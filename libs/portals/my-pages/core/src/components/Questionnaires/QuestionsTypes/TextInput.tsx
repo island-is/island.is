@@ -1,4 +1,5 @@
 import { Box, Input } from '@island.is/island-ui/core'
+import cn from 'classnames'
 import React from 'react'
 import * as styles from './QuestionTypes.css'
 
@@ -13,11 +14,13 @@ export interface TextInputProps {
   required?: boolean
   multiline?: boolean
   rows?: number
+  resizable?: boolean
   maxLength?: number
   type?: 'text' | 'number' | 'decimal'
   min?: string
   max?: string
   backgroundColor?: 'white' | 'blue'
+  labelledBy?: string
 }
 
 export const TextInput: React.FC<TextInputProps> = ({
@@ -31,11 +34,13 @@ export const TextInput: React.FC<TextInputProps> = ({
   required = false,
   multiline = false,
   rows = 4,
+  resizable = false,
   maxLength,
   type = 'text',
   min,
   max,
   backgroundColor = 'blue',
+  labelledBy,
 }) => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -48,18 +53,18 @@ export const TextInput: React.FC<TextInputProps> = ({
         return
       }
 
-      if (!/^-?\d*\.?\d*$/.test(newValue)) {
+      const allowedPattern = type === 'decimal' ? /^-?\d*[.,]?\d*$/ : /^-?\d*$/
+      if (!allowedPattern.test(newValue)) {
         return
       }
 
-      const numValue = parseFloat(newValue)
-      if (!isNaN(numValue)) {
-        if (min !== undefined && numValue < parseFloat(min)) {
-          newValue = min.toString()
-        } else if (max !== undefined && numValue > parseFloat(max)) {
-          newValue = max.toString()
-        }
-      }
+      // Icelandic decimal commas are accepted but stored with a dot so
+      // downstream parsing (formulas, triggers, submission) keeps working;
+      // the input renders the stored value back with a comma
+      newValue = newValue.replace(',', '.')
+
+      // Range is enforced on blur: clamping per keystroke makes every value
+      // between min and max unreachable, the first digit is always below min
     }
 
     onChange(newValue)
@@ -80,9 +85,10 @@ export const TextInput: React.FC<TextInputProps> = ({
   return (
     <Box
       width="full"
-      className={
-        type === 'number' || type === 'decimal' ? styles.numberInput : undefined
-      }
+      className={cn({
+        [styles.numberInput]: type === 'number' || type === 'decimal',
+        [styles.noResizeTextarea]: multiline && !resizable,
+      })}
     >
       <Input
         label={label}
@@ -90,8 +96,9 @@ export const TextInput: React.FC<TextInputProps> = ({
         backgroundColor={backgroundColor}
         id={id}
         name={id}
+        aria-labelledby={labelledBy}
         placeholder={placeholder}
-        value={value}
+        value={type === 'decimal' ? value.replace('.', ',') : value}
         onChange={handleChange}
         onBlur={handleBlur}
         hasError={!!error}

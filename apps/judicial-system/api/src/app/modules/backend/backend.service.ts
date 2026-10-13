@@ -16,6 +16,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../appeal-case'
+import { AppealSummons } from '../appeal-summons'
 import {
   Case,
   RequestSignatureResponse,
@@ -650,6 +651,31 @@ export class BackendService {
     return this.post(`case/${caseId}/subpoenas`, createSubpoenas)
   }
 
+  createAppealSummons(
+    caseId: string,
+    createAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.post(`case/${caseId}/appealSummons`, createAppealSummons)
+  }
+
+  updateAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+    updateAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}`,
+      updateAppealSummons,
+    )
+  }
+
+  deleteAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<{ deleted: boolean }> {
+    return this.delete(`case/${caseId}/appealSummons/${appealSummonsId}`)
+  }
+
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
     return this.post(`case/${caseId}/verdicts`, createVerdicts)
   }
@@ -1004,16 +1030,6 @@ export class BackendService {
     return this.callBackend<User[]>(`user?${params.toString()}`, {
       headers: this.secretTokenHeaders,
     })
-  }
-
-  findDefenderByNationalId(nationalId: string): Promise<User> {
-    const params = new URLSearchParams()
-    params.append('nationalId', nationalId)
-
-    return this.callBackend<User>(
-      `cases/limitedAccess/defender?${params.toString()}`,
-      { headers: this.secretTokenHeaders },
-    )
   }
 
   getLawyers(lawyerType?: LawyerType): Promise<Lawyer[]> {

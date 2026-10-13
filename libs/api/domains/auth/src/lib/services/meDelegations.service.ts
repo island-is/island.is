@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import differenceWith from 'lodash/differenceWith'
 import groupBy from 'lodash/groupBy'
 import min from 'lodash/min'
@@ -111,41 +107,23 @@ export class MeDelegationsService {
   ): Promise<DelegationDTO[]> {
     const scopesByDomain = groupBy(scopes, (scope) => scope.domainName)
 
-    const results = await Promise.allSettled(
-      toNationalIds.map((toNationalId) =>
-        Promise.all(
-          Object.entries(scopesByDomain).map(([domainName, domainScopes]) =>
-            this.createOrUpdateDelegation(user, {
-              toNationalId,
-              domainName,
-              scopes: domainScopes.map(({ name, validTo }) => ({
-                name,
-                validTo,
-              })),
-            }),
-          ),
-        ),
-      ),
+    const delegations = toNationalIds.flatMap((toNationalId) =>
+      Object.entries(scopesByDomain).map(([domainName, domainScopes]) => ({
+        toNationalId,
+        domainName,
+        scopes: domainScopes.map(({ name, validTo }) => ({ name, validTo })),
+      })),
     )
 
-    const successful: DelegationDTO[] = []
-    const failedNationalIds: string[] = []
-
-    results.forEach((result, index) => {
-      if (result.status === 'fulfilled') {
-        successful.push(...result.value)
-      } else {
-        failedNationalIds.push(toNationalIds[index])
-      }
+    const created = await this.delegationsApiWithAuth(
+      user,
+    ).meDelegationsControllerCreateBatch({
+      createDelegationBatchDTO: { delegations },
     })
 
-    if (failedNationalIds.length > 0) {
-      throw new BadRequestException(
-        'Failed to create delegations for some recipients',
-      )
-    }
-
-    return successful
+    return created.map((delegation) =>
+      this.includeDomainNameInScopes(delegation),
+    )
   }
 
   private createDelegation(

@@ -8,6 +8,7 @@ import {
 
 import {
   applyDativeCaseToCourtName,
+  applyGenitiveCaseToCourtName,
   capitalize,
   containsHtml,
   displayFirstPlusRemaining,
@@ -20,6 +21,7 @@ import {
   formatRulingOrderPronouncedOrallyName,
   indictmentSubtypes,
   normalizeAndFormatNationalId,
+  normalizePersonAddress,
   readableIndictmentSubtypes,
   sanitize,
   splitStringByComma,
@@ -247,6 +249,40 @@ describe('normalizeAndFormatNationalId', () => {
   })
 })
 
+describe('normalizePersonAddress', () => {
+  test('should replace Ótilgreindu with ótilgreindu lögheimili', () => {
+    expect(normalizePersonAddress('Ótilgreindu')).toEqual(
+      'ótilgreindu lögheimili',
+    )
+  })
+
+  test('should replace trimmed Ótilgreindu', () => {
+    expect(normalizePersonAddress('  Ótilgreindu  ')).toEqual(
+      'ótilgreindu lögheimili',
+    )
+  })
+
+  test('should replace regardless of casing', () => {
+    expect(normalizePersonAddress('ótilgreindu')).toEqual(
+      'ótilgreindu lögheimili',
+    )
+    expect(normalizePersonAddress('ÓTILGREINDU')).toEqual(
+      'ótilgreindu lögheimili',
+    )
+  })
+
+  test('should leave other addresses unchanged', () => {
+    expect(normalizePersonAddress('Aðalgata 1, 101 Reykjavík')).toEqual(
+      'Aðalgata 1, 101 Reykjavík',
+    )
+  })
+
+  test('should leave null and undefined unchanged', () => {
+    expect(normalizePersonAddress(null)).toBeNull()
+    expect(normalizePersonAddress(undefined)).toBeUndefined()
+  })
+})
+
 describe('formatDOB', () => {
   it('should format a national id string for a valid national id', () => {
     // Arrange
@@ -467,6 +503,18 @@ describe('applyDativeCaseToCourtName', () => {
 
     // Assert
     expect(result).toBe(courtName)
+  })
+})
+
+describe('applyGenitiveCaseToCourtName', () => {
+  test('should return genitive case if court name contains "dómur"', () => {
+    expect(applyGenitiveCaseToCourtName('Héraðsdómur Reykjavíkur')).toBe(
+      'Héraðsdóms Reykjavíkur',
+    )
+  })
+
+  test('should return the same court name if name does not contain "dómur"', () => {
+    expect(applyGenitiveCaseToCourtName('Bull')).toBe('Bull')
   })
 })
 

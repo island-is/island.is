@@ -1,0 +1,13 @@
+fragment SubpoenaFields on Subpoena {
+  id
+  created
+  modified
+  serviceStatus
+  serviceDate
+  servedBy
+  comment
+  defenderNationalId
+  caseId
+  defendantId
+  policeSubpoenaId
+}

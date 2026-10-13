@@ -4,6 +4,7 @@ import {
   ActionCardLoader,
   IntroWrapper,
   LinkButton,
+  STAFRAEN_HEILSA_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { FC } from 'react'
@@ -34,8 +35,8 @@ const PatientDataPermits: FC = () => {
       title={formatMessage(messages.patientDataPermitTitle)}
       intro={formatMessage(messages.patientDataPermitDescription)}
       serviceProvider={{
-        slug: 'landlaeknir',
-        tooltip: formatMessage(messages.landlaeknirPatientPermitsTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaPatientPermitsTooltip),
       }}
       loading={loading}
       buttonGroup={
@@ -101,7 +102,11 @@ const PatientDataPermits: FC = () => {
               heading={formatMessage(messages.patientDataPermit)}
               headingVariant="h4"
               text={formatMessage(messages.patientDataSharedDescription)}
-              tag={permitTagSelector(permit.status, formatMessage)}
+              tag={permitTagSelector(
+                permit.status,
+                formatMessage,
+                permit.validFrom,
+              )}
               cta={{
                 size: 'small',
                 variant: 'text',

@@ -1,12 +1,6 @@
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Icon,
-  Inline,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Icon, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import cn from 'classnames'
 import { useWindowSize } from 'react-use'
 import { LinkButton } from '../LinkButton/LinkButton'
 import { LinkResolver } from '../LinkResolver/LinkResolver'
@@ -25,6 +19,9 @@ interface AppointmentCardProps {
   }
   size?: 'small' | 'large'
   to?: string
+  showArrow?: boolean
+  /** Grays out the card, e.g. for appointments that have already passed */
+  muted?: boolean
 }
 
 // Example of a timecard
@@ -36,7 +33,6 @@ interface AppointmentCardProps {
 //     time: '11:40',
 //     location: {
 //       label: 'Heilsugæslan við Ásbrú',
-//       href: HealthPaths.HealthCenter,
 //     },
 //   },
 // },
@@ -46,6 +42,8 @@ export const TimeCard = ({
   description,
   data,
   to,
+  showArrow = !!to,
+  muted = false,
 }: AppointmentCardProps) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
@@ -55,44 +53,80 @@ export const TimeCard = ({
   const content = (
     <GridRow direction="row">
       <GridColumn span={'12/12'}>
-        <Box>
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          marginBottom={2}
+        >
           <Text
             variant="h4"
-            marginBottom={1}
-            color={to ? 'blue400' : undefined}
+            color={to && !muted ? 'blue400' : undefined}
+            className={muted ? styles.mutedTitle : undefined}
           >
             {title}
           </Text>
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            width="full"
-            flexDirection={isMobile ? 'column' : 'row'}
-          >
-            <Text variant="medium" marginBottom={'smallGutter'}>
+          {showArrow && (
+            <Icon
+              icon="arrowForward"
+              type="outline"
+              color="blue400"
+              size="medium"
+            />
+          )}
+        </Box>
+        <Box
+          display="flex"
+          flexWrap="wrap"
+          columnGap={3}
+          rowGap={1}
+          marginBottom={1}
+        >
+          <Box display="flex" alignItems="flexStart" columnGap={1}>
+            <Box flexShrink={0} paddingTop="smallGutter">
+              <Icon
+                icon="calendar"
+                color="blue400"
+                size="small"
+                type="outline"
+              />
+            </Box>
+            <Text>
               {data.weekday ? data.weekday + ', ' : ''}
               {data.date}
             </Text>
-            <Box
-              display="flex"
-              justifyContent={isMobile ? 'flexStart' : 'flexEnd'}
-              alignItems="center"
-              columnGap={1}
-              marginBottom={'smallGutter'}
-            >
-              <Icon icon="time" color="blue400" size="small" type="outline" />
-              <Text variant="medium">{data.time}</Text>
-            </Box>
           </Box>
-          {description && (
-            <Inline space={1}>
-              <Text variant="medium" marginBottom="smallGutter">
-                {description}
-              </Text>
-            </Inline>
-          )}
-          <Inline>
-            {data.location?.href ? (
+          <Box display="flex" alignItems="flexStart" columnGap={1}>
+            <Box flexShrink={0} paddingTop="smallGutter">
+              <Icon icon="time" color="blue400" size="small" type="outline" />
+            </Box>
+            <Text>{data.time}</Text>
+          </Box>
+        </Box>
+        {description && (
+          <Box
+            display="flex"
+            alignItems="flexStart"
+            columnGap={1}
+            marginBottom={1}
+          >
+            <Box flexShrink={0} paddingTop="smallGutter">
+              <Icon icon="person" color="blue400" size="small" type="outline" />
+            </Box>
+            <Text>{description}</Text>
+          </Box>
+        )}
+        {data.location?.label && (
+          <Box display="flex" alignItems="flexStart" columnGap={1}>
+            <Box flexShrink={0} paddingTop="smallGutter">
+              <Icon
+                icon="location"
+                color="blue400"
+                size="small"
+                type="outline"
+              />
+            </Box>
+            {data.location.href ? (
               <Box
                 onClick={(e) => {
                   // Stop propagation to prevent parent card link from triggering
@@ -105,35 +139,40 @@ export const TimeCard = ({
                   to={data.location.href}
                   text={data.location.label}
                   size="small"
-                  icon="link"
                 />
               </Box>
             ) : (
-              <Text variant="medium">{data.location.label}</Text>
+              <Text>{data.location.label}</Text>
             )}
-          </Inline>
-        </Box>
+          </Box>
+        )}
       </GridColumn>
     </GridRow>
   )
+  const card = (
+    <Box
+      border="standard"
+      borderColor="blue200"
+      borderRadius="large"
+      padding={isMobile ? 2 : 3}
+      height="full"
+      className={cn(to && styles.boxContainer, muted && styles.mutedCard)}
+    >
+      {content}
+    </Box>
+  )
+
+  // The link wraps the bordered box, not the content inside it, so the focus
+  // ring and the hit area are the card itself — same as the other variants.
   return (
     <Box height="full">
-      <Box
-        border="standard"
-        borderColor="blue200"
-        borderRadius="large"
-        padding={isMobile ? 2 : 3}
-        height="full"
-        className={to ? styles.boxContainer : undefined}
-      >
-        {to ? (
-          <LinkResolver href={to}>
-            <Box className={styles.containerLink}>{content}</Box>
-          </LinkResolver>
-        ) : (
-          <Box className={styles.containerLink}>{content}</Box>
-        )}
-      </Box>
+      {to ? (
+        <LinkResolver href={to} className={styles.containerLink}>
+          {card}
+        </LinkResolver>
+      ) : (
+        card
+      )}
     </Box>
   )
 }

@@ -4,15 +4,16 @@ import { m } from '../../lib/messages'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Box, Text, toast } from '@island.is/island-ui/core'
 import { m as coreMessages } from '@island.is/portals/core'
-import { useDelegationForm } from '../../context'
+import { ScopeSelection, useDelegationForm } from '../../context'
 import { ScopesTable } from '../ScopesTable/ScopesTable'
 import { DelegationPaths } from '../../lib/paths'
 import { useCreateAuthDelegationsMutation } from '../../screens/GrantAccessNew/GrantAccessNew.generated'
+import { usePatchAuthDelegationMutation } from '../../screens/EditAccess.tsx/EditAccess.generated'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as styles from './Modals.css'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import { AuthApiScope } from '@island.is/api/schema'
 
 export const ConfirmAccessModal = ({
   onClose,
@@ -26,7 +27,7 @@ export const ConfirmAccessModal = ({
   onConfirm?: () => void
   isVisible: boolean
   loading?: boolean
-  removedScopes?: AuthApiScope[]
+  removedScopes?: ScopeSelection[]
   isEdit?: boolean
 }) => {
   const { width } = useWindowSize()
@@ -36,29 +37,53 @@ export const ConfirmAccessModal = ({
 
   const { identities, selectedScopes } = useDelegationForm()
 
-  const [createAuthDelegations, { loading: mutationLoading }] =
+  const [createAuthDelegations, { loading: createLoading }] =
     useCreateAuthDelegationsMutation()
+  const [patchAuthDelegation, { loading: patchLoading }] =
+    usePatchAuthDelegationMutation()
+  const [submitting, setSubmitting] = useState(false)
+  const mutationLoading = submitting || createLoading || patchLoading
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (onConfirm) {
       onConfirm()
-    } else {
-      const invalidScopes = selectedScopes.filter(
-        (scope) => !scope.domain?.name || !scope.validTo,
-      )
+      return
+    }
 
-      if (invalidScopes.length > 0) {
-        toast.error(formatMessage(coreMessages.somethingWrong))
-        return
+    const invalidScopes = selectedScopes.filter(
+      (scope) => !scope.domain?.name || !scope.validTo,
+    )
+
+    if (invalidScopes.length > 0) {
+      toast.error(formatMessage(coreMessages.somethingWrong))
+      return
+    }
+
+    if (submitting) return
+    setSubmitting(true)
+
+    const scopes = selectedScopes.map((scope) => ({
+      name: scope.name,
+      validTo: scope.validTo as Date,
+      domainName: scope.domain!.name,
+    }))
+
+    const deleteScopesByDelegation = new Map<string, string[]>()
+    for (const scope of removedScopes ?? []) {
+      if (!scope.delegationId) continue
+      const names = deleteScopesByDelegation.get(scope.delegationId) ?? []
+      names.push(scope.name)
+      deleteScopesByDelegation.set(scope.delegationId, names)
+    }
+
+    try {
+      for (const [delegationId, names] of deleteScopesByDelegation) {
+        await patchAuthDelegation({
+          variables: { input: { delegationId, deleteScopes: names } },
+        })
       }
 
-      const scopes = selectedScopes.map((scope) => ({
-        name: scope.name,
-        validTo: scope.validTo as Date,
-        domainName: scope.domain!.name,
-      }))
-
-      createAuthDelegations({
+      await createAuthDelegations({
         variables: {
           input: {
             toNationalIds: identities.map((identity) => identity.nationalId),
@@ -66,13 +91,11 @@ export const ConfirmAccessModal = ({
           },
         },
       })
-        .then(() => {
-          navigate(DelegationPaths.DelegationsNew)
-        })
-        .catch(() => {
-          toast.error(formatMessage(m.confirmError))
-          navigate(DelegationPaths.DelegationsNew)
-        })
+      navigate(DelegationPaths.DelegationsNew)
+    } catch {
+      toast.error(formatMessage(m.confirmError))
+    } finally {
+      setSubmitting(false)
     }
   }
 

@@ -106,6 +106,7 @@ export const DEFENDER_REQUEST_CASE_ROUTE = '/verjandi/krafa'
 
 export const DEFENDER_INDICTMENT_CASE_ROUTE = '/verjandi/akaera'
 export const DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE = '/verjandi/akaera/gogn'
+export const DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE = '/verjandi/akaera/afryjun'
 
 export const DEFENDER_APPEAL_CASE_APPEAL_ROUTE = '/verjandi/kaera'
 export const DEFENDER_APPEAL_CASE_STATEMENT_ROUTE =
@@ -118,6 +119,10 @@ export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE =
   '/rikissaksoknari/akaera/yfirlit'
 export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE =
   '/rikissaksoknari/akaera/senda-til-fmst'
+export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE =
+  '/rikissaksoknari/akaera/afryjun'
+export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE =
+  '/rikissaksoknari/akaera/afryjunarstefna'
 //#endregion Public prosecutor user routes
 
 //#region Prison user routes
@@ -133,6 +138,14 @@ export const COURT_OF_APPEAL_RULING_ROUTE = '/landsrettur/urskurdur'
 export const COURT_OF_APPEAL_RESULT_ROUTE = '/landsrettur/nidurstada'
 export const COURT_OF_APPEAL_SUMMARY_ROUTE = '/landsrettur/samantekt'
 export const COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE = '/landsrettur/nidurfelling'
+
+// Verdict appeals are a separate proceeding from ruling appeals, with their
+// own screens, so they get their own path segment rather than sharing the
+// routes above. The steps that follow this one land under the same segment.
+export const COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE =
+  '/landsrettur/afryjun/yfirlit'
+export const COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE =
+  '/landsrettur/afryjun/verjandi'
 //#endregion Court of appeals user routes
 
 //#region District court user routes

@@ -7,6 +7,7 @@ import { CourtSessionStringType } from '@island.is/judicial-system/types'
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
+import { runInRequestContext } from '../../../../test'
 import {
   Case,
   CourtDocument,
@@ -16,10 +17,7 @@ import {
 } from '../../../repository'
 import { UpdateCourtSessionDto } from '../../dto/updateCourtSession.dto'
 
-jest.mock('@island.is/judicial-system/message', () => ({
-  ...jest.requireActual('@island.is/judicial-system/message'),
-  addMessagesToQueue: jest.fn(),
-}))
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: CourtSession | null
@@ -45,7 +43,7 @@ describe('CourtSessionController - Confirm with merged case entries', () => {
   let existingCourtSession: {
     id: string
     isConfirmed: boolean | undefined
-    mergedFiledDocuments?: Partial<CourtDocument>[]
+    filedDocuments?: Partial<CourtDocument>[]
     courtSessionStrings?: Partial<CourtSessionString>[]
   }
 
@@ -60,9 +58,7 @@ describe('CourtSessionController - Confirm with merged case entries', () => {
       await createTestingCourtSessionModule()
 
     const mockTransaction = sequelize.transaction as jest.Mock
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn({} as Transaction),
-    )
+    mockTransaction.mockResolvedValue({} as Transaction)
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
@@ -75,14 +71,20 @@ describe('CourtSessionController - Confirm with merged case entries', () => {
       const theCase = { id: caseId, caseFiles: [] } as unknown as Case
 
       try {
-        then.result = await courtSessionController.update(
-          caseId,
-          courtSessionId,
-          courtSessionToUpdate,
-          {} as never,
-          theCase,
-          existingCourtSession as unknown as CourtSession,
-        )
+        // The routes are guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open by the time the handler runs. Guards do
+        // not execute in controller unit tests, so the request context is set
+        // up here instead.
+        await runInRequestContext(async () => {
+          then.result = await courtSessionController.update(
+            caseId,
+            courtSessionId,
+            courtSessionToUpdate,
+            {} as never,
+            theCase,
+            existingCourtSession as unknown as CourtSession,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -99,7 +101,7 @@ describe('CourtSessionController - Confirm with merged case entries', () => {
     let then: Then
 
     beforeEach(async () => {
-      existingCourtSession.mergedFiledDocuments = [{ caseId: mergedCaseId }]
+      existingCourtSession.filedDocuments = [{ mergedFromCaseId: mergedCaseId }]
 
       then = await givenWhenThen({ isConfirmed: true })
     })
@@ -120,7 +122,7 @@ describe('CourtSessionController - Confirm with merged case entries', () => {
     let then: Then
 
     beforeEach(async () => {
-      existingCourtSession.mergedFiledDocuments = [{ caseId: mergedCaseId }]
+      existingCourtSession.filedDocuments = [{ mergedFromCaseId: mergedCaseId }]
       existingCourtSession.courtSessionStrings = [entries(mergedCaseId, '   ')]
 
       then = await givenWhenThen({ isConfirmed: true })
@@ -135,9 +137,9 @@ describe('CourtSessionController - Confirm with merged case entries', () => {
     let then: Then
 
     beforeEach(async () => {
-      existingCourtSession.mergedFiledDocuments = [
-        { caseId: mergedCaseId },
-        { caseId: otherMergedCaseId },
+      existingCourtSession.filedDocuments = [
+        { mergedFromCaseId: mergedCaseId },
+        { mergedFromCaseId: otherMergedCaseId },
       ]
       existingCourtSession.courtSessionStrings = [
         entries(mergedCaseId, 'Málin sameinuð'),
@@ -158,9 +160,9 @@ describe('CourtSessionController - Confirm with merged case entries', () => {
     let then: Then
 
     beforeEach(async () => {
-      existingCourtSession.mergedFiledDocuments = [
-        { caseId: mergedCaseId },
-        { caseId: otherMergedCaseId },
+      existingCourtSession.filedDocuments = [
+        { mergedFromCaseId: mergedCaseId },
+        { mergedFromCaseId: otherMergedCaseId },
       ]
       existingCourtSession.courtSessionStrings = [
         entries(mergedCaseId, 'Málin sameinuð'),
@@ -189,11 +191,29 @@ describe('CourtSessionController - Confirm with merged case entries', () => {
     })
   })
 
+  // The session's own documents sit in the same list as the copies from a
+  // merged case, so the check has to tell them apart: only a copy asks for
+  // entries.
+  describe('a session with only the case own documents', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      existingCourtSession.filedDocuments = [{ id: uuid() }, { id: uuid() }]
+
+      then = await givenWhenThen({ isConfirmed: true })
+    })
+
+    it('should confirm the court session', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockCourtSessionRepositoryService.update).toHaveBeenCalled()
+    })
+  })
+
   describe('an update that does not confirm', () => {
     let then: Then
 
     beforeEach(async () => {
-      existingCourtSession.mergedFiledDocuments = [{ caseId: mergedCaseId }]
+      existingCourtSession.filedDocuments = [{ mergedFromCaseId: mergedCaseId }]
 
       then = await givenWhenThen({ location: 'Updated Location' })
     })
@@ -209,7 +229,7 @@ describe('CourtSessionController - Confirm with merged case entries', () => {
 
     beforeEach(async () => {
       existingCourtSession.isConfirmed = true
-      existingCourtSession.mergedFiledDocuments = [{ caseId: mergedCaseId }]
+      existingCourtSession.filedDocuments = [{ mergedFromCaseId: mergedCaseId }]
 
       then = await givenWhenThen({ isConfirmed: true })
     })

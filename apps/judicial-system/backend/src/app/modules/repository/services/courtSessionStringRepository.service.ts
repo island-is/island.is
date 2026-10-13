@@ -144,4 +144,36 @@ export class CourtSessionStringRepositoryService {
       throw error
     }
   }
+
+  // Every string of a court session, the merged cases' included. Part of
+  // deleting the session; the caller sequences it before the row delete.
+  async deleteAllForCourtSession(
+    caseId: string,
+    courtSessionId: string,
+    options?: { transaction?: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Deleting all court session strings of court session ${courtSessionId} of case ${caseId}`,
+      )
+
+      const numberOfDeletedRows = await this.courtSessionStringModel.destroy({
+        where: { caseId, courtSessionId },
+        transaction: options?.transaction,
+      })
+
+      this.logger.debug(
+        `Deleted ${numberOfDeletedRows} court session strings of court session ${courtSessionId} of case ${caseId}`,
+      )
+
+      return numberOfDeletedRows
+    } catch (error) {
+      this.logger.error(
+        `Error deleting all court session strings of court session ${courtSessionId} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }

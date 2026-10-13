@@ -28,7 +28,7 @@ import {
   useCase,
   useDebouncedInput,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 const PoliceReport = () => {
@@ -82,7 +82,7 @@ const PoliceReport = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(icReportForm.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <BlueBox>
             <Text whiteSpace="preLine">{workingCase.demands}</Text>
@@ -130,7 +130,7 @@ const PoliceReport = () => {
             />
           </Box>
           <Box component="section">
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <Checkbox
                 name="request-prosecutor-only-session"
                 label={formatMessage(

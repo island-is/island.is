@@ -2,7 +2,7 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Input, toast } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import {
   PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
@@ -40,7 +40,7 @@ import {
   useCase,
   useDebouncedInput,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -89,11 +89,9 @@ const HearingArrangements = () => {
         } else {
           setNavigateTo(destination)
         }
-      } else {
-        toast.error(formatMessage(errors.transitionCase))
       }
     },
-    [formatMessage, router, setWorkingCase, transitionCase, workingCase],
+    [router, setWorkingCase, transitionCase, workingCase],
   )
 
   const stepIsValid = isHearingArrangementsStepValidIC(workingCase)
@@ -114,7 +112,7 @@ const HearingArrangements = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
           <ProsecutorSectionHeightenedSecurity />
           <Box component="section">

@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'portals-admin-application-system',
   preset: '../../../../jest.preset.js',

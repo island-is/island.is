@@ -1,0 +1,20 @@
+fragment CaseFileFields on CaseFile {
+  id
+  created
+  modified
+  name
+  type
+  category
+  state
+  key
+  size
+  userGeneratedFilename
+  displayDate
+  submittedBy
+  fileRepresentative
+  isKeyAccessible
+  defendantId
+  civilClaimantId
+  rulingFileId
+  isPronouncedOrally
+}

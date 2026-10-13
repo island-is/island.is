@@ -81,6 +81,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   handleOpenCalendar,
   handleClear,
   required,
+  ariaLabelledBy,
   inputName = '',
   backgroundColor = 'white',
   appearInline = false,
@@ -176,7 +177,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
     if (!unchanged) {
       setStartDate(start)
       setEndDate(end)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(datePickerRef.current as any)?.setState({ inputValue: null })
       handleChange && handleChange(start, end)
     }
@@ -220,7 +220,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               setEndDate(startDate)
               hoverDateRef.current = null
               setIsOpen(false)
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               ;(datePickerRef.current as any)?.setState({
                 inputValue: null,
               })
@@ -394,6 +393,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           }
           startDate={startDate}
           required={required}
+          ariaLabelledBy={ariaLabelledBy}
           autoComplete="off"
           calendarClassName={cn({
             [styles.backgroundBlue]: backgroundColor === 'blue',
@@ -613,7 +613,7 @@ const CustomHeader = ({
                 value: year,
               }}
               onChange={(selectedOption) =>
-                changeYear(Number(selectedOption?.value) ?? year)
+                changeYear(Number(selectedOption?.value ?? year))
               }
               options={years.map((option) => ({
                 label: option.toString(),

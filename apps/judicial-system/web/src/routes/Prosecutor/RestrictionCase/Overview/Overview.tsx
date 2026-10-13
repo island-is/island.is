@@ -57,7 +57,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { getLegalProvisionTitle } from '@island.is/judicial-system-web/src/utils/laws'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
 
 export const Overview = () => {
@@ -109,6 +109,12 @@ export const Overview = () => {
           setWorkingCase,
         )
       : workingCase.state !== CaseState.NEW
+
+    // transitionCase has already reported the failure, so leave the
+    // "sent to court" modal closed.
+    if (!caseSubmitted) {
+      return
+    }
 
     const notificationSent = caseSubmitted
       ? await sendNotification(
@@ -179,7 +185,7 @@ export const Overview = () => {
             caseType: workingCase.type,
           })}
         </PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           {workingCase.state === CaseState.RECEIVED &&
             workingCase.arraignmentDate?.date &&

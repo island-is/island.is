@@ -31,8 +31,8 @@ export const m = {
   answerLabel: defineMessages({
     '0': {
       id: 'web.ecoi.calculator:form.answerLabel0',
-      defaultMessage: 'Nei',
-      description: 'Nei',
+      defaultMessage: 'Já',
+      description: 'Já',
     },
     '1': {
       id: 'web.ecoi.calculator:form.answerLabel1',
@@ -46,8 +46,8 @@ export const m = {
     },
     '3': {
       id: 'web.ecoi.calculator:form.answerLabel3',
-      defaultMessage: 'Já',
-      description: 'Já',
+      defaultMessage: 'Nei',
+      description: 'Nei',
     },
   }),
   results: defineMessages({
@@ -70,6 +70,21 @@ export const m = {
       id: 'web.ecoi.calculator:results.breakdownHeading',
       defaultMessage: 'Sundurliðun á niðurstöðum',
       description: 'Sundurliðun á niðurstöðum',
+    },
+    tableTabLabel: {
+      id: 'web.ecoi.calculator:results.tableTabLabel',
+      defaultMessage: 'Tafla',
+      description: 'Tafla',
+    },
+    chartTabLabel: {
+      id: 'web.ecoi.calculator:results.chartTabLabel',
+      defaultMessage: 'Stöplarit',
+      description: 'Stöplarit',
+    },
+    radarChartTabLabel: {
+      id: 'web.ecoi.calculator:results.radarChartTabLabel',
+      defaultMessage: 'Köngulóargraf',
+      description: 'Köngulóargraf',
     },
     tableCategory: {
       id: 'web.ecoi.calculator:results.tableCategory',

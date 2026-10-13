@@ -75,12 +75,15 @@ export const TableRepeaterFormField: FC<Props> = ({
     cancelButtonText = coreMessages.buttonCancel,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
+    removeButtonDisabledTooltipText,
     editButtonTooltipText = coreMessages.editFieldText,
     editField = false,
+    canRemoveRow,
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
     initActiveFieldIfEmpty,
+    hideTableHeaderIfEmpty,
   } = data
 
   const apolloClient = useApolloClient()
@@ -321,112 +324,144 @@ export const TableRepeaterFormField: FC<Props> = ({
       )}
       <Box marginTop={description ? 3 : 0}>
         <Stack space={4}>
-          <T.Table>
-            <T.Head>
-              <T.Row>
-                <T.HeadData></T.HeadData>
-                {tableHeader.map((item, index) => (
-                  <T.HeadData key={index}>
-                    {formatText(item ?? '', application, formatMessage)}
-                  </T.HeadData>
-                ))}
-              </T.Row>
-            </T.Head>
-            <T.Body>
-              {staticData &&
-                staticData.map((item, index) => (
-                  <T.Row key={index}>
-                    <T.Data></T.Data>
-                    {Object.keys(item).map((key, idx) => (
-                      <T.Data key={`static-${key}-${idx}`}>
-                        {formatTableValue(key, item, index, application)}
-                      </T.Data>
-                    ))}
-                  </T.Row>
-                ))}
-              {values &&
-                fields.map((field, index) => {
-                  if (
-                    index === activeIndex ||
-                    field.isUnsaved ||
-                    field.isRemoved
-                  )
-                    return null
-
-                  // Compute display index (based only on visible rows)
-                  const displayIndex = fields
-                    .filter((f) => !f.isUnsaved && !f.isRemoved)
-                    .findIndex((f) => f.id === field.id)
-
-                  return (
-                    <T.Row key={field.id}>
-                      <T.Data>
-                        <Box display="flex" alignItems="center">
-                          <Tooltip
-                            placement="left"
-                            text={formatText(
-                              removeButtonTooltipText,
-                              application,
-                              formatMessage,
-                            )}
-                          >
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveItem(index)}
-                            >
-                              <Icon
-                                icon="trash"
-                                type="outline"
-                                color="blue400"
-                              />
-                            </button>
-                          </Tooltip>
-                          &nbsp;&nbsp;
-                          {editField && (
-                            <Tooltip
-                              placement="left"
-                              text={formatText(
-                                editButtonTooltipText,
-                                application,
-                                formatMessage,
-                              )}
-                            >
-                              <button
-                                type="button"
-                                onClick={() => handleEditItem(index)}
-                                disabled={activeIndex !== -1}
-                              >
-                                <Icon
-                                  icon="pencil"
-                                  color="blue400"
-                                  type="outline"
-                                  size="small"
-                                />
-                              </button>
-                            </Tooltip>
-                          )}
-                        </Box>
-                      </T.Data>
-                      {tableRows.map((item, idx) => (
-                        <T.Data
-                          key={`${item}-${idx}`}
-                          disabled={values[index].disabled === 'true'}
-                        >
-                          {formatTableValue(
-                            item,
-                            customMappedValues.length
-                              ? customMappedValues[index]
-                              : values[index],
-                            displayIndex,
-                            application,
-                          )}
+          {(!hideTableHeaderIfEmpty ||
+            staticData?.length ||
+            fields.some(
+              (f, i) => i !== activeIndex && !f.isUnsaved && !f.isRemoved,
+            )) && (
+            <T.Table>
+              <T.Head>
+                <T.Row>
+                  <T.HeadData></T.HeadData>
+                  {tableHeader.map((item, index) => (
+                    <T.HeadData key={index}>
+                      {formatText(item ?? '', application, formatMessage)}
+                    </T.HeadData>
+                  ))}
+                </T.Row>
+              </T.Head>
+              <T.Body>
+                {staticData &&
+                  staticData.map((item, index) => (
+                    <T.Row key={index}>
+                      <T.Data></T.Data>
+                      {Object.keys(item).map((key, idx) => (
+                        <T.Data key={`static-${key}-${idx}`}>
+                          {formatTableValue(key, item, index, application)}
                         </T.Data>
                       ))}
                     </T.Row>
-                  )
-                })}
-            </T.Body>
-          </T.Table>
+                  ))}
+                {values &&
+                  fields.map((field, index) => {
+                    if (
+                      index === activeIndex ||
+                      field.isUnsaved ||
+                      field.isRemoved
+                    )
+                      return null
+
+                    // Compute display index (based only on visible rows)
+                    const displayIndex = fields
+                      .filter((f) => !f.isUnsaved && !f.isRemoved)
+                      .findIndex((f) => f.id === field.id)
+
+                    const canRemove = canRemoveRow
+                      ? canRemoveRow(
+                          watchedApplication,
+                          values[index] ?? {},
+                          index,
+                        )
+                      : true
+
+                    const removeTooltipText = canRemove
+                      ? removeButtonTooltipText
+                      : removeButtonDisabledTooltipText
+
+                    // aria-disabled rather than disabled so the tooltip still
+                    // receives hover events on locked rows
+                    const removeButton = (
+                      <button
+                        type="button"
+                        aria-disabled={!canRemove}
+                        style={canRemove ? undefined : { cursor: 'default' }}
+                        onClick={
+                          canRemove ? () => handleRemoveItem(index) : undefined
+                        }
+                      >
+                        <Icon
+                          icon="trash"
+                          type="outline"
+                          color={canRemove ? 'blue400' : 'dark300'}
+                        />
+                      </button>
+                    )
+
+                    return (
+                      <T.Row key={field.id}>
+                        <T.Data>
+                          <Box display="flex" alignItems="center">
+                            {removeTooltipText ? (
+                              <Tooltip
+                                placement="left"
+                                text={formatText(
+                                  removeTooltipText,
+                                  application,
+                                  formatMessage,
+                                )}
+                              >
+                                {removeButton}
+                              </Tooltip>
+                            ) : (
+                              removeButton
+                            )}
+                            &nbsp;&nbsp;
+                            {editField && (
+                              <Tooltip
+                                placement="left"
+                                text={formatText(
+                                  editButtonTooltipText,
+                                  application,
+                                  formatMessage,
+                                )}
+                              >
+                                <button
+                                  type="button"
+                                  onClick={() => handleEditItem(index)}
+                                  disabled={activeIndex !== -1}
+                                >
+                                  <Icon
+                                    icon="pencil"
+                                    color="blue400"
+                                    type="outline"
+                                    size="small"
+                                  />
+                                </button>
+                              </Tooltip>
+                            )}
+                          </Box>
+                        </T.Data>
+                        {tableRows.map((item, idx) => (
+                          <T.Data
+                            key={`${item}-${idx}`}
+                            disabled={values[index].disabled === 'true'}
+                          >
+                            {formatTableValue(
+                              item,
+                              customMappedValues.length
+                                ? customMappedValues[index]
+                                : values[index],
+                              displayIndex,
+                              application,
+                            )}
+                          </T.Data>
+                        ))}
+                      </T.Row>
+                    )
+                  })}
+              </T.Body>
+            </T.Table>
+          )}
           {activeField ? (
             <Stack space={2} key={activeField.id}>
               {formTitle && (

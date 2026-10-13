@@ -1,8 +1,10 @@
 import {
   ApolloClient,
   ApolloLink,
+  FieldMergeFunction,
   HttpLink,
   InMemoryCache,
+  Reference,
 } from '@apollo/client'
 import fetch from 'cross-fetch'
 
@@ -16,6 +18,29 @@ const httpLink = new HttpLink({
 })
 
 const retryLink = new RetryLink()
+
+const mergeCursorPage: FieldMergeFunction = (
+  existing,
+  incoming,
+  { args, readField },
+) => {
+  if (!existing || !args?.input?.after) {
+    return incoming
+  }
+  // Rows can shift between pages when the underlying list changes
+  const existingIds = new Set(
+    existing.data.map((ref: Reference) => readField('id', ref)),
+  )
+  return {
+    ...incoming,
+    data: [
+      ...existing.data,
+      ...incoming.data.filter(
+        (ref: Reference) => !existingIds.has(readField('id', ref)),
+      ),
+    ],
+  }
+}
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors)
@@ -58,6 +83,20 @@ export const client = new ApolloClient({
             merge(_, incoming) {
               return incoming
             },
+          },
+          // Cursor pagination: each filter combination is its own list
+          // (the cursor is left out of the key), a page with `after` is
+          // appended, and a fetch without it (page one) replaces the list.
+          healthDirectoratePaginatedHealthConversations: {
+            keyArgs: [
+              'input',
+              ['status', 'starred', 'search', 'treatmentId', 'limit'],
+            ],
+            merge: mergeCursorPage,
+          },
+          healthDirectoratePaginatedAppointments: {
+            keyArgs: ['input', ['from', 'to', 'status', 'order', 'limit']],
+            merge: mergeCursorPage,
           },
         },
       },

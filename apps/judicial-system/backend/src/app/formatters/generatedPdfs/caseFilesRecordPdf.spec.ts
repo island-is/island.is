@@ -105,7 +105,7 @@ describe('createCaseFilesRecord - table of contents', () => {
 
     const outPath = path.join(os.tmpdir(), 'caseFilesRecord.pdf')
     fs.writeFileSync(outPath, pdf)
-    // eslint-disable-next-line no-console
+
     console.log(`Case files record written to ${outPath}`)
 
     const document = await PDFDocument.load(new Uint8Array(pdf))
@@ -146,7 +146,7 @@ describe('createCaseFilesRecord - table of contents', () => {
 
     const outPath = path.join(os.tmpdir(), 'caseFilesRecord-digital.pdf')
     fs.writeFileSync(outPath, pdf)
-    // eslint-disable-next-line no-console
+
     console.log(`Case files record written to ${outPath}`)
 
     const document = await PDFDocument.load(new Uint8Array(pdf))
@@ -164,6 +164,96 @@ describe('createCaseFilesRecord - table of contents', () => {
     // digital case files page instead of the first
     expect(linkTargets.has(pages[31].ref.toString())).toBe(true)
     expect(linkTargets.has(pages[32].ref.toString())).toBe(true)
+  })
+})
+
+describe('createCaseFilesRecord - unreadable files', () => {
+  const formatMessage = createTestIntl({
+    locale: 'is-IS',
+    onError: jest.fn,
+  }).formatMessage
+
+  const policeCaseNumber = '007-2024-000001'
+
+  const theCase = {
+    id: 'case-id',
+    prosecutorsOffice: { name: 'Héraðssaksóknari' },
+    defendants: [
+      {
+        name: 'Jón Jónsson',
+        nationalId: '0101012519',
+        address: 'Suðurgata 1',
+      },
+    ],
+    indictmentSubtypes: { [policeCaseNumber]: [IndictmentSubtype.THEFT] },
+  } as unknown as Case
+
+  const createPdf = async (pageCount: number, encrypted = false) => {
+    const document = await PDFDocument.create()
+
+    for (let index = 0; index < pageCount; index++) {
+      document.addPage()
+    }
+
+    if (encrypted) {
+      // pdf-lib refuses to load a document whose trailer names an Encrypt
+      // dictionary, which is how a password protected upload presents itself
+      document.context.trailerInfo.Encrypt = document.context.obj({
+        Filter: 'Standard',
+      })
+    }
+
+    return Buffer.from(await document.save({ useObjectStreams: false }))
+  }
+
+  it('should replace unreadable files with a placeholder page and report them', async () => {
+    const encryptedPdf = await createPdf(3, true)
+    const readablePdf = await createPdf(2)
+    const notAPdf = Buffer.from('not a pdf at all')
+    const onUnreadableFile = jest.fn()
+
+    const caseFiles = [
+      { id: 'file-1', name: 'Dulkóðað skjal.pdf', buffer: encryptedPdf },
+      { id: 'file-2', name: 'Lesanlegt skjal.pdf', buffer: readablePdf },
+      { id: 'file-3', name: 'Ekki pdf.pdf', buffer: notAPdf },
+    ].map((file) => async () => ({
+      ...file,
+      date: new Date('2024-03-01T10:00:00Z'),
+      chapter: 0,
+    }))
+
+    const pdf = await createCaseFilesRecord(
+      theCase,
+      policeCaseNumber,
+      caseFiles,
+      [],
+      formatMessage,
+      onUnreadableFile,
+    )
+
+    const document = await PDFDocument.load(new Uint8Array(pdf))
+
+    // 1 cover page (the three-row table of contents fits on it)
+    // + 1 placeholder page for the encrypted file + 2 pages from the readable
+    // file + 1 placeholder page for the file that is not a PDF = 5 pages.
+    // Without the placeholder handling the whole record would have failed on
+    // the encrypted file instead
+    expect(document.getPageCount()).toBe(5)
+    expect(onUnreadableFile).toHaveBeenCalledTimes(2)
+    expect(onUnreadableFile).toHaveBeenNthCalledWith(
+      1,
+      { id: 'file-1', name: 'Dulkóðað skjal.pdf' },
+      expect.objectContaining({
+        message: expect.stringContaining('encrypted'),
+      }),
+    )
+    expect(onUnreadableFile).toHaveBeenNthCalledWith(
+      2,
+      { id: 'file-3', name: 'Ekki pdf.pdf' },
+      expect.objectContaining({
+        message: expect.stringContaining('No PDF header found'),
+      }),
+    )
   })
 })
 

@@ -1,9 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
+  ApplicationEligibility,
+  DrivingLicenseApplicationType,
   DrivingLicenseCategory,
   DrivingLicenseService,
   NewDrivingLicenseResult,
   Pickup,
+  RequirementKey as DomainRequirementKey,
 } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../../shared'
@@ -37,10 +40,51 @@ import {
 } from '@island.is/clients/driving-license'
 import { messages as drivingLicenseMessages } from '@island.is/application/templates/driving-license'
 import {
+  structuralCandidates,
+  hasUsablePhoto,
+  buildTypeEligibility,
+  fakeTypeEligibility,
+  messages as districtCommissionerMessages,
+  requirementsMessages as districtCommissionerRequirementsMessages,
+} from '@island.is/application/templates/district-commissioners/driving-license'
+import type {
+  TypeEligibility,
+  DrivingLicenseFakeData as DistrictCommissionerFakeData,
+} from '@island.is/application/templates/district-commissioners/driving-license'
+import {
   PostTemporaryLicenseWithHealthDeclarationMapper,
   DrivingLicenseSchema,
 } from './utils/healthDeclarationMapper'
 import { formatPhoneNumber } from './utils'
+
+// The schema `RequirementKey` the template consumes lives in a `lib:dom` package
+// this API scope may not import, so we can't reference it here. It only differs
+// from the domain `RequirementKey` (what `getApplicationEligibility` returns,
+// mirroring RLS) in its string values: the schema uses camelCase values that equal
+// each member's name, the domain uses PascalCase. Reverse-mapping a domain value to
+// its member name therefore yields the schema value, and we type it through the
+// template's own `TypeEligibility` rather than importing the schema enum.
+type SchemaRequirementKey = TypeEligibility['requirements'][number]['key']
+
+const domainValueToMemberName: Record<string, string> = Object.fromEntries(
+  Object.entries(DomainRequirementKey).map(([name, value]) => [value, name]),
+)
+
+// Convert the domain eligibility result into the schema-keyed shape the template's
+// `buildTypeEligibility` and eligibility summary expect.
+const toTypeEligibility = (
+  serverResult: ApplicationEligibility,
+): TypeEligibility => ({
+  isEligible: serverResult.isEligible,
+  requirements: serverResult.requirements.map((r) => ({
+    key: (domainValueToMemberName[r.key] ??
+      r.key) as unknown as SchemaRequirementKey,
+    requirementMet: r.requirementMet,
+    daysOfResidency: r.daysOfResidency,
+    messageIs: r.messageIs,
+    messageEn: r.messageEn,
+  })),
+})
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -97,6 +141,74 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     super(ApplicationTypes.DRIVING_LICENSE)
   }
 
+  async checkEligibility({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<{
+    byType: Record<string, TypeEligibility>
+  }> {
+    const { externalData, answers } = application
+    const fakeData = getValueViaPath<DistrictCommissionerFakeData>(
+      answers,
+      'fakeData',
+    )
+    const usingFakeData = fakeData?.useFakeData === YES
+
+    const candidates = structuralCandidates(externalData, fakeData)
+
+    // Universal block 1: the applicant can't apply for any license type. Stop here, before the draft.
+    if (candidates.length === 0) {
+      throw new TemplateApiError(
+        {
+          title: districtCommissionerMessages.notEligibleTitle,
+          summary: districtCommissionerMessages.notEligibleDescription,
+        },
+        400,
+      )
+    }
+
+    // Universal block 2: a usable quality photo is required for every type, so
+    // it is enforced here rather than per type on the eligibility summary.
+    if (!hasUsablePhoto(externalData)) {
+      throw new TemplateApiError(
+        {
+          title:
+            districtCommissionerRequirementsMessages.beLicenseQualityPhotoTitle,
+          summary:
+            districtCommissionerRequirementsMessages.beLicenseQualityPhotoDescription,
+        },
+        400,
+      )
+    }
+
+    // Per-type requirements the eligibility summary renders (driving school /
+    // assessment / residency / RLS can-apply, plus 65+ extras). These are NOT
+    // blocked here — the summary shows them and gates progression per type.
+    const byType: Record<string, TypeEligibility> = {}
+    for (const type of candidates) {
+      if (usingFakeData) {
+        byType[type] = fakeTypeEligibility(type, fakeData)
+      } else {
+        // renewal-65 is not in the DrivingLicenseApplicationType union but flows
+        // through the same as it does on the GraphQL eligibility path (a String
+        // field); canApplyFor handles the value at runtime.
+        const serverResult =
+          await this.drivingLicenseService.getApplicationEligibility(
+            auth,
+            application.applicant,
+            type as DrivingLicenseApplicationType,
+          )
+        byType[type] = buildTypeEligibility(
+          type,
+          toTypeEligibility(serverResult),
+          externalData,
+        )
+      }
+    }
+
+    return { byType }
+  }
+
   async createCharge({
     application: { id, answers },
     auth,
@@ -137,8 +249,12 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     success: boolean
     // Persisted by the framework at `externalData.submitApplication.data`, so the
     // RLS application guid is retrievable from the application record for support/
-    // reconciliation — not only from the api logs. Present for the redesigned
-    // B-temp/B-full v6 flows; null for the paths that don't return one.
+    // reconciliation — not only from the api logs. Present for every v6 submit
+    // that returns one: the redesigned B-temp/B-full flows plus BE and 65+; null
+    // for the paths that don't. BE and 65+ yield null wherever RLS's response
+    // omits `applicationGuid` (older RLS prod builds did), which is a missing
+    // reconciliation record only — no caller branches on the guid for those two
+    // products.
     applicationGuid?: string | null
   }> {
     const { answers } = application
@@ -626,7 +742,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         application,
       )
 
-      return this.drivingLicenseService.applyForRenewal65(auth.authorization, {
+      return this.drivingLicenseService.applyForRenewal65(auth, {
         jurisdiction: jurisdictionId
           ? jurisdictionId
           : setJurisdictionToKopavogur,
@@ -634,7 +750,10 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         studentEmail: renewalEmail ?? '',
         ...(deliveryMethod
           ? {
-              pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
+              // Note: the redesigned renewal-65 flow (v6 postApplyForRenewal65)
+              // only supports a single `sendPlasticToPerson` flag; the old
+              // `pickupPlasticAtDistrict` flag was intentionally dropped since
+              // the underlying schema has no such field.
               sendPlasticToPerson: deliveryMethod === Pickup.POST,
             }
           : {}),
@@ -778,7 +897,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       }
       return this.drivingLicenseService.newTemporaryDrivingLicense(
         nationalId,
-        auth.authorization.replace('Bearer ', ''),
+        auth,
         {
           jurisdictionId: jurisdictionId
             ? jurisdictionId
@@ -828,23 +947,19 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         healthDeclarationAnswers,
       )
 
-      return this.drivingLicenseService.applyForBELicense(
-        nationalId,
-        auth.authorization,
-        {
-          jurisdiction: jurisdictionId
-            ? jurisdictionId
-            : setJurisdictionToKopavogur,
-          instructorSSN: instructorSSN ?? '',
-          primaryPhoneNumber: bePhone,
-          studentEmail: beEmail ?? '',
-          contentList,
-          photoBiometricsId,
-          signatureBiometricsId,
-          sendPlasticToPerson: deliveryMethod === Pickup.POST,
-          healthDeclarationModel,
-        },
-      )
+      return this.drivingLicenseService.applyForBELicense(nationalId, auth, {
+        jurisdiction: jurisdictionId
+          ? jurisdictionId
+          : setJurisdictionToKopavogur,
+        instructorSSN: instructorSSN ?? '',
+        primaryPhoneNumber: bePhone,
+        studentEmail: beEmail ?? '',
+        contentList,
+        photoBiometricsId,
+        signatureBiometricsId,
+        sendPlasticToPerson: deliveryMethod === Pickup.POST,
+        healthDeclarationModel,
+      })
     }
 
     throw new Error('application for unknown type of license')
@@ -894,7 +1009,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
   async glassesCheck({ auth }: TemplateApiModuleActionProps): Promise<boolean> {
     const licences: DriverLicenseWithoutImages[] =
-      await this.drivingLicenseService.getAllDriverLicenses(auth.authorization)
+      await this.drivingLicenseService.getAllDriverLicenses(auth)
     const hasGlasses: boolean = licences.some((license) => {
       // Visual impairments comments on driving licenses are prefixed with "01."
       return !!license.comments?.some((comment) => comment.nr?.includes('01.'))

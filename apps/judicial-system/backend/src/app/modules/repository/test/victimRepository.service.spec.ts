@@ -15,6 +15,7 @@ describe('VictimRepositoryService', () => {
   let service: VictimRepositoryService
   let model: {
     findByPk: jest.Mock
+    findAll: jest.Mock
     create: jest.Mock
     update: jest.Mock
     destroy: jest.Mock
@@ -23,6 +24,7 @@ describe('VictimRepositoryService', () => {
   beforeEach(async () => {
     model = {
       findByPk: jest.fn().mockResolvedValue(null),
+      findAll: jest.fn().mockResolvedValue([]),
       create: jest.fn(),
       update: jest.fn().mockResolvedValue([0, []]),
       destroy: jest.fn().mockResolvedValue(0),

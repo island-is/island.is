@@ -205,7 +205,7 @@ function RootLayoutNav({
                 />
               </Stack>
               <PromptModal />
-              <ToastHost />
+              <ToastHost fallback />
             </OfflineProvider>
           </FeatureFlagProvider>
         </ApolloProvider>

@@ -13,7 +13,6 @@ export interface NewRenewal65DrivingLicenseInput {
   jurisdiction: number
   primaryPhoneNumber: string
   studentEmail: string
-  pickupPlasticAtDistrict?: boolean
   sendPlasticToPerson?: boolean
   contentList?: NewBEDrivingLicenseContentItem[]
   photoBiometricsId?: string | null

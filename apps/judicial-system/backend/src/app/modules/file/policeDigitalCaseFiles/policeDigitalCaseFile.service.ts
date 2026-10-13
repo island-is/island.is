@@ -155,10 +155,11 @@ export class PoliceDigitalCaseFileService {
 
     const [policeSystemDigitalCaseFiles, currentPoliceDigitalCaseFiles] =
       await Promise.all([
-        this.policeService.getAllPoliceSystemDigitalCaseFiles(caseId, user),
-        this.policeDigitalCaseFileRepositoryService.findAll({
-          where: { caseId },
+        this.policeService.getAllPoliceSystemDigitalCaseFiles(caseId, user, {
+          courtCaseNumber,
+          policeCaseNumbers,
         }),
+        this.policeDigitalCaseFileRepositoryService.findByCaseId(caseId),
       ])
 
     // Only consider files from the police system whose policeCaseNumber is among the stored ones on the case
@@ -225,9 +226,7 @@ export class PoliceDigitalCaseFileService {
     // Re-fetch only if we inserted new records
     const currentDigitalCaseFiles =
       filesToCreate.length > 0
-        ? await this.policeDigitalCaseFileRepositoryService.findAll({
-            where: { caseId },
-          })
+        ? await this.policeDigitalCaseFileRepositoryService.findByCaseId(caseId)
         : currentPoliceDigitalCaseFiles
 
     return currentDigitalCaseFiles
@@ -250,6 +249,10 @@ export class PoliceDigitalCaseFileService {
     caseId: string,
     user: User,
     policeDigitalFileId: string,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ): Promise<string> {
     return this.policeService.getTokenUrl(
       caseId,
@@ -257,6 +260,7 @@ export class PoliceDigitalCaseFileService {
       policeDigitalFileId,
       user,
       'getPoliceDigitalCaseFileTokenUrl',
+      caseNumbers,
     )
   }
 

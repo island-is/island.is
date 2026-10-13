@@ -67,7 +67,7 @@
     "react-native-quick-actions": "0.3.13",
     "react-native-reanimated": "~4.2.2",
     "react-native-safe-area-context": "~5.6.2",
-    "react-native-screens": "~4.24.0",
+    "react-native-screens": "patch:react-native-screens@npm%3A4.24.0#~/.yarn/patches/react-native-screens-npm-4.24.0-c572d01561.patch",
     "react-native-svg": "15.15.3",
     "react-native-vision-camera": "4.7.3",
     "react-native-web": "~0.21.0",

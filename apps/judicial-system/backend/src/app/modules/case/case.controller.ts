@@ -50,6 +50,7 @@ import {
   CaseType,
   hasGeneratedCourtRecordPdf,
   indictmentCases,
+  InstitutionType,
   investigationCases,
   isCompletedCase,
   isDistrictCourtUser,
@@ -117,6 +118,7 @@ import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppe
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
+import { CaseCloningService } from './caseCloning.service'
 import { PdfService } from './pdf.service'
 
 @Controller('api')
@@ -125,6 +127,7 @@ import { PdfService } from './pdf.service'
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
+    private readonly caseCloningService: CaseCloningService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
     private readonly pdfService: PdfService,
@@ -191,6 +194,31 @@ export class CaseController {
     }
   }
 
+  private async validateAppealProsecutor(appealProsecutorId: string) {
+    const appealProsecutor = await this.userService.findById(appealProsecutorId)
+
+    if (!appealProsecutor.active) {
+      throw new ForbiddenException(
+        `User ${appealProsecutorId} is not an active prosecutor`,
+      )
+    }
+
+    if (appealProsecutor.role !== UserRole.PROSECUTOR) {
+      throw new ForbiddenException(
+        `User ${appealProsecutorId} does not have an acceptable role ${UserRole.PROSECUTOR}`,
+      )
+    }
+
+    if (
+      appealProsecutor.institution?.type !==
+      InstitutionType.PUBLIC_PROSECUTORS_OFFICE
+    ) {
+      throw new ForbiddenException(
+        `User ${appealProsecutorId} belongs to the wrong institution`,
+      )
+    }
+  }
+
   private assertIndictmentWaitingForReviewUpdateAllowed(
     theCase: Case,
     update: UpdateCase,
@@ -241,7 +269,22 @@ export class CaseController {
     return createdCase
   }
 
-  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  // Every field-level decision below, and every one caseService.update then
+  // makes, is taken from the case the guard loaded. CaseExistsForUpdateGuard
+  // reads it under FOR UPDATE in the request's transaction, so two updates of
+  // one case serialize on the case row and the second decides against the
+  // first's commit: two court users receiving a submitted case no longer both
+  // see it submitted and receive it twice, and a ruling-modified history
+  // appended by two judges keeps both lines instead of the last writer's.
+  //
+  // RolesGuard runs first, ahead of the guard that takes the write lock. It
+  // can, because all six rules are field rules decided on the user's role and
+  // the body's keys alone: none has a canActivate, so none reads request.case,
+  // and a caller this route has no rule for is turned away before any case row
+  // is locked. updateRolesRules.spec.ts pins that assumption, so a rule that
+  // starts reading the case cannot silently reopen the exposure. CaseWriteGuard
+  // decides from request.case and so stays after the locking read.
+  @UseGuards(RolesGuard, CaseExistsForUpdateGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorUpdateRule,
     prosecutorRepresentativeUpdateRule,
@@ -261,129 +304,131 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Updating case ${caseId}`)
 
-    const transaction = await this.sequelize.transaction()
+    const update: UpdateCase = updateDto
 
-    try {
-      const update: UpdateCase = updateDto
+    this.assertIndictmentWaitingForReviewUpdateAllowed(theCase, update, user)
 
-      this.assertIndictmentWaitingForReviewUpdateAllowed(theCase, update, user)
-
-      // Make sure valid users are assigned to the case's roles
-      if (update.prosecutorId) {
-        await this.validateAssignedUser(
-          update.prosecutorId,
-          [UserRole.PROSECUTOR],
-          theCase.prosecutorsOfficeId,
-        )
-      }
-
-      if (update.judgeId) {
-        await this.validateAssignedUser(
-          update.judgeId,
-          [UserRole.DISTRICT_COURT_JUDGE, UserRole.DISTRICT_COURT_ASSISTANT],
-          theCase.courtId,
-        )
-      }
-
-      if (update.registrarId) {
-        await this.validateAssignedUser(
-          update.registrarId,
-          [
-            UserRole.DISTRICT_COURT_REGISTRAR,
-            UserRole.DISTRICT_COURT_ASSISTANT,
-          ],
-          theCase.courtId,
-        )
-      }
-
-      if (update.indictmentApproverId) {
-        await this.validateIndictmentApprover(
-          update.indictmentApproverId,
-          theCase,
-          user,
-        )
-      }
-
-      if (update.rulingModifiedHistory) {
-        const history = theCase.rulingModifiedHistory
-          ? `${theCase.rulingModifiedHistory}\n\n`
-          : ''
-        const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
-        update.rulingModifiedHistory = `${history}${today} - ${
-          user.name
-        } ${lowercase(user.title)}\n\n${update.rulingModifiedHistory}`
-      }
-
-      if (update.caseResentExplanation) {
-        // We want to overwrite certain fields that the court sees so they're always seeing
-        // the correct information post resend
-        update.courtCaseFacts = `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
-        update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
-        update.prosecutorDemands = update.demands ?? theCase.demands
-        if (!theCase.decision) {
-          update.validToDate =
-            update.requestedValidToDate ?? theCase.requestedValidToDate
-        }
-      }
-
-      if (update.mergeCaseId && theCase.state !== CaseState.RECEIVED) {
-        throw new BadRequestException(
-          'Cannot merge case that is not in a received state',
-        )
-      }
-
-      if (update.reopenReason !== undefined) {
-        if (!isIndictmentCase(theCase.type)) {
-          throw new BadRequestException('Cannot reopen a non-indictment case')
-        }
-
-        if (!update.reopenReason.trim()) {
-          throw new BadRequestException('Reopen reason cannot be empty')
-        }
-      }
-
-      // This probably belongs inside the case service
-      if (update.hasCivilClaims !== undefined) {
-        if (update.hasCivilClaims) {
-          await this.civilClaimantService.create(theCase, transaction)
-        } else {
-          await this.civilClaimantService.deleteAll(theCase.id, transaction)
-        }
-      }
-
-      // If the case comes from LOKE then we don't want to allow the removal or
-      // moving around of the first police case number as that coupled with the
-      // case id is the identifier used to update the case in LOKE.
-      if (theCase.origin === CaseOrigin.LOKE && update.policeCaseNumbers) {
-        const mainPoliceCaseNumber = theCase.policeCaseNumbers[0]
-
-        if (
-          mainPoliceCaseNumber &&
-          update.policeCaseNumbers?.indexOf(mainPoliceCaseNumber) !== 0
-        ) {
-          throw new BadRequestException(
-            `Cannot remove or move main police case number ${mainPoliceCaseNumber}`,
-          )
-        }
-      }
-
-      const updatedCase = (await this.caseService.update(
-        theCase,
-        update,
-        user,
-        transaction,
-      )) as Case // Never returns undefined
-
-      await transaction.commit()
-
-      return updatedCase
-    } catch (error) {
-      this.logger.error(`Error updating case ${caseId}`, { error })
-
-      await transaction.rollback()
-
-      throw error
+    // Make sure valid users are assigned to the case's roles
+    if (update.prosecutorId) {
+      await this.validateAssignedUser(
+        update.prosecutorId,
+        [UserRole.PROSECUTOR],
+        theCase.prosecutorsOfficeId,
+      )
     }
+
+    if (update.judgeId) {
+      await this.validateAssignedUser(
+        update.judgeId,
+        [UserRole.DISTRICT_COURT_JUDGE, UserRole.DISTRICT_COURT_ASSISTANT],
+        theCase.courtId,
+      )
+    }
+
+    if (update.registrarId) {
+      await this.validateAssignedUser(
+        update.registrarId,
+        [UserRole.DISTRICT_COURT_REGISTRAR, UserRole.DISTRICT_COURT_ASSISTANT],
+        theCase.courtId,
+      )
+    }
+
+    if (update.indictmentApproverId) {
+      await this.validateIndictmentApprover(
+        update.indictmentApproverId,
+        theCase,
+        user,
+      )
+    }
+
+    if (update.appealProsecutorId) {
+      await this.validateAppealProsecutor(update.appealProsecutorId)
+    }
+
+    if (update.rulingModifiedHistory) {
+      const history = theCase.rulingModifiedHistory
+        ? `${theCase.rulingModifiedHistory}\n\n`
+        : ''
+      const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
+      update.rulingModifiedHistory = `${history}${today} - ${
+        user.name
+      } ${lowercase(user.title)}\n\n${update.rulingModifiedHistory}`
+    }
+
+    if (update.caseResentExplanation) {
+      // We want to overwrite certain fields that the court sees so they're always seeing
+      // the correct information post resend
+      update.courtCaseFacts = `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
+      update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
+      update.prosecutorDemands = update.demands ?? theCase.demands
+      if (!theCase.decision) {
+        update.validToDate =
+          update.requestedValidToDate ?? theCase.requestedValidToDate
+      }
+    }
+
+    // A case being corrected sends its existing parent back unchanged, so
+    // only a change of parent is refused outside the received state.
+    if (
+      update.mergeCaseId &&
+      update.mergeCaseId !== theCase.mergeCaseId &&
+      theCase.state !== CaseState.RECEIVED
+    ) {
+      throw new BadRequestException(
+        'Cannot merge case that is not in a received state',
+      )
+    }
+
+    if (update.reopenReason !== undefined) {
+      if (!isIndictmentCase(theCase.type)) {
+        throw new BadRequestException('Cannot reopen a non-indictment case')
+      }
+
+      if (!update.reopenReason.trim()) {
+        throw new BadRequestException('Reopen reason cannot be empty')
+      }
+    }
+
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race. TransactionCommitInterceptor
+    // commits it after this handler has returned, and the middleware rolls it
+    // back if anything above or below throws.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    // This probably belongs inside the case service
+    if (update.hasCivilClaims !== undefined) {
+      if (update.hasCivilClaims) {
+        await this.civilClaimantService.create(theCase, transaction)
+      } else {
+        await this.civilClaimantService.deleteAll(theCase.id, transaction)
+      }
+    }
+
+    // If the case comes from LOKE then we don't want to allow the removal or
+    // moving around of the first police case number as that coupled with the
+    // case id is the identifier used to update the case in LOKE.
+    if (theCase.origin === CaseOrigin.LOKE && update.policeCaseNumbers) {
+      const mainPoliceCaseNumber = theCase.policeCaseNumbers[0]
+
+      if (
+        mainPoliceCaseNumber &&
+        update.policeCaseNumbers?.indexOf(mainPoliceCaseNumber) !== 0
+      ) {
+        throw new BadRequestException(
+          `Cannot remove or move main police case number ${mainPoliceCaseNumber}`,
+        )
+      }
+    }
+
+    const updatedCase = (await this.caseService.update(
+      theCase,
+      update,
+      user,
+      transaction,
+    )) as Case // Never returns undefined
+
+    return updatedCase
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
@@ -1175,7 +1220,12 @@ export class CaseController {
     }
 
     const duplicatedCase = await this.sequelize.transaction((transaction) =>
-      this.caseService.duplicateIndictmentCase(theCase, user, transaction),
+      this.caseCloningService.duplicateIndictmentToDraft(theCase, {
+        transaction,
+        // The current prosecutor owns the new draft case
+        prosecutorId: user.id,
+        prosecutorsOfficeId: user.institution?.id,
+      }),
     )
 
     this.eventService.postEvent('DUPLICATE', duplicatedCase)
@@ -1183,9 +1233,21 @@ export class CaseController {
     return duplicatedCase
   }
 
+  // RolesGuard runs first here, ahead of the guard that takes the write lock.
+  // It can, because this route's three rules are bare user roles with no
+  // canActivate: none of them reads request.case, so the role decision needs
+  // nothing from the database and a caller this route has no rule for is
+  // turned away before any case row is locked. That is what RouteRolesGuard
+  // does for the transition route, whose rules do read the case - it would be
+  // a second reader of the same metadata here, deciding the same thing.
+  // splitRolesRules.spec.ts pins the assumption, so a rule that starts reading
+  // the case cannot silently reopen the exposure.
+  //
+  // CaseExistsForUpdateGuard reads the case under FOR UPDATE, and the three
+  // guards after it all decide from request.case, so they see the locked row.
   @UseGuards(
     RolesGuard,
-    CaseExistsGuard,
+    CaseExistsForUpdateGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
     DefendantExistsGuard,
@@ -1210,18 +1272,25 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Splitting defendant ${defendantId} from case ${caseId}`)
 
+    // CaseExistsForUpdateGuard read this case under FOR UPDATE, so the count
+    // is decided against a row no one else can change. Without the lock two
+    // concurrent splits of a two-defendant case both count two, both proceed,
+    // and the case is left with no defendants at all.
     if (!theCase.defendants || theCase.defendants.length < 2) {
       throw new BadRequestException(
         'Cannot split defendant from case with less than two defendants',
       )
     }
 
-    return this.sequelize.transaction((transaction) =>
-      this.caseService.splitDefendantFromCase(
-        theCase,
-        theDefendant,
-        transaction,
-      ),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.caseService.splitDefendantFromCase(
+      theCase,
+      theDefendant,
+      transaction,
     )
   }
 

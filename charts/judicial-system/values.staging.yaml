@@ -125,6 +125,7 @@ judicial-system-backend:
     DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DOKOBIT_URL: 'https://developers.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
+    LAWYER_REGISTRY_INCLUDE_TEST_LAWYERS: 'true'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     NOVA_SENDER_NAME: 'Island Staging'
@@ -530,6 +531,7 @@ judicial-system-web:
       cpu: '100m'
       memory: '256Mi'
   secrets:
+    AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
     LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'

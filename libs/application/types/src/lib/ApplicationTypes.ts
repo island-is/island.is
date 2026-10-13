@@ -11,6 +11,7 @@ export enum ApplicationTypes {
   PASSPORT_ANNULMENT = 'PassportAnnulment',
   DRIVING_LEARNERS_PERMIT = 'DrivingLearnersPermit',
   DRIVING_LICENSE = 'DrivingLicense',
+  DISTRICT_COMMISSIONER_DRIVING_LICENSE = 'DistrictCommissionerDrivingLicense',
   DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
   PARENTAL_LEAVE = 'ParentalLeave',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
@@ -107,8 +108,10 @@ export enum ApplicationTypes {
   DEREGISTER_UNEMPLOYMENT_BENEFITS = 'DeregisterUnemploymentBenefits',
   VMST_SUBMIT_DOCUMENTS = 'VmstSubmitDocuments',
   UNEMPLOYMENT_CONFIRM_TRAVEL = 'UnemploymentConfirmTravel',
+  CONFIRM_JOB_OR_INCOME = 'ConfirmJobOrIncome',
   EQUALITY_REPORT = 'EqualityReport',
   SALARY_REPORT = 'SalaryReport',
+  U2_CERTIFICATE = 'U2Certificate',
 }
 
 export interface ApplicationConfiguration {
@@ -169,6 +172,10 @@ export const ApplicationConfigurations: Record<
   [ApplicationTypes.DRIVING_LICENSE]: {
     slug: 'okuskirteini',
     translation: ['dl.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE]: {
+    slug: 'okuskirteini-syslumadur',
+    translation: ['dl.dc.application', 'uiForms.application'],
   },
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: {
     slug: 'akstursmat',
@@ -545,7 +552,7 @@ export const ApplicationConfigurations: Record<
   },
   [ApplicationTypes.CONFIRM_JOB_SEARCH]: {
     slug: 'stadfesta-atvinnuleit',
-    translation: ['vmst.cjs', 'uiForms.application'],
+    translation: ['vmst.cjs.application', 'uiForms.application'],
   },
   [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: {
     slug: 'vmst-afskraning-bota',
@@ -559,6 +566,10 @@ export const ApplicationConfigurations: Record<
     slug: 'vmst-tilkynning-ferda',
     translation: ['vmst.ct.application', 'uiForms.application'],
   },
+  [ApplicationTypes.CONFIRM_JOB_OR_INCOME]: {
+    slug: 'vmst-stadfesting-starf-eda-tekna',
+    translation: ['vmst.cjoi.application', 'uiForms.application'],
+  },
   [ApplicationTypes.EQUALITY_REPORT]: {
     slug: 'jafnrettisstofa-jafnrettisaaetlun',
     translation: ['doe.er.application', 'uiForms.application'],
@@ -566,5 +577,9 @@ export const ApplicationConfigurations: Record<
   [ApplicationTypes.SALARY_REPORT]: {
     slug: 'jafnrettisstofa-skyrslugjof',
     translation: ['doe.sr.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.U2_CERTIFICATE]: {
+    slug: 'u2-vottord',
+    translation: ['vmst.u2c.application', 'uiForms.application'],
   },
 }

@@ -2,14 +2,14 @@ import type { Dispatch, SetStateAction } from 'react'
 import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
-import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CivilClaimant,
   CreateCivilClaimantInput,
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { normalizeBlankStrings } from '../../formatters'
 import { useCreateCivilClaimantMutation } from './createCivilClaimant.generated'
@@ -39,7 +39,7 @@ const useCivilClaimants = () => {
           }
         }
         return null
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.createCivilClaimant))
         return null
       }
@@ -55,7 +55,7 @@ const useCivilClaimants = () => {
         })
 
         return Boolean(data?.deleteCivilClaimant.deleted)
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.deleteCivilClaimant))
         return false
       }
@@ -73,7 +73,7 @@ const useCivilClaimants = () => {
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.updateCivilClaimant))
         return false
       }
@@ -84,9 +84,9 @@ const useCivilClaimants = () => {
   const updateCivilClaimantState = useCallback(
     (
       update: UpdateCivilClaimantInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
-      setWorkingCase((prevWorkingCase: Case) => {
+      setWorkingCase((prevWorkingCase: WorkingCase) => {
         if (!prevWorkingCase.civilClaimants) {
           return prevWorkingCase
         }
@@ -115,7 +115,7 @@ const useCivilClaimants = () => {
   const setAndSendCivilClaimantToServer = useCallback(
     (
       update: UpdateCivilClaimantInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
       updateCivilClaimantState(update, setWorkingCase)
       updateCivilClaimant(update)

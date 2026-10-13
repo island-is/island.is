@@ -4,11 +4,10 @@ import {
   Box,
   Button,
   DialogPrompt,
-  GridColumn,
-  GridRow,
   Stack,
   Table as T,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatCurrency } from '@island.is/shared/utils'
@@ -16,7 +15,11 @@ import { messages } from '../../lib/messages'
 import { GENDER_LABELS, SALARY_COMPONENT_KEYS } from '../../utils/constants'
 import { formatDateValue } from '../../utils/dates'
 import type { Employee } from '../../utils/types'
-import { formatPaidHours, getSalaryComponentLabels } from './utils'
+import {
+  formatPaidHours,
+  getSalaryComponentLabels,
+  getSalaryComponentDetailTooltips,
+} from './utils'
 import * as styles from './EmployeesEditor.css'
 
 type Props = {
@@ -26,22 +29,38 @@ type Props = {
   onEdit: () => void
 }
 
-// Alternating white / transparent (blue container shows through) rows.
-const DetailItem: FC<{ label: string; value: string; highlight: boolean }> = ({
+type DetailItemProps = {
+  label: string
+  value: string
+  highlight: boolean
+  tooltip?: string
+}
+
+// Alternating white / transparent (blue container shows through) rows, one
+// full-width list with a 2:1 label/value split. The column gap keeps a long
+// label from running straight into its value.
+const DetailItem: FC<DetailItemProps> = ({
   label,
   value,
   highlight,
+  tooltip,
 }) => (
   <Box
     display="flex"
+    columnGap={2}
     paddingX={3}
     paddingY={2}
     borderRadius="large"
     background={highlight ? 'white' : 'transparent'}
   >
-    <Box style={{ flex: 1 }}>
+    <Box style={{ flex: 2 }}>
       <Text variant="medium" fontWeight="semiBold">
         {label}
+        {tooltip && (
+          <Box component="span" marginLeft={1}>
+            <Tooltip placement="top" text={tooltip} />
+          </Box>
+        )}
       </Text>
     </Box>
     <Box style={{ flex: 1 }}>
@@ -62,7 +81,10 @@ export const EmployeeRow: FC<Props> = ({
 
   const background = expanded ? 'blue100' : 'transparent'
 
-  const leftItems = [
+  const componentLabels = getSalaryComponentLabels(formatMessage)
+  const componentTooltips = getSalaryComponentDetailTooltips(formatMessage)
+
+  const detailItems: Omit<DetailItemProps, 'highlight'>[] = [
     { label: formatMessage(m.ordinalLabel), value: String(employee.ordinal) },
     { label: formatMessage(m.fieldLabel), value: employee.field ?? '' },
     {
@@ -73,22 +95,20 @@ export const EmployeeRow: FC<Props> = ({
       label: formatMessage(m.startDateLabel),
       value: formatDateValue(employee.startDate),
     },
-  ]
-
-  const componentLabels = getSalaryComponentLabels(formatMessage)
-
-  const rightItems = [
     {
       label: formatMessage(m.paidHoursLabel),
       value: formatPaidHours(employee.paidHours),
+      tooltip: formatMessage(m.paidHoursDetailTooltip),
     },
     {
       label: formatMessage(m.baseSalaryLabel),
       value: formatCurrency(employee.baseSalary),
+      tooltip: formatMessage(m.baseSalaryTooltip),
     },
     ...SALARY_COMPONENT_KEYS.map((key) => ({
       label: componentLabels[key],
       value: formatCurrency(employee[key] ?? 0),
+      tooltip: componentTooltips[key],
     })),
   ]
 
@@ -165,32 +185,17 @@ export const EmployeeRow: FC<Props> = ({
           <AnimateHeight duration={300} height={expanded ? 'auto' : 0}>
             {expanded && <div className={styles.line} />}
             <Box paddingX={3} paddingTop={3} paddingBottom={3}>
-              <GridRow>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <Stack space={0} dividers={false}>
-                    {leftItems.map((item, i) => (
-                      <DetailItem
-                        key={item.label}
-                        label={item.label}
-                        value={item.value}
-                        highlight={i % 2 === 0}
-                      />
-                    ))}
-                  </Stack>
-                </GridColumn>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <Stack space={0} dividers={false}>
-                    {rightItems.map((item, i) => (
-                      <DetailItem
-                        key={item.label}
-                        label={item.label}
-                        value={item.value}
-                        highlight={i % 2 === 0}
-                      />
-                    ))}
-                  </Stack>
-                </GridColumn>
-              </GridRow>
+              <Stack space={0} dividers={false}>
+                {detailItems.map((item, i) => (
+                  <DetailItem
+                    key={item.label}
+                    label={item.label}
+                    value={item.value}
+                    tooltip={item.tooltip}
+                    highlight={i % 2 === 0}
+                  />
+                ))}
+              </Stack>
             </Box>
           </AnimateHeight>
         </T.Data>

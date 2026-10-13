@@ -75,6 +75,7 @@ export enum InvoiceErrorCode {
 export enum BankTransferErrorCode {
   FailedToCreateBankTransfer = 'FailedToCreateBankTransfer',
   MissingBankAccountNumber = 'MissingBankAccountNumber',
+  InvalidActorNationalId = 'InvalidActorNationalId',
   FailedToFetchBankTransfer = 'FailedToFetchBankTransfer',
   BankTransferAlreadyInProgress = 'BankTransferAlreadyInProgress',
   BankTransferCannotCancel = 'BankTransferCannotCancel',

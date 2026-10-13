@@ -1,4 +1,3 @@
-import { Op } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -7,26 +6,9 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import {
-  CaseState,
-  CaseType,
-  CourtSessionRulingType,
-  EventType,
-} from '@island.is/judicial-system/types'
-
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
-import {
-  CaseRepositoryService,
-  CourtSession,
-  DateLog,
-  Defendant,
-  EventLog,
-  Institution,
-  Subpoena,
-  User,
-  Verdict,
-} from '../../../repository'
+import { CaseRepositoryService } from '../../../repository'
 import { IndictmentCaseExistsForDefendantGuard } from '../indictmentCaseExistsForDefendant.guard'
 
 interface Then {
@@ -74,81 +56,17 @@ describe('Indictment Case Exists For Defendant Guard', () => {
 
     beforeEach(async () => {
       mockRequest.mockReturnValueOnce(request)
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(theCase)
+      const mockFindIndictmentCase =
+        mockCaseRepositoryService.findIndictmentCaseByIdAndDefendantNationalId as jest.Mock
+      mockFindIndictmentCase.mockResolvedValueOnce(theCase)
 
       then = await givenWhenThen()
     })
 
     it('should activate', () => {
-      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include: [
-          {
-            model: Defendant,
-            as: 'defendants',
-            include: [
-              {
-                model: Subpoena,
-                as: 'subpoenas',
-                order: [['created', 'DESC']],
-                separate: true,
-              },
-              {
-                model: Verdict,
-                as: 'verdicts',
-                required: false,
-                order: [['created', 'DESC']],
-                separate: true,
-              },
-            ],
-          },
-          { model: Institution, as: 'court' },
-          { model: Institution, as: 'prosecutorsOffice' },
-          { model: User, as: 'judge' },
-          {
-            model: User,
-            as: 'prosecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: DateLog, as: 'dateLogs' },
-          {
-            model: EventLog,
-            as: 'eventLogs',
-            required: false,
-            order: [['created', 'DESC']],
-            separate: true,
-            where: {
-              event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-            },
-          },
-          {
-            model: CourtSession,
-            as: 'courtSessions',
-            required: false,
-            order: [['created', 'DESC']],
-            separate: true,
-            attributes: ['ruling'],
-            where: {
-              ruling_type: CourtSessionRulingType.JUDGEMENT,
-            },
-          },
-        ],
-        attributes: [
-          'courtCaseNumber',
-          'id',
-          'state',
-          'indictmentRulingDecision',
-          'rulingDate',
-          'ruling',
-        ],
-        where: {
-          type: CaseType.INDICTMENT,
-          id: caseId,
-          state: { [Op.not]: CaseState.DELETED },
-          isArchived: false,
-          '$defendants.national_id$': defendantNationalId.replace(/-/g, ''),
-        },
-      })
+      expect(
+        mockCaseRepositoryService.findIndictmentCaseByIdAndDefendantNationalId,
+      ).toHaveBeenCalledWith(caseId, defendantNationalId)
       expect(then.result).toBe(true)
       expect(request.case).toBe(theCase)
     })

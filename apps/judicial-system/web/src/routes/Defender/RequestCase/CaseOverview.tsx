@@ -34,7 +34,7 @@ import {
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './CaseOverview.strings'
 
@@ -107,10 +107,10 @@ export const CaseOverview = () => {
                 />
               </Box>
             )}
-          <div className={grid({ gap: 5, marginBottom: 5 })}>
+          <Box className={stack({ gap: 5 })} marginBottom={5}>
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
-          </div>
+          </Box>
           {workingCase.state === CaseState.RECEIVED &&
             workingCase.arraignmentDate?.date &&
             workingCase.court && (

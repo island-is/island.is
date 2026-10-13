@@ -199,6 +199,7 @@ export const ImpactList = (props: ImpactListProps) => {
       {editing?.impact?.type === 'repeal' && (
         <EditCancellation
           cancellation={editing.impact}
+          impacts={groupedImpacts[editing.impact.name]}
           onSave={handleSave}
           onClose={closeModal}
         />
@@ -206,6 +207,7 @@ export const ImpactList = (props: ImpactListProps) => {
       {editing?.impact?.type === 'amend' && (
         <EditChange
           change={editing.impact}
+          impacts={groupedImpacts[editing.impact.name]}
           draftTitle={draftTitle}
           draftHtml={draftHtml}
           isBase={isBase}

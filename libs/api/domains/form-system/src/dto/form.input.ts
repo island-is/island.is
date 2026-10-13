@@ -99,6 +99,12 @@ export class UpdateFormDtoInput {
   isInaccessible?: boolean
 
   @Field(() => Boolean, { nullable: true })
+  validateEligibility?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  enableApplicationPdfDownload?: boolean
+
+  @Field(() => Boolean, { nullable: true })
   hasSummaryScreen?: boolean
 
   @Field(() => SectionInfoInput, { nullable: true })
@@ -169,6 +175,12 @@ export class FormInput {
 
   @Field(() => Boolean, { nullable: true })
   isInaccessible?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  validateEligibility?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  enableApplicationPdfDownload?: boolean
 
   @Field(() => SectionInfoInput, { nullable: true })
   sectionInfo?: SectionInfoInput

@@ -47,6 +47,7 @@ import {
   CasesInterceptor,
 } from './interceptors/case.interceptor'
 import { ArchiveResponse } from './models/archive.response'
+import { CasePoliceStateResponse } from './models/casePoliceState.response'
 import { DeliverResponse } from './models/deliver.response'
 import { InternalCaseService } from './internalCase.service'
 
@@ -94,6 +95,22 @@ export class InternalCaseController {
     this.eventService.postEvent('CREATE_XRD', createdCase)
 
     return createdCase
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Get('case/:caseId/state')
+  @ApiOkResponse({
+    type: CasePoliceStateResponse,
+    description:
+      'Returns whether the indictment case is DRAFT or SUBMITTED for police case-file handling',
+  })
+  async getCasePoliceState(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<CasePoliceStateResponse> {
+    this.logger.debug(`Getting case police state for case ${caseId}`)
+
+    return this.internalCaseService.getCasePoliceState(theCase)
   }
 
   @Post('cases/archive')

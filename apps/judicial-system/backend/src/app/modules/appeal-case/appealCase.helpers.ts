@@ -48,19 +48,31 @@ export const findAppealCaseOfCaseFile = (
   return theCase.appealCase
 }
 
-// The defendants that currently stand as appellants of a verdict appeal:
-// those whose most recent appeal event on it is an APPEALED rather
-// than an APPEAL_WITHDRAWN. A defendant who withdraws may appeal again while the
-// deadline still runs, so it is the latest event that decides, not the mere
-// presence of a withdrawal.
-//
-// The event log is the appellant source for out-of-court appeals - a verdict
-// appeal has no appeal_decision rows, since a party that appeals out of court is
-// precisely one that did not appeal in court.
-export const standingVerdictAppellantIds = (
+// A verdict appeal has two sides. The defence side is a defendant appealing -
+// through their defender in the system, or registered by the public
+// prosecution office on a letter; the prosecution side is the public
+// prosecution reviewer appealing the verdict regarding that defendant. Both are
+// per defendant, and they are independent: either or both may stand.
+export type VerdictAppellantSide = 'DEFENCE' | 'PROSECUTION'
+
+export interface VerdictAppellant {
+  defendantId: string
+  side: VerdictAppellantSide
+}
+
+export const verdictAppellantSide = (
+  userRole: UserRole,
+): VerdictAppellantSide =>
+  prosecutionRoles.includes(userRole) ? 'PROSECUTION' : 'DEFENCE'
+
+// The appellants of a verdict appeal that currently stand, read from the appeal
+// event log: for each (defendant, side) the latest APPEALED / APPEAL_WITHDRAWN
+// event decides, so a party that withdrew and appealed again while the deadline
+// ran still counts. Events without a defendant are not verdict appeal events.
+export const standingVerdictAppellants = (
   appealCase: Pick<AppealCase, 'appealEventLogs'>,
-): string[] => {
-  const latestByDefendant = new Map<string, AppealEventLog>()
+): VerdictAppellant[] => {
+  const latestByAppellant = new Map<string, AppealEventLog>()
 
   for (const eventLog of appealCase.appealEventLogs ?? []) {
     if (
@@ -71,17 +83,41 @@ export const standingVerdictAppellantIds = (
       continue
     }
 
-    const latest = latestByDefendant.get(eventLog.defendantId)
+    const key = `${eventLog.defendantId}:${verdictAppellantSide(
+      eventLog.userRole,
+    )}`
+    const latest = latestByAppellant.get(key)
 
     if (!latest || eventLog.created > latest.created) {
-      latestByDefendant.set(eventLog.defendantId, eventLog)
+      latestByAppellant.set(key, eventLog)
     }
   }
 
-  return Array.from(latestByDefendant)
-    .filter(([, eventLog]) => eventLog.eventType === AppealEventType.APPEALED)
-    .map(([defendantId]) => defendantId)
+  return Array.from(latestByAppellant.values())
+    .filter((eventLog) => eventLog.eventType === AppealEventType.APPEALED)
+    .map((eventLog) => ({
+      defendantId: eventLog.defendantId as string,
+      side: verdictAppellantSide(eventLog.userRole),
+    }))
 }
+
+export const hasStandingVerdictAppeal = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+  defendantId: string,
+  side: VerdictAppellantSide,
+): boolean =>
+  standingVerdictAppellants(appealCase).some(
+    (appellant) =>
+      appellant.defendantId === defendantId && appellant.side === side,
+  )
+
+// The defendants whose own (defence-side) verdict appeal stands.
+export const standingVerdictAppellantIds = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+): string[] =>
+  standingVerdictAppellants(appealCase)
+    .filter((appellant) => appellant.side === 'DEFENCE')
+    .map((appellant) => appellant.defendantId)
 
 // Resolves the appeal decision (Ákvörðun um kæru) recorded in court for the
 // party the user acts for - the prosecution, or the specific defendant / civil
@@ -287,6 +323,91 @@ export const buildInCourtAppealedEvent = (params: {
   }
 }
 
+/**
+ * The record of the court of appeals settling who represents one party in the
+ * appeal.
+ *
+ * It exists for the letter of appointment, which is signed by whoever
+ * confirmed the advocate and dated the day they did it - neither of which the
+ * party row keeps. Only the latest such event per party is ever read, so an
+ * advocate replaced later leaves nothing to clean up.
+ *
+ * userRole is the actor's own role here. The column usually carries the
+ * appellant's side, but a confirmation has no appellant: it is an act of the
+ * court, and the court is who it names.
+ */
+export const buildAdvocateConfirmedEvent = (params: {
+  theCase: Case
+  appealCase: AppealCase
+  party: { defendantId?: string; civilClaimantId?: string }
+  actor: User
+}): Partial<AppealEventLog> => {
+  const { theCase, appealCase, party, actor } = params
+
+  return {
+    caseId: theCase.id,
+    appealCaseId: appealCase.id,
+    eventType: AppealEventType.ADVOCATE_CONFIRMED,
+    defendantId: party.defendantId,
+    civilClaimantId: party.civilClaimantId,
+    userRole: actor.role,
+    userId: actor.id,
+    nationalId: actor.nationalId,
+    userName: actor.name,
+    userTitle: actor.title,
+    institutionName: actor.institution?.name,
+  }
+}
+
+/**
+ * Whether an update puts a different advocate on a party than the one already
+ * there.
+ *
+ * Only a field the update actually carries counts: a PATCH that leaves the
+ * name out is not changing it, and one that repeats the same name is not
+ * either.
+ *
+ * Used to take a confirmation back when the advocate under it changes. A
+ * confirmation names a person, and the letter of appointment is signed and
+ * dated from the event that confirmation wrote - so a row left confirmed under
+ * a new name would print the new advocate over the old signatory and date.
+ * The screen already makes the court confirm again; this is the same rule
+ * where the screen cannot reach.
+ */
+export const namesADifferentAdvocate = (
+  current: { name?: string | null; nationalId?: string | null },
+  update: { name?: string | null; nationalId?: string | null },
+): boolean =>
+  (update.name !== undefined && update.name !== current.name) ||
+  (update.nationalId !== undefined && update.nationalId !== current.nationalId)
+
+/**
+ * The confirmation that currently stands for one party, which is what the
+ * letter of appointment is written from: its signatory and its date.
+ *
+ * Only the latest matters. An advocate replaced later is simply superseded -
+ * nothing tracks the ones before, by design - so the letter always reproduces
+ * the appointment in force.
+ */
+export const latestAdvocateConfirmedEvent = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+  party: { defendantId?: string; civilClaimantId?: string },
+): AppealEventLog | undefined =>
+  (appealCase.appealEventLogs ?? [])
+    .filter(
+      (eventLog) =>
+        eventLog.eventType === AppealEventType.ADVOCATE_CONFIRMED &&
+        (party.defendantId
+          ? eventLog.defendantId === party.defendantId
+          : Boolean(party.civilClaimantId) &&
+            eventLog.civilClaimantId === party.civilClaimantId),
+    )
+    .reduce<AppealEventLog | undefined>(
+      (latest, eventLog) =>
+        !latest || eventLog.created > latest.created ? eventLog : latest,
+      undefined,
+    )
+
 // An APPEALED event for an appeal the party filed itself, outside the court
 // record. Such an appellant has no decision = APPEAL row - they appealed because
 // they postponed in court - so it must never be inferred from the decision rows
@@ -317,15 +438,12 @@ export const hasOutOfCourtAppeal = (events: AppealEventLog[]): boolean =>
 //     spokesperson of a party (defendant / civil claimant) that has an APPEALED
 //     event;
 //   - request-case defence is collective (no party on the event), so it resolves
-//     to the case's *current* registered defender.
+//     to any current defender registered on a defendant of the case.
 // This does not cover in-court ruling-order appeals - their live per-party
 // withdrawal state is on the decision row (see userHasActiveInCourtAppeal), which
 // the event log only catches up to on session confirmation.
 export const userIsAppellant = (
-  theCase: Pick<
-    Case,
-    'type' | 'defenderNationalId' | 'defendants' | 'civilClaimants'
-  >,
+  theCase: Pick<Case, 'type' | 'defendants' | 'civilClaimants'>,
   appealCase: Pick<AppealCase, 'appealEventLogs'>,
   user: User,
 ): boolean => {
@@ -352,19 +470,28 @@ export const userIsAppellant = (
   )
 
   if (isRequestCase(theCase.type)) {
-    // Collective defence: no party on the event, so authorize the case's current
-    // registered defender.
+    // Collective defence: no party on the event, so authorize any current
+    // defender registered on a defendant of the case.
     return (
       defenceAppealed &&
-      Boolean(theCase.defenderNationalId) &&
-      theCase.defenderNationalId === user.nationalId
+      Boolean(
+        theCase.defendants?.some(
+          (defendant) => defendant.defenderNationalId === user.nationalId,
+        ),
+      )
     )
   }
 
   // Indictment defence: the user must be the current confirmed representative of
   // a party (defendant / civil claimant) that appealed. Resolving live against
-  // the case follows defender / spokesperson reassignment.
+  // the case follows defender / spokesperson reassignment. A prosecution
+  // event names a defendant too - the one whose verdict the prosecution
+  // appealed - and that does not make the defendant's defender an appellant.
   return appealedEvents.some((eventLog) => {
+    if (prosecutionRoles.includes(eventLog.userRole)) {
+      return false
+    }
+
     if (eventLog.defendantId) {
       return Boolean(
         Defendant.isConfirmedDefenderOfDefendant(
@@ -402,7 +529,12 @@ export const appellantRepresentativeNationalIds = (
   const nationalIds = new Set<string>()
 
   for (const eventLog of appealCase.appealEventLogs ?? []) {
-    if (eventLog.eventType !== AppealEventType.APPEALED) {
+    // A prosecution verdict appeal names the defendant whose verdict it
+    // appeals; that defendant's defender is the one to notify, not an appellant.
+    if (
+      eventLog.eventType !== AppealEventType.APPEALED ||
+      prosecutionRoles.includes(eventLog.userRole)
+    ) {
       continue
     }
 
@@ -438,10 +570,7 @@ export const appellantRepresentativeNationalIds = (
 // here rather than in userIsAppellant, and is used by both the withdrawal guard
 // and the case tables' cancel-appeal action so they stay in sync.
 export const canWithdrawCaseLevelAppeal = (
-  theCase: Pick<
-    Case,
-    'type' | 'defenderNationalId' | 'defendants' | 'civilClaimants'
-  >,
+  theCase: Pick<Case, 'type' | 'defendants' | 'civilClaimants'>,
   appealCase: Pick<AppealCase, 'appealEventLogs'>,
   user: User,
 ): boolean => {

@@ -1,4 +1,5 @@
 import {
+  formatBackendDate,
   formatDateValue,
   isRemedyDateInWindow,
   remedyDateBounds,
@@ -95,5 +96,36 @@ describe('isRemedyDateInWindow', () => {
     expect(isRemedyDateInWindow(null, NOW)).toBe(false)
     expect(isRemedyDateInWindow('', NOW)).toBe(false)
     expect(isRemedyDateInWindow('einhvern tímann', NOW)).toBe(false)
+  })
+})
+
+// DMR sends its dates (`dueAt`, `earliestNewDueAt`) as full ISO instants.
+// Formatting an instant directly resolves it in the runner's zone, which is
+// invisible on a UTC CI box and a day out for an applicant in Reykjavík — so
+// the date part is taken first.
+describe('formatBackendDate', () => {
+  it('formats an ISO instant without shifting the day', () => {
+    expect(formatBackendDate('2026-04-03T00:00:00.000Z')).toBe('3.4.2026')
+    expect(formatBackendDate(new Date('2026-04-03T00:00:00.000Z'))).toBe(
+      '3.4.2026',
+    )
+  })
+
+  // Midnight UTC is the boundary the slice protects; late in the day is the
+  // one a naive parse gets right by accident, so both are worth pinning.
+  it('formats an instant late in the UTC day as that same day', () => {
+    expect(formatBackendDate('2026-04-03T23:30:00.000Z')).toBe('3.4.2026')
+  })
+
+  it('formats a date-only value the same way', () => {
+    expect(formatBackendDate('2026-04-03')).toBe('3.4.2026')
+  })
+
+  // `dueAt` is nullable — DMR has no deadline for a company with no obligation
+  // on record — so a missing value has to format as blank rather than throw.
+  it('reads a missing value as blank', () => {
+    expect(formatBackendDate(undefined)).toBe('')
+    expect(formatBackendDate(null)).toBe('')
+    expect(formatBackendDate('')).toBe('')
   })
 })

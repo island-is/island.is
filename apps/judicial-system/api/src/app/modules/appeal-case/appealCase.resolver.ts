@@ -1,4 +1,4 @@
-import { Inject, UseGuards } from '@nestjs/common'
+import { ForbiddenException, Inject, UseGuards } from '@nestjs/common'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
@@ -12,9 +12,14 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import { type User } from '@island.is/judicial-system/types'
+import {
+  AppealCaseType,
+  Feature,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { FeatureService } from '../feature/feature.service'
 import { AppealCase } from './dto/appealCase.response'
 import { CreateAppealCaseInput } from './dto/createAppealCase.input'
 import { CreateAppealEventLogInput } from './dto/createAppealEventLog.input'
@@ -29,7 +34,17 @@ export class AppealCaseResolver {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private readonly backendService: BackendService,
+    private readonly featureService: FeatureService,
   ) {}
+
+  // The flag hides the verdict appeal actions in the web; closing the write
+  // paths here too means a hidden feature cannot be reached by calling the API
+  // directly. Mirrors the limited-access resolver.
+  private assertVerdictAppealsAvailable() {
+    if (this.featureService.isHidden(Feature.INDICTMENT_APPEAL)) {
+      throw new ForbiddenException('Indictment appeals are not available')
+    }
+  }
 
   @Mutation(() => AppealCase, { nullable: true })
   createAppealCase(
@@ -38,6 +53,10 @@ export class AppealCaseResolver {
     @CurrentGraphQlUser() user: User,
   ): Promise<AppealCase> {
     const { caseId, ...body } = input
+
+    if (body.appealType === AppealCaseType.VERDICT) {
+      this.assertVerdictAppealsAvailable()
+    }
 
     this.logger.debug(`Creating appeal case for case ${caseId}`)
 
@@ -96,6 +115,11 @@ export class AppealCaseResolver {
     @CurrentGraphQlUser() user: User,
   ): Promise<AppealCase> {
     const { caseId, appealCaseId, ...transitionAppealCase } = input
+
+    // Only a verdict appeal is transitioned for one defendant.
+    if (transitionAppealCase.defendantId) {
+      this.assertVerdictAppealsAvailable()
+    }
 
     this.logger.debug(
       `Transitioning appeal case ${appealCaseId} of case ${caseId}`,

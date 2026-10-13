@@ -246,10 +246,15 @@ export type Resources = {
   }
 }
 
-export type ReplicaCount = {
+/** Fields resolved per environment. */
+export type ReplicaBounds = {
   default: number
   max: number
   min: number
+}
+
+/** Options that apply to all environments regardless of form. */
+export type ReplicaGlobals = {
   /**
    * This is mostly for internal use by the DevOps team. If you would like to know more about it, please be in touch with them.
    * For more info, see this - https://prometheus.io/docs/prometheus/latest/querying/functions/#irate
@@ -258,9 +263,31 @@ export type ReplicaCount = {
   cpuAverageUtilization?: number
   /**
    * Opt this service out of the dev/staging `min:1, max:2` cost-saving clamp
-   * so its explicit `replicaCount` applies there too (e.g. for load testing).
+   * so its explicit `replicaCount` applies there too (e.g. for load testing,
+   * or for scale-to-zero in a single environment).
    */
   bypassReplicaClamp?: boolean
+}
+
+/** Existing flat form: same bounds for every environment. */
+export type FlatReplicaCount = ReplicaBounds & ReplicaGlobals
+
+/** New per-environment form. Any subset of envs may be provided. */
+export type PerEnvReplicaCount = ReplicaGlobals & {
+  dev?: ReplicaBounds
+  staging?: ReplicaBounds
+  prod?: ReplicaBounds
+}
+
+export type ReplicaCount = FlatReplicaCount | PerEnvReplicaCount
+
+/**
+ * The flat form carries a numeric top-level `min`; the per-env form does not.
+ */
+export function isPerEnvReplicaCount(
+  rc: ReplicaCount,
+): rc is PerEnvReplicaCount {
+  return typeof (rc as FlatReplicaCount).min !== 'number'
 }
 
 type Container = {

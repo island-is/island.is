@@ -5,7 +5,7 @@ import type {
   FormValue,
 } from '@island.is/application/types'
 import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
-import { hasPostponedOutlierPlan } from './eligibility'
+import { hasPostponedOutlierPlan, isSalaryReportEligible } from './eligibility'
 
 const analysis = (outlierCount: number): ExternalData =>
   ({
@@ -78,5 +78,44 @@ describe('hasPostponedOutlierPlan', () => {
         ),
       ),
     ).toBe(true)
+  })
+})
+
+const eligibility = (data: unknown): ExternalData =>
+  ({
+    salaryReportEligibility: { status: 'success', data },
+  } as unknown as ExternalData)
+
+// The guard on the PREREQUISITES → DRAFT transition. Anything other than an
+// explicit `true` keeps the applicant out, because the alternative — reading a
+// shape we did not expect as "eligible" — walks a company that DMR refuses into
+// the full data-entry flow.
+describe('isSalaryReportEligible', () => {
+  it('admits a company DMR says is eligible', () => {
+    expect(
+      isSalaryReportEligible(ctx({}, eligibility({ eligible: true }))),
+    ).toBe(true)
+  })
+
+  it('refuses a company DMR says is not', () => {
+    expect(
+      isSalaryReportEligible(
+        ctx(
+          {},
+          eligibility({
+            eligible: false,
+            reason: 'MISSING_EQUALITY_REPORT',
+          }),
+        ),
+      ),
+    ).toBe(false)
+  })
+
+  it('refuses when the answer is missing or not a boolean true', () => {
+    expect(isSalaryReportEligible(ctx({}, {} as ExternalData))).toBe(false)
+    expect(isSalaryReportEligible(ctx({}, eligibility({})))).toBe(false)
+    expect(
+      isSalaryReportEligible(ctx({}, eligibility({ eligible: 'true' }))),
+    ).toBe(false)
   })
 })

@@ -26,6 +26,8 @@ import {
   EMPTY_EMPLOYEE_FORM_VALUES,
   type EmployeeFormValues,
   getSalaryComponentLabels,
+  getSalaryComponentTooltips,
+  isPaidHoursFormat,
   paidHoursFromFormValue,
   toFormValues,
 } from './utils'
@@ -58,10 +60,13 @@ export const EmployeeForm: FC<Props> = ({
   const requiredMsg = formatMessage(messages.errors.required)
 
   const componentLabels = getSalaryComponentLabels(formatMessage)
+  const componentTooltips = getSalaryComponentTooltips(formatMessage)
 
+  // Row 4 of the workbook, not the derived-total names: these head the input
+  // columns, and Viðbótarlaun / Aukagreiðslur are columns P and Q.
   const groupHeadings: Record<'additional' | 'bonus', string> = {
-    additional: formatMessage(m.additionalSalaryLabel),
-    bonus: formatMessage(m.bonusSalaryLabel),
+    additional: formatMessage(m.fixedPaymentsGroupLabel),
+    bonus: formatMessage(m.occasionalPaymentsGroupLabel),
   }
 
   const onValid = (data: EmployeeFormValues) => {
@@ -145,7 +150,10 @@ export const EmployeeForm: FC<Props> = ({
               name="paidHours"
               label={formatMessage(m.paidHoursInputLabel)}
               placeholder={formatMessage(m.paidHoursPlaceholder)}
-              type="number"
+              tooltip={formatMessage(m.paidHoursTooltip)}
+              // Plain text, not type="number": NumberFormat strips a pasted
+              // '.' (173.33 → 17333). paidHoursFromFormValue parses both.
+              inputMode="decimal"
               backgroundColor="white"
               size="sm"
               required
@@ -155,6 +163,9 @@ export const EmployeeForm: FC<Props> = ({
                 // a starfshlutfall carried into this field: 0,8 or 1 would
                 // otherwise pass and inflate tímakaup ~173x silently.
                 validate: (value: string) => {
+                  if (!isPaidHoursFormat(value)) {
+                    return formatMessage(m.paidHoursFormatError)
+                  }
                   const hours = paidHoursFromFormValue(value)
                   return (
                     (hours >= PAID_HOURS_MIN && hours <= PAID_HOURS_MAX) ||
@@ -170,13 +181,23 @@ export const EmployeeForm: FC<Props> = ({
               id="baseSalary"
               name="baseSalary"
               label={formatMessage(m.baseSalaryLabel)}
+              tooltip={formatMessage(m.baseSalaryTooltip)}
               type="number"
+              thousandSeparator
               backgroundColor="white"
               size="sm"
               required
               rules={{ required: requiredMsg }}
               error={errors.baseSalary?.message}
             />
+          </GridColumn>
+          {/* Sits under the hours/base-salary pair rather than in a tooltip:
+              template 2.0 narrowed what Greiddar stundir means, and a
+              manual-entry applicant has no workbook header to read it off. */}
+          <GridColumn span="12/12">
+            <Text variant="small" color="dark400">
+              {formatMessage(m.paidHoursHelperText)}
+            </Text>
           </GridColumn>
           {SALARY_COMPONENT_GROUPS.map(({ group, keys }) => (
             <Fragment key={group}>
@@ -191,7 +212,9 @@ export const EmployeeForm: FC<Props> = ({
                     id={key}
                     name={key}
                     label={componentLabels[key]}
+                    tooltip={componentTooltips[key]}
                     type="number"
+                    thousandSeparator
                     backgroundColor="white"
                     size="sm"
                   />

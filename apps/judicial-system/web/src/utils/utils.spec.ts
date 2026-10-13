@@ -1,9 +1,9 @@
 import faker from 'faker'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
   AppealCase,
-  Case,
   CaseFile,
   CivilClaimant,
   CourtSessionString,
@@ -38,6 +38,7 @@ import {
   isSentToPublicProsecutor,
   mapStringToGender,
   reconcileAppealDecisionsForRulingFileChange,
+  revertCaseLevelAppealDecision,
   rulingOrderChoices,
   userHasActiveInCourtAppeal,
 } from './utils'
@@ -49,7 +50,7 @@ describe('Utils', () => {
       const workingCase = {
         indictmentCompletedDate: '2024-01-01',
         indictmentSentToPublicProsecutorDate: '2024-01-02',
-      } as Case
+      } as WorkingCase
 
       // Act
       const res = isSentToPublicProsecutor(workingCase)
@@ -63,7 +64,7 @@ describe('Utils', () => {
       const workingCase = {
         indictmentCompletedDate: '2024-01-02',
         indictmentSentToPublicProsecutorDate: '2024-01-01',
-      } as Case
+      } as WorkingCase
 
       // Act
       const res = isSentToPublicProsecutor(workingCase)
@@ -76,7 +77,7 @@ describe('Utils', () => {
       // Arrange
       const workingCase = {
         indictmentCompletedDate: '2024-01-01',
-      } as Case
+      } as WorkingCase
 
       // Act
       const res = isSentToPublicProsecutor(workingCase)
@@ -89,7 +90,7 @@ describe('Utils', () => {
       // Arrange
       const workingCase = {
         indictmentSentToPublicProsecutorDate: '2024-01-02',
-      } as Case
+      } as WorkingCase
 
       // Act
       const res = isSentToPublicProsecutor(workingCase)
@@ -497,7 +498,7 @@ describe('Utils', () => {
             },
           ],
           appealCase: { appealedByRole: UserRole.PROSECUTOR } as AppealCase,
-        } as unknown as Case
+        } as unknown as WorkingCase
 
         expect(getAppealActorText(workingCase)).toBe(
           'Sækjandi kærði í þinghaldi',
@@ -515,7 +516,7 @@ describe('Utils', () => {
             },
           ],
           appealCase: { appealedByRole: UserRole.DEFENDER } as AppealCase,
-        } as unknown as Case
+        } as unknown as WorkingCase
 
         expect(getAppealActorText(workingCase)).toBe(
           'Varnaraðili kærði í þinghaldi',
@@ -536,7 +537,7 @@ describe('Utils', () => {
             appealedByRole: UserRole.PROSECUTOR,
             appealedDate,
           } as AppealCase,
-        } as unknown as Case
+        } as unknown as WorkingCase
 
         expect(getAppealActorText(workingCase)).toBe(
           `Kært af sækjanda ${dateStr}`,
@@ -558,7 +559,7 @@ describe('Utils', () => {
             appealedByRole: UserRole.DEFENDER,
             appealedDate,
           } as AppealCase,
-        } as unknown as Case
+        } as unknown as WorkingCase
 
         expect(getAppealActorText(workingCase)).toBe(
           `Verjandi Jón Jónsson kærði úrskurðinn ${dateStr}`,
@@ -581,7 +582,7 @@ describe('Utils', () => {
             appealedByRole: UserRole.DEFENDER,
             appealedDate,
           } as AppealCase,
-        } as unknown as Case
+        } as unknown as WorkingCase
 
         expect(getAppealActorText(workingCase)).toBe(
           `Kært af verjanda ${dateStr}`,
@@ -597,7 +598,7 @@ describe('Utils', () => {
             appealedByRole: UserRole.PROSECUTOR,
             appealedDate,
           } as AppealCase,
-        } as Case
+        } as WorkingCase
 
         expect(getAppealActorText(workingCase)).toBe(
           `Kært af ákæranda ${dateStr}`,
@@ -612,7 +613,7 @@ describe('Utils', () => {
             appealedByRole: UserRole.DEFENDER,
             appealedDate,
           } as AppealCase,
-        } as unknown as Case
+        } as unknown as WorkingCase
 
         expect(getAppealActorText(workingCase)).toBe(
           `Kært af verjanda ${dateStr}`,
@@ -622,7 +623,7 @@ describe('Utils', () => {
 
     describe('indictment ruling-order appeals', () => {
       test('returns "Kært í þinghaldi {date}" when appealed in court', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           rulingFileId: 'file-1',
           appealedInCourt: true,
@@ -635,7 +636,7 @@ describe('Utils', () => {
       })
 
       test('uses subject-verb form for prosecutor', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           rulingFileId: 'file-1',
           appealedByRole: UserRole.PROSECUTOR,
@@ -659,7 +660,7 @@ describe('Utils', () => {
               defenderName: 'Jón Jónsson',
             } as Defendant,
           ],
-        } as Case
+        } as WorkingCase
         const appealCase = {
           rulingFileId: 'file-1',
           appealedByRole: UserRole.DEFENDER,
@@ -686,7 +687,7 @@ describe('Utils', () => {
               spokespersonName: 'Anna Önnudóttir',
             } as CivilClaimant,
           ],
-        } as Case
+        } as WorkingCase
         const appealCase = {
           rulingFileId: 'file-1',
           appealedByRole: UserRole.DEFENDER,
@@ -703,7 +704,7 @@ describe('Utils', () => {
         const workingCase = {
           type: CaseType.INDICTMENT,
           defendants: [],
-        } as unknown as Case
+        } as unknown as WorkingCase
         const appealCase = {
           rulingFileId: 'file-1',
           appealedByRole: UserRole.DEFENDER,
@@ -803,7 +804,7 @@ describe('Utils', () => {
       { id: 'd1', rulingFileId: 'file-a' },
       { id: 'd2', rulingFileId: 'file-a' },
       { id: 'd3', rulingFileId: 'other-file' },
-    ] as unknown as Case['appealDecisions']
+    ] as unknown as WorkingCase['appealDecisions']
 
     it('re-keys the ruling decisions onto the new file on a swap', () => {
       expect(
@@ -888,7 +889,7 @@ describe('Utils', () => {
           ...decision,
           rulingFileId,
         })),
-      } as unknown as Case)
+      } as unknown as WorkingCase)
 
     it("is true when the defence user's defendant accepted in court", () => {
       const workingCase = caseWith([
@@ -999,7 +1000,7 @@ describe('Utils', () => {
         ],
         civilClaimants: [],
         appealDecisions: [{ ...decision, rulingFileId }],
-      } as unknown as Case)
+      } as unknown as WorkingCase)
 
     it('is true when the defendant appealed in court and has not withdrawn', () => {
       const workingCase = caseWith({
@@ -1093,7 +1094,7 @@ describe('Utils', () => {
             rulingFileId,
           },
         ],
-      } as unknown as Case
+      } as unknown as WorkingCase
 
       expect(
         userHasActiveInCourtAppeal(workingCase, defenceUser, rulingFileId),
@@ -1111,7 +1112,7 @@ describe('Utils', () => {
             defenderNationalId: '0101011010',
           },
         ],
-      } as Case
+      } as WorkingCase
       const appealCase = { appealedByDefendantId: 'd-1' } as AppealCase
 
       expect(
@@ -1128,7 +1129,7 @@ describe('Utils', () => {
             defenderNationalId: 'new-defender',
           },
         ],
-      } as unknown as Case
+      } as unknown as WorkingCase
       const appealCase = { appealedByDefendantId: 'd-1' } as AppealCase
 
       // The old (frozen) defender no longer matches; only the current one does.
@@ -1158,7 +1159,7 @@ describe('Utils', () => {
             spokespersonNationalId: '0303033030',
           },
         ],
-      } as unknown as Case
+      } as unknown as WorkingCase
       const appealCase = { appealedByCivilClaimantId: 'cc-1' } as AppealCase
 
       expect(
@@ -1167,7 +1168,7 @@ describe('Utils', () => {
     })
 
     it('is false when there is no appellant party or no user', () => {
-      const workingCase = { defendants: [] } as unknown as Case
+      const workingCase = { defendants: [] } as unknown as WorkingCase
 
       expect(
         isCurrentAppellantRepresentative(workingCase, {} as AppealCase, '123'),
@@ -1199,7 +1200,7 @@ describe('Utils', () => {
 
     describe('briefs — appellant role', () => {
       test('shows prosecutor brief when prosecutor appealed', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.PROSECUTOR,
         } as AppealCase
@@ -1215,7 +1216,7 @@ describe('Utils', () => {
       })
 
       test('hides prosecutor brief when defender appealed', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.DEFENDER,
         } as AppealCase
@@ -1231,7 +1232,7 @@ describe('Utils', () => {
       })
 
       test('shows defendant brief when defender appealed', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.DEFENDER,
         } as AppealCase
@@ -1247,7 +1248,7 @@ describe('Utils', () => {
       })
 
       test('hides defendant brief when prosecutor appealed', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.PROSECUTOR,
         } as AppealCase
@@ -1266,7 +1267,7 @@ describe('Utils', () => {
         const workingCase = {
           type: CaseType.INDICTMENT,
           defendants: [{ id: 'd-1' } as Defendant],
-        } as Case
+        } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.DEFENDER,
           appealedByDefendantId: 'd-1',
@@ -1288,7 +1289,7 @@ describe('Utils', () => {
         const workingCase = {
           type: CaseType.INDICTMENT,
           defendants: [{ id: 'd-1' } as Defendant, { id: 'd-2' } as Defendant],
-        } as Case
+        } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.DEFENDER,
           appealedByDefendantId: 'd-1',
@@ -1311,7 +1312,7 @@ describe('Utils', () => {
         const workingCase = {
           type: CaseType.INDICTMENT,
           civilClaimants: [{ id: 'cc-1' } as CivilClaimant],
-        } as Case
+        } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.DEFENDER,
           appealedByCivilClaimantId: 'cc-1',
@@ -1332,7 +1333,7 @@ describe('Utils', () => {
 
     describe('statements — request cases (singular gate)', () => {
       test('shows defence statement when defendantStatementDate is set', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           defendantStatementDate: '2026-04-01T12:00:00.000Z',
         } as AppealCase
@@ -1348,7 +1349,7 @@ describe('Utils', () => {
       })
 
       test('hides defence statement when defendantStatementDate is unset', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {} as AppealCase
 
         expect(
@@ -1362,7 +1363,7 @@ describe('Utils', () => {
       })
 
       test('shows prosecutor statement when prosecutorStatementDate is set', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           prosecutorStatementDate: '2026-04-01T12:00:00.000Z',
         } as AppealCase
@@ -1380,7 +1381,7 @@ describe('Utils', () => {
 
     describe('statements — indictment cases (per-party gate)', () => {
       test('shows defendant statement when that defendant has submitted', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           defendantStatementDates: [
             { defendantId: 'd-1', statementDate: '2026-04-01T12:00:00.000Z' },
@@ -1400,7 +1401,7 @@ describe('Utils', () => {
       })
 
       test('hides defendant statement when that defendant has NOT submitted', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           defendantStatementDates: [
             { defendantId: 'd-1', statementDate: '2026-04-01T12:00:00.000Z' },
@@ -1420,7 +1421,7 @@ describe('Utils', () => {
       })
 
       test('shows civil-claimant statement when that claimant has submitted', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           civilClaimantStatementDates: [
             {
@@ -1443,7 +1444,7 @@ describe('Utils', () => {
       })
 
       test('hides defence statement file with no party id attached', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           defendantStatementDates: [
             { defendantId: 'd-1', statementDate: '2026-04-01T12:00:00.000Z' },
@@ -1463,7 +1464,7 @@ describe('Utils', () => {
 
     describe('APPEAL_RULING and APPEAL_COURT_RECORD', () => {
       test('shows APPEAL_COURT_RECORD to all parties at COMPLETED', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           appealState: AppealCaseState.COMPLETED,
         } as AppealCase
@@ -1479,7 +1480,7 @@ describe('Utils', () => {
       })
 
       test('hides APPEAL_COURT_RECORD pre-COMPLETED to non-Court-of-Appeals users', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           appealState: AppealCaseState.RECEIVED,
         } as AppealCase
@@ -1495,7 +1496,7 @@ describe('Utils', () => {
       })
 
       test('shows APPEAL_RULING to Court of Appeals at any state', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           appealState: AppealCaseState.APPEALED,
         } as AppealCase
@@ -1513,7 +1514,7 @@ describe('Utils', () => {
 
     describe('free-form *_APPEAL_CASE_FILE', () => {
       test('shows PROSECUTOR_APPEAL_CASE_FILE to prosecutors in request cases', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {} as AppealCase
         const prosecutor = { role: UserRole.PROSECUTOR } as User
 
@@ -1528,7 +1529,7 @@ describe('Utils', () => {
       })
 
       test('hides PROSECUTOR_APPEAL_CASE_FILE from defenders in request cases', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {} as AppealCase
         const defender = { role: UserRole.DEFENDER } as User
 
@@ -1543,7 +1544,7 @@ describe('Utils', () => {
       })
 
       test('shows PROSECUTOR_APPEAL_CASE_FILE to defenders in indictment cases', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {} as AppealCase
         const defender = { role: UserRole.DEFENDER } as User
 
@@ -1558,7 +1559,7 @@ describe('Utils', () => {
       })
 
       test('shows DEFENDANT_APPEAL_CASE_FILE always', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {} as AppealCase
 
         expect(
@@ -1574,7 +1575,7 @@ describe('Utils', () => {
 
     describe('rulingFileId scoping', () => {
       test('shows ruling-order file when its rulingFileId matches the appeal-case row', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           rulingFileId: 'ruling-1',
           appealedByRole: UserRole.PROSECUTOR,
@@ -1593,7 +1594,7 @@ describe('Utils', () => {
       })
 
       test('hides ruling-order file when its rulingFileId points to a different appeal', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           rulingFileId: 'ruling-1',
           appealedByRole: UserRole.PROSECUTOR,
@@ -1612,7 +1613,7 @@ describe('Utils', () => {
       })
 
       test('hides ruling-order file from a case-level appeal-case row', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.PROSECUTOR,
         } as AppealCase
@@ -1630,7 +1631,7 @@ describe('Utils', () => {
       })
 
       test('hides case-level file from a ruling-order appeal-case row', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           rulingFileId: 'ruling-1',
           appealedByRole: UserRole.PROSECUTOR,
@@ -1648,7 +1649,7 @@ describe('Utils', () => {
     })
 
     test('returns false when no appealCase row is provided', () => {
-      const workingCase = { type: CaseType.CUSTODY } as Case
+      const workingCase = { type: CaseType.CUSTODY } as WorkingCase
 
       expect(
         isAppealFileCategoryVisible(
@@ -1776,7 +1777,7 @@ describe('rulingOrderChoices', () => {
   const makeCase = (
     caseFiles: CaseFile[],
     courtSessions: { id: string; rulingFileId?: string | null }[] = [],
-  ) => ({ caseFiles, courtSessions } as unknown as Case)
+  ) => ({ caseFiles, courtSessions } as unknown as WorkingCase)
 
   it('offers only written rulings as documents to pick', () => {
     const { files } = rulingOrderChoices(
@@ -1894,5 +1895,66 @@ describe('rulingOrderChoices', () => {
     )
 
     expect(resolved).toBeUndefined()
+  })
+})
+
+describe('revertCaseLevelAppealDecision', () => {
+  const prosecutorDecision = {
+    partyRole: AppealDecisionPartyRole.PROSECUTOR,
+    rulingFileId: null,
+    decision: CaseAppealDecision.ACCEPT,
+  } as NonNullable<WorkingCase['appealDecisions']>[number]
+  const defendantDecision = {
+    partyRole: AppealDecisionPartyRole.DEFENDANT,
+    rulingFileId: null,
+    decision: CaseAppealDecision.POSTPONE,
+  } as NonNullable<WorkingCase['appealDecisions']>[number]
+  const rulingOrderDecision = {
+    partyRole: AppealDecisionPartyRole.DEFENDANT,
+    rulingFileId: 'ruling_file_id',
+    decision: CaseAppealDecision.APPEAL,
+  } as NonNullable<WorkingCase['appealDecisions']>[number]
+
+  it('puts the previous row back for the party', () => {
+    const optimistic = [
+      prosecutorDecision,
+      { ...defendantDecision, decision: CaseAppealDecision.APPEAL },
+    ]
+
+    const result = revertCaseLevelAppealDecision(
+      optimistic,
+      [prosecutorDecision, defendantDecision],
+      AppealDecisionPartyRole.DEFENDANT,
+    )
+
+    expect(result).toEqual(
+      expect.arrayContaining([prosecutorDecision, defendantDecision]),
+    )
+    expect(result).toHaveLength(2)
+  })
+
+  it('drops the row when the party had none before', () => {
+    const result = revertCaseLevelAppealDecision(
+      [prosecutorDecision, defendantDecision],
+      [prosecutorDecision],
+      AppealDecisionPartyRole.DEFENDANT,
+    )
+
+    expect(result).toEqual([prosecutorDecision])
+  })
+
+  it('leaves the other party and ruling-order rows alone', () => {
+    const otherPartyUpdated = {
+      ...prosecutorDecision,
+      decision: CaseAppealDecision.APPEAL,
+    }
+
+    const result = revertCaseLevelAppealDecision(
+      [otherPartyUpdated, rulingOrderDecision, defendantDecision],
+      [prosecutorDecision, rulingOrderDecision],
+      AppealDecisionPartyRole.DEFENDANT,
+    )
+
+    expect(result).toEqual([otherPartyUpdated, rulingOrderDecision])
   })
 })

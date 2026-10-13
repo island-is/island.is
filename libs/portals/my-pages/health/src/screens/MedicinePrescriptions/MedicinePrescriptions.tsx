@@ -13,11 +13,13 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
+  EmptyTable,
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+import { TextMarkdown } from '../../components/TextMarkdown/TextMarkdown'
 import { debounceTime } from '@island.is/shared/constants'
 import debounce from 'lodash/debounce'
 import { useEffect, useMemo, useState } from 'react'
@@ -131,13 +133,18 @@ const MedicinePrescriptions = () => {
   return (
     <IntroWrapper
       title={formatMessage(messages.medicinePrescriptions)}
-      intro={formatMessage(messages.medicinePrescriptionIntroText)}
+      introComponent={
+        <TextMarkdown>
+          {formatMessage(messages.medicinePrescriptionIntroWithLink)}
+        </TextMarkdown>
+      }
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
+        slug: STAFRAEN_HEILSA_SLUG,
         tooltip: formatMessage(
-          messages.landlaeknirMedicinePrescriptionsTooltip,
+          messages.stafraenHeilsaMedicinePrescriptionsTooltip,
         ),
       }}
+      marginBottom={[3, 3, 3, 4]}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
 
@@ -147,6 +154,8 @@ const MedicinePrescriptions = () => {
             variant="popover"
             align="left"
             reverse
+            filterInputFluid
+            mobileWrap={false}
             labelClearAll={formatMessage(m.clearAllFilters)}
             labelClear={formatMessage(m.clearFilter)}
             labelOpen={formatMessage(m.openFilter)}
@@ -156,9 +165,9 @@ const MedicinePrescriptions = () => {
             filterInput={
               <Input
                 placeholder={formatMessage(m.searchPlaceholder)}
+                aria-label={formatMessage(m.searchLabel)}
                 name="rafraen-skjol-input"
                 size="xs"
-                label={formatMessage(m.searchLabel)}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 backgroundColor="blue"
                 icon={{ name: 'search' }}
@@ -208,7 +217,17 @@ const MedicinePrescriptions = () => {
             </Box>
           </Filter>
           <Box marginTop={4}>
-            <PrescriptionsTable data={paginatedData} loading={loading} />
+            {!loading && !filteredMedicines?.length ? (
+              <EmptyTable
+                message={
+                  filteredPrescriptions?.length
+                    ? messages.noSearchResults
+                    : messages.noData
+                }
+              />
+            ) : (
+              <PrescriptionsTable data={paginatedData} loading={loading} />
+            )}
           </Box>
         </>
       )}

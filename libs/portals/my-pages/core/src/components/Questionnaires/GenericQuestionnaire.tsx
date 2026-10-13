@@ -22,12 +22,23 @@ import {
   QuestionnaireQuestionnairesOrganizationEnum,
 } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
+import { useScrollTopOnUpdate } from '../../hooks/useScrollTopOnUpdate/useScrollTopOnUpdate'
 import { m } from '../../lib/messages'
 import { QuestionAnswer } from '../../types/questionnaire'
 import { QuestionnaireFooter } from './Footer'
 import { QuestionnaireHeader } from './Header'
 import { Review } from './Review'
 import { calculateFormula } from './utils/calculations'
+
+// Scales end with their own clear-answer row, so the divider needs less room
+const endsWithScale = (section: { questions?: QuestionnaireQuestion[] }) => {
+  const questions = section.questions ?? []
+  const lastType = questions[questions.length - 1]?.answerOptions.type
+  return (
+    lastType === QuestionnaireAnswerOptionType.scale ||
+    lastType === QuestionnaireAnswerOptionType.thermometer
+  )
+}
 
 interface GenericQuestionnaireProps {
   questionnaire: QuestionnaireDetail
@@ -55,6 +66,7 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
   )
 
   const [showReview, setShowReview] = useState(false)
+  useScrollTopOnUpdate([showReview])
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
   // Helper function to calculate formula
@@ -168,9 +180,12 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
   const handleAnswerChange = useCallback(
     (answer: QuestionAnswer) => {
       setAnswers((prev) => {
-        const newAnswers = {
-          ...prev,
-          [answer.questionId]: answer,
+        const newAnswers = { ...prev }
+
+        if (answer.answers.length === 0) {
+          delete newAnswers[answer.questionId]
+        } else {
+          newAnswers[answer.questionId] = answer
         }
 
         // Calculate any formulas that depend on changed values
@@ -267,8 +282,17 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
               <QuestionnaireHeader
                 title={questionnaire.baseInformation.title}
                 img={img}
-                buttonGroup={
-                  questionnaire.baseInformation.organization ===
+                buttonGroup={[
+                  <Button
+                    variant="utility"
+                    icon="print"
+                    iconType="outline"
+                    key="print-button"
+                    onClick={() => window.print()}
+                  >
+                    {formatMessage(m.print)}
+                  </Button>,
+                  ...(questionnaire.baseInformation.organization ===
                   QuestionnaireQuestionnairesOrganizationEnum.EL
                     ? [
                         <Button
@@ -281,8 +305,8 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
                           {formatMessage(m.saveAsDraft)}
                         </Button>,
                       ]
-                    : undefined
-                }
+                    : []),
+                ]}
               />
               {/* Questions */}
               <Box style={{ minHeight: '400px' }} marginY={[2, 2, 2, 6]}>
@@ -318,7 +342,7 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
                             )}
                           </Box>
                         )}
-                        <Stack space={4}>
+                        <Stack space={6}>
                           {section.questions?.map(
                             (question: QuestionnaireQuestion) => (
                               <Box
@@ -340,7 +364,10 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
                             ),
                           )}
                         </Stack>
-                        <Box paddingBottom={3} paddingTop={6}>
+                        <Box
+                          paddingTop={endsWithScale(section) ? 4 : 6}
+                          paddingBottom={3}
+                        >
                           <Divider />
                         </Box>
                       </Box>

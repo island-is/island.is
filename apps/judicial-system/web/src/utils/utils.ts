@@ -13,9 +13,9 @@ import {
   isRequestCase,
   isRulingOrderWithoutDocument,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
   AppealCase,
-  Case,
   CaseFile,
   CourtSessionResponse,
   CourtSessionString,
@@ -95,7 +95,7 @@ export const isBusiness = (nationalId?: string | null) => {
 }
 
 export const createCaseResentExplanation = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   explanation?: string,
 ) => {
   const now = new Date() // TODO: Find a way to set this message server side as we cannot trust the client date.
@@ -133,7 +133,7 @@ export const hasSentNotification = (
 
 // Whether the indictment has been sent to the public prosecutor after its
 // latest completion/correction
-export const isSentToPublicProsecutor = (workingCase: Case): boolean =>
+export const isSentToPublicProsecutor = (workingCase: WorkingCase): boolean =>
   Boolean(
     workingCase.indictmentCompletedDate &&
       workingCase.indictmentSentToPublicProsecutorDate &&
@@ -179,7 +179,10 @@ export const shouldUseAppealWithdrawnRoutes = (
   )
 }
 
-export const shouldDisplayGeneratedPdfFiles = (theCase: Case, user?: User) =>
+export const shouldDisplayGeneratedPdfFiles = (
+  theCase: WorkingCase,
+  user?: User,
+) =>
   Boolean(
     isProsecutionUser(user) ||
       theCase.defendants?.some(
@@ -203,7 +206,10 @@ export const shouldDisplayGeneratedPdfFiles = (theCase: Case, user?: User) =>
       ),
   )
 
-export const isCaseDefendantDefender = (user?: User, workingCase?: Case) =>
+export const isCaseDefendantDefender = (
+  user?: User,
+  workingCase?: WorkingCase,
+) =>
   workingCase?.defendants?.some(
     (defendant) =>
       defendant?.defenderNationalId &&
@@ -214,7 +220,7 @@ export const isCaseDefendantDefender = (user?: User, workingCase?: Case) =>
 
 export const isCaseCivilClaimantSpokesperson = (
   user?: User,
-  workingCase?: Case,
+  workingCase?: WorkingCase,
 ) =>
   workingCase?.civilClaimants?.some(
     (civilClaimant) =>
@@ -226,7 +232,7 @@ export const isCaseCivilClaimantSpokesperson = (
 
 export const isCaseCivilClaimantLegalSpokesperson = (
   user?: User,
-  workingCase?: Case,
+  workingCase?: WorkingCase,
 ) =>
   workingCase?.civilClaimants?.some(
     (civilClaimant) =>
@@ -251,7 +257,7 @@ export const isCaseCivilClaimantLegalSpokesperson = (
  * 3. Empty object (prosecutor or no match)
  */
 export const getDefenceUserPartyIds = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   user: User | undefined,
 ): { defendantId?: string; civilClaimantId?: string } => {
   if (!user || !isIndictmentCase(workingCase.type)) {
@@ -292,7 +298,7 @@ export const getDefenceUserPartyIds = (
  */
 export const canDefenceUserOpenLinkedCase = (
   user: User | undefined,
-  linkedCase: Case | null | undefined,
+  linkedCase: WorkingCase | null | undefined,
 ): boolean => {
   if (!user || !isDefenceUser(user)) {
     return true
@@ -311,8 +317,11 @@ export const canDefenceUserOpenLinkedCase = (
 }
 
 // The case-level appeal_decision row of a party - the one with no rulingFileId.
-const caseLevelAppealDecisionRow = (
-  appealDecisions: Case['appealDecisions'],
+/**
+ * The case-level (no rulingFileId) appeal_decision row of a party, if any.
+ */
+export const caseLevelAppealDecisionRow = (
+  appealDecisions: WorkingCase['appealDecisions'],
   partyRole: AppealDecisionPartyRole,
 ) =>
   appealDecisions?.find(
@@ -325,7 +334,7 @@ const caseLevelAppealDecisionRow = (
  * Case-level decisions are the appeal_decision rows with no rulingFileId.
  */
 export const caseLevelAppealDecision = (
-  appealDecisions: Case['appealDecisions'],
+  appealDecisions: WorkingCase['appealDecisions'],
   partyRole: AppealDecisionPartyRole,
 ): CaseAppealDecision | undefined =>
   caseLevelAppealDecisionRow(appealDecisions, partyRole)?.decision ?? undefined
@@ -335,7 +344,7 @@ export const caseLevelAppealDecision = (
  * Same case-level row (no rulingFileId) as caseLevelAppealDecision.
  */
 export const caseLevelAppealAnnouncement = (
-  appealDecisions: Case['appealDecisions'],
+  appealDecisions: WorkingCase['appealDecisions'],
   partyRole: AppealDecisionPartyRole,
 ): string | undefined =>
   caseLevelAppealDecisionRow(appealDecisions, partyRole)?.announcement ??
@@ -350,10 +359,10 @@ export const caseLevelAppealAnnouncement = (
  * mutation persists the rows server-side.
  */
 export const withCaseLevelAppealDecision = (
-  appealDecisions: Case['appealDecisions'],
+  appealDecisions: WorkingCase['appealDecisions'],
   partyRole: AppealDecisionPartyRole,
   update: { decision?: CaseAppealDecision; announcement?: string },
-): Case['appealDecisions'] => {
+): WorkingCase['appealDecisions'] => {
   const decisions = appealDecisions ?? []
   const patch = {
     ...('decision' in update ? { decision: update.decision } : {}),
@@ -368,7 +377,7 @@ export const withCaseLevelAppealDecision = (
     return [
       ...decisions,
       { partyRole, rulingFileId: null, ...patch } as NonNullable<
-        Case['appealDecisions']
+        WorkingCase['appealDecisions']
       >[number],
     ]
   }
@@ -379,13 +388,38 @@ export const withCaseLevelAppealDecision = (
 }
 
 /**
+ * Returns a new appeal-decisions array where the case-level (no rulingFileId)
+ * row for `partyRole` is put back to what `previousAppealDecisions` held for it
+ * - dropped when there was none. Rolls back the optimistic update of
+ * withCaseLevelAppealDecision when its mutation fails, leaving the other
+ * party's row (which may have been saved in the meantime) alone.
+ */
+export const revertCaseLevelAppealDecision = (
+  appealDecisions: WorkingCase['appealDecisions'],
+  previousAppealDecisions: WorkingCase['appealDecisions'],
+  partyRole: AppealDecisionPartyRole,
+): WorkingCase['appealDecisions'] => {
+  const otherDecisions = (appealDecisions ?? []).filter(
+    (decision) => decision.rulingFileId || decision.partyRole !== partyRole,
+  )
+  const previousDecision = caseLevelAppealDecisionRow(
+    previousAppealDecisions,
+    partyRole,
+  )
+
+  return previousDecision
+    ? [...otherDecisions, previousDecision]
+    : otherDecisions
+}
+
+/**
  * The appeal of a specific ruling order, if it has one. A case can carry several
  * ruling-order appeals at once, keyed by the ruling file they were made against
  * - so anything acting on one ruling must resolve its own appeal rather than the
  * case-level `appealCase`.
  */
 export const rulingOrderAppealCase = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   rulingFileId: string | null | undefined,
 ): AppealCase | undefined =>
   rulingFileId
@@ -409,7 +443,7 @@ export const rulingOrderAppealCase = (
  *   appeal made against it.
  */
 export const rulingOrderChoices = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   courtSession: Pick<CourtSessionResponse, 'id' | 'rulingFileId'>,
 ): {
   files: CaseFile[]
@@ -465,7 +499,7 @@ export const rulingOrderChoices = (
  * can omit it; ruling-order call sites pass the specific appeal-case row.
  */
 export const getAppealActorText = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   appealCase: AppealCase | null | undefined = workingCase.appealCase,
 ): string => {
   if (isRequestCase(workingCase.type)) {
@@ -548,7 +582,7 @@ export const getAppealActorText = (
  * Returns the role label and name, or undefined if the party is not found.
  */
 export const getAppealingPartyInfo = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   appealedByDefendantId?: string | null,
   appealedByCivilClaimantId?: string | null,
 ): { role: string; name: string } | undefined => {
@@ -587,7 +621,7 @@ export const getAppealingPartyInfo = (
  * defender / spokesperson reassignment.
  */
 export const isCurrentAppellantRepresentative = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   appealCase: AppealCase,
   userNationalId?: string | null,
 ): boolean => {
@@ -628,7 +662,7 @@ export const isCurrentAppellantRepresentative = (
  * backend helper (appealCase.helpers.findUserRulingOrderAppealDecision).
  */
 const findUserRulingOrderAppealDecision = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   user: User | undefined,
   rulingFileId: string,
 ) => {
@@ -685,7 +719,7 @@ const findUserRulingOrderAppealDecision = (
  * (appealCase.service.hasAcceptedRulingOrderInCourt).
  */
 export const hasAcceptedRulingOrderInCourt = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   user: User | undefined,
   rulingFileId: string,
 ): boolean =>
@@ -701,7 +735,7 @@ export const hasAcceptedRulingOrderInCourt = (
  * (appealCase.helpers.userRulingOrderAppealDecisions).
  */
 const userRulingOrderAppealDecisions = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   user: User | undefined,
   rulingFileId: string,
 ) => {
@@ -765,7 +799,7 @@ const userRulingOrderAppealDecisions = (
  * Mirrors the backend (appealCase.helpers.userHasActiveInCourtAppeal).
  */
 export const userHasActiveInCourtAppeal = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   user: User | undefined,
   rulingFileId: string,
 ): boolean =>
@@ -786,10 +820,10 @@ export const userHasActiveInCourtAppeal = (
  * were deleted on the server.
  */
 export const reconcileAppealDecisionsForRulingFileChange = (
-  appealDecisions: Case['appealDecisions'],
+  appealDecisions: WorkingCase['appealDecisions'],
   previousRulingFileId: string | null | undefined,
   nextRulingFileId: string | null | undefined,
-): Case['appealDecisions'] => {
+): WorkingCase['appealDecisions'] => {
   if (!previousRulingFileId || previousRulingFileId === nextRulingFileId) {
     return appealDecisions
   }
@@ -869,7 +903,7 @@ export const applyMergedCaseEntries = (
  * absent, or when the category is not appeal-related.
  */
 export const isAppealFileCategoryVisible = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   appealCase: AppealCase | null | undefined,
   file: {
     category?: CaseFileCategory | null
@@ -977,7 +1011,7 @@ export const isMatchingAppealCourtFile = (
   (file.rulingFileId ?? null) === (rulingFileId ?? null)
 
 export const isMatchingAppealCaseFile = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   categories: CaseFileCategory[],
   file: {
     category?: CaseFileCategory | null
@@ -1053,7 +1087,7 @@ export const isMatchingAppealCaseFile = (
 // lists by id. Request cases have a single defender, so the aggregated
 // appealCase.defendantStatementDate is the right answer.
 export const getCurrentUserStatementDate = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   appealCase: AppealCase | null | undefined,
   user: User | undefined,
 ): string | undefined => {
@@ -1110,15 +1144,15 @@ export const appendAppealCaseIdQuery = (
   appealCaseId: string | undefined,
 ): string => (appealCaseId ? `${path}?appealCaseId=${appealCaseId}` : path)
 
-// Returns a new Case with `update` merged into the appeal-case slot that
+// Returns a new WorkingCase with `update` merged into the appeal-case slot that
 // matches `targetAppealCaseId`. For optimistic `setWorkingCase` updates from
 // COA detail pages — ruling-order rows need their updates routed into
 // `rulingOrderAppealCases[i]` rather than the case-level `appealCase`.
 export const applyAppealCaseUpdate = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   targetAppealCaseId: string,
   update: Partial<AppealCase>,
-): Case => {
+): WorkingCase => {
   if (workingCase.appealCase?.id === targetAppealCaseId) {
     return {
       ...workingCase,

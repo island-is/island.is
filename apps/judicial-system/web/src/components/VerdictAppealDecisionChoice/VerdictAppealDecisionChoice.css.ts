@@ -13,3 +13,9 @@ export const gridRow = style({
     },
   },
 })
+
+// The label is bold when selected, which is wider; keep it on one line either
+// way so the two options stay the same height.
+export const label = style({
+  whiteSpace: 'nowrap',
+})

@@ -15,11 +15,11 @@ import {
 } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import InputName from '@island.is/judicial-system-web/src/components/Inputs/InputName'
 import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
 import type {
-  Case,
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -31,7 +31,7 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isBusiness,
   mapStringToGender,
@@ -39,12 +39,12 @@ import {
 
 interface Props {
   defendant: Defendant
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   onChange: (updatedDefendant: UpdateDefendantInput) => void
   updateDefendantState: (
     update: UpdateDefendantInput,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => void
   onDelete?: (defendant: Defendant) => Promise<void>
 }
@@ -138,7 +138,7 @@ const DefendantInfo: FC<Props> = (props) => {
   }, [businessData, error])
 
   return (
-    <BlueBox className={grid({ gap: 2 })}>
+    <BlueBox className={stack({ gap: 2 })}>
       {onDelete && (
         <Box display="flex" justifyContent="flexEnd">
           <Button

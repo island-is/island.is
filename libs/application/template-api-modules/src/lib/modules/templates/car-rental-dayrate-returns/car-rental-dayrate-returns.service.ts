@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { Auth, User } from '@island.is/auth-nest-tools'
+import { Auth } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
+  DayRateEntry,
   InsertRentalDaysModel,
-  RentalDaysEntry,
   RskRentalDayRateClient,
   RskRentalDaysClient,
 } from '@island.is/clients-rental-day-rate'
@@ -19,31 +19,12 @@ import {
   UploadSelection,
 } from '@island.is/application/templates/car-rental-dayrate-returns'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { FetchError } from '@island.is/clients/middlewares'
 import { AttachmentS3Service } from '../../shared/services'
 import { getValueViaPath } from '@island.is/application/core'
 
 const toPeriod = (year: number, monthIndex: number): string =>
   `${year}-${String(monthIndex + 1).padStart(2, '0')}`
-
-/**
- * Rental days Skatturinn has already registered for a period, summed per vehicle.
- * A vehicle can appear more than once when its days were reported in batches.
- */
-const sumRentalDaysByPermno = (
-  entries: Array<RentalDaysEntry>,
-): Map<string, number> => {
-  const totals = new Map<string, number>()
-
-  for (const entry of entries) {
-    if (!entry.fastnr) continue
-    totals.set(
-      entry.fastnr,
-      (totals.get(entry.fastnr) ?? 0) + (entry.fjoldiDaga ?? 0),
-    )
-  }
-
-  return totals
-}
 
 @Injectable()
 export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
@@ -73,16 +54,29 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     const targetMonthIndex = lastMonthDate.getMonth()
     const period = toPeriod(targetYear, targetMonthIndex)
 
-    const targetFromUtc = new Date(Date.UTC(targetYear, targetMonthIndex, 1))
-    const targetToUtc = new Date(Date.UTC(targetYear, targetMonthIndex + 1, 0))
+    const noVehiclesFound = () =>
+      new TemplateApiError(
+        {
+          title: messages.serviceErrors.noVehiclesFound.title,
+          summary: {
+            ...messages.serviceErrors.noVehiclesFound.summary,
+            values: { period },
+          },
+        },
+        404,
+      )
 
-    const [dayRateEntries, reportedRentalDays] = await Promise.all([
+    const [dayRateEntries, periodRegistration] = await Promise.all([
       this.rentalsApiWithAuth(auth)
         .apiDayRateEntriesEntityIdPeriodsPeriodGet({
           entityId: auth.nationalId,
           period,
         })
         .catch((error) => {
+          if (error instanceof FetchError && error.status === 404) {
+            return [] as Array<DayRateEntry>
+          }
+
           this.logger.error(
             'Error getting previous period day rate entries from Skatturinn',
             { endpoint: 'dayRateEntriesPeriodsGet', error },
@@ -95,51 +89,42 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
           period,
         })
         .catch((error) => {
+          if (error instanceof FetchError && error.status === 404) {
+            throw noVehiclesFound()
+          }
+
           this.logger.error(
-            'Error getting already reported rental days from Skatturinn',
+            'Error getting the day rate period registration from Skatturinn',
             { endpoint: 'rentalDaysPeriodsGet', error },
           )
           throw error
         }),
     ])
 
-    const reportedDaysByPermno = sumRentalDaysByPermno(reportedRentalDays)
+    const dayRateEntryIdByPermno = new Map<string, number | undefined>()
+    for (const entry of dayRateEntries) {
+      if (!entry.fastnr) continue
+      dayRateEntryIdByPermno.set(
+        entry.fastnr,
+        dayRateEntryIdByPermno.has(entry.fastnr) ? undefined : entry.id,
+      )
+    }
 
-    return dayRateEntries
+    const records = (periodRegistration.entries ?? [])
       .map<DayRateRecord | null>((entry) => {
-        // Only the vehicle registration number is required. `id` is optional on
-        // Skatturinn's side and optional on the return, so a missing one is no
-        // longer a reason to hide a vehicle the applicant has to report for.
-        if (!entry.fastnr) return null
-
-        const entryValidFrom = entry.gildirFra
-          ? new Date(entry.gildirFra)
-          : targetFromUtc
-        const entryValidTo = entry.gildirTil
-          ? new Date(entry.gildirTil)
-          : targetToUtc
-
-        const start =
-          entryValidFrom > targetFromUtc ? entryValidFrom : targetFromUtc
-        const end = entryValidTo < targetToUtc ? entryValidTo : targetToUtc
-
-        if (end < start) return null
-
-        const totalDays =
-          Math.floor((end.getTime() - start.getTime()) / 86400000) + 1
-
-        if (totalDays <= 0) return null
+        if (!entry.permno) return null
 
         return {
-          permno: entry.fastnr,
-          prevPeriodTotalDays: totalDays,
-          dayRateEntryId: entry.id,
-          // Kept in the list rather than filtered out so the applicant can see
-          // the vehicle and why it needs nothing from them.
-          alreadyReportedDays: reportedDaysByPermno.get(entry.fastnr),
+          permno: entry.permno,
+          prevPeriodTotalDays: entry.availableDays,
+          dayRateEntryId: dayRateEntryIdByPermno.get(entry.permno),
         }
       })
-      .filter((entry): entry is DayRateRecord => entry !== null)
+      .filter((record): record is DayRateRecord => record !== null)
+
+    if (records.length === 0) throw noVehiclesFound()
+
+    return records
   }
 
   async postDataToSkatturinn({
@@ -191,14 +176,6 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
           ?.dayRateEntryId,
       }))
 
-      // External data is captured back at the prerequisite step, so re-check
-      // with Skatturinn that nothing landed for this period in the meantime.
-      await this.assertNotAlreadyReported(
-        auth,
-        toPeriod(lastMonthDate.getFullYear(), lastMonthIndex),
-        entries,
-      )
-
       await this.rentalDaysApiWithAuth(auth).apiRentalDaysEntityIdPost({
         entityId: auth.nationalId,
         rentalDayRegistrationModel: {
@@ -247,50 +224,6 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     }
   }
 
-  private async assertNotAlreadyReported(
-    auth: User,
-    period: string,
-    entries: Array<InsertRentalDaysModel>,
-  ): Promise<void> {
-    const reportedDaysByPermno = sumRentalDaysByPermno(
-      await this.rentalDaysApiWithAuth(
-        auth,
-      ).apiRentalDaysEntityIdPeriodsPeriodGet({
-        entityId: auth.nationalId,
-        period,
-      }),
-    )
-
-    if (reportedDaysByPermno.size === 0) return
-
-    const duplicates = [
-      ...new Set(
-        entries
-          .map((entry) => entry.permno)
-          .filter(
-            (permno): permno is string =>
-              !!permno && reportedDaysByPermno.has(permno),
-          ),
-      ),
-    ]
-
-    if (duplicates.length === 0) return
-
-    throw new TemplateApiError(
-      {
-        title: messages.serviceErrors.alreadyReported.title,
-        summary: {
-          ...messages.serviceErrors.alreadyReported.summary,
-          values: {
-            period,
-            vehicles: duplicates.join(', '),
-          },
-        },
-      },
-      400,
-    )
-  }
-
   private getRecordsFromTableAnswers(
     application: TemplateApiModuleActionProps['application'],
     dayRateRecordsByPermno: Map<string, DayRateRecord>,
@@ -325,11 +258,6 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
 
         if (!permno || !dayRateRecord || Number.isNaN(usage) || usage < 0) {
           invalidRows.push(permno || '-')
-          return null
-        }
-
-        if (dayRateRecord.alreadyReportedDays !== undefined) {
-          invalidRows.push(permno)
           return null
         }
 

@@ -284,16 +284,19 @@ describe('DrivingLicenseSubmissionService', () => {
       expect(applyForRenewal65).toHaveBeenCalledTimes(1)
 
       const [auth, input] = applyForRenewal65.mock.calls[0]
-      expect(auth).toBe(user.authorization)
+      // applyForRenewal65 now takes the full Auth object (v6 forwards the
+      // caller's token via withAuthContext); renewDrivingLicense65AndOver
+      // above still takes the raw authorization string, as it stays on v5.
+      expect(auth).toBe(user)
       expect(input).toMatchObject({
         jurisdiction: 37,
         primaryPhoneNumber: expect.any(String),
         studentEmail: 'mock@email.com',
         sendPlasticToPerson: true,
-        pickupPlasticAtDistrict: false,
         photoBiometricsId: null,
         signatureBiometricsId: null,
       })
+      expect(input).not.toHaveProperty('pickupPlasticAtDistrict')
       expect(input.contentList).toHaveLength(1)
       expect(input.contentList[0]).toMatchObject({
         fileName: 'cert.pdf',

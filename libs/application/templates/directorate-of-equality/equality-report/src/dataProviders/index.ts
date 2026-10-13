@@ -36,6 +36,20 @@ export const PreviousEqualityReportContentApi = defineTemplateApi({
   order: 0,
 })
 
+// The bytes of a PDF-backed previous plan. Its own on-demand provider rather
+// than part of `PreviousEqualityReportContentApi`, so several megabytes of
+// base64 are fetched only when the applicant asks to see the document — not on
+// every render of the screen that mentions it.
+export const PreviousEqualityReportPdfApi = defineTemplateApi({
+  action: ApiActions.getPreviousEqualityReportPdf,
+  externalDataId: 'previousEqualityReportPdf',
+  namespace: 'DirectorateOfEquality',
+  order: 0,
+  // The runner returns the bytes on the mutation response either way, so the
+  // download works without parking megabytes of base64 in the application row.
+  shouldPersistToExternalData: false,
+})
+
 export const EqualityReportTemplateDocxApi = defineTemplateApi({
   action: ApiActions.getEqualityReportTemplateDocx,
   externalDataId: 'equalityReportTemplateDocx',

@@ -2,7 +2,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDate,
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import React from 'react'
@@ -57,8 +57,8 @@ const Referrals: React.FC = () => {
       title={formatMessage(messages.referrals)}
       intro={formatMessage(messages.referralsIntro)}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirReferralTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaReferralTooltip),
       }}
       desktopContentSpan="10/12"
     >
@@ -88,7 +88,6 @@ const Referrals: React.FC = () => {
               .join(' ')}
             tag={{
               label: referral?.stateDisplay ?? '',
-              outlined: false,
               variant: referralStatusToTagVariant(referral?.status ?? null),
             }}
             cta={{

@@ -14,6 +14,9 @@ export class ApplicationDto {
   @ApiPropertyOptional()
   nationalId?: string
 
+  @ApiPropertyOptional()
+  actorNationalId?: string
+
   @ApiPropertyOptional({ type: LanguageType })
   organizationName?: LanguageType
 

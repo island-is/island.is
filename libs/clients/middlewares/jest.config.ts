@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-middlewares',
   preset: './jest.preset.js',

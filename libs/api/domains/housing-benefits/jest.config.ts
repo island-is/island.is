@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'api-domains-housing-benefits',
   preset: '../../../../jest.preset.js',

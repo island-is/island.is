@@ -9,10 +9,6 @@ export const m = defineMessages({
     id: 'service.portal:health-treatment',
     defaultMessage: 'Meðferð',
   },
-  healthTreatments: {
-    id: 'service.portal:health-treatments',
-    defaultMessage: 'Meðferðir',
-  },
   healthTreatmentEducationalContent: {
     id: 'service.portal:health-treatment-educational-content',
     defaultMessage: 'Fræðsluefni',
@@ -1262,6 +1258,10 @@ export const m = defineMessages({
     id: 'service.portal:required-question',
     defaultMessage: 'Þessari spurningu er nauðsynlegt að svara',
   },
+  clearAnswer: {
+    id: 'service.portal:clear-answer',
+    defaultMessage: 'Hreinsa svar',
+  },
   confirmation: {
     id: 'service.portal:confirmation',
     defaultMessage: 'Staðfesting',
@@ -2135,6 +2135,22 @@ export const m = defineMessages({
     id: 'service.portal:subpoena',
     defaultMessage: 'Fyrirkall',
   },
+  driversPoints: {
+    id: 'service.portal:drivers-points',
+    defaultMessage: 'Punktastaða',
+  },
+  driversPointsIntro: {
+    id: 'service.portal:drivers-points-intro',
+    defaultMessage: 'Punktastaða ökumanns hjá lögreglu',
+  },
+  driversDeprivations: {
+    id: 'service.portal:drivers-deprivations',
+    defaultMessage: 'Svipting',
+  },
+  driversDeprivationsIntro: {
+    id: 'service.portal:drivers-deprivations-intro',
+    defaultMessage: 'Upplýsingar um sviptingu ökuréttinda',
+  },
   case: {
     id: 'service.portal:case',
     defaultMessage: 'Dómur',
@@ -2285,12 +2301,20 @@ export const m = defineMessages({
   },
   sidebarContactBoxTitle: {
     id: 'service.portal:sidebar-contact-box-title',
-    defaultMessage: 'Ertu með spurningu?',
+    defaultMessage: 'Aðstoð við Mínar síður',
   },
   sidebarContactBoxBody: {
     id: 'service.portal:sidebar-contact-box-body',
     defaultMessage:
-      'Ef þú ert í vandræðum getur þú sent okkur fyrirspurn eða ábendingu á netfangið island@island.is',
+      'Finnurðu ekki það sem þú leitar að eða ertu í tæknilegum vandræðum? Sendu fyrirspurn eða ábendingu.',
+  },
+  sidebarContactBoxLinkText: {
+    id: 'service.portal:sidebar-contact-box-link-text',
+    defaultMessage: 'Opna form',
+  },
+  sidebarContactBoxLinkUrl: {
+    id: 'service.portal:sidebar-contact-box-link-url',
+    defaultMessage: 'https://island.is/s/stafraen-heilsa/hafa-samband',
   },
   unemploymentHasConfirmedJobSearch: {
     id: 'service.portal:unemployment-has-confirmed-job-search',
@@ -2399,6 +2423,14 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:health-shorter',
     defaultMessage: 'Sjúkra',
   },
+  healthTreatment: {
+    id: 'sp.search.tags:health-treatment',
+    defaultMessage: 'Meðferð',
+  },
+  healthPregnancy: {
+    id: 'sp.search.tags:health-pregnancy',
+    defaultMessage: 'Meðganga',
+  },
   healthReferrals: {
     id: 'sp.search.tags:health-referrals',
     defaultMessage: 'Vísanir',
@@ -2454,6 +2486,14 @@ export const searchTagsMessages = defineMessages({
   medicineDelegationOtherNew: {
     id: 'sp.search.tags:medicine-delegation-other-new',
     defaultMessage: 'Nýtt lyfjaumboð',
+  },
+  medicinePrescriptions: {
+    id: 'sp.search.tags:medicine-prescriptions',
+    defaultMessage: 'Lyfseðlar',
+  },
+  medicinePrescription: {
+    id: 'sp.search.tags:medicine-prescription',
+    defaultMessage: 'Lyfseðill',
   },
   appointment: {
     id: 'sp.search.tags:appointment',

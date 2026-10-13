@@ -9,6 +9,7 @@ import {
   ApplicationsControllerDeleteApplicationRequest,
   ApplicationsControllerFindAllBySlugAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
+  ApplicationsControllerGetApplicationPdfRequest,
   ApplicationsControllerGetDataFromUrlRequest,
   ApplicationsControllerNotifyRequest,
   ApplicationsControllerSaveScreenRequest,
@@ -23,6 +24,7 @@ import {
   UpdateApplicationInput,
 } from '../../dto/application.input'
 import {
+  ApplicationPdf,
   ApplicationResponse,
   SubmitApplicationResponse,
 } from '../../models/applications.model'
@@ -40,7 +42,7 @@ export class ApplicationsService {
   ) {}
 
   // eslint-disable-next-line
-  handleError(error: any, errorDetail?: string): ApolloError | null {
+  handleError = (error: any, errorDetail?: string): ApolloError | null => {
     const err = {
       error: JSON.stringify(error),
       category: 'forms-service',
@@ -75,6 +77,20 @@ export class ApplicationsService {
       .catch((e) => handle4xx(e, this.handleError, 'failed to get application'))
 
     return response as ApplicationResponse
+  }
+
+  async getApplicationPdf(
+    auth: User,
+    input: GetApplicationInput,
+  ): Promise<ApplicationPdf> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerGetApplicationPdf(
+        input as ApplicationsControllerGetApplicationPdfRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get application pdf'),
+      )
+    return response as ApplicationPdf
   }
 
   async getAllApplications(

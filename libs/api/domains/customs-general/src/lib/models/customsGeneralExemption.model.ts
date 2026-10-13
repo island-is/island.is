@@ -11,6 +11,12 @@ export class CustomsGeneralExemption {
   @Field(() => String, { nullable: true })
   description?: string
 
+  @Field(() => Date, { nullable: true })
+  validFrom?: Date
+
+  @Field(() => Date, { nullable: true })
+  validTo?: Date
+
   @Field(() => String, { nullable: true })
   legalArticle?: string
 

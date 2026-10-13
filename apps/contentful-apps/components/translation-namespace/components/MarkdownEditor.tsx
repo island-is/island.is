@@ -21,6 +21,10 @@ interface MarkdownEditorProps {
   value: Node[]
   dialogs: DialogsAPI
   onChange(value: Node[]): void
+  /* Both optional and defaulted, so the translation-namespace caller keeps its
+   * current behaviour untouched. */
+  readOnly?: boolean
+  ariaLabel?: string
 }
 
 const HOTKEYS = {
@@ -33,7 +37,7 @@ const HOTKEYS = {
 
 export const MarkdownEditor: FC<
   React.PropsWithChildren<MarkdownEditorProps>
-> = ({ value, dialogs, onChange }) => {
+> = ({ value, dialogs, onChange, readOnly = false, ariaLabel }) => {
   const [internalValue, setInternalValue] = useState<Node[]>(value) // We keep track of the original Slate Nodes
   const renderElement = useCallback((props) => <Element {...props} />, [])
   const renderLeaf = useCallback((props) => <Leaf {...props} />, [])
@@ -68,25 +72,31 @@ export const MarkdownEditor: FC<
         onChange(newValue)
       }}
     >
-      <Toolbar>
-        <MarkButton format="bold" icon="format_bold" />
-        <MarkButton format="italic" icon="format_italic" />
-        <MarkButton format="underline" icon="format_underlined" />
-        <LinkButton dialogs={dialogs} />
-        <BlockButton format="heading_two" icon="looks_two" />
-        <BlockButton format="heading_three" icon="looks_three" />
-        <BlockButton format="heading_four" icon="looks_four" />
-        <BlockButton format="ol_list" icon="format_list_numbered" />
-        <BlockButton format="ul_list" icon="format_list_bulleted" />
-      </Toolbar>
+      {!readOnly && (
+        <Toolbar>
+          <MarkButton format="bold" icon="format_bold" />
+          <MarkButton format="italic" icon="format_italic" />
+          <MarkButton format="underline" icon="format_underlined" />
+          <LinkButton dialogs={dialogs} />
+          <BlockButton format="heading_two" icon="looks_two" />
+          <BlockButton format="heading_three" icon="looks_three" />
+          <BlockButton format="heading_four" icon="looks_four" />
+          <BlockButton format="ol_list" icon="format_list_numbered" />
+          <BlockButton format="ul_list" icon="format_list_bulleted" />
+        </Toolbar>
+      )}
 
       <Editable
+        readOnly={readOnly}
+        aria-label={ariaLabel}
         style={{
           padding: '12px 16px',
           border: '1px solid #d3dce0',
-          borderTopColor: 'transparent',
+          borderTopColor: readOnly ? '#d3dce0' : 'transparent',
           borderBottomLeftRadius: '6px',
           borderBottomRightRadius: '6px',
+          borderTopLeftRadius: readOnly ? '6px' : undefined,
+          borderTopRightRadius: readOnly ? '6px' : undefined,
         }}
         renderElement={renderElement}
         renderLeaf={renderLeaf}

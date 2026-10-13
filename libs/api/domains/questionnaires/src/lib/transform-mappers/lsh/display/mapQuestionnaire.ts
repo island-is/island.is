@@ -45,11 +45,12 @@ export const mapLshQuestionnaireOverview = (
   baseInformation: {
     id: data.gUID ?? 'undefined-id',
     title: data.caption || formatMessage(m.questionnaireWithoutTitle),
-    status: data.answerDateTime
-      ? QuestionnairesStatusEnum.answered
-      : data.validToDateTime != null && data.validToDateTime < new Date()
-      ? QuestionnairesStatusEnum.expired
-      : QuestionnairesStatusEnum.notAnswered,
+    status:
+      data.validToDateTime != null && data.validToDateTime < new Date()
+        ? QuestionnairesStatusEnum.expired
+        : data.answerDateTime
+        ? QuestionnairesStatusEnum.answered
+        : QuestionnairesStatusEnum.notAnswered,
     sentDate: data.validFromDateTime?.toISOString() ?? '',
     description: data.description ?? undefined,
     organization: QuestionnairesOrganizationEnum.LSH,
@@ -85,11 +86,12 @@ export const mapLshQuestionnaireListItem = (
   sentDate: data.validFromDateTime?.toISOString() ?? '',
   organization: QuestionnairesOrganizationEnum.LSH,
   department: data.department ?? undefined,
-  status: data.answerDateTime
-    ? QuestionnairesStatusEnum.answered
-    : data.validToDateTime != null && data.validToDateTime < new Date()
-    ? QuestionnairesStatusEnum.expired
-    : QuestionnairesStatusEnum.notAnswered,
+  status:
+    data.validToDateTime != null && data.validToDateTime < new Date()
+      ? QuestionnairesStatusEnum.expired
+      : data.answerDateTime
+      ? QuestionnairesStatusEnum.answered
+      : QuestionnairesStatusEnum.notAnswered,
   lastSubmitted: data.answerDateTime ?? undefined,
   lastSubmissionId: data.answerDateTime ? data.gUID ?? undefined : undefined,
 })

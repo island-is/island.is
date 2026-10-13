@@ -9,6 +9,13 @@
     "lint": {
       "executor": "@nx/eslint:lint"
     },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/portals/my-pages/air-discount/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/portals/my-pages/air-discount/codegen.yml"
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": [

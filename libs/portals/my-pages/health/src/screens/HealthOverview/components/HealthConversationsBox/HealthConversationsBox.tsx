@@ -10,8 +10,10 @@ import { formatDate, LinkResolver, m } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { ApiScope } from '@island.is/auth/scopes'
+import cn from 'classnames'
 import { useGetHealthConversationsQuery } from '../../../HealthConversations/HealthConversations.generated'
 import ConversationAvatar from '../../../HealthConversations/components/ConversationAvatar'
+import * as listStyles from '../../../HealthConversations/HealthConversations.css'
 import { HealthPaths } from '../../../../lib/paths'
 import { messages } from '../../../../lib/messages'
 import * as styles from './HealthConversationsBox.css'
@@ -58,13 +60,12 @@ export const HealthConversationsBox = ({ limit }: Props) => {
 
   const { data, loading, error } = useGetHealthConversationsQuery({
     fetchPolicy: 'network-only',
-    variables: { input: {} },
+    variables: { input: { limit } },
     skip: !hasHealthScope,
   })
 
-  const conversations = (
-    data?.healthDirectorateHealthConversations ?? []
-  ).slice(0, limit)
+  const conversations =
+    data?.healthDirectoratePaginatedHealthConversations?.data ?? []
 
   return (
     <Box
@@ -73,7 +74,8 @@ export const HealthConversationsBox = ({ limit }: Props) => {
       borderRadius="large"
       borderWidth="standard"
       borderColor="blue200"
-      paddingY={3}
+      paddingTop={[2, 2, 3]}
+      paddingBottom={3}
       height="full"
     >
       {!loading && !hasHealthScope && (
@@ -87,25 +89,47 @@ export const HealthConversationsBox = ({ limit }: Props) => {
         justifyContent="spaceBetween"
         alignItems="center"
         marginBottom={2}
-        paddingX={3}
+        paddingX={[2, 2, 3]}
       >
-        <LinkResolver href={HealthPaths.HealthConversations}>
+        <LinkResolver
+          href={HealthPaths.HealthConversations}
+          className={styles.headerLink}
+        >
           <Box
             display="flex"
             alignItems="center"
             columnGap={2}
             overflow="hidden"
           >
-            <Icon icon="mail" type="outline" color="blue400" size="medium" />
+            <Icon
+              icon="chatbubble"
+              type="outline"
+              color="blue400"
+              size="medium"
+            />
             <Text variant="h4" as="h2" color="blue400" truncate>
               {formatMessage(messages.healthConversationsBoxTitle)}
             </Text>
           </Box>
         </LinkResolver>
+        {hasHealthScope && (
+          <LinkResolver
+            href={HealthPaths.HealthConversations}
+            aria-label={formatMessage(messages.seeAllMessages)}
+            className={styles.headerLink}
+          >
+            <Icon
+              icon="arrowForward"
+              type="filled"
+              color="blue400"
+              size="medium"
+            />
+          </LinkResolver>
+        )}
       </Box>
 
       {loading && (
-        <Box marginTop={4} paddingX={3}>
+        <Box marginTop={4} paddingX={[2, 2, 3]}>
           <SkeletonLoader
             space={2}
             repeat={4}
@@ -138,7 +162,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
       {!loading &&
         hasHealthScope &&
         !error &&
-        conversations.map((item) => {
+        conversations.map((item, index) => {
           const unread = !item.isRead
           return (
             <LinkResolver
@@ -149,15 +173,21 @@ export const HealthConversationsBox = ({ limit }: Props) => {
               )}
               className={styles.conversationLink}
             >
-              <Box paddingX={3}>
+              <Box paddingX={[0, 0, 3]}>
                 <Box
                   display="flex"
                   alignItems="center"
                   columnGap={2}
                   borderTopWidth="standard"
                   borderColor="blue200"
-                  style={{ paddingTop: 12, paddingBottom: 12 }}
-                  className={unread ? styles.unreadRow : undefined}
+                  paddingY={2}
+                  paddingLeft={2}
+                  paddingRight={2}
+                  className={cn(
+                    listStyles.conversationRow,
+                    unread && styles.unreadRow,
+                    index === 0 && styles.firstRow,
+                  )}
                 >
                   <ConversationAvatar
                     variant="organization"
@@ -173,7 +203,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                     >
                       <Box overflow="hidden">
                         <Text variant="medium" truncate>
-                          {item.organization?.name}
+                          {item.groupName?.trim() || item.organization?.name}
                         </Text>
                       </Box>
                       {item.lastMessageSentAt && (
@@ -190,12 +220,12 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                       truncate
                     >
                       {item.title}
-                      {unread && (
-                        <VisuallyHidden>
-                          {` - ${formatMessage(m.notificationUnread)}`}
-                        </VisuallyHidden>
-                      )}
                     </Text>
+                    {unread && (
+                      <VisuallyHidden>
+                        {` - ${formatMessage(m.notificationUnread)}`}
+                      </VisuallyHidden>
+                    )}
                   </Box>
                 </Box>
               </Box>

@@ -31,9 +31,14 @@ describe('CaseController - Create guards', () => {
 })
 
 describe('CaseController - Update guards', () => {
+  // RolesGuard stays ahead of the locking read: the six update rules are
+  // field rules with no canActivate, so none reads request.case, and a caller
+  // the route has no rule for is rejected before a FOR UPDATE lock is taken.
+  // updateRolesRules.spec.ts pins that, and updateGuardChain.spec.ts runs the
+  // chain - this only pins the declaration.
   verifyGuards(CaseController, 'update', [
     RolesGuard,
-    CaseExistsGuard,
+    CaseExistsForUpdateGuard,
     CaseWriteGuard,
   ])
 })
@@ -272,12 +277,16 @@ describe('CaseController - Extend guards', () => {
 })
 
 describe('CaseController - Split defendant from case guards', () => {
+  // RolesGuard must stay ahead of the case-exists guard, which is where the
+  // write lock is taken: this route's rules are bare roles, so it can reject a
+  // caller the route has no rule for without reading the case. The rules spec
+  // pins that, and the guard-chain spec runs the chain.
   verifyGuards(
     CaseController,
     'splitDefendantFromCase',
     [
       RolesGuard,
-      CaseExistsGuard,
+      CaseExistsForUpdateGuard,
       CaseTypeGuard,
       CaseWriteGuard,
       DefendantExistsGuard,

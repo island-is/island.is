@@ -128,7 +128,7 @@ export const Answered: FC<AnsweredProps> = ({ answers }) => {
                   : answer.answers.map((a) => formatValue(a.label ?? a.value)),
               type: 'text' as const,
               boldValue: false,
-              boldTitle: false,
+              boldTitle: true,
               splitValue: 'new-line' as const,
             }
           }) ?? []),

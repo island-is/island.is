@@ -1,13 +1,9 @@
-import {
-  Application,
-  ApplicationRole,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
+import { Application, ApplicationRole } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
-import { DEV_INSTITUTION_TESTER_NATIONAL_ID, Roles } from './constants'
+import { Roles } from './constants'
 import { getRejectedAssigneeNationalIds } from './assigneeRejectionUtils'
-import { isHousingBenefitsNonProduction } from './prerequisiteMockDataUtils'
+import { assigneeExternalDataKey } from './assigneeUtils'
 
 const hasAssigneeCompletedPrereq = (
   application: Application,
@@ -16,7 +12,7 @@ const hasAssigneeCompletedPrereq = (
   const { externalData, answers } = application
 
   const assigneeRegistry = externalData[
-    `${normalizedNationalId}.assigneeNationalRegistry`
+    assigneeExternalDataKey(normalizedNationalId, 'assigneeNationalRegistry')
   ] as { status?: string; data?: unknown } | undefined
   const hasNationalRegistry =
     assigneeRegistry != null &&
@@ -25,9 +21,18 @@ const hasAssigneeCompletedPrereq = (
     typeof assigneeRegistry.data === 'object' &&
     Object.keys(assigneeRegistry.data as object).length > 0
   const hasUserProfile =
-    !!externalData[`${normalizedNationalId}.assigneeUserProfile`]?.data
+    !!externalData[
+      assigneeExternalDataKey(normalizedNationalId, 'assigneeUserProfile')
+    ]?.data
+  const taxReturn = externalData[
+    assigneeExternalDataKey(normalizedNationalId, 'assigneeTaxReturn')
+  ] as { status?: string; data?: unknown } | undefined
   const hasTaxReturn =
-    !!externalData[`${normalizedNationalId}.assigneeTaxReturn`]?.data
+    taxReturn != null &&
+    taxReturn.status !== 'failure' &&
+    taxReturn.data != null &&
+    typeof taxReturn.data === 'object' &&
+    Object.keys(taxReturn.data as object).length > 0
 
   const hasApprovedExternalData =
     getValueViaPath<boolean>(
@@ -50,18 +55,6 @@ export const mapUserToRole = (
   const normalizedNationalId = kennitala.isValid(nationalId)
     ? kennitala.sanitize(nationalId)
     : nationalId
-
-  const isHmsInstitution =
-    normalizedNationalId ===
-    kennitala.sanitize(InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN)
-  const isDevInstitutionTester =
-    isHousingBenefitsNonProduction() &&
-    normalizedNationalId ===
-      kennitala.sanitize(DEV_INSTITUTION_TESTER_NATIONAL_ID)
-
-  if (isHmsInstitution || isDevInstitutionTester) {
-    return Roles.INSTITUTION
-  }
 
   if (
     nationalId === application.applicant ||

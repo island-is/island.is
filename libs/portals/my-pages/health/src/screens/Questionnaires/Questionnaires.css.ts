@@ -1,4 +1,4 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 
 export const select = style({
@@ -7,8 +7,20 @@ export const select = style({
   paddingTop: 0,
 })
 
-export const button = style({
-  minWidth: 175, // minWidth from design
+export const button = style(
+  themeUtils.responsiveStyle({
+    xs: {
+      minWidth: 140, // minWidth from design
+    },
+    md: {
+      minWidth: 175, // minWidth from design
+    },
+  }),
+)
+
+// Same max width as Filter's fluid input so both tabs match
+export const searchInput = style({
+  maxWidth: 420,
 })
 
 export const toggleBox = style({})

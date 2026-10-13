@@ -11,6 +11,7 @@ import {
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core, titles } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   CourtArrangements,
@@ -26,7 +27,6 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -41,7 +41,7 @@ import {
   useCreateSubpoenas,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { canSkipArraignmentSummons as isArraignmentSummonsSkippable } from '@island.is/judicial-system-web/src/utils/utils'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -50,7 +50,7 @@ import { pdfButtonGrid } from './Subpoena.css'
 
 export interface Updates {
   defendants?: Defendant[] | null
-  theCase: Case
+  theCase: WorkingCase
 }
 
 interface ModalContent {
@@ -437,7 +437,7 @@ const Subpoena: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           {updates?.defendants && (
             <SubpoenaType
               subpoenaItems={updates?.defendants?.map((defendant) => ({

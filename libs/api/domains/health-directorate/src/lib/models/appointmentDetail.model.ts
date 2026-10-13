@@ -61,4 +61,11 @@ export class AppointmentDetail {
       'Reason cancellation is blocked; only set when canCancel is false',
   })
   cancelBlockedReason?: AppointmentCancelBlockedReasonEnum
+
+  @Field(() => GraphQLISODateTime, {
+    nullable: true,
+    description:
+      'Deadline for online cancellation; may be in the past when the deadline has expired',
+  })
+  canCancelBefore?: Date
 }

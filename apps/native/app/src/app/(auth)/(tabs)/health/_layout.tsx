@@ -81,9 +81,11 @@ export default function HealthLayout() {
           }),
         }}
       />
-      {/* Legacy health screen from the old app */}
+      {/* The old app's medicine screen: certificates only, and the
+          destination whenever the medicine feature flags are off. Remove it
+          once those flags are permanently on. */}
       <Stack.Screen
-        name="medicine/legacy"
+        name="medicine/certificates"
         options={{
           title: intl.formatMessage({ id: 'health.drugCertificates.title' }),
         }}
@@ -91,7 +93,7 @@ export default function HealthLayout() {
       <Stack.Screen
         name="medicine/prescriptions/index"
         options={{
-          title: intl.formatMessage({ id: 'health.drugCertificates.title' }),
+          title: intl.formatMessage({ id: 'health.prescriptions.title' }),
         }}
       />
       <Stack.Screen

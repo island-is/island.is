@@ -71,7 +71,6 @@ export class UserService {
         // We have access to auth if a user is logged in
         custodians = [
           ...(await this.nationalRegistryService.getCustodians(
-            auth,
             user.nationalId,
           )),
         ]
@@ -105,7 +104,7 @@ export class UserService {
     isExplicit?: boolean,
     isManual?: boolean,
   ): Promise<T | null> {
-    const user = await this.nationalRegistryService.getUser(nationalId, auth)
+    const user = await this.nationalRegistryService.getUser(nationalId)
     if (!user) {
       return null
     }

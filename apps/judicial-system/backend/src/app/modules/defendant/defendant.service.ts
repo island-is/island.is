@@ -1,29 +1,46 @@
-import { literal, Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseState,
-  CaseType,
+  AppealCaseState,
+  AppealCaseTransition,
+  CaseIndictmentRulingDecision,
   DefendantEventType,
   DefendantNotificationType,
   DefenderChoice,
+  IndictmentCaseReviewDecision,
   isIndictmentCase,
   isPrisonAdminUser,
+  isRequestCase,
   RequestCaseNotificationType,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware'
+import {
+  buildAdvocateConfirmedEvent,
+  hasStandingVerdictAppeal,
+  namesADifferentAdvocate,
+} from '../appeal-case/appealCase.helpers'
+import { AppealCaseService } from '../appeal-case/appealCase.service'
 import { CourtService } from '../court'
 import {
+  AppealCase,
+  AppealEventLogRepositoryService,
   Case,
+  CaseFileRepositoryService,
+  CaseRepositoryService,
   Defendant,
   DefendantEventLog,
   DefendantEventLogRepositoryService,
@@ -34,13 +51,19 @@ import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { DeliverResponse } from './models/deliver.response'
+import { getMostPermissiveRequestSharedWithDefender } from './requestSharedWithDefender.logic'
 
 @Injectable()
 export class DefendantService {
   constructor(
     private readonly defendantRepositoryService: DefendantRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
+    private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
+    private readonly caseRepositoryService: CaseRepositoryService,
+    private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly courtService: CourtService,
+    @Inject(forwardRef(() => AppealCaseService))
+    private readonly appealCaseService: AppealCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -48,7 +71,7 @@ export class DefendantService {
     theCase: Case,
     user: User,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -76,7 +99,7 @@ export class DefendantService {
     defendant: Defendant,
     user: User,
   ): void {
-    addMessagesToQueue(
+    queueMessagesAfterCommit(
       {
         type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
         user,
@@ -101,7 +124,7 @@ export class DefendantService {
         ? DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN
         : DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN
 
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.DEFENDANT_NOTIFICATION,
       caseId,
       elementId: defendant.id,
@@ -133,6 +156,13 @@ export class DefendantService {
         user,
       )
       this.addMessagesForDeliverDefendantToCourtToQueue(updatedDefendant, user)
+    } else if (
+      updatedDefendant.defenderEmail !== oldDefendant.defenderEmail ||
+      updatedDefendant.defenderName !== oldDefendant.defenderName
+    ) {
+      // Defender email or name changed on this defendant — re-deliver defender info to court.
+      // Case-level defender field changes still trigger via case.service (dual-write era).
+      this.addMessagesForDeliverDefendantToCourtToQueue(updatedDefendant, user)
     }
   }
 
@@ -151,7 +181,7 @@ export class DefendantService {
       !oldDefendant.isDefenderChoiceConfirmed
     ) {
       // Defender choice was just confirmed by the court
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDANT,
         user,
         caseId: theCase.id,
@@ -165,14 +195,14 @@ export class DefendantService {
         // Defender was just confirmed by judge
         if (!oldDefendant.isDefenderChoiceConfirmed) {
           // send general defender assignment email
-          addMessagesToQueue({
+          queueMessagesAfterCommit({
             type: MessageType.DEFENDANT_NOTIFICATION,
             caseId: theCase.id,
             body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
             elementId: updatedDefendant.id,
           })
           // send a notification to follow-up on scheduled court date
-          addMessagesToQueue({
+          queueMessagesAfterCommit({
             type: MessageType.DEFENDANT_NOTIFICATION,
             caseId: theCase.id,
             user,
@@ -211,8 +241,19 @@ export class DefendantService {
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
+    // Seed sharing timing from the case for request cases so a defendant
+    // added mid-lifecycle starts aligned. Does not touch other defendants —
+    // case→all sync still only writes this field when the case update sets it.
     const defendant = await this.defendantRepositoryService.create(
-      { ...defendantToCreate, caseId: theCase.id },
+      {
+        ...defendantToCreate,
+        caseId: theCase.id,
+        ...(isRequestCase(theCase.type)
+          ? {
+              requestSharedWithDefender: theCase.requestSharedWithDefender,
+            }
+          : {}),
+      },
       { transaction },
     )
 
@@ -251,6 +292,14 @@ export class DefendantService {
       transaction,
     )
 
+    if (update.requestSharedWithDefender !== undefined) {
+      await this.mirrorMostPermissiveRequestSharedWithDefenderToCase(
+        theCase,
+        updatedDefendant,
+        transaction,
+      )
+    }
+
     this.addMessagesForRequestCaseUpdateDefendantToQueue(
       theCase,
       updatedDefendant,
@@ -261,11 +310,43 @@ export class DefendantService {
     return updatedDefendant
   }
 
+  /**
+   * Dual-write: when a defendant's sharing timing changes, keep the case
+   * column as the most permissive value across defendants so existing case
+   * readers stay correct until they flip to the defendant column. Uses the
+   * case repository directly so we do not re-enter case.service.update and
+   * sync the mirror back onto every defendant.
+   */
+  private async mirrorMostPermissiveRequestSharedWithDefenderToCase(
+    theCase: Case,
+    updatedDefendant: Defendant,
+    transaction: Transaction,
+  ): Promise<void> {
+    const defendants = (theCase.defendants ?? []).map((d) =>
+      d.id === updatedDefendant.id ? updatedDefendant : d,
+    )
+
+    const mostPermissive = getMostPermissiveRequestSharedWithDefender(
+      defendants.map((d) => d.requestSharedWithDefender),
+    )
+
+    if (mostPermissive === (theCase.requestSharedWithDefender ?? null)) {
+      return
+    }
+
+    await this.caseRepositoryService.update(
+      theCase.id,
+      { requestSharedWithDefender: mostPermissive },
+      { transaction },
+    )
+  }
+
   async createDefendantEvent(
     event: {
       caseId: string
       defendantId: string
       eventType: DefendantEventType
+      verdictId?: string
       user?: User
     },
     transaction: Transaction,
@@ -277,6 +358,7 @@ export class DefendantService {
         event.defendantId,
         event.user,
         transaction,
+        ...(event.verdictId ? [{ verdictId: event.verdictId }] : []),
       )
 
       return
@@ -293,6 +375,7 @@ export class DefendantService {
     updatedDefendant: UpdateDefendantDto,
     user: User,
     transaction: Transaction,
+    verdictAppealCase = theCase.verdictAppealCase,
   ) {
     if (
       updatedDefendant.indictmentReviewDecision &&
@@ -309,6 +392,101 @@ export class DefendantService {
         transaction,
       )
     }
+
+    // The court of appeals confirming this defendant's defender for the
+    // appeal. Written in the same transaction as the confirmation so the two
+    // cannot drift: the letter of appointment is signed by whoever confirmed
+    // and dated the day they did, and the defendant row keeps neither.
+    //
+    // No verdict appeal means no proceeding to record it against, which a
+    // court of appeals user reaching this defendant through a ruling appeal
+    // alone would be. The confirmation still saves.
+    if (
+      updatedDefendant.isAppealDefenderConfirmed &&
+      !defendant.isAppealDefenderConfirmed &&
+      verdictAppealCase
+    ) {
+      await this.appealEventLogRepositoryService.create(
+        buildAdvocateConfirmedEvent({
+          theCase,
+          appealCase: verdictAppealCase,
+          party: { defendantId: defendant.id },
+          actor: user,
+        }),
+        { transaction },
+      )
+    }
+  }
+
+  /**
+   * Files or withdraws the prosecution's verdict appeal for this defendant,
+   * from the review decision that is being saved and in the same transaction.
+   *
+   * For the public prosecution the reviewer's decision *is* the appeal, so the
+   * two must not be able to drift apart: deciding to appeal files one, taking
+   * the decision back withdraws it, and either the pair lands or neither does.
+   *
+   * Only ever reached when the API asked for it - it reads the
+   * INDICTMENT_APPEAL feature, the backend does not.
+   */
+  private async handleVerdictAppealUpdates(
+    theCase: Case,
+    defendant: Defendant,
+    update: UpdateDefendantDto,
+    user: User,
+    transaction: Transaction,
+  ): Promise<AppealCase | undefined> {
+    const decision = update.indictmentReviewDecision
+
+    // Only a decision that actually changed is an act of review, and only a
+    // ruling is appealed this way - a fine is appealed as a ruling order.
+    if (
+      decision === undefined ||
+      decision === defendant.indictmentReviewDecision ||
+      theCase.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING
+    ) {
+      return
+    }
+
+    if (decision === IndictmentCaseReviewDecision.APPEAL) {
+      // Handed back rather than dropped: one request may both register the
+      // appeal and confirm an advocate on it, and the confirmation has no
+      // proceeding to record itself against until this has run.
+      return this.appealCaseService.create(
+        theCase,
+        user,
+        undefined,
+        transaction,
+        {
+          defendantId: defendant.id,
+        },
+      )
+    }
+
+    // Changed away from an appeal. A decision recorded as APPEAL before verdict
+    // appeals were switched on has no appeal case and no event behind it -
+    // there is nothing to withdraw, and asking to withdraw it would be refused.
+    if (
+      defendant.indictmentReviewDecision !==
+        IndictmentCaseReviewDecision.APPEAL ||
+      !theCase.verdictAppealCase ||
+      !hasStandingVerdictAppeal(
+        theCase.verdictAppealCase,
+        defendant.id,
+        'PROSECUTION',
+      )
+    ) {
+      return
+    }
+
+    await this.appealCaseService.transition(
+      theCase,
+      theCase.verdictAppealCase,
+      AppealCaseTransition.WITHDRAW_APPEAL,
+      user,
+      transaction,
+      defendant.id,
+    )
   }
 
   private async updateIndictmentCaseDefendant(
@@ -317,11 +495,31 @@ export class DefendantService {
     update: UpdateDefendantDto,
     user: User,
     transaction: Transaction,
+    registerVerdictAppeal?: boolean,
   ): Promise<Defendant> {
+    // A confirmation names a person, so one cannot survive the person
+    // changing. The screen makes the court confirm again; the API has to
+    // enforce the same rule, or the letter would print the new defender over
+    // the signatory and date of the confirmation that named the old one.
+    const effectiveUpdate =
+      defendant.isAppealDefenderConfirmed &&
+      namesADifferentAdvocate(
+        {
+          name: defendant.appealDefenderName,
+          nationalId: defendant.appealDefenderNationalId,
+        },
+        {
+          name: update.appealDefenderName,
+          nationalId: update.appealDefenderNationalId,
+        },
+      )
+        ? { ...update, isAppealDefenderConfirmed: false }
+        : update
+
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
       defendant.id,
-      update,
+      effectiveUpdate,
       transaction,
     )
 
@@ -358,12 +556,27 @@ export class DefendantService {
       user,
     )
 
+    // Before the event log, not after: a request that registers the appeal and
+    // confirms an advocate on it in one go has no proceeding to record the
+    // confirmation against until this has run. The two are independent
+    // otherwise - this reads the review decision, that writes events.
+    const registeredVerdictAppeal = registerVerdictAppeal
+      ? await this.handleVerdictAppealUpdates(
+          theCase,
+          defendant,
+          update,
+          user,
+          transaction,
+        )
+      : undefined
+
     await this.handleEventLogUpdates(
       theCase,
       defendant,
       updatedDefendant,
       user,
       transaction,
+      registeredVerdictAppeal ?? theCase.verdictAppealCase,
     )
 
     if (
@@ -394,10 +607,15 @@ export class DefendantService {
   async update(
     theCase: Case,
     defendant: Defendant,
-    update: UpdateDefendantDto,
+    updateWithIntent: UpdateDefendantDto,
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
+    // The intent to file or withdraw the prosecution's verdict appeal rides
+    // along with the decision but is not a defendant field, so it never reaches
+    // the database update.
+    const { registerVerdictAppeal, ...updateFields } = updateWithIntent
+    let update: UpdateDefendantDto = updateFields
     // Closing without enforcement is only valid for indictment defendants and
     // is irreversible through this endpoint - reopening a case resets the flag
     // in the case reopen workflow.
@@ -432,6 +650,22 @@ export class DefendantService {
       update = rest
     }
 
+    // The reviewer's decision on an indictment verdict is the prosecution's
+    // appeal or its absence. Once the court of appeals has received the verdict
+    // appeal the decision is made; the web creates and withdraws the appeal
+    // from the decision, and this keeps the two from drifting apart.
+    if (
+      update.indictmentReviewDecision !== undefined &&
+      update.indictmentReviewDecision !== defendant.indictmentReviewDecision &&
+      theCase.verdictAppealCase &&
+      theCase.verdictAppealCase.appealState !== AppealCaseState.APPEALED &&
+      theCase.verdictAppealCase.appealState !== AppealCaseState.WITHDRAWN
+    ) {
+      throw new BadRequestException(
+        'The review decision cannot change once the court of appeals has received the verdict appeal',
+      )
+    }
+
     if (isIndictmentCase(theCase.type)) {
       return this.updateIndictmentCaseDefendant(
         theCase,
@@ -439,6 +673,7 @@ export class DefendantService {
         update,
         user,
         transaction,
+        registerVerdictAppeal,
       )
     } else {
       return this.updateRequestCaseDefendant(
@@ -495,7 +730,7 @@ export class DefendantService {
     )
 
     if (updatedDefendant.defenderChoice === DefenderChoice.DELEGATE) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DEFENDANT_NOTIFICATION,
         caseId: theCase.id,
         elementId: updatedDefendant.id,
@@ -510,7 +745,7 @@ export class DefendantService {
         updatedDefendant.defenderNationalId !== defendant.defenderNationalId)
     ) {
       // Notify the court if the defendant has changed the defender choice
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DEFENDANT_NOTIFICATION,
         caseId: theCase.id,
         elementId: updatedDefendant.id,
@@ -521,12 +756,21 @@ export class DefendantService {
     return updatedDefendant
   }
 
+  // A defendant's files go with the defendant, so they are deleted first in
+  // the same transaction - the delete of the defendant would otherwise fail on
+  // the case file foreign key.
   async delete(
     theCase: Case,
     defendantId: string,
     user: User,
     transaction: Transaction,
   ): Promise<boolean> {
+    await this.caseFileRepositoryService.deleteAllForDefendant(
+      theCase.id,
+      defendantId,
+      { transaction },
+    )
+
     await this.defendantRepositoryService.delete(theCase.id, defendantId, {
       transaction,
     })
@@ -544,6 +788,49 @@ export class DefendantService {
     return true
   }
 
+  async syncDefenderToAllDefendants(
+    caseId: string,
+    defenderFields: {
+      defenderName?: string | null
+      defenderNationalId?: string | null
+      defenderEmail?: string | null
+      defenderPhoneNumber?: string | null
+      defenderChoice?: DefenderChoice | null
+      requestSharedWithDefender?: RequestSharedWithDefender | null
+    },
+    transaction: Transaction,
+  ): Promise<void> {
+    const update: UpdateDefendant = {}
+
+    if (defenderFields.defenderName !== undefined) {
+      update.defenderName = defenderFields.defenderName
+    }
+    if (defenderFields.defenderNationalId !== undefined) {
+      update.defenderNationalId = defenderFields.defenderNationalId
+    }
+    if (defenderFields.defenderEmail !== undefined) {
+      update.defenderEmail = defenderFields.defenderEmail
+    }
+    if (defenderFields.defenderPhoneNumber !== undefined) {
+      update.defenderPhoneNumber = defenderFields.defenderPhoneNumber
+    }
+    if (defenderFields.defenderChoice !== undefined) {
+      update.defenderChoice = defenderFields.defenderChoice
+    }
+    if (defenderFields.requestSharedWithDefender !== undefined) {
+      update.requestSharedWithDefender =
+        defenderFields.requestSharedWithDefender
+    }
+
+    if (Object.keys(update).length === 0) {
+      return
+    }
+
+    await this.defendantRepositoryService.updateAllForCase(caseId, update, {
+      transaction,
+    })
+  }
+
   async isDefendantInActiveCustody(defendants?: Defendant[]): Promise<boolean> {
     if (
       !defendants ||
@@ -553,41 +840,9 @@ export class DefendantService {
       return false
     }
 
-    const defendantsInCustody = await this.defendantRepositoryService.findAll({
-      include: [
-        {
-          model: Case,
-          as: 'case',
-          where: {
-            state: CaseState.ACCEPTED,
-            type: CaseType.CUSTODY,
-            valid_to_date: { [Op.gte]: literal('current_date') },
-          },
-        },
-      ],
-      where: { nationalId: defendants[0].nationalId },
-    })
-
-    return defendantsInCustody.some((d) => d.case)
-  }
-
-  findLatestDefendantByDefenderNationalId(
-    nationalId: string,
-  ): Promise<Defendant | null> {
-    return this.defendantRepositoryService.findOne({
-      include: [
-        {
-          model: Case,
-          as: 'case',
-          where: {
-            state: { [Op.not]: CaseState.DELETED },
-            isArchived: false,
-          },
-        },
-      ],
-      where: { defenderNationalId: nationalId },
-      order: [['created', 'DESC']],
-    })
+    return this.defendantRepositoryService.existsInActiveCustody(
+      defendants[0].nationalId,
+    )
   }
 
   async deliverDefendantToCourt(
@@ -611,7 +866,7 @@ export class DefendantService {
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
         defendant.nationalId.replace('-', ''),
-        theCase.defenderEmail,
+        defendant.defenderEmail,
       )
       .then(() => {
         return { delivered: true }
@@ -639,8 +894,8 @@ export class DefendantService {
         theCase.court?.name,
         theCase.courtCaseNumber,
         defendant.nationalId,
-        theCase.defenderName,
-        theCase.defenderEmail,
+        defendant.defenderName,
+        defendant.defenderEmail,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {

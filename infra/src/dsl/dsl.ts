@@ -29,6 +29,7 @@ import type {
 import { bffConfig } from './bff'
 import { logger } from '../logging'
 import { COMMON_SECRETS } from './consts'
+import { validateReplicaCount } from './replica-count'
 
 /**
  * Allows you to make some properties of a type optional.
@@ -314,6 +315,7 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   replicaCount(replicaCount: ReplicaCount) {
+    validateReplicaCount(replicaCount)
     this.serviceDef.replicaCount = replicaCount
     return this
   }

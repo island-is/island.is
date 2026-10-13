@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import Cookie from 'js-cookie'
 
-import { toast } from '@island.is/island-ui/core'
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { type Lawyer } from '@island.is/judicial-system/types'
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 export const useGetLawyers = (shouldFetch?: boolean): Lawyer[] => {
   const { formatMessage } = useIntl()

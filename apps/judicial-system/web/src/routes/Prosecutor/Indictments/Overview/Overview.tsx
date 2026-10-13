@@ -11,7 +11,6 @@ import {
   Checkbox,
   RadioButton,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
@@ -22,7 +21,7 @@ import {
   isCompletedCase,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
-import { core, errors, titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import type { FormFooterAction } from '@island.is/judicial-system-web/src/components'
 import {
   AllIndictmentCaseFiles,
@@ -53,7 +52,7 @@ import {
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCaseModal'
 import ReturnIndictmentModal from './ReturnIndictmentModal/ReturnIndictmentModal'
@@ -134,7 +133,6 @@ const Overview: FC = () => {
     )
 
     if (!caseTransitioned) {
-      toast.error(formatMessage(errors.transitionCase))
       return false
     }
 
@@ -390,7 +388,7 @@ const Overview: FC = () => {
               />
             </Box>
           )}
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <AppealRulingModifiedAlert />
           <Box component="section">
             <InfoCardActiveIndictment

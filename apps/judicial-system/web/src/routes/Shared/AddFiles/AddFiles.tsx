@@ -10,11 +10,14 @@ import {
   PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  type InstitutionUser,
   isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
+  isProsecutorUser,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -30,10 +33,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
-import type {
-  Case,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseFileCategory,
   TrackedNotificationType,
@@ -53,8 +53,15 @@ import {
 import { SelectCaseFileRepresentative } from './SelectCaseFileRepresentative'
 import { strings } from './AddFiles.strings'
 
-const getUserProps = (user: User | undefined, workingCase: Case) => {
-  const getCaseInfoNode = (workingCase: Case) => (
+// Mirrors the CASE_FILES_UPDATED entries in notification rolesRules.
+// District court users (and prosecutor representatives) reuse this screen for
+// uploads but are not allowed to send that notification type — calling it
+// produces a swallowed 403 in Datadog.
+const canSendCaseFilesUpdatedNotification = (user?: InstitutionUser): boolean =>
+  isProsecutorUser(user) || isDefenceUser(user)
+
+const getUserProps = (user: User | undefined, workingCase: WorkingCase) => {
+  const getCaseInfoNode = (workingCase: WorkingCase) => (
     <Box marginBottom={5}>
       <ProsecutorCaseInfo workingCase={workingCase} />
     </Box>
@@ -76,7 +83,7 @@ const getUserProps = (user: User | undefined, workingCase: Case) => {
   } else if (isDistrictCourtUser(user)) {
     return {
       previousRoute: DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
-      getCaseInfoNode: (workingCase: Case) => (
+      getCaseInfoNode: (workingCase: WorkingCase) => (
         <CourtCaseInfo workingCase={workingCase} />
       ),
       hasFileRepresentativeSelection: true,
@@ -189,7 +196,10 @@ const AddFiles: FC = () => {
       updateUploadFile,
     )
 
-    if (uploadResult !== 'NONE_SUCCEEDED') {
+    if (
+      uploadResult !== 'NONE_SUCCEEDED' &&
+      canSendCaseFilesUpdatedNotification(user)
+    ) {
       // Some files were added successfully so we send a notification
       await sendNotification(
         workingCase.id,
@@ -207,6 +217,7 @@ const AddFiles: FC = () => {
     sendNotification,
     updateUploadFile,
     uploadFiles,
+    user,
     workingCase.id,
     router,
     previousRoute,
@@ -247,7 +258,6 @@ const AddFiles: FC = () => {
           onDelete={removeUploadFile}
           onRename={handleRename}
           setEditCount={setEditCount}
-          isBottomComponent={!hasFileRepresentativeSelection}
         />
         {hasFileRepresentativeSelection && (
           <SelectCaseFileRepresentative

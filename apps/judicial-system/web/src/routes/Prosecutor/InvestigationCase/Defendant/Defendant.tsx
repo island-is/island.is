@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { v4 as uuid } from 'uuid'
 
-import { Box, Button, LoadingDots, toast } from '@island.is/island-ui/core'
+import { Box, Button, LoadingDots } from '@island.is/island-ui/core'
 import {
   PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE,
@@ -14,6 +14,7 @@ import {
   defendant as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   DefenderInfo,
   FormContentContainer,
@@ -27,7 +28,6 @@ import {
   VictimInfo,
 } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -38,7 +38,8 @@ import {
   useSyncDefendantsFromPolice,
   useVictim,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -76,7 +77,7 @@ const Defendant = () => {
 
   const updateDefendantState = useCallback(
     (update: UpdateDefendantInput) => {
-      setWorkingCase((prevWorkingCase: Case) => {
+      setWorkingCase((prevWorkingCase: WorkingCase) => {
         if (!prevWorkingCase.defendants) {
           return prevWorkingCase
         }
@@ -110,30 +111,33 @@ const Defendant = () => {
   )
 
   const handleDeleteDefendant = async (defendant: TDefendant) => {
-    if (workingCase.defendants && workingCase.defendants.length > 1) {
-      if (workingCase.id) {
-        const defendantDeleted = await deleteDefendant(
-          workingCase.id,
-          defendant.id,
-        )
+    if (!workingCase.defendants || workingCase.defendants.length <= 1) {
+      return
+    }
 
-        if (defendantDeleted && workingCase.defendants) {
-          removeDefendantFromState(defendant)
-        } else {
-          // TODO: handle error
-        }
-      } else {
-        removeDefendantFromState(defendant)
+    if (workingCase.id) {
+      const deleted = await deleteDefendant(workingCase.id, defendant.id)
+
+      // The failure has been reported. Keep the defendant in the form so
+      // the deletion can be retried.
+      if (!deleted) {
+        return
       }
     }
+
+    removeDefendantFromState(defendant)
   }
 
+  // The defendant's files are deleted with the defendant
   const removeDefendantFromState = (defendant: TDefendant) => {
     setWorkingCase((prevWorkingCase) => ({
       ...prevWorkingCase,
       defendants:
         prevWorkingCase.defendants &&
         [...prevWorkingCase.defendants].filter((d) => d.id !== defendant.id),
+      caseFiles: prevWorkingCase.caseFiles?.filter(
+        (caseFile) => caseFile.defendantId !== defendant.id,
+      ),
     }))
   }
 
@@ -142,6 +146,13 @@ const Defendant = () => {
   const handleCreateDefendantClick = async () => {
     if (workingCase.id) {
       const defendantId = await createDefendant({ caseId: workingCase.id })
+
+      // The failure has been reported. Adding a defendant the server does
+      // not know about would only make every later save of it fail too.
+      if (!defendantId) {
+        return
+      }
+
       createEmptyDefendant(defendantId)
     } else {
       createEmptyDefendant()
@@ -184,13 +195,13 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo
             workingCase={workingCase}
             hideDefendants
             hideCourt
           />
-          <Box component="section" className={grid({ gap: 3 })}>
+          <Box component="section" className={stack({ gap: 3 })}>
             <Box
               display="flex"
               alignItems="center"

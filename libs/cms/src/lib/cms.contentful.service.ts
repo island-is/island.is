@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { logger } from '@island.is/logging'
 import { GraphQLError } from 'graphql'
 import { Injectable } from '@nestjs/common'

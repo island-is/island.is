@@ -1,6 +1,8 @@
 export { AppealCase } from './models/appealCase.model'
 export { AppealDecision } from './models/appealDecision.model'
 export { AppealEventLog } from './models/appealEventLog.model'
+export { AppealSummons } from './models/appealSummons.model'
+export { AppealSummonsDefendant } from './models/appealSummonsDefendant.model'
 export { Case } from './models/case.model'
 export { CaseArchive } from './models/caseArchive.model'
 export { CaseFile } from './models/caseFile.model'
@@ -35,6 +37,10 @@ export {
   AppealDecisionPartyKey,
 } from './services/appealDecisionRepository.service'
 export { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
+export {
+  AppealSummonsRepositoryService,
+  UpdateAppealSummons,
+} from './services/appealSummonsRepository.service'
 export { CaseRepositoryService } from './services/caseRepository.service'
 export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 export { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
@@ -44,6 +50,7 @@ export {
 } from './services/caseStringRepository.service'
 export {
   CaseFileRepositoryService,
+  CopyCaseFileTarget,
   CreateCaseFile,
   UpdateCaseFile,
   UpdatedCaseFiles,
@@ -119,7 +126,6 @@ export {
 } from './services/victimRepository.service'
 
 export {
-  caseInclude,
   CreateAppealCase,
   UpdateAppealCase,
   UpdateCase,

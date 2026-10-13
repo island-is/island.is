@@ -7,7 +7,6 @@ import {
   FileUploadStatus,
   InputFileUpload,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import {
   DEFENDER_INDICTMENT_CASE_ROUTE,
@@ -50,6 +49,7 @@ import {
   useTargetAppealCaseByRulingFileId,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import {
   getAppealActorText,
   getDefenceUserPartyIds,
@@ -259,7 +259,7 @@ const Statement = () => {
               />
             </Box>
             {!isIndictmentCase(workingCase.type) && isProsecutionUser(user) && (
-              <Box component="section" marginBottom={10}>
+              <Box component="section">
                 <RequestAppealRulingNotToBePublishedCheckbox />
               </Box>
             )}
