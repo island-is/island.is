@@ -1,12 +1,12 @@
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import { COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 import {
   BlueBox,
+  ExpandingSection,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -20,7 +20,6 @@ import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.c
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
-import ExpandingSection from './ExpandingSection'
 import ScheduleCourtSession from './ScheduleCourtSession'
 import type { AppealCourtSession } from './VerdictAppealStatus.logic'
 import {
@@ -129,18 +128,14 @@ const VerdictAppealStatus = () => {
         </div>
         {/* Outside the stack so the gap above the section grows and shrinks
             with it, rather than appearing the instant the section mounts. */}
-        <AnimatePresence initial={false}>
-          {status === Status.COURT_SESSION_SCHEDULED && (
-            <ExpandingSection key="schedule-court-session">
-              <Box paddingTop={5}>
-                <ScheduleCourtSession
-                  session={courtSession}
-                  onChange={setCourtSession}
-                />
-              </Box>
-            </ExpandingSection>
-          )}
-        </AnimatePresence>
+        <ExpandingSection show={status === Status.COURT_SESSION_SCHEDULED}>
+          <Box paddingTop={5}>
+            <ScheduleCourtSession
+              session={courtSession}
+              onChange={setCourtSession}
+            />
+          </Box>
+        </ExpandingSection>
       </FormContentContainer>
       <FormContentContainer isFooter>
         {/* No continue action: this is the last step the court of appeals has
