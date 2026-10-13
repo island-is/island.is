@@ -313,7 +313,6 @@ describe('Card Payment Saga - Shared Steps', () => {
           expect.objectContaining({
             type: 'update',
             metadata: {
-              payFlowId: debtFlow.id,
               dateCreated: '2026-10-12T10:00:00',
             },
           }),
@@ -378,7 +377,6 @@ describe('Card Payment Saga - Shared Steps', () => {
       it('does not finalize again when the registration was made earlier', async () => {
         mockCardPaymentService.settleDebt.mockResolvedValue({
           type: 'registered',
-          payFlowId: debtFlow.id,
           dateCreated: '2026-10-12T10:00:00',
           alreadySettled: true,
         } as never)

@@ -794,7 +794,7 @@ export class PaymentFlowService {
   async logDebtPaymentFinalized(
     paymentFlowId: string,
     paymentMethod: PaymentMethod,
-    registration: { payFlowId: string; dateCreated?: string },
+    registration: { dateCreated?: string },
   ) {
     await this.logPaymentFlowUpdate(
       {
@@ -805,7 +805,6 @@ export class PaymentFlowService {
         reason: 'payment_finalized',
         message: 'Debt payment registered with FJS',
         metadata: {
-          payFlowId: registration.payFlowId,
           dateCreated: registration.dateCreated,
         },
       },

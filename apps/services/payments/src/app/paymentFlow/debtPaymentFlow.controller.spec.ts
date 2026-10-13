@@ -334,7 +334,6 @@ describe('DebtPaymentFlowController', () => {
 
       await app.get(getModelToken(FjsDebtPayment)).create({
         paymentFlowId: flowId,
-        payFlowId: flowId,
         amount: 12500,
         status: 'rejected',
       })

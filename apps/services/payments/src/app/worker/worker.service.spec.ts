@@ -557,7 +557,6 @@ describe('WorkerService', () => {
 
     const registered = {
       type: 'registered',
-      payFlowId: 'debt-card',
       dateCreated: '2026-10-12T10:00:00',
       alreadySettled: false,
     }

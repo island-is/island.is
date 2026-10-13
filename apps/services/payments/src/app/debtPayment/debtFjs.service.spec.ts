@@ -221,9 +221,25 @@ describe('DebtFjsService', () => {
 
       await expect(service.pay(payInput)).resolves.toEqual({
         type: 'registered',
-        payFlowId: validateInput.flowId,
         dateCreated: '2026-10-12T10:00:00',
       })
+      expect(logger.warn).not.toHaveBeenCalled()
+    })
+
+    it('warns when FJS registers the payment under another payFlowId', async () => {
+      financeClient.payDebt.mockResolvedValue({
+        payFlowId: 'another-flow',
+        dateCreated: '2026-10-12T10:00:00',
+      })
+
+      await expect(service.pay(payInput)).resolves.toEqual({
+        type: 'registered',
+        dateCreated: '2026-10-12T10:00:00',
+      })
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('another payFlowId'),
+        { payFlowId: 'another-flow' },
+      )
     })
 
     it('is rejected with the problem on a 400', async () => {

@@ -93,7 +93,6 @@ describe('PaymentFlowService — debt flows for the worker', () => {
     if (status) {
       await fjsDebtPaymentModel.create({
         paymentFlowId: flow.id,
-        payFlowId: flow.id,
         amount: 1000,
         status,
         lastAttemptAt:

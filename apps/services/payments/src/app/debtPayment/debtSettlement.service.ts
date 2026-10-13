@@ -36,7 +36,6 @@ export type DebtSettlementFlow = {
 export type DebtSettlementResult = (
   | {
       type: 'registered'
-      payFlowId: string
       /** Missing when the 202 was lost and FJS only reported the payment as a duplicate. */
       dateCreated?: string
     }
@@ -97,7 +96,6 @@ export class DebtSettlementService {
       where: { paymentFlowId: flow.id },
       defaults: {
         paymentFlowId: flow.id,
-        payFlowId: flow.id,
         status: 'pending',
         attempts: 0,
         hadAmbiguousAttempt: false,
@@ -164,7 +162,6 @@ export class DebtSettlementService {
         })
         return {
           type: 'registered',
-          payFlowId: outcome.payFlowId,
           dateCreated: outcome.dateCreated,
           alreadySettled: false,
         }
@@ -278,7 +275,6 @@ export class DebtSettlementService {
       case 'registered':
         return {
           type: 'registered',
-          payFlowId: row.payFlowId,
           dateCreated: row.dateCreated ?? undefined,
           alreadySettled: true,
         }
@@ -317,7 +313,6 @@ export class DebtSettlementService {
     })
     return {
       type: 'registered',
-      payFlowId: row.payFlowId,
       alreadySettled: false,
     }
   }

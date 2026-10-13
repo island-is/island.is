@@ -1978,7 +1978,6 @@ describe('BankTransferService', () => {
     it('creates the fulfillment without an FJS charge and registers the payment', async () => {
       debtSettlementService.attempt.mockResolvedValue({
         type: 'registered',
-        payFlowId: 'flow-1',
         dateCreated: '2026-10-12T10:00:00',
         alreadySettled: false,
       })
@@ -2016,7 +2015,6 @@ describe('BankTransferService', () => {
       )
       const registered = {
         type: 'registered',
-        payFlowId: 'flow-1',
         dateCreated: '2026-10-12T10:00:00',
         alreadySettled: false,
       }
@@ -2037,7 +2035,6 @@ describe('BankTransferService', () => {
       bankTransferPaymentModel.update.mockResolvedValueOnce([0])
       debtSettlementService.attempt.mockResolvedValue({
         type: 'registered',
-        payFlowId: 'flow-1',
         dateCreated: '2026-10-12T10:00:00',
         alreadySettled: true,
       })

@@ -328,7 +328,6 @@ export class WorkerService {
           'success',
           {
             metadata: {
-              payFlowId: outcome.payFlowId,
               dateCreated: outcome.dateCreated,
             },
           },

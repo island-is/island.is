@@ -64,15 +64,6 @@ export class FjsDebtPayment extends Model<
   @BelongsTo(() => PaymentFlow)
   paymentFlow?: PaymentFlow
 
-  // The payFlowId sent to FJS, the payment flow id
-  @ApiProperty()
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    field: 'pay_flow_id',
-  })
-  payFlowId!: string
-
   @ApiProperty()
   @Column({
     type: DataType.ENUM(

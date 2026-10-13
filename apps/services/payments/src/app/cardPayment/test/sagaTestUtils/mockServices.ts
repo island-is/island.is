@@ -39,7 +39,6 @@ export const createMockCardPaymentService = (
     settleDebt: jest.fn().mockResolvedValue(
       resolved({
         type: 'registered',
-        payFlowId: PAYMENT_FLOW_ID,
         dateCreated: '2026-10-12T10:00:00',
         alreadySettled: false,
       }),

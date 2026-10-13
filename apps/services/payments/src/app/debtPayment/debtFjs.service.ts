@@ -125,11 +125,15 @@ export class DebtFjsService {
         ? await this.financeClient.payDebt(body, { timeoutMs: input.timeoutMs })
         : await this.financeClient.payDebt(body)
 
-      return {
-        type: 'registered',
-        payFlowId: result.payFlowId,
-        dateCreated: result.dateCreated,
+      // FJS knows the payment by the flow id, it should echo it back unchanged
+      if (result.payFlowId !== input.flowId) {
+        this.logger.warn(
+          `[${input.flowId}] FJS registered the debt payment under another payFlowId`,
+          { payFlowId: result.payFlowId },
+        )
       }
+
+      return { type: 'registered', dateCreated: result.dateCreated }
     } catch (error) {
       const http = getHttpErrorDetails(error)
 

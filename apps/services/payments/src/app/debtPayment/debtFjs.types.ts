@@ -37,7 +37,7 @@ export type DebtFjsValidateOutcome =
 
 export type DebtFjsPayOutcome =
   /** 202 Accepted, FJS owns the payment from here. */
-  | { type: 'registered'; payFlowId: string; dateCreated: string }
+  | { type: 'registered'; dateCreated: string }
   /** FJS rejected the payment, permanently. */
   | { type: 'rejected'; problem?: ProblemDetailsDt }
   /** FJS already has a payment with this payFlowId, nothing new was registered. */

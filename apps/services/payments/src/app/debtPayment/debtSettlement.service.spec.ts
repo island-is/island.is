@@ -48,7 +48,6 @@ const valid = {
 }
 const registered = {
   type: 'registered' as const,
-  payFlowId: 'flow',
   dateCreated: '2026-10-12T10:00:00',
 }
 
@@ -139,7 +138,6 @@ describe('DebtSettlementService', () => {
       attempts: 1,
       hadAmbiguousAttempt: false,
       amount: 15000,
-      payFlowId: flow.id,
       dateCreated: registered.dateCreated,
     })
     expect(row?.paymentDate).toBeInstanceOf(Date)
@@ -336,7 +334,6 @@ describe('DebtSettlementService', () => {
 
       expect(outcome).toEqual({
         type: 'registered',
-        payFlowId: flow.id,
         alreadySettled: false,
       })
       expect(pay).toHaveBeenCalledTimes(1)
@@ -361,7 +358,6 @@ describe('DebtSettlementService', () => {
 
       expect(outcome).toEqual({
         type: 'registered',
-        payFlowId: flow.id,
         alreadySettled: false,
       })
       expect((await getRow(flow.id))?.status).toBe('registered')
@@ -430,7 +426,6 @@ describe('DebtSettlementService', () => {
       const flow = await createFlow()
       await fjsDebtPaymentModel.create({
         paymentFlowId: flow.id,
-        payFlowId: flow.id,
         amount: 15000,
         status,
         dateCreated: '2026-10-12T10:00:00',

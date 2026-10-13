@@ -26,11 +26,6 @@ module.exports = {
             },
             onDelete: 'CASCADE',
           },
-          // The payFlowId sent to FJS, the payment flow id.
-          pay_flow_id: {
-            type: Sequelize.STRING,
-            allowNull: false,
-          },
           status: {
             type: Sequelize.ENUM(
               'pending',

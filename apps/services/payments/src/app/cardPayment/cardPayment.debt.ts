@@ -107,7 +107,6 @@ export const notifyPaymentCompleted = async ({
           reason: 'payment_finalized',
           message: 'Debt payment registered with FJS',
           metadata: {
-            payFlowId: settlement.payFlowId,
             dateCreated: settlement.dateCreated,
           },
         },
