@@ -4,6 +4,7 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { ChargeFjsV2ClientModule } from '@island.is/clients/charge-fjs-v2'
 
 import { PaymentFlowController } from './paymentFlow.controller'
+import { DebtPaymentFlowController } from './debtPaymentFlow.controller'
 import { PaymentFlowService } from './paymentFlow.service'
 import { PaymentFlow, PaymentFlowCharge } from './models/paymentFlow.model'
 import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
@@ -16,6 +17,9 @@ import { JwksConfig } from '../jwks/jwks.config'
 import { PaymentFulfillment } from './models/paymentFulfillment.model'
 import { PaymentWorkerEvent } from './models/paymentWorkerEvent.model'
 import { BankTransferPaymentModule } from '../bankTransferPayment/bankTransferPayment.module'
+import { PaymentFlowDebt } from './models/paymentFlowDebt.model'
+import { FjsDebtPayment } from './models/fjsDebtPayment.model'
+import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
 
 @Module({
   imports: [
@@ -27,16 +31,19 @@ import { BankTransferPaymentModule } from '../bankTransferPayment/bankTransferPa
       CardPaymentDetails,
       PaymentFulfillment,
       PaymentWorkerEvent,
+      PaymentFlowDebt,
+      FjsDebtPayment,
     ]),
     ConfigModule.forRoot({
       load: [PaymentFlowModuleConfig, JwksConfig],
     }),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
+    DebtPaymentModule,
     JwksModule,
     forwardRef(() => BankTransferPaymentModule),
   ],
-  controllers: [PaymentFlowController],
+  controllers: [PaymentFlowController, DebtPaymentFlowController],
   providers: [PaymentFlowService],
   exports: [PaymentFlowService, SequelizeModule],
 })

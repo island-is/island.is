@@ -21,6 +21,9 @@ import { JwksConfig } from '../jwks/jwks.config'
 import { RefundController } from './refund.controller'
 import { RefundService } from './refund.service'
 import { RefundModuleConfig } from './refund.config'
+import { PaymentFlowDebt } from '../paymentFlow/models/paymentFlowDebt.model'
+import { FjsDebtPayment } from '../paymentFlow/models/fjsDebtPayment.model'
+import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
 
 @Module({
   imports: [
@@ -32,6 +35,8 @@ import { RefundModuleConfig } from './refund.config'
       CardPaymentDetails,
       PaymentFulfillment,
       PaymentWorkerEvent,
+      PaymentFlowDebt,
+      FjsDebtPayment,
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -39,6 +44,7 @@ import { RefundModuleConfig } from './refund.config'
     }),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
+    DebtPaymentModule,
     JwksModule,
     BankTransferPaymentModule,
   ],

@@ -12,7 +12,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
-import { PaymentStatus } from '../../types'
+import { PaymentMethod, PaymentStatus } from '../../types'
 import {
   CachePaymentFlowStatus,
   CardPaymentErrorSchema,
@@ -276,15 +276,14 @@ export class CardPaymentService {
     const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
       paymentFlowId,
     )
-    const [{ catalogItems, totalPrice }, { paymentStatus }] = await Promise.all(
-      [
-        this.paymentFlowService.getPaymentFlowChargeDetails(
-          paymentFlow.organisationId,
-          paymentFlow.charges,
-        ),
-        this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
-      ],
-    )
+    const [amountDetails, { paymentStatus }] = await Promise.all([
+      this.paymentFlowService.getPaymentFlowAmountDetails(paymentFlow),
+      this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
+    ])
+    const { totalPrice } = amountDetails
+    // Debt flows have no catalog items, their debts are on the flow
+    const catalogItems =
+      amountDetails.type === 'charge' ? amountDetails.catalogItems : []
 
     return {
       paymentFlow,
@@ -308,7 +307,14 @@ export class CardPaymentService {
     }
 
     // validate the payment flow against FJS
-    await this.paymentFlowService.validateCharge(paymentFlow, catalogItems)
+    if (paymentFlow.type === 'debt') {
+      await this.paymentFlowService.validateDebtPaymentFlow(
+        paymentFlow,
+        PaymentMethod.CARD,
+      )
+    } else {
+      await this.paymentFlowService.validateCharge(paymentFlow, catalogItems)
+    }
 
     return {
       paymentFlow,

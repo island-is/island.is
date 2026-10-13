@@ -31,6 +31,8 @@ import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import { PaymentFlowDebtAttributes } from '../paymentFlow/models/paymentFlowDebt.model'
+import { CatalogItemWithQuantity } from '../../types/charges'
 import {
   BankTransferPayerType,
   BankTransferPaymentResult,
@@ -63,6 +65,7 @@ import {
   mapBlikkStatusToBankTransferStatus,
   mapRawStatusToBankTransferPendingStatus,
   rowLogContext,
+  toBlikkDebtItem,
   toBlikkItem,
   type BankTransferLogContext,
 } from './bankTransfer.utils'
@@ -146,11 +149,29 @@ export class BankTransferService {
       await this.handleExistingActiveBankTransferRow(existing)
     }
 
-    const { catalogItems, totalPrice } =
-      await this.paymentFlowService.getPaymentFlowChargeDetails(
-        paymentFlow.organisationId,
-        paymentFlow.charges,
+    let catalogItems: CatalogItemWithQuantity[] | undefined
+    let debts: PaymentFlowDebtAttributes[] | undefined
+    let totalPrice: number
+
+    if (paymentFlow.type === 'debt') {
+      // The debts can change after the flow was created, FJS has the final say.
+      await this.paymentFlowService.validateDebtPaymentFlow(
+        paymentFlow,
+        PaymentMethod.BANK_TRANSFER,
       )
+      const amountDetails =
+        await this.paymentFlowService.getPaymentFlowAmountDetails(paymentFlow)
+      totalPrice = amountDetails.totalPrice
+      debts = paymentFlow.debts
+    } else {
+      const chargeDetails =
+        await this.paymentFlowService.getPaymentFlowChargeDetails(
+          paymentFlow.organisationId,
+          paymentFlow.charges,
+        )
+      totalPrice = chargeDetails.totalPrice
+      catalogItems = chargeDetails.catalogItems
+    }
 
     const correlationId = uuid()
     const callbackUrl = `${this.paymentFlowConfig.webOrigin}/api/bank-transfer/callback`
@@ -176,6 +197,7 @@ export class BankTransferService {
         partnerRedirectUrl,
         expiresAt: expiresAtSeconds,
         items: catalogItems,
+        debts,
         ...debtor,
         bankAccountNumber: input.bankAccountNumber,
       })
@@ -750,7 +772,9 @@ export class BankTransferService {
       callbackUrl: input.callbackUrl,
       partnerRedirectUrl: input.partnerRedirectUrl,
       expiresAt: input.expiresAt,
-      items: input.items?.map(toBlikkItem),
+      items: input.debts
+        ? input.debts.map(toBlikkDebtItem)
+        : input.items?.map(toBlikkItem),
       debtorExternalId: input.debtorExternalId,
       debtorCorpExternalId: input.debtorCorpExternalId,
       // Blikk expects a debtor name; we send the national id.

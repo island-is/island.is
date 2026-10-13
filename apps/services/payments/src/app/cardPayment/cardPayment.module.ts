@@ -23,6 +23,9 @@ import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { PaymentWorkerEvent } from '../paymentFlow/models/paymentWorkerEvent.model'
 import { RefundModule } from '../refund/refund.module'
+import { PaymentFlowDebt } from '../paymentFlow/models/paymentFlowDebt.model'
+import { FjsDebtPayment } from '../paymentFlow/models/fjsDebtPayment.model'
+import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
 
 @Module({
   imports: [
@@ -34,6 +37,8 @@ import { RefundModule } from '../refund/refund.module'
       CardPaymentDetails,
       PaymentFulfillment,
       PaymentWorkerEvent,
+      PaymentFlowDebt,
+      FjsDebtPayment,
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -41,6 +46,7 @@ import { RefundModule } from '../refund/refund.module'
     }),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
+    DebtPaymentModule,
     CardPaymentCacheModule,
     JwksModule,
     RefundModule,

@@ -1,0 +1,67 @@
+import format from 'date-fns/format'
+
+import type { PayInfo } from '@island.is/clients/finance-v3'
+
+import { PaymentMethod } from '../types'
+
+/** National id of Fjársýsla ríkisins, the organisation that debt payment flows are made out to. */
+// eslint-disable-next-line local-rules/disallow-kennitalas
+export const FJS_DEBT_ORGANISATION_ID = '5402697509'
+
+/** Title shown to the payer on debt payment flows. Set by the server, not by the caller. */
+export const DEBT_PAYMENT_PRODUCT_TITLE = 'Greiðsla skulda'
+
+/** Card kind used while building payInfo, each FJS client maps it to its own enum. */
+export type FjsPaymentKind = 'debit' | 'credit' | 'transfer'
+
+const PAYMENT_OPTION_TO_METHODS: Record<string, PaymentMethod[]> = {
+  // Apple Pay rides on card, it has no token of its own.
+  CARD: [PaymentMethod.CARD],
+  TRANSFER: [PaymentMethod.BANK_TRANSFER],
+}
+
+/**
+ * Parses the `paymentOptions` of FJS validatePayment, a list of coarse tokens such as
+ * "CARD;TRANSFER", into the payment methods we offer. Splits on `;` or `,`, ignores case and
+ * whitespace. Unknown tokens are ignored, and reported through `onUnknownToken`.
+ */
+export const parsePaymentOptions = (
+  paymentOptions: string | null | undefined,
+  onUnknownToken?: (token: string) => void,
+): Set<PaymentMethod> => {
+  const methods = new Set<PaymentMethod>()
+
+  for (const rawToken of (paymentOptions ?? '').split(/[;,]/)) {
+    const token = rawToken.trim().toUpperCase()
+    if (!token) {
+      continue
+    }
+
+    const mapped = PAYMENT_OPTION_TO_METHODS[token]
+    if (!mapped) {
+      onUnknownToken?.(rawToken.trim())
+      continue
+    }
+
+    mapped.forEach((method) => methods.add(method))
+  }
+
+  return methods
+}
+
+export const toFjsPaymentMeans = (
+  kind: FjsPaymentKind,
+): PayInfo['paymentMeans'] => {
+  switch (kind) {
+    case 'debit':
+      return 'DebetCard'
+    case 'credit':
+      return 'KreditCard'
+    case 'transfer':
+      return 'Transfer'
+  }
+}
+
+/** The format FJS expects for `paymentDate`. */
+export const formatFjsDebtPaymentDate = (date: Date): string =>
+  format(date, 'yyyy-MM-dd')

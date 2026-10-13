@@ -16,6 +16,7 @@ import {
 import { BankTransferPayment } from './models/bankTransferPayment.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import { PaymentFlowDebtAttributes } from '../paymentFlow/models/paymentFlowDebt.model'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
 
 /** Blikk's payment status lifecycle. */
@@ -129,6 +130,16 @@ export const toBlikkItem = (item: CatalogItemWithQuantity): BlikkItem => ({
   quantity: item.quantity,
   unitPrice: String(item.priceAmount),
   sku: item.chargeItemCode,
+})
+
+/** Debts have no catalog item, the `payId` stands in for the sku and the label for the name. */
+export const toBlikkDebtItem = (
+  debt: Pick<PaymentFlowDebtAttributes, 'payId' | 'amount' | 'label'>,
+): BlikkItem => ({
+  name: debt.label ?? debt.payId,
+  quantity: 1,
+  unitPrice: String(debt.amount),
+  sku: debt.payId,
 })
 
 /** True when the row's TTL has elapsed. Anchored on `expires_at`, which we sent to Blikk on create. */

@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { BlikkClientConfig } from '@island.is/clients/blikk'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
+import { FinanceClientV3Config } from '@island.is/clients/finance-v3'
 import { LoggingModule } from '@island.is/logging'
 
 import { AuditModule } from '@island.is/nest/audit'
@@ -44,6 +45,7 @@ import { WorkerService } from './worker.service'
         XRoadConfig,
         FeatureFlagConfig,
         ChargeFjsV2ClientConfig,
+        FinanceClientV3Config,
         BlikkClientConfig,
         PaymentFlowModuleConfig,
         JwksConfig,

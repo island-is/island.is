@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  ServiceUnavailableException,
+} from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import { InferAttributes, Sequelize, WhereOptions } from 'sequelize'
 import { ConfigType } from '@nestjs/config'
@@ -28,6 +33,8 @@ import {
   PaymentFlowAttributes,
   PaymentFlowCharge,
 } from './models/paymentFlow.model'
+import { PaymentFlowDebt } from './models/paymentFlowDebt.model'
+import { FjsDebtPayment } from './models/fjsDebtPayment.model'
 
 import {
   PaymentFlowUpdateEvent,
@@ -38,6 +45,7 @@ import {
 } from '../../types'
 import { GetPaymentFlowDTO } from './dtos/getPaymentFlow.dto'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
+import { CreateDebtPaymentFlowInput } from './dtos/createDebtPaymentFlow.input'
 import { GetPaymentFlowsPaginatedDTO } from './dtos/getPaymentFlow.dto'
 
 import { environment } from '../../environments'
@@ -67,6 +75,11 @@ import { PaymentFulfillment } from './models/paymentFulfillment.model'
 import { PaymentWorkerEvent } from './models/paymentWorkerEvent.model'
 import { BankTransferPayment } from '../bankTransferPayment/models/bankTransferPayment.model'
 import { determinePaymentMethods } from './paymentFlow.utils'
+import { DebtFjsService } from '../debtPayment/debtFjs.service'
+import {
+  DEBT_PAYMENT_PRODUCT_TITLE,
+  FJS_DEBT_ORGANISATION_ID,
+} from '../../utils/fjsDebtPayment'
 
 interface PaymentFlowUpdateConfig {
   /**
@@ -93,6 +106,17 @@ type LogContextFields = Record<
   level?: never
 }
 
+export type PaymentFlowAmountDetails =
+  | ({ type: 'charge' } & Awaited<
+      ReturnType<PaymentFlowService['getPaymentFlowChargeDetails']>
+    >)
+  | {
+      type: 'debt'
+      firstProductTitle: string
+      totalPrice: number
+      debts: PaymentFlowDebt[]
+    }
+
 @Injectable()
 export class PaymentFlowService {
   constructor(
@@ -102,6 +126,8 @@ export class PaymentFlowService {
     private readonly paymentFlowModel: typeof PaymentFlow,
     @InjectModel(PaymentFlowCharge)
     private readonly paymentFlowChargeModel: typeof PaymentFlowCharge,
+    @InjectModel(PaymentFlowDebt)
+    private readonly paymentFlowDebtModel: typeof PaymentFlowDebt,
     @InjectModel(PaymentFlowEvent)
     private readonly paymentFlowEventModel: typeof PaymentFlowEvent,
     @InjectModel(FjsCharge)
@@ -113,6 +139,7 @@ export class PaymentFlowService {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    private readonly debtFjsService: DebtFjsService,
     private jwksConfigService: JwksConfigService,
     @Inject(PaymentFlowModuleConfig.KEY)
     private readonly paymentFlowConfig: ConfigType<
@@ -156,6 +183,25 @@ export class PaymentFlowService {
     return this.isBankTransferAllowedForCompany(payerNationalId)
   }
 
+  /**
+   * Whether bank transfer may be offered to this payer: the global flag is the offer kill-switch,
+   * and then `isBankTransferAllowedForPayer` decides per payer.
+   */
+  private async isBankTransferOffered(
+    payerNationalId: string,
+  ): Promise<boolean> {
+    const isBankTransferEnabled = await this.featureFlagService.getValue(
+      Features.isIslandisBankTransferPaymentEnabled,
+      false,
+    )
+
+    // With the flag off the payer does not matter, so the company flag is not evaluated.
+    return (
+      isBankTransferEnabled &&
+      (await this.isBankTransferAllowedForPayer(payerNationalId))
+    )
+  }
+
   async createPaymentUrl(
     paymentInfo: CreatePaymentFlowInput,
   ): Promise<CreatePaymentFlowDTO> {
@@ -176,23 +222,13 @@ export class PaymentFlowService {
       // screen. The global flag is the offer kill-switch: off → never listed, so the
       // FE selector never shows a method whose endpoints the flag also guards.
       let availableMethods = paymentMethods
-      if (paymentMethods.includes(PaymentMethod.BANK_TRANSFER)) {
-        const isBankTransferEnabled = await this.featureFlagService.getValue(
-          Features.isIslandisBankTransferPaymentEnabled,
-          false,
+      if (
+        paymentMethods.includes(PaymentMethod.BANK_TRANSFER) &&
+        !(await this.isBankTransferOffered(paymentInfo.payerNationalId))
+      ) {
+        availableMethods = paymentMethods.filter(
+          (m) => m !== PaymentMethod.BANK_TRANSFER,
         )
-        // With the flag off the payer does not matter, so the company flag is not evaluated.
-        const isBankTransferOffered =
-          isBankTransferEnabled &&
-          (await this.isBankTransferAllowedForPayer(
-            paymentInfo.payerNationalId,
-          ))
-
-        if (!isBankTransferOffered) {
-          availableMethods = paymentMethods.filter(
-            (m) => m !== PaymentMethod.BANK_TRANSFER,
-          )
-        }
       }
 
       if (availableMethods.length === 0) {
@@ -259,6 +295,195 @@ export class PaymentFlowService {
         ),
       )
     }
+  }
+
+  /**
+   * Creates a payment flow for debts owed to the state. FJS decides whether the debts can be paid,
+   * and by what means, so the flow is only created once `validatePayment` has accepted them.
+   */
+  async createDebtPaymentUrl(
+    input: CreateDebtPaymentFlowInput,
+  ): Promise<CreatePaymentFlowDTO> {
+    const { debts } = input
+    // FJS knows the payment by the flow id, so it is generated up front.
+    const paymentFlowId = uuid()
+
+    try {
+      const validation = await this.debtFjsService.validate({
+        flowId: paymentFlowId,
+        payerNationalId: input.payerNationalId,
+        debts,
+        paymentDate: new Date(),
+      })
+
+      if (validation.type === 'invalid') {
+        this.logger.warn(`[${paymentFlowId}] FJS rejected the debts`, {
+          problem: validation.problem,
+        })
+        throw new BadRequestException(PaymentServiceCode.DebtPaymentInvalid)
+      }
+
+      if (validation.type === 'transient') {
+        this.logger.error(`[${paymentFlowId}] Could not validate debts`, {
+          error: validation.error,
+        })
+        throw new ServiceUnavailableException(
+          PaymentServiceCode.UnknownPaymentServiceError,
+        )
+      }
+
+      const availableMethods: PaymentMethod[] = []
+      if (validation.paymentOptions.has(PaymentMethod.CARD)) {
+        availableMethods.push(PaymentMethod.CARD)
+      }
+      if (
+        validation.paymentOptions.has(PaymentMethod.BANK_TRANSFER) &&
+        (await this.isBankTransferOffered(input.payerNationalId))
+      ) {
+        availableMethods.push(PaymentMethod.BANK_TRANSFER)
+      }
+
+      if (availableMethods.length === 0) {
+        throw new BadRequestException(
+          PaymentServiceCode.DebtPaymentMethodNotAllowed,
+        )
+      }
+
+      return await this.sequelize.transaction(async (transaction) => {
+        const paymentFlow = await this.paymentFlowModel.create(
+          {
+            // Fields are picked rather than spread, so nothing outside the debt contract
+            // (e.g. extraData or existingInvoiceId) can reach a debt flow.
+            payerNationalId: input.payerNationalId,
+            onUpdateUrl: input.onUpdateUrl,
+            metadata: input.metadata,
+            returnUrl: input.returnUrl,
+            cancelUrl: input.cancelUrl,
+            redirectToReturnUrlOnSuccess: input.redirectToReturnUrlOnSuccess,
+            type: 'debt',
+            organisationId: FJS_DEBT_ORGANISATION_ID,
+            productTitle: DEBT_PAYMENT_PRODUCT_TITLE,
+            availablePaymentMethods: availableMethods,
+            id: paymentFlowId,
+            charges: [],
+          },
+          { transaction },
+        )
+
+        await this.paymentFlowDebtModel.bulkCreate(
+          debts.map((debt) => ({
+            payId: debt.payId,
+            amount: debt.amount,
+            label: debt.label,
+            paymentFlowId,
+          })),
+          { transaction },
+        )
+
+        this.logger.info(
+          `[${paymentFlow.id}] Debt payment flow created [${paymentFlow.organisationId}]`,
+          { debtCount: debts.length },
+        )
+
+        return {
+          id: paymentFlow.id,
+          urls: {
+            is: `${this.paymentFlowConfig.webOrigin}/is/${paymentFlow.id}`,
+            en: `${this.paymentFlowConfig.webOrigin}/en/${paymentFlow.id}`,
+          },
+        }
+      })
+    } catch (e) {
+      this.logger.error('Failed to create debt payment url', e)
+
+      if (e instanceof BadRequestException) {
+        throw e
+      }
+
+      if (e instanceof ServiceUnavailableException) {
+        throw e
+      }
+
+      throw new BadRequestException(
+        PaymentServiceCode.CouldNotCreatePaymentFlow,
+      )
+    }
+  }
+
+  /**
+   * Checks that a debt flow can still be paid with `paymentMethod`. Run right before a payment is
+   * taken, since the debts can change after the flow was created: FJS has the final say.
+   */
+  async validateDebtPaymentFlow(
+    paymentFlow: Pick<
+      PaymentFlowAttributes,
+      'id' | 'payerNationalId' | 'debts' | 'fjsDebtPayment'
+    >,
+    paymentMethod: PaymentMethod,
+  ): Promise<void> {
+    // A rejected flow is terminal, the payer starts again from the application.
+    if (paymentFlow.fjsDebtPayment?.status === 'rejected') {
+      throw new BadRequestException(PaymentServiceCode.DebtPaymentFlowClosed)
+    }
+
+    const validation = await this.debtFjsService.validate({
+      flowId: paymentFlow.id,
+      payerNationalId: paymentFlow.payerNationalId,
+      debts: paymentFlow.debts ?? [],
+      paymentDate: new Date(),
+    })
+
+    if (validation.type === 'invalid') {
+      this.logger.warn(`[${paymentFlow.id}] FJS rejected the debts`, {
+        problem: validation.problem,
+      })
+      throw new BadRequestException(PaymentServiceCode.DebtPaymentInvalid)
+    }
+
+    if (validation.type === 'transient') {
+      this.logger.error(`[${paymentFlow.id}] Could not validate debts`, {
+        error: validation.error,
+      })
+      throw new ServiceUnavailableException(
+        PaymentServiceCode.UnknownPaymentServiceError,
+      )
+    }
+
+    if (!validation.paymentOptions.has(paymentMethod)) {
+      throw new BadRequestException(
+        PaymentServiceCode.DebtPaymentMethodNotAllowed,
+      )
+    }
+  }
+
+  /**
+   * What the payer is paying for, whatever kind of flow it is: catalog charges priced by FJS, or
+   * debts with amounts chosen by the payer.
+   */
+  async getPaymentFlowAmountDetails(
+    paymentFlow: Pick<
+      PaymentFlowAttributes,
+      'organisationId' | 'charges' | 'debts' | 'productTitle'
+    > & { type?: PaymentFlowAttributes['type'] },
+  ): Promise<PaymentFlowAmountDetails> {
+    if (paymentFlow.type === 'debt') {
+      const debts = paymentFlow.debts ?? []
+
+      return {
+        type: 'debt',
+        firstProductTitle:
+          paymentFlow.productTitle ?? DEBT_PAYMENT_PRODUCT_TITLE,
+        totalPrice: debts.reduce((sum, debt) => sum + debt.amount, 0),
+        debts,
+      }
+    }
+
+    const chargeDetails = await this.getPaymentFlowChargeDetails(
+      paymentFlow.organisationId,
+      paymentFlow.charges,
+    )
+
+    return { type: 'charge', ...chargeDetails }
   }
 
   async getPaymentFlowChargeDetails(
@@ -439,6 +664,13 @@ export class PaymentFlowService {
             model: PaymentFlowCharge,
           },
           {
+            model: PaymentFlowDebt,
+          },
+          {
+            model: FjsDebtPayment,
+            required: false,
+          },
+          {
             model: FjsCharge,
             where: { isDeleted: false },
             required: false,
@@ -510,10 +742,7 @@ export class PaymentFlowService {
   ): Promise<GetPaymentFlowDTO | null> {
     try {
       const paymentFlow = await this.getPaymentFlowDetails(id, includeEvents)
-      const paymentDetails = await this.getPaymentFlowChargeDetails(
-        paymentFlow.organisationId,
-        paymentFlow.charges,
-      )
+      const paymentDetails = await this.getPaymentFlowAmountDetails(paymentFlow)
       const { paymentStatus, updatedAt } = await this.getPaymentFlowStatus(
         paymentFlow,
       )
@@ -1299,9 +1528,8 @@ export class PaymentFlowService {
     }
 
     // Construct the DTO to be returned before deleting
-    const paymentDetails = await this.getPaymentFlowChargeDetails(
-      paymentFlowDetails.organisationId,
-      paymentFlowDetails.charges,
+    const paymentDetails = await this.getPaymentFlowAmountDetails(
+      paymentFlowDetails,
     )
     const payerName = await this.getPayerName(
       paymentFlowDetails.payerNationalId,
@@ -1535,15 +1763,16 @@ export class PaymentFlowService {
           model: PaymentFlowCharge,
           as: 'charges',
         },
+        {
+          model: PaymentFlowDebt,
+          as: 'debts',
+        },
       ],
     })
 
     const paymentFlowDtos = await Promise.all(
       paginatedResult.data.map(async (flow) => {
-        const paymentDetails = await this.getPaymentFlowChargeDetails(
-          flow.organisationId,
-          flow.charges,
-        )
+        const paymentDetails = await this.getPaymentFlowAmountDetails(flow)
         const { paymentStatus, updatedAt } = await this.getPaymentFlowStatus(
           flow,
         )

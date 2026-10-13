@@ -1,3 +1,4 @@
+import type { PaymentFlowDebtAttributes } from '../paymentFlow/models/paymentFlowDebt.model'
 import { PaymentStatus } from '../../types'
 import { CatalogItemWithQuantity } from '../../types/charges'
 
@@ -49,6 +50,8 @@ export interface CreateBankTransferPaymentInput extends BankTransferDebtor {
   callbackUrl?: string
   partnerRedirectUrl?: string
   items?: CatalogItemWithQuantity[]
+  // Debt flows send their debts as items instead of catalog items.
+  debts?: Pick<PaymentFlowDebtAttributes, 'payId' | 'amount' | 'label'>[]
   // Unix seconds.
   expiresAt?: number
   bankAccountNumber?: string

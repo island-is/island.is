@@ -54,10 +54,16 @@ export class InvoicePaymentController {
   async create(
     @Body() createInvoiceInput: CreateInvoiceInput,
   ): Promise<CreateInvoiceResponse> {
+    const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
+      createInvoiceInput.paymentFlowId,
+    )
+
+    // Debts cannot be paid by invoice. Rejected before the try so that no failure event is sent.
+    if (paymentFlow.type === 'debt') {
+      throw new BadRequestException(PaymentServiceCode.InvalidPaymentMethods)
+    }
+
     try {
-      const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
-        createInvoiceInput.paymentFlowId,
-      )
       const [{ catalogItems }, { paymentStatus }] = await Promise.all([
         this.paymentFlowService.getPaymentFlowChargeDetails(
           paymentFlow.organisationId,

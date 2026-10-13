@@ -1,0 +1,42 @@
+import type { PayInfo, ProblemDetailsDt } from '@island.is/clients/finance-v3'
+
+import type { PaymentMethod } from '../../types'
+
+export interface DebtFjsDebt {
+  payId: string
+  amount: number
+}
+
+export interface DebtFjsValidateInput {
+  /** The payment flow id, also the payFlowId FJS knows the payment by. */
+  flowId: string
+  payerNationalId: string
+  debts: DebtFjsDebt[]
+  paymentDate: Date
+}
+
+export interface DebtFjsPayInput extends DebtFjsValidateInput {
+  payInfo: PayInfo
+}
+
+export type DebtFjsValidateOutcome =
+  /** FJS accepts the debts and amounts, `paymentOptions` is parsed to our methods. */
+  | {
+      type: 'valid'
+      paymentOptions: Set<PaymentMethod>
+      rawPaymentOptions: string
+    }
+  /** FJS rejected the debts, permanently. */
+  | { type: 'invalid'; problem?: ProblemDetailsDt }
+  /** We could not tell, try again later. */
+  | { type: 'transient'; error: unknown }
+
+export type DebtFjsPayOutcome =
+  /** 202 Accepted, FJS owns the payment from here. */
+  | { type: 'registered'; payFlowId: string; dateCreated: string }
+  /** FJS rejected the payment, permanently. */
+  | { type: 'rejected'; problem?: ProblemDetailsDt }
+  /** FJS may or may not have processed the call. */
+  | { type: 'ambiguous'; error: unknown }
+  /** FJS did not process the call (authentication), safe to retry. */
+  | { type: 'transient'; error: unknown }

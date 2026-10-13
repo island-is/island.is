@@ -21,6 +21,9 @@ import { JwksConfig } from '../jwks/jwks.config'
 import { InvoicePaymentModuleConfig } from './invoicePayment.config'
 import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { PaymentWorkerEvent } from '../paymentFlow/models/paymentWorkerEvent.model'
+import { PaymentFlowDebt } from '../paymentFlow/models/paymentFlowDebt.model'
+import { FjsDebtPayment } from '../paymentFlow/models/fjsDebtPayment.model'
+import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
 
 @Module({
   imports: [
@@ -32,12 +35,15 @@ import { PaymentWorkerEvent } from '../paymentFlow/models/paymentWorkerEvent.mod
       CardPaymentDetails,
       PaymentFulfillment,
       PaymentWorkerEvent,
+      PaymentFlowDebt,
+      FjsDebtPayment,
     ]),
     ConfigModule.forRoot({
       load: [PaymentFlowModuleConfig, JwksConfig, InvoicePaymentModuleConfig],
     }),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
+    DebtPaymentModule,
     JwksModule,
   ],
   controllers: [InvoicePaymentController],

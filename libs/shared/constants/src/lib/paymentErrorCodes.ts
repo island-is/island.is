@@ -24,6 +24,12 @@ export enum PaymentServiceCode {
   PaymentFlowNotEligibleToBeRefunded = 'PaymentFlowNotEligibleToBeRefunded',
   CouldNotDeletePaymentConfirmation = 'CouldNotDeletePaymentConfirmation',
   CouldNotDeletePaymentFulfillment = 'CouldNotDeletePaymentFulfillment',
+  // Debt payments
+  DebtPaymentInvalid = 'DebtPaymentInvalid',
+  DebtPaymentMethodNotAllowed = 'DebtPaymentMethodNotAllowed',
+  DebtPaymentRejected = 'DebtPaymentRejected',
+  DebtPaymentFlowClosed = 'DebtPaymentFlowClosed',
+  DebtPaymentRegisteredCannotBeRefunded = 'DebtPaymentRegisteredCannotBeRefunded',
 }
 
 export enum CardErrorCode {
