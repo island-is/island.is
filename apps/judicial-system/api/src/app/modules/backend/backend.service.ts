@@ -15,7 +15,11 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase, AppealCourtSession } from '../appeal-case'
+import {
+  AppealCase,
+  AppealCourtSession,
+  DeleteAppealCourtSessionResponse,
+} from '../appeal-case'
 import {
   Case,
   RequestSignatureResponse,
@@ -353,6 +357,28 @@ export class BackendService {
     return this.post(
       `case/${caseId}/appealCase/${appealCaseId}/courtSession`,
       createAppealCourtSession,
+    )
+  }
+
+  updateAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    appealCourtSessionId: string,
+    updateAppealCourtSession: unknown,
+  ): Promise<AppealCourtSession> {
+    return this.patch(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession/${appealCourtSessionId}`,
+      updateAppealCourtSession,
+    )
+  }
+
+  deleteAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    appealCourtSessionId: string,
+  ): Promise<DeleteAppealCourtSessionResponse> {
+    return this.delete(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession/${appealCourtSessionId}`,
     )
   }
 

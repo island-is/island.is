@@ -10,6 +10,13 @@ import { verifyGuards, verifyRolesRules } from '../../../test'
 import { AppealCaseExistsGuard } from '../../appeal-case/guards/appealCaseExists.guard'
 import { CaseExistsGuard, CaseTypeGuard, CaseWriteGuard } from '../../case'
 import { AppealCourtSessionController } from '../appealCourtSession.controller'
+import { AppealCourtSessionExistsGuard } from '../guards/appealCourtSessionExists.guard'
+
+const courtOfAppealsRules = [
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
+  courtOfAppealsAssistantRule,
+]
 
 describe('AppealCourtSessionController - Top-level guards', () => {
   verifyGuards(
@@ -27,10 +34,26 @@ describe('AppealCourtSessionController - Top-level guards', () => {
   )
 })
 
-describe('AppealCourtSessionController - create roles', () => {
-  verifyRolesRules(AppealCourtSessionController, 'create', [
-    courtOfAppealsJudgeRule,
-    courtOfAppealsRegistrarRule,
-    courtOfAppealsAssistantRule,
+describe('AppealCourtSessionController - update guards', () => {
+  verifyGuards(AppealCourtSessionController, 'update', [
+    AppealCourtSessionExistsGuard,
   ])
+})
+
+describe('AppealCourtSessionController - delete guards', () => {
+  verifyGuards(AppealCourtSessionController, 'delete', [
+    AppealCourtSessionExistsGuard,
+  ])
+})
+
+describe('AppealCourtSessionController - create roles', () => {
+  verifyRolesRules(AppealCourtSessionController, 'create', courtOfAppealsRules)
+})
+
+describe('AppealCourtSessionController - update roles', () => {
+  verifyRolesRules(AppealCourtSessionController, 'update', courtOfAppealsRules)
+})
+
+describe('AppealCourtSessionController - delete roles', () => {
+  verifyRolesRules(AppealCourtSessionController, 'delete', courtOfAppealsRules)
 })
