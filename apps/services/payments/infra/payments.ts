@@ -7,7 +7,12 @@ import {
   scheduledJob,
   ScheduledJobBuilder,
 } from '../../../../infra/src/dsl/dsl'
-import { Base, Client, ChargeFjsV2 } from '../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  ChargeFjsV2,
+  FinanceV3,
+} from '../../../../infra/src/dsl/xroad'
 
 const namespace = 'services-payments'
 const serviceName = namespace
@@ -164,7 +169,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         public: false,
       },
     })
-    .xroad(Base, Client, ChargeFjsV2)
+    .xroad(Base, Client, ChargeFjsV2, FinanceV3)
     .readiness('/liveness')
     .liveness('/liveness')
     .grantNamespaces(
@@ -185,7 +190,7 @@ export const serviceSetupForWorker =
       .codeOwner(CodeOwners.Aranja)
       .env(env)
       .secrets(secrets)
-      .xroad(Base, Client, ChargeFjsV2)
+      .xroad(Base, Client, ChargeFjsV2, FinanceV3)
       .command('node')
       .args('main.cjs', '--job', 'worker')
       .schedule({
