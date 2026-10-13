@@ -83,9 +83,9 @@ describe('Fjarskiptastofa self-assessment template', () => {
         template,
       )
 
-      expect(() =>
-        helper.changeState({ type: DefaultEvents.SUBMIT }),
-      ).toThrow(/invalid for state completed/)
+      expect(() => helper.changeState({ type: DefaultEvents.SUBMIT })).toThrow(
+        /invalid for state completed/,
+      )
     })
   })
 
