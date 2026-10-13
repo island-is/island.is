@@ -8,6 +8,7 @@ import {
   NotificationSenderSetting,
   NotificationSettings,
 } from './notificationSettings.model'
+import { normalizeSenderId, toCategoryKey } from './notificationSettings.utils'
 
 interface CategoryLabel {
   is: string
@@ -21,12 +22,6 @@ interface CategorySetting {
   categoryLabel: CategoryLabel
   blocked: boolean
 }
-
-const normalizeSenderId = (senderId: string): string =>
-  senderId.replace(/\D/g, '')
-
-export const toCategoryKey = (senderId: string, category: string): string =>
-  `${normalizeSenderId(senderId)}-${category}`
 
 @Injectable()
 export class NotificationSettingsService {

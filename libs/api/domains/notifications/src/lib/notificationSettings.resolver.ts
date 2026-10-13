@@ -5,10 +5,8 @@ import { notificationScopes } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { Inject, UseGuards } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import {
-  NotificationSettingsService,
-  toCategoryKey,
-} from './notificationSettings.service'
+import { NotificationSettingsService } from './notificationSettings.service'
+import { toCategoryKey } from './notificationSettings.utils'
 import {
   NotificationCategoriesInput,
   NotificationSettings,
