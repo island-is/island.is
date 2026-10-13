@@ -574,6 +574,11 @@ export const m = defineMessages({
     defaultMessage:
       'Ertu viss um að þú viljir endurheimta þessa útgáfu? Núverandi útgefnar þýðingar verða yfirskrifaðar.',
   },
+  translationRollbackDiscardsDrafts: {
+    id: 'admin-portal.application-system:translationRollbackDiscardsDrafts',
+    defaultMessage:
+      'Þú átt {count, plural, one {# óvistaða breytingu} other {# óvistaðar breytingar}} sem tapast.',
+  },
   translationRollbackSuccess: {
     id: 'admin-portal.application-system:translationRollbackSuccess',
     defaultMessage: 'Þýðingar hafa verið endurheimtar.',

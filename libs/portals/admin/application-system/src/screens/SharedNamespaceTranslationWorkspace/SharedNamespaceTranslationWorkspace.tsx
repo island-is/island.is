@@ -235,6 +235,7 @@ export const SharedNamespaceTranslationWorkspace = () => {
           isOpen={historyOpen}
           onClose={handleCloseHistory}
           onRollbackComplete={handleRollbackComplete}
+          unsavedCount={unsavedCount}
           formatMessage={formatMessage}
         />
 

@@ -10,6 +10,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import type { FormatMessage } from '@island.is/localization'
+import { Modal } from '@island.is/react/components'
 import { m } from '../../lib/messages'
 import {
   useGetApplicationTranslationPublishHistoryQuery,
@@ -21,6 +22,7 @@ interface TranslationPublishHistoryProps {
   isOpen: boolean
   onClose: () => void
   onRollbackComplete: () => void
+  unsavedCount: number
   formatMessage: FormatMessage
 }
 
@@ -29,6 +31,7 @@ export const TranslationPublishHistory = ({
   isOpen,
   onClose,
   onRollbackComplete,
+  unsavedCount,
   formatMessage,
 }: TranslationPublishHistoryProps) => {
   const { data, loading, refetch } =
@@ -100,7 +103,6 @@ export const TranslationPublishHistory = ({
             minute: '2-digit',
           })
           const isCurrent = index === 0
-          const isConfirming = confirmingId === pub.id
 
           return (
             <Box
@@ -124,29 +126,6 @@ export const TranslationPublishHistory = ({
                     <Tag variant="mint" outlined>
                       {formatMessage(m.translationCurrentVersion)}
                     </Tag>
-                  ) : isConfirming ? (
-                    <Box display="flex" alignItems="center" columnGap={2}>
-                      <Box flexShrink={1} style={{ maxWidth: 340 }}>
-                        <Text variant="small">
-                          {formatMessage(m.translationRollbackConfirm)}
-                        </Text>
-                      </Box>
-                      <Button
-                        size="small"
-                        colorScheme="destructive"
-                        loading={rollingBack}
-                        onClick={() => handleRollback(pub.id)}
-                      >
-                        {formatMessage(m.translationRollback)}
-                      </Button>
-                      <Button
-                        size="small"
-                        variant="ghost"
-                        onClick={() => setConfirmingId(null)}
-                      >
-                        &times;
-                      </Button>
-                    </Box>
                   ) : (
                     <Button
                       size="small"
@@ -162,6 +141,47 @@ export const TranslationPublishHistory = ({
           )
         })}
       </Stack>
+      <Modal
+        id="translation-rollback-confirm"
+        isVisible={confirmingId !== null}
+        label={formatMessage(m.translationRollback)}
+        title={formatMessage(m.translationRollback)}
+        onClose={() => setConfirmingId(null)}
+        closeButtonLabel={formatMessage(m.translationPublishCancel)}
+      >
+        <Text>{formatMessage(m.translationRollbackConfirm)}</Text>
+        {unsavedCount > 0 && (
+          <Box marginTop={2}>
+            <Text color="red600">
+              {formatMessage(m.translationRollbackDiscardsDrafts, {
+                count: unsavedCount,
+              })}
+            </Text>
+          </Box>
+        )}
+        <Box
+          marginTop={4}
+          display="flex"
+          flexDirection="row"
+          justifyContent="spaceBetween"
+        >
+          <Button
+            variant="ghost"
+            size="small"
+            onClick={() => setConfirmingId(null)}
+          >
+            {formatMessage(m.translationPublishCancel)}
+          </Button>
+          <Button
+            size="small"
+            colorScheme="destructive"
+            loading={rollingBack}
+            onClick={() => confirmingId && handleRollback(confirmingId)}
+          >
+            {formatMessage(m.translationRollback)}
+          </Button>
+        </Box>
+      </Modal>
     </Drawer>
   )
 }

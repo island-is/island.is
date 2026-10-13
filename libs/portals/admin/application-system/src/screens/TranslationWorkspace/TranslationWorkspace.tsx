@@ -115,6 +115,7 @@ export const TranslationWorkspace = () => {
 
   const derivedView = useTranslationWorkspaceDerivedView({
     introspection,
+    namespace,
     selectedLocation,
     selectedScreen,
   })
@@ -247,6 +248,7 @@ export const TranslationWorkspace = () => {
           isOpen={historyOpen}
           onClose={handleCloseHistory}
           onRollbackComplete={handleRollbackComplete}
+          unsavedCount={unsavedCount}
           formatMessage={formatMessage}
         />
 

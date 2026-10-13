@@ -1,8 +1,5 @@
 import { useMemo } from 'react'
-import {
-  filterOwnedTranslationDescriptors,
-  getOwnedTranslationNamespaces,
-} from '@island.is/application/utils'
+import { filterOwnedTranslationDescriptors } from '@island.is/application/utils'
 import type {
   MessageDescriptor,
   ScreenIntrospection,
@@ -21,19 +18,20 @@ import {
 
 type UseTranslationWorkspaceDerivedViewArgs = {
   introspection: WorkspaceTemplateIntrospection | null
+  namespace: string
   selectedLocation: SidebarNavLocation | null
   selectedScreen: ScreenIntrospection | null
 }
 
 export const useTranslationWorkspaceDerivedView = ({
   introspection,
+  namespace,
   selectedLocation,
   selectedScreen,
 }: UseTranslationWorkspaceDerivedViewArgs) => {
   const ownedNamespaces = useMemo(
-    () =>
-      getOwnedTranslationNamespaces(introspection?.translationNamespaces ?? []),
-    [introspection],
+    () => (namespace ? [namespace] : []),
+    [namespace],
   )
 
   const activeForm = useMemo(
