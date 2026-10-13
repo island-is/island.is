@@ -185,6 +185,32 @@ describe('AppealSummonsController - Update', () => {
     )
   })
 
+  it('does not delete the cached PDF when a confirmation landed before cleanup', async () => {
+    const summons = {
+      id: summonsId,
+      confirmedDate: new Date(),
+      confirmedById: uuid(),
+      hash: 'abc',
+    } as AppealSummons
+    ;(
+      mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
+    ).mockResolvedValue({
+      ...updated,
+      hash: 'reconfirmed-hash',
+    } as AppealSummons)
+
+    await appealSummonsController.update(
+      caseId,
+      summonsId,
+      theCase,
+      summons,
+      dto,
+      user,
+    )
+
+    expect(mockAwsS3Service.deleteObject).not.toHaveBeenCalled()
+  })
+
   it('keeps a defendant already on the summons after their appeal is withdrawn', async () => {
     const withdrawnDefendantId = uuid()
     const caseWithWithdrawn = {

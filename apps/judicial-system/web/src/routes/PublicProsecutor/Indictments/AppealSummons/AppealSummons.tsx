@@ -157,8 +157,8 @@ const AppealSummons = () => {
       return
     }
 
-    await previewAppealSummons(workingCase.id, defendants)
-  }, [previewAppealSummons, sections, workingCase.id])
+    await previewAppealSummons(workingCase.id, defendants, appealSummonsId)
+  }, [appealSummonsId, previewAppealSummons, sections, workingCase.id])
 
   const handleSave = useCallback(async () => {
     const defendants = toAppealSummonsDefendantInputs(sections)

@@ -37,6 +37,7 @@ import {
 } from '../case'
 import { AppealSummons, Case } from '../repository'
 import { CreateAppealSummonsDto } from './dto/createAppealSummons.dto'
+import { PreviewAppealSummonsDto } from './dto/previewAppealSummons.dto'
 import { CurrentAppealSummons } from './guards/appealSummons.decorator'
 import { AppealSummonsExistsGuard } from './guards/appealSummonsExists.guard'
 import { DeleteAppealSummonsResponse } from './models/deleteAppealSummons.response'
@@ -195,13 +196,14 @@ export class AppealSummonsController {
   async preview(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
-    @Body() dto: CreateAppealSummonsDto,
+    @Body() dto: PreviewAppealSummonsDto,
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ): Promise<void> {
     this.logger.debug(`Previewing an appeal summons pdf for case ${caseId}`)
 
-    const defendants = this.appealSummonsService.resolveDefendants(theCase, dto)
+    const defendants =
+      await this.appealSummonsService.resolvePreviewDefendants(theCase, dto)
     const pdf = await this.pdfService.getAppealSummonsPdf(
       theCase,
       user,

@@ -133,7 +133,11 @@ const useAppealSummons = () => {
   )
 
   const previewAppealSummons = useCallback(
-    async (caseId: string, defendants: AppealSummonsDefendantInput[]) => {
+    async (
+      caseId: string,
+      defendants: AppealSummonsDefendantInput[],
+      appealSummonsId?: string,
+    ) => {
       // Open synchronously so the browser still treats this as a user gesture
       // after the fetch/blob awaits below.
       const previewWindow = window.open('', '_blank')
@@ -149,7 +153,10 @@ const useAppealSummons = () => {
               Accept: 'application/pdf',
               ...(token ? { authorization: `Bearer ${token}` } : {}),
             },
-            body: JSON.stringify({ defendants }),
+            body: JSON.stringify({
+              defendants,
+              ...(appealSummonsId ? { appealSummonsId } : {}),
+            }),
           },
         )
 

@@ -28,6 +28,7 @@ import {
   Case,
 } from '../repository'
 import { CreateAppealSummonsDto } from './dto/createAppealSummons.dto'
+import { PreviewAppealSummonsDto } from './dto/previewAppealSummons.dto'
 
 @Injectable()
 export class AppealSummonsService {
@@ -50,6 +51,26 @@ export class AppealSummonsService {
       theCase.type,
       this.appealSummonsPdfKey(theCase.id, summonsId),
     )
+  }
+
+  // Edit clears the hash then deletes S3 after commit. A confirmation that
+  // lands between those steps would upload a new PDF and set a hash; skip the
+  // delete so we do not remove that object.
+  private async tryDeleteCachedPdfIfUnconfirmed(
+    theCase: Case,
+    summonsId: string,
+  ) {
+    const current =
+      await this.appealSummonsRepositoryService.findByIdAndCaseId(
+        summonsId,
+        theCase.id,
+      )
+
+    if (current?.hash) {
+      return
+    }
+
+    await this.tryDeleteCachedPdf(theCase, summonsId)
   }
 
   async create(
@@ -147,9 +168,10 @@ export class AppealSummonsService {
         { transaction },
       )
       // Delete after commit so a rolled-back edit cannot leave the DB hash
-      // pointing at a PDF that S3 already removed.
+      // pointing at a PDF that S3 already removed. Re-check hash so a
+      // confirmation that finished in between is not wiped.
       transaction.afterCommit(() => {
-        void this.tryDeleteCachedPdf(theCase, summons.id)
+        void this.tryDeleteCachedPdfIfUnconfirmed(theCase, summons.id)
       })
     }
 
@@ -303,11 +325,42 @@ export class AppealSummonsService {
     return result
   }
 
+  async resolvePreviewDefendants(
+    theCase: Case,
+    dto: PreviewAppealSummonsDto,
+  ): Promise<
+    {
+      defendantId: string
+      appellantSide: AppealSummonsAppellantSide
+      claims: string
+    }[]
+  > {
+    let existingSummons: AppealSummons | undefined
+
+    if (dto.appealSummonsId) {
+      const summons =
+        await this.appealSummonsRepositoryService.findByIdAndCaseId(
+          dto.appealSummonsId,
+          theCase.id,
+        )
+
+      if (!summons) {
+        throw new BadRequestException(
+          `Appeal summons ${dto.appealSummonsId} not found for case ${theCase.id}`,
+        )
+      }
+
+      existingSummons = summons
+    }
+
+    return this.resolveDefendants(theCase, dto, existingSummons)
+  }
+
   resolveDefendants(
     theCase: Case,
-    dto: CreateAppealSummonsDto,
-    // On update, defendants already on this summons may be kept even if their
-    // appeal was later withdrawn, so an edit does not silently drop them.
+    dto: Pick<CreateAppealSummonsDto, 'defendants'>,
+    // On update/preview of an existing summons, defendants already on it may
+    // be kept even if their appeal was later withdrawn.
     existingSummons?: Pick<AppealSummons, 'defendants'>,
   ): {
     defendantId: string
