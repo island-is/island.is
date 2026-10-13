@@ -1,8 +1,32 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { UserNotificationApi } from '@island.is/clients/user-notification'
 import { V2MeApi } from '@island.is/clients/user-profile'
-import { Injectable } from '@nestjs/common'
-import { NotificationSettings } from './notificationSettings.model'
+import type { Locale } from '@island.is/shared/types'
+import { BadRequestException, Injectable } from '@nestjs/common'
+import {
+  NotificationCategoryInput,
+  NotificationSenderSetting,
+  NotificationSettings,
+} from './notificationSettings.model'
+
+interface CategoryLabel {
+  is: string
+  en?: string
+}
+
+interface CategorySetting {
+  key: string
+  senderId: string
+  category: string
+  categoryLabel: CategoryLabel
+  blocked: boolean
+}
+
+const normalizeSenderId = (senderId: string): string =>
+  senderId.replace(/\D/g, '')
+
+export const toCategoryKey = (senderId: string, category: string): string =>
+  `${normalizeSenderId(senderId)}-${category}`
 
 @Injectable()
 export class NotificationSettingsService {
@@ -20,43 +44,121 @@ export class NotificationSettingsService {
   }
 
   /**
-   * Combines the senders the user has received notifications from with the
-   * senders the user has blocked. Blocked senders are included even if the
-   * user hasn't received notifications from them, so they can be unblocked.
+   * Combines the sender categories the user has received notifications in
+   * with the categories the user has blocked. Blocked categories are included
+   * even if the user hasn't received them, e.g. after a category was renamed,
+   * so they can be unblocked.
    */
-  async getNotificationSettings(user: User): Promise<NotificationSettings> {
-    const [{ senders }, { blockedSenders }] = await Promise.all([
-      this.userNotificationsWAuth(user).meNotificationsControllerFindSenders(),
+  private async findCategorySettings(
+    user: User,
+  ): Promise<Map<string, CategorySetting>> {
+    const [{ categories }, { blockedCategories }] = await Promise.all([
+      this.userNotificationsWAuth(
+        user,
+      ).meNotificationsControllerFindCategories(),
       this.v2MeApiWAuth(user).meUserProfileControllerFindNotificationSettings(),
     ])
 
-    const blockedSenderIds = new Set(
-      blockedSenders.map((blockedSender) => blockedSender.senderId),
-    )
-    const senderIds = new Set([
-      ...senders.map((sender) => sender.senderId),
-      ...blockedSenderIds,
-    ])
-
-    return {
-      senders: [...senderIds].map((senderId) => ({
-        sender: { id: senderId },
-        blocked: blockedSenderIds.has(senderId),
-      })),
+    const settings = new Map<string, CategorySetting>()
+    for (const { senderId, category, categoryLabel } of categories) {
+      const key = toCategoryKey(senderId, category)
+      settings.set(key, {
+        key,
+        senderId: normalizeSenderId(senderId),
+        category,
+        categoryLabel,
+        blocked: false,
+      })
     }
+
+    for (const { senderId, category, categoryLabel } of blockedCategories) {
+      const key = toCategoryKey(senderId, category)
+      const received = settings.get(key)
+      settings.set(key, {
+        key,
+        senderId: normalizeSenderId(senderId),
+        category,
+        // Prefer the latest label from received notifications
+        categoryLabel: received?.categoryLabel ?? categoryLabel,
+        blocked: true,
+      })
+    }
+
+    return settings
   }
 
-  async blockSender(user: User, senderId: string): Promise<void> {
+  async getNotificationSettings(
+    user: User,
+    locale: Locale,
+  ): Promise<NotificationSettings> {
+    const settings = await this.findCategorySettings(user)
+
+    const senders = new Map<string, NotificationSenderSetting>()
+    for (const setting of settings.values()) {
+      const sender = senders.get(setting.senderId) ?? {
+        sender: { id: setting.senderId },
+        categories: [],
+      }
+      sender.categories.push({
+        key: setting.key,
+        category: setting.category,
+        label:
+          locale === 'en'
+            ? setting.categoryLabel.en ?? setting.categoryLabel.is
+            : setting.categoryLabel.is,
+        blocked: setting.blocked,
+      })
+      senders.set(setting.senderId, sender)
+    }
+
+    return { senders: [...senders.values()] }
+  }
+
+  /**
+   * Blocks the given sender categories. Only categories the user has received
+   * or already blocked can be blocked, and their labels are taken from there.
+   */
+  async blockCategories(
+    user: User,
+    categories: NotificationCategoryInput[],
+  ): Promise<void> {
+    const settings = await this.findCategorySettings(user)
+
+    const blockCategories = categories.map(({ senderId, category }) => {
+      const setting = settings.get(toCategoryKey(senderId, category))
+      if (!setting) {
+        throw new BadRequestException(
+          `Unknown notification category ${toCategoryKey(senderId, category)}`,
+        )
+      }
+
+      return {
+        senderId: setting.senderId,
+        category: setting.category,
+        categoryLabel: setting.categoryLabel,
+      }
+    })
+
     await this.v2MeApiWAuth(
       user,
-    ).meUserProfileControllerBlockNotificationSender({
-      createBlockedSenderDto: { senderId },
+    ).meUserProfileControllerBlockNotificationCategories({
+      blockCategoriesDto: { categories: blockCategories },
     })
   }
 
-  async unblockSender(user: User, senderId: string): Promise<void> {
+  async unblockCategories(
+    user: User,
+    categories: NotificationCategoryInput[],
+  ): Promise<void> {
     await this.v2MeApiWAuth(
       user,
-    ).meUserProfileControllerUnblockNotificationSender({ senderId })
+    ).meUserProfileControllerUnblockNotificationCategories({
+      unblockCategoriesDto: {
+        categories: categories.map(({ senderId, category }) => ({
+          senderId,
+          category,
+        })),
+      },
+    })
   }
 }

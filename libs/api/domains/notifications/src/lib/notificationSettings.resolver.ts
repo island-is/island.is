@@ -5,12 +5,16 @@ import { notificationScopes } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { Inject, UseGuards } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { NotificationSettingsService } from './notificationSettings.service'
 import {
-  NotificationSenderInput,
+  NotificationSettingsService,
+  toCategoryKey,
+} from './notificationSettings.service'
+import {
+  NotificationCategoriesInput,
   NotificationSettings,
 } from './notificationSettings.model'
 import { AUDIT_NAMESPACE } from './notifications.resolver'
+import type { Locale } from '@island.is/shared/types'
 
 const LOG_CATEGORY = 'notification-settings-resolver'
 
@@ -29,9 +33,11 @@ export class NotificationSettingsResolver {
   @Audit()
   async getNotificationSettings(
     @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
   ): Promise<NotificationSettings> {
     try {
-      return await this.service.getNotificationSettings(user)
+      return await this.service.getNotificationSettings(user, locale)
     } catch (e) {
       this.logger.info('failed to get notification settings', {
         category: LOG_CATEGORY,
@@ -41,23 +47,25 @@ export class NotificationSettingsResolver {
     }
   }
 
-  @Mutation(() => Boolean, { name: 'blockNotificationSender' })
-  async blockNotificationSender(
+  @Mutation(() => Boolean, { name: 'blockNotificationCategories' })
+  async blockNotificationCategories(
     @CurrentUser() user: User,
-    @Args('input') input: NotificationSenderInput,
+    @Args('input') input: NotificationCategoriesInput,
   ): Promise<boolean> {
     try {
       await this.auditService.auditPromise(
         {
           auth: user,
           namespace: AUDIT_NAMESPACE,
-          action: 'blockNotificationSender',
-          resources: input.senderId,
+          action: 'blockNotificationCategories',
+          resources: input.categories.map(({ senderId, category }) =>
+            toCategoryKey(senderId, category),
+          ),
         },
-        this.service.blockSender(user, input.senderId),
+        this.service.blockCategories(user, input.categories),
       )
     } catch (e) {
-      this.logger.info('failed to block notification sender', {
+      this.logger.info('failed to block notification categories', {
         category: LOG_CATEGORY,
         error: e,
       })
@@ -67,23 +75,25 @@ export class NotificationSettingsResolver {
     return true
   }
 
-  @Mutation(() => Boolean, { name: 'unblockNotificationSender' })
-  async unblockNotificationSender(
+  @Mutation(() => Boolean, { name: 'unblockNotificationCategories' })
+  async unblockNotificationCategories(
     @CurrentUser() user: User,
-    @Args('input') input: NotificationSenderInput,
+    @Args('input') input: NotificationCategoriesInput,
   ): Promise<boolean> {
     try {
       await this.auditService.auditPromise(
         {
           auth: user,
           namespace: AUDIT_NAMESPACE,
-          action: 'unblockNotificationSender',
-          resources: input.senderId,
+          action: 'unblockNotificationCategories',
+          resources: input.categories.map(({ senderId, category }) =>
+            toCategoryKey(senderId, category),
+          ),
         },
-        this.service.unblockSender(user, input.senderId),
+        this.service.unblockCategories(user, input.categories),
       )
     } catch (e) {
-      this.logger.info('failed to unblock notification sender', {
+      this.logger.info('failed to unblock notification categories', {
         category: LOG_CATEGORY,
         error: e,
       })

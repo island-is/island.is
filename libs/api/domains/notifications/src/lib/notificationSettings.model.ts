@@ -2,12 +2,27 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { NotificationSender } from './notifications.model'
 
 @ObjectType()
+export class NotificationCategorySetting {
+  @Field({ description: 'Key of the category, {senderId}-{category}' })
+  key!: string
+
+  @Field({ description: 'Slugified Icelandic category label' })
+  category!: string
+
+  @Field()
+  label!: string
+
+  @Field()
+  blocked!: boolean
+}
+
+@ObjectType()
 export class NotificationSenderSetting {
   @Field(() => NotificationSender)
   sender!: NotificationSender
 
-  @Field()
-  blocked!: boolean
+  @Field(() => [NotificationCategorySetting])
+  categories!: NotificationCategorySetting[]
 }
 
 @ObjectType()
@@ -17,7 +32,16 @@ export class NotificationSettings {
 }
 
 @InputType()
-export class NotificationSenderInput {
+export class NotificationCategoryInput {
   @Field()
   senderId!: string
+
+  @Field()
+  category!: string
+}
+
+@InputType()
+export class NotificationCategoriesInput {
+  @Field(() => [NotificationCategoryInput])
+  categories!: NotificationCategoryInput[]
 }
