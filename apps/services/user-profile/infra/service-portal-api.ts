@@ -2,6 +2,7 @@ import {
   CodeOwners,
   json,
   service,
+  scheduledJob,
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
 import {

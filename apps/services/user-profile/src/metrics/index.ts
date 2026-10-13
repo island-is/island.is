@@ -30,6 +30,7 @@ import { collectProfileMetrics } from './collect'
         const options = new SequelizeConfigService(
           logger,
         ).createSequelizeOptions()
+        const afterConnect = options.hooks?.afterConnect
         return {
           ...options,
           retryAttempts: 1,
@@ -40,7 +41,8 @@ import { collectProfileMetrics } from './collect'
           },
           hooks: {
             ...options.hooks,
-            afterConnect: async (connection: unknown) => {
+            afterConnect: async (connection, config) => {
+              await afterConnect?.(connection, config)
               await (connection as Client).query(
                 'SET SESSION CHARACTERISTICS AS TRANSACTION READ ONLY',
               )
@@ -62,7 +64,9 @@ export const collectEnabledProfileMetrics = async (
     false,
   )
 
-  return enabled ? collectProfileMetrics(db) : []
+  return enabled
+    ? collectProfileMetrics(db)
+    : [{ name: 'all_channels_disabled_users', value: 0 }]
 }
 
 export const metrics = async () => {

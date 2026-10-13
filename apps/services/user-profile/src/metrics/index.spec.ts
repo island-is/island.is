@@ -22,7 +22,9 @@ describe('enabled profile metrics', () => {
 
     await expect(
       collectEnabledProfileMetrics(featureFlagService, db),
-    ).resolves.toEqual([])
+    ).resolves.toEqual([
+      { name: 'all_channels_disabled_users', value: 0 },
+    ])
 
     expect(featureFlagService.getValue).toHaveBeenCalledWith(
       expect.anything(),
