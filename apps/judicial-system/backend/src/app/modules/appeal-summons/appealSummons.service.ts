@@ -60,11 +60,10 @@ export class AppealSummonsService {
     theCase: Case,
     summonsId: string,
   ) {
-    const current =
-      await this.appealSummonsRepositoryService.findByIdAndCaseId(
-        summonsId,
-        theCase.id,
-      )
+    const current = await this.appealSummonsRepositoryService.findByIdAndCaseId(
+      summonsId,
+      theCase.id,
+    )
 
     if (current?.hash) {
       return

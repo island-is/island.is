@@ -202,8 +202,10 @@ export class AppealSummonsController {
   ): Promise<void> {
     this.logger.debug(`Previewing an appeal summons pdf for case ${caseId}`)
 
-    const defendants =
-      await this.appealSummonsService.resolvePreviewDefendants(theCase, dto)
+    const defendants = await this.appealSummonsService.resolvePreviewDefendants(
+      theCase,
+      dto,
+    )
     const pdf = await this.pdfService.getAppealSummonsPdf(
       theCase,
       user,
