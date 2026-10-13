@@ -20,6 +20,7 @@ import {
   AppealCourtSession,
   DeleteAppealCourtSessionResponse,
 } from '../appeal-case'
+import { AppealSummons } from '../appeal-summons'
 import {
   Case,
   RequestSignatureResponse,
@@ -685,6 +686,31 @@ export class BackendService {
     },
   ): Promise<Subpoena[]> {
     return this.post(`case/${caseId}/subpoenas`, createSubpoenas)
+  }
+
+  createAppealSummons(
+    caseId: string,
+    createAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.post(`case/${caseId}/appealSummons`, createAppealSummons)
+  }
+
+  updateAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+    updateAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}`,
+      updateAppealSummons,
+    )
+  }
+
+  deleteAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<{ deleted: boolean }> {
+    return this.delete(`case/${caseId}/appealSummons/${appealSummonsId}`)
   }
 
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
