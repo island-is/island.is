@@ -80,17 +80,29 @@ test.describe.serial('Verdict appeal tests', () => {
     await expect(page).toHaveURL(
       new RegExp(`/landsrettur/afryjun/yfirlit/${caseId}(\\?.*)?$`),
     )
-    await page.getByTestId('continueButton').click()
+    // The defender page refetches the case as it opens. Acting before that
+    // settles lets the refetch overwrite the answer given below.
+    await Promise.all([
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      page.getByTestId('continueButton').click(),
+    ])
 
     // Defender: the defendant waived counsel in the district court, and the
     // court of appeals records its own answer to the question.
     await expect(page).toHaveURL(
       new RegExp(`/landsrettur/afryjun/verjandi/${caseId}(\\?.*)?$`),
     )
-    await page
-      .getByRole('checkbox', { name: 'Ákærði óskar ekki eftir verjanda' })
-      .check()
-    await page.getByRole('button', { name: 'Staðfesta val á verjanda' }).click()
+    await Promise.all([
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
+      page
+        .getByRole('checkbox', { name: 'Ákærði óskar ekki eftir verjanda' })
+        .check(),
+    ])
+    const confirmDefenderButton = page.getByRole('button', {
+      name: 'Staðfesta val á verjanda',
+    })
+    await expect(confirmDefenderButton).toBeEnabled()
+    await confirmDefenderButton.click()
     await Promise.all([
       page.getByTestId('modalPrimaryButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
