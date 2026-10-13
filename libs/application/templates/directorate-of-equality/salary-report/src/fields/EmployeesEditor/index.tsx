@@ -81,6 +81,8 @@ const DRAFT_EMPLOYEES_QUERY = gql`
   }
 `
 
+const ADD_TARGET = 'add'
+
 const toEmployee = (e: ReportEmployeeDto): Employee => ({
   id: e.id,
   ordinal: e.ordinal,
@@ -140,8 +142,10 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [isAdding, setIsAdding] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | undefined>()
-  // Spans the sync and its refetches; the form only closes once both land.
-  const [isSaving, setIsSaving] = useState(false)
+  // What is syncing — 'add' or an employee id — so only that form or row
+  // spins. Spans the sync and its refetches, as the form only closes after.
+  const [savingTarget, setSavingTarget] = useState<string | null>(null)
+  const isSaving = savingTarget !== null
   // State alone can miss a double click that fires before the re-render.
   const savingRef = useRef(false)
 
@@ -201,10 +205,13 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     ...componentsFromFormValues(values),
   })
 
-  const runSync = async (batch: Parameters<typeof sync>[0]) => {
+  const runSync = async (
+    target: string,
+    batch: Parameters<typeof sync>[0],
+  ) => {
     if (savingRef.current) return false
     savingRef.current = true
-    setIsSaving(true)
+    setSavingTarget(target)
     setActionError(undefined)
     try {
       await sync(batch)
@@ -231,13 +238,13 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       return false
     } finally {
       savingRef.current = false
-      setIsSaving(false)
+      setSavingTarget(null)
     }
   }
 
   const handleAdd = async (values: EmployeeFormValues) => {
     const { roleId, roleCommand } = buildRoleCommand(values.roleTitle)
-    const ok = await runSync({
+    const ok = await runSync(ADD_TARGET, {
       roles: roleCommand ? [roleCommand] : undefined,
       employees: [
         {
@@ -252,7 +259,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const handleSave = async (employee: Employee, values: EmployeeFormValues) => {
     const { roleId, roleCommand } = buildRoleCommand(values.roleTitle)
-    const ok = await runSync({
+    const ok = await runSync(employee.id, {
       roles: roleCommand ? [roleCommand] : undefined,
       employees: [
         {
@@ -266,7 +273,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }
 
   const handleRemove = (employee: Employee) =>
-    runSync({
+    runSync(employee.id, {
       employees: [{ method: SyncMethodEnum.REMOVE, id: employee.id }],
     })
 
@@ -300,7 +307,8 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     <EmployeeForm
                       employee={employee}
                       roleTitleById={roleTitleById}
-                      isSaving={isSaving}
+                      isSaving={savingTarget === employee.id}
+                      disabled={isSaving}
                       onSubmit={(values) => handleSave(employee, values)}
                       onCancel={() => setEditingId(null)}
                     />
@@ -312,6 +320,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   employee={employee}
                   roleTitleById={roleTitleById}
                   disabled={isSaving}
+                  isRemoving={savingTarget === employee.id}
                   onRemove={() => handleRemove(employee)}
                   onEdit={() => setEditingId(employee.id)}
                 />
@@ -324,6 +333,9 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           page={paging?.page ?? page}
           totalPages={paging?.totalPages ?? 1}
           onPageChange={(newPage) => {
+            // A page change mid-save would unmount the open form and lose its
+            // values if the sync then fails.
+            if (savingRef.current) return
             setEditingId(null)
             setPage(newPage)
           }}
@@ -332,7 +344,8 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         {isAdding ? (
           <EmployeeForm
             roleTitleById={roleTitleById}
-            isSaving={isSaving}
+            isSaving={savingTarget === ADD_TARGET}
+            disabled={isSaving}
             onSubmit={handleAdd}
             onCancel={() => setIsAdding(false)}
           />

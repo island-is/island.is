@@ -36,7 +36,9 @@ type Props = {
   // Present when editing an existing employee; omitted when adding a new one.
   employee?: Employee
   roleTitleById: Record<string, string>
+  // isSaving: this form is the one syncing. disabled: any change is syncing.
   isSaving?: boolean
+  disabled?: boolean
   onSubmit: (values: EmployeeFormValues) => void
   onCancel: () => void
 }
@@ -45,6 +47,7 @@ export const EmployeeForm: FC<Props> = ({
   employee,
   roleTitleById,
   isSaving = false,
+  disabled = false,
   onSubmit,
   onCancel,
 }) => {
@@ -244,6 +247,7 @@ export const EmployeeForm: FC<Props> = ({
               type="button"
               onClick={methods.handleSubmit(onValid)}
               loading={isSaving}
+              disabled={disabled}
             >
               {formatMessage(m.saveButton)}
             </Button>
