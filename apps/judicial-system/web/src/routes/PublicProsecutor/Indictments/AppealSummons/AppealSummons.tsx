@@ -119,6 +119,7 @@ const AppealSummons = () => {
         standing,
         workingCase.civilClaimants ?? [],
         existingSummons,
+        workingCase.defendants ?? [],
       ),
     )
     setHasInitialized(true)

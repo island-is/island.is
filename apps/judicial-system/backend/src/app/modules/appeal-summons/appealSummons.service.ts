@@ -132,7 +132,7 @@ export class AppealSummonsService {
       )
     }
 
-    const resolvedDefendants = this.resolveDefendants(theCase, dto)
+    const resolvedDefendants = this.resolveDefendants(theCase, dto, summons)
 
     if (summons.confirmedDate) {
       await this.appealSummonsRepositoryService.update(
@@ -146,7 +146,11 @@ export class AppealSummonsService {
         },
         { transaction },
       )
-      await this.tryDeleteCachedPdf(theCase, summons.id)
+      // Delete after commit so a rolled-back edit cannot leave the DB hash
+      // pointing at a PDF that S3 already removed.
+      transaction.afterCommit(() => {
+        void this.tryDeleteCachedPdf(theCase, summons.id)
+      })
     }
 
     await this.appealSummonsRepositoryService.deleteDefendants(summons.id, {
@@ -201,7 +205,10 @@ export class AppealSummonsService {
     )
 
     if (deleted) {
-      await this.tryDeleteCachedPdf(theCase, summons.id)
+      // Same as update: only drop the cached PDF once the row is gone.
+      transaction.afterCommit(() => {
+        void this.tryDeleteCachedPdf(theCase, summons.id)
+      })
     }
 
     return deleted
@@ -299,6 +306,9 @@ export class AppealSummonsService {
   resolveDefendants(
     theCase: Case,
     dto: CreateAppealSummonsDto,
+    // On update, defendants already on this summons may be kept even if their
+    // appeal was later withdrawn, so an edit does not silently drop them.
+    existingSummons?: Pick<AppealSummons, 'defendants'>,
   ): {
     defendantId: string
     appellantSide: AppealSummonsAppellantSide
@@ -311,6 +321,9 @@ export class AppealSummonsService {
     }
 
     const standing = standingVerdictAppellants(appealCase)
+    const existingByDefendant = new Map(
+      (existingSummons?.defendants ?? []).map((row) => [row.defendantId, row]),
+    )
     const defendantIds = dto.defendants.map(
       (defendant) => defendant.defendantId,
     )
@@ -337,9 +350,19 @@ export class AppealSummonsService {
         .map((appellant) => appellant.side)
 
       if (sides.length === 0) {
-        throw new BadRequestException(
-          `Defendant ${defendant.defendantId} has no standing verdict appeal`,
-        )
+        const existing = existingByDefendant.get(defendant.defendantId)
+
+        if (!existing) {
+          throw new BadRequestException(
+            `Defendant ${defendant.defendantId} has no standing verdict appeal`,
+          )
+        }
+
+        return {
+          defendantId: defendant.defendantId,
+          appellantSide: existing.appellantSide,
+          claims: defendant.claims,
+        }
       }
 
       const appellantSide =
