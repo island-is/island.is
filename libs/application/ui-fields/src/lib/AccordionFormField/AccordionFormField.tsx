@@ -128,20 +128,20 @@ export const AccordionFormField = ({
     })
   }, [items, errors, formValues, application])
 
-  // Expand items containing invalid fields each time the user tries to submit
+  // Expand all items containing invalid fields each time the user tries to submit.
+  // In single-expand mode this temporarily allows multiple open items; the
+  // single-expand rule is restored on the next manual toggle.
   useEffect(() => {
     if (submitCount === handledSubmitCountRef.current) return
     handledSubmitCountRef.current = submitCount
     if (erroredItemIndices.length === 0) return
 
-    setExpandedItems((prev) => {
-      if (isSingleExpand) {
-        return prev.map((_, index) => index === erroredItemIndices[0])
-      }
-      return prev.map(
-        (expanded, index) => expanded || erroredItemIndices.includes(index),
-      )
-    })
+    setExpandedItems((prev) =>
+      prev.map(
+        (expanded, index) =>
+          erroredItemIndices.includes(index) || (!isSingleExpand && expanded),
+      ),
+    )
   }, [submitCount, erroredItemIndices, isSingleExpand])
 
   const handleToggle = (index: number, expanded: boolean) => {

@@ -48,7 +48,6 @@ export const accordionSubsection = buildSubSection({
         buildAccordionField({
           id: 'accordionDemo',
           title: 'Accordion demo',
-          singleExpand: false,
           accordionItems: [
             {
               itemTitle: 'Text only',
