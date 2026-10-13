@@ -30,6 +30,8 @@ export type DebtFjsValidateOutcome =
     }
   /** FJS rejected the debts, permanently. */
   | { type: 'invalid'; problem?: ProblemDetailsDt }
+  /** FJS already has a payment with this payFlowId. */
+  | { type: 'already_registered'; problem?: ProblemDetailsDt }
   /** We could not tell, try again later. */
   | { type: 'transient'; error: unknown }
 
@@ -38,6 +40,8 @@ export type DebtFjsPayOutcome =
   | { type: 'registered'; payFlowId: string; dateCreated: string }
   /** FJS rejected the payment, permanently. */
   | { type: 'rejected'; problem?: ProblemDetailsDt }
+  /** FJS already has a payment with this payFlowId, nothing new was registered. */
+  | { type: 'already_registered'; problem?: ProblemDetailsDt }
   /** FJS may or may not have processed the call. */
   | { type: 'ambiguous'; error: unknown }
   /** FJS did not process the call (authentication), safe to retry. */

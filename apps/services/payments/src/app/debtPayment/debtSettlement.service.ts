@@ -34,10 +34,18 @@ export type DebtSettlementFlow = {
 }
 
 export type DebtSettlementResult = (
-  | { type: 'registered'; payFlowId: string; dateCreated: string }
+  | {
+      type: 'registered'
+      payFlowId: string
+      /** Missing when the 202 was lost and FJS only reported the payment as a duplicate. */
+      dateCreated?: string
+    }
   /** FJS rejected the payment, the flow is closed and the caller decides how to unwind it. */
   | { type: 'rejected'; problem?: ProblemDetailsDt }
-  /** A rejection after an ambiguous attempt: may be registered already, needs a person. */
+  /**
+   * A rejection after an ambiguous attempt, or FJS reporting a payment no attempt explains: may be
+   * registered already, needs a person.
+   */
   | { type: 'reconcile'; problem?: ProblemDetailsDt }
 ) & {
   /** True when the flow was settled by an earlier attempt, nothing happened on this call. */
@@ -124,6 +132,10 @@ export class DebtSettlementService {
         : this.markRejected(flow.id, validation.problem)
     }
 
+    if (validation.type === 'already_registered') {
+      return this.onAlreadyRegistered(row, validation.problem)
+    }
+
     // Until the outcome is saved the call counts as ambiguous, so a crash or a failed write after a
     // 202 can not make a later 400 look like a clean rejection and refund a registered payment.
     // If this write fails nothing has been sent to FJS, and throwing is safe.
@@ -163,6 +175,9 @@ export class DebtSettlementService {
         return row.hadAmbiguousAttempt
           ? this.markNeedsReconciliation(flow.id, outcome.problem)
           : this.markRejected(flow.id, outcome.problem)
+
+      case 'already_registered':
+        return this.onAlreadyRegistered(row, outcome.problem)
 
       case 'ambiguous':
         // FJS may have processed the call, so a later 400 can not be trusted.
@@ -264,7 +279,7 @@ export class DebtSettlementService {
         return {
           type: 'registered',
           payFlowId: row.payFlowId,
-          dateCreated: row.dateCreated ?? '',
+          dateCreated: row.dateCreated ?? undefined,
           alreadySettled: true,
         }
       case 'rejected':
@@ -273,6 +288,37 @@ export class DebtSettlementService {
         return { type: 'reconcile', problem, alreadySettled: true }
       default:
         return { type: 'deferred', reason: 'in_progress' }
+    }
+  }
+
+  /**
+   * FJS already has a payment with this payFlowId. The flow id is ours alone, so after an attempt
+   * with an unknown outcome that attempt was registered. Without one nothing explains it, and a
+   * person has to look. Never a refund either way.
+   *
+   * `row` is the claimed row, so its flag is what earlier attempts left.
+   */
+  private async onAlreadyRegistered(
+    row: FjsDebtPayment,
+    problem?: ProblemDetailsDt,
+  ): Promise<DebtSettlementOutcome> {
+    if (!row.hadAmbiguousAttempt) {
+      return this.markNeedsReconciliation(row.paymentFlowId, problem)
+    }
+
+    this.logger.warn(
+      `[${row.paymentFlowId}] FJS already has the debt payment, an earlier attempt registered it`,
+      { problem },
+    )
+    // FJS does not repeat `dateCreated`, so it stays empty
+    await this.persistAfterPay(row.paymentFlowId, {
+      status: 'registered',
+      hadAmbiguousAttempt: true,
+    })
+    return {
+      type: 'registered',
+      payFlowId: row.payFlowId,
+      alreadySettled: false,
     }
   }
 
@@ -339,7 +385,7 @@ export class DebtSettlementService {
         paymentMethod: 'system',
         occurredAt: new Date(),
         message:
-          'FJS rejected a debt payment after an attempt with an unknown outcome — reconcile manually',
+          'FJS rejected a debt payment that may already be registered — reconcile manually',
         metadata: { needsReconciliation: true, problem },
       })
       .catch((error) => {

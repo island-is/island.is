@@ -317,7 +317,11 @@ export class PaymentFlowService {
         paymentDate: new Date(),
       })
 
-      if (validation.type === 'invalid') {
+      // A duplicate can not happen for a new flow id, it is refused like any other 400
+      if (
+        validation.type === 'invalid' ||
+        validation.type === 'already_registered'
+      ) {
         this.logger.warn(`[${paymentFlowId}] FJS rejected the debts`, {
           problem: validation.problem,
         })
@@ -439,6 +443,14 @@ export class PaymentFlowService {
         problem: validation.problem,
       })
       throw new BadRequestException(PaymentServiceCode.DebtPaymentInvalid)
+    }
+
+    // FJS already has a payment for this flow, taking the money again would pay twice
+    if (validation.type === 'already_registered') {
+      this.logger.warn(`[${paymentFlow.id}] FJS already has the debt payment`, {
+        problem: validation.problem,
+      })
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
     }
 
     if (validation.type === 'transient') {
@@ -775,11 +787,14 @@ export class PaymentFlowService {
     }
   }
 
-  /** `update/payment_finalized`: FJS accepted (202) the debt payment, it owns it from here. */
+  /**
+   * `update/payment_finalized`: FJS accepted (202) the debt payment, it owns it from here.
+   * `dateCreated` is missing when the 202 was lost and FJS only reported the payment as a duplicate.
+   */
   async logDebtPaymentFinalized(
     paymentFlowId: string,
     paymentMethod: PaymentMethod,
-    registration: { payFlowId: string; dateCreated: string },
+    registration: { payFlowId: string; dateCreated?: string },
   ) {
     await this.logPaymentFlowUpdate(
       {

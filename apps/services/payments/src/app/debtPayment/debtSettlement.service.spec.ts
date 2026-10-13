@@ -16,6 +16,16 @@ const problem = {
   detail: 'Amount exceeds debt',
 }
 
+// FJS already took a payment with this payFlowId
+const alreadyRegistered = {
+  type: 'already_registered' as const,
+  problem: {
+    title: '6',
+    status: '400',
+    detail: 'Búið að taka á móti álagningu flow',
+  },
+}
+
 const payInfo: FjsPayInfo = {
   kind: 'credit',
   RRN: 'rrn-1',
@@ -233,6 +243,31 @@ describe('DebtSettlementService', () => {
     })
   })
 
+  it('needs reconciliation, not a refund, when FJS has the payment on a first attempt', async () => {
+    pay.mockResolvedValue(alreadyRegistered)
+    const flow = await createFlow()
+
+    const outcome = await service.attempt(flow, payInfo)
+
+    expect(outcome).toEqual({
+      type: 'reconcile',
+      problem: alreadyRegistered.problem,
+      alreadySettled: false,
+    })
+    expect((await getRow(flow.id))?.status).toBe('needs_reconciliation')
+  })
+
+  it('needs reconciliation when validation finds the payment on a first attempt', async () => {
+    validate.mockResolvedValue(alreadyRegistered)
+    const flow = await createFlow()
+
+    const outcome = await service.attempt(flow, payInfo)
+
+    expect(outcome).toMatchObject({ type: 'reconcile' })
+    expect(pay).not.toHaveBeenCalled()
+    expect((await getRow(flow.id))?.status).toBe('needs_reconciliation')
+  })
+
   describe('after an ambiguous attempt', () => {
     const createFlowWithAmbiguousAttempt = async () => {
       pay.mockResolvedValueOnce({
@@ -292,6 +327,45 @@ describe('DebtSettlementService', () => {
       expect(pay).toHaveBeenCalledTimes(1)
       expect((await getRow(flow.id))?.status).toBe('needs_reconciliation')
     })
+
+    it('registers when validation finds that FJS has the payment, without paying again', async () => {
+      const flow = await createFlowWithAmbiguousAttempt()
+      validate.mockResolvedValue(alreadyRegistered)
+
+      const outcome = await service.attempt(flow, payInfo)
+
+      expect(outcome).toEqual({
+        type: 'registered',
+        payFlowId: flow.id,
+        alreadySettled: false,
+      })
+      expect(pay).toHaveBeenCalledTimes(1)
+
+      const row = await getRow(flow.id)
+      expect(row).toMatchObject({
+        status: 'registered',
+        attempts: 2,
+        hadAmbiguousAttempt: true,
+      })
+      // FJS does not repeat it for a duplicate
+      expect(row?.dateCreated).toBeNull()
+      // Not a reconciliation, so no event either
+      expect(await getEvents(flow.id)).toHaveLength(0)
+    })
+
+    it('registers when the retry is a duplicate of it', async () => {
+      const flow = await createFlowWithAmbiguousAttempt()
+      pay.mockResolvedValue(alreadyRegistered)
+
+      const outcome = await service.attempt(flow, payInfo)
+
+      expect(outcome).toEqual({
+        type: 'registered',
+        payFlowId: flow.id,
+        alreadySettled: false,
+      })
+      expect((await getRow(flow.id))?.status).toBe('registered')
+    })
   })
 
   describe('when the outcome of a call is lost', () => {
@@ -331,6 +405,19 @@ describe('DebtSettlementService', () => {
 
       expect(outcome).toMatchObject({ type: 'reconcile' })
       expect((await getRow(flow.id))?.status).toBe('needs_reconciliation')
+    })
+
+    it('registers when a retry finds that FJS has the payment', async () => {
+      const flow = await createFlowWithLostOutcome()
+      validate.mockResolvedValue(alreadyRegistered)
+
+      const outcome = await service.attempt(flow, payInfo)
+
+      expect(outcome).toMatchObject({
+        type: 'registered',
+        alreadySettled: false,
+      })
+      expect((await getRow(flow.id))?.status).toBe('registered')
     })
   })
 

@@ -61,6 +61,15 @@ const getHttpErrorDetails = (
 const isAuthError = (status: number) => status === 401 || status === 403
 
 /**
+ * FJS answers a payFlowId it has already taken a payment for with a 400 and this title, from
+ * both `validatePayment` and `payDebt`: "Búið að taka á móti álagningu <payFlowId>".
+ */
+const FJS_PAY_FLOW_ALREADY_RECEIVED_TITLE = '6'
+
+const isPayFlowAlreadyReceived = (problem?: ProblemDetailsDt) =>
+  problem?.title?.trim() === FJS_PAY_FLOW_ALREADY_RECEIVED_TITLE
+
+/**
  * Talks to FJS about debts, and sorts every way a call can go into an outcome the callers act
  * on, so that none of them has to read raw client errors.
  */
@@ -98,7 +107,9 @@ export class DebtFjsService {
 
       const http = getHttpErrorDetails(error)
       if (http?.status === 400) {
-        return { type: 'invalid', problem: http.problem }
+        return isPayFlowAlreadyReceived(http.problem)
+          ? { type: 'already_registered', problem: http.problem }
+          : { type: 'invalid', problem: http.problem }
       }
 
       // Everything else, 401/403, 5xx, timeouts, network errors and an open circuit breaker,
@@ -123,7 +134,9 @@ export class DebtFjsService {
       const http = getHttpErrorDetails(error)
 
       if (http?.status === 400) {
-        return { type: 'rejected', problem: http.problem }
+        return isPayFlowAlreadyReceived(http.problem)
+          ? { type: 'already_registered', problem: http.problem }
+          : { type: 'rejected', problem: http.problem }
       }
 
       // FJS did not process the call, no need to treat a later retry with care.

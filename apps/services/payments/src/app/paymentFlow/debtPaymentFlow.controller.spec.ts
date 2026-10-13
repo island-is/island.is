@@ -437,6 +437,21 @@ describe('DebtPaymentFlowController', () => {
         })
       })
 
+      it('rejects as paid when FJS already has a payment for the flow', async () => {
+        const flow = await getFlow(await createFlow())
+        validatePayment.mockRejectedValue(
+          await fjsFetchError(400, {
+            error: { title: '6', status: '400', detail: 'Búið að taka á móti' },
+          }),
+        )
+
+        await expect(
+          service.validateDebtPaymentFlow(flow, PaymentMethod.CARD),
+        ).rejects.toMatchObject({
+          message: PaymentServiceCode.PaymentFlowAlreadyPaid,
+        })
+      })
+
       it('rejects a flow whose settlement was rejected as closed, without asking FJS', async () => {
         const flow = await getFlow(await createFlow())
         validatePayment.mockClear()

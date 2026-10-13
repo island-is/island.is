@@ -42,6 +42,13 @@ const validateInput = {
   paymentDate: new Date(2026, 9, 12),
 }
 
+// What FJS answers for a payFlowId it already took a payment for
+const alreadyReceived: ProblemDetailsDt = {
+  title: '6',
+  status: '400',
+  detail: `Búið að taka á móti álagningu ${validateInput.flowId}`,
+}
+
 const payInfo = {
   RRN: '123',
   paymentMeans: 'DebetCard' as const,
@@ -123,6 +130,17 @@ describe('DebtFjsService', () => {
       await expect(service.validate(validateInput)).resolves.toEqual({
         type: 'invalid',
         problem,
+      })
+    })
+
+    it('is already registered when FJS has a payment for the flow id', async () => {
+      financeClient.validatePayment.mockRejectedValue(
+        await fjsFetchError(400, { error: alreadyReceived }),
+      )
+
+      await expect(service.validate(validateInput)).resolves.toEqual({
+        type: 'already_registered',
+        problem: alreadyReceived,
       })
     })
 
@@ -214,6 +232,17 @@ describe('DebtFjsService', () => {
       await expect(service.pay(payInput)).resolves.toEqual({
         type: 'rejected',
         problem,
+      })
+    })
+
+    it('is already registered when FJS has a payment for the flow id', async () => {
+      financeClient.payDebt.mockRejectedValue(
+        await fjsFetchError(400, { error: alreadyReceived }),
+      )
+
+      await expect(service.pay(payInput)).resolves.toEqual({
+        type: 'already_registered',
+        problem: alreadyReceived,
       })
     })
 
