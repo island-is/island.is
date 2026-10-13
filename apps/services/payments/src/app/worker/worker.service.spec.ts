@@ -752,7 +752,7 @@ describe('WorkerService', () => {
       )
     })
 
-    it.each(['ambiguous', 'validation_unavailable', 'in_progress'])(
+    it.each(['ambiguous', 'in_progress'])(
       'retries next run without counting a failure when %s',
       async (reason) => {
         mockDebtSweep([createDebtCardFlow()])

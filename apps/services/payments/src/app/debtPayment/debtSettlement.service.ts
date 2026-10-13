@@ -23,7 +23,7 @@ const PAY_DEBT_TIMEOUT_MS = 15_000
 /**
  * An attempt is claimed for this long. It keeps concurrent callers (the saga, a status poll, the
  * worker) from calling `payDebt` for the same flow at the same time, so it must outlast one
- * attempt: validation (client timeout 20s) plus `payDebt` (15s).
+ * attempt: `payDebt` (15s) plus saving its outcome.
  */
 const ATTEMPT_CLAIM_WINDOW_MS = 60_000
 
@@ -56,11 +56,7 @@ export type DebtSettlementOutcome =
   /** Not settled yet, the worker tries again. `reason` is for logs and worker events. */
   | {
       type: 'deferred'
-      reason:
-        | 'in_progress'
-        | 'validation_unavailable'
-        | 'ambiguous'
-        | 'transient'
+      reason: 'in_progress' | 'ambiguous' | 'transient'
     }
 
 /**
@@ -108,31 +104,10 @@ export class DebtSettlementService {
       return this.currentOutcome(flow.id)
     }
 
+    // No validatePayment first: payDebt answers with the same error codes, including the
+    // duplicate (6) that tells an earlier attempt registered the payment. The payment flows
+    // validated the debts right before the money was captured.
     const paymentDate = new Date()
-    const validation = await this.debtFjsService.validate({
-      flowId: flow.id,
-      payerNationalId: flow.payerNationalId,
-      debts,
-      paymentDate,
-    })
-
-    if (validation.type === 'transient') {
-      this.logger.warn(`[${flow.id}] Could not validate debts before payDebt`, {
-        error: (validation.error as Error)?.message,
-      })
-      return { type: 'deferred', reason: 'validation_unavailable' }
-    }
-
-    if (validation.type === 'invalid') {
-      // After an ambiguous attempt the debts may be gone because FJS registered that attempt.
-      return row.hadAmbiguousAttempt
-        ? this.markNeedsReconciliation(flow.id, validation.problem)
-        : this.markRejected(flow.id, validation.problem)
-    }
-
-    if (validation.type === 'already_registered') {
-      return this.onAlreadyRegistered(row, validation.problem)
-    }
 
     // Until the outcome is saved the call counts as ambiguous, so a crash or a failed write after a
     // 202 can not make a later 400 look like a clean rejection and refund a registered payment.
