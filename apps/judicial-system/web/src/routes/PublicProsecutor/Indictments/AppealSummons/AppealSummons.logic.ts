@@ -89,9 +89,10 @@ export type StandingAppealSummonsDefendant = {
 }
 
 /**
- * Defendants with a standing verdict appeal, one row each. When both sides
- * stand for the same defendant the prosecution wording wins (design Q-G).
- * Mirrors standingVerdictAppellants on the backend.
+ * Defendants with a standing verdict appeal, one row each. When both the
+ * defence and the prosecution have a standing appeal for the same defendant,
+ * the prosecution appellant side is used. Mirrors standingVerdictAppellants
+ * on the backend.
  */
 export const getStandingAppealSummonsDefendants = (
   workingCase: Pick<WorkingCase, 'defendants' | 'verdictAppealCase'>,

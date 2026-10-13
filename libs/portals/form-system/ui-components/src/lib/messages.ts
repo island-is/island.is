@@ -880,6 +880,13 @@ export const m = defineMessages({
     defaultMessage: 'Ógild kennitala',
     description: 'Invalid national ID',
   },
+  nationalIdLookupFailed: {
+    id: 'form.system:national-id-lookup-failed',
+    defaultMessage:
+      'Leitin skilaði ekki niðurstöðu. Kennitala fannst ekki eða þjónusta ekki tiltæk.',
+    description:
+      'The search yielded no results. The ID number was not found, or the service is unavailable.',
+  },
   invalidPhoneNumber: {
     id: 'form.system:invalid-phone-number',
     defaultMessage: 'Ógilt símanúmer',

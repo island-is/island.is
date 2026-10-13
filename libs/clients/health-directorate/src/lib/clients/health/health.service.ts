@@ -18,6 +18,7 @@ import {
   donationExceptionControllerGetOrgansV1,
   meAppointmentControllerCancelAppointmentV1,
   meAppointmentControllerGetPatientAppointmentsV1,
+  meAppointmentControllerGetPatientAppointmentsV2V2,
   meAppointmentControllerGetPatientAppointmentByIdV1,
   meCertificateControllerCreateCertificateRequestV1,
   meCertificateControllerCreatePaymentIntentV1,
@@ -87,8 +88,10 @@ import {
   ExaminationCommunicationDetailDto,
   ExaminationMeasurementDto,
   Locale,
+  MeAppointmentControllerGetPatientAppointmentsV2V2Data,
   MeConversationControllerGetConversationsV2V2Data,
   MessagingRecipientDto,
+  PaginatedAppointmentsDto,
   PaginatedConversationsDto,
   PaymentIntentDto,
   PaymentRequiredProblemResponse,
@@ -702,6 +705,17 @@ export class HealthDirectorateHealthService {
     )
 
     return appointments ?? null
+  }
+
+  public async getPaginatedAppointments(
+    auth: Auth,
+    query?: MeAppointmentControllerGetPatientAppointmentsV2V2Data['query'],
+  ): Promise<PaginatedAppointmentsDto | null> {
+    const page = await withAuthContext(auth, () =>
+      data(meAppointmentControllerGetPatientAppointmentsV2V2({ query })),
+    )
+
+    return page ?? null
   }
 
   public async getAppointmentById(
