@@ -691,7 +691,6 @@ const rewriteDevEnv = (
     return rewrite(value)
   }
 
-
   //trigger
   if (typeof value === 'object' && value !== null && 'dev' in value) {
     if (typeof value.dev === 'string') {
@@ -707,10 +706,10 @@ const rewriteDevEnv = (
 }
 
 /**
- * 
+ *
  * @param s Rewrites sercices parameters for ids feature.
- * @param env 
- * @returns 
+ * @param env
+ * @returns
  */
 function rewriteIdsFeatureServiceUrls(
   s: ServiceDefinition,
@@ -743,32 +742,32 @@ function rewriteIdsFeatureServiceUrls(
   }
 
   for (const [name, value] of Object.entries(s.env)) {
-      if (
-        typeof value === 'object' &&
-        value !== null &&
-        'dev' in value &&
-        typeof value.dev === 'string' &&
-        value.dev.startsWith('http')
-      ) {
-        s.env[name] = rewriteDevEnv(value, (devValue) =>
-          getFeatureInternalUrl(env, devValue),
-        )
-      }
+    if (
+      typeof value === 'object' &&
+      value !== null &&
+      'dev' in value &&
+      typeof value.dev === 'string' &&
+      value.dev.startsWith('http')
+    ) {
+      s.env[name] = rewriteDevEnv(value, (devValue) =>
+        getFeatureInternalUrl(env, devValue),
+      )
+    }
   }
 
   if (s.env.IDENTITY_SERVER_ISSUER_URL_LIST !== undefined) {
-      s.env.IDENTITY_SERVER_ISSUER_URL_LIST = rewriteDevEnv(
-        s.env.IDENTITY_SERVER_ISSUER_URL_LIST,
-        (value) => {
-          const issuers = JSON.parse(value) as string[]
-          const featureIssuer = getFeatureIdsUrl(env)
+    s.env.IDENTITY_SERVER_ISSUER_URL_LIST = rewriteDevEnv(
+      s.env.IDENTITY_SERVER_ISSUER_URL_LIST,
+      (value) => {
+        const issuers = JSON.parse(value) as string[]
+        const featureIssuer = getFeatureIdsUrl(env)
 
-          return JSON.stringify([
-            featureIssuer,
-            ...issuers.filter((issuer) => issuer !== featureIssuer),
-          ])
-        },
-      )
+        return JSON.stringify([
+          featureIssuer,
+          ...issuers.filter((issuer) => issuer !== featureIssuer),
+        ])
+      },
+    )
   }
 
   const idsUrlVariables = [
@@ -795,72 +794,71 @@ function rewriteIdsFeatureServiceUrls(
 
   //test
   if (s.env.AUTH_ADMIN_API_PATHS !== undefined) {
-      s.env.AUTH_ADMIN_API_PATHS = rewriteDevEnv(
-        s.env.AUTH_ADMIN_API_PATHS,
-        (value) => {
-          const paths = JSON.parse(value) as Record<string, string>
-          const developmentPath = paths.development
-            ? new URL(paths.development)
-            : null
+    s.env.AUTH_ADMIN_API_PATHS = rewriteDevEnv(
+      s.env.AUTH_ADMIN_API_PATHS,
+      (value) => {
+        const paths = JSON.parse(value) as Record<string, string>
+        const developmentPath = paths.development
+          ? new URL(paths.development)
+          : null
 
-          return JSON.stringify({
-            ...paths,
-            ...(developmentPath
-              ? {
-                  development: getFeatureIdsUrl(
-                    env,
-                    `${developmentPath.pathname}${developmentPath.search}${developmentPath.hash}`,
-                  ),
-                }
-              : {}),
-          })
-        },
-      )
+        return JSON.stringify({
+          ...paths,
+          ...(developmentPath
+            ? {
+                development: getFeatureIdsUrl(
+                  env,
+                  `${developmentPath.pathname}${developmentPath.search}${developmentPath.hash}`,
+                ),
+              }
+            : {}),
+        })
+      },
+    )
   }
 
   if (idsServices.includes(serviceName)) {
-      const rewriteIdsUrl = (value: string) => {
-        const url = new URL(value)
-        return getFeatureIdsUrl(env, `${url.pathname}${url.search}${url.hash}`)
-      }
+    const rewriteIdsUrl = (value: string) => {
+      const url = new URL(value)
+      return getFeatureIdsUrl(env, `${url.pathname}${url.search}${url.hash}`)
+    }
 
-      if (s.env.PUBLIC_URL !== undefined) {
-        s.env.PUBLIC_URL = rewriteDevEnv(s.env.PUBLIC_URL, rewriteIdsUrl)
-      }
-      if (s.env.BASE_URL !== undefined) {
-        s.env.BASE_URL = rewriteDevEnv(s.env.BASE_URL, rewriteIdsUrl)
-      }
-      if (s.env.NEXTAUTH_URL !== undefined) {
-        s.env.NEXTAUTH_URL = rewriteDevEnv(s.env.NEXTAUTH_URL, rewriteIdsUrl)
-      }
+    if (s.env.PUBLIC_URL !== undefined) {
+      s.env.PUBLIC_URL = rewriteDevEnv(s.env.PUBLIC_URL, rewriteIdsUrl)
+    }
+    if (s.env.BASE_URL !== undefined) {
+      s.env.BASE_URL = rewriteDevEnv(s.env.BASE_URL, rewriteIdsUrl)
+    }
+    if (s.env.NEXTAUTH_URL !== undefined) {
+      s.env.NEXTAUTH_URL = rewriteDevEnv(s.env.NEXTAUTH_URL, rewriteIdsUrl)
+    }
 
-      if (s.env.IDENTITYSERVER_DOMAIN !== undefined) {
-        s.env.IDENTITYSERVER_DOMAIN = rewriteDevEnv(
-          s.env.IDENTITYSERVER_DOMAIN,
-          () => featureIdsHost,
-        )
-      }
+    if (s.env.IDENTITYSERVER_DOMAIN !== undefined) {
+      s.env.IDENTITYSERVER_DOMAIN = rewriteDevEnv(
+        s.env.IDENTITYSERVER_DOMAIN,
+        () => featureIdsHost,
+      )
+    }
   }
 
-
   if (s.env.Application__AllowedRedirectUris) {
-      s.env.Application__AllowedRedirectUris = rewriteDevEnv(
-        s.env.Application__AllowedRedirectUris,
-        (value) =>
-          value
-            .split(',')
-            .map((uri) => {
-              const url = new URL(uri)
-              if (url.hostname !== `beta.${env.domain}`) {
-                return uri
-              }
-              return getFeaturePortalUrl(
-                env,
-                `${url.pathname}${url.search}${url.hash}`,
-              )
-            })
-            .join(','),
-      )
+    s.env.Application__AllowedRedirectUris = rewriteDevEnv(
+      s.env.Application__AllowedRedirectUris,
+      (value) =>
+        value
+          .split(',')
+          .map((uri) => {
+            const url = new URL(uri)
+            if (url.hostname !== `beta.${env.domain}`) {
+              return uri
+            }
+            return getFeaturePortalUrl(
+              env,
+              `${url.pathname}${url.search}${url.hash}`,
+            )
+          })
+          .join(','),
+    )
   }
 
   return s
@@ -870,7 +868,6 @@ function prepareFeatureDeployment(
   s: ServiceDefinition,
   env: EnvironmentConfig,
 ): ServiceDefinition {
-
   s = rewriteIdsFeatureServiceUrls(s, env)
 
   const featureIdsHost = getFeatureIdsHost(env)
@@ -883,19 +880,19 @@ function prepareFeatureDeployment(
   ]
   const serviceName = s.image ?? s.name
 
-    Object.values(s.ingress).forEach((ingress) => {
-      if (!Array.isArray(ingress.host.dev)) {
-        ingress.host.dev = [ingress.host.dev]
-      }
-      if (publicIdsServices.includes(serviceName)) {
-        ingress.host.dev = ingress.host.dev.map(() => featureIdsHost)
-      } else {
-        ingress.host.dev = ingress.host.dev.map(
-          (host) => `${env.feature}-${host}`,
-        )
-      }
-    })
-    return s
+  Object.values(s.ingress).forEach((ingress) => {
+    if (!Array.isArray(ingress.host.dev)) {
+      ingress.host.dev = [ingress.host.dev]
+    }
+    if (publicIdsServices.includes(serviceName)) {
+      ingress.host.dev = ingress.host.dev.map(() => featureIdsHost)
+    } else {
+      ingress.host.dev = ingress.host.dev.map(
+        (host) => `${env.feature}-${host}`,
+      )
+    }
+  })
+  return s
 }
 
 export const HelmOutput: OutputFormat<HelmService> = {
