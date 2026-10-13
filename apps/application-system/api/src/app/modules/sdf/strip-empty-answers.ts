@@ -1,11 +1,14 @@
 import { FormValue } from '@island.is/application/types'
 
 /**
- * Drop empty-string answer leaves so the persisted tree matches legacy, where an
- * untouched optional field is absent rather than `''`. SDF inputs are controlled
- * and the spread-merge never removes keys, so a cleared field would otherwise
- * stick as `''` and leak into outgoing payloads. Only empty-string leaves are
- * dropped; structure and other "empty" shapes (`null`, `[]`) are left intact.
+ * Drop object properties whose value is an empty or whitespace-only string,
+ * at any depth (including objects inside arrays), so the persisted tree
+ * matches legacy, where an untouched optional field is absent rather than `''`.
+ * SDF inputs are controlled, so a cleared field sends `''`, which
+ * `applyFlatAnswers` stores as-is rather than deleting the key; it would
+ * otherwise stick as `''` and leak into outgoing payloads. Only such string
+ * properties are dropped: string array items (e.g. `['a', '']`) are kept,
+ * and structure and other "empty" shapes (`null`, `[]`, `{}`) are left intact.
  *
  * Pure: returns a new tree, leaving the input untouched.
  */

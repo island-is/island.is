@@ -40,6 +40,7 @@ describe('applyResolvedFieldDefaults', () => {
       merged,
       makeApplication(),
       'is',
+      new Set(),
     )
     expect(merged.foo).toBe('bar')
   })
@@ -68,6 +69,7 @@ describe('applyResolvedFieldDefaults', () => {
       merged,
       application,
       'is',
+      new Set(),
     )
     expect(merged).toEqual({ applicant: { name: 'Jón Jónsson' } })
   })
@@ -86,6 +88,7 @@ describe('applyResolvedFieldDefaults', () => {
       merged,
       makeApplication(),
       'is',
+      new Set(),
     )
     expect(merged.foo).toBe('user-typed')
   })
@@ -104,6 +107,7 @@ describe('applyResolvedFieldDefaults', () => {
       merged,
       makeApplication(),
       'is',
+      new Set(),
     )
     expect(merged.computed).toBeUndefined()
   })
@@ -123,6 +127,7 @@ describe('applyResolvedFieldDefaults', () => {
       merged,
       makeApplication(),
       'is',
+      new Set(),
     )
     expect(merged.conditional).toBeUndefined()
   })
@@ -142,6 +147,7 @@ describe('applyResolvedFieldDefaults', () => {
       merged,
       makeApplication(),
       'is',
+      new Set(),
     )
     expect(merged.conditional).toBe('seed')
   })
@@ -160,6 +166,7 @@ describe('applyResolvedFieldDefaults', () => {
       merged,
       makeApplication(),
       'is',
+      new Set(),
     )
     expect(merged.hidden).toBeUndefined()
   })
@@ -171,7 +178,13 @@ describe('applyResolvedFieldDefaults', () => {
       isNavigable: true,
     } as unknown as FormScreen
     expect(
-      applyResolvedFieldDefaults(screen, merged, makeApplication(), 'is'),
+      applyResolvedFieldDefaults(
+        screen,
+        merged,
+        makeApplication(),
+        'is',
+        new Set(),
+      ),
     ).toBe(merged)
     expect(Object.keys(merged)).toHaveLength(0)
   })
@@ -206,6 +219,7 @@ describe('applyResolvedFieldDefaults', () => {
       merged,
       model,
       'is',
+      new Set(),
     )
     expect(merged).toEqual({ applicant: { email: 'a@b.is' } })
   })
@@ -226,7 +240,85 @@ describe('applyResolvedFieldDefaults', () => {
       merged,
       makeApplication(),
       'is',
+      new Set(),
     )
     expect(merged.boom).toBeUndefined()
+  })
+
+  it('does not seed a field the client sent as empty', () => {
+    const merged: FormValue = { cleared: '' }
+    applyResolvedFieldDefaults(
+      page([
+        {
+          id: 'cleared',
+          type: FieldTypes.TEXT,
+          isNavigable: true,
+          defaultValue: 'seed',
+        },
+      ]),
+      merged,
+      makeApplication(),
+      'is',
+      new Set(['cleared']),
+    )
+    expect(merged.cleared).toBe('')
+  })
+
+  it('still seeds a field the client did not send', () => {
+    const merged: FormValue = { other: 'x' }
+    applyResolvedFieldDefaults(
+      page([
+        {
+          id: 'untouched',
+          type: FieldTypes.TEXT,
+          isNavigable: true,
+          defaultValue: 'seed',
+        },
+      ]),
+      merged,
+      makeApplication(),
+      'is',
+      new Set(['other']),
+    )
+    expect(merged.untouched).toBe('seed')
+  })
+
+  it('does not seed a dotted field the client sent as empty', () => {
+    const merged: FormValue = { applicant: { phone: '' } }
+    applyResolvedFieldDefaults(
+      page([
+        {
+          id: 'applicant.phone',
+          type: FieldTypes.TEXT,
+          isNavigable: true,
+          defaultValue: '+354',
+        },
+      ]),
+      merged,
+      makeApplication(),
+      'is',
+      new Set(['applicant.phone']),
+    )
+    expect(merged).toEqual({ applicant: { phone: '' } })
+  })
+
+  it('still seeds a dotted field when the client sent only its parent object', () => {
+    const merged: FormValue = { applicant: { name: 'B' } }
+    applyResolvedFieldDefaults(
+      page([
+        {
+          id: 'applicant.phone',
+          type: FieldTypes.TEXT,
+          isNavigable: true,
+          defaultValue: '+354',
+        },
+      ]),
+      merged,
+      makeApplication(),
+      'is',
+      // Matched by exact field id, so `applicant` does not cover `applicant.phone`.
+      new Set(['applicant']),
+    )
+    expect(merged).toEqual({ applicant: { name: 'B', phone: '+354' } })
   })
 })

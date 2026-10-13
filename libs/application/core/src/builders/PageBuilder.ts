@@ -257,7 +257,10 @@ export type PageBuilderOptions = {
   space?: MultiField['space']
 }
 
-interface SearchFieldOptions<TSchema = unknown> extends FieldOptions {
+// Search fields take no defaultValue: the client never renders one, so a
+// default would be saved as an answer the user never saw.
+interface SearchFieldOptions<TSchema = unknown>
+  extends Omit<FieldOptions, 'defaultValue'> {
   searchAction: string
   options: OptionList | DynamicOptions<TSchema>
   onSelectRefetch?: string[]

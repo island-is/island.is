@@ -82,6 +82,21 @@ const collectPageFields = (screen: FormScreen | undefined): FieldDef[] => {
  * (e.g. applicant base info from external data) never reaches `answers`. This pass
  * seeds every visible, value-bearing field that has no answer yet on page advance.
  *
+ * `mergedAnswers` must already contain the client's values for this request:
+ * `clientShowWhen` and function defaults are evaluated against it. Server
+ * `condition` visibility is not; it is read from `isNavigable` on `screen`, which
+ * the caller builds from the stored answers before this request's values apply.
+ *
+ * `clientAnswerKeys` holds the field ids the client sent in this request; those
+ * fields are never seeded, even when the value sent is empty (`''`, `[]`,
+ * `null`). This only protects the request that sends the empty value. Empty
+ * strings are stripped before saving, so a cleared text field is stored as
+ * absent, and a later request that does not send it (e.g. after a reload, when
+ * the client's answers come from the stored ones) seeds its default again. The
+ * match is by exact field id, not by path prefix, so a dotted child field
+ * (`applicant.phone`) still gets its default when the client sent only its
+ * parent object (`applicant`).
+ *
  * `mergedAnswers` is mutated in place and also returned.
  */
 export const applyResolvedFieldDefaults = (
@@ -89,6 +104,7 @@ export const applyResolvedFieldDefaults = (
   mergedAnswers: FormValue,
   application: Application,
   locale: Locale,
+  clientAnswerKeys: ReadonlySet<string>,
 ): FormValue => {
   const fields = collectPageFields(screen)
   if (fields.length === 0) return mergedAnswers
@@ -114,6 +130,8 @@ export const applyResolvedFieldDefaults = (
     // Hidden by a server `condition` (already reflected in `isNavigable`).
     if (field.isNavigable === false) continue
     if (NON_VALUE_BEARING_FIELD_TYPES.has(field.type as string)) continue
+    // A field the client sent in this request wins, even when it sent an empty value.
+    if (clientAnswerKeys.has(field.id)) continue
 
     const rawDefault = (field as { defaultValue?: unknown }).defaultValue
     if (rawDefault === undefined) continue

@@ -21,11 +21,16 @@ import { createApplicationTemplate } from '@island.is/application/testing'
 import type { User } from '@island.is/auth-nest-tools'
 import { z } from 'zod'
 import { ConflictException, HttpException } from '@nestjs/common'
+import cloneDeep from 'lodash/cloneDeep'
 
 import { SdfController } from '../sdf.controller'
 import { SdfScreenService } from '../sdf-screen.service'
 import { ExecuteActionDto, SdfActionType } from '../dto/action.dto'
-import type { ScreenDto, ValidateResponseDto } from '../dto/screen.dto'
+import type {
+  ScreenDto,
+  ValidateResponseDto,
+  ValidationErrorDto,
+} from '../dto/screen.dto'
 
 // Runs every SdfActionType through the real SdfController and SdfScreenService,
 // with their dependencies mocked, and checks what each action persists and
@@ -38,14 +43,18 @@ jest.mock('@island.is/application/template-loader', () => ({
     getApplicationTemplateByTypeIdMock(...args),
 }))
 
+// Resolves a message descriptor to its defaultMessage, so the rows can tell a
+// template's own message from the generic default.
+const resolveText = (message: unknown) =>
+  typeof message === 'string'
+    ? message
+    : (message as { defaultMessage?: string; id?: string })?.defaultMessage ??
+      (message as { id?: string })?.id ??
+      ''
+
 const createResolver = () => ({
-  resolve: (value: unknown) => (typeof value === 'string' ? value : ''),
-  format: (message: unknown) =>
-    typeof message === 'string'
-      ? message
-      : (message as { defaultMessage?: string; id?: string })?.defaultMessage ??
-        (message as { id?: string })?.id ??
-        '',
+  resolve: resolveText,
+  format: resolveText,
 })
 
 const APPLICANT = '111111-3000'
@@ -67,6 +76,33 @@ const twoPageForm = () =>
             id: 'page0',
             title: 'Page 0',
             children: [buildTextField({ id: 'field0', title: 'Field 0' })],
+          }),
+          buildMultiField({
+            id: 'page1',
+            title: 'Page 1',
+            children: [buildTextField({ id: 'field1', title: 'Field 1' })],
+          }),
+        ],
+      }),
+    ],
+  })
+
+// Page 0 holds a single text field with a static default.
+const defaultedFieldForm = (fieldId: string, defaultValue: string) => () =>
+  buildForm({
+    id: 'form',
+    title: 'Form',
+    children: [
+      buildSection({
+        id: 'section',
+        title: 'Section',
+        children: [
+          buildMultiField({
+            id: 'page0',
+            title: 'Page 0',
+            children: [
+              buildTextField({ id: fieldId, title: 'Field 0', defaultValue }),
+            ],
           }),
           buildMultiField({
             id: 'page1',
@@ -113,6 +149,14 @@ const permissiveSchema = z.object({}).passthrough()
 const strictSchema = z.object({
   field0: z.string().min(1),
   edp: z.literal(true),
+})
+// Requires field0 the way templates do, with their own namespaced message.
+const field0Required = {
+  id: 'example.application:field0.required',
+  defaultMessage: 'Field 0 is required',
+}
+const templateRequiredSchema = z.object({
+  field0: z.string().refine((value) => !!value, { params: field0Required }),
 })
 
 const createTemplate = (
@@ -274,6 +318,8 @@ interface PersistenceCase {
   }
   // Component ids of the validation errors on the returned Screen.
   validationErrors?: string[]
+  // When set, the messages of those errors, in the same order.
+  validationMessages?: string[]
   // The data passed to each applicationService.update call, in call order.
   saves: Record<string, unknown>[]
   // The template API actions and event passed to each call, in call order.
@@ -339,6 +385,65 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       stateChanges: [],
     },
     {
+      // The dotted key writes into the object sent under the same parent key.
+      // That object belongs to the request, so it must be copied, not written
+      // into.
+      label: 'with an object value and a dotted key under it',
+      form: twoPageForm,
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { applicant: { name: 'B' }, 'applicant.phone': '1' },
+        lastKnownPageIndex: 0,
+      },
+      saves: [
+        {
+          answers: { applicant: { name: 'B', phone: '1' } },
+          applicantActors: [],
+          pageIndex: 1,
+        },
+      ],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      // A field the client sent is never seeded, even when it sent it empty.
+      // The empty value is then stripped before saving, so the field is
+      // absent rather than holding its default.
+      label: 'with an empty value for a field that has a default',
+      form: defaultedFieldForm('field0', 'seed'),
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { field0: '' },
+        lastKnownPageIndex: 0,
+      },
+      saves: [{ answers: {}, applicantActors: [], pageIndex: 1 }],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      // Sent keys are matched against field ids exactly, so sending the
+      // parent object does not count as sending its dotted child field.
+      label: 'with only the parent object of a dotted field that has a default',
+      form: defaultedFieldForm('applicant.phone', '+354'),
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { applicant: { name: 'B' } },
+        lastKnownPageIndex: 0,
+      },
+      saves: [
+        {
+          answers: { applicant: { name: 'B', phone: '+354' } },
+          applicantActors: [],
+          pageIndex: 1,
+        },
+      ],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
       label: 'by a delegated actor',
       form: twoPageForm,
       user: { actor: { nationalId: ACTOR } } as Partial<User>,
@@ -396,6 +501,24 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
           answers: {},
         },
       ],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      // The schema sees the cleared field as `''`, so the template's own
+      // message is shown rather than the generic one for a missing value.
+      label: 'with a cleared required field',
+      form: twoPageForm,
+      dataSchema: templateRequiredSchema,
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { field0: '' },
+        lastKnownPageIndex: 0,
+      },
+      validationErrors: ['field0'],
+      validationMessages: [field0Required.defaultMessage],
+      saves: [],
+      persistingActions: [],
       ephemeralActions: [],
       stateChanges: [],
     },
@@ -527,6 +650,36 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       stateChanges: [{ answers: mergedAnswers, event: SUBMIT_EVENT }],
     },
     {
+      // The request's object must be copied, not written into. The resume
+      // save lands on page 0 because field0 on that page is still unanswered.
+      label: 'with an object value and a dotted key under it',
+      form: twoPageForm,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { applicant: { name: 'B' }, 'applicant.phone': '1' },
+      },
+      saves: [
+        { answers: { applicant: { name: 'B', phone: '1' } } },
+        { pageIndex: 0 },
+        { pageIndex: 0 },
+      ],
+      persistingActions: [
+        {
+          actions: roleActions,
+          event: SUBMIT_EVENT,
+          answers: { applicant: { name: 'B', phone: '1' } },
+        },
+      ],
+      ephemeralActions: [],
+      stateChanges: [
+        {
+          answers: { applicant: { name: 'B', phone: '1' } },
+          event: SUBMIT_EVENT,
+        },
+      ],
+    },
+    {
       // Unlike NEXT_PAGE, SUBMIT doesn't add the actor to applicantActors.
       label: 'by a delegated actor',
       form: twoPageForm,
@@ -572,6 +725,22 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         answers: { field0: '' },
       },
       validationErrors: ['field0'],
+      saves: [],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      label: 'with a cleared required field',
+      form: twoPageForm,
+      dataSchema: templateRequiredSchema,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { field0: '' },
+      },
+      validationErrors: ['field0'],
+      validationMessages: [field0Required.defaultMessage],
       saves: [],
       persistingActions: [],
       ephemeralActions: [],
@@ -758,6 +927,7 @@ describe('SDF action persistence', () => {
         ephemeralAction: c.ephemeralActionResult ?? succeeded,
         changeState: c.changeStateResult ?? transitioned,
       })
+    const requestAnswersBefore = cloneDeep(c.dto.answers)
 
     const request = controller.executeAction(
       row.id,
@@ -780,24 +950,25 @@ describe('SDF action persistence', () => {
     } else {
       const response = await request
       // VALIDATE answers with errors only; every other action returns a Screen.
+      let errors: ValidationErrorDto[]
       if (c.actionType === SdfActionType.VALIDATE) {
         expect(response).not.toHaveProperty('page')
-        const { errors } = response as ValidateResponseDto
-        expect(errors.map((e) => e.componentId)).toEqual(
-          c.validationErrors ?? [],
-        )
+        errors = (response as ValidateResponseDto).errors
       } else {
         expect(response).toHaveProperty('page')
-        const errors = (response as ScreenDto).page.errors ?? []
-        expect(errors.map((e) => e.componentId)).toEqual(
-          c.validationErrors ?? [],
-        )
+        errors = (response as ScreenDto).page.errors ?? []
+      }
+      expect(errors.map((e) => e.componentId)).toEqual(c.validationErrors ?? [])
+      if (c.validationMessages) {
+        expect(errors.map((e) => e.message)).toEqual(c.validationMessages)
       }
     }
 
     expect(
       applicationService.update.mock.calls.map(([, data]) => data),
     ).toEqual(c.saves)
+    // No action may modify the answers object it received in the request.
+    expect(c.dto.answers).toEqual(requestAnswersBefore)
     expect(applicationService.updateExternalData).not.toHaveBeenCalled()
     expect(applicationService.updateApplicationState).not.toHaveBeenCalled()
 

@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import TestRenderer, { act } from 'react-test-renderer'
+import React, { act, useState } from 'react'
+import TestRenderer from 'react-test-renderer'
 
 import { FormRenderer } from './FormRenderer'
 import type { SdfComponentData } from '../lib/graphql'
@@ -109,7 +109,12 @@ describe('FormRenderer client display fields', () => {
   })
 
   it('updates a display field immediately from typed currency answers', () => {
-    const renderer = TestRenderer.create(<Harness />)
+    let renderer!: TestRenderer.ReactTestRenderer
+    // `TestRenderer.create` renders asynchronously; wrap it in act() so the
+    // tree is committed before asserting.
+    act(() => {
+      renderer = TestRenderer.create(<Harness />)
+    })
 
     expect(renderer.root.findAllByType('input')[3].props.value).toBe('0 kr.')
 

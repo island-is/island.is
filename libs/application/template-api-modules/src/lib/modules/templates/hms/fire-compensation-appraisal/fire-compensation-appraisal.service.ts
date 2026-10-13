@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   ApplicationTypes,
   NotificationType,
+  SdfSearchAnswer,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NotificationsService } from '../../../../notification/notifications.service'
@@ -56,12 +57,6 @@ const getPropertiesErrorMessages = {
       'Vinsamlega hafið samband við HMS í [hms@hms.is](mailto:hms@hms.is)',
     description: 'Error summary for getting properties',
   },
-}
-
-type SearchAnswer = {
-  query?: string
-  value?: string
-  label?: string
 }
 
 const cleanupSearch = (search: string): number | undefined => {
@@ -440,7 +435,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
   // Replaces the legacy `PropertySearch` custom component for the SDF
   // "apply for a property I do not own" flow (address / property-code search).
   async searchProperties({ application, auth }: TemplateApiModuleActionProps) {
-    const search = getValueViaPath<SearchAnswer>(
+    const search = getValueViaPath<SdfSearchAnswer>(
       application.answers,
       'anyonesProperty',
     )

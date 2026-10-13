@@ -4,7 +4,7 @@ import set from 'lodash/set'
 import { FormValue } from '@island.is/application/types'
 
 /**
- * Merge the SDF client's answer payload onto an existing answer tree, expanding
+ * Apply the SDF client's answer payload onto an existing answer tree, expanding
  * dotted field ids into the nested shape the rest of the stack expects.
  *
  * The SDF client keys every answer by the field's literal id — including dotted
@@ -12,16 +12,22 @@ import { FormValue } from '@island.is/application/types'
  * shared zod `dataSchema`, the legacy answer validators, and every downstream
  * reader (`getValueViaPath`, overview/DTO mappers) instead expect that value
  * nested under `applicant: { phoneNumber }` — the shape the legacy
- * react-hook-form renderer produced. A plain `{ ...base, ...client }` spread
- * left the typed value stranded under the flat key, so a required nested field
- * (e.g. the applicant phone number when no `userProfile` default exists)
- * validated as `undefined` → "Required".
+ * react-hook-form renderer produced. Leaving a dotted value under its flat key
+ * would make a required nested field (e.g. the applicant phone number) read as
+ * `undefined` and fail validation as required.
  *
- * Using lodash `set` per key both nests the dotted ids and deep-merges into the
- * existing tree, so sibling fields already on `base.applicant` (name, email,
- * …) are preserved rather than clobbered by a shallow object replacement.
+ * Using lodash `set` per key nests the dotted ids into the existing tree, so
+ * sibling fields already on `base.applicant` (name, email, …) are preserved
+ * when only `applicant.phoneNumber` is sent.
  *
- * Pure: returns a new tree, leaving `base` untouched.
+ * A value that is an object or an array replaces whatever is stored under its
+ * key; it is not deep-merged. A field owns its whole value, so a field that
+ * sends an object or array must send the complete value. Keys are applied in
+ * order, so a later key overwrites anything an earlier key wrote at or below
+ * the same path.
+ *
+ * Pure: returns a new tree, leaving `base` and `flatAnswers` untouched.
+ * Incoming values are cloned, so the result shares no objects with either.
  */
 export const applyFlatAnswers = (
   base: FormValue | undefined,
@@ -33,7 +39,7 @@ export const applyFlatAnswers = (
   }
 
   for (const [key, value] of Object.entries(flatAnswers)) {
-    set(result, key, value)
+    set(result, key, cloneDeep(value))
   }
 
   return result as FormValue

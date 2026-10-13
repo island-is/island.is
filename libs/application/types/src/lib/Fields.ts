@@ -579,6 +579,19 @@ export interface SearchField extends InputField {
   inlineRefetchTemplateApis?: string[]
 }
 
+/**
+ * The answer the SDF search field writes under its id. The field replaces its
+ * whole value on every change with an object holding only these keys, so it
+ * does not preserve other keys stored under the same id. The server does not
+ * enforce this shape and stores whatever the client sends. Keep fetched or
+ * derived data in `externalData` or under separate field ids.
+ */
+export type SdfSearchAnswer = {
+  value?: string
+  label?: string
+  query?: string
+}
+
 export interface DataTableField extends BaseField {
   readonly type: FieldTypes.DATA_TABLE
   component: FieldComponents.DATA_TABLE

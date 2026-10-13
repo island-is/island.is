@@ -50,7 +50,7 @@ import { getApplicationNameTranslationString } from '../application/utils/applic
 import { isNewActor } from '../application/utils/delegationUtils'
 import { I18nResolverService, FormTextResolver } from './i18n-resolver.service'
 import { mapScreenToComponents } from './screen-mapper'
-import set from 'lodash/set'
+import cloneDeep from 'lodash/cloneDeep'
 import { applyResolvedFieldDefaults } from './field-default-persistence'
 import { applyFlatAnswers } from './apply-flat-answers'
 import { stripEmptyFormValue } from './strip-empty-answers'
@@ -808,12 +808,12 @@ export class SdfScreenService {
       mergedAnswers,
       application as Application,
       locale,
+      new Set(Object.keys(answers)),
     )
 
-    for (const [key, value] of Object.entries(answers)) {
-      set(mergedAnswers as Record<string, unknown>, key, value)
-    }
-
+    // Validation, the error screen and routing use the answers as sent, so a
+    // cleared field reaches the schema as `''` and the template's own
+    // messages apply. Empty strings are stripped only when saving.
     const validationErrors = await this.validateScreenAnswers(
       currentScreen,
       template,
@@ -1145,6 +1145,8 @@ export class SdfScreenService {
 
     const currentPageIndex: number =
       (application as ApplicationWithPageIndex).pageIndex ?? 0
+    // Validated as sent, so a cleared field reaches the schema as `''` and the
+    // template's own messages apply. Empty strings are stripped only when saving.
     const submitMergedAnswers = applyFlatAnswers(application.answers, answers)
     const currentScreen = await this.getCurrentScreen(
       application,
@@ -1178,9 +1180,8 @@ export class SdfScreenService {
     }
 
     if (answers && Object.keys(answers).length > 0) {
-      const mergedAnswers = applyFlatAnswers(application.answers, answers)
       await this.applicationService.update(applicationId, {
-        answers: stripEmptyFormValue(mergedAnswers),
+        answers: stripEmptyFormValue(submitMergedAnswers),
       })
       application = await this.requireApplicationForUser(applicationId, user)
     }
@@ -1294,10 +1295,13 @@ export class SdfScreenService {
   ): { answers: FormValue; externalData: ExternalData } {
     const { read, write } = roleInState
 
+    // Returns deep copies: the filtered data is handed to screen building and
+    // field mappers, which may modify it, and those changes must not reach
+    // the application.
     if (read === 'all' || write === 'all') {
       return {
-        answers: { ...application.answers },
-        externalData: { ...application.externalData },
+        answers: cloneDeep(application.answers),
+        externalData: cloneDeep(application.externalData),
       }
     }
 
@@ -1313,7 +1317,7 @@ export class SdfScreenService {
 
     for (const key of answerKeys) {
       if (key in application.answers) {
-        filteredAnswers[key] = application.answers[key]
+        filteredAnswers[key] = cloneDeep(application.answers[key])
       }
     }
 
@@ -1323,7 +1327,7 @@ export class SdfScreenService {
 
     for (const key of externalDataKeys) {
       if (key in application.externalData) {
-        filteredExternalData[key] = application.externalData[key]
+        filteredExternalData[key] = cloneDeep(application.externalData[key])
       }
     }
 
