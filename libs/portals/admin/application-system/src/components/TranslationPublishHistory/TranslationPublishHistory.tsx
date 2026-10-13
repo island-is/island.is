@@ -103,10 +103,11 @@ export const TranslationPublishHistory = ({
             minute: '2-digit',
           })
           const isCurrent = index === 0
+          const pubId = pub.id
 
           return (
             <Box
-              key={pub.id}
+              key={pubId ?? pub.publishedAt}
               border="standard"
               borderRadius="large"
               padding={3}
@@ -126,15 +127,15 @@ export const TranslationPublishHistory = ({
                     <Tag variant="mint" outlined>
                       {formatMessage(m.translationCurrentVersion)}
                     </Tag>
-                  ) : (
+                  ) : pubId ? (
                     <Button
                       size="small"
                       variant="ghost"
-                      onClick={() => setConfirmingId(pub.id)}
+                      onClick={() => setConfirmingId(pubId)}
                     >
                       {formatMessage(m.translationRollback)}
                     </Button>
-                  )}
+                  ) : null}
                 </Box>
               </Box>
             </Box>
