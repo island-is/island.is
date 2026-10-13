@@ -16,12 +16,17 @@ import type {
 } from 'sequelize'
 import { UserProfile } from './userProfile.model'
 
+export interface CategoryLabel {
+  is: string
+  en?: string
+}
+
 @Table({
   tableName: 'blocked_notifications',
   timestamps: true,
   indexes: [
     {
-      fields: ['national_id', 'sender_id'],
+      fields: ['national_id', 'sender_id', 'category'],
       unique: true,
     },
   ],
@@ -53,6 +58,20 @@ export class BlockedNotification extends Model<
   })
   @ApiProperty()
   senderId!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  category!: string
+
+  @Column({
+    type: DataType.JSONB,
+    allowNull: false,
+  })
+  @ApiProperty()
+  categoryLabel!: CategoryLabel
 
   @CreatedAt
   @ApiProperty()

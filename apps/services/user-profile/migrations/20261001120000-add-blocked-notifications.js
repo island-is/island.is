@@ -26,6 +26,14 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: false,
           },
+          category: {
+            type: Sequelize.STRING,
+            allowNull: false,
+          },
+          category_label: {
+            type: Sequelize.JSONB,
+            allowNull: false,
+          },
           created: {
             type: 'TIMESTAMP WITH TIME ZONE',
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
@@ -40,12 +48,12 @@ module.exports = {
         { transaction },
       )
 
-      // A sender can only be blocked once per user
+      // A sender's category can only be blocked once per user
       await queryInterface.addIndex(
         'blocked_notifications',
-        ['national_id', 'sender_id'],
+        ['national_id', 'sender_id', 'category'],
         {
-          name: 'blocked_notifications_national_id_sender_id_unique',
+          name: 'blocked_notifications_national_id_sender_id_category_unique',
           unique: true,
           transaction,
         },

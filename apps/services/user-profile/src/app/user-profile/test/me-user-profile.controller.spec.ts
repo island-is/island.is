@@ -2804,6 +2804,9 @@ describe('MeUserProfileController', () => {
     const senderId = createNationalId('company')
     const otherSenderId = createNationalId('company')
     const dashedSenderId = `${senderId.slice(0, 6)}-${senderId.slice(6)}`
+    const healthLabel = { is: 'Heilbrigðismál', en: 'Health' }
+    const generalLabel = { is: 'Almennt', en: 'General' }
+    const endpoint = '/v2/me/notification-settings/blocked-categories'
 
     let app: TestApp
     let server: SuperTest<Test>
@@ -2834,7 +2837,7 @@ describe('MeUserProfileController', () => {
     })
 
     describe('GET /v2/me/notification-settings', () => {
-      it('should return an empty list when the user has no blocked senders', async () => {
+      it('should return an empty list when the user has no blocked categories', async () => {
         // Arrange
         await fixtureFactory.createUserProfile({
           nationalId: testUser.nationalId,
@@ -2845,7 +2848,7 @@ describe('MeUserProfileController', () => {
 
         // Assert
         expect(res.status).toBe(200)
-        expect(res.body).toEqual({ blockedSenders: [] })
+        expect(res.body).toEqual({ blockedCategories: [] })
       })
 
       it('should return an empty list when the user has no profile', async () => {
@@ -2854,10 +2857,10 @@ describe('MeUserProfileController', () => {
 
         // Assert
         expect(res.status).toBe(200)
-        expect(res.body).toEqual({ blockedSenders: [] })
+        expect(res.body).toEqual({ blockedCategories: [] })
       })
 
-      it("should return only the user's own blocked senders ordered by created", async () => {
+      it("should return only the user's own blocked categories ordered by created", async () => {
         // Arrange
         await fixtureFactory.createUserProfile({
           nationalId: testUser.nationalId,
@@ -2866,6 +2869,8 @@ describe('MeUserProfileController', () => {
         await fixtureFactory.createBlockedNotification({
           nationalId: testUser.nationalId,
           senderId,
+          category: 'heilbrigdismal',
+          categoryLabel: healthLabel,
           created: new Date('2026-01-02'),
         })
         await fixtureFactory.createBlockedNotification({
@@ -2884,45 +2889,95 @@ describe('MeUserProfileController', () => {
         // Assert
         expect(res.status).toBe(200)
         expect(res.body).toEqual({
-          blockedSenders: [{ senderId: otherSenderId }, { senderId }],
+          blockedCategories: [
+            {
+              key: `${otherSenderId}-almennt`,
+              senderId: otherSenderId,
+              category: 'almennt',
+              categoryLabel: generalLabel,
+            },
+            {
+              key: `${senderId}-heilbrigdismal`,
+              senderId,
+              category: 'heilbrigdismal',
+              categoryLabel: healthLabel,
+            },
+          ],
         })
       })
     })
 
-    describe('POST /v2/me/notification-settings/blocked-senders', () => {
-      it('should block the sender', async () => {
+    describe('POST /v2/me/notification-settings/blocked-categories', () => {
+      it('should block all given categories', async () => {
         // Arrange
         await fixtureFactory.createUserProfile({
           nationalId: testUser.nationalId,
         })
 
         // Act
-        const res = await server
-          .post('/v2/me/notification-settings/blocked-senders')
-          .send({ senderId })
+        const res = await server.post(endpoint).send({
+          categories: [
+            {
+              senderId,
+              category: 'heilbrigdismal',
+              categoryLabel: healthLabel,
+            },
+            { senderId, category: 'almennt', categoryLabel: generalLabel },
+            {
+              senderId: otherSenderId,
+              category: 'almennt',
+              categoryLabel: generalLabel,
+            },
+          ],
+        })
 
         // Assert
         expect(res.status).toBe(204)
         const blocked = await blockedNotificationModel.findAll({
           where: { nationalId: testUser.nationalId },
+          order: [
+            ['senderId', 'ASC'],
+            ['category', 'ASC'],
+          ],
         })
-        expect(blocked).toHaveLength(1)
-        expect(blocked[0].senderId).toBe(senderId)
+        expect(
+          blocked.map(({ senderId, category, categoryLabel }) => ({
+            senderId,
+            category,
+            categoryLabel,
+          })),
+        ).toEqual(
+          expect.arrayContaining([
+            {
+              senderId,
+              category: 'heilbrigdismal',
+              categoryLabel: healthLabel,
+            },
+            { senderId, category: 'almennt', categoryLabel: generalLabel },
+            {
+              senderId: otherSenderId,
+              category: 'almennt',
+              categoryLabel: generalLabel,
+            },
+          ]),
+        )
+        expect(blocked).toHaveLength(3)
       })
 
-      it('should be idempotent when blocking the same sender twice', async () => {
+      it('should be idempotent when blocking the same category twice', async () => {
         // Arrange
         await fixtureFactory.createUserProfile({
           nationalId: testUser.nationalId,
         })
+        const body = {
+          categories: [
+            { senderId, category: 'almennt', categoryLabel: generalLabel },
+          ],
+        }
 
         // Act
-        const firstRes = await server
-          .post('/v2/me/notification-settings/blocked-senders')
-          .send({ senderId })
-        const secondRes = await server
-          .post('/v2/me/notification-settings/blocked-senders')
-          .send({ senderId })
+        const firstRes = await server.post(endpoint).send(body)
+        const secondRes = await server.post(endpoint).send(body)
 
         // Assert
         expect(firstRes.status).toBe(204)
@@ -2933,23 +2988,26 @@ describe('MeUserProfileController', () => {
         expect(count).toBe(1)
       })
 
-      it('should store a dashed sender id as digits only', async () => {
+      it('should store a dashed sender id as digits only and dedupe within the request', async () => {
         // Arrange
         await fixtureFactory.createUserProfile({
           nationalId: testUser.nationalId,
         })
 
         // Act
-        const dashedRes = await server
-          .post('/v2/me/notification-settings/blocked-senders')
-          .send({ senderId: dashedSenderId })
-        const plainRes = await server
-          .post('/v2/me/notification-settings/blocked-senders')
-          .send({ senderId })
+        const res = await server.post(endpoint).send({
+          categories: [
+            {
+              senderId: dashedSenderId,
+              category: 'almennt',
+              categoryLabel: generalLabel,
+            },
+            { senderId, category: 'almennt', categoryLabel: generalLabel },
+          ],
+        })
 
         // Assert
-        expect(dashedRes.status).toBe(204)
-        expect(plainRes.status).toBe(204)
+        expect(res.status).toBe(204)
         const blocked = await blockedNotificationModel.findAll({
           where: { nationalId: testUser.nationalId },
         })
@@ -2957,13 +3015,30 @@ describe('MeUserProfileController', () => {
         expect(blocked[0].senderId).toBe(senderId)
       })
 
+      it('should return 204 and do nothing for an empty list', async () => {
+        // Act
+        const res = await server.post(endpoint).send({ categories: [] })
+
+        // Assert
+        expect(res.status).toBe(204)
+        expect(await blockedNotificationModel.count()).toBe(0)
+        expect(await userProfileModel.count()).toBe(0)
+      })
+
       it.each(['123', 'abc'])(
         'should return 400 for invalid sender id %s',
         async (invalidSenderId) => {
           // Act
-          const res = await server
-            .post('/v2/me/notification-settings/blocked-senders')
-            .send({ senderId: invalidSenderId })
+          const res = await server.post(endpoint).send({
+            categories: [
+              { senderId, category: 'almennt', categoryLabel: generalLabel },
+              {
+                senderId: invalidSenderId,
+                category: 'almennt',
+                categoryLabel: generalLabel,
+              },
+            ],
+          })
 
           // Assert
           expect(res.status).toBe(400)
@@ -2976,26 +3051,66 @@ describe('MeUserProfileController', () => {
         },
       )
 
-      it('should return 400 when senderId is missing from request body', async () => {
+      it.each(['Almennt', 'heilbrigðismál', 'almennt-', '-almennt', 'a b', ''])(
+        'should return 400 for invalid category %p',
+        async (invalidCategory) => {
+          // Act
+          const res = await server.post(endpoint).send({
+            categories: [
+              {
+                senderId,
+                category: invalidCategory,
+                categoryLabel: generalLabel,
+              },
+            ],
+          })
+
+          // Assert
+          expect(res.status).toBe(400)
+          expect(res.body).toMatchObject({
+            status: 400,
+            title: 'Bad Request',
+            detail: expect.arrayContaining([
+              'categories.0.category is not valid',
+            ]),
+          })
+          expect(await blockedNotificationModel.count()).toBe(0)
+        },
+      )
+
+      it('should return 400 when the Icelandic category label is missing', async () => {
         // Act
-        const res = await server
-          .post('/v2/me/notification-settings/blocked-senders')
-          .send({})
+        const res = await server.post(endpoint).send({
+          categories: [
+            { senderId, category: 'almennt', categoryLabel: { en: 'General' } },
+          ],
+        })
+
+        // Assert
+        expect(res.status).toBe(400)
+        expect(await blockedNotificationModel.count()).toBe(0)
+      })
+
+      it('should return 400 when categories is missing from request body', async () => {
+        // Act
+        const res = await server.post(endpoint).send({})
 
         // Assert
         expect(res.status).toBe(400)
         expect(res.body).toMatchObject({
           status: 400,
           title: 'Bad Request',
-          detail: expect.arrayContaining(['senderId must be a string']),
+          detail: expect.arrayContaining(['categories must be an array']),
         })
       })
 
       it('should create the user profile when it does not exist', async () => {
         // Act
-        const res = await server
-          .post('/v2/me/notification-settings/blocked-senders')
-          .send({ senderId })
+        const res = await server.post(endpoint).send({
+          categories: [
+            { senderId, category: 'almennt', categoryLabel: generalLabel },
+          ],
+        })
 
         // Assert
         expect(res.status).toBe(204)
@@ -3010,14 +3125,59 @@ describe('MeUserProfileController', () => {
       })
     })
 
-    describe('DELETE /v2/me/notification-settings/blocked-senders/:senderId', () => {
+    describe('DELETE /v2/me/notification-settings/blocked-categories', () => {
       beforeEach(async () => {
         await fixtureFactory.createUserProfile({
           nationalId: testUser.nationalId,
         })
       })
 
-      it('should unblock the sender', async () => {
+      it('should unblock only the given categories', async () => {
+        // Arrange
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId,
+        })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId,
+          category: 'heilbrigdismal',
+          categoryLabel: healthLabel,
+        })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId: otherSenderId,
+        })
+
+        // Act
+        const res = await server.delete(endpoint).send({
+          categories: [
+            { senderId, category: 'almennt' },
+            { senderId: otherSenderId, category: 'almennt' },
+          ],
+        })
+
+        // Assert
+        expect(res.status).toBe(204)
+        const remaining = await blockedNotificationModel.findAll({
+          where: { nationalId: testUser.nationalId },
+        })
+        expect(remaining).toHaveLength(1)
+        expect(remaining[0].senderId).toBe(senderId)
+        expect(remaining[0].category).toBe('heilbrigdismal')
+      })
+
+      it('should return 204 when the categories are not blocked', async () => {
+        // Act
+        const res = await server.delete(endpoint).send({
+          categories: [{ senderId, category: 'almennt' }],
+        })
+
+        // Assert
+        expect(res.status).toBe(204)
+      })
+
+      it('should return 204 for an empty list', async () => {
         // Arrange
         await fixtureFactory.createBlockedNotification({
           nationalId: testUser.nationalId,
@@ -3025,9 +3185,24 @@ describe('MeUserProfileController', () => {
         })
 
         // Act
-        const res = await server.delete(
-          `/v2/me/notification-settings/blocked-senders/${senderId}`,
-        )
+        const res = await server.delete(endpoint).send({ categories: [] })
+
+        // Assert
+        expect(res.status).toBe(204)
+        expect(await blockedNotificationModel.count()).toBe(1)
+      })
+
+      it('should unblock the category when given a dashed sender id', async () => {
+        // Arrange
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId,
+        })
+
+        // Act
+        const res = await server.delete(endpoint).send({
+          categories: [{ senderId: dashedSenderId, category: 'almennt' }],
+        })
 
         // Assert
         expect(res.status).toBe(204)
@@ -3037,37 +3212,18 @@ describe('MeUserProfileController', () => {
         expect(count).toBe(0)
       })
 
-      it('should return 204 when the sender is not blocked', async () => {
+      it('should return 400 for invalid sender id', async () => {
         // Act
-        const res = await server.delete(
-          `/v2/me/notification-settings/blocked-senders/${senderId}`,
-        )
-
-        // Assert
-        expect(res.status).toBe(204)
-      })
-
-      it('should unblock the sender when given a dashed sender id', async () => {
-        // Arrange
-        await fixtureFactory.createBlockedNotification({
-          nationalId: testUser.nationalId,
-          senderId,
+        const res = await server.delete(endpoint).send({
+          categories: [{ senderId: '123', category: 'almennt' }],
         })
 
-        // Act
-        const res = await server.delete(
-          `/v2/me/notification-settings/blocked-senders/${dashedSenderId}`,
-        )
-
         // Assert
-        expect(res.status).toBe(204)
-        const count = await blockedNotificationModel.count({
-          where: { nationalId: testUser.nationalId },
-        })
-        expect(count).toBe(0)
+        expect(res.status).toBe(400)
+        expect(res.body).toMatchObject({ detail: 'Sender id is not valid' })
       })
 
-      it("should not remove other users' blocked senders", async () => {
+      it("should not remove other users' blocked categories", async () => {
         // Arrange
         await fixtureFactory.createUserProfile({ nationalId: otherNationalId })
         await fixtureFactory.createBlockedNotification({
@@ -3080,9 +3236,9 @@ describe('MeUserProfileController', () => {
         })
 
         // Act
-        const res = await server.delete(
-          `/v2/me/notification-settings/blocked-senders/${senderId}`,
-        )
+        const res = await server.delete(endpoint).send({
+          categories: [{ senderId, category: 'almennt' }],
+        })
 
         // Assert
         expect(res.status).toBe(204)
@@ -3095,6 +3251,7 @@ describe('MeUserProfileController', () => {
 
   describe('Notification settings without write scope', () => {
     const senderId = createNationalId('company')
+    const endpoint = '/v2/me/notification-settings/blocked-categories'
 
     let app: TestApp
     let server: SuperTest<Test>
@@ -3117,17 +3274,24 @@ describe('MeUserProfileController', () => {
     })
 
     it.each`
-      method      | endpoint
-      ${'POST'}   | ${'/v2/me/notification-settings/blocked-senders'}
-      ${'DELETE'} | ${`/v2/me/notification-settings/blocked-senders/${senderId}`}
+      method
+      ${'POST'}
+      ${'DELETE'}
     `(
-      'should return 403 for $method $endpoint',
-      async ({ method, endpoint }: { method: string; endpoint: string }) => {
+      'should return 403 for $method blocked-categories',
+      async ({ method }: { method: string }) => {
+        // Arrange
+        const category = {
+          senderId,
+          category: 'almennt',
+          categoryLabel: { is: 'Almennt', en: 'General' },
+        }
+
         // Act
         const res =
           method === 'POST'
-            ? await server.post(endpoint).send({ senderId })
-            : await server.delete(endpoint)
+            ? await server.post(endpoint).send({ categories: [category] })
+            : await server.delete(endpoint).send({ categories: [category] })
 
         // Assert
         expect(res.status).toBe(403)

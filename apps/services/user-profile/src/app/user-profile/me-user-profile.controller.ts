@@ -47,7 +47,10 @@ import { SetActorProfileEmailDto } from './dto/set-actor-profile-email.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
 import { CreateVerificationDto } from './dto/create-verification.dto'
-import { CreateBlockedSenderDto } from './dto/blocked-sender.dto'
+import {
+  BlockCategoriesDto,
+  UnblockCategoriesDto,
+} from './dto/blocked-category.dto'
 import { NotificationSettingsDto } from './dto/notification-settings.dto'
 import { NotificationSettingsService } from './notification-settings.service'
 
@@ -317,12 +320,12 @@ export class MeUserProfileController {
   @Get('/notification-settings')
   @Documentation({
     description:
-      'Get notification settings for the current user, including the notification senders the user has blocked.',
+      'Get notification settings for the current user, including the sender categories the user has blocked.',
     response: { status: 200, type: NotificationSettingsDto },
   })
   @Audit<NotificationSettingsDto>({
     resources: (settings) =>
-      settings.blockedSenders.map((blockedSender) => blockedSender.senderId),
+      settings.blockedCategories.map((blockedCategory) => blockedCategory.key),
   })
   findNotificationSettings(
     @CurrentUser() user: User,
@@ -330,65 +333,62 @@ export class MeUserProfileController {
     return this.notificationSettingsService.findSettings(user.nationalId)
   }
 
-  @Post('/notification-settings/blocked-senders')
+  @Post('/notification-settings/blocked-categories')
   @Scopes(UserProfileScope.write)
   @Documentation({
     description:
-      'Blocks notifications from a specific sender for the current user.',
+      'Blocks notifications in the given sender categories for the current user.',
     response: { status: 204 },
   })
-  blockNotificationSender(
+  blockNotificationCategories(
     @CurrentUser() user: User,
-    @Body() input: CreateBlockedSenderDto,
+    @Body() input: BlockCategoriesDto,
   ): Promise<void> {
     return this.auditService.auditPromise(
       {
         auth: user,
         namespace,
-        action: 'blockNotificationSender',
+        action: 'blockNotificationCategories',
         resources: user.nationalId,
         meta: {
-          senderId: input.senderId,
+          categories: input.categories.map(({ senderId, category }) => ({
+            senderId,
+            category,
+          })),
         },
       },
-      this.notificationSettingsService.blockSender(
+      this.notificationSettingsService.blockCategories(
         user.nationalId,
-        input.senderId,
+        input.categories,
       ),
     )
   }
 
-  @Delete('/notification-settings/blocked-senders/:senderId')
+  @Delete('/notification-settings/blocked-categories')
   @Scopes(UserProfileScope.write)
   @Documentation({
     description:
-      'Unblocks notifications from a specific sender for the current user.',
-    request: {
-      params: {
-        senderId: {
-          required: true,
-          type: 'string',
-          description: 'National id of the notification sender',
-        },
-      },
-    },
+      'Unblocks notifications in the given sender categories for the current user.',
     response: { status: 204 },
   })
-  unblockNotificationSender(
+  unblockNotificationCategories(
     @CurrentUser() user: User,
-    @Param('senderId') senderId: string,
+    @Body() input: UnblockCategoriesDto,
   ): Promise<void> {
     return this.auditService.auditPromise(
       {
         auth: user,
         namespace,
-        action: 'unblockNotificationSender',
+        action: 'unblockNotificationCategories',
         resources: user.nationalId,
         meta: {
-          senderId,
+          categories: input.categories,
         },
       },
-      this.notificationSettingsService.unblockSender(user.nationalId, senderId),
+      this.notificationSettingsService.unblockCategories(
+        user.nationalId,
+        input.categories,
+      ),
     )
   }
 
