@@ -70,6 +70,7 @@ interface CheckboxState {
   }[]
 }
 
+const ANSWER_DISPLAY_ORDER = [3, 1, 2, 0]
 interface ECOIFormProps {
   step: Step
   stepIndex: number
@@ -97,13 +98,12 @@ const ECOIForm = ({ step, stepIndex, state, setState }: ECOIFormProps) => {
                 {question}
               </Text>
               <Stack space={1}>
-                {answerOptions.map((option, answerIndex) => {
+                {ANSWER_DISPLAY_ORDER.filter(
+                  (answerIndex) => answerIndex < answerOptions.length,
+                ).map((answerIndex) => {
+                  const option = answerOptions[answerIndex]
                   const id = `${step.title}-${questionIndex}-${answerIndex}`
                   const groupName = `${stepIndex}-${questionIndex}`
-
-                  if (answerIndex > 3) {
-                    return null
-                  }
 
                   const label =
                     option.text ||
@@ -185,7 +185,35 @@ const CategoryAxisTick = (props: {
   )
 }
 
-const RADAR_CATEGORY_LABEL_MAX_LENGTH = 20
+const RADAR_CATEGORY_LABEL_LINE_LENGTH = 18
+const RADAR_CATEGORY_LABEL_MAX_LINES = 2
+const RADAR_CATEGORY_LABEL_LINE_HEIGHT = 14
+
+const wrapRadarLabel = (value: string) => {
+  const lines: string[] = []
+  let currentLine = ''
+  for (const word of value.split(' ')) {
+    const candidate = currentLine ? `${currentLine} ${word}` : word
+    if (candidate.length <= RADAR_CATEGORY_LABEL_LINE_LENGTH || !currentLine) {
+      currentLine = candidate
+    } else {
+      lines.push(currentLine)
+      currentLine = word
+    }
+  }
+  if (currentLine) lines.push(currentLine)
+
+  if (lines.length <= RADAR_CATEGORY_LABEL_MAX_LINES) {
+    return lines
+  }
+  const visibleLines = lines.slice(0, RADAR_CATEGORY_LABEL_MAX_LINES)
+  const lastLine = visibleLines[RADAR_CATEGORY_LABEL_MAX_LINES - 1]
+  visibleLines[RADAR_CATEGORY_LABEL_MAX_LINES - 1] = `${lastLine.slice(
+    0,
+    RADAR_CATEGORY_LABEL_LINE_LENGTH - 1,
+  )}…`
+  return visibleLines
+}
 
 const RadarCategoryTick = (props: {
   x?: number
@@ -195,10 +223,10 @@ const RadarCategoryTick = (props: {
 }) => {
   const { x = 0, y = 0, textAnchor = 'middle', payload } = props
   const value = payload?.value ?? ''
-  const label =
-    value.length > RADAR_CATEGORY_LABEL_MAX_LENGTH
-      ? `${value.slice(0, RADAR_CATEGORY_LABEL_MAX_LENGTH - 1)}…`
-      : value
+  const lines = wrapRadarLabel(value)
+  // Vertically center multi-line labels around the tick position
+  const firstLineOffset =
+    (-(lines.length - 1) * RADAR_CATEGORY_LABEL_LINE_HEIGHT) / 2
   return (
     <text
       x={x}
@@ -208,7 +236,15 @@ const RadarCategoryTick = (props: {
       fontWeight={600}
       fill={theme.color.dark400}
     >
-      {label}
+      {lines.map((line, index) => (
+        <tspan
+          key={index}
+          x={x}
+          dy={index === 0 ? firstLineOffset : RADAR_CATEGORY_LABEL_LINE_HEIGHT}
+        >
+          {line}
+        </tspan>
+      ))}
       <title>{value}</title>
     </text>
   )
@@ -379,8 +415,12 @@ export const ECOICalculatorResults = ({
                   <>
                     <Box className={styles.tabPanelSpacer} />
                     <Box width="full" height="full">
-                      <ResponsiveContainer width="100%" height={520}>
-                        <RadarChart data={categoryAverages} outerRadius="65%">
+                      <ResponsiveContainer width="100%" height={640}>
+                        <RadarChart
+                          data={categoryAverages}
+                          outerRadius="75%"
+                          margin={{ top: 16, right: 16, bottom: 16, left: 16 }}
+                        >
                           <PolarGrid
                             gridType="polygon"
                             stroke={theme.color.blue200}
