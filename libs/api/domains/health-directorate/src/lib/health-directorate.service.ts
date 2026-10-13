@@ -10,6 +10,7 @@ import {
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateReplyRequestDto,
+  HcpTargetKind,
   HealthDirectorateHealthService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
@@ -1174,14 +1175,15 @@ export class HealthDirectorateService {
 
     const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
     const webChat = getWebChatConversationType(formatMessage)
-    // A link-out entry without a link is useless and would render as a
-    // broken regular option — skip it if the URL was blanked in Contentful.
-    if (!webChat.externalLinkUrl) {
-      return items.map((item) => mapMessagingRecipient(item, formatMessage))
-    }
 
     return items.map((item) => {
       const recipient = mapMessagingRecipient(item, formatMessage)
+      // The web chat is staffed by primary care, so only the patient's
+      // primary-care clinic advertises it. A link-out entry without a link
+      // would render as a broken regular option, so it is also skipped if
+      // the URL was blanked in Contentful.
+      if (item.kind !== HcpTargetKind.PRIMARY_CARE || !webChat.externalLinkUrl)
+        return recipient
       return {
         ...recipient,
         allowedMessageTypes: [...recipient.allowedMessageTypes, webChat],

@@ -75,6 +75,7 @@ export {
   ExaminationCommunicationDetailDto,
   ExaminationMeasurementDto,
   FetalHeartRateDto,
+  HcpTargetKind,
   MeAppointmentControllerGetPatientAppointmentsV2V2Data,
   MessageType,
   MessagingDayType,
