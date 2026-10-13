@@ -1,6 +1,8 @@
-import { ApolloError } from '@apollo/client'
-import { HealthDirectorateAppointment } from '@island.is/api/schema'
-import { Box, Tabs, Text } from '@island.is/island-ui/core'
+import {
+  HealthDirectorateAppointmentsOrder,
+  HealthDirectoratePaginatedAppointmentsInput,
+} from '@island.is/api/schema'
+import { Box, Button, Tabs, Text, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -22,14 +24,50 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { useState } from 'react'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import { isPastAppointment } from '../../utils/appointments'
 import {
-  DEFAULT_APPOINTMENTS_STATUS,
-  PAST_APPOINTMENTS_STATUS,
-} from '../../utils/constants'
+  getStartOfToday,
+  nextAppointmentsInput,
+} from '../../utils/appointments'
+import { VISIBLE_APPOINTMENTS_STATUS } from '../../utils/constants'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 import Appointments from '../HealthOverview/components/Appointments'
 import { useGetAppointmentsQuery } from './Appointments.generated'
+
+const PAGE_SIZE = 20
+
+const useAppointmentsPage = (
+  input: HealthDirectoratePaginatedAppointmentsInput,
+  skip?: boolean,
+) => {
+  const { formatMessage } = useLocale()
+  const [loadingMore, setLoadingMore] = useState(false)
+  const { data, loading, error, fetchMore } = useGetAppointmentsQuery({
+    fetchPolicy: 'network-only',
+    variables: { input },
+    skip,
+  })
+  const page = data?.healthDirectoratePaginatedAppointments
+
+  const loadMore = () => {
+    const cursor = page?.pageInfo.endCursor
+    if (loadingMore || !cursor) return
+    setLoadingMore(true)
+    // The field's cache policy appends the page to the current list
+    fetchMore({ variables: { input: { ...input, after: cursor } } })
+      .catch(() => toast.error(formatMessage(m.errorTitle)))
+      .finally(() => setLoadingMore(false))
+  }
+
+  return {
+    appointments: page?.data ?? [],
+    totalCount: page?.totalCount ?? 0,
+    hasNextPage: !!page?.pageInfo.hasNextPage,
+    loading: loading && !data,
+    error,
+    loadMore,
+    loadingMore,
+  }
+}
 
 const AppointmentsOverview = () => {
   useNamespaces('sp.health')
@@ -52,39 +90,25 @@ const AppointmentsOverview = () => {
     false,
   )
 
-  const upcoming = useGetAppointmentsQuery({
-    fetchPolicy: 'network-only',
-    variables: {
-      status: DEFAULT_APPOINTMENTS_STATUS,
-    },
-  })
+  const upcoming = useAppointmentsPage(nextAppointmentsInput(PAGE_SIZE))
 
-  const past = useGetAppointmentsQuery({
-    fetchPolicy: 'network-only',
-    variables: {
-      // The client defaults "from" to today when omitted, which would return
-      // no past appointments — any date before the data migration works here
-      from: new Date('2026-01-01'),
-      status: PAST_APPOINTMENTS_STATUS,
+  // Upcoming starts where this ends, at the start of today
+  const past = useAppointmentsPage(
+    {
+      to: getStartOfToday(),
+      status: VISIBLE_APPOINTMENTS_STATUS,
+      order: HealthDirectorateAppointmentsOrder.DESC,
+      limit: PAGE_SIZE,
     },
-    skip: !pastTabVisited || !hasPastAppointmentsAccess,
-  })
-
-  const upcomingAppointments =
-    upcoming.data?.healthDirectorateAppointments?.data ?? []
-  const pastAppointments = (
-    past.data?.healthDirectorateAppointments?.data ?? []
+    !pastTabVisited || !hasPastAppointmentsAccess,
   )
-    // The query includes BOOKED, which also matches upcoming appointments
-    .filter(isPastAppointment)
-    .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
 
   const renderAppointmentList = (
-    appointments: HealthDirectorateAppointment[],
-    query: { loading: boolean; error?: ApolloError },
+    query: ReturnType<typeof useAppointmentsPage>,
     emptyText: string,
     muted?: boolean,
   ) => {
+    const { appointments } = query
     if (query.loading) {
       return <CardLoader />
     }
@@ -109,16 +133,32 @@ const AppointmentsOverview = () => {
       )
     }
     return (
-      <Appointments
-        data={{
-          data: { data: appointments },
-          loading: query.loading,
-          error: query.error ? true : false,
-        }}
-        showLinkButton={false}
-        showHeader={false}
-        muted={muted}
-      />
+      <>
+        <Appointments
+          data={{
+            data: { data: appointments },
+            loading: query.loading,
+            error: query.error ? true : false,
+          }}
+          showLinkButton={false}
+          showHeader={false}
+          muted={muted}
+        />
+        {query.hasNextPage && (
+          <Box display="flex" justifyContent="center" marginTop={3}>
+            <Button
+              onClick={query.loadMore}
+              loading={query.loadingMore}
+              variant="ghost"
+              size="small"
+            >
+              {`${formatMessage(m.fetchMore)} ${appointments.length}/${
+                query.totalCount
+              }`}
+            </Button>
+          </Box>
+        )}
+      </>
     )
   }
 
@@ -184,7 +224,6 @@ const AppointmentsOverview = () => {
             content: (
               <Box paddingTop={3}>
                 {renderAppointmentList(
-                  upcomingAppointments,
                   upcoming,
                   formatMessage(messages.noAppointmentsText),
                 )}
@@ -202,7 +241,6 @@ const AppointmentsOverview = () => {
                       {formatMessage(messages.pastAppointmentsNote)}
                     </Text>
                     {renderAppointmentList(
-                      pastAppointments,
                       past,
                       formatMessage(messages.noPastAppointmentsText),
                       true,

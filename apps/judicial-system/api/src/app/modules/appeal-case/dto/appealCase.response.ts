@@ -7,6 +7,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { AppealSummons } from '../../appeal-summons'
 import { CaseFile } from '../../file'
 import { User } from '../../user'
 import { AppealEventLog } from './appealEventLog.response'
@@ -142,4 +143,8 @@ export class AppealCase {
   // ruling appeal into the appealedBy* fields above and strips it from the payload.
   @Field(() => [AppealEventLog], { nullable: true })
   readonly appealEventLogs?: AppealEventLog[]
+
+  // Only meaningful on a verdict appeal case (áfrýjunarstefna).
+  @Field(() => [AppealSummons], { nullable: true })
+  readonly appealSummonses?: AppealSummons[]
 }
