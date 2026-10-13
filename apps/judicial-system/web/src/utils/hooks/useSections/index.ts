@@ -11,6 +11,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
@@ -1566,7 +1567,8 @@ const useSections = (
       isActive:
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE) ||
-        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE),
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE) ||
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE),
       children: [
         {
           name: 'Yfirlit',
@@ -1621,6 +1623,30 @@ const useSections = (
               ? async () =>
                   await onNavigationTo(
                     COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
+                  )
+              : undefined,
+        },
+        {
+          name: 'Samantekt',
+          isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE),
+          href: appendAppealCaseIdQuery(
+            `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+            targetAppealCase?.id,
+          ),
+          onClick:
+            !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE) &&
+            validateFormStepper(
+              isValid,
+              [
+                COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+                COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
+              ],
+              workingCase,
+            ) &&
+            onNavigationTo
+              ? async () =>
+                  await onNavigationTo(
+                    COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
                   )
               : undefined,
         },

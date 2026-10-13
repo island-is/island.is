@@ -1,36 +1,47 @@
 import type { FC } from 'react'
 
-import { Box, Input, Select } from '@island.is/island-ui/core'
+import { Box, Input, Select, Text } from '@island.is/island-ui/core'
+import { appealCourtSessionTypeNames } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-
 import type {
   AppealCourtSession,
   AppealCourtSessionType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+
+import type { AppealCourtSessionDraft } from './VerdictAppealStatus.logic'
+import {
+  appealCourtSessionTypeOptions,
+  formatAppealCourtSessionDetails,
 } from './VerdictAppealStatus.logic'
-import { appealCourtSessionTypeOptions } from './VerdictAppealStatus.logic'
 
 interface Props {
-  session: AppealCourtSession
-  onChange: (session: AppealCourtSession) => void
+  session: AppealCourtSessionDraft
+  onChange: (session: AppealCourtSessionDraft) => void
+  // The sessions already booked in the appeal, listed under the form.
+  bookedSessions: AppealCourtSession[]
 }
 
 /**
- * The form the court fills in to call a session: its type, when it is held
- * and in which room.
+ * The form the court fills in to call a session - its type, when it is held
+ * and in which room - and the list of sessions already called.
  *
- * Just the form. Completing it does nothing yet - no booking, no list of
- * sessions, nothing sent anywhere. Those arrive with the slices that follow
- * this one, and the values live in the page's state until then.
+ * The form is a draft; the page books it when the court continues. The list
+ * is read only for now: editing and deleting a booked session come with the
+ * next slice, and their menu with them.
  */
-const ScheduleCourtSession: FC<Props> = ({ session, onChange }) => {
+const ScheduleCourtSession: FC<Props> = ({
+  session,
+  onChange,
+  bookedSessions,
+}) => {
   const selectedTypeOption =
     appealCourtSessionTypeOptions.find(
-      (option) => option.value === session.type,
+      (option) => option.value === session.sessionType,
     ) ?? null
 
   return (
@@ -46,7 +57,7 @@ const ScheduleCourtSession: FC<Props> = ({ session, onChange }) => {
           onChange={(selectedOption) =>
             onChange({
               ...session,
-              type: selectedOption
+              sessionType: selectedOption
                 ? (selectedOption.value as AppealCourtSessionType)
                 : undefined,
             })
@@ -58,7 +69,7 @@ const ScheduleCourtSession: FC<Props> = ({ session, onChange }) => {
           datepickerLabel="Dagsetning"
           datepickerPlaceholder="Veldu dagsetningu"
           timeLabel="Tímasetning"
-          selectedDate={session.date}
+          selectedDate={session.sessionDate}
           minDate={new Date()}
           blueBox={false}
           required
@@ -67,7 +78,7 @@ const ScheduleCourtSession: FC<Props> = ({ session, onChange }) => {
             // for an invalid time, and writing that back through
             // `selectedDate` would clear the date the court just picked.
             if (valid && date) {
-              onChange({ ...session, date })
+              onChange({ ...session, sessionDate: date })
             }
           }}
         />
@@ -83,6 +94,28 @@ const ScheduleCourtSession: FC<Props> = ({ session, onChange }) => {
           required
         />
       </BlueBox>
+      {bookedSessions.length > 0 && (
+        <Box component="ul" marginTop={3} aria-label="Bókuð þinghöld">
+          {bookedSessions.map((bookedSession) => (
+            <Box
+              key={bookedSession.id}
+              component="li"
+              paddingY={2}
+              borderBottomWidth="standard"
+              borderColor="blue200"
+            >
+              <Text variant="h5">
+                {bookedSession.sessionType
+                  ? appealCourtSessionTypeNames[bookedSession.sessionType]
+                  : ''}
+              </Text>
+              <Text variant="medium">
+                {formatAppealCourtSessionDetails(bookedSession)}
+              </Text>
+            </Box>
+          ))}
+        </Box>
+      )}
     </Box>
   )
 }

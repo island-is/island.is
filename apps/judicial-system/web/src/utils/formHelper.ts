@@ -10,6 +10,7 @@ import {
   COURT_OF_APPEAL_SUMMARY_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
@@ -350,6 +351,7 @@ export type stepValidationsType = {
     theCase: WorkingCase,
   ) => boolean
   [COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE]: () => boolean
+  [COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE]: () => boolean
 }
 
 // COA step validations operate on the appeal-case row identified by the
@@ -463,10 +465,12 @@ export const stepValidations = (
     // every party's advocate is confirmed.
     [COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE]: (theCase: WorkingCase) =>
       areAllAppealAdvocatesConfirmed(theCase),
-    // The last step of a verdict appeal so far, so nothing asks whether it is
-    // complete. Whoever adds the step after it has to answer that here - the
-    // page's own isValid is what stops the court leaving it half done.
+    // The status is not saved yet, so there is nothing on the case to check;
+    // the page's own isValid is what stops the court leaving it half done.
     [COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE]: () => true,
+    // The last step of a verdict appeal so far, so nothing asks whether it is
+    // complete.
+    [COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE]: () => true,
   }
 }
 

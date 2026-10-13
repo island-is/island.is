@@ -1,11 +1,15 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
+} from '@island.is/judicial-system/consts'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseState,
   AppealCaseType,
+  AppealCourtSessionType,
   CaseState,
   CaseType,
   UserRole,
@@ -21,6 +25,18 @@ import {
 import VerdictAppealStatus from './VerdictAppealStatus'
 
 const mockPush = jest.fn()
+const mockCreateAppealCourtSession = jest.fn()
+
+jest.mock(
+  '@island.is/judicial-system-web/src/utils/hooks/useAppealCourtSession',
+  () => ({
+    __esModule: true,
+    default: () => ({
+      createAppealCourtSession: mockCreateAppealCourtSession,
+      isCreatingAppealCourtSession: false,
+    }),
+  }),
+)
 
 // The footer's back button goes through the default router export, the page
 // itself through the hook, so both are mocked onto the same push.
@@ -55,12 +71,27 @@ const theCase = {
   },
 } as unknown as WorkingCase
 
-const renderPage = () =>
+const bookedSession = {
+  id: 'session-1',
+  sessionType: AppealCourtSessionType.MAIN_HEARING,
+  sessionDate: new Date(2026, 11, 12, 14, 0).toISOString(),
+  courtRoom: '1',
+}
+
+const caseWithBookedSession = {
+  ...theCase,
+  verdictAppealCase: {
+    ...theCase.verdictAppealCase,
+    courtSessions: [bookedSession],
+  },
+} as unknown as WorkingCase
+
+const renderPage = (c: WorkingCase = theCase) =>
   render(
     <IntlProviderWrapper>
       <ApolloProviderWrapper>
         <UserContextWrapper userRole={UserRole.COURT_OF_APPEALS_JUDGE}>
-          <FormContextWrapper theCase={theCase}>
+          <FormContextWrapper theCase={c}>
             <VerdictAppealStatus />
           </FormContextWrapper>
         </UserContextWrapper>
@@ -71,6 +102,7 @@ const renderPage = () =>
 describe('VerdictAppealStatus', () => {
   beforeEach(() => {
     mockPush.mockClear()
+    mockCreateAppealCourtSession.mockClear()
   })
 
   it('names the case and who appealed', () => {
@@ -128,6 +160,35 @@ describe('VerdictAppealStatus', () => {
         screen.queryByRole('heading', { name: 'Boða til þinghalds' }),
       ).not.toBeInTheDocument(),
     )
+  })
+
+  // The status is not saved, so a booked session is what says the court
+  // chose to call one. Opening the page reads that back.
+  it('opens on the session status with the booked session listed', () => {
+    renderPage(caseWithBookedSession)
+
+    expect(screen.getByLabelText('Boða til þinghalds')).toBeChecked()
+    expect(screen.getByText('Aðalmeðferð')).toBeInTheDocument()
+    expect(
+      screen.getByText('12.12.2026 kl. 14:00 · Dómsalur 1'),
+    ).toBeInTheDocument()
+  })
+
+  it('continues straight to the summary when there is nothing to book', async () => {
+    renderPage(caseWithBookedSession)
+
+    await userEvent.click(screen.getByTestId('continueButton'))
+
+    expect(mockCreateAppealCourtSession).not.toHaveBeenCalled()
+    expect(mockPush).toHaveBeenCalledWith(
+      `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/case-id?appealCaseId=verdict-appeal`,
+    )
+  })
+
+  it('cannot continue before a status is chosen', () => {
+    renderPage()
+
+    expect(screen.getByTestId('continueButton')).toBeDisabled()
   })
 
   it('leads back to the defender step with the appeal id', async () => {

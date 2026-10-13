@@ -6,13 +6,19 @@ import userEvent from '@testing-library/user-event'
 import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
 import ScheduleCourtSession from './ScheduleCourtSession'
-import type { AppealCourtSession } from './VerdictAppealStatus.logic'
+import type { AppealCourtSessionDraft } from './VerdictAppealStatus.logic'
 
 // The page owns the draft; this stands in for it.
 const Harness = () => {
-  const [session, setSession] = useState<AppealCourtSession>({})
+  const [session, setSession] = useState<AppealCourtSessionDraft>({})
 
-  return <ScheduleCourtSession session={session} onChange={setSession} />
+  return (
+    <ScheduleCourtSession
+      session={session}
+      onChange={setSession}
+      bookedSessions={[]}
+    />
+  )
 }
 
 const renderSection = () =>
