@@ -31,8 +31,7 @@ interface Props {
  * and in which room - and the list of sessions already called.
  *
  * The form is a draft; the page books it when the court continues. The list
- * is read only for now: editing and deleting a booked session come with the
- * next slice, and their menu with them.
+ * is read only.
  */
 const ScheduleCourtSession: FC<Props> = ({
   session,

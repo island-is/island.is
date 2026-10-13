@@ -8,10 +8,8 @@ import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types
 /**
  * Where the Court of Appeals stands with a verdict appeal.
  *
- * Frontend only for now: the status is not saved anywhere, and the values
- * below exist so the screen has something to hold. When the backend learns
- * about the status these move to `@island.is/judicial-system/types` and the
- * generated GraphQL enum takes their place.
+ * Held in page state only: nothing in the backend stores the status, so the
+ * values are defined here rather than in the shared types.
  */
 export enum VerdictAppealStatus {
   STATEMENT_DEADLINE_GRANTED = 'STATEMENT_DEADLINE_GRANTED',
