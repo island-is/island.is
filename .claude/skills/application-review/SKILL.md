@@ -227,6 +227,9 @@ empty, except the counts and clean checks.
   consequential first.
 - Mark a finding **unverified** inside its bullet when step 4 could not
   confirm it.
+- Keep each finding to the bullet shapes above. Never put a blank line or a
+  loose paragraph inside a list item: the terminal drops it, leaving a
+  heading with nothing under it. Extra detail goes in another sub-bullet.
 - The closing sentences name the fix order: high findings first, then any
   decision missing from the README. Say whether shared code should be split
   into its own PR.
