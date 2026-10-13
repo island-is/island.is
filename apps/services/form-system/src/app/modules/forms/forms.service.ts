@@ -15,7 +15,7 @@ import zipObject from 'lodash/zipObject'
 import { SectionInfo } from '@/app/dataTypes/sectionInfo.model'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { AssetTypes } from '@island.is/form-system/enums'
+import { AssetTypes, FamilyTypes } from '@island.is/form-system/enums'
 import {
   FieldTypesEnum,
   FormStatus,
@@ -1559,10 +1559,14 @@ export class FormsService {
         if (field.fieldType === FieldTypesEnum.ASSETS) {
           settings.assetType = field.fieldSettings?.assetType
         }
+        if (field.fieldType === FieldTypesEnum.FAMILY) {
+          settings.familyType = field.fieldSettings?.familyType
+        }
         if (
           settings.isDecimal !== undefined ||
           settings.applicantType !== undefined ||
-          settings.assetType !== undefined
+          settings.assetType !== undefined ||
+          settings.familyType !== undefined
         ) {
           jsonField.fieldSettings = settings
         }
@@ -1579,6 +1583,9 @@ export class FormsService {
                 : undefined,
               field.fieldType === FieldTypesEnum.NUMBERBOX
                 ? field.fieldSettings?.isDecimal
+                : undefined,
+              field.fieldType === FieldTypesEnum.FAMILY
+                ? field.fieldSettings?.familyType
                 : undefined,
             ),
           } as ApplicationJsonValueDto,
@@ -1602,6 +1609,7 @@ export class FormsService {
     partial: Partial<ValueType>,
     assetType?: string,
     isDecimal?: boolean,
+    familyType?: string,
   ): ValueType {
     const assetValueTypes =
       assetType === AssetTypes.REAL_ESTATE
@@ -1609,9 +1617,15 @@ export class FormsService {
         : assetType === AssetTypes.VEHICLE
         ? ['registrationNumber', 'model', 'color']
         : undefined
-    const v = (
-      assetValueTypes ? pick(partial, assetValueTypes) : partial
-    ) as any
+    const familyValueTypes =
+      familyType === FamilyTypes.SPOUSE
+        ? ['nationalId', 'name', 'maritalStatus']
+        : familyType === FamilyTypes.CHILD ||
+          familyType === FamilyTypes.NATIONAL_ID_ESTATE
+        ? ['nationalId', 'name']
+        : undefined
+    const valueTypes = assetValueTypes ?? familyValueTypes
+    const v = (valueTypes ? pick(partial, valueTypes) : partial) as any
 
     if ('text' in v) v.text = 'Dæmi texti'
     if ('number' in v) v.number = isDecimal ? 17.5 : 17
@@ -1626,6 +1640,7 @@ export class FormsService {
     if ('municipality' in v) v.municipality = 'Reykjavík'
     if ('jobTitle' in v) v.jobTitle = 'Developer'
     if ('altName' in v) v.altName = 'Aukanafn'
+    if ('maritalStatus' in v) v.maritalStatus = 'Gift/ur'
 
     if ('homestayNumber' in v) v.homestayNumber = 'HOMESTAY-123'
     if ('propertyNumber' in v) v.propertyNumber = 'F1234567'

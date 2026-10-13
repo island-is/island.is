@@ -169,7 +169,7 @@ export const CaseFiles = () => {
     })
 
     try {
-      const { errors: mutationErrors } = await updateFilesMutation({
+      await updateFilesMutation({
         variables: {
           input: {
             caseId: workingCase.id,
@@ -180,9 +180,6 @@ export const CaseFiles = () => {
           },
         },
       })
-      if (mutationErrors) {
-        toast.error(formatMessage(errors.general))
-      }
     } catch {
       toast.error(formatMessage(errors.general))
     }
@@ -199,7 +196,7 @@ export const CaseFiles = () => {
     }
 
     try {
-      const { errors: mutationErrors } = await updateFilesMutation({
+      await updateFilesMutation({
         variables: {
           input: {
             caseId: workingCase.id,
@@ -207,9 +204,6 @@ export const CaseFiles = () => {
           },
         },
       })
-      if (mutationErrors) {
-        toast.error(formatMessage(errors.general))
-      }
     } catch {
       toast.error(formatMessage(errors.general))
     }

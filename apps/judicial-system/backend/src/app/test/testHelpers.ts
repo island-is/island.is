@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CanActivate, Type } from '@nestjs/common'
+import { CanActivate, NestInterceptor, Type } from '@nestjs/common'
 
 import { RolesRule } from '@island.is/judicial-system/auth'
 
@@ -88,6 +88,35 @@ export const verifyRolesRules = (
 
     it('should match the expected rules', () => {
       expect(rules).toEqual(expectedRules)
+    })
+  })
+}
+
+export const verifyInterceptors = (
+  controller: object,
+  methodName: string,
+  expectedInterceptors: Type<NestInterceptor>[], // verify defined interceptors and order
+): void => {
+  const controllerName = (controller as any).name ?? controller.constructor.name
+  const description = `${controllerName}.${methodName}() interceptors`
+
+  const interceptors: Type<NestInterceptor>[] =
+    Reflect.getMetadata(
+      '__interceptors__',
+      (controller as any).prototype[methodName],
+    ) ?? []
+
+  describe(description, () => {
+    it('should have the correct number of interceptors', () => {
+      expect(interceptors).toHaveLength(expectedInterceptors.length)
+    })
+
+    expectedInterceptors.forEach((expectedInterceptor, index) => {
+      it(`should have ${expectedInterceptor.name} at position ${
+        index + 1
+      }`, () => {
+        expect(interceptors[index]).toBe(expectedInterceptor)
+      })
     })
   })
 }

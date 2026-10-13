@@ -20,6 +20,7 @@ import {
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
+import type { User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
 import ResidenceHistory from '../lib/__mock-data__/residenceHistory.json'
@@ -32,10 +33,31 @@ import {
 
 const daysOfResidency = 365
 
+// v6 takes the caller's identity from the forwarded X-Road token rather than a
+// per-call param, and the DrivingLicenseApi wrapper establishes that auth
+// context itself (withAuthContext, per call). These tests deliberately do NOT
+// set it up: `asUser` is a pure pass-through whose only job is to document which
+// caller a case is about, keeping the call sites readable.
+//
+// It asserts nothing itself. The coverage comes from the v6 mock handlers,
+// several of which route on the `jwttoken` header (see requestHandlers.ts and
+// apiConfiguration.ts), so cases here fail if the production wrapper stops
+// forwarding the token. The client spec additionally asserts the outgoing
+// `jwttoken` on the v6 request itself.
+const asUser = <T>(_authorization: string, fn: () => Promise<T>): Promise<T> =>
+  fn()
+
+// Builds the Auth the service now takes in place of a bare token string.
+const authAs = (authorization: string): User => ({
+  ...MOCK_USER,
+  authorization,
+})
+
 startMocking(requestHandlers)
 describe('DrivingLicenseService', () => {
   let service: DrivingLicenseService
   let drivingLicenseApi: DrivingLicenseApi
+  let nationalRegistry: NationalRegistryV3ApplicationsClientService
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -68,6 +90,7 @@ describe('DrivingLicenseService', () => {
 
     service = module.get(DrivingLicenseService)
     drivingLicenseApi = module.get(DrivingLicenseApi)
+    nationalRegistry = module.get(NationalRegistryV3ApplicationsClientService)
   })
 
   describe('Module', () => {
@@ -120,10 +143,12 @@ describe('DrivingLicenseService', () => {
 
   describe('getTeachingRights', () => {
     it('should return false for a normal license', async () => {
-      const response = await service.getTeachingRights({
-        nationalId: MOCK_NATIONAL_ID,
-        token: MOCK_TOKEN,
-      })
+      const response = await asUser(MOCK_TOKEN, () =>
+        service.getTeachingRights({
+          nationalId: MOCK_NATIONAL_ID,
+          auth: authAs(MOCK_TOKEN),
+        }),
+      )
 
       expect(response).toStrictEqual({
         nationalId: MOCK_NATIONAL_ID,
@@ -132,10 +157,12 @@ describe('DrivingLicenseService', () => {
     })
 
     it('should return true for a teacher', async () => {
-      const response = await service.getTeachingRights({
-        nationalId: MOCK_NATIONAL_ID_TEACHER,
-        token: MOCK_TOKEN_TEACHER,
-      })
+      const response = await asUser(MOCK_TOKEN_TEACHER, () =>
+        service.getTeachingRights({
+          nationalId: MOCK_NATIONAL_ID_TEACHER,
+          auth: authAs(MOCK_TOKEN_TEACHER),
+        }),
+      )
 
       expect(response).toStrictEqual({
         nationalId: MOCK_NATIONAL_ID_TEACHER,
@@ -163,8 +190,8 @@ describe('DrivingLicenseService', () => {
 
   describe('getDrivingAssessmentResult', () => {
     it('should return a valid assessment when applicable', async () => {
-      const response = await service.getDrivingAssessment(
-        MOCK_USER.authorization,
+      const response = await asUser(MOCK_USER.authorization, () =>
+        service.getDrivingAssessment(MOCK_USER),
       )
 
       expect(response).toStrictEqual({
@@ -175,8 +202,8 @@ describe('DrivingLicenseService', () => {
     })
 
     it('should return null for missing assessment', async () => {
-      const response = await service.getDrivingAssessment(
-        MOCK_TOKEN_NO_ASSESSMENT,
+      const response = await asUser(MOCK_TOKEN_NO_ASSESSMENT, () =>
+        service.getDrivingAssessment(authAs(MOCK_TOKEN_NO_ASSESSMENT)),
       )
 
       expect(response).toStrictEqual(null)
@@ -285,10 +312,12 @@ describe('DrivingLicenseService', () => {
 
   describe('getApplicationEligibility', () => {
     it('all checks should pass for applicable students', async () => {
-      const response = await service.getApplicationEligibility(
-        MOCK_USER,
-        MOCK_NATIONAL_ID,
-        'B-full',
+      const response = await asUser(MOCK_USER.authorization, () =>
+        service.getApplicationEligibility(
+          MOCK_USER,
+          MOCK_NATIONAL_ID,
+          'B-full',
+        ),
       )
 
       expect(response).toStrictEqual({
@@ -333,10 +362,12 @@ describe('DrivingLicenseService', () => {
     })
 
     it('all checks should pass for applicable students for temporary license', async () => {
-      const response = await service.getApplicationEligibility(
-        MOCK_USER,
-        MOCK_NATIONAL_ID,
-        'B-temp',
+      const response = await asUser(MOCK_USER.authorization, () =>
+        service.getApplicationEligibility(
+          MOCK_USER,
+          MOCK_NATIONAL_ID,
+          'B-temp',
+        ),
       )
 
       expect(response).toStrictEqual({
@@ -358,10 +389,12 @@ describe('DrivingLicenseService', () => {
     it('checks should fail for non-applicable students', async () => {
       const MOCK_USER_COPY = { ...MOCK_USER }
       MOCK_USER_COPY.authorization = MOCK_TOKEN_EXPIRED
-      const response = await service.getApplicationEligibility(
-        MOCK_USER_COPY,
-        MOCK_NATIONAL_ID_EXPIRED,
-        'B-full',
+      const response = await asUser(MOCK_TOKEN_EXPIRED, () =>
+        service.getApplicationEligibility(
+          MOCK_USER_COPY,
+          MOCK_NATIONAL_ID_EXPIRED,
+          'B-full',
+        ),
       )
 
       expect(response).toStrictEqual({
@@ -397,10 +430,12 @@ describe('DrivingLicenseService', () => {
       const MOCK_USER_COPY = { ...MOCK_USER }
       MOCK_USER_COPY.authorization = MOCK_TOKEN_EXPIRED
 
-      const response = await service.getApplicationEligibility(
-        MOCK_USER_COPY,
-        MOCK_NATIONAL_ID_EXPIRED,
-        'B-full',
+      const response = await asUser(MOCK_TOKEN_EXPIRED, () =>
+        service.getApplicationEligibility(
+          MOCK_USER_COPY,
+          MOCK_NATIONAL_ID_EXPIRED,
+          'B-full',
+        ),
       )
 
       // The denial reason (errorCode) is still attached; only the RLS message
@@ -423,10 +458,12 @@ describe('DrivingLicenseService', () => {
         .spyOn(drivingLicenseApi, 'getCanApplyForCategoryTemporary')
         .mockResolvedValue({ result: false, errorCode: 'HAS_NO_SIGNATURE' })
 
-      const response = await service.getApplicationEligibility(
-        MOCK_USER,
-        MOCK_NATIONAL_ID,
-        'B-temp',
+      const response = await asUser(MOCK_USER.authorization, () =>
+        service.getApplicationEligibility(
+          MOCK_USER,
+          MOCK_NATIONAL_ID,
+          'B-temp',
+        ),
       )
 
       const canApply = response.requirements.find(
@@ -443,12 +480,14 @@ describe('DrivingLicenseService', () => {
         .spyOn(drivingLicenseApi, 'getCanApplyForRenewal65')
         .mockResolvedValue({ result: false, errorCode: 'HAS_POINTS' })
 
-      const response = await service.getApplicationEligibility(
-        MOCK_USER,
-        MOCK_NATIONAL_ID,
-        // Runtime value the GraphQL String field actually receives, even though
-        // it is outside the narrower DrivingLicenseApplicationType TS union.
-        'B-full-renewal-65' as DrivingLicenseApplicationType,
+      const response = await asUser(MOCK_USER.authorization, () =>
+        service.getApplicationEligibility(
+          MOCK_USER,
+          MOCK_NATIONAL_ID,
+          // Runtime value the GraphQL String field actually receives, even though
+          // it is outside the narrower DrivingLicenseApplicationType TS union.
+          'B-full-renewal-65' as DrivingLicenseApplicationType,
+        ),
       )
 
       const canApply = response.requirements.find(
@@ -456,6 +495,76 @@ describe('DrivingLicenseService', () => {
       )
       expect(canApply?.messageIs).toBe('Þú ert með punkta á ökuskírteini')
       expect(canApply?.messageEn).toBe('You have points on your license')
+    })
+
+    describe('only fetches what the type checks', () => {
+      // RLS flagged driving-assessment and Ö3 lookups during 65+ testing: they
+      // were fetched for every type, though only B-full reads them (and only
+      // B-full/B-temp read residency).
+      const spyLookups = () => {
+        jest.spyOn(service, 'canApplyFor').mockResolvedValue({ result: true })
+        return {
+          assessment: jest.spyOn(drivingLicenseApi, 'getDrivingAssessment'),
+          school: jest.spyOn(drivingLicenseApi, 'getHasFinishedOkugerdi'),
+          residence: jest.spyOn(nationalRegistry, 'getResidenceHistory'),
+        }
+      }
+
+      it.each([
+        // Runtime value outside the narrower TS union (see the test above).
+        'B-full-renewal-65' as DrivingLicenseApplicationType,
+        'BE' as DrivingLicenseApplicationType,
+      ])(
+        'skips the assessment, Ö3 and residency lookups for %s',
+        async (type) => {
+          const { assessment, school, residence } = spyLookups()
+
+          const response = await asUser(MOCK_USER.authorization, () =>
+            service.getApplicationEligibility(
+              MOCK_USER,
+              MOCK_NATIONAL_ID,
+              type,
+            ),
+          )
+
+          expect(assessment).not.toHaveBeenCalled()
+          expect(school).not.toHaveBeenCalled()
+          expect(residence).not.toHaveBeenCalled()
+          expect(response.isEligible).toBe(true)
+        },
+      )
+
+      it('fetches residency but not the assessment or Ö3 for B-temp', async () => {
+        const { assessment, school, residence } = spyLookups()
+
+        await asUser(MOCK_USER.authorization, () =>
+          service.getApplicationEligibility(
+            MOCK_USER,
+            MOCK_NATIONAL_ID,
+            'B-temp',
+          ),
+        )
+
+        expect(assessment).not.toHaveBeenCalled()
+        expect(school).not.toHaveBeenCalled()
+        expect(residence).toHaveBeenCalledTimes(1)
+      })
+
+      it('still fetches all three for B-full', async () => {
+        const { assessment, school, residence } = spyLookups()
+
+        await asUser(MOCK_USER.authorization, () =>
+          service.getApplicationEligibility(
+            MOCK_USER,
+            MOCK_NATIONAL_ID,
+            'B-full',
+          ),
+        )
+
+        expect(assessment).toHaveBeenCalledTimes(1)
+        expect(school).toHaveBeenCalledTimes(1)
+        expect(residence).toHaveBeenCalledTimes(1)
+      })
     })
   })
 
@@ -507,13 +616,15 @@ describe('DrivingLicenseService', () => {
 
   describe('newDrivingLicense', () => {
     it('should handle driving license creation', async () => {
-      const response = await service.newDrivingLicense(MOCK_NATIONAL_ID, {
-        jurisdictionId: 11,
-        needsToPresentHealthCertificate: false,
-        needsToPresentQualityPhoto: false,
-        licenseCategory: DrivingLicenseCategory.B,
-        sendLicenseInMail: 0,
-      })
+      const response = await asUser(MOCK_TOKEN, () =>
+        service.newDrivingLicense(MOCK_NATIONAL_ID, {
+          jurisdictionId: 11,
+          needsToPresentHealthCertificate: false,
+          needsToPresentQualityPhoto: false,
+          licenseCategory: DrivingLicenseCategory.B,
+          sendLicenseInMail: 0,
+        }),
+      )
 
       expect(response).toStrictEqual({
         success: true,
@@ -524,24 +635,22 @@ describe('DrivingLicenseService', () => {
     it('should handle error responses when creating a license', async () => {
       expect.assertions(1)
 
-      return service
-        .newDrivingLicense(MOCK_NATIONAL_ID_NO_ASSESSMENT, {
+      return asUser(MOCK_TOKEN_NO_ASSESSMENT, () =>
+        service.newDrivingLicense(MOCK_NATIONAL_ID_NO_ASSESSMENT, {
           jurisdictionId: 11,
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
           licenseCategory: DrivingLicenseCategory.B,
           sendLicenseInMail: 0,
-        })
-        .catch((e) => expect(e).toBeTruthy())
+        }),
+      ).catch((e) => expect(e).toBeTruthy())
     })
   })
 
   describe('newTemporaryDrivingLicense', () => {
     it('should handle driving license creation', async () => {
-      const response = await service.newTemporaryDrivingLicense(
-        MOCK_NATIONAL_ID,
-        MOCK_USER.authorization,
-        {
+      const response = await asUser(MOCK_TOKEN, () =>
+        service.newTemporaryDrivingLicense(MOCK_NATIONAL_ID, MOCK_USER, {
           jurisdictionId: 11,
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: false,
@@ -549,7 +658,7 @@ describe('DrivingLicenseService', () => {
           email: 'mock@email.com',
           phone: '9999999',
           sendLicenseInMail: false,
-        },
+        }),
       )
 
       expect(response).toStrictEqual({
@@ -559,10 +668,10 @@ describe('DrivingLicenseService', () => {
     })
 
     it('should handle error responses when creating a license', async () => {
-      return await service
-        .newTemporaryDrivingLicense(
+      return await asUser(MOCK_TOKEN_NO_ASSESSMENT, () =>
+        service.newTemporaryDrivingLicense(
           MOCK_NATIONAL_ID_NO_ASSESSMENT,
-          MOCK_USER.authorization,
+          authAs(MOCK_TOKEN_NO_ASSESSMENT),
           {
             jurisdictionId: 11,
             needsToPresentHealthCertificate: false,
@@ -572,8 +681,8 @@ describe('DrivingLicenseService', () => {
             phone: '9999999',
             sendLicenseInMail: false,
           },
-        )
-        .catch((e) => expect(e).toBeTruthy())
+        ),
+      ).catch((e) => expect(e).toBeTruthy())
     })
   })
 

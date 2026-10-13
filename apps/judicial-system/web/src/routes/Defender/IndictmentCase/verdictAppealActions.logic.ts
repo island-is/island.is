@@ -3,8 +3,8 @@ import {
   canDefendantAppealVerdict,
   isCompletedCase,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   Defendant,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -30,7 +30,7 @@ export const isConfirmedDefenderOf = (
 // Whether this defender may file a verdict appeal for this defendant right now. The
 // backend enforces every one of these again; this only decides what to offer.
 export const canDefenderAppealVerdictOf = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   defendant: Defendant,
   user: User | undefined,
 ): boolean =>
@@ -46,7 +46,7 @@ export const canDefenderAppealVerdictOf = (
 // verdict.appealDate is the per-defendant mirror the backend sets on appeal and
 // clears on withdrawal, and the appeal case is what the withdrawal is filed on.
 export const canDefenderWithdrawVerdictAppealOf = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   defendant: Defendant,
   user: User | undefined,
 ): boolean =>
@@ -57,7 +57,7 @@ export const canDefenderWithdrawVerdictAppealOf = (
 // The single action the defendant's verdict timeline card offers this user, if
 // any. Nothing is offered while the feature is hidden.
 export const getVerdictAppealAction = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   defendant: Defendant,
   user: User | undefined,
   isFeatureEnabled: boolean,

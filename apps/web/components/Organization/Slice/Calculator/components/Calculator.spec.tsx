@@ -99,11 +99,23 @@ const config: CalculatorConfig = {
       key: 'income',
       title: { is: 'Tekjur' },
       fields: [
-        { uid: 'u1', key: 'salary', span: 6, label: { is: 'Laun' } },
+        {
+          uid: 'u1',
+          key: 'salary',
+          kind: 'field',
+          size: 'medium',
+          label: { is: 'Laun' },
+        },
         /* Keyed but never labelled: omitted from the page entirely. */
-        { uid: 'u2', key: 'isMarried', span: 6 },
+        { uid: 'u2', key: 'isMarried', kind: 'field', size: 'medium' },
         /* Keyed to a field the calculator no longer carries. */
-        { uid: 'u3', key: 'renamedAway', span: 6, label: { is: 'Horfið' } },
+        {
+          uid: 'u3',
+          key: 'renamedAway',
+          kind: 'field',
+          size: 'medium',
+          label: { is: 'Horfið' },
+        },
       ],
     },
     {
@@ -111,13 +123,18 @@ const config: CalculatorConfig = {
       title: { is: 'Annað' },
       toggle: { key: 'wantsExtra', label: { is: 'Bæta við' } },
       fields: [
-        { uid: 'u4', key: 'childCount', span: 12, label: { is: 'Börn' } },
+        {
+          uid: 'u4',
+          key: 'childCount',
+          kind: 'field',
+          size: 'large',
+          label: { is: 'Börn' },
+        },
       ],
     },
   ],
   outputTotal: {
     uid: 'hero',
-    kind: 'value',
     key: 'netTotal',
     label: { is: 'Heildarlaun eftir frádrátt' },
   },
@@ -172,6 +189,29 @@ const calculationResult = {
   },
 }
 
+const recalculationRequest = {
+  query: GET_TAX_CALCULATOR_CALCULATION,
+  variables: {
+    input: {
+      type: TaxCalculatorType.ChildBenefit,
+      values: [{ key: 'salary', value: { numberValue: 600000 } }],
+    },
+  },
+}
+
+const recalculationResult = {
+  taxCalculatorCalculate: {
+    ...calculationResult.taxCalculatorCalculate,
+    calculation: {
+      ...calculationResult.taxCalculatorCalculate.calculation,
+      values: calculationResult.taxCalculatorCalculate.calculation.values.map(
+        (value) =>
+          value.key === 'total' ? { ...value, numberValue: 150000 } : value,
+      ),
+    },
+  },
+}
+
 /* `InputController type="number"` routes through NumberFormat, which renders no
  * `id` on the input and no `htmlFor` on the label -- so the control cannot be
  * reached by its label text and is found through the label's container. */
@@ -197,7 +237,13 @@ const gatedConfig = (
       title: { is: 'Hlið' },
       gate: { toggle: 'wantsExtra', ...gate },
       fields: [
-        { uid: 'u5', key: 'note', span: 12, label: { is: 'Athugasemd' } },
+        {
+          uid: 'u5',
+          key: 'note',
+          kind: 'field',
+          size: 'large',
+          label: { is: 'Athugasemd' },
+        },
       ],
     },
   ],
@@ -279,6 +325,74 @@ describe('Calculator', () => {
     expect(screen.getByText('Laun')).toBeTruthy()
     /* The stale key's authored label must not reach the page either. */
     expect(screen.queryByText('Horfið')).toBeNull()
+  })
+
+  it('renders a text row in its authored place among the fields', async () => {
+    renderSlice(
+      [{ request, result: { data: metadata } }],
+      slice({
+        ...config,
+        inputSections: [
+          {
+            key: 'income',
+            fields: [
+              {
+                uid: 't1',
+                kind: 'content',
+                content: { is: 'Fyrir **texti**' },
+              },
+              {
+                uid: 'u1',
+                kind: 'field',
+                key: 'salary',
+                size: 'medium',
+                label: { is: 'Laun' },
+              },
+              { uid: 't2', kind: 'content', content: { is: 'Eftir texti' } },
+            ],
+          },
+        ],
+      }),
+    )
+
+    await screen.findByText('Laun')
+
+    const text = document.body.textContent ?? ''
+
+    expect(screen.getByText('texti', { selector: 'strong' })).toBeTruthy()
+    expect(text.indexOf('Fyrir')).toBeLessThan(text.indexOf('Laun'))
+    expect(text.indexOf('Laun')).toBeLessThan(text.indexOf('Eftir texti'))
+  })
+
+  it('hides a section whose fields are all omitted, text rows and all', async () => {
+    renderSlice(
+      [{ request, result: { data: metadata } }],
+      slice({
+        ...config,
+        inputSections: [
+          ...config.inputSections,
+          {
+            key: 'stale',
+            title: { is: 'Úrelt' },
+            fields: [
+              { uid: 't1', kind: 'content', content: { is: 'Skýring' } },
+              {
+                uid: 'u9',
+                kind: 'field',
+                key: 'alsoGone',
+                size: 'medium',
+                label: { is: 'Horfið' },
+              },
+            ],
+          },
+        ],
+      }),
+    )
+
+    await screen.findByText('Laun')
+
+    expect(screen.queryByText('Úrelt')).toBeNull()
+    expect(screen.queryByText('Skýring')).toBeNull()
   })
 
   it('hides a toggled section body until the toggle is on', async () => {
@@ -431,8 +545,24 @@ describe('Calculator', () => {
     expect(screen.queryByText('Niðurstaða reiknings')).toBeNull()
   })
 
-  /* The visible result must not drift away from the visible inputs. */
-  it('drops the result as soon as an input changes', async () => {
+  it('switches the submit label to recalculate once a result is shown', async () => {
+    renderSlice([
+      { request, result: { data: metadata } },
+      { request: calculationRequest, result: { data: calculationResult } },
+    ])
+
+    await screen.findByText('Laun')
+    expect(screen.getByRole('button').textContent).toContain('Reikna')
+
+    fillSalary()
+    fireEvent.click(await screen.findByRole('button'))
+    await screen.findByText('120.000 kr.')
+
+    expect(screen.getByRole('button').textContent).toContain('Endurreikna')
+  })
+
+  /* The visible result must not pass for the visible inputs once they change. */
+  it('keeps the previous result, faded, until recalculated', async () => {
     renderSlice([
       { request, result: { data: metadata } },
       { request: calculationRequest, result: { data: calculationResult } },
@@ -441,11 +571,103 @@ describe('Calculator', () => {
     await screen.findByText('Laun')
     fillSalary()
     fireEvent.click(await screen.findByRole('button'))
-    await screen.findByText('120.000 kr.')
+    const total = await screen.findByText('120.000 kr.')
+
+    expect(total.closest('[class*="opacity_0.5"]')).toBeNull()
+    expect(
+      screen.queryByText('Niðurstöður eru úreltar, reiknaðu aftur'),
+    ).toBeNull()
 
     fillSalary('600000')
 
-    await waitFor(() => expect(screen.queryByText('120.000 kr.')).toBeNull())
+    await waitFor(() =>
+      expect(
+        screen.getByText('120.000 kr.').closest('[class*="opacity_0.5"]'),
+      ).not.toBeNull(),
+    )
+    expect(
+      screen.getAllByText('Niðurstöður eru úreltar, reiknaðu aftur'),
+    ).toHaveLength(2)
+    expect(screen.getByRole('status').textContent).toBe(
+      'Niðurstöður eru úreltar, reiknaðu aftur',
+    )
+  })
+
+  it('announces the calculation and its result in a status region', async () => {
+    renderSlice([
+      { request, result: { data: metadata } },
+      {
+        request: calculationRequest,
+        result: { data: calculationResult },
+        delay: 50,
+      },
+    ])
+
+    await screen.findByText('Laun')
+    fillSalary()
+    const submit = screen.getByRole('button')
+    await waitFor(() => expect(submit.hasAttribute('disabled')).toBe(false))
+    fireEvent.click(submit)
+
+    const status = screen.getByRole('status')
+    await waitFor(() => expect(status.textContent).toBe('Reiknar…'))
+    await waitFor(() =>
+      expect(status.textContent).toBe('Niðurstöður reiknaðar'),
+    )
+  })
+
+  it('shows a busy skeleton while recalculating, then replaces the values', async () => {
+    const { container } = renderSlice([
+      { request, result: { data: metadata } },
+      { request: calculationRequest, result: { data: calculationResult } },
+      {
+        request: recalculationRequest,
+        result: { data: recalculationResult },
+        delay: 50,
+      },
+    ])
+
+    await screen.findByText('Laun')
+    fillSalary()
+    fireEvent.click(await screen.findByRole('button'))
+    await screen.findByText('120.000 kr.')
+
+    fillSalary('600000')
+    const submit = screen.getByRole('button')
+    await waitFor(() => expect(submit.hasAttribute('disabled')).toBe(false))
+    fireEvent.click(submit)
+
+    await waitFor(() =>
+      expect(container.querySelector('[aria-busy="true"]')).not.toBeNull(),
+    )
+    expect(screen.queryByText('120.000 kr.')).toBeNull()
+
+    expect(await screen.findByText('150.000 kr.')).toBeTruthy()
+    expect(container.querySelector('[aria-busy="true"]')).toBeNull()
+  })
+
+  it('clears the previous result when a recalculation fails', async () => {
+    renderSlice([
+      { request, result: { data: metadata } },
+      { request: calculationRequest, result: { data: calculationResult } },
+      { request: recalculationRequest, error: new Error('RSK is down') },
+    ])
+
+    await screen.findByText('Laun')
+    fillSalary()
+    fireEvent.click(await screen.findByRole('button'))
+    await screen.findByText('120.000 kr.')
+
+    fillSalary('600000')
+    const submit = screen.getByRole('button')
+    await waitFor(() => expect(submit.hasAttribute('disabled')).toBe(false))
+    fireEvent.click(submit)
+
+    expect(await screen.findByTestId('alertMessage')).toHaveProperty(
+      'textContent',
+      'Ekki tókst að reikna',
+    )
+    expect(screen.queryByText('120.000 kr.')).toBeNull()
   })
 
   it('attaches a field-keyed domain error to its own control', async () => {
@@ -491,8 +713,28 @@ describe('Calculator', () => {
     fillSalary()
     fireEvent.click(await screen.findByRole('button'))
 
-    expect(await screen.findByText('Ekki tókst að reikna')).toBeTruthy()
+    expect(await screen.findByTestId('alertMessage')).toHaveProperty(
+      'textContent',
+      'Ekki tókst að reikna',
+    )
     expect(salaryInput().value).toBe('500.000 kr.')
+  })
+
+  it('announces a failed calculation in the status region', async () => {
+    renderSlice([
+      { request, result: { data: metadata } },
+      { request: calculationRequest, error: new Error('RSK is down') },
+    ])
+
+    await screen.findByText('Laun')
+    fillSalary()
+    fireEvent.click(await screen.findByRole('button'))
+
+    await waitFor(() =>
+      expect(screen.getByRole('status').textContent).toBe(
+        'Ekki tókst að reikna',
+      ),
+    )
   })
 
   /* The button is what prevents a double submit, and island-ui's `Button`

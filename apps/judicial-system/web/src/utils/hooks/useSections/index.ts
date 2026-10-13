@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -7,6 +8,7 @@ import {
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_RULING_ROUTE,
   COURT_OF_APPEAL_SUMMARY_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
@@ -52,12 +54,15 @@ import {
   PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   getAppealResultTextByValue,
 } from '@island.is/judicial-system/formatters'
 import {
+  Feature,
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -66,15 +71,16 @@ import {
   isInvestigationCase,
   isProsecutionUser,
   isProsecutorsOffice,
+  isPublicProsecutionOfficeUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
-import type {
-  Case,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { hasStandingVerdictAppeal } from '@island.is/judicial-system-web/src/components/VerdictAppealFiles/VerdictAppealFiles.logic'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   AppealCaseType,
@@ -92,6 +98,18 @@ import {
   shouldUseAppealWithdrawnRoutes,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
+export const showsPublicProsecutorVerdictAppealStep = (
+  workingCase: Pick<WorkingCase, 'type' | 'verdictAppealCase'>,
+  user: User | undefined,
+  features: Feature[],
+  isRegisteringVerdictAppeal = false,
+): boolean =>
+  features.includes(Feature.INDICTMENT_APPEAL) &&
+  isIndictmentCase(workingCase.type) &&
+  isPublicProsecutionOfficeUser(user) &&
+  (hasStandingVerdictAppeal(workingCase.verdictAppealCase) ||
+    isRegisteringVerdictAppeal)
+
 const useSections = (
   isValid = true,
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>,
@@ -103,11 +121,12 @@ const useSections = (
   // router query; in production the FormContext working case matches the
   // working case passed to `getSections`, so closure capture is fine.
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
+  const { features } = useContext(FeatureContext)
 
   const validateFormStepper = (
     isActiveSubSectionValid: boolean,
     steps: string[],
-    workingCase: Case,
+    workingCase: WorkingCase,
   ) => {
     if (!isActiveSubSectionValid) {
       return false
@@ -129,7 +148,7 @@ const useSections = (
     router.pathname.replace(/\/\[\w+\]/g, '') === pathname
 
   const getRestrictionCaseProsecutorSection = (
-    workingCase: Case,
+    workingCase: WorkingCase,
     user?: User,
   ): RouteSection => {
     const { type, id, parentCase, state } = workingCase
@@ -293,7 +312,7 @@ const useSections = (
   }
 
   const getInvestigationCaseProsecutorSection = (
-    workingCase: Case,
+    workingCase: WorkingCase,
     user?: User,
   ): RouteSection => {
     const { id, type, parentCase, state } = workingCase
@@ -474,7 +493,7 @@ const useSections = (
   }
 
   const getIndictmentCaseProsecutorSection = (
-    workingCase: Case,
+    workingCase: WorkingCase,
     user?: User,
   ): RouteSection => {
     const { id, type, state } = workingCase
@@ -672,7 +691,7 @@ const useSections = (
   }
 
   const getRestrictionCaseCourtSections = (
-    workingCase: Case,
+    workingCase: WorkingCase,
     user?: User,
   ): RouteSection => {
     const { id, parentCase, state } = workingCase
@@ -828,7 +847,7 @@ const useSections = (
   }
 
   const getInvestigationCaseCourtSections = (
-    workingCase: Case,
+    workingCase: WorkingCase,
     user?: User,
   ): RouteSection => {
     const { id, parentCase, state } = workingCase
@@ -992,7 +1011,10 @@ const useSections = (
     }
   }
 
-  const getIndictmentsCourtSections = (workingCase: Case, user?: User) => {
+  const getIndictmentsCourtSections = (
+    workingCase: WorkingCase,
+    user?: User,
+  ) => {
     const { id, state, indictmentDecision } = workingCase
 
     return {
@@ -1161,7 +1183,7 @@ const useSections = (
   }
 
   const getRestrictionCaseExtensionSections = (
-    workingCase: Case,
+    workingCase: WorkingCase,
     user?: User,
   ): RouteSection => {
     const section = getRestrictionCaseProsecutorSection(workingCase, user)
@@ -1259,7 +1281,7 @@ const useSections = (
   }
 
   const getInvestigationCaseExtensionSections = (
-    workingCase: Case,
+    workingCase: WorkingCase,
     user?: User,
   ): RouteSection => {
     const section = getInvestigationCaseProsecutorSection(workingCase, user)
@@ -1359,7 +1381,7 @@ const useSections = (
     }
   }
 
-  const getCourtOfAppealSections = (workingCase: Case, user?: User) => {
+  const getCourtOfAppealSections = (workingCase: WorkingCase, user?: User) => {
     const { id } = workingCase
     // For COA users on ruling-order rows, the stepper reflects the target
     // appeal-case row (resolved via `?appealCaseId=…`). Other users / pages
@@ -1505,7 +1527,7 @@ const useSections = (
   }
 
   const getRestrictionCaseExtensionCourtSections = (
-    workingCase: Case,
+    workingCase: WorkingCase,
     user?: User,
   ) => {
     return {
@@ -1516,7 +1538,7 @@ const useSections = (
   }
 
   const getInvestigationCaseExtensionCourtSections = (
-    workingCase: Case,
+    workingCase: WorkingCase,
     user?: User,
   ) => {
     return {
@@ -1536,11 +1558,13 @@ const useSections = (
    * links to pages that do not answer yet.
    */
   const getCourtOfAppealVerdictAppealSections = (
-    workingCase: Case,
+    workingCase: WorkingCase,
   ): RouteSection[] => [
     {
       name: 'Dómur Landsréttar',
-      isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE),
+      isActive:
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE) ||
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE),
       children: [
         {
           name: 'Yfirlit',
@@ -1554,13 +1578,54 @@ const useSections = (
             targetAppealCase?.id,
           ),
         },
+        {
+          name: 'Verjandi',
+          isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE),
+          href: appendAppealCaseIdQuery(
+            `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/${workingCase.id}`,
+            targetAppealCase?.id,
+          ),
+          // The href alone only reaches a step the court has already passed.
+          // Going forward to one needs this, and nothing stands in the way:
+          // the overview before it asks nothing of the court.
+          onClick:
+            !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE) &&
+            validateFormStepper(isValid, [], workingCase) &&
+            onNavigationTo
+              ? async () =>
+                  await onNavigationTo(
+                    COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+                  )
+              : undefined,
+        },
       ],
     },
   ]
 
-  const getSections = (workingCase: Case, user?: User): RouteSection[] => {
+  const getSections = (
+    workingCase: WorkingCase,
+    user?: User,
+  ): RouteSection[] => {
     const isExtensionCase =
       Boolean(workingCase.parentCase) && !isIndictmentCase(workingCase.type)
+    // Two different readers stand on a verdict appeal: the court of appeals,
+    // whose stepper is about the appeal itself, and the public prosecution
+    // office, whose own Áfrýjun step sits in their indictment stepper.
+    const isVerdictAppealProceeding =
+      targetAppealCase?.appealType === AppealCaseType.VERDICT
+    const isRegisteringVerdictAppeal = isActive(
+      PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
+    )
+    const showsVerdictAppealStep = showsPublicProsecutorVerdictAppealStep(
+      workingCase,
+      user,
+      features,
+      isRegisteringVerdictAppeal,
+    )
+    const isVerdictAppealStepActive =
+      showsVerdictAppealStep &&
+      (isActive(PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE) ||
+        isRegisteringVerdictAppeal)
 
     return [
       isRestrictionCase(workingCase.type)
@@ -1581,15 +1646,30 @@ const useSections = (
             ? workingCase.parentCase.state
             : workingCase.state,
         ),
+        // hasBeenAppealed only reflects the case-level ruling appeal, so a
+        // verdict appeal has to switch this step off explicitly.
+        // Both readers switch it off, each for their own proceeding.
         isActive:
-          (workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
+          !isVerdictAppealProceeding &&
+          !isVerdictAppealStepActive &&
+          ((workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
             !workingCase.appealCase?.appealReceivedByCourtDate) ||
-          (!isExtensionCase &&
-            isCompletedCase(workingCase.state) &&
-            !workingCase.hasBeenAppealed &&
-            workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED),
+            (!isExtensionCase &&
+              isCompletedCase(workingCase.state) &&
+              !workingCase.hasBeenAppealed &&
+              workingCase.appealCase?.appealState !==
+                AppealCaseState.COMPLETED)),
         children: [],
       },
+      ...(showsVerdictAppealStep
+        ? [
+            {
+              name: 'Áfrýjun',
+              isActive: isVerdictAppealStepActive,
+              children: [],
+            },
+          ]
+        : []),
       ...(isExtensionCase
         ? [
             isRestrictionCase(workingCase.type)
@@ -1605,6 +1685,7 @@ const useSections = (
                 workingCase.state,
               ),
               isActive:
+                !isVerdictAppealProceeding &&
                 isCompletedCase(workingCase.state) &&
                 !workingCase.hasBeenAppealed &&
                 workingCase.appealCase?.appealState !==
@@ -1617,7 +1698,7 @@ const useSections = (
       // the page is about. A case can carry a ruling appeal and a verdict
       // appeal at once, and their steps are different; showing both would let
       // the side panel mark a step from the other proceeding active.
-      ...(targetAppealCase?.appealType === AppealCaseType.VERDICT
+      ...(isVerdictAppealProceeding
         ? getCourtOfAppealVerdictAppealSections(workingCase)
         : !targetAppealCase?.appealState ||
           (targetAppealCase.appealState === AppealCaseState.WITHDRAWN &&

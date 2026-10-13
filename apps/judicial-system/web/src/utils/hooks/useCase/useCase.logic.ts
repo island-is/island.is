@@ -4,8 +4,8 @@ import isUndefined from 'lodash/isUndefined'
 import omitBy from 'lodash/omitBy'
 
 import { isIndictmentCase } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CreateCaseInput,
   Defendant,
   UpdateCaseInput,
@@ -44,7 +44,7 @@ const isChildKey = (key: keyof UpdateCaseInput): key is keyof ChildKeys => {
   ].includes(key)
 }
 
-const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
+const childof: { [Property in keyof ChildKeys]-?: keyof WorkingCase } = {
   courtId: 'court',
   prosecutorId: 'prosecutor',
   sharedWithProsecutorsOfficeId: 'sharedWithProsecutorsOffice',
@@ -62,33 +62,40 @@ const overwrite = (update: UpdateCase): UpdateCase => {
   return validUpdates
 }
 
-const fieldHasValue = (workingCase: Case) => (value: unknown, key: string) => {
-  const theKey = key as keyof UpdateCaseInput
+const fieldHasValue =
+  (workingCase: WorkingCase) => (value: unknown, key: string) => {
+    const theKey = key as keyof UpdateCaseInput
 
-  let currentValue: unknown
+    let currentValue: unknown
 
-  if (theKey === 'defendantEventLogDecisions') {
-    return false
-  } else if (isChildKey(theKey)) {
-    currentValue = workingCase[childof[theKey]]
-  } else {
-    currentValue = workingCase[theKey]
+    if (theKey === 'defendantEventLogDecisions') {
+      return false
+    } else if (isChildKey(theKey)) {
+      currentValue = workingCase[childof[theKey]]
+    } else {
+      currentValue = workingCase[theKey]
+    }
+
+    if (isNil(currentValue)) {
+      return value === undefined
+    }
+
+    return true
   }
 
-  if (isNil(currentValue)) {
-    return value === undefined
-  }
-
-  return true
-}
-
-export const update = (update: UpdateCase, workingCase: Case): UpdateCase => {
+export const update = (
+  update: UpdateCase,
+  workingCase: WorkingCase,
+): UpdateCase => {
   const validUpdates = omitBy<UpdateCase>(update, fieldHasValue(workingCase))
 
   return validUpdates
 }
 
-export const formatUpdates = (updates: UpdateCase[], workingCase: Case) => {
+export const formatUpdates = (
+  updates: UpdateCase[],
+  workingCase: WorkingCase,
+) => {
   const changes: UpdateCase[] = updates.map((entry) => {
     if (entry.force) {
       return overwrite(entry)
@@ -129,7 +136,9 @@ const toCreateCaseDefendantInput = (defendant: Defendant) =>
 // whole or not at all. Request cases are created before their defendant is
 // entered, so nothing is sent for them and the server starts them from an
 // empty defendant. Undefined when the case is missing what it takes to be created.
-export const createCaseInput = (theCase: Case): CreateCaseInput | undefined => {
+export const createCaseInput = (
+  theCase: WorkingCase,
+): CreateCaseInput | undefined => {
   if (!theCase.type || !theCase.policeCaseNumbers) {
     return undefined
   }

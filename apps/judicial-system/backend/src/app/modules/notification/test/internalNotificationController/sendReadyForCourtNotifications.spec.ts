@@ -80,6 +80,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
         defenderNationalId: defender.nationalId,
         defenderName: defender.name,
         defenderEmail: defender.email,
+        requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
       },
     ],
     requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
@@ -223,6 +224,12 @@ describe('InternalNotificationController - Send ready for court notifications fo
     beforeEach(async () => {
       theCase.requestSharedWithDefender =
         RequestSharedWithDefender.READY_FOR_COURT
+      theCase.defendants = [
+        {
+          ...(theCase.defendants?.[0] ?? {}),
+          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+        },
+      ]
       await givenWhenThen(caseId, theCase, notificationDto)
     })
 
@@ -288,11 +295,15 @@ describe('InternalNotificationController - Send ready for court notifications fo
               defenderNationalId: defender.nationalId,
               defenderName: defender.name,
               defenderEmail: defender.email,
+              requestSharedWithDefender:
+                RequestSharedWithDefender.READY_FOR_COURT,
             },
             {
               defenderNationalId: defender2.nationalId,
               defenderName: defender2.name,
               defenderEmail: defender2.email,
+              requestSharedWithDefender:
+                RequestSharedWithDefender.READY_FOR_COURT,
             },
           ],
         } as Case,
@@ -328,11 +339,15 @@ describe('InternalNotificationController - Send ready for court notifications fo
               defenderNationalId: defender.nationalId,
               defenderName: defender.name,
               defenderEmail: defender.email,
+              requestSharedWithDefender:
+                RequestSharedWithDefender.READY_FOR_COURT,
             },
             {
               defenderNationalId: defender.nationalId,
               defenderName: defender.name,
               defenderEmail: defender.email,
+              requestSharedWithDefender:
+                RequestSharedWithDefender.READY_FOR_COURT,
             },
           ],
         } as Case,
@@ -363,11 +378,15 @@ describe('InternalNotificationController - Send ready for court notifications fo
               defenderNationalId: defender.nationalId,
               defenderName: defender.name,
               defenderEmail: defender.email,
+              requestSharedWithDefender:
+                RequestSharedWithDefender.READY_FOR_COURT,
             },
             {
               defenderNationalId: defender2.nationalId,
               defenderName: defender2.name,
               defenderEmail: defender2.email,
+              requestSharedWithDefender:
+                RequestSharedWithDefender.READY_FOR_COURT,
             },
           ],
           notifications: [
