@@ -17,6 +17,7 @@ import {
   BankTransferFailureReason,
   BankTransferPendingStatus,
 } from '../../bankTransferPayment/bankTransfer.types'
+import type { PaymentFlowType } from '../models/paymentFlow.model'
 import { PageInfoDto } from '@island.is/nest/pagination'
 
 export class PaymentFlowEventDTO {
@@ -248,6 +249,13 @@ export class GetPaymentFlowDTO {
     type: Boolean,
   })
   isClosed!: boolean
+
+  @ApiProperty({
+    description:
+      'charge: paying catalog charges. debt: paying debts owed to the state, see POST /v1/payments/debts.',
+    enum: ['charge', 'debt'],
+  })
+  type!: PaymentFlowType
 
   @ApiPropertyOptional({
     description: 'Populated only when paymentStatus is bank_transfer_pending',

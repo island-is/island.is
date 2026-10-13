@@ -35,7 +35,7 @@ Lets an application (e.g. the Fjármál overview) have a person or company pay d
 | `debts[].amount`                                         | Positive integer, whole ISK. May be less than the full debt. |
 | `debts[].label`                                          | Optional, up to 255 characters, display only.                |
 
-`organisationId` (FJS, `5402697509`) and the product title are set by the service, so they are not sent. The debts are validated with FJS when the flow is created.
+`organisationId` (FJS, `5402697509`) is set by the service and `productTitle` is not used, so neither is sent. `GET /v1/payments/:id` returns `type: 'debt'` and the fallback title "Greiðsla skulda"; the pay page shows its own translated title. The debts are validated with FJS when the flow is created.
 
 Payment methods come from the `paymentOptions` FJS returns from `validatePayment` (e.g. `CARD;TRANSFER`), limited by our feature flags and payer rules. `CARD` enables card and Apple Pay, `TRANSFER` enables bank transfer. Invoice payment is never offered.
 

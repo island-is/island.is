@@ -8,7 +8,10 @@ import { PaymentMethod } from '../types'
 // eslint-disable-next-line local-rules/disallow-kennitalas
 export const FJS_DEBT_ORGANISATION_ID = '5402697509'
 
-/** Title shown to the payer on debt payment flows. Set by the server, not by the caller. */
+/**
+ * Product title of debt flows for API consumers. Not stored on the flow: the pay page shows its
+ * own translated title for debt flows.
+ */
 export const DEBT_PAYMENT_PRODUCT_TITLE = 'Greiðsla skulda'
 
 /** A debt flow is closed once FJS rejected its settlement, the payer has to start a new flow. */

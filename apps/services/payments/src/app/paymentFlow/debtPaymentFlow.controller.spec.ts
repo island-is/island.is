@@ -110,7 +110,8 @@ describe('DebtPaymentFlowController', () => {
       expect(flow).toMatchObject({
         type: 'debt',
         organisationId: FJS_DEBT_ORGANISATION_ID,
-        productTitle: DEBT_PAYMENT_PRODUCT_TITLE,
+        // The pay page translates the title itself
+        productTitle: null,
         payerNationalId: payload.payerNationalId,
         availablePaymentMethods: [
           PaymentMethod.CARD,
@@ -321,6 +322,7 @@ describe('DebtPaymentFlowController', () => {
         productPrice: 12500,
         paymentStatus: PaymentStatus.UNPAID,
         isClosed: false,
+        type: 'debt',
         availablePaymentMethods: [
           PaymentMethod.CARD,
           PaymentMethod.BANK_TRANSFER,

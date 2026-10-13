@@ -121,6 +121,14 @@ export const genericError = defineMessages({
   },
 })
 
+export const debtPayment = defineMessages({
+  productTitle: {
+    id: 'payments:debtPayment.productTitle',
+    defaultMessage: 'Greiðsla skulda',
+    description: 'Payment of debts',
+  },
+})
+
 export const debtError = defineMessages({
   closedTitle: {
     id: 'payments:debtError.closedTitle',

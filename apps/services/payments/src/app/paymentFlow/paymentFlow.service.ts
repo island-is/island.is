@@ -366,8 +366,8 @@ export class PaymentFlowService {
             cancelUrl: input.cancelUrl,
             redirectToReturnUrlOnSuccess: input.redirectToReturnUrlOnSuccess,
             type: 'debt',
+            // No productTitle: the pay page shows its own translated title for debt flows
             organisationId: FJS_DEBT_ORGANISATION_ID,
-            productTitle: DEBT_PAYMENT_PRODUCT_TITLE,
             availablePaymentMethods: availableMethods,
             id: paymentFlowId,
             charges: [],
@@ -773,6 +773,7 @@ export class PaymentFlowService {
         paymentStatus,
         updatedAt,
         isClosed: isDebtFlowClosed(paymentFlow),
+        type: paymentFlow.type ?? 'charge',
         events: includeEvents
           ? paymentFlow.events?.map((event) => ({
               ...event,
@@ -1684,6 +1685,7 @@ export class PaymentFlowService {
       paymentStatus,
       updatedAt,
       isClosed: isDebtFlowClosed(paymentFlowDetails),
+      type: paymentFlowDetails.type ?? 'charge',
       events: paymentFlowDetails.events?.map((event) => ({
         ...event,
         type: event.type as PaymentFlowEventType,
@@ -1931,6 +1933,7 @@ export class PaymentFlowService {
           paymentStatus,
           updatedAt,
           isClosed: isDebtFlowClosed(flow.toJSON()),
+          type: flow.type ?? 'charge',
         }
       }),
     )

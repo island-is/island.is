@@ -165,6 +165,7 @@ describe('PaymentFlowController', () => {
       expect(response.status).toBe(200)
       expect(overlaySpy).toHaveBeenCalledWith(paymentFlowId)
       expect(response.body.paymentStatus).toBe(PaymentStatus.UNPAID)
+      expect(response.body.type).toBe('charge')
       expect(response.body.lastBankTransferFailure).toBeUndefined()
       expect(response.body.bankTransferScaRedirectUrl).toBeUndefined()
     })

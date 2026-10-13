@@ -5,7 +5,10 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useCallback, useMemo, useState } from 'react'
 import { isCompany } from 'kennitala'
 
-import { PaymentsGetFlowPaymentStatus } from '@island.is/api/schema'
+import {
+  PaymentsFlowType,
+  PaymentsGetFlowPaymentStatus,
+} from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -42,6 +45,7 @@ import {
   bankTransfer,
   card,
   cardSuccess,
+  debtPayment,
   generic,
   invoice,
   invoiceSuccess,
@@ -414,6 +418,12 @@ function PaymentPage({
 
   const paymentStatus = paymentFlow?.paymentStatus
 
+  // Debt flows have no product title of their own, the page translates it
+  const productTitle =
+    paymentFlow?.type === PaymentsFlowType.debt
+      ? formatMessage(debtPayment.productTitle)
+      : productInformation?.title ?? ''
+
   // A closed (rejected) debt flow can no longer be paid, but a paid flow still shows its receipt
   const isClosed =
     !!paymentFlow?.isClosed &&
@@ -456,7 +466,7 @@ function PaymentPage({
             imageSrc={organization?.logo?.url}
             imageAlt={organization?.logo?.title}
             amount={productInformation.amount}
-            subTitle={productInformation.title}
+            subTitle={productTitle}
             type="primary"
           />
         }
@@ -489,7 +499,7 @@ function PaymentPage({
           bodySlot={
             <>
               <ReceiptComponent
-                productTitle={productInformation.title}
+                productTitle={productTitle}
                 amount={productInformation.amount}
                 paidAt={paymentFlow.updatedAt}
                 payerNationalId={paymentFlow.payerNationalId}
@@ -528,7 +538,7 @@ function PaymentPage({
               imageSrc={organization?.logo?.url}
               imageAlt={organization?.logo?.title}
               amount={productInformation.amount}
-              subTitle={productInformation.title}
+              subTitle={productTitle}
               type="primary"
             />
           ) : (
