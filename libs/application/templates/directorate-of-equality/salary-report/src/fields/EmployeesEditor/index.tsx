@@ -205,10 +205,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     ...componentsFromFormValues(values),
   })
 
-  const runSync = async (
-    target: string,
-    batch: Parameters<typeof sync>[0],
-  ) => {
+  const runSync = async (target: string, batch: Parameters<typeof sync>[0]) => {
     if (savingRef.current) return false
     savingRef.current = true
     setSavingTarget(target)
