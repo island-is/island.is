@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/core'
 import { FILE_SIZE_LIMIT, Routes, UPLOAD_ACCEPT } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
-import { isRVKresident, taxSuccess } from '../../../utils/conditions'
+import { isVeitaMunicipality, taxSuccess } from '../../../utils/conditions'
 import { ApproveOptions, TaxData } from '../../../lib/types'
 import { incomeSubsection } from './incomeSubsection'
 import { personalTaxCreditSubsection } from './personalTaxCreditSubsection'
@@ -31,13 +31,13 @@ export const financeSection = buildSection({
       children: [
         buildCustomField({
           condition: (_answers, externalData) =>
-            !isRVKresident(_answers, externalData),
+            !isVeitaMunicipality(_answers, externalData),
           id: Routes.INCOMEFILES,
           title: m.incomeFilesForm.general.pageTitle,
           component: 'IncomeFilesForm',
         }),
         buildMultiField({
-          condition: isRVKresident,
+          condition: isVeitaMunicipality,
           id: Routes.INCOMEFILESTAXSUCCESS,
           title: m.incomeFilesForm.general.pageTitle,
           children: [
@@ -53,7 +53,7 @@ export const financeSection = buildSection({
               description: incomeFilesForm.general.description,
             }),
             buildFileUploadField({
-              condition: isRVKresident,
+              condition: isVeitaMunicipality,
               id: Routes.RVKINCOMEFILES,
               title: m.incomeFilesForm.general.pageTitle,
               uploadAccept: UPLOAD_ACCEPT.join(','),
@@ -80,13 +80,13 @@ export const financeSection = buildSection({
       children: [
         buildCustomField({
           condition: (_answers, externalData) =>
-            !isRVKresident(_answers, externalData),
+            !isVeitaMunicipality(_answers, externalData),
           id: Routes.TAXRETURNFILES,
           title: m.taxReturnForm.general.pageTitle,
           component: 'TaxReturnFilesForm',
         }),
         buildMultiField({
-          condition: isRVKresident,
+          condition: isVeitaMunicipality,
           id: Routes.RVKTAXRETURNFILESMULTIFIELD,
           title: m.taxReturnForm.general.pageTitle,
           children: [
@@ -95,7 +95,7 @@ export const financeSection = buildSection({
               description: taxReturnForm.general.description,
             }),
             buildFileUploadField({
-              condition: isRVKresident,
+              condition: isVeitaMunicipality,
               id: Routes.RVKTAXRETURNFILES,
               title: m.taxReturnForm.general.pageTitle,
               uploadAccept: UPLOAD_ACCEPT.join(','),

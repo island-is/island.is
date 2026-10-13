@@ -6,7 +6,9 @@ import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { confirmation, copyUrl } from '../../lib/messages'
-import { DescriptionText, ConfirmationSectionImage, CopyUrl } from '..'
+import DescriptionText from '../DescriptionText/DescriptionText'
+import ConfirmationSectionImage from '../ConfirmationSectionImage/ConfirmationSectionImage'
+import CopyUrl from '../CopyUrl/CopyUrl'
 
 interface Props {
   firstStepText?: MessageDescriptor

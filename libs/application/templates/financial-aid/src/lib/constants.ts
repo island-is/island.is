@@ -1,3 +1,5 @@
+import { getStaticEnv } from '@island.is/shared/utils'
+
 export enum ApplicationStates {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
@@ -54,8 +56,10 @@ export enum Routes {
   SPOUSECONFIRMATION = 'spouseConfirmation',
   MISSINGFILES = 'missingFiles',
   APPLICANTSTATUS = 'applicantStatus',
+  RVKAPPLICANTSTATUS = 'rvkApplicantStatus',
   MISSINGFILESCONFIRMATION = 'missingFilesConfirmation',
   SPOUSESTATUS = 'spouseStatus',
+  RVKSPOUSESTATUS = 'rvkSpouseStatus',
   SERVICECENTER = 'serviceCenter',
 }
 
@@ -79,16 +83,60 @@ export const UPLOAD_ACCEPT = [
 ]
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
-export const RVK_MUNICIPALITY_CODES = ['1400']
+export const VEITA_TENANTS_ENV_VAR = 'SI_PUBLIC_FINANCIAL_AID_VEITA_TENANTS'
 
-export const VEITA_TENANT_BY_MUNICIPALITY_CODE: Record<
-  string,
-  string | undefined
-> = {
-  '1400': 'hafnarfjordur',
+// Municipality code -> Veita tenant identifier. Doubles as the on/off switch for the
+// Veita flow, so an empty map routes every municipality through the original backend.
+// Read in the browser and in the template api, and exposed in page source via the
+// SI_PUBLIC_ prefix, so never put secrets in this value.
+const readRawVeitaTenants = (): string | undefined => {
+  if (typeof document !== 'undefined') {
+    return getStaticEnv(VEITA_TENANTS_ENV_VAR)
+  }
+
+  return typeof process !== 'undefined'
+    ? process.env[VEITA_TENANTS_ENV_VAR]
+    : undefined
 }
 
-export const isRvkMunicipalityCode = (
+const parseVeitaTenants = (raw?: string): Record<string, string> => {
+  if (!raw) {
+    return {}
+  }
+
+  try {
+    const parsed: unknown = JSON.parse(raw)
+
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      throw new Error('Expected an object of municipality code to tenant')
+    }
+
+    // Dropping blank tenants keeps "code is present" equivalent to "tenant is usable".
+    return Object.fromEntries(
+      Object.entries(parsed as Record<string, unknown>).filter(
+        (entry): entry is [string, string] =>
+          typeof entry[1] === 'string' && entry[1].length > 0,
+      ),
+    )
+  } catch (error) {
+    console.error(`Could not parse ${VEITA_TENANTS_ENV_VAR}`, error)
+    return {}
+  }
+}
+
+let veitaTenants: Record<string, string> | undefined
+
+export const getVeitaTenants = (): Record<string, string> => {
+  if (!veitaTenants) {
+    veitaTenants = parseVeitaTenants(readRawVeitaTenants())
+  }
+
+  return veitaTenants
+}
+
+export const getVeitaTenant = (municipalityCode?: string | null) =>
+  municipalityCode ? getVeitaTenants()[municipalityCode] : undefined
+
+export const isVeitaMunicipalityCode = (
   municipalityCode?: string | null,
-): municipalityCode is string =>
-  Boolean(municipalityCode && RVK_MUNICIPALITY_CODES.includes(municipalityCode))
+): municipalityCode is string => getVeitaTenant(municipalityCode) !== undefined

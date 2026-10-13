@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Text, Box, Input } from '@island.is/island-ui/core'
 
-import { DescriptionText } from '..'
+import DescriptionText from '../DescriptionText/DescriptionText'
 import {
   FAFieldBaseProps,
   SummaryComment as SummaryCommentType,

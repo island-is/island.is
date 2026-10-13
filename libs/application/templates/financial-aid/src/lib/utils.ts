@@ -19,7 +19,7 @@ import {
   FAApplication,
   OverrideAnswerSchema,
   UploadFileType,
-} from '..'
+} from './types'
 import { UploadFileDeprecated } from '@island.is/island-ui/core'
 import { ApplicationStates } from './constants'
 import sortBy from 'lodash/sortBy'

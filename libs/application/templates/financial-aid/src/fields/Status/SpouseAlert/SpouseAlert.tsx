@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { copyUrl, spouseAlert } from '../../../lib/messages'
-import { CopyUrl } from '../..'
+import CopyUrl from '../../CopyUrl/CopyUrl'
 
 interface Props {
   showCopyUrl: boolean

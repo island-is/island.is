@@ -11,9 +11,10 @@ export * from './lib/types'
 export * from './lib/utils'
 
 export {
-  RVK_MUNICIPALITY_CODES,
-  VEITA_TENANT_BY_MUNICIPALITY_CODE,
-  isRvkMunicipalityCode,
+  VEITA_TENANTS_ENV_VAR,
+  getVeitaTenants,
+  getVeitaTenant,
+  isVeitaMunicipalityCode,
 } from './lib/constants'
 
 export * as messages from './lib/messages'

@@ -7,7 +7,8 @@ import {
   SummaryComment as SummaryCommentType,
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
-import { DescriptionText, DirectTaxPaymentsModal } from '../index'
+import DescriptionText from '../DescriptionText/DescriptionText'
+import DirectTaxPaymentsModal from '../DirectTaxPaymentsModal/DirectTaxPaymentModal'
 import { formatAddress, spouseFormItems } from '../../lib/formatters'
 import {
   FormInfo,

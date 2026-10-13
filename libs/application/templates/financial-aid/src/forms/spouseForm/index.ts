@@ -22,7 +22,7 @@ import { createElement } from 'react'
 import { Logo } from '../../components/Logo/Logo'
 import { spouseIncomeSection } from './spouseIncomeSection'
 import { spouseContactInfoSection } from './spouseContactInfoSection'
-import { isRVKresident, taxSuccess } from '../../utils/conditions'
+import { isVeitaMunicipality } from '../../utils/conditions'
 
 export const Spouse: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -47,13 +47,13 @@ export const Spouse: Form = buildForm({
       children: [
         buildCustomField({
           condition: (_answers, externalData) =>
-            !isRVKresident(_answers, externalData),
+            !isVeitaMunicipality(_answers, externalData),
           id: Routes.SPOUSEINCOMEFILES,
           title: m.incomeFilesForm.general.pageTitle,
           component: 'IncomeFilesForm',
         }),
         buildFileUploadField({
-          condition: isRVKresident,
+          condition: isVeitaMunicipality,
           id: Routes.RVKSPOUSEINCOMEFILES,
           title: m.incomeFilesForm.general.pageTitle,
           uploadAccept: UPLOAD_ACCEPT.join(','),
@@ -85,13 +85,13 @@ export const Spouse: Form = buildForm({
       children: [
         buildCustomField({
           condition: (_answers, externalData) =>
-            !isRVKresident(_answers, externalData),
+            !isVeitaMunicipality(_answers, externalData),
           id: Routes.SPOUSETAXRETURNFILES,
           title: m.taxReturnForm.general.pageTitle,
           component: 'TaxReturnFilesForm',
         }),
         buildMultiField({
-          condition: isRVKresident,
+          condition: isVeitaMunicipality,
           id: Routes.RVKSPOUSETAXRETURNFILESMULTIFIELD,
           title: m.taxReturnForm.general.pageTitle,
           children: [

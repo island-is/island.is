@@ -1,12 +1,12 @@
 import {
-  isRvkMunicipalityCode,
+  isVeitaMunicipalityCode,
   TaxData,
 } from '@island.is/application/templates/financial-aid'
 import { ApplicationWithAttachments } from '@island.is/application/types'
 import type { PersonalTaxReturnApi as RskPersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
 import { AttachmentS3Service } from '../../shared/services'
 
-export const shouldFetchTaxDataFromRsk = isRvkMunicipalityCode
+export const shouldFetchTaxDataFromRsk = isVeitaMunicipalityCode
 
 const createPeriod = (pastMonth: number) => {
   const date = new Date()

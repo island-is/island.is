@@ -23,7 +23,8 @@ import {
   SummaryComment as SummaryCommentType,
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
-import { DescriptionText, Breakdown } from '../index'
+import DescriptionText from '../DescriptionText/DescriptionText'
+import Breakdown from '../Breakdown/Breakdown'
 import { formatAddress, formItems } from '../../lib/formatters'
 import {
   FormInfo,
@@ -34,7 +35,7 @@ import {
   DirectTaxPaymentCell,
 } from './index'
 
-import { DirectTaxPaymentsModal } from '..'
+import DirectTaxPaymentsModal from '../DirectTaxPaymentsModal/DirectTaxPaymentModal'
 import { findFamilyStatus } from '../../lib/utils'
 import ChildrenInfo from './ChildrenInfo'
 

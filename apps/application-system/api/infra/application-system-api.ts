@@ -450,6 +450,10 @@ export const serviceSetup = (services: {
       SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN',
       AUTH_JWT_SECRET: '/k8s/application-system/api/AUTH_JWT_SECRET',
+      // Municipality code -> Veita tenant JSON. Empty map routes every municipality
+      // through the original financial aid backend. Shared with the form service.
+      SI_PUBLIC_FINANCIAL_AID_VEITA_TENANTS:
+        '/k8s/application-system/FINANCIAL_AID_VEITA_TENANTS',
       DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
       EMAIL_FROM: '/k8s/application-system/api/EMAIL_FROM',
       EMAIL_FROM_NAME: '/k8s/application-system/api/EMAIL_FROM_NAME',

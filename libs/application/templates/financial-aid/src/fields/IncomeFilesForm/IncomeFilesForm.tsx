@@ -2,8 +2,12 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Text, UploadFileDeprecated } from '@island.is/island-ui/core'
 import { incomeFilesForm } from '../../lib/messages'
-import { FAFieldBaseProps, OverrideAnswerSchema, UploadFileType } from '../..'
-import { Files } from '..'
+import {
+  FAFieldBaseProps,
+  OverrideAnswerSchema,
+  UploadFileType,
+} from '../../lib/types'
+import Files from '../Files/Files'
 
 const IncomeFilesForm = ({ field, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()

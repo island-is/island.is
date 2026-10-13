@@ -4,13 +4,13 @@ import {
   FormValue,
   NationalRegistrySpouse,
 } from '@island.is/application/types'
-import { ApproveOptions } from '..'
+import { ApproveOptions } from '../lib/types'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   Employment,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
-import { isRvkMunicipalityCode } from '../lib/constants'
+import { isVeitaMunicipalityCode } from '../lib/constants'
 
 export const hasSpouse = (_answers: FormValue, externalData: ExternalData) =>
   getValueViaPath<NationalRegistrySpouse>(
@@ -42,7 +42,7 @@ export const hasChildren = (
   return Boolean(childWithInfo?.length)
 }
 
-export const isRVKresident = (
+export const isVeitaMunicipality = (
   _answers: FormValue,
   externalData: ExternalData,
 ) => {
@@ -50,7 +50,7 @@ export const isRVKresident = (
     externalData,
     'nationalRegistry.data.address.municipalityCode',
   )
-  return isRvkMunicipalityCode(municipalityCode)
+  return isVeitaMunicipalityCode(municipalityCode)
 }
 
 export const taxSuccess = (_answers: FormValue, externalData: ExternalData) =>

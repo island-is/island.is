@@ -13,7 +13,14 @@ const ATTACHMENT_KEY = 'uuid-Framtal.pdf'
 
 describe('taxDataFromRsk', () => {
   describe('shouldFetchTaxDataFromRsk', () => {
-    it('returns true for municipality codes in the allowlist', () => {
+    // The tenant map is memoised on first read, so it has to be set before any call.
+    beforeAll(() => {
+      process.env.SI_PUBLIC_FINANCIAL_AID_VEITA_TENANTS = JSON.stringify({
+        '1400': 'hafnarfjordur',
+      })
+    })
+
+    it('returns true for municipality codes with a Veita tenant', () => {
       expect(shouldFetchTaxDataFromRsk('1400')).toBe(true)
     })
 

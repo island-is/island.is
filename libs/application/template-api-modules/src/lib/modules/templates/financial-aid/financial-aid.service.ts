@@ -5,9 +5,8 @@ import {
   CurrentApplication,
   FAApplication,
   findFamilyStatus,
-  isRvkMunicipalityCode,
+  getVeitaTenant,
   TaxData,
-  VEITA_TENANT_BY_MUNICIPALITY_CODE,
 } from '@island.is/application/templates/financial-aid'
 import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -66,12 +65,6 @@ export class FinancialAidService extends BaseTemplateApiService {
     private readonly logger: Logger,
   ) {
     super(ApplicationTypes.FINANCIAL_AID)
-  }
-
-  municipalityCodeCheck(
-    municipalityCode: string | null | undefined,
-  ): municipalityCode is string {
-    return isRvkMunicipalityCode(municipalityCode)
   }
 
   private applicationApiWithAuth(auth: Auth) {
@@ -224,7 +217,9 @@ export class FinancialAidService extends BaseTemplateApiService {
 
     let files: ApplicationAnswerFile[] = []
 
-    if (this.municipalityCodeCheck(municipalityCode)) {
+    const veitaTenant = getVeitaTenant(municipalityCode)
+
+    if (veitaTenant) {
       files = (
         await formatFilesRvk(answers.rvkTaxReturnFiles, FileType.TAXRETURN)
       )
@@ -307,23 +302,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       applicationSystemId: id,
     }
 
-    if (this.municipalityCodeCheck(municipalityCode)) {
-      const tenantIdentifier =
-        VEITA_TENANT_BY_MUNICIPALITY_CODE[municipalityCode]
-
-      if (!tenantIdentifier) {
-        this.logger.error('No Veita tenant configured for municipality', {
-          municipalityCode,
-        })
-        throw new TemplateApiError(
-          {
-            title: messages.serviceErrors.createApplication.title,
-            summary: messages.serviceErrors.createApplication.summary,
-          },
-          500,
-        )
-      }
-
+    if (veitaTenant) {
       const rvkRequest: CreateIslandisApplicationRequest = {
         createApplicationRequest: {
           name: externalData.nationalRegistry.data.fullName,
@@ -367,7 +346,7 @@ export class FinancialAidService extends BaseTemplateApiService {
           directTaxPayments: [JSON.stringify(directTaxPayments())],
           applicationSystemId: id,
         },
-        xTenantIdentifier: tenantIdentifier,
+        xTenantIdentifier: veitaTenant,
         xUserPermissions: 'financialaid:write',
       }
 
@@ -430,21 +409,14 @@ export class FinancialAidService extends BaseTemplateApiService {
     if (municipalityCode == null) {
       return null
     }
-    if (this.municipalityCodeCheck(municipalityCode)) {
-      const tenantIdentifier =
-        VEITA_TENANT_BY_MUNICIPALITY_CODE[municipalityCode]
 
-      if (!tenantIdentifier) {
-        this.logger.error('No Veita tenant configured for municipality', {
-          municipalityCode,
-        })
-        return null
-      }
+    const veitaTenant = getVeitaTenant(municipalityCode)
 
+    if (veitaTenant) {
       const settings = await this.rvkApplicationsApiWithAuth(
         auth,
       ).getFinaidServiceSettingsForIslandis({
-        xTenantIdentifier: tenantIdentifier,
+        xTenantIdentifier: veitaTenant,
         xUserPermissions: 'financialaid:read',
         municipalityCode: municipalityCode,
       })

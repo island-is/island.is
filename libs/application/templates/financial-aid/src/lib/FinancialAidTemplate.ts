@@ -22,7 +22,7 @@ import {
   hasActiveCurrentApplication,
   hasSpouseCheck,
 } from './utils'
-import { FAApplication } from '..'
+import { FAApplication } from './types'
 import {
   CreateApplicationApi,
   CurrentApplicationApi,

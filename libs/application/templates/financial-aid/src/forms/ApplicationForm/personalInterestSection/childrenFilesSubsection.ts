@@ -4,7 +4,7 @@ import {
 } from '@island.is/application/core'
 import { buildSubSection } from '@island.is/application/core'
 import { FILE_SIZE_LIMIT, Routes, UPLOAD_ACCEPT } from '../../../lib/constants'
-import { hasChildren, isRVKresident } from '../../../utils/conditions'
+import { hasChildren, isVeitaMunicipality } from '../../../utils/conditions'
 import * as m from '../../../lib/messages'
 
 export const childrenFilesSubsection = buildSubSection({
@@ -14,14 +14,14 @@ export const childrenFilesSubsection = buildSubSection({
   children: [
     buildCustomField({
       condition: (_answers, externalData) =>
-        !isRVKresident(_answers, externalData),
+        !isVeitaMunicipality(_answers, externalData),
       id: Routes.CHILDRENFILES,
       title: m.childrenFilesForm.general.pageTitle,
       component: 'ChildrenFilesForm',
     }),
     buildFileUploadField({
       marginTop: 8,
-      condition: isRVKresident,
+      condition: isVeitaMunicipality,
       id: Routes.RVKCHILDRENFILES,
       title: m.childrenFilesForm.general.pageTitle,
       uploadAccept: UPLOAD_ACCEPT.join(','),
