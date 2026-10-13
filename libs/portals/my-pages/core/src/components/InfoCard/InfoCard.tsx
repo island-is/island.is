@@ -166,7 +166,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                       icon="arrowForward"
                       type="outline"
                       color="blue400"
-                      size={isMobile ? 'small' : 'medium'}
+                      size="medium"
                     />
                   </Box>
                 )}
