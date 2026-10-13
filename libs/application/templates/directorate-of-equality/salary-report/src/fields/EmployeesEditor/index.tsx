@@ -140,6 +140,10 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [isAdding, setIsAdding] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | undefined>()
+  // Spans the sync and its refetches; the form only closes once both land.
+  const [isSaving, setIsSaving] = useState(false)
+  // State alone can miss a double click that fires before the re-render.
+  const savingRef = useRef(false)
 
   const loading = employeesLoading || rolesLoading
   const hasError = employeesHasError || rolesHasError
@@ -198,6 +202,9 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   })
 
   const runSync = async (batch: Parameters<typeof sync>[0]) => {
+    if (savingRef.current) return false
+    savingRef.current = true
+    setIsSaving(true)
     setActionError(undefined)
     try {
       await sync(batch)
@@ -222,6 +229,9 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     } catch {
       setActionError(formatMessage(messages.errors.draftSyncFailed))
       return false
+    } finally {
+      savingRef.current = false
+      setIsSaving(false)
     }
   }
 
@@ -290,6 +300,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     <EmployeeForm
                       employee={employee}
                       roleTitleById={roleTitleById}
+                      isSaving={isSaving}
                       onSubmit={(values) => handleSave(employee, values)}
                       onCancel={() => setEditingId(null)}
                     />
@@ -300,6 +311,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   key={employee.id}
                   employee={employee}
                   roleTitleById={roleTitleById}
+                  disabled={isSaving}
                   onRemove={() => handleRemove(employee)}
                   onEdit={() => setEditingId(employee.id)}
                 />
@@ -320,6 +332,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         {isAdding ? (
           <EmployeeForm
             roleTitleById={roleTitleById}
+            isSaving={isSaving}
             onSubmit={handleAdd}
             onCancel={() => setIsAdding(false)}
           />
@@ -329,6 +342,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               variant="ghost"
               type="button"
               icon="add"
+              disabled={isSaving}
               onClick={() => setIsAdding(true)}
             >
               {formatMessage(m.addButton)}

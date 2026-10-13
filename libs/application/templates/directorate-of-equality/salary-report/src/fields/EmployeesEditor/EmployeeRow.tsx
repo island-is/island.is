@@ -25,6 +25,8 @@ import * as styles from './EmployeesEditor.css'
 type Props = {
   employee: Employee
   roleTitleById: Record<string, string>
+  // Locks edit/remove while another change is syncing.
+  disabled?: boolean
   onRemove: () => void
   onEdit: () => void
 }
@@ -72,6 +74,7 @@ const DetailItem: FC<DetailItemProps> = ({
 export const EmployeeRow: FC<Props> = ({
   employee,
   roleTitleById,
+  disabled = false,
   onRemove,
   onEdit,
 }) => {
@@ -144,6 +147,7 @@ export const EmployeeRow: FC<Props> = ({
               icon="pencil"
               iconType="outline"
               onClick={onEdit}
+              disabled={disabled}
               size="small"
               type="button"
               variant="ghost"
@@ -161,6 +165,7 @@ export const EmployeeRow: FC<Props> = ({
                     colorScheme="light"
                     icon="trash"
                     iconType="outline"
+                    disabled={disabled}
                     size="small"
                     type="button"
                     variant="ghost"
