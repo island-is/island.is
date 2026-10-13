@@ -189,12 +189,26 @@ const RADAR_CATEGORY_LABEL_LINE_LENGTH = 18
 const RADAR_CATEGORY_LABEL_MAX_LINES = 2
 const RADAR_CATEGORY_LABEL_LINE_HEIGHT = 14
 
+const splitOverlengthWord = (word: string) => {
+  if (word.length <= RADAR_CATEGORY_LABEL_LINE_LENGTH) {
+    return [word]
+  }
+  const chunkLength = RADAR_CATEGORY_LABEL_LINE_LENGTH - 1
+  const chunks: string[] = []
+  for (let i = 0; i < word.length; i += chunkLength) {
+    chunks.push(word.slice(i, i + chunkLength))
+  }
+  return chunks.map((chunk, index) =>
+    index < chunks.length - 1 ? `${chunk}-` : chunk,
+  )
+}
+
 const wrapRadarLabel = (value: string) => {
   const lines: string[] = []
   let currentLine = ''
-  for (const word of value.split(' ')) {
+  for (const word of value.split(' ').flatMap(splitOverlengthWord)) {
     const candidate = currentLine ? `${currentLine} ${word}` : word
-    if (candidate.length <= RADAR_CATEGORY_LABEL_LINE_LENGTH || !currentLine) {
+    if (candidate.length <= RADAR_CATEGORY_LABEL_LINE_LENGTH) {
       currentLine = candidate
     } else {
       lines.push(currentLine)
@@ -224,7 +238,6 @@ const RadarCategoryTick = (props: {
   const { x = 0, y = 0, textAnchor = 'middle', payload } = props
   const value = payload?.value ?? ''
   const lines = wrapRadarLabel(value)
-  // Vertically center multi-line labels around the tick position
   const firstLineOffset =
     (-(lines.length - 1) * RADAR_CATEGORY_LABEL_LINE_HEIGHT) / 2
   return (
