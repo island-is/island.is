@@ -21,9 +21,7 @@ export class AppealCourtSessionService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  // Books a session in a verdict appeal. Nothing follows from it yet - no
-  // notification, no court record - those arrive with the slices after this
-  // one.
+  // Books a session in a verdict appeal.
   async create(
     theCase: Case,
     appealCase: AppealCase,
