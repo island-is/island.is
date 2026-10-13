@@ -72,14 +72,17 @@ const ScheduleCourtSession: FC<Props> = ({
           minDate={new Date()}
           blueBox={false}
           required
-          onChange={(date, valid) => {
-            // Nothing while the time is half typed. DateTime reports no date
-            // for an invalid time, and writing that back through
-            // `selectedDate` would clear the date the court just picked.
-            if (valid && date) {
-              onChange({ ...session, sessionDate: date })
-            }
-          }}
+          onChange={(date, valid) =>
+            onChange({
+              ...session,
+              // The date stays while the time is half typed or cleared.
+              // DateTime reports no date then, and writing that back
+              // through `selectedDate` would clear the day the court just
+              // picked. The flag is what says the field is filled in.
+              sessionDate: valid && date ? date : session.sessionDate,
+              isSessionDateValid: valid,
+            })
+          }
         />
         <Input
           name="appeal-court-session-court-room"

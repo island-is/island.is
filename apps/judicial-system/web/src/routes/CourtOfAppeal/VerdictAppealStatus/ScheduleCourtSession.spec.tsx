@@ -13,11 +13,16 @@ const Harness = () => {
   const [session, setSession] = useState<AppealCourtSessionDraft>({})
 
   return (
-    <ScheduleCourtSession
-      session={session}
-      onChange={setSession}
-      bookedSessions={[]}
-    />
+    <>
+      <ScheduleCourtSession
+        session={session}
+        onChange={setSession}
+        bookedSessions={[]}
+      />
+      <output data-testid="session-date-valid">
+        {String(session.isSessionDateValid)}
+      </output>
+    </>
   )
 }
 
@@ -79,5 +84,12 @@ describe('ScheduleCourtSession', () => {
     await user.type(timeInput, '{backspace}')
 
     expect(dateInput.value).toBe(dateValue)
+    // Kept, but not counted: the time field is showing an error, and the
+    // draft must not pass as complete until it is whole again.
+    expect(screen.getByTestId('session-date-valid')).toHaveTextContent('false')
+
+    await user.type(timeInput, '0')
+
+    expect(screen.getByTestId('session-date-valid')).toHaveTextContent('true')
   })
 })

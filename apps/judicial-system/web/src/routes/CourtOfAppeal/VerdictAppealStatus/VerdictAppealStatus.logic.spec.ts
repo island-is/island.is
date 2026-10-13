@@ -86,6 +86,11 @@ describe('court session draft', () => {
     expect(isAppealCourtSessionComplete({ ...session, courtRoom: ' ' })).toBe(
       false,
     )
+    // The date is kept while the time field is being corrected or cleared;
+    // the flag is what says the field is not filled in.
+    expect(
+      isAppealCourtSessionComplete({ ...session, isSessionDateValid: false }),
+    ).toBe(false)
   })
 
   it('is empty only when nothing has been entered', () => {
