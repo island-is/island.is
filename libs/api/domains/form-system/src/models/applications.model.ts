@@ -67,6 +67,9 @@ export class Application {
   @Field(() => String, { nullable: true })
   status?: string
 
+  @Field(() => Boolean, { nullable: true })
+  pruned?: boolean
+
   @Field(() => Int, { nullable: true })
   draftFinishedSteps?: number
 
