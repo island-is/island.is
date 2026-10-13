@@ -1,5 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { ExternalData, FormValue, StaticText } from '@island.is/application/types'
+import {
+  ExternalData,
+  FormValue,
+  StaticText,
+} from '@island.is/application/types'
 import {
   ASSESSMENT_ANSWERS_ID,
   AssessmentAnswer,
