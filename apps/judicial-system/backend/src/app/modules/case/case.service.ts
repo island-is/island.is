@@ -696,6 +696,26 @@ export class CaseService {
         body: { withCourtCaseNumber: false },
       })
     }
+
+    // Sync current court roles on connect (including roles assigned before
+    // the case had a number). Later assignment changes are handled only when
+    // the court case number is unchanged — same mutual exclusion as
+    // prosecutor/defendant on R-case connect and appeal roles on connect.
+    if (theCase.judge?.nationalId) {
+      this.addMessagesForIndictmentCourtRoleAssigned(
+        theCase,
+        user,
+        theCase.judge.nationalId,
+      )
+    }
+
+    if (theCase.registrar?.nationalId) {
+      this.addMessagesForIndictmentCourtRoleAssigned(
+        theCase,
+        user,
+        theCase.registrar.nationalId,
+      )
+    }
   }
 
   private addMessagesForDefenderEmailChangeToQueue(
@@ -1240,6 +1260,42 @@ export class CaseService {
           // New defender email
           this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
         }
+
+        // Same mutual exclusion as prosecutor/defender above and appeal roles:
+        // connect (number change) syncs current roles; this branch handles
+        // later assignment changes only.
+        if (
+          isIndictment &&
+          ![
+            CaseState.DRAFT,
+            CaseState.SUBMITTED,
+            CaseState.WAITING_FOR_CONFIRMATION,
+          ].includes(updatedCase.state)
+        ) {
+          // The delivery resolves one role per message, so a judge and a
+          // registrar assigned in the same update are delivered as two messages
+          if (
+            updatedCase.judge?.nationalId &&
+            updatedCase.judge.nationalId !== theCase.judge?.nationalId
+          ) {
+            this.addMessagesForIndictmentCourtRoleAssigned(
+              updatedCase,
+              user,
+              updatedCase.judge.nationalId,
+            )
+          }
+
+          if (
+            updatedCase.registrar?.nationalId &&
+            updatedCase.registrar.nationalId !== theCase.registrar?.nationalId
+          ) {
+            this.addMessagesForIndictmentCourtRoleAssigned(
+              updatedCase,
+              user,
+              updatedCase.registrar.nationalId,
+            )
+          }
+        }
       }
     }
 
@@ -1265,39 +1321,6 @@ export class CaseService {
         this.addMessagesForDistrictCourtRegistrarAssignedToQueue(
           updatedCase,
           user,
-        )
-      }
-    }
-
-    if (
-      isIndictment &&
-      ![
-        CaseState.DRAFT,
-        CaseState.SUBMITTED,
-        CaseState.WAITING_FOR_CONFIRMATION,
-      ].includes(updatedCase.state)
-    ) {
-      // The delivery resolves one role per message, so a judge and a registrar
-      // assigned in the same update are delivered as two messages
-      if (
-        updatedCase.judge?.nationalId &&
-        updatedCase.judge.nationalId !== theCase.judge?.nationalId
-      ) {
-        this.addMessagesForIndictmentCourtRoleAssigned(
-          updatedCase,
-          user,
-          updatedCase.judge.nationalId,
-        )
-      }
-
-      if (
-        updatedCase.registrar?.nationalId &&
-        updatedCase.registrar.nationalId !== theCase.registrar?.nationalId
-      ) {
-        this.addMessagesForIndictmentCourtRoleAssigned(
-          updatedCase,
-          user,
-          updatedCase.registrar.nationalId,
         )
       }
     }
