@@ -465,11 +465,10 @@ export const stepValidations = (
     // every party's advocate is confirmed.
     [COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE]: (theCase: WorkingCase) =>
       areAllAppealAdvocatesConfirmed(theCase),
-    // The status is not saved yet, so there is nothing on the case to check;
-    // the page's own isValid is what stops the court leaving it half done.
+    // The status is not saved, so there is nothing on the case to check; the
+    // page's own isValid is what stops the court leaving it half done.
     [COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE]: () => true,
-    // The last step of a verdict appeal so far, so nothing asks whether it is
-    // complete.
+    // Nothing follows the summary, so nothing asks whether it is complete.
     [COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE]: () => true,
   }
 }

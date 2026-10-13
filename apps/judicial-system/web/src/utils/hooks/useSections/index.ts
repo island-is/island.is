@@ -1555,9 +1555,7 @@ const useSections = (
    *
    * Separate from getCourtOfAppealSections, which is built around a ruling
    * appeal - its steps, its state, and the appeal named in the query string.
-   * A verdict appeal is a different proceeding and will grow steps of its own;
-   * only the steps built so far are named here, because naming the rest would
-   * offer links to pages that do not answer yet.
+   * A verdict appeal is a different proceeding with steps of its own.
    */
   const getCourtOfAppealVerdictAppealSections = (
     workingCase: WorkingCase,

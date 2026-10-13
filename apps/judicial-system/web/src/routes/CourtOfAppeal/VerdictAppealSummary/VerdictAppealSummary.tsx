@@ -18,11 +18,8 @@ import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/util
 import { getVerdictAppealStatusHeaderLines } from '../VerdictAppealStatus/VerdictAppealStatus.logic'
 
 /**
- * The summary of a verdict appeal at the Court of Appeals.
- *
- * A placeholder: the step exists so the status step has somewhere to lead
- * once a session is booked. What the summary shows arrives with its own
- * slice.
+ * The summary of a verdict appeal at the Court of Appeals: the case header and
+ * a way back to the status step, nothing more.
  */
 const VerdictAppealSummary = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =

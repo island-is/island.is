@@ -48,7 +48,7 @@ import {
  * appeal, after the court confirms, and the booked ones are listed under the
  * form. Each has a menu to change it - the form then holds that session and
  * the footer saves the changes instead of continuing - or to cancel it, after
- * the court confirms. The status itself is not saved yet - there is no column
+ * the court confirms. The status itself is not saved - there is no column
  * for it - so it is held in page state, and read back from the sessions: an
  * appeal with one is on "Boða til þinghalds" when the page opens.
  *
@@ -282,10 +282,7 @@ const VerdictAppealStatus = () => {
       <PageHeader title={titleForCase(formatMessage, workingCase)} />
       <FormContentContainer>
         <div className={stack({ gap: 5 })}>
-          {/* The design leads with the court's own case number, "Mál nr.
-              555/2026". That number is assigned on the registration step,
-              which is not built yet, and the appeal does not carry one until
-              it is. The line joins the header with that step. */}
+          {/* No "Mál nr." line: the appeal has no case number of its own. */}
           <Box>
             <PageTitle marginBottom={1}>Staða og lyktir</PageTitle>
             {headerLines.map((line) => (
