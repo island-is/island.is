@@ -18,8 +18,6 @@ const namespace = 'service-portal'
 const serviceId = `${namespace}-api`
 const imageId = 'services-user-profile'
 
-<<<<<<< Updated upstream
-=======
 export const userProfileMetricsSetup = () =>
   scheduledJob('service-portal-metrics')
     .namespace(namespace)
@@ -37,7 +35,6 @@ export const userProfileMetricsSetup = () =>
       requests: { cpu: '100m', memory: '256Mi' },
     })
 
->>>>>>> Stashed changes
 const envVariables: EnvironmentVariables = {
   SERVICE_PORTAL_BASE_URL: {
     dev: 'https://beta.dev01.devland.is/minarsidur',
