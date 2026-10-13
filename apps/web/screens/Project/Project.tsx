@@ -98,9 +98,27 @@ const ProjectPage: Screen<PageProps> = ({
   useContentfulId(...contentfulIds)
 
   // Only link events to the project event routes when they can resolve an organization
-  const eventLinkParams = getProjectEventsOrganizationSlug(projectPage)
+  const projectEventsOrganizationSlug =
+    getProjectEventsOrganizationSlug(projectPage)
+  const eventLinkParams = projectEventsOrganizationSlug
     ? projectEventLinkParams
     : undefined
+
+  // Events slices for another organization link to that organization's event routes
+  const getEventSliceLinkProps = (slice: {
+    __typename?: string
+    organizationSlug?: string | null
+  }) => {
+    const sliceOrganizationSlug =
+      slice.__typename === 'LatestEventsSlice' ? slice.organizationSlug : null
+    if (
+      sliceOrganizationSlug &&
+      sliceOrganizationSlug !== projectEventsOrganizationSlug
+    ) {
+      return { slug: sliceOrganizationSlug, eventParams: undefined }
+    }
+    return { slug: projectPage?.slug, eventParams: eventLinkParams }
+  }
 
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
 
@@ -266,14 +284,15 @@ const ProjectPage: Screen<PageProps> = ({
         <Stack space={SLICE_SPACING}>
           {pageSlices.map((slice: Slice, index) => {
             const sliceCount = pageSlices.length
+            const linkProps = getEventSliceLinkProps(slice)
             return (
               <Box className="rs_read" key={slice.id}>
                 <SliceMachine
                   slice={slice}
                   namespace={namespace}
                   fullWidth={true}
-                  slug={projectPage?.slug}
-                  params={eventLinkParams}
+                  slug={linkProps.slug}
+                  params={linkProps.eventParams}
                   marginBottom={
                     typeof sliceCount === 'number' && index === sliceCount - 1
                       ? 8
@@ -351,17 +370,18 @@ const ProjectPage: Screen<PageProps> = ({
               </Box>
             )
           }
+          const linkProps = getEventSliceLinkProps(slice)
           return (
             <SliceMachine
               key={slice.id}
               slice={slice}
               namespace={namespace}
-              slug={projectPage?.slug}
+              slug={linkProps.slug}
               fullWidth={true}
               params={{
                 linkType: 'projectnews',
                 overview: 'projectnewsoverview',
-                ...eventLinkParams,
+                ...linkProps.eventParams,
                 containerPaddingBottom: 0,
                 containerPaddingTop: 0,
                 contentPaddingTop: 0,
