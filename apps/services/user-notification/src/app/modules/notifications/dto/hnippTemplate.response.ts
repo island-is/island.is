@@ -1,4 +1,13 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+
+export const HNIPP_TEMPLATE_PRIORITY_TYPES = [
+  'Informative',
+  'Actionable',
+] as const
+
+export type HnippTemplatePriorityType =
+  | typeof HNIPP_TEMPLATE_PRIORITY_TYPES[number]
+  | undefined
 
 export class HnippTemplate {
   @ApiProperty({ example: 'HNIPP.POSTHOLF.NEW_DOCUMENT' })
@@ -33,4 +42,12 @@ export class HnippTemplate {
     example: 'OPT_IN',
   })
   smsDelivery!: string
+
+  @ApiPropertyOptional({
+    enum: HNIPP_TEMPLATE_PRIORITY_TYPES,
+    example: 'Informative',
+    description:
+      'Whether the notification is informative or actionable. Recipients who only want actionable notifications do not receive push or email for other templates (including templates without a priority type) unless the notification is urgent. SMS with smsDelivery ALWAYS is still sent.',
+  })
+  priorityType?: HnippTemplatePriorityType
 }
