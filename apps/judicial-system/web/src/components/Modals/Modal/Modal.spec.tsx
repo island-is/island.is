@@ -1,8 +1,27 @@
+import { AnimatePresence } from 'motion/react'
 import { fireEvent, render, screen } from '@testing-library/react'
 
 import { Modal } from './Modal'
+import * as styles from './Modal.css'
 
 describe('Modal', () => {
+  // The backdrop's fade-out is a class, not a motion exit: a motion exit
+  // left the backdrop at full opacity for one frame before unmount.
+  it('marks the backdrop as leaving while the dialog plays out', async () => {
+    const { rerender } = render(
+      <AnimatePresence>
+        <Modal key="modal" title="Titill" />
+      </AnimatePresence>,
+    )
+
+    const dialog = await screen.findByRole('dialog')
+    expect(dialog).not.toHaveClass(styles.leaving)
+
+    rerender(<AnimatePresence>{null}</AnimatePresence>)
+
+    expect(dialog).toHaveClass(styles.leaving)
+  })
+
   it('labels the dialog with its title via aria-labelledby', async () => {
     render(<Modal title="Ertu viss?" />)
 

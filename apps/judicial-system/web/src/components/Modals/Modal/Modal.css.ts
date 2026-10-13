@@ -1,6 +1,11 @@
-import { style, styleVariants } from '@vanilla-extract/css'
+import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
+
+const fadeIn = keyframes({
+  from: { opacity: 0 },
+  to: { opacity: 1 },
+})
 
 export const container = style({
   position: 'fixed',
@@ -13,6 +18,14 @@ export const container = style({
   justifyContent: 'center',
   zIndex: 100,
   background: 'rgba(203, 203, 215, 0.8)',
+  animation: `${fadeIn} 0.3s ease-in-out`,
+  transition: 'opacity 0.2s ease-in-out',
+})
+
+// On while the dialog plays out: the same length as the dialog's own exit,
+// so the two leave together.
+export const leaving = style({
+  opacity: 0,
 })
 
 export const alignItems = styleVariants({
