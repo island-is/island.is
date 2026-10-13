@@ -13,7 +13,11 @@ import SectionHeading from '@island.is/judicial-system-web/src/components/Sectio
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { getVerdictAppealFileGroups } from './VerdictAppealFiles.logic'
+import {
+  getAppealAppointmentLetters,
+  getVerdictAppealFileGroups,
+  showsAppealSummonses,
+} from './VerdictAppealFiles.logic'
 
 // Appeal documents are "sent in" (design, 2026-09-03), unlike the case files
 // the shared formatter describes as "lagt fram". When the public prosecution
@@ -26,9 +30,11 @@ const formatSentInBy = (defenderName?: string | null): string => {
 }
 
 /**
- * The appeal-process section of a completed indictment: the appeal
- * declaration each defendant's defender filed, with whatever came with it. Renders nothing until there is something to show. Which files that is, and
- * for whom, is decided by getVerdictAppealFileGroups.
+ * The appeal-process section of a completed indictment: the áfrýjunarstefna
+ * the public prosecution office issues, and the appeal declaration each
+ * defendant's defender filed, with whatever came with it. Renders nothing until
+ * there is something to show. Which declarations that is, and for whom, is
+ * decided by getVerdictAppealFileGroups.
  *
  * The rows offer no deletion: a declaration is the appeal itself, and the way to
  * take it back is to withdraw the appeal from the verdict timeline card.
@@ -41,14 +47,31 @@ const VerdictAppealFiles: FC = () => {
   })
 
   const groups = getVerdictAppealFileGroups(workingCase, user)
+  const showSummonses = showsAppealSummonses(workingCase, user)
+  const appointmentLetters = getAppealAppointmentLetters(workingCase, user)
 
-  if (groups.length === 0) {
+  if (
+    groups.length === 0 &&
+    !showSummonses &&
+    appointmentLetters.length === 0
+  ) {
     return null
   }
 
   return (
     <Box component="section" dataTestId="verdictAppealFiles">
       <SectionHeading title="Áfrýjunarferli" marginBottom={2} />
+      {showSummonses && (
+        <Box
+          dataTestId="appealSummonses"
+          paddingBottom={2}
+          marginBottom={2}
+          borderBottomWidth="standard"
+          borderColor="blue200"
+        >
+          <Text variant="small">Áfrýjunarstefna hefur ekki verið gefin út</Text>
+        </Box>
+      )}
       {groups.map(({ defendant, files }) => (
         <Box key={defendant.id} marginBottom={2}>
           {groups.length > 1 && (
@@ -111,6 +134,20 @@ const VerdictAppealFiles: FC = () => {
             </PdfButton>
           ))}
         </Box>
+      ))}
+      {/* Last, because the court writes the letter once the appeal has
+      reached it and it has settled who represents each party. Generated on
+      demand rather than stored, so there is nothing to date it by here - the
+      letter carries the date it was signed. */}
+      {appointmentLetters.map((letter) => (
+        <PdfButton
+          key={letter.key}
+          renderAs="row"
+          caseId={workingCase.id}
+          title={letter.fileName}
+          pdfType="appealAppointmentLetter"
+          elementId={letter.elementId}
+        />
       ))}
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}

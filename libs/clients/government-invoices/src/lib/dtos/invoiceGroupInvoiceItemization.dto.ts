@@ -20,7 +20,6 @@ export const mapInvoiceGroupInvoiceItemization = (
     code: data.type.code,
     name: data.type.name,
     accountType: data.accountType ?? undefined,
-    isConfidential: data.type.isConfidential ?? undefined,
   }
 
   return {

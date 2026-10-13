@@ -1,3 +1,4 @@
+import { DialogsAPI } from '@contentful/app-sdk'
 import {
   Button,
   IconButton,
@@ -14,6 +15,7 @@ import type {
 
 import type { InputFieldContract } from '../contract'
 import type { InputSectionActions } from '../types'
+import { ContentRow } from './ContentRow'
 import { InputFieldRow } from './InputFieldRow'
 import { LocalizedTextFields } from './LocalizedTextFields'
 import { SectionToggleControl } from './SectionToggleControl'
@@ -30,6 +32,7 @@ interface Props {
   rowIssues: Map<string, string[]>
   duplicateUids: Set<string>
   otherToggles: CalculatorSectionToggle[]
+  dialogs: DialogsAPI
   actions: InputSectionActions
 }
 
@@ -43,6 +46,7 @@ export const InputSection = ({
   rowIssues,
   duplicateUids,
   otherToggles,
+  dialogs,
   actions,
 }: Props) => (
   <Stack
@@ -102,17 +106,30 @@ export const InputSection = ({
             label={`Reorder field ${fieldIndex + 1} in section ${position}`}
             isDisabled={isDisabled}
           >
-            <InputFieldRow
-              field={field}
-              contract={contract}
-              usedKeys={usedKeys}
-              isLoading={isLoading}
-              isDisabled={isDisabled}
-              issues={rowIssues.get(field.uid)}
-              isDuplicate={duplicateUids.has(field.uid)}
-              onChange={(patch) => actions.updateField(fieldIndex, patch)}
-              onRemove={() => actions.removeField(fieldIndex)}
-            />
+            {field.kind === 'content' ? (
+              <ContentRow
+                field={field}
+                isDisabled={isDisabled}
+                issues={rowIssues.get(field.uid)}
+                dialogs={dialogs}
+                onChange={(content) =>
+                  actions.updateField(fieldIndex, { content })
+                }
+                onRemove={() => actions.removeField(fieldIndex)}
+              />
+            ) : (
+              <InputFieldRow
+                field={field}
+                contract={contract}
+                usedKeys={usedKeys}
+                isLoading={isLoading}
+                isDisabled={isDisabled}
+                issues={rowIssues.get(field.uid)}
+                isDuplicate={duplicateUids.has(field.uid)}
+                onChange={(patch) => actions.updateField(fieldIndex, patch)}
+                onRemove={() => actions.removeField(fieldIndex)}
+              />
+            )}
           </SortableRow>
         ))}
         {section.fields.length === 0 && (
@@ -124,13 +141,23 @@ export const InputSection = ({
       </Stack>
     </SortableContext>
 
-    <Button
-      size="small"
-      startIcon={<PlusIcon />}
-      isDisabled={isDisabled}
-      onClick={actions.addField}
-    >
-      Add field
-    </Button>
+    <Stack flexDirection="row" spacing="spacingXs">
+      <Button
+        size="small"
+        startIcon={<PlusIcon />}
+        isDisabled={isDisabled}
+        onClick={actions.addField}
+      >
+        Add field
+      </Button>
+      <Button
+        size="small"
+        startIcon={<PlusIcon />}
+        isDisabled={isDisabled}
+        onClick={actions.addContentField}
+      >
+        Add text
+      </Button>
+    </Stack>
   </Stack>
 )

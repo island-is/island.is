@@ -6,6 +6,7 @@ import { ConfigModule } from '@island.is/nest/config'
 import { AppealCaseRepositoryService } from './services/appealCaseRepository.service'
 import { AppealDecisionRepositoryService } from './services/appealDecisionRepository.service'
 import { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
+import { AppealSummonsRepositoryService } from './services/appealSummonsRepository.service'
 import { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseFileRepositoryService } from './services/caseFileRepository.service'
@@ -45,6 +46,7 @@ import { repositoryModels } from './repositoryModels'
     AppealCaseRepositoryService,
     AppealDecisionRepositoryService,
     AppealEventLogRepositoryService,
+    AppealSummonsRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
     CaseFileRepositoryService,
@@ -77,6 +79,7 @@ import { repositoryModels } from './repositoryModels'
     AppealCaseRepositoryService,
     AppealDecisionRepositoryService,
     AppealEventLogRepositoryService,
+    AppealSummonsRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
     CaseFileRepositoryService,

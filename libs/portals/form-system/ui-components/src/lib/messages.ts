@@ -842,6 +842,11 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: 'National ID',
   },
+  maritalStatus: {
+    id: 'form.system:marital-status',
+    defaultMessage: 'Hjúskaparstaða',
+    description: 'Marital status',
+  },
   basicErrorMessage: {
     id: 'form.system:basic-error-message',
     defaultMessage: 'Villa kom upp',
@@ -874,6 +879,13 @@ export const m = defineMessages({
     id: 'form.system:invalid-national-id',
     defaultMessage: 'Ógild kennitala',
     description: 'Invalid national ID',
+  },
+  nationalIdLookupFailed: {
+    id: 'form.system:national-id-lookup-failed',
+    defaultMessage:
+      'Leitin skilaði ekki niðurstöðu. Kennitala fannst ekki eða þjónusta ekki tiltæk.',
+    description:
+      'The search yielded no results. The ID number was not found, or the service is unavailable.',
   },
   invalidPhoneNumber: {
     id: 'form.system:invalid-phone-number',

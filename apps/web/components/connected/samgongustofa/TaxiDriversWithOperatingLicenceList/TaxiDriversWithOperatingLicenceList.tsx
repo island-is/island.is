@@ -25,7 +25,7 @@ const DEFAULT_PAGE_SIZE = 20
 const SEARCH_KEYS: (keyof TaxiDriver)[] = [
   'name',
   'stationName',
-  'stationId',
+  'callNumber',
   'representativeName',
 ]
 
@@ -111,7 +111,7 @@ const TaxiDriversWithOperatingLicenceList = ({
               <T.Row>
                 <T.HeadData>{formatMessage(t.name)}</T.HeadData>
                 <T.HeadData>{formatMessage(t.stationName)}</T.HeadData>
-                <T.HeadData>{formatMessage(t.stationId)}</T.HeadData>
+                <T.HeadData>{formatMessage(t.callNumber)}</T.HeadData>
                 <T.HeadData>{formatMessage(t.representativeName)}</T.HeadData>
               </T.Row>
             </T.Head>
@@ -130,7 +130,7 @@ const TaxiDriversWithOperatingLicenceList = ({
                       <Text variant="small">{driver.stationName}</Text>
                     </T.Data>
                     <T.Data>
-                      <Text variant="small">{driver.stationId}</Text>
+                      <Text variant="small">{driver.callNumber}</Text>
                     </T.Data>
                     <T.Data>
                       <Text variant="small">{driver.representativeName}</Text>
