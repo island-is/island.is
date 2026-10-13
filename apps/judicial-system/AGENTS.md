@@ -154,6 +154,21 @@ and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
 - Never put a `.spec.ts` under `pages/` in the web app - Next compiles it as a
   route and the production build fails.
 
+## Case loads are traced per guard
+
+Every guard that reads a case onto the request does so through
+`traceCaseLoad` in `case/guards/traceCaseLoad.ts`, which runs the load in a
+`judicial-system.case_load` span named after the guard and tags both that span
+and the request span with `case_load.guard` and `case_load.include`. That is
+what lets Postgres volume and request latency be attributed to the guard and
+include profile that caused them, route by route, in Datadog.
+
+A new guard that loads a case, or a guard moving to a narrower include
+profile, has to go through the helper and name its profile in
+`CaseLoadInclude`; `guards/test/caseLoadTracing.spec.ts` pins the existing
+ones. The api's `responseSize.plugin.ts` is the client-side counterpart: it
+tags each GraphQL request span with the operation name and the response bytes.
+
 ## Queue messages after commit
 
 A request queues messages for the message handler with
