@@ -242,6 +242,13 @@ export class GetPaymentFlowDTO {
   @IsDate()
   bankTransferExpiresAt?: Date
 
+  @ApiProperty({
+    description:
+      'True when the flow can no longer be paid and the payer has to start a new one. Only debt flows whose settlement was rejected by FJS are closed.',
+    type: Boolean,
+  })
+  isClosed!: boolean
+
   @ApiPropertyOptional({
     description: 'Populated only when paymentStatus is bank_transfer_pending',
     enum: BankTransferPendingStatus,

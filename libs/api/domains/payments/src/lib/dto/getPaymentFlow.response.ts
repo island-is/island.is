@@ -73,6 +73,12 @@ export class GetPaymentFlowResponse {
   @Field(() => Date)
   updatedAt!: Date
 
+  @Field(() => Boolean, {
+    description:
+      'True when the flow can no longer be paid and the payer has to start a new one, e.g. a debt flow whose settlement was rejected.',
+  })
+  isClosed!: boolean
+
   @Field(() => GetPaymentFlowDTOLastBankTransferFailureEnum, {
     nullable: true,
     description:

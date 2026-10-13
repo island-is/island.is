@@ -11,6 +11,14 @@ export const FJS_DEBT_ORGANISATION_ID = '5402697509'
 /** Title shown to the payer on debt payment flows. Set by the server, not by the caller. */
 export const DEBT_PAYMENT_PRODUCT_TITLE = 'Greiðsla skulda'
 
+/** A debt flow is closed once FJS rejected its settlement, the payer has to start a new flow. */
+export const isDebtFlowClosed = (paymentFlow: {
+  type?: string | null
+  fjsDebtPayment?: { status?: string | null } | null
+}): boolean =>
+  paymentFlow.type === 'debt' &&
+  paymentFlow.fjsDebtPayment?.status === 'rejected'
+
 /** Card kind used while building payInfo, each FJS client maps it to its own enum. */
 export type FjsPaymentKind = 'debit' | 'credit' | 'transfer'
 

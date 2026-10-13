@@ -48,6 +48,7 @@ import {
 } from '../../../messages'
 import {
   getErrorTitleAndMessage,
+  isTerminalDebtError,
   PaymentError,
 } from '../../../utils/error/error'
 
@@ -411,15 +412,23 @@ function PaymentPage({
     !paymentFlow ||
     !paymentFlow.availablePaymentMethods
 
-  const hasPaymentError = paymentError !== null
+  const paymentStatus = paymentFlow?.paymentStatus
+
+  // A closed (rejected) debt flow can no longer be paid, but a paid flow still shows its receipt
+  const isClosed =
+    !!paymentFlow?.isClosed &&
+    paymentStatus !== PaymentsGetFlowPaymentStatus.paid
+  const displayedError: PaymentError | null =
+    paymentError ??
+    (isClosed ? { code: PaymentServiceCode.DebtPaymentFlowClosed } : null)
+
+  const hasPaymentError = displayedError !== null
   const canRenderMainFlow = !invalidFlowSetup && !hasPaymentError
 
   const { errorTitle, errorMessage } = getErrorTitleAndMessage(
     invalidFlowSetup,
-    paymentError,
+    displayedError,
   )
-
-  const paymentStatus = paymentFlow?.paymentStatus
   // Once a poll has reported, it replaces the SSR snapshot
   const rawScaRedirectUrl = liveBankTransfer
     ? liveBankTransfer.scaRedirectUrl
@@ -590,7 +599,20 @@ function PaymentPage({
               <Box display="flex" flexDirection="column" textAlign="center">
                 <p>{formatMessage(errorMessage)}</p>
               </Box>
-              {!invalidFlowSetup && (
+              {!invalidFlowSetup && isTerminalDebtError(displayedError?.code) && (
+                <LinkV2
+                  href={
+                    paymentFlow?.cancelUrl ??
+                    paymentFlow?.returnUrl ??
+                    'https://island.is'
+                  }
+                >
+                  <Button variant="ghost" fluid unfocusable>
+                    {formatMessage(generic.back)}
+                  </Button>
+                </LinkV2>
+              )}
+              {!invalidFlowSetup && !isTerminalDebtError(displayedError?.code) && (
                 <Button
                   variant="ghost"
                   fluid

@@ -16,6 +16,59 @@ Direct bank-to-bank payment method (Blikk is the current provider). For the full
 the service, the payer-facing screens, and what happens for each provider payment status, see
 [Bank transfer payment method](./src/app/bankTransferPayment/README.md).
 
+## Debt payments (Greiðsla skulda)
+
+Lets an application (e.g. the Fjármál overview) have a person or company pay debts owed to Fjársýsla ríkisins (FJS). Debt flows use the same `payment_flow` table and pay page as charge flows, with `type = 'debt'`. FJS `validatePayment` decides whether the debts can be paid, and after capture the payment is registered with FJS (`payDebt`).
+
+### Creating a flow
+
+`POST /v1/payments/debts`
+
+| Field                                                    | Rules                                                        |
+| -------------------------------------------------------- | ------------------------------------------------------------ |
+| `payerNationalId`                                        | Individual or company.                                       |
+| `onUpdateUrl`                                            | Webhook receiving the events below.                          |
+| `metadata`                                               | Optional JSON, echoed back in every webhook.                 |
+| `returnUrl`, `cancelUrl`, `redirectToReturnUrlOnSuccess` | Optional, as for charge flows.                               |
+| `debts[]`                                                | 1 to 50 items, see below.                                    |
+| `debts[].payId`                                          | FJS payId. Required, non-empty, unique within the request.   |
+| `debts[].amount`                                         | Positive integer, whole ISK. May be less than the full debt. |
+| `debts[].label`                                          | Optional, up to 255 characters, display only.                |
+
+`organisationId` (FJS, `5402697509`) and the product title are set by the service, so they are not sent. The debts are validated with FJS when the flow is created.
+
+Payment methods come from the `paymentOptions` FJS returns from `validatePayment` (e.g. `CARD;TRANSFER`), limited by our feature flags and payer rules. `CARD` enables card and Apple Pay, `TRANSFER` enables bank transfer. Invoice payment is never offered.
+
+Response: `{ id, urls: { is, en } }`. Send the payer to `urls`. `id` is also the `payFlowId` used towards FJS.
+
+Errors (`detail` of the problem response, or the error code on the pay page):
+
+| Code                                    | Meaning                                                                                                                    |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `DebtPaymentInvalid`                    | FJS says the debts can not be paid (changed, already paid).                                                                |
+| `DebtPaymentMethodNotAllowed`           | FJS does not allow the chosen payment method for these debts.                                                              |
+| `DebtPaymentRejected`                   | FJS rejected the payment after the card was charged. The card is refunded.                                                 |
+| `DebtPaymentFlowClosed`                 | The flow was rejected by FJS earlier and can not be used again.                                                            |
+| `DebtPaymentRegisteredCannotBeRefunded` | Returned by `POST /v1/payments/refund` for a flow registered with FJS (or in `needs_reconciliation`), FJS has no reversal. |
+
+The debts are validated with FJS again right before every capture, so a flow can fail with `DebtPaymentInvalid` long after it was created. Flows do not expire.
+
+### Webhook sequences
+
+Events are POSTed to `onUpdateUrl` (signed JWT in the `Authorization` header) as `{ type, paymentFlowId, paymentFlowMetadata, occurredAt, details: { paymentMethod, reason, message, eventMetadata } }`. `paymentFlowMetadata` is the `metadata` from the request, and the event specific fields below are in `details.eventMetadata`.
+
+- **Happy path**: `success/payment_completed` when the money is captured, then `update/payment_finalized` when FJS accepts the registration (202), with `eventMetadata.payFlowId` and `eventMetadata.dateCreated`. If registration could not finish inline, the payment worker retries and `payment_finalized` comes later.
+- **Card or Apple Pay, rejected inline**: FJS rejects (400) before the registration is accepted. The card is refunded and the application gets `error/payment_failed` (`eventMetadata.fjsProblem`). There is no `payment_completed`.
+- **Rejected later by the worker**: `payment_completed` was already sent, then `error/payment_failed`. A card payment is then refunded automatically and the usual refund events follow. A bank transfer is not refunded automatically (Blikk refunds need an SCA approval): the `payment_failed` event has `eventMetadata.needsManualRefund = true` and the money is returned manually.
+- **Bank transfer rejected inline** behaves like the late rejection above: `payment_completed` is sent when the transfer settles, then `error/payment_failed` with `needsManualRefund`.
+- **`needs_reconciliation`**: FJS rejected the payment after an attempt whose outcome was unknown, so it may already be registered. This is internal: no webhook is sent, the payment stays completed, and an error event and alert ask for manual reconciliation. It is never refunded automatically.
+
+FJS registers the payment asynchronously (202 Accepted), so the payer's Fjármál status can lag behind `payment_finalized`. Treat 202 as final: failures after it are for FJS to resolve.
+
+### Rejected and closed flows
+
+A rejected flow is terminal and its id is never reused for a second registration. The pay page shows "Skuldastaðan hefur breyst" and `GetPaymentFlowDTO.isClosed` is `true`. The application should start a new flow with `POST /v1/payments/debts`. A paid flow still shows its receipt.
+
 ## Payment worker
 
 ### What it does

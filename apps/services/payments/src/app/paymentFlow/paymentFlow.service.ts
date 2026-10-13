@@ -79,6 +79,7 @@ import { DebtFjsService } from '../debtPayment/debtFjs.service'
 import {
   DEBT_PAYMENT_PRODUCT_TITLE,
   FJS_DEBT_ORGANISATION_ID,
+  isDebtFlowClosed,
 } from '../../utils/fjsDebtPayment'
 
 interface PaymentFlowUpdateConfig {
@@ -759,6 +760,7 @@ export class PaymentFlowService {
           paymentFlow.availablePaymentMethods as PaymentMethod[],
         paymentStatus,
         updatedAt,
+        isClosed: isDebtFlowClosed(paymentFlow),
         events: includeEvents
           ? paymentFlow.events?.map((event) => ({
               ...event,
@@ -1667,6 +1669,7 @@ export class PaymentFlowService {
         paymentFlowDetails.availablePaymentMethods as PaymentMethod[],
       paymentStatus,
       updatedAt,
+      isClosed: isDebtFlowClosed(paymentFlowDetails),
       events: paymentFlowDetails.events?.map((event) => ({
         ...event,
         type: event.type as PaymentFlowEventType,
@@ -1889,6 +1892,10 @@ export class PaymentFlowService {
           model: PaymentFlowDebt,
           as: 'debts',
         },
+        {
+          model: FjsDebtPayment,
+          required: false,
+        },
       ],
     })
 
@@ -1909,6 +1916,7 @@ export class PaymentFlowService {
             flow.availablePaymentMethods as PaymentMethod[],
           paymentStatus,
           updatedAt,
+          isClosed: isDebtFlowClosed(flow.toJSON()),
         }
       }),
     )

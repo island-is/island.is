@@ -120,3 +120,54 @@ export const genericError = defineMessages({
     description: 'Amount mismatch',
   },
 })
+
+export const debtError = defineMessages({
+  closedTitle: {
+    id: 'payments:debtError.closedTitle',
+    defaultMessage: 'Skuldastaðan hefur breyst',
+    description: 'Your debt status has changed',
+  },
+  closed: {
+    id: 'payments:debtError.closed',
+    defaultMessage:
+      'Ekki var hægt að ljúka greiðslunni þar sem skuldastaðan hefur breyst. Engin greiðsla var tekin eða hún hefur verið endurgreidd. Vinsamlegast byrjaðu aftur.',
+    description:
+      'The payment could not be completed because your debt status has changed. No payment was taken, or it has been refunded. Please start again.',
+  },
+  invalidTitle: {
+    id: 'payments:debtError.invalidTitle',
+    defaultMessage: 'Ekki er hægt að greiða skuldirnar',
+    description: 'The debts cannot be paid',
+  },
+  invalid: {
+    id: 'payments:debtError.invalid',
+    defaultMessage:
+      'Skuldastaðan hefur breyst eða ekki er hægt að greiða þessar skuldir. Engin greiðsla var tekin. Vinsamlegast byrjaðu aftur.',
+    description:
+      'Your debt status has changed or these debts cannot be paid. No payment was taken. Please start again.',
+  },
+  methodNotAllowedTitle: {
+    id: 'payments:debtError.methodNotAllowedTitle',
+    defaultMessage: 'Greiðsluleið ekki í boði',
+    description: 'Payment method not available',
+  },
+  methodNotAllowed: {
+    id: 'payments:debtError.methodNotAllowed',
+    defaultMessage:
+      'Þessi greiðsluleið er ekki í boði fyrir þessar skuldir. Vinsamlegast veldu aðra greiðsluleið.',
+    description:
+      'This payment method is not available for these debts. Please choose another payment method.',
+  },
+  rejectedTitle: {
+    id: 'payments:debtError.rejectedTitle',
+    defaultMessage: 'Greiðslan var ekki samþykkt',
+    description: 'The payment was not accepted',
+  },
+  rejected: {
+    id: 'payments:debtError.rejected',
+    defaultMessage:
+      'Fjársýslan hafnaði greiðslunni þar sem skuldastaðan hefur breyst. Kortagreiðsla hefur verið endurgreidd. Vinsamlegast byrjaðu aftur.',
+    description:
+      'The payment was rejected because your debt status has changed. A card payment has been refunded. Please start again.',
+  },
+})

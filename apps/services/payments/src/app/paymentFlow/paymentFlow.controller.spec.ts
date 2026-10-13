@@ -120,6 +120,7 @@ describe('PaymentFlowController', () => {
       const getResponse = await server.get(`/v1/payments/${paymentFlowId}`)
       expect(getResponse.status).toBe(200)
       expect(getResponse.body.cancelUrl).toBe(cancelUrl)
+      expect(getResponse.body.isClosed).toBe(false)
     })
   })
 

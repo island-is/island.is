@@ -7,10 +7,15 @@ import {
   PaymentServiceCode,
 } from '@island.is/shared/constants'
 
-import { bankTransferError, cardError, genericError } from '../../messages'
+import {
+  bankTransferError,
+  cardError,
+  debtError,
+  genericError,
+} from '../../messages'
 
 export type PaymentError = {
-  code: CardErrorCode | BankTransferErrorCode
+  code: CardErrorCode | BankTransferErrorCode | PaymentServiceCode
   meta?: Record<string, string | number>
 }
 
@@ -161,6 +166,26 @@ export const paymentErrorToTitleAndMessage = (
         title: genericError.amountMismatchTitle,
         message: genericError.amountMismatch,
       }
+    case PaymentServiceCode.DebtPaymentFlowClosed:
+      return {
+        title: debtError.closedTitle,
+        message: debtError.closed,
+      }
+    case PaymentServiceCode.DebtPaymentInvalid:
+      return {
+        title: debtError.invalidTitle,
+        message: debtError.invalid,
+      }
+    case PaymentServiceCode.DebtPaymentMethodNotAllowed:
+      return {
+        title: debtError.methodNotAllowedTitle,
+        message: debtError.methodNotAllowed,
+      }
+    case PaymentServiceCode.DebtPaymentRejected:
+      return {
+        title: debtError.rejectedTitle,
+        message: debtError.rejected,
+      }
     case CardErrorCode.RefundedBecauseOfSystemError:
       return {
         title: cardError.refundedBecauseOfSystemErrorTitle,
@@ -220,6 +245,12 @@ export const paymentErrorToTitleAndMessage = (
       }
   }
 }
+
+/** Debt errors after which the flow cannot be paid, the payer starts again from the application. */
+export const isTerminalDebtError = (code?: string | null): boolean =>
+  code === PaymentServiceCode.DebtPaymentFlowClosed ||
+  code === PaymentServiceCode.DebtPaymentInvalid ||
+  code === PaymentServiceCode.DebtPaymentRejected
 
 export const getErrorTitleAndMessage = (
   invalidFlowSetup: boolean,

@@ -320,11 +320,29 @@ describe('DebtPaymentFlowController', () => {
         productTitle: DEBT_PAYMENT_PRODUCT_TITLE,
         productPrice: 12500,
         paymentStatus: PaymentStatus.UNPAID,
+        isClosed: false,
         availablePaymentMethods: [
           PaymentMethod.CARD,
           PaymentMethod.BANK_TRANSFER,
         ],
       })
+    })
+
+    it('reports the flow as closed once its settlement is rejected', async () => {
+      const create = await server.post('/v1/payments/debts').send(payload)
+      const flowId = getFlowId(create.body.urls)
+
+      await app.get(getModelToken(FjsDebtPayment)).create({
+        paymentFlowId: flowId,
+        payFlowId: flowId,
+        amount: 12500,
+        status: 'rejected',
+      })
+
+      const response = await server.get(`/v1/payments/${flowId}`)
+
+      expect(response.status).toBe(200)
+      expect(response.body.isClosed).toBe(true)
     })
 
     it('does not call the charge catalog for debt flows', async () => {
