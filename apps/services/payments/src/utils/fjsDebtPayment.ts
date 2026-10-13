@@ -14,6 +14,20 @@ export const DEBT_PAYMENT_PRODUCT_TITLE = 'Greiðsla skulda'
 /** Card kind used while building payInfo, each FJS client maps it to its own enum. */
 export type FjsPaymentKind = 'debit' | 'credit' | 'transfer'
 
+/**
+ * What FJS needs to know about how a payment was made, in neutral terms. Each FJS client maps it
+ * to its own payInfo, see `toFjsDebtPayInfo` and the charge payload builders.
+ */
+export type FjsPayInfo = {
+  kind: FjsPaymentKind
+  RRN: string
+  PAN?: string
+  authCode?: string
+  cardType?: string
+  payableAmount: number
+  correlationId?: string
+}
+
 const PAYMENT_OPTION_TO_METHODS: Record<string, PaymentMethod[]> = {
   // Apple Pay rides on card, it has no token of its own.
   CARD: [PaymentMethod.CARD],
@@ -65,3 +79,9 @@ export const toFjsPaymentMeans = (
 /** The format FJS expects for `paymentDate`. */
 export const formatFjsDebtPaymentDate = (date: Date): string =>
   format(date, 'yyyy-MM-dd')
+
+/** Maps the neutral payInfo to the finance-v3 `payDebt` payInfo. */
+export const toFjsDebtPayInfo = ({ kind, ...rest }: FjsPayInfo): PayInfo => ({
+  ...rest,
+  paymentMeans: toFjsPaymentMeans(kind),
+})

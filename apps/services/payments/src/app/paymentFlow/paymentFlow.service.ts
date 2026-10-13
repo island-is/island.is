@@ -773,6 +773,56 @@ export class PaymentFlowService {
     }
   }
 
+  /** `update/payment_finalized`: FJS accepted (202) the debt payment, it owns it from here. */
+  async logDebtPaymentFinalized(
+    paymentFlowId: string,
+    paymentMethod: PaymentMethod,
+    registration: { payFlowId: string; dateCreated: string },
+  ) {
+    await this.logPaymentFlowUpdate(
+      {
+        paymentFlowId,
+        type: 'update',
+        occurredAt: new Date(),
+        paymentMethod,
+        reason: 'payment_finalized',
+        message: 'Debt payment registered with FJS',
+        metadata: {
+          payFlowId: registration.payFlowId,
+          dateCreated: registration.dateCreated,
+        },
+      },
+      { useRetry: true, throwOnError: false },
+    )
+  }
+
+  /**
+   * `error/payment_failed`: FJS rejected a debt payment that was captured. The event is the
+   * durable record too, `needsManualRefund` marks the payments nothing refunds automatically.
+   */
+  async logDebtPaymentRejected(
+    paymentFlowId: string,
+    paymentMethod: PaymentMethod,
+    problem: object | undefined,
+    { needsManualRefund = false }: { needsManualRefund?: boolean } = {},
+  ) {
+    await this.logPaymentFlowUpdate(
+      {
+        paymentFlowId,
+        type: 'error',
+        occurredAt: new Date(),
+        paymentMethod,
+        reason: 'payment_failed',
+        message: 'FJS rejected the debt payment',
+        metadata: {
+          fjsProblem: problem,
+          ...(needsManualRefund ? { needsManualRefund: true } : {}),
+        },
+      },
+      { useRetry: true, throwOnError: false },
+    )
+  }
+
   async logPaymentFlowUpdate(
     update: {
       paymentFlowId: string
@@ -1415,7 +1465,8 @@ export class PaymentFlowService {
     paymentMethod: 'card' | 'bank_transfer',
   ): Promise<InferAttributes<PaymentFlow>[]> {
     const paymentFlows = await this.paymentFlowModel.findAll({
-      where: { isDeleted: false },
+      // Debt flows have no FJS charge, see findDebtFlowsToSettle
+      where: { isDeleted: false, type: 'charge' },
       include: [
         {
           model: PaymentFulfillment,
@@ -1452,6 +1503,77 @@ export class PaymentFlowService {
     })
 
     return paymentFlows
+  }
+
+  /**
+   * Finds paid debt flows whose payment is not registered with FJS yet, for the payment worker:
+   * no `fjs_debt_payment` row or a pending one, and no attempt lately. Also card flows FJS
+   * rejected whose refund is still due, a refund that failed is retried until the fulfillment
+   * is gone. Rejected bank transfers wait for a manual refund and are left out.
+   *
+   * @param cutoffTime - Only include flows whose fulfillment and last attempt are older than this
+   */
+  async findDebtFlowsToSettle(
+    cutoffTime: Date,
+  ): Promise<InferAttributes<PaymentFlow>[]> {
+    return this.paymentFlowModel.findAll({
+      where: {
+        isDeleted: false,
+        type: 'debt',
+        [Op.and]: [
+          {
+            [Op.or]: [
+              { '$fjsDebtPayment.id$': null },
+              { '$fjsDebtPayment.status$': 'pending' },
+              {
+                [Op.and]: [
+                  { '$fjsDebtPayment.status$': 'rejected' },
+                  { '$paymentFulfillments.payment_method$': 'card' },
+                ],
+              },
+            ],
+          },
+          {
+            [Op.or]: [
+              { '$fjsDebtPayment.last_attempt_at$': null },
+              { '$fjsDebtPayment.last_attempt_at$': { [Op.lt]: cutoffTime } },
+            ],
+          },
+        ],
+      },
+      include: [
+        {
+          model: PaymentFulfillment,
+          required: true,
+          where: {
+            paymentMethod: { [Op.in]: ['card', 'bank_transfer'] },
+            created: { [Op.lt]: cutoffTime },
+            isDeleted: false,
+          },
+        },
+        { model: FjsDebtPayment, required: false },
+        { model: PaymentFlowDebt, separate: true },
+        {
+          model: CardPaymentDetails,
+          required: false,
+          where: { isDeleted: false },
+          separate: true,
+        },
+        {
+          model: BankTransferPayment,
+          required: false,
+          where: { isDeleted: false },
+          separate: true,
+        },
+        {
+          model: PaymentWorkerEvent,
+          required: false,
+          where: { taskType: 'pay_fjs_debt' },
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+      ],
+    })
   }
 
   async deleteFjsCharge(

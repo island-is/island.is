@@ -36,6 +36,14 @@ export const createMockCardPaymentService = (
     persistPaymentConfirmation: jest
       .fn()
       .mockResolvedValue(resolved(undefined)),
+    settleDebt: jest.fn().mockResolvedValue(
+      resolved({
+        type: 'registered',
+        payFlowId: PAYMENT_FLOW_ID,
+        dateCreated: '2026-10-12T10:00:00',
+        alreadySettled: false,
+      }),
+    ),
     refund: jest.fn().mockResolvedValue(
       resolved({
         isSuccess: true,

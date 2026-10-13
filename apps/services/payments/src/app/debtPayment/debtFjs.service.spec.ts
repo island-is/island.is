@@ -181,6 +181,20 @@ describe('DebtFjsService', () => {
       })
     })
 
+    it('passes the timeout on to the client', async () => {
+      financeClient.payDebt.mockResolvedValue({
+        payFlowId: validateInput.flowId,
+        dateCreated: '2026-10-12T10:00:00',
+      })
+
+      await service.pay({ ...payInput, timeoutMs: 15000 })
+
+      expect(financeClient.payDebt).toHaveBeenCalledWith(
+        expect.objectContaining({ payFlowId: validateInput.flowId }),
+        { timeoutMs: 15000 },
+      )
+    })
+
     it('is registered on success', async () => {
       financeClient.payDebt.mockResolvedValue({
         payFlowId: validateInput.flowId,

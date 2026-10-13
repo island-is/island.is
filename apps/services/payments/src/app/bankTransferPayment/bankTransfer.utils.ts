@@ -18,6 +18,7 @@ import { CatalogItemWithQuantity } from '../../types/charges'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { PaymentFlowDebtAttributes } from '../paymentFlow/models/paymentFlowDebt.model'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
+import type { FjsPayInfo } from '../../utils/fjsDebtPayment'
 
 /** Blikk's payment status lifecycle. */
 export const BLIKK_STATUSES = [
@@ -226,6 +227,22 @@ export const deriveBankTransferFailureReason = (
     ? BankTransferFailureReason.EXPIRED
     : toBankTransferFailureReason(status)
 
+/** The neutral payInfo of a settled bank transfer; carries the provider id in `RRN`. */
+export const buildBankTransferPayInfo = ({
+  providerPaymentId,
+  totalPrice,
+  correlationId,
+}: {
+  providerPaymentId: string
+  totalPrice: number
+  correlationId: string
+}): FjsPayInfo => ({
+  kind: 'transfer',
+  RRN: providerPaymentId,
+  payableAmount: totalPrice,
+  correlationId,
+})
+
 /** Builds a PAID FJS charge payload for a settled bank transfer; carries the provider id in `RRN`. */
 export const generateBankTransferChargeFJSPayload = ({
   paymentFlow,
@@ -243,16 +260,23 @@ export const generateBankTransferChargeFJSPayload = ({
   providerPaymentId: string
   correlationId: string
   effectiveDate?: Date
-}): Charge =>
-  generateChargeFJSPayload({
+}): Charge => {
+  const {
+    RRN,
+    payableAmount,
+    correlationId: payInfoCorrelationId,
+  } = buildBankTransferPayInfo({ providerPaymentId, totalPrice, correlationId })
+
+  return generateChargeFJSPayload({
     paymentFlow,
     charges,
     systemId,
     effectiveDate,
     payInfo: {
-      RRN: providerPaymentId,
-      payableAmount: totalPrice,
+      RRN,
+      payableAmount,
       paymentMeans: PayInfoPaymentMeansEnum.Milli,
-      correlationId,
+      correlationId: payInfoCorrelationId,
     },
   })
+}

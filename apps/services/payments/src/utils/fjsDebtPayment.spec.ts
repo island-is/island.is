@@ -2,6 +2,7 @@ import { PaymentMethod } from '../types'
 import {
   formatFjsDebtPaymentDate,
   parsePaymentOptions,
+  toFjsDebtPayInfo,
   toFjsPaymentMeans,
 } from './fjsDebtPayment'
 
@@ -67,5 +68,29 @@ describe('formatFjsDebtPaymentDate', () => {
     expect(formatFjsDebtPaymentDate(new Date(2026, 9, 5, 14, 30))).toBe(
       '2026-10-05',
     )
+  })
+})
+
+describe('toFjsDebtPayInfo', () => {
+  it('replaces the neutral kind with the FJS payment means', () => {
+    expect(
+      toFjsDebtPayInfo({
+        kind: 'debit',
+        RRN: 'rrn',
+        PAN: '****1234',
+        authCode: 'auth',
+        cardType: 'Visa',
+        payableAmount: 1000,
+        correlationId: 'correlation',
+      }),
+    ).toEqual({
+      paymentMeans: 'DebetCard',
+      RRN: 'rrn',
+      PAN: '****1234',
+      authCode: 'auth',
+      cardType: 'Visa',
+      payableAmount: 1000,
+      correlationId: 'correlation',
+    })
   })
 })

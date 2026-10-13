@@ -33,6 +33,7 @@ import { CatalogItemWithQuantity } from '../../types/charges'
 import { mapToCardErrorCode } from '../../utils/paymentErrors'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
+import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import { paymentGatewayResponseCodes } from './cardPayment.constants'
 import { verifyApplePaySignature } from './applePaySignature'
@@ -44,6 +45,7 @@ import {
   generateApplePayValidationRequestOptions,
   generateChargeRequestOptions,
   generateMd,
+  buildCardPayInfo,
   generateRefundRequestOptions,
   generateVerificationRequestOptions,
   getPayloadFromMd,
@@ -73,6 +75,7 @@ export class CardPaymentService {
     private readonly cacheManager: CacheManager,
     private readonly paymentFlowService: PaymentFlowService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly debtSettlementService: DebtSettlementService,
   ) {}
 
   // VERIFICATION METHODS ------------------------------------------------------------------------------------------------
@@ -778,6 +781,34 @@ export class CardPaymentService {
       totalPrice,
       paymentTrackingData,
     })
+  }
+
+  /** Registers the captured card payment of a debt flow with FJS, see DebtSettlementService. */
+  async settleDebt({
+    paymentFlow,
+    paymentResult,
+    trackingData,
+    totalPrice,
+  }: {
+    paymentFlow: PaymentFlowAttributes
+    paymentResult: CardPaymentSuccessResponse
+    trackingData: PaymentTrackingData
+    totalPrice: number
+  }) {
+    return this.debtSettlementService.attempt(
+      paymentFlow,
+      buildCardPayInfo({
+        cardChargeInfo: {
+          maskedCardNumber: paymentResult.maskedCardNumber,
+          authorizationCode: paymentResult.authorizationCode,
+          cardScheme: paymentResult.cardInformation.cardScheme,
+          cardUsage: paymentResult.cardInformation.cardUsage,
+        },
+        totalPrice,
+        merchantReferenceData: trackingData.merchantReferenceData,
+        correlationId: trackingData.correlationId,
+      }),
+    )
   }
 
   // PRIVATE HELPER METHODS ------------------------------------------------------------------------------------------------

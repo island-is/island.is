@@ -11,6 +11,7 @@ import {
   ApplePayPaymentSagaDefinition,
 } from './cardPayment.orchestrator'
 import { CardPaymentService } from './cardPayment.service'
+import { notifyPaymentCompleted, settleDebtStep } from './cardPayment.debt'
 import { ApplePayChargeInput } from './dtos'
 
 export const createApplePayPaymentContext = (
@@ -106,6 +107,9 @@ export const createApplePayPaymentSaga = (
             refund,
             originalError: ctx.error?.message,
             reasonForRefund: RefundType.PAYMENT_FAILURE,
+            ...(ctx.metadata?.fjsProblem
+              ? { fjsProblem: ctx.metadata.fjsProblem }
+              : {}),
           },
         })
 
@@ -170,28 +174,41 @@ export const createApplePayPaymentSaga = (
     },
   },
   {
+    name: 'SETTLE_DEBT',
+    description:
+      'Register the payment with FJS for debt payments, no-op for charges',
+    execute: async (ctx) => {
+      const { paymentFlow, totalPrice } = requireStepResult(ctx, 'VALIDATE')
+      const { paymentResult } = requireStepResult(ctx, 'CHARGE_APPLE_PAY')
+
+      return await settleDebtStep({
+        cardPaymentService,
+        paymentFlow,
+        paymentResult,
+        trackingData: ctx.trackingData,
+        totalPrice,
+        onRejected: (problem) => {
+          ctx.metadata = { ...ctx.metadata, fjsProblem: problem }
+        },
+      })
+    },
+  },
+  {
     name: 'NOTIFY_SUCCESSFUL_PAYMENT',
     description: 'Notify the successful payment',
     execute: async (ctx) => {
+      const { paymentFlow } = requireStepResult(ctx, 'VALIDATE')
       const { paymentResult } = requireStepResult(ctx, 'CHARGE_APPLE_PAY')
 
-      await paymentFlowService.logPaymentFlowUpdate(
-        {
-          paymentFlowId: ctx.paymentFlowId,
-          type: 'success',
-          occurredAt: new Date(),
-          paymentMethod: PaymentMethod.CARD,
-          reason: 'payment_completed',
-          message: `Apple Pay payment completed successfully`,
-          metadata: {
-            payment: paymentResult,
-          },
-        },
-        {
-          useRetry: true,
-          throwOnError: true,
-        },
-      )
+      await notifyPaymentCompleted({
+        paymentFlowService,
+        logger,
+        paymentFlowId: ctx.paymentFlowId,
+        paymentFlow,
+        settlement: ctx.stepResults.SETTLE_DEBT,
+        message: `Apple Pay payment completed successfully`,
+        paymentResult,
+      })
     },
   },
 ]

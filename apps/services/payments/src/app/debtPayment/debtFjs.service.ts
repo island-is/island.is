@@ -109,10 +109,10 @@ export class DebtFjsService {
 
   async pay(input: DebtFjsPayInput): Promise<DebtFjsPayOutcome> {
     try {
-      const result = await this.financeClient.payDebt({
-        ...toRequestBody(input),
-        payInfo: input.payInfo,
-      })
+      const body = { ...toRequestBody(input), payInfo: input.payInfo }
+      const result = input.timeoutMs
+        ? await this.financeClient.payDebt(body, { timeoutMs: input.timeoutMs })
+        : await this.financeClient.payDebt(body)
 
       return {
         type: 'registered',

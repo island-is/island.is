@@ -16,9 +16,11 @@ import {
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 
 import { environment } from '../../environments'
+import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
 import { JwksConfig } from '../jwks/jwks.config'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowModule } from '../paymentFlow/paymentFlow.module'
+import { RefundModule } from '../refund/refund.module'
 import { WorkerModuleConfig } from './worker.config'
 import { WorkerService } from './worker.service'
 
@@ -27,8 +29,10 @@ import { WorkerService } from './worker.service'
  *
  * Runs outside the main payments API: finds paid card and bank-transfer flows without
  * FJS charges, creates the charges, and saves receptionId to PaymentFlow and PaymentFulfillment.
+ * Paid debt flows are registered with FJS the same way, and refunded when FJS rejects them.
  *
- * Uses PaymentFlowService for charge creation, catalog lookup, and flow queries.
+ * Uses PaymentFlowService for charge creation, catalog lookup, and flow queries, and
+ * RefundModule for the card refunds, which is why the worker needs the payment gateway secrets.
  */
 @Module({
   imports: [
@@ -38,6 +42,8 @@ import { WorkerService } from './worker.service'
     LoggingModule,
     AuditModule.forRoot(environment.audit),
     PaymentFlowModule,
+    DebtPaymentModule,
+    RefundModule,
     FeatureFlagModule,
     ConfigModule.forRoot({
       isGlobal: true,

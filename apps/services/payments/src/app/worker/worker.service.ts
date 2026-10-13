@@ -11,14 +11,22 @@ import { retry } from '@island.is/shared/utils/server'
 import { Charge } from '@island.is/clients/charge-fjs-v2'
 
 import { FJS_NETWORK_ERROR } from '../../utils/fjsCharge'
+import type { FjsPayInfo } from '../../utils/fjsDebtPayment'
+import { PaymentMethod } from '../../types'
 import { environment } from '../../environments'
 import { ChargeItem } from '../../utils/chargeUtils'
 import {
   bankTransferLogContext,
   getBankTransferPayerType,
+  buildBankTransferPayInfo,
   generateBankTransferChargeFJSPayload,
 } from '../bankTransferPayment/bankTransfer.utils'
-import { generateCardChargeFJSPayload } from '../cardPayment/cardPayment.utils'
+import {
+  buildCardPayInfo,
+  generateCardChargeFJSPayload,
+} from '../cardPayment/cardPayment.utils'
+import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
+import { RefundOrchestrationService } from '../refund/refundOrchestration.service'
 import type { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
 import type { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { PaymentFlow } from '../paymentFlow/models/paymentFlow.model'
@@ -40,7 +48,8 @@ type FlowToProcess = {
 }
 
 /**
- * Worker service that creates FJS charges for payment flows paid with card or bank transfer.
+ * Worker service that creates FJS charges for payment flows paid with card or bank transfer, and
+ * registers paid debt flows with FJS.
  */
 @Injectable()
 export class WorkerService {
@@ -52,6 +61,8 @@ export class WorkerService {
     private readonly paymentWorkerEventModel: typeof PaymentWorkerEvent,
     @Inject(WorkerModuleConfig.KEY)
     private readonly workerConfig: ConfigType<typeof WorkerModuleConfig>,
+    private readonly debtSettlementService: DebtSettlementService,
+    private readonly refundOrchestrationService: RefundOrchestrationService,
   ) {}
 
   /**
@@ -184,7 +195,286 @@ export class WorkerService {
       `Payment worker run complete — created: ${createdFJSCharges}, failed: ${failedCount}, skipped (manual intervention): ${skippedCount}, deferred (retry delay): ${deferredCount}`,
     )
 
+    await this.settleDebtFlows()
+
     timer.done()
+  }
+
+  /**
+   * Registers paid debt flows with FJS (`payDebt`) that the payment flow could not finish inline.
+   * A payment FJS rejects is undone: card payments are refunded, bank transfers are left for a
+   * manual refund.
+   */
+  private async settleDebtFlows() {
+    const cutoffTime = new Date()
+    cutoffTime.setMinutes(
+      cutoffTime.getMinutes() -
+        this.workerConfig.workerMinutesToWaitBeforeSettlingDebt,
+    )
+
+    const debtFlows = (await this.paymentFlowService.findDebtFlowsToSettle(
+      cutoffTime,
+    )) as PaymentFlowWithWorkerEvents[]
+    this.logger.info(
+      `Found ${debtFlows.length} debt payment flow(s) pending FJS registration`,
+    )
+
+    let settledCount = 0
+    let failedCount = 0
+    let skippedCount = 0
+    const skippedFlowIds: string[] = []
+
+    for (const paymentFlow of debtFlows) {
+      if (
+        this.shouldSkipDueToFailureCount(
+          paymentFlow.workerEvents ?? [],
+          this.workerConfig.workerMaxFailureEventsPerFlow,
+        )
+      ) {
+        skippedCount++
+        skippedFlowIds.push(paymentFlow.id)
+        continue
+      }
+
+      try {
+        const settled = await this.settleDebtFlow(paymentFlow)
+        settled ? settledCount++ : failedCount++
+      } catch (error) {
+        const err = error as Error
+        failedCount++
+
+        await this.recordWorkerEvent(
+          paymentFlow.id,
+          WorkerTaskType.PayFjsDebt,
+          'failure',
+          {
+            errorCode: err?.message,
+            message: err?.message,
+            metadata: { stack: err?.stack },
+          },
+        )
+        this.logger.error(
+          `[${paymentFlow.id}] Failed to settle debt payment flow`,
+          { error: err?.message, stack: err?.stack },
+        )
+      }
+    }
+
+    // Like for charges, ops alerting keys on the capped failure events, not on this recurring line.
+    if (skippedFlowIds.length > 0) {
+      this.logger.warn(
+        `Skipping ${
+          skippedFlowIds.length
+        } debt payment flow(s) that exceeded the failure limit (${
+          this.workerConfig.workerMaxFailureEventsPerFlow
+        }) and require manual intervention: ${skippedFlowIds.join(', ')}`,
+      )
+    }
+
+    this.logger.info(
+      `Debt payment run complete — settled: ${settledCount}, failed: ${failedCount}, skipped (manual intervention): ${skippedCount}`,
+    )
+  }
+
+  /** @returns false when the flow is left for the next run */
+  private async settleDebtFlow(
+    paymentFlow: PaymentFlowWithWorkerEvents,
+  ): Promise<boolean> {
+    const fulfillment = this.getActiveFulfillment(paymentFlow)
+    const paymentMethod =
+      fulfillment.paymentMethod === 'bank_transfer'
+        ? PaymentMethod.BANK_TRANSFER
+        : PaymentMethod.CARD
+
+    // FJS rejected the payment earlier but the card refund did not go through, only the refund
+    // is left to do.
+    if (paymentFlow.fjsDebtPayment?.status === 'rejected') {
+      await this.refundRejectedDebtPayment(paymentFlow.id)
+      await this.recordWorkerEvent(
+        paymentFlow.id,
+        WorkerTaskType.PayFjsDebt,
+        'success',
+        { metadata: { refundedRejectedPayment: true } },
+      )
+      return true
+    }
+
+    const payInfo =
+      paymentMethod === PaymentMethod.BANK_TRANSFER
+        ? this.buildBankTransferPayInfo(paymentFlow)
+        : this.buildCardPayInfo(paymentFlow)
+
+    const outcome = await this.debtSettlementService.attempt(
+      {
+        id: paymentFlow.id,
+        payerNationalId: paymentFlow.payerNationalId,
+        debts: paymentFlow.debts,
+      },
+      payInfo,
+    )
+
+    switch (outcome.type) {
+      case 'registered':
+        if (!outcome.alreadySettled) {
+          await this.paymentFlowService.logDebtPaymentFinalized(
+            paymentFlow.id,
+            paymentMethod,
+            outcome,
+          )
+        }
+        await this.recordWorkerEvent(
+          paymentFlow.id,
+          WorkerTaskType.PayFjsDebt,
+          'success',
+          {
+            metadata: {
+              payFlowId: outcome.payFlowId,
+              dateCreated: outcome.dateCreated,
+            },
+          },
+        )
+        return true
+
+      case 'rejected':
+        await this.handleRejectedDebtPayment(
+          paymentFlow.id,
+          paymentMethod,
+          outcome.problem,
+          outcome.alreadySettled,
+        )
+        await this.recordWorkerEvent(
+          paymentFlow.id,
+          WorkerTaskType.PayFjsDebt,
+          'success',
+          { metadata: { rejected: true, problem: outcome.problem } },
+        )
+        return true
+
+      case 'reconcile':
+        // The attempt wrote the durable event and raised the alert. Nothing is retried or refunded.
+        await this.recordWorkerEvent(
+          paymentFlow.id,
+          WorkerTaskType.PayFjsDebt,
+          'failure',
+          {
+            errorCode: 'needs_reconciliation',
+            message: 'FJS rejected a debt payment after an unknown outcome',
+            metadata: { problem: outcome.problem },
+          },
+        )
+        return false
+
+      case 'deferred':
+        // Another attempt is running, or FJS is unreachable: like network errors on charges these
+        // are not counted as failures, the next run tries again.
+        if (outcome.reason === 'transient') {
+          // FJS refused our credentials, it did not look at the payment.
+          await this.recordWorkerEvent(
+            paymentFlow.id,
+            WorkerTaskType.PayFjsDebt,
+            'failure',
+            {
+              errorCode: outcome.reason,
+              message: 'FJS did not accept the debt payment call',
+            },
+          )
+        } else {
+          this.logger.warn(
+            `[${paymentFlow.id}] Debt payment not registered yet (${outcome.reason}), will retry`,
+          )
+        }
+        return false
+    }
+  }
+
+  /**
+   * FJS rejected the payment: let the organisation know, then give the money back. Bank
+   * transfers can not be refunded automatically, Blikk refunds need an SCA approval.
+   */
+  private async handleRejectedDebtPayment(
+    paymentFlowId: string,
+    paymentMethod: PaymentMethod,
+    problem: object | undefined,
+    alreadyReported: boolean,
+  ) {
+    const isBankTransfer = paymentMethod === PaymentMethod.BANK_TRANSFER
+
+    if (!alreadyReported) {
+      if (isBankTransfer) {
+        this.logger.error(
+          `[${paymentFlowId}] FJS rejected a settled debt bank transfer — refund it manually`,
+          { needsManualRefund: true, problem },
+        )
+      }
+
+      await this.paymentFlowService.logDebtPaymentRejected(
+        paymentFlowId,
+        paymentMethod,
+        problem,
+        { needsManualRefund: isBankTransfer },
+      )
+    }
+
+    if (!isBankTransfer) {
+      await this.refundRejectedDebtPayment(paymentFlowId)
+    }
+  }
+
+  /** A system refund, the check that stops admins from refunding registered debts does not apply. */
+  private async refundRejectedDebtPayment(paymentFlowId: string) {
+    await this.refundOrchestrationService.refund(
+      {
+        paymentFlowId,
+        reasonForRefund: 'FJS rejected the debt payment',
+      },
+      { system: true },
+    )
+  }
+
+  /** The neutral payInfo of a settled card payment, same source as the FJS charge payload. */
+  private buildCardPayInfo(
+    paymentFlow: PaymentFlowWithWorkerEvents,
+  ): FjsPayInfo {
+    const cardPaymentDetails = this.getLatestCardPaymentDetails(
+      paymentFlow.cardPaymentDetails,
+    )
+
+    return buildCardPayInfo({
+      cardChargeInfo: {
+        authorizationCode: cardPaymentDetails.authorizationCode,
+        cardScheme: cardPaymentDetails.cardScheme,
+        maskedCardNumber: cardPaymentDetails.maskedCardNumber,
+        cardUsage: cardPaymentDetails.cardUsage,
+      },
+      totalPrice: cardPaymentDetails.totalPrice,
+      merchantReferenceData: cardPaymentDetails.merchantReferenceData,
+      // CardPaymentDetails.id is the per-attempt correlationId (see createCardPaymentConfirmation).
+      correlationId: cardPaymentDetails.id,
+    })
+  }
+
+  /** The neutral payInfo of a settled bank transfer, same source as the FJS charge payload. */
+  private buildBankTransferPayInfo(
+    paymentFlow: PaymentFlowWithWorkerEvents,
+  ): FjsPayInfo {
+    const fulfillment = this.getActiveFulfillment(paymentFlow)
+
+    // The fulfillment's confirmationRefId is the bank_transfer_payment row id.
+    const bankTransferPayment = paymentFlow.bankTransferPayments?.find(
+      (row) => row.id === fulfillment.confirmationRefId,
+    )
+
+    if (!bankTransferPayment) {
+      throw new BadRequestException(
+        'No bank transfer payment found for payment flow fulfillment',
+      )
+    }
+
+    return buildBankTransferPayInfo({
+      providerPaymentId: bankTransferPayment.providerPaymentId,
+      totalPrice: bankTransferPayment.amount,
+      correlationId: fulfillment.confirmationRefId,
+    })
   }
 
   /**

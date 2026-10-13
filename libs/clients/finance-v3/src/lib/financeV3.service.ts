@@ -97,9 +97,22 @@ export class FinanceClientV3Service {
    *
    * Non-2xx responses throw a `FetchError` (from `@island.is/clients/middlewares`)
    * whose `body.error` holds the FJS problem details.
+   *
+   * `timeoutMs` ends the call earlier than the client wide timeout, an aborted call throws like
+   * any other network failure.
    */
-  async payDebt(input: PaymentsInDt): Promise<PaymentsOutDt> {
-    const response = await data(payDebtPost3({ body: input }))
+  async payDebt(
+    input: PaymentsInDt,
+    options?: { timeoutMs?: number },
+  ): Promise<PaymentsOutDt> {
+    const response = await data(
+      payDebtPost3({
+        body: input,
+        signal: options?.timeoutMs
+          ? AbortSignal.timeout(options.timeoutMs)
+          : undefined,
+      }),
+    )
 
     if (!response?.payDebtsResult) {
       throw new FinanceClientV3ResultMissingError('payDebt', response?.error)

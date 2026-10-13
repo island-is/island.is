@@ -7,6 +7,8 @@ import { FjsErrorCode } from '@island.is/shared/constants'
 import { FJS_NETWORK_ERROR } from '../../utils/fjsCharge'
 import { PaymentWorkerEvent } from '../paymentFlow/models/paymentWorkerEvent.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
+import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
+import { RefundOrchestrationService } from '../refund/refundOrchestration.service'
 import { WorkerModuleConfig } from './worker.config'
 import { WorkerService } from './worker.service'
 import { WorkerTaskType } from './workerTaskTypes'
@@ -21,6 +23,7 @@ const mockLogger = {
 const mockWorkerConfig = {
   workerMaxFailureEventsPerFlow: 5,
   workerMinutesToWaitBeforeCreatingFjsCharge: 5,
+  workerMinutesToWaitBeforeSettlingDebt: 1,
   workerRetryDelayMinutesAfterFailure: 60,
 }
 
@@ -100,9 +103,13 @@ describe('WorkerService', () => {
   let service: WorkerService
   let paymentFlowService: jest.Mocked<PaymentFlowService>
   let paymentWorkerEventModel: { create: jest.Mock }
+  let debtSettlementService: { attempt: jest.Mock }
+  let refundOrchestrationService: { refund: jest.Mock }
 
   beforeEach(async () => {
     paymentWorkerEventModel = { create: jest.fn().mockResolvedValue({}) }
+    debtSettlementService = { attempt: jest.fn() }
+    refundOrchestrationService = { refund: jest.fn().mockResolvedValue({}) }
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -115,6 +122,9 @@ describe('WorkerService', () => {
           provide: PaymentFlowService,
           useValue: {
             findPaidFlowsWithoutFjsCharge: jest.fn(),
+            findDebtFlowsToSettle: jest.fn().mockResolvedValue([]),
+            logDebtPaymentFinalized: jest.fn().mockResolvedValue(undefined),
+            logDebtPaymentRejected: jest.fn().mockResolvedValue(undefined),
             getPaymentFlowChargeDetails: jest.fn().mockResolvedValue({
               catalogItems: [
                 {
@@ -136,6 +146,11 @@ describe('WorkerService', () => {
         {
           provide: WorkerModuleConfig.KEY,
           useValue: mockWorkerConfig,
+        },
+        { provide: DebtSettlementService, useValue: debtSettlementService },
+        {
+          provide: RefundOrchestrationService,
+          useValue: refundOrchestrationService,
         },
       ],
     }).compile()
@@ -509,6 +524,307 @@ describe('WorkerService', () => {
       expect(payloads[1].payInfo?.RRN).toBe('provider-payment-id')
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Payment worker run complete — created: 2, failed: 0, skipped (manual intervention): 0, deferred (retry delay): 0',
+      )
+    })
+  })
+
+  describe('debt flows', () => {
+    const problem = { title: 'Bad request', detail: 'Amount exceeds debt' }
+    const debts = [{ payId: 'pay-1', amount: 900 }]
+
+    const createDebtCardFlow = (
+      overrides: Parameters<typeof createMockFlow>[0] & {
+        fjsDebtPayment?: { status: string }
+      } = {},
+    ) => ({
+      ...createMockFlow({ id: 'debt-card', ...overrides }),
+      type: 'debt',
+      payerNationalId: '0101302989',
+      debts,
+      ...overrides,
+    })
+
+    const createDebtBankFlow = (overrides: { id?: string } = {}) => ({
+      ...createBankTransferFlow({ id: 'debt-bank', ...overrides }),
+      type: 'debt',
+      payerNationalId: '0101302989',
+      debts,
+    })
+
+    const mockDebtSweep = (flows: unknown[]) => {
+      paymentFlowService.findDebtFlowsToSettle.mockResolvedValue(flows as never)
+    }
+
+    const registered = {
+      type: 'registered',
+      payFlowId: 'debt-card',
+      dateCreated: '2026-10-12T10:00:00',
+      alreadySettled: false,
+    }
+
+    beforeEach(() => {
+      mockFlowSweep({})
+    })
+
+    it('looks for flows whose last attempt is older than the wait', async () => {
+      const before = Date.now()
+
+      await service.run()
+
+      const [cutoffTime] =
+        paymentFlowService.findDebtFlowsToSettle.mock.calls[0]
+      // One minute
+      expect(before - cutoffTime.getTime()).toBeGreaterThanOrEqual(59_000)
+      expect(before - cutoffTime.getTime()).toBeLessThan(65_000)
+    })
+
+    it('registers a card payment from the card details and sends payment_finalized', async () => {
+      mockDebtSweep([createDebtCardFlow()])
+      debtSettlementService.attempt.mockResolvedValue(registered)
+
+      await service.run()
+
+      expect(debtSettlementService.attempt).toHaveBeenCalledWith(
+        { id: 'debt-card', payerNationalId: '0101302989', debts },
+        {
+          kind: 'credit',
+          PAN: '****',
+          RRN: expect.anything(),
+          authCode: 'auth',
+          cardType: 'Visa',
+          payableAmount: 1000,
+          correlationId: 'card-details-correlation-id',
+        },
+      )
+      expect(paymentFlowService.logDebtPaymentFinalized).toHaveBeenCalledWith(
+        'debt-card',
+        'card',
+        registered,
+      )
+      expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          paymentFlowId: 'debt-card',
+          taskType: WorkerTaskType.PayFjsDebt,
+          status: 'success',
+        }),
+      )
+      expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Debt payment run complete — settled: 1, failed: 0, skipped (manual intervention): 0',
+      )
+    })
+
+    it('registers a bank transfer with the provider payment id', async () => {
+      mockDebtSweep([createDebtBankFlow()])
+      debtSettlementService.attempt.mockResolvedValue(registered)
+
+      await service.run()
+
+      expect(debtSettlementService.attempt).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'debt-bank' }),
+        {
+          kind: 'transfer',
+          RRN: 'provider-payment-id',
+          payableAmount: 900,
+          correlationId: 'bt-correlation-id',
+        },
+      )
+      expect(paymentFlowService.logDebtPaymentFinalized).toHaveBeenCalledWith(
+        'debt-bank',
+        'bank_transfer',
+        registered,
+      )
+    })
+
+    it('does not announce a registration an earlier attempt made', async () => {
+      mockDebtSweep([createDebtCardFlow()])
+      debtSettlementService.attempt.mockResolvedValue({
+        ...registered,
+        alreadySettled: true,
+      })
+
+      await service.run()
+
+      expect(paymentFlowService.logDebtPaymentFinalized).not.toHaveBeenCalled()
+    })
+
+    it('tells the organisation and refunds the card when FJS rejects a card payment', async () => {
+      mockDebtSweep([createDebtCardFlow()])
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'rejected',
+        problem,
+        alreadySettled: false,
+      })
+
+      await service.run()
+
+      expect(paymentFlowService.logDebtPaymentRejected).toHaveBeenCalledWith(
+        'debt-card',
+        'card',
+        problem,
+        { needsManualRefund: false },
+      )
+      expect(refundOrchestrationService.refund).toHaveBeenCalledWith(
+        expect.objectContaining({ paymentFlowId: 'debt-card' }),
+        { system: true },
+      )
+    })
+
+    it('leaves a rejected bank transfer for a manual refund', async () => {
+      mockDebtSweep([createDebtBankFlow()])
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'rejected',
+        problem,
+        alreadySettled: false,
+      })
+
+      await service.run()
+
+      expect(paymentFlowService.logDebtPaymentRejected).toHaveBeenCalledWith(
+        'debt-bank',
+        'bank_transfer',
+        problem,
+        { needsManualRefund: true },
+      )
+      expect(refundOrchestrationService.refund).not.toHaveBeenCalled()
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        expect.stringContaining('refund it manually'),
+        expect.objectContaining({ needsManualRefund: true }),
+      )
+    })
+
+    it('only retries the refund of a card payment that was rejected before', async () => {
+      mockDebtSweep([
+        createDebtCardFlow({ fjsDebtPayment: { status: 'rejected' } }),
+      ])
+
+      await service.run()
+
+      expect(debtSettlementService.attempt).not.toHaveBeenCalled()
+      expect(paymentFlowService.logDebtPaymentRejected).not.toHaveBeenCalled()
+      expect(refundOrchestrationService.refund).toHaveBeenCalledWith(
+        expect.objectContaining({ paymentFlowId: 'debt-card' }),
+        { system: true },
+      )
+    })
+
+    it('records a failure and tries again next run when the refund fails', async () => {
+      mockDebtSweep([createDebtCardFlow()])
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'rejected',
+        problem,
+        alreadySettled: false,
+      })
+      refundOrchestrationService.refund.mockRejectedValue(
+        new Error('gateway down'),
+      )
+
+      await service.run()
+
+      expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          paymentFlowId: 'debt-card',
+          taskType: WorkerTaskType.PayFjsDebt,
+          status: 'failure',
+          errorCode: 'gateway down',
+        }),
+      )
+    })
+
+    it('neither refunds nor notifies when the payment needs reconciliation', async () => {
+      mockDebtSweep([createDebtCardFlow()])
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'reconcile',
+        problem,
+        alreadySettled: false,
+      })
+
+      await service.run()
+
+      expect(refundOrchestrationService.refund).not.toHaveBeenCalled()
+      expect(paymentFlowService.logDebtPaymentRejected).not.toHaveBeenCalled()
+      expect(paymentFlowService.logDebtPaymentFinalized).not.toHaveBeenCalled()
+      expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          taskType: WorkerTaskType.PayFjsDebt,
+          status: 'failure',
+          errorCode: 'needs_reconciliation',
+        }),
+      )
+    })
+
+    it.each(['ambiguous', 'validation_unavailable', 'in_progress'])(
+      'retries next run without counting a failure when %s',
+      async (reason) => {
+        mockDebtSweep([createDebtCardFlow()])
+        debtSettlementService.attempt.mockResolvedValue({
+          type: 'deferred',
+          reason,
+        })
+
+        await service.run()
+
+        expect(paymentWorkerEventModel.create).not.toHaveBeenCalled()
+        expect(
+          paymentFlowService.logDebtPaymentFinalized,
+        ).not.toHaveBeenCalled()
+      },
+    )
+
+    it('counts a failure when FJS did not accept our call', async () => {
+      mockDebtSweep([createDebtCardFlow()])
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'deferred',
+        reason: 'transient',
+      })
+
+      await service.run()
+
+      expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          paymentFlowId: 'debt-card',
+          taskType: WorkerTaskType.PayFjsDebt,
+          status: 'failure',
+          errorCode: 'transient',
+        }),
+      )
+    })
+
+    it('records a failure when the settlement throws', async () => {
+      mockDebtSweep([createDebtCardFlow()])
+      debtSettlementService.attempt.mockRejectedValue(new Error('db down'))
+
+      await service.run()
+
+      expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'failure',
+          errorCode: 'db down',
+          taskType: WorkerTaskType.PayFjsDebt,
+        }),
+      )
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Debt payment run complete — settled: 0, failed: 1, skipped (manual intervention): 0',
+      )
+    })
+
+    it('skips flows that reached the failure limit', async () => {
+      mockDebtSweep([
+        createDebtCardFlow({
+          workerEvents: Array.from({ length: 5 }, () => ({
+            status: 'failure',
+          })),
+        }),
+      ])
+
+      await service.run()
+
+      expect(debtSettlementService.attempt).not.toHaveBeenCalled()
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('Skipping 1 debt payment flow(s)'),
+      )
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Debt payment run complete — settled: 0, failed: 0, skipped (manual intervention): 1',
       )
     })
   })

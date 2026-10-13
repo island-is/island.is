@@ -20,6 +20,7 @@ import { JwksModule } from '../jwks/jwks.module'
 import { JwksConfig } from '../jwks/jwks.config'
 import { RefundController } from './refund.controller'
 import { RefundService } from './refund.service'
+import { RefundOrchestrationService } from './refundOrchestration.service'
 import { RefundModuleConfig } from './refund.config'
 import { PaymentFlowDebt } from '../paymentFlow/models/paymentFlowDebt.model'
 import { FjsDebtPayment } from '../paymentFlow/models/fjsDebtPayment.model'
@@ -49,7 +50,7 @@ import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
     BankTransferPaymentModule,
   ],
   controllers: [RefundController],
-  providers: [RefundService, PaymentFlowService],
-  exports: [RefundService],
+  providers: [RefundService, RefundOrchestrationService, PaymentFlowService],
+  exports: [RefundService, RefundOrchestrationService],
 })
 export class RefundModule {}

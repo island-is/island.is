@@ -17,6 +17,8 @@ export interface DebtFjsValidateInput {
 
 export interface DebtFjsPayInput extends DebtFjsValidateInput {
   payInfo: PayInfo
+  /** Ends the call earlier than the client wide timeout. */
+  timeoutMs?: number
 }
 
 export type DebtFjsValidateOutcome =

@@ -83,6 +83,20 @@ const secrets = {
   BLIKK_API_KEY: '/k8s/services-payments/BLIKK_API_KEY',
 }
 
+// The card payment gateway: the service charges and refunds cards, the worker refunds the card
+// payments FJS rejects.
+const paymentGatewaySecrets = {
+  PAYMENTS_GATEWAY_API_SECRET:
+    '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET',
+  PAYMENTS_GATEWAY_API_HEADER_KEY:
+    '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_KEY',
+  PAYMENTS_GATEWAY_API_HEADER_VALUE:
+    '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_VALUE',
+  PAYMENTS_GATEWAY_API_URL: '/k8s/services-payments/PAYMENTS_GATEWAY_API_URL',
+  PAYMENTS_GATEWAY_SYSTEM_CALLING:
+    '/k8s/services-payments/PAYMENTS_GATEWAY_SYSTEM_CALLING',
+}
+
 // service setup
 export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
   service(serviceName)
@@ -112,16 +126,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
     })
     .secrets({
       ...secrets,
-      PAYMENTS_GATEWAY_API_SECRET:
-        '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET',
-      PAYMENTS_GATEWAY_API_HEADER_KEY:
-        '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_KEY',
-      PAYMENTS_GATEWAY_API_HEADER_VALUE:
-        '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_VALUE',
-      PAYMENTS_GATEWAY_API_URL:
-        '/k8s/services-payments/PAYMENTS_GATEWAY_API_URL',
-      PAYMENTS_GATEWAY_SYSTEM_CALLING:
-        '/k8s/services-payments/PAYMENTS_GATEWAY_SYSTEM_CALLING',
+      ...paymentGatewaySecrets,
       PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET:
         '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET',
       PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM:
@@ -189,7 +194,7 @@ export const serviceSetupForWorker =
       .db(db)
       .codeOwner(CodeOwners.Aranja)
       .env(env)
-      .secrets(secrets)
+      .secrets({ ...secrets, ...paymentGatewaySecrets })
       .xroad(Base, Client, ChargeFjsV2, FinanceV3)
       .command('node')
       .args('main.cjs', '--job', 'worker')

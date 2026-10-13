@@ -251,6 +251,11 @@ export class CardPaymentController {
       const refundFailed = context.metadata?.refundSucceeded === false
 
       if (refundSucceeded) {
+        // FJS rejected the debts, the card is refunded and the flow is closed
+        if (e.message === PaymentServiceCode.DebtPaymentRejected) {
+          throw new BadRequestException(PaymentServiceCode.DebtPaymentRejected)
+        }
+
         throw new BadRequestException(
           CardErrorCode.RefundedBecauseOfSystemError,
         )
@@ -337,6 +342,11 @@ export class CardPaymentController {
       const refundFailed = context.metadata?.refundSucceeded === false
 
       if (refundSucceeded) {
+        // FJS rejected the debts, the card is refunded and the flow is closed
+        if (e.message === PaymentServiceCode.DebtPaymentRejected) {
+          throw new BadRequestException(PaymentServiceCode.DebtPaymentRejected)
+        }
+
         throw new BadRequestException(
           CardErrorCode.RefundedBecauseOfSystemError,
         )

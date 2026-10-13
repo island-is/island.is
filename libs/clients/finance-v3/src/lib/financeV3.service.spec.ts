@@ -151,6 +151,18 @@ describe('FinanceClientV3Service', () => {
       expect(withAuthContext).not.toHaveBeenCalled()
     })
 
+    it('aborts the call after the given timeout', async () => {
+      const result = { payFlowId: 'flow-1', dateCreated: '2026-10-12' }
+      payDebt.mockResolvedValue({ data: { payDebtsResult: result } })
+
+      await service.payDebt(payInput, { timeoutMs: 15000 })
+
+      expect(payDebt).toHaveBeenCalledWith({
+        body: payInput,
+        signal: expect.any(AbortSignal),
+      })
+    })
+
     it('throws when the result is missing', async () => {
       payDebt.mockResolvedValue({ data: {} })
 
