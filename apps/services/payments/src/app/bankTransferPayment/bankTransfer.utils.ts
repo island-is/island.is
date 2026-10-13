@@ -1,3 +1,5 @@
+import { isCompany, isPerson } from 'kennitala'
+
 import {
   Charge,
   PayInfoPaymentMeansEnum,
@@ -5,6 +7,7 @@ import {
 import { BlikkItem } from '@island.is/clients/blikk'
 
 import {
+  BankTransferDebtor,
   BankTransferFailureReason,
   BankTransferStatus,
   BankTransferPendingStatus,
@@ -67,26 +70,44 @@ export const isOnboardingRequired = (
   }
 }
 
-/** Map a raw Blikk status onto the pending sub-status. */
+/**
+ * Map a raw Blikk status onto the pending sub-status. Only `SCA_REQUIRED` asks the payer to act —
+ * that is the point at which Blikk has decided whether there is an SCA URL to open at all, so an
+ * earlier status is always "waiting", never "your turn".
+ */
 export const mapRawStatusToBankTransferPendingStatus = (
   status: string,
-  scaRedirectUrl: string | undefined,
-  onboardingOrigin: string,
-): BankTransferPendingStatus => {
-  if (status === 'SCA_REQUIRED') {
-    return BankTransferPendingStatus.SCA_REQUIRED
+): BankTransferPendingStatus =>
+  status === 'SCA_REQUIRED'
+    ? BankTransferPendingStatus.SCA_REQUIRED
+    : BankTransferPendingStatus.PROCESSING
+
+/**
+ * Resolves who Blikk debits. A person pays as themselves. A company pays from its own account,
+ * authorised by an individual with the rights to do so (entered on the payment screen), who is the
+ * one authenticating with their bank. Returns `null` for a company without a valid individual, and
+ * for any other payer, such as a temporary kennitala.
+ */
+export const getBankTransferDebtor = (
+  payerNationalId: string,
+  actorNationalId?: string,
+): BankTransferDebtor | null => {
+  if (isPerson(payerNationalId)) {
+    return { debtorExternalId: payerNationalId }
   }
 
-  // If the payment is a DRAFT and has a non-onboarding SCA URL, return SCA_REQUIRED.
   if (
-    status === 'DRAFT' &&
-    scaRedirectUrl &&
-    !isOnboardingRequired(status, scaRedirectUrl, onboardingOrigin)
+    isCompany(payerNationalId) &&
+    actorNationalId &&
+    isPerson(actorNationalId)
   ) {
-    return BankTransferPendingStatus.SCA_REQUIRED
+    return {
+      debtorExternalId: actorNationalId,
+      debtorCorpExternalId: payerNationalId,
+    }
   }
 
-  return BankTransferPendingStatus.PROCESSING
+  return null
 }
 
 export const toBlikkItem = (item: CatalogItemWithQuantity): BlikkItem => ({
@@ -101,26 +122,30 @@ export const isRowExpired = (
   row: Pick<BankTransferPayment, 'expiresAt'>,
 ): boolean => row.expiresAt.getTime() < Date.now()
 
-/** Structured log prefix used throughout the bank-transfer flow. */
-export const createLogPrefix = (
+/**
+ * Identifiers on every bank-transfer log line. Winston writes metadata as top-level JSON fields,
+ * so Datadog joins on `correlationId` / `rrn` without Grok. The flow id is also prefixed onto the
+ * message, as every other payment method does. Call sites that lack a field omit it rather than
+ * placehold it — a blank id looks joinable and is not.
+ */
+export type BankTransferLogContext = {
+  paymentFlowId: string
+  correlationId: string
+  rrn: string
+}
+
+/** `rrn` is the provider's payment id; `correlationId` our per-attempt key. */
+export const bankTransferLogContext = (
   paymentFlowId: string,
   correlationId: string,
-  providerPaymentId: string,
-): string =>
-  `[${paymentFlowId}][correlationId: ${correlationId}][rrn: ${providerPaymentId}]`
+  rrn: string,
+): BankTransferLogContext => ({ paymentFlowId, correlationId, rrn })
 
-/** Row-driven convenience wrapper around `createLogPrefix`. */
-export const rowLogPrefix = (
-  row: Pick<
-    BankTransferPayment,
-    'paymentFlowId' | 'sourceReferenceId' | 'providerPaymentId'
-  >,
-): string =>
-  createLogPrefix(
-    row.paymentFlowId,
-    row.sourceReferenceId,
-    row.providerPaymentId,
-  )
+/** Correlation id comes from `id`, not `sourceReferenceId` — `create` sets both to the same uuid. */
+export const rowLogContext = (
+  row: Pick<BankTransferPayment, 'paymentFlowId' | 'id' | 'providerPaymentId'>,
+): BankTransferLogContext =>
+  bankTransferLogContext(row.paymentFlowId, row.id, row.providerPaymentId)
 
 /** True for any status that won't change again (SUCCESS and the three failure values). */
 export const isTerminalBankTransferStatus = (

@@ -410,6 +410,8 @@ export const buildPaginatedSearchableTableField = (
     savePropertyNames,
     pageSize,
     callbackId,
+    disabledKey,
+    disabledReason,
   } = data
 
   return {
@@ -427,6 +429,8 @@ export const buildPaginatedSearchableTableField = (
     savePropertyNames,
     pageSize,
     callbackId,
+    disabledKey,
+    disabledReason,
   }
 }
 
@@ -1000,13 +1004,16 @@ export const buildTableRepeaterField = (
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    removeButtonDisabledTooltipText,
     editButtonTooltipText,
     editField,
+    canRemoveRow,
     getStaticTableData,
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
     initActiveFieldIfEmpty,
+    hideTableHeaderIfEmpty,
   } = data
 
   return {
@@ -1021,13 +1028,16 @@ export const buildTableRepeaterField = (
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    removeButtonDisabledTooltipText,
     editButtonTooltipText,
     editField,
+    canRemoveRow,
     getStaticTableData,
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
     initActiveFieldIfEmpty,
+    hideTableHeaderIfEmpty,
   }
 }
 

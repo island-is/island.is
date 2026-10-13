@@ -1,6 +1,6 @@
 import type { Transaction } from 'sequelize'
 
-import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
+import { getConnectionToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -19,7 +19,7 @@ import { IndictmentCountService } from '../../indictment-count/indictmentCount.s
 import {
   CaseDefendantPoliceCaseNumberRepositoryService,
   CaseRepositoryService,
-  IndictmentSubtype,
+  IndictmentSubtypeRepositoryService,
 } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
 import { policeModuleConfig } from '../police.config'
@@ -69,9 +69,9 @@ export const createTestingPoliceModule = async () => {
         },
       },
       {
-        provide: getModelToken(IndictmentSubtype),
+        provide: IndictmentSubtypeRepositoryService,
         useValue: {
-          findOne: jest.fn(),
+          findByArticle: jest.fn(),
         },
       },
       {
@@ -110,6 +110,12 @@ export const createTestingPoliceModule = async () => {
 
   const policeController = policeModule.get<PoliceController>(PoliceController)
 
+  const logger = policeModule.get<{
+    debug: jest.Mock
+    info: jest.Mock
+    error: jest.Mock
+  }>(LOGGER_PROVIDER)
+
   const caseDefendantPoliceCaseNumberRepositoryService =
     policeModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
       CaseDefendantPoliceCaseNumberRepositoryService,
@@ -118,6 +124,10 @@ export const createTestingPoliceModule = async () => {
   const indictmentCountService = policeModule.get<IndictmentCountService>(
     IndictmentCountService,
   )
+  const indictmentSubtypeRepositoryService =
+    policeModule.get<IndictmentSubtypeRepositoryService>(
+      IndictmentSubtypeRepositoryService,
+    )
   const caseRepositoryService = policeModule.get<CaseRepositoryService>(
     CaseRepositoryService,
   )
@@ -129,8 +139,10 @@ export const createTestingPoliceModule = async () => {
     awsS3Service,
     policeService,
     policeController,
+    logger,
     caseDefendantPoliceCaseNumberRepositoryService,
     indictmentCountService,
+    indictmentSubtypeRepositoryService,
     caseRepositoryService,
   }
 }

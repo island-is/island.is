@@ -35,7 +35,22 @@ export class NotifyService {
     notificationDto: NotificationDto,
     url: string,
   ): Promise<NotificationResponseDto> {
+    const logContext = {
+      applicationId: notificationDto.applicationId,
+      formSlug: notificationDto.slug,
+      isTest: notificationDto.isTest,
+      notificationCommand: notificationDto.command,
+      organizationNationalId: notificationDto.organizationNationalId,
+      url,
+    }
+
     if (!this.xroadBase || !this.xroadClient) {
+      this.logger.error('form system notification configuration missing', {
+        ...logContext,
+        missingXRoadBase: !this.xroadBase,
+        missingXRoadClient: !this.xroadClient,
+        datadogEvent: 'form_system_notification_send_failed',
+      })
       throw new Error(
         `X-Road configuration is missing for NotifyService. Please check environment variables.`,
       )
@@ -47,9 +62,11 @@ export class NotifyService {
       accessToken = loginResponse.accessToken
       audkenni = loginResponse.audkenni
     } catch (error) {
-      this.logger.error(
-        `Error acquiring login tokens for application ${notificationDto.applicationId}: ${error}`,
-      )
+      this.logger.error('form system notification token acquisition failed', {
+        ...logContext,
+        datadogEvent: 'form_system_notification_send_failed',
+        error,
+      })
       return { operationSuccessful: false }
     }
 
@@ -71,22 +88,28 @@ export class NotifyService {
         body: JSON.stringify(notificationRequest),
       })
 
+      const responseData = await response.json()
+
       if (!response.ok) {
-        this.logger.error(
-          `Non-OK response for application ${notificationDto.applicationId}`,
-        )
+        this.logger.error('form system notification request failed', {
+          ...logContext,
+          status: response.status,
+          statusText: response.statusText,
+          responseError: responseData.error,
+          datadogEvent: 'form_system_notification_send_failed',
+        })
       }
 
-      const responseData = await response.json()
       let operationSuccessful = response.ok
 
       if (notificationDto.command === NotificationCommands.SUBMIT) {
         if (response.ok && responseData.success !== true) {
-          this.logger.error(
-            `SUBMIT rejected by external system for application ${
-              notificationDto.applicationId
-            }: ${responseData.error ?? 'no error detail'}`,
-          )
+          this.logger.error('form system notification submit rejected', {
+            ...logContext,
+            responseError: responseData.error ?? 'no error detail',
+            responseSuccess: responseData.success,
+            datadogEvent: 'form_system_notification_send_failed',
+          })
         }
         operationSuccessful = response.ok && responseData.success === true
       }
@@ -96,11 +119,20 @@ export class NotifyService {
         screen: responseData.screen,
         screenError: responseData.screenError,
       }
+      if (operationSuccessful) {
+        this.logger.info('form system notification sent', {
+          ...logContext,
+          status: response.status,
+          datadogEvent: 'form_system_notification_sent',
+        })
+      }
       return externalSystemResponse
     } catch (error) {
-      this.logger.error(
-        `Error sending notification for application ${notificationDto.applicationId}: ${error}`,
-      )
+      this.logger.error('form system notification send failed', {
+        ...logContext,
+        datadogEvent: 'form_system_notification_send_failed',
+        error,
+      })
       return { operationSuccessful: false }
     }
   }

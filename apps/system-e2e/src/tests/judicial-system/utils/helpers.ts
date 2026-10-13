@@ -5,9 +5,12 @@ export const randomPoliceCaseNumber = () => {
   return `007-${new Date().getFullYear()}-${Math.floor(Math.random() * 100000)}`
 }
 
+// The app validates R-/S- case numbers as 1-5 digits and appeal case
+// numbers as 1-4 digits, so these draw from the full allowed space to
+// minimize collisions with cases left behind by previous runs.
 export const randomCourtCaseNumber = (prefix?: string) => {
   return `${prefix ?? 'R'}-${Math.floor(
-    Math.random() * 1000,
+    Math.random() * 100000,
   )}/${new Date().getFullYear()}`
 }
 
@@ -16,7 +19,7 @@ export const randomIndictmentCourtCaseNumber = () => {
 }
 
 export const randomAppealCaseNumber = () => {
-  return `${Math.floor(Math.random() * 1000)}/${new Date().getFullYear()}`
+  return `${Math.floor(Math.random() * 10000)}/${new Date().getFullYear()}`
 }
 
 export const getDaysFromNow = (days = 0) => {
@@ -45,7 +48,6 @@ export const chooseDocument = async (
   await clickButton()
 
   const fileChooser = await fileChooserPromise
-  await page.waitForTimeout(1000)
   await fileChooser.setFiles(createFakePdf(fileName))
 }
 

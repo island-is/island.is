@@ -11,7 +11,7 @@ import { FC } from 'react'
 import { m } from '../../../lib/messages'
 import { RowItemType } from '../OverviewAssets/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { ApplicationDebts, Debt as DebtType } from '../../../types'
 import { format as formatNationalId } from 'kennitala'
 

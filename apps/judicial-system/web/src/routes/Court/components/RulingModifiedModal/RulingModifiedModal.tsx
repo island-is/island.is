@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { RulingModifiedModal as BaseModal } from '@island.is/judicial-system-web/src/components'

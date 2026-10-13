@@ -9,6 +9,7 @@ const schema = z.object({
   xroadPathV2: z.string(),
   xroadPathV4: z.string(),
   xroadPathV5: z.string(),
+  xroadPathV6: z.string(),
 })
 
 export const DrivingLicenseApiConfig = defineConfig<z.infer<typeof schema>>({
@@ -37,6 +38,10 @@ export const DrivingLicenseApiConfig = defineConfig<z.infer<typeof schema>>({
       xroadPathV5: env.required(
         'XROAD_DRIVING_LICENSE_V5_PATH',
         'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5',
+      ),
+      xroadPathV6: env.required(
+        'XROAD_DRIVING_LICENSE_V6_PATH',
+        'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v6',
       ),
     }
   },

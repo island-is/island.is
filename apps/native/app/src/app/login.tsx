@@ -128,7 +128,7 @@ export default function LoginScreen() {
   }
 
   const onNeedHelpPress = () => {
-    const helpDeskUrl = 'https://island.is/flokkur/thjonusta-island-is'
+    const helpDeskUrl = 'https://island.is/adstod'
     openBrowser(helpDeskUrl)
   }
 

@@ -14,6 +14,7 @@ import {
   BlikkGetPaymentResponse,
   CreateBlikkPaymentRequest,
   blikkCreatePaymentResponseSchema,
+  blikkErrorResponseSchema,
   blikkGetPaymentResponseSchema,
 } from './blikkClient.types'
 
@@ -59,14 +60,16 @@ export class BlikkClientService {
   }
 
   /**
-   * `DELETE /ecom/v3/payments/{id}` — cancel a payment. Blikk only honours this while the payment is
-   * in DRAFT; a past-DRAFT payment yields a non-2xx, surfaced as a {@link BlikkClientError} (with the
-   * HTTP `status`) so the caller can decide whether the local state may be discarded.
+   * `POST /ecom/v3/payments/cancel/{id}` — cancel a payment. Blikk only honours this while the
+   * payment is in DRAFT; a past-DRAFT payment yields a non-2xx, surfaced as a {@link BlikkClientError}
+   * (with the HTTP `status`) so the caller can decide whether the local state may be discarded.
+   * The body is required by Blikk; `cancelMessage` is the reason shown on their side.
    */
   async cancelPayment(providerPaymentId: string): Promise<void> {
     await this.request(
-      'DELETE',
-      `/ecom/v3/payments/${encodeURIComponent(providerPaymentId)}`,
+      'POST',
+      `/ecom/v3/payments/cancel/${encodeURIComponent(providerPaymentId)}`,
+      { cancelMessage: 'Cancelled by payer' },
     )
   }
 
@@ -98,11 +101,7 @@ export class BlikkClientService {
     return parsed.data
   }
 
-  private async request(
-    method: 'GET' | 'POST' | 'DELETE',
-    path: string,
-    body?: unknown,
-  ) {
+  private async request(method: 'GET' | 'POST', path: string, body?: unknown) {
     const url = `${this.config.basePath}${path}`
 
     try {
@@ -115,17 +114,29 @@ export class BlikkClientService {
         body: body === undefined ? undefined : JSON.stringify(body),
       })
     } catch (e) {
-      const status = e instanceof FetchError ? e.status : undefined
-      this.logger.error('Blikk request failed', {
-        method,
-        path,
-        status,
-        error: (e as Error)?.message,
-      })
+      // The enhanced fetch has already logged the failure with the full error body; this only
+      // converts to the client's error type. For a non-2xx, Blikk's reason (Problem Details
+      // `detail`) is folded into the message so callers can log it with their own context.
+      const fallbackMessage =
+        (e as Error)?.message ?? `Blikk request failed for ${path}`
+
+      if (!(e instanceof FetchError)) {
+        throw new BlikkClientError(fallbackMessage)
+      }
+
+      const detail = blikkProblemDetail(e.problem ?? e.body)
       throw new BlikkClientError(
-        (e as Error)?.message ?? `Blikk request failed for ${path}`,
-        status,
+        detail
+          ? `Blikk request failed (${e.status}): ${detail}`
+          : fallbackMessage,
+        e.status,
       )
     }
   }
+}
+
+/** Blikk's `detail` when the captured error body is RFC 9457 Problem Details. */
+const blikkProblemDetail = (body: unknown): string | undefined => {
+  const parsed = blikkErrorResponseSchema.safeParse(body)
+  return parsed.success ? parsed.data.detail : undefined
 }

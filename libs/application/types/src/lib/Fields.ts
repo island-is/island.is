@@ -48,7 +48,7 @@ export type TextFieldVariant =
   | 'tel'
   | 'textarea'
   | 'currency'
-type AlertType = 'default' | 'warning' | 'error' | 'info' | 'success'
+export type AlertType = 'default' | 'warning' | 'error' | 'info' | 'success'
 
 export type Context = {
   application: Application
@@ -712,7 +712,7 @@ export interface ExpandableDescriptionField extends BaseField {
 export interface AlertMessageField extends BaseField {
   readonly type: FieldTypes.ALERT_MESSAGE
   component: FieldComponents.ALERT_MESSAGE
-  alertType?: AlertType
+  alertType?: MaybeWithApplicationAndFieldAndLocale<AlertType>
   message?: FormTextWithLocale
   links?: AlertMessageLink[]
   shouldBlockInSetBeforeSubmitCallback?: boolean
@@ -836,9 +836,18 @@ export type TableRepeaterField = BaseField & {
   saveItemButtonText?: StaticText
   getStaticTableData?: (application: Application) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
+  /** Shown on hover when `canRemoveRow` returns false. No tooltip if omitted. */
+  removeButtonDisabledTooltipText?: StaticText
   editButtonTooltipText?: StaticText
   editField?: boolean
   titleVariant?: TitleVariants
+  /** Per row gate for the delete button. Defaults to every row being removable. */
+  canRemoveRow?: (
+    application: Application,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    row: Record<string, any>,
+    index: number,
+  ) => boolean
   fields: Record<string, RepeaterItem>
   onSubmitLoad?(c: TableContext): Promise<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -877,6 +886,10 @@ export type TableRepeaterField = BaseField & {
     >
   }
   initActiveFieldIfEmpty?: boolean
+  /**
+   * If true, hides the table header when there are no visible rows.
+   */
+  hideTableHeaderIfEmpty?: boolean
 }
 
 export type FieldsRepeaterField = BaseField & {
@@ -902,11 +915,20 @@ export type FieldsRepeaterField = BaseField & {
   maxRows?: MaybeWithAnswersAndExternalData<number>
 }
 
+export type AccordionItemTag = {
+  label: FormText
+  variant?: TagVariant
+  outlined?: boolean
+}
+
 export type AccordionItem = {
   itemTitle: FormText
   itemContent?: FormText
   children?: Field[]
   startExpanded?: boolean
+  tag?:
+    | AccordionItemTag
+    | ((application: Application) => AccordionItemTag | undefined)
 }
 export interface AccordionField extends BaseField {
   readonly type: FieldTypes.ACCORDION
@@ -1010,7 +1032,7 @@ export interface StaticTableField extends BaseField {
 
 export type PaginatedSearchableTableRow = Record<
   string,
-  string | number | null | undefined
+  string | number | boolean | null | undefined
 >
 
 export type PaginatedSearchableTableHeader = {
@@ -1039,6 +1061,17 @@ export interface PaginatedSearchableTableField extends BaseField {
   savePropertyNames?: string[]
   pageSize?: number
   callbackId?: string
+  /**
+   * Row property whose truthy value makes that row's editable cells read only.
+   * The row is still listed and searchable, it just cannot be filled in.
+   */
+  disabledKey?: string
+  /**
+   * Text shown in place of the editable cells of a disabled row. Receives the
+   * row so the reason can quote row specific values - return a StaticTextObject
+   * with `values` to interpolate them into the message.
+   */
+  disabledReason?: (row: PaginatedSearchableTableRow) => StaticText
 }
 
 export interface SliderField extends BaseField {
@@ -1101,6 +1134,11 @@ export type KeyValueItem = {
   boldValueText?: boolean
   lineAboveKeyText?: boolean
   hideIfEmpty?: boolean
+  tag?: {
+    label: FormText
+    variant?: TagVariant
+    outlined?: boolean
+  }
 }
 
 export type AttachmentItem = {

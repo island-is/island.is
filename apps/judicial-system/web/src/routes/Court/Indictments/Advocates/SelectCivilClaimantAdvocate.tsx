@@ -1,4 +1,5 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -16,13 +17,13 @@ import {
   InputAdvocate,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseState,
+import type {
   CivilClaimant,
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCivilClaimants } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './Advocates.strings'
 import * as styles from './Advocates.css'
@@ -31,8 +32,10 @@ interface Props {
   civilClaimant: CivilClaimant
 }
 
-interface UpdateCivilClaimant
-  extends Omit<UpdateCivilClaimantInput, 'caseId' | 'civilClaimantId'> {}
+type UpdateCivilClaimant = Omit<
+  UpdateCivilClaimantInput,
+  'caseId' | 'civilClaimantId'
+>
 
 const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
@@ -70,7 +73,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
   }
 
   return (
-    <BlueBox className={grid({ gap: 2 })}>
+    <BlueBox className={stack({ gap: 2 })}>
       <Box display="flex" justifyContent="spaceBetween">
         <Text variant="h4">{civilClaimant.name}</Text>
         {civilClaimant.hasSpokesperson && (

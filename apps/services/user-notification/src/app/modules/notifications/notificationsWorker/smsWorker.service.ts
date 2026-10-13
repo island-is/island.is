@@ -7,7 +7,7 @@ import type { Logger } from '@island.is/logging'
 import { METRICS_PREFIX } from '../utils'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
-import { SmsService } from '@island.is/nova-sms'
+import { SmsService, toGsm7 } from '@island.is/nova-sms'
 
 import {
   NotificationDelivery,
@@ -61,10 +61,13 @@ export class SmsWorkerService {
       this.logger.info('SMS worker received message', { messageId })
 
       const normalizedNumber = normalizePhoneNumber(mobilePhoneNumber)
+      // Nova sends the whole message as UCS-2 if it contains a single non-GSM-7
+      // character, cutting segment capacity from 160 to 70 characters.
+      const gsm7Content = toGsm7(smsContent)
 
       const result = await this.smsService.sendSms(
         normalizedNumber,
-        smsContent,
+        gsm7Content,
         {
           payer: smsPayer,
         },

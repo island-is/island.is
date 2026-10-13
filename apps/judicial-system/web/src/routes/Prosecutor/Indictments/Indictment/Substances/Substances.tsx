@@ -1,15 +1,16 @@
-import { FC, useMemo } from 'react'
+import type { FC } from 'react'
+import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Select } from '@island.is/island-ui/core'
-import {
-  offenseSubstances,
+import type {
   Substance as SubstanceEnum,
   SubstanceMap,
 } from '@island.is/judicial-system/types'
+import { offenseSubstances } from '@island.is/judicial-system/types'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
-import { Offense } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import type { Offense } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 import { Substance } from './Substance'
 import { strings as sStrings } from './Substance.strings'

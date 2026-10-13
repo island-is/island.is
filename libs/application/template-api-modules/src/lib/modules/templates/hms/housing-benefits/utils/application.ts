@@ -504,10 +504,12 @@ export const mapApplicationToHousingBenefitsModel = (
     ) ?? false
 
   return {
+    islandIsApplicationNumber: application.id,
     kennitala: applicantKennitala,
     address: getValueViaPath<string>(answers, 'applicant.address') ?? '',
     municipality: getValueViaPath<string>(answers, 'applicant.city') ?? '',
     postalCode: getValueViaPath<string>(answers, 'applicant.postalCode') ?? '',
+    islandIsDateCreated: new Date(application.created),
     islandIsDateRegistered: new Date(),
 
     phoneNumber: normalizePhoneNumber(

@@ -1,17 +1,17 @@
-import { Dispatch, FC, SetStateAction } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
 import { core } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   ConclusionDraft,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   isDraftingConclusion: boolean | undefined
   setIsDraftingConclusion: Dispatch<SetStateAction<boolean | undefined>>
 }

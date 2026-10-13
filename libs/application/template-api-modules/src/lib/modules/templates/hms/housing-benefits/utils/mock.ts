@@ -1,8 +1,13 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
 import type { NationalRegistryIndividual } from '@island.is/application/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import * as kennitala from 'kennitala'
 
 type Answers = Record<string, unknown> | undefined
+
+/** Form-answer mocks are allowed everywhere except production (including staging). */
+const areHousingBenefitsMocksAllowed = () =>
+  !isRunningOnEnvironment('production')
 
 /** Dev/testing address aligned with rental mock data (húsnæðisbætur assignee flow). */
 export const MOCK_ASSIGNEE_NATIONAL_REGISTRY_ADDRESS = {
@@ -22,6 +27,9 @@ const assigneeDevMockNatRegChecked = (
   answers: Answers,
   nationalId: string | undefined,
 ): boolean => {
+  if (!areHousingBenefitsMocksAllowed()) {
+    return false
+  }
   if (!nationalId?.trim()) {
     return false
   }
@@ -93,6 +101,7 @@ const devMockUseMock = (answers: Answers): boolean =>
 export const isDevOrLegacyMockEnabled = (application: {
   answers?: Record<string, unknown>
 }): boolean => {
+  if (!areHousingBenefitsMocksAllowed()) return false
   const answers = application?.answers
   if (legacyMockEnabled(answers)) return true
   return devMockUseMock(answers)
@@ -102,6 +111,7 @@ export const isDevOrLegacyMockEnabled = (application: {
 export const useMockRentalAgreements = (application: {
   answers?: Record<string, unknown>
 }): boolean => {
+  if (!areHousingBenefitsMocksAllowed()) return false
   const answers = application?.answers
   if (legacyMockEnabled(answers)) return true
   if (!devMockUseMock(answers)) return false
@@ -173,6 +183,7 @@ export const resolveMockPersonalTaxReturn = (
 export const getPersonalTaxMockMode = (application: {
   answers?: Record<string, unknown>
 }): PersonalTaxMockMode => {
+  if (!areHousingBenefitsMocksAllowed()) return 'none'
   const answers = application?.answers
   if (legacyMockEnabled(answers)) return 'sample'
   if (!devMockUseMock(answers)) return 'none'
@@ -196,6 +207,7 @@ export const getAssigneePersonalTaxMockMode = (
   application: { answers?: Record<string, unknown> },
   nationalId: string,
 ): PersonalTaxMockMode => {
+  if (!areHousingBenefitsMocksAllowed()) return 'none'
   const answers = application?.answers
   const prefix = `${nationalId}.assigneeDevMockSettings`
   if (getValueViaPath<string>(answers ?? {}, `${prefix}.useMock`) !== YES) {

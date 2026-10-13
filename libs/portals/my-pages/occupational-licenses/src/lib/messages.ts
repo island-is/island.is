@@ -216,6 +216,14 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:sailor-right-certificates-column-valid-date',
     defaultMessage: 'Gildisdagsetning',
   },
+  sailorRightCertificatesInfoLinkText: {
+    id: 'sp.occupational-licenses:sailor-right-certificates-info-link-text',
+    defaultMessage: 'Nánar um réttindaflokka skírteina',
+  },
+  sailorRightCertificatesInfoLinkUrl: {
+    id: 'sp.occupational-licenses:sailor-right-certificates-info-link-url',
+    defaultMessage: 'https://island.is/nanar-um-rettindaflokka-skirteina',
+  },
   sailorRightCertificatesExpandIssueDate: {
     id: 'sp.occupational-licenses:sailor-right-certificates-expand-issue-date',
     defaultMessage: 'Útgáfudagur',

@@ -35,6 +35,23 @@ describe('IconButton', () => {
     expect(onClick).toHaveBeenCalledTimes(1)
   })
 
+  it('forwards remaining button props to the underlying button', async () => {
+    render(
+      <IconButton
+        icon="ellipsisVertical"
+        colorScheme="transparent"
+        ariaLabel="Valmynd"
+        aria-expanded={true}
+        aria-haspopup="menu"
+      />,
+    )
+
+    const button = await screen.findByRole('button', { name: 'Valmynd' })
+
+    expect(button).toHaveAttribute('aria-expanded', 'true')
+    expect(button).toHaveAttribute('aria-haspopup', 'menu')
+  })
+
   it('still exposes the accessible name when wrapped in a tooltip', async () => {
     render(
       <IconButton

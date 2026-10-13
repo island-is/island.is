@@ -29,6 +29,8 @@ export const is = {
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
   'applock.attempts': 'tilraunir eftir',
   'applock.attempt': 'tilraun eftir',
+  'applock.usePin': 'Nota PIN',
+  'biometrics.cancel': 'Hætta við',
 
   // onboarding
   'onboarding.notifications.title': 'Leyfa tilkynningar',
@@ -102,6 +104,25 @@ export const is = {
     'Tilkynningar í Ísland.is appinu',
   'settings.communication.newNotificationsInAppDescription':
     'Stofnanir geta sent þér tilkynningu í Ísland.is appið.',
+  'settings.communication.notificationsNotEnabledTitle':
+    'Tilkynningar eru ekki virkar í tækinu',
+  'settings.communication.notificationsNotEnabledDescription':
+    'Þú þarft að leyfa tilkynningar í tækinu til að fá þær frá Ísland.is.',
+  'settings.communication.notificationsNotEnabledLinkText':
+    'Leyfa tilkynningar',
+  'settings.communication.notificationsBlockedTitle':
+    'Slökkt er á tilkynningum í tækinu',
+  'settings.communication.notificationsBlockedDescription':
+    'Ísland.is getur ekki sent þér tilkynningar fyrr en þú leyfir þær í stillingum tækisins.',
+  'settings.communication.notificationsBlockedLinkText':
+    'Opna stillingar tækisins',
+  'settings.communication.notificationsBlockedAlertTitle':
+    'Leyfa tilkynningar í tækinu?',
+  'settings.communication.notificationsBlockedAlertDescription':
+    'Slökkt er á tilkynningum frá Ísland.is í stillingum tækisins. Þú þarft að kveikja á þeim þar.',
+  'settings.communication.notificationsBlockedAlertCancelButton': 'Ekki núna',
+  'settings.communication.notificationsBlockedAlertOpenSettingsButton':
+    'Opna stillingar',
   'settings.security.privacyTitle': 'Persónuverndarstefna',
   'settings.security.privacySubTitle': 'Stafrænt Íslands',
   'settings.security.groupTitle': 'Öryggi og persónuvernd',
@@ -350,6 +371,9 @@ export const is = {
   'vehicleDetail.totalWeight': 'Heildarþyngd',
   'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
   'vehicleDetail.odometer': 'Kílómetrastaða',
+  'vehicleDetail.lastOdometer': 'Síðasta kílómetrastaða',
+  'vehicleDetail.moreInfo': 'Fleiri upplýsingar',
+  'vehicleDetail.viewMore': 'Sjá nánar',
   'vehicleDetail.noInfo': 'Engar upplýsingar bárust',
   'vehicleDetail.moreOptions': 'Fleiri valmöguleikar',
 
@@ -775,6 +799,8 @@ export const is = {
   'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
   'health.overview.medicine': 'Lyf',
   'health.overview.seeAllCategories': 'Sjá alla flokka',
+  'health.overview.lastUpdated': 'Grunnupplýsingar síðast uppfærðar: {date}',
+  'health.overview.update': 'Uppfæra',
 
   // health: categories
   'health.categories.screenTitle': 'Heilsuflokkar',
@@ -783,7 +809,8 @@ export const is = {
   'health.categories.referrals': 'Tilvísanir',
   'health.categories.paymentsAndRights': 'Greiðslur og réttindi',
   'health.categories.waitingLists': 'Biðlistar',
-  'health.categories.medicalRecords': 'Sjúkraskrá',
+  'health.categories.treatment': 'Meðferð',
+  'health.categories.treatmentWithName': 'Meðferð - {name}',
 
   // health - questionnaires
   'health.questionnaires.screenTitle': 'Spurningalistar',
@@ -801,14 +828,14 @@ export const is = {
   'health.questionnaires.action.answer': 'Svara lista',
   'health.questionnaires.action.continue-draft': 'Halda áfram',
   'health.questionnaires.action.view-answer': 'Skoða svör',
+  'health.questionnaires.action.answer-again': 'Svara aftur',
   'health.questionnaires.action.show-expired': 'Sýna útrunna',
   'health.questionnaires.action.hide-expired': 'Fela útrunna',
-  'health.questionnaires.detail.description':
-    'Hér má finna svör þín við spurningalistunum. Þú getur borið saman svörin.',
   'health.questionnaires.detail.status': 'Staða',
   'health.questionnaires.detail.institution': 'Stofnun',
   'health.questionnaires.detail.sentBy': 'Sent af',
-  'health.questionnaires.detail.sentDate': 'Sent dags',
+  'health.questionnaires.detail.sentDate': 'Dagsetning',
+  'health.questionnaires.detail.expirationDate': 'Gildir til',
   'health.questionnaires.detail.notFound': 'Spurningalisti fannst ekki',
 
   // health - vaccinations
@@ -858,6 +885,140 @@ export const is = {
     'Tímabókun fannst ekki. Hún kann að hafa verið felld niður.',
   'health.appointments.minutesFormat': '{minutes} mínútur',
   'health.appointments.moreInfo': 'Nánari upplýsingar',
+  'health.appointments.preparation': 'Undirbúningur',
+  'health.appointments.locationDepartment': 'Deild',
+  'health.appointments.locationWing': 'Álma',
+  'health.appointments.locationFloor': 'Hæð',
+  'health.appointments.locationRoom': 'Herbergi',
+  'health.appointments.assigneeTypeRole': 'Hlutverk',
+  'health.appointments.assigneeTypeRoom': 'Stofa',
+  'health.appointments.assigneeTypeEquipment': 'Tæki',
+  'health.appointments.assigneeTypeService': 'Þjónusta',
+  'health.appointments.assigneeTypeTeam': 'Teymi',
+  'health.appointments.assigneeTypeOther': 'Annað',
+  'health.appointments.cancelAppointment': 'Afbóka tíma',
+  'health.appointments.cancelDeadline': 'Hægt að afbóka til {date} kl. {time}',
+  'health.appointments.cancelNotPossible':
+    'Ekki hægt að afbóka rafrænt. Hringdu í þjónustuveitanda til að afbóka eða færa tímann.',
+  'health.appointments.cancelPromptTitle':
+    'Ertu viss um að þú viljir afbóka tímann?',
+  'health.appointments.cancelPromptMessage':
+    'Þú ert að fara afbóka tíma sem þú átt pantaðan.',
+  'health.appointments.cancelPromptConfirm': 'Staðfesta',
+  'health.appointments.cancelPromptCancel': 'Hætta við',
+  'health.appointments.cancelSuccessTitle': 'Tími hefur verið afbókaður',
+  'health.appointments.cancelErrorTitle': 'Ekki tókst að afbóka tímann',
+  'health.appointments.cancelErrorMessage':
+    'Ekki tókst að framkvæma aðgerð, reyndu aftur.',
+  'health.appointments.cancelContactProvider':
+    'Ekki tókst að afbóka tíma, vinsamlegast hringdu í þjónustuveitanda.',
+  'health.appointments.cancelUnconfirmed':
+    'Ekki tókst að staðfesta afbókun, reyndu aftur.',
+
+  // health - messages
+  'health.messages.screenTitle': 'Skilaboð',
+  'health.messages.errorMessage':
+    'Ekki tókst að sækja skilaboð. Vinsamlegast reyndu aftur síðar.',
+  'health.messages.notFoundMessage':
+    'Skilaboðin fundust ekki. Þau kunna að hafa verið fjarlægð.',
+  'health.messages.noMessagesTitle': 'Engin skilaboð',
+  'health.messages.noMessagesText': 'Þegar þú færð skilaboð birtast þau hér.',
+  'health.messages.searchPlaceholder': 'Leita',
+  'health.messages.filter.screenTitle': 'Sía skilaboð',
+  'health.messages.replyButton': 'Svara skilaboðum',
+  'health.messages.archiveSuccess': 'Skilaboð sett í geymslu',
+  'health.messages.unarchiveSuccess': 'Skilaboð tekin úr geymslu',
+  'health.messages.archiveError': 'Ekki tókst að setja skilaboð í geymslu',
+  'health.messages.unarchiveError': 'Ekki tókst að taka skilaboð úr geymslu',
+  'health.messages.starSuccess': 'Skilaboð stjörnumerkt',
+  'health.messages.unstarSuccess': 'Stjörnumerking fjarlægð',
+  'health.messages.starError': 'Ekki tókst að stjörnumerkja skilaboð',
+  'health.messages.unstarError': 'Ekki tókst að fjarlægja stjörnumerkingu',
+  'health.messages.videoCall': 'Myndsímtal',
+  'health.messages.videoCallCanceled': 'Afboðað',
+  'health.messages.videoCallExpired': 'Tími liðinn',
+  'health.messages.startVideoCall': 'Hefja myndsímtal',
+  'health.messages.replyBlocked.default':
+    'Ekki er hægt að svara þessum skilaboðum.',
+  'health.messages.replyBlocked.repliesDisabled':
+    'Ekki er hægt að svara þessum skilaboðum þar sem sendandi hefur lokað fyrir frekari svör í þessu samtali.',
+  'health.messages.replyBlocked.outsideWindow':
+    'Ekki er hægt að svara skilaboðum utan opnunartíma.',
+  'health.messages.replyBlocked.windowExpired':
+    'Ekki er hægt að svara þessum skilaboðum þar sem svarfrestur er liðinn.',
+  'health.messages.replyBlocked.windowExpiredDay':
+    'Ekki er hægt að svara skilaboðum sem eru eldri en {days} dagur.',
+  'health.messages.replyBlocked.windowExpiredDays':
+    'Ekki er hægt að svara skilaboðum sem eru eldri en {days} dagar.',
+  'health.messages.replyBlocked.awaitingStaff':
+    'Ekki er hægt að svara þessum skilaboðum fyrr en starfsfólk hefur svarað þér.',
+  'health.messages.replyBlocked.awaitingAcknowledgement':
+    'Ekki er hægt að svara fyrr en fyrri skilaboð hafa borist móttakanda.',
+  'health.messages.compose.introTitle': 'Hafa samband',
+  'health.messages.compose.introBody1':
+    'Hér er hægt að senda skilaboð og þeim er yfirleitt svarað innan þriggja virkra daga, á dagvinnutíma.',
+  'health.messages.compose.introBody2':
+    'Ef erindið er brýnt og þarfnast svars samdægurs hringdu í <b>1700</b> eða hafðu samband við þitt meðferðarteymi.',
+  'health.messages.compose.introBody3':
+    'Í neyðartilvikum, hringdu í <b>112.</b>',
+  'health.messages.compose.continue': 'Halda áfram',
+  'health.messages.compose.newTitle': 'Ný skilaboð',
+  'health.messages.compose.selectRecipient': 'Veldu viðtakanda',
+  'health.messages.compose.selectService': 'Veldu þjónustu',
+  'health.messages.compose.selectServicePlaceholder':
+    'Veldu þjónustu úr fellilistanum',
+  'health.messages.compose.to': 'Til: {name}',
+  'health.messages.compose.subjectLabel': 'Efni',
+  'health.messages.compose.subjectPlaceholder': 'Sláðu inn efni skilaboðanna',
+  'health.messages.compose.messageLabel': 'Skilaboð',
+  'health.messages.compose.messagePlaceholder': 'Skrifaðu skilaboð hér',
+  'health.messages.compose.termsAccept':
+    'Ég samþykki að skilaboðin vistist í sjúkraskrá og að viðeigandi heilbrigðisstarfsmaður með aðgang að henni svari erindinu.',
+  'health.messages.compose.closedTitle': 'Lokað fyrir ný skilaboð núna',
+  'health.messages.compose.closedNowText':
+    'Ekki er hægt að senda ný skilaboð eins og er.',
+  'health.messages.compose.closedNextOpensText':
+    'Næst er hægt að senda skilaboð {hasTime, select, false {} other {frá kl. {time} }}{when, select, today {í dag} tomorrow {á morgun} other {{date}}}.',
+  'health.messages.compose.openingHoursTitle': 'Móttökutími skilaboða:',
+  'health.messages.compose.openingHoursWeekdays': 'Virkir dagar',
+  'health.messages.compose.openingHoursWeekends': 'Helgar',
+  'health.messages.compose.openingHoursHolidays': 'Lögbundnir frídagar',
+  'health.messages.compose.openingHoursClosed': 'Lokað',
+  'health.messages.compose.openingHoursAllDay': 'Allan sólarhringinn',
+  'health.messages.compose.notAllowedTitle': 'Ekki hægt að senda skilaboð',
+  'health.messages.compose.notAllowedText':
+    'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
+  'health.messages.compose.soleBlockedTitle':
+    'Heilsugæslan þín er ekki með opið fyrir skilaboð',
+  'health.messages.compose.soleBlockedText':
+    '{name} býður ekki upp á skilaboðaþjónustu í gegnum Ísland.is',
+  'health.messages.compose.closingSoonTitle':
+    'Athugið: það lokar bráðlega fyrir skilaboð',
+  'health.messages.compose.closingSoonText':
+    'Sendu skilaboðin þín áður en lokað er kl. {closeTime}.',
+  'health.messages.compose.send': 'Senda skilaboð',
+  'health.messages.compose.sendError':
+    'Ekki tókst að senda skilaboð. Vinsamlegast reyndu aftur síðar.',
+  'health.messages.compose.noRecipient': 'Ekki hægt að senda skilaboð',
+  'health.messages.compose.noRecipientText':
+    'Engin heilsugæsla sem skráð er á þig býður upp á skilaboðaþjónustu í gegnum Ísland.is.',
+  'health.messages.compose.certificateTitle':
+    'Ekki hægt að sækja um vottorð í gegnum appið',
+  'health.messages.compose.certificateText':
+    'Eins og er er ekki hægt að sækja um vottorð í gegnum Ísland.is appið. Vinsamlegast sækið um vottorð í gegnum Mínar síður Ísland.is.',
+  'health.messages.compose.certificateLink': 'Sækja um vottorð',
+  'health.messages.compose.externalLink': 'Opna netspjall',
+  'health.messages.certificatePayment.title': 'Vottorð tilbúið til greiðslu',
+  'health.messages.certificatePayment.text':
+    'Vottorðið kostar {amount} og er ógreitt. Greiddu fyrir vottorðið á Mínum síðum Ísland.is.',
+  'health.messages.certificatePayment.textNoAmount':
+    'Vottorðið er ógreitt. Greiddu fyrir vottorðið á Mínum síðum Ísland.is.',
+  'health.messages.certificatePayment.link': 'Greiða á Mínum síðum',
+  'health.messages.attachmentError':
+    'Ekki tókst að sækja skjalið. Vinsamlegast reyndu aftur síðar.',
+  'health.messages.sentTitle': 'Skilaboð móttekin',
+  'health.messages.sentText':
+    'Við svörum á dagvinnutíma, yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
 
   // health - organ donation
   'health.organDonation': 'Líffæragjöf',
@@ -889,6 +1050,7 @@ export const is = {
   'health.medicineDelegation.captionPickupAndLookup':
     'Sækja lyf í apóteki og fletta upp lyfjaávísunum.',
   'health.medicineDelegation.listValidTo': 'Gildir til {date}',
+  'health.medicineDelegation.listValidFrom': 'Gildir frá {date}',
   'health.medicineDelegation.showExpiredPermits': 'Sýna óvirkar',
   'health.medicineDelegation.hideExpiredPermits': 'Fela óvirkar',
   'health.medicineDelegation.noActiveTitle': 'Engar virkar heimildir',
@@ -902,6 +1064,7 @@ export const is = {
   'health.medicineDelegation.detail.status': 'Staða',
   'health.medicineDelegation.detail.statusActive': 'Í gildi',
   'health.medicineDelegation.detail.statusExpired': 'Útrunnið',
+  'health.medicineDelegation.detail.statusAwaitingApproval': 'Bíður gildistöku',
   'health.medicineDelegation.detail.validity': 'Gildistími',
   'health.medicineDelegation.detail.validFor': 'Gildir fyrir',
   'health.medicineDelegation.detail.validForValue':
@@ -963,14 +1126,65 @@ export const is = {
 
   'health.prescriptions.title': 'Lyfjaávísanir',
   'health.prescriptions.description':
-    'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.',
+    'Hér finnur þú yfirlit yfir þínar lyfjaávísanir. Þú getur sótt um lyfjaendurnýjun þegar á við. Athugið að breytingar hafa orðið á tilkynningum vegna lyfjaendurnýjana. Þú getur stillt hvernig þú vilt fá tilkynningar undir <link>Stillingar</link>.',
   'health.prescriptions.drug': 'Lyf',
   'health.prescriptions.strength': 'Styrkur',
   'health.prescriptions.indication': 'Notað við',
   'health.prescriptions.type': 'Tegund',
   'health.prescriptions.form': 'Form',
   'health.prescriptions.quantity': 'Ávísað magn',
-  'health.prescriptions.dosageInstructions': 'Notkunarleiðbeiningar',
+  'health.prescriptions.dosageInstructions': 'Notkun',
+  'health.prescriptions.attachment': 'Fylgiskjal {arg}',
+  'health.prescriptions.openAttachment': 'Opna fylgiskjal {arg}',
+  'health.prescriptions.attachmentError': 'Villa kom upp við að sækja skjal',
+  'health.prescriptions.renewal': 'Endurnýjun',
+  'health.prescriptions.renew': 'Endurnýja',
+  'health.prescriptions.renewalPossible': 'Hægt að endurnýja',
+  'health.prescriptions.renewalValid': 'Gild lyfjaávísun',
+  'health.prescriptions.renewalNotAvailable': 'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalStatusApproved': 'Endurnýjun samþykkt',
+  'health.prescriptions.renewalStatusPending': 'Endurnýjun í vinnslu',
+  'health.prescriptions.renewalStatusRejected': 'Endurnýjun hafnað',
+  'health.prescriptions.renewalStatusDismissed': 'Endurnýjun vísað frá',
+  'health.prescriptions.renewalStatusUnknown': 'Staða endurnýjunar óþekkt',
+  'health.prescriptions.renewalBlockedIsRegiment':
+    'Ekki er hægt að endurnýja lyfjakúr',
+  'health.prescriptions.renewalBlockedNoMedCard': 'Ekkert lyfjakort skráð',
+  'health.prescriptions.renewalBlockedNoHealthClinic':
+    'Engin heilsugæslustöð skráð',
+  'health.prescriptions.renewalBlockedNotFullyDispensed': 'Ekki öll lyf sótt',
+  'health.prescriptions.renewalBlockedPendingRequest':
+    'Beiðni um endurnýjun í vinnslu',
+  'health.prescriptions.renewalBlockedRejectedRequest':
+    'Beiðni um endurnýjun hafnað',
+  'health.prescriptions.renewalBlockedDismissedRequest':
+    'Beiðni um endurnýjun vísað frá',
+  'health.prescriptions.renewalBlockedAlreadyRequested':
+    'Endurnýjun þegar í vinnslu',
+  'health.prescriptions.renewalBlockedMoreRecentExists':
+    'Endurnýjun ekki í boði vegna þess að nýrri lyfseðill er til staðar',
+  'health.prescriptions.renewalBlockedSpecialistOnly': 'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalBlockedNoRenewalTargets':
+    'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalBlockedInvalidRenewalTarget':
+    'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalBlockedRecipientExcludesAtc':
+    'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalBlockedOther': 'Óþekkt ástæða',
+  'health.prescriptions.renewalModal.title': 'Beiðni um endurnýjun á lyfi',
+  'health.prescriptions.renewalModal.description':
+    'Lyfjaendurnýjun verður unnin eins fljótt og auðið er. Ekki er víst að hún verði afgreidd samdægurs. Ef um neyðartilfelli er að ræða hafið samband við 112. Þú getur stillt hvernig þú vilt fá tilkynningar undir <link>Stillingar</link>.',
+  'health.prescriptions.renewalModal.selectRecipient': 'Sendist til',
+  'health.prescriptions.renewalModal.medicineName': 'Heiti lyfs',
+  'health.prescriptions.renewalModal.usedFor': 'Notað við',
+  'health.prescriptions.renewalModal.cancel': 'Hætta við',
+  'health.prescriptions.renewalModal.noTargets':
+    'Ekki tókst að finna stofnun til að senda endurnýjunarbeiðni til. Vinsamlegast hafið samband við heilsugæslu.',
+  'health.prescriptions.renewalModal.success':
+    'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',
+  'health.prescriptions.renewalModal.error':
+    'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
+  'health.prescriptions.renewalModal.dismissedTitle': 'Athugið',
   'health.prescriptions.issueDate': 'Útgáfudagur',
   'health.prescriptions.expiresAt': 'Gildir til',
   'health.prescriptions.doctor': 'Læknir',

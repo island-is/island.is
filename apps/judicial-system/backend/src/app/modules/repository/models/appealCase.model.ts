@@ -15,10 +15,12 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { AppealEventLog } from './appealEventLog.model'
+import { AppealSummons } from './appealSummons.model'
 import { Case } from './case.model'
 import { CaseFile } from './caseFile.model'
 import { User } from './user.model'
@@ -76,6 +78,20 @@ export class AppealCase extends Model {
   @BelongsTo(() => CaseFile, 'rulingFileId')
   @ApiPropertyOptional({ type: () => CaseFile })
   rulingFile?: CaseFile
+
+  /**********
+   * Which decision this appeal challenges: a ruling appeal or a verdict appeal.
+   * Set once, when the appeal is created. The Case model's `appealCase` association
+   * scope filters on it, so a verdict appeal never reaches the lists and views built
+   * for ruling appeals.
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(AppealCaseType),
+  })
+  @ApiProperty({ enum: AppealCaseType })
+  appealType!: AppealCaseType
 
   /**********
    * The case appeal state
@@ -246,4 +262,11 @@ export class AppealCase extends Model {
   @HasMany(() => AppealEventLog, 'appealCaseId')
   @ApiPropertyOptional({ type: () => AppealEventLog, isArray: true })
   appealEventLogs?: AppealEventLog[]
+
+  /**********
+   * Appeal summonses (áfrýjunarstefna) issued for this verdict appeal
+   **********/
+  @HasMany(() => AppealSummons, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealSummons, isArray: true })
+  appealSummonses?: AppealSummons[]
 }

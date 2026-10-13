@@ -123,7 +123,7 @@ export default function VaccinationsScreen() {
         )}
         {vaccinationsRes.error && !vaccinationsRes.data && (
           <ErrorWrapper>
-            <Problem />
+            <Problem error={vaccinationsRes.error} />
           </ErrorWrapper>
         )}
       </Host>

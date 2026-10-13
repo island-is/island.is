@@ -4,16 +4,23 @@ import { v4 as uuid } from 'uuid'
 import { BadRequestException, NotFoundException } from '@nestjs/common'
 
 import {
+  AppealCaseState,
   AppealDecisionPartyRole,
+  AppealEventType,
+  AppealOrigin,
   CaseAppealDecision,
   CourtSessionRulingType,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
+import { runInRequestContext } from '../../../../test'
 import {
   AppealDecision,
   AppealDecisionRepositoryService,
+  AppealEventLog,
+  AppealEventLogRepositoryService,
   Case,
   CourtSession,
 } from '../../../repository'
@@ -50,44 +57,73 @@ describe('CourtSessionController - Upsert appeal decision', () => {
     rulingFileId,
   } as CourtSession
 
+  const appealCaseId = uuid()
+
+  // The same case, but its ruling has produced an appeal case in the given state.
+  const caseWithAppeal = (appealState: AppealCaseState) =>
+    ({
+      ...theCase,
+      rulingOrderAppealCases: [{ id: appealCaseId, rulingFileId, appealState }],
+    } as unknown as Case)
+
+  const appealedEvent = (appealOrigin: AppealOrigin) =>
+    ({
+      appealCaseId,
+      eventType: AppealEventType.APPEALED,
+      appealOrigin,
+      userRole: UserRole.PROSECUTOR,
+    } as AppealEventLog)
+
   let transaction: Transaction
   let mockAppealDecisionRepositoryService: AppealDecisionRepositoryService
+  let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       sequelize,
       appealDecisionRepositoryService,
+      appealEventLogRepositoryService,
       courtSessionController,
     } = await createTestingCourtSessionModule()
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     mockAppealDecisionRepositoryService = appealDecisionRepositoryService
+    mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     const mockUpsert = mockAppealDecisionRepositoryService.upsert as jest.Mock
     mockUpsert.mockImplementation((party) =>
       Promise.resolve({ id: uuid(), ...party } as AppealDecision),
     )
-    // Default: no stored decision (a fresh row), so recording a decision clears
-    // any withdrawal. Tests that assert the no-clear guard override this.
-    const mockFindAll = mockAppealDecisionRepositoryService.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
+    // Default: no recorded decisions, and no stored decision for the party (a
+    // fresh row), so recording a decision clears any withdrawal. Tests that
+    // assert the no-clear guard override this.
+    ;(
+      mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+    ).mockResolvedValue([])
+    ;(
+      mockAppealDecisionRepositoryService.findByParty as jest.Mock
+    ).mockResolvedValue(null)
 
     givenWhenThen = async (theCase, courtSession, update) => {
       const then = {} as Then
 
       try {
-        then.result = await courtSessionController.upsertAppealDecision(
-          caseId,
-          courtSession.id,
-          update,
-          theCase,
-          courtSession,
-        )
+        // The routes are guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open by the time the handler runs. Guards do
+        // not execute in controller unit tests, so the request context is set
+        // up here instead.
+        await runInRequestContext(async () => {
+          then.result = await courtSessionController.upsertAppealDecision(
+            caseId,
+            courtSession.id,
+            update,
+            theCase,
+            courtSession,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -192,14 +228,29 @@ describe('CourtSessionController - Upsert appeal decision', () => {
   describe('re-recording the same decision', () => {
     beforeEach(async () => {
       ;(
-        mockAppealDecisionRepositoryService.findAll as jest.Mock
-      ).mockResolvedValue([
-        { decision: CaseAppealDecision.APPEAL } as AppealDecision,
-      ])
+        mockAppealDecisionRepositoryService.findByParty as jest.Mock
+      ).mockResolvedValue({
+        decision: CaseAppealDecision.APPEAL,
+      } as AppealDecision)
       await givenWhenThen(theCase, orderSession, {
         partyRole: AppealDecisionPartyRole.PROSECUTOR,
         decision: CaseAppealDecision.APPEAL,
       })
+    })
+
+    it('should read the stored decision of that party on the session ruling file', () => {
+      expect(
+        mockAppealDecisionRepositoryService.findByParty,
+      ).toHaveBeenCalledWith(
+        {
+          caseId,
+          rulingFileId,
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          defendantId: undefined,
+          civilClaimantId: undefined,
+        },
+        { transaction },
+      )
     })
 
     it('should not clear the withdrawal date', () => {
@@ -214,10 +265,10 @@ describe('CourtSessionController - Upsert appeal decision', () => {
   describe('changing the decision', () => {
     beforeEach(async () => {
       ;(
-        mockAppealDecisionRepositoryService.findAll as jest.Mock
-      ).mockResolvedValue([
-        { decision: CaseAppealDecision.APPEAL } as AppealDecision,
-      ])
+        mockAppealDecisionRepositoryService.findByParty as jest.Mock
+      ).mockResolvedValue({
+        decision: CaseAppealDecision.APPEAL,
+      } as AppealDecision)
       await givenWhenThen(theCase, orderSession, {
         partyRole: AppealDecisionPartyRole.PROSECUTOR,
         decision: CaseAppealDecision.ACCEPT,
@@ -333,6 +384,135 @@ describe('CourtSessionController - Upsert appeal decision', () => {
     it('should throw NotFoundException', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
       expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
+    })
+  })
+  // Correcting the court record re-opens the session, so the decisions are only
+  // protected from here on by the appeal's own state. See appealCorrectionLock.
+  describe('ruling appealed in court and still at the district court', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      ;(
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
+      ).mockResolvedValue([appealedEvent(AppealOrigin.IN_COURT)])
+
+      then = await givenWhenThen(
+        caseWithAppeal(AppealCaseState.APPEALED),
+        orderSession,
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      )
+    })
+
+    it('should upsert - the court record still governs this appeal', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealDecisionRepositoryService.upsert).toHaveBeenCalled()
+    })
+
+    it("should read the ruling appeal's APPEALED events in the transaction", () => {
+      expect(
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase,
+      ).toHaveBeenCalledWith(appealCaseId, { transaction })
+    })
+  })
+
+  describe('ruling appealed out of court', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      ;(
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
+      ).mockResolvedValue([appealedEvent(AppealOrigin.OUT_OF_COURT)])
+
+      then = await givenWhenThen(
+        caseWithAppeal(AppealCaseState.APPEALED),
+        orderSession,
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      )
+    })
+
+    it('should throw BadRequestException and not upsert', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('appeal progressed past the district court', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      ;(
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
+      ).mockResolvedValue([appealedEvent(AppealOrigin.IN_COURT)])
+
+      then = await givenWhenThen(
+        caseWithAppeal(AppealCaseState.RECEIVED),
+        orderSession,
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      )
+    })
+
+    it('should throw BadRequestException and not upsert', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
+    })
+  })
+
+  // The lock covers the whole ruling, not just the party that appealed: the
+  // decisions are read together as the record of one appeal proceeding.
+  describe('a party other than the out-of-court appellant', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      ;(
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
+      ).mockResolvedValue([appealedEvent(AppealOrigin.OUT_OF_COURT)])
+
+      then = await givenWhenThen(
+        caseWithAppeal(AppealCaseState.APPEALED),
+        orderSession,
+        {
+          partyRole: AppealDecisionPartyRole.CIVIL_CLAIMANT,
+          civilClaimantId,
+          announcement: 'Leiðrétt yfirlýsing',
+        },
+      )
+    })
+
+    it('should throw BadRequestException and not upsert', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('ruling with no appeal at all', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(theCase, orderSession, {
+        partyRole: AppealDecisionPartyRole.PROSECUTOR,
+        decision: CaseAppealDecision.APPEAL,
+      })
+    })
+
+    it('should upsert without looking up any appeal events', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealDecisionRepositoryService.upsert).toHaveBeenCalled()
+      expect(
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase,
+      ).not.toHaveBeenCalled()
+      expect(
+        mockAppealEventLogRepositoryService.findAllForAppealCase,
+      ).not.toHaveBeenCalled()
     })
   })
 })

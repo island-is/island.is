@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid'
 
 import { createTestingVictimModule } from './createTestingVictimModule'
 
-import { Case, Victim } from '../../repository'
+import { Case, Victim, VictimRepositoryService } from '../../repository'
 
 interface Then {
   result: Victim
@@ -20,15 +20,16 @@ describe('VictimController - Create', () => {
   const victimId = uuid()
   const createdVictim = { id: victimId, caseId }
 
-  let mockVictimModel: typeof Victim
+  let mockVictimRepositoryService: VictimRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { victimController, victimModel } = await createTestingVictimModule()
+    const { victimController, victimRepositoryService } =
+      await createTestingVictimModule()
 
-    mockVictimModel = victimModel
+    mockVictimRepositoryService = victimRepositoryService
 
-    const mockCreate = mockVictimModel.create as jest.Mock
+    const mockCreate = mockVictimRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(createdVictim)
 
     givenWhenThen = async () => {
@@ -51,10 +52,10 @@ describe('VictimController - Create', () => {
     })
 
     it('should create a victim', () => {
-      expect(mockVictimModel.create).toHaveBeenCalledWith({
-        ...victimToCreate,
+      expect(mockVictimRepositoryService.create).toHaveBeenCalledWith(
         caseId,
-      })
+        victimToCreate,
+      )
     })
 
     it('should return victim', () => {
@@ -66,7 +67,7 @@ describe('VictimController - Create', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockVictimModel.create as jest.Mock
+      const mockCreate = mockVictimRepositoryService.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen()

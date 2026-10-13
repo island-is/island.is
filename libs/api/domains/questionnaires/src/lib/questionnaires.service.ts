@@ -43,6 +43,23 @@ import {
 import { NAMESPACE } from './utils/constants'
 import { m } from './utils/messages'
 
+// Expired last, otherwise newest first
+const sortQuestionnaires = (
+  questionnaires: QuestionnairesList['questionnaires'],
+) =>
+  [...(questionnaires ?? [])].sort((a, b) => {
+    const aIsExpired = a.status === QuestionnairesStatusEnum.expired
+    const bIsExpired = b.status === QuestionnairesStatusEnum.expired
+
+    if (aIsExpired && !bIsExpired) return 1
+    if (!aIsExpired && bIsExpired) return -1
+
+    const dateA = Date.parse(a.sentDate) || 0
+    const dateB = Date.parse(b.sentDate) || 0
+
+    return dateB - dateA
+  })
+
 @Injectable()
 export class QuestionnairesService {
   constructor(
@@ -94,21 +111,34 @@ export class QuestionnairesService {
     }
 
     return {
-      questionnaires: [elQuestionnaires, lshQuestionnaires]
-        .flatMap((list) => list.questionnaires)
-        .filter((q) => q !== undefined)
-        .sort((a, b) => {
-          const aIsExpired = a.status === QuestionnairesStatusEnum.expired
-          const bIsExpired = b.status === QuestionnairesStatusEnum.expired
+      questionnaires: sortQuestionnaires(
+        [elQuestionnaires, lshQuestionnaires]
+          .flatMap((list) => list.questionnaires)
+          .filter((q) => q !== undefined),
+      ),
+    }
+  }
 
-          if (aIsExpired && !bIsExpired) return 1
-          if (!aIsExpired && bIsExpired) return -1
+  async getTreatmentQuestionnaires(
+    user: User,
+    locale: Locale,
+    treatmentId: string,
+  ): Promise<QuestionnairesList | null> {
+    const { useEl } = await this.getQuestionnaireFeatureFlags(user)
+    if (!useEl) {
+      return null
+    }
 
-          const dateA = Date.parse(a.sentDate) || 0
-          const dateB = Date.parse(b.sentDate) || 0
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE],
+      locale,
+    )
+    const data = await this.api.getTreatmentQuestionnaires(user, treatmentId)
 
-          return dateB - dateA
-        }),
+    return {
+      questionnaires: sortQuestionnaires(
+        (data ?? []).map((q) => mapElQuestionnaireListItem(q, formatMessage)),
+      ),
     }
   }
 
@@ -312,6 +342,7 @@ export class QuestionnairesService {
 
       const submission = {
         id: questionnaireId,
+        submissionId,
         title: ELdata.title ?? formatMessage(m.questionnaireWithoutTitle),
         isDraft: ELdata.submission.isDraft ?? false,
         description: ELdata.message ?? undefined,
@@ -382,6 +413,8 @@ export class QuestionnairesService {
 
     const data = {
       id: LSHdata.gUID,
+      submissionId: LSHdata.gUID,
+      isDraft: false,
       title:
         LSHquestionnaire?.header ?? formatMessage(m.questionnaireWithoutTitle),
       description: LSHquestionnaire?.description ?? undefined,
@@ -480,7 +513,7 @@ export class QuestionnairesService {
         row
           .map((cell) =>
             'answer' in cell
-              ? String(cell.answer)
+              ? this.formatCellAnswer(cell.answer, formatMessage)
               : cell.values.map((v) => v.answer).join(', '),
           )
           .join(' | '),
@@ -498,6 +531,25 @@ export class QuestionnairesService {
       this.logger.warn('Unhandled reply type')
       return []
     }
+  }
+
+  // `unknown` is deliberate: the generated EL types declare table cell
+  // answers as anyOf without a discriminator (e.g. `Date | unknown`),
+  // so this function is the runtime narrowing boundary
+  private formatCellAnswer(
+    answer: unknown,
+    formatMessage: FormatMessage,
+  ): string {
+    if (answer === null || answer === undefined) return ''
+    if (answer === true) return formatMessage(m.yes)
+    if (answer === false) return formatMessage(m.no)
+
+    const value =
+      answer instanceof Date
+        ? answer.toISOString().split('T')[0]
+        : String(answer)
+    const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+    return dateMatch ? `${dateMatch[3]}.${dateMatch[2]}.${dateMatch[1]}` : value
   }
 
   private formatDate(date?: Date | string | null): string | undefined {

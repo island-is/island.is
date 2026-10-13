@@ -1,4 +1,5 @@
-import { Dispatch, FC, SetStateAction, useContext } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, RadioButton, Tooltip } from '@island.is/island-ui/core'
@@ -8,21 +9,26 @@ import {
   isProsecutionUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
-  Case,
+  BlueBox,
+  InputAdvocate,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
+import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import {
   RequestSharedWithDefender,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { UpdateCase, useCase } from '../../utils/hooks'
-import RadioGroup from '../RadioGroup/RadioGroup'
-import { UserContext } from '../UserProvider/UserProvider'
-import { BlueBox, InputAdvocate, SectionHeading } from '..'
 import { defenderInfo } from './DefenderInfo.strings'
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
 }
 
 const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {

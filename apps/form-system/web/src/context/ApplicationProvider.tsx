@@ -22,11 +22,15 @@ import { fieldReducer } from '../reducers/fieldReducer'
 interface ApplicationContextProvider {
   state: ApplicationState
   dispatch: Dispatch<Action>
+  validateEligibility: boolean
+  enableApplicationPdfDownload: boolean
 }
 
 export const ApplicationContext = createContext<ApplicationContextProvider>({
   state: initialState,
   dispatch: () => undefined,
+  validateEligibility: false,
+  enableApplicationPdfDownload: false,
 })
 
 export const useApplicationContext = () => useContext(ApplicationContext)
@@ -38,7 +42,9 @@ const reducers = (state: ApplicationState, action: Action) => {
 
 export const ApplicationProvider: React.FC<{
   application: FormSystemApplication
-}> = ({ application }) => {
+  validateEligibility: boolean
+  enableApplicationPdfDownload: boolean
+}> = ({ application, validateEligibility, enableApplicationPdfDownload }) => {
   useNamespaces('form.system')
   const app = useMemo(() => application, [application])
   const [state, dispatch] = useReducer(
@@ -51,7 +57,15 @@ export const ApplicationProvider: React.FC<{
     initialReducer,
   )
   const methods = useForm({ mode: 'onChange', shouldUnregister: true })
-  const contextValue = useMemo(() => ({ state, dispatch }), [state])
+  const contextValue = useMemo(
+    () => ({
+      state,
+      dispatch,
+      validateEligibility,
+      enableApplicationPdfDownload,
+    }),
+    [state, validateEligibility, enableApplicationPdfDownload],
+  )
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {

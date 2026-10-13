@@ -1,20 +1,19 @@
-import { Dispatch, FC, SetStateAction } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { ruling as m } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   Decision,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { useCase } from '../../utils/hooks'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
 }
 
 const ConclusionDraft: FC<Props> = ({ workingCase, setWorkingCase }) => {

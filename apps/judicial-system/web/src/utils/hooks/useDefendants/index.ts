@@ -1,14 +1,16 @@
-import { Dispatch, SetStateAction, useCallback } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
-import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import {
-  Case,
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type {
   CreateDefendantInput,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateDefendantMutation } from './createDefendant.generated'
 import { useDeleteDefendantMutation } from './deleteDefendant.generated'
 import { useLimitedAccessUpdateDefendantMutation } from './limitedAccessUpdateDefendant.generated'
@@ -22,42 +24,64 @@ const useDefendants = () => {
 
   const [deleteDefendantMutation] = useDeleteDefendantMutation()
 
+  // Defendant updates can move the case between case tables, so active
+  // case table membership queries - the breadcrumbs - must be refetched.
   const [updateDefendantMutation, { loading: isUpdatingDefendant }] =
-    useUpdateDefendantMutation()
+    useUpdateDefendantMutation({ refetchQueries: ['CaseTableMembership'] })
 
   const [limitedAccessUpdateDefendantMutation] =
-    useLimitedAccessUpdateDefendantMutation()
+    useLimitedAccessUpdateDefendantMutation({
+      refetchQueries: ['CaseTableMembership'],
+    })
 
+  // Resolves to the new defendant's id, or undefined when the defendant was
+  // not created. Every failure is reported here, so callers only need to
+  // check the result before adding the defendant to the working case.
   const createDefendant = useCallback(
-    async (defendant: CreateDefendantInput) => {
-      try {
-        if (!isCreatingDefendant) {
-          const { data } = await createDefendantMutation({
-            variables: {
-              input: defendant,
-            },
-          })
+    async (defendant: CreateDefendantInput): Promise<string | undefined> => {
+      if (isCreatingDefendant) {
+        return undefined
+      }
 
-          if (data) {
-            return data.createDefendant?.id
-          }
+      try {
+        const { data } = await createDefendantMutation({
+          variables: {
+            input: normalizeBlankStrings(defendant),
+          },
+        })
+
+        const defendantId = data?.createDefendant?.id
+
+        if (!defendantId) {
+          throw new Error('No defendant id returned')
         }
-      } catch (error) {
+
+        return defendantId
+      } catch {
         toast.error(formatMessage(errors.createDefendant))
+
+        return undefined
       }
     },
     [createDefendantMutation, formatMessage, isCreatingDefendant],
   )
 
+  // Resolves to whether the defendant was deleted. The server can answer
+  // without deleting, so that case is reported the same way as a failed
+  // request and callers only need to check the result.
   const deleteDefendant = useCallback(
-    async (caseId: string, defendantId: string) => {
+    async (caseId: string, defendantId: string): Promise<boolean> => {
       try {
         const { data } = await deleteDefendantMutation({
           variables: { input: { caseId, defendantId } },
         })
 
-        return Boolean(data?.deleteDefendant?.deleted)
-      } catch (error) {
+        if (!data?.deleteDefendant?.deleted) {
+          throw new Error('Defendant was not deleted')
+        }
+
+        return true
+      } catch {
         toast.error(formatMessage(errors.deleteDefendant))
 
         return false
@@ -71,12 +95,12 @@ const useDefendants = () => {
       try {
         const { data } = await updateDefendantMutation({
           variables: {
-            input: updateDefendant,
+            input: normalizeBlankStrings(updateDefendant),
           },
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.updateDefendant))
 
         return false
@@ -90,12 +114,12 @@ const useDefendants = () => {
       try {
         const { data } = await limitedAccessUpdateDefendantMutation({
           variables: {
-            input: updateDefendant,
+            input: normalizeBlankStrings(updateDefendant),
           },
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.updateDefendant))
 
         return false
@@ -107,9 +131,9 @@ const useDefendants = () => {
   const updateDefendantState = useCallback(
     (
       update: UpdateDefendantInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
-      setWorkingCase((prevWorkingCase: Case) => {
+      setWorkingCase((prevWorkingCase: WorkingCase) => {
         if (!prevWorkingCase.defendants) {
           return prevWorkingCase
         }
@@ -133,7 +157,7 @@ const useDefendants = () => {
   const setAndSendDefendantToServer = useCallback(
     (
       update: UpdateDefendantInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
       updateDefendantState(update, setWorkingCase)
       updateDefendant(update)

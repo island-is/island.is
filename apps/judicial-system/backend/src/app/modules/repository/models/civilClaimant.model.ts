@@ -143,6 +143,42 @@ export class CivilClaimant extends Model {
   @ApiPropertyOptional({ type: Boolean })
   isSpokespersonConfirmed?: boolean
 
+  // The appeal proceeding's own advocate, mirroring the district court columns
+  // above. Kept apart rather than reused because the court of appeals decides
+  // the question afresh: a claimant represented at the district court may go
+  // unrepresented on appeal, and the other way round.
+  //
+  // The lawyer / spokesperson distinction carries the same meaning as above
+  // and matters more here - a spokesperson is formally appointed by the court,
+  // a lawyer the claimant retains is not.
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  hasAppealSpokesperson?: boolean
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  appealSpokespersonIsLawyer?: boolean
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealSpokespersonNationalId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealSpokespersonName?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealSpokespersonEmail?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealSpokespersonPhoneNumber?: string
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isAppealSpokespersonConfirmed?: boolean
+
   @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: true })
   @ApiPropertyOptional({ type: String, isArray: true })
   policeCaseNumbers?: string[]

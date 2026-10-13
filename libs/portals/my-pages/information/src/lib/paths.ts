@@ -13,6 +13,8 @@ export enum InformationPaths {
   Company = '/fyrirtaeki',
   CompanySettings = '/fyrirtaeki/stillingar/',
   CompanyNotifications = '/fyrirtaeki/tilkynningar',
+  CompanyContracts = '/fyrirtaeki/samningar',
+  CompanyContractsDetail = '/fyrirtaeki/samningar/:id',
   Notifications = '/min-gogn/tilkynningar',
   NotificationDetail = '/min-gogn/tilkynningar/:id',
   Lists = '/min-gogn/listar',

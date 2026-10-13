@@ -10,6 +10,7 @@ auth-admin-web:
   env:
     BASE_URL: 'https://innskra.island.is/admin'
     CODE_OWNER: 'aranja'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITYSERVER_DOMAIN: 'innskra.island.is'
     LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://innskra.island.is/admin/api/auth'
@@ -32,14 +33,6 @@ auth-admin-web:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 90
-        nginxRequestsIrate: 5
-      replicas:
-        max: 10
-        min: 2
   httpRoute:
     primary-gw:
       hostnames:
@@ -61,9 +54,9 @@ auth-admin-web:
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 0
+    max: 0
+    min: 0
   resources:
     limits:
       cpu: '400m'
@@ -117,6 +110,7 @@ identity-server:
     DD_DOTNET_TRACER_HOME: '/opt/datadog'
     DD_INTEGRATIONS: '/opt/datadog/integrations.json'
     DD_TRACE_DEBUG: 'true'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     Datadog__Metrics__Port: '5003'
     EmailsApiSettings__BaseAddress: 'https://service-portal-api.internal.island.is'
     IdentityServer__ConsentsScope: '@island.is/auth/consents'
@@ -238,6 +232,7 @@ services-auth-admin-api:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     IDENTITY_SERVER_ISSUER_URL_LIST: '["https://innskra.island.is"]'
@@ -291,6 +286,7 @@ services-auth-admin-api:
     primary-gw:
       hostnames:
         - 'innskra.island.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -353,6 +349,7 @@ services-auth-delegation-api:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
@@ -464,6 +461,7 @@ services-auth-ids-api:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
@@ -610,6 +608,7 @@ services-auth-ids-api-cleanup:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
@@ -679,6 +678,7 @@ services-auth-personal-representative:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
@@ -778,6 +778,7 @@ services-auth-personal-representative-public:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -854,6 +855,7 @@ services-auth-public-api:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
@@ -913,6 +915,7 @@ services-auth-public-api:
     primary-gw:
       hostnames:
         - 'innskra.island.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'

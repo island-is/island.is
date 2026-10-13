@@ -44,10 +44,7 @@ import {
   getFreightPairingItemsByIndex,
 } from './freightUtils'
 import { format as formatKennitala } from 'kennitala'
-import {
-  formatPhoneNumber,
-  removeCountryCode,
-} from '@island.is/application/ui-components'
+import { formatPhoneNumber, removeCountryCode } from '@island.is/shared/utils'
 
 const getAddressAndPostalCodeCityStr = (
   address?: string,

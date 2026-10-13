@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-license-client',
   preset: './jest.preset.js',
@@ -15,4 +14,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '<rootDir>/coverage/libs/clients/license-client',
+  testEnvironment: 'jest-environment-node',
 }

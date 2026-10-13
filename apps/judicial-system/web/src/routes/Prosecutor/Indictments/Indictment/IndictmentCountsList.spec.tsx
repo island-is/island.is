@@ -1,10 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { IndictmentCount } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseType,
-  IndictmentCount,
   IndictmentSubtype,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useIndictmentCounts } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -50,7 +50,9 @@ const mockGetIndictmentCountWarningMessage =
 const POLICE_CASE_NUMBER_EARLIER = '007-2021-001'
 const POLICE_CASE_NUMBER_LATER = '007-2021-002'
 
-const createWorkingCase = (indictmentCounts: IndictmentCount[]): Case => ({
+const createWorkingCase = (
+  indictmentCounts: IndictmentCount[],
+): WorkingCase => ({
   ...mockCase(CaseType.INDICTMENT),
   id: 'test-case-id',
   indictmentCounts,
@@ -86,7 +88,7 @@ describe('IndictmentCountsList', () => {
     reorderIndictmentCounts.mockResolvedValue({ id: 'test-case-id' })
   })
 
-  const renderComponent = (workingCase: Case) =>
+  const renderComponent = (workingCase: WorkingCase) =>
     render(
       <IntlProviderWrapper>
         <IndictmentCountsList

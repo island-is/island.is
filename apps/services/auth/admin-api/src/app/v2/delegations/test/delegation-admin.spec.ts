@@ -194,7 +194,7 @@ describe('DelegationAdmin - With authentication', () => {
       // Remove the referenceId
       await delegationModel.update(
         {
-          referenceId: null ?? '',
+          referenceId: '',
         },
         {
           where: {

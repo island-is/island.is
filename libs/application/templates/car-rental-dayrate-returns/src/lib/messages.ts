@@ -1,16 +1,17 @@
 import { defineMessages } from 'react-intl'
 
 export const serviceErrors = {
-  missingDayRateEntry: defineMessages({
+  noVehiclesFound: defineMessages({
     title: {
-      id: 'rsk.crdr.application:serviceErrors.missingDayRateEntry.title',
-      defaultMessage: 'Missing day rate entry',
-      description: 'Title for missing day rate entry id error',
+      id: 'rsk.crdr.application:serviceErrors.noVehiclesFound.title',
+      defaultMessage: 'Engin ökutæki skráð á daggjald fundust',
+      description: 'Title shown when the applicant has no day rate vehicles',
     },
     summary: {
-      id: 'rsk.crdr.application:serviceErrors.missingDayRateEntry.summary',
-      defaultMessage: 'No dayRateEntryId for vehicle {vehicleId}',
-      description: 'Summary for missing day rate entry id error',
+      id: 'rsk.crdr.application:serviceErrors.noVehiclesFound.summary',
+      defaultMessage:
+        'Engin ökutæki skráð á daggjald fundust fyrir tímabilið {period}.',
+      description: 'Summary shown when the applicant has no day rate vehicles',
     },
   }),
   badRequest: defineMessages({
@@ -369,6 +370,17 @@ export const m = {
         'Skila þarf upplýsingum um útleigudag fyrir öll ökutæki á daggjaldsskrá',
       description: 'Entries for all cars must be present in the upload file',
     },
+    unreadableFile: {
+      id: 'rsk.crdr.application:multi.upload.error.unreadable.file',
+      defaultMessage:
+        'Ekki tókst að lesa skjalið. Sæktu sniðmátið og fylltu það út óbreytt.',
+      description: 'Uploaded file could not be parsed',
+    },
+    rowLabel: {
+      id: 'rsk.crdr.application:multi.upload.row.label',
+      defaultMessage: 'lína {row}',
+      description: 'Fallback label for a file row with no registration number',
+    },
     invalidFileType: {
       id: 'rsk.crdr.application:multi.upload.error.invalid.file.type',
       defaultMessage: 'Skrá verður að vera .csv eða .xlsx',
@@ -437,23 +449,28 @@ export const m = {
   }),
 
   multiUploadErrors: defineMessages({
-    dayRateMin30Days: {
-      id: 'rsk.crdr.application:multi.upload.error.dayrate.min30days',
-      defaultMessage:
-        'Bílar þurfa að vera skráðir á daggjald í amk 30 daga áður en hægt er að breyta til baka!',
-      description: 'Changing from day rate to km rate too soon',
-    },
     carNotFound: {
       id: 'rsk.crdr.application:multi.upload.error.car.not.found',
       defaultMessage:
         'Þessi bíll fannst ekki í lista af þínum bílum á daggjaldi í síðasta mánuði!',
       description: 'Car not found',
     },
+    duplicateCar: {
+      id: 'rsk.crdr.application:multi.upload.error.duplicate.car',
+      defaultMessage:
+        'Sama ökutæki kemur oftar en einu sinni fyrir í skjalinu!',
+      description: 'The same vehicle is listed on more than one row',
+    },
     previousPeriodUsageRequired: {
       id: 'rsk.crdr.application:multi.upload.error.prev.usage.required',
       defaultMessage:
         'Notkun bíls á síðasta dagsfjölda þarf að vera til staðar!',
       description: 'Previous period usage missing',
+    },
+    invalidDayCount: {
+      id: 'rsk.crdr.application:multi.upload.error.invalid.day.count',
+      defaultMessage: 'Dagafjöldi verður að vera heil tala, 0 eða hærri',
+      description: 'Invalid day count in uploaded file',
     },
     prevPeriodUsageGreaterThanPrevPeriodTotalDays: {
       id: 'rsk.crdr.application:multi.upload.error.prev.period.usage.greater.than.prev.period.total.days',

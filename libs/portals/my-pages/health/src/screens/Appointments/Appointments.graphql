@@ -1,13 +1,11 @@
-query getAppointments(
-  $from: DateTime
-  $status: [HealthDirectorateAppointmentStatus!]
-) {
-  healthDirectorateAppointments(from: $from, status: $status) {
+query getAppointments($input: HealthDirectoratePaginatedAppointmentsInput!) {
+  healthDirectoratePaginatedAppointments(input: $input) {
     data {
       __typename
       id
       title
       date
+      status
       duration
       modality
       practitioners
@@ -24,6 +22,11 @@ query getAppointments(
         latitude
         longitude
       }
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      endCursor
     }
   }
 }

@@ -7,12 +7,19 @@ import PoliceCaseDetail from './screens/PoliceCaseDetail/PoliceCaseDetail'
 import { Navigate } from 'react-router-dom'
 import { LawAndOrderPaths } from './lib/paths'
 import Verdict from './screens/Verdict/Verdict'
+import { Features } from '@island.is/feature-flags'
 
 const CourtCases = lazy(() => import('./screens/CourtCases/CourtCases'))
 const CourtCaseDetail = lazy(() =>
   import('./screens/CourtCaseDetail/CourtCaseDetail'),
 )
 const Subpoena = lazy(() => import('./screens/Subpoena/Subpoena'))
+const DriversPoints = lazy(() =>
+  import('./screens/DriversPoints/DriversPoints'),
+)
+const DriversDeprivations = lazy(() =>
+  import('./screens/DriversDeprivations/DriversDeprivations'),
+)
 export const lawAndOrderModule: PortalModule = {
   name: m.lawAndOrder,
   routes: ({ userInfo }) => [
@@ -66,6 +73,20 @@ export const lawAndOrderModule: PortalModule = {
       path: LawAndOrderPaths.VerdictDetail,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
       element: <Verdict />,
+    },
+    {
+      name: m.driversPoints,
+      path: LawAndOrderPaths.DriversPoints,
+      key: Features.isDriversDeprivationsEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
+      element: <DriversPoints />,
+    },
+    {
+      name: m.driversDeprivations,
+      path: LawAndOrderPaths.DriversDeprivations,
+      key: Features.isDriversDeprivationsEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
+      element: <DriversDeprivations />,
     },
   ],
 }

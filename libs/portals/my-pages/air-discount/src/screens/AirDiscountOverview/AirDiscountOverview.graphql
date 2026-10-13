@@ -1,0 +1,21 @@
+query AirDiscountMembers {
+  airDiscountSchemeMembers {
+    name
+    benefit {
+      fund {
+        credit
+        total
+      }
+      discountCode
+      connectionDiscountCodes {
+        code
+        flightDesc
+        validUntil
+      }
+    }
+    usedFlightLegsThisPeriod {
+      travel
+      bookingDate
+    }
+  }
+}

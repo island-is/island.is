@@ -88,6 +88,7 @@ export const ListItem = ({
             updateListItemDto: {
               label: listItem.label,
               description: listItem.description,
+              value: listItem.value,
               isSelected: listItem.isSelected,
             },
           },
@@ -320,6 +321,31 @@ export const ListItem = ({
           </Column>
         </Row>
       )}
+      <Row marginTop={2}>
+        <Column span="10/10">
+          <Input
+            id={`list-item-value-${listItem.id || index}`}
+            name="value"
+            label="Valkvæmt gildi (value) fyrir bakendavinnslu"
+            backgroundColor="blue"
+            size="sm"
+            value={listItem?.value ?? ''}
+            readOnly={isReadOnly}
+            onFocus={(e) => setFocus(e.target.value)}
+            onBlur={(e) => e.target.value !== focus && listItemUpdate()}
+            onChange={(e) =>
+              controlDispatch({
+                type: 'CHANGE_LIST_ITEM',
+                payload: {
+                  property: 'value',
+                  value: e.target.value,
+                  id: listItem.id ?? '',
+                },
+              })
+            }
+          />
+        </Column>
+      </Row>
     </Box>
   )
 }

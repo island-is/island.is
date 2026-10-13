@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Input, LoadingDots, toast } from '@island.is/island-ui/core'
+import { Box, Input, LoadingDots } from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
   PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
@@ -12,6 +12,7 @@ import {
   core,
   titles,
 } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   DefenderInfo,
   FormContentContainer,
@@ -23,12 +24,16 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import type { UpdateDefendantInput } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseOrigin,
   CaseType,
-  UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  DefendantInfo,
+  PoliceCaseNumbers,
+  usePoliceCaseNumbers,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import {
   useCase,
   useDebouncedInput,
@@ -36,14 +41,9 @@ import {
   useInstitution,
   useSyncDefendantsFromPolice,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-
-import {
-  DefendantInfo,
-  PoliceCaseNumbers,
-  usePoliceCaseNumbers,
-} from '../../components'
 
 const isLokeCaseWithId = (origin: CaseOrigin | null | undefined, id: string) =>
   origin === CaseOrigin.LOKE && Boolean(id)
@@ -76,7 +76,7 @@ export const Defendant = () => {
 
   const updateDefendantState = useCallback(
     (update: UpdateDefendantInput) => {
-      setWorkingCase((prevWorkingCase: Case) => {
+      setWorkingCase((prevWorkingCase: WorkingCase) => {
         if (!prevWorkingCase.defendants) {
           return prevWorkingCase
         }
@@ -158,7 +158,7 @@ export const Defendant = () => {
         <>
           <FormContentContainer>
             <PageTitle>{formatMessage(m.heading)}</PageTitle>
-            <div className={grid({ gap: 5, marginBottom: 10 })}>
+            <div className={stack({ gap: 5 })}>
               <Box component="section">
                 <PoliceCaseNumbers
                   workingCase={workingCase}

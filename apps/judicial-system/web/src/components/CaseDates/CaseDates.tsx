@@ -1,12 +1,13 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
+import type { IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { caseDates } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
-  Case,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -14,7 +15,7 @@ import {
 import * as styles from './CaseDates.css'
 
 export interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
   button?: {
     label: string
     onClick: () => void

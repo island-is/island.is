@@ -4,6 +4,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { OfficialJournalOfIcelandAdvertAppendix } from '@island.is/web/graphql/schema'
 
 import { Appendixes } from './OJOIAppendix'
+import { splitDepartmentDateFromBody } from './OJOIUtils'
 import * as s from './OJOIAdvertDisplay.css'
 
 export type OJOIAdvertDisplayProps = {
@@ -29,6 +30,13 @@ export const OJOIAdvertDisplay = ({
   if (!advertText) {
     return null
   }
+
+  const hasAdditions = !!additions?.length
+
+  // The closing department/date line moves below the appendix accordion
+  const { bodyHtml, departmentDateHtml } = hasAdditions
+    ? splitDepartmentDateFromBody(advertText)
+    : { bodyHtml: advertText, departmentDateHtml: null }
 
   return (
     <Box
@@ -61,10 +69,13 @@ export const OJOIAdvertDisplay = ({
         className={c(s.bodyText, 'ojoi-advert-display-wrapper', {
           [s.hideSignature]: hiddenSignatureDate,
         })}
-        dangerouslySetInnerHTML={{ __html: advertText }}
+        dangerouslySetInnerHTML={{ __html: bodyHtml }}
       ></Box>
-      {additions && additions.length > 0 && (
-        <Appendixes additions={additions} />
+      {hasAdditions && (
+        <Appendixes
+          additions={additions}
+          departmentDateHtml={departmentDateHtml}
+        />
       )}
     </Box>
   )

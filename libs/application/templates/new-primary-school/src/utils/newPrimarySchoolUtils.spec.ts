@@ -207,7 +207,29 @@ describe('getApplicationType', () => {
     )
   })
 
-  it('should return NEW_PRIMARY_SCHOOL for child in first grade, if enrollment is closed', () => {
+  it('should return NEW_PRIMARY_SCHOOL for child in first grade, if enrollment is open but the child is already registered in a primary school', () => {
+    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
+
+    jest.setSystemTime(new Date(currentDate.getFullYear(), 1, 1)) // 1 Feb
+
+    const answers = {
+      childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
+    }
+
+    const externalData = {
+      childInformation: {
+        data: {
+          primaryOrgId: 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1',
+        },
+      },
+    } as unknown as ExternalData
+
+    expect(getApplicationType(answers, externalData)).toBe(
+      ApplicationType.NEW_PRIMARY_SCHOOL,
+    )
+  })
+
+  it('should return NEW_PRIMARY_SCHOOL for child in first grade, if enrollment is closed and no data is found in Frigg', () => {
     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
 
     jest.setSystemTime(new Date(currentDate.getFullYear(), 10, 1)) // 1 Nov
@@ -217,9 +239,7 @@ describe('getApplicationType', () => {
     }
     const externalData = {
       childInformation: {
-        data: {
-          primaryOrgId: 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1',
-        },
+        data: {},
       },
     } as unknown as ExternalData
 

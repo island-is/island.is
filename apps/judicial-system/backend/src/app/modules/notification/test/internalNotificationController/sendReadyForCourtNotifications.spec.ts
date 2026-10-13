@@ -26,7 +26,12 @@ import {
 } from '../createTestingNotificationModule'
 
 import { randomDate } from '../../../../test'
-import { Case, Institution, Notification, Recipient } from '../../../repository'
+import {
+  Case,
+  Institution,
+  NotificationRepositoryService,
+  Recipient,
+} from '../../../repository'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
@@ -48,9 +53,10 @@ describe('InternalNotificationController - Send ready for court notifications fo
   const policeCaseNumber = uuid()
   const courtCaseNumber = uuid()
 
-  const { prosecutor, defender, testCourt } = createTestUsers([
+  const { prosecutor, defender, defender2, testCourt } = createTestUsers([
     'prosecutor',
     'defender',
+    'defender2',
     'testCourt',
   ])
 
@@ -69,6 +75,14 @@ describe('InternalNotificationController - Send ready for court notifications fo
     defenderNationalId: defender.nationalId,
     defenderName: defender.name,
     defenderEmail: defender.email,
+    defendants: [
+      {
+        defenderNationalId: defender.nationalId,
+        defenderName: defender.name,
+        defenderEmail: defender.email,
+        requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+      },
+    ],
     requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
     prosecutorsOffice: { name: 'Héraðsdómur Derricks' },
     dateLogs: [{ date: randomDate(), dateType: DateType.ARRAIGNMENT_DATE }],
@@ -210,6 +224,12 @@ describe('InternalNotificationController - Send ready for court notifications fo
     beforeEach(async () => {
       theCase.requestSharedWithDefender =
         RequestSharedWithDefender.READY_FOR_COURT
+      theCase.defendants = [
+        {
+          ...(theCase.defendants?.[0] ?? {}),
+          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+        },
+      ]
       await givenWhenThen(caseId, theCase, notificationDto)
     })
 
@@ -262,6 +282,141 @@ describe('InternalNotificationController - Send ready for court notifications fo
       )
     })
   })
+
+  describe('multiple defendants with different defenders', () => {
+    beforeEach(async () => {
+      await givenWhenThen(
+        caseId,
+        {
+          ...theCase,
+          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+          defendants: [
+            {
+              defenderNationalId: defender.nationalId,
+              defenderName: defender.name,
+              defenderEmail: defender.email,
+              requestSharedWithDefender:
+                RequestSharedWithDefender.READY_FOR_COURT,
+            },
+            {
+              defenderNationalId: defender2.nationalId,
+              defenderName: defender2.name,
+              defenderEmail: defender2.email,
+              requestSharedWithDefender:
+                RequestSharedWithDefender.READY_FOR_COURT,
+            },
+          ],
+        } as Case,
+        notificationDto,
+      )
+    })
+
+    it('should send ready for court email to each unique defender', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: defender.name, address: defender.email }],
+          subject: `Krafa í máli ${policeCaseNumber}`,
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: defender2.name, address: defender2.email }],
+          subject: `Krafa í máli ${policeCaseNumber}`,
+        }),
+      )
+    })
+  })
+
+  describe('multiple defendants sharing the same defender', () => {
+    beforeEach(async () => {
+      await givenWhenThen(
+        caseId,
+        {
+          ...theCase,
+          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+          defendants: [
+            {
+              defenderNationalId: defender.nationalId,
+              defenderName: defender.name,
+              defenderEmail: defender.email,
+              requestSharedWithDefender:
+                RequestSharedWithDefender.READY_FOR_COURT,
+            },
+            {
+              defenderNationalId: defender.nationalId,
+              defenderName: defender.name,
+              defenderEmail: defender.email,
+              requestSharedWithDefender:
+                RequestSharedWithDefender.READY_FOR_COURT,
+            },
+          ],
+        } as Case,
+        notificationDto,
+      )
+    })
+
+    it('should send ready for court email to the defender only once', () => {
+      const defenderEmails = (
+        mockEmailService.sendEmail as jest.Mock
+      ).mock.calls.filter(
+        ([email]) => email?.to?.[0]?.address === defender.email,
+      )
+
+      expect(defenderEmails).toHaveLength(1)
+    })
+  })
+
+  describe('multiple defendants where only one defender was previously notified', () => {
+    beforeEach(async () => {
+      await givenWhenThen(
+        caseId,
+        {
+          ...theCase,
+          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+          defendants: [
+            {
+              defenderNationalId: defender.nationalId,
+              defenderName: defender.name,
+              defenderEmail: defender.email,
+              requestSharedWithDefender:
+                RequestSharedWithDefender.READY_FOR_COURT,
+            },
+            {
+              defenderNationalId: defender2.nationalId,
+              defenderName: defender2.name,
+              defenderEmail: defender2.email,
+              requestSharedWithDefender:
+                RequestSharedWithDefender.READY_FOR_COURT,
+            },
+          ],
+          notifications: [
+            {
+              type: TrackedNotificationType.READY_FOR_COURT,
+              recipients: [{ address: defender.email, success: true }],
+            },
+          ],
+        } as Case,
+        notificationDto,
+      )
+    })
+
+    it('should send a resubmit email to the previously notified defender and an initial email to the other', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: defender.name, address: defender.email }],
+          subject: `Krafa í máli ${courtCaseNumber}`,
+          html: expect.stringContaining('hefur breytt kröfunni'),
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: defender2.name, address: defender2.email }],
+          subject: `Krafa í máli ${policeCaseNumber}`,
+          html: expect.stringContaining('hefur valið að deila kröfu'),
+        }),
+      )
+    })
+  })
 })
 
 describe('InternalNotificationController - Send ready for court notifications for indictment cases', () => {
@@ -275,7 +430,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
   let mockEmailService: EmailService
   let mockNotificationConfig: ConfigType<typeof notificationModuleConfig>
-  let mockNotificationModel: typeof Notification
+  let mockNotificationRepositoryService: NotificationRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -284,12 +439,12 @@ describe('InternalNotificationController - Send ready for court notifications fo
     const {
       emailService,
       notificationConfig,
-      notificationModel,
+      notificationRepositoryService,
       internalNotificationController,
     } = await createTestingNotificationModule()
 
     mockEmailService = emailService
-    mockNotificationModel = notificationModel
+    mockNotificationRepositoryService = notificationRepositoryService
     mockNotificationConfig = notificationConfig
 
     givenWhenThen = async (caseId, theCase, notification) => {
@@ -344,7 +499,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           html: `Lögreglan á höfuðborgarsvæðinu hefur sent inn nýja ákæru. Ákæran varðar eftirfarandi brot: manndráp. Ákæran og öll skjöl málsins eru <a href="${mockNotificationConfig.clientUrl}${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${caseId}">aðgengileg í Réttarvörslugátt.</a>`,
         }),
       )
-      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledWith({
         caseId,
         type: RequestCaseNotificationType.READY_FOR_COURT,
         recipients: [
@@ -400,7 +555,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           html: `Lögreglan á höfuðborgarsvæðinu hefur sent inn nýja ákæru. Ákæran varðar eftirfarandi brot: manndráp, gripdeild og þjófnaður. Ákæran og öll skjöl málsins eru <a href="${mockNotificationConfig.clientUrl}${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${caseId}">aðgengileg í Réttarvörslugátt.</a>`,
         }),
       )
-      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledWith({
         caseId,
         type: RequestCaseNotificationType.READY_FOR_COURT,
         recipients: [

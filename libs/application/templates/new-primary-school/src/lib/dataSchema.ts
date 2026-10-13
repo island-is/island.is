@@ -84,6 +84,7 @@ export const dataSchema = z.object({
         relation: z.string(),
         applicantNationalId: z.string().optional(),
         otherGuardianNationalId: z.string().optional(),
+        childNationalId: z.string().optional(),
       })
       .refine(
         ({
@@ -96,6 +97,14 @@ export const dataSchema = z.object({
         {
           path: ['nationalIdWithName', 'nationalId'],
           params: errorMessages.relativeSameAsGuardian,
+        },
+      )
+      .refine(
+        ({ nationalIdWithName, childNationalId }) =>
+          nationalIdWithName?.nationalId !== childNationalId,
+        {
+          path: ['nationalIdWithName', 'nationalId'],
+          params: errorMessages.relativeSameAsChild,
         },
       ),
   ),

@@ -74,7 +74,6 @@ export const incomeSection = buildSection({
           variant: 'currency',
           allowNegative: false,
           marginBottom: 2,
-          maxLength: MAX_NUMBER_LENGTH,
           condition: contractorIncomeSelected,
         }),
         buildCheckboxField({

@@ -1,4 +1,5 @@
-import { FC, useContext, useEffect, useMemo, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
@@ -10,15 +11,16 @@ import {
   Select,
   Tag,
 } from '@island.is/island-ui/core'
-import { POLICE_CASE_NUMBER } from '@island.is/judicial-system/consts'
+import {
+  isValidPoliceCaseNumber,
+  POLICE_CASE_NUMBER,
+} from '@island.is/judicial-system/consts'
 import {
   capitalize,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import {
-  CrimeScene,
-  deprecatedIndictmentSubtypes,
-} from '@island.is/judicial-system/types'
+import type { CrimeScene } from '@island.is/judicial-system/types'
+import { deprecatedIndictmentSubtypes } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
@@ -48,6 +50,7 @@ interface Props {
   index: number
   policeCaseNumber: string
   mainLokePoliceCaseNumber?: string
+  autoFocus?: boolean
   setPoliceCase: (update: PoliceCaseUpdate) => void
   updatePoliceCase: (update?: PoliceCaseUpdate) => void
   deletePoliceCase?: () => void
@@ -57,6 +60,7 @@ export const PoliceCase: FC<Props> = ({
   index,
   policeCaseNumber,
   mainLokePoliceCaseNumber,
+  autoFocus,
   setPoliceCase,
   updatePoliceCase,
   deletePoliceCase,
@@ -102,6 +106,14 @@ export const PoliceCase: FC<Props> = ({
     index,
     date: policeCaseNumberCrimeScene.date,
   })
+  const policeCaseNumberRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (autoFocus) {
+      // This police case was just added, so the user can start typing its number
+      policeCaseNumberRef.current?.focus()
+    }
+  }, [autoFocus])
 
   const crimeSceneDateId = useMemo(
     () => `crime-scene-date-${originalPoliceCaseNumber}`,
@@ -135,19 +147,26 @@ export const PoliceCase: FC<Props> = ({
             otherPoliceCaseNumber === policeCaseNumberInput,
         )
       ) {
-        setPoliceCaseNumberErrorMessage('')
-        validateAndSetErrorMessage(
+        // Errors are surfaced on blur - here we only clear a message that no
+        // longer applies, so nothing flashes while the user is still typing
+        removeErrorMessageIfValid(
           ['empty', 'police-casenumber-format'],
           policeCaseNumberInput,
+          policeCaseNumberErrorMessage,
           setPoliceCaseNumberErrorMessage,
         )
-        updatePoliceCase({ policeCaseNumber: policeCaseNumberInput })
+
+        // Never send a number the user has not finished typing to the server
+        if (isValidPoliceCaseNumber(policeCaseNumberInput)) {
+          updatePoliceCase({ policeCaseNumber: policeCaseNumberInput })
+        }
       }
     }
   }, [
     index,
     originalPoliceCaseNumber,
     policeCaseNumber,
+    policeCaseNumberErrorMessage,
     policeCaseNumberInput,
     policeCaseNumbers,
     updatePoliceCase,
@@ -196,6 +215,7 @@ export const PoliceCase: FC<Props> = ({
       )}
       <InputMask
         component={Input}
+        ref={policeCaseNumberRef}
         mask={POLICE_CASE_NUMBER}
         replacement={{ _: /\d/ }}
         value={policeCaseNumberInput}
@@ -213,13 +233,36 @@ export const PoliceCase: FC<Props> = ({
               policeCaseNumberErrorMessage,
               setPoliceCaseNumberErrorMessage,
             )
-            setPoliceCase({ policeCaseNumber: event.target.value })
+
+            // An unfinished number must not reach the working case, since every
+            // update of this police case sends all the case's police case
+            // numbers to the server, which rejects malformed numbers. An empty
+            // number is allowed - that is a police case which has just been
+            // added, or has been cleared, and it is kept in the client until
+            // it has been given a number.
+            if (
+              event.target.value === '' ||
+              isValidPoliceCaseNumber(event.target.value)
+            ) {
+              setPoliceCase({ policeCaseNumber: event.target.value })
+            }
           }
 
           setPoliceCaseNumberInput(event.target.value)
         }}
         onBlur={(event) => {
-          if (policeCaseNumberInput !== policeCaseNumber) {
+          if (
+            event.target.value !== '' &&
+            !isValidPoliceCaseNumber(event.target.value)
+          ) {
+            // The number was never applied to the working case, so the input
+            // differing from it means it is unfinished, not that it is taken
+            validateAndSetErrorMessage(
+              ['empty', 'police-casenumber-format'],
+              event.target.value,
+              setPoliceCaseNumberErrorMessage,
+            )
+          } else if (policeCaseNumberInput !== policeCaseNumber) {
             setPoliceCaseNumberErrorMessage(
               formatMessage(strings.policeCaseNumberExists),
             )
@@ -306,7 +349,18 @@ export const PoliceCase: FC<Props> = ({
             },
           })
         }
-        onBlur={() => updatePoliceCase()}
+        onBlur={() => {
+          const { place } = policeCaseNumberCrimeScene
+
+          // A whitespace-only place is persisted as '' - pass the normalized
+          // update explicitly so the working case (and with it the displayed
+          // value) matches what the server stores.
+          updatePoliceCase(
+            place && place.trim() === ''
+              ? { crimeScene: { ...policeCaseNumberCrimeScene, place: '' } }
+              : undefined,
+          )
+        }}
       />
       <DateTime
         name={crimeSceneDateId}

@@ -9,6 +9,7 @@ import {
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import {
+  Calculator,
   EmailSignup,
   GenericListWrapper,
   IntroLinkImageSlice,
@@ -182,6 +183,8 @@ export const renderSlice = (
       return <EmailSignup slice={slice} marginLeft={[0, 0, 0, 6]} />
     case 'ConnectedComponent':
       return webRenderConnectedComponent(slice)
+    case 'Calculator':
+      return <Calculator slice={slice} />
     case 'FeaturedSupportQNAs':
       return <FeaturedSupportQNAs slice={slice} />
     case 'PowerBiSlice':

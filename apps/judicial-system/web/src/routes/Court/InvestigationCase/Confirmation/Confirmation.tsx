@@ -1,4 +1,5 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -29,19 +30,19 @@ import {
   SigningMethodSelectionModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import type { RequestSignatureResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseDecision,
   CaseTransition,
-  RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-
 import {
   JudgeRequestRulingSignatureModal,
   RegistrarRequestRulingSignatureModal,
   RulingModifiedModal,
-} from '../../components'
+} from '@island.is/judicial-system-web/src/routes/Court/components'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+
 import { confirmation as strings } from './Confirmation.strings'
 
 type VisibleModal =
@@ -147,13 +148,13 @@ const Confirmation: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <CourtRecordAccordionItem workingCase={workingCase} />
             <RulingAccordionItem workingCase={workingCase} />
           </Accordion>
-          <BlueBox className={grid({ gap: 2 })}>
+          <BlueBox className={stack({ gap: 2 })}>
             <Text as="h3" variant="h3" textAlign="center">
               {formatMessage(strings.conclusionTitle)}
             </Text>
@@ -162,7 +163,7 @@ const Confirmation: FC = () => {
               {workingCase.judge?.name}
             </Text>
           </BlueBox>
-          <div className={grid({ gap: 2 })}>
+          <div className={stack({ gap: 2 })}>
             <Box>
               <PdfButton
                 caseId={workingCase.id}

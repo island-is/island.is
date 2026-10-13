@@ -1,12 +1,16 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
+  AppointmentBaseDto,
   ConversationAttachmentDto,
+  ConversationBaseDto,
   ConversationDetailDto,
   ConversationMessageDto,
+  CreateCertificatePaymentIntentDto,
   CreateCertificateRequestBody,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateReplyRequestDto,
+  HcpTargetKind,
   HealthDirectorateHealthService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
@@ -17,13 +21,21 @@ import type { ConfigType } from '@island.is/nest/config'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadGatewayException,
+  BadRequestException,
+  Inject,
+  Injectable,
+} from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
-import { PATIENT_PERMIT_CODE } from './constants'
+import { IntlService } from '@island.is/cms-translations'
+import { NAMESPACE, PATIENT_PERMIT_CODE } from './constants'
 import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
 } from './dto/appointments.input'
+import { HealthDirectoratePaginatedAppointmentsInput } from './dto/paginatedAppointments.input'
+import { HealthDirectorateCreateCertificatePaymentIntentInput } from './dto/createCertificatePaymentIntent.input'
 import { HealthDirectorateCreateCertificateRequestInput } from './dto/createCertificateRequest.input'
 import { HealthDirectorateCreateConversationInput } from './dto/createHealthConversation.input'
 import { HealthDirectorateReplyToConversationInput } from './dto/replyToHealthConversation.input'
@@ -36,7 +48,9 @@ import { HealthDirectorateResponse } from './dto/response.dto'
 import {
   getAppointmentLinkActivationWindow,
   mapAppointmentStatus,
+  mapAppointmentsOrder,
   toAppointmentAssigneeTypeEnum,
+  toAppointmentCancelBlockedReason,
   toAppointmentLinkTypeEnum,
   toAppointmentModalityEnum,
   toAppointmentStatusEnum,
@@ -45,17 +59,22 @@ import {
   mapVaccinationStatus,
 } from './mappers/basicInformationMapper'
 import {
+  getWebChatConversationType,
+  WEB_CHAT_TYPE_CODE,
   mapConversationMessageContent,
   mapMessagingRecipient,
   toConversationDirectionEnum,
   toConversationReplyBlockedReasonEnum,
+  toReplyAvailability,
   toConversationStatusFilter,
 } from './mappers/conversationMapper'
 import {
+  mapCertificate,
   mapCertificateRequest,
   toCertificateTypeCode,
 } from './mappers/certificateMapper'
 import {
+  formatStrength,
   mapDelegationStatus,
   mapDispensationItem,
   mapPrescriptionCategory,
@@ -64,8 +83,12 @@ import {
 } from './mappers/medicineMapper'
 import { mapPermit, mapPermitHistoryEntry } from './mappers/patientDataMapper'
 import { Appointment, Appointments } from './models/appointments.model'
+import { HealthDirectoratePaginatedAppointments } from './models/paginatedAppointments.model'
 import { AppointmentDetail } from './models/appointmentDetail.model'
+import { CancelAppointmentResponse } from './models/cancelAppointmentResponse.model'
 import {
+  AppointmentCancelOutcomeEnum,
+  AppointmentsOrderEnum,
   HealthConversationStatusFilterEnum,
   PermitStatusEnum,
 } from './models/enums'
@@ -90,16 +113,40 @@ import { PrescriptionRenewalTarget } from './models/renewalTarget.model'
 import { ReferralDetail } from './models/referral.model'
 import { Referral, Referrals } from './models/referrals.model'
 import { HealthDirectorateRenewalInput } from './models/renewal.input'
+import { HealthDirectorateTreatment } from './models/treatment.model'
+import { HealthDirectorateTreatmentDetail } from './models/treatmentDetail.model'
+import { HealthDirectorateTreatmentDocument } from './models/treatmentDocument.model'
+import {
+  mapTreatment,
+  mapTreatmentDetail,
+  mapTreatmentDocument,
+} from './mappers/treatmentMapper'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
 import { HealthDirectorateHealthConversation } from './models/healthConversation.model'
+import { HealthDirectoratePaginatedHealthConversations } from './models/paginatedHealthConversations.model'
+import { HealthDirectoratePaginatedHealthConversationsInput } from './dto/paginatedHealthConversations.input'
 import { HealthDirectorateHealthConversationAttachment } from './models/healthConversationAttachment.model'
 import { HealthDirectorateHealthConversationDetail } from './models/healthConversationDetail.model'
 import { HealthDirectorateConversationOrganization } from './models/healthConversationOrganization.model'
 import { HealthDirectorateHealthConversationEntry } from './models/healthConversationEntry.model'
 import { HealthDirectorateHealthConversationRecipient } from './models/healthConversationRecipient.model'
+import { HealthDirectorateCertificate } from './models/certificate.model'
 import { HealthDirectorateCertificateRequest } from './models/certificateRequest.model'
+import { HealthDirectorateCertificatePaymentIntent } from './models/paymentIntent.model'
+import { ActivePregnancy } from './models/activePregnancy.model'
+import { PregnancyCommunication } from './models/pregnancyCommunication.model'
+import { PregnancyCommunicationDetail } from './models/pregnancyCommunicationDetail.model'
+import { ExaminationMeasurement } from './models/examinationMeasurement.model'
+import { PregnancyDocument } from './models/pregnancyDocument.model'
+import {
+  mapActivePregnancy,
+  mapPregnancyCommunication,
+  mapPregnancyCommunicationDetail,
+  mapExaminationMeasurement,
+  mapPregnancyDocument,
+} from './mappers/pregnancyMapper'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -111,6 +158,7 @@ export class HealthDirectorateService {
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
     >,
+    private readonly intlService: IntlService,
   ) {}
 
   /* Organ Donation */
@@ -156,6 +204,92 @@ export class HealthDirectorateService {
       }) ?? []
 
     return limitations
+  }
+
+  /* Pregnancy */
+  async hasActivePregnancy(auth: Auth): Promise<boolean | null> {
+    return this.healthApi.hasActivePregnancy(auth)
+  }
+
+  async getActivePregnancy(auth: Auth): Promise<ActivePregnancy | null> {
+    const pregnancy = await this.healthApi.getActivePregnancy(auth)
+    if (!pregnancy) return null
+
+    return mapActivePregnancy(pregnancy)
+  }
+
+  async getPregnancyCommunications(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<PregnancyCommunication[] | null> {
+    const communications = await this.healthApi.getPregnancyCommunications(
+      auth,
+      pregnancyId,
+    )
+    if (!communications) return null
+
+    return communications.flatMap((dto) => {
+      const communication = mapPregnancyCommunication(dto)
+      if (!communication) {
+        this.logger.warn('Unexpected pregnancy communication kind', {
+          kind: dto.kind,
+          communicationId: dto.id,
+          pregnancyId,
+        })
+        return []
+      }
+      return [communication]
+    })
+  }
+
+  async getPregnancyCommunicationDetail(
+    auth: Auth,
+    pregnancyId: string,
+    communicationId: string,
+  ): Promise<PregnancyCommunicationDetail | null> {
+    const detail = await this.healthApi.getPregnancyCommunicationDetail(
+      auth,
+      pregnancyId,
+      communicationId,
+    )
+    if (!detail) return null
+
+    const mapped = mapPregnancyCommunicationDetail(detail)
+    if (!mapped) {
+      this.logger.warn('Unexpected pregnancy communication detail kind', {
+        kind: detail.kind,
+        communicationId,
+        pregnancyId,
+      })
+      return null
+    }
+    return mapped
+  }
+
+  async getPregnancyMeasurements(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<ExaminationMeasurement[] | null> {
+    const measurements = await this.healthApi.getPregnancyMeasurements(
+      auth,
+      pregnancyId,
+    )
+    if (!measurements) return null
+
+    return measurements.map(mapExaminationMeasurement).filter(isDefined)
+  }
+
+  async getPregnancyDocuments(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<PregnancyDocument[] | null> {
+    const documents = await this.healthApi.getPregnancyDocuments(
+      auth,
+      pregnancyId,
+    )
+    if (!documents) return null
+
+    return documents.map(mapPregnancyDocument).filter(isDefined)
   }
 
   async updateDonorStatus(
@@ -329,7 +463,7 @@ export class HealthDirectorateService {
           name: item.product.name,
           type: item.product.type,
           form: item.product.form,
-          strength: item.product.strength,
+          strength: formatStrength(item.product.strength),
           url: item.product.url,
           quantity: item.product?.quantity?.toString(),
           prescriberName: item.prescriber.name,
@@ -361,7 +495,7 @@ export class HealthDirectorateService {
                 count: item.dispensations.length,
                 itemId: dispensedItem.productId,
                 name: dispensedItem.productName,
-                strength: dispensedItem.productStrength,
+                strength: formatStrength(dispensedItem.productStrength),
                 amount: dispensedItem.dispensedAmountDisplay,
               }
             })
@@ -438,7 +572,7 @@ export class HealthDirectorateService {
         return {
           id: item.product.id,
           name: item.product.name,
-          strength: item.product.strength,
+          strength: formatStrength(item.product.strength),
           atcCode: item.product.atcCode,
           indication: item.indication,
           lastDispensationDate: item.lastDispensationDate,
@@ -635,7 +769,36 @@ export class HealthDirectorateService {
       return new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
     })
 
-    const appointments: Array<Appointment> = sortedData.map((item) => ({
+    return { data: sortedData.map((item) => this.mapAppointment(item)) }
+  }
+
+  public async getPaginatedAppointments(
+    auth: Auth,
+    input: HealthDirectoratePaginatedAppointmentsInput,
+  ): Promise<HealthDirectoratePaginatedAppointments | null> {
+    const status = input.status
+      ?.map((status) => mapAppointmentStatus(status))
+      .filter(isDefined)
+    const page = await this.healthApi.getPaginatedAppointments(auth, {
+      fromStartTime: input.from,
+      toStartTime: input.to,
+      status: status?.length ? status : undefined,
+      order: mapAppointmentsOrder(input.order ?? AppointmentsOrderEnum.ASC),
+      limit: input.limit,
+      after: input.after,
+      before: input.before,
+    })
+    if (!page) return null
+
+    return {
+      data: page.data.map((item) => this.mapAppointment(item)),
+      totalCount: page.totalCount,
+      pageInfo: page.pageInfo,
+    }
+  }
+
+  private mapAppointment(item: AppointmentBaseDto): Appointment {
+    return {
       id: item.id,
       date: item.startTime,
       title: item.description,
@@ -661,8 +824,7 @@ export class HealthDirectorateService {
             return type ? { type, name: a.name } : null
           })
           .filter(isDefined) ?? [],
-    }))
-    return { data: appointments }
+    }
   }
 
   public async getAppointmentById(
@@ -725,7 +887,43 @@ export class HealthDirectorateService {
           }
         })
         .filter(isDefined),
+      canCancel: item.canCancel,
+      cancelBlockedReason: toAppointmentCancelBlockedReason(
+        item.canCancel,
+        item.canCancelBefore,
+      ),
+      canCancelBefore: item.canCancelBefore,
     }
+  }
+
+  public async requestAppointmentCancellation(
+    auth: Auth,
+    input: HealthDirectorateAppointmentInput,
+  ): Promise<CancelAppointmentResponse> {
+    const result = await this.healthApi.cancelAppointment(auth, input.id)
+
+    switch (result) {
+      case 'CANCELLED':
+        return { outcome: AppointmentCancelOutcomeEnum.CANCELLED }
+      case 'REFUSED':
+        return { outcome: AppointmentCancelOutcomeEnum.REFUSED }
+      case 'BLOCKED':
+        return { outcome: AppointmentCancelOutcomeEnum.BLOCKED }
+      case 'UNCONFIRMED':
+        return { outcome: AppointmentCancelOutcomeEnum.UNCONFIRMED }
+    }
+  }
+
+  /*
+   * Legacy path for the deployed native app's Boolean mutation: it treats
+   * false and a thrown error the same, so refusals and timeouts map to false.
+   */
+  public async cancelAppointment(
+    auth: Auth,
+    input: HealthDirectorateAppointmentInput,
+  ): Promise<boolean> {
+    const result = await this.healthApi.cancelAppointment(auth, input.id)
+    return result === 'CANCELLED'
   }
 
   /* Health Conversations */
@@ -771,6 +969,12 @@ export class HealthDirectorateService {
       attachments: m.attachments.map((a) =>
         this.mapConversationAttachment(a, conversationId, m.id),
       ),
+      certificateId: m.certificateId,
+      requiresPayment: m.requiresPayment,
+      paid: m.paid,
+      amountIsk: m.amountIsk,
+      pendingPaymentId: m.pendingPaymentId,
+      pendingPaymentStartedAt: m.pendingPaymentStartedAt,
     }
   }
 
@@ -780,11 +984,12 @@ export class HealthDirectorateService {
     return {
       id: c.id,
       title: c.title,
-      status: c.status,
       startDate: c.conversationStartDate,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
-      lastSenderGroupName: c.lastSenderGroupName,
+      lastSenderGroupName: c.groupName ?? c.lastSenderGroupName,
+      groupName: c.groupName ?? c.lastSenderGroupName,
+      treatmentId: c.treatmentId,
       organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
@@ -793,9 +998,42 @@ export class HealthDirectorateService {
       replyBlockedReason: toConversationReplyBlockedReasonEnum(
         c.replyBlockedReason,
       ),
+      replyAvailability: toReplyAvailability(c),
+      patientReplyWindowDays: c.patientReplyWindowDays ?? undefined,
       isRead: !c.unread,
       messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
     }
+  }
+
+  /* Treatments */
+
+  async getTreatments(
+    auth: Auth,
+  ): Promise<HealthDirectorateTreatment[] | null> {
+    const items = await this.healthApi.getTreatments(auth)
+    if (!items) return null
+
+    return items.map(mapTreatment)
+  }
+
+  async getTreatment(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateTreatmentDetail | null> {
+    const treatment = await this.healthApi.getTreatment(auth, id)
+    if (!treatment) return null
+
+    return mapTreatmentDetail(treatment)
+  }
+
+  async getTreatmentDocuments(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateTreatmentDocument[] | null> {
+    const documents = await this.healthApi.getTreatmentDocuments(auth, id)
+    if (!documents) return null
+
+    return documents.map(mapTreatmentDocument)
   }
 
   async getHealthConversations(
@@ -810,19 +1048,45 @@ export class HealthDirectorateService {
     )
     if (!items) return null
 
-    return items.map((c) => ({
+    return items.map((c) => this.mapConversationBase(c))
+  }
+
+  async getPaginatedHealthConversations(
+    auth: Auth,
+    input?: HealthDirectoratePaginatedHealthConversationsInput,
+  ): Promise<HealthDirectoratePaginatedHealthConversations | null> {
+    const page = await this.healthApi.getPaginatedConversations(auth, {
+      ...input,
+      status: input?.status
+        ? toConversationStatusFilter(input.status)
+        : undefined,
+    })
+    if (!page) return null
+
+    return {
+      data: page.data.map((c) => this.mapConversationBase(c)),
+      totalCount: page.totalCount,
+      pageInfo: page.pageInfo,
+    }
+  }
+
+  private mapConversationBase(
+    c: ConversationBaseDto,
+  ): HealthDirectorateHealthConversation {
+    return {
       id: c.id,
       title: c.title,
-      status: c.status,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
-      lastSenderGroupName: c.lastSenderGroupName,
+      lastSenderGroupName: c.groupName ?? c.lastSenderGroupName,
+      groupName: c.groupName ?? c.lastSenderGroupName,
+      treatmentId: c.treatmentId,
       organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
       isArchived: c.isArchived,
       isRead: !c.unread,
-    }))
+    }
   }
 
   async getHealthConversation(
@@ -839,10 +1103,19 @@ export class HealthDirectorateService {
     auth: Auth,
     input: HealthDirectorateCreateConversationInput,
   ): Promise<HealthDirectorateHealthConversationDetail | null> {
+    // The web chat entry is advertised in allowedMessageTypes but is an
+    // external link, not a conversation type Hekla knows about.
+    if (input.patientInitiatedTypeCode === WEB_CHAT_TYPE_CODE) {
+      throw new BadRequestException(
+        'patientInitiatedTypeCode is not a valid conversation type',
+      )
+    }
+
     const body: CreateConversationRequestDto = {
       nodeId: input.nodeId,
       groupId: input.groupId,
-      patientInitiatedTypeCode: input.patientInitiatedTypeCode,
+      treatmentId: input.treatmentId ?? undefined,
+      patientInitiatedTypeCode: input.patientInitiatedTypeCode ?? undefined,
       title: input.title ?? '',
       messageTextContent: input.messageTextContent,
     }
@@ -900,7 +1173,22 @@ export class HealthDirectorateService {
     const items = await this.healthApi.getMessagingRecipients(auth, locale)
     if (!items) return null
 
-    return items.map(mapMessagingRecipient)
+    const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
+    const webChat = getWebChatConversationType(formatMessage)
+
+    return items.map((item) => {
+      const recipient = mapMessagingRecipient(item, formatMessage)
+      // The web chat is staffed by primary care, so only the patient's
+      // primary-care clinic advertises it. A link-out entry without a link
+      // would render as a broken regular option, so it is also skipped if
+      // the URL was blanked in Contentful.
+      if (item.kind !== HcpTargetKind.PRIMARY_CARE || !webChat.externalLinkUrl)
+        return recipient
+      return {
+        ...recipient,
+        allowedMessageTypes: [...recipient.allowedMessageTypes, webChat],
+      }
+    })
   }
 
   /* Certificates */
@@ -916,6 +1204,7 @@ export class HealthDirectorateService {
     const body: CreateCertificateRequestBody = {
       nodeId: input.nodeId,
       groupId: input.groupId,
+      treatmentId: input.treatmentId ?? undefined,
       certificateType: toCertificateTypeCode(input.certificateType),
       recipientName: input.recipientName,
       startDate: input.startDate,
@@ -927,5 +1216,45 @@ export class HealthDirectorateService {
     if (!request) return null
 
     return mapCertificateRequest(request)
+  }
+
+  async getCertificate(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateCertificate | null> {
+    const certificate = await this.healthApi.getCertificate(auth, id)
+    if (!certificate) return null
+
+    return mapCertificate(certificate)
+  }
+
+  async createCertificatePaymentIntent(
+    auth: Auth,
+    input: HealthDirectorateCreateCertificatePaymentIntentInput,
+    locale: Locale = 'is',
+  ): Promise<HealthDirectorateCertificatePaymentIntent> {
+    const body: CreateCertificatePaymentIntentDto = {
+      returnUrl: input.returnUrl,
+      cancelUrl: input.cancelUrl,
+    }
+
+    const intent = await this.healthApi.createCertificatePaymentIntent(
+      auth,
+      input.id,
+      body,
+      locale,
+    )
+    // The upstream contract marks the intent required on success — a missing
+    // body is an upstream fault, and the mutation is non-nullable on it.
+    if (!intent) {
+      throw new BadGatewayException(
+        'Payment intent missing from upstream response',
+      )
+    }
+
+    return {
+      paymentId: intent.paymentId,
+      paymentPageUrl: intent.paymentPageUrl,
+    }
   }
 }

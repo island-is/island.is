@@ -39,6 +39,9 @@ export default function TabLayout() {
   return (
     <>
       <NativeTabs
+        // NativeTabs ignores `unstable_settings.initialRouteName`, so the
+        // default 'initialRoute' back behavior lands on the first trigger.
+        backBehavior="history"
         labelVisibilityMode="labeled"
         backgroundColor={
           Platform.OS === 'android' ? theme.shade.background : undefined
@@ -56,7 +59,7 @@ export default function TabLayout() {
           },
         }}
         iconColor={theme.color.blue400}
-        hidden={tabsHidden && Platform.OS === 'ios'}
+        hidden={tabsHidden}
         screenListeners={{
           tabPress: (e) => uiStore.setState({ focusedTab: e.target }),
         }}

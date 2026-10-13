@@ -42,9 +42,12 @@ const makeDefendant = (
   isSentToPrisonAdmin: false,
 })
 
-const makeCase = (defendants: ReturnType<typeof makeDefendant>[]) => ({
+const makeCase = (
+  defendants: ReturnType<typeof makeDefendant>[],
+  type: CaseType = CaseType.INDICTMENT,
+) => ({
   toJSON: () => ({}),
-  type: CaseType.INDICTMENT,
+  type,
   defendants,
   caseFiles: undefined,
   prosecutor: undefined,
@@ -294,6 +297,69 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
     })
   })
 
+  describe('request case — defence user assigned to one of multiple defendants', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const assignedDefendant = {
+        ...makeDefendant(nationalId),
+        // R-cases leave choice/confirmed null (no indictment confirm workflow)
+        isDefenderChoiceConfirmed: undefined,
+      }
+      const otherDefendant = {
+        ...makeDefendant(otherNationalId),
+        isDefenderChoiceConfirmed: undefined,
+      }
+      const theCase = makeCase(
+        [assignedDefendant, otherDefendant],
+        CaseType.CUSTODY,
+      )
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('returns all defendants — request hearings cover the whole case', () => {
+      expect(then.result.defendants).toHaveLength(2)
+      expect(then.result.defendants.map((d) => d.defenderNationalId)).toEqual([
+        nationalId,
+        otherNationalId,
+      ])
+    })
+  })
+
+  describe('request case — defence user with no matching defendant defenderNationalId', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const theCase = makeCase(
+        [
+          {
+            ...makeDefendant(otherNationalId),
+            isDefenderChoiceConfirmed: undefined,
+          },
+        ],
+        CaseType.TRAVEL_BAN,
+      )
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('still returns all defendants', () => {
+      expect(then.result.defendants).toHaveLength(1)
+      expect(then.result.defendants[0].defenderNationalId).toBe(otherNationalId)
+    })
+  })
+
   describe('when a cancelled defendant belongs to a case with a ruling date', () => {
     let then: Then
 
@@ -411,6 +477,90 @@ describe('CaseInterceptor - reopenReason mapping', () => {
 
     it('returns undefined for reopenReason', () => {
       expect(then.result.reopenReason).toBeUndefined()
+    })
+  })
+})
+
+describe('CaseInterceptor - indictmentReviewReturnedExplanation mapping', () => {
+  const mockRequest = jest.fn()
+  const mockHandle = jest.fn()
+
+  interface Then {
+    result: { indictmentReviewReturnedExplanation?: string }
+    error: Error
+  }
+
+  let givenWhenThen: () => Promise<Then>
+
+  beforeEach(() => {
+    givenWhenThen = async (): Promise<Then> => {
+      const interceptor = new CaseInterceptor({
+        findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
+      } as unknown as CaseRepositoryService)
+      const then = {} as Then
+
+      await firstValueFrom(
+        interceptor.intercept(
+          {
+            switchToHttp: () => ({ getRequest: mockRequest }),
+          } as unknown as ExecutionContext,
+          { handle: mockHandle } as unknown as CallHandler,
+        ),
+      )
+        .then((result) => (then.result = result as Then['result']))
+        .catch((error) => (then.error = error))
+
+      return then
+    }
+  })
+
+  describe('when caseStrings contains an INDICTMENT_REVIEW_RETURNED_EXPLANATION entry', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const theCase = {
+        ...makeCase([]),
+        caseStrings: [
+          {
+            stringType: StringType.INDICTMENT_REVIEW_RETURNED_EXPLANATION,
+            value: 'needs changes',
+          },
+        ],
+      }
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: {
+          currentUser: { role: UserRole.PROSECUTOR, nationalId },
+        },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen()
+    })
+
+    it('includes the indictmentReviewReturnedExplanation in the response', () => {
+      expect(then.result.indictmentReviewReturnedExplanation).toBe(
+        'needs changes',
+      )
+    })
+  })
+
+  describe('when caseStrings is undefined', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      mockRequest.mockImplementationOnce(() => ({
+        user: {
+          currentUser: { role: UserRole.PROSECUTOR, nationalId },
+        },
+      }))
+      mockHandle.mockReturnValueOnce(of(makeCase([])))
+
+      then = await givenWhenThen()
+    })
+
+    it('returns undefined for indictmentReviewReturnedExplanation', () => {
+      expect(then.result.indictmentReviewReturnedExplanation).toBeUndefined()
     })
   })
 })

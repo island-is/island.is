@@ -56,9 +56,7 @@ export const PaymentField = () => {
                   chargeItemCode: paymentSettings?.chargeItemCode || '',
                   chargeItemName: paymentSettings?.chargeItemName || '',
                   chargeType: paymentSettings?.chargeType || '',
-                  performingOrgID:
-                    paymentSettings?.performingOrganizationID || '',
-                  priceAmount: paymentSettings?.priceAmount || 0,
+                  performingOrgID: paymentSettings?.performingOrgID || '',
                   update: updateActiveItem,
                 },
               })

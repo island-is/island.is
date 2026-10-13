@@ -1,11 +1,5 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useMemo,
-  useRef,
-} from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import { useLocalStorage } from 'react-use'
 import { Reorder } from 'motion/react'
 
@@ -14,17 +8,17 @@ import {
   getIndictmentCountCompare,
   sortIndictmentCounts,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
-import {
-  Case,
+import type {
   IndictmentCount as TIndictmentCount,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
+import type {
   UpdateIndictmentCount,
   UpdateIndictmentCountState,
-  useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useIndictmentCounts } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { IndictmentCount } from './IndictmentCount'
 import { IndictmentCountAccordionItem } from './IndictmentCountAccordionItem'
@@ -34,8 +28,8 @@ const EXPANDED_STORAGE_KEY = 'INDICTMENT_COUNTS_EXPANDED'
 type ExpandedByCase = Record<string, Record<string, boolean>>
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   handleUpdateIndictmentCount: (
     indictmentCountId: string,
     indictmentCountUpdate: UpdateIndictmentCount,
@@ -45,7 +39,7 @@ interface Props {
   updateIndictmentCountState: (
     indictmentCountId: string,
     indictmentCountUpdate: UpdateIndictmentCountState,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => void
 }
 

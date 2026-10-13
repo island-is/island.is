@@ -20,11 +20,11 @@ import {
   PdfButton,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   CaseFile as TCaseFile,
-  CaseFileCategory,
   PoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import { usePoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { caseFile as m } from './CaseFile.strings'

@@ -1,11 +1,11 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import IconCard from '@island.is/judicial-system-web/src/components/Cards/IconCard/IconCard'
+import type { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { Institution } from '../../../graphql/schema'
-import IconCard from '../IconCard/IconCard'
 import { strings } from './CaseScheduledCard.strings'
 
 interface Props {

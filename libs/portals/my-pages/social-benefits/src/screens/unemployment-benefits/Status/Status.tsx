@@ -19,7 +19,7 @@ import {
   OverviewTable,
   RowTagRenderer,
 } from '../../../components/shared/OverviewTable'
-import { ApplicantOverview } from './ApplicantOverview'
+import { ApplicantOverview } from '../../../components/shared/ApplicantOverview'
 import { Problem } from '@island.is/react-spa/shared'
 import { ActionButtons } from '../components/ActionButtons'
 import { useGetApplicantAvailableActionsQuery } from '../MyData/MyData.generated'
@@ -173,7 +173,26 @@ const Status = () => {
             label: formatMessage(
               isMobile ? um.statusTabApplicantMobile : um.statusTabApplicant,
             ),
-            content: <ApplicantOverview />,
+            content: (
+              <ApplicantOverview
+                fields={[
+                  'passCode',
+                  'preferredJobs',
+                  'bankAccount',
+                  'union',
+                  'pensionFund',
+                  'usedPersonalTaxCredit',
+                  'numberOfChildren',
+                  'employmentHistory',
+                  'educationHistory',
+                  'drivingLicenses',
+                  'languageAbilities',
+                  'serviceArea',
+                  'currentAddressDifferent',
+                  'savedToEures',
+                ]}
+              />
+            ),
           },
         ]}
       />

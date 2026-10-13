@@ -1,12 +1,13 @@
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
-  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
-import { DemandsAutofillProps, getDemandsAutofill } from './PoliceDemands'
+import type { DemandsAutofillProps } from './PoliceDemands'
+import { getDemandsAutofill } from './PoliceDemands'
 
 describe('getDemandsAutofill', () => {
   const baseDefendant = {

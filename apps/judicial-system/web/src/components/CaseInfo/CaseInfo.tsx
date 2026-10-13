@@ -1,5 +1,6 @@
-import { FC } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { FC } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
 
 import { Box, Tag, Text } from '@island.is/island-ui/core'
@@ -13,8 +14,8 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
-import {
-  Case,
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -63,7 +64,7 @@ export const getDefendantLabel = (
 }
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
 }
 
 const Defendants: FC<Props> = ({ workingCase }) => {
@@ -124,7 +125,7 @@ export const ProsecutorCaseInfo: FC<
 export const ProsecutorAndDefendantsEntries: FC<Props> = ({
   workingCase,
 }: {
-  workingCase: Case
+  workingCase: WorkingCase
 }) => (
   <Box display="flex" flexDirection="column" rowGap={1}>
     <Prosecutor workingCase={workingCase} />
@@ -151,8 +152,8 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
         <Box marginTop={1}>
           <Text as="h5" variant="h5">
             {formatMessage(strings.rulingDate, {
-              rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
-            })}
+              rulingDate: formatDate(workingCase.rulingDate, 'PPP') ?? '',
+            }).trim()}
           </Text>
           {workingCase.hasBeenAppealed && (
             <Box marginBottom={1}>

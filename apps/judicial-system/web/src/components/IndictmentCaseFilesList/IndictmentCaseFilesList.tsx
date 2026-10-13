@@ -1,4 +1,5 @@
-import { FC, PropsWithChildren, useContext, useMemo } from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
@@ -15,7 +16,6 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isCourtOfAppealsUser,
@@ -27,41 +27,45 @@ import {
   isPublicProsecutionUser,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
-  FeatureContext,
   FileNotFoundModal,
   PdfButton,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Case,
+import { CaseFileTable } from '@island.is/judicial-system-web/src/components/Table'
+import type {
   CaseFile,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,
-  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { caseFiles } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import {
   useFiledCourtDocuments,
   useFileList,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { isAppealFileCategoryVisible } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { isNonEmptyArray } from '../../utils/arrayHelpers'
-import { isAppealFileCategoryVisible } from '../../utils/utils'
-import { CaseFileTable } from '../Table'
+import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
+import {
+  getVisibleSubpoenas,
+  shouldShowPoliceDigitalCaseFilesSection,
+} from './IndictmentCaseFilesList.logic'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
-import RulingOrderConfirmation from './RulingOrderConfirmation'
 import RulingOrderFileRow from './RulingOrderFileRow'
-import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
-import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './IndictmentCaseFilesList.css'
 
 const getDefenderVisiblePoliceCaseNumbers = (
   userNationalId: string | undefined,
-  defendants: Case['defendants'] | undefined | null,
+  defendants: WorkingCase['defendants'] | undefined | null,
   allPoliceCaseNumbers: string[] | null | undefined,
 ) => {
   if (!userNationalId || !allPoliceCaseNumbers) {
@@ -98,8 +102,8 @@ const getDefenderVisiblePoliceCaseNumbers = (
 
 const getSpokespersonVisiblePoliceCaseNumbers = (
   userNationalId: string | undefined,
-  civilClaimants: Case['civilClaimants'] | undefined | null,
-  defendants: Case['defendants'] | undefined | null,
+  civilClaimants: WorkingCase['civilClaimants'] | undefined | null,
+  defendants: WorkingCase['defendants'] | undefined | null,
   allPoliceCaseNumbers: string[] | null | undefined,
 ) => {
   if (!userNationalId || !allPoliceCaseNumbers) {
@@ -153,8 +157,8 @@ const getSpokespersonVisiblePoliceCaseNumbers = (
 
 const getDefenceUserVisiblePoliceCaseNumbers = (
   userNationalId: string | undefined,
-  defendants: Case['defendants'] | undefined | null,
-  civilClaimants: Case['civilClaimants'] | undefined | null,
+  defendants: WorkingCase['defendants'] | undefined | null,
+  civilClaimants: WorkingCase['civilClaimants'] | undefined | null,
   allPoliceCaseNumbers: string[] | null | undefined,
 ) => {
   if (!userNationalId || !allPoliceCaseNumbers) {
@@ -214,7 +218,7 @@ const getDefenceUserVisiblePoliceCaseNumbers = (
 }
 
 interface Props {
-  workingCase: Case
+  workingCase: CaseFilesListCase
   displayGeneratedPDFs?: boolean
   displayHeading?: boolean
   forceDisplayAdditionalFiles?: boolean
@@ -294,7 +298,7 @@ const FileSection: FC<PropsWithChildren<FileSectionProps>> = (props) => {
 
 const useFilteredCaseFiles = (
   caseFiles?: CaseFile[] | null,
-  splitCases?: Case[] | null,
+  splitCases?: WorkingCase['splitCases'],
 ) => {
   return useMemo(() => {
     const splitCaseFiles =
@@ -342,7 +346,7 @@ const useFilteredCaseFiles = (
   }, [caseFiles, splitCases])
 }
 
-const useFilePermissions = (workingCase: Case, user?: User) => {
+const useFilePermissions = (workingCase: CaseFilesListCase, user?: User) => {
   return useMemo(
     () => ({
       canViewCriminalRecordUpdate:
@@ -359,6 +363,12 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
       canViewDefendantRulings: !isDefenceUser(user),
+      // Not the court of appeals. This certifies service of the verdict, and
+      // the only list of theirs this component reaches is the ruling appeal,
+      // which is a different proceeding - it appeals a ruling order made
+      // while the case ran, not the verdict. The backend route agrees and
+      // admits neither of their roles, so offering it only produced a link
+      // that answers 403.
       canViewVerdictServiceCertificate:
         isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
@@ -366,7 +376,7 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
   )
 }
 
-export const useSentToPrisonAdminDate = (workingCase: Case) => {
+export const useSentToPrisonAdminDate = (workingCase: CaseFilesListCase) => {
   return useMemo(() => {
     // For now we return the newest date on any defendant that has been sent to prison admin
     // but we may need to change this in the future depending on how we want to handle
@@ -407,10 +417,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
-  const showRulingOrderAppealMenu = features.includes(
-    Feature.APPEAL_RULING_ORDER,
-  )
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
     connectedCaseParentId,
@@ -418,44 +424,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const { prefixGeneratedDocumentNameWithDocumentOrder } =
     useFiledCourtDocuments()
 
-  const allSubpoenas = useMemo(
-    () => [
-      ...(workingCase.defendants?.flatMap((defendant) =>
-        (defendant.subpoenas ?? []).map((subpoena) => ({
-          defendant,
-          subpoena,
-          caseId: workingCase.id,
-        })),
-      ) ?? []),
-      ...(workingCase.splitCases?.flatMap((splitCase) =>
-        (splitCase.defendants ?? []).flatMap((defendant) =>
-          (defendant.subpoenas ?? []).map((subpoena) => ({
-            defendant,
-            subpoena,
-            caseId: workingCase.id,
-          })),
-        ),
-      ) ?? []),
-    ],
-    [workingCase],
-  )
-
-  const visibleSubpoenas = useMemo(() => {
-    if (!isDefenceUser(user)) {
-      return allSubpoenas
-    }
-
-    const normalizedUserNationalId = normalizeAndFormatNationalId(
-      user?.nationalId ?? '',
-    )
-
-    return allSubpoenas.filter(
-      ({ defendant }) =>
-        defendant.isDefenderChoiceConfirmed &&
-        defendant.defenderNationalId &&
-        normalizedUserNationalId.includes(defendant.defenderNationalId),
-    )
-  }, [allSubpoenas, user])
+  const visibleSubpoenas = getVisibleSubpoenas(workingCase, user)
 
   const showSubpoenaPdf = displayGeneratedPDFs && visibleSubpoenas.length > 0
 
@@ -520,9 +489,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
     usePoliceDigitalCaseFile()
 
-  const showDigitalCaseFilesSection =
-    (isDistrictCourtUser(user) || isCourtOfAppealsUser(user)) &&
-    (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
+  const showDigitalCaseFilesSection = shouldShowPoliceDigitalCaseFilesSection(
+    user,
+    digitalCaseFiles,
+    digitalCaseFilesLoading,
+  )
 
   const hasNoFiles =
     !showFiles && !displayGeneratedPDFs && !showDigitalCaseFilesSection
@@ -538,7 +509,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           }
         />
       )}
-      <div className={grid({ gap: 5 })}>
+      <div className={stack({ gap: 5 })}>
         {displayGeneratedPDFs && (
           <Box>
             <SectionHeading
@@ -808,21 +779,13 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     onOpenFile={onOpen}
                   />
                 )}
-                {showRulingOrderAppealMenu
-                  ? filteredFiles.rulingOrders.map((file) => (
-                      <RulingOrderFileRow
-                        key={file.id}
-                        file={file}
-                        onOpenFile={onOpen}
-                      />
-                    ))
-                  : filteredFiles.rulingOrders.map((file) => (
-                      <RulingOrderConfirmation
-                        key={file.id}
-                        file={file}
-                        onOpenFile={onOpen}
-                      />
-                    ))}
+                {filteredFiles.rulingOrders.map((file) => (
+                  <RulingOrderFileRow
+                    key={file.id}
+                    file={file}
+                    onOpenFile={onOpen}
+                  />
+                ))}
                 {permissions.canViewVerdictServiceCertificate &&
                   workingCase.defendants?.map((defendant) => {
                     if (
@@ -852,51 +815,46 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   })}
               </div>
             )}
-            {showRulingOrderAppealMenu &&
-              (workingCase.rulingOrderAppealCases?.length ?? 0) > 0 && (
-                <Box>
-                  <Accordion dividerOnBottom={false} dividerOnTop={false}>
-                    {(workingCase.rulingOrderAppealCases ?? [])
-                      .flatMap((appealCase) => {
-                        const rulingFile = workingCase.caseFiles?.find(
-                          (f) => f.id === appealCase.rulingFileId,
-                        )
-                        if (!rulingFile) {
-                          return []
-                        }
+            {(workingCase.rulingOrderAppealCases?.length ?? 0) > 0 && (
+              <Box>
+                <Accordion dividerOnBottom={false} dividerOnTop={false}>
+                  {(workingCase.rulingOrderAppealCases ?? [])
+                    .flatMap((appealCase) => {
+                      const rulingFile = workingCase.caseFiles?.find(
+                        (f) => f.id === appealCase.rulingFileId,
+                      )
+                      if (!rulingFile) {
+                        return []
+                      }
 
-                        const hasVisibleFiles = (
-                          workingCase.caseFiles ?? []
-                        ).some((file) =>
-                          isAppealFileCategoryVisible(
-                            workingCase,
-                            appealCase,
-                            file,
-                            user,
-                          ),
-                        )
-                        if (!hasVisibleFiles) {
-                          return []
-                        }
-
-                        return [{ appealCase, rulingFile }]
-                      })
-                      .map(
-                        ({ appealCase, rulingFile }, index, visibleCases) => (
-                          <RulingOrderAppealFilesAccordion
-                            key={appealCase.id}
-                            appealCase={appealCase}
-                            rulingFile={rulingFile}
-                            onOpenFile={onOpen}
-                            hideTrailingSeparator={
-                              index < visibleCases.length - 1
-                            }
-                          />
+                      const hasVisibleFiles = (
+                        workingCase.caseFiles ?? []
+                      ).some((file) =>
+                        isAppealFileCategoryVisible(
+                          workingCase,
+                          appealCase,
+                          file,
+                          user,
                         ),
-                      )}
-                  </Accordion>
-                </Box>
-              )}
+                      )
+                      if (!hasVisibleFiles) {
+                        return []
+                      }
+
+                      return [{ appealCase, rulingFile }]
+                    })
+                    .map(({ appealCase, rulingFile }, index, visibleCases) => (
+                      <RulingOrderAppealFilesAccordion
+                        key={appealCase.id}
+                        appealCase={appealCase}
+                        rulingFile={rulingFile}
+                        onOpenFile={onOpen}
+                        hideTrailingSeparator={index < visibleCases.length - 1}
+                      />
+                    ))}
+                </Accordion>
+              </Box>
+            )}
             <FileSection
               title={formatMessage(caseFiles.criminalRecordUpdateSection)}
               files={filteredFiles.criminalRecordUpdate}

@@ -1,4 +1,5 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -14,23 +15,23 @@ import {
 } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import InputName from '@island.is/judicial-system-web/src/components/Inputs/InputName'
 import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
-import {
-  Case,
+import type {
   Defendant,
-  Gender,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { formatNationalRegistryAddress } from '@island.is/judicial-system-web/src/utils/formatNationalRegistryAddress'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isBusiness,
   mapStringToGender,
@@ -38,12 +39,12 @@ import {
 
 interface Props {
   defendant: Defendant
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   onChange: (updatedDefendant: UpdateDefendantInput) => void
   updateDefendantState: (
     update: UpdateDefendantInput,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => void
   onDelete?: (defendant: Defendant) => Promise<void>
 }
@@ -137,7 +138,7 @@ const DefendantInfo: FC<Props> = (props) => {
   }, [businessData, error])
 
   return (
-    <BlueBox className={grid({ gap: 2 })}>
+    <BlueBox className={stack({ gap: 2 })}>
       {onDelete && (
         <Box display="flex" justifyContent="flexEnd">
           <Button
@@ -259,17 +260,21 @@ const DefendantInfo: FC<Props> = (props) => {
           )
         }}
         onBlur={(evt) => {
-          validateAndSetErrorMessage(
+          const isValid = validateAndSetErrorMessage(
             ['empty'],
             evt.target.value,
             setAccusedAddressErrorMessage,
           )
 
-          onChange({
-            caseId: workingCase.id,
-            defendantId: defendant.id,
-            address: evt.target.value.trim(),
-          })
+          // Gate the save on validity, like InputName does for the name: a
+          // required field that fails validation is flagged, not persisted.
+          if (isValid) {
+            onChange({
+              caseId: workingCase.id,
+              defendantId: defendant.id,
+              address: evt.target.value.trim(),
+            })
+          }
         }}
         required
       />

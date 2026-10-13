@@ -14,7 +14,14 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useApolloClient } from '@apollo/client'
 
@@ -84,7 +91,18 @@ type RealEstatePropertyVars = {
   }
 }
 
-const PROPERTY_NUMBER_REGEX = /^\d{7}$/
+const PROPERTY_NUMBER_REGEX = /^F?\d{7}$/i
+
+const normalizePropertyNumber = (propertyNumber: string) =>
+  propertyNumber.trim().replace(/^F/i, '')
+
+const sanitizePropertyNumberInput = (propertyNumber: string) => {
+  const sanitized = propertyNumber
+    .replace(/[^\dF]/gi, '')
+    .replace(/(?!^)F/gi, '')
+
+  return sanitized.slice(0, /^F/i.test(sanitized) ? 8 : 7)
+}
 
 export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const { lang, formatMessage } = useLocale()
@@ -129,23 +147,6 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
     municipality: address?.municipality ?? '',
   })
 
-  const parsePropertyFromLabel = (label: string) => {
-    const separator = ' - '
-    const separatorIndex = label.indexOf(separator)
-
-    if (separatorIndex < 0) {
-      return {
-        propertyNumber: label.trim(),
-        address: '',
-      }
-    }
-
-    return {
-      propertyNumber: label.slice(0, separatorIndex).trim(),
-      address: label.slice(separatorIndex + separator.length).trim(),
-    }
-  }
-
   const [propertyList, setPropertyList] = useState<
     (FormSystemListItem | null)[]
   >(item.list ?? [])
@@ -156,6 +157,7 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const [propertiesFetchHasError, setPropertiesFetchHasError] = useState(false)
   const [searchLoading, setSearchLoading] = useState(false)
   const [isPropertySearchFocused, setIsPropertySearchFocused] = useState(false)
+  const propertyRequestId = useRef(0)
 
   const buildListItem = (property: SimpleProperty): FormSystemListItem => {
     const propertyNumber = property.propertyNumber ?? ''
@@ -186,11 +188,6 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
 
     while (hasNextPage) {
       const cursorValue = cursor.toString()
-      console.log('[FormSystemRealEstate] Fetching assetsOverview', {
-        fieldId: item.id,
-        valueIndex,
-        cursor: cursorValue,
-      })
 
       const result = await client.query<
         RealEstatePropertiesQuery,
@@ -216,13 +213,6 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
       }
 
       const pageItems = pageData.properties ?? []
-      console.log('[FormSystemRealEstate] assetsOverview page received', {
-        fieldId: item.id,
-        valueIndex,
-        cursor: cursorValue,
-        itemCount: pageItems.length,
-        hasNextPage: pageData.paging?.hasNextPage ?? false,
-      })
 
       for (const property of pageItems) {
         if (!property?.propertyNumber || seen.has(property.propertyNumber)) {
@@ -237,19 +227,16 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
       cursor += 1
     }
 
-    console.log('[FormSystemRealEstate] Finished fetching assetsOverview', {
-      fieldId: item.id,
-      valueIndex,
-      totalItems: allItems.length,
-    })
-
     return allItems
   }
 
   const fetchProperty = async (propertyNumber: string) => {
-    const normalized = propertyNumber.trim()
+    const requestId = ++propertyRequestId.current
+    const trimmed = propertyNumber.trim()
+    const normalized = normalizePropertyNumber(trimmed)
 
-    if (!normalized) {
+    if (!trimmed) {
+      setSearchLoading(false)
       setValue(propertyNumberField, '')
       setValue(addressField, '')
       setValue(postalCodeField, '')
@@ -261,7 +248,8 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
       return
     }
 
-    if (!PROPERTY_NUMBER_REGEX.test(normalized)) {
+    if (!PROPERTY_NUMBER_REGEX.test(trimmed)) {
+      setSearchLoading(false)
       setError(propertyNumberField, {
         type: 'validate',
         message: formatMessage(m.invalidPropertyNumber),
@@ -272,12 +260,6 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
     setSearchLoading(true)
 
     try {
-      console.log('[FormSystemRealEstate] Fetching assetsDetail', {
-        fieldId: item.id,
-        valueIndex,
-        assetId: normalized,
-      })
-
       const result = await client.query<
         RealEstatePropertyQuery,
         RealEstatePropertyVars
@@ -291,22 +273,21 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
         fetchPolicy: 'network-only',
       })
 
+      if (requestId !== propertyRequestId.current) {
+        return
+      }
+
       const propertyData = result.data?.assetsDetail
 
       if (propertyData?.propertyNumber) {
-        console.log('[FormSystemRealEstate] assetsDetail received', {
-          fieldId: item.id,
-          valueIndex,
-          assetId: normalized,
-          hasDefaultAddress: Boolean(propertyData.defaultAddress),
-        })
-
         const propertyNumber = propertyData.propertyNumber
         const { address, postalCode, municipality } = getAddressParts(
           propertyData.defaultAddress,
         )
 
-        setValue(propertyNumberField, propertyNumber)
+        if (!shouldFetch) {
+          setValue(propertyNumberField, propertyNumber)
+        }
         setValue(addressField, address)
         setValue(postalCodeField, postalCode)
         setValue(municipalityField, municipality)
@@ -348,6 +329,10 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
         })
       }
     } catch (error) {
+      if (requestId !== propertyRequestId.current) {
+        return
+      }
+
       console.error('[FormSystemRealEstate] Failed to fetch assetsDetail', {
         fieldId: item.id,
         valueIndex,
@@ -375,7 +360,9 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
         message: '',
       })
     } finally {
-      setSearchLoading(false)
+      if (requestId === propertyRequestId.current) {
+        setSearchLoading(false)
+      }
     }
   }
 
@@ -509,127 +496,129 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
     [propertyList, mapToSelectItems],
   )
 
-  if (shouldFetch) {
-    return (
-      <Controller
-        key={item.id + '-' + valueIndex}
-        name={propertyNumberField}
-        control={control}
-        defaultValue={selectedOption?.label ?? ''}
-        rules={{
-          required: {
-            value: item?.isRequired ?? false,
-            message: formatMessage(m.required),
-          },
-          validate: () => {
-            if (shouldFetch && propertiesFetchHasError) {
-              return formatMessage(m.listFetchFailed)
-            }
-            return true
-          },
-        }}
-        render={({ field, fieldState }) =>
-          isLoading ? (
-            <Box>
-              <SkeletonLoader
-                height={48}
-                display="block"
-                borderRadius="large"
-              />
-              <Box marginLeft={1}>
-                <LoadingDots />
-              </Box>
+  const propertyNumberInput = shouldFetch ? (
+    <Controller
+      key={item.id + '-' + valueIndex}
+      name={propertyNumberField}
+      control={control}
+      defaultValue={selectedOption?.label ?? ''}
+      rules={{
+        required: {
+          value: item?.isRequired ?? false,
+          message: formatMessage(m.required),
+        },
+        validate: () => {
+          if (shouldFetch && propertiesFetchHasError) {
+            return formatMessage(m.listFetchFailed)
+          }
+          return true
+        },
+      }}
+      render={({ field, fieldState }) =>
+        isLoading ? (
+          <Box>
+            <SkeletonLoader height={48} display="block" borderRadius="large" />
+            <Box marginLeft={1}>
+              <LoadingDots />
             </Box>
-          ) : (
-            <Select
-              name="list"
+          </Box>
+        ) : (
+          <Select
+            name="list"
+            label={item.name?.[lang] ?? ''}
+            options={selectOptions}
+            required={item.isRequired ?? false}
+            placeholder={formatMessage(m.select)}
+            backgroundColor="blue"
+            isClearable={item.isRequired ? false : true}
+            onChange={(option) => {
+              const selectedLabel = option?.label ?? ''
+              const propertyNumber = option?.value?.value ?? ''
+
+              field.onChange(selectedLabel)
+              trigger(field.name)
+              setSelectedOption(option ?? undefined)
+
+              setValue(addressField, '')
+              setValue(postalCodeField, '')
+              setValue(municipalityField, '')
+              dispatchAssetValue(propertyNumber, '', '', '')
+              fetchProperty(propertyNumber)
+            }}
+            value={selectedOption}
+            hasError={Boolean(fieldState.error)}
+            errorMessage={fieldState.error?.message}
+          />
+        )
+      }
+    />
+  ) : (
+    <Controller
+      key={`${item.id}-${valueIndex}_propertyNumber`}
+      name={propertyNumberField}
+      control={control}
+      defaultValue={getValue(item, 'propertyNumber', valueIndex) ?? ''}
+      rules={{
+        required: {
+          value: item?.isRequired ?? false,
+          message: formatMessage(m.required),
+        },
+        validate: (value) => {
+          if (!value || PROPERTY_NUMBER_REGEX.test(value)) {
+            return true
+          }
+
+          return searchLoading || isPropertySearchFocused
+            ? true
+            : formatMessage(m.invalidPropertyNumber)
+        },
+      }}
+      render={({ field, fieldState }) => (
+        <GridRow>
+          <GridColumn span="6/10">
+            <Input
               label={item.name?.[lang] ?? ''}
-              options={selectOptions}
-              required={item.isRequired ?? false}
-              placeholder={formatMessage(m.select)}
+              name="propertySearch"
+              value={field.value}
               backgroundColor="blue"
-              isClearable={item.isRequired ? false : true}
-              onChange={(option) => {
-                const selectedLabel = option?.label ?? ''
-                const propertyNumber = option?.value?.value ?? ''
-                const { address } = parsePropertyFromLabel(selectedLabel)
+              onChange={(e) => {
+                const value = sanitizePropertyNumberInput(e.target.value)
+                propertyRequestId.current += 1
+                setSearchLoading(false)
+                field.onChange(value)
 
-                field.onChange(selectedLabel)
-                trigger(field.name)
-                setSelectedOption(option ?? undefined)
+                setValue(addressField, '')
+                setValue(postalCodeField, '')
+                setValue(municipalityField, '')
+                clearErrors(propertyNumberField)
+                clearErrors(addressField)
+                clearErrors(postalCodeField)
+                clearErrors(municipalityField)
 
-                dispatchAssetValue(propertyNumber, address, '', '')
+                dispatchAssetValue('', '', '', '')
               }}
-              value={selectedOption}
+              onFocus={() => {
+                setIsPropertySearchFocused(true)
+              }}
+              onBlur={() => {
+                setIsPropertySearchFocused(false)
+                field.onBlur()
+                fetchProperty(field.value)
+              }}
+              placeholder={formatMessage(m.enterPropertyNumber)}
+              required={item.isRequired ?? false}
               hasError={Boolean(fieldState.error)}
               errorMessage={fieldState.error?.message}
             />
-          )
-        }
-      />
-    )
-  }
+          </GridColumn>
+        </GridRow>
+      )}
+    />
+  )
 
   return (
     <Stack space={2}>
-      <Controller
-        key={`${item.id}-${valueIndex}_propertyNumber`}
-        name={propertyNumberField}
-        control={control}
-        defaultValue={getValue(item, 'propertyNumber', valueIndex) ?? ''}
-        rules={{
-          required: {
-            value: item?.isRequired ?? false,
-            message: formatMessage(m.required),
-          },
-          validate: (value) => {
-            if (!value || PROPERTY_NUMBER_REGEX.test(value)) {
-              return true
-            }
-
-            return searchLoading || isPropertySearchFocused
-              ? true
-              : formatMessage(m.invalidPropertyNumber)
-          },
-        }}
-        render={({ field, fieldState }) => (
-          <GridRow>
-            <GridColumn span="6/10">
-              <Input
-                label={item.name?.[lang] ?? ''}
-                name="propertySearch"
-                value={field.value}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, '').slice(0, 7)
-                  field.onChange(value)
-
-                  setValue(addressField, '')
-                  setValue(postalCodeField, '')
-                  setValue(municipalityField, '')
-                  clearErrors(propertyNumberField)
-                  clearErrors(addressField)
-                  clearErrors(postalCodeField)
-                  clearErrors(municipalityField)
-
-                  dispatchAssetValue('', '', '', '')
-                }}
-                onFocus={() => {
-                  setIsPropertySearchFocused(true)
-                }}
-                onBlur={() => {
-                  setIsPropertySearchFocused(false)
-                  field.onBlur()
-                  fetchProperty(field.value)
-                }}
-                placeholder={formatMessage(m.enterPropertyNumber)}
-                required={item.isRequired ?? false}
-                hasError={Boolean(fieldState.error)}
-                errorMessage={fieldState.error?.message}
-              />
-            </GridColumn>
-          </GridRow>
-        )}
-      />
+      {propertyNumberInput}
 
       {searchLoading && <LoadingDots />}
 
@@ -668,18 +657,11 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
             name={postalCodeField}
             control={control}
             defaultValue={getValue(item, 'postalCode', valueIndex) ?? ''}
-            rules={{
-              required: {
-                value: item?.isRequired ?? false,
-                message: formatMessage(m.required),
-              },
-            }}
             render={({ field, fieldState }) => (
               <Input
                 label={formatMessage(m.postalCode)}
                 name="propertyPostalCode"
                 value={field.value}
-                required={item?.isRequired ?? false}
                 readOnly
                 backgroundColor="blue"
                 loading={searchLoading}
@@ -698,18 +680,11 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
             name={municipalityField}
             control={control}
             defaultValue={getValue(item, 'municipality', valueIndex) ?? ''}
-            rules={{
-              required: {
-                value: item?.isRequired ?? false,
-                message: formatMessage(m.required),
-              },
-            }}
             render={({ field, fieldState }) => (
               <Input
                 label={formatMessage(m.city)}
                 name="propertyMunicipality"
                 value={field.value}
-                required={item?.isRequired ?? false}
                 readOnly
                 backgroundColor="blue"
                 loading={searchLoading}

@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64'
-import { Includeable, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   forwardRef,
@@ -15,10 +15,7 @@ import {
   formatDate,
   getServiceStatusText,
 } from '@island.is/judicial-system/formatters'
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CourtDocumentType,
@@ -32,7 +29,10 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { getCaseFileHash } from '../../formatters'
+import { queueMessagesAfterCommit } from '../../middleware'
+import { InternalCaseService } from '../case/internalCase.service'
 import { PdfService } from '../case/pdf.service'
 import {
   CourtDocumentFolder,
@@ -42,51 +42,18 @@ import {
 import { DefendantService } from '../defendant/defendant.service'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
-import { PoliceService } from '../police'
+import { PoliceDocumentType, PoliceService } from '../police'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
   CourtDocumentRepositoryService,
-  CourtSession,
   Defendant,
-  Institution,
   Subpoena,
   SubpoenaRepositoryService,
-  User,
 } from '../repository'
 import { CreateSubpoenasDto } from './dto/createSubpoenas.dto'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
-
-export const include: Includeable[] = [
-  {
-    model: Case,
-    as: 'case',
-    include: [
-      {
-        model: User,
-        as: 'judge',
-      },
-      {
-        model: User,
-        as: 'registrar',
-      },
-      {
-        model: Institution,
-        as: 'prosecutorsOffice',
-      },
-      {
-        model: Institution,
-        as: 'court',
-      },
-      {
-        model: CourtSession,
-        as: 'courtSessions',
-      },
-    ],
-  },
-  { model: Defendant, as: 'defendant' },
-]
 
 @Injectable()
 export class SubpoenaService {
@@ -103,6 +70,8 @@ export class SubpoenaService {
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     private readonly courtService: CourtService,
+    @Inject(forwardRef(() => InternalCaseService))
+    private readonly internalCaseService: InternalCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -193,6 +162,8 @@ export class SubpoenaService {
       }
     }
 
+    this.queueSubpoenaRevocationMessages(theCase, defendantsToProcess, user)
+
     // Queue messages for delivering subpoenas to court and national commissioners office
     await this.queueSubpoenaDeliveryMessages(
       theCase,
@@ -208,6 +179,44 @@ export class SubpoenaService {
     })
 
     return subpoenas
+  }
+
+  private shouldRevokeSubpoena(subpoena: Subpoena, now: Date): boolean {
+    if (!subpoena.policeSubpoenaId) {
+      return false
+    }
+
+    if (isSuccessfulServiceStatus(subpoena.serviceStatus)) {
+      return false
+    }
+
+    return subpoena.arraignmentDate.getTime() > now.getTime()
+  }
+
+  private queueSubpoenaRevocationMessages(
+    theCase: Case,
+    defendants: Defendant[],
+    user: TUser,
+  ): void {
+    const now = nowFactory()
+    const messages: Message[] = []
+
+    for (const defendant of defendants) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        if (this.shouldRevokeSubpoena(subpoena, now)) {
+          messages.push({
+            type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
+            user,
+            caseId: theCase.id,
+            elementId: [defendant.id, subpoena.id],
+          })
+        }
+      }
+    }
+
+    if (messages.length > 0) {
+      queueMessagesAfterCommit(...messages)
+    }
   }
 
   private async queueSubpoenaDeliveryMessages(
@@ -240,7 +249,7 @@ export class SubpoenaService {
     }
 
     if (messages.length > 0) {
-      addMessagesToQueue(...messages)
+      queueMessagesAfterCommit(...messages)
     }
   }
 
@@ -266,14 +275,14 @@ export class SubpoenaService {
   ): void {
     if (serviceStatus && serviceStatus !== subpoena.serviceStatus) {
       if (isSuccessfulServiceStatus(serviceStatus)) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
           body: { type: SubpoenaNotificationType.SERVICE_SUCCESSFUL },
         })
       } else if (isFailedServiceStatus(serviceStatus)) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
@@ -391,9 +400,7 @@ export class SubpoenaService {
     subpoenaId: string,
     transaction: Transaction,
   ): Promise<Subpoena> {
-    const subpoena = await this.subpoenaRepositoryService.findOne({
-      include,
-      where: { id: subpoenaId },
+    const subpoena = await this.subpoenaRepositoryService.findById(subpoenaId, {
       transaction,
     })
 
@@ -404,11 +411,11 @@ export class SubpoenaService {
     return subpoena
   }
 
-  async findByPoliceSubpoenaId(policeSubpoenaId?: string): Promise<Subpoena> {
-    const subpoena = await this.subpoenaRepositoryService.findOne({
-      include,
-      where: { policeSubpoenaId },
-    })
+  async findByPoliceSubpoenaId(policeSubpoenaId: string): Promise<Subpoena> {
+    const subpoena =
+      await this.subpoenaRepositoryService.findByPoliceSubpoenaId(
+        policeSubpoenaId,
+      )
 
     if (!subpoena) {
       throw new NotFoundException(
@@ -417,13 +424,6 @@ export class SubpoenaService {
     }
 
     return subpoena
-  }
-
-  async findByCaseId(caseId: string): Promise<Subpoena[]> {
-    return this.subpoenaRepositoryService.findAll({
-      include,
-      where: { caseId },
-    })
   }
 
   async deliverSubpoenaToNationalCommissionersOffice({
@@ -610,6 +610,42 @@ export class SubpoenaService {
         // Do not retry an upload the court service will never accept
         return { delivered: isFileTooLargeForCourt(reason) }
       })
+  }
+
+  async deliverServiceCertificateToPolice(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena: Subpoena,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    try {
+      const pdf = await this.pdfService.getSubpoenaServiceCertificatePdf(
+        theCase,
+        defendant,
+        subpoena,
+      )
+
+      const delivered =
+        await this.internalCaseService.deliverCaseToPoliceWithFiles(
+          theCase,
+          user,
+          [
+            {
+              type: PoliceDocumentType.RVBD,
+              courtDocument: Base64.btoa(pdf.toString('binary')),
+            },
+          ],
+        )
+
+      return { delivered }
+    } catch (reason) {
+      this.logger.warn(
+        `Failed to upload service certificate pdf to police for subpoena ${subpoena.id} of defendant ${defendant.id} and case ${theCase.id}`,
+        { reason },
+      )
+
+      return { delivered: false }
+    }
   }
 
   async deliverSubpoenaRevocationToNationalCommissionersOffice(

@@ -5,6 +5,7 @@ import {
 } from './bankTransfer.types'
 import {
   deriveBankTransferFailureReason,
+  getBankTransferDebtor,
   isOnboardingRequired,
   mapRawStatusToBankTransferPendingStatus,
 } from './bankTransfer.utils'
@@ -12,29 +13,19 @@ import {
 const onboardingOrigin = 'https://light.blikk.tech'
 
 describe('mapRawStatusToBankTransferPendingStatus', () => {
-  const scaUrl = 'https://stage.blikk.tech/sca/p-1'
-
-  it.each<[string, string | undefined, BankTransferPendingStatus]>([
-    ['SCA_REQUIRED', scaUrl, BankTransferPendingStatus.SCA_REQUIRED],
-    ['SCA_REQUIRED', undefined, BankTransferPendingStatus.SCA_REQUIRED],
-    // DRAFT only advances once the payer initiates — with an SCA URL present the payer
-    // must act, so it renders the SCA UI (prevents a dots→QR flicker right after create).
-    ['DRAFT', scaUrl, BankTransferPendingStatus.SCA_REQUIRED],
-    ['DRAFT', undefined, BankTransferPendingStatus.PROCESSING],
-    // …but an onboarding URL is handled via redirect, not the SCA UI.
-    [
-      'DRAFT',
-      'https://light.blikk.tech/onboarding/p-1',
-      BankTransferPendingStatus.PROCESSING,
-    ],
-    ['PENDING', scaUrl, BankTransferPendingStatus.PROCESSING],
-    ['SCA_COMPLETE', scaUrl, BankTransferPendingStatus.PROCESSING],
+  it.each<[string, BankTransferPendingStatus]>([
+    // SCA_REQUIRED is the only status that asks the payer to act — with or without a URL, since
+    // Blikk omits one for back-channel banks that push to the banking app instead.
+    ['SCA_REQUIRED', BankTransferPendingStatus.SCA_REQUIRED],
+    // Everything before it is "waiting": Blikk has not yet decided whether there is an SCA URL,
+    // so a create-time URL must not put the payer into the SCA UI.
+    ['DRAFT', BankTransferPendingStatus.PROCESSING],
+    ['PENDING', BankTransferPendingStatus.PROCESSING],
+    ['SCA_COMPLETE', BankTransferPendingStatus.PROCESSING],
     // Unknown statuses fall back to processing (keep polling, no SCA UI).
-    ['WAT', scaUrl, BankTransferPendingStatus.PROCESSING],
-  ])('maps %s (url: %s) to %s', (rawStatus, url, expected) => {
-    expect(
-      mapRawStatusToBankTransferPendingStatus(rawStatus, url, onboardingOrigin),
-    ).toBe(expected)
+    ['WAT', BankTransferPendingStatus.PROCESSING],
+  ])('maps %s to %s', (rawStatus, expected) => {
+    expect(mapRawStatusToBankTransferPendingStatus(rawStatus)).toBe(expected)
   })
 })
 
@@ -126,5 +117,36 @@ describe('deriveBankTransferFailureReason', () => {
     [BankTransferStatus.PENDING, expired, null],
   ])('derives %s on %o as %s', (status, row, expectedReason) => {
     expect(deriveBankTransferFailureReason(status, row)).toBe(expectedReason)
+  })
+})
+
+describe('getBankTransferDebtor', () => {
+  const person = '0101302129'
+  const company = '6010100890'
+  const temporary = '8123456789'
+
+  it.each([
+    ['an individual payer', person, undefined, { debtorExternalId: person }],
+    // An individual sent alongside a non-company payer does not change who is debited.
+    [
+      'an individual payer with an individual',
+      person,
+      '0101307789',
+      { debtorExternalId: person },
+    ],
+    [
+      'a company payer with an individual',
+      company,
+      person,
+      { debtorExternalId: person, debtorCorpExternalId: company },
+    ],
+    ['a company payer without an individual', company, undefined, null],
+    ['a company payer with a company', company, company, null],
+    ['a company payer with a temporary kennitala', company, temporary, null],
+    ['a temporary-kennitala payer', temporary, undefined, null],
+  ])('resolves %s', (_, payerNationalId, actorNationalId, expected) => {
+    expect(getBankTransferDebtor(payerNationalId, actorNationalId)).toEqual(
+      expected,
+    )
   })
 })

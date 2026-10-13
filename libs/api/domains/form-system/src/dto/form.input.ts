@@ -77,6 +77,9 @@ export class UpdateFormDtoInput {
   @Field(() => String, { nullable: true })
   submissionServiceUrl?: string
 
+  @Field(() => String, { nullable: true })
+  zendeskBrandId?: string
+
   @Field(() => Boolean, { nullable: true })
   hasPayment?: boolean
 
@@ -94,6 +97,12 @@ export class UpdateFormDtoInput {
 
   @Field(() => Boolean, { nullable: true })
   isInaccessible?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  validateEligibility?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  enableApplicationPdfDownload?: boolean
 
   @Field(() => Boolean, { nullable: true })
   hasSummaryScreen?: boolean
@@ -166,6 +175,12 @@ export class FormInput {
 
   @Field(() => Boolean, { nullable: true })
   isInaccessible?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  validateEligibility?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  enableApplicationPdfDownload?: boolean
 
   @Field(() => SectionInfoInput, { nullable: true })
   sectionInfo?: SectionInfoInput

@@ -158,7 +158,7 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   }
 })
 
-const getAndRefreshToken = async () => {
+export const getAndRefreshToken = async () => {
   const { refresh } = getAuthStoreRef().getState()
   let { authorizeResult } = getAuthStoreRef().getState()
 
@@ -202,6 +202,16 @@ const authLink = setContext(async (_, { headers }) => {
 export const archivedCache = new Map()
 
 const cache = new InMemoryCache({
+  // Union/interface types need possibleTypes so the cache can match inline
+  // fragments when reading; without it a union member's fields (e.g. the
+  // health message content segments) come back undefined.
+  possibleTypes: {
+    HealthDirectorateHealthConversationMessageContent: [
+      'HealthDirectorateHealthConversationTextContent',
+      'HealthDirectorateHealthConversationSegmentedContent',
+      'HealthDirectorateHealthConversationVideoContent',
+    ],
+  },
   dataIdFromObject: (object) => {
     switch (object.__typename) {
       case 'VehiclesVehicle':
@@ -218,11 +228,28 @@ const cache = new InMemoryCache({
         userNotifications: {
           merge: true,
         },
+        // The paginated wrapper has no id, so Apollo needs an explicit merge.
+        healthDirectoratePaginatedHealthConversations: {
+          merge: true,
+        },
         getUserProfile: {
           merge: true,
         },
         nationalRegistryPerson: {
           merge: false,
+        },
+        // Client-only, written by the health overview. Defaults to null so a
+        // cache-only read before the first write does not warn.
+        healthBasicInfoFetchedAt: {
+          read: (value: string | null = null) => value,
+        },
+        // The as-of date is always "now", so keying by it would leave a dead
+        // ROOT_QUERY entry behind on every fetch. One consumer, one entry.
+        rightsPortalUserDentistRegistration: {
+          keyArgs: false,
+        },
+        rightsPortalPaymentOverview: {
+          keyArgs: false,
         },
       },
     },

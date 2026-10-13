@@ -51,17 +51,16 @@ export const financialStateMachine = createMachine({
   },
 })
 
-interface FlightLegCreationAttributes
-  extends Optional<
-    TFlightLeg,
-    | 'id'
-    | 'created'
-    | 'modified'
-    | 'financialState'
-    | 'financialStateUpdated'
-    | 'flight'
-    | 'flightId'
-  > {}
+type FlightLegCreationAttributes = Optional<
+  TFlightLeg,
+  | 'id'
+  | 'created'
+  | 'modified'
+  | 'financialState'
+  | 'financialStateUpdated'
+  | 'flight'
+  | 'flightId'
+>
 
 @Table({ tableName: 'flight_leg' })
 export class FlightLeg
@@ -77,7 +76,6 @@ export class FlightLeg
   @ApiProperty()
   id!: string
 
-  // eslint-disable-next-line
   @ForeignKey(() => Flight)
   @Column({
     type: DataType.UUID,
@@ -100,7 +98,6 @@ export class FlightLeg
   @ApiProperty()
   cooperation?: string
 
-  // eslint-disable-next-line
   @BelongsTo(() => Flight)
   @ApiProperty({ type: () => Flight })
   flight?: TFlight

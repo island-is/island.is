@@ -1,17 +1,17 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { Box, Tag } from '@island.is/island-ui/core'
 import { getShortRestrictionByValue } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
-  Case,
   CaseCustodyRestrictions,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/utils'
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
 }
 
 const RestrictionTags: FC<Props> = ({ workingCase }) => {

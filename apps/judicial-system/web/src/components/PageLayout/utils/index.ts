@@ -1,12 +1,12 @@
-import { IntlFormatters } from 'react-intl'
+import type { IntlFormatters } from 'react-intl'
 
 import {
   isCompletedCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { sections as m } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
-  Case,
   CaseDecision,
   CaseState,
   CaseType,
@@ -14,7 +14,7 @@ import {
 
 export const formatCaseResult = (
   formatMessage: IntlFormatters['formatMessage'],
-  workingCase: Case,
+  workingCase: WorkingCase,
   caseResult?: CaseState | null,
 ): string => {
   let caseType = workingCase.type

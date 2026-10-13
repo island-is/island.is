@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'portals-admin-ids-admin',
   preset: './jest.preset.js',

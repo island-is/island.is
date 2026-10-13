@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-rsk-company-registry',
   preset: './jest.preset.js',

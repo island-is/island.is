@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 import isSameDay from 'date-fns/isSameDay'
 
@@ -12,9 +12,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import AccordionListItem from '@island.is/judicial-system-web/src/components/AccordionListItem/AccordionListItem'
 import {
   AppealDecisionPartyRole,
-  Case,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -22,11 +23,10 @@ import {
   caseLevelAppealDecision,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { courtRecordAccordion as m } from './CourtRecordAccordion.strings'
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
 }
 
 const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {

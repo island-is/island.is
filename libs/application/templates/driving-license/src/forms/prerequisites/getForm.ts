@@ -5,6 +5,7 @@ import { m } from '../../lib/messages'
 import { sectionFakeData } from './sectionFakeData'
 import { sectionExternalData } from './sectionExternalData'
 import { sectionApplicationFor } from './sectionApplicationFor'
+import { sectionDigitalLicense } from './sectionDigitalLicense'
 import { sectionRequirements } from './sectionRequirements'
 
 interface DrivingLicenseFormConfig {
@@ -42,6 +43,7 @@ export const getForm = ({
           ...(allowPickLicense
             ? [sectionApplicationFor(allowBELicense, allow65Renewal)]
             : []),
+          sectionDigitalLicense(),
           sectionRequirements(
             allow65RenewalRedesign,
             allowBTempRedesign,

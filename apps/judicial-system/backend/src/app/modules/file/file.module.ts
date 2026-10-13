@@ -1,9 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 
-import { CaseFile } from '../repository'
 import {
   AwsS3Module,
   CaseModule,
@@ -29,7 +27,6 @@ import { LimitedAccessFileController } from './limitedAccessFile.controller'
     forwardRef(() => CaseModule),
     forwardRef(() => CourtModule),
     forwardRef(() => AwsS3Module),
-    SequelizeModule.forFeature([CaseFile]),
   ],
   controllers: [
     FileController,

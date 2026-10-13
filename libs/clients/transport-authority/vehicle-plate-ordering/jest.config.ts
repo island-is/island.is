@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-transport-authority-vehicle-plate-ordering',
   preset: './jest.preset.js',

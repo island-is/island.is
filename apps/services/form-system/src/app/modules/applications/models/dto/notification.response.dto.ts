@@ -1,4 +1,4 @@
-import { ApiHideProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 import { IsArray, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
@@ -16,7 +16,7 @@ export class NotificationResponseDto {
   @Type(() => ApplicationJsonFieldDto)
   fields?: ApplicationJsonFieldDto[]
 
-  @ApiHideProperty()
+  @ApiPropertyOptional()
   operationSuccessful?: boolean
 
   @ApiPropertyOptional({ type: ValidationErrorDto })

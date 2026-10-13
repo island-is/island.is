@@ -22,7 +22,11 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case, Notification } from '../../../repository'
+import {
+  Case,
+  Notification,
+  NotificationRepositoryService,
+} from '../../../repository'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
@@ -56,7 +60,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
   let mockConfig: ConfigType<typeof notificationModuleConfig>
 
   let mockEmailService: EmailService
-  let mockNotificationModel: typeof Notification
+  let mockNotificationRepositoryService: NotificationRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -64,12 +68,12 @@ describe('InternalNotificationController - Send court date notifications', () =>
       emailService,
       internalNotificationController,
       notificationConfig,
-      notificationModel,
+      notificationRepositoryService,
     } = await createTestingNotificationModule()
 
     mockConfig = notificationConfig
     mockEmailService = emailService
-    mockNotificationModel = notificationModel
+    mockNotificationRepositoryService = notificationRepositoryService
 
     givenWhenThen = async (
       theCase: Case,
@@ -104,6 +108,13 @@ describe('InternalNotificationController - Send court date notifications', () =>
       defenderName: defender.name,
       defenderEmail: defender.email,
       defenderNationalId: defender.nationalId,
+      defendants: [
+        {
+          defenderName: defender.name,
+          defenderEmail: defender.email,
+          defenderNationalId: defender.nationalId,
+        },
+      ],
     } as Case
 
     beforeEach(async () => {
@@ -155,10 +166,16 @@ describe('InternalNotificationController - Send court date notifications', () =>
       courtCaseNumber,
       defenderName: defender.name,
       defenderEmail: defender.email,
+      defendants: [
+        {
+          defenderName: defender.name,
+          defenderEmail: defender.email,
+        },
+      ],
     } as Case
 
     beforeEach(async () => {
-      const mockCreate = mockNotificationModel.create as jest.Mock
+      const mockCreate = mockNotificationRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce({} as Notification)
 
       then = await givenWhenThen(
@@ -203,6 +220,12 @@ describe('InternalNotificationController - Send court date notifications', () =>
       courtCaseNumber,
       defenderName: defender.name,
       defenderEmail: defender.email,
+      defendants: [
+        {
+          defenderName: defender.name,
+          defenderEmail: defender.email,
+        },
+      ],
       // The defender was notified the first time the court date was sent
       notifications: [
         {
@@ -214,7 +237,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
     } as Case
 
     beforeEach(async () => {
-      const mockCreate = mockNotificationModel.create as jest.Mock
+      const mockCreate = mockNotificationRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce({} as Notification)
 
       await givenWhenThen(theCase, notificationDto)
@@ -255,6 +278,12 @@ describe('InternalNotificationController - Send court date notifications', () =>
       // The defender is also the legal rights protector of one of the victims
       defenderName: defender.name,
       defenderEmail: defender.email,
+      defendants: [
+        {
+          defenderName: defender.name,
+          defenderEmail: defender.email,
+        },
+      ],
       sessionArrangements: SessionArrangements.ALL_PRESENT,
       victims: [
         {

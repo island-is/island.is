@@ -1,11 +1,8 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useMemo } from 'react'
 
-import {
-  AccordionItem,
-  Box,
-  IconMapIcon,
-  Text,
-} from '@island.is/island-ui/core'
+import type { IconMapIcon } from '@island.is/island-ui/core'
+import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import {
   formatDate,
@@ -16,6 +13,7 @@ import {
   isDefenceUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   ContextMenu,
   FormContext,
@@ -23,16 +21,13 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   AppealCase,
-  Case,
   CaseFile,
-  CaseFileCategory,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  TUploadFile,
-  useS3Upload,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   isAppealFileCategoryVisible,
   isMatchingAppealCaseFile,
@@ -58,7 +53,10 @@ const isProsecutorCategory = (category: CaseFileCategory | undefined | null) =>
   ].includes(category) ||
     prosecutorDeleteCategories.includes(category))
 
-const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
+const getFileSubmittedByText = (
+  file: CaseFile,
+  workingCase: WorkingCase,
+): string => {
   if (isProsecutorCategory(file.category)) {
     return formatFileSubmittedBy('Sækjandi')
   }
@@ -102,14 +100,16 @@ const RulingOrderAppealFilesAccordion: FC<Props> = ({
   onOpenFile,
   hideTrailingSeparator = false,
 }) => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { handleRemove } = useS3Upload(workingCase.id)
 
-  const [files, setFiles] = useState<CaseFile[]>(() =>
-    (workingCase.caseFiles ?? []).filter((file) =>
-      isAppealFileCategoryVisible(workingCase, appealCase, file, user),
-    ),
+  const files = useMemo(
+    () =>
+      (workingCase.caseFiles ?? []).filter((file) =>
+        isAppealFileCategoryVisible(workingCase, appealCase, file, user),
+      ),
+    [workingCase, appealCase, user],
   )
 
   const deleteCategories = isProsecutionUser(user)
@@ -191,9 +191,12 @@ const RulingOrderAppealFilesAccordion: FC<Props> = ({
                               title: 'Eyða',
                               onClick: () =>
                                 handleRemove(file as TUploadFile, () => {
-                                  setFiles((prev) =>
-                                    prev.filter((f) => f.id !== file.id),
-                                  )
+                                  setWorkingCase((prev) => ({
+                                    ...prev,
+                                    caseFiles: prev.caseFiles?.filter(
+                                      (f) => f.id !== file.id,
+                                    ),
+                                  }))
                                 }),
                               icon: 'trash' as IconMapIcon,
                             },

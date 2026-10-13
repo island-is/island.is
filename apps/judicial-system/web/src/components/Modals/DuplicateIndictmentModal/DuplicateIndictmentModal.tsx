@@ -1,4 +1,5 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE } from '@island.is/judicial-system/consts'

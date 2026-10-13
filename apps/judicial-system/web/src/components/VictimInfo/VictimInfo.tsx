@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   Box,
@@ -8,27 +9,27 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   InputName,
   InputNationalId,
   RequiredStar,
 } from '@island.is/judicial-system-web/src/components'
+import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
+import type { Victim } from '@island.is/judicial-system-web/src/graphql/schema'
+import { RequestSharedWhen } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
-  RequestSharedWhen,
-  Victim,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import { useVictim } from '@island.is/judicial-system-web/src/utils/hooks'
-import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
+  useNationalRegistry,
+  useVictim,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
-import RadioGroup from '../RadioGroup/RadioGroup'
 import { LegalRightsProtectorInputFields } from './LegalRightsProtectorInputFields'
 
 interface Props {
   victim: Victim
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   onDelete: (victim: Victim) => void
 }
 

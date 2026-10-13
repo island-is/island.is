@@ -7,7 +7,7 @@ import { KeyValueItem } from '@island.is/application/types'
 import { overview } from '../lib/messages'
 import { isContactDifferentFromApplicant } from './isContactDifferentFromApplicant'
 import { RealEstateAnswers } from '../lib/dataSchema'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { Fasteign } from '@island.is/clients/assets'
 
 export const getApplicantOverviewItems = (

@@ -128,7 +128,7 @@ export const VehicleSelectField: FC<
         options={currentVehicleList.map((vehicle) => {
           return {
             value: vehicle.permno,
-            label: `${vehicle.make} - ${vehicle.permno}` || '',
+            label: `${vehicle.make} - ${vehicle.permno}`,
           }
         })}
         placeholder={formatMessage(information.labels.pickVehicle.placeholder)}

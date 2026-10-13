@@ -1,5 +1,5 @@
-import { ApolloError } from '@apollo/client'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import { ApolloError, useApolloClient } from '@apollo/client'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
   Animated,
@@ -16,29 +16,38 @@ import categoriesIcon from '@/assets/icons/categories.png'
 import externalLinkIcon from '@/assets/icons/external-link.png'
 import medicineIcon from '@/assets/icons/medicine.png'
 import readerIcon from '@/assets/icons/reader.png'
+import refreshIcon from '@/assets/icons/refresh.png'
 import vaccinationsIcon from '@/assets/icons/vaccinations.png'
 import { getConfig } from '@/config'
 import { BaseAppointmentStatuses } from '@/constants/base-appointment-statuses'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import {
+  GetHealthBasicInfoFetchedAtDocument,
   useGetAppointmentsQuery,
   useGetBloodTypeOverviewQuery,
   useGetDentistOverviewQuery,
   useGetHealthCenterQuery,
+  useGetHealthConversationsQuery,
   useGetHealthInsuranceOverviewQuery,
   useGetMedicineDataQuery,
   useGetOrganDonorStatusQuery,
   useGetPaymentOverviewQuery,
+  useGetHealthBasicInfoFetchedAtQuery,
   useGetPaymentStatusQuery,
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
 import { useBrowser } from '@/hooks/use-browser'
+import { useOrganizationsStore } from '@/stores/organizations-store'
 import {
   Alert,
+  Button,
+  ChevronRight,
   GeneralCardSkeleton,
   Heading,
   Input,
   InputRow,
+  ListItem,
+  ListItemSkeleton,
   MoreCard,
   Problem,
   Skeleton,
@@ -46,8 +55,12 @@ import {
 } from '@/ui'
 import { AppointmentCard } from '../../../../components/appointment-card'
 import { StackScreen } from '../../../../components/stack-screen'
+import { pushOnce } from '@/utils/push-once'
 import { testIDs } from '@/utils/test-ids'
 import { MedicineHistoryCard } from '../../../../components/medicine-history-card'
+
+// The overview previews the newest few; the full list is its own screen.
+const OVERVIEW_MESSAGE_COUNT = 3
 
 const Row = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing.smallGutter}px;
@@ -61,6 +74,12 @@ const AppointmentsContainer = styled.View`
 
 const AppointmentsSkeletonGroup = styled.View`
   row-gap: ${({ theme }) => theme.spacing[1]}px;
+`
+
+const RefreshButtonContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  margin-top: ${({ theme }) => theme.spacing[3]}px;
 `
 
 type HealthCard = {
@@ -77,6 +96,7 @@ interface HeadingSectionProps {
   linkTextId?: string
   onPress?: () => void
   showIcon?: boolean
+  chevron?: boolean
 }
 
 const HeadingSection: React.FC<HeadingSectionProps> = ({
@@ -84,6 +104,7 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
   onPress,
   linkTextId,
   showIcon = true,
+  chevron = false,
 }) => {
   const theme = useTheme()
 
@@ -94,7 +115,7 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
       disabled={!onPress}
     >
       <Heading
-        small
+        medium
         button={
           <TouchableOpacity
             onPress={onPress}
@@ -113,7 +134,11 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
                 >
                   <FormattedMessage id={linkTextId ?? 'button.seeAll'} />
                 </Typography>
-                {showIcon && <Image source={externalLinkIcon} />}
+                {chevron ? (
+                  <ChevronRight />
+                ) : (
+                  showIcon && <Image source={externalLinkIcon} />
+                )}
               </>
             )}
           </TouchableOpacity>
@@ -149,7 +174,7 @@ const ExternalLink: React.FC<ExternalLinkProps> = ({
         style={{
           flexDirection: 'row',
           borderBottomWidth: 1,
-          borderBottomColor: theme.color.dark300,
+          borderBottomColor: theme.color.blue400,
         }}
       >
         <Typography
@@ -185,6 +210,23 @@ export default function HealthOverviewScreen() {
   const intl = useIntl()
   const theme = useTheme()
   const { openBrowser } = useBrowser()
+  const { getSenderLogo } = useOrganizationsStore()
+  const apolloClient = useApolloClient()
+  // In the Apollo cache so it is persisted and cleared with the data it dates.
+  const fetchedAtRes = useGetHealthBasicInfoFetchedAtQuery({
+    fetchPolicy: 'cache-only',
+  })
+  const basicInfoFetchedAt = fetchedAtRes.data?.healthBasicInfoFetchedAt ?? null
+
+  const setBasicInfoFetchedAt = useCallback(
+    (fetchedAt: string) => {
+      apolloClient.writeQuery({
+        query: GetHealthBasicInfoFetchedAtDocument,
+        data: { healthBasicInfoFetchedAt: fetchedAt },
+      })
+    },
+    [apolloClient],
+  )
   const origin = getConfig().apiUrl.replace(/\/api$/, '')
   const [refetching, setRefetching] = useState(false)
 
@@ -226,6 +268,11 @@ export default function HealthOverviewScreen() {
     false,
     null,
   )
+  const isHealthMessagesEnabled = useFeatureFlag(
+    'isAppHealthMessagesEnabled',
+    false,
+    null,
+  )
 
   const isLoadingFeatureFlags =
     isVaccinationsEnabled === null ||
@@ -233,7 +280,8 @@ export default function HealthOverviewScreen() {
     isPrescriptionsEnabled === null ||
     isOrganDonationEnabled === null ||
     isQuestionnaireFeatureEnabled === null ||
-    isAppointmentsEnabled === null
+    isAppointmentsEnabled === null ||
+    isHealthMessagesEnabled === null
 
   const now = useMemo(() => new Date().toISOString(), [])
 
@@ -246,7 +294,7 @@ export default function HealthOverviewScreen() {
         id: 'prescriptionsAndCertificates',
         titleId: 'health.drugCertificates.title',
         icon: medicineIcon,
-        route: '/health/medicine/legacy',
+        route: '/health/medicine/certificates',
         enabled: !isMedicineEnabled,
       },
       {
@@ -307,24 +355,36 @@ export default function HealthOverviewScreen() {
   const medicinePurchaseRes = useGetMedicineDataQuery({
     skip: !hasBeenFocused,
   })
+  // The four basic-information queries (organ donation, health center, dentist,
+  // blood type) read from the persisted cache and only hit the network on an
+  // explicit refresh. notifyOnNetworkStatusChange gives that refetch a loading
+  // state instead of swapping the values in silently.
   const organDonationRes = useGetOrganDonorStatusQuery({
     variables: {
       locale: useLocale(),
     },
     skip: !hasBeenFocused || !isOrganDonationEnabled,
+    fetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: true,
   })
   const healthInsuranceRes = useGetHealthInsuranceOverviewQuery({
     skip: !hasBeenFocused,
   })
   const healthCenterRes = useGetHealthCenterQuery({
     skip: !hasBeenFocused,
+    fetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: true,
   })
   const paymentStatusRes = useGetPaymentStatusQuery({
     skip: !hasBeenFocused,
   })
   const bloodTypeRes = useGetBloodTypeOverviewQuery({
     skip: !hasBeenFocused,
+    fetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: true,
   })
+  // keyArgs: false in client.ts keeps the as-of date out of the cache key, so a
+  // fresh `now` each mount still reads the cached answer.
   const dentistRes = useGetDentistOverviewQuery({
     variables: {
       input: {
@@ -333,6 +393,8 @@ export default function HealthOverviewScreen() {
       },
     },
     skip: !hasBeenFocused,
+    fetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: true,
   })
   const paymentOverviewRes = useGetPaymentOverviewQuery({
     variables: {
@@ -352,6 +414,11 @@ export default function HealthOverviewScreen() {
     skip: !hasBeenFocused || !isAppointmentsEnabled,
     notifyOnNetworkStatusChange: true,
   })
+  const messagesRes = useGetHealthConversationsQuery({
+    skip: !hasBeenFocused || !isHealthMessagesEnabled,
+    notifyOnNetworkStatusChange: true,
+    variables: { input: { limit: OVERVIEW_MESSAGE_COUNT } },
+  })
 
   const medicinePurchaseData =
     medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
@@ -364,6 +431,8 @@ export default function HealthOverviewScreen() {
     organDonationRes.data?.healthDirectorateOrganDonation.donor
   const appointments =
     appointmentsRes.data?.healthDirectorateAppointments?.data ?? []
+  const messages =
+    messagesRes.data?.healthDirectoratePaginatedHealthConversations?.data ?? []
 
   const isMedicinePeriodActive =
     medicinePurchaseData?.active ||
@@ -372,25 +441,92 @@ export default function HealthOverviewScreen() {
 
   const isOrganDonor = organDonationData?.isDonor ?? false
 
+  // The two co-payment queries are independent, so a failure only affects the
+  // fields it feeds rather than erroring the whole section. Inneign and Skuld
+  // fall back to '-' on their own, so only these two need the warning.
+  const paymentStatusFailed = !!paymentStatusRes.error && !paymentStatusRes.data
+
+  const basicInfoLoading =
+    bloodTypeRes.loading ||
+    organDonationRes.loading ||
+    healthCenterRes.loading ||
+    dentistRes.loading
+  const basicInfoAnswered =
+    (!bloodTypeRes.error && !!bloodTypeRes.data) ||
+    (!organDonationRes.error && !!organDonationRes.data) ||
+    (!healthCenterRes.error && !!healthCenterRes.data) ||
+    (!dentistRes.error && !!dentistRes.data)
+  const wasBasicInfoLoading = useRef(false)
+
+  // Dates the fetch a login does on a cleared cache, otherwise the label stays
+  // hidden until a refresh. Cached answers never set loading, so data of
+  // unknown age stays undated.
+  useEffect(() => {
+    const finishedLoading = wasBasicInfoLoading.current && !basicInfoLoading
+    wasBasicInfoLoading.current = basicInfoLoading
+
+    if (finishedLoading && basicInfoFetchedAt === null && basicInfoAnswered) {
+      setBasicInfoFetchedAt(new Date().toISOString())
+    }
+  }, [
+    basicInfoLoading,
+    basicInfoAnswered,
+    basicInfoFetchedAt,
+    setBasicInfoFetchedAt,
+  ])
+
+  const lastUpdatedFormatted = useMemo(
+    () =>
+      basicInfoFetchedAt === null
+        ? null
+        : intl.formatDate(new Date(basicInfoFetchedAt), {
+            dateStyle: 'short',
+            timeStyle: 'short',
+          }),
+    [intl, basicInfoFetchedAt],
+  )
+
+  const refreshInFlight = useRef(false)
+
   const onRefresh = useCallback(async () => {
+    // The button and pull-to-refresh can both fire before `refetching` renders.
+    if (refreshInFlight.current) {
+      return
+    }
+    refreshInFlight.current = true
     setRefetching(true)
+    const asOf = new Date().toISOString()
 
     try {
-      const promises = [
-        medicinePurchaseRes.refetch(),
-        healthInsuranceRes.refetch(),
-        healthCenterRes.refetch(),
-        paymentStatusRes.refetch(),
-        paymentOverviewRes.refetch(),
-        dentistRes.refetch(),
-        isOrganDonationEnabled && organDonationRes.refetch(),
-        bloodTypeRes.refetch(),
-        isAppointmentsEnabled && appointmentsRes.refetch(),
-      ].filter(Boolean)
-      await Promise.all(promises)
-    } catch (e) {
-      // noop
+      // Settled, not all: one failure should not hide the answers that arrived.
+      const basicInfo = Promise.allSettled(
+        [
+          healthCenterRes.refetch(),
+          // New as-of date, so the answer is current rather than as-of launch.
+          dentistRes.refetch({ input: { dateFrom: asOf, dateTo: asOf } }),
+          isOrganDonationEnabled && organDonationRes.refetch(),
+          bloodTypeRes.refetch(),
+        ].filter(Boolean),
+      )
+      const rest = Promise.allSettled(
+        [
+          medicinePurchaseRes.refetch(),
+          healthInsuranceRes.refetch(),
+          paymentStatusRes.refetch(),
+          paymentOverviewRes.refetch(),
+          isAppointmentsEnabled && appointmentsRes.refetch(),
+          isHealthMessagesEnabled && messagesRes.refetch(),
+        ].filter(Boolean),
+      )
+
+      const [basicInfoResults] = await Promise.all([basicInfo, rest])
+      // Something came back, so there is something to date. A refresh where all
+      // four failed leaves the old timestamp alone.
+      if (basicInfoResults.some((result) => result.status === 'fulfilled')) {
+        setBasicInfoFetchedAt(asOf)
+      }
     } finally {
+      refreshInFlight.current = false
       setRefetching(false)
     }
   }, [
@@ -405,6 +541,9 @@ export default function HealthOverviewScreen() {
     bloodTypeRes,
     isAppointmentsEnabled,
     appointmentsRes,
+    isHealthMessagesEnabled,
+    messagesRes,
+    setBasicInfoFetchedAt,
   ])
 
   const handleAppointmentPress = useCallback(
@@ -430,6 +569,7 @@ export default function HealthOverviewScreen() {
           dentistRes.networkStatus,
           bloodTypeRes.networkStatus,
           appointmentsRes.networkStatus,
+          messagesRes.networkStatus,
         ]}
       />
       <Animated.ScrollView
@@ -495,7 +635,7 @@ export default function HealthOverviewScreen() {
               title={intl.formatMessage({
                 id: 'health.appointments.screenTitle',
               })}
-              showIcon={false}
+              chevron
               onPress={() =>
                 router.navigate('/(auth)/(tabs)/health/appointments')
               }
@@ -512,11 +652,11 @@ export default function HealthOverviewScreen() {
                 <Problem
                   type="error"
                   size="small"
+                  error={appointmentsRes.error}
                   title={intl.formatMessage({ id: 'problem.error.title' })}
                   message={intl.formatMessage({
                     id: 'health.appointments.errorMessage',
                   })}
-                  tag={appointmentsRes.error.message}
                 />
               </AppointmentsContainer>
             )}
@@ -548,6 +688,75 @@ export default function HealthOverviewScreen() {
               )}
           </>
         )}
+        {isHealthMessagesEnabled && (
+          <>
+            <HeadingSection
+              title={intl.formatMessage({
+                id: 'health.messages.screenTitle',
+              })}
+              chevron
+              onPress={() => router.navigate('/(auth)/(tabs)/health/messages')}
+            />
+            {(!hasBeenFocused || messagesRes.loading) && (
+              <View style={{ marginHorizontal: -theme.spacing[2] }}>
+                {Array.from({ length: OVERVIEW_MESSAGE_COUNT }).map(
+                  (_, index) => (
+                    <ListItemSkeleton key={index} />
+                  ),
+                )}
+              </View>
+            )}
+            {messagesRes.error && messages.length === 0 && (
+              <AppointmentsContainer>
+                <Problem
+                  type="error"
+                  size="small"
+                  error={messagesRes.error}
+                  title={intl.formatMessage({ id: 'problem.error.title' })}
+                  message={intl.formatMessage({
+                    id: 'health.messages.errorMessage',
+                  })}
+                />
+              </AppointmentsContainer>
+            )}
+            {hasBeenFocused &&
+              !messagesRes.loading &&
+              !messagesRes.error &&
+              messages.length === 0 && (
+                <AppointmentsContainer>
+                  <Problem type="no_data" size="small" />
+                </AppointmentsContainer>
+              )}
+            {hasBeenFocused && !messagesRes.loading && messages.length > 0 && (
+              <View style={{ marginHorizontal: -theme.spacing[2] }}>
+                {messages.map((message) => (
+                  <TouchableOpacity
+                    key={message.id}
+                    onPress={() =>
+                      pushOnce({
+                        pathname: '/health/messages/[id]',
+                        params: { id: message.id },
+                      })
+                    }
+                  >
+                    <ListItem
+                      title={
+                        message.organization?.name ??
+                        message.lastSenderGroupName ??
+                        ''
+                      }
+                      subtitle={message.title ?? ''}
+                      date={message.lastMessageSentAt ?? undefined}
+                      unread={!message.isRead}
+                      starred={message.isStarred}
+                      icon={getSenderLogo(message.organization, 75)}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+          </>
+        )}
         <HeadingSection
           title={intl.formatMessage({
             id: 'health.overview.coPayments',
@@ -558,77 +767,91 @@ export default function HealthOverviewScreen() {
             )
           }
         />
-        {(paymentOverviewRes.loading || paymentOverviewRes.data) && (
-          <>
-            <InputRow background>
-              <Input
-                label={intl.formatMessage({
-                  id: 'health.overview.maxMonthlyPayment',
-                })}
-                value={
-                  paymentStatusData?.maximumMonthlyPayment
-                    ? `${intl.formatNumber(
-                        paymentStatusData?.maximumMonthlyPayment,
-                      )} kr.`
-                    : '0 kr.'
-                }
-                loading={paymentStatusRes.loading && !paymentStatusRes.data}
-                error={paymentStatusRes.error && !paymentStatusRes.data}
-                darkBorder
-              />
-            </InputRow>
-            <InputRow background>
-              <Input
-                label={intl.formatMessage({
-                  id: 'health.overview.paymentLimit',
-                })}
-                value={
-                  paymentStatusData?.maximumPayment
-                    ? `${intl.formatNumber(
-                        paymentStatusData?.maximumPayment,
-                      )} kr.`
-                    : '0 kr.'
-                }
-                loading={paymentStatusRes.loading && !paymentStatusRes.data}
-                error={paymentStatusRes.error && !paymentStatusRes.data}
-                darkBorder
-              />
-            </InputRow>
-            <InputRow background>
-              <Input
-                label={intl.formatMessage({
-                  id: 'health.overview.paymentCredit',
-                })}
-                value={
-                  paymentOverviewData?.credit
-                    ? `${intl.formatNumber(paymentOverviewData?.credit)} kr.`
-                    : '0 kr.'
-                }
-                loading={paymentOverviewRes.loading && !paymentOverviewRes.data}
-                error={paymentOverviewRes.error && !paymentOverviewRes.data}
-                noBorder
-              />
-              <Input
-                label={intl.formatMessage({
-                  id: 'health.overview.paymentDebt',
-                })}
-                value={
-                  paymentOverviewData?.debt
-                    ? `${intl.formatNumber(paymentOverviewData?.debt)} kr.`
-                    : '0 kr.'
-                }
-                loading={paymentOverviewRes.loading && !paymentOverviewRes.data}
-                error={paymentOverviewRes.error && !paymentOverviewRes.data}
-                noBorder
-              />
-            </InputRow>
-          </>
-        )}
-        {paymentOverviewRes.error &&
-          !paymentOverviewRes.data &&
-          paymentStatusRes.error &&
-          !paymentStatusRes.data &&
-          showErrorComponent(paymentOverviewRes.error)}
+        <InputRow background>
+          <Input
+            label={intl.formatMessage({
+              id: 'health.overview.maxMonthlyPayment',
+            })}
+            value={
+              paymentStatusData?.maximumMonthlyPayment != null
+                ? `${intl.formatNumber(
+                    paymentStatusData.maximumMonthlyPayment,
+                  )} kr.`
+                : ''
+            }
+            loading={
+              !hasBeenFocused ||
+              (paymentStatusRes.loading && !paymentStatusRes.data)
+            }
+            // No '-' placeholder on these two, the warning stands on its own
+            allowEmptyValue={paymentStatusFailed}
+            warningText={
+              paymentStatusFailed
+                ? intl.formatMessage({ id: 'problem.thirdParty.message' })
+                : ''
+            }
+            fullWidthWarning
+            darkBorder
+          />
+        </InputRow>
+        <InputRow background>
+          <Input
+            label={intl.formatMessage({
+              id: 'health.overview.paymentLimit',
+            })}
+            value={
+              paymentStatusData?.maximumPayment != null
+                ? `${intl.formatNumber(paymentStatusData.maximumPayment)} kr.`
+                : ''
+            }
+            loading={
+              !hasBeenFocused ||
+              (paymentStatusRes.loading && !paymentStatusRes.data)
+            }
+            allowEmptyValue={paymentStatusFailed}
+            warningText={
+              paymentStatusFailed
+                ? intl.formatMessage({ id: 'problem.thirdParty.message' })
+                : ''
+            }
+            fullWidthWarning
+            darkBorder
+          />
+        </InputRow>
+        <InputRow background>
+          <Input
+            label={intl.formatMessage({
+              id: 'health.overview.paymentCredit',
+            })}
+            value={
+              // A missing value is not the same as a zero balance, so only
+              // format an actual number and let the rest fall back to '-'
+              paymentOverviewData?.credit != null
+                ? `${intl.formatNumber(paymentOverviewData.credit)} kr.`
+                : ''
+            }
+            loading={
+              !hasBeenFocused ||
+              (paymentOverviewRes.loading && !paymentOverviewRes.data)
+            }
+            noBorder
+          />
+          <Input
+            label={intl.formatMessage({
+              id: 'health.overview.paymentDebt',
+            })}
+            value={
+              paymentOverviewData?.debt != null
+                ? `${intl.formatNumber(paymentOverviewData.debt)} kr.`
+                : ''
+            }
+            loading={
+              !hasBeenFocused ||
+              (paymentOverviewRes.loading && !paymentOverviewRes.data)
+            }
+            noBorder
+          />
+        </InputRow>
         <HeadingSection
           title={intl.formatMessage({
             id: 'health.overview.medicinePurchase',
@@ -877,10 +1100,7 @@ export default function HealthOverviewScreen() {
                         : 'health.organDonation.isNotDonorDescription',
                     }) ?? ''
               }`}
-              loading={
-                !hasBeenFocused ||
-                (organDonationRes.loading && !organDonationRes.data)
-              }
+              loading={!hasBeenFocused || organDonationRes.loading}
               fullWidthWarning
               warningText={
                 organDonationRes.error
@@ -948,6 +1168,24 @@ export default function HealthOverviewScreen() {
             noBorder
           />
         </InputRow>
+        <RefreshButtonContainer>
+          {lastUpdatedFormatted && (
+            <Typography variant="body3" textAlign="center">
+              {intl.formatMessage(
+                { id: 'health.overview.lastUpdated' },
+                { date: lastUpdatedFormatted },
+              )}
+            </Typography>
+          )}
+          <Button
+            onPress={onRefresh}
+            title={intl.formatMessage({ id: 'health.overview.update' })}
+            icon={refreshIcon}
+            isTransparent
+            loading={refetching}
+            disabled={refetching}
+          />
+        </RefreshButtonContainer>
       </Animated.ScrollView>
     </>
   )

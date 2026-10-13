@@ -28,17 +28,16 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { SortButton } from '@island.is/judicial-system-web/src/components/Table'
-import {
-  User,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import { userRoleToString } from '@island.is/judicial-system-web/src/routes/Admin/userRoleToString'
 import {
   useInstitution,
   useSort,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { userRoleToString } from '../userRoleToString'
 import { useUsersQuery } from './users.generated'
+import { UsersCsvButton } from './UsersCsvButton'
 import * as styles from './Users.css'
 
 export const Users = () => {
@@ -177,6 +176,9 @@ export const Users = () => {
             }
           />
         </Box>
+      </Box>
+      <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
+        <UsersCsvButton users={users} />
       </Box>
       {users.length > 0 ? (
         <table

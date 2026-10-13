@@ -7,10 +7,13 @@
  * - Removed GraphQL mutations (createDraftRegulationChange, updateDraftRegulationChange)
  * - Replaced with callback pattern: onSave/onClose props
  * - Uses RegulationImpactSchema instead of DraftChangeForm
- * - Simplified: no pristine regulation tracking, no ImpactHistory (deferred to Phase 4)
+ * - Simplified: no pristine regulation tracking
+ * - Chains onto this draft's earlier changes of the same regulation only;
+ *   other drafts' unpublished changes aren't taken into account
  * - EditorInput references kept but using existing OJOI editor components
  */
 import {
+  AlertMessage,
   Button,
   Box,
   Divider,
@@ -22,7 +25,13 @@ import {
   LoadingDots,
 } from '@island.is/island-ui/core'
 import { useState, useEffect, useMemo } from 'react'
-import { HTMLText, toISODate, getDiff } from '@island.is/regulations'
+import {
+  HTMLText,
+  toISODate,
+  getDiff,
+  prettyName,
+  RegName,
+} from '@island.is/regulations'
 import dirtyClean from '@dmr.is/regulations-tools/dirtyClean-browser'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
@@ -33,12 +42,17 @@ import { HTMLEditor } from '../htmlEditor/HTMLEditor'
 import { useApplicationAssetUploader } from '../../hooks/useAssetUpload'
 import { ReferenceText } from './ReferenceText'
 import { getDefaultDate } from '../../lib/utils'
+import { getImpactChain } from '../../utils/getImpactChain'
+import { formatDate } from '../../utils/formatAmendingUtils'
+import { ImpactHistory } from './ImpactHistory'
 
 // ---------------------------------------------------------------------------
 
 type EditChangeProps = {
   /** The amendment impact being edited (from answers.regulation.impacts[]) */
   change: RegulationImpactSchema
+  /** This draft's impacts on the same regulation, for building on earlier changes */
+  impacts?: RegulationImpactSchema[]
   /** The title of the parent regulation/draft */
   draftTitle?: string
   /** HTML body of the draft regulation (shown in reference panel) */
@@ -58,6 +72,7 @@ type EditChangeProps = {
 export const EditChange = (props: EditChangeProps) => {
   const {
     change,
+    impacts = [],
     draftTitle,
     draftHtml,
     isBase,
@@ -75,35 +90,97 @@ export const EditChange = (props: EditChangeProps) => {
   // Minimum date for the impact — MINIMUM_WEEKDAYS workdays from now
   // (consistent with the OJOI publication flow)
   const defaultMinDate = useMemo(() => new Date(getDefaultDate()), [])
-  const [minDate] = useState(defaultMinDate)
+
+  const isNewImpact = !change.title && !change.text
+  const isSelf = change.name === 'self'
+  const {
+    regulation: currentRegulation,
+    loading: currentLoading,
+    done: currentDone,
+  } = useRegulationFetch(isSelf ? undefined : change.name)
+
+  const [activeDate, setActiveDate] = useState<Date | undefined>(
+    change.date ? new Date(change.date) : undefined,
+  )
+
+  // Build on this draft's earlier change of the regulation, or on the
+  // regulation as it will be once its scheduled changes are in effect.
+  const {
+    previous,
+    minDate,
+    hasFutureEffects,
+    repealedOn,
+    missedEffect,
+    upcoming,
+  } = useMemo(
+    () =>
+      getImpactChain({
+        impact: change,
+        impacts,
+        history: currentRegulation?.history,
+        defaultMinDate,
+        selectedDate: activeDate ? toISODate(activeDate) : undefined,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      change.id,
+      change.date,
+      impacts,
+      currentRegulation,
+      defaultMinDate,
+      activeDate,
+    ],
+  )
+  const needsDatedText = !!currentRegulation && !previous && hasFutureEffects
+  const {
+    regulation: datedRegulation,
+    loading: datedLoading,
+    done: datedDone,
+  } = useRegulationFetch(
+    needsDatedText ? change.name : undefined,
+    toISODate(minDate),
+  )
+  const regulationLoading = currentLoading || datedLoading
+
+  // What this change is compared against, and what a new change starts from
+  const baseRegulation = useMemo(() => {
+    if (previous) {
+      return {
+        title: previous.title,
+        text: previous.text,
+        appendixes: previous.appendixes,
+      }
+    }
+    // Without the dated text a change would drop the scheduled ones
+    return needsDatedText ? datedRegulation : currentRegulation
+  }, [previous, needsDatedText, datedRegulation, currentRegulation])
+  // Without the regulation's history, scheduled changes and repeals can't be
+  // checked, so a change isn't saved without it
+  const currentFailed = !isSelf && currentDone && !currentRegulation
+  const datedFailed = needsDatedText && datedDone && !datedRegulation
+  const fetchFailed = currentFailed || datedFailed
 
   const [activeTitle, setActiveTitle] = useState(change.title || '')
   const [activeText, setActiveText] = useState(change.text || '')
-  const [activeDate, setActiveDate] = useState<Date | undefined>(
-    change.date ? new Date(change.date) : defaultMinDate,
-  )
   const [activeAppendixes, setActiveAppendixes] = useState(
     change.appendixes || [],
   )
   const [activeComments, setActiveComments] = useState(change.comments || '')
   const [saving, setSaving] = useState(false)
 
-  // Fetch the base regulation so we can pre-populate the form fields
-  // when creating a new amendment impact (i.e. change has no existing text)
-  const isNewImpact = !change.title && !change.text
-  const isSelf = change.name === 'self'
-  const { regulation: baseRegulation, loading: regulationLoading } =
-    useRegulationFetch(isSelf ? undefined : change.name)
+  // A new change after a later one can't take effect "immediately"
+  const shownDate =
+    change.date ?? (minDate > defaultMinDate ? toISODate(minDate) : undefined)
 
   // Track whether form fields have been initialized from the fetched data.
   // The HTMLEditor captures its value at mount time via a ref, so we must
   // NOT render it until the fields contain the correct initial content.
   const [initialized, setInitialized] = useState(!isNewImpact || isSelf)
 
-  // Pre-populate title/text/appendixes from the fetched base regulation
-  // when creating a new impact (fields start empty)
+  // Pre-populate title/text/appendixes from the base when creating a new
+  // impact (fields start empty)
   useEffect(() => {
-    if (!isNewImpact || isSelf || !baseRegulation) return
+    if (!isNewImpact || isSelf || regulationLoading || !baseRegulation) return
 
     if (!activeTitle && baseRegulation.title) {
       setActiveTitle(baseRegulation.title)
@@ -124,7 +201,11 @@ export const EditChange = (props: EditChangeProps) => {
     }
     setInitialized(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseRegulation])
+  }, [baseRegulation, regulationLoading])
+
+  // Not before the impacts this one follows
+  const effectiveDate =
+    activeDate && activeDate > minDate ? activeDate : minDate
 
   const changeDate = (newDate: Date | undefined) => {
     setActiveDate(newDate)
@@ -166,7 +247,7 @@ export const EditChange = (props: EditChangeProps) => {
         title: activeTitle,
         text: activeText,
         diff: getDiffHtml(),
-        date: toISODate(activeDate ?? defaultMinDate),
+        date: toISODate(effectiveDate),
         appendixes: activeAppendixes.map((apx, i) => ({
           ...apx,
           diff: getAppendixDiffHtml(i),
@@ -180,8 +261,21 @@ export const EditChange = (props: EditChangeProps) => {
 
   const isValidImpact = () => {
     // Date always has a value — defaults to today ("takes effect immediately")
-    return !!activeTitle && !!activeText
+    return !!activeTitle && !!activeText && !repealedOn && !missedEffect
   }
+
+  // What the user can do about a scheduled change the text doesn't include
+  const missedEffectAdvice = !missedEffect
+    ? ''
+    : !isNewImpact && missedEffect.date > toISODate(minDate)
+    ? 'Veldu dagsetningu á undan henni.'
+    : previous
+    ? 'Fyrri breyting á reglugerðinni í þessari umsókn tekur gildi á undan henni, svo ekki er hægt að skrá þessa breytingu á eftir henni.'
+    : 'Eyddu breytingunni og skráðu hana aftur, þá byggir hún á textanum með þeirri breytingu.'
+
+  // Don't save a diff against a base that hasn't loaded
+  const baseReady =
+    isSelf || (!regulationLoading && !!currentRegulation && !!baseRegulation)
 
   // The base regulation text to use as the diff reference.
   // This is the original text before the user's edits.
@@ -211,7 +305,7 @@ export const EditChange = (props: EditChangeProps) => {
                   : change.regTitle || change.name
               }
               name={change.name}
-              date={change.date}
+              date={shownDate}
               minDate={
                 readOnly
                   ? change.date
@@ -234,11 +328,64 @@ export const EditChange = (props: EditChangeProps) => {
             span={['12/12', '12/12', '12/12', '10/12', '8/12']}
             offset={['0', '0', '0', '1/12', '2/12']}
           >
+            <ImpactHistory
+              impactDate={effectiveDate}
+              upcoming={upcoming}
+              targetName={change.name}
+            />
+            {fetchFailed && !readOnly && (
+              <Box marginBottom={4}>
+                <AlertMessage
+                  type="error"
+                  title="Ekki tókst að sækja reglugerðina"
+                  message={
+                    datedFailed
+                      ? `Ekki tókst að sækja texta reglugerðarinnar eins og hann verður ${formatDate(
+                          minDate,
+                        )}, með þeim breytingum sem þegar hafa verið birtar. Reyndu aftur síðar.`
+                      : 'Ekki tókst að sækja reglugerðina og væntanlegar breytingar á henni. Reyndu aftur síðar.'
+                  }
+                />
+              </Box>
+            )}
+            {missedEffect && !repealedOn && !readOnly && (
+              <Box marginBottom={4}>
+                <AlertMessage
+                  type="error"
+                  title="Önnur breyting tekur gildi á undan"
+                  message={`Reglugerð ${prettyName(
+                    missedEffect.name as RegName,
+                  )} breytir reglugerðinni ${formatDate(
+                    new Date(missedEffect.date),
+                  )}. Sú breyting er ekki í textanum sem þessi breyting byggir á og myndi falla út ef þessi breyting tæki gildi á eftir henni. ${missedEffectAdvice}`}
+                />
+              </Box>
+            )}
+            {repealedOn && !readOnly && (
+              <Box marginBottom={4}>
+                <AlertMessage
+                  type="error"
+                  title="Reglugerðin fellur brott áður"
+                  message={`Reglugerðin fellur brott ${formatDate(
+                    new Date(repealedOn),
+                  )} og því er ekki hægt að breyta henni eftir það. Ef breytingin á að taka gildi fyrr þarf að skrá hana á undan brottfellingunni.`}
+                />
+              </Box>
+            )}
+          </GridColumn>
+        </GridRow>
+
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '10/12', '8/12']}
+            offset={['0', '0', '0', '1/12', '2/12']}
+          >
             {/* Show loading indicator while fetching the base regulation.
                 Wait for both the fetch AND the useEffect that populates the
                 form fields — the HTMLEditor captures its value at mount time
                 via a ref, so it must not render before data is ready. */}
-            {!initialized || regulationLoading ? (
+            {fetchFailed && !readOnly ? null : !initialized ||
+              regulationLoading ? (
               <Box
                 display="flex"
                 justifyContent="center"
@@ -397,7 +544,9 @@ export const EditChange = (props: EditChangeProps) => {
                   onClick={saveChange}
                   size="small"
                   icon="arrowForward"
-                  disabled={readOnly || !isValidImpact() || saving}
+                  disabled={
+                    readOnly || !isValidImpact() || !baseReady || saving
+                  }
                   loading={saving}
                 >
                   Vista textabreytingu

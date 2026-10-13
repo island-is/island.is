@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'services-auth-testing',
   preset: './jest.preset.js',

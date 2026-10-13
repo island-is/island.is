@@ -38,6 +38,7 @@ import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../../../lib/paths'
 import { hasEnglishForAllNameFields } from '../../../../lib/utils/validateNameTranslations'
+import { hasZendeskSettingsForPublish } from '../../../../lib/utils/validateZendeskBrand'
 import { StatusTag } from '../../../StatusTag/StatusTag'
 import * as styles from './TableRow.css'
 import { FormsContext } from '../../../../context/FormsContext'
@@ -314,6 +315,10 @@ export const TableRow = ({
           toast.warning(formatMessage(m.translationNeededError))
           return
         }
+        if (!hasZendeskSettingsForPublish(form)) {
+          toast.warning(formatMessage(m.zendeskSettingsNeededError))
+          return
+        }
         try {
           await updateFormStatus({
             variables: {
@@ -339,6 +344,18 @@ export const TableRow = ({
       icon: 'star' as const,
       iconType: 'outline' as const,
       onClick: async () => {
+        const { data: formData } = await getForm({
+          variables: { input: { id } },
+        })
+        const form = formData?.formSystemForm?.form
+        if (!form || !hasEnglishForAllNameFields(form)) {
+          toast.warning(formatMessage(m.translationNeededError))
+          return
+        }
+        if (!form || !hasZendeskSettingsForPublish(form)) {
+          toast.warning(formatMessage(m.zendeskSettingsNeededError))
+          return
+        }
         try {
           const { data } = await updateFormStatus({
             variables: {

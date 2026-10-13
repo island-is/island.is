@@ -85,11 +85,26 @@ export const listItem = style({
   position: 'relative',
 })
 
+const compactFromMd = `screen and (min-width: ${theme.breakpoints.md}px)`
+
 export const itemLevel = styleVariants({
-  1: {},
+  1: {
+    '@media': {
+      [compactFromMd]: {
+        paddingTop: 2,
+        paddingBottom: 2,
+      },
+    },
+  },
   2: {
-    paddingBottom: theme.spacing['smallGutter'],
-    paddingTop: theme.spacing['smallGutter'],
+    paddingTop: theme.spacing.smallGutter,
+    paddingBottom: theme.spacing.smallGutter,
+    '@media': {
+      [compactFromMd]: {
+        paddingTop: 2,
+        paddingBottom: 2,
+      },
+    },
   },
 })
 

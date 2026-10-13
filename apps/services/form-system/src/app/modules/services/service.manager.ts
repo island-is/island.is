@@ -44,6 +44,7 @@ export class ServiceManager {
       const notificationDto = {
         applicationId: applicationDto.id ?? '',
         nationalId: applicationDto.nationalId ?? '',
+        actorNationalId: applicationDto.actorNationalId ?? '',
         organizationNationalId: applicationDto.organizationNationalId ?? '',
         slug: applicationDto.slug ?? '',
         isTest: applicationDto.isTest ?? false,

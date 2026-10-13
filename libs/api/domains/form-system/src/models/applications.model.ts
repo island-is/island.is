@@ -17,6 +17,15 @@ export class ApplicationEventDto {
   created?: Date
 }
 
+@ObjectType('FormSystemApplicationPdf')
+export class ApplicationPdf {
+  @Field(() => String)
+  base64!: string
+
+  @Field(() => String)
+  filename!: string
+}
+
 @ObjectType('FormSystemApplication')
 export class Application {
   @Field(() => String)
@@ -192,4 +201,10 @@ export class ApplicationResponse {
 
   @Field(() => Boolean, { nullable: true })
   isInaccessible?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  validateEligibility?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  enableApplicationPdfDownload?: boolean
 }

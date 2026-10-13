@@ -10,7 +10,7 @@ import { format as formatNationalId } from 'kennitala'
 import {
   formatCurrency,
   formatPhoneNumberWithIcelandicCountryCode,
-} from '@island.is/application/ui-components'
+} from '@island.is/shared/utils'
 import { BOARDMEMEBER } from './constants'
 import { CareTaker } from '../types/types'
 

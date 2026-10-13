@@ -1,28 +1,34 @@
-import { createContext, FC, PropsWithChildren, useContext } from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { createContext, useContext } from 'react'
 
+import type { Lawyer } from '@island.is/judicial-system/types'
 import {
+  isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
-  Lawyer,
 } from '@island.is/judicial-system/types'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { useLawyerRegistry } from '@island.is/judicial-system-web/src/utils/hooks/useLawyerRegistry/useLawyerRegistry'
 
-import { useLawyerRegistry } from '../../utils/hooks/useLawyerRegistry/useLawyerRegistry'
-import { UserContext } from '../UserProvider/UserProvider'
-
-interface LawyerRegistryContext {
+interface LawyerRegistryContextValue {
   lawyers?: Lawyer[]
 }
 
-export const LawyerRegistryContext = createContext<LawyerRegistryContext>({
+export const LawyerRegistryContext = createContext<LawyerRegistryContextValue>({
   lawyers: [],
 })
 
 export const LawyerRegistryProvider: FC<PropsWithChildren> = ({ children }) => {
   const { user } = useContext(UserContext)
+  // Everyone who has to name a lawyer. The court of appeals appoints the
+  // advocates of an appeal the way the district court appoints those of the
+  // case, so it needs the register to look them up in; without it every
+  // search answers that the lawyer is not on it.
   const shouldFetch =
     isDistrictCourtUser(user) ||
+    isCourtOfAppealsUser(user) ||
     isDefenceUser(user) ||
     isProsecutionUser(user) ||
     isPublicProsecutionOfficeUser(user)

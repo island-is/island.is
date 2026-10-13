@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
-import { Box, Icon, Table as T, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Icon, Table as T, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { ApplicationStatistics } from '@island.is/api/schema'
-import * as styles from '../ApplicationsTable/ApplicationsTable.css'
-import { getLogoFromContentfulSlug } from '../../shared/utils'
 import { Organization } from '@island.is/shared/types'
 
 type SortKey =
@@ -206,24 +204,16 @@ export default function StatisticsTable({
               (x) => x.slug === row.institutionContentfulSlug,
             )
 
-            const logo = getLogoFromContentfulSlug(
-              contentfulOrg ? [contentfulOrg] : [],
-              row.institutionContentfulSlug ?? '',
-            )
+            const institutionName =
+              contentfulOrg?.title ?? row.institutionName ?? ''
             return (
               <T.Row key={`${row.typeid}-${i}`}>
-                {isSuperAdmin && (
-                  <T.Data>
-                    <Box display="flex" alignItems="center">
-                      <Tooltip
-                        text={contentfulOrg?.title ?? row.institutionName ?? ''}
-                      >
-                        <img src={logo} alt="" className={styles.logo} />
-                      </Tooltip>
-                    </Box>
-                  </T.Data>
-                )}
-                <T.Data>{row.name || row.typeid}</T.Data>
+                {isSuperAdmin && <T.Data>{institutionName}</T.Data>}
+                <T.Data>
+                  <Text variant="eyebrow" color="blue400">
+                    {row.name || row.typeid}
+                  </Text>
+                </T.Data>
                 <T.Data>{row.draft}</T.Data>
                 <T.Data>{row.inprogress}</T.Data>
                 <T.Data>{row.completed}</T.Data>

@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { keyframes, style } from '@vanilla-extract/css'
+import { globalStyle, keyframes, style } from '@vanilla-extract/css'
 
 export const outerSlider = style({
   height: 16,
@@ -79,4 +79,34 @@ export const thermoMeterSegment = style({
   alignItems: 'center',
   justifyContent: 'center',
   transition: 'background-color 0.2s ease',
+})
+
+export const isRequiredStar = style({
+  color: theme.color.red600,
+})
+
+// Numeric fields hold a handful of digits - cap their width on larger
+// screens instead of letting them span the content column
+export const numberInput = style({
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      maxWidth: 300,
+    },
+  },
+})
+
+export const noResizeTextarea = style({})
+
+globalStyle(`${noResizeTextarea} textarea`, {
+  resize: 'none',
+})
+
+export const tableFormGrid = style({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(min(250px, 100%), 1fr))',
+  gap: theme.spacing[3],
+})
+
+globalStyle(`${tableFormGrid} ${numberInput}`, {
+  maxWidth: 'none',
 })

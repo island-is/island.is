@@ -1,12 +1,14 @@
-import { ComponentProps, FC, useContext } from 'react'
+import type { ComponentProps, FC } from 'react'
+import { useContext } from 'react'
 import router from 'next/router'
 
-import { Icon } from '@island.is/island-ui/core'
-import { Box, IconMapIcon } from '@island.is/island-ui/core'
+import type { Icon, IconMapIcon } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import {
   DEFENDER_APPEAL_CASE_ADD_FILES_ROUTE,
   DEFENDER_APPEAL_CASE_APPEAL_ROUTE,
   DEFENDER_APPEAL_CASE_STATEMENT_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_ADD_RULING_ORDER_IN_COURT_ROUTE,
   PROSECUTION_APPEAL_CASE_ADD_FILES_ROUTE,
   PROSECUTION_APPEAL_CASE_APPEAL_ROUTE,
   PROSECUTION_APPEAL_CASE_STATEMENT_ROUTE,
@@ -17,6 +19,7 @@ import {
   isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
+  isRulingOrderWithoutDocument,
 } from '@island.is/judicial-system/types'
 import {
   ContextMenu,
@@ -24,13 +27,14 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import { useWithdrawAppeal } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenuItems/WithdrawAppeal'
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import TagAppealState from '@island.is/judicial-system-web/src/components/Tags/TagAppealState/TagAppealState'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   AppealCaseTransition,
-  CaseFile,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -42,11 +46,13 @@ import {
   getCurrentUserStatementDate,
   hasAcceptedRulingOrderInCourt,
   isCurrentAppellantRepresentative,
+  rulingOrderAppealCase,
   userHasActiveInCourtAppeal,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { ContextMenuItem } from '../ContextMenu/ContextMenu'
-import RulingOrderConfirmationStatus from './RulingOrderConfirmationStatus'
+import RulingOrderConfirmationStatus, {
+  isRulingOrderConfirmed,
+} from './RulingOrderConfirmationStatus'
 
 interface Props {
   file: CaseFile
@@ -57,9 +63,6 @@ interface Props {
  * Single ruling-order (`COURT_INDICTMENT_RULING_ORDER`) file row with an
  * action context menu attached. The available menu items are role- and
  * appeal-state-driven.
- *
- * Rendered in place of the plain `<RenderFiles>` row when the
- * `Feature.APPEAL_RULING_ORDER` flag is on.
  */
 const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   const { user } = useContext(UserContext)
@@ -69,9 +72,7 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   const isDefence = isDefenceUser(user)
   const isDistrictCourt = isDistrictCourtUser(user)
 
-  const appealCase = workingCase.rulingOrderAppealCases?.find(
-    (a) => a.rulingFileId === file.id,
-  )
+  const appealCase = rulingOrderAppealCase(workingCase, file.id)
 
   const appealRoute = isDefence
     ? DEFENDER_APPEAL_CASE_APPEAL_ROUTE
@@ -197,6 +198,35 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   }
   // COMPLETED / WITHDRAWN: read-only, no menu items.
 
+  // A ruling pronounced orally has no document until the district court writes
+  // it up, which it only does if the ruling is appealed.
+  const hasNoDocument = isRulingOrderWithoutDocument(file)
+
+  let menuItems = items
+
+  if (isDistrictCourt) {
+    if (hasNoDocument) {
+      // Writing the ruling up is the only thing the court can do with it. The
+      // parties keep their own actions - the ruling was pronounced, so it can
+      // be appealed whether or not it has been written up yet.
+      menuItems = [
+        {
+          title: 'Hlaða upp úrskurði',
+          icon: 'add',
+          onClick: () =>
+            router.push(
+              `${DISTRICT_COURT_INDICTMENT_CASE_ADD_RULING_ORDER_IN_COURT_ROUTE}/${workingCase.id}?rulingFileId=${file.id}`,
+            ),
+        },
+      ]
+    } else if (!isRulingOrderConfirmed(file)) {
+      // Nothing to act on before the registered judge has confirmed the ruling
+      // order - until then the row only offers the "Staðfesta" button, so its
+      // action menu stays hidden.
+      menuItems = []
+    }
+  }
+
   // Status text below the file row. Visible to working prosecution, defence,
   // and district-court users. Other roles (e.g. PUBLIC_PROSECUTOR_STAFF) see
   // the row without status text or actions.
@@ -277,13 +307,20 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
       <Box flexGrow={1}>
         <PdfButton
           title={fileName}
+          titleIcon={hasNoDocument ? 'chatbubble' : undefined}
+          titleIconTooltip={
+            hasNoDocument ? 'Úrskurður kveðinn upp munnlega' : undefined
+          }
           subtitle={statusText}
           subtitleIcon={statusIcon}
           subtitleIconColor={statusIconColor}
           subtitleIconTooltip={statusIconTooltip}
           renderAs="row"
-          disabled={!file.isKeyAccessible}
-          handleClick={() => onOpenFile(file.id)}
+          // A ruling with no document has no S3 object by design, so the
+          // inaccessible-key styling must never apply to it - the district
+          // court still has to reach its upload action.
+          disabled={!hasNoDocument && !file.isKeyAccessible}
+          handleClick={hasNoDocument ? undefined : () => onOpenFile(file.id)}
         >
           <RulingOrderConfirmationStatus file={file} />
           {showCompletedPill && (
@@ -294,10 +331,10 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
               />
             </Box>
           )}
-          {items.length > 0 && (
+          {menuItems.length > 0 && (
             <Box marginLeft={1}>
               <ContextMenu
-                items={items}
+                items={menuItems}
                 placement="left-start"
                 shift={-12}
                 render={

@@ -1,19 +1,19 @@
-import { IntlShape } from 'react-intl'
+import type { IntlShape } from 'react-intl'
 
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseDecision,
   CaseType,
-  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './Ruling.strings'
 
 export const getConclusionAutofill = (
   formatMessage: IntlShape['formatMessage'],
-  workingCase: Case,
+  workingCase: WorkingCase,
   decision: CaseDecision,
   defendant: Defendant,
   validToDate?: string | null,

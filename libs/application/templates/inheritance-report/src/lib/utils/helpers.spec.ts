@@ -1,4 +1,9 @@
-import { isValidEmail, valueToNumber, nationalIdsMatch } from './helpers'
+import {
+  isValidEmail,
+  valueToNumber,
+  nationalIdsMatch,
+  includeSpouse,
+} from './helpers'
 
 describe('isValidEmail', () => {
   it('should return false if email is malformed', () => {
@@ -75,5 +80,20 @@ describe('nationalIdsMatch', () => {
     expect(nationalIdsMatch('', '0101302209')).toBe(false)
     expect(nationalIdsMatch('0101302209', '')).toBe(false)
     expect(nationalIdsMatch('', '')).toBe(false)
+  })
+})
+
+describe('includeSpouse', () => {
+  it('should return true when includeSpouse contains YES', () => {
+    expect(includeSpouse({ executors: { includeSpouse: ['yes'] } })).toBe(true)
+  })
+
+  it('should return false when includeSpouse is empty array', () => {
+    expect(includeSpouse({ executors: { includeSpouse: [] } })).toBe(false)
+  })
+
+  it('should return false when includeSpouse is undefined or missing', () => {
+    expect(includeSpouse({ executors: {} })).toBe(false)
+    expect(includeSpouse({})).toBe(false)
   })
 })

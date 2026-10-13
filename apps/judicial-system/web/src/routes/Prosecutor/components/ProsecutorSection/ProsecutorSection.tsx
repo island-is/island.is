@@ -1,4 +1,5 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {

@@ -193,6 +193,7 @@ export interface CrimeSceneMap {
 export enum CaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
+  WAITING_FOR_REVIEW = 'WAITING_FOR_REVIEW',
   WAITING_FOR_CONFIRMATION = 'WAITING_FOR_CONFIRMATION',
   SUBMITTED = 'SUBMITTED',
   RECEIVED = 'RECEIVED',
@@ -207,6 +208,7 @@ export enum CaseState {
 
 export enum IndictmentCaseState {
   DRAFT = CaseState.DRAFT,
+  WAITING_FOR_REVIEW = CaseState.WAITING_FOR_REVIEW,
   WAITING_FOR_CONFIRMATION = CaseState.WAITING_FOR_CONFIRMATION,
   SUBMITTED = CaseState.SUBMITTED,
   RECEIVED = CaseState.RECEIVED,
@@ -229,12 +231,15 @@ export enum RequestCaseState {
 
 export enum CaseTransition {
   ACCEPT = 'ACCEPT',
+  ACCEPT_REVIEW = 'ACCEPT_REVIEW',
   ASK_FOR_CANCELLATION = 'ASK_FOR_CANCELLATION',
   ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
+  ASK_FOR_REVIEW = 'ASK_FOR_REVIEW',
   COMPLETE = 'COMPLETE',
   CORRECT = 'CORRECT',
   DELETE = 'DELETE',
   DENY_INDICTMENT = 'DENY_INDICTMENT',
+  DENY_REVIEW = 'DENY_REVIEW',
   DISMISS = 'DISMISS',
   MOVE = 'MOVE',
   OPEN = 'OPEN',
@@ -245,12 +250,15 @@ export enum CaseTransition {
 }
 
 export enum IndictmentCaseTransition {
+  ACCEPT_REVIEW = CaseTransition.ACCEPT_REVIEW,
   ASK_FOR_CANCELLATION = CaseTransition.ASK_FOR_CANCELLATION,
   ASK_FOR_CONFIRMATION = CaseTransition.ASK_FOR_CONFIRMATION,
+  ASK_FOR_REVIEW = CaseTransition.ASK_FOR_REVIEW,
   COMPLETE = CaseTransition.COMPLETE,
   CORRECT = CaseTransition.CORRECT,
   DELETE = CaseTransition.DELETE,
   DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
+  DENY_REVIEW = CaseTransition.DENY_REVIEW,
   MOVE = CaseTransition.MOVE,
   RECEIVE = CaseTransition.RECEIVE,
   REOPEN = CaseTransition.REOPEN,
@@ -279,6 +287,15 @@ export enum CaseLegalProvisions {
   _97_1 = '_97_1', // 1. mgr. 97. gr. sml.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
+  _115_1 = '_115_1', // 115. gr. útl.
+  _115_1_A = '_115_1_A', // a-lið 1. mgr. 115. gr. útl.
+  _115_1_B = '_115_1_B', // b-lið 1. mgr. 115. gr. útl.
+  _115_1_C = '_115_1_C', // c-lið 1. mgr. 115. gr. útl.
+  _115_1_D = '_115_1_D', // d-lið 1. mgr. 115. gr. útl.
+  _115_1_E = '_115_1_E', // e-lið 1. mgr. 115. gr. útl.
+  _115_1_F = '_115_1_F', // f-lið 1. mgr. 115. gr. útl.
+  _115_1_G = '_115_1_G', // g-lið 1. mgr. 115. gr. útl.
+  _115_1_H = '_115_1_H', // h-lið 1. mgr. 115. gr. útl.
 }
 /* eslint-enable @typescript-eslint/naming-convention */
 
@@ -450,6 +467,12 @@ export const isRulingOrDismissalCase = (
   )
 }
 
+/** Police-facing case state for the XRD case/state endpoint. */
+export enum CasePoliceState {
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED',
+}
+
 export const hasIndictmentCaseBeenSubmittedToCourt = (
   state?: CaseState | null,
 ): boolean => {
@@ -461,6 +484,18 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
         ...completedIndictmentCaseStates,
       ].includes(state),
   )
+}
+
+export const getIndictmentCasePoliceState = (
+  state?: CaseState | null,
+): CasePoliceState => {
+  // Includes WAITING_FOR_CANCELLATION: the indictment already went to court,
+  // so the case is treated as submitted even before a live duplicate exists.
+  const isSubmitted =
+    state === CaseState.WAITING_FOR_CANCELLATION ||
+    hasIndictmentCaseBeenSubmittedToCourt(state)
+
+  return isSubmitted ? CasePoliceState.SUBMITTED : CasePoliceState.DRAFT
 }
 
 export const isIndictmentCaseState = (

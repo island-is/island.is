@@ -13,8 +13,8 @@ import {
   DISTRICT_COURT_INDICTMENT_CASE_ADD_FILES_IN_COURT_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_ADD_RULING_ORDER_IN_COURT_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  getStandardUserDashboardRoute,
 } from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
   isDistrictCourtUser,
@@ -43,11 +43,11 @@ import {
   CaseState,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCancelCase } from '@island.is/judicial-system-web/src/routes/Shared/CaseTable/CancelCase'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { useCancelCase } from '../../../Shared/CaseTable/CancelCase'
 import { strings } from './Overview.strings'
 // onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
 
@@ -74,7 +74,7 @@ const OverviewBody = ({
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           {workingCase.comments && (
             <AlertMessage
               title={formatMessage(commentsInput.heading)}

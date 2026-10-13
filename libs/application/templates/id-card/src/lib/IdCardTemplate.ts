@@ -196,6 +196,7 @@ const IdCardTemplate: ApplicationTemplate<
             schedulePruneReminderAfterDays(
               PARENT_B_PRUNE_AFTER_MS,
               2,
+              applicationMessage.pruneReason,
               Features.idCardScheduledNotifications,
             ),
           onEntry: defineTemplateApi({

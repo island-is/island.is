@@ -30,6 +30,7 @@ env:
   BACKEND_URL: 'http://web-judicial-system-backend'
   CONTENTFUL_ENVIRONMENT: 'test'
   CONTENTFUL_HOST: 'preview.contentful.com'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   HIDDEN_FEATURES: ''
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'

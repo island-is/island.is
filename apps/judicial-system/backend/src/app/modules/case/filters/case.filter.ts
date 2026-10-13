@@ -14,6 +14,7 @@ import {
   isPrisonStaffUser,
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   isRequestCase,
   isRestrictionCase,
   RequestSharedWhen,
@@ -21,6 +22,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
 import {
   AppealCase,
   Case,
@@ -47,6 +49,7 @@ const canProsecutionUserAccessCase = (
     ![
       CaseState.NEW,
       CaseState.DRAFT,
+      CaseState.WAITING_FOR_REVIEW,
       CaseState.WAITING_FOR_CONFIRMATION,
       CaseState.SUBMITTED,
       CaseState.WAITING_FOR_CANCELLATION,
@@ -66,16 +69,27 @@ const canProsecutionUserAccessCase = (
     user.institution?.id !== theCase.prosecutorsOfficeId &&
     (forUpdate ||
       user.institution?.id !== theCase.sharedWithProsecutorsOfficeId) &&
-    user.id !== theCase.indictmentReviewerId
+    user.id !== theCase.indictmentReviewerId &&
+    user.id !== theCase.appealProsecutorId
   ) {
     return false
   }
 
   // Check heightened security level access
+  //
+  // Being made the reviewer or the appeal prosecutor of a case is itself a
+  // grant of access to that one case - it is why the office check above lets
+  // those assignees through - so it survives this restriction too. Without
+  // that, an assignee is handed a case and then refused it, and every list
+  // built on that assignment route shows a row that will not open. Request
+  // cases have neither assignment, so nothing changes where heightened
+  // security actually applies.
   if (
     theCase.isHeightenedSecurityLevel &&
     user.id !== theCase.creatingProsecutorId &&
-    user.id !== theCase.prosecutorId
+    user.id !== theCase.prosecutorId &&
+    user.id !== theCase.indictmentReviewerId &&
+    user.id !== theCase.appealProsecutorId
   ) {
     return false
   }
@@ -116,6 +130,53 @@ export const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
     ),
   )
 }
+
+// A verdict on this case has been appealed - the same rule the appealed case
+// list is built from, in TypeScript. Keep it in step with
+// buildHasAppealedVerdictCondition in the case table's where options: a list
+// that shows a case the guard then refuses is worse than no list at all.
+//
+// Rulings only, because a fine is appealed by ruling appeal rather than
+// verdict appeal. On the defence side only the latest verdict counts, and the
+// verdicts come newest first from the case include graph; a review decision to
+// appeal stands whatever verdicts follow it.
+//
+// Closing a defendant without enforcement does not withdraw their appeal, so it
+// does not take the case away here either - see
+// buildHasAppealedVerdictCondition.
+const hasAppealedVerdict = (theCase: Case): boolean =>
+  Boolean(
+    theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING &&
+      theCase.defendants?.some(
+        (defendant) =>
+          defendant.indictmentReviewDecision ===
+            IndictmentCaseReviewDecision.APPEAL ||
+          Boolean(defendant.verdicts?.[0]?.appealDate),
+      ),
+  )
+
+// Prosecutors at the public prosecution office read every appealed verdict,
+// not only the cases they reviewed themselves. An appeal can land with a
+// prosecutor who had nothing to do with the review, and without this they
+// would have to ask a colleague to print the files for them.
+//
+// Read only. Everything they may change still goes through
+// canProsecutionUserAccessCase.
+//
+// Heightened security narrows this route as it narrows every other prosecution
+// route: an appeal is not a way around it. The flag is a plain column on every
+// case and the update DTO accepts it whatever the case type, so an indictment
+// can carry it - relying on which screen happens to offer it today would be
+// relying on the UI to enforce authorization.
+const canPublicProsecutionUserAccessAppealedCase = (
+  theCase: Case,
+  user: User,
+): boolean =>
+  canPublicProsecutionUserAccessCase(theCase) &&
+  hasAppealedVerdict(theCase) &&
+  (!theCase.isHeightenedSecurityLevel ||
+    user.id === theCase.creatingProsecutorId ||
+    user.id === theCase.prosecutorId)
 
 const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
   // Check case state access
@@ -201,10 +262,25 @@ const canAppealsCourtUserAccessRequestCase = (theCase: Case): boolean => {
   return canAppealsCourtUserAccessCaseAppealCase(theCase)
 }
 
+// An appealed verdict reaches the court earlier than an appealed ruling does.
+// Every clause above waits for receipt; a verdict appeal is filed and then
+// waits for the court to pick it up, so the court has to see it from the
+// moment it is filed or it could never receive it at all. Every state of one
+// is the court's to see, which is what the case table access rule says too -
+// the two have to agree, or the court gets a row in a list that it cannot
+// open.
+//
+// The association is scoped to appeal_type = VERDICT, so its presence is the
+// whole of the question.
+const canAppealsCourtUserAccessCaseVerdictAppealCase = (
+  theCase: Case,
+): boolean => Boolean(theCase.verdictAppealCase)
+
 const canAppealsCourtUserAccessIndictmentCase = (theCase: Case): boolean => {
   return (
     canAppealsCourtUserAccessCaseAppealCase(theCase) ||
-    canAppealsCourtUserAccessCaseRulingOrderAppealCase(theCase)
+    canAppealsCourtUserAccessCaseRulingOrderAppealCase(theCase) ||
+    canAppealsCourtUserAccessCaseVerdictAppealCase(theCase)
   )
 }
 
@@ -214,7 +290,8 @@ const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
     return canAppealsCourtUserAccessRequestCase(theCase)
   }
 
-  // Indictment cases — only dismissed cases can be appealed
+  // Indictment cases - a dismissal or a ruling order is appealed by ruling appeal,
+  // a judgment by verdict appeal.
   if (isIndictmentCase(theCase.type)) {
     return canAppealsCourtUserAccessIndictmentCase(theCase)
   }
@@ -368,7 +445,11 @@ const canCaseDefendantDefenceUserAccessRequestCase = (
 ) => {
   if (
     !canDefenceUserAccessRequestCaseState({
-      requestSharedWhen: theCase.requestSharedWithDefender,
+      requestSharedWhen:
+        getMostPermissiveRequestSharedWithDefenderForNationalId(
+          theCase.defendants,
+          user.nationalId,
+        ) ?? undefined,
       state: theCase.state,
       dateLogs: theCase.dateLogs,
     })
@@ -376,9 +457,12 @@ const canCaseDefendantDefenceUserAccessRequestCase = (
     return false
   }
 
-  // Check case defender assignment
-  return (
-    theCase.defenderNationalId && theCase.defenderNationalId === user.nationalId
+  // Defendant-level assignment. A defender of any defendant on the case gets
+  // access, subject to that defender's requestSharedWithDefender timing above.
+  return Boolean(
+    theCase.defendants?.some(
+      (defendant) => defendant.defenderNationalId === user.nationalId,
+    ),
   )
 }
 
@@ -436,9 +520,11 @@ const canDefenceUserAccessIndictmentCase = (
     return false
   }
 
-  // Check received case access
+  // Check received case access - defence users get access once an arraignment
+  // has been scheduled, or once the court has decided not to summon to one
   const canDefenderAccessReceivedCase = Boolean(
-    DateLog.arraignmentDate(theCase.dateLogs),
+    DateLog.arraignmentDate(theCase.dateLogs) ||
+      theCase.isArraignmentSummonsSkipped,
   )
 
   if (theCase.state === CaseState.RECEIVED && !canDefenderAccessReceivedCase) {
@@ -487,7 +573,17 @@ export const canUserAccessCase = (
   forUpdate: boolean,
 ): boolean => {
   if (isProsecutionUser(user)) {
-    return canProsecutionUserAccessCase(theCase, user, forUpdate)
+    if (canProsecutionUserAccessCase(theCase, user, forUpdate)) {
+      return true
+    }
+
+    // Falls through rather than replacing the check above - a public
+    // prosecution user keeps everything the ordinary rule already gave them.
+    return (
+      !forUpdate &&
+      isPublicProsecutionUser(user) &&
+      canPublicProsecutionUserAccessAppealedCase(theCase, user)
+    )
   }
 
   if (isDistrictCourtUser(user)) {

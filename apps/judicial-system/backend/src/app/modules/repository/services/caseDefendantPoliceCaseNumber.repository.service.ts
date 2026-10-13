@@ -8,10 +8,6 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Case } from '../models/case.model'
 import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 
-interface ReplaceUnassignedOptions {
-  transaction: Transaction
-}
-
 @Injectable()
 export class CaseDefendantPoliceCaseNumberRepositoryService {
   constructor(
@@ -23,7 +19,7 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
   async replaceUnassignedFromPoliceCaseNumbersArray(
     caseId: string,
     policeCaseNumbers: string[],
-    options: ReplaceUnassignedOptions,
+    options: { transaction: Transaction },
   ): Promise<void> {
     const { transaction } = options
 
@@ -129,6 +125,54 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
       defendantId: row.defendantId as string,
       policeCaseNumber: row.policeCaseNumber,
     }))
+  }
+
+  /**
+   * Returns the distinct ids of the given defendants that are linked to at
+   * least one of the given police case numbers on the case. Used when a civil
+   * claimant's police case numbers change and its defendant selection must be
+   * narrowed to the defendants still reachable through those numbers.
+   */
+  async findAssignedDefendantIds(
+    caseId: string,
+    policeCaseNumbers: string[],
+    defendantIds: string[],
+    options: { transaction: Transaction },
+  ): Promise<string[]> {
+    if (policeCaseNumbers.length === 0 || defendantIds.length === 0) {
+      return []
+    }
+
+    try {
+      this.logger.debug(
+        `Finding assigned defendant ids for case ${caseId} among ${defendantIds.length} defendant(s) and ${policeCaseNumbers.length} police case number(s)`,
+      )
+
+      const rows = await this.model.findAll({
+        where: {
+          caseId,
+          policeCaseNumber: policeCaseNumbers,
+          defendantId: defendantIds,
+        },
+        attributes: ['defendantId'],
+        transaction: options.transaction,
+      })
+
+      return [
+        ...new Set(
+          rows
+            .map((row) => row.defendantId)
+            .filter((defendantId): defendantId is string => !!defendantId),
+        ),
+      ]
+    } catch (error) {
+      this.logger.error(
+        `Error finding assigned defendant ids for case ${caseId}`,
+        { error },
+      )
+
+      throw error
+    }
   }
 
   async findDistinctPoliceCaseNumbersByCaseIds(
@@ -289,7 +333,7 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     fromCaseId: string,
     toCaseId: string,
     defendantId: string,
-    options: ReplaceUnassignedOptions,
+    options: { transaction: Transaction },
   ): Promise<void> {
     const { transaction } = options
 

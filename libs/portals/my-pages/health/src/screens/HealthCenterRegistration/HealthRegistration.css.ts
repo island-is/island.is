@@ -17,6 +17,12 @@ export const tableRowStyle = style({
 export const saveButtonWrapperStyle = recipe({
   base: {
     position: 'relative',
+    selectors: {
+      '&:focus-within': {
+        opacity: 1,
+        zIndex: 1,
+      },
+    },
   },
   variants: {
     visible: {
@@ -38,9 +44,6 @@ export const filterWrapperStyle = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       width: '50%',
-    },
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      width: '33.33333%',
     },
   },
 })

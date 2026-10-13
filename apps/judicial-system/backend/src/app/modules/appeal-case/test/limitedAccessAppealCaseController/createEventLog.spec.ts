@@ -1,10 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
   AppealEventType,
@@ -15,6 +12,7 @@ import {
 
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import {
   AppealCase,
   AppealEventLogRepositoryService,
@@ -22,7 +20,7 @@ import {
 } from '../../../repository'
 import { CreateAppealEventLogDto } from '../../dto/createAppealEventLog.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: AppealCase
@@ -125,7 +123,7 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
     })
 
     it('should queue the appeal statement notification', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,

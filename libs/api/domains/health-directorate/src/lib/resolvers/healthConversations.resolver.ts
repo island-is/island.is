@@ -38,8 +38,10 @@ import { HealthDirectorateService } from '../health-directorate.service'
 import { HealthDirectorateCreateConversationInput } from '../dto/createHealthConversation.input'
 import { HealthDirectorateConversationIdInput } from '../dto/healthConversationId.input'
 import { HealthDirectorateHealthConversationsFilterInput } from '../dto/healthConversationsFilter.input'
+import { HealthDirectoratePaginatedHealthConversationsInput } from '../dto/paginatedHealthConversations.input'
 import { HealthDirectorateReplyToConversationInput } from '../dto/replyToHealthConversation.input'
 import { HealthDirectorateHealthConversation } from '../models/healthConversation.model'
+import { HealthDirectoratePaginatedHealthConversations } from '../models/paginatedHealthConversations.model'
 import { HealthDirectorateHealthConversationDetail } from '../models/healthConversationDetail.model'
 import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
 import { HealthDirectorateConversationOrganization } from '../models/healthConversationOrganization.model'
@@ -54,9 +56,10 @@ export class HealthConversationsResolver {
   @Query(() => [HealthDirectorateHealthConversation], {
     name: 'healthDirectorateHealthConversations',
     nullable: true,
+    deprecationReason: 'Use healthDirectoratePaginatedHealthConversations.',
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   getHealthConversations(
     @Args('input', {
@@ -69,12 +72,30 @@ export class HealthConversationsResolver {
     return this.api.getHealthConversations(user, input?.status, input?.starred)
   }
 
+  @Query(() => HealthDirectoratePaginatedHealthConversations, {
+    name: 'healthDirectoratePaginatedHealthConversations',
+    nullable: true,
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
+  getPaginatedHealthConversations(
+    @Args('input', {
+      type: () => HealthDirectoratePaginatedHealthConversationsInput,
+      nullable: true,
+    })
+    input: HealthDirectoratePaginatedHealthConversationsInput | undefined,
+    @CurrentUser() user: User,
+  ): Promise<HealthDirectoratePaginatedHealthConversations | null> {
+    return this.api.getPaginatedHealthConversations(user, input)
+  }
+
   @Query(() => HealthDirectorateHealthConversationDetail, {
     name: 'healthDirectorateHealthConversation',
     nullable: true,
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   getHealthConversation(
     @Args('id', { type: () => ID }) id: string,
@@ -88,7 +109,7 @@ export class HealthConversationsResolver {
     nullable: true,
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   getHealthConversationRecipients(
     @Args('locale', { type: () => LocaleEnum, nullable: true })
@@ -103,7 +124,7 @@ export class HealthConversationsResolver {
     nullable: true,
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   createHealthConversation(
     @Args('input') input: HealthDirectorateCreateConversationInput,
@@ -117,7 +138,7 @@ export class HealthConversationsResolver {
     nullable: true,
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   replyToHealthConversation(
     @Args('input') input: HealthDirectorateReplyToConversationInput,
@@ -130,7 +151,7 @@ export class HealthConversationsResolver {
     name: 'healthDirectorateMarkHealthConversationAsRead',
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   markHealthConversationAsRead(
     @Args('input') input: HealthDirectorateConversationIdInput,
@@ -143,7 +164,7 @@ export class HealthConversationsResolver {
     name: 'healthDirectorateArchiveHealthConversation',
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   archiveHealthConversation(
     @Args('input') input: HealthDirectorateConversationIdInput,
@@ -156,7 +177,7 @@ export class HealthConversationsResolver {
     name: 'healthDirectorateUnarchiveHealthConversation',
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   unarchiveHealthConversation(
     @Args('input') input: HealthDirectorateConversationIdInput,
@@ -169,7 +190,7 @@ export class HealthConversationsResolver {
     name: 'healthDirectorateStarHealthConversation',
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   starHealthConversation(
     @Args('input') input: HealthDirectorateConversationIdInput,
@@ -182,7 +203,7 @@ export class HealthConversationsResolver {
     name: 'healthDirectorateUnstarHealthConversation',
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   unstarHealthConversation(
     @Args('input') input: HealthDirectorateConversationIdInput,

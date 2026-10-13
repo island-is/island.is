@@ -1,7 +1,9 @@
 import React from 'react'
 import {
+  ActivityIndicator,
   ImageSourcePropType,
   ImageStyle,
+  StyleSheet,
   TextProps,
   TextStyle,
   TouchableHighlightProps,
@@ -10,7 +12,6 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
-import { Loader } from '../loader/loader'
 
 interface ButtonBaseProps extends TouchableHighlightProps {
   isTransparent?: boolean
@@ -144,6 +145,18 @@ export function Button({
 
   if (isFilledUtilityButton) isUtilityButton = true
 
+  // Match the spinner colour to the button's text colour (same rules as Text).
+  const spinnerColor =
+    isTransparent && rest.disabled
+      ? theme.color.dark200
+      : isUtilityButton && !isFilledUtilityButton
+      ? theme.isDark
+        ? theme.color.white
+        : theme.color.dark400
+      : isTransparent || isOutlined
+      ? theme.color.blue400
+      : theme.color.white
+
   const renderIcon = () => {
     return (
       <Icon
@@ -176,22 +189,21 @@ export function Button({
       isFilledUtilityButton={isFilledUtilityButton}
       {...rest}
     >
-      {loading ? (
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingHorizontal: theme.spacing.p3,
-          }}
-        >
-          <Loader />
-        </View>
-      ) : (
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             columnGap: theme.spacing.p1,
+            // Stays mounted while loading so the button keeps its size; the
+            // spinner is laid over it rather than replacing it.
+            opacity: loading ? 0 : 1,
           }}
         >
           {icon && iconPosition === 'start' && renderIcon()}
@@ -212,7 +224,18 @@ export function Button({
           )}
           {icon && iconPosition === 'end' && renderIcon()}
         </View>
-      )}
+        {loading && (
+          <View
+            pointerEvents="none"
+            style={[
+              StyleSheet.absoluteFillObject,
+              { justifyContent: 'center', alignItems: 'center' },
+            ]}
+          >
+            <ActivityIndicator color={spinnerColor} />
+          </View>
+        )}
+      </View>
     </Host>
   )
 }

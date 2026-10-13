@@ -8,10 +8,12 @@ import {
   IsOptional,
   IsString,
   Length,
+  Matches,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import { CaseType, Gender } from '@island.is/judicial-system/types'
 
 import { nationalIdTransformer } from '../../../transformers'
@@ -26,6 +28,7 @@ export class DeprecatedInternalCreateCaseDto {
   @IsArray()
   @ArrayMinSize(1)
   @IsString({ each: true })
+  @Matches(POLICE_CASE_NUMBER_REGEX, { each: true })
   @ApiProperty({ type: String, isArray: true })
   readonly policeCaseNumbers!: string[]
 

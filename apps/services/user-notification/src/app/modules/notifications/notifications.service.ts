@@ -40,7 +40,7 @@ import {
   GetTemplates,
   GetOrganizationByNationalId,
 } from '@island.is/clients/cms'
-import { DocumentsScope } from '@island.is/auth/scopes'
+import { ApiScope, DocumentsScope } from '@island.is/auth/scopes'
 import { Op } from 'sequelize'
 
 /**
@@ -235,23 +235,19 @@ export class NotificationsService {
     }
   }
 
-  /**
-   * Sanitizes arguments by filtering out any that don't exist in the template.
-   * Logs warnings for invalid args and returns only valid ones.
-   */
+  /** Filters out arguments that don't exist in the template. */
   sanitize(template: HnippTemplate, args: ArgumentDto[]): ArgumentDto[] {
     const validArgs: ArgumentDto[] = []
 
-    // Filter args and log warnings for invalid ones
     for (const arg of args) {
       if (template.args.includes(arg.key)) {
         validArgs.push(arg)
       } else {
-        this.logger.warn(
-          `Filtering out invalid argument '${arg.key}' for template '${
-            template.templateId
-          }'. Valid args are: ${template.args.join(', ')}`,
-        )
+        this.logger.warn('Filtering out invalid notification argument', {
+          templateId: template.templateId,
+          invalidArgKey: arg.key,
+          validArgKeys: template.args,
+        })
       }
     }
 
@@ -372,9 +368,15 @@ export class NotificationsService {
       orderOption: [['id', 'DESC']],
       where: {
         recipient: nationalId,
-        scope: {
-          [Op.in]: scopes || [DocumentsScope.main],
-        },
+        // Callers with @island.is/internal see all their own notifications,
+        // regardless of scope (recipient still restricts to their own).
+        ...(scopes.includes(ApiScope.internal)
+          ? {}
+          : {
+              scope: {
+                [Op.in]: scopes || [DocumentsScope.main],
+              },
+            }),
       },
     })
 

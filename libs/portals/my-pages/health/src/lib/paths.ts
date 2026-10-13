@@ -24,6 +24,7 @@ export enum HealthPaths {
   HealthTherapiesSpeech = `${therapiesAndAids}/thjalfun/talthjalfun`,
   HealthTherapiesOccupational = `${therapiesAndAids}/thjalfun/idjuthjalfun`,
   HealthAidsAndNutrition = `${therapiesAndAids}/hjalpartaeki-og-naering`,
+  HealthMovementPrescriptions = `${therapiesAndAids}/hreyfisedlar`,
 
   HealthPayments = `${payments}`,
   HealthPaymentParticipation = `${payments}/greidsluthatttaka`,
@@ -50,6 +51,7 @@ export enum HealthPaths {
   HealthVaccinationsOther = `${patientData}/bolusetningar/adrar`,
   HealthWaitlists = `${patientData}/bidlistar`,
   HealthWaitlistsDetail = `${patientData}/bidlistar/:id`,
+  HealthOldPregnancies = `${patientData}/eldri-medgongur`,
   HealthQuestionnaires = '/heilsa/spurningalistar',
   HealthQuestionnairesDetail = '/heilsa/spurningalistar/:org/:id',
   HealthQuestionnairesAnswer = '/heilsa/spurningalistar/:org/:id/svara',
@@ -65,10 +67,25 @@ export enum HealthPaths {
 
   HealthAppointments = '/heilsa/timabokanir',
   HealthAppointmentDetail = '/heilsa/timabokanir/:id',
+  HealthBookAppointment = '/heilsa/timabokanir/boka-tima',
 
   HealthConversations = '/heilsa/skilabod',
   HealthConversationsNew = '/heilsa/skilabod/nytt',
   HealthConversationsDetail = '/heilsa/skilabod/:id',
+
+  HealthTreatments = '/heilsa/medferd',
+  HealthTreatment = '/heilsa/medferd/:treatmentId',
+  HealthTreatmentEducationalContent = '/heilsa/medferd/:treatmentId/fraedsluefni',
+  HealthTreatmentConversations = '/heilsa/medferd/:treatmentId/skilabod',
+  HealthTreatmentConversationsNew = '/heilsa/medferd/:treatmentId/skilabod/nytt',
+  HealthTreatmentConversationsDetail = '/heilsa/medferd/:treatmentId/skilabod/:id',
+  HealthTreatmentQuestionnaires = '/heilsa/medferd/:treatmentId/spurningalistar',
+  HealthTreatmentQuestionnairesDetail = '/heilsa/medferd/:treatmentId/spurningalistar/:org/:id',
+  HealthTreatmentQuestionnairesAnswer = '/heilsa/medferd/:treatmentId/spurningalistar/:org/:id/svara',
+  HealthTreatmentQuestionnairesAnswered = '/heilsa/medferd/:treatmentId/spurningalistar/:org/:id/skoda-svor/:submissionId',
+
+  HealthPregnancy = '/heilsa/medganga',
+  HealthPregnancyOverview = '/heilsa/medganga/min-medganga',
 
   // Deprecated paths - kept for redirects
   HealthOverviewOld = `${basicInformation}/yfirlit`,

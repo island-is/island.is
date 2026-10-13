@@ -10,11 +10,11 @@ export enum Features {
   europeanHealthInsuranceCard = 'isEuropeanHealthInsuranceCardApplicationEnabled',
   passportApplication = 'isPassportApplicationEnabled',
   passportAnnulmentApplication = 'isPassportAnnulmentApplicationEnabled',
+  drivingLicenseAdvanced = 'isDrivingLicenseAdvancedEnabled',
   financialStatementInao = 'financialStatementInao',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
-  university = 'isUniversityEnabled',
   homeSupport = 'isHomeSupportEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
   officialJournalOfIcelandRegulations = 'isOjoiRegulationApplicationPathEnabled',
@@ -33,18 +33,12 @@ export enum Features {
   disabilityPensionLightweightModeEnabled = 'isDisabilityPensionLightweightModeEnabled',
   pensionSupplementEnabled = 'isPensionSupplementEnabled',
   fireCompensationAppraisalEnabled = 'isFireCompensationAppraisalEnabled',
-  ExemptionForTransportation = 'isExemptionForTransportationEnabled',
   TerminateRentalAgreementEnabled = 'isterminaterentalagreementsenabled',
-  UnemploymentBenefitsEnabled = 'isUnemploymentBenefitsEnabled',
-  RegistrationOfNewPropertyNumbersEnabled = 'isRegistrationOfNewPropertyNumbersEnabled',
   fundingGovernmentProjectsEnabled = 'isFundingGovernmentProjectsEnabled',
-  editUnemploymentInformation = 'isEditUnemploymentInformationEnabled',
   estateReviewEnabled = 'isEstateReviewEnabled',
   inheritanceReportReviewEnabled = 'isInheritanceReportReviewEnabled',
-  isDeregisterUnemploymentBenefitsEnabled = 'isDeregisterUnemploymentBenefitsEnabled',
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
-  isTravelConfirmationEnabled = 'isTravelConfirmationEnabled',
-  isSubmitDocumentsEnabled = 'isSubmitDocumentsEnabled',
+  isNewDrivingLicenseEnabled = 'isNewDrivingLicenseEnabled',
   isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -59,6 +53,7 @@ export enum Features {
   servicePortalHealthMedicineLandlaeknirPageEnabled = 'isServicePortalHealthMedicineLandlaeknirPageEnabled',
   servicePortalHealthMedicineDelegationPageEnabled = 'isServicePortalHealthMedicineDelegationPageEnabled',
   servicePortalHealthBloodPageEnabled = 'isServicePortalHealthBloodPageEnabled',
+  servicePortalHealthMovementPrescriptionsPageEnabled = 'isServicePortalHealthMovementPrescriptionsPageEnabled',
   isServicePortalMyContractsPageEnabled = 'isServicePortalMyContractsPageEnabled',
   isServicePortalMyPagesTRBankInformationPageEnabled = 'isServicePortalMyPagesTRBankInformationPageEnabled',
   isServicePortalTRPaymentTypesOverviewPageEnabled = 'isServicePortalTRPaymentTypesOverviewPageEnabled',
@@ -71,6 +66,7 @@ export enum Features {
   isServicePortalFarmersLandsPageEnabled = 'isServicePortalFarmersLandsPageEnabled',
   isServicePortalUnemploymentBenefitsPageEnabled = 'isServicePortalUnemploymentBenefitsPageEnabled',
   isServicePortalActivationAllowancePageEnabled = 'isServicePortalActivationAllowancePageEnabled',
+  isServicePortalHealthOldPregnanciesPageEnabled = 'isServicePortalHealthOldPregnanciesPageEnabled',
 
   // Health Aid and Nutrition Renewal feature enabled
   servicePortalHealthAidAndNutritionRenewalEnabled = 'isServicePortalHealthAidAndNutritionRenewalEnabled',
@@ -86,6 +82,8 @@ export enum Features {
   isServicePortalHealthAppointmentsPageEnabled = 'isServicePortalHealthAppointmentsPageEnabled',
   isServicePortalHealthMessagesPageEnabled = 'isServicePortalHealthMessagesPageEnabled',
   isServicePortalHealthPaymentOverviewTotalPageEnabled = 'isServicePortalHealthPaymentOverviewTotalPageEnabled',
+  isServicePortalHealthPregnancyPageEnabled = 'isServicePortalHealthPregnancyPageEnabled',
+  isServicePortalHealthTreatmentsPageEnabled = 'isServicePortalHealthTreatmentsPageEnabled',
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
   pkPassV2 = 'isPkPassV2Enabled',
@@ -138,6 +136,7 @@ export enum Features {
 
   // Notifications
   isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
+  isServicePortalOnlyActionablePriorityNotificationsEnabled = 'isServicePortalOnlyActionablePriorityNotificationsEnabled',
 
   // New/updated delegation notification
   isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',
@@ -160,15 +159,13 @@ export enum Features {
   isIslandisApplePayStrictSignatureVerificationEnabled = 'isIslandisApplePayStrictSignatureVerificationEnabled',
   isIslandisBankTransferPaymentEnabled = 'isIslandisBankTransferPaymentEnabled',
   isIslandisBankTransferPaymentAllowedForUser = 'isIslandisBankTransferPaymentAllowedForUser',
+  isIslandisBankTransferPaymentAllowedForCompany = 'isIslandisBankTransferPaymentAllowedForCompany',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
 
   // Should auth api use national registry v3 (Midlun) for incoming ward (legal guardian) delegations
   isDelegationIncomingWardV3Enabled = 'isDelegationIncomingWardV3Enabled',
-
-  // Should applicaton-system use national registry v3
-  shouldApplicationSystemUseNationalRegistryV3 = 'shouldApplicationSystemUseNationalRegistryV3',
 
   delegationTypesWithNotificationsEnabled = 'delegationTypesWithNotificationsEnabled',
 
@@ -201,6 +198,9 @@ export enum Features {
   isSmsNotificationEnabled = 'isSmsNotificationEnabled',
   isSendSmsNotificationsEnabled = 'isSendSmsNotificationsEnabled',
 
+  // Notifications settings
+  isOnlyActionablePriorityNotificationsEnabled = 'isOnlyActionablePriorityNotificationsEnabled',
+
   // Primary school (guardian-facing)
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Primary school PDF viewer modal
@@ -215,6 +215,7 @@ export enum Features {
   isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
   // Housing Benefits
   isHousingBenefitsEnabled = 'isHousingBenefitsApplicationEnabled',
+  isDriversDeprivationsEnabled = 'isDriversDeprivationsEnabled',
 
   organizationFooterComesFromOrganizationPage = 'organizationFooterComesFromOrganizationPage',
 

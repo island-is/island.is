@@ -3,7 +3,8 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
-import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
+import type { IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
   DEFENDER_APPEAL_CASE_ADD_FILES_ROUTE,
   PROSECUTION_APPEAL_CASE_ADD_FILES_ROUTE,
@@ -19,6 +20,7 @@ import {
   isIndictmentCase,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   ContextMenu,
   FileNotFoundModal,
@@ -28,25 +30,24 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
-  Case,
-  CaseFile,
   CaseFileCategory,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  TUploadFile,
   useFileList,
   useS3Upload,
   useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isAppealFileCategoryVisible,
   isMatchingAppealCaseFile,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { strings } from './AppealCaseFilesOverview.strings'
-import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './AppealCaseFilesOverview.css'
 
 const prosecutorDeleteCategories = [
@@ -67,7 +68,10 @@ const isProsecutorCategory = (category: CaseFileCategory | undefined | null) =>
   ].includes(category) ||
     prosecutorDeleteCategories.includes(category))
 
-const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
+const getFileSubmittedByText = (
+  file: CaseFile,
+  workingCase: WorkingCase,
+): string => {
   const prosecutorSubmitted = isProsecutorCategory(file.category)
 
   if (prosecutorSubmitted) {
@@ -154,7 +158,7 @@ const AppealCaseFilesOverview = () => {
   return (
     allFiles &&
     allFiles.length > 0 && (
-      <div className={grid({ gap: 3 })}>
+      <div className={stack({ gap: 3 })}>
         <Box>
           <SectionHeading
             title="Skjöl kærumáls"

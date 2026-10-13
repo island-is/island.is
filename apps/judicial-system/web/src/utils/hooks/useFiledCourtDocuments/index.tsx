@@ -19,13 +19,12 @@ const useFiledCourtDocuments = () => {
     : false
 
   const filedCourtDocuments = useMemo(() => {
+    // Documents copied in from a merged case are ordinary documents of this
+    // case, filed in its sessions and numbered in its one sequence, so they
+    // come along with the rest.
     const filedDocuments = (workingCase.courtSessions ?? [])
       .filter((session) => session.isConfirmed)
-      .flatMap((session) => {
-        const filedDocuments = session.filedDocuments ?? []
-        const mergedFiledDocuments = session.mergedFiledDocuments ?? []
-        return [...filedDocuments, ...mergedFiledDocuments]
-      })
+      .flatMap((session) => session.filedDocuments ?? [])
 
     const uploadedFiledDocuments = filedDocuments.filter(
       (doc) => doc.documentType === CourtDocumentType.UPLOADED_DOCUMENT,
@@ -64,19 +63,11 @@ const useFiledCourtDocuments = () => {
       (doc) => doc.caseFileId === caseFileId,
     )
 
-    const isMergedCaseDocument = workingCase?.mergedCases?.some(
-      (mergedCase) => mergedCase.id === document?.caseId,
-    )
-
     if (!document || !document.documentOrder) {
       return name
     }
 
-    return `${
-      isMergedCaseDocument
-        ? document.mergedDocumentOrder
-        : document.documentOrder
-    }. ${name}`
+    return `${document.documentOrder}. ${name}`
   }
 
   const prefixGeneratedDocumentNameWithDocumentOrder = (
@@ -96,20 +87,11 @@ const useFiledCourtDocuments = () => {
         doc.generatedPdfUri?.includes(partialUri),
     )
 
-    const isMergedCaseDocument =
-      workingCase?.mergedCases?.some(
-        (mergedCase) => mergedCase.id === document?.caseId,
-      ) && document?.mergedDocumentOrder
-
     if (!document || !document.documentOrder) {
       return name
     }
 
-    return `${
-      isMergedCaseDocument
-        ? document.mergedDocumentOrder
-        : document.documentOrder
-    }. ${name}`
+    return `${document.documentOrder}. ${name}`
   }
 
   return {

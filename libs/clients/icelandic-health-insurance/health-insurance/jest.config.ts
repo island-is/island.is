@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-health-insurance',
   preset: './jest.preset.js',

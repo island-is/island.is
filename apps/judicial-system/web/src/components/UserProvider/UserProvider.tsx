@@ -1,10 +1,5 @@
-import {
-  createContext,
-  FC,
-  PropsWithChildren,
-  useEffect,
-  useState,
-} from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
@@ -14,11 +9,11 @@ import {
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCurrentUserQuery } from './currentUser.generated'
 
-interface UserProvider {
+interface UserContextValue {
   isLoading?: boolean
   isAuthenticated?: boolean
   limitedAccess?: boolean
@@ -27,7 +22,7 @@ interface UserProvider {
   hasError?: boolean
 }
 
-export const UserContext = createContext<UserProvider>({})
+export const UserContext = createContext<UserContextValue>({})
 
 // Used for accessing the current user outside of React components
 export const userRef: { current?: User; authBypass?: boolean } = {}

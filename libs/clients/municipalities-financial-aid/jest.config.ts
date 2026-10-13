@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-municipality-financial-aid',
   preset: './jest.preset.js',

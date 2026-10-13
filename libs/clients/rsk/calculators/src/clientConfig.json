@@ -1,0 +1,1120 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "ReiknivelarREST",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/Barnabaetur": {
+      "get": {
+        "tags": ["Barnabaetur"],
+        "summary": "",
+        "parameters": [
+          {
+            "name": "hjuskaparstada",
+            "in": "query",
+            "description": "1 - Hjón/í sambúð 0 - Einstætt foreldri",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "tekjuar",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "tekjustofn",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "fjoldiBarna",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "fjoldiBarnaUndir7ara",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skiptBuseta",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "skiptBornYfir7ara",
+            "in": "query",
+            "description": "Bara notað ef skiptBuseta == true",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skiptBornUndir7ara",
+            "in": "query",
+            "description": "Bara notað ef skiptBuseta == true",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaBarnabaetur"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaBarnabaetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaBarnabaetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bifreidagjold": {
+      "get": {
+        "tags": ["Bifreidagjold"],
+        "summary": "",
+        "parameters": [
+          {
+            "name": "ar",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "bilnumer",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "gjaldtimabil",
+            "in": "query",
+            "description": "bool 0 = 1 jan - 30 júlí, 1 = 1 júlí - 31 des",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "gjaldskipting",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaBifreidagjold"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaBifreidagjold"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaBifreidagjold"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bifreidahlunnindi": {
+      "get": {
+        "tags": ["Bifreidahlunnindi"],
+        "summary": "",
+        "parameters": [
+          {
+            "name": "kaupar",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "kaupverd",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "rafbill",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "starfsmadurGreidirHledslu",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "starfsmadurGreidirRekstrarkostnad",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaBifreidahlunnindi"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaBifreidahlunnindi"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaBifreidahlunnindi"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/FyrningOkutaekja": {
+      "get": {
+        "tags": ["FyrningOkutaekja"],
+        "summary": "",
+        "parameters": [
+          {
+            "name": "verd",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "kaupmanudur",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "kaupar",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "komumanudur",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "komuar",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaFyrning"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaFyrning"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaFyrning"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Stadgreidsla": {
+      "get": {
+        "tags": ["Stadgreidsla"],
+        "summary": "",
+        "parameters": [
+          {
+            "name": "launGreidast",
+            "in": "query",
+            "description": "0 = Vikulega, 1 = Mánaðarlega",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "hjuskaparstada",
+            "in": "query",
+            "description": "1 = Einhleypingur, 2 = Einstætt foreldri, 3 = Hjón/Sambúð.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "tekjuar",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "launamanudur",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "laun",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "lifeyrissjodurHlutfall",
+            "in": "query",
+            "description": "Hlutfall sem er greitt í lífeyrissjóð, gefið sem tala milli 0 og 1",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "sereignHlutfall",
+            "in": "query",
+            "description": "Hlutfall sem er greitt í séreignarsparnað, gefið sem tala milli 0 og 1",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "nytingSkattkorts",
+            "in": "query",
+            "description": "Nýting skattkorts, gefið sem tala milli 0 og 1",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "nytingSkattkortsMaka",
+            "in": "query",
+            "description": "Nýting skattkorts maka, gefið sem tala milli 0 og 1",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "uppsafnadurPersonuafslattur",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "orlof",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "stettarfelag",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "annad",
+            "in": "query",
+            "description": "Annar frádráttur",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "motframlagLifeyrissjodur",
+            "in": "query",
+            "description": "Mótframlag, gefið sem tala milli 0 og 1",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "okutaekjastyrkurUtan",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "idgjaldSlysatryggingSjomanna",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaStadgreidsla"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaStadgreidsla"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaStadgreidsla"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Vaxtabaetur": {
+      "get": {
+        "tags": ["Vaxtabaetur"],
+        "summary": "",
+        "parameters": [
+          {
+            "name": "hjuskaparstada",
+            "in": "query",
+            "description": "1 = Einhleypingur, 2 = Einstætt foreldri, 3 = Hjón/Sambúð.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "tekjuar",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "tekjustofn",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "eignastofn",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "eftirstodvar",
+            "in": "query",
+            "description": "Eftirstöðvar lána í árslok á því ári sem reikna á fyrir",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "greiddVaxtagjold",
+            "in": "query",
+            "description": "Greiddir vextir og verðbætur af íbúðarlánum.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaVaxtabaetur"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaVaxtabaetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NidurstadaVaxtabaetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BifreidagjaldSkipting": {
+        "type": "object",
+        "properties": {
+          "upphafTimabils": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lokTimabils": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dagar": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bifreidagjald": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "urvinnslugjald": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bifreidagjaldAlls": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NidurstadaBarnabaetur": {
+        "type": "object",
+        "properties": {
+          "hjuskaparstada": {
+            "type": "string",
+            "nullable": true
+          },
+          "fjoldiBarna": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fjoldiBarnaUndir7ara": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tekjuar": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "botaAr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tekjustofn": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skerdingarhlutfall": {
+            "type": "number",
+            "format": "double"
+          },
+          "skerdingarmork": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "efriSkerdingarmork": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "stofnTilSkerdingar": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stofnTilUmframskerdingar": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "skerdingVegnaTekna": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "umframskerdingVegnaTekna": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "umframskerdingarhlutfall": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "oskertarBarnabaetur": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "barnabaeturPerBarn": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "barnabaeturAlls": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "greidslurArsfjordungi": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tekjutengdarBarnabaetur": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "barnabaeturAllsPrHjon": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vidbotBornYngriEn7ara": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vidbotPerBarnYngraEn7ara": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skerdingUndir7ara": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skerdingarhlutfallUndir7ara": {
+            "type": "number",
+            "format": "double"
+          },
+          "faedingararBarna": {
+            "type": "string",
+            "nullable": true
+          },
+          "skiptBuseta": {
+            "type": "boolean"
+          },
+          "skiptYfir7ara": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "skiptUndir7ara": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "barnabaeturFyrirSkiptingu": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NidurstadaBifreidagjold": {
+        "type": "object",
+        "properties": {
+          "timabil": {
+            "type": "string",
+            "nullable": true
+          },
+          "gjaldar": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eiginthyngd": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "co2": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nedc": {
+            "type": "number",
+            "format": "double"
+          },
+          "wltp": {
+            "type": "number",
+            "format": "double"
+          },
+          "bifreidagjold": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "urvinnslugjald": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bifreidagjoldAlls": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fyrraTimabil": {
+            "$ref": "#/components/schemas/BifreidagjaldSkipting"
+          },
+          "seinnaTimabil": {
+            "$ref": "#/components/schemas/BifreidagjaldSkipting"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NidurstadaBifreidahlunnindi": {
+        "type": "object",
+        "properties": {
+          "kaupar": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kaupverd": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "arshlunnindi": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "manadarhlunnindi": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NidurstadaFyrning": {
+        "type": "object",
+        "properties": {
+          "kaupreikningur": {
+            "type": "boolean"
+          },
+          "verd": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "vsk": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "alagning": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "vorugjald": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "vatrygging": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "flutningsgjald": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "fyrstu12Manudir": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "naestu24Manudir": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "rest": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalFyrning": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "finalAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NidurstadaStadgreidsla": {
+        "type": "object",
+        "properties": {
+          "manadarlaun": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lifeyrisjodurProsenta": {
+            "type": "number",
+            "format": "double"
+          },
+          "sereignProsenta": {
+            "type": "number",
+            "format": "double"
+          },
+          "lifeyrissjodur": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sereignarsjodur": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fradratturAlls": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "personuafslattur": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "personuafslatturFraMaka": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skattstofn": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reiknudStadgreidsla": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "greiddStadgreidsla": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hatekjuskattur": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reiknadiHatekjuskatt": {
+            "type": "boolean"
+          },
+          "utborgudLaun": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uppsafnadurPersonuafslattur": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tekjuar": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hjuskaparstada": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "launamanudur": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fritekjumarkBarns": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "faedingararBarns": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stadgreidsluhlutfall": {
+            "type": "number",
+            "format": "double"
+          },
+          "motframlag": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tryggingagjaldsstofn": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tryggingagjald": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skattthrep": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Skattthrep"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NidurstadaVaxtabaetur": {
+        "type": "object",
+        "properties": {
+          "hjuskaparstada": {
+            "type": "string",
+            "nullable": true
+          },
+          "tekjuar": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "botaar": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hamarkVaxtagjalda": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vaxtagjoldTilUtreiknings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tekjustofn": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eignastofn": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eftirstodvar": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vaxtagjold": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hamarkVaxtabota": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skerdingVegnaTekna": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vaxtabaeturEftirSkerdinguTekna": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tekjuskerdingarhlutfall": {
+            "type": "number",
+            "format": "double"
+          },
+          "skuldaskerdingarhlutfall": {
+            "type": "number",
+            "format": "double"
+          },
+          "skerdingVegnaEigna": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eignaskerdingarhlutfall": {
+            "type": "number",
+            "format": "double"
+          },
+          "skerdingLog2003": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skerdingLog2004": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vaxtabaeturAlls": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serstokVaxtanidurgreidsla": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nadiHamarki": {
+            "type": "boolean"
+          },
+          "varUndirLamarki": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Skattthrep": {
+        "type": "object",
+        "properties": {
+          "nedriMork": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "numerThreps": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "stadgreidsluhlutfall": {
+            "type": "number",
+            "format": "double"
+          },
+          "reiknudStadgreidsla": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

@@ -1,15 +1,14 @@
-import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
+import type { ChangeEvent, FC, FocusEvent } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
 import { DatePicker, Input } from '@island.is/island-ui/core'
 import { DATE_PICKER_TIME } from '@island.is/judicial-system/consts'
-import {
-  validate,
-  Validation,
-} from '@island.is/judicial-system-web/src/utils/validate'
+import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { BlueBox } from '../../components'
 import { strings } from './DateTime.strings'
 import * as styles from './DateTime.css'
 

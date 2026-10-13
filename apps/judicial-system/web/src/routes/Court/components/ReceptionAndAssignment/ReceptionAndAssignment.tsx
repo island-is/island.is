@@ -8,8 +8,8 @@ import {
   DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE,
   DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE,
   DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
+  getStandardUserDashboardRoute,
 } from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
   isInvestigationCase,
@@ -27,12 +27,12 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { ProsecutorAndDefendantsEntries } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
 import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import CourtCaseNumber from '@island.is/judicial-system-web/src/routes/Court/components/CourtCaseNumber/CourtCaseNumber'
+import { ProsecutorSection } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/utils'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { ProsecutorSection } from '../../../Prosecutor/components'
-import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
 import SelectCourtOfficials from './SelectCourtOfficials/SelectCourtOfficials'
 import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
 
@@ -119,7 +119,7 @@ const ReceptionAndAssignment = () => {
           </Box>
         )}
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <Box component="section">
             <ProsecutorAndDefendantsEntries workingCase={workingCase} />
           </Box>

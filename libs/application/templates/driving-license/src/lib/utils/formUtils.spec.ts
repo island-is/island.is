@@ -8,9 +8,11 @@ import {
   hasUsableRlsQualityPhoto,
   hasHealthRemarks,
   getHealthCertificateRemarks,
+  isRedesignedBTempOrBFull,
 } from './formUtils'
 import { NO, YES } from '@island.is/application/core'
 import { Remark } from '../types'
+import { B_FULL, B_FULL_RENEWAL_65, B_TEMP, BE } from '../constants'
 
 describe('isVisible', () => {
   it('returns true when all functions return true', () => {
@@ -277,5 +279,44 @@ describe('getHealthCertificateRemarks', () => {
         { code: '400', description: 'Other' },
       ]),
     ).toEqual([])
+  })
+})
+
+describe('isRedesignedBTempOrBFull', () => {
+  it.each([
+    [{ applicationFor: B_TEMP, isBTempRedesignEnabled: true }, true],
+    [{ applicationFor: B_FULL, isBFullRedesignEnabled: true }, true],
+    // Each product reads only its own flag: the cross-flag pairs are the
+    // copy-paste error this predicate invites, and getting one wrong would put
+    // a draft on the v6 endpoint with no upload rendered (or the reverse).
+    [{ applicationFor: B_TEMP, isBFullRedesignEnabled: true }, false],
+    [{ applicationFor: B_FULL, isBTempRedesignEnabled: true }, false],
+    [{ applicationFor: B_TEMP }, false],
+    [{ applicationFor: B_FULL }, false],
+    [{ applicationFor: B_TEMP, isBTempRedesignEnabled: false }, false],
+    [{ applicationFor: B_FULL, isBFullRedesignEnabled: false }, false],
+    // The flag is persisted from a feature-flag client, so anything other than
+    // a real `true` must not opt a draft in.
+    [{ applicationFor: B_TEMP, isBTempRedesignEnabled: 'true' }, false],
+    // Other products never match, whichever flags are set.
+    [
+      {
+        applicationFor: BE,
+        isBTempRedesignEnabled: true,
+        isBFullRedesignEnabled: true,
+      },
+      false,
+    ],
+    [
+      {
+        applicationFor: B_FULL_RENEWAL_65,
+        isBTempRedesignEnabled: true,
+        isBFullRedesignEnabled: true,
+      },
+      false,
+    ],
+    [{}, false],
+  ])('%p -> %s', (answers, expected) => {
+    expect(isRedesignedBTempOrBFull(answers)).toBe(expected)
   })
 })

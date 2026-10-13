@@ -11,12 +11,13 @@ import {
   useIsMobile,
   useIsPhoneWidth,
 } from '@island.is/portals/my-pages/core'
-import { ReactNode, useMemo } from 'react'
+import cn from 'classnames'
+import { ReactNode, useMemo, useRef } from 'react'
 import { Link as ReactLink, matchPath } from 'react-router-dom'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
-import Sticky from '../Sticky/Sticky'
 import * as styles from './Layout.css'
 import SidebarLayout from './SidebarLayout'
+import { useScrollShadows } from './useScrollShadows'
 
 /* Modules opt in to the mobile takeover (hidden breadcrumbs, sub-nav and
    sidebar footer at phone widths) per route via the `mobileTakeover` flag
@@ -63,6 +64,9 @@ export const NarrowLayout = ({
   const { isPhoneWidth } = useIsPhoneWidth()
   const { headerVisible, headerHeight } = useHeaderVisibility()
 
+  const sidebarRef = useRef<HTMLDivElement>(null)
+  const { atTop, atBottom } = useScrollShadows(sidebarRef)
+
   /* The takeover is only worth it at true phone widths — narrower than the
    `md` cutoff isMobile uses. */
   const isTakeoverRoute = useMemo(
@@ -106,12 +110,22 @@ export const NarrowLayout = ({
     })
 
   const sidebar = (
-    <Sticky>
-      <Box style={{ marginTop: height }} paddingBottom={4}>
-        <GoBack />
-
+    <>
+      <Box
+        className={cn(styles.stickyGoBack, {
+          [styles.stickyGoBackShadow]: !atTop,
+        })}
+        paddingBottom={2}
+      >
+        <GoBack marginBottom={0} />
+      </Box>
+      <Box ref={sidebarRef} className={styles.scrollArea} paddingBottom={4}>
         {subNavItems && subNavItems.length > 0 && (
-          <Box borderRadius="large" background="blue100">
+          <Box
+            borderRadius="large"
+            background="blue100"
+            className={styles.navGutter}
+          >
             <Navigation
               renderLink={(link, item: SubNavItemType | undefined) => {
                 return item?.href ? (
@@ -136,20 +150,26 @@ export const NarrowLayout = ({
               title={formatMessage(activeParent?.name ?? m.tableOfContents)}
               items={subNavItems ?? []}
               expand
+              singleAccordion
               titleIcon={activeParent?.icon}
             />
           </Box>
         )}
         {sidebarFooter}
+        <Box
+          className={cn(styles.scrollShadowBottom, {
+            [styles.scrollShadowVisible]: !atBottom,
+          })}
+        />
       </Box>
-    </Sticky>
+    </>
   )
 
   /* Takeover routes render without the layout chrome at phone widths:
   no breadcrumbs, mobile sub-nav or footer — the screen is expected to
   provide its own back navigation. */
   return (
-    <SidebarLayout isSticky={true} sidebarContent={sidebar}>
+    <SidebarLayout isSticky={true} sidebarContent={sidebar} offsetTop={height}>
       <Box
         as="main"
         paddingBottom={9}
@@ -184,6 +204,7 @@ export const NarrowLayout = ({
                 }
                 items={subNavItems}
                 titleIcon={activeParent?.icon}
+                singleAccordion
                 isMenuDialog={true}
               />
             </Box>

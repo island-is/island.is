@@ -1,11 +1,10 @@
 import { useContext } from 'react'
 import { useRouter } from 'next/router'
 
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
-import {
-  AppealCase,
-  Case,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { AppealCase } from '@island.is/judicial-system-web/src/graphql/schema'
+import { rulingOrderAppealCase } from '@island.is/judicial-system-web/src/utils/utils'
 
 // Resolves which AppealCase the current page should operate on when the URL
 // identifies it indirectly via the ruling-order file id (`?rulingFileId=…` —
@@ -14,16 +13,14 @@ import {
 // preserving today's behavior for legacy URLs.
 
 export const resolveTargetAppealCaseByRulingFileId = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   rulingFileId: string | undefined,
 ): AppealCase | undefined | null => {
   if (!rulingFileId) {
     return workingCase.appealCase
   }
 
-  return workingCase.rulingOrderAppealCases?.find(
-    (a) => a.rulingFileId === rulingFileId,
-  )
+  return rulingOrderAppealCase(workingCase, rulingFileId)
 }
 
 const useTargetAppealCaseByRulingFileId = (): AppealCase | undefined | null => {

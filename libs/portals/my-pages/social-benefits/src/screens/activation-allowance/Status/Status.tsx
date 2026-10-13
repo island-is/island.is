@@ -12,7 +12,7 @@ import {
 import { Box, SkeletonLoader, Tabs } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { OverviewTable } from '../../../components/shared/OverviewTable'
-import { ApplicantOverview } from './ApplicantOverview'
+import { ApplicantOverview } from '../../../components/shared/ApplicantOverview'
 import { Problem } from '@island.is/react-spa/shared'
 import { ActionButtons } from '../../unemployment-benefits/components/ActionButtons'
 
@@ -116,7 +116,20 @@ const Status = () => {
             label: formatMessage(
               isMobile ? am.statusTabApplicantMobile : am.statusTabApplicant,
             ),
-            content: <ApplicantOverview />,
+            content: (
+              <ApplicantOverview
+                fields={[
+                  'passCode',
+                  'preferredJobs',
+                  'bankAccount',
+                  'employmentHistory',
+                  'educationHistory',
+                  'drivingLicenses',
+                  'languageAbilities',
+                  'currentAddressDifferent',
+                ]}
+              />
+            ),
           },
         ]}
       />

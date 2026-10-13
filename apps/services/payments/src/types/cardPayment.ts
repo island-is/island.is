@@ -43,7 +43,7 @@ const CardInformationSchema = z.object({
 
 const MarketInformationSchema = z.object({
   merchantCountry: z.string(),
-  marketName: z.string(),
+  marketName: z.string().nullable(),
   acquirerRegion: z.string(),
 })
 

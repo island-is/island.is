@@ -16,16 +16,36 @@ export const mapAnswerOptionType = (
     case 'number':
       if ('displayClass' in item && item.displayClass === 'thermometer')
         return AnswerOptionType.thermometer
+      if (
+        'min' in item &&
+        'max' in item &&
+        typeof item.min === 'number' &&
+        typeof item.max === 'number' &&
+        Number.isInteger(item.min) &&
+        Number.isInteger(item.max) &&
+        item.min >= 0 &&
+        item.max <= 10 &&
+        item.min < item.max &&
+        !('decimals' in item && item.decimals)
+      )
+        return AnswerOptionType.scale
       return AnswerOptionType.number
     case 'bool':
       // Boolean questions are typically yes/no radio buttons
       return AnswerOptionType.radio
-    case 'list':
-      return 'multiselect' in item && item.multiselect
+    case 'list': {
+      // maxSelections supersedes the deprecated multiselect flag when
+      // provided; 0 means unlimited selections
+      const multiselect =
+        'maxSelections' in item && item.maxSelections != null
+          ? item.maxSelections !== 1
+          : 'multiselect' in item && item.multiselect
+      return multiselect
         ? AnswerOptionType.checkbox
         : 'displayClass' in item && item.displayClass === 'slider'
         ? AnswerOptionType.slider
         : AnswerOptionType.radio
+    }
     case 'thermometer':
       return AnswerOptionType.thermometer
     case 'date':

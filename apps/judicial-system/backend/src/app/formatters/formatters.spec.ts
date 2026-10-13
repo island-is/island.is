@@ -105,12 +105,15 @@ describe('formatLegalProvisions', () => {
   test('should sort provisions when formatting legal provisions', () => {
     // Arrange
     const legalProvisions = [
+      CaseLegalProvisions._115_1_B,
       CaseLegalProvisions._95_1_C,
       CaseLegalProvisions._95_1_D,
       CaseLegalProvisions._95_1_A,
+      CaseLegalProvisions._115_1,
       CaseLegalProvisions._95_2,
       CaseLegalProvisions._99_1_B,
       CaseLegalProvisions._95_1_B,
+      CaseLegalProvisions._115_1_A,
       CaseLegalProvisions._100_1,
     ]
 
@@ -119,8 +122,23 @@ describe('formatLegalProvisions', () => {
 
     // Assert
     expect(res).toBe(
-      'a-lið 1. mgr. 95. gr. sml.\nb-lið 1. mgr. 95. gr. sml.\nc-lið 1. mgr. 95. gr. sml.\nd-lið 1. mgr. 95. gr. sml.\n2. mgr. 95. gr. sml.\nb-lið 1. mgr. 99. gr. sml.\n1. mgr. 100. gr. sml.',
+      'a-lið 1. mgr. 95. gr. sml.\nb-lið 1. mgr. 95. gr. sml.\nc-lið 1. mgr. 95. gr. sml.\nd-lið 1. mgr. 95. gr. sml.\n2. mgr. 95. gr. sml.\nb-lið 1. mgr. 99. gr. sml.\n1. mgr. 100. gr. sml.\n115. gr. útl.\na-lið 115. gr. útl.\nb-lið 115. gr. útl.',
     )
+  })
+
+  test('should format legal provisions when only 115. gr. útl. provisions are selected', () => {
+    // Arrange
+    const legalProvisions = [
+      CaseLegalProvisions._115_1_H,
+      CaseLegalProvisions._115_1,
+      CaseLegalProvisions._115_1_C,
+    ]
+
+    // Act
+    const res = formatLegalProvisions(legalProvisions)
+
+    // Assert
+    expect(res).toBe('115. gr. útl.\nc-lið 115. gr. útl.\nh-lið 115. gr. útl.')
   })
 
   test('should format legal provisions when some provisions are selected and additional freetext provided', () => {

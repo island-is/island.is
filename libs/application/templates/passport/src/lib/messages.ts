@@ -363,6 +363,13 @@ export const m = defineMessages({
     description: 'Some description',
   },
 
+  pruneReason: {
+    id: 'pa.application:pruneReason',
+    defaultMessage: 'Bíður staðfestingar frá forsjáraðila 2',
+    description:
+      "The reason for why this application hasn't moved to the next state",
+  },
+
   /* ParentB Intro Section */
   parentBIntroText: {
     id: 'pa.application:parentBIntroText',

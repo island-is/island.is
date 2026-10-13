@@ -6,13 +6,15 @@ import {
   PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import { faker } from '@island.is/shared/mocking'
 
 import {
   findFirstInvalidStep,
   hasDateChanged,
   removeErrorMessageIfValid,
+  setParentCheckboxAndSendToServer,
   toggleInArray,
   validateAndSendToServer,
 } from './formHelper'
@@ -175,7 +177,7 @@ describe('findLastValidStep', () => {
         PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE,
         PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE,
       ],
-      { policeCaseNumbers: ['test'] } as Case,
+      { policeCaseNumbers: ['test'] } as WorkingCase,
     )
 
     expect(lastValidStep).toEqual(PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE)
@@ -188,7 +190,7 @@ describe('findLastValidStep', () => {
         DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
         DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
       ],
-      { policeCaseNumbers: ['test'] } as Case,
+      { policeCaseNumbers: ['test'] } as WorkingCase,
     )
 
     expect(lastValidStep).toEqual(PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE)
@@ -201,10 +203,99 @@ describe('findLastValidStep', () => {
         PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE,
         PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE,
       ],
-      { policeCaseNumbers: ['test'] } as Case,
+      { policeCaseNumbers: ['test'] } as WorkingCase,
     )
 
     expect(lastValidStep).toEqual(PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE)
+  })
+})
+
+describe('setParentCheckboxAndSendToServer', () => {
+  const childValues = [
+    CaseLegalProvisions._115_1_A,
+    CaseLegalProvisions._115_1_B,
+    CaseLegalProvisions._115_1_C,
+  ]
+
+  test('should add only the parent when checking it', () => {
+    // Arrange
+    const setWorkingCase = jest.fn()
+    const updateCase = jest.fn()
+    const id = faker.datatype.uuid()
+    const theCase = {
+      id,
+      legalProvisions: [CaseLegalProvisions._95_1_A],
+    } as WorkingCase
+
+    // Act
+    setParentCheckboxAndSendToServer(
+      'legalProvisions',
+      CaseLegalProvisions._115_1,
+      childValues,
+      theCase,
+      setWorkingCase,
+      updateCase,
+    )
+
+    // Assert
+    expect(updateCase).toHaveBeenCalledWith(id, {
+      legalProvisions: [
+        CaseLegalProvisions._95_1_A,
+        CaseLegalProvisions._115_1,
+      ],
+    })
+  })
+
+  test('should remove the parent and all its children when unchecking it', () => {
+    // Arrange
+    const setWorkingCase = jest.fn()
+    const updateCase = jest.fn()
+    const id = faker.datatype.uuid()
+    const theCase = {
+      id,
+      legalProvisions: [
+        CaseLegalProvisions._95_1_A,
+        CaseLegalProvisions._115_1,
+        CaseLegalProvisions._115_1_A,
+        CaseLegalProvisions._115_1_C,
+      ],
+    } as WorkingCase
+
+    // Act
+    setParentCheckboxAndSendToServer(
+      'legalProvisions',
+      CaseLegalProvisions._115_1,
+      childValues,
+      theCase,
+      setWorkingCase,
+      updateCase,
+    )
+
+    // Assert
+    expect(updateCase).toHaveBeenCalledWith(id, {
+      legalProvisions: [CaseLegalProvisions._95_1_A],
+    })
+  })
+
+  test('should not call the updateCase function when the case has no id', () => {
+    // Arrange
+    const setWorkingCase = jest.fn()
+    const updateCase = jest.fn()
+    const theCase = { id: '', legalProvisions: [] } as unknown as WorkingCase
+
+    // Act
+    setParentCheckboxAndSendToServer(
+      'legalProvisions',
+      CaseLegalProvisions._115_1,
+      childValues,
+      theCase,
+      setWorkingCase,
+      updateCase,
+    )
+
+    // Assert
+    expect(updateCase).not.toHaveBeenCalled()
+    expect(setWorkingCase).toHaveBeenCalled()
   })
 })
 
@@ -215,7 +306,7 @@ describe('validateAndSendToServer', () => {
     const fieldToUpdate = 'courtCaseNumber'
     const value = '1234/1234'
     const id = faker.datatype.uuid()
-    const theCase = { id } as Case
+    const theCase = { id } as WorkingCase
     const update = {
       courtCaseNumber: value,
     }
@@ -239,7 +330,7 @@ describe('validateAndSendToServer', () => {
     const fieldToUpdate = 'courtCaseNumber'
     const value = '12341234'
     const id = faker.datatype.uuid()
-    const theCase = { id } as Case
+    const theCase = { id } as WorkingCase
 
     // Act
     validateAndSendToServer(
@@ -252,5 +343,39 @@ describe('validateAndSendToServer', () => {
 
     // Assert
     expect(spy).not.toHaveBeenCalled()
+  })
+
+  test('should not call the updateCase function with a whitespace-only value for a required field', () => {
+    // Arrange
+    const spy = jest.fn()
+    const setErrorMessage = jest.fn()
+    const theCase = { id: faker.datatype.uuid() } as WorkingCase
+
+    // Act
+    validateAndSendToServer(
+      'comments',
+      '   ',
+      ['empty'],
+      theCase,
+      spy,
+      setErrorMessage,
+    )
+
+    // Assert
+    expect(spy).not.toHaveBeenCalled()
+    expect(setErrorMessage).toHaveBeenCalledWith('Reitur má ekki vera tómur')
+  })
+
+  test('should persist a whitespace-only value as an empty string for an optional field', () => {
+    // Arrange
+    const spy = jest.fn()
+    const id = faker.datatype.uuid()
+    const theCase = { id } as WorkingCase
+
+    // Act
+    validateAndSendToServer('comments', '   ', [], theCase, spy)
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith(id, { comments: '' })
   })
 })

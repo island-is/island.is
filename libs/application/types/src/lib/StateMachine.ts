@@ -98,16 +98,33 @@ export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {
     | ((role: ApplicationRole, nationalId: string, isAdmin: boolean) => boolean)
 }
 
+export type ScheduledNotificationArg =
+  | { key: string; value: string }
+  | {
+      key: string
+      /**
+       * A message to resolve via CMS translations before scheduling. The API
+       * expands this into two args, `{key}Is` and `{key}En`, holding the
+       * Icelandic and English translations respectively.
+       */
+      message: StaticText | ((application: Application) => StaticText)
+    }
+
 export type ScheduledNotificationConfig = {
   /** HNIPP template id, e.g. `HNIPP.AS.PRUNE.REMINDER`. */
   template: string
   /** Arguments substituted into the HNIPP template's `{{placeholders}}`. */
-  args?: Array<{ key: string; value: string }>
+  args?: ScheduledNotificationArg[]
   /**
    * When true, the API appends an `applicationLink` arg pointing at the
    * application when scheduling. Note that the contentful Template must include a `{{applicationLink}}` placeholder for this to work.
    */
   includeApplicationLink?: boolean
+  /**
+   * When true, the API appends `applicationNameIs`/`applicationNameEn` args
+   * resolved from the template's own `name`.
+   */
+  includeApplicationName?: boolean
   /**
    * When set, the API only schedules this notification if the feature
    * flag evaluates to true at the time of scheduling.

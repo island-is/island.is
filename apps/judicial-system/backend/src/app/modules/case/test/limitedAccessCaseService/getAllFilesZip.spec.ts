@@ -2,6 +2,7 @@ import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
+  CaseFileCategory,
   CaseState,
   CaseType,
   DefendantEventType,
@@ -11,8 +12,10 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
+import { FileService } from '../../../file'
 import {
   Case,
+  CaseFile,
   Defendant,
   DefendantEventLog,
   Subpoena,
@@ -58,6 +61,7 @@ const makeIndictmentCase = (overrides: Partial<Case> = {}): Case =>
 describe('LimitedAccessCaseService - getAllFilesZip', () => {
   let limitedAccessCaseService: LimitedAccessCaseService
   let mockPdfService: PdfService
+  let mockFileService: FileService
   let transaction: Transaction
   let zipFilesSpy: jest.SpyInstance
 
@@ -67,10 +71,11 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
   } as User
 
   beforeEach(async () => {
-    const { limitedAccessCaseService: service } =
+    const { limitedAccessCaseService: service, fileService } =
       await createTestingCaseModule()
 
     limitedAccessCaseService = service
+    mockFileService = fileService
     mockPdfService = (
       limitedAccessCaseService as unknown as { pdfService: PdfService }
     ).pdfService
@@ -88,6 +93,9 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
     jest.spyOn(mockPdfService, 'getSubpoenaPdf').mockResolvedValue(pdfBuffer)
     jest
       .spyOn(mockPdfService, 'getCourtRecordPdfForIndictmentCase')
+      .mockResolvedValue(pdfBuffer)
+    jest
+      .spyOn(mockFileService, 'getCaseFileFromS3')
       .mockResolvedValue(pdfBuffer)
   })
 
@@ -175,6 +183,52 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
       expect(
         mockPdfService.getCourtRecordPdfForIndictmentCase,
       ).toHaveBeenCalledWith(theCase, user, transaction)
+    })
+  })
+
+  describe('ruling orders', () => {
+    const makeRulingOrder = (overrides: Partial<CaseFile> = {}): CaseFile =>
+      ({
+        id: uuid(),
+        name: 'S-1/2026 Úrskurður 12.11.2026',
+        category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+        key: `${uuid()}/${uuid()}/ruling.pdf`,
+        isKeyAccessible: true,
+        ...overrides,
+      } as CaseFile)
+
+    it('should skip a ruling order that was pronounced orally and not yet written up', async () => {
+      const pronouncedOrally = makeRulingOrder({
+        isPronouncedOrally: true,
+        key: '',
+      })
+      const theCase = makeIndictmentCase({
+        caseFiles: [pronouncedOrally],
+        courtSessions: [
+          { isConfirmed: true, rulingFileId: pronouncedOrally.id },
+        ] as Case['courtSessions'],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockFileService.getCaseFileFromS3).not.toHaveBeenCalled()
+    })
+
+    it('should include a ruling order that was pronounced orally once it has been written up', async () => {
+      const writtenUp = makeRulingOrder({ isPronouncedOrally: true })
+      const theCase = makeIndictmentCase({
+        caseFiles: [writtenUp],
+        courtSessions: [
+          { isConfirmed: true, rulingFileId: writtenUp.id },
+        ] as Case['courtSessions'],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
+        theCase,
+        writtenUp,
+      )
     })
   })
 })

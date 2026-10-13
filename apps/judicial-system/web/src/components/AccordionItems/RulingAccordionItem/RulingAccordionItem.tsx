@@ -1,14 +1,16 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { rulingAccordion as m } from '@island.is/judicial-system-web/messages'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { AccordionListItem, SectionHeading } from '../..'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import {
+  AccordionListItem,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
   startExpanded?: boolean
 }
 
