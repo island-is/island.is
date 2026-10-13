@@ -16,7 +16,3 @@ bootstrap({
   stripNonClassValidatorInputs: false,
   jsonBodyLimit: '350kb',
 })
-
-// Intentional no-op touch so the deploy-feature pipeline picks up an
-// api change alongside the web-only courts coat of arms link on this branch.
-// Revert before merging.
