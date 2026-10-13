@@ -3,7 +3,10 @@ import { getModelToken } from '@nestjs/sequelize'
 import { TestApp } from '@island.is/testing/nest'
 
 import { setupTestApp } from '../../../test/setup'
-import { FjsPayInfo } from '../../utils/fjsDebtPayment'
+import {
+  FJS_DEBT_ORGANISATION_ID,
+  FjsPayInfo,
+} from '../../utils/fjsDebtPayment'
 import { FjsDebtPayment } from '../paymentFlow/models/fjsDebtPayment.model'
 import { PaymentFlow } from '../paymentFlow/models/paymentFlow.model'
 import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
@@ -83,7 +86,7 @@ describe('DebtSettlementService', () => {
       payerNationalId: '0101302989',
       availablePaymentMethods: ['card'],
       onUpdateUrl: 'https://www.island.is/greida/update',
-      organisationId: '5402697509',
+      organisationId: FJS_DEBT_ORGANISATION_ID,
       type: 'debt',
     } as never)
 

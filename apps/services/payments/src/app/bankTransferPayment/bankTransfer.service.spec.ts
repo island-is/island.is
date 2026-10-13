@@ -11,6 +11,7 @@ import {
 } from '@island.is/shared/constants'
 
 import { PaymentMethod, PaymentStatus } from '../../types'
+import { FJS_DEBT_ORGANISATION_ID } from '../../utils/fjsDebtPayment'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
@@ -1962,7 +1963,7 @@ describe('BankTransferService', () => {
     const debtFlow = {
       id: 'flow-1',
       type: 'debt',
-      organisationId: '5402697509',
+      organisationId: FJS_DEBT_ORGANISATION_ID,
       payerNationalId: '0101307789',
       charges: [],
       debts: [
