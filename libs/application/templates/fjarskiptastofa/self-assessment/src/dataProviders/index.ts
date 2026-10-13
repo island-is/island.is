@@ -3,7 +3,10 @@ import {
   IdentityApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { QUESTIONS_EXTERNAL_DATA_ID } from '../utils/constants'
+import {
+  IS_REGULATED_EXTERNAL_DATA_ID,
+  QUESTIONS_EXTERNAL_DATA_ID,
+} from '../utils/constants'
 
 export { IdentityApi, UserProfileApi }
 
@@ -13,6 +16,14 @@ export const UserProfileApiWithValidation = UserProfileApi.configure({
     validatePhoneNumberIfNotActor: true,
     validateEmailIfNotActor: true,
   },
+})
+
+// Checks with Fjarskiptastofa whether the company is a supervised entity with an
+// open access window. Stored in externalData so the template can route a company
+// whose window is closed to the "not allowed" screen.
+export const SelfAssessmentIsRegulatedApi = defineTemplateApi({
+  action: 'getIsRegulated',
+  externalDataId: IS_REGULATED_EXTERNAL_DATA_ID,
 })
 
 // Fetches the assessment categories and questions from Fjarskiptastofa. The

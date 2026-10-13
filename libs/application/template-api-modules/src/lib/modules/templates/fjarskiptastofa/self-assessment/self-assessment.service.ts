@@ -28,6 +28,18 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
     super(ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT)
   }
 
+  // Data provider: check whether the company is a supervised entity with an open
+  // access window. The result is stored in externalData so the template can route
+  // a company whose window is closed to the "not allowed" screen.
+  async getIsRegulated({ auth, application }: TemplateApiModuleActionProps) {
+    const ssn = application.applicant
+
+    const { isSupervisedEntity, accessWindowOpen } =
+      await this.selfAssessmentClient.isRegulated(auth, ssn)
+
+    return { isSupervisedEntity, accessWindowOpen }
+  }
+
   // Data provider: fetch the categories and questions the applicant answers.
   // Returning them from the API means new categories/questions need no changes
   // in the application itself.
@@ -35,13 +47,10 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
     auth,
     currentUserLocale,
   }: TemplateApiModuleActionProps) {
-    console.log('Fetching questions and categories')
     const [categoriesResponse, questionsResponse] = await Promise.all([
       this.selfAssessmentClient.getQuestionCategories(auth),
       this.selfAssessmentClient.getQuestions(auth, currentUserLocale),
     ])
-
-    console.log('Category', categoriesResponse)
 
     return {
       categories: categoriesResponse.categoryList,
@@ -52,6 +61,7 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
   async submitSelfAssessment({
     application,
     auth,
+    currentUserLocale,
   }: TemplateApiModuleActionProps) {
     const storedAnswers =
       getValueViaPath<StoredAssessmentAnswers>(
@@ -67,10 +77,14 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
         remark: answer.remark,
       }))
 
-    // The individual acting on behalf of the company is the submitter.
-    const submitterSSN = '0101010000'
+    // The company the application belongs to is the submitter.
+    const submitterSSN = application.applicant
 
-    const payload = { submitterSSN, assessmentResponses }
+    const payload = {
+      language: currentUserLocale,
+      submitterSSN,
+      assessmentResponses,
+    }
 
     // DEBUG: confirm the submit action is reached and inspect the payload.
     this.logger.info('[self-assessment] submitSelfAssessment hit', {

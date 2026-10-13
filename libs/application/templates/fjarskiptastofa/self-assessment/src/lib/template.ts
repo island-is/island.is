@@ -15,10 +15,12 @@ import { CodeOwners } from '@island.is/shared/constants'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { isCompany } from 'kennitala'
 import {
   Events,
+  IS_REGULATED_EXTERNAL_DATA_ID,
   Roles,
   States,
   SUBMIT_EXTERNAL_DATA_ID,
@@ -27,6 +29,7 @@ import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import {
   IdentityApi,
+  SelfAssessmentIsRegulatedApi,
   SelfAssessmentQuestionsApi,
   UserProfileApiWithValidation,
 } from '../dataProviders'
@@ -60,6 +63,9 @@ const template: ApplicationTemplate<
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
+          // Check the company's access window on entry so mapUserToRole can route
+          // a company whose window is closed to the "not allowed" screen.
+          onEntry: [SelfAssessmentIsRegulatedApi],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -76,6 +82,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
+              api: [SelfAssessmentIsRegulatedApi],
               delete: true,
             },
             {
@@ -170,13 +177,25 @@ const template: ApplicationTemplate<
   },
   mapUserToRole(
     nationalId: string,
-    _application: Application,
+    application: Application,
   ): ApplicationRole | undefined {
-    // Only allow companies (or delegated actors) to access the application
-    if (isCompany(nationalId)) {
-      return Roles.APPLICANT
+    // Only companies (or delegated actors) may access the application.
+    if (!isCompany(nationalId)) {
+      return Roles.NOTALLOWED
     }
-    return Roles.NOTALLOWED
+
+    // A company is also blocked when Fjarskiptastofa reports its access window as
+    // closed. The flag is stored by the isRegulated data provider; until it has
+    // run the company is let through so the prerequisites screen can load.
+    const accessWindowOpen = getValueViaPath<boolean>(
+      application.externalData,
+      `${IS_REGULATED_EXTERNAL_DATA_ID}.data.accessWindowOpen`,
+    )
+    if (accessWindowOpen === false) {
+      return Roles.NOTALLOWED
+    }
+
+    return Roles.APPLICANT
   },
 }
 

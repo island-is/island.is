@@ -28,6 +28,11 @@ export enum AssessmentAnswer {
 // Key in externalData where the API-driven categories and questions are stored.
 export const QUESTIONS_EXTERNAL_DATA_ID = 'selfAssessmentQuestions'
 
+// Key in externalData where the Fjarskiptastofa "is regulated" check is stored.
+// Fetched on entry to the prerequisites state so the company's access window can
+// gate who is allowed to continue.
+export const IS_REGULATED_EXTERNAL_DATA_ID = 'isRegulated'
+
 // Key in externalData where the scoring returned by the submit API is stored.
 // Set explicitly on the onExit template api so the completed form can render the
 // preliminary findings from it.
