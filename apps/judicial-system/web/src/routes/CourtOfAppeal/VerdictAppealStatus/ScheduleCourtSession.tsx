@@ -97,25 +97,31 @@ const ScheduleCourtSession: FC<Props> = ({
         />
       </BlueBox>
       {bookedSessions.length > 0 && (
-        <Box component="ul" marginTop={3} aria-label="Bókuð þinghöld">
-          {bookedSessions.map((bookedSession) => (
-            <Box
-              key={bookedSession.id}
-              component="li"
-              paddingY={2}
-              borderBottomWidth="standard"
-              borderColor="blue200"
-            >
-              <Text variant="h5">
-                {bookedSession.sessionType
-                  ? appealCourtSessionTypeNames[bookedSession.sessionType]
-                  : ''}
-              </Text>
-              <Text variant="medium">
-                {formatAppealCourtSessionDetails(bookedSession)}
-              </Text>
-            </Box>
-          ))}
+        // Its own section under the form, the same distance below the blue
+        // box as the form's heading is below the box above it. The rows
+        // carry their own padding, so the heading keeps only a small gap.
+        <Box component="section" marginTop={5}>
+          <SectionHeading title="Bókuð þinghöld" marginBottom={1} />
+          <Box component="ul" aria-label="Bókuð þinghöld">
+            {bookedSessions.map((bookedSession) => (
+              <Box
+                key={bookedSession.id}
+                component="li"
+                paddingY={2}
+                borderBottomWidth="standard"
+                borderColor="blue200"
+              >
+                <Text variant="h5">
+                  {bookedSession.sessionType
+                    ? appealCourtSessionTypeNames[bookedSession.sessionType]
+                    : ''}
+                </Text>
+                <Text variant="medium" fontWeight="light">
+                  {formatAppealCourtSessionDetails(bookedSession)}
+                </Text>
+              </Box>
+            ))}
+          </Box>
         </Box>
       )}
     </Box>
