@@ -595,18 +595,40 @@ describe('ApplicationTranslationService', () => {
       expect(result.id).toBe('snap-newest')
     })
 
-    it('throws when no publish snapshot can be found immediately after publishing', async () => {
+    it('still resolves, without a snapshot id, when the publish snapshot never appears', async () => {
+      const entry = buildEntry({
+        namespace: { [DEFAULT_LOCALE]: 'test.ns' },
+        strings: { [DEFAULT_LOCALE]: {}, [ENGLISH_LOCALE]: {} },
+      })
+      const publishedEntry = buildEntry(entry.fields)
+      publishedEntry.sys.publishedAt = '2026-02-01T10:00:00.000Z'
+      managementEntryGetSpy.mockResolvedValue(entry)
+      managementEntryPublishSpy.mockResolvedValue(publishedEntry)
+      managementSnapshotGetManyForEntrySpy.mockResolvedValue({ items: [] })
+
+      await expect(
+        service.publishTranslations('test.ns', user),
+      ).resolves.toEqual({
+        namespace: 'test.ns',
+        publishedAt: new Date('2026-02-01T10:00:00.000Z'),
+      })
+    })
+
+    it('still resolves when the snapshot lookup itself fails', async () => {
       const entry = buildEntry({
         namespace: { [DEFAULT_LOCALE]: 'test.ns' },
         strings: { [DEFAULT_LOCALE]: {}, [ENGLISH_LOCALE]: {} },
       })
       managementEntryGetSpy.mockResolvedValue(entry)
       managementEntryPublishSpy.mockResolvedValue(entry)
-      managementSnapshotGetManyForEntrySpy.mockResolvedValue({ items: [] })
+      managementSnapshotGetManyForEntrySpy.mockRejectedValue(
+        new Error('timeout'),
+      )
 
-      await expect(
-        service.publishTranslations('test.ns', user),
-      ).rejects.toThrow(/No publish snapshot found/)
+      const result = await service.publishTranslations('test.ns', user)
+
+      expect(result.id).toBeUndefined()
+      expect(result.namespace).toBe('test.ns')
     })
   })
 

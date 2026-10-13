@@ -498,8 +498,8 @@ export class SharedNamespaceIntrospectionGql {
 
 @ObjectType()
 export class TranslationPublishGql {
-  @Field(() => ID)
-  id!: string
+  @Field(() => ID, { nullable: true })
+  id?: string
 
   @Field()
   namespace!: string

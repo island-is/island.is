@@ -30,7 +30,7 @@ export interface UpsertTranslationInput {
 }
 
 export interface PublishHistoryItem {
-  id: string
+  id?: string
   namespace: string
   publishedAt: Date
 }
@@ -431,8 +431,10 @@ export class ApplicationTranslationService {
 
   private async getLatestPublishSnapshot(
     namespace: string,
-    expectedVersion?: number,
+    publishedEntry: EntryProps<NamespaceEntryFields>,
   ): Promise<PublishHistoryItem> {
+    const expectedVersion = publishedEntry.sys.version
+
     const findSnapshot = async () => {
       const snapshots =
         await this.managementClient.snapshot.getManyForEntry<NamespaceEntryFields>(
@@ -445,10 +447,8 @@ export class ApplicationTranslationService {
       )
     }
 
-    let latest = await findSnapshot()
-
-    if (!latest && expectedVersion !== undefined) {
-      latest = await retry(
+    try {
+      const latest = await retry(
         async () => {
           const match = await findSnapshot()
           if (!match) {
@@ -462,19 +462,23 @@ export class ApplicationTranslationService {
           shouldRetryOnError: (e) =>
             e.message === 'CONTENTFUL_PUBLISH_SNAPSHOT_PENDING',
         },
-      ).catch(() => undefined)
-    }
-
-    if (!latest) {
-      throw new BadRequestException(
-        `No publish snapshot found for namespace "${namespace}" immediately after publishing`,
       )
-    }
 
-    return {
-      id: latest.sys.id,
-      namespace,
-      publishedAt: new Date(latest.sys.createdAt),
+      return {
+        id: latest.sys.id,
+        namespace,
+        publishedAt: new Date(latest.sys.createdAt),
+      }
+    } catch (error) {
+      logger.warn(
+        `Publish snapshot for namespace "${namespace}" unavailable after publishing`,
+        { message: error instanceof Error ? error.message : String(error) },
+      )
+
+      return {
+        namespace,
+        publishedAt: new Date(publishedEntry.sys.publishedAt ?? Date.now()),
+      }
     }
   }
 
@@ -493,7 +497,7 @@ export class ApplicationTranslationService {
       )
     })
 
-    return this.getLatestPublishSnapshot(namespace, publishedEntry.sys.version)
+    return this.getLatestPublishSnapshot(namespace, publishedEntry)
   }
 
   async getPublishHistory(namespace: string): Promise<PublishHistoryItem[]> {
@@ -588,6 +592,6 @@ export class ApplicationTranslationService {
       )
     })
 
-    return this.getLatestPublishSnapshot(namespace, publishedEntry.sys.version)
+    return this.getLatestPublishSnapshot(namespace, publishedEntry)
   }
 }
