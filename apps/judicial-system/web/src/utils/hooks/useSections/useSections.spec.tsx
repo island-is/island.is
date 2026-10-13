@@ -6,6 +6,7 @@ import { renderHook } from '@testing-library/react'
 import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE,
@@ -202,12 +203,50 @@ describe('useSections getSections', () => {
       expect(sections[0].children.map((c) => c.name)).toEqual([
         'Yfirlit',
         'Verjandi',
+        'Staða og lyktir',
       ])
       // Every step carries the appeal id for the same reason the overview
       // does: without it the next render resolves back to the ruling appeal.
       expect(sections[0].children[1].href).toBe(
         `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
       )
+      expect(sections[0].children[2].href).toBe(
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
+      )
+    })
+
+    // The step after the defender step is gated on it: the court settles who
+    // represents each party before it records where the appeal stands.
+    it('withholds the status step until every advocate is confirmed', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE
+
+      const unconfirmed = {
+        ...caseWithBothAppeals,
+        defendants: [{ id: 'd1', isAppealDefenderConfirmed: false }],
+      } as unknown as WorkingCase
+      const confirmed = {
+        ...caseWithBothAppeals,
+        defendants: [{ id: 'd1', isAppealDefenderConfirmed: true }],
+      } as unknown as WorkingCase
+
+      expect(
+        appealSections(unconfirmed, coaUser)[0].children[2].onClick,
+      ).toBeUndefined()
+      expect(
+        appealSections(confirmed, coaUser)[0].children[2].onClick,
+      ).toBeDefined()
+    })
+
+    it('marks the section active on the status step', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE
+
+      const sections = appealSections(caseWithBothAppeals, coaUser)
+
+      expect(sections[0].isActive).toBe(true)
+      expect(sections[0].children[2].isActive).toBe(true)
+      expect(sections[0].children[2].onClick).toBeUndefined()
     })
 
     // The side panel works out which step you are on by finding the first
