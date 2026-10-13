@@ -145,14 +145,11 @@ export const richText: RichText = (
     ...opt.renderComponent,
     locale,
   }
-  // The same Contentful entry (e.g. an Asset or ProcessEntry) can be embedded
-  // more than once in a single body, so `slice.id` is not unique on its own.
-  // Duplicate React keys break reconciliation on client-side navigation
-  // (reused slices get hoisted/reordered), so we give each occurrence of an id
-  // its own stable ordinal (0, 1, 2 …) and scope the key by that rather than by
-  // the slice's current array index. The ordinal is always a trailing numeric
-  // suffix, so the `id:occurrence` key stays unambiguous even for ids that
-  // themselves contain a colon.
+
+  // The same entry can be embedded more than once, so `slice.id` isn't unique.
+  // Key each occurrence by a per-id ordinal (not the array index) so keys stay
+  // stable across reordering; the trailing numeric suffix keeps `id:occurrence`
+  // unambiguous even for ids containing a colon.
   const occurrenceById = new Map<string, number>()
   return documents.map((slice) => {
     const occurrence = occurrenceById.get(slice.id) ?? 0
