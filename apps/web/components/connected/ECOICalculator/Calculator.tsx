@@ -70,7 +70,6 @@ interface CheckboxState {
   }[]
 }
 
-const ANSWER_DISPLAY_ORDER = [3, 1, 2, 0]
 interface ECOIFormProps {
   step: Step
   stepIndex: number
@@ -98,38 +97,39 @@ const ECOIForm = ({ step, stepIndex, state, setState }: ECOIFormProps) => {
                 {question}
               </Text>
               <Stack space={1}>
-                {ANSWER_DISPLAY_ORDER.filter(
-                  (answerIndex) => answerIndex < answerOptions.length,
-                ).map((answerIndex) => {
-                  const option = answerOptions[answerIndex]
-                  const id = `${step.title}-${questionIndex}-${answerIndex}`
-                  const groupName = `${stepIndex}-${questionIndex}`
+                {answerOptions
+                  .slice(0, 4)
+                  .map((option, answerIndex) => ({ option, answerIndex }))
+                  .reverse()
+                  .map(({ option, answerIndex }) => {
+                    const id = `${step.title}-${questionIndex}-${answerIndex}`
+                    const groupName = `${stepIndex}-${questionIndex}`
 
-                  const label =
-                    option.text ||
-                    formatMessage(
-                      m.answerLabel[
-                        String(answerIndex) as keyof typeof m.answerLabel
-                      ],
+                    const label =
+                      option.text ||
+                      formatMessage(
+                        m.answerLabel[
+                          String(answerIndex) as keyof typeof m.answerLabel
+                        ],
+                      )
+                    return (
+                      <RadioButton
+                        key={id}
+                        id={id}
+                        name={groupName}
+                        label={label}
+                        value={label}
+                        checked={
+                          questionState.selectedAnswerIndex === answerIndex
+                        }
+                        onChange={() => {
+                          questionState.selectedAnswerIndex = answerIndex
+                          questionState.answerScore = option.score
+                          setState((prevState) => ({ ...prevState }))
+                        }}
+                      />
                     )
-                  return (
-                    <RadioButton
-                      key={id}
-                      id={id}
-                      name={groupName}
-                      label={label}
-                      value={label}
-                      checked={
-                        questionState.selectedAnswerIndex === answerIndex
-                      }
-                      onChange={() => {
-                        questionState.selectedAnswerIndex = answerIndex
-                        questionState.answerScore = option.score
-                        setState((prevState) => ({ ...prevState }))
-                      }}
-                    />
-                  )
-                })}
+                  })}
               </Stack>
             </Stack>
           )
