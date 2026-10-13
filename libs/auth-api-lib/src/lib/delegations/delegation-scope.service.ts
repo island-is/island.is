@@ -37,12 +37,7 @@ import { validateDistrictCommissionersDelegations } from './utils/delegations'
 
 import type { User } from '@island.is/auth-nest-tools'
 
-/**
- * How a write may include scopes marked `requiresConfirmation`. Without either,
- * it may not include any.
- */
 export type CreateScopesOptions = {
-  /** The confirmed confirmation these scopes were redeemed under. */
   confirmationId: string
 }
 
@@ -74,8 +69,7 @@ export class DelegationScopeService {
     options?: CreateScopesOptions,
   ): Promise<DelegationScope[]> {
     if (scopes && scopes.length > 0) {
-      // Checked before anything is deleted: a refused write must not remove the
-      // scopes it was meant to replace, transaction or not.
+      // Before deleting, so a refused write doesn't remove the scopes it was meant to replace.
       await this.assertScopesMayBeGranted(
         delegationId,
         scopes,
@@ -93,15 +87,7 @@ export class DelegationScopeService {
     return []
   }
 
-  /**
-   * Refuses to write a scope marked `requiresConfirmation` unless the caller
-   * presents the confirmation it was redeemed under.
-   *
-   * This sits below every write path — create, patch, and anything added later
-   * — so the rule cannot be bypassed by forgetting to check it higher up. It is
-   * the last line of defence behind the reserve-don't-write design, not the
-   * primary one.
-   */
+  /** Last line of defence below every write path, so the rule can't be skipped by a new caller. */
   private async assertScopesMayBeGranted(
     delegationId: string,
     scopes: UpdateDelegationScopeDTO[],
@@ -123,7 +109,6 @@ export class DelegationScopeService {
 
     const sensitiveNames = sensitiveScopes.map((scope) => scope.name)
 
-    // A refusal, not a crash: a caller asked for something it may not have.
     if (!options) {
       throw new ForbiddenException(
         `Refusing to grant scopes which require confirmation without a redeemed confirmation: ${sensitiveNames.join(
@@ -132,8 +117,6 @@ export class DelegationScopeService {
       )
     }
 
-    // The confirmation must exist, be confirmed, belong to this delegation and
-    // cover every sensitive scope written — not just be named.
     const confirmation = await this.delegationConfirmationModel.findOne({
       where: {
         id: options.confirmationId,
@@ -172,7 +155,6 @@ export class DelegationScopeService {
     return this.insertMany(delegationId, scopes, transaction)
   }
 
-  /** The write itself. Every public path asserts first, exactly once. */
   private async insertMany(
     delegationId: string,
     scopes: UpdateDelegationScopeDTO[],

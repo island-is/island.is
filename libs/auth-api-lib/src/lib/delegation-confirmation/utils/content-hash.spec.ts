@@ -73,8 +73,7 @@ describe('canonicalizeForHash', () => {
 })
 
 describe('hashConfirmationContent', () => {
-  // Pinned literal. Recomputing the expectation would let a canonicalisation
-  // change pass its own test, and this digest is long-term evidence.
+  // Pinned, so a canonicalisation change can't pass its own test.
   const expectedHash =
     '0f5f3176c6db34ee6a4a2e503deee6d910829be0ab65f7d17a0375ea5d4389da'
 

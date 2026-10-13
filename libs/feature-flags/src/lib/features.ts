@@ -141,8 +141,6 @@ export enum Features {
   // New/updated delegation notification
   isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',
 
-  // Requires a second, high-assurance confirmation when granting a delegation
-  // that contains scopes marked `requiresConfirmation` (tvöfalt samþykki).
   isDelegationConfirmationEnabled = 'isDelegationConfirmationEnabled',
 
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',

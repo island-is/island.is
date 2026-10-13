@@ -32,29 +32,16 @@ const schema = z.object({
   // users in custom delegations.
   customScopeRules: customScopeRuleSchema,
   userInfoUrl: z.string(),
-  // Identity provider that attests the confirming authentication, recorded on
-  // the evidence record.
   identityServerIssuerUrl: z.string(),
   defaultValidityPeriodInDays: z.number().min(1),
-  // How long a grantor has to complete the second, high-assurance confirmation
-  // of a delegation containing sensitive scopes.
   confirmationLifetimeInMinutes: z.number().min(1),
-  // The assurance level a confirming authentication must assert. Every Auðkenni
-  // method asserts eidas-loa-high; passkey logins do not.
   confirmationRequiredAcr: z.string(),
-  // Development only. Local fake login asserts acr "0", which the confirmation
-  // guard correctly rejects, so the happy path is otherwise unreachable on a
-  // developer machine. Ignored outside development — see the check in load().
+  // Fake login asserts acr "0", so local development needs this.
   confirmationAllowAnyAcrInDev: z.boolean(),
-  // The confirming authentication is a CIBA request to the identity server,
-  // made by delegation-api as its own confidential client when a grant is
-  // saved. The identity server is the same as identityServerIssuerUrl
-  // everywhere but local development, where it may be a local one.
   confirmationCibaIssuerUrl: z.string(),
   confirmationCibaClientId: z.string(),
   confirmationCibaClientSecret: z.string(),
-  // Must include openid (CIBA requires it) and a scope that puts nationalId on
-  // the access token.
+  // Must include openid (CIBA requires it) and a scope that puts nationalId on the token.
   confirmationCibaScope: z.string(),
 })
 
@@ -141,8 +128,7 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
       env.optionalJSON('DELEGATION_CONFIRMATION_LIFETIME_IN_MINUTES') ?? 15,
     confirmationRequiredAcr:
       env.optional('DELEGATION_CONFIRMATION_REQUIRED_ACR') ?? 'eidas-loa-high',
-    // Deliberately gated on NODE_ENV rather than on the env var alone, so
-    // setting the variable in a deployed environment does nothing.
+    // Gated on NODE_ENV too, so setting the variable in a deployed environment does nothing.
     confirmationAllowAnyAcrInDev:
       process.env.NODE_ENV === 'development' &&
       (env.optionalJSON('DELEGATION_CONFIRMATION_ALLOW_ANY_ACR_IN_DEV') ??

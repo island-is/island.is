@@ -2,7 +2,6 @@ import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 import { DelegationConfirmationStepUpMethod } from '../dto/delegationConfirmation.input'
 
-/** The step-up a save started, for the client to show while the grantor approves. */
 @ObjectType('AuthDelegationConfirmationAuthenticationStart')
 export class DelegationConfirmationAuthenticationStart {
   @Field(() => DelegationConfirmationStepUpMethod)
@@ -22,11 +21,6 @@ export class DelegationConfirmationAuthenticationStart {
   expiresIn!: number
 }
 
-/**
- * Tells the client that a grant was held because it needs a second,
- * high-assurance confirmation, and carries the step-up already on its way to
- * the grantor.
- */
 @ObjectType('AuthPendingDelegationConfirmation')
 export class PendingDelegationConfirmation {
   @Field(() => ID)
@@ -62,15 +56,10 @@ export class PendingDelegationConfirmation {
 }
 
 export enum DelegationConfirmationAuthenticationStatus {
-  /** Waiting for the grantor to approve on their phone. Keep polling. */
   pending = 'pending',
-  /** Done: the held scopes are granted. */
   confirmed = 'confirmed',
-  /** The grantor declined, or someone else answered. Save again to retry. */
   denied = 'denied',
-  /** The step-up ran out of time. Save again to retry. */
   timed_out = 'timed_out',
-  /** The confirmation is over. Save again to retry. */
   expired = 'expired',
 }
 

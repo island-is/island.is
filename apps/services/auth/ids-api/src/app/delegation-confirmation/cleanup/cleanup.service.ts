@@ -5,13 +5,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { Logger } from '@island.is/logging'
 
-/**
- * Marks elapsed delegation confirmations as expired.
- *
- * Deliberately only touches rows still awaiting confirmation. A confirmed row is
- * the evidence that a delegation was granted and must outlive the delegation
- * itself, so it is never expired and never deleted here.
- */
+/** Only pending rows: confirmed ones are evidence and outlive the delegation. */
 export class CleanupDelegationConfirmationService {
   constructor(
     @Inject(LOGGER_PROVIDER)

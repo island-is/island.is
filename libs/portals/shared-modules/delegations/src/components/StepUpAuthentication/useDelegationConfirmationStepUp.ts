@@ -5,11 +5,7 @@ import { findProblemInApolloError } from '@island.is/shared/problem'
 import { useAuthCheckDelegationConfirmationAuthenticationMutation } from './DelegationConfirmationStepUp.generated'
 import type { StepUpStatus } from './StepUpAuthentication'
 
-/**
- * Follows the step-up a held grant started. A refusal (any 4xx) is thrown as
- * 'refused', so it can be shown; anything else is thrown as it is and the
- * caller polls again.
- */
+/** A 4xx is thrown as 'refused' so it can be shown; anything else is retried. */
 export const useDelegationConfirmationStepUp = (
   confirmationId: string | undefined,
 ) => {

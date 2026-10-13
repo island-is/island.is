@@ -76,7 +76,6 @@ interface WrittenDelegation {
   id: string
   toNationalId: string
   hadExistingScopes: boolean
-  /** Sensitive scopes held back from this write until the grantor confirms. */
   pendingConfirmation?: DelegationConfirmation
 }
 
@@ -267,9 +266,7 @@ export class DelegationsOutgoingService {
           rows.push(await this.writeForDomain(user, input, transaction))
         }
 
-        // One authentication confirms everything this grant holds, whatever
-        // recipients and domains it spans. It starts now, as part of the save:
-        // if it can't, the save is undone and nothing waits for it.
+        // Starts inside the save, so if it fails the save is undone.
         const confirmations = await this.delegationConfirmationService.group(
           rows.flatMap((row) =>
             row.pendingConfirmation ? [row.pendingConfirmation] : [],
@@ -404,8 +401,6 @@ export class DelegationsOutgoingService {
       )
     }
 
-    // Sensitive scopes are held for confirmation in the same transaction, so a
-    // rolled-back grant never leaves a confirmation behind.
     const { grantable, pendingConfirmation } = await this.splitSensitiveScopes({
       user,
       delegation,
@@ -428,22 +423,7 @@ export class DelegationsOutgoingService {
     }
   }
 
-  /**
-   * Decides whether a grant can be written now or must wait for a second,
-   * high-assurance confirmation.
-   *
-   * If any requested scope is sensitive, the whole grant waits: every scope in
-   * it is held on the confirmation record and nothing is written to the
-   * delegation tables until the grantor confirms, when all of it is written
-   * at once. Granting part of it now would leave a grantor who stops at the
-   * step-up thinking nothing happened while some of it already took effect.
-   * Held scopes being absent from the tables is also what makes them unusable
-   * by construction rather than by filtering every read path.
-   *
-   * Scopes the delegation already has are untouched: only what this grant
-   * changes waits. A sensitive scope sent again with the same date, as the edit
-   * form does, counts as unchanged.
-   */
+  /** If any scope is sensitive the whole grant waits, so stopping at the step-up never leaves it half-granted. */
   private async splitSensitiveScopes({
     user,
     delegation,
@@ -466,10 +446,7 @@ export class DelegationsOutgoingService {
       return { grantable: scopes }
     }
 
-    // Straight from the scope table, like the guard below every write. The
-    // caller has already checked the grantor may give these scopes, so they
-    // are not filtered again: a filtered-out sensitive scope would otherwise
-    // count as an ordinary one here, and only be caught by that guard.
+    // Not filtered by access again, so a hidden sensitive scope can't pass as an ordinary one.
     const sensitiveScopeNames = (
       await this.apiScopeModel.findAll({
         attributes: ['name'],
@@ -485,10 +462,7 @@ export class DelegationsOutgoingService {
       return { grantable: scopes }
     }
 
-    // The edit form sends back every selected scope, including sensitive ones
-    // the delegation already has under an earlier confirmation. Unchanged in
-    // name and date, they stay as they are: they neither make the grant wait
-    // nor are written again.
+    // The edit form sends back already confirmed scopes; unchanged ones don't need a new confirmation.
     const sensitive = new Set(sensitiveScopeNames)
     const existing = await this.delegationScopeService.findByDelegationId(
       delegation.id,
@@ -509,24 +483,20 @@ export class DelegationsOutgoingService {
       return { grantable: requested }
     }
 
-    // A marked scope is never granted without a confirmation. When one can't be
-    // had right now (the feature is off for the grantor, or its flag can't be
-    // read), the scope can't be granted at all.
+    // Fails closed: without confirmation available, a marked scope can't be granted at all.
     if (!(await this.delegationConfirmationPolicy.isAvailable(user))) {
       throw new ForbiddenException(
         'Scopes that require confirmation cannot be granted right now.',
       )
     }
 
-    // The confirmation is a step-up by the method the grantor logged in with,
-    // and a card can't be used for it, so a card session can't grant these.
+    // The step-up uses the login method, and a card can't be used for it.
     if (isCardSession(user.amr)) {
       throw new ForbiddenException(
         'Scopes that require confirmation cannot be granted from a session logged in with an ID card.',
       )
     }
 
-    // All of it waits for the confirmation, sensitive or not.
     const held = requested
 
     const [scopeDisplayNames, domain] = await Promise.all([
@@ -559,15 +529,7 @@ export class DelegationsOutgoingService {
     return new Map(scopes.map((scope) => [scope.name, scope.displayName]))
   }
 
-  /**
-   * Notifies recipients once a held grant has actually taken effect, the same
-   * way a grant that needed no confirmation is notified: one notification per
-   * recipient, new or updated as it really was.
-   *
-   * The recipient is deliberately not notified when the scopes are merely
-   * requested — otherwise they would be told about access they cannot use, and
-   * an abandoned confirmation would leave a false notification behind.
-   */
+  /** Recipients are only told once held access actually exists. */
   async notifyConfirmed(
     user: User,
     confirmed: Array<{ delegationId: string; hadExistingScopes: boolean }>,
@@ -591,7 +553,6 @@ export class DelegationsOutgoingService {
     )
   }
 
-  /** One notification per recipient, covering every domain they were given. */
   private async notifyByRecipient(
     user: User,
     results: Array<{ delegation: DelegationDTO; hadExistingScopes: boolean }>,
@@ -771,7 +732,6 @@ export class DelegationsOutgoingService {
 
         pendingConfirmationId = pendingConfirmation?.id
 
-        // Started as part of the save: if it can't, the save is undone.
         if (pendingConfirmation) {
           stepUp = await this.delegationConfirmationService.startAuthentication(
             user,
@@ -847,9 +807,6 @@ export class DelegationsOutgoingService {
       ]
     }
 
-    // Only access that actually took effect is notified (a delegation with
-    // nothing but held scopes has none). Held scopes notify when their
-    // confirmation is redeemed instead.
     void this.notifyDelegationUpdate(user, [
       { delegation, hadExistingScopes: txResult.hadExistingScopes },
     ])

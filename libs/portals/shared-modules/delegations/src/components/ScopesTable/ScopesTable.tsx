@@ -50,8 +50,7 @@ export const ScopesTable = ({
   const scopes = scopesProp ?? selectedScopes ?? []
   const canGrantSensitiveScopes = useCanGrantSensitiveScopes()
 
-  // Sensitive scopes can't be added in a session logged in with an ID card.
-  // One already selected (e.g. when editing a delegation) can still be removed.
+  // An already selected one can still be removed.
   const isLocked = (scope: AuthApiScope, isChecked: boolean) =>
     !isChecked && !canSelectScope(scope, canGrantSensitiveScopes)
   const selectableScopes = scopes.filter((s) =>

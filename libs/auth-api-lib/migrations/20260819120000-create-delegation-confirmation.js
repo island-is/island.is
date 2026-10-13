@@ -17,11 +17,9 @@ module.exports = {
             allowNull: true,
             references: { model: 'delegation', key: 'id' },
             onUpdate: 'CASCADE',
-            // Evidence must outlive the delegation it was created for.
+            // Evidence outlives the delegation.
             onDelete: 'SET NULL',
           },
-          // Confirmations made by one grant share it, and one authentication
-          // confirms them all.
           group_id: {
             type: Sequelize.UUID,
             allowNull: true,
@@ -158,8 +156,7 @@ module.exports = {
         transaction,
       })
 
-      // At most one pending confirmation per grantor/recipient/domain, so a
-      // re-submission supersedes rather than duplicating.
+      // One pending confirmation per grantor/recipient/domain; a new save supersedes it.
       await queryInterface.addIndex('delegation_confirmation', {
         fields: ['from_national_id', 'to_national_id', 'domain_name'],
         name: 'delegation_confirmation_unique_pending',

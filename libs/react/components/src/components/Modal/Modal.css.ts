@@ -32,7 +32,6 @@ export const modal = recipe({
 
         paddingTop: theme.spacing[9],
 
-        // When a modal changes size while open, it narrows rather than jumps.
         transition: 'max-width 200ms ease',
       },
     }),
@@ -40,7 +39,6 @@ export const modal = recipe({
   variants: {
     size: {
       default: {},
-      // For short, focused content, e.g. a code to compare.
       small: {
         ...themeUtils.responsiveStyle({
           md: {

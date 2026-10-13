@@ -40,10 +40,7 @@ export interface ModalProps {
    * Will hide the modal when clicking outside of it
    */
   hideOnClickOutside?: boolean
-  /**
-   * 'small' for short, focused content. Full width on small screens either way.
-   * @default "default"
-   */
+  /** @default "default" */
   size?: 'default' | 'small'
 }
 

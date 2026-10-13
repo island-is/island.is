@@ -12,7 +12,6 @@ const authenticationStatuses = [
   'expired',
 ] as const
 
-/** The step-up the save started: what to show while the grantor approves. */
 export class StartedDelegationConfirmationAuthenticationDTO {
   constructor(started: StartAuthenticationResult) {
     this.method = started.method
@@ -37,11 +36,6 @@ export class StartedDelegationConfirmationAuthenticationDTO {
   expiresIn: number
 }
 
-/**
- * Returned alongside a created or patched delegation when the grant is held:
- * nothing of it applies until the grantor confirms with the step-up that the
- * save has already started.
- */
 export class PendingConfirmationDTO {
   constructor(
     model: DelegationConfirmation,
@@ -95,7 +89,6 @@ export class PendingConfirmationDTO {
   authentication: StartedDelegationConfirmationAuthenticationDTO
 }
 
-/** Where the confirming authentication stands. */
 export class DelegationConfirmationAuthenticationDTO {
   constructor(status: typeof authenticationStatuses[number]) {
     this.status = status

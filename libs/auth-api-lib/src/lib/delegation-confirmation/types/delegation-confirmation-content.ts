@@ -1,17 +1,11 @@
-/** A single scope held pending confirmation. */
 export interface ConfirmationScope {
   name: string
   displayName: string
   validTo: string
 }
 
-/**
- * The grant exactly as it was presented to the grantor. This is what
- * `contentHash` is computed over and what the receipt renders, so it must
- * never be re-derived from current state after the fact.
- */
+/** What the grantor was shown. contentHash covers it, so never re-derive it from current state. */
 export interface ConfirmationContentSnapshot {
-  /** Snapshot format version, so a future format change stays verifiable. */
   version: 1
   fromNationalId: string
   toNationalId: string
@@ -21,10 +15,6 @@ export interface ConfirmationContentSnapshot {
   scopes: ConfirmationScope[]
   requestedAt: string
   locale: string
-  /**
-   * The text shown in the Auðkenni app when the grantor confirms. Part of the
-   * snapshot so `contentHash` covers what the phone displayed, not only what the
-   * screen did.
-   */
+  /** Hashed too, so contentHash covers what the phone showed. */
   bindingMessage: string
 }

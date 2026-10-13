@@ -14,29 +14,17 @@ import type {
 } from './types'
 
 export interface CibaClientOptions {
-  /** The identity server, e.g. https://innskra.island.is */
   issuer: string
-  /** This service's own CIBA client. Each consumer has its own. */
   clientId: string
   clientSecret?: string
-  /** Scopes to request, e.g. "openid @island.is/auth/delegation-confirmation". */
   scope: string
-  /** The assurance level the person must authenticate at. */
   requiredAcr: string
-  /**
-   * How long to wait for the identity server before giving up. A stalled
-   * server must not hold the caller's request, and the polls behind it, open.
-   */
   timeoutMs?: number
 }
 
 const DEFAULT_TIMEOUT_MS = 10_000
 
-/**
- * The session behind the user token can't be stepped up at all — logged in
- * with an ID card, or reachable by no method we have. Unlike other refusals it
- * won't pass: there is no point trying again from the same session.
- */
+/** Refusals that retrying from the same session will not fix. */
 export class SessionCannotStepUpError extends ForbiddenException {
   constructor() {
     super(
@@ -45,52 +33,26 @@ export class SessionCannotStepUpError extends ForbiddenException {
   }
 }
 
-/**
- * Step-up is not available for this person right now: the identity server has
- * the feature off for them, or can't read its flag. Waiting won't help either.
- */
 export class StepUpUnavailableError extends ForbiddenException {
   constructor() {
     super('Step-up is not available for this person right now.')
   }
 }
 
-/**
- * The identity server answered with a token, but it failed verification here.
- * Unlike an outage this is final: the identity server hands out a request's
- * token only once, so polling again can only say the request is gone.
- */
+/** The IDS hands out a token once, so a rejected one is final, unlike an outage. */
 export class StepUpTokenRejectedError extends BadRequestException {
   constructor(reason: string) {
     super(`The identity server token was rejected: ${reason}`)
   }
 }
 
-/** How the identity server marks those refusals: the start of error_description. */
 const SESSION_CANNOT_STEP_UP = 'session_cannot_step_up'
 const STEP_UP_UNAVAILABLE = 'step_up_unavailable'
 
 const JWKS_PATH = '/.well-known/openid-configuration/jwks'
 const CIBA_GRANT_TYPE = 'urn:openid:params:grant-type:ciba'
 
-/**
- * One service's side of OpenID Connect CIBA against the identity server: start
- * an authentication for the person a user token belongs to, then poll for the
- * result.
- *
- * The person is never named by us. We pass the access token of the user we are
- * serving as login_hint_token, and the identity server authenticates whoever is
- * behind it (the actor, for a delegation). So a client can only reach people it
- * is serving right now.
- *
- * The token that comes back is verified here — signature against the identity
- * server's published keys, issuer, expiry, and that it was issued to this client
- * — so nothing downstream has to trust the transport. It is read once and never
- * stored.
- *
- * Each consumer constructs its own, with its own client: a client is the party
- * that acts on the result, so they are kept apart.
- */
+/** The person is named only by their own token, so a client can only reach people it is serving. */
 export class CibaClient {
   private readonly jwksClient: JwksClient
 
@@ -152,7 +114,6 @@ export class CibaClient {
       }
     }
 
-    // invalid_request, unknown_user_id, access_denied (feature off), ...
     throw new BadRequestException(
       `The authentication could not be started: ${json['error'] ?? status}${
         json['error_description'] ? ` (${json['error_description']})` : ''
@@ -282,8 +243,6 @@ export class CibaClient {
           this.options.timeoutMs ?? DEFAULT_TIMEOUT_MS,
         ),
       })
-      // Read under the same timeout: a body that never arrives is an outage,
-      // not an empty answer.
       text = await response.text()
     } catch {
       throw new ServiceUnavailableException(
@@ -298,8 +257,6 @@ export class CibaClient {
         json = parsed as Record<string, unknown>
       }
     } catch {
-      // An error page that isn't JSON still answers with its status below; a
-      // success that can't be read is of no use.
       if (response.ok) {
         throw new ServiceUnavailableException(
           'The identity server sent an answer that could not be read.',
@@ -311,6 +268,5 @@ export class CibaClient {
   }
 }
 
-/** User.authorization carries the scheme; the identity server wants the token. */
 const stripBearer = (authorization: string) =>
   authorization.replace(/^Bearer\s+/i, '')

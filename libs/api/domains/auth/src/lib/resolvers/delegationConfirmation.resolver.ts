@@ -9,11 +9,6 @@ import { DelegationConfirmationInput } from '../dto'
 import { DelegationConfirmationAuthentication } from '../models/delegationConfirmation.model'
 import { MeDelegationConfirmationsService } from '../services/meDelegationConfirmations.service'
 
-/**
- * Following "tvöfalt samþykki": saving a grant with a sensitive scope holds it
- * and starts the grantor's step-up (see `pendingConfirmations` on the saved
- * delegation). This is where the client follows that step-up.
- */
 @UseGuards(IdsUserGuard)
 @Resolver()
 export class DelegationConfirmationResolver {
@@ -21,11 +16,7 @@ export class DelegationConfirmationResolver {
     private meDelegationConfirmationsService: MeDelegationConfirmationsService,
   ) {}
 
-  /**
-   * A mutation, not a query, although it is polled: the call that finds the
-   * grantor has approved is the one that grants the held scopes, and a query
-   * could be answered from the client's cache.
-   */
+  /** A mutation although it is polled: it can grant the held scopes, and a query could be cached. */
   @Mutation(() => DelegationConfirmationAuthentication, {
     name: 'authCheckDelegationConfirmationAuthentication',
     description:

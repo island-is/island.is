@@ -22,11 +22,8 @@ interface UserOptions {
   }
   audkenniSimNumber?: string
   delegationProvider?: AuthDelegationProvider
-  /** Authentication Context Class Reference, e.g. `eidas-loa-high`. */
   acr?: string
-  /** Authentication Methods References, e.g. `['hwk', 'pin']`. */
   amr?: string[]
-  /** When the user authenticated. */
   authTime?: Date
   sub?: string
   sid?: string

@@ -39,7 +39,6 @@ export const ConfirmAccessModal = ({
   isVisible: boolean
   loading?: boolean
   removedScopes?: ScopeSelection[]
-  /** What the delegation already gives, when editing it. */
   initialScopes?: ScopeSelection[]
   isEdit?: boolean
 }) => {
@@ -50,9 +49,7 @@ export const ConfirmAccessModal = ({
 
   const { identities, selectedScopes } = useDelegationForm()
 
-  // Only a sensitive scope that this save adds or changes needs a step-up. One
-  // the delegation already has, with the same date, is left as it is — the
-  // same rule the server applies.
+  // Same rule as the server: an already granted sensitive scope with the same date needs no step-up.
   const hasSensitiveScopeSelected = selectedScopes.some(
     (scope) =>
       scope.requiresConfirmation &&
@@ -70,10 +67,6 @@ export const ConfirmAccessModal = ({
   const [submitting, setSubmitting] = useState(false)
   const mutationLoading = submitting || createLoading || patchLoading
 
-  // The step-up the save started for a held grant. While there is one, this
-  // modal is the second act of "tvöfalt samþykki": the grantor confirms with
-  // electronic ID, right here. One save holds everything it grants under one
-  // confirmation group, and one step-up confirms it all.
   const [stepUp, setStepUp] = useState<{
     confirmationId: string
     start: StepUpStart
@@ -87,8 +80,6 @@ export const ConfirmAccessModal = ({
     navigate(DelegationPaths.DelegationsNew)
   }
 
-  // Nothing held takes effect without the step-up, so closing it goes to the
-  // grantor's delegations; an unfinished confirmation simply expires.
   const handleClose = () =>
     stepUp ? navigate(DelegationPaths.DelegationsNew) : onClose()
 
@@ -140,10 +131,7 @@ export const ConfirmAccessModal = ({
         },
       })
 
-      // Branch on what the server actually returned, never on our own feature
-      // flag read: the two are cached independently and disagreeing with the
-      // server is how you strand a half-created grant. The step-up has already
-      // been started by the save; every confirmation of the group shares it.
+      // Branch on the server's answer, not our own flag read: they're cached separately.
       const [held] =
         data?.createAuthDelegations?.flatMap((delegation) =>
           delegation.__typename === 'AuthCustomDelegation'
@@ -164,8 +152,6 @@ export const ConfirmAccessModal = ({
 
       navigate(DelegationPaths.DelegationsNew)
     } catch (error) {
-      // 403: the grant can't be confirmed from this session (e.g. an ID card
-      // login) or not right now. Nothing was granted.
       const status = findProblemInApolloError(error as never)?.status
       toast.error(
         formatMessage(status === 403 ? m.stepUpUnavailable : m.confirmError),
@@ -179,7 +165,6 @@ export const ConfirmAccessModal = ({
     <Modal
       id="confirm-access-modal"
       label={formatMessage(coreMessages.codeConfirmation)}
-      // The step-up has a heading of its own.
       title={
         confirmationId
           ? undefined
@@ -192,7 +177,6 @@ export const ConfirmAccessModal = ({
       onClose={handleClose}
       closeButtonLabel={formatMessage(m.closeModal)}
       isVisible={isVisible}
-      // The step-up needs much less room than the grant it confirms.
       size={confirmationId ? 'small' : 'default'}
       eyebrow={
         confirmationId
@@ -281,7 +265,6 @@ export const ConfirmAccessModal = ({
               showShadow={false}
               onCancel={handleClose}
               onConfirm={handleConfirm}
-              // A sensitive grant goes on to the authentication from here.
               confirmLabel={formatMessage(
                 hasSensitiveScopeSelected
                   ? m.confirmAccessAuthenticateButton

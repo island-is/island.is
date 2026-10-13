@@ -3,15 +3,11 @@ import { QueryInterface } from 'sequelize'
 import { safeBulkInsert } from './safeBulkInsert'
 
 interface GrantTypeOptions {
-  /** The grant type as it is sent to the token endpoint. */
   name: string
   description: string
 }
 
-/**
- * Registers a grant type so clients can be linked to it. Safe to run when it
- * already exists, so every seed migration that needs one can declare it.
- */
+/** Safe to run when the grant type already exists. */
 export const createGrantType =
   (options: GrantTypeOptions) => async (queryInterface: QueryInterface) => {
     await safeBulkInsert(
@@ -22,7 +18,6 @@ export const createGrantType =
     )
   }
 
-/** OpenID Connect Client-Initiated Backchannel Authentication. */
 export const CIBA_GRANT_TYPE = 'urn:openid:params:grant-type:ciba'
 
 export const createCibaGrantType = createGrantType({

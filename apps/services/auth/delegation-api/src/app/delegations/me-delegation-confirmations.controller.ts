@@ -33,15 +33,7 @@ const confirmationId: DocumentationParamOptions = {
   description: 'The id of the delegation confirmation.',
 }
 
-/**
- * Second half of "tvöfalt samþykki". Saving a grant with a sensitive scope
- * holds the grant and starts the grantor's step-up; this is where the client
- * follows it until the grant takes effect.
- *
- * Deliberately NOT feature-flag gated. Only holding a grant is flagged; if the
- * flag gated this endpoint too, turning it off would strand grants already
- * waiting for their confirmation.
- */
+/** Not flag gated, so turning the flag off never strands a grant already waiting. */
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(...delegationScopes)
 @ApiSecurity('ias', delegationScopes)
@@ -58,11 +50,6 @@ export class MeDelegationConfirmationsController {
     private readonly auditService: AuditService,
   ) {}
 
-  /**
-   * Where the confirming authentication stands. Once the grantor has approved,
-   * this is the call that grants the held scopes. Anything but pending or
-   * confirmed means nothing was granted, and the grantor saves again to retry.
-   */
   @Get(':confirmationId/authentication')
   @Documentation({
     includeNoContentResponse: true,
@@ -76,9 +63,7 @@ export class MeDelegationConfirmationsController {
     const { status, completedNow } =
       await this.delegationConfirmationService.getAuthenticationStatus(user, id)
 
-    // Only the poll that completes them is audited and notified, so a client
-    // polling an already-confirmed row doesn't repeat either. One audit entry
-    // per confirmation the authentication confirmed.
+    // Only the poll that completes it audits and notifies, however often the client polls.
     for (const { confirmation: confirmed } of completedNow ?? []) {
       this.auditService.audit({
         auth: user,
@@ -97,8 +82,6 @@ export class MeDelegationConfirmationsController {
       })
     }
 
-    // The recipients are told only now, when the access actually exists, and
-    // the same way as a grant that needed no confirmation.
     if (completedNow?.length) {
       void this.delegationsOutgoingService.notifyConfirmed(
         user,

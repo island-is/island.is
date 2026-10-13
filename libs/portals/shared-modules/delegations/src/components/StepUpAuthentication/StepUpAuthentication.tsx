@@ -20,56 +20,28 @@ export type StepUpStatus =
   | 'timed_out'
   | 'expired'
 
-/** A step-up already on its way to the person's phone. */
 export interface StepUpStart {
-  /** Which method the server chose, so we can say where to look. */
   method: StepUpMethod
   verificationCode?: string | null
-  /** Seconds between polls. */
   interval: number
-  /** Seconds until the step-up gives up. */
   expiresIn: number
 }
 
 interface StepUpAuthenticationProps {
-  /**
-   * The step-up the server has started. It reaches the person the way they
-   * logged in to this session — their Auðkenni app or their own SIM — so it
-   * only ever reaches their own phone.
-   */
   stepUp: StepUpStart
-  /**
-   * Asks the server where the authentication stands. Throws 'refused' when the
-   * server refused it; any other error is taken as passing.
-   */
+  /** Throws 'refused' when the server refused it; other errors are treated as transient. */
   check: () => Promise<StepUpStatus>
   onConfirmed: () => void
-  /** Starts over: the whole request is made again, with a new step-up. */
   onRetry: () => void
-  /** Set while a retry is being made. */
   retrying?: boolean
-  /** What is being confirmed, shown under the title, e.g. "Veiting umboðs". */
   context?: string
-  /** Shows a "Til baka" button once the step-up is over. */
   onBack?: () => void
 }
 
-/** Why it ended without a confirmation. */
 type Notice = 'denied' | 'timed_out' | 'expired' | 'refused'
 
 type State = { name: 'waiting' } | { name: 'ended'; notice: Notice }
 
-/**
- * Authenticates the person again with electronic ID without leaving the page:
- * a code, and they approve on their own phone. Looks like the identity
- * server's own verification screen. There is no phone number field and no
- * choice of method: it uses the method the person logged in with, so it only
- * reaches their own phone.
- *
- * The step-up is started by whatever it confirms — saving the grant — so this
- * only follows it. If it ends without a confirmation, trying again means
- * making the request again.
- */
 export const StepUpAuthentication = ({
   stepUp,
   check,
@@ -91,8 +63,6 @@ export const StepUpAuthentication = ({
       try {
         status = await check()
       } catch (error) {
-        // The server refused it: say so. Anything else is not an answer, so
-        // try again at the next interval.
         status = error === 'refused' ? 'refused' : 'pending'
       }
 
@@ -113,9 +83,7 @@ export const StepUpAuthentication = ({
     }, stepUp.interval * 1000)
   }, [check, onConfirmed, stepUp.interval])
 
-  // Set on mount as well as cleared on unmount: React mounts twice in
-  // development (StrictMode), and a flag only ever set to true would make the
-  // second mount ignore every answer.
+  // Reset on mount too: StrictMode mounts twice, and a flag only ever set to true would ignore every answer.
   useEffect(() => {
     unmounted.current = false
     poll()
@@ -167,7 +135,6 @@ export const StepUpAuthentication = ({
       </Box>
 
       {notice && (
-        // Announced: a refusal or a timeout arrives while the person waits.
         <Box role="alert">
           <AlertMessage
             type="error"
