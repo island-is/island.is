@@ -153,11 +153,10 @@ describe('FjarskiptastofaSelfAssessmentService', () => {
       )
     })
 
-    it('should send the current locale and only the answered questions', async () => {
+    it('should send only the answered questions', async () => {
       await submit(ACCESS_WINDOW_OPEN[0])
 
       expect(client.submitAnswers).toHaveBeenCalledWith(expect.anything(), {
-        language: 'en',
         submitterSSN: ACCESS_WINDOW_OPEN[0],
         assessmentResponses: [
           { questionId: 1, answerValue: 'Yes', remark: 'done' },

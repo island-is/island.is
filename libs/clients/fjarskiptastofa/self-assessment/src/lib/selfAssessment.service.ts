@@ -21,7 +21,7 @@ export class FjarskiptastofaSelfAssessmentClientService {
   }
 
   async getQuestionCategories(auth: User): Promise<QuestionCategoriesResponse> {
-    return this.apiWithAuth(auth).getQuestionCategories({})
+    return this.apiWithAuth(auth).getQuestionCategories()
   }
 
   async getQuestions(
