@@ -72,6 +72,7 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+      IDS_FEATURE_DEPLOY: ${{ contains(github.event.pull_request.labels.*.name, 'ids-feature-deploy') }}
 
     steps:
       - name: Cache server health check
@@ -603,6 +604,7 @@ jobs:
           -d "{\"event_type\":\"deploy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}}"
       - name: Get token for identity-server.web
         id: get-ids-token
+        if: ${{ needs.prepare.outputs.IDS_FEATURE_DEPLOY == 'true' }}
         shell: bash
         working-directory: monorepo
         env:
@@ -611,7 +613,8 @@ jobs:
         run: |
           node ./scripts/ci/docker/get-github-token.mjs
 
-      - name: Dispatch feature-branch creation to identity-server.web
+      - name: Dispatch IDS feature deploy to identity-server.web
+        if: ${{ needs.prepare.outputs.IDS_FEATURE_DEPLOY == 'true' }}
         env:
           IDS_WEB_TOKEN: ${{ steps.get-ids-token.outputs.token }}
           FEATURE_NAME: ${{ env.FEATURE_NAME }}
@@ -621,12 +624,12 @@ jobs:
           set -euo pipefail
           repo_owner="island-is"
           repository="identity-server.web"
-          echo "Dispatching feature-branch creation for: $SOURCE_BRANCH (feature: $FEATURE_NAME)"
+          echo "Dispatching IDS feature deploy for: $SOURCE_BRANCH (feature: $FEATURE_NAME)"
           curl -fsS -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer $IDS_WEB_TOKEN" \
             "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
-            -d "{\"event_type\":\"create-feature-branch\",\"client_payload\":{\"feature_name\":\"$FEATURE_NAME\",\"source_branch\":\"$SOURCE_BRANCH\"}}"
+            -d "{\"event_type\":\"ids-feature-deploy\",\"client_payload\":{\"feature_name\":\"$FEATURE_NAME\",\"source_branch\":\"$SOURCE_BRANCH\"}}"
   push-success:
     runs-on: arc-shared
     if: ${{ !cancelled() }}
