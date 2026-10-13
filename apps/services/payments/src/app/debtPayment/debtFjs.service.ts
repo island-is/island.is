@@ -48,26 +48,53 @@ const getHttpErrorDetails = (
   const e = error as {
     name?: string
     status?: unknown
-    body?: { error?: ProblemDetailsDt }
+    body?: unknown
   }
 
   if (e?.name !== 'FetchError' || typeof e.status !== 'number') {
     return null
   }
 
-  return { status: e.status, problem: e.body?.error }
+  // The spec wraps ProblemDetails in `error`, FJS also answers with it at the top level
+  const body = e.body as { error?: ProblemDetailsDt } | null | undefined
+  const problem =
+    body && typeof body === 'object'
+      ? body.error ?? (body as ProblemDetailsDt)
+      : undefined
+
+  return { status: e.status, problem }
 }
 
 const isAuthError = (status: number) => status === 401 || status === 403
 
 /**
- * FJS answers a payFlowId it has already taken a payment for with a 400 and this title, from
- * both `validatePayment` and `payDebt`: "Búið að taka á móti álagningu <payFlowId>".
+ * The error codes FJS sends in the ProblemDetails `type` of a 400, from both `validatePayment`
+ * and `payDebt`. `PayFlowAlreadyReceived` and `OtherPaymentInProgress` are handled on their own,
+ * every other code is a rejection.
  */
-const FJS_PAY_FLOW_ALREADY_RECEIVED_TITLE = '6'
+const FjsDebtErrorCode = {
+  /** Kennitala finnst ekki */
+  NationalIdNotFound: '2',
+  /** Reikningur (payid) finnst ekki */
+  PayIdNotFound: '3',
+  /** Reikningur (payid) tilheyrir ekki kennitölu */
+  PayIdNotOwnedByNationalId: '4',
+  /** Samtals greiðsla stemmir ekki við fjárhæð skulda */
+  TotalDoesNotMatchDebts: '5',
+  /** Búið að taka á móti álagningu, or it is being processed: the payFlowId is taken */
+  PayFlowAlreadyReceived: '6',
+  /** Gildisdagur ekki á formati YYYY-MM-DD */
+  InvalidPaymentDate: '10',
+  /** Ekki hægt að taka á móti greiðslu á meðan önnur greiðsla er í vinnslu */
+  OtherPaymentInProgress: '12',
+  /** Vantar greiðsluupplýsingar */
+  PayInfoMissing: '14',
+  /** Samtals greiðsla stemmir ekki við fjárhæð í greiðsluupplýsingum */
+  PayInfoAmountMismatch: '15',
+} as const
 
-const isPayFlowAlreadyReceived = (problem?: ProblemDetailsDt) =>
-  problem?.title?.trim() === FJS_PAY_FLOW_ALREADY_RECEIVED_TITLE
+const hasErrorCode = (problem: ProblemDetailsDt | undefined, code: string) =>
+  problem?.type?.trim() === code
 
 /**
  * Talks to FJS about debts, and sorts every way a call can go into an outcome the callers act
@@ -107,9 +134,18 @@ export class DebtFjsService {
 
       const http = getHttpErrorDetails(error)
       if (http?.status === 400) {
-        return isPayFlowAlreadyReceived(http.problem)
-          ? { type: 'already_registered', problem: http.problem }
-          : { type: 'invalid', problem: http.problem }
+        if (
+          hasErrorCode(http.problem, FjsDebtErrorCode.PayFlowAlreadyReceived)
+        ) {
+          return { type: 'already_registered', problem: http.problem }
+        }
+        // Says nothing about these debts, they can be paid once the other payment is through
+        if (
+          hasErrorCode(http.problem, FjsDebtErrorCode.OtherPaymentInProgress)
+        ) {
+          return { type: 'transient', error }
+        }
+        return { type: 'invalid', problem: http.problem }
       }
 
       // Everything else, 401/403, 5xx, timeouts, network errors and an open circuit breaker,
@@ -138,9 +174,18 @@ export class DebtFjsService {
       const http = getHttpErrorDetails(error)
 
       if (http?.status === 400) {
-        return isPayFlowAlreadyReceived(http.problem)
-          ? { type: 'already_registered', problem: http.problem }
-          : { type: 'rejected', problem: http.problem }
+        if (
+          hasErrorCode(http.problem, FjsDebtErrorCode.PayFlowAlreadyReceived)
+        ) {
+          return { type: 'already_registered', problem: http.problem }
+        }
+        // FJS turned the call away without taking it, a later retry can go through
+        if (
+          hasErrorCode(http.problem, FjsDebtErrorCode.OtherPaymentInProgress)
+        ) {
+          return { type: 'transient', error }
+        }
+        return { type: 'rejected', problem: http.problem }
       }
 
       // FJS did not process the call, no need to treat a later retry with care.

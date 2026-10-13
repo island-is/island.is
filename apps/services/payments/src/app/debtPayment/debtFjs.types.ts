@@ -44,5 +44,5 @@ export type DebtFjsPayOutcome =
   | { type: 'already_registered'; problem?: ProblemDetailsDt }
   /** FJS may or may not have processed the call. */
   | { type: 'ambiguous'; error: unknown }
-  /** FJS did not process the call (authentication), safe to retry. */
+  /** FJS did not process the call (authentication, another payment in progress), safe to retry. */
   | { type: 'transient'; error: unknown }

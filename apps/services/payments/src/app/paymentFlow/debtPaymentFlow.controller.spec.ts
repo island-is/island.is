@@ -440,7 +440,12 @@ describe('DebtPaymentFlowController', () => {
         const flow = await getFlow(await createFlow())
         validatePayment.mockRejectedValue(
           await fjsFetchError(400, {
-            error: { title: '6', status: '400', detail: 'Búið að taka á móti' },
+            error: {
+              type: '6',
+              title: 'Bad Request',
+              status: '400',
+              detail: 'Búið að taka á móti',
+            },
           }),
         )
 

@@ -44,9 +44,19 @@ const validateInput = {
 
 // What FJS answers for a payFlowId it already took a payment for
 const alreadyReceived: ProblemDetailsDt = {
-  title: '6',
+  type: '6',
+  title: 'Bad Request',
   status: '400',
   detail: `Búið að taka á móti álagningu ${validateInput.flowId}`,
+}
+
+// FJS refuses a payment while another one for the debts is being processed
+const otherPaymentInProgress: ProblemDetailsDt = {
+  type: '12',
+  title: 'Bad Request',
+  status: '400',
+  detail:
+    'Ekki hægt að taka á móti greiðslu á meðan önnur greiðsla er í vinnslu',
 }
 
 const payInfo = {
@@ -141,6 +151,27 @@ describe('DebtFjsService', () => {
       await expect(service.validate(validateInput)).resolves.toEqual({
         type: 'already_registered',
         problem: alreadyReceived,
+      })
+    })
+
+    it('reads the problem when FJS sends it at the top level of the body', async () => {
+      financeClient.validatePayment.mockRejectedValue(
+        await fjsFetchError(400, alreadyReceived),
+      )
+
+      await expect(service.validate(validateInput)).resolves.toEqual({
+        type: 'already_registered',
+        problem: alreadyReceived,
+      })
+    })
+
+    it('is transient while another payment is in progress', async () => {
+      const error = await fjsFetchError(400, { error: otherPaymentInProgress })
+      financeClient.validatePayment.mockRejectedValue(error)
+
+      await expect(service.validate(validateInput)).resolves.toEqual({
+        type: 'transient',
+        error,
       })
     })
 
@@ -259,6 +290,25 @@ describe('DebtFjsService', () => {
       await expect(service.pay(payInput)).resolves.toEqual({
         type: 'already_registered',
         problem: alreadyReceived,
+      })
+    })
+
+    it('reads the problem when FJS sends it at the top level of the body', async () => {
+      financeClient.payDebt.mockRejectedValue(await fjsFetchError(400, problem))
+
+      await expect(service.pay(payInput)).resolves.toEqual({
+        type: 'rejected',
+        problem,
+      })
+    })
+
+    it('is transient, not rejected, while another payment is in progress', async () => {
+      const error = await fjsFetchError(400, { error: otherPaymentInProgress })
+      financeClient.payDebt.mockRejectedValue(error)
+
+      await expect(service.pay(payInput)).resolves.toEqual({
+        type: 'transient',
+        error,
       })
     })
 

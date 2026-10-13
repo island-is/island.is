@@ -20,7 +20,8 @@ const problem = {
 const alreadyRegistered = {
   type: 'already_registered' as const,
   problem: {
-    title: '6',
+    type: '6',
+    title: 'Bad Request',
     status: '400',
     detail: 'Búið að taka á móti álagningu flow',
   },
