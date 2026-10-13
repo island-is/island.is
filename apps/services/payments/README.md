@@ -88,6 +88,7 @@ A flow that has never failed is processed as soon as it is picked up. A flow wit
 - **Config:** `workerRetryDelayMinutesAfterFailure` (default 60). Deferred flows are listed in one info line per run and counted as `deferred (retry delay)` in the run summary.
 - **What starts the delay:** every failure the worker records, i.e. any error thrown while processing the flow except `FJS_NETWORK_ERROR`. This includes FJS error responses, X-Road errors, and local errors raised before the FJS request (e.g. missing card payment details, missing bank transfer row, catalog mismatch).
 - **Not gated:** network/transient errors (`FJS_NETWORK_ERROR`) record no event, so they do not start the delay. Such a flow is retried on every run (every 5 minutes) until FJS responds.
+- **Debt flows:** the debt pass (`pay_fjs_debt`) uses the same delay and failure limit, counted on its own failure events. A `payDebt` call FJS refused (401/403) or an error while settling records a failure; an ambiguous outcome or FJS being unreachable records none and is retried on the next run.
 
 ### Failure limit
 
@@ -102,6 +103,7 @@ The worker **skips** a flow (and requires manual intervention) when that flow ha
 | `PAYMENTS_WORKER_MAX_FAILURE_EVENTS_PER_FLOW`                | 5       | Stop retrying a flow after this many failure events (FJS error responses) for that flow+task.                          |
 | `PAYMENTS_WORKER_MINUTES_TO_WAIT_BEFORE_CREATING_FJS_CHARGE` | 5       | Only consider paid flows whose fulfillment is at least this many minutes old (avoids races with payment confirmation). |
 | `PAYMENTS_WORKER_RETRY_DELAY_MINUTES_AFTER_FAILURE`          | 60      | After a failure event, wait at least this many minutes before trying that flow again (never-failed flows run at once). |
+| `PAYMENTS_WORKER_MINUTES_TO_WAIT_BEFORE_SETTLING_DEBT`       | 1       | Only consider paid debt flows whose fulfillment and last `payDebt` attempt are at least this many minutes old.         |
 
 ### Manual intervention
 
@@ -118,4 +120,5 @@ For **AlreadyCreatedCharge**: reconcile the flow/fulfillment with the existing F
 - The worker logs one info line per run when flows are skipped: `Skipping N payment flow(s) that exceeded the failure limit (5) and require manual intervention: <ids>`.
 - The worker logs one info line per run when flows are deferred: `Deferring N payment flow(s) that failed less than 60 minute(s) ago: <ids>`.
 - Each run ends with `Payment worker run complete — created: X, failed: Y, skipped (manual intervention): Z, deferred (retry delay): W`.
+- The debt pass logs the same skip and defer lines for debt payment flows, and ends with `Debt payment run complete — settled: X, failed: Y, skipped (manual intervention): Z, deferred (retry delay): W`.
 - Optional: add metrics for flows processed, succeeded, failed, skipped, and deferred.

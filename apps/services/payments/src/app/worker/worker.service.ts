@@ -221,18 +221,31 @@ export class WorkerService {
 
     let settledCount = 0
     let failedCount = 0
-    let skippedCount = 0
     const skippedFlowIds: string[] = []
+    const deferredFlowIds: string[] = []
+    const now = new Date()
 
     for (const paymentFlow of debtFlows) {
+      const events = paymentFlow.workerEvents ?? []
+
       if (
         this.shouldSkipDueToFailureCount(
-          paymentFlow.workerEvents ?? [],
+          events,
           this.workerConfig.workerMaxFailureEventsPerFlow,
         )
       ) {
-        skippedCount++
         skippedFlowIds.push(paymentFlow.id)
+        continue
+      }
+
+      if (
+        this.shouldDeferDueToRecentFailure(
+          events,
+          this.workerConfig.workerRetryDelayMinutesAfterFailure,
+          now,
+        )
+      ) {
+        deferredFlowIds.push(paymentFlow.id)
         continue
       }
 
@@ -271,8 +284,18 @@ export class WorkerService {
       )
     }
 
+    if (deferredFlowIds.length > 0) {
+      this.logger.info(
+        `Deferring ${
+          deferredFlowIds.length
+        } debt payment flow(s) that failed less than ${
+          this.workerConfig.workerRetryDelayMinutesAfterFailure
+        } minute(s) ago: ${deferredFlowIds.join(', ')}`,
+      )
+    }
+
     this.logger.info(
-      `Debt payment run complete — settled: ${settledCount}, failed: ${failedCount}, skipped (manual intervention): ${skippedCount}`,
+      `Debt payment run complete — settled: ${settledCount}, failed: ${failedCount}, skipped (manual intervention): ${skippedFlowIds.length}, deferred (retry delay): ${deferredFlowIds.length}`,
     )
   }
 

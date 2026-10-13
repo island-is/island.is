@@ -609,7 +609,7 @@ describe('WorkerService', () => {
       )
       expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Debt payment run complete — settled: 1, failed: 0, skipped (manual intervention): 0',
+        'Debt payment run complete — settled: 1, failed: 0, skipped (manual intervention): 0, deferred (retry delay): 0',
       )
     })
 
@@ -803,7 +803,7 @@ describe('WorkerService', () => {
         }),
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Debt payment run complete — settled: 0, failed: 1, skipped (manual intervention): 0',
+        'Debt payment run complete — settled: 0, failed: 1, skipped (manual intervention): 0, deferred (retry delay): 0',
       )
     })
 
@@ -823,7 +823,52 @@ describe('WorkerService', () => {
         expect.stringContaining('Skipping 1 debt payment flow(s)'),
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Debt payment run complete — settled: 0, failed: 0, skipped (manual intervention): 1',
+        'Debt payment run complete — settled: 0, failed: 0, skipped (manual intervention): 1, deferred (retry delay): 0',
+      )
+    })
+
+    it('defers a flow whose latest failure is more recent than the retry delay', async () => {
+      mockDebtSweep([
+        createDebtCardFlow({
+          workerEvents: [failureEvent(180), failureEvent(10)],
+        }),
+      ])
+
+      await service.run()
+
+      expect(debtSettlementService.attempt).not.toHaveBeenCalled()
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        expect.stringContaining('Deferring 1 debt payment flow(s)'),
+      )
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Debt payment run complete — settled: 0, failed: 0, skipped (manual intervention): 0, deferred (retry delay): 1',
+      )
+    })
+
+    it('retries a flow once the retry delay since its latest failure has passed', async () => {
+      mockDebtSweep([createDebtCardFlow({ workerEvents: [failureEvent(61)] })])
+      debtSettlementService.attempt.mockResolvedValue(registered)
+
+      await service.run()
+
+      expect(debtSettlementService.attempt).toHaveBeenCalledTimes(1)
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Debt payment run complete — settled: 1, failed: 0, skipped (manual intervention): 0, deferred (retry delay): 0',
+      )
+    })
+
+    it('parks a flow at the failure limit even when its latest failure is recent', async () => {
+      mockDebtSweep([
+        createDebtCardFlow({
+          workerEvents: Array.from({ length: 5 }, () => failureEvent(1)),
+        }),
+      ])
+
+      await service.run()
+
+      expect(debtSettlementService.attempt).not.toHaveBeenCalled()
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Debt payment run complete — settled: 0, failed: 0, skipped (manual intervention): 1, deferred (retry delay): 0',
       )
     })
   })
