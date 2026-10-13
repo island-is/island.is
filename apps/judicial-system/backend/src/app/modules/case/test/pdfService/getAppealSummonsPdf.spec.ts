@@ -102,14 +102,18 @@ describe('PdfService - getAppealSummonsPdf', () => {
     ;(mockAwsS3Service.putObject as jest.Mock).mockClear()
 
     await expect(
-      pdfService.getAppealSummonsPdf(theCase, user as never, {
-        id: summonsId,
-        confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
-        hash: 'frozen-hash',
-        hashAlgorithm: HashAlgorithm.SHA256,
-        confirmedBy: user,
-        defendants: [],
-      } as AppealSummons),
+      pdfService.getAppealSummonsPdf(
+        theCase,
+        user as never,
+        {
+          id: summonsId,
+          confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
+          hash: 'frozen-hash',
+          hashAlgorithm: HashAlgorithm.SHA256,
+          confirmedBy: user,
+          defendants: [],
+        } as AppealSummons,
+      ),
     ).rejects.toThrow(
       `Appeal summons ${summonsId} has a hash but its PDF was not found in S3`,
     )
@@ -124,12 +128,16 @@ describe('PdfService - getAppealSummonsPdf', () => {
     )
 
     await expect(
-      pdfService.getAppealSummonsPdf(theCase, user as never, {
-        id: summonsId,
-        confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
-        confirmedBy: user,
-        defendants: [],
-      } as AppealSummons),
+      pdfService.getAppealSummonsPdf(
+        theCase,
+        user as never,
+        {
+          id: summonsId,
+          confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
+          confirmedBy: user,
+          defendants: [],
+        } as AppealSummons,
+      ),
     ).rejects.toThrow('upload failed')
   })
 

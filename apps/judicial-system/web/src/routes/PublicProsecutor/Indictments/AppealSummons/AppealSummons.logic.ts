@@ -226,7 +226,9 @@ export const buildAppealSummonsFormSections = (
   const existingByDefendant = new Map(
     (existingSummons?.defendants ?? []).map((row) => [row.defendantId, row]),
   )
-  const standingIds = new Set(standing.map((defendant) => defendant.defendantId))
+  const standingIds = new Set(
+    standing.map((defendant) => defendant.defendantId),
+  )
   const nameById = new Map(
     caseDefendants.map((defendant) => [defendant.id, defendant.name]),
   )
