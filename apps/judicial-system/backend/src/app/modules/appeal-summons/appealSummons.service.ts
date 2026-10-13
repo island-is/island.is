@@ -168,9 +168,17 @@ export class AppealSummonsService {
       )
       // Delete after commit so a rolled-back edit cannot leave the DB hash
       // pointing at a PDF that S3 already removed. Re-check hash so a
-      // confirmation that finished in between is not wiped.
-      transaction.afterCommit(() => {
-        void this.tryDeleteCachedPdfIfUnconfirmed(theCase, summons.id)
+      // confirmation that finished in between is not wiped. Catch cleanup
+      // failures: the edit is already committed and must not fail the request.
+      transaction.afterCommit(async () => {
+        try {
+          await this.tryDeleteCachedPdfIfUnconfirmed(theCase, summons.id)
+        } catch (reason) {
+          this.logger.error(
+            `Failed to delete cached appeal summons PDF for ${summons.id} after edit`,
+            { reason },
+          )
+        }
       })
     }
 
@@ -227,8 +235,15 @@ export class AppealSummonsService {
 
     if (deleted) {
       // Same as update: only drop the cached PDF once the row is gone.
-      transaction.afterCommit(() => {
-        void this.tryDeleteCachedPdf(theCase, summons.id)
+      transaction.afterCommit(async () => {
+        try {
+          await this.tryDeleteCachedPdf(theCase, summons.id)
+        } catch (reason) {
+          this.logger.error(
+            `Failed to delete cached appeal summons PDF for ${summons.id} after delete`,
+            { reason },
+          )
+        }
       })
     }
 
