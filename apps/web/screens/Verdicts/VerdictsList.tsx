@@ -1964,7 +1964,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     selectedDistrictCourts,
                   )}
                   renderKey={renderKey}
-                  startExpanded={true}
                   caseFilterOptions={caseFilterOptions}
                   keywords={keywords}
                   queryState={queryState}

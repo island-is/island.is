@@ -121,14 +121,10 @@ const validateVehicleFields = (value: FormSystemValue) => {
 }
 
 const validateRealEstateFields = (value: FormSystemValue) => {
-  const { propertyNumber, address, municipality } = value
+  const { propertyNumber, address } = value
 
-  if (!propertyNumber || !address || !municipality) return false
-  if (
-    propertyNumber.length === 0 ||
-    address.length === 0 ||
-    municipality.length === 0
-  ) {
+  if (!propertyNumber || !address) return false
+  if (propertyNumber.length === 0 || address.length === 0) {
     return false
   }
 

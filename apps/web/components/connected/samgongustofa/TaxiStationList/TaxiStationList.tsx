@@ -49,7 +49,9 @@ const TaxiStationList = ({ slice }: TaxiStationListProps) => {
 
   useQuery<Query>(GET_TAXI_STATIONS_QUERY, {
     onCompleted: (data) => {
-      const fetched = [...(data?.getTaxiStations?.stations ?? [])]
+      const fetched = (data?.getTaxiStations?.stations ?? []).filter(
+        (station) => station.driverCount > 0,
+      )
       fetched.sort((a, b) => a.name.localeCompare(b.name, 'is'))
       setStations(fetched)
       setListState('loaded')
