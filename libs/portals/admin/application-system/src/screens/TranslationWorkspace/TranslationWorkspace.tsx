@@ -35,6 +35,7 @@ export const TranslationWorkspace = () => {
     introspection,
     namespace,
     customFields,
+    customFieldPropsByForm,
     previewApplication,
     persistedByKey,
     hasDraftChanges,
@@ -220,6 +221,7 @@ export const TranslationWorkspace = () => {
             fieldErrorOverrides={fieldErrorOverrides}
             previewFieldValues={previewFieldValues}
             customFields={customFields}
+            customFieldPropsByForm={customFieldPropsByForm}
             previewApplication={previewApplicationForState}
             activeLocale={activeLocale}
             footerSubmitScreen={footerSubmitScreen}

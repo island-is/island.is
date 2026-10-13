@@ -10,6 +10,11 @@ import type {
 
 const MAX_DEPTH = 12
 const PREVIEW_DATE = new Date('2026-01-01')
+const PREVIEW_DATE_STRING = '2026-01-01'
+
+const isDateLikeString = (schema: z.ZodString, key?: string): boolean =>
+  schema._def.checks.some((check) => check.kind === 'datetime') ||
+  /date|^dob$/i.test(key ?? '')
 
 const unwrapEffects = (schema: z.ZodTypeAny): z.ZodTypeAny => {
   let current = schema
@@ -19,7 +24,11 @@ const unwrapEffects = (schema: z.ZodTypeAny): z.ZodTypeAny => {
   return current
 }
 
-const generateMockValue = (schema: z.ZodTypeAny, depth = 0): unknown => {
+const generateMockValue = (
+  schema: z.ZodTypeAny,
+  depth = 0,
+  key?: string,
+): unknown => {
   if (depth > MAX_DEPTH) {
     return undefined
   }
@@ -27,16 +36,18 @@ const generateMockValue = (schema: z.ZodTypeAny, depth = 0): unknown => {
   const unwrapped = unwrapEffects(schema)
 
   if (unwrapped instanceof z.ZodOptional) {
-    return generateMockValue(unwrapped.unwrap(), depth + 1)
+    return generateMockValue(unwrapped.unwrap(), depth + 1, key)
   }
   if (unwrapped instanceof z.ZodNullable) {
-    return generateMockValue(unwrapped.unwrap(), depth + 1)
+    return generateMockValue(unwrapped.unwrap(), depth + 1, key)
   }
   if (unwrapped instanceof z.ZodDefault) {
-    return generateMockValue(unwrapped.removeDefault(), depth + 1)
+    return generateMockValue(unwrapped.removeDefault(), depth + 1, key)
   }
   if (unwrapped instanceof z.ZodString) {
-    return 'Lorem ipsum'
+    return isDateLikeString(unwrapped, key)
+      ? PREVIEW_DATE_STRING
+      : 'Lorem ipsum'
   }
   if (unwrapped instanceof z.ZodNumber) {
     return 0
@@ -59,16 +70,18 @@ const generateMockValue = (schema: z.ZodTypeAny, depth = 0): unknown => {
   if (unwrapped instanceof z.ZodArray) {
     const requiresAtLeastOne = unwrapped._def.minLength !== null
     return requiresAtLeastOne
-      ? [generateMockValue(unwrapped.element, depth + 1)]
+      ? [generateMockValue(unwrapped.element, depth + 1, key)]
       : []
   }
   if (unwrapped instanceof z.ZodUnion) {
     const [firstOption] = unwrapped.options
-    return firstOption ? generateMockValue(firstOption, depth + 1) : undefined
+    return firstOption
+      ? generateMockValue(firstOption, depth + 1, key)
+      : undefined
   }
   if (unwrapped instanceof z.ZodIntersection) {
-    const left = generateMockValue(unwrapped._def.left, depth + 1)
-    const right = generateMockValue(unwrapped._def.right, depth + 1)
+    const left = generateMockValue(unwrapped._def.left, depth + 1, key)
+    const right = generateMockValue(unwrapped._def.right, depth + 1, key)
     if (
       left &&
       right &&
@@ -84,8 +97,8 @@ const generateMockValue = (schema: z.ZodTypeAny, depth = 0): unknown => {
   if (unwrapped instanceof z.ZodObject) {
     const shape = unwrapped.shape
     const result: Record<string, unknown> = {}
-    for (const key of Object.keys(shape)) {
-      result[key] = generateMockValue(shape[key], depth + 1)
+    for (const childKey of Object.keys(shape)) {
+      result[childKey] = generateMockValue(shape[childKey], depth + 1, childKey)
     }
     return result
   }
@@ -140,6 +153,16 @@ const MOCK_NATIONAL_REGISTRY_INDIVIDUAL = {
   birthDate: PREVIEW_DATE,
 }
 
+const MOCK_MUNICIPALITY_AID = {
+  ownPlace: 0,
+  registeredRenting: 0,
+  unregisteredRenting: 0,
+  livesWithParents: 0,
+  unknown: 0,
+  withOthers: 0,
+  municipalityId: '',
+}
+
 const KNOWN_PROVIDER_DATA_DEFAULTS: Record<string, unknown> = {
   nationalRegistry: MOCK_NATIONAL_REGISTRY_INDIVIDUAL,
   nationalRegistrySpouse: MOCK_NATIONAL_REGISTRY_INDIVIDUAL,
@@ -150,6 +173,20 @@ const KNOWN_PROVIDER_DATA_DEFAULTS: Record<string, unknown> = {
     bankInfo: '0000-00-000000',
   },
   VMSTApplicationRights: [],
+  municipality: {
+    id: '',
+    municipalityId: '',
+    name: 'Lorem',
+    active: true,
+    homepage: 'https://island.is',
+    rulesHomepage: 'https://island.is',
+    email: 'lorem.ipsum@island.is',
+    individualAid: { ...MOCK_MUNICIPALITY_AID, type: 'Individual' },
+    cohabitationAid: { ...MOCK_MUNICIPALITY_AID, type: 'Cohabitation' },
+    childrenAid: 'NotDefined',
+    usingNav: false,
+    decemberCompensation: 0,
+  },
 }
 
 const KNOWN_ANSWERS_DEFAULTS_BY_TYPE: Partial<
@@ -233,7 +270,7 @@ export const generateMockPreviewData = (
         externalData = generateMockExternalData(shape[key])
         continue
       }
-      answers[key] = generateMockValue(shape[key]) as Answer
+      answers[key] = generateMockValue(shape[key], 0, key) as Answer
     }
 
     return {

@@ -1,5 +1,12 @@
 import { useEffect, useMemo, type ReactNode } from 'react'
 import {
+  ApolloClient,
+  ApolloLink,
+  ApolloProvider,
+  InMemoryCache,
+  Observable,
+} from '@apollo/client'
+import {
   FormProvider,
   useForm,
   type DefaultValues,
@@ -15,6 +22,18 @@ import type {
   ScreenIntrospection,
 } from '../../types/translationWorkspace'
 import { buildTranslationWorkspacePreviewIntlMessages } from '../../utils/translationWorkspacePreviewIntlMessages'
+
+const previewApolloClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: new ApolloLink(
+    (operation) =>
+      new Observable(() => {
+        console.info(
+          `Translation preview blocked network call (${operation.operationName})`,
+        )
+      }),
+  ),
+})
 
 const collectScreenFieldIdsDeep = (
   screens: ScreenIntrospection[],
@@ -118,14 +137,16 @@ export const TranslationWorkspacePreviewShell = ({
   )
 
   return (
-    <LocaleContext.Provider value={localeCtx}>
-      <IntlProvider
-        locale={activeLocale}
-        messages={messages}
-        defaultLocale="is"
-      >
-        <FormProvider {...methods}>{children}</FormProvider>
-      </IntlProvider>
-    </LocaleContext.Provider>
+    <ApolloProvider client={previewApolloClient}>
+      <LocaleContext.Provider value={localeCtx}>
+        <IntlProvider
+          locale={activeLocale}
+          messages={messages}
+          defaultLocale="is"
+        >
+          <FormProvider {...methods}>{children}</FormProvider>
+        </IntlProvider>
+      </LocaleContext.Provider>
+    </ApolloProvider>
   )
 }

@@ -33,6 +33,11 @@ import { resolveSubmitActionLabel } from '../../utils/translationWorkspaceFooter
 import { TranslationWorkspaceFieldPreview } from '../TranslationWorkspaceFieldPreview'
 import { TranslationWorkspaceFormLogo } from '../TranslationWorkspaceFormLogo/TranslationWorkspaceFormLogo'
 import { TranslationWorkspacePreviewShell } from '../TranslationWorkspacePreviewShell/TranslationWorkspacePreviewShell'
+import {
+  CustomFieldPropsContext,
+  customFieldPropsFormKey,
+  type CustomFieldPropsByForm,
+} from '../../utils/customFieldProps'
 import * as styles from './TranslationWorkspacePreviewArea.css'
 
 type SubmitPreviewButtonConfig = {
@@ -134,6 +139,7 @@ export interface TranslationWorkspacePreviewAreaProps {
   previewFieldValues: Record<string, string>
   /** Optional template `getFields` overrides merged over `@island.is/application/ui-fields`. */
   customFields?: Record<string, PreviewFieldComponent>
+  customFieldPropsByForm?: CustomFieldPropsByForm
   previewApplication: Application
   /** Translation Workspace locale used by preview `intl` bridge and form context. */
   activeLocale: 'is' | 'en'
@@ -166,6 +172,7 @@ export const TranslationWorkspacePreviewArea = ({
   fieldErrorOverrides,
   previewFieldValues,
   customFields,
+  customFieldPropsByForm,
   previewApplication,
   activeLocale,
   footerSubmitScreen,
@@ -179,6 +186,11 @@ export const TranslationWorkspacePreviewArea = ({
     () => mergePreviewFieldRegistry(customFields),
     [customFields],
   )
+
+  const activeCustomFieldProps =
+    customFieldPropsByForm?.[
+      customFieldPropsFormKey(activeStateKey, activeRoleId)
+    ] ?? {}
 
   const isEmpty = previewScreens.length === 0
   const footerSubmitActions = footerSubmitScreen?.submitActions ?? []
@@ -245,21 +257,27 @@ export const TranslationWorkspacePreviewArea = ({
                   resolvePreviewString={resolvePreviewString}
                   extraMessageDescriptors={extraMessageDescriptors}
                 >
-                  {previewScreens.map((screen) => (
-                    <TranslationWorkspaceFieldPreview
-                      key={screen.id}
-                      screen={screen}
-                      resolvePreviewString={resolvePreviewString}
-                      formatMessage={formatMessage as PreviewFormatMessage}
-                      showValidationErrors={showValidationErrors}
-                      validationDescriptorsByPath={validationDescriptorsByPath}
-                      focusedFieldId={focusedFieldId}
-                      fieldErrorOverrides={fieldErrorOverrides}
-                      previewFieldValues={previewFieldValues}
-                      previewFields={mergedPreviewFields}
-                      previewApplication={previewApplication}
-                    />
-                  ))}
+                  <CustomFieldPropsContext.Provider
+                    value={activeCustomFieldProps}
+                  >
+                    {previewScreens.map((screen) => (
+                      <TranslationWorkspaceFieldPreview
+                        key={screen.id}
+                        screen={screen}
+                        resolvePreviewString={resolvePreviewString}
+                        formatMessage={formatMessage as PreviewFormatMessage}
+                        showValidationErrors={showValidationErrors}
+                        validationDescriptorsByPath={
+                          validationDescriptorsByPath
+                        }
+                        focusedFieldId={focusedFieldId}
+                        fieldErrorOverrides={fieldErrorOverrides}
+                        previewFieldValues={previewFieldValues}
+                        previewFields={mergedPreviewFields}
+                        previewApplication={previewApplication}
+                      />
+                    ))}
+                  </CustomFieldPropsContext.Provider>
                 </TranslationWorkspacePreviewShell>
               </Box>
 

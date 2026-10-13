@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import type { Application } from '@island.is/application/types'
 import { FieldTypes } from '@island.is/application/types'
@@ -10,6 +11,7 @@ import {
 } from '../../utils/buildPreviewFieldFromScreen'
 import type { PreviewFieldComponent } from '../../utils/previewFieldRegistry'
 import type { ScreenIntrospection } from '../../types/translationWorkspace'
+import { CustomFieldPropsContext } from '../../utils/customFieldProps'
 import {
   buildMockCustomField,
   inferTranslationWorkspaceShowFieldName,
@@ -49,6 +51,7 @@ export const CustomFieldPreview = ({
   isMultiFieldChild,
 }: CustomFieldPreviewProps) => {
   const layout = fieldPreviewLayoutProps(screen)
+  const customFieldProps = useContext(CustomFieldPropsContext)
   const registry = previewFields ?? {}
   const componentName = screen.component ?? ''
   const PreviewCtrl = componentName !== '' ? registry[componentName] : undefined
@@ -88,7 +91,10 @@ export const CustomFieldPreview = ({
   if (screen.type === FieldTypes.CUSTOM && screen.component) {
     const CustomComponent = registry[screen.component]
     if (CustomComponent) {
-      const mockField = buildMockCustomField(screen)
+      const mockField = buildMockCustomField(
+        screen,
+        customFieldProps[screen.id],
+      )
       return (
         <Box {...layout}>
           <CustomFieldErrorBoundary

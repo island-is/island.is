@@ -6,6 +6,10 @@ import {
   type TranslationWorkspacePreviewApplicationData,
 } from '@island.is/application/template-loader'
 import type { PreviewFieldComponent } from '../utils/previewFieldRegistry'
+import {
+  loadCustomFieldPropsByForm,
+  type CustomFieldPropsByForm,
+} from '../utils/customFieldProps'
 
 type CustomFieldMap = Record<string, PreviewFieldComponent>
 
@@ -13,6 +17,8 @@ export const useTemplateCustomFields = (typeId: string | undefined) => {
   const [fields, setFields] = useState<CustomFieldMap>({})
   const [previewApplicationData, setPreviewApplicationData] =
     useState<TranslationWorkspacePreviewApplicationData>({})
+  const [customFieldPropsByForm, setCustomFieldPropsByForm] =
+    useState<CustomFieldPropsByForm>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const loadedRef = useRef<string | null>(null)
@@ -21,6 +27,7 @@ export const useTemplateCustomFields = (typeId: string | undefined) => {
     if (!typeId) {
       setFields({})
       setPreviewApplicationData({})
+      setCustomFieldPropsByForm({})
       setLoading(false)
       setError(null)
       loadedRef.current = null
@@ -32,6 +39,7 @@ export const useTemplateCustomFields = (typeId: string | undefined) => {
     let cancelled = false
     setFields({})
     setPreviewApplicationData({})
+    setCustomFieldPropsByForm({})
     setLoading(true)
     setError(null)
 
@@ -40,11 +48,15 @@ export const useTemplateCustomFields = (typeId: string | undefined) => {
       getApplicationTranslationWorkspacePreview(
         typeId as ApplicationTypes,
       ).catch(() => ({} as TranslationWorkspacePreviewApplicationData)),
+      loadCustomFieldPropsByForm(typeId as ApplicationTypes).catch(
+        () => ({} as CustomFieldPropsByForm),
+      ),
     ])
-      .then(([uiFields, previewData]) => {
+      .then(([uiFields, previewData, propsByForm]) => {
         if (cancelled) return
         setFields(uiFields as CustomFieldMap)
         setPreviewApplicationData(previewData)
+        setCustomFieldPropsByForm(propsByForm)
         loadedRef.current = typeId
       })
       .catch((err) => {
@@ -64,5 +76,11 @@ export const useTemplateCustomFields = (typeId: string | undefined) => {
     }
   }, [typeId])
 
-  return { customFields: fields, previewApplicationData, loading, error }
+  return {
+    customFields: fields,
+    previewApplicationData,
+    customFieldPropsByForm,
+    loading,
+    error,
+  }
 }

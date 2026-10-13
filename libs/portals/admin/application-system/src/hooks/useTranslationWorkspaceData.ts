@@ -17,6 +17,7 @@ export const useTranslationWorkspaceData = (typeId: string | undefined) => {
   const {
     customFields,
     previewApplicationData,
+    customFieldPropsByForm,
     loading: customFieldsLoading,
     error: customFieldsError,
   } = useTemplateCustomFields(typeId)
@@ -81,6 +82,7 @@ export const useTranslationWorkspaceData = (typeId: string | undefined) => {
     introspection,
     namespace,
     customFields,
+    customFieldPropsByForm,
     previewApplication,
     persistedByKey,
     hasDraftChanges,

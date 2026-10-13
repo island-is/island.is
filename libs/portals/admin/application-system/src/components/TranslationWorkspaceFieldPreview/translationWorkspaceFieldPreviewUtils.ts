@@ -1,6 +1,6 @@
 import { coreErrorMessages } from '@island.is/application/core'
 import { FieldTypes } from '@island.is/application/types'
-import type { CustomField } from '@island.is/application/types'
+import type { CustomField, RecordObject } from '@island.is/application/types'
 import type {
   PreviewFormatMessage,
   ResolvePreviewString,
@@ -37,6 +37,7 @@ export const inferTranslationWorkspaceShowFieldName = (
 
 export const buildMockCustomField = (
   screen: ScreenIntrospection,
+  props: RecordObject = {},
 ): CustomField => {
   return {
     id: screen.id,
@@ -44,7 +45,7 @@ export const buildMockCustomField = (
     component: screen.component ?? '',
     title: screen.title ?? '',
     children: undefined,
-    props: {},
+    props,
   }
 }
 
