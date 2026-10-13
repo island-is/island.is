@@ -11,6 +11,7 @@ query GetTemplateByTemplateId($templateId: String!, $locale: String!) {
       smsPayer
       smsDelivery
       priorityType
+      hnippCategory
     }
   }
 }
@@ -28,6 +29,7 @@ query GetTemplates($locale: String!) {
       smsPayer
       smsDelivery
       priorityType
+      hnippCategory
     }
   }
 }

@@ -39,6 +39,7 @@ import { Notification } from '../notification.model'
 import { NotificationsService } from '../notifications.service'
 import { ActorNotification } from '../actor-notification.model'
 import { UserNotificationSender } from '../user-notification-sender.model'
+import { NotificationCategory } from '../notification-category.model'
 import {
   isValidSenderId,
   mapToLocale,
@@ -133,6 +134,9 @@ export class NotificationsWorkerService {
 
     @InjectModel(UserNotificationSender)
     private readonly userNotificationSenderModel: typeof UserNotificationSender,
+
+    @InjectModel(NotificationCategory)
+    private readonly notificationCategoryModel: typeof NotificationCategory,
   ) {}
 
   // Stopgap: lets users ignore notifications that are neither urgent nor
@@ -448,6 +452,7 @@ export class NotificationsWorkerService {
       await this.recordNotificationSender(
         message.recipient,
         message.senderId,
+        message.templateId,
         messageId,
       )
     }
@@ -861,6 +866,7 @@ export class NotificationsWorkerService {
   private async recordNotificationSender(
     recipient: string,
     senderId: string | undefined,
+    templateId: string,
     messageId: string,
   ): Promise<void> {
     const normalizedSenderId = senderId ? normalizeKennitala(senderId) : ''
@@ -869,8 +875,24 @@ export class NotificationsWorkerService {
     }
 
     try {
+      const templateCategory =
+        await this.notificationsService.getTemplateCategory(templateId)
+
+      if (templateCategory) {
+        // Keep the latest label so renamed translations are picked up
+        await this.notificationCategoryModel.bulkCreate([templateCategory], {
+          updateOnDuplicate: ['label'],
+        })
+      }
+
       await this.userNotificationSenderModel.bulkCreate(
-        [{ recipient, senderId: normalizedSenderId }],
+        [
+          {
+            recipient,
+            senderId: normalizedSenderId,
+            category: templateCategory?.category ?? null,
+          },
+        ],
         { ignoreDuplicates: true },
       )
     } catch (error) {

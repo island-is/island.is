@@ -1,3 +1,4 @@
+import slugify from '@sindresorhus/slugify'
 import type { Locale } from '@island.is/shared/types'
 import { localeMap } from '@island.is/cms'
 
@@ -32,6 +33,24 @@ export const normalizeKennitala = (senderId: string): string =>
  */
 export const isValidSenderId = (normalizedSenderId: string): boolean =>
   /^\d{10}$/.test(normalizedSenderId)
+
+/** Category of notifications whose template has no HnippCategory */
+export const DEFAULT_CATEGORY = 'almennt'
+export const DEFAULT_CATEGORY_LABEL = { is: 'Almennt', en: 'General' }
+
+/**
+ * Slugifies an Icelandic HnippCategory label into a category key part,
+ * e.g. 'Heilbrigðismál & Æfingar' -> 'heilbrigdismal-og-aefingar'.
+ */
+export const toCategorySlug = (label: string): string =>
+  slugify(label, {
+    decamelize: false,
+    customReplacements: [
+      ['&', ' og '],
+      ['ö', 'o'],
+      ['Ö', 'o'],
+    ],
+  })
 
 export const extractLocaleField = (
   field: string | Record<string, string> | undefined | null,

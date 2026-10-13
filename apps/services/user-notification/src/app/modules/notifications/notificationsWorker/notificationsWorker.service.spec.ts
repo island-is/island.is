@@ -34,6 +34,7 @@ import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { Notification } from '../notification.model'
 import { ActorNotification } from '../actor-notification.model'
 import { UserNotificationSender } from '../user-notification-sender.model'
+import { NotificationCategory } from '../notification-category.model'
 import {
   NotificationDelivery,
   NotificationChannel,
@@ -122,6 +123,7 @@ describe('NotificationsWorkerService', () => {
   let smsService: SmsService
   let notificationDeliveryModel: typeof NotificationDelivery
   let userNotificationSenderModel: typeof UserNotificationSender
+  let notificationCategoryModel: typeof NotificationCategory
 
   beforeAll(async () => {
     app = await testServer({
@@ -155,6 +157,7 @@ describe('NotificationsWorkerService', () => {
     actorNotificationModel = app.get(getModelToken(ActorNotification))
     notificationDeliveryModel = app.get(getModelToken(NotificationDelivery))
     userNotificationSenderModel = app.get(getModelToken(UserNotificationSender))
+    notificationCategoryModel = app.get(getModelToken(NotificationCategory))
     notificationsService = app.get(NotificationsService)
     userProfileApi = app.get(V2UsersApi)
     nationalRegistryService = app.get(NationalRegistryV3ClientService)
@@ -1141,6 +1144,15 @@ describe('NotificationsWorkerService', () => {
     const otherSenderId = createNationalId('company')
     const dashedSenderId = `${senderId.slice(0, 6)}-${senderId.slice(6)}`
 
+    const mockTemplateCategory = (labels: { is?: string; en?: string }) =>
+      jest
+        .spyOn(notificationsService, 'getTemplate')
+        .mockImplementation(async (_templateId, locale) =>
+          getMockHnippTemplate({
+            hnippCategory: locale === 'en' ? labels.en : labels.is,
+          }),
+        )
+
     const addToQueueWithSender = async (
       recipient: string,
       senderId?: string,
@@ -1166,7 +1178,9 @@ describe('NotificationsWorkerService', () => {
       expect(senders[0]).toMatchObject({
         recipient: userWithNoDelegations.nationalId,
         senderId,
+        category: null,
       })
+      expect(await notificationCategoryModel.count()).toBe(0)
     })
 
     it('should record the same sender only once, also when its id is dashed', async () => {
@@ -1257,6 +1271,80 @@ describe('NotificationsWorkerService', () => {
       expect(senders[0]).toMatchObject({
         recipient: userWithDelegations.nationalId,
         senderId,
+      })
+    })
+
+    it('should record the slugified Icelandic category and its labels', async () => {
+      // Arrange
+      mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Health' })
+
+      // Act
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      // Assert
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0]).toMatchObject({
+        recipient: userWithNoDelegations.nationalId,
+        senderId,
+        category: 'heilbrigdismal',
+      })
+
+      const categories = await notificationCategoryModel.findAll()
+      expect(categories).toHaveLength(1)
+      expect(categories[0]).toMatchObject({
+        category: 'heilbrigdismal',
+        label: { is: 'Heilbrigðismál', en: 'Health' },
+      })
+    })
+
+    it('should record each category of a sender separately', async () => {
+      // Act
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+      mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Health' })
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      // Assert
+      const senders = await userNotificationSenderModel.findAll({
+        where: { recipient: userWithNoDelegations.nationalId },
+      })
+      expect(senders.map(({ category }) => category).sort()).toEqual(
+        ['heilbrigdismal', null].sort(),
+      )
+    })
+
+    it("should record an explicit 'Almennt' category as uncategorized", async () => {
+      // Arrange
+      mockTemplateCategory({ is: 'Almennt', en: 'General' })
+
+      // Act
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+      mockTemplateCategory({})
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      // Assert
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0].category).toBeNull()
+      expect(await notificationCategoryModel.count()).toBe(0)
+    })
+
+    it('should keep the latest label of a category', async () => {
+      // Arrange
+      mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Health' })
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      // Act
+      mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Healthcare' })
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      // Assert
+      const categories = await notificationCategoryModel.findAll()
+      expect(categories).toHaveLength(1)
+      expect(categories[0].label).toEqual({
+        is: 'Heilbrigðismál',
+        en: 'Healthcare',
       })
     })
 

@@ -50,4 +50,9 @@ export class HnippTemplate {
       'Whether the notification is informative or actionable. Recipients who only want actionable notifications do not receive push or email for other templates (including templates without a priority type) unless the notification is urgent. SMS with smsDelivery ALWAYS is still sent.',
   })
   priorityType?: HnippTemplatePriorityType
+
+  @ApiPropertyOptional({
+    example: 'Heilbrigðismál',
+  })
+  hnippCategory?: string
 }
