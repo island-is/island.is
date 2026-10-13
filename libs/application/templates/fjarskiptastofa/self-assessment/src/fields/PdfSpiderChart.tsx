@@ -107,9 +107,7 @@ export const PdfSpiderChart: FC<PdfSpiderChartProps> = ({
   }
 
   const polygonPoints = (r: number) =>
-    data
-      .map((_, index) => pointAt(index, r).map(round).join(','))
-      .join(' ')
+    data.map((_, index) => pointAt(index, r).map(round).join(',')).join(' ')
 
   const dataPoints = data.map((point, index) =>
     pointAt(index, valueRadius(point.value)),
@@ -191,8 +189,7 @@ export const PdfSpiderChart: FC<PdfSpiderChartProps> = ({
         const angle = angleFor(index)
         const cos = Math.cos(angle)
         const sin = Math.sin(angle)
-        const textAnchor =
-          cos > 0.3 ? 'start' : cos < -0.3 ? 'end' : 'middle'
+        const textAnchor = cos > 0.3 ? 'start' : cos < -0.3 ? 'end' : 'middle'
         const lines = wrapLabel(point.label, maxLineLength)
 
         // Anchor the label block so top labels sit above the axis end, bottom
