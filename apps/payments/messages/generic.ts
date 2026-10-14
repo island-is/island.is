@@ -138,9 +138,9 @@ export const debtError = defineMessages({
   closed: {
     id: 'payments:debtError.closed',
     defaultMessage:
-      'Ekki var hægt að ljúka greiðslunni þar sem skuldastaðan hefur breyst. Engin greiðsla var tekin eða hún hefur verið endurgreidd. Vinsamlegast byrjaðu aftur.',
+      'Ekki var hægt að ljúka greiðslunni þar sem skuldastaðan hefur breyst. Hafi greiðsla verið tekin verður hún endurgreidd. Vinsamlegast byrjaðu aftur.',
     description:
-      'The payment could not be completed because your debt status has changed. No payment was taken, or it has been refunded. Please start again.',
+      'The payment could not be completed because your debt status has changed. If a payment was taken, it will be refunded. Please start again.',
   },
   invalidTitle: {
     id: 'payments:debtError.invalidTitle',

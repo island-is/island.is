@@ -1544,8 +1544,10 @@ export class PaymentFlowService {
   /**
    * Finds paid debt flows whose payment is not registered with FJS yet, for the payment worker:
    * no `fjs_debt_payment` row or a pending one, and no attempt lately. Also card flows FJS
-   * rejected whose refund is still due, a refund that failed is retried until the fulfillment
-   * is gone. Rejected bank transfers wait for a manual refund and are left out.
+   * rejected whose refund is still due: a refund the worker started that failed is retried until
+   * the fulfillment is gone. A refund that failed while a payment saga rolled back is not, the
+   * rollback removed the fulfillment first, and the card is refunded by hand. Rejected bank
+   * transfers wait for a manual refund and are left out.
    *
    * @param cutoffTime - Only include flows whose fulfillment and last attempt are older than this
    */
