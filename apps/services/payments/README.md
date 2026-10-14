@@ -43,13 +43,13 @@ Response: `{ id, urls: { is, en } }`. Send the payer to `urls`. `id` is also the
 
 Errors (`detail` of the problem response, or the error code on the pay page):
 
-| Code                                    | Meaning                                                                                                                    |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `DebtPaymentInvalid`                    | FJS says the debts can not be paid (changed, already paid).                                                                |
-| `DebtPaymentMethodNotAllowed`           | FJS does not allow the chosen payment method for these debts.                                                              |
-| `DebtPaymentRejected`                   | FJS rejected the payment after the card was charged. The card is refunded.                                                 |
-| `DebtPaymentFlowClosed`                 | The flow was rejected by FJS earlier and can not be used again.                                                            |
-| `DebtPaymentRegisteredCannotBeRefunded` | Returned by `POST /v1/payments/refund` for a flow registered with FJS (or in `needs_reconciliation`), FJS has no reversal. |
+| Code                                    | Meaning                                                                                                                                                                                                            |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `DebtPaymentInvalid`                    | FJS says the debts can not be paid (changed, already paid).                                                                                                                                                        |
+| `DebtPaymentMethodNotAllowed`           | FJS does not allow the chosen payment method for these debts.                                                                                                                                                      |
+| `DebtPaymentRejected`                   | FJS rejected the payment after the card was charged. The card is refunded.                                                                                                                                         |
+| `DebtPaymentFlowClosed`                 | The flow was rejected by FJS earlier and can not be used again.                                                                                                                                                    |
+| `DebtPaymentRegisteredCannotBeRefunded` | Returned by `POST /v1/payments/refund` for a flow registered with FJS, in `needs_reconciliation`, or that may be registered (an earlier `payDebt` had an unknown outcome, or one is running). FJS has no reversal. |
 
 The debts are validated with FJS again right before every capture, so a flow can fail with `DebtPaymentInvalid` long after it was created. Flows do not expire.
 
@@ -66,6 +66,72 @@ Events are POSTed to `onUpdateUrl` (signed JWT in the `Authorization` header) as
 `eventMetadata.fjsProblem.type` is FJS's error code: `2` kennitala not found, `3` payId not found, `4` payId does not belong to the kennitala, `5` total does not match the debts, `10` bad payment date, `14` payInfo missing, `15` payInfo amount does not match the total. Code `6` (payFlowId already received) is handled as above, and code `12` (another payment for the debts is in progress) is not a rejection: the payment is left pending and the worker retries it.
 
 FJS registers the payment asynchronously (202 Accepted), so the payer's Fjármál status can lag behind `payment_finalized`. Treat 202 as final: failures after it are for FJS to resolve.
+
+### Settlement flow
+
+From validation to registration with FJS. `payDebt` runs inline once the money is captured: in the `SETTLE_DEBT` step of the card and Apple Pay sagas, and when a bank transfer settles. The payment worker retries what that left pending.
+
+```mermaid
+flowchart TD
+    V["validatePayment, right before capture"] -->|"400"| X1["DebtPaymentInvalid, no money taken"]
+    V -->|"method not in paymentOptions"| X2["DebtPaymentMethodNotAllowed"]
+    V -->|"valid"| C["Money captured: card, Apple Pay, or settled bank transfer"]
+    C --> P["payDebt inline, 15 s timeout"]
+
+    P -->|"202"| R1["registered: payment_completed + payment_finalized"]
+    P -->|"400, card"| RJ1["rejected: saga refunds the card, payment_failed, payer sees DebtPaymentRejected"]
+    P -->|"400, bank transfer"| RJ2["rejected: payment_completed, then payment_failed with needsManualRefund"]
+    P -->|"ambiguous, transient, or attempt claimed"| PE["pending: payment_completed only"]
+
+    PE --> W["Payment worker, fulfillment at least 1 min old"]
+    W --> FC{"Fulfillment still active?"}
+    FC -->|"no, refunded during the run"| SK["Skipped, not registered"]
+    FC -->|"yes"| P2["payDebt retry"]
+    P2 -->|"202, or code 6 after an ambiguous attempt"| R2["registered: payment_finalized"]
+    P2 -->|"400, no earlier ambiguous attempt"| RJ3["rejected: payment_failed, card refunded, bank transfer refunded manually"]
+    P2 -->|"400 after an ambiguous attempt, or unexplained code 6"| NR["needs_reconciliation: alert, no webhook, never refunded"]
+    P2 -->|"ambiguous or transient"| PE
+```
+
+The `fjs_debt_payment` row, one per flow. Only `pending` changes, the other states are final.
+
+```mermaid
+stateDiagram-v2
+    [*] --> pending: money captured, first payDebt attempt
+    pending --> pending: worker retries
+    pending --> registered: 202, or code 6 after an ambiguous attempt
+    pending --> rejected: 400 with no earlier ambiguous attempt
+    pending --> needs_reconciliation: 400 after an ambiguous attempt, or code 6 with none
+    registered --> [*]
+    rejected --> [*]
+    needs_reconciliation --> [*]
+
+    note left of pending
+        Stays pending after an ambiguous call
+        (timeout, 5xx, network), which sets
+        hadAmbiguousAttempt, or a transient
+        one (401/403, code 12), which does not.
+    end note
+
+    note right of rejected
+        Card and Apple Pay are refunded
+        (by the saga inline, or the worker).
+        Bank transfers are refunded manually.
+        The flow is closed (isClosed).
+    end note
+```
+
+`POST /v1/payments/refund` for a debt flow. The worker's own refunds of rejected payments skip the status check.
+
+```mermaid
+flowchart TD
+    RQ["POST /v1/payments/refund"] --> S{"fjs_debt_payment status"}
+    S -->|"registered or needs_reconciliation"| NO1["Refused: DebtPaymentRegisteredCannotBeRefunded"]
+    S -->|"pending, with hadAmbiguousAttempt or an attempt in the last 60 s"| NO2["Refused: DebtPaymentRegisteredCannotBeRefunded, warn log with debtRefundRefused"]
+    S -->|"no row, other pending, or rejected"| M{"Paid with"}
+    M -->|"card or Apple Pay"| OK["Card refund saga"]
+    M -->|"bank transfer"| NO3["Refused: PaymentFlowNotEligibleToBeRefunded"]
+```
 
 ### Rejected and closed flows
 
@@ -126,5 +192,6 @@ For **AlreadyCreatedCharge**: reconcile the flow/fulfillment with the existing F
 - The worker logs one info line per run when flows are skipped: `Skipping N payment flow(s) that exceeded the failure limit (5) and require manual intervention: <ids>`.
 - The worker logs one info line per run when flows are deferred: `Deferring N payment flow(s) that failed less than 60 minute(s) ago: <ids>`.
 - Each run ends with `Payment worker run complete — created: X, failed: Y, skipped (manual intervention): Z, deferred (retry delay): W`.
+- A refund of a debt payment that may already be registered with FJS is refused and logged as a warning with `debtRefundRefused: true`. Monitors count on that field.
 - The debt pass logs the same skip and defer lines for debt payment flows, and ends with `Debt payment run complete — settled: X, failed: Y, skipped (manual intervention): Z, deferred (retry delay): W`.
 - Optional: add metrics for flows processed, succeeded, failed, skipped, and deferred.
