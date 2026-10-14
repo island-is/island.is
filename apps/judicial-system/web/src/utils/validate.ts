@@ -237,7 +237,9 @@ export const isDefendantStepValidRC = (
       policeCaseNumbers.length > 0 &&
       (workingCase.defendants?.length ?? 0) > 0 &&
       !firstDefendantIsInvalid(workingCase) &&
-      isRequestSharingDecidedForAllDefenders(workingCase.defendants?.slice(0, 1)) &&
+      isRequestSharingDecidedForAllDefenders(
+        workingCase.defendants?.slice(0, 1),
+      ) &&
       areDefenderContactsValid(workingCase) &&
       validate([
         ...policeCaseNumbers.map(
