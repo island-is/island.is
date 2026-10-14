@@ -68,7 +68,10 @@ describe('FjarskiptastofaSelfAssessmentService', () => {
         currentUserLocale: 'is',
       } as never)
 
-      expect(client.isRegulated).toHaveBeenCalledWith(auth, ACCESS_WINDOW_OPEN[0])
+      expect(client.isRegulated).toHaveBeenCalledWith(
+        auth,
+        ACCESS_WINDOW_OPEN[0],
+      )
     })
 
     it.each(ACCESS_WINDOW_OPEN)(

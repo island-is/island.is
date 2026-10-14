@@ -20,10 +20,7 @@ import {
   SUBMIT_EXTERNAL_DATA_ID,
 } from './constants'
 import { m } from '../lib/messages'
-import {
-  AssessmentQuestionsData,
-  SelfAssessmentResult,
-} from './types'
+import { AssessmentQuestionsData, SelfAssessmentResult } from './types'
 
 const questionsData: AssessmentQuestionsData = {
   categories: [
@@ -183,9 +180,9 @@ describe('assessment utils', () => {
     })
 
     it('should return false when the remark is missing or blank', () => {
-      expect(
-        isQuestionAnswered({ answerValue: AssessmentAnswer.YES }),
-      ).toBe(false)
+      expect(isQuestionAnswered({ answerValue: AssessmentAnswer.YES })).toBe(
+        false,
+      )
       expect(
         isQuestionAnswered({
           answerValue: AssessmentAnswer.YES,
