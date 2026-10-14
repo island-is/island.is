@@ -126,9 +126,6 @@ describe('PasskeyCoreService', () => {
       } as any)
 
       expect(verification.verified).toBe(true)
-      expect(verifyAuthenticationResponse).toHaveBeenCalledWith(
-        expect.objectContaining({ requireUserVerification: true }),
-      )
     })
   })
 
@@ -251,6 +248,9 @@ describe('PasskeyCoreService', () => {
       } as any)
 
       expect(verification.verified).toBe(true)
+      expect(verifyAuthenticationResponse).toHaveBeenCalledWith(
+        expect.objectContaining({ requireUserVerification: true }),
+      )
     })
   })
 
