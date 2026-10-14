@@ -126,6 +126,11 @@ export const waitingForSpouse = (state: string) => {
   )
 }
 
+// SUBMITTED is only persisted after createApplication has delivered the
+// application to the municipality's backend.
+export const isSubmittedToMunicipality = (state: string) =>
+  state === ApplicationStates.SUBMITTED
+
 export const sortChildrenUnderAgeByAge = (
   children: ApplicantChildCustodyInformation[],
 ): ApplicantChildCustodyInformation[] => {

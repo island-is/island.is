@@ -43,7 +43,8 @@ import {
   fetchPersonalTaxReturnFromRsk,
   shouldFetchTaxDataFromRsk,
 } from './taxDataFromRsk'
-import { mapVeitaSettingsToMunicipalityModel } from './veitaMunicipalitySettings'
+import { fetchVeitaMunicipalitySettings } from './veitaMunicipalitySettings'
+import { serializeVeitaDirectTaxPayments } from './veitaDirectTaxPayments'
 import {
   CreateIslandisApplicationRequest,
   ForIslandisApi,
@@ -353,7 +354,7 @@ export class FinancialAidService extends BaseTemplateApiService {
           streetName: externalData.nationalRegistry.data.address?.streetAddress,
           postalCode: externalData.nationalRegistry.data.address?.postalCode,
           city: externalData.nationalRegistry.data.address?.locality,
-          directTaxPayments: [JSON.stringify(directTaxPayments())],
+          directTaxPayments: serializeVeitaDirectTaxPayments(externalData),
           applicationSystemId: id,
         },
         xTenantIdentifier: routing.veitaTenant,
@@ -429,25 +430,12 @@ export class FinancialAidService extends BaseTemplateApiService {
       : { backend: 'municipalities' }
 
     if (routing.backend === 'veita') {
-      const settings = await this.rvkApplicationsApiWithAuth(
-        auth,
-      ).getFinaidServiceSettingsForIslandis({
-        xTenantIdentifier: routing.veitaTenant,
-        xUserPermissions: 'financialaid:read',
-        municipalityCode: municipalityCode,
-      })
-
-      if (!settings?.data) {
-        this.logger.error('Veita returned no municipality settings', {
-          municipalityCode,
-        })
-        return null
-      }
-
-      return {
-        ...mapVeitaSettingsToMunicipalityModel(settings.data, municipalityCode),
-        ...routing,
-      }
+      const municipality = await fetchVeitaMunicipalitySettings(
+        this.rvkApplicationsApiWithAuth(auth),
+        this.logger,
+        { veitaTenant: routing.veitaTenant, municipalityCode },
+      )
+      return municipality ? { ...municipality, ...routing } : null
     }
 
     const municipality = await this.municipalityApiWithAuth(auth)

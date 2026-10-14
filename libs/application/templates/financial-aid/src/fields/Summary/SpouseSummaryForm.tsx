@@ -11,6 +11,10 @@ import DescriptionText from '../DescriptionText/DescriptionText'
 import DirectTaxPaymentsModal from '../DirectTaxPaymentsModal/DirectTaxPaymentModal'
 import { formatAddress, spouseFormItems } from '../../lib/formatters'
 import {
+  getVeitaSpouseFilesRoute,
+  isVeitaApplication,
+} from '../../lib/summaryRoutes'
+import {
   FormInfo,
   SummaryComment,
   UserInfo,
@@ -66,7 +70,7 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       )}
 
       <ContactInfo
-        route={Routes.SPOUSECONTACTINFO}
+        route={Routes.CONTACTINFOMULTIFIELD}
         email={answers?.spouseContactInfo?.email}
         phone={answers?.spouseContactInfo?.phone}
         goToScreen={goToScreen}
@@ -74,7 +78,9 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <Files
         route={
-          answers.spouseIncome === ApproveOptions.Yes
+          isVeitaApplication(application)
+            ? getVeitaSpouseFilesRoute(application)
+            : answers.spouseIncome === ApproveOptions.Yes
             ? Routes.SPOUSEINCOMEFILES
             : Routes.SPOUSETAXRETURNFILES
         }

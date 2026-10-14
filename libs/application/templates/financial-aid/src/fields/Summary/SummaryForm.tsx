@@ -37,6 +37,7 @@ import {
 
 import DirectTaxPaymentsModal from '../DirectTaxPaymentsModal/DirectTaxPaymentModal'
 import { findFamilyStatus } from '../../lib/utils'
+import { getVeitaFilesRoute, isVeitaApplication } from '../../lib/summaryRoutes'
 import ChildrenInfo from './ChildrenInfo'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
@@ -170,14 +171,18 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       />
 
       <ContactInfo
-        route={Routes.CONTACTINFO}
+        route={Routes.CONTACTINFOMULTIFIELD}
         email={answers?.contactInfo?.email}
         phone={answers?.contactInfo?.phone}
         goToScreen={goToScreen}
       />
 
       <Files
-        route={findFilesRouteFrom(answers.childrenFiles, answers.income)}
+        route={
+          isVeitaApplication(application)
+            ? getVeitaFilesRoute(application)
+            : findFilesRouteFrom(answers.childrenFiles, answers.income)
+        }
         goToScreen={goToScreen}
         personalTaxReturn={
           externalData.taxData?.data?.municipalitiesPersonalTaxReturn

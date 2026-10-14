@@ -14,15 +14,17 @@ const SpouseAlert = ({ showCopyUrl }: Props) => {
 
   return (
     <Box marginBottom={[4, 4, 5]}>
-      <AlertMessage
-        type="warning"
-        title={formatMessage(spouseAlert.title)}
-        message={
-          showCopyUrl
-            ? formatMessage(spouseAlert.messageCopyUrl)
-            : formatMessage(spouseAlert.message)
-        }
-      />
+      <Box paddingBottom={2} paddingTop={2}>
+        <AlertMessage
+          type="warning"
+          title={formatMessage(spouseAlert.title)}
+          message={
+            showCopyUrl
+              ? formatMessage(spouseAlert.messageCopyUrl)
+              : formatMessage(spouseAlert.message)
+          }
+        />
+      </Box>
       {showCopyUrl && (
         <Box marginTop={2}>
           <CopyUrl

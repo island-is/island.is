@@ -4,7 +4,14 @@ import {
   MunicipalityModel,
   MunicipalityModelChildrenAidEnum,
 } from '@island.is/clients/municipalities-financial-aid'
-import { ForIslandisFinaidSvcSettingsResponse } from '@island.is/clients/rvk-financial-aid'
+import {
+  ForIslandisApi,
+  ForIslandisFinaidSvcSettingsResponse,
+} from '@island.is/clients/rvk-financial-aid'
+import { FetchError } from '@island.is/clients/middlewares'
+import { messages } from '@island.is/application/templates/financial-aid'
+import type { Logger } from '@island.is/logging'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 const toAidModel = (
   municipalityId: string,
@@ -85,4 +92,50 @@ export const mapVeitaSettingsToMunicipalityModel = (
       },
     ),
   }
+}
+
+// A missing municipality (404 or empty data) becomes null, which routes the
+// applicant to MUNCIPALITYNOTREGISTERED. Other failures throw so the
+// prerequisites step can be retried.
+export const fetchVeitaMunicipalitySettings = async (
+  api: ForIslandisApi,
+  logger: Logger,
+  {
+    veitaTenant,
+    municipalityCode,
+  }: { veitaTenant: string; municipalityCode: string },
+): Promise<MunicipalityModel | null> => {
+  const context = { veitaTenant, municipalityCode }
+
+  const settings = await api
+    .getFinaidServiceSettingsForIslandis({
+      xTenantIdentifier: veitaTenant,
+      xUserPermissions: 'financialaid:read',
+      municipalityCode,
+    })
+    .catch((error: unknown) => {
+      if (error instanceof FetchError && error.status === 404) {
+        logger.error('Veita has no settings for municipality', context)
+        return null
+      }
+
+      logger.error('Error fetching Veita municipality settings', {
+        ...context,
+        error,
+      })
+      throw new TemplateApiError(
+        {
+          title: messages.serviceErrors.veita.title,
+          summary: messages.serviceErrors.veita.summary,
+        },
+        500,
+      )
+    })
+
+  if (!settings?.data) {
+    logger.error('Veita returned no municipality settings', context)
+    return null
+  }
+
+  return mapVeitaSettingsToMunicipalityModel(settings.data, municipalityCode)
 }

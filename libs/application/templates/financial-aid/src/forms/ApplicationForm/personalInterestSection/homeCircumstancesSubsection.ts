@@ -14,7 +14,7 @@ export const homeCircumstancesSubsection = buildSubSection({
   title: m.homeCircumstancesForm.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'homeCircumstancesMultiField',
+      id: Routes.HOMECIRCUMSTANCESMULTIFIELD,
       title: m.homeCircumstancesForm.general.pageTitle,
       children: [
         buildRadioField({

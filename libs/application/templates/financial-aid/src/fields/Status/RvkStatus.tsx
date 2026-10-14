@@ -8,7 +8,7 @@ import { RecordObject } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 
 import { FAFieldBaseProps } from '../../lib/types'
-import { hasSpouse, waitingForSpouse } from '../../lib/utils'
+import { isSubmittedToMunicipality, waitingForSpouse } from '../../lib/utils'
 import { rvkStatus } from '../../lib/messages'
 import DescriptionText from '../DescriptionText/DescriptionText'
 import { Estimation, MoreActions, SpouseAlert } from './index'
@@ -25,21 +25,22 @@ const RvkStatus = ({ application, field }: FAFieldBaseProps) => {
     getValueViaPath(field as unknown as RecordObject, 'props.isSpouse'),
   )
 
-  const isWaitingForSpouse =
-    !isSpouse &&
-    waitingForSpouse(application.state) &&
-    hasSpouse(application.answers, application.externalData)
+  const isWaitingForSpouse = !isSpouse && waitingForSpouse(application.state)
+
+  const isSubmitted = isSubmittedToMunicipality(application.state)
 
   return (
     <Box paddingBottom={5} className={styles.container}>
-      <Box marginBottom={[4, 4, 5]}>
-        <AlertMessage
-          type="success"
-          title={formatMessage(
-            isSpouse ? rvkStatus.spouseAlertTitle : rvkStatus.alertTitle,
-          )}
-        />
-      </Box>
+      {isSubmitted && (
+        <Box marginBottom={[4, 4, 5]}>
+          <AlertMessage
+            type="success"
+            title={formatMessage(
+              isSpouse ? rvkStatus.spouseAlertTitle : rvkStatus.alertTitle,
+            )}
+          />
+        </Box>
+      )}
 
       {isWaitingForSpouse && (
         <SpouseAlert
@@ -53,15 +54,17 @@ const RvkStatus = ({ application, field }: FAFieldBaseProps) => {
         </Box>
       )}
 
-      <Box marginBottom={[4, 4, 5]}>
-        <Text as="h3" variant="h3" marginBottom={[1, 1, 2]}>
-          {formatMessage(rvkStatus.nextStepsTitle)}
-        </Text>
-        <DescriptionText
-          text={rvkStatus.nextSteps}
-          format={{ nextMonth: getNextPeriod(lang).month }}
-        />
-      </Box>
+      {isSubmitted && (
+        <Box marginBottom={[4, 4, 5]}>
+          <Text as="h3" variant="h3" marginBottom={[1, 1, 2]}>
+            {formatMessage(rvkStatus.nextStepsTitle)}
+          </Text>
+          <DescriptionText
+            text={rvkStatus.nextSteps}
+            format={{ nextMonth: getNextPeriod(lang).month }}
+          />
+        </Box>
+      )}
 
       <MoreActions
         municipalityRulesPage={municipality.data?.rulesHomepage}
