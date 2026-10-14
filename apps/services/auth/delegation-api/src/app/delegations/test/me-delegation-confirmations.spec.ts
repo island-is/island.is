@@ -52,7 +52,6 @@ const grantorNationalId = createNationalId('person')
 const recipientNationalId = createNationalId('person')
 const secondRecipientNationalId = createNationalId('person')
 
-/** Stands in for the identity server. Each test decides what polling answers. */
 const ciba = {
   start: jest.fn(),
   poll: jest.fn(),
@@ -120,7 +119,6 @@ describe('MeDelegationConfirmationsController', () => {
       .spyOn(namesService, 'validateRecipientNotDeceased')
       .mockResolvedValue(faker.name.findName())
 
-    // Stub fire-and-forget indexing so stray queries don't outlive the suite.
     const delegationIndexService = app.get(DelegationsIndexService)
     jest.spyOn(delegationIndexService, 'indexDelegations').mockImplementation()
     jest
@@ -210,7 +208,6 @@ describe('MeDelegationConfirmationsController', () => {
   }
 
   afterEach(async () => {
-    // Some spies sit on shared mocks, so they must not outlive their test.
     jest.restoreAllMocks()
     await app?.cleanUp()
   })

@@ -156,7 +156,6 @@ module.exports = {
         transaction,
       })
 
-      // One pending confirmation per grantor/recipient/domain; a new save supersedes it.
       await queryInterface.addIndex('delegation_confirmation', {
         fields: ['from_national_id', 'to_national_id', 'domain_name'],
         name: 'delegation_confirmation_unique_pending',

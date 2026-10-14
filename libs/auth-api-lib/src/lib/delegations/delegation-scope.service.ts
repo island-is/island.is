@@ -87,7 +87,6 @@ export class DelegationScopeService {
     return []
   }
 
-  /** Last line of defence below every write path, so the rule can't be skipped by a new caller. */
   private async assertScopesMayBeGranted(
     delegationId: string,
     scopes: UpdateDelegationScopeDTO[],

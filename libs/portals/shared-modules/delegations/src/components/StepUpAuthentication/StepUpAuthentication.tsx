@@ -29,7 +29,6 @@ export interface StepUpStart {
 
 interface StepUpAuthenticationProps {
   stepUp: StepUpStart
-  /** Throws 'refused' when the server refused it; other errors are treated as transient. */
   check: () => Promise<StepUpStatus>
   onConfirmed: () => void
   onRetry: () => void
@@ -56,12 +55,18 @@ export const StepUpAuthentication = ({
   const pollTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const unmounted = useRef(false)
 
+  // In refs, so parent re-renders don't restart polling while a check is in flight.
+  const checkRef = useRef(check)
+  const onConfirmedRef = useRef(onConfirmed)
+  checkRef.current = check
+  onConfirmedRef.current = onConfirmed
+
   const poll = useCallback(() => {
     clearTimeout(pollTimer.current)
     pollTimer.current = setTimeout(async () => {
       let status: StepUpStatus | 'refused'
       try {
-        status = await check()
+        status = await checkRef.current()
       } catch (error) {
         status = error === 'refused' ? 'refused' : 'pending'
       }
@@ -75,13 +80,13 @@ export const StepUpAuthentication = ({
           poll()
           return
         case 'confirmed':
-          onConfirmed()
+          onConfirmedRef.current()
           return
         default:
           setState({ name: 'ended', notice: status })
       }
     }, stepUp.interval * 1000)
-  }, [check, onConfirmed, stepUp.interval])
+  }, [stepUp.interval])
 
   // Reset on mount too: StrictMode mounts twice, and a flag only ever set to true would ignore every answer.
   useEffect(() => {

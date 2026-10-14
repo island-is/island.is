@@ -7,7 +7,6 @@ interface GrantTypeOptions {
   description: string
 }
 
-/** Safe to run when the grant type already exists. */
 export const createGrantType =
   (options: GrantTypeOptions) => async (queryInterface: QueryInterface) => {
     await safeBulkInsert(

@@ -15,6 +15,5 @@ export interface ConfirmationContentSnapshot {
   scopes: ConfirmationScope[]
   requestedAt: string
   locale: string
-  /** Hashed too, so contentHash covers what the phone showed. */
   bindingMessage: string
 }

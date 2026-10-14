@@ -36,7 +36,6 @@ const schema = z.object({
   defaultValidityPeriodInDays: z.number().min(1),
   confirmationLifetimeInMinutes: z.number().min(1),
   confirmationRequiredAcr: z.string(),
-  // Fake login asserts acr "0", so local development needs this.
   confirmationAllowAnyAcrInDev: z.boolean(),
   confirmationCibaIssuerUrl: z.string(),
   confirmationCibaClientId: z.string(),

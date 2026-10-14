@@ -63,7 +63,6 @@ export class MeDelegationConfirmationsController {
     const { status, completedNow } =
       await this.delegationConfirmationService.getAuthenticationStatus(user, id)
 
-    // Only the poll that completes it audits and notifies, however often the client polls.
     for (const { confirmation: confirmed } of completedNow ?? []) {
       this.auditService.audit({
         auth: user,

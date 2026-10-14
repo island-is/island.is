@@ -2,7 +2,6 @@ import { createHash } from 'crypto'
 
 import type { ConfirmationContentSnapshot } from '../types/delegation-confirmation-content'
 
-/** Stored with each hash, so old rows stay verifiable if this changes. */
 export const CONTENT_HASH_ALG = 'sha256'
 
 type JsonValue =

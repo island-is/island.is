@@ -8,10 +8,8 @@ export type StepUpStatus =
   | 'expired'
 
 export interface CibaStartRequest {
-  /** The identity server authenticates the person behind this token. */
   userToken: string
   bindingMessage: string
-  /** Signed by the person's key (app) and echoed on the token, so the result can be tied to this content. */
   contextHash?: string
 }
 

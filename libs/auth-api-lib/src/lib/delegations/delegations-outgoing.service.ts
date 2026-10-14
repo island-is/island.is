@@ -266,7 +266,6 @@ export class DelegationsOutgoingService {
           rows.push(await this.writeForDomain(user, input, transaction))
         }
 
-        // Starts inside the save, so if it fails the save is undone.
         const confirmations = await this.delegationConfirmationService.group(
           rows.flatMap((row) =>
             row.pendingConfirmation ? [row.pendingConfirmation] : [],
@@ -483,14 +482,12 @@ export class DelegationsOutgoingService {
       return { grantable: requested }
     }
 
-    // Fails closed: without confirmation available, a marked scope can't be granted at all.
     if (!(await this.delegationConfirmationPolicy.isAvailable(user))) {
       throw new ForbiddenException(
         'Scopes that require confirmation cannot be granted right now.',
       )
     }
 
-    // The step-up uses the login method, and a card can't be used for it.
     if (isCardSession(user.amr)) {
       throw new ForbiddenException(
         'Scopes that require confirmation cannot be granted from a session logged in with an ID card.',
@@ -529,28 +526,32 @@ export class DelegationsOutgoingService {
     return new Map(scopes.map((scope) => [scope.name, scope.displayName]))
   }
 
-  /** Recipients are only told once held access actually exists. */
   async notifyConfirmed(
     user: User,
     confirmed: Array<{ delegationId: string; hadExistingScopes: boolean }>,
   ): Promise<void> {
-    const results = await Promise.all(
-      confirmed.map(async ({ delegationId, hadExistingScopes }) => {
-        const delegation = await this.findOneInternal(
-          user,
-          DelegationDirection.OUTGOING,
-          { id: delegationId },
-        )
-        return delegation ? { delegation, hadExistingScopes } : null
-      }),
-    )
+    // Called without awaiting, so a failure must be logged, not rejected.
+    try {
+      const results = await Promise.all(
+        confirmed.map(async ({ delegationId, hadExistingScopes }) => {
+          const delegation = await this.findOneInternal(
+            user,
+            DelegationDirection.OUTGOING,
+            { id: delegationId },
+          )
+          return delegation ? { delegation, hadExistingScopes } : null
+        }),
+      )
 
-    await this.notifyByRecipient(
-      user,
-      results.filter((result): result is NonNullable<typeof result> =>
-        Boolean(result),
-      ),
-    )
+      await this.notifyByRecipient(
+        user,
+        results.filter((result): result is NonNullable<typeof result> =>
+          Boolean(result),
+        ),
+      )
+    } catch (e) {
+      this.logger.error('Failed to notify confirmed delegations', e)
+    }
   }
 
   private async notifyByRecipient(
@@ -757,9 +758,7 @@ export class DelegationsOutgoingService {
 
       if (remainingScopes.length === 0 && !pendingConfirmationId) {
         // No scopes remain — delete the delegation row so it doesn't linger
-        // as an empty record that grants nothing. A delegation with a pending
-        // confirmation is kept: it is the envelope the held scopes attach to
-        // once the confirmation is redeemed.
+        // as an empty record that grants nothing.
         await this.delegationModel.destroy({
           where: { id: delegationId },
           transaction,

@@ -61,7 +61,6 @@ export class DelegationConfirmation extends Model<
   })
   fromNationalId!: string
 
-  /** Set for a company grant: the procuration holder, the only one who may confirm it. */
   @Column({
     type: DataType.STRING,
     allowNull: true,
@@ -155,7 +154,6 @@ export class DelegationConfirmation extends Model<
   })
   receiptIssuer!: string
 
-  /** Read from the snapshot, which is what contentHash covers. */
   get scopes(): NonAttribute<ConfirmationScope[]> {
     return this.contentSnapshot?.scopes ?? []
   }

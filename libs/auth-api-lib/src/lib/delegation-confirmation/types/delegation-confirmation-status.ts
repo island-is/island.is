@@ -1,6 +1,5 @@
 export enum DelegationConfirmationStatus {
   Pending = 'pending',
-  /** Evidence: never updated after this. */
   Confirmed = 'confirmed',
   Expired = 'expired',
   Rejected = 'rejected',

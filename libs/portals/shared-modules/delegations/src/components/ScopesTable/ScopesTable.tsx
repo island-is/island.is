@@ -50,7 +50,6 @@ export const ScopesTable = ({
   const scopes = scopesProp ?? selectedScopes ?? []
   const canGrantSensitiveScopes = useCanGrantSensitiveScopes()
 
-  // An already selected one can still be removed.
   const isLocked = (scope: AuthApiScope, isChecked: boolean) =>
     !isChecked && !canSelectScope(scope, canGrantSensitiveScopes)
   const selectableScopes = scopes.filter((s) =>

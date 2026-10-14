@@ -74,7 +74,6 @@ export interface CompletedConfirmation {
 export interface AuthenticationStatusResult {
   status: AuthenticationStatus
   confirmation: DelegationConfirmation
-  /** Set only on the poll that completed it, so callers audit and notify once. */
   completedNow?: CompletedConfirmation[]
 }
 
@@ -178,7 +177,6 @@ export class DelegationConfirmationService {
       : this.sequelize.transaction(run)
   }
 
-  /** One step-up confirms the group; each row's hash covers the shared phone message. */
   async group(
     confirmations: DelegationConfirmation[],
     transaction: Transaction,
@@ -267,7 +265,6 @@ export class DelegationConfirmationService {
     })
   }
 
-  /** A first grant that is never confirmed shouldn't leave an empty delegation behind. */
   private async removeEmptyDelegations(
     delegationIds: Array<string | null | undefined>,
     transaction?: Transaction,
@@ -329,7 +326,6 @@ export class DelegationConfirmationService {
     const started = await this.cibaClient.start({
       userToken: user.authorization,
       bindingMessage: confirmations[0].contentSnapshot.bindingMessage,
-      // Echoed on the token, so the approval can only complete this exact content.
       contextHash: hashConfirmationGroup(
         confirmations.map((confirmation) => confirmation.contentHash),
       ),
@@ -411,7 +407,6 @@ export class DelegationConfirmationService {
         return { status: 'timed_out', confirmation }
     }
 
-    // If part of the group was superseded since, the hash won't match and nothing is confirmed.
     const members = (await this.findPendingGroup(confirmation)).filter(
       (member) => member.authReqId === authReqId,
     )
@@ -573,7 +568,6 @@ export class DelegationConfirmationService {
       confirmation.actorNationalId ?? confirmation.fromNationalId
 
     if (claims.nationalId !== expectedNationalId) {
-      // The IDS already refuses this; checked again on the token itself.
       throw new ForbiddenException(
         'This confirmation can only be completed by the delegation grantor.',
       )

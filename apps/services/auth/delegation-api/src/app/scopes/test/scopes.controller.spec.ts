@@ -89,7 +89,6 @@ describe('ScopesController', () => {
       )
       expect(byName.get('s1')).toBe(false)
       expect(byName.get('s2')).toBe(true)
-      // Identity resources are not api scopes and can never be sensitive.
       expect(byName.get('i1')).toBe(false)
     })
 

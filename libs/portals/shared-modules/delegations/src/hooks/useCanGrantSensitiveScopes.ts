@@ -7,7 +7,6 @@ export type SensitiveScopesUnavailableReason =
   /** Card logins carry amr "sc", and a card can't be used for the step-up. */
   'card_session' | 'not_available'
 
-/** Mirrors the API, so the person isn't offered scopes it would refuse. */
 export const useSensitiveScopesAvailability = (): {
   canGrant: boolean
   reason?: SensitiveScopesUnavailableReason

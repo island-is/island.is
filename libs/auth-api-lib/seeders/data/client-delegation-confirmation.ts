@@ -1,6 +1,6 @@
 import { compose, createCibaGrantType, createClient } from './helpers'
 
-/** CIBA only, so it can do nothing else. The secret is created in the IDS admin. */
+/** The secret is created in the IDS admin. */
 export const up = compose(
   createCibaGrantType,
   createClient({

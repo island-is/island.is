@@ -5,7 +5,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { Logger } from '@island.is/logging'
 
-/** Only pending rows: confirmed ones are evidence and outlive the delegation. */
 export class CleanupDelegationConfirmationService {
   constructor(
     @Inject(LOGGER_PROVIDER)
