@@ -154,6 +154,29 @@ and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
 - Never put a `.spec.ts` under `pages/` in the web app - Next compiles it as a
   route and the production build fails.
 
+## Case loads are traced per guard
+
+Every guard that reads a case onto the request does so through
+`traceCaseLoad` in `case/guards/traceCaseLoad.ts`, which runs the load in a
+`judicial_system.case_load` span (underscore: the Datadog agent normalises a
+hyphen in a span name to one) named after the guard and tagged with
+`case_load.guard`, `case_load.include` and `case_load.route`. That is what
+lets Postgres volume and load time be attributed to the guard and include
+profile that caused them, route by route, in Datadog.
+
+The route is carried on the span on purpose. The span active inside a guard
+is Nest's `router.middleware` span, not the `express.request` entry span, and
+dd-trace keeps the entry span in a private map, so tags set from a guard never
+reach the route or status code. Query the `case_load` span and group by its
+own tags instead of expecting them on the request.
+
+A new guard that loads a case, or a guard moving to a narrower include
+profile, has to go through the helper and name its profile in
+`CaseLoadInclude`; `guards/test/caseLoadTracing.spec.ts` pins the existing
+ones. The api's `responseSize.plugin.ts` is the client-side counterpart: it
+tags the GraphQL route's middleware span with the operation name and the
+response bytes, which is enough for bytes per operation.
+
 ## Queue messages after commit
 
 A request queues messages for the message handler with
