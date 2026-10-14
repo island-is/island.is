@@ -97,9 +97,6 @@ const ScheduleCourtSession: FC<Props> = ({
         />
       </BlueBox>
       {bookedSessions.length > 0 && (
-        // Its own section under the form, the same distance below the blue
-        // box as the form's heading is below the box above it. The rows
-        // carry their own padding, so the heading keeps only a small gap.
         <Box component="section" marginTop={5}>
           <SectionHeading title="Bókuð þinghöld" marginBottom={1} />
           <Box component="ul" aria-label="Bókuð þinghöld">
