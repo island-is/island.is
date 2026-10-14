@@ -50,7 +50,7 @@ export interface PreferencesStore {
   pinTries: number
   setLocale(locale: Locale): void
   setAppearanceMode(appearanceMode: AppearanceMode): void
-  setUseBiometrics(useBiometrics: boolean): void
+  setUseBiometrics(useBiometrics: boolean): boolean
   dismiss(key: string, value?: boolean): void
   setWalletPassInfoAlertDismissed(key: string): void
   reset(): void
@@ -109,15 +109,17 @@ export const preferencesStore = create<PreferencesStore>()(
       setUseBiometrics(useBiometrics: boolean) {
         // Snapshot the enrolled biometrics so later changes can be detected.
         // If that fails, changes couldn't be detected, so stay off.
+        // Returns whether biometric unlock ended up on.
         if (useBiometrics) {
           if (!enrollBiometricBaseline()) {
             set({ useBiometrics: false })
-            return
+            return false
           }
         } else {
           clearBiometricBaseline()
         }
         set({ useBiometrics })
+        return useBiometrics
       },
       dismiss(key: string, value = true) {
         const now = get().dismissed

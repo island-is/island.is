@@ -87,10 +87,10 @@ export default function BiometricsScreen() {
       biometricsSecurityLevel: 'strong',
     }).then((result) => {
       if (result.success) {
-        preferencesStore.getState().setUseBiometrics(true)
+        const enabled = preferencesStore.getState().setUseBiometrics(true)
         preferencesStore.setState({
           hasOnboardedBiometrics: true,
-          hasAcceptedBiometrics: true,
+          hasAcceptedBiometrics: enabled,
         })
         nextOnboardingStep()
       }

@@ -511,8 +511,7 @@ export default function SettingsScreen() {
                         }),
                         biometricsSecurityLevel: 'strong',
                       }).then((result) => {
-                        if (result.success) {
-                          setUseBiometrics(true)
+                        if (result.success && setUseBiometrics(true)) {
                           preferencesStore.setState({
                             hasAcceptedBiometrics: true,
                           })
