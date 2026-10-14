@@ -4,6 +4,7 @@ import {
   extractArticleTitleDisplay,
   extractAuthority,
   formatDate,
+  hasAnyChange,
   hasSubtitle,
   updateAppendixWording,
 } from './formatAmendingUtils'
@@ -147,6 +148,25 @@ describe('allSameDay', () => {
         { date: new Date(2026, 0, 1) },
         { date: new Date(2026, 0, 2) },
       ]),
+    ).toBe(false)
+  })
+})
+
+describe('hasAnyChange', () => {
+  it('finds inserted or deleted text', () => {
+    expect(hasAnyChange('<p>a <ins class="diffins">b</ins></p>')).toBe(true)
+    expect(hasAnyChange('<p>a <del class="diffdel">b</del></p>')).toBe(true)
+  })
+
+  it('finds a changed element that has no text, such as a rule', () => {
+    expect(hasAnyChange('<p>a</p><hr data-diff="insert"><p>b</p>')).toBe(true)
+  })
+
+  it('ignores unchanged text, including section labels', () => {
+    expect(
+      hasAnyChange(
+        '<h3 class="article__title" data-diff-section="1. gr.">1. gr.</h3><p>a</p><hr>',
+      ),
     ).toBe(false)
   })
 })

@@ -220,7 +220,8 @@ export const EditChange = (props: EditChangeProps) => {
   const diffHtml = (previous: HTMLText, current: HTMLText) => {
     try {
       return getStructuredDiff(previous, current).diff
-    } catch {
+    } catch (error) {
+      console.error('getStructuredDiff failed, falling back to getDiff:', error)
       return getDiff(previous, current).diff
     }
   }
