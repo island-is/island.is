@@ -56,7 +56,7 @@ export type DebtSettlementOutcome =
   /** Not settled yet, the worker tries again. `reason` is for logs and worker events. */
   | {
       type: 'deferred'
-      reason: 'in_progress' | 'ambiguous' | 'transient'
+      reason: 'in_progress' | 'busy' | 'ambiguous' | 'transient'
     }
 
 /**
@@ -162,6 +162,18 @@ export class DebtSettlementService {
           { error: (outcome.error as Error)?.message },
         )
         return { type: 'deferred', reason: 'ambiguous' }
+
+      case 'busy':
+        // FJS is processing another payment for these debts and did not take this one.
+        await this.persistAfterPay(flow.id, {
+          hadAmbiguousAttempt: row.hadAmbiguousAttempt,
+          lastError: outcome.problem ?? {},
+        })
+        this.logger.warn(
+          `[${flow.id}] FJS is processing another payment for these debts, the worker will retry`,
+          { problemType: outcome.problem?.type },
+        )
+        return { type: 'deferred', reason: 'busy' }
 
       case 'transient':
         // FJS did not process the call, so the flag goes back to what earlier attempts left.

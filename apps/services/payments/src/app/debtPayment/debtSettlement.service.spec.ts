@@ -186,6 +186,21 @@ describe('DebtSettlementService', () => {
     })
   })
 
+  it('defers while FJS is busy with another payment, without flagging the attempt', async () => {
+    const problem = { type: '12', title: 'Payment in progress' }
+    pay.mockResolvedValue({ type: 'busy', problem })
+    const flow = await createFlow()
+
+    const outcome = await service.attempt(flow, payInfo)
+
+    expect(outcome).toEqual({ type: 'deferred', reason: 'busy' })
+    expect(await getRow(flow.id)).toMatchObject({
+      status: 'pending',
+      hadAmbiguousAttempt: false,
+      lastError: problem,
+    })
+  })
+
   it('defers a transient outcome without flagging the attempt', async () => {
     pay.mockResolvedValue({ type: 'transient', error: new Error('401') })
     const flow = await createFlow()

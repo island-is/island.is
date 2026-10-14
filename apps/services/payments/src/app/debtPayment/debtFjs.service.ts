@@ -183,7 +183,7 @@ export class DebtFjsService {
         if (
           hasErrorCode(http.problem, FjsDebtErrorCode.OtherPaymentInProgress)
         ) {
-          return { type: 'transient', error }
+          return { type: 'busy', problem: http.problem }
         }
         return { type: 'rejected', problem: http.problem }
       }

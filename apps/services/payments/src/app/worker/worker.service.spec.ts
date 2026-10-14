@@ -923,6 +923,18 @@ describe('WorkerService', () => {
       )
     })
 
+    it('does not count a failure while FJS is busy with another payment', async () => {
+      mockDebtSweep([createDebtCardFlow()])
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'deferred',
+        reason: 'busy',
+      })
+
+      await service.run()
+
+      expect(paymentWorkerEventModel.create).not.toHaveBeenCalled()
+    })
+
     it('records a failure when the settlement throws', async () => {
       mockDebtSweep([createDebtCardFlow()])
       debtSettlementService.attempt.mockRejectedValue(new Error('db down'))

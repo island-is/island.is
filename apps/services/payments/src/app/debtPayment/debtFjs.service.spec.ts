@@ -302,13 +302,13 @@ describe('DebtFjsService', () => {
       })
     })
 
-    it('is transient, not rejected, while another payment is in progress', async () => {
+    it('is busy, not rejected, while another payment is in progress', async () => {
       const error = await fjsFetchError(400, { error: otherPaymentInProgress })
       financeClient.payDebt.mockRejectedValue(error)
 
       await expect(service.pay(payInput)).resolves.toEqual({
-        type: 'transient',
-        error,
+        type: 'busy',
+        problem: otherPaymentInProgress,
       })
     })
 

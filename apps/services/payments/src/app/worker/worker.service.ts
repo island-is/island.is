@@ -436,8 +436,9 @@ export class WorkerService {
         return false
 
       case 'deferred':
-        // Another attempt is running, or FJS is unreachable: like network errors on charges these
-        // are not counted as failures, the next run tries again.
+        // Another attempt is running, FJS is busy with another payment for the debts, or FJS is
+        // unreachable: like network errors on charges these are not counted as failures, the next
+        // run tries again.
         if (outcome.reason === 'transient') {
           // FJS refused our credentials, it did not look at the payment.
           await this.recordWorkerEvent(
