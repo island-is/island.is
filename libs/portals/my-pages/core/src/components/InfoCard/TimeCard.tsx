@@ -71,7 +71,7 @@ export const TimeCard = ({
               icon="arrowForward"
               type="outline"
               color="blue400"
-              size={isMobile ? 'small' : 'medium'}
+              size="medium"
             />
           )}
         </Box>

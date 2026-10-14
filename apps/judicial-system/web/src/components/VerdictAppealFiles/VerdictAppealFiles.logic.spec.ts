@@ -1,5 +1,5 @@
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CaseFile,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -13,10 +13,26 @@ import {
 import { mockUser } from '@island.is/judicial-system-web/src/utils/mocks'
 
 import {
+  canShowIssueAppealSummons,
+  formatAppealSummonsFileName,
+  getAppealAppointmentLetters,
+  getAppealSummonsMenuItems,
   getVerdictAppealFileGroups,
   hasStandingVerdictAppeal,
   showsAppealSummonses,
 } from './VerdictAppealFiles.logic'
+
+describe('formatAppealSummonsFileName', () => {
+  it('appends the created date to the file name', () => {
+    expect(
+      formatAppealSummonsFileName({ created: '2026-10-07T12:00:00.000Z' }),
+    ).toBe('Áfrýjunarstefna 07.10.2026.pdf')
+  })
+
+  it('falls back when created is missing', () => {
+    expect(formatAppealSummonsFileName({})).toBe('Áfrýjunarstefna.pdf')
+  })
+})
 
 describe('getVerdictAppealFileGroups', () => {
   const defenderNationalId = '1111111111'
@@ -33,7 +49,7 @@ describe('getVerdictAppealFileGroups', () => {
     created: string,
   ): CaseFile => ({ id, defendantId, category, created, name: `${id}.pdf` })
 
-  const theCase = (caseFiles: CaseFile[]): Case =>
+  const theCase = (caseFiles: CaseFile[]): WorkingCase =>
     ({
       id: 'case_id',
       type: CaseType.INDICTMENT,
@@ -52,7 +68,7 @@ describe('getVerdictAppealFileGroups', () => {
         },
       ],
       caseFiles,
-    } as Case)
+    } as WorkingCase)
 
   it('should return nothing when no declaration has been filed', () => {
     expect(
@@ -231,7 +247,7 @@ describe('showsAppealSummonses', () => {
       appealType: AppealCaseType.VERDICT,
       appealState: AppealCaseState.APPEALED,
     },
-  } as Case
+  } as WorkingCase
 
   it('shows the summonses to the public prosecution office on a verdict appeal', () => {
     expect(
@@ -245,7 +261,7 @@ describe('showsAppealSummonses', () => {
   it('shows nothing before the verdict is appealed', () => {
     expect(
       showsAppealSummonses(
-        { verdictAppealCase: null } as Case,
+        { verdictAppealCase: null } as WorkingCase,
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
       ),
     ).toBe(false)
@@ -260,7 +276,7 @@ describe('showsAppealSummonses', () => {
             appealType: AppealCaseType.VERDICT,
             appealState: AppealCaseState.WITHDRAWN,
           },
-        } as Case,
+        } as WorkingCase,
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
       ),
     ).toBe(false)
@@ -274,5 +290,248 @@ describe('showsAppealSummonses', () => {
     UserRole.COURT_OF_APPEALS_JUDGE,
   ])('shows nothing to %s', (role) => {
     expect(showsAppealSummonses(appealed, mockUser(role))).toBe(false)
+  })
+})
+
+describe('canShowIssueAppealSummons', () => {
+  it('offers the button to public prosecution office staff on a verdict appeal', () => {
+    expect(
+      canShowIssueAppealSummons(
+        {
+          verdictAppealCase: {
+            id: 'verdict_appeal_id',
+            appealType: AppealCaseType.VERDICT,
+            appealState: AppealCaseState.APPEALED,
+          },
+        } as WorkingCase,
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+      ),
+    ).toBe(true)
+  })
+
+  it('hides the button when the verdict appeal has been withdrawn', () => {
+    expect(
+      canShowIssueAppealSummons(
+        {
+          verdictAppealCase: {
+            id: 'verdict_appeal_id',
+            appealType: AppealCaseType.VERDICT,
+            appealState: AppealCaseState.WITHDRAWN,
+          },
+        } as WorkingCase,
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+      ),
+    ).toBe(false)
+  })
+
+  it.each([UserRole.DEFENDER, UserRole.COURT_OF_APPEALS_JUDGE])(
+    'hides the button from %s',
+    (role) => {
+      expect(
+        canShowIssueAppealSummons(
+          {
+            verdictAppealCase: {
+              id: 'verdict_appeal_id',
+              appealType: AppealCaseType.VERDICT,
+              appealState: AppealCaseState.APPEALED,
+            },
+          } as WorkingCase,
+          mockUser(role),
+        ),
+      ).toBe(false)
+    },
+  )
+})
+
+describe('getAppealSummonsMenuItems', () => {
+  it('offers edit, open and delete on a draft for staff', () => {
+    expect(
+      getAppealSummonsMenuItems(
+        {},
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+        jest.fn(),
+        jest.fn(),
+        jest.fn(),
+      ).map((item) => item.title),
+    ).toEqual(['Breyta', 'Opna í nýjum flipa', 'Eyða'])
+  })
+
+  it('hides edit and delete once the summons has been sent to the court of appeals', () => {
+    expect(
+      getAppealSummonsMenuItems(
+        { sentToCourtOfAppealsDate: '2026-06-10T10:00:00.000Z' },
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+        jest.fn(),
+        jest.fn(),
+        jest.fn(),
+      ).map((item) => item.title),
+    ).toEqual(['Opna í nýjum flipa'])
+  })
+})
+
+describe('getAppealAppointmentLetters', () => {
+  const appealedCase = (fields: Partial<WorkingCase> = {}): WorkingCase =>
+    ({
+      id: 'case_id',
+      type: CaseType.INDICTMENT,
+      verdictAppealCase: {
+        id: 'verdict_appeal_id',
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.RECEIVED,
+      },
+      defendants: [
+        {
+          id: 'defendant_id',
+          name: 'Gervimaður Jónsson',
+          isAppealDefenderConfirmed: true,
+          appealDefenderName: 'Þórður Már Jónsson',
+        },
+      ],
+      civilClaimants: [],
+      ...fields,
+    } as WorkingCase)
+
+  const coaUser = mockUser(UserRole.COURT_OF_APPEALS_REGISTRAR)
+
+  it('offers a letter for each confirmed advocate', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          civilClaimants: [
+            {
+              id: 'claimant_id',
+              isAppealSpokespersonConfirmed: true,
+              appealSpokespersonName: 'Brynjar Sveinsson',
+            },
+          ],
+        } as Partial<WorkingCase>),
+        coaUser,
+      ),
+    ).toEqual([
+      {
+        key: 'defendant-defendant_id',
+        fileName: 'Skipunarbréf Þórður Már Jónsson.pdf',
+        buttonLabel: 'Skipunarbréf Þórður Már Jónsson - PDF',
+        elementId: [
+          'defendant',
+          'defendant_id',
+          'Skipunarbréf Þórður Már Jónsson.pdf',
+        ],
+      },
+      {
+        key: 'civilClaimant-claimant_id',
+        fileName: 'Skipunarbréf Brynjar Sveinsson.pdf',
+        buttonLabel: 'Skipunarbréf Brynjar Sveinsson - PDF',
+        elementId: [
+          'civilClaimant',
+          'claimant_id',
+          'Skipunarbréf Brynjar Sveinsson.pdf',
+        ],
+      },
+    ])
+  })
+
+  it('offers nothing for an advocate the court has not confirmed', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          defendants: [
+            {
+              id: 'defendant_id',
+              name: 'Gervimaður Jónsson',
+              isAppealDefenderConfirmed: false,
+              appealDefenderName: 'Þórður Már Jónsson',
+            },
+          ],
+        } as Partial<WorkingCase>),
+        coaUser,
+      ),
+    ).toEqual([])
+  })
+
+  // "Ákærði óskar ekki eftir verjanda": the screen confirms the answer while
+  // clearing the name, so confirmed alone does not mean somebody was appointed.
+  it('offers nothing for a defendant who waived a defender', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          defendants: [
+            {
+              id: 'defendant_id',
+              name: 'Gervimaður Jónsson',
+              isAppealDefenderConfirmed: true,
+              isAppealDefenderWaived: true,
+            },
+          ],
+        } as Partial<WorkingCase>),
+        coaUser,
+      ),
+    ).toEqual([])
+  })
+
+  it('offers nothing for a spokesperson the court has not confirmed', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          defendants: [],
+          civilClaimants: [
+            {
+              id: 'claimant_id',
+              isAppealSpokespersonConfirmed: false,
+              appealSpokespersonName: 'Brynjar Sveinsson',
+            },
+          ],
+        } as Partial<WorkingCase>),
+        coaUser,
+      ),
+    ).toEqual([])
+  })
+
+  // A réttargæslumaður is appointed by the court; a lögmaður is hired by the
+  // claimant, and the court does not appoint what it did not choose.
+  it('offers nothing for a lawyer the claimant engaged', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          defendants: [],
+          civilClaimants: [
+            {
+              id: 'claimant_id',
+              isAppealSpokespersonConfirmed: true,
+              appealSpokespersonIsLawyer: true,
+              appealSpokespersonName: 'Brynjar Sveinsson',
+            },
+          ],
+        } as Partial<WorkingCase>),
+        coaUser,
+      ),
+    ).toEqual([])
+  })
+
+  it('offers nothing once the appeal is withdrawn', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          verdictAppealCase: {
+            id: 'verdict_appeal_id',
+            appealType: AppealCaseType.VERDICT,
+            appealState: AppealCaseState.WITHDRAWN,
+          },
+        } as Partial<WorkingCase>),
+        coaUser,
+      ),
+    ).toEqual([])
+  })
+
+  // The court of appeals writes the letter and sends it; the advocate it
+  // appoints is told by e-mail, and nobody else is party to the appointment.
+  it.each([
+    UserRole.DEFENDER,
+    UserRole.PROSECUTOR,
+    UserRole.PUBLIC_PROSECUTOR_STAFF,
+  ])('offers nothing to %s', (role) => {
+    expect(getAppealAppointmentLetters(appealedCase(), mockUser(role))).toEqual(
+      [],
+    )
   })
 })

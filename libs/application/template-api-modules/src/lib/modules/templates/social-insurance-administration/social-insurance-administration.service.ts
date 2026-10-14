@@ -22,6 +22,7 @@ import { Application, ApplicationTypes } from '@island.is/application/types'
 import {
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
+  SocialInsuranceAdministrationGeneralApplicationService,
   type TrWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument as Attachment,
   type ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   type ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
@@ -64,6 +65,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
+    private siaGeneralApplicationService: SocialInsuranceAdministrationGeneralApplicationService,
     private siaOldAgePensionServiceV2: SocialInsuranceAdministrationOldAgePensionService,
     private siaMedicalRehabServiceV2: SocialInsuranceAdministrationMedicalAndRehabilitationService,
     @Inject(sharedModuleConfig.KEY)
@@ -440,11 +442,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       const householdSupplementDTO =
         transformApplicationToHouseholdSupplementDTO(application, attachments)
 
-      const response = await this.siaClientService.sendApplication(
-        auth,
-        householdSupplementDTO,
-        application.typeId.toLowerCase(),
-      )
+      const response =
+        await this.siaGeneralApplicationService.sendApplicationV2(
+          auth,
+          householdSupplementDTO,
+          application.typeId.toLowerCase(),
+        )
 
       return response
     }
@@ -471,11 +474,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       const additionalSupportForTheElderlyDTO =
         transformApplicationToAdditionalSupportForTheElderlyDTO(application)
 
-      const response = await this.siaClientService.sendApplication(
-        auth,
-        additionalSupportForTheElderlyDTO,
-        application.typeId.toLowerCase(),
-      )
+      const response =
+        await this.siaGeneralApplicationService.sendApplicationV2(
+          auth,
+          additionalSupportForTheElderlyDTO,
+          application.typeId.toLowerCase(),
+        )
       return response
     }
 

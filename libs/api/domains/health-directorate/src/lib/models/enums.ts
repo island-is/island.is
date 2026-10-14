@@ -123,6 +123,15 @@ registerEnumType(AppointmentLinkTypeEnum, {
   name: 'HealthDirectorateAppointmentLinkType',
 })
 
+export enum AppointmentsOrderEnum {
+  ASC = 'asc',
+  DESC = 'desc',
+}
+
+registerEnumType(AppointmentsOrderEnum, {
+  name: 'HealthDirectorateAppointmentsOrder',
+})
+
 export enum WaitlistStatusTagColorEnum {
   blue = 'blue',
   purple = 'purple',
