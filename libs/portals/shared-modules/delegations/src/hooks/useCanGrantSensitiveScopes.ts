@@ -4,23 +4,30 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import type { AuthApiScope } from '@island.is/api/schema'
 
 export type SensitiveScopesUnavailableReason =
-  /** Card logins carry amr "sc", and a card can't be used for the step-up. */
+  /** A card can't be used for the step-up. */
   'card_session' | 'not_available'
+
+// Same rule as isCardSession in @island.is/auth/step-up, which can't be bundled here.
+const CARD_IDPS = ['audkenni_card', 'audkenni_newcard', 'audkenni_oldcard']
 
 export const useSensitiveScopesAvailability = (): {
   canGrant: boolean
   reason?: SensitiveScopesUnavailableReason
 } => {
   const userInfo = useUserInfo()
-  const amr = (userInfo?.profile as { amr?: string | string[] } | undefined)
-    ?.amr
-  const values = Array.isArray(amr) ? amr : amr ? [amr] : []
+  const profile = userInfo?.profile as
+    | { idp?: string; acr?: string }
+    | undefined
+  const isCardSession =
+    !!profile?.idp &&
+    CARD_IDPS.includes(profile.idp) &&
+    profile.acr !== 'islandis-passkey'
   const { value: available, loading } = useFeatureFlag(
     Features.isDelegationConfirmationEnabled,
     false,
   )
 
-  if (values.includes('sc')) {
+  if (isCardSession) {
     return { canGrant: false, reason: 'card_session' }
   }
   if (loading) {

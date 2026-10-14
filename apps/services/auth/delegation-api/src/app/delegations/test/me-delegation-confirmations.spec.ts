@@ -362,7 +362,7 @@ describe('MeDelegationConfirmationsController', () => {
     it('refuses sensitive scopes from a session logged in with an ID card', async () => {
       // Arrange
       await app.cleanUp()
-      await setup({ amr: ['hwk', 'sc', 'pin'] })
+      await setup({ idp: 'audkenni_card' })
 
       // Act
       const res = await grant([ORDINARY_SCOPE, SENSITIVE_SCOPE])
@@ -377,7 +377,7 @@ describe('MeDelegationConfirmationsController', () => {
     it('still grants ordinary scopes from a card session', async () => {
       // Arrange
       await app.cleanUp()
-      await setup({ amr: ['hwk', 'sc', 'pin'] })
+      await setup({ idp: 'audkenni_card' })
 
       // Act
       const res = await grant([ORDINARY_SCOPE])

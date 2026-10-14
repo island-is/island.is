@@ -23,7 +23,7 @@ export interface Auth {
   audkenniSimNumber?: string
   delegationProvider?: AuthDelegationProvider
   acr?: string
-  amr?: string[]
+  idp?: string
   /** Preserved across an identity switch, so not on its own proof of a fresh authentication. */
   authTime?: Date
 }

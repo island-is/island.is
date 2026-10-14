@@ -23,7 +23,7 @@ interface UserOptions {
   audkenniSimNumber?: string
   delegationProvider?: AuthDelegationProvider
   acr?: string
-  amr?: string[]
+  idp?: string
   authTime?: Date
   sub?: string
   sid?: string
@@ -53,7 +53,7 @@ export const createCurrentUser = (user: UserOptions = {}): User => {
     audkenniSimNumber: user.audkenniSimNumber,
     delegationProvider: user.delegationProvider,
     acr: user.acr,
-    amr: user.amr,
+    idp: user.idp,
     authTime: user.authTime,
     sub: user.sub,
     sid: user.sid,

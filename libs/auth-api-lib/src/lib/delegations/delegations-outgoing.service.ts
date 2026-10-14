@@ -488,7 +488,7 @@ export class DelegationsOutgoingService {
       )
     }
 
-    if (isCardSession(user.amr)) {
+    if (isCardSession(user)) {
       throw new ForbiddenException(
         'Scopes that require confirmation cannot be granted from a session logged in with an ID card.',
       )

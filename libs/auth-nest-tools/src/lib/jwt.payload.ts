@@ -24,6 +24,6 @@ export interface JwtPayload {
   audkenni_sim_number?: string
   client_delegation_provider?: AuthDelegationProvider
   acr?: string
-  amr?: string | string[]
+  idp?: string
   auth_time?: number
 }

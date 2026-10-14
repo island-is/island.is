@@ -122,7 +122,7 @@ describe('JwtStrategy#validate', () => {
     const payload: JwtPayload = {
       ...fakePayload,
       acr: 'eidas-loa-high',
-      amr: ['hwk', 'pin'],
+      idp: 'audkenni_sim',
       auth_time: authTime,
     }
 
@@ -131,22 +131,8 @@ describe('JwtStrategy#validate', () => {
 
     // Assert
     expect(user.acr).toEqual('eidas-loa-high')
-    expect(user.amr).toEqual(['hwk', 'pin'])
+    expect(user.idp).toEqual('audkenni_sim')
     expect(user.authTime).toEqual(new Date(authTime * 1000))
-  })
-
-  it('supports amr as a space separated string', async () => {
-    // Arrange
-    const payload: JwtPayload = {
-      ...fakePayload,
-      amr: 'hwk pin',
-    }
-
-    // Act
-    const user = await jwtStrategy.validate(fakeRequest, payload)
-
-    // Assert
-    expect(user.amr).toEqual(['hwk', 'pin'])
   })
 
   it('leaves the authentication event claims undefined when absent', async () => {
@@ -155,7 +141,7 @@ describe('JwtStrategy#validate', () => {
 
     // Assert
     expect(user.acr).toBeUndefined()
-    expect(user.amr).toBeUndefined()
+    expect(user.idp).toBeUndefined()
     expect(user.authTime).toBeUndefined()
   })
 

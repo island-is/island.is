@@ -8,7 +8,7 @@ import {
   StepUpTokenRejectedError,
   StepUpUnavailableError,
 } from './ciba.client'
-import { isCardSession } from './types'
+import { isCardSession, sessionLoginMethod } from './types'
 
 const { privateKey, publicKey } = generateKeyPairSync('rsa', {
   modulusLength: 2048,
@@ -56,14 +56,26 @@ const respond = (status: number, json: Record<string, unknown>) =>
 const sentForm = (fetchMock: jest.SpyInstance) =>
   new URLSearchParams(String(fetchMock.mock.calls[0][1].body))
 
-describe('isCardSession', () => {
+describe('sessionLoginMethod', () => {
   it.each([
-    [['hwk', 'sc', 'pin'], true],
-    [['hwk', 'pin'], false],
-    [['swk', 'pin'], false],
-    [undefined, false],
-  ])('%j → %s', (amr, expected) => {
-    expect(isCardSession(amr)).toBe(expected)
+    [{ idp: 'audkenni_app' }, 'app'],
+    [{ idp: 'audkenni_sim' }, 'sim'],
+    [{ idp: 'audkenni_devicelink' }, 'devicelink'],
+    [{ idp: 'audkenni_card' }, 'card'],
+    [{ idp: 'audkenni_newcard' }, 'card'],
+    [{ idp: 'audkenni_sim', acr: 'islandis-passkey' }, 'passkey'],
+    [{ idp: 'gervimadur' }, undefined],
+    [{}, undefined],
+  ])('%j → %s', (session, expected) => {
+    expect(sessionLoginMethod(session)).toBe(expected)
+  })
+
+  it('only treats card logins as card sessions', () => {
+    expect(isCardSession({ idp: 'audkenni_card' })).toBe(true)
+    expect(isCardSession({ idp: 'audkenni_sim' })).toBe(false)
+    expect(
+      isCardSession({ idp: 'audkenni_card', acr: 'islandis-passkey' }),
+    ).toBe(false)
   })
 })
 

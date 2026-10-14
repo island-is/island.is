@@ -45,13 +45,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return scopes
   }
 
-  private parseAmr(amr: undefined | string | string[]): string[] | undefined {
-    if (amr === undefined) {
-      return undefined
-    }
-    return typeof amr === 'string' ? amr.split(' ') : amr
-  }
-
   async validate(request: Request, payload: JwtPayload): Promise<Auth> {
     const actor = payload.actor
 
@@ -83,7 +76,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       audkenniSimNumber: payload.audkenni_sim_number,
       delegationProvider: payload.client_delegation_provider,
       acr: payload.acr,
-      amr: this.parseAmr(payload.amr),
+      idp: payload.idp,
       authTime: payload.auth_time
         ? new Date(payload.auth_time * 1000)
         : undefined,
