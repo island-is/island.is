@@ -3,8 +3,9 @@ import { RequestSharedWithDefender } from '@island.is/judicial-system-web/src/gr
 import {
   anyDefendantHasDefender,
   buildCaseDefenderMirrorUpdate,
+  getDefendantRequestSharingUpdate,
   getRequestCaseDefenderNames,
-  shouldClearRequestSharedWithDefender,
+  isRequestSharingDecidedForAllDefenders,
 } from './RequestCaseDefenderInfo.logic'
 
 describe('RequestCaseDefenderInfo.logic', () => {
@@ -68,60 +69,92 @@ describe('RequestCaseDefenderInfo.logic', () => {
     })
   })
 
-  describe('shouldClearRequestSharedWithDefender', () => {
-    const defendants = [
-      { id: 'a', defenderName: 'Lögmaður A' },
-      { id: 'b', defenderName: 'Lögmaður B' },
-    ]
+  describe('isRequestSharingDecidedForAllDefenders', () => {
+    test('returns true when defendants are undefined', () => {
+      expect(isRequestSharingDecidedForAllDefenders(undefined)).toBe(true)
+    })
 
-    test('returns false when the next defender name is set', () => {
+    test('ignores defendants without a defender', () => {
       expect(
-        shouldClearRequestSharedWithDefender({
-          defendants,
-          editedDefendantId: 'a',
-          nextDefenderName: 'Nýr lögmaður',
-        }),
+        isRequestSharingDecidedForAllDefenders([
+          { id: 'a' },
+          { id: 'b', defenderName: '' },
+        ]),
+      ).toBe(true)
+    })
+
+    test('returns false when a defendant with a defender has no decision', () => {
+      expect(
+        isRequestSharingDecidedForAllDefenders([
+          {
+            id: 'a',
+            defenderName: 'Lögmaður A',
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          },
+          { id: 'b', defenderName: 'Lögmaður B' },
+        ]),
       ).toBe(false)
     })
 
-    test('returns false when another defendant still has a defender', () => {
+    test('returns true when every defendant with a defender has a decision', () => {
       expect(
-        shouldClearRequestSharedWithDefender({
-          defendants,
-          editedDefendantId: 'a',
+        isRequestSharingDecidedForAllDefenders([
+          {
+            id: 'a',
+            defenderName: 'Lögmaður A',
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          },
+          { id: 'b' },
+          {
+            id: 'c',
+            defenderName: 'Lögmaður C',
+            requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+          },
+        ]),
+      ).toBe(true)
+    })
+  })
+
+  describe('getDefendantRequestSharingUpdate', () => {
+    test('leaves sharing alone when a prosecutor sets a defender', () => {
+      expect(
+        getDefendantRequestSharingUpdate({
+          isCourtUser: false,
+          nextDefenderName: 'Lögmaður',
+        }),
+      ).toEqual({})
+    })
+
+    test('sets NOT_SHARED when a court user sets a defender', () => {
+      expect(
+        getDefendantRequestSharingUpdate({
+          isCourtUser: true,
+          nextDefenderName: 'Lögmaður',
+        }),
+      ).toEqual({
+        requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+      })
+    })
+
+    test.each([null, '', undefined])(
+      'clears sharing when the defender is removed (%p)',
+      (nextDefenderName) => {
+        expect(
+          getDefendantRequestSharingUpdate({
+            isCourtUser: false,
+            nextDefenderName,
+          }),
+        ).toEqual({ requestSharedWithDefender: null })
+      },
+    )
+
+    test('clearing wins over NOT_SHARED for a court user', () => {
+      expect(
+        getDefendantRequestSharingUpdate({
+          isCourtUser: true,
           nextDefenderName: null,
         }),
-      ).toBe(false)
-    })
-
-    test('returns true when the edited defendant is cleared and no other defendant has a defender', () => {
-      expect(
-        shouldClearRequestSharedWithDefender({
-          defendants: [{ id: 'a', defenderName: 'Lögmaður A' }, { id: 'b' }],
-          editedDefendantId: 'a',
-          nextDefenderName: null,
-        }),
-      ).toBe(true)
-    })
-
-    test('treats an empty string as cleared', () => {
-      expect(
-        shouldClearRequestSharedWithDefender({
-          defendants: [{ id: 'a', defenderName: 'Lögmaður A' }],
-          editedDefendantId: 'a',
-          nextDefenderName: '',
-        }),
-      ).toBe(true)
-    })
-
-    test('returns true for a single defendant cleared when defendants are undefined', () => {
-      expect(
-        shouldClearRequestSharedWithDefender({
-          defendants: undefined,
-          editedDefendantId: 'a',
-          nextDefenderName: undefined,
-        }),
-      ).toBe(true)
+      ).toEqual({ requestSharedWithDefender: null })
     })
   })
 
@@ -133,58 +166,17 @@ describe('RequestCaseDefenderInfo.logic', () => {
       defenderPhoneNumber: '1234567',
     }
 
-    test('mirrors contact fields with force for a prosecutor', () => {
-      expect(
-        buildCaseDefenderMirrorUpdate({
-          ...contact,
-          isCourtUser: false,
-          clearSharing: false,
-        }),
-      ).toEqual({ ...contact, force: true })
-    })
-
-    test('sets NOT_SHARED for a court user', () => {
-      expect(
-        buildCaseDefenderMirrorUpdate({
-          ...contact,
-          isCourtUser: true,
-          clearSharing: false,
-        }),
-      ).toEqual({
+    test('mirrors contact fields with force', () => {
+      expect(buildCaseDefenderMirrorUpdate(contact)).toEqual({
         ...contact,
-        requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
         force: true,
       })
     })
 
-    test('clears sharing when requested', () => {
-      expect(
-        buildCaseDefenderMirrorUpdate({
-          defenderName: null,
-          defenderNationalId: null,
-          defenderEmail: null,
-          defenderPhoneNumber: null,
-          isCourtUser: false,
-          clearSharing: true,
-        }),
-      ).toEqual({
-        defenderName: null,
-        defenderNationalId: null,
-        defenderEmail: null,
-        defenderPhoneNumber: null,
-        requestSharedWithDefender: null,
-        force: true,
-      })
-    })
-
-    test('null wins over NOT_SHARED when a court user clears sharing', () => {
-      const update = buildCaseDefenderMirrorUpdate({
-        ...contact,
-        isCourtUser: true,
-        clearSharing: true,
-      })
-
-      expect(update.requestSharedWithDefender).toBeNull()
+    test('never writes the case-level sharing timing', () => {
+      expect(buildCaseDefenderMirrorUpdate(contact)).not.toHaveProperty(
+        'requestSharedWithDefender',
+      )
     })
   })
 })

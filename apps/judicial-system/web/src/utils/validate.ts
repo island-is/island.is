@@ -4,7 +4,7 @@ import {
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
-import { anyDefendantHasDefender } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
+import { isRequestSharingDecidedForAllDefenders } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import type {
   AppealCase,
   CourtSessionResponse,
@@ -183,11 +183,6 @@ const areDefenderContactsValid = (workingCase: WorkingCase): boolean =>
     ]),
   ]).isValid
 
-const isRequestSharingDecided = (workingCase: WorkingCase): boolean =>
-  anyDefendantHasDefender(workingCase.defendants)
-    ? Boolean(workingCase.requestSharedWithDefender)
-    : true
-
 const someDefendantIsInvalid = (workingCase: WorkingCase): boolean => {
   return Boolean(
     workingCase.defendants &&
@@ -242,7 +237,7 @@ export const isDefendantStepValidRC = (
       policeCaseNumbers.length > 0 &&
       (workingCase.defendants?.length ?? 0) > 0 &&
       !firstDefendantIsInvalid(workingCase) &&
-      isRequestSharingDecided(workingCase) &&
+      isRequestSharingDecidedForAllDefenders(workingCase.defendants?.slice(0, 1)) &&
       areDefenderContactsValid(workingCase) &&
       validate([
         ...policeCaseNumbers.map(
@@ -260,7 +255,7 @@ export const isDefendantStepValidIC = (workingCase: WorkingCase): boolean => {
     (workingCase.defendants?.length ?? 0) > 0 &&
       !someDefendantIsInvalid(workingCase) &&
       areVictimsValid(workingCase.victims) &&
-      isRequestSharingDecided(workingCase) &&
+      isRequestSharingDecidedForAllDefenders(workingCase.defendants) &&
       areDefenderContactsValid(workingCase),
   )
 }

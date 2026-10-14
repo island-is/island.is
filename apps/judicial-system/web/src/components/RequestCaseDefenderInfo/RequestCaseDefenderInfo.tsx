@@ -26,7 +26,7 @@ import {
 
 import {
   buildCaseDefenderMirrorUpdate,
-  shouldClearRequestSharedWithDefender,
+  getDefendantRequestSharingUpdate,
 } from './RequestCaseDefenderInfo.logic'
 import RequestCaseDefenderSharing from './RequestCaseDefenderSharing'
 
@@ -34,16 +34,12 @@ interface Props {
   workingCase: WorkingCase
   setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   defendant: Defendant
-  // The sharing radios are case-level, so only one instance per page should
-  // show them.
-  showRequestSharedWithDefender?: boolean
 }
 
 const RequestCaseDefenderInfo: FC<Props> = ({
   workingCase,
   setWorkingCase,
   defendant,
-  showRequestSharedWithDefender,
 }) => {
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer } = useCase()
@@ -111,25 +107,11 @@ const RequestCaseDefenderInfo: FC<Props> = ({
     return null
   }
 
-  const mirrorToCase = ({
-    defenderName,
-    defenderNationalId,
-    defenderEmail,
-    defenderPhoneNumber,
-    isCourtUser,
-    clearSharing,
-  }: Parameters<typeof buildCaseDefenderMirrorUpdate>[0]) => {
+  const mirrorToCase = (
+    contact: Parameters<typeof buildCaseDefenderMirrorUpdate>[0],
+  ) => {
     setAndSendCaseToServer(
-      [
-        buildCaseDefenderMirrorUpdate({
-          defenderName,
-          defenderNationalId,
-          defenderEmail,
-          defenderPhoneNumber,
-          isCourtUser,
-          clearSharing,
-        }),
-      ],
+      [buildCaseDefenderMirrorUpdate(contact)],
       workingCase,
       setWorkingCase,
     )
@@ -149,6 +131,10 @@ const RequestCaseDefenderInfo: FC<Props> = ({
         defenderNationalId,
         defenderEmail,
         defenderPhoneNumber,
+        ...getDefendantRequestSharingUpdate({
+          isCourtUser: isDistrictCourtUser(user),
+          nextDefenderName: defenderName,
+        }),
       },
       setWorkingCase,
     )
@@ -158,12 +144,6 @@ const RequestCaseDefenderInfo: FC<Props> = ({
       defenderNationalId,
       defenderEmail,
       defenderPhoneNumber,
-      isCourtUser: isDistrictCourtUser(user),
-      clearSharing: shouldClearRequestSharedWithDefender({
-        defendants: workingCase.defendants,
-        editedDefendantId: defendant.id,
-        nextDefenderName: defenderName,
-      }),
     })
   }
 
@@ -179,8 +159,6 @@ const RequestCaseDefenderInfo: FC<Props> = ({
       defenderNationalId: defendant.defenderNationalId ?? null,
       defenderEmail,
       defenderPhoneNumber: defendant.defenderPhoneNumber ?? null,
-      isCourtUser: false,
-      clearSharing: false,
     })
   }
 
@@ -196,8 +174,6 @@ const RequestCaseDefenderInfo: FC<Props> = ({
       defenderNationalId: defendant.defenderNationalId ?? null,
       defenderEmail: defendant.defenderEmail ?? null,
       defenderPhoneNumber,
-      isCourtUser: false,
-      clearSharing: false,
     })
   }
 
@@ -240,10 +216,11 @@ const RequestCaseDefenderInfo: FC<Props> = ({
           }
           onPhoneNumberSave={handlePhoneNumberSave}
         />
-        {showRequestSharedWithDefender && isProsecutionUser(user) && (
+        {isProsecutionUser(user) && (
           <RequestCaseDefenderSharing
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            defendant={defendant}
           />
         )}
       </BlueBox>

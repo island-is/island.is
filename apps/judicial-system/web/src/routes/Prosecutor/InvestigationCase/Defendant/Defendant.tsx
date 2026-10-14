@@ -16,7 +16,6 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
-  BlueBox,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -25,7 +24,6 @@ import {
   PageTitle,
   ProsecutorCaseInfo,
   RequestCaseDefenderInfo,
-  RequestCaseDefenderSharing,
   SectionHeading,
   VictimInfo,
 } from '@island.is/judicial-system-web/src/components'
@@ -265,14 +263,6 @@ const Defendant = () => {
                 {formatMessage(m.sections.defendantInfo.addDefendantButtonText)}
               </Button>
             </Box>
-          </Box>
-          <Box component="section">
-            <BlueBox>
-              <RequestCaseDefenderSharing
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-              />
-            </BlueBox>
           </Box>
           {workingCase.id &&
             (workingCase.victims && workingCase.victims?.length === 0 ? (

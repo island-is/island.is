@@ -1044,7 +1044,7 @@ describe('isDefendantStepValidRC', () => {
     expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(true)
   })
 
-  test('requires a decision on sharing the request when a defender is named', () => {
+  test('requires the defendant to have a decision on sharing the request when a defender is named', () => {
     const withDefender = {
       ...validCase,
       defendants: [{ ...validDefendant, defenderName: 'Verjandi' }],
@@ -1056,32 +1056,39 @@ describe('isDefendantStepValidRC', () => {
     expect(
       isDefendantStepValidRC(
         {
-          ...withDefender,
-          requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+          ...validCase,
+          defendants: [
+            {
+              ...validDefendant,
+              defenderName: 'Verjandi',
+              requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+            },
+          ],
         } as WorkingCase,
         [POLICE_CASE_NUMBER],
       ),
     ).toBe(true)
   })
 
-  test('requires a sharing decision when a later defendant has a defender', () => {
+  test('does not accept a case-level sharing decision', () => {
     const workingCase = {
       ...validCase,
-      defendants: [validDefendant, { id: 'd2', defenderName: 'Verjandi' }],
+      requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+      defendants: [{ ...validDefendant, defenderName: 'Verjandi' }],
     } as WorkingCase
 
     expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(
       false,
     )
-    expect(
-      isDefendantStepValidRC(
-        {
-          ...workingCase,
-          requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
-        } as WorkingCase,
-        [POLICE_CASE_NUMBER],
-      ),
-    ).toBe(true)
+  })
+
+  test('ignores the sharing decision of defendants the form does not show', () => {
+    const workingCase = {
+      ...validCase,
+      defendants: [validDefendant, { id: 'd2', defenderName: 'Verjandi' }],
+    } as WorkingCase
+
+    expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(true)
   })
 
   test('does not rely on the case-level defender name', () => {
@@ -1240,35 +1247,73 @@ describe('isDefendantStepValidIC', () => {
     expect(isDefendantStepValidIC(withAccess)).toBe(true)
   })
 
-  test('requires a decision on sharing the request when a defender is named', () => {
-    const withDefender = {
-      ...validCase,
-      defendants: [{ ...validDefendant, defenderName: 'Verjandi' }],
-    } as WorkingCase
-
-    expect(isDefendantStepValidIC(withDefender)).toBe(false)
+  test('requires the defendant to have a decision on sharing the request when a defender is named', () => {
     expect(
       isDefendantStepValidIC({
-        ...withDefender,
-        requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+        ...validCase,
+        defendants: [{ ...validDefendant, defenderName: 'Verjandi' }],
+      } as WorkingCase),
+    ).toBe(false)
+    expect(
+      isDefendantStepValidIC({
+        ...validCase,
+        defendants: [
+          {
+            ...validDefendant,
+            defenderName: 'Verjandi',
+            requestSharedWithDefender:
+              RequestSharedWithDefender.READY_FOR_COURT,
+          },
+        ],
       } as WorkingCase),
     ).toBe(true)
   })
 
-  test('requires a sharing decision when only a later defendant has a defender', () => {
-    const workingCase = {
-      ...validCase,
-      defendants: [
-        validDefendant,
-        { ...validDefendant, id: 'd2', defenderName: 'Verjandi' },
-      ],
-    } as WorkingCase
+  test('requires a sharing decision from every defendant with a defender', () => {
+    const decided = {
+      ...validDefendant,
+      defenderName: 'Verjandi A',
+      requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+    }
+    const undecided = {
+      ...validDefendant,
+      id: 'd2',
+      defenderName: 'Verjandi B',
+    }
 
-    expect(isDefendantStepValidIC(workingCase)).toBe(false)
     expect(
       isDefendantStepValidIC({
-        ...workingCase,
-        requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+        ...validCase,
+        requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+        defendants: [decided, undecided],
+      } as WorkingCase),
+    ).toBe(false)
+    expect(
+      isDefendantStepValidIC({
+        ...validCase,
+        defendants: [
+          decided,
+          {
+            ...undecided,
+            requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+          },
+        ],
+      } as WorkingCase),
+    ).toBe(true)
+  })
+
+  test('does not require a sharing decision from a defendant without a defender', () => {
+    expect(
+      isDefendantStepValidIC({
+        ...validCase,
+        defendants: [
+          {
+            ...validDefendant,
+            defenderName: 'Verjandi',
+            requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+          },
+          { ...validDefendant, id: 'd2' },
+        ],
       } as WorkingCase),
     ).toBe(true)
   })

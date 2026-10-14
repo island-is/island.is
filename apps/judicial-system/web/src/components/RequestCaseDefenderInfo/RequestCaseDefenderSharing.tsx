@@ -7,28 +7,29 @@ import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import { defenderInfo } from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo.strings'
 import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import { RequestSharedWithDefender } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-
-import { anyDefendantHasDefender } from './RequestCaseDefenderInfo.logic'
+import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   workingCase: WorkingCase
   setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
+  defendant: Defendant
 }
 
 const RequestCaseDefenderSharing: FC<Props> = ({
   workingCase,
   setWorkingCase,
+  defendant,
 }) => {
   const { formatMessage } = useIntl()
-  const { setAndSendCaseToServer } = useCase()
+  const { setAndSendDefendantToServer } = useDefendants()
 
   const sections = isRestrictionCase(workingCase.type)
     ? defenderInfo.restrictionCases.sections
     : defenderInfo.investigationCases.sections
   const requestAccessTitle = formatMessage(sections.defenderRequestAccess.title)
-  const hasDefender = anyDefendantHasDefender(workingCase.defendants)
+  const hasDefender = Boolean(defendant.defenderName)
 
   const options = [
     {
@@ -61,14 +62,17 @@ const RequestCaseDefenderSharing: FC<Props> = ({
         {options.map(({ id, label, value }, index) => (
           <Box key={id} marginTop={index === 0 ? 0 : 2}>
             <RadioButton
-              name="defender-access"
-              id={id}
+              name={`defender-access-${defendant.id}`}
+              id={`${id}-${defendant.id}`}
               label={formatMessage(label)}
-              checked={workingCase.requestSharedWithDefender === value}
+              checked={defendant.requestSharedWithDefender === value}
               onChange={() => {
-                setAndSendCaseToServer(
-                  [{ requestSharedWithDefender: value, force: true }],
-                  workingCase,
+                setAndSendDefendantToServer(
+                  {
+                    caseId: workingCase.id,
+                    defendantId: defendant.id,
+                    requestSharedWithDefender: value,
+                  },
                   setWorkingCase,
                 )
               }}

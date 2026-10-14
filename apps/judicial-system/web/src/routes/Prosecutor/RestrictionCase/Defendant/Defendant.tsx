@@ -111,6 +111,7 @@ export const Defendant = () => {
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!workingCase.id) {
+        // Case creation copies these onto the created defendant
         const defendant = workingCase.defendants?.[0]
         const createdCase = await createCase({
           ...workingCase,
@@ -118,6 +119,7 @@ export const Defendant = () => {
           defenderNationalId: defendant?.defenderNationalId,
           defenderEmail: defendant?.defenderEmail,
           defenderPhoneNumber: defendant?.defenderPhoneNumber,
+          requestSharedWithDefender: defendant?.requestSharedWithDefender,
         })
 
         if (
@@ -136,12 +138,6 @@ export const Defendant = () => {
             nationalId: workingCase.defendants[0].nationalId || null,
             noNationalId: workingCase.defendants[0].noNationalId,
             citizenship: workingCase.defendants[0].citizenship,
-            defenderName: workingCase.defendants[0].defenderName || null,
-            defenderNationalId:
-              workingCase.defendants[0].defenderNationalId || null,
-            defenderEmail: workingCase.defendants[0].defenderEmail || null,
-            defenderPhoneNumber:
-              workingCase.defendants[0].defenderPhoneNumber || null,
           })
 
           router.push(`${destination}/${createdCase.id}`)
@@ -210,7 +206,6 @@ export const Defendant = () => {
                     workingCase={workingCase}
                     setWorkingCase={setWorkingCase}
                     defendant={workingCase.defendants[0]}
-                    showRequestSharedWithDefender
                   />
                 </Box>
               )}
