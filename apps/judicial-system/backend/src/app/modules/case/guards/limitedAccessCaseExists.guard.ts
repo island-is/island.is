@@ -24,6 +24,7 @@ export class LimitedAccessCaseExistsGuard implements CanActivate {
     request.case = await traceCaseLoad(
       LimitedAccessCaseExistsGuard.name,
       'limitedAccess',
+      request,
       () =>
         this.limitedAccessCaseService.findById(caseId, {
           user: request.user?.currentUser,
