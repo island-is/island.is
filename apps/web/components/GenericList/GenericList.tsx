@@ -364,7 +364,7 @@ export const GenericList = ({
       name="list-year"
       size="xs"
       isSearchable={false}
-      aria-label={activeLocale === 'is' ? 'Ár' : 'Year'}
+      label={activeLocale === 'is' ? 'Ár' : 'Year'}
       backgroundColor="white"
       options={yearOptions}
       value={
@@ -681,7 +681,8 @@ export const GenericListWrapper = ({
       const queryString = searchParams.get(searchQueryId) || ''
       const pageQuery = searchParams.get(pageQueryId) || '1'
       const tagQuery = searchParams.get(tagQueryId) || '{}'
-      const yearQuery = showYearFilter ? searchParams.get(yearQueryId) : null
+      const yearParam = showYearFilter ? searchParams.get(yearQueryId) : null
+      const yearQuery = yearParam ? parseAsInteger.parse(yearParam) : null
 
       const tags: string[] = flatten(Object.values(JSON.parse(tagQuery)))
 
@@ -692,8 +693,7 @@ export const GenericListWrapper = ({
         tags.every((tag) =>
           (data?.getGenericListItems?.input?.tags ?? []).includes(tag),
         ) &&
-        (yearQuery || null) ===
-          (data?.getGenericListItems?.input?.year?.toString() ?? null)
+        yearQuery === (data?.getGenericListItems?.input?.year ?? null)
       ) {
         setItemsResponse(data.getGenericListItems)
         setErrorOccurred(false)
