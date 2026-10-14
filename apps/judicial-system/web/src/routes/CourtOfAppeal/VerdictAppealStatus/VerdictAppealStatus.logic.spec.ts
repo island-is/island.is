@@ -11,6 +11,7 @@ import {
   getVerdictAppealStatusHeaderLines,
   isAppealCourtSessionComplete,
   isAppealCourtSessionEmpty,
+  sortAppealCourtSessionsNewestFirst,
 } from './VerdictAppealStatus.logic'
 
 describe('getVerdictAppealStatusHeaderLines', () => {
@@ -110,5 +111,33 @@ describe('court session draft', () => {
         courtRoom: '1',
       }),
     ).toMatch(/^12\.12\.2026 kl\. \d\d:\d\d · Dómsalur 1$/)
+  })
+})
+
+describe('sortAppealCourtSessionsNewestFirst', () => {
+  it('puts the most recently booked session first, whatever its date', () => {
+    const sessions = [
+      { id: 'early', created: '2026-10-01T10:00:00.000Z' },
+      { id: 'latest', created: '2026-10-14T10:00:00.000Z' },
+      { id: 'middle', created: '2026-10-07T10:00:00.000Z' },
+    ]
+
+    expect(sortAppealCourtSessionsNewestFirst(sessions).map((s) => s.id)).toEqual(
+      ['latest', 'middle', 'early'],
+    )
+    // The input is left as it was.
+    expect(sessions.map((s) => s.id)).toEqual(['early', 'latest', 'middle'])
+  })
+
+  it('keeps sessions without a booking time where they were', () => {
+    const sessions = [
+      { id: 'a', created: undefined },
+      { id: 'b', created: '2026-10-07T10:00:00.000Z' },
+      { id: 'c', created: null },
+    ]
+
+    expect(sortAppealCourtSessionsNewestFirst(sessions).map((s) => s.id)).toEqual(
+      ['b', 'a', 'c'],
+    )
   })
 })

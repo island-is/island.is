@@ -144,3 +144,20 @@ export const getVerdictAppealStatusHeaderLines = (
 
   return Array.from(new Set(lines))
 }
+
+type Booked = { created?: string | null }
+
+/**
+ * Booked sessions with the most recently booked first, so the one the court
+ * has just called is at the top of the list rather than wherever its date
+ * falls. The backend hands them over by session date.
+ */
+export const sortAppealCourtSessionsNewestFirst = <T extends Booked>(
+  sessions: T[],
+): T[] =>
+  [...sessions].sort((a, b) => {
+    const createdA = a.created ? new Date(a.created).getTime() : 0
+    const createdB = b.created ? new Date(b.created).getTime() : 0
+
+    return createdB - createdA
+  })

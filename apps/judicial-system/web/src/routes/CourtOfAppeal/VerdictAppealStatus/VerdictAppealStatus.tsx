@@ -33,6 +33,7 @@ import {
   getVerdictAppealStatusHeaderLines,
   isAppealCourtSessionComplete,
   isAppealCourtSessionEmpty,
+  sortAppealCourtSessionsNewestFirst,
   VerdictAppealStatus as Status,
   verdictAppealStatuses,
   verdictAppealStatusLabels,
@@ -65,7 +66,9 @@ const VerdictAppealStatus = () => {
   const { createAppealCourtSession, isCreatingAppealCourtSession } =
     useAppealCourtSession()
 
-  const bookedSessions = verdictAppealCase?.courtSessions ?? []
+  const bookedSessions = sortAppealCourtSessionsNewestFirst(
+    verdictAppealCase?.courtSessions ?? [],
+  )
 
   const [chosenStatus, setChosenStatus] = useState<Status>()
   const [courtSession, setCourtSession] = useState<AppealCourtSessionDraft>({})
