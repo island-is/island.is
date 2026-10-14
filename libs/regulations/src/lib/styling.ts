@@ -48,14 +48,14 @@ export const diffStyling = (wrapper: string) => {
     opacity: 0.7,
   })
   // A rule has no text to wrap in ins/del; getStructuredDiff marks the element.
+  // The browser's default hr border is 1px inset on every side; replace it.
   global('hr[data-diff="insert"]', {
-    borderColor: color.mint600,
-    borderTopWidth: 3,
+    borderStyle: 'none',
+    borderTop: `3px solid ${color.mint600}`,
   })
   global('hr[data-diff="delete"]', {
-    borderColor: color.red400,
-    borderTopWidth: 3,
-    borderTopStyle: 'dashed',
+    borderStyle: 'none',
+    borderTop: `3px dashed ${color.red400}`,
   })
 }
 
