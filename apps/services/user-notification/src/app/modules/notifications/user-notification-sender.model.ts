@@ -11,24 +11,21 @@ import {
   InferAttributes,
   InferCreationAttributes,
 } from 'sequelize'
+import {
+  HNIPP_TEMPLATE_PRIORITY_TYPES,
+  HnippTemplatePriorityType,
+} from './dto/hnippTemplate.response'
 
 /**
- * Tracks which sender categories have sent notifications to a recipient.
- * Unlike user_notification, rows here are not pruned by the cleanup job.
+ * Tracks which sender templates have sent notifications to a recipient, with
+ * the latest category and priority type of each template. Unlike
+ * user_notification, rows here are not pruned by the cleanup job.
  */
 @Table({
   tableName: 'user_notification_sender',
   timestamps: false,
   indexes: [
-    { unique: true, fields: ['recipient', 'sender_id', 'category'] },
-    // Unique indexes treat nulls as distinct, so uncategorized rows need
-    // their own partial index
-    {
-      name: 'user_notification_sender_recipient_sender_id_uncategorized_idx',
-      unique: true,
-      fields: ['recipient', 'sender_id'],
-      where: { category: null },
-    },
+    { unique: true, fields: ['recipient', 'sender_id', 'template_id'] },
   ],
 })
 export class UserNotificationSender extends Model<
@@ -58,9 +55,17 @@ export class UserNotificationSender extends Model<
   })
   senderId!: string
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: 'template_id',
+  })
+  templateId!: string
+
   /**
    * Slugified Icelandic HnippCategory, null when the template has no category,
-   * which is presented as 'almennt'.
+   * which is presented as 'almennt'. Updated on every send, since a template's
+   * category can change.
    */
   @Column({
     type: DataType.STRING,
@@ -68,4 +73,14 @@ export class UserNotificationSender extends Model<
     field: 'category',
   })
   category!: string | null
+
+  /**
+   * Latest priority type of the template, updated on every send.
+   */
+  @Column({
+    type: DataType.ENUM(...HNIPP_TEMPLATE_PRIORITY_TYPES),
+    allowNull: true,
+    field: 'priority_type',
+  })
+  priorityType!: HnippTemplatePriorityType | null
 }

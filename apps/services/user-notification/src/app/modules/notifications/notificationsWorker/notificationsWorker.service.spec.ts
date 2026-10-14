@@ -1144,23 +1144,28 @@ describe('NotificationsWorkerService', () => {
     const otherSenderId = createNationalId('company')
     const dashedSenderId = `${senderId.slice(0, 6)}-${senderId.slice(6)}`
 
-    const mockTemplateCategory = (labels: { is?: string; en?: string }) =>
+    const mockTemplateCategory = (
+      labels: { is?: string; en?: string },
+      priorityType?: HnippTemplatePriorityType,
+    ) =>
       jest
         .spyOn(notificationsService, 'getTemplate')
         .mockImplementation(async (_templateId, locale) =>
           getMockHnippTemplate({
             hnippCategory: locale === 'en' ? labels.en : labels.is,
+            priorityType,
           }),
         )
 
     const addToQueueWithSender = async (
       recipient: string,
       senderId?: string,
+      templateId = mockTemplateId,
     ) => {
       await queue.add({
         recipient,
         senderId,
-        templateId: mockTemplateId,
+        templateId,
         args: [{ key: 'organization', value: 'Test Crew' }],
       })
 
@@ -1178,7 +1183,9 @@ describe('NotificationsWorkerService', () => {
       expect(senders[0]).toMatchObject({
         recipient: userWithNoDelegations.nationalId,
         senderId,
+        templateId: mockTemplateId,
         category: null,
+        priorityType: null,
       })
       expect(await notificationCategoryModel.count()).toBe(0)
     })
@@ -1298,20 +1305,64 @@ describe('NotificationsWorkerService', () => {
       })
     })
 
-    it('should record each category of a sender separately', async () => {
+    it('should record the priority type of the template', async () => {
+      // Arrange
+      mockTemplateCategory({ is: 'Heilbrigðismál' }, 'Actionable')
+
+      // Act
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      // Assert
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0].priorityType).toBe('Actionable')
+    })
+
+    it('should record each template of a sender separately', async () => {
       // Act
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
       mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Health' })
-      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
-      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+      await addToQueueWithSender(
+        userWithNoDelegations.nationalId,
+        senderId,
+        'HNIPP.DEMO.OTHER_ID',
+      )
+      await addToQueueWithSender(
+        userWithNoDelegations.nationalId,
+        senderId,
+        'HNIPP.DEMO.OTHER_ID',
+      )
 
       // Assert
       const senders = await userNotificationSenderModel.findAll({
         where: { recipient: userWithNoDelegations.nationalId },
+        order: [['templateId', 'ASC']],
       })
-      expect(senders.map(({ category }) => category).sort()).toEqual(
-        ['heilbrigdismal', null].sort(),
-      )
+      expect(
+        senders.map(({ templateId, category }) => ({ templateId, category })),
+      ).toEqual([
+        { templateId: mockTemplateId, category: null },
+        { templateId: 'HNIPP.DEMO.OTHER_ID', category: 'heilbrigdismal' },
+      ])
+    })
+
+    it('should keep the latest category and priority type of a template', async () => {
+      // Arrange
+      mockTemplateCategory({ is: 'Heilbrigðismál' }, 'Informative')
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      // Act
+      mockTemplateCategory({ is: 'Skattar' }, 'Actionable')
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      // Assert
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0]).toMatchObject({
+        templateId: mockTemplateId,
+        category: 'skattar',
+        priorityType: 'Actionable',
+      })
     })
 
     it("should record an explicit 'Almennt' category as uncategorized", async () => {

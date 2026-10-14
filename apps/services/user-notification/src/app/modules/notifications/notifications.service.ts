@@ -466,7 +466,7 @@ export class NotificationsService {
   }
 
   async findCategories(nationalId: string): Promise<NotificationCategoriesDto> {
-    const rows = await this.userNotificationSenderModel.findAll({
+    const templateRows = await this.userNotificationSenderModel.findAll({
       attributes: ['senderId', 'category'],
       where: { recipient: nationalId },
       order: [
@@ -474,6 +474,13 @@ export class NotificationsService {
         ['category', 'ASC NULLS FIRST'],
       ],
     })
+
+    // Rows are per template, so several templates can share a category
+    const rows = [
+      ...new Map(
+        templateRows.map((row) => [`${row.senderId}-${row.category}`, row]),
+      ).values(),
+    ]
 
     const slugs = [
       ...new Set(rows.map(({ category }) => category).filter(isDefined)),

@@ -453,6 +453,7 @@ export class NotificationsWorkerService {
         message.recipient,
         message.senderId,
         message.templateId,
+        template.priorityType,
         messageId,
       )
     }
@@ -867,6 +868,7 @@ export class NotificationsWorkerService {
     recipient: string,
     senderId: string | undefined,
     templateId: string,
+    priorityType: HnippTemplatePriorityType,
     messageId: string,
   ): Promise<void> {
     const normalizedSenderId = senderId ? normalizeKennitala(senderId) : ''
@@ -885,15 +887,22 @@ export class NotificationsWorkerService {
         })
       }
 
+      // Keep the latest category and priority type, since a template can
+      // change them
       await this.userNotificationSenderModel.bulkCreate(
         [
           {
             recipient,
             senderId: normalizedSenderId,
+            templateId,
             category: templateCategory?.category ?? null,
+            priorityType: priorityType ?? null,
           },
         ],
-        { ignoreDuplicates: true },
+        {
+          conflictAttributes: ['recipient', 'senderId', 'templateId'],
+          updateOnDuplicate: ['category', 'priorityType'],
+        },
       )
     } catch (error) {
       this.logger.warn(
