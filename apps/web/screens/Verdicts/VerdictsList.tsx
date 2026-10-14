@@ -72,6 +72,7 @@ import * as styles from './VerdictsList.css'
 
 const ITEMS_PER_PAGE = 10
 const DEBOUNCE_TIME_IN_MS = 500
+const COURTS_FRONTPAGE_HREF = '/s/domstolar'
 const DATE_FORMAT = 'd. MMMM yyyy'
 
 const ALL_COURTS_TAG = ''
@@ -1337,7 +1338,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
     },
     {
       label: 'Endurupptökudómar',
-      href: '/s/endurupptokudomar',
+      href: '/s/endurupptokudomur',
     },
     {
       label: 'Landsréttur',
@@ -1346,7 +1347,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
 
     {
       label: 'Héraðsdómstólar',
-      href: '/s/haeradsdomstolar',
+      href: '/s/heradsdomstolar',
     },
     {
       label: 'Dómstólasýslan',
@@ -1422,11 +1423,13 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       paddingTop={2}
                       paddingBottom={2}
                     >
-                      <img
-                        src="/assets/skjaldarmerki.svg"
-                        alt=""
-                        className={styles.logo}
-                      />
+                      <LinkV2 href={COURTS_FRONTPAGE_HREF}>
+                        <img
+                          src="/assets/skjaldarmerki.svg"
+                          alt={formatMessage(m.listPage.courtsFrontpageLinkAlt)}
+                          className={styles.logo}
+                        />
+                      </LinkV2>
                     </Box>
                   </Hidden>
                 </GridColumn>
