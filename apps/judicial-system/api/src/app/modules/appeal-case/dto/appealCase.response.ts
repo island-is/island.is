@@ -10,6 +10,7 @@ import {
 import { AppealSummons } from '../../appeal-summons'
 import { CaseFile } from '../../file'
 import { User } from '../../user'
+import { AppealCourtSession } from './appealCourtSession.response'
 import { AppealEventLog } from './appealEventLog.response'
 
 registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
@@ -147,4 +148,8 @@ export class AppealCase {
   // Only meaningful on a verdict appeal case (áfrýjunarstefna).
   @Field(() => [AppealSummons], { nullable: true })
   readonly appealSummonses?: AppealSummons[]
+
+  // Only a verdict appeal carries sessions; a ruling appeal is decided on the papers.
+  @Field(() => [AppealCourtSession], { nullable: true })
+  readonly courtSessions?: AppealCourtSession[]
 }
