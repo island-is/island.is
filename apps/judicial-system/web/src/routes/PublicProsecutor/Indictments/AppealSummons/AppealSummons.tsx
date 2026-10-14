@@ -75,7 +75,9 @@ const AppealSummons = () => {
       existingSummons,
       user,
     )
-  const mayAccess = hasStandingAppeal && (isEdit ? mayEdit : mayIssue)
+  // Issue still needs a standing appeal (via mayIssue). Edit is allowed on an
+  // existing draft/confirmed summons even when every appeal was later withdrawn.
+  const mayAccess = isEdit ? mayEdit : mayIssue
 
   const [sections, setSections] = useState<AppealSummonsFormSection[]>([])
   const [hasInitialized, setHasInitialized] = useState(false)
@@ -104,11 +106,17 @@ const AppealSummons = () => {
   ])
 
   useEffect(() => {
-    if (isLoadingWorkingCase || !hasStandingAppeal || hasInitialized) {
+    if (isLoadingWorkingCase || hasInitialized) {
       return
     }
 
     if (appealSummonsId && !existingSummons) {
+      return
+    }
+
+    // New issue needs standing defendants; edit can build from the saved
+    // summons alone when appeals were withdrawn.
+    if (isEdit ? !mayEdit : !hasStandingAppeal) {
       return
     }
 
@@ -126,10 +134,12 @@ const AppealSummons = () => {
   }, [
     isLoadingWorkingCase,
     hasStandingAppeal,
+    hasInitialized,
+    isEdit,
+    mayEdit,
     workingCase,
     appealSummonsId,
     existingSummons,
-    hasInitialized,
   ])
 
   const standing = getStandingAppealSummonsDefendants(workingCase)
