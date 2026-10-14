@@ -120,6 +120,16 @@ describe('Fjarskiptastofa self-assessment template', () => {
         /invalid for state completed/,
       )
     })
+
+    it('should prune the completed state 4 hours after submission', () => {
+      const lifecycle =
+        template.stateMachineConfig.states[States.COMPLETED]?.meta?.lifecycle
+
+      expect(lifecycle?.shouldBePruned).toBe(true)
+      if (lifecycle?.shouldBePruned === true) {
+        expect(lifecycle.whenToPrune).toBe(4 * 3600 * 1000)
+      }
+    })
   })
 
   describe('mapUserToRole', () => {

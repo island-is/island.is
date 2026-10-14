@@ -49,7 +49,7 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
     currentUserLocale,
   }: TemplateApiModuleActionProps) {
     const [categoriesResponse, questionsResponse] = await Promise.all([
-      this.selfAssessmentClient.getQuestionCategories(auth),
+      this.selfAssessmentClient.getQuestionCategories(auth, currentUserLocale),
       this.selfAssessmentClient.getQuestions(auth, currentUserLocale),
     ])
 

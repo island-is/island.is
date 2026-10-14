@@ -13,9 +13,9 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { Features } from '@island.is/feature-flags'
 import {
-  DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   pruneAfterDays,
+  pruneAfterHours,
 } from '@island.is/application/core'
 import { isCompany } from 'kennitala'
 import {
@@ -174,7 +174,10 @@ const template: ApplicationTemplate<
           name: States.COMPLETED,
           progress: 1,
           status: FormModes.COMPLETED,
-          lifecycle: DefaultStateLifeCycle,
+          // The submitted self-assessment (answers and preliminary findings)
+          // stays available on Ísland.is for 4 hours after submission, then the
+          // application is pruned so no submitted data lingers.
+          lifecycle: pruneAfterHours(4),
           roles: [
             {
               id: Roles.APPLICANT,

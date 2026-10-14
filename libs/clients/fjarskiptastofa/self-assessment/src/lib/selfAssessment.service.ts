@@ -20,8 +20,11 @@ export class FjarskiptastofaSelfAssessmentClientService {
     return this.apiWithAuth(auth).getIsRegulated({ sSN: ssn })
   }
 
-  async getQuestionCategories(auth: User): Promise<QuestionCategoriesResponse> {
-    return this.apiWithAuth(auth).getQuestionCategories()
+  async getQuestionCategories(
+    auth: User,
+    language?: string,
+  ): Promise<QuestionCategoriesResponse> {
+    return this.apiWithAuth(auth).getQuestionCategories({ language })
   }
 
   async getQuestions(
