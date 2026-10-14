@@ -341,6 +341,7 @@ export default function AppointmentDetailScreen() {
         intl.formatMessage({ id: 'health.appointments.cancelErrorTitle' }),
         {
           message: intl.formatMessage({ id: messageId }),
+          duration: 5000,
         },
       )
     },

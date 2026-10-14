@@ -51,6 +51,8 @@ export const is = {
     'Þú getur einnig notað {biometricType} til að opna appið án þess að slá inn PIN.',
   'onboarding.biometrics.notEnrolled':
     'Tækið þitt styður {biometricType} en þú hefur ekki virkjað það.',
+  'onboarding.biometrics.strongNotEnrolled':
+    'Aðeins er hægt að nota fingrafar eða örugga andlitsgreiningu til að opna appið. Settu það upp í stillingum tækisins.',
   'onboarding.biometrics.noAuthenticationTypes':
     'Tækið hjá þér er ekki með stuðning fyrir lífkenni',
   'onboarding.biometrics.useBiometricsButtonText': 'Nota {biometricType}',
@@ -59,6 +61,12 @@ export const is = {
   'onboarding.biometrics.type.biometrics': 'lífkenni',
   'onboarding.biometrics.type.fingerprint': 'fingrafar',
   'onboarding.biometrics.type.iris': 'augnskanna',
+  'biometrics.enrollmentChanged.title': 'Slökkt á lífkennum',
+  'biometrics.enrollmentChanged.message':
+    'Lífkennin sem skráð eru í tækinu hafa breyst. Opnaðu appið með PIN-númerinu og kveiktu aftur á lífkennum í stillingum.',
+  'biometrics.strongRequired.title': 'Slökkt á lífkennum',
+  'biometrics.strongRequired.message':
+    'Aðeins er hægt að nota fingrafar eða örugga andlitsgreiningu til að opna appið og hvorugt er sett upp í tækinu. Opnaðu appið með PIN-númerinu eða settu upp fingrafar og kveiktu aftur á lífkennum í stillingum.',
   'onboarding.pinKeypad.accessibilityLabel.iris': 'Nota augnskannaauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.fingerprint':
     'Nota fingrafarsauðkenningu',
