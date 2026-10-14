@@ -28,7 +28,6 @@ import { useState, useEffect, useMemo } from 'react'
 import {
   HTMLText,
   toISODate,
-  getDiff,
   prettyName,
   RegName,
 } from '@island.is/regulations'
@@ -215,15 +214,14 @@ export const EditChange = (props: EditChangeProps) => {
   // ----------- Diff computation (ported from regulations-admin) -----------
   const emptyHTML = '' as HTMLText
 
-  // The structured diff, falling back to the flat word diff if it throws, so
-  // a text it cannot parse never blocks saving the impact.
+  // getStructuredDiff never throws: on a text it cannot parse it returns the
+  // flat word diff instead, flagged. Log that, so it shows in monitoring.
   const diffHtml = (previous: HTMLText, current: HTMLText) => {
-    try {
-      return getStructuredDiff(previous, current).diff
-    } catch (error) {
-      console.error('getStructuredDiff failed, falling back to getDiff:', error)
-      return getDiff(previous, current).diff
+    const result = getStructuredDiff(previous, current)
+    if (result.fallback) {
+      console.error('getStructuredDiff fell back to the flat word diff')
     }
+    return result.diff
   }
 
   const getDiffHtml = () => {
