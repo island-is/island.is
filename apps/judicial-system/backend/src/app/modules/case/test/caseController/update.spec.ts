@@ -996,6 +996,135 @@ describe('CaseController - Update', () => {
     },
   )
 
+  describe('court case number updated for indictment with pre-assigned court roles', () => {
+    const newCourtCaseNumber = uuid()
+    const caseToUpdate = { courtCaseNumber: newCourtCaseNumber }
+    const policeCaseNumber = uuid()
+    const judge = {
+      id: uuid(),
+      nationalId: '0101017890',
+      email: 'judge@court.is',
+      role: UserRole.DISTRICT_COURT_JUDGE,
+    }
+    const registrar = {
+      id: uuid(),
+      nationalId: '0202027890',
+      email: 'registrar@court.is',
+      role: UserRole.DISTRICT_COURT_REGISTRAR,
+    }
+    const originalCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.SUBMITTED,
+      courtCaseNumber: undefined,
+      policeCaseNumbers: [policeCaseNumber],
+      caseFiles: [],
+      judge,
+      registrar,
+      judgeId: judge.id,
+      registrarId: registrar.id,
+    } as Case
+    const updatedCase = {
+      ...originalCase,
+      courtCaseNumber: newCourtCaseNumber,
+      state: CaseState.RECEIVED,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+    })
+
+    it('should deliver already assigned court roles to the court', () => {
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          {
+            type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+            user,
+            caseId,
+            elementId: judge.nationalId,
+          },
+          {
+            type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+            user,
+            caseId,
+            elementId: registrar.nationalId,
+          },
+        ]),
+      )
+    })
+
+    it('should deliver each court role only once', () => {
+      const courtRoleMessages = mockQueuedMessages.filter(
+        (message) =>
+          message.type === MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+      )
+
+      expect(courtRoleMessages).toHaveLength(2)
+    })
+  })
+
+  describe('court case number and judge assigned together on indictment', () => {
+    const newCourtCaseNumber = uuid()
+    const judge = {
+      id: uuid(),
+      nationalId: '0101017890',
+      email: 'judge@court.is',
+      role: UserRole.DISTRICT_COURT_JUDGE,
+    }
+    const caseToUpdate = {
+      courtCaseNumber: newCourtCaseNumber,
+      judgeId: judge.id,
+    } as UpdateCaseDto
+    const originalCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.SUBMITTED,
+      courtCaseNumber: undefined,
+      policeCaseNumbers: [uuid()],
+      caseFiles: [],
+    } as Case
+    const updatedCase = {
+      ...originalCase,
+      courtCaseNumber: newCourtCaseNumber,
+      state: CaseState.RECEIVED,
+      judge,
+      judgeId: judge.id,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindById = mockUserService.findById as jest.Mock
+      mockFindById.mockResolvedValueOnce(judge)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+    })
+
+    // Connect syncs current roles; assignment-path robot delivery is skipped
+    // when the court case number just changed (same mutual exclusion as
+    // prosecutor on R-case connect).
+    it('should deliver the judge to the court only once', () => {
+      const courtRoleMessages = mockQueuedMessages.filter(
+        (message) =>
+          message.type === MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+      )
+
+      expect(courtRoleMessages).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+          user,
+          caseId,
+          elementId: judge.nationalId,
+        },
+      ])
+    })
+  })
+
   describe.each(restrictionCases)(
     'case modified explanation is updated for %s case',
     (type) => {
@@ -2389,16 +2518,16 @@ describe('CaseController - Update', () => {
         it('should queue the notification and deliver the court role to the court', () => {
           expect(mockQueuedMessages).toEqual([
             {
-              type: MessageType.NOTIFICATION,
-              user,
-              caseId,
-              body: { type: notificationType },
-            },
-            {
               type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
               user,
               caseId,
               elementId: assignee.nationalId,
+            },
+            {
+              type: MessageType.NOTIFICATION,
+              user,
+              caseId,
+              body: { type: notificationType },
             },
           ])
         })
@@ -2457,10 +2586,22 @@ describe('CaseController - Update', () => {
     })
 
     // The delivery resolves one role per message, so both assignments must be
-    // delivered - the judge first, matching the notifications above and the
-    // order the controller validates the two assignees in
+    // delivered - the judge first, matching the order the controller validates
+    // the two assignees in. Robot delivery is queued before email notifications.
     it('should deliver both court roles to the court', () => {
       expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+          user,
+          caseId,
+          elementId: judge.nationalId,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+          user,
+          caseId,
+          elementId: registrar.nationalId,
+        },
         {
           type: MessageType.NOTIFICATION,
           user,
@@ -2476,18 +2617,6 @@ describe('CaseController - Update', () => {
           body: {
             type: IndictmentCaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
           },
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
-          user,
-          caseId,
-          elementId: judge.nationalId,
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
-          user,
-          caseId,
-          elementId: registrar.nationalId,
         },
       ])
     })
