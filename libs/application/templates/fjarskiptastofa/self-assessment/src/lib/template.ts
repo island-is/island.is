@@ -15,6 +15,7 @@ import { Features } from '@island.is/feature-flags'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import { isCompany } from 'kennitala'
 import {
@@ -117,7 +118,9 @@ const template: ApplicationTemplate<
           name: States.DRAFT,
           progress: 0.4,
           status: FormModes.DRAFT,
-          lifecycle: DefaultStateLifeCycle,
+          // The applicant has 7 days to complete the self-assessment once it is
+          // started; after that the draft is pruned.
+          lifecycle: pruneAfterDays(7),
           // Fetch the company data and the assessment categories/questions on
           // entry to the draft state so the main form can render them from
           // external data. The user profile fetch also validates that the
