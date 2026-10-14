@@ -34,19 +34,58 @@ describe('Modal', () => {
     const onClose = jest.fn()
     render(<Modal title="Titill" onClose={onClose} />)
 
-    const closeButton = await screen.findByRole('button', {
+    // The backdrop shares the name; the X is the one in the tab order.
+    const buttons = await screen.findAllByRole('button', {
       name: 'Loka glugga',
     })
-    fireEvent.click(closeButton)
+    const closeButton = buttons.find(
+      (button) => button.getAttribute('tabindex') !== '-1',
+    )
+    expect(closeButton).toBeDefined()
+    if (closeButton) {
+      fireEvent.click(closeButton)
+    }
 
     expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('closes when the backdrop is clicked but not when the panel is', async () => {
+    const onClose = jest.fn()
+    render(
+      <Modal title="Titill" onClose={onClose}>
+        <p>Innihald</p>
+      </Modal>,
+    )
+
+    fireEvent.click(await screen.findByText('Innihald'))
+    expect(onClose).not.toHaveBeenCalled()
+
+    // Two buttons share the name: the X in the panel and the backdrop.
+    const [backdrop] = screen.getAllByRole('button', { name: 'Loka glugga' })
+    expect(backdrop).toHaveAttribute('tabindex', '-1')
+    fireEvent.click(backdrop)
+
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not close on a backdrop click while loading', async () => {
+    const onClose = jest.fn()
+    render(<Modal title="Titill" onClose={onClose} loading />)
+
+    const [backdrop] = await screen.findAllByRole('button', {
+      name: 'Loka glugga',
+    })
+    expect(backdrop).toHaveAttribute('tabindex', '-1')
+    fireEvent.click(backdrop)
+
+    expect(onClose).not.toHaveBeenCalled()
   })
 
   it('closes the modal when Escape is pressed', async () => {
     const onClose = jest.fn()
     render(<Modal title="Titill" onClose={onClose} />)
 
-    await screen.findByRole('button', { name: 'Loka glugga' })
+    await screen.findAllByRole('button', { name: 'Loka glugga' })
     fireEvent.keyDown(window, { key: 'Escape' })
 
     expect(onClose).toHaveBeenCalledTimes(1)
@@ -56,7 +95,7 @@ describe('Modal', () => {
     const onClose = jest.fn()
     render(<Modal title="Titill" onClose={onClose} loading />)
 
-    await screen.findByRole('button', { name: 'Loka glugga' })
+    await screen.findAllByRole('button', { name: 'Loka glugga' })
     fireEvent.keyDown(window, { key: 'Escape' })
 
     expect(onClose).not.toHaveBeenCalled()

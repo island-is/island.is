@@ -102,6 +102,20 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
         aria-labelledby={titleId}
         data-testid="modal"
       >
+        {/* Clicking outside the panel closes. The click target is a real
+            button under the panel rather than a handler on the dialog, so
+            assistive technology finds a named close control. It is kept out
+            of the tab order; Escape, handled above, is the keyboard's way. */}
+        {onClose && (
+          <button
+            type="button"
+            className={styles.backdropButton}
+            onClick={onClose}
+            disabled={loading}
+            tabIndex={-1}
+            aria-label="Loka glugga"
+          />
+        )}
         <motion.div
           className={styles.modalContainer}
           initial="closed"
@@ -265,10 +279,7 @@ export const ModalContainer = ({
         aria-modal="true"
         data-testid="modal"
       >
-        {/* Clicking outside the panel closes. The click target is a real
-            button under the panel rather than a handler on the dialog, so
-            assistive technology finds a named close control. It is kept out
-            of the tab order; Escape, handled above, is the keyboard's way. */}
+        {/* Backdrop close button, as in Modal above. */}
         {onClose && (
           <button
             type="button"
