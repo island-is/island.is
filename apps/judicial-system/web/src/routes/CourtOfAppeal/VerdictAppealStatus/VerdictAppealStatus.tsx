@@ -33,7 +33,6 @@ import {
   getVerdictAppealStatusHeaderLines,
   isAppealCourtSessionComplete,
   isAppealCourtSessionEmpty,
-  sortAppealCourtSessionsNewestFirst,
   VerdictAppealStatus as Status,
   verdictAppealStatuses,
   verdictAppealStatusLabels,
@@ -66,9 +65,7 @@ const VerdictAppealStatus = () => {
   const { createAppealCourtSession, isCreatingAppealCourtSession } =
     useAppealCourtSession()
 
-  const bookedSessions = sortAppealCourtSessionsNewestFirst(
-    verdictAppealCase?.courtSessions ?? [],
-  )
+  const bookedSessions = verdictAppealCase?.courtSessions ?? []
 
   const [chosenStatus, setChosenStatus] = useState<Status>()
   const [courtSession, setCourtSession] = useState<AppealCourtSessionDraft>({})
@@ -154,7 +151,8 @@ const VerdictAppealStatus = () => {
     }
 
     // Written into the working case so the list is right when the court
-    // comes back, without a refetch.
+    // comes back, without a refetch. Placed first to match the backend,
+    // which hands the sessions over most recently booked first.
     setWorkingCase((previous) =>
       previous.verdictAppealCase
         ? {
@@ -162,8 +160,8 @@ const VerdictAppealStatus = () => {
             verdictAppealCase: {
               ...previous.verdictAppealCase,
               courtSessions: [
-                ...(previous.verdictAppealCase.courtSessions ?? []),
                 booked,
+                ...(previous.verdictAppealCase.courtSessions ?? []),
               ],
             },
           }
