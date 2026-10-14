@@ -123,6 +123,7 @@ describe('WorkerService', () => {
           useValue: {
             findPaidFlowsWithoutFjsCharge: jest.fn(),
             findDebtFlowsToSettle: jest.fn().mockResolvedValue([]),
+            findPaymentFulfillmentForPaymentFlow: jest.fn(),
             logDebtPaymentFinalized: jest.fn().mockResolvedValue(undefined),
             logDebtPaymentRejected: jest.fn().mockResolvedValue(undefined),
             isCardPaymentRefunded: jest.fn().mockResolvedValue(false),
@@ -615,6 +616,17 @@ describe('WorkerService', () => {
 
     const mockDebtSweep = (flows: unknown[]) => {
       paymentFlowService.findDebtFlowsToSettle.mockResolvedValue(flows as never)
+      // Still paid when the worker gets to it
+      paymentFlowService.findPaymentFulfillmentForPaymentFlow.mockImplementation(
+        (async (paymentFlowId: string) =>
+          (
+            flows as {
+              id: string
+              paymentFulfillments: unknown[]
+            }[]
+          ).find((flow) => flow.id === paymentFlowId)?.paymentFulfillments[0] ??
+          null) as never,
+      )
     }
 
     const registered = {
@@ -695,6 +707,18 @@ describe('WorkerService', () => {
         'bank_transfer',
         registered,
       )
+    })
+
+    it('does not register a payment refunded since the run started', async () => {
+      mockDebtSweep([createDebtCardFlow()])
+      paymentFlowService.findPaymentFulfillmentForPaymentFlow.mockResolvedValue(
+        null,
+      )
+
+      await service.run()
+
+      expect(debtSettlementService.attempt).not.toHaveBeenCalled()
+      expect(paymentWorkerEventModel.create).not.toHaveBeenCalled()
     })
 
     it('does not announce a registration an earlier attempt made', async () => {

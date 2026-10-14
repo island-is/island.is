@@ -356,6 +356,21 @@ export class WorkerService {
       return true
     }
 
+    // The flows were read at the start of the run, and a refund since then deletes the
+    // fulfillment. Registering a refunded payment can not be undone, FJS has no reversal.
+    const currentFulfillment =
+      await this.paymentFlowService.findPaymentFulfillmentForPaymentFlow(
+        paymentFlow.id,
+      )
+    if (
+      currentFulfillment?.confirmationRefId !== fulfillment.confirmationRefId
+    ) {
+      this.logger.warn(
+        `[${paymentFlow.id}] Debt payment no longer paid (refunded during the run), not registering it`,
+      )
+      return false
+    }
+
     const payInfo =
       paymentMethod === PaymentMethod.BANK_TRANSFER
         ? this.buildBankTransferPayInfo(paymentFlow)
