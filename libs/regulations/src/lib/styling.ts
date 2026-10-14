@@ -37,17 +37,6 @@ export const diffStyling = (wrapper: string) => {
     textDecoration: `underline dotted 2px ${color.purple400}`,
     textUnderlineOffset: '0.2em',
   })
-  // A block whose formatting changed but whose text did not (a list turned
-  // lettered, bold turned italic) comes as the old block deleted and the new
-  // one inserted. Show only the new one, marked as a formatting change.
-  global('[data-diff-change="format"][data-diff-side="old"]', {
-    display: 'none',
-  })
-  global('[data-diff-change="format"][data-diff-side="new"] ins.diffins', {
-    backgroundColor: 'transparent',
-    textDecoration: `underline dotted 2px ${color.purple400}`,
-    textUnderlineOffset: '0.2em',
-  })
   // A block moved: highlighted where it arrived, struck through where it left.
   global('ins.diffmove', {
     backgroundColor: color.blue200,
