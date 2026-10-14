@@ -145,7 +145,7 @@ const fileNames = (value: unknown): string[] => {
 
 const drawPageChrome = (
   document: PDFKit.PDFDocument,
-  title: string,
+  organizationName: string,
   locale: Locale,
   page: number,
 ) => {
@@ -163,7 +163,7 @@ const drawPageChrome = (
     .text(
       truncateText(
         document,
-        title,
+        organizationName,
         contentWidth - document.widthOfString(pageNumber) - 16,
       ),
       pageMargin,
@@ -452,6 +452,7 @@ export const buildApplicationPdf = (
     const title =
       textFor(application.formName, locale) ||
       textFor(translations.application, locale)
+    const organizationName = textFor(application.organizationName, locale)
     const document = new PDFDocument({ margin: pageMargin, size: 'A4' })
     const chunks: Buffer[] = []
     let page = 1
@@ -461,11 +462,11 @@ export const buildApplicationPdf = (
     document.on('error', reject)
     document.on('pageAdded', () => {
       page += 1
-      drawPageChrome(document, title, locale, page)
+      drawPageChrome(document, organizationName, locale, page)
     })
 
     document.info.Title = title
-    drawPageChrome(document, title, locale, page)
+    drawPageChrome(document, organizationName, locale, page)
     document
       .fillColor(colors.accent)
       .font('Helvetica-Bold')
