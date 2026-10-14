@@ -15,6 +15,7 @@ import {
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
+import { runInRequestContext } from '../../../../test'
 import { EventLogService } from '../../../event-log'
 import { FileService } from '../../../file'
 import {
@@ -27,10 +28,7 @@ import {
 } from '../../../repository'
 import { UpdateCourtSessionDto } from '../../dto/updateCourtSession.dto'
 
-jest.mock('@island.is/judicial-system/message', () => ({
-  ...jest.requireActual('@island.is/judicial-system/message'),
-  addMessagesToQueue: jest.fn(),
-}))
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: CourtSession | null
@@ -127,9 +125,7 @@ describe('CourtSessionController - Correct ruling order appeal', () => {
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
@@ -161,14 +157,20 @@ describe('CourtSessionController - Correct ruling order appeal', () => {
       } as unknown as CourtSession
 
       try {
-        then.result = await courtSessionController.update(
-          caseId,
-          courtSessionId,
-          confirmUpdate,
-          user,
-          theCase,
-          existingCourtSession,
-        )
+        // The routes are guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open by the time the handler runs. Guards do
+        // not execute in controller unit tests, so the request context is set
+        // up here instead.
+        await runInRequestContext(async () => {
+          then.result = await courtSessionController.update(
+            caseId,
+            courtSessionId,
+            confirmUpdate,
+            user,
+            theCase,
+            existingCourtSession,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }

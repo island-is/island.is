@@ -2,6 +2,11 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    courtsFrontpageLinkAlt: {
+      id: 'web.verdicts:listPage.courtsFrontpageLinkAlt',
+      defaultMessage: 'Dómstólar forsíða',
+      description: 'Alt texti á skjaldarmerki sem vísar á forsíðu dómstóla',
+    },
     downloadGuide: {
       id: 'web.verdicts:listPage.downloadGuide',
       defaultMessage: 'Sjá leiðbeiningar',
@@ -267,6 +272,13 @@ export const m = {
       id: 'web.verdicts:verdictPage.print',
       defaultMessage: 'Prenta',
       description: 'Texti á prenta hnapp',
+    },
+    printFromButton: {
+      id: 'web.verdicts:verdictPage.printFromButton',
+      defaultMessage:
+        'Notaðu „Prenta“ hnappinn á síðunni til að prenta dóminn.',
+      description:
+        'Birtist þegar PDF dómssíða er prentuð úr vafranum, vísar á Prenta hnappinn',
     },
     goBack: {
       id: 'web.verdicts:verdictPage.goBack',

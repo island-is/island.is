@@ -1,0 +1,88 @@
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import {
+  AppealEventType,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+
+import type { AppealCourtSession } from './VerdictAppealStatus.logic'
+import {
+  AppealCourtSessionType,
+  getVerdictAppealStatusHeaderLines,
+  isAppealCourtSessionComplete,
+} from './VerdictAppealStatus.logic'
+
+describe('getVerdictAppealStatusHeaderLines', () => {
+  it('names the district court case and who appealed when', () => {
+    const lines = getVerdictAppealStatusHeaderLines({
+      courtCaseNumber: 'S-123/2026',
+      defendants: [
+        { id: 'd1', verdict: { appealDate: '2026-06-04T10:00:00.000Z' } },
+      ],
+      verdictAppealCase: {
+        id: 'verdict-appeal',
+        appealEventLogs: [
+          {
+            id: 'e1',
+            eventType: AppealEventType.APPEALED,
+            created: '2026-06-10T10:00:00.000Z',
+            defendantId: 'd1',
+            userRole: UserRole.PROSECUTOR,
+          },
+        ],
+      },
+    } as unknown as WorkingCase)
+
+    expect(lines).toEqual([
+      'Málsnr. héraðsdóms S-123/2026',
+      'Dómfelldi áfrýjaði 4. júní 2026',
+      'Ákæruvaldið áfrýjaði 10. júní 2026',
+    ])
+  })
+
+  // A case with two defendants carries the prosecution's appeal once per
+  // defendant. The header is about the proceeding, so one line is enough.
+  it('does not repeat a line two defendants share', () => {
+    const lines = getVerdictAppealStatusHeaderLines({
+      courtCaseNumber: 'S-123/2026',
+      defendants: [
+        { id: 'd1', verdict: { appealDate: '2026-06-04T10:00:00.000Z' } },
+        { id: 'd2', verdict: { appealDate: '2026-06-04T12:00:00.000Z' } },
+      ],
+      verdictAppealCase: { id: 'verdict-appeal', appealEventLogs: [] },
+    } as unknown as WorkingCase)
+
+    expect(lines).toEqual([
+      'Málsnr. héraðsdóms S-123/2026',
+      'Dómfelldi áfrýjaði 4. júní 2026',
+    ])
+  })
+
+  it('says only what is known', () => {
+    expect(
+      getVerdictAppealStatusHeaderLines({
+        defendants: [{ id: 'd1' }],
+      } as unknown as WorkingCase),
+    ).toEqual([])
+  })
+})
+
+describe('isAppealCourtSessionComplete', () => {
+  const session: AppealCourtSession = {
+    type: AppealCourtSessionType.MAIN_HEARING,
+    date: new Date(2026, 11, 12, 14, 0),
+    courtRoom: '1',
+  }
+
+  it('is complete only with a type, a date and a court room', () => {
+    expect(isAppealCourtSessionComplete(session)).toBe(true)
+    expect(isAppealCourtSessionComplete({ ...session, type: undefined })).toBe(
+      false,
+    )
+    expect(isAppealCourtSessionComplete({ ...session, date: undefined })).toBe(
+      false,
+    )
+    expect(isAppealCourtSessionComplete({ ...session, courtRoom: ' ' })).toBe(
+      false,
+    )
+  })
+})

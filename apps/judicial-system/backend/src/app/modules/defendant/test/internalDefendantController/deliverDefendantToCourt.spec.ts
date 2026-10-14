@@ -44,10 +44,13 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queuedMessages, courtService, internalDefendantController } =
-      await createTestingDefendantModule()
+    const {
+      queuedMessagesAfterCommit,
+      courtService,
+      internalDefendantController,
+    } = await createTestingDefendantModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
     mockCourtService = courtService
     const mockUpdateCaseWithDefendant =
       mockCourtService.updateCaseWithDefendant as jest.Mock

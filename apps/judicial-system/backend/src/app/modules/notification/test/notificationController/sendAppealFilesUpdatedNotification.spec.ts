@@ -30,10 +30,10 @@ describe('NotificationController - Send appeal files updated notifications', () 
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queuedMessages, notificationController } =
+    const { queuedMessagesAfterCommit, notificationController } =
       await createTestingNotificationModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
 
     givenWhenThen = async (caseId) => {
       const then = {} as Then

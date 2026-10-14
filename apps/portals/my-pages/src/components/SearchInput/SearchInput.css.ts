@@ -13,8 +13,6 @@ globalStyle(`${wrapper} button:last-of-type`, {
   },
 })
 
-export const searchButton = style({})
-
 export const item = style({
   display: 'block',
   padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
@@ -38,16 +36,6 @@ export const active = style({})
 export const breadcrumb = style({
   position: 'relative',
   width: 'auto',
-})
-
-globalStyle(`${searchButton}:focus > span`, {
-  color: theme.color.dark400,
-  backgroundColor: theme.color.mint400,
-})
-
-globalStyle(`${searchButton}:focus`, {
-  outline: 0,
-  boxShadow: 'none',
 })
 
 globalStyle(`${active}:hover ${breadcrumb} p`, {

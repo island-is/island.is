@@ -32,7 +32,7 @@ import {
 } from '../../../repository'
 import { TransitionAppealCaseDto } from '../../dto/transitionAppealCase.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: AppealCase

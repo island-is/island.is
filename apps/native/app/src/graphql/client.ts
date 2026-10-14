@@ -238,6 +238,19 @@ const cache = new InMemoryCache({
         nationalRegistryPerson: {
           merge: false,
         },
+        // Client-only, written by the health overview. Defaults to null so a
+        // cache-only read before the first write does not warn.
+        healthBasicInfoFetchedAt: {
+          read: (value: string | null = null) => value,
+        },
+        // The as-of date is always "now", so keying by it would leave a dead
+        // ROOT_QUERY entry behind on every fetch. One consumer, one entry.
+        rightsPortalUserDentistRegistration: {
+          keyArgs: false,
+        },
+        rightsPortalPaymentOverview: {
+          keyArgs: false,
+        },
       },
     },
     DocumentV2: {

@@ -38,13 +38,17 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { ModalId } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import {
+  APPEAL_PROSECUTOR_ASSIGNED,
+  isAppealProsecutorAssignedModal,
   isReviewerAssignedModal,
   REVIEWER_ASSIGNED,
 } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
+import { AppealProsecutorSelector } from './AppealProsecutorSelector'
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
+import { getPublicProsecutorOverviewAssignMode } from './Overview.logic'
 import { strings } from './Overview.strings'
 
 export const Overview = () => {
@@ -58,21 +62,14 @@ export const Overview = () => {
 
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
+  const [selectedAppealProsecutor, setSelectedAppealProsecutor] =
+    useState<Option<string> | null>()
 
   const [confirmationModal, setConfirmationModal] = useState<
     ModalId | undefined
   >()
 
-  // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
-  // Defendants whose indictment was cancelled or dismissed (completed for some)
-  // do not receive a verdict, so no review decision is required for them.
-  // The same goes for defendants whose case was closed without enforcement.
-  const isReviewMissing = workingCase.defendants?.some(
-    (defendant) =>
-      !defendant.indictmentCancelledOrDismissedState &&
-      !defendant.isClosedWithoutEnforcement &&
-      !defendant.indictmentReviewDecision,
-  )
+  const assignMode = getPublicProsecutorOverviewAssignMode(workingCase)
 
   const assignReviewer = async () => {
     if (!selectedIndictmentReviewer) {
@@ -86,6 +83,20 @@ export const Overview = () => {
     }
 
     setConfirmationModal(REVIEWER_ASSIGNED)
+  }
+
+  const assignAppealProsecutor = async () => {
+    if (!selectedAppealProsecutor) {
+      return
+    }
+    const updatedCase = await updateCase(workingCase.id, {
+      appealProsecutorId: selectedAppealProsecutor.value,
+    })
+    if (!updatedCase) {
+      return
+    }
+
+    setConfirmationModal(APPEAL_PROSECUTOR_ASSIGNED)
   }
 
   const handleNavigationTo = useCallback(
@@ -193,11 +204,18 @@ export const Overview = () => {
           )}
           <AllIndictmentCaseFiles />
           <Box component="section">
-            {isReviewMissing && (
+            {assignMode === 'reviewer' && (
               <IndictmentReviewerSelector
                 workingCase={workingCase}
                 selectedIndictmentReviewer={selectedIndictmentReviewer}
                 setSelectedIndictmentReviewer={setSelectedIndictmentReviewer}
+              />
+            )}
+            {assignMode === 'appealProsecutor' && (
+              <AppealProsecutorSelector
+                workingCase={workingCase}
+                selectedAppealProsecutor={selectedAppealProsecutor}
+                setSelectedAppealProsecutor={setSelectedAppealProsecutor}
               />
             )}
           </Box>
@@ -207,18 +225,26 @@ export const Overview = () => {
         <FormFooter
           previousUrl={getStandardUserDashboardRoute(user)}
           actions={
-            !isReviewMissing
+            assignMode === 'none'
               ? []
               : [
                   {
                     text: fm(core.continue),
                     icon: 'arrowForward',
-                    onClick: assignReviewer,
+                    onClick:
+                      assignMode === 'appealProsecutor'
+                        ? assignAppealProsecutor
+                        : assignReviewer,
                     disabled:
-                      !selectedIndictmentReviewer ||
-                      selectedIndictmentReviewer.value ===
-                        workingCase.indictmentReviewer?.id ||
-                      isLoadingWorkingCase,
+                      assignMode === 'appealProsecutor'
+                        ? !selectedAppealProsecutor ||
+                          selectedAppealProsecutor.value ===
+                            workingCase.appealProsecutor?.id ||
+                          isLoadingWorkingCase
+                        : !selectedIndictmentReviewer ||
+                          selectedIndictmentReviewer.value ===
+                            workingCase.indictmentReviewer?.id ||
+                          isLoadingWorkingCase,
                     loading: isLoadingWorkingCase,
                     testId: 'continueButton',
                   },
@@ -233,6 +259,19 @@ export const Overview = () => {
             caseNumber: workingCase.courtCaseNumber,
             reviewer: selectedIndictmentReviewer?.label,
           })}
+          buttons={[
+            {
+              text: fm(core.back),
+              onClick: () => router.push(getStandardUserDashboardRoute(user)),
+              variant: 'ghost',
+            },
+          ]}
+        />
+      )}
+      {isAppealProsecutorAssignedModal(confirmationModal) && (
+        <Modal
+          title="Úthlutun áfrýjunarmáls tókst"
+          text="Áfrýjunarmáli hefur verið úthlutað á saksóknara."
           buttons={[
             {
               text: fm(core.back),

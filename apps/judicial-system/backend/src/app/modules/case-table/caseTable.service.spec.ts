@@ -202,6 +202,7 @@ describe('CaseTableService', () => {
       id?: string
       appealCase?: ReturnType<typeof buildAppeal> | null
       rulingOrderAppealCases?: ReturnType<typeof buildAppeal>[]
+      verdictAppealCase?: ReturnType<typeof buildAppeal> | null
       defendants?: { nationalId: string; name: string }[]
       matchedValue?: string
       matchedField?: string
@@ -213,6 +214,7 @@ describe('CaseTableService', () => {
       courtCaseNumber: null,
       appealCase: overrides.appealCase ?? null,
       rulingOrderAppealCases: overrides.rulingOrderAppealCases ?? [],
+      verdictAppealCase: overrides.verdictAppealCase ?? null,
       defendants: overrides.defendants ?? [],
       get: (key: string) =>
         ({
@@ -305,6 +307,53 @@ describe('CaseTableService', () => {
         'L-12/2024',
       ])
       result.rows.forEach((r) => expect(r.caseId).toBe('case-1'))
+    })
+
+    // A verdict appeal is a proceeding of its own with its own page, so search
+    // has to offer it as its own row. Without this the court finds the case,
+    // opens it, and lands on the ruling appeal overview - the list it came
+    // from was the only thing that ever knew better.
+    it('emits a row for the verdict appeal', async () => {
+      const user = courtOfAppealsUser('user-1')
+      const mockCase = buildSearchCase({
+        appealCase: buildAppeal('appeal-cl', 'L-10/2024'),
+        verdictAppealCase: buildAppeal('appeal-verdict', 'L-99/2024'),
+      })
+      mockFindAll.mockResolvedValueOnce([mockCase])
+      mockFindAll.mockResolvedValue([])
+
+      const result = await service.searchCases('001', user)
+
+      expect(result.rows.map((r) => r.appealCaseId)).toEqual([
+        'appeal-cl',
+        'appeal-verdict',
+      ])
+      expect(result.rows.map((r) => r.appealCaseNumber)).toEqual([
+        'L-10/2024',
+        'L-99/2024',
+      ])
+    })
+
+    // The court sees a verdict appeal from the moment it is filed - that is
+    // what the access rule says and what its own list shows. The ruling appeal
+    // rule would hold a newly filed one back until the court received it.
+    it('emits a row for a verdict appeal that has only just been filed', async () => {
+      const user = courtOfAppealsUser('user-1')
+      const mockCase = buildSearchCase({
+        appealCase: null,
+        verdictAppealCase: buildAppeal(
+          'appeal-verdict',
+          '',
+          AppealCaseState.APPEALED,
+        ),
+      })
+      mockFindAll.mockResolvedValueOnce([mockCase])
+      mockFindAll.mockResolvedValue([])
+
+      const result = await service.searchCases('001', user)
+
+      expect(result.rowCount).toBe(1)
+      expect(result.rows[0].appealCaseId).toBe('appeal-verdict')
     })
 
     it('emits ruling-order rows when case-level appeal is missing', async () => {

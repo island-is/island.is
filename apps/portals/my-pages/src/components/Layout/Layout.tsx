@@ -26,7 +26,15 @@ import Header from '../Header/Header'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import FullWidthLayout from './FullWidthLayout'
 import { NarrowLayout } from './NarrowLayout'
-import { HeaderVisibilityProvider } from '../../context/HeaderVisibilityContext'
+import {
+  HeaderVisibilityProvider,
+  useHeaderVisibility,
+} from '../../context/HeaderVisibilityContext'
+
+const InertWhenSearchOpen = ({ children }: { children: React.ReactNode }) => {
+  const { searchMenuOpen } = useHeaderVisibility()
+  return <div inert={searchMenuOpen}>{children}</div>
+}
 
 export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   useNamespaces(['service.portal', 'global', 'portals', 'sp.search.tags'])
@@ -88,39 +96,43 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
         <AuthOverlay />
         <ToastContainer useKeyframeStyles={false} />
         {globalBanners.length > 0 && (
-          <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
+          <InertWhenSearchOpen>
+            <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
+          </InertWhenSearchOpen>
         )}
         <Header
           position={alertBannerHeight}
           includeSearchInHeader={!disableSearch && showSearch}
         />
 
-        {!isFullwidth && activeParent && (
-          <NarrowLayout
-            activeParent={activeParent}
-            height={totalBannerOffset}
-            pathname={pathname}
-            sidebarFooter={
-              showHealthContactBox &&
-              // If more pages end up needing to display the contact box in the future,
-              // we should consider moving this decision in to navigation metadata
-              activeParent.path === HealthPaths.HealthRoot ? (
-                <SidebarContactBox />
-              ) : undefined
-            }
-          >
-            {children}
-          </NarrowLayout>
-        )}
-        {(isFullwidth || !activeParent) && (
-          <FullWidthLayout
-            activeParent={activeParent}
-            height={totalBannerOffset}
-            pathname={pathname}
-          >
-            {children}
-          </FullWidthLayout>
-        )}
+        <InertWhenSearchOpen>
+          {!isFullwidth && activeParent && (
+            <NarrowLayout
+              activeParent={activeParent}
+              height={totalBannerOffset}
+              pathname={pathname}
+              sidebarFooter={
+                showHealthContactBox &&
+                // If more pages end up needing to display the contact box in the future,
+                // we should consider moving this decision in to navigation metadata
+                activeParent.path === HealthPaths.HealthRoot ? (
+                  <SidebarContactBox />
+                ) : undefined
+              }
+            >
+              {children}
+            </NarrowLayout>
+          )}
+          {(isFullwidth || !activeParent) && (
+            <FullWidthLayout
+              activeParent={activeParent}
+              height={totalBannerOffset}
+              pathname={pathname}
+            >
+              {children}
+            </FullWidthLayout>
+          )}
+        </InertWhenSearchOpen>
       </div>
     </HeaderVisibilityProvider>
   )

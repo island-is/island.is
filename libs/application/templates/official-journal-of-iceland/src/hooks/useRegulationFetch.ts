@@ -32,5 +32,7 @@ export const useRegulationFetch = (name?: string, date?: string) => {
     regulation: data?.OJOIAGetRegulationFromApi ?? undefined,
     loading,
     error,
+    /** Whether the query has finished, even if it found nothing */
+    done: !loading && (data !== undefined || !!error),
   }
 }

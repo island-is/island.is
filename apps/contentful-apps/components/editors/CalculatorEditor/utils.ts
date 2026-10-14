@@ -44,14 +44,21 @@ const filterText = (
     : { is: value!.is }
 }
 
-/* Treats whitespace-only rich text as empty. */
+/* The markdown serializer writes an empty paragraph as a literal `<br>`. */
+export const isBlankMarkdown = (value: string | undefined) =>
+  !value?.replace(/<br>/g, '').trim()
+
+const trimTrailingBreaks = (value: string) =>
+  value.replace(/(\s*<br>)+\s*$/, '').trimEnd()
+
 const filterMarkdown = (
   value: CalculatorLocalizedMarkdown | undefined,
 ): CalculatorLocalizedMarkdown | undefined => {
-  if (!hasText(value?.is)) return undefined
-  return hasText(value?.en)
-    ? { is: value!.is, en: value!.en }
-    : { is: value!.is }
+  if (!value || isBlankMarkdown(value.is)) return undefined
+  const is = trimTrailingBreaks(value.is)
+  return value.en && !isBlankMarkdown(value.en)
+    ? { is, en: trimTrailingBreaks(value.en) }
+    : { is }
 }
 
 const filterInputSections = (
@@ -81,13 +88,20 @@ const filterInputSections = (
         : undefined
 
     const fields = section.fields
-      .filter((field) => hasText(field.key))
+      .filter((field) =>
+        field.kind === 'content'
+          ? !isBlankMarkdown(field.content?.is)
+          : hasText(field.key),
+      )
       .map((field, fieldIndex) => {
         identity.set(`inputSections.${sectionIndex}.fields.${fieldIndex}`, {
           tab: 'input',
           sectionKey: section.key,
           fieldUid: field.uid,
         })
+        if (field.kind === 'content') {
+          return { ...field, content: filterMarkdown(field.content)! }
+        }
         return {
           ...field,
           label: filterText(field.label),
@@ -114,7 +128,7 @@ const filterOutputSections = (
     const fields = section.fields
       .filter((field) =>
         field.kind === 'content'
-          ? hasText(field.content?.is)
+          ? !isBlankMarkdown(field.content?.is)
           : hasText(field.key),
       )
       .map((field, fieldIndex) => {

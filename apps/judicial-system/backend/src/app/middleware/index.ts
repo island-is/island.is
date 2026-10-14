@@ -13,3 +13,4 @@ export type {
   TransactionContext,
   TransactionSettlement,
 } from './transactionContext.middleware'
+export { queueMessagesAfterCommit } from './queueMessagesAfterCommit'

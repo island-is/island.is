@@ -16,6 +16,7 @@ import { m } from '@island.is/portals/my-pages/core'
 import cn from 'classnames'
 import React, { useState, useEffect } from 'react'
 import { messages } from '../../../../lib/messages'
+import { TextMarkdown } from '../../../../components/TextMarkdown/TextMarkdown'
 import { PrescriptionItem } from '../../../../utils/types'
 import {
   useGetPrescriptionRenewalTargetsLazyQuery,
@@ -140,7 +141,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
         closeModal()
         toast.success(formatMessage(messages.renewalRequestSent))
       }
-    } catch (error) {
+    } catch {
       const errorMessage = formatMessage(messages.renewalRequestError)
       toast.error(errorMessage)
     }
@@ -179,9 +180,11 @@ const RenewPrescriptionModal: React.FC<Props> = ({
             {formatMessage(messages.renewalMedicineRequest)}
           </Text>
         </Box>
-        <Text marginBottom={3}>
-          {formatMessage(messages.renewalMedicineRequestText)}
-        </Text>
+        <Box marginBottom={3}>
+          <TextMarkdown openLinksInNewTab>
+            {formatMessage(messages.renewalMedicineRequestTextWithLink)}
+          </TextMarkdown>
+        </Box>
         {targetOptions.length > 1 && (
           <Box marginBottom={3}>
             <Select

@@ -1334,6 +1334,7 @@ describe('Transition Case', () => {
           courtEndTime: null,
           rulingDate: null,
           indictmentReviewerId: null,
+          appealProsecutorId: null,
           courtRecordHash: null,
         })
       })

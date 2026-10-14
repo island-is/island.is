@@ -1,7 +1,6 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { addMessagesToQueue } from '@island.is/judicial-system/message'
 import {
   AppealCaseState,
   AppealCaseTransition,
@@ -16,6 +15,7 @@ import {
 
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import { FileService } from '../../../file'
 import {
   AppealCase,
@@ -29,7 +29,7 @@ import {
 } from '../../../repository'
 import { TransitionAppealCaseDto } from '../../dto/transitionAppealCase.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: AppealCase
@@ -232,7 +232,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     // appeal case nor the notification moves.
     it('should leave the appeal case standing', () => {
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
       expect(then.result).toBe(appealCase)
     })
   })
@@ -270,7 +270,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     })
 
     it('should notify that the appeal was withdrawn', () => {
-      expect(addMessagesToQueue).toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).toHaveBeenCalled()
     })
   })
 

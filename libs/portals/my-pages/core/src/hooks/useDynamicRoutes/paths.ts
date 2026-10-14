@@ -13,7 +13,7 @@ export enum DynamicPaths {
   HealthPregnancyOverview = '/heilsa/medganga/min-medganga',
 
   SocialBenefitsUnemploymentStatus = '/framfaersla/atvinnuleysisbaetur/minstada',
-  SocialBenefitsUnemploymentPayments = '/framfaersla/atvinnuleysisbaetur/greidslur',
+  SocialBenefitsUnemploymentIncome = '/framfaersla/atvinnuleysisbaetur/tekjur',
   SocialBenefitsUnemploymentMyData = '/framfaersla/atvinnuleysisbaetur/mingogn',
   SocialBenefitsActivationAllowanceStatus = '/framfaersla/virknistyrkur/minstada',
   SocialBenefitsActivationAllowanceMyData = '/framfaersla/virknistyrkur/mingogn',

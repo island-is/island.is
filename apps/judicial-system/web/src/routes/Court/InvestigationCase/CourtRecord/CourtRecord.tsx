@@ -19,6 +19,7 @@ import {
   icCourtRecord as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   CourtCaseInfo,
@@ -35,10 +36,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { getRequestCaseDefenderNames } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
-import type {
-  Case,
-  CaseAppealDecision,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealDecisionPartyRole,
   CaseType,
@@ -63,7 +61,7 @@ import {
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
-  workingCase: Case,
+  workingCase: WorkingCase,
 ) => {
   const autofillSessionBookings = []
 

@@ -17,8 +17,8 @@ const Payments = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(um.paymentsTitle)}
-      intro={formatMessage(um.paymentsIntro)}
+      title={formatMessage(um.incomeTitle)}
+      intro={formatMessage(um.incomeIntro)}
       serviceProvider={{
         slug: 'vinnumalastofnun',
         tooltip: formatMessage(um.tooltip),

@@ -834,6 +834,35 @@ export interface IChartNumberBox extends Entry<IChartNumberBoxFields> {
   }
 }
 
+export interface IChartNumberBoxGroupFields {
+  /** Internal title */
+  internalTitle: string
+
+  /** Column count */
+  columnCount?: number | undefined
+
+  /** Components */
+  components?: IChartNumberBox[] | undefined
+}
+
+export interface IChartNumberBoxGroup
+  extends Entry<IChartNumberBoxGroupFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'chartNumberBoxGroup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IContactUsFields {
   /** Title */
   title?: string | undefined
@@ -3660,6 +3689,7 @@ export interface IOrganizationPageFields {
         | ILatestNewsSlice
         | IFeaturedLinks
         | IOrganizationParentSubpageList
+        | IChartNumberBoxGroup
       )[]
     | undefined
 
@@ -3761,6 +3791,9 @@ export interface IOrganizationPageFields {
 
   /** Can be found in search results */
   canBeFoundInSearchResults?: boolean | undefined
+
+  /** Active translations */
+  activeTranslations?: Record<string, any> | undefined
 
   /** Show past events option */
   showPastEventsOption?: boolean | undefined

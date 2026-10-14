@@ -320,18 +320,35 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
         filePdfDoc.getPageIndices(),
       )
 
-      pages.forEach((page) => {
+      // Always scale to A4 so all merged pages have consistent size (small pages
+      // were previously added as-is and appeared tiny next to A4 pages).
+      // Every page is scaled before any of them is added, so a page that cannot
+      // be scaled leaves the document untouched instead of half merged.
+      const scaledPages = pages.map((page) => {
         const { width, height } = page.getSize()
         const isLandscape = width > height
 
-        // Always scale to A4 so all merged pages have consistent size (small pages
-        // were previously added as-is and appeared tiny next to A4 pages).
-        const { page: scaledPage, scale } = scaleToA4(page, isLandscape)
-        const pageNumber = rawDocument.getPageCount()
-
-        scalePageInfo.set(pageNumber, 1 / scale)
-        rawDocument.addPage(scaledPage)
+        return scaleToA4(page, isLandscape)
       })
+
+      const firstPageNumber = rawDocument.getPageCount()
+
+      try {
+        scaledPages.forEach(({ page, scale }) => {
+          scalePageInfo.set(rawDocument.getPageCount(), 1 / scale)
+          rawDocument.addPage(page)
+        })
+      } catch (error) {
+        // Roll back the pages that were added before the failure
+        while (rawDocument.getPageCount() > firstPageNumber) {
+          const lastPageNumber = rawDocument.getPageCount() - 1
+
+          scalePageInfo.delete(lastPageNumber)
+          rawDocument.removePage(lastPageNumber)
+        }
+
+        throw error
+      }
 
       return pdfDocument
     },

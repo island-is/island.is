@@ -12,8 +12,10 @@ import {
 
 import { CaseService } from '../../case'
 import { LimitedAccessCaseService } from '../../case/limitedAccessCase.service'
+import { PdfService } from '../../case/pdf.service'
 import { EventService } from '../../event'
 import { FileService } from '../../file'
+import { LawyerRegistryService } from '../../lawyer-registry/lawyerRegistry.service'
 import {
   AppealCaseRepositoryService,
   AppealDecisionRepositoryService,
@@ -29,9 +31,12 @@ import { AppealCaseService } from '../appealCase.service'
 import { LimitedAccessAppealCaseController } from '../limitedAccessAppealCase.controller'
 
 jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../case/case.service')
 jest.mock('../../case/limitedAccessCase.service')
+jest.mock('../../case/pdf.service')
 jest.mock('../../event/event.service')
+jest.mock('../../lawyer-registry/lawyerRegistry.service')
 jest.mock('../../file/file.service')
 jest.mock('../../user/user.service')
 jest.mock('../../repository/services/appealCaseRepository.service')
@@ -53,7 +58,9 @@ export const createTestingAppealCaseModule = async () => {
       SharedAuthModule,
       CaseService,
       LimitedAccessCaseService,
+      PdfService,
       EventService,
+      LawyerRegistryService,
       FileService,
       UserService,
       AppealCaseRepositoryService,
@@ -101,6 +108,12 @@ export const createTestingAppealCaseModule = async () => {
   const defendantRepositoryService =
     appealCaseModule.get<DefendantRepositoryService>(DefendantRepositoryService)
 
+  const pdfService = appealCaseModule.get<PdfService>(PdfService)
+
+  const lawyerRegistryService = appealCaseModule.get<LawyerRegistryService>(
+    LawyerRegistryService,
+  )
+
   const userService = appealCaseModule.get<UserService>(UserService)
 
   const eventService = appealCaseModule.get<EventService>(EventService)
@@ -129,6 +142,8 @@ export const createTestingAppealCaseModule = async () => {
     caseRepositoryService,
     defendantRepositoryService,
     verdictRepositoryService,
+    pdfService,
+    lawyerRegistryService,
     userService,
     eventService,
     fileService,

@@ -154,6 +154,39 @@ and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
 - Never put a `.spec.ts` under `pages/` in the web app - Next compiles it as a
   route and the production build fails.
 
+## Case loads are traced per guard
+
+Every guard that reads a case onto the request does so through
+`traceCaseLoad` in `case/guards/traceCaseLoad.ts`, which runs the load in a
+`judicial-system.case_load` span named after the guard and tags both that span
+and the request span with `case_load.guard` and `case_load.include`. That is
+what lets Postgres volume and request latency be attributed to the guard and
+include profile that caused them, route by route, in Datadog.
+
+A new guard that loads a case, or a guard moving to a narrower include
+profile, has to go through the helper and name its profile in
+`CaseLoadInclude`; `guards/test/caseLoadTracing.spec.ts` pins the existing
+ones. The api's `responseSize.plugin.ts` is the client-side counterpart: it
+tags each GraphQL request span with the operation name and the response bytes.
+
+## Queue messages after commit
+
+A request queues messages for the message handler with
+`queueMessagesAfterCommit` from `app/middleware`, and with nothing else. The
+helper registers the push with the request's transaction context, so a request
+whose transaction rolls back sends nothing. The message library's
+`pushMessagesToRequestStore` is the plumbing behind the helper: it pushes into
+a store that is flushed when the response ends whatever happened to the
+database work, so the helper is its only production caller and must stay so. A
+handler that commits a transaction of its own must
+return right after the commit: the callbacks run on the success path, so work
+that can fail after a commit would drop them.
+
+In a spec, mock the helper's module
+(`jest.mock('<path to>/middleware/queueMessagesAfterCommit')`) and assert on
+the messages it was called with. Registering real callbacks needs the request
+context and the commit interceptor, which controller specs do not run.
+
 ## Codegen
 
 Regenerate after changing GraphQL schema/resolvers, REST controllers/DTOs, or

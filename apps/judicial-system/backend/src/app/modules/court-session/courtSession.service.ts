@@ -15,11 +15,7 @@ import {
   formatDate,
   formatRulingOrderPronouncedOrallyName,
 } from '@island.is/judicial-system/formatters'
-import {
-  addMessagesToQueue,
-  type Message,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { type Message, MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
   AppealCaseState,
@@ -38,6 +34,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { queueMessagesAfterCommit } from '../../middleware'
 import {
   buildInCourtAppealedEvent,
   hasOutOfCourtAppeal,
@@ -126,7 +123,7 @@ export class CourtSessionService {
       })
     }
 
-    addMessagesToQueue(...messages)
+    queueMessagesAfterCommit(...messages)
   }
 
   // Records a merged case in a court session: its court documents are copied
@@ -258,6 +255,22 @@ export class CourtSessionService {
     }
 
     return courtSession
+  }
+
+  // Whether the latest court session of a case is still open - unconfirmed, so
+  // a merged case may still join it. Read from the caller's transaction so a
+  // decision taken on it holds for the rest of that transaction, which the
+  // guard's earlier snapshot of the case cannot promise.
+  async isLatestCourtSessionOpen(
+    caseId: string,
+    transaction: Transaction,
+  ): Promise<boolean> {
+    const latestCourtSession =
+      await this.courtSessionRepositoryService.findLatestByCase(caseId, {
+        transaction,
+      })
+
+    return Boolean(latestCourtSession && !latestCourtSession.isConfirmed)
   }
 
   // A case merged into another after that case's latest court session was
@@ -998,7 +1011,7 @@ export class CourtSessionService {
         ))
 
       if (!existingAppealCase) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           user,
           caseId: theCase.id,
@@ -1051,7 +1064,7 @@ export class CourtSessionService {
           { transaction },
         )
 
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           user,
           caseId: theCase.id,

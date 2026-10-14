@@ -1,9 +1,7 @@
 import { v4 as uuid } from 'uuid'
 
-import type {
-  Case,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseDecision,
   CaseState,
@@ -36,20 +34,20 @@ describe('shouldHideNextButton', () => {
     ${{ id: uuid(), role: UserRole.PRISON_SYSTEM_STAFF, institution: { type: InstitutionType.PRISON } }}
     ${{ id: uuid(), role: UserRole.PRISON_SYSTEM_STAFF, institution: { type: InstitutionType.PRISON_ADMIN } }}
   `('should hide next button for user: $user', ({ user }) => {
-    const theCase = {} as Case
+    const theCase = {} as WorkingCase
     const res = shouldHideNextButton(theCase, user)
     expect(res).toEqual(true)
   })
 
   test('should show next button for user role: PROSECUTOR', () => {
-    const theCase = {} as Case
+    const theCase = {} as WorkingCase
     const res = shouldHideNextButton(theCase, prosecutor)
     expect(res).toEqual(false)
   })
 
   test('should show next button for user role: DISTRICT_COURT_REGISTRAR if user is assinged registrar', () => {
     const userId = uuid()
-    const theCase = { registrar: { id: userId } } as Case
+    const theCase = { registrar: { id: userId } } as WorkingCase
     const res = shouldHideNextButton(theCase, {
       id: userId,
       role: UserRole.DISTRICT_COURT_REGISTRAR,
@@ -59,7 +57,7 @@ describe('shouldHideNextButton', () => {
 
   test('should show next button for user role: DISTRICT_COURT_JUDGE iF user is assigned judge', () => {
     const userId = uuid()
-    const theCase = { judge: { id: userId } } as Case
+    const theCase = { judge: { id: userId } } as WorkingCase
     const res = shouldHideNextButton(theCase, {
       id: userId,
       role: UserRole.DISTRICT_COURT_JUDGE,
@@ -70,31 +68,31 @@ describe('shouldHideNextButton', () => {
   test('should hide next button if decision is ACCEPTING_ALTERNATIVE_TRAVEL_BAN', () => {
     const theCase = {
       decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-    } as Case
+    } as WorkingCase
     const res = shouldHideNextButton(theCase, prosecutor)
     expect(res).toEqual(true)
   })
 
   test('should hide next button if case is rejected', () => {
-    const theCase = { state: CaseState.REJECTED } as Case
+    const theCase = { state: CaseState.REJECTED } as WorkingCase
     const res = shouldHideNextButton(theCase, prosecutor)
     expect(res).toEqual(true)
   })
 
   test('should hide next button if case is dismissed', () => {
-    const theCase = { state: CaseState.DISMISSED } as Case
+    const theCase = { state: CaseState.DISMISSED } as WorkingCase
     const res = shouldHideNextButton(theCase, prosecutor)
     expect(res).toEqual(true)
   })
 
   test('should hide next button if case has valid to date in the past', () => {
-    const theCase = { isValidToDateInThePast: true } as Case
+    const theCase = { isValidToDateInThePast: true } as WorkingCase
     const res = shouldHideNextButton(theCase, prosecutor)
     expect(res).toEqual(true)
   })
 
   test('should hide next button if case has a child case', () => {
-    const theCase = { childCase: {} as Case } as Case
+    const theCase = { childCase: {} as WorkingCase } as WorkingCase
     const res = shouldHideNextButton(theCase, prosecutor)
     expect(res).toEqual(true)
   })
@@ -108,7 +106,7 @@ describe('getExtensionInfoText', () => {
     institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
   } as User
 
-  const fn = (theCase: Case, user?: User) =>
+  const fn = (theCase: WorkingCase, user?: User) =>
     getExtensionInfoText(formatMessage, theCase, user)
 
   it.each`
@@ -122,7 +120,7 @@ describe('getExtensionInfoText', () => {
     const theCase = {
       type: CaseType.CUSTODY,
       state: CaseState.REJECTED,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase, { role } as User)
 
     expect(res).toBeUndefined()
@@ -132,7 +130,7 @@ describe('getExtensionInfoText', () => {
     const theCase = {
       type: CaseType.CUSTODY,
       state: CaseState.REJECTED,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase, prosecutor)
 
     expect(res).toEqual('Ekki hægt að framlengja gæsluvarðhald sem var hafnað.')
@@ -142,7 +140,7 @@ describe('getExtensionInfoText', () => {
     const theCase = {
       type: CaseType.ADMISSION_TO_FACILITY,
       state: CaseState.REJECTED,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase, prosecutor)
 
     expect(res).toEqual(
@@ -154,7 +152,7 @@ describe('getExtensionInfoText', () => {
     const theCase = {
       type: CaseType.TRAVEL_BAN,
       state: CaseState.REJECTED,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase, prosecutor)
 
     expect(res).toEqual('Ekki hægt að framlengja farbann sem var hafnað.')
@@ -164,7 +162,7 @@ describe('getExtensionInfoText', () => {
     const theCase = {
       type: CaseType.SEARCH_WARRANT,
       state: CaseState.REJECTED,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase, prosecutor)
 
     expect(res).toEqual('Ekki hægt að framlengja kröfu sem var hafnað.')
@@ -174,7 +172,7 @@ describe('getExtensionInfoText', () => {
     const theCase = {
       type: CaseType.SEARCH_WARRANT,
       state: CaseState.DISMISSED,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase, prosecutor)
 
     expect(res).toEqual('Ekki hægt að framlengja kröfu sem var vísað frá.')
@@ -184,7 +182,7 @@ describe('getExtensionInfoText', () => {
     const theCase = {
       type: CaseType.CUSTODY,
       isValidToDateInThePast: true,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase, prosecutor)
 
     expect(res).toEqual('Ekki hægt að framlengja gæsluvarðhald sem er lokið.')
@@ -194,7 +192,7 @@ describe('getExtensionInfoText', () => {
     const theCase = {
       type: CaseType.CUSTODY,
       decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase, prosecutor)
 
     expect(res).toEqual(
@@ -205,8 +203,8 @@ describe('getExtensionInfoText', () => {
   test('should format for custody case with a child case', () => {
     const theCase = {
       type: CaseType.CUSTODY,
-      childCase: {} as Case,
-    } as Case
+      childCase: {} as WorkingCase,
+    } as WorkingCase
     const res = fn(theCase, prosecutor)
 
     expect(res).toEqual('Framlengingarkrafa hefur þegar verið útbúin.')
@@ -215,7 +213,7 @@ describe('getExtensionInfoText', () => {
   test('should fallback to undefined', () => {
     const theCase = {
       type: CaseType.CUSTODY,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase, prosecutor)
 
     expect(res).toBeUndefined()

@@ -15,11 +15,7 @@ import {
   formatDate,
   getServiceStatusText,
 } from '@island.is/judicial-system/formatters'
-import {
-  addMessagesToQueue,
-  Message,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CourtDocumentType,
@@ -35,7 +31,7 @@ import {
 
 import { nowFactory } from '../../factories'
 import { getCaseFileHash } from '../../formatters'
-import { registerAfterCommit } from '../../middleware'
+import { queueMessagesAfterCommit } from '../../middleware'
 import { InternalCaseService } from '../case/internalCase.service'
 import { PdfService } from '../case/pdf.service'
 import {
@@ -219,10 +215,7 @@ export class SubpoenaService {
     }
 
     if (messages.length > 0) {
-      // Only buffer after commit so a rollback cannot publish via MessageMiddleware.
-      registerAfterCommit(async () => {
-        addMessagesToQueue(...messages)
-      })
+      queueMessagesAfterCommit(...messages)
     }
   }
 
@@ -256,7 +249,7 @@ export class SubpoenaService {
     }
 
     if (messages.length > 0) {
-      addMessagesToQueue(...messages)
+      queueMessagesAfterCommit(...messages)
     }
   }
 
@@ -282,14 +275,14 @@ export class SubpoenaService {
   ): void {
     if (serviceStatus && serviceStatus !== subpoena.serviceStatus) {
       if (isSuccessfulServiceStatus(serviceStatus)) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
           body: { type: SubpoenaNotificationType.SERVICE_SUCCESSFUL },
         })
       } else if (isFailedServiceStatus(serviceStatus)) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],

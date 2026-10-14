@@ -1,15 +1,8 @@
-import type { User, UserRole } from '@island.is/judicial-system/types'
+import type { UserRole } from '@island.is/judicial-system/types'
 
-export type Credentials = {
-  currentUserNationalId: string
-  currentUser?: User
-  csrfToken?: string
-}
-
-export type AuthUser = {
-  currentUserNationalId: string
-  currentUser?: User
-}
+// Defined in the types lib so that judicial-system-web, which cannot depend on
+// this nest library, can verify the same access token in its api routes.
+export type { AuthUser, Credentials } from '@island.is/judicial-system/types'
 
 export enum RulesType {
   BASIC,

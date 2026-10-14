@@ -17,27 +17,28 @@ export const bankTransfer = defineMessages({
     defaultMessage: 'Hefja millifærslu',
     description: 'Primary button label that initiates the bank-transfer flow',
   },
-  accountNumber: {
-    id: 'payments:bankTransfer.accountNumber',
-    defaultMessage: 'Úttektarreikningur',
-    description: 'Label for the payer bank account number (BBAN) input',
-  },
-  accountNumberPlaceholder: {
-    id: 'payments:bankTransfer.accountNumberPlaceholder',
-    defaultMessage: '0000-00-000000',
+  bank: {
+    id: 'payments:bankTransfer.bank',
+    defaultMessage: 'Banki',
     description:
-      'Placeholder for the bank account number input (XXXX-XX-XXXXXX)',
+      'Label for the bank part (first 4 digits) of the payer bank account number. EN: "Bank"',
+  },
+  ledger: {
+    id: 'payments:bankTransfer.ledger',
+    defaultMessage: 'Höfuðbók',
+    description:
+      'Label for the ledger part (middle 2 digits) of the payer bank account number. EN: "Ledger"',
+  },
+  account: {
+    id: 'payments:bankTransfer.account',
+    defaultMessage: 'Bankareikningur',
+    description:
+      'Label for the account part (last 6 digits) of the payer bank account number. EN: "Account number"',
   },
   accountNumberRequired: {
     id: 'payments:bankTransfer.accountNumberRequired',
     defaultMessage: 'Úttektarreikningur er nauðsynlegur',
     description: 'Validation error when the bank account number is empty',
-  },
-  accountNumberInvalid: {
-    id: 'payments:bankTransfer.accountNumberInvalid',
-    defaultMessage: 'Sláðu inn gilt reikningsnúmer (0000-00-000000)',
-    description:
-      'Validation error when the bank account number is not 12 digits',
   },
   accountNumberBankNotSupported: {
     id: 'payments:bankTransfer.accountNumberBankNotSupported',
@@ -45,6 +46,48 @@ export const bankTransfer = defineMessages({
       'Millifærsla er ekki í boði frá þessum banka. Notaðu reikning í öðrum banka.',
     description:
       'Validation error when the account number is well-formed but belongs to a bank the payment provider cannot process. Must not read as a typo error — the number is fine, the bank is the problem. EN: "Bank transfer is not available from this bank. Please use an account at another bank."',
+  },
+  companyPayerInfo: {
+    id: 'payments:bankTransfer.companyPayerInfo',
+    defaultMessage:
+      'Þú greiðir fyrir hönd <b>{companyName}.</b> Notaðu bankareikning fyrirtækisins, ekki þinn eigin.',
+    description:
+      'Info banner shown instead of the disclaimer when the payer is a company. {companyName} is the company name without a trailing period; <b> marks it bold. EN: "You are paying on behalf of <b>{companyName}.</b> Use the company\'s bank account, not your own."',
+  },
+  actorNationalId: {
+    id: 'payments:bankTransfer.actorNationalId',
+    defaultMessage: 'Kennitala samþykktaraðila',
+    description:
+      'Label for the national id of the individual who authorises the transfer on behalf of a company payer. EN: "National id of approver"',
+  },
+  actorNationalIdTooltip: {
+    id: 'payments:bankTransfer.actorNationalIdTooltip',
+    defaultMessage:
+      'Kennitala einstaklings sem hefur heimild til að framkvæma greiðslur af bankareikningi fyrirtækisins.',
+    description:
+      'Tooltip on the approver national id input. EN: "National id of an individual who is authorised to make payments from the company\'s bank account."',
+  },
+  actorNationalIdPlaceholder: {
+    id: 'payments:bankTransfer.actorNationalIdPlaceholder',
+    defaultMessage: '000000-0000',
+    description: 'Placeholder for the approver national id input',
+  },
+  actorNationalIdRequired: {
+    id: 'payments:bankTransfer.actorNationalIdRequired',
+    defaultMessage: 'Kennitala samþykktaraðila er nauðsynleg.',
+    description: 'Validation error when the approver national id is empty',
+  },
+  actorNationalIdInvalid: {
+    id: 'payments:bankTransfer.actorNationalIdInvalid',
+    defaultMessage: 'Sláðu inn gilda kennitölu einstaklings.',
+    description:
+      'Validation error when the approver national id is not a valid national id of an individual (e.g. a company). EN: "Enter a valid national id of an individual."',
+  },
+  companyNationalId: {
+    id: 'payments:bankTransfer.companyNationalId',
+    defaultMessage: 'Kennitala {companyName}',
+    description:
+      'Label for the read-only national id of the company paying. {companyName} is the company name. EN: "National id of {companyName}"',
   },
   cancel: {
     id: 'payments:bankTransfer.cancel',

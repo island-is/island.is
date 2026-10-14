@@ -1,4 +1,5 @@
-import { Area, Bar, Cell, Label, Line, Pie } from 'recharts'
+import { useMemo } from 'react'
+import { Area, Bar, Cell, Label, Line, Pie, useChartWidth } from 'recharts'
 
 import type { Locale } from '@island.is/shared/types'
 
@@ -18,6 +19,7 @@ import {
   formatPercentageForPresentation,
   formatValueForPresentation,
 } from '../utils'
+import { AVG_CHAR_WIDTH_EM, wrapAxisLabel } from '../utils/wrapAxisLabel'
 
 interface ChartComponentRendererProps {
   component: ChartComponentWithRenderProps
@@ -72,7 +74,6 @@ type CustomLabelProps = {
   cy?: number
   midAngle?: number
   outerRadius?: number
-  innerRadius?: number
   percent?: number
   payload?: {
     name?: string
@@ -83,20 +84,54 @@ type CustomLabelProps = {
 }
 
 const RADIAN = Math.PI / 180
-const renderCustomizedLabel = ({
+// Recharts draws the label line from the pie's edge out this far
+const LABEL_LINE_LENGTH = 20
+const LABEL_GAP = 4
+const LABEL_EDGE_MARGIN = 4
+const LABEL_LINE_HEIGHT_EM = 1.2
+const LABEL_MAX_LINES = 3
+const LABEL_MIN_CHARS_PER_LINE = 6
+
+// Anchored away from the pie at the end of its label line and wrapped to the
+// space left before the chart edge, so long names aren't clipped
+const PieLabel = ({
   cx = 0,
   cy = 0,
   midAngle = 0,
   outerRadius = 0,
-  innerRadius = 0,
   payload,
   percent = 0,
   activeLocale,
   customStyleConfig,
 }: CustomLabelProps) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 1.8
-  const x = cx + radius * Math.cos(-midAngle * RADIAN)
-  const y = cy + radius * Math.sin(-midAngle * RADIAN)
+  const chartWidth = useChartWidth() ?? 0
+  const fontSize =
+    customStyleConfig?.pie?.fontSize ?? DEFAULT_PIE_LABEL_FONT_SIZE
+
+  const cos = Math.cos(-midAngle * RADIAN)
+  const sin = Math.sin(-midAngle * RADIAN)
+  const radius = outerRadius + LABEL_LINE_LENGTH + LABEL_GAP
+  const x = cx + radius * cos
+  const y = cy + radius * sin
+  const isRightSide = cos >= 0
+
+  const availableWidth = (isRightSide ? chartWidth - x : x) - LABEL_EDGE_MARGIN
+  const maxCharsPerLine = Math.max(
+    LABEL_MIN_CHARS_PER_LINE,
+    Math.floor(availableWidth / (fontSize * AVG_CHAR_WIDTH_EM)),
+  )
+  const name = payload?.name ?? ''
+  // hyphenateText builds a new pattern table per call, so skip it on re-renders
+  const lines = useMemo(
+    () => wrapAxisLabel(name, maxCharsPerLine, LABEL_MAX_LINES, activeLocale),
+    [name, maxCharsPerLine, activeLocale],
+  )
+  const isTruncated = lines[lines.length - 1]?.endsWith('…') ?? false
+
+  // Centre the value on the line's end; labels above the pie stack upwards
+  // so their wrapped lines don't run into it
+  const firstLineOffset =
+    0.35 - (sin < 0 ? lines.length * LABEL_LINE_HEIGHT_EM : 0)
 
   const value = payload?.value
 
@@ -106,43 +141,51 @@ const renderCustomizedLabel = ({
         x={x}
         y={y}
         fill="#00003C"
-        textAnchor="middle"
-        fontSize={`${
-          customStyleConfig?.pie?.fontSize ?? DEFAULT_PIE_LABEL_FONT_SIZE
-        }px`}
+        textAnchor={isRightSide ? 'start' : 'end'}
+        fontSize={`${fontSize}px`}
       >
-        <tspan x={x} dy="0" fontWeight={500}>{`${
+        {isTruncated && <title>{name}</title>}
+        <tspan x={x} dy={`${firstLineOffset}em`} fontWeight={500}>{`${
           percent
             ? formatPercentageForPresentation(percent)
             : value
             ? formatValueForPresentation(activeLocale, value)
             : ''
         }`}</tspan>
-        <tspan x={x} dy="1.2em">
-          {payload?.name}
-        </tspan>
+        {lines.map((line, i) => (
+          <tspan key={line + i} x={x} dy={`${LABEL_LINE_HEIGHT_EM}em`}>
+            {line}
+          </tspan>
+        ))}
       </text>
     </g>
   )
 }
+
+// Tooltips resolve the segment name from the data entries (nameKey),
+// not from Cell props — without this they fall back to the entry index.
+export const getPieData = (
+  components: ChartComponentWithRenderProps[],
+  data: ChartData,
+) =>
+  (data?.[0]?.statisticsForHeader ?? []).map((entry) => ({
+    ...entry,
+    name:
+      components.find((c) => c.sourceDataKey === entry.key)?.label ?? entry.key,
+  }))
+
+export const getPieTotal = (pieData: ReturnType<typeof getPieData>) =>
+  pieData.reduce((total, { value }) => total + (value ? value : 0), 0)
 
 export const renderPieChartComponents = (
   components: ChartComponentWithRenderProps[],
   data: ChartData,
   activeLocale: Locale,
   customStyleConfig: CustomStyleConfig,
+  isMobile: boolean,
 ) => {
-  // Tooltips resolve the segment name from the data entries (nameKey),
-  // not from Cell props — without this they fall back to the entry index.
-  const pieData = (data?.[0]?.statisticsForHeader ?? []).map((entry) => ({
-    ...entry,
-    name:
-      components.find((c) => c.sourceDataKey === entry.key)?.label ?? entry.key,
-  }))
-  const total = pieData.reduce(
-    (total, { value }) => total + (value ? value : 0),
-    0,
-  )
+  const pieData = getPieData(components, data)
+  const total = getPieTotal(pieData)
   const formattedTotal = formatValueForPresentation(activeLocale, total)
 
   const userDefinedInnerRadius = customStyleConfig?.pie?.innerRadius
@@ -159,8 +202,11 @@ export const renderPieChartComponents = (
   }
 
   const innerRadius = userDefinedInnerRadius ?? DEFAULT_PIE_INNER_RADIUS
+  // Mobile lists the segments in the legend instead, so the pie can use the
+  // space the outside labels need on wider screens
   const outerRadius =
-    userDefinedOuterRadius ?? PIE_CHART_MAX_RADIUS - innerRadius
+    userDefinedOuterRadius ??
+    (isMobile ? PIE_CHART_MAX_RADIUS : PIE_CHART_MAX_RADIUS - innerRadius)
 
   return (
     <Pie
@@ -171,12 +217,16 @@ export const renderPieChartComponents = (
       cy="50%"
       innerRadius={`${innerRadius}%`}
       outerRadius={`${outerRadius}%`}
-      label={(props) =>
-        renderCustomizedLabel({
-          ...props,
-          activeLocale,
-          customStyleConfig,
-        })
+      label={
+        isMobile
+          ? false
+          : (props) => (
+              <PieLabel
+                {...props}
+                activeLocale={activeLocale}
+                customStyleConfig={customStyleConfig}
+              />
+            )
       }
       startAngle={90}
       endAngle={360 + 90}
@@ -206,6 +256,7 @@ interface ChartComponentsRendererProps {
   data: ChartData
   activeLocale: Locale
   customStyleConfig: CustomStyleConfig
+  isMobile: boolean
 }
 
 export const renderChartComponents = ({
@@ -214,6 +265,7 @@ export const renderChartComponents = ({
   data,
   activeLocale,
   customStyleConfig,
+  isMobile,
 }: ChartComponentsRendererProps) => {
   if (chartType === ChartType.pie) {
     return renderPieChartComponents(
@@ -221,6 +273,7 @@ export const renderChartComponents = ({
       data,
       activeLocale,
       customStyleConfig,
+      isMobile,
     )
   }
 

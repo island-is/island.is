@@ -310,7 +310,7 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: {
+            appeal: {
               appealState: AppealCaseState.APPEALED,
               appealEventLogs: [prosecutorAppealed],
             },
@@ -325,7 +325,7 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.INDICTMENT,
-            appealCase: {
+            appeal: {
               appealState: AppealCaseState.APPEALED,
               appealEventLogs: [prosecutorAppealed],
             },
@@ -340,7 +340,7 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: {
+            appeal: {
               appealState: AppealCaseState.RECEIVED,
               appealEventLogs: [prosecutorAppealed],
             },
@@ -355,7 +355,7 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: {
+            appeal: {
               appealState: AppealCaseState.APPEALED,
               appealEventLogs: [defenderAppealed],
             },
@@ -370,7 +370,7 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: {
+            appeal: {
               appealState: AppealCaseState.APPEALED,
               appealEventLogs: [],
             },
@@ -386,7 +386,7 @@ describe('caseTable.utils', () => {
           {
             type: CaseType.CUSTODY,
             defendants: [{ defenderNationalId: '1111111111' }],
-            appealCase: {
+            appeal: {
               appealState: AppealCaseState.APPEALED,
               appealEventLogs: [defenderAppealed],
             },
@@ -402,7 +402,7 @@ describe('caseTable.utils', () => {
           {
             type: CaseType.CUSTODY,
             defendants: [{ defenderNationalId: '1111111111' }],
-            appealCase: {
+            appeal: {
               appealState: AppealCaseState.APPEALED,
               appealEventLogs: [defenderAppealed],
             },
@@ -418,7 +418,7 @@ describe('caseTable.utils', () => {
           {
             type: CaseType.CUSTODY,
             defendants: [{ defenderNationalId: '1111111111' }],
-            appealCase: {
+            appeal: {
               appealState: AppealCaseState.APPEALED,
               appealEventLogs: [prosecutorAppealed],
             },
@@ -437,7 +437,7 @@ describe('caseTable.utils', () => {
           {
             type: CaseType.CUSTODY,
             defendants: [{ defenderNationalId: '1111111111' }],
-            appealCase: {
+            appeal: {
               appealState: AppealCaseState.APPEALED,
               appealEventLogs: [prosecutorAppealed, defenderAppealed],
             },
@@ -462,7 +462,7 @@ describe('caseTable.utils', () => {
                 defenderNationalId: '1111111111',
               },
             ],
-            appealCase: {
+            appeal: {
               appealState: AppealCaseState.RECEIVED,
               appealEventLogs: [
                 prosecutorAppealed,
@@ -491,7 +491,7 @@ describe('caseTable.utils', () => {
                 defenderNationalId: '1111111111',
               },
             ],
-            appealCase: {
+            appeal: {
               appealState: AppealCaseState.RECEIVED,
               appealEventLogs: [
                 {
@@ -519,7 +519,7 @@ describe('caseTable.utils', () => {
                 defenderNationalId: '1111111111',
               },
             ],
-            appealCase: {
+            appeal: {
               appealState: AppealCaseState.RECEIVED,
               appealEventLogs: [
                 {
@@ -541,7 +541,7 @@ describe('caseTable.utils', () => {
           {
             type: CaseType.CUSTODY,
             defendants: [{ defenderNationalId: '1111111111' }],
-            appealCase: {
+            appeal: {
               appealState: AppealCaseState.COMPLETED,
               appealEventLogs: [defenderAppealed],
             },
@@ -578,7 +578,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         type: CaseType.CUSTODY,
         state: CaseState.ACCEPTED,
-        appealCase: {
+        appeal: {
           appealState: AppealCaseState.APPEALED,
           appealEventLogs: [
             {
@@ -599,7 +599,7 @@ describe('caseTable.utils', () => {
         type: CaseType.CUSTODY,
         state: CaseState.ACCEPTED,
         defendants: [{ defenderNationalId: '1111111111' }],
-        appealCase: {
+        appeal: {
           appealState: AppealCaseState.APPEALED,
           appealEventLogs: [
             {

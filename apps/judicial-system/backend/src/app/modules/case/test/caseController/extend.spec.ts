@@ -231,6 +231,7 @@ describe('CaseController - Extend', () => {
           defenderEmail: undefined,
           defenderPhoneNumber: undefined,
           defenderChoice: null,
+          requestSharedWithDefender: undefined,
         },
         transaction,
       )
@@ -277,6 +278,7 @@ describe('CaseController - Extend', () => {
           defenderEmail: undefined,
           defenderPhoneNumber: undefined,
           defenderChoice: DefenderChoice.WAIVE,
+          requestSharedWithDefender: undefined,
         },
         transaction,
       )

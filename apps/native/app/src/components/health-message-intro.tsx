@@ -1,19 +1,81 @@
 import React, { useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Image, ScrollView, View } from 'react-native'
+import {
+  DimensionValue,
+  Image,
+  ScrollView,
+  View,
+  ViewStyle,
+} from 'react-native'
 import { initialWindowMetrics } from 'react-native-safe-area-context'
 import { useTheme } from 'styled-components/native'
 
 import illustrationSrc from '@/assets/illustrations/health-messages-intro.png'
-import { Button, Checkbox, Typography } from '@/ui'
+import { Button, Checkbox, Skeleton, Typography } from '@/ui'
 
 // Less room than this and the illustration is dropped rather than squeezed.
 const MIN_ILLUSTRATION_HEIGHT = 96
+
+const SKELETON_LINE_HEIGHT = 16
+const SKELETON_LINE_RADIUS = 8
+// The illustration's own bounds, and the button's padding plus line height.
+const ILLUSTRATION_WIDTH = 153
+const ILLUSTRATION_HEIGHT = 183
+const BUTTON_HEIGHT = 48
+// Smaller than the illustration: at full size it reads as content, not as
+// waiting.
+const ILLUSTRATION_SKELETON_SIZE = 120
+
+// Stands in for the intro copy while the recipients load.
+const IntroCopySkeleton = () => {
+  const theme = useTheme()
+
+  // Stretched: percent widths resolve against zero in a group that hugs its
+  // lines.
+  const paragraphStyle: ViewStyle = {
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    rowGap: theme.spacing.smallGutter,
+  }
+
+  const line = (width: DimensionValue) => (
+    <Skeleton
+      active
+      height={SKELETON_LINE_HEIGHT}
+      style={{ width, borderRadius: SKELETON_LINE_RADIUS }}
+    />
+  )
+
+  return (
+    <View style={{ alignItems: 'center', rowGap: theme.spacing[2] }}>
+      <Skeleton
+        active
+        height={24}
+        style={{ width: '60%', borderRadius: SKELETON_LINE_RADIUS }}
+      />
+      {/* The line counts the Icelandic copy wraps to on a form sheet. */}
+      <View style={paragraphStyle}>
+        {line('95%')}
+        {line('90%')}
+        {line('60%')}
+      </View>
+      <View style={paragraphStyle}>
+        {line('95%')}
+        {line('90%')}
+        {line('70%')}
+      </View>
+      {line('45%')}
+    </View>
+  )
+}
 
 interface HealthMessageIntroProps {
   termsAccepted: boolean
   onToggleTerms: () => void
   onContinue: () => void
+  /** Recipients still loading: the copy is a skeleton and the step is a
+   * dead end until they arrive. */
+  loading?: boolean
 }
 
 /**
@@ -24,6 +86,7 @@ export const HealthMessageIntro = ({
   termsAccepted,
   onToggleTerms,
   onContinue,
+  loading = false,
 }: HealthMessageIntroProps) => {
   const intl = useIntl()
   const theme = useTheme()
@@ -66,47 +129,81 @@ export const HealthMessageIntro = ({
           style={{ rowGap: theme.spacing[2] }}
           onLayout={(e) => setCopyHeight(e.nativeEvent.layout.height)}
         >
-          <Typography variant="heading2" textAlign="center">
-            {intl.formatMessage({ id: 'health.messages.compose.introTitle' })}
-          </Typography>
-          <Typography textAlign="center">
-            <FormattedMessage id="health.messages.compose.introBody1" />
-          </Typography>
-          <Typography textAlign="center">
-            <FormattedMessage
-              id="health.messages.compose.introBody2"
-              values={bold}
-            />
-          </Typography>
-          <Typography textAlign="center">
-            <FormattedMessage
-              id="health.messages.compose.introBody3"
-              values={bold}
-            />
-          </Typography>
+          {loading ? (
+            <IntroCopySkeleton />
+          ) : (
+            <>
+              <Typography variant="heading2" textAlign="center">
+                {intl.formatMessage({
+                  id: 'health.messages.compose.introTitle',
+                })}
+              </Typography>
+              <Typography textAlign="center">
+                <FormattedMessage id="health.messages.compose.introBody1" />
+              </Typography>
+              <Typography textAlign="center">
+                <FormattedMessage
+                  id="health.messages.compose.introBody2"
+                  values={bold}
+                />
+              </Typography>
+              <Typography textAlign="center">
+                <FormattedMessage
+                  id="health.messages.compose.introBody3"
+                  values={bold}
+                />
+              </Typography>
+            </>
+          )}
         </View>
         {showIllustration ? (
-          <View style={{ flex: 1, alignItems: 'center' }}>
-            <Image
-              source={illustrationSrc}
-              style={{ flex: 1, maxWidth: 153, maxHeight: 183 }}
-              resizeMode="contain"
-            />
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              // The consent is out while loading, so the box sits under the
+              // copy rather than centred in the empty slot.
+              ...(loading && { paddingTop: theme.spacing[7] }),
+            }}
+          >
+            {loading ? (
+              <Skeleton
+                active
+                height={ILLUSTRATION_SKELETON_SIZE}
+                style={{
+                  width: ILLUSTRATION_SKELETON_SIZE,
+                  borderRadius: 16,
+                }}
+              />
+            ) : (
+              <Image
+                source={illustrationSrc}
+                style={{
+                  flex: 1,
+                  maxWidth: ILLUSTRATION_WIDTH,
+                  maxHeight: ILLUSTRATION_HEIGHT,
+                }}
+                resizeMode="contain"
+              />
+            )}
           </View>
         ) : (
           // Soaks up the slack the illustration would have, so the consent
           // sits with the button instead of floating mid-step.
           <View style={{ flex: 1 }} />
         )}
-        <View onLayout={(e) => setConsentHeight(e.nativeEvent.layout.height)}>
-          <Checkbox
-            checked={termsAccepted}
-            onPress={onToggleTerms}
-            label={intl.formatMessage({
-              id: 'health.messages.compose.termsAccept',
-            })}
-          />
-        </View>
+        {/* Nothing to consent to until it is known the form can open. */}
+        {!loading && (
+          <View onLayout={(e) => setConsentHeight(e.nativeEvent.layout.height)}>
+            <Checkbox
+              checked={termsAccepted}
+              onPress={onToggleTerms}
+              label={intl.formatMessage({
+                id: 'health.messages.compose.termsAccept',
+              })}
+            />
+          </View>
+        )}
       </ScrollView>
       {/* Pinned so the consent action stays reachable without scrolling. The
           bottom inset is applied here rather than on a SafeAreaView wrapper,
@@ -119,13 +216,21 @@ export const HealthMessageIntro = ({
           backgroundColor: theme.color.white,
         }}
       >
-        <Button
-          title={intl.formatMessage({
-            id: 'health.messages.compose.continue',
-          })}
-          onPress={onContinue}
-          disabled={!termsAccepted}
-        />
+        {loading ? (
+          <Skeleton
+            active
+            height={BUTTON_HEIGHT}
+            style={{ borderRadius: SKELETON_LINE_RADIUS }}
+          />
+        ) : (
+          <Button
+            title={intl.formatMessage({
+              id: 'health.messages.compose.continue',
+            })}
+            onPress={onContinue}
+            disabled={!termsAccepted}
+          />
+        )}
       </View>
     </View>
   )
