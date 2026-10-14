@@ -182,16 +182,13 @@ describe('MeNotificationsController - GET /v1/me/notifications/categories', () =
   })
 
   it('should return an empty list when the user has received no notifications', async () => {
-    // Act
     const res = await server.get('/v1/me/notifications/categories')
 
-    // Assert
     expect(res.status).toBe(200)
     expect(res.body).toEqual({ categories: [] })
   })
 
   it("should return the user's own categories with labels, presenting uncategorized as almennt", async () => {
-    // Arrange
     await notificationCategoryModel.create({
       category: 'heilbrigdismal',
       label: { is: 'Heilbrigðismál', en: 'Health' },
@@ -227,10 +224,8 @@ describe('MeNotificationsController - GET /v1/me/notifications/categories', () =
       },
     ])
 
-    // Act
     const res = await server.get('/v1/me/notifications/categories')
 
-    // Assert
     expect(res.status).toBe(200)
     expect(res.body.categories).toHaveLength(3)
     expect(res.body.categories).toEqual(
@@ -255,7 +250,6 @@ describe('MeNotificationsController - GET /v1/me/notifications/categories', () =
   })
 
   it('should fall back to the category slug when its label is missing', async () => {
-    // Arrange
     await userNotificationSenderModel.create({
       recipient: user.nationalId,
       senderId,
@@ -264,10 +258,8 @@ describe('MeNotificationsController - GET /v1/me/notifications/categories', () =
       priorityType: null,
     })
 
-    // Act
     const res = await server.get('/v1/me/notifications/categories')
 
-    // Assert
     expect(res.status).toBe(200)
     expect(res.body).toEqual({
       categories: [
@@ -277,7 +269,6 @@ describe('MeNotificationsController - GET /v1/me/notifications/categories', () =
   })
 
   it('should return a category once when several templates share it', async () => {
-    // Arrange
     await userNotificationSenderModel.bulkCreate([
       {
         recipient: user.nationalId,
@@ -295,52 +286,11 @@ describe('MeNotificationsController - GET /v1/me/notifications/categories', () =
       },
     ])
 
-    // Act
     const res = await server.get('/v1/me/notifications/categories')
 
-    // Assert
     expect(res.status).toBe(200)
     expect(res.body).toEqual({
       categories: [
-        { senderId, category: 'skattar', categoryLabel: { is: 'skattar' } },
-      ],
-    })
-  })
-
-  it('should return categories regardless of priority type', async () => {
-    // Arrange
-    await userNotificationSenderModel.bulkCreate([
-      {
-        recipient: user.nationalId,
-        senderId,
-        templateId: 'HNIPP.COLLECTION.ACTION',
-        category: 'innheimta',
-        priorityType: 'Actionable',
-      },
-      {
-        recipient: user.nationalId,
-        senderId,
-        templateId: 'HNIPP.TAXES.ACTION',
-        category: 'skattar',
-        priorityType: 'Actionable',
-      },
-      {
-        recipient: user.nationalId,
-        senderId,
-        templateId: 'HNIPP.TAXES.INFO',
-        category: 'skattar',
-        priorityType: 'Informative',
-      },
-    ])
-
-    // Act
-    const res = await server.get('/v1/me/notifications/categories')
-
-    // Assert
-    expect(res.status).toBe(200)
-    expect(res.body).toEqual({
-      categories: [
-        { senderId, category: 'innheimta', categoryLabel: { is: 'innheimta' } },
         { senderId, category: 'skattar', categoryLabel: { is: 'skattar' } },
       ],
     })

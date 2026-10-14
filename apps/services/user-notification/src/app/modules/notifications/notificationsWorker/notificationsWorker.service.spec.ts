@@ -1174,10 +1174,8 @@ describe('NotificationsWorkerService', () => {
     }
 
     it('should record the sender when a notification with a senderId is created', async () => {
-      // Act
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
 
-      // Assert
       const senders = await userNotificationSenderModel.findAll()
       expect(senders).toHaveLength(1)
       expect(senders[0]).toMatchObject({
@@ -1187,11 +1185,11 @@ describe('NotificationsWorkerService', () => {
         category: null,
         priorityType: null,
       })
+      // assert no categories stored because the template category is null
       expect(await notificationCategoryModel.count()).toBe(0)
     })
 
     it('should record the same sender only once, also when its id is dashed', async () => {
-      // Act
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
       await addToQueueWithSender(
@@ -1199,7 +1197,6 @@ describe('NotificationsWorkerService', () => {
         dashedSenderId,
       )
 
-      // Assert
       const notifications = await notificationModel.findAll({
         where: { recipient: userWithNoDelegations.nationalId },
       })
@@ -1211,14 +1208,12 @@ describe('NotificationsWorkerService', () => {
     })
 
     it('should record each sender the recipient receives notifications from', async () => {
-      // Act
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
       await addToQueueWithSender(
         userWithNoDelegations.nationalId,
         otherSenderId,
       )
 
-      // Assert
       const senders = await userNotificationSenderModel.findAll({
         where: { recipient: userWithNoDelegations.nationalId },
       })
@@ -1228,10 +1223,8 @@ describe('NotificationsWorkerService', () => {
     })
 
     it('should not record a sender when the notification has no senderId', async () => {
-      // Act
       await addToQueueWithSender(userWithNoDelegations.nationalId)
 
-      // Assert
       const notifications = await notificationModel.findAll({
         where: { recipient: userWithNoDelegations.nationalId },
       })
@@ -1240,13 +1233,11 @@ describe('NotificationsWorkerService', () => {
     })
 
     it('should not record the sender for delegation holders receiving actor notifications', async () => {
-      // Act
       await addToQueueWithSender(userWithDelegations.nationalId, senderId)
 
       // Wait for the queued actor notifications to be processed
       await wait(2)
 
-      // Assert
       const actorNotifications = await actorNotificationModel.findAll()
       expect(actorNotifications.length).toBeGreaterThan(0)
 
@@ -1259,7 +1250,6 @@ describe('NotificationsWorkerService', () => {
     })
 
     it('should record the sender for the represented user, not the actor, when onBehalfOf is provided without rootMessageId', async () => {
-      // Act
       await queue.add({
         recipient: userWithNoDelegations.nationalId, // The actor
         senderId,
@@ -1272,7 +1262,6 @@ describe('NotificationsWorkerService', () => {
       })
       await wait(3)
 
-      // Assert
       const senders = await userNotificationSenderModel.findAll()
       expect(senders).toHaveLength(1)
       expect(senders[0]).toMatchObject({
@@ -1282,13 +1271,10 @@ describe('NotificationsWorkerService', () => {
     })
 
     it('should record the slugified Icelandic category and its labels', async () => {
-      // Arrange
       mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Health' })
 
-      // Act
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
 
-      // Assert
       const senders = await userNotificationSenderModel.findAll()
       expect(senders).toHaveLength(1)
       expect(senders[0]).toMatchObject({
@@ -1306,20 +1292,16 @@ describe('NotificationsWorkerService', () => {
     })
 
     it('should record the priority type of the template', async () => {
-      // Arrange
       mockTemplateCategory({ is: 'Heilbrigðismál' }, 'Actionable')
 
-      // Act
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
 
-      // Assert
       const senders = await userNotificationSenderModel.findAll()
       expect(senders).toHaveLength(1)
       expect(senders[0].priorityType).toBe('Actionable')
     })
 
     it('should record each template of a sender separately', async () => {
-      // Act
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
       mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Health' })
       await addToQueueWithSender(
@@ -1333,7 +1315,6 @@ describe('NotificationsWorkerService', () => {
         'HNIPP.DEMO.OTHER_ID',
       )
 
-      // Assert
       const senders = await userNotificationSenderModel.findAll({
         where: { recipient: userWithNoDelegations.nationalId },
         order: [['templateId', 'ASC']],
@@ -1347,15 +1328,12 @@ describe('NotificationsWorkerService', () => {
     })
 
     it('should keep the latest category and priority type of a template', async () => {
-      // Arrange
       mockTemplateCategory({ is: 'Heilbrigðismál' }, 'Informative')
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
 
-      // Act
       mockTemplateCategory({ is: 'Skattar' }, 'Actionable')
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
 
-      // Assert
       const senders = await userNotificationSenderModel.findAll()
       expect(senders).toHaveLength(1)
       expect(senders[0]).toMatchObject({
@@ -1366,15 +1344,12 @@ describe('NotificationsWorkerService', () => {
     })
 
     it("should record an explicit 'Almennt' category as uncategorized", async () => {
-      // Arrange
       mockTemplateCategory({ is: 'Almennt', en: 'General' })
 
-      // Act
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
       mockTemplateCategory({})
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
 
-      // Assert
       const senders = await userNotificationSenderModel.findAll()
       expect(senders).toHaveLength(1)
       expect(senders[0].category).toBeNull()
@@ -1382,15 +1357,12 @@ describe('NotificationsWorkerService', () => {
     })
 
     it('should keep the latest label of a category', async () => {
-      // Arrange
       mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Health' })
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
 
-      // Act
       mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Healthcare' })
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
 
-      // Assert
       const categories = await notificationCategoryModel.findAll()
       expect(categories).toHaveLength(1)
       expect(categories[0].label).toEqual({
@@ -1400,15 +1372,12 @@ describe('NotificationsWorkerService', () => {
     })
 
     it('should still write and deliver the notification when recording the sender fails', async () => {
-      // Arrange
       const bulkCreateSpy = jest
         .spyOn(userNotificationSenderModel, 'bulkCreate')
         .mockRejectedValueOnce(new Error('DB write error'))
 
-      // Act
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
 
-      // Assert
       expect(bulkCreateSpy).toHaveBeenCalled()
 
       const notifications = await notificationModel.findAll({
