@@ -15,7 +15,7 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase } from '../appeal-case'
+import { AppealCase, AppealCourtSession } from '../appeal-case'
 import { AppealSummons } from '../appeal-summons'
 import {
   Case,
@@ -343,6 +343,17 @@ export class BackendService {
     return this.patch(
       `case/${caseId}/appealCase/${appealCaseId}`,
       updateAppealCase,
+    )
+  }
+
+  createAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    createAppealCourtSession: unknown,
+  ): Promise<AppealCourtSession> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession`,
+      createAppealCourtSession,
     )
   }
 
