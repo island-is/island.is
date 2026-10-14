@@ -497,6 +497,7 @@ const defaultRenderComponent = {
       defaultOrder={slice.defaultOrder}
       showSearchInput={slice.showSearchInput ?? true}
       textSearchOrder={slice.textSearchOrder ?? 'Default'}
+      showYearFilter={slice.showYearFilter ?? false}
     />
   ),
   TeamList: (slice: TeamList) => (

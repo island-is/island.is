@@ -221,6 +221,7 @@ export const renderSlice = (
           defaultOrder={(slice as GenericListSchema).defaultOrder}
           showSearchInput={(slice as GenericListSchema).showSearchInput ?? true}
           textSearchOrder={slice.textSearchOrder ?? 'Default'}
+          showYearFilter={(slice as GenericListSchema).showYearFilter ?? false}
         />
       )
     case 'TeamList':

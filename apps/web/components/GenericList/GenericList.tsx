@@ -20,6 +20,7 @@ import {
   type IconProps,
   Inline,
   Pagination,
+  Select,
   Stack,
   Tag,
   Text,
@@ -235,17 +236,21 @@ interface GenericListProps {
   searchQueryId: string
   pageQueryId: string
   tagQueryId: string
+  yearQueryId?: string
   fetchListItems: (props: {
     page: number
     searchValue: string
     tags: string[]
     tagGroups: Record<string, string[]>
+    year?: number
   }) => void
   loading: boolean
   totalItems: number
   displayError: boolean
   showSearchInput?: boolean
   showSearchFilters?: boolean
+  showYearFilter?: boolean
+  years?: number[] | null
 }
 
 export const GenericList = ({
@@ -261,9 +266,16 @@ export const GenericList = ({
   children,
   showSearchInput = true,
   showSearchFilters = true,
+  showYearFilter = false,
+  yearQueryId,
+  years,
 }: React.PropsWithChildren<GenericListProps>) => {
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
+  const [year, setYear] = useQueryState(
+    yearQueryId ?? `${searchQueryId}year`,
+    parseAsInteger,
+  )
   const [parameters, setParameters] = useQueryState<Record<string, string[]>>(
     tagQueryId,
     parseAsJson(),
@@ -299,10 +311,11 @@ export const GenericList = ({
         searchValue: searchValue || '',
         tags: selectedCategories,
         tagGroups: getGenericTagGroupHierarchy(filterCategories),
+        year: showYearFilter ? year ?? undefined : undefined,
       })
     },
     DEBOUNCE_TIME_IN_MS,
-    [searchValue, page, filterCategories],
+    [searchValue, page, filterCategories, year, showYearFilter],
   )
 
   const { width } = useWindowSize()
@@ -316,7 +329,7 @@ export const GenericList = ({
   const noResultsFoundText =
     activeLocale === 'is' ? 'Engar niðurstöður fundust' : 'No results found'
 
-  const filterInputComponent = (
+  const searchInputComponent = (
     <FilterInput
       name="list-search"
       onChange={(value) => {
@@ -329,6 +342,60 @@ export const GenericList = ({
       backgroundColor="white"
     />
   )
+
+  const allYearsLabel = activeLocale === 'is' ? 'Öll ár' : 'All years'
+
+  const yearOptions = useMemo(() => {
+    const availableYears = new Set(years ?? [])
+    // Make sure the currently selected year is always selectable
+    if (year) {
+      availableYears.add(year)
+    }
+    return [
+      { label: allYearsLabel, value: '' },
+      ...Array.from(availableYears)
+        .sort((a, b) => b - a)
+        .map((y) => ({ label: y.toString(), value: y.toString() })),
+    ]
+  }, [allYearsLabel, year, years])
+
+  const yearFilterComponent = (
+    <Select
+      name="list-year"
+      size="xs"
+      isSearchable={false}
+      aria-label={activeLocale === 'is' ? 'Ár' : 'Year'}
+      backgroundColor="white"
+      options={yearOptions}
+      value={
+        yearOptions.find(
+          (option) => option.value === (year?.toString() ?? ''),
+        ) ?? yearOptions[0]
+      }
+      onChange={(option) => {
+        const selectedYear = Number(option?.value)
+        setYear(selectedYear > 0 ? selectedYear : null)
+        setPage(null)
+      }}
+    />
+  )
+
+  const filterInputComponent = showYearFilter ? (
+    <GridRow rowGap={2}>
+      {showSearchInput && (
+        <GridColumn span={['1/1', '1/1', '8/12', '9/12']}>
+          {searchInputComponent}
+        </GridColumn>
+      )}
+      <GridColumn span={['1/1', '1/1', '4/12', '3/12']}>
+        {yearFilterComponent}
+      </GridColumn>
+    </GridRow>
+  ) : (
+    searchInputComponent
+  )
+
+  const showFilterInput = showSearchInput || showYearFilter
 
   const selectedFilters = extractFilterTags(filterCategories)
 
@@ -378,12 +445,12 @@ export const GenericList = ({
     <Box paddingBottom={3}>
       <GridContainer>
         <Stack space={4}>
-          {(showSearchInput || showSearchFilters) && (
+          {(showSearchInput || showSearchFilters || showYearFilter) && (
             <Box ref={ref}>
               {showSearchFilters && filterCategories.length > 1 && (
                 <Stack space={4}>
                   <Stack space={3}>
-                    {isMobile && showSearchInput && filterInputComponent}
+                    {isMobile && showFilterInput && filterInputComponent}
                     <Filter
                       resultCount={totalItems}
                       labelClear={
@@ -415,6 +482,7 @@ export const GenericList = ({
                       variant={isMobile ? 'dialog' : 'popover'}
                       onFilterClear={() => {
                         setParameters(null)
+                        setYear(null)
                         setPage(null)
                       }}
                       filterInput={filterInputComponent}
@@ -473,11 +541,11 @@ export const GenericList = ({
                 </Stack>
               )}
 
-              {(showSearchFilters || showSearchInput) &&
+              {(showSearchFilters || showFilterInput) &&
                 filterCategories.length <= 1 && (
                   <Stack space={4}>
                     <Stack space={3}>
-                      {showSearchInput && filterInputComponent}
+                      {showFilterInput && filterInputComponent}
                       {showSearchFilters &&
                         selectedFilters.length > 0 &&
                         selectedFiltersComponent}
@@ -579,6 +647,7 @@ interface GenericListWrapperProps {
   defaultOrder?: GetGenericListItemsInputOrderBy | null
   textSearchOrder?: 'Default' | 'Score'
   showSearchInput?: boolean
+  showYearFilter?: boolean
 }
 
 export const GenericListWrapper = ({
@@ -589,10 +658,12 @@ export const GenericListWrapper = ({
   defaultOrder,
   textSearchOrder,
   showSearchInput,
+  showYearFilter,
 }: GenericListWrapperProps) => {
   const searchQueryId = `${id}q`
   const pageQueryId = `${id}page`
   const tagQueryId = `${id}tag`
+  const yearQueryId = `${id}year`
 
   const { activeLocale } = useI18n()
 
@@ -610,6 +681,7 @@ export const GenericListWrapper = ({
       const queryString = searchParams.get(searchQueryId) || ''
       const pageQuery = searchParams.get(pageQueryId) || '1'
       const tagQuery = searchParams.get(tagQueryId) || '{}'
+      const yearQuery = showYearFilter ? searchParams.get(yearQueryId) : null
 
       const tags: string[] = flatten(Object.values(JSON.parse(tagQuery)))
 
@@ -619,7 +691,9 @@ export const GenericListWrapper = ({
         pageQuery === data?.getGenericListItems?.input?.page?.toString() &&
         tags.every((tag) =>
           (data?.getGenericListItems?.input?.tags ?? []).includes(tag),
-        )
+        ) &&
+        (yearQuery || null) ===
+          (data?.getGenericListItems?.input?.year?.toString() ?? null)
       ) {
         setItemsResponse(data.getGenericListItems)
         setErrorOccurred(false)
@@ -640,7 +714,7 @@ export const GenericListWrapper = ({
       filterTags={filterTags}
       searchInputPlaceholder={searchInputPlaceholder}
       displayError={errorOccurred}
-      fetchListItems={({ page, searchValue, tags, tagGroups }) => {
+      fetchListItems={({ page, searchValue, tags, tagGroups, year }) => {
         let orderBy = defaultOrder
         if (searchValue.trim().length > 0 && textSearchOrder === 'Score') {
           orderBy = GetGenericListItemsInputOrderBy.Score
@@ -656,6 +730,7 @@ export const GenericListWrapper = ({
               tags,
               tagGroups,
               orderBy,
+              year,
             },
           },
         })
@@ -665,8 +740,11 @@ export const GenericListWrapper = ({
       pageQueryId={pageQueryId}
       searchQueryId={searchQueryId}
       tagQueryId={tagQueryId}
+      yearQueryId={yearQueryId}
       showSearchInput={showSearchInput}
       showSearchFilters={showSearchInput}
+      showYearFilter={showYearFilter}
+      years={itemsResponse?.years}
     >
       <GridContainer>
         <GridRow rowGap={3}>
