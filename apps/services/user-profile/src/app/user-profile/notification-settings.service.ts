@@ -62,7 +62,6 @@ export class NotificationSettingsService {
       return
     }
 
-    // The user may not have a profile yet, e.g. if they have never onboarded.
     await this.userProfileService.findOrCreateUserProfile(nationalId)
 
     await this.blockedNotificationModel.bulkCreate(rows, {

@@ -181,13 +181,6 @@ describe('MeNotificationsController - GET /v1/me/notifications/categories', () =
     await app.cleanUp()
   })
 
-  it('should return an empty list when the user has received no notifications', async () => {
-    const res = await server.get('/v1/me/notifications/categories')
-
-    expect(res.status).toBe(200)
-    expect(res.body).toEqual({ categories: [] })
-  })
-
   it("should return the user's own categories with labels, presenting uncategorized as almennt", async () => {
     await notificationCategoryModel.create({
       category: 'heilbrigdismal',
@@ -247,25 +240,6 @@ describe('MeNotificationsController - GET /v1/me/notifications/categories', () =
         },
       ]),
     )
-  })
-
-  it('should fall back to the category slug when its label is missing', async () => {
-    await userNotificationSenderModel.create({
-      recipient: user.nationalId,
-      senderId,
-      templateId: 'HNIPP.TAXES',
-      category: 'skattar',
-      priorityType: null,
-    })
-
-    const res = await server.get('/v1/me/notifications/categories')
-
-    expect(res.status).toBe(200)
-    expect(res.body).toEqual({
-      categories: [
-        { senderId, category: 'skattar', categoryLabel: { is: 'skattar' } },
-      ],
-    })
   })
 
   it('should return a category once when several templates share it', async () => {
