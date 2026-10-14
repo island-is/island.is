@@ -956,9 +956,7 @@ describe('WorkerService', () => {
     it('skips flows that reached the failure limit', async () => {
       mockDebtSweep([
         createDebtCardFlow({
-          workerEvents: Array.from({ length: 5 }, () => ({
-            status: 'failure',
-          })),
+          workerEvents: Array.from({ length: 5 }, () => failureEvent(120)),
         }),
       ])
 
