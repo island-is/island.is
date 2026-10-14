@@ -173,15 +173,19 @@ export const HearingArrangements = () => {
             />
           </Box>
         </Box>
-        {workingCase.defendants?.map((defendant) => (
-          <Box key={defendant.id} component="section" marginBottom={8}>
-            <RequestCaseDefenderInfo
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              defendant={defendant}
-            />
-          </Box>
-        ))}
+        <Box component="section" marginBottom={8}>
+          {workingCase.defendants?.map((defendant, index, defendants) => (
+            <Box key={defendant.id} marginTop={index === 0 ? 0 : 3}>
+              <RequestCaseDefenderInfo
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+                defendant={defendant}
+                hideHeading={index > 0}
+                showDefendantName={defendants.length > 1}
+              />
+            </Box>
+          ))}
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

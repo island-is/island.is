@@ -313,13 +313,15 @@ const HearingArrangements = () => {
             SessionArrangements.ALL_PRESENT ||
             workingCase.sessionArrangements ===
               SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
-            <section className={stack({ gap: 5 })}>
-              {workingCase.defendants?.map((defendant) => (
+            <section className={stack({ gap: 3 })}>
+              {workingCase.defendants?.map((defendant, index, defendants) => (
                 <Box key={defendant.id} component="div">
                   <RequestCaseDefenderInfo
                     workingCase={workingCase}
                     setWorkingCase={setWorkingCase}
                     defendant={defendant}
+                    hideHeading={index > 0}
+                    showDefendantName={defendants.length > 1}
                   />
                 </Box>
               ))}

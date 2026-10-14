@@ -2,7 +2,7 @@ import type { Dispatch, FC, SetStateAction } from 'react'
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Tooltip } from '@island.is/island-ui/core'
+import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   isDistrictCourtUser,
   isInvestigationCase,
@@ -34,12 +34,18 @@ interface Props {
   workingCase: WorkingCase
   setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   defendant: Defendant
+  // Pages listing several defenders under one heading set these so the
+  // heading is shown once and each box names its defendant.
+  hideHeading?: boolean
+  showDefendantName?: boolean
 }
 
 const RequestCaseDefenderInfo: FC<Props> = ({
   workingCase,
   setWorkingCase,
   defendant,
+  hideHeading,
+  showDefendantName,
 }) => {
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer } = useCase()
@@ -179,8 +185,15 @@ const RequestCaseDefenderInfo: FC<Props> = ({
 
   return (
     <>
-      <SectionHeading title={getSectionTitle()} tooltip={renderTooltip()} />
+      {!hideHeading && (
+        <SectionHeading title={getSectionTitle()} tooltip={renderTooltip()} />
+      )}
       <BlueBox>
+        {showDefendantName && defendant.name && (
+          <Box marginBottom={2}>
+            <Text variant="h4">{defendant.name}</Text>
+          </Box>
+        )}
         <InputAdvocate
           advocateType={
             !isProsecutionUser(user) &&
