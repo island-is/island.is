@@ -28,6 +28,7 @@ import { useState, useEffect, useMemo } from 'react'
 import {
   HTMLText,
   toISODate,
+  getDiff,
   prettyName,
   RegName,
 } from '@island.is/regulations'
@@ -214,12 +215,20 @@ export const EditChange = (props: EditChangeProps) => {
   // ----------- Diff computation (ported from regulations-admin) -----------
   const emptyHTML = '' as HTMLText
 
+  // The structured diff, falling back to the flat word diff if it throws, so
+  // a text it cannot parse never blocks saving the impact.
+  const diffHtml = (previous: HTMLText, current: HTMLText) => {
+    try {
+      return getStructuredDiff(previous, current).diff
+    } catch {
+      return getDiff(previous, current).diff
+    }
+  }
+
   const getDiffHtml = () => {
     const prev = (baseRegulation?.text as HTMLText) || emptyHTML
     const curr = (activeText as HTMLText) || emptyHTML
-    return (
-      getStructuredDiff(dirtyClean(prev), dirtyClean(curr)).diff || emptyHTML
-    )
+    return diffHtml(dirtyClean(prev), dirtyClean(curr)) || emptyHTML
   }
 
   const getAppendixDiffHtml = (i: number) => {
@@ -227,10 +236,7 @@ export const EditChange = (props: EditChangeProps) => {
       (baseRegulation?.appendixes?.[i]?.text as HTMLText) || emptyHTML
     const current = (activeAppendixes[i]?.text as HTMLText) || emptyHTML
 
-    const diff = getStructuredDiff(
-      dirtyClean(previous),
-      dirtyClean(current),
-    ).diff
+    const diff = diffHtml(dirtyClean(previous), dirtyClean(current))
 
     if (!baseRegulation?.appendixes?.[i]) {
       // New appendix
