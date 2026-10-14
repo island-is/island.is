@@ -266,7 +266,8 @@ export const GenericList = ({
   children,
   showSearchInput = true,
   showSearchFilters = true,
-  showYearFilter = false,
+  // TODO: Revert default back to false before merging (set to true so the feature deploy shows the year filter)
+  showYearFilter = true,
   yearQueryId,
   years,
 }: React.PropsWithChildren<GenericListProps>) => {
