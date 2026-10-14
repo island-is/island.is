@@ -60,7 +60,7 @@ export class UnblockCategoryDto {
   senderId!: string
 
   @IsString()
-  @MaxLength(100)
+  @MaxLength(255)
   @Matches(CATEGORY_PATTERN, { message: 'category is not valid' })
   @ApiProperty({
     description: 'Slugified Icelandic category label',

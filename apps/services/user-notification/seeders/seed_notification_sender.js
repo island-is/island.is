@@ -59,9 +59,7 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.bulkDelete('user_notification_sender', { recipient })
-    return queryInterface.bulkDelete('notification_category', {
-      category: ['heilbrigdismal', 'innheimta'],
-    })
+    // notification_category rows may predate this seeder, so they are kept
+    return queryInterface.bulkDelete('user_notification_sender', { recipient })
   },
 }

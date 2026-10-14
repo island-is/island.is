@@ -8,7 +8,11 @@ import {
   NotificationSenderSetting,
   NotificationSettings,
 } from './notificationSettings.model'
-import { normalizeSenderId, toCategoryKey } from './notificationSettings.utils'
+import {
+  isValidSenderId,
+  normalizeSenderId,
+  toCategoryKey,
+} from './notificationSettings.utils'
 
 interface CategoryLabel {
   is: string
@@ -110,13 +114,18 @@ export class NotificationSettingsService {
   }
 
   /**
-   * Blocks or unblocks the given sender categories. Blocked categories are
-   * validated before anything is written.
+   * Blocks or unblocks the given sender categories.
    */
   async updateCategories(
     user: User,
     categories: NotificationCategoryInput[],
   ): Promise<void> {
+    for (const { senderId } of categories) {
+      if (!isValidSenderId(normalizeSenderId(senderId))) {
+        throw new BadRequestException(`Sender id ${senderId} is not valid`)
+      }
+    }
+
     const toBlock = categories.filter(({ blocked }) => blocked)
     const toUnblock = categories.filter(({ blocked }) => !blocked)
 
