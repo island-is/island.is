@@ -20,12 +20,21 @@ export const container = style({
   background: 'rgba(203, 203, 215, 0.8)',
   animation: `${fadeIn} 0.3s ease-in-out`,
   transition: 'opacity 0.2s ease-in-out',
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      transition: 'none',
+    },
+  },
 })
 
 // On while the dialog plays out: the same length as the dialog's own exit,
-// so the two leave together.
+// so the two leave together. The entrance animation is dropped here, since a
+// running animation would otherwise win over the opacity below when the
+// dialog is closed before it has finished playing in.
 export const leaving = style({
   opacity: 0,
+  animation: 'none',
 })
 
 export const alignItems = styleVariants({
