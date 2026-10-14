@@ -1,3 +1,4 @@
+import { StepUpRequired } from '@island.is/api/domains/step-up'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import { UseGuards } from '@nestjs/common'
@@ -33,6 +34,7 @@ import { Prescriptions } from '.././models/prescriptions.model'
 import { HealthDirectorateRenewalInput } from '.././models/renewal.input'
 import { PrescriptionRenewalTarget } from '.././models/renewalTarget.model'
 
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver()

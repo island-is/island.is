@@ -1,3 +1,5 @@
+import { StepUpRequired } from '@island.is/api/domains/step-up'
+import { Features } from '@island.is/feature-flags'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -14,6 +16,7 @@ import { BloodService } from './blood.service'
 import { BloodType } from './models/bloodType.model'
 
 @Resolver(() => BloodType)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/blood' })
 export class BloodResolver {

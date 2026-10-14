@@ -1,0 +1,25 @@
+query StepUpSession {
+  stepUpSession {
+    unlocked
+    expiresAt
+    idleSeconds
+  }
+}
+
+mutation StepUpStart {
+  stepUpStart {
+    stepUpId
+    method
+    verificationCode
+    interval
+    expiresIn
+  }
+}
+
+mutation StepUpStatus($stepUpId: ID!) {
+  stepUpStatus(stepUpId: $stepUpId)
+}
+
+mutation StepUpLock {
+  stepUpLock
+}

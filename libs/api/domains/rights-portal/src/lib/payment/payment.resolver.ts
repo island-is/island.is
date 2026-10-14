@@ -1,3 +1,4 @@
+import { StepUpRequired } from '@island.is/api/domains/step-up'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -31,6 +32,7 @@ import { PaymentOverviewTotalsServiceTypeResponse } from './models/paymentOvervi
 import { PaymentOverviewTotalsResponse } from './models/paymentOverviewTotals.response'
 
 @Resolver()
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/payment' })
 export class PaymentResolver {

@@ -1,3 +1,4 @@
+import { StepUpRequired } from '@island.is/api/domains/step-up'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -29,6 +30,7 @@ import {
 import { QuestionnairesResponse } from './dto/response.dto'
 import { QuestionnairesService } from './questionnaires.service'
 
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/questionnaires' })

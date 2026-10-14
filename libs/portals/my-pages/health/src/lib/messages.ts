@@ -1,6 +1,19 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  highAssuranceRequiredTitle: {
+    id: 'sp.health:high-assurance-required-title',
+    defaultMessage: 'Skráðu þig inn með rafrænum skilríkjum',
+  },
+  highAssuranceRequiredMessage: {
+    id: 'sp.health:high-assurance-required-message',
+    defaultMessage:
+      'Heilsufarsupplýsingar eru aðeins sýndar eftir innskráningu með rafrænum skilríkjum. Skráðu þig inn aftur til að sjá þær.',
+  },
+  highAssuranceRequiredLogin: {
+    id: 'sp.health:high-assurance-required-login',
+    defaultMessage: 'Skrá inn með rafrænum skilríkjum',
+  },
   addDelegation: {
     defaultMessage: 'Bæta við heimild',
     id: 'sp.health:add-delegation',

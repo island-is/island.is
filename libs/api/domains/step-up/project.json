@@ -1,0 +1,18 @@
+{
+  "name": "api-domains-step-up",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/step-up/src",
+  "tags": ["lib:api", "scope:api"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/step-up"],
+      "options": {
+        "jestConfig": "libs/api/domains/step-up/jest.config.ts"
+      }
+    }
+  }
+}
