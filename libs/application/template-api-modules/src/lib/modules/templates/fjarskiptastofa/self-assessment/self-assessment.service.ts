@@ -62,6 +62,7 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
   async submitSelfAssessment({
     application,
     auth,
+    currentUserLocale,
   }: TemplateApiModuleActionProps) {
     const storedAnswers =
       getValueViaPath<StoredAssessmentAnswers>(
@@ -80,7 +81,13 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
     // The company the application belongs to is the submitter.
     const submitterSSN = application.applicant
 
-    const payload = { submitterSSN, assessmentResponses }
+    // Fjarskiptastofa requires the submission language (required field on the
+    // submit endpoint); fall back to Icelandic if the locale is unavailable.
+    const payload = {
+      language: currentUserLocale ?? 'is',
+      submitterSSN,
+      assessmentResponses,
+    }
 
     // DEBUG: confirm the submit action is reached and inspect the payload.
     this.logger.info('[self-assessment] submitSelfAssessment hit', {

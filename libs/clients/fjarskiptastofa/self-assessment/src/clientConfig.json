@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "https://islandis-sm-api-test.fjarskiptastofa.is/"
+      "url": "/"
     }
   ],
   "paths": {
@@ -15,6 +15,15 @@
         "tags": ["Self-assessment"],
         "description": "Returns the question categories.",
         "operationId": "GetQuestionCategories",
+        "parameters": [
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "500": {
             "description": "Internal Server Error",
@@ -32,6 +41,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/QuestionCategoriesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
                 }
               }
             }
@@ -247,9 +266,12 @@
         }
       },
       "AnswersRequest": {
-        "required": ["submitterSSN", "assessmentResponses"],
+        "required": ["language", "submitterSSN", "assessmentResponses"],
         "type": "object",
         "properties": {
+          "language": {
+            "type": "string"
+          },
           "submitterSSN": {
             "type": "string"
           },
@@ -262,13 +284,26 @@
         }
       },
       "AnswersResponse": {
-        "required": ["averageOverallScore", "categoryScores"],
+        "required": [
+          "submissionId",
+          "averageOverallScore",
+          "scoreInterpretation",
+          "categoryScores"
+        ],
         "type": "object",
         "properties": {
+          "submissionId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "format": "int32",
+            "type": "integer"
+          },
           "averageOverallScore": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
             "format": "double",
             "type": "number"
+          },
+          "scoreInterpretation": {
+            "type": "string"
           },
           "categoryScores": {
             "type": "array",
