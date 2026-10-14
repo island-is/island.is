@@ -19,6 +19,7 @@ import {
   Image as ImageSchema,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import { LinkType } from '@island.is/web/hooks/useLinkResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -34,6 +35,7 @@ interface EventListProps {
   parentPageSlug: string
   noEventsFoundFallback?: ReactNode
   variant?: 'NewsCard' | 'InfoCard'
+  eventLinkType?: LinkType
 }
 
 export const EventList = ({
@@ -42,6 +44,7 @@ export const EventList = ({
   parentPageSlug,
   noEventsFoundFallback,
   variant = 'NewsCard',
+  eventLinkType = 'event',
 }: EventListProps) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -84,7 +87,10 @@ export const EventList = ({
               endDate,
             )
 
-            const link = linkResolver('event', [parentPageSlug, event.slug])
+            const link = linkResolver(eventLinkType, [
+              parentPageSlug,
+              event.slug,
+            ])
 
             const detailLines: Array<{
               icon: IconMapIcon
@@ -142,7 +148,7 @@ export const EventList = ({
               eventItem.startDate,
               endDate,
             )
-            const eventHref = linkResolver('event', [
+            const eventHref = linkResolver(eventLinkType, [
               parentPageSlug,
               eventItem.slug,
             ]).href
@@ -178,7 +184,7 @@ export const EventList = ({
         <Stack space={[3, 3, 4]}>
           {eventList.map((eventItem) => {
             const endDate = eventItem.time?.endDate
-            const eventHref = linkResolver('event', [
+            const eventHref = linkResolver(eventLinkType, [
               parentPageSlug,
               eventItem.slug,
             ]).href

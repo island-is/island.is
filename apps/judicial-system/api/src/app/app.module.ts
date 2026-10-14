@@ -46,6 +46,7 @@ import {
   VerdictModule,
   VictimModule,
 } from './modules'
+import { responseSizePlugin } from './responseSize.plugin'
 
 const production = process.env.NODE_ENV === 'production'
 const debug = !production
@@ -63,6 +64,7 @@ const autoSchemaFile = production
       cache: 'bounded',
       path: '/api/graphql',
       context: ({ req }: never) => ({ req }),
+      plugins: [responseSizePlugin],
     }),
     BackendModule,
     SharedAuthModule,
