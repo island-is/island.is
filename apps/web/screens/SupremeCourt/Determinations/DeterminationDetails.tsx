@@ -201,7 +201,12 @@ const DeterminationDetails: CustomScreen<DeterminationDetailsProps> = ({
   )
 }
 
-DeterminationDetails.getProps = async ({ apolloClient, query, locale, customPageData }) => {
+DeterminationDetails.getProps = async ({
+  apolloClient,
+  query,
+  locale,
+  customPageData,
+}) => {
   const [{ data }, organizationPage, namespace] = await Promise.all([
     apolloClient.query<
       GetSupremeCourtDeterminationByIdQuery,

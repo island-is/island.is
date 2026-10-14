@@ -285,7 +285,12 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
   )
 }
 
-Determinations.getProps = async ({ apolloClient, query, locale, customPageData }) => {
+Determinations.getProps = async ({
+  apolloClient,
+  query,
+  locale,
+  customPageData,
+}) => {
   const page = parseAsInteger.parseServerSide(query.page) ?? 1
   const initialCaseType =
     typeof query.caseType === 'string' ? query.caseType : undefined
