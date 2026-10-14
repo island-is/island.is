@@ -15,7 +15,6 @@ import { FileService } from '../file/file.service'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { ApplicationEvent } from './models/applicationEvent.model'
 import { ApplicationEvents } from '@island.is/form-system/shared'
-import { buildApplicationPdf } from '../../../utils/applicationPdf'
 import { ApplicationPdfResponseDto } from './models/dto/applicationPdf.response.dto'
 
 @Injectable()
@@ -145,7 +144,10 @@ export class ApplicationsXRoadService {
       form,
       application,
     )
-    const pdf = await buildApplicationPdf(applicationDto)
+    applicationDto.organizationName = form.organizationDisplayName
+    const pdf = await this.applicationsService.createApplicationPdf(
+      applicationDto,
+    )
 
     this.logger.info('form system application PDF fetched via xroad', {
       applicationId: id,

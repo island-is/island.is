@@ -254,13 +254,24 @@ export class CmsContentfulService {
   ): Promise<Array<string | null>> {
     const params = {
       ['content_type']: 'organization',
-      select: `fields.serviceSystemInstance,fields.serviceSystemBrandID,fields.${searchByField}`,
+      select: `fields.serviceSystemInstance,fields.serviceSystemBrandID,fields.title,fields.logo,fields.${searchByField}`,
       [`fields.${searchByField}[in]`]: organizationKeys.join(','),
     }
 
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IOrganizationFields>(locale, params)
       .catch(errorHandler('getOrganizationZendeskInstance'))
+
+    const otherLocale = locale === 'en' ? 'is' : 'en'
+    const translatedResult = result.items?.length
+      ? await this.contentfulRepository
+          .getLocalizedEntries<types.IOrganizationFields>(otherLocale, {
+            content_type: 'organization',
+            select: params.select,
+            'sys.id[in]': result.items.map((item) => item.sys.id).join(','),
+          })
+          .catch(errorHandler('getOrganizationZendeskInstance'))
+      : undefined
 
     return organizationKeys.map((key) => {
       if (!result.items) {
@@ -270,7 +281,26 @@ export class CmsContentfulService {
           (item) => item.fields[searchByField] === key,
         )
 
-        return JSON.stringify(organization?.fields) ?? null
+        if (!organization) {
+          return null
+        }
+
+        const translatedOrganization = translatedResult?.items?.find(
+          (item) => item.sys.id === organization.sys.id,
+        )
+        const title = organization.fields.title ?? ''
+        const translatedTitle = translatedOrganization?.fields.title ?? ''
+
+        return JSON.stringify({
+          ...organization.fields,
+          name:
+            locale === 'en'
+              ? { is: translatedTitle, en: title }
+              : { is: title, en: translatedTitle },
+          logo: organization.fields.logo
+            ? mapImage(organization.fields.logo).url
+            : undefined,
+        })
       }
     })
   }

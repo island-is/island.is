@@ -112,8 +112,14 @@ export class OrganizationsService {
     user: User,
     organizationZendeskInstanceDto: OrganizationZendeskInstanceDto,
   ): Promise<void> {
-    const { zendeskInstance, zendeskBrandId, organizationId, formId } =
-      organizationZendeskInstanceDto
+    const {
+      zendeskInstance,
+      zendeskBrandId,
+      organizationId,
+      formId,
+      name,
+      logo,
+    } = organizationZendeskInstanceDto
     const organization = await this.organizationModel.findByPk(organizationId)
 
     if (!organization) {
@@ -134,6 +140,13 @@ export class OrganizationsService {
     organization.zendeskInstance = supportedZendeskInstance
       ? supportedZendeskInstance
       : ''
+
+    if (name != null) {
+      organization.name = name
+    }
+    if (logo != null) {
+      organization.logo = logo
+    }
 
     await this.sequelize.transaction(async (transaction) => {
       await organization.save({ transaction })

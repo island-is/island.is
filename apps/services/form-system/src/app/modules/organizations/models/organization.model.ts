@@ -10,6 +10,7 @@ import {
 } from 'sequelize-typescript'
 import { Form } from '../../forms/models/form.model'
 import { OrganizationPermission } from '../../organizationPermissions/models/organizationPermission.model'
+import { LanguageType } from '../../../dataTypes/languageType.model'
 
 @Table({ tableName: 'organization' })
 export class Organization extends Model<Organization> {
@@ -34,6 +35,18 @@ export class Organization extends Model<Organization> {
     field: 'national_id',
   })
   nationalId!: string
+
+  @Column({
+    type: DataType.JSONB,
+    allowNull: true,
+  })
+  name?: LanguageType
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  logo?: string
 
   @Column({
     type: DataType.STRING,

@@ -761,11 +761,24 @@ export class ApplicationsService {
       )
     }
 
-    const pdf = await buildApplicationPdf(response.application, locale)
+    const pdf = await this.createApplicationPdf(response.application, locale)
     return {
       base64: pdf.toString('base64'),
       filename: `${slug}-${applicationId}.pdf`,
     }
+  }
+
+  async createApplicationPdf(
+    application: ApplicationDto,
+    locale: Locale = 'is',
+  ): Promise<Buffer> {
+    const organization = application.organizationNationalId
+      ? await this.organizationModel.findOne({
+          where: { nationalId: application.organizationNationalId },
+        })
+      : undefined
+
+    return buildApplicationPdf(application, locale, organization ?? undefined)
   }
 
   async findAllByNationalId(

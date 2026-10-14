@@ -1,5 +1,5 @@
 import { useLazyQuery, useMutation } from '@apollo/client'
-import { FormSystemField } from '@island.is/api/schema'
+import { FormSystemField, FormSystemLanguageType } from '@island.is/api/schema'
 import {
   GET_ORGANIZATION_ZENDESK_INSTANCE,
   UPDATE_FIELD,
@@ -27,6 +27,8 @@ import { ControlContext } from '../../../../context/ControlContext'
 type ZendeskInstanceConfig = {
   serviceSystemInstance: string
   serviceSystemBrandID: string
+  name?: FormSystemLanguageType
+  logo?: string
 }
 
 const parseZendeskBrandIds = (brandIds?: string | null) =>
@@ -162,6 +164,8 @@ export const SubmissionUrls = () => {
             zendeskBrandId: nextZendeskBrandId,
             organizationId: form.organizationId,
             formId: form.id,
+            name: parsed.name,
+            logo: parsed.logo,
           },
         },
       })

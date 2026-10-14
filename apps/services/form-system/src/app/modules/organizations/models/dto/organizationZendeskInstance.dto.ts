@@ -1,5 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { IsOptional, IsString } from 'class-validator'
+import { IsOptional, IsString, ValidateNested } from 'class-validator'
+import { Type } from 'class-transformer'
+import { LanguageType } from '../../../../dataTypes/languageType.model'
 
 export class OrganizationZendeskInstanceDto {
   @ApiPropertyOptional()
@@ -21,4 +23,15 @@ export class OrganizationZendeskInstanceDto {
   @IsString()
   @IsOptional()
   formId?: string
+
+  @ApiPropertyOptional({ type: LanguageType })
+  @ValidateNested()
+  @Type(() => LanguageType)
+  @IsOptional()
+  name?: LanguageType
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  logo?: string
 }

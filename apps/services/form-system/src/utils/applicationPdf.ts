@@ -1,5 +1,6 @@
 import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
 import type { Locale } from '@island.is/shared/types'
+import axios from 'axios'
 import PDFDocument from 'pdfkit'
 import { getLanguageTypeForValueTypeAttribute } from '../app/dataTypes/valueTypes/valueType.helper'
 import { ApplicationDto } from '../app/modules/applications/models/dto/application.dto'
@@ -145,7 +146,7 @@ const fileNames = (value: unknown): string[] => {
 
 const drawPageChrome = (
   document: PDFKit.PDFDocument,
-  title: string,
+  organizationName: string,
   locale: Locale,
   page: number,
 ) => {
@@ -163,7 +164,7 @@ const drawPageChrome = (
     .text(
       truncateText(
         document,
-        title,
+        organizationName,
         contentWidth - document.widthOfString(pageNumber) - 16,
       ),
       pageMargin,
@@ -444,14 +445,40 @@ const drawScreenHeading = (document: PDFKit.PDFDocument, name: string) => {
   document.y = top + 38
 }
 
-export const buildApplicationPdf = (
+export const buildApplicationPdf = async (
   application: ApplicationDto,
   locale: Locale = 'is',
-): Promise<Buffer> =>
-  new Promise((resolve, reject) => {
+  organization?: {
+    name?: { is?: string; en?: string }
+    logo?: string
+  },
+): Promise<Buffer> => {
+  let logo: Buffer | undefined
+  if (organization?.logo) {
+    try {
+      const url = new URL(organization.logo)
+      if (url.hostname === 'images.ctfassets.net') {
+        url.searchParams.set('fm', 'png')
+        url.searchParams.set('w', '256')
+      }
+      const response = await axios.get<ArrayBuffer>(url.toString(), {
+        responseType: 'arraybuffer',
+        timeout: 5000,
+        maxContentLength: 5 * 1024 * 1024,
+      })
+      logo = Buffer.from(response.data)
+    } catch {
+      logo = undefined
+    }
+  }
+
+  return new Promise((resolve, reject) => {
     const title =
       textFor(application.formName, locale) ||
       textFor(translations.application, locale)
+    const organizationName =
+      textFor(application.organizationName, locale) ||
+      textFor(organization?.name, locale)
     const document = new PDFDocument({ margin: pageMargin, size: 'A4' })
     const chunks: Buffer[] = []
     let page = 1
@@ -461,16 +488,31 @@ export const buildApplicationPdf = (
     document.on('error', reject)
     document.on('pageAdded', () => {
       page += 1
-      drawPageChrome(document, title, locale, page)
+      drawPageChrome(document, organizationName, locale, page)
     })
 
     document.info.Title = title
-    drawPageChrome(document, title, locale, page)
+    drawPageChrome(document, organizationName, locale, page)
+    const headerTop = document.y
+    const logoSize = 96
+    let logoWidth = 0
+    if (logo) {
+      try {
+        document.image(logo, pageMargin + contentWidth - logoSize, headerTop, {
+          fit: [logoSize, logoSize],
+          align: 'right',
+        })
+        logoWidth = logoSize + 20
+      } catch {
+        logoWidth = 0
+      }
+    }
+    const headerTextWidth = contentWidth - logoWidth
     document
       .fillColor(colors.accent)
       .font('Helvetica-Bold')
       .fontSize(20)
-      .text(title)
+      .text(title, pageMargin, headerTop, { width: headerTextWidth })
     document.moveDown(0.45)
     document
       .fillColor(colors.muted)
@@ -480,13 +522,18 @@ export const buildApplicationPdf = (
         `${textFor(translations.applicationNumber, locale)}: ${
           application.id ?? ''
         }`,
+        { width: headerTextWidth },
       )
     if (application.submittedAt) {
       document.text(
         `${textFor(translations.received, locale)}: ${new Date(
           application.submittedAt,
         ).toLocaleString(locale === 'en' ? 'en-GB' : 'is-IS')}`,
+        { width: headerTextWidth },
       )
+    }
+    if (logoWidth) {
+      document.y = Math.max(document.y, headerTop + logoSize) + 20
     }
 
     const premises = application.sections?.find(
@@ -585,3 +632,4 @@ export const buildApplicationPdf = (
 
     document.end()
   })
+}
