@@ -126,6 +126,9 @@ describe('PasskeyCoreService', () => {
       } as any)
 
       expect(verification.verified).toBe(true)
+      expect(verifyAuthenticationResponse).toHaveBeenCalledWith(
+        expect.objectContaining({ requireUserVerification: true }),
+      )
     })
   })
 
@@ -163,6 +166,7 @@ describe('PasskeyCoreService', () => {
 
       assert(opts)
       expect(typeof opts.challenge).toBe('string')
+      expect(opts.userVerification).toBe('required')
     })
 
     it('should not verify authentication using a passkey older than config.maxAgeDays', async () => {
