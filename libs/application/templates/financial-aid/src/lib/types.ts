@@ -22,6 +22,10 @@ type Override<T1, T2> = Omit<T1, keyof T2> & T2
 
 export type ErrorSchema = NestedType<answersSchema>
 
+export type FinancialAidRouting =
+  | { backend: 'municipalities' }
+  | { backend: 'veita'; veitaTenant: string }
+
 export interface ExternalData {
   nationalRegistry: {
     data: NationalRegistryIndividual
@@ -38,7 +42,7 @@ export interface ExternalData {
     date: string
   }
   municipality: {
-    data?: Municipality
+    data?: Municipality & (FinancialAidRouting | { backend?: undefined })
     date: string
     status: StatusProvider
   }

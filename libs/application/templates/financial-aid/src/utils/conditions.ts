@@ -10,7 +10,7 @@ import {
   Employment,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
-import { isVeitaMunicipalityCode } from '../lib/constants'
+import { getFinancialAidRouting } from '../lib/utils'
 
 export const hasSpouse = (_answers: FormValue, externalData: ExternalData) =>
   getValueViaPath<NationalRegistrySpouse>(
@@ -45,13 +45,7 @@ export const hasChildren = (
 export const isVeitaMunicipality = (
   _answers: FormValue,
   externalData: ExternalData,
-) => {
-  const municipalityCode = getValueViaPath<string>(
-    externalData,
-    'nationalRegistry.data.address.municipalityCode',
-  )
-  return isVeitaMunicipalityCode(municipalityCode)
-}
+) => getFinancialAidRouting(externalData).backend === 'veita'
 
 export const taxSuccess = (_answers: FormValue, externalData: ExternalData) =>
   getValueViaPath<boolean>(

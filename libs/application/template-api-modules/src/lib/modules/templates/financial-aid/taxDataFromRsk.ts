@@ -1,12 +1,16 @@
 import {
-  isVeitaMunicipalityCode,
+  getFinancialAidRouting,
   TaxData,
 } from '@island.is/application/templates/financial-aid'
-import { ApplicationWithAttachments } from '@island.is/application/types'
+import {
+  ApplicationWithAttachments,
+  ExternalData,
+} from '@island.is/application/types'
 import type { PersonalTaxReturnApi as RskPersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
 import { AttachmentS3Service } from '../../shared/services'
 
-export const shouldFetchTaxDataFromRsk = isVeitaMunicipalityCode
+export const shouldFetchTaxDataFromRsk = (externalData: ExternalData) =>
+  getFinancialAidRouting(externalData).backend === 'veita'
 
 const createPeriod = (pastMonth: number) => {
   const date = new Date()

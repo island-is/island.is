@@ -13,21 +13,31 @@ const ATTACHMENT_KEY = 'uuid-Framtal.pdf'
 
 describe('taxDataFromRsk', () => {
   describe('shouldFetchTaxDataFromRsk', () => {
-    // The tenant map is memoised on first read, so it has to be set before any call.
-    beforeAll(() => {
-      process.env.SI_PUBLIC_FINANCIAL_AID_VEITA_TENANTS = JSON.stringify({
-        '1400': 'hafnarfjordur',
-      })
+    it('returns true for a stored Veita route', () => {
+      expect(
+        shouldFetchTaxDataFromRsk({
+          municipality: {
+            data: { backend: 'veita', veitaTenant: 'hafnarfjordur' },
+            date: new Date(),
+            status: 'success',
+          },
+        }),
+      ).toBe(true)
     })
 
-    it('returns true for municipality codes with a Veita tenant', () => {
-      expect(shouldFetchTaxDataFromRsk('1400')).toBe(true)
-    })
+    it.each([{}, { backend: 'municipalities' }])(
+      'uses the primary backend when routing is %j',
+      (data) => {
+        expect(
+          shouldFetchTaxDataFromRsk({
+            municipality: { data, date: new Date(), status: 'success' },
+          }),
+        ).toBe(false)
+      },
+    )
 
-    it('returns false for other municipality codes', () => {
-      expect(shouldFetchTaxDataFromRsk('0001')).toBe(false)
-      expect(shouldFetchTaxDataFromRsk(undefined)).toBe(false)
-      expect(shouldFetchTaxDataFromRsk(null)).toBe(false)
+    it('uses the primary backend when municipality data is missing', () => {
+      expect(shouldFetchTaxDataFromRsk({})).toBe(false)
     })
   })
 

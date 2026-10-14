@@ -5,6 +5,8 @@ import {
   CurrentApplication,
   FAApplication,
   findFamilyStatus,
+  FinancialAidRouting,
+  getFinancialAidRouting,
   getVeitaTenant,
   TaxData,
 } from '@island.is/application/templates/financial-aid'
@@ -18,7 +20,6 @@ import {
 import {
   ApplicationApi,
   MunicipalityApi,
-  MunicipalityModel,
   PersonalTaxReturnApi,
 } from '@island.is/clients/municipalities-financial-aid'
 import { PersonalTaxReturnApi as RskPersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
@@ -161,7 +162,7 @@ export class FinancialAidService extends BaseTemplateApiService {
             name: f.name ?? '',
             key:
               (await this.attachmentService.getAttachmentUrl(
-                application as unknown as ApplicationWithAttachments,
+                application,
                 f.key,
                 300_000,
               )) ?? '',
@@ -169,7 +170,16 @@ export class FinancialAidService extends BaseTemplateApiService {
             type: type,
           }
         }),
-      )
+      ).catch((error) => {
+        this.logger.error('Error preparing application attachments', { error })
+        throw new TemplateApiError(
+          {
+            title: messages.serviceErrors.createApplication.title,
+            summary: messages.serviceErrors.createApplication.summary,
+          },
+          500,
+        )
+      })
     }
 
     const spouseTaxFiles = () => {
@@ -217,9 +227,9 @@ export class FinancialAidService extends BaseTemplateApiService {
 
     let files: ApplicationAnswerFile[] = []
 
-    const veitaTenant = getVeitaTenant(municipalityCode)
+    const routing = getFinancialAidRouting(externalData)
 
-    if (veitaTenant) {
+    if (routing.backend === 'veita') {
       files = (
         await formatFilesRvk(answers.rvkTaxReturnFiles, FileType.TAXRETURN)
       )
@@ -302,7 +312,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       applicationSystemId: id,
     }
 
-    if (veitaTenant) {
+    if (routing.backend === 'veita') {
       const rvkRequest: CreateIslandisApplicationRequest = {
         createApplicationRequest: {
           name: externalData.nationalRegistry.data.fullName,
@@ -346,7 +356,7 @@ export class FinancialAidService extends BaseTemplateApiService {
           directTaxPayments: [JSON.stringify(directTaxPayments())],
           applicationSystemId: id,
         },
-        xTenantIdentifier: veitaTenant,
+        xTenantIdentifier: routing.veitaTenant,
         xUserPermissions: 'financialaid:write',
       }
 
@@ -399,10 +409,13 @@ export class FinancialAidService extends BaseTemplateApiService {
       : null
   }
 
-  async municipality({
-    auth,
-    application,
-  }: Props): Promise<MunicipalityModel | null> {
+  async municipality({ auth, application }: Props) {
+    const storedMunicipality = application.externalData.municipality
+    // A failed refetch would replace external data and erase the pinned route.
+    if (storedMunicipality?.status === 'success') {
+      return storedMunicipality.data ?? null
+    }
+
     const municipalityCode =
       application.externalData.nationalRegistry.data.address?.municipalityCode
 
@@ -411,12 +424,15 @@ export class FinancialAidService extends BaseTemplateApiService {
     }
 
     const veitaTenant = getVeitaTenant(municipalityCode)
+    const routing: FinancialAidRouting = veitaTenant
+      ? { backend: 'veita', veitaTenant }
+      : { backend: 'municipalities' }
 
-    if (veitaTenant) {
+    if (routing.backend === 'veita') {
       const settings = await this.rvkApplicationsApiWithAuth(
         auth,
       ).getFinaidServiceSettingsForIslandis({
-        xTenantIdentifier: veitaTenant,
+        xTenantIdentifier: routing.veitaTenant,
         xUserPermissions: 'financialaid:read',
         municipalityCode: municipalityCode,
       })
@@ -428,23 +444,25 @@ export class FinancialAidService extends BaseTemplateApiService {
         return null
       }
 
-      return mapVeitaSettingsToMunicipalityModel(
-        settings.data,
-        municipalityCode,
-      )
+      return {
+        ...mapVeitaSettingsToMunicipalityModel(settings.data, municipalityCode),
+        ...routing,
+      }
     }
 
-    return await this.municipalityApiWithAuth(auth)
+    const municipality = await this.municipalityApiWithAuth(auth)
       .municipalityControllerGetById({ id: municipalityCode })
       .catch(this.handle404)
+    return municipality ? { ...municipality, ...routing } : null
   }
 
   async taxData({ auth, application }: Props): Promise<TaxData> {
     try {
-      const municipalityCode =
-        application.externalData.nationalRegistry.data.address?.municipalityCode
+      if (application.externalData.municipality?.status === 'failure') {
+        throw new Error('Municipality settings could not be fetched')
+      }
 
-      if (shouldFetchTaxDataFromRsk(municipalityCode)) {
+      if (shouldFetchTaxDataFromRsk(application.externalData)) {
         const municipalitiesPersonalTaxReturn =
           await fetchPersonalTaxReturnFromRsk(
             this.rskPersonalTaxReturnApi,

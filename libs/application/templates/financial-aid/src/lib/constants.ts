@@ -85,8 +85,9 @@ export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
 export const VEITA_TENANTS_ENV_VAR = 'SI_PUBLIC_FINANCIAL_AID_VEITA_TENANTS'
 
-// Municipality code -> Veita tenant identifier. Doubles as the on/off switch for the
-// Veita flow, so an empty map routes every municipality through the original backend.
+// Municipality code -> Veita tenant identifier, used to select the backend when
+// municipality data is first fetched. Existing applications use their stored route.
+// An empty map selects the municipalities backend for all new applications.
 // Read in the browser and in the template api, and exposed in page source via the
 // SI_PUBLIC_ prefix, so never put secrets in this value.
 const readRawVeitaTenants = (): string | undefined => {
