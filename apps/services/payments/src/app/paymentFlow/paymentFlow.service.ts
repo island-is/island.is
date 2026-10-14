@@ -349,6 +349,10 @@ export class PaymentFlowService {
       }
 
       if (availableMethods.length === 0) {
+        this.logger.warn(
+          `[${paymentFlowId}] No payment method available for the debts`,
+          { paymentOptions: validation.rawPaymentOptions },
+        )
         throw new BadRequestException(
           PaymentServiceCode.DebtPaymentMethodNotAllowed,
         )
@@ -399,15 +403,16 @@ export class PaymentFlowService {
         }
       })
     } catch (e) {
+      // Logged where they were raised: a warning for debts FJS turned down, an error when FJS
+      // could not be reached
+      if (
+        e instanceof BadRequestException ||
+        e instanceof ServiceUnavailableException
+      ) {
+        throw e
+      }
+
       this.logger.error('Failed to create debt payment url', e)
-
-      if (e instanceof BadRequestException) {
-        throw e
-      }
-
-      if (e instanceof ServiceUnavailableException) {
-        throw e
-      }
 
       throw new BadRequestException(
         PaymentServiceCode.CouldNotCreatePaymentFlow,
