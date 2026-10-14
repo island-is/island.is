@@ -193,7 +193,7 @@ describe('PaymentFlowService — debt flows for the worker', () => {
     })
   })
 
-  describe('isPaymentRefunded', () => {
+  describe('isCardPaymentRefunded', () => {
     const addEvent = (
       paymentFlowId: string,
       reason: 'payment_failed' | 'refund_completed',
@@ -209,33 +209,69 @@ describe('PaymentFlowService — debt flows for the worker', () => {
         metadata,
       })
 
+    const refund = { acquirerReferenceNumber: 'arn' }
+
     it('is false without a refund', async () => {
       const flowId = await createFlow({ status: 'rejected' })
 
-      expect(await service.isPaymentRefunded(flowId)).toBe(false)
+      expect(await service.isCardPaymentRefunded(flowId, 'payment-1')).toBe(
+        false,
+      )
     })
 
     it('is false for the rejection the worker reports before refunding', async () => {
       const flowId = await createFlow({ status: 'rejected' })
-      await addEvent(flowId, 'payment_failed', { fjsProblem: { title: '5' } })
+      await addEvent(flowId, 'payment_failed', { fjsProblem: { type: '5' } })
 
-      expect(await service.isPaymentRefunded(flowId)).toBe(false)
+      expect(await service.isCardPaymentRefunded(flowId, 'payment-1')).toBe(
+        false,
+      )
     })
 
-    it('is true when the payment saga refunded the card while rolling back', async () => {
+    it('is true when the payment saga refunded the payment while rolling back', async () => {
       const flowId = await createFlow({ status: 'rejected' })
       await addEvent(flowId, 'payment_failed', {
-        refund: { acquirerReferenceNumber: 'arn' },
+        refund,
+        correlationId: 'payment-1',
       })
 
-      expect(await service.isPaymentRefunded(flowId)).toBe(true)
+      expect(await service.isCardPaymentRefunded(flowId, 'payment-1')).toBe(
+        true,
+      )
     })
 
-    it('is true when a refund saga completed', async () => {
+    it('matches older rollback events on the correlationID the gateway echoed', async () => {
       const flowId = await createFlow({ status: 'rejected' })
-      await addEvent(flowId, 'refund_completed', { action: 'refunded' })
+      await addEvent(flowId, 'payment_failed', {
+        refund,
+        payment: { correlationID: 'payment-1' },
+      })
 
-      expect(await service.isPaymentRefunded(flowId)).toBe(true)
+      expect(await service.isCardPaymentRefunded(flowId, 'payment-1')).toBe(
+        true,
+      )
+    })
+
+    it('is false for a refund of an earlier payment on the same flow', async () => {
+      // A refunded charge flow can be paid again
+      const flowId = await createFlow({ type: 'charge' })
+      await addEvent(flowId, 'payment_failed', {
+        refund,
+        correlationId: 'payment-1',
+      })
+
+      expect(await service.isCardPaymentRefunded(flowId, 'payment-2')).toBe(
+        false,
+      )
+    })
+
+    it('is false for a refund saga, which deletes the fulfillment before refunding', async () => {
+      const flowId = await createFlow({ type: 'charge' })
+      await addEvent(flowId, 'refund_completed', { action: 'refunded', refund })
+
+      expect(await service.isCardPaymentRefunded(flowId, 'payment-1')).toBe(
+        false,
+      )
     })
   })
 

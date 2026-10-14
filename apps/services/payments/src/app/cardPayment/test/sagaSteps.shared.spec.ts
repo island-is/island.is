@@ -349,6 +349,8 @@ describe('Card Payment Saga - Shared Steps', () => {
             metadata: expect.objectContaining({
               originalError: PaymentServiceCode.DebtPaymentRejected,
               fjsProblem: problem,
+              // Ties the refund to this payment for the worker
+              correlationId: context.trackingData.correlationId,
             }),
           }),
         )

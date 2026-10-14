@@ -140,6 +140,25 @@ export class WorkerService {
     // Step 3: Process each flow individually
     for (const { flow: paymentFlow, paymentMethod } of paymentFlowsToProcess) {
       try {
+        // Creating a charge would make the payer owe for a payment that was refunded, see
+        // finishRefundedRollback
+        if (paymentMethod === 'card') {
+          const { confirmationRefId } = this.getActiveFulfillment(paymentFlow)
+          if (
+            await this.paymentFlowService.isCardPaymentRefunded(
+              paymentFlow.id,
+              confirmationRefId,
+            )
+          ) {
+            await this.finishRefundedRollback(
+              paymentFlow.id,
+              confirmationRefId,
+              WorkerTaskType.CreateFjsCharge,
+            )
+            continue
+          }
+        }
+
         const createdFjsCharge = await this.createFjsChargeForPaymentFlow(
           paymentFlow,
           paymentMethod,
@@ -312,23 +331,17 @@ export class WorkerService {
     // FJS rejected the payment earlier but the card refund did not go through, only the refund
     // is left to do.
     if (paymentFlow.fjsDebtPayment?.status === 'rejected') {
-      // The payment saga can refund the card and still leave the fulfillment behind, when deleting
-      // it fails while the saga rolls back. Refunding again would pay the payer twice, so the
-      // worker only finishes the rollback. A delete that fails again throws, and is recorded as a
-      // failure like any other.
-      if (await this.paymentFlowService.isPaymentRefunded(paymentFlow.id)) {
-        await this.paymentFlowService.deleteCardPaymentConfirmationAndFulfillment(
+      // Refunding again would pay the payer twice, see finishRefundedRollback
+      if (
+        await this.paymentFlowService.isCardPaymentRefunded(
           paymentFlow.id,
           fulfillment.confirmationRefId,
         )
-        this.logger.warn(
-          `[${paymentFlow.id}] Finished the rollback of a refunded debt payment: confirmation and fulfillment deleted`,
-        )
-        await this.recordWorkerEvent(
+      ) {
+        await this.finishRefundedRollback(
           paymentFlow.id,
+          fulfillment.confirmationRefId,
           WorkerTaskType.PayFjsDebt,
-          'success',
-          { metadata: { completedRollback: true } },
         )
         return true
       }
@@ -461,6 +474,29 @@ export class WorkerService {
     if (!isBankTransfer) {
       await this.refundRejectedDebtPayment(paymentFlowId)
     }
+  }
+
+  /**
+   * The payment saga refunds the card even when deleting the confirmation or fulfillment fails
+   * while it rolls back, which leaves a refunded payment that still looks paid. The worker finishes
+   * that rollback, and never refunds or charges it. A delete that fails again throws, and is
+   * recorded as a failure like any other.
+   */
+  private async finishRefundedRollback(
+    paymentFlowId: string,
+    correlationId: string,
+    taskType: string,
+  ) {
+    await this.paymentFlowService.deleteCardPaymentConfirmationAndFulfillment(
+      paymentFlowId,
+      correlationId,
+    )
+    this.logger.warn(
+      `[${paymentFlowId}] Finished the rollback of a refunded card payment: confirmation and fulfillment deleted`,
+    )
+    await this.recordWorkerEvent(paymentFlowId, taskType, 'success', {
+      metadata: { completedRollback: true },
+    })
   }
 
   /** A system refund, the check that stops admins from refunding registered debts does not apply. */

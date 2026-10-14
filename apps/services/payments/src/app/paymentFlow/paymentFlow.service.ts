@@ -841,22 +841,36 @@ export class PaymentFlowService {
   }
 
   /**
-   * Whether the payment of the flow was refunded already: by a refund saga (`refund_completed`), or
-   * by the payment saga rolling back, whose `payment_failed` event carries the refund.
+   * Whether the payment saga refunded this card payment while rolling back: its `payment_failed`
+   * event carries the refund. Matched on the payment, not the flow, since a refunded charge flow
+   * can be paid again.
+   *
+   * A refund saga is not looked at: it deletes the fulfillment before refunding, so it never leaves
+   * a refunded payment that still looks paid.
    */
-  async isPaymentRefunded(paymentFlowId: string): Promise<boolean> {
+  async isCardPaymentRefunded(
+    paymentFlowId: string,
+    correlationId: string,
+  ): Promise<boolean> {
     const events = await this.paymentFlowEventModel.findAll({
-      where: {
-        paymentFlowId,
-        reason: { [Op.in]: ['payment_failed', 'refund_completed'] },
-      },
+      where: { paymentFlowId, reason: 'payment_failed' },
     })
 
-    return events.some(
-      (event) =>
-        event.reason === 'refund_completed' ||
-        !!(event.metadata as { refund?: unknown } | undefined)?.refund,
-    )
+    return events.some((event) => {
+      const metadata = event.metadata as
+        | {
+            refund?: unknown
+            correlationId?: string
+            payment?: { correlationID?: string }
+          }
+        | undefined
+
+      // Events from before `correlationId` was added only have the one the gateway echoed
+      const eventCorrelationId =
+        metadata?.correlationId ?? metadata?.payment?.correlationID
+
+      return !!metadata?.refund && eventCorrelationId === correlationId
+    })
   }
 
   async logPaymentFlowUpdate(

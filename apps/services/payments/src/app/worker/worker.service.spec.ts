@@ -125,7 +125,7 @@ describe('WorkerService', () => {
             findDebtFlowsToSettle: jest.fn().mockResolvedValue([]),
             logDebtPaymentFinalized: jest.fn().mockResolvedValue(undefined),
             logDebtPaymentRejected: jest.fn().mockResolvedValue(undefined),
-            isPaymentRefunded: jest.fn().mockResolvedValue(false),
+            isCardPaymentRefunded: jest.fn().mockResolvedValue(false),
             deleteCardPaymentConfirmationAndFulfillment: jest
               .fn()
               .mockResolvedValue(undefined),
@@ -222,6 +222,64 @@ describe('WorkerService', () => {
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Payment worker run complete — created: 1, failed: 0, skipped (manual intervention): 0, deferred (retry delay): 0',
       )
+    })
+
+    describe('when the payment saga refunded the card but did not finish its rollback', () => {
+      it('finishes the rollback instead of creating a charge for the refunded payment', async () => {
+        mockFlowSweep({ card: [createMockFlow({ id: 'flow-refunded' })] })
+        paymentFlowService.isCardPaymentRefunded.mockResolvedValueOnce(true)
+
+        await service.run()
+
+        expect(paymentFlowService.isCardPaymentRefunded).toHaveBeenCalledWith(
+          'flow-refunded',
+          'card-details-correlation-id',
+        )
+        expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
+        expect(
+          paymentFlowService.deleteCardPaymentConfirmationAndFulfillment,
+        ).toHaveBeenCalledWith('flow-refunded', 'card-details-correlation-id')
+        expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            paymentFlowId: 'flow-refunded',
+            taskType: WorkerTaskType.CreateFjsCharge,
+            status: 'success',
+            metadata: { completedRollback: true },
+          }),
+        )
+      })
+
+      it('records a failure, and still creates no charge, when the clean-up fails', async () => {
+        mockFlowSweep({ card: [createMockFlow({ id: 'flow-refunded' })] })
+        paymentFlowService.isCardPaymentRefunded.mockResolvedValueOnce(true)
+        paymentFlowService.deleteCardPaymentConfirmationAndFulfillment.mockRejectedValueOnce(
+          new Error('Failed to delete payment fulfillment'),
+        )
+
+        await service.run()
+
+        expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
+        expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            paymentFlowId: 'flow-refunded',
+            taskType: WorkerTaskType.CreateFjsCharge,
+            status: 'failure',
+            errorCode: 'Failed to delete payment fulfillment',
+          }),
+        )
+      })
+
+      it('does not look for a card refund on bank transfers', async () => {
+        mockFlowSweep({ bankTransfer: [createBankTransferFlow()] })
+        paymentFlowService.createFjsCharge.mockResolvedValue({
+          receptionId: 'rec-123',
+        } as never)
+
+        await service.run()
+
+        expect(paymentFlowService.isCardPaymentRefunded).not.toHaveBeenCalled()
+        expect(paymentFlowService.createFjsCharge).toHaveBeenCalledTimes(1)
+      })
     })
 
     it('should record failure event and log failed: 1 when createFjsCharge throws FJS error', async () => {
@@ -716,14 +774,15 @@ describe('WorkerService', () => {
         mockDebtSweep([
           createDebtCardFlow({ fjsDebtPayment: { status: 'rejected' } }),
         ])
-        paymentFlowService.isPaymentRefunded.mockResolvedValueOnce(true)
+        paymentFlowService.isCardPaymentRefunded.mockResolvedValueOnce(true)
       })
 
       it('finishes the rollback instead of refunding a second time', async () => {
         await service.run()
 
-        expect(paymentFlowService.isPaymentRefunded).toHaveBeenCalledWith(
+        expect(paymentFlowService.isCardPaymentRefunded).toHaveBeenCalledWith(
           'debt-card',
+          'card-details-correlation-id',
         )
         expect(refundOrchestrationService.refund).not.toHaveBeenCalled()
         expect(

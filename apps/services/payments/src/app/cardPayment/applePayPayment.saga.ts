@@ -105,6 +105,8 @@ export const createApplePayPaymentSaga = (
           metadata: {
             payment: paymentResult,
             refund,
+            // Ties the refund to this payment, see PaymentFlowService.isCardPaymentRefunded
+            correlationId: ctx.trackingData.correlationId,
             originalError: ctx.error?.message,
             reasonForRefund: RefundType.PAYMENT_FAILURE,
             ...(ctx.metadata?.fjsProblem
