@@ -54,8 +54,6 @@ export const en: TranslatedMessages = {
     'You can also use {biometricType} to access the app without entering a PIN.',
   'onboarding.biometrics.notEnrolled':
     "Your device supports {biometricType} but you haven't enrolled into it yet.",
-  'onboarding.biometrics.strongNotEnrolled':
-    'Only fingerprint or secure face unlock can be used to open the app. Set one up in your device settings.',
   'onboarding.biometrics.noAuthenticationTypes':
     'Your device does not support biometrics',
   'onboarding.biometrics.useBiometricsButtonText': 'Use {biometricType}',
@@ -67,9 +65,6 @@ export const en: TranslatedMessages = {
   'biometrics.enrollmentChanged.title': 'Biometrics turned off',
   'biometrics.enrollmentChanged.message':
     'The biometrics registered on this device have changed. Unlock the app with your PIN and turn biometrics back on in settings.',
-  'biometrics.strongRequired.title': 'Biometrics turned off',
-  'biometrics.strongRequired.message':
-    'Only fingerprint or secure face unlock can be used to open the app, and neither is set up on this device. Unlock the app with your PIN, or set up a fingerprint and turn biometrics back on in settings.',
   'onboarding.pinKeypad.accessibilityLabel.faceId': 'Use FaceID',
   'onboarding.pinKeypad.accessibilityLabel.iris': 'Use Iris',
   'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Use fingerprint',
