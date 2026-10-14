@@ -21,6 +21,7 @@ describe('RefundOrchestrationService', () => {
   let paymentFlowService: { findPaymentFulfillmentForPaymentFlow: jest.Mock }
   let fjsDebtPaymentModel: { findOne: jest.Mock }
   let handleCardRefund: jest.SpyInstance
+  let logger: { info: jest.Mock; warn: jest.Mock; error: jest.Mock }
 
   beforeEach(() => {
     paymentFlowService = {
@@ -29,13 +30,14 @@ describe('RefundOrchestrationService', () => {
         .mockResolvedValue({ paymentMethod: 'card', fjsChargeId: null }),
     }
     fjsDebtPaymentModel = { findOne: jest.fn().mockResolvedValue(null) }
+    logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn() }
 
     service = new RefundOrchestrationService(
       {} as RefundService,
       paymentFlowService as unknown as PaymentFlowService,
       {} as BankTransferService,
       fjsDebtPaymentModel as unknown as typeof FjsDebtPayment,
-      { info: jest.fn(), warn: jest.fn(), error: jest.fn() } as never,
+      logger as never,
     )
     handleCardRefund = jest
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -73,6 +75,54 @@ describe('RefundOrchestrationService', () => {
         await expect(service.refund(input)).resolves.toEqual(refundResponse)
       },
     )
+
+    it('blocks a pending debt flow whose earlier payDebt had an unknown outcome', async () => {
+      fjsDebtPaymentModel.findOne.mockResolvedValue({
+        status: 'pending',
+        hadAmbiguousAttempt: true,
+        lastAttemptAt: new Date(Date.now() - 10 * 60_000),
+      })
+
+      await expect(service.refund(input)).rejects.toEqual(
+        new BadRequestException(
+          PaymentServiceCode.DebtPaymentRegisteredCannotBeRefunded,
+        ),
+      )
+
+      expect(handleCardRefund).not.toHaveBeenCalled()
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ debtRefundRefused: true }),
+      )
+    })
+
+    it('blocks a pending debt flow while a payDebt attempt is running', async () => {
+      fjsDebtPaymentModel.findOne.mockResolvedValue({
+        status: 'pending',
+        hadAmbiguousAttempt: false,
+        lastAttemptAt: new Date(),
+      })
+
+      await expect(service.refund(input)).rejects.toEqual(
+        new BadRequestException(
+          PaymentServiceCode.DebtPaymentRegisteredCannotBeRefunded,
+        ),
+      )
+
+      expect(handleCardRefund).not.toHaveBeenCalled()
+    })
+
+    it('allows a pending debt flow whose last attempt FJS did not process', async () => {
+      fjsDebtPaymentModel.findOne.mockResolvedValue({
+        status: 'pending',
+        hadAmbiguousAttempt: false,
+        lastAttemptAt: new Date(Date.now() - 10 * 60_000),
+      })
+
+      await expect(service.refund(input)).resolves.toEqual(refundResponse)
+
+      expect(logger.warn).not.toHaveBeenCalled()
+    })
 
     it.each(['registered', 'needs_reconciliation'])(
       'does not block system refunds of a debt flow that is %s',

@@ -25,7 +25,7 @@ const PAY_DEBT_TIMEOUT_MS = 15_000
  * worker) from calling `payDebt` for the same flow at the same time, so it must outlast one
  * attempt: `payDebt` (15s) plus saving its outcome.
  */
-const ATTEMPT_CLAIM_WINDOW_MS = 60_000
+export const ATTEMPT_CLAIM_WINDOW_MS = 60_000
 
 export type DebtSettlementFlow = {
   id: string

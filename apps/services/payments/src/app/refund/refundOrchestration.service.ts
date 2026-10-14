@@ -10,6 +10,7 @@ import { InferAttributes } from 'sequelize'
 import { PaymentMethod } from '../../types'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
+import { ATTEMPT_CLAIM_WINDOW_MS } from '../debtPayment/debtSettlement.service'
 import { FjsDebtPayment } from '../paymentFlow/models/fjsDebtPayment.model'
 import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
@@ -305,6 +306,30 @@ export class RefundOrchestrationService {
       debtPayment?.status === 'registered' ||
       debtPayment?.status === 'needs_reconciliation'
     ) {
+      throw new BadRequestException(
+        PaymentServiceCode.DebtPaymentRegisteredCannotBeRefunded,
+      )
+    }
+
+    // A pending payment may be registered already: an earlier payDebt had an unknown outcome (a
+    // lost 202 is final at FJS), or an attempt started within the claim window. The worker settles it.
+    const isAttemptRunning =
+      !!debtPayment?.lastAttemptAt &&
+      debtPayment.lastAttemptAt.getTime() > Date.now() - ATTEMPT_CLAIM_WINDOW_MS
+
+    if (
+      debtPayment?.status === 'pending' &&
+      (debtPayment.hadAmbiguousAttempt || isAttemptRunning)
+    ) {
+      this.logger.warn(
+        `[${paymentFlowId}] Refused to refund a debt payment that may be registered with FJS`,
+        {
+          // Monitors count on this field, not the message text.
+          debtRefundRefused: true,
+          hadAmbiguousAttempt: debtPayment.hadAmbiguousAttempt,
+          isAttemptRunning,
+        },
+      )
       throw new BadRequestException(
         PaymentServiceCode.DebtPaymentRegisteredCannotBeRefunded,
       )
