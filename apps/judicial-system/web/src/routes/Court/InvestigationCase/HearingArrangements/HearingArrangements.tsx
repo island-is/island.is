@@ -31,6 +31,7 @@ import {
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { defenderInfo } from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo.strings'
 import { anyDefendantHasDefender } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import { LegalRightsProtectorInputFields } from '@island.is/judicial-system-web/src/components/VictimInfo/LegalRightsProtectorInputFields'
 import {
@@ -314,16 +315,37 @@ const HearingArrangements = () => {
             workingCase.sessionArrangements ===
               SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
             <section className={stack({ gap: 3 })}>
-              {workingCase.defendants?.map((defendant, index, defendants) => (
-                <Box key={defendant.id} component="div">
+              <SectionHeading
+                title={formatMessage(
+                  defenderInfo.investigationCases.sections.defender.title,
+                  {
+                    defenderType:
+                      workingCase.sessionArrangements ===
+                      SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                        ? 'Talsmaður'
+                        : 'Verjandi',
+                  },
+                )}
+                tooltip={
+                  <Tooltip
+                    text={formatMessage(
+                      defenderInfo.investigationCases.sections.defender.tooltip,
+                      { sessionArrangement: workingCase.sessionArrangements },
+                    )}
+                    placement="right"
+                  />
+                }
+                marginBottom={0}
+              />
+              {workingCase.defendants?.map((defendant, _index, defendants) => (
+                <BlueBox key={defendant.id}>
                   <RequestCaseDefenderInfo
                     workingCase={workingCase}
                     setWorkingCase={setWorkingCase}
                     defendant={defendant}
-                    hideHeading={index > 0}
                     showDefendantName={defendants.length > 1}
                   />
-                </Box>
+                </BlueBox>
               ))}
             </section>
           )}

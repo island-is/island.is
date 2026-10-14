@@ -2,7 +2,7 @@ import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
   DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE,
@@ -10,6 +10,7 @@ import {
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   ArraignmentAlert,
+  BlueBox,
   CourtArrangements,
   CourtCaseInfo,
   FormContentContainer,
@@ -20,8 +21,10 @@ import {
   PageLayout,
   PageTitle,
   RequestCaseDefenderInfo,
+  SectionHeading,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
+import { defenderInfo } from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo.strings'
 import {
   CaseCustodyRestrictions,
   CaseType,
@@ -174,15 +177,29 @@ export const HearingArrangements = () => {
           </Box>
         </Box>
         <Box component="section" marginBottom={8}>
+          <SectionHeading
+            title={formatMessage(
+              defenderInfo.restrictionCases.sections.defender.title,
+            )}
+            tooltip={
+              <Tooltip
+                text={formatMessage(
+                  defenderInfo.restrictionCases.sections.defender.tooltip,
+                )}
+                placement="right"
+              />
+            }
+          />
           {workingCase.defendants?.map((defendant, index, defendants) => (
             <Box key={defendant.id} marginTop={index === 0 ? 0 : 3}>
-              <RequestCaseDefenderInfo
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-                defendant={defendant}
-                hideHeading={index > 0}
-                showDefendantName={defendants.length > 1}
-              />
+              <BlueBox>
+                <RequestCaseDefenderInfo
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                  defendant={defendant}
+                  showDefendantName={defendants.length > 1}
+                />
+              </BlueBox>
             </Box>
           ))}
         </Box>

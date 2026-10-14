@@ -197,16 +197,13 @@ export const Defendant = () => {
                     setWorkingCase={setWorkingCase}
                     onChange={handleUpdateDefendant}
                     updateDefendantState={updateDefendantState}
-                  />
-                </Box>
-              )}
-              {workingCase.defendants && workingCase.defendants.length > 0 && (
-                <Box component="section">
-                  <RequestCaseDefenderInfo
-                    workingCase={workingCase}
-                    setWorkingCase={setWorkingCase}
-                    defendant={workingCase.defendants[0]}
-                  />
+                  >
+                    <RequestCaseDefenderInfo
+                      workingCase={workingCase}
+                      setWorkingCase={setWorkingCase}
+                      defendant={workingCase.defendants[0]}
+                    />
+                  </DefendantInfo>
                 </Box>
               )}
               {workingCase.type !== CaseType.TRAVEL_BAN && (

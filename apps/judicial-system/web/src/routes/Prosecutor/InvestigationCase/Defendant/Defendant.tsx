@@ -196,23 +196,24 @@ const Defendant = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
         <div className={stack({ gap: 5 })}>
-          <ProsecutorCaseInfo
-            workingCase={workingCase}
-            hideDefendants
-            hideCourt
-          />
-          <Box component="section" className={stack({ gap: 3 })}>
+          <div className={stack({ gap: 2 })}>
             <Box
               display="flex"
               alignItems="center"
               justifyContent="spaceBetween"
-              marginBottom={2}
             >
               <SectionHeading title="Varnaraðili" marginBottom={0} />
               {showPoliceDefendantsUI && policeDefendantsLoading && (
                 <LoadingDots size="small" />
               )}
             </Box>
+            <ProsecutorCaseInfo
+              workingCase={workingCase}
+              hideDefendants
+              hideCourt
+            />
+          </div>
+          <Box component="section" className={stack({ gap: 3 })}>
             <AnimatePresence>
               {workingCase.defendants &&
                 workingCase.defendants.map((defendant, index) => (
@@ -234,14 +235,13 @@ const Defendant = () => {
                       }
                       onChange={handleUpdateDefendant}
                       updateDefendantState={updateDefendantState}
-                    />
-                    <Box marginTop={5}>
+                    >
                       <RequestCaseDefenderInfo
                         workingCase={workingCase}
                         setWorkingCase={setWorkingCase}
                         defendant={defendant}
                       />
-                    </Box>
+                    </DefendantInfo>
                   </motion.div>
                 ))}
             </AnimatePresence>

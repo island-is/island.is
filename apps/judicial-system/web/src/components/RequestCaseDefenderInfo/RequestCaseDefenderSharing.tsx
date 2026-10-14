@@ -54,6 +54,7 @@ const RequestCaseDefenderSharing: FC<Props> = ({
       <SectionHeading
         title={requestAccessTitle}
         heading="h4"
+        variant="h4"
         marginTop={2}
         marginBottom={2}
         required={hasDefender}
