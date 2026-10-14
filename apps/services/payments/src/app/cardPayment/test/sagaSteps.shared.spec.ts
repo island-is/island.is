@@ -336,7 +336,7 @@ describe('Card Payment Saga - Shared Steps', () => {
         expect(refundMock()).toHaveBeenCalledTimes(1)
         expect(context.metadata?.refundSucceeded).toBe(true)
         expect(
-          mockPaymentFlowService.deleteCardPaymentConfirmation,
+          mockPaymentFlowService.deleteCardPaymentConfirmationAndFulfillment,
         ).toHaveBeenCalled()
         // No payment_completed, and the refund event tells the organisation it failed
         expect(loggedReasons()).toEqual(['payment_failed'])
@@ -405,7 +405,7 @@ describe('Card Payment Saga - Shared Steps', () => {
         expect(result.success).toBe(true)
         expect(refundMock()).not.toHaveBeenCalled()
         expect(
-          mockPaymentFlowService.deleteCardPaymentConfirmation,
+          mockPaymentFlowService.deleteCardPaymentConfirmationAndFulfillment,
         ).not.toHaveBeenCalled()
       })
 
@@ -452,19 +452,10 @@ describe('Card Payment Saga - Shared Steps', () => {
       ).rejects.toThrow('Webhook failed')
 
       expect(
-        mockPaymentFlowService.deleteCardPaymentConfirmation,
+        mockPaymentFlowService.deleteCardPaymentConfirmationAndFulfillment,
       ).toHaveBeenCalledWith(
         input.paymentFlowId,
         context.trackingData.correlationId,
-      )
-      expect(
-        mockPaymentFlowService.deletePaymentFulfillment,
-      ).toHaveBeenCalledWith(
-        expect.objectContaining({
-          paymentFlowId: input.paymentFlowId,
-          confirmationRefId: expect.any(String),
-          correlationId: context.trackingData.correlationId,
-        }),
       )
     })
   })

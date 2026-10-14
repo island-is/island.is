@@ -126,6 +126,9 @@ describe('WorkerService', () => {
             logDebtPaymentFinalized: jest.fn().mockResolvedValue(undefined),
             logDebtPaymentRejected: jest.fn().mockResolvedValue(undefined),
             isPaymentRefunded: jest.fn().mockResolvedValue(false),
+            deleteCardPaymentConfirmationAndFulfillment: jest
+              .fn()
+              .mockResolvedValue(undefined),
             getPaymentFlowChargeDetails: jest.fn().mockResolvedValue({
               catalogItems: [
                 {
@@ -708,31 +711,51 @@ describe('WorkerService', () => {
       )
     })
 
-    it('does not refund a rejected card payment a second time', async () => {
-      // The payment saga refunded the card but could not delete the confirmation while rolling back
-      mockDebtSweep([
-        createDebtCardFlow({ fjsDebtPayment: { status: 'rejected' } }),
-      ])
-      paymentFlowService.isPaymentRefunded.mockResolvedValueOnce(true)
+    describe('when the payment saga refunded the card but did not finish its rollback', () => {
+      beforeEach(() => {
+        mockDebtSweep([
+          createDebtCardFlow({ fjsDebtPayment: { status: 'rejected' } }),
+        ])
+        paymentFlowService.isPaymentRefunded.mockResolvedValueOnce(true)
+      })
 
-      await service.run()
+      it('finishes the rollback instead of refunding a second time', async () => {
+        await service.run()
 
-      expect(paymentFlowService.isPaymentRefunded).toHaveBeenCalledWith(
-        'debt-card',
-      )
-      expect(refundOrchestrationService.refund).not.toHaveBeenCalled()
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        expect.stringContaining('CRITICAL'),
-        { needsManualIntervention: true },
-      )
-      expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          paymentFlowId: 'debt-card',
-          taskType: WorkerTaskType.PayFjsDebt,
-          status: 'failure',
-          errorCode: 'already_refunded',
-        }),
-      )
+        expect(paymentFlowService.isPaymentRefunded).toHaveBeenCalledWith(
+          'debt-card',
+        )
+        expect(refundOrchestrationService.refund).not.toHaveBeenCalled()
+        expect(
+          paymentFlowService.deleteCardPaymentConfirmationAndFulfillment,
+        ).toHaveBeenCalledWith('debt-card', 'card-details-correlation-id')
+        expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            paymentFlowId: 'debt-card',
+            taskType: WorkerTaskType.PayFjsDebt,
+            status: 'success',
+            metadata: { completedRollback: true },
+          }),
+        )
+      })
+
+      it('records a failure, and still does not refund, when the clean-up fails', async () => {
+        paymentFlowService.deleteCardPaymentConfirmationAndFulfillment.mockRejectedValueOnce(
+          new Error('Failed to delete payment fulfillment'),
+        )
+
+        await service.run()
+
+        expect(refundOrchestrationService.refund).not.toHaveBeenCalled()
+        expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            paymentFlowId: 'debt-card',
+            taskType: WorkerTaskType.PayFjsDebt,
+            status: 'failure',
+            errorCode: 'Failed to delete payment fulfillment',
+          }),
+        )
+      })
     })
 
     it('records a failure and tries again next run when the refund fails', async () => {

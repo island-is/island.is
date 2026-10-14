@@ -1831,6 +1831,81 @@ export class PaymentFlowService {
     }
   }
 
+  /**
+   * Marks a card payment confirmation and its fulfillment as deleted, retrying each. Used when a
+   * card payment is undone: by the payment saga rolling back, and by the worker finishing a
+   * rollback that did not.
+   *
+   * The fulfillment is deleted even when deleting the confirmation fails: the confirmation id is
+   * the correlationId, and an active fulfillment is what makes a flow look paid. A row that is
+   * deleted already counts as done, so a retry after a lost response, or a second clean-up, is
+   * not a failure. Throws when either is left active.
+   */
+  async deleteCardPaymentConfirmationAndFulfillment(
+    paymentFlowId: string,
+    correlationId: string,
+  ): Promise<void> {
+    const retryOptions = {
+      maxRetries: 3,
+      retryDelayMs: 500,
+      logger: this.logger,
+    }
+
+    const [confirmation, fulfillment] = await Promise.allSettled([
+      retry(
+        async () => {
+          if (
+            (await this.deleteCardPaymentConfirmation(
+              paymentFlowId,
+              correlationId,
+            )) ||
+            !(await this.cardPaymentDetailsModel.count({
+              where: { id: correlationId, paymentFlowId, isDeleted: false },
+            }))
+          ) {
+            return
+          }
+          throw new Error('Failed to delete payment confirmation')
+        },
+        {
+          ...retryOptions,
+          logPrefix: `[${paymentFlowId}] Delete payment confirmation`,
+        },
+      ),
+      retry(
+        async () => {
+          if (
+            (await this.deletePaymentFulfillment({
+              paymentFlowId,
+              confirmationRefId: correlationId,
+              correlationId,
+            })) ||
+            !(await this.paymentFulfillmentModel.count({
+              where: {
+                confirmationRefId: correlationId,
+                paymentFlowId,
+                isDeleted: false,
+              },
+            }))
+          ) {
+            return
+          }
+          throw new Error('Failed to delete payment fulfillment')
+        },
+        {
+          ...retryOptions,
+          logPrefix: `[${paymentFlowId}] Delete payment fulfillment`,
+        },
+      ),
+    ])
+
+    for (const result of [confirmation, fulfillment]) {
+      if (result.status === 'rejected') {
+        throw result.reason
+      }
+    }
+  }
+
   async restoreCardPaymentConfirmation(
     paymentFlowId: string,
     correlationId: string,

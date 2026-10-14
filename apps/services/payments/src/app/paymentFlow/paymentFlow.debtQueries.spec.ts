@@ -239,6 +239,86 @@ describe('PaymentFlowService — debt flows for the worker', () => {
     })
   })
 
+  describe('deleteCardPaymentConfirmationAndFulfillment', () => {
+    // In createFlow the confirmation id and the fulfillment's confirmationRefId are the flow id
+    const isActive = async (flowId: string) => ({
+      confirmation: !!(await cardPaymentDetailsModel.count({
+        where: { id: flowId, isDeleted: false },
+      })),
+      fulfillment: !!(await paymentFulfillmentModel.count({
+        where: { paymentFlowId: flowId, isDeleted: false },
+      })),
+    })
+
+    it('deletes both, and the rejected flow is no longer picked up', async () => {
+      const flowId = await createFlow({
+        status: 'rejected',
+        withCardDetails: true,
+      })
+      expect(await findDebtFlowIds()).toContain(flowId)
+
+      await service.deleteCardPaymentConfirmationAndFulfillment(flowId, flowId)
+
+      expect(await isActive(flowId)).toEqual({
+        confirmation: false,
+        fulfillment: false,
+      })
+      expect(await findDebtFlowIds()).not.toContain(flowId)
+    })
+
+    it('deletes the fulfillment when the confirmation is deleted already', async () => {
+      const flowId = await createFlow({
+        status: 'rejected',
+        withCardDetails: true,
+      })
+      await cardPaymentDetailsModel.update(
+        { isDeleted: true },
+        { where: { id: flowId } },
+      )
+
+      await service.deleteCardPaymentConfirmationAndFulfillment(flowId, flowId)
+
+      expect(await isActive(flowId)).toEqual({
+        confirmation: false,
+        fulfillment: false,
+      })
+    })
+
+    it('is done when both are deleted already', async () => {
+      const flowId = await createFlow({
+        status: 'rejected',
+        withCardDetails: true,
+      })
+      await service.deleteCardPaymentConfirmationAndFulfillment(flowId, flowId)
+
+      await expect(
+        service.deleteCardPaymentConfirmationAndFulfillment(flowId, flowId),
+      ).resolves.toBeUndefined()
+    })
+
+    it('still deletes the confirmation, and throws, when the fulfillment stays active', async () => {
+      const flowId = await createFlow({
+        status: 'rejected',
+        withCardDetails: true,
+      })
+      const deleteFulfillment = jest
+        .spyOn(service, 'deletePaymentFulfillment')
+        .mockResolvedValue(null)
+
+      await expect(
+        service.deleteCardPaymentConfirmationAndFulfillment(flowId, flowId),
+      ).rejects.toThrow('Failed to delete payment fulfillment')
+
+      // Retried before giving up
+      expect(deleteFulfillment).toHaveBeenCalledTimes(3)
+      expect(await isActive(flowId)).toEqual({
+        confirmation: false,
+        fulfillment: true,
+      })
+      deleteFulfillment.mockRestore()
+    })
+  })
+
   describe('findPaidFlowsWithoutFjsCharge', () => {
     it('does not return debt flows, they have no FJS charge to create', async () => {
       const debtFlow = await createFlow({ type: 'debt', withCardDetails: true })

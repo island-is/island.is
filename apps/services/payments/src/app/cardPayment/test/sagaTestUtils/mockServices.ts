@@ -71,6 +71,9 @@ export const createMockPaymentFlowService = (
       }),
     ),
     deletePaymentFulfillment: jest.fn().mockResolvedValue(resolved({})),
+    deleteCardPaymentConfirmationAndFulfillment: jest
+      .fn()
+      .mockResolvedValue(resolved(undefined)),
     restoreCardPaymentConfirmation: jest.fn().mockResolvedValue(resolved({})),
     restorePaymentFulfillment: jest.fn().mockResolvedValue(resolved({})),
     findPaymentFulfillmentForPaymentFlow: jest
