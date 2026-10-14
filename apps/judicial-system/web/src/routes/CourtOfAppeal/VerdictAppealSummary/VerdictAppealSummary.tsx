@@ -1,6 +1,5 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE } from '@island.is/judicial-system/consts'
@@ -26,20 +25,11 @@ const VerdictAppealSummary = () => {
     useContext(FormContext)
   const verdictAppealCase = workingCase.verdictAppealCase
   const { formatMessage } = useIntl()
-  const router = useRouter()
 
   const statusUrl = appendAppealCaseIdQuery(
     `${COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE}/${workingCase.id}`,
     verdictAppealCase?.id,
   )
-
-  const handleNavigationTo = (destination: string) =>
-    router.push(
-      appendAppealCaseIdQuery(
-        `${destination}/${workingCase.id}`,
-        verdictAppealCase?.id,
-      ),
-    )
 
   const headerLines = getVerdictAppealStatusHeaderLines(workingCase)
 
@@ -48,7 +38,6 @@ const VerdictAppealSummary = () => {
       workingCase={workingCase}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={titleForCase(formatMessage, workingCase)} />
       <FormContentContainer>
