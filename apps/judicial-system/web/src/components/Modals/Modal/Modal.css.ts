@@ -28,10 +28,9 @@ export const container = style({
   },
 })
 
-// On while the dialog plays out: the same length as the dialog's own exit,
-// so the two leave together. The entrance animation is dropped here, since a
-// running animation would otherwise win over the opacity below when the
-// dialog is closed before it has finished playing in.
+// Fades out over the same 0.2s as the dialog's exit, so both leave together.
+// The entrance animation is cancelled so a close inside its first 0.3s, say
+// an immediate Escape, fades out rather than finishing the fade in.
 export const leaving = style({
   opacity: 0,
   animation: 'none',
