@@ -31,6 +31,7 @@ export abstract class BaseCaseExistsGuard implements CanActivate {
     request.case = await traceCaseLoad(
       this.constructor.name,
       this.include,
+      request,
       () => this.loadCase(caseId),
     )
 
