@@ -3,27 +3,32 @@ import {
   IsDate,
   IsEnum,
   IsNotEmpty,
-  IsOptional,
   IsString,
+  ValidateIf,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import { AppealCourtSessionType } from '@island.is/judicial-system/types'
 
+// Each field is validated when it is present, so an explicit null is
+// rejected like any other bad value instead of reaching a NOT NULL column.
+// IsOptional would let null through.
+const whenPresent = (_: unknown, value: unknown) => value !== undefined
+
 export class UpdateAppealCourtSessionDto {
-  @IsOptional()
+  @ValidateIf(whenPresent)
   @IsEnum(AppealCourtSessionType)
   @ApiPropertyOptional({ enum: AppealCourtSessionType })
   readonly sessionType?: AppealCourtSessionType
 
-  @IsOptional()
+  @ValidateIf(whenPresent)
   @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly sessionDate?: Date
 
-  @IsOptional()
+  @ValidateIf(whenPresent)
   @IsString()
   @IsNotEmpty()
   @ApiPropertyOptional({ type: String })
