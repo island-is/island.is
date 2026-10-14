@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildDescriptionField,
   buildForm,
@@ -7,10 +8,12 @@ import {
   buildSection,
   buildSubmitField,
   buildTitleField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
 import { CoFundedByEU } from '../../assets/CoFundedByEU'
 import { m } from '../../lib/messages'
+import { IS_REGULATED_EXTERNAL_DATA_ID } from '../../utils/constants'
 
 // Intro ("Inngangur") screen. Built from declarative fields so the EU emblem,
 // the blue sub-headings and the confirmation checkbox all live on one screen.
@@ -29,6 +32,29 @@ export const Prerequisites = buildForm({
           id: 'intro',
           title: m.prerequisites.title,
           children: [
+            // Shows the "not eligible" error when the company is not a
+            // supervised entity with an open access window. The company cannot
+            // continue either way: the prerequisites -> draft transition is
+            // guarded by the same check on the backend (canStartApplication).
+            buildAlertMessageField({
+              id: 'eligibilityError',
+              alertType: 'error',
+              title: m.notEligible.title,
+              message: m.notEligible.description,
+              condition: (_answers, externalData) => {
+                const isSupervisedEntity = getValueViaPath<boolean>(
+                  externalData,
+                  `${IS_REGULATED_EXTERNAL_DATA_ID}.data.isSupervisedEntity`,
+                )
+                const accessWindowOpen = getValueViaPath<boolean>(
+                  externalData,
+                  `${IS_REGULATED_EXTERNAL_DATA_ID}.data.accessWindowOpen`,
+                )
+                return !(
+                  isSupervisedEntity === true && accessWindowOpen === true
+                )
+              },
+            }),
             buildDescriptionField({
               id: 'introText',
               description: m.prerequisites.intro,
@@ -95,6 +121,7 @@ export const Prerequisites = buildForm({
                 },
               ],
             }),
+
             buildSubmitField({
               id: 'submit',
               placement: 'footer',

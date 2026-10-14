@@ -18,9 +18,12 @@ import template from './template'
 const COMPANY = createNationalId('company')
 const INDIVIDUAL = createNationalId('person')
 
-const regulatedExternalData = (accessWindowOpen: boolean): ExternalData => ({
+const regulatedExternalData = (
+  isSupervisedEntity: boolean,
+  accessWindowOpen: boolean,
+): ExternalData => ({
   [IS_REGULATED_EXTERNAL_DATA_ID]: {
-    data: { isSupervisedEntity: true, accessWindowOpen },
+    data: { isSupervisedEntity, accessWindowOpen },
     date: new Date(),
     status: 'success',
   },
@@ -49,9 +52,12 @@ const buildApplication = (data: {
 
 describe('Fjarskiptastofa self-assessment template', () => {
   describe('state transitions', () => {
-    it('should transition from prerequisites to draft on submit', () => {
+    it('should transition from prerequisites to draft on submit for a supervised entity with an open access window', () => {
       const helper = new ApplicationTemplateHelper(
-        buildApplication({ state: States.PREREQUISITES }),
+        buildApplication({
+          state: States.PREREQUISITES,
+          externalData: regulatedExternalData(true, true),
+        }),
         template,
       )
 
@@ -62,6 +68,33 @@ describe('Fjarskiptastofa self-assessment template', () => {
       expect(hasChanged).toBe(true)
       expect(newState).toBe(States.DRAFT)
     })
+
+    it.each([
+      ['not a supervised entity', false, true],
+      ['access window closed', true, false],
+      ['neither supervised nor open', false, false],
+    ])(
+      'should NOT transition from prerequisites to draft when the company is %s',
+      (_label, isSupervisedEntity, accessWindowOpen) => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            state: States.PREREQUISITES,
+            externalData: regulatedExternalData(
+              isSupervisedEntity,
+              accessWindowOpen,
+            ),
+          }),
+          template,
+        )
+
+        const [hasChanged, newState] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(false)
+        expect(newState).toBe(States.PREREQUISITES)
+      },
+    )
 
     it('should transition from draft to completed on submit', () => {
       const helper = new ApplicationTemplateHelper(
@@ -97,24 +130,28 @@ describe('Fjarskiptastofa self-assessment template', () => {
       )
     })
 
-    it('should map a company to the applicant role before the access window has been checked', () => {
+    it('should map a company to the applicant role so it can open the prerequisites screen', () => {
       const application = buildApplication({})
       expect(template.mapUserToRole(COMPANY, application)).toBe(Roles.APPLICANT)
     })
 
-    it('should map a company with an open access window to the applicant role', () => {
-      const application = buildApplication({
-        externalData: regulatedExternalData(true),
+    it('should map a company to the applicant role regardless of its access window (the submit gates instead)', () => {
+      const openWindow = buildApplication({
+        externalData: regulatedExternalData(true, true),
       })
-      expect(template.mapUserToRole(COMPANY, application)).toBe(Roles.APPLICANT)
-    })
+      const closedWindow = buildApplication({
+        externalData: regulatedExternalData(true, false),
+      })
+      const notSupervised = buildApplication({
+        externalData: regulatedExternalData(false, true),
+      })
 
-    it('should map a company with a closed access window to the notAllowed role', () => {
-      const application = buildApplication({
-        externalData: regulatedExternalData(false),
-      })
-      expect(template.mapUserToRole(COMPANY, application)).toBe(
-        Roles.NOTALLOWED,
+      expect(template.mapUserToRole(COMPANY, openWindow)).toBe(Roles.APPLICANT)
+      expect(template.mapUserToRole(COMPANY, closedWindow)).toBe(
+        Roles.APPLICANT,
+      )
+      expect(template.mapUserToRole(COMPANY, notSupervised)).toBe(
+        Roles.APPLICANT,
       )
     })
   })

@@ -89,7 +89,7 @@ describe('FjarskiptastofaSelfAssessmentService', () => {
     )
 
     it.each(ACCESS_WINDOW_CLOSED)(
-      'should report the access window as closed for %s',
+      'should report the access window as closed (the prerequisites screen blocks the submit) for %s',
       async (applicant) => {
         ;(client.isRegulated as jest.Mock).mockResolvedValue({
           isSupervisedEntity: true,
@@ -105,7 +105,7 @@ describe('FjarskiptastofaSelfAssessmentService', () => {
       },
     )
 
-    it('should surface an unsupervised entity with a closed window', async () => {
+    it('should report an unsupervised entity with a closed window', async () => {
       ;(client.isRegulated as jest.Mock).mockResolvedValue({
         isSupervisedEntity: false,
         accessWindowOpen: false,

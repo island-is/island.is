@@ -29,8 +29,9 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
   }
 
   // Data provider: check whether the company is a supervised entity with an open
-  // access window. The result is stored in externalData so the template can route
-  // a company whose window is closed to the "not allowed" screen.
+  // access window. The flags are stored in externalData so the prerequisites
+  // screen can block the submit (and show the "not eligible" error) when the
+  // company is not a supervised entity or its access window is closed.
   async getIsRegulated({ auth, application }: TemplateApiModuleActionProps) {
     const ssn = application.applicant
 

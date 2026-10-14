@@ -4,7 +4,6 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  Application,
   DefaultEvents,
   FormModes,
   ApplicationConfigurations,
@@ -12,19 +11,19 @@ import {
 } from '@island.is/application/types'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { CodeOwners } from '@island.is/shared/constants'
+import { Features } from '@island.is/feature-flags'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { isCompany } from 'kennitala'
 import {
   Events,
-  IS_REGULATED_EXTERNAL_DATA_ID,
   Roles,
   States,
   SUBMIT_EXTERNAL_DATA_ID,
 } from '../utils/constants'
+import { canStartApplication } from '../utils/canStartApplication'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import {
@@ -41,12 +40,14 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT,
   name: m.application.name,
-  // TODO: Change to the Fjarskiptastofa code owner once a team is registered
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Juni,
   institution: m.application.institution,
   translationNamespaces:
     ApplicationConfigurations.FjarskiptastofaSelfAssessment.translation,
   dataSchema,
+  // Gate the application's visibility behind a feature flag so it can be rolled
+  // out gradually (hidden until the flag is enabled per environment).
+  featureFlag: Features.fjarskiptastofaSelfAssessment,
   // Only companies (or actors acting on their behalf) may apply
   allowedDelegations: [
     {
@@ -63,8 +64,10 @@ const template: ApplicationTemplate<
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
-          // Check the company's access window on entry so mapUserToRole can route
-          // a company whose window is closed to the "not allowed" screen.
+          // Check whether the company is a supervised entity with an open access
+          // window on entry. The isRegulated provider throws when the company is
+          // not eligible, so the error shows on this prerequisites screen and the
+          // company cannot continue to the draft.
           onEntry: [SelfAssessmentIsRegulatedApi],
           roles: [
             {
@@ -96,9 +99,17 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
-          },
+          // Only a company that Fjarskiptastofa reports as a supervised entity
+          // with an open access window may start the assessment. The flags are
+          // stored by the isRegulated data provider on entry; the prerequisites
+          // screen also shows the error, but this guard is the real enforcement
+          // (an ineligible company stays in prerequisites and cannot continue).
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.DRAFT,
+              cond: canStartApplication,
+            },
+          ],
         },
       },
       [States.DRAFT]: {
@@ -175,23 +186,13 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(
-    nationalId: string,
-    application: Application,
-  ): ApplicationRole | undefined {
-    // Only companies (or delegated actors) may access the application.
+  mapUserToRole(nationalId: string): ApplicationRole | undefined {
+    // Only companies (or delegated actors) may access the application; everyone
+    // else gets the "not allowed" screen. Every company can open the
+    // prerequisites screen regardless of whether it is a supervised entity; the
+    // regulation/access-window check runs in the isRegulated data provider on
+    // entry and surfaces an error on that screen when the company is not eligible.
     if (!isCompany(nationalId)) {
-      return Roles.NOTALLOWED
-    }
-
-    // A company is also blocked when Fjarskiptastofa reports its access window as
-    // closed. The flag is stored by the isRegulated data provider; until it has
-    // run the company is let through so the prerequisites screen can load.
-    const accessWindowOpen = getValueViaPath<boolean>(
-      application.externalData,
-      `${IS_REGULATED_EXTERNAL_DATA_ID}.data.accessWindowOpen`,
-    )
-    if (accessWindowOpen === false) {
       return Roles.NOTALLOWED
     }
 

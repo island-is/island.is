@@ -26,7 +26,7 @@ import {
   isQuestionAnswered,
 } from '../utils/assessment'
 import { consumeFocusQuestionId } from '../utils/focusQuestion'
-import { ASSESSMENT_ANSWERS_ID, AssessmentAnswer } from '../utils/constants'
+import { ASSESSMENT_ANSWERS_ID } from '../utils/constants'
 import { AssessmentAnswers, AssessmentQuestion } from '../utils/types'
 
 export const AssessmentQuestions: FC<FieldBaseProps> = ({
@@ -96,53 +96,46 @@ export const AssessmentQuestions: FC<FieldBaseProps> = ({
   // The "Halda áfram" button steps through categories one at a time: it advances
   // the category selector and stays on this screen until the last category, then
   // lets the multiField proceed to the overview section.
-  useEffect(() => {
-    if (!setBeforeSubmitCallback) return
+  //
+  // Registered during render (not in a useEffect): the ui-shell Screen clears any
+  // beforeSubmit callback once on mount, and because child effects run before the
+  // parent's clearing effect, a useEffect registration would be wiped out and
+  // never re-run, so the first click would skip straight to the overview.
+  setBeforeSubmitCallback?.(async () => {
+    const currentIndex = Math.max(
+      0,
+      groups.findIndex(({ category }) => String(category.id) === selectedId),
+    )
 
-    setBeforeSubmitCallback(async () => {
-      const currentIndex = Math.max(
-        0,
-        groups.findIndex(({ category }) => String(category.id) === selectedId),
-      )
-
-      // Persist what's been answered so far so category progress survives a
-      // reload. Stepping between categories stays on this single multiField
-      // screen (returns [false, '']), so the application-system's automatic
-      // per-screen save never runs until the last category; save it here.
-      try {
-        await updateApplication({
-          variables: {
-            locale,
-            input: {
-              id: application.id,
-              answers: {
-                [ASSESSMENT_ANSWERS_ID]: getValues(ASSESSMENT_ANSWERS_ID) ?? {},
-              },
+    // Persist what's been answered so far so category progress survives a
+    // reload. Stepping between categories stays on this single multiField
+    // screen (returns [false, '']), so the application-system's automatic
+    // per-screen save never runs until the last category; save it here.
+    try {
+      await updateApplication({
+        variables: {
+          locale,
+          input: {
+            id: application.id,
+            answers: {
+              [ASSESSMENT_ANSWERS_ID]: getValues(ASSESSMENT_ANSWERS_ID) ?? {},
             },
           },
-        })
-      } catch {
-        // Let navigation continue even if the save failed; the final screen
-        // submit still persists everything.
-      }
+        },
+      })
+    } catch {
+      // Let navigation continue even if the save failed; the final screen
+      // submit still persists everything.
+    }
 
-      if (currentIndex >= groups.length - 1) {
-        return [true, null]
-      }
+    if (currentIndex >= groups.length - 1) {
+      return [true, null]
+    }
 
-      setSelectedId(String(groups[currentIndex + 1].category.id))
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      return [false, '']
-    })
-  }, [
-    selectedId,
-    groups,
-    setBeforeSubmitCallback,
-    updateApplication,
-    locale,
-    application.id,
-    getValues,
-  ])
+    setSelectedId(String(groups[currentIndex + 1].category.id))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    return [false, '']
+  })
 
   // When arriving from an overview "edit" button, jump to that question: switch
   // to its category, expand it and scroll it into view.

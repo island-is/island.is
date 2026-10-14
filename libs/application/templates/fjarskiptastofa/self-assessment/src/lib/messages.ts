@@ -88,14 +88,27 @@ export const m = {
   notAllowed: defineMessages({
     title: {
       id: 'fjs.sa.application:notAllowed.title',
-      defaultMessage: 'Sjálfsmat er einungis fyrir fyrirtæki',
+      defaultMessage: 'Þú hefur ekki aðgang að sjálfsmati',
       description: 'Not allowed title',
     },
     description: {
       id: 'fjs.sa.application:notAllowed.description',
       defaultMessage:
-        'Þetta sjálfsmat er einungis aðgengilegt fyrirtækjum. Til að halda áfram þarftu að skrá þig inn fyrir hönd fyrirtækis með prókúru.',
+        'Þú ert ekki skráð/ur inn á umboði fyrirtækis eða stofnunar sem þú starfar hjá. Til að nálgast sjálfsmatið þarftu að skrá þig inn á umboð, og prókúruhafi hjá þínu fyrirtæki eða stofnun þarf að hafa gefið þér réttindi á sjálfsmatið.Við bendum á opið sjálfsmat á sviði netöryggis á Ísland.is fyrir aðila sem ekki eru eftirlitsskyldir.',
       description: 'Not allowed description',
+    },
+  }),
+  notEligible: defineMessages({
+    title: {
+      id: 'fjs.sa.application:notEligible.title',
+      defaultMessage: 'Þú hefur ekki aðgang að sjálfsmati',
+      description: 'Not eligible title',
+    },
+    description: {
+      id: 'fjs.sa.application:notEligible.description',
+      defaultMessage:
+        'Eingöngu aðilar á lista yfir rekstraraðila nauðsynlegrar þjónustu, sem Fjarskiptastofa hefur boðað í sjálfsmat, geta hafið matið.',
+      description: 'Not eligible description',
     },
   }),
   shared: defineMessages({
