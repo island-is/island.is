@@ -110,10 +110,29 @@ export class NotificationSettingsService {
   }
 
   /**
+   * Blocks or unblocks the given sender categories. Blocked categories are
+   * validated before anything is written.
+   */
+  async updateCategories(
+    user: User,
+    categories: NotificationCategoryInput[],
+  ): Promise<void> {
+    const toBlock = categories.filter(({ blocked }) => blocked)
+    const toUnblock = categories.filter(({ blocked }) => !blocked)
+
+    if (toBlock.length > 0) {
+      await this.blockCategories(user, toBlock)
+    }
+    if (toUnblock.length > 0) {
+      await this.unblockCategories(user, toUnblock)
+    }
+  }
+
+  /**
    * Blocks the given sender categories. Only categories the user has received
    * or already blocked can be blocked, and their labels are taken from there.
    */
-  async blockCategories(
+  private async blockCategories(
     user: User,
     categories: NotificationCategoryInput[],
   ): Promise<void> {
@@ -141,7 +160,7 @@ export class NotificationSettingsService {
     })
   }
 
-  async unblockCategories(
+  private async unblockCategories(
     user: User,
     categories: NotificationCategoryInput[],
   ): Promise<void> {

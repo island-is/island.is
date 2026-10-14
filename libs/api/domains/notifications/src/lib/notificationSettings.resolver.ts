@@ -8,8 +8,8 @@ import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { NotificationSettingsService } from './notificationSettings.service'
 import { toCategoryKey } from './notificationSettings.utils'
 import {
-  NotificationCategoriesInput,
   NotificationSettings,
+  UpdateNotificationCategoriesInput,
 } from './notificationSettings.model'
 import { AUDIT_NAMESPACE } from './notifications.resolver'
 import type { Locale } from '@island.is/shared/types'
@@ -45,53 +45,31 @@ export class NotificationSettingsResolver {
     }
   }
 
-  @Mutation(() => Boolean, { name: 'blockNotificationCategories' })
-  async blockNotificationCategories(
+  @Mutation(() => Boolean, { name: 'updateNotificationCategorySettings' })
+  async updateNotificationCategorySettings(
     @CurrentUser() user: User,
-    @Args('input') input: NotificationCategoriesInput,
+    @Args('input') input: UpdateNotificationCategoriesInput,
   ): Promise<boolean> {
+    const keysWhere = (blocked: boolean) =>
+      input.categories
+        .filter((c) => c.blocked === blocked)
+        .map(({ senderId, category }) => toCategoryKey(senderId, category))
+
     try {
       await this.auditService.auditPromise(
         {
           auth: user,
           namespace: AUDIT_NAMESPACE,
-          action: 'blockNotificationCategories',
+          action: 'updateNotificationCategorySettings',
           resources: input.categories.map(({ senderId, category }) =>
             toCategoryKey(senderId, category),
           ),
+          meta: { blocked: keysWhere(true), unblocked: keysWhere(false) },
         },
-        this.service.blockCategories(user, input.categories),
+        this.service.updateCategories(user, input.categories),
       )
     } catch (e) {
-      this.logger.info('failed to block notification categories', {
-        category: LOG_CATEGORY,
-        error: e,
-      })
-      throw e
-    }
-
-    return true
-  }
-
-  @Mutation(() => Boolean, { name: 'unblockNotificationCategories' })
-  async unblockNotificationCategories(
-    @CurrentUser() user: User,
-    @Args('input') input: NotificationCategoriesInput,
-  ): Promise<boolean> {
-    try {
-      await this.auditService.auditPromise(
-        {
-          auth: user,
-          namespace: AUDIT_NAMESPACE,
-          action: 'unblockNotificationCategories',
-          resources: input.categories.map(({ senderId, category }) =>
-            toCategoryKey(senderId, category),
-          ),
-        },
-        this.service.unblockCategories(user, input.categories),
-      )
-    } catch (e) {
-      this.logger.info('failed to unblock notification categories', {
+      this.logger.info('failed to update notification category settings', {
         category: LOG_CATEGORY,
         error: e,
       })

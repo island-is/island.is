@@ -38,10 +38,13 @@ export class NotificationCategoryInput {
 
   @Field()
   category!: string
+
+  @Field()
+  blocked!: boolean
 }
 
 @InputType()
-export class NotificationCategoriesInput {
+export class UpdateNotificationCategoriesInput {
   @Field(() => [NotificationCategoryInput])
   categories!: NotificationCategoryInput[]
 }
