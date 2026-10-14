@@ -122,9 +122,9 @@ describe('sortAppealCourtSessionsNewestFirst', () => {
       { id: 'middle', created: '2026-10-07T10:00:00.000Z' },
     ]
 
-    expect(sortAppealCourtSessionsNewestFirst(sessions).map((s) => s.id)).toEqual(
-      ['latest', 'middle', 'early'],
-    )
+    expect(
+      sortAppealCourtSessionsNewestFirst(sessions).map((s) => s.id),
+    ).toEqual(['latest', 'middle', 'early'])
     // The input is left as it was.
     expect(sessions.map((s) => s.id)).toEqual(['early', 'latest', 'middle'])
   })
@@ -136,8 +136,8 @@ describe('sortAppealCourtSessionsNewestFirst', () => {
       { id: 'c', created: null },
     ]
 
-    expect(sortAppealCourtSessionsNewestFirst(sessions).map((s) => s.id)).toEqual(
-      ['b', 'a', 'c'],
-    )
+    expect(
+      sortAppealCourtSessionsNewestFirst(sessions).map((s) => s.id),
+    ).toEqual(['b', 'a', 'c'])
   })
 })
