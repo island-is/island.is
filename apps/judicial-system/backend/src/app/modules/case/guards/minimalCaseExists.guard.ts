@@ -34,6 +34,7 @@ export class MinimalCaseExistsGuard implements CanActivate {
     request.case = await traceCaseLoad(
       MinimalCaseExistsGuard.name,
       'minimal',
+      request,
       () => this.caseService.findMinimalById(caseId),
     )
 
