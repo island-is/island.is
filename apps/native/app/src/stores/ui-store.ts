@@ -1,12 +1,12 @@
 import {
   AuthenticationType,
+  isEnrolledAsync,
   supportedAuthenticationTypesAsync,
 } from 'expo-local-authentication'
 import { AppState } from 'react-native'
 import { DefaultTheme } from 'styled-components/native'
 import { create, useStore } from 'zustand'
 import { verifyBiometricIntegrity } from '../utils/biometric-integrity'
-import { isStrongBiometricsEnrolledAsync } from '../utils/biometrics'
 import { authStore } from './auth-store'
 
 export interface UIStore {
@@ -50,7 +50,7 @@ function updateBiometricsStatus() {
   supportedAuthenticationTypesAsync().then((authenticationTypes) => {
     uiStore.setState({ authenticationTypes })
   })
-  isStrongBiometricsEnrolledAsync().then((isEnrolledBiometrics) => {
+  isEnrolledAsync().then((isEnrolledBiometrics) => {
     uiStore.setState({ isEnrolledBiometrics })
   })
 }
@@ -63,7 +63,7 @@ AppState.addEventListener('change', (state) => {
     // same check before prompting — so the alert lands over the lock screen.
     const { authorizeResult, lockScreenActivatedAt } = authStore.getState()
     if (authorizeResult && lockScreenActivatedAt === undefined) {
-      void verifyBiometricIntegrity()
+      verifyBiometricIntegrity()
     }
   }
 })
