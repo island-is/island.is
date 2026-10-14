@@ -38,10 +38,12 @@ const ExpandingSection: FC<PropsWithChildren<Props>> = ({
   className,
   children,
 }) => {
-  // Whether a block mounting now plays open. On the first render only when
-  // asked to: AnimatePresence skips the entrance otherwise, and a block that
-  // never animates never reports an animation complete. A block mounting on
-  // any later render is an opening and always plays.
+  // Whether a block appearing now will animate open, and so should start
+  // clipped. A block present on the first render only animates when
+  // animateOnMount asks for it: AnimatePresence skips entrances on its first
+  // render, and a block that never animates would never have its clipping
+  // lifted. A block appearing on a later render is a real opening and always
+  // animates.
   const isFirstRender = useRef(true)
 
   useEffect(() => {
