@@ -123,13 +123,13 @@ const RequestCaseDefenderInfo: FC<Props> = ({
     )
   }
 
-  const handleAdvocateChange = (
+  const handleAdvocateChange = async (
     defenderName: string | null,
     defenderNationalId: string | null,
     defenderEmail: string | null,
     defenderPhoneNumber: string | null,
   ) => {
-    setAndSendDefendantToServer(
+    const updated = await setAndSendDefendantToServer(
       {
         caseId: workingCase.id,
         defendantId: defendant.id,
@@ -145,6 +145,10 @@ const RequestCaseDefenderInfo: FC<Props> = ({
       setWorkingCase,
     )
 
+    if (!updated) {
+      return
+    }
+
     mirrorToCase({
       defenderName,
       defenderNationalId,
@@ -153,12 +157,16 @@ const RequestCaseDefenderInfo: FC<Props> = ({
     })
   }
 
-  const handleEmailSave = (defenderEmail: string | null) => {
-    updateDefendant({
+  const handleEmailSave = async (defenderEmail: string | null) => {
+    const updated = await updateDefendant({
       caseId: workingCase.id,
       defendantId: defendant.id,
       defenderEmail,
     })
+
+    if (!updated) {
+      return
+    }
 
     mirrorToCase({
       defenderName: defendant.defenderName ?? null,
@@ -168,12 +176,16 @@ const RequestCaseDefenderInfo: FC<Props> = ({
     })
   }
 
-  const handlePhoneNumberSave = (defenderPhoneNumber: string | null) => {
-    updateDefendant({
+  const handlePhoneNumberSave = async (defenderPhoneNumber: string | null) => {
+    const updated = await updateDefendant({
       caseId: workingCase.id,
       defendantId: defendant.id,
       defenderPhoneNumber,
     })
+
+    if (!updated) {
+      return
+    }
 
     mirrorToCase({
       defenderName: defendant.defenderName ?? null,

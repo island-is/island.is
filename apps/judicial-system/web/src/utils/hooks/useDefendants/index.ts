@@ -171,7 +171,8 @@ const useDefendants = () => {
       setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
       updateDefendantState(update, setWorkingCase)
-      updateDefendant(update)
+
+      return updateDefendant(update)
     },
     [updateDefendant, updateDefendantState],
   )

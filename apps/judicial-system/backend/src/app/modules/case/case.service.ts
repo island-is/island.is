@@ -2910,28 +2910,25 @@ export class CaseService {
               gender: defendant.gender,
               address: defendant.address,
               citizenship: defendant.citizenship,
+              // Each defendant keeps its own defender and sharing timing
+              ...(isRequestCase(theCase.type)
+                ? {
+                    defenderName: defendant.defenderName,
+                    defenderNationalId: defendant.defenderNationalId,
+                    defenderEmail: defendant.defenderEmail,
+                    defenderPhoneNumber: defendant.defenderPhoneNumber,
+                    requestSharedWithDefender:
+                      defendant.requestSharedWithDefender,
+                    ...(theCase.defendantWaivesRightToCounsel
+                      ? { defenderChoice: DefenderChoice.WAIVE }
+                      : {}),
+                  }
+                : {}),
             },
             transaction,
           ),
         ),
       )
-
-      if (isRequestCase(theCase.type)) {
-        await this.defendantService.syncDefenderToAllDefendants(
-          extendedCase.id,
-          {
-            defenderName: theCase.defenderName,
-            defenderNationalId: theCase.defenderNationalId,
-            defenderEmail: theCase.defenderEmail,
-            defenderPhoneNumber: theCase.defenderPhoneNumber,
-            defenderChoice: theCase.defendantWaivesRightToCounsel
-              ? DefenderChoice.WAIVE
-              : null,
-            requestSharedWithDefender: theCase.requestSharedWithDefender,
-          },
-          transaction,
-        )
-      }
     }
 
     return extendedCase

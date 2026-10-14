@@ -226,7 +226,9 @@ export class DefendantService {
 
   async createForNewCase(
     caseId: string,
-    defendantToCreate: CreateDefendantDto,
+    defendantToCreate: CreateDefendantDto & {
+      requestSharedWithDefender?: RequestSharedWithDefender
+    },
     transaction: Transaction,
   ): Promise<Defendant> {
     return this.defendantRepositoryService.create(
