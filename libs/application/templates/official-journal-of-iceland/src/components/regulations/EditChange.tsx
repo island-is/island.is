@@ -28,11 +28,11 @@ import { useState, useEffect, useMemo } from 'react'
 import {
   HTMLText,
   toISODate,
-  getDiff,
   prettyName,
   RegName,
 } from '@island.is/regulations'
 import dirtyClean from '@dmr.is/regulations-tools/dirtyClean-browser'
+import getStructuredDiff from '@dmr.is/regulations-tools/structuredDiff-browser'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
 import { RegulationImpactSchema } from '../../lib/dataSchema'
@@ -217,7 +217,9 @@ export const EditChange = (props: EditChangeProps) => {
   const getDiffHtml = () => {
     const prev = (baseRegulation?.text as HTMLText) || emptyHTML
     const curr = (activeText as HTMLText) || emptyHTML
-    return getDiff(dirtyClean(prev), dirtyClean(curr)).diff || emptyHTML
+    return (
+      getStructuredDiff(dirtyClean(prev), dirtyClean(curr)).diff || emptyHTML
+    )
   }
 
   const getAppendixDiffHtml = (i: number) => {
@@ -225,7 +227,10 @@ export const EditChange = (props: EditChangeProps) => {
       (baseRegulation?.appendixes?.[i]?.text as HTMLText) || emptyHTML
     const current = (activeAppendixes[i]?.text as HTMLText) || emptyHTML
 
-    const diff = getDiff(dirtyClean(previous), dirtyClean(current)).diff
+    const diff = getStructuredDiff(
+      dirtyClean(previous),
+      dirtyClean(current),
+    ).diff
 
     if (!baseRegulation?.appendixes?.[i]) {
       // New appendix

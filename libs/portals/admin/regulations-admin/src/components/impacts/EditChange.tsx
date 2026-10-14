@@ -17,7 +17,6 @@ import {
   RegDraftForm,
 } from '../../state/types'
 import {
-  getDiff,
   HTMLText,
   PlainText,
   RegName,
@@ -25,6 +24,7 @@ import {
   toISODate,
 } from '@island.is/regulations'
 import dirtyClean from '@dmr.is/regulations-tools/dirtyClean-browser'
+import getStructuredDiff from '@dmr.is/regulations-tools/structuredDiff-browser'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
 import {
@@ -231,14 +231,19 @@ export const EditChange = (props: EditChangeProp) => {
     const prev = previous || previousRegulation?.text || emptyHTML
     const curr = current || activeChange.text.value || emptyHTML
 
-    return getDiff(dirtyClean(prev), dirtyClean(curr)).diff || emptyHTML
+    return (
+      getStructuredDiff(dirtyClean(prev), dirtyClean(curr)).diff || emptyHTML
+    )
   }
 
   const getAppendixDiffHtml = (i: number) => {
     const previous = previousRegulation?.appendixes[i]?.text || emptyHTML
     const current = activeChange?.appendixes[i]?.text.value || emptyHTML
 
-    const diff = getDiff(dirtyClean(previous), dirtyClean(current)).diff
+    const diff = getStructuredDiff(
+      dirtyClean(previous),
+      dirtyClean(current),
+    ).diff
 
     if (!previousRegulation?.appendixes[i]) {
       // If the appendix is new

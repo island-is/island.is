@@ -30,6 +30,33 @@ export const diffStyling = (wrapper: string) => {
     textDecorationColor: 'rgba(0, 0, 0, 0.5)',
     backgroundColor: color.red200,
   })
+  // Formatting changed, text did not (htmldiff's `ins.mod`) — so not shown
+  // as added text.
+  global('ins.mod', {
+    backgroundColor: 'transparent',
+    textDecoration: `underline dotted 2px ${color.purple400}`,
+    textUnderlineOffset: '0.2em',
+  })
+  // A block moved: highlighted where it arrived, struck through where it left.
+  global('ins.diffmove', {
+    backgroundColor: color.blue200,
+    textDecoration: 'underline double',
+    textUnderlineOffset: '0.15em',
+  })
+  global('del.diffmove', {
+    backgroundColor: color.blue200,
+    opacity: 0.7,
+  })
+  // A rule has no text to wrap in ins/del; getStructuredDiff marks the element.
+  global('hr[data-diff="insert"]', {
+    borderColor: color.mint600,
+    borderTopWidth: 3,
+  })
+  global('hr[data-diff="delete"]', {
+    borderColor: color.red400,
+    borderTopWidth: 3,
+    borderTopStyle: 'dashed',
+  })
 }
 
 // ---------------------------------------------------------------------------
