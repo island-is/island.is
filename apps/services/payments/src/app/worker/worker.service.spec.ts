@@ -125,6 +125,7 @@ describe('WorkerService', () => {
             findDebtFlowsToSettle: jest.fn().mockResolvedValue([]),
             logDebtPaymentFinalized: jest.fn().mockResolvedValue(undefined),
             logDebtPaymentRejected: jest.fn().mockResolvedValue(undefined),
+            isPaymentRefunded: jest.fn().mockResolvedValue(false),
             getPaymentFlowChargeDetails: jest.fn().mockResolvedValue({
               catalogItems: [
                 {
@@ -704,6 +705,33 @@ describe('WorkerService', () => {
       expect(refundOrchestrationService.refund).toHaveBeenCalledWith(
         expect.objectContaining({ paymentFlowId: 'debt-card' }),
         { system: true },
+      )
+    })
+
+    it('does not refund a rejected card payment a second time', async () => {
+      // The payment saga refunded the card but could not delete the confirmation while rolling back
+      mockDebtSweep([
+        createDebtCardFlow({ fjsDebtPayment: { status: 'rejected' } }),
+      ])
+      paymentFlowService.isPaymentRefunded.mockResolvedValueOnce(true)
+
+      await service.run()
+
+      expect(paymentFlowService.isPaymentRefunded).toHaveBeenCalledWith(
+        'debt-card',
+      )
+      expect(refundOrchestrationService.refund).not.toHaveBeenCalled()
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        expect.stringContaining('CRITICAL'),
+        { needsManualIntervention: true },
+      )
+      expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          paymentFlowId: 'debt-card',
+          taskType: WorkerTaskType.PayFjsDebt,
+          status: 'failure',
+          errorCode: 'already_refunded',
+        }),
       )
     })
 

@@ -840,6 +840,25 @@ export class PaymentFlowService {
     )
   }
 
+  /**
+   * Whether the payment of the flow was refunded already: by a refund saga (`refund_completed`), or
+   * by the payment saga rolling back, whose `payment_failed` event carries the refund.
+   */
+  async isPaymentRefunded(paymentFlowId: string): Promise<boolean> {
+    const events = await this.paymentFlowEventModel.findAll({
+      where: {
+        paymentFlowId,
+        reason: { [Op.in]: ['payment_failed', 'refund_completed'] },
+      },
+    })
+
+    return events.some(
+      (event) =>
+        event.reason === 'refund_completed' ||
+        !!(event.metadata as { refund?: unknown } | undefined)?.refund,
+    )
+  }
+
   async logPaymentFlowUpdate(
     update: {
       paymentFlowId: string

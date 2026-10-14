@@ -6,6 +6,7 @@ import { setupTestApp } from '../../../test/setup'
 import { CardPaymentDetails } from './models/cardPaymentDetails.model'
 import { FjsDebtPayment } from './models/fjsDebtPayment.model'
 import { PaymentFlow } from './models/paymentFlow.model'
+import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 import { PaymentFulfillment } from './models/paymentFulfillment.model'
 import { PaymentFlowService } from './paymentFlow.service'
 
@@ -18,6 +19,7 @@ describe('PaymentFlowService — debt flows for the worker', () => {
   let paymentFulfillmentModel: typeof PaymentFulfillment
   let fjsDebtPaymentModel: typeof FjsDebtPayment
   let cardPaymentDetailsModel: typeof CardPaymentDetails
+  let paymentFlowEventModel: typeof PaymentFlowEvent
 
   beforeAll(async () => {
     app = await setupTestApp()
@@ -26,6 +28,7 @@ describe('PaymentFlowService — debt flows for the worker', () => {
     paymentFulfillmentModel = app.get(getModelToken(PaymentFulfillment))
     fjsDebtPaymentModel = app.get(getModelToken(FjsDebtPayment))
     cardPaymentDetailsModel = app.get(getModelToken(CardPaymentDetails))
+    paymentFlowEventModel = app.get(getModelToken(PaymentFlowEvent))
   })
 
   afterAll(() => {
@@ -187,6 +190,52 @@ describe('PaymentFlowService — debt flows for the worker', () => {
       const id = await createFlow({ type: 'charge' })
 
       expect(await findDebtFlowIds()).not.toContain(id)
+    })
+  })
+
+  describe('isPaymentRefunded', () => {
+    const addEvent = (
+      paymentFlowId: string,
+      reason: 'payment_failed' | 'refund_completed',
+      metadata: object,
+    ) =>
+      paymentFlowEventModel.create({
+        paymentFlowId,
+        type: reason === 'refund_completed' ? 'success' : 'error',
+        reason,
+        paymentMethod: 'card',
+        occurredAt: new Date(),
+        message: reason,
+        metadata,
+      })
+
+    it('is false without a refund', async () => {
+      const flowId = await createFlow({ status: 'rejected' })
+
+      expect(await service.isPaymentRefunded(flowId)).toBe(false)
+    })
+
+    it('is false for the rejection the worker reports before refunding', async () => {
+      const flowId = await createFlow({ status: 'rejected' })
+      await addEvent(flowId, 'payment_failed', { fjsProblem: { title: '5' } })
+
+      expect(await service.isPaymentRefunded(flowId)).toBe(false)
+    })
+
+    it('is true when the payment saga refunded the card while rolling back', async () => {
+      const flowId = await createFlow({ status: 'rejected' })
+      await addEvent(flowId, 'payment_failed', {
+        refund: { acquirerReferenceNumber: 'arn' },
+      })
+
+      expect(await service.isPaymentRefunded(flowId)).toBe(true)
+    })
+
+    it('is true when a refund saga completed', async () => {
+      const flowId = await createFlow({ status: 'rejected' })
+      await addEvent(flowId, 'refund_completed', { action: 'refunded' })
+
+      expect(await service.isPaymentRefunded(flowId)).toBe(true)
     })
   })
 

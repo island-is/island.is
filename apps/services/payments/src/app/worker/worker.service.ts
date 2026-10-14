@@ -312,6 +312,27 @@ export class WorkerService {
     // FJS rejected the payment earlier but the card refund did not go through, only the refund
     // is left to do.
     if (paymentFlow.fjsDebtPayment?.status === 'rejected') {
+      // The payment saga can refund the card and still leave the fulfillment behind, when deleting
+      // the confirmation fails while it rolls back. Refunding again would pay the payer twice.
+      if (await this.paymentFlowService.isPaymentRefunded(paymentFlow.id)) {
+        this.logger.error(
+          `[${paymentFlow.id}] CRITICAL: a rejected debt payment was refunded but its fulfillment is still active — clean it up manually, do not refund again`,
+          { needsManualIntervention: true },
+        )
+        // A failure, so the retry delay and the failure limit stop the worker from coming back
+        await this.recordWorkerEvent(
+          paymentFlow.id,
+          WorkerTaskType.PayFjsDebt,
+          'failure',
+          {
+            errorCode: 'already_refunded',
+            message:
+              'The rejected debt payment was refunded already, the rollback did not finish',
+          },
+        )
+        return false
+      }
+
       await this.refundRejectedDebtPayment(paymentFlow.id)
       await this.recordWorkerEvent(
         paymentFlow.id,
