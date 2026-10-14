@@ -77,10 +77,6 @@ export interface AuthenticationStatusResult {
   completedNow?: CompletedConfirmation[]
 }
 
-/**
- * Held scopes are not written to `delegation_scope` until confirmed, so an
- * unconfirmed scope can't leak through any read path.
- */
 @Injectable()
 export class DelegationConfirmationService {
   constructor(
