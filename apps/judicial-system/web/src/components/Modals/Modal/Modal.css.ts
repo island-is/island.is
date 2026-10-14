@@ -66,6 +66,18 @@ export const modalContainer = style({
   },
 })
 
+export const backdropButton = style({
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+  padding: 0,
+  border: 'none',
+  background: 'transparent',
+  cursor: 'default',
+})
+
 export const modalContainerBare = style({
   position: 'relative',
   background: theme.color.white,

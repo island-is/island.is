@@ -1,7 +1,7 @@
 import { AnimatePresence } from 'motion/react'
 import { fireEvent, render, screen } from '@testing-library/react'
 
-import { Modal } from './Modal'
+import { Modal, ModalContainer } from './Modal'
 import * as styles from './Modal.css'
 
 describe('Modal', () => {
@@ -118,5 +118,61 @@ describe('Modal', () => {
     expect(await screen.findByTestId('modalButton-0')).toHaveTextContent('A')
     expect(await screen.findByTestId('modalButton-1')).toHaveTextContent('B')
     expect(await screen.findByTestId('modalButton-2')).toHaveTextContent('C')
+  })
+})
+
+describe('ModalContainer', () => {
+  it('closes when the backdrop is clicked but not when the panel is', async () => {
+    const onClose = jest.fn()
+    render(
+      <ModalContainer title="Leit" onClose={onClose}>
+        <p>Innihald</p>
+      </ModalContainer>,
+    )
+
+    fireEvent.click(await screen.findByText('Innihald'))
+    expect(onClose).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Loka glugga' }))
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps the backdrop control out of the tab order', async () => {
+    render(
+      <ModalContainer title="Leit" onClose={jest.fn()}>
+        <p>Innihald</p>
+      </ModalContainer>,
+    )
+
+    expect(
+      await screen.findByRole('button', { name: 'Loka glugga' }),
+    ).toHaveAttribute('tabindex', '-1')
+  })
+
+  it('has no backdrop control when it cannot be closed', async () => {
+    render(
+      <ModalContainer title="Leit">
+        <p>Innihald</p>
+      </ModalContainer>,
+    )
+
+    await screen.findByRole('dialog')
+    expect(
+      screen.queryByRole('button', { name: 'Loka glugga' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('closes when Escape is pressed', async () => {
+    const onClose = jest.fn()
+    render(
+      <ModalContainer title="Leit" onClose={onClose}>
+        <p>Innihald</p>
+      </ModalContainer>,
+    )
+
+    await screen.findByRole('dialog')
+    fireEvent.keyDown(window, { key: 'Escape' })
+
+    expect(onClose).toHaveBeenCalledTimes(1)
   })
 })

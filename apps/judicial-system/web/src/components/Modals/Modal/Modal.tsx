@@ -255,9 +255,7 @@ export const ModalContainer = ({
 
   return (
     <FocusLock autoFocus={false}>
-      {/* CSS fade for the same reason as in Modal above. Clicking the
-          backdrop closes; Escape, handled above, is the keyboard's way. */}
-      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
+      {/* CSS fade for the same reason as in Modal above. */}
       <div
         className={cn(styles.container, {
           [styles.alignItems[position]]: position,
@@ -266,20 +264,26 @@ export const ModalContainer = ({
         role="dialog"
         aria-modal="true"
         data-testid="modal"
-        onClick={() => {
-          onClose && onClose()
-        }}
       >
+        {/* Clicking outside the panel closes. The click target is a real
+            button under the panel rather than a handler on the dialog, so
+            assistive technology finds a named close control. It is kept out
+            of the tab order; Escape, handled above, is the keyboard's way. */}
+        {onClose && (
+          <button
+            type="button"
+            className={styles.backdropButton}
+            onClick={onClose}
+            tabIndex={-1}
+            aria-label="Loka glugga"
+          />
+        )}
         <motion.div
           className={styles.modalContainerBare}
           initial="closed"
           animate="open"
           exit="closed"
           variants={modalVariants}
-          onClick={(e) => {
-            // Prevent click events from bubbling up to the container
-            e.stopPropagation()
-          }}
         >
           {children}
         </motion.div>
