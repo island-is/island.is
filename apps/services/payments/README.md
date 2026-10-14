@@ -192,6 +192,7 @@ For **AlreadyCreatedCharge**: reconcile the flow/fulfillment with the existing F
 - The worker logs one info line per run when flows are skipped: `Skipping N payment flow(s) that exceeded the failure limit (5) and require manual intervention: <ids>`.
 - The worker logs one info line per run when flows are deferred: `Deferring N payment flow(s) that failed less than 60 minute(s) ago: <ids>`.
 - Each run ends with `Payment worker run complete — created: X, failed: Y, skipped (manual intervention): Z, deferred (retry delay): W`.
+- A debt bank transfer FJS rejects is logged once, as an error with `needsManualRefund: true` and the payment flow id, and its `payment_failed` event carries the same flag. Nothing refunds it automatically, and nothing records when it has been refunded by hand: alert on the field and track the refund with whoever returns the money.
 - A refund of a debt payment that may already be registered with FJS is refused and logged as a warning with `debtRefundRefused: true`. Monitors count on that field.
 - The debt pass logs the same skip and defer lines for debt payment flows, and ends with `Debt payment run complete — settled: X, failed: Y, skipped (manual intervention): Z, deferred (retry delay): W`.
 - Optional: add metrics for flows processed, succeeded, failed, skipped, and deferred.
