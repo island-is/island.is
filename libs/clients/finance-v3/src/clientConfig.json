@@ -89,7 +89,27 @@
               }
             }
           },
-          "401": { "description": "Access Denied", "content": {} }
+          "400": {
+            "description": "Bad request\t",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/customerDebtsnationalID_GET_response"
+                }
+              }
+            }
+          },
+          "401": { "description": "Access Denied", "content": {} },
+          "500": {
+            "description": "Server Error\t",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/customerDebtsnationalID_GET_response"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -106,17 +126,6 @@
           "required": true
         },
         "responses": {
-          "200": { "description": "OK", "content": {} },
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/payDebt_POST_response"
-                }
-              }
-            }
-          },
           "202": {
             "description": "Accepted. ",
             "content": {
@@ -127,8 +136,27 @@
               }
             }
           },
-          "400": { "description": "Bad Request", "content": {} },
-          "401": { "description": "Access Denied", "content": {} }
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/payDebt_POST_response"
+                }
+              }
+            }
+          },
+          "401": { "description": "Access Denied", "content": {} },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/payDebt_POST_response"
+                }
+              }
+            }
+          }
         },
         "x-codegen-request-body-name": "payInput"
       }
@@ -158,7 +186,27 @@
               }
             }
           },
-          "401": { "description": "Access Denied", "content": {} }
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/validatePayment_POST_response"
+                }
+              }
+            }
+          },
+          "401": { "description": "Access Denied", "content": {} },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/validatePayment_POST_response"
+                }
+              }
+            }
+          }
         },
         "x-codegen-request-body-name": "validateInput"
       }
@@ -431,7 +479,7 @@
           "paymentMeans": {
             "type": "string",
             "description": "Greiðslumáti  debet/Kredit kort",
-            "enum": ["Kreditkort", "Debetkort", "Milli"]
+            "enum": ["DebetCard", "KreditCard", "Transfer"]
           },
           "authCode": { "type": "string", "description": "Heimildarnúmer" },
           "PAN": { "type": "string", "description": "Síðustu stafir korts" },
