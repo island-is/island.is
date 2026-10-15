@@ -51,7 +51,7 @@ const getCopyRecipients = (
   if (kind === AppealAppointmentKind.SPOKESPERSON) {
     parties.push(
       ...(theCase.defendants ?? []).map((defendant) =>
-        defendant.isAppealDefenderConfirmed
+        defendant.isAppealDefenderConfirmed && !defendant.isAppealDefenderWaived
           ? recipient(defendant.appealDefenderName, 'lögmaður')
           : undefined,
       ),
@@ -111,7 +111,14 @@ export const buildAppealAppointmentLetter = (params: {
   let advocateName: string | undefined
 
   if (defendant) {
-    if (!defendant.isAppealDefenderConfirmed) {
+    // The waiver is its own field, and the API takes it without touching the
+    // defender's name or the confirmation, so a defendant who asked for no
+    // defender can still carry a confirmed, named one. There is nobody to
+    // appoint, whatever the row says.
+    if (
+      !defendant.isAppealDefenderConfirmed ||
+      defendant.isAppealDefenderWaived
+    ) {
       return undefined
     }
 

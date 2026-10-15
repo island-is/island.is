@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common'
 
 import { CaseService } from '../case.service'
+import { traceCaseLoad } from './traceCaseLoad'
 
 @Injectable()
 export class MinimalCaseExistsGuard implements CanActivate {
@@ -30,7 +31,12 @@ export class MinimalCaseExistsGuard implements CanActivate {
       throw new BadRequestException('Invalid case id format')
     }
 
-    request.case = await this.caseService.findMinimalById(caseId)
+    request.case = await traceCaseLoad(
+      MinimalCaseExistsGuard.name,
+      'minimal',
+      request,
+      () => this.caseService.findMinimalById(caseId),
+    )
 
     return true
   }

@@ -15,7 +15,8 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase } from '../appeal-case'
+import { AppealCase, AppealCourtSession } from '../appeal-case'
+import { AppealSummons } from '../appeal-summons'
 import {
   Case,
   RequestSignatureResponse,
@@ -345,6 +346,17 @@ export class BackendService {
     )
   }
 
+  createAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    createAppealCourtSession: unknown,
+  ): Promise<AppealCourtSession> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession`,
+      createAppealCourtSession,
+    )
+  }
+
   transitionAppealCase(
     caseId: string,
     appealCaseId: string,
@@ -648,6 +660,31 @@ export class BackendService {
     },
   ): Promise<Subpoena[]> {
     return this.post(`case/${caseId}/subpoenas`, createSubpoenas)
+  }
+
+  createAppealSummons(
+    caseId: string,
+    createAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.post(`case/${caseId}/appealSummons`, createAppealSummons)
+  }
+
+  updateAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+    updateAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}`,
+      updateAppealSummons,
+    )
+  }
+
+  deleteAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<{ deleted: boolean }> {
+    return this.delete(`case/${caseId}/appealSummons/${appealSummonsId}`)
   }
 
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {

@@ -59,6 +59,9 @@ export const is = {
   'onboarding.biometrics.type.biometrics': 'lífkenni',
   'onboarding.biometrics.type.fingerprint': 'fingrafar',
   'onboarding.biometrics.type.iris': 'augnskanna',
+  'biometrics.enrollmentChanged.title': 'Slökkt á lífkennum',
+  'biometrics.enrollmentChanged.message':
+    'Lífkennin sem skráð eru í tækinu hafa breyst. Opnaðu appið með PIN-númerinu og kveiktu aftur á lífkennum í stillingum.',
   'onboarding.pinKeypad.accessibilityLabel.iris': 'Nota augnskannaauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.fingerprint':
     'Nota fingrafarsauðkenningu',

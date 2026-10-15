@@ -12,6 +12,7 @@ import { Dispatch } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
+import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
@@ -36,7 +37,7 @@ type RegistryChild = {
 }
 
 export const Child = ({ item, valueIndex = 0, dispatch }: Props) => {
-  const { lang } = useLocale()
+  const { lang, formatMessage } = useLocale()
   const { control, trigger } = useFormContext()
   const cached = (item.list?.length ?? 0) > 0
   const { data, loading } = useQuery(GET_FAMILY_MEMBERS, {
@@ -114,7 +115,12 @@ export const Child = ({ item, valueIndex = 0, dispatch }: Props) => {
       name={fieldName}
       control={control}
       defaultValue={selectedNationalId}
-      rules={{ required: item.isRequired ?? false }}
+      rules={{
+        required: {
+          value: item.isRequired ?? false,
+          message: formatMessage(m.required),
+        },
+      }}
       render={({ field, fieldState }) => (
         <Select
           name="child"
@@ -142,6 +148,7 @@ export const Child = ({ item, valueIndex = 0, dispatch }: Props) => {
             })
           }}
           hasError={Boolean(fieldState.error)}
+          errorMessage={fieldState.error?.message}
         />
       )}
     />

@@ -1,6 +1,7 @@
 export { AppealCase } from './models/appealCase.model'
 export { AppealDecision } from './models/appealDecision.model'
 export { AppealEventLog } from './models/appealEventLog.model'
+export { AppealCourtSession } from './models/appealCourtSession.model'
 export { AppealSummons } from './models/appealSummons.model'
 export { AppealSummonsDefendant } from './models/appealSummonsDefendant.model'
 export { Case } from './models/case.model'
@@ -37,6 +38,10 @@ export {
   AppealDecisionPartyKey,
 } from './services/appealDecisionRepository.service'
 export { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
+export {
+  AppealCourtSessionRepositoryService,
+  CreateAppealCourtSession,
+} from './services/appealCourtSessionRepository.service'
 export {
   AppealSummonsRepositoryService,
   UpdateAppealSummons,

@@ -3,7 +3,11 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
+} from '@island.is/judicial-system/consts'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   AppealAppointmentLetterButtons,
   FormContentContainer,
@@ -140,10 +144,19 @@ const VerdictAppealDefender = () => {
         </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
-        {/* No continue action: this is the last step the court of appeals has
-            on a verdict appeal so far. The next one arrives with the step
-            that follows it. */}
-        <FormFooter previousUrl={overviewUrl} />
+        <FormFooter
+          previousUrl={overviewUrl}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              disabled: !stepIsValid,
+              onClick: () =>
+                handleNavigationTo(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE),
+              testId: 'continueButton',
+            },
+          ]}
+        />
       </FormContentContainer>
     </PageLayout>
   )

@@ -6,6 +6,7 @@ import { animate, Reorder, useDragControls, useMotionValue } from 'motion/react'
 
 import { Box, Button, FileUploadStatus, Text } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
+import { stripPdfExtension } from '@island.is/judicial-system/formatters'
 import { sortCaseFiles } from '@island.is/judicial-system/types'
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -124,8 +125,7 @@ const DraggableFileRow: FC<DraggableFileRowProps> = (props) => {
           id: file.id ?? '',
           displayText:
             file.userGeneratedFilename ??
-            file.name?.replace(/\.pdf$/i, '') ??
-            file.name,
+            (file.name ? stripPdfExtension(file.name) : file.name),
           canEdit: ['fileName'],
           canOpen:
             file.status === FileUploadStatus.done &&

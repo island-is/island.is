@@ -10,6 +10,7 @@ import {
   COURT_OF_APPEAL_SUMMARY_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
@@ -54,6 +55,7 @@ import {
   PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
@@ -1554,8 +1556,8 @@ const useSections = (
    * Separate from getCourtOfAppealSections, which is built around a ruling
    * appeal - its steps, its state, and the appeal named in the query string.
    * A verdict appeal is a different proceeding and will grow steps of its own;
-   * only the overview exists so far, and naming the rest here would offer
-   * links to pages that do not answer yet.
+   * only the steps built so far are named here, because naming the rest would
+   * offer links to pages that do not answer yet.
    */
   const getCourtOfAppealVerdictAppealSections = (
     workingCase: WorkingCase,
@@ -1564,7 +1566,8 @@ const useSections = (
       name: 'Dómur Landsréttar',
       isActive:
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE) ||
-        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE),
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE) ||
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE),
       children: [
         {
           name: 'Yfirlit',
@@ -1598,6 +1601,30 @@ const useSections = (
                   )
               : undefined,
         },
+        {
+          name: 'Staða og lyktir',
+          isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE),
+          href: appendAppealCaseIdQuery(
+            `${COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE}/${workingCase.id}`,
+            targetAppealCase?.id,
+          ),
+          // Going forward to it runs through the defender step's validation:
+          // the court does not record where the appeal stands before it has
+          // settled who represents each party.
+          onClick:
+            !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE) &&
+            validateFormStepper(
+              isValid,
+              [COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE],
+              workingCase,
+            ) &&
+            onNavigationTo
+              ? async () =>
+                  await onNavigationTo(
+                    COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
+                  )
+              : undefined,
+        },
       ],
     },
     // The outcome, which this court has not reached and has no screens for.
@@ -1625,16 +1652,20 @@ const useSections = (
     const isRegisteringVerdictAppeal = isActive(
       PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
     )
+    const isIssuingAppealSummons = isActive(
+      PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE,
+    )
     const showsVerdictAppealStep = showsPublicProsecutorVerdictAppealStep(
       workingCase,
       user,
       features,
-      isRegisteringVerdictAppeal,
+      isRegisteringVerdictAppeal || isIssuingAppealSummons,
     )
     const isVerdictAppealStepActive =
       showsVerdictAppealStep &&
       (isActive(PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE) ||
-        isRegisteringVerdictAppeal)
+        isRegisteringVerdictAppeal ||
+        isIssuingAppealSummons)
 
     return [
       isRestrictionCase(workingCase.type)

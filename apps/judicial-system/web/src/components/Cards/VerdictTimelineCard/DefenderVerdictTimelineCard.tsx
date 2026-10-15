@@ -43,6 +43,9 @@ const DefenderVerdictTimelineCard: FC<Props> = (props) => {
       items={getDefenderVerdictTimelineItems({
         defendantId: defendant.id,
         verdict,
+        verdictAppealDeadline: defendant.verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired:
+          defendant.isVerdictAppealDeadlineExpired,
         verdictAppealCase,
         formatMessage,
       })}

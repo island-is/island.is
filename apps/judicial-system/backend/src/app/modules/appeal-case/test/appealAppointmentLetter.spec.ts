@@ -159,6 +159,38 @@ describe('buildAppealAppointmentLetter', () => {
     ).toBeUndefined()
   })
 
+  // The screen clears the name when the waiver is ticked, but the API takes
+  // the waiver on its own - so a confirmed, named defender can sit under a
+  // waiver, and there is nobody to appoint.
+  it('writes no letter for a waived defendant who still names a defender', () => {
+    expect(
+      buildAppealAppointmentLetter({
+        theCase: theCase(),
+        defendant: defendant({ isAppealDefenderWaived: true }),
+      }),
+    ).toBeUndefined()
+  })
+
+  it("copies no waived defendant's defender on a spokesperson letter", () => {
+    const letter = buildAppealAppointmentLetter({
+      theCase: theCase({
+        civilClaimants: [civilClaimant()],
+        defendants: [defendant({ isAppealDefenderWaived: true })],
+        verdictAppealCase: appealCase({
+          appealEventLogs: [
+            confirmation({ civilClaimantId: 'civil-claimant-id' }),
+          ],
+        }),
+      }),
+      civilClaimant: civilClaimant(),
+    })
+
+    expect(letter?.copyTo).toEqual([
+      'Hrafnhildur M. Gunnarsdóttir saksóknari',
+      'Ekki skráð',
+    ])
+  })
+
   // The letter is signed and dated by whoever confirmed the advocate, and the
   // party row keeps neither.
   it('writes no letter when nothing records the confirmation', () => {
