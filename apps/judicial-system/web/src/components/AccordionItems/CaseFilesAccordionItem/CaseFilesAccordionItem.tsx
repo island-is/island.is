@@ -9,14 +9,12 @@ import {
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileList,
   InfoBox,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  Case,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
   useCourtUpload,
@@ -25,8 +23,8 @@ import {
 import { UploadStateMessage } from './UploadStateMessage'
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   user: User
 }
 

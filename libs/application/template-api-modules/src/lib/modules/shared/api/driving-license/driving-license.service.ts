@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiError } from '@island.is/nest/problem'
+import type { Auth } from '@island.is/auth-nest-tools'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { coreErrorMessages } from '@island.is/application/core'
 import type { Logger } from '@island.is/logging'
@@ -38,14 +39,14 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     super('DrivingLicenseShared')
   }
 
-  private async hasTeachingRights(token: string): Promise<boolean> {
-    return await this.drivingLicenseService.getIsTeacher({ token })
+  private async hasTeachingRights(auth: Auth): Promise<boolean> {
+    return await this.drivingLicenseService.getIsTeacher({ auth })
   }
 
   async getHasTeachingRights({
     auth,
   }: TemplateApiModuleActionProps): Promise<boolean> {
-    const teachingRights = await this.hasTeachingRights(auth.authorization)
+    const teachingRights = await this.hasTeachingRights(auth)
     if (teachingRights) {
       return true
     } else {
@@ -152,11 +153,11 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
         drivingLicense =
           await this.drivingLicenseService.legacyGetCurrentLicense({
             nationalId: auth.nationalId,
-            token: auth.authorization,
+            auth,
           })
       } else {
         drivingLicense = await this.drivingLicenseService.getCurrentLicense({
-          token: auth.authorization,
+          auth,
         })
       }
     }
@@ -212,11 +213,11 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
 
     const hasQualityPhoto = await this.drivingLicenseService.getHasQualityPhoto(
-      { token: auth.authorization },
+      { auth },
     )
 
     const qualityPhoto = await this.drivingLicenseService.getQualityPhoto({
-      token: auth.authorization,
+      auth,
     })
 
     return {
@@ -236,7 +237,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
     const hasQualitySignature =
       await this.drivingLicenseService.getHasQualitySignature({
-        token: auth.authorization,
+        auth,
       })
     return {
       hasQualitySignature,
@@ -259,7 +260,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     try {
       const result =
         await this.drivingLicenseService.getQualityPhotoAndSignature({
-          token: auth.authorization,
+          auth,
         })
       // Some legacy RLS records return metadata + signature but no photo
       // binary. Submission still resolves the photo by imageId, but log the
@@ -296,7 +297,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
     try {
       return await this.drivingLicenseService.getAllPhotosFromThjodskra({
-        token: auth.authorization,
+        auth,
       })
     } catch {
       // Return empty rather than throwing — this provider runs for all
@@ -311,10 +312,10 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   }
 
   private async getDrivingAssessment(
-    token: string,
+    auth: Auth,
   ): Promise<StudentAssessment | null> {
     const assessment = await this.drivingLicenseService.getDrivingAssessment({
-      token,
+      auth,
     })
 
     if (!assessment) {
@@ -348,6 +349,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       return buildFakeDrivingAssessment()
     }
 
-    return await this.getDrivingAssessment(auth.authorization)
+    return await this.getDrivingAssessment(auth)
   }
 }

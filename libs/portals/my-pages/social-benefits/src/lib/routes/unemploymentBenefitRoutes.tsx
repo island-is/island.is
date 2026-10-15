@@ -26,9 +26,9 @@ export const unemploymentBenefitsRoutes = (
     element: <Status />,
   },
   {
-    name: sharedMessages.myPayments,
+    name: sharedMessages.myIncome,
     key: 'UnemploymentBenefits',
-    path: UnemploymentBenefitsPaths.Payments,
+    path: UnemploymentBenefitsPaths.Income,
     enabled: true,
     dynamic: true,
     element: <Payments />,

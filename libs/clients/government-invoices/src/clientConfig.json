@@ -16,54 +16,40 @@
             "name": "limit",
             "in": "query",
             "description": "Maximum number of suppliers to return (default: 50, max: 100).",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 50
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
           },
           {
             "name": "search",
             "in": "query",
             "description": "Optional search string for supplier name.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "lookup",
             "in": "query",
-            "description": "Optional exact lookup by supplier legal ID (max 15 characters each). Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
+            "description": "Optional exact lookup by supplier legal ID (max 15 characters each). Over-length values are ignored. Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
             "schema": {
               "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "items": { "maxLength": 15, "type": "string" }
             }
           },
           {
             "name": "after",
             "in": "query",
             "description": "Cursor for next page.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "before",
             "in": "query",
             "description": "Cursor for previous page.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "sortDirection",
             "in": "query",
             "description": "Sort direction by supplier name (default: Elfur.Core.Domain.Enums.Sorting.SortDirections.Ascending).",
-            "schema": {
-              "$ref": "#/components/schemas/SortDirections"
-            }
+            "schema": { "$ref": "#/components/schemas/SortDirections" }
           }
         ],
         "responses": {
@@ -81,9 +67,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -91,9 +75,7 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -101,9 +83,7 @@
             "description": "Request Timeout",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -111,78 +91,58 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        "security": [{ "Bearer": [] }]
       }
     },
     "/v1/openinvoices/debtors": {
       "get": {
         "tags": ["OpenInvoices"],
         "summary": "Returns a paginated list of debtors.",
-        "description": "\nUse the returned debtor `erpLegalEntityId` values as filter values on the `/invoices` endpoint.",
+        "description": "\nUse the returned debtor `debtorGuid` values as filter values on the `/invoices` endpoint.",
         "parameters": [
           {
             "name": "limit",
             "in": "query",
             "description": "Maximum number of debtors to return (default: 50, max: 100).",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 50
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
           },
           {
             "name": "search",
             "in": "query",
             "description": "Optional search string for debtor name.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "lookup",
             "in": "query",
-            "description": "Optional exact lookup by debtor `erpLegalEntityId` (max 15 characters each). Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
+            "description": "Optional exact lookup by debtor `debtorGuid` (36 characters each). Over-length values are ignored. Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
             "schema": {
               "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "items": { "maxLength": 36, "type": "string" }
             }
           },
           {
             "name": "after",
             "in": "query",
             "description": "Cursor for next page.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "before",
             "in": "query",
             "description": "Cursor for previous page.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "sortDirection",
             "in": "query",
             "description": "Sort direction by debtor name (default: Elfur.Core.Domain.Enums.Sorting.SortDirections.Ascending).",
-            "schema": {
-              "$ref": "#/components/schemas/SortDirections"
-            }
+            "schema": { "$ref": "#/components/schemas/SortDirections" }
           }
         ],
         "responses": {
@@ -200,9 +160,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -210,9 +168,7 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -220,9 +176,7 @@
             "description": "Request Timeout",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -230,18 +184,12 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        "security": [{ "Bearer": [] }]
       }
     },
     "/v1/openinvoices/ministries": {
@@ -254,54 +202,40 @@
             "name": "limit",
             "in": "query",
             "description": "Maximum number of ministries to return (default: 50, max: 100).",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 50
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
           },
           {
             "name": "search",
             "in": "query",
             "description": "Optional search string for ministry name.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "lookup",
             "in": "query",
-            "description": "Optional exact lookup by ministry code (max 15 characters each). Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
+            "description": "Optional exact lookup by ministry code (max 15 characters each). Over-length values are ignored. Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
             "schema": {
               "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "items": { "maxLength": 15, "type": "string" }
             }
           },
           {
             "name": "after",
             "in": "query",
             "description": "Cursor for next page.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "before",
             "in": "query",
             "description": "Cursor for previous page.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "sortDirection",
             "in": "query",
             "description": "Sort direction by ministry name (default: Elfur.Core.Domain.Enums.Sorting.SortDirections.Ascending).",
-            "schema": {
-              "$ref": "#/components/schemas/SortDirections"
-            }
+            "schema": { "$ref": "#/components/schemas/SortDirections" }
           }
         ],
         "responses": {
@@ -319,9 +253,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -329,9 +261,7 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -339,9 +269,7 @@
             "description": "Request Timeout",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -349,18 +277,12 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        "security": [{ "Bearer": [] }]
       }
     },
     "/v1/openinvoices/paymenttypes": {
@@ -373,54 +295,40 @@
             "name": "limit",
             "in": "query",
             "description": "Maximum number of invoice payment types to return (default: 50, max: 100).",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 50
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
           },
           {
             "name": "search",
             "in": "query",
             "description": "Optional search string for invoice payment type name.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "lookup",
             "in": "query",
-            "description": "Optional exact lookup by payment type code (max 15 characters each). Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
+            "description": "Optional exact lookup by payment type code (max 15 characters each). Over-length values are ignored. Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
             "schema": {
               "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "items": { "maxLength": 15, "type": "string" }
             }
           },
           {
             "name": "after",
             "in": "query",
             "description": "Cursor for next page.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "before",
             "in": "query",
             "description": "Cursor for previous page.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "sortDirection",
             "in": "query",
             "description": "Sort direction by payment type name (default: Elfur.Core.Domain.Enums.Sorting.SortDirections.Ascending).",
-            "schema": {
-              "$ref": "#/components/schemas/SortDirections"
-            }
+            "schema": { "$ref": "#/components/schemas/SortDirections" }
           }
         ],
         "responses": {
@@ -438,9 +346,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -448,9 +354,7 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -458,9 +362,7 @@
             "description": "Request Timeout",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -468,18 +370,12 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        "security": [{ "Bearer": [] }]
       }
     },
     "/v1/openinvoices/paymenttypes/groups": {
@@ -492,54 +388,40 @@
             "name": "limit",
             "in": "query",
             "description": "Maximum number of grouped invoice payment types to return (default: 50, max: 100).",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 50
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
           },
           {
             "name": "search",
             "in": "query",
             "description": "Optional search string for grouped invoice payment type name.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "lookup",
             "in": "query",
-            "description": "Optional exact lookup by an underlying payment type code (max 15 characters each). Repeat for multiple values: `?lookup=x&lookup=y`.",
+            "description": "Optional exact lookup by an underlying payment type code (max 15 characters each). Over-length values are ignored. Repeat for multiple values: `?lookup=x&lookup=y`.",
             "schema": {
               "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "items": { "maxLength": 15, "type": "string" }
             }
           },
           {
             "name": "after",
             "in": "query",
             "description": "Cursor for next page.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "before",
             "in": "query",
             "description": "Cursor for previous page.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "sortDirection",
             "in": "query",
             "description": "Sort direction by grouped payment type name (default: Elfur.Core.Domain.Enums.Sorting.SortDirections.Ascending).",
-            "schema": {
-              "$ref": "#/components/schemas/SortDirections"
-            }
+            "schema": { "$ref": "#/components/schemas/SortDirections" }
           }
         ],
         "responses": {
@@ -557,9 +439,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -567,9 +447,7 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -577,9 +455,7 @@
             "description": "Request Timeout",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -587,18 +463,12 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        "security": [{ "Bearer": [] }]
       }
     },
     "/v1/openinvoices/invoices": {
@@ -611,100 +481,64 @@
             "name": "limit",
             "in": "query",
             "description": "Maximum number of invoice groups to return (default: 50, max: 100).",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 50
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
           },
           {
             "name": "page",
             "in": "query",
             "description": "Page number to return (1-based, default: 1).",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
           },
           {
             "name": "dateFrom",
             "in": "query",
             "description": "Optional inclusive start date filter (default: one month ago). At most 60 days before `dateTo`.",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
+            "schema": { "type": "string", "format": "date" }
           },
           {
             "name": "dateTo",
             "in": "query",
             "description": "Optional inclusive end date filter (default: today). At most 60 days after `dateFrom`.",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
+            "schema": { "type": "string", "format": "date" }
           },
           {
             "name": "suppliers",
             "in": "query",
             "description": "Optional supplier legal ID filter. Repeat for multiple values.",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
             "name": "debtors",
             "in": "query",
-            "description": "Optional debtor `erpLegalEntityId` filter. Repeat for multiple values.",
+            "description": "Optional debtor `debtorGuid` filter. Repeat for multiple values.",
             "schema": {
               "type": "array",
-              "items": {
-                "type": "integer",
-                "format": "int32"
-              }
+              "items": { "type": "string", "format": "uuid" }
             }
           },
           {
             "name": "ministries",
             "in": "query",
             "description": "Optional ministry code filter. Repeat for multiple values.",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
             "name": "paymentTypeIds",
             "in": "query",
             "description": "Optional payment type code filter. Repeat for multiple values.",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
             "name": "sortBy",
             "in": "query",
             "description": "Field to sort by (default: Elfur.Core.Domain.Enums.Sorting.OpenInvoiceSortFields.SupplierName).",
-            "schema": {
-              "$ref": "#/components/schemas/OpenInvoiceSortFields"
-            }
+            "schema": { "$ref": "#/components/schemas/OpenInvoiceSortFields" }
           },
           {
             "name": "sortDirection",
             "in": "query",
             "description": "Sort direction (default: Elfur.Core.Domain.Enums.Sorting.SortDirections.Ascending).",
-            "schema": {
-              "$ref": "#/components/schemas/SortDirections"
-            }
+            "schema": { "$ref": "#/components/schemas/SortDirections" }
           }
         ],
         "responses": {
@@ -722,9 +556,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -732,9 +564,7 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -742,9 +572,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -752,9 +580,7 @@
             "description": "Request Timeout",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -762,21 +588,15 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        "security": [{ "Bearer": [] }]
       }
     },
-    "/v1/openinvoices/invoices/{supplierLegalId}/{erpLegalEntityId}": {
+    "/v1/openinvoices/invoices/{supplierLegalId}/{debtorGuid}": {
       "get": {
         "tags": ["OpenInvoices"],
         "summary": "Returns a single invoice group for a specific supplier-debtor pair with all invoices.",
@@ -787,59 +607,38 @@
             "in": "path",
             "description": "Supplier legal ID (required).",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
-            "name": "erpLegalEntityId",
+            "name": "debtorGuid",
             "in": "path",
-            "description": "Debtor ERP legal entity ID (required).",
+            "description": "Debtor GUID (required).",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "dateFrom",
             "in": "query",
             "description": "Optional inclusive start date filter (default: one month ago). At most 60 days before `dateTo`.",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
+            "schema": { "type": "string", "format": "date" }
           },
           {
             "name": "dateTo",
             "in": "query",
             "description": "Optional inclusive end date filter (default: today). At most 60 days after `dateFrom`.",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
+            "schema": { "type": "string", "format": "date" }
           },
           {
             "name": "paymentTypeIds",
             "in": "query",
             "description": "Optional payment type filter. Repeat for multiple values.",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
             "name": "ministries",
             "in": "query",
             "description": "Optional ministry filter. Repeat for multiple values.",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "schema": { "type": "array", "items": { "type": "string" } }
           }
         ],
         "responses": {
@@ -857,9 +656,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -867,9 +664,7 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -877,9 +672,7 @@
             "description": "Request Timeout",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -887,18 +680,12 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        "security": [{ "Bearer": [] }]
       }
     }
   },
@@ -909,15 +696,11 @@
         "properties": {
           "debtors": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DebtorResponseDto"
-            },
+            "items": { "$ref": "#/components/schemas/DebtorResponseDto" },
             "description": "Gets or sets paginated debtor items.",
             "nullable": true
           },
-          "pageInfo": {
-            "$ref": "#/components/schemas/PageInfo"
-          },
+          "pageInfo": { "$ref": "#/components/schemas/PageInfo" },
           "totalCount": {
             "type": "integer",
             "description": "Gets or sets total item count.",
@@ -930,10 +713,10 @@
       "DebtorResponseDto": {
         "type": "object",
         "properties": {
-          "erpLegalEntityId": {
-            "type": "integer",
-            "description": "Gets or sets the ERP legal entity ID. Use this (not Elfur.Core.Domain.OpenInvoices.InvoiceEntityDto.LegalId) to filter\r\nor look up a debtor, since the legal ID may be hidden for confidential debtors.",
-            "format": "int32"
+          "debtorGuid": {
+            "type": "string",
+            "description": "Gets or sets the debtor identifier. Use this (not Elfur.Core.Domain.OpenInvoices.InvoiceEntityDto.LegalId) to filter\r\nor look up a debtor, since the legal ID may be hidden for confidential debtors.",
+            "format": "uuid"
           },
           "legalId": {
             "type": "string",
@@ -959,11 +742,7 @@
             "nullable": true,
             "example": "string"
           },
-          "name": {
-            "type": "string",
-            "nullable": true,
-            "example": "string"
-          }
+          "name": { "type": "string", "nullable": true, "example": "string" }
         },
         "additionalProperties": false,
         "description": "Debtor information embedded in an invoice payment response."
@@ -982,12 +761,6 @@
             "description": "Gets or sets the invoice type name.",
             "nullable": true,
             "example": "string"
-          },
-          "isConfidential": {
-            "type": "boolean",
-            "description": "Gets or sets whether the invoice type is confidential.",
-            "nullable": true,
-            "example": false
           }
         },
         "additionalProperties": false,
@@ -996,9 +769,7 @@
       "InvoiceGlLineResponseDto": {
         "type": "object",
         "properties": {
-          "type": {
-            "$ref": "#/components/schemas/InvoiceGLTypeDto"
-          },
+          "type": { "$ref": "#/components/schemas/InvoiceGLTypeDto" },
           "accountType": {
             "type": "string",
             "description": "Gets or sets the Account Type.",
@@ -1010,7 +781,7 @@
             "description": "Gets or sets the GL Date.",
             "format": "date",
             "nullable": true,
-            "example": "2026-09-23"
+            "example": "2026-10-08"
           },
           "accountedAmount": {
             "type": "number",
@@ -1026,20 +797,15 @@
       "InvoicePaymentDetailResponseDto": {
         "type": "object",
         "properties": {
-          "erpInvoiceId": {
-            "type": "number",
-            "description": "Gets or sets the ERP Invoice ID.",
-            "format": "double"
+          "invoiceGuid": {
+            "type": "string",
+            "description": "Gets or sets the invoice identifier.",
+            "format": "uuid"
           },
-          "erpInvoicePaymentId": {
-            "type": "number",
-            "description": "Gets or sets the ERP Invoice Payment ID.",
-            "format": "double"
-          },
-          "sourceErpId": {
-            "type": "integer",
-            "description": "Gets or sets the Source ERP ID.",
-            "format": "int32"
+          "paymentGuid": {
+            "type": "string",
+            "description": "Gets or sets the payment identifier.",
+            "format": "uuid"
           },
           "paymentAccountingDate": {
             "type": "string",
@@ -1066,26 +832,13 @@
             "nullable": true,
             "example": 0
           },
-          "invoicePaymentNumber": {
-            "type": "integer",
-            "description": "Gets or sets the Invoice Payment Number.",
-            "format": "int32"
-          },
-          "supplier": {
-            "$ref": "#/components/schemas/InvoiceSupplierDto"
-          },
-          "debtor": {
-            "$ref": "#/components/schemas/InvoiceDebtorDto"
-          },
+          "supplier": { "$ref": "#/components/schemas/InvoiceSupplierDto" },
+          "debtor": { "$ref": "#/components/schemas/InvoiceDebtorDto" },
           "invoiceNum": {
             "type": "string",
-            "description": "Gets or sets the Invoice Number. Null when Elfur.Core.Domain.OpenInvoices.InvoicePaymentDetailResponseDto.InvoiceNumRedacted is true.",
+            "description": "Gets or sets the Invoice Number. Null when withheld by the database view.",
             "nullable": true,
             "example": "string"
-          },
-          "invoiceNumRedacted": {
-            "type": "boolean",
-            "description": "Gets or sets whether Elfur.Core.Domain.OpenInvoices.InvoicePaymentDetailResponseDto.InvoiceNum was withheld because the supplier is a\r\nprivate person, a private person proxy, or confidential -- private individuals sometimes\r\nput a national ID or other sensitive string in this field. A null Elfur.Core.Domain.OpenInvoices.InvoicePaymentDetailResponseDto.InvoiceNum\r\nwith this false would instead indicate a data issue."
           },
           "invoiceTotalBaseAmount": {
             "type": "number",
@@ -1131,26 +884,7 @@
             "nullable": true,
             "example": "string"
           },
-          "name": {
-            "type": "string",
-            "nullable": true,
-            "example": "string"
-          },
-          "isPrivatePerson": {
-            "type": "boolean",
-            "nullable": true,
-            "example": false
-          },
-          "isPrivatePersonProxy": {
-            "type": "boolean",
-            "nullable": true,
-            "example": false
-          },
-          "isConfidential": {
-            "type": "boolean",
-            "nullable": true,
-            "example": false
-          }
+          "name": { "type": "string", "nullable": true, "example": "string" }
         },
         "additionalProperties": false,
         "description": "Supplier information embedded in an invoice payment response."
@@ -1160,18 +894,11 @@
         "properties": {
           "ministries": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MinistryResponseDto"
-            },
+            "items": { "$ref": "#/components/schemas/MinistryResponseDto" },
             "nullable": true
           },
-          "pageInfo": {
-            "$ref": "#/components/schemas/PageInfo"
-          },
-          "totalCount": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "pageInfo": { "$ref": "#/components/schemas/PageInfo" },
+          "totalCount": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false,
         "description": "API response model for a paginated list of ministries."
@@ -1179,16 +906,8 @@
       "MinistryResponseDto": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "string",
-            "nullable": true,
-            "example": "string"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true,
-            "example": "string"
-          }
+          "code": { "type": "string", "nullable": true, "example": "string" },
+          "name": { "type": "string", "nullable": true, "example": "string" }
         },
         "additionalProperties": false,
         "description": "API response model for a ministry."
@@ -1196,36 +915,19 @@
       "OffsetPageInfo": {
         "type": "object",
         "properties": {
-          "currentPage": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "pageSize": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "hasPreviousPage": {
-            "type": "boolean"
-          },
-          "hasNextPage": {
-            "type": "boolean"
-          }
+          "currentPage": { "type": "integer", "format": "int32" },
+          "pageSize": { "type": "integer", "format": "int32" },
+          "totalPages": { "type": "integer", "format": "int32" },
+          "hasPreviousPage": { "type": "boolean" },
+          "hasNextPage": { "type": "boolean" }
         },
         "additionalProperties": false
       },
       "OpenInvoiceGroupResponseDto": {
         "type": "object",
         "properties": {
-          "supplier": {
-            "$ref": "#/components/schemas/SupplierResponseDto"
-          },
-          "debtor": {
-            "$ref": "#/components/schemas/DebtorResponseDto"
-          },
+          "supplier": { "$ref": "#/components/schemas/SupplierResponseDto" },
+          "debtor": { "$ref": "#/components/schemas/DebtorResponseDto" },
           "totalPaymentsSum": {
             "type": "number",
             "description": "Gets or sets the total sum of each invoice group invoices",
@@ -1244,9 +946,7 @@
             "description": "Gets or sets the detailed invoices for this group (optional, only when includeInvoices is true)",
             "nullable": true
           },
-          "invoicesPageInfo": {
-            "$ref": "#/components/schemas/PageInfo"
-          }
+          "invoicesPageInfo": { "$ref": "#/components/schemas/PageInfo" }
         },
         "additionalProperties": false,
         "description": "Represents all invoices between a specified supplier-customer relationship"
@@ -1282,9 +982,7 @@
             "description": "Gets or sets the customer information",
             "nullable": true
           },
-          "pageInfo": {
-            "$ref": "#/components/schemas/OffsetPageInfo"
-          }
+          "pageInfo": { "$ref": "#/components/schemas/OffsetPageInfo" }
         },
         "additionalProperties": false,
         "description": "Represents a collection of invoices between a specified supplier-customer relationship"
@@ -1329,9 +1027,7 @@
             "description": "Gets or sets the grouped payment types.",
             "nullable": true
           },
-          "pageInfo": {
-            "$ref": "#/components/schemas/PageInfo"
-          },
+          "pageInfo": { "$ref": "#/components/schemas/PageInfo" },
           "totalCount": {
             "type": "integer",
             "description": "Gets or sets the total number of grouped payment types matching the query.",
@@ -1358,9 +1054,7 @@
           },
           "codes": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
+            "items": { "type": "string" },
             "description": "Gets or sets the underlying payment type codes represented by this group.",
             "nullable": true
           },
@@ -1380,18 +1074,11 @@
         "properties": {
           "paymentTypes": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PaymentTypeResponseDto"
-            },
+            "items": { "$ref": "#/components/schemas/PaymentTypeResponseDto" },
             "nullable": true
           },
-          "pageInfo": {
-            "$ref": "#/components/schemas/PageInfo"
-          },
-          "totalCount": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "pageInfo": { "$ref": "#/components/schemas/PageInfo" },
+          "totalCount": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false,
         "description": "API response model for a paginated list of payment types."
@@ -1399,16 +1086,8 @@
       "PaymentTypeResponseDto": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "string",
-            "nullable": true,
-            "example": "string"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true,
-            "example": "string"
-          }
+          "code": { "type": "string", "nullable": true, "example": "string" },
+          "name": { "type": "string", "nullable": true, "example": "string" }
         },
         "additionalProperties": false,
         "description": "API response model for a payment type."
@@ -1416,27 +1095,15 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true,
-            "example": "string"
-          },
-          "title": {
-            "type": "string",
-            "nullable": true,
-            "example": "string"
-          },
+          "type": { "type": "string", "nullable": true, "example": "string" },
+          "title": { "type": "string", "nullable": true, "example": "string" },
           "status": {
             "type": "integer",
             "format": "int32",
             "nullable": true,
             "example": 0
           },
-          "detail": {
-            "type": "string",
-            "nullable": true,
-            "example": "string"
-          },
+          "detail": { "type": "string", "nullable": true, "example": "string" },
           "instance": {
             "type": "string",
             "nullable": true,
@@ -1455,15 +1122,11 @@
         "properties": {
           "suppliers": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SupplierResponseDto"
-            },
+            "items": { "$ref": "#/components/schemas/SupplierResponseDto" },
             "description": "Gets or sets paginated supplier items.",
             "nullable": true
           },
-          "pageInfo": {
-            "$ref": "#/components/schemas/PageInfo"
-          },
+          "pageInfo": { "$ref": "#/components/schemas/PageInfo" },
           "totalCount": {
             "type": "integer",
             "description": "Gets or sets total item count.",
@@ -1476,18 +1139,6 @@
       "SupplierResponseDto": {
         "type": "object",
         "properties": {
-          "isPrivatePerson": {
-            "type": "boolean",
-            "description": "Gets or sets if the supplier is a private person (individual)."
-          },
-          "isPrivatePersonProxy": {
-            "type": "boolean",
-            "description": "Gets or sets if the supplier is a private entity."
-          },
-          "isConfidential": {
-            "type": "boolean",
-            "description": "Gets or sets if the supplier information is confidential."
-          },
           "legalId": {
             "type": "string",
             "description": "Gets the invoice entity legal ID.",

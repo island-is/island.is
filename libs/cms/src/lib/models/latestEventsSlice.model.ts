@@ -15,6 +15,9 @@ export class LatestEventsSlice {
   @Field()
   title?: string
 
+  @Field(() => String, { nullable: true })
+  organizationSlug?: string | null
+
   @CacheField(() => [EventModel])
   events!: GetEventsInput
 }
@@ -22,17 +25,24 @@ export class LatestEventsSlice {
 export const mapLatestEventsSlice = ({
   fields,
   sys,
-}: ILatestEventsSlice): SystemMetadata<LatestEventsSlice> => ({
-  typename: 'LatestEventsSlice',
-  id: sys.id,
-  title: fields.title ?? '',
-  events: {
-    lang:
-      sys.locale === 'is-IS' ? 'is' : (sys.locale as ElasticsearchIndexLocale),
-    size: 4,
-    order: 'asc',
-    organization: fields.organization
-      ? mapOrganization(fields.organization).slug
-      : undefined,
-  },
-})
+}: ILatestEventsSlice): SystemMetadata<LatestEventsSlice> => {
+  const organizationSlug = fields.organization
+    ? mapOrganization(fields.organization).slug
+    : null
+
+  return {
+    typename: 'LatestEventsSlice',
+    id: sys.id,
+    title: fields.title ?? '',
+    organizationSlug,
+    events: {
+      lang:
+        sys.locale === 'is-IS'
+          ? 'is'
+          : (sys.locale as ElasticsearchIndexLocale),
+      size: 4,
+      order: 'asc',
+      organization: organizationSlug ?? undefined,
+    },
+  }
+}

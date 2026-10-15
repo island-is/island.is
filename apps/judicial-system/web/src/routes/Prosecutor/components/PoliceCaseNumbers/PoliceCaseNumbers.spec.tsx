@@ -4,7 +4,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CaseOrigin,
   CaseState,
@@ -16,9 +16,8 @@ import { PoliceCaseNumbers } from './PoliceCaseNumbers'
 describe('PoliceCaseNumbers component', () => {
   it('should not have an option to remove the first police case number if the case was created in LOKE', async () => {
     // Arrange
-    const workingCase: Case = {
+    const workingCase: WorkingCase = {
       created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       type: CaseType.CUSTODY,
       origin: CaseOrigin.LOKE,
@@ -50,9 +49,8 @@ describe('PoliceCaseNumbers component', () => {
   it('should not accept more than six digits in the last part of a police case number', async () => {
     // Arrange
     const user = userEvent.setup()
-    const workingCase: Case = {
+    const workingCase: WorkingCase = {
       created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       type: CaseType.CUSTODY,
       origin: CaseOrigin.UNKNOWN,

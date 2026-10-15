@@ -1,6 +1,6 @@
 export interface InvoiceRequestDto {
   supplierLegalId: string
-  erpLegalEntityId: number
+  debtorGuid: string
   dateFrom?: Date
   dateTo?: Date
   paymentTypeIds?: string[]

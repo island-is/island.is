@@ -5,7 +5,7 @@ import {
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { sections as m } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
   CaseState,
@@ -14,7 +14,7 @@ import {
 
 export const formatCaseResult = (
   formatMessage: IntlFormatters['formatMessage'],
-  workingCase: Case,
+  workingCase: WorkingCase,
   caseResult?: CaseState | null,
 ): string => {
   let caseType = workingCase.type

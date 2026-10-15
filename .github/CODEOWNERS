@@ -318,6 +318,7 @@ codemagic.yaml                                                                  
 /libs/clients/rsk/company-registry                                                                                           @island-is/origo
 /libs/clients/rsk/rental-day-rate                                                                                            @island-is/origo
 /libs/clients/rsk/customs                                                                                                    @island-is/stefna
+/libs/clients/rsk/customs-calculator/                                                                                        @island-is/stefna
 /libs/clients/rsk/calculators/                                                                                               @island-is/hugsmidjan
 
 /libs/api/domains/company-registry                                                                                           @island-is/origo
@@ -344,6 +345,13 @@ codemagic.yaml                                                                  
 /apps/web/components/ChatPanel/                                                                                              @island-is/stefna
 /apps/web/components/Form/                                                                                                   @island-is/stefna
 /apps/web/components/Stepper/                                                                                                @island-is/stefna
+/apps/contentful-apps/components/editors/CalculatorEditor/                                                                   @island-is/hugsmidjan
+/apps/contentful-apps/pages/fields/calculator-config-field.tsx                                                               @island-is/hugsmidjan
+/apps/web/components/Organization/Slice/Calculator/                                                                          @island-is/hugsmidjan
+/apps/web/screens/OpenInvoices/                                                                                              @island-is/hugsmidjan
+/apps/web/screens/queries/OpenInvoices.ts                                                                                    @island-is/hugsmidjan
+/apps/web/pages/opnir-reikningar/                                                                                            @island-is/hugsmidjan
+/apps/web/pages/en/open-invoices/                                                                                            @island-is/hugsmidjan
 /libs/content-search-toolkit/                                                                                                @island-is/stefna @island-is/juni
 /libs/content-search-index-manager/                                                                                          @island-is/stefna @island-is/juni
 /libs/content-search-metrics/                                                                                                @island-is/stefna @island-is/juni
@@ -357,6 +365,7 @@ codemagic.yaml                                                                  
 /libs/clients/syslumenn/                                                                                                     @island-is/stefna @island-is/juni
 /libs/api/domains/icelandic-government-institution-vacancies/                                                                @island-is/stefna
 /libs/api/domains/icelandic-medicines-agency/                                                                                @island-is/hugsmidjan
+/libs/clients/air-discount-scheme/                                                                                           @island-is/hugsmidjan
 /libs/clients/aircraft-registry/                                                                                             @island-is/stefna
 /libs/api/domains/aircraft-registry/                                                                                         @island-is/stefna
 /libs/api/domains/housing-benefit-calculator/                                                                                @island-is/stefna
@@ -502,6 +511,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/directorate-of-equality/                                                                         @island-is/hugsmidjan
 /libs/application/template-api-modules/src/lib/modules/templates/directorate-of-equality/                                    @island-is/hugsmidjan
 /libs/clients/directorate-of-equality/                                                                                       @island-is/hugsmidjan
+/libs/clients/directorate-of-equality-statistics/                                                                            @island-is/hugsmidjan
 /libs/api/domains/directorate-of-equality-application/                                                                       @island-is/hugsmidjan
 /libs/clients/directorate-of-immigration/                                                                                    @island-is/origo
 

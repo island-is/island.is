@@ -1,5 +1,7 @@
 export { Feature } from './lib/feature'
 
+export type { AuthUser, Credentials } from './lib/auth'
+
 export {
   Gender,
   DefenderChoice,
@@ -70,6 +72,18 @@ export {
 } from './lib/eventLog'
 
 export {
+  AppealSummonsAction,
+  AppealSummonsAppellantSide,
+  canIssueAppealSummons,
+  canPerformAppealSummonsAction,
+  getAppealSummonsStatus,
+} from './lib/appealSummons'
+export type {
+  AppealSummonsStatus,
+  AppealSummonsStatusFields,
+} from './lib/appealSummons'
+
+export {
   AppealCaseState,
   AppealCaseRulingDecision,
   AppealCaseTransition,
@@ -80,6 +94,10 @@ export {
   CaseAppealDecision,
 } from './lib/appealCase'
 export type { AppealCorrectionLock } from './lib/appealCase'
+export {
+  AppealCourtSessionType,
+  appealCourtSessionTypeNames,
+} from './lib/appealCourtSession'
 
 export { DateType, dateTypes } from './lib/dateLog'
 

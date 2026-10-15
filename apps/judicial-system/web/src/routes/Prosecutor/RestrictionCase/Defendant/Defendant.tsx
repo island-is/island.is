@@ -12,6 +12,7 @@ import {
   core,
   titles,
 } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   DefenderInfo,
   FormContentContainer,
@@ -23,10 +24,7 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  Case,
-  UpdateDefendantInput,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { UpdateDefendantInput } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseOrigin,
   CaseType,
@@ -78,7 +76,7 @@ export const Defendant = () => {
 
   const updateDefendantState = useCallback(
     (update: UpdateDefendantInput) => {
-      setWorkingCase((prevWorkingCase: Case) => {
+      setWorkingCase((prevWorkingCase: WorkingCase) => {
         if (!prevWorkingCase.defendants) {
           return prevWorkingCase
         }

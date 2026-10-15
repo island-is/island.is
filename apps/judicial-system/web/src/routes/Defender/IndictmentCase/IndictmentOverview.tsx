@@ -55,7 +55,6 @@ import {
   CaseState,
   IndictmentDecision,
   ServiceStatus,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useAppealCase,
@@ -294,30 +293,31 @@ const IndictmentOverview: FC = () => {
                   </Box>
                 ),
             )}
-          {workingCase.defendants?.map((defendant) => (
-            <Fragment key={defendant.id}>
-              {defendant.alternativeServiceDescription && (
-                <AlternativeServiceAnnouncement
-                  alternativeServiceDescription={
-                    defendant.alternativeServiceDescription
-                  }
-                  defendantName={defendant.name}
-                />
-              )}
-              {defendant.subpoenas
-                ?.filter((subpoena) =>
-                  isSuccessfulServiceStatus(subpoena.serviceStatus),
-                )
-                .map((subpoena) => (
-                  <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
-                    <ServiceAnnouncement
-                      defendant={defendant}
-                      subpoena={subpoena}
-                    />
-                  </Box>
-                ))}
-            </Fragment>
-          ))}
+          {!caseIsClosed &&
+            workingCase.defendants?.map((defendant) => (
+              <Fragment key={defendant.id}>
+                {defendant.alternativeServiceDescription && (
+                  <AlternativeServiceAnnouncement
+                    alternativeServiceDescription={
+                      defendant.alternativeServiceDescription
+                    }
+                    defendantName={defendant.name}
+                  />
+                )}
+                {defendant.subpoenas
+                  ?.filter((subpoena) =>
+                    isSuccessfulServiceStatus(subpoena.serviceStatus),
+                  )
+                  .map((subpoena) => (
+                    <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
+                      <ServiceAnnouncement
+                        defendant={defendant}
+                        subpoena={subpoena}
+                      />
+                    </Box>
+                  ))}
+              </Fragment>
+            ))}
           <div className={stack({ gap: 5 })}>
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
@@ -344,15 +344,7 @@ const IndictmentOverview: FC = () => {
               )}
             <Box component="section">
               {caseIsClosed ? (
-                <InfoCardClosedIndictment
-                  displayAppealExpirationInfo={
-                    workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.RULING &&
-                    (user?.role === UserRole.DEFENDER ||
-                      workingCase.indictmentReviewer?.id === user?.id)
-                  }
-                  displayVerdictViewDate
-                />
+                <InfoCardClosedIndictment />
               ) : (
                 <InfoCardActiveIndictment displayVerdictViewDate />
               )}

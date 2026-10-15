@@ -48,6 +48,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     appealCaseNumber,
     appealAssistant,
     appealJudges,
+    linkedCaseSections,
   } = useInfoCardItems()
 
   const {
@@ -96,6 +97,10 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
           ],
           columns: 2,
         },
+        // The cases this one was merged with or split from. They belong here
+        // just as much as on the active card - a case does not stop having
+        // been merged when it closes.
+        ...linkedCaseSections,
         ...(targetAppealCase?.appealCaseNumber
           ? [
               {

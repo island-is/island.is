@@ -95,7 +95,7 @@ export const OverviewTable = ({
         renderExpandedRow={(row) => (
           <NestedLines
             supplierLegalId={row.original.supplier.id}
-            erpLegalEntityId={Number(row.original.debtor.id)}
+            debtorId={row.original.debtor.id}
             total={row.original.totalPaymentsSum}
             dateFrom={dateFrom}
             dateTo={dateTo}

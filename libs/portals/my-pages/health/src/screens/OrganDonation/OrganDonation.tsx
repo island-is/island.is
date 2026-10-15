@@ -93,7 +93,7 @@ const OrganDonation = () => {
         !isMinor &&
         !isTemporaryResident &&
         donorStatus !== null && (
-          <Box>
+          <Box marginTop={[2, 2, 0]}>
             <Text variant="eyebrow" color="purple400" marginBottom={1}>
               {formatMessage(m.takeOnOrganDonation)}
             </Text>

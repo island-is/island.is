@@ -106,7 +106,7 @@ const Content = styled.View`
 
 export const Toast = ({
   visible,
-  duration = 2000,
+  duration = 4000,
   onHide,
   variant,
   title,

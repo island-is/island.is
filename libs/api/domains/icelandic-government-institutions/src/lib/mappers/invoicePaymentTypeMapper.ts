@@ -11,7 +11,6 @@ export const mapInvoicePaymentType = (
   id: data.code,
   name: data.name,
   accountType: data.accountType,
-  isConfidential: data.isConfidential,
 })
 
 export const mapInvoicePaymentTypes = (

@@ -10,7 +10,4 @@ export class InvoicePaymentType {
 
   @Field({ nullable: true })
   accountType?: string
-
-  @Field({ nullable: true })
-  isConfidential?: boolean
 }

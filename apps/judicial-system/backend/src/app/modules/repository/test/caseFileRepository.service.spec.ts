@@ -779,6 +779,40 @@ describe('CaseFileRepositoryService', () => {
     })
   })
 
+  describe('deleteAllForDefendant', () => {
+    const defendantId = 'some-defendant-id'
+
+    it("soft-deletes the defendant's files within the case, clears the defendant reference and returns the count", async () => {
+      model.update.mockResolvedValueOnce([2, []])
+
+      const result = await service.deleteAllForDefendant(caseId, defendantId, {
+        transaction,
+      })
+
+      expect(model.update).toHaveBeenCalledWith(
+        {
+          state: CaseFileState.DELETED,
+          isKeyAccessible: false,
+          defendantId: null,
+        },
+        {
+          where: { caseId, defendantId },
+          transaction,
+        },
+      )
+      expect(result).toBe(2)
+    })
+
+    it('rethrows when the update fails', async () => {
+      const error = new Error('Some error')
+      model.update.mockRejectedValueOnce(error)
+
+      await expect(
+        service.deleteAllForDefendant(caseId, defendantId, { transaction }),
+      ).rejects.toThrow(error)
+    })
+  })
+
   describe('deleteAllForCivilClaimant', () => {
     const civilClaimantId = 'some-civil-claimant-id'
 

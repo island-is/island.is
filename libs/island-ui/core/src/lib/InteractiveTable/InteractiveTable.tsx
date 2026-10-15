@@ -345,7 +345,11 @@ export const InteractiveTable = <TData extends object>({
                             >
                               <Button
                                 circle
-                                colorScheme="light"
+                                colorScheme={
+                                  isExpanded || isCollapsing
+                                    ? 'negative'
+                                    : 'light'
+                                }
                                 icon={isExpanded ? 'remove' : 'add'}
                                 iconType="filled"
                                 size="small"
@@ -600,7 +604,9 @@ export const InteractiveTable = <TData extends object>({
                     <Box marginLeft={1}>
                       <Button
                         circle
-                        colorScheme="light"
+                        colorScheme={
+                          isExpanded || isCollapsing ? 'negative' : 'light'
+                        }
                         icon={isExpanded ? 'remove' : 'add'}
                         iconType="filled"
                         size="small"

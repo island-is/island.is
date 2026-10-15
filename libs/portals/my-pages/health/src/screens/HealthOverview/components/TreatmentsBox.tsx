@@ -47,10 +47,11 @@ export const TreatmentsBox = () => {
               border="standard"
               borderColor="blue200"
               borderRadius="large"
-              padding={3}
+              padding={[2, 2, 3]}
               display="flex"
               justifyContent="spaceBetween"
               columnGap={3}
+              className={styles.card}
             >
               <Box
                 display="flex"
@@ -75,7 +76,12 @@ export const TreatmentsBox = () => {
                   </Box>
                 </Hidden>
                 <Box paddingTop="smallGutter">
-                  <Icon icon="arrowForward" type="outline" color="blue400" />
+                  <Icon
+                    icon="arrowForward"
+                    type="outline"
+                    color="blue400"
+                    size="medium"
+                  />
                 </Box>
               </Box>
             </Box>

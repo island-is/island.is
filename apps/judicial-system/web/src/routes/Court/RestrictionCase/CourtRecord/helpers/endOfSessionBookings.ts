@@ -2,7 +2,7 @@ import type { IntlShape } from 'react-intl'
 
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { rcCourtRecord } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
   CaseType,
@@ -10,7 +10,7 @@ import {
 import { formatCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 export const populateEndOfCourtSessionForRestrictions = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   endOfSessionBookings: string[],
   formatMessage: IntlShape['formatMessage'],
 ) => {

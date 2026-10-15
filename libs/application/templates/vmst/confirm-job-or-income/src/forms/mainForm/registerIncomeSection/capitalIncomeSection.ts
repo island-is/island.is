@@ -7,7 +7,6 @@ import {
   buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { GaldurExternalDomainModelsIncomeCapitalIncomePaymentDTO } from '@island.is/clients/vmst-unemployment'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isCapitalIncome } from '../../../utils/conditions'
@@ -18,32 +17,17 @@ import {
 } from '../../../utils/date'
 import {
   formatIsCurrency,
-  formatIsDateLong,
-  formatIsDateLongOrDash,
+  formatIsDate,
+  formatIsDateOrDash,
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { buildCanRemoveRow } from '../../../utils/reconcile'
+import { getCapitalIncomeDefaults } from '../../../utils/persistedRows'
 import {
   periodToByFrequency,
   toRequiredNumber,
   toRequiredString,
 } from '../../../utils/rowCoercions'
-
-const getCapitalIncomeDefaults = (application: Application) => {
-  const payments =
-    getValueViaPath<GaldurExternalDomainModelsIncomeCapitalIncomePaymentDTO[]>(
-      application.externalData,
-      'income.data.capitalIncomePayments',
-    ) ?? []
-
-  return payments.map((payment) => ({
-    validationId: payment.id,
-    paymentType: payment.incomeTypeId ?? '',
-    amountPerMonth:
-      payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
-    dateFrom: payment.periodFrom ?? '',
-    dateTo: payment.periodTo ?? '',
-  }))
-}
 
 const capitalIncomeValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerCapitalIncome',
@@ -91,6 +75,10 @@ export const capitalIncomeSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getCapitalIncomeDefaults,
+          canRemoveRow: buildCanRemoveRow(
+            capitalIncomeValidationProps.persistedPath,
+          ),
+          removeButtonDisabledTooltipText: m.application.removeLineLocked,
           marginTop: 2,
           fields: {
             paymentType: {
@@ -125,6 +113,7 @@ export const capitalIncomeSection = buildSubSection({
               required: true,
               largeButtons: false,
               width: 'half',
+              defaultValue: PaymentFrequency.ONE_TIME,
               clearOnChange: (index: number) => [
                 `registerCapitalIncome[${index}].dateTo`,
               ],
@@ -195,8 +184,8 @@ export const capitalIncomeSection = buildSubSection({
                 const type = incomeTypes.find((t) => t.id === value)
                 return type?.name ?? value
               },
-              dateFrom: formatIsDateLong,
-              dateTo: formatIsDateLongOrDash,
+              dateFrom: formatIsDate,
+              dateTo: formatIsDateOrDash,
               amountPerMonth: formatIsCurrency,
             },
           },

@@ -5,8 +5,6 @@ import { useRouter } from 'next/router'
 
 import { LoadingDots } from '@island.is/island-ui/core'
 import {
-  COURT_OF_APPEAL_OVERVIEW_ROUTE,
-  COURT_OF_APPEAL_RESULT_ROUTE,
   courtInvestigationCasesRoutes,
   courtRestrictionCasesRoutes,
   DEFENDER_INDICTMENT_CASE_ROUTE,
@@ -36,20 +34,18 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  AppealCaseState,
-  CaseState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import { compareArrays } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { resolveTargetAppealCaseByAppealCaseId } from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
+
+import { getCourtOfAppealsRouteForRow } from './useCaseList.logic'
 
 const useCaseList = () => {
   const timeouts = useMemo<NodeJS.Timeout[]>(() => [], [])
@@ -75,7 +71,7 @@ const useCaseList = () => {
 
   const openCase = useCallback(
     (
-      caseToOpen: Case,
+      caseToOpen: WorkingCase,
       openCaseInNewTab?: boolean,
       appealCaseId?: string | null,
     ) => {
@@ -91,20 +87,7 @@ const useCaseList = () => {
         // Public prosecutor users can only see completed indictments
         routeTo = PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
-        // Court of appeals users see one row per appeal — case-level or
-        // ruling-order. Pick OVERVIEW vs RESULT based on the *target* appeal's
-        // state, falling back to the case-level appeal when no appealCaseId is
-        // supplied.
-        const targetAppealCase = resolveTargetAppealCaseByAppealCaseId(
-          caseToOpen,
-          appealCaseId ?? undefined,
-        )
-
-        if (targetAppealCase?.appealState === AppealCaseState.COMPLETED) {
-          routeTo = COURT_OF_APPEAL_RESULT_ROUTE
-        } else {
-          routeTo = COURT_OF_APPEAL_OVERVIEW_ROUTE
-        }
+        routeTo = getCourtOfAppealsRouteForRow(caseToOpen, appealCaseId)
       } else if (isDistrictCourtUser(user)) {
         if (isRestrictionCase(caseToOpen.type)) {
           if (isCompletedCase(caseToOpen.state)) {

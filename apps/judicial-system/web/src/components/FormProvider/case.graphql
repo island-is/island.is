@@ -179,7 +179,6 @@ query Case($input: CaseQueryInput!) {
     rulingModifiedHistory
     caseResentExplanation
     origin
-    originalAncestorId
     openedByDefender
     defendantWaivesRightToCounsel
     crimeScenes
@@ -260,6 +259,19 @@ query Case($input: CaseQueryInput!) {
       id
       appealState
       appealType
+      appealConclusion
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
       appealEventLogs {
         id
         created
@@ -270,6 +282,18 @@ query Case($input: CaseQueryInput!) {
         userName
         userTitle
         institutionName
+      }
+      appealSummonses {
+        id
+        created
+        confirmedDate
+        sentToCourtOfAppealsDate
+        defendants {
+          id
+          defendantId
+          appellantSide
+          claims
+        }
       }
     }
     rulingOrderAppealCases {
@@ -303,6 +327,10 @@ query Case($input: CaseQueryInput!) {
     postponedIndefinitelyExplanation
     indictmentRulingDecision
     indictmentReviewer {
+      id
+      name
+    }
+    appealProsecutor {
       id
       name
     }
@@ -374,6 +402,7 @@ query Case($input: CaseQueryInput!) {
         defenderNationalId
         defenderEmail
         defenderPhoneNumber
+        requestSharedWithDefender
         defenderChoice
         defendantPlea
         requestedDefenderChoice
@@ -384,7 +413,13 @@ query Case($input: CaseQueryInput!) {
         verdictAppealDeadline
         isVerdictAppealDeadlineExpired
         subpoenaType
+        isSentToPrisonAdmin
+        sentToPrisonAdminDate
         punishmentType
+        indictmentCancelledOrDismissedState {
+          type
+          time
+        }
         subpoenas {
           ...SubpoenaFields
         }

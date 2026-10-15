@@ -137,6 +137,7 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     caseId: string,
     policeCaseNumbers: string[],
     defendantIds: string[],
+    options: { transaction: Transaction },
   ): Promise<string[]> {
     if (policeCaseNumbers.length === 0 || defendantIds.length === 0) {
       return []
@@ -154,6 +155,7 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
           defendantId: defendantIds,
         },
         attributes: ['defendantId'],
+        transaction: options.transaction,
       })
 
       return [

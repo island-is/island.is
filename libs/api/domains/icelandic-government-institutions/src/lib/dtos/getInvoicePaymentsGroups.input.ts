@@ -1,4 +1,3 @@
-import { Field, GraphQLISODateTime, InputType, Int } from '@nestjs/graphql'
 import {
   IsArray,
   IsDate,
@@ -6,9 +5,12 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  IsUUID,
   Max,
   Min,
 } from 'class-validator'
+import { Field, GraphQLISODateTime, InputType, Int } from '@nestjs/graphql'
+
 import { OpenInvoiceSortFields, SortDirections } from './sortEnums'
 
 @InputType('IcelandicGovernmentInstitutionsInvoicePaymentsGroupsInput')
@@ -32,11 +34,11 @@ export class InvoicePaymentsGroupsInput {
   @IsString({ each: true })
   suppliers?: string[]
 
-  @Field(() => [Int], { nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsOptional()
   @IsArray()
-  @IsInt({ each: true })
-  debtors?: number[]
+  @IsUUID(undefined, { each: true })
+  debtors?: string[]
 
   @Field(() => [String], { nullable: true })
   @IsOptional()

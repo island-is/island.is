@@ -74,6 +74,39 @@ describe('getRequestCaseDefenderRecipients', () => {
     ])
   })
 
+  it('should deduplicate defender emails ignoring case and surrounding whitespace', () => {
+    const result = getRequestCaseDefenderRecipients({
+      defendants: [
+        {
+          defenderEmail: ' Defender@test.is ',
+          defenderName: 'Jon',
+          defenderNationalId: '1234567890',
+        },
+        {
+          defenderEmail: 'defender@test.is',
+          defenderName: 'Jon',
+          defenderNationalId: '1234567890',
+        },
+      ],
+    } as unknown as Case)
+
+    expect(result).toEqual([
+      {
+        email: 'Defender@test.is',
+        name: 'Jon',
+        nationalId: '1234567890',
+      },
+    ])
+  })
+
+  it('should skip whitespace-only defender emails', () => {
+    const result = getRequestCaseDefenderRecipients({
+      defendants: [{ defenderEmail: '   ', defenderName: 'Jon' }],
+    } as unknown as Case)
+
+    expect(result).toEqual([])
+  })
+
   it('should return two recipients for two defendants with different defender emails', () => {
     const result = getRequestCaseDefenderRecipients({
       defendants: [

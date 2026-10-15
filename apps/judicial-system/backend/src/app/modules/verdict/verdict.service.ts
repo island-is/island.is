@@ -11,10 +11,7 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CourtSessionRulingType,
@@ -26,6 +23,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { ServiceRequirement } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware'
 import { InternalCaseService, PdfService } from '../case'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
@@ -279,7 +277,7 @@ export class VerdictService {
       isVerdictServed && defendant?.isDrivingLicenseSuspended
 
     if (shouldSendDrivingLicenseSuspensionNotification) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         caseId: theCase.id,
         body: {
@@ -701,7 +699,7 @@ export class VerdictService {
             )
           }
 
-          addMessagesToQueue({
+          queueMessagesAfterCommit({
             type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
             user,
             caseId: theCase.id,

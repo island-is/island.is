@@ -15,10 +15,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { stripPdfExtension } from '@island.is/judicial-system/formatters'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -36,6 +34,7 @@ import {
 import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
+import { queueMessagesAfterCommit } from '../../middleware'
 import { findAppealCaseOfCaseFile } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
@@ -435,7 +434,7 @@ export class FileService {
       const appealCase = findAppealCaseOfCaseFile(theCase, file)
 
       if (appealCase) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
           user,
           caseId: theCase.id,
@@ -478,7 +477,7 @@ export class FileService {
     }
 
     if (theCase.origin === CaseOrigin.LOKE) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
         user,
         caseId: theCase.id,
@@ -487,7 +486,7 @@ export class FileService {
     }
 
     if (theCase.courtCaseNumber) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
         user,
         caseId: theCase.id,
@@ -558,7 +557,8 @@ export class FileService {
         state: CaseFileState.STORED_IN_RVG,
         name: fileName,
         userGeneratedFilename:
-          createFile.userGeneratedFilename ?? fileName.replace(/\.pdf$/, ''),
+          stripPdfExtension(createFile.userGeneratedFilename ?? fileName) ||
+          stripPdfExtension(fileName),
         submittedBy: user.name,
       },
       { transaction },
@@ -581,7 +581,7 @@ export class FileService {
         theCase.id,
         {
           documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: file.userGeneratedFilename ?? file.name,
+          name: stripPdfExtension(file.userGeneratedFilename ?? file.name),
           caseFileId: file.id,
         },
         { transaction },

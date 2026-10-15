@@ -10,6 +10,7 @@ fragment DefendantFields on Defendant {
   defenderNationalId
   defenderEmail
   defenderPhoneNumber
+  requestSharedWithDefender
   defenderChoice
   defendantPlea
   requestedDefenderChoice
@@ -22,6 +23,7 @@ fragment DefendantFields on Defendant {
   appealDefenderEmail
   appealDefenderPhoneNumber
   isAppealDefenderConfirmed
+  isAppealDefenderWaived
   verdictAppealDeadline
   isVerdictAppealDeadlineExpired
   subpoenaType

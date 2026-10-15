@@ -625,10 +625,19 @@ export class CoursesService extends BaseTemplateApiService {
     )
 
     try {
-      await this.zendeskService.upsertCustomObjectRecordsByExternalId(
-        ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
-        participants.map((p) => p.record),
-      )
+      // Bulk jobs are queued and take seconds to complete, so a single
+      // record is written directly
+      if (participants.length === 1) {
+        await this.zendeskService.upsertCustomObjectRecord(
+          ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+          participants[0].record,
+        )
+      } else {
+        await this.zendeskService.upsertCustomObjectRecordsByExternalId(
+          ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+          participants.map((p) => p.record),
+        )
+      }
 
       const writtenRecords =
         await this.zendeskService.listCustomObjectRecordsByExternalIds(
@@ -788,7 +797,14 @@ export class CoursesService extends BaseTemplateApiService {
     }
 
     const missingTickets = tickets.filter((ticket) => !ticket.ticketId)
-    if (missingTickets.length > 0) {
+    if (missingTickets.length === 1) {
+      // Bulk jobs are queued and take seconds to complete, so a single
+      // ticket is created directly
+      const createdTicket = await this.zendeskService
+        .createTicket(missingTickets[0].input)
+        .catch(() => undefined)
+      missingTickets[0].ticketId = this.toZendeskNumber(createdTicket?.id)
+    } else if (missingTickets.length > 1) {
       const createdTicketIds = await this.zendeskService.createManyTickets(
         missingTickets.map((ticket) => ticket.input),
       )

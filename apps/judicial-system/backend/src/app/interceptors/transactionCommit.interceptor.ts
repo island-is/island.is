@@ -16,11 +16,19 @@ import { getTransactionContext } from '../middleware'
 /**
  * Commits the transaction owned by `TransactionContextMiddleware` on the
  * success path, before the response is serialized - a commit that fails after
- * the client has been told 200 is unrecoverable.
+ * the client has been told 200 is unrecoverable - and then runs the after
+ * commit callbacks.
  *
  * There is deliberately no error path here: the middleware rolls back anything
  * still open when the response ends, which covers handler errors, guards that
  * throw before any interceptor runs, and client aborts.
+ *
+ * The callbacks run only on the success path, which is what makes them safe
+ * for a transaction a handler commits itself: a managed transaction that rolls
+ * back rejects, and a handler that returns right after its commit therefore
+ * reaches this point only when its work is durable. A handler must not do work
+ * that can fail after its own commit - that would drop the callbacks for work
+ * the database kept.
  */
 @Injectable()
 export class TransactionCommitInterceptor implements NestInterceptor {
@@ -49,21 +57,37 @@ export class TransactionCommitInterceptor implements NestInterceptor {
       const transaction = await context.transaction
 
       await transaction?.commit()
-    } finally {
-      // Settled either way, so the middleware does not roll back a transaction
-      // whose commit has already failed, and the callbacks below run once.
+    } catch (error) {
+      // Settled, so the middleware does not roll back a transaction whose
+      // commit has already failed, and nothing runs the callbacks.
       context.settlement = 'settled'
+
+      throw error
     }
 
-    for (const callback of context.afterCommit) {
-      try {
-        await callback()
-      } catch (error) {
-        // The work is committed - a failed announcement must not fail the
-        // request, matching the fire-and-forget semantics of the side effects
-        // these callbacks carry.
-        this.logger.error('An after commit callback failed', { error })
+    // Committed rather than settled while the callbacks run, so that a
+    // callback can register another - announcing what it did - and have it
+    // run after the ones already registered.
+    context.settlement = 'committed'
+
+    try {
+      // By index rather than an iterator, so that a callback appended while
+      // draining is visited deliberately rather than by an accident of array
+      // iteration.
+      for (let i = 0; i < context.afterCommit.length; i++) {
+        try {
+          await context.afterCommit[i]()
+        } catch (error) {
+          // The work is committed - a failed announcement must not fail the
+          // request, matching the fire-and-forget semantics of the side effects
+          // these callbacks carry.
+          this.logger.error('An after commit callback failed', { error })
+        }
       }
+    } finally {
+      // Nothing drains the array from here on, so a registration after this
+      // point is refused rather than lost.
+      context.settlement = 'settled'
     }
   }
 

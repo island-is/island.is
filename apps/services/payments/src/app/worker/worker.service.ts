@@ -13,7 +13,10 @@ import { Charge } from '@island.is/clients/charge-fjs-v2'
 import { FJS_NETWORK_ERROR } from '../../utils/fjsCharge'
 import { environment } from '../../environments'
 import { ChargeItem } from '../../utils/chargeUtils'
-import { generateBankTransferChargeFJSPayload } from '../bankTransferPayment/bankTransfer.utils'
+import {
+  bankTransferLogContext,
+  generateBankTransferChargeFJSPayload,
+} from '../bankTransferPayment/bankTransfer.utils'
 import { generateCardChargeFJSPayload } from '../cardPayment/cardPayment.utils'
 import type { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
 import type { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
@@ -63,18 +66,35 @@ export class WorkerService {
     )
 
     // Step 2: Filter out flows that have reached the failure limit (manual intervention required)
+    // and flows whose last failure is too recent to retry yet.
     const skippedFlowIds: string[] = []
+    const deferredFlowIds: string[] = []
+    const now = new Date()
     const paymentFlowsToProcess = allFlows.filter(({ flow }) => {
-      const shouldSkip = this.shouldSkipDueToFailureCount(
-        flow.workerEvents ?? [],
-        this.workerConfig.workerMaxFailureEventsPerFlow,
-      )
+      const events = flow.workerEvents ?? []
 
-      if (shouldSkip) {
+      if (
+        this.shouldSkipDueToFailureCount(
+          events,
+          this.workerConfig.workerMaxFailureEventsPerFlow,
+        )
+      ) {
         skippedFlowIds.push(flow.id)
+        return false
       }
 
-      return !shouldSkip
+      if (
+        this.shouldDeferDueToRecentFailure(
+          events,
+          this.workerConfig.workerRetryDelayMinutesAfterFailure,
+          now,
+        )
+      ) {
+        deferredFlowIds.push(flow.id)
+        return false
+      }
+
+      return true
     })
 
     // One aggregate line per run — ops alerting keys on the capped failure events
@@ -89,7 +109,18 @@ export class WorkerService {
       )
     }
 
+    if (deferredFlowIds.length > 0) {
+      this.logger.info(
+        `Deferring ${
+          deferredFlowIds.length
+        } payment flow(s) that failed less than ${
+          this.workerConfig.workerRetryDelayMinutesAfterFailure
+        } minute(s) ago: ${deferredFlowIds.join(', ')}`,
+      )
+    }
+
     const skippedCount = skippedFlowIds.length
+    const deferredCount = deferredFlowIds.length
 
     let createdFJSCharges = 0
     let failedCount = 0
@@ -149,7 +180,7 @@ export class WorkerService {
     }
 
     this.logger.info(
-      `Payment worker run complete — created: ${createdFJSCharges}, failed: ${failedCount}, skipped (manual intervention): ${skippedCount}`,
+      `Payment worker run complete — created: ${createdFJSCharges}, failed: ${failedCount}, skipped (manual intervention): ${skippedCount}, deferred (retry delay): ${deferredCount}`,
     )
 
     timer.done()
@@ -245,8 +276,14 @@ export class WorkerService {
     // The charge is PAID — payInfo must carry the amount that actually settled, not the
     // catalog price at worker-run time (prices may have changed since settlement).
     if (catalogTotalPrice !== bankTransferPayment.amount) {
+      // Amounts not logged: identifiers only. Both are recoverable from the row and catalog.
       this.logger.warn(
-        `[${paymentFlow.id}] Catalog total (${catalogTotalPrice}) differs from settled bank transfer amount (${bankTransferPayment.amount}) — charging the settled amount`,
+        `[${paymentFlow.id}] Catalog total differs from settled bank transfer amount — charging the settled amount`,
+        bankTransferLogContext(
+          paymentFlow.id,
+          fulfillment.confirmationRefId,
+          bankTransferPayment.providerPaymentId,
+        ),
       )
     }
 
@@ -298,6 +335,30 @@ export class WorkerService {
   ): boolean {
     const failureCount = events.filter((e) => e.status === 'failure').length
     return failureCount >= limit
+  }
+
+  /**
+   * Returns true if the flow's most recent failure event is less than `delayMinutes` old.
+   * A flow that has never failed is processed right away; a failed flow waits out the delay
+   * before the worker tries again (an FJS outage should not burn the failure limit in one go).
+   */
+  private shouldDeferDueToRecentFailure(
+    events: Array<{ status: string; created: Date }>,
+    delayMinutes: number,
+    now: Date,
+  ): boolean {
+    const latestFailureAt = events
+      .filter((e) => e.status === 'failure')
+      .reduce<number | null>((latest, e) => {
+        const createdAt = new Date(e.created).getTime()
+        return latest === null || createdAt > latest ? createdAt : latest
+      }, null)
+
+    if (latestFailureAt === null) {
+      return false
+    }
+
+    return now.getTime() - latestFailureAt < delayMinutes * 60 * 1000
   }
 
   /**

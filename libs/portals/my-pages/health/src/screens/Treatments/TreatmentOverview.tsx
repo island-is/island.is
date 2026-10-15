@@ -11,6 +11,7 @@ import {
   CardLoader,
   formatDate,
   STAFRAEN_HEILSA_SLUG,
+  InfoCard,
   IntroWrapper,
   LinkResolver,
   m,
@@ -20,11 +21,10 @@ import { Problem } from '@island.is/react-spa/shared'
 import { generatePath, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
+import { nextAppointmentsInput } from '../../utils/appointments'
 import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 import { useGetAppointmentsOverviewQuery } from '../HealthOverview/HealthOverview.generated'
 import Appointments from '../HealthOverview/components/Appointments'
-import TreatmentLinkCard from './components/TreatmentLinkCard'
 import TreatmentMessages from './components/TreatmentMessages'
 import { useGetHealthTreatmentQuery } from './TreatmentOverview.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
@@ -53,14 +53,14 @@ const TreatmentOverview = () => {
     error: appointmentsError,
   } = useGetAppointmentsOverviewQuery({
     variables: {
-      status: DEFAULT_APPOINTMENTS_STATUS,
+      input: nextAppointmentsInput(2),
     },
   })
 
   const treatment = data?.healthDirectorateTreatment
 
   const firstTwoAppointments =
-    appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
+    appointmentsData?.healthDirectoratePaginatedAppointments?.data ?? []
 
   const paths = useTreatmentScopedPaths()
   const educationalContentPath = generatePath(
@@ -163,10 +163,11 @@ const TreatmentOverview = () => {
             <GridRow rowGap={2}>
               {linkCards.map((card) => (
                 <GridColumn key={card.to} span={['12/12', '12/12', '6/12']}>
-                  <TreatmentLinkCard
-                    label={card.label}
+                  <InfoCard
+                    variant="link"
+                    title={card.label}
                     to={card.to}
-                    text={
+                    description={
                       card.lastSentAt
                         ? formatMessage(messages.lastSent, {
                             date: formatDate(card.lastSentAt),

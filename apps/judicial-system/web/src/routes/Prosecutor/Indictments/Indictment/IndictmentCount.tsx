@@ -17,6 +17,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import type { SubstanceMap } from '@island.is/judicial-system/types'
 import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   CheckboxList,
@@ -25,7 +26,6 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   IndictmentCount as TIndictmentCount,
   IndictmentSubtype,
   Offense,
@@ -53,8 +53,8 @@ import { strings } from './IndictmentCount.strings'
 
 interface Props {
   indictmentCount: TIndictmentCount
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   onChange: (
     indictmentCountId: string,
     indictmentCountUpdate: UpdateIndictmentCount,
@@ -64,7 +64,7 @@ interface Props {
   updateIndictmentCountState: (
     indictmentCountId: string,
     indictmentCountUpdate: UpdateIndictmentCountState,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => void
 }
 
