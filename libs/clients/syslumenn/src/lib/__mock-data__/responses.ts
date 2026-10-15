@@ -259,3 +259,42 @@ export const REAL_ESTATE_ADDRESS: Array<AssetName> = [
     name: REAL_ESTATE_ADDRESS_NAME,
   },
 ]
+
+// The District Commissioners' API sends the asset type by name
+// ('InnistaedaIBanka') where it used to send the value (8)
+export const ESTATE_INFO_WITH_ASSET_TYPE_NAMES_RESPONSE = {
+  yfirlit: [
+    {
+      malsnumer: '2020-000123',
+      nafn: 'Gervimaður Ameríku',
+      eignir: [
+        {
+          tegundAngalgs: 'Fasteign',
+          fastanumer: 'F2010005',
+          lysing: 'Húsið 1',
+          eignarhlutfall: 100,
+        },
+        {
+          tegundAngalgs: 'Okutaeki',
+          fastanumer: 'VA334',
+          lysing: 'Nissan Terrano II',
+          eignarhlutfall: 100,
+        },
+        {
+          tegundAngalgs: 'InnistaedaIBanka',
+          fastanumer: '1',
+          lysing: 'Bankareikningur',
+          upphaed: '1000',
+          gengiVextir: '0',
+        },
+        {
+          tegundAngalgs: 'Lan',
+          fastanumer: '2',
+          lysing: 'Lán',
+          upphaed: '500',
+        },
+      ],
+      mogulegSkipti: { Einkaskipti: 'Í lagi' },
+    },
+  ],
+}
