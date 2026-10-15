@@ -10,13 +10,13 @@ import {
   getAppealAppointmentDefendantNames,
   getCourtNameInGenitive,
   NOT_RECORDED,
-} from '../../formatters/generatedPdfs/appealAppointmentLetterPdf'
+} from '../../formatters'
 // Types only: the controllers that write the letter inject these, and a
 // runtime import here would close a cycle through the case module's barrel
 // that leaves PdfService undefined when the subpoena and verdict services are
 // constructed.
-import type { PdfService } from '../case/pdf.service'
-import type { LawyerRegistryService } from '../lawyer-registry/lawyerRegistry.service'
+import type { LawyerRegistryService } from '..'
+import type { PdfService } from '../case'
 import { Case, CivilClaimant, Defendant, User } from '../repository'
 import { latestAdvocateConfirmedEvent } from './appealCase.helpers'
 
