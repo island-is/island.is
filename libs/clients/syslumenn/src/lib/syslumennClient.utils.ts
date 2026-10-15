@@ -34,6 +34,7 @@ import {
   Okukennarar,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
+import { logger } from '@island.is/logging'
 import {
   AlcoholLicence,
   SyslumennAuction,
@@ -498,15 +499,21 @@ const ASSET_TYPE_NAMES = [
   'Yfirdrattur',
 ]
 
-export const withAssetTypeValue = <T extends { tegundAngalgs?: TegundAndlags }>(
+export const withAssetTypeValue = <
+  T extends { tegundAngalgs?: TegundAndlags | string },
+>(
   asset: T,
-): T => {
+): Omit<T, 'tegundAngalgs'> & { tegundAngalgs?: TegundAndlags } => {
   const assetType: TegundAndlags | string | undefined = asset.tegundAngalgs
   if (typeof assetType !== 'string') {
-    return asset
+    return { ...asset, tegundAngalgs: assetType }
   }
   const value = ASSET_TYPE_NAMES.indexOf(assetType)
-  return { ...asset, tegundAngalgs: value === -1 ? undefined : value }
+  if (value === -1) {
+    logger.warn('Syslumenn-client: unknown asset type', { assetType })
+    return { ...asset, tegundAngalgs: undefined }
+  }
+  return { ...asset, tegundAngalgs: value }
 }
 
 export const mapAvailableSettlements = (

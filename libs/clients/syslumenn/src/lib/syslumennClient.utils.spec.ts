@@ -1,3 +1,6 @@
+import { readFileSync } from 'fs'
+import { join } from 'path'
+import { logger } from '@island.is/logging'
 import { EignirDanarbus, TegundAndlags } from '../../gen/fetch'
 import { DebtTypes } from './syslumennClient.types'
 import {
@@ -64,18 +67,36 @@ const assetsByValue = [
 ]
 
 describe('syslumennClient.utils.withAssetTypeValue', () => {
-  it('maps asset type names to their values', () => {
-    expect(withAssetTypeValue(assetsByName[0]).tegundAngalgs).toBe(0)
-    expect(withAssetTypeValue(assetsByName[2]).tegundAngalgs).toBe(8)
-    expect(withAssetTypeValue(assetsByName[3]).tegundAngalgs).toBe(19)
+  it('maps every asset type name in the API spec to its value', () => {
+    const spec = JSON.parse(
+      readFileSync(join(__dirname, '../clientConfig.json'), 'utf8'),
+    )
+    const { enum: values, 'x-enumNames': names } =
+      spec.components.schemas.TegundAndlags
+
+    expect(names).toHaveLength(values.length)
+    names.forEach((name: string, i: number) => {
+      expect(withAssetTypeValue({ tegundAngalgs: name }).tegundAngalgs).toBe(
+        values[i],
+      )
+    })
   })
 
   it('leaves asset type values unchanged', () => {
-    expect(withAssetTypeValue(assetsByValue[2])).toBe(assetsByValue[2])
+    expect(withAssetTypeValue(assetsByValue[2])).toEqual(assetsByValue[2])
   })
 
-  it('drops unknown asset type names', () => {
-    expect(withAssetTypeValue(assetsByName[4]).tegundAngalgs).toBeUndefined()
+  it('drops and logs unknown asset type names', () => {
+    const warn = jest.spyOn(logger, 'warn').mockImplementation()
+
+    expect(
+      withAssetTypeValue({ tegundAngalgs: 'NyTegund' }).tegundAngalgs,
+    ).toBeUndefined()
+    expect(warn).toHaveBeenCalledWith(expect.any(String), {
+      assetType: 'NyTegund',
+    })
+
+    warn.mockRestore()
   })
 })
 
