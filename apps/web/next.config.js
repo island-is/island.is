@@ -7,6 +7,106 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default
 const { DuplicatesPlugin } = require('inspectpack/plugin')
 
+/** Page ids the old court websites (all on the same CMS) used for verdicts */
+const LEGACY_COURT_VERDICT_PAGE_IDS =
+  '(?:347c3bb1-8926-11e5-80c6-005056bc6a40|d2ca19a6-a3fa-11e5-9402-005056bc0bdb)'
+
+/**
+ * Old court websites redirect to island.is/redirects/<host>/<path>.
+ * Their verdict urls are handled by /api/redirects/court-verdict,
+ * other urls fall through to the CMS 404 redirects.
+ */
+const legacyCourtVerdictRewrites = [
+  {
+    domain: 'landsrettur',
+    site: 'landsrettur',
+    kind: 'verdict',
+    paths: ['/domar-og-urskurdir/domur-urskurdur', '/domar-og-urskurdir/domur'],
+    verdictPageAlias: true,
+  },
+  {
+    domain: 'landsrettur',
+    site: 'landsrettur',
+    kind: 'document',
+    paths: ['/domar-og-urskurdir/domur-urskurdur/$Verdict/Download'],
+  },
+  {
+    domain: 'haestirettur',
+    site: 'haestirettur',
+    kind: 'verdict',
+    paths: ['/domar/domur', '/domar/_domur'],
+    verdictPageAlias: true,
+  },
+  {
+    domain: 'haestirettur',
+    site: 'haestirettur',
+    kind: 'determination',
+    paths: ['/akvardanir/_malskotsbeidni', '/malskotsbeidnir/_malskotsbeidni'],
+  },
+  {
+    domain: 'haestirettur',
+    site: 'haestirettur',
+    kind: 'nr',
+    paths: ['/domar'],
+  },
+  {
+    domain: 'haestirettur',
+    site: 'haestirettur',
+    kind: 'ifx',
+    paths: ['/ifx_hr'],
+  },
+  {
+    domain: 'heradsdomstolar',
+    site: 'district',
+    kind: 'verdict',
+    paths: ['/domar/domur', '/heradsdomstolar/:court/domar/domur'],
+    verdictPageAlias: true,
+  },
+  {
+    domain: 'domstolar',
+    site: 'district',
+    kind: 'verdict',
+    paths: ['/domar/domur', '/heradsdomstolar/:court/domar/domur'],
+    verdictPageAlias: true,
+  },
+  {
+    domain: 'domstolar',
+    site: 'district',
+    kind: 'search',
+    paths: ['/domaleit/nanar'],
+  },
+  {
+    domain: 'endurupptokudomur',
+    site: 'endurupptokudomur',
+    kind: 'verdict',
+    paths: ['/urskurdir/domur-urskurdur'],
+    verdictPageAlias: true,
+  },
+].flatMap(({ domain, site, kind, paths, verdictPageAlias }) => {
+  const prefix = `/redirects/:legacyHost((?:www\\.)?${domain}\\.is)`
+  const destination = `/api/redirects/court-verdict?site=${site}&kind=${kind}`
+  const rewrites = paths.map((path) => ({
+    source: `${prefix}${path}`,
+    destination,
+  }))
+  if (verdictPageAlias) {
+    for (const path of ['', '/default.aspx']) {
+      rewrites.push({
+        source: `${prefix}${path}`,
+        has: [
+          {
+            type: 'query',
+            key: 'pageid',
+            value: LEGACY_COURT_VERDICT_PAGE_IDS,
+          },
+        ],
+        destination,
+      })
+    }
+  }
+  return rewrites
+})
+
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
@@ -41,6 +141,7 @@ const nextConfig = {
         source: '/rss/dagskra-domstola.xml',
         destination: '/api/dagskra-domstola/rss',
       },
+      ...legacyCourtVerdictRewrites,
     ]
   },
   async redirects() {
