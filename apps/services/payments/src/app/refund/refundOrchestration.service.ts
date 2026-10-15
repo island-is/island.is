@@ -3,7 +3,11 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import {
+  CardErrorCode,
+  PaymentServiceCode,
+  DebtPaymentErrorCode,
+} from '@island.is/shared/constants'
 
 import { InferAttributes } from 'sequelize'
 
@@ -307,7 +311,7 @@ export class RefundOrchestrationService {
       debtPayment?.status === 'needs_reconciliation'
     ) {
       throw new BadRequestException(
-        PaymentServiceCode.DebtPaymentRegisteredCannotBeRefunded,
+        DebtPaymentErrorCode.DebtPaymentRegisteredCannotBeRefunded,
       )
     }
 
@@ -331,7 +335,7 @@ export class RefundOrchestrationService {
         },
       )
       throw new BadRequestException(
-        PaymentServiceCode.DebtPaymentRegisteredCannotBeRefunded,
+        DebtPaymentErrorCode.DebtPaymentRegisteredCannotBeRefunded,
       )
     }
   }

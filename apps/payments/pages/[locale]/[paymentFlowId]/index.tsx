@@ -23,6 +23,7 @@ import {
   BankTransferErrorCode,
   CardErrorCode,
   PaymentServiceCode,
+  DebtPaymentErrorCode,
 } from '@island.is/shared/constants'
 
 import { PageCard } from '../../../components/PageCard/PageCard'
@@ -430,7 +431,7 @@ function PaymentPage({
     paymentStatus !== PaymentsGetFlowPaymentStatus.paid
   const displayedError: PaymentError | null =
     paymentError ??
-    (isClosed ? { code: PaymentServiceCode.DebtPaymentFlowClosed } : null)
+    (isClosed ? { code: DebtPaymentErrorCode.DebtPaymentFlowClosed } : null)
 
   const hasPaymentError = displayedError !== null
   const canRenderMainFlow = !invalidFlowSetup && !hasPaymentError

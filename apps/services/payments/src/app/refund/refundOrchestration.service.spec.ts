@@ -1,6 +1,9 @@
 import { BadRequestException } from '@nestjs/common'
 
-import { PaymentServiceCode } from '@island.is/shared/constants'
+import {
+  PaymentServiceCode,
+  DebtPaymentErrorCode,
+} from '@island.is/shared/constants'
 
 import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
 import { FjsDebtPayment } from '../paymentFlow/models/fjsDebtPayment.model'
@@ -59,7 +62,7 @@ describe('RefundOrchestrationService', () => {
 
         await expect(service.refund(input)).rejects.toEqual(
           new BadRequestException(
-            PaymentServiceCode.DebtPaymentRegisteredCannotBeRefunded,
+            DebtPaymentErrorCode.DebtPaymentRegisteredCannotBeRefunded,
           ),
         )
 
@@ -85,7 +88,7 @@ describe('RefundOrchestrationService', () => {
 
       await expect(service.refund(input)).rejects.toEqual(
         new BadRequestException(
-          PaymentServiceCode.DebtPaymentRegisteredCannotBeRefunded,
+          DebtPaymentErrorCode.DebtPaymentRegisteredCannotBeRefunded,
         ),
       )
 
@@ -105,7 +108,7 @@ describe('RefundOrchestrationService', () => {
 
       await expect(service.refund(input)).rejects.toEqual(
         new BadRequestException(
-          PaymentServiceCode.DebtPaymentRegisteredCannotBeRefunded,
+          DebtPaymentErrorCode.DebtPaymentRegisteredCannotBeRefunded,
         ),
       )
 

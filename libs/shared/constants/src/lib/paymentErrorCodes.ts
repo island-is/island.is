@@ -24,13 +24,6 @@ export enum PaymentServiceCode {
   PaymentFlowNotEligibleToBeRefunded = 'PaymentFlowNotEligibleToBeRefunded',
   CouldNotDeletePaymentConfirmation = 'CouldNotDeletePaymentConfirmation',
   CouldNotDeletePaymentFulfillment = 'CouldNotDeletePaymentFulfillment',
-  // Debt payments
-  DebtPaymentInvalid = 'DebtPaymentInvalid',
-  DebtPaymentMethodNotAllowed = 'DebtPaymentMethodNotAllowed',
-  DebtPaymentRejected = 'DebtPaymentRejected',
-  DebtPaymentFlowClosed = 'DebtPaymentFlowClosed',
-  DebtPaymentUnavailable = 'DebtPaymentUnavailable',
-  DebtPaymentRegisteredCannotBeRefunded = 'DebtPaymentRegisteredCannotBeRefunded',
 }
 
 export enum CardErrorCode {
@@ -94,9 +87,19 @@ export enum BankTransferErrorCode {
   BankTransferExpired = 'BankTransferExpired',
 }
 
+export enum DebtPaymentErrorCode {
+  DebtPaymentInvalid = 'DebtPaymentInvalid',
+  DebtPaymentMethodNotAllowed = 'DebtPaymentMethodNotAllowed',
+  DebtPaymentRejected = 'DebtPaymentRejected',
+  DebtPaymentFlowClosed = 'DebtPaymentFlowClosed',
+  DebtPaymentUnavailable = 'DebtPaymentUnavailable',
+  DebtPaymentRegisteredCannotBeRefunded = 'DebtPaymentRegisteredCannotBeRefunded',
+}
+
 export type PaymentErrorCode =
   | FjsErrorCode
   | CardErrorCode
   | InvoiceErrorCode
   | BankTransferErrorCode
+  | DebtPaymentErrorCode
   | PaymentServiceCode

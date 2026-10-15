@@ -1,5 +1,5 @@
 import type { Logger } from '@island.is/logging'
-import { PaymentServiceCode } from '@island.is/shared/constants'
+import { DebtPaymentErrorCode } from '@island.is/shared/constants'
 import type { ProblemDetailsDt } from '@island.is/clients/finance-v3'
 
 import { PaymentMethod } from '../../types'
@@ -48,7 +48,7 @@ export const settleDebtStep = async ({
 
   if (outcome.type === 'rejected') {
     onRejected(outcome.problem)
-    throw new Error(PaymentServiceCode.DebtPaymentRejected)
+    throw new Error(DebtPaymentErrorCode.DebtPaymentRejected)
   }
 
   return outcome

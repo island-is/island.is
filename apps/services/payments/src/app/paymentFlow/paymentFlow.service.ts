@@ -26,6 +26,7 @@ import {
   FjsErrorCode,
   InvoiceErrorCode,
   PaymentServiceCode,
+  DebtPaymentErrorCode,
 } from '@island.is/shared/constants'
 
 import {
@@ -325,7 +326,7 @@ export class PaymentFlowService {
         this.logger.warn(`[${paymentFlowId}] FJS rejected the debts`, {
           problem: validation.problem,
         })
-        throw new BadRequestException(PaymentServiceCode.DebtPaymentInvalid)
+        throw new BadRequestException(DebtPaymentErrorCode.DebtPaymentInvalid)
       }
 
       if (validation.type === 'transient') {
@@ -354,7 +355,7 @@ export class PaymentFlowService {
           { paymentOptions: validation.rawPaymentOptions },
         )
         throw new BadRequestException(
-          PaymentServiceCode.DebtPaymentMethodNotAllowed,
+          DebtPaymentErrorCode.DebtPaymentMethodNotAllowed,
         )
       }
 
@@ -433,7 +434,7 @@ export class PaymentFlowService {
   ): Promise<void> {
     // A rejected flow is terminal, the payer starts again from the application.
     if (paymentFlow.fjsDebtPayment?.status === 'rejected') {
-      throw new BadRequestException(PaymentServiceCode.DebtPaymentFlowClosed)
+      throw new BadRequestException(DebtPaymentErrorCode.DebtPaymentFlowClosed)
     }
 
     const validation = await this.debtFjsService.validate({
@@ -447,7 +448,7 @@ export class PaymentFlowService {
       this.logger.warn(`[${paymentFlow.id}] FJS rejected the debts`, {
         problem: validation.problem,
       })
-      throw new BadRequestException(PaymentServiceCode.DebtPaymentInvalid)
+      throw new BadRequestException(DebtPaymentErrorCode.DebtPaymentInvalid)
     }
 
     // FJS already has a payment for this flow, taking the money again would pay twice
@@ -463,13 +464,13 @@ export class PaymentFlowService {
         error: validation.error,
       })
       throw new ServiceUnavailableException(
-        PaymentServiceCode.DebtPaymentUnavailable,
+        DebtPaymentErrorCode.DebtPaymentUnavailable,
       )
     }
 
     if (!validation.paymentOptions.has(paymentMethod)) {
       throw new BadRequestException(
-        PaymentServiceCode.DebtPaymentMethodNotAllowed,
+        DebtPaymentErrorCode.DebtPaymentMethodNotAllowed,
       )
     }
   }

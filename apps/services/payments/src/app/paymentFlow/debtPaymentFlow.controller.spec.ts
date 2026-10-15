@@ -5,7 +5,10 @@ import { FinanceClientV3Service } from '@island.is/clients/finance-v3'
 import { FetchError } from '@island.is/clients/middlewares'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
-import { PaymentServiceCode } from '@island.is/shared/constants'
+import {
+  PaymentServiceCode,
+  DebtPaymentErrorCode,
+} from '@island.is/shared/constants'
 import { TestApp } from '@island.is/testing/nest'
 
 import { setupTestApp } from '../../../test/setup'
@@ -168,7 +171,7 @@ describe('DebtPaymentFlowController', () => {
 
       expect(response.status).toBe(400)
       expect(response.body.detail).toBe(
-        PaymentServiceCode.DebtPaymentMethodNotAllowed,
+        DebtPaymentErrorCode.DebtPaymentMethodNotAllowed,
       )
     })
 
@@ -188,7 +191,7 @@ describe('DebtPaymentFlowController', () => {
 
       expect(response.status).toBe(400)
       expect(response.body.detail).toBe(
-        PaymentServiceCode.DebtPaymentMethodNotAllowed,
+        DebtPaymentErrorCode.DebtPaymentMethodNotAllowed,
       )
     })
 
@@ -202,7 +205,7 @@ describe('DebtPaymentFlowController', () => {
       const response = await server.post('/v1/payments/debts').send(payload)
 
       expect(response.status).toBe(400)
-      expect(response.body.detail).toBe(PaymentServiceCode.DebtPaymentInvalid)
+      expect(response.body.detail).toBe(DebtPaymentErrorCode.DebtPaymentInvalid)
     })
 
     it('answers 503 when FJS cannot be reached, and creates nothing', async () => {
@@ -421,7 +424,7 @@ describe('DebtPaymentFlowController', () => {
         await expect(
           service.validateDebtPaymentFlow(flow, PaymentMethod.CARD),
         ).rejects.toMatchObject({
-          message: PaymentServiceCode.DebtPaymentMethodNotAllowed,
+          message: DebtPaymentErrorCode.DebtPaymentMethodNotAllowed,
         })
       })
 
@@ -434,7 +437,7 @@ describe('DebtPaymentFlowController', () => {
         await expect(
           service.validateDebtPaymentFlow(flow, PaymentMethod.CARD),
         ).rejects.toMatchObject({
-          message: PaymentServiceCode.DebtPaymentInvalid,
+          message: DebtPaymentErrorCode.DebtPaymentInvalid,
         })
       })
 
@@ -467,7 +470,7 @@ describe('DebtPaymentFlowController', () => {
         await expect(
           service.validateDebtPaymentFlow(flow, PaymentMethod.CARD),
         ).rejects.toMatchObject({
-          message: PaymentServiceCode.DebtPaymentUnavailable,
+          message: DebtPaymentErrorCode.DebtPaymentUnavailable,
         })
       })
 
@@ -484,7 +487,7 @@ describe('DebtPaymentFlowController', () => {
             PaymentMethod.CARD,
           ),
         ).rejects.toMatchObject({
-          message: PaymentServiceCode.DebtPaymentFlowClosed,
+          message: DebtPaymentErrorCode.DebtPaymentFlowClosed,
         })
         expect(validatePayment).not.toHaveBeenCalled()
       })

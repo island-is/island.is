@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals'
 import { BadRequestException } from '@nestjs/common'
 
-import { PaymentServiceCode } from '@island.is/shared/constants'
+import { DebtPaymentErrorCode } from '@island.is/shared/constants'
 
 import { RefundService } from '../refund/refund.service'
 import { CardPaymentController } from './cardPayment.controller'
@@ -59,7 +59,7 @@ describe('CardPaymentController — debt payments', () => {
     const controller = createController(rejected)
 
     await expect(controller.charge(getChargeCardInput())).rejects.toEqual(
-      new BadRequestException(PaymentServiceCode.DebtPaymentRejected),
+      new BadRequestException(DebtPaymentErrorCode.DebtPaymentRejected),
     )
   })
 
@@ -69,7 +69,7 @@ describe('CardPaymentController — debt payments', () => {
     await expect(
       controller.chargeApplePay(getApplePayChargeInput()),
     ).rejects.toEqual(
-      new BadRequestException(PaymentServiceCode.DebtPaymentRejected),
+      new BadRequestException(DebtPaymentErrorCode.DebtPaymentRejected),
     )
   })
 

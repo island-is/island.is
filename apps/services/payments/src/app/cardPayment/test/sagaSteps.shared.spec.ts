@@ -1,5 +1,5 @@
 import type { Logger } from '@island.is/logging'
-import { PaymentServiceCode } from '@island.is/shared/constants'
+import { DebtPaymentErrorCode } from '@island.is/shared/constants'
 
 import {
   ApplePayPaymentContext,
@@ -331,7 +331,7 @@ describe('Card Payment Saga - Shared Steps', () => {
 
         await expect(
           orchestrator.execute(saga as never, context as never),
-        ).rejects.toThrow(PaymentServiceCode.DebtPaymentRejected)
+        ).rejects.toThrow(DebtPaymentErrorCode.DebtPaymentRejected)
 
         expect(refundMock()).toHaveBeenCalledTimes(1)
         expect(context.metadata?.refundSucceeded).toBe(true)
@@ -347,7 +347,7 @@ describe('Card Payment Saga - Shared Steps', () => {
             type: 'error',
             reason: 'payment_failed',
             metadata: expect.objectContaining({
-              originalError: PaymentServiceCode.DebtPaymentRejected,
+              originalError: DebtPaymentErrorCode.DebtPaymentRejected,
               fjsProblem: problem,
               // Ties the refund to this payment for the worker
               correlationId: context.trackingData.correlationId,
