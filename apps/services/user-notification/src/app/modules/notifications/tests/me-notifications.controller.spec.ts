@@ -165,15 +165,17 @@ describe('MeNotificationsController - GET /v1/me/notifications/categories', () =
       AppModule,
       SequelizeConfigService,
       user,
+      override: (builder) =>
+        builder.overrideProvider(CmsService).useValue({
+          fetchData: jest.fn().mockResolvedValue({
+            hnippTemplateCollection: {
+              items: [{ categoryIs: 'Heilbrigðismál', categoryEn: 'Health' }],
+            },
+          }),
+        }),
     })
     server = request(app.getHttpServer())
     userNotificationSenderModel = app.get(getModelToken(UserNotificationSender))
-
-    jest.spyOn(app.get(CmsService), 'fetchData').mockResolvedValue({
-      hnippTemplateCollection: {
-        items: [{ categoryIs: 'Heilbrigðismál', categoryEn: 'Health' }],
-      },
-    })
   })
 
   beforeEach(async () => {
