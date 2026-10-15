@@ -40,6 +40,10 @@ import {
   VehiclesClientModule,
 } from '@island.is/clients/vehicles'
 import {
+  RskKilometerFeeClientConfig,
+  RskKilometerFeeClientModule,
+} from '@island.is/clients/rsk/kilometer-fee'
+import {
   AgriculturalUniversityOfIcelandCareerClientConfig,
   BifrostUniversityCareerClientConfig,
   HolarUniversityCareerClientConfig,
@@ -107,6 +111,7 @@ import {
     DocumentsClientModule,
     FinanceClientModule,
     VehiclesClientModule,
+    RskKilometerFeeClientModule,
     RegulationsAdminClientModule,
     RegulationsClientModule,
     WorkMachinesClientModule,
@@ -127,6 +132,7 @@ import {
         IdsClientConfig,
         XRoadConfig,
         VehiclesClientConfig,
+        RskKilometerFeeClientConfig,
         UniversityOfIcelandCareerClientConfig,
         AgriculturalUniversityOfIcelandCareerClientConfig,
         UniversityOfAkureyriCareerClientConfig,

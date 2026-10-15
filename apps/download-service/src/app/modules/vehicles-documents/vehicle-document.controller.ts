@@ -5,6 +5,7 @@ import {
   Header,
   Inject,
   Param,
+  ParseIntPipe,
   Post,
   Res,
   UseGuards,
@@ -19,7 +20,13 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { VehiclesClientService } from '@island.is/clients/vehicles'
+import { RskKilometerFeeClientService } from '@island.is/clients/rsk/kilometer-fee'
 import { AuditService } from '@island.is/nest/audit'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import format from 'date-fns/format'
 import csvStringify from 'csv-stringify/lib/sync'
@@ -31,6 +38,7 @@ export class VehicleController {
   constructor(
     private readonly auditService: AuditService,
     private readonly vehicleService: VehiclesClientService,
+    private readonly kilometerFeeService: RskKilometerFeeClientService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -184,6 +192,53 @@ export class VehicleController {
       res.header(
         'Content-Disposition',
         `inline; filename=eignastoduvottord-${user.nationalId}.xlsx`,
+      )
+      return res.status(200).end(buffer)
+    }
+    return res.end()
+  }
+
+  @Post('/mileage-fee/:permno/:year/excel')
+  @UseGuards(FeatureFlagGuard)
+  @FeatureFlag(Features.isServicePortalVehicleMileageFeePageEnabled)
+  @Header(
+    'Content-Type',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  )
+  @Header('Pragma', 'no-cache')
+  @Header('Cache-Control', 'no-cache')
+  @ApiOkResponse({
+    content: {
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {},
+    },
+    description: 'Get a mileage fee excel export from Skatturinn',
+  })
+  async getVehicleMileageFeeExcel(
+    @Param('permno') permno: string,
+    @Param('year', ParseIntPipe) year: number,
+    @CurrentUser() user: User,
+    @Res() res: Response,
+  ) {
+    const documentResponse = await this.kilometerFeeService.getFeeExport(
+      user,
+      permno,
+      year,
+    )
+
+    if (documentResponse) {
+      this.auditService.audit({
+        action: 'getVehicleMileageFeeExcel',
+        auth: user,
+        resources: permno,
+      })
+
+      const contentArrayBuffer = await documentResponse.arrayBuffer()
+      const buffer = Buffer.from(contentArrayBuffer)
+
+      res.header('Content-length', buffer.length.toString())
+      res.header(
+        'Content-Disposition',
+        `attachment; filename=kilometragjald-${permno}-${year}.xlsx`,
       )
       return res.status(200).end(buffer)
     }

@@ -16,7 +16,7 @@ paths:
         - $ref: '#/components/parameters/year'
       responses:
         '200':
-          description: OK
+          description: OK. A year with no periods returns an empty periods list
           content:
             application/json:
               schema:
