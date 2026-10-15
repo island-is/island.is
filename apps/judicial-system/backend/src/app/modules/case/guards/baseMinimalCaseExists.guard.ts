@@ -7,12 +7,15 @@ import {
 } from '@nestjs/common'
 
 import { MinimalCase } from '../models/case.types'
+import { traceCaseLoad } from './traceCaseLoad'
 
 /**
  * Reads the case row named by the route - the case's own columns, none of
  * its associations - and puts it on the request, where `@MinimalCurrentCase()`
  * and the guards that run after it pick it up. Subclasses decide how the row
  * is read - see `MinimalCaseExistsGuard` and `MinimalCaseExistsForUpdateGuard`.
+ * Both read with the `minimal` include profile, which is what the load is
+ * traced under.
  */
 export abstract class BaseMinimalCaseExistsGuard implements CanActivate {
   protected abstract loadCase(caseId: string): Promise<MinimalCase>
@@ -29,7 +32,12 @@ export abstract class BaseMinimalCaseExistsGuard implements CanActivate {
       throw new BadRequestException('Invalid case id format')
     }
 
-    request.case = await this.loadCase(caseId)
+    request.case = await traceCaseLoad(
+      this.constructor.name,
+      'minimal',
+      request,
+      () => this.loadCase(caseId),
+    )
 
     return true
   }

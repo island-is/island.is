@@ -27,6 +27,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../models/appealCase.model'
+import { AppealCourtSession } from '../models/appealCourtSession.model'
 import { AppealDecision } from '../models/appealDecision.model'
 import { AppealEventLog } from '../models/appealEventLog.model'
 import { AppealSummons } from '../models/appealSummons.model'
@@ -123,6 +124,13 @@ export const caseInclude: Includeable[] = [
             separate: true,
           },
         ],
+      },
+      {
+        model: AppealCourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['sessionDate', 'ASC']],
+        separate: true,
       },
     ],
   },

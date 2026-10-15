@@ -137,11 +137,18 @@ Array [
   "case.childCase.origin",
   "case.childCase.policeCaseNumbers",
   "case.childCase.type",
+  "case.civilClaimants.appealSpokespersonEmail",
+  "case.civilClaimants.appealSpokespersonIsLawyer",
+  "case.civilClaimants.appealSpokespersonName",
+  "case.civilClaimants.appealSpokespersonNationalId",
+  "case.civilClaimants.appealSpokespersonPhoneNumber",
   "case.civilClaimants.caseFilesSharedWithSpokesperson",
   "case.civilClaimants.caseId",
   "case.civilClaimants.defendantIds",
+  "case.civilClaimants.hasAppealSpokesperson",
   "case.civilClaimants.hasSpokesperson",
   "case.civilClaimants.id",
+  "case.civilClaimants.isAppealSpokespersonConfirmed",
   "case.civilClaimants.isSpokespersonConfirmed",
   "case.civilClaimants.name",
   "case.civilClaimants.nationalId",
@@ -249,6 +256,7 @@ Array [
   "case.defendants.indictmentReviewDecision",
   "case.defendants.isAlternativeService",
   "case.defendants.isAppealDefenderConfirmed",
+  "case.defendants.isAppealDefenderWaived",
   "case.defendants.isClosedWithoutEnforcement",
   "case.defendants.isDefenderChoiceConfirmed",
   "case.defendants.isDrivingLicenseSuspended",
@@ -690,6 +698,14 @@ Array [
   "case.verdictAppealCase.appealJudge3.id",
   "case.verdictAppealCase.appealJudge3.name",
   "case.verdictAppealCase.appealState",
+  "case.verdictAppealCase.appealSummonses.confirmedDate",
+  "case.verdictAppealCase.appealSummonses.created",
+  "case.verdictAppealCase.appealSummonses.defendants.appellantSide",
+  "case.verdictAppealCase.appealSummonses.defendants.claims",
+  "case.verdictAppealCase.appealSummonses.defendants.defendantId",
+  "case.verdictAppealCase.appealSummonses.defendants.id",
+  "case.verdictAppealCase.appealSummonses.id",
+  "case.verdictAppealCase.appealSummonses.sentToCourtOfAppealsDate",
   "case.verdictAppealCase.appealType",
   "case.verdictAppealCase.id",
   "case.victims.hasLawyer",
@@ -784,6 +800,18 @@ Array [
 exports[`GraphQL operations select these field paths CreateAppealEventLog 1`] = `
 Array [
   "createAppealEventLog.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateAppealSummons 1`] = `
+Array [
+  "createAppealSummons.confirmedDate",
+  "createAppealSummons.defendants.appellantSide",
+  "createAppealSummons.defendants.claims",
+  "createAppealSummons.defendants.defendantId",
+  "createAppealSummons.defendants.id",
+  "createAppealSummons.id",
+  "createAppealSummons.sentToCourtOfAppealsDate",
 ]
 `;
 
@@ -962,6 +990,12 @@ Array [
   "currentUser.user.nationalId",
   "currentUser.user.role",
   "currentUser.user.title",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteAppealSummons 1`] = `
+Array [
+  "deleteAppealSummons.deleted",
 ]
 `;
 
@@ -1168,11 +1202,18 @@ Array [
   "limitedAccessCase.caseResentExplanation",
   "limitedAccessCase.caseSentToCourtDate",
   "limitedAccessCase.childCase.id",
+  "limitedAccessCase.civilClaimants.appealSpokespersonEmail",
+  "limitedAccessCase.civilClaimants.appealSpokespersonIsLawyer",
+  "limitedAccessCase.civilClaimants.appealSpokespersonName",
+  "limitedAccessCase.civilClaimants.appealSpokespersonNationalId",
+  "limitedAccessCase.civilClaimants.appealSpokespersonPhoneNumber",
   "limitedAccessCase.civilClaimants.caseFilesSharedWithSpokesperson",
   "limitedAccessCase.civilClaimants.caseId",
   "limitedAccessCase.civilClaimants.defendantIds",
+  "limitedAccessCase.civilClaimants.hasAppealSpokesperson",
   "limitedAccessCase.civilClaimants.hasSpokesperson",
   "limitedAccessCase.civilClaimants.id",
+  "limitedAccessCase.civilClaimants.isAppealSpokespersonConfirmed",
   "limitedAccessCase.civilClaimants.isSpokespersonConfirmed",
   "limitedAccessCase.civilClaimants.name",
   "limitedAccessCase.civilClaimants.nationalId",
@@ -1245,6 +1286,7 @@ Array [
   "limitedAccessCase.defendants.indictmentReviewDecision",
   "limitedAccessCase.defendants.isAlternativeService",
   "limitedAccessCase.defendants.isAppealDefenderConfirmed",
+  "limitedAccessCase.defendants.isAppealDefenderWaived",
   "limitedAccessCase.defendants.isDefenderChoiceConfirmed",
   "limitedAccessCase.defendants.isRegisteredInPrisonSystem",
   "limitedAccessCase.defendants.isSentToPrisonAdmin",
@@ -1656,11 +1698,18 @@ Array [
 
 exports[`GraphQL operations select these field paths LimitedAccessUpdateCase 1`] = `
 Array [
+  "limitedAccessUpdateCase.civilClaimants.appealSpokespersonEmail",
+  "limitedAccessUpdateCase.civilClaimants.appealSpokespersonIsLawyer",
+  "limitedAccessUpdateCase.civilClaimants.appealSpokespersonName",
+  "limitedAccessUpdateCase.civilClaimants.appealSpokespersonNationalId",
+  "limitedAccessUpdateCase.civilClaimants.appealSpokespersonPhoneNumber",
   "limitedAccessUpdateCase.civilClaimants.caseFilesSharedWithSpokesperson",
   "limitedAccessUpdateCase.civilClaimants.caseId",
   "limitedAccessUpdateCase.civilClaimants.defendantIds",
+  "limitedAccessUpdateCase.civilClaimants.hasAppealSpokesperson",
   "limitedAccessUpdateCase.civilClaimants.hasSpokesperson",
   "limitedAccessUpdateCase.civilClaimants.id",
+  "limitedAccessUpdateCase.civilClaimants.isAppealSpokespersonConfirmed",
   "limitedAccessUpdateCase.civilClaimants.isSpokespersonConfirmed",
   "limitedAccessUpdateCase.civilClaimants.name",
   "limitedAccessUpdateCase.civilClaimants.nationalId",
@@ -1958,13 +2007,32 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths UpdateAppealSummons 1`] = `
+Array [
+  "updateAppealSummons.confirmedDate",
+  "updateAppealSummons.defendants.appellantSide",
+  "updateAppealSummons.defendants.claims",
+  "updateAppealSummons.defendants.defendantId",
+  "updateAppealSummons.defendants.id",
+  "updateAppealSummons.id",
+  "updateAppealSummons.sentToCourtOfAppealsDate",
+]
+`;
+
 exports[`GraphQL operations select these field paths UpdateCase 1`] = `
 Array [
+  "updateCase.civilClaimants.appealSpokespersonEmail",
+  "updateCase.civilClaimants.appealSpokespersonIsLawyer",
+  "updateCase.civilClaimants.appealSpokespersonName",
+  "updateCase.civilClaimants.appealSpokespersonNationalId",
+  "updateCase.civilClaimants.appealSpokespersonPhoneNumber",
   "updateCase.civilClaimants.caseFilesSharedWithSpokesperson",
   "updateCase.civilClaimants.caseId",
   "updateCase.civilClaimants.defendantIds",
+  "updateCase.civilClaimants.hasAppealSpokesperson",
   "updateCase.civilClaimants.hasSpokesperson",
   "updateCase.civilClaimants.id",
+  "updateCase.civilClaimants.isAppealSpokespersonConfirmed",
   "updateCase.civilClaimants.isSpokespersonConfirmed",
   "updateCase.civilClaimants.name",
   "updateCase.civilClaimants.nationalId",

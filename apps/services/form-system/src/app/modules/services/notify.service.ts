@@ -51,9 +51,7 @@ export class NotifyService {
         missingXRoadClient: !this.xroadClient,
         datadogEvent: 'form_system_notification_send_failed',
       })
-      throw new Error(
-        `X-Road configuration is missing for NotifyService. Please check environment variables.`,
-      )
+      return { operationSuccessful: false }
     }
     let accessToken = ''
     let audkenni = ''

@@ -107,10 +107,14 @@ export const NationalIdDisplay = ({
                 <Text
                   as="span"
                   fontWeight="light"
-                  color="dark400"
+                  color={
+                    !maritalStatus && requiredMissing ? 'red600' : 'dark400'
+                  }
                   lineHeight="sm"
                 >
-                  {maritalStatus}
+                  {!maritalStatus && requiredMissing
+                    ? formatMessage(m.missingValue)
+                    : maritalStatus}
                 </Text>
               </Text>
             )}

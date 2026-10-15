@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common'
 
 import { LimitedAccessCaseService } from '../limitedAccessCase.service'
+import { traceCaseLoad } from './traceCaseLoad'
 
 @Injectable()
 export class LimitedAccessCaseExistsGuard implements CanActivate {
@@ -20,9 +21,15 @@ export class LimitedAccessCaseExistsGuard implements CanActivate {
       throw new BadRequestException('Missing case id')
     }
 
-    request.case = await this.limitedAccessCaseService.findById(caseId, {
-      user: request.user?.currentUser,
-    })
+    request.case = await traceCaseLoad(
+      LimitedAccessCaseExistsGuard.name,
+      'limitedAccess',
+      request,
+      () =>
+        this.limitedAccessCaseService.findById(caseId, {
+          user: request.user?.currentUser,
+        }),
+    )
 
     return true
   }
