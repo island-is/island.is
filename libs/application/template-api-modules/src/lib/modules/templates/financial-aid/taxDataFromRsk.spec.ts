@@ -48,6 +48,8 @@ describe('taxDataFromRsk', () => {
   })
 
   describe('fetchDirectTaxPaymentsFromRsk', () => {
+    afterEach(() => jest.useRealTimers())
+
     it('maps salary breakdown like the financial-aid backend', async () => {
       const directTaxPayments = jest.fn().mockResolvedValueOnce({
         salaryBreakdown: [
@@ -78,22 +80,10 @@ describe('taxDataFromRsk', () => {
         APPLICATION_ID,
       )
 
-      const today = new Date()
-      const threeMonthsAgoPeriod = new Date()
-      threeMonthsAgoPeriod.setMonth(today.getMonth() - 3)
-      const lastMonthPeriod = new Date()
-      lastMonthPeriod.setMonth(today.getMonth() - 1)
-
       expect(directTaxPayments).toHaveBeenCalledWith(
         NATIONAL_ID,
-        {
-          year: threeMonthsAgoPeriod.getFullYear(),
-          month: threeMonthsAgoPeriod.getMonth() + 1,
-        },
-        {
-          year: lastMonthPeriod.getFullYear(),
-          month: lastMonthPeriod.getMonth() + 1,
-        },
+        expect.any(Object),
+        expect.any(Object),
       )
       expect(result).toEqual({
         directTaxPayments: [
@@ -117,6 +107,39 @@ describe('taxDataFromRsk', () => {
         success: true,
       })
     })
+
+    it.each([
+      ['mid-month', new Date(2026, 9, 15, 12), [2026, 7], [2026, 9]],
+      [
+        'end of a 31-day month',
+        new Date(2026, 9, 31, 12),
+        [2026, 7],
+        [2026, 9],
+      ],
+      ['end of March', new Date(2026, 2, 31, 12), [2025, 12], [2026, 2]],
+      ['January', new Date(2026, 0, 31, 12), [2025, 10], [2025, 12]],
+    ])(
+      'requests the last three full months (%s)',
+      async (_, now, [fromYear, fromMonth], [toYear, toMonth]) => {
+        jest.useFakeTimers({ now })
+        const directTaxPayments = jest
+          .fn()
+          .mockResolvedValue({ salaryBreakdown: [], success: true })
+
+        await fetchDirectTaxPaymentsFromRsk(
+          { directTaxPayments } as unknown as RskPersonalTaxReturnApi,
+          NATIONAL_ID,
+          logger,
+          APPLICATION_ID,
+        )
+
+        expect(directTaxPayments).toHaveBeenCalledWith(
+          NATIONAL_ID,
+          { year: fromYear, month: fromMonth },
+          { year: toYear, month: toMonth },
+        )
+      },
+    )
 
     it('returns empty payments with success false when RSK throws', async () => {
       const result = await fetchDirectTaxPaymentsFromRsk(
