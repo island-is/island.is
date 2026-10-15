@@ -1014,6 +1014,7 @@ export const slices = gql`
     defaultOrder
     textSearchOrder
     showSearchInput
+    showYearFilter
     filterTags {
       id
       title
