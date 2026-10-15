@@ -32,10 +32,14 @@ export class IndictmentCountService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async findById(indictmentCountId: string): Promise<IndictmentCount> {
+  async findById(
+    indictmentCountId: string,
+    options: { transaction: Transaction },
+  ): Promise<IndictmentCount> {
     const indictmentCount =
       await this.indictmentCountRepositoryService.findByIdWithOffenses(
         indictmentCountId,
+        options,
       )
 
     if (!indictmentCount) {
@@ -242,20 +246,27 @@ export class IndictmentCountService {
   async createOffense(
     indictmentCountId: string,
     offense: IndictmentCountOffense,
+    options: { transaction: Transaction },
   ): Promise<Offense> {
-    return this.offenseRepositoryService.create(indictmentCountId, offense)
+    return this.offenseRepositoryService.create(
+      indictmentCountId,
+      offense,
+      options,
+    )
   }
 
   async updateOffense(
     indictmentCountId: string,
     offenseId: string,
     update: UpdateOffenseDto,
+    options: { transaction: Transaction },
   ): Promise<Offense> {
     const { numberOfAffectedRows, offenses } =
       await this.offenseRepositoryService.updateByIdAndIndictmentCount(
         offenseId,
         indictmentCountId,
         update,
+        options,
       )
 
     if (numberOfAffectedRows > 1) {
@@ -275,11 +286,13 @@ export class IndictmentCountService {
   async deleteOffense(
     indictmentCountId: string,
     offenseId: string,
+    options: { transaction: Transaction },
   ): Promise<boolean> {
     const numberOfAffectedRows =
       await this.offenseRepositoryService.deleteByIdAndIndictmentCount(
         offenseId,
         indictmentCountId,
+        options,
       )
 
     if (numberOfAffectedRows > 1) {
