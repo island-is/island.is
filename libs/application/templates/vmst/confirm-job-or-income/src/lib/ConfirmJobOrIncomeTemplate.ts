@@ -24,6 +24,7 @@ import {
   WorkshiftPeriodsApi,
   SubmitApi,
 } from '../dataProviders'
+import { getNextIncomeLockBoundary } from '../utils/date'
 import { application as applicationMessages } from './messages'
 
 const ConfirmJobOrIncomeTemplate: ApplicationTemplate<
@@ -81,7 +82,12 @@ const ConfirmJobOrIncomeTemplate: ApplicationTemplate<
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              getNextIncomeLockBoundary(new Date(application.created)),
+          },
           actionCard: {
             tag: {
               label: applicationMessages.actionCardDraft,

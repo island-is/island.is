@@ -1,10 +1,8 @@
 import { MockedProvider } from '@apollo/client/testing'
 import { fireEvent, render, screen } from '@testing-library/react'
 
-import type {
-  Case,
-  Defendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import { LocaleProvider } from '@island.is/localization'
 
 import DefendantInfo from './DefendantInfo'
@@ -19,7 +17,7 @@ jest.mock('@island.is/judicial-system-web/src/utils/hooks', () => ({
 }))
 
 const renderDefendantInfo = (defendant: Partial<Defendant>) => {
-  const workingCase = { id: 'case_id', type: 'CUSTODY' } as Case
+  const workingCase = { id: 'case_id', type: 'CUSTODY' } as WorkingCase
   const onChange = jest.fn()
 
   render(

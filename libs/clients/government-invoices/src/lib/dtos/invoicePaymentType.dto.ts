@@ -4,7 +4,6 @@ export interface InvoicePaymentTypeDto {
   code: string
   name: string
   accountType?: string
-  isConfidential?: boolean
 }
 
 export const mapInvoicePaymentTypeDto = (

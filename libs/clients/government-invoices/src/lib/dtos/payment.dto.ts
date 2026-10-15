@@ -12,7 +12,7 @@ export const mapPaymentDto = (
   data: InvoicePaymentDetailResponseDto,
 ): PaymentDto | null => {
   if (
-    data.erpInvoicePaymentId == null ||
+    !data.paymentGuid ||
     !data.paymentAccountingDate ||
     data.paymentAmountISK == null
   ) {
@@ -26,7 +26,7 @@ export const mapPaymentDto = (
   }
 
   return {
-    id: String(data.erpInvoicePaymentId),
+    id: data.paymentGuid,
     date: new Date(data.paymentAccountingDate),
     amount: data.paymentAmountISK,
     invoice,

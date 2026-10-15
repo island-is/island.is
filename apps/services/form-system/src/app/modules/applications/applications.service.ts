@@ -3,6 +3,8 @@ import {
   ApplicantTypesEnum,
   ApplicationEvents,
   ApplicationStatus,
+  AssetTypes,
+  FamilyTypes,
   FieldTypesEnum,
   FormStatus,
   ListTypesEnum,
@@ -22,7 +24,9 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { jwtDecode } from 'jwt-decode'
 import * as kennitala from 'kennitala'
+import pick from 'lodash/pick'
 import { Op, QueryTypes } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { calculatePruneAt } from '../../../utils/calculatePruneAt'
@@ -89,11 +93,32 @@ export class ApplicationsService {
     private readonly sequelize: Sequelize,
   ) {}
 
+  private isFakeUserAllowed(form: Form, user: User | null): boolean {
+    if (
+      process.env.name !== 'prod' ||
+      form.status !== FormStatus.PUBLISHED ||
+      !user
+    ) {
+      return true
+    }
+
+    const { idp } = jwtDecode<{ idp?: string }>(
+      user.authorization.replace(/^Bearer /i, ''),
+    )
+    return idp !== 'gervimadur'
+  }
+
   async create(slug: string, user: User): Promise<ApplicationResponseDto> {
     const form: Form = await this.getForm(slug)
 
     if (!form) {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    if (!this.isFakeUserAllowed(form, user)) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isLoginTypeAllowed = false
+      return responseDto
     }
 
     if (form.isInaccessible) {
@@ -164,11 +189,36 @@ export class ApplicationsService {
                     ) {
                       return
                     }
-                    const valueJson =
+                    let valueJson =
                       ValueTypeFactory.getClass(
                         field.fieldType,
                         new ValueType(),
                       ) ?? {}
+                    if (field.fieldType === FieldTypesEnum.ASSETS) {
+                      const assetType = field.fieldSettings?.assetType
+                      if (assetType === AssetTypes.REAL_ESTATE) {
+                        valueJson = pick(valueJson, [
+                          'address',
+                          'postalCode',
+                          'municipality',
+                          'propertyNumber',
+                        ])
+                      } else if (assetType === AssetTypes.VEHICLE) {
+                        valueJson = pick(valueJson, [
+                          'color',
+                          'model',
+                          'registrationNumber',
+                        ])
+                      }
+                    } else if (field.fieldType === FieldTypesEnum.FAMILY) {
+                      const keys = ['nationalId', 'name']
+                      if (
+                        field.fieldSettings?.familyType === FamilyTypes.SPOUSE
+                      ) {
+                        keys.push('maritalStatus')
+                      }
+                      valueJson = pick(valueJson, keys)
+                    }
                     if (field.fieldType === FieldTypesEnum.APPLICANT) {
                       const type = field.fieldSettings?.applicantType
                       if (type === ApplicantTypesEnum.INDIVIDUAL) {
@@ -565,6 +615,12 @@ export class ApplicationsService {
         slug,
       )
 
+      if (!this.isFakeUserAllowed(form, user)) {
+        const responseDto = new ApplicationResponseDto()
+        responseDto.isLoginTypeAllowed = false
+        return responseDto
+      }
+
       if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
         const responseDto = new ApplicationResponseDto()
         responseDto.isInaccessible = true
@@ -632,6 +688,12 @@ export class ApplicationsService {
 
     if (!form) {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    if (!this.isFakeUserAllowed(form, user)) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isLoginTypeAllowed = false
+      return responseDto
     }
 
     if (form.isInaccessible) {

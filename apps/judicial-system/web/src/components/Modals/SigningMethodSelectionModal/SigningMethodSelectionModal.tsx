@@ -3,11 +3,9 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { Modal } from '@island.is/judicial-system-web/src/components'
-import type {
-  Case,
-  RequestSignatureResponse,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { RequestSignatureResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useRequestCourtRecordSignatureMutation } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/requestCourtRecordSignature.generated'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
@@ -18,7 +16,7 @@ export type SignatureType = 'ruling' | 'courtRecord'
 type LoadingMethod = 'mobile' | 'audkenni'
 
 interface SigningMethodSelectionModalProps {
-  workingCase: Case
+  workingCase: WorkingCase
   signatureType: SignatureType
   onClose: () => void
   onSignatureRequested: (
@@ -35,59 +33,44 @@ export const SigningMethodSelectionModal: FC<
     undefined,
   )
 
-  // Ruling signature mutation
-  const [requestRulingSignature] = useRequestRulingSignatureMutation({
-    onError: () => {
-      toast.error(formatMessage(errorMessages.requestRulingSignature))
-      setLoadingMethod(undefined)
-    },
-  })
-
-  // Court record signature mutation
-  const [requestCourtRecordSignature] = useRequestCourtRecordSignatureMutation({
-    onError: () => {
-      toast.error(formatMessage(errorMessages.requestCourtRecordSignature))
-      setLoadingMethod(undefined)
-    },
-  })
+  // Errors are reported once, below, after the request settles. An onError
+  // handler here would toast as well and make the mutate promise resolve
+  // without data, so the failure would be reported twice.
+  const [requestRulingSignature] = useRequestRulingSignatureMutation()
+  const [requestCourtRecordSignature] = useRequestCourtRecordSignatureMutation()
 
   const handleMethodSelection = async (isAudkenni: boolean) => {
-    setLoadingMethod(isAudkenni ? 'audkenni' : 'mobile')
+    const method: LoadingMethod = isAudkenni ? 'audkenni' : 'mobile'
+    setLoadingMethod(method)
 
     let response: RequestSignatureResponse | undefined | null = null
     try {
+      const variables = { input: { caseId: workingCase.id, method } }
+
       if (signatureType === 'ruling') {
-        const result = await requestRulingSignature({
-          variables: {
-            input: {
-              caseId: workingCase.id,
-              method: isAudkenni ? 'audkenni' : 'mobile',
-            },
-          },
-        })
+        const result = await requestRulingSignature({ variables })
         response = result.data?.requestRulingSignature
       } else {
-        // courtRecord
-        const result = await requestCourtRecordSignature({
-          variables: {
-            input: {
-              caseId: workingCase.id,
-              method: isAudkenni ? 'audkenni' : 'mobile',
-            },
-          },
-        })
+        const result = await requestCourtRecordSignature({ variables })
         response = result.data?.requestCourtRecordSignature
       }
     } catch {
-      setLoadingMethod(undefined)
+      // Reported below together with an empty response
     }
 
-    if (response) {
-      onSignatureRequested(response, isAudkenni)
-    } else {
-      toast.error(formatMessage(errorMessages.requestCourtRecordSignature))
+    if (!response) {
+      toast.error(
+        formatMessage(
+          signatureType === 'ruling'
+            ? errorMessages.requestRulingSignature
+            : errorMessages.requestCourtRecordSignature,
+        ),
+      )
       setLoadingMethod(undefined)
+      return
     }
+
+    onSignatureRequested(response, isAudkenni)
   }
 
   const courtCaseNumber = workingCase.courtCaseNumber || ''

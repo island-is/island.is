@@ -97,6 +97,41 @@ export class UpdateDefendantInput {
   @Field(() => Boolean, { nullable: true })
   readonly isDefenderChoiceConfirmed?: boolean
 
+  /**********
+   * The appeal proceeding's defender, settled by the court of appeals. The
+   * backend's field rules keep these apart from the district court's defender
+   * above.
+   **********/
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderNationalId?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderName?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderEmail?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderPhoneNumber?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isAppealDefenderWaived?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isAppealDefenderConfirmed?: boolean
+
   @Allow()
   @IsOptional()
   @Field(() => Boolean, { nullable: true })

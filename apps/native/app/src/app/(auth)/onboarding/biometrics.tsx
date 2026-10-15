@@ -79,12 +79,16 @@ export default function BiometricsScreen() {
   }, [])
 
   const onBiometricsPress = () => {
-    authenticateAsync().then((result) => {
+    authenticateAsync({
+      disableDeviceFallback: true,
+      fallbackLabel: '',
+      cancelLabel: intl.formatMessage({ id: 'biometrics.cancel' }),
+    }).then((result) => {
       if (result.success) {
+        preferencesStore.getState().setUseBiometrics(true)
         preferencesStore.setState({
           hasOnboardedBiometrics: true,
           hasAcceptedBiometrics: true,
-          useBiometrics: true,
         })
         nextOnboardingStep()
       }

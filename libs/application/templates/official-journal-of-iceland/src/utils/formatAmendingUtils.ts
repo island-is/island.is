@@ -209,8 +209,11 @@ export const hasAnyChange = (diff: string) => {
   const testElement = asDiv(diff)
   const hasDeletion = !!testElement.querySelector('del')
   const hasInsert = !!testElement.querySelector('ins')
+  // getStructuredDiff marks a changed element that has no text to wrap in
+  // ins/del, such as an inserted or deleted <hr>, with data-diff alone.
+  const hasMarkedElement = !!testElement.querySelector('[data-diff]')
 
-  return hasDeletion || hasInsert
+  return hasDeletion || hasInsert || hasMarkedElement
 }
 
 export const updateAppendixWording = (input: string): string => {

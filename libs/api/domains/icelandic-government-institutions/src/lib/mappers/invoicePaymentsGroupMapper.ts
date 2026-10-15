@@ -14,7 +14,7 @@ export const mapInvoicePaymentsGroup = (
 ): InvoicePaymentsGroup => {
   return {
     id: buildInvoicePaymentsGroupId(
-      String(data.debtor.erpLegalEntityId),
+      data.debtor.debtorGuid,
       data.supplier.legalId,
       scope,
       filters,
@@ -24,7 +24,7 @@ export const mapInvoicePaymentsGroup = (
       name: data.supplier.name,
     },
     debtor: {
-      id: String(data.debtor.erpLegalEntityId),
+      id: data.debtor.debtorGuid,
       legalId: data.debtor.legalId,
       name: data.debtor.name,
     },

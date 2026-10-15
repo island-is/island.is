@@ -28,9 +28,14 @@ export class InvoicesService {
   async getOpenInvoicesPaymentsGroup(
     input: InvoicePaymentsGroupInput,
   ): Promise<InvoicePaymentsGroup | null> {
-    const data = await this.govInvoicesService.getOpenInvoicePaymentsGroup(
-      input,
-    )
+    const data = await this.govInvoicesService.getOpenInvoicePaymentsGroup({
+      supplierLegalId: input.supplierLegalId,
+      debtorGuid: input.debtorId,
+      dateFrom: input.dateFrom,
+      dateTo: input.dateTo,
+      paymentTypeIds: input.paymentTypeIds,
+      ministries: input.ministries,
+    })
 
     if (!data) {
       return null

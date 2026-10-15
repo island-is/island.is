@@ -257,6 +257,13 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: Boolean })
   isAppealDefenderConfirmed?: boolean
 
+  // Whether the defendant wants no counsel for the appeal. Null while the
+  // court of appeals has not recorded a stance, so that an unanswered case and
+  // one that declined counsel do not look alike.
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isAppealDefenderWaived?: boolean
+
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   isSentToPrisonAdmin?: boolean

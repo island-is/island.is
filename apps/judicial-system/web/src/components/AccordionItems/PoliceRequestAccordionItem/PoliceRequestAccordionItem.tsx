@@ -16,18 +16,16 @@ import {
   restrictionsV2,
 } from '@island.is/judicial-system-web/messages'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import AccordionListItem from '@island.is/judicial-system-web/src/components/AccordionListItem/AccordionListItem'
-import type {
-  Case,
-  CaseLegalProvisions,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import { getLegalProvisionTitle } from '@island.is/judicial-system-web/src/utils/laws'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 import * as styles from './PoliceRequestAccordionItem.css'
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
 }
 
 const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {

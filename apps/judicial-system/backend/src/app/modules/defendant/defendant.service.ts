@@ -28,11 +28,18 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { queueMessagesAfterCommit } from '../../middleware'
-import { hasStandingVerdictAppeal } from '../appeal-case/appealCase.helpers'
+import {
+  buildAdvocateConfirmedEvent,
+  hasStandingVerdictAppeal,
+  namesADifferentAdvocate,
+} from '../appeal-case/appealCase.helpers'
 import { AppealCaseService } from '../appeal-case/appealCase.service'
 import { CourtService } from '../court'
 import {
+  AppealCase,
+  AppealEventLogRepositoryService,
   Case,
+  CaseFileRepositoryService,
   CaseRepositoryService,
   Defendant,
   DefendantEventLog,
@@ -51,7 +58,9 @@ export class DefendantService {
   constructor(
     private readonly defendantRepositoryService: DefendantRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
+    private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
+    private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly courtService: CourtService,
     @Inject(forwardRef(() => AppealCaseService))
     private readonly appealCaseService: AppealCaseService,
@@ -366,6 +375,7 @@ export class DefendantService {
     updatedDefendant: UpdateDefendantDto,
     user: User,
     transaction: Transaction,
+    verdictAppealCase = theCase.verdictAppealCase,
   ) {
     if (
       updatedDefendant.indictmentReviewDecision &&
@@ -380,6 +390,30 @@ export class DefendantService {
           user,
         },
         transaction,
+      )
+    }
+
+    // The court of appeals confirming this defendant's defender for the
+    // appeal. Written in the same transaction as the confirmation so the two
+    // cannot drift: the letter of appointment is signed by whoever confirmed
+    // and dated the day they did, and the defendant row keeps neither.
+    //
+    // No verdict appeal means no proceeding to record it against, which a
+    // court of appeals user reaching this defendant through a ruling appeal
+    // alone would be. The confirmation still saves.
+    if (
+      updatedDefendant.isAppealDefenderConfirmed &&
+      !defendant.isAppealDefenderConfirmed &&
+      verdictAppealCase
+    ) {
+      await this.appealEventLogRepositoryService.create(
+        buildAdvocateConfirmedEvent({
+          theCase,
+          appealCase: verdictAppealCase,
+          party: { defendantId: defendant.id },
+          actor: user,
+        }),
+        { transaction },
       )
     }
   }
@@ -401,7 +435,7 @@ export class DefendantService {
     update: UpdateDefendantDto,
     user: User,
     transaction: Transaction,
-  ) {
+  ): Promise<AppealCase | undefined> {
     const decision = update.indictmentReviewDecision
 
     // Only a decision that actually changed is an act of review, and only a
@@ -415,7 +449,10 @@ export class DefendantService {
     }
 
     if (decision === IndictmentCaseReviewDecision.APPEAL) {
-      await this.appealCaseService.create(
+      // Handed back rather than dropped: one request may both register the
+      // appeal and confirm an advocate on it, and the confirmation has no
+      // proceeding to record itself against until this has run.
+      return this.appealCaseService.create(
         theCase,
         user,
         undefined,
@@ -424,8 +461,6 @@ export class DefendantService {
           defendantId: defendant.id,
         },
       )
-
-      return
     }
 
     // Changed away from an appeal. A decision recorded as APPEAL before verdict
@@ -462,10 +497,29 @@ export class DefendantService {
     transaction: Transaction,
     registerVerdictAppeal?: boolean,
   ): Promise<Defendant> {
+    // A confirmation names a person, so one cannot survive the person
+    // changing. The screen makes the court confirm again; the API has to
+    // enforce the same rule, or the letter would print the new defender over
+    // the signatory and date of the confirmation that named the old one.
+    const effectiveUpdate =
+      defendant.isAppealDefenderConfirmed &&
+      namesADifferentAdvocate(
+        {
+          name: defendant.appealDefenderName,
+          nationalId: defendant.appealDefenderNationalId,
+        },
+        {
+          name: update.appealDefenderName,
+          nationalId: update.appealDefenderNationalId,
+        },
+      )
+        ? { ...update, isAppealDefenderConfirmed: false }
+        : update
+
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
       defendant.id,
-      update,
+      effectiveUpdate,
       transaction,
     )
 
@@ -502,23 +556,28 @@ export class DefendantService {
       user,
     )
 
+    // Before the event log, not after: a request that registers the appeal and
+    // confirms an advocate on it in one go has no proceeding to record the
+    // confirmation against until this has run. The two are independent
+    // otherwise - this reads the review decision, that writes events.
+    const registeredVerdictAppeal = registerVerdictAppeal
+      ? await this.handleVerdictAppealUpdates(
+          theCase,
+          defendant,
+          update,
+          user,
+          transaction,
+        )
+      : undefined
+
     await this.handleEventLogUpdates(
       theCase,
       defendant,
       updatedDefendant,
       user,
       transaction,
+      registeredVerdictAppeal ?? theCase.verdictAppealCase,
     )
-
-    if (registerVerdictAppeal) {
-      await this.handleVerdictAppealUpdates(
-        theCase,
-        defendant,
-        update,
-        user,
-        transaction,
-      )
-    }
 
     if (
       update.punishmentType !== undefined &&
@@ -697,12 +756,21 @@ export class DefendantService {
     return updatedDefendant
   }
 
+  // A defendant's files go with the defendant, so they are deleted first in
+  // the same transaction - the delete of the defendant would otherwise fail on
+  // the case file foreign key.
   async delete(
     theCase: Case,
     defendantId: string,
     user: User,
     transaction: Transaction,
   ): Promise<boolean> {
+    await this.caseFileRepositoryService.deleteAllForDefendant(
+      theCase.id,
+      defendantId,
+      { transaction },
+    )
+
     await this.defendantRepositoryService.delete(theCase.id, defendantId, {
       transaction,
     })

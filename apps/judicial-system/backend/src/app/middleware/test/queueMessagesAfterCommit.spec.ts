@@ -55,22 +55,28 @@ describe('messages queued after commit', () => {
     caseId: 'some case id',
   }
 
+  // Both middlewares listen for 'close', so the response keeps every listener
+  // for an event and runs them in registration order, as a real one does.
   const createResponse = () => {
-    const listeners: Record<string, () => Promise<void> | void> = {}
+    const listeners: Record<string, (() => Promise<void> | void)[]> = {}
 
     return {
       on: (event: string, listener: () => Promise<void> | void) => {
-        listeners[event] = listener
+        listeners[event] = [...(listeners[event] ?? []), listener]
       },
-      emit: async (event: string) => await listeners[event]?.(),
+      emit: async (event: string) => {
+        for (const listener of listeners[event] ?? []) {
+          await listener()
+        }
+      },
     }
   }
 
   // Runs work inside a request wrapped by both middlewares, in the order the
-  // app module applies them. The response is handed to work because the
-  // events have to be emitted from inside the request's own async context
-  // for the message flush to find the request's store, as it does in
-  // production. A response ends with 'finish' and then 'close'.
+  // app module applies them. The response is handed to work so that it can
+  // end the request from inside the request's own async context and push
+  // again afterwards. A completed response ends with 'finish' and then
+  // 'close'; an aborted one with 'close' alone.
   const givenARequest = async (
     work: (res: ReturnType<typeof createResponse>) => Promise<void>,
   ) => {
@@ -121,6 +127,62 @@ describe('messages queued after commit', () => {
 
         await res.emit('finish')
         await res.emit('close')
+      })
+
+      expect(commitTransaction).toHaveBeenCalledTimes(1)
+      expect(rollbackTransaction).not.toHaveBeenCalled()
+      expect(messageService.addMessagesToQueue).toHaveBeenCalledTimes(1)
+      expect(messageService.addMessagesToQueue).toHaveBeenCalledWith([message])
+    })
+
+    it('should flush the messages when the client aborts after the commit', async () => {
+      // The response was committed and then aborted before it reached the
+      // client: 'close' without 'finish'. The work is durable, so what it has
+      // to announce is sent all the same.
+      await givenARequest(async (res) => {
+        await getOrCreateTransaction(sequelize as unknown as TypedSequelize)
+
+        queueMessagesAfterCommit(message)
+
+        await lastValueFrom(interceptor.intercept(executionContext, next))
+
+        await res.emit('close')
+      })
+
+      expect(commitTransaction).toHaveBeenCalledTimes(1)
+      expect(rollbackTransaction).not.toHaveBeenCalled()
+      expect(messageService.addMessagesToQueue).toHaveBeenCalledTimes(1)
+      expect(messageService.addMessagesToQueue).toHaveBeenCalledWith([message])
+    })
+
+    it('should flush the messages when the client aborts during the commit', async () => {
+      // The client aborts while COMMIT is in flight: the response closes
+      // before the after commit callbacks have pushed anything, so the flush
+      // on 'close' finds an empty store. The work is durable once the commit
+      // comes back, and the message is sent then, once.
+      let finishCommit: () => void = () => undefined
+      commitTransaction.mockReturnValueOnce(
+        new Promise<void>((resolve) => {
+          finishCommit = resolve
+        }),
+      )
+
+      await givenARequest(async (res) => {
+        await getOrCreateTransaction(sequelize as unknown as TypedSequelize)
+
+        queueMessagesAfterCommit(message)
+
+        const committing = lastValueFrom(
+          interceptor.intercept(executionContext, next),
+        )
+
+        await res.emit('close')
+
+        expect(messageService.addMessagesToQueue).not.toHaveBeenCalled()
+
+        finishCommit()
+
+        await committing
       })
 
       expect(commitTransaction).toHaveBeenCalledTimes(1)
@@ -201,6 +263,29 @@ describe('messages queued after commit', () => {
       })
 
       expect(commitTransaction).not.toHaveBeenCalled()
+      expect(messageService.addMessagesToQueue).toHaveBeenCalledWith([message])
+    })
+
+    it('should flush the messages when the client aborts before the interceptor runs', async () => {
+      // The handler committed a transaction of its own and returned, and the
+      // client aborted while a route-level interceptor was still at work, so
+      // the response closed before the commit interceptor got to the
+      // callbacks. The work is durable, so the message is still sent, once.
+      await givenARequest(async (res) => {
+        await sequelize.transaction(async () => {
+          queueMessagesAfterCommit(message)
+        })
+
+        await res.emit('close')
+
+        expect(messageService.addMessagesToQueue).not.toHaveBeenCalled()
+
+        await lastValueFrom(interceptor.intercept(executionContext, next))
+      })
+
+      expect(commitTransaction).toHaveBeenCalledTimes(1)
+      expect(rollbackTransaction).not.toHaveBeenCalled()
+      expect(messageService.addMessagesToQueue).toHaveBeenCalledTimes(1)
       expect(messageService.addMessagesToQueue).toHaveBeenCalledWith([message])
     })
   })

@@ -76,7 +76,12 @@ export const TreatmentsBox = () => {
                   </Box>
                 </Hidden>
                 <Box paddingTop="smallGutter">
-                  <Icon icon="arrowForward" type="outline" color="blue400" />
+                  <Icon
+                    icon="arrowForward"
+                    type="outline"
+                    color="blue400"
+                    size="medium"
+                  />
                 </Box>
               </Box>
             </Box>

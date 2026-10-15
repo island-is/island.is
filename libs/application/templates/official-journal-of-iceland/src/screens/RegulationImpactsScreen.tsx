@@ -1,7 +1,7 @@
 import { useLocale } from '@island.is/localization'
 import { FormScreen } from '../components/form/FormScreen'
 import { regulation } from '../lib/messages'
-import { InputFields, OJOIFieldBaseProps } from '../lib/types'
+import { OJOIFieldBaseProps } from '../lib/types'
 import {
   AlertMessage,
   Box,
@@ -12,7 +12,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { useRegulationImpacts } from '../hooks/useRegulationImpacts'
 import { useRegulationSearch } from '../hooks/useRegulationSearch'
@@ -24,16 +24,13 @@ import {
   ImpactAmendingSelection,
   EditChange,
   EditCancellation,
+  UpdateTextModal,
 } from '../components/regulations'
 import type { SelRegOption as BaseSelRegOption } from '../components/regulations/ImpactBaseSelection'
 import type { SelRegOption as AmendingSelRegOption } from '../components/regulations/ImpactAmendingSelection'
 import { findAffectedRegulationsInText } from '../utils/regulationGuessers'
 import type { HTMLText, PlainText } from '@island.is/regulations'
-import {
-  formatAmendingBodyWithArticlePrefix,
-  formatAmendingRegTitle,
-} from '../utils/formatAmendingRegulation'
-import { useApplication } from '../hooks/useUpdateApplication'
+import { useAmendingText } from '../hooks/useAmendingText'
 import { useRegulationDraft } from '../hooks/useRegulationDraft'
 import {
   REGULATION_FROM_API_QUERY,
@@ -65,11 +62,35 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
     generateImpactId,
   } = useRegulationImpacts({ draftId })
 
-  // updateApplicationV2 is still needed for advert text generation
-  // (advert title/html are OJOI answer fields, not regulation DB fields)
-  const { updateApplicationV2 } = useApplication({
+  const { isEdited, rememberIfGenerated, generateText } = useAmendingText({
     applicationId: application.id,
   })
+
+  // Text that is still exactly as generated is updated without asking
+  const textCheckedRef = useRef(false)
+  useEffect(() => {
+    if (!isAmending || !impactsLoaded || textCheckedRef.current) return
+    textCheckedRef.current = true
+    rememberIfGenerated(impacts)
+  }, [isAmending, impactsLoaded, impacts, rememberIfGenerated])
+
+  // Impacts to regenerate the text from, waiting on the user's answer
+  const [pendingTextImpacts, setPendingTextImpacts] =
+    useState<RegulationImpactSchema[]>()
+
+  /**
+   * Regenerate the amending regulation text after the impacts change.
+   * What the user submits is what gets published, so ask before
+   * overwriting a text they have edited.
+   */
+  const refreshAdvertText = async (allImpacts: RegulationImpactSchema[]) => {
+    if (!isAmending) return
+    if (isEdited()) {
+      setPendingTextImpacts(allImpacts)
+    } else {
+      await generateText(allImpacts)
+    }
+  }
 
   // Lazy queries for auto-selecting law chapters from impacted regulations
   const [fetchRegulation] = useLazyQuery<{
@@ -79,50 +100,6 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
     fetchPolicy: 'network-only',
   })
   const [updateDraftMutation] = useMutation(UPDATE_DRAFT_REGULATION_MUTATION)
-
-  /**
-   * Generate amending regulation body text from all impact diffs,
-   * then persist it as the default advert HTML content (base64-encoded)
-   * and set the advert title.
-   *
-   * Mirrors the regulations-admin "Uppfæra texta" flow.
-   */
-  const generateAdvertText = useCallback(
-    async (allImpacts: RegulationImpactSchema[]) => {
-      if (allImpacts.length === 0) {
-        await updateApplicationV2({
-          path: InputFields.advert.html,
-          value: '',
-        })
-        await updateApplicationV2({
-          path: InputFields.advert.title,
-          value: '',
-        })
-        return
-      }
-
-      // Generate body text from diffs
-      const additions = formatAmendingBodyWithArticlePrefix(allImpacts)
-      const bodyHtml = additions.join('') as HTMLText
-      const base64Body = Buffer.from(bodyHtml).toString('base64')
-
-      // Generate amending title (without "Reglugerð" prefix in OJOI flow)
-      const title = formatAmendingRegTitle(allImpacts, {
-        skipRegulationPrefix: true,
-      })
-
-      // Persist both to application answers
-      await updateApplicationV2({
-        path: InputFields.advert.html,
-        value: base64Body,
-      })
-      await updateApplicationV2({
-        path: InputFields.advert.title,
-        value: title,
-      })
-    },
-    [updateApplicationV2],
-  )
 
   // Selected regulation for new impact
   const [selRegOption, setSelRegOption] = useState<
@@ -312,10 +289,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
   const handleSaveNewImpact = async (impact: RegulationImpactSchema) => {
     const resolvedDraftId = await ensureDraft(applicationType ?? '')
     await addImpact(impact, resolvedDraftId)
-    const allImpacts = [...impacts, impact]
-    if (isAmending) {
-      await generateAdvertText(allImpacts)
-    }
+    await refreshAdvertText([...impacts, impact])
 
     // Auto-add law chapters from the impacted regulation
     if (
@@ -333,21 +307,16 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
 
   const handleSaveExistingImpact = async (impact: RegulationImpactSchema) => {
     await updateImpact(impact.id, impact)
-    const allImpacts = impacts.map((i) =>
-      i.id === impact.id ? { ...i, ...impact } : i,
+    await refreshAdvertText(
+      impacts.map((i) => (i.id === impact.id ? { ...i, ...impact } : i)),
     )
-    if (isAmending) {
-      await generateAdvertText(allImpacts)
-    }
   }
 
   const handleDeleteImpact = async (id: string) => {
     const removedImpact = impacts.find((i) => i.id === id)
     await removeImpact(id)
     const allImpacts = impacts.filter((i) => i.id !== id)
-    if (isAmending) {
-      await generateAdvertText(allImpacts)
-    }
+    await refreshAdvertText(allImpacts)
 
     // Remove law chapters that came from this regulation (if no other
     // impact still references the same regulation)
@@ -532,6 +501,16 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
             onDeleteImpact={handleDeleteImpact}
           />
         )}
+
+        <UpdateTextModal
+          isVisible={!!pendingTextImpacts}
+          onConfirm={() =>
+            pendingTextImpacts
+              ? generateText(pendingTextImpacts)
+              : Promise.resolve(true)
+          }
+          onClose={() => setPendingTextImpacts(undefined)}
+        />
 
         {nextDisabledReason && (
           <Text variant="small" color="red600">

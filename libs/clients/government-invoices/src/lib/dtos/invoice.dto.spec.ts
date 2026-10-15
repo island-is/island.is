@@ -2,7 +2,7 @@ import { InvoicePaymentDetailResponseDto } from '../../../gen/fetch'
 import { mapInvoiceDto } from './invoice.dto'
 
 const baseData: InvoicePaymentDetailResponseDto = {
-  erpInvoiceId: 22136687,
+  invoiceGuid: '00000000-0000-0000-0000-000000000002',
   invoiceNum: '191552084',
   invoiceCurrencyCode: 'ISK',
   invoiceTotalBaseAmountISK: 16161,
@@ -17,10 +17,10 @@ describe('mapInvoiceDto', () => {
     expect(result?.totalAmount).toBe(16161)
   })
 
-  it('sources id from erpInvoiceId, coerced to a string', () => {
+  it('sources id from invoiceGuid', () => {
     const result = mapInvoiceDto(baseData)
 
-    expect(result?.id).toBe('22136687')
+    expect(result?.id).toBe('00000000-0000-0000-0000-000000000002')
   })
 
   it('sources number from invoiceNum', () => {
@@ -38,33 +38,26 @@ describe('mapInvoiceDto', () => {
     expect(result?.totalAmount).toBeNull()
   })
 
-  it('returns null when erpInvoiceId is missing', () => {
-    const result = mapInvoiceDto({ ...baseData, erpInvoiceId: undefined })
+  it('returns null when invoiceGuid is missing', () => {
+    const result = mapInvoiceDto({ ...baseData, invoiceGuid: undefined })
 
     expect(result).toBeNull()
   })
 
-  it('returns null when invoiceNum is missing', () => {
-    const result = mapInvoiceDto({ ...baseData, invoiceNum: null })
+  it.each([null, undefined])(
+    'keeps an invoice when invoiceNum is %s',
+    (invoiceNum) => {
+      const result = mapInvoiceDto({ ...baseData, invoiceNum })
 
-    expect(result).toBeNull()
-  })
-
-  it('maps a redacted invoice when invoiceNum is missing but invoiceNumRedacted is true', () => {
-    const result = mapInvoiceDto({
-      ...baseData,
-      invoiceNum: null,
-      invoiceNumRedacted: true,
-    })
-
-    expect(result).not.toBeNull()
-    expect(result?.number).toBeNull()
-    expect(result?.numberRedacted).toBe(true)
-  })
+      expect(result).not.toBeNull()
+      expect(result?.number).toBeNull()
+      expect(result?.totalAmount).toBe(16161)
+    },
+  )
 
   it('maps an invoice when invoiceCurrencyCode is missing', () => {
     const result = mapInvoiceDto({ ...baseData, invoiceCurrencyCode: null })
 
-    expect(result?.id).toBe('22136687')
+    expect(result?.id).toBe('00000000-0000-0000-0000-000000000002')
   })
 })

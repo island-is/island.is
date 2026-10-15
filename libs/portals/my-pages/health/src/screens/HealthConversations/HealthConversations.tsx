@@ -273,7 +273,7 @@ const HealthConversations = () => {
       {canCreate && (
         <Box
           display={['inlineFlex', 'inlineFlex', 'inlineFlex', 'none']}
-          marginBottom={3}
+          marginBottom={4}
         >
           <LinkButton
             to={paths.conversationsNew}
@@ -398,7 +398,7 @@ const HealthConversations = () => {
               background="blue100"
               borderColor="blue200"
               borderBottomWidth="standard"
-              display="flex"
+              display={['none', 'none', 'flex']}
               justifyContent="spaceBetween"
               paddingX={2}
               paddingY={2}

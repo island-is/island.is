@@ -1,40 +1,40 @@
 import format from 'date-fns/format'
 import { Injectable } from '@nestjs/common'
+
+import { dataOr404Null } from '@island.is/clients/middlewares'
+import { isDefined } from '@island.is/shared/utils'
+
 import {
-  getV1OpeninvoicesInvoices,
-  getV1OpeninvoicesInvoicesBySupplierLegalIdByErpLegalEntityId,
-  getV1OpeninvoicesSuppliers,
   getV1OpeninvoicesDebtors,
+  getV1OpeninvoicesInvoices,
+  getV1OpeninvoicesInvoicesBySupplierLegalIdByDebtorGuid,
   getV1OpeninvoicesMinistries,
   getV1OpeninvoicesPaymenttypes,
   getV1OpeninvoicesPaymenttypesGroups,
+  getV1OpeninvoicesSuppliers,
 } from '../../gen/fetch'
-import { SearchRequestDto } from './dtos/searchRequest.dto'
-import { InvoiceRequestDto } from './dtos/invoiceRequest.dto'
-import { dataOr404Null } from '@island.is/clients/middlewares'
-import { isDefined } from '@island.is/shared/utils'
-import { SuppliersDto } from './dtos/suppliers.dto'
-import { mapSupplierDto } from './dtos/supplier.dto'
-import { DebtorsDto } from './dtos/debtors.dto'
 import { mapDebtorDto } from './dtos/debtor.dto'
-import { MinistriesDto } from './dtos/ministries.dto'
-import { mapMinistryDto } from './dtos/ministry.dto'
-import { dedupeById } from './utils/dedupe.util'
-import { mapPageInfo } from './utils/pageInfo.util'
-import { InvoicePaymentsGroupRequestDto } from './dtos/invoicePaymentsGroupRequest.dto'
-import {
-  InvoicePaymentsGroupCollectionDto,
-  mapInvoicePaymentsGroupCollectionDto,
-} from './dtos/invoicePaymentsGroupCollection.dto'
+import { DebtorsDto } from './dtos/debtors.dto'
 import {
   InvoicePaymentsGroupDto,
   mapInvoicePaymentsGroupDto,
 } from './dtos/invoicePaymentsGroup.dto'
-import { InvoicePaymentTypesDto } from './dtos/invoicePaymentTypes.dto'
+import {
+  InvoicePaymentsGroupCollectionDto,
+  mapInvoicePaymentsGroupCollectionDto,
+} from './dtos/invoicePaymentsGroupCollection.dto'
+import { InvoicePaymentsGroupRequestDto } from './dtos/invoicePaymentsGroupRequest.dto'
 import { mapInvoicePaymentTypeDto } from './dtos/invoicePaymentType.dto'
-import { InvoicePaymentTypeGroupsDto } from './dtos/invoicePaymentTypeGroups.dto'
 import { mapInvoicePaymentTypeGroupDto } from './dtos/invoicePaymentTypeGroup.dto'
-import { groupIdentity } from './utils/groupIdentity.util'
+import { InvoicePaymentTypeGroupsDto } from './dtos/invoicePaymentTypeGroups.dto'
+import { InvoicePaymentTypesDto } from './dtos/invoicePaymentTypes.dto'
+import { InvoiceRequestDto } from './dtos/invoiceRequest.dto'
+import { MinistriesDto } from './dtos/ministries.dto'
+import { mapMinistryDto } from './dtos/ministry.dto'
+import { SearchRequestDto } from './dtos/searchRequest.dto'
+import { mapSupplierDto } from './dtos/supplier.dto'
+import { SuppliersDto } from './dtos/suppliers.dto'
+import { mapPageInfo } from './utils/pageInfo.util'
 
 @Injectable()
 export class GovernmentInvoicesClientService {
@@ -69,10 +69,10 @@ export class GovernmentInvoicesClientService {
     requestParams: InvoiceRequestDto,
   ): Promise<InvoicePaymentsGroupDto | null> {
     const data = await dataOr404Null(
-      getV1OpeninvoicesInvoicesBySupplierLegalIdByErpLegalEntityId({
+      getV1OpeninvoicesInvoicesBySupplierLegalIdByDebtorGuid({
         path: {
           supplierLegalId: requestParams.supplierLegalId,
-          erpLegalEntityId: requestParams.erpLegalEntityId,
+          debtorGuid: requestParams.debtorGuid,
         },
         query: {
           dateFrom: requestParams.dateFrom
@@ -106,10 +106,7 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      suppliers: dedupeById(
-        (data.suppliers ?? []).map(mapSupplierDto).filter(isDefined),
-        (supplier) => supplier.legalId,
-      ),
+      suppliers: (data.suppliers ?? []).map(mapSupplierDto).filter(isDefined),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }
@@ -127,10 +124,7 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      debtors: dedupeById(
-        (data.debtors ?? []).map(mapDebtorDto).filter(isDefined),
-        (debtor) => debtor.erpLegalEntityId,
-      ),
+      debtors: (data.debtors ?? []).map(mapDebtorDto).filter(isDefined),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }
@@ -148,10 +142,7 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      ministries: dedupeById(
-        (data.ministries ?? []).map(mapMinistryDto).filter(isDefined),
-        (ministry) => ministry.code,
-      ),
+      ministries: (data.ministries ?? []).map(mapMinistryDto).filter(isDefined),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }
@@ -169,12 +160,9 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      invoicePaymentTypes: dedupeById(
-        (data.paymentTypes ?? [])
-          .map(mapInvoicePaymentTypeDto)
-          .filter(isDefined),
-        (paymentType) => paymentType.code,
-      ),
+      invoicePaymentTypes: (data.paymentTypes ?? [])
+        .map(mapInvoicePaymentTypeDto)
+        .filter(isDefined),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }
@@ -192,12 +180,9 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      invoicePaymentTypeGroups: dedupeById(
-        (data.paymentTypeGroups ?? [])
-          .map(mapInvoicePaymentTypeGroupDto)
-          .filter(isDefined),
-        groupIdentity,
-      ),
+      invoicePaymentTypeGroups: (data.paymentTypeGroups ?? [])
+        .map(mapInvoicePaymentTypeGroupDto)
+        .filter(isDefined),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }

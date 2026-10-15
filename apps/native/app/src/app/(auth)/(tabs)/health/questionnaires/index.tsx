@@ -188,7 +188,7 @@ export default function QuestionnairesScreen() {
                       light: theme.color.blue200,
                     }}
                     overlayOpacity={1}
-                    height={140}
+                    height={98}
                     style={{
                       borderRadius: 8,
                       marginBottom: theme.spacing[2],
