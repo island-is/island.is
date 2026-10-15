@@ -26,6 +26,7 @@ import {
 } from '../dataProviders'
 import { getNextIncomeLockBoundary } from '../utils/date'
 import { application as applicationMessages } from './messages'
+import { Features } from '@island.is/feature-flags'
 
 const ConfirmJobOrIncomeTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -39,6 +40,7 @@ const ConfirmJobOrIncomeTemplate: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.ConfirmJobOrIncome.translation,
   dataSchema,
+  featureFlag: Features.isConfirmJobOrIncomeEnabled,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
