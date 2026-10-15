@@ -17,7 +17,7 @@ import {
 } from 'sequelize-typescript'
 import { PaymentFlow } from './paymentFlow.model'
 
-export type FjsDebtPaymentStatus =
+export type DebtSettlementStatus =
   | 'pending'
   | 'registered'
   | 'rejected'
@@ -28,20 +28,20 @@ export type FjsDebtPaymentStatus =
  * with FJS (`payDebt`). One row per flow, since a rejected debt flow is terminal.
  */
 @Table({
-  tableName: 'fjs_debt_payment',
+  tableName: 'debt_settlement',
   // Declared here as well as in the migration because the test database is built by
   // `sequelize.sync()`. Keep both in step with the SQL.
   indexes: [
     {
-      name: 'fjs_debt_payment_payment_flow_id_unique',
+      name: 'debt_settlement_payment_flow_id_unique',
       unique: true,
       fields: ['payment_flow_id'],
     },
   ],
 })
-export class FjsDebtPayment extends Model<
-  InferAttributes<FjsDebtPayment>,
-  InferCreationAttributes<FjsDebtPayment>
+export class DebtSettlement extends Model<
+  InferAttributes<DebtSettlement>,
+  InferCreationAttributes<DebtSettlement>
 > {
   @ApiProperty()
   @PrimaryKey
@@ -75,7 +75,7 @@ export class FjsDebtPayment extends Model<
     allowNull: false,
     defaultValue: 'pending',
   })
-  status!: CreationOptional<FjsDebtPaymentStatus>
+  status!: CreationOptional<DebtSettlementStatus>
 
   @ApiProperty()
   @Column({
@@ -153,4 +153,4 @@ export class FjsDebtPayment extends Model<
   modified!: CreationOptional<Date>
 }
 
-export type FjsDebtPaymentAttributes = InferAttributes<FjsDebtPayment>
+export type DebtSettlementAttributes = InferAttributes<DebtSettlement>

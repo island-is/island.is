@@ -2,26 +2,26 @@ import type { PayInfo, ProblemDetailsDt } from '@island.is/clients/finance-v3'
 
 import type { PaymentMethod } from '../../types'
 
-export interface DebtFjsDebt {
+export interface FjsDebt {
   payId: string
   amount: number
 }
 
-export interface DebtFjsValidateInput {
+export interface FjsDebtValidateInput {
   /** The payment flow id, also the payFlowId FJS knows the payment by. */
   flowId: string
   payerNationalId: string
-  debts: DebtFjsDebt[]
+  debts: FjsDebt[]
   paymentDate: Date
 }
 
-export interface DebtFjsPayInput extends DebtFjsValidateInput {
+export interface FjsDebtPayInput extends FjsDebtValidateInput {
   payInfo: PayInfo
   /** Ends the call earlier than the client wide timeout. */
   timeoutMs?: number
 }
 
-export type DebtFjsValidateOutcome =
+export type FjsDebtValidateOutcome =
   /** FJS accepts the debts and amounts, `paymentOptions` is parsed to our methods. */
   | {
       type: 'valid'
@@ -35,7 +35,7 @@ export type DebtFjsValidateOutcome =
   /** We could not tell, try again later. */
   | { type: 'transient'; error: unknown }
 
-export type DebtFjsPayOutcome =
+export type FjsDebtPayOutcome =
   /** 202 Accepted, FJS owns the payment from here. */
   | { type: 'registered'; dateCreated: string }
   /** FJS rejected the payment, permanently. */

@@ -6,7 +6,7 @@ import {
 } from '@island.is/shared/constants'
 
 import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
-import { FjsDebtPayment } from '../paymentFlow/models'
+import { DebtSettlement } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { RefundController } from './refund.controller'
 import { RefundService } from './refund.service'
@@ -22,7 +22,7 @@ const refundResponse = {
 describe('RefundOrchestrationService', () => {
   let service: RefundOrchestrationService
   let paymentFlowService: { findPaymentFulfillmentForPaymentFlow: jest.Mock }
-  let fjsDebtPaymentModel: { findOne: jest.Mock }
+  let debtSettlementModel: { findOne: jest.Mock }
   let handleCardRefund: jest.SpyInstance
   let logger: { info: jest.Mock; warn: jest.Mock; error: jest.Mock }
 
@@ -32,14 +32,14 @@ describe('RefundOrchestrationService', () => {
         .fn()
         .mockResolvedValue({ paymentMethod: 'card', fjsChargeId: null }),
     }
-    fjsDebtPaymentModel = { findOne: jest.fn().mockResolvedValue(null) }
+    debtSettlementModel = { findOne: jest.fn().mockResolvedValue(null) }
     logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn() }
 
     service = new RefundOrchestrationService(
       {} as RefundService,
       paymentFlowService as unknown as PaymentFlowService,
       {} as BankTransferService,
-      fjsDebtPaymentModel as unknown as typeof FjsDebtPayment,
+      debtSettlementModel as unknown as typeof DebtSettlement,
       logger as never,
     )
     handleCardRefund = jest
@@ -58,7 +58,7 @@ describe('RefundOrchestrationService', () => {
     it.each(['registered', 'needs_reconciliation'])(
       'blocks a debt flow that is %s',
       async (status) => {
-        fjsDebtPaymentModel.findOne.mockResolvedValue({ status })
+        debtSettlementModel.findOne.mockResolvedValue({ status })
 
         await expect(service.refund(input)).rejects.toEqual(
           new BadRequestException(
@@ -73,14 +73,14 @@ describe('RefundOrchestrationService', () => {
     it.each(['pending', 'rejected'])(
       'allows a debt flow that is %s',
       async (status) => {
-        fjsDebtPaymentModel.findOne.mockResolvedValue({ status })
+        debtSettlementModel.findOne.mockResolvedValue({ status })
 
         await expect(service.refund(input)).resolves.toEqual(refundResponse)
       },
     )
 
     it('blocks a pending debt flow whose earlier payDebt had an unknown outcome', async () => {
-      fjsDebtPaymentModel.findOne.mockResolvedValue({
+      debtSettlementModel.findOne.mockResolvedValue({
         status: 'pending',
         hadAmbiguousAttempt: true,
         lastAttemptAt: new Date(Date.now() - 10 * 60_000),
@@ -100,7 +100,7 @@ describe('RefundOrchestrationService', () => {
     })
 
     it('blocks a pending debt flow while a payDebt attempt is running', async () => {
-      fjsDebtPaymentModel.findOne.mockResolvedValue({
+      debtSettlementModel.findOne.mockResolvedValue({
         status: 'pending',
         hadAmbiguousAttempt: false,
         lastAttemptAt: new Date(),
@@ -116,7 +116,7 @@ describe('RefundOrchestrationService', () => {
     })
 
     it('allows a pending debt flow whose last attempt FJS did not process', async () => {
-      fjsDebtPaymentModel.findOne.mockResolvedValue({
+      debtSettlementModel.findOne.mockResolvedValue({
         status: 'pending',
         hadAmbiguousAttempt: false,
         lastAttemptAt: new Date(Date.now() - 10 * 60_000),
@@ -130,20 +130,20 @@ describe('RefundOrchestrationService', () => {
     it.each(['registered', 'needs_reconciliation'])(
       'does not block system refunds of a debt flow that is %s',
       async (status) => {
-        fjsDebtPaymentModel.findOne.mockResolvedValue({ status })
+        debtSettlementModel.findOne.mockResolvedValue({ status })
 
         await expect(service.refund(input, { system: true })).resolves.toEqual(
           refundResponse,
         )
 
-        expect(fjsDebtPaymentModel.findOne).not.toHaveBeenCalled()
+        expect(debtSettlementModel.findOne).not.toHaveBeenCalled()
       },
     )
 
     it('looks at the row of the flow being refunded', async () => {
       await service.refund(input)
 
-      expect(fjsDebtPaymentModel.findOne).toHaveBeenCalledWith({
+      expect(debtSettlementModel.findOne).toHaveBeenCalledWith({
         where: { paymentFlowId: 'flow-1' },
       })
     })

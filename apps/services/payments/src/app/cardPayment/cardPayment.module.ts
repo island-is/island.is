@@ -15,7 +15,7 @@ import {
   PaymentFulfillment,
   PaymentWorkerEvent,
   PaymentFlowDebt,
-  FjsDebtPayment,
+  DebtSettlement,
 } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { ConfigModule } from '@nestjs/config'
@@ -38,7 +38,7 @@ import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
       PaymentFulfillment,
       PaymentWorkerEvent,
       PaymentFlowDebt,
-      FjsDebtPayment,
+      DebtSettlement,
     ]),
     ConfigModule.forRoot({
       isGlobal: true,

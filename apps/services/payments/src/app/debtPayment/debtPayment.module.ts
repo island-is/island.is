@@ -4,17 +4,17 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { FinanceClientV3Module } from '@island.is/clients/finance-v3'
 import { LoggingModule } from '@island.is/logging'
 
-import { FjsDebtPayment, PaymentFlowEvent } from '../paymentFlow/models'
-import { DebtFjsService } from './debtFjs.service'
+import { DebtSettlement, PaymentFlowEvent } from '../paymentFlow/models'
+import { FjsDebtGateway } from './fjsDebt.gateway'
 import { DebtSettlementService } from './debtSettlement.service'
 
 @Module({
   imports: [
     FinanceClientV3Module,
     LoggingModule,
-    SequelizeModule.forFeature([FjsDebtPayment, PaymentFlowEvent]),
+    SequelizeModule.forFeature([DebtSettlement, PaymentFlowEvent]),
   ],
-  providers: [DebtFjsService, DebtSettlementService],
-  exports: [DebtFjsService, DebtSettlementService],
+  providers: [FjsDebtGateway, DebtSettlementService],
+  exports: [DebtSettlementService],
 })
 export class DebtPaymentModule {}

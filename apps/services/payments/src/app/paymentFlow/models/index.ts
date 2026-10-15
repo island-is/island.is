@@ -1,6 +1,6 @@
 export * from './cardPaymentDetails.model'
 export * from './fjsCharge.model'
-export * from './fjsDebtPayment.model'
+export * from './debtSettlement.model'
 export * from './paymentFlow.model'
 export * from './paymentFlowDebt.model'
 export * from './paymentFlowEvent.model'

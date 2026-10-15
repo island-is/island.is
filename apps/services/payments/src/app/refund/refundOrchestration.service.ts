@@ -15,7 +15,7 @@ import { PaymentMethod } from '../../types'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
 import { ATTEMPT_CLAIM_WINDOW_MS } from '../debtPayment/debtSettlement.service'
-import { FjsDebtPayment, PaymentFulfillment } from '../paymentFlow/models'
+import { DebtSettlement, PaymentFulfillment } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import {
   createCardRefundContext,
@@ -50,8 +50,8 @@ export class RefundOrchestrationService {
     private readonly refundService: RefundService,
     private readonly paymentFlowService: PaymentFlowService,
     private readonly bankTransferService: BankTransferService,
-    @InjectModel(FjsDebtPayment)
-    private readonly fjsDebtPaymentModel: typeof FjsDebtPayment,
+    @InjectModel(DebtSettlement)
+    private readonly debtSettlementModel: typeof DebtSettlement,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -297,7 +297,7 @@ export class RefundOrchestrationService {
   private async assertDebtPaymentCanBeRefunded(
     paymentFlowId: string,
   ): Promise<void> {
-    const debtPayment = await this.fjsDebtPaymentModel.findOne({
+    const debtPayment = await this.debtSettlementModel.findOne({
       where: { paymentFlowId },
     })
 

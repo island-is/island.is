@@ -5,7 +5,7 @@ import { TestApp } from '@island.is/testing/nest'
 import { setupTestApp } from '../../../test/setup'
 import {
   CardPaymentDetails,
-  FjsDebtPayment,
+  DebtSettlement,
   PaymentFlow,
   PaymentFlowEvent,
   PaymentFulfillment,
@@ -19,7 +19,7 @@ describe('PaymentFlowService — debt flows for the worker', () => {
   let service: PaymentFlowService
   let paymentFlowModel: typeof PaymentFlow
   let paymentFulfillmentModel: typeof PaymentFulfillment
-  let fjsDebtPaymentModel: typeof FjsDebtPayment
+  let debtSettlementModel: typeof DebtSettlement
   let cardPaymentDetailsModel: typeof CardPaymentDetails
   let paymentFlowEventModel: typeof PaymentFlowEvent
 
@@ -28,7 +28,7 @@ describe('PaymentFlowService — debt flows for the worker', () => {
     service = app.get(PaymentFlowService)
     paymentFlowModel = app.get(getModelToken(PaymentFlow))
     paymentFulfillmentModel = app.get(getModelToken(PaymentFulfillment))
-    fjsDebtPaymentModel = app.get(getModelToken(FjsDebtPayment))
+    debtSettlementModel = app.get(getModelToken(DebtSettlement))
     cardPaymentDetailsModel = app.get(getModelToken(CardPaymentDetails))
     paymentFlowEventModel = app.get(getModelToken(PaymentFlowEvent))
   })
@@ -42,7 +42,7 @@ describe('PaymentFlowService — debt flows for the worker', () => {
   type Options = {
     type?: 'charge' | 'debt'
     paymentMethod?: 'card' | 'bank_transfer'
-    /** Status of the fjs_debt_payment row, no row when left out */
+    /** Status of the debt_settlement row, no row when left out */
     status?: 'pending' | 'registered' | 'rejected' | 'needs_reconciliation'
     lastAttemptMinutesAgo?: number
     fulfillmentMinutesAgo?: number
@@ -96,7 +96,7 @@ describe('PaymentFlowService — debt flows for the worker', () => {
     }
 
     if (status) {
-      await fjsDebtPaymentModel.create({
+      await debtSettlementModel.create({
         paymentFlowId: flow.id,
         amount: 1000,
         status,

@@ -15,7 +15,7 @@ import {
   PaymentFulfillment,
   PaymentWorkerEvent,
   PaymentFlowDebt,
-  FjsDebtPayment,
+  DebtSettlement,
 } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { InvoicePaymentService } from './invoicePayment.service'
@@ -36,7 +36,7 @@ import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
       PaymentFulfillment,
       PaymentWorkerEvent,
       PaymentFlowDebt,
-      FjsDebtPayment,
+      DebtSettlement,
     ]),
     ConfigModule.forRoot({
       load: [PaymentFlowModuleConfig, JwksConfig, InvoicePaymentModuleConfig],

@@ -94,7 +94,7 @@ flowchart TD
     P2 -->|"ambiguous or transient"| PE
 ```
 
-The `fjs_debt_payment` row, one per flow. Only `pending` changes, the other states are final.
+The `debt_settlement` row, one per flow. Only `pending` changes, the other states are final.
 
 ```mermaid
 stateDiagram-v2
@@ -126,7 +126,7 @@ stateDiagram-v2
 
 ```mermaid
 flowchart TD
-    RQ["POST /v1/payments/refund"] --> S{"fjs_debt_payment status"}
+    RQ["POST /v1/payments/refund"] --> S{"debt_settlement status"}
     S -->|"registered or needs_reconciliation"| NO1["Refused: DebtPaymentRegisteredCannotBeRefunded"]
     S -->|"pending, with hadAmbiguousAttempt or an attempt in the last 60 s"| NO2["Refused: DebtPaymentRegisteredCannotBeRefunded, warn log with debtRefundRefused"]
     S -->|"no row, other pending, or rejected"| M{"Paid with"}

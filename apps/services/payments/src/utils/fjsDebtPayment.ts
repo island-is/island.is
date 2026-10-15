@@ -17,10 +17,10 @@ export const DEBT_PAYMENT_PRODUCT_TITLE = 'Greiðsla skulda'
 /** A debt flow is closed once FJS rejected its settlement, the payer has to start a new flow. */
 export const isDebtFlowClosed = (paymentFlow: {
   type?: string | null
-  fjsDebtPayment?: { status?: string | null } | null
+  debtSettlement?: { status?: string | null } | null
 }): boolean =>
   paymentFlow.type === 'debt' &&
-  paymentFlow.fjsDebtPayment?.status === 'rejected'
+  paymentFlow.debtSettlement?.status === 'rejected'
 
 /** Card kind used while building payInfo, each FJS client maps it to its own enum. */
 export type FjsPaymentKind = 'debit' | 'credit' | 'transfer'

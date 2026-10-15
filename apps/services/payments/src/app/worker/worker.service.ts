@@ -331,7 +331,7 @@ export class WorkerService {
 
     // FJS rejected the payment earlier but the card refund did not go through, only the refund
     // is left to do.
-    if (paymentFlow.fjsDebtPayment?.status === 'rejected') {
+    if (paymentFlow.debtSettlement?.status === 'rejected') {
       // Refunding again would pay the payer twice, see finishRefundedRollback
       if (
         await this.paymentFlowService.isCardPaymentRefunded(

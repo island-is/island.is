@@ -19,7 +19,7 @@ import {
 import { BankTransferPayment } from '../../bankTransferPayment/models'
 import { CardPaymentDetails } from './cardPaymentDetails.model'
 import { FjsCharge } from './fjsCharge.model'
-import { FjsDebtPayment } from './fjsDebtPayment.model'
+import { DebtSettlement } from './debtSettlement.model'
 import { PaymentFlowDebt } from './paymentFlowDebt.model'
 import { PaymentFlowEvent } from './paymentFlowEvent.model'
 import { PaymentFulfillment } from './paymentFulfillment.model'
@@ -166,8 +166,8 @@ export class PaymentFlow extends Model<
   @HasMany(() => PaymentFlowDebt, 'paymentFlowId')
   debts?: PaymentFlowDebt[]
 
-  @HasOne(() => FjsDebtPayment, 'paymentFlowId')
-  fjsDebtPayment?: FjsDebtPayment
+  @HasOne(() => DebtSettlement, 'paymentFlowId')
+  debtSettlement?: DebtSettlement
 
   @ApiProperty({ type: [PaymentFlowEvent] })
   @HasMany(() => PaymentFlowEvent, 'paymentFlowId')

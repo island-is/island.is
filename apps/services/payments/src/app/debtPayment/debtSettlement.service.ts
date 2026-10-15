@@ -10,12 +10,16 @@ import { retry } from '@island.is/shared/utils/server'
 
 import { FjsPayInfo, toFjsDebtPayInfo } from '../../utils/fjsDebtPayment'
 import {
-  FjsDebtPayment,
-  FjsDebtPaymentAttributes,
+  DebtSettlement,
+  DebtSettlementAttributes,
   PaymentFlowEvent,
 } from '../paymentFlow/models'
-import { DebtFjsService } from './debtFjs.service'
-import type { DebtFjsDebt } from './debtFjs.types'
+import { FjsDebtGateway } from './fjsDebt.gateway'
+import type {
+  FjsDebt,
+  FjsDebtValidateInput,
+  FjsDebtValidateOutcome,
+} from './fjsDebt.types'
 
 /** The call to FJS ends well inside the 60s step timeout of the payment sagas. */
 const PAY_DEBT_TIMEOUT_MS = 15_000
@@ -30,7 +34,7 @@ export const ATTEMPT_CLAIM_WINDOW_MS = 60_000
 export type DebtSettlementFlow = {
   id: string
   payerNationalId: string
-  debts?: DebtFjsDebt[]
+  debts?: FjsDebt[]
 }
 
 export type DebtSettlementResult = (
@@ -63,19 +67,27 @@ export type DebtSettlementOutcome =
  * Registers a captured debt payment with FJS (`payDebt`). Shared by the payment flows, which
  * call it right after the money is captured, and by the worker, which retries what is left.
  *
- * The state is the `fjs_debt_payment` row, one per flow:
+ * The state is the `debt_settlement` row, one per flow:
  * pending -> registered | rejected | needs_reconciliation. The last three are final.
  */
 @Injectable()
 export class DebtSettlementService {
   constructor(
-    @InjectModel(FjsDebtPayment)
-    private readonly fjsDebtPaymentModel: typeof FjsDebtPayment,
+    @InjectModel(DebtSettlement)
+    private readonly debtSettlementModel: typeof DebtSettlement,
     @InjectModel(PaymentFlowEvent)
     private readonly paymentFlowEventModel: typeof PaymentFlowEvent,
-    private readonly debtFjsService: DebtFjsService,
+    private readonly fjsDebtGateway: FjsDebtGateway,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  /**
+   * Asks FJS whether the debts can be paid, without touching the settlement state. The gateway is
+   * not exported, so `payDebt` is only reached through `attempt` and its guards.
+   */
+  validate(input: FjsDebtValidateInput): Promise<FjsDebtValidateOutcome> {
+    return this.fjsDebtGateway.validate(input)
+  }
 
   /**
    * One attempt at registering the payment, with no retry loop: callers that wait on it are
@@ -88,7 +100,7 @@ export class DebtSettlementService {
     const debts = flow.debts ?? []
     const amount = debts.reduce((sum, debt) => sum + debt.amount, 0)
 
-    await this.fjsDebtPaymentModel.findOrCreate({
+    await this.debtSettlementModel.findOrCreate({
       where: { paymentFlowId: flow.id },
       defaults: {
         paymentFlowId: flow.id,
@@ -112,12 +124,12 @@ export class DebtSettlementService {
     // Until the outcome is saved the call counts as ambiguous, so a crash or a failed write after a
     // 202 can not make a later 400 look like a clean rejection and refund a registered payment.
     // If this write fails nothing has been sent to FJS, and throwing is safe.
-    await this.fjsDebtPaymentModel.update(
+    await this.debtSettlementModel.update(
       { hadAmbiguousAttempt: true },
       { where: { paymentFlowId: flow.id, status: 'pending' } },
     )
 
-    const outcome = await this.debtFjsService.pay({
+    const outcome = await this.fjsDebtGateway.pay({
       flowId: flow.id,
       payerNationalId: flow.payerNationalId,
       debts,
@@ -195,12 +207,12 @@ export class DebtSettlementService {
    */
   private async persistAfterPay(
     paymentFlowId: string,
-    values: Partial<FjsDebtPaymentAttributes>,
+    values: Partial<DebtSettlementAttributes>,
   ): Promise<boolean> {
     try {
       await retry(
         () =>
-          this.fjsDebtPaymentModel.update(values, {
+          this.debtSettlementModel.update(values, {
             where: { paymentFlowId, status: 'pending' },
           }),
         {
@@ -226,8 +238,8 @@ export class DebtSettlementService {
    */
   private async claimAttempt(
     paymentFlowId: string,
-  ): Promise<FjsDebtPayment | null> {
-    const [count, rows] = await this.fjsDebtPaymentModel.update(
+  ): Promise<DebtSettlement | null> {
+    const [count, rows] = await this.debtSettlementModel.update(
       { attempts: literal('attempts + 1') as never, lastAttemptAt: new Date() },
       {
         where: {
@@ -253,7 +265,7 @@ export class DebtSettlementService {
   private async currentOutcome(
     paymentFlowId: string,
   ): Promise<DebtSettlementOutcome> {
-    const row = await this.fjsDebtPaymentModel.findOne({
+    const row = await this.debtSettlementModel.findOne({
       where: { paymentFlowId },
     })
     const problem = row?.lastError as ProblemDetailsDt | undefined
@@ -282,7 +294,7 @@ export class DebtSettlementService {
    * `row` is the claimed row, so its flag is what earlier attempts left.
    */
   private async onAlreadyRegistered(
-    row: FjsDebtPayment,
+    row: DebtSettlement,
     problem?: ProblemDetailsDt,
   ): Promise<DebtSettlementOutcome> {
     if (!row.hadAmbiguousAttempt) {
@@ -308,7 +320,7 @@ export class DebtSettlementService {
     paymentFlowId: string,
     problem?: ProblemDetailsDt,
   ): Promise<DebtSettlementOutcome> {
-    const [count] = await this.fjsDebtPaymentModel.update(
+    const [count] = await this.debtSettlementModel.update(
       // Only reached when no earlier attempt was ambiguous, see the callers
       {
         status: 'rejected',
@@ -336,7 +348,7 @@ export class DebtSettlementService {
     paymentFlowId: string,
     problem?: ProblemDetailsDt,
   ): Promise<DebtSettlementOutcome> {
-    const [count] = await this.fjsDebtPaymentModel
+    const [count] = await this.debtSettlementModel
       .update(
         { status: 'needs_reconciliation', lastError: problem ?? {} },
         { where: { paymentFlowId, status: 'pending' } },

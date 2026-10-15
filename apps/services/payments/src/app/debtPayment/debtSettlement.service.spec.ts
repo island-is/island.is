@@ -8,11 +8,11 @@ import {
   FjsPayInfo,
 } from '../../utils/fjsDebtPayment'
 import {
-  FjsDebtPayment,
+  DebtSettlement,
   PaymentFlow,
   PaymentFlowEvent,
 } from '../paymentFlow/models'
-import { DebtFjsService } from './debtFjs.service'
+import { FjsDebtGateway } from './fjsDebt.gateway'
 import { DebtSettlementService } from './debtSettlement.service'
 
 const problem = {
@@ -56,7 +56,7 @@ describe('DebtSettlementService', () => {
   let app: TestApp
   let service: DebtSettlementService
   let paymentFlowModel: typeof PaymentFlow
-  let fjsDebtPaymentModel: typeof FjsDebtPayment
+  let debtSettlementModel: typeof DebtSettlement
   let paymentFlowEventModel: typeof PaymentFlowEvent
   let validate: jest.SpyInstance
   let pay: jest.SpyInstance
@@ -65,12 +65,12 @@ describe('DebtSettlementService', () => {
     app = await setupTestApp()
     service = app.get(DebtSettlementService)
     paymentFlowModel = app.get(getModelToken(PaymentFlow))
-    fjsDebtPaymentModel = app.get(getModelToken(FjsDebtPayment))
+    debtSettlementModel = app.get(getModelToken(DebtSettlement))
     paymentFlowEventModel = app.get(getModelToken(PaymentFlowEvent))
 
-    const debtFjsService = app.get(DebtFjsService)
-    validate = jest.spyOn(debtFjsService, 'validate')
-    pay = jest.spyOn(debtFjsService, 'pay')
+    const fjsDebtGateway = app.get(FjsDebtGateway)
+    validate = jest.spyOn(fjsDebtGateway, 'validate')
+    pay = jest.spyOn(fjsDebtGateway, 'pay')
   })
 
   beforeEach(() => {
@@ -96,11 +96,11 @@ describe('DebtSettlementService', () => {
   }
 
   const getRow = (paymentFlowId: string) =>
-    fjsDebtPaymentModel.findOne({ where: { paymentFlowId } })
+    debtSettlementModel.findOne({ where: { paymentFlowId } })
 
   /** Makes the last attempt look old enough for the next one to be claimed. */
   const ageLastAttempt = (paymentFlowId: string) =>
-    fjsDebtPaymentModel.update(
+    debtSettlementModel.update(
       { lastAttemptAt: new Date(Date.now() - 5 * 60 * 1000) },
       { where: { paymentFlowId } },
     )
@@ -354,7 +354,7 @@ describe('DebtSettlementService', () => {
       ['needs_reconciliation', 'reconcile'],
     ] as const)('is final once %s', async (status, type) => {
       const flow = await createFlow()
-      await fjsDebtPaymentModel.create({
+      await debtSettlementModel.create({
         paymentFlowId: flow.id,
         amount: 15000,
         status,

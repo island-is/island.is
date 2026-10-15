@@ -34,7 +34,7 @@ import {
   PaymentFlowAttributes,
   PaymentFlowCharge,
   PaymentFlowDebt,
-  FjsDebtPayment,
+  DebtSettlement,
   PaymentFlowEvent,
   FjsCharge,
   CardPaymentDetails,
@@ -78,7 +78,7 @@ import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
 import { BankTransferPayment } from '../bankTransferPayment/models'
 import { determinePaymentMethods } from './paymentFlow.utils'
-import { DebtFjsService } from '../debtPayment/debtFjs.service'
+import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
 import {
   DEBT_PAYMENT_PRODUCT_TITLE,
   FJS_DEBT_ORGANISATION_ID,
@@ -143,7 +143,7 @@ export class PaymentFlowService {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
-    private readonly debtFjsService: DebtFjsService,
+    private readonly debtSettlementService: DebtSettlementService,
     private jwksConfigService: JwksConfigService,
     @Inject(PaymentFlowModuleConfig.KEY)
     private readonly paymentFlowConfig: ConfigType<
@@ -313,7 +313,7 @@ export class PaymentFlowService {
     const paymentFlowId = uuid()
 
     try {
-      const validation = await this.debtFjsService.validate({
+      const validation = await this.debtSettlementService.validate({
         flowId: paymentFlowId,
         payerNationalId: input.payerNationalId,
         debts,
@@ -430,16 +430,16 @@ export class PaymentFlowService {
   async validateDebtPaymentFlow(
     paymentFlow: Pick<
       PaymentFlowAttributes,
-      'id' | 'payerNationalId' | 'debts' | 'fjsDebtPayment'
+      'id' | 'payerNationalId' | 'debts' | 'debtSettlement'
     >,
     paymentMethod: PaymentMethod,
   ): Promise<void> {
     // A rejected flow is terminal, the payer starts again from the application.
-    if (paymentFlow.fjsDebtPayment?.status === 'rejected') {
+    if (paymentFlow.debtSettlement?.status === 'rejected') {
       throw new BadRequestException(DebtPaymentErrorCode.DebtPaymentFlowClosed)
     }
 
-    const validation = await this.debtFjsService.validate({
+    const validation = await this.debtSettlementService.validate({
       flowId: paymentFlow.id,
       payerNationalId: paymentFlow.payerNationalId,
       debts: paymentFlow.debts ?? [],
@@ -688,7 +688,7 @@ export class PaymentFlowService {
             model: PaymentFlowDebt,
           },
           {
-            model: FjsDebtPayment,
+            model: DebtSettlement,
             required: false,
           },
           {
@@ -1565,7 +1565,7 @@ export class PaymentFlowService {
 
   /**
    * Finds paid debt flows whose payment is not registered with FJS yet, for the payment worker:
-   * no `fjs_debt_payment` row or a pending one, and no attempt lately. Also card flows FJS
+   * no `debt_settlement` row or a pending one, and no attempt lately. Also card flows FJS
    * rejected whose refund is still due: a refund the worker started that failed is retried until
    * the fulfillment is gone. A refund that failed while a payment saga rolled back is not, the
    * rollback removed the fulfillment first, and the card is refunded by hand. Rejected bank
@@ -1583,11 +1583,11 @@ export class PaymentFlowService {
         [Op.and]: [
           {
             [Op.or]: [
-              { '$fjsDebtPayment.id$': null },
-              { '$fjsDebtPayment.status$': 'pending' },
+              { '$debtSettlement.id$': null },
+              { '$debtSettlement.status$': 'pending' },
               {
                 [Op.and]: [
-                  { '$fjsDebtPayment.status$': 'rejected' },
+                  { '$debtSettlement.status$': 'rejected' },
                   { '$paymentFulfillments.payment_method$': 'card' },
                 ],
               },
@@ -1595,8 +1595,8 @@ export class PaymentFlowService {
           },
           {
             [Op.or]: [
-              { '$fjsDebtPayment.last_attempt_at$': null },
-              { '$fjsDebtPayment.last_attempt_at$': { [Op.lt]: cutoffTime } },
+              { '$debtSettlement.last_attempt_at$': null },
+              { '$debtSettlement.last_attempt_at$': { [Op.lt]: cutoffTime } },
             ],
           },
         ],
@@ -1611,7 +1611,7 @@ export class PaymentFlowService {
             isDeleted: false,
           },
         },
-        { model: FjsDebtPayment, required: false },
+        { model: DebtSettlement, required: false },
         { model: PaymentFlowDebt, separate: true },
         {
           model: CardPaymentDetails,
@@ -2027,7 +2027,7 @@ export class PaymentFlowService {
           as: 'debts',
         },
         {
-          model: FjsDebtPayment,
+          model: DebtSettlement,
           required: false,
         },
       ],

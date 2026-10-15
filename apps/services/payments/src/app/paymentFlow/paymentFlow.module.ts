@@ -15,7 +15,7 @@ import {
   PaymentFulfillment,
   PaymentWorkerEvent,
   PaymentFlowDebt,
-  FjsDebtPayment,
+  DebtSettlement,
 } from './models'
 import { JwksModule } from '../jwks/jwks.module'
 import { ConfigModule } from '@nestjs/config'
@@ -35,7 +35,7 @@ import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
       PaymentFulfillment,
       PaymentWorkerEvent,
       PaymentFlowDebt,
-      FjsDebtPayment,
+      DebtSettlement,
     ]),
     ConfigModule.forRoot({
       load: [PaymentFlowModuleConfig, JwksConfig],

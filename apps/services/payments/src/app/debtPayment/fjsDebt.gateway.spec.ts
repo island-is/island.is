@@ -6,7 +6,7 @@ import type { ProblemDetailsDt } from '@island.is/clients/finance-v3'
 import { FetchError } from '@island.is/clients/middlewares'
 
 import { PaymentMethod } from '../../types'
-import { DebtFjsService } from './debtFjs.service'
+import { FjsDebtGateway } from './fjsDebt.gateway'
 
 const problem: ProblemDetailsDt = {
   title: 'Bad request',
@@ -65,18 +65,18 @@ const payInfo = {
   payableAmount: 15000,
 }
 
-describe('DebtFjsService', () => {
+describe('FjsDebtGateway', () => {
   let financeClient: {
     validatePayment: jest.Mock
     payDebt: jest.Mock
   }
   let logger: { warn: jest.Mock; error: jest.Mock; info: jest.Mock }
-  let service: DebtFjsService
+  let service: FjsDebtGateway
 
   beforeEach(() => {
     financeClient = { validatePayment: jest.fn(), payDebt: jest.fn() }
     logger = { warn: jest.fn(), error: jest.fn(), info: jest.fn() }
-    service = new DebtFjsService(
+    service = new FjsDebtGateway(
       financeClient as unknown as FinanceClientV3Service,
       logger as never,
     )

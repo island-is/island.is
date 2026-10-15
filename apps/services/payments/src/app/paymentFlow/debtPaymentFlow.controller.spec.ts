@@ -18,7 +18,7 @@ import {
   FJS_DEBT_ORGANISATION_ID,
 } from '../../utils/fjsDebtPayment'
 import { CreateDebtPaymentFlowInput } from './dtos'
-import { PaymentFlow, FjsDebtPayment, PaymentFlowDebt } from './models'
+import { PaymentFlow, DebtSettlement, PaymentFlowDebt } from './models'
 import { PaymentFlowService } from './paymentFlow.service'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -335,7 +335,7 @@ describe('DebtPaymentFlowController', () => {
       const create = await server.post('/v1/payments/debts').send(payload)
       const flowId = getFlowId(create.body.urls)
 
-      await app.get(getModelToken(FjsDebtPayment)).create({
+      await app.get(getModelToken(DebtSettlement)).create({
         paymentFlowId: flowId,
         amount: 12500,
         status: 'rejected',
@@ -480,7 +480,7 @@ describe('DebtPaymentFlowController', () => {
           service.validateDebtPaymentFlow(
             {
               ...flow,
-              fjsDebtPayment: { status: 'rejected' } as never,
+              debtSettlement: { status: 'rejected' } as never,
             },
             PaymentMethod.CARD,
           ),

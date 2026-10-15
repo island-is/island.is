@@ -1,7 +1,7 @@
 'use strict'
 
-const TABLE = 'fjs_debt_payment'
-const ENUM_NAME = 'enum_fjs_debt_payment_status'
+const TABLE = 'debt_settlement'
+const ENUM_NAME = 'enum_debt_settlement_status'
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {

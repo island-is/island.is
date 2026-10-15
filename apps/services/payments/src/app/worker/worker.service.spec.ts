@@ -597,7 +597,7 @@ describe('WorkerService', () => {
 
     const createDebtCardFlow = (
       overrides: Parameters<typeof createMockFlow>[0] & {
-        fjsDebtPayment?: { status: string }
+        debtSettlement?: { status: string }
       } = {},
     ) => ({
       ...createMockFlow({ id: 'debt-card', ...overrides }),
@@ -780,7 +780,7 @@ describe('WorkerService', () => {
 
     it('only retries the refund of a card payment that was rejected before', async () => {
       mockDebtSweep([
-        createDebtCardFlow({ fjsDebtPayment: { status: 'rejected' } }),
+        createDebtCardFlow({ debtSettlement: { status: 'rejected' } }),
       ])
 
       await service.run()
@@ -796,7 +796,7 @@ describe('WorkerService', () => {
     describe('when the payment saga refunded the card but did not finish its rollback', () => {
       beforeEach(() => {
         mockDebtSweep([
-          createDebtCardFlow({ fjsDebtPayment: { status: 'rejected' } }),
+          createDebtCardFlow({ debtSettlement: { status: 'rejected' } }),
         ])
         paymentFlowService.isCardPaymentRefunded.mockResolvedValueOnce(true)
       })

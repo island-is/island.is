@@ -13,22 +13,22 @@ import {
   parsePaymentOptions,
 } from '../../utils/fjsDebtPayment'
 import type {
-  DebtFjsDebt,
-  DebtFjsPayInput,
-  DebtFjsPayOutcome,
-  DebtFjsValidateInput,
-  DebtFjsValidateOutcome,
-} from './debtFjs.types'
+  FjsDebt,
+  FjsDebtPayInput,
+  FjsDebtPayOutcome,
+  FjsDebtValidateInput,
+  FjsDebtValidateOutcome,
+} from './fjsDebt.types'
 
 const toRequestBody = ({
   flowId,
   payerNationalId,
   debts,
   paymentDate,
-}: DebtFjsValidateInput) => ({
+}: FjsDebtValidateInput) => ({
   payFlowId: flowId,
   nationalId: payerNationalId,
-  totalAmount: debts.reduce((sum: number, debt: DebtFjsDebt) => {
+  totalAmount: debts.reduce((sum: number, debt: FjsDebt) => {
     return sum + debt.amount
   }, 0),
   paymentDate: formatFjsDebtPaymentDate(paymentDate),
@@ -101,13 +101,13 @@ const hasErrorCode = (problem: ProblemDetailsDt | undefined, code: string) =>
  * on, so that none of them has to read raw client errors.
  */
 @Injectable()
-export class DebtFjsService {
+export class FjsDebtGateway {
   constructor(
     private readonly financeClient: FinanceClientV3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async validate(input: DebtFjsValidateInput): Promise<DebtFjsValidateOutcome> {
+  async validate(input: FjsDebtValidateInput): Promise<FjsDebtValidateOutcome> {
     try {
       const result = await this.financeClient.validatePayment(
         toRequestBody(input),
@@ -154,7 +154,7 @@ export class DebtFjsService {
     }
   }
 
-  async pay(input: DebtFjsPayInput): Promise<DebtFjsPayOutcome> {
+  async pay(input: FjsDebtPayInput): Promise<FjsDebtPayOutcome> {
     try {
       const body = { ...toRequestBody(input), payInfo: input.payInfo }
       const result = input.timeoutMs
