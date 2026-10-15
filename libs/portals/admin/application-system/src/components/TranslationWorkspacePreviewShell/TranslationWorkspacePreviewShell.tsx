@@ -121,7 +121,6 @@ export const TranslationWorkspacePreviewShell = ({
         previewFieldValues,
       ),
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [previewScreens, previewFieldValues, activeLocale])
 
   const localeCtx = useMemo(
