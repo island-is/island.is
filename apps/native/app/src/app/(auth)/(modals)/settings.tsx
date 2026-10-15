@@ -489,12 +489,7 @@ export default function SettingsScreen() {
                     { biometricType: biometricType.text },
                   )
                 : intl.formatMessage(
-                    {
-                      id:
-                        Platform.OS === 'android'
-                          ? 'onboarding.biometrics.strongNotEnrolled'
-                          : 'onboarding.biometrics.notEnrolled',
-                    },
+                    { id: 'onboarding.biometrics.notEnrolled' },
                     { biometricType: biometricType.text },
                   )
             }
@@ -509,9 +504,9 @@ export default function SettingsScreen() {
                         cancelLabel: intl.formatMessage({
                           id: 'biometrics.cancel',
                         }),
-                        biometricsSecurityLevel: 'strong',
                       }).then((result) => {
-                        if (result.success && setUseBiometrics(true)) {
+                        if (result.success) {
+                          setUseBiometrics(true)
                           preferencesStore.setState({
                             hasAcceptedBiometrics: true,
                           })

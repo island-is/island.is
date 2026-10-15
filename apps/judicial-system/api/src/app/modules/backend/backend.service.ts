@@ -66,6 +66,7 @@ import { Subpoena } from '../subpoena'
 import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
+import { withTraceContext } from './traceContext'
 
 type Transformer<TResult> = (data: never) => TResult
 
@@ -132,17 +133,18 @@ export class BackendService {
     options: RequestInit,
     transformer?: Transformer<TResult>,
   ): Promise<TResult> {
-    return fetch(`${this.config.backendUrl}/api/${route}`, options).then(
-      async (res) => {
-        const response = await res.json()
+    return fetch(
+      `${this.config.backendUrl}/api/${route}`,
+      withTraceContext(options),
+    ).then(async (res) => {
+      const response = await res.json()
 
-        if (res.ok) {
-          return transformer ? transformer(response as never) : response
-        }
+      if (res.ok) {
+        return transformer ? transformer(response as never) : response
+      }
 
-        throw new ProblemError(response)
-      },
-    )
+      throw new ProblemError(response)
+    })
   }
 
   private get<TResult>(
