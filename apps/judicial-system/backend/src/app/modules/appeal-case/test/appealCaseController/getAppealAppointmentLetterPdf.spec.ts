@@ -11,6 +11,7 @@ import {
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
+  publicProsecutorStaffRule,
 } from '../../../../guards'
 import { CaseExistsGuard } from '../../../case/guards/caseExists.guard'
 import { CaseReadGuard } from '../../../case/guards/caseRead.guard'
@@ -185,10 +186,11 @@ describe('AppealCaseController - get appeal appointment letter pdf', () => {
   })
 })
 
-// The court of appeals is the only reader of its own letter, and the route it
-// was modelled on - the verdict service certificate - carries no court of
-// appeals rule at all, so getting this wrong would be invisible: the specs
-// above call the handler directly and never consult a guard.
+// The route it was modelled on - the verdict service certificate - carries no
+// court of appeals rule at all, so getting this wrong would be invisible: the
+// specs above call the handler directly and never consult a guard. The
+// advocate the letter appoints reads it through the limited access route, not
+// this one.
 describe('AppealCaseController - appointment letter access', () => {
   describe.each([
     [
@@ -203,13 +205,14 @@ describe('AppealCaseController - appointment letter access', () => {
     ],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ])('the %s letter', (_name, handler, partyGuard: any) => {
-    it('is open to the court of appeals and nobody else', () => {
+    it('is open to the court of appeals and the public prosecution office, and nobody else', () => {
       const rules = Reflect.getMetadata('roles-rules', handler)
 
       expect(rules).toEqual([
         courtOfAppealsJudgeRule,
         courtOfAppealsRegistrarRule,
         courtOfAppealsAssistantRule,
+        publicProsecutorStaffRule,
       ])
     })
 

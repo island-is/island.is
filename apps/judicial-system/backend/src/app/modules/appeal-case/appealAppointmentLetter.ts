@@ -1,3 +1,7 @@
+import type { Response } from 'express'
+
+import { NotFoundException } from '@nestjs/common'
+
 import { AppealCaseState } from '@island.is/judicial-system/types'
 
 import {
@@ -7,6 +11,12 @@ import {
   getCourtNameInGenitive,
   NOT_RECORDED,
 } from '../../formatters/generatedPdfs/appealAppointmentLetterPdf'
+// Types only: the controllers that write the letter inject these, and a
+// runtime import here would close a cycle through the case module's barrel
+// that leaves PdfService undefined when the subpoena and verdict services are
+// constructed.
+import type { PdfService } from '../case/pdf.service'
+import type { LawyerRegistryService } from '../lawyer-registry/lawyerRegistry.service'
 import { Case, CivilClaimant, Defendant, User } from '../repository'
 import { latestAdvocateConfirmedEvent } from './appealCase.helpers'
 
@@ -166,4 +176,64 @@ export const buildAppealAppointmentLetter = (params: {
     appointedDate: confirmation.created,
     copyTo: getCopyRecipients(theCase, kind),
   }
+}
+
+/**
+ * The advocate's firm, which the letter puts under their name. It lives in
+ * the lawyer register rather than on the case, and only for an advocate
+ * picked out of that register - one typed in by hand has no national id to
+ * find them by. A letter is worth sending without the firm, so a lookup that
+ * finds nothing is not an error.
+ */
+const getAdvocatePractice = async (
+  lawyerRegistryService: LawyerRegistryService,
+  nationalId?: string | null,
+): Promise<string | undefined> => {
+  if (!nationalId) {
+    return undefined
+  }
+
+  try {
+    const lawyer = await lawyerRegistryService.getByNationalId(nationalId)
+
+    return lawyer.practice
+  } catch {
+    return undefined
+  }
+}
+
+/**
+ * Writes the letter appointing a party's advocate to a response.
+ *
+ * Two controllers serve the letter - the court of appeals and the prosecution
+ * reach it through the ordinary case routes, an advocate through the limited
+ * access ones - and both have to assemble it the same way, so the assembly
+ * lives here rather than in either.
+ */
+export const writeAppealAppointmentLetter = async (params: {
+  theCase: Case
+  party: { defendant?: Defendant; civilClaimant?: CivilClaimant }
+  res: Response
+  pdfService: PdfService
+  lawyerRegistryService: LawyerRegistryService
+}): Promise<void> => {
+  const { theCase, party, res, pdfService, lawyerRegistryService } = params
+
+  const advocatePractice = await getAdvocatePractice(
+    lawyerRegistryService,
+    party.defendant?.appealDefenderNationalId ??
+      party.civilClaimant?.appealSpokespersonNationalId,
+  )
+
+  const letter = buildAppealAppointmentLetter({
+    theCase,
+    ...party,
+    advocatePractice,
+  })
+
+  if (!letter) {
+    throw new NotFoundException('No appeal appointment letter to write')
+  }
+
+  res.end(await pdfService.getAppealAppointmentLetterPdf(letter))
 }

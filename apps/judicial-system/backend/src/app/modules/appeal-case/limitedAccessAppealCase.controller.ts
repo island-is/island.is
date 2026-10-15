@@ -1,12 +1,16 @@
+import { Response } from 'express'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
   Body,
   Controller,
+  Get,
+  Header,
   Inject,
   Param,
   Patch,
   Post,
+  Res,
   UseGuards,
 } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
@@ -31,17 +35,26 @@ import {
 
 import { defenderRule } from '../../guards'
 import { CurrentCase } from '../case/guards/case.decorator'
+import { CaseReadGuard } from '../case/guards/caseRead.guard'
 import { CaseTypeGuard } from '../case/guards/caseType.guard'
 import { CaseWriteGuard } from '../case/guards/caseWrite.guard'
 import { LimitedAccessCaseExistsGuard } from '../case/guards/limitedAccessCaseExists.guard'
+import { PdfService } from '../case/pdf.service'
+import { CurrentCivilClaimant } from '../defendant/guards/civilClaimaint.decorator'
+import { CivilClaimantExistsGuard } from '../defendant/guards/civilClaimantExists.guard'
+import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
+import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { EventService } from '../event'
-import { AppealCase, Case } from '../repository'
+import { LawyerRegistryService } from '../lawyer-registry/lawyerRegistry.service'
+import { AppealCase, Case, CivilClaimant, Defendant } from '../repository'
 import { CreateAppealCaseDto } from './dto/createAppealCase.dto'
 import { CreateAppealEventLogDto } from './dto/createAppealEventLog.dto'
 import { TransitionAppealCaseDto } from './dto/transitionAppealCase.dto'
 import { CurrentAppealCase } from './guards/appealCase.decorator'
 import { AppealCaseExistsGuard } from './guards/appealCaseExists.guard'
+import { DefenceAdvocateOfPartyGuard } from './guards/defenceAdvocateOfParty.guard'
 import { defenderTransitionRule } from './guards/rolesRules'
+import { writeAppealAppointmentLetter } from './appealAppointmentLetter'
 import { AppealCaseService } from './appealCase.service'
 
 @Controller('api')
@@ -50,6 +63,8 @@ import { AppealCaseService } from './appealCase.service'
 export class LimitedAccessAppealCaseController {
   constructor(
     private readonly appealCaseService: AppealCaseService,
+    private readonly pdfService: PdfService,
+    private readonly lawyerRegistryService: LawyerRegistryService,
     private readonly eventService: EventService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -172,5 +187,85 @@ export class LimitedAccessAppealCaseController {
     this.eventService.postEvent(dto.transition, theCase)
 
     return result.appealCase
+  }
+
+  // The letter is addressed to the advocate, so the one it appoints - and the
+  // one the district court confirmed, which is who holds access to the case -
+  // reads it from the party's appeal section. The party guard keeps a defender
+  // of one of the accused away from what the court sent the other's.
+  @UseGuards(
+    LimitedAccessCaseExistsGuard,
+    RolesGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+    DefendantExistsGuard,
+    DefenceAdvocateOfPartyGuard,
+  )
+  @RolesRules(defenderRule)
+  @Get(
+    'case/:caseId/limitedAccess/defendant/:defendantId/appealAppointmentLetter',
+  )
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      "Gets the letter appointing a defendant's defender for an appeal as a pdf document for a limited access user",
+  })
+  async getDefenderAppointmentLetterPdf(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the appeal appointment letter for defendant ${defendantId} of case ${caseId} as a pdf document for a limited access user`,
+    )
+
+    await writeAppealAppointmentLetter({
+      theCase,
+      party: { defendant },
+      res,
+      pdfService: this.pdfService,
+      lawyerRegistryService: this.lawyerRegistryService,
+    })
+  }
+
+  @UseGuards(
+    LimitedAccessCaseExistsGuard,
+    RolesGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+    CivilClaimantExistsGuard,
+    DefenceAdvocateOfPartyGuard,
+  )
+  @RolesRules(defenderRule)
+  @Get(
+    'case/:caseId/limitedAccess/civilClaimant/:civilClaimantId/appealAppointmentLetter',
+  )
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      "Gets the letter appointing a civil claimant's spokesperson for an appeal as a pdf document for a limited access user",
+  })
+  async getSpokespersonAppointmentLetterPdf(
+    @Param('caseId') caseId: string,
+    @Param('civilClaimantId') civilClaimantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentCivilClaimant() civilClaimant: CivilClaimant,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the appeal appointment letter for civil claimant ${civilClaimantId} of case ${caseId} as a pdf document for a limited access user`,
+    )
+
+    await writeAppealAppointmentLetter({
+      theCase,
+      party: { civilClaimant },
+      res,
+      pdfService: this.pdfService,
+      lawyerRegistryService: this.lawyerRegistryService,
+    })
   }
 }
