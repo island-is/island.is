@@ -15,7 +15,7 @@ import {
   isPartTime,
 } from '../../../utils/conditions'
 import {
-  getCurrentMonthEndDate,
+  getMaxRegistrationDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
 import { formatIsCurrency, formatIsDate } from '../../../utils/formatters'
@@ -84,6 +84,7 @@ export const partTimeSection = buildSubSection({
           id: 'registerPartTime',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
+          initActiveFieldIfEmpty: true,
           defaultValue: getPartTimeDefaults,
           canRemoveRow: buildCanRemoveRow(
             partTimeValidationProps.persistedPath,
@@ -104,14 +105,18 @@ export const partTimeSection = buildSubSection({
               label: m.application.jobStart,
               width: 'half',
               required: true,
+              clearOnChange: (index: number) => [
+                `registerPartTime[${index}].jobEnd`,
+              ],
               minDate: getCurrentMonthStartDate,
-              maxDate: getCurrentMonthEndDate,
+              maxDate: getMaxRegistrationDate,
             },
             jobEnd: {
               component: 'date',
               label: m.application.jobEnd,
               width: 'half',
-              maxDate: getCurrentMonthEndDate,
+              placeholder: m.application.indefinitePeriod,
+              maxDate: getMaxRegistrationDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.jobStart
                 if (fromDate) {

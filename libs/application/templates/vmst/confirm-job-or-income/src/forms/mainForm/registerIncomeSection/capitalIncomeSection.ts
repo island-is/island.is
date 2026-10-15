@@ -12,13 +12,13 @@ import * as m from '../../../lib/messages'
 import { isCapitalIncome } from '../../../utils/conditions'
 import { PaymentFrequency } from '../../../utils/constants'
 import {
-  getCurrentMonthEndDate,
+  getMaxRegistrationDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
 import {
   formatIsCurrency,
   formatIsDate,
-  formatIsDateOrDash,
+  formatIsDateOrIndefinite,
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildCanRemoveRow } from '../../../utils/reconcile'
@@ -74,6 +74,7 @@ export const capitalIncomeSection = buildSubSection({
           id: 'registerCapitalIncome',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
+          initActiveFieldIfEmpty: true,
           defaultValue: getCapitalIncomeDefaults,
           canRemoveRow: buildCanRemoveRow(
             capitalIncomeValidationProps.persistedPath,
@@ -137,15 +138,19 @@ export const capitalIncomeSection = buildSubSection({
                 `registerCapitalIncome[${index}].dateTo`,
               ],
               minDate: getCurrentMonthStartDate,
-              maxDate: getCurrentMonthEndDate,
+              maxDate: getMaxRegistrationDate,
             },
             dateTo: {
               component: 'date',
               label: m.application.dateTo,
               width: 'half',
-              required: (_application, activeField) =>
+              disabled: (_application, activeField) =>
                 activeField?.paymentFrequency === PaymentFrequency.ONE_TIME,
-              maxDate: getCurrentMonthEndDate,
+              placeholder: (_application, activeField) =>
+                activeField?.paymentFrequency === PaymentFrequency.MONTHLY
+                  ? m.application.indefinitePeriod
+                  : '',
+              maxDate: getMaxRegistrationDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {
@@ -185,7 +190,8 @@ export const capitalIncomeSection = buildSubSection({
                 return type?.name ?? value
               },
               dateFrom: formatIsDate,
-              dateTo: formatIsDateOrDash,
+              dateTo: (value, _displayIndex, _application, row) =>
+                formatIsDateOrIndefinite(value, row?.paymentFrequency),
               amountPerMonth: formatIsCurrency,
             },
           },

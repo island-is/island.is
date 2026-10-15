@@ -204,7 +204,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     item[key] = rawValue ?? ''
     const formatFn = table?.format?.[key]
     const formatted = formatFn
-      ? formatFn(item[key], displayIndex, application)
+      ? formatFn(item[key], displayIndex, application, item)
       : item[key]
     if (
       formatted &&

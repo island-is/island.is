@@ -43,8 +43,12 @@ const toNumber = (value: unknown): number | undefined =>
 const getNationalId = (entry: Entry): string | undefined =>
   entry.company?.nationalId?.replace(/-/g, '')
 
+// One-time payments are a single-day period; monthly ones are open-ended (null)
+// unless an end date was chosen.
 const getPeriodTo = (entry: Entry): Date | null | undefined =>
-  entry.paymentFrequency === 'oneTime' ? toDate(entry.dateTo) : null
+  entry.paymentFrequency === 'oneTime'
+    ? toDate(entry.dateFrom)
+    : toDate(entry.dateTo) ?? null
 
 const buildIrregularJob = (entry: Entry) => ({
   employerSSN: getNationalId(entry),

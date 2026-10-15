@@ -241,6 +241,12 @@ export const application = defineMessages({
     defaultMessage: 'Dagsetning til',
     description: 'Date to label',
   },
+  indefinitePeriod: {
+    id: 'vmst.cjoi.application:indefinitePeriod',
+    defaultMessage: 'Ótímabundið',
+    description:
+      'Shown for an empty optional end date (placeholder and overview), declaring an indefinite period',
+  },
   jobStart: {
     id: 'vmst.cjoi.application:jobStart',
     defaultMessage: 'Upphaf starfs',
@@ -566,10 +572,11 @@ export const errorMessages = defineMessages({
       'Villa við að skila inn umsókn. Reyndu aftur eða hafðu samband við Ísland.is',
     description: 'Error message when submit fails',
   },
-  dateToRequiredForOneTime: {
-    id: 'vmst.cjoi.application:errorMessages.dateToRequiredForOneTime',
-    defaultMessage: 'Dagsetning til er skylda þegar valin er eingreiðsla',
-    description: 'Error shown when dateTo is missing for a one-time payment',
+  dateToBeforeDateFrom: {
+    id: 'vmst.cjoi.application:errorMessages.dateToBeforeDateFrom',
+    defaultMessage: 'Dagsetning til má ekki vera á undan dagsetningu frá',
+    description:
+      'Error shown when the end date of a period is before its start date',
   },
   casualWorkOverlappingPeriods: {
     id: 'vmst.cjoi.application:errorMessages.casualWorkOverlappingPeriods',

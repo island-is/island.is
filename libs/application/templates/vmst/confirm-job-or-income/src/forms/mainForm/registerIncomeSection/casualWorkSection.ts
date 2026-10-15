@@ -12,7 +12,7 @@ import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { hasCasualWorkOverlap, isCasualWork } from '../../../utils/conditions'
 import {
-  getCurrentMonthEndDate,
+  getMaxRegistrationDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
 import { formatIsCurrency, formatIsDate } from '../../../utils/formatters'
@@ -85,6 +85,7 @@ export const casualWorkSection = buildSubSection({
           id: 'registerCasualWork',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
+          initActiveFieldIfEmpty: true,
           marginTop: 2,
           defaultValue: getCasualWorkDefaults,
           canRemoveRow: buildCanRemoveRow(
@@ -109,14 +110,14 @@ export const casualWorkSection = buildSubSection({
                 `registerCasualWork[${index}].dateTo`,
               ],
               minDate: getCurrentMonthStartDate,
-              maxDate: getCurrentMonthEndDate,
+              maxDate: getMaxRegistrationDate,
             },
             dateTo: {
               component: 'date',
               label: m.application.dateTo,
               width: 'half',
               required: true,
-              maxDate: getCurrentMonthEndDate,
+              maxDate: getMaxRegistrationDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {

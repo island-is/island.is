@@ -11,7 +11,7 @@ import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isContractWork } from '../../../utils/conditions'
 import {
-  getCurrentMonthEndDate,
+  getMaxRegistrationDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
 import { formatIsDate } from '../../../utils/formatters'
@@ -69,6 +69,7 @@ export const contractWorkSection = buildSubSection({
           id: 'registerContractWork',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
+          initActiveFieldIfEmpty: true,
           defaultValue: getContractWorkDefaults,
           canRemoveRow: buildCanRemoveRow(
             contractWorkValidationProps.persistedPath,
@@ -85,14 +86,14 @@ export const contractWorkSection = buildSubSection({
                 `registerContractWork[${index}].workEnds`,
               ],
               minDate: getCurrentMonthStartDate,
-              maxDate: getCurrentMonthEndDate,
+              maxDate: getMaxRegistrationDate,
             },
             workEnds: {
               component: 'date',
               label: m.application.workEnds,
               width: 'half',
               required: true,
-              maxDate: getCurrentMonthEndDate,
+              maxDate: getMaxRegistrationDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.contractJobStart
                 if (fromDate) {

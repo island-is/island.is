@@ -70,6 +70,7 @@ describe('buildCreateIncomesRequest', () => {
           amountPerMonth: '2000',
           paymentFrequency: 'oneTime',
           dateFrom: '2026-09-05',
+          // Stale value from the disabled field; ignored for one-time payments.
           dateTo: '2026-09-06',
         },
       ],
@@ -88,6 +89,7 @@ describe('buildCreateIncomesRequest', () => {
           amountPerMonth: '4000',
           paymentFrequency: 'monthly',
           dateFrom: '2026-09-08',
+          dateTo: '2026-12-31',
         },
       ],
     }
@@ -114,7 +116,7 @@ describe('buildCreateIncomesRequest', () => {
           incomeTypeId: 'rent',
           estimatedIncome: 2000,
           periodFrom: new Date('2026-09-05'),
-          periodTo: new Date('2026-09-06'),
+          periodTo: new Date('2026-09-05'),
         },
       ],
       trPayments: [
@@ -131,7 +133,7 @@ describe('buildCreateIncomesRequest', () => {
           pensionFundId: 'fund-id',
           estimatedIncome: 4000,
           periodFrom: new Date('2026-09-08'),
-          periodTo: null,
+          periodTo: new Date('2026-12-31'),
         },
       ],
     })
@@ -520,7 +522,6 @@ describe('buildCreateIncomesRequest', () => {
             amountPerMonth: '3000',
             paymentFrequency: 'oneTime',
             dateFrom: '2026-09-05',
-            dateTo: '2026-09-06',
           },
         ],
       }
@@ -541,7 +542,7 @@ describe('buildCreateIncomesRequest', () => {
           incomeTypeId: 'disability',
           estimatedIncome: 3000,
           periodFrom: new Date('2026-09-05'),
-          periodTo: new Date('2026-09-06'),
+          periodTo: new Date('2026-09-05'),
         },
         { id: removedId, deleted: true },
       ])

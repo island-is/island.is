@@ -23,9 +23,11 @@ export const getCompanyNationalId = (
   return nationalId ? nationalId.replace(/-/g, '') : undefined
 }
 
-// Galdur wants null for monthly (open-ended) payments and a real dateTo for
-// one-time ones; matches the submit-side `getPeriodTo` in confirm-job-or-income.utils.
+// One-time payments have no dateTo, so Galdur gets a single-day period
+// (periodTo = periodFrom). Monthly payments send the chosen dateTo, or null for
+// an open-ended period. Matches the submit-side `getPeriodTo` in
+// confirm-job-or-income.utils.
 export const periodToByFrequency = (row: IncomeValidationRow): string | null =>
   row.paymentFrequency === PaymentFrequency.ONE_TIME
-    ? toRequiredString(row.dateTo)
-    : null
+    ? toRequiredString(row.dateFrom)
+    : toOptionalString(row.dateTo) ?? null

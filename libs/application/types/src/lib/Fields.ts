@@ -153,7 +153,7 @@ export type RepeaterItem = {
   emailLabel?: StaticText
   customNameLabel?: StaticText
   customNationalIdLabel?: StaticText
-  placeholder?: StaticText
+  placeholder?: MaybeWithApplicationAndActiveField<StaticText>
   options?: TableRepeaterOptions
   filterOptions?: (
     options: RepeaterOption[],
@@ -882,6 +882,7 @@ export type TableRepeaterField = BaseField & {
         value: string,
         displayIndex: number,
         application?: Application,
+        row?: Record<string, string>,
       ) => string | StaticText
     >
   }

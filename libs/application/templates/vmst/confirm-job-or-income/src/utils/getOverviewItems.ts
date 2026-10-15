@@ -9,7 +9,11 @@ import { format as formatKennitala } from 'kennitala'
 import { ApplicationAnswers } from '../lib/dataSchema'
 import * as m from '../lib/messages'
 import { PaymentFrequency } from './constants'
-import { formatIsDate, formatIsDateOrDash } from './formatters'
+import {
+  formatIsDate,
+  formatIsDateOrDash,
+  formatIsDateOrIndefinite,
+} from './formatters'
 import {
   getPersistedRecords,
   toCapitalIncomeRow,
@@ -198,7 +202,7 @@ export const getPartTimeOverviewItems = (
     {
       width: 'half',
       keyText: m.application.jobEnd,
-      valueText: formatIsDateOrDash(entry.jobEnd),
+      valueText: formatIsDateOrIndefinite(entry.jobEnd),
     },
     {
       width: 'half',
@@ -291,7 +295,7 @@ export const getPensionOverviewItems = (
     {
       width: 'half',
       keyText: m.application.dateTo,
-      valueText: formatIsDateOrDash(entry.dateTo),
+      valueText: formatIsDateOrIndefinite(entry.dateTo, entry.paymentFrequency),
     },
   ])
 }
@@ -342,7 +346,7 @@ export const getCapitalIncomeOverviewItems = (
     {
       width: 'half',
       keyText: m.application.dateTo,
-      valueText: formatIsDateOrDash(entry.dateTo),
+      valueText: formatIsDateOrIndefinite(entry.dateTo, entry.paymentFrequency),
     },
   ])
 }
@@ -393,7 +397,7 @@ export const getSocialInsuranceOverviewItems = (
     {
       width: 'half',
       keyText: m.application.dateTo,
-      valueText: formatIsDateOrDash(entry.dateTo),
+      valueText: formatIsDateOrIndefinite(entry.dateTo, entry.paymentFrequency),
     },
   ])
 }
