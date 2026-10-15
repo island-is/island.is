@@ -1,5 +1,7 @@
-import type { User } from '@island.is/auth-nest-tools'
-import { ApiScope } from '@island.is/auth/scopes'
+import csvStringify from 'csv-stringify/lib/sync'
+import format from 'date-fns/format'
+import { Response } from 'express'
+import * as XLSX from 'xlsx'
 import {
   Controller,
   Header,
@@ -11,25 +13,24 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
-import { Response } from 'express'
-import * as XLSX from 'xlsx'
+
+import { ApiScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { VehiclesClientService } from '@island.is/clients/vehicles'
 import { RskKilometerFeeClientService } from '@island.is/clients/rsk/kilometer-fee'
+import { VehiclesClientService } from '@island.is/clients/vehicles'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { AuditService } from '@island.is/nest/audit'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import format from 'date-fns/format'
-import csvStringify from 'csv-stringify/lib/sync'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.vehicles)
@@ -219,6 +220,10 @@ export class VehicleController {
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
+    if (/["\r\n]/.test(permno) || year < 2024) {
+      return res.status(400).end()
+    }
+
     const documentResponse = await this.kilometerFeeService.getFeeExport(
       user,
       permno,
@@ -238,11 +243,11 @@ export class VehicleController {
       res.header('Content-length', buffer.length.toString())
       res.header(
         'Content-Disposition',
-        `attachment; filename=kilometragjald-${permno}-${year}.xlsx`,
+        `attachment; filename="kilometragjald-${permno}-${year}.xlsx"`,
       )
       return res.status(200).end(buffer)
     }
-    return res.end()
+    return res.status(404).end()
   }
 
   @Post('/ownership/pdf')

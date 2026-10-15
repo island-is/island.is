@@ -1,5 +1,5 @@
 import { getMockKilometerFee } from '../mocks/mileageFee.mock'
-import { MileageFeeDifferenceOutcome } from '../models/v3/mileageFee.model'
+import { MileageFeeDifferenceOutcome } from '../models/v3/enums'
 import { mapMileageFee } from './mileageFeeMapper'
 
 describe('mapMileageFee', () => {

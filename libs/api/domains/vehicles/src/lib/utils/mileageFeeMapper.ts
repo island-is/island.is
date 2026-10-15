@@ -2,10 +2,9 @@ import type {
   DifferenceOutcome,
   KilometerFee,
 } from '@island.is/clients/rsk/kilometer-fee'
-import {
-  MileageFee,
-  MileageFeeDifferenceOutcome,
-} from '../models/v3/mileageFee.model'
+
+import { MileageFeeDifferenceOutcome } from '../models/v3/enums'
+import { MileageFee } from '../models/v3/mileageFee.model'
 
 const differenceOutcomeMap: Record<
   DifferenceOutcome,

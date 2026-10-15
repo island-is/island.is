@@ -1,21 +1,23 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { Args, Query, Resolver } from '@nestjs/graphql'
+
+import { ApiScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
-import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { CodeOwner } from '@island.is/nest/core'
-import { CodeOwners } from '@island.is/shared/constants'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import { CodeOwners } from '@island.is/shared/constants'
+
 import { GetVehicleMileageFeeInput } from '../dto/getVehicleMileageFeeInput'
 import { MileageFee } from '../models/v3/mileageFee.model'
 import { MileageFeeService } from '../services/mileageFee.service'

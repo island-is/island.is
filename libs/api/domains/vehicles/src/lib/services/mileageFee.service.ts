@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
+
 import type { User } from '@island.is/auth-nest-tools'
 import { RskKilometerFeeClientService } from '@island.is/clients/rsk/kilometer-fee'
-import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
-import { getMockKilometerFee } from '../mocks/mileageFee.mock'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+
 import { GetVehicleMileageFeeInput } from '../dto/getVehicleMileageFeeInput'
+import { getMockKilometerFee } from '../mocks/mileageFee.mock'
 import { MileageFee } from '../models/v3/mileageFee.model'
 import { mapMileageFee } from '../utils/mileageFeeMapper'
 

@@ -1,5 +1,5 @@
+import { IsInt, IsOptional, IsString, Min } from 'class-validator'
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsInt, IsOptional, IsString } from 'class-validator'
 
 @InputType('VehiclesMileageFeeInput')
 export class GetVehicleMileageFeeInput {
@@ -10,5 +10,6 @@ export class GetVehicleMileageFeeInput {
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()
+  @Min(2024)
   year?: number
 }

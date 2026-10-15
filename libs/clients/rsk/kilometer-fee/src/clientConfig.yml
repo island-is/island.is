@@ -60,7 +60,6 @@ components:
       required: true
       schema:
         type: string
-        pattern: '^[A-Z0-9]{2,6}$'
     year:
       name: year
       in: query
