@@ -156,9 +156,9 @@ export default function FamilyScreen() {
               light: theme.color.blue200,
             }}
             overlayOpacity={1}
-            height={104}
+            height={82}
             style={{
-              borderRadius: 16,
+              borderRadius: 8,
               marginBottom: theme.spacing[2],
             }}
           />
