@@ -33,7 +33,7 @@ export interface AppealAppointmentLetter {
   courtCaseNumber: string
   /** The court of appeals number, which nothing records yet. */
   appealCaseNumber?: string | null
-  /** When the áfrýjunarstefna was issued. Nothing records it yet. */
+  /** When the áfrýjunarstefna was issued, if one has been. */
   appealSummonsDate?: Date | string | null
   /** Who appointed the advocate, and when - read off the appointment event. */
   appointedBy: { name: string; title?: string | null }
@@ -42,12 +42,9 @@ export interface AppealAppointmentLetter {
   copyTo: string[]
 }
 
-// What stands in for a value the portal cannot know yet. The court of appeals
-// case number is recorded on a step that does not exist, and the áfrýjunarstefna
-// is a document that does not exist - so the two read differently: one is
-// missing, the other is not built.
+// What stands in for the court of appeals case number, which is recorded on a
+// step that does not exist yet.
 const NO_APPEAL_CASE_NUMBER = 'xxx/xxxx'
-const NO_APPEAL_SUMMONS_DATE = 'Ekki útfært'
 
 /**
  * What the copy line says in place of a party the case does not name. A party
@@ -196,7 +193,7 @@ export const getAppealAppointmentBody = (
   )} sem áfrýjað var með áfrýjunarstefnu útgefinni ${
     letter.appealSummonsDate
       ? formatDate(letter.appealSummonsDate, 'PPP')
-      : NO_APPEAL_SUMMONS_DATE
+      : NOT_RECORDED
   }. Málsnúmer fyrir Landsrétti er ${getAppealCaseNumberOrPlaceholder(
     letter.appealCaseNumber,
   )}.`

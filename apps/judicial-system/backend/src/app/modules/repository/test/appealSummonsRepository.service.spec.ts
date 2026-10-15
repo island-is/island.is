@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
@@ -16,6 +16,7 @@ describe('AppealSummonsRepositoryService', () => {
   let service: AppealSummonsRepositoryService
   let summonsModel: {
     create: jest.Mock
+    findAll: jest.Mock
     findOne: jest.Mock
     update: jest.Mock
   }
@@ -24,6 +25,7 @@ describe('AppealSummonsRepositoryService', () => {
   beforeEach(async () => {
     summonsModel = {
       create: jest.fn(),
+      findAll: jest.fn(),
       findOne: jest.fn(),
       update: jest.fn(),
     }
@@ -156,6 +158,37 @@ describe('AppealSummonsRepositoryService', () => {
         { where: { id: 'summons_id', caseId: 'case_id' }, transaction },
       )
       expect(result).toBe(updated)
+    })
+  })
+
+  describe('findConfirmedByAppealCaseId', () => {
+    it('loads the confirmed summonses of the appeal, oldest first, with their defendant rows', async () => {
+      const found = [{ id: 'summons_id', defendants: [] }]
+      summonsModel.findAll.mockResolvedValueOnce(found)
+
+      const result = await service.findConfirmedByAppealCaseId(
+        'appeal_case_id',
+        { transaction },
+      )
+
+      expect(summonsModel.findAll).toHaveBeenCalledWith({
+        where: {
+          appealCaseId: 'appeal_case_id',
+          confirmedDate: { [Op.ne]: null },
+        },
+        include: [
+          {
+            model: AppealSummonsDefendant,
+            as: 'defendants',
+            required: false,
+            separate: true,
+            order: [['created', 'ASC']],
+          },
+        ],
+        order: [['confirmedDate', 'ASC']],
+        transaction,
+      })
+      expect(result).toBe(found)
     })
   })
 })
