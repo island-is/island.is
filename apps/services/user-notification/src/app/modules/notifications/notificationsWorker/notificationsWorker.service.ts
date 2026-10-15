@@ -39,12 +39,12 @@ import { Notification } from '../notification.model'
 import { NotificationsService } from '../notifications.service'
 import { ActorNotification } from '../actor-notification.model'
 import { UserNotificationSender } from '../user-notification-sender.model'
-import { NotificationCategory } from '../notification-category.model'
 import {
   isValidSenderId,
   mapToLocale,
   normalizeKennitala,
   SmsDelivery,
+  toTemplateCategory,
 } from '../utils'
 import { EmailQueueMessage } from './emailWorker.service'
 import { SmsQueueMessage } from './smsWorker.service'
@@ -134,9 +134,6 @@ export class NotificationsWorkerService {
 
     @InjectModel(UserNotificationSender)
     private readonly userNotificationSenderModel: typeof UserNotificationSender,
-
-    @InjectModel(NotificationCategory)
-    private readonly notificationCategoryModel: typeof NotificationCategory,
   ) {}
 
   // Stopgap: lets users ignore notifications that are neither urgent nor
@@ -453,6 +450,7 @@ export class NotificationsWorkerService {
         message.recipient,
         message.senderId,
         message.templateId,
+        toTemplateCategory(template.hnippCategoryIs),
         template.priorityType,
         messageId,
       )
@@ -868,6 +866,7 @@ export class NotificationsWorkerService {
     recipient: string,
     senderId: string | undefined,
     templateId: string,
+    category: string | null,
     priorityType: HnippTemplatePriorityType,
     messageId: string,
   ): Promise<void> {
@@ -877,16 +876,6 @@ export class NotificationsWorkerService {
     }
 
     try {
-      const templateCategory =
-        await this.notificationsService.getTemplateCategory(templateId)
-
-      if (templateCategory) {
-        // Keep the latest label so renamed translations are picked up
-        await this.notificationCategoryModel.bulkCreate([templateCategory], {
-          updateOnDuplicate: ['label'],
-        })
-      }
-
       // Keep the latest category and priority type, since a template can
       // change them
       await this.userNotificationSenderModel.bulkCreate(
@@ -895,7 +884,7 @@ export class NotificationsWorkerService {
             recipient,
             senderId: normalizedSenderId,
             templateId,
-            category: templateCategory?.category ?? null,
+            category,
             priorityType: priorityType ?? null,
           },
         ],

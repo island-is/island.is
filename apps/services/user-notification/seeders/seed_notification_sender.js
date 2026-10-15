@@ -4,21 +4,6 @@ const recipient = '0101302989'
 
 module.exports = {
   up: async (queryInterface) => {
-    await queryInterface.bulkInsert(
-      'notification_category',
-      [
-        {
-          category: 'heilbrigdismal',
-          label: JSON.stringify({ is: 'Heilbrigðismál', en: 'Health' }),
-        },
-        {
-          category: 'innheimta',
-          label: JSON.stringify({ is: 'Innheimta', en: 'Collection' }),
-        },
-      ],
-      { ignoreDuplicates: true },
-    )
-
     return queryInterface.bulkInsert(
       'user_notification_sender',
       [
@@ -59,7 +44,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    // notification_category rows may predate this seeder, so they are kept
     return queryInterface.bulkDelete('user_notification_sender', { recipient })
   },
 }

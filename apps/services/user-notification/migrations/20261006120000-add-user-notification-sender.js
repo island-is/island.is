@@ -50,22 +50,6 @@ module.exports = {
         },
       )
 
-      await queryInterface.createTable(
-        'notification_category',
-        {
-          category: {
-            type: Sequelize.STRING,
-            allowNull: false,
-            primaryKey: true,
-          },
-          label: {
-            type: Sequelize.JSONB,
-            allowNull: false,
-          },
-        },
-        { transaction },
-      )
-
       // Backfill from existing notifications, normalizing sender ids to digits
       // only and taking the priority type of the latest notification of each
       // template. Categories are not known for existing notifications, so they
@@ -101,7 +85,6 @@ module.exports = {
 
   async down(queryInterface) {
     return queryInterface.sequelize.transaction(async (transaction) => {
-      await queryInterface.dropTable('notification_category', { transaction })
       await queryInterface.dropTable('user_notification_sender', {
         transaction,
       })

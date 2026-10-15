@@ -34,7 +34,6 @@ import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { Notification } from '../notification.model'
 import { ActorNotification } from '../actor-notification.model'
 import { UserNotificationSender } from '../user-notification-sender.model'
-import { NotificationCategory } from '../notification-category.model'
 import {
   NotificationDelivery,
   NotificationChannel,
@@ -123,7 +122,6 @@ describe('NotificationsWorkerService', () => {
   let smsService: SmsService
   let notificationDeliveryModel: typeof NotificationDelivery
   let userNotificationSenderModel: typeof UserNotificationSender
-  let notificationCategoryModel: typeof NotificationCategory
 
   beforeAll(async () => {
     app = await testServer({
@@ -157,7 +155,6 @@ describe('NotificationsWorkerService', () => {
     actorNotificationModel = app.get(getModelToken(ActorNotification))
     notificationDeliveryModel = app.get(getModelToken(NotificationDelivery))
     userNotificationSenderModel = app.get(getModelToken(UserNotificationSender))
-    notificationCategoryModel = app.get(getModelToken(NotificationCategory))
     notificationsService = app.get(NotificationsService)
     userProfileApi = app.get(V2UsersApi)
     nationalRegistryService = app.get(NationalRegistryV3ClientService)
@@ -1153,6 +1150,7 @@ describe('NotificationsWorkerService', () => {
         .mockImplementation(async (_templateId, locale) =>
           getMockHnippTemplate({
             hnippCategory: locale === 'en' ? labels.en : labels.is,
+            hnippCategoryIs: labels.is,
             priorityType,
           }),
         )
@@ -1185,8 +1183,6 @@ describe('NotificationsWorkerService', () => {
         category: null,
         priorityType: null,
       })
-      // assert no categories stored because the template category is null
-      expect(await notificationCategoryModel.count()).toBe(0)
     })
 
     it('should record the same sender only once, also when its id is dashed', async () => {
@@ -1270,7 +1266,7 @@ describe('NotificationsWorkerService', () => {
       })
     })
 
-    it('should record the slugified Icelandic category and its labels', async () => {
+    it('should record the slugified Icelandic category', async () => {
       mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Health' })
 
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
@@ -1281,13 +1277,6 @@ describe('NotificationsWorkerService', () => {
         recipient: userWithNoDelegations.nationalId,
         senderId,
         category: 'heilbrigdismal',
-      })
-
-      const categories = await notificationCategoryModel.findAll()
-      expect(categories).toHaveLength(1)
-      expect(categories[0]).toMatchObject({
-        category: 'heilbrigdismal',
-        label: { is: 'Heilbrigðismál', en: 'Health' },
       })
     })
 
@@ -1353,22 +1342,6 @@ describe('NotificationsWorkerService', () => {
       const senders = await userNotificationSenderModel.findAll()
       expect(senders).toHaveLength(1)
       expect(senders[0].category).toBeNull()
-      expect(await notificationCategoryModel.count()).toBe(0)
-    })
-
-    it('should keep the latest label of a category', async () => {
-      mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Health' })
-      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
-
-      mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Healthcare' })
-      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
-
-      const categories = await notificationCategoryModel.findAll()
-      expect(categories).toHaveLength(1)
-      expect(categories[0].label).toEqual({
-        is: 'Heilbrigðismál',
-        en: 'Healthcare',
-      })
     })
 
     it('should still write and deliver the notification when recording the sender fails', async () => {

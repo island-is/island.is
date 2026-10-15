@@ -9,7 +9,6 @@ import { Notification } from '../notification.model'
 import { ActorNotification } from '../actor-notification.model'
 import { NotificationDelivery } from '../notification-delivery.model'
 import { UserNotificationSender } from '../user-notification-sender.model'
-import { NotificationCategory } from '../notification-category.model'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 
@@ -78,10 +77,6 @@ describe('NotificationsService', () => {
         },
         {
           provide: getModelToken(UserNotificationSender),
-          useClass: jest.fn(() => ({})),
-        },
-        {
-          provide: getModelToken(NotificationCategory),
           useClass: jest.fn(() => ({})),
         },
         {

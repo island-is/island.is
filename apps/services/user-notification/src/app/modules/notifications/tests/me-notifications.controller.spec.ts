@@ -16,8 +16,8 @@ import {
 import { AppModule } from '../../../app.module'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { DocumentsScope } from '@island.is/auth/scopes'
+import { CmsService } from '@island.is/clients/cms'
 import { UserNotificationSender } from '../user-notification-sender.model'
-import { NotificationCategory } from '../notification-category.model'
 
 beforeAll(async () => {
   process.env.INIT_SCHEMA = 'true' // Disabling Firebase init
@@ -159,7 +159,6 @@ describe('MeNotificationsController - GET /v1/me/notifications/categories', () =
   let app: TestApp
   let server: request.SuperTest<request.Test>
   let userNotificationSenderModel: typeof UserNotificationSender
-  let notificationCategoryModel: typeof NotificationCategory
 
   beforeAll(async () => {
     app = await setupApp({
@@ -169,12 +168,16 @@ describe('MeNotificationsController - GET /v1/me/notifications/categories', () =
     })
     server = request(app.getHttpServer())
     userNotificationSenderModel = app.get(getModelToken(UserNotificationSender))
-    notificationCategoryModel = app.get(getModelToken(NotificationCategory))
+
+    jest.spyOn(app.get(CmsService), 'fetchData').mockResolvedValue({
+      hnippTemplateCollection: {
+        items: [{ categoryIs: 'Heilbrigðismál', categoryEn: 'Health' }],
+      },
+    })
   })
 
   beforeEach(async () => {
     await userNotificationSenderModel.destroy({ truncate: true })
-    await notificationCategoryModel.destroy({ truncate: true })
   })
 
   afterAll(async () => {
@@ -182,10 +185,6 @@ describe('MeNotificationsController - GET /v1/me/notifications/categories', () =
   })
 
   it("should return the user's own categories with labels, presenting uncategorized as almennt", async () => {
-    await notificationCategoryModel.create({
-      category: 'heilbrigdismal',
-      label: { is: 'Heilbrigðismál', en: 'Health' },
-    })
     await userNotificationSenderModel.bulkCreate([
       {
         recipient: user.nationalId,

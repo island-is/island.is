@@ -16,10 +16,6 @@ import { Notification } from './notification.model'
 import { ActorNotification } from './actor-notification.model'
 import { NotificationDelivery } from './notification-delivery.model'
 import { UserNotificationSender } from './user-notification-sender.model'
-import {
-  CategoryLabel,
-  NotificationCategory,
-} from './notification-category.model'
 import { ArgumentDto } from './dto/createHnippNotification.dto'
 import { NotificationDeliveryDto } from './dto/notificationDelivery.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
@@ -32,6 +28,7 @@ import {
   UnseenNotificationsCountDto,
   UnreadNotificationsCountDto,
   NotificationCategoriesDto,
+  NotificationCategoryLabelDto,
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
 import {
@@ -41,13 +38,13 @@ import {
   SmsDelivery,
   DEFAULT_CATEGORY,
   DEFAULT_CATEGORY_LABEL,
-  isDefined,
-  toCategorySlug,
+  toTemplateCategory,
 } from './utils'
 import {
   CmsService,
   GetTemplateByTemplateId,
   GetTemplates,
+  GetTemplateCategories,
   GetOrganizationByNationalId,
 } from '@island.is/clients/cms'
 import { ApiScope, DocumentsScope } from '@island.is/auth/scopes'
@@ -80,8 +77,6 @@ export class NotificationsService {
     private readonly notificationDeliveryModel: typeof NotificationDelivery,
     @InjectModel(UserNotificationSender)
     private readonly userNotificationSenderModel: typeof UserNotificationSender,
-    @InjectModel(NotificationCategory)
-    private readonly notificationCategoryModel: typeof NotificationCategory,
     private readonly cmsService: CmsService,
   ) {}
 
@@ -467,7 +462,7 @@ export class NotificationsService {
 
   async findCategories(nationalId: string): Promise<NotificationCategoriesDto> {
     const templateRows = await this.userNotificationSenderModel.findAll({
-      attributes: ['senderId', 'category'],
+      attributes: ['senderId', 'templateId', 'category'],
       where: { recipient: nationalId },
       order: [
         ['senderId', 'ASC'],
@@ -482,18 +477,19 @@ export class NotificationsService {
       ).values(),
     ]
 
-    const slugs = [
-      ...new Set(rows.map(({ category }) => category).filter(isDefined)),
-    ]
-    const labels = new Map(
-      slugs.length > 0
-        ? (
-            await this.notificationCategoryModel.findAll({
-              where: { category: slugs },
-            })
-          ).map(({ category, label }) => [category, label])
-        : [],
-    )
+    // Labels come from the CMS so they are always current. Sorted so the same
+    // templates make the same request, which the CMS client caches by URL.
+    const templateIds = [
+      ...new Set(
+        templateRows
+          .filter(({ category }) => category)
+          .map(({ templateId }) => templateId),
+      ),
+    ].sort()
+    const labels =
+      templateIds.length > 0
+        ? await this.getCategoryLabels(templateIds)
+        : new Map<string, NotificationCategoryLabelDto>()
 
     return {
       categories: rows.map(({ senderId, category }) => ({
@@ -506,31 +502,36 @@ export class NotificationsService {
     }
   }
 
-  /**
-   * Resolves the category of a template. The category is keyed by the
-   * slugified Icelandic HnippCategory, so it is the same regardless of the
-   * recipient's locale. Templates without a category resolve to null, which is
-   * presented as 'almennt'.
-   */
-  async getTemplateCategory(
-    templateId: string,
-  ): Promise<{ category: string; label: CategoryLabel } | null> {
-    const [isTemplate, enTemplate] = await Promise.all([
-      this.getTemplate(templateId, 'is'),
-      this.getTemplate(templateId, 'en'),
-    ])
+  private async getCategoryLabels(
+    templateIds: string[],
+  ): Promise<Map<string, NotificationCategoryLabelDto>> {
+    try {
+      const res = (await this.cmsService.fetchData(GetTemplateCategories, {
+        templateIds,
+      })) as unknown as {
+        hnippTemplateCollection: {
+          items: { categoryIs?: string | null; categoryEn?: string | null }[]
+        }
+      }
 
-    const isLabel = isTemplate.hnippCategory?.trim()
-    const category = isLabel ? toCategorySlug(isLabel) : ''
-    if (!category || category === DEFAULT_CATEGORY) {
-      return null
-    }
-
-    const enLabel = enTemplate.hnippCategory?.trim()
-
-    return {
-      category,
-      label: { is: isLabel as string, ...(enLabel && { en: enLabel }) },
+      const { items } = res.hnippTemplateCollection
+      const labels = new Map<string, NotificationCategoryLabelDto>()
+      for (const { categoryIs, categoryEn } of items) {
+        const category = toTemplateCategory(categoryIs)
+        if (category) {
+          const enLabel = categoryEn?.trim()
+          labels.set(category, {
+            is: (categoryIs as string).trim(),
+            ...(enLabel && { en: enLabel }),
+          })
+        }
+      }
+      return labels
+    } catch (error) {
+      this.logger.warn('Failed to fetch notification category labels', {
+        error,
+      })
+      return new Map()
     }
   }
 

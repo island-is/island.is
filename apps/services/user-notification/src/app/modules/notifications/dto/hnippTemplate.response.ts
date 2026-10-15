@@ -55,4 +55,11 @@ export class HnippTemplate {
     example: 'Heilbrigðismál',
   })
   hnippCategory?: string
+
+  @ApiPropertyOptional({
+    example: 'Heilbrigðismál',
+    description:
+      'The Icelandic HnippCategory regardless of locale, which the category key is slugified from',
+  })
+  hnippCategoryIs?: string
 }

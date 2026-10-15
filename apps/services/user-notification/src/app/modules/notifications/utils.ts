@@ -52,6 +52,19 @@ export const toCategorySlug = (label: string): string =>
     ],
   })
 
+/**
+ * Resolves the category of a template from its Icelandic HnippCategory, so it
+ * is the same regardless of the recipient's locale. Templates without a
+ * category resolve to null, which is presented as 'almennt'.
+ */
+export const toTemplateCategory = (
+  isLabel?: string | null,
+): string | null => {
+  const label = isLabel?.trim()
+  const category = label ? toCategorySlug(label) : ''
+  return category && category !== DEFAULT_CATEGORY ? category : null
+}
+
 export const extractLocaleField = (
   field: string | Record<string, string> | undefined | null,
   locale: Locale,

@@ -25,7 +25,6 @@ import { Notification } from './notification.model'
 import { ActorNotification } from './actor-notification.model'
 import { NotificationDelivery } from './notification-delivery.model'
 import { UserNotificationSender } from './user-notification-sender.model'
-import { NotificationCategory } from './notification-category.model'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { NotificationsWorkerService } from './notificationsWorker/notificationsWorker.service'
 import { EmailWorkerService } from './notificationsWorker/emailWorker.service'
@@ -41,7 +40,6 @@ import { MessageProcessorService } from './messageProcessor.service'
       ActorNotification,
       NotificationDelivery,
       UserNotificationSender,
-      NotificationCategory,
     ]),
     LoggingModule,
     CmsTranslationsModule,
