@@ -61,7 +61,8 @@ const DISTRICT_COURTS = [
   'hd-reykjanes',
 ]
 
-const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+const GUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 const getQueryValue = (query: NextApiRequest['query'], key: string) => {
   const matchingKey = Object.keys(query).find(
