@@ -53,11 +53,6 @@ query Case($input: CaseQueryInput!) {
         }
       }
     }
-    defenderName
-    defenderNationalId
-    defenderEmail
-    defenderPhoneNumber
-    requestSharedWithDefender
     isHeightenedSecurityLevel
     court {
       ...InstitutionFields

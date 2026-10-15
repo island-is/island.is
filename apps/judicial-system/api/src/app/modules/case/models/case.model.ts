@@ -95,21 +95,6 @@ export class Case {
   @Field(() => [Defendant], { nullable: true })
   readonly defendants?: Defendant[]
 
-  @Field(() => String, { nullable: true })
-  readonly defenderName?: string
-
-  @Field(() => String, { nullable: true })
-  readonly defenderNationalId?: string
-
-  @Field(() => String, { nullable: true })
-  readonly defenderEmail?: string
-
-  @Field(() => String, { nullable: true })
-  readonly defenderPhoneNumber?: string
-
-  @Field(() => RequestSharedWithDefender, { nullable: true })
-  readonly requestSharedWithDefender?: RequestSharedWithDefender
-
   @Field(() => Boolean, { nullable: true })
   isHeightenedSecurityLevel?: boolean
 
