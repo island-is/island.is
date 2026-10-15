@@ -345,6 +345,13 @@ codemagic.yaml                                                                  
 /apps/web/components/ChatPanel/                                                                                              @island-is/stefna
 /apps/web/components/Form/                                                                                                   @island-is/stefna
 /apps/web/components/Stepper/                                                                                                @island-is/stefna
+/apps/contentful-apps/components/editors/CalculatorEditor/                                                                   @island-is/hugsmidjan
+/apps/contentful-apps/pages/fields/calculator-config-field.tsx                                                               @island-is/hugsmidjan
+/apps/web/components/Organization/Slice/Calculator/                                                                          @island-is/hugsmidjan
+/apps/web/screens/OpenInvoices/                                                                                              @island-is/hugsmidjan
+/apps/web/screens/queries/OpenInvoices.ts                                                                                    @island-is/hugsmidjan
+/apps/web/pages/opnir-reikningar/                                                                                            @island-is/hugsmidjan
+/apps/web/pages/en/open-invoices/                                                                                            @island-is/hugsmidjan
 /libs/content-search-toolkit/                                                                                                @island-is/stefna @island-is/juni
 /libs/content-search-index-manager/                                                                                          @island-is/stefna @island-is/juni
 /libs/content-search-metrics/                                                                                                @island-is/stefna @island-is/juni

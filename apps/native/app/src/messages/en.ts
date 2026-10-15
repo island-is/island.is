@@ -62,6 +62,9 @@ export const en: TranslatedMessages = {
   'onboarding.biometrics.type.biometrics': 'biometrics',
   'onboarding.biometrics.type.fingerprint': 'fingerprint',
   'onboarding.biometrics.type.iris': 'iris scanner',
+  'biometrics.enrollmentChanged.title': 'Biometrics turned off',
+  'biometrics.enrollmentChanged.message':
+    'The biometrics registered on this device have changed. Unlock the app with your PIN and turn biometrics back on in settings.',
   'onboarding.pinKeypad.accessibilityLabel.faceId': 'Use FaceID',
   'onboarding.pinKeypad.accessibilityLabel.iris': 'Use Iris',
   'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Use fingerprint',

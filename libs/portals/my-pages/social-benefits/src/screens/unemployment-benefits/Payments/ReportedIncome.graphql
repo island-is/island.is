@@ -9,19 +9,16 @@ query GetVmstApplicantIncomeRows {
     }
     estimatedIncome
     ... on VmstApplicantIrregularJob {
-      employer {
-        name
-        ssn
-      }
+      employerName
+      employerSSN
     }
     ... on VmstApplicantPartTimeJob {
-      employer {
-        name
-        ssn
-      }
+      employerName
+      employerSSN
       ratio
     }
     ... on VmstApplicantPensionPayment {
+      employerName
       incomeTypeId
       pensionFundId
     }

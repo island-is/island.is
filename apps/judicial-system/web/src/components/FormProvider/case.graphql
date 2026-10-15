@@ -283,6 +283,18 @@ query Case($input: CaseQueryInput!) {
         userTitle
         institutionName
       }
+      appealSummonses {
+        id
+        created
+        confirmedDate
+        sentToCourtOfAppealsDate
+        defendants {
+          id
+          defendantId
+          appellantSide
+          claims
+        }
+      }
     }
     rulingOrderAppealCases {
       ...AppealCaseFields
@@ -401,7 +413,13 @@ query Case($input: CaseQueryInput!) {
         verdictAppealDeadline
         isVerdictAppealDeadlineExpired
         subpoenaType
+        isSentToPrisonAdmin
+        sentToPrisonAdminDate
         punishmentType
+        indictmentCancelledOrDismissedState {
+          type
+          time
+        }
         subpoenas {
           ...SubpoenaFields
         }

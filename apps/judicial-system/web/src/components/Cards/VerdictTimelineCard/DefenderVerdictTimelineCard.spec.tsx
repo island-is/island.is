@@ -103,8 +103,8 @@ describe('DefenderVerdictTimelineCard', () => {
     ).toBeInTheDocument()
   })
 
-  // The appeal deadline is already on InfoCardClosedIndictment for defence
-  // users, and enforcement is internal to the prosecution.
+  // Enforcement is internal to the prosecution; the appeal deadline belongs on
+  // this card now that InfoCardClosedIndictment no longer shows it for defence.
   it('leaves out the lines that belong to the public prosecution office', async () => {
     renderComponent({
       ...servedDefendant,
@@ -117,7 +117,9 @@ describe('DefenderVerdictTimelineCard', () => {
     } as Defendant)
 
     expect(await screen.findByText('Dómur')).toBeInTheDocument()
-    expect(screen.queryByText(/Áfrýjunarfrestur/)).not.toBeInTheDocument()
+    expect(
+      screen.getByText('• Áfrýjunarfrestur dómfellda er til 29.06.2026'),
+    ).toBeInTheDocument()
     expect(screen.queryByText(/Sent til fullnustu/)).not.toBeInTheDocument()
     expect(
       screen.queryByText(/Máli lokið án fullnustu/),

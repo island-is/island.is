@@ -32,6 +32,10 @@ export const certificateAvatar = style({
   height: 64,
 })
 
+export const certificateText = style({
+  overflowWrap: 'anywhere',
+})
+
 export const detailHeader = style({
   minHeight: 32,
   ...themeUtils.responsiveStyle({

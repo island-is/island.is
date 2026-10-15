@@ -6,18 +6,17 @@ import { renderHook } from '@testing-library/react'
 import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { Feature } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import type {
-  Case,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
@@ -57,7 +56,7 @@ describe('useSections getSections', () => {
   // hook). Each test injects its own `c` here so the resolved target appeal
   // matches what `getSections(c, u)` is called with.
   const makeWrapper =
-    (workingCase: Case, features: Feature[] = []) =>
+    (workingCase: WorkingCase, features: Feature[] = []) =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ({ children }: any) =>
       (
@@ -145,7 +144,7 @@ describe('useSections getSections', () => {
         appealState: AppealCaseState.RECEIVED,
         appealType: AppealCaseType.VERDICT,
       },
-    } as unknown as Case
+    } as unknown as WorkingCase
 
     const coaUser = {
       ...u,
@@ -157,7 +156,7 @@ describe('useSections getSections', () => {
     // the hook only builds when it is given somewhere to navigate to.
     const onNavigationTo = jest.fn()
 
-    const appealSections = (c: Case, user: User) => {
+    const appealSections = (c: WorkingCase, user: User) => {
       const { result } = renderHook(() => useSections(true, onNavigationTo), {
         wrapper: makeWrapper(c),
       })
@@ -204,12 +203,50 @@ describe('useSections getSections', () => {
       expect(sections[0].children.map((c) => c.name)).toEqual([
         'Yfirlit',
         'Verjandi',
+        'Staða og lyktir',
       ])
       // Every step carries the appeal id for the same reason the overview
       // does: without it the next render resolves back to the ruling appeal.
       expect(sections[0].children[1].href).toBe(
         `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
       )
+      expect(sections[0].children[2].href).toBe(
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
+      )
+    })
+
+    // The step after the defender step is gated on it: the court settles who
+    // represents each party before it records where the appeal stands.
+    it('withholds the status step until every advocate is confirmed', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE
+
+      const unconfirmed = {
+        ...caseWithBothAppeals,
+        defendants: [{ id: 'd1', isAppealDefenderConfirmed: false }],
+      } as unknown as WorkingCase
+      const confirmed = {
+        ...caseWithBothAppeals,
+        defendants: [{ id: 'd1', isAppealDefenderConfirmed: true }],
+      } as unknown as WorkingCase
+
+      expect(
+        appealSections(unconfirmed, coaUser)[0].children[2].onClick,
+      ).toBeUndefined()
+      expect(
+        appealSections(confirmed, coaUser)[0].children[2].onClick,
+      ).toBeDefined()
+    })
+
+    it('marks the section active on the status step', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE
+
+      const sections = appealSections(caseWithBothAppeals, coaUser)
+
+      expect(sections[0].isActive).toBe(true)
+      expect(sections[0].children[2].isActive).toBe(true)
+      expect(sections[0].children[2].onClick).toBeUndefined()
     })
 
     // The side panel works out which step you are on by finding the first
@@ -314,10 +351,10 @@ describe('useSections getSections', () => {
         appealState: AppealCaseState.APPEALED,
         appealType: AppealCaseType.VERDICT,
       },
-    } as unknown as Case
+    } as unknown as WorkingCase
 
     const sectionsFor = (
-      c: Case,
+      c: WorkingCase,
       user: User,
       features: Feature[] = [Feature.INDICTMENT_APPEAL],
     ) => {
@@ -346,7 +383,7 @@ describe('useSections getSections', () => {
       mockPathname = PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE
 
       const sections = sectionsFor(
-        { ...appealedCase, verdictAppealCase: null } as unknown as Case,
+        { ...appealedCase, verdictAppealCase: null } as unknown as WorkingCase,
         staff,
       )
 
@@ -393,7 +430,7 @@ describe('useSections getSections', () => {
             appealState: AppealCaseState.WITHDRAWN,
             appealType: AppealCaseType.VERDICT,
           },
-        } as unknown as Case,
+        } as unknown as WorkingCase,
         staff,
       )
 
@@ -404,11 +441,10 @@ describe('useSections getSections', () => {
   })
 
   it('should return the correct sections for restriction cases in DRAFT state', () => {
-    const c: Case = {
+    const c: WorkingCase = {
       origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
       created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       state: CaseState.DRAFT,
       policeCaseNumbers: [],
@@ -435,11 +471,10 @@ describe('useSections getSections', () => {
   })
 
   it('should return the correct sections for appealed restriction cases when the court of appeals has made a ruling', () => {
-    const c: Case = {
+    const c: WorkingCase = {
       origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
       created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       state: CaseState.ACCEPTED,
       policeCaseNumbers: [],
@@ -468,10 +503,9 @@ describe('useSections getSections', () => {
   })
 
   it('should return the correct sections for indictment cases in RECEIVED state', () => {
-    const c: Case = {
+    const c: WorkingCase = {
       type: CaseType.INDICTMENT,
       created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       state: CaseState.RECEIVED,
       policeCaseNumbers: [],
@@ -488,10 +522,9 @@ describe('useSections getSections', () => {
   })
 
   it('should return the correct sections for indictment cases in WAITING_FOR_CANCELLATION state', () => {
-    const c: Case = {
+    const c: WorkingCase = {
       type: CaseType.INDICTMENT,
       created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       state: CaseState.WAITING_FOR_CANCELLATION,
       policeCaseNumbers: [],
@@ -508,10 +541,9 @@ describe('useSections getSections', () => {
   })
 
   it('should return the correct sections for indictment cases in WAITING_FOR_REVIEW state', () => {
-    const c: Case = {
+    const c: WorkingCase = {
       type: CaseType.INDICTMENT,
       created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       state: CaseState.WAITING_FOR_REVIEW,
       policeCaseNumbers: [],
@@ -528,10 +560,9 @@ describe('useSections getSections', () => {
   })
 
   it('should not append extension sections for indictment cases copied to draft (with a parentCase)', () => {
-    const c: Case = {
+    const c: WorkingCase = {
       type: CaseType.INDICTMENT,
       created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       state: CaseState.DRAFT,
       policeCaseNumbers: [],

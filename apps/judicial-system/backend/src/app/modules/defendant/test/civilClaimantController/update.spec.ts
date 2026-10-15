@@ -166,7 +166,9 @@ describe('CivilClaimantController - Update', () => {
     it('should only keep the defendants still linked to the police case numbers', () => {
       expect(
         mockCaseDefendantPoliceCaseNumberRepositoryService.findAssignedDefendantIds,
-      ).toHaveBeenCalledWith(caseId, ['007-1', '007-2'], ['def-a', 'def-b'])
+      ).toHaveBeenCalledWith(caseId, ['007-1', '007-2'], ['def-a', 'def-b'], {
+        transaction,
+      })
       expect(
         mockCivilClaimantRepositoryService.updateByIdAndCase,
       ).toHaveBeenCalledWith(

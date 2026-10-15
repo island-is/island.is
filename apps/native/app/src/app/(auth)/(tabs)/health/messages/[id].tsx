@@ -335,6 +335,7 @@ export default function HealthMessageDetailScreen() {
         console.error('Failed to download health attachment', error)
         toast.error(
           intl.formatMessage({ id: 'health.messages.attachmentError' }),
+          { duration: 5000 },
         )
       } finally {
         setDownloadingAttachmentId(null)

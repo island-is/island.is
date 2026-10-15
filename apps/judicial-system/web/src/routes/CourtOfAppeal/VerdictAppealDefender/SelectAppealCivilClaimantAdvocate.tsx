@@ -60,7 +60,17 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
   const hasSpokesperson = getHasAppealSpokesperson(civilClaimant)
   const isLawyer = getAppealSpokespersonIsLawyer(civilClaimant)
   const advocate = getAppealSpokesperson(civilClaimant)
-  const advocateTitle = isLawyer ? 'Lögmaður' : 'Réttargæslumaður'
+  // Icelandic declines the role noun, and the four places it appears below
+  // need three different cases: "Lögmaður staðfestur", but "Staðfesta
+  // lögmann" and "Breyta lögmanni". Lower-casing one nominative form for all
+  // of them is what produced "Staðfesta lögmaður".
+  const advocateNoun = isLawyer
+    ? { nominative: 'Lögmaður', accusative: 'lögmann', dative: 'lögmanni' }
+    : {
+        nominative: 'Réttargæslumaður',
+        accusative: 'réttargæslumann',
+        dative: 'réttargæslumanni',
+      }
 
   const send = (update: UpdateCivilClaimant) =>
     setAndSendCivilClaimantToServer(
@@ -220,7 +230,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
         )}
         {isConfirmed && advocate.name && (
           <AlertMessage
-            title={`${advocateTitle} staðfestur`}
+            title={`${advocateNoun.nominative} staðfestur`}
             message={`${advocate.name} hefur fengið tilkynningu um skráningu í tölvupósti.`}
             type="success"
           />
@@ -234,7 +244,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
               }
               onClick={() => setDisplayModal(true)}
             >
-              {`Staðfesta ${advocateTitle.toLowerCase()}`}
+              {`Staðfesta ${advocateNoun.accusative}`}
             </Button>
           </Box>
         )}
@@ -250,17 +260,13 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
         <Modal
           title={
             isConfirmed
-              ? `Breyta ${advocateTitle.toLowerCase()}`
-              : `Staðfesta ${advocateTitle.toLowerCase()}`
+              ? `Breyta ${advocateNoun.dative}`
+              : `Staðfesta ${advocateNoun.accusative}`
           }
           text={
             isConfirmed
               ? 'Ef þú breytir skráningunni þarf að staðfesta hana að nýju.'
-              : `Með því að staðfesta skráir þú ${
-                  advocate.name
-                } sem ${advocateTitle.toLowerCase()} ${
-                  civilClaimant.name
-                } fyrir Landsrétti.`
+              : `Með því að staðfesta skráir þú ${advocate.name} sem ${advocateNoun.accusative} ${civilClaimant.name} fyrir Landsrétti.`
           }
           buttons={[
             {
