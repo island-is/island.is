@@ -15,8 +15,8 @@ import {
 // runtime import here would close a cycle through the case module's barrel
 // that leaves PdfService undefined when the subpoena and verdict services are
 // constructed.
-import type { LawyerRegistryService } from '..'
 import type { PdfService } from '../case'
+import type { LawyerRegistryService } from '../lawyer-registry'
 import { Case, CivilClaimant, Defendant, User } from '../repository'
 import { latestAdvocateConfirmedEvent } from './appealCase.helpers'
 
