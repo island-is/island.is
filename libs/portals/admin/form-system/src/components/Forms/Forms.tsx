@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client'
 import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
-import { CREATE_FORM } from '@island.is/form-system/graphql'
+import { CREATE_FORM, IMPORT_FORM } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
@@ -12,8 +12,9 @@ import {
   GridRow,
   Stack,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
-import { useContext, useEffect, useState } from 'react'
+import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { FormsContext } from '../../context/FormsContext'
@@ -60,6 +61,52 @@ export const Forms = () => {
   })
 
   const [isCreatingForm, setIsCreatingForm] = useState(false)
+  const fileInput = useRef<HTMLInputElement>(null)
+  const importInProgress = useRef(false)
+  const [isImportingForm, setIsImportingForm] = useState(false)
+  const [importFormMutation] = useMutation(IMPORT_FORM)
+
+  const importForm = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file || importInProgress.current || !organizationNationalId) return
+
+    importInProgress.current = true
+    setIsImportingForm(true)
+    try {
+      const formJson = await file.text()
+      JSON.parse(formJson)
+      const { data } = await importFormMutation({
+        variables: { input: { organizationNationalId, formJson } },
+      })
+      const form = data?.importFormSystemForm?.form
+      if (!form?.id) throw new Error('Missing imported form')
+      setForms((forms) => [form, ...forms])
+      navigate(
+        `${FormSystemPaths.Form.replace(
+          ':formId',
+          form.id,
+        )}?organizationNationalId=${organizationNationalId}`,
+      )
+    } catch {
+      toast.error(formatMessage(m.importFormError))
+    } finally {
+      importInProgress.current = false
+      setIsImportingForm(false)
+    }
+  }
+
+  const importButton = (
+    <Button
+      variant="ghost"
+      icon="upload"
+      onClick={() => fileInput.current?.click()}
+      loading={isImportingForm}
+      disabled={isCreatingForm || isImportingForm || !organizationNationalId}
+    >
+      {formatMessage(m.importForm)}
+    </Button>
+  )
 
   const defaultDirection: Record<SortColumn, SortDirection> = {
     name: 'asc',
@@ -158,6 +205,14 @@ export const Forms = () => {
 
   return (
     <>
+      <input
+        ref={fileInput}
+        type="file"
+        accept=".json,application/json"
+        aria-label={formatMessage(m.importForm)}
+        hidden
+        onChange={importForm}
+      />
       {isAdmin && (
         <GridRow>
           <Box
@@ -181,10 +236,24 @@ export const Forms = () => {
           </Box>
         </GridRow>
       )}
-      <Box display={['flex', 'flex', 'none']} marginBottom={2}>
-        <Button size="default" onClick={createForm}>
-          {formatMessage(m.newForm)}
-        </Button>
+      <Box
+        display={['flex', 'flex', 'none']}
+        marginBottom={2}
+        columnGap={2}
+        flexWrap="wrap"
+        rowGap={2}
+      >
+        <Box display="flex" style={{ minWidth: 144 }}>
+          <Button
+            fluid
+            size="default"
+            onClick={createForm}
+            disabled={isCreatingForm || isImportingForm}
+          >
+            {formatMessage(m.newForm)}
+          </Button>
+        </Box>
+        {importButton}
       </Box>
       <Box
         display="flex"
@@ -193,10 +262,18 @@ export const Forms = () => {
         justifyContent="flexEnd"
         alignItems="baseline"
       >
-        <Box display={['none', 'none', 'flex']}>
-          <Button size="default" onClick={createForm} disabled={isCreatingForm}>
-            {formatMessage(m.newForm)}
-          </Button>
+        <Box display={['none', 'none', 'flex']} columnGap={2}>
+          <Box display="flex" style={{ minWidth: 144 }}>
+            <Button
+              fluid
+              size="default"
+              onClick={createForm}
+              disabled={isCreatingForm || isImportingForm}
+            >
+              {formatMessage(m.newForm)}
+            </Button>
+          </Box>
+          {importButton}
         </Box>
         <Filter
           labelClearAll="Hreinsa allar síur"
