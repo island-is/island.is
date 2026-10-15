@@ -77,7 +77,7 @@ const template: ApplicationTemplate<
       type: AuthDelegationType.Custom,
     },
   ],
-  requiredScopes: [ApiScope.directorateOfEquality],
+  requiredScopes: [ApiScope.directorateOfEqualitySalary],
   allowMultipleApplicationsInDraft: false,
   newApplicationButtonLabel: messages.general.newApplicationButtonLabel,
   stateMachineOptions: {
