@@ -7,10 +7,31 @@ import {
   ExternalData,
 } from '@island.is/application/types'
 import type { PersonalTaxReturnApi as RskPersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
+import type { Logger } from '@island.is/logging'
 import { AttachmentS3Service } from '../../shared/services'
 
 export const shouldFetchTaxDataFromRsk = (externalData: ExternalData) =>
   getFinancialAidRouting(externalData).backend === 'veita'
+
+// RSK errors are axios errors whose config carries the SOAP body, including
+// the agent credentials, so only safe fields are logged. National ids are
+// masked by the logger.
+const describeError = (error: unknown) => {
+  if (!(error instanceof Error)) {
+    return { message: String(error) }
+  }
+  const { code, response, $metadata } = error as Error & {
+    code?: string
+    response?: { status?: number }
+    $metadata?: { httpStatusCode?: number }
+  }
+  return {
+    name: error.name,
+    message: error.message,
+    code,
+    status: response?.status ?? $metadata?.httpStatusCode,
+  }
+}
 
 const createPeriod = (pastMonth: number) => {
   const date = new Date()
@@ -26,10 +47,18 @@ const createPeriod = (pastMonth: number) => {
 export const fetchDirectTaxPaymentsFromRsk = async (
   rskApi: RskPersonalTaxReturnApi,
   nationalId: string,
+  logger: Logger,
+  applicationId: string,
 ): Promise<TaxData['municipalitiesDirectTaxPayments']> => {
   return rskApi
     .directTaxPayments(nationalId, createPeriod(3), createPeriod(1))
     .then((res) => {
+      if (!res.success) {
+        logger.info('RSK returned no direct tax payments', {
+          applicationId,
+          errorText: res.errorText,
+        })
+      }
       return {
         directTaxPayments: res.salaryBreakdown
           ? res.salaryBreakdown.map((salary) => {
@@ -46,7 +75,11 @@ export const fetchDirectTaxPaymentsFromRsk = async (
         success: res.success,
       } as TaxData['municipalitiesDirectTaxPayments']
     })
-    .catch(() => {
+    .catch((error: unknown) => {
+      logger.warn('Could not fetch direct tax payments from RSK', {
+        applicationId,
+        error: describeError(error),
+      })
       return {
         directTaxPayments: [],
         success: false,
@@ -59,36 +92,52 @@ export const fetchPersonalTaxReturnFromRsk = async (
   attachmentService: AttachmentS3Service,
   application: ApplicationWithAttachments,
   nationalId: string,
+  logger: Logger,
 ): Promise<TaxData['municipalitiesPersonalTaxReturn']> => {
-  try {
-    let changeableYear = new Date().getFullYear() - 1
+  const applicationId = application.id
+  const unavailable = {
+    personalTaxReturn: undefined,
+  } as unknown as TaxData['municipalitiesPersonalTaxReturn']
 
-    let taxReturn = await rskApi
-      .personalTaxReturnInPdf(nationalId, changeableYear)
-      .catch(() => {
-        return {
-          success: false,
-          content: '',
-        }
-      })
-    if (taxReturn.success === false) {
-      changeableYear -= 1
-      taxReturn = await rskApi
-        .personalTaxReturnInPdf(nationalId, changeableYear)
-        .catch(() => {
-          return {
-            success: false,
-            content: '',
-          }
+  const fetchYear = async (year: number) => {
+    try {
+      const taxReturn = await rskApi.personalTaxReturnInPdf(nationalId, year)
+      if (!taxReturn.success) {
+        logger.info('RSK returned no tax return for year', {
+          applicationId,
+          year,
+          errorText: taxReturn.errorText,
         })
+      }
+      return taxReturn
+    } catch (error) {
+      logger.warn('Could not fetch tax return from RSK', {
+        applicationId,
+        year,
+        error: describeError(error),
+      })
+      return { success: false, errorText: '', content: '' }
     }
-    if (taxReturn.success === false) {
-      throw Error('Tax return was not successful')
-    }
+  }
 
-    const fileName = `Framtal_${nationalId}_${changeableYear}.pdf`
+  let changeableYear = new Date().getFullYear() - 1
+  let taxReturn = await fetchYear(changeableYear)
+  if (!taxReturn.success) {
+    changeableYear -= 1
+    taxReturn = await fetchYear(changeableYear)
+  }
+  if (!taxReturn.success) {
+    return unavailable
+  }
+
+  try {
+    // Kept free of the national id, which would otherwise end up in the S3
+    // key, presigned URLs and access logs.
+    const isSpouse = nationalId !== application.applicant
+    const fileName = isSpouse
+      ? `Framtal_maki_${changeableYear}.pdf`
+      : `Framtal_${changeableYear}.pdf`
     const buffer = Buffer.from(taxReturn.content, 'base64')
-    const size = buffer.length
 
     const key = await attachmentService.addAttachment(
       application,
@@ -98,11 +147,14 @@ export const fetchPersonalTaxReturnFromRsk = async (
     )
 
     return {
-      personalTaxReturn: { key, name: fileName, size },
+      personalTaxReturn: { key, name: fileName, size: buffer.length },
     }
-  } catch {
-    return {
-      personalTaxReturn: undefined,
-    } as unknown as TaxData['municipalitiesPersonalTaxReturn']
+  } catch (error) {
+    logger.warn('Could not store RSK tax return', {
+      applicationId,
+      year: changeableYear,
+      error: describeError(error),
+    })
+    return unavailable
   }
 }

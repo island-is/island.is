@@ -457,11 +457,14 @@ export class FinancialAidService extends BaseTemplateApiService {
             this.attachmentService,
             application,
             auth.nationalId,
+            this.logger,
           )
         const municipalitiesDirectTaxPayments =
           await fetchDirectTaxPaymentsFromRsk(
             this.rskPersonalTaxReturnApi,
             auth.nationalId,
+            this.logger,
+            application.id,
           )
 
         return {
