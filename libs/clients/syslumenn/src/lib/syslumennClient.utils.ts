@@ -470,6 +470,45 @@ export const bankAccountMapper = (assetRaw: EignirDanarbus): EstateAsset => {
   }
 }
 
+// Sýslumenn now send the asset type by name ('InnistaedaIBanka') instead of
+// by value (8). The names are listed in value order, so a name's index is
+// its value. Both forms are accepted.
+const ASSET_TYPE_NAMES = [
+  'Fasteign',
+  'Okutaeki',
+  'Skip',
+  'Lausafe',
+  'Loftfar',
+  'Oskrad',
+  'AdrarEignir',
+  'Hlutabref',
+  'InnistaedaIBanka',
+  'PeningarOgBankaholf',
+  'Skotvopn',
+  'VerdbrefOgKrofur',
+  'Utfarakostnadur',
+  'OpinberGjold',
+  'AdrarSkuldir',
+  'EignirIAtvinnurekstri',
+  'SkuldirIAtvinnurekstri',
+  'Fasteignagjold',
+  'Tryggingastofnun',
+  'Lan',
+  'Kreditkort',
+  'Yfirdrattur',
+]
+
+export const withAssetTypeValue = <T extends { tegundAngalgs?: TegundAndlags }>(
+  asset: T,
+): T => {
+  const assetType: TegundAndlags | string | undefined = asset.tegundAngalgs
+  if (typeof assetType !== 'string') {
+    return asset
+  }
+  const value = ASSET_TYPE_NAMES.indexOf(assetType)
+  return { ...asset, tegundAngalgs: value === -1 ? undefined : value }
+}
+
 export const mapAvailableSettlements = (
   settlementRaw: DanarbuUpplRadstofun['mogulegSkipti'],
 ): AvailableSettlements | undefined => {
@@ -487,6 +526,7 @@ export const mapAvailableSettlements = (
 export const mapEstateRegistrant = (
   syslaData: SkraningaradiliDanarbusSkeyti,
 ): EstateRegistrant => {
+  const eignir = syslaData.eignir?.map(withAssetTypeValue)
   return {
     applicantEmail: syslaData.tolvuposturSkreningaradila ?? '',
     applicantPhone: syslaData.simiSkraningaradila ?? '',
@@ -502,8 +542,8 @@ export const mapEstateRegistrant = (
       syslaData.erfdaskraIVorsluSyslumanns !== undefined
         ? syslaData.erfdaskraIVorsluSyslumanns
         : undefined,
-    assets: syslaData.eignir
-      ? syslaData.eignir
+    assets: eignir
+      ? eignir
           .filter(
             (a) =>
               a.tegundAngalgs === TegundAndlags.NUMBER_0 &&
@@ -512,33 +552,33 @@ export const mapEstateRegistrant = (
           )
           .map(assetMapper)
       : [],
-    vehicles: syslaData.eignir
-      ? syslaData.eignir
+    vehicles: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_1)
           .map(assetMapper)
       : [],
-    ships: syslaData.eignir
-      ? syslaData.eignir
+    ships: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_2)
           .map(assetMapper)
       : [],
-    cash: syslaData.eignir
-      ? syslaData.eignir
+    cash: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_3)
           .map(assetMapper)
       : [],
-    flyers: syslaData.eignir
-      ? syslaData.eignir
+    flyers: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_4)
           .map(assetMapper)
       : [],
-    guns: syslaData.eignir
-      ? syslaData.eignir
+    guns: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_10)
           .map(assetMapper)
       : [],
-    moneyAndDeposit: syslaData.eignir
-      ? syslaData.eignir
+    moneyAndDeposit: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_9)
           .map(assetMapper)
       : [],
@@ -565,9 +605,10 @@ export const mapEstateRegistrant = (
 
 // TODO: get updated types into the client
 export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
+  const eignir = syslaData.eignir?.map(withAssetTypeValue)
   return {
-    assets: syslaData.eignir
-      ? syslaData.eignir
+    assets: eignir
+      ? eignir
           .filter(
             (a) =>
               a?.tegundAngalgs !== undefined &&
@@ -576,59 +617,59 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
           )
           .map(assetMapper)
       : [],
-    vehicles: syslaData.eignir
-      ? syslaData.eignir
+    vehicles: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_1)
           .map(assetMapper)
       : [],
-    ships: syslaData.eignir
-      ? syslaData.eignir
+    ships: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_2)
           .map(assetMapper)
       : [],
-    cash: syslaData.eignir
-      ? syslaData.eignir
+    cash: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_3)
           .map(assetMapper)
       : [],
-    flyers: syslaData.eignir
-      ? syslaData.eignir
+    flyers: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_4)
           .map(assetMapper)
       : [],
     // TODO: update once implemented in District Commissioner's backend
-    guns: syslaData.eignir
-      ? syslaData.eignir
+    guns: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_10)
           .map(assetMapper)
       : [],
-    otherAssets: syslaData.eignir
-      ? syslaData.eignir
+    otherAssets: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_6)
           .map(assetMapper)
       : [],
-    bankAccounts: syslaData.eignir
-      ? syslaData.eignir
+    bankAccounts: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_8)
           .map(bankAccountMapper)
       : [],
-    claims: syslaData.eignir
-      ? syslaData.eignir
+    claims: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_11)
           .map(assetMapper)
       : [],
-    stocks: syslaData.eignir
-      ? syslaData.eignir
+    stocks: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_7)
           .map(stocksAssetMapper)
       : [],
-    moneyAndDeposit: syslaData.eignir
-      ? syslaData.eignir
+    moneyAndDeposit: eignir
+      ? eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_9)
           .map(assetMapper)
       : [],
-    otherDebts: syslaData.eignir
-      ? syslaData.eignir
+    otherDebts: eignir
+      ? eignir
           .filter(
             (a) =>
               a.tegundAngalgs === TegundAndlags.NUMBER_13 || // OpinberGjold
@@ -859,7 +900,7 @@ const mapInheritanceReportAssets = (
   const assetsInBusiness: Array<InheritanceReportAsset> = []
   const debtsInBusiness: Array<InheritanceReportAsset> = []
 
-  iAssets?.forEach((iAsset) => {
+  iAssets?.map(withAssetTypeValue).forEach((iAsset) => {
     const asset = mapInheritanceReportAsset(iAsset)
 
     const assetTypeTodebtType = {
