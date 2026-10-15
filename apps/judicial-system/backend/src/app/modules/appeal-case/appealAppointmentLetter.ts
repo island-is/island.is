@@ -7,15 +7,13 @@ import { AppealCaseState } from '@island.is/judicial-system/types'
 import {
   AppealAppointmentKind,
   type AppealAppointmentLetter,
+  createAppealAppointmentLetter,
   getAppealAppointmentDefendantNames,
   getCourtNameInGenitive,
   NOT_RECORDED,
 } from '../../formatters'
-// Types only: the controllers that write the letter inject these, and a
-// runtime import here would close a cycle through the case module's barrel
-// that leaves PdfService undefined when the subpoena and verdict services are
-// constructed.
-import type { PdfService } from '../case'
+// Type only: the controllers that write the letter inject the register and
+// hand it in, so this file needs nothing of the module at runtime.
 import type { LawyerRegistryService } from '../lawyer-registry'
 import { Case, CivilClaimant, Defendant, User } from '../repository'
 import { latestAdvocateConfirmedEvent } from './appealCase.helpers'
@@ -214,10 +212,9 @@ export const writeAppealAppointmentLetter = async (params: {
   theCase: Case
   party: { defendant?: Defendant; civilClaimant?: CivilClaimant }
   res: Response
-  pdfService: PdfService
   lawyerRegistryService: LawyerRegistryService
 }): Promise<void> => {
-  const { theCase, party, res, pdfService, lawyerRegistryService } = params
+  const { theCase, party, res, lawyerRegistryService } = params
 
   const advocatePractice = await getAdvocatePractice(
     lawyerRegistryService,
@@ -235,5 +232,5 @@ export const writeAppealAppointmentLetter = async (params: {
     throw new NotFoundException('No appeal appointment letter to write')
   }
 
-  res.end(await pdfService.getAppealAppointmentLetterPdf(letter))
+  res.end(await createAppealAppointmentLetter(letter))
 }

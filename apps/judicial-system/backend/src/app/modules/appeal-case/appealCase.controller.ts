@@ -41,7 +41,6 @@ import { CurrentCase } from '../case/guards/case.decorator'
 import { CaseExistsGuard } from '../case/guards/caseExists.guard'
 import { CaseReadGuard } from '../case/guards/caseRead.guard'
 import { CaseWriteGuard } from '../case/guards/caseWrite.guard'
-import { PdfService } from '../case/pdf.service'
 import { CurrentCivilClaimant } from '../defendant/guards/civilClaimaint.decorator'
 import { CivilClaimantExistsGuard } from '../defendant/guards/civilClaimantExists.guard'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
@@ -83,7 +82,6 @@ export class AppealCaseController {
     private readonly appealCaseService: AppealCaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
-    private readonly pdfService: PdfService,
     private readonly lawyerRegistryService: LawyerRegistryService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -277,7 +275,6 @@ export class AppealCaseController {
       theCase,
       party,
       res,
-      pdfService: this.pdfService,
       lawyerRegistryService: this.lawyerRegistryService,
     })
   }

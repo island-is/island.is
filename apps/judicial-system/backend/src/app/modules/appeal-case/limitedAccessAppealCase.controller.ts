@@ -39,7 +39,6 @@ import { CaseReadGuard } from '../case/guards/caseRead.guard'
 import { CaseTypeGuard } from '../case/guards/caseType.guard'
 import { CaseWriteGuard } from '../case/guards/caseWrite.guard'
 import { LimitedAccessCaseExistsGuard } from '../case/guards/limitedAccessCaseExists.guard'
-import { PdfService } from '../case/pdf.service'
 import { CurrentCivilClaimant } from '../defendant/guards/civilClaimaint.decorator'
 import { CivilClaimantExistsGuard } from '../defendant/guards/civilClaimantExists.guard'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
@@ -63,7 +62,6 @@ import { AppealCaseService } from './appealCase.service'
 export class LimitedAccessAppealCaseController {
   constructor(
     private readonly appealCaseService: AppealCaseService,
-    private readonly pdfService: PdfService,
     private readonly lawyerRegistryService: LawyerRegistryService,
     private readonly eventService: EventService,
     @InjectConnection() private readonly sequelize: Sequelize,
@@ -226,7 +224,6 @@ export class LimitedAccessAppealCaseController {
       theCase,
       party: { defendant },
       res,
-      pdfService: this.pdfService,
       lawyerRegistryService: this.lawyerRegistryService,
     })
   }
@@ -264,7 +261,6 @@ export class LimitedAccessAppealCaseController {
       theCase,
       party: { civilClaimant },
       res,
-      pdfService: this.pdfService,
       lawyerRegistryService: this.lawyerRegistryService,
     })
   }

@@ -12,7 +12,6 @@ import {
 
 import { CaseService } from '../../case'
 import { LimitedAccessCaseService } from '../../case/limitedAccessCase.service'
-import { PdfService } from '../../case/pdf.service'
 import { EventService } from '../../event'
 import { FileService } from '../../file'
 import { LawyerRegistryService } from '../../lawyer-registry/lawyerRegistry.service'
@@ -34,7 +33,6 @@ jest.mock('@island.is/judicial-system/message')
 jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../case/case.service')
 jest.mock('../../case/limitedAccessCase.service')
-jest.mock('../../case/pdf.service')
 jest.mock('../../event/event.service')
 jest.mock('../../lawyer-registry/lawyerRegistry.service')
 jest.mock('../../file/file.service')
@@ -58,7 +56,6 @@ export const createTestingAppealCaseModule = async () => {
       SharedAuthModule,
       CaseService,
       LimitedAccessCaseService,
-      PdfService,
       EventService,
       LawyerRegistryService,
       FileService,
@@ -108,8 +105,6 @@ export const createTestingAppealCaseModule = async () => {
   const defendantRepositoryService =
     appealCaseModule.get<DefendantRepositoryService>(DefendantRepositoryService)
 
-  const pdfService = appealCaseModule.get<PdfService>(PdfService)
-
   const lawyerRegistryService = appealCaseModule.get<LawyerRegistryService>(
     LawyerRegistryService,
   )
@@ -142,7 +137,6 @@ export const createTestingAppealCaseModule = async () => {
     caseRepositoryService,
     defendantRepositoryService,
     verdictRepositoryService,
-    pdfService,
     lawyerRegistryService,
     userService,
     eventService,

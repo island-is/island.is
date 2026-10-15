@@ -7,6 +7,7 @@ import { AppealEventType } from '@island.is/judicial-system/types'
 
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
+import { createAppealAppointmentLetter } from '../../../../formatters'
 import {
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
@@ -25,6 +26,16 @@ import {
   Defendant,
 } from '../../../repository'
 import { AppealCaseController } from '../../appealCase.controller'
+
+jest.mock(
+  '../../../../formatters/generatedPdfs/appealAppointmentLetterPdf',
+  () => ({
+    ...jest.requireActual(
+      '../../../../formatters/generatedPdfs/appealAppointmentLetterPdf',
+    ),
+    createAppealAppointmentLetter: jest.fn(),
+  }),
+)
 
 const confirmation = (fields: Partial<AppealEventLog>): AppealEventLog =>
   ({
@@ -75,14 +86,11 @@ describe('AppealCaseController - get appeal appointment letter pdf', () => {
   let res: Response
 
   beforeEach(async () => {
-    const {
-      appealCaseController: controller,
-      pdfService,
-      lawyerRegistryService,
-    } = await createTestingAppealCaseModule()
+    const { appealCaseController: controller, lawyerRegistryService } =
+      await createTestingAppealCaseModule()
 
     appealCaseController = controller
-    mockGetPdf = pdfService.getAppealAppointmentLetterPdf as jest.Mock
+    mockGetPdf = createAppealAppointmentLetter as jest.Mock
     mockGetPdf.mockResolvedValue(pdf)
     mockGetLawyer = lawyerRegistryService.getByNationalId as jest.Mock
     mockGetLawyer.mockResolvedValue({ practice: 'Vivos lögmenn' })

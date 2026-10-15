@@ -10,6 +10,7 @@ import {
 
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
+import { createAppealAppointmentLetter } from '../../../../formatters'
 import { defenderRule } from '../../../../guards'
 import { verifyGuards, verifyRolesRules } from '../../../../test'
 import { CaseReadGuard } from '../../../case/guards/caseRead.guard'
@@ -26,6 +27,16 @@ import {
 } from '../../../repository'
 import { DefenceAdvocateOfPartyGuard } from '../../guards/defenceAdvocateOfParty.guard'
 import { LimitedAccessAppealCaseController } from '../../limitedAccessAppealCase.controller'
+
+jest.mock(
+  '../../../../formatters/generatedPdfs/appealAppointmentLetterPdf',
+  () => ({
+    ...jest.requireActual(
+      '../../../../formatters/generatedPdfs/appealAppointmentLetterPdf',
+    ),
+    createAppealAppointmentLetter: jest.fn(),
+  }),
+)
 
 const confirmation = (fields: Partial<AppealEventLog>): AppealEventLog =>
   ({
@@ -78,14 +89,11 @@ describe('LimitedAccessAppealCaseController - get appeal appointment letter pdf'
   let res: Response
 
   beforeEach(async () => {
-    const {
-      limitedAccessAppealCaseController,
-      pdfService,
-      lawyerRegistryService,
-    } = await createTestingAppealCaseModule()
+    const { limitedAccessAppealCaseController, lawyerRegistryService } =
+      await createTestingAppealCaseModule()
 
     controller = limitedAccessAppealCaseController
-    mockGetPdf = pdfService.getAppealAppointmentLetterPdf as jest.Mock
+    mockGetPdf = createAppealAppointmentLetter as jest.Mock
     mockGetPdf.mockResolvedValue(pdf)
     ;(lawyerRegistryService.getByNationalId as jest.Mock).mockResolvedValue({
       practice: 'Vivos lögmenn',
