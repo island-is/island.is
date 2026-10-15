@@ -22,8 +22,8 @@ import { createTestingCaseModule } from '../../case/test/createTestingCaseModule
 
 import { runGuardChain, runInRequestContext } from '../../../test'
 import { CaseTypeGuard } from '../../case/guards/caseType.guard'
-import { MinimalCaseAccessGuard } from '../../case/guards/minimalCaseAccess.guard'
 import { MinimalCaseExistsForUpdateGuard } from '../../case/guards/minimalCaseExistsForUpdate.guard'
+import { MinimalCaseWriteGuard } from '../../case/guards/minimalCaseWrite.guard'
 import {
   Case,
   CaseRepositoryService,
@@ -160,7 +160,7 @@ describe.each(routes)(
         new AuthenticatedGuard(),
         new RolesGuard(new Reflector()),
         new MinimalCaseExistsForUpdateGuard(caseService, sequelize),
-        new MinimalCaseAccessGuard(),
+        new MinimalCaseWriteGuard(),
         new ValidateVictimGuard(
           new VictimService(victimRepositoryService, logger),
           sequelize,
@@ -311,6 +311,36 @@ describe.each(routes)(
       })
     })
 
+    // Sharing a case with another office gives its prosecutors read access
+    // and nothing more: the write guard decides with forUpdate, as
+    // CaseWriteGuard does on the full-case routes, and every route here
+    // mutates. The access guard would have let this caller through.
+    describe('prosecutor at the office the case is shared with', () => {
+      const caseId = uuid()
+      const sharedWithProsecutorsOfficeId = uuid()
+      let then: Awaited<ReturnType<typeof runChain>>
+
+      beforeEach(async () => {
+        const mockFindLiveMinimalByIdForUpdate =
+          mockCaseRepositoryService.findLiveMinimalByIdForUpdate as jest.Mock
+        mockFindLiveMinimalByIdForUpdate.mockResolvedValueOnce({
+          ...investigationCaseAtOffice(caseId),
+          sharedWithProsecutorsOfficeId,
+        } as Case)
+
+        then = await runChain(
+          prosecutionUser(UserRole.PROSECUTOR, sharedWithProsecutorsOfficeId),
+          caseId,
+        )
+      })
+
+      it('should be rejected by MinimalCaseWriteGuard', () => {
+        expect(then.allowed).toBe(false)
+        expect(then.rejectedBy).toBe(MinimalCaseWriteGuard.name)
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+      })
+    })
+
     // The guards after the locking read all decide from request.case. Each of
     // them throws a 500 for a missing case and a 403 or 404 for the case it
     // was given, so the error type is what shows the read came first.
@@ -353,9 +383,9 @@ describe.each(routes)(
         )
       })
 
-      it('should be rejected by MinimalCaseAccessGuard', () => {
+      it('should be rejected by MinimalCaseWriteGuard', () => {
         expect(then.allowed).toBe(false)
-        expect(then.rejectedBy).toBe(MinimalCaseAccessGuard.name)
+        expect(then.rejectedBy).toBe(MinimalCaseWriteGuard.name)
         expect(then.error).toBeInstanceOf(ForbiddenException)
       })
     })

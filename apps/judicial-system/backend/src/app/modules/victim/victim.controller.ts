@@ -33,8 +33,8 @@ import { getOrCreateTransaction } from '../../middleware'
 import {
   CaseTypeGuard,
   MinimalCase,
-  MinimalCaseAccessGuard,
   MinimalCaseExistsForUpdateGuard,
+  MinimalCaseWriteGuard,
   MinimalCurrentCase,
 } from '../case'
 import { Victim } from '../repository'
@@ -60,7 +60,7 @@ import { VictimService } from './victim.service'
   RolesGuard,
   MinimalCaseExistsForUpdateGuard,
   new CaseTypeGuard(investigationCases),
-  MinimalCaseAccessGuard,
+  MinimalCaseWriteGuard,
   ValidateVictimGuard,
   VictimWriteGuard,
 )
