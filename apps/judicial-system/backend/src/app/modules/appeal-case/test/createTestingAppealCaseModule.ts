@@ -24,6 +24,7 @@ import {
   VerdictRepositoryService,
 } from '../../repository'
 import { UserService } from '../../user'
+import { AppealAppointmentLetterService } from '../appealAppointmentLetter.service'
 import { appealCaseModuleConfig } from '../appealCase.config'
 import { AppealCaseController } from '../appealCase.controller'
 import { AppealCaseService } from '../appealCase.service'
@@ -77,6 +78,7 @@ export const createTestingAppealCaseModule = async () => {
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       AppealCaseService,
+      AppealAppointmentLetterService,
     ],
   }).compile()
 

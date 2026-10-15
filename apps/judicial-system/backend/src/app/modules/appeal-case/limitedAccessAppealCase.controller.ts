@@ -44,7 +44,6 @@ import { CivilClaimantExistsGuard } from '../defendant/guards/civilClaimantExist
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { EventService } from '../event'
-import { LawyerRegistryService } from '../lawyer-registry/lawyerRegistry.service'
 import { AppealCase, Case, CivilClaimant, Defendant } from '../repository'
 import { CreateAppealCaseDto } from './dto/createAppealCase.dto'
 import { CreateAppealEventLogDto } from './dto/createAppealEventLog.dto'
@@ -53,7 +52,7 @@ import { CurrentAppealCase } from './guards/appealCase.decorator'
 import { AppealCaseExistsGuard } from './guards/appealCaseExists.guard'
 import { DefenceAdvocateOfPartyGuard } from './guards/defenceAdvocateOfParty.guard'
 import { defenderTransitionRule } from './guards/rolesRules'
-import { writeAppealAppointmentLetter } from './appealAppointmentLetter'
+import { AppealAppointmentLetterService } from './appealAppointmentLetter.service'
 import { AppealCaseService } from './appealCase.service'
 
 @Controller('api')
@@ -62,7 +61,7 @@ import { AppealCaseService } from './appealCase.service'
 export class LimitedAccessAppealCaseController {
   constructor(
     private readonly appealCaseService: AppealCaseService,
-    private readonly lawyerRegistryService: LawyerRegistryService,
+    private readonly appealAppointmentLetterService: AppealAppointmentLetterService,
     private readonly eventService: EventService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -220,12 +219,7 @@ export class LimitedAccessAppealCaseController {
       `Getting the appeal appointment letter for defendant ${defendantId} of case ${caseId} as a pdf document for a limited access user`,
     )
 
-    await writeAppealAppointmentLetter({
-      theCase,
-      party: { defendant },
-      res,
-      lawyerRegistryService: this.lawyerRegistryService,
-    })
+    await this.appealAppointmentLetterService.write(theCase, { defendant }, res)
   }
 
   @UseGuards(
@@ -257,11 +251,10 @@ export class LimitedAccessAppealCaseController {
       `Getting the appeal appointment letter for civil claimant ${civilClaimantId} of case ${caseId} as a pdf document for a limited access user`,
     )
 
-    await writeAppealAppointmentLetter({
+    await this.appealAppointmentLetterService.write(
       theCase,
-      party: { civilClaimant },
+      { civilClaimant },
       res,
-      lawyerRegistryService: this.lawyerRegistryService,
-    })
+    )
   }
 }

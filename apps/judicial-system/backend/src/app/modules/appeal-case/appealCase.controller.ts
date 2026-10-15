@@ -46,7 +46,6 @@ import { CivilClaimantExistsGuard } from '../defendant/guards/civilClaimantExist
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { EventService } from '../event'
-import { LawyerRegistryService } from '../lawyer-registry/lawyerRegistry.service'
 import { AppealCase, Case, CivilClaimant, Defendant } from '../repository'
 import { UserService } from '../user'
 import { CreateAppealCaseDto } from './dto/createAppealCase.dto'
@@ -71,7 +70,7 @@ import {
   publicProsecutorStaffCreateRule,
   publicProsecutorStaffTransitionRule,
 } from './guards/rolesRules'
-import { writeAppealAppointmentLetter } from './appealAppointmentLetter'
+import { AppealAppointmentLetterService } from './appealAppointmentLetter.service'
 import { AppealCaseService } from './appealCase.service'
 
 @Controller('api')
@@ -82,7 +81,7 @@ export class AppealCaseController {
     private readonly appealCaseService: AppealCaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
-    private readonly lawyerRegistryService: LawyerRegistryService,
+    private readonly appealAppointmentLetterService: AppealAppointmentLetterService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -266,19 +265,6 @@ export class AppealCaseController {
     return result.appealCase
   }
 
-  private writeAppointmentLetter(
-    theCase: Case,
-    party: { defendant?: Defendant; civilClaimant?: CivilClaimant },
-    res: Response,
-  ): Promise<void> {
-    return writeAppealAppointmentLetter({
-      theCase,
-      party,
-      res,
-      lawyerRegistryService: this.lawyerRegistryService,
-    })
-  }
-
   // The public prosecution office prosecutes the appeal and is copied on the
   // letter, so it reads it here; the advocate it appoints reads it through the
   // limited access route.
@@ -307,7 +293,7 @@ export class AppealCaseController {
       `Getting the appeal appointment letter for defendant ${defendantId} of case ${caseId} as a pdf document`,
     )
 
-    await this.writeAppointmentLetter(theCase, { defendant }, res)
+    await this.appealAppointmentLetterService.write(theCase, { defendant }, res)
   }
 
   @UseGuards(
@@ -340,6 +326,10 @@ export class AppealCaseController {
       `Getting the appeal appointment letter for civil claimant ${civilClaimantId} of case ${caseId} as a pdf document`,
     )
 
-    await this.writeAppointmentLetter(theCase, { civilClaimant }, res)
+    await this.appealAppointmentLetterService.write(
+      theCase,
+      { civilClaimant },
+      res,
+    )
   }
 }
