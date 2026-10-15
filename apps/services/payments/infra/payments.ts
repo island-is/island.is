@@ -81,11 +81,8 @@ const secrets = {
   // Shared by the service and the worker: the worker transitively loads the
   // bank-transfer/Blikk modules via PaymentFlowModule, so BlikkClientConfig must resolve at boot.
   BLIKK_API_KEY: '/k8s/services-payments/BLIKK_API_KEY',
-}
-
-// The card payment gateway: the service charges and refunds cards, the worker refunds the card
-// payments FJS rejects.
-const paymentGatewaySecrets = {
+  // The card payment gateway: the service charges and refunds cards, the worker refunds the card
+  // payments FJS rejects.
   PAYMENTS_GATEWAY_API_SECRET:
     '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET',
   PAYMENTS_GATEWAY_API_HEADER_KEY:
@@ -126,7 +123,6 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
     })
     .secrets({
       ...secrets,
-      ...paymentGatewaySecrets,
       PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET:
         '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET',
       PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM:
@@ -194,7 +190,7 @@ export const serviceSetupForWorker =
       .db(db)
       .codeOwner(CodeOwners.Aranja)
       .env(env)
-      .secrets({ ...secrets, ...paymentGatewaySecrets })
+      .secrets(secrets)
       .xroad(Base, Client, ChargeFjsV2, FinanceV3)
       .command('node')
       .args('main.cjs', '--job', 'worker')
