@@ -159,10 +159,6 @@ describe('CaseController - Extend', () => {
           state: CaseState.NEW,
           description,
           policeCaseNumbers,
-          defenderName,
-          defenderNationalId,
-          defenderEmail,
-          defenderPhoneNumber,
           leadInvestigator,
           courtId,
           translator,
@@ -195,11 +191,6 @@ describe('CaseController - Extend', () => {
       )
     })
 
-    it('should not copy the case defender onto every defendant', () => {
-      expect(
-        mockDefendantService.syncDefenderToAllDefendants,
-      ).not.toHaveBeenCalled()
-    })
   })
 
   describe('waived counsel when extending a case', () => {
@@ -326,10 +317,6 @@ describe('CaseController - Extend', () => {
           state: CaseState.NEW,
           description,
           policeCaseNumbers,
-          defenderName,
-          defenderNationalId,
-          defenderEmail,
-          defenderPhoneNumber,
           leadInvestigator,
           courtId,
           translator,

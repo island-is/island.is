@@ -5,7 +5,6 @@ import {
 
 import {
   anyDefendantHasDefender,
-  buildCaseDefenderMirrorUpdate,
   canDefenderViewRequest,
   getDefendantRequestSharingUpdate,
   getRequestCaseDefenderNames,
@@ -160,28 +159,6 @@ describe('RequestCaseDefenderInfo.logic', () => {
           nextDefenderName: null,
         }),
       ).toEqual({ requestSharedWithDefender: null })
-    })
-  })
-
-  describe('buildCaseDefenderMirrorUpdate', () => {
-    const contact = {
-      defenderName: 'Lögmaður',
-      defenderNationalId: '0101010101',
-      defenderEmail: 'logmadur@example.com',
-      defenderPhoneNumber: '1234567',
-    }
-
-    test('mirrors contact fields with force', () => {
-      expect(buildCaseDefenderMirrorUpdate(contact)).toEqual({
-        ...contact,
-        force: true,
-      })
-    })
-
-    test('never writes the case-level sharing timing', () => {
-      expect(buildCaseDefenderMirrorUpdate(contact)).not.toHaveProperty(
-        'requestSharedWithDefender',
-      )
     })
   })
 

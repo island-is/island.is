@@ -3,8 +3,6 @@ import {
   CaseState,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
-
 type DefendantWithDefender = {
   id: string
   defenderName?: string | null
@@ -147,24 +145,3 @@ export const getDefendantRequestSharingUpdate = ({
 
   return {}
 }
-
-// The case-level sharing timing is left out on purpose: the server keeps it as
-// the most permissive value across the defendants, and a case-level write
-// would be copied onto every defendant.
-export const buildCaseDefenderMirrorUpdate = ({
-  defenderName,
-  defenderNationalId,
-  defenderEmail,
-  defenderPhoneNumber,
-}: {
-  defenderName: string | null
-  defenderNationalId: string | null
-  defenderEmail: string | null
-  defenderPhoneNumber: string | null
-}): UpdateCase => ({
-  defenderName,
-  defenderNationalId,
-  defenderEmail,
-  defenderPhoneNumber,
-  force: true,
-})

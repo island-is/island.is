@@ -718,13 +718,6 @@ export class CaseService {
     }
   }
 
-  private addMessagesForDefenderEmailChangeToQueue(
-    theCase: Case,
-    user: TUser,
-  ): void {
-    this.addMessagesForDeliverDefendantToCourtToQueue(theCase, user)
-  }
-
   private addMessagesForProsecutorChangeToQueue(
     theCase: Case,
     user: TUser,
@@ -1253,15 +1246,7 @@ export class CaseService {
           this.addMessagesForProsecutorChangeToQueue(updatedCase, user)
         }
 
-        if (
-          !isIndictment &&
-          updatedCase.defenderEmail !== theCase.defenderEmail
-        ) {
-          // New defender email
-          this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
-        }
-
-        // Same mutual exclusion as prosecutor/defender above and appeal roles:
+        // Same mutual exclusion as prosecutor above and appeal roles:
         // connect (number change) syncs current roles; this branch handles
         // later assignment changes only.
         if (
@@ -1461,20 +1446,6 @@ export class CaseService {
       await this.defendantService.createForNewCase(
         theCase.id,
         defendant,
-        transaction,
-      )
-    }
-
-    if (isRequestCase(caseToCreate.type)) {
-      await this.defendantService.syncDefenderToAllDefendants(
-        theCase.id,
-        {
-          defenderName: caseToCreate.defenderName,
-          defenderNationalId: caseToCreate.defenderNationalId,
-          defenderEmail: caseToCreate.defenderEmail,
-          defenderPhoneNumber: caseToCreate.defenderPhoneNumber,
-          requestSharedWithDefender: caseToCreate.requestSharedWithDefender,
-        },
         transaction,
       )
     }
@@ -2360,21 +2331,6 @@ export class CaseService {
       })
     }
 
-    // Request-case sharing timing is still dual-written from the case onto
-    // every defendant so that a case-level write reaches the defendant rows
-    // that access is decided on. Defender contact fields are not fanned out:
-    // each defendant has its own defender.
-    if (
-      isRequestCase(theCase.type) &&
-      caseUpdate.requestSharedWithDefender !== undefined
-    ) {
-      await this.defendantService.syncDefenderToAllDefendants(
-        theCase.id,
-        { requestSharedWithDefender: caseUpdate.requestSharedWithDefender },
-        transaction,
-      )
-    }
-
     // Update police case numbers of case files if necessary
     await this.handlePoliceCaseNumbersUpdate(theCase, caseUpdate, transaction)
 
@@ -2860,10 +2816,6 @@ export class CaseService {
       'type',
       'description',
       'policeCaseNumbers',
-      'defenderName',
-      'defenderNationalId',
-      'defenderEmail',
-      'defenderPhoneNumber',
       'defendantWaivesRightToCounsel',
       'leadInvestigator',
       'courtId',
