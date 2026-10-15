@@ -393,19 +393,15 @@ export class SubpoenaService {
     // No need to wait for this to finish
     this.addMessagesForSubpoenaUpdateToQueue(subpoena, serviceStatus)
 
-    if (
-      update.serviceStatus &&
-      update.serviceStatus !== subpoena.serviceStatus
-    ) {
+    if (serviceStatus && serviceStatus !== subpoena.serviceStatus) {
       // The event announces a service status the database has accepted, so it
       // is posted after the commit - which TransactionCommitInterceptor does
       // after the handler has returned, whether the request's transaction is
       // the guard's (the police update) or one the handler committed itself
-      // and returned right after (getSubpoena) - and never for an update that
-      // rolled back. Still fire and forget: a failed announcement is logged,
-      // not returned to the caller.
-      const { serviceStatus } = update
-
+      // and returned right after (getSubpoena, and the defendant indictment
+      // case read that syncs the subpoena the same way) - and never for an
+      // update that rolled back. Still fire and forget: a failed announcement
+      // is logged, not returned to the caller.
       registerAfterCommit(() =>
         this.eventService.postEvent('SUBPOENA_SERVICE_STATUS', theCase, {
           Staða: getServiceStatusText(serviceStatus),

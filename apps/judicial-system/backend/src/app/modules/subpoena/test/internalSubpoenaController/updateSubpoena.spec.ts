@@ -239,8 +239,10 @@ describe('InternalSubpoenaController - Update subpoena', () => {
   })
 
   // SubpoenaOnCaseGuard hands the handler the subpoena as the locked case
-  // carries it, so a status another delivery already recorded arrives here
-  // as the subpoena's own.
+  // carries it, so a status another delivery already recorded arrives here as
+  // the subpoena's own. Guards do not run here - subpoenaOnCaseGuard.spec.ts
+  // and the chain spec pin the swap - so this row is the handler's half: a
+  // status already on the subpoena it is given changes nothing.
   describe('service status already recorded on the locked case', () => {
     const servedSubpoena = {
       ...subpoena,
