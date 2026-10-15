@@ -28,13 +28,13 @@ export const m = defineMessages({
   },
   exportForm: {
     id: 'form.system:export-form',
-    defaultMessage: 'Flytja út eyðublað',
-    description: 'Export form',
+    defaultMessage: 'Flytja út',
+    description: 'Export',
   },
   importForm: {
     id: 'form.system:import-form',
-    defaultMessage: 'Flytja inn eyðublað',
-    description: 'Import form',
+    defaultMessage: 'Flytja inn',
+    description: 'Import',
   },
   exportFormError: {
     id: 'form.system:export-form-error',

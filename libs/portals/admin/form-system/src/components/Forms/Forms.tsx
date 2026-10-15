@@ -100,7 +100,8 @@ export const Forms = () => {
   const importButton = (
     <Button
       variant="ghost"
-      size="small"
+      size="default"
+      nowrap
       onClick={() => fileInput.current?.click()}
       loading={isImportingForm}
       disabled={isCreatingForm || isImportingForm || !organizationNationalId}
