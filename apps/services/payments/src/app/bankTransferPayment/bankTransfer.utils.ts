@@ -12,13 +12,11 @@ import {
   BankTransferStatus,
   BankTransferPendingStatus,
   BankTransferPayerType,
+  BankTransferDebt,
 } from './bankTransfer.types'
 import { BankTransferPayment } from './models'
 import { CatalogItemWithQuantity } from '../../types/charges'
-import {
-  PaymentFlowAttributes,
-  PaymentFlowDebtAttributes,
-} from '../paymentFlow/models'
+import { PaymentFlowAttributes } from '../paymentFlow/models'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
 import type { FjsPayInfo } from '../../utils/fjsDebtPayment'
 
@@ -136,9 +134,7 @@ export const toBlikkItem = (item: CatalogItemWithQuantity): BlikkItem => ({
 })
 
 /** Debts have no catalog item, the `payId` stands in for the sku and the label for the name. */
-export const toBlikkDebtItem = (
-  debt: Pick<PaymentFlowDebtAttributes, 'payId' | 'amount' | 'label'>,
-): BlikkItem => ({
+export const toBlikkDebtItem = (debt: BankTransferDebt): BlikkItem => ({
   name: debt.label ?? debt.payId,
   quantity: 1,
   unitPrice: String(debt.amount),

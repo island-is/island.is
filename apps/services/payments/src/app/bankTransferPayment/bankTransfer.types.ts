@@ -2,6 +2,12 @@ import type { PaymentFlowDebtAttributes } from '../paymentFlow/models'
 import { PaymentStatus } from '../../types'
 import { CatalogItemWithQuantity } from '../../types/charges'
 
+/** A debt as a bank transfer needs it: Blikk shows each debt as an item. */
+export type BankTransferDebt = Pick<
+  PaymentFlowDebtAttributes,
+  'payId' | 'amount' | 'label'
+>
+
 /** Normalized bank-transfer status. */
 export enum BankTransferStatus {
   PENDING = 'pending',
@@ -51,7 +57,7 @@ export interface CreateBankTransferPaymentInput extends BankTransferDebtor {
   partnerRedirectUrl?: string
   items?: CatalogItemWithQuantity[]
   // Debt flows send their debts as items instead of catalog items.
-  debts?: Pick<PaymentFlowDebtAttributes, 'payId' | 'amount' | 'label'>[]
+  debts?: BankTransferDebt[]
   // Unix seconds.
   expiresAt?: number
   bankAccountNumber?: string
