@@ -3,11 +3,14 @@ import { Type } from 'class-transformer'
 import {
   ArrayMaxSize,
   IsArray,
+  IsBoolean,
+  IsDefined,
   IsNotEmpty,
   IsOptional,
   IsString,
   Matches,
   MaxLength,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator'
 
@@ -50,7 +53,7 @@ export class BlockedCategoryDto {
   categoryLabel!: CategoryLabelDto
 }
 
-export class UnblockCategoryDto {
+export class UpdateNotificationCategoryDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
@@ -67,29 +70,30 @@ export class UnblockCategoryDto {
     example: 'heilbrigdismal',
   })
   category!: string
-}
 
-export class BlockCategoryDto extends UnblockCategoryDto {
+  @IsBoolean()
+  @ApiProperty({
+    description:
+      'True to block notifications in the category, false to unblock them',
+  })
+  blocked!: boolean
+
+  @ValidateIf((dto: UpdateNotificationCategoryDto) => dto.blocked === true)
+  @IsDefined()
   @ValidateNested()
   @Type(() => CategoryLabelDto)
-  @ApiProperty({ type: CategoryLabelDto })
-  categoryLabel!: CategoryLabelDto
+  @ApiPropertyOptional({
+    type: CategoryLabelDto,
+    description: 'Label of the category. Required when blocking.',
+  })
+  categoryLabel?: CategoryLabelDto
 }
 
-export class BlockCategoriesDto {
+export class UpdateNotificationSettingsDto {
   @IsArray()
   @ArrayMaxSize(MAX_CATEGORIES_PER_REQUEST)
   @ValidateNested({ each: true })
-  @Type(() => BlockCategoryDto)
-  @ApiProperty({ type: [BlockCategoryDto] })
-  categories!: BlockCategoryDto[]
-}
-
-export class UnblockCategoriesDto {
-  @IsArray()
-  @ArrayMaxSize(MAX_CATEGORIES_PER_REQUEST)
-  @ValidateNested({ each: true })
-  @Type(() => UnblockCategoryDto)
-  @ApiProperty({ type: [UnblockCategoryDto] })
-  categories!: UnblockCategoryDto[]
+  @Type(() => UpdateNotificationCategoryDto)
+  @ApiProperty({ type: [UpdateNotificationCategoryDto] })
+  categories!: UpdateNotificationCategoryDto[]
 }

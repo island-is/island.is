@@ -47,12 +47,12 @@ import { SetActorProfileEmailDto } from './dto/set-actor-profile-email.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
 import { CreateVerificationDto } from './dto/create-verification.dto'
-import {
-  BlockCategoriesDto,
-  UnblockCategoriesDto,
-} from './dto/blocked-category.dto'
+import { UpdateNotificationSettingsDto } from './dto/blocked-category.dto'
 import { NotificationSettingsDto } from './dto/notification-settings.dto'
-import { NotificationSettingsService } from './notification-settings.service'
+import {
+  NotificationSettingsService,
+  toCategoryKey,
+} from './notification-settings.service'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -333,59 +333,31 @@ export class MeUserProfileController {
     return this.notificationSettingsService.findSettings(user.nationalId)
   }
 
-  @Post('/notification-settings/blocked-categories')
+  @Post('/notification-settings')
   @Scopes(UserProfileScope.write)
   @Documentation({
     description:
-      'Blocks notifications in the given sender categories for the current user.',
+      'Blocks or unblocks notifications in the given sender categories for the current user.',
     response: { status: 204 },
   })
-  blockNotificationCategories(
+  updateNotificationSettings(
     @CurrentUser() user: User,
-    @Body() input: BlockCategoriesDto,
+    @Body() input: UpdateNotificationSettingsDto,
   ): Promise<void> {
-    return this.auditService.auditPromise(
-      {
-        auth: user,
-        namespace,
-        action: 'blockNotificationCategories',
-        resources: user.nationalId,
-        meta: {
-          categories: input.categories.map(({ senderId, category }) => ({
-            senderId,
-            category,
-          })),
-        },
-      },
-      this.notificationSettingsService.blockCategories(
-        user.nationalId,
-        input.categories,
-      ),
-    )
-  }
+    const keysWhere = (blocked: boolean) =>
+      input.categories
+        .filter((category) => category.blocked === blocked)
+        .map(({ senderId, category }) => toCategoryKey(senderId, category))
 
-  @Delete('/notification-settings/blocked-categories')
-  @Scopes(UserProfileScope.write)
-  @Documentation({
-    description:
-      'Unblocks notifications in the given sender categories for the current user.',
-    response: { status: 204 },
-  })
-  unblockNotificationCategories(
-    @CurrentUser() user: User,
-    @Body() input: UnblockCategoriesDto,
-  ): Promise<void> {
     return this.auditService.auditPromise(
       {
         auth: user,
         namespace,
-        action: 'unblockNotificationCategories',
+        action: 'updateNotificationSettings',
         resources: user.nationalId,
-        meta: {
-          categories: input.categories,
-        },
+        meta: { blocked: keysWhere(true), unblocked: keysWhere(false) },
       },
-      this.notificationSettingsService.unblockCategories(
+      this.notificationSettingsService.updateCategories(
         user.nationalId,
         input.categories,
       ),

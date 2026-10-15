@@ -126,28 +126,15 @@ export class NotificationSettingsService {
       }
     }
 
-    const toBlock = categories.filter(({ blocked }) => blocked)
-    const toUnblock = categories.filter(({ blocked }) => !blocked)
+    const settings = categories.some(({ blocked }) => blocked)
+      ? await this.findCategorySettings(user)
+      : new Map<string, CategorySetting>()
 
-    if (toBlock.length > 0) {
-      await this.blockCategories(user, toBlock)
-    }
-    if (toUnblock.length > 0) {
-      await this.unblockCategories(user, toUnblock)
-    }
-  }
+    const updates = categories.map(({ senderId, category, blocked }) => {
+      if (!blocked) {
+        return { senderId, category, blocked }
+      }
 
-  /**
-   * Blocks the given sender categories. Only categories the user has received
-   * or already blocked can be blocked, and their labels are taken from there.
-   */
-  private async blockCategories(
-    user: User,
-    categories: NotificationCategoryInput[],
-  ): Promise<void> {
-    const settings = await this.findCategorySettings(user)
-
-    const blockCategories = categories.map(({ senderId, category }) => {
       const setting = settings.get(toCategoryKey(senderId, category))
       if (!setting) {
         throw new BadRequestException(
@@ -159,29 +146,14 @@ export class NotificationSettingsService {
         senderId: setting.senderId,
         category: setting.category,
         categoryLabel: setting.categoryLabel,
+        blocked,
       }
     })
 
     await this.v2MeApiWAuth(
       user,
-    ).meUserProfileControllerBlockNotificationCategories({
-      blockCategoriesDto: { categories: blockCategories },
-    })
-  }
-
-  private async unblockCategories(
-    user: User,
-    categories: NotificationCategoryInput[],
-  ): Promise<void> {
-    await this.v2MeApiWAuth(
-      user,
-    ).meUserProfileControllerUnblockNotificationCategories({
-      unblockCategoriesDto: {
-        categories: categories.map(({ senderId, category }) => ({
-          senderId,
-          category,
-        })),
-      },
+    ).meUserProfileControllerUpdateNotificationSettings({
+      updateNotificationSettingsDto: { categories: updates },
     })
   }
 }

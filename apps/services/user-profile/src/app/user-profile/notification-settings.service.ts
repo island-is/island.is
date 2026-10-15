@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
-  BlockCategoryDto,
-  UnblockCategoryDto,
+  CategoryLabelDto,
+  UpdateNotificationCategoryDto,
 } from './dto/blocked-category.dto'
 import { NotificationSettingsDto } from './dto/notification-settings.dto'
 import { BlockedNotification } from './models/blockedNotification.model'
@@ -20,6 +21,7 @@ export class NotificationSettingsService {
     @InjectModel(BlockedNotification)
     private readonly blockedNotificationModel: typeof BlockedNotification,
     private readonly userProfileService: UserProfileService,
+    private readonly sequelize: Sequelize,
   ) {}
 
   async findSettings(nationalId: string): Promise<NotificationSettingsDto> {
@@ -45,47 +47,62 @@ export class NotificationSettingsService {
     }
   }
 
-  async blockCategories(
+  /**
+   * Blocks or unblocks the given sender categories in a single transaction.
+   * If a category is given more than once, the last entry wins.
+   */
+  async updateCategories(
     nationalId: string,
-    categories: BlockCategoryDto[],
+    categories: UpdateNotificationCategoryDto[],
   ): Promise<void> {
-    const rows = this.dedupe(
-      categories.map(({ senderId, category, categoryLabel }) => ({
-        nationalId,
-        senderId: this.normalizeSenderId(senderId),
-        category,
-        categoryLabel,
+    const updates = this.dedupe(
+      categories.map((category) => ({
+        ...category,
+        senderId: this.normalizeSenderId(category.senderId),
       })),
     )
 
-    if (rows.length === 0) {
+    if (updates.length === 0) {
       return
     }
 
-    await this.userProfileService.findOrCreateUserProfile(nationalId)
-
-    await this.blockedNotificationModel.bulkCreate(rows, {
-      ignoreDuplicates: true,
-    })
-  }
-
-  async unblockCategories(
-    nationalId: string,
-    categories: UnblockCategoryDto[],
-  ): Promise<void> {
-    const pairs = this.dedupe(
-      categories.map(({ senderId, category }) => ({
-        senderId: this.normalizeSenderId(senderId),
-        category,
-      })),
+    // UpdateNotificationCategoryDto requires a categoryLabel when blocking
+    const toBlock = updates.filter(
+      (update): update is typeof update & { categoryLabel: CategoryLabelDto } =>
+        update.blocked,
     )
+    const toUnblock = updates.filter(({ blocked }) => !blocked)
 
-    if (pairs.length === 0) {
-      return
-    }
+    await this.sequelize.transaction(async (transaction) => {
+      if (toBlock.length > 0) {
+        await this.userProfileService.findOrCreateUserProfile(
+          nationalId,
+          transaction,
+        )
 
-    await this.blockedNotificationModel.destroy({
-      where: { nationalId, [Op.or]: pairs },
+        await this.blockedNotificationModel.bulkCreate(
+          toBlock.map(({ senderId, category, categoryLabel }) => ({
+            nationalId,
+            senderId,
+            category,
+            categoryLabel,
+          })),
+          { ignoreDuplicates: true, transaction },
+        )
+      }
+
+      if (toUnblock.length > 0) {
+        await this.blockedNotificationModel.destroy({
+          where: {
+            nationalId,
+            [Op.or]: toUnblock.map(({ senderId, category }) => ({
+              senderId,
+              category,
+            })),
+          },
+          transaction,
+        })
+      }
     })
   }
 
