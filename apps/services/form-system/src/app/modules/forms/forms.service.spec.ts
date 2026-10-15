@@ -24,6 +24,7 @@ describe('FormsService import', () => {
       slug: 'test',
       organizationId: 'source-org',
       organizationNationalId: 'source',
+      organizationDisplayName: { is: 'Source organization', en: 'Source' },
       status: FormStatus.PUBLISHED,
       beenPublished: true,
       derivedFrom: randomUUID(),
@@ -222,6 +223,60 @@ describe('FormsService import', () => {
       ).toEqual({ transaction })
     }
   })
+
+  it.each([true, false])(
+    'resets the imported organization display name only when organizations differ: %s',
+    async (differentOrganization) => {
+      const { service, input, form, formModel } = setup()
+      input.formJson = JSON.stringify({
+        format: 'island.is/form-system',
+        version: 1,
+        form: {
+          ...form,
+          organizationNationalId: differentOrganization
+            ? 'source'
+            : 'destination',
+        },
+      })
+
+      await service.importForm(user, input)
+
+      expect(formModel.create.mock.calls[0][0].organizationDisplayName).toEqual(
+        differentOrganization
+          ? { is: '', en: '' }
+          : form.organizationDisplayName,
+      )
+    },
+  )
+
+  it.each([true, false])(
+    'resets the copied organization display name only when organizations differ: %s',
+    async (differentOrganization) => {
+      const { service, form, formModel } = setup()
+      Object.assign(service, {
+        findById: jest.fn().mockResolvedValue(formModel.build(form)),
+      })
+
+      await service.copy(
+        {
+          nationalId: 'admin',
+          scope: [AdminPortalScope.formSystemAdmin],
+        } as unknown as User,
+        form.id,
+        {
+          organizationNationalId: differentOrganization
+            ? 'destination'
+            : 'source',
+        },
+      )
+
+      expect(formModel.create.mock.calls[0][0].organizationDisplayName).toEqual(
+        differentOrganization
+          ? { is: '', en: '' }
+          : form.organizationDisplayName,
+      )
+    },
+  )
 
   it.each([
     'invalid json',
