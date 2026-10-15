@@ -158,6 +158,142 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     )
   })
 
+  describe('paragraphs that share words', () => {
+    // The case getStructuredDiff is for: getDiff spread a new paragraph that
+    // shares words with its neighbours over them.
+    const SHARED = [
+      title('1. gr.'),
+      '<p>Skoðunarstofa skal skoða ökutæki árlega.</p>',
+      '<p>Skoðunarstofa skal skrá niðurstöður skoðunar ökutækja.</p>',
+      '<p>Ráðherra setur nánari reglur um skoðun ökutækja.</p>',
+      title('2. gr. Gildistaka'),
+      GILDISTAKA,
+    ].join('')
+    const NEW =
+      '<p>Skoðunarstofa skal senda niðurstöður skoðunar ökutækja til Samgöngustofu.</p>'
+
+    it('adds a paragraph without touching its neighbours', () => {
+      const after = SHARED.replace(
+        '<p>Ráðherra setur',
+        NEW + '<p>Ráðherra setur',
+      )
+      expect(body(amend(after, {}, SHARED))).toEqual([
+        article(
+          1,
+          '<p>Á eftir 2. mgr. 1. gr. reglugerðarinnar kemur ný málsgrein sem orðast svo:</p>' +
+            NEW,
+        ),
+        article(2, CLOSING),
+      ])
+    })
+
+    it('removes a paragraph without touching its neighbours', () => {
+      const after = SHARED.replace(
+        '<p>Skoðunarstofa skal skrá niðurstöður skoðunar ökutækja.</p>',
+        '',
+      )
+      expect(body(amend(after, {}, SHARED))).toEqual([
+        article(1, '<p>2. mgr. 1. gr. reglugerðarinnar fellur brott.</p>'),
+        article(2, CLOSING),
+      ])
+    })
+  })
+
+  describe('articles renumbered by a new article', () => {
+    it('does not amend the heading of an article that was only renumbered', () => {
+      const after = BASE.replace(
+        title('2. gr. Gildistaka'),
+        title('2. gr.') + '<p>Kilo lima mike.</p>' + title('3. gr. Gildistaka'),
+      )
+      const output = body(amend(after)).join('')
+      expect(output).toContain(
+        '<p>Á eftir 1. gr. reglugerðarinnar kemur ný grein, 2. gr., svohljóðandi:</p>',
+      )
+      expect(output).not.toContain('Fyrirsögn')
+    })
+
+    it('cites a renumbered article by its number in the base regulation', () => {
+      const before = [
+        title('1. gr.'),
+        '<p>Alfa bravo charlie.</p>',
+        title('2. gr.'),
+        '<p>Delta echo foxtrot.</p>',
+        title('3. gr. Gildistaka'),
+        GILDISTAKA,
+      ].join('')
+      const after = before
+        .replace(
+          title('2. gr.'),
+          title('2. gr.') + '<p>Kilo lima mike.</p>' + title('3. gr.'),
+        )
+        .replace(title('3. gr. Gildistaka'), title('4. gr. Gildistaka'))
+        .replace('Delta echo', 'Delta november')
+      const output = body(amend(after, {}, before)).join('')
+      expect(output).toContain(
+        '<p>1. mgr. 2. gr. reglugerðarinnar breytist og orðast svo:</p><p>Delta november foxtrot.</p>',
+      )
+      expect(output).not.toContain('Fyrirsögn')
+    })
+  })
+
+  describe('formatting changed, wording did not', () => {
+    it('names a reformatted word', () => {
+      const [first] = body(
+        amend(BASE.replace('Delta echo', 'Delta <em>echo</em>')),
+      )
+      expect(first).toBe(
+        article(
+          1,
+          '<p>Snið „echo“ í 2. mgr. 1. gr. reglugerðarinnar hefur breyst.</p>',
+        ),
+      )
+    })
+
+    it('names every reformatted word', () => {
+      const before = BASE.replace(
+        'Delta echo foxtrot.',
+        'Delta echo foxtrot hotel india juliett.',
+      )
+      const after = before.replace(
+        'Delta echo foxtrot hotel india juliett.',
+        '<strong>Delta</strong> echo foxtrot hotel <em>india</em> juliett.',
+      )
+      const [first] = body(amend(after, {}, before))
+      expect(first).toBe(
+        article(
+          1,
+          '<p>Snið „Delta“ og „india“ í 2. mgr. 1. gr. reglugerðarinnar hefur breyst.</p>',
+        ),
+      )
+    })
+
+    it('names the paragraph when all of it was reformatted', () => {
+      const [first] = body(
+        amend(
+          BASE.replace(
+            '<p>Delta echo foxtrot.</p>',
+            '<p><em>Delta echo foxtrot.</em></p>',
+          ),
+        ),
+      )
+      expect(first).toBe(
+        article(1, '<p>Snið 2. mgr. 1. gr. reglugerðarinnar hefur breyst.</p>'),
+      )
+    })
+  })
+
+  it('names a heading whose subtitle was only made italic', () => {
+    const before = BASE.replace(title('1. gr.'), title('1. gr. Gildissvið'))
+    const after = BASE.replace(
+      title('1. gr.'),
+      title('1. gr. <em>Gildissvið</em>'),
+    )
+    const [first] = body(amend(after, {}, before))
+    expect(first).toContain(
+      '<p>Snið fyrirsagnar 1. gr. reglugerðarinnar hefur breyst.</p>',
+    )
+  })
+
   it('closes the list when list items are added', () => {
     const [first] = body(
       amend(
@@ -533,6 +669,36 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
       article(
         1,
         '<p>Stafliðir í 1. mgr. 1. gr. reglugerðarinnar verða töluliðir.</p>',
+      ),
+    )
+  })
+
+  it('makes töluliðir stafliðir and restates them when an item changed too', () => {
+    expect(
+      first(
+        withList('', 'fólksbifreiðar,', 'vörubifreiðar.'),
+        withList('a', 'fólksbifreiðar,', 'vöruflutningabifreiðar.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Töluliðir í 1. mgr. 1. gr. reglugerðarinnar verða stafliðir og orðast svo:</p>' +
+          list('a', 'fólksbifreiðar,', 'vöruflutningabifreiðar.'),
+      ),
+    )
+  })
+
+  it('makes stafliðir töluliðir and restates them when an item changed too', () => {
+    expect(
+      first(
+        withList('a', 'fólksbifreiðar,', 'vörubifreiðar.'),
+        withList('', 'fólksbifreiðar,', 'vöruflutningabifreiðar.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Stafliðir í 1. mgr. 1. gr. reglugerðarinnar verða töluliðir og orðast svo:</p>' +
+          list('', 'fólksbifreiðar,', 'vöruflutningabifreiðar.'),
       ),
     )
   })

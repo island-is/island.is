@@ -145,6 +145,10 @@ export const getDeletionOrAddition = (
       const insElements = tempElement.querySelectorAll('ins')
 
       insElements.forEach((insElement) => {
+        // Formatting changed, text did not: nothing new to break the line on.
+        if (insElement.classList.contains('mod')) {
+          return
+        }
         const content = insElement.textContent
         insElement.textContent = ` ${content}<br />`
       })
