@@ -177,6 +177,16 @@ ones. The api's `responseSize.plugin.ts` is the client-side counterpart: it
 tags the GraphQL route's middleware span with the operation name and the
 response bytes, which is enough for bytes per operation.
 
+**Outgoing `fetch` calls carry no trace context by themselves.** dd-trace's
+fetch instrumentation is disabled on every service (`DD_TRACE_DISABLED_INSTRUMENTATIONS=fetch`
+in the infra DSL), and global `fetch` is undici, so the remaining `http`-layer
+instrumentation never sees it. The api injects the context by hand on its
+calls to the backend, in `modules/backend/traceContext.ts`, which is what makes
+the backend's spans part of the GraphQL operation's trace. A new client that
+calls another judicial-system service with `fetch` needs the same, and the
+carrier it injects into must be a plain object: the propagator assigns
+properties, so a `Headers` instance silently gets nothing.
+
 ## Queue messages after commit
 
 A request queues messages for the message handler with
