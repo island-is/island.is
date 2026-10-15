@@ -170,7 +170,7 @@ empty, except the counts and clean checks.
 <draft or ready>; <n> files, +<added>/−<removed>; lenses: <list>
 
 ### Must fix (high)
-1. **<one-line headline in plain words>** (`<path:line>`[, `<path:line>`]; <check ids>)
+1. **<one-line headline in plain words>** (`<path:line>`[, `<path:line>`]; <check names>)
    - **Problem:** <what the code does>.
    - **Scenario:** <input or state> → <wrong outcome>.
    - **Fix:** <one or two lines>.
@@ -179,7 +179,7 @@ empty, except the counts and clean checks.
 ### Should fix (medium)
 
 **<Area: The template (<name>)>**
-- `<path:line>` (**<check id>**): <what is wrong>.
+- `<path:line>` (**<check name>**): <what is wrong>.
   - **Scenario:** <input → outcome>.
   - **Fix:** <one line>. [**Precedent:** #<PR>.]
 
@@ -213,13 +213,20 @@ empty, except the counts and clean checks.
 
 **<h> high · <m> medium · <l> low**
 
-**Clean checks:** <check ids, grouped by lens>
+**Checked, no problems found:**
+- **<Area label>:** <check names, comma-separated>. [Name any finding that excepts a check.]
+**Not run:** <checks skipped, and why>
 **Settled decisions applied:** <one line each, from step 1>
 **Suppressed:** <what was dropped and which suppression letter>
 
 <Two or three sentences: what to fix first and why.>
 ```
 
+- Name checks in the report, never ids. Take each name from the check's
+  heading in its lens file (D5 becomes "dataSchema too loose"). Label clean
+  checks by area, not by lens file: Data handling, Access and states, Template
+  API, Shared UI, Scopes, Security, General. List checks that did not run
+  under **Not run**, never under the clean ones.
 - Number the high findings. Give each one a plain-words headline, so a
   reader can scan them before reading the detail.
 - Group the medium findings by area, in this order: the template, the
