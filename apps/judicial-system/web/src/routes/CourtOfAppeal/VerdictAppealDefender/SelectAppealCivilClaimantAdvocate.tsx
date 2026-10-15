@@ -28,7 +28,6 @@ import {
 import {
   getAppealSpokesperson,
   getAppealSpokespersonIsLawyer,
-  getCivilClaimantSpokespersonRequest,
   getHasAppealSpokesperson,
 } from './VerdictAppealDefender.logic'
 
@@ -145,13 +144,6 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             </Box>
           )}
         </Box>
-        {/* Who the court has settled on as réttargæslumaður - shown for that
-            choice and for no other. */}
-        {isLawyer === false && (
-          <Text variant="small">
-            {getCivilClaimantSpokespersonRequest(advocate)}
-          </Text>
-        )}
         {hasSpokesperson ? (
           <>
             <div className={twoColumn({ gap: 2 })}>

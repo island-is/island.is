@@ -1,4 +1,3 @@
-import { formatDOB } from '@island.is/judicial-system/formatters'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
   CivilClaimant,
@@ -183,28 +182,6 @@ export const getVerdictAppealDefenderHeaderLines = (
   theCase.courtCaseNumber
     ? [`Málsnr. héraðsdóms ${theCase.courtCaseNumber}`]
     : []
-
-/**
- * The line under a claimant's name while the court has settled on a
- * réttargæslumaður: who that is, as this court has recorded them.
- *
- * Shown for that choice alone. A claimant whose advocate is a lögmaður hired
- * them, and the line has nothing to say.
- *
- * Takes the advocate the card already resolved for its input fields, so the
- * name on the line is always the name in the field above it. A part the court
- * has not recorded is simply left out - the line stays, shorter.
- */
-export const getCivilClaimantSpokespersonRequest = (
-  advocate: Pick<Advocate, 'name' | 'nationalId'>,
-): string =>
-  [
-    'Ósk einkaréttarkröfuhafa um réttargæslumann:',
-    advocate.name,
-    formatDOB(advocate.nationalId, false, ''),
-  ]
-    .filter(Boolean)
-    .join(' ')
 
 /**
  * How the two sections are headed: for the party, and in the plural once a

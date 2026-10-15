@@ -10,7 +10,6 @@ import {
   getAppealSpokesperson,
   getAppealSpokespersonIsLawyer,
   getCivilClaimantSectionTitle,
-  getCivilClaimantSpokespersonRequest,
   getDefendantSectionTitle,
   getHasAppealSpokesperson,
   getVerdictAppealDefenderCaseNumber,
@@ -323,34 +322,6 @@ describe('getVerdictAppealDefenderHeaderLines', () => {
         courtCaseNumber: 'S-123/2026',
       } as WorkingCase).join(' '),
     ).not.toContain('áfrýjaði')
-  })
-})
-
-describe('getCivilClaimantSpokespersonRequest', () => {
-  it('names who the court settled on', () => {
-    expect(
-      getCivilClaimantSpokespersonRequest({
-        name: 'Sólveig Hreinsdóttir',
-        nationalId: '0909713459',
-      }),
-    ).toBe(
-      'Ósk einkaréttarkröfuhafa um réttargæslumann: Sólveig Hreinsdóttir kt. 090971-3459',
-    )
-  })
-
-  // A part the court has not recorded is left out, and the line stays.
-  it('leaves out whichever part is missing', () => {
-    expect(
-      getCivilClaimantSpokespersonRequest({ name: 'Sólveig Hreinsdóttir' }),
-    ).toBe('Ósk einkaréttarkröfuhafa um réttargæslumann: Sólveig Hreinsdóttir')
-
-    expect(
-      getCivilClaimantSpokespersonRequest({ nationalId: '0909713459' }),
-    ).toBe('Ósk einkaréttarkröfuhafa um réttargæslumann: kt. 090971-3459')
-
-    expect(getCivilClaimantSpokespersonRequest({})).toBe(
-      'Ósk einkaréttarkröfuhafa um réttargæslumann:',
-    )
   })
 })
 
