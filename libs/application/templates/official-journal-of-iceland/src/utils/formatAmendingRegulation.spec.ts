@@ -761,6 +761,48 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
     )
   })
 
+  describe('stafliðir nested in töluliðir', () => {
+    const nested = (second: string) =>
+      `alfa:${list('a', 'eitt atriði hér,', second)}`
+    const BEFORE = withList('', nested('annað atriði hér.'), 'bravo.')
+    const LEAD =
+      '<p>Eftirfarandi breytingar verða á 1. mgr. 1. gr. reglugerðarinnar:</p> '
+
+    it('rewords a nested stafliður', () => {
+      expect(
+        first(BEFORE, withList('', nested('annað atriði þar.'), 'bravo.')),
+      ).toBe(
+        article(
+          1,
+          LEAD + '<p>Töluliður 1, b-liður orðast svo: annað atriði þar.</p>',
+        ),
+      )
+    })
+
+    it('names a nested stafliður whose formatting alone changed', () => {
+      expect(
+        first(
+          BEFORE,
+          withList('', nested('<em>annað atriði hér.</em>'), 'bravo.'),
+        ),
+      ).toBe(
+        article(1, LEAD + '<p>Töluliður 1, snið b-liðar hefur breyst.</p>'),
+      )
+    })
+
+    it('numbers a tölul. after a nested list by its place in its own list', () => {
+      expect(
+        first(BEFORE, withList('', nested('annað atriði hér.'), 'charlie.')),
+      ).toBe(article(1, LEAD + '<p>2. tölul. orðast svo: charlie.</p>'))
+      expect(
+        first(
+          BEFORE,
+          withList('', nested('annað atriði hér.'), '<em>bravo.</em>'),
+        ),
+      ).toBe(article(1, LEAD + '<p>Snið 2. tölul. hefur breyst.</p>'))
+    })
+  })
+
   it('does not call italic items a change of list type', () => {
     expect(
       first(

@@ -19,10 +19,15 @@ export const formatListItemDiff = (item: Element) => {
   let oldLiText = ''
   let newLiText = ''
   let liItemHtml = '' as HTMLText
-  let lidur = 0
   const returningArray: HTMLText[] = []
   qq('ol > li', item).forEach((liItem) => {
-    lidur++
+    // The item's number in its own list. The loop also visits the items of
+    // nested lists, so a running count numbered every item after a nested
+    // list too high.
+    const lidur =
+      Array.from(liItem.parentElement?.children ?? [])
+        .filter((e) => e.nodeName.toLowerCase() === 'li')
+        .indexOf(liItem) + 1
 
     const liHasDeletion = !!liItem.querySelector('del')
     const liHasInsert = !!liItem.querySelector('ins')
@@ -32,18 +37,25 @@ export const formatListItemDiff = (item: Element) => {
         liItem?.parentElement?.getAttribute('type')?.toLowerCase() === 'a'
 
       // Formatting changed, wording did not: nothing deleted, and everything
-      // inserted is <ins class="mod">.
+      // inserted is <ins class="mod">. Only the item's own marks count; a
+      // change inside a list nested in it goes through the nested path below.
+      const ownMarks = Array.from(liItem.querySelectorAll('ins, del')).filter(
+        (e) => e.closest('li') === liItem,
+      )
       const isFormatOnly =
-        !liHasDeletion &&
-        Array.from(liItem.querySelectorAll('ins')).every((e) =>
-          e.classList.contains('mod'),
+        ownMarks.length > 0 &&
+        ownMarks.every(
+          (e) =>
+            e.nodeName.toLowerCase() === 'ins' && e.classList.contains('mod'),
         )
       if (isFormatOnly) {
         returningArray.push(
-          `Snið ${getLiPoint(lidur, isStaflidur)}${
-            isStaflidur ? '-liðar' : '. tölul.'
-          } hefur breyst.` as HTMLText,
+          `${liItemHtml}${liItemHtml ? 'snið' : 'Snið'} ${getLiPoint(
+            lidur,
+            isStaflidur,
+          )}${isStaflidur ? '-liðar' : '. tölul.'} hefur breyst.` as HTMLText,
         )
+        liItemHtml = '' as HTMLText
         return
       }
 
@@ -89,7 +101,6 @@ export const formatListItemDiff = (item: Element) => {
             isStaflidur,
           )}, `) as HTMLText
         formatListItemDiff(liItem)
-        lidur = 0
         return
       }
 
