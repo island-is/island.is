@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize'
+import { Includeable, Transaction } from 'sequelize'
 
 import {
   Inject,
@@ -27,13 +27,14 @@ export class AppealCaseRepositoryService {
 
   async findById(
     id: string,
-    options?: { transaction?: Transaction },
+    options?: { transaction?: Transaction; include?: Includeable[] },
   ): Promise<AppealCase | null> {
     try {
       this.logger.debug(`Finding appeal case ${id}`)
 
       const result = await this.appealCaseModel.findOne({
         where: { id },
+        include: options?.include,
         transaction: options?.transaction,
       })
 

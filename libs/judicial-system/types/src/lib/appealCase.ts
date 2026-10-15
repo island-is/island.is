@@ -107,3 +107,61 @@ export const appealCorrectionLock = (
 
   return null
 }
+
+// The bench of an appeal case. Judges are stored as ordered rows on the appeal
+// case (appeal_case_judge): the judge at display order 0 is the presiding judge
+// (dómsformaður). Shared between the backend, which reads the Sequelize rows,
+// and the web, which reads the GraphQL rows, so both are typed structurally.
+//
+// Three judges sit on every appeal case today, and an appeal case counts as
+// fully assigned once an assistant and three judges are registered. Benches of
+// more than three are stored and shown as they are.
+export const APPEAL_JUDGE_COUNT = 3
+
+export interface AppealJudgeFields<U> {
+  displayOrder?: number | null
+  userId?: string | null
+  user?: U | null
+}
+
+export interface AppealJudgesFields<U> {
+  appealJudges?: (AppealJudgeFields<U> | null)[] | null
+}
+
+// The judge rows of an appeal case in bench order, presiding judge first. The
+// rows normally arrive ordered from the database; sorting here keeps a caller
+// that built them any other way correct.
+export const getOrderedAppealJudges = <J extends AppealJudgeFields<unknown>>(
+  appealCase?: { appealJudges?: (J | null)[] | null } | null,
+): J[] =>
+  (appealCase?.appealJudges ?? [])
+    .filter((judge): judge is J => Boolean(judge))
+    .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
+
+// The judges of an appeal case in bench order, presiding judge first.
+export const getAppealJudges = <U>(
+  appealCase?: AppealJudgesFields<U> | null,
+): U[] =>
+  getOrderedAppealJudges(appealCase)
+    .map((judge) => judge.user)
+    .filter((user): user is U => user !== undefined && user !== null)
+
+export const getPresidingAppealJudge = <U>(
+  appealCase?: AppealJudgesFields<U> | null,
+): U | undefined => getAppealJudges(appealCase)[0]
+
+// The user ids of the judges in bench order, read from the row's user id and
+// falling back to the loaded user.
+export const getAppealJudgeUserIds = (
+  appealCase?: AppealJudgesFields<{ id?: string | null }> | null,
+): string[] =>
+  getOrderedAppealJudges(appealCase)
+    .map((judge) => judge.userId ?? judge.user?.id)
+    .filter((id): id is string => Boolean(id))
+
+// Whether the bench is complete: at least APPEAL_JUDGE_COUNT judges are
+// registered. Counts rows rather than loaded users so an unloaded user
+// association does not read as a missing judge.
+export const hasAllAppealJudges = (
+  appealCase?: AppealJudgesFields<unknown> | null,
+): boolean => getOrderedAppealJudges(appealCase).length >= APPEAL_JUDGE_COUNT

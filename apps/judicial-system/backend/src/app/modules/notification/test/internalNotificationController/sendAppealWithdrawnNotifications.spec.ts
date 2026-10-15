@@ -99,10 +99,13 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
           name: appealAssistant.name,
           email: appealAssistant.email,
         },
-        appealJudge1: {
-          name: appealJudge1.name,
-          email: appealJudge1.email,
-        },
+        appealJudges: [
+          {
+            displayOrder: 0,
+            userId: appealJudge1.id,
+            user: { name: appealJudge1.name, email: appealJudge1.email },
+          },
+        ],
       } as AppealCase
 
       await internalNotificationController

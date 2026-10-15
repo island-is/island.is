@@ -221,6 +221,9 @@ const getIncludeAndOrder = (
               as: sk,
               separate: subModelDef.separate,
               ...order,
+              ...(subModelDef.include
+                ? { include: subModelDef.include }
+                : undefined),
             }
           }),
         }

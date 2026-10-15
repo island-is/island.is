@@ -1,4 +1,5 @@
 export { AppealCase } from './models/appealCase.model'
+export { AppealCaseJudge } from './models/appealCaseJudge.model'
 export { AppealDecision } from './models/appealDecision.model'
 export { AppealEventLog } from './models/appealEventLog.model'
 export { AppealCourtSession } from './models/appealCourtSession.model'
@@ -33,6 +34,7 @@ export { Verdict } from './models/verdict.model'
 export { Victim } from './models/victim.model'
 
 export { AppealCaseRepositoryService } from './services/appealCaseRepository.service'
+export { AppealCaseJudgeRepositoryService } from './services/appealCaseJudgeRepository.service'
 export {
   AppealDecisionRepositoryService,
   AppealDecisionPartyKey,
@@ -131,6 +133,7 @@ export {
 } from './services/victimRepository.service'
 
 export {
+  appealJudgesInclude,
   CreateAppealCase,
   UpdateAppealCase,
   UpdateCase,

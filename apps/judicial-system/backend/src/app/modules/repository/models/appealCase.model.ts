@@ -19,6 +19,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { AppealCaseJudge } from './appealCaseJudge.model'
 import { AppealCourtSession } from './appealCourtSession.model'
 import { AppealEventLog } from './appealEventLog.model'
 import { AppealSummons } from './appealSummons.model'
@@ -142,49 +143,12 @@ export class AppealCase extends Model {
   appealAssistant?: User
 
   /**********
-   * The surrogate key of the first judge assigned to the appeal case
+   * The judges assigned to the appeal case, in bench order; the first is the
+   * presiding judge
    **********/
-  @ForeignKey(() => User)
-  @Column({ type: DataType.UUID, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  appealJudge1Id?: string
-
-  /**********
-   * The first judge assigned to the appeal case
-   **********/
-  @BelongsTo(() => User, 'appealJudge1Id')
-  @ApiPropertyOptional({ type: User })
-  appealJudge1?: User
-
-  /**********
-   * The surrogate key of the second judge assigned to the appeal case
-   **********/
-  @ForeignKey(() => User)
-  @Column({ type: DataType.UUID, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  appealJudge2Id?: string
-
-  /**********
-   * The second judge assigned to the appeal case
-   **********/
-  @BelongsTo(() => User, 'appealJudge2Id')
-  @ApiPropertyOptional({ type: User })
-  appealJudge2?: User
-
-  /**********
-   * The surrogate key of the third judge assigned to the appeal case
-   **********/
-  @ForeignKey(() => User)
-  @Column({ type: DataType.UUID, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  appealJudge3Id?: string
-
-  /**********
-   * The third judge assigned to the appeal case
-   **********/
-  @BelongsTo(() => User, 'appealJudge3Id')
-  @ApiPropertyOptional({ type: User })
-  appealJudge3?: User
+  @HasMany(() => AppealCaseJudge, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealCaseJudge, isArray: true })
+  appealJudges?: AppealCaseJudge[]
 
   /**********
    * The case appeal ruling decision

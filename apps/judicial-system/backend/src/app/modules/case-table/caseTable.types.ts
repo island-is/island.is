@@ -1,9 +1,10 @@
-import { WhereOptions } from 'sequelize'
+import { Includeable, WhereOptions } from 'sequelize'
 
 import { DefendantEventType } from '@island.is/judicial-system/types'
 
 import {
   AppealCase,
+  AppealCaseJudge,
   AppealEventLog,
   Case,
   CaseFile,
@@ -55,6 +56,9 @@ type ModelDef<M extends ModelCtor<unknown>> = {
   model: M
   separate: boolean
   order?: [[keyof DefinedObject<InstanceType<M>>, SortDir]]
+  // Associations loaded with the sub-model, for a sub-model that is itself a
+  // join row (a judge row carries its user).
+  include?: Includeable[]
 }
 
 export const modelMap: {
@@ -90,14 +94,19 @@ export const modelMap: {
 }
 
 export const subModelMap: {
-  appealJudge1: ModelDef<typeof User>
+  appealJudges: ModelDef<typeof AppealCaseJudge>
   appealEventLogs: ModelDef<typeof AppealEventLog>
   eventLogs: ModelDef<typeof DefendantEventLog>
   rulingFile: ModelDef<typeof CaseFile>
   subpoenas: ModelDef<typeof Subpoena>
   verdicts: ModelDef<typeof Verdict>
 } = {
-  appealJudge1: { model: User, separate: false },
+  appealJudges: {
+    model: AppealCaseJudge,
+    separate: true,
+    order: [['displayOrder', 'ASC']],
+    include: [{ model: User, as: 'user', attributes: ['id', 'name'] }],
+  },
   appealEventLogs: { model: AppealEventLog, separate: true },
   eventLogs: { model: DefendantEventLog, separate: true },
   rulingFile: { model: CaseFile, separate: false },
