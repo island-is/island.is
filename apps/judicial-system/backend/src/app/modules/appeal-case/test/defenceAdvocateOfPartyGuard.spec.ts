@@ -1,4 +1,8 @@
-import { ExecutionContext, ForbiddenException } from '@nestjs/common'
+import {
+  ExecutionContext,
+  ForbiddenException,
+  InternalServerErrorException,
+} from '@nestjs/common'
 
 import { UserRole } from '@island.is/judicial-system/types'
 
@@ -59,6 +63,18 @@ describe('DefenceAdvocateOfPartyGuard', () => {
     ).toThrow(ForbiddenException)
   })
 
+  it.each([
+    ['not confirmed', { isSpokespersonConfirmed: false }],
+    ['not recorded', { hasSpokesperson: false }],
+  ])('keeps a spokesperson away when they are %s', (_name, fields) => {
+    expect(() =>
+      activate({
+        user: { currentUser: defender },
+        civilClaimant: { ...ownClaimant, ...fields },
+      }),
+    ).toThrow(ForbiddenException)
+  })
+
   it("keeps a spokesperson away from another claimant's letter", () => {
     expect(() =>
       activate({
@@ -69,16 +85,17 @@ describe('DefenceAdvocateOfPartyGuard', () => {
   })
 
   // The party guard before this one puts the party on the request; a request
-  // without one is not a request this guard was meant for.
-  it('refuses a request that names no party', () => {
+  // without one is a misordered chain, which is not something to refuse the
+  // user over.
+  it('fails a request that names no party', () => {
     expect(() => activate({ user: { currentUser: defender } })).toThrow(
-      ForbiddenException,
+      InternalServerErrorException,
     )
   })
 
-  it('refuses a request without a user', () => {
+  it('fails a request without a user', () => {
     expect(() => activate({ defendant: ownDefendant })).toThrow(
-      ForbiddenException,
+      InternalServerErrorException,
     )
   })
 

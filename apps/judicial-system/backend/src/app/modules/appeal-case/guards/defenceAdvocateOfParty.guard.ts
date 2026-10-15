@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common'
 
 import { isDefenceUser } from '@island.is/judicial-system/types'
@@ -34,8 +35,13 @@ export class DefenceAdvocateOfPartyGuard implements CanActivate {
     const defendant: Defendant | undefined = request.defendant
     const civilClaimant: CivilClaimant | undefined = request.civilClaimant
 
-    if (!user || (!defendant && !civilClaimant)) {
-      throw new ForbiddenException()
+    // A missing user or party is a misordered guard chain, not a refusal.
+    if (!user) {
+      throw new InternalServerErrorException('Missing user')
+    }
+
+    if (!defendant && !civilClaimant) {
+      throw new InternalServerErrorException('Missing party')
     }
 
     if (!isDefenceUser(user)) {

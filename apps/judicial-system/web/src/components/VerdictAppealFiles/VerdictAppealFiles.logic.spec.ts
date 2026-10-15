@@ -612,6 +612,34 @@ describe('getAppealAppointmentLetters', () => {
       ).toEqual([])
     })
 
+    it.each([
+      ['not confirmed', { isSpokespersonConfirmed: false }],
+      ['not recorded', { hasSpokesperson: false }],
+    ])(
+      'offers nothing to a spokesperson the district court has %s',
+      (_name, fields) => {
+        expect(
+          getAppealAppointmentLetters(
+            appealedCase({
+              defendants: [],
+              civilClaimants: [
+                {
+                  id: 'claimant_id',
+                  hasSpokesperson: true,
+                  isSpokespersonConfirmed: true,
+                  spokespersonNationalId: '0101302989',
+                  isAppealSpokespersonConfirmed: true,
+                  appealSpokespersonName: 'Brynjar Sveinsson',
+                  ...fields,
+                },
+              ],
+            } as Partial<WorkingCase>),
+            defender,
+          ),
+        ).toEqual([])
+      },
+    )
+
     // Being the one the court of appeals appointed is not, by itself, access
     // to the case - that comes with the district court's confirmation.
     it('offers nothing on the appeal appointment alone', () => {

@@ -282,10 +282,10 @@ export class AppealCaseController {
     })
   }
 
-  @UseGuards(CaseExistsGuard, RolesGuard, CaseReadGuard, DefendantExistsGuard)
   // The public prosecution office prosecutes the appeal and is copied on the
   // letter, so it reads it here; the advocate it appoints reads it through the
   // limited access route.
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseReadGuard, DefendantExistsGuard)
   @RolesRules(
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
