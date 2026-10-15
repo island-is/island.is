@@ -37,23 +37,13 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal court session booked notifications', () => {
-  const {
-    prosecutor,
-    appealDefender,
-    districtCourtDefender,
-    spokesperson,
-    judge1,
-    judge2,
-    judge3,
-  } = createTestUsers([
-    'prosecutor',
-    'appealDefender',
-    'districtCourtDefender',
-    'spokesperson',
-    'judge1',
-    'judge2',
-    'judge3',
-  ])
+  const { prosecutor, appealDefender, districtCourtDefender, spokesperson } =
+    createTestUsers([
+      'prosecutor',
+      'appealDefender',
+      'districtCourtDefender',
+      'spokesperson',
+    ])
 
   const caseId = uuid()
   const appealCaseId = uuid()
@@ -134,11 +124,9 @@ describe('InternalNotificationController - Send appeal court session booked noti
   const expectedDetails = `Landsréttur boðar til þinghalds í máli ${appealCaseNumber}.<br/><br/>Aðalmeðferð mun fara fram ${formatDate(
     sessionDate,
     'PPP',
-  )}, kl. 13:00.<br/><br/>Dómsalur: 1.<br/><br/>Dómarar: ${judge1.name}, ${
-    judge2.name
-  }, ${judge3.name}.<br/><br/>`
+  )}, kl. 13:00.<br/><br/>Dómsalur: 1.<br/><br/>`
 
-  describe('session booked with judges assigned', () => {
+  describe('session booked on a numbered appeal', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -146,9 +134,6 @@ describe('InternalNotificationController - Send appeal court session booked noti
         {
           id: appealCaseId,
           appealCaseNumber,
-          appealJudge1: { name: judge1.name },
-          appealJudge2: { name: judge2.name },
-          appealJudge3: { name: judge3.name },
           courtSessions: [session],
         } as AppealCase,
         sessionId,
@@ -207,7 +192,7 @@ describe('InternalNotificationController - Send appeal court session booked noti
     })
   })
 
-  describe('session booked before judges are assigned or a case number given', () => {
+  describe('session booked before a case number is given', () => {
     beforeEach(async () => {
       await givenWhenThen(
         { id: appealCaseId, courtSessions: [session] } as AppealCase,
@@ -215,15 +200,10 @@ describe('InternalNotificationController - Send appeal court session booked noti
       )
     })
 
-    it('should name the district court case and skip the judges line', () => {
+    it('should name the district court case', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           subject: `Nýtt þinghald í máli ${courtCaseNumber}`,
-          html: expect.not.stringContaining('Dómarar'),
-        }),
-      )
-      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
-        expect.objectContaining({
           html: expect.stringContaining(
             `Landsréttur boðar til þinghalds í máli ${courtCaseNumber}.`,
           ),

@@ -98,21 +98,6 @@ export const caseInclude: Includeable[] = [
     required: false,
     include: [
       {
-        model: User,
-        as: 'appealJudge1',
-        include: [{ model: Institution, as: 'institution' }],
-      },
-      {
-        model: User,
-        as: 'appealJudge2',
-        include: [{ model: Institution, as: 'institution' }],
-      },
-      {
-        model: User,
-        as: 'appealJudge3',
-        include: [{ model: Institution, as: 'institution' }],
-      },
-      {
         model: AppealEventLog,
         as: 'appealEventLogs',
         required: false,

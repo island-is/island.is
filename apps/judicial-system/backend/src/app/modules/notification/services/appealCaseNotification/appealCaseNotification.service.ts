@@ -2050,24 +2050,13 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     }
 
     const caseNumber = appealCase.appealCaseNumber ?? theCase.courtCaseNumber
-    const judgeNames = [
-      appealCase.appealJudge1,
-      appealCase.appealJudge2,
-      appealCase.appealJudge3,
-    ]
-      .map((judge) => judge?.name)
-      .filter((name): name is string => Boolean(name))
     const subject = `Nýtt þinghald í máli ${caseNumber}`
     const details = `Landsréttur boðar til þinghalds í máli ${caseNumber}.<br/><br/>${
       appealCourtSessionTypeNames[session.sessionType]
     } mun fara fram ${formatDate(session.sessionDate, 'PPP')}, kl. ${formatDate(
       session.sessionDate,
       'HH:mm',
-    )}.<br/><br/>Dómsalur: ${session.courtRoom}.<br/><br/>${
-      judgeNames.length > 0
-        ? `Dómarar: ${judgeNames.join(', ')}.<br/><br/>`
-        : ''
-    }`
+    )}.<br/><br/>Dómsalur: ${session.courtRoom}.<br/><br/>`
     const html = (url: string) =>
       `${details}Hægt er að nálgast gögn málsins á <a href="${url}">${url}</a>.`
 
