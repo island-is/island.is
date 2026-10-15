@@ -451,7 +451,7 @@ export const application = defineMessages({
   },
   overviewTagDeleted: {
     id: 'vmst.cjoi.application:overviewTagDeleted',
-    defaultMessage: 'Eytt',
+    defaultMessage: 'Skráningu eytt',
     description: 'Tag marking a deleted entry in the overview',
   },
   overviewEditButton: {

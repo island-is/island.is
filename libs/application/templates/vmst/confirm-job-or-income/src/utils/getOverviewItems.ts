@@ -337,6 +337,7 @@ export const getCapitalIncomeOverviewItems = (
       width: 'half',
       keyText: m.application.paymentFrequency,
       valueText: getPaymentFrequencyLabel(entry.paymentFrequency),
+      hideIfEmpty: true,
     },
     {
       width: 'half',
@@ -388,6 +389,7 @@ export const getSocialInsuranceOverviewItems = (
       width: 'half',
       keyText: m.application.paymentFrequency,
       valueText: getPaymentFrequencyLabel(entry.paymentFrequency),
+      hideIfEmpty: true,
     },
     {
       width: 'half',
