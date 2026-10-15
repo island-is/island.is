@@ -10,6 +10,7 @@ import {
   Filter,
   FilterInput,
   GridRow,
+  Icon,
   Stack,
   Text,
   toast,
@@ -99,12 +100,20 @@ export const Forms = () => {
   const importButton = (
     <Button
       variant="ghost"
-      icon="upload"
+      size="small"
       onClick={() => fileInput.current?.click()}
       loading={isImportingForm}
       disabled={isCreatingForm || isImportingForm || !organizationNationalId}
     >
-      {formatMessage(m.importForm)}
+      <Box
+        component="span"
+        display="inlineFlex"
+        alignItems="center"
+        columnGap={1}
+      >
+        {formatMessage(m.importForm)}
+        <Icon icon="upload" size="large" type="outline" ariaHidden />
+      </Box>
     </Button>
   )
 
@@ -246,7 +255,7 @@ export const Forms = () => {
         <Box display="flex" style={{ minWidth: 144 }}>
           <Button
             fluid
-            size="default"
+            size="small"
             onClick={createForm}
             disabled={isCreatingForm || isImportingForm}
           >
@@ -266,7 +275,7 @@ export const Forms = () => {
           <Box display="flex" style={{ minWidth: 144 }}>
             <Button
               fluid
-              size="default"
+              size="small"
               onClick={createForm}
               disabled={isCreatingForm || isImportingForm}
             >
