@@ -93,7 +93,31 @@ module.exports = {
     })
   },
 
+  // Rolling back hands the bench back to the legacy columns: the first three
+  // judges in bench order, and an empty bench clears all three. Benches written
+  // after the upgrade live only in appeal_case_judge, so dropping the table
+  // without this would lose them to the old code.
   down: (queryInterface) => {
-    return queryInterface.dropTable('appeal_case_judge')
+    return queryInterface.sequelize.transaction(async (transaction) => {
+      await queryInterface.sequelize.query(
+        `UPDATE appeal_case ac
+         SET appeal_judge1_id = bench.judge1,
+             appeal_judge2_id = bench.judge2,
+             appeal_judge3_id = bench.judge3
+         FROM (
+           SELECT ac.id,
+                  (ARRAY_AGG(j.user_id ORDER BY j.display_order, j.created, j.id))[1] AS judge1,
+                  (ARRAY_AGG(j.user_id ORDER BY j.display_order, j.created, j.id))[2] AS judge2,
+                  (ARRAY_AGG(j.user_id ORDER BY j.display_order, j.created, j.id))[3] AS judge3
+           FROM appeal_case ac
+           LEFT JOIN appeal_case_judge j ON j.appeal_case_id = ac.id
+           GROUP BY ac.id
+         ) bench
+         WHERE bench.id = ac.id`,
+        { transaction },
+      )
+
+      await queryInterface.dropTable('appeal_case_judge', { transaction })
+    })
   },
 }
