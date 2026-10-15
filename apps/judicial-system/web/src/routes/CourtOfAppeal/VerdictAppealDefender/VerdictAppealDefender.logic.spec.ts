@@ -9,7 +9,6 @@ import {
   getAppealDefender,
   getAppealSpokesperson,
   getAppealSpokespersonIsLawyer,
-  getCivilClaimantSectionTitle,
   getHasAppealSpokesperson,
   getVerdictAppealDefenderCaseNumber,
   getVerdictAppealDefenderHeaderLines,
@@ -321,16 +320,5 @@ describe('getVerdictAppealDefenderHeaderLines', () => {
         courtCaseNumber: 'S-123/2026',
       } as WorkingCase).join(' '),
     ).not.toContain('áfrýjaði')
-  })
-})
-
-describe('getCivilClaimantSectionTitle', () => {
-  // A réttargæslumaður is a lawyer too, so the heading counts claimants rather
-  // than naming the role the court settled on.
-  it('counts claimants rather than naming the role', () => {
-    expect(getCivilClaimantSectionTitle(1)).toBe(
-      'Lögmaður einkaréttarkröfuhafa',
-    )
-    expect(getCivilClaimantSectionTitle(2)).toBe('Lögmenn einkaréttarkröfuhafa')
   })
 })

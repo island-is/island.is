@@ -182,11 +182,3 @@ export const getVerdictAppealDefenderHeaderLines = (
   theCase.courtCaseNumber
     ? [`Málsnr. héraðsdóms ${theCase.courtCaseNumber}`]
     : []
-
-/**
- * How the claimants' section is titled. Every advocate a claimant has is a
- * lawyer - a réttargæslumaður is one too - so the heading counts claimants
- * rather than naming the role the court settled on.
- */
-export const getCivilClaimantSectionTitle = (count: number): string =>
-  count === 1 ? 'Lögmaður einkaréttarkröfuhafa' : 'Lögmenn einkaréttarkröfuhafa'

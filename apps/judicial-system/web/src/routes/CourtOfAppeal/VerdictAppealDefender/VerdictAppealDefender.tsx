@@ -26,7 +26,6 @@ import SelectAppealCivilClaimantAdvocate from './SelectAppealCivilClaimantAdvoca
 import SelectAppealDefender from './SelectAppealDefender'
 import {
   areAllAppealAdvocatesConfirmed,
-  getCivilClaimantSectionTitle,
   getVerdictAppealDefenderCaseNumber,
   getVerdictAppealDefenderHeaderLines,
 } from './VerdictAppealDefender.logic'
@@ -121,10 +120,11 @@ const VerdictAppealDefender = () => {
           </Box>
           {hasCivilClaimants && (
             <Box component="section">
+              {/* Singular whatever the count - the design heads two
+                  claimants the same way. A réttargæslumaður is a lawyer too,
+                  so the heading does not name the role either. */}
               <SectionHeading
-                title={getCivilClaimantSectionTitle(
-                  workingCase.civilClaimants?.length ?? 0,
-                )}
+                title="Lögmaður einkaréttarkröfuhafa"
                 marginBottom={3}
               />
               <div className={stack({ gap: 5 })}>
