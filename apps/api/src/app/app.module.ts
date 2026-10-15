@@ -204,6 +204,7 @@ import { NationalRegistryModule } from '@island.is/api/domains/national-registry
 import { SignatureCollectionModule } from '@island.is/api/domains/signature-collection'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { RskRentalDayRateClientConfig } from '@island.is/clients-rental-day-rate'
+import { RskKilometerFeeClientConfig } from '@island.is/clients/rsk/kilometer-fee'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
 import { FinanceClientV3Config } from '@island.is/clients/finance-v3'
 import { MMSClientConfig } from '@island.is/clients/mms'
@@ -524,6 +525,7 @@ const environment = getConfig
         IcelandicGovernmentInstitutionVacanciesClientConfig,
         RskRelationshipsClientConfig,
         RskRentalDayRateClientConfig,
+        RskKilometerFeeClientConfig,
         AircraftRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
