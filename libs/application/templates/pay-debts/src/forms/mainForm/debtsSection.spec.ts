@@ -54,6 +54,7 @@ describe('debtsSection', () => {
       | undefined
 
     expect(table?.id).toBe('selectedDebts')
+    expect(table?.rowIds?.id).toBe('selectedDebtIds')
     expect(children.map((child) => child.id)).toContain('shouldUseMockPayment')
   })
 

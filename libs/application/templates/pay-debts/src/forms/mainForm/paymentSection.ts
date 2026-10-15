@@ -1,9 +1,11 @@
 import {
+  buildAlertMessageField,
   buildMultiField,
   buildPaymentChargeOverviewField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { payment as messages } from '../../lib/messages'
 import { getSelectedDebts } from '../../utils/getSelectedDebts'
 
@@ -39,6 +41,16 @@ export const paymentSection = buildSection({
                   : {}),
               }
             }),
+        }),
+        buildAlertMessageField({
+          id: 'paymentNoSelection',
+          alertType: 'warning',
+          title: messages.noSelection.title,
+          message: messages.noSelection.message,
+          shouldBlockInSetBeforeSubmitCallback: true,
+          condition: (answers, externalData) =>
+            getSelectedDebts({ answers, externalData } as Application)
+              .length === 0,
         }),
         buildSubmitField({
           id: 'submit',

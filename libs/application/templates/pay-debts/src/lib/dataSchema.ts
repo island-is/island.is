@@ -1,11 +1,9 @@
 import { z } from 'zod'
 
-const dummySchema = z.object({
-  dummyTextField: z.string(),
-})
-
 export const dataSchema = z.object({
-  dummy: dummySchema,
+  selectedDebts: z.array(z.boolean().nullish()),
+  selectedDebtIds: z.array(z.string()),
+  debtsToPay: z.array(z.string().nullish()),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

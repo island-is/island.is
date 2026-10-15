@@ -1077,6 +1077,10 @@ export interface InteractiveTableField extends BaseField {
     getMaxAmount?: (application: Application) => Array<number | undefined>
     placeholder?: StaticText
   }
+  rowIds?: {
+    id: string
+    getIds: (application: Application) => string[]
+  }
   footerRow?: StaticText[] | ((application: Application) => StaticText[])
   expandedRows?: {
     header:

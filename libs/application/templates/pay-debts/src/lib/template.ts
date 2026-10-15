@@ -75,11 +75,18 @@ const template: ApplicationTemplate<
         // (Gjaldliður). Blocked on FJS exposing the correct item code (and
         // possibly a debt reference such as payID) before this can be relied
         // on to create a valid charge.
-        chargeItems: (application) =>
-          getSelectedDebts(application).map((debt) => ({
+        chargeItems: (application) => {
+          const selected = getSelectedDebts(application)
+
+          if (selected.length === 0) {
+            throw new Error('None of the selected debts are in the debt list')
+          }
+
+          return selected.map((debt) => ({
             code: debt.chargeTypeId,
             amount: debt.amountToPay,
-          })),
+          }))
+        },
         lifecycle: EphemeralStateLifeCycle,
         submitTarget: States.COMPLETED,
       }),

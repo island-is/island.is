@@ -116,6 +116,11 @@ export const debtsSection = buildSection({
                   : undefined,
               ),
           },
+          rowIds: {
+            id: 'selectedDebtIds',
+            getIds: (application) =>
+              getDebts(application).map((debt) => debt.payID),
+          },
           // inputColumn: {
           //   id: 'debtsToPay',
           //   getMaxAmount: (application) =>

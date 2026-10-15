@@ -130,8 +130,8 @@ export const getInteractiveTableChildFieldIds = (field: Field): string[] => {
   if (field.type !== FieldTypes.INTERACTIVE_TABLE) {
     return []
   }
-  const inputColumnId = (field as InteractiveTableField).inputColumn?.id
-  return inputColumnId ? [inputColumnId] : []
+  const { inputColumn, rowIds } = field as InteractiveTableField
+  return [inputColumn?.id, rowIds?.id].filter((id): id is string => !!id)
 }
 
 export const extractAnswersToSubmitFromScreen = (

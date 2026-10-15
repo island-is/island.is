@@ -33,6 +33,21 @@ export const payment = {
       description: 'Label for the remaining amount of the selected debts',
     },
   }),
+  noSelection: defineMessages({
+    title: {
+      id: 'pd.application:payment.noSelection.title',
+      defaultMessage: 'Engar skuldir valdar',
+      description:
+        'Title shown when none of the selected debts are in the current list',
+    },
+    message: {
+      id: 'pd.application:payment.noSelection.message',
+      defaultMessage:
+        'Skuldastaða þín hefur breyst síðan þú valdir. Farðu til baka og veldu skuldir að nýju.',
+      description:
+        'Message shown when none of the selected debts are in the current list',
+    },
+  }),
   buttons: defineMessages({
     submit: {
       id: 'pd.application:payment.buttons.submit',

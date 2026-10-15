@@ -2,7 +2,7 @@ import '@testing-library/jest-dom'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FC, PropsWithChildren } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
 import {
   Application,
   ApplicationStatus,
@@ -103,6 +103,40 @@ describe('InteractiveTableFormField rows', () => {
     expect(ids).toHaveLength(20)
     expect(ids[0]).toBe('selectedDebts-select-0')
     expect(ids[19]).toBe('selectedDebts-select-19')
+  })
+})
+
+describe('InteractiveTableFormField row ids', () => {
+  it('saves the id of every row next to the selection', async () => {
+    let form: UseFormReturn | undefined
+    const CapturingWrapper: FC<PropsWithChildren> = ({ children }) => {
+      form = useForm()
+
+      return <FormProvider {...form}>{children}</FormProvider>
+    }
+
+    render(
+      <InteractiveTableFormField
+        field={
+          buildInteractiveTableField({
+            id: 'selectedDebts',
+            selectable: true,
+            header: ['Gjaldflokkur', 'Gjaldgrunnur', 'Eindagi', 'Skuldir'],
+            rows: makeRows(2),
+            rowIds: {
+              id: 'selectedDebtIds',
+              getIds: () => ['PAY-A', 'PAY-B'],
+            },
+          }) as InteractiveTableField
+        }
+        application={application}
+      />,
+      { wrapper: CapturingWrapper },
+    )
+
+    await waitFor(() =>
+      expect(form?.getValues('selectedDebtIds')).toEqual(['PAY-A', 'PAY-B']),
+    )
   })
 })
 

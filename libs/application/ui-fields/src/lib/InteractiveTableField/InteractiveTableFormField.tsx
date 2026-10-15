@@ -103,6 +103,13 @@ export const InteractiveTableFormField: FC<Props> = ({
     () => field.inputColumn?.getMaxAmount?.(application) ?? [],
     [field.inputColumn, application],
   )
+  const rowIdsFieldId = field.rowIds
+    ? resolveFieldId({ id: field.rowIds.id }, application, user)
+    : undefined
+  const rowIds = useMemo(
+    () => field.rowIds?.getIds(application),
+    [field.rowIds, application],
+  )
   const inputPlaceholder = field.inputColumn?.placeholder
     ? formatText(field.inputColumn.placeholder, application, formatMessage)
     : 'kr.'
@@ -184,6 +191,11 @@ export const InteractiveTableFormField: FC<Props> = ({
       }
     })
   }, [selectable, rows, fieldId, inputFieldId, getValues, setValue])
+
+  useEffect(() => {
+    if (!rowIdsFieldId || !rowIds) return
+    setValue(rowIdsFieldId, rowIds)
+  }, [rowIdsFieldId, rowIds, setValue])
 
   const toggleAll = () => {
     const nowSelected = !allSelected
