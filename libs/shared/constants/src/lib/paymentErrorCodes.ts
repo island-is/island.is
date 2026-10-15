@@ -29,6 +29,7 @@ export enum PaymentServiceCode {
   DebtPaymentMethodNotAllowed = 'DebtPaymentMethodNotAllowed',
   DebtPaymentRejected = 'DebtPaymentRejected',
   DebtPaymentFlowClosed = 'DebtPaymentFlowClosed',
+  DebtPaymentUnavailable = 'DebtPaymentUnavailable',
   DebtPaymentRegisteredCannotBeRefunded = 'DebtPaymentRegisteredCannotBeRefunded',
 }
 

@@ -49,6 +49,7 @@ Errors (`detail` of the problem response, or the error code on the pay page):
 | `DebtPaymentMethodNotAllowed`           | FJS does not allow the chosen payment method for these debts.                                                                                                                                                      |
 | `DebtPaymentRejected`                   | FJS rejected the payment after the card was charged. The card is refunded.                                                                                                                                         |
 | `DebtPaymentFlowClosed`                 | The flow was rejected by FJS earlier and can not be used again.                                                                                                                                                    |
+| `DebtPaymentUnavailable`                | FJS could not be reached when the payer paid, so the debts could not be checked. Nothing was charged and the payer can try again.                                                                                  |
 | `DebtPaymentRegisteredCannotBeRefunded` | Returned by `POST /v1/payments/refund` for a flow registered with FJS, in `needs_reconciliation`, or that may be registered (an earlier `payDebt` had an unknown outcome, or one is running). FJS has no reversal. |
 
 The debts are validated with FJS again right before every capture, so a flow can fail with `DebtPaymentInvalid` long after it was created. Flows do not expire.
@@ -135,7 +136,7 @@ flowchart TD
 
 ### Rejected and closed flows
 
-A rejected flow is terminal and its id is never reused for a second registration. The pay page shows "Skuldastaðan hefur breyst" and `GetPaymentFlowDTO.isClosed` is `true`. The application should start a new flow with `POST /v1/payments/debts`. A paid flow still shows its receipt.
+A rejected flow is terminal and its id is never reused for a second registration. The pay page shows "Ekki tókst að ljúka greiðslunni" and `GetPaymentFlowDTO.isClosed` is `true`. The application should start a new flow with `POST /v1/payments/debts`. A paid flow still shows its receipt.
 
 ## Payment worker
 

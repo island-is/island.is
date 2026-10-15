@@ -167,6 +167,7 @@ export const paymentErrorToTitleAndMessage = (
         message: genericError.amountMismatch,
       }
     case PaymentServiceCode.DebtPaymentFlowClosed:
+    case PaymentServiceCode.DebtPaymentRejected:
       return {
         title: debtError.closedTitle,
         message: debtError.closed,
@@ -181,10 +182,10 @@ export const paymentErrorToTitleAndMessage = (
         title: debtError.methodNotAllowedTitle,
         message: debtError.methodNotAllowed,
       }
-    case PaymentServiceCode.DebtPaymentRejected:
+    case PaymentServiceCode.DebtPaymentUnavailable:
       return {
-        title: debtError.rejectedTitle,
-        message: debtError.rejected,
+        title: debtError.unavailableTitle,
+        message: debtError.unavailable,
       }
     case CardErrorCode.RefundedBecauseOfSystemError:
       return {

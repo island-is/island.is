@@ -458,6 +458,19 @@ describe('DebtPaymentFlowController', () => {
         })
       })
 
+      it('answers unavailable when FJS cannot be reached', async () => {
+        const flow = await getFlow(await createFlow())
+        validatePayment.mockRejectedValue(
+          new Error('Timeout of 20000ms exceeded'),
+        )
+
+        await expect(
+          service.validateDebtPaymentFlow(flow, PaymentMethod.CARD),
+        ).rejects.toMatchObject({
+          message: PaymentServiceCode.DebtPaymentUnavailable,
+        })
+      })
+
       it('rejects a flow whose settlement was rejected as closed, without asking FJS', async () => {
         const flow = await getFlow(await createFlow())
         validatePayment.mockClear()
