@@ -145,12 +145,11 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             </Box>
           )}
         </Box>
-        {/* What the claimant asked the district court for - the request this
-            court is answering - shown while it has settled on a
-            réttargæslumaður and for no other choice. */}
+        {/* Who the court has settled on as réttargæslumaður - shown for that
+            choice and for no other. */}
         {isLawyer === false && (
           <Text variant="small">
-            {getCivilClaimantSpokespersonRequest(civilClaimant)}
+            {getCivilClaimantSpokespersonRequest(advocate)}
           </Text>
         )}
         {hasSpokesperson ? (

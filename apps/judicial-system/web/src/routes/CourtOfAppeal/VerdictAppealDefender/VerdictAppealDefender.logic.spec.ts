@@ -9,7 +9,9 @@ import {
   getAppealDefender,
   getAppealSpokesperson,
   getAppealSpokespersonIsLawyer,
+  getCivilClaimantSectionTitle,
   getCivilClaimantSpokespersonRequest,
+  getDefendantSectionTitle,
   getHasAppealSpokesperson,
   getVerdictAppealDefenderCaseNumber,
   getVerdictAppealDefenderHeaderLines,
@@ -325,30 +327,46 @@ describe('getVerdictAppealDefenderHeaderLines', () => {
 })
 
 describe('getCivilClaimantSpokespersonRequest', () => {
-  it('names who the claimant asked the district court for', () => {
+  it('names who the court settled on', () => {
     expect(
       getCivilClaimantSpokespersonRequest({
-        spokespersonName: 'Sólveig Hreinsdóttir',
-        spokespersonNationalId: '0909713459',
-      } as CivilClaimant),
+        name: 'Sólveig Hreinsdóttir',
+        nationalId: '0909713459',
+      }),
     ).toBe(
       'Ósk einkaréttarkröfuhafa um réttargæslumann: Sólveig Hreinsdóttir kt. 090971-3459',
     )
   })
 
-  it('leaves the national id out when none was recorded', () => {
+  // A part the court has not recorded is left out, and the line stays.
+  it('leaves out whichever part is missing', () => {
     expect(
-      getCivilClaimantSpokespersonRequest({
-        spokespersonName: 'Sólveig Hreinsdóttir',
-      } as CivilClaimant),
+      getCivilClaimantSpokespersonRequest({ name: 'Sólveig Hreinsdóttir' }),
     ).toBe('Ósk einkaréttarkröfuhafa um réttargæslumann: Sólveig Hreinsdóttir')
+
+    expect(
+      getCivilClaimantSpokespersonRequest({ nationalId: '0909713459' }),
+    ).toBe('Ósk einkaréttarkröfuhafa um réttargæslumann: kt. 090971-3459')
+
+    expect(getCivilClaimantSpokespersonRequest({})).toBe(
+      'Ósk einkaréttarkröfuhafa um réttargæslumann:',
+    )
+  })
+})
+
+describe('section titles', () => {
+  // Singular for exactly one party, plural past that.
+  it('head the defendants by their number', () => {
+    expect(getDefendantSectionTitle(1)).toBe('Verjandi')
+    expect(getDefendantSectionTitle(2)).toBe('Verjendur')
   })
 
-  // The same rule as the letter's copy list: an absence that announces itself
-  // beats one the reader has to notice.
-  it('says so when the claimant asked for nobody', () => {
-    expect(getCivilClaimantSpokespersonRequest({} as CivilClaimant)).toBe(
-      'Ósk einkaréttarkröfuhafa um réttargæslumann: Ekki skráð',
+  // A réttargæslumaður is a lawyer too, so the heading counts claimants rather
+  // than naming the role the court settled on.
+  it('head the claimants by their number', () => {
+    expect(getCivilClaimantSectionTitle(1)).toBe(
+      'Lögmaður einkaréttarkröfuhafa',
     )
+    expect(getCivilClaimantSectionTitle(2)).toBe('Lögmenn einkaréttarkröfuhafa')
   })
 })

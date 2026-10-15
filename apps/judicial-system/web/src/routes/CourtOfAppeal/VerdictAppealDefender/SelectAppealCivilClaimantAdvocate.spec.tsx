@@ -41,8 +41,8 @@ describe('SelectAppealCivilClaimantAdvocate', () => {
       id: 'claimant-id',
       name: 'Brynjar Sveinsson',
       hasAppealSpokesperson: true,
-      spokespersonName: 'Sólveig Hreinsdóttir',
-      spokespersonNationalId: '0909713459',
+      appealSpokespersonName: 'Sólveig Hreinsdóttir',
+      appealSpokespersonNationalId: '0909713459',
       ...fields,
     } as CivilClaimant)
 
@@ -60,18 +60,22 @@ describe('SelectAppealCivilClaimantAdvocate', () => {
                 } as unknown as WorkingCase
               }
             >
-              <SelectAppealCivilClaimantAdvocate civilClaimant={civilClaimant} />
+              <SelectAppealCivilClaimantAdvocate
+                civilClaimant={civilClaimant}
+              />
             </FormContextWrapper>
           </UserContextWrapper>
         </ApolloProviderWrapper>
       </IntlProviderWrapper>,
     )
 
-  it("shows what the claimant asked for once the court picks a réttargæslumaður", () => {
+  it('names who the court settled on once it picks a réttargæslumaður', () => {
     renderCard(claimant({ appealSpokespersonIsLawyer: false }))
 
     expect(screen.getByText(request)).toBeInTheDocument()
-    expect(screen.getByText(/Sólveig Hreinsdóttir kt. 090971-3459/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Sólveig Hreinsdóttir kt. 090971-3459/),
+    ).toBeInTheDocument()
   })
 
   // A lögmaður is hired by the claimant; what they once asked the court for
@@ -93,17 +97,18 @@ describe('SelectAppealCivilClaimantAdvocate', () => {
     expect(screen.queryByText(request)).not.toBeInTheDocument()
   })
 
-  // The line is about the choice, not about whether the district court
-  // recorded anyone: a claimant who asked for nobody is told so.
-  it('says so when the claimant asked for nobody', () => {
+  // A part the court has not recorded is left out; the line itself stays.
+  it('keeps the line, shorter, when the court recorded no name', () => {
     renderCard(
       claimant({
         appealSpokespersonIsLawyer: false,
-        spokespersonName: undefined,
-        spokespersonNationalId: undefined,
+        appealSpokespersonName: undefined,
+        appealSpokespersonNationalId: undefined,
       }),
     )
 
-    expect(screen.getByText(/réttargæslumann: Ekki skráð/)).toBeInTheDocument()
+    expect(
+      screen.getByText('Ósk einkaréttarkröfuhafa um réttargæslumann:'),
+    ).toBeInTheDocument()
   })
 })

@@ -186,30 +186,33 @@ export const getVerdictAppealDefenderHeaderLines = (
 
 /**
  * The line under a claimant's name while the court has settled on a
- * réttargæslumaður: what the claimant asked the district court for, which is
- * the request this court is answering.
+ * réttargæslumaður: who that is, as this court has recorded them.
  *
  * Shown for that choice alone. A claimant whose advocate is a lögmaður hired
- * them, and what they once asked the court for is beside the point.
+ * them, and the line has nothing to say.
  *
- * A claimant who asked for nobody still gets the line, saying so - the same
- * rule as the letter's copy list: an absence that announces itself beats one
- * the reader has to notice.
+ * Takes the advocate the card already resolved for its input fields, so the
+ * name on the line is always the name in the field above it. A part the court
+ * has not recorded is simply left out - the line stays, shorter.
  */
 export const getCivilClaimantSpokespersonRequest = (
-  civilClaimant: Pick<
-    CivilClaimant,
-    'spokespersonName' | 'spokespersonNationalId'
-  >,
-): string => {
-  const requested = civilClaimant.spokespersonName
-    ? [
-        civilClaimant.spokespersonName,
-        formatDOB(civilClaimant.spokespersonNationalId, false, ''),
-      ]
-        .filter(Boolean)
-        .join(' ')
-    : 'Ekki skráð'
+  advocate: Pick<Advocate, 'name' | 'nationalId'>,
+): string =>
+  [
+    'Ósk einkaréttarkröfuhafa um réttargæslumann:',
+    advocate.name,
+    formatDOB(advocate.nationalId, false, ''),
+  ]
+    .filter(Boolean)
+    .join(' ')
 
-  return `Ósk einkaréttarkröfuhafa um réttargæslumann: ${requested}`
-}
+/**
+ * How the two sections are headed: for the party, and in the plural once a
+ * case has more than one of them. A réttargæslumaður is a lawyer too, so the
+ * claimants' heading does not name the role the court settled on.
+ */
+export const getDefendantSectionTitle = (count: number): string =>
+  count === 1 ? 'Verjandi' : 'Verjendur'
+
+export const getCivilClaimantSectionTitle = (count: number): string =>
+  count === 1 ? 'Lögmaður einkaréttarkröfuhafa' : 'Lögmenn einkaréttarkröfuhafa'
