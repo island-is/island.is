@@ -4,7 +4,7 @@ Client for Skatturinn's kílómetragjald service (`Kilometragjald-kilometer-fee`
 
 ## The OpenAPI document is hand-written
 
-`src/clientConfig.yml` is the contract island.is has proposed to Skatturinn. Their published spec (`getOpenAPI?serviceCode=Kilometragjald-kilometer-fee`) has no response schemas, so there is no `update-openapi-document` target. Until Skatturinn implements this contract, consumers use mock data. When they do, replace this file with their spec and add the target back.
+`src/clientConfig.json` is the contract island.is has proposed to Skatturinn. Their published spec (`getOpenAPI?serviceCode=Kilometragjald-kilometer-fee`) has no response schemas, so there is no `update-openapi-document` target. Until Skatturinn implements this contract, consumers use mock data. When they do, replace this file with their spec and add the target back.
 
 ## Auth
 

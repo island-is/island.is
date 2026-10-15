@@ -1,3 +1,9 @@
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
+import format from 'date-fns/format'
+
+import { VehicleMileageDetail } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -6,28 +12,24 @@ import {
   GridRow,
   SkeletonLoader,
   Stack,
+  Tabs,
   Text,
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  createColumnHelper,
   FootNote,
   icelandLocalTime,
   IntroHeader,
   m,
+  PortalTable,
   SAMGONGUSTOFA_SLUG,
   SimpleBarChart,
-  PortalTable,
-  createColumnHelper,
 } from '@island.is/portals/my-pages/core'
-import { InputController } from '@island.is/shared/form-fields'
-import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
-
-import { VehicleMileageDetail } from '@island.is/api/schema'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
-import format from 'date-fns/format'
+import { InputController } from '@island.is/shared/form-fields'
+
 import VehicleCO2 from '../../components/VehicleCO2'
 import { vehicleMessage as messages } from '../../lib/messages'
 import { displayWithUnit } from '../../utils/displayWithUnit'
@@ -38,6 +40,7 @@ import {
   usePostVehicleMileageMutation,
   usePutVehicleMileageMutation,
 } from './VehicleDetail.generated'
+import VehicleMileageFee from './VehicleMileageFee'
 import * as styles from './VehicleMileage.css'
 
 const ORIGIN_CODE = 'ISLAND.IS'
@@ -81,6 +84,7 @@ const VehicleMileage = () => {
   })
 
   const [showChart, setShowChart] = useState<boolean>(false)
+  const [showMileageFee, setShowMileageFee] = useState<boolean>(false)
   const featureFlagClient = useFeatureFlagClient()
   useEffect(() => {
     const isFlagEnabled = async () => {
@@ -90,6 +94,13 @@ const VehicleMileage = () => {
       )
       if (ffEnabled) {
         setShowChart(ffEnabled as boolean)
+      }
+      const mileageFeeEnabled = await featureFlagClient.getValue(
+        Features.isServicePortalVehicleMileageFeePageEnabled,
+        false,
+      )
+      if (mileageFeeEnabled) {
+        setShowMileageFee(mileageFeeEnabled as boolean)
       }
     }
     isFlagEnabled()
@@ -224,6 +235,70 @@ const VehicleMileage = () => {
         mileage: item.mileage,
       }))
   }
+
+  const mileageHistory = (
+    <>
+      {loading && (
+        <Box marginTop={2}>
+          <SkeletonLoader
+            space={2}
+            repeat={4}
+            display="block"
+            width="full"
+            height={35}
+          />
+        </Box>
+      )}
+      {!loading && !error && hasData && (
+        <>
+          <GridContainer>
+            <GridRow marginBottom={2}>
+              <GridColumn span="1/1">
+                <Text as="h3" variant="h5">
+                  {formatMessage(m.overview)}
+                </Text>
+              </GridColumn>
+            </GridRow>
+            <GridRow>
+              <GridColumn span="1/1">
+                <PortalTable
+                  columns={mileageColumns}
+                  data={details ?? []}
+                  emptyMessage=""
+                  mobileTitleKey="readDate"
+                />
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+          {showChart && (
+            <Box width="full">
+              <SimpleBarChart
+                data={parseChartData(details)}
+                datakeys={['date', 'mileage']}
+                bars={[
+                  {
+                    datakey: 'mileage',
+                  },
+                ]}
+                xAxis={{
+                  datakey: 'date',
+                }}
+                yAxis={{
+                  datakey: 'mileage',
+                  label: unit === 'mi' ? 'Mi.' : 'Km.',
+                }}
+                tooltip={{
+                  labels: {
+                    mileage: formatMessage(messages.odometer),
+                  },
+                }}
+              />
+            </Box>
+          )}
+        </>
+      )}
+    </>
+  )
 
   return (
     <>
@@ -393,64 +468,25 @@ const VehicleMileage = () => {
               </GridRow>
             </GridContainer>
           </form>
-          {loading && (
-            <Box marginTop={2}>
-              <SkeletonLoader
-                space={2}
-                repeat={4}
-                display="block"
-                width="full"
-                height={35}
-              />
-            </Box>
-          )}
-          {!loading && !error && hasData && (
-            <>
-              <GridContainer>
-                <GridRow marginBottom={2}>
-                  <GridColumn span="1/1">
-                    <Text as="h3" variant="h5">
-                      {formatMessage(m.overview)}
-                    </Text>
-                  </GridColumn>
-                </GridRow>
-                <GridRow>
-                  <GridColumn span="1/1">
-                    <PortalTable
-                      columns={mileageColumns}
-                      data={details ?? []}
-                      emptyMessage=""
-                      mobileTitleKey="readDate"
-                    />
-                  </GridColumn>
-                </GridRow>
-              </GridContainer>
-              {showChart && (
-                <Box width="full">
-                  <SimpleBarChart
-                    data={parseChartData(details)}
-                    datakeys={['date', 'mileage']}
-                    bars={[
-                      {
-                        datakey: 'mileage',
-                      },
-                    ]}
-                    xAxis={{
-                      datakey: 'date',
-                    }}
-                    yAxis={{
-                      datakey: 'mileage',
-                      label: unit === 'mi' ? 'Mi.' : 'Km.',
-                    }}
-                    tooltip={{
-                      labels: {
-                        mileage: formatMessage(messages.odometer),
-                      },
-                    }}
-                  />
-                </Box>
-              )}
-            </>
+          {showMileageFee ? (
+            <Tabs
+              label={formatMessage(messages.mileageTabsLabel)}
+              tabs={[
+                {
+                  label: formatMessage(messages.mileageHistoryTab),
+                  content: <Box marginTop={6}>{mileageHistory}</Box>,
+                },
+                {
+                  label: formatMessage(messages.mileageFeeTab),
+                  content: <VehicleMileageFee permno={id} />,
+                },
+              ]}
+              contentBackground="transparent"
+              selected="0"
+              size="xs"
+            />
+          ) : (
+            mileageHistory
           )}
         </Stack>
         <VehicleCO2 co2={co2?.vehiclesListV3?.vehicleList?.[0]?.co2 ?? '0'} />

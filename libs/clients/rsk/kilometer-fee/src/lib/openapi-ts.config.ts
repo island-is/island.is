@@ -1,7 +1,7 @@
 import { defineConfig } from '@hey-api/openapi-ts'
 
 export default defineConfig({
-  input: './libs/clients/rsk/kilometer-fee/src/clientConfig.yml',
+  input: './libs/clients/rsk/kilometer-fee/src/clientConfig.json',
   output: {
     path: './libs/clients/rsk/kilometer-fee/gen/fetch',
     format: 'prettier',
