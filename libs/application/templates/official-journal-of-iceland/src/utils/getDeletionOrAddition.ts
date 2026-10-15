@@ -28,6 +28,25 @@ export const formatListItemDiff = (item: Element) => {
     const liHasInsert = !!liItem.querySelector('ins')
 
     if (liHasDeletion || liHasInsert) {
+      const isStaflidur =
+        liItem?.parentElement?.getAttribute('type')?.toLowerCase() === 'a'
+
+      // Formatting changed, wording did not: nothing deleted, and everything
+      // inserted is <ins class="mod">.
+      const isFormatOnly =
+        !liHasDeletion &&
+        Array.from(liItem.querySelectorAll('ins')).every((e) =>
+          e.classList.contains('mod'),
+        )
+      if (isFormatOnly) {
+        returningArray.push(
+          `Snið ${getLiPoint(lidur, isStaflidur)}${
+            isStaflidur ? '-liðar' : '. tölul.'
+          } hefur breyst.` as HTMLText,
+        )
+        return
+      }
+
       const oldLiElement = liItem.cloneNode(true) as Element
       removeInsertions(oldLiElement)
       oldLiText = oldLiElement.textContent || ''
@@ -60,9 +79,6 @@ export const formatListItemDiff = (item: Element) => {
         }
         return returning
       })
-
-      const isStaflidur =
-        liItem?.parentElement?.getAttribute('type')?.toLowerCase() === 'a'
 
       if (containsDirect) {
         liItemHtml = (liItemHtml + formatListItemDiff(liItem)) as HTMLText
@@ -136,7 +152,8 @@ export const getDeletionOrAddition = (
 
   let liHtml = '' as HTMLText
   if (type === 'lidur') {
-    liHtml = `<p>${formatListItemDiff(item).join('</p><p>')}</p>` as HTMLText
+    const items = formatListItemDiff(item)
+    liHtml = (items.length ? `<p>${items.join('</p><p>')}</p>` : '') as HTMLText
     newText = escapeHtml(newText)
   } else {
     if (type === 'greinTitle') {

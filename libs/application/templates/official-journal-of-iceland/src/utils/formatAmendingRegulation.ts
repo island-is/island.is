@@ -508,16 +508,19 @@ export const formatAmendingRegBody = (
         isLetterList || isNumberList ? getReplacingList(element) : undefined
       const replacedByLettered =
         replacingList?.getAttribute('type')?.toLowerCase() === 'a'
-      if (replacingList && replacedByLettered !== isLetterList) {
+      if (replacingList) {
         handled.add(replacingList)
         testGroup.isDeletion = false
         testGroup.isAddition = false
+        const items = isLetterList ? 'Stafliðir' : 'Töluliðir'
+        const where = `${paragraph}. mgr. ${articleTitle} ${regNameDisplay}`
         testGroup.arr.push(
-          `<p>${
-            isLetterList ? 'Stafliðir' : 'Töluliðir'
-          } í ${paragraph}. mgr. ${articleTitle} ${regNameDisplay} verða ${
-            isLetterList ? 'töluliðir' : 'stafliðir'
-          } og orðast svo:</p>${afterChange(replacingList)}` as HTMLText,
+          ((replacedByLettered !== isLetterList
+            ? `<p>${items} í ${where} verða ${
+                isLetterList ? 'töluliðir' : 'stafliðir'
+              } og orðast svo:</p>`
+            : `<p>${items} í ${where} orðast svo:</p>`) +
+            afterChange(replacingList)) as HTMLText,
         )
         return
       }
@@ -692,8 +695,11 @@ export const formatAmendingRegBody = (
                 : `<p>${where} breytist og orðast svo:</p><p>${newText}</p>`
             ) as HTMLText
           } else if (isLetterList || isNumberList) {
-            pushHtml =
-              `<p>Eftirfarandi breytingar verða á ${paragraph}. mgr. ${articleTitle} ${regNameDisplay}:</p> ${liHtml}` as HTMLText
+            pushHtml = (
+              liHtml
+                ? `<p>Eftirfarandi breytingar verða á ${paragraph}. mgr. ${articleTitle} ${regNameDisplay}:</p> ${liHtml}`
+                : ''
+            ) as HTMLText
           } else if (table) {
             pushHtml = formatTableChange(
               table,
@@ -707,7 +713,10 @@ export const formatAmendingRegBody = (
               }${newText}</p>` as HTMLText
           }
         }
-        testGroup.arr.push(pushHtml)
+        // A list whose items changed formatting only can leave nothing to say
+        if (pushHtml) {
+          testGroup.arr.push(pushHtml)
+        }
       } else {
         testGroup.isDeletion = false
         testGroup.isAddition = false

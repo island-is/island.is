@@ -703,6 +703,64 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
     )
   })
 
+  it('restates töluliðir when every item changed', () => {
+    expect(
+      first(
+        withList('', 'alfa,', 'bravo.'),
+        withList('', 'charlie,', 'delta,', 'echo.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Töluliðir í 1. mgr. 1. gr. reglugerðarinnar orðast svo:</p>' +
+          list('', 'charlie,', 'delta,', 'echo.'),
+      ),
+    )
+  })
+
+  it('restates stafliðir when every item changed', () => {
+    expect(
+      first(
+        withList('a', 'alfa,', 'bravo.'),
+        withList('a', 'charlie,', 'delta,', 'echo.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Stafliðir í 1. mgr. 1. gr. reglugerðarinnar orðast svo:</p>' +
+          list('a', 'charlie,', 'delta,', 'echo.'),
+      ),
+    )
+  })
+
+  it('names a tölul. whose formatting alone changed', () => {
+    expect(
+      first(
+        withList('', 'fólksbifreiðar,', 'vörubifreiðar,', 'bifhjól.'),
+        withList('', 'fólksbifreiðar,', '<em>vörubifreiðar</em>,', 'bifhjól.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Eftirfarandi breytingar verða á 1. mgr. 1. gr. reglugerðarinnar:</p> <p>Snið 2. tölul. hefur breyst.</p>',
+      ),
+    )
+  })
+
+  it('names a stafliður whose formatting alone changed', () => {
+    expect(
+      first(
+        withList('a', 'fólksbifreiðar,', 'vörubifreiðar,', 'bifhjól.'),
+        withList('a', 'fólksbifreiðar,', '<em>vörubifreiðar</em>,', 'bifhjól.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Eftirfarandi breytingar verða á 1. mgr. 1. gr. reglugerðarinnar:</p> <p>Snið b-liðar hefur breyst.</p>',
+      ),
+    )
+  })
+
   it('does not call italic items a change of list type', () => {
     expect(
       first(
