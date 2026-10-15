@@ -1,0 +1,344 @@
+{
+  "id": {
+    "0866d5a2-b595-4cc3-a975-2e2bf6ead39b": {
+      "id": "g-2f0ccfd0-e7d8-4550-9875-0935ae9c8af3",
+      "caseNumber": "30/2022"
+    },
+    "09030772-936e-42d0-b409-e33ecbb6cac2": {
+      "id": "g-9c7ead6e-d8cd-4a74-a329-43dc1ece30bd",
+      "caseNumber": "15/2023"
+    },
+    "09ab355e-75a1-433a-b810-47dd59cc1efe": {
+      "id": "g-346f0d9f-a958-4e4e-97a8-543cd07f93a2",
+      "caseNumber": "5/2025"
+    },
+    "0d9fbc51-a04a-43e2-8214-0c82011eb075": {
+      "id": "g-a02002b7-2052-4e19-8618-9647634cbb11",
+      "caseNumber": "10/2023"
+    },
+    "1084fd00-c719-4ec0-a78d-55234816e43b": {
+      "id": "g-1b3c7346-0368-4a72-bd86-39741a44c3b9",
+      "caseNumber": "3/2023"
+    },
+    "16bbeb68-c4bb-4411-a012-827c8628bb76": {
+      "id": "g-98f68410-ee5d-4f90-b5b2-0cc1a6c1b7a7",
+      "caseNumber": "20/2021"
+    },
+    "1739f4cd-43c1-43e5-97a6-02105877c89f": {
+      "id": "g-fa2741c1-3c2b-4d58-9274-d3f3f187ed3b",
+      "caseNumber": "30/2021"
+    },
+    "1a026f55-eba8-409c-9f54-9fb29662f790": {
+      "id": "g-efb663d4-cba4-4134-a90e-68b13a3a14aa",
+      "caseNumber": "9/2022"
+    },
+    "1a552e21-ab4b-4df5-8472-30eeeead90bd": {
+      "id": "g-712d2197-465e-4623-908a-fc8447263438",
+      "caseNumber": "29/2021"
+    },
+    "1b601611-39b4-42bf-9f3c-284bdc8faa39": {
+      "id": "g-56f000df-e525-4526-8d76-115925aa3060",
+      "caseNumber": "27/2022"
+    },
+    "2ad34dbf-5648-401d-8d58-5730291a4166": {
+      "id": "g-6c0a3817-281d-4ef7-bd98-57e4aabb99e9",
+      "caseNumber": "10/2022"
+    },
+    "2b3c5d22-a40b-4921-a16a-4c08ef8d768d": {
+      "id": "g-d87126a2-80ff-4b09-bf62-072fce0050cb",
+      "caseNumber": "2/2024"
+    },
+    "2d0f4ade-fdcd-4c6f-9034-7c1fa304e193": {
+      "caseNumber": "387/2022",
+      "verdictDate": "2022-06-07"
+    },
+    "2d888476-2573-4be5-8cb1-12ffbe7924df": {
+      "id": "g-477717a1-6372-4289-bc1e-fb335f711712",
+      "caseNumber": "12/2023"
+    },
+    "2dd369e4-3e2c-4f1d-a527-490654dd63ea": {
+      "id": "g-89e63d28-6682-4224-9184-93489fb43819",
+      "caseNumber": "28/2022"
+    },
+    "2e8e4946-8da6-401e-96c5-c3ca84d212dd": {
+      "id": "g-e90f5c3f-ba23-4d52-a9b9-5af3d030bae7",
+      "caseNumber": "1/2023"
+    },
+    "3238fd8e-de8e-46ad-b2d7-f3f7c755665c": {
+      "id": "g-895b1e25-6a0b-4a09-88e2-d209bedd789b",
+      "caseNumber": "32/2022"
+    },
+    "3436846c-ad35-4efb-af9d-2101532d2a6b": {
+      "id": "g-b1722624-45dd-4529-ab88-2306f4b64303",
+      "caseNumber": "13/2023"
+    },
+    "3858181d-2cae-4758-86bd-d2b712913a48": {
+      "id": "g-98f68410-ee5d-4f90-b5b2-0cc1a6c1b7a7",
+      "caseNumber": "20/2021"
+    },
+    "38a20641-e48a-47c6-ab5e-74566a7250bb": {
+      "id": "g-e90f5c3f-ba23-4d52-a9b9-5af3d030bae7",
+      "caseNumber": "1/2023"
+    },
+    "38f9bb41-0c84-43e9-a809-9cc4dd1bff07": {
+      "id": "g-1a571ff7-e9d6-42a6-84fa-eb28eadc98a8",
+      "caseNumber": "15/2022"
+    },
+    "3b22e4e9-83e1-46e0-8599-6abb8589fe24": {
+      "id": "g-dbec9e48-e6eb-42be-a1da-b9855a9f2d97",
+      "caseNumber": "6/2024"
+    },
+    "3cf470bd-3fba-47a0-af9d-b9dbe0d20982": {
+      "id": "g-d16be3f9-6199-4308-b133-3eae2e47d3bc",
+      "caseNumber": "8/2022"
+    },
+    "3f8ee0dc-9fb2-45a9-99e9-bc7c9b7d8e64": {
+      "id": "g-196e2e42-d398-4f36-ab26-76364373e6b2",
+      "caseNumber": "11/2023"
+    },
+    "45ec4adf-0e46-4103-9bd7-8b03c3c86042": {
+      "id": "g-2c06a50b-b256-40ef-adbb-0f0f4bcd7555",
+      "caseNumber": "2/2021"
+    },
+    "472b0ac3-32a7-4e22-a05e-31b53ffb552f": {
+      "id": "g-3daf60c2-4798-49b8-b536-9aaf10cbbb92",
+      "caseNumber": "21/2022"
+    },
+    "47c374bc-3624-49de-94f7-3415b4d6e082": {
+      "id": "g-84dde83d-af6e-41b3-a7bb-7bf9204dd333",
+      "caseNumber": "20/2022"
+    },
+    "480fa9b5-515a-4c89-8fbe-199067a2a81b": {
+      "id": "g-9f4c5788-9af7-4eda-9a30-c25925ce67b7",
+      "caseNumber": "16/2022"
+    },
+    "4dbadee6-eccd-471a-a796-134729f34138": {
+      "id": "g-5bd67e2f-c789-41a0-86ee-35f60e2d176b",
+      "caseNumber": "2/2025"
+    },
+    "56d33c45-b570-4e3a-a5d3-856c9c2b506d": {
+      "id": "g-c998148b-2955-493b-be29-23f08d27bc12",
+      "caseNumber": "40/2021"
+    },
+    "648f89a1-11b1-438c-8d21-6223412919bc": {
+      "id": "g-bf19d7c8-1622-4a04-9b49-570bfcfb6078",
+      "caseNumber": "3/2025"
+    },
+    "657d05b4-e522-4798-aa11-017929902afb": {
+      "id": "g-6a8bc8fc-7167-44f9-b8f9-49a12301a2cc",
+      "caseNumber": "10/2021"
+    },
+    "689da13e-a1a8-4ec8-a36a-6e1ebbc14d02": {
+      "id": "g-ad24e405-19e5-409d-a6fe-23846bc8f969",
+      "caseNumber": "14/2022"
+    },
+    "6fc3f863-d781-4c9e-846b-ba0676517d3c": {
+      "id": "g-c4cb2b6d-c636-46d9-833d-1f41c7b8a2e5",
+      "caseNumber": "6/2023"
+    },
+    "70a6b901-f6e2-42ab-a376-d85fd5fbb90d": {
+      "id": "g-013205e6-61ed-41c3-90ae-a33389d6d35a",
+      "caseNumber": "6/2025"
+    },
+    "71281bd2-6e08-4a9b-b287-d0c2cdb678e1": {
+      "id": "g-78fae5c3-f800-4c3c-9c04-0b564d6be23f",
+      "caseNumber": "7/2021"
+    },
+    "71ae8d2e-4e1c-4b50-81e6-09ff84877764": {
+      "id": "g-90d8eb93-312b-4db5-aa2d-278c02350094",
+      "caseNumber": "1/2022"
+    },
+    "74101b54-b79e-41b3-b67e-1c685cf42499": {
+      "id": "g-91e09906-6721-4e49-b575-ba8b622f4544",
+      "caseNumber": "1/2025"
+    },
+    "81ce8ef4-5e18-4fb7-89a4-9ada2ec2c1bf": {
+      "id": "g-342a0f7b-8c2d-4d57-973b-f5b5d9c63b79",
+      "caseNumber": "1/2024"
+    },
+    "8313c28e-f26c-4e6b-b169-b2272c8a5d7a": {
+      "id": "g-0a4984f0-c377-4240-870c-c7c602f5ed5c",
+      "caseNumber": "4/2022"
+    },
+    "8bc6a45f-37da-4870-8df9-5ef20bd1d91e": {
+      "id": "g-f31f7413-3538-4709-8a2e-5c5c3b6ae9cc",
+      "caseNumber": "38/2021"
+    },
+    "8ccbe061-63f5-49ee-9088-af8bc566eb30": {
+      "id": "g-02bbe6fe-cbdc-4aa5-89fd-f32c6899ccbc",
+      "caseNumber": "4/2025"
+    },
+    "8d1946f0-7a59-49ff-b80b-d40c129a94c0": {
+      "id": "g-5192d5b5-f1e4-462c-9497-89c8debd13e0",
+      "caseNumber": "24/2022"
+    },
+    "8ff36d87-6efd-409a-a7ae-a2b963a50019": {
+      "id": "g-d89514f5-7038-4583-a47f-b21b8a9079c0",
+      "caseNumber": "17/2022"
+    },
+    "935d62b2-f287-4310-b040-2fcc84ab751e": {
+      "id": "g-eb639a2d-3fe0-4173-8784-0fec5bfa113f",
+      "caseNumber": "9/2023"
+    },
+    "93a2f92b-efc8-4685-8054-10d653f0201b": {
+      "id": "g-efbc525e-e09e-4975-b123-673fb936a20c",
+      "caseNumber": "3/2024"
+    },
+    "980a8026-87d0-4e53-afb1-030cd89b0cf0": {
+      "id": "g-a38959ee-7387-4819-8ccd-1218d4488a1e",
+      "caseNumber": "18/2021"
+    },
+    "98df1f57-15f2-459f-a87f-aed9825a067a": {
+      "id": "g-18d80cb8-bb0f-4ea6-8fac-0cf71893f233",
+      "caseNumber": "26/2021"
+    },
+    "99fe689f-d51c-4c33-8d4d-0883f9e8c271": {
+      "id": "g-6c1ab4cd-dfc0-4f51-8178-1c2db66a1821",
+      "caseNumber": "41/2021"
+    },
+    "9d124ea6-30d6-4e58-914d-1a661c0c65a0": {
+      "id": "g-74c5b7a1-47b4-419f-a35a-c864365e7519",
+      "caseNumber": "25/2022"
+    },
+    "9ede4024-7a0d-492f-ab82-3ec6fc25e5f3": {
+      "id": "g-62664150-6129-4fe7-aa02-eb81558a5a6b",
+      "caseNumber": "37/2021"
+    },
+    "a08f18a9-4068-4814-9150-ecdeb6c7485b": {
+      "id": "g-ff9b5741-3120-4c4f-a979-de652a7ff5e8",
+      "caseNumber": "11/2022"
+    },
+    "a41ef0e8-1231-4d8b-8356-f902b9a70fe7": {
+      "id": "g-a8a26776-a2ac-47da-a22b-197848cc34e8",
+      "caseNumber": "5/2023"
+    },
+    "a4a366d6-a1c5-451f-9b75-12cf738de9d2": {
+      "id": "g-c6b39563-9e33-4cb8-8a74-7abbb5cb82ea",
+      "caseNumber": "4/2024"
+    },
+    "af2dc9f1-c2ed-4cd7-9ba3-1157541770f1": {
+      "id": "g-be11afbd-401b-4d06-a0d0-584e67fec579",
+      "caseNumber": "14/2023"
+    },
+    "b65a2d28-0bdb-4ff9-8811-71ecf33c846a": {
+      "id": "g-e64d5c0f-4fa4-41cf-8b36-02275a2ebed1",
+      "caseNumber": "7/2022"
+    },
+    "b730ed77-5d73-4abb-a7f4-d423b9cc171f": {
+      "id": "g-faa8f777-a7b1-495b-a432-c8645baddc00",
+      "caseNumber": "26/2022"
+    },
+    "ba3a1133-e655-49ae-b274-ca9888f01a9f": {
+      "id": "g-39aaaefa-8787-4d3d-9848-c3137ecabf48",
+      "caseNumber": "18/2022"
+    },
+    "bc54492f-418d-4354-8886-23485ba5e3dc": {
+      "id": "g-a8ced562-83e2-46ca-bd07-0f4c60124203",
+      "caseNumber": "6/2022"
+    },
+    "bcc6ebb1-5792-4f8f-8292-8fbeab0de2c4": {
+      "id": "g-f48bdf78-511e-448b-be10-19d2ed9ef58f",
+      "caseNumber": "29/2022"
+    },
+    "be905eda-3f13-4c87-9735-c2a7047c8160": {
+      "id": "g-efb663d4-cba4-4134-a90e-68b13a3a14aa",
+      "caseNumber": "9/2022"
+    },
+    "bf4e5223-9ebb-4903-a67f-e3e806ab3c80": {
+      "id": "g-21a5fbe9-fe12-408f-a916-90553984e258",
+      "caseNumber": "8/2023"
+    },
+    "c33ea7fd-ea7f-41cf-89b3-8cbaf5daffae": {
+      "id": "g-dac667d8-e148-4ecd-9b8b-def515d58b7d",
+      "caseNumber": "35/2021"
+    },
+    "c3e9fa0b-420c-4677-b705-4b55ba78e980": {
+      "id": "g-988b1c9b-d11f-462d-a2d5-53626645dbde",
+      "caseNumber": "12/2022"
+    },
+    "c471262a-789a-45b4-ab67-8bda1f42e921": {
+      "id": "g-a8ced562-83e2-46ca-bd07-0f4c60124203",
+      "caseNumber": "6/2022"
+    },
+    "cc3711a2-9c96-48ea-89c7-637b6e2ac0d2": {
+      "id": "g-bce4234d-f431-4dd2-9670-3eb4967f3ada",
+      "caseNumber": "15/2021"
+    },
+    "ce071ae7-a2b4-4d3e-b6e1-f27af831a265": {
+      "id": "g-faa8f777-a7b1-495b-a432-c8645baddc00",
+      "caseNumber": "26/2022"
+    },
+    "d25359bf-068c-4be7-a617-bd35350e58ca": {
+      "id": "g-e3f4addb-5bb8-4857-aecb-680d6d4cbc6b",
+      "caseNumber": "19/2022"
+    },
+    "d591d517-d025-48cd-9d13-1063ededabdc": {
+      "id": "g-3885ce4f-3bd3-4327-b91e-de2167753eb1",
+      "caseNumber": "5/2022"
+    },
+    "d5e9de6c-9561-4a79-ab34-24a946d6486c": {
+      "id": "g-a29f0c0a-7bc4-4119-9b9a-965dee2e7a58",
+      "caseNumber": "14/2021"
+    },
+    "e0689da9-07a2-4048-98d3-774537a3970f": {
+      "id": "g-8850dff4-b773-475a-964a-dd6e2f465260",
+      "caseNumber": "23/2022"
+    },
+    "e0fc0c3a-7df2-4302-9647-7c2bfd6d89b0": {
+      "id": "g-5e3ed1dc-9f9c-458d-99af-39f6aff32e36",
+      "caseNumber": "13/2021"
+    },
+    "e90f1816-7ab5-44b0-a68f-f63ae408876f": {
+      "id": "g-28d4985b-f17e-4b7b-94e7-f9a41f9ad4a0",
+      "caseNumber": "11/2021"
+    },
+    "e9545331-95e1-4edc-a01f-d9e5771ab6b0": {
+      "id": "g-2aecdce2-9743-4e68-ae07-32fa9c21c342",
+      "caseNumber": "13/2022"
+    },
+    "ea33635b-d8bc-48e3-8d00-3758d7c20c21": {
+      "id": "g-712f73f4-ae4f-43d9-891a-f4c085b77b59",
+      "caseNumber": "39/2021"
+    },
+    "ebaccf9d-7f99-4264-ae66-6297bfd652f1": {
+      "id": "g-235a513e-5d1e-4e7c-9390-542dc4e288fd",
+      "caseNumber": "34/2021"
+    },
+    "ed7ff942-673b-4a80-b08f-fe1735380b82": {
+      "id": "g-5dd69f08-a665-4f91-9798-366871856823",
+      "caseNumber": "3/2022"
+    },
+    "f0d5b1bd-7571-4e07-af47-ec50603bd3de": {
+      "id": "g-aad222e5-ce56-4242-b66c-d82fe773c57b",
+      "caseNumber": "5/2024"
+    },
+    "f2d24573-3e25-4a4f-a8cf-704b12c3bb8e": {
+      "id": "g-c2de53b6-5835-4014-97d4-c03a62822464",
+      "caseNumber": "7/2023"
+    },
+    "f353fe2d-2b4d-4ae2-9296-711105aff96a": {
+      "id": "g-be8ce937-898b-4654-8522-31272d5aeef6",
+      "caseNumber": "22/2022"
+    },
+    "f5055556-7d45-496e-812b-2219625c039b": {
+      "id": "g-d16be3f9-6199-4308-b133-3eae2e47d3bc",
+      "caseNumber": "8/2022"
+    },
+    "f800316a-00d6-4f4f-8133-9b96bea48616": {
+      "id": "g-ab1387a0-9c52-41b0-8d21-9836afb8540e",
+      "caseNumber": "7/2024"
+    },
+    "f83259ad-790f-4c36-a24b-e078b852d6d5": {
+      "id": "g-76116036-e18b-4447-91d0-6aff64db708d",
+      "caseNumber": "2/2023"
+    },
+    "fa96675c-b57c-447c-b313-761736ad6e17": {
+      "id": "g-3114b09b-0779-409c-b218-5906ebf9990a",
+      "caseNumber": "31/2022"
+    },
+    "ff55eb3a-1aa5-4951-8319-df8beb04b2ed": {
+      "id": "g-f02b4faa-3bb3-4c6a-8517-659c5272d8fb",
+      "caseNumber": "3/2021"
+    }
+  }
+}
