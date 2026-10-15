@@ -913,6 +913,50 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
       )
     })
 
+    describe('when the wording of the tölul. changed too', () => {
+      const withLead = (lead: string, ...items: string[]) =>
+        withList('', `${lead}${list('a', ...items)}`, 'bravo.')
+      const REWORDED = withLead(
+        'alfa yfirlit atriða:',
+        'eitt atriði hér,',
+        'annað atriði hér.',
+      )
+
+      it('restates the tölul. once, with its stafliðir as a list', () => {
+        expect(
+          first(
+            REWORDED,
+            withLead(
+              'alfa samantekt atriða:',
+              'eitt atriði þar,',
+              'annað atriði þar.',
+            ),
+          ),
+        ).toBe(
+          article(
+            1,
+            LEAD +
+              '<p>1. tölul. orðast svo: alfa samantekt atriða:</p><ol type="a"><li>eitt atriði þar,</li><li>annað atriði þar.</li></ol>',
+          ),
+        )
+      })
+
+      it('leaves a removed stafliður out of the restated tölul.', () => {
+        expect(
+          first(
+            REWORDED,
+            withLead('alfa samantekt atriða:', 'eitt atriði hér,'),
+          ),
+        ).toBe(
+          article(
+            1,
+            LEAD +
+              '<p>1. tölul. orðast svo: alfa samantekt atriða:</p><ol type="a"><li>eitt atriði hér,</li></ol>',
+          ),
+        )
+      })
+    })
+
     it('numbers a tölul. after a nested list by its place in its own list', () => {
       expect(
         first(BEFORE, withList('', nested('annað atriði hér.'), 'charlie.')),
