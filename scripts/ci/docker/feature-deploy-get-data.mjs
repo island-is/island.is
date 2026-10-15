@@ -7,6 +7,7 @@ import github from '@actions/github'
 import { findNestedObjectByKey } from './utils.mjs'
 import { isMainModule } from './utils.mjs'
 import AWS from 'aws-sdk'
+import { ConsoleLogger } from '@nestjs/common'
 
 if (isMainModule(import.meta.url)) {
   main().catch((error) => {
@@ -28,6 +29,7 @@ async function getLatestIdsImageTag() {
   // is merged
 
   // test image: here
+  console.log("test image");
   return 'test_ids_feature_deploy_j98h09u'
 
   // const ecr = new AWS.ECR({ region: 'eu-west-1' })
