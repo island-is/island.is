@@ -5,35 +5,6 @@ module.exports = {
     await queryInterface.sequelize.query(`
       BEGIN;
 
-      -- Local setup runs migrations before seeds. Ensure the scope and its
-      -- domain exist before granting access, preserving existing configuration.
-      INSERT INTO domain
-        (name, description, national_id, display_name, organisation_logo_key)
-      VALUES
-        ('@admin.island.is', '@admin.island.is domain', '5005101370',
-         'Ísland.is stjórnborð', 'Stafrænt Ísland')
-      ON CONFLICT (name) DO NOTHING;
-
-      -- Keep these values aligned with scope-signature-collection-municipality.ts.
-      INSERT INTO api_scope (
-        name, display_name, description, domain_name, enabled,
-        show_in_discovery_document, required, emphasize,
-        grant_to_legal_guardians, grant_to_procuring_holders,
-        allow_explicit_delegation_grant, automatic_delegation_grant,
-        also_for_delegated_user, is_access_controlled
-      )
-      VALUES (
-        '@admin.island.is/signature-collection:municipality',
-        'Meðmælakerfi Admin - Municipalities',
-        'Umsjón sveitarfélaga með söfnum meðmæla og úrvinnsla',
-        '@admin.island.is', true, true, false, false,
-        false, true, true, false, false, true
-      )
-      ON CONFLICT (name) DO NOTHING;
-
-      -- Resource and client configuration, including scope links, is handled
-      -- by scope-signature-collection-municipality.ts after local clients exist.
-
       -- Create users if they don't exist
       INSERT INTO api_scope_user (national_id, email)
       VALUES
@@ -101,9 +72,13 @@ module.exports = {
         ('4301690339', '')
       ON CONFLICT (national_id) DO NOTHING;
 
-      -- Add scope access
+      -- Add scope access. The scope itself is created by the
+      -- scope-signature-collection-municipality seed migration. Locally,
+      -- migrations run before seeds, so skip the grants when it is missing
+      -- rather than failing on the foreign key.
       INSERT INTO api_scope_user_access (national_id, scope)
-      VALUES
+      SELECT v.national_id, v.scope
+      FROM (VALUES
         ('5701696109', '@admin.island.is/signature-collection:municipality'),
         ('5901697579', '@admin.island.is/signature-collection:municipality'),
         ('6901693129', '@admin.island.is/signature-collection:municipality'),
@@ -166,6 +141,8 @@ module.exports = {
         ('4203697009', '@admin.island.is/signature-collection:municipality'),
         ('6902690159', '@admin.island.is/signature-collection:municipality'),
         ('4301690339', '@admin.island.is/signature-collection:municipality')
+      ) AS v(national_id, scope)
+      WHERE EXISTS (SELECT 1 FROM api_scope WHERE name = v.scope)
       ON CONFLICT (national_id, scope) DO NOTHING;
 
       COMMIT;

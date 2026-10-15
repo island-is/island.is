@@ -30,8 +30,6 @@ module.exports = {
     try {
       await queryInterface.bulkInsert('domain', domains, {
         transaction,
-        // Migrations may already have created a domain before local seeds run.
-        ignoreDuplicates: true,
       })
     } catch (err) {
       await transaction.rollback()
