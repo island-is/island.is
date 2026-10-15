@@ -190,7 +190,6 @@ describe('CaseController - Extend', () => {
         transaction,
       )
     })
-
   })
 
   describe('waived counsel when extending a case', () => {
