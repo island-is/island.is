@@ -285,7 +285,6 @@ describe('CaseController - Duplicate', () => {
         rulingDate: new Date(),
         parentCaseId: uuid(),
         // Request-case data that must NOT be copied to an indictment
-        defenderName: 'Defender',
         leadInvestigator: 'Investigator',
         caseFilesComments: 'Some case files comment',
       } as Case
@@ -316,7 +315,6 @@ describe('CaseController - Duplicate', () => {
       expect(createdWith).not.toHaveProperty('judgeId')
       expect(createdWith).not.toHaveProperty('registrarId')
       expect(createdWith).not.toHaveProperty('rulingDate')
-      expect(createdWith).not.toHaveProperty('defenderName')
       expect(createdWith).not.toHaveProperty('leadInvestigator')
       expect(createdWith).not.toHaveProperty('caseFilesComments')
     })

@@ -149,8 +149,8 @@ export class Defendant extends Model {
 
   /**********
    * When the prosecutor's request should become accessible to this
-   * defendant's defender - optional. Dual-written with case.requestSharedWithDefender
-   * until request-case readers flip to the defendant column.
+   * defendant's defender - optional. Sharing timing for request cases
+   * lives on the defendant only.
    **********/
   @Column({
     type: DataType.ENUM,

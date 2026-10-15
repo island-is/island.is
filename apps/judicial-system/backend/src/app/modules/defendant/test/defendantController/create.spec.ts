@@ -2,12 +2,7 @@ import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
-import {
-  CaseType,
-  Gender,
-  RequestSharedWithDefender,
-  User,
-} from '@island.is/judicial-system/types'
+import { Gender, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
@@ -103,22 +98,6 @@ describe('DefendantController - Create', () => {
 
     it('should not queue any messages', () => {
       expect(mockQueuedMessages).toEqual([])
-    })
-  })
-
-  describe('defendant created on a request case with case-level sharing timing', () => {
-    beforeEach(async () => {
-      await givenWhenThen({
-        type: CaseType.CUSTODY,
-        requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
-      })
-    })
-
-    it('should not seed requestSharedWithDefender from the case', () => {
-      expect(mockDefendantRepositoryService.create).toHaveBeenCalledWith(
-        { ...defendantToCreate, caseId },
-        { transaction },
-      )
     })
   })
 
