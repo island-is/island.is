@@ -184,7 +184,7 @@ describe('FormsService import', () => {
       slug: 'test-1',
       submissionServiceUrl: form.submissionServiceUrl,
       sectionInfo: form.sectionInfo,
-      delegations: form.delegations,
+      delegations: [],
       dependencies: [
         {
           parentProp: item.id,
@@ -225,7 +225,7 @@ describe('FormsService import', () => {
   })
 
   it.each([true, false])(
-    'resets the imported organization display name only when organizations differ: %s',
+    'resets the imported organization display name and delegations only when organizations differ: %s',
     async (differentOrganization) => {
       const { service, input, form, formModel } = setup()
       input.formJson = JSON.stringify({
@@ -246,11 +246,14 @@ describe('FormsService import', () => {
           ? { is: '', en: '' }
           : form.organizationDisplayName,
       )
+      expect(formModel.create.mock.calls[0][0].delegations).toEqual(
+        differentOrganization ? [] : form.delegations,
+      )
     },
   )
 
   it.each([true, false])(
-    'resets the copied organization display name only when organizations differ: %s',
+    'resets the copied organization display name and delegations only when organizations differ: %s',
     async (differentOrganization) => {
       const { service, form, formModel } = setup()
       Object.assign(service, {
@@ -274,6 +277,9 @@ describe('FormsService import', () => {
         differentOrganization
           ? { is: '', en: '' }
           : form.organizationDisplayName,
+      )
+      expect(formModel.create.mock.calls[0][0].delegations).toEqual(
+        differentOrganization ? [] : form.delegations,
       )
     },
   )

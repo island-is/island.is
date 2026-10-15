@@ -558,6 +558,10 @@ export class FormsService {
           parsed.form.organizationNationalId !== organization.nationalId
             ? { is: '', en: '' }
             : parsed.form.organizationDisplayName,
+        delegations:
+          parsed.form.organizationNationalId !== organization.nationalId
+            ? []
+            : parsed.form.delegations,
         status: FormStatus.IN_DEVELOPMENT,
         isInaccessible: false,
         invalidationDate: null,
