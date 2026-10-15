@@ -118,8 +118,10 @@ export class TenantsService extends MultiEnvironmentService {
           environment: environments[index],
           name: domain.name,
           displayName: [{ locale: 'is', value: domain.displayName }],
+          displayNameEn: domain.displayNameEn,
           nationalId: domain.nationalId,
           description: domain.description,
+          descriptionEn: domain.descriptionEn,
           organisationLogoKey: domain.organisationLogoKey,
           contactEmail: domain.contactEmail,
           municipalityCode: domain.municipalityCode,
@@ -210,8 +212,10 @@ export class TenantsService extends MultiEnvironmentService {
         environment: targetEnvironments[index],
         name: domain.name,
         displayName: [{ locale: 'is', value: domain.displayName }],
+        displayNameEn: domain.displayNameEn,
         nationalId: domain.nationalId,
         description: domain.description,
+        descriptionEn: domain.descriptionEn,
         organisationLogoKey: domain.organisationLogoKey,
         contactEmail: domain.contactEmail,
         municipalityCode: domain.municipalityCode,
@@ -270,12 +274,30 @@ export class TenantsService extends MultiEnvironmentService {
       )
     }
 
+    if (source.displayNameEn || source.descriptionEn) {
+      await this.makeRequest(user, input.targetEnvironment, (targetApi) =>
+        targetApi.meTenantsControllerUpdateRaw({
+          tenantId: created.name,
+          adminPatchTenantDto: {
+            ...(source.displayNameEn
+              ? { displayNameEn: source.displayNameEn }
+              : {}),
+            ...(source.descriptionEn
+              ? { descriptionEn: source.descriptionEn }
+              : {}),
+          },
+        }),
+      )
+    }
+
     return {
       environment: input.targetEnvironment,
       name: created.name,
       displayName: [{ locale: 'is', value: created.displayName }],
+      displayNameEn: source.displayNameEn,
       nationalId: created.nationalId,
       description: created.description,
+      descriptionEn: source.descriptionEn,
       organisationLogoKey: created.organisationLogoKey,
       contactEmail: created.contactEmail,
       municipalityCode: created.municipalityCode,
