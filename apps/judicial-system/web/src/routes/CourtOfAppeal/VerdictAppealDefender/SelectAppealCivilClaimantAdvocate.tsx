@@ -8,7 +8,6 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import { formatDOB } from '@island.is/judicial-system/formatters'
 import {
   BlueBox,
   FormContext,
@@ -29,6 +28,7 @@ import {
 import {
   getAppealSpokesperson,
   getAppealSpokespersonIsLawyer,
+  getCivilClaimantSpokespersonRequest,
   getHasAppealSpokesperson,
 } from './VerdictAppealDefender.logic'
 
@@ -145,16 +145,12 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             </Box>
           )}
         </Box>
-        {/* What the claimant asked for at the district court, so the court of
-            appeals can see the request it is answering. */}
-        {civilClaimant.hasSpokesperson && civilClaimant.spokespersonName && (
+        {/* What the claimant asked the district court for - the request this
+            court is answering - shown while it has settled on a
+            réttargæslumaður and for no other choice. */}
+        {isLawyer === false && (
           <Text variant="small">
-            {`Ósk einkaréttarkröfuhafa um réttargæslumann: ${[
-              civilClaimant.spokespersonName,
-              formatDOB(civilClaimant.spokespersonNationalId, false, ''),
-            ]
-              .filter(Boolean)
-              .join(' ')}`}
+            {getCivilClaimantSpokespersonRequest(civilClaimant)}
           </Text>
         )}
         {hasSpokesperson ? (

@@ -1,3 +1,4 @@
+import { formatDOB } from '@island.is/judicial-system/formatters'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
   CivilClaimant,
@@ -182,3 +183,33 @@ export const getVerdictAppealDefenderHeaderLines = (
   theCase.courtCaseNumber
     ? [`Málsnr. héraðsdóms ${theCase.courtCaseNumber}`]
     : []
+
+/**
+ * The line under a claimant's name while the court has settled on a
+ * réttargæslumaður: what the claimant asked the district court for, which is
+ * the request this court is answering.
+ *
+ * Shown for that choice alone. A claimant whose advocate is a lögmaður hired
+ * them, and what they once asked the court for is beside the point.
+ *
+ * A claimant who asked for nobody still gets the line, saying so - the same
+ * rule as the letter's copy list: an absence that announces itself beats one
+ * the reader has to notice.
+ */
+export const getCivilClaimantSpokespersonRequest = (
+  civilClaimant: Pick<
+    CivilClaimant,
+    'spokespersonName' | 'spokespersonNationalId'
+  >,
+): string => {
+  const requested = civilClaimant.spokespersonName
+    ? [
+        civilClaimant.spokespersonName,
+        formatDOB(civilClaimant.spokespersonNationalId, false, ''),
+      ]
+        .filter(Boolean)
+        .join(' ')
+    : 'Ekki skráð'
+
+  return `Ósk einkaréttarkröfuhafa um réttargæslumann: ${requested}`
+}

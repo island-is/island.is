@@ -9,6 +9,7 @@ import {
   getAppealDefender,
   getAppealSpokesperson,
   getAppealSpokespersonIsLawyer,
+  getCivilClaimantSpokespersonRequest,
   getHasAppealSpokesperson,
   getVerdictAppealDefenderCaseNumber,
   getVerdictAppealDefenderHeaderLines,
@@ -320,5 +321,34 @@ describe('getVerdictAppealDefenderHeaderLines', () => {
         courtCaseNumber: 'S-123/2026',
       } as WorkingCase).join(' '),
     ).not.toContain('áfrýjaði')
+  })
+})
+
+describe('getCivilClaimantSpokespersonRequest', () => {
+  it('names who the claimant asked the district court for', () => {
+    expect(
+      getCivilClaimantSpokespersonRequest({
+        spokespersonName: 'Sólveig Hreinsdóttir',
+        spokespersonNationalId: '0909713459',
+      } as CivilClaimant),
+    ).toBe(
+      'Ósk einkaréttarkröfuhafa um réttargæslumann: Sólveig Hreinsdóttir kt. 090971-3459',
+    )
+  })
+
+  it('leaves the national id out when none was recorded', () => {
+    expect(
+      getCivilClaimantSpokespersonRequest({
+        spokespersonName: 'Sólveig Hreinsdóttir',
+      } as CivilClaimant),
+    ).toBe('Ósk einkaréttarkröfuhafa um réttargæslumann: Sólveig Hreinsdóttir')
+  })
+
+  // The same rule as the letter's copy list: an absence that announces itself
+  // beats one the reader has to notice.
+  it('says so when the claimant asked for nobody', () => {
+    expect(getCivilClaimantSpokespersonRequest({} as CivilClaimant)).toBe(
+      'Ósk einkaréttarkröfuhafa um réttargæslumann: Ekki skráð',
+    )
   })
 })
