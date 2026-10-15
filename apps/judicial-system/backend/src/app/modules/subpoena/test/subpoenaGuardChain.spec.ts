@@ -119,7 +119,7 @@ const withNamedSubpoena = (theCase: Case, subpoenaId: string) =>
 const withNamedSubpoenaOnSplitCase = (theCase: Case, subpoenaId: string) =>
   ({
     ...theCase,
-    defendants: [],
+    defendants: [] as Defendant[],
     splitCases: [
       {
         id: uuid(),
