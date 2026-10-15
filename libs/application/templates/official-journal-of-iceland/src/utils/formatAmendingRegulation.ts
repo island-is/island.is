@@ -26,6 +26,8 @@ import {
   groupElementsByArticleTitleFromDiv,
   hasAnyChange,
   hasSubtitle,
+  removeDiffAttributes,
+  removeInsertions,
   removeRegPrefix,
   updateAppendixWording,
 } from './formatAmendingUtils'
@@ -260,6 +262,17 @@ const getTable = (element: Element): Element | null =>
     ? element
     : element.querySelector(':scope > table')
 
+/**
+ * Whether the list itself changed type and nothing in it did: the structured
+ * diff then marks the list as a formatting change and shows only its new
+ * version, with no item marked. A formatting change inside the items marks
+ * the items instead.
+ */
+const isListTypeChange = (list: Element): boolean =>
+  list.getAttribute('data-diff-change') === 'format' &&
+  list.getAttribute('data-diff-side') === 'new' &&
+  !list.querySelector('li[data-diff]')
+
 /** An element as it reads after the change, keeping its markup. */
 const afterChange = (element: Element): string => {
   const clone = element.cloneNode(true) as Element
@@ -267,13 +280,18 @@ const afterChange = (element: Element): string => {
   clone
     .querySelectorAll('ins')
     .forEach((e) => e.replaceWith(...Array.from(e.childNodes)))
+  removeDiffAttributes(clone)
   return clone.outerHTML
 }
 
 /** Whether nothing is left once `tag` is removed: all inserted or all deleted. */
 const isEmptyWithout = (element: Element, tag: 'ins' | 'del'): boolean => {
   const clone = element.cloneNode(true) as Element
-  clone.querySelectorAll(tag).forEach((e) => e.remove())
+  if (tag === 'ins') {
+    removeInsertions(clone)
+  } else {
+    clone.querySelectorAll(tag).forEach((e) => e.remove())
+  }
   return !clone.textContent?.trim()
 }
 
@@ -384,6 +402,10 @@ export const formatAmendingRegBody = (
     let newParagraphs: { index: number; texts: string[] } | undefined
 
     group.forEach((element) => {
+      // The closing date line and signatories: never an amendment.
+      if (element.hasAttribute('data-diff-signature')) {
+        return
+      }
       let pushHtml = '' as HTMLText
 
       let isParagraph = false
@@ -409,6 +431,19 @@ export const formatAmendingRegBody = (
         } else {
           isNumberList = true
         }
+      }
+
+      if ((isLetterList || isNumberList) && isListTypeChange(element)) {
+        testGroup.isDeletion = false
+        testGroup.isAddition = false
+        testGroup.arr.push(
+          `<p>${
+            isLetterList ? 'Töluliðir' : 'Stafliðir'
+          } í ${paragraph}. mgr. ${articleTitle} ${regNameDisplay} verða ${
+            isLetterList ? 'stafliðir' : 'töluliðir'
+          }.</p>` as HTMLText,
+        )
+        return
       }
 
       const table =

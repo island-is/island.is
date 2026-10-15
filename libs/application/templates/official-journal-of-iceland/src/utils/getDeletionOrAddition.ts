@@ -6,7 +6,7 @@
  */
 import qq from '@hugsmidjan/qj/qq'
 import { HTMLText } from '@island.is/regulations'
-import { escapeHtml } from './formatAmendingUtils'
+import { escapeHtml, removeInsertions } from './formatAmendingUtils'
 
 export const getLiPoint = (num: number, isStaflidur: boolean) => {
   const charNum = num > 22 ? 23 : num - 1
@@ -29,7 +29,7 @@ export const formatListItemDiff = (item: Element) => {
 
     if (liHasDeletion || liHasInsert) {
       const oldLiElement = liItem.cloneNode(true) as Element
-      oldLiElement.querySelectorAll('ins').forEach((e) => e.remove())
+      removeInsertions(oldLiElement)
       oldLiText = oldLiElement.textContent || ''
 
       const newLiElement = liItem.cloneNode(true) as Element
@@ -128,7 +128,7 @@ export const getDeletionOrAddition = (
   const oldTextElement = item.cloneNode(true) as Element
   const newTextElement = item.cloneNode(true) as Element
 
-  oldTextElement.querySelectorAll('ins').forEach((e) => e.remove())
+  removeInsertions(oldTextElement)
   oldText = oldTextElement.textContent || ''
 
   newTextElement.querySelectorAll('del').forEach((e) => e.remove())

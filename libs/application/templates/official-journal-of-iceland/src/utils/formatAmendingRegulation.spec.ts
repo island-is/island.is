@@ -1,3 +1,4 @@
+import getStructuredDiff from '@dmr.is/regulations-tools/structuredDiff-browser'
 import { getDiff, HTMLText } from '@island.is/regulations'
 import { RegulationImpactSchema } from '../lib/dataSchema'
 import {
@@ -25,24 +26,34 @@ const BASE = [
   GILDISTAKA,
 ].join('')
 
-const amend = (
-  after: string,
-  overrides: Partial<RegulationImpactSchema> = {},
-  before = BASE,
-): RegulationImpactSchema => ({
-  id: overrides.name ?? '1',
-  type: 'amend',
-  name: '0123/2020',
-  diff: getDiff(before as HTMLText, after as HTMLText).diff,
-  ...overrides,
-})
+type Differ = (older: HTMLText, newer: HTMLText) => string
+
+// Saved impact diffs come from both differs: getDiff before the switch to
+// getStructuredDiff, getStructuredDiff after it. The generator reads both, so
+// every case below runs against each.
+const differs: Array<[string, Differ]> = [
+  ['getDiff', (older, newer) => getDiff(older, newer).diff],
+  ['getStructuredDiff', (older, newer) => getStructuredDiff(older, newer).diff],
+]
 
 const article = (n: number, html: string) => `${title(`${n}. gr.`)}${html}`
 
 const body = (...impacts: RegulationImpactSchema[]) =>
   formatAmendingBodyWithArticlePrefix(impacts)
 
-describe('formatAmendingBodyWithArticlePrefix', () => {
+const bodyCases = (diffWith: Differ) => {
+  const amend = (
+    after: string,
+    overrides: Partial<RegulationImpactSchema> = {},
+    before = BASE,
+  ): RegulationImpactSchema => ({
+    id: overrides.name ?? '1',
+    type: 'amend',
+    name: '0123/2020',
+    diff: diffWith(before as HTMLText, after as HTMLText),
+    ...overrides,
+  })
+
   it('removes a paragraph and reuses the authority of the base regulation', () => {
     expect(body(amend(BASE.replace('<p>Alfa bravo charlie.</p>', '')))).toEqual(
       [
@@ -272,10 +283,10 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
         appendixes: [
           {
             title: 'Viðauki I',
-            diff: getDiff(
+            diff: diffWith(
               '<p>Alfa.</p>' as HTMLText,
               '<p>Bravo.</p>' as HTMLText,
-            ).diff,
+            ),
           },
         ],
       }),
@@ -482,6 +493,74 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
   it('returns nothing when there is nothing to amend', () => {
     expect(body(amend(BASE))).toEqual([])
     expect(body()).toEqual([])
+  })
+}
+
+describe.each(differs)(
+  'formatAmendingBodyWithArticlePrefix (%s)',
+  (_, diffWith) => bodyCases(diffWith),
+)
+
+// getDiff marks nothing when only a list's type changes, so these cases run
+// against getStructuredDiff alone.
+describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
+  const list = (type: string, ...items: string[]) =>
+    `<ol${type ? ` type="${type}"` : ''}>${items
+      .map((item) => `<li>${item}</li>`)
+      .join('')}</ol>`
+  const withList = (type: string, ...items: string[]) =>
+    [
+      title('1. gr.'),
+      '<p>Reglugerð þessi gildir um:</p>',
+      list(type, ...items),
+      title('2. gr. Gildistaka'),
+      GILDISTAKA,
+    ].join('')
+  const first = (before: string, after: string) =>
+    formatAmendingBodyWithArticlePrefix([
+      {
+        id: '1',
+        type: 'amend',
+        name: '0123/2020',
+        diff: getStructuredDiff(before as HTMLText, after as HTMLText).diff,
+      },
+    ])[0]
+
+  it('makes töluliðir stafliðir', () => {
+    expect(
+      first(
+        withList('', 'fólksbifreiðar,', 'vörubifreiðar.'),
+        withList('a', 'fólksbifreiðar,', 'vörubifreiðar.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Töluliðir í 1. mgr. 1. gr. reglugerðarinnar verða stafliðir.</p>',
+      ),
+    )
+  })
+
+  it('makes stafliðir töluliðir', () => {
+    expect(
+      first(
+        withList('a', 'fólksbifreiðar,', 'vörubifreiðar.'),
+        withList('', 'fólksbifreiðar,', 'vörubifreiðar.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Stafliðir í 1. mgr. 1. gr. reglugerðarinnar verða töluliðir.</p>',
+      ),
+    )
+  })
+
+  it('does not call italic items a change of list type', () => {
+    expect(
+      first(
+        withList('a', 'fólksbifreiðar,', 'vörubifreiðar.'),
+        withList('a', '<em>fólksbifreiðar,</em>', '<em>vörubifreiðar.</em>'),
+      ),
+    ).not.toContain('verða töluliðir')
   })
 })
 
