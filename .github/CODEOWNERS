@@ -158,7 +158,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/municipalities-financial-aid                                                                               @island-is/kolibri-robin-hood
 /libs/clients/municipalities-financial-aid                                                                                   @island-is/kolibri-robin-hood
 
-/libs/clients/rvk-financial-aid                                                                                              @island-is/norda
+/libs/clients/rvk-financial-aid                                                                                              @island-is/origo
 
 /libs/clients/hms/                                                                                                           @island-is/origo
 /libs/clients/hms-rental-agreement/                                                                                          @island-is/origo @island-is/hugsmidjan
