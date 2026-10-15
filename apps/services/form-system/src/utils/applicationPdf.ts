@@ -452,7 +452,8 @@ export const buildApplicationPdf = (
     const title =
       textFor(application.formName, locale) ||
       textFor(translations.application, locale)
-    const organizationName = textFor(application.organizationName, locale)
+    const organizationName =
+      textFor(application.organizationName, locale) || title
     const document = new PDFDocument({ margin: pageMargin, size: 'A4' })
     const chunks: Buffer[] = []
     let page = 1
