@@ -342,8 +342,10 @@ describe.each(routes)(
     })
 
     // The guards after the locking read all decide from request.case. Each of
-    // them throws a 500 for a missing case and a 403 or 404 for the case it
-    // was given, so the error type is what shows the read came first.
+    // them fails outright for a missing case - 500 from the type and write
+    // guards, 400 from the victim guards - and a 403, 404 or a plain refusal
+    // for the case it was given, so the outcome is what shows the read came
+    // first.
     describe('case is not an investigation case', () => {
       const caseId = uuid()
       let then: Awaited<ReturnType<typeof runChain>>
@@ -467,5 +469,37 @@ describe.each(routes)(
         expect(then.error).toBeUndefined()
       })
     })
+
+    // The court's twin: a draft request case is one the court may access,
+    // but victims are the court's to edit only once the case has been
+    // submitted.
+    if (allowedRoles.includes(UserRole.DISTRICT_COURT_JUDGE)) {
+      describe('case has not reached the states in which the court may edit victims', () => {
+        const caseId = uuid()
+        let then: Awaited<ReturnType<typeof runChain>>
+
+        beforeEach(async () => {
+          const mockFindLiveMinimalByIdForUpdate =
+            mockCaseRepositoryService.findLiveMinimalByIdForUpdate as jest.Mock
+          mockFindLiveMinimalByIdForUpdate.mockResolvedValueOnce({
+            ...investigationCaseAtOffice(caseId),
+            state: CaseState.DRAFT,
+          } as Case)
+          const mockFindById = mockVictimRepositoryService.findById as jest.Mock
+          mockFindById.mockResolvedValueOnce(victimOnCase(caseId))
+
+          then = await runChain(
+            districtCourtUser(UserRole.DISTRICT_COURT_JUDGE),
+            caseId,
+          )
+        })
+
+        it('should be rejected by VictimWriteGuard', () => {
+          expect(then.allowed).toBe(false)
+          expect(then.rejectedBy).toBe(VictimWriteGuard.name)
+          expect(then.error).toBeUndefined()
+        })
+      })
+    }
   },
 )

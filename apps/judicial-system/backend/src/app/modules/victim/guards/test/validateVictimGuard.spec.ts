@@ -75,6 +75,7 @@ describe('Validate Victim Guard', () => {
     })
 
     it('should read the victim in the request transaction and activate', () => {
+      expect(mockTransaction).toHaveBeenCalledTimes(1)
       expect(mockFindById).toHaveBeenCalledWith(victimId, { transaction })
       expect(then.result).toBe(true)
       expect(request.victim).toBe(victim)
