@@ -33,9 +33,14 @@ import {
   PaymentFlow,
   PaymentFlowAttributes,
   PaymentFlowCharge,
-} from './models/paymentFlow.model'
-import { PaymentFlowDebt } from './models/paymentFlowDebt.model'
-import { FjsDebtPayment } from './models/fjsDebtPayment.model'
+  PaymentFlowDebt,
+  FjsDebtPayment,
+  PaymentFlowEvent,
+  FjsCharge,
+  CardPaymentDetails,
+  PaymentFulfillment,
+  PaymentWorkerEvent,
+} from './models'
 
 import {
   PaymentFlowUpdateEvent,
@@ -44,15 +49,15 @@ import {
   PaymentFlowEventType,
   PaymentFlowEventReason,
 } from '../../types'
-import { GetPaymentFlowDTO } from './dtos/getPaymentFlow.dto'
-import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
-import { CreateDebtPaymentFlowInput } from './dtos/createDebtPaymentFlow.input'
-import { GetPaymentFlowsPaginatedDTO } from './dtos/getPaymentFlow.dto'
+import {
+  GetPaymentFlowDTO,
+  CreatePaymentFlowInput,
+  CreateDebtPaymentFlowInput,
+  GetPaymentFlowsPaginatedDTO,
+  CreatePaymentFlowDTO,
+} from './dtos'
 
 import { environment } from '../../environments'
-import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
-import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
-import { FjsCharge } from './models/fjsCharge.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import {
   generateChargeFJSPayload,
@@ -61,7 +66,6 @@ import {
   mapFjsErrorToCode,
 } from '../../utils/fjsCharge'
 import { processCharges } from '../../utils/chargeUtils'
-import { CardPaymentDetails } from './models/cardPaymentDetails.model'
 import {
   CardPaymentSuccessResponse,
   PaymentTrackingData,
@@ -72,9 +76,7 @@ import { JwksConfigService } from '../jwks/jwks-config.service'
 import { ChargeItem } from '../../utils/chargeUtils'
 import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
-import { PaymentFulfillment } from './models/paymentFulfillment.model'
-import { PaymentWorkerEvent } from './models/paymentWorkerEvent.model'
-import { BankTransferPayment } from '../bankTransferPayment/models/bankTransferPayment.model'
+import { BankTransferPayment } from '../bankTransferPayment/models'
 import { determinePaymentMethods } from './paymentFlow.utils'
 import { DebtFjsService } from '../debtPayment/debtFjs.service'
 import {

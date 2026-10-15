@@ -1,8 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { RefundPaymentInput } from './dtos/refundPayment.input'
-import { RefundPaymentResponse } from './dtos/refundPayment.response'
+import { RefundPaymentInput, RefundPaymentResponse } from './dtos'
 import { RefundOrchestrationService } from './refundOrchestration.service'
 
 @ApiTags('payments')

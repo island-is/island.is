@@ -3,11 +3,13 @@ import { getModelToken } from '@nestjs/sequelize'
 import { TestApp } from '@island.is/testing/nest'
 
 import { setupTestApp } from '../../../test/setup'
-import { CardPaymentDetails } from './models/cardPaymentDetails.model'
-import { FjsDebtPayment } from './models/fjsDebtPayment.model'
-import { PaymentFlow } from './models/paymentFlow.model'
-import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
-import { PaymentFulfillment } from './models/paymentFulfillment.model'
+import {
+  CardPaymentDetails,
+  FjsDebtPayment,
+  PaymentFlow,
+  PaymentFlowEvent,
+  PaymentFulfillment,
+} from './models'
 import { PaymentFlowService } from './paymentFlow.service'
 
 const MINUTE = 60 * 1000

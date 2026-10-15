@@ -9,8 +9,7 @@ import {
   PayInfoPaymentMeansEnum,
 } from '@island.is/clients/charge-fjs-v2'
 
-import { ChargeCardInput } from './dtos/chargeCard.input'
-import { VerifyCardBrowserInfo, VerifyCardInput } from './dtos/verifyCard.input'
+import { ChargeCardInput, VerifyCardBrowserInfo, VerifyCardInput } from './dtos'
 import {
   MdNormalised,
   MdSerialized,
@@ -18,7 +17,7 @@ import {
   ApplePayDecryptedWalletPaymentPayload,
 } from '../../types/cardPayment'
 
-import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import { PaymentFlowAttributes } from '../paymentFlow/models'
 import { CardPaymentModuleConfigType } from './cardPayment.config'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
 import type { FjsPayInfo } from '../../utils/fjsDebtPayment'

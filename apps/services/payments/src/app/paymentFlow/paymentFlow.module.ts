@@ -6,19 +6,22 @@ import { ChargeFjsV2ClientModule } from '@island.is/clients/charge-fjs-v2'
 import { PaymentFlowController } from './paymentFlow.controller'
 import { DebtPaymentFlowController } from './debtPaymentFlow.controller'
 import { PaymentFlowService } from './paymentFlow.service'
-import { PaymentFlow, PaymentFlowCharge } from './models/paymentFlow.model'
-import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
-import { FjsCharge } from './models/fjsCharge.model'
-import { CardPaymentDetails } from './models/cardPaymentDetails.model'
+import {
+  PaymentFlow,
+  PaymentFlowCharge,
+  PaymentFlowEvent,
+  FjsCharge,
+  CardPaymentDetails,
+  PaymentFulfillment,
+  PaymentWorkerEvent,
+  PaymentFlowDebt,
+  FjsDebtPayment,
+} from './models'
 import { JwksModule } from '../jwks/jwks.module'
 import { ConfigModule } from '@nestjs/config'
 import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
-import { PaymentFulfillment } from './models/paymentFulfillment.model'
-import { PaymentWorkerEvent } from './models/paymentWorkerEvent.model'
 import { BankTransferPaymentModule } from '../bankTransferPayment/bankTransferPayment.module'
-import { PaymentFlowDebt } from './models/paymentFlowDebt.model'
-import { FjsDebtPayment } from './models/fjsDebtPayment.model'
 import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
 
 @Module({

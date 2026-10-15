@@ -12,8 +12,8 @@ import { FjsPayInfo, toFjsDebtPayInfo } from '../../utils/fjsDebtPayment'
 import {
   FjsDebtPayment,
   FjsDebtPaymentAttributes,
-} from '../paymentFlow/models/fjsDebtPayment.model'
-import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
+  PaymentFlowEvent,
+} from '../paymentFlow/models'
 import { DebtFjsService } from './debtFjs.service'
 import type { DebtFjsDebt } from './debtFjs.types'
 

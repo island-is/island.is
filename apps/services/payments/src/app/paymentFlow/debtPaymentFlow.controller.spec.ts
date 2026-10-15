@@ -17,10 +17,8 @@ import {
   DEBT_PAYMENT_PRODUCT_TITLE,
   FJS_DEBT_ORGANISATION_ID,
 } from '../../utils/fjsDebtPayment'
-import { CreateDebtPaymentFlowInput } from './dtos/createDebtPaymentFlow.input'
-import { PaymentFlow } from './models/paymentFlow.model'
-import { FjsDebtPayment } from './models/fjsDebtPayment.model'
-import { PaymentFlowDebt } from './models/paymentFlowDebt.model'
+import { CreateDebtPaymentFlowInput } from './dtos'
+import { PaymentFlow, FjsDebtPayment, PaymentFlowDebt } from './models'
 import { PaymentFlowService } from './paymentFlow.service'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -9,20 +9,20 @@ import { InvoicePaymentController } from './invoicePayment.controller'
 import {
   PaymentFlow,
   PaymentFlowCharge,
-} from '../paymentFlow/models/paymentFlow.model'
-import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
+  PaymentFlowEvent,
+  FjsCharge,
+  CardPaymentDetails,
+  PaymentFulfillment,
+  PaymentWorkerEvent,
+  PaymentFlowDebt,
+  FjsDebtPayment,
+} from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { InvoicePaymentService } from './invoicePayment.service'
-import { FjsCharge } from '../paymentFlow/models/fjsCharge.model'
-import { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
 import { JwksModule } from '../jwks/jwks.module'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
 import { InvoicePaymentModuleConfig } from './invoicePayment.config'
-import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
-import { PaymentWorkerEvent } from '../paymentFlow/models/paymentWorkerEvent.model'
-import { PaymentFlowDebt } from '../paymentFlow/models/paymentFlowDebt.model'
-import { FjsDebtPayment } from '../paymentFlow/models/fjsDebtPayment.model'
 import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
 
 @Module({

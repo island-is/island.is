@@ -31,7 +31,7 @@ import {
 } from '../../types/cardPayment'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import { mapToCardErrorCode } from '../../utils/paymentErrors'
-import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import { PaymentFlowAttributes } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
 import { CardPaymentModuleConfig } from './cardPayment.config'

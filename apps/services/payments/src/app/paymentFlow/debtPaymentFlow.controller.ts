@@ -8,8 +8,7 @@ import {
 } from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
 
-import { CreateDebtPaymentFlowInput } from './dtos/createDebtPaymentFlow.input'
-import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
+import { CreateDebtPaymentFlowInput, CreatePaymentFlowDTO } from './dtos'
 import { PaymentFlowService } from './paymentFlow.service'
 
 @UseGuards(FeatureFlagGuard)

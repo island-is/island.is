@@ -1,4 +1,4 @@
-import type { PaymentFlowDebtAttributes } from '../paymentFlow/models/paymentFlowDebt.model'
+import type { PaymentFlowDebtAttributes } from '../paymentFlow/models'
 import { PaymentStatus } from '../../types'
 import { CatalogItemWithQuantity } from '../../types/charges'
 

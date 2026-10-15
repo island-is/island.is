@@ -26,10 +26,12 @@ import { PaymentMethod } from '../../types'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { CallbackInput } from './dtos/callback.input'
-import { CreateInvoiceInput } from './dtos/createInvoice.input'
-import { CreateInvoiceResponse } from './dtos/createInvoice.response'
-import { PaidStatus } from './dtos/paidStatus.enum'
+import {
+  CallbackInput,
+  CreateInvoiceInput,
+  CreateInvoiceResponse,
+  PaidStatus,
+} from './dtos'
 import { InvoicePaymentService } from './invoicePayment.service'
 
 @UseGuards(FeatureFlagGuard)

@@ -4,7 +4,7 @@ import { PaymentMethod, PaymentStatus } from '../../types'
 import { TestApp } from '@island.is/testing/nest'
 
 import { setupTestApp } from '../../../test/setup'
-import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
+import { CreatePaymentFlowInput } from './dtos'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
 import {

@@ -9,7 +9,7 @@ import {
   generateVerificationRequestOptions,
 } from './cardPayment.utils'
 import { CardPaymentModuleConfigType } from './cardPayment.config'
-import { VerifyCardInput } from './dtos/verifyCard.input'
+import { VerifyCardInput } from './dtos'
 
 const MERCHANT_ID = 'merchant.com.island.test'
 

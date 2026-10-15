@@ -4,8 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { FinanceClientV3Module } from '@island.is/clients/finance-v3'
 import { LoggingModule } from '@island.is/logging'
 
-import { FjsDebtPayment } from '../paymentFlow/models/fjsDebtPayment.model'
-import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
+import { FjsDebtPayment, PaymentFlowEvent } from '../paymentFlow/models'
 import { DebtFjsService } from './debtFjs.service'
 import { DebtSettlementService } from './debtSettlement.service'
 

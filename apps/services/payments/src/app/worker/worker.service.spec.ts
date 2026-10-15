@@ -5,7 +5,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FjsErrorCode } from '@island.is/shared/constants'
 
 import { FJS_NETWORK_ERROR } from '../../utils/fjsCharge'
-import { PaymentWorkerEvent } from '../paymentFlow/models/paymentWorkerEvent.model'
+import { PaymentWorkerEvent } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
 import { RefundOrchestrationService } from '../refund/refundOrchestration.service'

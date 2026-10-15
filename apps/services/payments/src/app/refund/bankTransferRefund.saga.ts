@@ -9,9 +9,9 @@ import { environment } from '../../environments'
 import { requireStepResult } from '../../utils/orchestrator'
 import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
 import { generateBankTransferChargeFJSPayload } from '../bankTransferPayment/bankTransfer.utils'
-import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
+import { PaymentFulfillment } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { RefundPaymentInput } from './dtos/refundPayment.input'
+import { RefundPaymentInput } from './dtos'
 import {
   BankTransferRefundContext,
   BankTransferRefundSagaDefinition,

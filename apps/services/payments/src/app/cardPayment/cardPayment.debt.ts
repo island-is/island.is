@@ -8,7 +8,7 @@ import type {
   PaymentTrackingData,
 } from '../../types/cardPayment'
 import type { DebtSettlementOutcome } from '../debtPayment/debtSettlement.service'
-import type { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import type { PaymentFlowAttributes } from '../paymentFlow/models'
 import type { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import type { CardPaymentService } from './cardPayment.service'
 

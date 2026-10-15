@@ -17,7 +17,7 @@ import {
   BankTransferFailureReason,
   BankTransferPendingStatus,
 } from '../../bankTransferPayment/bankTransfer.types'
-import type { PaymentFlowType } from '../models/paymentFlow.model'
+import type { PaymentFlowType } from '../models'
 import { PageInfoDto } from '@island.is/nest/pagination'
 
 export class PaymentFlowEventDTO {

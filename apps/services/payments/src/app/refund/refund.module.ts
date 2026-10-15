@@ -7,12 +7,14 @@ import { ChargeFjsV2ClientModule } from '@island.is/clients/charge-fjs-v2'
 import {
   PaymentFlow,
   PaymentFlowCharge,
-} from '../paymentFlow/models/paymentFlow.model'
-import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
-import { FjsCharge } from '../paymentFlow/models/fjsCharge.model'
-import { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
-import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
-import { PaymentWorkerEvent } from '../paymentFlow/models/paymentWorkerEvent.model'
+  PaymentFlowEvent,
+  FjsCharge,
+  CardPaymentDetails,
+  PaymentFulfillment,
+  PaymentWorkerEvent,
+  PaymentFlowDebt,
+  FjsDebtPayment,
+} from '../paymentFlow/models'
 import { BankTransferPaymentModule } from '../bankTransferPayment/bankTransferPayment.module'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
@@ -22,8 +24,6 @@ import { RefundController } from './refund.controller'
 import { RefundService } from './refund.service'
 import { RefundOrchestrationService } from './refundOrchestration.service'
 import { RefundModuleConfig } from './refund.config'
-import { PaymentFlowDebt } from '../paymentFlow/models/paymentFlowDebt.model'
-import { FjsDebtPayment } from '../paymentFlow/models/fjsDebtPayment.model'
 import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
 
 @Module({

@@ -15,7 +15,7 @@ import { FJS_DEBT_ORGANISATION_ID } from '../../utils/fjsDebtPayment'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
-import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
+import { PaymentFulfillment } from '../paymentFlow/models'
 import {
   BankTransferFailureReason,
   BankTransferPayerType,
@@ -24,8 +24,8 @@ import {
 } from './bankTransfer.types'
 import { BankTransferService } from './bankTransfer.service'
 import { BankTransferModuleConfig } from './bankTransfer.config'
-import { BankTransferLocale } from './dtos/createBankTransfer.input'
-import { BankTransferPayment } from './models/bankTransferPayment.model'
+import { BankTransferLocale } from './dtos'
+import { BankTransferPayment } from './models'
 
 const config: ConfigType<typeof BankTransferModuleConfig> = {
   paymentTtlSeconds: 300,

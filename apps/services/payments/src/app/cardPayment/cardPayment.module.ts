@@ -9,22 +9,22 @@ import { CardPaymentService } from './cardPayment.service'
 import {
   PaymentFlow,
   PaymentFlowCharge,
-} from '../paymentFlow/models/paymentFlow.model'
-import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
+  PaymentFlowEvent,
+  FjsCharge,
+  CardPaymentDetails,
+  PaymentFulfillment,
+  PaymentWorkerEvent,
+  PaymentFlowDebt,
+  FjsDebtPayment,
+} from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { FjsCharge } from '../paymentFlow/models/fjsCharge.model'
 import { ConfigModule } from '@nestjs/config'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import { CardPaymentCacheModule } from './cardPayment.cache'
-import { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
 import { JwksModule } from '../jwks/jwks.module'
 import { JwksConfig } from '../jwks/jwks.config'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
-import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
-import { PaymentWorkerEvent } from '../paymentFlow/models/paymentWorkerEvent.model'
 import { RefundModule } from '../refund/refund.module'
-import { PaymentFlowDebt } from '../paymentFlow/models/paymentFlowDebt.model'
-import { FjsDebtPayment } from '../paymentFlow/models/fjsDebtPayment.model'
 import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
 
 @Module({

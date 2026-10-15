@@ -6,7 +6,7 @@ import {
 } from '@island.is/shared/constants'
 
 import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
-import { FjsDebtPayment } from '../paymentFlow/models/fjsDebtPayment.model'
+import { FjsDebtPayment } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { RefundController } from './refund.controller'
 import { RefundService } from './refund.service'

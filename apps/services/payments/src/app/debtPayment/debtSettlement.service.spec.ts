@@ -7,9 +7,11 @@ import {
   FJS_DEBT_ORGANISATION_ID,
   FjsPayInfo,
 } from '../../utils/fjsDebtPayment'
-import { FjsDebtPayment } from '../paymentFlow/models/fjsDebtPayment.model'
-import { PaymentFlow } from '../paymentFlow/models/paymentFlow.model'
-import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
+import {
+  FjsDebtPayment,
+  PaymentFlow,
+  PaymentFlowEvent,
+} from '../paymentFlow/models'
 import { DebtFjsService } from './debtFjs.service'
 import { DebtSettlementService } from './debtSettlement.service'
 

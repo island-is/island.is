@@ -13,10 +13,12 @@ import {
   BankTransferPendingStatus,
   BankTransferPayerType,
 } from './bankTransfer.types'
-import { BankTransferPayment } from './models/bankTransferPayment.model'
+import { BankTransferPayment } from './models'
 import { CatalogItemWithQuantity } from '../../types/charges'
-import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
-import { PaymentFlowDebtAttributes } from '../paymentFlow/models/paymentFlowDebt.model'
+import {
+  PaymentFlowAttributes,
+  PaymentFlowDebtAttributes,
+} from '../paymentFlow/models'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
 import type { FjsPayInfo } from '../../utils/fjsDebtPayment'
 

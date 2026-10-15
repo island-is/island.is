@@ -15,8 +15,7 @@ import { PaymentMethod } from '../../types'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
 import { ATTEMPT_CLAIM_WINDOW_MS } from '../debtPayment/debtSettlement.service'
-import { FjsDebtPayment } from '../paymentFlow/models/fjsDebtPayment.model'
-import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
+import { FjsDebtPayment, PaymentFulfillment } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import {
   createCardRefundContext,
@@ -32,11 +31,7 @@ import {
   createBankTransferRefundSaga,
   BANK_TRANSFER_REFUND_SAGA_START_STEP,
 } from './bankTransferRefund.saga'
-import { RefundPaymentInput } from './dtos/refundPayment.input'
-import {
-  RefundMethod,
-  RefundPaymentResponse,
-} from './dtos/refundPayment.response'
+import { RefundPaymentInput, RefundMethod, RefundPaymentResponse } from './dtos'
 import {
   BankTransferRefundContext,
   BankTransferRefundStepResults,

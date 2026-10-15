@@ -30,9 +30,11 @@ import { environment } from '../../environments'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
-import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
-import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
-import { PaymentFlowDebtAttributes } from '../paymentFlow/models/paymentFlowDebt.model'
+import {
+  PaymentFulfillment,
+  PaymentFlowAttributes,
+  PaymentFlowDebtAttributes,
+} from '../paymentFlow/models'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import {
   BankTransferPayerType,
@@ -51,7 +53,7 @@ import {
   VerifyBankTransferInput,
   VerifyBankTransferResponse,
 } from './dtos'
-import { BankTransferPayment } from './models/bankTransferPayment.model'
+import { BankTransferPayment } from './models'
 import {
   bankTransferLogContext,
   buildBankTransferPayInfo,

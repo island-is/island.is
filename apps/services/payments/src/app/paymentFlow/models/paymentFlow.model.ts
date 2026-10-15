@@ -16,7 +16,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { BankTransferPayment } from '../../bankTransferPayment/models/bankTransferPayment.model'
+import { BankTransferPayment } from '../../bankTransferPayment/models'
 import { CardPaymentDetails } from './cardPaymentDetails.model'
 import { FjsCharge } from './fjsCharge.model'
 import { FjsDebtPayment } from './fjsDebtPayment.model'
