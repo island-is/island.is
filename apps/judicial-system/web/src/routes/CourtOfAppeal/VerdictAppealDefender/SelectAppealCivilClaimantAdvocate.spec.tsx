@@ -60,18 +60,22 @@ describe('SelectAppealCivilClaimantAdvocate', () => {
                 } as unknown as WorkingCase
               }
             >
-              <SelectAppealCivilClaimantAdvocate civilClaimant={civilClaimant} />
+              <SelectAppealCivilClaimantAdvocate
+                civilClaimant={civilClaimant}
+              />
             </FormContextWrapper>
           </UserContextWrapper>
         </ApolloProviderWrapper>
       </IntlProviderWrapper>,
     )
 
-  it("shows what the claimant asked for once the court picks a réttargæslumaður", () => {
+  it('shows what the claimant asked for once the court picks a réttargæslumaður', () => {
     renderCard(claimant({ appealSpokespersonIsLawyer: false }))
 
     expect(screen.getByText(request)).toBeInTheDocument()
-    expect(screen.getByText(/Sólveig Hreinsdóttir kt. 090971-3459/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Sólveig Hreinsdóttir kt. 090971-3459/),
+    ).toBeInTheDocument()
   })
 
   // A lögmaður is hired by the claimant; what they once asked the court for
