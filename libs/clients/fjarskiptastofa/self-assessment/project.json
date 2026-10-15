@@ -1,0 +1,38 @@
+{
+  "name": "clients-fjarskiptastofa-self-assessment",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/fjarskiptastofa/self-assessment/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/clients/fjarskiptastofa/self-assessment/jest.config.ts"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10100/Fjarskiptastofa-Protected/getOpenAPI?serviceCode=assessment-v1 > src/clientConfig.json",
+          "jq '.components.schemas.ProblemDetails.additionalProperties = false | .components.schemas.HttpValidationProblemDetails.additionalProperties = false | walk(if (type == \"object\") and (has(\"format\")) and (has(\"type\") | not) then .type = (if (.format == \"int32\" or .format == \"int64\") then \"integer\" elif (.format == \"double\" or .format == \"float\" or .format == \"decimal\") then \"number\" else \"string\" end) else . end)' src/clientConfig.json > tmpConfig.json && mv tmpConfig.json src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/fjarskiptastofa/self-assessment"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/fjarskiptastofa/self-assessment/gen/fetch -i libs/clients/fjarskiptastofa/self-assessment/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}

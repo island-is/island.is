@@ -313,6 +313,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.U2_CERTIFICATE]: () =>
     import('@island.is/application/templates/vmst/u2-certificate'),
+  [ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT]: () =>
+    import('@island.is/application/templates/fjarskiptastofa/self-assessment'),
 }
 
 export default templates

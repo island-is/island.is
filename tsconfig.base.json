@@ -477,6 +477,9 @@
       "@island.is/application/templates/financial-statement-political-party": [
         "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
       ],
+      "@island.is/application/templates/fjarskiptastofa/self-assessment": [
+        "libs/application/templates/fjarskiptastofa/self-assessment/src/index.ts"
+      ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
       ],
@@ -851,6 +854,9 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
+      "@island.is/clients/fjarskiptastofa/self-assessment": [
+        "libs/clients/fjarskiptastofa/self-assessment/src/index.ts"
+      ],
       "@island.is/clients/fjs/bank-info": [
         "libs/clients/fjs/bank-info/src/index.ts"
       ],

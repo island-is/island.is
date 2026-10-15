@@ -1,3 +1,5 @@
+import { FjarskiptastofaSelfAssessmentModule } from './fjarskiptastofa/self-assessment/self-assessment.module'
+import { FjarskiptastofaSelfAssessmentService } from './fjarskiptastofa/self-assessment/self-assessment.service'
 import { ConfirmJobOrIncomeModule } from './vmst/confirm-job-or-income/confirm-job-or-income.module'
 import { ConfirmJobOrIncomeService } from './vmst/confirm-job-or-income/confirm-job-or-income.service'
 import { U2CertificateModule } from './vmst/u2-certificate/u2-certificate.module'
@@ -303,6 +305,7 @@ export const modules = [
   DrivingLicenseAdditionalModule,
   DirectorateOfEqualityModule,
   U2CertificateModule,
+  FjarskiptastofaSelfAssessmentModule,
 ]
 
 export const services = [
@@ -406,4 +409,5 @@ export const services = [
   DrivingLicenseAdditionalService,
   DirectorateOfEqualityService,
   U2CertificateService,
+  FjarskiptastofaSelfAssessmentService,
 ]
