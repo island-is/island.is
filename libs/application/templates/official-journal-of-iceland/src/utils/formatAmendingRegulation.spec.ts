@@ -1,5 +1,5 @@
 import getStructuredDiff from '@dmr.is/regulations-tools/structuredDiff-browser'
-import { getDiff, HTMLText } from '@island.is/regulations'
+import { HTMLText } from '@island.is/regulations'
 import { RegulationImpactSchema } from '../lib/dataSchema'
 import {
   formatAmendingBodyWithArticlePrefix,
@@ -26,34 +26,24 @@ const BASE = [
   GILDISTAKA,
 ].join('')
 
-type Differ = (older: HTMLText, newer: HTMLText) => string
-
-// Saved impact diffs come from both differs: getDiff before the switch to
-// getStructuredDiff, getStructuredDiff after it. The generator reads both, so
-// every case below runs against each.
-const differs: Array<[string, Differ]> = [
-  ['getDiff', (older, newer) => getDiff(older, newer).diff],
-  ['getStructuredDiff', (older, newer) => getStructuredDiff(older, newer).diff],
-]
+const amend = (
+  after: string,
+  overrides: Partial<RegulationImpactSchema> = {},
+  before = BASE,
+): RegulationImpactSchema => ({
+  id: overrides.name ?? '1',
+  type: 'amend',
+  name: '0123/2020',
+  diff: getStructuredDiff(before as HTMLText, after as HTMLText).diff,
+  ...overrides,
+})
 
 const article = (n: number, html: string) => `${title(`${n}. gr.`)}${html}`
 
 const body = (...impacts: RegulationImpactSchema[]) =>
   formatAmendingBodyWithArticlePrefix(impacts)
 
-const bodyCases = (diffWith: Differ) => {
-  const amend = (
-    after: string,
-    overrides: Partial<RegulationImpactSchema> = {},
-    before = BASE,
-  ): RegulationImpactSchema => ({
-    id: overrides.name ?? '1',
-    type: 'amend',
-    name: '0123/2020',
-    diff: diffWith(before as HTMLText, after as HTMLText),
-    ...overrides,
-  })
-
+describe('formatAmendingBodyWithArticlePrefix', () => {
   it('removes a paragraph and reuses the authority of the base regulation', () => {
     expect(body(amend(BASE.replace('<p>Alfa bravo charlie.</p>', '')))).toEqual(
       [
@@ -283,10 +273,10 @@ const bodyCases = (diffWith: Differ) => {
         appendixes: [
           {
             title: 'Viðauki I',
-            diff: diffWith(
+            diff: getStructuredDiff(
               '<p>Alfa.</p>' as HTMLText,
               '<p>Bravo.</p>' as HTMLText,
-            ),
+            ).diff,
           },
         ],
       }),
@@ -494,15 +484,8 @@ const bodyCases = (diffWith: Differ) => {
     expect(body(amend(BASE))).toEqual([])
     expect(body()).toEqual([])
   })
-}
+})
 
-describe.each(differs)(
-  'formatAmendingBodyWithArticlePrefix (%s)',
-  (_, diffWith) => bodyCases(diffWith),
-)
-
-// getDiff marks nothing when only a list's type changes, so these cases run
-// against getStructuredDiff alone.
 describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
   const list = (type: string, ...items: string[]) =>
     `<ol${type ? ` type="${type}"` : ''}>${items
