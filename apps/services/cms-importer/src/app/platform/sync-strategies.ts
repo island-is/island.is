@@ -205,6 +205,7 @@ export const resolveExternalLink = async (
   url: string,
   existingLinkUrls: Map<string, string>,
   linkUrlContentType: ContentTypeOptions,
+  publish: boolean,
 ): Promise<string | null> => {
   const existingId = existingLinkUrls.get(url)
   if (existingId) return existingId
@@ -212,6 +213,7 @@ export const resolveExternalLink = async (
   const results = await cmsRepository.createEntries(
     [{ fields: { url: { [LOCALE]: url } } }],
     linkUrlContentType,
+    publish,
   )
 
   const result = results[0]

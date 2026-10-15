@@ -73,6 +73,7 @@ export class LyfjastofnunListsImportService {
             item.externalUrl,
             existingLinkUrls,
             LINK_URL_CONTENT_TYPE,
+            publish,
           )
           if (!externalLinkId) {
             logger.warn('Skipping item, could not create external link entry', {
