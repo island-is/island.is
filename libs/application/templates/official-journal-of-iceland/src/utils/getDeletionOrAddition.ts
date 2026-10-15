@@ -55,7 +55,17 @@ export const formatListItemDiff = (item: Element) => {
             isStaflidur,
           )}${isStaflidur ? '-liðar' : '. tölul.'} hefur breyst.` as HTMLText,
         )
-        liItemHtml = '' as HTMLText
+        // Changes in a list nested in this item follow, and are cited under it
+        const hasNestedChange =
+          liItem.querySelectorAll('ins, del').length > ownMarks.length
+        liItemHtml = (
+          hasNestedChange
+            ? `${isStaflidur ? 'Stafliður' : 'Töluliður'} ${getLiPoint(
+                lidur,
+                isStaflidur,
+              )}, `
+            : ''
+        ) as HTMLText
         return
       }
 
@@ -169,6 +179,19 @@ export const getDeletionOrAddition = (
   } else {
     if (type === 'greinTitle') {
       const tempElement = newTextElement
+
+      // A renumbered heading's new number (<ins>3</ins>. gr.) is not part of
+      // the title; unwrap it so the "N. gr." label can be split off below.
+      const [leadingIns] = Array.from(tempElement.querySelectorAll('ins'))
+      if (
+        leadingIns &&
+        /^\d+$/.test(leadingIns.textContent?.trim() ?? '') &&
+        (tempElement.textContent ?? '')
+          .trimStart()
+          .startsWith(`${leadingIns.textContent?.trim()}.`)
+      ) {
+        leadingIns.replaceWith(leadingIns.textContent ?? '')
+      }
 
       const insElements = tempElement.querySelectorAll('ins')
 

@@ -300,6 +300,10 @@ const getFormatOnlyChange = (
   const words = uniq(
     compact(inserted.map((e) => e.textContent?.replace(/\s+/g, ' ').trim())),
   )
+  if (!words.length) {
+    // Only whitespace was reformatted: nothing to name
+    return undefined
+  }
   const all = (paragraph.textContent || '').replace(/\s+/g, ' ').trim()
   return words.join(' ') === all ? true : words
 }
@@ -318,10 +322,16 @@ const quoteWords = (words: string[]) => {
  * version, with no item marked. A formatting change inside the items marks
  * the items instead.
  */
-const isListTypeChange = (list: Element): boolean =>
+const isWholeListFormatChange = (list: Element): boolean =>
   list.getAttribute('data-diff-change') === 'format' &&
   list.getAttribute('data-diff-side') === 'new' &&
   !list.querySelector('li[data-diff]')
+
+const isListTypeChange = (list: Element): boolean =>
+  isWholeListFormatChange(list) &&
+  // With a list nested in it, the markup does not say which list changed
+  // type: getStructuredDiff marks the outer list either way.
+  !list.querySelector('ol, ul')
 
 /**
  * The new version of a list replaced as a whole: getStructuredDiff gives the
@@ -510,6 +520,7 @@ export const formatAmendingRegBody = (
         replacingList?.getAttribute('type')?.toLowerCase() === 'a'
       if (replacingList) {
         handled.add(replacingList)
+        newParagraphs = undefined
         testGroup.isDeletion = false
         testGroup.isAddition = false
         const items = isLetterList ? 'Stafliðir' : 'Töluliðir'
@@ -525,7 +536,22 @@ export const formatAmendingRegBody = (
         return
       }
 
+      // A list holding a nested list whose formatting changed as a whole: one
+      // of them changed type, but the markup does not say which. Leave it to
+      // the author rather than name the wrong list.
+      if (
+        (isLetterList || isNumberList) &&
+        isWholeListFormatChange(element) &&
+        !isListTypeChange(element)
+      ) {
+        newParagraphs = undefined
+        testGroup.isDeletion = false
+        testGroup.isAddition = false
+        return
+      }
+
       if ((isLetterList || isNumberList) && isListTypeChange(element)) {
+        newParagraphs = undefined
         testGroup.isDeletion = false
         testGroup.isAddition = false
         testGroup.arr.push(
