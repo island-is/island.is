@@ -838,6 +838,48 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
       )
     })
 
+    it('cites the tölul. for every changed stafliður in it', () => {
+      expect(
+        first(
+          BEFORE,
+          withList(
+            '',
+            `alfa:${list('a', 'eitt atriði þar,', 'annað atriði þar.')}`,
+            'bravo.',
+          ),
+        ),
+      ).toBe(
+        article(
+          1,
+          LEAD +
+            '<p>Töluliður 1, a-liður orðast svo: eitt atriði þar,</p><p>Töluliður 1, b-liður orðast svo: annað atriði þar.</p>',
+        ),
+      )
+    })
+
+    it('cites the reformatted tölul. for every changed stafliður in it', () => {
+      expect(
+        first(
+          BEFORE,
+          withList(
+            '',
+            `<em>alfa:</em>${list(
+              'a',
+              'eitt atriði þar,',
+              'annað atriði þar.',
+            )}`,
+            'bravo.',
+          ),
+        ),
+      ).toBe(
+        article(
+          1,
+          LEAD +
+            '<p>Snið 1. tölul. hefur breyst.</p><p>Töluliður 1, a-liður orðast svo: eitt atriði þar,</p><p>Töluliður 1, b-liður orðast svo: annað atriði þar.</p>',
+        ),
+      )
+    })
+
     it('does not name the outer list when only the nested list changed type', () => {
       // One of the two lists changed type, and the markup does not say
       // which, so nothing is generated: the author words it.

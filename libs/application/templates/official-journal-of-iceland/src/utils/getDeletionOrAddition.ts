@@ -20,6 +20,20 @@ export const formatListItemDiff = (item: Element) => {
   let newLiText = ''
   let liItemHtml = '' as HTMLText
   const returningArray: HTMLText[] = []
+  // "Töluliður 1, " for an item whose nested list has changes, so each of
+  // them is cited under it, not only the first.
+  const parentLabels = new Map<Element, string>()
+  const labelsAbove = (liItem: Element) => {
+    let labels = ''
+    for (
+      let li = liItem.parentElement?.closest('li');
+      li && item.contains(li);
+      li = li.parentElement?.closest('li')
+    ) {
+      labels = (parentLabels.get(li) ?? '') + labels
+    }
+    return labels as HTMLText
+  }
   qq('ol > li', item).forEach((liItem) => {
     // The item's number in its own list. The loop also visits the items of
     // nested lists, so a running count numbered every item after a nested
@@ -33,6 +47,7 @@ export const formatListItemDiff = (item: Element) => {
     const liHasInsert = !!liItem.querySelector('ins')
 
     if (liHasDeletion || liHasInsert) {
+      liItemHtml = labelsAbove(liItem)
       const isStaflidur =
         liItem?.parentElement?.getAttribute('type')?.toLowerCase() === 'a'
 
@@ -58,14 +73,15 @@ export const formatListItemDiff = (item: Element) => {
         // Changes in a list nested in this item follow, and are cited under it
         const hasNestedChange =
           liItem.querySelectorAll('ins, del').length > ownMarks.length
-        liItemHtml = (
-          hasNestedChange
-            ? `${isStaflidur ? 'Stafliður' : 'Töluliður'} ${getLiPoint(
-                lidur,
-                isStaflidur,
-              )}, `
-            : ''
-        ) as HTMLText
+        if (hasNestedChange) {
+          parentLabels.set(
+            liItem,
+            `${isStaflidur ? 'Stafliður' : 'Töluliður'} ${getLiPoint(
+              lidur,
+              isStaflidur,
+            )}, `,
+          )
+        }
         return
       }
 
@@ -105,11 +121,13 @@ export const formatListItemDiff = (item: Element) => {
       if (containsDirect) {
         liItemHtml = (liItemHtml + formatListItemDiff(liItem)) as HTMLText
       } else {
-        liItemHtml = (liItemHtml +
+        parentLabels.set(
+          liItem,
           `${isStaflidur ? 'Stafliður' : 'Töluliður'} ${getLiPoint(
             lidur,
             isStaflidur,
-          )}, `) as HTMLText
+          )}, `,
+        )
         formatListItemDiff(liItem)
         return
       }
