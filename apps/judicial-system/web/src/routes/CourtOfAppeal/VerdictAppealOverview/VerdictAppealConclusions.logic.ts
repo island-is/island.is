@@ -1,3 +1,4 @@
+import { getAppealJudges } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
@@ -63,11 +64,9 @@ export const getCourtOfAppealsConclusion = (
     title: 'Dómsorð Landsréttar',
     text,
     signedBy: sortByIcelandicAlphabet(
-      [
-        appeal?.appealJudge1?.name,
-        appeal?.appealJudge2?.name,
-        appeal?.appealJudge3?.name,
-      ].filter((name): name is string => Boolean(name)),
+      getAppealJudges(appeal)
+        .map((judge) => judge.name)
+        .filter((name): name is string => Boolean(name)),
     ),
   }
 }

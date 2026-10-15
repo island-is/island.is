@@ -260,17 +260,14 @@ query Case($input: CaseQueryInput!) {
       appealState
       appealType
       appealConclusion
-      appealJudge1 {
+      appealJudges {
         id
-        name
-      }
-      appealJudge2 {
-        id
-        name
-      }
-      appealJudge3 {
-        id
-        name
+        displayOrder
+        userId
+        user {
+          id
+          name
+        }
       }
       appealEventLogs {
         id
