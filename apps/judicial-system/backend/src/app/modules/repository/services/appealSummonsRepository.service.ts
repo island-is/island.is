@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 
 import {
   Inject,
@@ -104,6 +104,50 @@ export class AppealSummonsRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error finding appeal summons ${id} for case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  /**
+   * The summonses of a verdict appeal that have been confirmed, and so
+   * issued, oldest first. Each carries its defendant rows, which say who it
+   * was issued against.
+   */
+  async findConfirmedByAppealCaseId(
+    appealCaseId: string,
+    options?: { transaction?: Transaction },
+  ): Promise<AppealSummons[]> {
+    try {
+      this.logger.debug(
+        `Finding confirmed appeal summonses for appeal case ${appealCaseId}`,
+      )
+
+      const result = await this.appealSummonsModel.findAll({
+        where: { appealCaseId, confirmedDate: { [Op.ne]: null } },
+        include: [
+          {
+            model: AppealSummonsDefendant,
+            as: 'defendants',
+            required: false,
+            separate: true,
+            order: [['created', 'ASC']],
+          },
+        ],
+        order: [['confirmedDate', 'ASC']],
+        transaction: options?.transaction,
+      })
+
+      this.logger.debug(
+        `Found ${result.length} confirmed appeal summonses for appeal case ${appealCaseId}`,
+      )
+
+      return result
+    } catch (error) {
+      this.logger.error(
+        `Error finding confirmed appeal summonses for appeal case ${appealCaseId}:`,
         { error },
       )
 
