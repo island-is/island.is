@@ -21,7 +21,7 @@ export const itemFields = style({
   paddingLeft: theme.spacing[2],
 })
 
-export const spanControl = style({ width: theme.spacing[12] })
+export const sizeControl = style({ width: theme.spacing[12] })
 
 export const sortableContent = style({ flex: 1, minWidth: 0 })
 

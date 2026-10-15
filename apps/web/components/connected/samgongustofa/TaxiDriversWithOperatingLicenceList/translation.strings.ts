@@ -2,8 +2,8 @@ import { defineMessages } from 'react-intl'
 
 export const translation = defineMessages({
   name: { id: 'web.taxiOperatingLicenceList:name', defaultMessage: 'Nafn' },
-  stationId: {
-    id: 'web.taxiOperatingLicenceList:stationId',
+  callNumber: {
+    id: 'web.taxiOperatingLicenceList:callNumber',
     defaultMessage: 'Stöðvarnúmer',
   },
   stationName: {

@@ -1,9 +1,7 @@
 import React from 'react'
 import styled from 'styled-components/native'
 import timeOutlineIcon from '../../assets/card/time-outline.png'
-import { spacing } from '../../utils'
 import { dynamicColor } from '../../utils/dynamic-color'
-import { Loader } from '../loader/loader'
 
 const Host = styled.View`
   width: 100%;
@@ -18,6 +16,7 @@ const Host = styled.View`
   )};
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
   padding: ${({ theme }) => theme.spacing[2]}px;
+  min-height: 180px;
 `
 
 const Date = styled.View`
@@ -69,9 +68,31 @@ const Progress = styled.View<{ width?: number }>`
   }))};
 `
 
-const Loading = styled.View`
-  margin-top: ${spacing(2)};
-  margin-bottom: 10px;
+const Title = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+`
+
+const IconSkeleton = styled.View`
+  width: 24px;
+  height: 24px;
+  margin-right: ${({ theme }) => theme.spacing[1]}px;
+  border-radius: 4px;
+  background-color: ${dynamicColor(({ theme }) => ({
+    dark: 'shade200',
+    light: theme.color.blue100,
+  }))};
+`
+
+const TitleSkeleton = styled.View`
+  height: 16px;
+  width: 60%;
+  background-color: ${dynamicColor(({ theme }) => ({
+    dark: 'shade200',
+    light: theme.color.blue100,
+  }))};
+  border-radius: 4px;
 `
 
 const BadgeSkeleton = styled.View`
@@ -97,9 +118,10 @@ export function StatusCardSkeleton() {
         <Flex />
         <BadgeSkeleton />
       </Date>
-      <Loading>
-        <Loader />
-      </Loading>
+      <Title>
+        <IconSkeleton />
+        <TitleSkeleton />
+      </Title>
       <Bar>
         <Progress />
       </Bar>

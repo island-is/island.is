@@ -289,8 +289,9 @@ export const getClosesAt = (
 
 /* 
   The Heilsuvera web chat is not a Hekla conversation type, it's appended
-  manually to every recipient's service list so both web and app render it
-  from the same source, as an external link at the bottom of the dropdown.
+  manually to the primary-care clinic's service list so both web and app
+  render it from the same source, as an external link at the bottom of the
+  dropdown.
 */
 export const WEB_CHAT_TYPE_CODE = 'HEILSUVERA_WEB_CHAT'
 // Must match the hours stated in the translated web chat description strings.

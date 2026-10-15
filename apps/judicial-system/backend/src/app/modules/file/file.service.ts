@@ -15,6 +15,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
+import { stripPdfExtension } from '@island.is/judicial-system/formatters'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
@@ -556,7 +557,8 @@ export class FileService {
         state: CaseFileState.STORED_IN_RVG,
         name: fileName,
         userGeneratedFilename:
-          createFile.userGeneratedFilename ?? fileName.replace(/\.pdf$/, ''),
+          stripPdfExtension(createFile.userGeneratedFilename ?? fileName) ||
+          stripPdfExtension(fileName),
         submittedBy: user.name,
       },
       { transaction },
@@ -579,7 +581,7 @@ export class FileService {
         theCase.id,
         {
           documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: file.userGeneratedFilename ?? file.name,
+          name: stripPdfExtension(file.userGeneratedFilename ?? file.name),
           caseFileId: file.id,
         },
         { transaction },

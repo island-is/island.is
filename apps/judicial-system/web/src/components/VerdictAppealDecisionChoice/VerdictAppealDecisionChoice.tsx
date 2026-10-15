@@ -48,13 +48,9 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
         }}
         large
         backgroundColor="white"
-        label={
-          <span className={styles.label}>
-            {getDefendantVerdictAppealDecisionLabel(
-              VerdictAppealDecision.ACCEPT,
-            )}
-          </span>
-        }
+        label={getDefendantVerdictAppealDecisionLabel(
+          VerdictAppealDecision.ACCEPT,
+        )}
         disabled={disabled}
       />
       <RadioButton
@@ -73,13 +69,9 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
         }}
         large
         backgroundColor="white"
-        label={
-          <span className={styles.label}>
-            {getDefendantVerdictAppealDecisionLabel(
-              VerdictAppealDecision.POSTPONE,
-            )}
-          </span>
-        }
+        label={getDefendantVerdictAppealDecisionLabel(
+          VerdictAppealDecision.POSTPONE,
+        )}
         disabled={disabled}
       />
     </RadioGroup>
