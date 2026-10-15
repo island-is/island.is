@@ -251,13 +251,23 @@ export const LanguageToggler = ({
 
   const onDialogConfirm = () => {
     const href = dialogConfig?.confirmButtonHref
-    if (!href) {
-      goToOtherLanguagePage(linkResolver('homepage', [], otherLanguage).href)
-    } else if (href.startsWith('/')) {
+    if (href?.startsWith('/') && !href.startsWith('//')) {
       goToOtherLanguagePage(href)
-    } else {
-      window.location.href = href
+      return
     }
+    if (href) {
+      try {
+        const url = new URL(href)
+        // Only allow external http(s) links, never executable schemes like javascript:
+        if (url.protocol === 'https:' || url.protocol === 'http:') {
+          window.location.href = url.href
+          return
+        }
+      } catch {
+        // Invalid URL, fall back to the homepage
+      }
+    }
+    goToOtherLanguagePage(linkResolver('homepage', [], otherLanguage).href)
   }
 
   const Dialog = (
