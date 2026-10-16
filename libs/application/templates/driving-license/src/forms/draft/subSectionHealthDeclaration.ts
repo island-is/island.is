@@ -273,30 +273,14 @@ export const subSectionHealthDeclaration = buildSubSection({
         ...healthCertificateFields('BE'),
       ],
     }),
-    // 65+ multifield (legacy) — flag OFF
-    buildMultiField({
-      id: 'healthDeclarationAge65',
-      title: m.healthDeclarationMultiFieldTitle,
-      description: m.healthDeclarationMultiField65Description,
-      condition: (answers) =>
-        answers.applicationFor === B_FULL_RENEWAL_65 &&
-        getValueViaPath(answers, 'is65RenewalRedesignEnabled') !== true,
-      children: [
-        buildDescriptionField({
-          id: 'healthDeclarationDescription65',
-          description: m.healthDeclarationMultiField65Description,
-        }),
-      ],
-    }),
-    // 65+ multifield (redesigned) — flag ON. Description + mandatory cert
-    // upload. No health questions (per product decision: 65+ always submits
-    // a fresh health certificate, no per-condition questionnaire).
+    // 65+ multifield: description + mandatory cert upload. No health questions
+    // (per product decision: 65+ always submits a fresh health certificate, no
+    // per-condition questionnaire). The id keeps its `Redesigned` suffix so
+    // in-flight drafts are unaffected.
     buildMultiField({
       id: 'healthDeclarationAge65Redesigned',
       title: m.healthDeclarationMultiFieldTitle,
-      condition: (answers) =>
-        answers.applicationFor === B_FULL_RENEWAL_65 &&
-        getValueViaPath(answers, 'is65RenewalRedesignEnabled') === true,
+      condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
       space: 2,
       children: [
         buildDescriptionField({

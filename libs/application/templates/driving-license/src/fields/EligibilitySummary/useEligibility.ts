@@ -42,7 +42,6 @@ export interface UseEligibilityResult {
 
 export const useEligibility = (
   application: Application,
-  is65RenewalRedesignEnabled: boolean,
   isBTempRedesignEnabled: boolean,
   isBFullRedesignEnabled: boolean,
 ): UseEligibilityResult => {
@@ -94,7 +93,7 @@ export const useEligibility = (
 
   const usesNewPhotoSelector =
     applicationFor === BE ||
-    (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled) ||
+    applicationFor === B_FULL_RENEWAL_65 ||
     (applicationFor === B_TEMP && isBTempRedesignEnabled) ||
     (applicationFor === B_FULL && isBFullRedesignEnabled)
 
@@ -129,7 +128,6 @@ export const useEligibility = (
         applicationFor,
         parseInt(fakeData?.howManyDaysHaveYouLivedInIceland.toString(), 10),
         hasPhoto,
-        is65RenewalRedesignEnabled,
         isBTempRedesignEnabled,
         isBFullRedesignEnabled,
       ),
@@ -196,10 +194,9 @@ export const useEligibility = (
         remarksCannotRenew65.includes(remark.code),
       ) ?? false
 
-    // When the redesign is on, also require a usable photo (same as BE).
-    const hasUsablePhoto = is65RenewalRedesignEnabled
-      ? computeUsablePhoto()
-      : true
+    // 65+ picks its licence photo in the photo selector, so require a usable
+    // photo (same as BE).
+    const hasUsablePhoto = computeUsablePhoto()
 
     const requirements = [
       ...eligibility,
@@ -211,14 +208,10 @@ export const useEligibility = (
             },
           ]
         : []),
-      ...(is65RenewalRedesignEnabled
-        ? [
-            {
-              key: RequirementKey.hasNoPhoto,
-              requirementMet: hasUsablePhoto,
-            },
-          ]
-        : []),
+      {
+        key: RequirementKey.hasNoPhoto,
+        requirementMet: hasUsablePhoto,
+      },
     ]
 
     return {
