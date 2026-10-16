@@ -26,6 +26,8 @@ import {
   groupElementsByArticleTitleFromDiv,
   hasAnyChange,
   hasSubtitle,
+  removeDiffAttributes,
+  removeInsertions,
   removeRegPrefix,
   updateAppendixWording,
 } from './formatAmendingUtils'
@@ -218,12 +220,30 @@ const getNeighbourTitle = (group: HTMLElement[] | undefined): string => {
   if (!title || !containsAnyTitleClass(title)) {
     return ''
   }
-  const titleText = (removeTag: 'ins' | 'del') => {
-    const clone = title.cloneNode(true) as HTMLElement
-    clone.querySelectorAll(removeTag).forEach((e) => e.remove())
-    return extractArticleTitleDisplay(getTextWithSpaces(clone))
+  return escapeHtml(
+    extractArticleTitleDisplay(
+      headingText(title, 'old') || headingText(title, 'new'),
+    ),
+  )
+}
+
+/**
+ * A heading's text before or after the change, with the diff marks
+ * unwrapped, so "<del>4</del><ins>5</ins>. gr." reads "4. gr." or "5. gr."
+ * and not "4 5 . gr.".
+ */
+const headingText = (heading: Element, version: 'old' | 'new'): string => {
+  const clone = heading.cloneNode(true) as Element
+  if (version === 'old') {
+    removeInsertions(clone)
+  } else {
+    clone.querySelectorAll('del').forEach((e) => e.remove())
   }
-  return escapeHtml(titleText('ins') || titleText('del'))
+  clone
+    .querySelectorAll('ins, del')
+    .forEach((e) => e.replaceWith(...Array.from(e.childNodes)))
+  clone.normalize()
+  return getTextWithSpaces(clone)
 }
 
 const NEW_PARAGRAPH_COUNT = ['', 'ein', 'tvær', 'þrjár', 'fjórar']
@@ -260,6 +280,76 @@ const getTable = (element: Element): Element | null =>
     ? element
     : element.querySelector(':scope > table')
 
+/**
+ * The formatting-only change in a paragraph whose wording did not change:
+ * nothing deleted, and everything inserted is `<ins class="mod">`. Returns
+ * the reformatted words, or `true` when the whole paragraph was reformatted,
+ * or `undefined` when the paragraph is not a formatting-only change.
+ */
+const getFormatOnlyChange = (
+  paragraph: Element,
+): string[] | true | undefined => {
+  const inserted = Array.from(paragraph.querySelectorAll('ins'))
+  if (
+    paragraph.querySelector('del') ||
+    !inserted.length ||
+    !inserted.every((e) => e.classList.contains('mod'))
+  ) {
+    return undefined
+  }
+  const words = uniq(
+    compact(inserted.map((e) => e.textContent?.replace(/\s+/g, ' ').trim())),
+  )
+  if (!words.length) {
+    // Only whitespace was reformatted: nothing to name
+    return undefined
+  }
+  const all = (paragraph.textContent || '').replace(/\s+/g, ' ').trim()
+  return words.join(' ') === all ? true : words
+}
+
+/** „a“, „b“ og „c“ */
+const quoteWords = (words: string[]) => {
+  const quoted = words.map((w) => `„${escapeHtml(w)}“`)
+  return quoted.length > 1
+    ? `${quoted.slice(0, -1).join(', ')} og ${quoted[quoted.length - 1]}`
+    : quoted[0]
+}
+
+/**
+ * Whether the list itself changed type and nothing in it did: the structured
+ * diff then marks the list as a formatting change and shows only its new
+ * version, with no item marked. A formatting change inside the items marks
+ * the items instead.
+ */
+const isWholeListFormatChange = (list: Element): boolean =>
+  list.getAttribute('data-diff-change') === 'format' &&
+  list.getAttribute('data-diff-side') === 'new' &&
+  !list.querySelector('li[data-diff]')
+
+const isListTypeChange = (list: Element): boolean =>
+  isWholeListFormatChange(list) &&
+  // With a list nested in it, the markup does not say which list changed
+  // type: getStructuredDiff marks the outer list either way.
+  !list.querySelector('ol, ul')
+
+/**
+ * The new version of a list replaced as a whole: getStructuredDiff gives the
+ * old list, all deleted, followed by the new one, all inserted, when a list
+ * changed type and wording at once.
+ */
+const getReplacingList = (list: Element): Element | undefined => {
+  const next = list.nextElementSibling
+  return list.getAttribute('data-diff') === 'replace' &&
+    list.getAttribute('data-diff-side') === 'old' &&
+    next?.nodeName === list.nodeName &&
+    next.getAttribute('data-diff') === 'replace' &&
+    next.getAttribute('data-diff-side') === 'new' &&
+    next.getAttribute('data-diff-mgr') === list.getAttribute('data-diff-mgr')
+    ? next
+    : undefined
+}
+
 /** An element as it reads after the change, keeping its markup. */
 const afterChange = (element: Element): string => {
   const clone = element.cloneNode(true) as Element
@@ -267,13 +357,18 @@ const afterChange = (element: Element): string => {
   clone
     .querySelectorAll('ins')
     .forEach((e) => e.replaceWith(...Array.from(e.childNodes)))
+  removeDiffAttributes(clone)
   return clone.outerHTML
 }
 
 /** Whether nothing is left once `tag` is removed: all inserted or all deleted. */
 const isEmptyWithout = (element: Element, tag: 'ins' | 'del'): boolean => {
   const clone = element.cloneNode(true) as Element
-  clone.querySelectorAll(tag).forEach((e) => e.remove())
+  if (tag === 'ins') {
+    removeInsertions(clone)
+  } else {
+    clone.querySelectorAll(tag).forEach((e) => e.remove())
+  }
   return !clone.textContent?.trim()
 }
 
@@ -383,7 +478,14 @@ export const formatAmendingRegBody = (
     // New paragraphs in a row, merged into one amendment
     let newParagraphs: { index: number; texts: string[] } | undefined
 
+    // The new side of a list already written together with its old side
+    const handled = new Set<Element>()
+
     group.forEach((element) => {
+      // The closing date line and signatories: never an amendment.
+      if (element.hasAttribute('data-diff-signature') || handled.has(element)) {
+        return
+      }
       let pushHtml = '' as HTMLText
 
       let isParagraph = false
@@ -392,9 +494,10 @@ export const formatAmendingRegBody = (
       let isLetterList = false
       const containsAnyTitle = containsAnyTitleClass(element)
       if (containsAnyTitle) {
-        const clone = element.cloneNode(true)
-
-        const textContent = getTextWithSpaces(clone)
+        // The base regulation's number, as amending text cites it; the new
+        // one only for an article that did not exist before.
+        const textContent =
+          headingText(element, 'old') || headingText(element, 'new')
         articleTitle = escapeHtml(extractArticleTitleDisplay(textContent))
         testGroup.titleObject.hasSubtitle = hasSubtitle(textContent)
         testGroup.titleObject.type = getArticleTitleType(element)
@@ -411,6 +514,56 @@ export const formatAmendingRegBody = (
         }
       }
 
+      const replacingList =
+        isLetterList || isNumberList ? getReplacingList(element) : undefined
+      const replacedByLettered =
+        replacingList?.getAttribute('type')?.toLowerCase() === 'a'
+      if (replacingList) {
+        handled.add(replacingList)
+        newParagraphs = undefined
+        testGroup.isDeletion = false
+        testGroup.isAddition = false
+        const items = isLetterList ? 'Stafliðir' : 'Töluliðir'
+        const where = `${paragraph}. mgr. ${articleTitle} ${regNameDisplay}`
+        testGroup.arr.push(
+          ((replacedByLettered !== isLetterList
+            ? `<p>${items} í ${where} verða ${
+                isLetterList ? 'töluliðir' : 'stafliðir'
+              } og orðast svo:</p>`
+            : `<p>${items} í ${where} orðast svo:</p>`) +
+            afterChange(replacingList)) as HTMLText,
+        )
+        return
+      }
+
+      // A list holding a nested list whose formatting changed as a whole: one
+      // of them changed type, but the markup does not say which. Leave it to
+      // the author rather than name the wrong list.
+      if (
+        (isLetterList || isNumberList) &&
+        isWholeListFormatChange(element) &&
+        !isListTypeChange(element)
+      ) {
+        newParagraphs = undefined
+        testGroup.isDeletion = false
+        testGroup.isAddition = false
+        return
+      }
+
+      if ((isLetterList || isNumberList) && isListTypeChange(element)) {
+        newParagraphs = undefined
+        testGroup.isDeletion = false
+        testGroup.isAddition = false
+        testGroup.arr.push(
+          `<p>${
+            isLetterList ? 'Töluliðir' : 'Stafliðir'
+          } í ${paragraph}. mgr. ${articleTitle} ${regNameDisplay} verða ${
+            isLetterList ? 'stafliðir' : 'töluliðir'
+          }.</p>` as HTMLText,
+        )
+        return
+      }
+
       const table =
         isParagraph || isSectionTitle || isNumberList || isLetterList
           ? null
@@ -425,8 +578,15 @@ export const formatAmendingRegBody = (
           ? `${baseTables.indexOf(element) + 1}. `
           : ''
 
-      const hasDeletion = !!element.querySelector('del')
-      const hasInsert = !!element.querySelector('ins')
+      // A heading only renumbered by an article inserted or removed before it
+      // is not itself an amendment. getStructuredDiff adds data-diff to a
+      // heading only when its text changed.
+      const renumberedOnly =
+        isSectionTitle &&
+        element.hasAttribute('data-diff-renumbered-to') &&
+        !element.hasAttribute('data-diff')
+      const hasDeletion = !renumberedOnly && !!element.querySelector('del')
+      const hasInsert = !renumberedOnly && !!element.querySelector('ins')
 
       const elementType =
         isLetterList || isNumberList
@@ -539,14 +699,33 @@ export const formatAmendingRegBody = (
           testGroup.isDeletion = false
           testGroup.isAddition = false
           if (isSectionTitle) {
-            pushHtml =
-              `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} breytist og orðast svo:</p><p>${newText}</p>` as HTMLText
+            // Formatting alone changed: the wording did not, so it is not
+            // restated.
+            pushHtml = (
+              getFormatOnlyChange(element)
+                ? `<p>Snið fyrirsagnar ${articleTitle} ${regNameDisplay} hefur breyst.</p>`
+                : `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} breytist og orðast svo:</p><p>${newText}</p>`
+            ) as HTMLText
           } else if (isParagraph) {
-            pushHtml =
-              `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} breytist og orðast svo:</p><p>${newText}</p>` as HTMLText
+            // Formatting alone changed: the wording did not, so it is not
+            // restated.
+            const formatOnly = getFormatOnlyChange(element)
+            const where = `${paragraph}. mgr. ${articleTitle} ${regNameDisplay}`
+            pushHtml = (
+              formatOnly === true
+                ? `<p>Snið ${where} hefur breyst.</p>`
+                : formatOnly
+                ? `<p>Snið ${quoteWords(
+                    formatOnly,
+                  )} í ${where} hefur breyst.</p>`
+                : `<p>${where} breytist og orðast svo:</p><p>${newText}</p>`
+            ) as HTMLText
           } else if (isLetterList || isNumberList) {
-            pushHtml =
-              `<p>Eftirfarandi breytingar verða á ${paragraph}. mgr. ${articleTitle} ${regNameDisplay}:</p> ${liHtml}` as HTMLText
+            pushHtml = (
+              liHtml
+                ? `<p>Eftirfarandi breytingar verða á ${paragraph}. mgr. ${articleTitle} ${regNameDisplay}:</p> ${liHtml}`
+                : ''
+            ) as HTMLText
           } else if (table) {
             pushHtml = formatTableChange(
               table,
@@ -560,7 +739,10 @@ export const formatAmendingRegBody = (
               }${newText}</p>` as HTMLText
           }
         }
-        testGroup.arr.push(pushHtml)
+        // A list whose items changed formatting only can leave nothing to say
+        if (pushHtml) {
+          testGroup.arr.push(pushHtml)
+        }
       } else {
         testGroup.isDeletion = false
         testGroup.isAddition = false

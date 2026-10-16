@@ -42,7 +42,7 @@ describe('CivilClaimantController - Update writes an advocate confirmed event', 
   const actor = {
     id: uuid(),
     nationalId: '0000000000',
-    name: 'Áslaug Björk Ingólfsdóttir',
+    name: 'Some Person',
     title: 'aðstoðarmaður dómara',
     role: UserRole.COURT_OF_APPEALS_ASSISTANT,
     institution: { name: 'Landsréttur' },
@@ -299,7 +299,7 @@ describe('CivilClaimantController - Update notifies a confirmed appeal advocate'
   const actor = {
     id: uuid(),
     nationalId: '0000000000',
-    name: 'Áslaug Björk Ingólfsdóttir',
+    name: 'Some Person',
     role: UserRole.COURT_OF_APPEALS_ASSISTANT,
     institution: { name: 'Landsréttur' },
   } as User

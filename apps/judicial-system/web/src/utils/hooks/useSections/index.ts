@@ -11,6 +11,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
@@ -74,6 +75,7 @@ import {
   isProsecutionUser,
   isProsecutorsOffice,
   isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
@@ -105,12 +107,22 @@ export const showsPublicProsecutorVerdictAppealStep = (
   user: User | undefined,
   features: Feature[],
   isRegisteringVerdictAppeal = false,
-): boolean =>
-  features.includes(Feature.INDICTMENT_APPEAL) &&
-  isIndictmentCase(workingCase.type) &&
-  isPublicProsecutionOfficeUser(user) &&
-  (hasStandingVerdictAppeal(workingCase.verdictAppealCase) ||
-    isRegisteringVerdictAppeal)
+): boolean => {
+  if (
+    !features.includes(Feature.INDICTMENT_APPEAL) ||
+    !isIndictmentCase(workingCase.type)
+  ) {
+    return false
+  }
+
+  const hasStanding = hasStandingVerdictAppeal(workingCase.verdictAppealCase)
+
+  if (isPublicProsecutionOfficeUser(user)) {
+    return hasStanding || isRegisteringVerdictAppeal
+  }
+
+  return isPublicProsecutionUser(user) && hasStanding
+}
 
 const useSections = (
   isValid = true,
@@ -1555,9 +1567,7 @@ const useSections = (
    *
    * Separate from getCourtOfAppealSections, which is built around a ruling
    * appeal - its steps, its state, and the appeal named in the query string.
-   * A verdict appeal is a different proceeding and will grow steps of its own;
-   * only the steps built so far are named here, because naming the rest would
-   * offer links to pages that do not answer yet.
+   * A verdict appeal is a different proceeding with steps of its own.
    */
   const getCourtOfAppealVerdictAppealSections = (
     workingCase: WorkingCase,
@@ -1567,7 +1577,8 @@ const useSections = (
       isActive:
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE) ||
-        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE),
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE) ||
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE),
       children: [
         {
           name: 'Yfirlit',
@@ -1622,6 +1633,30 @@ const useSections = (
               ? async () =>
                   await onNavigationTo(
                     COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
+                  )
+              : undefined,
+        },
+        {
+          name: 'Samantekt',
+          isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE),
+          href: appendAppealCaseIdQuery(
+            `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+            targetAppealCase?.id,
+          ),
+          onClick:
+            !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE) &&
+            validateFormStepper(
+              isValid,
+              [
+                COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+                COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
+              ],
+              workingCase,
+            ) &&
+            onNavigationTo
+              ? async () =>
+                  await onNavigationTo(
+                    COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
                   )
               : undefined,
         },

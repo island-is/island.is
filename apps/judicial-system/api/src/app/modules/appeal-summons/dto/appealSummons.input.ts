@@ -64,3 +64,11 @@ export class DeleteAppealSummonsInput {
   @Field(() => ID)
   readonly appealSummonsId!: string
 }
+
+@InputType()
+export class ConfirmAppealSummonsInput {
+  @Allow()
+  @IsUUID()
+  @Field(() => ID)
+  readonly appealSummonsId!: string
+}
