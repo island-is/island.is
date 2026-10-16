@@ -219,6 +219,16 @@ export const mobileNav = style({
   height: '100%',
 })
 
+export const mobileNavContent = style({
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100%',
+})
+
+export const menuFooter = style({
+  marginTop: 'auto',
+})
+
 export const shakeKeyframe = keyframes({
   from: {
     transform: 'translateX(0)',
