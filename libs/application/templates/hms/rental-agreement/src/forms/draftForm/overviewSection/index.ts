@@ -57,10 +57,10 @@ export const overviewSection = buildSection({
         }),
         // Property address
         buildOverviewField({
-          id: 'rentalInfoOverview',
+          id: 'rentalPropertyOverview',
           title: m.overview.propertyInfoHeader,
           items: rentalPropertyOverview,
-          backId: Routes.PROPERTYSEARCH,
+          backId: Routes.PROPERTYSEARCHPAGE,
         }),
         // Landlords
         buildOverviewField({
@@ -97,7 +97,7 @@ export const overviewSection = buildSection({
           id: 'rentalInfoOverview',
           title: m.overview.propertyInfoHeader,
           items: rentalInfoOverview,
-          backId: Routes.PROPERTYSEARCH,
+          backId: Routes.PROPERTYSEARCHPAGE,
         }),
         // Property registration
         buildOverviewField({
