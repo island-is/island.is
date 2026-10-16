@@ -1,10 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import {
+  FinanceClientV3PaymentErrorCode,
   FinanceClientV3ResultMissingError,
   FinanceClientV3Service,
+  getFinanceClientV3Problem,
 } from '@island.is/clients/finance-v3'
-import type { ProblemDetailsDt } from '@island.is/clients/finance-v3'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -38,63 +39,7 @@ const toRequestBody = ({
   })),
 })
 
-/**
- * The client throws `FetchError` for non-2xx responses. Duck typed so it also holds when the
- * class comes from another copy of the middlewares lib.
- */
-const getHttpErrorDetails = (
-  error: unknown,
-): { status: number; problem?: ProblemDetailsDt } | null => {
-  const e = error as {
-    name?: string
-    status?: unknown
-    body?: unknown
-  }
-
-  if (e?.name !== 'FetchError' || typeof e.status !== 'number') {
-    return null
-  }
-
-  // The spec wraps ProblemDetails in `error`, FJS also answers with it at the top level
-  const body = e.body as { error?: ProblemDetailsDt } | null | undefined
-  const problem =
-    body && typeof body === 'object'
-      ? body.error ?? (body as ProblemDetailsDt)
-      : undefined
-
-  return { status: e.status, problem }
-}
-
 const isAuthError = (status: number) => status === 401 || status === 403
-
-/**
- * The error codes FJS sends in the ProblemDetails `type` of a 400, from both `validatePayment`
- * and `payDebt`. `PayFlowAlreadyReceived` and `OtherPaymentInProgress` are handled on their own,
- * every other code is a rejection.
- */
-const FjsDebtErrorCode = {
-  /** Kennitala finnst ekki */
-  NationalIdNotFound: '2',
-  /** Reikningur (payid) finnst ekki */
-  PayIdNotFound: '3',
-  /** Reikningur (payid) tilheyrir ekki kennitölu */
-  PayIdNotOwnedByNationalId: '4',
-  /** Samtals greiðsla stemmir ekki við fjárhæð skulda */
-  TotalDoesNotMatchDebts: '5',
-  /** Búið að taka á móti álagningu, or it is being processed: the payFlowId is taken */
-  PayFlowAlreadyReceived: '6',
-  /** Gildisdagur ekki á formati YYYY-MM-DD */
-  InvalidPaymentDate: '10',
-  /** Ekki hægt að taka á móti greiðslu á meðan önnur greiðsla er í vinnslu */
-  OtherPaymentInProgress: '12',
-  /** Vantar greiðsluupplýsingar */
-  PayInfoMissing: '14',
-  /** Samtals greiðsla stemmir ekki við fjárhæð í greiðsluupplýsingum */
-  PayInfoAmountMismatch: '15',
-} as const
-
-const hasErrorCode = (problem: ProblemDetailsDt | undefined, code: string) =>
-  problem?.type?.trim() === code
 
 /**
  * Talks to FJS about debts, and sorts every way a call can go into an outcome the callers act
@@ -132,16 +77,16 @@ export class FjsDebtGateway {
         return { type: 'transient', error }
       }
 
-      const http = getHttpErrorDetails(error)
+      const http = getFinanceClientV3Problem(error)
       if (http?.status === 400) {
         if (
-          hasErrorCode(http.problem, FjsDebtErrorCode.PayFlowAlreadyReceived)
+          http.code === FinanceClientV3PaymentErrorCode.PayFlowAlreadyReceived
         ) {
           return { type: 'already_registered', problem: http.problem }
         }
         // Says nothing about these debts, they can be paid once the other payment is through
         if (
-          hasErrorCode(http.problem, FjsDebtErrorCode.OtherPaymentInProgress)
+          http.code === FinanceClientV3PaymentErrorCode.OtherPaymentInProgress
         ) {
           return { type: 'transient', error }
         }
@@ -171,17 +116,17 @@ export class FjsDebtGateway {
 
       return { type: 'registered', dateCreated: result.dateCreated }
     } catch (error) {
-      const http = getHttpErrorDetails(error)
+      const http = getFinanceClientV3Problem(error)
 
       if (http?.status === 400) {
         if (
-          hasErrorCode(http.problem, FjsDebtErrorCode.PayFlowAlreadyReceived)
+          http.code === FinanceClientV3PaymentErrorCode.PayFlowAlreadyReceived
         ) {
           return { type: 'already_registered', problem: http.problem }
         }
         // FJS turned the call away without taking it, a later retry can go through
         if (
-          hasErrorCode(http.problem, FjsDebtErrorCode.OtherPaymentInProgress)
+          http.code === FinanceClientV3PaymentErrorCode.OtherPaymentInProgress
         ) {
           return { type: 'busy', problem: http.problem }
         }
