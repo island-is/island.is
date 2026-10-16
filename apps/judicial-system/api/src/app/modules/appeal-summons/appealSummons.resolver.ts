@@ -124,7 +124,7 @@ export class AppealSummonsResolver {
 
   @Mutation(() => AppealSummons)
   confirmAppealSummons(
-    @Args('caseId', { type: () => String }) caseId: string,
+    @Args('caseId', new ParseUUIDPipe()) caseId: string,
     @Args('input', { type: () => ConfirmAppealSummonsInput })
     input: ConfirmAppealSummonsInput,
     @CurrentGraphQlUser() user: User,
@@ -143,9 +143,10 @@ export class AppealSummonsResolver {
     )
   }
 
+
   @Mutation(() => AppealSummons)
   sendAppealSummonsToCourtOfAppeals(
-    @Args('caseId', { type: () => String }) caseId: string,
+    @Args('caseId', new ParseUUIDPipe()) caseId: string,
     @Args('input', { type: () => SendAppealSummonsToCourtOfAppealsInput })
     input: SendAppealSummonsToCourtOfAppealsInput,
     @CurrentGraphQlUser() user: User,

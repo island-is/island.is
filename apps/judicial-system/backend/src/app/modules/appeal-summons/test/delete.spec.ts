@@ -48,7 +48,11 @@ describe('AppealSummonsController - Delete', () => {
     mockAppealSummonsRepositoryService =
       testingModule.appealSummonsRepositoryService
     mockAwsS3Service = testingModule.awsS3Service
-    transaction = {} as Transaction
+    transaction = {
+      afterCommit: jest.fn((callback: () => void) => {
+        void callback()
+      }),
+    } as unknown as Transaction
     appealSummonsController = testingModule.appealSummonsController
     ;(testingModule.sequelize.transaction as jest.Mock).mockImplementation(
       (callback) => callback(transaction),

@@ -97,6 +97,50 @@ describe('PdfService - getAppealSummonsPdf', () => {
     expect(result).toBe(pdf)
   })
 
+  it('fails when a hashed summons has no S3 object instead of regenerating', async () => {
+    ;(createAppealSummons as jest.Mock).mockClear()
+    ;(mockAwsS3Service.putObject as jest.Mock).mockClear()
+
+    await expect(
+      pdfService.getAppealSummonsPdf(
+        theCase,
+        user as never,
+        {
+          id: summonsId,
+          confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
+          hash: 'frozen-hash',
+          hashAlgorithm: HashAlgorithm.SHA256,
+          confirmedBy: user,
+          defendants: [],
+        } as AppealSummons,
+      ),
+    ).rejects.toThrow(
+      `Appeal summons ${summonsId} has a hash but its PDF was not found in S3`,
+    )
+
+    expect(createAppealSummons).not.toHaveBeenCalled()
+    expect(mockAwsS3Service.putObject).not.toHaveBeenCalled()
+  })
+
+  it('propagates an S3 upload failure for a confirmed summons', async () => {
+    ;(mockAwsS3Service.putObject as jest.Mock).mockRejectedValueOnce(
+      new Error('upload failed'),
+    )
+
+    await expect(
+      pdfService.getAppealSummonsPdf(
+        theCase,
+        user as never,
+        {
+          id: summonsId,
+          confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
+          confirmedBy: user,
+          defendants: [],
+        } as AppealSummons,
+      ),
+    ).rejects.toThrow('upload failed')
+  })
+
   it('does not touch S3 for an unconfirmed preview', async () => {
     await pdfService.getAppealSummonsPdf(theCase, user as never, undefined, [
       {

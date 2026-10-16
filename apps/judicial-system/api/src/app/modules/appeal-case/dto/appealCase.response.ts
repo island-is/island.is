@@ -10,6 +10,7 @@ import {
 import { AppealSummons } from '../../appeal-summons'
 import { CaseFile } from '../../file'
 import { User } from '../../user'
+import { AppealCourtSession } from './appealCourtSession.response'
 import { AppealEventLog } from './appealEventLog.response'
 
 registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
@@ -152,4 +153,8 @@ export class AppealCase {
   // reads this field only.
   @Field(() => [AppealSummons], { nullable: true })
   readonly sentAppealSummonses?: AppealSummons[]
+
+  // Only a verdict appeal carries sessions; a ruling appeal is decided on the papers.
+  @Field(() => [AppealCourtSession], { nullable: true })
+  readonly courtSessions?: AppealCourtSession[]
 }

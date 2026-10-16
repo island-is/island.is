@@ -26,6 +26,27 @@ export const m = defineMessages({
     defaultMessage: 'Nýtt',
     description: 'New',
   },
+  exportForm: {
+    id: 'form.system:export-form',
+    defaultMessage: 'Flytja út',
+    description: 'Export',
+  },
+  importForm: {
+    id: 'form.system:import-form',
+    defaultMessage: 'Flytja inn',
+    description: 'Import',
+  },
+  exportFormError: {
+    id: 'form.system:export-form-error',
+    defaultMessage: 'Ekki tókst að flytja út eyðublað.',
+    description: 'Form export failed',
+  },
+  importFormError: {
+    id: 'form.system:import-form-error',
+    defaultMessage:
+      'Ekki tókst að flytja inn eyðublað. Athugaðu skrána og stillingar stofnunar.',
+    description: 'Form import failed',
+  },
   newApplication: {
     id: 'form.system:new-application',
     defaultMessage: 'Ný umsókn',
@@ -879,6 +900,13 @@ export const m = defineMessages({
     id: 'form.system:invalid-national-id',
     defaultMessage: 'Ógild kennitala',
     description: 'Invalid national ID',
+  },
+  nationalIdLookupFailed: {
+    id: 'form.system:national-id-lookup-failed',
+    defaultMessage:
+      'Leitin skilaði ekki niðurstöðu. Kennitala fannst ekki eða þjónusta ekki tiltæk.',
+    description:
+      'The search yielded no results. The ID number was not found, or the service is unavailable.',
   },
   invalidPhoneNumber: {
     id: 'form.system:invalid-phone-number',

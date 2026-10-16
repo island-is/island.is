@@ -113,6 +113,7 @@ export default function RenewPrescriptionScreen() {
     if (!params.id || !selected) {
       toast.error(
         intl.formatMessage({ id: 'health.prescriptions.renewalModal.error' }),
+        { duration: 5000 },
       )
       return
     }
@@ -132,10 +133,12 @@ export default function RenewPrescriptionScreen() {
       router.back()
       toast.success(
         intl.formatMessage({ id: 'health.prescriptions.renewalModal.success' }),
+        { duration: 5000 },
       )
     } catch {
       toast.error(
         intl.formatMessage({ id: 'health.prescriptions.renewalModal.error' }),
+        { duration: 5000 },
       )
     }
   }

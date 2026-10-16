@@ -50,14 +50,18 @@ import {
   childUnder16,
   companyUser,
   deceasedUser,
+  delegateWhoDeclinesInformationalNotifications,
   delegationSubjectId,
+  delegatorWithRestrictedDelegate,
   getMockHnippTemplate,
   inactiveCompanyStatus,
   inactiveCompanyUser,
   legalGuardianOne,
   legalGuardianTwo,
   mockTemplateId,
+  restrictedDelegatorWithDelegate,
   userProfiles,
+  userWhoDeclinesInformationalNotifications,
   userWithDelegations,
   userWithDelegations2,
   userWithDocumentNotificationsDisabled,
@@ -71,6 +75,7 @@ import { NotificationsWorkerService } from './notificationsWorker.service'
 import { EmailWorkerService, EmailQueueMessage } from './emailWorker.service'
 import { SmsWorkerService, SmsQueueMessage } from './smsWorker.service'
 import { PushWorkerService, PushQueueMessage } from './pushWorker.service'
+import { HnippTemplatePriorityType } from '../dto/hnippTemplate.response'
 
 const workingHoursDelta = 1000 * 60 * 60 // 1 hour
 const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
@@ -221,10 +226,11 @@ describe('NotificationsWorkerService', () => {
     await truncate(sequelize)
   })
 
-  const addToQueue = async (recipient: string) => {
+  const addToQueue = async (recipient: string, urgent?: boolean) => {
     await queue.add({
       recipient,
       templateId: mockTemplateId,
+      urgent,
       args: [{ key: 'organization', value: 'Test Crew' }],
     })
 
@@ -1036,6 +1042,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [{ key: 'organization', value: 'Test Crew' }],
         scope: '@island.is/documents',
+        wasSent: true,
       })
 
       // Now add an actor notification to the queue (with onBehalfOf and rootMessageId)
@@ -1251,6 +1258,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [],
         scope: '@island.is/documents',
+        wasSent: true,
       })
 
       await emailSubQueue.add({
@@ -1286,6 +1294,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [],
         scope: '@island.is/documents',
+        wasSent: true,
       })
 
       await smsSubQueue.add({
@@ -1351,6 +1360,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [],
         scope: '@island.is/documents',
+        wasSent: true,
       })
 
       await smsSubQueue.add({
@@ -1403,6 +1413,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [],
         scope: '@island.is/documents',
+        wasSent: true,
       })
 
       await smsSubQueue.add({
@@ -1440,6 +1451,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [],
         scope: '@island.is/documents',
+        wasSent: true,
       })
 
       await pushSubQueue.add({
@@ -1477,6 +1489,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [],
         scope: '@island.is/documents',
+        wasSent: true,
       })
 
       await emailSubQueue.add({
@@ -1501,6 +1514,319 @@ describe('NotificationsWorkerService', () => {
         },
       })
       expect(record).toBeNull()
+    })
+  })
+
+  describe('when user declines informational notification', () => {
+    // userWhoDeclinesInformationalNotifications has
+    // onlyActionablePriorityNotifications set, so notificationsWorker.service.ts
+    // should suppress non-urgent notifications whose template isn't Actionable.
+    const recipient = userWhoDeclinesInformationalNotifications.nationalId
+
+    describe.each<{
+      isUrgent: boolean
+      priorityType: HnippTemplatePriorityType
+      shouldSend: boolean
+    }>([
+      { isUrgent: true, priorityType: 'Informative', shouldSend: true },
+      { isUrgent: true, priorityType: 'Actionable', shouldSend: true },
+      { isUrgent: true, priorityType: undefined, shouldSend: true },
+      { isUrgent: false, priorityType: 'Informative', shouldSend: false },
+      { isUrgent: false, priorityType: 'Actionable', shouldSend: true },
+      { isUrgent: false, priorityType: undefined, shouldSend: false },
+    ])(
+      'and given notification urgency is $isUrgent and template priority is $priorityType',
+      ({ isUrgent, priorityType, shouldSend }) => {
+        beforeEach(() => {
+          jest
+            .spyOn(notificationsService, 'getTemplate')
+            .mockReturnValue(
+              Promise.resolve(getMockHnippTemplate({ priorityType })),
+            )
+        })
+
+        it(`should ${
+          shouldSend ? 'send' : 'not send'
+        } notifications`, async () => {
+          await addToQueue(recipient, isUrgent)
+
+          if (shouldSend) {
+            expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
+            expect(
+              notificationDispatch.sendPushNotification,
+            ).toHaveBeenCalledTimes(1)
+          } else {
+            expect(emailService.sendEmail).not.toHaveBeenCalled()
+            expect(
+              notificationDispatch.sendPushNotification,
+            ).not.toHaveBeenCalled()
+          }
+        })
+      },
+    )
+
+    it('should still send SMS for templates with smsDelivery ALWAYS but no email or push', async () => {
+      jest.clearAllMocks()
+      jest.spyOn(notificationsService, 'getTemplate').mockReturnValue(
+        Promise.resolve(
+          getMockHnippTemplate({
+            priorityType: 'Informative',
+            smsDelivery: 'ALWAYS',
+          }),
+        ),
+      )
+
+      await addToQueue(recipient, false)
+      await wait(5)
+
+      const calledNumbers = (smsService.sendSms as jest.Mock).mock.calls.map(
+        (call) => call[0],
+      )
+      expect(calledNumbers).toContain(
+        userWhoDeclinesInformationalNotifications.mobilePhoneNumber,
+      )
+      expect(emailService.sendEmail).not.toHaveBeenCalled()
+      expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
+    })
+
+    it('should not send SMS for OPT_IN templates', async () => {
+      jest.clearAllMocks()
+      jest.spyOn(notificationsService, 'getTemplate').mockReturnValue(
+        Promise.resolve(
+          getMockHnippTemplate({
+            priorityType: 'Informative',
+            smsDelivery: 'OPT_IN',
+          }),
+        ),
+      )
+
+      await addToQueue(recipient, false)
+      await wait(5)
+
+      const calledNumbers = (smsService.sendSms as jest.Mock).mock.calls.map(
+        (call) => call[0],
+      )
+      expect(calledNumbers).not.toContain(
+        userWhoDeclinesInformationalNotifications.mobilePhoneNumber,
+      )
+    })
+  })
+
+  // Delegates will be handled specfically and these test might become relevant
+  // when the logic for them has been decided.
+  describe.skip('when a delegate declines informational notification', () => {
+    // The delegate is the end receiver, so their own
+    // onlyActionablePriorityNotifications decides, not the delegator's.
+    const delegator = userWithDelegations
+    const unrestrictedDelegate = userWithNoDelegations
+    const restrictedDelegate = delegateWhoDeclinesInformationalNotifications
+
+    const sentEmailAddresses = () =>
+      (emailService.sendEmail as jest.Mock).mock.calls.map(
+        (call) => call[0].to.address,
+      )
+
+    const sentSmsNumbers = () =>
+      (smsService.sendSms as jest.Mock).mock.calls.map((call) => call[0])
+
+    // Enqueues the actor message directly, isolating the delegate decision
+    // from the fan-out in handleSendingNotificationsToDelegations.
+    const addActorToQueue = async ({
+      delegate,
+      urgent,
+      forceSmsToMinorGuardian,
+    }: {
+      delegate: typeof unrestrictedDelegate
+      urgent?: boolean
+      forceSmsToMinorGuardian?: boolean
+    }) => {
+      const root = await notificationModel.create({
+        messageId: randomUUID(),
+        recipient: delegator.nationalId,
+        templateId: mockTemplateId,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+        scope: '@island.is/documents',
+        wasSent: true,
+      })
+
+      await queue.add({
+        recipient: delegate.nationalId,
+        templateId: mockTemplateId,
+        urgent,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+        rootMessageId: root.messageId,
+        forceSmsToMinorGuardian,
+        onBehalfOf: {
+          nationalId: delegator.nationalId,
+          name: delegator.name,
+        },
+      })
+
+      await wait(5)
+    }
+
+    describe.each<{
+      delegateRestricted: boolean
+      isUrgent: boolean
+      priorityType: HnippTemplatePriorityType
+      emailSent: boolean
+    }>([
+      {
+        delegateRestricted: false,
+        isUrgent: false,
+        priorityType: 'Informative',
+        emailSent: true,
+      },
+      {
+        delegateRestricted: false,
+        isUrgent: false,
+        priorityType: undefined,
+        emailSent: true,
+      },
+      {
+        delegateRestricted: true,
+        isUrgent: true,
+        priorityType: 'Informative',
+        emailSent: true,
+      },
+      {
+        delegateRestricted: true,
+        isUrgent: false,
+        priorityType: 'Actionable',
+        emailSent: true,
+      },
+      {
+        delegateRestricted: true,
+        isUrgent: false,
+        priorityType: 'Informative',
+        emailSent: false,
+      },
+      {
+        delegateRestricted: true,
+        isUrgent: false,
+        priorityType: undefined,
+        emailSent: false,
+      },
+    ])(
+      'email: delegateRestricted $delegateRestricted, urgent $isUrgent, priority $priorityType',
+      ({ delegateRestricted, isUrgent, priorityType, emailSent }) => {
+        it(`should ${
+          emailSent ? 'send' : 'not send'
+        } email to the delegate`, async () => {
+          const delegate = delegateRestricted
+            ? restrictedDelegate
+            : unrestrictedDelegate
+          jest
+            .spyOn(notificationsService, 'getTemplate')
+            .mockReturnValue(
+              Promise.resolve(getMockHnippTemplate({ priorityType })),
+            )
+
+          await addActorToQueue({ delegate, urgent: isUrgent })
+
+          if (emailSent) {
+            expect(sentEmailAddresses()).toContain(delegate.email)
+          } else {
+            expect(sentEmailAddresses()).not.toContain(delegate.email)
+          }
+        })
+      },
+    )
+
+    describe.each<{
+      smsDelivery: string
+      delegateRestricted: boolean
+      forceSmsToMinorGuardian: boolean
+      smsSent: boolean
+    }>([
+      {
+        smsDelivery: 'OPT_IN',
+        delegateRestricted: false,
+        forceSmsToMinorGuardian: false,
+        smsSent: true,
+      },
+      {
+        smsDelivery: 'OPT_IN',
+        delegateRestricted: true,
+        forceSmsToMinorGuardian: false,
+        smsSent: false,
+      },
+      {
+        smsDelivery: 'OPT_IN',
+        delegateRestricted: true,
+        forceSmsToMinorGuardian: true,
+        smsSent: true,
+      },
+      {
+        smsDelivery: 'ALWAYS',
+        delegateRestricted: true,
+        forceSmsToMinorGuardian: false,
+        smsSent: true,
+      },
+    ])(
+      'sms: $smsDelivery, delegateRestricted $delegateRestricted, forced $forceSmsToMinorGuardian',
+      ({
+        smsDelivery,
+        delegateRestricted,
+        forceSmsToMinorGuardian,
+        smsSent,
+      }) => {
+        it(`should ${
+          smsSent ? 'send' : 'not send'
+        } SMS to the delegate`, async () => {
+          const delegate = delegateRestricted
+            ? restrictedDelegate
+            : unrestrictedDelegate
+          jest.spyOn(notificationsService, 'getTemplate').mockReturnValue(
+            Promise.resolve(
+              getMockHnippTemplate({
+                priorityType: 'Informative',
+                smsDelivery,
+              }),
+            ),
+          )
+
+          await addActorToQueue({ delegate, forceSmsToMinorGuardian })
+
+          if (smsSent) {
+            expect(sentSmsNumbers()).toContain(delegate.mobilePhoneNumber)
+          } else {
+            expect(sentSmsNumbers()).not.toContain(delegate.mobilePhoneNumber)
+          }
+        })
+      },
+    )
+
+    describe('fan-out from the delegator', () => {
+      beforeEach(() => {
+        jest
+          .spyOn(notificationsService, 'getTemplate')
+          .mockReturnValue(
+            Promise.resolve(
+              getMockHnippTemplate({ priorityType: 'Informative' }),
+            ),
+          )
+      })
+
+      it('should still notify an unrestricted delegate when the delegator is restricted', async () => {
+        await addToQueue(restrictedDelegatorWithDelegate.nationalId)
+        await wait(4)
+
+        expect(sentEmailAddresses()).not.toContain(
+          restrictedDelegatorWithDelegate.email,
+        )
+        expect(sentEmailAddresses()).toContain(unrestrictedDelegate.email)
+      })
+
+      it('should not notify a restricted delegate when the delegator is unrestricted', async () => {
+        await addToQueue(delegatorWithRestrictedDelegate.nationalId)
+        await wait(4)
+
+        expect(sentEmailAddresses()).toContain(
+          delegatorWithRestrictedDelegate.email,
+        )
+        expect(sentEmailAddresses()).not.toContain(restrictedDelegate.email)
+      })
     })
   })
 })

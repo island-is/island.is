@@ -20,6 +20,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { AppealCourtSession } from './appealCourtSession.model'
 import { AppealEventLog } from './appealEventLog.model'
 import { AppealSummons } from './appealSummons.model'
 import { Case } from './case.model'
@@ -282,4 +283,11 @@ export class AppealCase extends Model {
   })
   @ApiPropertyOptional({ type: () => AppealSummons, isArray: true })
   sentAppealSummonses?: AppealSummons[]
+
+  /**********
+   * Court sessions (þinghöld) the court of appeals has called in this verdict appeal
+   **********/
+  @HasMany(() => AppealCourtSession, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealCourtSession, isArray: true })
+  courtSessions?: AppealCourtSession[]
 }

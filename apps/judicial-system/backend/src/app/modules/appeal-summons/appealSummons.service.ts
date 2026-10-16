@@ -10,6 +10,7 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { MessageType } from '@island.is/judicial-system/message'
+
 import {
   AppealCaseNotificationType,
   AppealEventType,
@@ -31,6 +32,7 @@ import {
   Case,
 } from '../repository'
 import { CreateAppealSummonsDto } from './dto/createAppealSummons.dto'
+import { PreviewAppealSummonsDto } from './dto/previewAppealSummons.dto'
 
 @Injectable()
 export class AppealSummonsService {
@@ -53,6 +55,25 @@ export class AppealSummonsService {
       theCase.type,
       this.appealSummonsPdfKey(theCase.id, summonsId),
     )
+  }
+
+  // Edit clears the hash then deletes S3 after commit. A confirmation that
+  // lands between those steps would upload a new PDF and set a hash; skip the
+  // delete so we do not remove that object.
+  private async tryDeleteCachedPdfIfUnconfirmed(
+    theCase: Case,
+    summonsId: string,
+  ) {
+    const current = await this.appealSummonsRepositoryService.findByIdAndCaseId(
+      summonsId,
+      theCase.id,
+    )
+
+    if (current?.hash) {
+      return
+    }
+
+    await this.tryDeleteCachedPdf(theCase, summonsId)
   }
 
   async create(
@@ -135,7 +156,7 @@ export class AppealSummonsService {
       )
     }
 
-    const resolvedDefendants = this.resolveDefendants(theCase, dto)
+    const resolvedDefendants = this.resolveDefendants(theCase, dto, summons)
 
     if (summons.confirmedDate) {
       await this.appealSummonsRepositoryService.update(
@@ -149,7 +170,20 @@ export class AppealSummonsService {
         },
         { transaction },
       )
-      await this.tryDeleteCachedPdf(theCase, summons.id)
+      // Delete after commit so a rolled-back edit cannot leave the DB hash
+      // pointing at a PDF that S3 already removed. Re-check hash so a
+      // confirmation that finished in between is not wiped. Catch cleanup
+      // failures: the edit is already committed and must not fail the request.
+      transaction.afterCommit(async () => {
+        try {
+          await this.tryDeleteCachedPdfIfUnconfirmed(theCase, summons.id)
+        } catch (reason) {
+          this.logger.error(
+            `Failed to delete cached appeal summons PDF for ${summons.id} after edit`,
+            { reason },
+          )
+        }
+      })
     }
 
     await this.appealSummonsRepositoryService.deleteDefendants(summons.id, {
@@ -204,7 +238,17 @@ export class AppealSummonsService {
     )
 
     if (deleted) {
-      await this.tryDeleteCachedPdf(theCase, summons.id)
+      // Same as update: only drop the cached PDF once the row is gone.
+      transaction.afterCommit(async () => {
+        try {
+          await this.tryDeleteCachedPdf(theCase, summons.id)
+        } catch (reason) {
+          this.logger.error(
+            `Failed to delete cached appeal summons PDF for ${summons.id} after delete`,
+            { reason },
+          )
+        }
+      })
     }
 
     return deleted
@@ -372,9 +416,43 @@ export class AppealSummonsService {
     return result
   }
 
+  async resolvePreviewDefendants(
+    theCase: Case,
+    dto: PreviewAppealSummonsDto,
+  ): Promise<
+    {
+      defendantId: string
+      appellantSide: AppealSummonsAppellantSide
+      claims: string
+    }[]
+  > {
+    let existingSummons: AppealSummons | undefined
+
+    if (dto.appealSummonsId) {
+      const summons =
+        await this.appealSummonsRepositoryService.findByIdAndCaseId(
+          dto.appealSummonsId,
+          theCase.id,
+        )
+
+      if (!summons) {
+        throw new BadRequestException(
+          `Appeal summons ${dto.appealSummonsId} not found for case ${theCase.id}`,
+        )
+      }
+
+      existingSummons = summons
+    }
+
+    return this.resolveDefendants(theCase, dto, existingSummons)
+  }
+
   resolveDefendants(
     theCase: Case,
-    dto: CreateAppealSummonsDto,
+    dto: Pick<CreateAppealSummonsDto, 'defendants'>,
+    // On update/preview of an existing summons, defendants already on it may
+    // be kept even if their appeal was later withdrawn.
+    existingSummons?: Pick<AppealSummons, 'defendants'>,
   ): {
     defendantId: string
     appellantSide: AppealSummonsAppellantSide
@@ -387,6 +465,9 @@ export class AppealSummonsService {
     }
 
     const standing = standingVerdictAppellants(appealCase)
+    const existingByDefendant = new Map(
+      (existingSummons?.defendants ?? []).map((row) => [row.defendantId, row]),
+    )
     const defendantIds = dto.defendants.map(
       (defendant) => defendant.defendantId,
     )
@@ -413,9 +494,19 @@ export class AppealSummonsService {
         .map((appellant) => appellant.side)
 
       if (sides.length === 0) {
-        throw new BadRequestException(
-          `Defendant ${defendant.defendantId} has no standing verdict appeal`,
-        )
+        const existing = existingByDefendant.get(defendant.defendantId)
+
+        if (!existing) {
+          throw new BadRequestException(
+            `Defendant ${defendant.defendantId} has no standing verdict appeal`,
+          )
+        }
+
+        return {
+          defendantId: defendant.defendantId,
+          appellantSide: existing.appellantSide,
+          claims: defendant.claims,
+        }
       }
 
       const appellantSide =

@@ -46,6 +46,12 @@ describe('AppealSummonsController - sendToCourtOfAppeals guards', () => {
   ])
 })
 
+describe('AppealSummonsController - sendToCourtOfAppeals roles', () => {
+  verifyRolesRules(AppealSummonsController, 'sendToCourtOfAppeals', [
+    publicProsecutorStaffRule,
+  ])
+})
+
 describe('AppealSummonsController - getPdf guards', () => {
   verifyGuards(AppealSummonsController, 'getPdf', [AppealSummonsExistsGuard])
 })
@@ -70,12 +76,6 @@ describe('AppealSummonsController - delete roles', () => {
 
 describe('AppealSummonsController - confirm roles', () => {
   verifyRolesRules(AppealSummonsController, 'confirm', [prosecutorRule])
-})
-
-describe('AppealSummonsController - sendToCourtOfAppeals roles', () => {
-  verifyRolesRules(AppealSummonsController, 'sendToCourtOfAppeals', [
-    publicProsecutorStaffRule,
-  ])
 })
 
 describe('AppealSummonsController - getPdf roles', () => {

@@ -301,6 +301,23 @@ export class PdfService {
       })
   }
 
+  private async uploadPdfToS3(
+    theCase: Case,
+    key: string,
+    pdf: Buffer,
+  ): Promise<void> {
+    try {
+      await this.awsS3Service.putObject(
+        theCase.type,
+        key,
+        pdf.toString('binary'),
+      )
+    } catch (reason) {
+      this.logger.error(`Failed to upload pdf ${key} to AWS S3`, { reason })
+      throw reason
+    }
+  }
+
   private async getFullOriginalCase(
     theCase: Case,
     transaction?: Transaction,
@@ -608,6 +625,11 @@ export class PdfService {
       if (existingPdf) {
         return existingPdf
       }
+
+      // Do not regenerate: served bytes would no longer match the frozen hash.
+      throw new InternalServerErrorException(
+        `Appeal summons ${summons.id} has a hash but its PDF was not found in S3`,
+      )
     }
 
     if (!theCase.rulingDate) {
@@ -665,10 +687,10 @@ export class PdfService {
       )
     }
 
-    // Confirm generates the stamped PDF before the hash is written; upload
-    // then so the next GET (with hash) can serve the same bytes.
+    // Confirm awaits the upload before the caller persists the hash, so a
+    // failed put cannot leave a confirmed summons with no S3 object.
     if (summons?.confirmedDate && key) {
-      this.tryUploadPdfToS3(theCase, key, generatedPdf)
+      await this.uploadPdfToS3(theCase, key, generatedPdf)
     }
 
     return generatedPdf

@@ -98,7 +98,11 @@ describe('AppealSummonsController - Update', () => {
     appealSummonsController = controller
 
     const mockTransaction = sequelize.transaction as jest.Mock
-    transaction = {} as Transaction
+    transaction = {
+      afterCommit: jest.fn((callback: () => void) => {
+        void callback()
+      }),
+    } as unknown as Transaction
     mockTransaction.mockImplementation(
       (fn: (transaction: Transaction) => Promise<unknown>) => fn(transaction),
     )
@@ -178,6 +182,82 @@ describe('AppealSummonsController - Update', () => {
     expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(
       theCase.type,
       `${caseId}/appealSummons/${summonsId}.pdf`,
+    )
+  })
+
+  it('does not delete the cached PDF when a confirmation landed before cleanup', async () => {
+    const summons = {
+      id: summonsId,
+      confirmedDate: new Date(),
+      confirmedById: uuid(),
+      hash: 'abc',
+    } as AppealSummons
+    ;(
+      mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
+    ).mockResolvedValue({
+      ...updated,
+      hash: 'reconfirmed-hash',
+    } as AppealSummons)
+
+    await appealSummonsController.update(
+      caseId,
+      summonsId,
+      theCase,
+      summons,
+      dto,
+      user,
+    )
+
+    expect(mockAwsS3Service.deleteObject).not.toHaveBeenCalled()
+  })
+
+  it('keeps a defendant already on the summons after their appeal is withdrawn', async () => {
+    const withdrawnDefendantId = uuid()
+    const caseWithWithdrawn = {
+      ...theCase,
+      defendants: [
+        defendant,
+        { id: withdrawnDefendantId, name: 'Withdrawn' } as Defendant,
+      ],
+    } as Case
+    const summons = {
+      id: summonsId,
+      defendants: [
+        {
+          defendantId: withdrawnDefendantId,
+          appellantSide: AppealSummonsAppellantSide.DEFENCE,
+          claims: 'Old claims',
+        },
+      ],
+    } as AppealSummons
+    const dtoWithWithdrawn: CreateAppealSummonsDto = {
+      defendants: [
+        {
+          defendantId: withdrawnDefendantId,
+          claims: 'Kept after withdraw',
+        },
+      ],
+    }
+
+    await appealSummonsController.update(
+      caseId,
+      summonsId,
+      caseWithWithdrawn,
+      summons,
+      dtoWithWithdrawn,
+      user,
+    )
+
+    expect(
+      mockAppealSummonsRepositoryService.createDefendant,
+    ).toHaveBeenCalledWith(
+      {
+        appealSummonsId: summonsId,
+        defendantId: withdrawnDefendantId,
+        appellantSide: AppealSummonsAppellantSide.DEFENCE,
+        claims: 'Kept after withdraw',
+      },
+      { transaction },
     )
   })
 

@@ -154,6 +154,7 @@ const VerdictAppealFiles: FC = () => {
     setSummonsIdToConfirm(undefined)
   }
 
+
   const handleSendAppealSummonsToCourtOfAppeals = async () => {
     if (!summonsIdToSend) {
       return
@@ -352,6 +353,7 @@ const VerdictAppealFiles: FC = () => {
           title="Eyða áfrýjunarstefnu"
           text="Ertu viss um að þú viljir eyða þessari áfrýjunarstefnu?"
           onClose={() => setSummonsIdToDelete(undefined)}
+          loading={isDeletingAppealSummons}
           buttons={[
             {
               text: 'Hætta við',
@@ -374,6 +376,7 @@ const VerdictAppealFiles: FC = () => {
           title="Viltu staðfesta áfrýjunarstefnu?"
           text="Áfrýjunarstefnan verður staðfest rafrænt í þínu nafni. Ef henni er breytt síðar þarf að staðfesta hana aftur."
           onClose={() => setSummonsIdToConfirm(undefined)}
+          loading={isConfirmingAppealSummons}
           buttons={[
             {
               text: 'Hætta við',
@@ -390,6 +393,7 @@ const VerdictAppealFiles: FC = () => {
           ]}
         />
       )}
+
       {summonsIdToSend && (
         <Modal
           title="Viltu senda áfrýjunarstefnu til Landsréttar?"
