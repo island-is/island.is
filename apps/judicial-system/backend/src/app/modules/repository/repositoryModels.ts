@@ -1,4 +1,5 @@
 import { AppealCase } from './models/appealCase.model'
+import { AppealCaseJudge } from './models/appealCaseJudge.model'
 import { AppealCourtSession } from './models/appealCourtSession.model'
 import { AppealDecision } from './models/appealDecision.model'
 import { AppealEventLog } from './models/appealEventLog.model'
@@ -42,6 +43,7 @@ import { Victim } from './models/victim.model'
  */
 export const repositoryModels = [
   AppealCase,
+  AppealCaseJudge,
   AppealDecision,
   AppealCourtSession,
   AppealEventLog,

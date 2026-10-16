@@ -17,6 +17,7 @@ import { EventService } from '../../event'
 import { FileService } from '../../file'
 import { LawyerRegistryService } from '../../lawyer-registry/lawyerRegistry.service'
 import {
+  AppealCaseJudgeRepositoryService,
   AppealCaseRepositoryService,
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
@@ -40,6 +41,7 @@ jest.mock('../../lawyer-registry/lawyerRegistry.service')
 jest.mock('../../file/file.service')
 jest.mock('../../user/user.service')
 jest.mock('../../repository/services/appealCaseRepository.service')
+jest.mock('../../repository/services/appealCaseJudgeRepository.service')
 jest.mock('../../repository/services/appealDecisionRepository.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
@@ -64,6 +66,7 @@ export const createTestingAppealCaseModule = async () => {
       FileService,
       UserService,
       AppealCaseRepositoryService,
+      AppealCaseJudgeRepositoryService,
       AppealDecisionRepositoryService,
       AppealEventLogRepositoryService,
       CaseRepositoryService,
@@ -86,6 +89,11 @@ export const createTestingAppealCaseModule = async () => {
   const appealCaseRepositoryService =
     appealCaseModule.get<AppealCaseRepositoryService>(
       AppealCaseRepositoryService,
+    )
+
+  const appealCaseJudgeRepositoryService =
+    appealCaseModule.get<AppealCaseJudgeRepositoryService>(
+      AppealCaseJudgeRepositoryService,
     )
 
   const appealDecisionRepositoryService =
@@ -137,6 +145,7 @@ export const createTestingAppealCaseModule = async () => {
 
   return {
     appealCaseRepositoryService,
+    appealCaseJudgeRepositoryService,
     appealDecisionRepositoryService,
     appealEventLogRepositoryService,
     caseRepositoryService,

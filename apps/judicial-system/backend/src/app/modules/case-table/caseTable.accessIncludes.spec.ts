@@ -102,8 +102,8 @@ describe('access rules carry the joins they read', () => {
   const captureSql = async (run: () => Promise<unknown>): Promise<string> =>
     (await captureRawSql(run)).replace(/\s+/g, ' ')
 
-  // Aliases the SQL reads, other than the case itself. Digits included -
-  // `appealJudge1` is a real alias, and letters alone would not see it, which
+  // Aliases the SQL reads, other than the case itself. Digits included so an
+  // alias with a digit in it is seen too; letters alone would miss it, which
   // is the wrong way for the broad net to fail. Nested aliases render as
   // "appealCase->appealEventLogs" and are deliberately out of scope.
   const aliasesRead = (sql: string) =>

@@ -23,9 +23,7 @@ const prosecutorFields: (keyof UpdateAppealCaseDto)[] = [
 const courtOfAppealsUpdateFields: (keyof UpdateAppealCaseDto)[] = [
   'appealCaseNumber',
   'appealAssistantId',
-  'appealJudge1Id',
-  'appealJudge2Id',
-  'appealJudge3Id',
+  'appealJudgeIds',
   'appealConclusion',
   'appealRulingDecision',
   'appealRulingModifiedHistory',
