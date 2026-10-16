@@ -16,6 +16,7 @@ import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import {
   BankTransferFailureReason,
+  BankTransferPayerType,
   BankTransferStatus,
   BankTransferPendingStatus,
 } from './bankTransfer.types'
@@ -624,6 +625,10 @@ describe('BankTransferService', () => {
         expect(blikkSpy).not.toHaveBeenCalled()
         expect(bankTransferPaymentModel.create).not.toHaveBeenCalled()
         expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
+        expect(logger.warn).toHaveBeenCalledWith(expect.any(String), {
+          paymentFlowId: 'flow-1',
+          payerType: BankTransferPayerType.COMPANY,
+        })
       })
 
       it('debits the company with the entered individual authorising it', async () => {
@@ -642,6 +647,19 @@ describe('BankTransferService', () => {
         expect(
           JSON.stringify(paymentFlowService.logPaymentFlowUpdate.mock.calls),
         ).not.toContain('0101302129')
+      })
+
+      it('logs the company payer type, on the log line only', async () => {
+        mockBlikkCreate()
+
+        await service.create({ ...createInput, actorNationalId: '0101302129' })
+
+        const [update] = paymentFlowService.logPaymentFlowUpdate.mock.calls[0]
+        expect(update.reason).toBe('payment_started')
+        expect(update.logContext).toMatchObject({
+          payerType: BankTransferPayerType.COMPANY,
+        })
+        expect(update.metadata).not.toHaveProperty('payerType')
       })
 
       it.each<[string, string | undefined]>([
@@ -741,6 +759,7 @@ describe('BankTransferService', () => {
           paymentFlowId: 'flow-1',
           correlationId: rowArg.id,
           rrn: 'prov-1',
+          payerType: BankTransferPayerType.PERSON,
           rawStatus: 'ERROR',
           providerMessage: 'debtor account not eligible',
         },
@@ -1135,6 +1154,7 @@ describe('BankTransferService', () => {
             paymentFlowId: 'flow-1',
             correlationId: 'corr-1',
             rrn: 'prov-1',
+            payerType: BankTransferPayerType.PERSON,
             rawStatus,
             providerMessage: 'provider detail',
           },
@@ -1839,6 +1859,7 @@ describe('BankTransferService', () => {
             paymentFlowId: 'flow-1',
             correlationId: 'corr-1',
             rrn: 'prov-1',
+            payerType: BankTransferPayerType.PERSON,
           },
         },
         { useRetry: true, throwOnError: false },
@@ -2353,6 +2374,7 @@ describe('BankTransferService', () => {
         paymentFlowId: 'flow-1',
         confirmationRefId: 'corr-1',
         providerPaymentId: 'prov-1',
+        payerType: BankTransferPayerType.PERSON,
         chargePayload: dummyCharge,
       })
 
@@ -2369,6 +2391,7 @@ describe('BankTransferService', () => {
         paymentFlowId: 'flow-1',
         confirmationRefId: 'corr-1',
         providerPaymentId: 'prov-1',
+        payerType: BankTransferPayerType.PERSON,
         chargePayload: dummyCharge,
       })
 
@@ -2385,6 +2408,7 @@ describe('BankTransferService', () => {
         paymentFlowId: 'flow-1',
         confirmationRefId: 'corr-1',
         providerPaymentId: 'prov-1',
+        payerType: BankTransferPayerType.PERSON,
         chargePayload: dummyCharge,
       })
 
@@ -2412,6 +2436,7 @@ describe('BankTransferService', () => {
           paymentFlowId: 'flow-1',
           confirmationRefId: 'corr-1',
           providerPaymentId: 'prov-1',
+          payerType: BankTransferPayerType.PERSON,
           chargePayload: dummyCharge,
         }),
       ).resolves.toBeUndefined()
@@ -2432,6 +2457,7 @@ describe('BankTransferService', () => {
           paymentFlowId: 'flow-1',
           confirmationRefId: 'corr-1',
           providerPaymentId: 'prov-1',
+          payerType: BankTransferPayerType.PERSON,
           chargePayload: dummyCharge,
         }),
       ).rejects.toThrow('connection reset')
@@ -2447,6 +2473,7 @@ describe('BankTransferService', () => {
           paymentFlowId: 'flow-1',
           confirmationRefId: 'corr-1',
           providerPaymentId: 'prov-1',
+          payerType: BankTransferPayerType.PERSON,
           chargePayload: dummyCharge,
         }),
       ).resolves.toBeUndefined()
