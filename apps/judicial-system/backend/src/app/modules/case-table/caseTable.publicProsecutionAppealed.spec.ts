@@ -1,8 +1,4 @@
 import { Op } from 'sequelize'
-import type { ModelCtor } from 'sequelize-typescript'
-import { Model, Sequelize } from 'sequelize-typescript'
-
-import { getOptions } from '@island.is/nest/sequelize'
 
 import type { User } from '@island.is/judicial-system/types'
 import {
@@ -13,7 +9,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import * as repository from '../repository'
-import { notHiddenByHeightenedSecurityWhereOptions } from './whereOptions/access'
+import {
+  notHiddenByHeightenedSecurityWhereOptions,
+  publicProsecutionIndictmentsAccessWhereOptions,
+} from './whereOptions/access'
+import { captureSql, initCaseTableModels } from './caseTable.sqlProbe'
 import {
   getAllIncludes,
   getAttributes,
@@ -45,45 +45,7 @@ describe('public prosecution appealed case list', () => {
     },
   } as User
 
-  beforeAll(() => {
-    const models = Object.values(repository).filter(
-      (exported) =>
-        typeof exported === 'function' && exported.prototype instanceof Model,
-    ) as ModelCtor[]
-
-    new Sequelize({
-      dialect: 'postgres',
-      models,
-      logging: false,
-      define: getOptions().define,
-    })
-  })
-
-  const captureSql = async (run: () => Promise<unknown>): Promise<string> => {
-    const sequelize = repository.Case.sequelize as Sequelize
-    const queries: string[] = []
-    const stub = (sql: unknown) => {
-      queries.push(typeof sql === 'string' ? sql : JSON.stringify(sql))
-      return Promise.resolve([[], {}])
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const anySequelize = sequelize as any
-    const originalQuery = anySequelize.query
-    const originalQueryRaw = anySequelize.queryRaw
-    anySequelize.query = stub
-    anySequelize.queryRaw = stub
-
-    try {
-      await run()
-    } catch {
-      // Building the query is the subject here; running it is not.
-    } finally {
-      anySequelize.query = originalQuery
-      anySequelize.queryRaw = originalQueryRaw
-    }
-
-    return queries[0] ?? ''
-  }
+  beforeAll(initCaseTableModels)
 
   // The query the service really runs for a row: the cell generators' includes
   // merged in on top of the where options'. `sqlForTable` below builds only the
@@ -110,7 +72,10 @@ describe('public prosecution appealed case list', () => {
 
   const sqlForTable = (tableType: CaseTableType, user: User) => {
     const whereOptions = caseTableWhereOptions[tableType](user)
-    const [include, order] = getGlobalIncludes(whereOptions.includes ?? {})
+    const [include, order] = getGlobalIncludes(
+      whereOptions.includes ?? {},
+      user,
+    )
 
     return captureSql(() =>
       repository.Case.findAll({
@@ -234,15 +199,41 @@ describe('public prosecution appealed case list', () => {
     ).toBe(1)
   })
 
-  // The exemption that lets the list drop the restriction of its own. It
-  // mirrors canProsecutionUserAccessCase, which lets the reviewer through the
-  // same check - a case assigned to someone for review must not then be
-  // refused to them.
-  it('exempts the reviewer, as the case guard does', () => {
-    expect(
-      notHiddenByHeightenedSecurityWhereOptions(publicProsecutionUser)[Op.or],
-    ).toContainEqual({
+  // The exemptions that let the list drop the restriction of its own. They
+  // mirror canProsecutionUserAccessCase, which lets the reviewer and the
+  // appeal prosecutor through the same check - a case assigned to someone
+  // must not then be refused to them.
+  it('exempts the reviewer and appeal prosecutor, as the case guard does', () => {
+    const exemptions = notHiddenByHeightenedSecurityWhereOptions(
+      publicProsecutionUser,
+    )[Op.or]
+
+    expect(exemptions).toContainEqual({
       indictment_reviewer_id: publicProsecutionUser.id,
+    })
+    expect(exemptions).toContainEqual({
+      appeal_prosecutor_id: publicProsecutionUser.id,
+    })
+  })
+
+  // Write-capable reachability: being the appeal prosecutor is an assignment
+  // grant of its own, sibling to being the reviewer - not only an exemption
+  // inside the appealed-verdict branch.
+  it('reaches cases assigned as appeal prosecutor, as it does for the reviewer', () => {
+    const andTerms = (
+      publicProsecutionIndictmentsAccessWhereOptions(
+        publicProsecutionUser,
+      ) as unknown as Record<symbol, unknown[]>
+    )[Op.and]
+    const reachabilityOr = (
+      andTerms[1] as unknown as Record<symbol, unknown[]>
+    )[Op.or]
+
+    expect(reachabilityOr).toContainEqual({
+      indictment_reviewer_id: publicProsecutionUser.id,
+    })
+    expect(reachabilityOr).toContainEqual({
+      appeal_prosecutor_id: publicProsecutionUser.id,
     })
   })
 
@@ -267,7 +258,7 @@ describe('public prosecution appealed case list', () => {
     const sql = await captureSql(() =>
       repository.Case.findAll({
         attributes: ['id'],
-        where: userAccessWhereOptions(publicProsecutionUser),
+        where: userAccessWhereOptions(publicProsecutionUser).where,
       }),
     )
 

@@ -65,13 +65,10 @@ export const CriminalRecordUpdate = ({
         }
 
         // TODO: Make sure to log an event if at least one file was uploaded
-        const eventLogCreated = createEventLog({
+        await createEventLog({
           caseId: workingCase.id,
           eventType: EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
         })
-        if (!eventLogCreated) {
-          return
-        }
       }
       // Otherwise we don't complete uploads until
       // we handle the next button click

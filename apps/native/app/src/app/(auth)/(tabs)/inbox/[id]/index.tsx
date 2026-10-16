@@ -9,13 +9,16 @@ import { useIntl } from 'react-intl'
 import {
   Alert as RNAlert,
   Image,
+  Linking,
   SafeAreaView,
   TouchableNativeFeedback,
   Touchable,
   TouchableWithoutFeedback,
   Pressable,
 } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView from 'react-native-webview'
+import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes'
 import styled from 'styled-components/native'
 import { PdfView } from '@kishannareshpal/expo-pdf'
 
@@ -97,6 +100,35 @@ export default function DocumentScreen() {
     refetchDocumentContent,
   } = useDocument(id, isUrgent)
 
+  // Open links externally instead of letting them replace the document. Keyed on
+  // scheme, not `isTopFrame` - iOS reports it false for mailto/tel, Android omits it.
+  const onShouldStartLoadWithRequest = useCallback(
+    ({ url }: ShouldStartLoadRequest) => {
+      if (/^(mailto|tel|sms):/i.test(url)) {
+        Linking.openURL(url).catch(() => undefined)
+        return false
+      }
+      if (/^https?:\/\//i.test(url)) {
+        openBrowser(url)
+        return false
+      }
+      // Lets the initial `about:blank` load and in-page anchors through.
+      return true
+    },
+    [openBrowser],
+  )
+
+  // Clears the floating tab bar the viewer renders under.
+  const { bottom } = useSafeAreaInsets()
+
+  // Wait for the chrome above to land, so the viewer's first layout is its last.
+  const [querySettled, setQuerySettled] = useState(false)
+  useEffect(() => {
+    if (!loading) {
+      setQuerySettled(true)
+    }
+  }, [loading])
+
   // Force PdfView to remount when screen regains focus (Android recycles the native surface)
   const [pdfKey, setPdfKey] = useState(0)
   useFocusEffect(
@@ -104,6 +136,19 @@ export default function DocumentScreen() {
       setPdfKey((k) => k + 1)
     }, []),
   )
+
+  // PdfView scales on uri, before layout, so it paints once at 100%. Hide it
+  // until the real fit lands a frame later.
+  const [pdfScaled, setPdfScaled] = useState(false)
+  const showPdf = ready && querySettled && contentType === 'pdf' && !!pdfUri
+  useEffect(() => {
+    if (!showPdf) return
+    setPdfScaled(false)
+    // Never leave the document invisible if the callback is missed. Timed from
+    // the render, not from pdfUri, which can land well before the loader lifts.
+    const timeout = setTimeout(() => setPdfScaled(true), 1000)
+    return () => clearTimeout(timeout)
+  }, [showPdf, pdfUri, pdfKey])
 
   // Show confirmation alert when an urgent document requires user acknowledgement
   useEffect(() => {
@@ -299,14 +344,32 @@ export default function DocumentScreen() {
       <ContentArea>
         {error ? (
           <Problem type="error" withContainer />
-        ) : !ready ? (
+        ) : !ready || !querySettled ? (
           <Loader
             text={intl.formatMessage({ id: 'documentDetail.loadingText' })}
           />
-        ) : contentType === 'pdf' && pdfUri ? (
-          <PdfView key={pdfKey} uri={pdfUri} style={{ flex: 1 }} />
+        ) : showPdf ? (
+          <PdfView
+            key={pdfKey}
+            uri={pdfUri}
+            style={{
+              flex: 1,
+              marginBottom: bottom,
+              opacity: pdfScaled ? 1 : 0,
+            }}
+            onLoadComplete={() =>
+              requestAnimationFrame(() => setPdfScaled(true))
+            }
+          />
         ) : contentType === 'html' && htmlSource ? (
-          <WebView source={htmlSource} scalesPageToFit />
+          <WebView
+            source={htmlSource}
+            scalesPageToFit
+            // Keeps target="_blank" links on Android from being swallowed by a
+            // popup window instead of hitting onShouldStartLoadWithRequest.
+            setSupportMultipleWindows={false}
+            onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+          />
         ) : contentType === 'url' && document.content?.value ? (
           <WebView source={{ uri: document.content.value }} />
         ) : null}

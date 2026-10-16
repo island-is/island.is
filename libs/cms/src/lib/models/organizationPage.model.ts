@@ -1,3 +1,4 @@
+import graphqlTypeJson from 'graphql-type-json'
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { CacheControl, CacheField } from '@island.is/nest/graphql'
 import { type SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
@@ -176,6 +177,9 @@ export class OrganizationPage {
   @Field(() => Boolean, { nullable: true })
   canBeFoundInSearchResults?: boolean
 
+  @Field(() => graphqlTypeJson, { nullable: true })
+  activeTranslations?: Record<string, boolean>
+
   @Field(() => Boolean, { nullable: true })
   showPastEventsOption?: boolean
 
@@ -250,6 +254,7 @@ export const mapOrganizationPage = ({
       : undefined,
     topLevelNavigation,
     canBeFoundInSearchResults: fields.canBeFoundInSearchResults ?? true,
+    activeTranslations: fields.activeTranslations ?? { en: true },
     showPastEventsOption: fields.showPastEventsOption ?? false,
     navigationLinks: sitemapTree,
     lang: sys.locale,

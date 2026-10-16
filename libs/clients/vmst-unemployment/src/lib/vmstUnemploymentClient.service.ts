@@ -84,6 +84,7 @@ type VmstApis =
   | PensionFundsApi
   | U2CertificateApi
   | JobSearchConfirmationApi
+  | IncomeApi
 
 @Injectable()
 export class VmstUnemploymentClientService {

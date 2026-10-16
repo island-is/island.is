@@ -2,7 +2,11 @@ import { Op } from 'sequelize'
 
 import { AppealCaseState } from '@island.is/judicial-system/types'
 
-import { CaseWhereOptions, expandCasesWithAppeals } from '../caseTable.types'
+import {
+  CaseWhereOptions,
+  expandCasesWithAppeals,
+  presentVerdictAppealAsRowAppeal,
+} from '../caseTable.types'
 import { courtOfAppealsCasesAccessWhereOptions } from './access'
 
 // Court of appeals cases
@@ -27,7 +31,7 @@ export const courtOfAppealsCasesInProgressWhereOptions =
     },
     where: {
       [Op.and]: [
-        courtOfAppealsCasesAccessWhereOptions(),
+        courtOfAppealsCasesAccessWhereOptions().where,
         {
           [Op.or]: [
             {
@@ -65,7 +69,7 @@ export const courtOfAppealsCasesCompletedWhereOptions =
     },
     where: {
       [Op.and]: [
-        courtOfAppealsCasesAccessWhereOptions(),
+        courtOfAppealsCasesAccessWhereOptions().where,
         {
           [Op.or]: [
             { '$appealCase.appeal_state$': AppealCaseState.COMPLETED },
@@ -103,7 +107,7 @@ export const courtOfAppealsVerdictAppealsInProgressWhereOptions =
     },
     where: {
       [Op.and]: [
-        courtOfAppealsCasesAccessWhereOptions(),
+        courtOfAppealsCasesAccessWhereOptions().where,
         {
           '$verdictAppealCase.appeal_state$': [
             AppealCaseState.APPEALED,
@@ -112,6 +116,7 @@ export const courtOfAppealsVerdictAppealsInProgressWhereOptions =
         },
       ],
     },
+    displayCases: presentVerdictAppealAsRowAppeal,
   })
 
 export const courtOfAppealsVerdictAppealsCompletedWhereOptions =
@@ -128,7 +133,7 @@ export const courtOfAppealsVerdictAppealsCompletedWhereOptions =
     },
     where: {
       [Op.and]: [
-        courtOfAppealsCasesAccessWhereOptions(),
+        courtOfAppealsCasesAccessWhereOptions().where,
         {
           '$verdictAppealCase.appeal_state$': [
             AppealCaseState.COMPLETED,
@@ -137,4 +142,5 @@ export const courtOfAppealsVerdictAppealsCompletedWhereOptions =
         },
       ],
     },
+    displayCases: presentVerdictAppealAsRowAppeal,
   })

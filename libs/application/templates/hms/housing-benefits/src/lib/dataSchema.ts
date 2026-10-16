@@ -474,6 +474,22 @@ export const dataSchema = baseSchema
           params: m.assigneeDraft.validationAssetDeclerationTextFieldRequired,
         })
       }
+
+      if (bucket.incomeDeclarationTextField !== undefined) {
+        const incomeText =
+          typeof bucket.incomeDeclarationTextField === 'string'
+            ? bucket.incomeDeclarationTextField.trim()
+            : ''
+
+        if (!incomeText) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [key, 'incomeDeclarationTextField'],
+            params:
+              m.assigneeDraft.validationIncomeDeclarationTextFieldRequired,
+          })
+        }
+      }
     }
   })
 

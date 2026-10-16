@@ -15,10 +15,10 @@ import { Problem } from '@island.is/react-spa/shared'
 import { FC } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
-import { HealthPaths } from '../../lib/paths'
 import * as styles from './Questionnaires.css'
 import { useGetQuestionnaireQuery } from './questionnaires.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
+import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 
 const QuestionnaireDetail: FC = () => {
   useNamespaces('sp.health')
@@ -27,6 +27,7 @@ const QuestionnaireDetail: FC = () => {
   useHealthPlausibleSwap()
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
+  const paths = useTreatmentScopedPaths()
 
   const organization: QuestionnaireQuestionnairesOrganizationEnum | undefined =
     org === 'el'
@@ -68,19 +69,16 @@ const QuestionnaireDetail: FC = () => {
     )
   }
 
+  const questionnaireParams = { org: organization.toLocaleLowerCase(), id }
+
   const answeredLink = latestSubmissionId
-    ? HealthPaths.HealthQuestionnairesAnswered.replace(
-        ':org',
-        organization?.toLocaleLowerCase() ?? '',
-      )
-        .replace(':id', id)
-        .replace(':submissionId', latestSubmissionId)
+    ? paths.questionnaireAnswered({
+        ...questionnaireParams,
+        submissionId: latestSubmissionId,
+      })
     : undefined
 
-  const answerLink = HealthPaths.HealthQuestionnairesAnswer.replace(
-    ':org',
-    organization?.toLocaleLowerCase() ?? '',
-  ).replace(':id', id)
+  const answerLink = paths.questionnaireAnswer(questionnaireParams)
 
   const hasSubmission =
     questionnaire?.submissions?.some((sub) => !sub.isDraft) ?? false
@@ -92,7 +90,9 @@ const QuestionnaireDetail: FC = () => {
       ? answerLink
       : undefined
 
-  const statusLabel = isAnswered
+  const statusLabel = questionnaire?.baseInformation.disabled
+    ? formatMessage(messages.disabledQuestionnaire)
+    : isAnswered
     ? formatMessage(messages.answeredQuestionnaire)
     : notAnswered
     ? formatMessage(messages.unAnsweredQuestionnaire)
@@ -260,14 +260,13 @@ const QuestionnaireDetail: FC = () => {
         </InfoLineStack>
       )}
       {!loading && !data?.questionnairesDetail && !error && (
-        <Box background="white" margin={4} borderRadius="lg">
-          <Problem
-            type="not_found"
-            noBorder={false}
-            title={formatMessage(messages.questionnaireNotFound)}
-            message={formatMessage(messages.questionnaireNotFoundDetail)}
-          />
-        </Box>
+        <Problem
+          type="no_data"
+          title={formatMessage(messages.questionnaireNotFound)}
+          message={formatMessage(messages.questionnaireNotFoundDetail)}
+          imgSrc="./assets/images/nodata.svg"
+          noBorder={false}
+        />
       )}
     </IntroWrapper>
   )

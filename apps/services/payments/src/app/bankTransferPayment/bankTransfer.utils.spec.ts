@@ -5,6 +5,7 @@ import {
 } from './bankTransfer.types'
 import {
   deriveBankTransferFailureReason,
+  getBankTransferDebtor,
   isOnboardingRequired,
   mapRawStatusToBankTransferPendingStatus,
 } from './bankTransfer.utils'
@@ -116,5 +117,36 @@ describe('deriveBankTransferFailureReason', () => {
     [BankTransferStatus.PENDING, expired, null],
   ])('derives %s on %o as %s', (status, row, expectedReason) => {
     expect(deriveBankTransferFailureReason(status, row)).toBe(expectedReason)
+  })
+})
+
+describe('getBankTransferDebtor', () => {
+  const person = '0101302129'
+  const company = '6010100890'
+  const temporary = '8123456789'
+
+  it.each([
+    ['an individual payer', person, undefined, { debtorExternalId: person }],
+    // An individual sent alongside a non-company payer does not change who is debited.
+    [
+      'an individual payer with an individual',
+      person,
+      '0101307789',
+      { debtorExternalId: person },
+    ],
+    [
+      'a company payer with an individual',
+      company,
+      person,
+      { debtorExternalId: person, debtorCorpExternalId: company },
+    ],
+    ['a company payer without an individual', company, undefined, null],
+    ['a company payer with a company', company, company, null],
+    ['a company payer with a temporary kennitala', company, temporary, null],
+    ['a temporary-kennitala payer', temporary, undefined, null],
+  ])('resolves %s', (_, payerNationalId, actorNationalId, expected) => {
+    expect(getBankTransferDebtor(payerNationalId, actorNationalId)).toEqual(
+      expected,
+    )
   })
 })

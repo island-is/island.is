@@ -104,6 +104,12 @@ export const Overview = () => {
         )
       : workingCase.state !== CaseState.NEW
 
+    // transitionCase has already reported the failure, so leave the
+    // "sent to court" modal closed.
+    if (!caseSubmitted) {
+      return
+    }
+
     const notificationSent = caseSubmitted
       ? await sendNotification(
           workingCase.id,

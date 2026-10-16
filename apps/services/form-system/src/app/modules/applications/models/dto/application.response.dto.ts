@@ -26,4 +26,7 @@ export class ApplicationResponseDto {
 
   @ApiPropertyOptional()
   validateEligibility?: boolean
+
+  @ApiPropertyOptional()
+  enableApplicationPdfDownload?: boolean
 }

@@ -1,7 +1,6 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { addMessagesToQueue } from '@island.is/judicial-system/message'
 import {
   AppealCaseState,
   AppealCaseTransition,
@@ -16,6 +15,7 @@ import {
 
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import { FileService } from '../../../file'
 import {
   AppealCase,
@@ -29,7 +29,7 @@ import {
 } from '../../../repository'
 import { TransitionAppealCaseDto } from '../../dto/transitionAppealCase.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: AppealCase
@@ -179,7 +179,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         appealedEvent(defendantId, '2026-06-04T13:34:00Z'),
         appealedEvent(otherDefendantId, '2026-06-05T09:00:00Z'),
@@ -232,7 +232,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     // appeal case nor the notification moves.
     it('should leave the appeal case standing', () => {
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
       expect(then.result).toBe(appealCase)
     })
   })
@@ -242,7 +242,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         appealedEvent(defendantId, '2026-06-04T13:34:00Z'),
         appealedEvent(otherDefendantId, '2026-06-05T09:00:00Z'),
@@ -270,7 +270,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     })
 
     it('should notify that the appeal was withdrawn', () => {
-      expect(addMessagesToQueue).toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).toHaveBeenCalled()
     })
   })
 
@@ -281,7 +281,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         appealedEvent(defendantId, '2026-06-04T13:34:00Z'),
         {
@@ -332,7 +332,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
 
     it('should reject a withdrawal when the defendant is not appealing', async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         appealedEvent(defendantId, '2026-06-04T13:34:00Z'),
         withdrawnEvent(defendantId, '2026-06-05T09:00:00Z'),
@@ -350,7 +350,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     // followed by a fresh appeal leaves them standing.
     it('should allow a withdrawal after the defendant appealed again', async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         appealedEvent(defendantId, '2026-06-04T13:34:00Z'),
         withdrawnEvent(defendantId, '2026-06-05T09:00:00Z'),

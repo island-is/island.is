@@ -37,7 +37,6 @@ import {
   SubmitApplicationApi,
 } from '../dataProviders'
 import { hasRentalAgreements } from '../utils/rentalAgreementUtils'
-import { mustFileTaxReturnBeforeApplying } from '../utils/utils'
 import * as kennitala from 'kennitala'
 import {
   getAssigneeNationalIds,
@@ -129,31 +128,7 @@ const template: ApplicationTemplate<
                 !hasRentalAgreements(application),
             },
             {
-              target: States.TAX_RETURN_REQUIRED,
-              cond: ({ application }: ApplicationContext) =>
-                mustFileTaxReturnBeforeApplying(application),
-            },
-            {
               target: States.DRAFT,
-            },
-          ],
-        },
-      },
-      [States.TAX_RETURN_REQUIRED]: {
-        meta: {
-          name: 'Skattframtal vantar',
-          progress: 0.2,
-          status: FormModes.DRAFT,
-          lifecycle: EphemeralStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/noTaxReturnForm').then((module) =>
-                  Promise.resolve(module.TaxReturnRequiredForm),
-                ),
-              read: 'all',
-              delete: true,
             },
           ],
         },

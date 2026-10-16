@@ -14,6 +14,32 @@ const compat = new FlatCompat({
   recommendedConfig: js.configs.recommended,
 })
 
+const restrictedImportPaths = [
+  'lodash',
+  'date-fns',
+  'date-fns/locale',
+  'styled-components',
+  '.',
+  {
+    name: '@island.is/island-ui/core',
+    importNames: ['toast'],
+    message:
+      "Import toast from '@island.is/judicial-system-web/src/utils/toast' so that user-facing errors are logged.",
+  },
+  {
+    name: 'react-toastify',
+    message:
+      "Import toast from '@island.is/judicial-system-web/src/utils/toast' so that user-facing errors are logged.",
+  },
+]
+
+const caseSchemaTypeImport = {
+  name: '@island.is/judicial-system-web/src/graphql/schema',
+  importNames: ['Case'],
+  message:
+    "Type the case as WorkingCase from '@island.is/judicial-system-web/src/components' instead. Case is the full schema type, so it lets code read fields the case query never fetches.",
+}
+
 export default [
   ...baseConfig,
   ...nx.configs['flat/react'],
@@ -31,26 +57,7 @@ export default [
       eqeqeq: ['error', 'always'],
       'no-restricted-imports': [
         'error',
-        {
-          paths: [
-            'lodash',
-            'date-fns',
-            'date-fns/locale',
-            'styled-components',
-            '.',
-            {
-              name: '@island.is/island-ui/core',
-              importNames: ['toast'],
-              message:
-                "Import toast from '@island.is/judicial-system-web/src/utils/toast' so that user-facing errors are logged.",
-            },
-            {
-              name: 'react-toastify',
-              message:
-                "Import toast from '@island.is/judicial-system-web/src/utils/toast' so that user-facing errors are logged.",
-            },
-          ],
-        },
+        { paths: [...restrictedImportPaths, caseSchemaTypeImport] },
       ],
       'no-restricted-syntax': [
         'error',

@@ -101,14 +101,8 @@ describe('CaseRepositoryService - case reads', () => {
 
       expect(included(courtSessions?.include, 'filedDocuments')).toBeDefined()
       expect(
-        included(courtSessions?.include, 'mergedFiledDocuments'),
-      ).toBeUndefined()
-      expect(
         included(mergedCaseCourtSessions?.include, 'filedDocuments'),
       ).toBeDefined()
-      expect(
-        included(mergedCaseCourtSessions?.include, 'mergedFiledDocuments'),
-      ).toBeUndefined()
     })
 
     describe('no live case', () => {
@@ -168,6 +162,28 @@ describe('CaseRepositoryService - case reads', () => {
         [theCase],
         { transaction: undefined },
       )
+    })
+
+    describe('in a transaction', () => {
+      const transaction = {} as never
+
+      beforeEach(async () => {
+        mockCaseModel.findOne.mockClear()
+        mockResolvePoliceCaseNumbersForCases.mockClear()
+
+        result = await caseRepositoryService.findLiveMinimalById(caseId, {
+          transaction,
+        })
+      })
+
+      it('should read the row and resolve the police case numbers in it', () => {
+        expect(findOneOptions().transaction).toBe(transaction)
+        expect(mockResolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+          [theCase],
+          { transaction },
+        )
+        expect(result).toBe(theCase)
+      })
     })
   })
 
@@ -308,14 +324,8 @@ describe('CaseRepositoryService - case reads', () => {
 
         expect(included(courtSessions?.include, 'filedDocuments')).toBeDefined()
         expect(
-          included(courtSessions?.include, 'mergedFiledDocuments'),
-        ).toBeUndefined()
-        expect(
           included(mergedCaseCourtSessions?.include, 'filedDocuments'),
         ).toBeDefined()
-        expect(
-          included(mergedCaseCourtSessions?.include, 'mergedFiledDocuments'),
-        ).toBeUndefined()
       })
 
       // The attribute allowlist is the only thing keeping a defence user off

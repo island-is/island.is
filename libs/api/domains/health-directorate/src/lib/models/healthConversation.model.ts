@@ -24,6 +24,9 @@ export class HealthDirectorateHealthConversation {
   @Field({ nullable: true })
   groupName?: string
 
+  @Field(() => ID, { nullable: true })
+  treatmentId?: string
+
   @Field(() => HealthDirectorateConversationOrganization, { nullable: true })
   organization?: HealthDirectorateConversationOrganization
 

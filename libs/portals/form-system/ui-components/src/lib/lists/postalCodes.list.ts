@@ -3,7 +3,10 @@ import { FormSystemListItem } from '@island.is/api/schema'
 export const getPostalCodesList = (): FormSystemListItem[] => {
   return postalCodesList.map((postalCode, index) => ({
     id: postalCode.code,
-    label: { is: postalCode.code, en: postalCode.code },
+    label: {
+      is: postalCode.code + ' ' + postalCode.name,
+      en: postalCode.code + ' ' + postalCode.name,
+    },
     value: postalCode.code,
     displayOrder: index,
     isSelected: false,

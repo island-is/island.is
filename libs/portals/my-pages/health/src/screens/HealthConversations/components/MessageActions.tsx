@@ -22,7 +22,10 @@ const blurAfter =
   (handler?: React.MouseEventHandler<HTMLElement>) =>
   (e: React.MouseEvent<HTMLElement>) => {
     handler?.(e)
-    e.currentTarget.blur()
+    // Keyboard activation has detail 0; keep focus there so it isn't lost
+    if (e.detail > 0) {
+      e.currentTarget.blur()
+    }
   }
 
 export const MessageActions: React.FC<MessageActionsProps> = ({

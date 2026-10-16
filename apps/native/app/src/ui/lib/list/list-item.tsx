@@ -105,6 +105,8 @@ interface ListItemProps {
   title: string
   date?: Date | string
   subtitle: string
+  /** Lines the subtitle may fill before it is truncated. Defaults to one. */
+  subtitleNumberOfLines?: number
   unread?: boolean
   actions?: ListItemAction[]
   icon?: ImageSourcePropType | React.ReactNode
@@ -120,6 +122,7 @@ interface ListItemProps {
 export function ListItem({
   title,
   subtitle,
+  subtitleNumberOfLines = 1,
   date,
   icon,
   unread = false,
@@ -200,7 +203,11 @@ export function ListItem({
         )}
         <View style={[styles.row, styles.lowerRow]}>
           <View style={styles.subtitleWrapper}>
-            <Typography variant="heading5" numberOfLines={1}>
+            <Typography
+              variant="heading5"
+              numberOfLines={subtitleNumberOfLines}
+              style={{ flexShrink: 1 }}
+            >
               {subtitle}
             </Typography>
           </View>

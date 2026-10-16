@@ -24,10 +24,11 @@ import {
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
+import { getOrCreateTransaction } from '../../middleware'
 import {
   CaseTypeGuard,
   MinimalCaseAccessGuard,
-  MinimalCaseExistsGuard,
+  MinimalCaseExistsForUpdateGuard,
 } from '../case'
 import { IndictmentCount, Offense } from '../repository'
 import { CreateOffenseDto } from './dto/createOffense.dto'
@@ -39,12 +40,19 @@ import { OffenseExistsGuard } from './guards/offenseExists.guard'
 import { DeleteResponse } from './models/delete.response'
 import { IndictmentCountService } from './indictmentCount.service'
 
+// Every route mutates the case's indictment counts, so the class-level
+// MinimalCaseExistsForUpdateGuard opens the request's transaction and reads
+// the case row under FOR UPDATE. The handlers join that transaction with
+// getOrCreateTransaction; a transaction of their own would wait on the row
+// lock the guard already holds. RolesGuard goes first because every roles rule
+// here is a bare role - indictmentCountRolesRules.spec.ts pins that - so an
+// unauthorized caller is turned away before the lock is taken.
 @Controller('api/case/:caseId')
 @ApiTags('indictment-counts')
 @UseGuards(
   JwtAuthUserGuard,
   RolesGuard,
-  MinimalCaseExistsGuard,
+  MinimalCaseExistsForUpdateGuard,
   new CaseTypeGuard(indictmentCases),
   MinimalCaseAccessGuard,
 )
@@ -61,12 +69,12 @@ export class IndictmentCountController {
     type: IndictmentCount,
     description: 'Creates a new indictment count',
   })
-  create(@Param('caseId') caseId: string): Promise<IndictmentCount> {
+  async create(@Param('caseId') caseId: string): Promise<IndictmentCount> {
     this.logger.debug(`Creating a new indictment count for case ${caseId}`)
 
-    return this.sequelize.transaction((transaction) =>
-      this.indictmentCountService.create(caseId, transaction),
-    )
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.indictmentCountService.create(caseId, transaction)
   }
 
   @UseGuards(IndictmentCountExistsGuard)
@@ -76,7 +84,7 @@ export class IndictmentCountController {
     type: IndictmentCount,
     description: 'Updates an indictment count',
   })
-  update(
+  async update(
     @Param('caseId') caseId: string,
     @Param('indictmentCountId') indictmentCountId: string,
     @Body() indictmentCountToUpdate: UpdateIndictmentCountDto,
@@ -85,13 +93,13 @@ export class IndictmentCountController {
       `Updating indictment count ${indictmentCountId} of case ${caseId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
-      this.indictmentCountService.update(
-        caseId,
-        indictmentCountId,
-        indictmentCountToUpdate,
-        transaction,
-      ),
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.indictmentCountService.update(
+      caseId,
+      indictmentCountId,
+      indictmentCountToUpdate,
+      transaction,
     )
   }
 
@@ -107,12 +115,12 @@ export class IndictmentCountController {
       `Deleting indictment count ${indictmentCountId} of case ${caseId}`,
     )
 
-    const deleted = await this.sequelize.transaction((transaction) =>
-      this.indictmentCountService.delete(
-        caseId,
-        indictmentCountId,
-        transaction,
-      ),
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    const deleted = await this.indictmentCountService.delete(
+      caseId,
+      indictmentCountId,
+      transaction,
     )
 
     return { deleted }
@@ -125,7 +133,7 @@ export class IndictmentCountController {
     type: Offense,
     description: 'Creates a new indictment count offense',
   })
-  createOffense(
+  async createOffense(
     @Param('caseId') caseId: string,
     @Param('indictmentCountId') indictmentCountId: string,
     @Body() createOffenseDto: CreateOffenseDto,
@@ -134,9 +142,12 @@ export class IndictmentCountController {
       `Creating a new offense for indictment count ${indictmentCountId} of case ${caseId}`,
     )
 
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
     return this.indictmentCountService.createOffense(
       indictmentCountId,
       createOffenseDto.offense,
+      { transaction },
     )
   }
 
@@ -147,7 +158,7 @@ export class IndictmentCountController {
     type: Offense,
     description: 'Updates an offense',
   })
-  updateOffense(
+  async updateOffense(
     @Param('caseId') caseId: string,
     @Param('indictmentCountId') indictmentCountId: string,
     @Param('offenseId') offenseId: string,
@@ -157,10 +168,13 @@ export class IndictmentCountController {
       `Updating an offense ${offenseId} for indictment count ${indictmentCountId} of case ${caseId}`,
     )
 
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
     return this.indictmentCountService.updateOffense(
       indictmentCountId,
       offenseId,
       updatedOffense,
+      { transaction },
     )
   }
 
@@ -177,9 +191,12 @@ export class IndictmentCountController {
       `Deleting an offense ${offenseId} for indictment count ${indictmentCountId} of case ${caseId}`,
     )
 
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
     const deleted = await this.indictmentCountService.deleteOffense(
       indictmentCountId,
       offenseId,
+      { transaction },
     )
 
     return { deleted }
@@ -192,12 +209,14 @@ export class IndictmentCountController {
     isArray: true,
     description: 'Reorders indictment counts',
   })
-  reorder(
+  async reorder(
     @Param('caseId') caseId: string,
     @Body() body: ReorderIndictmentCountsDto,
   ): Promise<IndictmentCount[]> {
-    return this.sequelize.transaction((transaction) =>
-      this.indictmentCountService.reorder(caseId, body.counts, transaction),
-    )
+    this.logger.debug(`Reordering the indictment counts of case ${caseId}`)
+
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.indictmentCountService.reorder(caseId, body.counts, transaction)
   }
 }

@@ -1,0 +1,53 @@
+fragment AppealCaseFields on AppealCase {
+  id
+  appealState
+  # Which proceeding this appeal belongs to. The verdict appeal already
+  # carries it; the ruling appeals need it so a resolved appeal can say
+  # which of the two a page is about.
+  appealType
+  appealedByDefendantId
+  appealedByCivilClaimantId
+  appealedByRole
+  appealedDate
+  appealedInCourt
+  appealedOutOfCourt
+  statementDeadline
+  isStatementDeadlineExpired
+  appealCaseNumber
+  appealReceivedByCourtDate
+  appealRulingDate
+  prosecutorStatementDate
+  defendantStatementDate
+  defendantStatementDates {
+    defendantId
+    statementDate
+  }
+  civilClaimantStatementDates {
+    civilClaimantId
+    statementDate
+  }
+  appealAssistant {
+    id
+    name
+  }
+  appealJudge1 {
+    id
+    name
+  }
+  appealJudge2 {
+    id
+    name
+  }
+  appealJudge3 {
+    id
+    name
+  }
+  appealRulingDecision
+  appealConclusion
+  appealRulingModifiedHistory
+  requestAppealRulingNotToBePublished
+  appealValidToDate
+  isAppealCustodyIsolation
+  appealIsolationToDate
+  rulingFileId
+}

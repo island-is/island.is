@@ -20,10 +20,6 @@ import { CaseFile } from '../models/caseFile.model'
 import { CourtDocument } from '../models/courtDocument.model'
 import { CourtSession } from '../models/courtSession.model'
 
-interface CreateCourtDocumentOptions {
-  transaction: Transaction
-}
-
 export interface CreateCourtDocument {
   documentType: CourtDocumentType
   name: string
@@ -31,34 +27,10 @@ export interface CreateCourtDocument {
   generatedPdfUri?: string
 }
 
-interface UpdateCourtDocumentOptions {
-  transaction: Transaction
-}
-
 interface UpdateCourtDocument {
   documentOrder?: number
   name?: string
   submittedBy?: string
-}
-
-interface FileAllAvailableCourtDocumentsInCourtSessionOptions {
-  transaction: Transaction
-}
-
-interface FindMergedCaseIdsFiledInCourtSessionOptions {
-  transaction: Transaction
-}
-
-interface FileCourtDocumentInCourtSessionOptions {
-  transaction: Transaction
-}
-
-interface RemoveCourtDocumentFromCourtSessionOptions {
-  transaction: Transaction
-}
-
-interface DeleteCourtDocumentOptions {
-  transaction: Transaction
 }
 
 @Injectable()
@@ -74,7 +46,7 @@ export class CourtDocumentRepositoryService {
   async create(
     caseId: string,
     data: CreateCourtDocument,
-    options: CreateCourtDocumentOptions,
+    options: { transaction: Transaction },
   ): Promise<CourtDocument> {
     try {
       this.logger.debug(
@@ -122,7 +94,7 @@ export class CourtDocumentRepositoryService {
     caseId: string,
     courtSessionId: string,
     data: CreateCourtDocument,
-    options: CreateCourtDocumentOptions,
+    options: { transaction: Transaction },
   ): Promise<CourtDocument> {
     try {
       this.logger.debug(
@@ -245,7 +217,7 @@ export class CourtDocumentRepositoryService {
     courtSessionId: string,
     courtDocumentId: string,
     data: UpdateCourtDocument,
-    options: UpdateCourtDocumentOptions,
+    options: { transaction: Transaction },
   ): Promise<CourtDocument> {
     try {
       this.logger.debug(
@@ -460,7 +432,7 @@ export class CourtDocumentRepositoryService {
   async findMergedCaseIdsFiledInCourtSession(
     caseId: string,
     courtSessionId: string,
-    options: FindMergedCaseIdsFiledInCourtSessionOptions,
+    options: { transaction: Transaction },
   ): Promise<string[]> {
     try {
       const courtDocuments = await this.courtDocumentModel.findAll({
@@ -496,7 +468,7 @@ export class CourtDocumentRepositoryService {
   async fileAllAvailableCourtDocumentsInCourtSession(
     caseId: string,
     courtSessionId: string,
-    options: FileAllAvailableCourtDocumentsInCourtSessionOptions,
+    options: { transaction: Transaction },
   ): Promise<void> {
     try {
       this.logger.debug(
@@ -580,7 +552,7 @@ export class CourtDocumentRepositoryService {
     caseId: string,
     courtSessionId: string,
     courtDocumentId: string,
-    options: FileCourtDocumentInCourtSessionOptions,
+    options: { transaction: Transaction },
   ): Promise<CourtDocument> {
     try {
       this.logger.debug(
@@ -720,7 +692,7 @@ export class CourtDocumentRepositoryService {
     caseId: string,
     courtSessionId: string,
     courtDocumentId: string,
-    options: RemoveCourtDocumentFromCourtSessionOptions,
+    options: { transaction: Transaction },
   ): Promise<void> {
     try {
       this.logger.debug(
@@ -800,7 +772,7 @@ export class CourtDocumentRepositoryService {
   async deleteByCaseFileId(
     caseId: string,
     caseFileId: string,
-    options: DeleteCourtDocumentOptions,
+    options: { transaction: Transaction },
   ): Promise<void> {
     try {
       this.logger.debug(

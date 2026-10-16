@@ -76,6 +76,7 @@ resources:
     cpu: '100m'
     memory: '256Mi'
 secrets:
+  AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'

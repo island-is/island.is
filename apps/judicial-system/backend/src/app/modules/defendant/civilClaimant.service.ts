@@ -9,17 +9,20 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   CivilClaimantNotificationType,
   type User,
 } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware'
+import {
+  buildAdvocateConfirmedEvent,
+  namesADifferentAdvocate,
+} from '../appeal-case/appealCase.helpers'
 import { CourtService } from '../court'
 import {
+  AppealEventLogRepositoryService,
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
   CaseFileRepositoryService,
@@ -33,6 +36,7 @@ import { DeliverResponse } from './models/deliver.response'
 export class CivilClaimantService {
   constructor(
     private readonly civilClaimantRepositoryService: CivilClaimantRepositoryService,
+    private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     private readonly courtService: CourtService,
@@ -59,7 +63,7 @@ export class CivilClaimantService {
       !oldCivilClaimant.isSpokespersonConfirmed
     ) {
       if (theCase.courtCaseNumber) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CIVIL_CLAIMANT,
           user,
           caseId: theCase.id,
@@ -67,14 +71,14 @@ export class CivilClaimantService {
         })
       }
 
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
         caseId: updatedCivilClaimant.caseId,
         body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
         elementId: updatedCivilClaimant.id,
       })
       // send a notification to follow-up on scheduled court date
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
         caseId: updatedCivilClaimant.caseId,
         user,
@@ -89,7 +93,8 @@ export class CivilClaimantService {
   private async filterDefendantIdsByPoliceCaseNumbers(
     caseId: string,
     policeCaseNumbers: string[],
-    currentDefendantIds?: string[],
+    currentDefendantIds: string[] | undefined,
+    transaction: Transaction,
   ): Promise<string[]> {
     if (!currentDefendantIds?.length || !policeCaseNumbers.length) {
       return []
@@ -100,6 +105,7 @@ export class CivilClaimantService {
         caseId,
         policeCaseNumbers,
         currentDefendantIds,
+        { transaction },
       ),
     )
 
@@ -111,6 +117,7 @@ export class CivilClaimantService {
     civilClaimant: CivilClaimant,
     update: UpdateCivilClaimantDto,
     user: User,
+    transaction: Transaction,
   ): Promise<CivilClaimant> {
     const caseId = theCase.id
     let effectiveUpdate = { ...update }
@@ -125,7 +132,31 @@ export class CivilClaimantService {
           caseId,
           update.policeCaseNumbers ?? civilClaimant.policeCaseNumbers ?? [],
           update.defendantIds ?? civilClaimant.defendantIds,
+          transaction,
         ),
+      }
+    }
+
+    // A confirmation names a person, so one cannot survive the person
+    // changing. The screen makes the court confirm again; the API has to
+    // enforce the same rule, or the letter would print the new advocate over
+    // the signatory and date of the confirmation that named the old one.
+    if (
+      civilClaimant.isAppealSpokespersonConfirmed &&
+      namesADifferentAdvocate(
+        {
+          name: civilClaimant.appealSpokespersonName,
+          nationalId: civilClaimant.appealSpokespersonNationalId,
+        },
+        {
+          name: update.appealSpokespersonName,
+          nationalId: update.appealSpokespersonNationalId,
+        },
+      )
+    ) {
+      effectiveUpdate = {
+        ...effectiveUpdate,
+        isAppealSpokespersonConfirmed: false,
       }
     }
 
@@ -134,6 +165,7 @@ export class CivilClaimantService {
         civilClaimant.id,
         caseId,
         effectiveUpdate,
+        { transaction },
       )
 
     if (numberOfAffectedRows > 1) {
@@ -147,6 +179,42 @@ export class CivilClaimantService {
     }
 
     const updatedCivilClaimant = civilClaimants[0]
+
+    // The court of appeals confirming this claimant's advocate for the appeal.
+    // Written in the same transaction as the confirmation so the two cannot
+    // drift: the letter of appointment is signed by whoever confirmed and
+    // dated the day they did, and the claimant row keeps neither.
+    //
+    // Recorded for a lawyer as well as a spokesperson, even though only the
+    // spokesperson is formally appointed and gets a letter - the court
+    // confirmed either way, and that is what this records.
+    if (
+      updatedCivilClaimant.isAppealSpokespersonConfirmed &&
+      !civilClaimant.isAppealSpokespersonConfirmed &&
+      theCase.verdictAppealCase
+    ) {
+      await this.appealEventLogRepositoryService.create(
+        buildAdvocateConfirmedEvent({
+          theCase,
+          appealCase: theCase.verdictAppealCase,
+          party: { civilClaimantId: civilClaimant.id },
+          actor: user,
+        }),
+        { transaction },
+      )
+
+      // Telling the advocate the court of appeals has recorded them. A
+      // lögmaður hears the same way a réttargæslumaður does; only the letter
+      // of appointment tells them apart.
+      queueMessagesAfterCommit({
+        type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+        caseId: theCase.id,
+        elementId: civilClaimant.id,
+        body: {
+          type: CivilClaimantNotificationType.APPEAL_SPOKESPERSON_ASSIGNED,
+        },
+      })
+    }
 
     this.addMessagesForUpdateCivilClaimantToQueue(
       theCase,

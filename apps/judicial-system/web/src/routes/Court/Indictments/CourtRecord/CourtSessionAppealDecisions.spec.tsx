@@ -1,9 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 
-import type {
-  Case,
-  CourtSessionResponse,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { CourtSessionResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   AppealDecisionPartyRole,
@@ -40,7 +38,7 @@ describe('CourtSessionAppealDecisions - radio group identity across sessions', (
     defendants: [{ id: defendantId, name: 'Jón Jónsson' }],
     civilClaimants: [],
     appealDecisions: [],
-  } as unknown as Case
+  } as unknown as WorkingCase
 
   const session = (id: string, rulingFileId: string): CourtSessionResponse =>
     ({
@@ -125,7 +123,7 @@ describe('CourtSessionAppealDecisions - announcement preservation', () => {
             },
           ]
         : [],
-    } as unknown as Case
+    } as unknown as WorkingCase
 
     return render(
       <IntlProviderWrapper>
@@ -223,9 +221,9 @@ describe('CourtSessionAppealDecisions - locked by the appeal state', () => {
       civilClaimants: [],
       appealDecisions: [],
       rulingOrderAppealCases: appealCase ? [appealCase] : [],
-    } as unknown as Case)
+    } as unknown as WorkingCase)
 
-  const renderWith = (workingCase: Case) =>
+  const renderWith = (workingCase: WorkingCase) =>
     render(
       <IntlProviderWrapper>
         <CourtSessionAppealDecisions
