@@ -56,6 +56,11 @@ export const appealCourtSessionTypeOptions: ReactSelectOption[] = Object.values(
 export interface AppealCourtSessionDraft {
   sessionType?: AppealCourtSessionType
   sessionDate?: Date
+  // Whether the date and time fields hold a complete value. The last complete
+  // `sessionDate` is kept while the court corrects or clears the time, so
+  // that the picker does not lose the day, and so the date alone cannot say
+  // the field is filled in.
+  isSessionDateValid?: boolean
   courtRoom?: string
 }
 
@@ -63,7 +68,10 @@ export const isAppealCourtSessionComplete = (
   session: AppealCourtSessionDraft,
 ): boolean =>
   Boolean(
-    session.sessionType && session.sessionDate && session.courtRoom?.trim(),
+    session.sessionType &&
+      session.sessionDate &&
+      session.isSessionDateValid !== false &&
+      session.courtRoom?.trim(),
   )
 
 // Untouched, as opposed to half filled: the court can move on past an empty

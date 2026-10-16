@@ -1,5 +1,6 @@
 import type { FC, PropsWithChildren } from 'react'
 import { useState } from 'react'
+import addDays from 'date-fns/addDays'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
@@ -70,6 +71,9 @@ const theCase = {
       id: 'd1',
       name: 'Jón Jónsson',
       verdict: { appealDate: '2026-06-04T10:00:00.000Z' },
+      // The stepper only offers the steps after the defender step once every
+      // advocate is confirmed, as the court will have done to get here.
+      isAppealDefenderConfirmed: true,
     },
   ],
   verdictAppealCase: {
@@ -139,10 +143,50 @@ const clickMenuItem = async (name: string) =>
     within(await screen.findByRole('menuitem', { name })).getByRole('button'),
   )
 
+// Tomorrow rather than a fixed day: the picker refuses dates in the past.
+const pickTomorrow = async () => {
+  const today = new Date()
+  const tomorrow = addDays(today, 1)
+
+  await userEvent.click(screen.getByLabelText(/Dagsetning/))
+
+  if (tomorrow.getMonth() !== today.getMonth()) {
+    await userEvent.click(screen.getByLabelText('Next month'))
+  }
+
+  // The calendar pads its grid with the neighbouring months' days, so the
+  // number alone can match twice. Only a cell of the month on view counts.
+  const cell = screen
+    .getAllByText(String(tomorrow.getDate()))
+    .find(
+      (el) =>
+        el.className.includes('react-datepicker__day') &&
+        !el.className.includes('outside-month'),
+    )
+
+  if (!cell) {
+    throw new Error('No calendar cell for tomorrow')
+  }
+
+  await userEvent.click(cell)
+}
+
+const fillInSession = async () => {
+  await userEvent.click(screen.getByLabelText('Boða til þinghalds'))
+  await userEvent.click(screen.getByText('Veldu tegund þinghalds'))
+  await userEvent.click(screen.getByText('Aðalmeðferð'))
+  await pickTomorrow()
+  await userEvent.type(
+    screen.getByTestId('appeal-court-session-date-time'),
+    '14:00',
+  )
+  await userEvent.type(screen.getByLabelText(/Dómsalur/), '1')
+}
+
 describe('VerdictAppealStatus', () => {
   beforeEach(() => {
     mockPush.mockClear()
-    mockCreateAppealCourtSession.mockClear()
+    mockCreateAppealCourtSession.mockReset()
     mockUpdateAppealCourtSession.mockReset()
     mockDeleteAppealCourtSession.mockReset()
   })
@@ -224,6 +268,36 @@ describe('VerdictAppealStatus', () => {
     expect(mockCreateAppealCourtSession).not.toHaveBeenCalled()
     expect(mockPush).toHaveBeenCalledWith(
       `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/case-id?appealCaseId=verdict-appeal`,
+    )
+  })
+
+  // The stepper offers the summary as soon as the form is complete, and it
+  // calls the page's navigation handler straight. It must not be a way
+  // around the booking the continue button asks for.
+  it('books a filled-in session before the summary opens, from the stepper too', async () => {
+    mockCreateAppealCourtSession.mockResolvedValue(bookedSession)
+    renderPage()
+
+    await fillInSession()
+    await userEvent.click(screen.getByRole('button', { name: 'Samantekt' }))
+
+    expect(screen.getByText('Boða til þinghalds?')).toBeInTheDocument()
+    expect(mockPush).not.toHaveBeenCalled()
+
+    await userEvent.click(screen.getByTestId('confirmSessionButton'))
+
+    await waitFor(() =>
+      expect(mockPush).toHaveBeenCalledWith(
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/case-id?appealCaseId=verdict-appeal`,
+      ),
+    )
+    expect(mockCreateAppealCourtSession).toHaveBeenCalledWith(
+      expect.objectContaining({
+        caseId: 'case-id',
+        appealCaseId: 'verdict-appeal',
+        sessionType: AppealCourtSessionType.MAIN_HEARING,
+        courtRoom: '1',
+      }),
     )
   })
 

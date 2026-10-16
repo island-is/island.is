@@ -104,7 +104,7 @@ const VerdictAppealStatus = () => {
     verdictAppealCase?.id,
   )
 
-  const handleNavigationTo = (destination: string) =>
+  const navigateTo = (destination: string) =>
     router.push(
       appendAppealCaseIdQuery(
         `${destination}/${workingCase.id}`,
@@ -123,7 +123,7 @@ const VerdictAppealStatus = () => {
       (bookedSessions.length > 0 && isAppealCourtSessionEmpty(courtSession)))
 
   const continueToSummary = () =>
-    handleNavigationTo(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE)
+    navigateTo(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE)
 
   const handleContinue = () => {
     if (hasSessionToBook) {
@@ -133,6 +133,19 @@ const VerdictAppealStatus = () => {
     }
 
     continueToSummary()
+  }
+
+  // The stepper's link to the summary is the continue button by another
+  // name: a session the court has filled in is confirmed and booked first,
+  // whichever of the two takes them there.
+  const handleNavigationTo = async (destination: string) => {
+    if (destination === COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE) {
+      handleContinue()
+
+      return
+    }
+
+    await navigateTo(destination)
   }
 
   const bookSession = async () => {
@@ -158,7 +171,8 @@ const VerdictAppealStatus = () => {
     }
 
     // Written into the working case so the list is right when the court
-    // comes back, without a refetch.
+    // comes back, without a refetch. Placed first to match the backend,
+    // which hands the sessions over most recently booked first.
     setWorkingCase((previous) =>
       previous.verdictAppealCase
         ? {
@@ -166,8 +180,8 @@ const VerdictAppealStatus = () => {
             verdictAppealCase: {
               ...previous.verdictAppealCase,
               courtSessions: [
-                ...(previous.verdictAppealCase.courtSessions ?? []),
                 booked,
+                ...(previous.verdictAppealCase.courtSessions ?? []),
               ],
             },
           }

@@ -90,14 +90,17 @@ const ScheduleCourtSession: FC<Props> = ({
           minDate={new Date()}
           blueBox={false}
           required
-          onChange={(date, valid) => {
-            // Nothing while the time is half typed. DateTime reports no date
-            // for an invalid time, and writing that back through
-            // `selectedDate` would clear the date the court just picked.
-            if (valid && date) {
-              onChange({ ...session, sessionDate: date })
-            }
-          }}
+          onChange={(date, valid) =>
+            onChange({
+              ...session,
+              // The date stays while the time is half typed or cleared.
+              // DateTime reports no date then, and writing that back
+              // through `selectedDate` would clear the day the court just
+              // picked. The flag is what says the field is filled in.
+              sessionDate: valid && date ? date : session.sessionDate,
+              isSessionDateValid: valid,
+            })
+          }
         />
         <Input
           name="appeal-court-session-court-room"
@@ -112,60 +115,65 @@ const ScheduleCourtSession: FC<Props> = ({
         />
       </BlueBox>
       {bookedSessions.length > 0 && (
-        <Box component="ul" marginTop={3} aria-label="Bókuð þinghöld">
-          {bookedSessions.map((bookedSession) => {
-            const title = sessionTitle(bookedSession)
-            const isBeingEdited = bookedSession.id === editingSessionId
+        <Box component="section" marginTop={5}>
+          <SectionHeading title="Bókuð þinghöld" marginBottom={1} />
+          <Box component="ul" aria-label="Bókuð þinghöld">
+            {bookedSessions.map((bookedSession) => {
+              const title = sessionTitle(bookedSession)
+              const isBeingEdited = bookedSession.id === editingSessionId
 
-            return (
-              <Box
-                key={bookedSession.id}
-                component="li"
-                display="flex"
-                alignItems="center"
-                columnGap={2}
-                paddingY={2}
-                borderBottomWidth="standard"
-                borderColor="blue200"
-              >
-                <Box flexGrow={1}>
-                  <Box display="flex" alignItems="center" columnGap="p2">
-                    <Text variant="h5">{title}</Text>
-                    {isBeingEdited && <Tag variant="blue">Verið að breyta</Tag>}
+              return (
+                <Box
+                  key={bookedSession.id}
+                  component="li"
+                  display="flex"
+                  alignItems="center"
+                  columnGap={2}
+                  paddingY={2}
+                  borderBottomWidth="standard"
+                  borderColor="blue200"
+                >
+                  <Box flexGrow={1}>
+                    <Box display="flex" alignItems="center" columnGap="p2">
+                      <Text variant="h5">{title}</Text>
+                      {isBeingEdited && (
+                        <Tag variant="blue">Verið að breyta</Tag>
+                      )}
+                    </Box>
+                    <Text variant="medium" fontWeight="light">
+                      {formatAppealCourtSessionDetails(bookedSession)}
+                    </Text>
                   </Box>
-                  <Text variant="medium">
-                    {formatAppealCourtSessionDetails(bookedSession)}
-                  </Text>
+                  <ContextMenu
+                    items={[
+                      {
+                        title: 'Breyta þinghaldi',
+                        icon: 'pencil',
+                        onClick: () => onEdit(bookedSession),
+                      },
+                      {
+                        title: 'Eyða þinghaldi',
+                        icon: 'trash',
+                        onClick: () => onDelete(bookedSession),
+                      },
+                    ]}
+                    render={
+                      <IconButton
+                        icon="ellipsisVertical"
+                        colorScheme="transparent"
+                        // Without the room: a label that says "Dómsalur" would
+                        // answer for the court room input as well.
+                        ariaLabel={`Valmynd fyrir ${title} ${formatDate(
+                          bookedSession.sessionDate,
+                          "dd.MM.yyyy 'kl.' HH:mm",
+                        )}`}
+                      />
+                    }
+                  />
                 </Box>
-                <ContextMenu
-                  items={[
-                    {
-                      title: 'Breyta þinghaldi',
-                      icon: 'pencil',
-                      onClick: () => onEdit(bookedSession),
-                    },
-                    {
-                      title: 'Eyða þinghaldi',
-                      icon: 'trash',
-                      onClick: () => onDelete(bookedSession),
-                    },
-                  ]}
-                  render={
-                    <IconButton
-                      icon="ellipsisVertical"
-                      colorScheme="transparent"
-                      // Without the room: a label that says "Dómsalur" would
-                      // answer for the court room input as well.
-                      ariaLabel={`Valmynd fyrir ${title} ${formatDate(
-                        bookedSession.sessionDate,
-                        "dd.MM.yyyy 'kl.' HH:mm",
-                      )}`}
-                    />
-                  }
-                />
-              </Box>
-            )
-          })}
+              )
+            })}
+          </Box>
         </Box>
       )}
     </Box>
