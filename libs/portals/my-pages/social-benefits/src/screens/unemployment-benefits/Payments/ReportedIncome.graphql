@@ -1,5 +1,5 @@
-query GetVmstApplicantIncomeRows {
-  vmstApplicantIncomeRows {
+query GetVmstApplicantIncomeRows($locale: String) {
+  vmstApplicantIncomeRows(locale: $locale) {
     __typename
     id
     type
@@ -24,6 +24,7 @@ query GetVmstApplicantIncomeRows {
     }
     ... on VmstApplicantCapitalIncomePayment {
       incomeTypeId
+      incomeTypeName
     }
     ... on VmstApplicantTRPayment {
       incomeTypeId
