@@ -236,6 +236,10 @@ const VehicleMileage = () => {
       }))
   }
 
+  const co2Card = (
+    <VehicleCO2 co2={co2?.vehiclesListV3?.vehicleList?.[0]?.co2 ?? '0'} />
+  )
+
   const mileageHistory = (
     <>
       {loading && (
@@ -474,7 +478,12 @@ const VehicleMileage = () => {
               tabs={[
                 {
                   label: formatMessage(messages.mileageHistoryTab),
-                  content: <Box marginTop={6}>{mileageHistory}</Box>,
+                  content: (
+                    <Box marginTop={6}>
+                      {mileageHistory}
+                      {co2Card}
+                    </Box>
+                  ),
                 },
                 {
                   label: formatMessage(messages.mileageFeeTab),
@@ -489,7 +498,7 @@ const VehicleMileage = () => {
             mileageHistory
           )}
         </Stack>
-        <VehicleCO2 co2={co2?.vehiclesListV3?.vehicleList?.[0]?.co2 ?? '0'} />
+        {!showMileageFee && co2Card}
       </Box>
 
       <FootNote
