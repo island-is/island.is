@@ -19,14 +19,14 @@ const FIVE_DAYS_LATER = new Date('2026-10-21T10:00:00.000Z')
 const createHousingBenefitsApplication = (
   overrides: Partial<Application> = {},
 ): Application =>
-  (({
+  ({
     id: 'app-id',
     applicant: '0101302989',
     assignees: [],
     answers: { draftEnteredAt: NOW.toISOString() },
     externalData: {},
     ...overrides,
-  } as unknown) as Application)
+  } as unknown as Application)
 
 const getArg = (
   config: { args?: Array<{ key: string } & Record<string, unknown>> },
