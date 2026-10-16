@@ -511,7 +511,11 @@ describe('TenantsService', () => {
         }),
       )
       targetStagingApi.meTenantsControllerUpdateRaw.mockResolvedValue(
-        createMockApiResponse(source),
+        createMockApiResponse({
+          ...source,
+          displayNameEn: 'Tenant 1 EN',
+          descriptionEn: 'Description',
+        }),
       )
 
       const result = await tenantsService.publishTenant(currentUser, {
@@ -533,6 +537,27 @@ describe('TenantsService', () => {
         displayNameEn: 'Tenant 1 EN',
         descriptionEn: 'Description',
       })
+    })
+
+    it('still publishes when the translation patch fails', async () => {
+      sourceDevApi.meTenantsControllerFindByIdForAdminRaw.mockResolvedValue(
+        createMockApiResponse({ ...source, displayNameEn: 'Tenant 1 EN' }),
+      )
+      targetStagingApi.meTenantsControllerUpdateRaw.mockRejectedValue(
+        new Error('patch failed'),
+      )
+
+      const result = await tenantsService.publishTenant(currentUser, {
+        tenantId: source.name,
+        sourceEnvironment: Environment.Development,
+        targetEnvironment: Environment.Staging,
+      })
+
+      expect(result).toMatchObject({
+        name: source.name,
+        environment: Environment.Staging,
+      })
+      expect(result.displayNameEn).toBeUndefined()
     })
 
     it('does not patch the target when there are no English translations', async () => {
