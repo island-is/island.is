@@ -299,10 +299,14 @@ export class AppealSummonsService {
       )
     }
 
+    // Generate without caching: upload only after commit so a rolled-back
+    // confirmation cannot leave a confirmed PDF in S3. Hash stays in-tx.
     const pdf = await this.pdfService.getAppealSummonsPdf(
       theCase,
       user,
       confirmed,
+      undefined,
+      { cacheInS3: false },
     )
     const { hash, hashAlgorithm } = getCaseFileHash(pdf)
 
@@ -339,6 +343,17 @@ export class AppealSummonsService {
         `Appeal summons ${summons.id} was not found after hashing`,
       )
     }
+
+    transaction.afterCommit(async () => {
+      try {
+        await this.pdfService.uploadAppealSummonsPdf(theCase, summons.id, pdf)
+      } catch (reason) {
+        this.logger.error(
+          `Failed to upload confirmed appeal summons PDF for ${summons.id} after confirm`,
+          { reason },
+        )
+      }
+    })
 
     return result
   }

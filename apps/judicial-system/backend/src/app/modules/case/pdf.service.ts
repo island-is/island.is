@@ -614,6 +614,9 @@ export class PdfService {
     user: TUser,
     summons?: AppealSummons,
     previewDefendants?: AppealSummonsPdfDefendant[],
+    // Confirm generates inside a DB transaction and uploads after commit so a
+    // rolled-back confirmation cannot leave a PDF in S3. Pass false there.
+    options?: { cacheInS3?: boolean },
   ): Promise<Buffer> {
     // Same cache shape as subpoena: once confirmed (hash set), prefer the
     // frozen object in S3 so later downloads do not drift with case edits.
@@ -687,13 +690,25 @@ export class PdfService {
       )
     }
 
-    // Confirm awaits the upload before the caller persists the hash, so a
-    // failed put cannot leave a confirmed summons with no S3 object.
-    if (summons?.confirmedDate && key) {
+    // Default: cache a confirmed PDF so the next GET can serve the same bytes.
+    // Confirm skips this and uploads after the transaction commits instead.
+    if (summons?.confirmedDate && key && (options?.cacheInS3 ?? true)) {
       await this.uploadPdfToS3(theCase, key, generatedPdf)
     }
 
     return generatedPdf
+  }
+
+  async uploadAppealSummonsPdf(
+    theCase: Case,
+    summonsId: string,
+    pdf: Buffer,
+  ): Promise<void> {
+    await this.uploadPdfToS3(
+      theCase,
+      `${theCase.id}/appealSummons/${summonsId}.pdf`,
+      pdf,
+    )
   }
 
   private getDefenceAppealDate(

@@ -141,6 +141,26 @@ describe('PdfService - getAppealSummonsPdf', () => {
     ).rejects.toThrow('upload failed')
   })
 
+  it('skips S3 upload when cacheInS3 is false', async () => {
+    ;(mockAwsS3Service.putObject as jest.Mock).mockClear()
+
+    const result = await pdfService.getAppealSummonsPdf(
+      theCase,
+      user as never,
+      {
+        id: summonsId,
+        confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
+        confirmedBy: user,
+        defendants: [],
+      } as AppealSummons,
+      undefined,
+      { cacheInS3: false },
+    )
+
+    expect(mockAwsS3Service.putObject).not.toHaveBeenCalled()
+    expect(result).toBe(pdf)
+  })
+
   it('does not touch S3 for an unconfirmed preview', async () => {
     await pdfService.getAppealSummonsPdf(theCase, user as never, undefined, [
       {
