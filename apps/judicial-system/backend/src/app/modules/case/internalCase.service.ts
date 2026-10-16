@@ -1386,6 +1386,7 @@ export class InternalCaseService {
       validToDate,
       theCase.conclusion ?? '', // Indictments do not have a conclusion
       courtDocuments,
+      theCase.id,
     )
   }
 
@@ -1661,6 +1662,7 @@ export class InternalCaseService {
           return {
             type: PoliceDocumentType.RVUL,
             courtDocument: Base64.btoa(file.toString('binary')),
+            ...(caseFile.name ? { name: caseFile.name } : {}),
           }
         }) ?? [],
     )

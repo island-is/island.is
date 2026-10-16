@@ -16,6 +16,7 @@ import {
 } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
 
+import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
@@ -81,6 +82,24 @@ export enum PoliceDocumentType {
 export interface PoliceDocument {
   type: PoliceDocumentType
   courtDocument: string
+  // RVG-only; stripped before the document is sent to the police API
+  name?: string
+}
+
+const DEFAULT_POLICE_DOCUMENT_FILE_NAMES: Record<PoliceDocumentType, string> = {
+  [PoliceDocumentType.RVKR]: 'krafa.pdf',
+  [PoliceDocumentType.RVTB]: 'thingbok.pdf',
+  [PoliceDocumentType.RVUR]: 'urskurdur.pdf',
+  [PoliceDocumentType.RVVI]: 'vistunarsedill.pdf',
+  [PoliceDocumentType.RVUL]: 'landsrettarurskurdur.pdf',
+  [PoliceDocumentType.RVDO]: 'domur.pdf',
+  [PoliceDocumentType.RVAS]: 'akaera.pdf',
+  [PoliceDocumentType.RVMG]: 'malsgogn.pdf',
+  [PoliceDocumentType.RVMV]: 'vidbotargogn_verjanda.pdf',
+  [PoliceDocumentType.RVVS]: 'vidbotargogn_saekjanda.pdf',
+  [PoliceDocumentType.RVFK]: 'fyrirkall.pdf',
+  [PoliceDocumentType.RVBD]: 'birtingarvottord.pdf',
+  [PoliceDocumentType.BRTNG_RVBD]: 'birtingarvottord_doms.pdf',
 }
 
 export interface SubpoenaInfo {
@@ -283,6 +302,7 @@ export class PoliceService {
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(forwardRef(() => IndictmentCountService))
     private readonly indictmentCountService: IndictmentCountService,
+    private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -368,6 +388,100 @@ export class PoliceService {
       info,
       this.reasonToError(reason),
     )
+  }
+
+  private mask(value: string): string {
+    const valueIsFileName = value.split('.').pop() !== value
+    const fileNameEnding = valueIsFileName ? value.split('.').pop() : ''
+    const valueWithoutFileExtension = valueIsFileName
+      ? value.replace(`.${fileNameEnding}`, '')
+      : value
+
+    // The first and last letter are always kept, so there is nothing left to
+    // mask in shorter values
+    if (valueWithoutFileExtension.length < 2) {
+      return value
+    }
+
+    const firstLetterInValue = valueWithoutFileExtension[0]
+    const mask = '*'.repeat(valueWithoutFileExtension.length - 2)
+    const lastLetterInValueWithoutFileExtension =
+      valueWithoutFileExtension[valueWithoutFileExtension.length - 1]
+
+    return `${firstLetterInValue}${mask}${lastLetterInValueWithoutFileExtension}${
+      valueIsFileName ? `.${fileNameEnding}` : ''
+    }`
+  }
+
+  private getDocumentFileName(document: PoliceDocument): string {
+    return document.name ?? DEFAULT_POLICE_DOCUMENT_FILE_NAMES[document.type]
+  }
+
+  // The police system rejects files that exceed its size limit and no amount of
+  // retrying will change that, so the prosecutor is asked to upload the file by hand.
+  private async notifyProsecutorOfFileTooLarge(
+    caseId: string,
+    fileName: string,
+    policeCaseNumber?: string,
+  ): Promise<void> {
+    let theCase: Case | null = null
+
+    try {
+      theCase = await this.caseRepositoryService.findByIdWithProsecutor(caseId)
+    } catch (reason) {
+      this.logger.error(
+        `Failed to look up case ${caseId} when notifying that a file was too large for the police system`,
+        { reason },
+      )
+    }
+
+    const prosecutorEmail = theCase?.prosecutor?.email
+
+    if (!prosecutorEmail) {
+      this.logger.error(
+        `No prosecutor email is available for case ${caseId}, so it cannot be notified that a file was too large for the police system`,
+      )
+
+      return
+    }
+
+    const caseNumber =
+      policeCaseNumber && policeCaseNumber.trim() !== ''
+        ? policeCaseNumber
+        : theCase?.policeCaseNumbers?.[0] ?? ''
+
+    const body = `Ekki tókst að hlaða upp skjali ${this.mask(
+      fileName,
+    )} í LÖKE vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í LÖKE.`
+
+    const subject = `Ekki tókst að hlaða upp skjali í LÖKE í máli ${caseNumber}`
+
+    try {
+      await this.emailService.sendEmail({
+        from: {
+          name: this.config.fromName,
+          address: this.config.fromEmail,
+        },
+        replyTo: {
+          name: this.config.replyToName,
+          address: this.config.replyToEmail,
+        },
+        to: [
+          {
+            name: theCase?.prosecutor?.name ?? '',
+            address: prosecutorEmail,
+          },
+        ],
+        subject,
+        text: body,
+        html: body,
+      })
+    } catch (reason) {
+      this.logger.error(
+        `Failed to notify ${prosecutorEmail} that a file was too large for the police system`,
+        { reason },
+      )
+    }
   }
 
   private async throttleUploadPoliceCaseFile(
@@ -1205,6 +1319,7 @@ export class PoliceService {
     validToDate: Date,
     caseConclusion: string,
     courtDocuments: PoliceDocument[],
+    caseIdForNotification = caseId,
   ): Promise<boolean> {
     const usesLegacyPoliceCaseUpdate = Boolean(defendantNationalId)
     const url = usesLegacyPoliceCaseUpdate
@@ -1222,7 +1337,10 @@ export class PoliceService {
       courtVerdict: caseState,
       expiringDate: validToDate?.toISOString(),
       courtVerdictString: caseConclusion,
-      courtDocuments,
+      courtDocuments: courtDocuments.map(({ type, courtDocument }) => ({
+        type,
+        courtDocument,
+      })),
     }
 
     const failureInfo = {
@@ -1256,6 +1374,23 @@ export class PoliceService {
           responseBody.trim() !== ''
             ? responseBody
             : `Police case update failed with empty response body (HTTP ${res.status})`
+
+        if (res.status === 413 && courtDocuments.length > 0) {
+          // Size limits are expected; email the prosecutor instead of Slack.
+          await this.notifyProsecutorOfFileTooLarge(
+            caseIdForNotification,
+            this.getDocumentFileName(courtDocuments[0]),
+            policeCaseNumber,
+          )
+
+          this.logPoliceFailure(
+            `Failed to update police case ${caseId}`,
+            { ...failureInfo, statusCode: String(res.status) },
+            new Error(message),
+          )
+
+          return false
+        }
 
         this.logPoliceFailureAndNotify(
           'Failed to update police case',
@@ -1332,6 +1467,14 @@ export class PoliceService {
           `Verdict for defendant ${defendantId} with police document id ${policeResponse.id} and file type code ${fileTypeCode} delivered to national commissioners office `,
         )
         return { externalPoliceDocumentId: policeResponse.id }
+      }
+
+      if (res.status === 413) {
+        await this.notifyProsecutorOfFileTooLarge(
+          caseId,
+          documentFiles[0]?.name ??
+            DEFAULT_POLICE_DOCUMENT_FILE_NAMES[PoliceDocumentType.RVDO],
+        )
       }
 
       throw await res.text()
@@ -1500,6 +1643,14 @@ export class PoliceService {
       if (res.ok) {
         const subpoenaResponse = await res.json()
         return { policeSubpoenaId: subpoenaResponse.id }
+      }
+
+      if (res.status === 413) {
+        await this.notifyProsecutorOfFileTooLarge(
+          theCase.id,
+          DEFAULT_POLICE_DOCUMENT_FILE_NAMES[PoliceDocumentType.RVFK],
+          policeCaseNumbers?.[0],
+        )
       }
 
       throw await res.text()

@@ -991,6 +991,7 @@ export class FileService {
             {
               type: policeDocumentType,
               courtDocument: Base64.btoa(content.toString('binary')),
+              ...(file.name ? { name: file.name } : {}),
             },
           ],
         )

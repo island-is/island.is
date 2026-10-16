@@ -220,6 +220,85 @@ describe('PoliceController - Update Police Case', () => {
     })
   })
 
+  describe('update police case fails because a file is too large', () => {
+    const largeFileName = 'testFile.pdf'
+    const prosecutor = {
+      name: 'Prosecutor One',
+      email: 'prosecutor@omnitrix.is',
+    }
+    const caseIdForNotification = uuid()
+    let mockEmailService: { sendEmail: jest.Mock }
+    let mockEventService: { postErrorEvent: jest.Mock }
+    let mockFindByIdWithProsecutor: jest.Mock
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as unknown as jest.Mock
+      mockFetch.mockReset()
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 413,
+        text: jest.fn().mockResolvedValueOnce('Payload Too Large'),
+      })
+
+      const {
+        policeService,
+        emailService,
+        eventService,
+        caseRepositoryService,
+      } = await createTestingPoliceModule()
+      mockEmailService = emailService as unknown as { sendEmail: jest.Mock }
+      mockEventService = eventService as unknown as {
+        postErrorEvent: jest.Mock
+      }
+
+      mockFindByIdWithProsecutor =
+        caseRepositoryService.findByIdWithProsecutor as jest.Mock
+      mockFindByIdWithProsecutor.mockResolvedValueOnce({ prosecutor })
+
+      then = await policeService
+        .updatePoliceCase(
+          user,
+          caseId,
+          caseType,
+          caseState,
+          policeCaseNumber,
+          courtCaseNumber,
+          defendantNationalId,
+          validToDate,
+          caseConclusion,
+          [
+            {
+              type: PoliceDocumentType.RVVS,
+              courtDocument: 'large file',
+              name: largeFileName,
+            },
+          ],
+          caseIdForNotification,
+        )
+        .then((result) => ({ result } as Then))
+        .catch((error) => ({ error } as Then))
+    })
+
+    it('should notify the prosecutor with a masked file name', () => {
+      expect(then.result).toBe(false)
+      expect(mockFindByIdWithProsecutor).toHaveBeenCalledWith(
+        caseIdForNotification,
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
+          subject: `Ekki tókst að hlaða upp skjali í LÖKE í máli ${policeCaseNumber}`,
+          text: 'Ekki tókst að hlaða upp skjali t******e.pdf í LÖKE vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í LÖKE.',
+        }),
+      )
+    })
+
+    it('should not post a Slack error for an expected size limit', () => {
+      expect(mockEventService.postErrorEvent).not.toHaveBeenCalled()
+    })
+  })
+
   describe('update police case fails with a response body', () => {
     const responseBody = '{"type":"Server.ClientProxy.IOError"}'
     let mockLogger: { error: jest.Mock }
