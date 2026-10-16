@@ -1,0 +1,156 @@
+fragment PrimarySchoolAgentFields on EducationPrimarySchoolAgent {
+  id
+  person {
+    nationalId
+    name
+  }
+  relationType {
+    id
+    title {
+      is
+      en
+    }
+  }
+  createdBy {
+    kind
+    displayName
+    at
+  }
+  canEdit
+}
+
+fragment PrimarySchoolLanguageProfileFields on EducationPrimarySchoolLanguageProfile {
+  languageEnvironment {
+    id
+    code
+    title {
+      is
+      en
+    }
+  }
+  preferredLanguage
+  languages
+  interpreter
+  signLanguage
+  updatedAt
+  updatedBy {
+    kind
+    displayName
+  }
+}
+
+fragment PrimarySchoolHealthProfileFields on EducationPrimarySchoolHealthProfile {
+  epipen
+  medicalDiagnoses
+  medicationAssistance
+  allergies {
+    id
+    code
+    type
+    title {
+      is
+      en
+    }
+  }
+  updatedAt
+  updatedBy {
+    kind
+    displayName
+  }
+  canEdit
+}
+
+query PrimarySchoolAgents($childId: String!) {
+  primarySchoolAgents(childId: $childId) {
+    ...PrimarySchoolAgentFields
+  }
+}
+
+query PrimarySchoolLanguageProfile($childId: String!) {
+  primarySchoolLanguageProfile(childId: $childId) {
+    ...PrimarySchoolLanguageProfileFields
+  }
+}
+
+query PrimarySchoolHealthProfile($childId: String!) {
+  primarySchoolHealthProfile(childId: $childId) {
+    ...PrimarySchoolHealthProfileFields
+  }
+}
+
+query PrimarySchoolContactIdentity($input: IdentityInput!) {
+  identity(input: $input) {
+    nationalId
+    name
+  }
+}
+
+query PrimarySchoolAgentRelationTypes {
+  primarySchoolAgentRelationTypes {
+    id
+    relation
+    title {
+      is
+      en
+    }
+  }
+}
+
+query PrimarySchoolAllergies {
+  primarySchoolAllergies {
+    id
+    code
+    type
+    title {
+      is
+      en
+    }
+  }
+}
+
+query PrimarySchoolLanguageEnvironments {
+  primarySchoolLanguageEnvironments {
+    id
+    code
+    title {
+      is
+      en
+    }
+  }
+}
+
+mutation PrimarySchoolAddAgent($input: EducationPrimarySchoolAddAgentInput!) {
+  primarySchoolAddAgent(input: $input) {
+    ...PrimarySchoolAgentFields
+  }
+}
+
+mutation PrimarySchoolUpdateAgent(
+  $input: EducationPrimarySchoolUpdateAgentInput!
+) {
+  primarySchoolUpdateAgent(input: $input) {
+    ...PrimarySchoolAgentFields
+  }
+}
+
+mutation PrimarySchoolDeleteAgent(
+  $input: EducationPrimarySchoolDeleteAgentInput!
+) {
+  primarySchoolDeleteAgent(input: $input)
+}
+
+mutation PrimarySchoolUpdateLanguageProfile(
+  $input: EducationPrimarySchoolUpdateLanguageProfileInput!
+) {
+  primarySchoolUpdateLanguageProfile(input: $input) {
+    ...PrimarySchoolLanguageProfileFields
+  }
+}
+
+mutation PrimarySchoolUpdateHealthProfile(
+  $input: EducationPrimarySchoolUpdateHealthProfileInput!
+) {
+  primarySchoolUpdateHealthProfile(input: $input) {
+    ...PrimarySchoolHealthProfileFields
+  }
+}

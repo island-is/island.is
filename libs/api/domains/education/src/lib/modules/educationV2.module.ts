@@ -5,6 +5,7 @@ import { GradesResolver } from '../resolvers/grades.resolver'
 import { EducationServiceV2 } from '../services/educationV2.service'
 import { PrimarySchoolAssessmentResolver } from '../resolvers/primarySchoolAssessment.resolver'
 import { PrimarySchoolResolver } from '../resolvers/primarySchool.resolver'
+import { PrimarySchoolKeyInfoResolver } from '../resolvers/primarySchoolKeyInfo.resolver'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
@@ -14,6 +15,7 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
     EducationServiceV2,
     PrimarySchoolAssessmentResolver,
     PrimarySchoolResolver,
+    PrimarySchoolKeyInfoResolver,
   ],
 })
 export class EducationV2Module {}
