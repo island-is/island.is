@@ -1,17 +1,9 @@
-import { DogStatsD } from './dogStatsD'
+import { DogStatsD } from '@island.is/infra-metrics'
 
 export interface SnapshotMetric {
   name: string
   value: number
   tags?: Record<string, string>
-}
-
-/** UTC calendar days, deliberately independent of the host's timezone. */
-export const completedDay = (now: Date, daysAgo = 1) => {
-  const end = new Date(now)
-  end.setUTCHours(0, 0, 0, 0)
-  end.setUTCDate(end.getUTCDate() - daysAgo + 1)
-  return { start: new Date(end.getTime() - 86400000), end }
 }
 
 /** Gauges are snapshots: rerunning a job must not increment yesterday's totals. */

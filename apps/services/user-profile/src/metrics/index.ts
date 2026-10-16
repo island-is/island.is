@@ -4,7 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import type { Client } from 'pg'
 import { LoggingModule, LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { publishSnapshot } from '@island.is/infra-metrics'
+import { publishSnapshot } from './snapshot'
 import { ConfigModule } from '@island.is/nest/config'
 import {
   FeatureFlagConfig,

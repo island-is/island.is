@@ -1,5 +1,5 @@
 import { QueryTypes, Sequelize } from 'sequelize'
-import type { SnapshotMetric } from '@island.is/infra-metrics'
+import type { SnapshotMetric } from './snapshot'
 
 export const profileMetricsQuery = `
   SELECT COUNT(*) FILTER (
