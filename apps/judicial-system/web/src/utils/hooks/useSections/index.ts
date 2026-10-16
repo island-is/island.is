@@ -74,6 +74,7 @@ import {
   isProsecutionUser,
   isProsecutorsOffice,
   isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
@@ -105,12 +106,22 @@ export const showsPublicProsecutorVerdictAppealStep = (
   user: User | undefined,
   features: Feature[],
   isRegisteringVerdictAppeal = false,
-): boolean =>
-  features.includes(Feature.INDICTMENT_APPEAL) &&
-  isIndictmentCase(workingCase.type) &&
-  isPublicProsecutionOfficeUser(user) &&
-  (hasStandingVerdictAppeal(workingCase.verdictAppealCase) ||
-    isRegisteringVerdictAppeal)
+): boolean => {
+  if (
+    !features.includes(Feature.INDICTMENT_APPEAL) ||
+    !isIndictmentCase(workingCase.type)
+  ) {
+    return false
+  }
+
+  const hasStanding = hasStandingVerdictAppeal(workingCase.verdictAppealCase)
+
+  if (isPublicProsecutionOfficeUser(user)) {
+    return hasStanding || isRegisteringVerdictAppeal
+  }
+
+  return isPublicProsecutionUser(user) && hasStanding
+}
 
 const useSections = (
   isValid = true,
