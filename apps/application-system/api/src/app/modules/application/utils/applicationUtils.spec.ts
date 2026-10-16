@@ -723,5 +723,72 @@ describe('Testing utility functions for applications', () => {
         },
       ])
     })
+
+    it('Should store resolved, de-duplicated recipients when recipients is set', async () => {
+      const applicationService = createMockApplicationService()
+      const intlService = createMockIntlService()
+      const application = createApplication({
+        assignees: ['1111111111', '2222222222', '1111111111'],
+      })
+      const template = createTemplateWithScheduledNotifications({
+        template: 'HNIPP.ASSIGNEE',
+        date: new Date('2026-08-08T23:59:00.000Z'),
+        recipients: (app) => app.assignees,
+      })
+
+      await handleScheduledNotifications(
+        applicationService,
+        application,
+        template,
+        'draft',
+        intlService,
+      )
+
+      expect(
+        applicationService.createScheduledNotifications,
+      ).toHaveBeenCalledWith(application.id, 'draft', [
+        {
+          template: 'HNIPP.ASSIGNEE',
+          schedule_time: new Date('2026-08-08T23:59:00.000Z'),
+          args: [],
+          recipients: ['1111111111', '2222222222'],
+        },
+      ])
+    })
+
+    it('Should skip a config whose recipients resolve to an empty list', async () => {
+      const applicationService = createMockApplicationService()
+      const intlService = createMockIntlService()
+      const application = createApplication({ assignees: [] })
+      const template = createTemplateWithScheduledNotifications([
+        {
+          template: 'HNIPP.ASSIGNEE',
+          date: new Date('2026-08-08T23:59:00.000Z'),
+          recipients: (app) => app.assignees,
+        },
+        {
+          template: 'HNIPP.APPLICANT',
+          date: new Date('2026-08-09T23:59:00.000Z'),
+        },
+      ])
+
+      await handleScheduledNotifications(
+        applicationService,
+        application,
+        template,
+        'draft',
+        intlService,
+      )
+
+      expect(
+        applicationService.createScheduledNotifications,
+      ).toHaveBeenCalledWith(application.id, 'draft', [
+        {
+          template: 'HNIPP.APPLICANT',
+          schedule_time: new Date('2026-08-09T23:59:00.000Z'),
+          args: [],
+        },
+      ])
+    })
   })
 })

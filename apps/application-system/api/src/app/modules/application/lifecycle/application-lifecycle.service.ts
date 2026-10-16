@@ -207,8 +207,20 @@ export class ApplicationLifeCycleService {
         if (!application) {
           continue // Or handle missing application
         }
-        // Handle applicant actors (delegations) vs normal applicant
-        if (
+        if (notification.recipients && notification.recipients.length > 0) {
+          notification.recipients.forEach((recipient) => {
+            notificationsToSend.push({
+              notificationId: notification.id,
+              applicationId: application.id,
+              dto: {
+                recipient,
+                templateId: notification.template,
+                args: notification.args || [],
+              },
+            })
+          })
+        } else if (
+          // Handle applicant actors (delegations) vs normal applicant
           application.applicantActors &&
           application.applicantActors.length > 0
         ) {
