@@ -11,6 +11,7 @@ import {
   BankTransferFailureReason,
   BankTransferStatus,
   BankTransferPendingStatus,
+  BankTransferPayerType,
 } from './bankTransfer.types'
 import { BankTransferPayment } from './models/bankTransferPayment.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
@@ -110,6 +111,19 @@ export const getBankTransferDebtor = (
   return null
 }
 
+/** `undefined` for a payer that is neither, such as a temporary kennitala, which is never let through. */
+export const getBankTransferPayerType = (
+  payerNationalId: string,
+): BankTransferPayerType | undefined => {
+  if (isCompany(payerNationalId)) {
+    return BankTransferPayerType.COMPANY
+  }
+  if (isPerson(payerNationalId)) {
+    return BankTransferPayerType.PERSON
+  }
+  return undefined
+}
+
 export const toBlikkItem = (item: CatalogItemWithQuantity): BlikkItem => ({
   name: item.chargeItemName,
   quantity: item.quantity,
@@ -132,6 +146,8 @@ export type BankTransferLogContext = {
   paymentFlowId: string
   correlationId: string
   rrn: string
+  // Filters the logs by company and person payers (`@payerType:company`).
+  payerType?: BankTransferPayerType
 }
 
 /** `rrn` is the provider's payment id; `correlationId` our per-attempt key. */
@@ -139,13 +155,27 @@ export const bankTransferLogContext = (
   paymentFlowId: string,
   correlationId: string,
   rrn: string,
-): BankTransferLogContext => ({ paymentFlowId, correlationId, rrn })
+  payerType: BankTransferPayerType | undefined,
+): BankTransferLogContext => ({ paymentFlowId, correlationId, rrn, payerType })
 
-/** Correlation id comes from `id`, not `sourceReferenceId` — `create` sets both to the same uuid. */
+/**
+ * Correlation id comes from `id`, not `sourceReferenceId` — `create` sets both to the same uuid.
+ * The payer type comes from `actorNationalId`, which `create` stores for a company payer only.
+ */
 export const rowLogContext = (
-  row: Pick<BankTransferPayment, 'paymentFlowId' | 'id' | 'providerPaymentId'>,
+  row: Pick<
+    BankTransferPayment,
+    'paymentFlowId' | 'id' | 'providerPaymentId' | 'actorNationalId'
+  >,
 ): BankTransferLogContext =>
-  bankTransferLogContext(row.paymentFlowId, row.id, row.providerPaymentId)
+  bankTransferLogContext(
+    row.paymentFlowId,
+    row.id,
+    row.providerPaymentId,
+    row.actorNationalId
+      ? BankTransferPayerType.COMPANY
+      : BankTransferPayerType.PERSON,
+  )
 
 /** True for any status that won't change again (SUCCESS and the three failure values). */
 export const isTerminalBankTransferStatus = (

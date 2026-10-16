@@ -15,6 +15,7 @@ import { environment } from '../../environments'
 import { ChargeItem } from '../../utils/chargeUtils'
 import {
   bankTransferLogContext,
+  getBankTransferPayerType,
   generateBankTransferChargeFJSPayload,
 } from '../bankTransferPayment/bankTransfer.utils'
 import { generateCardChargeFJSPayload } from '../cardPayment/cardPayment.utils'
@@ -283,6 +284,7 @@ export class WorkerService {
           paymentFlow.id,
           fulfillment.confirmationRefId,
           bankTransferPayment.providerPaymentId,
+          getBankTransferPayerType(paymentFlow.payerNationalId),
         ),
       )
     }
