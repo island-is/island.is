@@ -1,5 +1,9 @@
-import addDays from 'date-fns/addDays'
-import { getValueViaPath } from '@island.is/application/core'
+import addMilliseconds from 'date-fns/addMilliseconds'
+import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
+import {
+  getValueViaPath,
+  scheduleAssigneeReminder,
+} from '@island.is/application/core'
 import {
   Application,
   ExternalData,
@@ -10,11 +14,15 @@ import {
 } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { getApplicationCardRentalSummary } from './applicationCardSummary'
+import { getPendingAssigneeNationalIds } from './assigneeUtils'
 import { getHousingBenefitsPruneDate } from './pruneUtils'
 
-export const PRUNE_REMINDER_DAYS_BEFORE = 7
+/** Days after entering a state (draft, assignee approval, applicant submit) until a reminder is sent. */
+export const REMINDER_DAYS_AFTER_STATE_ENTRY = 5
 
-/** Local testing only — single reminder 1 minute after entering draft. */
+const DAY_MS = 24 * 60 * 60 * 1000
+
+/** Local testing only — reminders are sent 1 minute after entering the state. */
 const LOCAL_SCHEDULED_NOTIFICATION_TEST_DELAY_MS = 60 * 1000
 
 const getScheduledNotificationTestDelayMs = (): number | undefined => {
@@ -109,33 +117,67 @@ export const getHousingBenefitsPruneMessage = (
   }
 }
 
-export const getDraftPruneReminderScheduledNotifications = (
+/**
+ * When the reminder for the current state entry should be sent, or undefined
+ * if the application would already be pruned by then.
+ */
+const getStateEntryReminderSendDate = (
+  application: Application,
+): Date | undefined => {
+  const delayMs =
+    getScheduledNotificationTestDelayMs() ??
+    REMINDER_DAYS_AFTER_STATE_ENTRY * DAY_MS
+  const sendDate = addMilliseconds(new Date(), delayMs)
+  return sendDate < getHousingBenefitsPruneDate(application)
+    ? sendDate
+    : undefined
+}
+
+/**
+ * Reminds the applicant to finish the application (used in draft and applicant submit).
+ * For draft this lands 5 days after starting, i.e. 40 days before pruning.
+ */
+export const getApplicantReminderScheduledNotifications = (
   application: Application,
 ): ScheduledNotificationConfig[] => {
-  const templateId = HOUSING_BENEFITS_PRUNE_REMINDER_TEMPLATE_ID
-
-  const testDelayMs = getScheduledNotificationTestDelayMs()
-  if (testDelayMs) {
-    return [
-      {
-        template: templateId,
-        delayInMs: testDelayMs,
-        args: buildNotificationArgs(application, PRUNE_REMINDER_DAYS_BEFORE),
-        includeApplicationLink: true,
-      },
-    ]
+  const sendDate = getStateEntryReminderSendDate(application)
+  if (!sendDate) {
+    return []
   }
 
-  const pruneDate = getHousingBenefitsPruneDate(application)
+  const daysRemaining = differenceInCalendarDays(
+    getHousingBenefitsPruneDate(application),
+    sendDate,
+  )
 
-  return Array.from({ length: PRUNE_REMINDER_DAYS_BEFORE }, (_, index) => {
-    const daysRemaining = PRUNE_REMINDER_DAYS_BEFORE - index
-
-    return {
-      template: templateId,
-      date: addDays(pruneDate, -daysRemaining),
+  return [
+    {
+      template: HOUSING_BENEFITS_PRUNE_REMINDER_TEMPLATE_ID,
+      date: sendDate,
       args: buildNotificationArgs(application, daysRemaining),
       includeApplicationLink: true,
-    }
-  })
+    },
+  ]
+}
+
+/**
+ * Reminds household members who have not yet signed or rejected. The state is
+ * re-entered whenever an assignee acts, so the recipients and the timer are
+ * refreshed each time.
+ */
+export const getAssigneeReminderScheduledNotifications = (
+  application: Application,
+): ScheduledNotificationConfig[] => {
+  const sendDate = getStateEntryReminderSendDate(application)
+  if (!sendDate) {
+    return []
+  }
+
+  return [
+    scheduleAssigneeReminder(
+      getPendingAssigneeNationalIds(application),
+      { date: sendDate },
+      getHousingBenefitsPruneDate(application),
+    ),
+  ]
 }
