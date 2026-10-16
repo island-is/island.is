@@ -201,6 +201,7 @@ describe('BankTransferService', () => {
         paymentFlowId: 'flow-1',
         correlationId: 'btp-onboard',
         debtorExternalId: '1234567890',
+        bankAccountNumber: '123456789012',
       })
 
       expect(result.onboardingRequired).toBe(true)
@@ -245,6 +246,7 @@ describe('BankTransferService', () => {
           paymentFlowId: 'flow-1',
           correlationId: 'btp-err',
           debtorExternalId: '1234567890',
+          bankAccountNumber: '123456789012',
         }),
       ).rejects.toThrow(BankTransferErrorCode.FailedToCreateBankTransfer)
 

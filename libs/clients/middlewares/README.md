@@ -358,6 +358,39 @@ const enhancedFetch = createEnhancedFetch({
 })
 ```
 
+## Empty response bodies in openapi-ts clients
+
+A client generated with `@hey-api/openapi-ts` returns `{}` for a 204 or a `Content-Length: 0` response without parsing or validating it, so an empty body passes as a valid response. `requireResponseBodies` is a response interceptor that rejects an empty 2xx with `EmptyResponseBodyError` when the OpenAPI document declares a JSON body for that status (the exact code, else `2XX`, else `default`). An operation documenting 200 with a body and 204 without one may still answer with an empty 204, but not with an empty 200.
+
+The `response-bodies` plugin generates what the document declares, as `responseBodies` in `responseBodies.gen.ts`. The openapi-ts CLI does not resolve workspace aliases, so import it by path:
+
+```typescript
+// openapi-ts.config.ts
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { defineResponseBodiesPlugin } from '../../../middlewares/src/lib/openapi-ts/responseBodiesPlugin'
+
+export default defineConfig({
+  plugins: [
+    '@hey-api/client-fetch',
+    '@hey-api/sdk',
+    defineResponseBodiesPlugin(),
+  ],
+})
+```
+
+Then register the interceptor once on the generated client:
+
+```typescript
+import { requireResponseBodies } from '@island.is/clients/middlewares'
+
+import { client } from '../../gen/fetch/client.gen'
+import { responseBodies } from '../../gen/fetch/responseBodies.gen'
+
+client.interceptors.response.use(requireResponseBodies(responseBodies))
+```
+
+A call that accepts an empty body anyway passes `meta: { allowEmptyResponseBody: true }`.
+
 ## Running unit tests
 
 Run `yarn test clients-middlewares` to execute the unit tests via [Jest](https://jestjs.io).
