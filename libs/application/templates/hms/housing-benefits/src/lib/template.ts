@@ -21,6 +21,7 @@ import {
 import {
   getApplicantReminderScheduledNotifications,
   getAssigneeReminderScheduledNotifications,
+  getDraftReminderScheduledNotifications,
 } from '../utils/notifications'
 import * as m from './messages'
 import {
@@ -162,7 +163,7 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: housingBenefitsPruneLifecycle,
-          scheduledNotifications: getApplicantReminderScheduledNotifications,
+          scheduledNotifications: getDraftReminderScheduledNotifications,
           actionCard: housingBenefitsActionCards.draft,
           onExit: NotifyAssigneesApi,
           roles: [

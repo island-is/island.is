@@ -6,6 +6,7 @@ import {
 import {
   getApplicantReminderScheduledNotifications,
   getAssigneeReminderScheduledNotifications,
+  getDraftReminderScheduledNotifications,
 } from './notifications'
 
 jest.mock('@island.is/shared/utils', () => ({
@@ -101,6 +102,55 @@ describe('housing benefits scheduled notifications', () => {
       expect(configs[0]).toMatchObject({
         date: new Date('2026-10-16T10:01:00.000Z'),
       })
+    })
+  })
+
+  describe('getDraftReminderScheduledNotifications', () => {
+    it('should remind 5 days after starting the draft and 5 days before pruning', () => {
+      const configs = getDraftReminderScheduledNotifications(
+        createHousingBenefitsApplication(),
+      )
+
+      expect(configs).toHaveLength(2)
+      expect(configs[0]).toMatchObject({
+        template: 'HNIPP.AS.HMS.HB.PRUNE.REMINDER',
+        date: FIVE_DAYS_LATER,
+        includeApplicationLink: true,
+      })
+      expect(getArg(configs[0], 'daysRemaining')).toEqual({
+        key: 'daysRemaining',
+        value: '40',
+      })
+      expect(configs[1]).toMatchObject({
+        template: 'HNIPP.AS.HMS.HB.PRUNE.REMINDER',
+        date: new Date('2026-11-25T10:00:00.000Z'),
+        includeApplicationLink: true,
+      })
+      expect(getArg(configs[1], 'daysRemaining')).toEqual({
+        key: 'daysRemaining',
+        value: '5',
+      })
+    })
+
+    it('should not schedule the pre-prune reminder in the past', () => {
+      const configs = getDraftReminderScheduledNotifications(
+        createHousingBenefitsApplication({
+          answers: { draftEnteredAt: '2026-09-05T10:00:00.000Z' },
+        }),
+      )
+
+      expect(configs).toEqual([])
+    })
+
+    it('should only send one reminder when the pre-prune date is not after the state entry reminder', () => {
+      const configs = getDraftReminderScheduledNotifications(
+        createHousingBenefitsApplication({
+          answers: { draftEnteredAt: '2026-09-08T10:00:00.000Z' },
+        }),
+      )
+
+      expect(configs).toHaveLength(1)
+      expect(configs[0]).toMatchObject({ date: FIVE_DAYS_LATER })
     })
   })
 

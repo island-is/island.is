@@ -1,3 +1,4 @@
+import addDays from 'date-fns/addDays'
 import addMilliseconds from 'date-fns/addMilliseconds'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 import {
@@ -19,6 +20,9 @@ import { getHousingBenefitsPruneDate } from './pruneUtils'
 
 /** Days after entering a state (draft, assignee approval, applicant submit) until a reminder is sent. */
 export const REMINDER_DAYS_AFTER_STATE_ENTRY = 5
+
+/** Days before pruning that the applicant gets a last reminder while in draft. */
+export const DRAFT_REMINDER_DAYS_BEFORE_PRUNE = 5
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
@@ -133,31 +137,58 @@ const getStateEntryReminderSendDate = (
     : undefined
 }
 
+const applicantReminder = (
+  application: Application,
+  sendDate: Date,
+): ScheduledNotificationConfig => ({
+  template: HOUSING_BENEFITS_PRUNE_REMINDER_TEMPLATE_ID,
+  date: sendDate,
+  args: buildNotificationArgs(
+    application,
+    differenceInCalendarDays(
+      getHousingBenefitsPruneDate(application),
+      sendDate,
+    ),
+  ),
+  includeApplicationLink: true,
+})
+
 /**
- * Reminds the applicant to finish the application (used in draft and applicant submit).
- * For draft this lands 5 days after starting, i.e. 40 days before pruning.
+ * Reminds the applicant to finish the application, 5 days after entering the
+ * state (used in applicant submit).
  */
 export const getApplicantReminderScheduledNotifications = (
   application: Application,
 ): ScheduledNotificationConfig[] => {
   const sendDate = getStateEntryReminderSendDate(application)
-  if (!sendDate) {
-    return []
-  }
+  return sendDate ? [applicantReminder(application, sendDate)] : []
+}
 
-  const daysRemaining = differenceInCalendarDays(
+/**
+ * Reminds the applicant to finish the draft 5 days after starting (40 days
+ * before pruning) and again 5 days before pruning. The pre-prune reminder is
+ * skipped if it would be sent in the past or not after the first reminder.
+ */
+export const getDraftReminderScheduledNotifications = (
+  application: Application,
+): ScheduledNotificationConfig[] => {
+  const stateEntrySendDate = getStateEntryReminderSendDate(application)
+  const beforePruneSendDate = addDays(
     getHousingBenefitsPruneDate(application),
-    sendDate,
+    -DRAFT_REMINDER_DAYS_BEFORE_PRUNE,
   )
 
-  return [
-    {
-      template: HOUSING_BENEFITS_PRUNE_REMINDER_TEMPLATE_ID,
-      date: sendDate,
-      args: buildNotificationArgs(application, daysRemaining),
-      includeApplicationLink: true,
-    },
-  ]
+  const sendDates = [stateEntrySendDate]
+  if (
+    beforePruneSendDate > new Date() &&
+    (!stateEntrySendDate || beforePruneSendDate > stateEntrySendDate)
+  ) {
+    sendDates.push(beforePruneSendDate)
+  }
+
+  return sendDates
+    .filter((date): date is Date => !!date)
+    .map((date) => applicantReminder(application, date))
 }
 
 /**
