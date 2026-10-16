@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
+import { ArrayMinSize, IsOptional } from 'class-validator'
 
 import { Environment } from '@island.is/shared/types'
 
@@ -14,5 +15,7 @@ export class RestoreClientInput {
     nullable: true,
     description: 'Environments to restore in. Defaults to all environments.',
   })
+  @IsOptional()
+  @ArrayMinSize(1)
   environments?: Environment[]
 }

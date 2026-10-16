@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
 import { ConfigModule } from '@nestjs/config'
 
 import {
@@ -612,4 +614,29 @@ describe('ClientsService', () => {
       )
     })
   })
+})
+
+describe('environments input validation', () => {
+  const base = { tenantId: 'test-tenant-id', clientId: 'test-client-id' }
+
+  it.each([DeleteClientInput, RestoreClientInput])(
+    '%p rejects an empty environments list',
+    async (Input) => {
+      const errors = await validate(
+        plainToInstance(Input, { ...base, environments: [] }),
+      )
+
+      expect(errors.map((e) => e.property)).toEqual(['environments'])
+    },
+  )
+
+  it.each([DeleteClientInput, RestoreClientInput])(
+    '%p allows omitted or null environments',
+    async (Input) => {
+      expect(await validate(plainToInstance(Input, base))).toHaveLength(0)
+      expect(
+        await validate(plainToInstance(Input, { ...base, environments: null })),
+      ).toHaveLength(0)
+    },
+  )
 })
