@@ -10,6 +10,7 @@ import {
   Employment,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
+import { isRvkMunicipalityCode } from '../lib/constants'
 
 export const hasSpouse = (_answers: FormValue, externalData: ExternalData) =>
   getValueViaPath<NationalRegistrySpouse>(
@@ -40,6 +41,23 @@ export const hasChildren = (
   )
   return Boolean(childWithInfo?.length)
 }
+
+export const isRVKresident = (
+  _answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const municipalityCode = getValueViaPath<string>(
+    externalData,
+    'nationalRegistry.data.address.municipalityCode',
+  )
+  return isRvkMunicipalityCode(municipalityCode)
+}
+
+export const taxSuccess = (_answers: FormValue, externalData: ExternalData) =>
+  getValueViaPath<boolean>(
+    externalData,
+    'taxData.data.municipalitiesDirectTaxPayments.success',
+  ) === true
 
 export const hasOtherHomeCircumstances = (answers: FormValue) =>
   getValueViaPath<HomeCircumstances>(answers, 'homeCircumstances.type') ===
