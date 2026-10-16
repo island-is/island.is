@@ -1,4 +1,9 @@
-import { isCourtOfAppealsUser } from '@island.is/judicial-system/types'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  isCourtOfAppealsUser,
+  isDefenceUser,
+  isPublicProsecutionOfficeUser,
+} from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type {
   AppealCase,
@@ -47,11 +52,56 @@ const letterRow = (
 }
 
 /**
- * The letter of appointment for one party, or nothing when there is none to
- * offer.
+ * Whether this user is shown a party's letter at all.
  *
- * Only the court of appeals sees it: it writes the letter and sends it, and
- * the advocate it appoints is told by e-mail rather than from a screen.
+ * The court of appeals writes it and the public prosecution office is copied
+ * on it, so both see every letter on the case. A defence user sees the letter
+ * of the party they act for - the one the district court confirmed them for,
+ * which is the same test every other party document on the case applies -
+ * and no other: a defender of one of the accused is not party to what the
+ * court sent the other's. Nobody else is offered it.
+ *
+ * The limited access route refuses on the same grounds, so a row offered
+ * here is one that opens.
+ */
+export const canViewAppealAppointmentLetter = (
+  user: User | undefined,
+  party: { defendant?: Defendant; civilClaimant?: CivilClaimant },
+): boolean => {
+  if (isCourtOfAppealsUser(user) || isPublicProsecutionOfficeUser(user)) {
+    return true
+  }
+
+  if (!isDefenceUser(user) || !user?.nationalId) {
+    return false
+  }
+
+  const ownIds = normalizeAndFormatNationalId(user.nationalId)
+  const { defendant, civilClaimant } = party
+
+  if (defendant) {
+    return Boolean(
+      defendant.isDefenderChoiceConfirmed &&
+        defendant.defenderNationalId &&
+        ownIds.includes(defendant.defenderNationalId),
+    )
+  }
+
+  if (civilClaimant) {
+    return Boolean(
+      civilClaimant.hasSpokesperson &&
+        civilClaimant.isSpokespersonConfirmed &&
+        civilClaimant.spokespersonNationalId &&
+        ownIds.includes(civilClaimant.spokespersonNationalId),
+    )
+  }
+
+  return false
+}
+
+/**
+ * The letter of appointment for one party, or nothing when there is none to
+ * offer - see canViewAppealAppointmentLetter for who is offered it.
  *
  * Only the advocate in force has a letter. Replacing one supersedes it, and
  * nothing keeps the ones before, so a row is offered for exactly the
@@ -64,9 +114,10 @@ const letterRow = (
  * réttargæslumaður is appointed by the court, a lögmaður is hired by the
  * claimant, and the court does not appoint what it did not choose.
  *
- * Shared by the two screens that offer it - the appeal overview and the
- * advocate screen - so the rule cannot drift between them, and so neither can
- * drift from the route, which refuses on the same grounds.
+ * Shared by every screen that offers it - the court of appeals' overview and
+ * advocate screen, and the appeal section the parties see - so the rule
+ * cannot drift between them, and so none can drift from the routes, which
+ * refuse on the same grounds.
  */
 export const getAppealAppointmentLetter = (
   workingCase: Pick<WorkingCase, 'verdictAppealCase'>,
@@ -74,7 +125,7 @@ export const getAppealAppointmentLetter = (
   party: { defendant?: Defendant; civilClaimant?: CivilClaimant },
 ): AppealAppointmentLetterRow | undefined => {
   if (
-    !isCourtOfAppealsUser(user) ||
+    !canViewAppealAppointmentLetter(user, party) ||
     !hasStandingVerdictAppeal(workingCase.verdictAppealCase)
   ) {
     return undefined

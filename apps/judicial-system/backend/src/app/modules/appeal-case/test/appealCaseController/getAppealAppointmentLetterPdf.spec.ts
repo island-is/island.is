@@ -7,10 +7,12 @@ import { AppealEventType } from '@island.is/judicial-system/types'
 
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
+import { createAppealAppointmentLetter } from '../../../../formatters'
 import {
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
+  publicProsecutorStaffRule,
 } from '../../../../guards'
 import { CaseExistsGuard } from '../../../case/guards/caseExists.guard'
 import { CaseReadGuard } from '../../../case/guards/caseRead.guard'
@@ -24,6 +26,16 @@ import {
   Defendant,
 } from '../../../repository'
 import { AppealCaseController } from '../../appealCase.controller'
+
+jest.mock(
+  '../../../../formatters/generatedPdfs/appealAppointmentLetterPdf',
+  () => ({
+    ...jest.requireActual(
+      '../../../../formatters/generatedPdfs/appealAppointmentLetterPdf',
+    ),
+    createAppealAppointmentLetter: jest.fn(),
+  }),
+)
 
 const confirmation = (fields: Partial<AppealEventLog>): AppealEventLog =>
   ({
@@ -74,14 +86,11 @@ describe('AppealCaseController - get appeal appointment letter pdf', () => {
   let res: Response
 
   beforeEach(async () => {
-    const {
-      appealCaseController: controller,
-      pdfService,
-      lawyerRegistryService,
-    } = await createTestingAppealCaseModule()
+    const { appealCaseController: controller, lawyerRegistryService } =
+      await createTestingAppealCaseModule()
 
     appealCaseController = controller
-    mockGetPdf = pdfService.getAppealAppointmentLetterPdf as jest.Mock
+    mockGetPdf = createAppealAppointmentLetter as jest.Mock
     mockGetPdf.mockResolvedValue(pdf)
     mockGetLawyer = lawyerRegistryService.getByNationalId as jest.Mock
     mockGetLawyer.mockResolvedValue({ practice: 'Vivos lögmenn' })
@@ -185,10 +194,11 @@ describe('AppealCaseController - get appeal appointment letter pdf', () => {
   })
 })
 
-// The court of appeals is the only reader of its own letter, and the route it
-// was modelled on - the verdict service certificate - carries no court of
-// appeals rule at all, so getting this wrong would be invisible: the specs
-// above call the handler directly and never consult a guard.
+// The route it was modelled on - the verdict service certificate - carries no
+// court of appeals rule at all, so getting this wrong would be invisible: the
+// specs above call the handler directly and never consult a guard. The
+// advocate the letter appoints reads it through the limited access route, not
+// this one.
 describe('AppealCaseController - appointment letter access', () => {
   describe.each([
     [
@@ -203,13 +213,14 @@ describe('AppealCaseController - appointment letter access', () => {
     ],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ])('the %s letter', (_name, handler, partyGuard: any) => {
-    it('is open to the court of appeals and nobody else', () => {
+    it('is open to the court of appeals and the public prosecution office, and nobody else', () => {
       const rules = Reflect.getMetadata('roles-rules', handler)
 
       expect(rules).toEqual([
         courtOfAppealsJudgeRule,
         courtOfAppealsRegistrarRule,
         courtOfAppealsAssistantRule,
+        publicProsecutorStaffRule,
       ])
     })
 
