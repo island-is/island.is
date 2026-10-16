@@ -203,7 +203,9 @@ event log handlers, the message helpers, `EventService.postEvent` - and
 `PATCH case/:caseId`, `PATCH case/:caseId/state` and `POST case/:caseId/court`
 answer through `UpdatedCaseInterceptor`, which serves the row, its court users
 and parties and the derived appeal case, and drops what the update read for
-its own side effects.
+its own side effects. A full `Case` is assignable to `UpdatedCase`, so the
+interceptor keeps that bound at runtime too: whatever a handler returns, it
+serves no association the read back does not carry.
 
 A consumer that needs an association the reload does not carry widens
 `updatedCaseInclude` and `UpdatedCase` together;

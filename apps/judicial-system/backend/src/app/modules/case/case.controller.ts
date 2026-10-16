@@ -522,26 +522,25 @@ export class CaseController {
     // which is a deadlock rather than a race.
     const transaction = await getOrCreateTransaction(this.sequelize)
 
-    const updatedCase = await this.caseService.update(
+    // Read back for every transition, deletion included: the read serves
+    // deleted cases, and the response has to be the case as read back, since
+    // UpdatedCaseInterceptor serves no more than that read carries.
+    const updatedCase = (await this.caseService.update(
       theCase,
       update,
       user,
       transaction,
-      update.state !== CaseState.DELETED,
-    )
+    )) as UpdatedCase // Never returns undefined
 
     // The event asserts that the transition happened, so it waits for the
     // commit - which TransactionCommitInterceptor does after this handler has
     // returned. Still fire and forget: a failed announcement is logged, not
     // returned to the caller.
     registerAfterCommit(() =>
-      this.eventService.postEvent(
-        transition.transition,
-        updatedCase ?? theCase,
-      ),
+      this.eventService.postEvent(transition.transition, updatedCase),
     )
 
-    return updatedCase ?? theCase
+    return updatedCase
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, CaseReadGuard)

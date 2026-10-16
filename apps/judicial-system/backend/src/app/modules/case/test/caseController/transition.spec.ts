@@ -355,14 +355,10 @@ describe('CaseController - Transition', () => {
               expect(mockQueuedMessages).toEqual([])
             }
 
-            if (transition === CaseTransition.DELETE) {
-              expect(then.result).toBe(theCase)
-            } else {
-              expect(
-                mockCaseRepositoryService.findUpdatedById,
-              ).toHaveBeenCalledWith(caseId, { transaction })
-              expect(then.result).toBe(updatedCase)
-            }
+            expect(
+              mockCaseRepositoryService.findUpdatedById,
+            ).toHaveBeenCalledWith(caseId, { transaction })
+            expect(then.result).toBe(updatedCase)
           })
         },
       )
@@ -609,14 +605,10 @@ describe('CaseController - Transition', () => {
             expect(mockQueuedMessages).toEqual([])
           }
 
-          if (transition === CaseTransition.DELETE) {
-            expect(then.result).toBe(theCase)
-          } else {
-            expect(
-              mockCaseRepositoryService.findUpdatedById,
-            ).toHaveBeenCalledWith(caseId, { transaction })
-            expect(then.result).toBe(updatedCase)
-          }
+          expect(
+            mockCaseRepositoryService.findUpdatedById,
+          ).toHaveBeenCalledWith(caseId, { transaction })
+          expect(then.result).toBe(updatedCase)
         })
       })
     },

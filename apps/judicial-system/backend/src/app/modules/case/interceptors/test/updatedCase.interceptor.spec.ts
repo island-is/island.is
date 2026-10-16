@@ -31,6 +31,12 @@ const makeCase = (withAppealCase: boolean) =>
       caseFiles: [{ id: 'case-file-id' }],
       dateLogs: [{ id: 'date-log-id' }],
       defendants: [{ id: 'defendant-id' }],
+      // Not read back after an update at all - on the row only when a
+      // handler returns a full Case
+      eventLogs: [{ id: 'event-log-id', userId: 'user-id' }],
+      caseStrings: [{ id: 'case-string-id' }],
+      courtSessions: [{ id: 'court-session-id' }],
+      notifications: [{ id: 'notification-id' }],
     }),
     type: CaseType.CUSTODY,
     appealDecisions: [],
@@ -70,6 +76,15 @@ describe('transformUpdatedCase', () => {
     expect(result.caseFiles).toBeUndefined()
     expect(result.dateLogs).toBeUndefined()
     expect(result.defendants).toBeUndefined()
+  })
+
+  it('serves no more than an updated case carries when handed a full case', () => {
+    const result = transformUpdatedCase(makeCase(false))
+
+    expect(result.eventLogs).toBeUndefined()
+    expect(result.caseStrings).toBeUndefined()
+    expect(result.courtSessions).toBeUndefined()
+    expect(result.notifications).toBeUndefined()
   })
 
   it('derives the appeal case the way the full case response does', () => {

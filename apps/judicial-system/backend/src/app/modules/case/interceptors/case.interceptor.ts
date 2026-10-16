@@ -56,7 +56,10 @@ import {
   DefendantEventLog,
   EventLog,
 } from '../../repository'
-import { UpdatedCase } from '../models/case.types'
+import {
+  UpdatedCase,
+  updatedCaseOmittedAssociations,
+} from '../models/case.types'
 
 // ---------------------------------------------------------------------------
 // Appeal-info computation
@@ -981,23 +984,40 @@ export class CaseInterceptor implements NestInterceptor {
   }
 }
 
+// The associations an update reads back for its own side effects only
+const updatedCaseSideEffectAssociations = [
+  'appealDecisions',
+  'caseFiles',
+  'dateLogs',
+  'defendants',
+]
+
 // The response of a route that updates a case. The case is read back as an
 // UpdatedCase, so this serves what that read carries and the web reads back:
 // the row with its court, court users, prosecutor and civil claimants, and
-// the appeal case the transition response reports on. The associations the
-// update read for its own side effects are not served.
+// the appeal case the transition response reports on. A full Case is
+// assignable to UpdatedCase, so the bound is kept at runtime as well: every
+// association the read back does not carry, and the ones it reads for its
+// side effects only, are left out whatever the handler returned.
 export const transformUpdatedCase = (
   theCase: UpdatedCase,
-): Record<string, unknown> => ({
-  ...theCase.toJSON(),
-  ...(theCase.appealCase
-    ? { appealCase: transformAppealCase(theCase.appealCase, theCase) }
-    : {}),
-  appealDecisions: undefined,
-  caseFiles: undefined,
-  dateLogs: undefined,
-  defendants: undefined,
-})
+): Record<string, unknown> => {
+  const response: Record<string, unknown> = theCase.toJSON()
+
+  for (const association of [
+    ...updatedCaseOmittedAssociations,
+    ...updatedCaseSideEffectAssociations,
+  ]) {
+    response[association] = undefined
+  }
+
+  return {
+    ...response,
+    ...(theCase.appealCase
+      ? { appealCase: transformAppealCase(theCase.appealCase, theCase) }
+      : {}),
+  }
+}
 
 @Injectable()
 export class UpdatedCaseInterceptor implements NestInterceptor {
