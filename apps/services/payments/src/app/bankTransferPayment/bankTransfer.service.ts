@@ -769,6 +769,9 @@ export class BankTransferService {
             // No `rrn`: the create call is what failed.
             paymentFlowId: input.paymentFlowId,
             correlationId: input.correlationId,
+            payerType: input.debtorCorpExternalId
+              ? BankTransferPayerType.COMPANY
+              : BankTransferPayerType.PERSON,
             status: e.status,
             error: e.message,
           },

@@ -255,6 +255,7 @@ describe('BankTransferService', () => {
         {
           paymentFlowId: 'flow-1',
           correlationId: 'btp-err',
+          payerType: BankTransferPayerType.PERSON,
           status: 403,
           error:
             'Blikk request failed (403): sales channel does not allow direct debtor payments',
@@ -942,6 +943,30 @@ describe('BankTransferService', () => {
 
       // Fulfillment must commit first so a SUCCESS lastKnownStatus always implies a paid flow.
       expect(order).toEqual(['fulfillment', 'status'])
+    })
+
+    it('logs the payer type of the flow it settles', async () => {
+      paymentFlowService.getPaymentFlowDetails.mockResolvedValue({
+        id: 'flow-1',
+        organisationId: 'org-1',
+        payerNationalId: '6010100890',
+        charges: [{ chargeType: 'AB', chargeItemCode: 'AB123', quantity: 1 }],
+        extraData: [],
+      })
+      const fulfillmentSpy = jest
+        .spyOn(service, 'createBankTransferFulfillment')
+        .mockResolvedValue(undefined)
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      expect(fulfillmentSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ payerType: BankTransferPayerType.COMPANY }),
+      )
+      const [update] = paymentFlowService.logPaymentFlowUpdate.mock.calls[0]
+      expect(update.reason).toBe('payment_completed')
+      expect(update.logContext).toMatchObject({
+        payerType: BankTransferPayerType.COMPANY,
+      })
     })
 
     it('passes a transfer charge payload to the fulfillment and notifies upstream', async () => {

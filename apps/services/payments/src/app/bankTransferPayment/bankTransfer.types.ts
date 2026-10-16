@@ -26,7 +26,7 @@ export enum BankTransferPendingStatus {
   PROCESSING = 'processing',
 }
 
-/** Whether the payer is a company or a person. Logged on every bank-transfer line to filter by. */
+/** Whether the payer is a company or a person. Carried on the bank-transfer log context to filter by. */
 export enum BankTransferPayerType {
   COMPANY = 'company',
   PERSON = 'person',

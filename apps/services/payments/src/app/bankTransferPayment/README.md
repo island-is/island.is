@@ -454,3 +454,12 @@ A field the call site does not know is left out rather than filled with a placeh
 company payers in Datadog with `service:services-payments @payerType:company`. For person payers,
 search for `@payerType:person` rather than negating `company`, which also matches lines without
 the field. The national ids themselves are never logged.
+
+Lines that do not carry `payerType`, so a `payerType` filter leaves them out:
+
+- `Blikk get payment failed`, keyed by `rrn` only.
+- `Unknown bank transfer status received`, which sees only Blikk's payload.
+- The bank-transfer [refund](#refund) saga.
+- The payment worker's FJS charge lines, which it shares with card payments.
+
+Search those by `paymentFlowId` or `rrn` instead.
