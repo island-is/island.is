@@ -699,6 +699,16 @@ export class BackendService {
     )
   }
 
+  sendAppealSummonsToCourtOfAppeals(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}/sendToCourtOfAppeals`,
+      {},
+    )
+  }
+
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
     return this.post(`case/${caseId}/verdicts`, createVerdicts)
   }
