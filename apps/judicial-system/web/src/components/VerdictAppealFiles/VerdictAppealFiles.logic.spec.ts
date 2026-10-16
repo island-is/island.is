@@ -556,6 +556,28 @@ describe('getAppealAppointmentLetters', () => {
     ).toEqual([])
   })
 
+  // The screen clears the name when the waiver is ticked, but the API takes
+  // the waiver on its own - so a confirmed, named defender can sit under a
+  // waiver, and there is nobody to appoint.
+  it('offers nothing for a waived defendant who still names a defender', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          defendants: [
+            {
+              id: 'defendant_id',
+              name: 'Gervimaður Jónsson',
+              isAppealDefenderConfirmed: true,
+              isAppealDefenderWaived: true,
+              appealDefenderName: 'Þórður Már Jónsson',
+            },
+          ],
+        } as Partial<WorkingCase>),
+        coaUser,
+      ),
+    ).toEqual([])
+  })
+
   it('offers nothing for a spokesperson the court has not confirmed', () => {
     expect(
       getAppealAppointmentLetters(

@@ -116,18 +116,10 @@ const SelectAppealDefender: FC<Props> = ({ defendant }) => {
             />
           )}
         </Box>
-        {/* What the office registered when the appeal arrived by letter, so
-            the court can see it is not the defender of record it is looking
-            at. Gone once this court has settled the question itself. */}
-        {!isConfirmed && defendant.appealDefenderName && (
-          <Text variant="small">
-            {`Verjandi skráður með áfrýjun: ${defendant.appealDefenderName}`}
-          </Text>
-        )}
         <Checkbox
           dataTestId={`isAppealDefenderWaived-${defendant.id}`}
           name={`isAppealDefenderWaived-${defendant.id}`}
-          label="Ákærði óskar ekki eftir verjanda"
+          label="Ákærði óskar ekki eftir að sér sé skipaður verjandi"
           checked={hasWaived}
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             toggleWaived(event.target.checked)
@@ -217,20 +209,20 @@ const SelectAppealDefender: FC<Props> = ({ defendant }) => {
               disabled={!hasWaived && !appealDefender.name}
               onClick={() => setDisplayModal(true)}
             >
-              Staðfesta val á verjanda
+              Staðfesta val
             </Button>
           </Box>
         )}
       </BlueBox>
       {displayModal && (
         <Modal
-          title={isConfirmed ? 'Breyta verjanda' : 'Staðfesta val á verjanda'}
+          title={isConfirmed ? 'Breyta verjanda' : 'Staðfesta'}
           text={
             isConfirmed
               ? 'Ef þú breytir verjanda þarf að staðfesta valið að nýju.'
               : hasWaived
               ? `Með því að staðfesta skráir þú að ${defendant.name} óski ekki eftir verjanda fyrir Landsrétti.`
-              : `Með því að staðfesta skráir þú ${appealDefender.name} sem verjanda ${defendant.name} fyrir Landsrétti.`
+              : `Valinn verjandi, ${appealDefender.name}, mun fá skipunarbréf og aðgang að málinu í Réttarvörslugátt`
           }
           buttons={[
             {
@@ -239,7 +231,7 @@ const SelectAppealDefender: FC<Props> = ({ defendant }) => {
               variant: 'ghost',
             },
             {
-              text: isConfirmed ? 'Breyta' : 'Staðfesta',
+              text: isConfirmed ? 'Breyta' : 'Staðfesta val',
               onClick: toggleConfirmed,
             },
           ]}
