@@ -566,6 +566,26 @@ describe('ClientsService', () => {
       ).toHaveBeenCalledTimes(1)
     })
 
+    it('should restore the client in all environments by default', async () => {
+      const input: RestoreClientInput = {
+        tenantId: 'test-tenant-id',
+        clientId: 'test-client-id',
+      }
+
+      const response = await clientsService.restoreClient(currentUser, input)
+
+      expect(response).toBe(true)
+      expect(
+        mockAdminDevApi.meClientsControllerRestoreRaw,
+      ).toHaveBeenCalledWith(input)
+      expect(
+        mockAdminStagingApi.meClientsControllerRestoreRaw,
+      ).toHaveBeenCalledWith(input)
+      expect(
+        mockAdminProdApi.meClientsControllerRestoreRaw,
+      ).toHaveBeenCalledWith(input)
+    })
+
     it('should report failure when archiving fails in one of the environments', async () => {
       mockAdminStagingApi.meClientsControllerDeleteRaw.mockRejectedValueOnce(
         new Error('staging down'),
@@ -624,6 +644,20 @@ describe('environments input validation', () => {
     async (Input) => {
       const errors = await validate(
         plainToInstance(Input, { ...base, environments: [] }),
+      )
+
+      expect(errors.map((e) => e.property)).toEqual(['environments'])
+    },
+  )
+
+  it.each([DeleteClientInput, RestoreClientInput])(
+    '%p rejects duplicate environments',
+    async (Input) => {
+      const errors = await validate(
+        plainToInstance(Input, {
+          ...base,
+          environments: [Environment.Development, Environment.Development],
+        }),
       )
 
       expect(errors.map((e) => e.property)).toEqual(['environments'])
