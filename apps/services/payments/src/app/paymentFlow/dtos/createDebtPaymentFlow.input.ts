@@ -1,7 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
-  ArrayMaxSize,
   ArrayNotEmpty,
   IsArray,
   IsInt,
@@ -17,8 +16,6 @@ import {
 } from 'class-validator'
 
 import { BasePaymentFlowInput } from './basePaymentFlow.input'
-
-export const MAX_DEBTS_PER_PAYMENT_FLOW = 50
 
 const UniquePayIds = (validationOptions?: ValidationOptions) => {
   return function (object: object, propertyName: string) {
@@ -79,11 +76,9 @@ export class CreateDebtPaymentFlowInput extends BasePaymentFlowInput {
       'Debts to pay, and how much to pay towards each. Fjársýslan decides whether they can be paid.',
     type: [DebtInput],
     minItems: 1,
-    maxItems: MAX_DEBTS_PER_PAYMENT_FLOW,
   })
   @IsArray()
   @ArrayNotEmpty()
-  @ArrayMaxSize(MAX_DEBTS_PER_PAYMENT_FLOW)
   @UniquePayIds()
   @ValidateNested({ each: true })
   @Type(() => DebtInput)

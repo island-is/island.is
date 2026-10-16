@@ -30,7 +30,7 @@ Lets an application (e.g. the Fjármál overview) have a person or company pay d
 | `onUpdateUrl`                                            | Webhook receiving the events below.                          |
 | `metadata`                                               | Optional JSON, echoed back in every webhook.                 |
 | `returnUrl`, `cancelUrl`, `redirectToReturnUrlOnSuccess` | Optional, as for charge flows.                               |
-| `debts[]`                                                | 1 to 50 items, see below.                                    |
+| `debts[]`                                                | At least 1 item, see below.                                  |
 | `debts[].payId`                                          | FJS payId. Required, non-empty, unique within the request.   |
 | `debts[].amount`                                         | Positive integer, whole ISK. May be less than the full debt. |
 | `debts[].label`                                          | Optional, up to 255 characters, display only.                |

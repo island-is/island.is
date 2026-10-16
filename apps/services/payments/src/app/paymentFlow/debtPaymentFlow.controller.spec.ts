@@ -248,16 +248,6 @@ describe('DebtPaymentFlowController', () => {
         await expectBadRequest(withoutDebts)
       })
 
-      it('rejects more than 50 debts', async () => {
-        await expectBadRequest({
-          ...payload,
-          debts: Array.from({ length: 51 }, (_, i) => ({
-            payId: `pay-${i}`,
-            amount: 100,
-          })),
-        })
-      })
-
       it('rejects duplicate payIds', async () => {
         await expectBadRequest({
           ...payload,
