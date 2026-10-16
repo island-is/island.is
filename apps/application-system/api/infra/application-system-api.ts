@@ -57,6 +57,7 @@ import {
   VMSTUnemployment,
   RecyclingFund,
   DirectorateOfEquality,
+  NationalAgencyForChildrenAndFamilies,
 } from '../../../../infra/src/dsl/xroad'
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
@@ -434,6 +435,7 @@ export const serviceSetup = (services: {
       VMSTUnemployment,
       RecyclingFund,
       DirectorateOfEquality,
+      NationalAgencyForChildrenAndFamilies,
     )
     .secrets({
       NOVA_URL: '/k8s/NOVA_URL_V1',
@@ -489,6 +491,10 @@ export const serviceSetup = (services: {
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
       REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
+      NATIONAL_AGENCY_FOR_CHILDREN_AND_FAMILIES_CLIENT_ID:
+        '/k8s/application-system-api/NATIONAL_AGENCY_FOR_CHILDREN_AND_FAMILIES_CLIENT_ID',
+      NATIONAL_AGENCY_FOR_CHILDREN_AND_FAMILIES_CLIENT_SECRET:
+        '/k8s/application-system-api/NATIONAL_AGENCY_FOR_CHILDREN_AND_FAMILIES_CLIENT_SECRET',
     })
     .db()
     .migrations()
