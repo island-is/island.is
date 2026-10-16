@@ -265,9 +265,14 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
           text={
             isConfirmed
               ? 'Ef þú breytir skráningunni þarf að staðfesta hana að nýju.'
-              : `Valinn ${advocateNoun.nominative.toLowerCase()}, ${
+              : // Only a réttargæslumaður is appointed by letter. A lögmaður the
+                // claimant retained is told by mail alone, so the modal must not
+                // promise them a letter.
+                `Valinn ${advocateNoun.nominative.toLowerCase()}, ${
                   advocate.name
-                }, mun fá skipunarbréf og aðgang að málinu í Réttarvörslugátt`
+                }, mun fá ${
+                  isLawyer ? '' : 'skipunarbréf og '
+                }aðgang að málinu í Réttarvörslugátt`
           }
           buttons={[
             {

@@ -102,8 +102,10 @@ const VerdictAppealDefender = () => {
               {caseNumber}
             </Text>
           )}
+          {/* Detail lines, not headings: an h5 under the h1/h2 would skip
+              levels for anyone navigating by heading. */}
           {headerLines.map((line) => (
-            <Text key={line} as="h5" variant="h5">
+            <Text key={line} as="p" variant="h5">
               {line}
             </Text>
           ))}
