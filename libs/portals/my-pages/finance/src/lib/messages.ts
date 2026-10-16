@@ -5,6 +5,10 @@ export const m = defineMessages({
     id: 'sp.finance-schedule:finance-schedule-application',
     defaultMessage: 'Gera greiðsluáætlun',
   },
+  payDebt: {
+    id: 'sp.finance-status:pay-debt',
+    defaultMessage: 'Greiða skuld',
+  },
   createdDate: {
     id: 'sp.finance-schedule:created-date',
     defaultMessage: 'Stofndagur',
