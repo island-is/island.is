@@ -1,7 +1,7 @@
 import type { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, RadioButton } from '@island.is/island-ui/core'
+import { RadioButton, Stack } from '@island.is/island-ui/core'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
@@ -60,9 +60,10 @@ const RequestCaseDefenderSharing: FC<Props> = ({
         required={hasDefender}
       />
       <RadioGroup legend={requestAccessTitle} hideLegend>
-        {options.map(({ id, label, value }, index) => (
-          <Box key={id} marginTop={index === 0 ? 0 : 2}>
+        <Stack space={2}>
+          {options.map(({ id, label, value }) => (
             <RadioButton
+              key={id}
               name={`defender-access-${defendant.id}`}
               id={`${id}-${defendant.id}`}
               label={formatMessage(label)}
@@ -81,8 +82,8 @@ const RequestCaseDefenderSharing: FC<Props> = ({
               backgroundColor="white"
               disabled={!hasDefender}
             />
-          </Box>
-        ))}
+          ))}
+        </Stack>
       </RadioGroup>
     </>
   )
