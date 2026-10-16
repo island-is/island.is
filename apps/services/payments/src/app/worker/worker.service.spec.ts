@@ -639,6 +639,34 @@ describe('WorkerService', () => {
       mockFlowSweep({})
     })
 
+    it('still settles debt flows when the FJS charge pass fails, and fails the run after', async () => {
+      paymentFlowService.findPaidFlowsWithoutFjsCharge.mockRejectedValue(
+        new Error('db down'),
+      )
+      mockDebtSweep([createDebtCardFlow()])
+      debtSettlementService.attempt.mockResolvedValue(registered)
+
+      await expect(service.run()).rejects.toThrow('db down')
+
+      expect(debtSettlementService.attempt).toHaveBeenCalledTimes(1)
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        'FJS charge pass failed',
+        expect.objectContaining({ error: 'db down' }),
+      )
+    })
+
+    it('fails the run when the debt pass fails', async () => {
+      paymentFlowService.findDebtFlowsToSettle.mockRejectedValue(
+        new Error('db down'),
+      )
+
+      await expect(service.run()).rejects.toThrow('db down')
+
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        expect.stringContaining('Payment worker run complete'),
+      )
+    })
+
     it('looks for flows whose last attempt is older than the wait', async () => {
       const before = Date.now()
 

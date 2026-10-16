@@ -68,11 +68,38 @@ export class WorkerService {
   ) {}
 
   /**
-   * Main entry point: finds paid flows without FJS charges and creates them.
+   * Main entry point: creates the FJS charges of paid charge flows, then registers paid debt flows
+   * with FJS. The two passes are independent, so one failing does not stop the other. The job
+   * still fails afterwards, with the first error.
    */
   public async run() {
     const timer = this.logger.startTimer()
+    const errors: unknown[] = []
 
+    for (const [name, pass] of [
+      ['FJS charge', () => this.createFjsCharges()],
+      ['Debt payment', () => this.settleDebtFlows()],
+    ] as const) {
+      try {
+        await pass()
+      } catch (error) {
+        errors.push(error)
+        this.logger.error(`${name} pass failed`, {
+          error: (error as Error)?.message,
+          stack: (error as Error)?.stack,
+        })
+      }
+    }
+
+    timer.done()
+
+    if (errors.length > 0) {
+      throw errors[0]
+    }
+  }
+
+  /** Finds paid flows without FJS charges and creates them. */
+  private async createFjsCharges() {
     // Step 1: Find all payment flows that are paid (have fulfillment) but missing FJS charge
     const allFlows = await this.findPaymentFlowsToProcess()
     this.logger.info(
@@ -215,10 +242,6 @@ export class WorkerService {
     this.logger.info(
       `Payment worker run complete — created: ${createdFJSCharges}, failed: ${failedCount}, skipped (manual intervention): ${skippedCount}, deferred (retry delay): ${deferredCount}`,
     )
-
-    await this.settleDebtFlows()
-
-    timer.done()
   }
 
   /**
