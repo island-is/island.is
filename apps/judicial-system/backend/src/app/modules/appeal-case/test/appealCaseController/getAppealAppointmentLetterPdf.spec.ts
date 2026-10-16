@@ -28,7 +28,7 @@ import { AppealCaseController } from '../../appealCase.controller'
 const confirmation = (fields: Partial<AppealEventLog>): AppealEventLog =>
   ({
     eventType: AppealEventType.ADVOCATE_CONFIRMED,
-    userName: 'Áslaug Björk Ingólfsdóttir',
+    userName: 'Some Person',
     userTitle: 'aðstoðarmaður dómara',
     created: new Date('2026-08-13'),
     ...fields,

@@ -16,7 +16,7 @@ import { buildAppealAppointmentLetter } from '../appealAppointmentLetter'
 const confirmation = (fields: Partial<AppealEventLog> = {}): AppealEventLog =>
   ({
     eventType: AppealEventType.ADVOCATE_CONFIRMED,
-    userName: 'Áslaug Björk Ingólfsdóttir',
+    userName: 'Some Person',
     userTitle: 'aðstoðarmaður dómara',
     created: new Date('2026-08-13'),
     ...fields,
@@ -80,7 +80,7 @@ describe('buildAppealAppointmentLetter', () => {
       appealCaseNumber: '593/2026',
       appealSummonsDate: undefined,
       appointedBy: {
-        name: 'Áslaug Björk Ingólfsdóttir',
+        name: 'Some Person',
         title: 'aðstoðarmaður dómara',
       },
       appointedDate: new Date('2026-08-13'),

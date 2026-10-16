@@ -11,6 +11,7 @@ import {
 
 import { createTestingAppealSummonsModule } from './createTestingAppealSummonsModule'
 
+import { AwsS3Service } from '../../aws-s3'
 import {
   AppealSummons,
   AppealSummonsRepositoryService,
@@ -37,6 +38,7 @@ describe('AppealSummonsController - Delete', () => {
   } as AppealSummons
 
   let mockAppealSummonsRepositoryService: AppealSummonsRepositoryService
+  let mockAwsS3Service: AwsS3Service
   let transaction: Transaction
   let appealSummonsController: AppealSummonsController
 
@@ -45,7 +47,12 @@ describe('AppealSummonsController - Delete', () => {
 
     mockAppealSummonsRepositoryService =
       testingModule.appealSummonsRepositoryService
-    transaction = {} as Transaction
+    mockAwsS3Service = testingModule.awsS3Service
+    transaction = {
+      afterCommit: jest.fn((callback: () => void) => {
+        void callback()
+      }),
+    } as unknown as Transaction
     appealSummonsController = testingModule.appealSummonsController
     ;(testingModule.sequelize.transaction as jest.Mock).mockImplementation(
       (callback) => callback(transaction),
@@ -53,9 +60,10 @@ describe('AppealSummonsController - Delete', () => {
     ;(mockAppealSummonsRepositoryService.delete as jest.Mock).mockResolvedValue(
       true,
     )
+    ;(mockAwsS3Service.deleteObject as jest.Mock).mockResolvedValue(true)
   })
 
-  it('deletes a draft summons', async () => {
+  it('deletes a draft summons and its cached PDF', async () => {
     const result = await appealSummonsController.delete(
       caseId,
       summonsId,
@@ -69,6 +77,36 @@ describe('AppealSummonsController - Delete', () => {
       caseId,
       { transaction },
     )
+    expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(
+      theCase.type,
+      `${caseId}/appealSummons/${summonsId}.pdf`,
+    )
+    expect(result).toEqual({ deleted: true })
+  })
+
+  it('deletes a confirmed summons and its cached PDF', async () => {
+    const confirmed = {
+      id: summonsId,
+      confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
+    } as AppealSummons
+
+    const result = await appealSummonsController.delete(
+      caseId,
+      summonsId,
+      theCase,
+      confirmed,
+      user,
+    )
+
+    expect(mockAppealSummonsRepositoryService.delete).toHaveBeenCalledWith(
+      summonsId,
+      caseId,
+      { transaction },
+    )
+    expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(
+      theCase.type,
+      `${caseId}/appealSummons/${summonsId}.pdf`,
+    )
     expect(result).toEqual({ deleted: true })
   })
 
@@ -78,5 +116,6 @@ describe('AppealSummonsController - Delete', () => {
     ).rejects.toThrow(ForbiddenException)
 
     expect(mockAppealSummonsRepositoryService.delete).not.toHaveBeenCalled()
+    expect(mockAwsS3Service.deleteObject).not.toHaveBeenCalled()
   })
 })

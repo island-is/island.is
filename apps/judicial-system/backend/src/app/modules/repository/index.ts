@@ -41,6 +41,7 @@ export { AppealEventLogRepositoryService } from './services/appealEventLogReposi
 export {
   AppealCourtSessionRepositoryService,
   CreateAppealCourtSession,
+  UpdateAppealCourtSession,
 } from './services/appealCourtSessionRepository.service'
 export {
   AppealSummonsRepositoryService,

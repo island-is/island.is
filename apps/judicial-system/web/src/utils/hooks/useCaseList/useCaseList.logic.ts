@@ -2,13 +2,35 @@ import {
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_RESULT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { Feature } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { hasStandingVerdictAppeal } from '@island.is/judicial-system-web/src/components/VerdictAppealFiles/VerdictAppealFiles.logic'
 import {
   AppealCaseState,
   AppealCaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { resolveTargetAppealCaseByAppealCaseId } from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
+
+/**
+ * Staff Overview route for a public-prosecution prosecutor when the case has a
+ * standing verdict appeal and the feature is on. Otherwise null so the list
+ * keeps its existing indictment overview path.
+ */
+export const getPublicProsecutionProsecutorVerdictAppealRoute = (
+  caseToOpen: Pick<WorkingCase, 'verdictAppealCase'>,
+  features: Feature[],
+): string | null => {
+  if (
+    !features.includes(Feature.INDICTMENT_APPEAL) ||
+    !hasStandingVerdictAppeal(caseToOpen.verdictAppealCase)
+  ) {
+    return null
+  }
+
+  return PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE
+}
 
 /**
  * Which page a court of appeals row opens.
