@@ -205,13 +205,7 @@ describe('AppealSummonsController - Confirm', () => {
     )
 
     await expect(
-      appealSummonsController.confirm(
-        caseId,
-        summonsId,
-        theCase,
-        draft,
-        user,
-      ),
+      appealSummonsController.confirm(caseId, summonsId, theCase, draft, user),
     ).resolves.toBe(afterHash)
   })
 

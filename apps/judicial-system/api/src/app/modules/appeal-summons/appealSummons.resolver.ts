@@ -143,7 +143,6 @@ export class AppealSummonsResolver {
     )
   }
 
-
   @Mutation(() => AppealSummons)
   sendAppealSummonsToCourtOfAppeals(
     @Args('caseId', new ParseUUIDPipe()) caseId: string,

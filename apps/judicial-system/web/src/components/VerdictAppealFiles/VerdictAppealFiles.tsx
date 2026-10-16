@@ -154,7 +154,6 @@ const VerdictAppealFiles: FC = () => {
     setSummonsIdToConfirm(undefined)
   }
 
-
   const handleSendAppealSummonsToCourtOfAppeals = async () => {
     if (!summonsIdToSend) {
       return
