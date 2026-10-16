@@ -10,13 +10,14 @@ import {
 
 import { createTestingAppealCourtSessionModule } from './createTestingAppealCourtSessionModule'
 
+import { getOrCreateTransaction } from '../../../middleware'
+import { runInRequestContext } from '../../../test'
 import {
   AppealCase,
   AppealCourtSession,
   AppealCourtSessionRepositoryService,
   Case,
 } from '../../repository'
-import { AppealCourtSessionController } from '../appealCourtSession.controller'
 import { UpdateAppealCourtSessionDto } from '../dto/updateAppealCourtSession.dto'
 
 describe('AppealCourtSessionController - Update', () => {
@@ -37,21 +38,39 @@ describe('AppealCourtSessionController - Update', () => {
   const updated = { ...session, courtRoom: '2' } as AppealCourtSession
   const transaction = {} as Transaction
 
+  let mockTransaction: jest.Mock
   let mockAppealCourtSessionRepositoryService: AppealCourtSessionRepositoryService
-  let appealCourtSessionController: AppealCourtSessionController
+  let update: (dto: UpdateAppealCourtSessionDto) => Promise<AppealCourtSession>
 
   beforeEach(async () => {
-    const testingModule = await createTestingAppealCourtSessionModule()
+    const { sequelize, appealCourtSessionController, ...testingModule } =
+      await createTestingAppealCourtSessionModule()
 
     mockAppealCourtSessionRepositoryService =
       testingModule.appealCourtSessionRepositoryService
-    appealCourtSessionController = testingModule.appealCourtSessionController
-    ;(testingModule.sequelize.transaction as jest.Mock).mockImplementation(
-      (callback) => callback(transaction),
-    )
+    mockTransaction = sequelize.transaction as jest.Mock
+    mockTransaction.mockResolvedValue(transaction)
     ;(
       mockAppealCourtSessionRepositoryService.update as jest.Mock
     ).mockResolvedValue(updated)
+
+    // The route is guarded by CaseExistsForUpdateGuard, which opens the
+    // request transaction before the handler runs. Guards do not execute in
+    // controller unit tests, so the request context is set up here instead.
+    update = (dto) =>
+      runInRequestContext(async () => {
+        await getOrCreateTransaction(sequelize)
+
+        return appealCourtSessionController.update(
+          caseId,
+          appealCaseId,
+          sessionId,
+          theCase,
+          appealCase,
+          session,
+          dto,
+        )
+      })
   })
 
   it('writes the given fields to the session on the appeal', async () => {
@@ -61,15 +80,7 @@ describe('AppealCourtSessionController - Update', () => {
       courtRoom: '2',
     }
 
-    const result = await appealCourtSessionController.update(
-      caseId,
-      appealCaseId,
-      sessionId,
-      theCase,
-      appealCase,
-      session,
-      dto,
-    )
+    const result = await update(dto)
 
     expect(mockAppealCourtSessionRepositoryService.update).toHaveBeenCalledWith(
       sessionId,
@@ -84,16 +95,14 @@ describe('AppealCourtSessionController - Update', () => {
     expect(result).toBe(updated)
   })
 
+  it('joins the transaction the guard opened rather than open one', async () => {
+    await update({ courtRoom: '2' })
+
+    expect(mockTransaction).toHaveBeenCalledTimes(1)
+  })
+
   it('leaves out the fields that are not given', async () => {
-    await appealCourtSessionController.update(
-      caseId,
-      appealCaseId,
-      sessionId,
-      theCase,
-      appealCase,
-      session,
-      { courtRoom: '2' },
-    )
+    await update({ courtRoom: '2' })
 
     expect(mockAppealCourtSessionRepositoryService.update).toHaveBeenCalledWith(
       sessionId,
@@ -104,17 +113,7 @@ describe('AppealCourtSessionController - Update', () => {
   })
 
   it('refuses an empty update', async () => {
-    await expect(
-      appealCourtSessionController.update(
-        caseId,
-        appealCaseId,
-        sessionId,
-        theCase,
-        appealCase,
-        session,
-        {},
-      ),
-    ).rejects.toBeInstanceOf(BadRequestException)
+    await expect(update({})).rejects.toBeInstanceOf(BadRequestException)
 
     expect(
       mockAppealCourtSessionRepositoryService.update,

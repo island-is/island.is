@@ -8,7 +8,11 @@ import {
 } from '../../../guards'
 import { verifyGuards, verifyRolesRules } from '../../../test'
 import { AppealCaseExistsGuard } from '../../appeal-case/guards/appealCaseExists.guard'
-import { CaseExistsGuard, CaseTypeGuard, CaseWriteGuard } from '../../case'
+import {
+  CaseExistsForUpdateGuard,
+  CaseTypeGuard,
+  CaseWriteGuard,
+} from '../../case'
 import { AppealCourtSessionController } from '../appealCourtSession.controller'
 import { AppealCourtSessionExistsGuard } from '../guards/appealCourtSessionExists.guard'
 
@@ -25,7 +29,7 @@ describe('AppealCourtSessionController - Top-level guards', () => {
     [
       JwtAuthUserGuard,
       RolesGuard,
-      CaseExistsGuard,
+      CaseExistsForUpdateGuard,
       CaseTypeGuard,
       AppealCaseExistsGuard,
       CaseWriteGuard,
