@@ -1,7 +1,18 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { SelectedDebt } from './types'
+import { CustomerDebt, SelectedDebt } from './types'
 import { getDebts } from './getDebts'
+
+export const getAmountToPay = (
+  debt: CustomerDebt,
+  typedAmount: string | undefined,
+): number => {
+  const amount = parseInt(typedAmount ?? '', 10)
+
+  return Number.isNaN(amount)
+    ? debt.debts
+    : Math.min(Math.max(amount, 1), debt.debts)
+}
 
 export const getSelectedDebts = (application: Application): SelectedDebt[] => {
   const selectedFlags =
@@ -23,14 +34,7 @@ export const getSelectedDebts = (application: Application): SelectedDebt[] => {
       return selected
     }
 
-    const amountToPay = parseInt(amountByPayId.get(debt.payID) ?? '', 10)
-
-    selected.push({
-      ...debt,
-      amountToPay: Number.isNaN(amountToPay)
-        ? debt.debts
-        : Math.min(Math.max(amountToPay, 1), debt.debts),
-    })
+    selected.push({ ...debt, amountToPay: debt.debts })
 
     return selected
   }, [])

@@ -1,6 +1,6 @@
 import { Application } from '@island.is/application/types'
 import { CustomerDebt } from './types'
-import { getSelectedDebts } from './getSelectedDebts'
+import { getAmountToPay, getSelectedDebts } from './getSelectedDebts'
 
 let nextPayId = 0
 
@@ -33,13 +33,7 @@ const applicationWith = (
   } as unknown as Application)
 
 const amountsFor = (debts: CustomerDebt[], amounts: unknown[]) =>
-  getSelectedDebts(
-    applicationWith(
-      debts,
-      debts.map(() => true),
-      amounts,
-    ),
-  ).map((selected) => selected.amountToPay)
+  debts.map((d, index) => getAmountToPay(d, amounts[index] as string))
 
 describe('getSelectedDebts', () => {
   it('returns only the ticked rows, keeping the answers index aligned', () => {
@@ -55,7 +49,7 @@ describe('getSelectedDebts', () => {
 
     expect(selected).toHaveLength(1)
     expect(selected[0].chargeTypeId).toBe('B')
-    expect(selected[0].amountToPay).toBe(250)
+    expect(selected[0].amountToPay).toBe(1000)
   })
 
   it('keeps an amount that is within the debt', () => {
@@ -102,7 +96,17 @@ describe('getSelectedDebts', () => {
     )
 
     expect(selected.map((d) => d.payID)).toEqual([second.payID])
-    expect(selected[0].amountToPay).toBe(250)
+    expect(selected[0].amountToPay).toBe(1000)
+  })
+
+  it('charges the full debt whatever amount was typed', () => {
+    const debts = [debt({ debts: 1000 }), debt({ debts: 50 })]
+
+    expect(
+      getSelectedDebts(applicationWith(debts, [true, true], ['1', '25'])).map(
+        (selected) => selected.amountToPay,
+      ),
+    ).toEqual([1000, 50])
   })
 
   it('drops a ticked debt that is no longer in the list', () => {
