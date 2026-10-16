@@ -10,7 +10,6 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { MessageType } from '@island.is/judicial-system/message'
-
 import {
   AppealCaseNotificationType,
   AppealEventType,
