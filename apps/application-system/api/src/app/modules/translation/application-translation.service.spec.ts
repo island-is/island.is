@@ -634,6 +634,9 @@ describe('ApplicationTranslationService', () => {
 
   describe('getPublishHistory', () => {
     it('returns publish-type snapshots, newest first, requesting select: sys', async () => {
+      managementEntryGetSpy.mockResolvedValue(
+        buildEntry({ namespace: { [DEFAULT_LOCALE]: 'test.ns' } }),
+      )
       managementSnapshotGetManyForEntrySpy.mockResolvedValue({
         items: [
           {
@@ -670,6 +673,9 @@ describe('ApplicationTranslationService', () => {
     })
 
     it('pages through multiple snapshot pages until a short page is seen', async () => {
+      managementEntryGetSpy.mockResolvedValue(
+        buildEntry({ namespace: { [DEFAULT_LOCALE]: 'test.ns' } }),
+      )
       const page = (id: string) => ({
         sys: {
           id,
@@ -696,13 +702,56 @@ describe('ApplicationTranslationService', () => {
 
   describe('rollbackToPublish', () => {
     it('returns null when the target snapshot does not exist', async () => {
+      managementEntryGetSpy.mockResolvedValue(
+        buildEntry({ namespace: { [DEFAULT_LOCALE]: 'test.ns' } }),
+      )
       managementSnapshotGetForEntrySpy.mockRejectedValue({ name: 'NotFound' })
 
       await expect(
         service.rollbackToPublish('missing-snap', 'test.ns', user),
       ).resolves.toBeNull()
 
-      expect(managementEntryGetSpy).not.toHaveBeenCalled()
+      expect(managementEntryUpdateSpy).not.toHaveBeenCalled()
+      expect(managementEntryPublishSpy).not.toHaveBeenCalled()
+    })
+
+    it('reads and writes the fallback entry by its sys.id, not the namespace', async () => {
+      const entry = buildEntry(
+        {
+          namespace: { [DEFAULT_LOCALE]: 'test.ns' },
+          strings: { [DEFAULT_LOCALE]: {}, [ENGLISH_LOCALE]: {} },
+        },
+        { id: 'other-id' },
+      )
+      managementEntryGetSpy.mockRejectedValue({ name: 'NotFound' })
+      managementEntryGetManySpy.mockResolvedValue({ items: [entry] })
+      managementSnapshotGetForEntrySpy.mockResolvedValue({
+        snapshot: { fields: entry.fields },
+      })
+      managementEntryUpdateSpy.mockResolvedValue(entry)
+      managementEntryPublishSpy.mockResolvedValue(entry)
+      managementSnapshotGetManyForEntrySpy.mockResolvedValue({
+        items: [buildLatestPublishSnapshotItem('snap-4')],
+      })
+
+      await service.rollbackToPublish('snap-1', 'test.ns', user)
+
+      expect(managementSnapshotGetForEntrySpy).toHaveBeenCalledWith({
+        entryId: 'other-id',
+        snapshotId: 'snap-1',
+      })
+      expect(managementEntryUpdateSpy).toHaveBeenCalledWith(
+        { entryId: 'other-id' },
+        expect.anything(),
+      )
+      expect(managementEntryPublishSpy).toHaveBeenCalledWith(
+        { entryId: 'other-id' },
+        entry,
+      )
+      expect(managementSnapshotGetManyForEntrySpy).toHaveBeenCalledWith({
+        entryId: 'other-id',
+        query: { limit: 5 },
+      })
     })
 
     it('throws a ServiceUnavailableException without reading the entry when writes are disabled', async () => {

@@ -225,7 +225,7 @@ export class ApplicationTranslationService {
 
     const snapshots =
       await this.managementClient.snapshot.getManyForEntry<NamespaceEntryFields>(
-        { entryId: namespace, query: { limit: 5 } },
+        { entryId: draftEntry.sys.id, query: { limit: 5 } },
       )
 
     const latestPublish = ApplicationTranslationService.findPublishSnapshot(
@@ -361,7 +361,7 @@ export class ApplicationTranslationService {
     }
 
     return this.managementClient.entry.update<NamespaceEntryFields>(
-      { entryId: namespace },
+      { entryId: entry.sys.id },
       {
         ...entry,
         fields: this.buildUpdatedFields(entry, stringsIs, stringsEn),
@@ -438,7 +438,7 @@ export class ApplicationTranslationService {
     const findSnapshot = async () => {
       const snapshots =
         await this.managementClient.snapshot.getManyForEntry<NamespaceEntryFields>(
-          { entryId: namespace, query: { limit: 5 } },
+          { entryId: publishedEntry.sys.id, query: { limit: 5 } },
         )
 
       return ApplicationTranslationService.findPublishSnapshot(
@@ -492,7 +492,7 @@ export class ApplicationTranslationService {
       const entry = await this.getVerifiedNamespaceEntry(namespace)
 
       return this.managementClient.entry.publish<NamespaceEntryFields>(
-        { entryId: namespace },
+        { entryId: entry.sys.id },
         entry,
       )
     })
@@ -501,6 +501,7 @@ export class ApplicationTranslationService {
   }
 
   async getPublishHistory(namespace: string): Promise<PublishHistoryItem[]> {
+    const { sys } = await this.getVerifiedNamespaceEntry(namespace)
     const items: PublishHistoryItem[] = []
     const limit = 100
     let skip = 0
@@ -508,7 +509,7 @@ export class ApplicationTranslationService {
     for (;;) {
       const page =
         await this.managementClient.snapshot.getManyForEntry<NamespaceEntryFields>(
-          { entryId: namespace, query: { select: 'sys', limit, skip } },
+          { entryId: sys.id, query: { select: 'sys', limit, skip } },
         )
 
       for (const item of page.items) {
@@ -539,11 +540,13 @@ export class ApplicationTranslationService {
   ): Promise<PublishHistoryItem | null> {
     await this.assertWritesEnabled(user)
 
+    const { sys } = await this.getVerifiedNamespaceEntry(namespace)
+
     let targetSnapshot
     try {
       targetSnapshot =
         await this.managementClient.snapshot.getForEntry<NamespaceEntryFields>({
-          entryId: namespace,
+          entryId: sys.id,
           snapshotId,
         })
     } catch (error) {
@@ -579,7 +582,7 @@ export class ApplicationTranslationService {
 
       const updated =
         await this.managementClient.entry.update<NamespaceEntryFields>(
-          { entryId: namespace },
+          { entryId: entry.sys.id },
           {
             ...entry,
             fields: this.buildUpdatedFields(entry, mergedIs, mergedEn),
@@ -587,7 +590,7 @@ export class ApplicationTranslationService {
         )
 
       return this.managementClient.entry.publish<NamespaceEntryFields>(
-        { entryId: namespace },
+        { entryId: updated.sys.id },
         updated,
       )
     })
