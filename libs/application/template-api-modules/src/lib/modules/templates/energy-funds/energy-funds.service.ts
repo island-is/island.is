@@ -215,7 +215,11 @@ export class EnergyFundsService extends BaseTemplateApiService {
       (applicationAnswers?.vehicleDetails.price &&
         parseInt(applicationAnswers?.vehicleDetails.price)) ||
       0
-    const priceCap = getPriceCap(vehicleApiDetails.euGroup)
+    const vehicleGroup =
+      vehicleApiDetails.euGroup ||
+      currentvehicleDetails?.vehicleRegistrationCode ||
+      ''
+    const priceCap = getPriceCap(vehicleGroup)
 
     if (purchasePrice > priceCap) {
       throw new TemplateApiError(
@@ -236,7 +240,7 @@ export class EnergyFundsService extends BaseTemplateApiService {
       carNumber: applicationAnswers?.selectVehicle.plate,
       carType: (currentvehicleDetails && currentvehicleDetails.make) || '',
       itemcode: applicationAnswers?.selectVehicle.grantItemCode || '',
-      vehicleGroup: currentvehicleDetails?.vehicleRegistrationCode || '',
+      vehicleGroup,
       purchasePrice,
       registrationDate: currentvehicleDetails
         ? format(

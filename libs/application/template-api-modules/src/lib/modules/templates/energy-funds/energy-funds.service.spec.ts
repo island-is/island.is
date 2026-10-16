@@ -24,7 +24,10 @@ const mockEnergyFundsClientService = {
   submitEnergyFundsApplication: jest.fn(),
 }
 
-const createActionProps = (price: string): TemplateApiModuleActionProps => ({
+const createActionProps = (
+  price: string,
+  vehicleRegistrationCode: string,
+): TemplateApiModuleActionProps => ({
   application: createApplication({
     typeId: ApplicationTypes.ENERGY_FUNDS,
     answers: {
@@ -44,7 +47,7 @@ const createActionProps = (price: string): TemplateApiModuleActionProps => ({
               permno: 'AB123',
               vin: 'VIN123',
               make: 'Test',
-              vehicleRegistrationCode: 'M1',
+              vehicleRegistrationCode,
               newRegistrationDate: '2026-10-01',
               firstRegistrationDate: '2026-10-01',
             },
@@ -77,8 +80,16 @@ describe('EnergyFundsService', () => {
   })
 
   describe('submitApplication price cap', () => {
-    const submit = (euGroup: string, price: string) => {
-      const props = createActionProps(price)
+    const submit = ({
+      price,
+      euGroup,
+      savedCategory = euGroup ?? '',
+    }: {
+      price: string
+      euGroup?: string
+      savedCategory?: string
+    }) => {
+      const props = createActionProps(price, savedCategory)
       mockVehiclesApi.basicVehicleInformationGet.mockResolvedValue({
         euGroup,
         owners: [{ persidno: props.auth.nationalId }],
@@ -86,10 +97,20 @@ describe('EnergyFundsService', () => {
       return service.submitApplication(props)
     }
 
+    const expectSentWith = (vehicleGroup: string) =>
+      expect(
+        mockEnergyFundsClientService.submitEnergyFundsApplication,
+      ).toHaveBeenCalledWith(expect.anything(), {
+        subsidyInput: expect.objectContaining({
+          vehicleGroup,
+          purchasePrice: 9000000,
+        }),
+      })
+
     it('rejects a passenger car over 8M from 1 November 2026 and names the cap', async () => {
       jest.useFakeTimers().setSystemTime(new Date('2026-11-01T08:00:00Z'))
 
-      const result = submit('M1', '9000000')
+      const result = submit({ price: '9000000', euGroup: 'M1' })
 
       await expect(result).rejects.toBeInstanceOf(TemplateApiError)
       await expect(result).rejects.toMatchObject({
@@ -105,23 +126,33 @@ describe('EnergyFundsService', () => {
     it('sends a passenger car over 8M before 1 November 2026', async () => {
       jest.useFakeTimers().setSystemTime(new Date('2026-10-31T23:00:00Z'))
 
-      await submit('M1', '9000000')
+      await submit({ price: '9000000', euGroup: 'M1' })
 
-      expect(
-        mockEnergyFundsClientService.submitEnergyFundsApplication,
-      ).toHaveBeenCalledTimes(1)
+      expectSentWith('M1')
     })
 
     it('sends a van over 8M from 1 November 2026', async () => {
       jest.useFakeTimers().setSystemTime(new Date('2026-11-01T08:00:00Z'))
 
-      await submit('N1', '9000000')
+      await submit({ price: '9000000', euGroup: 'N1' })
 
-      expect(
-        mockEnergyFundsClientService.submitEnergyFundsApplication,
-      ).toHaveBeenCalledWith(expect.anything(), {
-        subsidyInput: expect.objectContaining({ purchasePrice: 9000000 }),
-      })
+      expectSentWith('N1')
+    })
+
+    it('uses the category from Samgöngustofa for both the cap and FJS', async () => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-11-01T08:00:00Z'))
+
+      await submit({ price: '9000000', euGroup: 'N1', savedCategory: 'M1' })
+
+      expectSentWith('N1')
+    })
+
+    it('falls back to the saved category when Samgöngustofa returns none', async () => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-11-01T08:00:00Z'))
+
+      await expect(
+        submit({ price: '9000000', savedCategory: 'M1' }),
+      ).rejects.toBeInstanceOf(TemplateApiError)
     })
   })
 })
