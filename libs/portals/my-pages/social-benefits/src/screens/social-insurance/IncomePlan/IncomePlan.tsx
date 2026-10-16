@@ -145,7 +145,9 @@ const IncomePlan = () => {
             </Inline>
             <IncomePlanCard
               status={status}
-              registrationDate={new Date().toISOString()}
+              registrationDate={
+                data?.socialInsuranceIncomePlan?.registrationDate
+              }
             />
           </Stack>
         )
