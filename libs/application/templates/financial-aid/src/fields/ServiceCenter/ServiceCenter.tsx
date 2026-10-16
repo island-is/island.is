@@ -5,7 +5,7 @@ import { Button, Box } from '@island.is/island-ui/core'
 import { serviceCenters } from '@island.is/financial-aid/shared/data'
 import { FAFieldBaseProps } from '../../lib/types'
 import { serviceCenter } from '../../lib/messages'
-import { DescriptionText } from '..'
+import DescriptionText from '../DescriptionText/DescriptionText'
 
 const ServiceCenter = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()

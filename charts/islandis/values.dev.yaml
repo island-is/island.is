@@ -580,6 +580,7 @@ application-system-api:
     NOVA_SENDER_NAME: 'Island Dev'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
+    PERSONAL_TAX_RETURN_URL: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc'
     RECYCLING_FUND_GQL_BASE_PATH: 'http://skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
@@ -645,6 +646,7 @@ application-system-api:
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1'
     XROAD_RECYCLING_FUND_PATH: 'IS-DEV/GOV/10099/Urvinnslusjodur-Protected/skilavottord-api'
     XROAD_RSK_RENTAL_RATE_PATH: 'IS-DEV/GOV/10006/Skatturinn/rentaldayrate-v1'
+    XROAD_RVK_VEITA_PATH: 'IS-DEV/MUN/10025/rvik-veita-protected/veita-v1'
     XROAD_SECONDARY_SCHOOL_PATH: 'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt'
     XROAD_SEMINARS_VER_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/namskeid'
     XROAD_SIGNATURE_COLLECTION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Medmaeli-v1'
@@ -779,10 +781,13 @@ application-system-api:
     NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
     NOVA_URL: '/k8s/NOVA_URL_V1'
     NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
+    PERSONAL_TAX_RETURN_AGENT_ID: '/k8s/application-system/api/PERSONAL_TAX_RETURN_AGENT_ID'
+    PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID: '/k8s/application-system/api/PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID'
     REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
     REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
     REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
     REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
+    SI_PUBLIC_FINANCIAL_AID_VEITA_TENANTS: '/k8s/application-system/FINANCIAL_AID_VEITA_TENANTS'
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
@@ -994,6 +999,7 @@ application-system-form:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
+    SI_PUBLIC_FINANCIAL_AID_VEITA_TENANTS: '/k8s/application-system/FINANCIAL_AID_VEITA_TENANTS'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

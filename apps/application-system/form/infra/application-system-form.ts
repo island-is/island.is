@@ -12,6 +12,10 @@ export const serviceSetup = (): ServiceBuilder<'application-system-form'> =>
     })
     .secrets({
       SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
+      // Municipality code -> Veita tenant JSON. Empty map routes every municipality
+      // through the original financial aid backend. Shared with the api service.
+      SI_PUBLIC_FINANCIAL_AID_VEITA_TENANTS:
+        '/k8s/application-system/FINANCIAL_AID_VEITA_TENANTS',
     })
     .resources({
       limits: {

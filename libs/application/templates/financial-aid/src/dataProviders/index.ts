@@ -23,11 +23,13 @@ export const MunicipalityApi = defineTemplateApi({
 
 export const TaxDataApi = defineTemplateApi({
   action: ApiActions.TAXDATA,
+  order: 2, // After municipality so the backend is pinned before fetching tax data
 })
 
 export const TaxDataSpouseApi = defineTemplateApi({
   action: ApiActions.TAXDATA,
   externalDataId: 'taxDataSpouse',
+  order: 1,
 })
 
 export const SendSpouseEmailApi = defineTemplateApi({

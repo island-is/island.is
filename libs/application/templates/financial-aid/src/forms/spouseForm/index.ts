@@ -1,5 +1,7 @@
 import {
   buildCustomField,
+  buildDescriptionField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -15,11 +17,12 @@ import {
 
 import * as m from '../../lib/messages'
 import { ApproveOptions } from '../../lib/types'
-import { Routes } from '../../lib/constants'
+import { FILE_SIZE_LIMIT, Routes, UPLOAD_ACCEPT } from '../../lib/constants'
 import { createElement } from 'react'
 import { Logo } from '../../components/Logo/Logo'
 import { spouseIncomeSection } from './spouseIncomeSection'
 import { spouseContactInfoSection } from './spouseContactInfoSection'
+import { isVeitaMunicipality } from '../../utils/conditions'
 
 export const Spouse: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -43,9 +46,23 @@ export const Spouse: Form = buildForm({
       title: m.incomeFilesForm.general.sectionTitle,
       children: [
         buildCustomField({
+          condition: (_answers, externalData) =>
+            !isVeitaMunicipality(_answers, externalData),
           id: Routes.SPOUSEINCOMEFILES,
           title: m.incomeFilesForm.general.pageTitle,
           component: 'IncomeFilesForm',
+        }),
+        buildFileUploadField({
+          condition: isVeitaMunicipality,
+          id: Routes.RVKSPOUSEINCOMEFILES,
+          title: m.incomeFilesForm.general.pageTitle,
+          uploadAccept: UPLOAD_ACCEPT.join(','),
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.filesText.sizeErrorMessage,
+          uploadHeader: m.filesText.header,
+          uploadDescription: m.incomeFilesForm.general.description,
+          uploadButtonLabel: m.filesText.buttonLabel,
+          uploadMultiple: true,
         }),
       ],
     }),
@@ -67,9 +84,32 @@ export const Spouse: Form = buildForm({
       title: m.taxReturnForm.general.sectionTitle,
       children: [
         buildCustomField({
+          condition: (_answers, externalData) =>
+            !isVeitaMunicipality(_answers, externalData),
           id: Routes.SPOUSETAXRETURNFILES,
           title: m.taxReturnForm.general.pageTitle,
           component: 'TaxReturnFilesForm',
+        }),
+        buildMultiField({
+          condition: isVeitaMunicipality,
+          id: Routes.RVKSPOUSETAXRETURNFILESMULTIFIELD,
+          title: m.taxReturnForm.general.pageTitle,
+          children: [
+            buildDescriptionField({
+              id: Routes.RVKSPOUSETAXRETURNFILESDESCRIPTION,
+              description: m.taxReturnForm.general.description,
+            }),
+            buildFileUploadField({
+              id: Routes.RVKSPOUSETAXRETURNFILES,
+              title: m.taxReturnForm.general.pageTitle,
+              uploadAccept: UPLOAD_ACCEPT.join(','),
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText: m.filesText.sizeErrorMessage,
+              uploadHeader: m.filesText.header,
+              uploadButtonLabel: m.filesText.buttonLabel,
+              uploadMultiple: true,
+            }),
+          ],
         }),
       ],
     }),

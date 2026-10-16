@@ -23,7 +23,8 @@ import {
   SummaryComment as SummaryCommentType,
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
-import { DescriptionText, Breakdown } from '../index'
+import DescriptionText from '../DescriptionText/DescriptionText'
+import Breakdown from '../Breakdown/Breakdown'
 import { formatAddress, formItems } from '../../lib/formatters'
 import {
   FormInfo,
@@ -34,8 +35,9 @@ import {
   DirectTaxPaymentCell,
 } from './index'
 
-import { DirectTaxPaymentsModal } from '..'
+import DirectTaxPaymentsModal from '../DirectTaxPaymentsModal/DirectTaxPaymentModal'
 import { findFamilyStatus } from '../../lib/utils'
+import { getVeitaFilesRoute, isVeitaApplication } from '../../lib/summaryRoutes'
 import ChildrenInfo from './ChildrenInfo'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
@@ -169,22 +171,35 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       />
 
       <ContactInfo
-        route={Routes.CONTACTINFO}
+        route={Routes.CONTACTINFOMULTIFIELD}
         email={answers?.contactInfo?.email}
         phone={answers?.contactInfo?.phone}
         goToScreen={goToScreen}
       />
 
       <Files
-        route={findFilesRouteFrom(answers.childrenFiles, answers.income)}
+        route={
+          isVeitaApplication(application)
+            ? getVeitaFilesRoute(application)
+            : findFilesRouteFrom(answers.childrenFiles, answers.income)
+        }
         goToScreen={goToScreen}
         personalTaxReturn={
           externalData.taxData?.data?.municipalitiesPersonalTaxReturn
             ?.personalTaxReturn
         }
-        taxFiles={answers.taxReturnFiles ?? []}
-        incomeFiles={answers.incomeFiles ?? []}
-        childrenFiles={answers.childrenFiles ?? []}
+        taxFiles={[
+          ...(answers.taxReturnFiles ?? []),
+          ...(answers.rvkTaxReturnFiles ?? []),
+        ]}
+        incomeFiles={[
+          ...(answers.incomeFiles ?? []),
+          ...(answers.rvkIncomeFiles ?? []),
+        ]}
+        childrenFiles={[
+          ...(answers.childrenFiles ?? []),
+          ...(answers.rvkChildrenFiles ?? []),
+        ]}
         applicationId={id}
       />
 

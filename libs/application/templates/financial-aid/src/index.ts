@@ -10,6 +10,15 @@ export * from './lib/types'
 
 export * from './lib/utils'
 
+export {
+  VEITA_TENANTS_ENV_VAR,
+  getVeitaTenants,
+  getVeitaTenant,
+  isVeitaMunicipalityCode,
+} from './lib/constants'
+
 export * as messages from './lib/messages'
 
 export default FinancialAidTemplate
+
+// Trigger deploy
