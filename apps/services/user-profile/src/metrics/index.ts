@@ -64,9 +64,7 @@ export const collectEnabledProfileMetrics = async (
     false,
   )
 
-  return enabled
-    ? collectProfileMetrics(db)
-    : [{ name: 'all_channels_disabled_users', value: 0 }]
+  return enabled ? collectProfileMetrics(db) : []
 }
 
 export const metrics = async () => {

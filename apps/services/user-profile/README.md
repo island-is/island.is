@@ -53,7 +53,8 @@ yarn start services-user-profile
 The nightly profile collector reports the number of profile rows with all notification
 channels disabled (`document_notifications`, `email_notifications` and
 `sms_notifications`). Both `false` and `NULL` count as disabled. The metric is
-controlled by ConfigCat and is off by default. It counts rows present in
+controlled by ConfigCat and is off by default; while off, the collector reports
+no metrics at all rather than a zero value. It counts rows present in
 `user_profile`; users without a profile row are not included.
 
 ## Code owners and maintainers

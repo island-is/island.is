@@ -39,10 +39,8 @@ describe('user profile metrics scheduled job', () => {
           /^(10|15|20) 3 \* \* \*$/,
         )
         if (service === services[0]) {
-          expect(result.serviceDef[0].extra?.command).toEqual('node')
-          expect(result.serviceDef[0].extra?.args).toEqual([
-            'metrics-entrypoint.cjs',
-          ])
+          expect(result.serviceDef[0].command).toEqual(['node'])
+          expect(result.serviceDef[0].args).toEqual(['metrics-entrypoint.cjs'])
         }
       }
     },
