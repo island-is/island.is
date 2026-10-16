@@ -273,6 +273,18 @@ export const getCompletedAssigneeNationalIdSet = (
 }
 
 /**
+ * National IDs of assignees who have neither signed nor rejected household membership yet.
+ */
+export const getPendingAssigneeNationalIds = (
+  application: Application,
+): string[] => {
+  const completed = getCompletedAssigneeNationalIdSet(application)
+  return (application.assignees ?? []).filter(
+    (nationalId) => !completed.has(comparableNationalId(nationalId)),
+  )
+}
+
+/**
  * Check if this is the last assignee to complete (all have signed or rejected).
  */
 export const isLastAssigneeToSign = (

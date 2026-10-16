@@ -148,3 +148,48 @@ export const schedulePeriodEndingReminders = (
       featureFlag,
       args: localizedDateArgs('periodEndDate', periodEndDate),
     }))
+
+const DAY_MS = 24 * 60 * 60 * 1000
+
+/**
+ * Returns a ScheduledNotificationConfig for the shared
+ * ApplicationAssigneeReminder HNIPP template, reminding people other than the
+ * applicant (e.g. assignees) that the application is waiting for their
+ * action before it is pruned. `recipients` are national IDs, resolved when the
+ * state is entered; nothing is scheduled if they resolve to an empty list.
+ * The template receives `pruneDateIs`/`pruneDateEn`, `daysBeforePrune`
+ * (whole UTC calendar days between sending and `pruneDate`),
+ * `applicationNameIs`/`applicationNameEn` and `applicationLink` args. Pass
+ * `featureFlag` to only schedule while the flag is enabled.
+ */
+export const scheduleAssigneeReminder = (
+  recipients: string[] | ((application: Application) => string[]),
+  timing: { date: Date } | { delayInMs: number },
+  pruneDate: Date,
+  featureFlag?: Features,
+): ScheduledNotificationConfig => {
+  const sendDate =
+    'date' in timing ? timing.date : new Date(Date.now() + timing.delayInMs)
+  const daysBeforePrune = Math.max(
+    0,
+    Math.round(
+      (toUTCDateOnly(pruneDate).getTime() - toUTCDateOnly(sendDate).getTime()) /
+        DAY_MS,
+    ),
+  )
+
+  return {
+    template:
+      NotificationConfig[NotificationType.ApplicationAssigneeReminder]
+        .templateId,
+    recipients,
+    includeApplicationLink: true,
+    includeApplicationName: true,
+    args: [
+      ...localizedDateArgs('pruneDate', pruneDate),
+      { key: 'daysBeforePrune', value: String(daysBeforePrune) },
+    ],
+    featureFlag,
+    ...timing,
+  }
+}
