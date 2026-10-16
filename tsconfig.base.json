@@ -977,6 +977,9 @@
       "@island.is/clients/rsk/customs/general": [
         "libs/clients/rsk/customs/general/src/index.ts"
       ],
+      "@island.is/clients/rsk/kilometer-fee": [
+        "libs/clients/rsk/kilometer-fee/src/index.ts"
+      ],
       "@island.is/clients/rsk/personal-tax-return": [
         "libs/clients/rsk/personal-tax-return/src/index.ts"
       ],
