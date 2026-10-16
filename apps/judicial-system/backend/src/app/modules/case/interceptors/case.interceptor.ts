@@ -56,6 +56,7 @@ import {
   DefendantEventLog,
   EventLog,
 } from '../../repository'
+import { UpdatedCase } from '../models/case.types'
 
 // ---------------------------------------------------------------------------
 // Appeal-info computation
@@ -241,7 +242,7 @@ const getAppealedByRoleFromEvents = (
 
 export const getAppealCaseInfo = (
   appealCase: AppealCase,
-  theCase: Case,
+  theCase: Pick<Case, 'appealDecisions'>,
 ): AppealCaseInfo => {
   const { appealReceivedByCourtDate, rulingFileId } = appealCase
 
@@ -314,7 +315,7 @@ export interface AppealCaseStatementDates {
 
 export const getAppealCaseStatementDates = (
   appealCase: AppealCase,
-  theCase: Case,
+  theCase: Pick<Case, 'type'>,
 ): AppealCaseStatementDates => {
   const eventLogs = appealCase.appealEventLogs
   const prosecutorStatementDate = AppealEventLog.getLatestDateByRole(
@@ -714,6 +715,20 @@ const getDefenceUserDefendants = (
   }
 }
 
+// An appeal case as the web is served it: its row with the statement dates
+// and the appellant derived from its own event log, never from the parent
+// case's union, which keeps the attribution scoped to the row. The event log
+// itself is not served.
+const transformAppealCase = (
+  appealCase: AppealCase,
+  theCase: Pick<Case, 'type' | 'appealDecisions'>,
+) => ({
+  ...appealCase.toJSON(),
+  ...getAppealCaseStatementDates(appealCase, theCase),
+  ...getAppealCaseInfo(appealCase, theCase),
+  appealEventLogs: undefined,
+})
+
 const transformCase = (
   theCase: Case,
   user: User | undefined,
@@ -754,27 +769,15 @@ const transformCase = (
         defendants: transformedDefendants,
       })
 
-  // Per-appeal statement dates are derived from each appeal's own event log,
-  // never from the parent case's union — keeps attribution scoped to the row.
   const appealCaseOverride = theCase.appealCase
-    ? {
-        appealCase: {
-          ...theCase.appealCase.toJSON(),
-          ...getAppealCaseStatementDates(theCase.appealCase, theCase),
-          ...getAppealCaseInfo(theCase.appealCase, theCase),
-          appealEventLogs: undefined,
-        },
-      }
+    ? { appealCase: transformAppealCase(theCase.appealCase, theCase) }
     : {}
 
   const rulingOrderAppealCasesOverride = theCase.rulingOrderAppealCases
     ? {
-        rulingOrderAppealCases: theCase.rulingOrderAppealCases.map((ac) => ({
-          ...ac.toJSON(),
-          ...getAppealCaseStatementDates(ac, theCase),
-          ...getAppealCaseInfo(ac, theCase),
-          appealEventLogs: undefined,
-        })),
+        rulingOrderAppealCases: theCase.rulingOrderAppealCases.map((ac) =>
+          transformAppealCase(ac, theCase),
+        ),
       }
     : {}
 
@@ -975,6 +978,33 @@ export class CaseInterceptor implements NestInterceptor {
           ),
         ),
       )
+  }
+}
+
+// The response of a route that updates a case. The case is read back as an
+// UpdatedCase, so this serves what that read carries and the web reads back:
+// the row with its court, court users, prosecutor and civil claimants, and
+// the appeal case the transition response reports on. The associations the
+// update read for its own side effects are not served.
+export const transformUpdatedCase = (
+  theCase: UpdatedCase,
+): Record<string, unknown> => ({
+  ...theCase.toJSON(),
+  ...(theCase.appealCase
+    ? { appealCase: transformAppealCase(theCase.appealCase, theCase) }
+    : {}),
+  appealDecisions: undefined,
+  caseFiles: undefined,
+  dateLogs: undefined,
+  defendants: undefined,
+})
+
+@Injectable()
+export class UpdatedCaseInterceptor implements NestInterceptor {
+  intercept(_context: ExecutionContext, next: CallHandler) {
+    return next
+      .handle()
+      .pipe(map((theCase: UpdatedCase) => transformUpdatedCase(theCase)))
   }
 }
 

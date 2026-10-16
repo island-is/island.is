@@ -54,8 +54,9 @@ describe('CaseController - Get court record signature confirmation', () => {
     mockPutGeneratedObject.mockRejectedValue(new Error('Some error'))
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
-    const mockFindLiveById = mockCaseRepositoryService.findLiveById as jest.Mock
-    mockFindLiveById.mockRejectedValue(new Error('Some error'))
+    const mockFindUpdatedById =
+      mockCaseRepositoryService.findUpdatedById as jest.Mock
+    mockFindUpdatedById.mockRejectedValue(new Error('Some error'))
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -105,9 +106,9 @@ describe('CaseController - Get court record signature confirmation', () => {
     const documentToken = uuid()
 
     beforeEach(() => {
-      const mockFindLiveById =
-        mockCaseRepositoryService.findLiveById as jest.Mock
-      mockFindLiveById.mockResolvedValueOnce(theCase)
+      const mockFindUpdatedById =
+        mockCaseRepositoryService.findUpdatedById as jest.Mock
+      mockFindUpdatedById.mockResolvedValueOnce(theCase)
     })
 
     describe('successful completion', () => {
@@ -119,9 +120,9 @@ describe('CaseController - Get court record signature confirmation', () => {
         mockPutGeneratedObject.mockResolvedValueOnce(Promise.resolve())
         const mockUpdate = mockCaseRepositoryService.update as jest.Mock
         mockUpdate.mockResolvedValueOnce(theCase)
-        const mockFindLiveById =
-          mockCaseRepositoryService.findLiveById as jest.Mock
-        mockFindLiveById.mockResolvedValueOnce(theCase)
+        const mockFindUpdatedById =
+          mockCaseRepositoryService.findUpdatedById as jest.Mock
+        mockFindUpdatedById.mockResolvedValueOnce(theCase)
 
         then = await givenWhenThen(caseId, user, theCase, documentToken)
       })
@@ -160,9 +161,9 @@ describe('CaseController - Get court record signature confirmation', () => {
         mockPutGeneratedObject.mockResolvedValueOnce(Promise.resolve())
         const mockUpdate = mockCaseRepositoryService.update as jest.Mock
         mockUpdate.mockResolvedValueOnce(lokeCase)
-        const mockFindLiveById =
-          mockCaseRepositoryService.findLiveById as jest.Mock
-        mockFindLiveById.mockResolvedValueOnce(lokeCase)
+        const mockFindUpdatedById =
+          mockCaseRepositoryService.findUpdatedById as jest.Mock
+        mockFindUpdatedById.mockResolvedValueOnce(lokeCase)
 
         await givenWhenThen(caseId, user, lokeCase, documentToken)
       }

@@ -1,4 +1,12 @@
-import { col, Includeable, literal, Op, Order, WhereOptions } from 'sequelize'
+import {
+  col,
+  Includeable,
+  IncludeOptions,
+  literal,
+  Op,
+  Order,
+  WhereOptions,
+} from 'sequelize'
 
 import {
   appealEventTypes,
@@ -54,6 +62,60 @@ import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
 import { UpdateDateLog } from '../services/dateLogRepository.service'
 
+// Entries shared by the full case graph and the graph a case is read back
+// with after an update, so that the two cannot drift apart.
+const appealEventLogsInclude: IncludeOptions = {
+  model: AppealEventLog,
+  as: 'appealEventLogs',
+  required: false,
+  where: { eventType: appealEventTypes },
+  separate: true,
+}
+
+const appealDecisionsInclude: IncludeOptions = {
+  model: AppealDecision,
+  as: 'appealDecisions',
+  required: false,
+  separate: true,
+}
+
+const subpoenasInclude: IncludeOptions = {
+  model: Subpoena,
+  as: 'subpoenas',
+  required: false,
+  order: [['created', 'DESC']],
+  separate: true,
+}
+
+const civilClaimantsInclude: IncludeOptions = {
+  model: CivilClaimant,
+  as: 'civilClaimants',
+  required: false,
+  order: [['created', 'ASC']],
+  separate: true,
+}
+
+const caseFilesInclude: IncludeOptions = {
+  model: CaseFile,
+  as: 'caseFiles',
+  required: false,
+  order: [
+    ['orderWithinChapter', 'ASC NULLS LAST'],
+    ['created', 'ASC'],
+  ],
+  where: { state: { [Op.not]: CaseFileState.DELETED } },
+  separate: true,
+}
+
+const dateLogsInclude: IncludeOptions = {
+  model: DateLog,
+  as: 'dateLogs',
+  required: false,
+  where: { dateType: dateTypes },
+  order: [['created', 'DESC']],
+  separate: true,
+}
+
 export const caseInclude: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
@@ -83,13 +145,7 @@ export const caseInclude: Includeable[] = [
         as: 'appealJudge3',
         include: [{ model: Institution, as: 'institution' }],
       },
-      {
-        model: AppealEventLog,
-        as: 'appealEventLogs',
-        required: false,
-        where: { eventType: appealEventTypes },
-        separate: true,
-      },
+      appealEventLogsInclude,
     ],
   },
   {
@@ -97,13 +153,7 @@ export const caseInclude: Includeable[] = [
     as: 'verdictAppealCase',
     required: false,
     include: [
-      {
-        model: AppealEventLog,
-        as: 'appealEventLogs',
-        required: false,
-        where: { eventType: appealEventTypes },
-        separate: true,
-      },
+      appealEventLogsInclude,
       {
         model: AppealSummons,
         as: 'appealSummonses',
@@ -160,21 +210,10 @@ export const caseInclude: Includeable[] = [
         as: 'appealJudge3',
         include: [{ model: Institution, as: 'institution' }],
       },
-      {
-        model: AppealEventLog,
-        as: 'appealEventLogs',
-        required: false,
-        where: { eventType: appealEventTypes },
-        separate: true,
-      },
+      appealEventLogsInclude,
     ],
   },
-  {
-    model: AppealDecision,
-    as: 'appealDecisions',
-    required: false,
-    separate: true,
-  },
+  appealDecisionsInclude,
   {
     model: User,
     as: 'creatingProsecutor',
@@ -239,13 +278,7 @@ export const caseInclude: Includeable[] = [
     required: false,
     order: [['created', 'ASC']],
     include: [
-      {
-        model: Subpoena,
-        as: 'subpoenas',
-        required: false,
-        order: [['created', 'DESC']],
-        separate: true,
-      },
+      subpoenasInclude,
       {
         model: DefendantEventLog,
         as: 'eventLogs',
@@ -269,13 +302,7 @@ export const caseInclude: Includeable[] = [
     ],
     separate: true,
   },
-  {
-    model: CivilClaimant,
-    as: 'civilClaimants',
-    required: false,
-    order: [['created', 'ASC']],
-    separate: true,
-  },
+  civilClaimantsInclude,
   { model: Victim, as: 'victims', required: false },
   {
     model: IndictmentCount,
@@ -347,17 +374,7 @@ export const caseInclude: Includeable[] = [
     where: { courtSessionId: null },
     separate: true,
   },
-  {
-    model: CaseFile,
-    as: 'caseFiles',
-    required: false,
-    order: [
-      ['orderWithinChapter', 'ASC NULLS LAST'],
-      ['created', 'ASC'],
-    ],
-    where: { state: { [Op.not]: CaseFileState.DELETED } },
-    separate: true,
-  },
+  caseFilesInclude,
   {
     model: EventLog,
     as: 'eventLogs',
@@ -365,14 +382,7 @@ export const caseInclude: Includeable[] = [
     where: { eventType: eventTypes },
     separate: true,
   },
-  {
-    model: DateLog,
-    as: 'dateLogs',
-    required: false,
-    where: { dateType: dateTypes },
-    order: [['created', 'DESC']],
-    separate: true,
-  },
+  dateLogsInclude,
   {
     model: CaseString,
     as: 'caseStrings',
@@ -661,6 +671,52 @@ export const archivableCaseWhere: WhereOptions = {
 // Everything the archive is built from: every model that carries an encrypted
 // property is read here, because the same transaction writes the archive and
 // clears those properties off the live rows.
+// The graph a case is read back with right after an update, in the update's
+// own transaction: what the update's side effects compare against the case as
+// it was (state, court dates, parties, files), what the event posted about it
+// names (court, prosecutor's office, court users, appeal case) and what the
+// web reads off the responses of the update routes (court, prosecutor, judge,
+// registrar, civil claimants, appeal case). UpdatedCase in the case module is
+// the type of a case read this way; an association not listed here is not on
+// it, and the two are widened together.
+export const updatedCaseInclude: Includeable[] = [
+  { model: Institution, as: 'prosecutorsOffice' },
+  { model: Institution, as: 'court' },
+  {
+    model: AppealCase,
+    as: 'appealCase',
+    required: false,
+    include: [appealEventLogsInclude],
+  },
+  appealDecisionsInclude,
+  {
+    model: User,
+    as: 'prosecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'judge',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'registrar',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: Defendant,
+    as: 'defendants',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [subpoenasInclude],
+    separate: true,
+  },
+  civilClaimantsInclude,
+  caseFilesInclude,
+  dateLogsInclude,
+]
+
 export const archivableCaseInclude: Includeable[] = [
   { model: Defendant, as: 'defendants' },
   {
@@ -846,14 +902,7 @@ export const requestCaseEventExportInclude: Includeable[] = [
   },
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
-  {
-    model: DateLog,
-    as: 'dateLogs',
-    required: false,
-    where: { dateType: dateTypes },
-    order: [['created', 'DESC']],
-    separate: true,
-  },
+  dateLogsInclude,
   {
     model: AppealCase,
     as: 'appealCase',
@@ -899,27 +948,14 @@ export const indictmentCaseEventExportInclude: Includeable[] = [
   },
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
-  {
-    model: DateLog,
-    as: 'dateLogs',
-    required: false,
-    where: { dateType: dateTypes },
-    order: [['created', 'DESC']],
-    separate: true,
-  },
+  dateLogsInclude,
   {
     model: Defendant,
     as: 'defendants',
     required: false,
     order: [['created', 'ASC']],
     include: [
-      {
-        model: Subpoena,
-        as: 'subpoenas',
-        required: false,
-        order: [['created', 'DESC']],
-        separate: true,
-      },
+      subpoenasInclude,
       {
         model: DefendantEventLog,
         as: 'eventLogs',

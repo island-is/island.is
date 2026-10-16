@@ -106,7 +106,7 @@ import {
 import { VerdictService } from '../verdict'
 import { CaseAppealDecisionDto } from './dto/caseAppealDecision.dto'
 import { CreateCaseDto } from './dto/createCase.dto'
-import { MinimalCase } from './models/case.types'
+import { MinimalCase, UpdatedCase } from './models/case.types'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { caseModuleConfig } from './case.config'
@@ -421,7 +421,7 @@ export class CaseService {
   }
 
   private addMessagesForDeliverDefendantToCourtToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     for (const defendant of theCase.defendants ?? []) {
@@ -443,7 +443,7 @@ export class CaseService {
   }
 
   private addMessagesForDeliverProsecutorToCourtToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     queueMessagesAfterCommit({
@@ -454,7 +454,7 @@ export class CaseService {
   }
 
   private addMessagesForSubmittedIndictmentCaseToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     queueMessagesAfterCommit({
@@ -466,7 +466,7 @@ export class CaseService {
   }
 
   private addMessagesForDistrictCourtJudgeAssignedToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     queueMessagesAfterCommit({
@@ -480,7 +480,7 @@ export class CaseService {
   }
 
   private addMessagesForDistrictCourtRegistrarAssignedToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     queueMessagesAfterCommit({
@@ -494,7 +494,7 @@ export class CaseService {
   }
 
   private addMessagesForPublicProsecutorReviewerAssignedToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     queueMessagesAfterCommit({
@@ -508,7 +508,7 @@ export class CaseService {
   }
 
   private addMessagesForAppealProsecutorAssignedToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     queueMessagesAfterCommit({
@@ -521,7 +521,10 @@ export class CaseService {
     })
   }
 
-  private addMessagesForReceivedCaseToQueue(theCase: Case, user: TUser): void {
+  private addMessagesForReceivedCaseToQueue(
+    theCase: UpdatedCase,
+    user: TUser,
+  ): void {
     queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
@@ -565,7 +568,7 @@ export class CaseService {
   }
 
   private addMessagesForIndictmentCourtRoleAssigned(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
     assignedNationalId: string,
   ): void {
@@ -578,7 +581,7 @@ export class CaseService {
   }
 
   private addMessagesForIndictmentArraignmentDate(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     queueMessagesAfterCommit({
@@ -589,7 +592,7 @@ export class CaseService {
   }
 
   private addMessagesForCourtCaseConnectionToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     queueMessagesAfterCommit({
@@ -602,7 +605,7 @@ export class CaseService {
   }
 
   private addMessagesForIndictmentCourtCaseConnectionToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     for (const policeCaseNumber of theCase.policeCaseNumbers) {
@@ -719,14 +722,14 @@ export class CaseService {
   }
 
   private addMessagesForDefenderEmailChangeToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     this.addMessagesForDeliverDefendantToCourtToQueue(theCase, user)
   }
 
   private addMessagesForProsecutorChangeToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     this.addMessagesForDeliverProsecutorToCourtToQueue(theCase, user)
@@ -779,14 +782,17 @@ export class CaseService {
   }
 
   // A custody notice is only generated for accepted custody and admission to facility cases
-  private hasCustodyNoticeForPolice(theCase: Case): boolean {
+  private hasCustodyNoticeForPolice(theCase: UpdatedCase): boolean {
     return (
       theCase.state === CaseState.ACCEPTED &&
       [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(theCase.type)
     )
   }
 
-  private addMessagesForCompletedCaseToQueue(theCase: Case, user: TUser): void {
+  private addMessagesForCompletedCaseToQueue(
+    theCase: UpdatedCase,
+    user: TUser,
+  ): void {
     queueMessagesAfterCommit(
       {
         type: MessageType.DELIVERY_TO_COURT_CASE_CONCLUSION,
@@ -861,7 +867,7 @@ export class CaseService {
   }
 
   private addMessagesForIndictmentConclusionToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     if (
@@ -879,7 +885,7 @@ export class CaseService {
   }
 
   private addMessagesForCompletedIndictmentCaseToQueue(
-    updatedCase: Case,
+    updatedCase: UpdatedCase,
     user: TUser,
   ): void {
     this.addMessagesForIndictmentConclusionToQueue(updatedCase, user)
@@ -952,7 +958,7 @@ export class CaseService {
 
   private addMessagesForModifiedCaseToQueue(
     theCase: Case,
-    updatedCase: Case,
+    updatedCase: UpdatedCase,
     user: TUser,
   ): void {
     queueMessagesAfterCommit({
@@ -991,7 +997,7 @@ export class CaseService {
 
   private addMessagesForRevokeNotificationToQueue(
     user: TUser,
-    theCase: Case,
+    theCase: UpdatedCase,
   ): void {
     queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
@@ -1001,12 +1007,15 @@ export class CaseService {
     })
   }
 
-  private addMessagesForDeletedCaseToQueue(theCase: Case, user: TUser): void {
+  private addMessagesForDeletedCaseToQueue(
+    theCase: UpdatedCase,
+    user: TUser,
+  ): void {
     this.addMessagesForRevokeNotificationToQueue(user, theCase)
   }
 
   private addMessagesForRevokedIndictmentCaseToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     this.addMessagesForRevokeNotificationToQueue(user, theCase)
@@ -1035,7 +1044,7 @@ export class CaseService {
   }
 
   private addMessagesForDeniedIndictmentCaseToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     queueMessagesAfterCommit({
@@ -1047,7 +1056,7 @@ export class CaseService {
   }
 
   private addMessagesForReviewRequestedIndictmentCaseToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     queueMessagesAfterCommit({
@@ -1061,7 +1070,7 @@ export class CaseService {
   }
 
   private addMessagesForReviewDeniedIndictmentCaseToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     queueMessagesAfterCommit({
@@ -1073,7 +1082,7 @@ export class CaseService {
   }
 
   private addMessagesForReviewAcceptedIndictmentCaseToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     queueMessagesAfterCommit({
@@ -1087,7 +1096,7 @@ export class CaseService {
   }
 
   private addMessagesForReopenedIndictmentCaseToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     queueMessagesAfterCommit({
@@ -1099,7 +1108,7 @@ export class CaseService {
   }
 
   private addMessagesForIndictmentArraignmentCompletionToQueue(
-    theCase: Case,
+    theCase: UpdatedCase,
     user: TUser,
   ): void {
     for (const defendant of theCase.defendants ?? []) {
@@ -1137,7 +1146,7 @@ export class CaseService {
 
   private addMessagesForUpdatedCaseToQueue(
     theCase: Case,
-    updatedCase: Case,
+    updatedCase: UpdatedCase,
     user: TUser,
   ): void {
     const isIndictment = isIndictmentCase(updatedCase.type)
@@ -1407,6 +1416,26 @@ export class CaseService {
     }
 
     return theCase
+  }
+
+  // The case as read back right after an update - the graph
+  // updatedCaseInclude lists and nothing else - in the update's own
+  // transaction. A deletion is an update that is read back too, so a deleted
+  // case is served.
+  private async findUpdatedById(
+    caseId: string,
+    transaction: Transaction,
+  ): Promise<UpdatedCase> {
+    const updatedCase = await this.caseRepositoryService.findUpdatedById(
+      caseId,
+      { transaction },
+    )
+
+    if (!updatedCase) {
+      throw new NotFoundException(`Case ${caseId} does not exist`)
+    }
+
+    return updatedCase
   }
 
   async findMinimalById(id: string): Promise<MinimalCase> {
@@ -1773,7 +1802,7 @@ export class CaseService {
 
   private handleStateChangeEventLogUpdatesForIndictments(
     theCase: Case,
-    updatedCase: Case,
+    updatedCase: UpdatedCase,
     user: TUser,
     transaction: Transaction,
   ) {
@@ -1813,7 +1842,7 @@ export class CaseService {
 
   private handleStateChangeEventLogUpdatesForRequests(
     theCase: Case,
-    updatedCase: Case,
+    updatedCase: UpdatedCase,
     user: TUser,
     transaction: Transaction,
   ) {
@@ -1841,7 +1870,7 @@ export class CaseService {
 
   private handleStateChangeEventLogUpdates(
     theCase: Case,
-    updatedCase: Case,
+    updatedCase: UpdatedCase,
     user: TUser,
     transaction: Transaction,
   ) {
@@ -2027,7 +2056,7 @@ export class CaseService {
   // indictment and request cases - see NotificationDispatchService
   private async handleCourtDateEventLogUpdates(
     theCase: Case,
-    updatedCase: Case,
+    updatedCase: UpdatedCase,
     user: TUser,
     transaction: Transaction,
   ) {
@@ -2137,7 +2166,7 @@ export class CaseService {
 
   private async handleEventLogUpdates(
     theCase: Case,
-    updatedCase: Case,
+    updatedCase: UpdatedCase,
     user: TUser,
     transaction: Transaction,
   ) {
@@ -2164,7 +2193,7 @@ export class CaseService {
     user: TUser,
     transaction: Transaction,
     returnUpdatedCase = true,
-  ): Promise<Case | undefined> {
+  ): Promise<UpdatedCase | undefined> {
     const isReceivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
 
@@ -2585,7 +2614,7 @@ export class CaseService {
       }
     }
 
-    const updatedCase = await this.findById(theCase.id, true, transaction)
+    const updatedCase = await this.findUpdatedById(theCase.id, transaction)
 
     await this.handleEventLogUpdates(theCase, updatedCase, user, transaction)
     await this.handleDefendantEventLogUpdatesForIndictments(
@@ -3019,7 +3048,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
     transaction: Transaction,
-  ): Promise<Case> {
+  ): Promise<UpdatedCase> {
     const receivalDate =
       EventLog.getEventLogDateByEventType(
         [EventType.CASE_RECEIVED_BY_COURT, EventType.INDICTMENT_CONFIRMED],
@@ -3045,6 +3074,6 @@ export class CaseService {
       true,
     )
 
-    return updatedCase as Case
+    return updatedCase as UpdatedCase
   }
 }

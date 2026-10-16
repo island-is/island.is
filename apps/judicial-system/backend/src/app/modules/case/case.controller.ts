@@ -113,8 +113,10 @@ import {
 import {
   CaseInterceptor,
   CasesInterceptor,
+  UpdatedCaseInterceptor,
 } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
+import { UpdatedCase } from './models/case.types'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
@@ -293,7 +295,7 @@ export class CaseController {
     districtCourtAssistantUpdateRule,
     publicProsecutorStaffUpdateRule,
   )
-  @UseInterceptors(CaseInterceptor)
+  @UseInterceptors(UpdatedCaseInterceptor)
   @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
@@ -301,7 +303,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() updateDto: UpdateCaseDto,
-  ): Promise<Case> {
+  ): Promise<UpdatedCase> {
     this.logger.debug(`Updating case ${caseId}`)
 
     const update: UpdateCase = updateDto
@@ -426,7 +428,7 @@ export class CaseController {
       update,
       user,
       transaction,
-    )) as Case // Never returns undefined
+    )) as UpdatedCase // Never returns undefined
 
     return updatedCase
   }
@@ -486,7 +488,7 @@ export class CaseController {
     districtCourtRegistrarTransitionRule,
     districtCourtAssistantTransitionRule,
   )
-  @UseInterceptors(CaseInterceptor)
+  @UseInterceptors(UpdatedCaseInterceptor)
   @Patch('case/:caseId/state')
   @ApiOkResponse({
     type: Case,
@@ -497,7 +499,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
-  ): Promise<Case> {
+  ): Promise<UpdatedCase> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
     if (
@@ -1300,7 +1302,7 @@ export class CaseController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @UseInterceptors(CaseInterceptor)
+  @UseInterceptors(UpdatedCaseInterceptor)
   @Post('case/:caseId/court')
   @ApiCreatedResponse({
     type: Case,
@@ -1310,7 +1312,7 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-  ): Promise<Case> {
+  ): Promise<UpdatedCase> {
     this.logger.debug(`Creating a court case for case ${caseId}`)
 
     return this.sequelize.transaction((transaction) =>
