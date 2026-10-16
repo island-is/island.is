@@ -85,7 +85,7 @@ export const isTranslationNamespaceAllowed = (
   const allowed = getAllowedTranslationTypeIds(user)
 
   if (allowed === null) {
-    return true
+    return getApplicationTranslationNamespaceSet().has(namespace)
   }
 
   const owningTypeIds = getTypeIdsForNamespace(namespace)

@@ -152,10 +152,16 @@ describe('translationAccessUtils', () => {
       )
     })
 
-    it('allows any namespace for super admin', () => {
+    it('allows any application namespace for super admin', () => {
       expect(
         isTranslationNamespaceAllowed(superAdminUser, 'pa.application'),
       ).toBe(true)
+    })
+
+    it('denies a non-application namespace for super admin', () => {
+      expect(
+        isTranslationNamespaceAllowed(superAdminUser, 'service.portal'),
+      ).toBe(false)
     })
 
     it('denies core namespace for institution user', () => {
