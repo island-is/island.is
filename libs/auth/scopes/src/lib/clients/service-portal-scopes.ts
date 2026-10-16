@@ -21,6 +21,7 @@ export const servicePortalScopes = [
   EndorsementsScope.admin,
   ApiScope.intellectualProperties,
   ApiScope.assets,
+  ApiScope.estates,
   ApiScope.education,
   ApiScope.educationLicense,
   ApiScope.financeOverview,
