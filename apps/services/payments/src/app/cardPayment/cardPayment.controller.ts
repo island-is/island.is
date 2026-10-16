@@ -17,7 +17,11 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
-import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import {
+  CardErrorCode,
+  PaymentServiceCode,
+  DebtPaymentErrorCode,
+} from '@island.is/shared/constants'
 
 import { PaymentMethod } from '../../types'
 import { requireStepResult } from '../../utils/orchestrator'
@@ -251,6 +255,13 @@ export class CardPaymentController {
       const refundFailed = context.metadata?.refundSucceeded === false
 
       if (refundSucceeded) {
+        // FJS rejected the debts, the card is refunded and the flow is closed
+        if (e.message === DebtPaymentErrorCode.DebtPaymentRejected) {
+          throw new BadRequestException(
+            DebtPaymentErrorCode.DebtPaymentRejected,
+          )
+        }
+
         throw new BadRequestException(
           CardErrorCode.RefundedBecauseOfSystemError,
         )
@@ -337,6 +348,13 @@ export class CardPaymentController {
       const refundFailed = context.metadata?.refundSucceeded === false
 
       if (refundSucceeded) {
+        // FJS rejected the debts, the card is refunded and the flow is closed
+        if (e.message === DebtPaymentErrorCode.DebtPaymentRejected) {
+          throw new BadRequestException(
+            DebtPaymentErrorCode.DebtPaymentRejected,
+          )
+        }
+
         throw new BadRequestException(
           CardErrorCode.RefundedBecauseOfSystemError,
         )

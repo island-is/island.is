@@ -11,6 +11,7 @@ import {
   CardPaymentSagaDefinition,
 } from './cardPayment.orchestrator'
 import { CardPaymentService } from './cardPayment.service'
+import { notifyPaymentCompleted, settleDebtStep } from './cardPayment.debt'
 import { ChargeCardInput } from './dtos'
 
 export const createCardPaymentContext = (
@@ -94,8 +95,13 @@ export const createCardPaymentSaga = (
           metadata: {
             payment: paymentResult,
             refund,
+            // Ties the refund to this payment, see PaymentFlowService.isCardPaymentRefunded
+            correlationId: ctx.trackingData.correlationId,
             originalError: ctx.error?.message,
             reasonForRefund: RefundType.PAYMENT_FAILURE,
+            ...(ctx.metadata?.fjsProblem
+              ? { fjsProblem: ctx.metadata.fjsProblem }
+              : {}),
           },
         })
 
@@ -135,51 +141,48 @@ export const createCardPaymentSaga = (
       })
     },
     compensate: async (ctx) => {
-      const deletedPaymentConfirmation =
-        await paymentFlowService.deleteCardPaymentConfirmation(
-          ctx.paymentFlowId,
-          ctx.trackingData.correlationId,
-        )
+      await paymentFlowService.deleteCardPaymentConfirmationAndFulfillment(
+        ctx.paymentFlowId,
+        ctx.trackingData.correlationId,
+      )
+    },
+  },
+  {
+    name: 'SETTLE_DEBT',
+    description:
+      'Register the payment with FJS for debt payments, no-op for charges',
+    execute: async (ctx) => {
+      const { paymentFlow, totalPrice } = requireStepResult(ctx, 'VALIDATE')
+      const { paymentResult } = requireStepResult(ctx, 'CHARGE_CARD')
 
-      if (!deletedPaymentConfirmation) {
-        throw new Error('Failed to delete payment confirmation during rollback')
-      }
-
-      const deletedPaymentFulfillment =
-        await paymentFlowService.deletePaymentFulfillment({
-          paymentFlowId: ctx.paymentFlowId,
-          confirmationRefId: deletedPaymentConfirmation.id,
-          correlationId: ctx.trackingData.correlationId,
-        })
-
-      if (!deletedPaymentFulfillment) {
-        throw new Error('Failed to delete payment fulfillment during rollback')
-      }
+      return await settleDebtStep({
+        cardPaymentService,
+        paymentFlow,
+        paymentResult,
+        trackingData: ctx.trackingData,
+        totalPrice,
+        onRejected: (problem) => {
+          ctx.metadata = { ...ctx.metadata, fjsProblem: problem }
+        },
+      })
     },
   },
   {
     name: 'NOTIFY_SUCCESSFUL_PAYMENT',
     description: 'Notify the successful payment',
     execute: async (ctx) => {
+      const { paymentFlow } = requireStepResult(ctx, 'VALIDATE')
       const { paymentResult } = requireStepResult(ctx, 'CHARGE_CARD')
 
-      await paymentFlowService.logPaymentFlowUpdate(
-        {
-          paymentFlowId: ctx.paymentFlowId,
-          type: 'success',
-          occurredAt: new Date(),
-          paymentMethod: PaymentMethod.CARD,
-          reason: 'payment_completed',
-          message: `Card payment completed successfully`,
-          metadata: {
-            payment: paymentResult,
-          },
-        },
-        {
-          useRetry: true,
-          throwOnError: true,
-        },
-      )
+      await notifyPaymentCompleted({
+        paymentFlowService,
+        logger,
+        paymentFlowId: ctx.paymentFlowId,
+        paymentFlow,
+        settlement: ctx.stepResults.SETTLE_DEBT,
+        message: `Card payment completed successfully`,
+        paymentResult,
+      })
     },
   },
 ]

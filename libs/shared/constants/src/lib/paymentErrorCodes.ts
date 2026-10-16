@@ -87,9 +87,19 @@ export enum BankTransferErrorCode {
   BankTransferExpired = 'BankTransferExpired',
 }
 
+export enum DebtPaymentErrorCode {
+  DebtPaymentInvalid = 'DebtPaymentInvalid',
+  DebtPaymentMethodNotAllowed = 'DebtPaymentMethodNotAllowed',
+  DebtPaymentRejected = 'DebtPaymentRejected',
+  DebtPaymentFlowClosed = 'DebtPaymentFlowClosed',
+  DebtPaymentUnavailable = 'DebtPaymentUnavailable',
+  DebtPaymentRegisteredCannotBeRefunded = 'DebtPaymentRegisteredCannotBeRefunded',
+}
+
 export type PaymentErrorCode =
   | FjsErrorCode
   | CardErrorCode
   | InvoiceErrorCode
   | BankTransferErrorCode
+  | DebtPaymentErrorCode
   | PaymentServiceCode

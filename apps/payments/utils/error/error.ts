@@ -5,12 +5,22 @@ import {
   CardErrorCode,
   FjsErrorCode,
   PaymentServiceCode,
+  DebtPaymentErrorCode,
 } from '@island.is/shared/constants'
 
-import { bankTransferError, cardError, genericError } from '../../messages'
+import {
+  bankTransferError,
+  cardError,
+  debtError,
+  genericError,
+} from '../../messages'
 
 export type PaymentError = {
-  code: CardErrorCode | BankTransferErrorCode
+  code:
+    | CardErrorCode
+    | BankTransferErrorCode
+    | DebtPaymentErrorCode
+    | PaymentServiceCode
   meta?: Record<string, string | number>
 }
 
@@ -25,6 +35,7 @@ export const paymentErrorToTitleAndMessage = (
       | FjsErrorCode
       | PaymentServiceCode
       | BankTransferErrorCode
+      | DebtPaymentErrorCode
   ) {
     case CardErrorCode.InsufficientFunds:
       return {
@@ -161,6 +172,27 @@ export const paymentErrorToTitleAndMessage = (
         title: genericError.amountMismatchTitle,
         message: genericError.amountMismatch,
       }
+    case DebtPaymentErrorCode.DebtPaymentFlowClosed:
+    case DebtPaymentErrorCode.DebtPaymentRejected:
+      return {
+        title: debtError.closedTitle,
+        message: debtError.closed,
+      }
+    case DebtPaymentErrorCode.DebtPaymentInvalid:
+      return {
+        title: debtError.invalidTitle,
+        message: debtError.invalid,
+      }
+    case DebtPaymentErrorCode.DebtPaymentMethodNotAllowed:
+      return {
+        title: debtError.methodNotAllowedTitle,
+        message: debtError.methodNotAllowed,
+      }
+    case DebtPaymentErrorCode.DebtPaymentUnavailable:
+      return {
+        title: debtError.unavailableTitle,
+        message: debtError.unavailable,
+      }
     case CardErrorCode.RefundedBecauseOfSystemError:
       return {
         title: cardError.refundedBecauseOfSystemErrorTitle,
@@ -220,6 +252,12 @@ export const paymentErrorToTitleAndMessage = (
       }
   }
 }
+
+/** Debt errors after which the flow cannot be paid, the payer starts again from the application. */
+export const isTerminalDebtError = (code?: string | null): boolean =>
+  code === DebtPaymentErrorCode.DebtPaymentFlowClosed ||
+  code === DebtPaymentErrorCode.DebtPaymentInvalid ||
+  code === DebtPaymentErrorCode.DebtPaymentRejected
 
 export const getErrorTitleAndMessage = (
   invalidFlowSetup: boolean,

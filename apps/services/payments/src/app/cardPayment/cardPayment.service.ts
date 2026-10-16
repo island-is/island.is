@@ -12,7 +12,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
-import { PaymentStatus } from '../../types'
+import { PaymentMethod, PaymentStatus } from '../../types'
 import {
   CachePaymentFlowStatus,
   CardPaymentErrorSchema,
@@ -31,8 +31,9 @@ import {
 } from '../../types/cardPayment'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import { mapToCardErrorCode } from '../../utils/paymentErrors'
-import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import { PaymentFlowAttributes } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
+import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import { paymentGatewayResponseCodes } from './cardPayment.constants'
 import { verifyApplePaySignature } from './applePaySignature'
@@ -44,6 +45,7 @@ import {
   generateApplePayValidationRequestOptions,
   generateChargeRequestOptions,
   generateMd,
+  buildCardPayInfo,
   generateRefundRequestOptions,
   generateVerificationRequestOptions,
   getPayloadFromMd,
@@ -73,6 +75,7 @@ export class CardPaymentService {
     private readonly cacheManager: CacheManager,
     private readonly paymentFlowService: PaymentFlowService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly debtSettlementService: DebtSettlementService,
   ) {}
 
   // VERIFICATION METHODS ------------------------------------------------------------------------------------------------
@@ -276,15 +279,14 @@ export class CardPaymentService {
     const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
       paymentFlowId,
     )
-    const [{ catalogItems, totalPrice }, { paymentStatus }] = await Promise.all(
-      [
-        this.paymentFlowService.getPaymentFlowChargeDetails(
-          paymentFlow.organisationId,
-          paymentFlow.charges,
-        ),
-        this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
-      ],
-    )
+    const [amountDetails, { paymentStatus }] = await Promise.all([
+      this.paymentFlowService.getPaymentFlowAmountDetails(paymentFlow),
+      this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
+    ])
+    const { totalPrice } = amountDetails
+    // Debt flows have no catalog items, their debts are on the flow
+    const catalogItems =
+      amountDetails.type === 'charge' ? amountDetails.catalogItems : []
 
     return {
       paymentFlow,
@@ -308,7 +310,14 @@ export class CardPaymentService {
     }
 
     // validate the payment flow against FJS
-    await this.paymentFlowService.validateCharge(paymentFlow, catalogItems)
+    if (paymentFlow.type === 'debt') {
+      await this.paymentFlowService.validateDebtPaymentFlow(
+        paymentFlow,
+        PaymentMethod.CARD,
+      )
+    } else {
+      await this.paymentFlowService.validateCharge(paymentFlow, catalogItems)
+    }
 
     return {
       paymentFlow,
@@ -772,6 +781,34 @@ export class CardPaymentService {
       totalPrice,
       paymentTrackingData,
     })
+  }
+
+  /** Registers the captured card payment of a debt flow with FJS, see DebtSettlementService. */
+  async settleDebt({
+    paymentFlow,
+    paymentResult,
+    trackingData,
+    totalPrice,
+  }: {
+    paymentFlow: PaymentFlowAttributes
+    paymentResult: CardPaymentSuccessResponse
+    trackingData: PaymentTrackingData
+    totalPrice: number
+  }) {
+    return this.debtSettlementService.attempt(
+      paymentFlow,
+      buildCardPayInfo({
+        cardChargeInfo: {
+          maskedCardNumber: paymentResult.maskedCardNumber,
+          authorizationCode: paymentResult.authorizationCode,
+          cardScheme: paymentResult.cardInformation.cardScheme,
+          cardUsage: paymentResult.cardInformation.cardUsage,
+        },
+        totalPrice,
+        merchantReferenceData: trackingData.merchantReferenceData,
+        correlationId: trackingData.correlationId,
+      }),
+    )
   }
 
   // PRIVATE HELPER METHODS ------------------------------------------------------------------------------------------------

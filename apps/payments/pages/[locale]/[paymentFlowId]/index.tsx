@@ -5,7 +5,10 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useCallback, useMemo, useState } from 'react'
 import { isCompany } from 'kennitala'
 
-import { PaymentsGetFlowPaymentStatus } from '@island.is/api/schema'
+import {
+  PaymentsFlowType,
+  PaymentsGetFlowPaymentStatus,
+} from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -20,6 +23,7 @@ import {
   BankTransferErrorCode,
   CardErrorCode,
   PaymentServiceCode,
+  DebtPaymentErrorCode,
 } from '@island.is/shared/constants'
 
 import { PageCard } from '../../../components/PageCard/PageCard'
@@ -42,12 +46,14 @@ import {
   bankTransfer,
   card,
   cardSuccess,
+  debtPayment,
   generic,
   invoice,
   invoiceSuccess,
 } from '../../../messages'
 import {
   getErrorTitleAndMessage,
+  isTerminalDebtError,
   PaymentError,
 } from '../../../utils/error/error'
 
@@ -411,15 +417,29 @@ function PaymentPage({
     !paymentFlow ||
     !paymentFlow.availablePaymentMethods
 
-  const hasPaymentError = paymentError !== null
+  const paymentStatus = paymentFlow?.paymentStatus
+
+  // Debt flows have no product title of their own, the page translates it
+  const productTitle =
+    paymentFlow?.type === PaymentsFlowType.debt
+      ? formatMessage(debtPayment.productTitle)
+      : productInformation?.title ?? ''
+
+  // A closed (rejected) debt flow can no longer be paid, but a paid flow still shows its receipt
+  const isClosed =
+    !!paymentFlow?.isClosed &&
+    paymentStatus !== PaymentsGetFlowPaymentStatus.paid
+  const displayedError: PaymentError | null =
+    paymentError ??
+    (isClosed ? { code: DebtPaymentErrorCode.DebtPaymentFlowClosed } : null)
+
+  const hasPaymentError = displayedError !== null
   const canRenderMainFlow = !invalidFlowSetup && !hasPaymentError
 
   const { errorTitle, errorMessage } = getErrorTitleAndMessage(
     invalidFlowSetup,
-    paymentError,
+    displayedError,
   )
-
-  const paymentStatus = paymentFlow?.paymentStatus
   // Once a poll has reported, it replaces the SSR snapshot
   const rawScaRedirectUrl = liveBankTransfer
     ? liveBankTransfer.scaRedirectUrl
@@ -447,7 +467,7 @@ function PaymentPage({
             imageSrc={organization?.logo?.url}
             imageAlt={organization?.logo?.title}
             amount={productInformation.amount}
-            subTitle={productInformation.title}
+            subTitle={productTitle}
             type="primary"
           />
         }
@@ -480,7 +500,7 @@ function PaymentPage({
           bodySlot={
             <>
               <ReceiptComponent
-                productTitle={productInformation.title}
+                productTitle={productTitle}
                 amount={productInformation.amount}
                 paidAt={paymentFlow.updatedAt}
                 payerNationalId={paymentFlow.payerNationalId}
@@ -519,7 +539,7 @@ function PaymentPage({
               imageSrc={organization?.logo?.url}
               imageAlt={organization?.logo?.title}
               amount={productInformation.amount}
-              subTitle={productInformation.title}
+              subTitle={productTitle}
               type="primary"
             />
           ) : (
@@ -590,7 +610,20 @@ function PaymentPage({
               <Box display="flex" flexDirection="column" textAlign="center">
                 <p>{formatMessage(errorMessage)}</p>
               </Box>
-              {!invalidFlowSetup && (
+              {!invalidFlowSetup && isTerminalDebtError(displayedError?.code) && (
+                <LinkV2
+                  href={
+                    paymentFlow?.cancelUrl ??
+                    paymentFlow?.returnUrl ??
+                    'https://island.is'
+                  }
+                >
+                  <Button variant="ghost" fluid unfocusable>
+                    {formatMessage(generic.back)}
+                  </Button>
+                </LinkV2>
+              )}
+              {!invalidFlowSetup && !isTerminalDebtError(displayedError?.code) && (
                 <Button
                   variant="ghost"
                   fluid

@@ -4,8 +4,9 @@ import {
 } from '../../types/cardPayment'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import { SagaDefinition } from '../../utils/orchestrator'
-import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import { PaymentFlowAttributes } from '../paymentFlow/models'
 import { PaymentContext } from '../refund/refund.orchestrator'
+import type { SettleDebtStepResult } from './cardPayment.debt'
 import { ApplePayChargeInput, ChargeCardInput } from './dtos'
 
 export {
@@ -29,6 +30,7 @@ export interface CardPaymentStepResults {
     paymentResult: CardPaymentSuccessResponse
   }
   PERSIST_PAYMENT_CONFIRMATION: void
+  SETTLE_DEBT: SettleDebtStepResult
   NOTIFY_SUCCESSFUL_PAYMENT: void
 }
 
@@ -54,6 +56,7 @@ export interface ApplePayPaymentStepResults {
     paymentResult: CardPaymentSuccessResponse
   }
   PERSIST_PAYMENT_CONFIRMATION: void
+  SETTLE_DEBT: SettleDebtStepResult
   NOTIFY_SUCCESSFUL_PAYMENT: void
 }
 
