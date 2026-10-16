@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
@@ -20,6 +21,7 @@ import {
   StartDateOptions,
   States,
 } from '../../constants'
+import { usageMaxMonths } from '../../config'
 import { YES } from '@island.is/application/core'
 
 const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
@@ -38,6 +40,11 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
 
   const dob = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
   const dobDate = dob ? new Date(dob) : null
+
+  // Periods can't end later than usageMaxMonths after the birth or adoption
+  // date, so editing after that can't change anything
+  const rightsWindowClosed =
+    !!dobDate && new Date() >= addMonths(dobDate, usageMaxMonths)
 
   const canBeEdited =
     application.state === ApplicationStates.OTHER_PARENT_APPROVAL ||
@@ -113,7 +120,7 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
           </Text>
         )}
         <Box>
-          {canBeEdited && (
+          {canBeEdited && !rightsWindowClosed && (
             <Box display="inlineBlock">
               <Button
                 colorScheme="default"
