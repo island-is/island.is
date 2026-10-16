@@ -30,4 +30,10 @@ export class AppealCaseNotificationDto {
   @IsString({ each: true })
   @ApiPropertyOptional({ type: String, isArray: true })
   readonly userIds?: string[]
+
+  // The court session the notification is about, for the session types.
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly appealCourtSessionId?: string
 }

@@ -4,8 +4,14 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { AppealCaseType } from '@island.is/judicial-system/types'
+import { MessageType } from '@island.is/judicial-system/message'
+import {
+  AppealCaseNotificationType,
+  AppealCaseType,
+  type User,
+} from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware/queueMessagesAfterCommit'
 import {
   AppealCase,
   AppealCourtSession,
@@ -21,11 +27,13 @@ export class AppealCourtSessionService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  // Books a session in a verdict appeal.
+  // Books a session in a verdict appeal and tells the parties once the
+  // booking has committed.
   async create(
     theCase: Case,
     appealCase: AppealCase,
     dto: CreateAppealCourtSessionDto,
+    user: User,
     transaction: Transaction,
   ): Promise<AppealCourtSession> {
     // A ruling appeal is decided on the papers, so the route exists only for
@@ -41,7 +49,7 @@ export class AppealCourtSessionService {
       `Creating an appeal court session for case ${theCase.id} and appeal case ${appealCase.id}`,
     )
 
-    return this.appealCourtSessionRepositoryService.create(
+    const session = await this.appealCourtSessionRepositoryService.create(
       {
         caseId: theCase.id,
         appealCaseId: appealCase.id,
@@ -51,5 +59,18 @@ export class AppealCourtSessionService {
       },
       { transaction },
     )
+
+    queueMessagesAfterCommit({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      elementId: appealCase.id,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_COURT_SESSION_BOOKED,
+        appealCourtSessionId: session.id,
+      },
+    })
+
+    return session
   }
 }

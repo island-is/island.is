@@ -3,13 +3,17 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
+import { MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseNotificationType,
   AppealCaseType,
   AppealCourtSessionType,
+  type User,
 } from '@island.is/judicial-system/types'
 
 import { createTestingAppealCourtSessionModule } from './createTestingAppealCourtSessionModule'
 
+import { queueMessagesAfterCommit } from '../../../middleware/queueMessagesAfterCommit'
 import {
   AppealCase,
   AppealCourtSession,
@@ -29,6 +33,7 @@ describe('AppealCourtSessionController - Create', () => {
   const caseId = uuid()
   const appealCaseId = uuid()
   const theCase = { id: caseId } as Case
+  const user = { id: uuid() } as User
   const verdictAppeal = {
     id: appealCaseId,
     appealType: AppealCaseType.VERDICT,
@@ -51,6 +56,9 @@ describe('AppealCourtSessionController - Create', () => {
       appealCourtSessionController,
     } = await createTestingAppealCourtSessionModule()
 
+    const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+    mockQueueMessagesAfterCommit.mockClear()
+
     mockAppealCourtSessionRepositoryService =
       appealCourtSessionRepositoryService
     const mockCreate =
@@ -64,7 +72,7 @@ describe('AppealCourtSessionController - Create', () => {
       const then = {} as Then
 
       await appealCourtSessionController
-        .create(caseId, appealCase.id, theCase, appealCase, dto)
+        .create(caseId, appealCase.id, user, theCase, appealCase, dto)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -88,6 +96,21 @@ describe('AppealCourtSessionController - Create', () => {
     expect(then.result).toBe(created)
   })
 
+  it('tells the parties once the booking has committed', async () => {
+    await givenWhenThen(verdictAppeal)
+
+    expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId,
+      elementId: appealCaseId,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_COURT_SESSION_BOOKED,
+        appealCourtSessionId: created.id,
+      },
+    })
+  })
+
   // The guard matches any of the case's appeals to the id in the URL. A ruling
   // appeal is decided on the papers, so a session in one is a mistake.
   it('refuses a ruling appeal', async () => {
@@ -100,5 +123,6 @@ describe('AppealCourtSessionController - Create', () => {
     expect(
       mockAppealCourtSessionRepositoryService.create,
     ).not.toHaveBeenCalled()
+    expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
   })
 })
