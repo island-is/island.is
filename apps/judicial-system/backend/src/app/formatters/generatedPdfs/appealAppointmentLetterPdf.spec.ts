@@ -142,7 +142,7 @@ describe('createAppealAppointmentLetter', () => {
     appealCaseNumber: '593/2026',
     appealSummonsDate: '2026-06-22T00:00:00.000Z',
     appointedBy: {
-      name: 'Áslaug Björk Ingólfsdóttir',
+      name: 'Some Person',
       title: 'aðstoðarmaður dómara',
     },
     appointedDate: '2026-08-13T00:00:00.000Z',
@@ -196,7 +196,7 @@ describe('createAppealAppointmentLetter', () => {
         copyTo: [
           'Hrafnhildur M. Gunnarsdóttir saksóknari',
           'Þórður Már Jónsson lögmaður',
-          'Áslaug Björk Ingólfsdóttir lögmaður',
+          'Some Person lögmaður',
         ],
       })
 
