@@ -3,6 +3,7 @@ export {
   FinanceClientV3Service,
   FinanceClientV3ResultMissingError,
 } from './lib/financeV3.service'
+export type { FinanceClientV3PaymentValidation } from './lib/financeV3.service'
 export { FinanceClientV3Config } from './lib/financeV3.config'
 export {
   FinanceClientV3PaymentErrorCode,

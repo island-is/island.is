@@ -26,7 +26,7 @@ export type FjsDebtValidateOutcome =
   | {
       type: 'valid'
       paymentOptions: Set<PaymentMethod>
-      rawPaymentOptions: string
+      rawPaymentOptions: string[]
     }
   /** FJS rejected the debts, permanently. */
   | { type: 'invalid'; problem?: ProblemDetailsDt }

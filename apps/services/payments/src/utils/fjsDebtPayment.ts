@@ -2,7 +2,7 @@ import format from 'date-fns/format'
 
 import type { PayInfo } from '@island.is/clients/finance-v3'
 
-import { PaymentMethod } from '../types'
+import { FjsPaymentMethod, PaymentMethod } from '../types'
 
 /** National id of Fjársýsla ríkisins, the organisation that debt payment flows are made out to. */
 // eslint-disable-next-line local-rules/disallow-kennitalas
@@ -39,32 +39,28 @@ export type FjsPayInfo = {
   correlationId?: string
 }
 
-const PAYMENT_OPTION_TO_METHODS: Record<string, PaymentMethod[]> = {
-  // Apple Pay rides on card, it has no token of its own.
-  CARD: [PaymentMethod.CARD],
-  TRANSFER: [PaymentMethod.BANK_TRANSFER],
+// Invoices (CLAIM) are never offered for debts, so CLAIM is not mapped.
+const PAYMENT_OPTION_TO_METHODS: Partial<Record<string, PaymentMethod[]>> = {
+  // Apple Pay rides on card, it has no option of its own.
+  [FjsPaymentMethod.CARD]: [PaymentMethod.CARD],
+  [FjsPaymentMethod.BANK_TRANSFER]: [PaymentMethod.BANK_TRANSFER],
 }
 
 /**
- * Parses the `paymentOptions` of FJS validatePayment, a list of coarse tokens such as
- * "CARD;TRANSFER", into the payment methods we offer. Splits on `;` or `,`, ignores case and
- * whitespace. Unknown tokens are ignored, and reported through `onUnknownToken`.
+ * Maps the payment options FJS allows for the debts (from validatePayment, e.g.
+ * `['CARD', 'TRANSFER']`) to the payment methods we offer. Ignores case. Unknown options are
+ * ignored, and reported through `onUnknownOption`.
  */
-export const parsePaymentOptions = (
-  paymentOptions: string | null | undefined,
-  onUnknownToken?: (token: string) => void,
+export const toDebtPaymentMethods = (
+  paymentOptions: string[],
+  onUnknownOption?: (option: string) => void,
 ): Set<PaymentMethod> => {
   const methods = new Set<PaymentMethod>()
 
-  for (const rawToken of (paymentOptions ?? '').split(/[;,]/)) {
-    const token = rawToken.trim().toUpperCase()
-    if (!token) {
-      continue
-    }
-
-    const mapped = PAYMENT_OPTION_TO_METHODS[token]
+  for (const option of paymentOptions) {
+    const mapped = PAYMENT_OPTION_TO_METHODS[option.toUpperCase()]
     if (!mapped) {
-      onUnknownToken?.(rawToken.trim())
+      onUnknownOption?.(option)
       continue
     }
 

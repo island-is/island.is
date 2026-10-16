@@ -85,7 +85,7 @@ describe('FjsDebtGateway', () => {
   describe('validate', () => {
     it('sends the flow id, total and formatted date', async () => {
       financeClient.validatePayment.mockResolvedValue({
-        paymentOptions: 'CARD;TRANSFER',
+        paymentOptions: ['CARD', 'TRANSFER'],
       })
 
       await service.validate(validateInput)
@@ -104,7 +104,7 @@ describe('FjsDebtGateway', () => {
 
     it('is valid with the parsed payment options', async () => {
       financeClient.validatePayment.mockResolvedValue({
-        paymentOptions: 'CARD;TRANSFER',
+        paymentOptions: ['CARD', 'TRANSFER'],
       })
 
       await expect(service.validate(validateInput)).resolves.toEqual({
@@ -113,13 +113,13 @@ describe('FjsDebtGateway', () => {
           PaymentMethod.CARD,
           PaymentMethod.BANK_TRANSFER,
         ]),
-        rawPaymentOptions: 'CARD;TRANSFER',
+        rawPaymentOptions: ['CARD', 'TRANSFER'],
       })
     })
 
-    it('logs unknown payment option tokens', async () => {
+    it('logs unknown payment options', async () => {
       financeClient.validatePayment.mockResolvedValue({
-        paymentOptions: 'CARD;BITCOIN',
+        paymentOptions: ['CARD', 'BITCOIN'],
       })
 
       const outcome = await service.validate(validateInput)
@@ -130,7 +130,7 @@ describe('FjsDebtGateway', () => {
       })
       expect(logger.warn).toHaveBeenCalledWith(
         expect.stringContaining('Unknown FJS debt payment option'),
-        { token: 'BITCOIN' },
+        { option: 'BITCOIN' },
       )
     })
 

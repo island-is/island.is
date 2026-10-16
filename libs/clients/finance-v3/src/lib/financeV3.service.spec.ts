@@ -101,10 +101,25 @@ describe('FinanceClientV3Service', () => {
       })
 
       await expect(service.validatePayment(debtInput)).resolves.toEqual({
-        paymentOptions: 'CARD;TRANSFER',
+        paymentOptions: ['CARD', 'TRANSFER'],
       })
       expect(validatePayment).toHaveBeenCalledWith({ body: debtInput })
       expect(withAuthContext).not.toHaveBeenCalled()
+    })
+
+    it.each([
+      [' CARD ; TRANSFER ', ['CARD', 'TRANSFER']],
+      ['CARD,TRANSFER', ['CARD', 'TRANSFER']],
+      ['CARD;;', ['CARD']],
+      ['', []],
+    ])('splits the payment options %p', async (paymentOptions, expected) => {
+      validatePayment.mockResolvedValue({
+        data: { validatePaymentResult: { paymentOptions } },
+      })
+
+      await expect(service.validatePayment(debtInput)).resolves.toEqual({
+        paymentOptions: expected,
+      })
     })
 
     it('throws with the problem details when the result is missing', async () => {

@@ -1,55 +1,52 @@
 import { PaymentMethod } from '../types'
 import {
   formatFjsDebtPaymentDate,
-  parsePaymentOptions,
+  toDebtPaymentMethods,
   toFjsDebtPayInfo,
   toFjsPaymentMeans,
 } from './fjsDebtPayment'
 
-describe('parsePaymentOptions', () => {
-  it('maps CARD;TRANSFER to card and bank transfer', () => {
-    expect(parsePaymentOptions('CARD;TRANSFER')).toEqual(
+describe('toDebtPaymentMethods', () => {
+  it('maps CARD and TRANSFER to card and bank transfer', () => {
+    expect(toDebtPaymentMethods(['CARD', 'TRANSFER'])).toEqual(
       new Set([PaymentMethod.CARD, PaymentMethod.BANK_TRANSFER]),
     )
   })
 
   it('maps CARD to card only', () => {
-    expect(parsePaymentOptions('CARD')).toEqual(new Set([PaymentMethod.CARD]))
+    expect(toDebtPaymentMethods(['CARD'])).toEqual(
+      new Set([PaymentMethod.CARD]),
+    )
   })
 
   it('maps TRANSFER to bank transfer only', () => {
-    expect(parsePaymentOptions('TRANSFER')).toEqual(
+    expect(toDebtPaymentMethods(['TRANSFER'])).toEqual(
       new Set([PaymentMethod.BANK_TRANSFER]),
     )
   })
 
-  it('returns an empty set for an empty, null or undefined string', () => {
-    expect(parsePaymentOptions('').size).toBe(0)
-    expect(parsePaymentOptions(null).size).toBe(0)
-    expect(parsePaymentOptions(undefined).size).toBe(0)
+  it('returns an empty set when FJS allows nothing', () => {
+    expect(toDebtPaymentMethods([]).size).toBe(0)
   })
 
-  it('ignores case and whitespace, and accepts commas', () => {
-    expect(parsePaymentOptions('card ; transfer')).toEqual(
-      new Set([PaymentMethod.CARD, PaymentMethod.BANK_TRANSFER]),
-    )
-    expect(parsePaymentOptions(' Card,Transfer ')).toEqual(
+  it('ignores case', () => {
+    expect(toDebtPaymentMethods(['card', 'Transfer'])).toEqual(
       new Set([PaymentMethod.CARD, PaymentMethod.BANK_TRANSFER]),
     )
   })
 
-  it('ignores unknown tokens and reports them', () => {
-    const onUnknownToken = jest.fn()
+  it('ignores unknown options and reports them', () => {
+    const onUnknownOption = jest.fn()
 
-    expect(parsePaymentOptions('CARD;CLAIM;;', onUnknownToken)).toEqual(
+    expect(toDebtPaymentMethods(['CARD', 'BITCOIN'], onUnknownOption)).toEqual(
       new Set([PaymentMethod.CARD]),
     )
-    expect(onUnknownToken).toHaveBeenCalledTimes(1)
-    expect(onUnknownToken).toHaveBeenCalledWith('CLAIM')
+    expect(onUnknownOption).toHaveBeenCalledTimes(1)
+    expect(onUnknownOption).toHaveBeenCalledWith('BITCOIN')
   })
 
   it('never maps to invoice', () => {
-    expect(parsePaymentOptions('CLAIM').size).toBe(0)
+    expect(toDebtPaymentMethods(['CLAIM']).size).toBe(0)
   })
 })
 

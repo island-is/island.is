@@ -13,7 +13,6 @@ import {
   type PaymentsOutDt,
   type ProblemDetailsDt,
   type ValidatePaymentsInDt,
-  type ValidatePaymentsOutDt,
 } from '../../gen/fetch'
 
 /**
@@ -26,6 +25,19 @@ export class FinanceClientV3ResultMissingError extends Error {
     this.name = 'FinanceClientV3ResultMissingError'
   }
 }
+
+/** `validatePayment`'s answer, with FJS's payment options split into a list. */
+export interface FinanceClientV3PaymentValidation {
+  /** The payment methods FJS allows, as FJS names them, e.g. `['CARD', 'TRANSFER']`. */
+  paymentOptions: string[]
+}
+
+/** FJS sends the options as one string, e.g. "CARD;TRANSFER". Commas are accepted too. */
+const splitPaymentOptions = (paymentOptions?: string | null): string[] =>
+  (paymentOptions ?? '')
+    .split(/[;,]/)
+    .map((option) => option.trim())
+    .filter(Boolean)
 
 @Injectable()
 export class FinanceClientV3Service {
@@ -76,7 +88,7 @@ export class FinanceClientV3Service {
    */
   async validatePayment(
     input: ValidatePaymentsInDt,
-  ): Promise<ValidatePaymentsOutDt> {
+  ): Promise<FinanceClientV3PaymentValidation> {
     const response = await data(validatePaymentPost4({ body: input }))
 
     if (!response?.validatePaymentResult) {
@@ -86,7 +98,11 @@ export class FinanceClientV3Service {
       )
     }
 
-    return response.validatePaymentResult
+    return {
+      paymentOptions: splitPaymentOptions(
+        response.validatePaymentResult.paymentOptions,
+      ),
+    }
   }
 
   /**

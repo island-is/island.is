@@ -70,7 +70,7 @@ describe('DebtPaymentFlowController', () => {
     // Every flag on, tests turn single flags off
     jest.spyOn(featureFlagService, 'getValue').mockResolvedValue(true as never)
     validatePayment.mockReset()
-    validatePayment.mockResolvedValue({ paymentOptions: 'CARD;TRANSFER' })
+    validatePayment.mockResolvedValue({ paymentOptions: ['CARD', 'TRANSFER'] })
   })
 
   afterAll(() => {
@@ -132,7 +132,7 @@ describe('DebtPaymentFlowController', () => {
     })
 
     it('only offers card when FJS only lists CARD', async () => {
-      validatePayment.mockResolvedValue({ paymentOptions: 'CARD' })
+      validatePayment.mockResolvedValue({ paymentOptions: ['CARD'] })
 
       const response = await server.post('/v1/payments/debts').send(payload)
 
@@ -163,7 +163,7 @@ describe('DebtPaymentFlowController', () => {
     })
 
     it('rejects when FJS offers no usable payment method', async () => {
-      validatePayment.mockResolvedValue({ paymentOptions: '' })
+      validatePayment.mockResolvedValue({ paymentOptions: [] })
 
       const response = await server.post('/v1/payments/debts').send(payload)
 
@@ -174,7 +174,7 @@ describe('DebtPaymentFlowController', () => {
     })
 
     it('rejects when only bank transfer is offered but it is not allowed for the payer', async () => {
-      validatePayment.mockResolvedValue({ paymentOptions: 'TRANSFER' })
+      validatePayment.mockResolvedValue({ paymentOptions: ['TRANSFER'] })
 
       jest
         .spyOn(featureFlagService, 'getValue')
@@ -407,7 +407,7 @@ describe('DebtPaymentFlowController', () => {
 
       it('requires the method to be in the FJS payment options', async () => {
         const flow = await getFlow(await createFlow())
-        validatePayment.mockResolvedValue({ paymentOptions: 'TRANSFER' })
+        validatePayment.mockResolvedValue({ paymentOptions: ['TRANSFER'] })
 
         await expect(
           service.validateDebtPaymentFlow(flow, PaymentMethod.CARD),

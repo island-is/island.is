@@ -11,7 +11,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   formatFjsDebtPaymentDate,
-  parsePaymentOptions,
+  toDebtPaymentMethods,
 } from '../../utils/fjsDebtPayment'
 import type {
   FjsDebt,
@@ -58,12 +58,12 @@ export class FjsDebtGateway {
         toRequestBody(input),
       )
 
-      const paymentOptions = parsePaymentOptions(
+      const paymentOptions = toDebtPaymentMethods(
         result.paymentOptions,
-        (token) =>
+        (option) =>
           this.logger.warn(
             `[${input.flowId}] Unknown FJS debt payment option ignored`,
-            { token },
+            { option },
           ),
       )
 
