@@ -38,7 +38,14 @@ import { MessageProcessorService } from '../messageProcessor.service'
 import { Notification } from '../notification.model'
 import { NotificationsService } from '../notifications.service'
 import { ActorNotification } from '../actor-notification.model'
-import { mapToLocale, SmsDelivery } from '../utils'
+import { UserNotificationSender } from '../user-notification-sender.model'
+import {
+  isValidSenderId,
+  mapToLocale,
+  normalizeKennitala,
+  SmsDelivery,
+  toTemplateCategory,
+} from '../utils'
 import { EmailQueueMessage } from './emailWorker.service'
 import { SmsQueueMessage } from './smsWorker.service'
 import { PushQueueMessage } from './pushWorker.service'
@@ -124,6 +131,9 @@ export class NotificationsWorkerService {
 
     @InjectModel(ActorNotification)
     private readonly actorNotificationModel: typeof ActorNotification,
+
+    @InjectModel(UserNotificationSender)
+    private readonly userNotificationSenderModel: typeof UserNotificationSender,
   ) {}
 
   // Stopgap: lets users ignore notifications that are neither urgent nor
@@ -435,6 +445,16 @@ export class NotificationsWorkerService {
       shouldSendNotification,
       template.priorityType,
     )
+    if (dbRecord) {
+      await this.recordNotificationSender(
+        message.recipient,
+        message.senderId,
+        message.templateId,
+        toTemplateCategory(template.hnippCategoryIs),
+        template.priorityType,
+        messageId,
+      )
+    }
 
     // Phase 1: collect all payloads (data fetching only, no queue side effects)
     let pushPayload: PushQueueMessage | null = null
@@ -839,6 +859,45 @@ export class NotificationsWorkerService {
         { messageId },
       )
       return false
+    }
+  }
+
+  private async recordNotificationSender(
+    recipient: string,
+    senderId: string | undefined,
+    templateId: string,
+    category: string | null,
+    priorityType: HnippTemplatePriorityType,
+    messageId: string,
+  ): Promise<void> {
+    const normalizedSenderId = senderId ? normalizeKennitala(senderId) : ''
+    if (!isValidSenderId(normalizedSenderId)) {
+      return
+    }
+
+    try {
+      // Keep the latest category and priority type, since a template can
+      // change them
+      await this.userNotificationSenderModel.bulkCreate(
+        [
+          {
+            recipient,
+            senderId: normalizedSenderId,
+            templateId,
+            category,
+            priorityType: priorityType ?? null,
+          },
+        ],
+        {
+          conflictAttributes: ['recipient', 'senderId', 'templateId'],
+          updateOnDuplicate: ['category', 'priorityType'],
+        },
+      )
+    } catch (error) {
+      this.logger.warn(
+        'Failed to record notification sender, proceeding with notification',
+        { messageId, error },
+      )
     }
   }
 

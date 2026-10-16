@@ -34,6 +34,7 @@ import { PostNudgeDto } from '../dto/post-nudge.dto'
 import { CreateEmailDto } from '../dto/create-emails.dto'
 import { ActorProfile } from '../models/actor-profile.model'
 import { Emails } from '../models/emails.model'
+import { BlockedNotification } from '../models/blockedNotification.model'
 import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
 import { notificationScopes } from '@island.is/auth/scopes'
 
@@ -2784,6 +2785,384 @@ describe('MeUserProfileController', () => {
       )
 
       // Assert
+      expect(res.status).toBe(403)
+      expect(res.body).toMatchObject({
+        status: 403,
+        title: 'Forbidden',
+        detail: 'Forbidden resource',
+        type: 'https://httpstatuses.org/403',
+      })
+    })
+  })
+
+  describe('Notification settings', () => {
+    const testUser = createCurrentUser({
+      nationalId: testUserProfile.nationalId,
+      scope: [UserProfileScope.read, UserProfileScope.write],
+    })
+    const otherNationalId = testUserProfile2.nationalId
+    const senderId = createNationalId('company')
+    const otherSenderId = createNationalId('company')
+    const healthLabel = { is: 'Heilbrigðismál', en: 'Health' }
+    const generalLabel = { is: 'Almennt', en: 'General' }
+    const endpoint = '/v2/me/notification-settings'
+
+    let app: TestApp
+    let server: SuperTest<Test>
+    let fixtureFactory: FixtureFactory
+    let userProfileModel: typeof UserProfile
+    let blockedNotificationModel: typeof BlockedNotification
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: testUser,
+      })
+
+      server = request(app.getHttpServer())
+      fixtureFactory = new FixtureFactory(app)
+      userProfileModel = app.get(getModelToken(UserProfile))
+      blockedNotificationModel = app.get(getModelToken(BlockedNotification))
+    })
+
+    beforeEach(async () => {
+      await blockedNotificationModel.destroy({ truncate: true })
+      await userProfileModel.destroy({ truncate: true, cascade: true })
+    })
+
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+
+    describe('GET /v2/me/notification-settings', () => {
+      it("should return only the user's own blocked categories ordered by created", async () => {
+        await fixtureFactory.createUserProfile({
+          nationalId: testUser.nationalId,
+        })
+        await fixtureFactory.createUserProfile({ nationalId: otherNationalId })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId,
+          category: 'heilbrigdismal',
+          categoryLabel: healthLabel,
+          created: new Date('2026-01-02'),
+        })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId: otherSenderId,
+          created: new Date('2026-01-01'),
+        })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: otherNationalId,
+          senderId: createNationalId('company'),
+        })
+
+        const res = await server.get('/v2/me/notification-settings')
+
+        expect(res.status).toBe(200)
+        expect(res.body).toEqual({
+          blockedCategories: [
+            {
+              key: `${otherSenderId}-almennt`,
+              senderId: otherSenderId,
+              category: 'almennt',
+              categoryLabel: generalLabel,
+            },
+            {
+              key: `${senderId}-heilbrigdismal`,
+              senderId,
+              category: 'heilbrigdismal',
+              categoryLabel: healthLabel,
+            },
+          ],
+        })
+      })
+    })
+
+    describe('POST /v2/me/notification-settings', () => {
+      it('should block all given categories', async () => {
+        await fixtureFactory.createUserProfile({
+          nationalId: testUser.nationalId,
+        })
+
+        const res = await server.post(endpoint).send({
+          categories: [
+            {
+              senderId,
+              category: 'heilbrigdismal',
+              categoryLabel: healthLabel,
+              blocked: true,
+            },
+            {
+              senderId,
+              category: 'almennt',
+              categoryLabel: generalLabel,
+              blocked: true,
+            },
+            {
+              senderId: otherSenderId,
+              category: 'almennt',
+              categoryLabel: generalLabel,
+              blocked: true,
+            },
+          ],
+        })
+
+        expect(res.status).toBe(204)
+        const blocked = await blockedNotificationModel.findAll({
+          where: { nationalId: testUser.nationalId },
+          order: [
+            ['senderId', 'ASC'],
+            ['category', 'ASC'],
+          ],
+        })
+        expect(
+          blocked.map(({ senderId, category, categoryLabel }) => ({
+            senderId,
+            category,
+            categoryLabel,
+          })),
+        ).toEqual(
+          expect.arrayContaining([
+            {
+              senderId,
+              category: 'heilbrigdismal',
+              categoryLabel: healthLabel,
+            },
+            { senderId, category: 'almennt', categoryLabel: generalLabel },
+            {
+              senderId: otherSenderId,
+              category: 'almennt',
+              categoryLabel: generalLabel,
+            },
+          ]),
+        )
+        expect(blocked).toHaveLength(3)
+      })
+
+      it('should unblock only the given categories', async () => {
+        await fixtureFactory.createUserProfile({
+          nationalId: testUser.nationalId,
+        })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId,
+        })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId,
+          category: 'heilbrigdismal',
+          categoryLabel: healthLabel,
+        })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId: otherSenderId,
+        })
+
+        const res = await server.post(endpoint).send({
+          categories: [
+            { senderId, category: 'almennt', blocked: false },
+            { senderId: otherSenderId, category: 'almennt', blocked: false },
+          ],
+        })
+
+        expect(res.status).toBe(204)
+        const remaining = await blockedNotificationModel.findAll({
+          where: { nationalId: testUser.nationalId },
+        })
+        expect(remaining).toHaveLength(1)
+        expect(remaining[0].senderId).toBe(senderId)
+        expect(remaining[0].category).toBe('heilbrigdismal')
+      })
+
+      it('should block and unblock categories in the same request', async () => {
+        await fixtureFactory.createUserProfile({
+          nationalId: testUser.nationalId,
+        })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId,
+        })
+
+        const res = await server.post(endpoint).send({
+          categories: [
+            { senderId, category: 'almennt', blocked: false },
+            {
+              senderId,
+              category: 'heilbrigdismal',
+              categoryLabel: healthLabel,
+              blocked: true,
+            },
+          ],
+        })
+
+        expect(res.status).toBe(204)
+        const blocked = await blockedNotificationModel.findAll({
+          where: { nationalId: testUser.nationalId },
+        })
+        expect(blocked).toHaveLength(1)
+        expect(blocked[0].category).toBe('heilbrigdismal')
+      })
+
+      it("should not remove other users' blocked categories", async () => {
+        await fixtureFactory.createUserProfile({
+          nationalId: testUser.nationalId,
+        })
+        await fixtureFactory.createUserProfile({ nationalId: otherNationalId })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId,
+        })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: otherNationalId,
+          senderId,
+        })
+
+        const res = await server.post(endpoint).send({
+          categories: [{ senderId, category: 'almennt', blocked: false }],
+        })
+
+        expect(res.status).toBe(204)
+        const remaining = await blockedNotificationModel.findAll()
+        expect(remaining).toHaveLength(1)
+        expect(remaining[0].nationalId).toBe(otherNationalId)
+      })
+
+      it.each(['123', 'abc'])(
+        'should return 400 for invalid sender id %s',
+        async (invalidSenderId) => {
+          const res = await server.post(endpoint).send({
+            categories: [
+              {
+                senderId,
+                category: 'almennt',
+                categoryLabel: generalLabel,
+                blocked: true,
+              },
+              {
+                senderId: invalidSenderId,
+                category: 'almennt',
+                blocked: false,
+              },
+            ],
+          })
+
+          expect(res.status).toBe(400)
+          expect(res.body).toMatchObject({
+            status: 400,
+            title: 'Bad Request',
+            detail: 'Sender id is not valid',
+          })
+          expect(await blockedNotificationModel.count()).toBe(0)
+        },
+      )
+
+      it.each(['Almennt', 'heilbrigðismál', 'almennt-', '-almennt', 'a b', ''])(
+        'should return 400 for invalid category %p',
+        async (invalidCategory) => {
+          const res = await server.post(endpoint).send({
+            categories: [
+              {
+                senderId,
+                category: invalidCategory,
+                categoryLabel: generalLabel,
+                blocked: true,
+              },
+            ],
+          })
+
+          expect(res.status).toBe(400)
+          expect(res.body).toMatchObject({
+            status: 400,
+            title: 'Bad Request',
+            detail: expect.arrayContaining([
+              'categories.0.category is not valid',
+            ]),
+          })
+          expect(await blockedNotificationModel.count()).toBe(0)
+        },
+      )
+
+      it('should return 400 when blocking without a category label', async () => {
+        const res = await server.post(endpoint).send({
+          categories: [{ senderId, category: 'almennt', blocked: true }],
+        })
+
+        expect(res.status).toBe(400)
+        expect(res.body).toMatchObject({
+          detail: expect.arrayContaining([
+            'categories.0.categoryLabel should not be null or undefined',
+          ]),
+        })
+        expect(await blockedNotificationModel.count()).toBe(0)
+      })
+
+      it('should return 400 when the Icelandic category label is missing', async () => {
+        const res = await server.post(endpoint).send({
+          categories: [
+            {
+              senderId,
+              category: 'almennt',
+              categoryLabel: { en: 'General' },
+              blocked: true,
+            },
+          ],
+        })
+
+        expect(res.status).toBe(400)
+        expect(await blockedNotificationModel.count()).toBe(0)
+      })
+
+      it('should return 400 when categories is missing from request body', async () => {
+        const res = await server.post(endpoint).send({})
+
+        expect(res.status).toBe(400)
+        expect(res.body).toMatchObject({
+          status: 400,
+          title: 'Bad Request',
+          detail: expect.arrayContaining(['categories must be an array']),
+        })
+      })
+    })
+  })
+
+  describe('Notification settings without write scope', () => {
+    const senderId = createNationalId('company')
+    const endpoint = '/v2/me/notification-settings'
+
+    let app: TestApp
+    let server: SuperTest<Test>
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          nationalId: testUserProfile.nationalId,
+          scope: [UserProfileScope.read], // Only read scope
+        }),
+      })
+
+      server = request(app.getHttpServer())
+    })
+
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+
+    it('should return 403 for POST notification-settings', async () => {
+      const res = await server.post(endpoint).send({
+        categories: [
+          {
+            senderId,
+            category: 'almennt',
+            categoryLabel: { is: 'Almennt', en: 'General' },
+            blocked: true,
+          },
+        ],
+      })
+
       expect(res.status).toBe(403)
       expect(res.body).toMatchObject({
         status: 403,
