@@ -7,6 +7,7 @@ import {
   SectionTypes,
 } from '@island.is/form-system/shared'
 import { ApplicationsService } from './applications.service'
+import { SectionDto } from '../sections/models/dto/section.dto'
 
 describe('ApplicationsService.create value JSON', () => {
   it.each([
@@ -103,6 +104,134 @@ describe('ApplicationsService.create value JSON', () => {
     },
   )
 })
+
+describe.each([
+  { hasSummaryScreen: true, withScreens: true },
+  { hasSummaryScreen: true, withScreens: false },
+  { hasSummaryScreen: false, withScreens: true },
+  { hasSummaryScreen: false, withScreens: false },
+])(
+  'ApplicationsService.saveScreen hasSummaryScreen=$hasSummaryScreen withScreens=$withScreens',
+  ({ hasSummaryScreen, withScreens }) => {
+    const setupSaveScreen = () => {
+      const application = {
+        id: 'application',
+        formId: 'form',
+        completed: [] as string[],
+        draftFinishedSteps: 1,
+        draftTotalSteps: 0,
+        save: jest.fn().mockResolvedValue(undefined),
+      }
+      const sections: SectionDto[] = [
+        { id: 'input', sectionType: SectionTypes.INPUT },
+        { id: 'payment', sectionType: SectionTypes.PAYMENT },
+        { id: 'next-input', sectionType: SectionTypes.INPUT },
+      ].map((section, displayOrder) => ({
+        ...section,
+        name: { is: '', en: '' },
+        displayOrder,
+        isHidden: false,
+        isCompleted: false,
+        screens:
+          section.sectionType === SectionTypes.PAYMENT && withScreens
+            ? [
+                {
+                  id: 'payment-screen',
+                  identifier: 'payment-screen',
+                  sectionId: section.id,
+                  name: { is: '', en: '' },
+                  displayOrder: 0,
+                  isHidden: false,
+                  isCompleted: false,
+                  multiMax: 1,
+                  isMulti: false,
+                  shouldValidate: false,
+                  fields: [],
+                },
+              ]
+            : [],
+      }))
+      const service = Object.assign(
+        Object.create(ApplicationsService.prototype),
+        {
+          applicationModel: {
+            findByPk: jest.fn().mockResolvedValue(application),
+          },
+          formModel: {
+            findByPk: jest.fn().mockResolvedValue({ hasSummaryScreen }),
+          },
+          getLoginTypes: jest.fn().mockResolvedValue([]),
+          hasDelegation: jest.fn().mockReturnValue(true),
+          doesUserMatchApplication: jest.fn().mockReturnValue(true),
+          sequelize: {
+            transaction: jest
+              .fn()
+              .mockImplementation((callback) => callback({})),
+          },
+        },
+      ) as ApplicationsService
+
+      return {
+        application,
+        save: (sectionId: string, increment: boolean) =>
+          service.saveScreen(
+            {
+              applicationId: application.id,
+              sectionId,
+              screenId:
+                sectionId === 'payment' && withScreens
+                  ? 'payment-screen'
+                  : undefined,
+              sections,
+              increment,
+            },
+            { nationalId: '0101307789' } as User,
+          ),
+      }
+    }
+
+    it('only counts payment completion as a separate step without a summary', async () => {
+      const { application, save } = setupSaveScreen()
+
+      await save('payment', true)
+
+      expect(application.draftFinishedSteps).toBe(hasSummaryScreen ? 1 : 2)
+      expect(application.completed).toContain('payment')
+      if (withScreens) {
+        expect(application.completed).toContain('payment-screen')
+      }
+
+      await save('payment', true)
+      expect(application.draftFinishedSteps).toBe(hasSummaryScreen ? 1 : 2)
+    })
+
+    it('only reverses a payment step without a summary, while clearing completion IDs', async () => {
+      const { application, save } = setupSaveScreen()
+      application.completed = [
+        'payment',
+        ...(withScreens ? ['payment-screen'] : []),
+      ]
+      application.draftFinishedSteps = hasSummaryScreen ? 1 : 2
+
+      await save('next-input', false)
+
+      expect(application.draftFinishedSteps).toBe(1)
+      expect(application.completed).not.toContain('payment')
+      expect(application.completed).not.toContain('payment-screen')
+    })
+
+    it('continues counting ordinary sections in either summary configuration', async () => {
+      const { application, save } = setupSaveScreen()
+
+      await save('input', true)
+      expect(application.draftFinishedSteps).toBe(2)
+
+      await save('payment', false)
+      expect(application.draftFinishedSteps).toBe(1)
+      expect(application.completed).not.toContain('input')
+    })
+  },
+)
 
 describe('ApplicationsService.calculateDraftTotalSteps', () => {
   it.each([
