@@ -6,16 +6,14 @@ import {
   customerRecordsnationalIdGet1,
   payDebtPost3,
   validatePaymentPost4,
-} from '../../gen/fetch'
-import type {
-  CustomerDebtsOutput,
-  CustomerRecordsnationalIdGet1Data,
-  CustomerRercordsOutputDt,
-  PaymentsInDt,
-  PaymentsOutDt,
-  ProblemDetailsDt,
-  ValidatePaymentsInDt,
-  ValidatePaymentsOutDt,
+  type CustomerDebtsOutput,
+  type CustomerRecordsnationalIdGet1Data,
+  type CustomerRercordsOutputDt,
+  type PaymentsInDt,
+  type PaymentsOutDt,
+  type ProblemDetailsDt,
+  type ValidatePaymentsInDt,
+  type ValidatePaymentsOutDt,
 } from '../../gen/fetch'
 
 /**

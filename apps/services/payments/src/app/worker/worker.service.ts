@@ -27,12 +27,13 @@ import {
 } from '../cardPayment/cardPayment.utils'
 import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
 import { RefundOrchestrationService } from '../refund/refundOrchestration.service'
-import type {
-  CardPaymentDetails,
-  PaymentFulfillment,
-  PaymentWorkerEventAttributes,
+import {
+  PaymentFlow,
+  PaymentWorkerEvent,
+  type CardPaymentDetails,
+  type PaymentFulfillment,
+  type PaymentWorkerEventAttributes,
 } from '../paymentFlow/models'
-import { PaymentFlow, PaymentWorkerEvent } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { WorkerModuleConfig } from './worker.config'
 import { WorkerTaskType } from './workerTaskTypes'

@@ -1,8 +1,8 @@
 import {
   FinanceClientV3ResultMissingError,
   FinanceClientV3Service,
+  type ProblemDetailsDt,
 } from '@island.is/clients/finance-v3'
-import type { ProblemDetailsDt } from '@island.is/clients/finance-v3'
 import { FetchError } from '@island.is/clients/middlewares'
 
 import { PaymentMethod } from '../../types'
