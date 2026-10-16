@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   FormContextWrapper,
   IntlProviderWrapper,
@@ -8,10 +8,10 @@ import {
 
 import AppealRulingModifiedAlert from './AppealRulingModifiedAlert'
 
-const renderAlert = (theCase: Partial<Case>) =>
+const renderAlert = (theCase: Partial<WorkingCase>) =>
   render(
     <IntlProviderWrapper>
-      <FormContextWrapper theCase={theCase as Case}>
+      <FormContextWrapper theCase={theCase as WorkingCase}>
         <AppealRulingModifiedAlert />
       </FormContextWrapper>
     </IntlProviderWrapper>,

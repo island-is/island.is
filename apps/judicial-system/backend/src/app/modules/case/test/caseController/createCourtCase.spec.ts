@@ -6,6 +6,7 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
+  CaseTransition,
   CaseType,
   EventType,
   IndictmentSubtype,
@@ -17,8 +18,13 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
-import { randomDate, randomEnum } from '../../../../test'
+import {
+  getTransactionContext,
+  TransactionContext,
+} from '../../../../middleware'
+import { randomDate, randomEnum, runInRequestContext } from '../../../../test'
 import { CourtService } from '../../../court'
+import { EventService } from '../../../event'
 import { Case, CaseRepositoryService } from '../../../repository'
 
 jest.mock('../../../../factories')
@@ -41,14 +47,17 @@ describe('CaseController - Create court case', () => {
 
   let mockQueuedMessages: Message[]
   let mockCourtService: CourtService
+  let mockEventService: EventService
   let transaction: Transaction
   let mockCaseRepositoryService: CaseRepositoryService
+  let transactionContext: TransactionContext | undefined
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       queuedMessages,
       courtService,
+      eventService,
       sequelize,
       caseRepositoryService,
       caseController,
@@ -56,7 +65,9 @@ describe('CaseController - Create court case', () => {
 
     mockQueuedMessages = queuedMessages
     mockCourtService = courtService
+    mockEventService = eventService
     mockCaseRepositoryService = caseRepositoryService
+    transactionContext = undefined
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -73,11 +84,20 @@ describe('CaseController - Create court case', () => {
       const then = {} as Then
 
       try {
-        then.result = await caseController.createCourtCase(
-          caseId,
-          user,
-          theCase,
-        )
+        // The handler owns its transaction, but the receive event the case
+        // service registers on the way needs the request's transaction slot,
+        // which TransactionContextMiddleware opens for every request. Guards
+        // and middleware do not run in controller unit tests, so the request
+        // context is set up here instead.
+        await runInRequestContext(async () => {
+          transactionContext = getTransactionContext()
+
+          then.result = await caseController.createCourtCase(
+            caseId,
+            user,
+            theCase,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -222,13 +242,14 @@ describe('CaseController - Create court case', () => {
       courtId,
       courtCaseNumber,
     } as Case
+    let then: Then
 
     beforeEach(async () => {
       const mockFindLiveById =
         mockCaseRepositoryService.findLiveById as jest.Mock
       mockFindLiveById.mockResolvedValueOnce(returnedCase)
 
-      await givenWhenThen(caseId, user, theCase)
+      then = await givenWhenThen(caseId, user, theCase)
     })
 
     it('should update the court case number', () => {
@@ -236,6 +257,28 @@ describe('CaseController - Create court case', () => {
         caseId,
         { state: CaseState.RECEIVED, courtCaseNumber },
         { transaction },
+      )
+      expect(then.error).toBeUndefined()
+      expect(then.result).toBe(returnedCase)
+    })
+
+    // The handler commits its own transaction and returns right after, so
+    // the callback TransactionCommitInterceptor then drains runs behind that
+    // commit - the same ordering the update and transition routes get from
+    // the request transaction.
+    it('should register the RECEIVE event rather than posting it inline', () => {
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(1)
+    })
+
+    it('should post the RECEIVE event once the callbacks run', async () => {
+      await Promise.all(
+        (transactionContext?.afterCommit ?? []).map((callback) => callback()),
+      )
+
+      expect(mockEventService.postEvent).toHaveBeenCalledWith(
+        CaseTransition.RECEIVE,
+        returnedCase,
       )
     })
   })

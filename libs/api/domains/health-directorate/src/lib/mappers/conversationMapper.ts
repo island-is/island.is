@@ -69,8 +69,20 @@ export const mapConversationSegments = (
       : { type, text: s.text }
   })
 
+// Counted in UTC, which is Icelandic local time all year.
+export const isVideoCallExpired = (
+  appointmentDate: Date | undefined,
+  now: Date,
+): boolean => {
+  if (!appointmentDate) return false
+  const nextDayStart = new Date(appointmentDate)
+  nextDayStart.setUTCHours(24, 0, 0, 0)
+  return now >= nextDayStart
+}
+
 export const mapConversationVideo = (
   video?: VideoConversationDto,
+  now = new Date(),
 ): HealthDirectorateHealthConversationVideoContent | undefined =>
   video
     ? {
@@ -80,6 +92,7 @@ export const mapConversationVideo = (
         appointmentHostName: video.appointmentHostName,
         isCanceled: video.isCanceled,
         isEdited: video.isEdited,
+        isExpired: isVideoCallExpired(video.appointmentDate, now),
       }
     : undefined
 
@@ -276,8 +289,9 @@ export const getClosesAt = (
 
 /* 
   The Heilsuvera web chat is not a Hekla conversation type, it's appended
-  manually to every recipient's service list so both web and app render it
-  from the same source, as an external link at the bottom of the dropdown.
+  manually to the primary-care clinic's service list so both web and app
+  render it from the same source, as an external link at the bottom of the
+  dropdown.
 */
 export const WEB_CHAT_TYPE_CODE = 'HEILSUVERA_WEB_CHAT'
 // Must match the hours stated in the translated web chat description strings.
@@ -337,6 +351,7 @@ export const mapMessagingRecipient = (
     groupId: r.groupId,
     treatmentId: r.treatmentId,
     name: r.name,
+    allowsCustomTitle: r.allowsCustomTitle ?? false,
     allowsMessaging:
       r.canCreateConversation ||
       r.conversationBlockedReason !==

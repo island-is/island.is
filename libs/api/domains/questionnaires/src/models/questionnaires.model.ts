@@ -35,6 +35,12 @@ export class QuestionnairesBaseItem {
   @Field(() => QuestionnairesStatusEnum, { nullable: true })
   status?: QuestionnairesStatusEnum
 
+  @Field({
+    nullable: true,
+    description: 'Withdrawn by the provider. Status is reported as expired.',
+  })
+  disabled?: boolean
+
   @Field({ nullable: true })
   description?: string
 
@@ -52,6 +58,9 @@ export class QuestionnairesBaseItem {
 
   @Field(() => String, { nullable: true })
   senderGroupName?: string
+
+  @Field(() => Boolean, { nullable: true })
+  canSubmitAgain?: boolean
 }
 
 @ObjectType('QuestionnairesList')

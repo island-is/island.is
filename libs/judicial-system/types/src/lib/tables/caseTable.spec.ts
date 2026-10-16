@@ -172,3 +172,105 @@ describe('court of appeals verdict appeal tables', () => {
     ])
   })
 })
+
+describe('public prosecution case tables', () => {
+  // Role PROSECUTOR at the public prosecutor's office - the prosecutors
+  // themselves, not the office staff, who are PUBLIC_PROSECUTOR_STAFF and get
+  // their own groups.
+  const publicProsecutionUser = {
+    role: UserRole.PROSECUTOR,
+    institution: { type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE },
+  } as InstitutionUser
+
+  it('offers the appealed cases list second in the indictments group', () => {
+    const indictments = getCaseTableGroups(publicProsecutionUser)[1]
+
+    expect(indictments.title).toBe('Sakamál')
+    expect(indictments.tables.map((t) => t.type)).toEqual([
+      CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW,
+      CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED,
+      CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED,
+      CaseTableType.PROSECUTION_INDICTMENTS_IN_DRAFT,
+      CaseTableType.PROSECUTION_INDICTMENTS_WAITING_FOR_CONFIRMATION,
+      CaseTableType.PROSECUTION_INDICTMENTS_IN_PROGRESS,
+      CaseTableType.PROSECUTION_INDICTMENTS_APPEALED,
+      CaseTableType.PROSECUTION_INDICTMENTS_COMPLETED,
+    ])
+  })
+
+  it('describes the appealed cases card as the design does', () => {
+    const table = getCaseTableGroups(publicProsecutionUser)[1].tables[1]
+
+    expect([table.title, table.description, table.includeCounter]).toEqual([
+      'Áfrýjuð mál',
+      'Mál sem hefur verið áfrýjað.',
+      true,
+    ])
+  })
+
+  // Routes are matched across every group this user has, and this one inherits
+  // the ordinary prosecutor's tables wholesale, so a clash is easy to make.
+  it('resolves each table from a route of its own', () => {
+    const routes = getCaseTableGroups(publicProsecutionUser).flatMap((g) =>
+      g.tables.map((t) => t.route),
+    )
+
+    expect(new Set(routes).size).toBe(routes.length)
+    expect(getCaseTableType(publicProsecutionUser, 'afryjud-sakamal')).toBe(
+      CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED,
+    )
+  })
+
+  // The order the design settled on: the result reads last, after the deadline
+  // it qualifies.
+  it('titles the review list columns as the design does', () => {
+    expect(
+      caseTables[
+        CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW
+      ].columns.map((column) => column.title),
+    ).toEqual(['Málsnúmer', 'Varnaraðili', 'Tegund', 'Frestur', 'Niðurstaða'])
+  })
+
+  // The ticket asks for the same column the reviewed list uses, not one that
+  // merely looks like it - the title is shared by three column keys, so
+  // matching on the title alone would let the two lists drift into showing the
+  // result differently.
+  it('shows the result with the same column the reviewed list uses', () => {
+    const inReview =
+      caseTables[CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW]
+        .columnKeys
+    const reviewed =
+      caseTables[CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED]
+        .columnKeys
+
+    expect(inReview[inReview.length - 1]).toBe('indictmentRulingDecision')
+    expect(reviewed).toContain('indictmentRulingDecision')
+  })
+
+  // The office's list of the same name is the one the columns were borrowed
+  // from, and the ticket leaves tidying them to a later one.
+  it('borrows the columns of the office list of the same name', () => {
+    expect(
+      caseTables[CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED]
+        .columnKeys,
+    ).toEqual(
+      caseTables[CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED]
+        .columnKeys,
+    )
+  })
+
+  // The ordinary prosecutor's groups are spread into this user's, so adding a
+  // table to the wrong file would hand it to every district prosecutor too.
+  it('does not offer the appealed cases list to ordinary prosecutors', () => {
+    const prosecutorUser = {
+      role: UserRole.PROSECUTOR,
+      institution: { type: InstitutionType.DISTRICT_PROSECUTORS_OFFICE },
+    } as InstitutionUser
+
+    expect(
+      getCaseTableGroups(prosecutorUser).flatMap((g) =>
+        g.tables.map((t) => t.type),
+      ),
+    ).not.toContain(CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED)
+  })
+})

@@ -6,7 +6,6 @@ import {
   GridRow,
   SkeletonLoader,
   Stack,
-  Table,
   Text,
   toast,
 } from '@island.is/island-ui/core'
@@ -18,6 +17,8 @@ import {
   m,
   SAMGONGUSTOFA_SLUG,
   SimpleBarChart,
+  PortalTable,
+  createColumnHelper,
 } from '@island.is/portals/my-pages/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useEffect, useState } from 'react'
@@ -40,6 +41,7 @@ import {
 import * as styles from './VehicleMileage.css'
 
 const ORIGIN_CODE = 'ISLAND.IS'
+const mileageColumnHelper = createColumnHelper<VehicleMileageDetail>()
 
 type UseParams = {
   id: string
@@ -159,6 +161,23 @@ const VehicleMileage = () => {
   const hasMilesOdometer =
     co2?.vehiclesListV3?.vehicleList?.[0]?.hasMilesOdometer
   const unit: 'mi' | 'km' = hasMilesOdometer ? 'mi' : 'km'
+  const mileageColumns = [
+    mileageColumnHelper.accessor('readDate', {
+      header: formatMessage(m.date),
+      cell: ({ getValue }) => (getValue() ? icelandLocalTime(getValue()) : ''),
+      enableSorting: false,
+    }),
+    mileageColumnHelper.accessor('originCode', {
+      header: formatMessage(messages.vehicleMileageRegistration),
+      enableSorting: false,
+    }),
+    mileageColumnHelper.accessor('mileageNumber', {
+      header: formatMessage(messages.odometer),
+      cell: ({ getValue }) => displayWithUnit(getValue(), unit, true),
+      meta: { align: 'right' },
+      enableSorting: false,
+    }),
+  ]
 
   const details = data?.vehicleMileageDetails?.data
   const hasData = details && details?.length > 0
@@ -397,38 +416,12 @@ const VehicleMileage = () => {
                 </GridRow>
                 <GridRow>
                   <GridColumn span="1/1">
-                    <Table.Table width="100%">
-                      <Table.Head>
-                        <Table.Row>
-                          <Table.HeadData>
-                            {formatMessage(m.date)}
-                          </Table.HeadData>
-                          <Table.HeadData align="center">
-                            {formatMessage(messages.vehicleMileageRegistration)}
-                          </Table.HeadData>
-                          <Table.HeadData align="right">
-                            {formatMessage(messages.odometer)}
-                          </Table.HeadData>
-                        </Table.Row>
-                      </Table.Head>
-                      <Table.Body>
-                        {details?.map((item, i) => (
-                          <Table.Row key={i}>
-                            <Table.Data>
-                              {item.readDate
-                                ? icelandLocalTime(item.readDate)
-                                : ''}
-                            </Table.Data>
-                            <Table.Data align="center">
-                              {item.originCode}
-                            </Table.Data>
-                            <Table.Data align="right">
-                              {displayWithUnit(item.mileageNumber, unit, true)}
-                            </Table.Data>
-                          </Table.Row>
-                        ))}
-                      </Table.Body>
-                    </Table.Table>
+                    <PortalTable
+                      columns={mileageColumns}
+                      data={details ?? []}
+                      emptyMessage=""
+                      mobileTitleKey="readDate"
+                    />
                   </GridColumn>
                 </GridRow>
               </GridContainer>

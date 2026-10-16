@@ -834,6 +834,35 @@ export interface IChartNumberBox extends Entry<IChartNumberBoxFields> {
   }
 }
 
+export interface IChartNumberBoxGroupFields {
+  /** Internal title */
+  internalTitle: string
+
+  /** Column count */
+  columnCount?: number | undefined
+
+  /** Components */
+  components?: IChartNumberBox[] | undefined
+}
+
+export interface IChartNumberBoxGroup
+  extends Entry<IChartNumberBoxGroupFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'chartNumberBoxGroup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IContactUsFields {
   /** Title */
   title?: string | undefined
@@ -1244,6 +1273,38 @@ export interface IEmbeddedVideo extends Entry<IEmbeddedVideoFields> {
     contentType: {
       sys: {
         id: 'embeddedVideo'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICalculatorFields {
+  /** Internal title */
+  internalTitle: string
+
+  /** Type */
+  type:
+    | 'withholdingTaxOnWages'
+    | 'childBenefit'
+    | 'vehicleTax'
+    | 'vehicleBenefit'
+
+  /** Config json */
+  configJson: Record<string, any>
+}
+
+export interface ICalculator extends Entry<ICalculatorFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'calculator'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3628,6 +3689,7 @@ export interface IOrganizationPageFields {
         | ILatestNewsSlice
         | IFeaturedLinks
         | IOrganizationParentSubpageList
+        | IChartNumberBoxGroup
       )[]
     | undefined
 
@@ -3729,6 +3791,9 @@ export interface IOrganizationPageFields {
 
   /** Can be found in search results */
   canBeFoundInSearchResults?: boolean | undefined
+
+  /** Active translations */
+  activeTranslations?: Record<string, any> | undefined
 
   /** Show past events option */
   showPastEventsOption?: boolean | undefined
@@ -4690,6 +4755,7 @@ export interface ISliceConnectedComponentFields {
     | 'VERAnnouncementCalculator'
     | 'Lyfjastofnun/Pharmacies'
     | 'ECOI/Calculator'
+    | 'RSK/Calculator'
     | undefined
 
   /** Localized JSON */
@@ -5784,6 +5850,7 @@ export type CONTENT_TYPE =
   | 'auction'
   | 'bigBulletList'
   | 'bloodDonationRestriction'
+  | 'calculator'
   | 'card'
   | 'cardSection'
   | 'chart'

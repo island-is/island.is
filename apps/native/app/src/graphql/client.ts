@@ -228,11 +228,28 @@ const cache = new InMemoryCache({
         userNotifications: {
           merge: true,
         },
+        // The paginated wrapper has no id, so Apollo needs an explicit merge.
+        healthDirectoratePaginatedHealthConversations: {
+          merge: true,
+        },
         getUserProfile: {
           merge: true,
         },
         nationalRegistryPerson: {
           merge: false,
+        },
+        // Client-only, written by the health overview. Defaults to null so a
+        // cache-only read before the first write does not warn.
+        healthBasicInfoFetchedAt: {
+          read: (value: string | null = null) => value,
+        },
+        // The as-of date is always "now", so keying by it would leave a dead
+        // ROOT_QUERY entry behind on every fetch. One consumer, one entry.
+        rightsPortalUserDentistRegistration: {
+          keyArgs: false,
+        },
+        rightsPortalPaymentOverview: {
+          keyArgs: false,
         },
       },
     },

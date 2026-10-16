@@ -43,6 +43,9 @@ const DefenderVerdictTimelineCard: FC<Props> = (props) => {
       items={getDefenderVerdictTimelineItems({
         defendantId: defendant.id,
         verdict,
+        verdictAppealDeadline: defendant.verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired:
+          defendant.isVerdictAppealDeadlineExpired,
         verdictAppealCase,
         formatMessage,
       })}
@@ -52,9 +55,7 @@ const DefenderVerdictTimelineCard: FC<Props> = (props) => {
   if (contextMenuItems && contextMenuItems.length > 0) {
     return (
       <ContextMenuCard
-        title={
-          <SectionHeading title="Birting dóms" heading="h4" marginBottom={0} />
-        }
+        title={<SectionHeading title="Dómur" heading="h4" marginBottom={0} />}
         contextMenuItems={contextMenuItems}
         menuLabel={`Valmynd fyrir birtingu dóms ${defendant.name ?? ''}`.trim()}
       >
@@ -65,7 +66,7 @@ const DefenderVerdictTimelineCard: FC<Props> = (props) => {
 
   return (
     <BlueBox>
-      <SectionHeading title="Birting dóms" heading="h4" marginBottom={2} />
+      <SectionHeading title="Dómur" heading="h4" marginBottom={2} />
       {body}
     </BlueBox>
   )

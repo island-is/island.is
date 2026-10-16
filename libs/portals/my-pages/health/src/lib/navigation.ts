@@ -7,7 +7,7 @@ export const healthNavigation: PortalNavigationItem = {
   name: m.health,
   description: m.healthDescription,
   intro: m.healthIntro,
-  searchTags: [s.healthShorter],
+  searchTags: [s.healthShorter, s.healthTreatment, s.healthPregnancy],
   path: HealthPaths.HealthRoot,
   icon: {
     icon: 'heart',
@@ -26,26 +26,31 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: messages.pregnancy,
+      description: messages.pregnancySearchDescription,
       path: HealthPaths.HealthPregnancy,
       children: [
         {
           name: messages.myPregnancy,
           path: HealthPaths.HealthPregnancyOverview,
+          searchHide: true,
         },
       ],
     },
     {
       name: messages.myMedicine,
+      description: messages.medicineTitleIntro,
       path: HealthPaths.HealthMedicine,
       children: [
         {
           name: m.medicinePrescriptions,
           description: m.medicinePrescriptionsIntro,
+          searchTags: [s.medicinePrescriptions, s.medicinePrescription],
           path: HealthPaths.HealthMedicinePrescription,
         },
 
         {
           name: m.medicineDelegation,
+          description: messages.medicineDelegationIntroText,
           path: HealthPaths.HealthMedicineDelegation,
           searchTags: [s.medicineDelegationOther],
           children: [
@@ -109,6 +114,7 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: messages.appointments,
+      description: messages.appointmentsIntro,
       searchHide: false,
       path: HealthPaths.HealthAppointments,
       searchTags: [s.appointment, s.appointmentBook, s.appointmentDoctor],
@@ -129,6 +135,7 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: m.messages,
+      description: messages.healthConversationsSearchDescription,
       path: HealthPaths.HealthConversations,
       searchTags: [s.healthShorter],
       children: [
@@ -150,6 +157,7 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: messages.referrals,
+      description: messages.referralsIntro,
       path: HealthPaths.HealthReferrals,
       searchTags: [s.healthReferrals],
       children: [
@@ -163,6 +171,7 @@ export const healthNavigation: PortalNavigationItem = {
 
     {
       name: messages.questionnaires,
+      description: messages.questionnairesIntro,
       path: HealthPaths.HealthQuestionnaires,
       searchTags: [],
       children: [
@@ -236,10 +245,12 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: messages.therapiesAndAids,
+      description: messages.therapiesAndAidsSearchDescription,
       path: HealthPaths.HealthTherapiesAndAids,
       children: [
         {
           name: m.therapies,
+          description: messages.therapyDescription,
           path: HealthPaths.HealthTherapies,
           children: [
             {
@@ -273,11 +284,13 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: messages.patientData,
+      description: messages.patientDataSearchDescription,
       path: HealthPaths.HealthPatientData,
       searchTags: [s.healthPatientData],
       children: [
         {
           name: messages.waitlists,
+          description: messages.waitlistsIntro,
           path: HealthPaths.HealthWaitlists,
           searchTags: [s.healthWaiting],
           children: [
@@ -312,6 +325,7 @@ export const healthNavigation: PortalNavigationItem = {
         },
         {
           name: messages.patientDataPermit,
+          description: messages.patientDataPermitDescription,
           path: HealthPaths.HealthPatientDataPermits,
           children: [
             {
@@ -368,12 +382,13 @@ export const healthNavigation: PortalNavigationItem = {
             {
               name: m.organDonation,
               path: HealthPaths.HealthOrganDonationRegistration,
+              searchHide: true,
             },
           ],
         },
         {
           name: m.bloodtype,
-          description: m.bloodtype,
+          description: messages.bloodtypeDesc,
           path: HealthPaths.HealthBloodtype,
         },
       ],

@@ -21,7 +21,9 @@ import {
 import { BackendService } from '../backend'
 import { FeatureService } from '../feature/feature.service'
 import { AppealCase } from './dto/appealCase.response'
+import { AppealCourtSession } from './dto/appealCourtSession.response'
 import { CreateAppealCaseInput } from './dto/createAppealCase.input'
+import { CreateAppealCourtSessionInput } from './dto/createAppealCourtSession.input'
 import { CreateAppealEventLogInput } from './dto/createAppealEventLog.input'
 import { TransitionAppealCaseInput } from './dto/transitionAppealCase.input'
 import { UpdateAppealCaseInput } from './dto/updateAppealCase.input'
@@ -86,6 +88,28 @@ export class AppealCaseResolver {
         appealCaseId,
         updateAppealCase,
       ),
+      caseId,
+    )
+  }
+
+  @Mutation(() => AppealCourtSession, { nullable: true })
+  createAppealCourtSession(
+    @Args('input', { type: () => CreateAppealCourtSessionInput })
+    input: CreateAppealCourtSessionInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealCourtSession> {
+    const { caseId, appealCaseId, ...body } = input
+
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Creating a court session in appeal case ${appealCaseId} of case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.CREATE_APPEAL_COURT_SESSION,
+      this.backendService.createAppealCourtSession(caseId, appealCaseId, body),
       caseId,
     )
   }

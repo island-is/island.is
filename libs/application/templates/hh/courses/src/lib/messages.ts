@@ -199,6 +199,13 @@ export const m = {
       defaultMessage: 'Starfsheiti',
       description: 'Title of participant job title field',
     },
+    duplicateNationalIdError: {
+      id: 'hh.courses.application:participant.duplicateNationalIdError',
+      defaultMessage:
+        'Ekki er hægt að skrá sama þátttakanda oftar en einu sinni',
+      description:
+        'Error message when the same participant is added more than once',
+    },
   }),
   payer: defineMessages({
     sectionTitle: {

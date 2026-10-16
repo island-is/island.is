@@ -60,6 +60,14 @@ import {
   getDefaultDrivingLicenses,
   getDefaultHasHeavyMachineryLicense,
 } from '../../utils/defaultValues'
+import {
+  addressTag,
+  passwordTag,
+  bankAccountTag,
+  jobWishesTag,
+  driversLicenseTag,
+  euresTag,
+} from '../../utils/missingDataTag'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -82,6 +90,7 @@ export const MainForm = buildForm({
           accordionItems: [
             {
               itemTitle: m.application.addressTitle,
+              tag: addressTag,
               children: [
                 buildCheckboxField({
                   id: 'otherAddress.currentAddressIsNotDifferent',
@@ -115,6 +124,7 @@ export const MainForm = buildForm({
             },
             {
               itemTitle: m.application.passwordTitle,
+              tag: passwordTag,
               children: [
                 buildTextField({
                   id: 'password',
@@ -126,6 +136,7 @@ export const MainForm = buildForm({
             },
             {
               itemTitle: m.application.accountTitle,
+              tag: bankAccountTag,
               children: [
                 buildBankAccountField({
                   id: 'bankAccount',
@@ -135,6 +146,7 @@ export const MainForm = buildForm({
             },
             {
               itemTitle: m.application.jobWishesTitle,
+              tag: jobWishesTag,
               children: [
                 buildSelectField({
                   id: 'jobWishes',
@@ -224,6 +236,7 @@ export const MainForm = buildForm({
             },
             {
               itemTitle: m.application.driversLicenseTitle,
+              tag: driversLicenseTag,
               children: [
                 buildCheckboxField({
                   id: 'licenses.hasDrivingLicense',
@@ -318,6 +331,7 @@ export const MainForm = buildForm({
             },
             {
               itemTitle: m.application.euresTitle,
+              tag: euresTag,
               children: [
                 buildRadioField({
                   id: 'euresAgreement',

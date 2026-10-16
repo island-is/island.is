@@ -24,7 +24,7 @@ type GivenWhenThen = (
 
 describe('FileController - Confirm ruling order', () => {
   let mockCaseFileRepositoryService: CaseFileRepositoryService
-  let queuedMessages: Message[]
+  let queuedMessagesAfterCommit: Message[]
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -33,11 +33,11 @@ describe('FileController - Confirm ruling order', () => {
       caseFileRepositoryService,
       fileController,
       sequelize,
-      queuedMessages: messages,
+      queuedMessagesAfterCommit: messages,
     } = await createTestingFileModule()
 
     mockCaseFileRepositoryService = caseFileRepositoryService
-    queuedMessages = messages
+    queuedMessagesAfterCommit = messages
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -101,7 +101,7 @@ describe('FileController - Confirm ruling order', () => {
     })
 
     it('should not queue any notification', () => {
-      expect(queuedMessages).toHaveLength(0)
+      expect(queuedMessagesAfterCommit).toHaveLength(0)
     })
   })
 

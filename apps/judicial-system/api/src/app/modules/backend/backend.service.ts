@@ -15,7 +15,8 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase } from '../appeal-case'
+import { AppealCase, AppealCourtSession } from '../appeal-case'
+import { AppealSummons } from '../appeal-summons'
 import {
   Case,
   RequestSignatureResponse,
@@ -65,6 +66,7 @@ import { Subpoena } from '../subpoena'
 import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
+import { withTraceContext } from './traceContext'
 
 type Transformer<TResult> = (data: never) => TResult
 
@@ -131,17 +133,18 @@ export class BackendService {
     options: RequestInit,
     transformer?: Transformer<TResult>,
   ): Promise<TResult> {
-    return fetch(`${this.config.backendUrl}/api/${route}`, options).then(
-      async (res) => {
-        const response = await res.json()
+    return fetch(
+      `${this.config.backendUrl}/api/${route}`,
+      withTraceContext(options),
+    ).then(async (res) => {
+      const response = await res.json()
 
-        if (res.ok) {
-          return transformer ? transformer(response as never) : response
-        }
+      if (res.ok) {
+        return transformer ? transformer(response as never) : response
+      }
 
-        throw new ProblemError(response)
-      },
-    )
+      throw new ProblemError(response)
+    })
   }
 
   private get<TResult>(
@@ -342,6 +345,17 @@ export class BackendService {
     return this.patch(
       `case/${caseId}/appealCase/${appealCaseId}`,
       updateAppealCase,
+    )
+  }
+
+  createAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    createAppealCourtSession: unknown,
+  ): Promise<AppealCourtSession> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession`,
+      createAppealCourtSession,
     )
   }
 
@@ -648,6 +662,31 @@ export class BackendService {
     },
   ): Promise<Subpoena[]> {
     return this.post(`case/${caseId}/subpoenas`, createSubpoenas)
+  }
+
+  createAppealSummons(
+    caseId: string,
+    createAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.post(`case/${caseId}/appealSummons`, createAppealSummons)
+  }
+
+  updateAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+    updateAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}`,
+      updateAppealSummons,
+    )
+  }
+
+  deleteAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<{ deleted: boolean }> {
+    return this.delete(`case/${caseId}/appealSummons/${appealSummonsId}`)
   }
 
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {

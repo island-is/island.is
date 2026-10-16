@@ -10,6 +10,13 @@ export type SortableTableColumn<T> = {
   sortable?: boolean
 }
 
+const asSortableNumber = (value: unknown): number | undefined => {
+  if (typeof value === 'number') return isFinite(value) ? value : undefined
+  if (typeof value !== 'string' || value.trim() === '') return undefined
+  const parsed = Number(value)
+  return isFinite(parsed) ? parsed : undefined
+}
+
 interface Props<T extends Record<string, any>> {
   columns: SortableTableColumn<T>[]
   data: T[]
@@ -48,6 +55,11 @@ export const SortableTable = <T extends Record<string, any>>({
     sortKey === undefined
       ? data
       : [...data].sort((a, b) => {
+          const an = asSortableNumber(a[sortKey])
+          const bn = asSortableNumber(b[sortKey])
+          if (an !== undefined && bn !== undefined) {
+            return sortDir === 'asc' ? an - bn : bn - an
+          }
           const av = String(a[sortKey] ?? '').toLowerCase()
           const bv = String(b[sortKey] ?? '').toLowerCase()
           if (av < bv) return sortDir === 'asc' ? -1 : 1

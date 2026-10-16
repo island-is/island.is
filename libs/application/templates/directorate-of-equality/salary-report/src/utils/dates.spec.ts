@@ -99,10 +99,10 @@ describe('isRemedyDateInWindow', () => {
   })
 })
 
-// The renewal-window screen names a date DMR sent, and DMR sends it as a full
-// ISO instant. Formatting that instant directly resolves it in the runner's
-// zone, which is invisible on a UTC CI box and a day out for an applicant in
-// Reykjavík — so the date part is taken first.
+// DMR sends its dates (`dueAt`, `earliestNewDueAt`) as full ISO instants.
+// Formatting an instant directly resolves it in the runner's zone, which is
+// invisible on a UTC CI box and a day out for an applicant in Reykjavík — so
+// the date part is taken first.
 describe('formatBackendDate', () => {
   it('formats an ISO instant without shifting the day', () => {
     expect(formatBackendDate('2026-04-03T00:00:00.000Z')).toBe('3.4.2026')
@@ -121,9 +121,8 @@ describe('formatBackendDate', () => {
     expect(formatBackendDate('2026-04-03')).toBe('3.4.2026')
   })
 
-  // `earliestSubmissionDate` is nullable — there is no window to anchor on
-  // until DMR has a due date — and the screen falls back to a dateless message
-  // on the empty string.
+  // `dueAt` is nullable — DMR has no deadline for a company with no obligation
+  // on record — so a missing value has to format as blank rather than throw.
   it('reads a missing value as blank', () => {
     expect(formatBackendDate(undefined)).toBe('')
     expect(formatBackendDate(null)).toBe('')

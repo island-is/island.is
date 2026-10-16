@@ -69,7 +69,7 @@ export const actionCardMessages = defineMessages({
   },
   historyApplicantSubmitted: {
     id: 'hb.application:actionCard.historyApplicantSubmitted',
-    defaultMessage: '{applicantName} yfirfór og sendi inn umsókn',
+    defaultMessage: 'Umsókn móttekin',
     description:
       'History log when applicant reviews and submits the application to HMS',
   },
@@ -150,7 +150,7 @@ export const actionCardMessages = defineMessages({
   },
   pendingTitleInReviewApplicant: {
     id: 'hb.application:actionCard.pendingTitleInReviewApplicant',
-    defaultMessage: 'Umsókn í vinnslu',
+    defaultMessage: 'Umsókn móttekin af HMS',
     description: 'In review — applicant title',
   },
   pendingContentInReviewApplicant: {
@@ -163,5 +163,10 @@ export const actionCardMessages = defineMessages({
     defaultMessage:
       'Umsóknin er komin inn til HMS til vinnslu og verður tekin fyrir sem fyrst',
     description: 'In review state description',
+  },
+  inReviewTag: {
+    id: 'hb.application:actionCard.inReviewTag',
+    defaultMessage: 'Móttekin',
+    description: 'In review state action card tag',
   },
 })

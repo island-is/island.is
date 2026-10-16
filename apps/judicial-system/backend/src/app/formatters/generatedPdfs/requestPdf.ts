@@ -17,7 +17,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { core, request as m } from '../../messages'
-import { Case, EventLog } from '../../modules/repository'
+import { Case, Defendant, EventLog } from '../../modules/repository'
 import { formatLegalProvisions } from '../formatters'
 import {
   addCoatOfArms,
@@ -34,6 +34,22 @@ import {
   setLineGap,
   setTitle,
 } from '../pdfHelpers'
+
+/** Defender display name for a request-PDF defendant row. */
+export const formatRequestPdfDefenderName = (
+  defendant: Pick<Defendant, 'defenderName'>,
+  sessionArrangements: Case['sessionArrangements'],
+  noDefenderLabel: string,
+): string => {
+  if (
+    defendant.defenderName &&
+    sessionArrangements !== SessionArrangements.ALL_PRESENT_SPOKESPERSON
+  ) {
+    return defendant.defenderName
+  }
+
+  return noDefenderLabel
+}
 
 const constructRestrictionRequestPdf = (
   theCase: Case,
@@ -147,24 +163,19 @@ const constructRestrictionRequestPdf = (
       doc,
       `${formatMessage(m.baseInfo.address)} ${defendant.address ?? ''}`,
     )
+    addNormalText(
+      doc,
+      formatMessage(m.baseInfo.defender, {
+        defenderName: formatRequestPdfDefenderName(
+          defendant,
+          theCase.sessionArrangements,
+          formatMessage(m.baseInfo.noDefender),
+        ),
+      }),
+      'Times-Roman',
+    )
   })
 
-  if (theCase.defendants && theCase.defendants.length > 1) {
-    addEmptyLines(doc)
-  }
-
-  addNormalText(
-    doc,
-    formatMessage(m.baseInfo.defender, {
-      defenderName:
-        theCase.defenderName &&
-        theCase.sessionArrangements !==
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON
-          ? theCase.defenderName
-          : formatMessage(m.baseInfo.noDefender),
-    }),
-    'Times-Roman',
-  )
   addEmptyLines(doc)
   addMediumText(doc, formatMessage(m.demands.heading), 'Times-Bold')
   addNormalJustifiedText(
@@ -323,24 +334,21 @@ const constructInvestigationRequestPdf = (
       doc,
       `${formatMessage(m.baseInfo.address)} ${defendant.address ?? ''}`,
     )
-  })
 
-  if (
-    theCase.defenderName &&
-    theCase.sessionArrangements !== SessionArrangements.ALL_PRESENT_SPOKESPERSON
-  ) {
-    if (theCase.defendants && theCase.defendants.length > 1) {
-      addEmptyLines(doc)
+    if (
+      defendant.defenderName &&
+      theCase.sessionArrangements !==
+        SessionArrangements.ALL_PRESENT_SPOKESPERSON
+    ) {
+      addNormalText(
+        doc,
+        formatMessage(m.baseInfo.defender, {
+          defenderName: defendant.defenderName,
+        }),
+        'Times-Roman',
+      )
     }
-
-    addNormalText(
-      doc,
-      formatMessage(m.baseInfo.defender, {
-        defenderName: theCase.defenderName,
-      }),
-      'Times-Roman',
-    )
-  }
+  })
 
   addEmptyLines(doc)
   addMediumText(doc, formatMessage(m.description.heading), 'Times-Bold')

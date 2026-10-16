@@ -39,6 +39,9 @@ export default function TabLayout() {
   return (
     <>
       <NativeTabs
+        // NativeTabs ignores `unstable_settings.initialRouteName`, so the
+        // default 'initialRoute' back behavior lands on the first trigger.
+        backBehavior="history"
         labelVisibilityMode="labeled"
         backgroundColor={
           Platform.OS === 'android' ? theme.shade.background : undefined
@@ -87,7 +90,9 @@ export default function TabLayout() {
           />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="index">
-          <NativeTabs.Trigger.Label hidden={Platform.OS === 'ios'}>
+          <NativeTabs.Trigger.Label
+            hidden={Platform.OS === 'ios' && !Platform.isPad}
+          >
             {intl.formatMessage({ id: 'home.screenTitle' })}
           </NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon

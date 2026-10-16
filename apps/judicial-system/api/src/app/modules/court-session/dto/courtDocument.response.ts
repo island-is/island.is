@@ -23,9 +23,6 @@ export class CourtDocumentResponse {
   @Field(() => ID, { nullable: true })
   readonly courtSessionId?: string
 
-  @Field(() => ID, { nullable: true })
-  readonly mergedCourtSessionId?: string
-
   // Set when the document was copied into this case from a case merged into
   // it, naming that case. The court record groups the copies of each merged
   // case together under their own heading.
@@ -37,9 +34,6 @@ export class CourtDocumentResponse {
 
   @Field(() => Int)
   readonly documentOrder!: number
-
-  @Field(() => Int, { nullable: true })
-  readonly mergedDocumentOrder?: number
 
   @Field(() => String)
   readonly name!: string

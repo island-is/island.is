@@ -52,6 +52,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { parseCommaSeparatedListFromQuery } from '@island.is/web/units/parseCourtQueryParam'
+import { getLanguageToggleDialogConfig } from '@island.is/web/utils/languageToggleDialog'
 
 import {
   type CustomScreen,
@@ -72,6 +73,7 @@ import * as styles from './VerdictsList.css'
 
 const ITEMS_PER_PAGE = 10
 const DEBOUNCE_TIME_IN_MS = 500
+const COURTS_FRONTPAGE_HREF = '/s/domstolar'
 const DATE_FORMAT = 'd. MMMM yyyy'
 
 const ALL_COURTS_TAG = ''
@@ -1337,7 +1339,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
     },
     {
       label: 'Endurupptökudómar',
-      href: '/s/endurupptokudomar',
+      href: '/s/endurupptokudomur',
     },
     {
       label: 'Landsréttur',
@@ -1346,7 +1348,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
 
     {
       label: 'Héraðsdómstólar',
-      href: '/s/haeradsdomstolar',
+      href: '/s/heradsdomstolar',
     },
     {
       label: 'Dómstólasýslan',
@@ -1422,11 +1424,13 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       paddingTop={2}
                       paddingBottom={2}
                     >
-                      <img
-                        src="/assets/skjaldarmerki.svg"
-                        alt=""
-                        className={styles.logo}
-                      />
+                      <LinkV2 href={COURTS_FRONTPAGE_HREF}>
+                        <img
+                          src="/assets/skjaldarmerki.svg"
+                          alt={formatMessage(m.listPage.courtsFrontpageLinkAlt)}
+                          className={styles.logo}
+                        />
+                      </LinkV2>
                     </Box>
                   </Hidden>
                 </GridColumn>
@@ -1964,7 +1968,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     selectedDistrictCourts,
                   )}
                   renderKey={renderKey}
-                  startExpanded={true}
                   caseFilterOptions={caseFilterOptions}
                   keywords={keywords}
                   queryState={queryState}
@@ -2233,6 +2236,9 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
       is: '/domar',
       en: customPageData?.configJson?.englishFallbackUrl ?? '',
     },
+    languageToggleDialog: getLanguageToggleDialogConfig(
+      customPageData?.configJson,
+    ),
   }
 }
 

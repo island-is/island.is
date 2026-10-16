@@ -16,14 +16,24 @@ export const messageCard = style(
   }),
 )
 
+export const senderName = style({
+  minWidth: 0,
+  overflowWrap: 'anywhere',
+})
+
 export const attachmentIcon = style({
   width: 20,
   height: 20,
+  flexShrink: 0,
 })
 
 export const certificateAvatar = style({
   width: 64,
   height: 64,
+})
+
+export const certificateText = style({
+  overflowWrap: 'anywhere',
 })
 
 export const detailHeader = style({
@@ -49,11 +59,19 @@ export const mobileBackHeader = style({
 
 // Keeps the row's white button hover circle on a tinted background
 export const conversationRow = style({
-  selectors: {
-    '&:hover': {
-      backgroundColor: theme.color.blue100,
+  '@media': {
+    '(hover: hover)': {
+      selectors: {
+        '&:hover': {
+          backgroundColor: theme.color.blue100,
+        },
+      },
     },
   },
+})
+
+export const sentAlert = style({
+  outline: 'none',
 })
 
 export const termsCheckbox = style({})
@@ -65,13 +83,6 @@ globalStyle(`${termsCheckbox} label`, {
 globalStyle(`${termsCheckbox} label > div`, {
   alignSelf: 'flex-start',
   marginTop: 2,
-})
-
-export const typeInstructions = style({})
-
-// Out-specifies the shared Markdown component's light-weight p global
-globalStyle(`${typeInstructions} div p`, {
-  fontWeight: theme.typography.semiBold,
 })
 
 export const messageTextContent = style({

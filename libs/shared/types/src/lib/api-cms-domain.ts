@@ -12,11 +12,13 @@ export enum CustomPageUniqueIdentifier {
   Verdicts = 'Verdicts',
   BloodDonationRestrictions = 'BloodDonationRestrictions',
   CourtAgendas = 'CourtAgendas',
+  OpenInvoices = 'OpenInvoices',
   LandspitaliWebPaymentSuccessful = 'LandspitaliWebPaymentSuccessful',
   SecondarySchoolStudies = 'SecondarySchoolStudies',
   SupremeCourtDeterminations = 'SupremeCourtDeterminations',
   SupremeCourtAppeals = 'SupremeCourtAppeals',
   AskTheBudgetBill = 'AskTheBudgetBill',
+  ElectronicMandates = 'ElectronicMandates',
 }
 
 export interface StatisticSourceValue {

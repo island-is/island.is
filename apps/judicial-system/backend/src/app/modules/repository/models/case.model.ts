@@ -842,6 +842,21 @@ export class Case extends Model {
   indictmentReviewer?: User
 
   /**********
+   * The surrogate key of the appeal prosecutor at Ríkissaksóknari
+   **********/
+  @ForeignKey(() => User)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealProsecutorId?: string
+
+  /**********
+   * The appeal prosecutor at Ríkissaksóknari assigned to the case
+   **********/
+  @BelongsTo(() => User, 'appealProsecutorId')
+  @ApiPropertyOptional({ type: User })
+  appealProsecutor?: User
+
+  /**********
    * The judge's pending decision in indictment cases - example: POSTPONING
    **********/
   @Column({

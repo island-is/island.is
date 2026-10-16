@@ -1,46 +1,10 @@
 query CurrentUser {
   currentUser {
     user {
-      id
-      created
-      modified
-      active
-      name
-      title
-      role
-      email
-      mobileNumber
-      nationalId
-      canConfirmIndictment
-      canManageMessageSuspension
-      institution {
-        id
-        type
-        name
-        defaultCourtId
-        policeCaseNumberPrefix
-      }
+      ...CurrentUserFields
     }
     eligibleUsers {
-      id
-      created
-      modified
-      active
-      name
-      title
-      role
-      email
-      mobileNumber
-      nationalId
-      canConfirmIndictment
-      canManageMessageSuspension
-      institution {
-        id
-        type
-        name
-        defaultCourtId
-        policeCaseNumberPrefix
-      }
+      ...CurrentUserFields
     }
   }
 }

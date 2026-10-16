@@ -1,10 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseState,
   AppealCaseType,
@@ -22,6 +19,7 @@ import {
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
 import { nowFactory } from '../../../../factories'
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import {
   AppealCase,
   AppealCaseRepositoryService,
@@ -32,7 +30,7 @@ import {
 } from '../../../repository'
 import { CreateAppealCaseDto } from '../../dto/createAppealCase.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../../../factories')
 
 interface Then {
@@ -136,9 +134,9 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     ;(mockAppealCaseRepositoryService.create as jest.Mock).mockResolvedValue(
       createdAppealCase,
     )
-    ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-      [],
-    )
+    ;(
+      mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
+    ).mockResolvedValue(null)
     ;(
       mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
     ).mockResolvedValue(true)
@@ -183,8 +181,9 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
         caseId,
         transaction,
       )
-      expect(mockAppealCaseRepositoryService.findAll).toHaveBeenCalledWith({
-        where: { caseId, appealType: AppealCaseType.VERDICT },
+      expect(
+        mockAppealCaseRepositoryService.findVerdictAppealByCaseId,
+      ).toHaveBeenCalledWith(caseId, {
         transaction,
       })
     })
@@ -227,8 +226,8 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     // Nothing else is queued: the court of appeals learns of the appeal when it
     // receives it, which is the court of appeals process, not this one.
     it('should queue the verdict appealed notification and nothing else', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledTimes(1)
-      expect(addMessagesToQueue).toHaveBeenCalledWith({
+      expect(queueMessagesAfterCommit).toHaveBeenCalledTimes(1)
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
         type: MessageType.NOTIFICATION,
         user: defender,
         caseId,
@@ -250,12 +249,12 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [existingAppealCase],
-      )
+      ;(
+        mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
+      ).mockResolvedValue(existingAppealCase)
       // Another defendant is the standing appellant, not this one.
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           defendantId: uuid(),
@@ -319,14 +318,14 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [withdrawnAppealCase],
-      )
+      ;(
+        mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
+      ).mockResolvedValue(withdrawnAppealCase)
       ;(mockAppealCaseRepositoryService.update as jest.Mock).mockResolvedValue(
         reactivatedAppealCase,
       )
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           defendantId,
@@ -386,11 +385,11 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [existingAppealCase],
-      )
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
+      ).mockResolvedValue(existingAppealCase)
+      ;(
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           defendantId,

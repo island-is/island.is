@@ -19,6 +19,7 @@ import {
   IndictmentCaseReviewDecision,
   investigationCases,
   PunishmentType,
+  RequestSharedWithDefender,
   restrictionCases,
   stringTypes,
   SubpoenaType,
@@ -26,8 +27,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../models/appealCase.model'
+import { AppealCourtSession } from '../models/appealCourtSession.model'
 import { AppealDecision } from '../models/appealDecision.model'
 import { AppealEventLog } from '../models/appealEventLog.model'
+import { AppealSummons } from '../models/appealSummons.model'
+import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
 import { Case } from '../models/case.model'
 import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from '../models/caseFile.model'
@@ -98,6 +102,34 @@ export const caseInclude: Includeable[] = [
         as: 'appealEventLogs',
         required: false,
         where: { eventType: appealEventTypes },
+        separate: true,
+      },
+      {
+        model: AppealSummons,
+        as: 'appealSummonses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+        include: [
+          {
+            model: User,
+            as: 'confirmedBy',
+            include: [{ model: Institution, as: 'institution' }],
+          },
+          {
+            model: AppealSummonsDefendant,
+            as: 'defendants',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
+        ],
+      },
+      {
+        model: AppealCourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['sessionDate', 'ASC']],
         separate: true,
       },
     ],
@@ -171,6 +203,11 @@ export const caseInclude: Includeable[] = [
   {
     model: User,
     as: 'indictmentReviewer',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealProsecutor',
     include: [{ model: Institution, as: 'institution' }],
   },
   {
@@ -287,13 +324,6 @@ export const caseInclude: Includeable[] = [
         as: 'filedDocuments',
         required: false,
         order: [['documentOrder', 'ASC']],
-        separate: true,
-      },
-      {
-        model: CourtDocument,
-        as: 'mergedFiledDocuments',
-        required: false,
-        order: [['mergedDocumentOrder', 'ASC']],
         separate: true,
       },
       {
@@ -448,13 +478,6 @@ export const caseInclude: Includeable[] = [
             separate: true,
           },
           {
-            model: CourtDocument,
-            as: 'mergedFiledDocuments',
-            required: false,
-            order: [['mergedDocumentOrder', 'ASC']],
-            separate: true,
-          },
-          {
             model: CourtSessionString,
             as: 'courtSessionStrings',
             required: false,
@@ -525,6 +548,22 @@ export const caseInclude: Includeable[] = [
             },
           },
         ],
+      },
+      {
+        // A split case takes the civil claimants that applied to the defendant
+        // who left with it, so a spokesperson can be a confirmed party here.
+        // The attributes are the ones that decide whether they may open it.
+        model: CivilClaimant,
+        as: 'civilClaimants',
+        attributes: [
+          'id',
+          'hasSpokesperson',
+          'spokespersonNationalId',
+          'isSpokespersonConfirmed',
+        ],
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
       },
       {
         model: CaseFile,
@@ -944,6 +983,7 @@ export const limitedAccessCaseAttributes: (keyof Case)[] = [
   'indictmentHash',
   'courtSessionType',
   'indictmentReviewerId',
+  'appealProsecutorId',
   'hasCivilClaims',
   'isCompletedWithoutRuling',
   'isArraignmentSummonsSkipped',
@@ -1088,6 +1128,11 @@ export const getLimitedAccessCaseInclude = (
     {
       model: User,
       as: 'indictmentReviewer',
+      include: [{ model: Institution, as: 'institution' }],
+    },
+    {
+      model: User,
+      as: 'appealProsecutor',
       include: [{ model: Institution, as: 'institution' }],
     },
     {
@@ -1274,13 +1319,6 @@ export const getLimitedAccessCaseInclude = (
           separate: true,
         },
         {
-          model: CourtDocument,
-          as: 'mergedFiledDocuments',
-          required: false,
-          order: [['mergedDocumentOrder', 'ASC']],
-          separate: true,
-        },
-        {
           model: CourtSessionString,
           as: 'courtSessionStrings',
           required: false,
@@ -1417,13 +1455,6 @@ export const getLimitedAccessCaseInclude = (
               separate: true,
             },
             {
-              model: CourtDocument,
-              as: 'mergedFiledDocuments',
-              required: false,
-              order: [['mergedDocumentOrder', 'ASC']],
-              separate: true,
-            },
-            {
               model: CourtSessionString,
               as: 'courtSessionStrings',
               required: false,
@@ -1448,10 +1479,12 @@ export const getLimitedAccessCaseInclude = (
     {
       model: Case,
       as: 'splitCase',
+      attributes: limitedAccessCaseAttributes,
     },
     {
       model: Case,
       as: 'splitCases',
+      attributes: limitedAccessCaseAttributes,
       include: [
         {
           model: Defendant,
@@ -1475,6 +1508,22 @@ export const getLimitedAccessCaseInclude = (
               },
             },
           ],
+        },
+        {
+          // A split case takes the civil claimants that applied to the defendant
+          // who left with it, so a spokesperson can be a confirmed party here.
+          // The attributes are the ones that decide whether they may open it.
+          model: CivilClaimant,
+          as: 'civilClaimants',
+          attributes: [
+            'id',
+            'hasSpokesperson',
+            'spokespersonNationalId',
+            'isSpokespersonConfirmed',
+          ],
+          required: false,
+          order: [['created', 'ASC']],
+          separate: true,
         },
         {
           model: CaseFile,
@@ -1566,7 +1615,6 @@ export interface UpdateCase
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'
     | 'creatingProsecutorId'
-    | 'requestSharedWithDefender'
     | 'indictmentRulingDecision'
     | 'indictmentDecision'
     | 'courtSessionType'
@@ -1580,6 +1628,7 @@ export interface UpdateCase
   type?: Case['type']
   state?: Case['state']
   policeCaseNumbers?: Case['policeCaseNumbers']
+  requestSharedWithDefender?: Case['requestSharedWithDefender'] | null
   defendantWaivesRightToCounsel?: Case['defendantWaivesRightToCounsel'] | null
   courtEndTime?: Case['courtEndTime'] | null
   rulingDate?: Case['rulingDate'] | null
@@ -1590,6 +1639,7 @@ export interface UpdateCase
   courtRecordSignatureDate?: Case['courtRecordSignatureDate'] | null
   parentCaseId?: Case['parentCaseId'] | null
   indictmentReviewerId?: Case['indictmentReviewerId'] | null
+  appealProsecutorId?: Case['appealProsecutorId'] | null
   indictmentApproverId?: Case['indictmentApproverId'] | null
   indictmentDeniedExplanation?: Case['indictmentDeniedExplanation'] | null
   indictmentHash?: Case['indictmentHash'] | null
@@ -1645,11 +1695,12 @@ export interface UpdateDefendant {
   gender?: Gender
   address?: string
   citizenship?: string
-  defenderName?: string
-  defenderNationalId?: string
-  defenderEmail?: string
-  defenderPhoneNumber?: string
-  defenderChoice?: DefenderChoice
+  defenderName?: string | null
+  defenderNationalId?: string | null
+  defenderEmail?: string | null
+  defenderPhoneNumber?: string | null
+  requestSharedWithDefender?: RequestSharedWithDefender | null
+  defenderChoice?: DefenderChoice | null
   defendantPlea?: DefendantPlea
   subpoenaType?: SubpoenaType
   requestedDefenderChoice?: DefenderChoice

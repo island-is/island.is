@@ -1004,13 +1004,16 @@ export const buildTableRepeaterField = (
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    removeButtonDisabledTooltipText,
     editButtonTooltipText,
     editField,
+    canRemoveRow,
     getStaticTableData,
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
     initActiveFieldIfEmpty,
+    hideTableHeaderIfEmpty,
   } = data
 
   return {
@@ -1025,13 +1028,16 @@ export const buildTableRepeaterField = (
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    removeButtonDisabledTooltipText,
     editButtonTooltipText,
     editField,
+    canRemoveRow,
     getStaticTableData,
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
     initActiveFieldIfEmpty,
+    hideTableHeaderIfEmpty,
   }
 }
 

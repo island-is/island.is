@@ -40,6 +40,12 @@ export const mailLink = style({
 
 export const svgOutline = style({})
 
+export const cardText = style({})
+
+globalStyle(`${cardText} p`, {
+  fontSize: 18,
+})
+
 globalStyle(`${svgOutline} svg path`, {
   stroke: theme.color.blue400,
 })

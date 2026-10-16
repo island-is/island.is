@@ -9,12 +9,14 @@ import {
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
+import { nextAppointmentsInput } from '../../utils/appointments'
 import Appointments from '../HealthOverview/components/Appointments'
 import { useGetAppointmentsOverviewQuery } from '../HealthOverview/HealthOverview.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const Pregnancy = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage } = useLocale()
 
   const { value: showAppointments } = useFeatureFlag(
@@ -28,13 +30,13 @@ const Pregnancy = () => {
     error: appointmentsError,
   } = useGetAppointmentsOverviewQuery({
     variables: {
-      status: DEFAULT_APPOINTMENTS_STATUS,
+      input: nextAppointmentsInput(2),
     },
     skip: !showAppointments,
   })
 
   const firstTwoAppointments =
-    appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
+    appointmentsData?.healthDirectoratePaginatedAppointments?.data ?? []
 
   return (
     <IntroWrapper

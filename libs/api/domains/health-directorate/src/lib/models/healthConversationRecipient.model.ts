@@ -31,6 +31,12 @@ export class HealthDirectorateHealthConversationRecipient {
   name!: string
 
   @Field({
+    description:
+      'The patient writes the title and sends no patientInitiatedTypeCode.',
+  })
+  allowsCustomTitle!: boolean
+
+  @Field({
     deprecationReason:
       'Use canCreateConversation and conversationBlockedReason instead.',
   })

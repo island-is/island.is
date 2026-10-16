@@ -30,8 +30,9 @@ import {
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
 } from '../../guards'
+import { getOrCreateTransaction } from '../../middleware'
 import {
-  CaseExistsGuard,
+  CaseExistsForUpdateGuard,
   CaseTypeGuard,
   CaseWriteGuard,
   CurrentCase,
@@ -50,12 +51,31 @@ import { CurrentCourtSession } from './guards/courtSession.decorator'
 import { CourtSessionExistsGuard } from './guards/courtSessionExists.guard'
 import { CourtSessionService } from './courtSession.service'
 
+// Every route here changes the case's court sessions, and each decides what
+// to change from the case the guard loaded: delete checks the session is the
+// latest against theCase.courtSessions, update and the ruling routes decide
+// from the session and the files on that snapshot. CaseExistsForUpdateGuard
+// reads the case under FOR UPDATE in the request's transaction, so two of
+// these requests on one case serialize on the case row and the second sees
+// the first's commit - a create and a delete can no longer both decide
+// against the same latest session.
+//
+// RolesGuard runs first, ahead of the guard that takes the write lock. It
+// can, because every route's three rules are bare user roles with no
+// canActivate: none of them reads request.case, so a caller this controller
+// has no rule for is turned away before any case row is locked.
+// courtSessionRolesRules.spec.ts pins that assumption, so a rule that starts
+// reading the case cannot silently reopen the exposure.
+//
+// The guards after the locking read all decide from request.case and so see
+// the locked row - including CourtSessionExistsGuard on the routes that
+// name a session.
 @Controller('api/case/:caseId/courtSession')
 @ApiTags('court-sessions')
 @UseGuards(
   JwtAuthUserGuard,
   RolesGuard,
-  CaseExistsGuard,
+  CaseExistsForUpdateGuard,
   new CaseTypeGuard(indictmentCases),
   CaseWriteGuard,
 )
@@ -76,15 +96,18 @@ export class CourtSessionController {
     type: CourtSession,
     description: 'Creates a new court session',
   })
-  create(
+  async create(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
   ): Promise<CourtSession> {
     this.logger.debug(`Creating a new court session for case ${caseId}`)
 
-    return this.sequelize.transaction(async (transaction) =>
-      this.courtSessionService.create(theCase, transaction),
-    )
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.courtSessionService.create(theCase, transaction)
   }
 
   @UseGuards(CourtSessionExistsGuard)
@@ -98,7 +121,7 @@ export class CourtSessionController {
     type: CourtSession,
     description: 'Updates a court session',
   })
-  update(
+  async update(
     @Param('caseId') caseId: string,
     @Param('courtSessionId') courtSessionId: string,
     @Body() courtSessionToUpdate: UpdateCourtSessionDto,
@@ -110,14 +133,14 @@ export class CourtSessionController {
       `Updating court session ${courtSessionId} of case ${caseId}`,
     )
 
-    return this.sequelize.transaction(async (transaction) =>
-      this.courtSessionService.update(
-        theCase,
-        courtSession,
-        courtSessionToUpdate,
-        user,
-        transaction,
-      ),
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.courtSessionService.update(
+      theCase,
+      courtSession,
+      courtSessionToUpdate,
+      user,
+      transaction,
     )
   }
 
@@ -132,7 +155,7 @@ export class CourtSessionController {
     type: CourtSessionString,
     description: 'Creates or updates a court session string',
   })
-  createOrUpdateCourtSessionString(
+  async createOrUpdateCourtSessionString(
     @Param('caseId') caseId: string,
     @Param('courtSessionId') courtSessionId: string,
     @Body() courtSessionString: CourtSessionStringDto,
@@ -140,11 +163,18 @@ export class CourtSessionController {
     this.logger.debug(
       `Updating court session string of ${courtSessionId} of case ${caseId}`,
     )
+
+    // This route used to write without a transaction. The guard has opened the
+    // request's transaction to lock the case row, so the write joins it rather
+    // than autocommitting beside a lock held on its behalf.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
     return this.courtSessionService.createOrUpdateCourtSessionString({
       caseId,
       courtSessionId,
       mergedCaseId: courtSessionString.mergedCaseId,
       update: courtSessionString,
+      transaction,
     })
   }
 
@@ -160,7 +190,7 @@ export class CourtSessionController {
     description:
       'Creates or updates a party appeal decision recorded in a court session',
   })
-  upsertAppealDecision(
+  async upsertAppealDecision(
     @Param('caseId') caseId: string,
     @Param('courtSessionId') courtSessionId: string,
     @Body() appealDecision: CourtSessionAppealDecisionDto,
@@ -171,13 +201,13 @@ export class CourtSessionController {
       `Upserting appeal decision for court session ${courtSessionId} of case ${caseId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
-      this.courtSessionService.upsertAppealDecision(
-        theCase,
-        courtSession,
-        appealDecision,
-        transaction,
-      ),
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.courtSessionService.upsertAppealDecision(
+      theCase,
+      courtSession,
+      appealDecision,
+      transaction,
     )
   }
 
@@ -193,7 +223,7 @@ export class CourtSessionController {
     description:
       'Pronounces a ruling order orally in a court session, creating the ruling the district court writes up if it is appealed',
   })
-  pronounceRulingOrally(
+  async pronounceRulingOrally(
     @Param('caseId') caseId: string,
     @Param('courtSessionId') courtSessionId: string,
     @CurrentHttpUser() user: User,
@@ -204,13 +234,13 @@ export class CourtSessionController {
       `Pronouncing a ruling orally in court session ${courtSessionId} of case ${caseId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
-      this.courtSessionService.pronounceRulingOrally(
-        theCase,
-        courtSession,
-        user,
-        transaction,
-      ),
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.courtSessionService.pronounceRulingOrally(
+      theCase,
+      courtSession,
+      user,
+      transaction,
     )
   }
 
@@ -236,6 +266,14 @@ export class CourtSessionController {
     )
 
     // Only allow users to delete the latest court session and only if there are more than one.
+    //
+    // CaseExistsForUpdateGuard read this case under FOR UPDATE, so the list is
+    // decided against a row no one else can change: a create that would make
+    // this session no longer the latest waits for this request to commit, and
+    // then sees one session fewer. The service re-reads the latest session in
+    // the same transaction and refuses with a 500 if it disagrees - that is the
+    // check against the database's own view, cheap, and it guards the service
+    // against a caller that passes a stale case, so both stay.
     const courtSessions = theCase.courtSessions
     if (
       !courtSessions ||
@@ -247,14 +285,14 @@ export class CourtSessionController {
       )
     }
 
-    return this.sequelize.transaction(async (transaction) => {
-      const deleted = await this.courtSessionService.delete(
-        theCase,
-        courtSession,
-        transaction,
-      )
+    const transaction = await getOrCreateTransaction(this.sequelize)
 
-      return { deleted }
-    })
+    const deleted = await this.courtSessionService.delete(
+      theCase,
+      courtSession,
+      transaction,
+    )
+
+    return { deleted }
   }
 }

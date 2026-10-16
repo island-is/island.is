@@ -1,5 +1,7 @@
+import differenceInCalendarMonths from 'date-fns/differenceInCalendarMonths'
 import {
   ApplicantsInfo,
+  EARLIEST_RENTAL_PERIOD_START_DATE,
   PropertyUnit,
 } from '@island.is/application/templates/hms/rental-agreement'
 import { SecurityDepositType } from '@island.is/clients/hms-rental-agreement'
@@ -114,18 +116,26 @@ export interface FinancialIndexationEntry {
   value: string
 }
 
+// listOfLastMonths starts counting back from this far ahead of "now"
+const FUTURE_LOOKAHEAD_MONTHS = 2
 const FINANCIAL_INDEXATION_URL =
   'https://px.hagstofa.is:443/pxis/api/v1/is/Efnahagur/visitolur/1_vnv/1_vnv/VIS01004.px'
 const FINANCIAL_INDEXATION_FETCH_TIMEOUT = 10000
 
-export const listOfLastMonths = (
-  numberOfMonths: number,
-  currentDate = new Date(),
-) => {
+export const numberOfIndexMonthsToFetch = (currentDate = new Date()) => {
+  const monthsSinceEarliestStartDate = differenceInCalendarMonths(
+    currentDate,
+    EARLIEST_RENTAL_PERIOD_START_DATE,
+  )
+  return monthsSinceEarliestStartDate + FUTURE_LOOKAHEAD_MONTHS + 1
+}
+
+export const listOfLastMonths = (currentDate = new Date()) => {
+  const numberOfMonths = numberOfIndexMonthsToFetch(currentDate)
   const months: string[] = []
   const firstMonth = new Date(
     currentDate.getFullYear(),
-    currentDate.getMonth() + 2,
+    currentDate.getMonth() + FUTURE_LOOKAHEAD_MONTHS,
     1,
   )
 

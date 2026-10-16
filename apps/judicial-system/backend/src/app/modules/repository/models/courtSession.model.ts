@@ -136,13 +136,6 @@ export class CourtSession extends Model {
   @ApiPropertyOptional({ type: () => [CourtDocument] })
   filedDocuments?: CourtDocument[]
 
-  @HasMany(() => CourtDocument, {
-    foreignKey: 'mergedCourtSessionId',
-    as: 'mergedFiledDocuments',
-  })
-  @ApiPropertyOptional({ type: () => [CourtDocument] })
-  mergedFiledDocuments?: CourtDocument[]
-
   @HasMany(() => CourtSessionString, {
     foreignKey: 'courtSessionId',
     as: 'courtSessionStrings',

@@ -53,11 +53,13 @@ describe('IndictmentCountRepositoryService', () => {
   })
 
   describe('findByIdWithOffenses', () => {
-    it('loads the count by primary key with its offenses in creation order', async () => {
+    it('loads the count by primary key with its offenses in creation order, in the caller transaction', async () => {
       const indictmentCount = { id: indictmentCountId }
       model.findByPk.mockResolvedValueOnce(indictmentCount)
 
-      const result = await service.findByIdWithOffenses(indictmentCountId)
+      const result = await service.findByIdWithOffenses(indictmentCountId, {
+        transaction,
+      })
 
       expect(model.findByPk).toHaveBeenCalledWith(indictmentCountId, {
         include: [
@@ -69,12 +71,15 @@ describe('IndictmentCountRepositoryService', () => {
             order: [['created', 'ASC']],
           },
         ],
+        transaction,
       })
       expect(result).toBe(indictmentCount)
     })
 
     it('returns null when there is no such count', async () => {
-      expect(await service.findByIdWithOffenses(indictmentCountId)).toBeNull()
+      expect(
+        await service.findByIdWithOffenses(indictmentCountId, { transaction }),
+      ).toBeNull()
     })
 
     it('rethrows when the lookup fails', async () => {
@@ -82,7 +87,7 @@ describe('IndictmentCountRepositoryService', () => {
       model.findByPk.mockRejectedValueOnce(error)
 
       await expect(
-        service.findByIdWithOffenses(indictmentCountId),
+        service.findByIdWithOffenses(indictmentCountId, { transaction }),
       ).rejects.toThrow(error)
     })
   })

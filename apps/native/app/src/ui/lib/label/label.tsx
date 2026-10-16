@@ -7,7 +7,13 @@ import infoIcon from '../../assets/alert/info-alert.png'
 import warningIcon from '../../assets/alert/warning.png'
 import { Typography } from '../typography/typography'
 
-type LabelColor = 'default' | 'primary' | 'danger' | 'warning' | 'urgent'
+type LabelColor =
+  | 'default'
+  | 'primary'
+  | 'danger'
+  | 'warning'
+  | 'urgent'
+  | 'pending'
 type HelperProps = {
   theme: DefaultTheme
   color: LabelColor
@@ -29,6 +35,8 @@ const getBorderColor = ({ theme, color }: HelperProps) => {
       return { light: theme.color.yellow400, dark: theme.color.yellow400 }
     case 'primary':
       return { light: theme.color.blue200, dark: theme.shades.dark.shade300 }
+    case 'pending':
+      return { light: theme.color.purple200, dark: theme.color.purple300 }
     default:
       return { light: theme.shade.shade400, dark: theme.shades.dark.shade300 }
   }
@@ -54,6 +62,8 @@ const getTextColor = ({ theme, color }: HelperProps) => {
       return { light: theme.color.red600, dark: theme.color.red400 }
     case 'primary':
       return { light: theme.color.blue400, dark: theme.shades.dark.shade700 }
+    case 'pending':
+      return { light: theme.color.purple400, dark: theme.color.purple300 }
     default:
       return { light: theme.shade.foreground, dark: theme.shade.foreground }
   }

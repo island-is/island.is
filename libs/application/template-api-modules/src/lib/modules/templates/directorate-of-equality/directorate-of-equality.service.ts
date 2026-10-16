@@ -5,6 +5,7 @@ import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-reg
 import {
   DirectorateOfEqualityClientService,
   EqualityCoverageSourceEnum,
+  ReportStatusEnum,
   ReportTypeEnum,
 } from '@island.is/clients/directorate-of-equality'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -20,7 +21,6 @@ import {
   messages as salaryReportMessages,
   PERIOD_ONE_MONTH,
   SALARY_INELIGIBILITY_MISSING_EQUALITY_REPORT,
-  SALARY_INELIGIBILITY_RENEWAL_WINDOW_NOT_OPEN,
 } from '@island.is/application/templates/directorate-of-equality/salary-report'
 import { FetchError } from '@island.is/clients/middlewares'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -36,6 +36,14 @@ import {
 const DRAFT_EMPLOYEE_PAGE_SIZE = 100
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityService'
+
+// A report in one of these has nothing left open at DMR to withdraw.
+const CLOSED_REPORT_STATUSES: ReportStatusEnum[] = [
+  ReportStatusEnum.APPROVED,
+  ReportStatusEnum.DENIED,
+  ReportStatusEnum.SUPERSEDED,
+  ReportStatusEnum.WITHDRAWN,
+]
 
 /**
  * What meets the company's equality obligation at submit time.
@@ -318,10 +326,9 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
   /**
    * The salary report's entry gate: may this company file one right now?
    *
-   * DMR checks the two preconditions in order and names the first that fails —
-   * MISSING_EQUALITY_REPORT before RENEWAL_WINDOW_NOT_OPEN — so one read
-   * answers both. `earliestSubmissionDate` is what makes the renewal case worth
-   * distinguishing: it turns "not yet" into a date the applicant can act on.
+   * The one precondition left is the equality obligation
+   * (MISSING_EQUALITY_REPORT) — DMR dropped the six-month renewal window, so a
+   * company may file however far out its current deadline is.
    */
   async getSalaryReportEligibility({
     auth,
@@ -344,7 +351,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
 
       // Past this point DMR did not answer at all. This is the guard out of
       // PREREQUISITES, so falling back to "ineligible" would turn an outage
-      // into a rejection for a company that may well be in its window — it has
+      // into a rejection for a company that may well be eligible — it has
       // to surface instead, exactly as getActiveEqualityReport's salary branch
       // does.
       const errorDetails = this.extractFetchErrorDetails(error)
@@ -752,47 +759,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
-  /**
-   * Whether a refused submit was refused because the renewal window is shut.
-   *
-   * Reachable even though PREREQUISITES gates on the same check, by a route
-   * worth spelling out because the branch cannot be reproduced outside prod
-   * (see the 409 handler) and so reads like dead code: DMR rolls the due date
-   * forward on approval and at no other point, so a company whose earlier
-   * report is sitting in review still has its old, open window. It passes
-   * PREREQUISITES on that window, opens this draft, and the earlier report is
-   * approved while the draft sits — rolling the due date three years out and
-   * shutting the window under a draft that is already past the gate.
-   *
-   * Never throws — it only picks which of two messages to show on a request
-   * that has already failed, so a second failure falls back to the other
-   * reading rather than replacing a specific error with a generic one.
-   */
-  private async isRenewalWindowClosed(
-    auth: TemplateApiModuleActionProps['auth'],
-    applicationId: string,
-  ): Promise<boolean> {
-    try {
-      const eligibility =
-        await this.directorateOfEqualityService.getSalaryReportEligibility(auth)
-      return eligibility.reason === SALARY_INELIGIBILITY_RENEWAL_WINDOW_NOT_OPEN
-    } catch (error) {
-      // Warned rather than swallowed: if this read breaks permanently the
-      // fallback is silent, and the symptom is the very bug the check exists
-      // to prevent — an applicant who submitted too early being told their
-      // report is already in review.
-      this.logger.warn(
-        'Failed to resolve the reason for a refused salary submit',
-        {
-          applicationId,
-          context: LOGGING_CONTEXT,
-          ...this.extractFetchErrorDetails(error),
-        },
-      )
-      return false
-    }
-  }
-
   // Finalises the draft; only the pre-dataEntry answers need patching onto it first.
   async submitSalaryReport({
     auth,
@@ -852,7 +818,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
             {
               company: {
                 name: answers.generalInformation?.companyName ?? '',
-                nationalId: answers.generalInformation?.nationalId ?? '',
                 address: answers.generalInformation?.address ?? '',
                 city: answers.generalInformation?.municipality ?? '',
                 postcode: answers.generalInformation?.postalCode ?? '',
@@ -869,40 +834,17 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         } catch (error) {
           const status = this.extractFetchErrorDetails(error).status
 
-          // Three unrelated refusals share 409 — the renewal window not being
-          // open, a salary report already sitting in IN_REVIEW or POSTPONED (a
-          // merely SUBMITTED one is withdrawn silently), and a providerId tuple
-          // already bound to another company or report type — and none of them
-          // is named in a machine-readable field, so the pre-flight check is
-          // asked instead. Only on this path: it costs a round trip, and the
-          // submit has already failed by the time we are here.
-          //
-          // DMR does put the reason in `ApiErrorDto.message` as free text.
-          // That is not a contract — unlike `translatedMessage` it is not
-          // declared user-facing, and matching on its wording would break
-          // silently the first time it is reworded — so it is not parsed here.
-          //
-          // The test is deliberately the positive one. Eligibility does not
-          // look for an in-flight report at all, so the renewal window is the
-          // only cause it can confirm; everything else it calls eligible and
-          // falls through to the in-progress message. That also catches the
-          // tuple collision, which is an integrity error that cannot arise
-          // while providerId is this application's own id.
-          //
-          // NB: the renewal 409 fires in production only. Dev and staging
-          // accept the POST even when eligibility says RENEWAL_WINDOW_NOT_OPEN,
-          // so this branch cannot be reproduced outside prod — the other two
-          // causes fire everywhere.
+          // Two unrelated refusals share 409 — a salary report already sitting
+          // in IN_REVIEW or POSTPONED (a merely SUBMITTED one is withdrawn
+          // silently), and a providerId tuple already bound to another company
+          // or report type. The second is an integrity error that cannot arise
+          // while providerId is this application's own id, so the in-progress
+          // message covers both.
           if (status === 409) {
             throw new TemplateApiError(
               {
                 title: coreErrorMessages.defaultTemplateApiError,
-                summary: (await this.isRenewalWindowClosed(
-                  auth,
-                  application.id,
-                ))
-                  ? salaryReportMessages.errors.renewalWindowNotOpen
-                  : salaryReportMessages.errors.submitConflict,
+                summary: salaryReportMessages.errors.submitConflict,
               },
               409,
             )
@@ -975,6 +917,87 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
+  // onDelete from DRAFT. The draft is hard-deleted rather than withdrawn so DMR
+  // keeps no payroll data for an application that no longer exists. A 404 means
+  // there is no draft: either it was submitted in the meantime, which withdraw
+  // covers, or it was never created, which withdraw answers with its own 404.
+  async deleteSalaryReportDraft({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to delete salary report draft',
+      async () => {
+        try {
+          await this.directorateOfEqualityService.deleteDraft(
+            auth,
+            application.id,
+          )
+        } catch (error) {
+          if (!this.isNotFoundApiError(error)) throw error
+          await this.withdrawReportIfOpen(auth, application.id)
+        }
+      },
+    )
+  }
+
+  // onDelete from POSTPONE_RECEIVED and POSTPONED. Without it the report stays
+  // POSTPONED on DMR's side after the application is gone: the register shows
+  // the plan as missing and DMR refuses any new salary report with a 409, with
+  // no application left to send the plan from. Withdrawing puts the company
+  // back on whatever covered it before, as a reviewer's denial would.
+  async withdrawSalaryReport({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to withdraw salary report',
+      () => this.withdrawReportIfOpen(auth, application.id),
+    )
+  }
+
+  // A 404 is no report at all. A 400 is ambiguous: DMR gives the "already
+  // decided" refusal the same generic BadRequest name as any other bad request
+  // (the reason is only in free-text `details`), and maps validation and
+  // constraint errors to 400 too. So on a 400 the report's own status decides:
+  // decided or already withdrawn leaves nothing open at DMR and the delete may
+  // go ahead. Anything else, including a failed status read, refuses the delete
+  // so it never leaves an open report behind.
+  private async withdrawReportIfOpen(
+    auth: TemplateApiModuleActionProps['auth'],
+    providerId: string,
+  ): Promise<void> {
+    try {
+      await this.directorateOfEqualityService.withdrawReport(auth, providerId)
+    } catch (error) {
+      if (this.isNotFoundApiError(error)) return
+      if (
+        this.extractFetchErrorDetails(error).status === 400 &&
+        (await this.isReportClosed(auth, providerId))
+      ) {
+        return
+      }
+      throw error
+    }
+  }
+
+  private async isReportClosed(
+    auth: TemplateApiModuleActionProps['auth'],
+    providerId: string,
+  ): Promise<boolean> {
+    try {
+      const { status } = await this.directorateOfEqualityService.getReport(
+        auth,
+        providerId,
+      )
+      return CLOSED_REPORT_STATUSES.includes(status)
+    } catch {
+      return false
+    }
+  }
+
   // Finalises the draft; only the pre-dataEntry answers need patching onto
   // it first — the report's narrative content was already pushed live via
   // the directorate-of-equality-application GraphQL resolver's
@@ -1019,7 +1042,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           {
             company: {
               name: answers.generalInformation?.companyName ?? '',
-              nationalId: answers.generalInformation?.nationalId ?? '',
               address: answers.generalInformation?.address ?? '',
               city: answers.generalInformation?.municipality ?? '',
               postcode: answers.generalInformation?.postalCode ?? '',

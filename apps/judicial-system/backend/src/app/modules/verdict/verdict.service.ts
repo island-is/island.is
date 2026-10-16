@@ -11,10 +11,7 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CourtSessionRulingType,
@@ -26,6 +23,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { ServiceRequirement } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware'
 import { InternalCaseService, PdfService } from '../case'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
@@ -279,7 +277,7 @@ export class VerdictService {
       isVerdictServed && defendant?.isDrivingLicenseSuspended
 
     if (shouldSendDrivingLicenseSuspensionNotification) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         caseId: theCase.id,
         body: {
@@ -682,12 +680,26 @@ export class VerdictService {
                 serviceInformationForDefendant:
                   verdict.serviceInformationForDefendant,
                 isDefaultJudgement: verdict.isDefaultJudgement,
+                // These three are the office's record of what became of the
+                // judgment, and they came against the judgment rather than
+                // against the copy of it that was served - so re-serving must
+                // not lose them. Everything that reads them asks the
+                // defendant's latest verdict, so a value left behind on the
+                // superseded row reads as if it had never been recorded: the
+                // appealed case lists and the read access that goes with them
+                // for the appeal date, "Áfrýjunarleyfi" for the leave request,
+                // and "Sýknudómar" for the acquittal.
+                appealDate: verdict.appealDate,
+                defendantHasRequestedAppeal:
+                  verdict.defendantHasRequestedAppeal,
+                isAcquittedByPublicProsecutionOffice:
+                  verdict.isAcquittedByPublicProsecutionOffice,
               },
               { transaction },
             )
           }
 
-          addMessagesToQueue({
+          queueMessagesAfterCommit({
             type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
             user,
             caseId: theCase.id,

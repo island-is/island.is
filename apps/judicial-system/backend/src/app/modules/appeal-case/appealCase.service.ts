@@ -13,10 +13,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
   AppealCaseNotificationType,
@@ -42,6 +39,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { queueMessagesAfterCommit } from '../../middleware'
 import { FileService } from '../file'
 import {
   AppealCase,
@@ -292,7 +290,7 @@ export class AppealCaseService {
         caseFile.category &&
         fileCategories.includes(caseFile.category)
       ) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId: theCase.id,
@@ -301,7 +299,7 @@ export class AppealCaseService {
       }
     }
 
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -340,7 +338,7 @@ export class AppealCaseService {
         caseFile.category &&
         fileCategories.includes(caseFile.category)
       ) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId: theCase.id,
@@ -349,7 +347,7 @@ export class AppealCaseService {
       }
     }
 
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -363,7 +361,7 @@ export class AppealCaseService {
     appealCase: AppealCase,
     user: User,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -385,7 +383,7 @@ export class AppealCaseService {
         caseFile.category &&
         caseFile.category === CaseFileCategory.APPEAL_RULING
       ) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId: theCase.id,
@@ -394,7 +392,7 @@ export class AppealCaseService {
       }
     }
 
-    addMessagesToQueue(
+    queueMessagesAfterCommit(
       {
         type: MessageType.APPEAL_CASE_NOTIFICATION,
         user,
@@ -411,7 +409,7 @@ export class AppealCaseService {
     )
 
     if (theCase.origin === CaseOrigin.LOKE) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_POLICE_APPEAL,
         user,
         caseId: theCase.id,
@@ -425,7 +423,7 @@ export class AppealCaseService {
     appealCase: AppealCase,
     user: User,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -439,7 +437,7 @@ export class AppealCaseService {
     appealCase: AppealCase,
     user: User,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -466,7 +464,7 @@ export class AppealCaseService {
           CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
         ].includes(caseFile.category)
       ) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
           user,
           caseId: theCase.id,
@@ -475,7 +473,7 @@ export class AppealCaseService {
       }
     }
 
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
       user,
       caseId: theCase.id,
@@ -492,7 +490,7 @@ export class AppealCaseService {
     appealCase: AppealCase,
     user: User,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES,
       user,
       caseId: theCase.id,
@@ -521,7 +519,7 @@ export class AppealCaseService {
     user: User,
     userIds: string[],
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -830,12 +828,11 @@ export class AppealCaseService {
     // appeal rather than a joined one.
     await this.lockCaseForVerdictAppeal(theCase, user, actor, transaction)
 
-    const [existingAppealCase] = await this.appealCaseRepositoryService.findAll(
-      {
-        where: { caseId: theCase.id, appealType: AppealCaseType.VERDICT },
-        transaction,
-      },
-    )
+    const existingAppealCase =
+      await this.appealCaseRepositoryService.findVerdictAppealByCaseId(
+        theCase.id,
+        { transaction },
+      )
 
     // The appealDate check above reads the case as it was loaded before the
     // transaction, so it cannot see an appeal filed in the meantime - two
@@ -857,10 +854,10 @@ export class AppealCaseService {
       }
 
       const appealEventLogs =
-        await this.appealEventLogRepositoryService.findAll({
-          where: { appealCaseId: existingAppealCase.id },
-          transaction,
-        })
+        await this.appealEventLogRepositoryService.findAllForAppealCase(
+          existingAppealCase.id,
+          { transaction },
+        )
 
       if (hasStandingVerdictAppeal({ appealEventLogs }, defendantId, side)) {
         throw new ForbiddenException(
@@ -937,7 +934,7 @@ export class AppealCaseService {
     // portal, and only then: an appeal the office registered itself is one it
     // already knows about, and the prosecution's own appeal needs no telling.
     if (actor === 'DEFENDER') {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
@@ -1294,12 +1291,11 @@ export class AppealCaseService {
     // then re-read the freshly committed set. The lock must precede the update:
     // taking it after would let each transaction hold a lock on its own updated
     // row and deadlock on the other's.
-    await this.appealDecisionRepositoryService.findAll({
-      where: { caseId: theCase.id, rulingFileId },
-      order: [['id', 'ASC']],
-      lock: Transaction.LOCK.UPDATE,
-      transaction,
-    })
+    await this.appealDecisionRepositoryService.lockAllForRuling(
+      theCase.id,
+      rulingFileId,
+      { transaction },
+    )
 
     const withdrawnDate = nowFactory()
 
@@ -1329,10 +1325,12 @@ export class AppealCaseService {
     )
 
     // The appeal stands until every party that appealed in court has withdrawn.
-    const appealDecisions = await this.appealDecisionRepositoryService.findAll({
-      where: { caseId: theCase.id, rulingFileId },
-      transaction,
-    })
+    const appealDecisions =
+      await this.appealDecisionRepositoryService.findAllForRuling(
+        theCase.id,
+        rulingFileId,
+        { transaction },
+      )
     const allWithdrawn = appealDecisions
       .filter((d) => d.decision === CaseAppealDecision.APPEAL)
       .every((d) => d.withdrawnDate)
@@ -1422,10 +1420,11 @@ export class AppealCaseService {
       }
     }
 
-    const appealEventLogs = await this.appealEventLogRepositoryService.findAll({
-      where: { appealCaseId: appealCase.id },
-      transaction,
-    })
+    const appealEventLogs =
+      await this.appealEventLogRepositoryService.findAllForAppealCase(
+        appealCase.id,
+        { transaction },
+      )
 
     const standingAppellants = standingVerdictAppellants({ appealEventLogs })
     const isWithdrawn = (appellant: {
