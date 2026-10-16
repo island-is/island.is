@@ -11,8 +11,10 @@ import {
 import { PaymentsApi } from '@island.is/clients/payments'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { FetchError } from '@island.is/clients/middlewares'
-import { ApplicationStatus } from '@island.is/application/types'
-import { getSlugFromType } from '@island.is/application/core'
+import {
+  ApplicationStatus,
+  getApplicationPath,
+} from '@island.is/application/types'
 import { ConfigType } from '@nestjs/config'
 
 @Injectable()
@@ -122,17 +124,14 @@ export class ApplicationChargeService {
   }
 
   async getApplicationLink(application: Pick<Application, 'id' | 'typeId'>) {
-    let applicationSlug
-    if (application?.typeId) {
-      applicationSlug = getSlugFromType(application.typeId)
-    } else {
+    if (!application.typeId) {
       throw new NotFoundException(
         `application type id was not found for application id ${application.id}`,
       )
     }
 
     const baseUrl = new URL(this.config.clientLocationOrigin)
-    baseUrl.pathname = `umsoknir/${applicationSlug}/${application.id}`
+    baseUrl.pathname = getApplicationPath(application.typeId, application.id)
     const baseUrlString = baseUrl.toString()
 
     return baseUrlString

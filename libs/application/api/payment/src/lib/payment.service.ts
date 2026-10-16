@@ -8,7 +8,6 @@ import {
   ExtraData,
 } from '@island.is/clients/charge-fjs-v2'
 import { User } from '@island.is/auth-nest-tools'
-import { getSlugFromType } from '@island.is/application/core'
 import { CreateChargeResult } from './types/CreateChargeResult'
 
 import {
@@ -20,6 +19,7 @@ import { ConfigType } from '@nestjs/config'
 import {
   PaymentType as BasePayment,
   BasicChargeItem,
+  getApplicationPath,
 } from '@island.is/application/types'
 import { AuditService } from '@island.is/nest/audit'
 import { PaymentStatus } from './types/paymentStatus'
@@ -541,17 +541,14 @@ export class PaymentService {
       )
     }
 
-    let applicationSlug
-    if (application?.typeId) {
-      applicationSlug = getSlugFromType(application.typeId)
-    } else {
+    if (!application.typeId) {
       throw new NotFoundException(
         `application type id was not found for application id ${applicationId}`,
       )
     }
 
     const baseUrl = new URL(this.config.clientLocationOrigin)
-    baseUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
+    baseUrl.pathname = getApplicationPath(application.typeId, applicationId)
     const baseUrlString = baseUrl.toString()
 
     return baseUrlString

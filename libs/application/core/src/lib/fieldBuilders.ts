@@ -72,6 +72,7 @@ const extractCommonFields = (
 ) => {
   const {
     condition,
+    clientShowWhen,
     defaultValue,
     description,
     disabled = false,
@@ -91,6 +92,7 @@ const extractCommonFields = (
   return {
     id,
     condition,
+    clientShowWhen,
     defaultValue,
     description,
     disabled,
@@ -1234,6 +1236,7 @@ export const buildDisplayField = (
     suffix,
     rightAlign,
     halfWidthOwnline,
+    clientValueExpression,
   } = data
   return {
     ...extractCommonFields(data),
@@ -1247,6 +1250,7 @@ export const buildDisplayField = (
     suffix,
     rightAlign,
     halfWidthOwnline,
+    clientValueExpression,
   }
 }
 
