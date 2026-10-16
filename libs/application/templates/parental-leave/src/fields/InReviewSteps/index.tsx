@@ -20,7 +20,6 @@ import {
   StartDateOptions,
   States,
 } from '../../constants'
-import { useRemainingRights } from '../../hooks/useRemainingRights'
 import { YES } from '@island.is/application/core'
 
 const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
@@ -50,12 +49,6 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
       ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS ||
     application.state === ApplicationStates.EMPLOYER_APPROVE_EDITS ||
     application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS
-
-  const lastEndDate = new Date(periods[periods.length - 1].endDate)
-
-  const isUsedAllRights =
-    useRemainingRights(application) > 0 ||
-    lastEndDate.getTime() > new Date().getTime()
 
   const handleSubmit = async (event: string) => {
     const res = await submitApplication({
@@ -120,7 +113,7 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
           </Text>
         )}
         <Box>
-          {canBeEdited && isUsedAllRights && (
+          {canBeEdited && (
             <Box display="inlineBlock">
               <Button
                 colorScheme="default"
