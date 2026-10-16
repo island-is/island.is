@@ -1135,6 +1135,8 @@ export type KeyValueItem = {
   boldValueText?: boolean
   lineAboveKeyText?: boolean
   hideIfEmpty?: boolean
+  // Renders keyText and valueText in a de-emphasized color, e.g. for deleted entries
+  muted?: boolean
   tag?: {
     label: FormText
     variant?: TagVariant

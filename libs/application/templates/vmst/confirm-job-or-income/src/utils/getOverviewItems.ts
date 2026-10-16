@@ -105,6 +105,19 @@ const buildEntryHeading = (
   },
 ]
 
+// The heading keeps its normal color so the red "deleted" tag stays readable;
+// only the entry's fields are muted.
+const buildEntry = (
+  index: number,
+  status: EntryStatus,
+  fields: KeyValueItem[],
+): KeyValueItem[] => [
+  ...buildEntryHeading(index, status),
+  ...fields.map((field) =>
+    status === 'removed' ? { ...field, muted: true } : field,
+  ),
+]
+
 export const getIncomeTypeOverviewItems = (
   answers: FormValue,
 ): Array<KeyValueItem> => {
@@ -136,35 +149,36 @@ export const getCasualWorkOverviewItems = (
     DiffedEntry<NonNullable<ApplicationAnswers['registerCasualWork']>[number]>
   >
 
-  return entries.flatMap(({ entry, status }, index) => [
-    ...buildEntryHeading(index, status),
-    {
-      width: 'half',
-      keyText: m.application.overviewNationalId,
-      valueText: formatKennitala(entry.company.nationalId),
-    },
-    {
-      width: 'half',
-      keyText: m.application.overviewCompany,
-      valueText: entry.company.name ?? '',
-      hideIfEmpty: true,
-    },
-    {
-      width: 'half',
-      keyText: m.application.dateFrom,
-      valueText: formatIsDate(entry.dateFrom),
-    },
-    {
-      width: 'half',
-      keyText: m.application.dateTo,
-      valueText: formatIsDateOrDash(entry.dateTo),
-    },
-    {
-      width: 'half',
-      keyText: m.application.overviewEstimatedAmount,
-      valueText: formatCurrency(entry.estimatedIncome),
-    },
-  ])
+  return entries.flatMap(({ entry, status }, index) =>
+    buildEntry(index, status, [
+      {
+        width: 'half',
+        keyText: m.application.overviewNationalId,
+        valueText: formatKennitala(entry.company.nationalId),
+      },
+      {
+        width: 'half',
+        keyText: m.application.overviewCompany,
+        valueText: entry.company.name ?? '',
+        hideIfEmpty: true,
+      },
+      {
+        width: 'half',
+        keyText: m.application.dateFrom,
+        valueText: formatIsDate(entry.dateFrom),
+      },
+      {
+        width: 'half',
+        keyText: m.application.dateTo,
+        valueText: formatIsDateOrDash(entry.dateTo),
+      },
+      {
+        width: 'half',
+        keyText: m.application.overviewEstimatedAmount,
+        valueText: formatCurrency(entry.estimatedIncome),
+      },
+    ]),
+  )
 }
 
 export const getPartTimeOverviewItems = (
@@ -181,40 +195,41 @@ export const getPartTimeOverviewItems = (
     DiffedEntry<NonNullable<ApplicationAnswers['registerPartTime']>[number]>
   >
 
-  return entries.flatMap(({ entry, status }, index) => [
-    ...buildEntryHeading(index, status),
-    {
-      width: 'half',
-      keyText: m.application.overviewNationalId,
-      valueText: formatKennitala(entry.company.nationalId),
-    },
-    {
-      width: 'half',
-      keyText: m.application.overviewCompany,
-      valueText: entry.company.name ?? '',
-      hideIfEmpty: true,
-    },
-    {
-      width: 'half',
-      keyText: m.application.jobStart,
-      valueText: formatIsDate(entry.jobStart),
-    },
-    {
-      width: 'half',
-      keyText: m.application.jobEnd,
-      valueText: formatIsDateOrIndefinite(entry.jobEnd),
-    },
-    {
-      width: 'half',
-      keyText: m.application.workPercentage,
-      valueText: `${entry.workPercentage}%`,
-    },
-    {
-      width: 'half',
-      keyText: m.application.overviewEstimatedAmount,
-      valueText: formatCurrency(entry.estimatedIncome),
-    },
-  ])
+  return entries.flatMap(({ entry, status }, index) =>
+    buildEntry(index, status, [
+      {
+        width: 'half',
+        keyText: m.application.overviewNationalId,
+        valueText: formatKennitala(entry.company.nationalId),
+      },
+      {
+        width: 'half',
+        keyText: m.application.overviewCompany,
+        valueText: entry.company.name ?? '',
+        hideIfEmpty: true,
+      },
+      {
+        width: 'half',
+        keyText: m.application.jobStart,
+        valueText: formatIsDate(entry.jobStart),
+      },
+      {
+        width: 'half',
+        keyText: m.application.jobEnd,
+        valueText: formatIsDateOrIndefinite(entry.jobEnd),
+      },
+      {
+        width: 'half',
+        keyText: m.application.workPercentage,
+        valueText: `${entry.workPercentage}%`,
+      },
+      {
+        width: 'half',
+        keyText: m.application.overviewEstimatedAmount,
+        valueText: formatCurrency(entry.estimatedIncome),
+      },
+    ]),
+  )
 }
 
 export const getContractWorkOverviewItems = (
@@ -231,19 +246,20 @@ export const getContractWorkOverviewItems = (
     DiffedEntry<NonNullable<ApplicationAnswers['registerContractWork']>[number]>
   >
 
-  return entries.flatMap(({ entry, status }, index) => [
-    ...buildEntryHeading(index, status),
-    {
-      width: 'half',
-      keyText: m.application.overviewContractWorkStart,
-      valueText: formatIsDate(entry.contractJobStart),
-    },
-    {
-      width: 'half',
-      keyText: m.application.overviewContractWorkEnd,
-      valueText: formatIsDateOrDash(entry.workEnds),
-    },
-  ])
+  return entries.flatMap(({ entry, status }, index) =>
+    buildEntry(index, status, [
+      {
+        width: 'half',
+        keyText: m.application.overviewContractWorkStart,
+        valueText: formatIsDate(entry.contractJobStart),
+      },
+      {
+        width: 'half',
+        keyText: m.application.overviewContractWorkEnd,
+        valueText: formatIsDateOrDash(entry.workEnds),
+      },
+    ]),
+  )
 }
 
 export const getPensionOverviewItems = (
@@ -270,34 +286,38 @@ export const getPensionOverviewItems = (
       'incomeTypes.data.pensionTypes',
     ) ?? []
 
-  return entries.flatMap(({ entry, status }, index) => [
-    ...buildEntryHeading(index, status),
-    {
-      width: 'full',
-      keyText: m.application.pensionFund,
-      valueText: getOptionLabel(pensionFunds, entry.pensionFund),
-    },
-    {
-      width: 'half',
-      keyText: m.application.overviewType,
-      valueText: getOptionLabel(pensionTypes, entry.pensionType),
-    },
-    {
-      width: 'half',
-      keyText: m.application.overviewAmountPerMonth,
-      valueText: formatCurrency(entry.amountPerMonth),
-    },
-    {
-      width: 'half',
-      keyText: m.application.dateFrom,
-      valueText: formatIsDate(entry.dateFrom),
-    },
-    {
-      width: 'half',
-      keyText: m.application.dateTo,
-      valueText: formatIsDateOrIndefinite(entry.dateTo, entry.paymentFrequency),
-    },
-  ])
+  return entries.flatMap(({ entry, status }, index) =>
+    buildEntry(index, status, [
+      {
+        width: 'full',
+        keyText: m.application.pensionFund,
+        valueText: getOptionLabel(pensionFunds, entry.pensionFund),
+      },
+      {
+        width: 'half',
+        keyText: m.application.overviewType,
+        valueText: getOptionLabel(pensionTypes, entry.pensionType),
+      },
+      {
+        width: 'half',
+        keyText: m.application.overviewAmountPerMonth,
+        valueText: formatCurrency(entry.amountPerMonth),
+      },
+      {
+        width: 'half',
+        keyText: m.application.dateFrom,
+        valueText: formatIsDate(entry.dateFrom),
+      },
+      {
+        width: 'half',
+        keyText: m.application.dateTo,
+        valueText: formatIsDateOrIndefinite(
+          entry.dateTo,
+          entry.paymentFrequency,
+        ),
+      },
+    ]),
+  )
 }
 
 export const getCapitalIncomeOverviewItems = (
@@ -321,35 +341,39 @@ export const getCapitalIncomeOverviewItems = (
       'incomeTypes.data.capitalIncomeTypes',
     ) ?? []
 
-  return entries.flatMap(({ entry, status }, index) => [
-    ...buildEntryHeading(index, status),
-    {
-      width: 'full',
-      keyText: m.application.overviewCapitalIncomeType,
-      valueText: getOptionLabel(capitalIncomeTypes, entry.paymentType),
-    },
-    {
-      width: 'half',
-      keyText: m.application.overviewCapitalIncomeAmount,
-      valueText: formatCurrency(entry.amountPerMonth),
-    },
-    {
-      width: 'half',
-      keyText: m.application.paymentFrequency,
-      valueText: getPaymentFrequencyLabel(entry.paymentFrequency),
-      hideIfEmpty: true,
-    },
-    {
-      width: 'half',
-      keyText: m.application.dateFrom,
-      valueText: formatIsDate(entry.dateFrom),
-    },
-    {
-      width: 'half',
-      keyText: m.application.dateTo,
-      valueText: formatIsDateOrIndefinite(entry.dateTo, entry.paymentFrequency),
-    },
-  ])
+  return entries.flatMap(({ entry, status }, index) =>
+    buildEntry(index, status, [
+      {
+        width: 'full',
+        keyText: m.application.overviewCapitalIncomeType,
+        valueText: getOptionLabel(capitalIncomeTypes, entry.paymentType),
+      },
+      {
+        width: 'half',
+        keyText: m.application.overviewCapitalIncomeAmount,
+        valueText: formatCurrency(entry.amountPerMonth),
+      },
+      {
+        width: 'half',
+        keyText: m.application.paymentFrequency,
+        valueText: getPaymentFrequencyLabel(entry.paymentFrequency),
+        hideIfEmpty: true,
+      },
+      {
+        width: 'half',
+        keyText: m.application.dateFrom,
+        valueText: formatIsDate(entry.dateFrom),
+      },
+      {
+        width: 'half',
+        keyText: m.application.dateTo,
+        valueText: formatIsDateOrIndefinite(
+          entry.dateTo,
+          entry.paymentFrequency,
+        ),
+      },
+    ]),
+  )
 }
 
 export const getSocialInsuranceOverviewItems = (
@@ -373,33 +397,40 @@ export const getSocialInsuranceOverviewItems = (
       'incomeTypes.data.trTypes',
     ) ?? []
 
-  return entries.flatMap(({ entry, status }, index) => [
-    ...buildEntryHeading(index, status),
-    {
-      width: 'full',
-      keyText: m.application.overviewSocialInsuranceType,
-      valueText: getOptionLabel(socialInsuranceTypes, entry.socialPaymentType),
-    },
-    {
-      width: 'half',
-      keyText: m.application.overviewSocialInsuranceAmount,
-      valueText: formatCurrency(entry.amountPerMonth),
-    },
-    {
-      width: 'half',
-      keyText: m.application.paymentFrequency,
-      valueText: getPaymentFrequencyLabel(entry.paymentFrequency),
-      hideIfEmpty: true,
-    },
-    {
-      width: 'half',
-      keyText: m.application.dateFrom,
-      valueText: formatIsDate(entry.dateFrom),
-    },
-    {
-      width: 'half',
-      keyText: m.application.dateTo,
-      valueText: formatIsDateOrIndefinite(entry.dateTo, entry.paymentFrequency),
-    },
-  ])
+  return entries.flatMap(({ entry, status }, index) =>
+    buildEntry(index, status, [
+      {
+        width: 'full',
+        keyText: m.application.overviewSocialInsuranceType,
+        valueText: getOptionLabel(
+          socialInsuranceTypes,
+          entry.socialPaymentType,
+        ),
+      },
+      {
+        width: 'half',
+        keyText: m.application.overviewSocialInsuranceAmount,
+        valueText: formatCurrency(entry.amountPerMonth),
+      },
+      {
+        width: 'half',
+        keyText: m.application.paymentFrequency,
+        valueText: getPaymentFrequencyLabel(entry.paymentFrequency),
+        hideIfEmpty: true,
+      },
+      {
+        width: 'half',
+        keyText: m.application.dateFrom,
+        valueText: formatIsDate(entry.dateFrom),
+      },
+      {
+        width: 'half',
+        keyText: m.application.dateTo,
+        valueText: formatIsDateOrIndefinite(
+          entry.dateTo,
+          entry.paymentFrequency,
+        ),
+      },
+    ]),
+  )
 }
