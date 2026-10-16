@@ -69,3 +69,8 @@ Start a cleanup worker with this command:
 ```sh
 yarn nx run services-user-notification:cleanup
 ```
+
+### Notification metrics
+
+See [the metrics guide](./metrics/README.md) for nightly collectors, first-read
+tracking, the Datadog dashboard, source configuration and tests.
