@@ -23,6 +23,7 @@ export const informationNavigation: PortalNavigationItem = {
     {
       name: m.myInfo,
       description: m.userInfoIntro,
+      breadcrumbHideParent: true,
       path: InformationPaths.MyInfoRootOverview,
       children: [
         {

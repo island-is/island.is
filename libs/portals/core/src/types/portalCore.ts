@@ -45,6 +45,12 @@ export interface PortalNavigationItem {
   breadcrumbHide?: boolean
 
   /**
+   * Hides the parent from breadcrumbs while this item is the current page.
+   * For a group's landing page, where the parent crumb only leads back here.
+   */
+  breadcrumbHideParent?: boolean
+
+  /**
    * The screen takes over the viewport at phone widths (below the `sm`
    * breakpoint): the layout hides breadcrumbs, the mobile sub-navigation
    * and the sidebar footer for this route. The screen is expected to

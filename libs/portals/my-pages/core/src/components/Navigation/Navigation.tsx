@@ -1,6 +1,7 @@
 import {
   Box,
   BoxProps,
+  Button,
   FocusableBox,
   Icon,
   IconProps,
@@ -17,12 +18,12 @@ import React, {
   ReactNode,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import AnimateHeight from 'react-animate-height'
 
 import * as styles from './Navigation.css'
-import { useScrolledPassed } from '../../hooks/useScrolledPassed/useScrolledPassed'
 
 type NavigationContextProps = {
   baseId: string
@@ -76,7 +77,8 @@ export interface NavigationItem {
   slug?: string[]
 }
 interface MobileNavigationDialogProps {
-  Title: ReactNode
+  title: string
+  titleIcon?: Pick<IconProps, 'icon' | 'type'>
   colorScheme: keyof typeof styles.colorScheme
   items: NavigationItem[]
   renderLink: NavigationTreeProps['renderLink']
@@ -209,6 +211,15 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   const dividerColor = colorSchemeColors[colorScheme]['dividerColor']
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const menuBtnRef = useRef<HTMLElement>(null)
+
+  // Return focus ourselves without scrolling: reakit's own focus return scrolls
+  // the sticky button into view, which the mobile header reads as a scroll up.
+  // Reakit skips its focus return when focus is already outside the dialog.
+  const closeMobileMenu = () => {
+    menuBtnRef.current?.focus({ preventScroll: true })
+    setMobileMenuOpen(false)
+  }
 
   const titleLinkProps = titleLink
     ? {
@@ -220,19 +231,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
     setActiveAccordions(toggleId(activeAccordions, id, singleAccordion))
   }
 
-  const mobileId = 'menuDialog-mobile-test'
-  const [isScrolled, setIsScrolled] = useState<boolean | undefined>(undefined)
-  const scrolled = useScrolledPassed(mobileId)
-
-  useEffect(() => {
-    if (scrolled) {
-      setIsScrolled(true)
-    } else if (isScrolled && !scrolled) {
-      setIsScrolled(false)
-    }
-  }, [scrolled])
-
-  const Title: MobileNavigationDialogProps['Title'] = titleLinkProps ? (
+  const Title: ReactNode = titleLinkProps ? (
     renderLink(
       <FocusableBox
         component={asSpan ? 'span' : 'a'}
@@ -294,39 +293,46 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
       value={{ baseId, activeAccordions, toggleAccordion }}
     >
       {isMenuDialog ? (
-        <Box
-          background={backgroundColor}
-          alignItems="center"
-          borderRadius="large"
-          className={cn(styles.scrolledMenu, {
-            [styles.scrolledMenuVisible]: isScrolled,
-          })}
-          id={mobileId}
-        >
+        <Box background={backgroundColor} alignItems="center">
           <Box
+            ref={menuBtnRef}
             component="button"
             type="button"
-            className={styles.menuBtn}
+            className={cn(styles.menuRow, styles.menuBtn)}
             onClick={() => setMobileMenuOpen(true)}
             aria-expanded={mobileMenuOpen}
             aria-haspopup="dialog"
           >
-            <MobileButton
+            <MobileHeaderRow
               title={activeItemTitle ?? title}
               titleIcon={titleIcon}
-              colorScheme={colorScheme}
-              mobileNavigationButtonOpenLabel={mobileNavigationButtonOpenLabel}
+              color={activeColor}
+              action={
+                // Span, not button: the whole row is already the button
+                <Button
+                  as="span"
+                  variant="utility"
+                  colorScheme="white"
+                  size="small"
+                  icon="menu"
+                  iconType="outline"
+                  unfocusable
+                >
+                  {mobileNavigationButtonOpenLabel}
+                </Button>
+              }
             />
           </Box>
           <MobileNavigationDialog
-            Title={Title}
+            title={title}
+            titleIcon={titleIcon}
             colorScheme={colorScheme}
             items={items}
             renderLink={renderLink}
             asSpan={asSpan}
             isVisible={mobileMenuOpen}
             mobileNavigationButtonCloseLabel={mobileNavigationButtonCloseLabel}
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={closeMobileMenu}
           />
         </Box>
       ) : (
@@ -357,7 +363,8 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
 }
 
 const MobileNavigationDialog = ({
-  Title,
+  title,
+  titleIcon,
   colorScheme,
   items,
   renderLink,
@@ -379,30 +386,29 @@ const MobileNavigationDialog = ({
       <Box
         component="nav"
         background={colorSchemeColors[colorScheme]['backgroundColor']}
-        paddingY={2}
+        paddingBottom={2}
       >
-        <Box position="relative">
-          {Title}
-          <Box
-            position="absolute"
-            right={0}
-            marginRight={[2, 2, 2, 4]}
-            style={{ top: '50%', transform: 'translateY(-50%)' }}
-          >
-            <FocusableBox
-              component="button"
-              onClick={onClick}
-              background="white"
-              className={styles.dropdownIcon}
-            >
-              <VisuallyHidden>
-                {mobileNavigationButtonCloseLabel}
-              </VisuallyHidden>
-              <Icon icon="close" size="medium" color="blue400" />
-            </FocusableBox>
-          </Box>
+        <Box className={styles.menuRow}>
+          <MobileHeaderRow
+            title={title}
+            titleIcon={titleIcon}
+            color={colorSchemeColors[colorScheme]['color']}
+            action={
+              <FocusableBox
+                component="button"
+                onClick={onClick}
+                background="white"
+                className={styles.dropdownIcon}
+              >
+                <VisuallyHidden>
+                  {mobileNavigationButtonCloseLabel}
+                </VisuallyHidden>
+                <Icon icon="close" size="medium" color="blue400" />
+              </FocusableBox>
+            }
+          />
         </Box>
-        <Box display="flex" alignItems="center" paddingY={2}>
+        <Box display="flex" alignItems="center" paddingBottom={2}>
           <Box
             background={colorSchemeColors[colorScheme]['dividerColor']}
             className={styles.divider}
@@ -420,73 +426,58 @@ const MobileNavigationDialog = ({
     </ModalBase>
   )
 }
-interface MobileButtonProps {
+interface MobileHeaderRowProps {
   title: string
   titleIcon?: Pick<IconProps, 'icon' | 'type'>
-  colorScheme: keyof typeof styles.colorScheme
-  mobileNavigationButtonOpenLabel?: string
+  color: Colors
+  action: ReactNode
 }
 
-const MobileButton = ({
+// Same markup for the menu button and the dialog header, so they line up
+const MobileHeaderRow = ({
   title,
-  colorScheme,
   titleIcon,
-  mobileNavigationButtonOpenLabel,
-}: MobileButtonProps) => {
-  return (
+  color,
+  action,
+}: MobileHeaderRowProps) => (
+  <Box
+    component="span"
+    display="flex"
+    justifyContent="spaceBetween"
+    alignItems="center"
+    paddingY={1}
+  >
+    <Box display="flex" flexDirection="row">
+      {titleIcon && (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          marginRight={2}
+        >
+          <Icon
+            icon={titleIcon.icon}
+            type="outline"
+            size="medium"
+            color={color}
+          />
+        </Box>
+      )}
+      <Text as="span" variant="h4" color={color} lineHeight="lg">
+        {title}
+      </Text>
+    </Box>
     <Box
       component="span"
-      display="flex"
-      justifyContent="spaceBetween"
-      alignItems="center"
-      paddingY={1}
+      position="absolute"
+      right={0}
+      marginRight={2}
+      style={{ top: '50%', transform: 'translateY(-50%)' }}
     >
-      <Box display="flex" flexDirection="row">
-        {titleIcon && (
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            marginRight={2}
-            id="mobile-title-icon"
-          >
-            <Icon
-              icon={titleIcon.icon}
-              type="outline"
-              size="medium"
-              color={colorSchemeColors[colorScheme]['activeColor']}
-            />
-          </Box>
-        )}
-        <Text
-          as="span"
-          variant="h4"
-          color={colorSchemeColors[colorScheme]['activeColor']}
-          lineHeight="lg"
-        >
-          {title}
-        </Text>
-      </Box>
-
-      <Box
-        component="span"
-        position="absolute"
-        right={0}
-        marginRight={2}
-        style={{ top: '50%', transform: 'translateY(-50%)' }}
-      >
-        <FocusableBox
-          component="span"
-          background="white"
-          className={styles.dropdownIcon}
-        >
-          <VisuallyHidden>{mobileNavigationButtonOpenLabel}</VisuallyHidden>
-          <Icon icon="menu" size="medium" color={'blue400'} />
-        </FocusableBox>
-      </Box>
+      {action}
     </Box>
-  )
-}
+  </Box>
+)
 
 export const NavigationTree: FC<
   React.PropsWithChildren<NavigationTreeProps>

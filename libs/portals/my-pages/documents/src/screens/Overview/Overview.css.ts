@@ -10,18 +10,6 @@ export const checkboxWrap = style({
   justifyContent: 'center',
 })
 
-export const bullet = style({
-  height: 4,
-  width: 4,
-  marginTop: 2,
-  backgroundColor: theme.color.blue400,
-  ...themeUtils.responsiveStyle({
-    xs: {
-      marginTop: 4,
-    },
-  }),
-})
-
 export const loading = style({
   minHeight: 200,
 })
