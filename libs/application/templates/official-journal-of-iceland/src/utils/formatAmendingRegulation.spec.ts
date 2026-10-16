@@ -1,4 +1,5 @@
-import { getDiff, HTMLText } from '@island.is/regulations'
+import getStructuredDiff from '@dmr.is/regulations-tools/structuredDiff-browser'
+import { HTMLText } from '@island.is/regulations'
 import { RegulationImpactSchema } from '../lib/dataSchema'
 import {
   formatAmendingBodyWithArticlePrefix,
@@ -33,7 +34,7 @@ const amend = (
   id: overrides.name ?? '1',
   type: 'amend',
   name: '0123/2020',
-  diff: getDiff(before as HTMLText, after as HTMLText).diff,
+  diff: getStructuredDiff(before as HTMLText, after as HTMLText).diff,
   ...overrides,
 })
 
@@ -157,6 +158,142 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     )
   })
 
+  describe('paragraphs that share words', () => {
+    // The case getStructuredDiff is for: getDiff spread a new paragraph that
+    // shares words with its neighbours over them.
+    const SHARED = [
+      title('1. gr.'),
+      '<p>Skoðunarstofa skal skoða ökutæki árlega.</p>',
+      '<p>Skoðunarstofa skal skrá niðurstöður skoðunar ökutækja.</p>',
+      '<p>Ráðherra setur nánari reglur um skoðun ökutækja.</p>',
+      title('2. gr. Gildistaka'),
+      GILDISTAKA,
+    ].join('')
+    const NEW =
+      '<p>Skoðunarstofa skal senda niðurstöður skoðunar ökutækja til Samgöngustofu.</p>'
+
+    it('adds a paragraph without touching its neighbours', () => {
+      const after = SHARED.replace(
+        '<p>Ráðherra setur',
+        NEW + '<p>Ráðherra setur',
+      )
+      expect(body(amend(after, {}, SHARED))).toEqual([
+        article(
+          1,
+          '<p>Á eftir 2. mgr. 1. gr. reglugerðarinnar kemur ný málsgrein sem orðast svo:</p>' +
+            NEW,
+        ),
+        article(2, CLOSING),
+      ])
+    })
+
+    it('removes a paragraph without touching its neighbours', () => {
+      const after = SHARED.replace(
+        '<p>Skoðunarstofa skal skrá niðurstöður skoðunar ökutækja.</p>',
+        '',
+      )
+      expect(body(amend(after, {}, SHARED))).toEqual([
+        article(1, '<p>2. mgr. 1. gr. reglugerðarinnar fellur brott.</p>'),
+        article(2, CLOSING),
+      ])
+    })
+  })
+
+  describe('articles renumbered by a new article', () => {
+    it('does not amend the heading of an article that was only renumbered', () => {
+      const after = BASE.replace(
+        title('2. gr. Gildistaka'),
+        title('2. gr.') + '<p>Kilo lima mike.</p>' + title('3. gr. Gildistaka'),
+      )
+      const output = body(amend(after)).join('')
+      expect(output).toContain(
+        '<p>Á eftir 1. gr. reglugerðarinnar kemur ný grein, 2. gr., svohljóðandi:</p>',
+      )
+      expect(output).not.toContain('Fyrirsögn')
+    })
+
+    it('cites a renumbered article by its number in the base regulation', () => {
+      const before = [
+        title('1. gr.'),
+        '<p>Alfa bravo charlie.</p>',
+        title('2. gr.'),
+        '<p>Delta echo foxtrot.</p>',
+        title('3. gr. Gildistaka'),
+        GILDISTAKA,
+      ].join('')
+      const after = before
+        .replace(
+          title('2. gr.'),
+          title('2. gr.') + '<p>Kilo lima mike.</p>' + title('3. gr.'),
+        )
+        .replace(title('3. gr. Gildistaka'), title('4. gr. Gildistaka'))
+        .replace('Delta echo', 'Delta november')
+      const output = body(amend(after, {}, before)).join('')
+      expect(output).toContain(
+        '<p>1. mgr. 2. gr. reglugerðarinnar breytist og orðast svo:</p><p>Delta november foxtrot.</p>',
+      )
+      expect(output).not.toContain('Fyrirsögn')
+    })
+  })
+
+  describe('formatting changed, wording did not', () => {
+    it('names a reformatted word', () => {
+      const [first] = body(
+        amend(BASE.replace('Delta echo', 'Delta <em>echo</em>')),
+      )
+      expect(first).toBe(
+        article(
+          1,
+          '<p>Snið „echo“ í 2. mgr. 1. gr. reglugerðarinnar hefur breyst.</p>',
+        ),
+      )
+    })
+
+    it('names every reformatted word', () => {
+      const before = BASE.replace(
+        'Delta echo foxtrot.',
+        'Delta echo foxtrot hotel india juliett.',
+      )
+      const after = before.replace(
+        'Delta echo foxtrot hotel india juliett.',
+        '<strong>Delta</strong> echo foxtrot hotel <em>india</em> juliett.',
+      )
+      const [first] = body(amend(after, {}, before))
+      expect(first).toBe(
+        article(
+          1,
+          '<p>Snið „Delta“ og „india“ í 2. mgr. 1. gr. reglugerðarinnar hefur breyst.</p>',
+        ),
+      )
+    })
+
+    it('names the paragraph when all of it was reformatted', () => {
+      const [first] = body(
+        amend(
+          BASE.replace(
+            '<p>Delta echo foxtrot.</p>',
+            '<p><em>Delta echo foxtrot.</em></p>',
+          ),
+        ),
+      )
+      expect(first).toBe(
+        article(1, '<p>Snið 2. mgr. 1. gr. reglugerðarinnar hefur breyst.</p>'),
+      )
+    })
+  })
+
+  it('names a heading whose subtitle was only made italic', () => {
+    const before = BASE.replace(title('1. gr.'), title('1. gr. Gildissvið'))
+    const after = BASE.replace(
+      title('1. gr.'),
+      title('1. gr. <em>Gildissvið</em>'),
+    )
+    const [first] = body(amend(after, {}, before))
+    expect(first).toContain(
+      '<p>Snið fyrirsagnar 1. gr. reglugerðarinnar hefur breyst.</p>',
+    )
+  })
+
   it('closes the list when list items are added', () => {
     const [first] = body(
       amend(
@@ -272,7 +409,7 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
         appendixes: [
           {
             title: 'Viðauki I',
-            diff: getDiff(
+            diff: getStructuredDiff(
               '<p>Alfa.</p>' as HTMLText,
               '<p>Bravo.</p>' as HTMLText,
             ).diff,
@@ -479,9 +616,403 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     ])
   })
 
+  it('gives a renumbered and renamed heading its new title alone', () => {
+    const before = [
+      title('1. gr.'),
+      '<p>Alfa bravo charlie.</p>',
+      title('2. gr. Gildissvið'),
+      '<p>Delta echo foxtrot.</p>',
+      title('3. gr. Gildistaka'),
+      GILDISTAKA,
+    ].join('')
+    const after = before
+      .replace(
+        title('2. gr. Gildissvið'),
+        title('2. gr. Nýmæli') +
+          '<p>Kilo lima mike.</p>' +
+          title('3. gr. Umfang reglna'),
+      )
+      .replace(title('3. gr. Gildistaka'), title('4. gr. Gildistaka'))
+    const output = body(amend(after, {}, before)).join('')
+    expect(output).toContain(
+      '<p>Fyrirsögn 2. gr. reglugerðarinnar breytist og orðast svo:</p><p>Umfang reglna',
+    )
+    expect(output).not.toContain('3<br />')
+  })
+
+  it('restates a paragraph when only whitespace was reformatted', () => {
+    const before = BASE.replace(
+      'Alfa bravo charlie.',
+      'Alfa bravo charlie delta echo.',
+    )
+    const after = before.replace(
+      'Alfa bravo charlie delta echo.',
+      'Alfa<em> </em>bravo charlie delta echo.',
+    )
+    expect(body(amend(after, {}, before))[0]).toBe(
+      article(
+        1,
+        '<p>1. mgr. 1. gr. reglugerðarinnar breytist og orðast svo:</p><p>Alfa bravo charlie delta echo.</p>',
+      ),
+    )
+  })
+
+  it('does not amend a removed signature', () => {
+    const SIGNATURE =
+      '<p class="Dags">Innviðaráðuneytinu, 1. mars 2010.</p><p class="FHUndirskr">Jón Jónsson</p>'
+    expect(body(amend(BASE, {}, BASE + SIGNATURE))).toEqual([])
+  })
+
   it('returns nothing when there is nothing to amend', () => {
     expect(body(amend(BASE))).toEqual([])
     expect(body()).toEqual([])
+  })
+})
+
+describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
+  const list = (type: string, ...items: string[]) =>
+    `<ol${type ? ` type="${type}"` : ''}>${items
+      .map((item) => `<li>${item}</li>`)
+      .join('')}</ol>`
+  const withList = (type: string, ...items: string[]) =>
+    [
+      title('1. gr.'),
+      '<p>Reglugerð þessi gildir um:</p>',
+      list(type, ...items),
+      title('2. gr. Gildistaka'),
+      GILDISTAKA,
+    ].join('')
+  const first = (before: string, after: string) =>
+    formatAmendingBodyWithArticlePrefix([
+      {
+        id: '1',
+        type: 'amend',
+        name: '0123/2020',
+        diff: getStructuredDiff(before as HTMLText, after as HTMLText).diff,
+      },
+    ])[0]
+
+  it('makes töluliðir stafliðir', () => {
+    expect(
+      first(
+        withList('', 'fólksbifreiðar,', 'vörubifreiðar.'),
+        withList('a', 'fólksbifreiðar,', 'vörubifreiðar.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Töluliðir í 1. mgr. 1. gr. reglugerðarinnar verða stafliðir.</p>',
+      ),
+    )
+  })
+
+  it('makes stafliðir töluliðir', () => {
+    expect(
+      first(
+        withList('a', 'fólksbifreiðar,', 'vörubifreiðar.'),
+        withList('', 'fólksbifreiðar,', 'vörubifreiðar.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Stafliðir í 1. mgr. 1. gr. reglugerðarinnar verða töluliðir.</p>',
+      ),
+    )
+  })
+
+  it('makes töluliðir stafliðir and restates them when an item changed too', () => {
+    expect(
+      first(
+        withList('', 'fólksbifreiðar,', 'vörubifreiðar.'),
+        withList('a', 'fólksbifreiðar,', 'vöruflutningabifreiðar.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Töluliðir í 1. mgr. 1. gr. reglugerðarinnar verða stafliðir og orðast svo:</p>' +
+          list('a', 'fólksbifreiðar,', 'vöruflutningabifreiðar.'),
+      ),
+    )
+  })
+
+  it('makes stafliðir töluliðir and restates them when an item changed too', () => {
+    expect(
+      first(
+        withList('a', 'fólksbifreiðar,', 'vörubifreiðar.'),
+        withList('', 'fólksbifreiðar,', 'vöruflutningabifreiðar.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Stafliðir í 1. mgr. 1. gr. reglugerðarinnar verða töluliðir og orðast svo:</p>' +
+          list('', 'fólksbifreiðar,', 'vöruflutningabifreiðar.'),
+      ),
+    )
+  })
+
+  it('restates töluliðir when every item changed', () => {
+    expect(
+      first(
+        withList('', 'alfa,', 'bravo.'),
+        withList('', 'charlie,', 'delta,', 'echo.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Töluliðir í 1. mgr. 1. gr. reglugerðarinnar orðast svo:</p>' +
+          list('', 'charlie,', 'delta,', 'echo.'),
+      ),
+    )
+  })
+
+  it('restates stafliðir when every item changed', () => {
+    expect(
+      first(
+        withList('a', 'alfa,', 'bravo.'),
+        withList('a', 'charlie,', 'delta,', 'echo.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Stafliðir í 1. mgr. 1. gr. reglugerðarinnar orðast svo:</p>' +
+          list('a', 'charlie,', 'delta,', 'echo.'),
+      ),
+    )
+  })
+
+  it('names a tölul. whose formatting alone changed', () => {
+    expect(
+      first(
+        withList('', 'fólksbifreiðar,', 'vörubifreiðar,', 'bifhjól.'),
+        withList('', 'fólksbifreiðar,', '<em>vörubifreiðar</em>,', 'bifhjól.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Eftirfarandi breytingar verða á 1. mgr. 1. gr. reglugerðarinnar:</p> <p>Snið 2. tölul. hefur breyst.</p>',
+      ),
+    )
+  })
+
+  it('names a stafliður whose formatting alone changed', () => {
+    expect(
+      first(
+        withList('a', 'fólksbifreiðar,', 'vörubifreiðar,', 'bifhjól.'),
+        withList('a', 'fólksbifreiðar,', '<em>vörubifreiðar</em>,', 'bifhjól.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Eftirfarandi breytingar verða á 1. mgr. 1. gr. reglugerðarinnar:</p> <p>Snið b-liðar hefur breyst.</p>',
+      ),
+    )
+  })
+
+  describe('stafliðir nested in töluliðir', () => {
+    const nested = (second: string) =>
+      `alfa:${list('a', 'eitt atriði hér,', second)}`
+    const BEFORE = withList('', nested('annað atriði hér.'), 'bravo.')
+    const LEAD =
+      '<p>Eftirfarandi breytingar verða á 1. mgr. 1. gr. reglugerðarinnar:</p> '
+
+    it('keeps the tölul. prefix for a nested change when the tölul. was reformatted too', () => {
+      expect(
+        first(
+          BEFORE,
+          withList(
+            '',
+            `<em>alfa:</em>${list(
+              'a',
+              'eitt atriði hér,',
+              'annað atriði þar.',
+            )}`,
+            'bravo.',
+          ),
+        ),
+      ).toBe(
+        article(
+          1,
+          LEAD +
+            '<p>Snið 1. tölul. hefur breyst.</p><p>Töluliður 1, b-liður orðast svo: annað atriði þar.</p>',
+        ),
+      )
+    })
+
+    it('cites the tölul. for every changed stafliður in it', () => {
+      expect(
+        first(
+          BEFORE,
+          withList(
+            '',
+            `alfa:${list('a', 'eitt atriði þar,', 'annað atriði þar.')}`,
+            'bravo.',
+          ),
+        ),
+      ).toBe(
+        article(
+          1,
+          LEAD +
+            '<p>Töluliður 1, a-liður orðast svo: eitt atriði þar,</p><p>Töluliður 1, b-liður orðast svo: annað atriði þar.</p>',
+        ),
+      )
+    })
+
+    it('cites the reformatted tölul. for every changed stafliður in it', () => {
+      expect(
+        first(
+          BEFORE,
+          withList(
+            '',
+            `<em>alfa:</em>${list(
+              'a',
+              'eitt atriði þar,',
+              'annað atriði þar.',
+            )}`,
+            'bravo.',
+          ),
+        ),
+      ).toBe(
+        article(
+          1,
+          LEAD +
+            '<p>Snið 1. tölul. hefur breyst.</p><p>Töluliður 1, a-liður orðast svo: eitt atriði þar,</p><p>Töluliður 1, b-liður orðast svo: annað atriði þar.</p>',
+        ),
+      )
+    })
+
+    it('does not name the outer list when only the nested list changed type', () => {
+      // One of the two lists changed type, and the markup does not say
+      // which, so nothing is generated: the author words it.
+      expect(
+        first(
+          withList('', `alfa:${list('a', 'eitt,', 'tvö.')}`, 'bravo.'),
+          withList('', `alfa:${list('', 'eitt,', 'tvö.')}`, 'bravo.'),
+        ),
+      ).toBeUndefined()
+    })
+
+    it('rewords a nested stafliður', () => {
+      expect(
+        first(BEFORE, withList('', nested('annað atriði þar.'), 'bravo.')),
+      ).toBe(
+        article(
+          1,
+          LEAD + '<p>Töluliður 1, b-liður orðast svo: annað atriði þar.</p>',
+        ),
+      )
+    })
+
+    it('names a nested stafliður whose formatting alone changed', () => {
+      expect(
+        first(
+          BEFORE,
+          withList('', nested('<em>annað atriði hér.</em>'), 'bravo.'),
+        ),
+      ).toBe(
+        article(1, LEAD + '<p>Töluliður 1, snið b-liðar hefur breyst.</p>'),
+      )
+    })
+
+    describe('when the wording of the tölul. changed too', () => {
+      const withLead = (lead: string, ...items: string[]) =>
+        withList('', `${lead}${list('a', ...items)}`, 'bravo.')
+      const REWORDED = withLead(
+        'alfa yfirlit atriða:',
+        'eitt atriði hér,',
+        'annað atriði hér.',
+      )
+
+      it('restates the tölul. once, with its stafliðir as a list', () => {
+        expect(
+          first(
+            REWORDED,
+            withLead(
+              'alfa samantekt atriða:',
+              'eitt atriði þar,',
+              'annað atriði þar.',
+            ),
+          ),
+        ).toBe(
+          article(
+            1,
+            LEAD +
+              '<p>1. tölul. orðast svo: alfa samantekt atriða:</p><ol type="a"><li>eitt atriði þar,</li><li>annað atriði þar.</li></ol>',
+          ),
+        )
+      })
+
+      it('leaves a removed stafliður out of the restated tölul.', () => {
+        expect(
+          first(
+            REWORDED,
+            withLead('alfa samantekt atriða:', 'eitt atriði hér,'),
+          ),
+        ).toBe(
+          article(
+            1,
+            LEAD +
+              '<p>1. tölul. orðast svo: alfa samantekt atriða:</p><ol type="a"><li>eitt atriði hér,</li></ol>',
+          ),
+        )
+      })
+    })
+
+    it('numbers a tölul. after a nested list by its place in its own list', () => {
+      expect(
+        first(BEFORE, withList('', nested('annað atriði hér.'), 'charlie.')),
+      ).toBe(article(1, LEAD + '<p>2. tölul. orðast svo: charlie.</p>'))
+      expect(
+        first(
+          BEFORE,
+          withList('', nested('annað atriði hér.'), '<em>bravo.</em>'),
+        ),
+      ).toBe(article(1, LEAD + '<p>Snið 2. tölul. hefur breyst.</p>'))
+    })
+  })
+
+  it('keeps new paragraphs on either side of a list that changed type', () => {
+    const before = [
+      title('1. gr.'),
+      '<p>Alfa bravo charlie.</p>',
+      list('', 'fólksbifreiðar,', 'vörubifreiðar.'),
+      '<p>Golf hotel india.</p>',
+      title('2. gr. Gildistaka'),
+      GILDISTAKA,
+    ].join('')
+    const after = before
+      .replace(
+        '<p>Alfa bravo charlie.</p>',
+        '<p>Alfa bravo charlie.</p><p>Kilo lima mike.</p>',
+      )
+      .replace('<ol>', '<ol type="a">')
+      .replace(
+        '<p>Golf hotel india.</p>',
+        '<p>November oscar papa.</p><p>Golf hotel india.</p>',
+      )
+    const output = formatAmendingBodyWithArticlePrefix([
+      {
+        id: '1',
+        type: 'amend',
+        name: '0123/2020',
+        diff: getStructuredDiff(before as HTMLText, after as HTMLText).diff,
+      },
+    ])
+    expect(
+      output.slice(0, 3).map((a) => a.match(/<p>(.*?)<\/p>/)?.[1]),
+    ).toEqual([
+      'Á eftir 1. mgr. 1. gr. reglugerðarinnar kemur ný málsgrein sem orðast svo:',
+      'Töluliðir í 1. mgr. 1. gr. reglugerðarinnar verða stafliðir.',
+      'Á eftir 1. mgr. 1. gr. reglugerðarinnar kemur ný málsgrein sem orðast svo:',
+    ])
+  })
+
+  it('does not call italic items a change of list type', () => {
+    expect(
+      first(
+        withList('a', 'fólksbifreiðar,', 'vörubifreiðar.'),
+        withList('a', '<em>fólksbifreiðar,</em>', '<em>vörubifreiðar.</em>'),
+      ),
+    ).not.toContain('verða töluliðir')
   })
 })
 
