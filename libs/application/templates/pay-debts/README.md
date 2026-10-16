@@ -13,6 +13,18 @@ amount.
 - [Template-api-module](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/pay-debts/pay-debts.service.ts)
 - [Finance v3 client (X-Road)](https://github.com/island-is/island.is/tree/main/libs/clients/finance-v3)
 
+## Decisions
+
+- **Debts are paid in full.** Partial payment is left out for now, but its
+  code is kept: the commented-out `inputColumn` in `debtsSection.ts` (a
+  per-row amount saved as `debtsToPay`), the footer total beside it, and
+  `getAmountToPay` in `getSelectedDebts.ts`, which clamps a typed amount.
+  Re-enable them to bring partial payment back. Clearing a row's amount
+  then unchecks the row; this is intended.
+- **Up to 100 debts.** The flow supports at most 100 debts per applicant
+  for now. FJS returns them all in one response, so `nextKey` paging is
+  not used.
+
 ## URLs
 
 - [Local - http://localhost:4242/umsoknir/greidum-rikinu](http://localhost:4242/umsoknir/greidum-rikinu)
