@@ -725,13 +725,14 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       application.externalData,
     )
 
-    if (!isEligible?.isEligible) {
+    // Exemption cases (ísl. jaðartilvik) have no application type
+    if (!isEligible?.isEligible || !marpApplicationType) {
       return null
     }
 
     return await this.siaClientService.getEducationLevels(
       auth,
-      marpApplicationType || '',
+      marpApplicationType,
     )
   }
 
@@ -789,9 +790,41 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       return null
     }
 
-    return await this.siaClientService.getMedicalAndRehabilitationApplicationType(
-      auth,
+    try {
+      return await this.siaClientService.getMedicalAndRehabilitationApplicationType(
+        auth,
+      )
+    } catch (error) {
+      // TR fails with a 500 for applicants without a base certificate, which
+      // includes exemption cases. Treat it as "no type" so the exemption check
+      // can decide whether the applicant may continue.
+      if (
+        error?.status === 500 &&
+        error?.body?.detail === 'No document associated with client'
+      ) {
+        return null
+      }
+
+      throw error
+    }
+  }
+
+  // Exemption cases (ísl. jaðartilvik) skip the medical certificate and
+  // rehabilitation/confirmation sections. Only applicants TR returned no
+  // application type for are checked.
+  async getMedicalAndRehabilitationExemption({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const { marpApplicationType, isEligible } = getMARPApplicationExternalData(
+      application.externalData,
     )
+
+    if (!isEligible?.isEligible || marpApplicationType) {
+      return null
+    }
+
+    return await this.siaClientService.getExemption(auth)
   }
 
   async getEmploymentStatusesWithLocale({

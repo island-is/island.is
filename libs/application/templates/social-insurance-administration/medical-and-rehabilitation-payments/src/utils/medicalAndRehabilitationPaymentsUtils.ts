@@ -413,6 +413,11 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIsApplicantEligible.data',
   )
 
+  const hasActiveExemption = !!getValueViaPath<boolean>(
+    externalData,
+    'socialInsuranceAdministrationMARPExemption.data.hasActiveExemption',
+  )
+
   const professions =
     getValueViaPath<LabeledValue[]>(
       externalData,
@@ -455,6 +460,7 @@ export const getApplicationExternalData = (
     activitiesOfProfessions,
   }
 }
+    hasActiveExemption,
 
 export const getYesNoNotApplicableOptions = () => {
   return [
