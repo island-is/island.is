@@ -13,6 +13,7 @@ import {
 
 import { createTestingAppealSummonsModule } from './createTestingAppealSummonsModule'
 
+import { AwsS3Service } from '../../aws-s3'
 import {
   AppealCase,
   AppealEventLog,
@@ -78,6 +79,7 @@ describe('AppealSummonsController - Update', () => {
 
   let mockAppealSummonsRepositoryService: AppealSummonsRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
+  let mockAwsS3Service: AwsS3Service
   let transaction: Transaction
   let appealSummonsController: AppealSummonsController
 
@@ -86,15 +88,21 @@ describe('AppealSummonsController - Update', () => {
       sequelize,
       appealSummonsRepositoryService,
       appealEventLogRepositoryService,
+      awsS3Service,
       appealSummonsController: controller,
     } = await createTestingAppealSummonsModule()
 
     mockAppealSummonsRepositoryService = appealSummonsRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
+    mockAwsS3Service = awsS3Service
     appealSummonsController = controller
 
     const mockTransaction = sequelize.transaction as jest.Mock
-    transaction = {} as Transaction
+    transaction = {
+      afterCommit: jest.fn((callback: () => void) => {
+        void callback()
+      }),
+    } as unknown as Transaction
     mockTransaction.mockImplementation(
       (fn: (transaction: Transaction) => Promise<unknown>) => fn(transaction),
     )
@@ -107,6 +115,10 @@ describe('AppealSummonsController - Update', () => {
     ;(
       mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
     ).mockResolvedValue(updated)
+    ;(mockAppealSummonsRepositoryService.update as jest.Mock).mockResolvedValue(
+      [1],
+    )
+    ;(mockAwsS3Service.deleteObject as jest.Mock).mockResolvedValue(true)
   })
 
   it('replaces defendant rows and does not write an issued event', async () => {
@@ -139,7 +151,7 @@ describe('AppealSummonsController - Update', () => {
     expect(result).toBe(updated)
   })
 
-  it('clears confirmation when a confirmed summons is edited', async () => {
+  it('clears confirmation and the cached PDF when a confirmed summons is edited', async () => {
     const summons = {
       id: summonsId,
       confirmedDate: new Date(),
@@ -164,6 +176,86 @@ describe('AppealSummonsController - Update', () => {
         confirmedDate: null,
         hash: null,
         hashAlgorithm: null,
+      },
+      { transaction },
+    )
+    expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(
+      theCase.type,
+      `${caseId}/appealSummons/${summonsId}.pdf`,
+    )
+  })
+
+  it('does not delete the cached PDF when a confirmation landed before cleanup', async () => {
+    const summons = {
+      id: summonsId,
+      confirmedDate: new Date(),
+      confirmedById: uuid(),
+      hash: 'abc',
+    } as AppealSummons
+    ;(
+      mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
+    ).mockResolvedValue({
+      ...updated,
+      hash: 'reconfirmed-hash',
+    } as AppealSummons)
+
+    await appealSummonsController.update(
+      caseId,
+      summonsId,
+      theCase,
+      summons,
+      dto,
+      user,
+    )
+
+    expect(mockAwsS3Service.deleteObject).not.toHaveBeenCalled()
+  })
+
+  it('keeps a defendant already on the summons after their appeal is withdrawn', async () => {
+    const withdrawnDefendantId = uuid()
+    const caseWithWithdrawn = {
+      ...theCase,
+      defendants: [
+        defendant,
+        { id: withdrawnDefendantId, name: 'Withdrawn' } as Defendant,
+      ],
+    } as Case
+    const summons = {
+      id: summonsId,
+      defendants: [
+        {
+          defendantId: withdrawnDefendantId,
+          appellantSide: AppealSummonsAppellantSide.DEFENCE,
+          claims: 'Old claims',
+        },
+      ],
+    } as AppealSummons
+    const dtoWithWithdrawn: CreateAppealSummonsDto = {
+      defendants: [
+        {
+          defendantId: withdrawnDefendantId,
+          claims: 'Kept after withdraw',
+        },
+      ],
+    }
+
+    await appealSummonsController.update(
+      caseId,
+      summonsId,
+      caseWithWithdrawn,
+      summons,
+      dtoWithWithdrawn,
+      user,
+    )
+
+    expect(
+      mockAppealSummonsRepositoryService.createDefendant,
+    ).toHaveBeenCalledWith(
+      {
+        appealSummonsId: summonsId,
+        defendantId: withdrawnDefendantId,
+        appellantSide: AppealSummonsAppellantSide.DEFENCE,
+        claims: 'Kept after withdraw',
       },
       { transaction },
     )
