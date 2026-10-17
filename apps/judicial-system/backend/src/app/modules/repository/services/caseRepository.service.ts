@@ -46,6 +46,7 @@ import {
   limitedAccessCaseAttributes,
   requestCaseEventExportInclude,
   UpdateCase,
+  updatedCaseInclude,
   verdictAppealDeadlineCaseInclude,
 } from '../types/caseRepository.types'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './caseDefendantPoliceCaseNumber.repository.service'
@@ -650,6 +651,42 @@ export class CaseRepositoryService {
       return result
     } catch (error) {
       this.logger.error(`Error finding minimal case ${id}:`, { error })
+
+      throw error
+    }
+  }
+
+  /**
+   * A case as it is read back right after an update: the row with the graph
+   * updatedCaseInclude lists, which is what the update's side effects, the
+   * event posted about it and the responses of the update routes read.
+   * Archived cases are never served; deleted ones are, since a deletion is an
+   * update that has to be read back like any other.
+   */
+  async findUpdatedById(
+    id: string,
+    options?: { transaction?: Transaction },
+  ): Promise<Case | null> {
+    try {
+      this.logger.debug(`Finding updated case ${id}`)
+
+      const result = await this.caseModel.findOne({
+        include: updatedCaseInclude,
+        where: this.liveCaseWhere(id, true),
+        transaction: options?.transaction,
+      })
+
+      this.logger.debug(`Updated case ${id} ${result ? 'found' : 'not found'}`)
+
+      if (result) {
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction: options?.transaction,
+        })
+      }
+
+      return result
+    } catch (error) {
+      this.logger.error(`Error finding updated case ${id}:`, { error })
 
       throw error
     }

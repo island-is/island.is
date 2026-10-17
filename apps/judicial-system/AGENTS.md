@@ -187,6 +187,32 @@ calls another judicial-system service with `fetch` needs the same, and the
 carrier it injects into must be a plain object: the propagator assigns
 properties, so a `Headers` instance silently gets nothing.
 
+## An update reads the case back narrowly
+
+`CaseService.update` reads the case back after writing it: to compare it
+with the case as it was (the state and court-date event logs, the messages
+queued for the change), to name it in the event posted about it and to answer
+the update routes. That read is `findUpdatedById` with `updatedCaseInclude`
+(`repository/types/caseRepository.types.ts`), not the full `caseInclude`, and
+what it returns is an `UpdatedCase` (`case/models/case.types.ts`): `Case` with
+every association the read does not carry omitted. Sequelize returns
+`undefined` for an association that was not included, so the narrower type is
+what turns a consumer reading one into a compile error instead of a silent
+`undefined`. Everything downstream of the reload is typed against it - the
+event log handlers, the message helpers, `EventService.postEvent` - and
+`PATCH case/:caseId`, `PATCH case/:caseId/state` and `POST case/:caseId/court`
+answer through `UpdatedCaseInterceptor`, which serves the row, its court users
+and parties and the derived appeal case, and drops what the update read for
+its own side effects. A full `Case` is assignable to `UpdatedCase`, so the
+interceptor keeps that bound at runtime too: whatever a handler returns, it
+serves no association the read back does not carry.
+
+A consumer that needs an association the reload does not carry widens
+`updatedCaseInclude` and `UpdatedCase` together;
+`repository/test/caseRepository.caseReads.spec.ts` pins the list. The web's
+`UpdateCase`, `TransitionCase` and `CreateCourtCase` mutations can only select
+what that response carries.
+
 ## Queue messages after commit
 
 A request queues messages for the message handler with
