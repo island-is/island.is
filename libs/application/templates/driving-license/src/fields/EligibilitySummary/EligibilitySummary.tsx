@@ -24,10 +24,6 @@ export const EligibilitySummary: FC<
   // (sectionRequirements.ts), so `application.answers` is still stale on
   // first render. Read live form state first, fall back to answers for
   // returning visits after the value has been persisted.
-  const is65RenewalRedesignEnabled =
-    watch('is65RenewalRedesignEnabled') === true ||
-    getValueViaPath(application.answers, 'is65RenewalRedesignEnabled') === true
-
   const isBTempRedesignEnabled =
     watch('isBTempRedesignEnabled') === true ||
     getValueViaPath(application.answers, 'isBTempRedesignEnabled') === true
@@ -38,7 +34,6 @@ export const EligibilitySummary: FC<
 
   const { eligibility, loading, error } = useEligibility(
     application,
-    is65RenewalRedesignEnabled,
     isBTempRedesignEnabled,
     isBFullRedesignEnabled,
   )

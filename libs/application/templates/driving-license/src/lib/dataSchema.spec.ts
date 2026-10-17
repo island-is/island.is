@@ -48,7 +48,7 @@ describe('dataSchema — healthCertificate field-level refine (redesigned-65+ en
     expect(certIssue).toBeUndefined()
   })
 
-  it('accepts is65RenewalRedesignEnabled as an optional boolean (used by form conditions)', () => {
+  it('still accepts is65RenewalRedesignEnabled as an optional boolean (no longer read; older drafts carry it)', () => {
     const onResult = dataSchema.safeParse({ is65RenewalRedesignEnabled: true })
     const offResult = dataSchema.safeParse({
       is65RenewalRedesignEnabled: false,

@@ -31,12 +31,9 @@ export interface PhotoSelectorSubSectionOptions {
   // The product this photo step belongs to.
   applicationFor: DrivingLicenseApplicationFor
   // Redesign feature-flag answer key that must be `true` for this step to show.
-  // Omit for products where the new selector is unconditional (BE). 65+ and
-  // B-temp gate on their redesign flags, which are off in prod.
-  redesignFlagKey?:
-    | 'is65RenewalRedesignEnabled'
-    | 'isBTempRedesignEnabled'
-    | 'isBFullRedesignEnabled'
+  // Omit for products where the new selector is unconditional (BE, 65+).
+  // B-temp and B-full gate on their redesign flags.
+  redesignFlagKey?: 'isBTempRedesignEnabled' | 'isBFullRedesignEnabled'
   // Whether to show the "no usable photo" warning banner. BE omits it.
   withNoPhotoAlert: boolean
 }
@@ -60,8 +57,8 @@ const getFacialPhotos = (externalData: Application['externalData']) =>
  * lives in one place.
  *
  * Note: this does not touch the legacy `subSectionQualityPhoto` step (the
- * `willBringQualityPhoto` flow), which remains the live path for B-full and for
- * 65+ when its redesign flag is off — it must keep working until every flag is on.
+ * `willBringQualityPhoto` flow), which remains the live path for B-full while
+ * its redesign flag is off — it must keep working until that flag is on.
  */
 export const buildPhotoSelectorSubSection = ({
   id,

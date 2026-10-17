@@ -616,34 +616,6 @@ export class DrivingLicenseService {
     }
   }
 
-  // Legacy 65+ submit, used when `is65RenewalRedesignEnabled` flag is OFF. RLS
-  // has removed the endpoint behind it (see `postRenewLicenseOver65` in the
-  // wrapper), so delete this together with that method in a follow-up.
-  // Note: unlike the redesigned `applyForRenewal65` (v6 `postApplyForRenewal65`,
-  // which dropped `pickupPlasticAtDistrict` in favor of the single
-  // `sendPlasticToPerson` flag), the legacy `postRenewLicenseOver65` endpoint's
-  // schema still supports the old two-flag model, so `pickupPlasticAtDistrict`
-  // is defined locally here rather than picked from `NewRenewal65DrivingLicenseInput`.
-  async renewDrivingLicense65AndOver(
-    auth: User['authorization'],
-    input: { jurisdiction: number; pickupPlasticAtDistrict?: boolean } & Pick<
-      NewRenewal65DrivingLicenseInput,
-      'sendPlasticToPerson'
-    >,
-  ): Promise<NewDrivingLicenseResult> {
-    const response = await this.drivingLicenseApi.postRenewLicenseOver65({
-      token: auth,
-      districtId: input.jurisdiction,
-      pickupPlasticAtDistrict: input.pickupPlasticAtDistrict,
-      sendPlasticToPerson: input.sendPlasticToPerson,
-    })
-
-    return {
-      success: response.isOk ?? false,
-      errorMessage: response.errorCode ?? null,
-    }
-  }
-
   async applyForBELicense(
     nationalId: User['nationalId'],
     auth: Auth,
@@ -678,8 +650,7 @@ export class DrivingLicenseService {
    * would come back 400, while unit tests carried on passing.
    *
    * Every method here that forwards the caller's token now takes `Auth`, except
-   * the two that still call v5 with a bare token: `renewDrivingLicense65AndOver`
-   * and `postHealthDeclaration`.
+   * `postHealthDeclaration`, which still calls v5 with a bare token.
    */
   async newDrivingLicenseWithHealthDeclaration(
     auth: Auth,
