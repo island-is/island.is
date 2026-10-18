@@ -48,30 +48,4 @@ export const realEstateMessages = defineMessages({
     defaultMessage: 'Annað sem þú vilt að komi fram?',
     description: 'Real estate other comments title',
   },
-  realEstateNumber: {
-    id: 'ronp.application:realEstate.realEstateNumber',
-    defaultMessage: 'Fasteignanúmer',
-    description: 'Real estate number',
-  },
-  realEstateSearchPlaceholder: {
-    id: 'ronp.application:realEstate.realEstateSearchPlaceholder',
-    defaultMessage: 'Sláðu inn fastanúmer',
-    description: 'Real estate search placeholder',
-  },
-  realEstateSearchNotFound: {
-    id: 'ronp.application:realEstate.realEstateSearchNotFound',
-    defaultMessage: 'Enginn eign fannst fyrir slegið inn fasteignanúmer',
-    description: 'Real estate search not found',
-  },
-  realEstateSearchApiError: {
-    id: 'ronp.application:realEstate.realEstateSearchApiError',
-    defaultMessage:
-      'Villa kom upp í vefþjónustu, vinsamlega reyndu aftur síðar',
-    description: 'Real estate search api error',
-  },
-  realEstateSelectError: {
-    id: 'ronp.application:realEstate.realEstateSelectError',
-    defaultMessage: 'Vinsamlegast veldu fasteign',
-    description: 'Real estate error if user does not choose a real estate',
-  },
 })
