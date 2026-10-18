@@ -1,3 +1,4 @@
+/** Service portal (Mínar síður) entry point */
 import '@island.is/api/mocks'
 import './styles.css'
 import { StrictMode } from 'react'
