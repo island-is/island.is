@@ -935,11 +935,20 @@ export const formatAmendingRegBody = (
     }
   }
 
-  // A new appendix is usually named in the text that refers to it. Its own
-  // article is only added when no amendment mentions one.
-  const mentionsAppendix = articles.some((text) =>
-    /fylgiskj|viðauk/i.test(text),
-  )
+  // A new appendix is usually named in the text that refers to it, and then
+  // gets no article of its own. "Viðauki II" is looked for by its number, in
+  // any case ("viðauka II", but not "viðauka III"); a title without a number,
+  // such as "Fylgiskjal", by the word alone.
+  const articleText = articles.join('')
+  const isNamedInText = (name: string) => {
+    const [, number] =
+      name.match(/^(?:fylgiskjal|viðauki)\s+([\p{L}\p{N}]+)/iu) ?? []
+    const word = '(?:fylgiskj|viðauk)\\p{L}*'
+    return new RegExp(
+      number ? `${word}\\s+${number}(?![\\p{L}\\p{N}])` : word,
+      'iu',
+    ).test(articleText)
+  }
 
   const appendixArticles: HTMLText[] = []
   appendixes?.forEach((apx, idx) => {
@@ -962,7 +971,7 @@ export const formatAmendingRegBody = (
       )}${regNameChange}:`
 
       if (apx.diff.includes('<div data-diff="new">')) {
-        if (!mentionsAppendix) {
+        if (!isNamedInText(name)) {
           appendixArticles.push(`<p>${testAddTitle}</p>` as HTMLText)
         }
       } else if (hasAnyChange(apx.diff)) {

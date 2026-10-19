@@ -442,6 +442,40 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     ])
   })
 
+  describe('new appendixes', () => {
+    const newAppendix = (title: string) => ({
+      title,
+      diff: '<div data-diff="new"><p>Efni.</p></div>',
+    })
+    const added = (text: string, ...titles: string[]) =>
+      body(
+        amend(BASE.replace('Golf hotel india.', text), {
+          appendixes: titles.map(newAppendix),
+        }),
+      )
+        .join('')
+        .match(/Við reglugerðina bætist nýr viðauki, [^,]+/g) ?? []
+
+    it('leaves out the article of an appendix the text names', () => {
+      expect(added('Sjá nánar í viðauka II.', 'Viðauki II')).toEqual([])
+    })
+
+    it('adds an article for each appendix the text does not name', () => {
+      expect(
+        added('Sjá nánar í viðauka II.', 'Viðauki II', 'Viðauki III'),
+      ).toEqual(['Við reglugerðina bætist nýr viðauki, Viðauki III'])
+    })
+
+    it('does not take an existing appendix for the new one', () => {
+      expect(added('Sjá nánar í viðauka I.', 'Viðauki II')).toEqual([
+        'Við reglugerðina bætist nýr viðauki, Viðauki II',
+      ])
+      expect(added('Sjá nánar í viðauka III.', 'Viðauki II')).toEqual([
+        'Við reglugerðina bætist nýr viðauki, Viðauki II',
+      ])
+    })
+  })
+
   it('keeps a chapter heading change in document order', () => {
     const chapter = (text: string) => `<h2 class="chapter__title">${text}</h2>`
     const before = [
