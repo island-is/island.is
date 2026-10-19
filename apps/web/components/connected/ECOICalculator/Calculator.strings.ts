@@ -31,8 +31,8 @@ export const m = {
   answerLabel: defineMessages({
     '0': {
       id: 'web.ecoi.calculator:form.answerLabel0',
-      defaultMessage: 'Já',
-      description: 'Já',
+      defaultMessage: 'Nei',
+      description: 'Nei',
     },
     '1': {
       id: 'web.ecoi.calculator:form.answerLabel1',
@@ -46,8 +46,8 @@ export const m = {
     },
     '3': {
       id: 'web.ecoi.calculator:form.answerLabel3',
-      defaultMessage: 'Nei',
-      description: 'Nei',
+      defaultMessage: 'Já',
+      description: 'Já',
     },
   }),
   results: defineMessages({

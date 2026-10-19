@@ -1,78 +1,47 @@
-import { useEffect, useState } from 'react'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  m as coreMessage,
-  CardLoader,
-  VEGAGERDIN_SLUG,
-  formatDateWithTime,
-  IntroWrapper,
-} from '@island.is/portals/my-pages/core'
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import copyToClipboard from 'copy-to-clipboard'
+
+import { AirDiscountSchemeUsedFlightLeg } from '@island.is/api/schema'
 import {
   ActionCard,
   Box,
   Bullet,
   BulletList,
-  Button,
   GridColumn,
   GridRow,
   Stack,
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { messages as m } from '../../lib/messages'
-import copyToClipboard from 'copy-to-clipboard'
-import UsageTable from '../../components/UsageTable/UsageTable'
-import { AirDiscountSchemeDiscount } from '@island.is/portals/my-pages/graphql'
-import { Problem } from '@island.is/react-spa/shared'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  CardLoader,
+  createColumnHelper,
+  formatDateWithTime,
+  InlineLink,
+  IntroWrapper,
+  m as coreMessage,
+  PortalTable,
+  VEGAGERDIN_SLUG,
+} from '@island.is/portals/my-pages/core'
 import {
   FeatureFlagClient,
   useFeatureFlagClient,
 } from '@island.is/react/feature-flags'
+import { Problem } from '@island.is/react-spa/shared'
+import { isDefined } from '@island.is/shared/utils'
 
-const AirDiscountQuery = gql`
-  query AirDiscountQuery {
-    airDiscountSchemeDiscounts {
-      nationalId
-      discountCode
-      connectionDiscountCodes {
-        code
-        flightId
-        flightDesc
-        validUntil
-      }
-      expiresIn
-      user {
-        name
-        fund {
-          credit
-          used
-          total
-        }
-      }
-    }
-  }
-`
-
-const AirDiscountFlightLegsQuery = gql`
-  query AirDiscountFlightLegsQuery {
-    airDiscountSchemeUserAndRelationsFlights {
-      travel
-      flight {
-        bookingDate
-        user {
-          name
-        }
-      }
-    }
-  }
-`
+import { messages as m } from '../../lib/messages'
+import { useAirDiscountMembersQuery } from './AirDiscountOverview.generated'
 
 type CopiedCode = {
   code: string
   copied: boolean
 }
+
+type UsageRow = AirDiscountSchemeUsedFlightLeg & { name: string }
+
+const columnHelper = createColumnHelper<UsageRow>()
 
 export const AirDiscountOverview = () => {
   useNamespaces('sp.air-discount')
@@ -82,44 +51,76 @@ export const AirDiscountOverview = () => {
 
   useEffect(() => {
     const isFlagEnabled = async () => {
-      const isPageDisabled = await featureFlagClient.getValue(
+      const isPageDisabled = await featureFlagClient.getValue<boolean>(
         'isPortalAirDiscountPageDisabled',
         false,
       )
       if (isPageDisabled) {
-        setIsDisabled(isPageDisabled as boolean)
+        setIsDisabled(isPageDisabled)
       }
     }
     isFlagEnabled()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const { data, loading, error } = useQuery<Query>(AirDiscountQuery)
-  const { data: flightLegData } = useQuery<Query>(AirDiscountFlightLegsQuery)
+  const { data, loading, error } = useAirDiscountMembersQuery()
+  const members = data?.airDiscountSchemeMembers
+  const benefits =
+    members
+      ?.map(({ name, benefit }) => (benefit ? { name, ...benefit } : null))
+      .filter(isDefined) ?? []
+  const withConnectionCodes = benefits.filter(
+    (benefit) => benefit.connectionDiscountCodes.length > 0,
+  )
+  const usageRows: UsageRow[] =
+    members?.flatMap((member) =>
+      (member.usedFlightLegsThisPeriod ?? []).map((leg) => ({
+        ...leg,
+        name: member.name,
+      })),
+    ) ?? []
+  const noRights = !!members?.length && benefits.length === 0
 
   const [copiedCodes, setCopiedCodes] = useState<CopiedCode[]>([])
-  const airDiscounts: AirDiscountSchemeDiscount[] | undefined =
-    data?.airDiscountSchemeDiscounts
-  const flightLegs = flightLegData?.airDiscountSchemeUserAndRelationsFlights
-  const connectionCodes: AirDiscountSchemeDiscount[] | undefined =
-    airDiscounts?.filter((x) => x.connectionDiscountCodes.length > 0)
+  const copyTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({})
 
-  const noRights =
-    airDiscounts?.filter(
-      (item) => item.user.fund?.credit === 0 && item.user.fund.used === 0,
-    ).length === airDiscounts?.length
+  const usageColumns = useMemo(
+    () => [
+      columnHelper.accessor('name', {
+        id: 'user',
+        header: formatMessage(m.user),
+        enableSorting: false,
+      }),
+      columnHelper.accessor('travel', {
+        header: formatMessage(m.flight),
+        enableSorting: false,
+      }),
+      columnHelper.accessor('bookingDate', {
+        id: 'date',
+        header: formatMessage(m.date),
+        cell: ({ getValue }) => formatDateWithTime(getValue()),
+        enableSorting: false,
+      }),
+    ],
+    [formatMessage],
+  )
+
+  useEffect(() => {
+    const timers = copyTimers.current
+    return () => Object.values(timers).forEach(clearTimeout)
+  }, [])
 
   const copy = (code?: string | null) => {
     if (code) {
       copyToClipboard(code)
-      const newCode: CopiedCode = { code: code, copied: true }
-      setCopiedCodes([...copiedCodes, newCode])
+      setCopiedCodes((prev) => [
+        ...prev.filter((item) => item.code !== code),
+        { code, copied: true },
+      ])
       toast.success(formatMessage(m.codeCopiedSuccess))
-      setTimeout(() => {
-        const codes = copiedCodes
-        const currentCodeIndex = codes.findIndex((item) => item.code === code)
-        copiedCodes.slice(currentCodeIndex, 0)
-        setCopiedCodes(copiedCodes)
+      clearTimeout(copyTimers.current[code])
+      copyTimers.current[code] = setTimeout(() => {
+        setCopiedCodes((prev) => prev.filter((item) => item.code !== code))
       }, 5000)
     }
   }
@@ -131,15 +132,10 @@ export const AirDiscountOverview = () => {
         noBorder={false}
         title={formatMessage(m.noFundingTitle)}
         message={formatMessage(m.noFunding, {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          link: (str: any) => (
-            <a
-              href={formatMessage(m.noFundingMoreInfoLink)}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Button variant="text">{str}</Button>
-            </a>
+          link: (str: ReactNode) => (
+            <InlineLink to={formatMessage(m.noFundingMoreInfoLink)}>
+              {str}
+            </InlineLink>
           ),
         })}
         imgSrc="./assets/images/coffee.svg"
@@ -161,15 +157,8 @@ export const AirDiscountOverview = () => {
           <GridColumn span={['8/8', '8/8']} order={1}>
             <Text variant="default" paddingTop={2}>
               {formatMessage(m.introLink, {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                link: (str: any) => (
-                  <a
-                    href="https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Button variant="text">{str}</Button>
-                  </a>
+                link: (str: ReactNode) => (
+                  <InlineLink to={formatMessage(m.termsLink)}>{str}</InlineLink>
                 ),
               })}
             </Text>
@@ -187,9 +176,16 @@ export const AirDiscountOverview = () => {
         </GridRow>
       </Box>
 
-      {loading && !error && <CardLoader />}
-      {error && !loading && <Problem error={error} noBorder={false} />}
-      {!error && !loading && noRights && (
+      {loading && <CardLoader />}
+      {!loading && error && <Problem error={error} noBorder={false} />}
+      {!loading && !error && members?.length === 0 && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
+      {!loading && !error && noRights && (
         <Problem
           type="no_data"
           noBorder={false}
@@ -198,70 +194,69 @@ export const AirDiscountOverview = () => {
           imgSrc="./assets/images/coffee.svg"
         />
       )}
-      {data && !noRights && (
+      {!loading && !error && benefits.length > 0 && (
         <Box marginBottom={5}>
-          <Text paddingBottom={3} fontWeight="medium">
+          <Text as="h2" paddingBottom={3} fontWeight="medium">
             {formatMessage(m.myRights)}
           </Text>
           <Stack space={2}>
-            {airDiscounts
-              ?.filter(
-                (x) => !(x.user.fund?.used === 0 && x.user.fund.credit === 0),
+            {benefits.map((item, index) => {
+              const message = [
+                formatMessage(m.remainingAirfares),
+                item.fund.credit,
+                formatMessage(m.of),
+                item.fund.total,
+              ]
+                .filter((x) => x !== null)
+                .join(' ')
+              const isCopied = copiedCodes.find(
+                (x) => x.code === item.discountCode,
+              )?.copied
+              return (
+                <ActionCard
+                  key={`loftbru-item-${index}`}
+                  heading={item.name}
+                  text={message}
+                  subText={
+                    item.fund.credit === 0
+                      ? undefined
+                      : item.discountCode
+                      ? item.discountCode
+                      : formatMessage(m.codeGenFailed)
+                  }
+                  cta={
+                    item.fund.credit === 0 || !item.discountCode
+                      ? undefined
+                      : {
+                          label: formatMessage(m.copyCode),
+                          ariaLabel: formatMessage(m.copyCodeFor, {
+                            name: item.name,
+                          }),
+                          onClick: () => copy(item.discountCode),
+                          icon: isCopied ? 'checkmark' : 'copy',
+                        }
+                  }
+                />
               )
-              .map((item, index) => {
-                const message = [
-                  formatMessage(m.remainingAirfares),
-                  item.user.fund?.credit,
-                  formatMessage(m.of),
-                  item.user.fund?.total,
-                ]
-                  .filter((x) => x !== null)
-                  .join(' ')
-                const isCopied = copiedCodes.find(
-                  (x) => x.code === item.discountCode,
-                )?.copied
-                return (
-                  <ActionCard
-                    key={`loftbru-item-${index}`}
-                    heading={item.user.name}
-                    text={message}
-                    subText={
-                      item.user.fund?.credit === 0
-                        ? undefined
-                        : item.discountCode
-                        ? item.discountCode
-                        : formatMessage(m.codeGenFailed)
-                    }
-                    cta={
-                      item.user.fund?.credit === 0 || !item.discountCode
-                        ? undefined
-                        : {
-                            label: formatMessage(m.copyCode),
-                            onClick: () => copy(item.discountCode),
-                            icon: isCopied ? 'checkmark' : 'copy',
-                          }
-                    }
-                  />
-                )
-              })}
+            })}
           </Stack>
         </Box>
       )}
-      {connectionCodes && connectionCodes?.length > 0 && (
+      {!loading && !error && withConnectionCodes.length > 0 && (
         <Box marginBottom={5}>
-          <Text paddingBottom={3} fontWeight="medium">
+          <Text as="h2" paddingBottom={3} fontWeight="medium">
             {formatMessage(m.activeConnectionCodes)}
           </Text>
           <Stack space={2}>
-            {connectionCodes?.map((item) => {
+            {withConnectionCodes.map((item, itemIndex) => {
               return item.connectionDiscountCodes.map((code, codeIndex) => {
                 const isCopied = copiedCodes.find(
                   (x) => x.code === code.code,
                 )?.copied
                 return (
                   <ActionCard
-                    key={`loftbru-item-connection-code-${codeIndex}`}
-                    heading={item.user.name}
+                    key={`loftbru-item-connection-code-${itemIndex}-${codeIndex}`}
+                    heading={item.name}
                     headingVariant="h4"
                     text={formatMessage(m.flight) + ': ' + code.flightDesc}
                     subText={code.code}
@@ -273,6 +268,10 @@ export const AirDiscountOverview = () => {
                     }}
                     cta={{
                       label: formatMessage(m.copyCode),
+                      ariaLabel: formatMessage(m.copyConnectionCodeFor, {
+                        name: item.name,
+                        flight: code.flightDesc,
+                      }),
                       onClick: () => copy(code.code),
                       icon: isCopied ? 'checkmark' : 'copy',
                     }}
@@ -283,19 +282,20 @@ export const AirDiscountOverview = () => {
           </Stack>
         </Box>
       )}
-      {!loading && !error && airDiscounts?.length === 0 && (
-        <Problem
-          type="no_data"
-          noBorder={false}
-          imgSrc="./assets/images/sofa.svg"
-        />
-      )}
-      {flightLegs && flightLegs.length > 0 && (
+      {!loading && !error && usageRows.length > 0 && (
         <Box marginBottom={5}>
-          <Text paddingBottom={3} fontWeight="medium">
+          <Text as="h2" paddingBottom={3} fontWeight="medium">
             {formatMessage(m.airfaresUsage)}
           </Text>
-          <UsageTable data={flightLegs} />
+          <Box marginBottom={4}>
+            <PortalTable
+              columns={usageColumns}
+              data={usageRows}
+              emptyMessage=""
+              mobileTitleKey="user"
+              srCaption={formatMessage(m.airfaresUsage)}
+            />
+          </Box>
         </Box>
       )}
     </IntroWrapper>

@@ -34,7 +34,8 @@ export const IndividualApplicant = ({
 }: Props) => {
   const { locale, formatMessage } = useIntl()
   const { lang } = useLocale()
-  const { control, setValue, unregister, trigger } = useFormContext()
+  const { control, setValue, unregister, trigger, clearErrors } =
+    useFormContext()
 
   const emailFromState = getValue(applicant, 'email') ?? ''
   const phoneNumberFromState = getValue(applicant, 'phoneNumber') ?? ''
@@ -50,7 +51,7 @@ export const IndividualApplicant = ({
         setValue(key, emailFromState, {
           shouldDirty: false,
           shouldTouch: false,
-          shouldValidate: true,
+          shouldValidate: false,
         })
       }
     } else {
@@ -137,7 +138,11 @@ export const IndividualApplicant = ({
                   label={formatMessage(m.email)}
                   value={field.value}
                   onChange={(e) => {
-                    field.onChange(e)
+                    setValue(field.name, e.target.value, {
+                      shouldDirty: true,
+                      shouldValidate: false,
+                    })
+                    clearErrors(field.name)
                     if (dispatch) {
                       dispatch({
                         type: 'SET_EMAIL',

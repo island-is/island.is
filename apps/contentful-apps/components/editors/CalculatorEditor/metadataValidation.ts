@@ -1,4 +1,5 @@
 import type { CalculatorConfig } from '@island.is/tax-calculators'
+import { isInputValueField } from '@island.is/tax-calculators'
 
 import { TaxCalculatorOutputFieldType } from '../../../graphql/schema'
 import type { InputFieldContract, OutputFieldContract } from './contract'
@@ -10,7 +11,10 @@ export const hasMetadataValidationError = (
 ) => {
   const placedInputKeys = new Set(
     (config.inputSections ?? []).flatMap((section) =>
-      section.fields.map((field) => field.key).filter(Boolean),
+      section.fields
+        .filter(isInputValueField)
+        .map((field) => field.key)
+        .filter(Boolean),
     ),
   )
 
@@ -24,9 +28,9 @@ export const hasMetadataValidationError = (
 
   if (
     (config.inputSections ?? []).some((section) =>
-      section.fields.some(
-        (field) => field.key && !inputContract.has(field.key),
-      ),
+      section.fields
+        .filter(isInputValueField)
+        .some((field) => field.key && !inputContract.has(field.key)),
     )
   ) {
     return true

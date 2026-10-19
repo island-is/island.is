@@ -9,8 +9,10 @@ import {
 import {
   isCompletedCase,
   RequestSharedWithDefender,
+  type User,
 } from '@island.is/judicial-system/types'
 
+import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
 import { Case, DateLog } from '../../repository'
 
 @Injectable()
@@ -19,6 +21,7 @@ export class RequestSharedWithDefenderGuard implements CanActivate {
     const request = context.switchToHttp().getRequest()
 
     const theCase: Case = request.case
+    const user: User | undefined = request.user?.currentUser
 
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')
@@ -29,17 +32,21 @@ export class RequestSharedWithDefenderGuard implements CanActivate {
       return true
     }
 
+    const requestSharedWithDefender =
+      getMostPermissiveRequestSharedWithDefenderForNationalId(
+        theCase.defendants,
+        user?.nationalId,
+      )
+
     if (
-      theCase.requestSharedWithDefender ===
-        RequestSharedWithDefender.COURT_DATE &&
+      requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE &&
       Boolean(DateLog.arraignmentDate(theCase.dateLogs))
     ) {
       return true
     }
 
     if (
-      theCase.requestSharedWithDefender ===
-      RequestSharedWithDefender.READY_FOR_COURT
+      requestSharedWithDefender === RequestSharedWithDefender.READY_FOR_COURT
     ) {
       return true
     }

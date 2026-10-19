@@ -1,11 +1,9 @@
 import { useContext } from 'react'
 import { useRouter } from 'next/router'
 
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
-import type {
-  AppealCase,
-  Case,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { AppealCase } from '@island.is/judicial-system-web/src/graphql/schema'
 
 // Resolves which AppealCase a Court of Appeals detail page should operate on.
 // COA list rows route with `?appealCaseId=…` — the appeal id
@@ -19,7 +17,7 @@ import type {
 // would be a second answer to the same question.
 
 export const resolveTargetAppealCaseByAppealCaseId = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   appealCaseId: string | undefined,
 ): AppealCase | undefined | null => {
   if (!appealCaseId || workingCase.appealCase?.id === appealCaseId) {

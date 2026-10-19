@@ -1,18 +1,35 @@
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  AppealSummonsAction,
+  canIssueAppealSummons,
+  canPerformAppealSummonsAction,
   isCourtOfAppealsUser,
   isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
-import {
-  type AppealCase,
-  AppealCaseState,
-  type Case,
-  type CaseFile,
-  type CaseFileCategory,
-  type Defendant,
-  type User,
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import type {
+  AppealSummons,
+  CaseFile,
+  CaseFileCategory,
+  Defendant,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isMatchingAppealCaseFile } from '@island.is/judicial-system-web/src/utils/utils'
+
+import { hasStandingVerdictAppeal } from '../AppealAppointmentLetter/AppealAppointmentLetter.logic'
+
+// Re-exported because this is where the section's callers and its spec have
+// always asked for them; the rules themselves are shared with the advocate
+// screen and live beside it.
+export {
+  getAppealAppointmentLetters,
+  hasStandingVerdictAppeal,
+} from '../AppealAppointmentLetter/AppealAppointmentLetter.logic'
+export type { AppealAppointmentLetterRow } from '../AppealAppointmentLetter/AppealAppointmentLetter.logic'
 
 // Whether this user may open a verdict appeal file of one of the given
 // categories.
@@ -24,7 +41,7 @@ import { isMatchingAppealCaseFile } from '@island.is/judicial-system-web/src/uti
 // arrives with. Everyone else is governed by that rule - prosecution sees all,
 // a defender their own clients'.
 export const canViewVerdictAppealFile = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   categories: CaseFileCategory[],
   file: Pick<CaseFile, 'category' | 'defendantId' | 'civilClaimantId'>,
   user: User | undefined,
@@ -46,7 +63,7 @@ export interface VerdictAppealFileGroup {
  * every other party appeal file.
  */
 export const getVerdictAppealFileGroups = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   user: User | undefined,
 ): VerdictAppealFileGroup[] => {
   const declarationFiles = (workingCase.caseFiles ?? [])
@@ -72,20 +89,75 @@ export const getVerdictAppealFileGroups = (
   })
 }
 
-/**
- * Whether a verdict appeal currently stands. The association row persists after
- * withdrawal (and is reused if someone re-appeals within the deadline), so a
- * present `verdictAppealCase` alone is not enough.
- */
-export const hasStandingVerdictAppeal = (
-  verdictAppealCase?: Pick<AppealCase, 'appealState'> | null,
-): boolean =>
-  Boolean(verdictAppealCase) &&
-  verdictAppealCase?.appealState !== AppealCaseState.WITHDRAWN
-
 export const showsAppealSummonses = (
-  workingCase: Pick<Case, 'verdictAppealCase'>,
+  workingCase: Pick<WorkingCase, 'verdictAppealCase'>,
   user: User | undefined,
 ): boolean =>
-  isPublicProsecutionOfficeUser(user) &&
+  (isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user)) &&
   hasStandingVerdictAppeal(workingCase.verdictAppealCase)
+
+export const canConfirmAppealSummonsRow = (
+  summons: Pick<AppealSummons, 'confirmedDate' | 'sentToCourtOfAppealsDate'>,
+  user: User | undefined,
+): boolean =>
+  canPerformAppealSummonsAction(AppealSummonsAction.CONFIRM, summons, user)
+
+export const formatAppealSummonsConfirmedDate = (
+  confirmedDate?: string | null,
+): string | undefined => {
+  if (!confirmedDate) {
+    return undefined
+  }
+
+  const date = formatDate(confirmedDate, 'dd.MM.y')
+  const time = formatDate(confirmedDate, TIME_FORMAT)
+
+  if (!date || !time) {
+    return undefined
+  }
+
+  return `${date} kl. ${time}`
+}
+
+export const canShowIssueAppealSummons = (
+  workingCase: Pick<WorkingCase, 'verdictAppealCase'>,
+  user: User | undefined,
+): boolean =>
+  canIssueAppealSummons(
+    user,
+    hasStandingVerdictAppeal(workingCase.verdictAppealCase),
+  )
+
+export const formatAppealSummonsFileName = (
+  summons: Pick<AppealSummons, 'created'>,
+): string => {
+  const date = formatDate(summons.created, 'dd.MM.y')
+
+  return date ? `Áfrýjunarstefna ${date}.pdf` : 'Áfrýjunarstefna.pdf'
+}
+
+export const getAppealSummonsMenuItems = (
+  summons: Pick<AppealSummons, 'confirmedDate' | 'sentToCourtOfAppealsDate'>,
+  user: User | undefined,
+  onEdit: () => void,
+  onOpen: () => void,
+  onDelete: () => void,
+): ContextMenuItem[] => {
+  const items: ContextMenuItem[] = []
+
+  if (canPerformAppealSummonsAction(AppealSummonsAction.EDIT, summons, user)) {
+    items.push({ title: 'Breyta', onClick: onEdit, icon: 'pencil' })
+  }
+
+  if (canPerformAppealSummonsAction(AppealSummonsAction.OPEN, summons, user)) {
+    items.push({ title: 'Opna í nýjum flipa', onClick: onOpen, icon: 'open' })
+  }
+
+  if (
+    canPerformAppealSummonsAction(AppealSummonsAction.DELETE, summons, user)
+  ) {
+    items.push({ title: 'Eyða', onClick: onDelete, icon: 'trash' })
+  }
+
+  return items
+}
