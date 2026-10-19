@@ -129,9 +129,9 @@ describe('CaseController - Create court case', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindLiveById =
-        mockCaseRepositoryService.findLiveById as jest.Mock
-      mockFindLiveById.mockResolvedValueOnce(returnedCase)
+      const mockFindUpdatedById =
+        mockCaseRepositoryService.findUpdatedById as jest.Mock
+      mockFindUpdatedById.mockResolvedValueOnce(returnedCase)
 
       const mockToday = nowFactory as jest.Mock
       mockToday.mockReturnValueOnce(date)
@@ -155,9 +155,9 @@ describe('CaseController - Create court case', () => {
         { courtCaseNumber },
         { transaction },
       )
-      expect(mockCaseRepositoryService.findLiveById).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.findUpdatedById).toHaveBeenCalledWith(
         caseId,
-        { allowDeleted: true, transaction },
+        { transaction },
       )
       expect(then.result).toBe(returnedCase)
     })
@@ -196,9 +196,9 @@ describe('CaseController - Create court case', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindLiveById =
-        mockCaseRepositoryService.findLiveById as jest.Mock
-      mockFindLiveById.mockResolvedValueOnce(returnedCase)
+      const mockFindUpdatedById =
+        mockCaseRepositoryService.findUpdatedById as jest.Mock
+      mockFindUpdatedById.mockResolvedValueOnce(returnedCase)
 
       then = await givenWhenThen(caseId, user, theCase)
     })
@@ -219,9 +219,9 @@ describe('CaseController - Create court case', () => {
         { courtCaseNumber },
         { transaction },
       )
-      expect(mockCaseRepositoryService.findLiveById).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.findUpdatedById).toHaveBeenCalledWith(
         caseId,
-        { allowDeleted: true, transaction },
+        { transaction },
       )
       expect(then.result).toBe(returnedCase)
     })
@@ -245,9 +245,9 @@ describe('CaseController - Create court case', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindLiveById =
-        mockCaseRepositoryService.findLiveById as jest.Mock
-      mockFindLiveById.mockResolvedValueOnce(returnedCase)
+      const mockFindUpdatedById =
+        mockCaseRepositoryService.findUpdatedById as jest.Mock
+      mockFindUpdatedById.mockResolvedValueOnce(returnedCase)
 
       then = await givenWhenThen(caseId, user, theCase)
     })
@@ -298,9 +298,9 @@ describe('CaseController - Create court case', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockFindLiveById =
-        mockCaseRepositoryService.findLiveById as jest.Mock
-      mockFindLiveById.mockResolvedValueOnce(returnedCase)
+      const mockFindUpdatedById =
+        mockCaseRepositoryService.findUpdatedById as jest.Mock
+      mockFindUpdatedById.mockResolvedValueOnce(returnedCase)
 
       await givenWhenThen(caseId, user, theCase)
     })
@@ -393,9 +393,9 @@ describe('CaseController - Create court case', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockFindLiveById =
-        mockCaseRepositoryService.findLiveById as jest.Mock
-      mockFindLiveById.mockResolvedValueOnce(returnedCase)
+      const mockFindUpdatedById =
+        mockCaseRepositoryService.findUpdatedById as jest.Mock
+      mockFindUpdatedById.mockResolvedValueOnce(returnedCase)
 
       await givenWhenThen(caseId, user, theCase)
     })
@@ -461,9 +461,9 @@ describe('CaseController - Create court case', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindLiveById =
-        mockCaseRepositoryService.findLiveById as jest.Mock
-      mockFindLiveById.mockRejectedValueOnce(new Error('Some error'))
+      const mockFindUpdatedById =
+        mockCaseRepositoryService.findUpdatedById as jest.Mock
+      mockFindUpdatedById.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, user, theCase)
     })
