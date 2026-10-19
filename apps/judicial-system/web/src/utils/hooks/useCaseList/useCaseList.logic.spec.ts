@@ -2,14 +2,19 @@ import {
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_RESULT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { Feature } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseState,
   AppealCaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { getCourtOfAppealsRouteForRow } from './useCaseList.logic'
+import {
+  getCourtOfAppealsRouteForRow,
+  getPublicProsecutionProsecutorVerdictAppealRoute,
+} from './useCaseList.logic'
 
 describe('getCourtOfAppealsRouteForRow', () => {
   // A case can carry every kind of appeal at once, so the case cannot say
@@ -83,5 +88,38 @@ describe('getCourtOfAppealsRouteForRow', () => {
     expect(getCourtOfAppealsRouteForRow(caseWithEveryAppeal)).toBe(
       COURT_OF_APPEAL_OVERVIEW_ROUTE,
     )
+  })
+})
+
+describe('getPublicProsecutionProsecutorVerdictAppealRoute', () => {
+  const appealed = {
+    verdictAppealCase: {
+      id: 'verdict-appeal',
+      appealState: AppealCaseState.APPEALED,
+      appealType: AppealCaseType.VERDICT,
+    },
+  } as Pick<WorkingCase, 'verdictAppealCase'>
+
+  it('sends the prosecutor to the staff overview when the feature is on', () => {
+    expect(
+      getPublicProsecutionProsecutorVerdictAppealRoute(appealed, [
+        Feature.INDICTMENT_APPEAL,
+      ]),
+    ).toBe(PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE)
+  })
+
+  it('returns null when the feature is off', () => {
+    expect(
+      getPublicProsecutionProsecutorVerdictAppealRoute(appealed, []),
+    ).toBeNull()
+  })
+
+  it('returns null when there is no standing verdict appeal', () => {
+    expect(
+      getPublicProsecutionProsecutorVerdictAppealRoute(
+        { verdictAppealCase: null },
+        [Feature.INDICTMENT_APPEAL],
+      ),
+    ).toBeNull()
   })
 })

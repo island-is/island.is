@@ -129,7 +129,10 @@ export const caseInclude: Includeable[] = [
         model: AppealCourtSession,
         as: 'courtSessions',
         required: false,
-        order: [['sessionDate', 'ASC']],
+        // Most recently booked first, so the session the court has just
+        // called is at the top of the list rather than wherever its date
+        // falls.
+        order: [['created', 'DESC']],
         separate: true,
       },
     ],

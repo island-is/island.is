@@ -7,6 +7,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE,
@@ -204,6 +205,7 @@ describe('useSections getSections', () => {
         'Yfirlit',
         'Verjandi',
         'Staða og lyktir',
+        'Samantekt',
       ])
       // Every step carries the appeal id for the same reason the overview
       // does: without it the next render resolves back to the ruling appeal.
@@ -212,6 +214,9 @@ describe('useSections getSections', () => {
       )
       expect(sections[0].children[2].href).toBe(
         `${COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
+      )
+      expect(sections[0].children[3].href).toBe(
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
       )
     })
 

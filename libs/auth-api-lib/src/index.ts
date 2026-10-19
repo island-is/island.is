@@ -178,6 +178,14 @@ export * from './lib/identity-confirmation/models/Identity-Confirmation.model'
 export * from './lib/identity-confirmation/dto/identity-confirmation-dto.dto'
 export * from './lib/identity-confirmation/types/identity-confirmation-type'
 
+export * from './lib/delegation-confirmation/delegation-confirmation.service'
+export * from './lib/delegation-confirmation/models/delegation-confirmation.model'
+export * from './lib/delegation-confirmation/dto/delegation-confirmation.dto'
+export * from './lib/delegation-confirmation/types/delegation-confirmation-status'
+export * from './lib/delegation-confirmation/types/delegation-confirmation-content'
+export * from './lib/delegation-confirmation/utils/content-hash'
+export * from './lib/delegation-confirmation/delegation-confirmation.policy'
+
 // Personal Representative Module
 export * from './lib/personal-representative/personal-representative.module'
 export * from './lib/personal-representative/services/personalRepresentative.service'

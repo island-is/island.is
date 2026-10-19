@@ -183,6 +183,15 @@ describe('RequestCaseDefenderInfo.logic', () => {
         'requestSharedWithDefender',
       )
     })
+
+    test('omits contact fields that were not provided', () => {
+      expect(
+        buildCaseDefenderMirrorUpdate({ defenderEmail: 'new@example.com' }),
+      ).toEqual({
+        defenderEmail: 'new@example.com',
+        force: true,
+      })
+    })
   })
 
   describe('getRequestSharedWithDefenderForNationalId', () => {

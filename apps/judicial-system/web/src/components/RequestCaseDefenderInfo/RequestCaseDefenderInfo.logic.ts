@@ -157,14 +157,14 @@ export const buildCaseDefenderMirrorUpdate = ({
   defenderEmail,
   defenderPhoneNumber,
 }: {
-  defenderName: string | null
-  defenderNationalId: string | null
-  defenderEmail: string | null
-  defenderPhoneNumber: string | null
+  defenderName?: string | null
+  defenderNationalId?: string | null
+  defenderEmail?: string | null
+  defenderPhoneNumber?: string | null
 }): UpdateCase => ({
-  defenderName,
-  defenderNationalId,
-  defenderEmail,
-  defenderPhoneNumber,
+  ...(defenderName !== undefined ? { defenderName } : {}),
+  ...(defenderNationalId !== undefined ? { defenderNationalId } : {}),
+  ...(defenderEmail !== undefined ? { defenderEmail } : {}),
+  ...(defenderPhoneNumber !== undefined ? { defenderPhoneNumber } : {}),
   force: true,
 })

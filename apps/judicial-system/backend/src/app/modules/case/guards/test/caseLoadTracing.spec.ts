@@ -12,6 +12,7 @@ import { CaseExistsForUpdateGuard } from '../caseExistsForUpdate.guard'
 import { IndictmentCaseExistsForDefendantGuard } from '../indictmentCaseExistsForDefendant.guard'
 import { LimitedAccessCaseExistsGuard } from '../limitedAccessCaseExists.guard'
 import { MinimalCaseExistsGuard } from '../minimalCaseExists.guard'
+import { MinimalCaseExistsForUpdateGuard } from '../minimalCaseExistsForUpdate.guard'
 import {
   CASE_LOAD_GUARD_TAG,
   CASE_LOAD_INCLUDE_TAG,
@@ -93,6 +94,23 @@ describe('case load tracing', () => {
     })
 
     expectTraced('MinimalCaseExistsGuard', 'minimal')
+  })
+
+  it('MinimalCaseExistsForUpdateGuard loads the minimal case', async () => {
+    const { caseService, sequelize } = await createTestingCaseModule()
+    ;(sequelize.transaction as jest.Mock).mockResolvedValue({} as Transaction)
+    jest
+      .spyOn(caseService, 'findMinimalByIdForUpdate')
+      .mockResolvedValue(theCase as never)
+
+    await activate(
+      new MinimalCaseExistsForUpdateGuard(caseService, sequelize),
+      {
+        params: { caseId },
+      },
+    )
+
+    expectTraced('MinimalCaseExistsForUpdateGuard', 'minimal')
   })
 
   it('LimitedAccessCaseExistsGuard loads the limited access case', async () => {

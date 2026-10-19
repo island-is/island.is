@@ -6,7 +6,7 @@ import {
   getAppealAppointmentDefendantNames,
   getCourtNameInGenitive,
   NOT_RECORDED,
-} from '../../formatters/generatedPdfs/appealAppointmentLetterPdf'
+} from '../../formatters'
 import { Case, CivilClaimant, Defendant, User } from '../repository'
 import { latestAdvocateConfirmedEvent } from './appealCase.helpers'
 
@@ -51,7 +51,7 @@ const getCopyRecipients = (
   if (kind === AppealAppointmentKind.SPOKESPERSON) {
     parties.push(
       ...(theCase.defendants ?? []).map((defendant) =>
-        defendant.isAppealDefenderConfirmed
+        defendant.isAppealDefenderConfirmed && !defendant.isAppealDefenderWaived
           ? recipient(defendant.appealDefenderName, 'lögmaður')
           : undefined,
       ),
@@ -111,7 +111,14 @@ export const buildAppealAppointmentLetter = (params: {
   let advocateName: string | undefined
 
   if (defendant) {
-    if (!defendant.isAppealDefenderConfirmed) {
+    // The waiver is its own field, and the API takes it without touching the
+    // defender's name or the confirmation, so a defendant who asked for no
+    // defender can still carry a confirmed, named one. There is nobody to
+    // appoint, whatever the row says.
+    if (
+      !defendant.isAppealDefenderConfirmed ||
+      defendant.isAppealDefenderWaived
+    ) {
       return undefined
     }
 
@@ -148,6 +155,9 @@ export const buildAppealAppointmentLetter = (params: {
     kind,
     advocateName,
     advocatePractice,
+    // Only the defender's letter names the party: it is appointed to one of
+    // the accused, and a case may have several.
+    clientName: defendant?.name,
     defendantName: getAppealAppointmentDefendantNames(
       (theCase.defendants ?? [])
         .map((d) => d.name)
