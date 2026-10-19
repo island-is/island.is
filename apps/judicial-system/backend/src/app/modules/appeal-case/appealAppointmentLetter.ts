@@ -6,8 +6,14 @@ import {
   getAppealAppointmentDefendantNames,
   getCourtNameInGenitive,
   NOT_RECORDED,
-} from '../../formatters/generatedPdfs/appealAppointmentLetterPdf'
-import { Case, CivilClaimant, Defendant, User } from '../repository'
+} from '../../formatters'
+import {
+  AppealSummons,
+  Case,
+  CivilClaimant,
+  Defendant,
+  User,
+} from '../repository'
 import { latestAdvocateConfirmedEvent } from './appealCase.helpers'
 
 /** How the letter lists someone in its copy line: name, then what they are. */
@@ -76,6 +82,38 @@ const getCopyRecipients = (
 }
 
 /**
+ * When the appeal was lodged, as the letter states it: the date the
+ * áfrýjunarstefna was issued, which is the date the prosecution confirmed it.
+ *
+ * A defender's letter is about one of the accused, so it wants the summons
+ * issued against them. A spokesperson's letter is about the case, so any
+ * summons in the appeal will do. In both cases the newest confirmed one
+ * stands: a summons that is corrected is confirmed again, and a second one
+ * naming the same person replaces the first.
+ */
+export const getAppealSummonsDate = (
+  appealSummonses: AppealSummons[],
+  defendantId?: string,
+): Date | undefined => {
+  const issued = appealSummonses.filter(
+    (summons) =>
+      summons.confirmedDate &&
+      (!defendantId ||
+        summons.defendants?.some((row) => row.defendantId === defendantId)),
+  )
+
+  let latest: Date | undefined
+
+  for (const summons of issued) {
+    if (summons.confirmedDate && (!latest || summons.confirmedDate > latest)) {
+      latest = summons.confirmedDate
+    }
+  }
+
+  return latest
+}
+
+/**
  * Everything the letter of appointment prints, read off the case.
  *
  * Returns undefined when there is no letter to write, which is a state the
@@ -95,8 +133,16 @@ export const buildAppealAppointmentLetter = (params: {
   civilClaimant?: CivilClaimant
   /** The advocate's firm, which only the lawyer register knows. */
   advocatePractice?: string | null
+  /** The confirmed summonses of the appeal, which the case does not carry. */
+  appealSummonses?: AppealSummons[]
 }): AppealAppointmentLetter | undefined => {
-  const { theCase, defendant, civilClaimant, advocatePractice } = params
+  const {
+    theCase,
+    defendant,
+    civilClaimant,
+    advocatePractice,
+    appealSummonses = [],
+  } = params
 
   const appealCase = theCase.verdictAppealCase
 
@@ -166,9 +212,7 @@ export const buildAppealAppointmentLetter = (params: {
     courtName: getCourtNameInGenitive(theCase.court?.name),
     courtCaseNumber: theCase.courtCaseNumber ?? '',
     appealCaseNumber: appealCase.appealCaseNumber,
-    // Nothing issues an áfrýjunarstefna yet, so the letter says so rather than
-    // omitting the sentence that refers to it.
-    appealSummonsDate: undefined,
+    appealSummonsDate: getAppealSummonsDate(appealSummonses, defendant?.id),
     appointedBy: {
       name: confirmation.userName,
       title: confirmation.userTitle,

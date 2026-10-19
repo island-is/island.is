@@ -24,7 +24,7 @@ import {
   WorkshiftPeriodsApi,
   SubmitApi,
 } from '../dataProviders'
-import { getNextIncomeLockBoundary } from '../utils/date'
+import { getEndOfDay } from '../utils/date'
 import { application as applicationMessages } from './messages'
 import { Features } from '@island.is/feature-flags'
 
@@ -88,7 +88,7 @@ const ConfirmJobOrIncomeTemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              getNextIncomeLockBoundary(new Date(application.created)),
+              getEndOfDay(new Date(application.created)),
           },
           actionCard: {
             tag: {

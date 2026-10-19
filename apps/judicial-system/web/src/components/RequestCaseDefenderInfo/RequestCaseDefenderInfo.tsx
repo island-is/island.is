@@ -100,12 +100,7 @@ const RequestCaseDefenderInfo: FC<Props> = ({
       return
     }
 
-    mirrorToCase({
-      defenderName: defendant.defenderName ?? null,
-      defenderNationalId: defendant.defenderNationalId ?? null,
-      defenderEmail,
-      defenderPhoneNumber: defendant.defenderPhoneNumber ?? null,
-    })
+    mirrorToCase({ defenderEmail })
   }
 
   const handlePhoneNumberSave = async (defenderPhoneNumber: string | null) => {
@@ -119,12 +114,7 @@ const RequestCaseDefenderInfo: FC<Props> = ({
       return
     }
 
-    mirrorToCase({
-      defenderName: defendant.defenderName ?? null,
-      defenderNationalId: defendant.defenderNationalId ?? null,
-      defenderEmail: defendant.defenderEmail ?? null,
-      defenderPhoneNumber,
-    })
+    mirrorToCase({ defenderPhoneNumber })
   }
 
   return (
