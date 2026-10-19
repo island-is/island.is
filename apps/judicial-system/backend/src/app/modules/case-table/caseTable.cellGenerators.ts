@@ -707,11 +707,21 @@ const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
   includes: {
     appealCase: {
       attributes: [],
-      includes: { appealJudges: { attributes: ['displayOrder'] } },
+      includes: {
+        appealJudges: {
+          attributes: ['displayOrder'],
+          includes: { user: { attributes: ['name'] } },
+        },
+      },
     },
     rulingOrderAppealCases: {
       attributes: [],
-      includes: { appealJudges: { attributes: ['displayOrder'] } },
+      includes: {
+        appealJudges: {
+          attributes: ['displayOrder'],
+          includes: { user: { attributes: ['name'] } },
+        },
+      },
     },
   },
   generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
@@ -787,7 +797,12 @@ const verdictAppealHead: CaseTableCellGenerator<StringValue> = {
   includes: {
     verdictAppealCase: {
       attributes: [],
-      includes: { appealJudges: { attributes: ['displayOrder'] } },
+      includes: {
+        appealJudges: {
+          attributes: ['displayOrder'],
+          includes: { user: { attributes: ['name'] } },
+        },
+      },
     },
   },
   generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {

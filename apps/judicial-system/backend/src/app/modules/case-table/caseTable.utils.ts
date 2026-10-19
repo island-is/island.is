@@ -1,4 +1,4 @@
-import { Includeable, Order } from 'sequelize'
+import { Includeable, Order, OrderItem } from 'sequelize'
 
 import {
   AppealCaseState,
@@ -19,12 +19,15 @@ import { canWithdrawCaseLevelAppeal } from '../appeal-case/appealCase.helpers'
 import { Case } from '../repository'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
 import {
+  AnyModelDef,
   CaseIncludes,
   CaseTableRowCase,
   copyIncludeInto,
+  copyIncludeNode,
+  IncludeTree,
+  IncludeTreeNode,
   mergeAccessIncludes,
-  modelMap,
-  subModelMap,
+  modelMapsByDepth,
 } from './caseTable.types'
 import { userAccessIncludes } from './caseTable.whereOptions'
 
@@ -124,6 +127,35 @@ const mergeAttributes = <T>(target: T[], source: T[]) => {
   return [...new Set([...target, ...source])]
 }
 
+// Merges one node of an include declaration into another, attributes and
+// nested associations alike, at any depth.
+const mergeIncludeNode = (target: IncludeTreeNode, source: IncludeTreeNode) => {
+  target.attributes = mergeAttributes(target.attributes, source.attributes)
+
+  if (!source.includes) {
+    return
+  }
+
+  if (!target.includes) {
+    target.includes = {}
+  }
+
+  for (const [key, nestedSource] of Object.entries(source.includes)) {
+    if (!nestedSource) {
+      continue
+    }
+
+    const nestedTarget = target.includes[key]
+
+    if (!nestedTarget) {
+      target.includes[key] = copyIncludeNode(nestedSource)
+      continue
+    }
+
+    mergeIncludeNode(nestedTarget, nestedSource)
+  }
+}
+
 // Merges one association's include into the tree being built for a query.
 //
 // Every value that enters the tree is copied first (see copyIncludeInto): the
@@ -144,48 +176,40 @@ const setInclude = <K extends keyof CaseIncludes>(
     return
   }
 
-  targetValue.attributes = mergeAttributes(
-    targetValue.attributes,
-    sourceValue.attributes,
+  mergeIncludeNode(
+    targetValue as IncludeTreeNode,
+    sourceValue as IncludeTreeNode,
   )
-
-  if (!sourceValue.includes) {
-    return
-  }
-
-  if (!targetValue.includes) {
-    targetValue.includes = {}
-  }
-
-  for (const nestedKey of Object.keys(sourceValue.includes) as Array<
-    keyof NonNullable<typeof sourceValue.includes>
-  >) {
-    const nestedSource = sourceValue.includes[nestedKey]
-    if (!nestedSource) continue
-
-    const nestedTarget = targetValue.includes[nestedKey]
-    if (!nestedTarget) {
-      targetValue.includes[nestedKey] = {
-        ...nestedSource,
-        attributes: [...nestedSource.attributes],
-      }
-      continue
-    }
-
-    nestedTarget.attributes = mergeAttributes(
-      nestedTarget.attributes,
-      nestedSource.attributes,
-    )
-  }
 }
 
-const getIncludeAndOrder = (
-  allIncludes: CaseIncludes,
-): [Includeable[], Order] => {
-  const globalOrder: Order = []
+type OrderPath = { model: AnyModelDef['model']; as: string }[]
 
-  const include = Object.entries(allIncludes).map(([k, v]) => {
-    const modelDef = modelMap[k as keyof typeof modelMap]
+// Builds the Sequelize includes for one level of a declaration and recurses
+// into the next, looking each alias up in the model map for its depth.
+const buildIncludes = (
+  tree: IncludeTree,
+  depth: number,
+  parents: OrderPath,
+  globalOrder: OrderItem[],
+): Includeable[] =>
+  Object.entries(tree).flatMap(([as, node]) => {
+    if (!node) {
+      return []
+    }
+
+    const modelDef = modelMapsByDepth[depth]?.[as]
+
+    if (!modelDef) {
+      throw new Error(
+        `No model definition for the association ${[
+          ...parents.map((parent) => parent.as),
+          as,
+        ].join('.')} of a case table include`,
+      )
+    }
+
+    const path: OrderPath = [...parents, { model: modelDef.model, as }]
+
     // Named, not spread. `order` is an array, so spreading it would put the
     // term under "0" and Sequelize would ignore the include's ordering without
     // saying so.
@@ -193,57 +217,34 @@ const getIncludeAndOrder = (
       modelDef.separate && modelDef.order
         ? { order: modelDef.order }
         : undefined
-    const include = v.includes
-      ? {
-          include: Object.entries(v.includes).map(([sk, sv]) => {
-            const subModelDef = subModelMap[sk as keyof typeof subModelMap]
-            const order =
-              subModelDef.separate && subModelDef.order
-                ? { order: subModelDef.order }
-                : undefined
-
-            if (!subModelDef.separate && subModelDef.order) {
-              globalOrder.push([
-                { model: modelDef.model, as: k },
-                { model: subModelDef.model, as: sk },
-                ...subModelDef.order[0],
-              ])
-            }
-
-            return {
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              attributes: mergeAttributes(['id'], sv!.attributes ?? []),
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              required: sv!.required,
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              where: sv!.where,
-              model: subModelDef.model,
-              as: sk,
-              separate: subModelDef.separate,
-              ...order,
-              ...(subModelDef.include
-                ? { include: subModelDef.include }
-                : undefined),
-            }
-          }),
-        }
-      : undefined
 
     if (!modelDef.separate && modelDef.order) {
-      globalOrder.push([{ model: modelDef.model, as: k }, ...modelDef.order[0]])
+      globalOrder.push([...path, ...modelDef.order[0]] as OrderItem)
     }
 
-    return {
-      attributes: mergeAttributes(['id'], v.attributes),
-      required: v.required,
-      where: v.where,
-      model: modelDef.model,
-      as: k,
-      separate: modelDef.separate,
-      ...order,
-      ...include,
-    } as Includeable
+    const include = node.includes
+      ? { include: buildIncludes(node.includes, depth + 1, path, globalOrder) }
+      : undefined
+
+    return [
+      {
+        attributes: mergeAttributes(['id'], node.attributes),
+        required: node.required,
+        where: node.where,
+        model: modelDef.model,
+        as,
+        separate: modelDef.separate,
+        ...order,
+        ...include,
+      } as Includeable,
+    ]
   })
+
+const getIncludeAndOrder = (
+  allIncludes: CaseIncludes,
+): [Includeable[], Order] => {
+  const globalOrder: OrderItem[] = []
+  const include = buildIncludes(allIncludes as IncludeTree, 0, [], globalOrder)
 
   return [include, globalOrder]
 }
