@@ -144,7 +144,7 @@ describe('getAppealAppointmentBody', () => {
   it('marks the appeal summons as not yet built', () => {
     expect(
       getAppealAppointmentBody({ ...letter, appealSummonsDate: null }),
-    ).toContain('með áfrýjunarstefnu útgefinni Ekki útfært.')
+    ).toContain('með áfrýjunarstefnu útgefinni Ekki skráð.')
   })
 
   it('keeps the district court number out of the placeholder', () => {

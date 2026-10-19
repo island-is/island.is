@@ -632,15 +632,154 @@ describe('getAppealAppointmentLetters', () => {
     ).toEqual([])
   })
 
-  // The court of appeals writes the letter and sends it; the advocate it
-  // appoints is told by e-mail, and nobody else is party to the appointment.
-  it.each([
-    UserRole.DEFENDER,
-    UserRole.PROSECUTOR,
-    UserRole.PUBLIC_PROSECUTOR_STAFF,
-  ])('offers nothing to %s', (role) => {
-    expect(getAppealAppointmentLetters(appealedCase(), mockUser(role))).toEqual(
-      [],
+  // The office prosecutes the appeal and is copied on every letter.
+  it('offers every letter to the public prosecution office', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          civilClaimants: [
+            {
+              id: 'claimant_id',
+              isAppealSpokespersonConfirmed: true,
+              appealSpokespersonName: 'Brynjar Sveinsson',
+            },
+          ],
+        } as Partial<WorkingCase>),
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+      ).map((row) => row.key),
+    ).toEqual(['defendant-defendant_id', 'civilClaimant-claimant_id'])
+  })
+
+  describe('for a defence user', () => {
+    // Access to the case is the district court's confirmation, so that is
+    // what ties a defence user to a party here too - not the appeal advocate
+    // fields, which the court of appeals may fill with somebody else.
+    const defender = {
+      ...mockUser(UserRole.DEFENDER),
+      nationalId: '0101302989',
+    }
+
+    const twoParties = appealedCase({
+      defendants: [
+        {
+          id: 'own_client_id',
+          isDefenderChoiceConfirmed: true,
+          defenderNationalId: '0101302989',
+          isAppealDefenderConfirmed: true,
+          appealDefenderName: 'Þórður Már Jónsson',
+        },
+        {
+          id: 'other_client_id',
+          isDefenderChoiceConfirmed: true,
+          defenderNationalId: '0909713459',
+          isAppealDefenderConfirmed: true,
+          appealDefenderName: 'Lára Lögmann',
+        },
+      ],
+      civilClaimants: [
+        {
+          id: 'own_claimant_id',
+          hasSpokesperson: true,
+          isSpokespersonConfirmed: true,
+          spokespersonNationalId: '0101302989',
+          isAppealSpokespersonConfirmed: true,
+          appealSpokespersonName: 'Brynjar Sveinsson',
+        },
+        {
+          id: 'other_claimant_id',
+          hasSpokesperson: true,
+          isSpokespersonConfirmed: true,
+          spokespersonNationalId: '0909713459',
+          isAppealSpokespersonConfirmed: true,
+          appealSpokespersonName: 'Sólveig Hreinsdóttir',
+        },
+      ],
+    } as Partial<WorkingCase>)
+
+    it('offers the letters of the parties they act for, and no other', () => {
+      expect(
+        getAppealAppointmentLetters(twoParties, defender).map((row) => row.key),
+      ).toEqual(['defendant-own_client_id', 'civilClaimant-own_claimant_id'])
+    })
+
+    it('offers nothing to a defender the district court has not confirmed', () => {
+      expect(
+        getAppealAppointmentLetters(
+          appealedCase({
+            defendants: [
+              {
+                id: 'defendant_id',
+                isDefenderChoiceConfirmed: false,
+                defenderNationalId: '0101302989',
+                isAppealDefenderConfirmed: true,
+                appealDefenderName: 'Þórður Már Jónsson',
+              },
+            ],
+          } as Partial<WorkingCase>),
+          defender,
+        ),
+      ).toEqual([])
+    })
+
+    it.each([
+      ['not confirmed', { isSpokespersonConfirmed: false }],
+      ['not recorded', { hasSpokesperson: false }],
+    ])(
+      'offers nothing to a spokesperson the district court has %s',
+      (_name, fields) => {
+        expect(
+          getAppealAppointmentLetters(
+            appealedCase({
+              defendants: [],
+              civilClaimants: [
+                {
+                  id: 'claimant_id',
+                  hasSpokesperson: true,
+                  isSpokespersonConfirmed: true,
+                  spokespersonNationalId: '0101302989',
+                  isAppealSpokespersonConfirmed: true,
+                  appealSpokespersonName: 'Brynjar Sveinsson',
+                  ...fields,
+                },
+              ],
+            } as Partial<WorkingCase>),
+            defender,
+          ),
+        ).toEqual([])
+      },
     )
+
+    // Being the one the court of appeals appointed is not, by itself, access
+    // to the case - that comes with the district court's confirmation.
+    it('offers nothing on the appeal appointment alone', () => {
+      expect(
+        getAppealAppointmentLetters(
+          appealedCase({
+            defendants: [
+              {
+                id: 'defendant_id',
+                isDefenderChoiceConfirmed: true,
+                defenderNationalId: '0909713459',
+                isAppealDefenderConfirmed: true,
+                appealDefenderName: 'Þórður Már Jónsson',
+                appealDefenderNationalId: '0101302989',
+              },
+            ],
+          } as Partial<WorkingCase>),
+          defender,
+        ),
+      ).toEqual([])
+    })
+  })
+
+  // A district prosecutor has no appeal section to show it in, and the court
+  // of appeals' route does not admit them.
+  it('offers nothing to a prosecutor', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase(),
+        mockUser(UserRole.PROSECUTOR),
+      ),
+    ).toEqual([])
   })
 })

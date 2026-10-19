@@ -4,8 +4,8 @@ import { indictmentCases } from '@island.is/judicial-system/types'
 import { verifyGuards } from '../../../test'
 import {
   CaseTypeGuard,
-  MinimalCaseAccessGuard,
   MinimalCaseExistsForUpdateGuard,
+  MinimalCaseWriteGuard,
 } from '../../case'
 import { IndictmentCountExistsGuard } from '../guards/indictmentCountExists.guard'
 import { OffenseExistsGuard } from '../guards/offenseExists.guard'
@@ -20,7 +20,7 @@ describe('IndictmentCountController - Top-level guards', () => {
       RolesGuard,
       MinimalCaseExistsForUpdateGuard,
       CaseTypeGuard,
-      MinimalCaseAccessGuard,
+      MinimalCaseWriteGuard,
     ],
     [{ guard: CaseTypeGuard, prop: { allowedCaseTypes: indictmentCases } }],
   )
