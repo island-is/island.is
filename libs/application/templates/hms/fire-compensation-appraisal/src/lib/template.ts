@@ -164,7 +164,7 @@ const template: ApplicationTemplate<
           },
         },
       },
-      [States.PAYMENT]: buildPaymentState({
+      [States.PAYMENT]: buildPaymentState<Events>({
         organizationId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
         chargeItems: getChargeItems,
         roles: [
@@ -173,6 +173,14 @@ const template: ApplicationTemplate<
             formLoader: async () => {
               return PaymentForm
             },
+            actions: [
+              { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+              {
+                event: DefaultEvents.ABORT,
+                name: 'Hætta við',
+                type: 'primary',
+              },
+            ],
             write: 'all',
             delete: true,
           },
@@ -181,6 +189,14 @@ const template: ApplicationTemplate<
             formLoader: async () => {
               return PaymentForm
             },
+            actions: [
+              { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+              {
+                event: DefaultEvents.ABORT,
+                name: 'Hætta við',
+                type: 'primary',
+              },
+            ],
             write: 'all',
             delete: true,
           },

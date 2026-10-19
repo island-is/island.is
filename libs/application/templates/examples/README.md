@@ -33,6 +33,27 @@ For example:
 
 Each application template is an extension of the `ApplicationTemplate` interface. It can include as many custom fields as desired, and as many forms as well. All code for this application flow resides within the same library.
 
+## Roles, actions and events
+
+A role's `actions` in a state dictate what events that role is allowed to send. `PUT /applications/:id/submit` rejects (403) any event that isn't in the `actions` of the caller's role in the application's current state. The role comes from `mapUserToRole`, evaluated on the stored application (answers sent with the same request can't change it).
+
+Declare every event a role legitimately sends, wherever it comes from:
+
+- `buildSubmitField` actions in the role's form, including shared builders such as `buildFormPaymentChargeOverviewSection` (sends `SUBMIT`)
+- custom components that call the submit mutation directly
+- the payment screen (`PaymentPending` sends `SUBMIT` and `ABORT`). `buildPaymentState` declares these for its default role, but if you pass your own `roles` you must declare them yourself
+- institutions that send events through the API from their own systems — give the institution its own role, mapped from its national id, and declare those events on it
+
+`ASSIGN` sent through the assign link (`PUT /applications/assign`) is not checked, but `ASSIGN` sent from a submit field is, like any other event.
+
+Some more things to keep in mind:
+
+- Only declare events the state's `on` accepts, and only for roles that should send them — a declared event is a permission.
+- The checks in `mapUserToRole` run in order and the first match wins, so check specific identities (the applicant, an institution's national id) before a generic `assignees.includes(id)` when the same person can be both.
+- Keep `write` as narrow as the role needs, e.g. `write: { answers: ['approveOrReject', 'approveOrRejectReason'] }` for a reviewer rather than `write: 'all'`.
+
+`example-state-transfers` shows these in practice.
+
 ## Running unit tests
 
 Run `ng test application-templates-reference-template` to execute the unit tests via [Jest](https://jestjs.io).
