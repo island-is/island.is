@@ -143,6 +143,7 @@ export const RenderItems = ({
           <Tag
             variant={item.tag.variant ?? 'blue'}
             outlined={item.tag.outlined}
+            disabled
           >
             {formatTextWithLocale(
               item.tag.label,

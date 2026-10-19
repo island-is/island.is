@@ -839,10 +839,22 @@ export type TableRepeaterField = BaseField & {
   /** Shown on hover when `canRemoveRow` returns false. No tooltip if omitted. */
   removeButtonDisabledTooltipText?: StaticText
   editButtonTooltipText?: StaticText
+  /** Shown on hover when `canEditRow` returns false. No tooltip if omitted. */
+  editButtonDisabledTooltipText?: StaticText
   editField?: boolean
   titleVariant?: TitleVariants
   /** Per row gate for the delete button. Defaults to every row being removable. */
   canRemoveRow?: (
+    application: Application,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    row: Record<string, any>,
+    index: number,
+  ) => boolean
+  /**
+   * Per row gate for the edit button. Only applies when `editField` is true.
+   * Defaults to every row being editable.
+   */
+  canEditRow?: (
     application: Application,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     row: Record<string, any>,

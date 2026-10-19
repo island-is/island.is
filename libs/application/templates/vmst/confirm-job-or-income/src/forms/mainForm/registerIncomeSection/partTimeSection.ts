@@ -4,7 +4,6 @@ import {
   buildTableRepeaterField,
   buildMultiField,
   buildSubSection,
-  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
@@ -20,11 +19,16 @@ import {
 } from '../../../utils/date'
 import { formatIsCurrency, formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
 import {
+  buildCanEditRow,
   buildCanRemoveRow,
   buildEmployerSSNDelete,
 } from '../../../utils/reconcile'
-import { getPartTimeDefaults } from '../../../utils/persistedRows'
+import {
+  getPartTimeDefaults,
+  toPartTimeRow,
+} from '../../../utils/persistedRows'
 import {
   getCompanyNationalId,
   toOptionalNumber,
@@ -36,6 +40,7 @@ const partTimeValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerPartTime',
   incomeTypeKey: 'partTimeJobs',
   persistedPath: 'income.data.partTimeJobs',
+  toRow: toPartTimeRow,
   callbackId: 'PartTimeValidation',
   messages: {
     fallbackErrorMessage: 'partTimeValidationErrorMessage',
@@ -66,30 +71,19 @@ export const partTimeSection = buildSubSection({
           message: m.application.partTimeAlert,
           alertType: 'info',
         }),
-        buildDescriptionField({
-          title: () => {
-            const month = new Date().toLocaleDateString('is-IS', {
-              month: 'long',
-            })
-            return {
-              ...m.application.incomeTitle,
-              values: { month },
-            }
-          },
-          description: m.application.incomeDescriptionLink,
-          titleVariant: 'h4',
-          id: 'partTimeDescription',
-        }),
+        ...buildIncomeDescriptionFields('partTimeDescription'),
         buildTableRepeaterField({
           id: 'registerPartTime',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
-          initActiveFieldIfEmpty: true,
           defaultValue: getPartTimeDefaults,
           canRemoveRow: buildCanRemoveRow(
             partTimeValidationProps.persistedPath,
           ),
-          removeButtonDisabledTooltipText: m.application.removeLineLocked,
+          removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
+          editField: true,
+          canEditRow: buildCanEditRow(partTimeValidationProps.persistedPath),
+          editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
             company: {

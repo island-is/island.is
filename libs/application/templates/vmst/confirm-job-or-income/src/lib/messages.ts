@@ -215,11 +215,17 @@ export const application = defineMessages({
     defaultMessage: 'Bæta við línu',
     description: 'Add line button text for repeater',
   },
-  removeLineLocked: {
-    id: 'vmst.cjoi.application:removeLineLocked',
-    defaultMessage: 'Ekki hægt að eyða eftir 26. hvers mánaðar',
+  removeLineNotAllowed: {
+    id: 'vmst.cjoi.application:removeLineNotAllowed',
+    defaultMessage: 'Ekki hægt að eyða þessari færslu',
     description:
-      'Tooltip shown on the disabled delete button during the lock period',
+      'Tooltip shown on the disabled delete button when the persisted entry cannot be deleted',
+  },
+  editLineNotAllowed: {
+    id: 'vmst.cjoi.application:editLineNotAllowed',
+    defaultMessage: 'Ekki hægt að breyta þessari færslu',
+    description:
+      'Tooltip shown on the disabled edit button when the persisted entry cannot be edited',
   },
   entryTitle: {
     id: 'vmst.cjoi.application:entryTitle',
@@ -453,6 +459,12 @@ export const application = defineMessages({
     id: 'vmst.cjoi.application:overviewTagDeleted',
     defaultMessage: 'Skráningu eytt',
     description: 'Tag marking a deleted entry in the overview',
+  },
+  overviewTagEdited: {
+    id: 'vmst.cjoi.application:overviewTagEdited',
+    defaultMessage: 'Skráningu breytt',
+    description:
+      'Tag marking an edited previously registered entry in the overview',
   },
   overviewEditButton: {
     id: 'vmst.cjoi.application:overviewEditButton',

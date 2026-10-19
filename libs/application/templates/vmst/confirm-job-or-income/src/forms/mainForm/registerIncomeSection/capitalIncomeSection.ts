@@ -4,7 +4,6 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
-  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
@@ -21,9 +20,14 @@ import {
   formatIsDateOrIndefinite,
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
-import { buildCanRemoveRow } from '../../../utils/reconcile'
-import { getCapitalIncomeDefaults } from '../../../utils/persistedRows'
+import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
+import { buildCanEditRow, buildCanRemoveRow } from '../../../utils/reconcile'
 import {
+  getCapitalIncomeDefaults,
+  toCapitalIncomeRow,
+} from '../../../utils/persistedRows'
+import {
+  isOneTimePayment,
   periodToByFrequency,
   toRequiredNumber,
   toRequiredString,
@@ -33,6 +37,7 @@ const capitalIncomeValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerCapitalIncome',
   incomeTypeKey: 'capitalIncomePayments',
   persistedPath: 'income.data.capitalIncomePayments',
+  toRow: toCapitalIncomeRow,
   callbackId: 'CapitalIncomeValidation',
   messages: {
     fallbackErrorMessage: 'capitalIncomeValidationErrorMessage',
@@ -43,6 +48,7 @@ const capitalIncomeValidationProps: IncomeValidationFieldProps = {
     estimatedIncome: toRequiredNumber(row.amountPerMonth),
     periodFrom: toRequiredString(row.dateFrom),
     periodTo: periodToByFrequency(row),
+    oneTimePayment: isOneTimePayment(row),
   }),
 }
 
@@ -56,30 +62,21 @@ export const capitalIncomeSection = buildSubSection({
       title: m.application.capitalIncomeHeading,
       description: m.application.capitalIncomeDescription,
       children: [
-        buildDescriptionField({
-          title: () => {
-            const month = new Date().toLocaleDateString('is-IS', {
-              month: 'long',
-            })
-            return {
-              ...m.application.incomeTitle,
-              values: { month },
-            }
-          },
-          description: m.application.incomeDescriptionLink,
-          titleVariant: 'h4',
-          id: 'capitalIncomeDescription',
-        }),
+        ...buildIncomeDescriptionFields('capitalIncomeDescription'),
         buildTableRepeaterField({
           id: 'registerCapitalIncome',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
-          initActiveFieldIfEmpty: true,
           defaultValue: getCapitalIncomeDefaults,
           canRemoveRow: buildCanRemoveRow(
             capitalIncomeValidationProps.persistedPath,
           ),
-          removeButtonDisabledTooltipText: m.application.removeLineLocked,
+          removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
+          editField: true,
+          canEditRow: buildCanEditRow(
+            capitalIncomeValidationProps.persistedPath,
+          ),
+          editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
             paymentType: {

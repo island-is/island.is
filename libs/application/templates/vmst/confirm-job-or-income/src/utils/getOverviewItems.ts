@@ -49,14 +49,17 @@ const incomeTypeLabelMap = {
   socialInsurance: m.application.incomeTypeSocialInsurance,
 } as const
 
-type EntryStatus = 'new' | 'removed'
+type EntryStatus = 'new' | 'edited' | 'removed'
 
 type DiffedEntry<TRow> = { entry: TRow; status: EntryStatus }
 
 // Deleted rows are stripped from the answers the moment the repeater screen is
 // submitted, so the only record of a deletion is a persisted id that no longer
 // appears in the answers. Unchanged rows are intentionally left out entirely.
-const getDiffedEntries = <TPersisted extends { id?: string }, TRow>(
+const getDiffedEntries = <
+  TPersisted extends { id?: string },
+  TRow extends Record<string, unknown>,
+>(
   answers: FormValue,
   externalData: ExternalData,
   answersPath: string,
@@ -66,9 +69,11 @@ const getDiffedEntries = <TPersisted extends { id?: string }, TRow>(
   const entries = getValueViaPath<TRow[]>(answers, answersPath) ?? []
   const persisted = getPersistedRecords<TPersisted>(externalData, persistedPath)
 
-  const { creates, removedRecords } = splitPersisted(
+  const { creates, updates, removedRecords } = splitPersisted(
     entries as Array<TRow & { isRemoved?: boolean }>,
     persisted,
+    'validationId',
+    toRow,
   )
 
   return [
@@ -76,12 +81,22 @@ const getDiffedEntries = <TPersisted extends { id?: string }, TRow>(
       entry: entry as TRow,
       status: 'new' as const,
     })),
+    ...updates.map((entry) => ({
+      entry: entry as TRow,
+      status: 'edited' as const,
+    })),
     ...removedRecords.map((record) => ({
       entry: toRow(record),
       status: 'removed' as const,
     })),
   ]
 }
+
+const entryTags = {
+  new: { label: m.application.overviewTagNew, variant: 'blue' },
+  edited: { label: m.application.overviewTagEdited, variant: 'purple' },
+  removed: { label: m.application.overviewTagDeleted, variant: 'red' },
+} as const
 
 const buildEntryHeading = (
   index: number,
@@ -95,11 +110,7 @@ const buildEntryHeading = (
     },
     lineAboveKeyText: index > 0,
     tag: {
-      label:
-        status === 'new'
-          ? m.application.overviewTagNew
-          : m.application.overviewTagDeleted,
-      variant: status === 'new' ? 'blue' : 'red',
+      ...entryTags[status],
       outlined: true,
     },
   },

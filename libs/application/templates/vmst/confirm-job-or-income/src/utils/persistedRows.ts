@@ -8,10 +8,31 @@ import {
   GaldurExternalDomainModelsIncomePensionPaymentDTO,
   GaldurExternalDomainModelsIncomeTRPaymentDTO,
 } from '@island.is/clients/vmst-unemployment'
-import { INCOME_TYPE_ANSWER_KEYS } from './constants'
+import { INCOME_TYPE_ANSWER_KEYS, PaymentFrequency } from './constants'
 
 // Maps the persisted Galdur records into the answer row shape. Used both to seed
 // the table repeaters and to render rows the user deleted in the overview.
+
+type PaymentPeriod = { periodFrom?: string; periodTo?: string | null }
+
+// TODO: Galdur's payment DTOs do not expose oneTimePayment yet. Until they do,
+// a record whose period starts and ends on the same day is treated as a
+// one-time payment (how they were registered before oneTimePayment existed);
+// anything else, including an open-ended period, is treated as monthly.
+const toPaymentPeriodRow = ({ periodFrom, periodTo }: PaymentPeriod) => {
+  const isOneTime =
+    !!periodFrom &&
+    !!periodTo &&
+    periodFrom.slice(0, 10) === periodTo.slice(0, 10)
+
+  return {
+    paymentFrequency: isOneTime
+      ? PaymentFrequency.ONE_TIME
+      : PaymentFrequency.MONTHLY,
+    dateFrom: periodFrom ?? '',
+    dateTo: isOneTime ? '' : periodTo ?? '',
+  }
+}
 
 export const toCasualWorkRow = (
   job: GaldurExternalDomainModelsIncomeIrregularJobDTO,
@@ -59,8 +80,7 @@ export const toPensionRow = (
   pensionFund: payment.pensionFundId ?? '',
   amountPerMonth:
     payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
-  dateFrom: payment.periodFrom ?? '',
-  dateTo: payment.periodTo ?? '',
+  ...toPaymentPeriodRow(payment),
 })
 
 export const toCapitalIncomeRow = (
@@ -70,8 +90,7 @@ export const toCapitalIncomeRow = (
   paymentType: payment.incomeTypeId ?? '',
   amountPerMonth:
     payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
-  dateFrom: payment.periodFrom ?? '',
-  dateTo: payment.periodTo ?? '',
+  ...toPaymentPeriodRow(payment),
 })
 
 export const toSocialInsuranceRow = (
@@ -81,8 +100,7 @@ export const toSocialInsuranceRow = (
   socialPaymentType: payment.incomeTypeId ?? '',
   amountPerMonth:
     payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
-  dateFrom: payment.periodFrom ?? '',
-  dateTo: payment.periodTo ?? '',
+  ...toPaymentPeriodRow(payment),
 })
 
 export const getPersistedRecords = <TPersisted>(

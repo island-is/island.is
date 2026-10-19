@@ -4,7 +4,6 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
-  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
@@ -21,9 +20,11 @@ import {
   formatIsDateOrIndefinite,
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
-import { buildCanRemoveRow } from '../../../utils/reconcile'
-import { getPensionDefaults } from '../../../utils/persistedRows'
+import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
+import { buildCanEditRow, buildCanRemoveRow } from '../../../utils/reconcile'
+import { getPensionDefaults, toPensionRow } from '../../../utils/persistedRows'
 import {
+  isOneTimePayment,
   periodToByFrequency,
   toOptionalString,
   toRequiredNumber,
@@ -34,6 +35,7 @@ const pensionValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerPension',
   incomeTypeKey: 'pensionPayments',
   persistedPath: 'income.data.pensionPayments',
+  toRow: toPensionRow,
   callbackId: 'PensionValidation',
   messages: {
     fallbackErrorMessage: 'pensionValidationErrorMessage',
@@ -45,6 +47,7 @@ const pensionValidationProps: IncomeValidationFieldProps = {
     estimatedIncome: toRequiredNumber(row.amountPerMonth),
     periodFrom: toRequiredString(row.dateFrom),
     periodTo: periodToByFrequency(row),
+    oneTimePayment: isOneTimePayment(row),
   }),
 }
 
@@ -58,28 +61,17 @@ export const pensionSection = buildSubSection({
       title: m.application.pensionHeading,
       description: m.application.pensionDescription,
       children: [
-        buildDescriptionField({
-          title: () => {
-            const month = new Date().toLocaleDateString('is-IS', {
-              month: 'long',
-            })
-            return {
-              ...m.application.incomeTitle,
-              values: { month },
-            }
-          },
-          description: m.application.incomeDescriptionLink,
-          titleVariant: 'h4',
-          id: 'pensionDescription',
-        }),
+        ...buildIncomeDescriptionFields('pensionDescription'),
         buildTableRepeaterField({
           id: 'registerPension',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
-          initActiveFieldIfEmpty: true,
           defaultValue: getPensionDefaults,
           canRemoveRow: buildCanRemoveRow(pensionValidationProps.persistedPath),
-          removeButtonDisabledTooltipText: m.application.removeLineLocked,
+          removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
+          editField: true,
+          canEditRow: buildCanEditRow(pensionValidationProps.persistedPath),
+          editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
             pensionType: {

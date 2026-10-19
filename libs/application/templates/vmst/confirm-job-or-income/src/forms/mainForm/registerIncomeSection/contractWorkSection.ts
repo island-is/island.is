@@ -4,7 +4,6 @@ import {
   buildTableRepeaterField,
   buildMultiField,
   buildSubSection,
-  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
@@ -16,14 +15,19 @@ import {
 } from '../../../utils/date'
 import { formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
-import { buildCanRemoveRow } from '../../../utils/reconcile'
-import { getContractWorkDefaults } from '../../../utils/persistedRows'
+import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
+import { buildCanEditRow, buildCanRemoveRow } from '../../../utils/reconcile'
+import {
+  getContractWorkDefaults,
+  toContractWorkRow,
+} from '../../../utils/persistedRows'
 import { toOptionalString, toRequiredString } from '../../../utils/rowCoercions'
 
 const contractWorkValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerContractWork',
   incomeTypeKey: 'contractorJobs',
   persistedPath: 'income.data.contractorJobs',
+  toRow: toContractWorkRow,
   callbackId: 'ContractWorkValidation',
   messages: {
     fallbackErrorMessage: 'contractWorkValidationErrorMessage',
@@ -51,30 +55,21 @@ export const contractWorkSection = buildSubSection({
           message: m.application.contractWorkAlert,
           alertType: 'info',
         }),
-        buildDescriptionField({
-          title: () => {
-            const month = new Date().toLocaleDateString('is-IS', {
-              month: 'long',
-            })
-            return {
-              ...m.application.incomeTitle,
-              values: { month },
-            }
-          },
-          description: m.application.incomeDescriptionLink,
-          titleVariant: 'h4',
-          id: 'contractWorkDescription',
-        }),
+        ...buildIncomeDescriptionFields('contractWorkDescription'),
         buildTableRepeaterField({
           id: 'registerContractWork',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
-          initActiveFieldIfEmpty: true,
           defaultValue: getContractWorkDefaults,
           canRemoveRow: buildCanRemoveRow(
             contractWorkValidationProps.persistedPath,
           ),
-          removeButtonDisabledTooltipText: m.application.removeLineLocked,
+          removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
+          editField: true,
+          canEditRow: buildCanEditRow(
+            contractWorkValidationProps.persistedPath,
+          ),
+          editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
             contractJobStart: {

@@ -23,15 +23,7 @@ export const isEndBeforeStart = (start?: string, end?: string): boolean => {
   return endTime < startTime
 }
 
-// Income already registered with VMST is locked from the 26th until month end.
-export const INCOME_DELETION_LOCK_DAY = 26
-
-export const isIncomeDeletionLocked = (): boolean =>
-  new Date().getDate() >= INCOME_DELETION_LOCK_DAY
-
-// Next lock boundary after `from`: the 26th of the same month, or the 1st of
-// the next month if the lock period has already started.
-export const getNextIncomeLockBoundary = (from: Date): Date =>
-  from.getDate() < INCOME_DELETION_LOCK_DAY
-    ? new Date(from.getFullYear(), from.getMonth(), INCOME_DELETION_LOCK_DAY)
-    : new Date(from.getFullYear(), from.getMonth() + 1, 1)
+// Drafts are pruned at the end of the day they were created so the
+// canEdit/canDelete flags fetched from Galdur never go stale overnight.
+export const getEndOfDay = (from: Date): Date =>
+  new Date(from.getFullYear(), from.getMonth(), from.getDate() + 1)

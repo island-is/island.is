@@ -5,7 +5,6 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
-  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
@@ -17,11 +16,16 @@ import {
 } from '../../../utils/date'
 import { formatIsCurrency, formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
 import {
+  buildCanEditRow,
   buildCanRemoveRow,
   buildEmployerSSNDelete,
 } from '../../../utils/reconcile'
-import { getCasualWorkDefaults } from '../../../utils/persistedRows'
+import {
+  getCasualWorkDefaults,
+  toCasualWorkRow,
+} from '../../../utils/persistedRows'
 import {
   getCompanyNationalId,
   toOptionalString,
@@ -39,6 +43,7 @@ const casualWorkValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerCasualWork',
   incomeTypeKey: 'irregularJobs',
   persistedPath: 'income.data.irregularJobs',
+  toRow: toCasualWorkRow,
   callbackId: 'CasualWorkValidation',
   messages: {
     fallbackErrorMessage: 'casualWorkValidationErrorMessage',
@@ -67,31 +72,20 @@ export const casualWorkSection = buildSubSection({
       title: m.application.casualWorkHeading,
       description: m.application.casualWorkDescription,
       children: [
-        buildDescriptionField({
-          title: () => {
-            const month = new Date().toLocaleDateString('is-IS', {
-              month: 'long',
-            })
-            return {
-              ...m.application.incomeTitle,
-              values: { month },
-            }
-          },
-          description: m.application.incomeDescriptionLink,
-          titleVariant: 'h4',
-          id: 'casualWorkdDescription',
-        }),
+        ...buildIncomeDescriptionFields('casualWorkdDescription'),
         buildTableRepeaterField({
           id: 'registerCasualWork',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
-          initActiveFieldIfEmpty: true,
           marginTop: 2,
           defaultValue: getCasualWorkDefaults,
           canRemoveRow: buildCanRemoveRow(
             casualWorkValidationProps.persistedPath,
           ),
-          removeButtonDisabledTooltipText: m.application.removeLineLocked,
+          removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
+          editField: true,
+          canEditRow: buildCanEditRow(casualWorkValidationProps.persistedPath),
+          editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           fields: {
             company: {
               component: 'nationalIdWithName',

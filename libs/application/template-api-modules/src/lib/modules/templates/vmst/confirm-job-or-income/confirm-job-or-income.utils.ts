@@ -18,6 +18,12 @@ import {
 import {
   buildEmployerSSNDelete,
   reconcile,
+  toCapitalIncomeRow,
+  toCasualWorkRow,
+  toContractWorkRow,
+  toPartTimeRow,
+  toPensionRow,
+  toSocialInsuranceRow,
 } from '@island.is/application/templates/vmst/confirm-job-or-income'
 import { IncomeType } from './confirm-job-or-income.types'
 
@@ -43,12 +49,14 @@ const toNumber = (value: unknown): number | undefined =>
 const getNationalId = (entry: Entry): string | undefined =>
   entry.company?.nationalId?.replace(/-/g, '')
 
-// One-time payments are a single-day period; monthly ones are open-ended (null)
-// unless an end date was chosen.
-const getPeriodTo = (entry: Entry): Date | null | undefined =>
+const isOneTimePayment = (entry: Entry): boolean =>
   entry.paymentFrequency === 'oneTime'
-    ? toDate(entry.dateFrom)
-    : toDate(entry.dateTo) ?? null
+
+// One-time payments are flagged with oneTimePayment and have no end date (the
+// disabled dateTo field may still hold a stale value); monthly ones are
+// open-ended (null) unless an end date was chosen.
+const getPeriodTo = (entry: Entry): Date | null =>
+  isOneTimePayment(entry) ? null : toDate(entry.dateTo) ?? null
 
 const buildIrregularJob = (entry: Entry) => ({
   employerSSN: getNationalId(entry),
@@ -72,8 +80,7 @@ const buildIrregularJobs = (
       'income.data.irregularJobs',
     ),
     buildIrregularJob,
-    'validationId',
-    buildEmployerSSNDelete,
+    { buildDelete: buildEmployerSSNDelete, toRow: toCasualWorkRow },
   )
 
 const buildPartTimeJob = (entry: Entry) => ({
@@ -95,8 +102,7 @@ const buildPartTimeJobs = (
       'income.data.partTimeJobs',
     ),
     buildPartTimeJob,
-    'validationId',
-    buildEmployerSSNDelete,
+    { buildDelete: buildEmployerSSNDelete, toRow: toPartTimeRow },
   )
 
 const buildContractorJob = (entry: Entry) => ({
@@ -115,6 +121,7 @@ const buildContractorJobs = (
       'income.data.contractorJobs',
     ),
     buildContractorJob,
+    { toRow: toContractWorkRow },
   )
 
 const buildCapitalIncomePayment = (entry: Entry) => ({
@@ -123,6 +130,7 @@ const buildCapitalIncomePayment = (entry: Entry) => ({
   estimatedIncome: toNumber(entry.amountPerMonth),
   periodFrom: toDate(entry.dateFrom),
   periodTo: getPeriodTo(entry),
+  oneTimePayment: isOneTimePayment(entry),
 })
 
 const buildCapitalIncomePayments = (
@@ -136,6 +144,7 @@ const buildCapitalIncomePayments = (
       'income.data.capitalIncomePayments',
     ),
     buildCapitalIncomePayment,
+    { toRow: toCapitalIncomeRow },
   )
 
 const buildTRPayment = (entry: Entry) => ({
@@ -146,6 +155,7 @@ const buildTRPayment = (entry: Entry) => ({
   estimatedIncome: toNumber(entry.amountPerMonth),
   periodFrom: toDate(entry.dateFrom),
   periodTo: getPeriodTo(entry),
+  oneTimePayment: isOneTimePayment(entry),
 })
 
 const buildTRPayments = (
@@ -159,6 +169,7 @@ const buildTRPayments = (
       'income.data.trPayments',
     ),
     buildTRPayment,
+    { toRow: toSocialInsuranceRow },
   )
 
 const buildPensionPayment = (entry: Entry) => ({
@@ -169,6 +180,7 @@ const buildPensionPayment = (entry: Entry) => ({
   estimatedIncome: toNumber(entry.amountPerMonth),
   periodFrom: toDate(entry.dateFrom),
   periodTo: getPeriodTo(entry),
+  oneTimePayment: isOneTimePayment(entry),
 })
 
 const buildPensionPayments = (
@@ -182,6 +194,7 @@ const buildPensionPayments = (
       'income.data.pensionPayments',
     ),
     buildPensionPayment,
+    { toRow: toPensionRow },
   )
 
 export const buildCreateIncomesRequest = (

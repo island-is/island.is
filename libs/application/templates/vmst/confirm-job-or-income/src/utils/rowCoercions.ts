@@ -23,11 +23,11 @@ export const getCompanyNationalId = (
   return nationalId ? nationalId.replace(/-/g, '') : undefined
 }
 
-// One-time payments have no dateTo, so Galdur gets a single-day period
-// (periodTo = periodFrom). Monthly payments send the chosen dateTo, or null for
-// an open-ended period. Matches the submit-side `getPeriodTo` in
-// confirm-job-or-income.utils.
-export const periodToByFrequency = (row: IncomeValidationRow): string | null =>
+export const isOneTimePayment = (row: IncomeValidationRow): boolean =>
   row.paymentFrequency === PaymentFrequency.ONE_TIME
-    ? toRequiredString(row.dateFrom)
-    : toOptionalString(row.dateTo) ?? null
+
+// One-time payments are flagged with oneTimePayment and have no end date.
+// Monthly payments send the chosen dateTo, or null for an open-ended period.
+// Matches the submit-side `getPeriodTo` in confirm-job-or-income.utils.
+export const periodToByFrequency = (row: IncomeValidationRow): string | null =>
+  isOneTimePayment(row) ? null : toOptionalString(row.dateTo) ?? null

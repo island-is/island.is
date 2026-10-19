@@ -4,7 +4,6 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
-  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
@@ -21,9 +20,14 @@ import {
   formatIsDateOrIndefinite,
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
-import { buildCanRemoveRow } from '../../../utils/reconcile'
-import { getSocialInsuranceDefaults } from '../../../utils/persistedRows'
+import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
+import { buildCanEditRow, buildCanRemoveRow } from '../../../utils/reconcile'
 import {
+  getSocialInsuranceDefaults,
+  toSocialInsuranceRow,
+} from '../../../utils/persistedRows'
+import {
+  isOneTimePayment,
   periodToByFrequency,
   toRequiredNumber,
   toRequiredString,
@@ -33,6 +37,7 @@ const socialInsuranceValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerSocialInsurance',
   incomeTypeKey: 'trPayments',
   persistedPath: 'income.data.trPayments',
+  toRow: toSocialInsuranceRow,
   callbackId: 'SocialInsuranceValidation',
   messages: {
     fallbackErrorMessage: 'socialInsuranceValidationErrorMessage',
@@ -43,6 +48,7 @@ const socialInsuranceValidationProps: IncomeValidationFieldProps = {
     estimatedIncome: toRequiredNumber(row.amountPerMonth),
     periodFrom: toRequiredString(row.dateFrom),
     periodTo: periodToByFrequency(row),
+    oneTimePayment: isOneTimePayment(row),
   }),
 }
 
@@ -56,30 +62,21 @@ export const socialInsuranceSection = buildSubSection({
       title: m.application.socialInsuranceHeading,
       description: m.application.socialInsuranceDescription,
       children: [
-        buildDescriptionField({
-          title: () => {
-            const month = new Date().toLocaleDateString('is-IS', {
-              month: 'long',
-            })
-            return {
-              ...m.application.incomeTitle,
-              values: { month },
-            }
-          },
-          description: m.application.incomeDescriptionLink,
-          titleVariant: 'h4',
-          id: 'socialInsuranceDescription',
-        }),
+        ...buildIncomeDescriptionFields('socialInsuranceDescription'),
         buildTableRepeaterField({
           id: 'registerSocialInsurance',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
-          initActiveFieldIfEmpty: true,
           defaultValue: getSocialInsuranceDefaults,
           canRemoveRow: buildCanRemoveRow(
             socialInsuranceValidationProps.persistedPath,
           ),
-          removeButtonDisabledTooltipText: m.application.removeLineLocked,
+          removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
+          editField: true,
+          canEditRow: buildCanEditRow(
+            socialInsuranceValidationProps.persistedPath,
+          ),
+          editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
             socialPaymentType: {
