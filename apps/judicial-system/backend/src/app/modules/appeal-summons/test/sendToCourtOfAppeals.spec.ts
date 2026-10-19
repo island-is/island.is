@@ -108,7 +108,13 @@ describe('AppealSummonsController - Send to court of appeals', () => {
       summonsId,
       caseId,
       { sentToCourtOfAppealsDate },
-      { transaction, where: { sentToCourtOfAppealsDate: null } },
+      {
+        transaction,
+        where: {
+          sentToCourtOfAppealsDate: null,
+          confirmedDate: confirmed.confirmedDate,
+        },
+      },
     )
     expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
       {

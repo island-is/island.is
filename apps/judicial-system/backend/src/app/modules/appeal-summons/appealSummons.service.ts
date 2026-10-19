@@ -167,7 +167,8 @@ export class AppealSummonsService {
           hash: null,
           hashAlgorithm: null,
         },
-        { transaction },
+        // Do not clear confirmation if a concurrent send already went through.
+        { transaction, where: { sentToCourtOfAppealsDate: null } },
       )
       // Delete after commit so a rolled-back edit cannot leave the DB hash
       // pointing at a PDF that S3 already removed. Re-check hash so a
@@ -233,7 +234,8 @@ export class AppealSummonsService {
     const deleted = await this.appealSummonsRepositoryService.delete(
       summons.id,
       theCase.id,
-      { transaction },
+      // Do not delete if a concurrent send already went through.
+      { transaction, where: { sentToCourtOfAppealsDate: null } },
     )
 
     if (deleted) {
@@ -387,7 +389,14 @@ export class AppealSummonsService {
       summons.id,
       theCase.id,
       { sentToCourtOfAppealsDate },
-      { transaction, where: { sentToCourtOfAppealsDate: null } },
+      // Reject if already sent, or if a concurrent edit cleared confirmation.
+      {
+        transaction,
+        where: {
+          sentToCourtOfAppealsDate: null,
+          confirmedDate: summons.confirmedDate ?? null,
+        },
+      },
     )
 
     await this.appealEventLogRepositoryService.create(

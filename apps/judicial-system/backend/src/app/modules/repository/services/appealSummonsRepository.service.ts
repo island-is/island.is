@@ -154,9 +154,12 @@ export class AppealSummonsRepositoryService {
     data: UpdateAppealSummons,
     options: {
       transaction: Transaction
-      // Optional extra predicates (e.g. sentToCourtOfAppealsDate: null) so a
-      // concurrent update that matches no row is rejected before side effects.
-      where?: { sentToCourtOfAppealsDate: null }
+      // Optional extra predicates so a concurrent update that matches no row
+      // is rejected before side effects (event log, notifications, etc.).
+      where?: {
+        sentToCourtOfAppealsDate?: null
+        confirmedDate?: Date | null
+      }
     },
   ): Promise<AppealSummons> {
     try {
@@ -236,7 +239,10 @@ export class AppealSummonsRepositoryService {
   async delete(
     id: string,
     caseId: string,
-    options: { transaction: Transaction },
+    options: {
+      transaction: Transaction
+      where?: { sentToCourtOfAppealsDate?: null }
+    },
   ): Promise<boolean> {
     try {
       this.logger.debug(`Deleting appeal summons ${id} of case ${caseId}`)
@@ -244,11 +250,17 @@ export class AppealSummonsRepositoryService {
       await this.deleteDefendants(id, options)
 
       const numberOfDeletedRows = await this.appealSummonsModel.destroy({
-        where: { id, caseId },
+        where: { id, caseId, ...options.where },
         transaction: options.transaction,
       })
 
       if (numberOfDeletedRows < 1) {
+        if (options.where) {
+          throw new ConflictException(
+            `Could not delete appeal summons ${id} of case ${caseId}`,
+          )
+        }
+
         throw new InternalServerErrorException(
           `Could not delete appeal summons ${id} of case ${caseId}`,
         )

@@ -75,7 +75,7 @@ describe('AppealSummonsController - Delete', () => {
     expect(mockAppealSummonsRepositoryService.delete).toHaveBeenCalledWith(
       summonsId,
       caseId,
-      { transaction },
+      { transaction, where: { sentToCourtOfAppealsDate: null } },
     )
     expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(
       theCase.type,
@@ -101,7 +101,7 @@ describe('AppealSummonsController - Delete', () => {
     expect(mockAppealSummonsRepositoryService.delete).toHaveBeenCalledWith(
       summonsId,
       caseId,
-      { transaction },
+      { transaction, where: { sentToCourtOfAppealsDate: null } },
     )
     expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(
       theCase.type,
