@@ -376,9 +376,12 @@ describe.each(routes)(
     // What RolesGuard leaves: a caller in a listed role on a case they cannot
     // reach gets as far as the read, and is turned away by the access guard
     // from the case it read. On the three locking routes that guard is the
-    // write guard, and this row together with the allowed rows above is what
-    // shows the swap from the read guard changed nothing: the same role gets
-    // through on the same case, and is refused on the same case.
+    // write guard, and this row together with the allowed rows above pins
+    // the swap from the read guard on the two case shapes here: the same
+    // role gets through on the one and is refused on the other. That the
+    // swap changes nothing on any case follows from canUserAccessCase, which
+    // sends public prosecution staff through a check that never looks at
+    // whether the access is for an update.
     describe('case the court has not sent to the public prosecutor', () => {
       const caseId = uuid()
       let then: Awaited<ReturnType<typeof runChain>>
