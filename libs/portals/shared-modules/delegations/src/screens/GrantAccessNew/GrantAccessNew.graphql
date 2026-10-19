@@ -5,6 +5,20 @@ mutation CreateAuthDelegations($input: CreateAuthDelegationsInput!) {
       nationalId
       name
     }
+    ... on AuthCustomDelegation {
+      pendingConfirmations {
+        id
+        expiresAt
+        scopeNames
+        groupId
+        authentication {
+          method
+          verificationCode
+          interval
+          expiresIn
+        }
+      }
+    }
   }
 }
 

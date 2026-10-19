@@ -259,7 +259,15 @@ query Case($input: CaseQueryInput!) {
       id
       appealState
       appealType
+      appealCaseNumber
       appealConclusion
+      courtSessions {
+        id
+        created
+        sessionType
+        sessionDate
+        courtRoom
+      }
       appealJudges {
         id
         displayOrder

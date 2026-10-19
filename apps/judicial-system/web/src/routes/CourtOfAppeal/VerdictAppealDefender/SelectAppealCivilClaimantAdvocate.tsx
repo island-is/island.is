@@ -20,7 +20,10 @@ import type {
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCivilClaimants } from '@island.is/judicial-system-web/src/utils/hooks'
-import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import {
+  stack,
+  twoColumn,
+} from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
   getAppealSpokesperson,
@@ -143,7 +146,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
         </Box>
         {hasSpokesperson ? (
           <>
-            <Box display="flex" columnGap={2}>
+            <div className={twoColumn({ gap: 2 })}>
               <RadioButton
                 name={`appealAdvocateType-${civilClaimant.id}`}
                 id={`appeal-civil-claimant-lawyer-${civilClaimant.id}`}
@@ -164,7 +167,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
                 onChange={() => send({ appealSpokespersonIsLawyer: false })}
                 disabled={isConfirmed}
               />
-            </Box>
+            </div>
             <InputAdvocate
               advocateType={isLawyer ? 'lawyer' : 'legalRightsProtector'}
               name={advocate.name}
@@ -244,7 +247,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
               }
               onClick={() => setDisplayModal(true)}
             >
-              {`Staðfesta ${advocateNoun.accusative}`}
+              Staðfesta val
             </Button>
           </Box>
         )}
@@ -258,15 +261,18 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
       </BlueBox>
       {displayModal && (
         <Modal
-          title={
-            isConfirmed
-              ? `Breyta ${advocateNoun.dative}`
-              : `Staðfesta ${advocateNoun.accusative}`
-          }
+          title={isConfirmed ? `Breyta ${advocateNoun.dative}` : 'Staðfesta'}
           text={
             isConfirmed
               ? 'Ef þú breytir skráningunni þarf að staðfesta hana að nýju.'
-              : `Með því að staðfesta skráir þú ${advocate.name} sem ${advocateNoun.accusative} ${civilClaimant.name} fyrir Landsrétti.`
+              : // Only a réttargæslumaður is appointed by letter. A lögmaður the
+                // claimant retained is told by mail alone, so the modal must not
+                // promise them a letter.
+                `Valinn ${advocateNoun.nominative.toLowerCase()}, ${
+                  advocate.name
+                }, mun fá ${
+                  isLawyer ? '' : 'skipunarbréf og '
+                }aðgang að málinu í Réttarvörslugátt`
           }
           buttons={[
             {
@@ -275,7 +281,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
               variant: 'ghost',
             },
             {
-              text: isConfirmed ? 'Breyta' : 'Staðfesta',
+              text: isConfirmed ? 'Breyta' : 'Staðfesta val',
               onClick: toggleConfirmed,
             },
           ]}
