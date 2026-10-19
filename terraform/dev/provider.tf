@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
     encrypt = true
-    # Reuses the judicial FOUNDATION state bucket (gagni reuses the accelerator
-    # bucket) with a dedicated service key so app state is isolated from foundation.
+    # Reuses the judicial infrastructure state bucket with a dedicated service
+    # key so app state is isolated from the infrastructure state.
     bucket = "dev-dmr-judicial-terraform-state"
     key    = "services/judicial-system/terraform.tfstate"
     region = "eu-west-1"

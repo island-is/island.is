@@ -5,7 +5,7 @@
 # security_group_egress_rules are set). We pass a pre-created SHARED services SG
 # via security_group_ids instead, so the module does NOT open the ALB->task path.
 # The old in-repo module opened it automatically; here we declare it explicitly
-# (gagni-style cross-SG rules), both directions, on the service container port.
+# (cross-SG rules), both directions, on the service container port.
 #
 # Without these two rules the ALB health checks cannot reach the tasks on :3333
 # ("Reachability may be impacted" on the ALB; targets stay unhealthy).

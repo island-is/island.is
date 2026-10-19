@@ -57,7 +57,7 @@ output "hosted_zone_id" {
   value = data.terraform_remote_state.hosted_zone.outputs.zone_id
 }
 
-# --- shared services security group (foundation-owned, gagni-style) ---
+# --- shared services security group (infra-owned) ---
 output "services_shared_sg_id" {
   value = data.terraform_remote_state.services_sg.outputs.security_group_id
 }
