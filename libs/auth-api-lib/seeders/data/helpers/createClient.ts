@@ -13,6 +13,7 @@ type GrantType =
   | 'authorization_code'
   | 'client_credentials'
   | 'urn:ietf:params:oauth:grant-type:token-exchange'
+  | 'urn:openid:params:grant-type:ciba'
 
 interface ClientOptions {
   /**
