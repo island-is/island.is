@@ -1,5 +1,4 @@
 import {
-  allSameDay,
   escapeHtml,
   extractArticleTitleDisplay,
   extractAuthority,
@@ -110,7 +109,11 @@ describe('extractArticleTitleDisplay and hasSubtitle', () => {
   it.each([
     ['3. gr.', '3. gr.', false],
     ['3. gr. Gildistaka.', '3. gr.', true],
-    ['3. gr. a. Undanþágur', '3. gr. a.', true],
+    ['3. gr. a. Undanþágur', '3. gr. a', true],
+    ['3. gr. a Leyfissvipting.', '3. gr. a', true],
+    ['3. gr.a Leyfissvipting.', '3. gr. a', true],
+    ['3. gr. a', '3. gr. a', false],
+    ['3. gr. Á sjó.', '3. gr.', true],
     ['II. Kafli', 'II. Kafli', false],
   ])('"%s"', (title, display, subtitle) => {
     expect(extractArticleTitleDisplay(title)).toBe(display)
@@ -132,23 +135,6 @@ describe('formatDate', () => {
 
   it('returns an empty string for an invalid date', () => {
     expect(formatDate(new Date('nope'))).toBe('')
-  })
-})
-
-describe('allSameDay', () => {
-  it('treats a missing date as its own value', () => {
-    expect(allSameDay([{ date: new Date(2026, 0, 1) }, {}])).toBe(false)
-    expect(allSameDay([{}, {}])).toBe(true)
-    expect(allSameDay([])).toBe(true)
-  })
-
-  it('is false for different days', () => {
-    expect(
-      allSameDay([
-        { date: new Date(2026, 0, 1) },
-        { date: new Date(2026, 0, 2) },
-      ]),
-    ).toBe(false)
   })
 })
 

@@ -4,7 +4,6 @@
  * Utility functions for parsing regulation diff HTML and generating
  * Icelandic legal amendment prose.
  */
-import isSameDay from 'date-fns/isSameDay'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { asDiv } from '@island.is/regulations'
@@ -64,24 +63,50 @@ export const getArticleTitleType = (element: HTMLElement): ArticleTitleType => {
 }
 
 /**
- * Extracts article title number (e.g., '1. gr.' or '1. gr. a') from a string,
- * allowing for Icelandic characters.
+ * An article number, with the letter of an inserted article written any of
+ * the ways authors type it: "3. gr. a", "3. gr. a." or "3. gr.a". The letter
+ * is lowercase, so a heading starting with "Á" or "Í" is not read as one.
+ * Not case-insensitive: under /iu, \p{Ll} matches uppercase letters too.
  */
-const extractRegex =
-  /^\d+\. gr\.(?: [\p{L}]\.)?(?= |$)|^(?:\d+|[IVXLCDM]+)\.?\s*Kafli(?=\b| |$)/iu
+const articleNumberRegex = /^(\d+)\. gr\.(?: ?(\p{Ll})(?!\p{L})\.?)?(?= |$)/u
+const chapterNumberRegex = /^(?:\d+|[IVXLCDM]+)\.?\s*Kafli(?=\b| |$)/iu
 
-export const extractArticleTitleDisplay = (title: string): string => {
-  const grMatch = title.match(extractRegex)
-  const articleTitleDisplay = grMatch ? grMatch[0] : title
-  return articleTitleDisplay
+/**
+ * Splits a heading into its number, as amending text cites it ("3. gr. a"),
+ * and its subtitle ("Leyfissvipting."). A heading without a number is
+ * returned whole as the number, with no subtitle.
+ */
+export const splitArticleTitle = (
+  title: string,
+): { display: string; subtitle: string } => {
+  const trimmed = title.trim()
+  const article = trimmed.match(articleNumberRegex)
+  const match = article ?? trimmed.match(chapterNumberRegex)
+  if (!match) {
+    return { display: title, subtitle: '' }
+  }
+  const display = article
+    ? `${article[1]}. gr.${article[2] ? ` ${article[2]}` : ''}`
+    : match[0]
+  return { display, subtitle: trimmed.slice(match[0].length).trim() }
 }
 
-export const hasSubtitle = (title: string): boolean => {
-  const grMatch = title.match(extractRegex)
-  const articleTitleDisplay = grMatch ? grMatch[0] : title
-  const hasSubText = title.trim() !== articleTitleDisplay.trim()
-  return hasSubText
-}
+export const extractArticleTitleDisplay = (title: string): string =>
+  splitArticleTitle(title).display
+
+export const hasSubtitle = (title: string): boolean =>
+  !!splitArticleTitle(title).subtitle
+
+/**
+ * Whether a list is lettered: type="a" as in published regulations, or the
+ * list-style-type the OJOI editor writes.
+ */
+export const isLetteredList = (list: Element | null | undefined): boolean =>
+  !!list &&
+  (list.getAttribute('type')?.toLowerCase() === 'a' ||
+    /list-style-type:\s*(lower|upper)-(alpha|latin)/i.test(
+      list.getAttribute('style') ?? '',
+    ))
 
 export const getTextWithSpaces = (element: Node): string => {
   let result = ''
@@ -194,16 +219,6 @@ export const extractAuthority = (str: string): string | undefined => {
 
 export const escapeHtml = (text: string) =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-
-/** Whether all dates are the same day. A missing date is its own value. */
-export const allSameDay = (objects: Array<{ date?: Date }>): boolean => {
-  const [first, ...rest] = objects
-  return rest.every((obj) =>
-    first.date && obj.date
-      ? isSameDay(obj.date, first.date)
-      : !first.date && !obj.date,
-  )
-}
 
 /**
  * Removes inserted text from a diff element, leaving the text as it read
