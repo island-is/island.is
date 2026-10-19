@@ -248,11 +248,8 @@ const template: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined => {
     const { applicantActors = [] } = application
-    if (applicantActors.length > 0) {
-      return Roles.DELEGATE
-    }
     if (nationalId === application.applicant) {
-      return Roles.APPLICANT
+      return applicantActors.length > 0 ? Roles.DELEGATE : Roles.APPLICANT
     }
     return undefined
   },
