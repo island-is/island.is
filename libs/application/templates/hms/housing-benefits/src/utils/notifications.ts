@@ -1,10 +1,7 @@
 import addDays from 'date-fns/addDays'
 import addMilliseconds from 'date-fns/addMilliseconds'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
-import {
-  getValueViaPath,
-  scheduleAssigneeReminder,
-} from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
@@ -15,7 +12,6 @@ import {
 } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { getApplicationCardRentalSummary } from './applicationCardSummary'
-import { getPendingAssigneeNationalIds } from './assigneeUtils'
 import { getHousingBenefitsPruneDate } from './pruneUtils'
 
 /** Days after entering a state (draft, assignee approval, applicant submit) until a reminder is sent. */
@@ -154,8 +150,10 @@ const applicantReminder = (
 })
 
 /**
- * Reminds the applicant to finish the application, 5 days after entering the
- * state (used in applicant submit).
+ * Reminds the applicant about the application, 5 days after entering the
+ * state (used in assignee approval and applicant submit). Assignee approval is
+ * re-entered whenever a household member signs or rejects, which restarts the
+ * timer.
  */
 export const getApplicantReminderScheduledNotifications = (
   application: Application,
@@ -189,26 +187,4 @@ export const getDraftReminderScheduledNotifications = (
   return sendDates
     .filter((date): date is Date => !!date)
     .map((date) => applicantReminder(application, date))
-}
-
-/**
- * Reminds household members who have not yet signed or rejected. The state is
- * re-entered whenever an assignee acts, so the recipients and the timer are
- * refreshed each time.
- */
-export const getAssigneeReminderScheduledNotifications = (
-  application: Application,
-): ScheduledNotificationConfig[] => {
-  const sendDate = getStateEntryReminderSendDate(application)
-  if (!sendDate) {
-    return []
-  }
-
-  return [
-    scheduleAssigneeReminder(
-      getPendingAssigneeNationalIds(application),
-      { date: sendDate },
-      getHousingBenefitsPruneDate(application),
-    ),
-  ]
 }

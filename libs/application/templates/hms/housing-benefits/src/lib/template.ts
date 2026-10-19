@@ -20,7 +20,6 @@ import {
 } from '../utils/lifecycle'
 import {
   getApplicantReminderScheduledNotifications,
-  getAssigneeReminderScheduledNotifications,
   getDraftReminderScheduledNotifications,
 } from '../utils/notifications'
 import * as m from './messages'
@@ -202,7 +201,7 @@ const template: ApplicationTemplate<
           progress: 0.6,
           status: FormModes.IN_PROGRESS,
           lifecycle: housingBenefitsPruneLifecycle,
-          scheduledNotifications: getAssigneeReminderScheduledNotifications,
+          scheduledNotifications: getApplicantReminderScheduledNotifications,
           actionCard: housingBenefitsActionCards.assigneeApproval,
           onExit: [
             NotifyApplicantOnAssigneeSubmitApi,

@@ -1,11 +1,6 @@
-import {
-  Application,
-  NotificationConfig,
-  NotificationType,
-} from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import {
   getApplicantReminderScheduledNotifications,
-  getAssigneeReminderScheduledNotifications,
   getDraftReminderScheduledNotifications,
 } from './notifications'
 
@@ -151,49 +146,6 @@ describe('housing benefits scheduled notifications', () => {
 
       expect(configs).toHaveLength(1)
       expect(configs[0]).toMatchObject({ date: FIVE_DAYS_LATER })
-    })
-  })
-
-  describe('getAssigneeReminderScheduledNotifications', () => {
-    it('should remind only household members who have not signed or rejected', () => {
-      const configs = getAssigneeReminderScheduledNotifications(
-        createHousingBenefitsApplication({
-          assignees: ['0101302399', '0101302479', '0101302559'],
-          answers: {
-            draftEnteredAt: NOW.toISOString(),
-            signedAssignees: ['0101302399'],
-            rejectedAssignees: ['010130-2479'],
-          },
-        }),
-      )
-
-      expect(configs).toEqual([
-        expect.objectContaining({
-          template:
-            NotificationConfig[NotificationType.ApplicationAssigneeReminder]
-              .templateId,
-          recipients: ['0101302559'],
-          date: FIVE_DAYS_LATER,
-          includeApplicationLink: true,
-          includeApplicationName: true,
-          args: [
-            { key: 'pruneDateIs', value: '30.11.2026' },
-            { key: 'pruneDateEn', value: '30/11/2026' },
-            { key: 'daysBeforePrune', value: '40' },
-          ],
-        }),
-      ])
-    })
-
-    it('should not schedule a reminder that would be sent after pruning', () => {
-      const configs = getAssigneeReminderScheduledNotifications(
-        createHousingBenefitsApplication({
-          assignees: ['0101302559'],
-          answers: { draftEnteredAt: '2026-09-04T10:00:00.000Z' },
-        }),
-      )
-
-      expect(configs).toEqual([])
     })
   })
 })
