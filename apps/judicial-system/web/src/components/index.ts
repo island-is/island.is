@@ -3,6 +3,7 @@ export { default as AccordionListItem } from './AccordionListItem/AccordionListI
 export { default as BaseSelect } from './BaseSelect/BaseSelect'
 export { default as BlueBox } from './BlueBox/BlueBox'
 export { default as ExpandingSection } from './Motion/ExpandingSection'
+export { default as FadeSwap } from './Motion/FadeSwap'
 export { default as PopIn } from './Motion/PopIn'
 export { default as VerdictTimelineCard } from './Cards/VerdictTimelineCard/VerdictTimelineCard'
 export { default as DefenderVerdictTimelineCard } from './Cards/VerdictTimelineCard/DefenderVerdictTimelineCard'

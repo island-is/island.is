@@ -6,6 +6,7 @@ import { appealCourtSessionTypeNames } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
+  FadeSwap,
   PopIn,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
@@ -61,11 +62,13 @@ const ScheduleCourtSession: FC<Props> = ({
       ? appealCourtSessionTypeNames[bookedSession.sessionType]
       : 'þinghald'
 
+  const heading = editingSessionId ? 'Breyta þinghaldi' : 'Boða til þinghalds'
+
   return (
     <Box component="section">
-      <SectionHeading
-        title={editingSessionId ? 'Breyta þinghaldi' : 'Boða til þinghalds'}
-      />
+      <FadeSwap swapKey={heading}>
+        <SectionHeading title={heading} />
+      </FadeSwap>
       <BlueBox className={stack({ gap: 2 })}>
         <Select
           name="appeal-court-session-type"

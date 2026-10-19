@@ -346,7 +346,7 @@ describe('VerdictAppealStatus', () => {
       await clickMenuItem('Breyta þinghaldi')
 
       expect(
-        screen.getByRole('heading', { name: 'Breyta þinghaldi' }),
+        await screen.findByRole('heading', { name: 'Breyta þinghaldi' }),
       ).toBeInTheDocument()
       expect(screen.getByText('Verið að breyta')).toBeInTheDocument()
       expect(screen.getByLabelText(/Dómsalur/)).toHaveValue('1')
@@ -359,7 +359,7 @@ describe('VerdictAppealStatus', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Hætta við' }))
 
       expect(
-        screen.getByRole('heading', { name: 'Boða til þinghalds' }),
+        await screen.findByRole('heading', { name: 'Boða til þinghalds' }),
       ).toBeInTheDocument()
       await waitFor(() =>
         expect(screen.queryByText('Verið að breyta')).not.toBeInTheDocument(),
