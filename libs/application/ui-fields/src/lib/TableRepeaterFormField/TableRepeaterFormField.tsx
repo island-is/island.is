@@ -77,8 +77,10 @@ export const TableRepeaterFormField: FC<Props> = ({
     removeButtonTooltipText = coreMessages.deleteFieldText,
     removeButtonDisabledTooltipText,
     editButtonTooltipText = coreMessages.editFieldText,
+    editButtonDisabledTooltipText,
     editField = false,
     canRemoveRow,
+    canEditRow,
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
@@ -204,7 +206,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     item[key] = rawValue ?? ''
     const formatFn = table?.format?.[key]
     const formatted = formatFn
-      ? formatFn(item[key], displayIndex, application)
+      ? formatFn(item[key], displayIndex, application, item)
       : item[key]
     if (
       formatted &&
@@ -397,6 +399,38 @@ export const TableRepeaterFormField: FC<Props> = ({
                       </button>
                     )
 
+                    const canEdit =
+                      editField && canEditRow
+                        ? canEditRow(
+                            watchedApplication,
+                            values[index] ?? {},
+                            index,
+                          )
+                        : true
+
+                    const editTooltipText = canEdit
+                      ? editButtonTooltipText
+                      : editButtonDisabledTooltipText
+
+                    const editButton = (
+                      <button
+                        type="button"
+                        aria-disabled={!canEdit}
+                        style={canEdit ? undefined : { cursor: 'default' }}
+                        onClick={
+                          canEdit ? () => handleEditItem(index) : undefined
+                        }
+                        disabled={canEdit && activeIndex !== -1}
+                      >
+                        <Icon
+                          icon="pencil"
+                          color={canEdit ? 'blue400' : 'dark300'}
+                          type="outline"
+                          size="small"
+                        />
+                      </button>
+                    )
+
                     return (
                       <T.Row key={field.id}>
                         <T.Data>
@@ -416,29 +450,21 @@ export const TableRepeaterFormField: FC<Props> = ({
                               removeButton
                             )}
                             &nbsp;&nbsp;
-                            {editField && (
-                              <Tooltip
-                                placement="left"
-                                text={formatText(
-                                  editButtonTooltipText,
-                                  application,
-                                  formatMessage,
-                                )}
-                              >
-                                <button
-                                  type="button"
-                                  onClick={() => handleEditItem(index)}
-                                  disabled={activeIndex !== -1}
+                            {editField &&
+                              (editTooltipText ? (
+                                <Tooltip
+                                  placement="left"
+                                  text={formatText(
+                                    editTooltipText,
+                                    application,
+                                    formatMessage,
+                                  )}
                                 >
-                                  <Icon
-                                    icon="pencil"
-                                    color="blue400"
-                                    type="outline"
-                                    size="small"
-                                  />
-                                </button>
-                              </Tooltip>
-                            )}
+                                  {editButton}
+                                </Tooltip>
+                              ) : (
+                                editButton
+                              ))}
                           </Box>
                         </T.Data>
                         {tableRows.map((item, idx) => (
