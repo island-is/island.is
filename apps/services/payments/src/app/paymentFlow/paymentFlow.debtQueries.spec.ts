@@ -267,9 +267,43 @@ describe('PaymentFlowService — debt flows for the worker', () => {
       )
     })
 
-    it('is false for a refund saga, which deletes the fulfillment before refunding', async () => {
+    it('is true for a refund saga, whose rollback may have restored the fulfillment', async () => {
+      const flowId = await createFlow({ status: 'rejected' })
+      await addEvent(flowId, 'refund_completed', {
+        action: 'refunded',
+        refund,
+        correlationId: 'payment-1',
+      })
+
+      expect(await service.isCardPaymentRefunded(flowId, 'payment-1')).toBe(
+        true,
+      )
+    })
+
+    it('is true when the refund saga could not log its success and rolled back', async () => {
+      const flowId = await createFlow({ status: 'rejected' })
+      await addEvent(flowId, 'refund_completed', {
+        cleanupFailed: true,
+        correlationId: 'payment-1',
+      })
+
+      expect(await service.isCardPaymentRefunded(flowId, 'payment-1')).toBe(
+        true,
+      )
+    })
+
+    it('is false for an older refund saga event, without a correlation id', async () => {
       const flowId = await createFlow({ type: 'charge' })
       await addEvent(flowId, 'refund_completed', { action: 'refunded', refund })
+
+      expect(await service.isCardPaymentRefunded(flowId, 'payment-1')).toBe(
+        false,
+      )
+    })
+
+    it('is false for a deleted FJS charge, no card was refunded', async () => {
+      const flowId = await createFlow({ type: 'charge' })
+      await addEvent(flowId, 'refund_completed', { action: 'deleted_fjs' })
 
       expect(await service.isCardPaymentRefunded(flowId, 'payment-1')).toBe(
         false,

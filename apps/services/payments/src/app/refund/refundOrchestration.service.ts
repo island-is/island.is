@@ -245,6 +245,11 @@ export class RefundOrchestrationService {
             cleanupFailed: true,
             failedStep: context.failedStep,
             error: e.message,
+            // The card refund saga's rollback restored the fulfillment, see
+            // PaymentFlowService.isCardPaymentRefunded
+            ...(typeof context.metadata?.correlationId === 'string'
+              ? { correlationId: context.metadata.correlationId }
+              : {}),
           },
         })
       } catch (logError) {

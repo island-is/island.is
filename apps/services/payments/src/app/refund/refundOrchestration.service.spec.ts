@@ -149,6 +149,44 @@ describe('RefundOrchestrationService', () => {
     })
   })
 
+  describe('a refund whose clean-up failed', () => {
+    it('reports it with the refunded payment, so the worker does not refund again', async () => {
+      const logPaymentFlowUpdate = jest.fn()
+      ;(
+        service as unknown as { paymentFlowService: unknown }
+      ).paymentFlowService = { ...paymentFlowService, logPaymentFlowUpdate }
+
+      const response = await (
+        service as unknown as {
+          handleRefundError: (...args: unknown[]) => Promise<unknown>
+        }
+      ).handleRefundError(
+        new Error('Log failed'),
+        {
+          metadata: {
+            refundSucceededButRollbackFailed: true,
+            correlationId: 'payment-1',
+          },
+          failedStep: 'LOG_REFUND_SUCCESS',
+          completedSteps: ['REFUND_PAYMENT'],
+        },
+        'flow-1',
+        'card',
+      )
+
+      expect(response).toMatchObject({ success: true })
+      expect(logPaymentFlowUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          reason: 'refund_completed',
+          metadata: expect.objectContaining({
+            cleanupFailed: true,
+            correlationId: 'payment-1',
+          }),
+        }),
+      )
+    })
+  })
+
   describe('RefundController', () => {
     it('refunds on behalf of a caller, so the debt check applies', async () => {
       const refund = jest.fn().mockResolvedValue(refundResponse)
