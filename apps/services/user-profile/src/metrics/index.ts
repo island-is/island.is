@@ -60,7 +60,7 @@ export const collectEnabledProfileMetrics = async (
   db: Sequelize,
 ) => {
   const enabled = await featureFlagService.getValue(
-    Features.isUserProfileAllNotificationChannelsDisabledMetricEnabled,
+    Features.notificationSettingsMetricsEnabled,
     false,
   )
 

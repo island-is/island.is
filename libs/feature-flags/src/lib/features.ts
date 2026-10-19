@@ -132,7 +132,7 @@ export enum Features {
 
   // Userprofile Collection
   isIASSpaPagesEnabled = 'isiasspapagesenabled',
-  isUserProfileAllNotificationChannelsDisabledMetricEnabled = 'isUserProfileAllNotificationChannelsDisabledMetricEnabled',
+  notificationSettingsMetricsEnabled = 'notificationSettingsMetricsEnabled',
 
   // Disable new login restrictions
   disableNewDeviceLogins = 'disableNewDeviceLogins',
