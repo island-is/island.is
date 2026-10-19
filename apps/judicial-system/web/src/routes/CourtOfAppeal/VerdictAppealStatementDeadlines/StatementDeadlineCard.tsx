@@ -13,6 +13,7 @@ import {
   getStatementDeadlineMinDate,
   getStatementDeadlineStatusLabel,
 } from './VerdictAppealStatementDeadlines.logic'
+import * as styles from './StatementDeadlineCard.css'
 
 interface Props {
   party: StatementDeadlineParty
@@ -59,11 +60,7 @@ const StatementDeadlineCard: FC<Props> = ({ party, onSend, isSending }) => {
       borderColor="blue200"
       borderRadius="large"
       padding={3}
-      display="flex"
-      flexDirection={['column', 'column', 'row']}
-      justifyContent="spaceBetween"
-      columnGap={3}
-      rowGap={2}
+      className={styles.card}
     >
       <Box>
         <Text
