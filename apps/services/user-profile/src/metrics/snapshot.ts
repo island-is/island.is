@@ -38,7 +38,7 @@ export const publishSnapshot = async (
     await gauge({ name: 'collection.success', value: 1 })
     await gauge({ name: 'collection.last_success', value: Date.now() / 1000 })
   } catch (error) {
-    await gauge({ name: 'collection.success', value: 0 })
+    await gauge({ name: 'collection.success', value: 0 }).catch(() => undefined)
     throw error
   } finally {
     await new Promise<void>((resolve, reject) => {
