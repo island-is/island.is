@@ -341,8 +341,6 @@ export class FormsService {
       )
     }
 
-    const originalHasPayment = form.hasPayment
-    const originalHasSummary = form.hasSummaryScreen
     const originalUseValidate = form.useValidate
 
     Object.assign(form, updateFormDto)
@@ -351,26 +349,14 @@ export class FormsService {
       form.validateEligibility = false
     }
 
-    if (originalHasPayment !== form.hasPayment) {
-      if (originalHasPayment) {
-        form.draftTotalSteps--
-      } else {
-        form.draftTotalSteps++
-      }
-    }
-
-    if (originalHasSummary !== form.hasSummaryScreen) {
-      if (originalHasSummary) {
-        form.draftTotalSteps--
-      } else {
-        form.draftTotalSteps++
-      }
-    }
-
     const response = new UpdateFormResponse()
 
     try {
       await this.sequelize.transaction(async (transaction) => {
+        form.draftTotalSteps = await this.countDraftTotalSteps(
+          form,
+          transaction,
+        )
         await form.save({ transaction })
 
         if (
@@ -412,6 +398,23 @@ export class FormsService {
     }
 
     return response
+  }
+
+  private async countDraftTotalSteps(
+    form: Form,
+    transaction: Transaction,
+  ): Promise<number> {
+    const inputSections = await this.sectionModel.count({
+      where: { formId: form.id, sectionType: SectionTypes.INPUT },
+      transaction,
+    })
+
+    return (
+      inputSections +
+      1 +
+      Number(form.hasSummaryScreen) +
+      Number(form.hasPayment && !form.hasSummaryScreen)
+    )
   }
 
   private getSlugError(slug?: string): UpdateFormError {

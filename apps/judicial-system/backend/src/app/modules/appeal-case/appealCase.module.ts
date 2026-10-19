@@ -8,6 +8,7 @@ import {
   RepositoryModule,
   UserModule,
 } from '..'
+import { AppealAppointmentLetterService } from './appealAppointmentLetter.service'
 import { AppealCaseController } from './appealCase.controller'
 import { AppealCaseService } from './appealCase.service'
 import { LimitedAccessAppealCaseController } from './limitedAccessAppealCase.controller'
@@ -22,7 +23,7 @@ import { LimitedAccessAppealCaseController } from './limitedAccessAppealCase.con
     forwardRef(() => RepositoryModule),
   ],
   controllers: [AppealCaseController, LimitedAccessAppealCaseController],
-  providers: [AppealCaseService],
+  providers: [AppealCaseService, AppealAppointmentLetterService],
   exports: [AppealCaseService],
 })
 export class AppealCaseModule {}

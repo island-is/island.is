@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import {
-  COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -99,8 +99,8 @@ const VerdictAppealStatus = () => {
   const hasChangesToSave =
     isEditingSession && isAppealCourtSessionComplete(courtSession)
 
-  const defenderUrl = appendAppealCaseIdQuery(
-    `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/${workingCase.id}`,
+  const statementDeadlinesUrl = appendAppealCaseIdQuery(
+    `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE}/${workingCase.id}`,
     verdictAppealCase?.id,
   )
 
@@ -360,7 +360,7 @@ const VerdictAppealStatus = () => {
           />
         ) : (
           <FormFooter
-            previousUrl={defenderUrl}
+            previousUrl={statementDeadlinesUrl}
             actions={[
               {
                 text: formatMessage(core.continue),
