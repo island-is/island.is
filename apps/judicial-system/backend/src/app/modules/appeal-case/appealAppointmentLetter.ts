@@ -6,7 +6,7 @@ import {
   getAppealAppointmentDefendantNames,
   getCourtNameInGenitive,
   NOT_RECORDED,
-} from '../../formatters/generatedPdfs/appealAppointmentLetterPdf'
+} from '../../formatters'
 import { Case, CivilClaimant, Defendant, User } from '../repository'
 import { latestAdvocateConfirmedEvent } from './appealCase.helpers'
 
