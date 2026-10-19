@@ -128,7 +128,7 @@ export const application = defineMessages({
   partTimeDescription: {
     id: 'vmst.cjoi.application:partTimeDescription',
     defaultMessage:
-      'Hlutastarf er starf í minna en 100% starfshlutfalli sem varir lengur en einn mánuð. Þú getur verið áfram skráður í atvinnuleit samhliða hlutastarfi og átt rétt á atvinnuleysisbótum. En það fer eftir einstaklingsbunum bótarétti. Ekki þarf að skila launaseðli vegna hlutastarfa.',
+      'Hlutastarf er starf í minna en 100% starfshlutfalli sem varir lengur en einn mánuð. Þú getur verið áfram skráður í atvinnuleit samhliða hlutastarfi og átt rétt á atvinnuleysisbótum. En það fer eftir einstaklingsbundnum bótarétti. Ekki þarf að skila launaseðli vegna hlutastarfa.',
     description: 'Description for part-time work type',
   },
   partTimeAlert: {

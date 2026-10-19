@@ -13,26 +13,25 @@ import { INCOME_TYPE_ANSWER_KEYS, PaymentFrequency } from './constants'
 // Maps the persisted Galdur records into the answer row shape. Used both to seed
 // the table repeaters and to render rows the user deleted in the overview.
 
-type PaymentPeriod = { periodFrom?: string; periodTo?: string | null }
-
-// TODO: Galdur's payment DTOs do not expose oneTimePayment yet. Until they do,
-// a record whose period starts and ends on the same day is treated as a
-// one-time payment (how they were registered before oneTimePayment existed);
-// anything else, including an open-ended period, is treated as monthly.
-const toPaymentPeriodRow = ({ periodFrom, periodTo }: PaymentPeriod) => {
-  const isOneTime =
-    !!periodFrom &&
-    !!periodTo &&
-    periodFrom.slice(0, 10) === periodTo.slice(0, 10)
-
-  return {
-    paymentFrequency: isOneTime
-      ? PaymentFrequency.ONE_TIME
-      : PaymentFrequency.MONTHLY,
-    dateFrom: periodFrom ?? '',
-    dateTo: isOneTime ? '' : periodTo ?? '',
-  }
+type PaymentPeriod = {
+  periodFrom?: string
+  periodTo?: string | null
+  oneTimePayment?: boolean
 }
+
+// One-time payments have no end date in the form, so any periodTo Galdur
+// returns for them is dropped.
+const toPaymentPeriodRow = ({
+  periodFrom,
+  periodTo,
+  oneTimePayment,
+}: PaymentPeriod) => ({
+  paymentFrequency: oneTimePayment
+    ? PaymentFrequency.ONE_TIME
+    : PaymentFrequency.MONTHLY,
+  dateFrom: periodFrom ?? '',
+  dateTo: oneTimePayment ? '' : periodTo ?? '',
+})
 
 export const toCasualWorkRow = (
   job: GaldurExternalDomainModelsIncomeIrregularJobDTO,

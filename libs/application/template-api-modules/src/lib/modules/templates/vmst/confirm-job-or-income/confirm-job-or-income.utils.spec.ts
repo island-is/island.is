@@ -791,7 +791,7 @@ describe('buildCreateIncomesRequest', () => {
   })
 
   describe('one-time payments', () => {
-    it('does not resend an unchanged persisted one-time payment registered as a same-day period', () => {
+    it('does not resend an unchanged persisted one-time payment', () => {
       const persistedId = 'persisted-capital-id'
       const answers: FormValue = {
         typeOfIncome: [IncomeType.CAPITAL_INCOME],
@@ -817,7 +817,8 @@ describe('buildCreateIncomesRequest', () => {
                 incomeTypeId: 'rent',
                 estimatedIncome: 1000,
                 periodFrom: '2026-09-05T00:00:00',
-                periodTo: '2026-09-05T00:00:00',
+                periodTo: null,
+                oneTimePayment: true,
                 canEdit: true,
               },
             ],

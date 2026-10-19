@@ -87,7 +87,7 @@ describe('isEntryEdited', () => {
   })
 })
 
-describe('payment frequency inference', () => {
+describe('payment frequency from oneTimePayment', () => {
   const capitalRecord = {
     id: 'capital-1',
     incomeTypeId: 'rent',
@@ -95,26 +95,37 @@ describe('payment frequency inference', () => {
     periodFrom: '2026-09-05T00:00:00',
   }
 
-  it('treats a same-day period as a one-time payment without an end date', () => {
+  it('maps a one-time payment without an end date', () => {
     expect(
-      toCapitalIncomeRow({ ...capitalRecord, periodTo: '2026-09-05T00:00:00' }),
+      toCapitalIncomeRow({
+        ...capitalRecord,
+        periodTo: '2026-09-05T00:00:00',
+        oneTimePayment: true,
+      }),
     ).toMatchObject({ paymentFrequency: 'oneTime', dateTo: '' })
   })
 
   it.each([
-    ['open-ended', null],
-    ['multi-day', '2026-12-31T00:00:00'],
-  ])('treats a %s period as monthly', (_, periodTo) => {
-    expect(toCapitalIncomeRow({ ...capitalRecord, periodTo })).toMatchObject({
+    ['false', false],
+    ['missing', undefined],
+  ])('treats a %s flag as monthly', (_, oneTimePayment) => {
+    expect(
+      toCapitalIncomeRow({
+        ...capitalRecord,
+        periodTo: '2026-09-05T00:00:00',
+        oneTimePayment,
+      }),
+    ).toMatchObject({
       paymentFrequency: 'monthly',
-      dateTo: periodTo ?? '',
+      dateTo: '2026-09-05T00:00:00',
     })
   })
 
   it('ignores a stale dateTo on one-time payments', () => {
     const persistedRow = toCapitalIncomeRow({
       ...capitalRecord,
-      periodTo: '2026-09-05T00:00:00',
+      periodTo: null,
+      oneTimePayment: true,
     })
 
     expect(
@@ -126,6 +137,7 @@ describe('payment frequency inference', () => {
     const persistedRow = toCapitalIncomeRow({
       ...capitalRecord,
       periodTo: null,
+      oneTimePayment: false,
     })
 
     expect(
