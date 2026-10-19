@@ -13,7 +13,7 @@ locals {
   judicial_web_dd_version   = split("_", local.judicial_web_image_tag)[1]
   judicial_web_health       = "/liveness"
 
-  judicial_host    = module.foundation_outputs.alb_route53_record_names["judicial-system"]
+  judicial_host    = module.infra_outputs.alb_route53_record_names["judicial-system"]
   api_internal_url = "http://judicial-system-api.${local.internal_domain}:3333"
 }
 
@@ -26,19 +26,19 @@ module "judicial_web" {
   service_name = local.judicial_web_service_name
   env          = local.env
 
-  cluster_name          = module.foundation_outputs.ecs_cluster_name
-  vpc_id                = module.foundation_outputs.vpc_id
-  subnet_ids            = module.foundation_outputs.private_subnets
-  security_group_ids    = [module.foundation_outputs.services_shared_sg_id]
-  service_discovery_id  = module.foundation_outputs.ecs_namespace_id
-  alb_listener          = module.foundation_outputs.alb_https_listener_arn
-  alb_security_group_id = module.foundation_outputs.alb_security_group_id
+  cluster_name          = module.infra_outputs.ecs_cluster_name
+  vpc_id                = module.infra_outputs.vpc_id
+  subnet_ids            = module.infra_outputs.private_subnets
+  security_group_ids    = [module.infra_outputs.services_shared_sg_id]
+  service_discovery_id  = module.infra_outputs.ecs_namespace_id
+  alb_listener          = module.infra_outputs.alb_https_listener_arn
+  alb_security_group_id = module.infra_outputs.alb_security_group_id
 
   # Required by the module unconditionally; only used when create_record = true
   # (it is false here — foundation/CloudFront own the DNS records).
-  hosted_zone_name = module.foundation_outputs.hosted_zone_name
-  alb_dns_name     = module.foundation_outputs.alb_dns_name
-  alb_zone_id      = module.foundation_outputs.hosted_zone_id
+  hosted_zone_name = module.infra_outputs.hosted_zone_name
+  alb_dns_name     = module.infra_outputs.alb_dns_name
+  alb_zone_id      = module.infra_outputs.hosted_zone_id
 
   container_image  = local.judicial_web_image
   cpu_architecture = "X86_64"
@@ -87,11 +87,11 @@ module "judicial_web" {
   }
 
   secretsmanager_secret_names = {
-    DD_LOGS_CLIENT_TOKEN      = module.foundation_outputs.secret_names["shared/DD_LOGS_CLIENT_TOKEN"]
-    NATIONAL_REGISTRY_API_KEY = module.foundation_outputs.secret_names["web/NATIONAL_REGISTRY_API_KEY"]
-    LAWYERS_ICELAND_API_KEY   = module.foundation_outputs.secret_names["shared/LAWYERS_ICELAND_API_KEY"]
-    SUPPORT_EMAIL             = module.foundation_outputs.secret_names["web/SUPPORT_EMAIL"]
-    CONFIGCAT_SDK_KEY         = module.foundation_outputs.secret_names["shared/CONFIGCAT_SDK_KEY"]
-    AUTH_JWT_SECRET           = module.foundation_outputs.secret_names["shared/AUTH_JWT_SECRET"]
+    DD_LOGS_CLIENT_TOKEN      = module.infra_outputs.secret_names["shared/DD_LOGS_CLIENT_TOKEN"]
+    NATIONAL_REGISTRY_API_KEY = module.infra_outputs.secret_names["web/NATIONAL_REGISTRY_API_KEY"]
+    LAWYERS_ICELAND_API_KEY   = module.infra_outputs.secret_names["shared/LAWYERS_ICELAND_API_KEY"]
+    SUPPORT_EMAIL             = module.infra_outputs.secret_names["web/SUPPORT_EMAIL"]
+    CONFIGCAT_SDK_KEY         = module.infra_outputs.secret_names["shared/CONFIGCAT_SDK_KEY"]
+    AUTH_JWT_SECRET           = module.infra_outputs.secret_names["shared/AUTH_JWT_SECRET"]
   }
 }

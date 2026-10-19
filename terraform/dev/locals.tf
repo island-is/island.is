@@ -3,9 +3,9 @@ locals {
   aws_region = "eu-west-1"
   tenant     = "dmr-judicial"
 
-  # Foundation state bucket (owned by the infra repo, clients/DMR/infrastructure/judicial).
+  # Infra state bucket (owned by the infra repo, clients/DMR/infrastructure/judicial).
   # root.hcl there writes state to "<env>-<tenant>-terraform-state".
-  foundation_state_bucket = "${local.env}-${local.tenant}-terraform-state"
+  infra_state_bucket = "${local.env}-${local.tenant}-terraform-state"
 
   domain = "rettarvorslugatt.dev.dmr-dev.cloud"
 

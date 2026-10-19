@@ -1,5 +1,5 @@
 # Flat, service-facing view of the foundation. Keys match what the ecs_service
-# module inputs expect, so service modules read module.foundation_outputs.<x>.
+# module inputs expect, so service modules read module.infra_outputs.<x>.
 
 # --- network ---
 output "vpc_id" {

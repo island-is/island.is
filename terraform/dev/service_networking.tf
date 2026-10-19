@@ -20,8 +20,8 @@ resource "aws_security_group_rule" "alb_to_services" {
   from_port                = local.service_container_port
   to_port                  = local.service_container_port
   protocol                 = "tcp"
-  security_group_id        = module.foundation_outputs.services_shared_sg_id
-  source_security_group_id = module.foundation_outputs.alb_security_group_id
+  security_group_id        = module.infra_outputs.services_shared_sg_id
+  source_security_group_id = module.infra_outputs.alb_security_group_id
   description              = "ALB to judicial ECS tasks on ${local.service_container_port}"
 }
 
@@ -31,7 +31,7 @@ resource "aws_security_group_rule" "alb_egress_to_services" {
   from_port                = local.service_container_port
   to_port                  = local.service_container_port
   protocol                 = "tcp"
-  security_group_id        = module.foundation_outputs.alb_security_group_id
-  source_security_group_id = module.foundation_outputs.services_shared_sg_id
+  security_group_id        = module.infra_outputs.alb_security_group_id
+  source_security_group_id = module.infra_outputs.services_shared_sg_id
   description              = "ALB to judicial ECS tasks on ${local.service_container_port}"
 }

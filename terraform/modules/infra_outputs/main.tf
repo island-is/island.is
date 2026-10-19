@@ -1,11 +1,11 @@
-# foundation_outputs — read-only view of the judicial FOUNDATION state, which is
+# infra_outputs — read-only view of the judicial infrastructure state, which is
 # owned and applied by the infra repo (clients/DMR/infrastructure/judicial).
 #
 # Mirrors the gagni `accelerator_outputs` pattern: a bundle of
-# `terraform_remote_state` reads against the foundation's S3 state bucket
+# `terraform_remote_state` reads against the infra repo's S3 state bucket
 # (<env>-dmr-judicial-terraform-state), one key per Terragrunt component, re-
 # exposed as flat outputs the service modules consume. This repo NEVER mutates
-# the foundation — it only reads it and stamps out the ECS services.
+# the infrastructure — it only reads it and stamps out the ECS services.
 
 terraform {
   required_version = ">= 1.9.8"
