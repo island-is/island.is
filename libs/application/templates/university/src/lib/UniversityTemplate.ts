@@ -119,6 +119,13 @@ const template: ApplicationTemplate<
                 import('../forms/UniversityForm').then((module) =>
                   Promise.resolve(module.UniversityForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: applicationMessage.submit,
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
             },

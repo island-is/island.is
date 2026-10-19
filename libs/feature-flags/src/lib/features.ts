@@ -129,6 +129,9 @@ export enum Features {
   isApplicationSystemTranslationsEnabled = 'isApplicationSystemTranslationsEnabled',
   isApplicationTranslationWorkspaceReadOnlyEnabled = 'isApplicationTranslationWorkspaceReadOnlyEnabled',
 
+  // When on, events missing from the role's actions are only logged, not rejected
+  applicationSystemDisableEventPermissionCheck = 'applicationSystemDisableEventPermissionCheck',
+
   // Search indexer
   shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
 

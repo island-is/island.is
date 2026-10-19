@@ -640,4 +640,24 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationsUsedByAllApplications',
     defaultMessage: 'Allar umsóknir',
   },
+  origin: {
+    id: 'admin-portal.application-system:origin',
+    defaultMessage: 'Uppruni',
+  },
+  originDropdownPlaceholder: {
+    id: 'admin-portal.application-system:originDropdownPlaceholder',
+    defaultMessage: 'Veldu uppruna',
+  },
+  tableHeaderOrigin: {
+    id: 'admin-portal.application-system:tableHeaderOrigin',
+    defaultMessage: 'Uppruni',
+  },
+  originFormSystem: {
+    id: 'admin-portal.application-system:originFormSystem',
+    defaultMessage: 'Umsóknarsmiður',
+  },
+  originApplicationSystem: {
+    id: 'admin-portal.application-system:originApplicationSystem',
+    defaultMessage: 'Umsóknarkerfi',
+  },
 })

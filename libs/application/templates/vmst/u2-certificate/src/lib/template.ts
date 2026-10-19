@@ -28,7 +28,7 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { EESCountriesApi, EligibilityApi } from '../dataProviders'
-import { applicationMessages as m } from './messages'
+import { applicationMessages as m, reviewForm } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 
@@ -153,6 +153,13 @@ const template: ApplicationTemplate<
                 import('../forms/reviewForm').then((module) =>
                   Promise.resolve(module.ReviewForm),
                 ),
+              actions: [
+                {
+                  event: ApplicationEvents.REVOKE,
+                  name: reviewForm.general.revokeButton,
+                  type: 'reject',
+                },
+              ],
               read: 'all',
               write: 'all',
               delete: false,
