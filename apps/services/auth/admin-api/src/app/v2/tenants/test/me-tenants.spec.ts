@@ -323,6 +323,79 @@ describe('MeTenantsController', () => {
         })
       })
 
+      it('GET /:tenantId/admin-details should return English translations', async () => {
+        const created = await fixtureFactory.createDomain({
+          name: '@super.details.en.domain',
+          nationalId: createNationalId('company'),
+        })
+        await fixtureFactory.createTranslations(created, 'en', {
+          displayName: 'English display name',
+          description: 'English description',
+        })
+
+        const res = await server.get(
+          `/v2/me/tenants/${encodeURIComponent(created.name)}/admin-details`,
+        )
+
+        expect(res.status).toBe(200)
+        expect(res.body).toMatchObject({
+          name: created.name,
+          displayName: created.displayName,
+          displayNameEn: 'English display name',
+          description: created.description,
+          descriptionEn: 'English description',
+        })
+      })
+
+      it('PATCH should set and clear English translations', async () => {
+        const created = await fixtureFactory.createDomain({
+          name: '@super.patch.en.domain',
+          nationalId: createNationalId('company'),
+        })
+        // Makes sure the 'en' language exists
+        await fixtureFactory.createTranslations(created, 'en', {})
+
+        const setRes = await server
+          .patch(`/v2/me/tenants/${encodeURIComponent(created.name)}`)
+          .send({
+            displayNameEn: 'English display name',
+            descriptionEn: 'English description',
+          })
+
+        expect(setRes.status).toBe(200)
+        expect(setRes.body).toMatchObject({
+          name: created.name,
+          displayName: created.displayName,
+          displayNameEn: 'English display name',
+          descriptionEn: 'English description',
+        })
+
+        const clearRes = await server
+          .patch(`/v2/me/tenants/${encodeURIComponent(created.name)}`)
+          .send({
+            displayNameEn: '',
+          })
+
+        expect(clearRes.status).toBe(200)
+        expect(clearRes.body.displayNameEn).toBeUndefined()
+        expect(clearRes.body.descriptionEn).toBe('English description')
+      })
+
+      it('PATCH should reject English translations with unsafe characters', async () => {
+        const created = await fixtureFactory.createDomain({
+          name: '@super.patch.invalid-en.domain',
+          nationalId: createNationalId('company'),
+        })
+
+        const res = await server
+          .patch(`/v2/me/tenants/${encodeURIComponent(created.name)}`)
+          .send({
+            displayNameEn: '<script>',
+          })
+
+        expect(res.status).toBe(400)
+      })
+
       it('PATCH should set and clear municipalityCode', async () => {
         const created = await fixtureFactory.createDomain({
           name: '@super.patch.municipality.domain',

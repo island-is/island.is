@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { Box, Text } from '@island.is/island-ui/core'
 import {
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
-  COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -160,7 +160,9 @@ const VerdictAppealDefender = () => {
               icon: 'arrowForward',
               disabled: !stepIsValid,
               onClick: () =>
-                handleNavigationTo(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE),
+                handleNavigationTo(
+                  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+                ),
               testId: 'continueButton',
             },
           ]}
