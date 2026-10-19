@@ -4,8 +4,8 @@ import { investigationCases } from '@island.is/judicial-system/types'
 import { verifyGuards } from '../../../test'
 import {
   CaseTypeGuard,
-  MinimalCaseAccessGuard,
-  MinimalCaseExistsGuard,
+  MinimalCaseExistsForUpdateGuard,
+  MinimalCaseWriteGuard,
 } from '../../case'
 import { ValidateVictimGuard } from '../guards/validateVictim.guard'
 import { VictimWriteGuard } from '../guards/victimWrite.guard'
@@ -18,9 +18,9 @@ describe('VictimController - Top-level guards', () => {
     [
       JwtAuthUserGuard,
       RolesGuard,
-      MinimalCaseExistsGuard,
+      MinimalCaseExistsForUpdateGuard,
       CaseTypeGuard,
-      MinimalCaseAccessGuard,
+      MinimalCaseWriteGuard,
       ValidateVictimGuard,
       VictimWriteGuard,
     ],
