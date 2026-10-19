@@ -361,7 +361,9 @@ describe('VerdictAppealStatus', () => {
       expect(
         screen.getByRole('heading', { name: 'Boða til þinghalds' }),
       ).toBeInTheDocument()
-      expect(screen.queryByText('Verið að breyta')).not.toBeInTheDocument()
+      await waitFor(() =>
+        expect(screen.queryByText('Verið að breyta')).not.toBeInTheDocument(),
+      )
       expect(screen.getByLabelText(/Dómsalur/)).toHaveValue('')
       expect(screen.getByTestId('continueButton')).toBeInTheDocument()
     })
@@ -396,7 +398,9 @@ describe('VerdictAppealStatus', () => {
           screen.getByText('12.12.2026 kl. 14:00 · Dómsalur 2'),
         ).toBeInTheDocument(),
       )
-      expect(screen.queryByText('Verið að breyta')).not.toBeInTheDocument()
+      await waitFor(() =>
+        expect(screen.queryByText('Verið að breyta')).not.toBeInTheDocument(),
+      )
       expect(mockPush).not.toHaveBeenCalled()
     })
 

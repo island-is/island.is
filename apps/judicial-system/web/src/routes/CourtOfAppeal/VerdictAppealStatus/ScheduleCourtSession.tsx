@@ -6,6 +6,7 @@ import { appealCourtSessionTypeNames } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
+  PopIn,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import ContextMenu from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
@@ -21,6 +22,7 @@ import {
   appealCourtSessionTypeOptions,
   formatAppealCourtSessionDetails,
 } from './VerdictAppealStatus.logic'
+import * as styles from './ScheduleCourtSession.css'
 
 interface Props {
   session: AppealCourtSessionDraft
@@ -134,11 +136,16 @@ const ScheduleCourtSession: FC<Props> = ({
                   borderColor="blue200"
                 >
                   <Box flexGrow={1}>
-                    <Box display="flex" alignItems="center" columnGap="p2">
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      columnGap="p2"
+                      className={styles.sessionTitle}
+                    >
                       <Text variant="h5">{title}</Text>
-                      {isBeingEdited && (
+                      <PopIn show={isBeingEdited}>
                         <Tag variant="blue">Verið að breyta</Tag>
-                      )}
+                      </PopIn>
                     </Box>
                     <Text variant="medium" fontWeight="light">
                       {formatAppealCourtSessionDetails(bookedSession)}
