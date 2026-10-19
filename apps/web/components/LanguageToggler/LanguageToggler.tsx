@@ -21,6 +21,7 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
+import type { LanguageToggleDialogConfig } from '@island.is/web/utils/languageToggleDialog'
 
 type LanguageTogglerProps = {
   dialogId?: string
@@ -31,6 +32,7 @@ type LanguageTogglerProps = {
     is?: string
     en?: string
   }
+  dialogConfig?: LanguageToggleDialogConfig
 }
 
 export const LanguageToggler = ({
@@ -40,6 +42,7 @@ export const LanguageToggler = ({
     (!hideWhenMobile ? '-mobile' : ''),
   queryParams,
   hrefOverride,
+  dialogConfig,
 }: LanguageTogglerProps) => {
   const client = useApolloClient()
   const Router = useRouter()
@@ -244,22 +247,53 @@ export const LanguageToggler = ({
     <ButtonElement {...buttonElementProps}>{t.otherLanguageName}</ButtonElement>
   )
 
+  const showConfirmButton = dialogConfig?.showConfirmButton ?? true
+
+  const onDialogConfirm = () => {
+    const href = dialogConfig?.confirmButtonHref
+    if (href?.startsWith('/') && !href.startsWith('//')) {
+      goToOtherLanguagePage(href)
+      return
+    }
+    if (href) {
+      try {
+        const url = new URL(href)
+        // Only allow external http(s) links, never executable schemes like javascript:
+        if (url.protocol === 'https:' || url.protocol === 'http:') {
+          window.location.href = url.href
+          return
+        }
+      } catch {
+        // Invalid URL, fall back to the homepage
+      }
+    }
+    goToOtherLanguagePage(linkResolver('homepage', [], otherLanguage).href)
+  }
+
   const Dialog = (
     <DialogPrompt
       baseId={dialogId}
       initialVisibility={true}
-      title={gn('switchToEnglishModalTitle', 'Translation not available')}
-      description={gn(
-        'switchToEnglishModalText',
-        'The page you are viewing does not have an English translation yet',
-      )}
+      title={
+        dialogConfig?.title ??
+        gn('switchToEnglishModalTitle', 'Translation not available')
+      }
+      description={
+        dialogConfig?.description ??
+        gn(
+          'switchToEnglishModalText',
+          'The page you are viewing does not have an English translation yet',
+        )
+      }
       ariaLabel="Confirm switching to english"
       disclosureElement={Disclosure}
-      onConfirm={() => {
-        goToOtherLanguagePage(linkResolver('homepage', [], otherLanguage).href)
-      }}
-      buttonTextConfirm="Go to home page"
-      buttonTextCancel="Keep viewing"
+      onConfirm={onDialogConfirm}
+      buttonTextConfirm={
+        showConfirmButton
+          ? dialogConfig?.confirmButtonText ?? 'Go to home page'
+          : undefined
+      }
+      buttonTextCancel={dialogConfig?.cancelButtonText ?? 'Keep viewing'}
     />
   )
 
