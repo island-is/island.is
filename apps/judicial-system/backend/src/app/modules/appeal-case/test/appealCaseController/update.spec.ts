@@ -254,7 +254,7 @@ describe('AppealCaseController - Update', () => {
     it('should return the appeal case with the stored bench', () => {
       expect(mockAppealCaseRepositoryService.findById).toHaveBeenCalledWith(
         appealCaseId,
-        expect.objectContaining({ transaction }),
+        { transaction },
       )
       expect(then.result.appealJudges?.map((judge) => judge.userId)).toEqual([
         judge1Id,

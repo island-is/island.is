@@ -49,7 +49,6 @@ import {
   AppealCaseRepositoryService,
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
-  appealJudgesInclude,
   Case,
   CaseRepositoryService,
   CivilClaimant,
@@ -1133,7 +1132,6 @@ export class AppealCaseService {
       const reloadedAppealCase =
         await this.appealCaseRepositoryService.findById(appealCase.id, {
           transaction,
-          include: [appealJudgesInclude],
         })
 
       if (!reloadedAppealCase) {

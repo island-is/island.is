@@ -134,7 +134,6 @@ export {
 } from './services/victimRepository.service'
 
 export {
-  appealJudgesInclude,
   CreateAppealCase,
   UpdateAppealCase,
   UpdateCase,
