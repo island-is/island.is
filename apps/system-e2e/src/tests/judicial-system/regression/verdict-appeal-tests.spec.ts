@@ -113,6 +113,36 @@ test.describe.serial('Verdict appeal tests', () => {
     ])
     await page.getByTestId('continueButton').click()
 
+    // Statement deadlines: the court gives the defendant a deadline, confirms
+    // it, and is offered an extension once it is saved.
+    await expect(page).toHaveURL(
+      new RegExp(
+        `/landsrettur/afryjun/greinargerdarfrestir/${caseId}(\\?.*)?$`,
+      ),
+    )
+    await expect(
+      page.getByRole('heading', { name: 'Greinargerðarfrestir', level: 1 }),
+    ).toBeVisible()
+    const defendantCard = page.getByRole('region', { name: accusedName })
+    await defendantCard.getByLabel('Frestur til').fill(getDaysFromNow(7))
+    await page.keyboard.press('Escape')
+    await defendantCard.getByRole('button', { name: 'Senda frest' }).click()
+    await expect(
+      page.getByRole('dialog', { name: 'Viltu senda út greinargerðarfrest?' }),
+    ).toBeVisible()
+    await Promise.all([
+      verifyRequestCompletion(
+        page,
+        '/api/graphql',
+        'SetAppealStatementDeadline',
+      ),
+      page.getByTestId('confirmStatementDeadlineButton').click(),
+    ])
+    await expect(
+      defendantCard.getByRole('button', { name: 'Framlengja frest' }),
+    ).toBeVisible()
+    await page.getByTestId('continueButton').click()
+
     // Status
     await expect(page).toHaveURL(
       new RegExp(`/landsrettur/afryjun/stada-og-lyktir/${caseId}(\\?.*)?$`),
