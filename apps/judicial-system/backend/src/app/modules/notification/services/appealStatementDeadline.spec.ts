@@ -56,6 +56,15 @@ const theCase = {
       isAppealSpokespersonConfirmed: true,
       appealSpokespersonName: 'Enginn Póstur',
     },
+    // Advocate removed, with a stale confirmation and address left behind.
+    {
+      id: 'c4',
+      name: 'Fjórði Kröfuhafi',
+      hasAppealSpokesperson: false,
+      isAppealSpokespersonConfirmed: true,
+      appealSpokespersonName: 'Fyrrum Lögmaður',
+      appealSpokespersonEmail: 'fyrrum@x.is',
+    },
   ] as CivilClaimant[],
 } as Case
 

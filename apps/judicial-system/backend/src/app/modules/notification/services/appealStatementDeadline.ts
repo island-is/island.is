@@ -101,7 +101,11 @@ export const getAppealStatementDeadlineRecipients = (
   }
 
   for (const civilClaimant of theCase.civilClaimants ?? []) {
+    // The screen clears the confirmation when the advocate is removed, but
+    // nothing below it does, so a claimant the court has said has no
+    // advocate is left out whatever the confirmation says.
     if (
+      civilClaimant.hasAppealSpokesperson !== false &&
       civilClaimant.isAppealSpokespersonConfirmed &&
       civilClaimant.appealSpokespersonEmail
     ) {
