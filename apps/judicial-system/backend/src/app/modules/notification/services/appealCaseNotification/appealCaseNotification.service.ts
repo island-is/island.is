@@ -13,6 +13,7 @@ import { SmsService } from '@island.is/nova-sms'
 import {
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   DEFENDER_INDICTMENT_CASE_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
   ROUTE_HANDLER_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
@@ -24,14 +25,17 @@ import {
 import {
   AppealCaseNotificationType,
   AppealCaseRulingDecision,
+  type AppealStatementParty,
   CaseDecision,
   CaseState,
   CaseType,
+  findAppealStatementDeadline,
   getStatementDeadline,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
   isRestrictionCase,
+  isSameAppealStatementParty,
   TrackedNotificationType,
   type User,
 } from '@island.is/judicial-system/types'
@@ -54,6 +58,13 @@ import {
 import { getRequestCaseDefenderRecipients } from '../../getRequestCaseDefenderRecipients'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
+import {
+  appealStatementDeadlineGrantedBody,
+  appealStatementDeadlineOthersBody,
+  appealStatementDeadlineSubject,
+  describeAppealStatementDeadlineParty,
+  getAppealStatementDeadlineRecipients,
+} from '../appealStatementDeadline'
 import { BaseNotificationService } from '../baseNotification.service'
 import { strings } from './appealCaseNotification.strings'
 
@@ -1988,6 +1999,89 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     return recipients
   }
 
+  /**
+   * The mails that follow a party of a verdict appeal being given its
+   * deadline to file a statement, or more time for it: one to the party's
+   * advocate, another to everyone else with a part in the appeal, so each
+   * side knows where the other stands.
+   *
+   * The date is read off the appeal rather than carried in the message: the
+   * message runs after commit, so the row is there, and should the court
+   * have moved the deadline again before the mail went, the newer date is
+   * the one to send.
+   */
+  private async sendAppealStatementDeadlineNotifications(
+    theCase: Case,
+    appealCase: AppealCase,
+    type: AppealCaseNotificationType,
+    party: AppealStatementParty,
+  ): Promise<DeliverResponse> {
+    const extended =
+      type === AppealCaseNotificationType.APPEAL_STATEMENT_DEADLINE_EXTENDED
+    const deadline = findAppealStatementDeadline(
+      appealCase.statementDeadlines,
+      party,
+    )?.deadline
+
+    // A message about a deadline that is not there is a message about
+    // nothing, and retrying it would not change that.
+    if (!deadline) {
+      this.logger.warn(
+        `No statement deadline to announce in appeal case ${appealCase.id} of case ${theCase.id}`,
+      )
+
+      return { delivered: true }
+    }
+
+    const recipients = getAppealStatementDeadlineRecipients(theCase)
+
+    if (recipients.length === 0) {
+      return { delivered: true }
+    }
+
+    const subject = appealStatementDeadlineSubject(
+      extended,
+      appealCase.appealCaseNumber,
+    )
+    const who = describeAppealStatementDeadlineParty(theCase, party, recipients)
+
+    const sent = await Promise.all(
+      recipients.map((recipient) => {
+        const link =
+          recipient.side === 'PROSECUTION'
+            ? `${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${theCase.id}`
+            : formatDefenderRoute(
+                this.config.clientUrl,
+                theCase.type,
+                theCase.id,
+              )
+        const body = {
+          extended,
+          appealCaseNumber: appealCase.appealCaseNumber,
+          deadline,
+          link,
+        }
+
+        return this.sendEmail({
+          subject,
+          html: isSameAppealStatementParty(recipient.party, party)
+            ? appealStatementDeadlineGrantedBody(body)
+            : appealStatementDeadlineOthersBody({ ...body, who }),
+          recipientName: recipient.name ?? undefined,
+          recipientEmail: recipient.email,
+        })
+      }),
+    )
+
+    return this.recordNotification(
+      theCase.id,
+      extended
+        ? TrackedNotificationType.APPEAL_STATEMENT_DEADLINE_EXTENDED
+        : TrackedNotificationType.APPEAL_STATEMENT_DEADLINE_SET,
+      sent,
+    )
+  }
+
   //#region API
   private sendNotification(
     type: AppealCaseNotificationType,
@@ -1995,6 +2089,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     appealCase: AppealCase,
     user: User,
     userIds?: string[],
+    party?: AppealStatementParty,
   ): Promise<DeliverResponse> {
     switch (type) {
       case AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS:
@@ -2023,6 +2118,14 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         )
       case AppealCaseNotificationType.APPEAL_WITHDRAWN:
         return this.sendAppealWithdrawnNotifications(theCase, appealCase, user)
+      case AppealCaseNotificationType.APPEAL_STATEMENT_DEADLINE_SET:
+      case AppealCaseNotificationType.APPEAL_STATEMENT_DEADLINE_EXTENDED:
+        return this.sendAppealStatementDeadlineNotifications(
+          theCase,
+          appealCase,
+          type,
+          party ?? {},
+        )
       default:
         throw new InternalServerErrorException(
           `Invalid appeal case notification type ${type}`,
@@ -2036,6 +2139,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     appealCase: AppealCase,
     user: User,
     userIds?: string[],
+    party?: AppealStatementParty,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
@@ -2046,6 +2150,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         appealCase,
         user,
         userIds,
+        party,
       )
     } catch (error) {
       this.logger.error('Failed to send appeal case notification', error)
