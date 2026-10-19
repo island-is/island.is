@@ -8,7 +8,6 @@ import {
   Get,
   Header,
   Inject,
-  NotFoundException,
   Param,
   Patch,
   Post,
@@ -36,18 +35,17 @@ import {
   courtOfAppealsRegistrarRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../guards'
 import { CurrentCase } from '../case/guards/case.decorator'
 import { CaseExistsGuard } from '../case/guards/caseExists.guard'
 import { CaseReadGuard } from '../case/guards/caseRead.guard'
 import { CaseWriteGuard } from '../case/guards/caseWrite.guard'
-import { PdfService } from '../case/pdf.service'
 import { CurrentCivilClaimant } from '../defendant/guards/civilClaimaint.decorator'
 import { CivilClaimantExistsGuard } from '../defendant/guards/civilClaimantExists.guard'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { EventService } from '../event'
-import { LawyerRegistryService } from '../lawyer-registry/lawyerRegistry.service'
 import { AppealCase, Case, CivilClaimant, Defendant } from '../repository'
 import { UserService } from '../user'
 import { CreateAppealCaseDto } from './dto/createAppealCase.dto'
@@ -72,7 +70,7 @@ import {
   publicProsecutorStaffCreateRule,
   publicProsecutorStaffTransitionRule,
 } from './guards/rolesRules'
-import { buildAppealAppointmentLetter } from './appealAppointmentLetter'
+import { AppealAppointmentLetterService } from './appealAppointmentLetter.service'
 import { AppealCaseService } from './appealCase.service'
 
 @Controller('api')
@@ -83,8 +81,7 @@ export class AppealCaseController {
     private readonly appealCaseService: AppealCaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
-    private readonly pdfService: PdfService,
-    private readonly lawyerRegistryService: LawyerRegistryService,
+    private readonly appealAppointmentLetterService: AppealAppointmentLetterService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -256,59 +253,15 @@ export class AppealCaseController {
     return result.appealCase
   }
 
-  /**
-   * The advocate's firm, which the letter puts under their name. It lives in
-   * the lawyer register rather than on the case, and only for an advocate
-   * picked out of that register - one typed in by hand has no national id to
-   * find them by. A letter is worth sending without the firm, so a lookup
-   * that finds nothing is not an error.
-   */
-  private async getAdvocatePractice(
-    nationalId?: string | null,
-  ): Promise<string | undefined> {
-    if (!nationalId) {
-      return undefined
-    }
-
-    try {
-      const lawyer = await this.lawyerRegistryService.getByNationalId(
-        nationalId,
-      )
-
-      return lawyer.practice
-    } catch {
-      return undefined
-    }
-  }
-
-  private async writeAppointmentLetter(
-    theCase: Case,
-    party: { defendant?: Defendant; civilClaimant?: CivilClaimant },
-    res: Response,
-  ): Promise<void> {
-    const advocatePractice = await this.getAdvocatePractice(
-      party.defendant?.appealDefenderNationalId ??
-        party.civilClaimant?.appealSpokespersonNationalId,
-    )
-
-    const letter = buildAppealAppointmentLetter({
-      theCase,
-      ...party,
-      advocatePractice,
-    })
-
-    if (!letter) {
-      throw new NotFoundException('No appeal appointment letter to write')
-    }
-
-    res.end(await this.pdfService.getAppealAppointmentLetterPdf(letter))
-  }
-
+  // The public prosecution office prosecutes the appeal and is copied on the
+  // letter, so it reads it here; the advocate it appoints reads it through the
+  // limited access route.
   @UseGuards(CaseExistsGuard, RolesGuard, CaseReadGuard, DefendantExistsGuard)
   @RolesRules(
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
   )
   @Get('case/:caseId/defendant/:defendantId/appealAppointmentLetter')
   @Header('Content-Type', 'application/pdf')
@@ -328,7 +281,7 @@ export class AppealCaseController {
       `Getting the appeal appointment letter for defendant ${defendantId} of case ${caseId} as a pdf document`,
     )
 
-    await this.writeAppointmentLetter(theCase, { defendant }, res)
+    await this.appealAppointmentLetterService.write(theCase, { defendant }, res)
   }
 
   @UseGuards(
@@ -341,6 +294,7 @@ export class AppealCaseController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
   )
   @Get('case/:caseId/civilClaimant/:civilClaimantId/appealAppointmentLetter')
   @Header('Content-Type', 'application/pdf')
@@ -360,6 +314,10 @@ export class AppealCaseController {
       `Getting the appeal appointment letter for civil claimant ${civilClaimantId} of case ${caseId} as a pdf document`,
     )
 
-    await this.writeAppointmentLetter(theCase, { civilClaimant }, res)
+    await this.appealAppointmentLetterService.write(
+      theCase,
+      { civilClaimant },
+      res,
+    )
   }
 }
