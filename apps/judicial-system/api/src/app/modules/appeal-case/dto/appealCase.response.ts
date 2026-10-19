@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 import {
   AppealCaseRulingDecision,
@@ -34,6 +34,23 @@ export class AppealCivilClaimantStatementDate {
 
   @Field(() => String)
   readonly statementDate!: string
+}
+
+// A judge on the bench of an appeal case. The bench is ordered by display
+// order; the judge at 0 is the presiding judge.
+@ObjectType()
+export class AppealCaseJudge {
+  @Field(() => ID)
+  readonly id!: string
+
+  @Field(() => Int, { nullable: true })
+  readonly displayOrder?: number
+
+  @Field(() => ID, { nullable: true })
+  readonly userId?: string
+
+  @Field(() => User, { nullable: true })
+  readonly user?: User
 }
 
 @ObjectType()
@@ -78,13 +95,14 @@ export class AppealCase {
   @Field(() => User, { nullable: true })
   readonly appealAssistant?: User
 
-  @Field(() => User, { nullable: true })
+  // The bench in order, presiding judge first.
+  @Field(() => [AppealCaseJudge], { nullable: true })
+  readonly appealJudges?: AppealCaseJudge[]
+
+  // The bench as three fixed slots, for clients that have not moved to
+  // appealJudges. Resolved from the bench in AppealCaseResolver.
   readonly appealJudge1?: User
-
-  @Field(() => User, { nullable: true })
   readonly appealJudge2?: User
-
-  @Field(() => User, { nullable: true })
   readonly appealJudge3?: User
 
   @Field(() => AppealCaseRulingDecision, { nullable: true })

@@ -27,6 +27,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../models/appealCase.model'
+import { AppealCaseJudge } from '../models/appealCaseJudge.model'
 import { AppealCourtSession } from '../models/appealCourtSession.model'
 import { AppealDecision } from '../models/appealDecision.model'
 import { AppealEventLog } from '../models/appealEventLog.model'
@@ -55,6 +56,26 @@ import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
 import { UpdateDateLog } from '../services/dateLogRepository.service'
 
+// The bench of an appeal case, presiding judge first. Every appeal case include
+// loads it, whatever kind of appeal the case is.
+export const appealJudgesInclude: Includeable = {
+  model: AppealCaseJudge,
+  as: 'appealJudges',
+  required: false,
+  separate: true,
+  order: [
+    ['displayOrder', 'ASC'],
+    ['created', 'ASC'],
+  ],
+  include: [
+    {
+      model: User,
+      as: 'user',
+      include: [{ model: Institution, as: 'institution' }],
+    },
+  ],
+}
+
 export const caseInclude: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
@@ -69,21 +90,7 @@ export const caseInclude: Includeable[] = [
         as: 'appealAssistant',
         include: [{ model: Institution, as: 'institution' }],
       },
-      {
-        model: User,
-        as: 'appealJudge1',
-        include: [{ model: Institution, as: 'institution' }],
-      },
-      {
-        model: User,
-        as: 'appealJudge2',
-        include: [{ model: Institution, as: 'institution' }],
-      },
-      {
-        model: User,
-        as: 'appealJudge3',
-        include: [{ model: Institution, as: 'institution' }],
-      },
+      appealJudgesInclude,
       {
         model: AppealEventLog,
         as: 'appealEventLogs',
@@ -98,6 +105,7 @@ export const caseInclude: Includeable[] = [
     as: 'verdictAppealCase',
     required: false,
     include: [
+      appealJudgesInclude,
       {
         model: AppealEventLog,
         as: 'appealEventLogs',
@@ -156,21 +164,7 @@ export const caseInclude: Includeable[] = [
         as: 'appealAssistant',
         include: [{ model: Institution, as: 'institution' }],
       },
-      {
-        model: User,
-        as: 'appealJudge1',
-        include: [{ model: Institution, as: 'institution' }],
-      },
-      {
-        model: User,
-        as: 'appealJudge2',
-        include: [{ model: Institution, as: 'institution' }],
-      },
-      {
-        model: User,
-        as: 'appealJudge3',
-        include: [{ model: Institution, as: 'institution' }],
-      },
+      appealJudgesInclude,
       {
         model: AppealEventLog,
         as: 'appealEventLogs',
@@ -1161,21 +1155,7 @@ export const getLimitedAccessCaseInclude = (
           as: 'appealAssistant',
           include: [{ model: Institution, as: 'institution' }],
         },
-        {
-          model: User,
-          as: 'appealJudge1',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'appealJudge2',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'appealJudge3',
-          include: [{ model: Institution, as: 'institution' }],
-        },
+        appealJudgesInclude,
         {
           model: AppealEventLog,
           as: 'appealEventLogs',
@@ -1190,6 +1170,7 @@ export const getLimitedAccessCaseInclude = (
       as: 'verdictAppealCase',
       required: false,
       include: [
+        appealJudgesInclude,
         {
           model: AppealEventLog,
           as: 'appealEventLogs',
@@ -1210,21 +1191,7 @@ export const getLimitedAccessCaseInclude = (
           as: 'appealAssistant',
           include: [{ model: Institution, as: 'institution' }],
         },
-        {
-          model: User,
-          as: 'appealJudge1',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'appealJudge2',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'appealJudge3',
-          include: [{ model: Institution, as: 'institution' }],
-        },
+        appealJudgesInclude,
         {
           model: AppealEventLog,
           as: 'appealEventLogs',
@@ -1674,9 +1641,6 @@ export interface UpdateAppealCase
     | 'appealReceivedByCourtDate'
     | 'appealRulingDate'
     | 'appealAssistantId'
-    | 'appealJudge1Id'
-    | 'appealJudge2Id'
-    | 'appealJudge3Id'
     | 'appealRulingDecision'
     | 'appealConclusion'
     | 'appealRulingModifiedHistory'
