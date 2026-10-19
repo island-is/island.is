@@ -25,7 +25,7 @@ describe('limitedAccessFileController - Create civil claimant case file', () => 
     type: 'text/plain',
     key: `${caseId}/${uuId}/test.txt`,
     size: 99,
-    category: CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+    category: CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
   }
   const caseFile = {
     ...createCaseFile,
@@ -78,7 +78,7 @@ describe('limitedAccessFileController - Create civil claimant case file', () => 
         state: CaseFileState.STORED_IN_RVG,
         key: `${caseId}/${uuId}/test.txt`,
         size: 99,
-        category: CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+        category: CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
         name: 'test.txt',
         userGeneratedFilename: 'test.txt',
         civilClaimantId,

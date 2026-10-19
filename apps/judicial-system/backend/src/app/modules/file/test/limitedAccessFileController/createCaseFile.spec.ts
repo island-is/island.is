@@ -36,6 +36,7 @@ describe('limitedAccessFileController - Create case file', () => {
 
   let mockQueuedMessages: Message[]
   let mockCaseFileRepositoryService: CaseFileRepositoryService
+  let mockTransaction: jest.Mock
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -50,7 +51,7 @@ describe('limitedAccessFileController - Create case file', () => {
     mockQueuedMessages = queuedMessagesAfterCommit
     mockCaseFileRepositoryService = caseFileRepositoryService
 
-    const mockTransaction = sequelize.transaction as jest.Mock
+    mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
     mockTransaction.mockResolvedValue(transaction)
 
@@ -81,14 +82,15 @@ describe('limitedAccessFileController - Create case file', () => {
         then.error = error as Error
       }
 
-      // Once, by the stand-in for the guard above. A second call would be
-      // the handler opening a transaction of its own, which would block on
-      // the guard's row lock and deadlock the request.
-      expect(mockTransaction).toHaveBeenCalledTimes(1)
-
       return then
     }
   })
+
+  // Once, by the stand-in for the guard above. A second call would be the
+  // handler opening a transaction of its own, which would block on the
+  // guard's row lock and deadlock the request.
+  const expectTheGuardsTransactionOnly = () =>
+    expect(mockTransaction).toHaveBeenCalledTimes(1)
 
   describe.each([...restrictionCases, ...investigationCases])(
     'case file created for %s case',
@@ -128,6 +130,7 @@ describe('limitedAccessFileController - Create case file', () => {
       })
 
       it('should create a case file', () => {
+        expectTheGuardsTransactionOnly()
         expect(mockCaseFileRepositoryService.create).toHaveBeenCalledWith(
           caseId,
           {
@@ -183,6 +186,7 @@ describe('limitedAccessFileController - Create case file', () => {
     })
 
     it('should create a case file', () => {
+      expectTheGuardsTransactionOnly()
       expect(mockCaseFileRepositoryService.create).toHaveBeenCalledWith(
         caseId,
         {
@@ -215,6 +219,7 @@ describe('limitedAccessFileController - Create case file', () => {
     })
 
     it('should throw bad gateway exception', () => {
+      expectTheGuardsTransactionOnly()
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(then.error.message).toBe(
         `${caseId}/${uuId}/test.txt is not a valid key for case ${caseId}`,
@@ -241,6 +246,7 @@ describe('limitedAccessFileController - Create case file', () => {
     })
 
     it('should throw error', () => {
+      expectTheGuardsTransactionOnly()
       expect(then.error).toBeInstanceOf(Error)
       expect(then.error.message).toBe('Some error')
     })

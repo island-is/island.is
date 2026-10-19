@@ -119,8 +119,9 @@ export class LimitedAccessCaseController {
     return theCase
   }
 
-  // The rule reads only the user, so RolesGuard stays ahead of the locking
-  // read and an unauthorized caller takes no lock on the case row.
+  // The rule decides from the user and the body, never from the case, so
+  // RolesGuard stays ahead of the locking read and an unauthorized caller
+  // takes no lock on the case row.
   @UseGuards(
     JwtAuthUserGuard,
     RolesGuard,
