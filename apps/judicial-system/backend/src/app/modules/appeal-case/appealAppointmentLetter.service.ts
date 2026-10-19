@@ -4,7 +4,12 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 
 import { createAppealAppointmentLetter } from '../../formatters'
 import { LawyerRegistryService } from '../lawyer-registry'
-import { Case, CivilClaimant, Defendant } from '../repository'
+import {
+  AppealSummonsRepositoryService,
+  Case,
+  CivilClaimant,
+  Defendant,
+} from '../repository'
 import { buildAppealAppointmentLetter } from './appealAppointmentLetter'
 
 /**
@@ -17,7 +22,10 @@ import { buildAppealAppointmentLetter } from './appealAppointmentLetter'
  */
 @Injectable()
 export class AppealAppointmentLetterService {
-  constructor(private readonly lawyerRegistryService: LawyerRegistryService) {}
+  constructor(
+    private readonly lawyerRegistryService: LawyerRegistryService,
+    private readonly appealSummonsRepositoryService: AppealSummonsRepositoryService,
+  ) {}
 
   /**
    * The advocate's firm, which the letter puts under their name. It lives in
@@ -54,10 +62,19 @@ export class AppealAppointmentLetterService {
         party.civilClaimant?.appealSpokespersonNationalId,
     )
 
+    // The summonses are not on the case payload - a limited access user does
+    // not get them - so the letter fetches the ones it needs itself.
+    const appealSummonses = theCase.verdictAppealCase
+      ? await this.appealSummonsRepositoryService.findConfirmedByAppealCaseId(
+          theCase.verdictAppealCase.id,
+        )
+      : []
+
     const letter = buildAppealAppointmentLetter({
       theCase,
       ...party,
       advocatePractice,
+      appealSummonses,
     })
 
     if (!letter) {

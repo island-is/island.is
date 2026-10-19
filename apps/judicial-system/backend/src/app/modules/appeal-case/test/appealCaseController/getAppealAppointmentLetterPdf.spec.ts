@@ -21,6 +21,7 @@ import { DefendantExistsGuard } from '../../../defendant/guards/defendantExists.
 import {
   AppealCase,
   AppealEventLog,
+  AppealSummons,
   Case,
   CivilClaimant,
   Defendant,
@@ -83,17 +84,24 @@ describe('AppealCaseController - get appeal appointment letter pdf', () => {
   let appealCaseController: AppealCaseController
   let mockGetPdf: jest.Mock
   let mockGetLawyer: jest.Mock
+  let mockFindSummonses: jest.Mock
   let res: Response
 
   beforeEach(async () => {
-    const { appealCaseController: controller, lawyerRegistryService } =
-      await createTestingAppealCaseModule()
+    const {
+      appealCaseController: controller,
+      lawyerRegistryService,
+      appealSummonsRepositoryService,
+    } = await createTestingAppealCaseModule()
 
     appealCaseController = controller
     mockGetPdf = createAppealAppointmentLetter as jest.Mock
     mockGetPdf.mockResolvedValue(pdf)
     mockGetLawyer = lawyerRegistryService.getByNationalId as jest.Mock
     mockGetLawyer.mockResolvedValue({ practice: 'Vivos lögmenn' })
+    mockFindSummonses =
+      appealSummonsRepositoryService.findConfirmedByAppealCaseId as jest.Mock
+    mockFindSummonses.mockResolvedValue([])
     res = { end: jest.fn() } as unknown as Response
   })
 
@@ -175,6 +183,30 @@ describe('AppealCaseController - get appeal appointment letter pdf', () => {
       expect(mockGetLawyer).not.toHaveBeenCalled()
       expect(res.end).toHaveBeenCalledWith(pdf)
     })
+  })
+
+  // The summonses are not on the case payload, so the letter has to fetch
+  // them - through the appeal they belong to.
+  it('dates the appeal by the summons issued against the defendant', async () => {
+    mockFindSummonses.mockResolvedValue([
+      {
+        confirmedDate: new Date('2026-07-08'),
+        defendants: [{ defendantId: defendant.id }],
+      } as AppealSummons,
+    ])
+
+    await appealCaseController.getDefenderAppointmentLetterPdf(
+      theCase.id,
+      defendant.id,
+      theCase,
+      defendant,
+      res,
+    )
+
+    expect(mockFindSummonses).toHaveBeenCalledWith('appeal-case-id')
+    expect(mockGetPdf).toHaveBeenCalledWith(
+      expect.objectContaining({ appealSummonsDate: new Date('2026-07-08') }),
+    )
   })
 
   // The screen only offers the row for a confirmed advocate, but the route is
