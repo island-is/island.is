@@ -1824,6 +1824,19 @@ export const m = defineMessages({
     id: 'ap.ids-admin:tenant-description',
     defaultMessage: 'Description',
   },
+  tenantDisplayNameEn: {
+    id: 'ap.ids-admin:tenant-display-name-en',
+    defaultMessage: 'Display name (English)',
+  },
+  tenantDescriptionEn: {
+    id: 'ap.ids-admin:tenant-description-en',
+    defaultMessage: 'Description (English)',
+  },
+  tenantEnglishTooltip: {
+    id: 'ap.ids-admin:tenant-english-tooltip',
+    defaultMessage:
+      'Shown when the user has selected English. If empty, the Icelandic value is used.',
+  },
   tenantContactEmail: {
     id: 'ap.ids-admin:tenant-contact-email',
     defaultMessage: 'Contact email',
