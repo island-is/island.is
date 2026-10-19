@@ -207,8 +207,6 @@ describe('AppealCaseController - Register verdict appeal', () => {
       then = await givenWhenThen(buildCase(), dto)
     })
 
-    // The appeal happened when the filing was made, not when the office got
-    // round to registering it.
     // Once, by the stand-in for CaseExistsForUpdateGuard above. A second
     // call would be the handler opening a transaction of its own, which
     // would block on the guard's row lock and deadlock the request.
@@ -216,6 +214,8 @@ describe('AppealCaseController - Register verdict appeal', () => {
       expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
     })
 
+    // The appeal happened when the filing was made, not when the office got
+    // round to registering it.
     it('should create a verdict appeal case dated to the filing', () => {
       expect(then.error).toBeUndefined()
       expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(

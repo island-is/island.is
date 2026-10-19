@@ -447,10 +447,11 @@ describe.each(routes)(
   },
 )
 
-// RolesGuard stays after the locking read because the rules it applies read
-// the request's case and appeal case. These two rows are the ones that would
-// break if it were moved ahead of the read: they decide from what the read
-// put on the request.
+// RolesGuard stays after the locking read because the transition rules read
+// the request's case and appeal case. The allowed WITHDRAW_APPEAL rows above
+// are what breaks if it is moved ahead of the read - both rules deny on a
+// missing case. These two rows are the other half: the same rules denying
+// from what the read put on the request, after the read.
 describe('AppealCaseController - rules that read the locked case', () => {
   const transaction = {} as Transaction
 

@@ -115,19 +115,20 @@ export class AppealCaseController {
   // The four routes that change an appeal case decide against a case row read
   // under FOR UPDATE, so they share one guard order:
   //
-  // CaseExistsForUpdateGuard has to come before RolesGuard, because the roles
-  // rules on update and transition read request.case and request.appealCase
-  // (userAppealedAppealCase, publicProsecutorStaffTransitionRule, the field
-  // rules) and deny outright when they are missing. The rules on create and
-  // on createEventLog need no case, but the order is the same on every route
-  // so there is one shape to check, not two.
+  // CaseExistsForUpdateGuard has to come before RolesGuard, because the
+  // transition rules read request.case and request.appealCase
+  // (userAppealedAppealCase, publicProsecutorStaffTransitionRule) and deny
+  // outright when they are missing. The rules on the other three routes need
+  // no case, but the order is the same on every route so there is one shape
+  // to check, not two.
   //
   // RouteRolesGuard is what keeps that from exposing the lock to everyone. It
   // reads the same roles rules, but decides on the user's role alone, so it
   // needs no case and runs first: a caller in a role the route has no rule
   // for is rejected before the locking read. What remains is a caller in a
-  // listed role on a case they cannot write - CaseWriteGuard needs the case,
-  // so they still reach the read. That is a much smaller population than
+  // listed role on a case they cannot write, or with a body their rule
+  // rejects - CaseWriteGuard needs the case and RolesGuard comes after the
+  // read, so they still reach it. That is a much smaller population than
   // "any authenticated user". AppealCaseExistsGuard resolves the appeal case
   // from the locked case, so it comes after the read too.
   //
