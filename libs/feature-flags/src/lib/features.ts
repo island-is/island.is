@@ -126,6 +126,9 @@ export enum Features {
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',
+  isApplicationSystemTranslationsEnabled = 'isApplicationSystemTranslationsEnabled',
+  isApplicationTranslationWorkspaceReadOnlyEnabled = 'isApplicationTranslationWorkspaceReadOnlyEnabled',
+
   // When on, events missing from the role's actions are only logged, not rejected
   applicationSystemDisableEventPermissionCheck = 'applicationSystemDisableEventPermissionCheck',
 
