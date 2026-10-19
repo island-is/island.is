@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { ConflictException, ForbiddenException } from '@nestjs/common'
@@ -14,7 +15,11 @@ import {
 
 import { createTestingAppealSummonsModule } from './createTestingAppealSummonsModule'
 
-import { queueMessagesAfterCommit } from '../../../middleware'
+import {
+  getOrCreateTransaction,
+  queueMessagesAfterCommit,
+} from '../../../middleware'
+import { runInRequestContext } from '../../../test'
 import {
   AppealCase,
   AppealEventLogRepositoryService,
@@ -56,8 +61,30 @@ describe('AppealSummonsController - Send to court of appeals', () => {
 
   let mockAppealSummonsRepositoryService: AppealSummonsRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
+  let mockSequelize: Sequelize
   let transaction: Transaction
   let appealSummonsController: AppealSummonsController
+
+  // The route is guarded by CaseExistsForUpdateGuard, so the request
+  // transaction is already open - and holding a lock on this case row - by
+  // the time the handler runs. Guards do not execute in controller unit
+  // tests, so the request context and that transaction are set up here
+  // instead.
+  const sendToCourtOfAppeals = (
+    summons: AppealSummons,
+    actingUser: User = user,
+  ) =>
+    runInRequestContext(async () => {
+      await getOrCreateTransaction(mockSequelize)
+
+      return appealSummonsController.sendToCourtOfAppeals(
+        caseId,
+        summonsId,
+        theCase,
+        summons,
+        actingUser,
+      )
+    })
 
   beforeEach(async () => {
     const {
@@ -70,12 +97,11 @@ describe('AppealSummonsController - Send to court of appeals', () => {
     mockAppealSummonsRepositoryService = appealSummonsRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     appealSummonsController = controller
+    mockSequelize = sequelize
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => Promise<unknown>) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
     ;(queueMessagesAfterCommit as jest.Mock).mockClear()
   })
 
@@ -96,13 +122,7 @@ describe('AppealSummonsController - Send to court of appeals', () => {
       mockAppealEventLogRepositoryService.create as jest.Mock
     ).mockResolvedValueOnce({})
 
-    const result = await appealSummonsController.sendToCourtOfAppeals(
-      caseId,
-      summonsId,
-      theCase,
-      confirmed,
-      user,
-    )
+    const result = await sendToCourtOfAppeals(confirmed)
 
     expect(mockAppealSummonsRepositoryService.update).toHaveBeenCalledWith(
       summonsId,
@@ -144,13 +164,10 @@ describe('AppealSummonsController - Send to court of appeals', () => {
 
   it('rejects a draft that has not been confirmed', async () => {
     await expect(
-      appealSummonsController.sendToCourtOfAppeals(
-        caseId,
-        summonsId,
-        theCase,
-        { ...confirmed, confirmedDate: null } as AppealSummons,
-        user,
-      ),
+      sendToCourtOfAppeals({
+        ...confirmed,
+        confirmedDate: null,
+      } as AppealSummons),
     ).rejects.toThrow(ForbiddenException)
 
     expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
@@ -158,16 +175,10 @@ describe('AppealSummonsController - Send to court of appeals', () => {
 
   it('rejects a summons that has already been sent', async () => {
     await expect(
-      appealSummonsController.sendToCourtOfAppeals(
-        caseId,
-        summonsId,
-        theCase,
-        {
-          ...confirmed,
-          sentToCourtOfAppealsDate: new Date(),
-        } as AppealSummons,
-        user,
-      ),
+      sendToCourtOfAppeals({
+        ...confirmed,
+        sentToCourtOfAppealsDate: new Date(),
+      } as AppealSummons),
     ).rejects.toThrow(ForbiddenException)
 
     expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
@@ -182,15 +193,9 @@ describe('AppealSummonsController - Send to court of appeals', () => {
       ),
     )
 
-    await expect(
-      appealSummonsController.sendToCourtOfAppeals(
-        caseId,
-        summonsId,
-        theCase,
-        confirmed,
-        user,
-      ),
-    ).rejects.toThrow(ConflictException)
+    await expect(sendToCourtOfAppeals(confirmed)).rejects.toThrow(
+      ConflictException,
+    )
 
     expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
     expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
@@ -202,15 +207,9 @@ describe('AppealSummonsController - Send to court of appeals', () => {
       role: UserRole.PROSECUTOR,
     } as User
 
-    await expect(
-      appealSummonsController.sendToCourtOfAppeals(
-        caseId,
-        summonsId,
-        theCase,
-        confirmed,
-        prosecutor,
-      ),
-    ).rejects.toThrow(ForbiddenException)
+    await expect(sendToCourtOfAppeals(confirmed, prosecutor)).rejects.toThrow(
+      ForbiddenException,
+    )
 
     expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
   })

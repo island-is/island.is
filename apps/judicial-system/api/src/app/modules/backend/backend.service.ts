@@ -18,6 +18,7 @@ import {
 import {
   AppealCase,
   AppealCourtSession,
+  AppealStatementDeadline,
   DeleteAppealCourtSessionResponse,
 } from '../appeal-case'
 import { AppealSummons } from '../appeal-summons'
@@ -349,6 +350,17 @@ export class BackendService {
     return this.patch(
       `case/${caseId}/appealCase/${appealCaseId}`,
       updateAppealCase,
+    )
+  }
+
+  setAppealStatementDeadline(
+    caseId: string,
+    appealCaseId: string,
+    setAppealStatementDeadline: unknown,
+  ): Promise<AppealStatementDeadline> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/statementDeadline`,
+      setAppealStatementDeadline,
     )
   }
 

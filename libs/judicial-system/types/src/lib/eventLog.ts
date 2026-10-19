@@ -49,6 +49,12 @@ export enum AppealEventType {
   // Confirmed rather than appointed: a civil claimant's lawyer is confirmed
   // the same way but is never formally appointed, and gets no letter.
   ADVOCATE_CONFIRMED = 'ADVOCATE_CONFIRMED',
+  // The court of appeals gave a party a deadline to file its statement, or
+  // moved the one it had. The date lives on appeal_statement_deadline; the
+  // event keeps who did it and when, and tells a first deadline from an
+  // extension, which the mails word differently.
+  STATEMENT_DEADLINE_SET = 'STATEMENT_DEADLINE_SET',
+  STATEMENT_DEADLINE_EXTENDED = 'STATEMENT_DEADLINE_EXTENDED',
 }
 
 export const appealEventTypes = Object.values(AppealEventType)

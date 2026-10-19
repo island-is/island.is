@@ -30,6 +30,7 @@ import { AppealCase } from '../models/appealCase.model'
 import { AppealCourtSession } from '../models/appealCourtSession.model'
 import { AppealDecision } from '../models/appealDecision.model'
 import { AppealEventLog } from '../models/appealEventLog.model'
+import { AppealStatementDeadline } from '../models/appealStatementDeadline.model'
 import { AppealSummons } from '../models/appealSummons.model'
 import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
 import { Case } from '../models/case.model'
@@ -154,6 +155,13 @@ export const caseInclude: Includeable[] = [
         // called is at the top of the list rather than wherever its date
         // falls.
         order: [['created', 'DESC']],
+        separate: true,
+      },
+      {
+        model: AppealStatementDeadline,
+        as: 'statementDeadlines',
+        required: false,
+        order: [['created', 'ASC']],
         separate: true,
       },
     ],

@@ -684,6 +684,7 @@ Array [
   "case.verdictAppealCase.appealCaseNumber",
   "case.verdictAppealCase.appealConclusion",
   "case.verdictAppealCase.appealEventLogs.appealOrigin",
+  "case.verdictAppealCase.appealEventLogs.civilClaimantId",
   "case.verdictAppealCase.appealEventLogs.created",
   "case.verdictAppealCase.appealEventLogs.defendantId",
   "case.verdictAppealCase.appealEventLogs.eventType",
@@ -722,6 +723,12 @@ Array [
   "case.verdictAppealCase.sentAppealSummonses.defendants.id",
   "case.verdictAppealCase.sentAppealSummonses.id",
   "case.verdictAppealCase.sentAppealSummonses.sentToCourtOfAppealsDate",
+  "case.verdictAppealCase.statementDeadlines.civilClaimantId",
+  "case.verdictAppealCase.statementDeadlines.created",
+  "case.verdictAppealCase.statementDeadlines.deadline",
+  "case.verdictAppealCase.statementDeadlines.defendantId",
+  "case.verdictAppealCase.statementDeadlines.id",
+  "case.verdictAppealCase.statementDeadlines.modified",
   "case.victims.hasLawyer",
   "case.victims.hasNationalId",
   "case.victims.id",
@@ -1971,6 +1978,17 @@ Array [
 exports[`GraphQL operations select these field paths SendNotification 1`] = `
 Array [
   "sendNotification.notificationSent",
+]
+`;
+
+exports[`GraphQL operations select these field paths SetAppealStatementDeadline 1`] = `
+Array [
+  "setAppealStatementDeadline.civilClaimantId",
+  "setAppealStatementDeadline.created",
+  "setAppealStatementDeadline.deadline",
+  "setAppealStatementDeadline.defendantId",
+  "setAppealStatementDeadline.id",
+  "setAppealStatementDeadline.modified",
 ]
 `;
 
