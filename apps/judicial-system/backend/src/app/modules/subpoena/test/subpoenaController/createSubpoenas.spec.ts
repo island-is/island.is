@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { NotFoundException } from '@nestjs/common'
@@ -15,6 +16,13 @@ import {
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
+import {
+  getOrCreateTransaction,
+  getTransactionContext,
+  TransactionContext,
+} from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
+import { EventService } from '../../../event'
 import {
   Case,
   CaseRepositoryService,
@@ -81,9 +89,12 @@ describe('SubpoenaController - Create subpoenas', () => {
   let mockCaseRepositoryService: CaseRepositoryService
   let mockSubpoenaRepositoryService: SubpoenaRepositoryService
   let mockCourtDocumentRepositoryService: CourtDocumentRepositoryService
+  let mockEventService: EventService
+  let mockSequelize: Sequelize
   let mockQueuedMessages: Message[]
   let mockQueueMessagesAfterCommit: jest.Mock
   let transaction: Transaction
+  let transactionContext: TransactionContext | undefined
   let givenWhenThen: GivenWhenThen
   let subpoenaController: SubpoenaController
 
@@ -93,6 +104,7 @@ describe('SubpoenaController - Create subpoenas', () => {
       caseRepositoryService,
       subpoenaRepositoryService,
       courtDocumentRepositoryService,
+      eventService,
       subpoenaController: controller,
       queuedMessagesAfterCommit,
       mockQueueMessagesAfterCommit: mockQueueMessages,
@@ -101,15 +113,18 @@ describe('SubpoenaController - Create subpoenas', () => {
     mockCaseRepositoryService = caseRepositoryService
     mockSubpoenaRepositoryService = subpoenaRepositoryService
     mockCourtDocumentRepositoryService = courtDocumentRepositoryService
+    mockEventService = eventService
+    mockSequelize = sequelize
     subpoenaController = controller
     mockQueuedMessages = queuedMessagesAfterCommit
     mockQueueMessagesAfterCommit = mockQueueMessages
 
+    const mockPostEvent = mockEventService.postEvent as jest.Mock
+    mockPostEvent.mockClear()
+
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => Promise<unknown>) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     givenWhenThen = async (
       caseId: string,
@@ -122,13 +137,24 @@ describe('SubpoenaController - Create subpoenas', () => {
       mockQueuedMessages.length = 0
       mockQueueMessagesAfterCommit.mockClear()
 
+      // The route is guarded by CaseExistsForUpdateGuard, so the request
+      // transaction is already open - and holding a lock on this case row -
+      // by the time the handler runs. Guards do not execute in controller
+      // unit tests, so the request context and that transaction are set up
+      // here instead.
       try {
-        then.result = await subpoenaController.createSubpoenas(
-          caseId,
-          theCase,
-          createSubpoenasDto,
-          { id: uuid() } as User,
-        )
+        await runInRequestContext(async () => {
+          transactionContext = getTransactionContext()
+
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await subpoenaController.createSubpoenas(
+            caseId,
+            theCase,
+            createSubpoenasDto,
+            { id: uuid() } as User,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -164,6 +190,11 @@ describe('SubpoenaController - Create subpoenas', () => {
       // The case is passed directly from the controller, so no need to fetch it again
       expect(mockCaseRepositoryService.findById).not.toHaveBeenCalled()
       expect(mockCaseRepositoryService.findLiveById).not.toHaveBeenCalled()
+
+      // Once, by the stand-in for CaseExistsForUpdateGuard above. A second
+      // call would be the handler opening a transaction of its own, which
+      // would block on the guard's row lock and deadlock the request.
+      expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
 
       expect(mockSubpoenaRepositoryService.create).toHaveBeenCalledTimes(2)
       expect(mockSubpoenaRepositoryService.create).toHaveBeenNthCalledWith(
@@ -221,6 +252,39 @@ describe('SubpoenaController - Create subpoenas', () => {
 
       expect(then.result).toEqual([subpoena1, subpoena2])
       expect(then.error).toBeUndefined()
+    })
+
+    it('should register the issued event rather than posting it inline', async () => {
+      const createSubpoenasDto: CreateSubpoenasDto = {
+        defendantIds: [defendantId1, defendantId2],
+        arraignmentDate,
+        location,
+      }
+
+      await givenWhenThen(caseId, theCase, createSubpoenasDto)
+
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(1)
+    })
+
+    it('should post the issued event once the transaction has committed', async () => {
+      const createSubpoenasDto: CreateSubpoenasDto = {
+        defendantIds: [defendantId1, defendantId2],
+        arraignmentDate,
+        location,
+      }
+
+      await givenWhenThen(caseId, theCase, createSubpoenasDto)
+
+      await Promise.all(
+        (transactionContext?.afterCommit ?? []).map((callback) => callback()),
+      )
+
+      expect(mockEventService.postEvent).toHaveBeenCalledWith(
+        'SUBPOENA_ISSUED',
+        theCase,
+        { Varnaraðili: `${defendantId1}, ${defendantId2}` },
+      )
     })
 
     it('should queue the same messages for LOKE origin cases', async () => {
@@ -370,6 +434,9 @@ describe('SubpoenaController - Create subpoenas', () => {
       // Should not queue any messages since no subpoenas were created
       expect(mockQueuedMessages).toEqual([])
 
+      // Nothing was issued, so nothing is announced
+      expect(transactionContext?.afterCommit).toHaveLength(0)
+
       expect(then.result).toEqual([])
       expect(then.error).toBeUndefined()
     })
@@ -412,17 +479,7 @@ describe('SubpoenaController - Create subpoenas', () => {
         location,
       }
 
-      const user = { id: uuid() } as User
-
-      mockQueuedMessages.length = 0
-      mockQueueMessagesAfterCommit.mockClear()
-
-      const result = await subpoenaController.createSubpoenas(
-        caseId,
-        theCase,
-        createSubpoenasDto,
-        user,
-      )
+      const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
 
       expect(mockQueuedMessages).toEqual(
         expect.arrayContaining([
@@ -464,7 +521,8 @@ describe('SubpoenaController - Create subpoenas', () => {
         }),
       )
 
-      expect(result).toEqual([subpoena1])
+      expect(then.result).toEqual([subpoena1])
+      expect(then.error).toBeUndefined()
     })
 
     it('should not revoke previous subpoenas with a past arraignment date', async () => {

@@ -4,6 +4,7 @@ import {
   AppealCaseState,
   AppealCaseType,
   CaseType,
+  InstitutionType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { showsPublicProsecutorVerdictAppealStep } from '@island.is/judicial-system-web/src/utils/hooks/useSections'
@@ -49,12 +50,38 @@ describe('showsPublicProsecutorVerdictAppealStep', () => {
     ).toBe(false)
   })
 
+  it('shows the step to a prosecutor at the public prosecutor office', () => {
+    const user = mockUser(UserRole.PROSECUTOR)
+    const publicProsecutor = {
+      ...user,
+      institution: {
+        ...(user.institution ?? {
+          id: '',
+          created: '',
+          modified: '',
+          name: '',
+          active: true,
+          type: InstitutionType.DISTRICT_PROSECUTORS_OFFICE,
+        }),
+        type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+      },
+    }
+
+    expect(
+      showsPublicProsecutorVerdictAppealStep(
+        theCase(),
+        publicProsecutor,
+        enabled,
+      ),
+    ).toBe(true)
+  })
+
   it.each([
     UserRole.PROSECUTOR,
     UserRole.DEFENDER,
     UserRole.DISTRICT_COURT_JUDGE,
     UserRole.COURT_OF_APPEALS_JUDGE,
-  ])('hides the step from %s', (role) => {
+  ])('hides the step from %s outside the public prosecutor office', (role) => {
     expect(
       showsPublicProsecutorVerdictAppealStep(
         theCase(),

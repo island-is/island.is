@@ -205,6 +205,35 @@ export const allSameDay = (objects: Array<{ date?: Date }>): boolean => {
   )
 }
 
+/**
+ * Removes inserted text from a diff element, leaving the text as it read
+ * before the change. `<ins class="mod">` wraps text whose formatting alone
+ * changed (getStructuredDiff, and getDiff now and then), so that text was
+ * there before: it is unwrapped, not removed.
+ */
+export const removeInsertions = (element: Element) => {
+  element.querySelectorAll('ins').forEach((e) => {
+    if (e.classList.contains('mod')) {
+      e.replaceWith(...Array.from(e.childNodes))
+    } else {
+      e.remove()
+    }
+  })
+}
+
+/**
+ * Removes the `data-diff-*` attributes getStructuredDiff writes, from the
+ * element and everything in it, so markup copied from a diff into amending
+ * text carries none of them.
+ */
+export const removeDiffAttributes = (element: Element) => {
+  ;[element, ...Array.from(element.querySelectorAll('*'))].forEach((el) => {
+    Array.from(el.attributes)
+      .filter((attr) => attr.name.startsWith('data-diff'))
+      .forEach((attr) => el.removeAttribute(attr.name))
+  })
+}
+
 export const hasAnyChange = (diff: string) => {
   const testElement = asDiv(diff)
   const hasDeletion = !!testElement.querySelector('del')

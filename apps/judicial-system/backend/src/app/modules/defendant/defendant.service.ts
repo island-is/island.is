@@ -38,6 +38,7 @@ import { CourtService } from '../court'
 import {
   AppealCase,
   AppealEventLogRepositoryService,
+  AppealStatementDeadlineRepositoryService,
   Case,
   CaseFileRepositoryService,
   CaseRepositoryService,
@@ -59,6 +60,7 @@ export class DefendantService {
     private readonly defendantRepositoryService: DefendantRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
+    private readonly appealStatementDeadlineRepositoryService: AppealStatementDeadlineRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly courtService: CourtService,
@@ -226,7 +228,9 @@ export class DefendantService {
 
   async createForNewCase(
     caseId: string,
-    defendantToCreate: CreateDefendantDto,
+    defendantToCreate: CreateDefendantDto & {
+      requestSharedWithDefender?: RequestSharedWithDefender
+    },
     transaction: Transaction,
   ): Promise<Defendant> {
     return this.defendantRepositoryService.create(
@@ -415,6 +419,15 @@ export class DefendantService {
         }),
         { transaction },
       )
+
+      // Telling the defender the court of appeals has recorded them. Queued
+      // after commit, so a confirmation that rolls back sends nothing.
+      queueMessagesAfterCommit({
+        type: MessageType.DEFENDANT_NOTIFICATION,
+        caseId: theCase.id,
+        elementId: defendant.id,
+        body: { type: DefendantNotificationType.APPEAL_DEFENDER_ASSIGNED },
+      })
     }
   }
 
@@ -766,6 +779,14 @@ export class DefendantService {
     transaction: Transaction,
   ): Promise<boolean> {
     await this.caseFileRepositoryService.deleteAllForDefendant(
+      theCase.id,
+      defendantId,
+      { transaction },
+    )
+
+    // The deadlines reference the defendant without a cascade, so they go
+    // before the row they point at.
+    await this.appealStatementDeadlineRepositoryService.deleteAllForDefendant(
       theCase.id,
       defendantId,
       { transaction },
