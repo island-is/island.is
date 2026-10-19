@@ -66,9 +66,11 @@ describe('getVerdictAppealConclusions', () => {
         caseWith({
           verdictAppealCase: {
             appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
-            appealJudge1: { name: 'Jón Höskuldsson' },
-            appealJudge2: { name: 'Ásgeir Magnússon' },
-            appealJudge3: { name: 'Hildur Briem' },
+            appealJudges: [
+              { displayOrder: 0, user: { name: 'Jón Höskuldsson' } },
+              { displayOrder: 1, user: { name: 'Ásgeir Magnússon' } },
+              { displayOrder: 2, user: { name: 'Hildur Briem' } },
+            ],
           },
         } as Partial<ConclusionCase>),
       ),
@@ -88,7 +90,9 @@ describe('getVerdictAppealConclusions', () => {
         caseWith({
           verdictAppealCase: {
             appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
-            appealJudge1: { name: 'Ásgeir Magnússon' },
+            appealJudges: [
+              { displayOrder: 0, user: { name: 'Ásgeir Magnússon' } },
+            ],
           },
         } as Partial<ConclusionCase>),
       )[0].signedBy,

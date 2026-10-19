@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
+  hasAllAppealJudges,
   isCompletedCase,
   isInvestigationCase,
   isRestrictionCase,
@@ -156,9 +157,7 @@ export const CaseOverview = () => {
                         items: [
                           appealCaseNumber,
                           ...(appealAssistant ? [appealAssistant] : []),
-                          ...(workingCase.appealCase?.appealJudge1 &&
-                          workingCase.appealCase?.appealJudge2 &&
-                          workingCase.appealCase?.appealJudge3
+                          ...(hasAllAppealJudges(workingCase.appealCase)
                             ? [appealJudges]
                             : []),
                         ],
