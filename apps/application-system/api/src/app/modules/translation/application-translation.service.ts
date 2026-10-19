@@ -63,13 +63,13 @@ export class ApplicationTranslationService {
 
   private async assertWritesEnabled(user: User): Promise<void> {
     const readOnly = await this.featureFlagService.getValue(
-      Features.applicationTranslationWorkspaceReadOnly,
+      Features.isApplicationTranslationWorkspaceReadOnlyEnabled,
       false,
       user,
     )
     if (readOnly) {
       throw new ServiceUnavailableException(
-        'Translation workspace writes are temporarily disabled',
+        'Lokað hefur verið tímabundið fyrir breytingar á þýðingum',
       )
     }
   }

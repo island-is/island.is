@@ -12,8 +12,11 @@ import {
 } from '@island.is/island-ui/core'
 import Overview from '../../screens/Overview/Overview'
 import { useLocale } from '@island.is/localization'
+import { Features } from '@island.is/feature-flags'
+import { useFeatureFlag } from '@island.is/react/feature-flags'
 import {
   APPLICATION_SYSTEM_TAB_QUERY_PARAM,
+  APPLICATION_SYSTEM_TRANSLATIONS_TAB_ID,
   ApplicationSystemPaths,
 } from '../../lib/paths'
 import { m } from '../../lib/messages'
@@ -37,9 +40,18 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
   isSuperAdmin,
 }) => {
   const { formatMessage } = useLocale()
+  const { value: showTranslations, loading: isLoadingFlag } = useFeatureFlag(
+    Features.isApplicationSystemTranslationsEnabled,
+    false,
+  )
   const [searchParams, setSearchParams] = useSearchParams()
+  const requestedTab = searchParams.get(APPLICATION_SYSTEM_TAB_QUERY_PARAM)
   const selectedTab =
-    searchParams.get(APPLICATION_SYSTEM_TAB_QUERY_PARAM) ?? 'overview'
+    !requestedTab ||
+    (requestedTab === APPLICATION_SYSTEM_TRANSLATIONS_TAB_ID &&
+      !showTranslations)
+      ? 'overview'
+      : requestedTab
 
   //These are all organizations in contentful
   const { data: contentfulOrgData, loading: contentfulOrgLoading } =
@@ -91,6 +103,10 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
   )
 
   const isLoadingOrganizations = contentfulOrgLoading || institutionsLoading
+
+  if (isLoadingFlag) {
+    return null
+  }
 
   return (
     <GridContainer>
@@ -146,15 +162,19 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
                     />
                   ),
                 },
-                {
-                  id: 'translations',
-                  label: formatMessage(m.translations),
-                  content: (
-                    <Suspense fallback={null}>
-                      <Translations isSuperAdmin={isSuperAdmin} />
-                    </Suspense>
-                  ),
-                },
+                ...(showTranslations
+                  ? [
+                      {
+                        id: APPLICATION_SYSTEM_TRANSLATIONS_TAB_ID,
+                        label: formatMessage(m.translations),
+                        content: (
+                          <Suspense fallback={null}>
+                            <Translations isSuperAdmin={isSuperAdmin} />
+                          </Suspense>
+                        ),
+                      },
+                    ]
+                  : []),
               ]}
             />
           </Box>

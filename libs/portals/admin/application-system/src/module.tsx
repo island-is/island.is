@@ -1,4 +1,5 @@
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/feature-flags'
 import { PortalModule, PortalModuleRoutesProps } from '@island.is/portals/core'
 import React, { lazy } from 'react'
 import { m } from './lib/messages'
@@ -61,18 +62,21 @@ export const applicationSystemAdminModule: PortalModule = {
     },
     {
       name: m.translations,
+      key: Features.isApplicationSystemTranslationsEnabled,
       path: '/umsoknakerfi/thydingar/shared/:namespace',
       element: <SharedNamespaceTranslationWorkspaceRoute />,
       layout: 'default',
     },
     {
       name: m.translations,
+      key: Features.isApplicationSystemTranslationsEnabled,
       path: ApplicationSystemPaths.SharedNamespaceTranslationWorkspace,
       element: <SharedNamespaceTranslationWorkspaceRoute />,
       layout: 'default',
     },
     {
       name: m.translations,
+      key: Features.isApplicationSystemTranslationsEnabled,
       path: ApplicationSystemPaths.TranslationWorkspace,
       element: <TranslationWorkspaceRoute />,
       layout: 'workspace',

@@ -45,8 +45,6 @@ export enum Features {
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
-  applicationTranslationWorkspaceReadOnly = 'isApplicationTranslationWorkspaceReadOnlyEnabled',
-
   // Service portal modules
   servicePortalHealthPatientPermitsPageEnabled = 'isServicePortalHealthPatientPermitsPageEnabled',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
@@ -128,6 +126,8 @@ export enum Features {
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',
+  isApplicationSystemTranslationsEnabled = 'isApplicationSystemTranslationsEnabled',
+  isApplicationTranslationWorkspaceReadOnlyEnabled = 'isApplicationTranslationWorkspaceReadOnlyEnabled',
 
   // Search indexer
   shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
