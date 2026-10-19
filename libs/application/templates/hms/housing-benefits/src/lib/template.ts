@@ -13,7 +13,10 @@ import {
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  coreMessages,
+} from '@island.is/application/core'
 import {
   DRAFT_ENTERED_AT_KEY,
   housingBenefitsPruneLifecycle,
@@ -211,6 +214,18 @@ const template: ApplicationTemplate<
                 import(
                   '../forms/assigneeApprovalState/assigneePrereqForm'
                 ).then((module) => Promise.resolve(module.AssigneePrereqForm)),
+              actions: [
+                {
+                  event: 'EDIT',
+                  name: coreMessages.buttonNext,
+                  type: 'primary',
+                },
+                {
+                  event: 'REJECT',
+                  name: m.assigneeApproval.householdMemberRejectButton,
+                  type: 'reject',
+                },
+              ],
               write: 'all',
               read: 'all',
               api: [
@@ -229,6 +244,18 @@ const template: ApplicationTemplate<
                 import('../forms/assigneeApprovalState/assigneeDraftForm').then(
                   (module) => Promise.resolve(module.AssigneeDraftForm),
                 ),
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: m.assigneeDraftOverview.submitButton,
+                  type: 'primary',
+                },
+                {
+                  event: 'EDIT',
+                  name: coreMessages.buttonNext,
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               read: 'all',
               api: [
@@ -306,6 +333,18 @@ const template: ApplicationTemplate<
                 import(
                   '../forms/applicantSubmitState/applicantSubmitForm'
                 ).then((module) => Promise.resolve(module.ApplicantSubmitForm)),
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: m.applicantSubmitMessages.submitButton,
+                  type: 'primary',
+                },
+                {
+                  event: 'EDIT',
+                  name: 'Bæta við heimilismanni',
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
               delete: true,
