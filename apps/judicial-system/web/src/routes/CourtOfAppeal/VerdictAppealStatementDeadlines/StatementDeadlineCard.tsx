@@ -81,6 +81,7 @@ const StatementDeadlineCard: FC<Props> = ({ party, onSend, isSending }) => {
         selectedDate={pickedDate ?? party.deadline}
         minDate={getStatementDeadlineMinDate(party)}
         blueBox={false}
+        size="sm"
         dateOnly
         disabled={party.hasFiledStatement}
         onChange={(date) => setPickedDate(date)}

@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
@@ -31,4 +31,12 @@ export const action = style({
       gridColumn: 2,
     },
   },
+})
+
+// The text button sets its line height to 1.6 and pads itself by 4px, which
+// puts its underline a good way below the text. The design draws the line
+// just under the descenders, so the action is tightened to that.
+globalStyle(`${action} [role='button']`, {
+  lineHeight: 1.25,
+  paddingBottom: 2,
 })
