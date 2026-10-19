@@ -43,7 +43,6 @@ export enum NotificationType {
   HmsHousingBenefitsPruned = 'HmsHousingBenefitsPrunedNotification',
   ApplicationPruneReminder = 'ApplicationPruneReminderNotification',
   ApplicationPeriodEndingReminder = 'ApplicationPeriodEndingReminderNotification',
-  ApplicationAssigneeReminder = 'ApplicationAssigneeReminderNotification',
 }
 
 interface NotificationKeysMap {
@@ -284,9 +283,6 @@ export const NotificationConfig = defineNotificationConfig({
   },
   [NotificationType.ApplicationPeriodEndingReminder]: {
     templateId: 'HNIPP.AS.PERIOD.ENDING.REMINDER',
-  },
-  [NotificationType.ApplicationAssigneeReminder]: {
-    templateId: 'HNIPP.AS.ASSIGNEE.REMINDER',
   },
 } as const)
 

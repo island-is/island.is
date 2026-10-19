@@ -126,13 +126,6 @@ export type ScheduledNotificationConfig = {
    */
   includeApplicationName?: boolean
   /**
-   * National IDs that should receive this notification instead of the
-   * applicant (and the applicant's actors). Resolved when the notification is
-   * scheduled, i.e. on every state entry. If it resolves to an empty list the
-   * notification is not scheduled. When omitted, the applicant receives it.
-   */
-  recipients?: string[] | ((application: Application) => string[])
-  /**
    * When set, the API only schedules this notification if the feature
    * flag evaluates to true at the time of scheduling.
    */

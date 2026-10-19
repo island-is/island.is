@@ -461,22 +461,6 @@ export const handleScheduledNotifications = async (
     try {
       if (!enabled) continue
 
-      let recipients: string[] | undefined
-      if (config.recipients) {
-        const resolvedRecipients =
-          typeof config.recipients === 'function'
-            ? config.recipients(application)
-            : config.recipients
-
-        if (!Array.isArray(resolvedRecipients)) {
-          throw new Error('recipients did not resolve to an array')
-        }
-        recipients = Array.from(
-          new Set(resolvedRecipients.filter((recipient) => !!recipient)),
-        )
-        if (recipients.length === 0) continue
-      }
-
       let time: Date
 
       if ('delayInMs' in config) {
@@ -554,7 +538,6 @@ export const handleScheduledNotifications = async (
         template: config.template,
         schedule_time: time,
         args,
-        ...(recipients ? { recipients } : {}),
       })
     } catch (error) {
       logger.error(

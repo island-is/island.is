@@ -100,12 +100,4 @@ export class ScheduledNotification extends Model {
   })
   @ApiPropertyOptional({ type: Object })
   args?: { key: string; value: string }[]
-
-  /** When set, these national IDs receive the notification instead of the applicant. */
-  @Column({
-    type: DataType.JSONB,
-    allowNull: true,
-  })
-  @ApiPropertyOptional({ type: [String] })
-  recipients?: string[] | null
 }

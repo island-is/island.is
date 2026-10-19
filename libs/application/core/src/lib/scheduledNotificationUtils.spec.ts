@@ -5,7 +5,6 @@ import {
 import { Features } from '@island.is/feature-flags'
 import {
   endOfDayFromCreation,
-  scheduleAssigneeReminder,
   schedulePeriodEndingReminders,
   schedulePruneReminderAfterDays,
   schedulePruneReminderBefore,
@@ -286,74 +285,5 @@ describe('schedulePeriodEndingReminders', () => {
     const configs = schedulePeriodEndingReminders(periodEndDate, [7])
 
     expect(configs[0].includeApplicationName).toBe(true)
-  })
-})
-
-describe('scheduleAssigneeReminder', () => {
-  const pruneDate = new Date('2026-08-20T23:59:00.000Z')
-
-  afterEach(() => {
-    jest.useRealTimers()
-  })
-
-  it('should use the shared assignee reminder template with the given recipients, timing and prune date args', () => {
-    const date = new Date('2026-08-08T10:00:00.000Z')
-    const config = scheduleAssigneeReminder(['1111111111'], { date }, pruneDate)
-
-    expect(config).toEqual({
-      template:
-        NotificationConfig[NotificationType.ApplicationAssigneeReminder]
-          .templateId,
-      recipients: ['1111111111'],
-      includeApplicationLink: true,
-      includeApplicationName: true,
-      args: [
-        { key: 'pruneDateIs', value: '20.08.2026' },
-        { key: 'pruneDateEn', value: '20/08/2026' },
-        { key: 'daysBeforePrune', value: '12' },
-      ],
-      featureFlag: undefined,
-      date,
-    })
-  })
-
-  it('should count daysBeforePrune from now + delayInMs', () => {
-    jest.useFakeTimers()
-    jest.setSystemTime(new Date('2026-08-01T12:00:00.000Z'))
-
-    const config = scheduleAssigneeReminder(
-      ['1111111111'],
-      { delayInMs: 5 * 24 * 3600 * 1000 },
-      pruneDate,
-    )
-
-    expect(config.args).toContainEqual({
-      key: 'daysBeforePrune',
-      value: '14',
-    })
-  })
-
-  it('should never report a negative daysBeforePrune', () => {
-    const config = scheduleAssigneeReminder(
-      ['1111111111'],
-      { date: new Date('2026-08-25T10:00:00.000Z') },
-      pruneDate,
-    )
-
-    expect(config.args).toContainEqual({ key: 'daysBeforePrune', value: '0' })
-  })
-
-  it('should pass through a recipients resolver and featureFlag', () => {
-    const recipients = () => ['1111111111']
-    const config = scheduleAssigneeReminder(
-      recipients,
-      { delayInMs: 1000 },
-      pruneDate,
-      Features.applicationSystemHistory,
-    )
-
-    expect(config.recipients).toBe(recipients)
-    expect('delayInMs' in config && config.delayInMs).toBe(1000)
-    expect(config.featureFlag).toBe(Features.applicationSystemHistory)
   })
 })

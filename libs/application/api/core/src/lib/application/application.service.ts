@@ -416,7 +416,6 @@ export class ApplicationService {
         'schedule_time',
         'schedule_status',
         'args',
-        'recipients',
       ],
       where: {
         [Op.and]: {
@@ -607,7 +606,6 @@ export class ApplicationService {
       template: string
       schedule_time: Date
       args?: Array<{ key: string; value: string }>
-      recipients?: string[]
     }[],
   ) {
     if (!notifications.length) return
@@ -617,7 +615,6 @@ export class ApplicationService {
       application_state: state,
       schedule_time: n.schedule_time,
       args: n.args,
-      ...(n.recipients ? { recipients: n.recipients } : {}),
     }))
     return this.scheduledNotificationModel.bulkCreate(records)
   }
