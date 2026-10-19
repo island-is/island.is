@@ -928,7 +928,8 @@ export class PaymentFlowService {
         paymentMethod: update.paymentMethod,
         reason: update.reason,
         message: update.message,
-        eventMetadata: update.metadata,
+        // Always an object, the application's callback validates it as one
+        eventMetadata: update.metadata ?? {},
       },
     }
 

@@ -10,6 +10,7 @@ import { TestApp } from '@island.is/testing/nest'
 import { v4 as uuid } from 'uuid'
 
 import { setupTestApp } from '../../../test/setup'
+import * as webhookAuthUtils from '../../utils/webhookAuth.utils'
 import {
   CatalogItemWithQuantity,
   PaymentMethod,
@@ -400,6 +401,82 @@ describe('PaymentFlowService', () => {
         { isDeleted: true },
         { where: { id: paymentFlowId, isDeleted: false } },
       )
+    })
+  })
+
+  describe('logPaymentFlowUpdate', () => {
+    const paymentFlowId = uuid()
+    const onUpdateUrl = 'https://www.island.is/greida/update'
+    let fetchMock: jest.Mock
+    let spies: jest.SpyInstance[]
+    const originalFetch = global.fetch
+
+    const update = {
+      paymentFlowId,
+      type: 'update' as const,
+      occurredAt: new Date(),
+      paymentMethod: PaymentMethod.CARD,
+      reason: 'payment_started' as const,
+      message: 'Card verification started',
+    }
+
+    const sentBody = () => JSON.parse(fetchMock.mock.calls[0][1].body)
+
+    // Earlier tests stub the method on the instance and leave it stubbed
+    const logPaymentFlowUpdate = (
+      ...args: Parameters<PaymentFlowService['logPaymentFlowUpdate']>
+    ) => PaymentFlowService.prototype.logPaymentFlowUpdate.apply(service, args)
+
+    beforeEach(() => {
+      spies = [
+        jest
+          .spyOn((service as TestPartial).paymentFlowModel, 'findOne')
+          .mockResolvedValue({
+            toJSON: () => ({ id: paymentFlowId, onUpdateUrl, metadata: {} }),
+          }),
+        jest
+          .spyOn((service as TestPartial).paymentFlowEventModel, 'create')
+          .mockResolvedValue({ id: uuid() }),
+        jest
+          .spyOn((service as TestPartial).paymentFlowEventModel, 'update')
+          .mockResolvedValue([1]),
+        jest
+          .spyOn(webhookAuthUtils, 'generateWebhookJwt')
+          .mockReturnValue('jwt'),
+      ]
+      fetchMock = jest.fn().mockResolvedValue({ ok: true })
+      global.fetch = fetchMock as never
+    })
+
+    afterEach(() => {
+      spies.forEach((spy) => spy.mockRestore())
+      global.fetch = originalFetch
+    })
+
+    it('sends an event without fields with an empty eventMetadata object', async () => {
+      await logPaymentFlowUpdate(update)
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        onUpdateUrl,
+        expect.objectContaining({ method: 'POST' }),
+      )
+      expect(sentBody().details).toEqual({
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'payment_started',
+        message: 'Card verification started',
+        eventMetadata: {},
+      })
+    })
+
+    it('sends the event fields as eventMetadata', async () => {
+      await logPaymentFlowUpdate({
+        ...update,
+        metadata: { correlationId: 'correlation-1' },
+      })
+
+      expect(sentBody().details.eventMetadata).toEqual({
+        correlationId: 'correlation-1',
+      })
     })
   })
 
