@@ -7,11 +7,15 @@ import { AppealAppointmentKind } from '../../../formatters/generatedPdfs/appealA
 import {
   AppealCase,
   AppealEventLog,
+  AppealSummons,
   Case,
   CivilClaimant,
   Defendant,
 } from '../../repository'
-import { buildAppealAppointmentLetter } from '../appealAppointmentLetter'
+import {
+  buildAppealAppointmentLetter,
+  getAppealSummonsDate,
+} from '../appealAppointmentLetter'
 
 const confirmation = (fields: Partial<AppealEventLog> = {}): AppealEventLog =>
   ({
@@ -486,5 +490,96 @@ describe('buildAppealAppointmentLetter', () => {
 
       expect(letter?.copyTo).toEqual(['Ekki skráð'])
     })
+  })
+})
+
+describe('getAppealSummonsDate', () => {
+  const summons = (
+    confirmedDate: Date | undefined,
+    defendantIds: string[],
+  ): AppealSummons =>
+    ({
+      confirmedDate,
+      defendants: defendantIds.map((defendantId) => ({ defendantId })),
+    } as AppealSummons)
+
+  it('reads the summons issued against the defendant', () => {
+    const date = getAppealSummonsDate(
+      [
+        summons(new Date('2026-07-01'), ['other-defendant-id']),
+        summons(new Date('2026-07-08'), ['defendant-id']),
+      ],
+      'defendant-id',
+    )
+
+    expect(date).toEqual(new Date('2026-07-08'))
+  })
+
+  // A corrected summons is confirmed again, and a later one naming the same
+  // person replaces the earlier.
+  it('takes the newest when several name the defendant', () => {
+    const date = getAppealSummonsDate(
+      [
+        summons(new Date('2026-07-08'), ['defendant-id']),
+        summons(new Date('2026-07-01'), ['defendant-id']),
+      ],
+      'defendant-id',
+    )
+
+    expect(date).toEqual(new Date('2026-07-08'))
+  })
+
+  it('reads any summons of the appeal for a civil claimant', () => {
+    const date = getAppealSummonsDate([
+      summons(new Date('2026-07-01'), ['defendant-id']),
+      summons(new Date('2026-07-08'), ['other-defendant-id']),
+    ])
+
+    expect(date).toEqual(new Date('2026-07-08'))
+  })
+
+  // A draft is not issued, whoever it names.
+  it('ignores a summons that is not confirmed', () => {
+    expect(
+      getAppealSummonsDate(
+        [summons(undefined, ['defendant-id'])],
+        'defendant-id',
+      ),
+    ).toBeUndefined()
+  })
+
+  it('finds nothing when no summons names the defendant', () => {
+    expect(
+      getAppealSummonsDate(
+        [summons(new Date('2026-07-01'), ['other-defendant-id'])],
+        'defendant-id',
+      ),
+    ).toBeUndefined()
+  })
+})
+
+describe('buildAppealAppointmentLetter - the summons date', () => {
+  it('dates the appeal by the summons issued against the defendant', () => {
+    const letter = buildAppealAppointmentLetter({
+      theCase: theCase(),
+      defendant: defendant(),
+      appealSummonses: [
+        {
+          confirmedDate: new Date('2026-07-08'),
+          defendants: [{ defendantId: 'defendant-id' }],
+        } as AppealSummons,
+      ],
+    })
+
+    expect(letter?.appealSummonsDate).toEqual(new Date('2026-07-08'))
+  })
+
+  it('leaves the date out when no summons has been issued', () => {
+    const letter = buildAppealAppointmentLetter({
+      theCase: theCase(),
+      defendant: defendant(),
+    })
+
+    expect(letter?.appealSummonsDate).toBeUndefined()
   })
 })
