@@ -143,6 +143,9 @@ export const getStatementDeadlineMinDate = (
 /**
  * What the court confirms before the deadline goes out. The claimant and the
  * accused are named; the prosecution is a side, not a person, so it is not.
+ *
+ * The intro stands on its own; the deadline and the notice follow it as one
+ * block, which is how the dialog sets them.
  */
 export const getStatementDeadlineConfirmation = (
   party: Pick<
@@ -150,7 +153,7 @@ export const getStatementDeadlineConfirmation = (
     'role' | 'roleLabel' | 'name' | 'deadline'
   >,
   pickedDate: Date,
-): { title: string; lines: string[] } => {
+): { title: string; intro: string; details: string[] } => {
   const isExtension = Boolean(party.deadline)
   const subject =
     party.role === 'PROSECUTION'
@@ -161,10 +164,10 @@ export const getStatementDeadlineConfirmation = (
     title: isExtension
       ? 'Viltu framlengja greinargerðarfrest?'
       : 'Viltu senda út greinargerðarfrest?',
-    lines: [
-      `${subject} fær ${
-        isExtension ? 'aukinn frest' : 'frest'
-      } til að senda inn greinargerð.`,
+    intro: `${subject} fær ${
+      isExtension ? 'aukinn frest' : 'frest'
+    } til að senda inn greinargerð.`,
+    details: [
       `Frestur til: ${formatDate(pickedDate, 'PPP')}.`,
       'Aðilar máls fá tilkynningu um frestinn.',
     ],

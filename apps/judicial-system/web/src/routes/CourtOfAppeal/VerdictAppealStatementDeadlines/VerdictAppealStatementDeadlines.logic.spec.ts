@@ -213,8 +213,9 @@ describe('getStatementDeadlineConfirmation', () => {
       ),
     ).toEqual({
       title: 'Viltu senda út greinargerðarfrest?',
-      lines: [
+      intro:
         'Ákærði Gervimaður Jónsson fær frest til að senda inn greinargerð.',
+      details: [
         'Frestur til: 15. september 2026.',
         'Aðilar máls fá tilkynningu um frestinn.',
       ],
@@ -222,7 +223,7 @@ describe('getStatementDeadlineConfirmation', () => {
   })
 
   it('words an extension as more time', () => {
-    const { title, lines } = getStatementDeadlineConfirmation(
+    const { title, intro } = getStatementDeadlineConfirmation(
       {
         role: 'CIVIL_CLAIMANT',
         roleLabel: 'Bótakröfuhafi',
@@ -233,14 +234,14 @@ describe('getStatementDeadlineConfirmation', () => {
     )
 
     expect(title).toBe('Viltu framlengja greinargerðarfrest?')
-    expect(lines[0]).toBe(
+    expect(intro).toBe(
       'Bótakröfuhafi Fyrsti Kröfuhafi fær aukinn frest til að senda inn greinargerð.',
     )
   })
 
   // The prosecution is a side, not a person, so the prosecutor is not named.
   it('does not name the prosecutor', () => {
-    const { lines } = getStatementDeadlineConfirmation(
+    const { intro } = getStatementDeadlineConfirmation(
       {
         role: 'PROSECUTION',
         roleLabel: 'Ákæruvaldið',
@@ -249,7 +250,7 @@ describe('getStatementDeadlineConfirmation', () => {
       pickedDate,
     )
 
-    expect(lines[0]).toBe('Ákæruvaldið fær frest til að senda inn greinargerð.')
+    expect(intro).toBe('Ákæruvaldið fær frest til að senda inn greinargerð.')
   })
 })
 

@@ -4,6 +4,7 @@ import { AnimatePresence } from 'motion/react'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { DateTime, Modal } from '@island.is/judicial-system-web/src/components'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import type { StatementDeadlineParty } from './VerdictAppealStatementDeadlines.logic'
 import {
@@ -100,17 +101,15 @@ const StatementDeadlineCard: FC<Props> = ({ party, onSend, isSending }) => {
         </div>
       )}
       <AnimatePresence>
+        {/* No close handler on purpose: the dialog is left through its own
+            buttons, with no corner cross, and so no Escape or backdrop close
+            either. The body goes in as children rather than text, because
+            the text slot sets a fixed margin above the buttons and the design
+            has a wider one: 80px from the text to the buttons, of which the
+            footer's own padding gives 16. */}
         {isConfirming && confirmation && (
           <Modal
             title={confirmation.title}
-            text={
-              <Box>
-                {confirmation.lines.map((line) => (
-                  <Text key={line}>{line}</Text>
-                ))}
-              </Box>
-            }
-            onClose={() => setIsConfirming(false)}
             buttons={[
               {
                 text: 'Hætta við',
@@ -124,7 +123,16 @@ const StatementDeadlineCard: FC<Props> = ({ party, onSend, isSending }) => {
                 dataTestId: 'confirmStatementDeadlineButton',
               },
             ]}
-          />
+          >
+            <Box marginBottom={8} className={stack({ gap: 2 })}>
+              <Text>{confirmation.intro}</Text>
+              <div>
+                {confirmation.details.map((line) => (
+                  <Text key={line}>{line}</Text>
+                ))}
+              </div>
+            </Box>
+          </Modal>
         )}
       </AnimatePresence>
     </Box>
