@@ -3,8 +3,8 @@ import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { errors } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CreateDefendantInput,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -92,6 +92,13 @@ const useDefendants = () => {
 
   const updateDefendant = useCallback(
     async (updateDefendant: UpdateDefendantInput) => {
+      // Request cases keep a client-side defendant before "Stofna mál" creates
+      // the case. Same as updateCase: keep local state, skip the API until both
+      // ids exist (empty string is the FormProvider placeholder).
+      if (!updateDefendant.caseId || !updateDefendant.defendantId) {
+        return false
+      }
+
       try {
         const { data } = await updateDefendantMutation({
           variables: {
@@ -111,6 +118,10 @@ const useDefendants = () => {
 
   const limitedAccessUpdateDefendant = useCallback(
     async (updateDefendant: UpdateDefendantInput) => {
+      if (!updateDefendant.caseId || !updateDefendant.defendantId) {
+        return false
+      }
+
       try {
         const { data } = await limitedAccessUpdateDefendantMutation({
           variables: {
@@ -131,9 +142,9 @@ const useDefendants = () => {
   const updateDefendantState = useCallback(
     (
       update: UpdateDefendantInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
-      setWorkingCase((prevWorkingCase: Case) => {
+      setWorkingCase((prevWorkingCase: WorkingCase) => {
         if (!prevWorkingCase.defendants) {
           return prevWorkingCase
         }
@@ -157,10 +168,11 @@ const useDefendants = () => {
   const setAndSendDefendantToServer = useCallback(
     (
       update: UpdateDefendantInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
       updateDefendantState(update, setWorkingCase)
-      updateDefendant(update)
+
+      return updateDefendant(update)
     },
     [updateDefendant, updateDefendantState],
   )

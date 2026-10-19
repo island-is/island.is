@@ -4,11 +4,9 @@ import {
   buildTableRepeaterField,
   buildMultiField,
   buildSubSection,
-  getValueViaPath,
   buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { GaldurExternalDomainModelsIncomeContractorJobDTO } from '@island.is/clients/vmst-unemployment'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isContractWork } from '../../../utils/conditions'
@@ -19,21 +17,8 @@ import {
 import { formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildCanRemoveRow } from '../../../utils/reconcile'
+import { getContractWorkDefaults } from '../../../utils/persistedRows'
 import { toOptionalString, toRequiredString } from '../../../utils/rowCoercions'
-
-const getContractWorkDefaults = (application: Application) => {
-  const jobs =
-    getValueViaPath<GaldurExternalDomainModelsIncomeContractorJobDTO[]>(
-      application.externalData,
-      'income.data.contractorJobs',
-    ) ?? []
-
-  return jobs.map((job) => ({
-    validationId: job.id,
-    contractJobStart: job.startDate ?? '',
-    workEnds: job.endDate ?? '',
-  }))
-}
 
 const contractWorkValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerContractWork',

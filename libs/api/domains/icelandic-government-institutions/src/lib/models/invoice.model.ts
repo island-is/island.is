@@ -9,9 +9,6 @@ export class Invoice {
   @Field({ nullable: true })
   number?: string
 
-  @Field({ nullable: true })
-  numberRedacted?: boolean
-
   @Field(() => Float, { nullable: true })
   totalAmount?: number | null
 

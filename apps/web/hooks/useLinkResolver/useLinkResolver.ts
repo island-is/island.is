@@ -223,6 +223,14 @@ export const routesTemplate = {
     is: '/v/[slug]/frett',
     en: '/en/p/[slug]/news',
   },
+  projectevent: {
+    is: '/v/[slug]/vidburdir/[subSlug]',
+    en: '/en/p/[slug]/events/[subSlug]',
+  },
+  projecteventoverview: {
+    is: '/v/[slug]/vidburdir',
+    en: '/en/p/[slug]/events',
+  },
   projectsubpage: {
     is: '/v/[slug]/[subSlug]',
     en: '/en/p/[slug]/[subSlug]',

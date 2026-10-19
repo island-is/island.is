@@ -35,6 +35,8 @@ import {
   VmstApplicantPeriod,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { maskString } from '@island.is/shared/utils'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@nestjs/config'
@@ -57,7 +59,33 @@ export class VMSTApplicationsService {
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
     >,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  // Income type names are display-only, so a failed lookup should not fail the rows query.
+  private async getCapitalIncomeTypeNames(
+    locale?: Locale,
+  ): Promise<Map<string, string>> {
+    try {
+      const incomeTypes = await this.vmstUnemploymentService.getIncomeTypes({
+        onlyCapitalTypes: true,
+      })
+      return new Map(
+        incomeTypes.flatMap((incomeType): [string, string][] => {
+          const name =
+            locale === 'en'
+              ? incomeType.english || incomeType.name
+              : incomeType.name
+          return incomeType.id && name ? [[incomeType.id, name]] : []
+        }),
+      )
+    } catch (e) {
+      this.logger.warn('Failed to fetch VMST capital income types', {
+        error: e,
+      })
+      return new Map()
+    }
+  }
 
   async validateBankInformation(
     auth: User,
@@ -356,7 +384,10 @@ export class VMSTApplicationsService {
     return this.vmstUnemploymentService.getApplicantActions(applicantId)
   }
 
-  async getApplicantIncomeRows(auth: User): Promise<VmstApplicantIncomeRow[]> {
+  async getApplicantIncomeRows(
+    auth: User,
+    locale?: Locale,
+  ): Promise<VmstApplicantIncomeRow[]> {
     try {
       const { applicantId } = await this.resolveApplicant(auth)
       const dto: GaldurExternalDomainModelsIncomeIncomesDTO =
@@ -382,6 +413,10 @@ export class VMSTApplicationsService {
         )
       }
 
+      const capitalIncomeTypeNames = dto.capitalIncomePayments?.length
+        ? await this.getCapitalIncomeTypeNames(locale)
+        : new Map<string, string>()
+
       const rows: VmstApplicantIncomeRow[] = [
         ...(dto.irregularJobs ?? []).flatMap(
           (job): VmstApplicantIrregularJob[] =>
@@ -393,10 +428,8 @@ export class VMSTApplicationsService {
                     id: job.id ?? '',
                     period: buildPeriod(job.periodFrom, job.periodTo),
                     estimatedIncome: job.estimatedIncome ?? null,
-                    employer: {
-                      name: job.employerName ?? '',
-                      ssn: job.employerSSN ?? '',
-                    },
+                    employerName: job.employerName ?? null,
+                    employerSSN: job.employerSSN ?? null,
                   },
                 ],
         ),
@@ -409,10 +442,8 @@ export class VMSTApplicationsService {
                   id: job.id ?? '',
                   period: buildPeriod(job.periodFrom, job.periodTo),
                   estimatedIncome: job.estimatedIncome ?? null,
-                  employer: {
-                    name: job.employerName ?? '',
-                    ssn: job.employerSSN ?? '',
-                  },
+                  employerName: job.employerName ?? null,
+                  employerSSN: job.employerSSN ?? null,
                   ratio: job.ratio,
                 },
               ],
@@ -427,6 +458,7 @@ export class VMSTApplicationsService {
                     id: payment.id ?? '',
                     period: buildPeriod(payment.periodFrom, payment.periodTo),
                     estimatedIncome: payment.estimatedIncome ?? null,
+                    employerName: payment.employerName ?? null,
                     incomeTypeId: payment.incomeTypeId ?? '',
                     pensionFundId: payment.pensionFundId,
                   },
@@ -443,6 +475,9 @@ export class VMSTApplicationsService {
                     period: buildPeriod(payment.periodFrom, payment.periodTo),
                     estimatedIncome: payment.estimatedIncome ?? null,
                     incomeTypeId: payment.incomeTypeId ?? '',
+                    incomeTypeName: payment.incomeTypeId
+                      ? capitalIncomeTypeNames.get(payment.incomeTypeId) ?? null
+                      : null,
                   },
                 ],
         ),

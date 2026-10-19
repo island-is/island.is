@@ -242,6 +242,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         <Button
           {...(cta.buttonType ?? { variant: cta.variant })}
           size={smallButton ? 'small' : cta.size}
+          aria-label={cta.ariaLabel}
           onClick={cta.onClick}
           disabled={cta.disabled}
           icon={cta.icon}

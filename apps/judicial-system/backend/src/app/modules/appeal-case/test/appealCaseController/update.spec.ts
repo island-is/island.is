@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
@@ -17,7 +18,13 @@ import {
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
 import { nowFactory } from '../../../../factories'
-import { queueMessagesAfterCommit } from '../../../../middleware'
+import {
+  getOrCreateTransaction,
+  getTransactionContext,
+  queueMessagesAfterCommit,
+  TransactionContext,
+} from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import {
   AppealCase,
   AppealCaseRepositoryService,
@@ -56,7 +63,9 @@ describe('AppealCaseController - Update', () => {
 
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockUserService: UserService
+  let mockSequelize: Sequelize
   let transaction: Transaction
+  let transactionContext: TransactionContext | undefined
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -75,11 +84,12 @@ describe('AppealCaseController - Update', () => {
     const mockNowFactory = nowFactory as jest.Mock
     mockNowFactory.mockReturnValue(now)
 
+    mockSequelize = sequelize
+    transactionContext = undefined
+
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     givenWhenThen = async (theCase, appealCase, update) => {
       const then = {} as Then
@@ -88,10 +98,29 @@ describe('AppealCaseController - Update', () => {
       const mockUpdate = mockAppealCaseRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValueOnce(updatedAppealCase)
 
-      await appealCaseController
-        .update(caseId, appealCaseId, user, theCase, appealCase, update)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // The route is guarded by CaseExistsForUpdateGuard, so the request
+      // transaction is already open - and holding a lock on this case row -
+      // by the time the handler runs. Guards do not execute in controller
+      // unit tests, so the request context and that transaction are set up
+      // here instead.
+      try {
+        await runInRequestContext(async () => {
+          transactionContext = getTransactionContext()
+
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await appealCaseController.update(
+            caseId,
+            appealCaseId,
+            user,
+            theCase,
+            appealCase,
+            update,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -107,13 +136,22 @@ describe('AppealCaseController - Update', () => {
       then = await givenWhenThen(theCase, appealCase, update)
     })
 
-    it('should update the appeal case', () => {
+    it('should update the appeal case in the transaction the guard opened, without opening another', () => {
+      // Once, by the stand-in for CaseExistsForUpdateGuard above. A second
+      // call would be the handler opening a transaction of its own, which
+      // would block on the guard's row lock and deadlock the request.
+      expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
       expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
         appealCaseId,
         { appealConclusion: 'Conclusion' },
         { transaction },
       )
       expect(then.result).toEqual({ ...appealCase, ...update })
+    })
+
+    // An update announces nothing, so nothing waits for the commit.
+    it('should register nothing to run after the commit', () => {
+      expect(transactionContext?.afterCommit).toHaveLength(0)
     })
   })
 
@@ -213,6 +251,15 @@ describe('AppealCaseController - Update', () => {
       })
 
       await givenWhenThen(theCase, appealCase, update)
+    })
+
+    // The guard holds a write lock on the case row while the assigned user
+    // is read, so the read joins the request transaction rather than waiting
+    // on a second connection from the pool.
+    it('should read the assigned judge in the request transaction', () => {
+      expect(mockUserService.findById).toHaveBeenCalledWith(judge3Id, {
+        transaction,
+      })
     })
 
     it('should queue delivery of the assigned roles to the court of appeals', () => {

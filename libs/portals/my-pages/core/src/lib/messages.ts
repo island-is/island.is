@@ -2428,6 +2428,14 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:health-shorter',
     defaultMessage: 'Sjúkra',
   },
+  healthTreatment: {
+    id: 'sp.search.tags:health-treatment',
+    defaultMessage: 'Meðferð',
+  },
+  healthPregnancy: {
+    id: 'sp.search.tags:health-pregnancy',
+    defaultMessage: 'Meðganga',
+  },
   healthReferrals: {
     id: 'sp.search.tags:health-referrals',
     defaultMessage: 'Vísanir',
@@ -2483,6 +2491,14 @@ export const searchTagsMessages = defineMessages({
   medicineDelegationOtherNew: {
     id: 'sp.search.tags:medicine-delegation-other-new',
     defaultMessage: 'Nýtt lyfjaumboð',
+  },
+  medicinePrescriptions: {
+    id: 'sp.search.tags:medicine-prescriptions',
+    defaultMessage: 'Lyfseðlar',
+  },
+  medicinePrescription: {
+    id: 'sp.search.tags:medicine-prescription',
+    defaultMessage: 'Lyfseðill',
   },
   appointment: {
     id: 'sp.search.tags:appointment',

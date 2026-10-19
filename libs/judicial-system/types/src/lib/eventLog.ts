@@ -42,6 +42,18 @@ export enum AppealEventType {
   // court session confirmation) or directly by the party within the appeal deadline
   APPEALED = 'APPEALED',
   APPEAL_WITHDRAWN = 'APPEAL_WITHDRAWN',
+  APPEAL_SUMMONS_ISSUED = 'APPEAL_SUMMONS_ISSUED',
+  APPEAL_SUMMONS_CONFIRMED = 'APPEAL_SUMMONS_CONFIRMED',
+  // The court of appeals settled who represents a party in the appeal.
+  // Confirmed rather than appointed: a civil claimant's lawyer is confirmed
+  // the same way but is never formally appointed, and gets no letter.
+  ADVOCATE_CONFIRMED = 'ADVOCATE_CONFIRMED',
+  // The court of appeals gave a party a deadline to file its statement, or
+  // moved the one it had. The date lives on appeal_statement_deadline; the
+  // event keeps who did it and when, and tells a first deadline from an
+  // extension, which the mails word differently.
+  STATEMENT_DEADLINE_SET = 'STATEMENT_DEADLINE_SET',
+  STATEMENT_DEADLINE_EXTENDED = 'STATEMENT_DEADLINE_EXTENDED',
 }
 
 export const appealEventTypes = Object.values(AppealEventType)
