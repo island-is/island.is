@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import type { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -26,6 +27,7 @@ import {
   JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
+  RouteRolesGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 import { AppealCaseType, UserRole } from '@island.is/judicial-system/types'
@@ -37,8 +39,10 @@ import {
   prosecutorRepresentativeRule,
   prosecutorRule,
 } from '../../guards'
+import { getOrCreateTransaction, registerAfterCommit } from '../../middleware'
 import { CurrentCase } from '../case/guards/case.decorator'
 import { CaseExistsGuard } from '../case/guards/caseExists.guard'
+import { CaseExistsForUpdateGuard } from '../case/guards/caseExistsForUpdate.guard'
 import { CaseReadGuard } from '../case/guards/caseRead.guard'
 import { CaseWriteGuard } from '../case/guards/caseWrite.guard'
 import { PdfService } from '../case/pdf.service'
@@ -89,11 +93,17 @@ export class AppealCaseController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  // Read in the request transaction: the caller holds a write lock on the
+  // case row while this runs, and a read on a connection of its own would
+  // wait for a free one from the pool while the lock is held.
   private async validateAssignedUser(
     assignedUserId: string,
     assignableUserRoles: UserRole[],
+    transaction: Transaction,
   ) {
-    const assignedUser = await this.userService.findById(assignedUserId)
+    const assignedUser = await this.userService.findById(assignedUserId, {
+      transaction,
+    })
 
     if (!assignableUserRoles.includes(assignedUser.role)) {
       throw new ForbiddenException(
@@ -102,7 +112,33 @@ export class AppealCaseController {
     }
   }
 
-  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard)
+  // The four routes that change an appeal case decide against a case row read
+  // under FOR UPDATE, so they share one guard order:
+  //
+  // CaseExistsForUpdateGuard has to come before RolesGuard, because the roles
+  // rules on update and transition read request.case and request.appealCase
+  // (userAppealedAppealCase, publicProsecutorStaffTransitionRule, the field
+  // rules) and deny outright when they are missing. The rules on create and
+  // on createEventLog need no case, but the order is the same on every route
+  // so there is one shape to check, not two.
+  //
+  // RouteRolesGuard is what keeps that from exposing the lock to everyone. It
+  // reads the same roles rules, but decides on the user's role alone, so it
+  // needs no case and runs first: a caller in a role the route has no rule
+  // for is rejected before the locking read. What remains is a caller in a
+  // listed role on a case they cannot write - CaseWriteGuard needs the case,
+  // so they still reach the read. That is a much smaller population than
+  // "any authenticated user". AppealCaseExistsGuard resolves the appeal case
+  // from the locked case, so it comes after the read too.
+  //
+  // The two appointment-letter routes below only read, and keep the plain
+  // CaseExistsGuard. appealCaseGuardChain.spec.ts runs these chains.
+  @UseGuards(
+    RouteRolesGuard,
+    CaseExistsForUpdateGuard,
+    RolesGuard,
+    CaseWriteGuard,
+  )
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -121,22 +157,38 @@ export class AppealCaseController {
   ): Promise<AppealCase> {
     this.logger.debug(`Creating appeal case for case ${caseId}`)
 
-    const appealCase = await this.sequelize.transaction((transaction) =>
-      this.appealCaseService.create(
-        theCase,
-        user,
-        dto.rulingFileId,
-        transaction,
-        dto.appealType === AppealCaseType.VERDICT ? dto : undefined,
-      ),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    const appealCase = await this.appealCaseService.create(
+      theCase,
+      user,
+      dto.rulingFileId,
+      transaction,
+      dto.appealType === AppealCaseType.VERDICT ? dto : undefined,
     )
 
-    this.eventService.postEvent('CREATE_APPEAL', theCase)
+    // The event announces an appeal the database has accepted, so it is posted
+    // after the commit - which TransactionCommitInterceptor does after this
+    // handler has returned - as it was when the handler committed a transaction
+    // of its own. Still fire and forget: a failed announcement is logged, not
+    // returned to the caller.
+    registerAfterCommit(() =>
+      this.eventService.postEvent('CREATE_APPEAL', theCase),
+    )
 
     return appealCase
   }
 
-  @UseGuards(CaseExistsGuard, AppealCaseExistsGuard, RolesGuard, CaseWriteGuard)
+  @UseGuards(
+    RouteRolesGuard,
+    CaseExistsForUpdateGuard,
+    AppealCaseExistsGuard,
+    RolesGuard,
+    CaseWriteGuard,
+  )
   @RolesRules(
     prosecutorUpdateRule,
     prosecutorRepresentativeUpdateRule,
@@ -159,42 +211,59 @@ export class AppealCaseController {
   ): Promise<AppealCase> {
     this.logger.debug(`Updating appeal case ${appealCaseId} of case ${caseId}`)
 
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
     if (updateDto.appealAssistantId) {
-      await this.validateAssignedUser(updateDto.appealAssistantId, [
-        UserRole.COURT_OF_APPEALS_ASSISTANT,
-      ])
+      await this.validateAssignedUser(
+        updateDto.appealAssistantId,
+        [UserRole.COURT_OF_APPEALS_ASSISTANT],
+        transaction,
+      )
     }
 
     if (updateDto.appealJudge1Id) {
-      await this.validateAssignedUser(updateDto.appealJudge1Id, [
-        UserRole.COURT_OF_APPEALS_JUDGE,
-      ])
+      await this.validateAssignedUser(
+        updateDto.appealJudge1Id,
+        [UserRole.COURT_OF_APPEALS_JUDGE],
+        transaction,
+      )
     }
 
     if (updateDto.appealJudge2Id) {
-      await this.validateAssignedUser(updateDto.appealJudge2Id, [
-        UserRole.COURT_OF_APPEALS_JUDGE,
-      ])
+      await this.validateAssignedUser(
+        updateDto.appealJudge2Id,
+        [UserRole.COURT_OF_APPEALS_JUDGE],
+        transaction,
+      )
     }
 
     if (updateDto.appealJudge3Id) {
-      await this.validateAssignedUser(updateDto.appealJudge3Id, [
-        UserRole.COURT_OF_APPEALS_JUDGE,
-      ])
+      await this.validateAssignedUser(
+        updateDto.appealJudge3Id,
+        [UserRole.COURT_OF_APPEALS_JUDGE],
+        transaction,
+      )
     }
 
-    return this.sequelize.transaction((transaction) =>
-      this.appealCaseService.update(
-        theCase,
-        appealCase,
-        updateDto,
-        user,
-        transaction,
-      ),
+    return this.appealCaseService.update(
+      theCase,
+      appealCase,
+      updateDto,
+      user,
+      transaction,
     )
   }
 
-  @UseGuards(CaseExistsGuard, AppealCaseExistsGuard, RolesGuard, CaseWriteGuard)
+  @UseGuards(
+    RouteRolesGuard,
+    CaseExistsForUpdateGuard,
+    AppealCaseExistsGuard,
+    RolesGuard,
+    CaseWriteGuard,
+  )
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post('case/:caseId/appealCase/:appealCaseId/eventLog')
   @ApiCreatedResponse({
@@ -213,18 +282,27 @@ export class AppealCaseController {
       `Creating appeal event log ${dto.eventType} on appeal case ${appealCaseId} of case ${caseId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
-      this.appealCaseService.createEventLog(
-        theCase,
-        appealCase,
-        dto.eventType,
-        user,
-        transaction,
-      ),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.appealCaseService.createEventLog(
+      theCase,
+      appealCase,
+      dto.eventType,
+      user,
+      transaction,
     )
   }
 
-  @UseGuards(CaseExistsGuard, AppealCaseExistsGuard, RolesGuard, CaseWriteGuard)
+  @UseGuards(
+    RouteRolesGuard,
+    CaseExistsForUpdateGuard,
+    AppealCaseExistsGuard,
+    RolesGuard,
+    CaseWriteGuard,
+  )
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -252,18 +330,28 @@ export class AppealCaseController {
       `Transitioning appeal case ${appealCaseId} of case ${caseId}`,
     )
 
-    const result = await this.sequelize.transaction((transaction) =>
-      this.appealCaseService.transition(
-        theCase,
-        appealCase,
-        dto.transition,
-        user,
-        transaction,
-        dto.defendantId,
-      ),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    const result = await this.appealCaseService.transition(
+      theCase,
+      appealCase,
+      dto.transition,
+      user,
+      transaction,
+      dto.defendantId,
     )
 
-    this.eventService.postEvent(dto.transition, theCase)
+    // The event announces a transition the database has accepted, so it is
+    // posted after the commit - which TransactionCommitInterceptor does after
+    // this handler has returned - as it was when the handler committed a
+    // transaction of its own. Still fire and forget: a failed announcement is
+    // logged, not returned to the caller.
+    registerAfterCommit(() =>
+      this.eventService.postEvent(dto.transition, theCase),
+    )
 
     return result.appealCase
   }
