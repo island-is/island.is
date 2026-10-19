@@ -737,6 +737,61 @@ describe('WorkerService', () => {
       )
     })
 
+    describe('when the payment saga refunded the card before any attempt', () => {
+      beforeEach(() => {
+        mockDebtSweep([createDebtCardFlow()])
+        paymentFlowService.isCardPaymentRefunded.mockResolvedValueOnce(true)
+      })
+
+      it('finishes the rollback instead of registering the refunded payment', async () => {
+        await service.run()
+
+        expect(paymentFlowService.isCardPaymentRefunded).toHaveBeenCalledWith(
+          'debt-card',
+          'card-details-correlation-id',
+        )
+        expect(debtSettlementService.attempt).not.toHaveBeenCalled()
+        expect(
+          paymentFlowService.deleteCardPaymentConfirmationAndFulfillment,
+        ).toHaveBeenCalledWith('debt-card', 'card-details-correlation-id')
+        expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            paymentFlowId: 'debt-card',
+            taskType: WorkerTaskType.PayFjsDebt,
+            status: 'success',
+            metadata: { completedRollback: true },
+          }),
+        )
+      })
+
+      it('records a failure, and still does not register, when the clean-up fails', async () => {
+        paymentFlowService.deleteCardPaymentConfirmationAndFulfillment.mockRejectedValueOnce(
+          new Error('Failed to delete payment fulfillment'),
+        )
+
+        await service.run()
+
+        expect(debtSettlementService.attempt).not.toHaveBeenCalled()
+        expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            paymentFlowId: 'debt-card',
+            taskType: WorkerTaskType.PayFjsDebt,
+            status: 'failure',
+            errorCode: 'Failed to delete payment fulfillment',
+          }),
+        )
+      })
+    })
+
+    it('does not look for a card refund on a bank transfer', async () => {
+      mockDebtSweep([createDebtBankFlow()])
+
+      await service.run()
+
+      expect(paymentFlowService.isCardPaymentRefunded).not.toHaveBeenCalled()
+      expect(debtSettlementService.attempt).toHaveBeenCalledTimes(1)
+    })
+
     it('does not register a payment refunded since the run started', async () => {
       mockDebtSweep([createDebtCardFlow()])
       paymentFlowService.findPaymentFulfillmentForPaymentFlow.mockResolvedValue(

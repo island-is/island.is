@@ -154,7 +154,7 @@ The worker finds paid card payment flows that do not yet have an FJS charge, cre
 
 ### Refunded card payments that still look paid
 
-When a card payment saga rolls back, it refunds the card even if marking the confirmation and fulfillment as deleted fails, which leaves a refunded payment with an active fulfillment. Before creating an FJS charge for a card flow, and before refunding a rejected debt flow, the worker checks for the saga's `payment_failed` event carrying a refund for that payment (matched on its correlation id, since a refunded charge flow can be paid again). When it finds one it finishes the rollback instead: it deletes the confirmation and fulfillment and records a success event with `completedRollback`. It never charges or refunds such a payment. A delete that fails again is recorded as a failure.
+When a card payment saga rolls back, it refunds the card even if marking the confirmation and fulfillment as deleted fails, which leaves a refunded payment with an active fulfillment. Before creating an FJS charge for a card flow, and before registering or refunding a debt card payment, the worker checks for the saga's `payment_failed` event carrying a refund for that payment (matched on its correlation id, since a refunded charge flow can be paid again). When it finds one it finishes the rollback instead: it deletes the confirmation and fulfillment and records a success event with `completedRollback`. It never charges or refunds such a payment. A delete that fails again is recorded as a failure.
 
 ### Retry delay
 

@@ -353,24 +353,27 @@ export class WorkerService {
         ? PaymentMethod.BANK_TRANSFER
         : PaymentMethod.CARD
 
+    // The payment saga refunded the card but did not finish its rollback, see
+    // finishRefundedRollback: registering the payment would make the payer owe for money they
+    // got back, and refunding it again would pay them twice.
+    if (
+      paymentMethod === PaymentMethod.CARD &&
+      (await this.paymentFlowService.isCardPaymentRefunded(
+        paymentFlow.id,
+        fulfillment.confirmationRefId,
+      ))
+    ) {
+      await this.finishRefundedRollback(
+        paymentFlow.id,
+        fulfillment.confirmationRefId,
+        WorkerTaskType.PayFjsDebt,
+      )
+      return true
+    }
+
     // FJS rejected the payment earlier but the card refund did not go through, only the refund
     // is left to do.
     if (paymentFlow.debtSettlement?.status === 'rejected') {
-      // Refunding again would pay the payer twice, see finishRefundedRollback
-      if (
-        await this.paymentFlowService.isCardPaymentRefunded(
-          paymentFlow.id,
-          fulfillment.confirmationRefId,
-        )
-      ) {
-        await this.finishRefundedRollback(
-          paymentFlow.id,
-          fulfillment.confirmationRefId,
-          WorkerTaskType.PayFjsDebt,
-        )
-        return true
-      }
-
       await this.refundRejectedDebtPayment(paymentFlow.id)
       await this.recordWorkerEvent(
         paymentFlow.id,
