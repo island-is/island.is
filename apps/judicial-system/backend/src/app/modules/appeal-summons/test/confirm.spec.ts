@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
@@ -54,6 +55,7 @@ describe('AppealSummonsController - Confirm', () => {
   let mockAppealSummonsRepositoryService: AppealSummonsRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let mockPdfService: PdfService
+  let mockSequelize: Sequelize
   let transaction: Transaction
   let appealSummonsController: AppealSummonsController
 
@@ -70,6 +72,7 @@ describe('AppealSummonsController - Confirm', () => {
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockPdfService = pdfService
     appealSummonsController = controller
+    mockSequelize = sequelize
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -117,6 +120,11 @@ describe('AppealSummonsController - Confirm', () => {
       user,
     )
 
+    // Not on the request transaction, unlike create, update and delete: the
+    // handler opens a transaction of its own, because the PDF upload it
+    // awaits must not run under a FOR UPDATE lock on the case row.
+    expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
+    expect(mockSequelize.transaction).toHaveBeenCalledWith(expect.any(Function))
     expect(mockAppealSummonsRepositoryService.update).toHaveBeenNthCalledWith(
       1,
       summonsId,
