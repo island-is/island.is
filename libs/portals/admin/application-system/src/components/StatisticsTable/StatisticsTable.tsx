@@ -8,6 +8,7 @@ import { Organization } from '@island.is/shared/types'
 type SortKey =
   | 'institution'
   | 'name'
+  | 'origin'
   | 'inprogress'
   | 'draft'
   | 'completed'
@@ -64,6 +65,11 @@ export default function StatisticsTable({
     }
   }
 
+  const getOriginLabel = (row: ApplicationStatistics) =>
+    formatMessage(
+      row.isFormSystem ? m.originFormSystem : m.originApplicationSystem,
+    )
+
   const sortedRows = [...(dataRows ?? [])].sort((a, b) => {
     const dir = sortDirection === 'asc' ? 1 : -1
     switch (sortKey) {
@@ -76,6 +82,8 @@ export default function StatisticsTable({
         )
       case 'name':
         return dir * (a.name || a.typeid).localeCompare(b.name || b.typeid)
+      case 'origin':
+        return dir * getOriginLabel(a).localeCompare(getOriginLabel(b))
       case 'inprogress':
         return dir * (a.inprogress - b.inprogress)
       case 'draft':
@@ -126,6 +134,19 @@ export default function StatisticsTable({
                 {formatMessage(m.tableHeaderType)}
                 <SortIcon
                   colKey="name"
+                  sortKey={sortKey}
+                  sortDirection={sortDirection}
+                />
+              </Box>
+            </T.HeadData>
+            <T.HeadData
+              style={sortableHeaderStyle}
+              onClick={() => handleSort('origin')}
+            >
+              <Box display="flex" alignItems="center">
+                {formatMessage(m.tableHeaderOrigin)}
+                <SortIcon
+                  colKey="origin"
                   sortKey={sortKey}
                   sortDirection={sortDirection}
                 />
@@ -214,6 +235,7 @@ export default function StatisticsTable({
                     {row.name || row.typeid}
                   </Text>
                 </T.Data>
+                <T.Data>{getOriginLabel(row)}</T.Data>
                 <T.Data>{row.draft}</T.Data>
                 <T.Data>{row.inprogress}</T.Data>
                 <T.Data>{row.completed}</T.Data>
