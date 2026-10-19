@@ -405,6 +405,11 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Veldu fjölda eininga',
       description: 'Select number of credits',
     },
+    questionsStudyDocumentsTitle: {
+      id: 'marp.application:general.information.questions.study.documents.title',
+      defaultMessage: 'Hlaða inn staðfestingarskjali',
+      description: 'Upload confirmation document',
+    },
 
     // Employee sick pay
     employeeSickPaySubSectionTitle: {

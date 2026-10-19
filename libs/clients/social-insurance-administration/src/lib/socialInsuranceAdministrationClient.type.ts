@@ -148,6 +148,7 @@ export enum DocumentTypeEnum {
   SAILOR = 'sailor',
   SELF_EMPLOYED = 'selfEmployed',
   SCHOOL_CONFIRMATION = 'schoolConfirmation',
+  MARP_SCHOOL_CONFIRMATION = 'mar:schoolConfirmation',
   ASSISTED_CARE_AT_HOME = 'assistedCareAtHome',
   PURCHASE_OF_HEARING_AIDS = 'purchaseOfHearingAids',
   ASSISTED_LIVING = 'assistedLiving',

@@ -423,6 +423,7 @@ export const transformApplicationToIncomePlanDTO = (
 
 export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
   application: Application,
+  uploads: Attachment[],
 ): MedicalAndRehabilitationPaymentsDTO => {
   const {
     applicantPhonenumber,
@@ -479,6 +480,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     },
     comment,
     applicationId: application.id,
+    ...(uploads.length > 0 && { uploads }),
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
       domesticBankInfo: {
         bank: formatBank(getBankIsk(paymentInfo)),

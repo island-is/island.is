@@ -16,6 +16,12 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicantInfo: z.object({
@@ -214,6 +220,7 @@ export const dataSchema = z.object({
       calculatedRemunerationDate: z.string().optional(),
       educationalInstitution: z.string().optional().nullable(),
       ectsUnits: z.string().optional().nullable(),
+      studyDocuments: z.array(FileSchema).optional(),
     })
     .refine(
       ({ isSelfEmployed, calculatedRemunerationDate }) =>
@@ -234,6 +241,15 @@ export const dataSchema = z.object({
       ({ isStudying, ectsUnits }) => (isStudying === YES ? !!ectsUnits : true),
       {
         path: ['ectsUnits'],
+      },
+    )
+    .refine(
+      ({ isStudying, studyDocuments }) =>
+        isStudying === YES
+          ? !!studyDocuments && studyDocuments.length > 0
+          : true,
+      {
+        path: ['studyDocuments'],
       },
     ),
   employeeSickPay: z

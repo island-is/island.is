@@ -219,6 +219,7 @@ export const questionsItems = (
     isStudying,
     educationalInstitution,
     ectsUnits,
+    studyDocuments,
   } = getApplicationAnswers(answers)
 
   let baseItems: Array<KeyValueItem> = []
@@ -294,6 +295,17 @@ export const questionsItems = (
                 .questionsNumberOfCredits,
             valueText: ectsUnits,
           },
+          ...(studyDocuments.length > 0
+            ? [
+                {
+                  width: 'full' as const,
+                  keyText:
+                    medicalAndRehabilitationPaymentsFormMessage
+                      .generalInformation.questionsStudyDocumentsTitle,
+                  valueText: studyDocuments.map((file) => file.name),
+                },
+              ]
+            : []),
         ]
       : []
 

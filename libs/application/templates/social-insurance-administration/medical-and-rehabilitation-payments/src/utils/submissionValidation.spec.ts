@@ -1,4 +1,4 @@
-import { NO } from '@island.is/application/core'
+import { NO, YES } from '@island.is/application/core'
 import {
   defaultIncomeTypes,
   TaxLevelOptions,
@@ -60,6 +60,36 @@ describe('getIncompleteAnswerSections', () => {
     }
 
     expect(getIncompleteAnswerSections(answers)).toEqual(['applicantInfo'])
+  })
+
+  describe('when the applicant is studying', () => {
+    const studyingQuestions = {
+      isPartTimeEmployed: NO,
+      isStudying: YES,
+      educationalInstitution: 'institution',
+      ectsUnits: '30',
+    }
+
+    it('should report questions when the study confirmation is missing', () => {
+      const answers: FormValue = {
+        ...completeCoreAnswers,
+        questions: studyingQuestions,
+      }
+
+      expect(getIncompleteAnswerSections(answers)).toEqual(['questions'])
+    })
+
+    it('should accept the application when the study confirmation is uploaded', () => {
+      const answers: FormValue = {
+        ...completeCoreAnswers,
+        questions: {
+          ...studyingQuestions,
+          studyDocuments: [{ name: 'confirmation.pdf', key: 'key' }],
+        },
+      }
+
+      expect(getIncompleteAnswerSections(answers)).toEqual([])
+    })
   })
 
   it('should report a single missing section', () => {

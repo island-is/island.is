@@ -6,6 +6,7 @@ import {
   BankInfo,
   CategorizedIncomeTypes,
   Eligible,
+  FileType,
   IncomePlanConditions,
   IncomePlanRow,
   PaymentInfo,
@@ -81,6 +82,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   )
 
   const ectsUnits = getValueViaPath<string>(answers, 'questions.ectsUnits')
+
+  const studyDocuments =
+    getValueViaPath<FileType[]>(answers, 'questions.studyDocuments') ?? []
 
   const hasUtilizedEmployeeSickPayRights = getValueViaPath<
     YesOrNo | NotApplicable
@@ -251,6 +255,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     isStudying,
     educationalInstitution,
     ectsUnits,
+    studyDocuments,
     hasUtilizedEmployeeSickPayRights,
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
