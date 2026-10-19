@@ -65,14 +65,42 @@ describe('getAppealStatementDeadlineRecipients', () => {
       getAppealStatementDeadlineRecipients(theCase).map((recipient) => [
         recipient.role,
         recipient.email,
-        recipient.party,
+        recipient.parties,
         recipient.side,
       ]),
     ).toEqual([
-      ['saksóknari', 'saksoknari@x.is', {}, 'PROSECUTION'],
-      ['verjandi', 'lara@x.is', { defendantId: 'd1' }, 'DEFENCE'],
-      ['réttargæslumaður', 'retta@x.is', { civilClaimantId: 'c1' }, 'DEFENCE'],
-      ['lögmaður', 'logi@x.is', { civilClaimantId: 'c2' }, 'DEFENCE'],
+      ['saksóknari', 'saksoknari@x.is', [{}], 'PROSECUTION'],
+      ['verjandi', 'lara@x.is', [{ defendantId: 'd1' }], 'DEFENCE'],
+      [
+        'réttargæslumaður',
+        'retta@x.is',
+        [{ civilClaimantId: 'c1' }],
+        'DEFENCE',
+      ],
+      ['lögmaður', 'logi@x.is', [{ civilClaimantId: 'c2' }], 'DEFENCE'],
+    ])
+  })
+
+  // One lawyer defending two of the accused is the ordinary case, and is
+  // one address speaking for both, however the court spelled it.
+  it('writes once to an advocate recorded on several parties', () => {
+    const [, defender] = getAppealStatementDeadlineRecipients({
+      ...theCase,
+      defendants: [
+        theCase.defendants?.[0],
+        {
+          id: 'd4',
+          isAppealDefenderConfirmed: true,
+          appealDefenderName: 'Lára Lögmann',
+          appealDefenderEmail: ' Lara@X.is ',
+        },
+      ] as Defendant[],
+    } as Case)
+
+    expect(defender.email).toBe('lara@x.is')
+    expect(defender.parties).toEqual([
+      { defendantId: 'd1' },
+      { defendantId: 'd4' },
     ])
   })
 
@@ -154,7 +182,7 @@ describe('appealStatementDeadlineSubject', () => {
 describe('the bodies', () => {
   const params = {
     appealCaseNumber: '77/2026',
-    deadline: '2026-10-20T00:00:00.000Z',
+    deadline: new Date(2026, 9, 20),
     link: 'https://rvg.is/akaera/yfirlit/case-id',
   }
 
@@ -173,7 +201,7 @@ describe('the bodies', () => {
       appealStatementDeadlineGrantedBody({
         ...params,
         extended: true,
-        deadline: '2026-10-27T00:00:00.000Z',
+        deadline: new Date(2026, 9, 27),
       }),
     ).toContain(
       'Landsréttur hefur veitt þér aukinn frest til að skila greinargerð vegna máls nr. 77/2026.<br/>Frestur til 27. október 2026.',

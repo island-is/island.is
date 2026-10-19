@@ -35,7 +35,6 @@ import {
   isIndictmentCase,
   isProsecutionUser,
   isRestrictionCase,
-  isSameAppealStatementParty,
   TrackedNotificationType,
   type User,
 } from '@island.is/judicial-system/types'
@@ -64,6 +63,7 @@ import {
   appealStatementDeadlineSubject,
   describeAppealStatementDeadlineParty,
   getAppealStatementDeadlineRecipients,
+  representsAppealStatementParty,
 } from '../appealStatementDeadline'
 import { BaseNotificationService } from '../baseNotification.service'
 import { strings } from './appealCaseNotification.strings'
@@ -2064,7 +2064,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
 
         return this.sendEmail({
           subject,
-          html: isSameAppealStatementParty(recipient.party, party)
+          html: representsAppealStatementParty(recipient, party)
             ? appealStatementDeadlineGrantedBody(body)
             : appealStatementDeadlineOthersBody({ ...body, who }),
           recipientName: recipient.name ?? undefined,

@@ -54,6 +54,7 @@ describe('InternalNotificationController - Send appeal statement deadline notifi
     dto: Partial<AppealCaseNotificationDto>,
     overrides?: {
       defendant?: Partial<Defendant>
+      secondDefendant?: Partial<Defendant>
       civilClaimant?: Partial<CivilClaimant>
       statementDeadlines?: Partial<AppealStatementDeadline>[]
       appealProsecutor?: Case['appealProsecutor']
@@ -94,7 +95,7 @@ describe('InternalNotificationController - Send appeal statement deadline notifi
         id: appealCaseId,
         appealCaseNumber: '77/2026',
         statementDeadlines: (overrides.statementDeadlines ?? [
-          { defendantId, deadline: new Date('2026-10-20T00:00:00.000Z') },
+          { defendantId, deadline: new Date(2026, 9, 20) },
         ]) as AppealStatementDeadline[],
       } as AppealCase
       const theCase = {
@@ -108,7 +109,9 @@ describe('InternalNotificationController - Send appeal statement deadline notifi
                 name: prosecutor.name,
                 email: prosecutor.email,
               } as Case['appealProsecutor']),
-        defendants: [defendant],
+        defendants: overrides.secondDefendant
+          ? [defendant, overrides.secondDefendant as Defendant]
+          : [defendant],
         civilClaimants: [civilClaimant],
         verdictAppealCase: appealCase,
       } as Case
@@ -179,9 +182,7 @@ describe('InternalNotificationController - Send appeal statement deadline notifi
     await send(
       { type: AppealCaseNotificationType.APPEAL_STATEMENT_DEADLINE_EXTENDED },
       {
-        statementDeadlines: [
-          { defendantId, deadline: new Date('2026-10-27T00:00:00.000Z') },
-        ],
+        statementDeadlines: [{ defendantId, deadline: new Date(2026, 9, 27) }],
       },
     )
 
@@ -216,9 +217,7 @@ describe('InternalNotificationController - Send appeal statement deadline notifi
     await send(
       { defendantId: undefined },
       {
-        statementDeadlines: [
-          { deadline: new Date('2026-10-20T00:00:00.000Z') },
-        ],
+        statementDeadlines: [{ deadline: new Date(2026, 9, 20) }],
       },
     )
 
@@ -244,7 +243,7 @@ describe('InternalNotificationController - Send appeal statement deadline notifi
       {
         civilClaimant: { appealSpokespersonIsLawyer: true },
         statementDeadlines: [
-          { civilClaimantId, deadline: new Date('2026-10-20T00:00:00.000Z') },
+          { civilClaimantId, deadline: new Date(2026, 9, 20) },
         ],
       },
     )
@@ -278,6 +277,52 @@ describe('InternalNotificationController - Send appeal statement deadline notifi
         to: [{ name: prosecutor.name, address: prosecutor.email }],
       }),
     )
+  })
+
+  // One lawyer defending two of the accused hears once, as the advocate
+  // of the one given the time, and is not told about herself.
+  it('writes once to a defender shared by two of the accused', async () => {
+    await send(
+      {},
+      {
+        secondDefendant: {
+          id: uuid(),
+          name: 'Annar Ákærði',
+          isAppealDefenderConfirmed: true,
+          appealDefenderName: defender.name,
+          appealDefenderEmail: defender.email,
+        },
+      },
+    )
+
+    expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(3)
+    expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining('Landsréttur hefur veitt þér frest'),
+        to: [{ name: defender.name, address: defender.email }],
+      }),
+    )
+    expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining('hefur fengið frest'),
+        to: [{ name: defender.name, address: defender.email }],
+      }),
+    )
+  })
+
+  it('sends nothing, and records nothing, when there is nobody to write to', async () => {
+    const result = await send(
+      {},
+      {
+        appealProsecutor: undefined,
+        defendant: { isAppealDefenderConfirmed: false },
+        civilClaimant: { isAppealSpokespersonConfirmed: false },
+      },
+    )
+
+    expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
+    expect(mockNotificationRepositoryService.create).not.toHaveBeenCalled()
+    expect(result).toEqual({ delivered: true })
   })
 
   it('leaves out an advocate the court has not confirmed', async () => {

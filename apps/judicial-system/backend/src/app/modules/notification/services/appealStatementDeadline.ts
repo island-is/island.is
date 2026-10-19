@@ -9,6 +9,7 @@ import {
 // the appeal case number, shared with the letter of appointment.
 import { getAppealCaseNumberOrPlaceholder } from '../../../formatters/generatedPdfs/appealAppointmentLetterPdf'
 import type { Case } from '../../repository'
+import { COURT_OF_APPEALS_NAME } from './appealAdvocateAssigned'
 
 /**
  * The mails that follow the court of appeals giving a party of a verdict
@@ -20,7 +21,7 @@ import type { Case } from '../../repository'
  * extended, and the court is named outright for the reason the advocate
  * mail gives: the case's court is the district court that gave the judgment.
  */
-const COURT_NAME = 'Landsréttur'
+const COURT_NAME = COURT_OF_APPEALS_NAME
 
 /** How the other parties' mail names the role of whoever got the deadline. */
 export type AppealStatementDeadlineRole =
@@ -30,7 +31,9 @@ export type AppealStatementDeadlineRole =
   | 'lögmaður'
 
 export interface AppealStatementDeadlineRecipient {
-  party: AppealStatementParty
+  // Every party the address speaks for. One lawyer often defends two of the
+  // accused, and is written to once, as the advocate of them all.
+  parties: AppealStatementParty[]
   role: AppealStatementDeadlineRole
   name?: string | null
   email: string
@@ -49,16 +52,34 @@ export interface AppealStatementDeadlineRecipient {
 export const getAppealStatementDeadlineRecipients = (
   theCase: Pick<Case, 'appealProsecutor' | 'defendants' | 'civilClaimants'>,
 ): AppealStatementDeadlineRecipient[] => {
-  const recipients: AppealStatementDeadlineRecipient[] = []
+  // Keyed by address, so an advocate recorded on several parties is one
+  // recipient speaking for them all. The first party's name and role stand.
+  const recipients = new Map<string, AppealStatementDeadlineRecipient>()
+
+  const add = (
+    party: AppealStatementParty,
+    recipient: Omit<AppealStatementDeadlineRecipient, 'parties'>,
+  ) => {
+    const key = recipient.email.trim().toLowerCase()
+    const existing = recipients.get(key)
+
+    if (existing) {
+      existing.parties.push(party)
+    } else {
+      recipients.set(key, { ...recipient, parties: [party] })
+    }
+  }
 
   if (theCase.appealProsecutor?.email) {
-    recipients.push({
-      party: {},
-      role: 'saksóknari',
-      name: theCase.appealProsecutor.name,
-      email: theCase.appealProsecutor.email,
-      side: 'PROSECUTION',
-    })
+    add(
+      {},
+      {
+        role: 'saksóknari',
+        name: theCase.appealProsecutor.name,
+        email: theCase.appealProsecutor.email,
+        side: 'PROSECUTION',
+      },
+    )
   }
 
   for (const defendant of theCase.defendants ?? []) {
@@ -67,13 +88,15 @@ export const getAppealStatementDeadlineRecipients = (
       !defendant.isAppealDefenderWaived &&
       defendant.appealDefenderEmail
     ) {
-      recipients.push({
-        party: { defendantId: defendant.id },
-        role: 'verjandi',
-        name: defendant.appealDefenderName,
-        email: defendant.appealDefenderEmail,
-        side: 'DEFENCE',
-      })
+      add(
+        { defendantId: defendant.id },
+        {
+          role: 'verjandi',
+          name: defendant.appealDefenderName,
+          email: defendant.appealDefenderEmail,
+          side: 'DEFENCE',
+        },
+      )
     }
   }
 
@@ -82,20 +105,31 @@ export const getAppealStatementDeadlineRecipients = (
       civilClaimant.isAppealSpokespersonConfirmed &&
       civilClaimant.appealSpokespersonEmail
     ) {
-      recipients.push({
-        party: { civilClaimantId: civilClaimant.id },
-        role: civilClaimant.appealSpokespersonIsLawyer
-          ? 'lögmaður'
-          : 'réttargæslumaður',
-        name: civilClaimant.appealSpokespersonName,
-        email: civilClaimant.appealSpokespersonEmail,
-        side: 'DEFENCE',
-      })
+      add(
+        { civilClaimantId: civilClaimant.id },
+        {
+          role: civilClaimant.appealSpokespersonIsLawyer
+            ? 'lögmaður'
+            : 'réttargæslumaður',
+          name: civilClaimant.appealSpokespersonName,
+          email: civilClaimant.appealSpokespersonEmail,
+          side: 'DEFENCE',
+        },
+      )
     }
   }
 
-  return recipients
+  return Array.from(recipients.values())
 }
+
+// Whether the address speaks for the party.
+export const representsAppealStatementParty = (
+  recipient: Pick<AppealStatementDeadlineRecipient, 'parties'>,
+  party: AppealStatementParty,
+): boolean =>
+  recipient.parties.some((candidate) =>
+    isSameAppealStatementParty(candidate, party),
+  )
 
 /**
  * How the other parties' mail names who got the deadline: the advocate by
@@ -108,7 +142,7 @@ export const describeAppealStatementDeadlineParty = (
   recipients: AppealStatementDeadlineRecipient[],
 ): string => {
   const recipient = recipients.find((candidate) =>
-    isSameAppealStatementParty(candidate.party, party),
+    representsAppealStatementParty(candidate, party),
   )
 
   if (recipient?.name) {
