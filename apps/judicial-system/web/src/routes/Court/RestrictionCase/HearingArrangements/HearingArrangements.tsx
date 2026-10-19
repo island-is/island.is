@@ -2,7 +2,7 @@ import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Stack, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
   DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE,
@@ -190,9 +190,9 @@ export const HearingArrangements = () => {
               />
             }
           />
-          <Stack space={3}>
-            {workingCase.defendants?.map((defendant, _index, defendants) => (
-              <BlueBox key={defendant.id}>
+          {workingCase.defendants?.map((defendant, index, defendants) => (
+            <Box key={defendant.id} marginTop={index === 0 ? 0 : 3}>
+              <BlueBox>
                 <RequestCaseDefenderInfo
                   workingCase={workingCase}
                   setWorkingCase={setWorkingCase}
@@ -200,8 +200,8 @@ export const HearingArrangements = () => {
                   showDefendantName={defendants.length > 1}
                 />
               </BlueBox>
-            ))}
-          </Stack>
+            </Box>
+          ))}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
