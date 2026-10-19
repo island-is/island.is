@@ -1,6 +1,8 @@
 import fetch from 'node-fetch'
 import { v4 as uuid } from 'uuid'
 
+import { PayloadTooLargeException } from '@nestjs/common'
+
 import { User } from '@island.is/judicial-system/types'
 
 import { createTestingPoliceModule } from './createTestingPoliceModule'
@@ -9,7 +11,7 @@ jest.mock('node-fetch')
 
 interface Then {
   result?: { externalPoliceDocumentId: string }
-  error?: Error | string
+  error?: Error
 }
 
 describe('PoliceService - Create Document', () => {
@@ -74,9 +76,9 @@ describe('PoliceService - Create Document', () => {
       )
     })
 
-    it('should still throw after notifying', () => {
+    it('should throw a payload too large exception', () => {
       expect(then.result).toBeUndefined()
-      expect(then.error).toBe('Payload Too Large')
+      expect(then.error).toBeInstanceOf(PayloadTooLargeException)
     })
   })
 })

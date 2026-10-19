@@ -2,6 +2,8 @@ import { Agent } from 'https'
 import fetch from 'node-fetch'
 import { v4 as uuid } from 'uuid'
 
+import { PayloadTooLargeException } from '@nestjs/common'
+
 import { ConfigType } from '@island.is/nest/config'
 import {
   createXRoadAPIPath,
@@ -183,7 +185,7 @@ describe('PoliceController - Update Police Case', () => {
       mockFetch.mockReset()
       mockFetch.mockResolvedValueOnce({
         ok: false,
-        status: 413,
+        status: 500,
         text: jest.fn().mockResolvedValueOnce(''),
       })
 
@@ -213,8 +215,8 @@ describe('PoliceController - Update Police Case', () => {
         `Failed to update police case ${caseId}`,
         expect.objectContaining({
           caseId,
-          statusCode: '413',
-          errorSummary: expect.stringContaining('413'),
+          statusCode: '500',
+          errorSummary: expect.stringContaining('500'),
         }),
       )
     })
@@ -281,7 +283,6 @@ describe('PoliceController - Update Police Case', () => {
     })
 
     it('should notify the prosecutor with a masked file name', () => {
-      expect(then.result).toBe(false)
       expect(mockFindByIdWithProsecutor).toHaveBeenCalledWith(
         caseIdForNotification,
       )
@@ -292,6 +293,11 @@ describe('PoliceController - Update Police Case', () => {
           text: 'Ekki tókst að hlaða upp skjali t******e.pdf í LÖKE vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í LÖKE.',
         }),
       )
+    })
+
+    it('should throw a payload too large exception', () => {
+      expect(then.result).toBeUndefined()
+      expect(then.error).toBeInstanceOf(PayloadTooLargeException)
     })
 
     it('should not post a Slack error for an expected size limit', () => {

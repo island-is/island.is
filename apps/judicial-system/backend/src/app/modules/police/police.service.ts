@@ -12,6 +12,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  PayloadTooLargeException,
   ServiceUnavailableException,
 } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
@@ -478,7 +479,7 @@ export class PoliceService {
       })
     } catch (reason) {
       this.logger.error(
-        `Failed to notify ${prosecutorEmail} that a file was too large for the police system`,
+        `Failed to notify that a file was too large for the police system for case ${caseId}`,
         { reason },
       )
     }
@@ -1383,13 +1384,7 @@ export class PoliceService {
             policeCaseNumber,
           )
 
-          this.logPoliceFailure(
-            `Failed to update police case ${caseId}`,
-            { ...failureInfo, statusCode: String(res.status) },
-            new Error(message),
-          )
-
-          return false
+          throw new PayloadTooLargeException(message)
         }
 
         this.logPoliceFailureAndNotify(
@@ -1406,6 +1401,11 @@ export class PoliceService {
           // Do not spam the logs with errors
           // Act as if the case was updated
           return true
+        }
+
+        // Propagate so callers can complete the delivery without retrying.
+        if (reason instanceof PayloadTooLargeException) {
+          throw reason
         }
 
         this.logPoliceFailureAndNotify(
@@ -1475,10 +1475,17 @@ export class PoliceService {
           documentFiles[0]?.name ??
             DEFAULT_POLICE_DOCUMENT_FILE_NAMES[PoliceDocumentType.RVDO],
         )
+
+        throw new PayloadTooLargeException(await res.text())
       }
 
       throw await res.text()
     } catch (error) {
+      // Already emailed the prosecutor; callers complete delivery without retry.
+      if (error instanceof PayloadTooLargeException) {
+        throw error
+      }
+
       // Winston only - VerdictService.deliverVerdictToNationalCommissionersOffice
       // posts the Slack error for a failed delivery, so notifying here too would
       // double-post.
@@ -1651,10 +1658,17 @@ export class PoliceService {
           DEFAULT_POLICE_DOCUMENT_FILE_NAMES[PoliceDocumentType.RVFK],
           policeCaseNumbers?.[0],
         )
+
+        throw new PayloadTooLargeException(await res.text())
       }
 
       throw await res.text()
     } catch (error) {
+      // Already emailed the prosecutor; callers complete delivery without retry.
+      if (error instanceof PayloadTooLargeException) {
+        throw error
+      }
+
       // Winston only - SubpoenaService.deliverSubpoenaToNationalCommissionersOffice
       // posts the Slack error for a failed delivery, so notifying here too would
       // double-post.
