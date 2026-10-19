@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {
-  COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
 } from '@island.is/judicial-system/consts'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -265,13 +265,13 @@ describe('VerdictAppealStatus', () => {
     expect(screen.getByTestId('continueButton')).toBeDisabled()
   })
 
-  it('leads back to the defender step with the appeal id', async () => {
+  it('leads back to the deadlines step with the appeal id', async () => {
     renderPage()
 
     await userEvent.click(screen.getByTestId('previousButton'))
 
     expect(mockPush).toHaveBeenCalledWith(
-      `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/case-id?appealCaseId=verdict-appeal`,
+      `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE}/case-id?appealCaseId=verdict-appeal`,
     )
   })
 })

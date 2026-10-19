@@ -72,6 +72,8 @@ interface ClientOptions {
 
 const getClientFields = (options: ClientOptions): DbClient => ({
   client_id: options.clientId,
+  // The client id should be prefixed with the organisation domain, eg `@island.is/some-client`.
+  domain_name: options.clientId.split('/')[0],
   client_name:
     typeof options.displayName === 'string'
       ? options.displayName
