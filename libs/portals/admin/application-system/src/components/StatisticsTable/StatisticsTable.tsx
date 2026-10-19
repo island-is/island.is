@@ -41,6 +41,46 @@ const SortIcon = ({
   </Box>
 )
 
+const SortableHeader = ({
+  colKey,
+  label,
+  sortKey,
+  sortDirection,
+  onSort,
+}: {
+  colKey: SortKey
+  label: string
+  sortKey: SortKey
+  sortDirection: SortDirection
+  onSort: (key: SortKey) => void
+}) => (
+  <T.HeadData
+    aria-sort={
+      sortKey === colKey
+        ? sortDirection === 'asc'
+          ? 'ascending'
+          : 'descending'
+        : undefined
+    }
+  >
+    <Box
+      component="button"
+      type="button"
+      display="flex"
+      alignItems="center"
+      style={sortableHeaderStyle}
+      onClick={() => onSort(colKey)}
+    >
+      {label}
+      <SortIcon
+        colKey={colKey}
+        sortKey={sortKey}
+        sortDirection={sortDirection}
+      />
+    </Box>
+  </T.HeadData>
+)
+
 type Props = {
   isSuperAdmin: boolean
   dataRows?: ApplicationStatistics[] | null
@@ -112,111 +152,63 @@ export default function StatisticsTable({
         <T.Head>
           <T.Row>
             {isSuperAdmin && (
-              <T.HeadData
-                style={sortableHeaderStyle}
-                onClick={() => handleSort('institution')}
-              >
-                <Box display="flex" alignItems="center">
-                  {formatMessage(m.tableHeaderInstitution)}
-                  <SortIcon
-                    colKey="institution"
-                    sortKey={sortKey}
-                    sortDirection={sortDirection}
-                  />
-                </Box>
-              </T.HeadData>
+              <SortableHeader
+                colKey="institution"
+                label={formatMessage(m.tableHeaderInstitution)}
+                sortKey={sortKey}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              />
             )}
-            <T.HeadData
-              style={sortableHeaderStyle}
-              onClick={() => handleSort('name')}
-            >
-              <Box display="flex" alignItems="center">
-                {formatMessage(m.tableHeaderType)}
-                <SortIcon
-                  colKey="name"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                />
-              </Box>
-            </T.HeadData>
-            <T.HeadData
-              style={sortableHeaderStyle}
-              onClick={() => handleSort('origin')}
-            >
-              <Box display="flex" alignItems="center">
-                {formatMessage(m.tableHeaderOrigin)}
-                <SortIcon
-                  colKey="origin"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                />
-              </Box>
-            </T.HeadData>
-            <T.HeadData
-              style={sortableHeaderStyle}
-              onClick={() => handleSort('draft')}
-            >
-              <Box display="flex" alignItems="center">
-                {formatMessage(m.tableHeaderDraft)}
-                <SortIcon
-                  colKey="draft"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                />
-              </Box>
-            </T.HeadData>
-            <T.HeadData
-              style={sortableHeaderStyle}
-              onClick={() => handleSort('inprogress')}
-            >
-              <Box display="flex" alignItems="center">
-                {formatMessage(m.tableHeaderInProgress)}
-                <SortIcon
-                  colKey="inprogress"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                />
-              </Box>
-            </T.HeadData>
-            <T.HeadData
-              style={sortableHeaderStyle}
-              onClick={() => handleSort('completed')}
-            >
-              <Box display="flex" alignItems="center">
-                {formatMessage(m.tableHeaderCompleted)}
-                <SortIcon
-                  colKey="completed"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                />
-              </Box>
-            </T.HeadData>
-            <T.HeadData
-              style={sortableHeaderStyle}
-              onClick={() => handleSort('rejected')}
-            >
-              <Box display="flex" alignItems="center">
-                {formatMessage(m.tableHeaderRejected)}
-                <SortIcon
-                  colKey="rejected"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                />
-              </Box>
-            </T.HeadData>
-            <T.HeadData
-              style={sortableHeaderStyle}
-              onClick={() => handleSort('approved')}
-            >
-              <Box display="flex" alignItems="center">
-                {formatMessage(m.tableHeaderApproved)}
-                <SortIcon
-                  colKey="approved"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                />
-              </Box>
-            </T.HeadData>
+            <SortableHeader
+              colKey="name"
+              label={formatMessage(m.tableHeaderType)}
+              sortKey={sortKey}
+              sortDirection={sortDirection}
+              onSort={handleSort}
+            />
+            <SortableHeader
+              colKey="origin"
+              label={formatMessage(m.tableHeaderOrigin)}
+              sortKey={sortKey}
+              sortDirection={sortDirection}
+              onSort={handleSort}
+            />
+            <SortableHeader
+              colKey="draft"
+              label={formatMessage(m.tableHeaderDraft)}
+              sortKey={sortKey}
+              sortDirection={sortDirection}
+              onSort={handleSort}
+            />
+            <SortableHeader
+              colKey="inprogress"
+              label={formatMessage(m.tableHeaderInProgress)}
+              sortKey={sortKey}
+              sortDirection={sortDirection}
+              onSort={handleSort}
+            />
+            <SortableHeader
+              colKey="completed"
+              label={formatMessage(m.tableHeaderCompleted)}
+              sortKey={sortKey}
+              sortDirection={sortDirection}
+              onSort={handleSort}
+            />
+            <SortableHeader
+              colKey="rejected"
+              label={formatMessage(m.tableHeaderRejected)}
+              sortKey={sortKey}
+              sortDirection={sortDirection}
+              onSort={handleSort}
+            />
+            <SortableHeader
+              colKey="approved"
+              label={formatMessage(m.tableHeaderApproved)}
+              sortKey={sortKey}
+              sortDirection={sortDirection}
+              onSort={handleSort}
+            />
           </T.Row>
         </T.Head>
         <T.Body>
