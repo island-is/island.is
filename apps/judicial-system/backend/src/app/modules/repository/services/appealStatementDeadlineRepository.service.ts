@@ -103,4 +103,55 @@ export class AppealStatementDeadlineRepositoryService {
       throw error
     }
   }
+
+  // A party's deadlines go with the party. The rows reference the defendant
+  // or civil claimant without a cascade, as this schema's appeal children
+  // do, so the service deleting the party has to clear them first.
+  async deleteAllForDefendant(
+    caseId: string,
+    defendantId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Deleting the appeal statement deadlines of defendant ${defendantId} of case ${caseId}`,
+      )
+
+      return await this.appealStatementDeadlineModel.destroy({
+        where: { caseId, defendantId },
+        transaction: options.transaction,
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error deleting the appeal statement deadlines of defendant ${defendantId} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async deleteAllForCivilClaimant(
+    caseId: string,
+    civilClaimantId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Deleting the appeal statement deadlines of civil claimant ${civilClaimantId} of case ${caseId}`,
+      )
+
+      return await this.appealStatementDeadlineModel.destroy({
+        where: { caseId, civilClaimantId },
+        transaction: options.transaction,
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error deleting the appeal statement deadlines of civil claimant ${civilClaimantId} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }
