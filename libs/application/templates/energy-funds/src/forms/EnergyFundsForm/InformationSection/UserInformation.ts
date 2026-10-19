@@ -4,6 +4,7 @@ import {
   buildTextField,
   buildSubSection,
   buildDescriptionField,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import format from 'date-fns/format'
 
@@ -60,6 +61,16 @@ export const userInformationSubSection = buildSubSection({
           width: 'half',
           variant: 'currency',
           required: true,
+        }),
+        buildHiddenInput({
+          id: 'vehicleDetails.vehicleRegistrationCode',
+          defaultValue: (application: Application) => {
+            const vehicle = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as VehiclesCurrentVehicle
+            return vehicle?.vehicleRegistrationCode ?? undefined
+          },
         }),
         buildTextField({
           id: 'selectVehicle.newRegistrationDate',

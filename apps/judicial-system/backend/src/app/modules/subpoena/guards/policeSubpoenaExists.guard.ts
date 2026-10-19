@@ -25,6 +25,11 @@ export class PoliceSubpoenaExistsGuard implements CanActivate {
       policeSubpoenaId,
     )
 
+    // The police name the subpoena, not the case. This lookup is what supplies
+    // the case id, so it goes on the params for CaseExistsForUpdateGuard to
+    // read it from.
+    request.params.caseId = request.subpoena.caseId
+
     return true
   }
 }
