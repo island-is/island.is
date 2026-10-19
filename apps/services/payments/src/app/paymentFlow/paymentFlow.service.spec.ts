@@ -458,7 +458,10 @@ describe('PaymentFlowService', () => {
 
       expect(fetchMock).toHaveBeenCalledWith(
         onUpdateUrl,
-        expect.objectContaining({ method: 'POST' }),
+        expect.objectContaining({
+          method: 'POST',
+          signal: expect.any(AbortSignal),
+        }),
       )
       expect(sentBody().details).toEqual({
         paymentMethod: PaymentMethod.CARD,

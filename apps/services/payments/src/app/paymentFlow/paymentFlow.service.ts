@@ -121,6 +121,12 @@ export type PaymentFlowAmountDetails =
       debts: PaymentFlowDebt[]
     }
 
+/**
+ * A webhook that does not answer is given up on, the application gets the event's record. Keeps
+ * one notification, with its retries, inside the 60 s step timeout of the payment sagas.
+ */
+const WEBHOOK_TIMEOUT_MS = 10_000
+
 @Injectable()
 export class PaymentFlowService {
   constructor(
@@ -962,6 +968,7 @@ export class PaymentFlowService {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(updateBody),
+          signal: AbortSignal.timeout(WEBHOOK_TIMEOUT_MS),
         })
 
         if (!response.ok) {
