@@ -1,3 +1,6 @@
+import addDays from 'date-fns/addDays'
+import startOfDay from 'date-fns/startOfDay'
+
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   type AppealStatementParty,
@@ -116,6 +119,26 @@ export const canSendStatementDeadline = (
       (!party.deadline ||
         pickedDate.getTime() > new Date(party.deadline).getTime()),
   )
+
+/**
+ * The earliest day the picker offers: today, or the day after the deadline
+ * that stands, so the rule an extension follows is visible in the calendar
+ * rather than only in a button that will not light up.
+ */
+export const getStatementDeadlineMinDate = (
+  party: Pick<StatementDeadlineParty, 'deadline'>,
+  today: Date = new Date(),
+): Date => {
+  const earliest = startOfDay(today)
+
+  if (!party.deadline) {
+    return earliest
+  }
+
+  const dayAfterDeadline = startOfDay(addDays(new Date(party.deadline), 1))
+
+  return dayAfterDeadline > earliest ? dayAfterDeadline : earliest
+}
 
 /**
  * What the court confirms before the deadline goes out. The claimant and the

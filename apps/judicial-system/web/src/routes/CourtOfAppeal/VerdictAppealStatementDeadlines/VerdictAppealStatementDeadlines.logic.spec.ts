@@ -9,6 +9,7 @@ import {
   canSendStatementDeadline,
   getStatementDeadlineActionLabel,
   getStatementDeadlineConfirmation,
+  getStatementDeadlineMinDate,
   getStatementDeadlineParties,
   getStatementDeadlineStatusLabel,
 } from './VerdictAppealStatementDeadlines.logic'
@@ -169,6 +170,35 @@ describe('canSendStatementDeadline', () => {
         new Date('2026-10-13T00:00:00.000Z'),
       ),
     ).toBe(false)
+  })
+})
+
+describe('getStatementDeadlineMinDate', () => {
+  const today = new Date(2026, 9, 19, 14, 30)
+
+  it('offers from today for a first deadline', () => {
+    expect(getStatementDeadlineMinDate({}, today)).toEqual(
+      new Date(2026, 9, 19),
+    )
+  })
+
+  it('offers from the day after a deadline that stands', () => {
+    expect(
+      getStatementDeadlineMinDate(
+        { deadline: new Date(2026, 10, 2).toISOString() },
+        today,
+      ),
+    ).toEqual(new Date(2026, 10, 3))
+  })
+
+  // A deadline already passed cannot be extended into the past either.
+  it('never offers a day before today', () => {
+    expect(
+      getStatementDeadlineMinDate(
+        { deadline: new Date(2026, 9, 1).toISOString() },
+        today,
+      ),
+    ).toEqual(new Date(2026, 9, 19))
   })
 })
 

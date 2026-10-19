@@ -10,6 +10,7 @@ import {
   canSendStatementDeadline,
   getStatementDeadlineActionLabel,
   getStatementDeadlineConfirmation,
+  getStatementDeadlineMinDate,
   getStatementDeadlineStatusLabel,
 } from './VerdictAppealStatementDeadlines.logic'
 
@@ -84,7 +85,7 @@ const StatementDeadlineCard: FC<Props> = ({ party, onSend, isSending }) => {
           datepickerLabel="Frestur til"
           datepickerPlaceholder="Veldu dagsetningu"
           selectedDate={pickedDate ?? party.deadline}
-          minDate={new Date()}
+          minDate={getStatementDeadlineMinDate(party)}
           blueBox={false}
           dateOnly
           disabled={party.hasFiledStatement}

@@ -38,8 +38,9 @@ import {
  * Where the Court of Appeals gives each party of a verdict appeal its
  * deadline to file a statement, and moves it when asked.
  *
- * Each deadline is sent on its own, after the court confirms, and the mails
- * go out with it. The step asks nothing of the court before it moves on
+ * Each deadline is sent on its own, after the court confirms. The dialog
+ * promises the parties a mail, as the design has it; the mail itself is the
+ * notification slice that follows. The step asks nothing of the court before it moves on
  * (owner's decision): a deadline is given when there is a party to give it
  * to, and the court can come back for the rest.
  *

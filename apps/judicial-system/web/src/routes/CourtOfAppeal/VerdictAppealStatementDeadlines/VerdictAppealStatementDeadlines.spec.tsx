@@ -7,6 +7,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { FormContext } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseState,
   AppealCaseType,
@@ -18,7 +19,6 @@ import {
 import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   ApolloProviderWrapper,
-  FormContextWrapper,
   IntlProviderWrapper,
   UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
@@ -27,6 +27,7 @@ import VerdictAppealStatementDeadlines from './VerdictAppealStatementDeadlines'
 
 const mockPush = jest.fn()
 const mockSetAppealStatementDeadline = jest.fn()
+const mockSetWorkingCase = jest.fn()
 
 jest.mock(
   '@island.is/judicial-system-web/src/utils/hooks/useAppealStatementDeadline',
@@ -81,14 +82,28 @@ const theCase = {
   },
 } as unknown as WorkingCase
 
+// The shared form context wrapper swallows setWorkingCase. This one keeps
+// the updater the page hands it, so a spec can apply it to the case and see
+// what the page wrote.
 const renderPage = (c: WorkingCase = theCase) =>
   render(
     <IntlProviderWrapper>
       <ApolloProviderWrapper>
         <UserContextWrapper userRole={UserRole.COURT_OF_APPEALS_JUDGE}>
-          <FormContextWrapper theCase={c}>
+          <FormContext.Provider
+            value={{
+              workingCase: c,
+              setWorkingCase: mockSetWorkingCase,
+              isLoadingWorkingCase: false,
+              caseNotFound: false,
+              isCaseUpToDate: true,
+              refreshCase: jest.fn(),
+              getCase: jest.fn(),
+              isCreating: false,
+            }}
+          >
             <VerdictAppealStatementDeadlines />
-          </FormContextWrapper>
+          </FormContext.Provider>
         </UserContextWrapper>
       </ApolloProviderWrapper>
     </IntlProviderWrapper>,
@@ -130,6 +145,7 @@ describe('VerdictAppealStatementDeadlines', () => {
   beforeEach(() => {
     mockPush.mockClear()
     mockSetAppealStatementDeadline.mockReset()
+    mockSetWorkingCase.mockReset()
   })
 
   it('names the appeal and the district court case', () => {
@@ -215,11 +231,21 @@ describe('VerdictAppealStatementDeadlines', () => {
       deadline: sentDeadline.toISOString(),
     })
 
-    // The dialog closes on success. What the saved deadline does to the case
-    // is the logic spec's to prove; the form context here applies nothing.
+    // The dialog closes on success, and the saved row is written into the
+    // case so the party's next action is an extension.
     await waitFor(() =>
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
     )
+    expect(mockSetWorkingCase).toHaveBeenCalledTimes(1)
+
+    const update = mockSetWorkingCase.mock.calls[0][0] as (
+      previous: WorkingCase,
+    ) => WorkingCase
+
+    expect(update(theCase).verdictAppealCase?.statementDeadlines).toEqual([
+      ...(theCase.verdictAppealCase?.statementDeadlines ?? []),
+      saved,
+    ])
   })
 
   it('names the defendant on the request and in the confirmation', async () => {
@@ -266,6 +292,7 @@ describe('VerdictAppealStatementDeadlines', () => {
     await userEvent.click(screen.getByTestId('confirmStatementDeadlineButton'))
 
     expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(mockSetWorkingCase).not.toHaveBeenCalled()
   })
 
   it('leads back to the defender step and on to the status, with the appeal id', async () => {
