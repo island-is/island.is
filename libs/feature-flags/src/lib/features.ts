@@ -40,6 +40,8 @@ export enum Features {
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
   isNewDrivingLicenseEnabled = 'isNewDrivingLicenseEnabled',
   isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
+  isConfirmJobOrIncomeEnabled = 'isConfirmJobOrIncomeEnabled',
+
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
@@ -142,6 +144,8 @@ export enum Features {
 
   // New/updated delegation notification
   isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',
+
+  isDelegationConfirmationEnabled = 'isDelegationConfirmationEnabled',
 
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
 

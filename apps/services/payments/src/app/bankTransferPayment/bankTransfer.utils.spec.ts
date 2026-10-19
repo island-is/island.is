@@ -1,13 +1,16 @@
 import {
   BankTransferFailureReason,
+  BankTransferPayerType,
   BankTransferStatus,
   BankTransferPendingStatus,
 } from './bankTransfer.types'
 import {
   deriveBankTransferFailureReason,
   getBankTransferDebtor,
+  getBankTransferPayerType,
   isOnboardingRequired,
   mapRawStatusToBankTransferPendingStatus,
+  rowLogContext,
 } from './bankTransfer.utils'
 
 const onboardingOrigin = 'https://light.blikk.tech'
@@ -148,5 +151,36 @@ describe('getBankTransferDebtor', () => {
     expect(getBankTransferDebtor(payerNationalId, actorNationalId)).toEqual(
       expected,
     )
+  })
+})
+
+describe('getBankTransferPayerType', () => {
+  it.each([
+    ['a company', '6010100890', BankTransferPayerType.COMPANY],
+    ['a person', '0101302129', BankTransferPayerType.PERSON],
+    ['a temporary kennitala', '8123456789', undefined],
+  ])('resolves %s', (_, payerNationalId, expected) => {
+    expect(getBankTransferPayerType(payerNationalId)).toBe(expected)
+  })
+})
+
+describe('rowLogContext', () => {
+  const row = {
+    paymentFlowId: 'flow-1',
+    id: 'corr-1',
+    providerPaymentId: 'prov-1',
+  }
+
+  // `create` stores the authorising individual for a company payer only.
+  it.each([
+    ['a company payer', '0101302129', BankTransferPayerType.COMPANY],
+    ['a person payer', null, BankTransferPayerType.PERSON],
+  ])('logs %s', (_, actorNationalId, payerType) => {
+    expect(rowLogContext({ ...row, actorNationalId })).toEqual({
+      paymentFlowId: 'flow-1',
+      correlationId: 'corr-1',
+      rrn: 'prov-1',
+      payerType,
+    })
   })
 })

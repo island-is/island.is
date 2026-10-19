@@ -14,4 +14,6 @@ export class ScopeDTO {
   order!: number
 
   allowsWrite!: boolean
+
+  requiresConfirmation!: boolean
 }

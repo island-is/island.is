@@ -5,6 +5,7 @@ import {
   contactEmailSchema,
   nationalIdSchema,
   municipalityCodeSchema,
+  optionalSafeTextSchema,
   safeTextSchema,
 } from '../tenantValidation'
 
@@ -17,7 +18,9 @@ export const editTenantSchema = {
     .object({
       nationalId: nationalIdSchema,
       displayName: safeTextSchema,
+      displayNameEn: optionalSafeTextSchema,
       description: safeTextSchema,
+      descriptionEn: optionalSafeTextSchema,
       contactEmail: contactEmailSchema,
       municipalityCode: municipalityCodeSchema,
     })

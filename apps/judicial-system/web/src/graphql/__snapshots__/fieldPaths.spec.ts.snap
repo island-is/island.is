@@ -681,8 +681,10 @@ Array [
   "case.unfiledCourtDocuments.name",
   "case.unfiledCourtDocuments.submittedBy",
   "case.validToDate",
+  "case.verdictAppealCase.appealCaseNumber",
   "case.verdictAppealCase.appealConclusion",
   "case.verdictAppealCase.appealEventLogs.appealOrigin",
+  "case.verdictAppealCase.appealEventLogs.civilClaimantId",
   "case.verdictAppealCase.appealEventLogs.created",
   "case.verdictAppealCase.appealEventLogs.defendantId",
   "case.verdictAppealCase.appealEventLogs.eventType",
@@ -707,7 +709,18 @@ Array [
   "case.verdictAppealCase.appealSummonses.id",
   "case.verdictAppealCase.appealSummonses.sentToCourtOfAppealsDate",
   "case.verdictAppealCase.appealType",
+  "case.verdictAppealCase.courtSessions.courtRoom",
+  "case.verdictAppealCase.courtSessions.created",
+  "case.verdictAppealCase.courtSessions.id",
+  "case.verdictAppealCase.courtSessions.sessionDate",
+  "case.verdictAppealCase.courtSessions.sessionType",
   "case.verdictAppealCase.id",
+  "case.verdictAppealCase.statementDeadlines.civilClaimantId",
+  "case.verdictAppealCase.statementDeadlines.created",
+  "case.verdictAppealCase.statementDeadlines.deadline",
+  "case.verdictAppealCase.statementDeadlines.defendantId",
+  "case.verdictAppealCase.statementDeadlines.id",
+  "case.verdictAppealCase.statementDeadlines.modified",
   "case.victims.hasLawyer",
   "case.victims.hasNationalId",
   "case.victims.id",
@@ -775,6 +788,13 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths ConfirmAppealSummons 1`] = `
+Array [
+  "confirmAppealSummons.confirmedDate",
+  "confirmAppealSummons.id",
+]
+`;
+
 exports[`GraphQL operations select these field paths ConfirmRulingOrder 1`] = `
 Array [
   "confirmRulingOrder.id",
@@ -794,6 +814,16 @@ exports[`GraphQL operations select these field paths CreateAppealCase 1`] = `
 Array [
   "createAppealCase.appealState",
   "createAppealCase.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateAppealCourtSession 1`] = `
+Array [
+  "createAppealCourtSession.courtRoom",
+  "createAppealCourtSession.created",
+  "createAppealCourtSession.id",
+  "createAppealCourtSession.sessionDate",
+  "createAppealCourtSession.sessionType",
 ]
 `;
 
@@ -1933,6 +1963,17 @@ Array [
 exports[`GraphQL operations select these field paths SendNotification 1`] = `
 Array [
   "sendNotification.notificationSent",
+]
+`;
+
+exports[`GraphQL operations select these field paths SetAppealStatementDeadline 1`] = `
+Array [
+  "setAppealStatementDeadline.civilClaimantId",
+  "setAppealStatementDeadline.created",
+  "setAppealStatementDeadline.deadline",
+  "setAppealStatementDeadline.defendantId",
+  "setAppealStatementDeadline.id",
+  "setAppealStatementDeadline.modified",
 ]
 `;
 
