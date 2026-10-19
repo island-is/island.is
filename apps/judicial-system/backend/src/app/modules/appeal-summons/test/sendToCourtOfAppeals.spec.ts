@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { ForbiddenException } from '@nestjs/common'
+import { ConflictException, ForbiddenException } from '@nestjs/common'
 
 import { MessageType } from '@island.is/judicial-system/message'
 import {
@@ -108,7 +108,7 @@ describe('AppealSummonsController - Send to court of appeals', () => {
       summonsId,
       caseId,
       { sentToCourtOfAppealsDate },
-      { transaction },
+      { transaction, where: { sentToCourtOfAppealsDate: null } },
     )
     expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
       {
@@ -164,6 +164,29 @@ describe('AppealSummonsController - Send to court of appeals', () => {
       ),
     ).rejects.toThrow(ForbiddenException)
 
+    expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+  })
+
+  it('rejects when a concurrent send already set the date', async () => {
+    ;(
+      mockAppealSummonsRepositoryService.update as jest.Mock
+    ).mockRejectedValueOnce(
+      new ConflictException(
+        `Could not update appeal summons ${summonsId} of case ${caseId}`,
+      ),
+    )
+
+    await expect(
+      appealSummonsController.sendToCourtOfAppeals(
+        caseId,
+        summonsId,
+        theCase,
+        confirmed,
+        user,
+      ),
+    ).rejects.toThrow(ConflictException)
+
+    expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
     expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
   })
 

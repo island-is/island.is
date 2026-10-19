@@ -5,6 +5,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Header,
   Inject,
@@ -25,7 +26,12 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { indictmentCases, type User } from '@island.is/judicial-system/types'
+import {
+  AppealSummonsAction,
+  canPerformAppealSummonsAction,
+  indictmentCases,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import {
   courtOfAppealsAssistantRule,
@@ -216,6 +222,15 @@ export class AppealSummonsController {
     this.logger.debug(
       `Getting appeal summons ${appealSummonsId} of case ${caseId} as a pdf document`,
     )
+
+    // CoA may open only after send; staff/prosecutors keep broader OPEN rights.
+    if (
+      !canPerformAppealSummonsAction(AppealSummonsAction.OPEN, summons, user)
+    ) {
+      throw new ForbiddenException(
+        `User ${user.id} cannot open appeal summons ${appealSummonsId}`,
+      )
+    }
 
     const pdf = await this.pdfService.getAppealSummonsPdf(
       theCase,

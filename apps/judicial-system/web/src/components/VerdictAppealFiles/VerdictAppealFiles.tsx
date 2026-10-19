@@ -398,6 +398,7 @@ const VerdictAppealFiles: FC = () => {
           title="Viltu senda áfrýjunarstefnu til Landsréttar?"
           text="Áfrýjunarstefnan verður aðgengileg Landsrétti í Réttarvörslugátt. Ekki er hægt að breyta henni eftir að hún hefur verið send."
           onClose={() => setSummonsIdToSend(undefined)}
+          loading={isSendingAppealSummonsToCourtOfAppeals}
           buttons={[
             {
               text: 'Hætta við',

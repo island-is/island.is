@@ -1,6 +1,7 @@
 import { Transaction } from 'sequelize'
 
 import {
+  ConflictException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -151,7 +152,12 @@ export class AppealSummonsRepositoryService {
     id: string,
     caseId: string,
     data: UpdateAppealSummons,
-    options: { transaction: Transaction },
+    options: {
+      transaction: Transaction
+      // Optional extra predicates (e.g. sentToCourtOfAppealsDate: null) so a
+      // concurrent update that matches no row is rejected before side effects.
+      where?: { sentToCourtOfAppealsDate: null }
+    },
   ): Promise<AppealSummons> {
     try {
       this.logger.debug(`Updating appeal summons ${id} of case ${caseId}`)
@@ -159,12 +165,18 @@ export class AppealSummonsRepositoryService {
       const [numberOfAffectedRows] = await this.appealSummonsModel.update(
         data,
         {
-          where: { id, caseId },
+          where: { id, caseId, ...options.where },
           transaction: options.transaction,
         },
       )
 
       if (numberOfAffectedRows < 1) {
+        if (options.where) {
+          throw new ConflictException(
+            `Could not update appeal summons ${id} of case ${caseId}`,
+          )
+        }
+
         throw new InternalServerErrorException(
           `Could not update appeal summons ${id} of case ${caseId}`,
         )

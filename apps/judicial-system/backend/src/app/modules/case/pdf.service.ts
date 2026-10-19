@@ -629,10 +629,8 @@ export class PdfService {
         return existingPdf
       }
 
-      // Do not regenerate: served bytes would no longer match the frozen hash.
-      throw new InternalServerErrorException(
-        `Appeal summons ${summons.id} has a hash but its PDF was not found in S3`,
-      )
+      // Hash set but S3 miss (e.g. confirm uploaded after commit and failed):
+      // regenerate, serve/upload only if bytes still match the frozen hash.
     }
 
     if (!theCase.rulingDate) {
@@ -688,6 +686,20 @@ export class PdfService {
         undefined,
         undefined,
       )
+    }
+
+    if (summons?.hash && key) {
+      const { hash } = getCaseFileHash(generatedPdf)
+
+      if (hash !== summons.hash) {
+        throw new InternalServerErrorException(
+          `Appeal summons ${summons.id} has a hash but its PDF was not found in S3`,
+        )
+      }
+
+      await this.uploadPdfToS3(theCase, key, generatedPdf)
+
+      return generatedPdf
     }
 
     // Default: cache a confirmed PDF so the next GET can serve the same bytes.

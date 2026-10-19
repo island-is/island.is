@@ -387,7 +387,7 @@ export class AppealSummonsService {
       summons.id,
       theCase.id,
       { sentToCourtOfAppealsDate },
-      { transaction },
+      { transaction, where: { sentToCourtOfAppealsDate: null } },
     )
 
     await this.appealEventLogRepositoryService.create(
