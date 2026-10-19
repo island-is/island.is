@@ -22,7 +22,11 @@ describe('CardPaymentController — debt payments', () => {
     debts: [{ payId: 'pay-1', amount: 1000 }],
   }
 
-  const createController = (settleDebt: unknown, refundFails = false) => {
+  const createController = (
+    settleDebt: unknown,
+    refundFails = false,
+    overrides: Parameters<typeof createMockCardPaymentService>[0] = {},
+  ) => {
     const cardPaymentService = createMockCardPaymentService({
       validatePaymentFlow: jest.fn().mockResolvedValue({
         paymentFlow: debtFlow,
@@ -38,6 +42,7 @@ describe('CardPaymentController — debt payments', () => {
               .mockRejectedValue(new Error('gateway down') as never),
           }
         : {}),
+      ...overrides,
     })
     const refundService = {
       refundWithCorrelationId: jest
@@ -80,6 +85,32 @@ describe('CardPaymentController — debt payments', () => {
       { message: expect.not.stringContaining('DebtPaymentRejected') },
     )
   })
+
+  it.each([
+    ['card', (c: CardPaymentController) => c.charge(getChargeCardInput())],
+    [
+      'Apple Pay',
+      (c: CardPaymentController) => c.chargeApplePay(getApplePayChargeInput()),
+    ],
+  ])(
+    'answers the %s payment when the saga failed but the payment may be registered',
+    async (_name, charge) => {
+      const controller = createController(undefined, false, {
+        settleDebt: jest
+          .fn()
+          .mockRejectedValue(new Error('Step timeout') as never),
+        findPossibleDebtRegistration: jest.fn().mockResolvedValue({
+          status: 'pending',
+          hadAmbiguousAttempt: true,
+          isAttemptRunning: true,
+        } as never),
+      })
+
+      await expect(charge(controller)).resolves.toMatchObject({
+        isSuccess: true,
+      })
+    },
+  )
 
   it('succeeds when the registration is deferred to the worker', async () => {
     const controller = createController({

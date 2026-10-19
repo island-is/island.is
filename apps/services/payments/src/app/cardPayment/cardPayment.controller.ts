@@ -251,6 +251,14 @@ export class CardPaymentController {
 
       return { ...paymentResult, correlationId: paymentResult.correlationID }
     } catch (e) {
+      // The rollback left a debt payment that may be registered with FJS as it is, see
+      // keepDebtPayment: the payer paid, like when the webhook fails.
+      if (context.metadata?.debtPaymentKept === true) {
+        const { paymentResult } = requireStepResult(context, 'CHARGE_CARD')
+
+        return { ...paymentResult, correlationId: paymentResult.correlationID }
+      }
+
       const refundSucceeded = context.metadata?.refundSucceeded === true
       const refundFailed = context.metadata?.refundSucceeded === false
 
@@ -344,6 +352,14 @@ export class CardPaymentController {
 
       return { ...paymentResult, correlationId: paymentResult.correlationID }
     } catch (e) {
+      // The rollback left a debt payment that may be registered with FJS as it is, see
+      // keepDebtPayment: the payer paid, like when the webhook fails.
+      if (context.metadata?.debtPaymentKept === true) {
+        const { paymentResult } = requireStepResult(context, 'CHARGE_APPLE_PAY')
+
+        return { ...paymentResult, correlationId: paymentResult.correlationID }
+      }
+
       const refundSucceeded = context.metadata?.refundSucceeded === true
       const refundFailed = context.metadata?.refundSucceeded === false
 

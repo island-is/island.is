@@ -432,6 +432,147 @@ describe('Card Payment Saga - Shared Steps', () => {
         ).rejects.toThrow('Database error')
 
         expect(refundMock()).toHaveBeenCalledTimes(1)
+        expect(
+          mockCardPaymentService.findPossibleDebtRegistration,
+        ).toHaveBeenCalledWith(context.paymentFlowId)
+      })
+
+      describe('when the saga fails after a payment that may be registered', () => {
+        const registration = {
+          status: 'pending',
+          hadAmbiguousAttempt: true,
+          isAttemptRunning: true,
+        }
+
+        // Stands in for the step timeout: the attempt is sent and the step still fails
+        beforeEach(() => {
+          mockCardPaymentService.settleDebt.mockRejectedValue(
+            new Error('Step timeout'),
+          )
+        })
+
+        it('keeps the payment: no refund, the fulfillment stays', async () => {
+          mockCardPaymentService.findPossibleDebtRegistration.mockResolvedValue(
+            registration as never,
+          )
+
+          const { context, saga, orchestrator } = setupSaga()
+
+          await expect(
+            orchestrator.execute(saga as never, context as never),
+          ).rejects.toThrow('Step timeout')
+
+          expect(refundMock()).not.toHaveBeenCalled()
+          expect(
+            mockPaymentFlowService.deleteCardPaymentConfirmationAndFulfillment,
+          ).not.toHaveBeenCalled()
+          expect(loggedReasons()).toEqual([])
+          expect(context.metadata).toMatchObject({ debtPaymentKept: true })
+          expect(context.metadata?.refundSucceeded).toBeUndefined()
+          expect(mockLogger.error).toHaveBeenCalledWith(
+            expect.stringContaining('reconcile manually'),
+            expect.objectContaining({
+              debtRefundRefused: true,
+              failedStep: 'SETTLE_DEBT',
+              ...registration,
+            }),
+          )
+        })
+
+        it('asks once for both compensations', async () => {
+          mockCardPaymentService.findPossibleDebtRegistration.mockResolvedValue(
+            registration as never,
+          )
+
+          const { context, saga, orchestrator } = setupSaga()
+          await orchestrator
+            .execute(saga as never, context as never)
+            .catch(() => undefined)
+
+          expect(
+            mockCardPaymentService.findPossibleDebtRegistration,
+          ).toHaveBeenCalledTimes(1)
+        })
+
+        it('keeps the payment when the registration state can not be read', async () => {
+          mockCardPaymentService.findPossibleDebtRegistration.mockRejectedValue(
+            new Error('Database error'),
+          )
+
+          const { context, saga, orchestrator } = setupSaga()
+
+          await expect(
+            orchestrator.execute(saga as never, context as never),
+          ).rejects.toThrow('Step timeout')
+
+          expect(refundMock()).not.toHaveBeenCalled()
+          expect(
+            mockPaymentFlowService.deleteCardPaymentConfirmationAndFulfillment,
+          ).not.toHaveBeenCalled()
+          expect(context.metadata).toMatchObject({ debtPaymentKept: true })
+          expect(mockLogger.error).toHaveBeenCalledWith(
+            expect.stringContaining('could not tell'),
+            expect.objectContaining({
+              debtRefundRefused: true,
+              error: 'Database error',
+            }),
+          )
+        })
+
+        it('refunds a charge flow regardless', async () => {
+          mockCardPaymentService.validatePaymentFlow.mockResolvedValue({
+            paymentFlow: mockPaymentFlow,
+            catalogItems: [],
+            totalPrice: 1000,
+            paymentStatus: 'unpaid',
+          } as never)
+          mockCardPaymentService.findPossibleDebtRegistration.mockResolvedValue(
+            registration as never,
+          )
+          mockPaymentFlowService.logPaymentFlowUpdate.mockImplementation(
+            async (update, logConfig) => {
+              if (
+                logConfig?.throwOnError &&
+                update.reason === 'payment_completed'
+              ) {
+                throw new Error('Webhook failed')
+              }
+            },
+          )
+
+          const { context, saga, orchestrator } = setupSaga()
+
+          await expect(
+            orchestrator.execute(saga as never, context as never),
+          ).rejects.toThrow('Webhook failed')
+
+          expect(refundMock()).toHaveBeenCalledTimes(1)
+          expect(
+            mockCardPaymentService.findPossibleDebtRegistration,
+          ).not.toHaveBeenCalled()
+        })
+      })
+
+      it('refunds without asking FJS when the saga fails before the attempt', async () => {
+        mockCardPaymentService.persistPaymentConfirmation.mockRejectedValue(
+          new Error('Database error'),
+        )
+        mockCardPaymentService.findPossibleDebtRegistration.mockResolvedValue({
+          status: 'pending',
+          hadAmbiguousAttempt: true,
+          isAttemptRunning: true,
+        } as never)
+
+        const { context, saga, orchestrator } = setupSaga()
+
+        await expect(
+          orchestrator.execute(saga as never, context as never),
+        ).rejects.toThrow('Database error')
+
+        expect(refundMock()).toHaveBeenCalledTimes(1)
+        expect(
+          mockCardPaymentService.findPossibleDebtRegistration,
+        ).not.toHaveBeenCalled()
       })
     })
 

@@ -60,6 +60,7 @@ Events are POSTed to `onUpdateUrl` (signed JWT in the `Authorization` header) as
 
 - **Happy path**: `success/payment_completed` when the money is captured, then `update/payment_finalized` when FJS accepts the registration (202), with `eventMetadata.dateCreated`. If registration could not finish inline, the payment worker retries and `payment_finalized` comes later. FJS answers a payFlowId it already has with 400 and error `type` `6`, so when a retry gets that after a call whose response was lost, the payment counts as registered and `payment_finalized` comes without `dateCreated`.
 - **Card or Apple Pay, rejected inline**: FJS rejects (400) before the registration is accepted. The card is refunded and the application gets `error/payment_failed` (`eventMetadata.fjsProblem`). There is no `payment_completed`. If that refund fails, the payer gets `RefundFailedAfterPaymentError` and a CRITICAL alert asks for a manual refund, as for charge flows: the rollback removes the fulfillment before refunding, so the worker does not retry it.
+- **Card or Apple Pay, saga failed after the attempt**: a step timed out, or the registration failed for a reason other than a rejection, after `payDebt` may have been sent. The rollback refunds the card and removes the fulfillment only when the payment can not be registered: no attempt was sent, or FJS answered the last one without taking it. Otherwise (registered, an attempt with an unknown outcome, one still running, or the state could not be read) the payment is kept as paid, nothing is refunded, the payer gets the payment result and a CRITICAL alert with `debtRefundRefused: true` asks for a manual check. The worker finishes a pending registration, so `payment_finalized` may still follow.
 - **Rejected later by the worker**: `payment_completed` was already sent, then `error/payment_failed`. A card payment is then refunded automatically and the usual refund events follow. A bank transfer is not refunded automatically (Blikk refunds need an SCA approval): the `payment_failed` event has `eventMetadata.needsManualRefund = true` and the money is returned manually.
 - **Bank transfer rejected inline** behaves like the late rejection above: `payment_completed` is sent when the transfer settles, then `error/payment_failed` with `needsManualRefund`.
 - **`needs_reconciliation`**: FJS rejected the payment after an attempt whose outcome was unknown, so it may already be registered, or reported the payFlowId as a duplicate when no earlier attempt explains it. This is internal: no webhook is sent, the payment stays completed, and an error event and alert ask for manual reconciliation. It is never refunded automatically.
@@ -122,13 +123,14 @@ stateDiagram-v2
     end note
 ```
 
-`POST /v1/payments/refund` for a debt flow. The worker's own refunds of rejected payments skip the status check.
+`POST /v1/payments/refund` for a debt flow. The worker's own refunds of rejected payments skip the status check. The payment sagas' rollbacks make the same check before refunding a debt payment.
 
 ```mermaid
 flowchart TD
     RQ["POST /v1/payments/refund"] --> S{"debt_settlement status"}
     S -->|"registered or needs_reconciliation"| NO1["Refused: DebtPaymentRegisteredCannotBeRefunded"]
     S -->|"pending, with hadAmbiguousAttempt or an attempt in the last 60 s"| NO2["Refused: DebtPaymentRegisteredCannotBeRefunded, warn log with debtRefundRefused"]
+    S -->|"could not be read, saga rollback only"| NO4["Payment kept, error log with debtRefundRefused"]
     S -->|"no row, other pending, or rejected"| M{"Paid with"}
     M -->|"card or Apple Pay"| OK["Card refund saga"]
     M -->|"bank transfer"| NO3["Refused: PaymentFlowNotEligibleToBeRefunded"]
@@ -194,6 +196,6 @@ For **AlreadyCreatedCharge**: reconcile the flow/fulfillment with the existing F
 - The worker logs one info line per run when flows are deferred: `Deferring N payment flow(s) that failed less than 60 minute(s) ago: <ids>`.
 - Each run ends with `Payment worker run complete — created: X, failed: Y, skipped (manual intervention): Z, deferred (retry delay): W`.
 - A debt bank transfer FJS rejects is logged once, as an error with `needsManualRefund: true` and the payment flow id, and its `payment_failed` event carries the same flag. Nothing refunds it automatically, and nothing records when it has been refunded by hand: alert on the field and track the refund with whoever returns the money.
-- A refund of a debt payment that may already be registered with FJS is refused and logged as a warning with `debtRefundRefused: true`. Monitors count on that field.
+- A refund of a debt payment that may already be registered with FJS is refused and logged as a warning with `debtRefundRefused: true`. Monitors count on that field. A payment saga that rolls back and finds the same logs it as an error with the same field, since the payer was told the payment went through while the organisation may not have been: check that `payment_completed` and `payment_finalized` reached the application, and that FJS has the payment.
 - The debt pass logs the same skip and defer lines for debt payment flows, and ends with `Debt payment run complete — settled: X, failed: Y, skipped (manual intervention): Z, deferred (retry delay): W`.
 - Optional: add metrics for flows processed, succeeded, failed, skipped, and deferred.

@@ -1,5 +1,4 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -14,8 +13,8 @@ import { InferAttributes } from 'sequelize'
 import { PaymentMethod } from '../../types'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
-import { ATTEMPT_CLAIM_WINDOW_MS } from '../debtPayment/debtSettlement.service'
-import { DebtSettlement, PaymentFulfillment } from '../paymentFlow/models'
+import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
+import { PaymentFulfillment } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import {
   createCardRefundContext,
@@ -50,8 +49,7 @@ export class RefundOrchestrationService {
     private readonly refundService: RefundService,
     private readonly paymentFlowService: PaymentFlowService,
     private readonly bankTransferService: BankTransferService,
-    @InjectModel(DebtSettlement)
-    private readonly debtSettlementModel: typeof DebtSettlement,
+    private readonly debtSettlementService: DebtSettlementService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -297,41 +295,29 @@ export class RefundOrchestrationService {
   private async assertDebtPaymentCanBeRefunded(
     paymentFlowId: string,
   ): Promise<void> {
-    const debtPayment = await this.debtSettlementModel.findOne({
-      where: { paymentFlowId },
-    })
+    const registration =
+      await this.debtSettlementService.findPossibleRegistration(paymentFlowId)
 
-    if (
-      debtPayment?.status === 'registered' ||
-      debtPayment?.status === 'needs_reconciliation'
-    ) {
-      throw new BadRequestException(
-        DebtPaymentErrorCode.DebtPaymentRegisteredCannotBeRefunded,
-      )
+    if (!registration) {
+      return
     }
 
-    // A pending payment may be registered already: an earlier payDebt had an unknown outcome (a
-    // lost 202 is final at FJS), or an attempt started within the claim window. The worker settles it.
-    const isAttemptRunning =
-      !!debtPayment?.lastAttemptAt &&
-      debtPayment.lastAttemptAt.getTime() > Date.now() - ATTEMPT_CLAIM_WINDOW_MS
-
-    if (
-      debtPayment?.status === 'pending' &&
-      (debtPayment.hadAmbiguousAttempt || isAttemptRunning)
-    ) {
+    // A pending payment is refused for what an earlier attempt left behind, which is worth a
+    // look: the worker settles it.
+    if (registration.status === 'pending') {
       this.logger.warn(
         `[${paymentFlowId}] Refused to refund a debt payment that may be registered with FJS`,
         {
           // Monitors count on this field, not the message text.
           debtRefundRefused: true,
-          hadAmbiguousAttempt: debtPayment.hadAmbiguousAttempt,
-          isAttemptRunning,
+          hadAmbiguousAttempt: registration.hadAmbiguousAttempt,
+          isAttemptRunning: registration.isAttemptRunning,
         },
       )
-      throw new BadRequestException(
-        DebtPaymentErrorCode.DebtPaymentRegisteredCannotBeRefunded,
-      )
     }
+
+    throw new BadRequestException(
+      DebtPaymentErrorCode.DebtPaymentRegisteredCannotBeRefunded,
+    )
   }
 }

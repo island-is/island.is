@@ -12,6 +12,7 @@ import { FjsPayInfo, toFjsDebtPayInfo } from '../../utils/fjsDebtPayment'
 import {
   DebtSettlement,
   DebtSettlementAttributes,
+  DebtSettlementStatus,
   PaymentFlowEvent,
 } from '../paymentFlow/models'
 import { FjsDebtGateway } from './fjsDebt.gateway'
@@ -35,6 +36,14 @@ export type DebtSettlementFlow = {
   id: string
   payerNationalId: string
   debts?: FjsDebt[]
+}
+
+/** Why a debt payment may be registered with FJS, where nothing can take it back. */
+export type PossibleDebtRegistration = {
+  status: DebtSettlementStatus
+  hadAmbiguousAttempt: boolean
+  /** An attempt started within the claim window, its outcome is not in yet */
+  isAttemptRunning: boolean
 }
 
 export type DebtSettlementResult = (
@@ -90,8 +99,46 @@ export class DebtSettlementService {
   }
 
   /**
+   * Whether the payment may be registered with FJS, which has no reversal: a registered or
+   * unreconciled payment, or a pending one after an attempt with an unknown outcome (a lost 202 is
+   * final at FJS) or with one still running. Null when nothing has been sent to FJS, or FJS
+   * answered the last attempt without taking it. Refunds and the payment sagas' rollbacks leave a
+   * payment that may be registered alone, the worker finishes it.
+   */
+  async findPossibleRegistration(
+    paymentFlowId: string,
+  ): Promise<PossibleDebtRegistration | null> {
+    const row = await this.debtSettlementModel.findOne({
+      where: { paymentFlowId },
+    })
+
+    if (!row || row.status === 'rejected') {
+      return null
+    }
+
+    const isAttemptRunning =
+      !!row.lastAttemptAt &&
+      row.lastAttemptAt.getTime() > Date.now() - ATTEMPT_CLAIM_WINDOW_MS
+
+    if (
+      row.status === 'pending' &&
+      !row.hadAmbiguousAttempt &&
+      !isAttemptRunning
+    ) {
+      return null
+    }
+
+    return {
+      status: row.status,
+      hadAmbiguousAttempt: row.hadAmbiguousAttempt,
+      isAttemptRunning,
+    }
+  }
+
+  /**
    * One attempt at registering the payment, with no retry loop: callers that wait on it are
-   * inside a saga step that rolls back, and refunds the card, when it times out.
+   * inside a saga step that rolls back when it times out. The rollback refunds the card unless
+   * the payment may be registered, see findPossibleRegistration.
    */
   async attempt(
     flow: DebtSettlementFlow,

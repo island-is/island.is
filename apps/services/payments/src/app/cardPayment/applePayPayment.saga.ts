@@ -11,7 +11,11 @@ import {
   ApplePayPaymentSagaDefinition,
 } from './cardPayment.orchestrator'
 import { CardPaymentService } from './cardPayment.service'
-import { notifyPaymentCompleted, settleDebtStep } from './cardPayment.debt'
+import {
+  keepDebtPayment,
+  notifyPaymentCompleted,
+  settleDebtStep,
+} from './cardPayment.debt'
 import { ApplePayChargeInput } from './dtos'
 
 export const createApplePayPaymentContext = (
@@ -80,6 +84,10 @@ export const createApplePayPaymentSaga = (
       return { paymentResult }
     },
     compensate: async (ctx) => {
+      if (await keepDebtPayment({ cardPaymentService, logger, ctx })) {
+        return
+      }
+
       const { paymentResult } = requireStepResult(ctx, 'CHARGE_APPLE_PAY')
 
       logger.info(
@@ -151,6 +159,10 @@ export const createApplePayPaymentSaga = (
       })
     },
     compensate: async (ctx) => {
+      if (await keepDebtPayment({ cardPaymentService, logger, ctx })) {
+        return
+      }
+
       await paymentFlowService.deleteCardPaymentConfirmationAndFulfillment(
         ctx.paymentFlowId,
         ctx.trackingData.correlationId,

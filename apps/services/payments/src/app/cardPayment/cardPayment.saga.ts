@@ -11,7 +11,11 @@ import {
   CardPaymentSagaDefinition,
 } from './cardPayment.orchestrator'
 import { CardPaymentService } from './cardPayment.service'
-import { notifyPaymentCompleted, settleDebtStep } from './cardPayment.debt'
+import {
+  keepDebtPayment,
+  notifyPaymentCompleted,
+  settleDebtStep,
+} from './cardPayment.debt'
 import { ChargeCardInput } from './dtos'
 
 export const createCardPaymentContext = (
@@ -67,6 +71,10 @@ export const createCardPaymentSaga = (
       return { paymentResult }
     },
     compensate: async (ctx) => {
+      if (await keepDebtPayment({ cardPaymentService, logger, ctx })) {
+        return
+      }
+
       const { paymentResult } = requireStepResult(ctx, 'CHARGE_CARD')
       const { totalPrice } = requireStepResult(ctx, 'VALIDATE')
 
@@ -141,6 +149,10 @@ export const createCardPaymentSaga = (
       })
     },
     compensate: async (ctx) => {
+      if (await keepDebtPayment({ cardPaymentService, logger, ctx })) {
+        return
+      }
+
       await paymentFlowService.deleteCardPaymentConfirmationAndFulfillment(
         ctx.paymentFlowId,
         ctx.trackingData.correlationId,

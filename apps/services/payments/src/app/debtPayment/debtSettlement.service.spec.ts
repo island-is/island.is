@@ -371,6 +371,73 @@ describe('DebtSettlementService', () => {
     })
   })
 
+  describe('a payment that may be registered', () => {
+    it('is none before anything was sent to FJS', async () => {
+      const flow = await createFlow()
+
+      expect(await service.findPossibleRegistration(flow.id)).toBeNull()
+    })
+
+    it.each([
+      ['registered', true],
+      ['needs_reconciliation', true],
+      ['rejected', false],
+    ] as const)('%s: %s', async (status, mayBeRegistered) => {
+      const flow = await createFlow()
+      await debtSettlementModel.create({
+        paymentFlowId: flow.id,
+        amount: 15000,
+        status,
+      })
+
+      const registration = await service.findPossibleRegistration(flow.id)
+
+      if (mayBeRegistered) {
+        expect(registration).toMatchObject({ status })
+      } else {
+        expect(registration).toBeNull()
+      }
+    })
+
+    it('is pending while an attempt is running', async () => {
+      pay.mockReturnValue(new Promise(() => undefined))
+      const flow = await createFlow()
+      service.attempt(flow, payInfo)
+      await new Promise((resolve) => setTimeout(resolve, 200))
+
+      expect(await service.findPossibleRegistration(flow.id)).toMatchObject({
+        status: 'pending',
+        hadAmbiguousAttempt: true,
+        isAttemptRunning: true,
+      })
+    })
+
+    it('is pending after an attempt with an unknown outcome, however old', async () => {
+      pay.mockResolvedValueOnce({
+        type: 'ambiguous',
+        error: new Error('Timeout'),
+      })
+      const flow = await createFlow()
+      await service.attempt(flow, payInfo)
+      await ageLastAttempt(flow.id)
+
+      expect(await service.findPossibleRegistration(flow.id)).toMatchObject({
+        status: 'pending',
+        hadAmbiguousAttempt: true,
+        isAttemptRunning: false,
+      })
+    })
+
+    it('is none after an old attempt FJS did not process', async () => {
+      pay.mockResolvedValueOnce({ type: 'transient', error: new Error('401') })
+      const flow = await createFlow()
+      await service.attempt(flow, payInfo)
+      await ageLastAttempt(flow.id)
+
+      expect(await service.findPossibleRegistration(flow.id)).toBeNull()
+    })
+  })
+
   describe('claiming an attempt', () => {
     it('does not start a second attempt while one is in flight', async () => {
       let finishPay: (value: unknown) => void = () => undefined

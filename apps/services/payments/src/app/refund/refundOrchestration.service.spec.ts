@@ -6,7 +6,7 @@ import {
 } from '@island.is/shared/constants'
 
 import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
-import { DebtSettlement } from '../paymentFlow/models'
+import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { RefundController } from './refund.controller'
 import { RefundService } from './refund.service'
@@ -22,7 +22,7 @@ const refundResponse = {
 describe('RefundOrchestrationService', () => {
   let service: RefundOrchestrationService
   let paymentFlowService: { findPaymentFulfillmentForPaymentFlow: jest.Mock }
-  let debtSettlementModel: { findOne: jest.Mock }
+  let debtSettlementService: { findPossibleRegistration: jest.Mock }
   let handleCardRefund: jest.SpyInstance
   let logger: { info: jest.Mock; warn: jest.Mock; error: jest.Mock }
 
@@ -32,14 +32,16 @@ describe('RefundOrchestrationService', () => {
         .fn()
         .mockResolvedValue({ paymentMethod: 'card', fjsChargeId: null }),
     }
-    debtSettlementModel = { findOne: jest.fn().mockResolvedValue(null) }
+    debtSettlementService = {
+      findPossibleRegistration: jest.fn().mockResolvedValue(null),
+    }
     logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn() }
 
     service = new RefundOrchestrationService(
       {} as RefundService,
       paymentFlowService as unknown as PaymentFlowService,
       {} as BankTransferService,
-      debtSettlementModel as unknown as typeof DebtSettlement,
+      debtSettlementService as unknown as DebtSettlementService,
       logger as never,
     )
     handleCardRefund = jest
@@ -56,9 +58,13 @@ describe('RefundOrchestrationService', () => {
     })
 
     it.each(['registered', 'needs_reconciliation'])(
-      'blocks a debt flow that is %s',
+      'blocks a debt flow that is %s, quietly',
       async (status) => {
-        debtSettlementModel.findOne.mockResolvedValue({ status })
+        debtSettlementService.findPossibleRegistration.mockResolvedValue({
+          status,
+          hadAmbiguousAttempt: false,
+          isAttemptRunning: false,
+        })
 
         await expect(service.refund(input)).rejects.toEqual(
           new BadRequestException(
@@ -67,23 +73,23 @@ describe('RefundOrchestrationService', () => {
         )
 
         expect(handleCardRefund).not.toHaveBeenCalled()
+        expect(logger.warn).not.toHaveBeenCalled()
       },
     )
 
-    it.each(['pending', 'rejected'])(
-      'allows a debt flow that is %s',
-      async (status) => {
-        debtSettlementModel.findOne.mockResolvedValue({ status })
+    it('allows a debt flow that may not be registered', async () => {
+      debtSettlementService.findPossibleRegistration.mockResolvedValue(null)
 
-        await expect(service.refund(input)).resolves.toEqual(refundResponse)
-      },
-    )
+      await expect(service.refund(input)).resolves.toEqual(refundResponse)
 
-    it('blocks a pending debt flow whose earlier payDebt had an unknown outcome', async () => {
-      debtSettlementModel.findOne.mockResolvedValue({
+      expect(logger.warn).not.toHaveBeenCalled()
+    })
+
+    it('blocks a pending debt flow that may be registered, with a warning', async () => {
+      debtSettlementService.findPossibleRegistration.mockResolvedValue({
         status: 'pending',
         hadAmbiguousAttempt: true,
-        lastAttemptAt: new Date(Date.now() - 10 * 60_000),
+        isAttemptRunning: false,
       })
 
       await expect(service.refund(input)).rejects.toEqual(
@@ -95,57 +101,39 @@ describe('RefundOrchestrationService', () => {
       expect(handleCardRefund).not.toHaveBeenCalled()
       expect(logger.warn).toHaveBeenCalledWith(
         expect.any(String),
-        expect.objectContaining({ debtRefundRefused: true }),
+        expect.objectContaining({
+          debtRefundRefused: true,
+          hadAmbiguousAttempt: true,
+          isAttemptRunning: false,
+        }),
       )
-    })
-
-    it('blocks a pending debt flow while a payDebt attempt is running', async () => {
-      debtSettlementModel.findOne.mockResolvedValue({
-        status: 'pending',
-        hadAmbiguousAttempt: false,
-        lastAttemptAt: new Date(),
-      })
-
-      await expect(service.refund(input)).rejects.toEqual(
-        new BadRequestException(
-          DebtPaymentErrorCode.DebtPaymentRegisteredCannotBeRefunded,
-        ),
-      )
-
-      expect(handleCardRefund).not.toHaveBeenCalled()
-    })
-
-    it('allows a pending debt flow whose last attempt FJS did not process', async () => {
-      debtSettlementModel.findOne.mockResolvedValue({
-        status: 'pending',
-        hadAmbiguousAttempt: false,
-        lastAttemptAt: new Date(Date.now() - 10 * 60_000),
-      })
-
-      await expect(service.refund(input)).resolves.toEqual(refundResponse)
-
-      expect(logger.warn).not.toHaveBeenCalled()
     })
 
     it.each(['registered', 'needs_reconciliation'])(
       'does not block system refunds of a debt flow that is %s',
       async (status) => {
-        debtSettlementModel.findOne.mockResolvedValue({ status })
+        debtSettlementService.findPossibleRegistration.mockResolvedValue({
+          status,
+          hadAmbiguousAttempt: false,
+          isAttemptRunning: false,
+        })
 
         await expect(service.refund(input, { system: true })).resolves.toEqual(
           refundResponse,
         )
 
-        expect(debtSettlementModel.findOne).not.toHaveBeenCalled()
+        expect(
+          debtSettlementService.findPossibleRegistration,
+        ).not.toHaveBeenCalled()
       },
     )
 
-    it('looks at the row of the flow being refunded', async () => {
+    it('looks at the flow being refunded', async () => {
       await service.refund(input)
 
-      expect(debtSettlementModel.findOne).toHaveBeenCalledWith({
-        where: { paymentFlowId: 'flow-1' },
-      })
+      expect(
+        debtSettlementService.findPossibleRegistration,
+      ).toHaveBeenCalledWith('flow-1')
     })
 
     it('is not eligible when nothing was paid', async () => {

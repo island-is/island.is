@@ -783,6 +783,11 @@ export class CardPaymentService {
     })
   }
 
+  /** Whether a debt payment may be registered with FJS, see DebtSettlementService. */
+  findPossibleDebtRegistration(paymentFlowId: string) {
+    return this.debtSettlementService.findPossibleRegistration(paymentFlowId)
+  }
+
   /** Registers the captured card payment of a debt flow with FJS, see DebtSettlementService. */
   async settleDebt({
     paymentFlow,
