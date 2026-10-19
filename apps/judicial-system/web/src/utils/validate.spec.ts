@@ -2627,9 +2627,11 @@ describe('isCourtOfAppealCaseStepValid', () => {
   const validAppealCase = {
     appealState: AppealCaseState.RECEIVED,
     appealCaseNumber: '1/2024',
-    appealJudge1: { id: 'j1' },
-    appealJudge2: { id: 'j2' },
-    appealJudge3: { id: 'j3' },
+    appealJudges: [
+      { displayOrder: 0, userId: 'j1', user: { id: 'j1' } },
+      { displayOrder: 1, userId: 'j2', user: { id: 'j2' } },
+      { displayOrder: 2, userId: 'j3', user: { id: 'j3' } },
+    ],
     appealAssistant: { id: 'a1' },
   } as AppealCase
 
@@ -2637,18 +2639,40 @@ describe('isCourtOfAppealCaseStepValid', () => {
     expect(isCourtOfAppealCaseStepValid(validAppealCase)).toBe(true)
   })
 
-  test.each([
-    'appealJudge1',
-    'appealJudge2',
-    'appealJudge3',
-    'appealAssistant',
-  ] as const)('is false when %s is missing', (field) => {
+  test('is false when the assistant is missing', () => {
     expect(
       isCourtOfAppealCaseStepValid({
         ...validAppealCase,
-        [field]: undefined,
+        appealAssistant: undefined,
       } as AppealCase),
     ).toBe(false)
+  })
+
+  test('is false when the bench has fewer than three judges', () => {
+    expect(
+      isCourtOfAppealCaseStepValid({
+        ...validAppealCase,
+        appealJudges: validAppealCase.appealJudges?.slice(0, 2),
+      } as AppealCase),
+    ).toBe(false)
+    expect(
+      isCourtOfAppealCaseStepValid({
+        ...validAppealCase,
+        appealJudges: [],
+      } as AppealCase),
+    ).toBe(false)
+  })
+
+  test('is true for a bench of more than three judges', () => {
+    expect(
+      isCourtOfAppealCaseStepValid({
+        ...validAppealCase,
+        appealJudges: [
+          ...(validAppealCase.appealJudges ?? []),
+          { displayOrder: 3, userId: 'j4', user: { id: 'j4' } },
+        ],
+      } as AppealCase),
+    ).toBe(true)
   })
 
   test('does not require judges or an assistant when the appeal is withdrawn', () => {
