@@ -16,7 +16,9 @@ import { getAppealCaseNumberOrPlaceholder } from '../../../formatters/generatedP
  * is the district court that gave the judgment; the court writing here is
  * always the court of appeals.
  */
-const COURT_NAME = 'Landsréttur'
+export const COURT_OF_APPEALS_NAME = 'Landsréttur'
+
+const COURT_NAME = COURT_OF_APPEALS_NAME
 
 /** How the mail names the role it has recorded the advocate in. */
 export type AppealAdvocateRole =

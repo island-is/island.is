@@ -3,7 +3,9 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
+import { type Message, MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseNotificationType,
   AppealCaseType,
   AppealEventType,
   type User,
@@ -45,6 +47,7 @@ describe('AppealStatementDeadlineController - Set', () => {
   const deadline = new Date(2026, 9, 20)
   const transaction = {} as Transaction
 
+  let queuedMessages: Message[]
   let mockTransaction: jest.Mock
   let mockCreate: jest.Mock
   let mockUpdate: jest.Mock
@@ -56,12 +59,14 @@ describe('AppealStatementDeadlineController - Set', () => {
 
   beforeEach(async () => {
     const {
+      queuedMessagesAfterCommit,
       sequelize,
       appealStatementDeadlineController,
       appealStatementDeadlineRepositoryService,
       appealEventLogRepositoryService,
     } = await createTestingAppealStatementDeadlineModule()
 
+    queuedMessages = queuedMessagesAfterCommit
     mockTransaction = sequelize.transaction as jest.Mock
     mockTransaction.mockResolvedValue(transaction)
     mockCreate = appealStatementDeadlineRepositoryService.create as jest.Mock
@@ -160,6 +165,26 @@ describe('AppealStatementDeadlineController - Set', () => {
       expect(mockUpdate).not.toHaveBeenCalled()
     })
 
+    // The mails are the message handler's to send, once the deadline is
+    // committed; the party and the appeal are what it needs to know.
+    it('queues the mails for a first deadline after commit', async () => {
+      await set({ defendantId, deadline })
+
+      expect(queuedMessages).toEqual([
+        {
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
+          user,
+          caseId,
+          elementId: appealCaseId,
+          body: {
+            type: AppealCaseNotificationType.APPEAL_STATEMENT_DEADLINE_SET,
+            defendantId,
+            civilClaimantId: undefined,
+          },
+        },
+      ])
+    })
+
     // One call to sequelize.transaction: the guard's. A handler that opened a
     // transaction of its own, the deadlock the controller warns about, would
     // make it two.
@@ -203,6 +228,20 @@ describe('AppealStatementDeadlineController - Set', () => {
       )
     })
 
+    it('queues the mails for an extension after commit', async () => {
+      await set({ defendantId, deadline }, { statementDeadlines: [current] })
+
+      expect(queuedMessages).toEqual([
+        expect.objectContaining({
+          body: {
+            type: AppealCaseNotificationType.APPEAL_STATEMENT_DEADLINE_EXTENDED,
+            defendantId,
+            civilClaimantId: undefined,
+          },
+        }),
+      ])
+    })
+
     // Another party's row is not this party's: a deadline for the civil
     // claimant alongside is still a first deadline for the defendant.
     it("does not mistake another party's row for an extension", async () => {
@@ -236,6 +275,7 @@ describe('AppealStatementDeadlineController - Set', () => {
 
       expect(mockUpdate).not.toHaveBeenCalled()
       expect(mockCreateEvent).not.toHaveBeenCalled()
+      expect(queuedMessages).toEqual([])
     })
   })
 

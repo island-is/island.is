@@ -18,18 +18,26 @@ import {
   IncomeValidationRow,
   validateIncomes,
 } from '../../utils/validateIncomes'
-import { BuildDelete, splitEntries } from '../../utils/reconcile'
+import { BuildDelete, splitEntries, ToRow } from '../../utils/reconcile'
 
 // Which array in VmstApplicationsIncomeValidationInput the mapped rows should be placed under.
 type IncomeTypeKey = keyof VmstApplicationsIncomeValidationInput
 
-type PersistedRecord = Record<string, unknown> & { id?: string }
+type PersistedRecord = Record<string, unknown> & {
+  id?: string
+  canEdit?: boolean
+  canDelete?: boolean
+}
 
 export type IncomeValidationFieldProps = {
   fieldId: string
   incomeTypeKey: IncomeTypeKey
   // externalData path to the persisted array we reconcile against.
   persistedPath: string
+  // Maps a persisted record into the answer row shape so edits can be detected.
+  // Method syntax keeps the parameter bivariant, so the per-type Galdur DTO
+  // mappers can be passed as-is.
+  toRow(record: PersistedRecord): ReturnType<ToRow<PersistedRecord>>
   rowToInput: (
     row: IncomeValidationRow,
   ) => NonNullable<VmstApplicationsIncomeValidationInput[IncomeTypeKey]>[number]
@@ -64,6 +72,7 @@ export const IncomeValidation: FC<
     fieldId,
     incomeTypeKey,
     persistedPath,
+    toRow,
     rowToInput,
     messages,
     callbackId,
@@ -100,20 +109,28 @@ export const IncomeValidation: FC<
               persistedPath,
             ) ?? []
 
-          const { creates, deletes } = splitEntries(
+          const { creates, updates, deletes } = splitEntries(
             rowsWithValidationIds,
             persisted,
-            'validationId',
-            buildDelete,
+            { buildDelete, toRow },
           )
 
-          if (!creates.length && !deletes.length) {
+          if (!creates.length && !updates.length && !deletes.length) {
             setAlert(null)
             return [true, null]
           }
 
+          // Edited persisted rows are validated as creates carrying the
+          // persisted id, matching how they are submitted.
           const input: VmstApplicationsIncomeValidationInput = {
-            [incomeTypeKey]: [...creates.map(rowToInput), ...deletes],
+            [incomeTypeKey]: [
+              ...creates.map(rowToInput),
+              ...updates.map((row) => ({
+                ...rowToInput(row),
+                id: row.validationId,
+              })),
+              ...deletes,
+            ],
           }
 
           const { pathItems, isValid, alert } = await validateIncomes({
@@ -140,9 +157,10 @@ export const IncomeValidation: FC<
       },
       { allowMultiple: true, customCallbackId: callbackId },
     )
-    // rowToInput/messages/buildDelete are section-scoped const references, so
-    // their identity is stable and the effect re-runs only when the actual
-    // configuration changes (never in practice while the section is mounted).
+    // toRow/rowToInput/messages/buildDelete are section-scoped const
+    // references, so their identity is stable and the effect re-runs only when
+    // the actual configuration changes (never in practice while the section is
+    // mounted).
   }, [
     apolloClient,
     application.externalData,
@@ -158,6 +176,7 @@ export const IncomeValidation: FC<
     rowToInput,
     setBeforeSubmitCallback,
     setValue,
+    toRow,
   ])
 
   if (!alert) return null
