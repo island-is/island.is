@@ -177,7 +177,7 @@ describe('AppealSummonsController - Update', () => {
         hash: null,
         hashAlgorithm: null,
       },
-      { transaction },
+      { transaction, where: { sentToCourtOfAppealsDate: null } },
     )
     expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(
       theCase.type,
