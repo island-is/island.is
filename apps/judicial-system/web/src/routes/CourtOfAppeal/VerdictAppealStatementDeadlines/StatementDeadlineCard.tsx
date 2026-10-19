@@ -63,42 +63,41 @@ const StatementDeadlineCard: FC<Props> = ({ party, onSend, isSending }) => {
       className={styles.card}
     >
       <Box>
+        {/* The role line is plain until the statement is in, and then it is
+            the green, weighted line the design uses to pick those out. */}
         <Text
-          variant="eyebrow"
+          variant="small"
+          fontWeight={party.hasFiledStatement ? 'semiBold' : 'regular'}
           color={party.hasFiledStatement ? 'mint800' : 'dark400'}
         >
           {getStatementDeadlineStatusLabel(party)}
         </Text>
         <Text variant="h4">{party.name}</Text>
       </Box>
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="flexEnd"
-        rowGap={1}
-      >
-        <DateTime
-          name={`statement-deadline-${party.key}`}
-          datepickerLabel="Frestur til"
-          datepickerPlaceholder="Veldu dagsetningu"
-          selectedDate={pickedDate ?? party.deadline}
-          minDate={getStatementDeadlineMinDate(party)}
-          blueBox={false}
-          dateOnly
-          disabled={party.hasFiledStatement}
-          onChange={(date) => setPickedDate(date)}
-        />
-        {!party.hasFiledStatement && (
+      <DateTime
+        name={`statement-deadline-${party.key}`}
+        datepickerLabel="Frestur til"
+        datepickerPlaceholder="Veldu dagsetningu"
+        selectedDate={pickedDate ?? party.deadline}
+        minDate={getStatementDeadlineMinDate(party)}
+        blueBox={false}
+        dateOnly
+        disabled={party.hasFiledStatement}
+        onChange={(date) => setPickedDate(date)}
+      />
+      {!party.hasFiledStatement && (
+        <div className={styles.action}>
           <Button
             variant="text"
+            size="small"
             icon="arrowForward"
             disabled={!canSend}
             onClick={() => setIsConfirming(true)}
           >
             {getStatementDeadlineActionLabel(party)}
           </Button>
-        )}
-      </Box>
+        </div>
+      )}
       <AnimatePresence>
         {isConfirming && confirmation && (
           <Modal
