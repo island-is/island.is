@@ -19,6 +19,7 @@ import {
   AppealCaseRepositoryService,
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
+  AppealSummonsRepositoryService,
   CaseRepositoryService,
   DefendantRepositoryService,
   VerdictRepositoryService,
@@ -41,6 +42,7 @@ jest.mock('../../user/user.service')
 jest.mock('../../repository/services/appealCaseRepository.service')
 jest.mock('../../repository/services/appealDecisionRepository.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
+jest.mock('../../repository/services/appealSummonsRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/verdictRepository.service')
@@ -64,6 +66,7 @@ export const createTestingAppealCaseModule = async () => {
       AppealCaseRepositoryService,
       AppealDecisionRepositoryService,
       AppealEventLogRepositoryService,
+      AppealSummonsRepositoryService,
       CaseRepositoryService,
       DefendantRepositoryService,
       VerdictRepositoryService,
@@ -95,6 +98,11 @@ export const createTestingAppealCaseModule = async () => {
   const appealEventLogRepositoryService =
     appealCaseModule.get<AppealEventLogRepositoryService>(
       AppealEventLogRepositoryService,
+    )
+
+  const appealSummonsRepositoryService =
+    appealCaseModule.get<AppealSummonsRepositoryService>(
+      AppealSummonsRepositoryService,
     )
 
   const caseRepositoryService = appealCaseModule.get<CaseRepositoryService>(
@@ -136,6 +144,7 @@ export const createTestingAppealCaseModule = async () => {
     appealCaseRepositoryService,
     appealDecisionRepositoryService,
     appealEventLogRepositoryService,
+    appealSummonsRepositoryService,
     caseRepositoryService,
     defendantRepositoryService,
     verdictRepositoryService,
