@@ -302,7 +302,6 @@ export const TableRepeaterFormField: FC<Props> = ({
     )
   }, [fields, formatMessage, remove, setBeforeSubmitCallback])
 
-  console.log(values)
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {showFieldName && (
