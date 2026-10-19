@@ -15,7 +15,8 @@ import {
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
-import { randomDate } from '../../../../test'
+import { getOrCreateTransaction } from '../../../../middleware'
+import { randomDate, runInRequestContext } from '../../../../test'
 import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { CreateFileDto } from '../../dto/createFile.dto'
 
@@ -51,10 +52,13 @@ describe('limitedAccessFileController - Create case file', () => {
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
+    // The route is guarded by LimitedAccessCaseExistsForUpdateGuard, so the
+    // request transaction is already open - and holding a lock on this case
+    // row - by the time the handler runs. Guards do not execute in
+    // controller unit tests, so the request context and that transaction are
+    // set up here instead.
     givenWhenThen = async (
       caseId: string,
       createCaseFile: CreateFileDto,
@@ -62,10 +66,25 @@ describe('limitedAccessFileController - Create case file', () => {
     ): Promise<Then> => {
       const then = {} as Then
 
-      await limitedAccessFileController
-        .createCaseFile(caseId, user, theCase, createCaseFile)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      try {
+        then.result = await runInRequestContext(async () => {
+          await getOrCreateTransaction(sequelize)
+
+          return limitedAccessFileController.createCaseFile(
+            caseId,
+            user,
+            theCase,
+            createCaseFile,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
+
+      // Once, by the stand-in for the guard above. A second call would be
+      // the handler opening a transaction of its own, which would block on
+      // the guard's row lock and deadlock the request.
+      expect(mockTransaction).toHaveBeenCalledTimes(1)
 
       return then
     }
