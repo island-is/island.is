@@ -78,7 +78,7 @@ export interface InputProps extends InputComponentProps {
   label?: string
   hasError?: boolean
   errorMessage?: string
-  tooltip?: string
+  tooltip?: React.ReactNode
   backgroundColor?: ResponsiveProp<InputBackgroundColor>
   textarea?: boolean
   maxLength?: number
