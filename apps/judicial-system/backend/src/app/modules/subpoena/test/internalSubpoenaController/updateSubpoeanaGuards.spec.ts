@@ -1,19 +1,16 @@
+import { verifyGuards } from '../../../../test'
+import { CaseExistsForUpdateGuard } from '../../../case'
 import { PoliceSubpoenaExistsGuard } from '../../guards/policeSubpoenaExists.guard'
+import { SubpoenaOnCaseGuard } from '../../guards/subpoenaOnCase.guard'
 import { InternalSubpoenaController } from '../../internalSubpoena.controller'
 
+// The subpoena lookup supplies the case id the locking read needs, so it
+// stays first; the subpoena is then re-taken from the locked case.
+// subpoenaGuardChain.spec.ts runs the chain.
 describe('InternalSubpoenaController - Update subpoena guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let guards: any[]
-
-  beforeEach(() => {
-    guards = Reflect.getMetadata(
-      '__guards__',
-      InternalSubpoenaController.prototype.updateSubpoena,
-    )
-  })
-
-  it('should have the right guard configuration', () => {
-    expect(guards).toHaveLength(1)
-    expect(new guards[0]()).toBeInstanceOf(PoliceSubpoenaExistsGuard)
-  })
+  verifyGuards(InternalSubpoenaController, 'updateSubpoena', [
+    PoliceSubpoenaExistsGuard,
+    CaseExistsForUpdateGuard,
+    SubpoenaOnCaseGuard,
+  ])
 })

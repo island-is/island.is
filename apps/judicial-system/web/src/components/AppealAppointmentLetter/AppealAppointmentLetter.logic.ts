@@ -134,7 +134,13 @@ export const getAppealAppointmentLetter = (
   const { defendant, civilClaimant } = party
 
   if (defendant) {
-    return defendant.isAppealDefenderConfirmed && defendant.appealDefenderName
+    // The waiver is its own field, and the API takes it without touching the
+    // defender's name or the confirmation. A defendant who asked for no
+    // defender can therefore still carry a confirmed, named one - and there is
+    // nobody to appoint.
+    return defendant.isAppealDefenderConfirmed &&
+      !defendant.isAppealDefenderWaived &&
+      defendant.appealDefenderName
       ? letterRow('defendant', defendant.id, defendant.appealDefenderName)
       : undefined
   }

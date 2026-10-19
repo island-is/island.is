@@ -251,6 +251,45 @@ describe('buildAppealSummonsFormSections', () => {
     expect(sections[1].claims).toBe('Saved claims')
   })
 
+  it('keeps a saved defendant whose appeal was withdrawn', () => {
+    const sections = buildAppealSummonsFormSections(
+      [standing[1]],
+      [],
+      {
+        defendants: [
+          {
+            id: 'row_a',
+            defendantId: 'defendant_a',
+            appellantSide: AppealSummonsAppellantSide.DEFENCE,
+            claims: 'Saved defence claims',
+          },
+          {
+            id: 'row_b',
+            defendantId: 'defendant_b',
+            appellantSide: AppealSummonsAppellantSide.PROSECUTION,
+            claims: 'Saved prosecution claims',
+          },
+        ],
+      },
+      [
+        { id: 'defendant_a', name: 'Jón' },
+        { id: 'defendant_b', name: 'Guðrún' },
+      ],
+    )
+
+    expect(sections.map((section) => section.defendantId)).toEqual([
+      'defendant_b',
+      'defendant_a',
+    ])
+    expect(sections[1]).toMatchObject({
+      defendantId: 'defendant_a',
+      name: 'Jón',
+      included: true,
+      claims: 'Saved defence claims',
+      appellantSide: AppealSummonsAppellantSide.DEFENCE,
+    })
+  })
+
   it('prefills only civil claimants linked to each defendant', () => {
     const sections = buildAppealSummonsFormSections(standing, [
       {

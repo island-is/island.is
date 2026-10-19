@@ -16,6 +16,8 @@ import {
 
 import { AppealSummons } from '../models/appealSummons.model'
 import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
+import { Institution } from '../models/institution.model'
+import { User } from '../models/user.model'
 
 export type CreateAppealSummons = {
   caseId: string
@@ -83,6 +85,11 @@ export class AppealSummonsRepositoryService {
       const result = await this.appealSummonsModel.findOne({
         where: { id, caseId },
         include: [
+          {
+            model: User,
+            as: 'confirmedBy',
+            include: [{ model: Institution, as: 'institution' }],
+          },
           {
             model: AppealSummonsDefendant,
             as: 'defendants',

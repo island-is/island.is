@@ -26,6 +26,12 @@ export enum BankTransferPendingStatus {
   PROCESSING = 'processing',
 }
 
+/** Whether the payer is a company or a person. Carried on the bank-transfer log context to filter by. */
+export enum BankTransferPayerType {
+  COMPANY = 'company',
+  PERSON = 'person',
+}
+
 /** Who the provider debits for a bank transfer. */
 export interface BankTransferDebtor {
   // The individual who authenticates the payment (SCA) with their bank.

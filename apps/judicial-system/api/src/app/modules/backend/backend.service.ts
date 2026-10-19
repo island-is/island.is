@@ -15,7 +15,11 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase, AppealCourtSession } from '../appeal-case'
+import {
+  AppealCase,
+  AppealCourtSession,
+  DeleteAppealCourtSessionResponse,
+} from '../appeal-case'
 import { AppealSummons } from '../appeal-summons'
 import {
   Case,
@@ -359,6 +363,28 @@ export class BackendService {
     )
   }
 
+  updateAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    appealCourtSessionId: string,
+    updateAppealCourtSession: unknown,
+  ): Promise<AppealCourtSession> {
+    return this.patch(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession/${appealCourtSessionId}`,
+      updateAppealCourtSession,
+    )
+  }
+
+  deleteAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    appealCourtSessionId: string,
+  ): Promise<DeleteAppealCourtSessionResponse> {
+    return this.delete(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession/${appealCourtSessionId}`,
+    )
+  }
+
   transitionAppealCase(
     caseId: string,
     appealCaseId: string,
@@ -687,6 +713,16 @@ export class BackendService {
     appealSummonsId: string,
   ): Promise<{ deleted: boolean }> {
     return this.delete(`case/${caseId}/appealSummons/${appealSummonsId}`)
+  }
+
+  confirmAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}/confirm`,
+      {},
+    )
   }
 
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {

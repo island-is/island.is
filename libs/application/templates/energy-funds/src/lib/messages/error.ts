@@ -37,6 +37,13 @@ export const error = defineMessages({
     defaultMessage: 'Upphæð ekki gild',
     description: 'Price not valid',
   },
+  priceCapExceeded: {
+    id: 'ef.application:error.priceCapExceeded',
+    defaultMessage:
+      'Ekki er veittur styrkur fyrir kaup á bifreiðum sem kosta meira en {priceCap}.',
+    description:
+      'Purchase price is over the price cap when the application is sent',
+  },
   requiredValidVehicle: {
     id: 'ef.application:error.requiredValidVehicle',
     defaultMessage: 'Ökutæki þarf að vera gilt',

@@ -81,7 +81,15 @@ export const VictimInfo: React.FC<Props> = ({
     <Box marginBottom={3}>
       <BlueBox>
         <Box>
-          <Box marginBottom={2} display="flex" justifyContent="flexEnd">
+          <Box
+            marginBottom={2}
+            display="flex"
+            alignItems="center"
+            justifyContent="spaceBetween"
+          >
+            <Text as="h3" variant="h4">
+              Brotaþoli
+            </Text>
             <Button
               onClick={() => onDelete(victim)}
               colorScheme="destructive"
@@ -158,7 +166,7 @@ export const VictimInfo: React.FC<Props> = ({
             </Box>
           </Box>
         </Box>
-        <Box marginTop={4}>
+        <Box marginTop={2}>
           <LegalRightsProtectorInputFields
             victim={victim}
             workingCase={workingCase}
