@@ -152,6 +152,31 @@ describe('PdfService - getAppealSummonsPdf', () => {
     expect(mockAwsS3Service.putObject).not.toHaveBeenCalled()
   })
 
+  it('returns hash-verified PDF bytes when cache-repair upload to S3 fails', async () => {
+    const { getCaseFileHash } = jest.requireActual(
+      '../../../../formatters/confirmation/getCaseFileHash',
+    ) as typeof import('../../../../formatters/confirmation/getCaseFileHash')
+    const { hash, hashAlgorithm } = getCaseFileHash(pdf)
+    ;(mockAwsS3Service.putObject as jest.Mock).mockRejectedValueOnce(
+      new Error('upload failed'),
+    )
+
+    const result = await pdfService.getAppealSummonsPdf(
+      theCase,
+      user as never,
+      {
+        id: summonsId,
+        confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
+        hash,
+        hashAlgorithm,
+        confirmedBy: user,
+        defendants: [],
+      } as AppealSummons,
+    )
+
+    expect(result).toBe(pdf)
+  })
+
   it('propagates an S3 upload failure for a confirmed summons', async () => {
     ;(mockAwsS3Service.putObject as jest.Mock).mockRejectedValueOnce(
       new Error('upload failed'),

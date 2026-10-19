@@ -681,7 +681,8 @@ export class PdfService {
         )
       }
 
-      await this.uploadPdfToS3(theCase, key, generatedPdf)
+      // Bytes match the frozen hash — serve them even if re-caching in S3 fails.
+      this.tryUploadPdfToS3(theCase, key, generatedPdf)
 
       return generatedPdf
     }
