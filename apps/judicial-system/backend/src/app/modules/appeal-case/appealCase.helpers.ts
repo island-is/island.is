@@ -2,6 +2,7 @@ import {
   AppealDecisionPartyRole,
   AppealEventType,
   AppealOrigin,
+  type AppealStatementParty,
   CaseAppealDecision,
   isDefenceUser,
   isProsecutionUser,
@@ -372,7 +373,7 @@ export const buildAdvocateConfirmedEvent = (params: {
 export const buildStatementDeadlineEvent = (params: {
   theCase: Case
   appealCase: AppealCase
-  party: { defendantId?: string | null; civilClaimantId?: string | null }
+  party: AppealStatementParty
   actor: User
   extended: boolean
 }): Partial<AppealEventLog> => {

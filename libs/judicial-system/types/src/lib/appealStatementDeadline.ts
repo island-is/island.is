@@ -23,8 +23,9 @@ export const findAppealStatementDeadline = <T extends AppealStatementParty>(
   deadlines?.find((deadline) => isSameAppealStatementParty(deadline, party))
 
 // Whether the party has filed its statement in the appeal, read from the
-// event the statement upload writes. The same signal whoever uploaded it,
-// the party itself or the court on its behalf.
+// event the statement upload writes. A row naming no party is the
+// prosecution's; a court user uploading on a party's behalf, when that
+// arrives, has to name the party the same way.
 export const hasFiledAppealStatement = (
   eventLogs:
     | (AppealStatementParty & { eventType?: string | null })[]
