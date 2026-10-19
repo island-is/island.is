@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { AnimatePresence } from 'motion/react'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
@@ -39,16 +39,27 @@ const StatementDeadlineCard: FC<Props> = ({ party, onSend, isSending }) => {
     ? getStatementDeadlineConfirmation(party, pickedDate)
     : undefined
 
+  // A ref rather than the isSending prop: the prop only turns true on the
+  // render after the request starts, and a second click can land before
+  // that, so it alone would let a double click send the deadline twice.
+  const isSendingRef = useRef(false)
+
   const send = async () => {
-    if (!pickedDate) {
+    if (!pickedDate || isSendingRef.current) {
       return
     }
 
-    const sent = await onSend(party, pickedDate)
+    isSendingRef.current = true
 
-    if (sent) {
-      setPickedDate(undefined)
-      setIsConfirming(false)
+    try {
+      const sent = await onSend(party, pickedDate)
+
+      if (sent) {
+        setPickedDate(undefined)
+        setIsConfirming(false)
+      }
+    } finally {
+      isSendingRef.current = false
     }
   }
 

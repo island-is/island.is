@@ -281,6 +281,35 @@ describe('VerdictAppealStatementDeadlines', () => {
     )
   })
 
+  // A second click on the confirm button before the first request answers
+  // must not send the deadline again.
+  it('sends once however often the confirm button is clicked', async () => {
+    let resolveSend: (value: unknown) => void = () => undefined
+    mockSetAppealStatementDeadline.mockReturnValue(
+      new Promise((resolve) => {
+        resolveSend = resolve
+      }),
+    )
+    renderPage()
+
+    await pickTomorrow('Sækjandi Sækjandason')
+    await userEvent.click(
+      card('Sækjandi Sækjandason').getByRole('button', { name: 'Senda frest' }),
+    )
+
+    const confirm = screen.getByTestId('confirmStatementDeadlineButton')
+    await userEvent.click(confirm)
+    await userEvent.click(confirm)
+
+    expect(mockSetAppealStatementDeadline).toHaveBeenCalledTimes(1)
+
+    resolveSend({ id: 'sd2', deadline: '2026-12-01T00:00:00.000Z' })
+
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    )
+  })
+
   it('keeps the dialog open when the request fails', async () => {
     mockSetAppealStatementDeadline.mockResolvedValue(undefined)
     renderPage()
