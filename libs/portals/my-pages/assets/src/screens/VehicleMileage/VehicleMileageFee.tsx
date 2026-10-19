@@ -34,12 +34,109 @@ const columnHelper = createColumnHelper<VehiclesMileageFeePeriod>()
 const formatDifference = (value: number) =>
   `${value > 0 ? '+' : ''}${amountFormat(value)}`
 
+const PeriodLabel = ({
+  year,
+  month,
+}: Pick<VehiclesMileageFeePeriod, 'year' | 'month'>) => {
+  const { formatDateFns } = useLocale()
+  return <>{`${year} - ${formatDateFns(new Date(year, month - 1), 'LLLL')}`}</>
+}
+
+const DifferenceInfo = ({
+  reversalThreshold,
+}: {
+  reversalThreshold?: number
+}) => {
+  const { formatMessage } = useLocale()
+  return (
+    <Tooltip
+      text={
+        <Stack space={1}>
+          <Text variant="small">
+            {formatMessage(messages.mileageFeeTooltipRefunded)}
+          </Text>
+          <Text variant="small">
+            {formatMessage(messages.mileageFeeTooltipAdded)}
+          </Text>
+          <Text variant="small">
+            {formatMessage(messages.mileageFeeTooltipReversed, {
+              threshold: amountFormat(reversalThreshold),
+            })}
+          </Text>
+        </Stack>
+      }
+    >
+      <button
+        type="button"
+        className={styles.tooltipButton}
+        aria-label={formatMessage(messages.mileageFeeDifferenceInfo)}
+      >
+        <Icon
+          icon="informationCircle"
+          type="outline"
+          size="small"
+          color="blue400"
+        />
+      </button>
+    </Tooltip>
+  )
+}
+
+const DifferenceValue = ({ period }: { period: VehiclesMileageFeePeriod }) => {
+  const { formatMessage } = useLocale()
+  const { difference, differenceOutcome } = period
+  if (difference === null || difference === undefined) {
+    return <>-</>
+  }
+  const text = formatDifference(difference)
+  switch (differenceOutcome) {
+    case VehiclesMileageFeeDifferenceOutcome.ADDED_TO_NEXT_INVOICE:
+      return (
+        <>
+          <Text as="span" variant="medium" color="red600">
+            {text}
+          </Text>
+          <VisuallyHidden>
+            {' '}
+            {formatMessage(messages.mileageFeeOutcomeAdded)}
+          </VisuallyHidden>
+        </>
+      )
+    case VehiclesMileageFeeDifferenceOutcome.REFUNDED:
+      return (
+        <>
+          <Text as="span" variant="medium" color="mint800">
+            {text}
+          </Text>
+          <VisuallyHidden>
+            {' '}
+            {formatMessage(messages.mileageFeeOutcomeRefunded)}
+          </VisuallyHidden>
+        </>
+      )
+    case VehiclesMileageFeeDifferenceOutcome.REVERSED:
+      return (
+        <>
+          <Text as="span" variant="medium" color="dark350" strikethrough>
+            {text}
+          </Text>
+          <VisuallyHidden>
+            {' '}
+            {formatMessage(messages.mileageFeeOutcomeReversed)}
+          </VisuallyHidden>
+        </>
+      )
+    default:
+      return <>{text}</>
+  }
+}
+
 interface Props {
   permno: string
 }
 
 export const VehicleMileageFee = ({ permno }: Props) => {
-  const { formatMessage, formatDateFns } = useLocale()
+  const { formatMessage } = useLocale()
   const [year, setYear] = useState<number>()
   const [years, setYears] = useState<number[]>([])
 
@@ -67,11 +164,9 @@ export const VehicleMileageFee = ({ permno }: Props) => {
       columnHelper.display({
         id: 'period',
         header: formatMessage(messages.mileageFeePeriod),
-        cell: ({ row }) =>
-          `${row.original.year} - ${formatDateFns(
-            new Date(row.original.year, row.original.month - 1),
-            'LLLL',
-          )}`,
+        cell: ({ row }) => (
+          <PeriodLabel year={row.original.year} month={row.original.month} />
+        ),
         footer: () => formatMessage(messages.mileageFeeTotal),
         enableSorting: false,
       }),
@@ -93,96 +188,15 @@ export const VehicleMileageFee = ({ permno }: Props) => {
         header: () => (
           <Inline space={1} alignY="center" justifyContent="flexEnd">
             {formatMessage(messages.mileageFeeDifference)}
-            <Tooltip
-              text={
-                <Stack space={1}>
-                  <Text variant="small">
-                    {formatMessage(messages.mileageFeeTooltipRefunded)}
-                  </Text>
-                  <Text variant="small">
-                    {formatMessage(messages.mileageFeeTooltipAdded)}
-                  </Text>
-                  <Text variant="small">
-                    {formatMessage(messages.mileageFeeTooltipReversed, {
-                      threshold: amountFormat(fee?.reversalThreshold),
-                    })}
-                  </Text>
-                </Stack>
-              }
-            >
-              <button
-                type="button"
-                className={styles.tooltipButton}
-                aria-label={formatMessage(messages.mileageFeeDifferenceInfo)}
-              >
-                <Icon
-                  icon="informationCircle"
-                  type="outline"
-                  size="small"
-                  color="blue400"
-                />
-              </button>
-            </Tooltip>
+            <DifferenceInfo reversalThreshold={fee?.reversalThreshold} />
           </Inline>
         ),
-        cell: ({ row }) => {
-          const { difference, differenceOutcome } = row.original
-          if (difference === null || difference === undefined) {
-            return '-'
-          }
-          const text = formatDifference(difference)
-          switch (differenceOutcome) {
-            case VehiclesMileageFeeDifferenceOutcome.ADDED_TO_NEXT_INVOICE:
-              return (
-                <>
-                  <Text as="span" variant="medium" color="red600">
-                    {text}
-                  </Text>
-                  <VisuallyHidden>
-                    {' '}
-                    {formatMessage(messages.mileageFeeOutcomeAdded)}
-                  </VisuallyHidden>
-                </>
-              )
-            case VehiclesMileageFeeDifferenceOutcome.REFUNDED:
-              return (
-                <>
-                  <Text as="span" variant="medium" color="mint800">
-                    {text}
-                  </Text>
-                  <VisuallyHidden>
-                    {' '}
-                    {formatMessage(messages.mileageFeeOutcomeRefunded)}
-                  </VisuallyHidden>
-                </>
-              )
-            case VehiclesMileageFeeDifferenceOutcome.REVERSED:
-              return (
-                <>
-                  <Text
-                    as="span"
-                    variant="medium"
-                    color="dark350"
-                    strikethrough
-                  >
-                    {text}
-                  </Text>
-                  <VisuallyHidden>
-                    {' '}
-                    {formatMessage(messages.mileageFeeOutcomeReversed)}
-                  </VisuallyHidden>
-                </>
-              )
-            default:
-              return text
-          }
-        },
-        footer: () => '',
+        cell: ({ row }) => <DifferenceValue period={row.original} />,
         meta: { align: 'right' },
         enableSorting: false,
       }),
     ],
-    [formatMessage, formatDateFns, fee],
+    [formatMessage, fee],
   )
 
   const announcement =
