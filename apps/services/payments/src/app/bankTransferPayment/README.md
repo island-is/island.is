@@ -22,6 +22,7 @@ The feature is gated behind feature flags (see [Feature flags & access](#feature
 - [Refund](#refund)
 - [Feature flags & access](#feature-flags--access)
 - [Configuration](#configuration)
+- [Logging](#logging)
 
 ## Data model
 
@@ -436,3 +437,29 @@ Env vars (values from [`infra/payments.ts`](../../../infra/payments.ts), schemas
 | `BLIKK_API_BASE_URL`        | `https://stage.blikk.tech` (dev/staging), `https://api.blikk.tech` (prod) | Provider base URL.                                                 |
 | `BLIKK_PAYMENT_TTL_SECONDS` | `300` (dev/staging), `600` (prod)                                         | Attempt TTL; sent to Blikk as `expiresAt` and mirrored on the row. |
 | `BLIKK_FETCH_TIMEOUT`       | `10000`                                                                   | Per-request timeout (ms), enforced by the enhanced fetch.          |
+
+## Logging
+
+Bank-transfer log lines carry the context from
+[`bankTransferLogContext`](./bankTransfer.utils.ts) as top-level fields:
+
+| Field           | Value                                                                                   |
+| --------------- | --------------------------------------------------------------------------------------- |
+| `paymentFlowId` | The flow, also prefixed onto the message.                                               |
+| `correlationId` | The attempt's row id.                                                                   |
+| `rrn`           | Blikk's payment id.                                                                     |
+| `payerType`     | `company` or `person`. Read from the flow's payer, or from the row's `actorNationalId`. |
+
+A field the call site does not know is left out rather than filled with a placeholder. Filter
+company payers in Datadog with `service:services-payments @payerType:company`. For person payers,
+search for `@payerType:person` rather than negating `company`, which also matches lines without
+the field. The national ids themselves are never logged.
+
+Lines that do not carry `payerType`, so a `payerType` filter leaves them out:
+
+- `Blikk get payment failed`, keyed by `rrn` only.
+- `Unknown bank transfer status received`, which sees only Blikk's payload.
+- The bank-transfer [refund](#refund) saga.
+- The payment worker's FJS charge lines, which it shares with card payments.
+
+Search those by `paymentFlowId` or `rrn` instead.
