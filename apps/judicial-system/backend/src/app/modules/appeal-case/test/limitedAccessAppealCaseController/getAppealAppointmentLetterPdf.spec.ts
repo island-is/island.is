@@ -89,8 +89,11 @@ describe('LimitedAccessAppealCaseController - get appeal appointment letter pdf'
   let res: Response
 
   beforeEach(async () => {
-    const { limitedAccessAppealCaseController, lawyerRegistryService } =
-      await createTestingAppealCaseModule()
+    const {
+      limitedAccessAppealCaseController,
+      lawyerRegistryService,
+      appealSummonsRepositoryService,
+    } = await createTestingAppealCaseModule()
 
     controller = limitedAccessAppealCaseController
     mockGetPdf = createAppealAppointmentLetter as jest.Mock
@@ -98,6 +101,9 @@ describe('LimitedAccessAppealCaseController - get appeal appointment letter pdf'
     ;(lawyerRegistryService.getByNationalId as jest.Mock).mockResolvedValue({
       practice: 'Vivos lögmenn',
     })
+    ;(
+      appealSummonsRepositoryService.findConfirmedByAppealCaseId as jest.Mock
+    ).mockResolvedValue([])
     res = { end: jest.fn() } as unknown as Response
   })
 
