@@ -27,7 +27,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import { indictmentCases, type User } from '@island.is/judicial-system/types'
 
-import { publicProsecutorStaffRule } from '../../guards'
+import { prosecutorRule, publicProsecutorStaffRule } from '../../guards'
 import {
   CaseExistsGuard,
   CaseReadGuard,
@@ -37,6 +37,7 @@ import {
 } from '../case'
 import { AppealSummons, Case } from '../repository'
 import { CreateAppealSummonsDto } from './dto/createAppealSummons.dto'
+import { PreviewAppealSummonsDto } from './dto/previewAppealSummons.dto'
 import { CurrentAppealSummons } from './guards/appealSummons.decorator'
 import { AppealSummonsExistsGuard } from './guards/appealSummonsExists.guard'
 import { DeleteAppealSummonsResponse } from './models/deleteAppealSummons.response'
@@ -133,7 +134,30 @@ export class AppealSummonsController {
     return { deleted }
   }
 
-  @RolesRules(publicProsecutorStaffRule)
+  @RolesRules(prosecutorRule)
+  @UseGuards(AppealSummonsExistsGuard)
+  @Patch(':appealSummonsId/confirm')
+  @ApiOkResponse({
+    type: AppealSummons,
+    description: 'Confirms an appeal summons',
+  })
+  confirm(
+    @Param('caseId') caseId: string,
+    @Param('appealSummonsId') appealSummonsId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentAppealSummons() summons: AppealSummons,
+    @CurrentHttpUser() user: User,
+  ): Promise<AppealSummons> {
+    this.logger.debug(
+      `Confirming appeal summons ${appealSummonsId} of case ${caseId}`,
+    )
+
+    return this.sequelize.transaction((transaction) =>
+      this.appealSummonsService.confirm(theCase, summons, user, transaction),
+    )
+  }
+
+  @RolesRules(publicProsecutorStaffRule, prosecutorRule)
   @UseGuards(AppealSummonsExistsGuard)
   @Get(':appealSummonsId/pdf')
   @Header('Content-Type', 'application/pdf')
@@ -172,13 +196,16 @@ export class AppealSummonsController {
   async preview(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
-    @Body() dto: CreateAppealSummonsDto,
+    @Body() dto: PreviewAppealSummonsDto,
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ): Promise<void> {
     this.logger.debug(`Previewing an appeal summons pdf for case ${caseId}`)
 
-    const defendants = this.appealSummonsService.resolveDefendants(theCase, dto)
+    const defendants = await this.appealSummonsService.resolvePreviewDefendants(
+      theCase,
+      dto,
+    )
     const pdf = await this.pdfService.getAppealSummonsPdf(
       theCase,
       user,
