@@ -49,7 +49,7 @@ Declare every event a role legitimately sends, wherever it comes from:
 Some more things to keep in mind:
 
 - Only declare events the state's `on` accepts, and only for roles that should send them — a declared event is a permission.
-- The checks in `mapUserToRole` run in order and the first match wins, so check specific identities (the applicant, an institution's national id) before a generic `assignees.includes(id)` when the same person can be both.
+- The checks in `mapUserToRole` run in order and the first match wins, so be mindful of this in cases where the same user can have multiple roles, such as self-employed applicants in applications that require employer approval.
 - Keep `write` as narrow as the role needs, e.g. `write: { answers: ['approveOrReject', 'approveOrRejectReason'] }` for a reviewer rather than `write: 'all'`.
 
 `example-state-transfers` shows these in practice.
