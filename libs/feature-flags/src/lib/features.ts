@@ -143,6 +143,8 @@ export enum Features {
   // New/updated delegation notification
   isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',
 
+  isDelegationConfirmationEnabled = 'isDelegationConfirmationEnabled',
+
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
 
   shouldSendEmailNotificationsToCompanyUserProfiles = 'shouldSendEmailNotificationsToCompanyUserProfiles',

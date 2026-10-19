@@ -1,0 +1,9 @@
+mutation CreateAppealCourtSession($input: CreateAppealCourtSessionInput!) {
+  createAppealCourtSession(input: $input) {
+    id
+    created
+    sessionType
+    sessionDate
+    courtRoom
+  }
+}
