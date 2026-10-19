@@ -14,11 +14,11 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { getApplicationCardRentalSummary } from './applicationCardSummary'
 import { getHousingBenefitsPruneDate } from './pruneUtils'
 
-/** Days after entering a state (draft, assignee approval, applicant submit) until a reminder is sent. */
+/** Days after entering a state where the applicant needs to act until a reminder is sent. */
 export const REMINDER_DAYS_AFTER_STATE_ENTRY = 5
 
-/** Days before pruning that the applicant gets a last reminder while in draft. */
-export const DRAFT_REMINDER_DAYS_BEFORE_PRUNE = 5
+/** Days before pruning that the applicant gets a last reminder. */
+export const REMINDER_DAYS_BEFORE_PRUNE = 5
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
@@ -150,41 +150,37 @@ const applicantReminder = (
 })
 
 /**
- * Reminds the applicant about the application, 5 days after entering the
- * state (used in assignee approval and applicant submit). Assignee approval is
- * re-entered whenever a household member signs or rejects, which restarts the
- * timer.
+ * Reminds the applicant 5 days after entering the state and again 5 days
+ * before pruning. Pending reminders are cancelled on every state change and
+ * rescheduled on entry, so this is used in every state where the application
+ * can stall (draft, assignee approval, applicant submit, add household
+ * member). Assignee approval is re-entered whenever a household member signs
+ * or rejects, which restarts the state entry timer.
+ *
+ * The pre-prune reminder is sent whenever it is still in the future. The
+ * state entry reminder is skipped if it would be sent on or after the
+ * pre-prune reminder, or after pruning.
  */
 export const getApplicantReminderScheduledNotifications = (
-  application: Application,
-): ScheduledNotificationConfig[] => {
-  const sendDate = getStateEntryReminderSendDate(application)
-  return sendDate ? [applicantReminder(application, sendDate)] : []
-}
-
-/**
- * Reminds the applicant to finish the draft 5 days after starting (40 days
- * before pruning) and again 5 days before pruning. The pre-prune reminder is
- * skipped if it would be sent in the past or not after the first reminder.
- */
-export const getDraftReminderScheduledNotifications = (
   application: Application,
 ): ScheduledNotificationConfig[] => {
   const stateEntrySendDate = getStateEntryReminderSendDate(application)
   const beforePruneSendDate = addDays(
     getHousingBenefitsPruneDate(application),
-    -DRAFT_REMINDER_DAYS_BEFORE_PRUNE,
+    -REMINDER_DAYS_BEFORE_PRUNE,
   )
+  const isBeforePruneReminderUpcoming = beforePruneSendDate > new Date()
 
-  const sendDates = [stateEntrySendDate]
+  const sendDates: Date[] = []
   if (
-    beforePruneSendDate > new Date() &&
-    (!stateEntrySendDate || beforePruneSendDate > stateEntrySendDate)
+    stateEntrySendDate &&
+    (!isBeforePruneReminderUpcoming || stateEntrySendDate < beforePruneSendDate)
   ) {
+    sendDates.push(stateEntrySendDate)
+  }
+  if (isBeforePruneReminderUpcoming) {
     sendDates.push(beforePruneSendDate)
   }
 
-  return sendDates
-    .filter((date): date is Date => !!date)
-    .map((date) => applicantReminder(application, date))
+  return sendDates.map((date) => applicantReminder(application, date))
 }

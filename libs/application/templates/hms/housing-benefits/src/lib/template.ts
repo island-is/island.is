@@ -18,10 +18,7 @@ import {
   DRAFT_ENTERED_AT_KEY,
   housingBenefitsPruneLifecycle,
 } from '../utils/lifecycle'
-import {
-  getApplicantReminderScheduledNotifications,
-  getDraftReminderScheduledNotifications,
-} from '../utils/notifications'
+import { getApplicantReminderScheduledNotifications } from '../utils/notifications'
 import * as m from './messages'
 import {
   AssigneeUserProfileApi,
@@ -162,7 +159,7 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: housingBenefitsPruneLifecycle,
-          scheduledNotifications: getDraftReminderScheduledNotifications,
+          scheduledNotifications: getApplicantReminderScheduledNotifications,
           actionCard: housingBenefitsActionCards.draft,
           onExit: NotifyAssigneesApi,
           roles: [
@@ -354,6 +351,7 @@ const template: ApplicationTemplate<
           progress: 0.8,
           status: FormModes.IN_PROGRESS,
           lifecycle: housingBenefitsPruneLifecycle,
+          scheduledNotifications: getApplicantReminderScheduledNotifications,
           onExit: NotifyAssigneesApi,
           roles: [
             {

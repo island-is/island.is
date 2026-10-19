@@ -1,8 +1,5 @@
 import { Application } from '@island.is/application/types'
-import {
-  getApplicantReminderScheduledNotifications,
-  getDraftReminderScheduledNotifications,
-} from './notifications'
+import { getApplicantReminderScheduledNotifications } from './notifications'
 
 jest.mock('@island.is/shared/utils', () => ({
   ...jest.requireActual('@island.is/shared/utils'),
@@ -41,68 +38,8 @@ describe('housing benefits scheduled notifications', () => {
   })
 
   describe('getApplicantReminderScheduledNotifications', () => {
-    it('should send a single reminder 5 days after starting the draft, 40 days before pruning', () => {
+    it('should remind 5 days after entering the state and 5 days before pruning', () => {
       const configs = getApplicantReminderScheduledNotifications(
-        createHousingBenefitsApplication(),
-      )
-
-      expect(configs).toHaveLength(1)
-      expect(configs[0]).toMatchObject({
-        template: 'HNIPP.AS.HMS.HB.PRUNE.REMINDER',
-        date: FIVE_DAYS_LATER,
-        includeApplicationLink: true,
-      })
-      expect(getArg(configs[0], 'daysRemaining')).toEqual({
-        key: 'daysRemaining',
-        value: '40',
-      })
-      expect(getArg(configs[0], 'expiryDate')).toEqual({
-        key: 'expiryDate',
-        value: '2026-11-30T10:00:00.000Z',
-      })
-    })
-
-    it('should count days remaining from the original draft start when entered later', () => {
-      const configs = getApplicantReminderScheduledNotifications(
-        createHousingBenefitsApplication({
-          answers: { draftEnteredAt: '2026-10-01T10:00:00.000Z' },
-        }),
-      )
-
-      expect(configs[0]).toMatchObject({ date: FIVE_DAYS_LATER })
-      expect(getArg(configs[0], 'daysRemaining')).toEqual({
-        key: 'daysRemaining',
-        value: '25',
-      })
-    })
-
-    it('should not schedule a reminder that would be sent after pruning', () => {
-      const configs = getApplicantReminderScheduledNotifications(
-        createHousingBenefitsApplication({
-          answers: { draftEnteredAt: '2026-09-04T10:00:00.000Z' },
-        }),
-      )
-
-      expect(configs).toEqual([])
-    })
-
-    it('should use the test delay override when set', () => {
-      process.env.HOUSING_BENEFITS_SCHEDULED_NOTIFICATION_TEST_DELAY_MS =
-        '60000'
-
-      const configs = getApplicantReminderScheduledNotifications(
-        createHousingBenefitsApplication(),
-      )
-
-      expect(configs[0]).toMatchObject({
-        date: new Date('2026-10-16T10:01:00.000Z'),
-      })
-    })
-  })
-
-  describe('getDraftReminderScheduledNotifications', () => {
-    it('should remind 5 days after starting the draft and 5 days before pruning', () => {
-      const configs = getDraftReminderScheduledNotifications(
         createHousingBenefitsApplication(),
       )
 
@@ -116,6 +53,10 @@ describe('housing benefits scheduled notifications', () => {
         key: 'daysRemaining',
         value: '40',
       })
+      expect(getArg(configs[0], 'expiryDate')).toEqual({
+        key: 'expiryDate',
+        value: '2026-11-30T10:00:00.000Z',
+      })
       expect(configs[1]).toMatchObject({
         template: 'HNIPP.AS.HMS.HB.PRUNE.REMINDER',
         date: new Date('2026-11-25T10:00:00.000Z'),
@@ -127,8 +68,42 @@ describe('housing benefits scheduled notifications', () => {
       })
     })
 
-    it('should not schedule the pre-prune reminder in the past', () => {
-      const configs = getDraftReminderScheduledNotifications(
+    it('should anchor the pre-prune reminder to the original draft start when the state is entered later', () => {
+      const configs = getApplicantReminderScheduledNotifications(
+        createHousingBenefitsApplication({
+          answers: { draftEnteredAt: '2026-10-01T10:00:00.000Z' },
+        }),
+      )
+
+      expect(configs.map((config) => 'date' in config && config.date)).toEqual([
+        FIVE_DAYS_LATER,
+        new Date('2026-11-10T10:00:00.000Z'),
+      ])
+      expect(getArg(configs[0], 'daysRemaining')).toEqual({
+        key: 'daysRemaining',
+        value: '25',
+      })
+    })
+
+    it('should only send the pre-prune reminder when the state entry reminder would not come before it', () => {
+      const configs = getApplicantReminderScheduledNotifications(
+        createHousingBenefitsApplication({
+          answers: { draftEnteredAt: '2026-09-08T10:00:00.000Z' },
+        }),
+      )
+
+      expect(configs).toHaveLength(1)
+      expect(configs[0]).toMatchObject({
+        date: new Date('2026-10-18T10:00:00.000Z'),
+      })
+      expect(getArg(configs[0], 'daysRemaining')).toEqual({
+        key: 'daysRemaining',
+        value: '5',
+      })
+    })
+
+    it('should not schedule anything when both reminders would be in the past or after pruning', () => {
+      const configs = getApplicantReminderScheduledNotifications(
         createHousingBenefitsApplication({
           answers: { draftEnteredAt: '2026-09-05T10:00:00.000Z' },
         }),
@@ -137,15 +112,17 @@ describe('housing benefits scheduled notifications', () => {
       expect(configs).toEqual([])
     })
 
-    it('should only send one reminder when the pre-prune date is not after the state entry reminder', () => {
-      const configs = getDraftReminderScheduledNotifications(
-        createHousingBenefitsApplication({
-          answers: { draftEnteredAt: '2026-09-08T10:00:00.000Z' },
-        }),
+    it('should use the test delay override for the state entry reminder when set', () => {
+      process.env.HOUSING_BENEFITS_SCHEDULED_NOTIFICATION_TEST_DELAY_MS =
+        '60000'
+
+      const configs = getApplicantReminderScheduledNotifications(
+        createHousingBenefitsApplication(),
       )
 
-      expect(configs).toHaveLength(1)
-      expect(configs[0]).toMatchObject({ date: FIVE_DAYS_LATER })
+      expect(configs[0]).toMatchObject({
+        date: new Date('2026-10-16T10:01:00.000Z'),
+      })
     })
   })
 })
