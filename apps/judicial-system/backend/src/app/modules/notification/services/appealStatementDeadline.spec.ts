@@ -75,18 +75,12 @@ describe('getAppealStatementDeadlineRecipients', () => {
         recipient.role,
         recipient.email,
         recipient.parties,
-        recipient.side,
       ]),
     ).toEqual([
-      ['saksóknari', 'saksoknari@x.is', [{}], 'PROSECUTION'],
-      ['verjandi', 'lara@x.is', [{ defendantId: 'd1' }], 'DEFENCE'],
-      [
-        'réttargæslumaður',
-        'retta@x.is',
-        [{ civilClaimantId: 'c1' }],
-        'DEFENCE',
-      ],
-      ['lögmaður', 'logi@x.is', [{ civilClaimantId: 'c2' }], 'DEFENCE'],
+      ['saksóknari', 'saksoknari@x.is', [{}]],
+      ['verjandi', 'lara@x.is', [{ defendantId: 'd1' }]],
+      ['réttargæslumaður', 'retta@x.is', [{ civilClaimantId: 'c1' }]],
+      ['lögmaður', 'logi@x.is', [{ civilClaimantId: 'c2' }]],
     ])
   })
 

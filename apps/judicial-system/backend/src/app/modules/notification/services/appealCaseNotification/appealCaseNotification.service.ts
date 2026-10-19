@@ -13,7 +13,6 @@ import { SmsService } from '@island.is/nova-sms'
 import {
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   DEFENDER_INDICTMENT_CASE_ROUTE,
-  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
   ROUTE_HANDLER_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
@@ -2045,23 +2044,17 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     )
     const who = describeAppealStatementDeadlineParty(theCase, party, recipients)
 
+    // One link for every reader: the route handler sends each to the case
+    // on their own pages, as the other appeal mails do.
+    const body = {
+      extended,
+      appealCaseNumber: appealCase.appealCaseNumber,
+      deadline,
+      link: `${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}`,
+    }
+
     const sent = await Promise.all(
       recipients.map((recipient) => {
-        const link =
-          recipient.side === 'PROSECUTION'
-            ? `${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${theCase.id}`
-            : formatDefenderRoute(
-                this.config.clientUrl,
-                theCase.type,
-                theCase.id,
-              )
-        const body = {
-          extended,
-          appealCaseNumber: appealCase.appealCaseNumber,
-          deadline,
-          link,
-        }
-
         return this.sendEmail({
           subject,
           html: representsAppealStatementParty(recipient, party)

@@ -37,9 +37,6 @@ export interface AppealStatementDeadlineRecipient {
   role: AppealStatementDeadlineRole
   name?: string | null
   email: string
-  // Which overview the link leads to: the prosecution reads the case on its
-  // own pages, an advocate on the defence pages.
-  side: 'PROSECUTION' | 'DEFENCE'
 }
 
 /**
@@ -77,7 +74,6 @@ export const getAppealStatementDeadlineRecipients = (
         role: 'saksóknari',
         name: theCase.appealProsecutor.name,
         email: theCase.appealProsecutor.email,
-        side: 'PROSECUTION',
       },
     )
   }
@@ -94,7 +90,6 @@ export const getAppealStatementDeadlineRecipients = (
           role: 'verjandi',
           name: defendant.appealDefenderName,
           email: defendant.appealDefenderEmail,
-          side: 'DEFENCE',
         },
       )
     }
@@ -117,7 +112,6 @@ export const getAppealStatementDeadlineRecipients = (
             : 'réttargæslumaður',
           name: civilClaimant.appealSpokespersonName,
           email: civilClaimant.appealSpokespersonEmail,
-          side: 'DEFENCE',
         },
       )
     }

@@ -2,10 +2,7 @@ import { v4 as uuid } from 'uuid'
 
 import { EmailService } from '@island.is/email-service'
 
-import {
-  DEFENDER_INDICTMENT_CASE_ROUTE,
-  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
 import {
   AppealCaseNotificationType,
   CaseType,
@@ -141,7 +138,7 @@ describe('InternalNotificationController - Send appeal statement deadline notifi
         html:
           'Landsréttur hefur veitt þér frest til að skila greinargerð vegna máls nr. 77/2026.<br/>' +
           'Frestur til 20. október 2026.<br/><br/>' +
-          `<a href="${clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${caseId}">Sjá nánar á yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+          `<a href="${clientUrl}${ROUTE_HANDLER_ROUTE}/${caseId}">Sjá nánar á yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
         to: [{ name: defender.name, address: defender.email }],
       }),
     )
@@ -150,7 +147,7 @@ describe('InternalNotificationController - Send appeal statement deadline notifi
         subject: 'Landsréttur - greinargerðarfrestur í máli 77/2026',
         html:
           `${defender.name} verjandi hefur fengið frest til að skila greinargerð vegna máls nr. 77/2026. Frestur til 20. október 2026.<br/><br/>` +
-          `<a href="${clientUrl}${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${caseId}">Sjá nánar á yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+          `<a href="${clientUrl}${ROUTE_HANDLER_ROUTE}/${caseId}">Sjá nánar á yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
         to: [{ name: prosecutor.name, address: prosecutor.email }],
       }),
     )
