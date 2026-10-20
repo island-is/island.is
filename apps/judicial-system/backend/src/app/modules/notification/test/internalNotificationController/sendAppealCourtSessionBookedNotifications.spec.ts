@@ -84,6 +84,13 @@ describe('InternalNotificationController - Send appeal court session booked noti
         isSpokespersonConfirmed: true,
         spokespersonName: spokesperson.name,
         spokespersonEmail: spokesperson.email,
+        spokespersonNationalId: spokesperson.nationalId,
+      },
+      {
+        hasSpokesperson: true,
+        isSpokespersonConfirmed: true,
+        spokespersonName: 'Talsmaður án kennitölu',
+        spokespersonEmail: 'talsmadur@dummy.dd',
       },
     ],
   } as Case
@@ -124,7 +131,7 @@ describe('InternalNotificationController - Send appeal court session booked noti
   const expectedDetails = `Landsréttur boðar til þinghalds í máli ${appealCaseNumber}.<br/><br/>Aðalmeðferð mun fara fram ${formatDate(
     sessionDate,
     'PPP',
-  )}, kl. 13:00.<br/><br/>Dómsalur: 1.<br/><br/>`
+  )}, kl. 13:00.<br/><br/>Dómsalur: 1.`
 
   describe('session booked on a numbered appeal', () => {
     let then: Then
@@ -145,13 +152,13 @@ describe('InternalNotificationController - Send appeal court session booked noti
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Nýtt þinghald í máli ${appealCaseNumber}`,
-          html: `${expectedDetails}Hægt er að nálgast gögn málsins á <a href="${clientUrl}${ROUTE_HANDLER_ROUTE}/${caseId}">${clientUrl}${ROUTE_HANDLER_ROUTE}/${caseId}</a>.`,
+          html: `${expectedDetails}<br/><br/>Hægt er að nálgast gögn málsins á <a href="${clientUrl}${ROUTE_HANDLER_ROUTE}/${caseId}">${clientUrl}${ROUTE_HANDLER_ROUTE}/${caseId}</a>.`,
         }),
       )
     })
 
     it('should tell the confirmed appeal defender and the spokesperson, pointing at the defender view', () => {
-      const defenderHtml = `${expectedDetails}Hægt er að nálgast gögn málsins á <a href="${clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${caseId}">${clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${caseId}</a>.`
+      const defenderHtml = `${expectedDetails}<br/><br/>Hægt er að nálgast gögn málsins á <a href="${clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${caseId}">${clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${caseId}</a>.`
 
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -167,8 +174,21 @@ describe('InternalNotificationController - Send appeal court session booked noti
       )
     })
 
+    // A link to the defender view is no use to someone who cannot sign in,
+    // and neither is the footer's link to the system.
+    it('should tell a spokesperson without a national id, without a link', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            { name: 'Talsmaður án kennitölu', address: 'talsmadur@dummy.dd' },
+          ],
+          html: expectedDetails,
+        }),
+      )
+    })
+
     it('should leave out the district court defender and unconfirmed appeal defenders', () => {
-      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(3)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(4)
       expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
         expect.objectContaining({
           to: [
@@ -212,7 +232,9 @@ describe('InternalNotificationController - Send appeal court session booked noti
     })
   })
 
-  describe('session not found on the appeal', () => {
+  // The session can be cancelled between the booking's commit and the
+  // message running. A retry would not bring it back.
+  describe('session no longer on the appeal', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -222,9 +244,9 @@ describe('InternalNotificationController - Send appeal court session booked noti
       )
     })
 
-    it('should send nothing and report it', () => {
+    it('should send nothing and not ask for a retry', () => {
       expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
-      expect(then.result).toEqual({ delivered: false })
+      expect(then.result).toEqual({ delivered: true })
     })
   })
 })

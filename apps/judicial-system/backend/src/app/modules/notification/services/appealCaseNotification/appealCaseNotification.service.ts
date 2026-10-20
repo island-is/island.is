@@ -2056,7 +2056,9 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         `Appeal court session ${appealCourtSessionId} not found in appeal case ${appealCase.id} of case ${theCase.id}`,
       )
 
-      return { delivered: false }
+      // The session was cancelled before the message ran, so there is
+      // nothing to announce, and retrying would not change that.
+      return { delivered: true }
     }
 
     const caseNumber = appealCase.appealCaseNumber ?? theCase.courtCaseNumber
@@ -2066,9 +2068,13 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     } mun fara fram ${formatDate(session.sessionDate, 'PPP')}, kl. ${formatDate(
       session.sessionDate,
       'HH:mm',
-    )}.<br/><br/>Dómsalur: ${session.courtRoom}.<br/><br/>`
-    const html = (url: string) =>
-      `${details}Hægt er að nálgast gögn málsins á <a href="${url}">${url}</a>.`
+    )}.<br/><br/>Dómsalur: ${session.courtRoom}.`
+    // A recipient without a national id cannot sign in, so they are told of
+    // the session without a link to it.
+    const html = (url?: string) =>
+      url
+        ? `${details}<br/><br/>Hægt er að nálgast gögn málsins á <a href="${url}">${url}</a>.`
+        : details
 
     const promises = [
       this.sendEmail({
@@ -2086,10 +2092,13 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         this.sendEmail({
           subject,
           html: html(
-            `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`,
+            recipient.nationalId
+              ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
+              : undefined,
           ),
           recipientName: recipient.name,
           recipientEmail: recipient.email,
+          skipTail: !recipient.nationalId,
         }),
       )
     }
