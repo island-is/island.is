@@ -50,14 +50,20 @@ module.exports = {
       await queryInterface.sequelize.query(
         `
           INSERT INTO delegation_scope (id, delegation_id, scope_name, valid_from, valid_to, created, modified)
-            SELECT uuid_generate_v4(), t.delegation_id, :newScope, t.valid_from, t.valid_to, NOW(), NOW()
-            FROM delegation_scope t
-            WHERE t.scope_name = :oldScope
-            AND NOT EXISTS (
-              SELECT 1 FROM delegation_scope t2
-              WHERE t2.delegation_id = t.delegation_id
-              AND t2.scope_name = :newScope
-            )
+            SELECT uuid_generate_v4(), s.delegation_id, :newScope, s.valid_from, s.valid_to, NOW(), NOW()
+            FROM (
+              -- delegation_scope has no unique (delegation_id, scope_name) constraint, so copy
+              -- at most one row per delegation, the one that is valid the longest.
+              SELECT DISTINCT ON (t.delegation_id) t.delegation_id, t.valid_from, t.valid_to
+              FROM delegation_scope t
+              WHERE t.scope_name = :oldScope
+              AND NOT EXISTS (
+                SELECT 1 FROM delegation_scope t2
+                WHERE t2.delegation_id = t.delegation_id
+                AND t2.scope_name = :newScope
+              )
+              ORDER BY t.delegation_id, t.valid_to DESC NULLS FIRST
+            ) s
         `,
         {
           transaction,
