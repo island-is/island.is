@@ -379,6 +379,11 @@ function PaymentPage({
   const availablePaymentMethods = useMemo(() => {
     const methods = [...(paymentFlow?.availablePaymentMethods ?? [])]
 
+    // FJS decides the methods of a debt flow, the service would refuse any other
+    if (paymentFlow?.type === PaymentsFlowType.debt) {
+      return methods as PaymentMethod[]
+    }
+
     if (isInvoicePaymentEnabledForUser) {
       methods.push('invoice')
     }
@@ -395,6 +400,7 @@ function PaymentPage({
     return Array.from(new Set(methods)) as PaymentMethod[]
   }, [
     paymentFlow?.availablePaymentMethods,
+    paymentFlow?.type,
     isInvoicePaymentEnabledForUser,
     isBankTransferPaymentEnabledForUser,
     isCompanyPayer,
