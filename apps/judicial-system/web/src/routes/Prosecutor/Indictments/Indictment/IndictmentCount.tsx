@@ -641,7 +641,7 @@ export const IndictmentCount: FC<Props> = ({
         />
         <Box marginBottom={2}>
           <RichTextEditor
-            data-testid={`incidentDescription-${indictmentCount.id}`}
+            data-testid="incidentDescription"
             label={formatMessage(strings.incidentDescriptionLabel)}
             placeholder={formatMessage(strings.incidentDescriptionPlaceholder)}
             defaultValue={incidentDescriptionHtml}
