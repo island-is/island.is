@@ -5,6 +5,7 @@ import {
   BankTransferPendingStatus,
 } from './bankTransfer.types'
 import {
+  buildBankTransferPayInfo,
   deriveBankTransferFailureReason,
   getBankTransferDebtor,
   getBankTransferPayerType,
@@ -181,6 +182,23 @@ describe('rowLogContext', () => {
       correlationId: 'corr-1',
       rrn: 'prov-1',
       payerType,
+    })
+  })
+})
+
+describe('buildBankTransferPayInfo', () => {
+  it('carries the provider payment id in RRN and the attempt id as correlation id', () => {
+    expect(
+      buildBankTransferPayInfo({
+        providerPaymentId: 'provider-1',
+        totalPrice: 1500,
+        correlationId: 'btp-1',
+      }),
+    ).toEqual({
+      kind: 'transfer',
+      RRN: 'provider-1',
+      payableAmount: 1500,
+      correlationId: 'btp-1',
     })
   })
 })

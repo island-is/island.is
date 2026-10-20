@@ -12,11 +12,13 @@ import {
   BankTransferStatus,
   BankTransferPendingStatus,
   BankTransferPayerType,
+  BankTransferDebt,
 } from './bankTransfer.types'
-import { BankTransferPayment } from './models/bankTransferPayment.model'
+import { BankTransferPayment } from './models'
 import { CatalogItemWithQuantity } from '../../types/charges'
-import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import { PaymentFlowAttributes } from '../paymentFlow/models'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
+import type { FjsPayInfo } from '../../utils/fjsDebtPayment'
 
 /** Blikk's payment status lifecycle. */
 export const BLIKK_STATUSES = [
@@ -131,6 +133,14 @@ export const toBlikkItem = (item: CatalogItemWithQuantity): BlikkItem => ({
   sku: item.chargeItemCode,
 })
 
+/** Debts have no catalog item, the `payId` stands in for the sku and the label for the name. */
+export const toBlikkDebtItem = (debt: BankTransferDebt): BlikkItem => ({
+  name: debt.label ?? debt.payId,
+  quantity: 1,
+  unitPrice: String(debt.amount),
+  sku: debt.payId,
+})
+
 /** True when the row's TTL has elapsed. Anchored on `expires_at`, which we sent to Blikk on create. */
 export const isRowExpired = (
   row: Pick<BankTransferPayment, 'expiresAt'>,
@@ -215,6 +225,22 @@ export const deriveBankTransferFailureReason = (
     ? BankTransferFailureReason.EXPIRED
     : toBankTransferFailureReason(status)
 
+/** The neutral payInfo of a settled bank transfer; carries the provider id in `RRN`. */
+export const buildBankTransferPayInfo = ({
+  providerPaymentId,
+  totalPrice,
+  correlationId,
+}: {
+  providerPaymentId: string
+  totalPrice: number
+  correlationId: string
+}): FjsPayInfo => ({
+  kind: 'transfer',
+  RRN: providerPaymentId,
+  payableAmount: totalPrice,
+  correlationId,
+})
+
 /** Builds a PAID FJS charge payload for a settled bank transfer; carries the provider id in `RRN`. */
 export const generateBankTransferChargeFJSPayload = ({
   paymentFlow,
@@ -232,16 +258,23 @@ export const generateBankTransferChargeFJSPayload = ({
   providerPaymentId: string
   correlationId: string
   effectiveDate?: Date
-}): Charge =>
-  generateChargeFJSPayload({
+}): Charge => {
+  const {
+    RRN,
+    payableAmount,
+    correlationId: payInfoCorrelationId,
+  } = buildBankTransferPayInfo({ providerPaymentId, totalPrice, correlationId })
+
+  return generateChargeFJSPayload({
     paymentFlow,
     charges,
     systemId,
     effectiveDate,
     payInfo: {
-      RRN: providerPaymentId,
-      payableAmount: totalPrice,
+      RRN,
+      payableAmount,
       paymentMeans: PayInfoPaymentMeansEnum.Milli,
-      correlationId,
+      correlationId: payInfoCorrelationId,
     },
   })
+}
