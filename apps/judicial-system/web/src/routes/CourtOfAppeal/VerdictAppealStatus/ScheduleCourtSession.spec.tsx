@@ -165,4 +165,19 @@ describe('ScheduleCourtSession', () => {
       'Verið að breyta',
     )
   })
+
+  it('offers no change of the session already being changed', async () => {
+    renderSection({ bookedSessions, editingSessionId: 'session-2' })
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /^Valmynd fyrir Aðalmeðferð/ }),
+    )
+
+    expect(
+      await screen.findByRole('menuitem', { name: 'Eyða þinghaldi' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('menuitem', { name: 'Breyta þinghaldi' }),
+    ).not.toBeInTheDocument()
+  })
 })

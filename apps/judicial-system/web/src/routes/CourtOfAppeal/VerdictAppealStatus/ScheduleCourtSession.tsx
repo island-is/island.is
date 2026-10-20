@@ -10,6 +10,7 @@ import {
   PopIn,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import ContextMenu from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import type {
@@ -126,6 +127,21 @@ const ScheduleCourtSession: FC<Props> = ({
             {bookedSessions.map((bookedSession) => {
               const title = sessionTitle(bookedSession)
               const isBeingEdited = bookedSession.id === editingSessionId
+              const editItem: ContextMenuItem = {
+                title: 'Breyta þinghaldi',
+                icon: 'pencil',
+                onClick: () => onEdit(bookedSession),
+              }
+              const deleteItem: ContextMenuItem = {
+                title: 'Eyða þinghaldi',
+                icon: 'trash',
+                onClick: () => onDelete(bookedSession),
+              }
+              // The session already in the form has nothing to offer here
+              // but its cancellation.
+              const menuItems = isBeingEdited
+                ? [deleteItem]
+                : [editItem, deleteItem]
 
               return (
                 <Box
@@ -147,7 +163,9 @@ const ScheduleCourtSession: FC<Props> = ({
                     >
                       <Text variant="h5">{title}</Text>
                       <PopIn show={isBeingEdited}>
-                        <Tag variant="blue">Verið að breyta</Tag>
+                        <Tag variant="blue" disabled>
+                          Verið að breyta
+                        </Tag>
                       </PopIn>
                     </Box>
                     <Text variant="medium" fontWeight="light">
@@ -155,18 +173,7 @@ const ScheduleCourtSession: FC<Props> = ({
                     </Text>
                   </Box>
                   <ContextMenu
-                    items={[
-                      {
-                        title: 'Breyta þinghaldi',
-                        icon: 'pencil',
-                        onClick: () => onEdit(bookedSession),
-                      },
-                      {
-                        title: 'Eyða þinghaldi',
-                        icon: 'trash',
-                        onClick: () => onDelete(bookedSession),
-                      },
-                    ]}
+                    items={menuItems}
                     render={
                       <IconButton
                         icon="ellipsisVertical"
