@@ -22,7 +22,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { type User } from '@island.is/judicial-system/types'
+import { indictmentCases, type User } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -33,10 +33,16 @@ import {
   publicProsecutorStaffRule,
 } from '../../guards'
 import { getOrCreateTransaction } from '../../middleware'
-import { CaseExistsForUpdateGuard, CaseWriteGuard, CurrentCase } from '../case'
+import {
+  CaseExistsForUpdateGuard,
+  CaseTypeGuard,
+  CaseWriteGuard,
+  CurrentCase,
+} from '../case'
 import { Case, Defendant } from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
+import { UpdateDefendantsDto } from './dto/updateDefendants.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import {
@@ -106,6 +112,43 @@ export class DefendantController {
       defendantToCreate,
       user,
       transaction,
+    )
+  }
+
+  // Many defendants in one request, so the case is locked and read once. A
+  // request per defendant serializes on the case row and reads the whole case
+  // each time, which a case with tens of defendants does not survive.
+  @UseGuards(new CaseTypeGuard(indictmentCases))
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    publicProsecutorStaffRule,
+  )
+  @Patch()
+  @ApiOkResponse({
+    type: Defendant,
+    isArray: true,
+    description: 'Updates many defendants of a case',
+  })
+  async updateMany(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @Body() defendantsToUpdate: UpdateDefendantsDto,
+  ): Promise<Defendant[]> {
+    this.logger.debug(
+      `Updating ${defendantsToUpdate.defendants.length} defendants of case ${caseId}`,
+    )
+
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.defendantService.updateMany(
+      theCase,
+      defendantsToUpdate.defendants,
+      user,
+      transaction,
+      defendantsToUpdate.registerVerdictAppeal,
     )
   }
 

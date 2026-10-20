@@ -663,6 +663,13 @@ export class BackendService {
     )
   }
 
+  updateDefendants(
+    caseId: string,
+    updateDefendants: unknown,
+  ): Promise<Defendant[]> {
+    return this.patch(`case/${caseId}/defendant`, updateDefendants)
+  }
+
   limitedAccessUpdateDefendant(
     caseId: string,
     defendantId: string,

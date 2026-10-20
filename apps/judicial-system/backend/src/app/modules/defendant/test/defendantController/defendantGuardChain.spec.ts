@@ -448,3 +448,167 @@ describe.each(routes)(
     }
   },
 )
+
+// The batch route is for the district court and the public prosecution only
+// and names no defendant in its path, so it does not fit the table above: a
+// prosecutor there is turned away by RolesGuard, never by the guards after the
+// read.
+describe('DefendantController - updateMany guard chain', () => {
+  const allowedRows: [UserRole, User, (caseId: string) => Case][] = [
+    ...[
+      UserRole.DISTRICT_COURT_JUDGE,
+      UserRole.DISTRICT_COURT_REGISTRAR,
+      UserRole.DISTRICT_COURT_ASSISTANT,
+    ].map((role): [UserRole, User, (caseId: string) => Case] => [
+      role,
+      courtUser(role),
+      receivedIndictmentAtCourt,
+    ]),
+    [
+      UserRole.PUBLIC_PROSECUTOR_STAFF,
+      publicProsecutionUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+      completedIndictmentSentToPublicProsecutor,
+    ],
+  ]
+  const allowedRoles = allowedRows.map(([role]) => role)
+  const rejectedRoles = Object.values(UserRole).filter(
+    (role) => !allowedRoles.includes(role),
+  )
+  const body = {
+    defendants: [{ defendantId, isDrivingLicenseSuspended: true }],
+  }
+  const transaction = {} as Transaction
+
+  let mockCaseRepositoryService: CaseRepositoryService
+  let runChain: (
+    user: User,
+    caseId: string,
+  ) => Promise<{ allowed: boolean; rejectedBy?: string; error?: Error }>
+
+  beforeEach(async () => {
+    const { caseRepositoryService, caseService, sequelize } =
+      await createTestingCaseModule()
+
+    mockCaseRepositoryService = caseRepositoryService
+
+    const mockTransaction = (sequelize as Sequelize).transaction as jest.Mock
+    mockTransaction.mockResolvedValue(transaction)
+
+    const guards = [
+      new AuthenticatedGuard(),
+      new RolesGuard(new Reflector()),
+      new CaseExistsForUpdateGuard(caseService, sequelize),
+      new CaseWriteGuard(),
+    ]
+
+    runChain = (user, caseId) =>
+      runInRequestContext(() =>
+        runGuardChain(DefendantController, 'updateMany', guards, {
+          params: { caseId },
+          user: { currentUser: user },
+          body,
+          case: undefined,
+        }),
+      )
+  })
+
+  describe.each(allowedRows)(
+    '%s on a case they can write',
+    (_role, user, caseFor) => {
+      const caseId = uuid()
+      let then: Awaited<ReturnType<typeof runChain>>
+
+      beforeEach(async () => {
+        const mockFindLiveByIdForUpdate =
+          mockCaseRepositoryService.findLiveByIdForUpdate as jest.Mock
+        mockFindLiveByIdForUpdate.mockResolvedValueOnce(caseFor(caseId))
+
+        then = await runChain(user, caseId)
+      })
+
+      it('should let the whole chain through', () => {
+        expect(then.error).toBeUndefined()
+        expect(then.allowed).toBe(true)
+      })
+
+      it('should read the case under the request transaction', () => {
+        expect(
+          mockCaseRepositoryService.findLiveByIdForUpdate,
+        ).toHaveBeenCalledWith(caseId, transaction)
+      })
+    },
+  )
+
+  describe.each(rejectedRoles)('%s', (role) => {
+    const caseId = uuid()
+    let then: Awaited<ReturnType<typeof runChain>>
+
+    beforeEach(async () => {
+      const mockFindLiveByIdForUpdate =
+        mockCaseRepositoryService.findLiveByIdForUpdate as jest.Mock
+      mockFindLiveByIdForUpdate.mockResolvedValueOnce(
+        receivedIndictmentAtCourt(caseId),
+      )
+
+      then = await runChain(courtUser(role), caseId)
+    })
+
+    it('should be rejected by RolesGuard without reading the case', () => {
+      expect(then.allowed).toBe(false)
+      expect(then.rejectedBy).toBe(RolesGuard.name)
+      expect(
+        mockCaseRepositoryService.findLiveByIdForUpdate,
+      ).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('judge on a request case', () => {
+    const caseId = uuid()
+    let then: Awaited<ReturnType<typeof runChain>>
+
+    beforeEach(async () => {
+      const mockFindLiveByIdForUpdate =
+        mockCaseRepositoryService.findLiveByIdForUpdate as jest.Mock
+      mockFindLiveByIdForUpdate.mockResolvedValueOnce({
+        ...receivedIndictmentAtCourt(caseId),
+        type: CaseType.CUSTODY,
+      } as Case)
+
+      then = await runChain(courtUser(UserRole.DISTRICT_COURT_JUDGE), caseId)
+    })
+
+    it('should be rejected by CaseTypeGuard', () => {
+      expect(then.allowed).toBe(false)
+      expect(then.rejectedBy).toBe('CaseTypeGuard')
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+    })
+  })
+
+  describe('judge at another court than the case', () => {
+    const caseId = uuid()
+    let then: Awaited<ReturnType<typeof runChain>>
+
+    beforeEach(async () => {
+      const mockFindLiveByIdForUpdate =
+        mockCaseRepositoryService.findLiveByIdForUpdate as jest.Mock
+      mockFindLiveByIdForUpdate.mockResolvedValueOnce(
+        receivedIndictmentAtCourt(caseId),
+      )
+
+      then = await runChain(
+        userAt(
+          UserRole.DISTRICT_COURT_JUDGE,
+          uuid(),
+          InstitutionType.DISTRICT_COURT,
+        ),
+        caseId,
+      )
+    })
+
+    it('should be rejected by CaseWriteGuard', () => {
+      expect(then.allowed).toBe(false)
+      expect(then.rejectedBy).toBe(CaseWriteGuard.name)
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+    })
+  })
+})

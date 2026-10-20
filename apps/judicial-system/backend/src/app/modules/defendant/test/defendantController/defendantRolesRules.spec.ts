@@ -18,7 +18,7 @@ import { DefendantController } from '../../defendant.controller'
 // case-reading rule to any route here would silently turn it into a 403 and
 // recreate the lock exposure at the same time. This pins the assumption to
 // each route's own metadata rather than to a list retyped in a spec.
-describe.each(['create', 'update', 'delete'])(
+describe.each(['create', 'update', 'updateMany', 'delete'])(
   'DefendantController - %s rules',
   (methodName) => {
     const rules: RolesRule[] =

@@ -143,7 +143,7 @@ const Conclusion: FC = () => {
   const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
   const { createVerdicts, updateDefendantVerdictState } = useVerdict()
-  const { updateDefendantState, updateDefendant } = useDefendants()
+  const { updateDefendantState, updateDefendants } = useDefendants()
   const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
     useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
@@ -315,13 +315,13 @@ const Conclusion: FC = () => {
         }
 
         promises.push(
-          ...(activeDefendants?.map((defendant) =>
-            updateDefendant({
-              caseId: workingCase.id,
+          updateDefendants(
+            workingCase.id,
+            (activeDefendants ?? []).map((defendant) => ({
               defendantId: defendant.id,
               isDrivingLicenseSuspended: defendant.isDrivingLicenseSuspended,
-            }),
-          ) || []),
+            })),
+          ),
         )
 
         const createSuccess = await Promise.all(promises)
@@ -352,7 +352,7 @@ const Conclusion: FC = () => {
       conclusionDate,
       activeDefendants,
       createVerdicts,
-      updateDefendant,
+      updateDefendants,
     ],
   )
 
