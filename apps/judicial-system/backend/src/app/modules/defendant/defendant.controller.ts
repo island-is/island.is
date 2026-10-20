@@ -49,6 +49,7 @@ import {
   courtOfAppealsAssistantUpdateDefendantRule,
   courtOfAppealsJudgeUpdateDefendantRule,
   courtOfAppealsRegistrarUpdateDefendantRule,
+  publicProsecutionProsecutorUpdateDefendantsRule,
 } from './guards/rolesRules'
 import { DeleteDefendantResponse } from './models/delete.response'
 import { DefendantService } from './defendant.service'
@@ -64,9 +65,10 @@ import { DefendantService } from './defendant.service'
 //
 // RolesGuard runs first, ahead of the guard that takes the write lock. It
 // can, because every rule on these routes decides on the user alone - the
-// court of appeals rules are field rules, which read the body, not the case -
-// and none has a canActivate: a caller this controller has no rule for is
-// turned away before any case row is locked. defendantRolesRules.spec.ts pins
+// court of appeals rules are field rules, which read the body, not the case,
+// and the public prosecution prosecutor rule reads only the user's
+// institution: a caller this controller has no rule for is turned away
+// before any case row is locked. defendantRolesRules.spec.ts pins
 // that assumption, so a rule that starts reading the case cannot silently
 // reopen the exposure.
 //
@@ -124,6 +126,7 @@ export class DefendantController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
     publicProsecutorStaffRule,
+    publicProsecutionProsecutorUpdateDefendantsRule,
   )
   @Patch()
   @ApiOkResponse({

@@ -454,6 +454,7 @@ describe.each(routes)(
 // prosecutor there is turned away by RolesGuard, never by the guards after the
 // read.
 describe('DefendantController - updateMany guard chain', () => {
+  const publicProsecutionReviewer = publicProsecutionUser(UserRole.PROSECUTOR)
   const allowedRows: [UserRole, User, (caseId: string) => Case][] = [
     ...[
       UserRole.DISTRICT_COURT_JUDGE,
@@ -468,6 +469,15 @@ describe('DefendantController - updateMany guard chain', () => {
       UserRole.PUBLIC_PROSECUTOR_STAFF,
       publicProsecutionUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
       completedIndictmentSentToPublicProsecutor,
+    ],
+    [
+      UserRole.PROSECUTOR,
+      publicProsecutionReviewer,
+      (caseId) =>
+        ({
+          ...completedIndictmentSentToPublicProsecutor(caseId),
+          indictmentReviewerId: publicProsecutionReviewer.id,
+        } as Case),
     ],
   ]
   const allowedRoles = allowedRows.map(([role]) => role)
@@ -551,6 +561,29 @@ describe('DefendantController - updateMany guard chain', () => {
       )
 
       then = await runChain(courtUser(role), caseId)
+    })
+
+    it('should be rejected by RolesGuard without reading the case', () => {
+      expect(then.allowed).toBe(false)
+      expect(then.rejectedBy).toBe(RolesGuard.name)
+      expect(
+        mockCaseRepositoryService.findLiveByIdForUpdate,
+      ).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('prosecutor at a police prosecutors office', () => {
+    const caseId = uuid()
+    let then: Awaited<ReturnType<typeof runChain>>
+
+    beforeEach(async () => {
+      const mockFindLiveByIdForUpdate =
+        mockCaseRepositoryService.findLiveByIdForUpdate as jest.Mock
+      mockFindLiveByIdForUpdate.mockResolvedValueOnce(
+        completedIndictmentSentToPublicProsecutor(caseId),
+      )
+
+      then = await runChain(prosecutionUser(UserRole.PROSECUTOR), caseId)
     })
 
     it('should be rejected by RolesGuard without reading the case', () => {
