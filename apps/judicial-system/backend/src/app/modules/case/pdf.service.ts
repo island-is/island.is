@@ -30,6 +30,7 @@ import {
   Confirmation,
   createAppealSummons,
   createCaseFilesRecord,
+  createConfirmedIndictmentPdf,
   createFineSentToPrisonAdminPdf,
   createIndictment,
   createIndictmentCourtRecordPdf,
@@ -435,6 +436,76 @@ export class PdfService {
     }
 
     return generatedPdf
+  }
+
+  async replaceIndictmentPdf(
+    theCase: Case,
+    key: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    const confirmationEvent = EventLog.getEventLogByEventType(
+      EventType.INDICTMENT_CONFIRMED,
+      theCase.eventLogs,
+    )
+
+    if (
+      !confirmationEvent?.userName ||
+      !confirmationEvent.institutionName
+    ) {
+      throw new BadRequestException(
+        `Cannot replace the indictment of case ${theCase.id} before it has been confirmed`,
+      )
+    }
+
+    const uploadedPdf = await this.awsS3Service.getObject(theCase.type, key)
+
+    let confirmedPdf: Buffer
+
+    try {
+      confirmedPdf = await createConfirmedIndictmentPdf(
+        {
+          actor: confirmationEvent.userName,
+          title: confirmationEvent.userTitle,
+          institution: confirmationEvent.institutionName,
+          date: confirmationEvent.created,
+        },
+        uploadedPdf,
+      )
+    } catch (reason) {
+      this.logger.info(`Failed to stamp the indictment of case ${theCase.id}`, {
+        reason,
+      })
+
+      throw new BadRequestException('The uploaded file is not a readable pdf')
+    }
+
+    // Stored before the hash is set: a stored file without a hash is
+    // regenerated on the next read, a hash without the stored file is not
+    // recoverable.
+    await this.uploadPdfToS3(
+      theCase,
+      `${theCase.id}/indictment.pdf`,
+      confirmedPdf,
+    )
+
+    const { hash, hashAlgorithm } = getCaseFileHash(confirmedPdf)
+    const indictmentHash = JSON.stringify({ hash, hashAlgorithm })
+
+    await this.caseRepositoryService.update(
+      theCase.id,
+      { indictmentHash },
+      { transaction },
+    )
+
+    for (const splitCase of theCase.splitCases ?? []) {
+      await this.caseRepositoryService.update(
+        splitCase.id,
+        { indictmentHash },
+        { transaction },
+      )
+    }
+
+    await this.awsS3Service.deleteObject(theCase.type, key)
   }
 
   async getCaseFilesRecordPdf(
