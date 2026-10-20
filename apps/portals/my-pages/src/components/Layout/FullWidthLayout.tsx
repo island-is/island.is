@@ -26,6 +26,7 @@ import { DocumentsScope } from '@island.is/auth/scopes'
 import cn from 'classnames'
 import { FinancePaths } from '@island.is/portals/my-pages/finance'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { trimTrailingSlash } from '../ContentBreadcrumbs/ContentBreadcrumbs'
 
 interface FullWidthLayoutWrapperProps {
   activeParent?: PortalNavigationItem
@@ -90,7 +91,8 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                       {activeParent?.path &&
                         activeParent?.name &&
                         // Never link to the page the user is on
-                        activeParent.path !== pathname && (
+                        trimTrailingSlash(activeParent.path) !==
+                          trimTrailingSlash(pathname) && (
                           <Link to={activeParent.path}>
                             {formatMessage(activeParent.name)}
                           </Link>

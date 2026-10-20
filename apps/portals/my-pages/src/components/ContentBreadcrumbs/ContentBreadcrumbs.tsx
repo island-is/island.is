@@ -42,7 +42,7 @@ const parseNavItemName = (
   return navItem.name
 }
 
-const trimTrailingSlash = (path: string) => path.replace(/\/+$/, '')
+export const trimTrailingSlash = (path: string) => path.replace(/\/+$/, '')
 
 /**
  * Will explore all paths of the navigation tree
