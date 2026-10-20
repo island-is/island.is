@@ -106,8 +106,7 @@ export const hasActiveCurrentApplication = (context: ApplicationContext) => {
     'currentApplication.data',
   ) as CurrentApplication
 
-  // TODO FIX condition (local testing)
-  return currentApplication?.currentApplicationId == null
+  return currentApplication?.currentApplicationId != null
 }
 
 export const hasFiles = (
