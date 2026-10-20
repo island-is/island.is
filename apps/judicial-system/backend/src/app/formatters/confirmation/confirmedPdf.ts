@@ -10,6 +10,7 @@ import {
   confirmationLayout,
   drawTextWithEllipsisPDFKit,
   formatActor,
+  lockIcon,
 } from '../pdfHelpers'
 import { PDFKitCoatOfArms } from '../svgs/PDFKitCoatOfArms'
 
@@ -32,6 +33,7 @@ export const hasConfirmableCaseFileCategories = (
 const lightGray = rgb(0.9804, 0.9804, 0.9804)
 const darkGray = rgb(0.7961, 0.7961, 0.7961)
 const white = rgb(1, 1, 1)
+const gold = rgb(0xad / 255, 0xa3 / 255, 0x73 / 255)
 
 interface ConfirmationBox {
   title: string
@@ -46,6 +48,13 @@ interface ConfirmationFonts {
   bold: PDFFont
 }
 
+interface ConfirmationConfig {
+  confirmationText: string
+  // A locked document shows a lock where other stamps show the date
+  showLockIcon?: boolean
+  boxes: ConfirmationBox[]
+}
+
 // Draws the same stamp as drawConfirmation in pdfHelpers, for documents that
 // were uploaded as finished PDFs rather than generated. pdf-lib measures y
 // from the bottom of the page and positions text by its baseline, so every
@@ -55,7 +64,7 @@ const drawConfirmation = (
   page: PDFPage,
   fonts: ConfirmationFonts,
   confirmation: Confirmation,
-  boxes: ConfirmationBox[],
+  { confirmationText, showLockIcon = false, boxes }: ConfirmationConfig,
 ) => {
   const {
     pageMargin,
@@ -138,22 +147,35 @@ const drawConfirmation = (
 
   drawText(title, titleX, titleTextY, fonts.bold)
   drawText(
-    'Rafræn staðfesting',
+    confirmationText,
     titleX + fonts.bold.widthOfTextAtSize(`${title}  `, fontSize),
     titleTextY,
     fonts.regular,
   )
 
-  const dateString = formatDate(confirmation.date) ?? ''
-  drawText(
-    dateString,
-    contentX +
-      contentWidth -
-      padding -
-      fonts.regular.widthOfTextAtSize(dateString, fontSize),
-    titleTextY,
-    fonts.regular,
-  )
+  if (showLockIcon) {
+    page.drawSvgPath(lockIcon.path, {
+      x: totalWidth + offset,
+      y: fromTop(
+        titleTextY - (lockIcon.top + lockIcon.height / 2) * lockIcon.scale,
+      ),
+      scale: lockIcon.scale,
+      color: gold,
+      borderColor: gold,
+      borderWidth: 0.5,
+    })
+  } else {
+    const dateString = formatDate(confirmation.date) ?? ''
+    drawText(
+      dateString,
+      contentX +
+        contentWidth -
+        padding -
+        fonts.regular.widthOfTextAtSize(dateString, fontSize),
+      titleTextY,
+      fonts.regular,
+    )
+  }
 
   // Draw the boxes below the title
   const boxTop = contentTop + titleHeight
@@ -212,6 +234,23 @@ const getConfirmationBoxes = (
   }
 }
 
+const stampFirstPage = async (
+  pdf: Buffer,
+  confirmation: Confirmation,
+  config: ConfirmationConfig,
+) => {
+  const pdfDoc = await PDFDocument.load(new Uint8Array(pdf))
+  const fonts = {
+    regular: await pdfDoc.embedFont(StandardFonts.TimesRoman),
+    bold: await pdfDoc.embedFont(StandardFonts.TimesRomanBold),
+  }
+
+  drawConfirmation(pdfDoc.getPage(0), fonts, confirmation, config)
+
+  const pdfBytes = await pdfDoc.save()
+  return Buffer.from(pdfBytes)
+}
+
 export const createConfirmedPdf = async (
   confirmation: Confirmation,
   pdf: Buffer,
@@ -221,19 +260,37 @@ export const createConfirmedPdf = async (
     throw new Error('CaseFileCategory not supported')
   }
 
-  const pdfDoc = await PDFDocument.load(new Uint8Array(pdf))
-  const fonts = {
-    regular: await pdfDoc.embedFont(StandardFonts.TimesRoman),
-    bold: await pdfDoc.embedFont(StandardFonts.TimesRomanBold),
-  }
-
-  drawConfirmation(
-    pdfDoc.getPage(0),
-    fonts,
-    confirmation,
-    getConfirmationBoxes(confirmation, fileType),
-  )
-
-  const pdfBytes = await pdfDoc.save()
-  return Buffer.from(pdfBytes)
+  return stampFirstPage(pdf, confirmation, {
+    confirmationText: 'Rafræn staðfesting',
+    boxes: getConfirmationBoxes(confirmation, fileType),
+  })
 }
+
+// Same stamp as a generated indictment carries once it has been confirmed
+export const createConfirmedIndictmentPdf = (
+  confirmation: Confirmation,
+  pdf: Buffer,
+) =>
+  stampFirstPage(pdf, confirmation, {
+    confirmationText: 'Skjal samþykkt rafrænt',
+    showLockIcon: true,
+    boxes: [
+      {
+        title: 'Samþykktaraðili',
+        content: formatActor(confirmation.actor, confirmation.title),
+        widthPercent: 40,
+        ellipsize: true,
+      },
+      {
+        title: 'Embætti',
+        content: confirmation.institution,
+        widthPercent: 40,
+        ellipsize: true,
+      },
+      {
+        title: 'Útgáfa ákæru',
+        content: formatDate(confirmation.date) ?? '',
+        widthPercent: 20,
+      },
+    ],
+  })
