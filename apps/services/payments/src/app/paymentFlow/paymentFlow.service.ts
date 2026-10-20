@@ -342,7 +342,7 @@ export class PaymentFlowService {
           error: validation.error,
         })
         throw new ServiceUnavailableException(
-          PaymentServiceCode.UnknownPaymentServiceError,
+          DebtPaymentErrorCode.DebtPaymentUnavailable,
         )
       }
 

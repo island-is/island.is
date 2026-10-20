@@ -216,6 +216,9 @@ describe('DebtPaymentFlowController', () => {
       const response = await server.post('/v1/payments/debts').send(payload)
 
       expect(response.status).toBe(503)
+      expect(response.body.detail).toBe(
+        DebtPaymentErrorCode.DebtPaymentUnavailable,
+      )
       expect(await model.count({ where: { type: 'debt' } })).toBe(countBefore)
     })
 
