@@ -1,10 +1,15 @@
-import { RequestSharedWithDefender } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  RequestSharedWithDefender,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   anyDefendantHasDefender,
   buildCaseDefenderMirrorUpdate,
+  canDefenderViewRequest,
   getDefendantRequestSharingUpdate,
   getRequestCaseDefenderNames,
+  getRequestSharedWithDefenderForNationalId,
   isRequestSharingDecidedForAllDefenders,
 } from './RequestCaseDefenderInfo.logic'
 
@@ -177,6 +182,123 @@ describe('RequestCaseDefenderInfo.logic', () => {
       expect(buildCaseDefenderMirrorUpdate(contact)).not.toHaveProperty(
         'requestSharedWithDefender',
       )
+    })
+
+    test('omits contact fields that were not provided', () => {
+      expect(
+        buildCaseDefenderMirrorUpdate({ defenderEmail: 'new@example.com' }),
+      ).toEqual({
+        defenderEmail: 'new@example.com',
+        force: true,
+      })
+    })
+  })
+
+  describe('getRequestSharedWithDefenderForNationalId', () => {
+    const defendants = [
+      {
+        id: 'a',
+        defenderNationalId: '111',
+        requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+      },
+      {
+        id: 'b',
+        defenderNationalId: '222',
+        requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+      },
+      {
+        id: 'c',
+        defenderNationalId: '111',
+        requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+      },
+    ]
+
+    test("returns the most permissive sharing among the defender's clients", () => {
+      expect(getRequestSharedWithDefenderForNationalId(defendants, '111')).toBe(
+        RequestSharedWithDefender.COURT_DATE,
+      )
+    })
+
+    test("does not fall back to other defendants' sharing", () => {
+      expect(
+        getRequestSharedWithDefenderForNationalId(defendants, '999'),
+      ).toBeNull()
+    })
+  })
+
+  describe('canDefenderViewRequest', () => {
+    const defendants = [
+      {
+        id: 'a',
+        defenderNationalId: '111',
+        requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+      },
+    ]
+
+    test('allows READY_FOR_COURT once the case is submitted', () => {
+      expect(
+        canDefenderViewRequest({
+          defendants: [
+            {
+              id: 'a',
+              defenderNationalId: '111',
+              requestSharedWithDefender:
+                RequestSharedWithDefender.READY_FOR_COURT,
+            },
+          ],
+          nationalId: '111',
+          state: CaseState.SUBMITTED,
+          hasArraignmentDate: false,
+        }),
+      ).toBe(true)
+    })
+
+    test('requires an arraignment date for COURT_DATE sharing', () => {
+      expect(
+        canDefenderViewRequest({
+          defendants,
+          nationalId: '111',
+          state: CaseState.RECEIVED,
+          hasArraignmentDate: false,
+        }),
+      ).toBe(false)
+
+      expect(
+        canDefenderViewRequest({
+          defendants,
+          nationalId: '111',
+          state: CaseState.RECEIVED,
+          hasArraignmentDate: true,
+        }),
+      ).toBe(true)
+    })
+
+    test('allows NOT_SHARED only for completed cases', () => {
+      const notShared = [
+        {
+          id: 'a',
+          defenderNationalId: '111',
+          requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+        },
+      ]
+
+      expect(
+        canDefenderViewRequest({
+          defendants: notShared,
+          nationalId: '111',
+          state: CaseState.RECEIVED,
+          hasArraignmentDate: true,
+        }),
+      ).toBe(false)
+
+      expect(
+        canDefenderViewRequest({
+          defendants: notShared,
+          nationalId: '111',
+          state: CaseState.ACCEPTED,
+          hasArraignmentDate: true,
+        }),
+      ).toBe(true)
     })
   })
 })

@@ -4,7 +4,9 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import { MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseNotificationType,
   AppealCaseType,
   type AppealStatementParty,
   findAppealStatementDeadline,
@@ -12,6 +14,7 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware'
 import { buildStatementDeadlineEvent } from '../appeal-case/appealCase.helpers'
 import {
   AppealCase,
@@ -108,6 +111,23 @@ export class AppealStatementDeadlineService {
       }),
       { transaction },
     )
+
+    // The mails follow: to the party, that it has the time, and to everyone
+    // else, that it does. Queued after commit, so a deadline that rolls
+    // back announces nothing. The mail reads the date off the appeal.
+    queueMessagesAfterCommit({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      elementId: appealCase.id,
+      body: {
+        type: current
+          ? AppealCaseNotificationType.APPEAL_STATEMENT_DEADLINE_EXTENDED
+          : AppealCaseNotificationType.APPEAL_STATEMENT_DEADLINE_SET,
+        defendantId: party.defendantId ?? undefined,
+        civilClaimantId: party.civilClaimantId ?? undefined,
+      },
+    })
 
     return deadline
   }

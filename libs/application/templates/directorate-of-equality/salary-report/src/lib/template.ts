@@ -303,6 +303,9 @@ const template: ApplicationTemplate<
                 import('../forms/postponeReceivedForm').then((module) =>
                   Promise.resolve(module.postponeReceivedForm),
                 ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
               read: 'all',
               // Nothing on this screen writes an answer — the closer dispatches
               // an event. An empty array rather than an absent `write` all the
@@ -316,6 +319,13 @@ const template: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
               delete: false,
             },
           ],
@@ -419,6 +429,18 @@ const template: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.EDIT,
+                  name: 'Breyta',
+                  type: 'primary',
+                },
+              ],
               delete: false,
             },
           ],
@@ -509,6 +531,18 @@ const template: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
               delete: false,
             },
           ],
@@ -576,6 +610,23 @@ const template: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.EDIT,
+                  name: 'Breyta',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+              ],
               delete: false,
             },
           ],
