@@ -4,54 +4,38 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
-  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { GaldurExternalDomainModelsIncomePensionPaymentDTO } from '@island.is/clients/vmst-unemployment'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isPension } from '../../../utils/conditions'
 import { PaymentFrequency } from '../../../utils/constants'
 import {
-  getCurrentMonthEndDate,
+  getMaxRegistrationDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
 import {
   formatIsCurrency,
   formatIsDate,
-  formatIsDateOrDash,
+  formatIsDateOrIndefinite,
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
-import { buildCanRemoveRow } from '../../../utils/reconcile'
+import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
+import { buildCanEditRow, buildCanRemoveRow } from '../../../utils/reconcile'
+import { getPensionDefaults, toPensionRow } from '../../../utils/persistedRows'
 import {
+  isOneTimePayment,
   periodToByFrequency,
   toOptionalString,
   toRequiredNumber,
   toRequiredString,
 } from '../../../utils/rowCoercions'
 
-const getPensionDefaults = (application: Application) => {
-  const payments =
-    getValueViaPath<GaldurExternalDomainModelsIncomePensionPaymentDTO[]>(
-      application.externalData,
-      'income.data.pensionPayments',
-    ) ?? []
-
-  return payments.map((payment) => ({
-    validationId: payment.id,
-    pensionType: payment.incomeTypeId ?? '',
-    pensionFund: payment.pensionFundId ?? '',
-    amountPerMonth:
-      payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
-    dateFrom: payment.periodFrom ?? '',
-    dateTo: payment.periodTo ?? '',
-  }))
-}
-
 const pensionValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerPension',
   incomeTypeKey: 'pensionPayments',
   persistedPath: 'income.data.pensionPayments',
+  toRow: toPensionRow,
   callbackId: 'PensionValidation',
   messages: {
     fallbackErrorMessage: 'pensionValidationErrorMessage',
@@ -63,6 +47,7 @@ const pensionValidationProps: IncomeValidationFieldProps = {
     estimatedIncome: toRequiredNumber(row.amountPerMonth),
     periodFrom: toRequiredString(row.dateFrom),
     periodTo: periodToByFrequency(row),
+    oneTimePayment: isOneTimePayment(row),
   }),
 }
 
@@ -76,27 +61,17 @@ export const pensionSection = buildSubSection({
       title: m.application.pensionHeading,
       description: m.application.pensionDescription,
       children: [
-        buildDescriptionField({
-          title: () => {
-            const month = new Date().toLocaleDateString('is-IS', {
-              month: 'long',
-            })
-            return {
-              ...m.application.incomeTitle,
-              values: { month },
-            }
-          },
-          description: m.application.incomeDescriptionLink,
-          titleVariant: 'h4',
-          id: 'pensionDescription',
-        }),
+        ...buildIncomeDescriptionFields('pensionDescription'),
         buildTableRepeaterField({
           id: 'registerPension',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getPensionDefaults,
           canRemoveRow: buildCanRemoveRow(pensionValidationProps.persistedPath),
-          removeButtonDisabledTooltipText: m.application.removeLineLocked,
+          removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
+          editField: true,
+          canEditRow: buildCanEditRow(pensionValidationProps.persistedPath),
+          editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
             pensionType: {
@@ -140,6 +115,7 @@ export const pensionSection = buildSubSection({
               largeButtons: false,
               required: true,
               width: 'half',
+              defaultValue: PaymentFrequency.ONE_TIME,
               clearOnChange: (index: number) => [
                 `registerPension[${index}].dateTo`,
               ],
@@ -163,15 +139,19 @@ export const pensionSection = buildSubSection({
                 `registerPension[${index}].dateTo`,
               ],
               minDate: getCurrentMonthStartDate,
-              maxDate: getCurrentMonthEndDate,
+              maxDate: getMaxRegistrationDate,
             },
             dateTo: {
               component: 'date',
               label: m.application.dateTo,
               width: 'half',
-              required: (_application, activeField) =>
+              disabled: (_application, activeField) =>
                 activeField?.paymentFrequency === PaymentFrequency.ONE_TIME,
-              maxDate: getCurrentMonthEndDate,
+              placeholder: (_application, activeField) =>
+                activeField?.paymentFrequency === PaymentFrequency.MONTHLY
+                  ? m.application.indefinitePeriod
+                  : '',
+              maxDate: getMaxRegistrationDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {
@@ -237,7 +217,8 @@ export const pensionSection = buildSubSection({
                 return type?.name ?? value
               },
               dateFrom: formatIsDate,
-              dateTo: formatIsDateOrDash,
+              dateTo: (value, _displayIndex, _application, row) =>
+                formatIsDateOrIndefinite(value, row?.paymentFrequency),
               amountPerMonth: formatIsCurrency,
             },
           },

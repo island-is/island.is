@@ -1,15 +1,15 @@
-import { User } from '@island.is/auth-nest-tools'
 import { Test, TestingModule } from '@nestjs/testing'
+
+import { User as TUser } from '@island.is/air-discount-scheme/types'
+import { ApiScope } from '@island.is/auth/scopes'
+import { User } from '@island.is/auth-nest-tools'
+import { AirDiscountSchemeClientService } from '@island.is/clients/air-discount-scheme'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+
+import { Discount } from '../models/discount.model'
 import { DiscountResolver } from './discount.resolver'
 import { DiscountService } from './discount.service'
-
-import {
-  Discount as TDiscount,
-  User as TUser,
-} from '@island.is/air-discount-scheme/types'
-import { ApiScope } from '@island.is/auth/scopes'
-import { Discount } from '../models/discount.model'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
 type DiscountWithTUser = Discount & { user: TUser }
 
 describe('ApiDomains: DiscountResolver', () => {
@@ -34,7 +34,7 @@ describe('ApiDomains: DiscountResolver', () => {
       ...fabTUser(nationalId),
       // The DiscountWithTUser.user takes from both TUser and the User model
       // We fabricate TUser and name is simply the odd one out from between them.
-      name: 'Bergvin',
+      name: 'Bergvin Björn',
     },
     connectionDiscountCodes: [],
     discountCode,
@@ -57,9 +57,8 @@ describe('ApiDomains: DiscountResolver', () => {
   const fabTUser = (nationalId: string): TUser => ({
     address: 'Neinsstaðarból 18',
     city: 'Reykjavík',
-    firstName: 'Bergvin',
-    middleName: 'Björn',
-    lastName: 'Bóason',
+    givenName: 'Bergvin Björn',
+    fullName: 'Bergvin Björn Bóason',
     gender: 'kk',
     nationalId,
     postalcode: 200,
@@ -79,30 +78,25 @@ describe('ApiDomains: DiscountResolver', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DiscountResolver,
+        DiscountService,
         {
-          provide: DiscountService,
+          provide: AirDiscountSchemeClientService,
           useFactory: () => ({
-            // Is there a nicer way to mock a service while keeping some of its methods unchanged?
-            getCurrentDiscounts: DiscountService.prototype.getCurrentDiscounts,
-            discountIsValid: DiscountService.prototype.discountIsValid,
-            processDiscount: DiscountService.prototype.processDiscount,
-            getDiscount: jest.fn(
-              (user: User, nationalId: string): TDiscount | void => {
+            getCurrentDiscount: jest.fn(
+              async (user: User, nationalId: string) => {
                 if (idsForGetDiscount.includes(nationalId)) {
                   return fabGetDiscount(nationalId)
                 }
-                return undefined
+                return null
               },
             ),
-            createDiscount: jest.fn(
-              (user: User, nationalId: string): TDiscount | null => {
-                if (idsForCreateDiscount.includes(nationalId)) {
-                  return fabCreateDiscount(nationalId)
-                }
-                return fabInvalidDiscount(nationalId)
-              },
-            ),
-            getUserRelations: jest.fn((user: User): TUser[] => {
+            createDiscount: jest.fn(async (user: User, nationalId: string) => {
+              if (idsForCreateDiscount.includes(nationalId)) {
+                return fabCreateDiscount(nationalId)
+              }
+              return fabInvalidDiscount(nationalId)
+            }),
+            getUserRelations: jest.fn(async (user: User): Promise<TUser[]> => {
               const userRelationsResponse = [fabTUser(user.nationalId)]
               if (idsForGetUserRelations.includes(user.nationalId)) {
                 userRelationsResponse.push(...userRelationsWardResponse)
@@ -110,6 +104,10 @@ describe('ApiDomains: DiscountResolver', () => {
               return userRelationsResponse
             }),
           }),
+        },
+        {
+          provide: LOGGER_PROVIDER,
+          useValue: { error: jest.fn() },
         },
         {
           provide: FeatureFlagService,

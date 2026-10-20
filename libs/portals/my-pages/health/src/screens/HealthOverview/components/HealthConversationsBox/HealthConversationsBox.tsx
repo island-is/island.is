@@ -74,7 +74,8 @@ export const HealthConversationsBox = ({ limit }: Props) => {
       borderRadius="large"
       borderWidth="standard"
       borderColor="blue200"
-      paddingY={3}
+      paddingTop={[2, 2, 3]}
+      paddingBottom={3}
       height="full"
     >
       {!loading && !hasHealthScope && (
@@ -161,7 +162,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
       {!loading &&
         hasHealthScope &&
         !error &&
-        conversations.map((item) => {
+        conversations.map((item, index) => {
           const unread = !item.isRead
           return (
             <LinkResolver
@@ -180,11 +181,12 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                   borderTopWidth="standard"
                   borderColor="blue200"
                   paddingY={2}
-                  paddingLeft={[1, 1, 2]}
+                  paddingLeft={2}
                   paddingRight={2}
                   className={cn(
                     listStyles.conversationRow,
                     unread && styles.unreadRow,
+                    index === 0 && styles.firstRow,
                   )}
                 >
                   <ConversationAvatar

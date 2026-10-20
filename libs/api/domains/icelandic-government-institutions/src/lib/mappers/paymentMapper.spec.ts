@@ -10,7 +10,6 @@ describe('mapPayment', () => {
       invoice: {
         id: '22136687',
         number: '191552084',
-        numberRedacted: false,
         totalAmount: 16161,
         itemization: [],
       },
@@ -31,7 +30,6 @@ describe('mapPayment', () => {
       invoice: {
         id: '22136687',
         number: '191552084',
-        numberRedacted: false,
         totalAmount: 16161,
         itemization: [],
       },

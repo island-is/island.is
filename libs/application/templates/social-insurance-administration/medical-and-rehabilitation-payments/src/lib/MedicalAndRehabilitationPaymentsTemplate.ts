@@ -266,6 +266,23 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Approve',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Reject',
+                  type: 'reject',
+                },
+                {
+                  event: OAPEvents.DISMISS,
+                  name: 'Dismiss',
+                  type: 'reject',
+                },
+              ],
               write: 'all',
             },
           ],

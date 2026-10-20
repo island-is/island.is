@@ -27,6 +27,7 @@ import {
   capitalize,
   formatDate,
   lowercase,
+  stripPdfExtension,
 } from '@island.is/judicial-system/formatters'
 import { MessageType } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
@@ -69,7 +70,7 @@ import {
   getCourtRecordPdfAsString,
   getRulingPdfAsString,
 } from '../../formatters'
-import { queueMessagesAfterCommit } from '../../middleware'
+import { queueMessagesAfterCommit, registerAfterCommit } from '../../middleware'
 import {
   buildInCourtAppealedEvent,
   hasOutOfCourtAppeal,
@@ -695,6 +696,26 @@ export class CaseService {
         body: { withCourtCaseNumber: false },
       })
     }
+
+    // Sync current court roles on connect (including roles assigned before
+    // the case had a number). Later assignment changes are handled only when
+    // the court case number is unchanged — same mutual exclusion as
+    // prosecutor/defendant on R-case connect and appeal roles on connect.
+    if (theCase.judge?.nationalId) {
+      this.addMessagesForIndictmentCourtRoleAssigned(
+        theCase,
+        user,
+        theCase.judge.nationalId,
+      )
+    }
+
+    if (theCase.registrar?.nationalId) {
+      this.addMessagesForIndictmentCourtRoleAssigned(
+        theCase,
+        user,
+        theCase.registrar.nationalId,
+      )
+    }
   }
 
   private addMessagesForDefenderEmailChangeToQueue(
@@ -1239,6 +1260,42 @@ export class CaseService {
           // New defender email
           this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
         }
+
+        // Same mutual exclusion as prosecutor/defender above and appeal roles:
+        // connect (number change) syncs current roles; this branch handles
+        // later assignment changes only.
+        if (
+          isIndictment &&
+          ![
+            CaseState.DRAFT,
+            CaseState.SUBMITTED,
+            CaseState.WAITING_FOR_CONFIRMATION,
+          ].includes(updatedCase.state)
+        ) {
+          // The delivery resolves one role per message, so a judge and a
+          // registrar assigned in the same update are delivered as two messages
+          if (
+            updatedCase.judge?.nationalId &&
+            updatedCase.judge.nationalId !== theCase.judge?.nationalId
+          ) {
+            this.addMessagesForIndictmentCourtRoleAssigned(
+              updatedCase,
+              user,
+              updatedCase.judge.nationalId,
+            )
+          }
+
+          if (
+            updatedCase.registrar?.nationalId &&
+            updatedCase.registrar.nationalId !== theCase.registrar?.nationalId
+          ) {
+            this.addMessagesForIndictmentCourtRoleAssigned(
+              updatedCase,
+              user,
+              updatedCase.registrar.nationalId,
+            )
+          }
+        }
       }
     }
 
@@ -1264,39 +1321,6 @@ export class CaseService {
         this.addMessagesForDistrictCourtRegistrarAssignedToQueue(
           updatedCase,
           user,
-        )
-      }
-    }
-
-    if (
-      isIndictment &&
-      ![
-        CaseState.DRAFT,
-        CaseState.SUBMITTED,
-        CaseState.WAITING_FOR_CONFIRMATION,
-      ].includes(updatedCase.state)
-    ) {
-      // The delivery resolves one role per message, so a judge and a registrar
-      // assigned in the same update are delivered as two messages
-      if (
-        updatedCase.judge?.nationalId &&
-        updatedCase.judge.nationalId !== theCase.judge?.nationalId
-      ) {
-        this.addMessagesForIndictmentCourtRoleAssigned(
-          updatedCase,
-          user,
-          updatedCase.judge.nationalId,
-        )
-      }
-
-      if (
-        updatedCase.registrar?.nationalId &&
-        updatedCase.registrar.nationalId !== theCase.registrar?.nationalId
-      ) {
-        this.addMessagesForIndictmentCourtRoleAssigned(
-          updatedCase,
-          user,
-          updatedCase.registrar.nationalId,
         )
       }
     }
@@ -1387,6 +1411,29 @@ export class CaseService {
 
   async findMinimalById(id: string): Promise<MinimalCase> {
     const minimalCase = await this.caseRepositoryService.findLiveMinimalById(id)
+
+    if (!minimalCase) {
+      throw new NotFoundException(`Case ${id} not found`)
+    }
+
+    return minimalCase
+  }
+
+  /**
+   * Reads the case row with its row locked for the rest of the transaction.
+   * Used by `MinimalCaseExistsForUpdateGuard` so that a mutating route that
+   * decides against the case's own columns does so against a row no one else
+   * can change until it commits.
+   */
+  async findMinimalByIdForUpdate(
+    id: string,
+    transaction: Transaction,
+  ): Promise<MinimalCase> {
+    const minimalCase =
+      await this.caseRepositoryService.findLiveMinimalByIdForUpdate(
+        id,
+        transaction,
+      )
 
     if (!minimalCase) {
       throw new NotFoundException(`Case ${id} not found`)
@@ -1863,7 +1910,9 @@ export class CaseService {
         theCase.id,
         {
           documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          name: stripPdfExtension(
+            caseFile.userGeneratedFilename ?? caseFile.name,
+          ),
           caseFileId: caseFile.id,
         },
         { transaction },
@@ -1878,7 +1927,9 @@ export class CaseService {
         theCase.id,
         {
           documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          name: stripPdfExtension(
+            caseFile.userGeneratedFilename ?? caseFile.name,
+          ),
           caseFileId: caseFile.id,
         },
         { transaction },
@@ -1918,7 +1969,9 @@ export class CaseService {
         theCase.id,
         {
           documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          name: stripPdfExtension(
+            caseFile.userGeneratedFilename ?? caseFile.name,
+          ),
           caseFileId: caseFile.id,
         },
         { transaction },
@@ -2330,56 +2383,19 @@ export class CaseService {
       })
     }
 
-    // Keep defendant-level defender fields in sync with case-level fields for
-    // request cases. This dual-write is the first step toward per-defendant
-    // defenders — later phases will flip readers to the defendant rows and
-    // eventually drop the case-level columns.
-    if (isRequestCase(theCase.type)) {
-      const defenderFieldChanged =
-        caseUpdate.defenderName !== undefined ||
-        caseUpdate.defenderNationalId !== undefined ||
-        caseUpdate.defenderEmail !== undefined ||
-        caseUpdate.defenderPhoneNumber !== undefined ||
-        caseUpdate.defendantWaivesRightToCounsel !== undefined ||
-        caseUpdate.requestSharedWithDefender !== undefined
-
-      if (defenderFieldChanged) {
-        // Contact fields + waive → defenderChoice.WAIVE. R-cases do not use
-        // CHOOSE or isDefenderChoiceConfirmed (indictment confirmation).
-        // requestSharedWithDefender is dual-written so defendant rows stay
-        // aligned until readers flip to the defendant column.
-        const waives =
-          caseUpdate.defendantWaivesRightToCounsel !== undefined
-            ? caseUpdate.defendantWaivesRightToCounsel
-            : theCase.defendantWaivesRightToCounsel
-
-        await this.defendantService.syncDefenderToAllDefendants(
-          theCase.id,
-          {
-            defenderName:
-              caseUpdate.defenderName !== undefined
-                ? caseUpdate.defenderName
-                : theCase.defenderName,
-            defenderNationalId:
-              caseUpdate.defenderNationalId !== undefined
-                ? caseUpdate.defenderNationalId
-                : theCase.defenderNationalId,
-            defenderEmail:
-              caseUpdate.defenderEmail !== undefined
-                ? caseUpdate.defenderEmail
-                : theCase.defenderEmail,
-            defenderPhoneNumber:
-              caseUpdate.defenderPhoneNumber !== undefined
-                ? caseUpdate.defenderPhoneNumber
-                : theCase.defenderPhoneNumber,
-            defenderChoice: waives ? DefenderChoice.WAIVE : null,
-            // undefined → sync skips; avoids clobbering per-defendant values
-            // on contact-only edits
-            requestSharedWithDefender: caseUpdate.requestSharedWithDefender,
-          },
-          transaction,
-        )
-      }
+    // Request-case sharing timing is still dual-written from the case onto
+    // every defendant so that a case-level write reaches the defendant rows
+    // that access is decided on. Defender contact fields are not fanned out:
+    // each defendant has its own defender.
+    if (
+      isRequestCase(theCase.type) &&
+      caseUpdate.requestSharedWithDefender !== undefined
+    ) {
+      await this.defendantService.syncDefenderToAllDefendants(
+        theCase.id,
+        { requestSharedWithDefender: caseUpdate.requestSharedWithDefender },
+        transaction,
+      )
     }
 
     // Update police case numbers of case files if necessary
@@ -2490,18 +2506,42 @@ export class CaseService {
     ) {
       // The COMPLETE transition has already checked that the parent case is
       // received
-      const parentCase = theCase.mergeCase
 
-      // Update the latest court session if it is unconfirmed
+      // The parent's court sessions can change under this request: the guard
+      // locked this case's row, not the parent's. The parent's court session
+      // routes run under the parent's row lock (CaseExistsForUpdateGuard), so
+      // taking that lock here makes a confirmation of the parent's latest
+      // session, or a new session on it, either finish before the decision
+      // below or wait for this completion to commit - and the decision is
+      // taken from a fresh read under the lock, not from the guard's snapshot.
+      // Lock order is child then parent; nothing takes them the other way
+      // round - the parent's routes lock their own row and read the merged
+      // children without locking them.
+      const parentCaseLocked =
+        await this.caseRepositoryService.lockByIdForUpdate(
+          theCase.mergeCaseId,
+          transaction,
+        )
+
+      if (!parentCaseLocked) {
+        throw new InternalServerErrorException(
+          `Could not find parent case ${theCase.mergeCaseId} when completing merged case ${theCase.id}`,
+        )
+      }
+
+      // The merged case joins the parent's latest court session while that
+      // session is still open. Once it has been confirmed - or if the parent
+      // has no session yet - nothing happens here: the parent's next court
+      // session picks the merged case up when it is created.
       if (
-        parentCase?.withCourtSessions &&
-        parentCase.courtSessions &&
-        parentCase.courtSessions.length > 0 &&
-        !parentCase.courtSessions[parentCase.courtSessions.length - 1]
-          .isConfirmed
+        theCase.mergeCase?.withCourtSessions &&
+        (await this.courtSessionService.isLatestCourtSessionOpen(
+          theCase.mergeCaseId,
+          transaction,
+        ))
       ) {
         await this.courtSessionService.addMergedCaseToLatestCourtSession(
-          parentCase.id,
+          theCase.mergeCaseId,
           theCase.id,
           transaction,
         )
@@ -2546,19 +2586,35 @@ export class CaseService {
 
     this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
+    // Each of these events asserts that a transition happened, so they wait
+    // for the commit: TransactionCommitInterceptor drains the callbacks after
+    // the handler has returned and the request transaction, if there is one,
+    // has committed. The update and transition routes run inside the request
+    // transaction their guard opened; createCourtCase and the two signature
+    // confirmations call this inside a transaction their handler owns and
+    // return right after it commits, which is what keeps the drain behind the
+    // commit there too. Either way an update that rolls back announces
+    // nothing. Still fire and forget: a failed announcement is logged, not
+    // returned to the caller.
     if (isReceivingCase) {
-      this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)
+      registerAfterCommit(() =>
+        this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase),
+      )
     }
 
     if (requiresCourtTransition) {
-      this.eventService.postEvent(CaseTransition.MOVE, updatedCase, {
-        from: theCase.court?.name,
-        to: updatedCase?.court?.name,
-      })
+      registerAfterCommit(() =>
+        this.eventService.postEvent(CaseTransition.MOVE, updatedCase, {
+          from: theCase.court?.name,
+          to: updatedCase?.court?.name,
+        }),
+      )
     }
 
     if (isReopeningCase) {
-      this.eventService.postEvent(CaseTransition.REOPEN, updatedCase)
+      registerAfterCommit(() =>
+        this.eventService.postEvent(CaseTransition.REOPEN, updatedCase),
+      )
     }
 
     if (returnUpdatedCase) {
@@ -2877,28 +2933,25 @@ export class CaseService {
               gender: defendant.gender,
               address: defendant.address,
               citizenship: defendant.citizenship,
+              // Each defendant keeps its own defender and sharing timing
+              ...(isRequestCase(theCase.type)
+                ? {
+                    defenderName: defendant.defenderName,
+                    defenderNationalId: defendant.defenderNationalId,
+                    defenderEmail: defendant.defenderEmail,
+                    defenderPhoneNumber: defendant.defenderPhoneNumber,
+                    requestSharedWithDefender:
+                      defendant.requestSharedWithDefender,
+                    ...(theCase.defendantWaivesRightToCounsel
+                      ? { defenderChoice: DefenderChoice.WAIVE }
+                      : {}),
+                  }
+                : {}),
             },
             transaction,
           ),
         ),
       )
-
-      if (isRequestCase(theCase.type)) {
-        await this.defendantService.syncDefenderToAllDefendants(
-          extendedCase.id,
-          {
-            defenderName: theCase.defenderName,
-            defenderNationalId: theCase.defenderNationalId,
-            defenderEmail: theCase.defenderEmail,
-            defenderPhoneNumber: theCase.defenderPhoneNumber,
-            defenderChoice: theCase.defendantWaivesRightToCounsel
-              ? DefenderChoice.WAIVE
-              : null,
-            requestSharedWithDefender: theCase.requestSharedWithDefender,
-          },
-          transaction,
-        )
-      }
     }
 
     return extendedCase

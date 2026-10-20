@@ -541,6 +541,43 @@ export class CaseFileRepositoryService {
     }
   }
 
+  // A defendant's files go with the defendant. Files are soft-deleted, so the
+  // row stays for anything that references it, but the defendant reference has
+  // to be cleared: the foreign key does not cascade, and a soft-deleted row
+  // still pointing at the defendant would block the defendant's own delete.
+  async deleteAllForDefendant(
+    caseId: string,
+    defendantId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Deleting the case files of defendant ${defendantId} of case ${caseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.caseFileModel.update(
+        {
+          state: CaseFileState.DELETED,
+          isKeyAccessible: false,
+          defendantId: null,
+        },
+        {
+          where: { caseId, defendantId },
+          transaction: options.transaction,
+        },
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error deleting the case files of defendant ${defendantId} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
   // A civil claimant's files go with the claimant. Files are soft-deleted, so
   // the row stays for anything that references it, but the claimant reference
   // has to be cleared: the foreign key does not cascade, and a soft-deleted row

@@ -2,7 +2,7 @@ import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
   DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE,
@@ -10,9 +10,9 @@ import {
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   ArraignmentAlert,
+  BlueBox,
   CourtArrangements,
   CourtCaseInfo,
-  DefenderInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -20,8 +20,11 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RequestCaseDefenderInfo,
+  SectionHeading,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
+import { defenderInfo } from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo.strings'
 import {
   CaseCustodyRestrictions,
   CaseType,
@@ -174,10 +177,31 @@ export const HearingArrangements = () => {
           </Box>
         </Box>
         <Box component="section" marginBottom={8}>
-          <DefenderInfo
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
+          <SectionHeading
+            title={formatMessage(
+              defenderInfo.restrictionCases.sections.defender.title,
+            )}
+            tooltip={
+              <Tooltip
+                text={formatMessage(
+                  defenderInfo.restrictionCases.sections.defender.tooltip,
+                )}
+                placement="right"
+              />
+            }
           />
+          <Stack space={3}>
+            {workingCase.defendants?.map((defendant, _index, defendants) => (
+              <BlueBox key={defendant.id}>
+                <RequestCaseDefenderInfo
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                  defendant={defendant}
+                  showDefendantName={defendants.length > 1}
+                />
+              </BlueBox>
+            ))}
+          </Stack>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

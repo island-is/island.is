@@ -147,6 +147,11 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                   name: m.proceedToPayment,
                   type: 'primary',
                 },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
               ],
               api: [
                 CurrentLicenseApi,

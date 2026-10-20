@@ -18,20 +18,18 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Test User Ísabella
     nationalId: '1902982649',
-    firstName: 'Ísabella',
+    givenName: 'Ísabella EagleAir',
+    fullName: 'Ísabella EagleAir Developersdóttir',
     address: 'Hrimblugrugg 2',
     city: 'Vestmannaeyjar',
     gender: 'kvk',
-    lastName: 'Developersdóttir',
-    middleName: 'EagleAir',
     postalcode: 900,
   },
   {
     // Gervibarn Ísabellu
     nationalId: '1111990000',
-    firstName: 'Minnsti',
-    middleName: 'Drengur',
-    lastName: 'Ísabelluson',
+    givenName: 'Minnsti Drengur',
+    fullName: 'Minnsti Drengur Ísabelluson',
     gender: 'kk',
     address: 'Hrimblugrugg 2',
     postalcode: 900,
@@ -40,9 +38,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervibarn Ísabellu
     nationalId: '1111994500',
-    firstName: 'Stærri',
-    middleName: 'Drengur',
-    lastName: 'Ísabelluson',
+    givenName: 'Stærri Drengur',
+    fullName: 'Stærri Drengur Ísabelluson',
     gender: 'kk',
     address: 'Hrimblugrugg 2',
     postalcode: 900,
@@ -51,9 +48,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervibarn Ísabellu
     nationalId: '1111997600',
-    firstName: 'Lítil',
-    middleName: 'Stúlka',
-    lastName: 'Ísabelludóttir',
+    givenName: 'Lítil Stúlka',
+    fullName: 'Lítil Stúlka Ísabelludóttir',
     gender: 'kvk',
     address: 'Hrimblugrugg 2',
     postalcode: 900,
@@ -62,9 +58,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervibarn Ísabellu
     nationalId: '1111999300',
-    firstName: 'Stærsta',
-    middleName: 'Stúlka',
-    lastName: 'Ísabelludóttir',
+    givenName: 'Stærsta Stúlka',
+    fullName: 'Stærsta Stúlka Ísabelludóttir',
     gender: 'kvk',
     address: 'Hrimblugrugg 2',
     postalcode: 900,
@@ -73,9 +68,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervimadur Ameríka
     nationalId: '0101302989',
-    firstName: 'Gervimaður',
-    middleName: '',
-    lastName: 'Ameríka',
+    givenName: 'Gervimaður',
+    fullName: 'Gervimaður Ameríka',
     gender: 'kk',
     address: 'Vallargata 1',
     postalcode: 600,
@@ -84,9 +78,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervimadur Færeyjar
     nationalId: '0101302399',
-    firstName: 'Gervimaður',
-    middleName: '',
-    lastName: 'Færeyjar',
+    givenName: 'Gervimaður',
+    fullName: 'Gervimaður Færeyjar',
     gender: 'kk',
     address: 'Vallargata 1',
     postalcode: 100,
@@ -95,9 +88,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervibarn Ameríku
     nationalId: '2222222229',
-    firstName: 'Litli',
-    middleName: 'Jói',
-    lastName: 'Ameríkuson',
+    givenName: 'Litli Jói',
+    fullName: 'Litli Jói Ameríkuson',
     gender: 'kk',
     address: 'Vallargata 1',
     postalcode: 100,
@@ -106,9 +98,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervibarn Ameríku
     nationalId: '3333333339',
-    firstName: 'Litla',
-    middleName: 'Jóna',
-    lastName: 'Ameríkudóttir',
+    givenName: 'Litla Jóna',
+    fullName: 'Litla Jóna Ameríkudóttir',
     gender: 'kk',
     address: 'Vallargata 1',
     postalcode: 100,
@@ -118,9 +109,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervibarn Friðrik
     nationalId: '1204209090',
-    firstName: 'Friðrik',
-    middleName: 'Ari',
-    lastName: 'Baldursson',
+    givenName: 'Friðrik Ari',
+    fullName: 'Friðrik Ari Baldursson',
     gender: 'kk',
     address: 'Vallargata 1',
     postalcode: 900,
@@ -129,9 +119,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervibarn Eyjólfur
     nationalId: '0711196370',
-    firstName: 'Eyjólfur',
-    middleName: '',
-    lastName: 'Baldursson',
+    givenName: 'Eyjólfur',
+    fullName: 'Eyjólfur Baldursson',
     gender: 'kk',
     address: 'Vallargata 1',
     postalcode: 900,
@@ -140,9 +129,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervibarn Arnar
     nationalId: '1508154790',
-    firstName: 'Arnar',
-    middleName: '',
-    lastName: 'Sigurðarson',
+    givenName: 'Arnar',
+    fullName: 'Arnar Sigurðarson',
     gender: 'kk',
     address: 'Vallargata 1',
     postalcode: 900,
@@ -151,9 +139,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervimadur Afríka
     nationalId: '0101303019',
-    firstName: 'Gervimaður',
-    middleName: '',
-    lastName: 'Afríka',
+    givenName: 'Gervimaður',
+    fullName: 'Gervimaður Afríka',
     gender: 'kk',
     address: 'Urðarbraut 1',
     postalcode: 540,
@@ -162,9 +149,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervibarn Stefán
     nationalId: '2508107410',
-    firstName: 'Stefán',
-    middleName: 'Eysteinn',
-    lastName: 'Júlíusson',
+    givenName: 'Stefán Eysteinn',
+    fullName: 'Stefán Eysteinn Júlíusson',
     gender: 'kk',
     address: 'Urðarbraut 1',
     postalcode: 540,
@@ -173,9 +159,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervibarn Embla
     nationalId: '2508105630',
-    firstName: 'Embla',
-    middleName: '',
-    lastName: 'Asksdóttir',
+    givenName: 'Embla',
+    fullName: 'Embla Asksdóttir',
     gender: 'kvk',
     address: 'Urðarbraut 1',
     postalcode: 540,
@@ -184,9 +169,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervibarn Sunna
     nationalId: '1110199320',
-    firstName: 'Sunna',
-    middleName: 'Hlín',
-    lastName: 'Júlíusdóttir',
+    givenName: 'Sunna Hlín',
+    fullName: 'Sunna Hlín Júlíusdóttir',
     gender: 'kvk',
     address: 'Urðarbraut 1',
     postalcode: 540,
@@ -195,9 +179,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervimaður Útlönd
     nationalId: '0101307789',
-    firstName: 'Gervimaður',
-    middleName: '',
-    lastName: 'Útlönd',
+    givenName: 'Gervimaður',
+    fullName: 'Gervimaður Útlönd',
     gender: 'kk',
     address: 'Vallargata 1',
     postalcode: 900,
@@ -206,9 +189,8 @@ const TEST_USERS: NationalRegistryUser[] = [
   {
     // Gervibarn Útlönd
     nationalId: '1111111119',
-    firstName: 'Sól',
-    middleName: 'Rún',
-    lastName: 'Gervimannsdóttir',
+    givenName: 'Sól Rún',
+    fullName: 'Sól Rún Gervimannsdóttir',
     gender: 'kvk',
     address: 'Urðarbraut 1',
     postalcode: 210,
@@ -247,14 +229,10 @@ export class NationalRegistryService {
   ): NationalRegistryUser {
     const address = response.heimilisfang ?? response.itarupplysingar?.adsetur
     const postnumer = address?.postnumer
-    const nameParts = response.nafn?.split(' ') ?? []
     return {
       nationalId: response.kennitala ?? nationalId,
-      firstName: response.fulltNafn?.eiginNafn ?? nameParts[0] ?? '',
-      middleName:
-        response.fulltNafn?.milliNafn ?? nameParts.slice(1, -1).join(' '),
-      lastName:
-        response.fulltNafn?.kenniNafn ?? nameParts.slice(-1).pop() ?? '',
+      givenName: response.fulltNafn?.eiginNafn ?? '',
+      fullName: response.fulltNafn?.fulltNafn ?? response.nafn ?? '',
       gender: this.mapGender(response.kyn?.kynKodi ?? ''),
       address: address?.husHeiti ?? '',
       postalcode:

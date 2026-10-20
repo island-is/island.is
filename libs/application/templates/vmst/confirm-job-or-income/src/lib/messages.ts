@@ -19,8 +19,19 @@ export const application = defineMessages({
   pageDescription: {
     id: 'vmst.cjoi.application:pageDescription#markdown',
     defaultMessage:
-      'Ef þú vinnur eða færð tekjur samhliða atvinnuleysisbótum þarftu að tilkynna það til Vinnumálastofnunar. Þetta á við um alla launaða vinnu. Hvort sem er fast starf, hlutastarf eða tilfallandi vinnu.\n\n**Mikilvægt: Tilkynna þarf vinnu í síðasta lagi daginn áður en hún hefst**',
+      'Ef þú vinnur eða færð tekjur samhliða atvinnuleysisbótum þarftu að tilkynna það til Vinnumálastofnunar. Þetta á við um alla launaða vinnu, hvort sem er fast starf, hlutastarf eða tilfallandi vinna.',
     description: `Page description`,
+  },
+  incomeTypeAlertTitle: {
+    id: 'vmst.cjoi.application:incomeTypeAlertTitle',
+    defaultMessage: 'Athugið',
+    description: 'Alert title on the income type selection page',
+  },
+  incomeTypeAlert: {
+    id: 'vmst.cjoi.application:incomeTypeAlert#markdown',
+    defaultMessage:
+      '* Tilkynna þarf vinnu í síðasta lagi daginn áður en hún hefst.\n* Hægt er að tilkynna núverandi mánuð og þann síðasta og svo fjóra mánuði fram í tímann.\n* Öll tekjuskráning á að miðast við upphæð fyrir skatt, ekki útborgaða fjárhæð eftir skatt.',
+    description: 'Alert on the income type selection page',
   },
   applicationName: {
     id: 'vmst.cjoi.application:applicationName',
@@ -117,7 +128,7 @@ export const application = defineMessages({
   partTimeDescription: {
     id: 'vmst.cjoi.application:partTimeDescription',
     defaultMessage:
-      'Hlutastarf er starf í minna en 100% starfshlutfalli sem varir lengur en einn mánuð. Þú getur verið áfram skráður í atvinnuleit samhliða hlutastarfi og átt rétt á atvinnuleysisbótum. En það fer eftir einstaklingsbunum bótarétti. Ekki þarf að skila launaseðli vegna hlutastarfa.',
+      'Hlutastarf er starf í minna en 100% starfshlutfalli sem varir lengur en einn mánuð. Þú getur verið áfram skráður í atvinnuleit samhliða hlutastarfi og átt rétt á atvinnuleysisbótum. En það fer eftir einstaklingsbundnum bótarétti. Ekki þarf að skila launaseðli vegna hlutastarfa.',
     description: 'Description for part-time work type',
   },
   partTimeAlert: {
@@ -204,11 +215,17 @@ export const application = defineMessages({
     defaultMessage: 'Bæta við línu',
     description: 'Add line button text for repeater',
   },
-  removeLineLocked: {
-    id: 'vmst.cjoi.application:removeLineLocked',
-    defaultMessage: 'Ekki hægt að eyða eftir 26. hvers mánaðar',
+  removeLineNotAllowed: {
+    id: 'vmst.cjoi.application:removeLineNotAllowed',
+    defaultMessage: 'Ekki hægt að eyða þessari færslu',
     description:
-      'Tooltip shown on the disabled delete button during the lock period',
+      'Tooltip shown on the disabled delete button when the persisted entry cannot be deleted',
+  },
+  editLineNotAllowed: {
+    id: 'vmst.cjoi.application:editLineNotAllowed',
+    defaultMessage: 'Ekki hægt að breyta þessari færslu',
+    description:
+      'Tooltip shown on the disabled edit button when the persisted entry cannot be edited',
   },
   entryTitle: {
     id: 'vmst.cjoi.application:entryTitle',
@@ -229,6 +246,12 @@ export const application = defineMessages({
     id: 'vmst.cjoi.application:dateTo',
     defaultMessage: 'Dagsetning til',
     description: 'Date to label',
+  },
+  indefinitePeriod: {
+    id: 'vmst.cjoi.application:indefinitePeriod',
+    defaultMessage: 'Ótímabundið',
+    description:
+      'Shown for an empty optional end date (placeholder and overview), declaring an indefinite period',
   },
   jobStart: {
     id: 'vmst.cjoi.application:jobStart',
@@ -294,7 +317,7 @@ export const application = defineMessages({
   },
   tableHeaderDateFrom: {
     id: 'vmst.cjoi.application:tableHeaderDateFrom',
-    defaultMessage: 'Dag. frá',
+    defaultMessage: 'Dags. frá',
     description: 'Table header for date from',
   },
   tableHeaderDateTo: {
@@ -309,7 +332,7 @@ export const application = defineMessages({
   },
   tableHeaderEstimatedIncome: {
     id: 'vmst.cjoi.application:tableHeaderEstimatedIncome',
-    defaultMessage: 'Áætlaðuð upphæð',
+    defaultMessage: 'Áætluð upphæð',
     description: 'Table header for estimated income',
   },
   tableHeaderJobStart: {
@@ -426,6 +449,22 @@ export const application = defineMessages({
     id: 'vmst.cjoi.application:overviewEntryHeading',
     defaultMessage: 'Lína {index}',
     description: 'Heading for each repeater entry in the overview',
+  },
+  overviewTagNew: {
+    id: 'vmst.cjoi.application:overviewTagNew',
+    defaultMessage: 'Nýskráð',
+    description: 'Tag marking a newly added entry in the overview',
+  },
+  overviewTagDeleted: {
+    id: 'vmst.cjoi.application:overviewTagDeleted',
+    defaultMessage: 'Skráningu eytt',
+    description: 'Tag marking a deleted entry in the overview',
+  },
+  overviewTagEdited: {
+    id: 'vmst.cjoi.application:overviewTagEdited',
+    defaultMessage: 'Skráningu breytt',
+    description:
+      'Tag marking an edited previously registered entry in the overview',
   },
   overviewEditButton: {
     id: 'vmst.cjoi.application:overviewEditButton',
@@ -545,10 +584,11 @@ export const errorMessages = defineMessages({
       'Villa við að skila inn umsókn. Reyndu aftur eða hafðu samband við Ísland.is',
     description: 'Error message when submit fails',
   },
-  dateToRequiredForOneTime: {
-    id: 'vmst.cjoi.application:errorMessages.dateToRequiredForOneTime',
-    defaultMessage: 'Dagsetning til er skylda þegar valin er eingreiðsla',
-    description: 'Error shown when dateTo is missing for a one-time payment',
+  dateToBeforeDateFrom: {
+    id: 'vmst.cjoi.application:errorMessages.dateToBeforeDateFrom',
+    defaultMessage: 'Dagsetning til má ekki vera á undan dagsetningu frá',
+    description:
+      'Error shown when the end date of a period is before its start date',
   },
   casualWorkOverlappingPeriods: {
     id: 'vmst.cjoi.application:errorMessages.casualWorkOverlappingPeriods',
@@ -575,6 +615,19 @@ export const errorMessages = defineMessages({
       'Tímabil hjá sama fyrirtæki skarast. Þú getur eytt út línu eða breytt tímabilum til að geta haldið áfram með skráninguna. Ef starfslok eru ekki skráð telst starfið vera ótímabundið.',
     description:
       'Alert message body shown when part time entries have overlapping periods for the same company',
+  },
+  partTimeCasualWorkOverlappingPeriods: {
+    id: 'vmst.cjoi.application:errorMessages.partTimeCasualWorkOverlappingPeriods',
+    defaultMessage: 'Tímabil mega ekki skarast við tilfallandi vinnu',
+    description:
+      'Error shown when a part time entry overlaps a casual work entry for the same company',
+  },
+  partTimeCasualWorkOverlappingPeriodsAlertMessage: {
+    id: 'vmst.cjoi.application:errorMessages.partTimeCasualWorkOverlappingPeriodsAlertMessage',
+    defaultMessage:
+      'Tímabil hlutastarfs skarast við skráða tilfallandi vinnu hjá sama fyrirtæki. Þú getur breytt tímabilum hér eða breytt skráningu tilfallandi vinnu til að geta haldið áfram. Ef starfslok eru ekki skráð telst starfið vera ótímabundið.',
+    description:
+      'Alert message body shown when a part time entry overlaps a casual work entry for the same company',
   },
   partTimeValidationErrorMessage: {
     id: 'vmst.cjoi.application:errorMessages.partTimeValidationErrorMessage',

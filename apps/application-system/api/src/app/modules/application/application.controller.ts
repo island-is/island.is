@@ -786,6 +786,13 @@ export class ApplicationController {
     }
 
     return this.withApplicationInfo(template, existingApplication, async () => {
+      // Checked against the stored application, so answers in this request cannot change the role
+      await this.validationService.validateIncomingEvent(
+        existingApplication as BaseApplication,
+        updateApplicationStateDto.event,
+        user,
+      )
+
       const newAnswers = (updateApplicationStateDto.answers ?? {}) as FormValue
       const namespaces = await getApplicationTranslationNamespaces(
         existingApplication as BaseApplication,

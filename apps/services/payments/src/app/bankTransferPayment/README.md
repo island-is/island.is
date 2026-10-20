@@ -22,6 +22,7 @@ The feature is gated behind feature flags (see [Feature flags & access](#feature
 - [Refund](#refund)
 - [Feature flags & access](#feature-flags--access)
 - [Configuration](#configuration)
+- [Logging](#logging)
 
 ## Data model
 
@@ -117,8 +118,9 @@ sequenceDiagram
     FE->>U: Receipt screen
 ```
 
-The webhook and the FE polling loop are **two independent paths to the same idempotent
-`verify`**. Either one settles the flow; the other becomes a no-op.
+The webhook and the FE polling loop are **two independent paths into the same `verify`**. Only the
+terminal state transition is idempotent: one caller wins the compare-and-set and emits the event.
+The loser still reaches `createFjsCharge` — see [Settlement & FJS charge](#settlement--fjs-charge).
 
 ## Blikk status model
 
@@ -278,6 +280,21 @@ stateDiagram-v2
    retries, the fulfillment is kept (we don't un-settle) and a warning is logged — the payment
    worker retries the charge on its next run.
 
+> **Two finalizers can both reach FJS.** The loser of the `payment_fulfillment` race in step 2
+> carries on to step 3, so a webhook and a poll landing together produce two `createFjsCharge`
+> calls. FJS is what makes that safe: `requestID = paymentFlowId` is stable, so the second create
+> is rejected as `AlreadyCreatedCharge` and reconciled by step 4. That is inferred from the client
+> surface rather than verified, so the duplicate case is handled anyway — `createFjsCharge`
+> compares the reception id FJS returned against the row it adopts, and logs
+> `CRITICAL: FJS accepted a duplicate charge …` only when they differ.
+> Alert on the structured fields rather than the prose: `needsManualReversal` (a charge at FJS we
+> never persisted) and `needsReconciliation` (conflict with a soft-deleted row). A
+> `needsManualReversal` case is also written to `payment_flow_event` (`reason = 'other'`, the
+> reception id in `metadata`) without notifying the organisation, so it outlives log retention. A reconcile that
+> finds no row is not logged — it cannot tell a lagging commit from a real orphan, and the caller
+> and worker retries surface it anyway. Page on a settled flow that still has no `fjs_charge` row. Either way this is a duplicate _record_, not a second debit: the payer's
+> money moves once, at the provider.
+
 > **Worker backstop (FJS charge only).** The payment worker sweeps paid flows without an FJS
 > charge — once per payment method
 > ([`findPaidFlowsWithoutFjsCharge`](../paymentFlow/paymentFlow.service.ts)) — and rebuilds the
@@ -294,7 +311,8 @@ webhook body's `status` is **ignored** — `verify` fetches the authoritative st
 itself. A forged callback can therefore only trigger a (harmless, idempotent) refresh.
 
 **Polling** ([`useBankTransferStatusPolling`](../../../../../../apps/payments/hooks/useBankTransferStatusPolling.ts)):
-the FE polls `verify` by `paymentFlowId` with backoff `[1s, 2s, 4s, 8s, 15s]`, capped by a hard
+the FE polls `verify` by `paymentFlowId` with backoff `[500ms, 1s, 2s, 3s, 5s]` — dropping
+to a 10s steady state once the SCA URL is on screen — capped by a hard
 timeout derived from `expiresAt` (+30s grace; 10-min fallback if absent). Polling runs only on the
 waiting screen (`paymentStatus === bank_transfer_pending`), which is where both SCA paths land via
 SSR. It exits silently on `BankTransferNotFound`.
@@ -419,3 +437,29 @@ Env vars (values from [`infra/payments.ts`](../../../infra/payments.ts), schemas
 | `BLIKK_API_BASE_URL`        | `https://stage.blikk.tech` (dev/staging), `https://api.blikk.tech` (prod) | Provider base URL.                                                 |
 | `BLIKK_PAYMENT_TTL_SECONDS` | `300` (dev/staging), `600` (prod)                                         | Attempt TTL; sent to Blikk as `expiresAt` and mirrored on the row. |
 | `BLIKK_FETCH_TIMEOUT`       | `10000`                                                                   | Per-request timeout (ms), enforced by the enhanced fetch.          |
+
+## Logging
+
+Bank-transfer log lines carry the context from
+[`bankTransferLogContext`](./bankTransfer.utils.ts) as top-level fields:
+
+| Field           | Value                                                                                   |
+| --------------- | --------------------------------------------------------------------------------------- |
+| `paymentFlowId` | The flow, also prefixed onto the message.                                               |
+| `correlationId` | The attempt's row id.                                                                   |
+| `rrn`           | Blikk's payment id.                                                                     |
+| `payerType`     | `company` or `person`. Read from the flow's payer, or from the row's `actorNationalId`. |
+
+A field the call site does not know is left out rather than filled with a placeholder. Filter
+company payers in Datadog with `service:services-payments @payerType:company`. For person payers,
+search for `@payerType:person` rather than negating `company`, which also matches lines without
+the field. The national ids themselves are never logged.
+
+Lines that do not carry `payerType`, so a `payerType` filter leaves them out:
+
+- `Blikk get payment failed`, keyed by `rrn` only.
+- `Unknown bank transfer status received`, which sees only Blikk's payload.
+- The bank-transfer [refund](#refund) saga.
+- The payment worker's FJS charge lines, which it shares with card payments.
+
+Search those by `paymentFlowId` or `rrn` instead.

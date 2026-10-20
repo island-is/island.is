@@ -29,6 +29,8 @@ export const is = {
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
   'applock.attempts': 'tilraunir eftir',
   'applock.attempt': 'tilraun eftir',
+  'applock.usePin': 'Nota PIN',
+  'biometrics.cancel': 'Hætta við',
 
   // onboarding
   'onboarding.notifications.title': 'Leyfa tilkynningar',
@@ -57,6 +59,9 @@ export const is = {
   'onboarding.biometrics.type.biometrics': 'lífkenni',
   'onboarding.biometrics.type.fingerprint': 'fingrafar',
   'onboarding.biometrics.type.iris': 'augnskanna',
+  'biometrics.enrollmentChanged.title': 'Slökkt á lífkennum',
+  'biometrics.enrollmentChanged.message':
+    'Lífkennin sem skráð eru í tækinu hafa breyst. Opnaðu appið með PIN-númerinu og kveiktu aftur á lífkennum í stillingum.',
   'onboarding.pinKeypad.accessibilityLabel.iris': 'Nota augnskannaauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.fingerprint':
     'Nota fingrafarsauðkenningu',
@@ -102,6 +107,25 @@ export const is = {
     'Tilkynningar í Ísland.is appinu',
   'settings.communication.newNotificationsInAppDescription':
     'Stofnanir geta sent þér tilkynningu í Ísland.is appið.',
+  'settings.communication.notificationsNotEnabledTitle':
+    'Tilkynningar eru ekki virkar í tækinu',
+  'settings.communication.notificationsNotEnabledDescription':
+    'Þú þarft að leyfa tilkynningar í tækinu til að fá þær frá Ísland.is.',
+  'settings.communication.notificationsNotEnabledLinkText':
+    'Leyfa tilkynningar',
+  'settings.communication.notificationsBlockedTitle':
+    'Slökkt er á tilkynningum í tækinu',
+  'settings.communication.notificationsBlockedDescription':
+    'Ísland.is getur ekki sent þér tilkynningar fyrr en þú leyfir þær í stillingum tækisins.',
+  'settings.communication.notificationsBlockedLinkText':
+    'Opna stillingar tækisins',
+  'settings.communication.notificationsBlockedAlertTitle':
+    'Leyfa tilkynningar í tækinu?',
+  'settings.communication.notificationsBlockedAlertDescription':
+    'Slökkt er á tilkynningum frá Ísland.is í stillingum tækisins. Þú þarft að kveikja á þeim þar.',
+  'settings.communication.notificationsBlockedAlertCancelButton': 'Ekki núna',
+  'settings.communication.notificationsBlockedAlertOpenSettingsButton':
+    'Opna stillingar',
   'settings.security.privacyTitle': 'Persónuverndarstefna',
   'settings.security.privacySubTitle': 'Stafrænt Íslands',
   'settings.security.groupTitle': 'Öryggi og persónuvernd',
@@ -788,7 +812,6 @@ export const is = {
   'health.categories.referrals': 'Tilvísanir',
   'health.categories.paymentsAndRights': 'Greiðslur og réttindi',
   'health.categories.waitingLists': 'Biðlistar',
-  'health.categories.medicalRecords': 'Sjúkraskrá',
   'health.categories.treatment': 'Meðferð',
   'health.categories.treatmentWithName': 'Meðferð - {name}',
 

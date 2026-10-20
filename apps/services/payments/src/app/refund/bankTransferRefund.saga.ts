@@ -105,6 +105,10 @@ export const createBankTransferRefundSaga = (
       if (deletedPaymentFulfillment) {
         logger.info(
           `[${ctx.paymentFlowId}] Restoring bank transfer payment fulfillment`,
+          {
+            paymentFlowId: ctx.paymentFlowId,
+            correlationId: ctx.paymentFulfillment.confirmationRefId,
+          },
         )
         await paymentFlowService.restorePaymentFulfillment({
           paymentFlowId: ctx.paymentFlowId,
@@ -173,6 +177,11 @@ export const createBankTransferRefundSaga = (
           reasonForRefund: RefundType.FULFILLMENT_FAILURE,
           originalError: ctx.input.reasonForRefund,
         },
+        // No `rrn`: only looked up on the `needsFjsCreate` branch.
+        logContext: {
+          paymentFlowId: ctx.paymentFlowId,
+          correlationId: ctx.paymentFulfillment.confirmationRefId,
+        },
       })
 
       await paymentFlowService.deleteFjsCharge(ctx.paymentFlowId)
@@ -202,6 +211,11 @@ export const createBankTransferRefundSaga = (
           metadata: {
             action: 'deleted_fjs',
             reason: ctx.input.reasonForRefund,
+          },
+          // No `rrn` — as above.
+          logContext: {
+            paymentFlowId: ctx.paymentFlowId,
+            correlationId: ctx.paymentFulfillment.confirmationRefId,
           },
         },
         {

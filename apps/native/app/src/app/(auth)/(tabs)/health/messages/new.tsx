@@ -17,6 +17,7 @@ import { ServiceInstructions } from '@/components/service-instructions'
 import { StackScreen } from '@/components/stack-screen'
 import { toast, ToastHost } from '@/components/toast'
 import {
+  HealthDirectorateHealthConversationRecipientAvailability,
   LocaleEnum,
   useCreateHealthConversationMutation,
   useGetHealthConversationRecipientsQuery,
@@ -128,19 +129,25 @@ export default function HealthMessageComposeScreen() {
   const hidesComposer = isCertificateSelected || !!externalLinkUrl
   const { healthMessageNew: certificateUrl } = useMyPagesLinks()
 
-  // cache-and-network reports loading on a revisit too, so only an empty
-  // cache waits.
+  const hasOpenRecipient = recipients.some(canStartConversation)
+  // A closed window may have reopened since the cache was written.
+  const hasClosedWindow = recipients.some(
+    (r) =>
+      r.availability ===
+      HealthDirectorateHealthConversationRecipientAvailability.Closed,
+  )
+  // Show the cache on a revisit, unless it's all closed by a window: then
+  // wait for the refetch.
   const recipientsLoading =
-    !isReply && recipientsRes.loading && !recipientsRes.data
+    !isReply &&
+    recipientsRes.loading &&
+    (!recipientsRes.data || (!hasOpenRecipient && hasClosedWindow))
   const recipientsError =
     !isReply && !recipientsLoading && !!recipientsRes.error
   // Nothing to send to: no form can open, so the notice takes over the sheet
   // and the intro is skipped.
   const noOpenRecipient =
-    !isReply &&
-    !recipientsLoading &&
-    !recipientsError &&
-    !recipients.some(canStartConversation)
+    !isReply && !recipientsLoading && !recipientsError && !hasOpenRecipient
 
   // Default to the only recipient when there is a single option.
   useEffect(() => {
@@ -170,7 +177,10 @@ export default function HealthMessageComposeScreen() {
   }, [isReply, usesCustomTitle, serviceOptions, typeCode])
 
   const onError = () => {
-    toast.error(intl.formatMessage({ id: 'health.messages.compose.sendError' }))
+    toast.error(
+      intl.formatMessage({ id: 'health.messages.compose.sendError' }),
+      { duration: 5000 },
+    )
   }
 
   const [replyToConversation, { loading: replying }] =

@@ -101,6 +101,9 @@ export class ValueInput {
   paymentCode?: string
 
   @Field(() => String, { nullable: true })
+  maritalStatus?: string
+
+  @Field(() => String, { nullable: true })
   registrationNumber?: string
 
   @Field(() => String, { nullable: true })

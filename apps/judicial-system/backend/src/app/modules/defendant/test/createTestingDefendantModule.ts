@@ -17,6 +17,8 @@ import { CaseService } from '../../case'
 import { CourtService } from '../../court'
 import { EventLogService } from '../../event-log'
 import {
+  AppealEventLogRepositoryService,
+  AppealStatementDeadlineRepositoryService,
   CaseDefendantPoliceCaseNumberRepositoryService,
   CaseFileRepositoryService,
   CaseRepositoryService,
@@ -40,6 +42,7 @@ jest.mock('../../court/court.service')
 jest.mock('../../case/case.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
+jest.mock('../../repository/services/appealEventLogRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock(
   '../../repository/services/caseDefendantPoliceCaseNumber.repository.service',
@@ -66,6 +69,7 @@ export const createTestingDefendantModule = async () => {
       CaseRepositoryService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,
+      AppealEventLogRepositoryService,
       CaseDefendantPoliceCaseNumberRepositoryService,
       EventLogService,
       AppealCaseService,
@@ -90,8 +94,16 @@ export const createTestingDefendantModule = async () => {
       {
         provide: CaseFileRepositoryService,
         useValue: {
+          deleteAllForDefendant: jest.fn(),
           deleteAllForCivilClaimant: jest.fn(),
           deleteAllForCivilClaimantsOfCase: jest.fn(),
+        },
+      },
+      {
+        provide: AppealStatementDeadlineRepositoryService,
+        useValue: {
+          deleteAllForDefendant: jest.fn(),
+          deleteAllForCivilClaimant: jest.fn(),
         },
       },
       DefendantService,
@@ -122,6 +134,11 @@ export const createTestingDefendantModule = async () => {
       DefendantEventLogRepositoryService,
     )
 
+  const appealEventLogRepositoryService =
+    defendantModule.get<AppealEventLogRepositoryService>(
+      AppealEventLogRepositoryService,
+    )
+
   const caseDefendantPoliceCaseNumberRepositoryService =
     defendantModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
       CaseDefendantPoliceCaseNumberRepositoryService,
@@ -150,6 +167,11 @@ export const createTestingDefendantModule = async () => {
 
   const caseFileRepositoryService =
     defendantModule.get<CaseFileRepositoryService>(CaseFileRepositoryService)
+
+  const appealStatementDeadlineRepositoryService =
+    defendantModule.get<AppealStatementDeadlineRepositoryService>(
+      AppealStatementDeadlineRepositoryService,
+    )
 
   const civilClaimantService =
     defendantModule.get<CivilClaimantService>(CivilClaimantService)
@@ -183,6 +205,7 @@ export const createTestingDefendantModule = async () => {
     defendantRepositoryService,
     caseRepositoryService,
     defendantEventLogRepositoryService,
+    appealEventLogRepositoryService,
     caseDefendantPoliceCaseNumberRepositoryService,
     defendantService,
     defendantController,
@@ -193,5 +216,6 @@ export const createTestingDefendantModule = async () => {
     civilClaimantController,
     civilClaimantRepositoryService,
     caseFileRepositoryService,
+    appealStatementDeadlineRepositoryService,
   }
 }

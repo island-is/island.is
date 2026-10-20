@@ -153,7 +153,7 @@ export type RepeaterItem = {
   emailLabel?: StaticText
   customNameLabel?: StaticText
   customNationalIdLabel?: StaticText
-  placeholder?: StaticText
+  placeholder?: MaybeWithApplicationAndActiveField<StaticText>
   options?: TableRepeaterOptions
   filterOptions?: (
     options: RepeaterOption[],
@@ -839,10 +839,22 @@ export type TableRepeaterField = BaseField & {
   /** Shown on hover when `canRemoveRow` returns false. No tooltip if omitted. */
   removeButtonDisabledTooltipText?: StaticText
   editButtonTooltipText?: StaticText
+  /** Shown on hover when `canEditRow` returns false. No tooltip if omitted. */
+  editButtonDisabledTooltipText?: StaticText
   editField?: boolean
   titleVariant?: TitleVariants
   /** Per row gate for the delete button. Defaults to every row being removable. */
   canRemoveRow?: (
+    application: Application,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    row: Record<string, any>,
+    index: number,
+  ) => boolean
+  /**
+   * Per row gate for the edit button. Only applies when `editField` is true.
+   * Defaults to every row being editable.
+   */
+  canEditRow?: (
     application: Application,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     row: Record<string, any>,
@@ -882,6 +894,7 @@ export type TableRepeaterField = BaseField & {
         value: string,
         displayIndex: number,
         application?: Application,
+        row?: Record<string, string>,
       ) => string | StaticText
     >
   }
@@ -1134,6 +1147,13 @@ export type KeyValueItem = {
   boldValueText?: boolean
   lineAboveKeyText?: boolean
   hideIfEmpty?: boolean
+  // Renders keyText and valueText in a de-emphasized color, e.g. for deleted entries
+  muted?: boolean
+  tag?: {
+    label: FormText
+    variant?: TagVariant
+    outlined?: boolean
+  }
 }
 
 export type AttachmentItem = {

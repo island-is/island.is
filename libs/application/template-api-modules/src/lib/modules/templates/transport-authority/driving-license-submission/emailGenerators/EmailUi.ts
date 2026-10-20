@@ -52,8 +52,9 @@ type EmailHeaderOptions = {
 }
 
 export const EmailHeader = (opts?: EmailHeaderOptions) => {
-  const eyebrow = `${m.congratulations} ${opts?.firstName ?? ''}`.trim()
   const applicationFor = opts?.applicationFor || 'B-full'
+  const greeting = m.greeting[applicationFor] ?? m.congratulations
+  const eyebrow = `${greeting} ${opts?.firstName ?? ''}`.trim()
 
   return [
     Img('notification.jpg', 'myndskreyting'),
@@ -68,13 +69,21 @@ export const EmailHeader = (opts?: EmailHeaderOptions) => {
 export const EmailNextSteps = (
   applicationFor: DrivingLicenseApplicationFor = 'B-full',
 ) => {
-  const paragraphs = m.nextSteps[applicationFor]
+  const sections = m.nextSteps[applicationFor]
 
-  if (!paragraphs) {
+  if (!sections) {
     return []
   }
 
-  return paragraphs.map((copy) => Copy(copy, { align: 'left', small: true }))
+  // Section headings use the bold-paragraph style the in-person requirement
+  // titles below already use, so the email keeps one visual language.
+  return sections.flatMap(({ heading, paragraphs, list }) => [
+    ...(heading
+      ? [Copy(heading, { align: 'left', small: true, style: 'bold' })]
+      : []),
+    ...paragraphs.map((copy) => Copy(copy, { align: 'left', small: true })),
+    ...(list ? [List(list)] : []),
+  ])
 }
 
 type EmailCompleteOptions = {

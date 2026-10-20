@@ -33,3 +33,15 @@ export const headerLink = style({
     outlineOffset: 2,
   },
 })
+
+export const firstRow = style({
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md - 1}px)`]: {
+      selectors: {
+        '&&': {
+          borderTopWidth: 0,
+        },
+      },
+    },
+  },
+})
