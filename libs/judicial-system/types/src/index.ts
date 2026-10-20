@@ -192,6 +192,7 @@ export {
   isRulingOrDismissalCase,
   CasePoliceState,
   hasIndictmentCaseBeenSubmittedToCourt,
+  isIndictmentPdfReplaceableState,
   getIndictmentCasePoliceState,
   isIndictmentCaseState,
   isRequestCaseState,
