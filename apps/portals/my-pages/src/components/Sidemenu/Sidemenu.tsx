@@ -56,14 +56,17 @@ const Sidemenu = ({
     <Box display="flex" justifyContent="flexEnd">
       <Box
         position="relative"
-        background="blue100"
-        padding={2}
+        background={isMobile ? 'blue100' : 'white'}
+        // Desktop matches the notification menu's content inset
+        paddingTop={isMobile ? 2 : 4}
+        paddingBottom={2}
+        paddingX={isMobile ? 2 : 4}
         borderRadius="large"
         display="flex"
         flexDirection="column"
         height={isMobile ? 'full' : undefined}
         className={cn(
-          isMobile ? styles.fullScreen : styles.dropdown,
+          isMobile ? styles.fullScreen : [styles.dropdown, styles.dropdownWide],
           styles.container,
         )}
         style={

@@ -172,6 +172,15 @@ export const fullScreen = style({
   }),
 })
 
+// Category menu only: +32px gives back the card width its wider side padding takes
+export const dropdownWide = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: 480,
+    },
+  }),
+})
+
 export const wrapper = style({
   maxHeight: `calc(100vh - ${spacing[12]}px)`,
 })
