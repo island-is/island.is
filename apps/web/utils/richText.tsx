@@ -28,6 +28,7 @@ import {
   CatchQuotaCalculator,
   Chart,
   ChartNumberBox,
+  ChartNumberBoxGroup,
   ChartsCard,
   ChartsCardsProps,
   DigitalIcelandMailingListThumbnailCard,
@@ -67,6 +68,7 @@ import {
   Calculator as CalculatorSchema,
   Chart as ChartSchema,
   ChartNumberBox as ChartNumberBoxSchema,
+  ChartNumberBoxGroup as ChartNumberBoxGroupSchema,
   ConnectedComponent,
   EmailSignup as EmailSignupSchema,
   Embed as EmbedSchema,
@@ -466,6 +468,11 @@ const defaultRenderComponent = {
   ChartNumberBox: (
     slice: ChartNumberBoxSchema & { chartNumberBoxId: string },
   ) => <ChartNumberBox slice={slice} />,
+  ChartNumberBoxGroup: (
+    slice: Omit<ChartNumberBoxGroupSchema, 'components'> & {
+      components: (ChartNumberBoxSchema & { chartNumberBoxId: string })[]
+    },
+  ) => <ChartNumberBoxGroup slice={slice} />,
   SectionWithImage: (slice: SectionWithImageSchema) => (
     <SectionWithImage
       title={slice.title}

@@ -18,10 +18,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { ProsecutorSection } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
-import {
-  useCase,
-  useDefendants,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { DefendantList } from './DefendantList/DefendantList'
@@ -36,7 +33,6 @@ const Defendant = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { createCase, isCreatingCase } = useCase()
-  const { createDefendant, updateDefendant } = useDefendants()
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -49,46 +45,18 @@ const Defendant = () => {
         return
       }
 
+      // The defendants are created together with the case, so either the
+      // whole case exists afterwards or nothing does. A failed creation has
+      // been reported and leaves the form as it was, ready to try again.
       const createdCase = await createCase(workingCase)
 
-      if (!createdCase || !workingCase.defendants) {
+      if (!createdCase) {
         return
-      }
-
-      // Using for instead of forEach to await each defendant creation
-      // TODO: Handle errors in defendant creation and update
-      for (const [index, defendant] of workingCase.defendants.entries()) {
-        if (
-          index === 0 &&
-          createdCase.defendants &&
-          createdCase.defendants.length > 0
-        ) {
-          await updateDefendant({
-            caseId: createdCase.id,
-            defendantId: createdCase.defendants[0].id,
-            gender: defendant.gender,
-            name: defendant.name,
-            address: defendant.address,
-            nationalId: defendant.nationalId || null,
-            noNationalId: defendant.noNationalId,
-            citizenship: defendant.citizenship,
-          })
-        } else {
-          await createDefendant({
-            caseId: createdCase.id,
-            gender: defendant.gender,
-            name: defendant.name,
-            address: defendant.address,
-            nationalId: defendant.nationalId || null,
-            noNationalId: defendant.noNationalId,
-            citizenship: defendant.citizenship,
-          })
-        }
       }
 
       router.push(`${destination}/${createdCase.id}`)
     },
-    [createCase, createDefendant, router, updateDefendant, workingCase],
+    [createCase, router, workingCase],
   )
 
   const stepIsValid = isDefendantStepValidIndictments(workingCase)

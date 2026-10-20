@@ -21,6 +21,7 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
+import type { LanguageToggleDialogConfig } from '@island.is/web/utils/languageToggleDialog'
 
 type LanguageTogglerProps = {
   dialogId?: string
@@ -31,6 +32,7 @@ type LanguageTogglerProps = {
     is?: string
     en?: string
   }
+  dialogConfig?: LanguageToggleDialogConfig
 }
 
 export const LanguageToggler = ({
@@ -40,6 +42,7 @@ export const LanguageToggler = ({
     (!hideWhenMobile ? '-mobile' : ''),
   queryParams,
   hrefOverride,
+  dialogConfig,
 }: LanguageTogglerProps) => {
   const client = useApolloClient()
   const Router = useRouter()
@@ -164,24 +167,19 @@ export const LanguageToggler = ({
       }
     }
 
-    // Special case for grants since it's a custom page and doesn't have slugs or title in english
-    if ((type as string) === 'grantsplazasearch') {
-      title = {
-        is: 'Styrkjatorg - Leit',
-        en: 'Grantsplaza - Search',
-      }
-    }
-
-    if ((type as string) === 'grantsplaza') {
-      title = {
-        is: 'Styrkjatorg',
-        en: 'Grantsplaza',
-      }
-
+    // Static CustomPage root routes take no slug/id — the entry has no real
+    // Contentful slug or title, so skip slug matching and navigate directly
+    const staticCustomPageTypes: LinkType[] = [
+      'grantsplaza',
+      'grantsplazasearch',
+      'openinvoices',
+    ]
+    if (staticCustomPageTypes.includes(type as LinkType)) {
       return goToOtherLanguagePage(
-        linkResolver('grantsplaza', [], otherLanguage).href,
+        linkResolver(type as LinkType, [], otherLanguage).href,
       )
     }
+
     // Some content models are set up such that a slug is generated from the title
     // Unfortunately, Contentful generates slug for both locales which frequently
     // results in bogus english content. Therefore we check whether the other language has a title as well.
@@ -249,22 +247,53 @@ export const LanguageToggler = ({
     <ButtonElement {...buttonElementProps}>{t.otherLanguageName}</ButtonElement>
   )
 
+  const showConfirmButton = dialogConfig?.showConfirmButton ?? true
+
+  const onDialogConfirm = () => {
+    const href = dialogConfig?.confirmButtonHref
+    if (href?.startsWith('/') && !href.startsWith('//')) {
+      goToOtherLanguagePage(href)
+      return
+    }
+    if (href) {
+      try {
+        const url = new URL(href)
+        // Only allow external http(s) links, never executable schemes like javascript:
+        if (url.protocol === 'https:' || url.protocol === 'http:') {
+          window.location.href = url.href
+          return
+        }
+      } catch {
+        // Invalid URL, fall back to the homepage
+      }
+    }
+    goToOtherLanguagePage(linkResolver('homepage', [], otherLanguage).href)
+  }
+
   const Dialog = (
     <DialogPrompt
       baseId={dialogId}
       initialVisibility={true}
-      title={gn('switchToEnglishModalTitle', 'Translation not available')}
-      description={gn(
-        'switchToEnglishModalText',
-        'The page you are viewing does not have an English translation yet',
-      )}
+      title={
+        dialogConfig?.title ??
+        gn('switchToEnglishModalTitle', 'Translation not available')
+      }
+      description={
+        dialogConfig?.description ??
+        gn(
+          'switchToEnglishModalText',
+          'The page you are viewing does not have an English translation yet',
+        )
+      }
       ariaLabel="Confirm switching to english"
       disclosureElement={Disclosure}
-      onConfirm={() => {
-        goToOtherLanguagePage(linkResolver('homepage', [], otherLanguage).href)
-      }}
-      buttonTextConfirm="Go to home page"
-      buttonTextCancel="Keep viewing"
+      onConfirm={onDialogConfirm}
+      buttonTextConfirm={
+        showConfirmButton
+          ? dialogConfig?.confirmButtonText ?? 'Go to home page'
+          : undefined
+      }
+      buttonTextCancel={dialogConfig?.cancelButtonText ?? 'Keep viewing'}
     />
   )
 

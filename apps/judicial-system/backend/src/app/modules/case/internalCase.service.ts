@@ -31,6 +31,7 @@ import {
   courtSubtypes,
   EventType,
   getIndictmentAppealDeadline,
+  getIndictmentCasePoliceState,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
@@ -88,6 +89,7 @@ import { DeliverIndictmentConclusionDto } from './dto/deliverIndictmentConclusio
 import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { ArchiveResponse } from './models/archive.response'
+import { CasePoliceStateResponse } from './models/casePoliceState.response'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 import { PdfService } from './pdf.service'
@@ -1678,26 +1680,6 @@ export class InternalCaseService {
     return { delivered }
   }
 
-  async findOriginalAncestor(theCase: Case): Promise<Case> {
-    let originalAncestor: Case = theCase
-
-    while (originalAncestor.parentCaseId) {
-      const parentCase = await this.caseRepositoryService.findById(
-        originalAncestor.parentCaseId,
-      )
-
-      if (!parentCase) {
-        throw new InternalServerErrorException(
-          `Original ancestor of case ${theCase.id} not found`,
-        )
-      }
-
-      originalAncestor = parentCase
-    }
-
-    return originalAncestor
-  }
-
   // As this is only currently used by the digital mailbox API
   // we will only return indictment cases that have a court date
   async getAllDefendantIndictmentCases(nationalId: string): Promise<Case[]> {
@@ -1761,6 +1743,16 @@ export class InternalCaseService {
     return this.caseRepositoryService.countIndictmentsAwaitingConfirmationForProsecutorsOffice(
       prosecutorsOfficeId,
     )
+  }
+
+  async getCasePoliceState(theCase: Case): Promise<CasePoliceStateResponse> {
+    const liveCase = await this.caseRepositoryService.findLiveDescendantCase(
+      theCase,
+    )
+
+    return {
+      state: getIndictmentCasePoliceState(liveCase.state),
+    }
   }
 
   async getIndictmentCasesWithVerdictAppealDeadlineOnTargetDate(

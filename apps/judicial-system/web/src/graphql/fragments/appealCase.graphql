@@ -1,6 +1,10 @@
 fragment AppealCaseFields on AppealCase {
   id
   appealState
+  # Which proceeding this appeal belongs to. The verdict appeal already
+  # carries it; the ruling appeals need it so a resolved appeal can say
+  # which of the two a page is about.
+  appealType
   appealedByDefendantId
   appealedByCivilClaimantId
   appealedByRole

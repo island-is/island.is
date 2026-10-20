@@ -26,6 +26,8 @@ import {
   EMPTY_EMPLOYEE_FORM_VALUES,
   type EmployeeFormValues,
   getSalaryComponentLabels,
+  getSalaryComponentTooltips,
+  isPaidHoursFormat,
   paidHoursFromFormValue,
   toFormValues,
 } from './utils'
@@ -34,6 +36,9 @@ type Props = {
   // Present when editing an existing employee; omitted when adding a new one.
   employee?: Employee
   roleTitleById: Record<string, string>
+  // isSaving: this form is the one syncing. disabled: any change is syncing.
+  isSaving?: boolean
+  disabled?: boolean
   onSubmit: (values: EmployeeFormValues) => void
   onCancel: () => void
 }
@@ -41,6 +46,8 @@ type Props = {
 export const EmployeeForm: FC<Props> = ({
   employee,
   roleTitleById,
+  isSaving = false,
+  disabled = false,
   onSubmit,
   onCancel,
 }) => {
@@ -58,6 +65,7 @@ export const EmployeeForm: FC<Props> = ({
   const requiredMsg = formatMessage(messages.errors.required)
 
   const componentLabels = getSalaryComponentLabels(formatMessage)
+  const componentTooltips = getSalaryComponentTooltips(formatMessage)
 
   // Row 4 of the workbook, not the derived-total names: these head the input
   // columns, and Viðbótarlaun / Aukagreiðslur are columns P and Q.
@@ -147,7 +155,10 @@ export const EmployeeForm: FC<Props> = ({
               name="paidHours"
               label={formatMessage(m.paidHoursInputLabel)}
               placeholder={formatMessage(m.paidHoursPlaceholder)}
-              type="number"
+              tooltip={formatMessage(m.paidHoursTooltip)}
+              // Plain text, not type="number": NumberFormat strips a pasted
+              // '.' (173.33 → 17333). paidHoursFromFormValue parses both.
+              inputMode="decimal"
               backgroundColor="white"
               size="sm"
               required
@@ -157,6 +168,9 @@ export const EmployeeForm: FC<Props> = ({
                 // a starfshlutfall carried into this field: 0,8 or 1 would
                 // otherwise pass and inflate tímakaup ~173x silently.
                 validate: (value: string) => {
+                  if (!isPaidHoursFormat(value)) {
+                    return formatMessage(m.paidHoursFormatError)
+                  }
                   const hours = paidHoursFromFormValue(value)
                   return (
                     (hours >= PAID_HOURS_MIN && hours <= PAID_HOURS_MAX) ||
@@ -172,6 +186,7 @@ export const EmployeeForm: FC<Props> = ({
               id="baseSalary"
               name="baseSalary"
               label={formatMessage(m.baseSalaryLabel)}
+              tooltip={formatMessage(m.baseSalaryTooltip)}
               type="number"
               thousandSeparator
               backgroundColor="white"
@@ -202,6 +217,7 @@ export const EmployeeForm: FC<Props> = ({
                     id={key}
                     name={key}
                     label={componentLabels[key]}
+                    tooltip={componentTooltips[key]}
                     type="number"
                     thousandSeparator
                     backgroundColor="white"
@@ -218,11 +234,21 @@ export const EmployeeForm: FC<Props> = ({
           justifyContent="flexEnd"
           marginTop={3}
         >
-          <Button variant="ghost" type="button" onClick={onCancel}>
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={onCancel}
+            disabled={isSaving}
+          >
             {formatMessage(m.cancelButton)}
           </Button>
           <Box marginLeft={2}>
-            <Button type="button" onClick={methods.handleSubmit(onValid)}>
+            <Button
+              type="button"
+              onClick={methods.handleSubmit(onValid)}
+              loading={isSaving}
+              disabled={disabled}
+            >
               {formatMessage(m.saveButton)}
             </Button>
           </Box>

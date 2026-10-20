@@ -81,16 +81,22 @@
         }
       }
     },
-    "/api/applications/v6/testfinished/{applicationId}": {
+    "/api/applications/v6/confirmdone/{applicationId}": {
       "post": {
         "tags": ["Application"],
-        "summary": "Confirm application as done, test finished",
+        "summary": "Confirm application as done — test finished (BE, Temporary License) or health\r\ncertificate approved (Renewal 65+, Full License). Category is resolved from the\r\napplication id and dispatched accordingly.",
         "parameters": [
           {
             "name": "applicationId",
             "in": "path",
             "description": "RLS application id",
             "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "X-Employee-Id",
+            "in": "header",
+            "description": "Employee id from X-Employee-Id header — required for every category except BE, which is called by DDLB's system with no header",
             "schema": { "type": "string" }
           },
           {
@@ -109,11 +115,11 @@
           }
         ],
         "requestBody": {
-          "description": "Optional confirmation model with additional data",
+          "description": "Required for BE/Temporary License (carries TestFinished); must be omitted for Renewal 65+/Full License",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Models.V6.ConfirmBEApplicationModel"
+                "$ref": "#/components/schemas/Models.V6.ConfirmApplicationModel"
               }
             }
           }
@@ -209,83 +215,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Dto.ApplicationForCategoryDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/applications/v6/renewal65/confirmdone/{applicationId}": {
-      "post": {
-        "tags": ["Application"],
-        "summary": "Confirm renewal 65+ application done — called by employee after health certificate approval",
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "description": "RLS application guid",
-            "required": true,
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "X-Employee-Id",
-            "in": "header",
-            "description": "Employee id from X-Employee-Id header",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "api-version",
-            "in": "header",
-            "description": "The requested API version",
-            "required": true,
-            "schema": { "type": "string", "default": "6.0" }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "description": "The requested API version",
-            "required": true,
-            "schema": { "type": "string", "default": "6.0" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Dto.ApplicationFinishedDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Dto.ApplicationFinishedDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Dto.ApplicationFinishedDto"
                 }
               }
             }
@@ -423,160 +352,6 @@
         },
         "responses": {
           "204": { "description": "No Content" },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/applications/v6/fulllicense/confirmdone/{applicationId}": {
-      "post": {
-        "tags": ["Application"],
-        "summary": "Confirm full license application as done after employee approves health certificate",
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "description": "RLS application id",
-            "required": true,
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "X-Employee-Id",
-            "in": "header",
-            "description": "Employee id from X-Employee-Id header",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "api-version",
-            "in": "header",
-            "description": "The requested API version",
-            "required": true,
-            "schema": { "type": "string", "default": "6.0" }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "description": "The requested API version",
-            "required": true,
-            "schema": { "type": "string", "default": "6.0" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Dto.ApplicationFinishedDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Dto.ApplicationFinishedDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Dto.ApplicationFinishedDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/applications/v6/temporarylicense/confirmdone/{applicationId}": {
-      "post": {
-        "tags": ["Application"],
-        "summary": "Confirm temporary license application as done after employee approves health certificate",
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "description": "RLS application id",
-            "required": true,
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "X-Employee-Id",
-            "in": "header",
-            "description": "Employee id from X-Employee-Id header",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "api-version",
-            "in": "header",
-            "description": "The requested API version",
-            "required": true,
-            "schema": { "type": "string", "default": "6.0" }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "description": "The requested API version",
-            "required": true,
-            "schema": { "type": "string", "default": "6.0" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Dto.ApplicationFinishedDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Dto.ApplicationFinishedDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Dto.ApplicationFinishedDto"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5613,6 +5388,12 @@
             "description": "Númer ökuskírteinis ökukennara",
             "format": "int32",
             "nullable": true
+          },
+          "categories": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Dto.V6.CategoryDto" },
+            "description": "Category list for the instructor's driving license",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -6052,18 +5833,28 @@
         "additionalProperties": false,
         "description": "Health declaration when applying for driver's license"
       },
-      "Models.V6.ConfirmBEApplicationModel": {
+      "Models.V6.ConfirmApplicationModel": {
         "type": "object",
         "properties": {
           "testFinished": {
             "type": "string",
-            "description": "Date the BE driving test was completed (date only, e.g. \"2025-03-15\")",
+            "description": "Date the driving test was completed (date only, e.g. \"2025-03-15\"). Nullable so an\r\nomitted or explicit-null value can both be rejected explicitly by the caller — a\r\nnon-nullable DateOnly would silently bind a missing key to 0001-01-01 instead of failing.",
             "format": "date",
+            "nullable": true
+          },
+          "excemptionFromDrivingSchool3": {
+            "type": "boolean",
+            "description": "Temporary License only: person is exempt from driving school 3 (Ökugerði). When\r\nfalse or omitted, the license is marked as having finished driving school 3. Name\r\n(including spelling) kept identical to the pre-unification temporarytestfinished model.",
+            "nullable": true
+          },
+          "onlyAutomaticAuto": {
+            "type": "boolean",
+            "description": "Temporary License only: test was taken on an automatic, so remark 78 (automatic\r\ntransmission only) is added to the B category.",
             "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": "Request model for confirming a BE license application is finished"
+        "description": "Request model for confirming an application is finished. Required for BE and Temporary\r\nLicense categories (which need OkuskirteiniWS.Models.V6.ConfirmApplicationModel.TestFinished); Renewal 65+ and Full License\r\nexpect no body at all."
       },
       "Models.V6.LicenseProductionErrorMsgModel": {
         "type": "object",
@@ -6306,7 +6097,7 @@
         "description": "Post practice permit.\r\nInstructor SSN is resolved from JWT header or route value by SsnResolverFilter."
       },
       "Models.V6.PostRenewal65": {
-        "required": ["districtId", "userId"],
+        "required": ["districtId", "healthDeclaration", "userId"],
         "type": "object",
         "properties": {
           "userId": {
@@ -6333,6 +6124,9 @@
             "type": "boolean",
             "description": "Person requests plastic to be sent to them",
             "nullable": true
+          },
+          "healthDeclaration": {
+            "$ref": "#/components/schemas/Models.HealthDeclarationModel"
           },
           "contentList": {
             "type": "array",

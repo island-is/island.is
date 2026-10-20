@@ -17,10 +17,9 @@ let nationalRegistryService: NationalRegistryService
 
 const user: NationalRegistryUser = {
   nationalId: '1234567890',
-  firstName: 'Jón',
+  givenName: 'Jón Gunnar',
+  fullName: 'Jón Gunnar Jónsson',
   gender: 'kk',
-  lastName: 'Jónsson',
-  middleName: 'Gunnar',
   address: 'Bessastaðir 1',
   postalcode: 900,
   city: 'Vestmannaeyjar',

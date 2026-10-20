@@ -1,8 +1,3 @@
-import type { ModelCtor } from 'sequelize-typescript'
-import { Model, Sequelize } from 'sequelize-typescript'
-
-import { getOptions } from '@island.is/nest/sequelize'
-
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseTableType,
@@ -12,6 +7,7 @@ import {
 
 import * as repository from '../repository'
 import { courtOfAppealsCasesAccessWhereOptions } from './whereOptions/access'
+import { captureSql, initCaseTableModels } from './caseTable.sqlProbe'
 import { getAccessIncludes, getGlobalIncludes } from './caseTable.utils'
 import { caseTableWhereOptions } from './caseTable.whereOptions'
 
@@ -55,26 +51,11 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
     },
   } as User
 
-  beforeAll(() => {
-    const models = Object.values(repository).filter(
-      (exported) =>
-        typeof exported === 'function' && exported.prototype instanceof Model,
-    ) as ModelCtor[]
-
-    // The same define options the app runs with - `underscored` decides whether
-    // the association scope names appeal_type or appealType, so a probe without
-    // it would assert against column names production never emits.
-    new Sequelize({
-      dialect: 'postgres',
-      models,
-      logging: false,
-      define: getOptions().define,
-    })
-  })
+  beforeAll(initCaseTableModels)
 
   // Builds the query a case table runs and returns its SQL, without touching a
   // database.
-  const sqlForTable = async (
+  const sqlForTable = (
     tableType: CaseTableType,
     user: User,
   ): Promise<string> => {
@@ -84,68 +65,26 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
       user,
     )
 
-    const sequelize = repository.Case.sequelize as Sequelize
-    const queries: string[] = []
-    const stub = (sql: unknown) => {
-      queries.push(typeof sql === 'string' ? sql : JSON.stringify(sql))
-      return Promise.resolve([[], {}])
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const anySequelize = sequelize as any
-    const originalQuery = anySequelize.query
-    const originalQueryRaw = anySequelize.queryRaw
-    anySequelize.query = stub
-    anySequelize.queryRaw = stub
-
-    try {
-      await repository.Case.findAll({
+    return captureSql(() =>
+      repository.Case.findAll({
         attributes: ['id'],
         include,
         where: whereOptions.where,
         order,
-      })
-    } catch {
-      // Building the query is the subject here; running it is not, and the
-      // stubbed query layer answers with rows Sequelize cannot map.
-    } finally {
-      anySequelize.query = originalQuery
-      anySequelize.queryRaw = originalQueryRaw
-    }
-
-    return queries[0] ?? ''
+      }),
+    )
   }
 
   // The access options on their own, with no table where options - which is what
   // searchCases applies.
-  const sqlForAccessOptions = async (): Promise<string> => {
-    const sequelize = repository.Case.sequelize as Sequelize
-    const queries: string[] = []
-    const stub = (sql: unknown) => {
-      queries.push(typeof sql === 'string' ? sql : JSON.stringify(sql))
-      return Promise.resolve([[], {}])
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const anySequelize = sequelize as any
-    const originalQuery = anySequelize.query
-    const originalQueryRaw = anySequelize.queryRaw
-    anySequelize.query = stub
-    anySequelize.queryRaw = stub
-
-    try {
-      await repository.Case.findAll({
+  const sqlForAccessOptions = (): Promise<string> =>
+    captureSql(() =>
+      repository.Case.findAll({
         attributes: ['id'],
         include: getAccessIncludes(courtOfAppealsUserForAccess, []),
         where: courtOfAppealsCasesAccessWhereOptions().where,
-      })
-    } catch {
-      // Building the query is the subject here, not running it.
-    } finally {
-      anySequelize.query = originalQuery
-      anySequelize.queryRaw = originalQueryRaw
-    }
-
-    return queries[0] ?? ''
-  }
+      }),
+    )
 
   // Every alias a query's WHERE names, other than the root. Sequelize emits a
   // reference to an association the query did not join without complaint, and

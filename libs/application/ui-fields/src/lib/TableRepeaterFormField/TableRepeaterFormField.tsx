@@ -75,8 +75,12 @@ export const TableRepeaterFormField: FC<Props> = ({
     cancelButtonText = coreMessages.buttonCancel,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
+    removeButtonDisabledTooltipText,
     editButtonTooltipText = coreMessages.editFieldText,
+    editButtonDisabledTooltipText,
     editField = false,
+    canRemoveRow,
+    canEditRow,
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
@@ -202,7 +206,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     item[key] = rawValue ?? ''
     const formatFn = table?.format?.[key]
     const formatted = formatFn
-      ? formatFn(item[key], displayIndex, application)
+      ? formatFn(item[key], displayIndex, application, item)
       : item[key]
     if (
       formatted &&
@@ -364,53 +368,103 @@ export const TableRepeaterFormField: FC<Props> = ({
                       .filter((f) => !f.isUnsaved && !f.isRemoved)
                       .findIndex((f) => f.id === field.id)
 
+                    const canRemove = canRemoveRow
+                      ? canRemoveRow(
+                          watchedApplication,
+                          values[index] ?? {},
+                          index,
+                        )
+                      : true
+
+                    const removeTooltipText = canRemove
+                      ? removeButtonTooltipText
+                      : removeButtonDisabledTooltipText
+
+                    // aria-disabled rather than disabled so the tooltip still
+                    // receives hover events on locked rows
+                    const removeButton = (
+                      <button
+                        type="button"
+                        aria-disabled={!canRemove}
+                        style={canRemove ? undefined : { cursor: 'default' }}
+                        onClick={
+                          canRemove ? () => handleRemoveItem(index) : undefined
+                        }
+                      >
+                        <Icon
+                          icon="trash"
+                          type="outline"
+                          color={canRemove ? 'blue400' : 'dark300'}
+                        />
+                      </button>
+                    )
+
+                    const canEdit =
+                      editField && canEditRow
+                        ? canEditRow(
+                            watchedApplication,
+                            values[index] ?? {},
+                            index,
+                          )
+                        : true
+
+                    const editTooltipText = canEdit
+                      ? editButtonTooltipText
+                      : editButtonDisabledTooltipText
+
+                    const editButton = (
+                      <button
+                        type="button"
+                        aria-disabled={!canEdit}
+                        style={canEdit ? undefined : { cursor: 'default' }}
+                        onClick={
+                          canEdit ? () => handleEditItem(index) : undefined
+                        }
+                        disabled={canEdit && activeIndex !== -1}
+                      >
+                        <Icon
+                          icon="pencil"
+                          color={canEdit ? 'blue400' : 'dark300'}
+                          type="outline"
+                          size="small"
+                        />
+                      </button>
+                    )
+
                     return (
                       <T.Row key={field.id}>
                         <T.Data>
                           <Box display="flex" alignItems="center">
-                            <Tooltip
-                              placement="left"
-                              text={formatText(
-                                removeButtonTooltipText,
-                                application,
-                                formatMessage,
-                              )}
-                            >
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveItem(index)}
-                              >
-                                <Icon
-                                  icon="trash"
-                                  type="outline"
-                                  color="blue400"
-                                />
-                              </button>
-                            </Tooltip>
-                            &nbsp;&nbsp;
-                            {editField && (
+                            {removeTooltipText ? (
                               <Tooltip
                                 placement="left"
                                 text={formatText(
-                                  editButtonTooltipText,
+                                  removeTooltipText,
                                   application,
                                   formatMessage,
                                 )}
                               >
-                                <button
-                                  type="button"
-                                  onClick={() => handleEditItem(index)}
-                                  disabled={activeIndex !== -1}
-                                >
-                                  <Icon
-                                    icon="pencil"
-                                    color="blue400"
-                                    type="outline"
-                                    size="small"
-                                  />
-                                </button>
+                                {removeButton}
                               </Tooltip>
+                            ) : (
+                              removeButton
                             )}
+                            &nbsp;&nbsp;
+                            {editField &&
+                              (editTooltipText ? (
+                                <Tooltip
+                                  placement="left"
+                                  text={formatText(
+                                    editTooltipText,
+                                    application,
+                                    formatMessage,
+                                  )}
+                                >
+                                  {editButton}
+                                </Tooltip>
+                              ) : (
+                                editButton
+                              ))}
                           </Box>
                         </T.Data>
                         {tableRows.map((item, idx) => (

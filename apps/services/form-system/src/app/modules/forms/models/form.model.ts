@@ -175,6 +175,13 @@ export class Form extends Model<Form> {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
+  })
+  enableApplicationPdfDownload!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
     defaultValue: true,
   })
   hasSummaryScreen!: boolean

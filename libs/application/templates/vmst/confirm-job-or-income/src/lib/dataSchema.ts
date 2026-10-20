@@ -1,19 +1,56 @@
 import { z } from 'zod'
 import { PaymentFrequency } from '../utils/constants'
+import { isEndBeforeStart } from '../utils/date'
+import { getPartTimeCasualWorkOverlapIndices } from '../utils/overlap'
 import { errorMessages } from './messages'
 
-const casualWorkEntrySchema = z.object({
-  company: z.object({
-    nationalId: z.string().min(1),
-    name: z.string().optional(),
-  }),
-  dateFrom: z.string().min(1),
-  dateTo: z.string().min(1),
-  estimatedIncome: z.string().min(1),
-  // Correlates this row with the 3rd party income validation response.
-  validationId: z.string().optional(),
-  disabled: z.enum(['true', 'false']).optional(),
-})
+type DatedEntry = {
+  disabled?: 'true' | 'false'
+  isRemoved?: boolean
+}
+
+// Guards against an end date before the start date. Locked (disabled) and
+// soft-deleted rows are skipped since the user cannot edit them.
+const addDateOrderIssue = <T extends DatedEntry>(
+  data: T,
+  ctx: z.RefinementCtx,
+  start: keyof T,
+  end: keyof T,
+) => {
+  if (data.isRemoved || data.disabled === 'true') return
+  if (
+    isEndBeforeStart(
+      data[start] as string | undefined,
+      data[end] as string | undefined,
+    )
+  ) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: [end as string],
+      params: errorMessages.dateToBeforeDateFrom,
+    })
+  }
+}
+
+const casualWorkEntrySchema = z
+  .object({
+    company: z.object({
+      nationalId: z.string().min(1),
+      name: z.string().min(1),
+    }),
+    dateFrom: z.string().min(1),
+    dateTo: z.string().min(1),
+    estimatedIncome: z.string().min(1),
+    // Correlates this row with the 3rd party income validation response.
+    validationId: z.string().optional(),
+    disabled: z.enum(['true', 'false']).optional(),
+    // Table repeater soft deletes: the row is only dropped from the answers on submit,
+    // so it must be declared here to survive parsing and be skipped by the refinements.
+    isRemoved: z.boolean().optional(),
+  })
+  .superRefine((data, ctx) =>
+    addDateOrderIssue(data, ctx, 'dateFrom', 'dateTo'),
+  )
 
 const casualWorkArraySchema = z
   .array(casualWorkEntrySchema)
@@ -22,6 +59,7 @@ const casualWorkArraySchema = z
       for (let j = i + 1; j < entries.length; j++) {
         const a = entries[i]
         const b = entries[j]
+        if (a.isRemoved || b.isRemoved) continue
         if (!a.company?.nationalId || !b.company?.nationalId) continue
         if (a.company.nationalId !== b.company.nationalId) continue
         const aFrom = Date.parse(a.dateFrom)
@@ -52,19 +90,25 @@ const casualWorkArraySchema = z
     }
   })
 
-const partTimeEntrySchema = z.object({
-  company: z.object({
-    nationalId: z.string().min(1),
-    name: z.string().optional(),
-  }),
-  jobStart: z.string().min(1),
-  jobEnd: z.string().optional(),
-  workPercentage: z.string().min(1),
-  estimatedIncome: z.string().min(1),
-  // Used to correlate this row with the VMST validation response.
-  validationId: z.string().optional(),
-  disabled: z.enum(['true', 'false']).optional(),
-})
+const partTimeEntrySchema = z
+  .object({
+    company: z.object({
+      nationalId: z.string().min(1),
+      name: z.string().min(1),
+    }),
+    jobStart: z.string().min(1),
+    jobEnd: z.string().optional(),
+    workPercentage: z.string().min(1),
+    estimatedIncome: z.string().min(1),
+    // Used to correlate this row with the VMST validation response.
+    validationId: z.string().optional(),
+    disabled: z.enum(['true', 'false']).optional(),
+    // See casualWorkEntrySchema.isRemoved.
+    isRemoved: z.boolean().optional(),
+  })
+  .superRefine((data, ctx) =>
+    addDateOrderIssue(data, ctx, 'jobStart', 'jobEnd'),
+  )
 
 const partTimeArraySchema = z
   .array(partTimeEntrySchema)
@@ -73,6 +117,7 @@ const partTimeArraySchema = z
       for (let j = i + 1; j < entries.length; j++) {
         const a = entries[i]
         const b = entries[j]
+        if (a.isRemoved || b.isRemoved) continue
         if (!a.company?.nationalId || !b.company?.nationalId) continue
         if (a.company.nationalId !== b.company.nationalId) continue
         const aFrom = Date.parse(a.jobStart)
@@ -98,13 +143,17 @@ const partTimeArraySchema = z
     }
   })
 
-const contractWorkEntrySchema = z.object({
-  contractJobStart: z.string().min(1),
-  workEnds: z.string().min(1),
-  // Correlates this row with the VMST income validation response.
-  validationId: z.string().optional(),
-  disabled: z.enum(['true', 'false']).optional(),
-})
+const contractWorkEntrySchema = z
+  .object({
+    contractJobStart: z.string().min(1),
+    workEnds: z.string().min(1),
+    // Correlates this row with the VMST income validation response.
+    validationId: z.string().optional(),
+    disabled: z.enum(['true', 'false']).optional(),
+  })
+  .superRefine((data, ctx) =>
+    addDateOrderIssue(data, ctx, 'contractJobStart', 'workEnds'),
+  )
 
 const capitalIncomeEntrySchema = z
   .object({
@@ -120,13 +169,9 @@ const capitalIncomeEntrySchema = z
     disabled: z.enum(['true', 'false']).optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.paymentFrequency === PaymentFrequency.ONE_TIME && !data.dateTo) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['dateTo'],
-        params: errorMessages.dateToRequiredForOneTime,
-      })
-    }
+    // dateTo is disabled and ignored for one-time payments.
+    if (data.paymentFrequency === PaymentFrequency.ONE_TIME) return
+    addDateOrderIssue(data, ctx, 'dateFrom', 'dateTo')
   })
 
 const socialInsuranceEntrySchema = z
@@ -143,13 +188,9 @@ const socialInsuranceEntrySchema = z
     disabled: z.enum(['true', 'false']).optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.paymentFrequency === PaymentFrequency.ONE_TIME && !data.dateTo) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['dateTo'],
-        params: errorMessages.dateToRequiredForOneTime,
-      })
-    }
+    // dateTo is disabled and ignored for one-time payments.
+    if (data.paymentFrequency === PaymentFrequency.ONE_TIME) return
+    addDateOrderIssue(data, ctx, 'dateFrom', 'dateTo')
   })
 
 const pensionEntrySchema = z
@@ -167,13 +208,9 @@ const pensionEntrySchema = z
     disabled: z.enum(['true', 'false']).optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.paymentFrequency === PaymentFrequency.ONE_TIME && !data.dateTo) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['dateTo'],
-        params: errorMessages.dateToRequiredForOneTime,
-      })
-    }
+    // dateTo is disabled and ignored for one-time payments.
+    if (data.paymentFrequency === PaymentFrequency.ONE_TIME) return
+    addDateOrderIssue(data, ctx, 'dateFrom', 'dateTo')
   })
 
 const incomeTypeEnum = z.enum([
@@ -185,15 +222,42 @@ const incomeTypeEnum = z.enum([
   'socialInsurance',
 ])
 
-export const dataSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-  typeOfIncome: z.array(incomeTypeEnum).min(1),
-  registerCasualWork: casualWorkArraySchema.optional(),
-  registerPartTime: partTimeArraySchema.optional(),
-  registerContractWork: z.array(contractWorkEntrySchema).optional(),
-  registerCapitalIncome: z.array(capitalIncomeEntrySchema).optional(),
-  registerSocialInsurance: z.array(socialInsuranceEntrySchema).optional(),
-  registerPension: z.array(pensionEntrySchema).optional(),
-})
+export const dataSchema = z
+  .object({
+    // Optional at the object level because the root refinement below turns the schema
+    // into a ZodEffects, which the application system parses without `.partial()`.
+    // The inner refinements still apply whenever the answer is actually submitted.
+    approveExternalData: z
+      .boolean()
+      .refine((v) => v)
+      .optional(),
+    typeOfIncome: z.array(incomeTypeEnum).min(1).optional(),
+    registerCasualWork: casualWorkArraySchema.optional(),
+    registerPartTime: partTimeArraySchema.optional(),
+    registerContractWork: z.array(contractWorkEntrySchema).optional(),
+    registerCapitalIncome: z.array(capitalIncomeEntrySchema).optional(),
+    registerSocialInsurance: z.array(socialInsuranceEntrySchema).optional(),
+    registerPension: z.array(pensionEntrySchema).optional(),
+  })
+  .superRefine((data, ctx) => {
+    const partTimeEntries = data.registerPartTime ?? []
+    const casualWorkEntries = data.registerCasualWork ?? []
+    if (!partTimeEntries.length || !casualWorkEntries.length) return
+
+    const overlapIndices = getPartTimeCasualWorkOverlapIndices(
+      partTimeEntries,
+      casualWorkEntries,
+    )
+
+    for (const index of overlapIndices) {
+      for (const field of ['jobStart', 'jobEnd'] as const) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['registerPartTime', index, field],
+          params: errorMessages.partTimeCasualWorkOverlappingPeriods,
+        })
+      }
+    }
+  })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

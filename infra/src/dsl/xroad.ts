@@ -1034,6 +1034,17 @@ export const DirectorateOfEquality = new XroadConf({
   },
 })
 
+// Placeholder service name until DMR registers the statistics service.
+export const DirectorateOfEqualityStatistics = new XroadConf({
+  env: {
+    XROAD_DIRECTORATE_OF_EQUALITY_STATISTICS_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/jafnretti-statistics',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/jafnretti-statistics',
+      prod: 'IS/GOV/5804170510/DMR-Protected/jafnretti-statistics',
+    },
+  },
+})
+
 export const OfficialJournalOfIceland = new XroadConf({
   env: {
     XROAD_OFFICIAL_JOURNAL_PATH: {

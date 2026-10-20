@@ -710,7 +710,7 @@ describe('HousingBenefitsService notifications', () => {
       expect(hasTaxReturnForYear).not.toHaveBeenCalled()
     })
 
-    it('returns fiveYears mock without calling tax API', async () => {
+    it('throws TemplateApiError for `filedWithinFiveYears` mock without calling tax API', async () => {
       hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
       const application = createApplication({
         answers: {
@@ -724,17 +724,34 @@ describe('HousingBenefitsService notifications', () => {
       })
       const auth = createCurrentUser({ nationalId: APPLICANT_ID })
 
-      const result = await service.getPersonalTaxReturn({
-        application,
-        auth,
-        currentUserLocale: 'is',
-      })
-
-      expect(result).toEqual({
-        handedInLastYear: false,
-        handedInLastFiveYears: true,
-      })
+      await expect(
+        service.getPersonalTaxReturn({
+          application,
+          auth,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toBeInstanceOf(TemplateApiError)
       expect(hasTaxReturnForYear).not.toHaveBeenCalled()
+    })
+
+    it('throws TemplateApiError when the real API says filed within five years but not last year', async () => {
+      hasTaxReturnForYear.mockImplementation(
+        async (_auth: unknown, _nationalId: string, year: number) => {
+          const lastYear = new Date().getFullYear() - 1
+          return year !== lastYear
+        },
+      )
+
+      const application = createApplication()
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      await expect(
+        service.getPersonalTaxReturn({
+          application,
+          auth,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toBeInstanceOf(TemplateApiError)
     })
 
     it('calls tax API on production even when mock settings are set', async () => {
@@ -837,6 +854,53 @@ describe('HousingBenefitsService notifications', () => {
         handedInLastFiveYears: true,
       })
       expect(hasTaxReturnForYear).toHaveBeenCalled()
+    })
+
+    it('throws TemplateApiError when the real API says filed within five years but not last year', async () => {
+      hasTaxReturnForYear.mockImplementation(
+        async (_auth: unknown, _nationalId: string, year: number) => {
+          const lastYear = new Date().getFullYear() - 1
+          return year !== lastYear
+        },
+      )
+
+      const application = createApplication()
+      const auth = createCurrentUser({ nationalId: ASSIGNEE_A })
+
+      await expect(
+        service.getAssigneePersonalTaxReturn({
+          application,
+          auth,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toBeInstanceOf(TemplateApiError)
+    })
+
+    it('throws TemplateApiError when the `filedWithinFiveYears` mock variant is selected', async () => {
+      hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
+
+      const application = createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          [ASSIGNEE_A]: {
+            assigneeDevMockSettings: {
+              useMock: 'yes',
+              mockTaxReturn: ['yes'],
+              mockTaxReturnVariant: 'filedWithinFiveYears',
+            },
+          },
+        },
+      })
+      const auth = createCurrentUser({ nationalId: ASSIGNEE_A })
+
+      await expect(
+        service.getAssigneePersonalTaxReturn({
+          application,
+          auth,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toBeInstanceOf(TemplateApiError)
+      expect(hasTaxReturnForYear).not.toHaveBeenCalled()
     })
   })
 

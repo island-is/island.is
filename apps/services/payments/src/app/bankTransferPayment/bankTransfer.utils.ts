@@ -1,3 +1,5 @@
+import { isCompany, isPerson } from 'kennitala'
+
 import {
   Charge,
   PayInfoPaymentMeansEnum,
@@ -5,9 +7,11 @@ import {
 import { BlikkItem } from '@island.is/clients/blikk'
 
 import {
+  BankTransferDebtor,
   BankTransferFailureReason,
   BankTransferStatus,
   BankTransferPendingStatus,
+  BankTransferPayerType,
 } from './bankTransfer.types'
 import { BankTransferPayment } from './models/bankTransferPayment.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
@@ -79,6 +83,47 @@ export const mapRawStatusToBankTransferPendingStatus = (
     ? BankTransferPendingStatus.SCA_REQUIRED
     : BankTransferPendingStatus.PROCESSING
 
+/**
+ * Resolves who Blikk debits. A person pays as themselves. A company pays from its own account,
+ * authorised by an individual with the rights to do so (entered on the payment screen), who is the
+ * one authenticating with their bank. Returns `null` for a company without a valid individual, and
+ * for any other payer, such as a temporary kennitala.
+ */
+export const getBankTransferDebtor = (
+  payerNationalId: string,
+  actorNationalId?: string,
+): BankTransferDebtor | null => {
+  if (isPerson(payerNationalId)) {
+    return { debtorExternalId: payerNationalId }
+  }
+
+  if (
+    isCompany(payerNationalId) &&
+    actorNationalId &&
+    isPerson(actorNationalId)
+  ) {
+    return {
+      debtorExternalId: actorNationalId,
+      debtorCorpExternalId: payerNationalId,
+    }
+  }
+
+  return null
+}
+
+/** `undefined` for a payer that is neither, such as a temporary kennitala, which is never let through. */
+export const getBankTransferPayerType = (
+  payerNationalId: string,
+): BankTransferPayerType | undefined => {
+  if (isCompany(payerNationalId)) {
+    return BankTransferPayerType.COMPANY
+  }
+  if (isPerson(payerNationalId)) {
+    return BankTransferPayerType.PERSON
+  }
+  return undefined
+}
+
 export const toBlikkItem = (item: CatalogItemWithQuantity): BlikkItem => ({
   name: item.chargeItemName,
   quantity: item.quantity,
@@ -91,25 +136,45 @@ export const isRowExpired = (
   row: Pick<BankTransferPayment, 'expiresAt'>,
 ): boolean => row.expiresAt.getTime() < Date.now()
 
-/** Structured log prefix used throughout the bank-transfer flow. */
-export const createLogPrefix = (
+/**
+ * Identifiers on every bank-transfer log line. Winston writes metadata as top-level JSON fields,
+ * so Datadog joins on `correlationId` / `rrn` without Grok. The flow id is also prefixed onto the
+ * message, as every other payment method does. Call sites that lack a field omit it rather than
+ * placehold it — a blank id looks joinable and is not.
+ */
+export type BankTransferLogContext = {
+  paymentFlowId: string
+  correlationId: string
+  rrn: string
+  // Filters the logs by company and person payers (`@payerType:company`).
+  payerType?: BankTransferPayerType
+}
+
+/** `rrn` is the provider's payment id; `correlationId` our per-attempt key. */
+export const bankTransferLogContext = (
   paymentFlowId: string,
   correlationId: string,
-  providerPaymentId: string,
-): string =>
-  `[${paymentFlowId}][correlationId: ${correlationId}][rrn: ${providerPaymentId}]`
+  rrn: string,
+  payerType: BankTransferPayerType | undefined,
+): BankTransferLogContext => ({ paymentFlowId, correlationId, rrn, payerType })
 
-/** Row-driven convenience wrapper around `createLogPrefix`. */
-export const rowLogPrefix = (
+/**
+ * Correlation id comes from `id`, not `sourceReferenceId` — `create` sets both to the same uuid.
+ * The payer type comes from `actorNationalId`, which `create` stores for a company payer only.
+ */
+export const rowLogContext = (
   row: Pick<
     BankTransferPayment,
-    'paymentFlowId' | 'sourceReferenceId' | 'providerPaymentId'
+    'paymentFlowId' | 'id' | 'providerPaymentId' | 'actorNationalId'
   >,
-): string =>
-  createLogPrefix(
+): BankTransferLogContext =>
+  bankTransferLogContext(
     row.paymentFlowId,
-    row.sourceReferenceId,
+    row.id,
     row.providerPaymentId,
+    row.actorNationalId
+      ? BankTransferPayerType.COMPANY
+      : BankTransferPayerType.PERSON,
   )
 
 /** True for any status that won't change again (SUCCESS and the three failure values). */

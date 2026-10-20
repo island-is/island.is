@@ -28,6 +28,7 @@ import { DeprecatedCreateCaseDto } from './dto/deprecatedCreateCase.dto'
 import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
+import { CasePoliceStateResponse } from './models/casePoliceState.response'
 import { Defender } from './models/defender.model'
 import { PoliceDocumentDelivery } from './models/policeDocumentDelivery.response'
 import { PoliceDocumentSupplements } from './models/policeDocumentSupplements.response'
@@ -73,6 +74,22 @@ export class AppController {
 
       return createdCase
     })
+  }
+
+  @Get('case/:caseId/state')
+  @ApiOkResponse({
+    type: CasePoliceStateResponse,
+    description:
+      'Returns whether the indictment case is DRAFT or SUBMITTED for police case-file handling',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid input or not applicable' })
+  @ApiResponse({ status: 502, description: 'Failed to get case state' })
+  async getCasePoliceState(
+    @Param('caseId', new ParseUUIDPipe()) caseId: string,
+  ): Promise<CasePoliceStateResponse> {
+    this.logger.debug(`Getting case police state for case ${caseId}`)
+
+    return this.appService.getCasePoliceState(caseId)
   }
 
   @Get('defenders')

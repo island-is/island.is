@@ -13,12 +13,28 @@ export const container = style({
 export const containerLink = style({
   display: 'block',
   height: '100%',
+  borderRadius: theme.border.radius.large,
+  ':focus-visible': {
+    outline: `3px solid ${theme.color.mint400}`,
+    outlineOffset: 0,
+  },
+})
+
+export const arrowOnHover = style({
+  transition: 'opacity 150ms ease',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px) and (hover: hover)`]: {
+      opacity: 0,
+      selectors: {
+        [`${containerLink}:hover &, ${containerLink}:focus-visible &`]: {
+          opacity: 1,
+        },
+      },
+    },
+  },
 })
 
 export const boxContainer = style({
-  ':focus': {
-    borderColor: theme.color.mint400,
-  },
   ':hover': {
     borderColor: theme.color.blue400,
   },
@@ -27,10 +43,6 @@ export const boxContainer = style({
 export const gridRow = style({
   justifyContent: 'space-between',
 })
-export const icon = style({
-  padding: 0,
-})
-
 export const detailDivider = styleVariants({
   large: {
     height: 72,

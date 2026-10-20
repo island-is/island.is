@@ -349,6 +349,11 @@ export const application = defineMessages({
     defaultMessage: 'Breyting persónuupplýsinga móttekin',
     description: 'History log message when application is sent',
   },
+  missingDataTag: {
+    id: 'vmst.eui.application:missingDataTag',
+    defaultMessage: 'Vantar upplýsingar',
+    description: 'Tag shown on accordion items with missing required data',
+  },
 })
 
 export const errorMessages = defineMessages({

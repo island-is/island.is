@@ -2,9 +2,14 @@ import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { verifyGuards } from '../../../../test'
-import { CaseExistsGuard, CaseTypeGuard, CaseWriteGuard } from '../../../case'
+import {
+  CaseExistsForUpdateGuard,
+  CaseTypeGuard,
+  CaseWriteGuard,
+} from '../../../case'
 import { CourtSessionController } from '../../courtSession.controller'
 
+// The declared order. courtSessionGuardChain.spec.ts runs it.
 describe('CourtSessionController - Top-level guards', () => {
   verifyGuards(
     CourtSessionController,
@@ -12,7 +17,7 @@ describe('CourtSessionController - Top-level guards', () => {
     [
       JwtAuthUserGuard,
       RolesGuard,
-      CaseExistsGuard,
+      CaseExistsForUpdateGuard,
       CaseTypeGuard,
       CaseWriteGuard,
     ],

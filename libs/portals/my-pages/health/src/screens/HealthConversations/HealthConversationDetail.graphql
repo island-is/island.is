@@ -17,6 +17,7 @@ fragment HealthConversationVideoContent on HealthDirectorateHealthConversationVi
   appointmentDate
   appointmentHostName
   isCanceled
+  isExpired
 }
 
 fragment HealthConversationMessage on HealthDirectorateHealthConversationEntry {

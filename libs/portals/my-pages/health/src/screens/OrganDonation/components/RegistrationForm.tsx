@@ -116,9 +116,31 @@ export const OrganRegistrationForm = () => {
         slug: HEALTH_DIRECTORATE_SLUG,
         tooltip: formatMessage(messages.landlaeknirOrganDonationTooltip),
       }}
+      buttonGroup={{
+        actions: [
+          <LinkResolver
+            href={formatMessage(messages.organDonationLink)}
+            key="organ-donation"
+          >
+            <Button
+              variant="utility"
+              size="small"
+              icon="open"
+              iconType="outline"
+            >
+              {formatMessage(messages.readAboutOrganDonation)}
+            </Button>
+          </LinkResolver>,
+        ],
+      }}
       desktopContentSpan="10/12"
     >
-      <Text variant="eyebrow" color="purple400" marginBottom={1}>
+      <Text
+        variant="eyebrow"
+        color="purple400"
+        marginTop={[2, 2, 0]}
+        marginBottom={1}
+      >
         {formatMessage(messages.changeTake)}
       </Text>
       {loading && <Loader />}

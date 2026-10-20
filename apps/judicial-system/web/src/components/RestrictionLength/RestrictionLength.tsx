@@ -8,10 +8,10 @@ import {
   isAcceptingCaseDecision,
   isCourtOfAppealsUser,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import BlueBox from '@island.is/judicial-system-web/src/components/BlueBox/BlueBox'
 import DateTime from '@island.is/judicial-system-web/src/components/DateTime/DateTime'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseDecision,
   CaseType,
@@ -20,7 +20,7 @@ import {
 import { restrictionLength as strings } from './RestrictionLength.strings'
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
   handleIsolationChange: (event: ChangeEvent<HTMLInputElement>) => void
   handleIsolationDateChange: (date: Date | undefined, valid: boolean) => void
   handleValidToDateChange: (date: Date | undefined, valid: boolean) => void

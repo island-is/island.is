@@ -10,6 +10,7 @@ import {
   RefreshControl,
   View,
 } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -61,6 +62,8 @@ export default function HealthMessagesScreen() {
   const theme = useTheme()
   const [query, setQuery] = useState('')
   const search = useThrottleState(query)
+  const insets = useSafeAreaInsets()
+  const [headerHeight, setHeaderHeight] = useState(0)
   const { starred, archived } = useHealthMessagesFilterStore()
   const { getSenderLogo } = useOrganizationsStore()
   const [loadingMore, setLoadingMore] = useState(false)
@@ -238,6 +241,9 @@ export default function HealthMessagesScreen() {
       />
       <FlatList
         style={{ flex: 1 }}
+        // Gives the empty state height to centre in, and an empty list enough
+        // content to pull to refresh from.
+        contentContainerStyle={{ flexGrow: 1 }}
         data={conversations}
         keyExtractor={(item) => item.id}
         contentInsetAdjustmentBehavior="automatic"
@@ -259,7 +265,7 @@ export default function HealthMessagesScreen() {
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
         ListHeaderComponent={
-          <>
+          <View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
             {showSearch ? (
               <View
                 style={{
@@ -303,7 +309,7 @@ export default function HealthMessagesScreen() {
                 )}
               </TagsWrapper>
             ) : null}
-          </>
+          </View>
         }
         renderItem={({ item }) => (
           <Pressable
@@ -317,7 +323,9 @@ export default function HealthMessagesScreen() {
             <ListItem
               title={item.organization?.name ?? item.lastSenderGroupName ?? ''}
               subtitle={item.title ?? ''}
-              subtitleNumberOfLines={2}
+              // A 150-char subject (the compose cap) wraps to five lines at
+              // heading5 on the narrowest phones.
+              subtitleNumberOfLines={5}
               date={item.lastMessageSentAt ?? undefined}
               unread={!item.isRead}
               starred={item.isStarred}
@@ -347,7 +355,10 @@ export default function HealthMessagesScreen() {
           ) : (
             <View
               style={{
-                marginTop: theme.spacing[15],
+                flex: 1,
+                justifyContent: 'center',
+                // Centres on the screen, not on the box under the header.
+                paddingBottom: headerHeight + insets.bottom,
                 paddingHorizontal: theme.spacing[2],
               }}
             >

@@ -105,11 +105,81 @@ export const subModelMap: {
   verdicts: { model: Verdict, separate: false, order: [['created', 'DESC']] },
 }
 
+/**
+ * A case as a case table row sees it.
+ *
+ * One appeal, named for what it is: the appeal this row is about. Which appeal
+ * that is belongs to the list, not to whatever reads the row - most rows are
+ * about the case-level appeal, a ruling order list fans one case out into a
+ * row per appeal, and a verdict list substitutes the verdict appeal.
+ *
+ * The three associations are gone from the row on purpose. While `appealCase`
+ * was both "the case-level ruling appeal" and "the appeal this row is about",
+ * every reader had to know which lists rewrote it, and nothing said so; the
+ * shape is now the same whichever list built it.
+ *
+ * What it still claims and should not: `Omit` keeps the model's methods, while
+ * a row is the plain object `toJSON` returns. Nothing reads them - the
+ * generators and the row helpers were checked - so this is the old fiction
+ * left in place rather than a new one.
+ */
+export type CaseTableRowCase = Omit<
+  Case,
+  'appealCase' | 'rulingOrderAppealCases' | 'verdictAppealCase'
+> & {
+  appeal?: AppealCase | null
+}
+
 export type CaseWhereOptions = {
   includes?: CaseIncludes
   where: WhereOptions
-  displayCases?: (cases: Case[]) => Case[]
+  displayCases?: (cases: Case[]) => CaseTableRowCase[]
 }
+
+// Which association the row's appeal comes from, named as fields of Case so a
+// rename there breaks here rather than quietly narrowing this to the one that
+// survived. Only the single ones: a ruling order appeal is one of many on a
+// case, so a list about those picks per row rather than per case.
+type RowAppealSource = keyof Pick<Case, 'appealCase' | 'verdictAppealCase'>
+
+// `appeal` is the one the row is about, taken from the association the list
+// names. It defaults to the case-level appeal, which is what a list that says
+// nothing means; a list about another proceeding says which, rather than
+// building a row and overwriting it.
+const toRow = (
+  c: Case,
+  appealFrom: RowAppealSource = 'appealCase',
+): CaseTableRowCase => {
+  const json = c.toJSON()
+  const {
+    appealCase: _appealCase,
+    rulingOrderAppealCases: _rulingOrderAppealCases,
+    verdictAppealCase: _verdictAppealCase,
+    ...rest
+  } = json
+
+  return { ...rest, appeal: json[appealFrom] } as CaseTableRowCase
+}
+
+/**
+ * The rows a list is built from, whether or not it asked for anything special.
+ *
+ * Every row comes through here, so there is no such thing as one that skipped
+ * normalisation and nothing downstream has to ask whether a list has its own
+ * `displayCases`.
+ *
+ * The default is the whole rule for a list that says nothing: one row per
+ * case, about the case-level appeal - which is what every list meant before
+ * any of the others existed. The ones that override it either fan a case out
+ * into a row per appeal or name a different appeal.
+ */
+export const toDisplayCases = (
+  cs: Case[],
+  // Wrapped rather than passed to map directly: map would hand toRow the
+  // array index as the association to take the appeal from.
+  displayCases: (cases: Case[]) => CaseTableRowCase[] = (cs: Case[]) =>
+    cs.map((c) => toRow(c)),
+): CaseTableRowCase[] => displayCases(cs)
 
 /**
  * What a user may reach at all, as opposed to which of those cases belong in a
@@ -155,41 +225,71 @@ export const mergeAccessIncludes = (
   const merged: CaseIncludes = { ...tableIncludes }
 
   for (const key of Object.keys(accessIncludes) as Array<keyof CaseIncludes>) {
-    copyAccessInclude(merged, accessIncludes, key)
+    if (merged[key]) {
+      continue
+    }
+
+    copyIncludeInto(merged, accessIncludes, key)
   }
 
   return merged
 }
 
-// Copied rather than shared. Access options are often module level constants,
-// and the include machinery merges attributes into whatever object it is
-// handed - sharing one would let a list's columns leak into every other query
-// built from the same rule.
-//
-// Shallow in `where` and in nested `includes`, which is enough because an
-// access include carries neither. One that grew nested includes would be spliced
-// into by setInclude's nested merge and would need a deeper copy.
-const copyAccessInclude = <K extends keyof CaseIncludes>(
+/**
+ * Copied rather than shared, all the way down.
+ *
+ * Both the access options and the cell generators are module level constants,
+ * and the include machinery merges into whatever object it is handed rather
+ * than building a new one. Alias a constant into a query's include tree and the
+ * next merge writes another list's attributes and joins into the constant,
+ * where they stay for the lifetime of the process - so what one list fetches
+ * comes to depend on which lists were requested before it.
+ *
+ * The nested level is copied too. An access include carries no nested includes
+ * today, but a generator include does, and both go through the same merge.
+ *
+ * `where` is shared, not copied. Nothing merges into it - it is read straight
+ * through to Sequelize - and copying it would mean walking the operator symbols
+ * a where clause is built from.
+ */
+export const copyIncludeInto = <K extends keyof CaseIncludes>(
   target: CaseIncludes,
   source: CaseIncludes,
   key: K,
 ) => {
-  if (target[key]) {
-    return
-  }
-
   const value = source[key]
 
   if (!value) {
     return
   }
 
-  target[key] = { ...value, attributes: [...value.attributes] }
+  const copy = { ...value, attributes: [...value.attributes] }
+
+  if (copy.includes) {
+    const nested = { ...copy.includes }
+
+    for (const nestedKey of Object.keys(nested) as Array<keyof typeof nested>) {
+      const nestedValue = nested[nestedKey]
+
+      if (!nestedValue) {
+        continue
+      }
+
+      nested[nestedKey] = {
+        ...nestedValue,
+        attributes: [...nestedValue.attributes],
+      }
+    }
+
+    copy.includes = nested
+  }
+
+  target[key] = copy
 }
 
-export const expandCasesWithDefendants = (cs: Case[]) =>
+export const expandCasesWithDefendants = (cs: Case[]): CaseTableRowCase[] =>
   cs.flatMap((c) => {
-    const jsonCase = c.toJSON()
+    const jsonCase = toRow(c)
 
     return (c.defendants ?? [])
       .filter(
@@ -208,18 +308,43 @@ export const expandCasesWithDefendants = (cs: Case[]) =>
       .map((d) => ({ ...jsonCase, defendants: [d] }))
   })
 
+/**
+ * Presents the verdict appeal as the case's appeal.
+ *
+ * A row is about one appeal, and everything downstream asks `appealCase` which
+ * one - the id on the row, the context menu, the page the row opens. On a
+ * verdict appeal list that appeal is the verdict appeal, so it is put where
+ * the rest of the machinery looks rather than teaching each reader which lists
+ * are verdict lists. `expandCasesWithAppeals` does the same for ruling order
+ * appeals.
+ *
+ * `verdictAppealCase` is dropped once it has been slotted in, as
+ * `expandCasesWithAppeals` drops the ruling order appeals for the same reason:
+ * one name for the appeal a row is about, so nothing downstream has to know
+ * which list it came from. The columns still ask for the association by name -
+ * that is what decides the join - and read it back off `appealCase`, exactly
+ * as the ruling order columns do.
+ */
+export const presentVerdictAppealAsRowAppeal = (
+  cs: Case[],
+): CaseTableRowCase[] => cs.map((c) => toRow(c, 'verdictAppealCase'))
+
 // Emits one synthetic case per qualifying appeal — the case-level appeal in
 // `appealCase` (when present) and each entry in `rulingOrderAppealCases`. Each
 // emitted case has the relevant appeal slotted into `appealCase`, so cell
 // generators reading `c.appealCase.X` work without modification. The
 // `rulingOrderAppealCases` array is dropped to prevent re-iteration downstream.
-export const expandCasesWithAppeals = (cs: Case[]) =>
+export const expandCasesWithAppeals = (cs: Case[]): CaseTableRowCase[] =>
   cs.flatMap((c) => {
-    const jsonCase = c.toJSON()
-    const { rulingOrderAppealCases: _drop, ...rest } = jsonCase
+    // Spread rather than another toRow per appeal: one case becomes many rows
+    // here, and they share a serialisation.
+    const row = toRow(c)
     const rulingOrderRows = (c.rulingOrderAppealCases ?? []).map(
-      (roa: AppealCase) => ({ ...rest, appealCase: roa }),
+      (rulingOrderAppeal: AppealCase) => ({
+        ...row,
+        appeal: rulingOrderAppeal,
+      }),
     )
 
-    return rest.appealCase ? [rest, ...rulingOrderRows] : rulingOrderRows
+    return row.appeal ? [row, ...rulingOrderRows] : rulingOrderRows
   })

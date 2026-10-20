@@ -1,3 +1,4 @@
+import { HealthDirectoratePrescriptionRenewalStatus } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -15,6 +16,7 @@ import { m } from '@island.is/portals/my-pages/core'
 import cn from 'classnames'
 import React, { useState, useEffect } from 'react'
 import { messages } from '../../../../lib/messages'
+import { TextMarkdown } from '../../../../components/TextMarkdown/TextMarkdown'
 import { PrescriptionItem } from '../../../../utils/types'
 import {
   useGetPrescriptionRenewalTargetsLazyQuery,
@@ -139,7 +141,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
         closeModal()
         toast.success(formatMessage(messages.renewalRequestSent))
       }
-    } catch (error) {
+    } catch {
       const errorMessage = formatMessage(messages.renewalRequestError)
       toast.error(errorMessage)
     }
@@ -178,10 +180,12 @@ const RenewPrescriptionModal: React.FC<Props> = ({
             {formatMessage(messages.renewalMedicineRequest)}
           </Text>
         </Box>
-        <Text marginBottom={3}>
-          {formatMessage(messages.renewalMedicineRequestText)}
-        </Text>
-        {targetOptions.length > 0 && (
+        <Box marginBottom={3}>
+          <TextMarkdown openLinksInNewTab>
+            {formatMessage(messages.renewalMedicineRequestTextWithLink)}
+          </TextMarkdown>
+        </Box>
+        {targetOptions.length > 1 && (
           <Box marginBottom={3}>
             <Select
               name="renewalTarget"
@@ -235,6 +239,25 @@ const RenewPrescriptionModal: React.FC<Props> = ({
                 </GridColumn>
               ))}
             </GridRow>
+            {activePrescription.renewalStatus ===
+              HealthDirectoratePrescriptionRenewalStatus.Dismissed &&
+              activePrescription.renewResponseMessage && (
+                <GridRow>
+                  <GridColumn span={'12/12'}>
+                    <Box marginTop={5}>
+                      <AlertMessage
+                        type="warning"
+                        title={formatMessage(messages.alert)}
+                        message={
+                          <Text variant="small" whiteSpace="preLine">
+                            {activePrescription.renewResponseMessage}
+                          </Text>
+                        }
+                      />
+                    </Box>
+                  </GridColumn>
+                </GridRow>
+              )}
             <GridRow>
               <GridColumn span={'12/12'}>
                 <Box

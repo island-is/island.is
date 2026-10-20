@@ -158,6 +158,10 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       name
     }
+    appealProsecutor {
+      id
+      name
+    }
     courtSessionType
     mergeCase {
       id

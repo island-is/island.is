@@ -32,6 +32,10 @@ export const certificateAvatar = style({
   height: 64,
 })
 
+export const certificateText = style({
+  overflowWrap: 'anywhere',
+})
+
 export const detailHeader = style({
   minHeight: 32,
   ...themeUtils.responsiveStyle({
@@ -66,6 +70,10 @@ export const conversationRow = style({
   },
 })
 
+export const sentAlert = style({
+  outline: 'none',
+})
+
 export const termsCheckbox = style({})
 
 globalStyle(`${termsCheckbox} label`, {
@@ -75,13 +83,6 @@ globalStyle(`${termsCheckbox} label`, {
 globalStyle(`${termsCheckbox} label > div`, {
   alignSelf: 'flex-start',
   marginTop: 2,
-})
-
-export const typeInstructions = style({})
-
-// Out-specifies the shared Markdown component's light-weight p global
-globalStyle(`${typeInstructions} div p`, {
-  fontWeight: theme.typography.semiBold,
 })
 
 export const messageTextContent = style({

@@ -467,6 +467,12 @@ export const isRulingOrDismissalCase = (
   )
 }
 
+/** Police-facing case state for the XRD case/state endpoint. */
+export enum CasePoliceState {
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED',
+}
+
 export const hasIndictmentCaseBeenSubmittedToCourt = (
   state?: CaseState | null,
 ): boolean => {
@@ -478,6 +484,18 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
         ...completedIndictmentCaseStates,
       ].includes(state),
   )
+}
+
+export const getIndictmentCasePoliceState = (
+  state?: CaseState | null,
+): CasePoliceState => {
+  // Includes WAITING_FOR_CANCELLATION: the indictment already went to court,
+  // so the case is treated as submitted even before a live duplicate exists.
+  const isSubmitted =
+    state === CaseState.WAITING_FOR_CANCELLATION ||
+    hasIndictmentCaseBeenSubmittedToCourt(state)
+
+  return isSubmitted ? CasePoliceState.SUBMITTED : CasePoliceState.DRAFT
 }
 
 export const isIndictmentCaseState = (

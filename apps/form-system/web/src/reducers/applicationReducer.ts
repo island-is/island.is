@@ -13,6 +13,7 @@ import {
   SectionTypes,
 } from '@island.is/form-system/ui'
 import { hasScreens } from '../utils/reducerHelpers'
+import { updatePaymentSectionVisibility } from '../utils/payment'
 import {
   decrement,
   getCompletedSectionAndScreen,
@@ -41,26 +42,19 @@ export const initialState = {
 
 export const initialReducer = (state: ApplicationState): ApplicationState => {
   const application = initializeApplication(state.application)
-  const sections: FormSystemSection[] = (application.sections ?? [])
-    .filter((s): s is FormSystemSection => s != null)
-    .sort(
-      (a, b) =>
-        (a.displayOrder ?? Number.MAX_SAFE_INTEGER) -
-        (b.displayOrder ?? Number.MAX_SAFE_INTEGER),
-    )
+  const sections: FormSystemSection[] = updatePaymentSectionVisibility(
+    (application.sections ?? [])
+      .filter((s): s is FormSystemSection => s != null)
+      .sort(
+        (a, b) =>
+          (a.displayOrder ?? Number.MAX_SAFE_INTEGER) -
+          (b.displayOrder ?? Number.MAX_SAFE_INTEGER),
+      ),
+    application.hasPayment,
+  )
   const screens = sections
     .flatMap((section) => section.screens ?? [])
     .filter(Boolean) as FormSystemScreen[]
-
-  if (application.hasPayment === false) {
-    sections.forEach((s) => {
-      if (s.sectionType === SectionTypes.PAYMENT) s.isHidden = true
-    })
-  } else {
-    sections.forEach((s) => {
-      if (s.sectionType === SectionTypes.PAYMENT) s.isHidden = false
-    })
-  }
 
   if (application.hasSummaryScreen === false) {
     sections.forEach((s) => {

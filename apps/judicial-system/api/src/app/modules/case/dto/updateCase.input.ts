@@ -408,6 +408,11 @@ export class UpdateCaseInput {
   @Allow()
   @IsOptional()
   @Field(() => ID, { nullable: true })
+  readonly appealProsecutorId?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => ID, { nullable: true })
   readonly indictmentApproverId?: string
 
   @Allow()

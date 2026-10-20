@@ -21,12 +21,21 @@ const mockLogger = {
 const mockWorkerConfig = {
   workerMaxFailureEventsPerFlow: 5,
   workerMinutesToWaitBeforeCreatingFjsCharge: 5,
+  workerRetryDelayMinutesAfterFailure: 60,
 }
+
+const minutesAgo = (minutes: number) =>
+  new Date(Date.now() - minutes * 60 * 1000)
+
+const failureEvent = (createdMinutesAgo: number) => ({
+  status: 'failure',
+  created: minutesAgo(createdMinutesAgo),
+})
 
 const createMockFlow = (
   overrides: {
     id?: string
-    workerEvents?: Array<{ status: string }>
+    workerEvents?: Array<{ status: string; created: Date }>
     cardPaymentDetails?: unknown[]
     paymentFulfillments?: unknown[]
     bankTransferPayments?: unknown[]
@@ -62,7 +71,7 @@ const createMockFlow = (
 const createBankTransferFlow = (
   overrides: {
     id?: string
-    workerEvents?: Array<{ status: string }>
+    workerEvents?: Array<{ status: string; created: Date }>
     bankTransferPayments?: unknown[]
   } = {},
 ) =>
@@ -160,7 +169,7 @@ describe('WorkerService', () => {
       await service.run()
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete — created: 0, failed: 0, skipped (manual intervention): 0',
+        'Payment worker run complete — created: 0, failed: 0, skipped (manual intervention): 0, deferred (retry delay): 0',
       )
       expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
       expect(paymentWorkerEventModel.create).not.toHaveBeenCalled()
@@ -192,7 +201,7 @@ describe('WorkerService', () => {
         }),
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete — created: 1, failed: 0, skipped (manual intervention): 0',
+        'Payment worker run complete — created: 1, failed: 0, skipped (manual intervention): 0, deferred (retry delay): 0',
       )
     })
 
@@ -214,7 +223,7 @@ describe('WorkerService', () => {
         }),
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0',
+        'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0, deferred (retry delay): 0',
       )
     })
 
@@ -232,7 +241,7 @@ describe('WorkerService', () => {
         '[flow-network] FJS request failed (network/transient), will retry',
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0',
+        'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0, deferred (retry delay): 0',
       )
     })
 
@@ -258,20 +267,14 @@ describe('WorkerService', () => {
         '[flow-already] FJS charge already exists, flow/fulfillment not updated — manual reconciliation required',
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0',
+        'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0, deferred (retry delay): 0',
       )
     })
 
     it('should skip flows with failure count >= workerMaxFailureEventsPerFlow', async () => {
       const flowWithFiveFailures = createMockFlow({
         id: 'flow-skipped',
-        workerEvents: [
-          { status: 'failure' },
-          { status: 'failure' },
-          { status: 'failure' },
-          { status: 'failure' },
-          { status: 'failure' },
-        ],
+        workerEvents: Array.from({ length: 5 }, () => failureEvent(120)),
       })
       mockFlowSweep({ card: [flowWithFiveFailures] })
 
@@ -285,14 +288,14 @@ describe('WorkerService', () => {
       )
       expect(mockLogger.warn).not.toHaveBeenCalled()
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete — created: 0, failed: 0, skipped (manual intervention): 1',
+        'Payment worker run complete — created: 0, failed: 0, skipped (manual intervention): 1, deferred (retry delay): 0',
       )
     })
 
     it('should process flow with fewer than limit failure events', async () => {
       const flowWithTwoFailures = createMockFlow({
         id: 'flow-retry',
-        workerEvents: [{ status: 'failure' }, { status: 'failure' }],
+        workerEvents: [failureEvent(180), failureEvent(120)],
       })
       mockFlowSweep({ card: [flowWithTwoFailures] })
       paymentFlowService.createFjsCharge.mockResolvedValue({
@@ -310,7 +313,7 @@ describe('WorkerService', () => {
         }),
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete — created: 1, failed: 0, skipped (manual intervention): 0',
+        'Payment worker run complete — created: 1, failed: 0, skipped (manual intervention): 0, deferred (retry delay): 0',
       )
     })
 
@@ -318,7 +321,7 @@ describe('WorkerService', () => {
       const flowEligible = createMockFlow({ id: 'flow-a', workerEvents: [] })
       const flowSkipped = createMockFlow({
         id: 'flow-b',
-        workerEvents: Array.from({ length: 5 }, () => ({ status: 'failure' })),
+        workerEvents: Array.from({ length: 5 }, () => failureEvent(120)),
       })
       mockFlowSweep({ card: [flowEligible, flowSkipped] })
       paymentFlowService.createFjsCharge.mockResolvedValue({
@@ -332,7 +335,76 @@ describe('WorkerService', () => {
       expect(paymentWorkerEventModel.create).toHaveBeenCalledTimes(1)
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete — created: 1, failed: 0, skipped (manual intervention): 1',
+        'Payment worker run complete — created: 1, failed: 0, skipped (manual intervention): 1, deferred (retry delay): 0',
+      )
+    })
+
+    it('should defer a flow whose latest failure is more recent than the retry delay', async () => {
+      const recentlyFailed = createMockFlow({
+        id: 'flow-deferred',
+        workerEvents: [failureEvent(180), failureEvent(10)],
+      })
+      mockFlowSweep({ card: [recentlyFailed] })
+
+      await service.run()
+
+      expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
+      expect(paymentWorkerEventModel.create).not.toHaveBeenCalled()
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Deferring 1 payment flow(s) that failed less than 60 minute(s) ago: flow-deferred',
+      )
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Payment worker run complete — created: 0, failed: 0, skipped (manual intervention): 0, deferred (retry delay): 1',
+      )
+    })
+
+    it('should retry a flow once the retry delay since its latest failure has passed', async () => {
+      const retryable = createMockFlow({
+        id: 'flow-retry-after-delay',
+        workerEvents: [failureEvent(61)],
+      })
+      mockFlowSweep({ card: [retryable] })
+      paymentFlowService.createFjsCharge.mockResolvedValue({
+        receptionId: 'rec-789',
+        id: 'charge-id',
+      } as never)
+
+      await service.run()
+
+      expect(paymentFlowService.createFjsCharge).toHaveBeenCalledTimes(1)
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Payment worker run complete — created: 1, failed: 0, skipped (manual intervention): 0, deferred (retry delay): 0',
+      )
+    })
+
+    it('should not defer a flow that only has success events', async () => {
+      const flow = createMockFlow({
+        id: 'flow-success-only',
+        workerEvents: [{ status: 'success', created: minutesAgo(1) }],
+      })
+      mockFlowSweep({ card: [flow] })
+      paymentFlowService.createFjsCharge.mockResolvedValue({
+        receptionId: 'rec-s',
+        id: 'charge-s',
+      } as never)
+
+      await service.run()
+
+      expect(paymentFlowService.createFjsCharge).toHaveBeenCalledTimes(1)
+    })
+
+    it('should park a flow at the failure limit even when its latest failure is recent', async () => {
+      const flow = createMockFlow({
+        id: 'flow-capped',
+        workerEvents: Array.from({ length: 5 }, () => failureEvent(1)),
+      })
+      mockFlowSweep({ card: [flow] })
+
+      await service.run()
+
+      expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Payment worker run complete — created: 0, failed: 0, skipped (manual intervention): 1, deferred (retry delay): 0',
       )
     })
 
@@ -364,7 +436,7 @@ describe('WorkerService', () => {
         }),
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete — created: 1, failed: 0, skipped (manual intervention): 0',
+        'Payment worker run complete — created: 1, failed: 0, skipped (manual intervention): 0, deferred (retry delay): 0',
       )
     })
 
@@ -389,7 +461,7 @@ describe('WorkerService', () => {
         }),
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0',
+        'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0, deferred (retry delay): 0',
       )
     })
 
@@ -411,7 +483,7 @@ describe('WorkerService', () => {
         }),
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0',
+        'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0, deferred (retry delay): 0',
       )
     })
 
@@ -436,7 +508,7 @@ describe('WorkerService', () => {
       )
       expect(payloads[1].payInfo?.RRN).toBe('provider-payment-id')
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Payment worker run complete — created: 2, failed: 0, skipped (manual intervention): 0',
+        'Payment worker run complete — created: 2, failed: 0, skipped (manual intervention): 0, deferred (retry delay): 0',
       )
     })
   })

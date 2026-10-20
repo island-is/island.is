@@ -47,18 +47,17 @@ const normalizeKennitalaKey = (nationalId: string | undefined | null) => {
 }
 
 /**
- * Children in a given assignee's forsjá from stored external data (`{kt}.assigneeChildrenCustody`).
- * Empty set if the provider was never run or has no data.
+ * Children in a given assignee's forsjá from stored external data
+ * (`{kt}_assigneeChildrenCustody`). Empty set if the provider was never run or has no data.
  */
 export const buildChildNationalIdSetFromAssigneeExternalData = (
   externalData: ExternalData,
   assigneeKennitala: string,
 ): Set<string> => {
   if (!assigneeKennitala?.trim()) return new Set()
-  const kt = kennitala.isValid(assigneeKennitala)
-    ? kennitala.sanitize(assigneeKennitala)
-    : assigneeKennitala.trim()
-  const entry = externalData[`${kt}.assigneeChildrenCustody`] as
+  const entry = externalData[
+    assigneeExternalDataKey(assigneeKennitala.trim(), 'assigneeChildrenCustody')
+  ] as
     | { data?: ApplicantChildCustodyInformationV3[]; status?: string }
     | undefined
   const raw = entry?.data
@@ -97,12 +96,12 @@ const assigneeHasCustodyExternalDataKey = (
   assigneeKennitala: string,
 ): boolean => {
   if (!assigneeKennitala?.trim()) return false
-  const kt = kennitala.isValid(assigneeKennitala)
-    ? kennitala.sanitize(assigneeKennitala)
-    : assigneeKennitala.trim()
   return Object.prototype.hasOwnProperty.call(
     externalData,
-    `${kt}.assigneeChildrenCustody`,
+    assigneeExternalDataKey(
+      assigneeKennitala.trim(),
+      'assigneeChildrenCustody',
+    ),
   )
 }
 
@@ -634,6 +633,22 @@ export const nationalIdPreface = (
   return `${getNationalIdPrefix(user)}.${fieldKey}`
 }
 
+// Underscore separator so getValueViaPath doesn't split the key as a nested path.
+export const ASSIGNEE_EXTERNAL_DATA_SEPARATOR = '_'
+
+export const assigneeExternalDataKey = (
+  nationalId: string,
+  field: string,
+): string => {
+  const kt = kennitala.isValid(nationalId)
+    ? kennitala.sanitize(nationalId)
+    : nationalId
+  return `${kt}${ASSIGNEE_EXTERNAL_DATA_SEPARATOR}${field}`
+}
+
+export const assigneeExternalDataFieldSuffix = (field: string): string =>
+  `${ASSIGNEE_EXTERNAL_DATA_SEPARATOR}${field}`
+
 export const findCurrentAssigneeBackId = (
   answers: FormValue,
   fieldSuffix: string,
@@ -660,13 +675,14 @@ export const findCurrentAssigneeBackId = (
 
 /**
  * Finds the current assignee's national registry data from externalData.
- * External data is stored under dynamic keys: `<nationalId>.assigneeNationalRegistry`.
+ * External data is stored under dynamic keys: `<nationalId>_assigneeNationalRegistry`.
  */
 export const getAssigneeNationalRegistryData = (
   application: Application,
 ): NationalRegistryV3Individual | null => {
+  const suffix = assigneeExternalDataFieldSuffix('assigneeNationalRegistry')
   for (const [key, value] of Object.entries(application.externalData)) {
-    if (key.endsWith('.assigneeNationalRegistry') && value?.data) {
+    if (key.endsWith(suffix) && value?.data) {
       return value.data as NationalRegistryV3Individual
     }
   }
@@ -675,13 +691,14 @@ export const getAssigneeNationalRegistryData = (
 
 /**
  * Finds the current assignee's user profile data from externalData.
- * External data is stored under dynamic keys: `<nationalId>.assigneeUserProfile`.
+ * External data is stored under dynamic keys: `<nationalId>_assigneeUserProfile`.
  */
 export const getAssigneeUserProfileData = (
   application: Application,
 ): UserProfile | null => {
+  const suffix = assigneeExternalDataFieldSuffix('assigneeUserProfile')
   for (const [key, value] of Object.entries(application.externalData)) {
-    if (key.endsWith('.assigneeUserProfile') && value?.data) {
+    if (key.endsWith(suffix) && value?.data) {
       return value.data as UserProfile
     }
   }

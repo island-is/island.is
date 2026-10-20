@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
@@ -17,6 +18,8 @@ import {
 
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
+import { getOrCreateTransaction } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import {
   AppealCase,
   AppealCaseRepositoryService,
@@ -29,7 +32,7 @@ import {
 } from '../../../repository'
 import { TransitionAppealCaseDto } from '../../dto/transitionAppealCase.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: AppealCase
@@ -105,6 +108,7 @@ describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => 
   let mockCaseRepositoryService: CaseRepositoryService
   let mockDefendantRepositoryService: DefendantRepositoryService
   let mockVerdictRepositoryService: VerdictRepositoryService
+  let mockSequelize: Sequelize
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -127,11 +131,10 @@ describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => 
     mockDefendantRepositoryService = defendantRepositoryService
     mockVerdictRepositoryService = verdictRepositoryService
 
+    mockSequelize = sequelize
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
     ;(
       mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
     ).mockResolvedValue(true)
@@ -151,17 +154,27 @@ describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => 
     ) => {
       const then = {} as Then
 
-      await appealCaseController
-        .transition(
-          caseId,
-          appealCaseId,
-          user,
-          theCase,
-          anAppealCase,
-          transitionDto,
-        )
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // The route is guarded by CaseExistsForUpdateGuard, so the request
+      // transaction is already open - and holding a lock on this case row -
+      // by the time the handler runs. Guards do not execute in controller
+      // unit tests, so the request context and that transaction are set up
+      // here instead.
+      try {
+        await runInRequestContext(async () => {
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await appealCaseController.transition(
+            caseId,
+            appealCaseId,
+            user,
+            theCase,
+            anAppealCase,
+            transitionDto,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -190,6 +203,13 @@ describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => 
       ])
 
       then = await givenWhenThen(dto)
+    })
+
+    // Once, by the stand-in for CaseExistsForUpdateGuard above. A second
+    // call would be the handler opening a transaction of its own, which
+    // would block on the guard's row lock and deadlock the request.
+    it('should work in the transaction the guard opened, without opening another', () => {
+      expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
     })
 
     it('should read every event of the appeal case in the transaction', () => {

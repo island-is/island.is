@@ -19,7 +19,10 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { AppealCourtSession } from './appealCourtSession.model'
 import { AppealEventLog } from './appealEventLog.model'
+import { AppealStatementDeadline } from './appealStatementDeadline.model'
+import { AppealSummons } from './appealSummons.model'
 import { Case } from './case.model'
 import { CaseFile } from './caseFile.model'
 import { User } from './user.model'
@@ -261,4 +264,26 @@ export class AppealCase extends Model {
   @HasMany(() => AppealEventLog, 'appealCaseId')
   @ApiPropertyOptional({ type: () => AppealEventLog, isArray: true })
   appealEventLogs?: AppealEventLog[]
+
+  /**********
+   * Appeal summonses (áfrýjunarstefna) issued for this verdict appeal
+   **********/
+  @HasMany(() => AppealSummons, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealSummons, isArray: true })
+  appealSummonses?: AppealSummons[]
+
+  /**********
+   * Court sessions (þinghöld) the court of appeals has called in this verdict appeal
+   **********/
+  @HasMany(() => AppealCourtSession, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealCourtSession, isArray: true })
+  courtSessions?: AppealCourtSession[]
+
+  /**********
+   * The deadlines (greinargerðarfrestir) the court of appeals has given the
+   * parties of this verdict appeal to file their statements, one per party
+   **********/
+  @HasMany(() => AppealStatementDeadline, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealStatementDeadline, isArray: true })
+  statementDeadlines?: AppealStatementDeadline[]
 }

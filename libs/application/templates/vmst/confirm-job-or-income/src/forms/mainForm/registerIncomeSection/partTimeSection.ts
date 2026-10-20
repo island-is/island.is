@@ -4,21 +4,31 @@ import {
   buildTableRepeaterField,
   buildMultiField,
   buildSubSection,
-  getValueViaPath,
-  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { GaldurExternalDomainModelsIncomePartTimeJobDTO } from '@island.is/clients/vmst-unemployment'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
-import { hasPartTimeOverlap, isPartTime } from '../../../utils/conditions'
 import {
-  getCurrentMonthEndDate,
+  hasPartTimeCasualWorkOverlap,
+  hasPartTimeOverlap,
+  isPartTime,
+} from '../../../utils/conditions'
+import {
+  getMaxRegistrationDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
-import { formatIsCurrency, formatIsDateLong } from '../../../utils/formatters'
+import { formatIsCurrency, formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
-import { buildEmployerSSNDelete } from '../../../utils/reconcile'
+import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
+import {
+  buildCanEditRow,
+  buildCanRemoveRow,
+  buildEmployerSSNDelete,
+} from '../../../utils/reconcile'
+import {
+  getPartTimeDefaults,
+  toPartTimeRow,
+} from '../../../utils/persistedRows'
 import {
   getCompanyNationalId,
   toOptionalNumber,
@@ -26,31 +36,11 @@ import {
   toRequiredString,
 } from '../../../utils/rowCoercions'
 
-const getPartTimeDefaults = (application: Application) => {
-  const jobs =
-    getValueViaPath<GaldurExternalDomainModelsIncomePartTimeJobDTO[]>(
-      application.externalData,
-      'income.data.partTimeJobs',
-    ) ?? []
-
-  return jobs.map((job) => ({
-    validationId: job.id,
-    company: {
-      nationalId: job.employerSSN ?? '',
-      name: job.employerName?.trim() ?? '',
-    },
-    jobStart: job.periodFrom ?? '',
-    jobEnd: job.periodTo ?? '',
-    workPercentage: job.ratio != null ? String(job.ratio) : '',
-    estimatedIncome:
-      job.estimatedIncome != null ? String(job.estimatedIncome) : '',
-  }))
-}
-
 const partTimeValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerPartTime',
   incomeTypeKey: 'partTimeJobs',
   persistedPath: 'income.data.partTimeJobs',
+  toRow: toPartTimeRow,
   callbackId: 'PartTimeValidation',
   messages: {
     fallbackErrorMessage: 'partTimeValidationErrorMessage',
@@ -81,25 +71,19 @@ export const partTimeSection = buildSubSection({
           message: m.application.partTimeAlert,
           alertType: 'info',
         }),
-        buildDescriptionField({
-          title: () => {
-            const month = new Date().toLocaleDateString('is-IS', {
-              month: 'long',
-            })
-            return {
-              ...m.application.incomeTitle,
-              values: { month },
-            }
-          },
-          description: m.application.incomeDescriptionLink,
-          titleVariant: 'h4',
-          id: 'partTimeDescription',
-        }),
+        ...buildIncomeDescriptionFields('partTimeDescription'),
         buildTableRepeaterField({
           id: 'registerPartTime',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getPartTimeDefaults,
+          canRemoveRow: buildCanRemoveRow(
+            partTimeValidationProps.persistedPath,
+          ),
+          removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
+          editField: true,
+          canEditRow: buildCanEditRow(partTimeValidationProps.persistedPath),
+          editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
             company: {
@@ -107,19 +91,26 @@ export const partTimeSection = buildSubSection({
               searchCompanies: true,
               searchPersons: false,
               required: true,
+              customNationalIdLabel: m.application.companyNationalId,
+              customNameLabel: m.application.companyName,
             },
             jobStart: {
               component: 'date',
               label: m.application.jobStart,
               width: 'half',
               required: true,
+              clearOnChange: (index: number) => [
+                `registerPartTime[${index}].jobEnd`,
+              ],
               minDate: getCurrentMonthStartDate,
-              maxDate: getCurrentMonthEndDate,
+              maxDate: getMaxRegistrationDate,
             },
             jobEnd: {
               component: 'date',
               label: m.application.jobEnd,
               width: 'half',
+              placeholder: m.application.indefinitePeriod,
+              maxDate: getMaxRegistrationDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.jobStart
                 if (fromDate) {
@@ -178,9 +169,9 @@ export const partTimeSection = buildSubSection({
               nationalId: (value) => {
                 if (!value) return ''
                 const clean = value.replace('-', '')
-                return `${clean.slice(0, 6)}-${clean.slice(6)}`
+                return `${clean.slice(0, 6)}\u2011${clean.slice(6)}`
               },
-              jobStart: formatIsDateLong,
+              jobStart: formatIsDate,
               workPercentage: (value) => {
                 if (!value) return ''
                 return `${value}%`
@@ -196,6 +187,15 @@ export const partTimeSection = buildSubSection({
           alertType: 'warning',
           marginTop: 6,
           condition: hasPartTimeOverlap,
+        }),
+        buildAlertMessageField({
+          id: 'partTimeCasualWorkOverlapAlert',
+          title: m.errorMessages.partTimeCasualWorkOverlappingPeriods,
+          message:
+            m.errorMessages.partTimeCasualWorkOverlappingPeriodsAlertMessage,
+          alertType: 'warning',
+          marginTop: 6,
+          condition: hasPartTimeCasualWorkOverlap,
         }),
         buildCustomField(
           {

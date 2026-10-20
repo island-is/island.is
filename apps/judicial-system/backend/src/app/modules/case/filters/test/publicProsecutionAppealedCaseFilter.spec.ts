@@ -177,6 +177,39 @@ describe('public prosecution user - appealed verdicts', () => {
     )
   })
 
+  // Being made the appeal prosecutor is the same kind of assignment grant as
+  // being the reviewer: it bypasses the office check and survives heightened
+  // security, and it is full access because the ordinary prosecution rule is
+  // granting it - not the appeal read-only fallback.
+  describe('an appealed case this user is the appeal prosecutor of', () => {
+    verifyFullAccess(
+      anotherOfficeCase(
+        { verdicts: [{ appealDate: new Date() }] },
+        { appealProsecutorId: user.id },
+      ),
+      user,
+    )
+  })
+
+  describe('a heightened security case this user is the appeal prosecutor of', () => {
+    verifyFullAccess(
+      anotherOfficeCase(
+        { verdicts: [{ appealDate: new Date() }] },
+        { isHeightenedSecurityLevel: true, appealProsecutorId: user.id },
+      ),
+      user,
+    )
+  })
+
+  // The appeal fallback remains read only. Without an assignment as reviewer
+  // or appeal prosecutor, update stays closed even when the case is appealed.
+  describe('an appealed case this user is not assigned to', () => {
+    verifyReadAccess(
+      anotherOfficeCase({ verdicts: [{ appealDate: new Date() }] }),
+      user,
+    )
+  })
+
   // The widening reaches PROSECUTOR at this office and no other role there.
   // isPublicProsecutionUser is the only thing saying so, and nothing else in
   // the branch would notice if that changed.
