@@ -3,7 +3,6 @@ import { verifyRequestCompletion } from '../../../../support/api-tools'
 import {
   randomPoliceCaseNumber,
   getDaysFromNow,
-  injectTestDefenderIntoLawyerRegistry,
   randomIndictmentCourtCaseNumber,
   selectTestDefender,
 } from '../../utils/helpers'
@@ -200,10 +199,6 @@ export const judgeReceivesIndictmentThroughAdvocates = async (
   },
 ) => {
   const nextWeek = getDaysFromNow(7)
-
-  if (options?.assignDefender) {
-    await injectTestDefenderIntoLawyerRegistry(page)
-  }
 
   await page.goto('/malalistar/sakamal-sem-bida-uthlutunar')
   await expect(page).toHaveURL('/malalistar/sakamal-sem-bida-uthlutunar')

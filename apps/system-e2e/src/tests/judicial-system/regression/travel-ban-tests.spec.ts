@@ -4,7 +4,6 @@ import { test } from '../utils/judicialSystemTest'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import {
   getDaysFromNow,
-  injectTestDefenderIntoLawyerRegistry,
   randomPoliceCaseNumber,
   selectTestDefender,
 } from '../utils/helpers'
@@ -25,8 +24,6 @@ test.describe.serial('Travel ban tests', () => {
     prosecutorPage,
   }) => {
     const page = prosecutorPage
-
-    await injectTestDefenderIntoLawyerRegistry(page)
 
     await page.goto('/malalistar')
     await page.getByRole('button', { name: 'Nýtt mál' }).click()
@@ -59,7 +56,7 @@ test.describe.serial('Travel ban tests', () => {
     // Defender - registered through the lawyer registry combobox so the
     // defender fixture can appeal the ruling later
     await selectTestDefender(page)
-    await page.locator('label[for="defender-access-ready-for-court"]').click()
+    await page.locator('label[for^="defender-access-ready-for-court"]').click()
 
     await Promise.all([
       page.getByRole('button', { name: 'Stofna mál' }).click(),

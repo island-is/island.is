@@ -2,14 +2,13 @@ import { expect, Page } from '@playwright/test'
 import { verifyRequestCompletion } from '../../../../support/api-tools'
 import {
   getDaysFromNow,
-  injectTestDefenderIntoLawyerRegistry,
   randomPoliceCaseNumber,
   selectTestDefender,
 } from '../../utils/helpers'
 
 /**
- * Prosecutor creates a custody request and submits it to court. The test
- * defender is registered through the lawyer-registry combobox so the
+ * Prosecutor creates a custody request and submits it to court. The seeded
+ * test defender is registered through the lawyer-registry combobox so the
  * defender fixture (0909090909) gets limited access to the case.
  * Returns the created case id.
  */
@@ -20,8 +19,6 @@ export const prosecutorCreatesCustodyRequest = async (
 ): Promise<string> => {
   let caseId = ''
   const today = getDaysFromNow()
-
-  await injectTestDefenderIntoLawyerRegistry(page)
 
   // Case list groups
   await page.goto('/malalistar')
@@ -44,10 +41,10 @@ export const prosecutorCreatesCustodyRequest = async (
   await page.locator('#defendantGender').click()
   await page.locator('#react-select-defendantGender-option-0').click()
 
-  // Defender - selected from the (intercepted) lawyer registry so the
-  // CreateCase mutation carries the defender fields set by the real UI
+  // Defender - selected from the lawyer registry so the CreateCase mutation
+  // carries the defender fields set by the real UI
   await selectTestDefender(page)
-  await page.locator('label[for="defender-access-ready-for-court"]').click()
+  await page.locator('label[for^="defender-access-ready-for-court"]').click()
 
   await page.locator('input[name=leadInvestigator]').fill('Stjórinn')
   await expect(

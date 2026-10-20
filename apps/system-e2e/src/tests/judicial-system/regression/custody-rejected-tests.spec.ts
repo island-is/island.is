@@ -47,20 +47,22 @@ test.describe.serial('Custody rejection tests', () => {
       page.getByRole('heading', { name: 'Kröfu hafnað' }),
     ).toBeVisible()
 
-    // PdfButton opens the pdf in a new tab via window.open
-    const [popup] = await Promise.all([
-      page.waitForEvent('popup'),
+    // PdfButton opens the pdf in a new tab via window.open. Headless
+    // Chromium turns a pdf navigation into a download, so the popup never
+    // commits a url; catch the request it fires on the context instead.
+    const [pdfRequest] = await Promise.all([
+      page
+        .context()
+        .waitForEvent('request', (request) =>
+          request.url().includes(`/api/case/${caseId}/request`),
+        ),
       page.getByTestId('requestPDFButton').click(),
     ])
-    await popup.waitForURL(new RegExp(`/api/case/${caseId}/request`), {
-      waitUntil: 'commit',
-    })
 
     // The endpoint actually serves a pdf
-    const response = await page.request.get(popup.url())
+    const response = await page.request.get(pdfRequest.url())
     expect(response.status()).toBe(200)
     expect(response.headers()['content-type']).toContain('application/pdf')
-    await popup.close()
   })
 
   test('prosecutor should appeal the rejected ruling', async ({
@@ -72,11 +74,13 @@ test.describe.serial('Custody rejection tests', () => {
   test('prosecutor should withdraw the appeal', async ({ prosecutorPage }) => {
     const page = prosecutorPage
 
-    // Withdrawal lives in the appealed-cases table row context menu
+    // Withdrawal lives in the appealed-cases table row context menu. Table
+    // rows carry role="button" (the row itself opens the case), so they are
+    // located as plain tr elements.
     await page.goto('/malalistar/rannsoknarmal-i-kaeuferli')
     await expect(page).toHaveURL('/malalistar/rannsoknarmal-i-kaeuferli')
 
-    const caseRow = page.getByRole('row').filter({ hasText: accusedName })
+    const caseRow = page.locator('tr').filter({ hasText: accusedName })
     await caseRow
       .getByRole('button', { name: /Frekari aðgerðir/ })
       .first()
