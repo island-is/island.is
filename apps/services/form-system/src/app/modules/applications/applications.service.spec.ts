@@ -282,7 +282,7 @@ describe.each([
               displayOrder: 0,
               fieldType: type,
               isHidden: id === 'other' && hiddenLevel === 'field',
-              isPartOfMultiset: onCurrentScreen,
+              isPartOfMultiset: onCurrentScreen && type === fieldType,
               isRequired: false,
               values: [],
             })),
