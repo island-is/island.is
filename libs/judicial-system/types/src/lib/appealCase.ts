@@ -118,6 +118,9 @@ export const appealCorrectionLock = (
 // more than three are stored and shown as they are.
 export const APPEAL_JUDGE_COUNT = 3
 
+// The most judges the court of appeals seats on one case.
+export const MAX_APPEAL_JUDGE_COUNT = 5
+
 export interface AppealJudgeFields<U> {
   displayOrder?: number | null
   userId?: string | null

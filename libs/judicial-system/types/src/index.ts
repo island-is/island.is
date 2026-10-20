@@ -93,6 +93,7 @@ export {
   getStatementDeadline,
   CaseAppealDecision,
   APPEAL_JUDGE_COUNT,
+  MAX_APPEAL_JUDGE_COUNT,
   getOrderedAppealJudges,
   getAppealJudges,
   getPresidingAppealJudge,

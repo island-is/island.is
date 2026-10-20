@@ -1145,8 +1145,8 @@ export const appendAppealCaseIdQuery = (
 
 // Returns a new WorkingCase with `update` merged into the appeal-case slot that
 // matches `targetAppealCaseId`. For optimistic `setWorkingCase` updates from
-// COA detail pages — ruling-order rows need their updates routed into
-// `rulingOrderAppealCases[i]` rather than the case-level `appealCase`.
+// COA detail pages — the verdict appeal and the ruling-order rows need their
+// updates routed into their own slots rather than the case-level `appealCase`.
 export const applyAppealCaseUpdate = (
   workingCase: WorkingCase,
   targetAppealCaseId: string,
@@ -1156,6 +1156,13 @@ export const applyAppealCaseUpdate = (
     return {
       ...workingCase,
       appealCase: { ...workingCase.appealCase, ...update },
+    }
+  }
+
+  if (workingCase.verdictAppealCase?.id === targetAppealCaseId) {
+    return {
+      ...workingCase,
+      verdictAppealCase: { ...workingCase.verdictAppealCase, ...update },
     }
   }
 

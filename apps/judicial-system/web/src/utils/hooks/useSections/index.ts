@@ -10,6 +10,7 @@ import {
   COURT_OF_APPEAL_SUMMARY_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
@@ -1577,6 +1578,7 @@ const useSections = (
       name: 'Dómur Landsréttar',
       isActive:
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE) ||
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE) ||
@@ -1595,18 +1597,42 @@ const useSections = (
           ),
         },
         {
-          name: 'Verjandi',
-          isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE),
+          name: 'Skráning og úthlutun',
+          isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE),
           href: appendAppealCaseIdQuery(
-            `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/${workingCase.id}`,
+            `${COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           ),
           // The href alone only reaches a step the court has already passed.
           // Going forward to one needs this, and nothing stands in the way:
           // the overview before it asks nothing of the court.
           onClick:
-            !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE) &&
+            !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE) &&
             validateFormStepper(isValid, [], workingCase) &&
+            onNavigationTo
+              ? async () =>
+                  await onNavigationTo(
+                    COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
+                  )
+              : undefined,
+        },
+        {
+          name: 'Verjandi',
+          isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE),
+          href: appendAppealCaseIdQuery(
+            `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/${workingCase.id}`,
+            targetAppealCase?.id,
+          ),
+          // Going forward to it runs through the registration step: the court
+          // records its case number before it does anything else with the
+          // appeal.
+          onClick:
+            !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE) &&
+            validateFormStepper(
+              isValid,
+              [COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE],
+              workingCase,
+            ) &&
             onNavigationTo
               ? async () =>
                   await onNavigationTo(
@@ -1623,16 +1649,19 @@ const useSections = (
             `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           ),
-          // Going forward to it runs through the defender step's validation:
-          // a deadline is given to a party's advocate, so the court settles
-          // who that is first.
+          // Going forward to it runs through the steps before it, in practice
+          // the defender step's validation: a deadline is given to a party's
+          // advocate, so the court settles who that is first.
           onClick:
             !isActive(
               COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
             ) &&
             validateFormStepper(
               isValid,
-              [COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE],
+              [
+                COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
+                COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+              ],
               workingCase,
             ) &&
             onNavigationTo
@@ -1658,6 +1687,7 @@ const useSections = (
             validateFormStepper(
               isValid,
               [
+                COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
                 COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
                 COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
               ],
@@ -1682,6 +1712,7 @@ const useSections = (
             validateFormStepper(
               isValid,
               [
+                COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
                 COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
                 COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
                 COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,

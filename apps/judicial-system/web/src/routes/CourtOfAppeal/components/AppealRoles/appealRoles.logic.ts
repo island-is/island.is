@@ -2,20 +2,26 @@ import {
   APPEAL_JUDGE_COUNT,
   getAppealJudges,
   getAppealJudgeUserIds,
+  MAX_APPEAL_JUDGE_COUNT,
 } from '@island.is/judicial-system/types'
 import type {
   AppealCase,
   UpdateAppealCaseInput,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
-// A judge select on the registration page: the judge chosen for it, or empty.
+// A judge select on a registration page: the judge chosen for it, or empty.
 export type BenchSlot = User | null | undefined
 
 type AppealRoles = {
   appealAssistant?: User | null
   judges: BenchSlot[]
 }
+
+export type AssistantSelectOption = ReactSelectOption & { assistant: User }
+export type JudgeSelectOption = ReactSelectOption & { judge: User }
 
 // The selects the page shows: the bench as stored, in order, padded to the
 // default number of seats. A bench larger than the default keeps every seat.
@@ -31,9 +37,66 @@ export const getBenchSlots = (
   return slots
 }
 
+export const setBenchSeat = (
+  judges: BenchSlot[],
+  seat: number,
+  judge: User,
+): BenchSlot[] => judges.map((slot, index) => (index === seat ? judge : slot))
+
+export const canAddBenchSeat = (judges: BenchSlot[]): boolean =>
+  judges.length < MAX_APPEAL_JUDGE_COUNT
+
+// Adds an empty seat at the end of the bench, up to the most judges the court
+// seats on one case.
+export const addBenchSeat = (judges: BenchSlot[]): BenchSlot[] =>
+  canAddBenchSeat(judges) ? [...judges, null] : judges
+
+// A seat can be taken away while the bench has more than the default number
+// of seats. The presiding seat always stays.
+export const canRemoveBenchSeat = (
+  judges: BenchSlot[],
+  seat: number,
+): boolean => judges.length > APPEAL_JUDGE_COUNT && seat > 0
+
+export const removeBenchSeat = (
+  judges: BenchSlot[],
+  seat: number,
+): BenchSlot[] =>
+  canRemoveBenchSeat(judges, seat)
+    ? judges.filter((_, index) => index !== seat)
+    : judges
+
 // The ids of the chosen judges in seat order; empty seats are skipped.
 export const getSelectedJudgeIds = (judges: BenchSlot[]): string[] =>
   judges.map((judge) => judge?.id).filter((id): id is string => Boolean(id))
+
+export const getAssistantOptions = (
+  users: User[] | null | undefined,
+): AssistantSelectOption[] =>
+  (users ?? [])
+    .filter((user) => user.role === UserRole.COURT_OF_APPEALS_ASSISTANT)
+    .map((assistant) => ({
+      label: assistant.name ?? '',
+      value: assistant.id,
+      assistant,
+    }))
+
+// The judges that can still be seated: a judge already on the bench is not
+// offered for another seat.
+export const getJudgeOptions = (
+  users: User[] | null | undefined,
+  judges: BenchSlot[],
+): JudgeSelectOption[] => {
+  const selectedJudgeIds = getSelectedJudgeIds(judges)
+
+  return (users ?? [])
+    .filter(
+      (user) =>
+        user.role === UserRole.COURT_OF_APPEALS_JUDGE &&
+        !selectedJudgeIds.includes(user.id),
+    )
+    .map((judge) => ({ label: judge.name ?? '', value: judge.id, judge }))
+}
 
 const isSameBench = (a: string[], b: string[]): boolean =>
   a.length === b.length && a.every((id, index) => id === b[index])
