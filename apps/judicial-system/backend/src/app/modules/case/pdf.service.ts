@@ -25,13 +25,9 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-import type {
-  AppealAppointmentLetter,
-  AppealSummonsPdfDefendant,
-} from '../../formatters'
+import type { AppealSummonsPdfDefendant } from '../../formatters'
 import {
   Confirmation,
-  createAppealAppointmentLetter,
   createAppealSummons,
   createCaseFilesRecord,
   createFineSentToPrisonAdminPdf,
@@ -299,6 +295,23 @@ export class PdfService {
       .catch((reason) => {
         this.logger.error(`Failed to upload pdf ${key} to AWS S3`, { reason })
       })
+  }
+
+  private async uploadPdfToS3(
+    theCase: Case,
+    key: string,
+    pdf: Buffer,
+  ): Promise<void> {
+    try {
+      await this.awsS3Service.putObject(
+        theCase.type,
+        key,
+        pdf.toString('binary'),
+      )
+    } catch (reason) {
+      this.logger.error(`Failed to upload pdf ${key} to AWS S3`, { reason })
+      throw reason
+    }
   }
 
   private async getFullOriginalCase(
@@ -570,18 +583,6 @@ export class PdfService {
     return generatedPdf
   }
 
-  /**
-   * The letter by which the court of appeals appoints one party's advocate.
-   * Everything it prints is resolved by the caller - see
-   * buildAppealAppointmentLetter - so there is nothing to look up here and no
-   * translations to refresh.
-   */
-  async getAppealAppointmentLetterPdf(
-    letter: AppealAppointmentLetter,
-  ): Promise<Buffer> {
-    return createAppealAppointmentLetter(letter)
-  }
-
   async getRulingSentToPrisonAdminPdf(theCase: Case): Promise<Buffer> {
     if (
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
@@ -598,6 +599,23 @@ export class PdfService {
     summons?: AppealSummons,
     previewDefendants?: AppealSummonsPdfDefendant[],
   ): Promise<Buffer> {
+    // Same cache shape as subpoena: once confirmed (hash set), prefer the
+    // frozen object in S3 so later downloads do not drift with case edits.
+    const key = summons ? `${theCase.id}/appealSummons/${summons.id}.pdf` : ''
+
+    if (summons?.hash && key) {
+      const existingPdf = await this.tryGetPdfFromS3(theCase, key)
+
+      if (existingPdf) {
+        return existingPdf
+      }
+
+      // Do not regenerate: served bytes would no longer match the frozen hash.
+      throw new InternalServerErrorException(
+        `Appeal summons ${summons.id} has a hash but its PDF was not found in S3`,
+      )
+    }
+
     if (!theCase.rulingDate) {
       throw new BadRequestException(
         `Case ${theCase.id} has no ruling date; cannot generate an appeal summons PDF`,
@@ -615,6 +633,8 @@ export class PdfService {
 
     // Preview / draft: issuer is whoever is generating the PDF. Confirmed:
     // stamp and issuer must be the recorded confirmer — never the downloader.
+    let generatedPdf: Buffer
+
     if (summons?.confirmedDate) {
       const confirmedBy = summons.confirmedBy
 
@@ -629,7 +649,7 @@ export class PdfService {
         title: confirmedBy.title,
       }
 
-      return createAppealSummons(
+      generatedPdf = await createAppealSummons(
         theCase,
         defendants,
         issuer,
@@ -641,15 +661,23 @@ export class PdfService {
         },
         summons.confirmedDate,
       )
+    } else {
+      generatedPdf = await createAppealSummons(
+        theCase,
+        defendants,
+        { name: user.name, title: user.title },
+        undefined,
+        undefined,
+      )
     }
 
-    return createAppealSummons(
-      theCase,
-      defendants,
-      { name: user.name, title: user.title },
-      undefined,
-      undefined,
-    )
+    // Confirm awaits the upload before the caller persists the hash, so a
+    // failed put cannot leave a confirmed summons with no S3 object.
+    if (summons?.confirmedDate && key) {
+      await this.uploadPdfToS3(theCase, key, generatedPdf)
+    }
+
+    return generatedPdf
   }
 
   private getDefenceAppealDate(

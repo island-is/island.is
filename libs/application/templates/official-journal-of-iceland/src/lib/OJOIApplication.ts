@@ -127,6 +127,13 @@ const OJOITemplate: ApplicationTemplate<
                 import('../forms/Requirements').then((val) =>
                   Promise.resolve(val.Requirements),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: general.continue,
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -174,6 +181,13 @@ const OJOITemplate: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
             },
           ],
         },
@@ -224,6 +238,13 @@ const OJOITemplate: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
             },
           ],
         },
@@ -275,6 +296,23 @@ const OJOITemplate: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.EDIT,
+                  name: 'Breyta',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
             },
           ],
         },

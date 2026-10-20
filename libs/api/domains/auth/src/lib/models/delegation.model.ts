@@ -13,6 +13,7 @@ import {
 } from '@island.is/clients/auth/delegation-api'
 
 import { DelegationScope } from './delegationScope.model'
+import { PendingDelegationConfirmation } from './delegationConfirmation.model'
 
 registerEnumType(AuthDelegationProvider, { name: 'AuthDelegationProvider' })
 registerEnumType(AuthDelegationType, { name: 'AuthDelegationType' })
@@ -103,6 +104,13 @@ export class CustomDelegation extends Delegation {
 
   @Field(() => [DelegationScope])
   scopes!: DelegationScope[]
+
+  @Field(() => [PendingDelegationConfirmation], {
+    nullable: true,
+    description:
+      'Scopes which were not granted because they require a separate high-assurance confirmation. Present only on the response to creating or patching a delegation.',
+  })
+  pendingConfirmations?: PendingDelegationConfirmation[]
 
   // Internal attributes, used in field resolvers.
   domainName?: string

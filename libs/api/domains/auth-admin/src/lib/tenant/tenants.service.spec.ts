@@ -456,6 +456,127 @@ describe('TenantsService', () => {
     })
   })
 
+  describe('publishTenant', () => {
+    let app: TestApp
+    let tenantsService: TenantsService
+
+    const source = {
+      name: 'tenant-1',
+      nationalId: createNationalId('company'),
+      displayName: 'Tenant 1',
+      description: 'Lýsing',
+      organisationLogoKey: 'stafraent-island',
+    }
+
+    const sourceDevApi = {
+      withMiddleware: jest.fn().mockReturnThis(),
+      meTenantsControllerFindByIdForAdminRaw: jest.fn(),
+    }
+    const targetStagingApi = {
+      withMiddleware: jest.fn().mockReturnThis(),
+      meTenantsControllerCreateRaw: jest
+        .fn()
+        .mockResolvedValue(createMockApiResponse(source)),
+      meTenantsControllerUpdateRaw: jest.fn(),
+    }
+
+    beforeEach(async () => {
+      sourceDevApi.meTenantsControllerFindByIdForAdminRaw.mockReset()
+      targetStagingApi.meTenantsControllerUpdateRaw.mockReset()
+
+      app = await testServer({
+        appModule: TestModule,
+        enableVersioning: true,
+        override: (builder) =>
+          builder
+            .overrideProvider(AdminDevApi.key)
+            .useValue(sourceDevApi)
+            .overrideProvider(AdminStagingApi.key)
+            .useValue(targetStagingApi),
+        hooks: [useAuth({ auth: currentUser })],
+      })
+      tenantsService = app.get(TenantsService)
+    })
+
+    afterEach(async () => {
+      await app?.cleanUp()
+    })
+
+    it('copies English translations to the target environment', async () => {
+      sourceDevApi.meTenantsControllerFindByIdForAdminRaw.mockResolvedValue(
+        createMockApiResponse({
+          ...source,
+          displayNameEn: 'Tenant 1 EN',
+          descriptionEn: 'Description',
+        }),
+      )
+      targetStagingApi.meTenantsControllerUpdateRaw.mockResolvedValue(
+        createMockApiResponse({
+          ...source,
+          displayNameEn: 'Tenant 1 EN',
+          descriptionEn: 'Description',
+        }),
+      )
+
+      const result = await tenantsService.publishTenant(currentUser, {
+        tenantId: source.name,
+        sourceEnvironment: Environment.Development,
+        targetEnvironment: Environment.Staging,
+      })
+
+      expect(
+        targetStagingApi.meTenantsControllerUpdateRaw,
+      ).toHaveBeenCalledWith({
+        tenantId: source.name,
+        adminPatchTenantDto: {
+          displayNameEn: 'Tenant 1 EN',
+          descriptionEn: 'Description',
+        },
+      })
+      expect(result).toMatchObject({
+        displayNameEn: 'Tenant 1 EN',
+        descriptionEn: 'Description',
+      })
+    })
+
+    it('still publishes when the translation patch fails', async () => {
+      sourceDevApi.meTenantsControllerFindByIdForAdminRaw.mockResolvedValue(
+        createMockApiResponse({ ...source, displayNameEn: 'Tenant 1 EN' }),
+      )
+      targetStagingApi.meTenantsControllerUpdateRaw.mockRejectedValue(
+        new Error('patch failed'),
+      )
+
+      const result = await tenantsService.publishTenant(currentUser, {
+        tenantId: source.name,
+        sourceEnvironment: Environment.Development,
+        targetEnvironment: Environment.Staging,
+      })
+
+      expect(result).toMatchObject({
+        name: source.name,
+        environment: Environment.Staging,
+      })
+      expect(result.displayNameEn).toBeUndefined()
+    })
+
+    it('does not patch the target when there are no English translations', async () => {
+      sourceDevApi.meTenantsControllerFindByIdForAdminRaw.mockResolvedValue(
+        createMockApiResponse(source),
+      )
+
+      await tenantsService.publishTenant(currentUser, {
+        tenantId: source.name,
+        sourceEnvironment: Environment.Development,
+        targetEnvironment: Environment.Staging,
+      })
+
+      expect(
+        targetStagingApi.meTenantsControllerUpdateRaw,
+      ).not.toHaveBeenCalled()
+    })
+  })
+
   describe('with no environment', () => {
     it('logs error', async () => {
       // Assert

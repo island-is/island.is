@@ -218,12 +218,22 @@ export const buildAppealSummonsFormSections = (
     'name' | 'nationalId' | 'defendantIds'
   >[] = [],
   existingSummons?: Pick<AppealSummons, 'defendants'> | null,
+  caseDefendants: Pick<
+    NonNullable<WorkingCase['defendants']>[number],
+    'id' | 'name'
+  >[] = [],
 ): AppealSummonsFormSection[] => {
   const existingByDefendant = new Map(
     (existingSummons?.defendants ?? []).map((row) => [row.defendantId, row]),
   )
+  const standingIds = new Set(
+    standing.map((defendant) => defendant.defendantId),
+  )
+  const nameById = new Map(
+    caseDefendants.map((defendant) => [defendant.id, defendant.name]),
+  )
 
-  return standing.map((defendant) => {
+  const sections = standing.map((defendant) => {
     const existing = existingByDefendant.get(defendant.defendantId)
 
     return {
@@ -242,6 +252,29 @@ export const buildAppealSummonsFormSections = (
         ),
     }
   })
+
+  // Keep defendants already on the summons even if their appeal was withdrawn,
+  // so an edit does not silently drop them from the update payload. Staff can
+  // still remove them with Fjarlægja.
+  for (const row of existingSummons?.defendants ?? []) {
+    if (
+      !row.defendantId ||
+      !row.appellantSide ||
+      standingIds.has(row.defendantId)
+    ) {
+      continue
+    }
+
+    sections.push({
+      defendantId: row.defendantId,
+      name: nameById.get(row.defendantId),
+      appellantSide: row.appellantSide,
+      included: true,
+      claims: row.claims ?? '',
+    })
+  }
+
+  return sections
 }
 
 export const isAppealSummonsFormReady = (

@@ -31,7 +31,7 @@ import {
 
 import { nowFactory } from '../../factories'
 import { getCaseFileHash } from '../../formatters'
-import { queueMessagesAfterCommit } from '../../middleware'
+import { queueMessagesAfterCommit, registerAfterCommit } from '../../middleware'
 import { InternalCaseService } from '../case/internalCase.service'
 import { PdfService } from '../case/pdf.service'
 import {
@@ -172,11 +172,18 @@ export class SubpoenaService {
       user,
     )
 
-    this.eventService.postEvent('SUBPOENA_ISSUED', theCase, {
-      Varnaraðili: defendantsToProcess
-        .map((defendant) => defendant.id)
-        .join(', '),
-    })
+    // The event announces subpoenas the database has accepted, so it is posted
+    // after the commit - which TransactionCommitInterceptor does after the
+    // handler has returned - and never for a creation that rolled back. Still
+    // fire and forget: a failed announcement is logged, not returned to the
+    // caller.
+    registerAfterCommit(() =>
+      this.eventService.postEvent('SUBPOENA_ISSUED', theCase, {
+        Varnaraðili: defendantsToProcess
+          .map((defendant) => defendant.id)
+          .join(', '),
+      }),
+    )
 
     return subpoenas
   }
@@ -299,8 +306,10 @@ export class SubpoenaService {
     update: UpdateSubpoenaDto,
     transaction: Transaction,
   ): Promise<Subpoena> {
-    // Case is often loaded via Sequelize include (e.g. internal LÖKE PATCH) and does not
-    // pass through CaseRepository, so the virtual policeCaseNumbers field is unset.
+    // Not every caller's case comes through a repository read that resolves
+    // the virtual policeCaseNumbers field - the defendant indictment case read
+    // (findIndictmentCaseByIdAndDefendantNationalId) does not - so it is
+    // resolved here.
     await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
       [theCase],
       { transaction },
@@ -384,13 +393,20 @@ export class SubpoenaService {
     // No need to wait for this to finish
     this.addMessagesForSubpoenaUpdateToQueue(subpoena, serviceStatus)
 
-    if (
-      update.serviceStatus &&
-      update.serviceStatus !== subpoena.serviceStatus
-    ) {
-      this.eventService.postEvent('SUBPOENA_SERVICE_STATUS', theCase, {
-        Staða: getServiceStatusText(update.serviceStatus),
-      })
+    if (serviceStatus && serviceStatus !== subpoena.serviceStatus) {
+      // The event announces a service status the database has accepted, so it
+      // is posted after the commit - which TransactionCommitInterceptor does
+      // after the handler has returned, whether the request's transaction is
+      // the guard's (the police update) or one the handler committed itself
+      // and returned right after (getSubpoena, and the defendant indictment
+      // case read that syncs the subpoena the same way) - and never for an
+      // update that rolled back. Still fire and forget: a failed announcement
+      // is logged, not returned to the caller.
+      registerAfterCommit(() =>
+        this.eventService.postEvent('SUBPOENA_SERVICE_STATUS', theCase, {
+          Staða: getServiceStatusText(serviceStatus),
+        }),
+      )
     }
 
     return this.findById(subpoena.id, transaction)

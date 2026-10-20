@@ -1,33 +1,77 @@
-import { FC } from 'react'
-import { Modal } from '@island.is/react/components'
-import { AlertMessage, Box, Button, toast } from '@island.is/island-ui/core'
+import { FC, useEffect, useState } from 'react'
+import { useNavigate, useParams, useRevalidator } from 'react-router-dom'
+
+import { AuthAdminEnvironment } from '@island.is/api/schema'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Checkbox,
+  InputError,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../../lib/messages'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useDeleteClientMutation } from './DeleteClient.generated'
+import { Modal } from '@island.is/react/components'
 import { replaceParams } from '@island.is/react-spa/shared'
+
+import { m } from '../../../../lib/messages'
 import { IDSAdminPaths } from '../../../../lib/paths'
+import { authAdminEnvironments } from '../../../../utils/environments'
+import { useClient } from '../../ClientContext'
+import { useDeleteClientMutation } from './DeleteClient.generated'
 
 interface Props {
   isVisible: boolean
   onClose: () => void
-  deleteOnAllEnvironments?: boolean
 }
 
 export const DeleteClient: FC<Props> = ({ isVisible, onClose }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const revalidator = useRevalidator()
+  const { client, selectedEnvironment } = useClient()
 
   const { tenant: tenantId, client: clientId } = useParams() as {
     tenant: string
     client: string
   }
 
+  const activeEnvironments = client.environments
+    .filter((env) => !env.archived)
+    .map((env) => env.environment)
+
+  const [selectedEnvironments, setSelectedEnvironments] = useState<
+    AuthAdminEnvironment[]
+  >([selectedEnvironment.environment])
+  const [error, setError] = useState<string | undefined>(undefined)
+
+  useEffect(() => {
+    if (isVisible) {
+      setSelectedEnvironments(
+        selectedEnvironment.archived ? [] : [selectedEnvironment.environment],
+      )
+      setError(undefined)
+    }
+  }, [isVisible, selectedEnvironment])
+
   const [deleteClientMutation, { loading, error: mutationError }] =
     useDeleteClientMutation()
 
+  const handleEnvironmentChange = (env: AuthAdminEnvironment) => {
+    setSelectedEnvironments((prev) =>
+      prev.includes(env) ? prev.filter((e) => e !== env) : [...prev, env],
+    )
+    setError(undefined)
+  }
+
   const handleSubmit = async () => {
     if (loading) {
+      return
+    }
+
+    if (selectedEnvironments.length === 0) {
+      setError(formatMessage(m.deleteClientEnvironmentRequired))
       return
     }
 
@@ -36,24 +80,34 @@ export const DeleteClient: FC<Props> = ({ isVisible, onClose }) => {
         input: {
           tenantId,
           clientId,
+          environments: selectedEnvironments,
         },
       },
     })
 
-    // If there is at least one success, we consider it a success
-    if (res.data?.deleteAuthAdminClient) {
-      toast.success(formatMessage(m.successDeletingClient))
+    if (!res.data?.deleteAuthAdminClient) {
+      toast.error(formatMessage(m.errorDefault))
+      return
+    }
+
+    toast.success(formatMessage(m.successDeletingClient))
+
+    const remainingActive = activeEnvironments.filter(
+      (env) => !selectedEnvironments.includes(env),
+    )
+
+    if (remainingActive.length === 0) {
       navigate(
         replaceParams({
           href: IDSAdminPaths.IDSAdminClients,
-          params: {
-            tenant: tenantId,
-          },
+          params: { tenant: tenantId },
         }),
       )
-    } else {
-      toast.error(formatMessage(m.errorDefault))
+      return
     }
+
+    revalidator.revalidate()
+    onClose()
   }
 
   return (
@@ -72,6 +126,39 @@ export const DeleteClient: FC<Props> = ({ isVisible, onClose }) => {
         />
       </Box>
 
+      <Box marginTop={4}>
+        <Text variant="h4" marginBottom={2}>
+          {formatMessage(m.deleteClientSelectEnvironments)}
+        </Text>
+        <Box
+          display="flex"
+          flexDirection={['column', 'row']}
+          columnGap={3}
+          rowGap={2}
+        >
+          {authAdminEnvironments.map((env) => (
+            <Box width="full" key={env}>
+              <Checkbox
+                label={env}
+                name="deleteClientEnvironments"
+                id={`deleteClientEnvironments.${env}`}
+                value={env}
+                checked={selectedEnvironments.includes(env)}
+                onChange={() => handleEnvironmentChange(env)}
+                disabled={!activeEnvironments.includes(env)}
+                large
+              />
+            </Box>
+          ))}
+        </Box>
+        {error && (
+          <InputError
+            id="delete-client-environments-error"
+            errorMessage={error}
+          />
+        )}
+      </Box>
+
       {mutationError && (
         <Box marginTop={4}>
           <AlertMessage message={formatMessage(m.errorDefault)} type="error" />
@@ -87,7 +174,7 @@ export const DeleteClient: FC<Props> = ({ isVisible, onClose }) => {
           loading={loading}
           onClick={handleSubmit}
         >
-          {formatMessage(m.delete)}
+          {formatMessage(m.archive)}
         </Button>
       </Box>
     </Modal>

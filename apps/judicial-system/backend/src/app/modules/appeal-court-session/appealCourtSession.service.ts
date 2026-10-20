@@ -19,6 +19,7 @@ import {
   Case,
 } from '../repository'
 import { CreateAppealCourtSessionDto } from './dto/createAppealCourtSession.dto'
+import { UpdateAppealCourtSessionDto } from './dto/updateAppealCourtSession.dto'
 
 @Injectable()
 export class AppealCourtSessionService {
@@ -72,5 +73,56 @@ export class AppealCourtSessionService {
     })
 
     return session
+  }
+
+  // Changes a booked session. No verdict-appeal check here or on delete: the
+  // session the guard resolved hangs off the appeal, and only a verdict
+  // appeal can have one.
+  async update(
+    theCase: Case,
+    appealCase: AppealCase,
+    session: AppealCourtSession,
+    dto: UpdateAppealCourtSessionDto,
+    transaction: Transaction,
+  ): Promise<AppealCourtSession> {
+    const update = {
+      ...(dto.sessionType !== undefined && { sessionType: dto.sessionType }),
+      ...(dto.sessionDate !== undefined && { sessionDate: dto.sessionDate }),
+      ...(dto.courtRoom !== undefined && { courtRoom: dto.courtRoom }),
+    }
+
+    if (Object.keys(update).length === 0) {
+      throw new BadRequestException(
+        `Nothing to update in appeal court session ${session.id} of case ${theCase.id}`,
+      )
+    }
+
+    this.logger.debug(
+      `Updating appeal court session ${session.id} of appeal case ${appealCase.id} in case ${theCase.id}`,
+    )
+
+    return this.appealCourtSessionRepositoryService.update(
+      session.id,
+      appealCase.id,
+      update,
+      { transaction },
+    )
+  }
+
+  async delete(
+    theCase: Case,
+    appealCase: AppealCase,
+    session: AppealCourtSession,
+    transaction: Transaction,
+  ): Promise<boolean> {
+    this.logger.debug(
+      `Deleting appeal court session ${session.id} of appeal case ${appealCase.id} in case ${theCase.id}`,
+    )
+
+    return this.appealCourtSessionRepositoryService.delete(
+      session.id,
+      appealCase.id,
+      { transaction },
+    )
   }
 }

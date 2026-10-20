@@ -105,6 +105,21 @@ describe('CaseRepositoryService - case reads', () => {
       ).toBeDefined()
     })
 
+    // The statement deadline route reads the party's current deadline off the
+    // verdict appeal this load carries. Without the include every call would be
+    // a first deadline, and the second one for a party would die on the
+    // table's unique index.
+    it('should read the statement deadlines of the verdict appeal', () => {
+      const verdictAppealCase = included(
+        findOneOptions().include,
+        'verdictAppealCase',
+      )
+
+      expect(
+        included(verdictAppealCase?.include, 'statementDeadlines'),
+      ).toBeDefined()
+    })
+
     describe('no live case', () => {
       beforeEach(async () => {
         mockCaseModel.findOne.mockReset()
@@ -162,6 +177,28 @@ describe('CaseRepositoryService - case reads', () => {
         [theCase],
         { transaction: undefined },
       )
+    })
+
+    describe('in a transaction', () => {
+      const transaction = {} as never
+
+      beforeEach(async () => {
+        mockCaseModel.findOne.mockClear()
+        mockResolvePoliceCaseNumbersForCases.mockClear()
+
+        result = await caseRepositoryService.findLiveMinimalById(caseId, {
+          transaction,
+        })
+      })
+
+      it('should read the row and resolve the police case numbers in it', () => {
+        expect(findOneOptions().transaction).toBe(transaction)
+        expect(mockResolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+          [theCase],
+          { transaction },
+        )
+        expect(result).toBe(theCase)
+      })
     })
   })
 
