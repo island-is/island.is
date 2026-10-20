@@ -16,7 +16,7 @@ import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import { GetDebtsApi, MockPaymentCatalog } from '../dataProviders'
-import { application } from './messages'
+import { application, payment } from './messages'
 import { getSelectedDebts } from '../utils/getSelectedDebts'
 import {
   EphemeralStateLifeCycle,
@@ -55,6 +55,13 @@ const template: ApplicationTemplate<
                 import('../forms/mainForm').then((module) =>
                   Promise.resolve(module.MainForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: payment.buttons.submit,
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               read: 'all',
               api: [GetDebtsApi, MockPaymentCatalog],
