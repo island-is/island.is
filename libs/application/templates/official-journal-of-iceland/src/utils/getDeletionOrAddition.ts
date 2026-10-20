@@ -8,6 +8,7 @@ import qq from '@hugsmidjan/qj/qq'
 import { HTMLText } from '@island.is/regulations'
 import {
   escapeHtml,
+  isLetteredList,
   removeDiffAttributes,
   removeInsertions,
 } from './formatAmendingUtils'
@@ -67,8 +68,7 @@ export const formatListItemDiff = (item: Element) => {
 
     if (liHasDeletion || liHasInsert) {
       liItemHtml = labelsAbove(liItem)
-      const isStaflidur =
-        liItem?.parentElement?.getAttribute('type')?.toLowerCase() === 'a'
+      const isStaflidur = isLetteredList(liItem?.parentElement)
 
       // Formatting changed, wording did not: nothing deleted, and everything
       // inserted is <ins class="mod">. Only the item's own marks count; a
