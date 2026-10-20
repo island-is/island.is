@@ -36,7 +36,7 @@ const schema = z.object({
   defaultValidityPeriodInDays: z.number().min(1),
   confirmationLifetimeInMinutes: z.number().min(1),
   confirmationRequiredAcr: z.string(),
-  confirmationAllowAnyAcrInDev: z.boolean(),
+  confirmationAllowFakeLogin: z.boolean(),
   confirmationCibaIssuerUrl: z.string(),
   confirmationCibaClientId: z.string(),
   confirmationCibaClientSecret: z.string(),
@@ -127,10 +127,9 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
       env.optionalJSON('DELEGATION_CONFIRMATION_LIFETIME_IN_MINUTES') ?? 15,
     confirmationRequiredAcr:
       env.optional('DELEGATION_CONFIRMATION_REQUIRED_ACR') ?? 'eidas-loa-high',
-    // Gated on NODE_ENV too, so setting the variable in a deployed environment does nothing.
-    confirmationAllowAnyAcrInDev:
-      process.env.NODE_ENV === 'development' &&
-      (env.optionalJSON('DELEGATION_CONFIRMATION_ALLOW_ANY_ACR_IN_DEV') ??
+    // Only set for dev in infra: fake logins (gervimenn) can't reach the required acr.
+    confirmationAllowFakeLogin:
+      (env.optionalJSON('DELEGATION_CONFIRMATION_ALLOW_FAKE_LOGIN') ??
         false) === true,
     confirmationCibaIssuerUrl:
       env.optional('DELEGATION_CONFIRMATION_CIBA_ISSUER_URL') ??
