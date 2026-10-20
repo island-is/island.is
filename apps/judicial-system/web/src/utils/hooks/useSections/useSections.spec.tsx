@@ -6,6 +6,7 @@ import { renderHook } from '@testing-library/react'
 import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
@@ -145,6 +146,7 @@ describe('useSections getSections', () => {
         id: 'verdict-appeal',
         appealState: AppealCaseState.RECEIVED,
         appealType: AppealCaseType.VERDICT,
+        appealCaseNumber: '555/2026',
       },
     } as unknown as WorkingCase
 
@@ -204,6 +206,7 @@ describe('useSections getSections', () => {
 
       expect(sections[0].children.map((c) => c.name)).toEqual([
         'Yfirlit',
+        'Skráning og úthlutun',
         'Verjandi',
         'Greinargerðarfrestir',
         'Staða og lyktir',
@@ -212,17 +215,46 @@ describe('useSections getSections', () => {
       // Every step carries the appeal id for the same reason the overview
       // does: without it the next render resolves back to the ruling appeal.
       expect(sections[0].children[1].href).toBe(
-        `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
       )
       expect(sections[0].children[2].href).toBe(
-        `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
       )
       expect(sections[0].children[3].href).toBe(
-        `${COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
       )
       expect(sections[0].children[4].href).toBe(
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
+      )
+      expect(sections[0].children[5].href).toBe(
         `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
       )
+    })
+
+    // Every step after the registration step is gated on it: the court
+    // records its case number before it does anything else with the appeal.
+    describe.each([
+      ['defender', 2],
+      ['deadlines', 3],
+      ['status', 4],
+      ['summary', 5],
+    ])('the %s step', (_name, index) => {
+      it('is withheld until the court has its case number', () => {
+        mockAppealCaseId = 'verdict-appeal'
+        mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
+
+        const unnumbered = {
+          ...caseWithBothAppeals,
+          verdictAppealCase: {
+            ...caseWithBothAppeals.verdictAppealCase,
+            appealCaseNumber: null,
+          },
+        } as unknown as WorkingCase
+
+        expect(
+          appealSections(unnumbered, coaUser)[0].children[index].onClick,
+        ).toBeUndefined()
+      })
     })
 
     // The steps after the defender step are gated on it: a deadline is given
@@ -231,8 +263,8 @@ describe('useSections getSections', () => {
     // step itself holds nobody, so the status step is gated on the defender
     // step alone, through it.
     describe.each([
-      ['deadlines', 2],
-      ['status', 3],
+      ['deadlines', 3],
+      ['status', 4],
     ])('the %s step', (_name, index) => {
       it('is withheld until every advocate is confirmed', () => {
         mockAppealCaseId = 'verdict-appeal'
@@ -266,7 +298,7 @@ describe('useSections getSections', () => {
       } as unknown as WorkingCase
 
       expect(
-        appealSections(confirmed, coaUser)[0].children[3].onClick,
+        appealSections(confirmed, coaUser)[0].children[4].onClick,
       ).toBeDefined()
     })
 
@@ -277,8 +309,8 @@ describe('useSections getSections', () => {
       const sections = appealSections(caseWithBothAppeals, coaUser)
 
       expect(sections[0].isActive).toBe(true)
-      expect(sections[0].children[3].isActive).toBe(true)
-      expect(sections[0].children[3].onClick).toBeUndefined()
+      expect(sections[0].children[4].isActive).toBe(true)
+      expect(sections[0].children[4].onClick).toBeUndefined()
     })
 
     // The side panel works out which step you are on by finding the first
@@ -298,8 +330,8 @@ describe('useSections getSections', () => {
       expect(active.map((s) => s.name)).toEqual(['Dómur Landsréttar'])
     })
 
-    // What the panel does with that: the step you are on is index 1, so the
-    // one before it is reachable. This is the condition DisplaySection uses.
+    // What the panel does with that: the step you are on is index 2, so the
+    // ones before it are reachable. This is the condition DisplaySection uses.
     it('leaves the overview reachable from the defender step', () => {
       mockAppealCaseId = 'verdict-appeal'
       mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE
@@ -314,7 +346,7 @@ describe('useSections getSections', () => {
         (c) => c.isActive,
       )
 
-      expect(activeSubSection).toBe(1)
+      expect(activeSubSection).toBe(2)
       expect(
         Boolean(
           sections[activeSection].children[0].href &&
@@ -326,14 +358,18 @@ describe('useSections getSections', () => {
 
     // Reaching a step the court has not been to yet goes through onClick -
     // the href branch only lights up for steps already passed. Nothing bars
-    // the way here, because the overview asks nothing of the court.
-    it('lets the defender step be reached from the overview', () => {
+    // the way to the registration step, because the overview asks nothing of
+    // the court; the defender step follows once the case number is in.
+    it('lets the registration and defender steps be reached from the overview', () => {
       mockAppealCaseId = 'verdict-appeal'
       mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
 
       const sections = appealSections(caseWithBothAppeals, coaUser)
-      const defenderStep = sections[0].children[1]
+      const registrationStep = sections[0].children[1]
+      const defenderStep = sections[0].children[2]
 
+      expect(registrationStep.name).toBe('Skráning og úthlutun')
+      expect(registrationStep.onClick).toBeDefined()
       expect(defenderStep.name).toBe('Verjandi')
       expect(defenderStep.onClick).toBeDefined()
     })
@@ -345,7 +381,7 @@ describe('useSections getSections', () => {
 
       const sections = appealSections(caseWithBothAppeals, coaUser)
 
-      expect(sections[0].children[1].onClick).toBeUndefined()
+      expect(sections[0].children[2].onClick).toBeUndefined()
     })
 
     it('leaves the ruling appeal sections alone when it names that one', () => {

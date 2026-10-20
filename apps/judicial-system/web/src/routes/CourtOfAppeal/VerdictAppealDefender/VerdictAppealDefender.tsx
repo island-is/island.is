@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {
-  COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -61,8 +61,8 @@ const VerdictAppealDefender = () => {
   const { formatMessage } = useIntl()
   const router = useRouter()
 
-  const overviewUrl = appendAppealCaseIdQuery(
-    `${COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
+  const previousUrl = appendAppealCaseIdQuery(
+    `${COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE}/${workingCase.id}`,
     verdictAppealCase?.id,
   )
 
@@ -153,7 +153,7 @@ const VerdictAppealDefender = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={overviewUrl}
+          previousUrl={previousUrl}
           actions={[
             {
               text: formatMessage(core.continue),

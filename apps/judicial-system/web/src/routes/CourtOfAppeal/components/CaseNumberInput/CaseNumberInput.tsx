@@ -4,20 +4,23 @@ import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
+import type { AppealCase } from '@island.is/judicial-system-web/src/graphql/schema'
 import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
-import {
-  useAppealCase,
-  useTargetAppealCaseByAppealCaseId,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { applyAppealCaseUpdate } from '@island.is/judicial-system-web/src/utils/utils'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { strings } from './CaseNumberInput.strings'
 
-const CaseNumberInput: FC = () => {
+interface Props {
+  // The appeal the number belongs to. The page decides which of the case's
+  // appeals it is about, so the input takes it rather than resolving it.
+  appealCase: AppealCase | null | undefined
+}
+
+const CaseNumberInput: FC<Props> = ({ appealCase }) => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase } = useContext(FormContext)
-  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const [appealCaseNumberErrorMessage, setAppealCaseNumberErrorMessage] =
     useState<string>('')
   const { updateAppealCase } = useAppealCase()
@@ -26,7 +29,7 @@ const CaseNumberInput: FC = () => {
     <Input
       name="appealCaseNumber"
       label={formatMessage(strings.caseNumberLabel)}
-      value={targetAppealCase?.appealCaseNumber ?? ''}
+      value={appealCase?.appealCaseNumber ?? ''}
       placeholder={formatMessage(strings.caseNumberPlaceholder, {
         year: new Date().getFullYear(),
       })}
@@ -34,9 +37,9 @@ const CaseNumberInput: FC = () => {
       onChange={(event) => {
         const value = replaceTabs(event.target.value)
 
-        if (targetAppealCase?.id) {
+        if (appealCase?.id) {
           setWorkingCase((prev) =>
-            applyAppealCaseUpdate(prev, targetAppealCase.id, {
+            applyAppealCaseUpdate(prev, appealCase.id, {
               appealCaseNumber: value,
             }),
           )
@@ -62,8 +65,8 @@ const CaseNumberInput: FC = () => {
         if (validationResult.isValid) {
           setAppealCaseNumberErrorMessage('')
 
-          if (targetAppealCase?.id) {
-            updateAppealCase(workingCase.id, targetAppealCase.id, {
+          if (appealCase?.id) {
+            updateAppealCase(workingCase.id, appealCase.id, {
               appealCaseNumber: value,
             })
           }

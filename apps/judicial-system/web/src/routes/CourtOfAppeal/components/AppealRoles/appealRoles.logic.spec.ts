@@ -2,15 +2,23 @@ import type {
   AppealCase,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
+  addBenchSeat,
   buildAppealCaseUpdate,
+  canAddBenchSeat,
+  canRemoveBenchSeat,
+  getAssistantOptions,
   getBenchSlots,
+  getJudgeOptions,
   getNewlyAssignedUserIds,
   hasUnsavedRoleChanges,
   isAnyRoleUnfilled,
+  removeBenchSeat,
+  setBenchSeat,
   toPreviewAppealCase,
-} from './AppealCase.logic'
+} from './appealRoles.logic'
 
 const user = (id: string): User => ({ id, name: id } as User)
 
@@ -49,6 +57,63 @@ describe('getBenchSlots', () => {
     expect(
       getBenchSlots(appealCaseWith(null, [anna, bjorn, dora, einar])),
     ).toEqual([anna, bjorn, dora, einar])
+  })
+})
+
+describe('bench seats', () => {
+  it('seats a judge without touching the other seats', () => {
+    expect(setBenchSeat([anna, null, null], 1, bjorn)).toEqual([
+      anna,
+      bjorn,
+      null,
+    ])
+  })
+
+  it('adds empty seats up to five', () => {
+    const four = addBenchSeat([anna, bjorn, dora])
+    const five = addBenchSeat(four)
+
+    expect(four).toEqual([anna, bjorn, dora, null])
+    expect(canAddBenchSeat(four)).toBe(true)
+    expect(five).toHaveLength(5)
+    expect(canAddBenchSeat(five)).toBe(false)
+    expect(addBenchSeat(five)).toBe(five)
+  })
+
+  it('only lets a seat go while there are more than three, never the presiding one', () => {
+    const three = [anna, bjorn, dora]
+    const four = [anna, bjorn, dora, einar]
+
+    expect(canRemoveBenchSeat(three, 1)).toBe(false)
+    expect(removeBenchSeat(three, 1)).toBe(three)
+    expect(canRemoveBenchSeat(four, 0)).toBe(false)
+    expect(removeBenchSeat(four, 0)).toBe(four)
+    expect(canRemoveBenchSeat(four, 1)).toBe(true)
+    expect(removeBenchSeat(four, 1)).toEqual([anna, dora, einar])
+    expect(removeBenchSeat(four, 3)).toEqual([anna, bjorn, dora])
+  })
+})
+
+describe('select options', () => {
+  const users = [
+    { ...assistant, role: UserRole.COURT_OF_APPEALS_ASSISTANT },
+    { ...anna, role: UserRole.COURT_OF_APPEALS_JUDGE },
+    { ...bjorn, role: UserRole.COURT_OF_APPEALS_JUDGE },
+    { ...dora, role: UserRole.COURT_OF_APPEALS_JUDGE },
+  ] as User[]
+
+  it('offers the assistants', () => {
+    expect(getAssistantOptions(users).map((o) => o.value)).toEqual([
+      'assistant',
+    ])
+    expect(getAssistantOptions(undefined)).toEqual([])
+  })
+
+  it('offers the judges not already on the bench', () => {
+    expect(
+      getJudgeOptions(users, [anna, null, null]).map((o) => o.value),
+    ).toEqual(['bjorn', 'dora'])
+    expect(getJudgeOptions(users, [null, null, null])).toHaveLength(3)
   })
 })
 

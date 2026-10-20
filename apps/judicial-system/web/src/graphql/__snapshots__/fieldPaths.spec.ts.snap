@@ -678,6 +678,8 @@ Array [
   "case.unfiledCourtDocuments.name",
   "case.unfiledCourtDocuments.submittedBy",
   "case.validToDate",
+  "case.verdictAppealCase.appealAssistant.id",
+  "case.verdictAppealCase.appealAssistant.name",
   "case.verdictAppealCase.appealCaseNumber",
   "case.verdictAppealCase.appealConclusion",
   "case.verdictAppealCase.appealEventLogs.appealOrigin",

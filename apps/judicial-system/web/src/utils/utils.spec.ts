@@ -26,6 +26,7 @@ import {
 
 import * as formatters from './formatters'
 import {
+  applyAppealCaseUpdate,
   applyMergedCaseEntries,
   canSkipArraignmentSummons,
   getAppealActorText,
@@ -42,6 +43,51 @@ import {
   rulingOrderChoices,
   userHasActiveInCourtAppeal,
 } from './utils'
+
+describe('applyAppealCaseUpdate', () => {
+  const workingCase = {
+    id: 'case',
+    appealCase: { id: 'ruling-appeal', appealCaseNumber: '1/2026' },
+    verdictAppealCase: { id: 'verdict-appeal', appealCaseNumber: null },
+    rulingOrderAppealCases: [
+      { id: 'order-appeal', appealCaseNumber: '2/2026' },
+    ],
+  } as unknown as WorkingCase
+
+  it('updates the case-level ruling appeal', () => {
+    const updated = applyAppealCaseUpdate(workingCase, 'ruling-appeal', {
+      appealCaseNumber: '3/2026',
+    })
+
+    expect(updated.appealCase?.appealCaseNumber).toBe('3/2026')
+    expect(updated.verdictAppealCase).toBe(workingCase.verdictAppealCase)
+    expect(updated.rulingOrderAppealCases).toBe(
+      workingCase.rulingOrderAppealCases,
+    )
+  })
+
+  it('updates the verdict appeal', () => {
+    const updated = applyAppealCaseUpdate(workingCase, 'verdict-appeal', {
+      appealCaseNumber: '555/2026',
+    })
+
+    expect(updated.verdictAppealCase?.appealCaseNumber).toBe('555/2026')
+    expect(updated.appealCase).toBe(workingCase.appealCase)
+    expect(updated.rulingOrderAppealCases).toBe(
+      workingCase.rulingOrderAppealCases,
+    )
+  })
+
+  it('updates a ruling order appeal', () => {
+    const updated = applyAppealCaseUpdate(workingCase, 'order-appeal', {
+      appealCaseNumber: '4/2026',
+    })
+
+    expect(updated.rulingOrderAppealCases?.[0].appealCaseNumber).toBe('4/2026')
+    expect(updated.appealCase).toBe(workingCase.appealCase)
+    expect(updated.verdictAppealCase).toBe(workingCase.verdictAppealCase)
+  })
+})
 
 describe('Utils', () => {
   describe('isSentToPublicProsecutor', () => {
