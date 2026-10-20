@@ -115,6 +115,10 @@ export interface NavigationProps {
    */
   singleAccordion?: boolean
   isMenuDialog?: boolean
+  /**
+   * The menu button has stuck full width, so its row slides out to line up with the open dialog
+   */
+  isMenuStuck?: boolean
   titleLink?: Pick<NavigationItem, 'href' | 'active'>
   items: NavigationItem[]
   baseId: string
@@ -157,6 +161,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   singleAccordion = false,
   renderLink = defaultLinkRender,
   isMenuDialog = false,
+  isMenuStuck = false,
   items,
   titleProps,
   baseId,
@@ -298,7 +303,9 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
             ref={menuBtnRef}
             component="button"
             type="button"
-            className={cn(styles.menuRow, styles.menuBtn)}
+            className={cn(styles.menuRow, styles.menuBtn, {
+              [styles.menuBtnStuck]: isMenuStuck,
+            })}
             onClick={() => setMobileMenuOpen(true)}
             aria-expanded={mobileMenuOpen}
             aria-haspopup="dialog"
@@ -314,7 +321,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
                   variant="utility"
                   colorScheme="white"
                   size="small"
-                  icon="menu"
+                  icon="chevronDown"
                   iconType="outline"
                   unfocusable
                 >
@@ -392,7 +399,7 @@ const MobileNavigationDialog = ({
           <MobileHeaderRow
             title={title}
             titleIcon={titleIcon}
-            color={colorSchemeColors[colorScheme]['color']}
+            color={colorSchemeColors[colorScheme]['activeColor']}
             action={
               <FocusableBox
                 component="button"
@@ -447,7 +454,7 @@ const MobileHeaderRow = ({
     alignItems="center"
     paddingY={1}
   >
-    <Box display="flex" flexDirection="row">
+    <Box display="flex" flexDirection="row" className={styles.menuRowTitle}>
       {titleIcon && (
         <Box
           display="flex"
@@ -472,7 +479,7 @@ const MobileHeaderRow = ({
       position="absolute"
       right={0}
       marginRight={2}
-      style={{ top: '50%', transform: 'translateY(-50%)' }}
+      className={styles.menuRowAction}
     >
       {action}
     </Box>

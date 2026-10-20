@@ -24,7 +24,8 @@ const mobileNavEase = '300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)'
 const mobileNavGutter = createVar()
 
 // Always full width; the floating card is a clip-path, so sticking animates
-// paint only — no layout shift and the content inside never moves.
+// paint only, with no layout shift. Navigation's menuBtnStuck slides the row
+// content out by the same gutter with transforms.
 export const mobileNav = style({
   vars: { [mobileNavGutter]: `${theme.spacing[2]}px` },
   position: 'sticky',

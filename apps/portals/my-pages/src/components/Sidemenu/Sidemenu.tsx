@@ -2,7 +2,6 @@ import {
   Box,
   GridContainer,
   Hidden,
-  Icon,
   ModalBase,
   Text,
   usePreventBodyScroll,
@@ -57,7 +56,7 @@ const Sidemenu = ({
     <Box display="flex" justifyContent="flexEnd">
       <Box
         position="relative"
-        background="white"
+        background="blue100"
         padding={2}
         borderRadius="large"
         display="flex"
@@ -77,20 +76,7 @@ const Sidemenu = ({
         }
       >
         <Box display="flex" flexDirection="column" className={styles.wrapper}>
-          <Box display="flex" flexDirection="row" alignItems="center">
-            <Box
-              borderRadius="full"
-              background="blue100"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              className={styles.overviewIcon}
-              marginRight={'p2'}
-            >
-              <Icon icon="dots" />
-            </Box>
-            <Text variant="h4">{formatMessage(m.overview)}</Text>
-          </Box>
+          <Text variant="h4">{formatMessage(m.overview)}</Text>
           <Box className={styles.navWrapper}>
             {navChildren.map(
               (navRoot, index) =>

@@ -1,4 +1,10 @@
-import { style, styleVariants, keyframes } from '@vanilla-extract/css'
+import {
+  createVar,
+  fallbackVar,
+  style,
+  styleVariants,
+  keyframes,
+} from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const divider = style({
@@ -77,17 +83,46 @@ export const menuRow = style({
   },
 })
 
+// Same easing as the sticky bar's clip-path in the my-pages Layout
+const menuEase = '300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+
+// How far the row content slides out when the button sticks full width.
+// Unset (0) everywhere else, including the dialog header.
+const menuShift = createVar()
+const shift = fallbackVar(menuShift, '0px')
+
+// Transform only, so the slide is paint-only on low-end phones
+export const menuRowTitle = style({
+  transform: `translateX(calc(-1 * ${shift}))`,
+  transition: `transform ${menuEase}`,
+})
+
+export const menuRowAction = style({
+  top: '50%',
+  transform: `translateY(-50%) translateX(${shift})`,
+  transition: `transform ${menuEase}`,
+})
+
 export const menuBtn = style({
   width: '100%',
   cursor: 'pointer',
   outline: 'none',
-  transition:
-    'box-shadow 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), color 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  transition: `box-shadow ${menuEase}, color ${menuEase}, background-color ${menuEase}`,
   willChange: 'box-shadow',
   // No scale-on-press: at full width it visibly pulls both edges in
   ':focus-visible': {
     // Inset — an outer ring gets clipped at the screen edges
     boxShadow: `inset 0 0 0 3px ${theme.color.blue400}`,
+  },
+})
+
+// Matches the gutter the sticky bar drops when it sticks
+export const menuBtnStuck = style({
+  vars: { [menuShift]: `${theme.spacing[2]}px` },
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      vars: { [menuShift]: `${theme.spacing[3]}px` },
+    },
   },
 })
 

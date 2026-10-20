@@ -55,6 +55,11 @@ export const itemBlock = style({
   transition: 'border-color 200ms',
 })
 
+// 1px border + 1px inset shadow = 2px active ring, without shifting content
+export const itemActive = style({
+  boxShadow: `inset 0 0 0 1px ${theme.color.mint400}`,
+})
+
 const iconBase: StyleRule = {
   width: 30,
   display: 'flex',
@@ -219,16 +224,7 @@ export const itemContainer = style({
   },
 })
 
-export const item = style({
-  background: theme.color.blue100,
-})
-
 export const itemText = style({
   fontSize: 14,
   textAlign: 'center',
-})
-
-export const overviewIcon = style({
-  height: 40,
-  width: 40,
 })

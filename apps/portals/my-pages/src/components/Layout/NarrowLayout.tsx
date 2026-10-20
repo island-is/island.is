@@ -229,6 +229,7 @@ export const NarrowLayout = ({
             titleIcon={activeParent?.icon}
             singleAccordion
             isMenuDialog={true}
+            isMenuStuck={isStuck}
             mobileNavigationButtonOpenLabel={formatMessage(m.seeAll)}
           />
         </Box>
