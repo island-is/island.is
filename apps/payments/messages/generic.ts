@@ -141,6 +141,14 @@ export const debtError = defineMessages({
     defaultMessage: 'Ekki er hægt að greiða þessar skuldir eins og er.',
     description: "These debts can't be paid at the moment.",
   },
+  // A rejected bank transfer: the money moved and is returned by hand
+  refundPending: {
+    id: 'payments:debtError.refundPending',
+    defaultMessage:
+      'Ekki er hægt að greiða þessar skuldir eins og er. Upphæðin sem var millifærð verður endurgreidd handvirkt.',
+    description:
+      "These debts can't be paid at the moment. The amount transferred will be refunded manually.",
+  },
   invalidTitle: {
     id: 'payments:debtError.invalidTitle',
     defaultMessage: 'Ekki er hægt að greiða skuldirnar',

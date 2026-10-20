@@ -178,6 +178,11 @@ export const paymentErrorToTitleAndMessage = (
         title: debtError.closedTitle,
         message: debtError.closed,
       }
+    case DebtPaymentErrorCode.DebtPaymentRejectedRefundPending:
+      return {
+        title: debtError.closedTitle,
+        message: debtError.refundPending,
+      }
     case DebtPaymentErrorCode.DebtPaymentInvalid:
       return {
         title: debtError.invalidTitle,
@@ -256,6 +261,7 @@ export const paymentErrorToTitleAndMessage = (
 /** Debt errors after which the flow cannot be paid, the payer starts again from the application. */
 export const isTerminalDebtError = (code?: string | null): boolean =>
   code === DebtPaymentErrorCode.DebtPaymentFlowClosed ||
+  code === DebtPaymentErrorCode.DebtPaymentRejectedRefundPending ||
   code === DebtPaymentErrorCode.DebtPaymentInvalid ||
   code === DebtPaymentErrorCode.DebtPaymentRejected
 

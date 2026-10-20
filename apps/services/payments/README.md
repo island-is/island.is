@@ -138,7 +138,7 @@ flowchart TD
 
 ### Rejected and closed flows
 
-A rejected flow is terminal and its id is never reused for a second registration. The pay page shows "Ekki tókst að ljúka greiðslunni" and `GetPaymentFlowDTO.isClosed` is `true`. The application should start a new flow with `POST /v1/payments/debts`. A paid flow still shows its receipt.
+A rejected flow is terminal and its id is never reused for a second registration. The pay page shows "Ekki tókst að ljúka greiðslunni" and `GetPaymentFlowDTO.isClosed` is `true`. The application should start a new flow with `POST /v1/payments/debts`. A registered flow still shows its receipt. A rejected bank transfer stays `paid` until it is refunded by hand, so the pay page tells the payer the amount will be refunded instead of showing a receipt.
 
 ## Payment worker
 
