@@ -122,7 +122,7 @@ describe('InternalNotificationController - Send appeal court session changed not
   const expectedDetails = `Landsréttur hefur breytt þinghaldi í máli ${appealCaseNumber}.<br/><br/>Aðalmeðferð mun nú fara fram ${formatDate(
     sessionDate,
     'PPP',
-  )}, kl. 13:00.<br/><br/>Dómsalur: 2.`
+  )}, kl. 13:00.<br/><br/>Dómsalur: 2.<br/><br/>Það áréttast að því er beint til aðila að þeir afhendi til Landsréttar með fjögurra virkra daga fyrirvara tilvitnanir í fræðirit og dóma ef þeir hyggjast styðjast við slík gögn í málflutningi, sbr. 2. mgr. 205. gr. laga nr. 88/2008.`
 
   describe('session changed on a numbered appeal', () => {
     let then: Then
@@ -185,6 +185,39 @@ describe('InternalNotificationController - Send appeal court session changed not
         }),
       )
       expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('a session other than a main hearing changed', () => {
+    beforeEach(async () => {
+      await givenWhenThen(
+        {
+          id: appealCaseId,
+          appealCaseNumber,
+          courtSessions: [
+            {
+              ...session,
+              sessionType: AppealCourtSessionType.PREPARATORY_HEARING,
+            } as AppealCourtSession,
+          ],
+        } as AppealCase,
+        sessionId,
+      )
+    })
+
+    it('should not remind the parties of the main hearing deadline', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          html: expect.stringContaining(
+            'Undirbúningsþinghald mun nú fara fram',
+          ),
+        }),
+      )
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          html: expect.stringContaining('Það áréttast'),
+        }),
+      )
     })
   })
 

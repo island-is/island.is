@@ -131,7 +131,7 @@ describe('InternalNotificationController - Send appeal court session booked noti
   const expectedDetails = `Landsréttur boðar til þinghalds í máli ${appealCaseNumber}.<br/><br/>Aðalmeðferð mun fara fram ${formatDate(
     sessionDate,
     'PPP',
-  )}, kl. 13:00.<br/><br/>Dómsalur: 1.`
+  )}, kl. 13:00.<br/><br/>Dómsalur: 1.<br/><br/>Það áréttast að því er beint til aðila að þeir afhendi til Landsréttar með fjögurra virkra daga fyrirvara tilvitnanir í fræðirit og dóma ef þeir hyggjast styðjast við slík gögn í málflutningi, sbr. 2. mgr. 205. gr. laga nr. 88/2008.`
 
   describe('session booked on a numbered appeal', () => {
     let then: Then
@@ -209,6 +209,37 @@ describe('InternalNotificationController - Send appeal court session booked noti
         }),
       )
       expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('a session other than a main hearing booked', () => {
+    beforeEach(async () => {
+      await givenWhenThen(
+        {
+          id: appealCaseId,
+          appealCaseNumber,
+          courtSessions: [
+            {
+              ...session,
+              sessionType: AppealCourtSessionType.PREPARATORY_HEARING,
+            } as AppealCourtSession,
+          ],
+        } as AppealCase,
+        sessionId,
+      )
+    })
+
+    it('should not remind the parties of the main hearing deadline', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          html: expect.stringContaining('Undirbúningsþinghald mun fara fram'),
+        }),
+      )
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          html: expect.stringContaining('Það áréttast'),
+        }),
+      )
     })
   })
 

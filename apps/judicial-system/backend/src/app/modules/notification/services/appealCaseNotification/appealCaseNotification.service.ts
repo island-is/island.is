@@ -24,6 +24,7 @@ import {
 import {
   AppealCaseNotificationType,
   AppealCaseRulingDecision,
+  AppealCourtSessionType,
   appealCourtSessionTypeNames,
   type AppealStatementParty,
   CaseDecision,
@@ -2050,6 +2051,14 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     )}`
   }
 
+  // Before a main hearing the parties are reminded to hand in, four working
+  // days ahead, the literature and case law they mean to cite.
+  private appealCourtSessionReminder(sessionType: AppealCourtSessionType) {
+    return sessionType === AppealCourtSessionType.MAIN_HEARING
+      ? '<br/><br/>Það áréttast að því er beint til aðila að þeir afhendi til Landsréttar með fjögurra virkra daga fyrirvara tilvitnanir í fræðirit og dóma ef þeir hyggjast styðjast við slík gögn í málflutningi, sbr. 2. mgr. 205. gr. laga nr. 88/2008.'
+      : ''
+  }
+
   private findAppealCourtSession(
     theCase: Case,
     appealCase: AppealCase,
@@ -2143,7 +2152,9 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         appealCourtSessionTypeNames[session.sessionType]
       } mun fara fram ${this.appealCourtSessionWhen(
         session.sessionDate,
-      )}.<br/><br/>Dómsalur: ${session.courtRoom}.`,
+      )}.<br/><br/>Dómsalur: ${
+        session.courtRoom
+      }.${this.appealCourtSessionReminder(session.sessionType)}`,
     )
   }
 
@@ -2178,7 +2189,9 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         appealCourtSessionTypeNames[session.sessionType]
       } mun nú fara fram ${this.appealCourtSessionWhen(
         session.sessionDate,
-      )}.<br/><br/>Dómsalur: ${session.courtRoom}.`,
+      )}.<br/><br/>Dómsalur: ${
+        session.courtRoom
+      }.${this.appealCourtSessionReminder(session.sessionType)}`,
     )
   }
 
