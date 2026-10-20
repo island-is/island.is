@@ -126,6 +126,7 @@ export class AppealCourtSessionController {
     @Param('caseId') caseId: string,
     @Param('appealCaseId') appealCaseId: string,
     @Param('appealCourtSessionId') appealCourtSessionId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentAppealCase() appealCase: AppealCase,
     @CurrentAppealCourtSession() session: AppealCourtSession,
@@ -142,6 +143,7 @@ export class AppealCourtSessionController {
       appealCase,
       session,
       dto,
+      user,
       transaction,
     )
   }
@@ -161,6 +163,7 @@ export class AppealCourtSessionController {
     @Param('caseId') caseId: string,
     @Param('appealCaseId') appealCaseId: string,
     @Param('appealCourtSessionId') appealCourtSessionId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentAppealCase() appealCase: AppealCase,
     @CurrentAppealCourtSession() session: AppealCourtSession,
@@ -175,6 +178,7 @@ export class AppealCourtSessionController {
       theCase,
       appealCase,
       session,
+      user,
       transaction,
     )
 

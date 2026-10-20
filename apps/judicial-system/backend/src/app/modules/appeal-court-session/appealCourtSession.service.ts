@@ -75,14 +75,16 @@ export class AppealCourtSessionService {
     return session
   }
 
-  // Changes a booked session. No verdict-appeal check here or on delete: the
-  // session the guard resolved hangs off the appeal, and only a verdict
-  // appeal can have one.
+  // Changes a booked session and tells the parties once the change has
+  // committed. No verdict-appeal check here or on delete: the session the
+  // guard resolved hangs off the appeal, and only a verdict appeal can
+  // have one.
   async update(
     theCase: Case,
     appealCase: AppealCase,
     session: AppealCourtSession,
     dto: UpdateAppealCourtSessionDto,
+    user: User,
     transaction: Transaction,
   ): Promise<AppealCourtSession> {
     const update = {
@@ -101,28 +103,62 @@ export class AppealCourtSessionService {
       `Updating appeal court session ${session.id} of appeal case ${appealCase.id} in case ${theCase.id}`,
     )
 
-    return this.appealCourtSessionRepositoryService.update(
+    const updated = await this.appealCourtSessionRepositoryService.update(
       session.id,
       appealCase.id,
       update,
       { transaction },
     )
+
+    queueMessagesAfterCommit({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      elementId: appealCase.id,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_COURT_SESSION_CHANGED,
+        appealCourtSessionId: session.id,
+      },
+    })
+
+    return updated
   }
 
+  // Cancels a session and tells the parties once the cancellation has
+  // committed. The row is gone by then, so the message carries what the
+  // mail says about the session.
   async delete(
     theCase: Case,
     appealCase: AppealCase,
     session: AppealCourtSession,
+    user: User,
     transaction: Transaction,
   ): Promise<boolean> {
     this.logger.debug(
       `Deleting appeal court session ${session.id} of appeal case ${appealCase.id} in case ${theCase.id}`,
     )
 
-    return this.appealCourtSessionRepositoryService.delete(
+    const deleted = await this.appealCourtSessionRepositoryService.delete(
       session.id,
       appealCase.id,
       { transaction },
     )
+
+    queueMessagesAfterCommit({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      elementId: appealCase.id,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_COURT_SESSION_CANCELLED,
+        appealCourtSession: {
+          sessionType: session.sessionType,
+          sessionDate: session.sessionDate,
+          courtRoom: session.courtRoom,
+        },
+      },
+    })
+
+    return deleted
   }
 }

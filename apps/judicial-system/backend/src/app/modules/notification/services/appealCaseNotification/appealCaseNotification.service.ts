@@ -55,6 +55,7 @@ import {
   NotificationRepositoryService,
   Recipient,
 } from '../../../repository'
+import type { AppealCourtSessionNotificationDto } from '../../dto/appealCaseNotification.dto'
 import { getRequestCaseDefenderRecipients } from '../../getRequestCaseDefenderRecipients'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
@@ -2040,12 +2041,20 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     return recipients
   }
 
-  //#region APPEAL_COURT_SESSION_BOOKED notifications
-  private async sendAppealCourtSessionBookedNotifications(
+  //#region APPEAL_COURT_SESSION notifications
+  // The date and time of a session as the mails about it say them.
+  private appealCourtSessionWhen(sessionDate: Date) {
+    return `${formatDate(sessionDate, 'PPP')}, kl. ${formatDate(
+      sessionDate,
+      'HH:mm',
+    )}`
+  }
+
+  private findAppealCourtSession(
     theCase: Case,
     appealCase: AppealCase,
     appealCourtSessionId?: string,
-  ): Promise<DeliverResponse> {
+  ): AppealCourtSession | undefined {
     const session = appealCase.courtSessions?.find(
       (courtSession: AppealCourtSession) =>
         courtSession.id === appealCourtSessionId,
@@ -2055,22 +2064,21 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       this.logger.warn(
         `Appeal court session ${appealCourtSessionId} not found in appeal case ${appealCase.id} of case ${theCase.id}`,
       )
-
-      // The session was cancelled before the message ran, so there is
-      // nothing to announce, and retrying would not change that.
-      return { delivered: true }
     }
 
-    const caseNumber = appealCase.appealCaseNumber ?? theCase.courtCaseNumber
-    const subject = `Nýtt þinghald í máli ${caseNumber}`
-    const details = `Landsréttur boðar til þinghalds í máli ${caseNumber}.<br/><br/>${
-      appealCourtSessionTypeNames[session.sessionType]
-    } mun fara fram ${formatDate(session.sessionDate, 'PPP')}, kl. ${formatDate(
-      session.sessionDate,
-      'HH:mm',
-    )}.<br/><br/>Dómsalur: ${session.courtRoom}.`
-    // A recipient without a national id cannot sign in, so they are told of
-    // the session without a link to it.
+    return session
+  }
+
+  // What the mails about a session share: they go to the prosecutor and to
+  // the defence of the verdict appeal, each pointed at the case on their own
+  // pages. A recipient without a national id cannot sign in, so they are
+  // told of the session without a link to it.
+  private async sendAppealCourtSessionNotifications(
+    theCase: Case,
+    type: TrackedNotificationType,
+    subject: string,
+    details: string,
+  ): Promise<DeliverResponse> {
     const html = (url?: string) =>
       url
         ? `${details}<br/><br/>Hægt er að nálgast gögn málsins á <a href="${url}">${url}</a>.`
@@ -2105,10 +2113,100 @@ export class AppealCaseNotificationService extends BaseNotificationService {
 
     const recipients = await Promise.all(promises)
 
-    return this.recordNotification(
-      theCase.id,
+    return this.recordNotification(theCase.id, type, recipients)
+  }
+
+  private async sendAppealCourtSessionBookedNotifications(
+    theCase: Case,
+    appealCase: AppealCase,
+    appealCourtSessionId?: string,
+  ): Promise<DeliverResponse> {
+    const session = this.findAppealCourtSession(
+      theCase,
+      appealCase,
+      appealCourtSessionId,
+    )
+
+    // The session was cancelled before the message ran, so there is nothing
+    // to announce, and retrying would not change that.
+    if (!session) {
+      return { delivered: true }
+    }
+
+    const caseNumber = appealCase.appealCaseNumber ?? theCase.courtCaseNumber
+
+    return this.sendAppealCourtSessionNotifications(
+      theCase,
       TrackedNotificationType.APPEAL_COURT_SESSION_BOOKED,
-      recipients,
+      `Nýtt þinghald í máli ${caseNumber}`,
+      `Landsréttur boðar til þinghalds í máli ${caseNumber}.<br/><br/>${
+        appealCourtSessionTypeNames[session.sessionType]
+      } mun fara fram ${this.appealCourtSessionWhen(
+        session.sessionDate,
+      )}.<br/><br/>Dómsalur: ${session.courtRoom}.`,
+    )
+  }
+
+  // The mail gives the session as it now stands rather than what changed:
+  // the message runs after commit and reads the row, so should the court
+  // have changed it again before the mail went, the newest booking is the
+  // one to send.
+  private async sendAppealCourtSessionChangedNotifications(
+    theCase: Case,
+    appealCase: AppealCase,
+    appealCourtSessionId?: string,
+  ): Promise<DeliverResponse> {
+    const session = this.findAppealCourtSession(
+      theCase,
+      appealCase,
+      appealCourtSessionId,
+    )
+
+    // Cancelled since the change: the cancellation's own mail is the one
+    // that still says something.
+    if (!session) {
+      return { delivered: true }
+    }
+
+    const caseNumber = appealCase.appealCaseNumber ?? theCase.courtCaseNumber
+
+    return this.sendAppealCourtSessionNotifications(
+      theCase,
+      TrackedNotificationType.APPEAL_COURT_SESSION_CHANGED,
+      `Breytt þinghald í máli ${caseNumber}`,
+      `Landsréttur hefur breytt þinghaldi í máli ${caseNumber}.<br/><br/>${
+        appealCourtSessionTypeNames[session.sessionType]
+      } mun nú fara fram ${this.appealCourtSessionWhen(
+        session.sessionDate,
+      )}.<br/><br/>Dómsalur: ${session.courtRoom}.`,
+    )
+  }
+
+  private async sendAppealCourtSessionCancelledNotifications(
+    theCase: Case,
+    appealCase: AppealCase,
+    appealCourtSession?: AppealCourtSessionNotificationDto,
+  ): Promise<DeliverResponse> {
+    // Nothing to say about the session, and a retry would have no more.
+    if (!appealCourtSession) {
+      this.logger.warn(
+        `No cancelled session to announce in appeal case ${appealCase.id} of case ${theCase.id}`,
+      )
+
+      return { delivered: true }
+    }
+
+    const caseNumber = appealCase.appealCaseNumber ?? theCase.courtCaseNumber
+
+    return this.sendAppealCourtSessionNotifications(
+      theCase,
+      TrackedNotificationType.APPEAL_COURT_SESSION_CANCELLED,
+      `Þinghald fellt niður í máli ${caseNumber}`,
+      `Landsréttur hefur fellt niður þinghald í máli ${caseNumber}.<br/><br/>${
+        appealCourtSessionTypeNames[appealCourtSession.sessionType]
+      } sem fara átti fram ${this.appealCourtSessionWhen(
+        appealCourtSession.sessionDate,
+      )}, fellur niður.`,
     )
   }
   //#endregion
@@ -2199,6 +2297,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     userIds?: string[],
     party?: AppealStatementParty,
     appealCourtSessionId?: string,
+    appealCourtSession?: AppealCourtSessionNotificationDto,
   ): Promise<DeliverResponse> {
     switch (type) {
       case AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS:
@@ -2233,6 +2332,18 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           appealCase,
           appealCourtSessionId,
         )
+      case AppealCaseNotificationType.APPEAL_COURT_SESSION_CHANGED:
+        return this.sendAppealCourtSessionChangedNotifications(
+          theCase,
+          appealCase,
+          appealCourtSessionId,
+        )
+      case AppealCaseNotificationType.APPEAL_COURT_SESSION_CANCELLED:
+        return this.sendAppealCourtSessionCancelledNotifications(
+          theCase,
+          appealCase,
+          appealCourtSession,
+        )
       case AppealCaseNotificationType.APPEAL_STATEMENT_DEADLINE_SET:
       case AppealCaseNotificationType.APPEAL_STATEMENT_DEADLINE_EXTENDED:
         return this.sendAppealStatementDeadlineNotifications(
@@ -2256,6 +2367,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     userIds?: string[],
     party?: AppealStatementParty,
     appealCourtSessionId?: string,
+    appealCourtSession?: AppealCourtSessionNotificationDto,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
@@ -2268,6 +2380,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         userIds,
         party,
         appealCourtSessionId,
+        appealCourtSession,
       )
     } catch (error) {
       this.logger.error('Failed to send appeal case notification', error)
