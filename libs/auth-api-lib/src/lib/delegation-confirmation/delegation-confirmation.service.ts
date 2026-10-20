@@ -41,6 +41,9 @@ import {
   hashConfirmationGroup,
 } from './utils/content-hash'
 
+/** The acr the IDS gives a step-up completed by a fake login. */
+const FAKE_LOGIN_ACR = '0'
+
 export interface RequestConfirmationOptions {
   user: User
   delegation: Delegation
@@ -569,10 +572,10 @@ export class DelegationConfirmationService {
       )
     }
 
-    // Fake login can't assert a real acr; only allowed when NODE_ENV is development.
     const acrSatisfied =
       claims.acr === confirmation.requestedAcr ||
-      this.delegationConfig.confirmationAllowAnyAcrInDev
+      (this.delegationConfig.confirmationAllowFakeLogin &&
+        claims.acr === FAKE_LOGIN_ACR)
 
     if (!acrSatisfied) {
       throw new ForbiddenException(
