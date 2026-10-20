@@ -6,11 +6,18 @@ import {
   buildFileUploadField,
   buildDescriptionField,
   buildMultiField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { FILE_SIZE_LIMIT, Routes, UPLOAD_ACCEPT } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
-import { isVeitaMunicipality, taxSuccess } from '../../../utils/conditions'
-import { ApproveOptions, TaxData } from '../../../lib/types'
+import {
+  directTaxPaymentsFailed,
+  isVeitaMunicipality,
+  needsTaxFiles,
+  taxReturnFailed,
+  taxSuccess,
+} from '../../../utils/conditions'
+import { ApproveOptions } from '../../../lib/types'
 import { incomeSubsection } from './incomeSubsection'
 import { personalTaxCreditSubsection } from './personalTaxCreditSubsection'
 import { bankInfoSubsection } from './bankInfoSubsection'
@@ -68,13 +75,7 @@ export const financeSection = buildSection({
       ],
     }),
     buildSubSection({
-      condition: (_, externalData) => {
-        const taxData = getValueViaPath<TaxData>(externalData, 'taxData.data')
-        const success = taxData?.municipalitiesDirectTaxPayments.success
-        const personalTaxReturn =
-          taxData?.municipalitiesPersonalTaxReturn?.personalTaxReturn
-        return success === false || personalTaxReturn == null
-      },
+      condition: (_, externalData) => needsTaxFiles(externalData),
       id: Routes.TAXRETURNFILES,
       title: m.taxReturnForm.general.sectionTitle,
       children: [
@@ -90,9 +91,35 @@ export const financeSection = buildSection({
           id: Routes.RVKTAXRETURNFILESMULTIFIELD,
           title: m.taxReturnForm.general.pageTitle,
           children: [
+            buildAlertMessageField({
+              condition: (_, externalData) =>
+                taxReturnFailed(externalData) &&
+                directTaxPaymentsFailed(externalData),
+              id: Routes.RVKTAXRETURNFILESALERT,
+              title: taxReturnForm.alertMessage.title,
+              message: taxReturnForm.alertMessage.message,
+              alertType: 'error',
+            }),
             buildDescriptionField({
+              condition: (_, externalData) =>
+                taxReturnFailed(externalData) &&
+                directTaxPaymentsFailed(externalData),
               id: Routes.RVKTAXRETURNFILESDESCRIPTION,
               description: taxReturnForm.general.description,
+            }),
+            buildDescriptionField({
+              condition: (_, externalData) =>
+                taxReturnFailed(externalData) &&
+                !directTaxPaymentsFailed(externalData),
+              id: Routes.RVKTAXRETURNFILESDESCRIPTION,
+              description: taxReturnForm.data.directTaxPaymentsFailed,
+            }),
+            buildDescriptionField({
+              condition: (_, externalData) =>
+                directTaxPaymentsFailed(externalData) &&
+                !taxReturnFailed(externalData),
+              id: Routes.RVKTAXRETURNFILESDESCRIPTION,
+              description: taxReturnForm.data.taxReturnFailed,
             }),
             buildFileUploadField({
               condition: isVeitaMunicipality,
@@ -106,12 +133,15 @@ export const financeSection = buildSection({
               uploadMultiple: true,
             }),
             buildDescriptionField({
+              condition: (_, externalData) => taxReturnFailed(externalData),
               id: Routes.RVKFINDTAXRETURNDESCRIPTION,
               title: taxReturnForm.instructions.findTaxReturnTitle,
               titleVariant: 'h3',
               description: taxReturnForm.instructions.findTaxReturn,
             }),
             buildDescriptionField({
+              condition: (_, externalData) =>
+                directTaxPaymentsFailed(externalData),
               id: Routes.RVKFINDDIRECTTAXPAYMENTSDESCRIPTION,
               titleVariant: 'h3',
               title: taxReturnForm.instructions.findDirectTaxPaymentsTitle,

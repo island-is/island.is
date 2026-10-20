@@ -99,6 +99,7 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         ]}
         childrenFiles={[]}
         applicationId={id}
+        isVeita={isVeitaApplication(application)}
       />
 
       <SummaryComment

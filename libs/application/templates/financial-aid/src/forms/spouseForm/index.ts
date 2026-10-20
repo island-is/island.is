@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
   buildDescriptionField,
   buildFileUploadField,
@@ -22,7 +23,12 @@ import { createElement } from 'react'
 import { Logo } from '../../components/Logo/Logo'
 import { spouseIncomeSection } from './spouseIncomeSection'
 import { spouseContactInfoSection } from './spouseContactInfoSection'
-import { isVeitaMunicipality } from '../../utils/conditions'
+import {
+  directTaxPaymentsFailed,
+  isVeitaMunicipality,
+  needsTaxFiles,
+  taxReturnFailed,
+} from '../../utils/conditions'
 
 export const Spouse: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -67,19 +73,7 @@ export const Spouse: Form = buildForm({
       ],
     }),
     buildSection({
-      condition: (_, externalData) => {
-        const municipalitiesDirectTaxPayments = getValueViaPath<boolean>(
-          externalData,
-          'taxDataSpouse.data.municipalitiesDirectTaxPayments.success',
-        )
-        const personalTaxReturn = getValueViaPath(
-          externalData,
-          'taxDataSpouse.data.municipalitiesPersonalTaxReturn.personalTaxReturn',
-        )
-        return (
-          municipalitiesDirectTaxPayments === false || personalTaxReturn == null
-        )
-      },
+      condition: (_, externalData) => needsTaxFiles(externalData, true),
       id: Routes.SPOUSETAXRETURNFILES,
       title: m.taxReturnForm.general.sectionTitle,
       children: [
@@ -95,9 +89,35 @@ export const Spouse: Form = buildForm({
           id: Routes.RVKSPOUSETAXRETURNFILESMULTIFIELD,
           title: m.taxReturnForm.general.pageTitle,
           children: [
+            buildAlertMessageField({
+              condition: (_, externalData) =>
+                taxReturnFailed(externalData, true) &&
+                directTaxPaymentsFailed(externalData, true),
+              id: Routes.RVKSPOUSETAXRETURNFILESALERT,
+              title: m.taxReturnForm.alertMessage.title,
+              message: m.taxReturnForm.alertMessage.message,
+              alertType: 'error',
+            }),
             buildDescriptionField({
+              condition: (_, externalData) =>
+                taxReturnFailed(externalData, true) &&
+                directTaxPaymentsFailed(externalData, true),
               id: Routes.RVKSPOUSETAXRETURNFILESDESCRIPTION,
               description: m.taxReturnForm.general.description,
+            }),
+            buildDescriptionField({
+              condition: (_, externalData) =>
+                taxReturnFailed(externalData, true) &&
+                !directTaxPaymentsFailed(externalData, true),
+              id: Routes.RVKSPOUSETAXRETURNFILESDESCRIPTION,
+              description: m.taxReturnForm.data.directTaxPaymentsFailed,
+            }),
+            buildDescriptionField({
+              condition: (_, externalData) =>
+                directTaxPaymentsFailed(externalData, true) &&
+                !taxReturnFailed(externalData, true),
+              id: Routes.RVKSPOUSETAXRETURNFILESDESCRIPTION,
+              description: m.taxReturnForm.data.taxReturnFailed,
             }),
             buildFileUploadField({
               id: Routes.RVKSPOUSETAXRETURNFILES,
@@ -108,6 +128,22 @@ export const Spouse: Form = buildForm({
               uploadHeader: m.filesText.header,
               uploadButtonLabel: m.filesText.buttonLabel,
               uploadMultiple: true,
+            }),
+            buildDescriptionField({
+              condition: (_, externalData) =>
+                taxReturnFailed(externalData, true),
+              id: Routes.RVKSPOUSEFINDTAXRETURNDESCRIPTION,
+              title: m.taxReturnForm.instructions.findTaxReturnTitle,
+              titleVariant: 'h3',
+              description: m.taxReturnForm.instructions.findTaxReturn,
+            }),
+            buildDescriptionField({
+              condition: (_, externalData) =>
+                directTaxPaymentsFailed(externalData, true),
+              id: Routes.RVKSPOUSEFINDDIRECTTAXPAYMENTSDESCRIPTION,
+              titleVariant: 'h3',
+              title: m.taxReturnForm.instructions.findDirectTaxPaymentsTitle,
+              description: m.taxReturnForm.instructions.findDirectTaxPayments,
             }),
           ],
         }),

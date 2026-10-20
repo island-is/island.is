@@ -29,6 +29,12 @@ const RvkStatus = ({ application, field }: FAFieldBaseProps) => {
 
   const isSubmitted = isSubmittedToMunicipality(application.state)
 
+  // Applicants with an active application skip the draft, so there are no
+  // answers to estimate from.
+  const canEstimateAid = Boolean(
+    application.answers?.homeCircumstances?.type && municipality.data,
+  )
+
   return (
     <Box paddingBottom={5} className={styles.container}>
       {isSubmitted && (
@@ -48,7 +54,7 @@ const RvkStatus = ({ application, field }: FAFieldBaseProps) => {
         />
       )}
 
-      {!isSpouse && (
+      {!isSpouse && canEstimateAid && (
         <Box marginBottom={[4, 4, 5]}>
           <Estimation application={application} municipality={municipality} />
         </Box>

@@ -201,6 +201,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
           ...(answers.rvkChildrenFiles ?? []),
         ]}
         applicationId={id}
+        isVeita={isVeitaApplication(application)}
       />
 
       <SummaryComment

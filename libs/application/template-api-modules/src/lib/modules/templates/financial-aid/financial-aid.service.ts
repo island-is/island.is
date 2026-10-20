@@ -14,7 +14,9 @@ import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   ApplicationState,
+  Employment,
   FileType,
+  HomeCircumstances,
   UserType,
 } from '@island.is/financial-aid/shared/lib'
 import {
@@ -230,14 +232,27 @@ export class FinancialAidService extends BaseTemplateApiService {
 
     const routing = getFinancialAidRouting(externalData)
 
+    // The application system keeps answers from branches the applicant left,
+    // so Veita is only sent values whose screens still apply.
+    const hasIncome = answers.income === ApproveOptions.Yes
+    const spouseHasIncome = answers.spouseIncome === ApproveOptions.Yes
+    const isInUnregisteredCohabitation =
+      answers.relationshipStatus?.unregisteredCohabitation ===
+      ApproveOptions.Yes
+
     if (routing.backend === 'veita') {
       files = (
         await formatFilesRvk(answers.rvkTaxReturnFiles, FileType.TAXRETURN)
       )
-        .concat(await formatFilesRvk(answers.rvkIncomeFiles, FileType.INCOME))
         .concat(
           await formatFilesRvk(
-            answers.rvkSpouseIncomeFiles,
+            hasIncome ? answers.rvkIncomeFiles : [],
+            FileType.INCOME,
+          ),
+        )
+        .concat(
+          await formatFilesRvk(
+            spouseHasIncome ? answers.rvkSpouseIncomeFiles : [],
             FileType.SPOUSEFILES,
           ),
         )
@@ -322,10 +337,16 @@ export class FinancialAidService extends BaseTemplateApiService {
           phoneNumber: answers.contactInfo.phone,
           email: answers.contactInfo.email,
           homeCircumstances: answers.homeCircumstances.type,
-          homeCircumstancesCustom: answers.homeCircumstances.custom || '',
+          homeCircumstancesCustom:
+            answers.homeCircumstances.type === HomeCircumstances.OTHER
+              ? answers.homeCircumstances.custom || ''
+              : '',
           student: Boolean(answers.student.isStudent === ApproveOptions.Yes),
-          studentCustom: answers.student.custom || '',
-          hasIncome: Boolean(answers.income === ApproveOptions.Yes),
+          studentCustom:
+            answers.student.isStudent === ApproveOptions.Yes
+              ? answers.student.custom || ''
+              : '',
+          hasIncome,
           usePersonalTaxCredit: Boolean(
             answers.personalTaxCredit === ApproveOptions.Yes,
           ),
@@ -333,18 +354,25 @@ export class FinancialAidService extends BaseTemplateApiService {
           ledger: answers.bankInfo.ledger,
           accountNumber: answers.bankInfo.accountNumber,
           employment: answers.employment.type,
-          employmentCustom: answers.employment.custom || '',
+          employmentCustom:
+            answers.employment.type === Employment.OTHER
+              ? answers.employment.custom || ''
+              : '',
           formComment: answers.formComment,
           files: files, // attachments
           children: childrenRvk,
           childrenComment: answers.childrenComment,
           spouseNationalId:
             externalData.nationalRegistrySpouse.data?.nationalId ||
-            answers.relationshipStatus?.spouseNationalId,
+            (isInUnregisteredCohabitation
+              ? answers.relationshipStatus?.spouseNationalId
+              : undefined),
           spouseEmail:
             answers.spouseContactInfo?.email ||
             answers.spouse?.email ||
-            answers.relationshipStatus?.spouseEmail,
+            (isInUnregisteredCohabitation
+              ? answers.relationshipStatus?.spouseEmail
+              : undefined),
           spousePhoneNumber: answers.spouseContactInfo?.phone,
           spouseName:
             externalData.nationalRegistrySpouse.data?.name ||

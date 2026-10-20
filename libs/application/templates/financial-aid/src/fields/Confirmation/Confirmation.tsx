@@ -16,6 +16,7 @@ interface Props {
   hasSpouse?: boolean
   spouseEmailSuccess?: boolean
   municipalityHomepage?: string
+  isVeita?: boolean
 }
 
 const Confirmation = ({
@@ -24,6 +25,7 @@ const Confirmation = ({
   hasSpouse,
   spouseEmailSuccess,
   municipalityHomepage,
+  isVeita = false,
 }: Props) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
@@ -35,7 +37,11 @@ const Confirmation = ({
           <AlertMessage
             type="warning"
             title={formatMessage(confirmation.alertMessages.dataNeeded)}
-            message={formatMessage(confirmation.alertMessages.dataNeededText)}
+            message={formatMessage(
+              isVeita
+                ? confirmation.alertMessages.dataNeededTextVeita
+                : confirmation.alertMessages.dataNeededText,
+            )}
           />
         ) : (
           <AlertMessage

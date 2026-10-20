@@ -35,9 +35,10 @@ export const Estimation = ({ application, municipality }: EstimationProps) => {
   }
 
   const aidAmount = useMemo(() => {
-    if (application.answers.homeCircumstances.type && municipality.data) {
+    const homeCircumstances = application.answers?.homeCircumstances?.type
+    if (homeCircumstances && municipality.data) {
       return aidCalculator(
-        application.answers.homeCircumstances.type,
+        homeCircumstances,
         getAidType()
           ? municipality.data.individualAid
           : municipality.data.cohabitationAid,

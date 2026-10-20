@@ -33,6 +33,11 @@ const describeError = (error: unknown) => {
   }
 }
 
+// RSK responses are parsed with xml2js parseNumbers, so a kennitala starting
+// with a zero arrives as a 9 digit number.
+const formatPayerNationalId = (payerNationalId: number | string | undefined) =>
+  payerNationalId == null ? '' : String(payerNationalId).padStart(10, '0')
+
 const createPeriod = (pastMonth: number) => {
   const date = new Date()
   // Normalize to the 1st so shorter target months don't roll the date forward
@@ -64,7 +69,7 @@ export const fetchDirectTaxPaymentsFromRsk = async (
           ? res.salaryBreakdown.map((salary) => {
               return {
                 totalSalary: salary.salaryTotal,
-                payerNationalId: salary.payerNationalId.toString(),
+                payerNationalId: formatPayerNationalId(salary.payerNationalId),
                 personalAllowance: salary.personalAllowance,
                 withheldAtSource: salary.salaryWithheldAtSource,
                 month: salary.period,
