@@ -295,7 +295,17 @@ const Conclusion: FC = () => {
           CaseIndictmentRulingDecision.FINE,
         ].includes(update.indictmentRulingDecision)
       ) {
-        const promises = []
+        const defendantsUpdated = await updateDefendants(
+          workingCase.id,
+          (activeDefendants ?? []).map((defendant) => ({
+            defendantId: defendant.id,
+            isDrivingLicenseSuspended: defendant.isDrivingLicenseSuspended,
+          })),
+        )
+
+        if (!defendantsUpdated) {
+          return
+        }
 
         if (
           update.indictmentRulingDecision ===
@@ -306,28 +316,14 @@ const Conclusion: FC = () => {
             isDefaultJudgement: item.verdict?.isDefaultJudgement || false,
           }))
 
-          promises.push(
-            createVerdicts({
-              caseId: workingCase.id,
-              verdicts: defendantVerdictsToCreate,
-            }),
-          )
-        }
+          const verdictsCreated = await createVerdicts({
+            caseId: workingCase.id,
+            verdicts: defendantVerdictsToCreate,
+          })
 
-        promises.push(
-          updateDefendants(
-            workingCase.id,
-            (activeDefendants ?? []).map((defendant) => ({
-              defendantId: defendant.id,
-              isDrivingLicenseSuspended: defendant.isDrivingLicenseSuspended,
-            })),
-          ),
-        )
-
-        const createSuccess = await Promise.all(promises)
-
-        if (createSuccess.length === 0) {
-          return
+          if (!verdictsCreated) {
+            return
+          }
         }
       }
 
