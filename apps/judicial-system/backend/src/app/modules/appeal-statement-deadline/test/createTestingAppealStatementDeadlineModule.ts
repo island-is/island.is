@@ -9,7 +9,9 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
+import type { Message } from '@island.is/judicial-system/message'
 
+import { queueMessagesAfterCommit } from '../../../middleware/queueMessagesAfterCommit'
 import { CaseService } from '../../case'
 import {
   AppealEventLogRepositoryService,
@@ -18,6 +20,7 @@ import {
 import { AppealStatementDeadlineController } from '../appealStatementDeadline.controller'
 import { AppealStatementDeadlineService } from '../appealStatementDeadline.service'
 
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../case/case.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
 jest.mock('../../repository/services/appealStatementDeadlineRepository.service')
@@ -66,9 +69,18 @@ export const createTestingAppealStatementDeadlineModule = async () => {
       AppealStatementDeadlineController,
     )
 
+  // Every message the module queues goes through the helper, so this is the
+  // whole of what a request would send.
+  const queuedMessagesAfterCommit: Message[] = []
+  const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+  mockQueueMessagesAfterCommit.mockImplementation((...msgs: Message[]) => {
+    queuedMessagesAfterCommit.push(...msgs)
+  })
+
   appealStatementDeadlineModule.close()
 
   return {
+    queuedMessagesAfterCommit,
     appealEventLogRepositoryService,
     appealStatementDeadlineRepositoryService,
     sequelize,
