@@ -77,15 +77,7 @@ const template: ApplicationTemplate<
       type: AuthDelegationType.Custom,
     },
   ],
-  // Temporary: also accept the generic scope so existing custom delegates keep
-  // salary report access until their grants are copied to the salary scope with
-  // a DB write after release. Limitation: until then, anyone granted only the
-  // generic (equality report) scope can also open the salary report. Remove
-  // directorateOfEquality from this list in a follow-up PR once the copy has run.
-  requiredScopes: [
-    ApiScope.directorateOfEqualitySalary,
-    ApiScope.directorateOfEquality,
-  ],
+  requiredScopes: [ApiScope.directorateOfEqualitySalary],
   allowMultipleApplicationsInDraft: false,
   newApplicationButtonLabel: messages.general.newApplicationButtonLabel,
   stateMachineOptions: {
