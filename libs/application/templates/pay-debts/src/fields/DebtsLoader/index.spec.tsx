@@ -2,7 +2,7 @@ import '@testing-library/jest-dom'
 import { MockedProvider, type MockedResponse } from '@apollo/client/testing'
 import { render, screen, waitFor } from '@testing-library/react'
 import { FC, PropsWithChildren } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm, type UseFormReturn } from 'react-hook-form'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import {
   ApplicationStatus,
@@ -144,5 +144,109 @@ describe('DebtsLoader', () => {
     expect(setSubmitButtonDisabled).not.toHaveBeenCalledWith(true)
 
     await waitFor(() => expect(addExternalData).toHaveBeenCalled())
+  })
+})
+
+const debtA = { ...debt, payID: 'PAY-1' }
+const debtB = { ...debt, payID: 'PAY-2', chargeItemSubject: '999-00000-00' }
+
+type BeforeSubmit = () => Promise<[boolean, string | null]>
+
+const renderWithSelection = (
+  id: string,
+  current: unknown[],
+  refreshed: unknown[],
+) => {
+  const addExternalData = jest.fn()
+  const setBeforeSubmitCallback = jest.fn()
+  let form: UseFormReturn
+
+  const SelectionWrapper: FC<PropsWithChildren> = ({ children }) => {
+    form = useForm({
+      defaultValues: { selectedDebts: [true, false], debtsToPay: ['100', ''] },
+    })
+
+    return <FormProvider {...form}>{children}</FormProvider>
+  }
+
+  render(
+    <MockedProvider
+      mocks={[refreshMock(id, fetched(refreshed))]}
+      addTypename={false}
+    >
+      <DebtsLoader
+        {...({
+          application: applicationWith(id, fetched(current)),
+          addExternalData,
+          setSubmitButtonDisabled: jest.fn(),
+          setFieldLoadingState: jest.fn(),
+          setBeforeSubmitCallback,
+        } as unknown as FieldBaseProps)}
+      />
+    </MockedProvider>,
+    { wrapper: SelectionWrapper },
+  )
+
+  return {
+    addExternalData,
+    getSelection: () => ({
+      selectedDebts: form.getValues('selectedDebts'),
+      debtsToPay: form.getValues('debtsToPay'),
+    }),
+    beforeSubmit: (): ReturnType<BeforeSubmit> =>
+      (setBeforeSubmitCallback.mock.calls.at(-1)?.[0] as BeforeSubmit)(),
+  }
+}
+
+describe('DebtsLoader when the refreshed list differs', () => {
+  it('clears the selection and tells the applicant', async () => {
+    const { addExternalData, getSelection } = renderWithSelection(
+      'list-changed',
+      [debtA, debtB],
+      [debtA],
+    )
+
+    await waitFor(() => expect(addExternalData).toHaveBeenCalled())
+
+    expect(getSelection()).toEqual({ selectedDebts: [], debtsToPay: [] })
+    expect(screen.getByText('Skuldastaðan var uppfærð')).toBeInTheDocument()
+  })
+
+  it('keeps the selection when the list is unchanged', async () => {
+    const { addExternalData, getSelection } = renderWithSelection(
+      'list-unchanged',
+      [debtA, debtB],
+      [debtA, debtB],
+    )
+
+    await waitFor(() => expect(addExternalData).toHaveBeenCalled())
+
+    expect(getSelection()).toEqual({
+      selectedDebts: [true, false],
+      debtsToPay: ['100', ''],
+    })
+    expect(
+      screen.queryByText('Skuldastaðan var uppfærð'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('refuses to submit a selection the refresh has just cleared', async () => {
+    const { beforeSubmit } = renderWithSelection(
+      'submit-after-change',
+      [debtA, debtB],
+      [debtA],
+    )
+
+    await expect(beforeSubmit()).resolves.toEqual([false, ''])
+  })
+
+  it('lets a selection that survived the refresh through', async () => {
+    const { beforeSubmit } = renderWithSelection(
+      'submit-after-no-change',
+      [debtA, debtB],
+      [debtA, debtB],
+    )
+
+    await expect(beforeSubmit()).resolves.toEqual([true, null])
   })
 })
