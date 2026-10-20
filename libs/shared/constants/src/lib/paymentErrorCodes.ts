@@ -92,7 +92,7 @@ export enum DebtPaymentErrorCode {
   DebtPaymentMethodNotAllowed = 'DebtPaymentMethodNotAllowed',
   DebtPaymentRejected = 'DebtPaymentRejected',
   DebtPaymentFlowClosed = 'DebtPaymentFlowClosed',
-  /** FJS rejected a bank transfer, the money is returned by hand. Pay page only. */
+  /** FJS rejected the payment and the money is on its way back. Pay page only. */
   DebtPaymentRejectedRefundPending = 'DebtPaymentRejectedRefundPending',
   DebtPaymentUnavailable = 'DebtPaymentUnavailable',
   DebtPaymentRegisteredCannotBeRefunded = 'DebtPaymentRegisteredCannotBeRefunded',

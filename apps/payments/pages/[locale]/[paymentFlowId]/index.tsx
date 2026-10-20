@@ -431,8 +431,8 @@ function PaymentPage({
       ? formatMessage(debtPayment.productTitle)
       : productInformation?.title ?? ''
 
-  // A closed (rejected) debt flow can no longer be paid. One that still counts as paid is a
-  // rejected bank transfer: the money moved and is returned by hand, so no receipt.
+  // A closed (rejected) debt flow can no longer be paid. One that still counts as paid is waiting
+  // for its refund: a bank transfer by hand, a card by the worker. No receipt either way.
   const closedErrorCode = !paymentFlow?.isClosed
     ? null
     : paymentStatus === PaymentsGetFlowPaymentStatus.paid
