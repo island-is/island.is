@@ -16,17 +16,16 @@ import {
   LinkResolver,
 } from '@island.is/portals/my-pages/core'
 import { healthOverviewQuickLinkClick } from '@island.is/plausible'
+import { ApiScope } from '@island.is/auth/scopes'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useLocation } from 'react-router-dom'
 import { z } from 'zod'
 import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
 import { HealthPaths } from '../../lib/paths'
 import { messages } from '../../lib/messages'
-import {
-  CONTENT_GAP_LG,
-  DEFAULT_APPOINTMENTS_STATUS,
-  SECTION_GAP,
-} from '../../utils/constants'
+import { nextAppointmentsInput } from '../../utils/appointments'
+import { CONTENT_GAP_LG, SECTION_GAP } from '../../utils/constants'
 import {
   useGetAppointmentsOverviewQuery,
   useGetBloodTypeOverviewQuery,
@@ -94,6 +93,11 @@ export const HealthOverview = () => {
     false,
   )
 
+  const userInfo = useUserInfo()
+  const hasAppointmentsAccess = !!userInfo?.scopes?.includes(
+    ApiScope.healthAppointments,
+  )
+
   const { data, error, loading } = useGetInsuranceOverviewQuery()
   const {
     data: healthCenterData,
@@ -155,16 +159,16 @@ export const HealthOverview = () => {
     error: appointmentsError,
   } = useGetAppointmentsOverviewQuery({
     variables: {
-      status: DEFAULT_APPOINTMENTS_STATUS, // Empty will fetch all statuses
+      input: nextAppointmentsInput(2),
     },
-    skip: !showAppointments,
+    skip: !showAppointments || !hasAppointmentsAccess,
   })
 
   const currentMedicinePeriod =
     medicinePaymentOverviewData?.rightsPortalDrugPeriods[0] ?? null
 
   const firstTwoAppointments =
-    appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
+    appointmentsData?.healthDirectoratePaginatedAppointments?.data ?? []
 
   const { data: quickLinksData } = useQuery<Query, QueryGetNamespaceArgs>(
     GET_NAMESPACE_QUERY,
@@ -261,7 +265,7 @@ export const HealthOverview = () => {
         </GridRow>
       )}
       {/* Appointments */}
-      {showAppointments && (
+      {showAppointments && hasAppointmentsAccess && (
         <Appointments
           data={{
             data: { data: firstTwoAppointments },

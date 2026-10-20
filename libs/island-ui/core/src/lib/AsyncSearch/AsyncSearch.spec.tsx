@@ -40,6 +40,31 @@ describe('AsyncSearch', () => {
     }
   })
 
+  it('should only render the clear button when there is a value to clear', () => {
+    const onClear = jest.fn()
+    const { baseElement, queryByLabelText } = render(
+      <AsyncSearch filter options={items} onClear={onClear} />,
+    )
+
+    expect(queryByLabelText('Clear')).not.toBeInTheDocument()
+
+    const inputEl = baseElement.querySelector('input')
+    expect(inputEl).not.toBeNull()
+
+    if (inputEl !== null) {
+      fireEvent.change(inputEl, { target: { value: 'ap' } })
+
+      const clearEl = queryByLabelText('Clear')
+      expect(clearEl).toBeInTheDocument()
+
+      if (clearEl !== null) fireEvent.click(clearEl)
+
+      expect(onClear).toHaveBeenCalledTimes(1)
+      expect(inputEl.value).toBe('')
+      expect(queryByLabelText('Clear')).not.toBeInTheDocument()
+    }
+  })
+
   it('should show 4 items', () => {
     const { baseElement } = render(<AsyncSearch filter options={items} />)
 

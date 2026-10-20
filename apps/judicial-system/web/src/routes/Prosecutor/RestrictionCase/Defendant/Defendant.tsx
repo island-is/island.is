@@ -12,21 +12,19 @@ import {
   core,
   titles,
 } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
-  DefenderInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
   PageHeader,
   PageLayout,
   PageTitle,
+  RequestCaseDefenderInfo,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  Case,
-  UpdateDefendantInput,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { UpdateDefendantInput } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseOrigin,
   CaseType,
@@ -78,7 +76,7 @@ export const Defendant = () => {
 
   const updateDefendantState = useCallback(
     (update: UpdateDefendantInput) => {
-      setWorkingCase((prevWorkingCase: Case) => {
+      setWorkingCase((prevWorkingCase: WorkingCase) => {
         if (!prevWorkingCase.defendants) {
           return prevWorkingCase
         }
@@ -113,7 +111,16 @@ export const Defendant = () => {
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!workingCase.id) {
-        const createdCase = await createCase(workingCase)
+        // Case creation copies these onto the created defendant
+        const defendant = workingCase.defendants?.[0]
+        const createdCase = await createCase({
+          ...workingCase,
+          defenderName: defendant?.defenderName,
+          defenderNationalId: defendant?.defenderNationalId,
+          defenderEmail: defendant?.defenderEmail,
+          defenderPhoneNumber: defendant?.defenderPhoneNumber,
+          requestSharedWithDefender: defendant?.requestSharedWithDefender,
+        })
 
         if (
           createdCase &&
@@ -190,15 +197,15 @@ export const Defendant = () => {
                     setWorkingCase={setWorkingCase}
                     onChange={handleUpdateDefendant}
                     updateDefendantState={updateDefendantState}
-                  />
+                  >
+                    <RequestCaseDefenderInfo
+                      workingCase={workingCase}
+                      setWorkingCase={setWorkingCase}
+                      defendant={workingCase.defendants[0]}
+                    />
+                  </DefendantInfo>
                 </Box>
               )}
-              <Box component="section">
-                <DefenderInfo
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                />
-              </Box>
               {workingCase.type !== CaseType.TRAVEL_BAN && (
                 <Box component="section">
                   <SectionHeading

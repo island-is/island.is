@@ -44,6 +44,7 @@ export type SubmitTicketInput = {
   customFields?: Array<UpdateCustomField>
   brandId?: number
   ticketFormId?: number
+  externalId?: string
 }
 
 export type User = {
@@ -65,16 +66,20 @@ export type CustomObjectJobItem = {
   custom_object_fields?: Record<string, unknown>
 }
 
-type CustomObjectJobStatus = {
+export type JobStatusResult = {
+  index?: number
+  id?: string | number
+  external_id?: string
+  status?: string
+  error?: string
+  errors?: Array<{ code?: string; title?: string; detail?: string }>
+}
+
+type JobStatus = {
   id: string
   url?: string
   status: 'queued' | 'working' | 'completed' | 'failed' | 'aborted'
-  results?: Array<{
-    id?: string
-    external_id?: string
-    status?: string
-    errors?: unknown
-  }>
+  results?: Array<JobStatusResult>
 }
 
 export type Ticket = {
@@ -83,7 +88,15 @@ export type Ticket = {
   custom_fields: Array<{ id: number; value: string }>
   tags: Array<string>
   description?: string
+  external_id?: string | null
 }
+
+const isFailedJobResult = (result: JobStatusResult) =>
+  result.status?.toLowerCase() === 'failed' ||
+  Boolean(result.error) ||
+  (Array.isArray(result.errors)
+    ? result.errors.length > 0
+    : Boolean(result.errors))
 
 export interface ZendeskServiceOptions {
   email: string
@@ -188,7 +201,7 @@ export class ZendeskService {
     return true
   }
 
-  async createTicket({
+  private toTicketBody({
     message,
     subject,
     requesterId,
@@ -197,19 +210,23 @@ export class ZendeskService {
     customFields = [],
     brandId,
     ticketFormId,
-  }: SubmitTicketInput): Promise<Ticket | undefined> {
-    const newTicket = JSON.stringify({
-      ticket: {
-        requester_id: requesterId,
-        requester,
-        subject: subject?.trim() ?? '',
-        comment: { body: message ?? '' },
-        tags,
-        custom_fields: customFields,
-        brand_id: brandId,
-        ticket_form_id: ticketFormId,
-      },
-    })
+    externalId,
+  }: SubmitTicketInput) {
+    return {
+      requester_id: requesterId,
+      requester,
+      subject: subject?.trim() ?? '',
+      comment: { body: message ?? '' },
+      tags,
+      custom_fields: customFields,
+      brand_id: brandId,
+      ticket_form_id: ticketFormId,
+      external_id: externalId,
+    }
+  }
+
+  async createTicket(input: SubmitTicketInput): Promise<Ticket | undefined> {
+    const newTicket = JSON.stringify({ ticket: this.toTicketBody(input) })
 
     try {
       const response = await axios.post(
@@ -334,49 +351,217 @@ export class ZendeskService {
     }
   }
 
-  async runCustomObjectJob(
+  /**
+   * Upserts records by external id in a single bulk job (max 100 items).
+   * Zendesk bulk jobs are not atomic, so this throws if any item failed and
+   * the caller is responsible for cleaning up the items that were written.
+   */
+  async upsertCustomObjectRecordsByExternalId(
     objectKey: string,
-    action: 'create_or_update_by_external_id',
     items: CustomObjectJobItem[],
   ): Promise<void> {
-    const body = JSON.stringify({ job: { action, items } })
+    const results = await this.runJob(
+      `${this.api}/custom_objects/${objectKey}/jobs`,
+      { job: { action: 'create_or_update_by_external_id', items } },
+      'Zendesk custom object upsert job',
+    )
 
-    let jobStatus: CustomObjectJobStatus
-    try {
-      const response = await axios.post(
-        `${this.api}/custom_objects/${objectKey}/jobs`,
-        body,
-        this.params,
+    const failed = results.filter(isFailedJobResult)
+    if (failed.length > 0) {
+      throw new Error(
+        `${failed.length} Zendesk custom object job item(s) failed: ${failed
+          .map((r) => r.external_id ?? r.index)
+          .join(', ')}`,
       )
-      jobStatus = response.data.job_status ?? response.data
+    }
+  }
+
+  /**
+   * Deletes records by external id in a single bulk job (max 100 items).
+   * Records that do not exist are treated as already deleted.
+   */
+  async deleteCustomObjectRecordsByExternalId(
+    objectKey: string,
+    externalIds: string[],
+  ): Promise<void> {
+    const results = await this.runJob(
+      `${this.api}/custom_objects/${objectKey}/jobs`,
+      { job: { action: 'delete_by_external_id', items: externalIds } },
+      'Zendesk custom object delete job',
+    )
+
+    const failed = results.filter(
+      (r) =>
+        isFailedJobResult(r) &&
+        !r.errors?.some((e) => e.title === 'Record not found'),
+    )
+    if (failed.length > 0) {
+      throw new Error(
+        `${failed.length} Zendesk custom object delete item(s) failed: ${failed
+          .map((r) => r.external_id ?? r.index)
+          .join(', ')}`,
+      )
+    }
+  }
+
+  async listCustomObjectRecordsByExternalIds(
+    objectKey: string,
+    externalIds: string[],
+  ): Promise<CustomObjectRecord[]> {
+    const records: CustomObjectRecord[] = []
+    let url: string | null = `${
+      this.api
+    }/custom_objects/${objectKey}/records?page[size]=100&filter[external_ids]=${externalIds
+      .map(encodeURIComponent)
+      .join(',')}`
+
+    try {
+      while (url) {
+        const response: AxiosResponse<{
+          custom_object_records: CustomObjectRecord[]
+          meta?: { has_more?: boolean }
+          links?: { next?: string | null }
+        }> = await axios.get(url, this.params)
+        records.push(...response.data.custom_object_records)
+        // links.next is set even on the last page
+        url = response.data.meta?.has_more
+          ? response.data.links?.next ?? null
+          : null
+      }
     } catch (e) {
-      const errMsg = 'Failed to create Zendesk custom object job'
+      const errMsg = 'Failed to list Zendesk custom object records'
       const description = e.response?.data?.description ?? e.message
       this.logger.error(errMsg, { message: description })
       throw new Error(`${errMsg}: ${description}`)
     }
 
-    const MAX_POLL_ATTEMPTS = 10
+    return records
+  }
+
+  /**
+   * Returns every record matching the filter, see
+   * https://developer.zendesk.com/api-reference/custom-data/custom-objects/custom_object_records/#filtered-search-of-custom-object-records
+   */
+  async searchCustomObjectRecords(
+    objectKey: string,
+    filter: Record<string, unknown>,
+  ): Promise<CustomObjectRecord[]> {
+    const records: CustomObjectRecord[] = []
+    const body = JSON.stringify({ filter })
+    let after: string | null = null
+
+    try {
+      do {
+        const response: AxiosResponse<{
+          custom_object_records: CustomObjectRecord[]
+          meta?: { has_more?: boolean; after_cursor?: string | null }
+        }> = await axios.post(
+          `${
+            this.api
+          }/custom_objects/${objectKey}/records/search?page[size]=100${
+            after ? `&page[after]=${encodeURIComponent(after)}` : ''
+          }`,
+          body,
+          this.params,
+        )
+        records.push(...response.data.custom_object_records)
+        after = response.data.meta?.has_more
+          ? response.data.meta.after_cursor ?? null
+          : null
+      } while (after)
+    } catch (e) {
+      const errMsg = 'Failed to search Zendesk custom object records'
+      const description = e.response?.data?.description ?? e.message
+      this.logger.error(errMsg, { message: description })
+      throw new Error(`${errMsg}: ${description}`)
+    }
+
+    return records
+  }
+
+  async getTicketByExternalId(externalId: string): Promise<Ticket | null> {
+    try {
+      const response = await axios.get<{ tickets: Ticket[] }>(
+        `${this.api}/tickets.json?external_id=${encodeURIComponent(
+          externalId,
+        )}`,
+        this.params,
+      )
+      return response.data.tickets[0] ?? null
+    } catch (e) {
+      const errMsg = 'Failed to get Zendesk ticket by external id'
+      const description = e.response?.data?.description ?? e.message
+      this.logger.error(errMsg, { message: description })
+      throw new Error(`${errMsg}: ${description}`)
+    }
+  }
+
+  /**
+   * Creates up to 100 tickets in a single bulk job. The job is not atomic,
+   * so the returned array holds the created ticket id for each input (by
+   * index) or undefined where that ticket could not be created.
+   */
+  async createManyTickets(
+    inputs: SubmitTicketInput[],
+  ): Promise<Array<number | undefined>> {
+    const results = await this.runJob(
+      `${this.api}/tickets/create_many.json`,
+      { tickets: inputs.map((input) => this.toTicketBody(input)) },
+      'Zendesk create many tickets job',
+    )
+
+    const ticketIds: Array<number | undefined> = inputs.map(() => undefined)
+    results.forEach((result, position) => {
+      const index = result.index ?? position
+      const id = Number(result.id)
+      if (!isFailedJobResult(result) && Number.isSafeInteger(id) && id > 0) {
+        ticketIds[index] = id
+      }
+    })
+
+    return ticketIds
+  }
+
+  /**
+   * Queues a bulk job and waits for it to complete, returning its per item
+   * results. Throws if the job cannot be queued, fails as a whole or does
+   * not complete in time.
+   */
+  private async runJob(
+    url: string,
+    body: unknown,
+    jobName: string,
+  ): Promise<JobStatusResult[]> {
+    let jobStatus: JobStatus
+    try {
+      const response = await axios.post(url, JSON.stringify(body), this.params)
+      jobStatus = response.data.job_status ?? response.data
+    } catch (e) {
+      const errMsg = `Failed to create ${jobName}`
+      const description = e.response?.data?.description ?? e.message
+      this.logger.error(errMsg, { message: description })
+      throw new Error(`${errMsg}: ${description}`)
+    }
+
+    // Jobs are queued, in practice they take around 10 seconds to complete
+    const MAX_POLL_ATTEMPTS = 60
     const POLL_INTERVAL_MS = 1000
 
     for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++) {
       if (jobStatus.status === 'completed') break
       if (jobStatus.status === 'failed' || jobStatus.status === 'aborted') {
-        throw new Error(
-          `Zendesk custom object job ${jobStatus.status}: ${jobStatus.id}`,
-        )
+        throw new Error(`${jobName} ${jobStatus.status}: ${jobStatus.id}`)
       }
 
       await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS))
 
       try {
         const pollUrl =
-          jobStatus.url ??
-          `${this.api}/custom_objects/${objectKey}/jobs/${jobStatus.id}`
+          jobStatus.url ?? `${this.api}/job_statuses/${jobStatus.id}.json`
         const response = await axios.get(pollUrl, this.params)
         jobStatus = response.data.job_status ?? response.data
       } catch (e) {
-        const errMsg = 'Failed to poll Zendesk custom object job status'
+        const errMsg = `Failed to poll ${jobName} status`
         const description = e.response?.data?.description ?? e.message
         this.logger.error(errMsg, { message: description })
         throw new Error(`${errMsg}: ${description}`)
@@ -384,22 +569,9 @@ export class ZendeskService {
     }
 
     if (jobStatus.status !== 'completed') {
-      throw new Error(
-        `Zendesk custom object job did not complete in time: ${jobStatus.id}`,
-      )
+      throw new Error(`${jobName} did not complete in time: ${jobStatus.id}`)
     }
 
-    if (jobStatus.results) {
-      const failed = jobStatus.results.filter((r) =>
-        r.status === 'failed' || Array.isArray(r.errors)
-          ? (r.errors as unknown[]).length > 0
-          : Boolean(r.errors),
-      )
-      if (failed.length > 0) {
-        throw new Error(
-          `${failed.length} Zendesk custom object job item(s) failed`,
-        )
-      }
-    }
+    return jobStatus.results ?? []
   }
 }

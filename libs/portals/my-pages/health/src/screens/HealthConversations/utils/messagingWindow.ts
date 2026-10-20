@@ -1,26 +1,26 @@
-const MINUTES_IN_DAY = 24 * 60
-const CLOSING_SOON_THRESHOLD_MINUTES = 30
+const CLOSING_SOON_THRESHOLD_MS = 30 * 60 * 1000
 const MS_IN_DAY = 24 * 60 * 60 * 1000
 
 const pad = (value: number) => value.toString().padStart(2, '0')
 
-const formatMinutes = (minutes: number) =>
-  `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`
-
-const parseTimeToMinutes = (time: string): number | undefined => {
-  const match = time.match(/^(\d{1,2}):(\d{2})/)
-  if (!match) return undefined
-  return Number(match[1]) * 60 + Number(match[2])
+export const formatTimeLabel = (time?: string | null): string | undefined => {
+  const match = time?.match(/^(\d{1,2}):(\d{2})/)
+  return match ? `${pad(Number(match[1]))}:${match[2]}` : undefined
 }
 
-export const formatTimeLabel = (time?: string | null): string | undefined => {
-  const minutes = time ? parseTimeToMinutes(time) : undefined
-  return minutes !== undefined ? formatMinutes(minutes) : undefined
+export const isClosingSoon = (
+  closesAt?: string | null,
+  now: Date = new Date(),
+): boolean => {
+  if (!closesAt) return false
+  const msToClose = new Date(closesAt).getTime() - now.getTime()
+  return msToClose > 0 && msToClose <= CLOSING_SOON_THRESHOLD_MS
 }
 
 export interface OpeningWindow {
   windowOpen: string
   windowClose: string
+  isAllDay: boolean
 }
 
 export interface OpeningHours {
@@ -29,58 +29,20 @@ export interface OpeningHours {
   holiday?: OpeningWindow | null
 }
 
-/**
- * The hours the recipient keeps today, resolved through dayType. Undefined
- * when the recipient is closed on this kind of day.
- */
-export const getTodaysWindow = (recipient: {
-  dayType: string
-  openingHours?: OpeningHours | null
-}): OpeningWindow | undefined => {
-  const key = recipient.dayType.toLowerCase()
-  return key === 'weekday' || key === 'weekend' || key === 'holiday'
-    ? recipient.openingHours?.[key] ?? undefined
-    : undefined
-}
-
-export const getClosingSoonInfo = (
-  window?: OpeningWindow | null,
-  now: Date = new Date(),
-): { isClosingSoon: boolean; openLabel?: string; closeLabel?: string } => {
-  const nowMinutes = now.getUTCHours() * 60 + now.getUTCMinutes()
-  const openMinutes = window ? parseTimeToMinutes(window.windowOpen) : undefined
-  const closeMinutes = window
-    ? parseTimeToMinutes(window.windowClose)
-    : undefined
-
-  const minutesToClose =
-    closeMinutes !== undefined
-      ? (closeMinutes - nowMinutes + MINUTES_IN_DAY) % MINUTES_IN_DAY
-      : undefined
-
-  return {
-    isClosingSoon:
-      minutesToClose !== undefined &&
-      minutesToClose > 0 &&
-      minutesToClose <= CLOSING_SOON_THRESHOLD_MINUTES,
-    openLabel:
-      openMinutes !== undefined ? formatMinutes(openMinutes) : undefined,
-    closeLabel:
-      closeMinutes !== undefined ? formatMinutes(closeMinutes) : undefined,
-  }
-}
-
-interface WindowLabels {
+export interface WindowLabels {
   openLabel: string
   closeLabel: string
+  isAllDay: boolean
 }
 
-const toWindowLabels = (
+export const getWindowLabels = (
   window?: OpeningWindow | null,
 ): WindowLabels | undefined => {
   const openLabel = formatTimeLabel(window?.windowOpen)
   const closeLabel = formatTimeLabel(window?.windowClose)
-  return openLabel && closeLabel ? { openLabel, closeLabel } : undefined
+  return window && openLabel && closeLabel
+    ? { openLabel, closeLabel, isAllDay: window.isAllDay }
+    : undefined
 }
 
 export interface OpeningHoursLabels {
@@ -93,9 +55,9 @@ export const getOpeningHoursLabels = (
   openingHours?: OpeningHours | null,
 ): OpeningHoursLabels | undefined => {
   if (!openingHours) return undefined
-  const weekday = toWindowLabels(openingHours.weekday)
-  const weekend = toWindowLabels(openingHours.weekend)
-  const holiday = toWindowLabels(openingHours.holiday)
+  const weekday = getWindowLabels(openingHours.weekday)
+  const weekend = getWindowLabels(openingHours.weekend)
+  const holiday = getWindowLabels(openingHours.holiday)
 
   if (!weekday && !weekend && !holiday) return undefined
 
@@ -107,10 +69,7 @@ export interface NextOpening {
   windowOpen: string
 }
 
-/**
- * When the recipient next opens, phrased relative to the current UTC day —
- * the messaging windows are defined in UTC (Iceland stays on UTC year-round).
- */
+// Day difference is counted in UTC, which is Icelandic local time all year.
 export const getNextOpeningInfo = (
   nextOpensAt?: NextOpening | null,
   now: Date = new Date(),
@@ -118,6 +77,7 @@ export const getNextOpeningInfo = (
   | {
       when: 'today' | 'tomorrow' | 'later'
       timeLabel: string
+      opensAtMidnight: boolean
       dateLabel: string
     }
   | undefined => {
@@ -132,6 +92,8 @@ export const getNextOpeningInfo = (
   return {
     when: dayDiff <= 0 ? 'today' : dayDiff === 1 ? 'tomorrow' : 'later',
     timeLabel,
+    // "kl. 00:00 á morgun" reads oddly, so the day alone is shown for midnight.
+    opensAtMidnight: timeLabel === '00:00',
     dateLabel: `${pad(date.getUTCDate())}.${pad(
       date.getUTCMonth() + 1,
     )}.${date.getUTCFullYear()}`,

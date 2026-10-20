@@ -49,6 +49,9 @@ describe('DirectorateOfEqualityService', () => {
   let getSalaryReportEligibility: jest.Mock
   let updateDraft: jest.Mock
   let submitDraft: jest.Mock
+  let deleteDraft: jest.Mock
+  let withdrawReport: jest.Mock
+  let getReport: jest.Mock
 
   beforeEach(async () => {
     editOutliers = jest.fn().mockResolvedValue({})
@@ -58,6 +61,9 @@ describe('DirectorateOfEqualityService', () => {
     getSalaryReportEligibility = jest.fn().mockResolvedValue({ eligible: true })
     updateDraft = jest.fn().mockResolvedValue({})
     submitDraft = jest.fn().mockResolvedValue({})
+    deleteDraft = jest.fn().mockResolvedValue(undefined)
+    withdrawReport = jest.fn().mockResolvedValue(undefined)
+    getReport = jest.fn().mockResolvedValue({ status: 'APPROVED' })
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -73,6 +79,9 @@ describe('DirectorateOfEqualityService', () => {
             getSalaryReportEligibility,
             updateDraft,
             submitDraft,
+            deleteDraft,
+            withdrawReport,
+            getReport,
           },
         },
       ],
@@ -81,6 +90,138 @@ describe('DirectorateOfEqualityService', () => {
     service = module.get<DirectorateOfEqualityService>(
       DirectorateOfEqualityService,
     )
+  })
+
+  // onDelete: a failure here refuses the applicant's delete, so only the
+  // answers that leave nothing open at DMR may pass.
+  describe('deleteSalaryReportDraft', () => {
+    const application = createApplication({ answers: {} })
+    const run = () =>
+      service.deleteSalaryReportDraft({
+        auth: createCurrentUser(),
+        application,
+        currentUserLocale: 'is',
+      } as Parameters<typeof service.deleteSalaryReportDraft>[0])
+
+    it('hard-deletes the draft and does not withdraw', async () => {
+      await expect(run()).resolves.toBeUndefined()
+
+      expect(deleteDraft).toHaveBeenCalledWith(
+        expect.anything(),
+        application.id,
+      )
+      expect(withdrawReport).not.toHaveBeenCalled()
+    })
+
+    // The draft was submitted between the applicant opening the delete and
+    // confirming it, so the report has to be withdrawn instead.
+    it('withdraws when there is no draft left to delete', async () => {
+      deleteDraft.mockRejectedValue(await apiError(404))
+
+      await expect(run()).resolves.toBeUndefined()
+
+      expect(withdrawReport).toHaveBeenCalledWith(
+        expect.anything(),
+        application.id,
+      )
+    })
+
+    it('lets the delete through when DMR has nothing at all', async () => {
+      deleteDraft.mockRejectedValue(await apiError(404))
+      withdrawReport.mockRejectedValue(await apiError(404))
+
+      await expect(run()).resolves.toBeUndefined()
+    })
+
+    it('lets the delete through when the submitted report is already decided', async () => {
+      deleteDraft.mockRejectedValue(await apiError(404))
+      withdrawReport.mockRejectedValue(await apiError(400))
+      getReport.mockResolvedValue({ status: 'DENIED' })
+
+      await expect(run()).resolves.toBeUndefined()
+      expect(getReport).toHaveBeenCalledWith(expect.anything(), application.id)
+    })
+
+    it('refuses the delete when the fallback withdraw fails', async () => {
+      deleteDraft.mockRejectedValue(await apiError(404))
+      withdrawReport.mockRejectedValue(
+        await FetchError.buildMock({ status: 500 }),
+      )
+
+      await expect(run()).rejects.toThrow(TemplateApiError)
+    })
+
+    it('refuses the delete when DMR fails', async () => {
+      deleteDraft.mockRejectedValue(await FetchError.buildMock({ status: 500 }))
+
+      await expect(run()).rejects.toThrow(TemplateApiError)
+      expect(withdrawReport).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('withdrawSalaryReport', () => {
+    const application = createApplication({ answers: {} })
+    const run = () =>
+      service.withdrawSalaryReport({
+        auth: createCurrentUser(),
+        application,
+        currentUserLocale: 'is',
+      } as Parameters<typeof service.withdrawSalaryReport>[0])
+
+    it('withdraws the report tied to the application', async () => {
+      await expect(run()).resolves.toBeUndefined()
+
+      expect(withdrawReport).toHaveBeenCalledWith(
+        expect.anything(),
+        application.id,
+      )
+    })
+
+    it('lets the delete through when DMR has no report', async () => {
+      withdrawReport.mockRejectedValue(await apiError(404))
+
+      await expect(run()).resolves.toBeUndefined()
+    })
+
+    // DMR names the "already decided" refusal like any other bad request, so a
+    // 400 passes only once the report itself reads as closed.
+    it.each(['APPROVED', 'DENIED', 'SUPERSEDED', 'WITHDRAWN'])(
+      'lets the delete through on a 400 when the report is %s',
+      async (status) => {
+        withdrawReport.mockRejectedValue(await apiError(400))
+        getReport.mockResolvedValue({ status })
+
+        await expect(run()).resolves.toBeUndefined()
+        expect(getReport).toHaveBeenCalledWith(
+          expect.anything(),
+          application.id,
+        )
+      },
+    )
+
+    it('refuses the delete on a 400 while the report is still open', async () => {
+      withdrawReport.mockRejectedValue(
+        await apiError(400, { name: 'ValidationError' }),
+      )
+      getReport.mockResolvedValue({ status: 'POSTPONED' })
+
+      await expect(run()).rejects.toThrow(TemplateApiError)
+    })
+
+    it('refuses the delete on a 400 when the status cannot be read', async () => {
+      withdrawReport.mockRejectedValue(await apiError(400))
+      getReport.mockRejectedValue(await FetchError.buildMock({ status: 500 }))
+
+      await expect(run()).rejects.toThrow(TemplateApiError)
+    })
+
+    it('refuses the delete when DMR fails', async () => {
+      withdrawReport.mockRejectedValue(
+        await FetchError.buildMock({ status: 500 }),
+      )
+
+      await expect(run()).rejects.toThrow(TemplateApiError)
+    })
   })
 
   describe('editOutliers', () => {
@@ -245,8 +386,6 @@ describe('DirectorateOfEqualityService', () => {
     })
   })
 
-  // What matters is which equality-report id reaches submitDraft, not that
-  // submit was called — see resolveEqualityReportId's staleness handling.
   describe('getSalaryReportEligibility', () => {
     const run = async () => {
       const auth = createCurrentUser()
@@ -261,18 +400,21 @@ describe('DirectorateOfEqualityService', () => {
       } as Parameters<typeof service.getSalaryReportEligibility>[0])
     }
 
-    it('passes the renewal-window refusal through with its date', async () => {
-      const earliestSubmissionDate = new Date('2026-04-03T00:00:00.000Z')
+    it("passes DMR's answer through with both deadlines", async () => {
+      const dueAt = new Date('2027-10-03T23:59:59.999Z')
+      const earliestNewDueAt = new Date('2029-09-23T23:59:59.999Z')
       getSalaryReportEligibility.mockResolvedValue({
-        eligible: false,
-        reason: 'RENEWAL_WINDOW_NOT_OPEN',
-        earliestSubmissionDate,
+        eligible: true,
+        reason: null,
+        dueAt,
+        earliestNewDueAt,
       })
 
       await expect(run()).resolves.toEqual({
-        eligible: false,
-        reason: 'RENEWAL_WINDOW_NOT_OPEN',
-        earliestSubmissionDate,
+        eligible: true,
+        reason: null,
+        dueAt,
+        earliestNewDueAt,
       })
     })
 
@@ -294,7 +436,7 @@ describe('DirectorateOfEqualityService', () => {
     })
 
     // The guard has to fail loudly: answering "ineligible" on an outage would
-    // turn DMR being down into a rejection for a company that is in its window.
+    // turn DMR being down into a rejection for a company that is eligible.
     it('surfaces an outage instead of rejecting the applicant', async () => {
       getSalaryReportEligibility.mockRejectedValue(
         await FetchError.buildMock({ status: 500 }),
@@ -304,6 +446,9 @@ describe('DirectorateOfEqualityService', () => {
     })
   })
 
+  // What matters is which equality-report id reaches submitDraft — see
+  // resolveEqualityReportId's staleness handling. island.is never refuses on
+  // missing coverage itself: only DMR knows whether the company is exempt.
   describe('submitSalaryReport', () => {
     // Not FormValue: this is externalData, and a legacy row really does carry
     // `id: null` — the provider spreads DMR's answer through as it stands.
@@ -352,13 +497,31 @@ describe('DirectorateOfEqualityService', () => {
       expect(body.equalityReportId).toBe('stale-id')
     })
 
-    it('refuses to submit a known-stale id when DMR has no active report', async () => {
+    // A municipality without a plan: equality/active still 404s, since an
+    // exemption is not a plan, but DMR accepts the submission without an id.
+    // The stored id is known-stale, so it must not go along.
+    it('submits without the known-stale id when DMR has no active report', async () => {
       getActiveEqualityReport.mockRejectedValue(
         await FetchError.buildMock({ status: 404 }),
       )
 
-      await expect(run()).rejects.toThrow(TemplateApiError)
-      expect(submitDraft).not.toHaveBeenCalled()
+      const body = await run()
+
+      expect(submitDraft).toHaveBeenCalled()
+      expect(body.equalityReportId).toBeUndefined()
+    })
+
+    // With no coverage stored either, an outage leaves nothing to name, and
+    // DMR resolves the filing basis on its own.
+    it('submits without an id when DMR cannot answer and nothing was stored', async () => {
+      getActiveEqualityReport.mockRejectedValue(
+        await FetchError.buildMock({ status: 500 }),
+      )
+
+      const body = await run({ hasActiveEqualityReport: false })
+
+      expect(submitDraft).toHaveBeenCalled()
+      expect(body.equalityReportId).toBeUndefined()
     })
 
     // Legacy coverage has no report row to name, so the field goes off the
@@ -398,8 +561,8 @@ describe('DirectorateOfEqualityService', () => {
 
     // DMR says "no such company" with a 400 and a NotFound body, not a 404 —
     // the provider gate above already allows for that, and so must this one, or
-    // a definitive rejection reaches the applicant as a generic error.
-    it('refuses to submit when DMR names the company as not found', async () => {
+    // the stale stored id would be sent as a fallback.
+    it('submits without the stored id when DMR names the company as not found', async () => {
       getActiveEqualityReport.mockRejectedValue(
         await apiError(400, {
           name: 'NotFound',
@@ -407,58 +570,27 @@ describe('DirectorateOfEqualityService', () => {
         }),
       )
 
-      const error = await run().catch((e) => e)
+      const body = await run()
 
-      expect(submitDraft).not.toHaveBeenCalled()
-      expect(error.problem.errorReason.summary).toBe(
-        salaryReportMessages.errors.missingEqualityReport,
-      )
+      expect(submitDraft).toHaveBeenCalled()
+      expect(body.equalityReportId).toBeUndefined()
     })
 
-    // Two refusals share 409 and DMR does not distinguish them in the body, so
-    // the pre-flight check is what tells them apart. Getting this wrong tells an
-    // applicant who submitted too early that their report is already in review.
-    it('explains a 409 as the renewal window when the pre-check says so', async () => {
-      submitDraft.mockRejectedValue(await apiError(409))
-      getSalaryReportEligibility.mockResolvedValue({
-        eligible: false,
-        reason: 'RENEWAL_WINDOW_NOT_OPEN',
-      })
-
-      const error = await run().catch((e) => e)
-
-      expect(error.problem.errorReason.summary).toBe(
-        salaryReportMessages.errors.renewalWindowNotOpen,
-      )
-    })
-
-    it('keeps the in-progress reading of a 409 when the window is open', async () => {
+    // Both 409s DMR has left — a report already in review and a providerId
+    // collision — read as a report in progress, with no second round trip.
+    it('explains a 409 as a report already in progress', async () => {
       submitDraft.mockRejectedValue(await apiError(409))
 
       const error = await run().catch((e) => e)
 
+      expect(getSalaryReportEligibility).not.toHaveBeenCalled()
       expect(error.problem.errorReason.summary).toBe(
         salaryReportMessages.errors.submitConflict,
       )
     })
 
-    // The pre-check only picks between two messages on a request that has
-    // already failed — it must never replace the specific 409 with its own.
-    it('falls back to the in-progress reading when the pre-check fails', async () => {
-      submitDraft.mockRejectedValue(await apiError(409))
-      getSalaryReportEligibility.mockRejectedValue(
-        await FetchError.buildMock({ status: 500 }),
-      )
-
-      const error = await run().catch((e) => e)
-
-      expect(error.problem.errorReason.summary).toBe(
-        salaryReportMessages.errors.submitConflict,
-      )
-    })
-
-    // Reachable now that coverage can be left for DMR to resolve: the
-    // certificate lapses between the pre-check and the submit itself.
+    // DMR's refusal is now the only one: a company with no plan that is not
+    // exempt, or a certificate that lapses between the read and the submit.
     it('explains a 404 from the submit as missing coverage', async () => {
       submitDraft.mockRejectedValue(await apiError(404))
 
@@ -472,6 +604,24 @@ describe('DirectorateOfEqualityService', () => {
     it('explains the missing equality report instead of the generic error', async () => {
       getActiveEqualityReport.mockRejectedValue(
         await FetchError.buildMock({ status: 404 }),
+      )
+      submitDraft.mockRejectedValue(await apiError(404))
+
+      const error = await run().catch((e) => e)
+
+      expect(submitDraft.mock.calls[0][2].equalityReportId).toBeUndefined()
+      expect(error.problem.errorReason.summary).toBe(
+        salaryReportMessages.errors.missingEqualityReport,
+      )
+    })
+
+    // The same refusal said without the status, as DMR does elsewhere.
+    it('explains a NotFound body from the submit as missing coverage', async () => {
+      submitDraft.mockRejectedValue(
+        await apiError(400, {
+          name: 'NotFound',
+          translatedMessage: 'Fyrirtækið fannst ekki',
+        }),
       )
 
       const error = await run().catch((e) => e)

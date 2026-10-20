@@ -237,8 +237,9 @@ describe('CourtService - Create document', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindById = mockCaseRepositoryService.findById as jest.Mock
-      mockFindById.mockResolvedValueOnce({ judge, registrar })
+      const mockFindCase =
+        mockCaseRepositoryService.findByIdWithJudgeAndRegistrar as jest.Mock
+      mockFindCase.mockResolvedValueOnce({ judge, registrar })
 
       const mockUploadStream = mockCourtClientService.uploadStream as jest.Mock
       mockUploadStream.mockRejectedValueOnce(new PayloadTooLargeException())
@@ -284,8 +285,9 @@ describe('CourtService - Create document', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindById = mockCaseRepositoryService.findById as jest.Mock
-      mockFindById.mockRejectedValueOnce(new Error('Case lookup failed'))
+      const mockFindCase =
+        mockCaseRepositoryService.findByIdWithJudgeAndRegistrar as jest.Mock
+      mockFindCase.mockRejectedValueOnce(new Error('Case lookup failed'))
 
       const mockUploadStream = mockCourtClientService.uploadStream as jest.Mock
       mockUploadStream.mockRejectedValueOnce(new PayloadTooLargeException())

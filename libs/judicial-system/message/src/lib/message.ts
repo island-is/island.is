@@ -43,6 +43,9 @@ export enum MessageType {
   DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA = 'DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA', // This delivers the subpoena to the centralized file service to be served
   DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION = 'DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION',
   DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT = 'DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT',
+  // Copies the S3 object behind a case file that was created by duplicating an
+  // indictment, once the duplication has committed
+  DELIVERY_TO_STORAGE_DUPLICATED_CASE_FILE = 'DELIVERY_TO_STORAGE_DUPLICATED_CASE_FILE',
   NOTIFICATION = 'NOTIFICATION',
   APPEAL_CASE_NOTIFICATION = 'APPEAL_CASE_NOTIFICATION',
   INDICTMENT_CASE_NOTIFICATION = 'INDICTMENT_CASE_NOTIFICATION',
@@ -105,6 +108,8 @@ export const messageEndpoint: { [key in MessageType]: string } = {
     'deliverSubpoenaRevocationToNationalCommissionersOffice',
   DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT:
     'deliverVerdictToNationalCommissionersOffice',
+  DELIVERY_TO_STORAGE_DUPLICATED_CASE_FILE:
+    'deliverDuplicatedCaseFileToStorage',
   NOTIFICATION: 'notification',
   APPEAL_CASE_NOTIFICATION: 'appealCaseNotification',
   SUBPOENA_NOTIFICATION: 'subpoenaNotification',

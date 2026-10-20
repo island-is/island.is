@@ -1,4 +1,4 @@
-import type { Dispatch, FC, SetStateAction } from 'react'
+import type { Dispatch, FC, ReactNode, SetStateAction } from 'react'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
@@ -13,13 +13,16 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  isIndictmentCase,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import InputName from '@island.is/judicial-system-web/src/components/Inputs/InputName'
 import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
 import type {
-  Case,
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -39,14 +42,15 @@ import {
 
 interface Props {
   defendant: Defendant
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   onChange: (updatedDefendant: UpdateDefendantInput) => void
   updateDefendantState: (
     update: UpdateDefendantInput,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => void
   onDelete?: (defendant: Defendant) => Promise<void>
+  children?: ReactNode
 }
 
 const DefendantInfo: FC<Props> = (props) => {
@@ -57,6 +61,7 @@ const DefendantInfo: FC<Props> = (props) => {
     onDelete,
     onChange,
     updateDefendantState,
+    children,
   } = props
   const { formatMessage } = useIntl()
 
@@ -137,19 +142,34 @@ const DefendantInfo: FC<Props> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessData, error])
 
+  const title = isIndictmentCase(workingCase.type)
+    ? undefined
+    : isRestrictionCase(workingCase.type)
+    ? 'Sakborningur'
+    : 'Varnaraðili'
+
   return (
     <BlueBox className={stack({ gap: 2 })}>
-      {onDelete && (
-        <Box display="flex" justifyContent="flexEnd">
-          <Button
-            onClick={() => onDelete(defendant)}
-            colorScheme="destructive"
-            variant="text"
-            size="small"
-            data-testid="deleteDefendantButton"
-          >
-            Eyða
-          </Button>
+      {(title || onDelete) && (
+        <Box display="flex" alignItems="center" justifyContent="spaceBetween">
+          {title ? (
+            <Text as="h3" variant="h4">
+              {title}
+            </Text>
+          ) : (
+            <span />
+          )}
+          {onDelete && (
+            <Button
+              onClick={() => onDelete(defendant)}
+              colorScheme="destructive"
+              variant="text"
+              size="small"
+              data-testid="deleteDefendantButton"
+            >
+              Eyða
+            </Button>
+          )}
         </Box>
       )}
       {!isIndictmentCase(workingCase.type) && (
@@ -331,6 +351,7 @@ const DefendantInfo: FC<Props> = (props) => {
           </GridColumn>
         </GridRow>
       </GridContainer>
+      {children}
     </BlueBox>
   )
 }

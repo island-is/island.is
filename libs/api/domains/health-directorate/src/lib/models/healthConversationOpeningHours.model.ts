@@ -7,6 +7,12 @@ export class HealthDirectorateHealthConversationOpeningWindow {
 
   @Field({ description: 'HH:mm:ss, UTC.' })
   windowClose!: string
+
+  @Field({
+    description:
+      'True when the window spans the whole day, so there is no closing time to show or warn about.',
+  })
+  isAllDay!: boolean
 }
 
 @ObjectType()

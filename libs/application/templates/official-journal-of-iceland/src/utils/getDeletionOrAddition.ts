@@ -6,6 +6,12 @@
  */
 import qq from '@hugsmidjan/qj/qq'
 import { HTMLText } from '@island.is/regulations'
+import {
+  escapeHtml,
+  isLetteredList,
+  removeDiffAttributes,
+  removeInsertions,
+} from './formatAmendingUtils'
 
 export const getLiPoint = (num: number, isStaflidur: boolean) => {
   const charNum = num > 22 ? 23 : num - 1
@@ -18,22 +24,112 @@ export const formatListItemDiff = (item: Element) => {
   let oldLiText = ''
   let newLiText = ''
   let liItemHtml = '' as HTMLText
-  let lidur = 0
   const returningArray: HTMLText[] = []
+  // "Töluliður 1, " for an item whose nested list has changes, so each of
+  // them is cited under it, not only the first.
+  const parentLabels = new Map<Element, string>()
+  const labelsAbove = (liItem: Element) => {
+    let labels = ''
+    for (
+      let li = liItem.parentElement?.closest('li');
+      li && item.contains(li);
+      li = li.parentElement?.closest('li')
+    ) {
+      labels = (parentLabels.get(li) ?? '') + labels
+    }
+    return labels as HTMLText
+  }
+  // Items restated, added or removed as a whole, with any list nested in them
+  const wholeItems = new Set<Element>()
+  const isInWholeItem = (liItem: Element) => {
+    for (
+      let li = liItem.parentElement?.closest('li');
+      li && item.contains(li);
+      li = li.parentElement?.closest('li')
+    ) {
+      if (wholeItems.has(li)) return true
+    }
+    return false
+  }
   qq('ol > li', item).forEach((liItem) => {
-    lidur++
+    if (isInWholeItem(liItem)) {
+      return
+    }
+    // The item's number in its own list. The loop also visits the items of
+    // nested lists, so a running count numbered every item after a nested
+    // list too high.
+    const lidur =
+      Array.from(liItem.parentElement?.children ?? [])
+        .filter((e) => e.nodeName.toLowerCase() === 'li')
+        .indexOf(liItem) + 1
 
     const liHasDeletion = !!liItem.querySelector('del')
     const liHasInsert = !!liItem.querySelector('ins')
 
     if (liHasDeletion || liHasInsert) {
+      liItemHtml = labelsAbove(liItem)
+      const isStaflidur = isLetteredList(liItem?.parentElement)
+
+      // Formatting changed, wording did not: nothing deleted, and everything
+      // inserted is <ins class="mod">. Only the item's own marks count; a
+      // change inside a list nested in it goes through the nested path below.
+      const ownMarks = Array.from(liItem.querySelectorAll('ins, del')).filter(
+        (e) => e.closest('li') === liItem,
+      )
+      const isFormatOnly =
+        ownMarks.length > 0 &&
+        ownMarks.every(
+          (e) =>
+            e.nodeName.toLowerCase() === 'ins' && e.classList.contains('mod'),
+        )
+      if (isFormatOnly) {
+        returningArray.push(
+          `${liItemHtml}${liItemHtml ? 'snið' : 'Snið'} ${getLiPoint(
+            lidur,
+            isStaflidur,
+          )}${isStaflidur ? '-liðar' : '. tölul.'} hefur breyst.` as HTMLText,
+        )
+        // Changes in a list nested in this item follow, and are cited under it
+        const hasNestedChange =
+          liItem.querySelectorAll('ins, del').length > ownMarks.length
+        if (hasNestedChange) {
+          parentLabels.set(
+            liItem,
+            `${isStaflidur ? 'Stafliður' : 'Töluliður'} ${getLiPoint(
+              lidur,
+              isStaflidur,
+            )}, `,
+          )
+        }
+        return
+      }
+
       const oldLiElement = liItem.cloneNode(true) as Element
-      oldLiElement.querySelectorAll('ins').forEach((e) => e.remove())
+      removeInsertions(oldLiElement)
       oldLiText = oldLiElement.textContent || ''
 
       const newLiElement = liItem.cloneNode(true) as Element
       newLiElement.querySelectorAll('del').forEach((e) => e.remove())
-      newLiText = newLiElement.textContent || ''
+      newLiText = escapeHtml(newLiElement.textContent || '')
+
+      // A list nested in the item is restated after the item's own text, as
+      // a list: in the item's text it would run together.
+      const nestedLists = Array.from(newLiElement.children).filter((e) =>
+        ['ol', 'ul'].includes(e.nodeName.toLowerCase()),
+      )
+      nestedLists.forEach((list) => {
+        list.remove()
+        list
+          .querySelectorAll('ins')
+          .forEach((e) => e.replaceWith(...Array.from(e.childNodes)))
+        // A removed item is left empty by removing what was deleted
+        list.querySelectorAll('li').forEach((li) => {
+          if (!li.textContent?.trim()) li.remove()
+        })
+        removeDiffAttributes(list)
+      })
+      const ownLiText = escapeHtml(newLiElement.textContent || '')
+      const nestedListHtml = nestedLists.map((list) => list.outerHTML)
 
       const directArray = Array.from(liItem.children)
       const containsDirect = directArray.find((e) => {
@@ -60,21 +156,19 @@ export const formatListItemDiff = (item: Element) => {
         return returning
       })
 
-      const isStaflidur =
-        liItem?.parentElement?.getAttribute('type')?.toLowerCase() === 'a'
-
-      if (containsDirect) {
-        liItemHtml = (liItemHtml + formatListItemDiff(liItem)) as HTMLText
-      } else {
-        liItemHtml = (liItemHtml +
+      if (!containsDirect) {
+        // Only a list nested in the item changed: its items follow, cited
+        // under this one.
+        parentLabels.set(
+          liItem,
           `${isStaflidur ? 'Stafliður' : 'Töluliður'} ${getLiPoint(
             lidur,
             isStaflidur,
-          )}, `) as HTMLText
-        formatListItemDiff(liItem)
-        lidur = 0
+          )}, `,
+        )
         return
       }
+      wholeItems.add(liItem)
 
       const isLiDeleted = newLiText === '' || newLiText === null
       const isLiAddition = oldLiText === '' || oldLiText === null
@@ -98,18 +192,18 @@ export const formatListItemDiff = (item: Element) => {
           `Á eftir ${getLiPoint(
             lidur - 1,
             isStaflidur,
-          )}${liLidurPassive} kemur nýr liður svohljóðandi, og breytist númer annarra lið til samræmis: ${newLiText}`) as HTMLText
+          )}${liLidurPassive} kemur nýr liður svohljóðandi, og breytist númer annarra liða til samræmis: ${ownLiText}`) as HTMLText
 
-        returningArray.push(liItemHtml)
+        returningArray.push(liItemHtml, ...(nestedListHtml as HTMLText[]))
         liItemHtml = '' as HTMLText
       } else {
         liItemHtml = (liItemHtml +
           `${getLiPoint(
             lidur,
             isStaflidur,
-          )}${liLidurShortened} orðast svo: ${newLiText}`) as HTMLText
+          )}${liLidurShortened} orðast svo: ${ownLiText}`) as HTMLText
 
-        returningArray.push(liItemHtml)
+        returningArray.push(liItemHtml, ...(nestedListHtml as HTMLText[]))
         liItemHtml = '' as HTMLText
       }
     }
@@ -127,7 +221,7 @@ export const getDeletionOrAddition = (
   const oldTextElement = item.cloneNode(true) as Element
   const newTextElement = item.cloneNode(true) as Element
 
-  oldTextElement.querySelectorAll('ins').forEach((e) => e.remove())
+  removeInsertions(oldTextElement)
   oldText = oldTextElement.textContent || ''
 
   newTextElement.querySelectorAll('del').forEach((e) => e.remove())
@@ -135,26 +229,47 @@ export const getDeletionOrAddition = (
 
   let liHtml = '' as HTMLText
   if (type === 'lidur') {
-    liHtml = `<p>${formatListItemDiff(item).join('</p><p>')}</p>` as HTMLText
+    const items = formatListItemDiff(item)
+    // A restated nested list is markup of its own, not a sentence
+    liHtml = items
+      .map((i) => (/^<(ol|ul)\b/.test(i) ? i : `<p>${i}</p>`))
+      .join('') as HTMLText
+    newText = escapeHtml(newText)
   } else {
-    oldTextElement.querySelectorAll('ins').forEach((e) => e.remove())
-    oldText = oldTextElement.textContent || ''
-
-    newTextElement.querySelectorAll('del').forEach((e) => e.remove())
-
     if (type === 'greinTitle') {
       const tempElement = newTextElement
+
+      // A renumbered heading's new number (<ins>3</ins>. gr.) is not part of
+      // the title; unwrap it so the "N. gr." label can be split off below.
+      const [leadingIns] = Array.from(tempElement.querySelectorAll('ins'))
+      if (
+        leadingIns &&
+        /^\d+$/.test(leadingIns.textContent?.trim() ?? '') &&
+        (tempElement.textContent ?? '')
+          .trimStart()
+          .startsWith(`${leadingIns.textContent?.trim()}.`)
+      ) {
+        leadingIns.replaceWith(leadingIns.textContent ?? '')
+      }
 
       const insElements = tempElement.querySelectorAll('ins')
 
       insElements.forEach((insElement) => {
+        // Formatting changed, text did not: nothing new to break the line on.
+        if (insElement.classList.contains('mod')) {
+          return
+        }
         const content = insElement.textContent
         insElement.textContent = ` ${content}<br />`
       })
 
       const modifiedTextContent = tempElement?.textContent?.trim()
 
-      const modContent = modifiedTextContent ?? ''
+      // Escape the text but keep the <br /> added above.
+      const modContent = escapeHtml(modifiedTextContent ?? '').replace(
+        /&lt;br \/&gt;/g,
+        '<br />',
+      )
       const match = modContent.match(/^\d+\.\s*gr\.\s*(<br\s*\/?>)?$/)
       if (match) {
         newText = modContent
@@ -163,9 +278,10 @@ export const getDeletionOrAddition = (
         newText = parts[1] ? parts[1] : modContent
       }
     } else {
-      newText = newTextElement.textContent || ''
+      newText = escapeHtml(newTextElement.textContent || '')
     }
   }
+  oldText = escapeHtml(oldText)
 
   const isDeleted = newText === '' || newText === null || newText === '<br />'
   const isAddition = oldText === '' || oldText === null

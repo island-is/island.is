@@ -471,6 +471,19 @@ export const mNotifications = defineMessages({
     id: 'sp.notifications:paper-mail-aria-label',
     defaultMessage: 'Fá tilkynningar í bréfpósti?',
   },
+  actionablePriorityOnlyTitle: {
+    id: 'sp.notifications:actionable-priority-only-title',
+    defaultMessage: 'Aðeins viðbragðstilkynningar',
+  },
+  actionablePriorityOnlyDescription: {
+    id: 'sp.notifications:actionable-priority-only-description',
+    defaultMessage:
+      'Fáðu eingöngu tilkynningar sem krefjast viðbragðs frá þér, svo þú missir ekki af mikilvægum atriðum þótt þú viljir ekki fá allar tilkynningar.',
+  },
+  actionablePriorityOnlyAriaLabel: {
+    id: 'sp.notifications:actionable-priority-only-aria-label',
+    defaultMessage: 'Fá aðeins viðbragðstilkynningar?',
+  },
 })
 
 export const emailsMsg = defineMessages({
@@ -657,6 +670,22 @@ export const contractsMessages = defineMessages({
     id: 'sp.contracts:contracts-overview-subtitle',
     defaultMessage:
       'Hér finnur þú upplýsingar um þína samninga úr leiguskrá Húsnæðis og Mannvirkjastofnunar.',
+  },
+  contractsOverviewLink1Url: {
+    id: 'sp.contracts:contracts-overview-link-1-url',
+    defaultMessage: 'https://island.is/gerd-og-skraning-husaleigusamninga',
+  },
+  contractsOverviewLink1Text: {
+    id: 'sp.contracts:contracts-overview-link-1-text',
+    defaultMessage: 'Gerð og skráning húsaleigusamninga',
+  },
+  contractsOverviewLink2Url: {
+    id: 'sp.contracts:contracts-overview-link-2-url',
+    defaultMessage: 'https://island.is/umsokn-um-husnaedisbaetur',
+  },
+  contractsOverviewLink2Text: {
+    id: 'sp.contracts:contracts-overview-link-2-text',
+    defaultMessage: 'Umsókn um húsnæðisbætur',
   },
   agreementNumber: {
     id: 'sp.contracts:agreement-number',

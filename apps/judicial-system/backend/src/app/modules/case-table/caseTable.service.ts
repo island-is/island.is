@@ -18,7 +18,9 @@ import { AppealCase, CaseRepositoryService, Defendant } from '../repository'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
+import { toDisplayCases } from './caseTable.types'
 import {
+  getAccessIncludes,
   getActionOnRowClick,
   getAllIncludes,
   getAttributes,
@@ -74,6 +76,7 @@ export class CaseTableService {
       whereOptionsByType.map(async ({ type, whereOptions }) => {
         const [include, globalOrder] = getGlobalIncludes(
           whereOptions.includes ?? {},
+          user,
         )
 
         const cases = await this.caseRepositoryService.findAll({
@@ -122,15 +125,15 @@ export class CaseTableService {
       order: globalOrder,
     })
 
-    const displayCases = whereOptions.displayCases
-      ? whereOptions.displayCases(cases)
-      : cases
+    // Every list produces rows the same shape - see CaseTableRowCase. A list
+    // that says nothing is about the case-level appeal.
+    const rows = toDisplayCases(cases, whereOptions.displayCases)
 
     return {
-      rowCount: displayCases.length,
-      rows: displayCases.map((c) => ({
+      rowCount: rows.length,
+      rows: rows.map((c) => ({
         caseId: c.id,
-        appealCaseId: c.appealCase?.id,
+        appealCaseId: c.appeal?.id,
         defendantIds: c.defendants?.map((d: Defendant) => d.id),
         isMyCase: isMyCase(c, user),
         actionOnRowClick: getActionOnRowClick(c, user),
@@ -242,10 +245,40 @@ export class CaseTableService {
               },
             ]
           : []),
+        // The verdict appeal is a row of its own for court of appeals users,
+        // the same as a ruling order appeal. The access rule already joins it
+        // to ask whether it exists, but only for its id - a row needs its
+        // number too, so this query joins it itself.
+        ...(isCoaUser
+          ? [
+              {
+                model: AppealCase,
+                as: 'verdictAppealCase',
+                required: false,
+                attributes: [
+                  'id',
+                  'appealCaseNumber',
+                  'appealState',
+                  'appealReceivedByCourtDate',
+                ],
+              },
+            ]
+          : []),
+        // Whatever the access rule reads and this query has not joined itself.
+        ...getAccessIncludes(user, [
+          'defendants',
+          'appealCase',
+          // Only joined for court of appeals users, so only declared for them -
+          // claiming it unconditionally would make this query drop the join for
+          // everyone else the day a rule starts reading that alias.
+          ...(isCoaUser
+            ? (['rulingOrderAppealCases', 'verdictAppealCase'] as const)
+            : []),
+        ]),
       ],
       where: {
         [Op.and]: [
-          userAccessWhereOptions(user),
+          userAccessWhereOptions(user).where,
           {
             [Op.or]: [
               literal(`
@@ -304,13 +337,19 @@ export class CaseTableService {
       user,
     )
 
-    // Mirrors the appeal_state predicates in courtOfAppealsCasesAccessWhereOptions —
-    // only appeals visible to COA users should produce result rows.
-    const isQualifyingAppealForCoa = (a: AppealCase): boolean =>
+    // Mirrors the ruling appeal predicates in
+    // courtOfAppealsCasesAccessWhereOptions — only appeals visible to COA
+    // users should produce result rows.
+    const isQualifyingRulingAppealForCoa = (a: AppealCase): boolean =>
       a.appealState === AppealCaseState.RECEIVED ||
       a.appealState === AppealCaseState.COMPLETED ||
       (a.appealState === AppealCaseState.WITHDRAWN &&
         Boolean(a.appealReceivedByCourtDate))
+
+    // A verdict appeal is the court's from the moment it is filed, which is
+    // why the access rule asks only that it exists. Reusing the rule above
+    // would keep a newly filed appeal out of search while the court's own
+    // list is already showing it.
 
     const rows = cases.flatMap((c) => {
       const caseMatchedValue = (c.get('matchedValue') as string) ?? ''
@@ -326,13 +365,14 @@ export class CaseTableService {
 
       const caseTableTypes = caseTableTypesMap.get(c.id) ?? []
 
-      // For COA users emit one row per qualifying appeal (case-level + each
-      // ruling-order). For other roles emit a single row carrying the
-      // case-level appeal number, with no appealCaseId.
+      // For COA users emit one row per qualifying appeal - the case-level one,
+      // each ruling order one, and the verdict appeal. For other roles emit a
+      // single row carrying the case-level appeal number, with no
+      // appealCaseId.
       type AppealCell = { id: string | null; appealCaseNumber: string | null }
       const appealCases: AppealCell[] = isCoaUser
         ? [
-            ...(c.appealCase && isQualifyingAppealForCoa(c.appealCase)
+            ...(c.appealCase && isQualifyingRulingAppealForCoa(c.appealCase)
               ? [
                   {
                     id: c.appealCase.id,
@@ -341,11 +381,20 @@ export class CaseTableService {
                 ]
               : []),
             ...(c.rulingOrderAppealCases ?? [])
-              .filter(isQualifyingAppealForCoa)
+              .filter(isQualifyingRulingAppealForCoa)
               .map((a) => ({
                 id: a.id,
                 appealCaseNumber: a.appealCaseNumber ?? null,
               })),
+            ...(c.verdictAppealCase
+              ? [
+                  {
+                    id: c.verdictAppealCase.id,
+                    appealCaseNumber:
+                      c.verdictAppealCase.appealCaseNumber ?? null,
+                  },
+                ]
+              : []),
           ]
         : [
             {

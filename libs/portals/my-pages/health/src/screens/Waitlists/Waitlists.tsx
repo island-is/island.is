@@ -127,7 +127,6 @@ const Waitlists: React.FC = () => {
               eyebrow={waitlist?.organization}
               tag={{
                 label: waitlist.status,
-                outlined: false,
                 variant: mapStatusToColor(waitlist.statusId),
               }}
               cta={{

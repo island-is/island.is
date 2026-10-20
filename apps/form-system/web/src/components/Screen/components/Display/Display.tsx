@@ -38,6 +38,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.APPLICANT]: ApplicantDisplay,
   [FieldTypesEnum.PAYMENT_QUANTITY]: DefaultDisplay,
   [FieldTypesEnum.ASSETS]: AssetDisplay,
+  [FieldTypesEnum.FAMILY]: NationalIdDisplay,
 } as const
 
 export const Display = ({

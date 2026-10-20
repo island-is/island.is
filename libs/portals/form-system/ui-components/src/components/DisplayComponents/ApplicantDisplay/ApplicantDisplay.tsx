@@ -61,7 +61,6 @@ export const ApplicantDisplay = ({ item }: Props) => {
 
   return (
     <Box
-      component="form"
       display="flex"
       flexDirection="column"
       justifyContent="spaceBetween"

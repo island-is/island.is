@@ -20,6 +20,9 @@ interface Props {
   caseId: string
   defendant: Defendant
   isFine: boolean
+  // Set once the decision is no longer the reviewer's to change, because the
+  // appeal it made has been received by the court of appeals.
+  disabled?: boolean
 }
 
 /**
@@ -28,7 +31,7 @@ interface Props {
  * and saved together by ReviewDecisionModal.
  */
 export const ReviewDecision: FC<Props> = (props) => {
-  const { caseId, defendant, isFine } = props
+  const { caseId, defendant, isFine, disabled } = props
 
   const { user } = useContext(UserContext)
   const { setWorkingCase } = useContext(FormContext)
@@ -61,6 +64,7 @@ export const ReviewDecision: FC<Props> = (props) => {
         }
         onChange={() => choose(IndictmentCaseReviewDecision.APPEAL)}
         backgroundColor="white"
+        disabled={disabled}
         large
       />
       <RadioButton
@@ -74,6 +78,7 @@ export const ReviewDecision: FC<Props> = (props) => {
         }
         onChange={() => choose(IndictmentCaseReviewDecision.ACCEPT)}
         backgroundColor="white"
+        disabled={disabled}
         large
       />
     </div>

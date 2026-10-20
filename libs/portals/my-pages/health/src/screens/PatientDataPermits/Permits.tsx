@@ -102,7 +102,11 @@ const PatientDataPermits: FC = () => {
               heading={formatMessage(messages.patientDataPermit)}
               headingVariant="h4"
               text={formatMessage(messages.patientDataSharedDescription)}
-              tag={permitTagSelector(permit.status, formatMessage)}
+              tag={permitTagSelector(
+                permit.status,
+                formatMessage,
+                permit.validFrom,
+              )}
               cta={{
                 size: 'small',
                 variant: 'text',

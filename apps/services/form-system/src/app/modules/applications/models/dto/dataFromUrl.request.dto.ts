@@ -55,12 +55,12 @@ export class DataFromUrlReqDto {
   @IsString()
   @ApiPropertyOptional()
   @IsOptional()
-  loggedInUserNationalId?: string
+  actorNationalId?: string
 
   @IsString()
   @ApiPropertyOptional()
   @IsOptional()
-  applicantNationalId?: string
+  nationalId?: string
 
   @IsString()
   @ApiPropertyOptional()

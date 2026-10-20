@@ -1,9 +1,9 @@
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { HealthDirectorateHealthConversationRecipientBlockedReason } from '@island.is/api/schema'
+import { HealthDirectorateHealthConversationRecipientAvailability as Availability } from '@island.is/api/schema'
 import { messages } from '../../../lib/messages'
 import { HealthConversationRecipientFragment } from '../NewHealthConversation.generated'
-import { getClosingSoonInfo, getTodaysWindow } from '../utils/messagingWindow'
+import { formatTimeLabel, isClosingSoon } from '../utils/messagingWindow'
 import ClosedRecipientAlert from './ClosedRecipientAlert'
 
 interface Props {
@@ -12,12 +12,8 @@ interface Props {
 
 const ConversationAvailabilityAlert = ({ recipient }: Props) => {
   const { formatMessage } = useLocale()
-  const blockedReason = recipient.conversationBlockedReason
 
-  if (
-    blockedReason ===
-    HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW
-  ) {
+  if (recipient.availability === Availability.CLOSED) {
     return (
       <Box marginBottom={3}>
         <ClosedRecipientAlert recipient={recipient} />
@@ -25,7 +21,7 @@ const ConversationAvailabilityAlert = ({ recipient }: Props) => {
     )
   }
 
-  if (blockedReason) {
+  if (recipient.availability === Availability.NEVER) {
     return (
       <Box marginBottom={3}>
         <AlertMessage
@@ -41,9 +37,9 @@ const ConversationAvailabilityAlert = ({ recipient }: Props) => {
     )
   }
 
-  const closingSoon = getClosingSoonInfo(getTodaysWindow(recipient))
+  const closeTime = formatTimeLabel(recipient.todaysWindow?.windowClose)
 
-  if (!closingSoon.isClosingSoon) return null
+  if (!isClosingSoon(recipient.closesAt) || !closeTime) return null
 
   return (
     <Box marginBottom={3}>
@@ -51,9 +47,7 @@ const ConversationAvailabilityAlert = ({ recipient }: Props) => {
         type="warning"
         title={formatMessage(messages.healthConversationClosingSoonTitle)}
         message={formatMessage(messages.healthConversationClosingSoonText, {
-          hasOpenTime: closingSoon.openLabel ? 'true' : 'false',
-          openTime: closingSoon.openLabel ?? '',
-          closeTime: closingSoon.closeLabel,
+          closeTime,
         })}
       />
     </Box>

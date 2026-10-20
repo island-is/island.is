@@ -12,7 +12,6 @@ export const lastJobSchema = z.object({
   nationalIdWithName: z.string().optional(),
   jobCodeId: z.string().optional(),
   percentage: z.string().optional(),
-  startDate: z.string().optional(),
   endDate: z.string().optional(),
 })
 
@@ -21,9 +20,7 @@ const isJobPartiallyFilled = (job: z.infer<typeof lastJobSchema>) =>
   job.employer?.nationalId ||
   job.employer?.name ||
   job.jobCodeId ||
-  job.percentage ||
-  job.startDate ||
-  job.endDate
+  job.percentage
 
 const validateJob = (
   job: z.infer<typeof lastJobSchema>,
@@ -40,18 +37,6 @@ const validateJob = (
   if (!job.percentage || Number(job.percentage) < 1) {
     ctx.addIssue({
       path: [prefix, index, 'percentage'],
-      code: z.ZodIssueCode.custom,
-    })
-  }
-  if (!job.startDate) {
-    ctx.addIssue({
-      path: [prefix, index, 'startDate'],
-      code: z.ZodIssueCode.custom,
-    })
-  }
-  if (!job.endDate) {
-    ctx.addIssue({
-      path: [prefix, index, 'endDate'],
       code: z.ZodIssueCode.custom,
     })
   }

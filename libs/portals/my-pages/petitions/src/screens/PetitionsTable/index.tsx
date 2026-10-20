@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react'
-import {
-  Box,
-  Pagination,
-  Stack,
-  Table as T,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Pagination, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { formatDate, pageSize } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import DropdownExport from './ExportPetition'
 import { Endorsement, EndorsementList } from '@island.is/api/schema'
 import { useGetPetitionEndorsementsPaginated } from '../hooks'
+import {
+  createColumnHelper,
+  PortalTable,
+} from '@island.is/portals/my-pages/core'
 
 const PetitionsTable = (data: {
   canEdit: boolean
@@ -28,6 +26,30 @@ const PetitionsTable = (data: {
 
   const { endorsements, loadingEndorsements, refetch } =
     useGetPetitionEndorsementsPaginated(data.listId, cursor, pageDirection)
+  const columnHelper = createColumnHelper<Endorsement>()
+  const columns = [
+    columnHelper.accessor('created', {
+      header: formatMessage(m.date),
+      cell: ({ getValue }) => formatDate(getValue()),
+      enableSorting: false,
+    }),
+    columnHelper.accessor((petition) => petition.meta.fullName, {
+      id: 'name',
+      header: formatMessage(m.name),
+      cell: ({ getValue }) => getValue() || formatMessage(m.noName),
+      enableSorting: false,
+    }),
+    ...(data.canEdit
+      ? [
+          columnHelper.accessor((petition) => petition.meta.locality, {
+            id: 'locality',
+            header: formatMessage(m.locality),
+            cell: ({ getValue }) => getValue() || '',
+            enableSorting: false,
+          }),
+        ]
+      : []),
+  ]
 
   useEffect(() => {
     refetch()
@@ -40,39 +62,14 @@ const PetitionsTable = (data: {
         <Box>{data.canEdit && <DropdownExport petitionId={data.listId} />}</Box>
       </Box>
       <Stack space={3}>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>{formatMessage(m.date)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.name)}</T.HeadData>
-              {data.canEdit && (
-                <T.HeadData>{formatMessage(m.locality)}</T.HeadData>
-              )}
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {!loadingEndorsements &&
-              endorsements.data?.map((petition: Endorsement) => {
-                return (
-                  <T.Row key={petition.id}>
-                    <T.Data text={{ variant: 'medium' }}>
-                      {formatDate(petition.created)}
-                    </T.Data>
-                    <T.Data text={{ variant: 'medium' }}>
-                      {petition.meta.fullName
-                        ? petition.meta.fullName
-                        : formatMessage(m.noName)}
-                    </T.Data>
-                    {data.canEdit && (
-                      <T.Data text={{ variant: 'medium' }}>
-                        {petition.meta.locality ? petition.meta.locality : ''}
-                      </T.Data>
-                    )}
-                  </T.Row>
-                )
-              })}
-          </T.Body>
-        </T.Table>
+        <PortalTable
+          columns={columns}
+          data={endorsements.data ?? []}
+          loading={loadingEndorsements}
+          emptyMessage=""
+          getRowId={(petition) => petition.id}
+          mobileTitleKey="name"
+        />
 
         {endorsements && !endorsements.data?.length && (
           <Text>{formatMessage(m.noSignatures)}</Text>

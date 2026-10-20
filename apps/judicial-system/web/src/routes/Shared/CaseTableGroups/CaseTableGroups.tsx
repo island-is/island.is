@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 
 import { AlertMessage } from '@island.is/island-ui/core'
 import {
-  getCaseTableGroups,
   isDefenceUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
@@ -18,6 +17,7 @@ import {
 import CasesCard from '@island.is/judicial-system-web/src/components/Cards/CasesCard'
 import CasesDashboardLayout from '@island.is/judicial-system-web/src/components/Layouts/CasesDashboardLayout'
 import { CreateCaseButton } from '@island.is/judicial-system-web/src/routes/Shared/CreateCaseButton/CreateCaseButton'
+import { useCaseTableGroups } from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import * as styles from './CaseTableGroups.css'
@@ -27,7 +27,7 @@ const CaseTableGroups: FC = () => {
 
   const { user, hasError } = useContext(UserContext)
 
-  const groups = getCaseTableGroups(user)
+  const groups = useCaseTableGroups()
 
   return (
     <CasesLayout>

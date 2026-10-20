@@ -88,7 +88,6 @@ const Referrals: React.FC = () => {
               .join(' ')}
             tag={{
               label: referral?.stateDisplay ?? '',
-              outlined: false,
               variant: referralStatusToTagVariant(referral?.status ?? null),
             }}
             cta={{

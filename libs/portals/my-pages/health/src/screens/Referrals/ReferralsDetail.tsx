@@ -52,7 +52,10 @@ const ReferralsDetail: React.FC = () => {
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && (
-        <InfoLineStack space={1} label={formatMessage(messages.information)}>
+        <InfoLineStack
+          space={[0, 0, 1]}
+          label={formatMessage(messages.information)}
+        >
           <InfoLine
             label={formatMessage(messages.referralFrom)}
             content={

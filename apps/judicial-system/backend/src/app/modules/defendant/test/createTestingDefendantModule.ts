@@ -9,18 +9,19 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import {
-  addMessagesToQueue,
-  Message,
-  MessageService,
-} from '@island.is/judicial-system/message'
+import { Message, MessageService } from '@island.is/judicial-system/message'
 
+import { queueMessagesAfterCommit } from '../../../middleware'
+import { AppealCaseService } from '../../appeal-case/appealCase.service'
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
 import { EventLogService } from '../../event-log'
 import {
+  AppealEventLogRepositoryService,
+  AppealStatementDeadlineRepositoryService,
   CaseDefendantPoliceCaseNumberRepositoryService,
   CaseFileRepositoryService,
+  CaseRepositoryService,
   CivilClaimantRepositoryService,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
@@ -35,15 +36,19 @@ import { InternalDefendantController } from '../internalDefendant.controller'
 import { LimitedAccessDefendantController } from '../limitedAccessDefendant.controller'
 
 jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../user/user.service')
 jest.mock('../../court/court.service')
 jest.mock('../../case/case.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
+jest.mock('../../repository/services/appealEventLogRepository.service')
+jest.mock('../../repository/services/caseRepository.service')
 jest.mock(
   '../../repository/services/caseDefendantPoliceCaseNumber.repository.service',
 )
 jest.mock('../../event-log/eventLog.service')
+jest.mock('../../appeal-case/appealCase.service')
 
 export const createTestingDefendantModule = async () => {
   const defendantModule = await Test.createTestingModule({
@@ -61,10 +66,13 @@ export const createTestingDefendantModule = async () => {
       UserService,
       CourtService,
       CaseService,
+      CaseRepositoryService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,
+      AppealEventLogRepositoryService,
       CaseDefendantPoliceCaseNumberRepositoryService,
       EventLogService,
+      AppealCaseService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -86,8 +94,16 @@ export const createTestingDefendantModule = async () => {
       {
         provide: CaseFileRepositoryService,
         useValue: {
+          deleteAllForDefendant: jest.fn(),
           deleteAllForCivilClaimant: jest.fn(),
           deleteAllForCivilClaimantsOfCase: jest.fn(),
+        },
+      },
+      {
+        provide: AppealStatementDeadlineRepositoryService,
+        useValue: {
+          deleteAllForDefendant: jest.fn(),
+          deleteAllForCivilClaimant: jest.fn(),
         },
       },
       DefendantService,
@@ -101,14 +117,26 @@ export const createTestingDefendantModule = async () => {
 
   const courtService = defendantModule.get<CourtService>(CourtService)
 
+  const appealCaseService =
+    defendantModule.get<AppealCaseService>(AppealCaseService)
+
   const sequelize = defendantModule.get<Sequelize>(Sequelize)
 
   const defendantRepositoryService =
     defendantModule.get<DefendantRepositoryService>(DefendantRepositoryService)
 
+  const caseRepositoryService = defendantModule.get<CaseRepositoryService>(
+    CaseRepositoryService,
+  )
+
   const defendantEventLogRepositoryService =
     defendantModule.get<DefendantEventLogRepositoryService>(
       DefendantEventLogRepositoryService,
+    )
+
+  const appealEventLogRepositoryService =
+    defendantModule.get<AppealEventLogRepositoryService>(
+      AppealEventLogRepositoryService,
     )
 
   const caseDefendantPoliceCaseNumberRepositoryService =
@@ -140,6 +168,11 @@ export const createTestingDefendantModule = async () => {
   const caseFileRepositoryService =
     defendantModule.get<CaseFileRepositoryService>(CaseFileRepositoryService)
 
+  const appealStatementDeadlineRepositoryService =
+    defendantModule.get<AppealStatementDeadlineRepositoryService>(
+      AppealStatementDeadlineRepositoryService,
+    )
+
   const civilClaimantService =
     defendantModule.get<CivilClaimantService>(CivilClaimantService)
 
@@ -152,22 +185,27 @@ export const createTestingDefendantModule = async () => {
       InternalCivilClaimantController,
     )
 
-  const queuedMessages: Message[] = []
-  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
-  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
-    queuedMessages.push(...msgs)
+  // Every message the module queues goes through the helper, so this is the
+  // whole of what a request would send
+  const queuedMessagesAfterCommit: Message[] = []
+  const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+  mockQueueMessagesAfterCommit.mockImplementation((...msgs: Message[]) => {
+    queuedMessagesAfterCommit.push(...msgs)
   })
 
   defendantModule.close()
 
   return {
-    queuedMessages,
+    queuedMessagesAfterCommit,
     messageService,
     userService,
     courtService,
+    appealCaseService,
     sequelize,
     defendantRepositoryService,
+    caseRepositoryService,
     defendantEventLogRepositoryService,
+    appealEventLogRepositoryService,
     caseDefendantPoliceCaseNumberRepositoryService,
     defendantService,
     defendantController,
@@ -178,5 +216,6 @@ export const createTestingDefendantModule = async () => {
     civilClaimantController,
     civilClaimantRepositoryService,
     caseFileRepositoryService,
+    appealStatementDeadlineRepositoryService,
   }
 }

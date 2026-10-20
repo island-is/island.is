@@ -24,9 +24,11 @@ import {
   AircraftSearch,
   AlcoholLicencesList,
   BrokersList,
+  Calculator,
   CatchQuotaCalculator,
   Chart,
   ChartNumberBox,
+  ChartNumberBoxGroup,
   ChartsCard,
   ChartsCardsProps,
   DigitalIcelandMailingListThumbnailCard,
@@ -63,8 +65,10 @@ import {
 } from '@island.is/web/components'
 import {
   AccordionSlice as AccordionSliceSchema,
+  Calculator as CalculatorSchema,
   Chart as ChartSchema,
   ChartNumberBox as ChartNumberBoxSchema,
+  ChartNumberBoxGroup as ChartNumberBoxGroupSchema,
   ConnectedComponent,
   EmailSignup as EmailSignupSchema,
   Embed as EmbedSchema,
@@ -132,6 +136,9 @@ import { LandspitaliMenu } from '../components/connected/LandspitaliMenu'
 import { LandsretturCourtOfAppealAppeals } from '../components/connected/LandsretturCourtOfAppealAppeals'
 import { LatestVerdicts } from '../components/connected/LatestVerdicts'
 import LyfjastofnunAccordion from '../components/connected/lyfjastofnun/LyfjastofnunAccordion'
+import TaxiDriversWithOperatingLicenceList from '../components/connected/samgongustofa/TaxiDriversWithOperatingLicenceList/TaxiDriversWithOperatingLicenceList'
+import TaxiDriversWithWorkPermitList from '../components/connected/samgongustofa/TaxiDriversWithWorkPermitList/TaxiDriversWithWorkPermitList'
+import TaxiStationList from '../components/connected/samgongustofa/TaxiStationList/TaxiStationList'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import SyslumennDrivingInstructorList from '../components/connected/syslumenn/DrivingInstructorList/DrivingInstructorList'
@@ -241,6 +248,15 @@ export const webRenderConnectedComponent = (
       break
     case 'Sveinslisti/JourneymanList':
       connectedComponent = <JourneymanList slice={slice} />
+      break
+    case 'Samgongustofa/TaxiStationList':
+      connectedComponent = <TaxiStationList slice={slice} />
+      break
+    case 'Samgongustofa/TaxiDriversWithWorkPermitList':
+      connectedComponent = <TaxiDriversWithWorkPermitList slice={slice} />
+      break
+    case 'Samgongustofa/TaxiDriversWithOperatingLicenceList':
+      connectedComponent = <TaxiDriversWithOperatingLicenceList slice={slice} />
       break
     case 'Starfsrettindi/ProfessionRights':
       connectedComponent = <ProfessionRights slice={slice} />
@@ -419,6 +435,7 @@ const defaultRenderComponent = {
     slice.accordionItems && <AccordionSlice slice={slice} />,
   ConnectedComponent: (slice: ConnectedComponent) =>
     webRenderConnectedComponent(slice),
+  Calculator: (slice: CalculatorSchema) => <Calculator slice={slice} />,
   GraphCard: (chart: ChartsCardsProps['chart']) => <ChartsCard chart={chart} />,
   OneColumnText: (slice: OneColumnText) => <OneColumnTextSlice slice={slice} />,
   TwoColumnText: (slice: TwoColumnText) => <TwoColumnTextSlice slice={slice} />,
@@ -451,6 +468,11 @@ const defaultRenderComponent = {
   ChartNumberBox: (
     slice: ChartNumberBoxSchema & { chartNumberBoxId: string },
   ) => <ChartNumberBox slice={slice} />,
+  ChartNumberBoxGroup: (
+    slice: Omit<ChartNumberBoxGroupSchema, 'components'> & {
+      components: (ChartNumberBoxSchema & { chartNumberBoxId: string })[]
+    },
+  ) => <ChartNumberBoxGroup slice={slice} />,
   SectionWithImage: (slice: SectionWithImageSchema) => (
     <SectionWithImage
       title={slice.title}

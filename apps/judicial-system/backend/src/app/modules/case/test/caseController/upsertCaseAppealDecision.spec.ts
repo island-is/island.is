@@ -140,7 +140,7 @@ describe('CaseController - Upsert case appeal decision', () => {
       appealOrigin: AppealOrigin,
     ) => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           id: uuid(),

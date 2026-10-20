@@ -1,4 +1,4 @@
-import { Op, Transaction } from 'sequelize'
+import { literal, Op, Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
@@ -521,6 +521,58 @@ describe('CourtDocumentRepositoryService', () => {
       )
     })
 
+    // Only the sessions up to and including the target one set the next
+    // order - a later session's documents sit behind this one in the record.
+    it('ignores the documents of later court sessions', async () => {
+      courtDocumentModel.findOne.mockResolvedValueOnce({ id: 'own-3' })
+      courtSessionModel.findAll.mockResolvedValueOnce([
+        {
+          id: 'earlier-session',
+          filedDocuments: [{ id: 'own-0', documentOrder: 1 }],
+        },
+        {
+          id: courtSessionId,
+          filedDocuments: [{ id: 'own-1', documentOrder: 2 }],
+        },
+        {
+          id: 'later-session',
+          filedDocuments: [{ id: 'own-2', documentOrder: 9 }],
+        },
+      ])
+
+      await service.fileInCourtSession(caseId, courtSessionId, 'own-3', {
+        transaction,
+      })
+
+      expect(filedAtOrder()).toBe(3)
+    })
+
+    it('makes room for the document by pushing the ones behind it down', async () => {
+      courtDocumentModel.findOne.mockResolvedValueOnce({ id: 'own-3' })
+      courtSessionModel.findAll.mockResolvedValueOnce([
+        {
+          id: courtSessionId,
+          filedDocuments: [{ id: 'own-1', documentOrder: 2 }],
+        },
+        {
+          id: 'later-session',
+          filedDocuments: [{ id: 'own-2', documentOrder: 3 }],
+        },
+      ])
+
+      await service.fileInCourtSession(caseId, courtSessionId, 'own-3', {
+        transaction,
+      })
+
+      expect(courtDocumentModel.update).toHaveBeenCalledWith(
+        { documentOrder: literal('document_order + 1') },
+        {
+          where: { caseId, documentOrder: { [Op.gte]: 3 } },
+          transaction,
+        },
+      )
+    })
+
     it('files one of the case own documents at the end of the session', async () => {
       courtDocumentModel.findOne.mockResolvedValueOnce({ id: 'own-3' })
       courtSessionModel.findAll.mockResolvedValueOnce([
@@ -585,6 +637,37 @@ describe('CourtDocumentRepositoryService', () => {
         where: { id: 'own-1', caseId, courtSessionId },
         transaction,
       })
+    })
+  })
+
+  describe('removeFromCourtSession - closing the gap left behind', () => {
+    const caseId = uuid()
+    const courtSessionId = uuid()
+
+    beforeEach(async () => {
+      courtDocumentModel.findOne.mockResolvedValueOnce({
+        id: 'own-1',
+        documentOrder: 3,
+      })
+
+      await service.removeFromCourtSession(caseId, courtSessionId, 'own-1', {
+        transaction,
+      })
+    })
+
+    it('pulls every later document of the case one place up', () => {
+      expect(courtDocumentModel.update).toHaveBeenCalledWith(
+        { documentOrder: literal('document_order - 1') },
+        {
+          where: { caseId, documentOrder: { [Op.gt]: 3 } },
+          transaction,
+        },
+      )
+    })
+
+    // The document orders of the case are the only thing a removal touches.
+    it('adjusts nothing else', () => {
+      expect(courtDocumentModel.update).toHaveBeenCalledTimes(1)
     })
   })
 

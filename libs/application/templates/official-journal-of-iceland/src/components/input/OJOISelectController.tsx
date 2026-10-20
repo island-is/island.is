@@ -80,6 +80,10 @@ export const OJOISelectController = <T,>({
       return opt.value.id === defaultVal.id
     }
 
+    if (typeof opt.value === 'string' || typeof opt.value === 'number') {
+      return opt.value === defaultVal
+    }
+
     return undefined
   })
 

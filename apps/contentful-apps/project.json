@@ -96,6 +96,13 @@
     "lint": {
       "executor": "@nx/eslint:lint"
     },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "inputs": ["graphql-files", "{projectRoot}/**/*.{ts,tsx}"],
+      "options": {
+        "command": "graphql-codegen --config apps/contentful-apps/codegen.yml"
+      }
+    },
     "docker-next": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
     }

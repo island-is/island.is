@@ -2,7 +2,12 @@ import { ConfigType } from '@island.is/nest/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { Environment } from '@island.is/shared/types'
 
-import { AdminApi, Configuration, DelegationAdminApi } from '../../gen/fetch'
+import {
+  AdminApi,
+  Configuration,
+  DelegationAdminApi,
+  PublicApi,
+} from '../../gen/fetch'
 import { AuthAdminApiClientConfig } from './auth-admin-api-client.config'
 import { Provider } from '@nestjs/common'
 
@@ -24,6 +29,8 @@ export const AdminProdApi: AdminApiEnv = {
   key: 'AdminProdApi',
 }
 
+export const CurrentPublicApi = 'CurrentPublicApi'
+
 export const exportedApis: Provider[] = [
   AdminDevApi,
   AdminStagingApi,
@@ -44,6 +51,20 @@ export const exportedApis: Provider[] = [
         : undefined,
     inject: [AuthAdminApiClientConfig.KEY],
   }
+})
+
+exportedApis.push({
+  provide: CurrentPublicApi,
+  inject: [AuthAdminApiClientConfig.KEY],
+  useFactory: (config: ConfigType<typeof AuthAdminApiClientConfig>) =>
+    new PublicApi(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-auth-public-current-api',
+        }),
+        basePath: config.basePath,
+      }),
+    ),
 })
 
 exportedApis.push({

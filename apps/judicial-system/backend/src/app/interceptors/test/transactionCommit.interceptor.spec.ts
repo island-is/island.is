@@ -2,11 +2,7 @@ import { lastValueFrom, of, tap, throwError } from 'rxjs'
 import type { Transaction } from 'sequelize'
 import type { Sequelize } from 'sequelize-typescript'
 
-import {
-  CallHandler,
-  ExecutionContext,
-  InternalServerErrorException,
-} from '@nestjs/common'
+import { CallHandler, ExecutionContext } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 
@@ -141,29 +137,50 @@ describe('TransactionCommitInterceptor', () => {
       )
     })
 
-    it('should refuse a callback that registers another callback, without failing the request', async () => {
-      const second = jest.fn()
+    it('should run a callback registered by another callback, after the ones already registered', async () => {
+      const order: string[] = []
       const next: CallHandler = { handle: () => of('some value') }
 
       const value = await runInRequestContext(async () => {
         await getOrCreateTransaction(sequelize)
         registerAfterCommit(async () => {
-          // The slot is settled by the time the callbacks are drained, so this
-          // registration is refused: the callback would be appended to the
-          // array being iterated, and would run in a drain that has already
-          // passed the commit it was meant to follow.
-          registerAfterCommit(second)
+          order.push('first')
+          // The slot is committed while the callbacks are drained, so a
+          // callback announcing what another one did still runs, after those
+          // registered before it
+          registerAfterCommit(async () => {
+            order.push('third')
+          })
+        })
+        registerAfterCommit(async () => {
+          order.push('second')
         })
 
         return await lastValueFrom(interceptor.intercept(context, next))
       })
 
-      expect(second).not.toHaveBeenCalled()
+      expect(order).toEqual(['first', 'second', 'third'])
       expect(value).toBe('some value')
-      expect(logger.error).toHaveBeenCalledWith(
-        'An after commit callback failed',
-        { error: expect.any(InternalServerErrorException) },
-      )
+      expect(logger.error).not.toHaveBeenCalled()
+    })
+
+    it('should hold the slot committed while the callbacks run and settle it after', async () => {
+      const seen: string[] = []
+      const next: CallHandler = { handle: () => of('some value') }
+
+      const settlement = await runInRequestContext(async () => {
+        await getOrCreateTransaction(sequelize)
+        registerAfterCommit(async () => {
+          seen.push(getTransactionContext()?.settlement ?? 'none')
+        })
+
+        await lastValueFrom(interceptor.intercept(context, next))
+
+        return getTransactionContext()?.settlement
+      })
+
+      expect(seen).toEqual(['committed'])
+      expect(settlement).toBe('settled')
     })
 
     it('should claim the slot before committing, so a response that closes mid commit does not roll it back', async () => {

@@ -15,6 +15,7 @@ import {
   BlankExcelTemplateApi,
   CompanyRegistryApi,
   CreateSalaryDraftApi,
+  DeleteSalaryReportDraftApi,
   DoeCompanyApi,
   EditOutliersApi,
   GetDraftCriteriaTreeApi,
@@ -33,6 +34,7 @@ import {
   SubCriterionCatalogApi,
   SubmitReportCommentApi,
   SubmitSalaryReportApi,
+  WithdrawSalaryReportApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
 import { mapUserToRole } from '../utils/mapUserToRole'
@@ -75,7 +77,15 @@ const template: ApplicationTemplate<
       type: AuthDelegationType.Custom,
     },
   ],
-  requiredScopes: [ApiScope.directorateOfEquality],
+  // Temporary: also accept the generic scope so existing custom delegates keep
+  // salary report access until their grants are copied to the salary scope with
+  // a DB write after release. Limitation: until then, anyone granted only the
+  // generic (equality report) scope can also open the salary report. Remove
+  // directorateOfEquality from this list in a follow-up PR once the copy has run.
+  requiredScopes: [
+    ApiScope.directorateOfEqualitySalary,
+    ApiScope.directorateOfEquality,
+  ],
   allowMultipleApplicationsInDraft: false,
   newApplicationButtonLabel: messages.general.newApplicationButtonLabel,
   stateMachineOptions: {
@@ -161,12 +171,11 @@ const template: ApplicationTemplate<
                 import('../forms/notAllowedForm').then((m) =>
                   Promise.resolve(m.NotAllowedForm),
                 ),
-              // Same dead-end form as the PREREQUISITES fall-through above,
-              // and it reads no answers either — this applicant is authorized,
-              // just ineligible. The one thing it does read is why: the form
-              // names the renewal window and the date it opens, which it cannot
-              // do from `application.applicant` alone.
-              read: { answers: [], externalData: ['salaryReportEligibility'] },
+              // Same dead-end form as the PREREQUISITES fall-through above, and
+              // it reads nothing either — this applicant is authorized, just
+              // ineligible, and the one reason DMR still gives is the missing
+              // jafnréttisáætlun the form names without being told.
+              read: { answers: [], externalData: [] },
               write: { answers: [] },
               delete: false,
             },
@@ -196,6 +205,7 @@ const template: ApplicationTemplate<
           // blocks the transition instead of silently landing the applicant
           // on POSTPONED/COMPLETED with a stale backend record.
           onExit: SubmitSalaryReportApi,
+          onDelete: DeleteSalaryReportDraftApi,
           // onEntry so the comment thread's non-empty check has fresh
           // externalData to read on first render — role.api alone never
           // auto-fetches outside PREREQUISITES, it only permits the on-demand
@@ -263,7 +273,11 @@ const template: ApplicationTemplate<
           name: 'Sending móttekin',
           progress: 0.9,
           status: FormModes.IN_PROGRESS,
-          lifecycle: pruneAfterDays(90),
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
+          onDelete: WithdrawSalaryReportApi,
           actionCard: {
             tag: {
               label: messages.postponed.tagLabel,
@@ -275,6 +289,12 @@ const template: ApplicationTemplate<
               button: messages.postponed.pendingActionButton,
               displayStatus: 'info',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: messages.inReview.rejectedHistoryLog,
+              },
+            ],
           },
           roles: [
             {
@@ -283,6 +303,9 @@ const template: ApplicationTemplate<
                 import('../forms/postponeReceivedForm').then((module) =>
                   Promise.resolve(module.postponeReceivedForm),
                 ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
               read: 'all',
               // Nothing on this screen writes an answer — the closer dispatches
               // an event. An empty array rather than an absent `write` all the
@@ -296,6 +319,13 @@ const template: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
               delete: false,
             },
           ],
@@ -307,6 +337,12 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: {
             target: States.POSTPONED,
           },
+          // DMR dispatches REJECT when a reviewer denies the POSTPONED report.
+          // It is best-effort and not retried, so both POSTPONED states have to
+          // accept it or the application is left behind a report already closed.
+          [DefaultEvents.REJECT]: {
+            target: States.DENIED,
+          },
         },
       },
       [States.POSTPONED]: {
@@ -314,7 +350,17 @@ const template: ApplicationTemplate<
           name: 'Úrbótaáætlun',
           progress: 0.9,
           status: FormModes.IN_PROGRESS,
-          lifecycle: pruneAfterDays(90),
+          // Not pruned: this application is the only place the applicant can
+          // send the improvement plan from, and DMR keeps the report POSTPONED
+          // until the plan arrives, a reviewer denies it (REJECT below) or the
+          // applicant deletes the application (onDelete). Pruning after 90 days
+          // left the company unable to send the plan and, with DMR's 409 on a
+          // new salary report, unable to file again.
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
+          onDelete: WithdrawSalaryReportApi,
           // Fires on leaving POSTPONED (i.e. the final plan submit), PUTting
           // just the outlier explanations rather than resubmitting the whole
           // report — the report itself was already submitted via DRAFT's
@@ -345,6 +391,10 @@ const template: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: messages.historyLogs.postponed,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: messages.inReview.rejectedHistoryLog,
               },
             ],
           },
@@ -379,6 +429,18 @@ const template: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.EDIT,
+                  name: 'Breyta',
+                  type: 'primary',
+                },
+              ],
               delete: false,
             },
           ],
@@ -386,6 +448,10 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.IN_REVIEW,
+          },
+          // See the same transition on States.POSTPONE_RECEIVED.
+          [DefaultEvents.REJECT]: {
+            target: States.DENIED,
           },
           // DMR can dispatch EDIT independent of the application's own
           // frontend state — frontend states only pick which form renders,
@@ -465,6 +531,18 @@ const template: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
               delete: false,
             },
           ],
@@ -532,6 +610,23 @@ const template: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.EDIT,
+                  name: 'Breyta',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+              ],
               delete: false,
             },
           ],

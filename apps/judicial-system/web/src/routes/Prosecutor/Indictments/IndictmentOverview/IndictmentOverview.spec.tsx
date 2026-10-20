@@ -4,21 +4,25 @@ import { MockedProvider } from '@apollo/client/testing'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { Feature } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  Case,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  AppealCaseState,
+  AppealEventType,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   IndictmentCaseReviewDecision,
   InstitutionType,
   UserRole,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mockCase,
@@ -67,7 +71,7 @@ jest.mock('../../../../utils/hooks/useDefendants', () => ({
     isUpdatingDefendant: false,
     updateDefendantState: (
       update: { defendantId: string; indictmentReviewDecision: unknown },
-      setWorkingCase: (fn: (prev: Case) => Case) => void,
+      setWorkingCase: (fn: (prev: WorkingCase) => WorkingCase) => void,
     ) =>
       setWorkingCase((prev) => ({
         ...prev,
@@ -86,11 +90,10 @@ jest.mock('../../../../utils/hooks/useDefendants', () => ({
 
 // A form context whose working case actually updates, unlike the shared
 // wrapper's jest.fn setter.
-const StatefulFormContext: FC<PropsWithChildren<{ initialCase: Case }>> = ({
-  initialCase,
-  children,
-}) => {
-  const [workingCase, setWorkingCase] = useState<Case>(initialCase)
+const StatefulFormContext: FC<
+  PropsWithChildren<{ initialCase: WorkingCase }>
+> = ({ initialCase, children }) => {
+  const [workingCase, setWorkingCase] = useState<WorkingCase>(initialCase)
 
   return (
     <FormContext.Provider
@@ -176,7 +179,7 @@ describe('Prosecutor IndictmentOverview', () => {
   describe('confirming the review decisions', () => {
     // Two defendants; the first was already reviewed as ACCEPT, the second is
     // still undecided.
-    const reviewCase = (): Case => ({
+    const reviewCase = (): WorkingCase => ({
       ...mockCase(CaseType.INDICTMENT),
       state: CaseState.COMPLETED,
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
@@ -331,5 +334,212 @@ describe('Prosecutor IndictmentOverview', () => {
       await waitFor(() => expect(mockUpdateDefendant).toHaveBeenCalledTimes(1))
       expect(mockPush).not.toHaveBeenCalled()
     })
+  })
+
+  describe('the verdict appeal the decision comes to', () => {
+    // A ruling pronounced long enough ago that the prosecution's deadline still
+    // runs, so nothing here is a late appeal unless a test says so.
+    const rulingDate = new Date(
+      Date.now() - 2 * 24 * 60 * 60 * 1000,
+    ).toISOString()
+    const openDeadline = new Date(
+      Date.now() + 26 * 24 * 60 * 60 * 1000,
+    ).toISOString()
+
+    const appealCase = (
+      theCase: Partial<WorkingCase> & {
+        verdictAppealCase?: WorkingCase['verdictAppealCase']
+      },
+    ): WorkingCase => ({
+      ...mockCase(CaseType.INDICTMENT),
+      state: CaseState.COMPLETED,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      indictmentReviewer: { id: reviewerUser.id },
+      rulingDate,
+      indictmentAppealDeadline: openDeadline,
+      defendants: [
+        {
+          id: 'defendant_id',
+          name: 'Jón Sigurður Jónsson',
+          indictmentReviewDecision: null,
+          verdict: {
+            id: 'verdict_id',
+            appealDecision: VerdictAppealDecision.ACCEPT,
+          },
+        },
+      ],
+      ...theCase,
+    })
+
+    const renderCase = (theCase: WorkingCase, features: Feature[] = []) =>
+      render(
+        <MockedProvider
+          mocks={[...mockCaseTableMembershipQuery('test_id')]}
+          addTypename={false}
+        >
+          <FeatureContext.Provider value={{ features, isLoading: false }}>
+            <UserContext.Provider value={{ user: reviewerUser }}>
+              <IntlProviderWrapper>
+                <StatefulFormContext initialCase={theCase}>
+                  <IndictmentOverview />
+                  <div id="modal" />
+                </StatefulFormContext>
+              </IntlProviderWrapper>
+            </UserContext.Provider>
+          </FeatureContext.Provider>
+        </MockedProvider>,
+      )
+
+    beforeEach(() => {
+      mockUpdateDefendant.mockReset()
+      mockPush.mockReset()
+      mockUpdateDefendant.mockResolvedValue({ id: 'updated' })
+    })
+
+    // The card the reviewer reads before deciding: where the defendant stands,
+    // and how long the prosecution has left.
+    it('shows the defendant stance and the prosecution deadline', async () => {
+      renderCase(appealCase({}))
+
+      expect(
+        await screen.findByText('• Afstaða dómfellda: Unir dómi'),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          `• Áfrýjunarfrestur ákæruvalds: ${formatDate(openDeadline)}`,
+        ),
+      ).toBeInTheDocument()
+    })
+
+    it('reports the appeal on the card once the prosecution has made it', async () => {
+      renderCase(
+        appealCase({
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.APPEALED,
+            appealEventLogs: [
+              {
+                id: 'event_id',
+                created: '2026-05-25T10:00:00.000Z',
+                eventType: AppealEventType.APPEALED,
+                defendantId: 'defendant_id',
+                userRole: UserRole.PROSECUTOR,
+              },
+            ],
+          },
+        }),
+      )
+
+      expect(
+        await screen.findByText('• Ákæruvaldið áfrýjaði 25.05.2026'),
+      ).toBeInTheDocument()
+      expect(
+        screen.queryByText(/Áfrýjunarfrestur ákæruvalds/),
+      ).not.toBeInTheDocument()
+    })
+
+    it('spells out every decision being confirmed', async () => {
+      renderCase(appealCase({}))
+
+      await userEvent.click(
+        await screen.findByLabelText('Áfrýja héraðsdómi til Landsréttar', {
+          selector: '#review-option-appeal-defendant_id',
+        }),
+      )
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Ljúka yfirlestri' }),
+      )
+
+      expect(
+        await screen.findByText('Viltu staðfesta eftirfarandi ákvörðun:'),
+      ).toBeInTheDocument()
+      expect(screen.getByText('Jón Sigurður Jónsson:')).toBeInTheDocument()
+      // The page footer carries a "Til baka" of its own, so the modal's is
+      // picked out by its own test id.
+      expect(screen.getByTestId('modalSecondaryButton')).toHaveTextContent(
+        'Til baka',
+      )
+    })
+
+    // The deadline is soft: the appeal goes through, but the reviewer is told
+    // it is late before confirming.
+    it('warns before an appeal made after the deadline', async () => {
+      const expired = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+      renderCase(appealCase({ indictmentAppealDeadline: expired }), [
+        Feature.INDICTMENT_APPEAL,
+      ])
+
+      await userEvent.click(
+        await screen.findByLabelText('Áfrýja héraðsdómi til Landsréttar', {
+          selector: '#review-option-appeal-defendant_id',
+        }),
+      )
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Ljúka yfirlestri' }),
+      )
+
+      expect(
+        await screen.findByText('Áfrýjun eftir að fresti lauk'),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText(`Áfrýjunarfrestur rann út ${formatDate(expired)}.`),
+      ).toBeInTheDocument()
+    })
+
+    // Once the court of appeals has the appeal, the decision that made it is no
+    // longer the reviewer's to change.
+    it.each([AppealCaseState.RECEIVED, AppealCaseState.COMPLETED])(
+      'locks the decision once the appeal is %s',
+      async (appealState) => {
+        const { container } = renderCase(
+          appealCase({
+            verdictAppealCase: {
+              id: 'verdict_appeal_case_id',
+              appealState,
+              appealEventLogs: [],
+            },
+          }),
+          [Feature.INDICTMENT_APPEAL],
+        )
+
+        await waitFor(() =>
+          expect(
+            container.querySelector('#review-option-appeal-defendant_id'),
+          ).toBeDisabled(),
+        )
+        expect(
+          container.querySelector('#review-option-accept-defendant_id'),
+        ).toBeDisabled()
+        expect(
+          screen.queryByRole('button', { name: 'Ljúka yfirlestri' }),
+        ).not.toBeInTheDocument()
+      },
+    )
+
+    // While the appeal is still the reviewer's, the decision stays theirs.
+    it.each([AppealCaseState.APPEALED, AppealCaseState.WITHDRAWN])(
+      'leaves the decision open while the appeal is %s',
+      async (appealState) => {
+        const { container } = renderCase(
+          appealCase({
+            verdictAppealCase: {
+              id: 'verdict_appeal_case_id',
+              appealState,
+              appealEventLogs: [],
+            },
+          }),
+          [Feature.INDICTMENT_APPEAL],
+        )
+
+        await waitFor(() =>
+          expect(
+            container.querySelector('#review-option-appeal-defendant_id'),
+          ).not.toBeDisabled(),
+        )
+        expect(
+          screen.getByRole('button', { name: 'Ljúka yfirlestri' }),
+        ).toBeInTheDocument()
+      },
+    )
   })
 })

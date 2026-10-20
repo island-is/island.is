@@ -15,6 +15,7 @@ describe('NotificationsController', () => {
   let controller: NotificationsController
   let notificationsService: NotificationsService
   let queueService: QueueService
+  let logger: { info: jest.Mock }
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -42,7 +43,10 @@ describe('NotificationsController', () => {
         },
         {
           provide: 'IslandIsMessageQueue/QueueService/notifications',
-          useValue: { add: jest.fn().mockResolvedValue('mockQueueId') },
+          useValue: {
+            add: jest.fn().mockResolvedValue('mockQueueId'),
+            queueName: 'notifications-test',
+          },
         },
         {
           provide: CacheInterceptor,
@@ -55,6 +59,7 @@ describe('NotificationsController', () => {
     notificationsService =
       module.get<NotificationsService>(NotificationsService)
     queueService = module.get('IslandIsMessageQueue/QueueService/notifications')
+    logger = module.get<{ info: jest.Mock }>(LOGGER_PROVIDER)
   })
 
   // Individual tests go here
@@ -113,6 +118,7 @@ describe('NotificationsController', () => {
   describe('createHnippNotification', () => {
     it('should validate and queue a new Hnipp notification, returning a response with the id', async () => {
       const createHnippNotificationDto: CreateHnippNotificationDto = {
+        senderId: '0101010100',
         recipient: '1234567890',
         templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
         args: [
@@ -141,17 +147,11 @@ describe('NotificationsController', () => {
       const mockQueueId = 'mockQueueId'
       jest.spyOn(queueService, 'add').mockResolvedValue(mockQueueId)
 
-      let validationError
-      try {
-        await controller.createHnippNotification(createHnippNotificationDto)
-      } catch (error) {
-        validationError = error
-      }
+      const result = await controller.createHnippNotification(
+        createHnippNotificationDto,
+      )
 
-      // Asserting the validation passed by checking no error was thrown
-      expect(validationError).toBeUndefined()
-
-      // Additionally, checking the validate method was called correctly
+      expect(result).toEqual({ id: mockQueueId })
       expect(notificationsService.validate).toHaveBeenCalledWith(
         mockTemplate,
         createHnippNotificationDto.args,
@@ -161,12 +161,17 @@ describe('NotificationsController', () => {
         createHnippNotificationDto.args,
       )
 
-      // Assert that the queueService.add was called with any argument, considering
-      // the test setup does not specify the exact argument structure.
-      expect(queueService.add).toHaveBeenCalledWith(expect.anything())
-
-      // If reaching this point without errors, validation is considered successful.
-      expect(true).toBe(true) // This is implicitly true if no error was thrown.
+      expect(queueService.add).toHaveBeenCalledWith(createHnippNotificationDto)
+      expect(logger.info).toHaveBeenCalledWith('Message queued', {
+        messageId: mockQueueId,
+        templateId: createHnippNotificationDto.templateId,
+        senderId: createHnippNotificationDto.senderId,
+        queueName: queueService.queueName,
+        args: [
+          { key: 'organization', length: 'Test Organization'.length },
+          { key: 'documentId', length: '1234'.length },
+        ],
+      })
     })
   })
 

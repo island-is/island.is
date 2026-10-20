@@ -59,11 +59,14 @@ export type UpdateCaseFile = {
   rulingFileId?: string | null
 }
 
-// Where a copied case file points: the S3 key its own object was copied to,
-// and the copies of the defendant and civil claimant the original referenced,
-// if any.
+// Where a copied case file points: the S3 key of its own object, whether that
+// object is there yet, and the copies of the defendant and civil claimant the
+// original referenced, if any. The flag is stated rather than inherited from
+// the original, whose object is accessible: the duplication of an indictment
+// copies the object only after its transaction has committed.
 export type CopyCaseFileTarget = {
   key: string
+  isKeyAccessible: boolean
   defendantId?: string
   civilClaimantId?: string
 }
@@ -386,11 +389,11 @@ export class CaseFileRepositoryService {
   }
 
   // Creates the row for a copy of a case file on another case. The copy is a
-  // fully independent draft: it points at its own S3 object (the caller copies
-  // the object and supplies the new key), goes back to being stored only in
-  // RVG, and loses the hash, which was computed for the original key. The
-  // police file id is kept so a file already fetched from the police system
-  // (LÖKE) is not offered for re-upload on the copy.
+  // fully independent draft: it points at its own S3 object (the caller
+  // supplies the new key and says whether the object is there yet), goes back
+  // to being stored only in RVG, and loses the hash, which was computed for the
+  // original key. The police file id is kept so a file already fetched from
+  // the police system (LÖKE) is not offered for re-upload on the copy.
   async copyToCase(
     sourceFile: CaseFile,
     newCaseId: string,
@@ -408,6 +411,7 @@ export class CaseFileRepositoryService {
           id: undefined,
           caseId: newCaseId,
           key: target.key,
+          isKeyAccessible: target.isKeyAccessible,
           state: CaseFileState.STORED_IN_RVG,
           defendantId: target.defendantId,
           civilClaimantId: target.civilClaimantId,
@@ -530,6 +534,43 @@ export class CaseFileRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error copying the case files linked to no defendant of case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // A defendant's files go with the defendant. Files are soft-deleted, so the
+  // row stays for anything that references it, but the defendant reference has
+  // to be cleared: the foreign key does not cascade, and a soft-deleted row
+  // still pointing at the defendant would block the defendant's own delete.
+  async deleteAllForDefendant(
+    caseId: string,
+    defendantId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Deleting the case files of defendant ${defendantId} of case ${caseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.caseFileModel.update(
+        {
+          state: CaseFileState.DELETED,
+          isKeyAccessible: false,
+          defendantId: null,
+        },
+        {
+          where: { caseId, defendantId },
+          transaction: options.transaction,
+        },
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error deleting the case files of defendant ${defendantId} of case ${caseId}:`,
         { error },
       )
 

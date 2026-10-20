@@ -15,18 +15,20 @@ import {
   Answered,
   formatDate,
   IntroWrapper,
+  STAFRAEN_HEILSA_SLUG,
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { FC, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { HealthPaths, messages } from '../..'
+import { messages } from '../..'
 import * as styles from './Questionnaires.css'
 import {
   useGetAnsweredQuestionnaireQuery,
   useGetQuestionnaireLazyQuery,
 } from './questionnaires.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
+import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 
 const AnsweredQuestionnaire: FC = () => {
   useNamespaces('sp.health')
@@ -36,11 +38,18 @@ const AnsweredQuestionnaire: FC = () => {
     submissionId?: string
   }>()
   const navigate = useNavigate()
+  const paths = useTreatmentScopedPaths()
   useHealthPlausibleSwap()
 
   const { formatMessage, lang } = useLocale()
-  const [currentSubmission, setCurrentSubmission] =
-    useState<QuestionnaireSubmissionDetail>()
+  const [selectedSubmissionId, setSelectedSubmissionId] = useState(
+    submissionId ?? '',
+  )
+
+  // The route can change submission while this component stays mounted
+  useEffect(() => {
+    setSelectedSubmissionId(submissionId ?? '')
+  }, [submissionId])
 
   const organization: QuestionnaireQuestionnairesOrganizationEnum =
     org === 'el'
@@ -66,18 +75,6 @@ const AnsweredQuestionnaire: FC = () => {
     useGetQuestionnaireLazyQuery({ fetchPolicy: 'network-only' })
 
   useEffect(() => {
-    // Set current submission from answered questionnaire data
-    const submission = data?.getAnsweredQuestionnaire?.data[0]
-    if (submission) {
-      setCurrentSubmission({
-        id: submission.submissionId ?? '',
-        lastUpdated: submission.date ?? '',
-        isDraft: submission.isDraft ?? false,
-      } as QuestionnaireSubmissionDetail)
-    }
-  }, [data, id, submissionId])
-
-  useEffect(() => {
     getQuestionnaire({
       variables: {
         input: { id: id ?? '', organization: organization },
@@ -86,9 +83,25 @@ const AnsweredQuestionnaire: FC = () => {
     })
   }, [getQuestionnaire, id, lang, organization])
 
+  // The submissions list is the source of truth for the dropdown. Fall back
+  // to the answered response until the list has loaded.
+  const answered = data?.getAnsweredQuestionnaire?.data[0]
+  const currentSubmission: QuestionnaireSubmissionDetail | undefined =
+    questionnaireData?.questionnairesDetail?.submissions?.find(
+      (submission) => submission.id === selectedSubmissionId,
+    ) ??
+    (answered
+      ? ({
+          id: answered.submissionId ?? selectedSubmissionId,
+          lastUpdated: answered.date ?? '',
+          isDraft: answered.isDraft ?? false,
+        } as QuestionnaireSubmissionDetail)
+      : undefined)
+
   const isDraft = currentSubmission?.isDraft
 
   const handleSubmissionChange = (submissionId: string) => {
+    setSelectedSubmissionId(submissionId)
     refetch({
       input: {
         id: id ?? '',
@@ -97,11 +110,6 @@ const AnsweredQuestionnaire: FC = () => {
       },
       locale: lang,
     })
-    const selectedSubmission =
-      questionnaireData?.questionnairesDetail?.submissions?.find(
-        (submission) => submission.id === submissionId,
-      )
-    setCurrentSubmission(selectedSubmission)
   }
 
   if (!id) {
@@ -112,13 +120,17 @@ const AnsweredQuestionnaire: FC = () => {
     )
   }
 
-  const link = HealthPaths.HealthQuestionnairesAnswer.replace(
-    ':org',
-    org?.toLocaleLowerCase() ?? '',
-  ).replace(':id', id)
+  const link = paths.questionnaireAnswer({
+    org: org?.toLocaleLowerCase() ?? '',
+    id,
+  })
 
   return (
     <IntroWrapper
+      serviceProvider={{
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaQuestionnairesTooltip),
+      }}
       title={
         data?.getAnsweredQuestionnaire?.data[0]?.title ??
         formatMessage(messages.questionnaire)

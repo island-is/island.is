@@ -2,10 +2,16 @@ import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
-import { Gender, User } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  Gender,
+  RequestSharedWithDefender,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
+import { runInRequestContext } from '../../../../test'
 import {
   Case,
   Defendant,
@@ -17,7 +23,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (courtCaseNumber?: string) => Promise<Then>
+type GivenWhenThen = (caseOverride?: Partial<Case>) => Promise<Then>
 
 describe('DefendantController - Create', () => {
   const user = { id: uuid() } as User
@@ -39,36 +45,39 @@ describe('DefendantController - Create', () => {
 
   beforeEach(async () => {
     const {
-      queuedMessages,
+      queuedMessagesAfterCommit,
       sequelize,
       defendantRepositoryService,
       defendantController,
     } = await createTestingDefendantModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
     mockDefendantRepositoryService = defendantRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     const mockCreate = mockDefendantRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(createdDefendant)
 
-    givenWhenThen = async (courtCaseNumber?: string) => {
+    givenWhenThen = async (caseOverride?: Partial<Case>) => {
       const then = {} as Then
 
-      await defendantController
-        .create(
-          theCase.id,
-          user,
-          { ...theCase, courtCaseNumber } as Case,
-          defendantToCreate,
-        )
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // Guards do not execute in controller unit tests, so the request
+      // context the handler takes its transaction from is set up here.
+      try {
+        await runInRequestContext(async () => {
+          then.result = await defendantController.create(
+            theCase.id,
+            user,
+            { ...theCase, ...caseOverride } as Case,
+            defendantToCreate,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -97,9 +106,29 @@ describe('DefendantController - Create', () => {
     })
   })
 
+  describe('defendant created on a request case with sharing timing', () => {
+    beforeEach(async () => {
+      await givenWhenThen({
+        type: CaseType.CUSTODY,
+        requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+      })
+    })
+
+    it('should seed requestSharedWithDefender from the case', () => {
+      expect(mockDefendantRepositoryService.create).toHaveBeenCalledWith(
+        {
+          ...defendantToCreate,
+          caseId,
+          requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+        },
+        { transaction },
+      )
+    })
+  })
+
   describe('defendant created after case is delivered to court', () => {
     beforeEach(async () => {
-      await givenWhenThen(uuid())
+      await givenWhenThen({ courtCaseNumber: uuid() })
     })
 
     it('should queue messages', () => {
