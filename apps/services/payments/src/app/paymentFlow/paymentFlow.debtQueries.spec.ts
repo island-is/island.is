@@ -311,6 +311,46 @@ describe('PaymentFlowService — debt flows for the worker', () => {
     })
   })
 
+  describe('hasPaymentCompletedEvent', () => {
+    const addCompleted = (paymentFlowId: string, correlationID: string) =>
+      paymentFlowEventModel.create({
+        paymentFlowId,
+        type: 'success',
+        reason: 'payment_completed',
+        paymentMethod: 'card',
+        occurredAt: new Date(),
+        message: 'Card payment completed successfully',
+        metadata: { payment: { correlationID } },
+        deliveredToUpstream: false,
+      })
+
+    it('is false before the payment was announced', async () => {
+      const flowId = await createFlow()
+
+      expect(await service.hasPaymentCompletedEvent(flowId, 'payment-1')).toBe(
+        false,
+      )
+    })
+
+    it('is true once recorded, whether delivered or not', async () => {
+      const flowId = await createFlow()
+      await addCompleted(flowId, 'payment-1')
+
+      expect(await service.hasPaymentCompletedEvent(flowId, 'payment-1')).toBe(
+        true,
+      )
+    })
+
+    it('is false for an earlier payment on the same flow', async () => {
+      const flowId = await createFlow({ type: 'charge' })
+      await addCompleted(flowId, 'payment-1')
+
+      expect(await service.hasPaymentCompletedEvent(flowId, 'payment-2')).toBe(
+        false,
+      )
+    })
+  })
+
   describe('deleteCardPaymentConfirmationAndFulfillment', () => {
     // In createFlow the confirmation id and the fulfillment's confirmationRefId are the flow id
     const isActive = async (flowId: string) => ({

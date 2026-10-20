@@ -895,6 +895,25 @@ export class PaymentFlowService {
     })
   }
 
+  /**
+   * Whether `payment_completed` was recorded for this capture, delivered or not: once it is, the
+   * notification that recorded it is delivering it, with its retries.
+   */
+  async hasPaymentCompletedEvent(
+    paymentFlowId: string,
+    correlationId: string,
+  ): Promise<boolean> {
+    const events = await this.paymentFlowEventModel.findAll({
+      where: { paymentFlowId, reason: 'payment_completed' },
+    })
+
+    return events.some(
+      (event) =>
+        (event.metadata as { payment?: { correlationID?: string } } | undefined)
+          ?.payment?.correlationID === correlationId,
+    )
+  }
+
   async logPaymentFlowUpdate(
     update: {
       paymentFlowId: string

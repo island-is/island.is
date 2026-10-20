@@ -22,6 +22,9 @@ describe('CardPaymentController — debt payments', () => {
     debts: [{ payId: 'pay-1', amount: 1000 }],
   }
 
+  // The flow service of the controller created last
+  let paymentFlowService: ReturnType<typeof createMockPaymentFlowService>
+
   const createController = (
     settleDebt: unknown,
     refundFails = false,
@@ -49,13 +52,23 @@ describe('CardPaymentController — debt payments', () => {
         .fn()
         .mockResolvedValue({ isSuccess: true } as never),
     } as unknown as RefundService
+    paymentFlowService = createMockPaymentFlowService()
 
     return new CardPaymentController(
       cardPaymentService,
-      createMockPaymentFlowService(),
+      paymentFlowService,
       refundService,
       createMockLogger(),
     )
+  }
+
+  const kept = {
+    settleDebt: jest.fn().mockRejectedValue(new Error('Step timeout') as never),
+    findPossibleDebtRegistration: jest.fn().mockResolvedValue({
+      status: 'pending',
+      hadAmbiguousAttempt: true,
+      isAttemptRunning: true,
+    } as never),
   }
 
   const rejected = { type: 'rejected', alreadySettled: false }
@@ -93,24 +106,57 @@ describe('CardPaymentController — debt payments', () => {
       (c: CardPaymentController) => c.chargeApplePay(getApplePayChargeInput()),
     ],
   ])(
-    'answers the %s payment when the saga failed but the payment may be registered',
+    'answers the %s payment when the saga failed but the payment may be registered, and tells the organisation',
     async (_name, charge) => {
-      const controller = createController(undefined, false, {
-        settleDebt: jest
-          .fn()
-          .mockRejectedValue(new Error('Step timeout') as never),
-        findPossibleDebtRegistration: jest.fn().mockResolvedValue({
-          status: 'pending',
-          hadAmbiguousAttempt: true,
-          isAttemptRunning: true,
-        } as never),
-      })
+      const controller = createController(undefined, false, kept)
 
       await expect(charge(controller)).resolves.toMatchObject({
         isSuccess: true,
       })
+
+      expect(paymentFlowService.hasPaymentCompletedEvent).toHaveBeenCalledWith(
+        debtFlow.id,
+        expect.any(String),
+      )
+      const reasons = paymentFlowService.logPaymentFlowUpdate.mock.calls
+        .map(([update]) => update.reason)
+        .filter((reason) => reason !== 'payment_started')
+      expect(reasons).toEqual(['payment_completed'])
+      expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'success',
+          reason: 'payment_completed',
+          metadata: { payment: expect.objectContaining({ isSuccess: true }) },
+        }),
+        expect.objectContaining({ throwOnError: false }),
+      )
     },
   )
+
+  it('does not tell the organisation again when the notification step recorded the payment', async () => {
+    const controller = createController(undefined, false, kept)
+    paymentFlowService.hasPaymentCompletedEvent.mockResolvedValue(true as never)
+
+    await expect(
+      controller.charge(getChargeCardInput()),
+    ).resolves.toMatchObject({ isSuccess: true })
+
+    const reasons = paymentFlowService.logPaymentFlowUpdate.mock.calls
+      .map(([update]) => update.reason)
+      .filter((reason) => reason !== 'payment_started')
+    expect(reasons).toEqual([])
+  })
+
+  it('answers the kept payment even when the organisation can not be told', async () => {
+    const controller = createController(undefined, false, kept)
+    paymentFlowService.hasPaymentCompletedEvent.mockRejectedValue(
+      new Error('Database error') as never,
+    )
+
+    await expect(
+      controller.charge(getChargeCardInput()),
+    ).resolves.toMatchObject({ isSuccess: true })
+  })
 
   it('succeeds when the registration is deferred to the worker', async () => {
     const controller = createController({

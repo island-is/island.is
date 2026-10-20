@@ -27,6 +27,7 @@ import { PaymentMethod } from '../../types'
 import { requireStepResult } from '../../utils/orchestrator'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
+import { notifyKeptDebtPayment } from './cardPayment.debt'
 import {
   createApplePayPaymentContext,
   createApplePayPaymentSaga,
@@ -254,7 +255,17 @@ export class CardPaymentController {
       // The rollback left a debt payment that may be registered with FJS as it is, see
       // keepDebtPayment: the payer paid, like when the webhook fails.
       if (context.metadata?.debtPaymentKept === true) {
+        const { paymentFlow } = requireStepResult(context, 'VALIDATE')
         const { paymentResult } = requireStepResult(context, 'CHARGE_CARD')
+
+        await notifyKeptDebtPayment({
+          paymentFlowService: this.paymentFlowService,
+          logger: this.logger,
+          ctx: context,
+          paymentFlow,
+          paymentResult,
+          message: 'Card payment completed successfully',
+        })
 
         return { ...paymentResult, correlationId: paymentResult.correlationID }
       }
@@ -355,7 +366,17 @@ export class CardPaymentController {
       // The rollback left a debt payment that may be registered with FJS as it is, see
       // keepDebtPayment: the payer paid, like when the webhook fails.
       if (context.metadata?.debtPaymentKept === true) {
+        const { paymentFlow } = requireStepResult(context, 'VALIDATE')
         const { paymentResult } = requireStepResult(context, 'CHARGE_APPLE_PAY')
+
+        await notifyKeptDebtPayment({
+          paymentFlowService: this.paymentFlowService,
+          logger: this.logger,
+          ctx: context,
+          paymentFlow,
+          paymentResult,
+          message: 'Apple Pay payment completed successfully',
+        })
 
         return { ...paymentResult, correlationId: paymentResult.correlationID }
       }

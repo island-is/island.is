@@ -64,6 +64,7 @@ export const createMockPaymentFlowService = (
 ): jest.Mocked<PaymentFlowService> => {
   const mock: Record<string, jest.Mock> = {
     logPaymentFlowUpdate: jest.fn().mockResolvedValue(resolved(undefined)),
+    hasPaymentCompletedEvent: jest.fn().mockResolvedValue(resolved(false)),
     validateCharge: jest.fn().mockResolvedValue(resolved(undefined)),
     deleteCardPaymentConfirmation: jest.fn().mockResolvedValue(
       resolved({

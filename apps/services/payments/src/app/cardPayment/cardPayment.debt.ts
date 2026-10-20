@@ -84,6 +84,55 @@ export const keepDebtPayment = async ({
 }
 
 /**
+ * Tells the organisation about a payment the rollback kept, see keepDebtPayment: the saga did
+ * not reach its notification step, or that step is the one that timed out. In the latter case
+ * `payment_completed` is recorded already and still being delivered, so it is not sent again.
+ * `payment_finalized` is the worker's, once the registration is through. Never throws, the
+ * payer is answered either way.
+ */
+export const notifyKeptDebtPayment = async ({
+  paymentFlowService,
+  logger,
+  ctx,
+  paymentFlow,
+  paymentResult,
+  message,
+}: {
+  paymentFlowService: PaymentFlowService
+  logger: Logger
+  ctx: CardPaymentContext | ApplePayPaymentContext
+  paymentFlow: PaymentFlowAttributes
+  paymentResult: CardPaymentSuccessResponse
+  message: string
+}): Promise<void> => {
+  try {
+    if (
+      await paymentFlowService.hasPaymentCompletedEvent(
+        ctx.paymentFlowId,
+        ctx.trackingData.correlationId,
+      )
+    ) {
+      return
+    }
+
+    await notifyPaymentCompleted({
+      paymentFlowService,
+      logger,
+      paymentFlowId: ctx.paymentFlowId,
+      paymentFlow,
+      settlement: undefined,
+      message,
+      paymentResult,
+    })
+  } catch (error) {
+    logger.error(
+      `[${ctx.paymentFlowId}] Failed to notify upstream of a kept debt payment`,
+      { error: (error as Error)?.message },
+    )
+  }
+}
+
+/**
  * Registers the captured payment with FJS for debt flows. A rejection throws, so that the saga
  * refunds the card, and every other outcome lets the payment complete: a deferred registration
  * is picked up by the worker.
