@@ -4,7 +4,7 @@ import {
   extractAuthority,
   formatDate,
   hasAnyChange,
-  hasSubtitle,
+  splitArticleTitle,
   updateAppendixWording,
 } from './formatAmendingUtils'
 
@@ -105,7 +105,7 @@ describe('escapeHtml', () => {
   })
 })
 
-describe('extractArticleTitleDisplay and hasSubtitle', () => {
+describe('extractArticleTitleDisplay and splitArticleTitle', () => {
   it.each([
     ['3. gr.', '3. gr.', false],
     ['3. gr. Gildistaka.', '3. gr.', true],
@@ -117,7 +117,7 @@ describe('extractArticleTitleDisplay and hasSubtitle', () => {
     ['II. Kafli', 'II. Kafli', false],
   ])('"%s"', (title, display, subtitle) => {
     expect(extractArticleTitleDisplay(title)).toBe(display)
-    expect(hasSubtitle(title)).toBe(subtitle)
+    expect(!!splitArticleTitle(title).subtitle).toBe(subtitle)
   })
 })
 

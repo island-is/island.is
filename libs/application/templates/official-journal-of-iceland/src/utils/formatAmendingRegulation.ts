@@ -941,11 +941,19 @@ export const formatAmendingRegBody = (
   // such as "Fylgiskjal", by the word alone.
   const articleText = articles.join('')
   const isNamedInText = (name: string) => {
-    const [, number] =
-      name.match(/^(?:fylgiskjal|viðauki)\s+([\p{L}\p{N}]+)/iu) ?? []
-    const word = '(?:fylgiskj|viðauk)\\p{L}*'
+    const [, kind, number] =
+      name.match(/^(fylgiskjal|viðauki)(?:\s+([\p{L}\p{N}]+))?/iu) ?? []
+    // A title that is neither, such as "Gjaldskrá", always gets its article
+    if (!kind) {
+      return false
+    }
+    // Only the title's own kind: "viðauka EES-samningsins" is no fylgiskjal
+    const word = `${/^f/i.test(kind) ? 'fylgiskj' : 'viðauk'}\\p{L}*`
+    // "viðauka II" or "II. viðauka"
     return new RegExp(
-      number ? `${word}\\s+${number}(?![\\p{L}\\p{N}])` : word,
+      number
+        ? `${word}\\s+${number}(?![\\p{L}\\p{N}])|(?<![\\p{L}\\p{N}])${number}\\.\\s+${word}`
+        : word,
       'iu',
     ).test(articleText)
   }

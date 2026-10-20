@@ -454,10 +454,11 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
         }),
       )
         .join('')
-        .match(/Við reglugerðina bætist nýr viðauki, [^,]+/g) ?? []
+        .match(/Við reglugerðina bætist [^,]+, [^,]+/g) ?? []
 
     it('leaves out the article of an appendix the text names', () => {
       expect(added('Sjá nánar í viðauka II.', 'Viðauki II')).toEqual([])
+      expect(added('Sjá nánar í II. viðauka.', 'Viðauki II')).toEqual([])
     })
 
     it('adds an article for each appendix the text does not name', () => {
@@ -472,6 +473,29 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
       ])
       expect(added('Sjá nánar í viðauka III.', 'Viðauki II')).toEqual([
         'Við reglugerðina bætist nýr viðauki, Viðauki II',
+      ])
+    })
+
+    it('does not take a viðauki for a fylgiskjal', () => {
+      expect(
+        added('Sjá XIII. viðauka EES-samningsins.', 'Fylgiskjal 1'),
+      ).toEqual(['Við reglugerðina bætist nýtt fylgiskjal, Fylgiskjal 1'])
+      expect(
+        body(
+          amend(
+            BASE.replace(
+              'Golf hotel india.',
+              'Sjá XIII. viðauka EES-samningsins.',
+            ),
+            { appendixes: [newAppendix('Fylgiskjal')] },
+          ),
+        ).join(''),
+      ).toContain('Við reglugerðina bætist nýtt fylgiskjal sem birt er')
+    })
+
+    it('always adds the article of an appendix named neither', () => {
+      expect(added('Sjá nánar í viðauka I.', 'Gjaldskrá')).toEqual([
+        'Við reglugerðina bætist nýr viðauki, Gjaldskrá',
       ])
     })
   })

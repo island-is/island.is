@@ -94,9 +94,6 @@ export const splitArticleTitle = (
 export const extractArticleTitleDisplay = (title: string): string =>
   splitArticleTitle(title).display
 
-export const hasSubtitle = (title: string): boolean =>
-  !!splitArticleTitle(title).subtitle
-
 /**
  * Whether a list is lettered: type="a" as in published regulations, or the
  * list-style-type the OJOI editor writes.
