@@ -32,6 +32,7 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { getLanguageToggleDialogConfig } from '@island.is/web/utils/languageToggleDialog'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import {
@@ -200,7 +201,12 @@ const DeterminationDetails: CustomScreen<DeterminationDetailsProps> = ({
   )
 }
 
-DeterminationDetails.getProps = async ({ apolloClient, query, locale }) => {
+DeterminationDetails.getProps = async ({
+  apolloClient,
+  query,
+  locale,
+  customPageData,
+}) => {
   const [{ data }, organizationPage, namespace] = await Promise.all([
     apolloClient.query<
       GetSupremeCourtDeterminationByIdQuery,
@@ -247,6 +253,9 @@ DeterminationDetails.getProps = async ({ apolloClient, query, locale }) => {
       is: '',
       en: '',
     },
+    languageToggleDialog: getLanguageToggleDialogConfig(
+      customPageData?.configJson,
+    ),
   }
 }
 

@@ -7,9 +7,12 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { AppealSummons } from '../../appeal-summons'
 import { CaseFile } from '../../file'
 import { User } from '../../user'
+import { AppealCourtSession } from './appealCourtSession.response'
 import { AppealEventLog } from './appealEventLog.response'
+import { AppealStatementDeadline } from './appealStatementDeadline.response'
 
 registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
 registerEnumType(AppealCaseType, { name: 'AppealCaseType' })
@@ -142,4 +145,17 @@ export class AppealCase {
   // ruling appeal into the appealedBy* fields above and strips it from the payload.
   @Field(() => [AppealEventLog], { nullable: true })
   readonly appealEventLogs?: AppealEventLog[]
+
+  // Only meaningful on a verdict appeal case (áfrýjunarstefna).
+  @Field(() => [AppealSummons], { nullable: true })
+  readonly appealSummonses?: AppealSummons[]
+
+  // Only a verdict appeal carries sessions; a ruling appeal is decided on the papers.
+  @Field(() => [AppealCourtSession], { nullable: true })
+  readonly courtSessions?: AppealCourtSession[]
+
+  // The statement deadlines the court of appeals has given the parties of a
+  // verdict appeal, one per party.
+  @Field(() => [AppealStatementDeadline], { nullable: true })
+  readonly statementDeadlines?: AppealStatementDeadline[]
 }

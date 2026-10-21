@@ -1,5 +1,12 @@
+import type { PaymentFlowDebtAttributes } from '../paymentFlow/models'
 import { PaymentStatus } from '../../types'
 import { CatalogItemWithQuantity } from '../../types/charges'
+
+/** A debt as a bank transfer needs it: Blikk shows each debt as an item. */
+export type BankTransferDebt = Pick<
+  PaymentFlowDebtAttributes,
+  'payId' | 'amount' | 'label'
+>
 
 /** Normalized bank-transfer status. */
 export enum BankTransferStatus {
@@ -26,6 +33,12 @@ export enum BankTransferPendingStatus {
   PROCESSING = 'processing',
 }
 
+/** Whether the payer is a company or a person. Carried on the bank-transfer log context to filter by. */
+export enum BankTransferPayerType {
+  COMPANY = 'company',
+  PERSON = 'person',
+}
+
 /** Who the provider debits for a bank transfer. */
 export interface BankTransferDebtor {
   // The individual who authenticates the payment (SCA) with their bank.
@@ -43,6 +56,8 @@ export interface CreateBankTransferPaymentInput extends BankTransferDebtor {
   callbackUrl?: string
   partnerRedirectUrl?: string
   items?: CatalogItemWithQuantity[]
+  // Debt flows send their debts as items instead of catalog items.
+  debts?: BankTransferDebt[]
   // Unix seconds.
   expiresAt?: number
   bankAccountNumber?: string

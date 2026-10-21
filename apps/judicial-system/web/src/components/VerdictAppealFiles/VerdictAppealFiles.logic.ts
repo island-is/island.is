@@ -1,10 +1,18 @@
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  AppealSummonsAction,
+  canIssueAppealSummons,
+  canPerformAppealSummonsAction,
   isCourtOfAppealsUser,
   isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import type {
+  AppealSummons,
   CaseFile,
   CaseFileCategory,
   Defendant,
@@ -85,5 +93,71 @@ export const showsAppealSummonses = (
   workingCase: Pick<WorkingCase, 'verdictAppealCase'>,
   user: User | undefined,
 ): boolean =>
-  isPublicProsecutionOfficeUser(user) &&
+  (isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user)) &&
   hasStandingVerdictAppeal(workingCase.verdictAppealCase)
+
+export const canConfirmAppealSummonsRow = (
+  summons: Pick<AppealSummons, 'confirmedDate' | 'sentToCourtOfAppealsDate'>,
+  user: User | undefined,
+): boolean =>
+  canPerformAppealSummonsAction(AppealSummonsAction.CONFIRM, summons, user)
+
+export const formatAppealSummonsConfirmedDate = (
+  confirmedDate?: string | null,
+): string | undefined => {
+  if (!confirmedDate) {
+    return undefined
+  }
+
+  const date = formatDate(confirmedDate, 'dd.MM.y')
+  const time = formatDate(confirmedDate, TIME_FORMAT)
+
+  if (!date || !time) {
+    return undefined
+  }
+
+  return `${date} kl. ${time}`
+}
+
+export const canShowIssueAppealSummons = (
+  workingCase: Pick<WorkingCase, 'verdictAppealCase'>,
+  user: User | undefined,
+): boolean =>
+  canIssueAppealSummons(
+    user,
+    hasStandingVerdictAppeal(workingCase.verdictAppealCase),
+  )
+
+export const formatAppealSummonsFileName = (
+  summons: Pick<AppealSummons, 'created'>,
+): string => {
+  const date = formatDate(summons.created, 'dd.MM.y')
+
+  return date ? `Áfrýjunarstefna ${date}.pdf` : 'Áfrýjunarstefna.pdf'
+}
+
+export const getAppealSummonsMenuItems = (
+  summons: Pick<AppealSummons, 'confirmedDate' | 'sentToCourtOfAppealsDate'>,
+  user: User | undefined,
+  onEdit: () => void,
+  onOpen: () => void,
+  onDelete: () => void,
+): ContextMenuItem[] => {
+  const items: ContextMenuItem[] = []
+
+  if (canPerformAppealSummonsAction(AppealSummonsAction.EDIT, summons, user)) {
+    items.push({ title: 'Breyta', onClick: onEdit, icon: 'pencil' })
+  }
+
+  if (canPerformAppealSummonsAction(AppealSummonsAction.OPEN, summons, user)) {
+    items.push({ title: 'Opna í nýjum flipa', onClick: onOpen, icon: 'open' })
+  }
+
+  if (
+    canPerformAppealSummonsAction(AppealSummonsAction.DELETE, summons, user)
+  ) {
+    items.push({ title: 'Eyða', onClick: onDelete, icon: 'trash' })
+  }
+
+  return items
+}

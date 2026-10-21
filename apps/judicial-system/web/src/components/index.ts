@@ -2,6 +2,7 @@ export { CourtCaseInfo, ProsecutorCaseInfo } from './CaseInfo/CaseInfo'
 export { default as AccordionListItem } from './AccordionListItem/AccordionListItem'
 export { default as BaseSelect } from './BaseSelect/BaseSelect'
 export { default as BlueBox } from './BlueBox/BlueBox'
+export { default as ExpandingSection } from './Motion/ExpandingSection'
 export { default as VerdictTimelineCard } from './Cards/VerdictTimelineCard/VerdictTimelineCard'
 export { default as DefenderVerdictTimelineCard } from './Cards/VerdictTimelineCard/DefenderVerdictTimelineCard'
 export { default as VerdictAppealFiles } from './VerdictAppealFiles/VerdictAppealFiles'
@@ -35,6 +36,7 @@ export { default as CourtRecordAccordionItem } from './AccordionItems/CourtRecor
 export { default as DateTime } from './DateTime/DateTime'
 export { default as Decision } from './Decision/Decision'
 export { default as DefenderInfo } from './DefenderInfo/DefenderInfo'
+export { default as RequestCaseDefenderInfo } from './RequestCaseDefenderInfo/RequestCaseDefenderInfo'
 export { default as ErrorBoundary } from './ErrorBoundary/ErrorBoundary'
 export {
   default as FeatureProvider,

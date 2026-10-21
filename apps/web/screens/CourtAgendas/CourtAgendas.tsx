@@ -24,6 +24,7 @@ import {
   GridRow,
   Hidden,
   Inline,
+  LinkV2,
   Select,
   Stack,
   Tag,
@@ -52,6 +53,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { parseCommaSeparatedListFromQuery } from '@island.is/web/units/parseCourtQueryParam'
+import { getLanguageToggleDialogConfig } from '@island.is/web/utils/languageToggleDialog'
 
 import {
   type CustomScreen,
@@ -71,6 +73,7 @@ import * as styles from './CourtAgendas.css'
 
 const ITEMS_PER_PAGE = 10
 const DEBOUNCE_TIME_IN_MS = 500
+const COURTS_FRONTPAGE_HREF = '/s/domstolar'
 
 const ALL_COURTS_TAG = ''
 const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómstólar'
@@ -999,11 +1002,13 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                       paddingTop={2}
                       paddingBottom={2}
                     >
-                      <img
-                        src="/assets/skjaldarmerki.svg"
-                        alt=""
-                        className={styles.logo}
-                      />
+                      <LinkV2 href={COURTS_FRONTPAGE_HREF}>
+                        <img
+                          src="/assets/skjaldarmerki.svg"
+                          alt={formatMessage(m.listPage.courtsFrontpageLinkAlt)}
+                          className={styles.logo}
+                        />
+                      </LinkV2>
                     </Box>
                   </Hidden>
                 </GridColumn>
@@ -1723,6 +1728,9 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
       is: '/dagskra-domstola',
       en: customPageData?.configJson?.englishFallbackUrl ?? '',
     },
+    languageToggleDialog: getLanguageToggleDialogConfig(
+      customPageData?.configJson,
+    ),
   }
 }
 

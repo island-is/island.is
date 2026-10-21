@@ -259,7 +259,23 @@ query Case($input: CaseQueryInput!) {
       id
       appealState
       appealType
+      appealCaseNumber
       appealConclusion
+      courtSessions {
+        id
+        created
+        sessionType
+        sessionDate
+        courtRoom
+      }
+      statementDeadlines {
+        id
+        created
+        modified
+        defendantId
+        civilClaimantId
+        deadline
+      }
       appealJudge1 {
         id
         name
@@ -278,10 +294,23 @@ query Case($input: CaseQueryInput!) {
         eventType
         appealOrigin
         defendantId
+        civilClaimantId
         userRole
         userName
         userTitle
         institutionName
+      }
+      appealSummonses {
+        id
+        created
+        confirmedDate
+        sentToCourtOfAppealsDate
+        defendants {
+          id
+          defendantId
+          appellantSide
+          claims
+        }
       }
     }
     rulingOrderAppealCases {

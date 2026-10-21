@@ -18,6 +18,7 @@ import { CourtService } from '../../court'
 import { EventLogService } from '../../event-log'
 import {
   AppealEventLogRepositoryService,
+  AppealStatementDeadlineRepositoryService,
   CaseDefendantPoliceCaseNumberRepositoryService,
   CaseFileRepositoryService,
   CaseRepositoryService,
@@ -98,6 +99,13 @@ export const createTestingDefendantModule = async () => {
           deleteAllForCivilClaimantsOfCase: jest.fn(),
         },
       },
+      {
+        provide: AppealStatementDeadlineRepositoryService,
+        useValue: {
+          deleteAllForDefendant: jest.fn(),
+          deleteAllForCivilClaimant: jest.fn(),
+        },
+      },
       DefendantService,
       CivilClaimantService,
     ],
@@ -160,6 +168,11 @@ export const createTestingDefendantModule = async () => {
   const caseFileRepositoryService =
     defendantModule.get<CaseFileRepositoryService>(CaseFileRepositoryService)
 
+  const appealStatementDeadlineRepositoryService =
+    defendantModule.get<AppealStatementDeadlineRepositoryService>(
+      AppealStatementDeadlineRepositoryService,
+    )
+
   const civilClaimantService =
     defendantModule.get<CivilClaimantService>(CivilClaimantService)
 
@@ -203,5 +216,6 @@ export const createTestingDefendantModule = async () => {
     civilClaimantController,
     civilClaimantRepositoryService,
     caseFileRepositoryService,
+    appealStatementDeadlineRepositoryService,
   }
 }
