@@ -72,7 +72,6 @@ export const DebouncedInput = ({
               variant="small"
               fontWeight="regular"
               replaceNewLinesWithBreaks={false}
-              bulletColor="dark400"
             >
               {tooltip}
             </MarkdownText>

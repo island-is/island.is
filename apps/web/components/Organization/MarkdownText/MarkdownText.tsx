@@ -9,7 +9,7 @@ import {
   Text,
   TextProps,
 } from '@island.is/island-ui/core'
-import { Colors, helperStyles } from '@island.is/island-ui/theme'
+import { helperStyles } from '@island.is/island-ui/theme'
 
 import * as styles from './MarkdownText.css'
 
@@ -44,7 +44,6 @@ interface MarkdownTextProps {
   openLinksInNewTab?: boolean
   /** What the icon says to a screen reader, e.g. "Opnast í nýjum flipa" */
   newTabLabel?: string
-  bulletColor?: Colors
 }
 
 export const MarkdownText = ({
@@ -55,7 +54,6 @@ export const MarkdownText = ({
   replaceNewLinesWithBreaks = true,
   openLinksInNewTab = false,
   newTabLabel,
-  bulletColor,
 }: MarkdownTextProps) => {
   const processedChildren = replaceNewLinesWithBreaks
     ? (children as string).replace(/\n/gi, '<br>')
@@ -100,7 +98,6 @@ export const MarkdownText = ({
               component: BulletList,
               props: {
                 space: 1,
-                color: bulletColor,
               },
             },
             li: {
