@@ -1,6 +1,7 @@
 import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
 
+import { COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   type AppealStatementParty,
@@ -172,6 +173,28 @@ export const getStatementDeadlineConfirmation = (
       'Aðilar máls fá tilkynningu um frestinn.',
     ],
   }
+}
+
+/**
+ * Where the court uploads the party's statement on its behalf. The appeal id
+ * keeps the page about this appeal, as every step's link does; the party is
+ * named the way the deadline rows name it, and the prosecution by naming
+ * nobody.
+ */
+export const getStatementUploadUrl = (
+  caseId: string,
+  appealCaseId: string,
+  party: Pick<StatementDeadlineParty, 'party'>,
+): string => {
+  const query = new URLSearchParams({ appealCaseId })
+
+  if (party.party.defendantId) {
+    query.set('defendantId', party.party.defendantId)
+  } else if (party.party.civilClaimantId) {
+    query.set('civilClaimantId', party.party.civilClaimantId)
+  }
+
+  return `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE}/${caseId}?${query}`
 }
 
 /**

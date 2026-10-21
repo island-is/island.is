@@ -148,6 +148,8 @@ export const COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE =
   '/landsrettur/afryjun/verjandi'
 export const COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE =
   '/landsrettur/afryjun/greinargerdarfrestir'
+export const COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE =
+  '/landsrettur/afryjun/greinargerd'
 export const COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE =
   '/landsrettur/afryjun/stada-og-lyktir'
 export const COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE =

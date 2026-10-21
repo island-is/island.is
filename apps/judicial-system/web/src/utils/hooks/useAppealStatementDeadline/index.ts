@@ -1,17 +1,24 @@
 import type {
+  AppealEventLog,
   AppealStatementDeadline,
+  FileAppealStatementInput,
   SetAppealStatementDeadlineInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
+import { useFileAppealStatementMutation } from './fileAppealStatement.generated'
 import { useSetAppealStatementDeadlineMutation } from './setAppealStatementDeadline.generated'
 
-// Gives a party of a verdict appeal its deadline to file a statement, or
-// moves the one it has - the backend tells the two apart. Returns the saved
-// deadline, or undefined when the request failed and a toast has said so.
+// The court's side of a party's statement in a verdict appeal: gives the
+// party its deadline, or moves the one it has - the backend tells the two
+// apart - and files the statement on the party's behalf once the court has
+// uploaded it. Each returns what was saved, or undefined when the request
+// failed and a toast has said so.
 const useAppealStatementDeadline = () => {
-  const [setAppealStatementDeadlineMutation, { loading }] =
+  const [setAppealStatementDeadlineMutation, { loading: isSetting }] =
     useSetAppealStatementDeadlineMutation()
+  const [fileAppealStatementMutation, { loading: isFiling }] =
+    useFileAppealStatementMutation()
 
   const setAppealStatementDeadline = async (
     input: SetAppealStatementDeadlineInput,
@@ -29,9 +36,27 @@ const useAppealStatementDeadline = () => {
     }
   }
 
+  const fileAppealStatement = async (
+    input: FileAppealStatementInput,
+  ): Promise<AppealEventLog | undefined> => {
+    try {
+      const { data } = await fileAppealStatementMutation({
+        variables: { input },
+      })
+
+      return data?.fileAppealStatement ?? undefined
+    } catch {
+      toast.error('Upp kom villa við að skrá greinargerð')
+
+      return undefined
+    }
+  }
+
   return {
     setAppealStatementDeadline,
-    isSettingAppealStatementDeadline: loading,
+    isSettingAppealStatementDeadline: isSetting,
+    fileAppealStatement,
+    isFilingAppealStatement: isFiling,
   }
 }
 
