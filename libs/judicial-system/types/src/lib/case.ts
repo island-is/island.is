@@ -491,8 +491,7 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
 // been completed.
 export const isIndictmentPdfReplaceableState = (
   state?: CaseState | null,
-): boolean =>
-  state === CaseState.SUBMITTED || state === CaseState.RECEIVED
+): boolean => state === CaseState.SUBMITTED || state === CaseState.RECEIVED
 
 export const getIndictmentCasePoliceState = (
   state?: CaseState | null,

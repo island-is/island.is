@@ -580,10 +580,7 @@ export class BackendService {
     caseId: string,
     replaceIndictmentPdf: { key: string },
   ): Promise<ReplaceIndictmentPdfResponse> {
-    return this.post(
-      `case/${caseId}/indictment/replace`,
-      replaceIndictmentPdf,
-    )
+    return this.post(`case/${caseId}/indictment/replace`, replaceIndictmentPdf)
   }
 
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {

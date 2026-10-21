@@ -77,10 +77,7 @@ describe('CaseController - Replace indictment pdf', () => {
       key,
       expect.anything(),
     )
-    expect(pdfService.deleteIndictmentUpload).toHaveBeenCalledWith(
-      theCase,
-      key,
-    )
+    expect(pdfService.deleteIndictmentUpload).toHaveBeenCalledWith(theCase, key)
   })
 
   it("refuses a key outside the case's own uploads", async () => {

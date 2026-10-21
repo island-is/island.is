@@ -53,10 +53,7 @@ describe('indictmentPdfReplacement', () => {
     ['a split case', { splitCaseId: uuid() }],
   ])('refuses %s', (_, override) => {
     expect(
-      canReplaceIndictmentPdf(
-        { ...theCase, ...override } as Case,
-        prosecutor,
-      ),
+      canReplaceIndictmentPdf({ ...theCase, ...override } as Case, prosecutor),
     ).toBe(false)
   })
 
