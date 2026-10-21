@@ -80,7 +80,7 @@ describe('getStatementFileCategories', () => {
 
 describe('isPartyStatementFile', () => {
   const category = CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT
-  const defendant = { party: { defendantId: 'd1' } }
+  const defendant = { ids: { defendantId: 'd1' } }
 
   it('matches a file of the category under the party', () => {
     expect(
@@ -131,7 +131,7 @@ describe('isPartyStatementFile', () => {
       isPartyStatementFile(
         { category: prosecutorCategory },
         prosecutorCategory,
-        { party: {} },
+        { ids: {} },
       ),
     ).toBe(true)
   })

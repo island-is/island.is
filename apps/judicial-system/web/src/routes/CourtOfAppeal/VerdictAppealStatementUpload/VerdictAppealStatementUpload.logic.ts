@@ -32,7 +32,7 @@ export const getStatementUploadParty = (
   }
 
   const party = getStatementDeadlineParties(theCase).find((candidate) =>
-    isSameAppealStatementParty(candidate.party, wanted),
+    isSameAppealStatementParty(candidate.ids, wanted),
   )
 
   return party && !party.hasFiledStatement ? party : undefined
@@ -69,9 +69,9 @@ export const isPartyStatementFile = (
     civilClaimantId?: string | null
   },
   category: CaseFileCategory,
-  party: Pick<StatementDeadlineParty, 'party'>,
+  party: Pick<StatementDeadlineParty, 'ids'>,
 ): boolean =>
-  file.category === category && isSameAppealStatementParty(file, party.party)
+  file.category === category && isSameAppealStatementParty(file, party.ids)
 
 // The line under the case number naming whose statement this is: the role,
 // and the name after it when there is one.

@@ -90,8 +90,8 @@ const VerdictAppealStatementDeadlines = () => {
     const saved = await setAppealStatementDeadline({
       caseId: workingCase.id,
       appealCaseId: verdictAppealCase.id,
-      defendantId: party.party.defendantId ?? undefined,
-      civilClaimantId: party.party.civilClaimantId ?? undefined,
+      defendantId: party.ids.defendantId ?? undefined,
+      civilClaimantId: party.ids.civilClaimantId ?? undefined,
       // The picker gives a day at midnight, and that is what is sent: the
       // backend compares deadlines as instants, so a time of day on one
       // would let the same day pass as an extension.

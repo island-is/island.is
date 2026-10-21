@@ -27,7 +27,9 @@ export interface StatementDeadlineParty {
   role: StatementDeadlineRole
   roleLabel: string
   name: string
-  party: AppealStatementParty
+  // How the backend names the party: a defendant id, a civil claimant id,
+  // or neither for the prosecution.
+  ids: AppealStatementParty
   deadline?: string
   hasFiledStatement: boolean
 }
@@ -60,16 +62,16 @@ export const getStatementDeadlineParties = (
     key: string,
     role: StatementDeadlineRole,
     name: string | null | undefined,
-    party: AppealStatementParty,
+    ids: AppealStatementParty,
   ): StatementDeadlineParty => ({
     key,
     role,
     roleLabel: roleLabels[role],
     name: name ?? '',
-    party,
+    ids,
     deadline:
-      findAppealStatementDeadline(deadlines, party)?.deadline ?? undefined,
-    hasFiledStatement: hasFiledAppealStatement(eventLogs, party),
+      findAppealStatementDeadline(deadlines, ids)?.deadline ?? undefined,
+    hasFiledStatement: hasFiledAppealStatement(eventLogs, ids),
   })
 
   return [
@@ -184,14 +186,14 @@ export const getStatementDeadlineConfirmation = (
 export const getStatementUploadUrl = (
   caseId: string,
   appealCaseId: string,
-  party: Pick<StatementDeadlineParty, 'party'>,
+  party: Pick<StatementDeadlineParty, 'ids'>,
 ): string => {
   const query = new URLSearchParams({ appealCaseId })
 
-  if (party.party.defendantId) {
-    query.set('defendantId', party.party.defendantId)
-  } else if (party.party.civilClaimantId) {
-    query.set('civilClaimantId', party.party.civilClaimantId)
+  if (party.ids.defendantId) {
+    query.set('defendantId', party.ids.defendantId)
+  } else if (party.ids.civilClaimantId) {
+    query.set('civilClaimantId', party.ids.civilClaimantId)
   }
 
   return `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE}/${caseId}?${query}`

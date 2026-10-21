@@ -62,9 +62,9 @@ describe('getStatementDeadlineParties', () => {
     const [defendant, prosecution, claimant] =
       getStatementDeadlineParties(theCase)
 
-    expect(defendant.party).toEqual({ defendantId: 'd1' })
-    expect(prosecution.party).toEqual({})
-    expect(claimant.party).toEqual({ civilClaimantId: 'c1' })
+    expect(defendant.ids).toEqual({ defendantId: 'd1' })
+    expect(prosecution.ids).toEqual({})
+    expect(claimant.ids).toEqual({ civilClaimantId: 'c1' })
   })
 
   it("reads each party its own deadline and nobody else's", () => {
@@ -294,13 +294,13 @@ describe('applyStatementDeadline', () => {
 describe('getStatementUploadUrl', () => {
   it('names the appeal and the party', () => {
     expect(
-      getStatementUploadUrl('case', 'appeal', { party: { defendantId: 'd1' } }),
+      getStatementUploadUrl('case', 'appeal', { ids: { defendantId: 'd1' } }),
     ).toBe(
       '/landsrettur/afryjun/greinargerd/case?appealCaseId=appeal&defendantId=d1',
     )
     expect(
       getStatementUploadUrl('case', 'appeal', {
-        party: { civilClaimantId: 'c1' },
+        ids: { civilClaimantId: 'c1' },
       }),
     ).toBe(
       '/landsrettur/afryjun/greinargerd/case?appealCaseId=appeal&civilClaimantId=c1',
@@ -308,7 +308,7 @@ describe('getStatementUploadUrl', () => {
   })
 
   it('names nobody for the prosecution', () => {
-    expect(getStatementUploadUrl('case', 'appeal', { party: {} })).toBe(
+    expect(getStatementUploadUrl('case', 'appeal', { ids: {} })).toBe(
       '/landsrettur/afryjun/greinargerd/case?appealCaseId=appeal',
     )
   })

@@ -76,8 +76,8 @@ const VerdictAppealStatementUpload = () => {
   const { onOpenFile } = useFileList({ caseId: workingCase.id })
   const { handleUpload } = useS3Upload(
     workingCase.id,
-    party?.party.defendantId ?? undefined,
-    party?.party.civilClaimantId ?? undefined,
+    party?.ids.defendantId ?? undefined,
+    party?.ids.civilClaimantId ?? undefined,
   )
 
   const deadlinesUrl = appendAppealCaseIdQuery(
@@ -101,8 +101,8 @@ const VerdictAppealStatementUpload = () => {
     addUploadFiles(files, {
       category,
       status: FileUploadStatus.done,
-      defendantId: party?.party.defendantId ?? undefined,
-      civilClaimantId: party?.party.civilClaimantId ?? undefined,
+      defendantId: party?.ids.defendantId ?? undefined,
+      civilClaimantId: party?.ids.civilClaimantId ?? undefined,
     })
 
   const submit = async () => {
@@ -122,8 +122,8 @@ const VerdictAppealStatementUpload = () => {
     const filed = await fileAppealStatement({
       caseId: workingCase.id,
       appealCaseId: verdictAppealCase.id,
-      defendantId: party.party.defendantId ?? undefined,
-      civilClaimantId: party.party.civilClaimantId ?? undefined,
+      defendantId: party.ids.defendantId ?? undefined,
+      civilClaimantId: party.ids.civilClaimantId ?? undefined,
     })
 
     if (filed) {
