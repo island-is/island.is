@@ -3,6 +3,7 @@ import {
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
+  isIndictmentPdfReplaceableState,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import type {
@@ -72,3 +73,17 @@ export const shouldShowPoliceDigitalCaseFilesSection = (
     isDistrictCourtUser(user) ||
     isCourtOfAppealsUser(user)) &&
   (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
+
+// Switched on by hand until it is decided how a case is granted the
+// replacement. The backend refuses every case it has not been granted, so this
+// only decides whether the control is offered.
+const isReplaceIndictmentPdfEnabled = true
+
+export const shouldShowReplaceIndictmentPdf = (
+  workingCase: CaseFilesListCase,
+  user?: User,
+  isEnabled = isReplaceIndictmentPdfEnabled,
+): boolean =>
+  isEnabled &&
+  isProsecutionUser(user) &&
+  isIndictmentPdfReplaceableState(workingCase.state)

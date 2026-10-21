@@ -1892,6 +1892,12 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths ReplaceIndictmentPdf 1`] = `
+Array [
+  "replaceIndictmentPdf.success",
+]
+`;
+
 exports[`GraphQL operations select these field paths RequestCourtRecordSignature 1`] = `
 Array [
   "requestCourtRecordSignature.controlCode",

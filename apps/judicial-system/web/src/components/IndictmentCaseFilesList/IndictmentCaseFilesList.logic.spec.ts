@@ -1,10 +1,12 @@
 import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
   getVisibleSubpoenas,
   shouldShowPoliceDigitalCaseFilesSection,
+  shouldShowReplaceIndictmentPdf,
 } from './IndictmentCaseFilesList.logic'
 
 const user = (role: UserRole, type?: InstitutionType): User =>
@@ -149,5 +151,47 @@ describe('getVisibleSubpoenas', () => {
 
   it('shows nothing to a defender without a national id', () => {
     expect(subpoenaIds(user(UserRole.DEFENDER))).toEqual([])
+  })
+})
+
+describe('shouldShowReplaceIndictmentPdf', () => {
+  const prosecutor = {
+    role: UserRole.PROSECUTOR,
+    institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+  } as User
+  const submitted = {
+    id: 'case-id',
+    state: CaseState.SUBMITTED,
+  } as CaseFilesListCase
+
+  it('shows the upload to a prosecutor on a submitted indictment', () => {
+    expect(shouldShowReplaceIndictmentPdf(submitted, prosecutor, true)).toBe(
+      true,
+    )
+  })
+
+  it('hides it when switched off', () => {
+    expect(shouldShowReplaceIndictmentPdf(submitted, prosecutor, false)).toBe(
+      false,
+    )
+  })
+
+  it('hides it before the indictment is confirmed', () => {
+    expect(
+      shouldShowReplaceIndictmentPdf(
+        { ...submitted, state: CaseState.WAITING_FOR_CONFIRMATION },
+        prosecutor,
+        true,
+      ),
+    ).toBe(false)
+  })
+
+  it('hides it from court users', () => {
+    const judge = {
+      role: UserRole.DISTRICT_COURT_JUDGE,
+      institution: { type: InstitutionType.DISTRICT_COURT },
+    } as User
+
+    expect(shouldShowReplaceIndictmentPdf(submitted, judge, true)).toBe(false)
   })
 })
