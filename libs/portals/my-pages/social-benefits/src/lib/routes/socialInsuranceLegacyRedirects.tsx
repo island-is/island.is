@@ -3,6 +3,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Navigate } from 'react-router-dom'
 import { BffUser } from '@island.is/shared/types'
 import { m } from '@island.is/portals/my-pages/core'
+import { m as socialInsuranceMessages } from '../messages'
 import {
   SocialInsuranceMaintenancePaths,
   SocialInsuranceMaintenanceLegacyPaths,
@@ -36,7 +37,7 @@ export const socialInsuranceLegacyRedirects = (
     ),
   },
   {
-    name: m.latestIncomePlan,
+    name: socialInsuranceMessages.incomePlanDetail,
     path: SocialInsuranceMaintenanceLegacyPaths.SocialInsuranceMaintenanceIncomePlanDetail,
     enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
     key: 'SocialInsuranceIncomePlan',

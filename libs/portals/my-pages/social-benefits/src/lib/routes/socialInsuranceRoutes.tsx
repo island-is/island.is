@@ -4,6 +4,7 @@ import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import { BffUser } from '@island.is/shared/types'
 import { m } from '@island.is/portals/my-pages/core'
+import { m as socialInsuranceMessages } from '../messages'
 import { SocialInsuranceMaintenancePaths } from '../paths'
 
 const PaymentPlan = lazy(() =>
@@ -55,7 +56,7 @@ export const socialInsuranceRoutes = (userInfo: BffUser): PortalRoute[] => [
     element: <IncomePlan />,
   },
   {
-    name: m.latestIncomePlan,
+    name: socialInsuranceMessages.incomePlanDetail,
     path: SocialInsuranceMaintenancePaths.SocialInsuranceIncomePlanDetail,
     enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
     key: 'SocialInsuranceIncomePlan',
