@@ -341,6 +341,7 @@ Array [
   "case.indictmentCounts.vehicleRegistrationNumber",
   "case.indictmentDecision",
   "case.indictmentDeniedExplanation",
+  "case.indictmentHash",
   "case.indictmentIntroduction",
   "case.indictmentReviewReturnedExplanation",
   "case.indictmentReviewedDate",
