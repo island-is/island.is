@@ -63,7 +63,8 @@ const DISTRICT_COURTS = [
   'hd-reykjanes',
 ]
 
-const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+const GUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 const getQueryValue = (query: ParsedUrlQuery, key: string) => {
   const matchingKey = Object.keys(query).find(
@@ -360,9 +361,7 @@ const courtVerdictRedirect: LegacyRedirectHandler = async ({
   return { destination: `/domar?${params.toString()}`, permanent: false }
 }
 
-export const courtVerdictRedirects: Record<
-  string,
-  LegacyRedirectHandler
-> = Object.fromEntries(
-  Object.keys(ROUTES).map((host) => [host, courtVerdictRedirect]),
-)
+export const courtVerdictRedirects: Record<string, LegacyRedirectHandler> =
+  Object.fromEntries(
+    Object.keys(ROUTES).map((host) => [host, courtVerdictRedirect]),
+  )
