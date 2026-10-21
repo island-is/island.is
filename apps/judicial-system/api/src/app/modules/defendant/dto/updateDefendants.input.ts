@@ -1,43 +1,18 @@
-import { Allow, IsArray, IsOptional } from 'class-validator'
+import { Allow, IsArray } from 'class-validator'
 
-import { Field, ID, InputType } from '@nestjs/graphql'
+import { Field, ID, InputType, PickType } from '@nestjs/graphql'
 
-import {
-  IndictmentCaseReviewDecision,
-  SubpoenaType,
-} from '@island.is/judicial-system/types'
+import { UpdateDefendantInput } from './updateDefendant.input'
 
 @InputType()
-class UpdateDefendantsItem {
-  @Allow()
-  @Field(() => ID)
-  readonly defendantId!: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => SubpoenaType, { nullable: true })
-  readonly subpoenaType?: SubpoenaType
-
-  @Allow()
-  @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  readonly isAlternativeService?: boolean
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly alternativeServiceDescription?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  readonly isDrivingLicenseSuspended?: boolean
-
-  @Allow()
-  @IsOptional()
-  @Field(() => IndictmentCaseReviewDecision, { nullable: true })
-  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
-}
+class UpdateDefendantsItem extends PickType(UpdateDefendantInput, [
+  'defendantId',
+  'subpoenaType',
+  'isAlternativeService',
+  'alternativeServiceDescription',
+  'isDrivingLicenseSuspended',
+  'indictmentReviewDecision',
+] as const) {}
 
 @InputType()
 export class UpdateDefendantsInput {
