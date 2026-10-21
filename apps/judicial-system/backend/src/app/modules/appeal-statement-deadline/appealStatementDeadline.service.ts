@@ -216,7 +216,7 @@ export class AppealStatementDeadlineService {
   // from the body, so nothing upstream has checked them against the case.
   private resolveParty(
     theCase: Case,
-    dto: { defendantId?: string; civilClaimantId?: string },
+    dto: FileAppealStatementDto,
   ): AppealStatementParty {
     if (dto.defendantId && dto.civilClaimantId) {
       throw new BadRequestException(

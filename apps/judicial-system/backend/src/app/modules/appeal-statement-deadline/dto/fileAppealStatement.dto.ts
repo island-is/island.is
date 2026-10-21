@@ -2,8 +2,9 @@ import { IsOptional, IsUUID } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-// Whose statement is being filed: a defendant's, a civil claimant's, or the
-// prosecution's when neither is named.
+// The party a statement request is about: a defendant, a civil claimant, or
+// the prosecution when neither is named. On its own it files the party's
+// statement; with a date it sets the party's deadline.
 export class FileAppealStatementDto {
   @IsOptional()
   @IsUUID()
