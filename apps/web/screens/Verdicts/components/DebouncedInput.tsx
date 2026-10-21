@@ -67,7 +67,11 @@ export const DebouncedInput = ({
         size={size}
         label={label}
         tooltip={
-          tooltip && <MarkdownText variant="small">{tooltip}</MarkdownText>
+          tooltip && (
+            <MarkdownText variant="small" replaceNewLinesWithBreaks={false}>
+              {tooltip}
+            </MarkdownText>
+          )
         }
         name={name}
         icon={icon}
