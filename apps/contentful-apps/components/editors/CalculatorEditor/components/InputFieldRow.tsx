@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   FormControl,
   IconButton,
   Select,
@@ -50,6 +51,7 @@ export const InputFieldRow = ({
   const isStaleKey = isMissingFromContract && !isLoading
   const isDraft = !field.key
   const hasError = isStaleKey || isDuplicate || Boolean(issues?.length)
+  const hasOptionLabels = Boolean(field.optionLabelsEnabled)
 
   return (
     <Stack
@@ -71,7 +73,11 @@ export const InputFieldRow = ({
             isDisabled={isLoading || isDisabled}
             onChange={(ev) => {
               const key = ev.target.value
-              const patch: Partial<CalculatorInputValueField> = { key }
+              const patch: Partial<CalculatorInputValueField> = {
+                key,
+                optionLabels: undefined,
+                optionLabelsEnabled: undefined,
+              }
               /* Refreshes untouched placeholders from the selected field. */
               if (
                 controlForField(contract.get(key))?.kind === 'choice' ||
@@ -156,11 +162,32 @@ export const InputFieldRow = ({
       )}
 
       {contractField?.options && contractField.options.length > 0 && (
-        <Text fontColor="gray600" fontSize="fontSizeS">
-          Options: {contractField.options.join(', ')} — set by the calculator,
-          not editable here.
-        </Text>
+        <Checkbox
+          isChecked={hasOptionLabels}
+          isDisabled={isDisabled}
+          onChange={() => onChange({ optionLabelsEnabled: !hasOptionLabels })}
+        >
+          Custom option labels
+        </Checkbox>
       )}
+
+      {hasOptionLabels &&
+        contractField?.options?.map((option) => (
+          <LocalizedTextFields
+            key={option}
+            label={`${field.key}: option "${option}"`}
+            value={field.optionLabels?.[option]}
+            isDisabled={isDisabled}
+            isInvalid={!isLoading && !field.optionLabels?.[option]?.is?.trim()}
+            isRequired
+            onChange={(next) =>
+              onChange({
+                optionLabels: { ...field.optionLabels, [option]: next },
+              })
+            }
+            clearWhenEmpty
+          />
+        ))}
 
       {contractField?.dependsOn && (
         <Text fontColor="gray600" fontSize="fontSizeS">

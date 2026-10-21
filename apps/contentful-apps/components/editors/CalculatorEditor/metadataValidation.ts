@@ -36,6 +36,22 @@ export const hasMetadataValidationError = (
     return true
   }
 
+  if (
+    (config.inputSections ?? []).some((section) =>
+      section.fields
+        .filter(isInputValueField)
+        .some(
+          (field) =>
+            field.optionLabelsEnabled &&
+            (inputContract.get(field.key)?.options ?? []).some(
+              (option) => !field.optionLabels?.[option]?.is?.trim(),
+            ),
+        ),
+    )
+  ) {
+    return true
+  }
+
   if (config.outputTotal.key && !outputContract.has(config.outputTotal.key)) {
     return true
   }
