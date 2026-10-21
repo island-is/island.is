@@ -455,6 +455,10 @@ export class PdfService {
 
     const uploadedPdf = await this.awsS3Service.getObject(theCase.type, key)
 
+    if (uploadedPdf.subarray(0, 5).toString('latin1') !== '%PDF-') {
+      throw new BadRequestException('Uploaded file is not a PDF')
+    }
+
     // Overwrite the frozen object first, then update the hash. S3 is not part
     // of the DB transaction: if the hash update fails the new bytes are still
     // served while the hash is set, which is preferable to a hash pointing at

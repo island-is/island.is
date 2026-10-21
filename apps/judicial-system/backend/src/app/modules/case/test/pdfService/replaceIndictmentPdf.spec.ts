@@ -83,4 +83,16 @@ describe('PdfService - replaceIndictmentPdf', () => {
     expect(awsS3Service.getObject).not.toHaveBeenCalled()
     expect(awsS3Service.putObject).not.toHaveBeenCalled()
   })
+
+  it('refuses an upload that is not a PDF', async () => {
+    ;(awsS3Service.getObject as jest.Mock).mockResolvedValue(
+      Buffer.from('not a pdf'),
+    )
+
+    await expect(
+      pdfService.replaceIndictmentPdf(theCase, key, transaction),
+    ).rejects.toBeInstanceOf(BadRequestException)
+    expect(awsS3Service.putObject).not.toHaveBeenCalled()
+    expect(caseRepositoryService.update).not.toHaveBeenCalled()
+  })
 })
