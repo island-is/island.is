@@ -47,12 +47,8 @@ export const LanguageToggler = ({
   const client = useApolloClient()
   const Router = useRouter()
   const [showDialog, setShowDialog] = useState<boolean>(false)
-  const {
-    contentfulIds,
-    resolveLinkTypeLocally,
-    globalNamespace,
-    linkType,
-  } = useContext(GlobalContext)
+  const { contentfulIds, resolveLinkTypeLocally, globalNamespace, linkType } =
+    useContext(GlobalContext)
   const { activeLocale, locale, t } = useI18n()
   const gn = useNamespace(globalNamespace)
   const otherLanguage = (activeLocale === 'en' ? 'is' : 'en') as Locale
