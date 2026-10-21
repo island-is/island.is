@@ -98,13 +98,16 @@ describe('PdfService - replaceIndictmentPdf', () => {
     )
   })
 
-  it('removes the temporary upload', async () => {
-    await pdfService.replaceIndictmentPdf(theCase, key, transaction)
-
-    expect(awsS3Service.deleteObject).toHaveBeenCalledWith(
-      CaseType.INDICTMENT,
-      key,
-    )
+  it('refuses using the frozen indictment key as the upload', async () => {
+    await expect(
+      pdfService.replaceIndictmentPdf(
+        theCase,
+        `${caseId}/indictment.pdf`,
+        transaction,
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException)
+    expect(awsS3Service.getObject).not.toHaveBeenCalled()
+    expect(awsS3Service.putObject).not.toHaveBeenCalled()
   })
 
   it('refuses a case that has not been confirmed', async () => {

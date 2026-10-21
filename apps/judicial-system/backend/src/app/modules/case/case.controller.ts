@@ -919,15 +919,18 @@ export class CaseController {
       )
     }
 
-    if (!key.startsWith(`${caseId}/`)) {
+    if (!key.startsWith(`${caseId}/`) || key === `${caseId}/indictment.pdf`) {
       throw new BadRequestException(
-        `Key ${key} does not belong to case ${caseId}`,
+        `Key does not belong to an upload of case ${caseId}`,
       )
     }
 
     await this.sequelize.transaction((transaction) =>
       this.pdfService.replaceIndictmentPdf(theCase, key, transaction),
     )
+
+    // Outside the transaction: keep the temp upload if the hash update rolled back
+    await this.pdfService.deleteIndictmentUpload(theCase, key)
 
     return { success: true }
   }

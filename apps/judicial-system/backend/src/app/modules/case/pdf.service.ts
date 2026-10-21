@@ -443,6 +443,17 @@ export class PdfService {
     key: string,
     transaction: Transaction,
   ): Promise<void> {
+    const indictmentKey = `${theCase.id}/indictment.pdf`
+
+    // The temporary upload and the frozen indictment share the case id
+    // prefix. Using the indictment key as the upload would stamp, overwrite,
+    // then delete the only copy of the Ákæra.
+    if (key === indictmentKey) {
+      throw new BadRequestException(
+        'Cannot replace the indictment with its own storage key',
+      )
+    }
+
     const confirmationEvent = EventLog.getEventLogByEventType(
       EventType.INDICTMENT_CONFIRMED,
       theCase.eventLogs,
@@ -479,14 +490,12 @@ export class PdfService {
       throw new BadRequestException('The uploaded file is not a readable pdf')
     }
 
-    // Stored before the hash is set: a stored file without a hash is
-    // regenerated on the next read, a hash without the stored file is not
-    // recoverable.
-    await this.uploadPdfToS3(
-      theCase,
-      `${theCase.id}/indictment.pdf`,
-      confirmedPdf,
-    )
+    // Overwrite the frozen object first, then update the hash. S3 is not part
+    // of the DB transaction: if the hash update fails the new bytes are still
+    // served while the hash is set, which is preferable to a hash pointing at
+    // missing bytes. The temporary upload is deleted by the caller after
+    // commit so a rolled-back attempt can be retried.
+    await this.uploadPdfToS3(theCase, indictmentKey, confirmedPdf)
 
     const { hash, hashAlgorithm } = getCaseFileHash(confirmedPdf)
     const indictmentHash = JSON.stringify({ hash, hashAlgorithm })
@@ -504,7 +513,9 @@ export class PdfService {
         { transaction },
       )
     }
+  }
 
+  async deleteIndictmentUpload(theCase: Case, key: string): Promise<void> {
     await this.awsS3Service.deleteObject(theCase.type, key)
   }
 

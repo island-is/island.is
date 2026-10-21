@@ -162,18 +162,20 @@ describe('shouldShowReplaceIndictmentPdf', () => {
   const submitted = {
     id: 'case-id',
     state: CaseState.SUBMITTED,
+    indictmentHash: '{"hash":"frozen"}',
   } as CaseFilesListCase
 
-  it('shows the upload to a prosecutor on a submitted indictment', () => {
-    expect(shouldShowReplaceIndictmentPdf(submitted, prosecutor, true)).toBe(
-      true,
-    )
+  it('shows the upload when the indictment pdf is already frozen', () => {
+    expect(shouldShowReplaceIndictmentPdf(submitted, prosecutor)).toBe(true)
   })
 
-  it('hides it when switched off', () => {
-    expect(shouldShowReplaceIndictmentPdf(submitted, prosecutor, false)).toBe(
-      false,
-    )
+  it('hides it before the indictment pdf has been frozen to S3', () => {
+    expect(
+      shouldShowReplaceIndictmentPdf(
+        { ...submitted, indictmentHash: null },
+        prosecutor,
+      ),
+    ).toBe(false)
   })
 
   it('hides it before the indictment is confirmed', () => {
@@ -181,7 +183,6 @@ describe('shouldShowReplaceIndictmentPdf', () => {
       shouldShowReplaceIndictmentPdf(
         { ...submitted, state: CaseState.WAITING_FOR_CONFIRMATION },
         prosecutor,
-        true,
       ),
     ).toBe(false)
   })
@@ -192,6 +193,6 @@ describe('shouldShowReplaceIndictmentPdf', () => {
       institution: { type: InstitutionType.DISTRICT_COURT },
     } as User
 
-    expect(shouldShowReplaceIndictmentPdf(submitted, judge, true)).toBe(false)
+    expect(shouldShowReplaceIndictmentPdf(submitted, judge)).toBe(false)
   })
 })

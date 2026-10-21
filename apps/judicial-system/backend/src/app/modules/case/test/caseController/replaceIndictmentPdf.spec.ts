@@ -28,6 +28,7 @@ describe('CaseController - Replace indictment pdf', () => {
     id: caseId,
     type: CaseType.INDICTMENT,
     state: CaseState.SUBMITTED,
+    indictmentHash: JSON.stringify({ hash: 'frozen', hashAlgorithm: 'SHA256' }),
   } as Case
   const user = {
     role: UserRole.PROSECUTOR,
@@ -50,10 +51,8 @@ describe('CaseController - Replace indictment pdf', () => {
       (fn: (transaction: Transaction) => unknown) => fn({} as Transaction),
     )
     jest.spyOn(pdfService, 'replaceIndictmentPdf').mockResolvedValue()
-    mockCanReplace.mockImplementation(
-      jest.requireActual('../../indictmentPdfReplacement')
-        .canReplaceIndictmentPdf,
-    )
+    jest.spyOn(pdfService, 'deleteIndictmentUpload').mockResolvedValue()
+    mockCanReplace.mockReturnValue(true)
 
     replace = (uploadKey: string) =>
       caseController.replaceIndictmentPdf(caseId, theCase, user, {
@@ -63,31 +62,38 @@ describe('CaseController - Replace indictment pdf', () => {
 
   afterEach(() => jest.restoreAllMocks())
 
-  it('refuses a case that has not been granted it', async () => {
+  it('refuses when the access rule denies it', async () => {
+    mockCanReplace.mockReturnValue(false)
+
     await expect(replace(key)).rejects.toBeInstanceOf(ForbiddenException)
     expect(pdfService.replaceIndictmentPdf).not.toHaveBeenCalled()
   })
 
-  describe('when the case has been granted it', () => {
-    beforeEach(() => {
-      mockCanReplace.mockReturnValue(true)
-    })
+  it('replaces the indictment and removes the temporary upload', async () => {
+    await expect(replace(key)).resolves.toEqual({ success: true })
+    expect(mockCanReplace).toHaveBeenCalledWith(theCase, user)
+    expect(pdfService.replaceIndictmentPdf).toHaveBeenCalledWith(
+      theCase,
+      key,
+      expect.anything(),
+    )
+    expect(pdfService.deleteIndictmentUpload).toHaveBeenCalledWith(
+      theCase,
+      key,
+    )
+  })
 
-    it('replaces the indictment', async () => {
-      await expect(replace(key)).resolves.toEqual({ success: true })
-      expect(mockCanReplace).toHaveBeenCalledWith(theCase, user)
-      expect(pdfService.replaceIndictmentPdf).toHaveBeenCalledWith(
-        theCase,
-        key,
-        expect.anything(),
-      )
-    })
+  it("refuses a key outside the case's own uploads", async () => {
+    await expect(replace(`${uuid()}/${uuid()}/x.pdf`)).rejects.toBeInstanceOf(
+      BadRequestException,
+    )
+    expect(pdfService.replaceIndictmentPdf).not.toHaveBeenCalled()
+  })
 
-    it("refuses a key outside the case's own uploads", async () => {
-      await expect(replace(`${uuid()}/${uuid()}/x.pdf`)).rejects.toBeInstanceOf(
-        BadRequestException,
-      )
-      expect(pdfService.replaceIndictmentPdf).not.toHaveBeenCalled()
-    })
+  it('refuses the frozen indictment storage key', async () => {
+    await expect(replace(`${caseId}/indictment.pdf`)).rejects.toBeInstanceOf(
+      BadRequestException,
+    )
+    expect(pdfService.replaceIndictmentPdf).not.toHaveBeenCalled()
   })
 })

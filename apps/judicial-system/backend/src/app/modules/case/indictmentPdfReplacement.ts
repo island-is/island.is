@@ -7,23 +7,19 @@ import {
 
 import { Case } from '../repository'
 
-// Cases whose prosecutor may replace the generated indictment with their own
-// document. Empty unless a case has been granted it.
-const indictmentPdfReplacementCaseIds: string[] = []
-
-export const isIndictmentPdfReplacementCase = (
-  caseId: string,
-  allowedCaseIds = indictmentPdfReplacementCaseIds,
-): boolean => allowedCaseIds.includes(caseId)
-
 export const canReplaceIndictmentPdf = (
-  theCase: Pick<Case, 'id' | 'type' | 'state' | 'splitCaseId'>,
+  theCase: Pick<
+    Case,
+    'id' | 'type' | 'state' | 'splitCaseId' | 'indictmentHash'
+  >,
   user: User,
-  allowedCaseIds = indictmentPdfReplacementCaseIds,
 ): boolean =>
-  isIndictmentPdfReplacementCase(theCase.id, allowedCaseIds) &&
   isIndictmentCase(theCase.type) &&
   // A split case shares its parent's indictment, which is replaced on the parent
   !theCase.splitCaseId &&
   isIndictmentPdfReplaceableState(theCase.state) &&
+  // The generated indictment must already be frozen to S3 (hash set) before
+  // it can be replaced, so a concurrent getIndictmentPdf cannot regenerate
+  // over the upload.
+  Boolean(theCase.indictmentHash) &&
   isProsecutionUser(user)
