@@ -36,8 +36,7 @@ const ReplaceIndictmentPdf: FC<Props> = ({ caseId }) => {
   return (
     <Box marginTop={1}>
       <Text variant="small" marginBottom={1}>
-        Skjalið kemur í stað ákærunnar sem kerfið bjó til og fær rafræna
-        staðfestingu.
+        Skjalið kemur í stað ákærunnar sem kerfið bjó til.
       </Text>
       <input
         ref={inputRef}

@@ -6,12 +6,8 @@ import {
   calculatePt,
   confirmationFontSize,
   confirmationLayout,
-  lockIcon,
 } from '../pdfHelpers'
-import {
-  createConfirmedIndictmentPdf,
-  createConfirmedPdf,
-} from './confirmedPdf'
+import { createConfirmedPdf } from './confirmedPdf'
 
 describe('createConfirmedPdf', () => {
   const pageWidth = 595
@@ -242,74 +238,5 @@ describe('createConfirmedPdf', () => {
 
     expect(result.subarray(0, 4).toString()).toBe('%PDF')
     expect(drawText).toHaveBeenCalled()
-  })
-
-  describe('indictment', () => {
-    const prosecutorConfirmation = {
-      actor: 'Ása Saksóknari',
-      title: 'Saksóknari',
-      institution: 'Lögreglustjórinn á höfuðborgarsvæðinu',
-      date: new Date('2026-10-20T10:00:00Z'),
-    }
-
-    let drawSvgPath: jest.SpyInstance
-
-    beforeEach(async () => {
-      jest.restoreAllMocks()
-
-      const pdfDoc = await PDFDocument.load(new Uint8Array(pdf))
-      const page = pdfDoc.getPage(0)
-      drawRectangle = jest.spyOn(page, 'drawRectangle')
-      drawText = jest.spyOn(page, 'drawText')
-      drawSvgPath = jest.spyOn(page, 'drawSvgPath')
-      jest.spyOn(PDFDocument, 'load').mockResolvedValueOnce(pdfDoc)
-    })
-
-    it('draws the indictment title and the lock instead of a date', async () => {
-      await createConfirmedIndictmentPdf(prosecutorConfirmation, pdf)
-
-      expect(texts().slice(0, 2)).toEqual([
-        'Réttarvörslugátt',
-        'Skjal samþykkt rafrænt',
-      ])
-      // Title, confirmation text and three boxes of two lines; no date in the
-      // title bar
-      expect(texts()).toHaveLength(8)
-      expect(drawSvgPath).toHaveBeenCalledWith(
-        lockIcon.path,
-        expect.objectContaining({ scale: lockIcon.scale }),
-      )
-    })
-
-    it('draws the approver, the office and the issue date', async () => {
-      await createConfirmedIndictmentPdf(prosecutorConfirmation, pdf)
-
-      const boxes = rectangles().slice(3)
-
-      expect(boxes.map((box) => box.width)).toEqual([
-        contentWidth * 0.4,
-        contentWidth * 0.4,
-        contentWidth * 0.2,
-      ])
-      expect(texts().slice(2)).toEqual([
-        'Samþykktaraðili',
-        'Ása Saksóknari saksóknari',
-        'Embætti',
-        'Lögreglustjórinn á höfuðborgarsvæðinu',
-        'Útgáfa ákæru',
-        '20.10.2026',
-      ])
-    })
-
-    it('rejects a document that is not a pdf', async () => {
-      jest.restoreAllMocks()
-
-      await expect(
-        createConfirmedIndictmentPdf(
-          prosecutorConfirmation,
-          Buffer.from('not a pdf'),
-        ),
-      ).rejects.toThrow()
-    })
   })
 })

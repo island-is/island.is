@@ -44,10 +44,7 @@ export {
 export { createCaseFilesRecord } from './generatedPdfs/caseFilesRecordPdf'
 export { createDigitalCaseFileMetadataPdf } from './generatedPdfs/digitalCaseFileMetadataPdf'
 export { createIndictment } from './generatedPdfs/indictmentPdf'
-export {
-  createConfirmedIndictmentPdf,
-  createConfirmedPdf,
-} from './confirmation/confirmedPdf'
+export { createConfirmedPdf } from './confirmation/confirmedPdf'
 export { createSubpoena } from './generatedPdfs/subpoenaPdf'
 export { createSubpoenaServiceCertificate } from './generatedPdfs/subpoenaServiceCertificatePdf'
 export { createRulingSentToPrisonAdminPdf } from './generatedPdfs/rulingSentToPrisonAdminPdf'

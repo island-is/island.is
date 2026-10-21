@@ -10,7 +10,6 @@ import {
   confirmationLayout,
   drawTextWithEllipsisPDFKit,
   formatActor,
-  lockIcon,
 } from '../pdfHelpers'
 import { PDFKitCoatOfArms } from '../svgs/PDFKitCoatOfArms'
 
@@ -33,7 +32,6 @@ export const hasConfirmableCaseFileCategories = (
 const lightGray = rgb(0.9804, 0.9804, 0.9804)
 const darkGray = rgb(0.7961, 0.7961, 0.7961)
 const white = rgb(1, 1, 1)
-const gold = rgb(0xad / 255, 0xa3 / 255, 0x73 / 255)
 
 interface ConfirmationBox {
   title: string
@@ -50,8 +48,6 @@ interface ConfirmationFonts {
 
 interface ConfirmationConfig {
   confirmationText: string
-  // A locked document shows a lock where other stamps show the date
-  showLockIcon?: boolean
   boxes: ConfirmationBox[]
 }
 
@@ -64,7 +60,7 @@ const drawConfirmation = (
   page: PDFPage,
   fonts: ConfirmationFonts,
   confirmation: Confirmation,
-  { confirmationText, showLockIcon = false, boxes }: ConfirmationConfig,
+  { confirmationText, boxes }: ConfirmationConfig,
 ) => {
   const {
     pageMargin,
@@ -153,29 +149,16 @@ const drawConfirmation = (
     fonts.regular,
   )
 
-  if (showLockIcon) {
-    page.drawSvgPath(lockIcon.path, {
-      x: totalWidth + offset,
-      y: fromTop(
-        titleTextY - (lockIcon.top + lockIcon.height / 2) * lockIcon.scale,
-      ),
-      scale: lockIcon.scale,
-      color: gold,
-      borderColor: gold,
-      borderWidth: 0.5,
-    })
-  } else {
-    const dateString = formatDate(confirmation.date) ?? ''
-    drawText(
-      dateString,
-      contentX +
-        contentWidth -
-        padding -
-        fonts.regular.widthOfTextAtSize(dateString, fontSize),
-      titleTextY,
-      fonts.regular,
-    )
-  }
+  const dateString = formatDate(confirmation.date) ?? ''
+  drawText(
+    dateString,
+    contentX +
+      contentWidth -
+      padding -
+      fonts.regular.widthOfTextAtSize(dateString, fontSize),
+    titleTextY,
+    fonts.regular,
+  )
 
   // Draw the boxes below the title
   const boxTop = contentTop + titleHeight
@@ -265,32 +248,3 @@ export const createConfirmedPdf = async (
     boxes: getConfirmationBoxes(confirmation, fileType),
   })
 }
-
-// Same stamp as a generated indictment carries once it has been confirmed
-export const createConfirmedIndictmentPdf = (
-  confirmation: Confirmation,
-  pdf: Buffer,
-) =>
-  stampFirstPage(pdf, confirmation, {
-    confirmationText: 'Skjal samþykkt rafrænt',
-    showLockIcon: true,
-    boxes: [
-      {
-        title: 'Samþykktaraðili',
-        content: formatActor(confirmation.actor, confirmation.title),
-        widthPercent: 40,
-        ellipsize: true,
-      },
-      {
-        title: 'Embætti',
-        content: confirmation.institution,
-        widthPercent: 40,
-        ellipsize: true,
-      },
-      {
-        title: 'Útgáfa ákæru',
-        content: formatDate(confirmation.date) ?? '',
-        widthPercent: 20,
-      },
-    ],
-  })

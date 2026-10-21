@@ -30,7 +30,6 @@ import {
   Confirmation,
   createAppealSummons,
   createCaseFilesRecord,
-  createConfirmedIndictmentPdf,
   createFineSentToPrisonAdminPdf,
   createIndictment,
   createIndictmentCourtRecordPdf,
@@ -446,58 +445,24 @@ export class PdfService {
     const indictmentKey = `${theCase.id}/indictment.pdf`
 
     // The temporary upload and the frozen indictment share the case id
-    // prefix. Using the indictment key as the upload would stamp, overwrite,
-    // then delete the only copy of the Ákæra.
+    // prefix. Using the indictment key as the upload would overwrite, then
+    // delete the only copy of the Ákæra.
     if (key === indictmentKey) {
       throw new BadRequestException(
         'Cannot replace the indictment with its own storage key',
       )
     }
 
-    const confirmationEvent = EventLog.getEventLogByEventType(
-      EventType.INDICTMENT_CONFIRMED,
-      theCase.eventLogs,
-    )
-
-    if (
-      !confirmationEvent?.userName ||
-      !confirmationEvent.institutionName
-    ) {
-      throw new BadRequestException(
-        `Cannot replace the indictment of case ${theCase.id} before it has been confirmed`,
-      )
-    }
-
     const uploadedPdf = await this.awsS3Service.getObject(theCase.type, key)
-
-    let confirmedPdf: Buffer
-
-    try {
-      confirmedPdf = await createConfirmedIndictmentPdf(
-        {
-          actor: confirmationEvent.userName,
-          title: confirmationEvent.userTitle,
-          institution: confirmationEvent.institutionName,
-          date: confirmationEvent.created,
-        },
-        uploadedPdf,
-      )
-    } catch (reason) {
-      this.logger.info(`Failed to stamp the indictment of case ${theCase.id}`, {
-        reason,
-      })
-
-      throw new BadRequestException('The uploaded file is not a readable pdf')
-    }
 
     // Overwrite the frozen object first, then update the hash. S3 is not part
     // of the DB transaction: if the hash update fails the new bytes are still
     // served while the hash is set, which is preferable to a hash pointing at
     // missing bytes. The temporary upload is deleted by the caller after
     // commit so a rolled-back attempt can be retried.
-    await this.uploadPdfToS3(theCase, indictmentKey, confirmedPdf)
+    await this.uploadPdfToS3(theCase, indictmentKey, uploadedPdf)
 
-    const { hash, hashAlgorithm } = getCaseFileHash(confirmedPdf)
+    const { hash, hashAlgorithm } = getCaseFileHash(uploadedPdf)
     const indictmentHash = JSON.stringify({ hash, hashAlgorithm })
 
     await this.caseRepositoryService.update(
