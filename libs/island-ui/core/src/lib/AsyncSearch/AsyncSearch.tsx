@@ -523,6 +523,7 @@ export const AsyncSearchInput = forwardRef<
             <label
               className={helperStyles.srOnly}
               id={inputProps['aria-labelledby']}
+              htmlFor={inputProps.id}
             >
               {inputProps.placeholder}
             </label>
