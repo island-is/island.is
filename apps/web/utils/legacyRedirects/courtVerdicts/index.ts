@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { ParsedUrlQuery } from 'querystring'
 
 import initApollo from '@island.is/web/graphql/client'
 import {
@@ -11,10 +11,12 @@ import {
   GET_VERDICT_EXISTS_QUERY,
   GET_VERDICTS_QUERY,
 } from '@island.is/web/screens/queries/Verdicts'
-import districtCourtVerdicts from '@island.is/web/screens/Verdicts/legacyVerdictRedirects/district.json'
-import retrialCourtVerdicts from '@island.is/web/screens/Verdicts/legacyVerdictRedirects/endurupptokudomur.json'
-import supremeCourtVerdicts from '@island.is/web/screens/Verdicts/legacyVerdictRedirects/haestirettur.json'
-import courtOfAppealVerdicts from '@island.is/web/screens/Verdicts/legacyVerdictRedirects/landsrettur.json'
+
+import type { LegacyRedirectHandler } from '../types'
+import districtCourtVerdicts from './data/district.json'
+import retrialCourtVerdicts from './data/endurupptokudomur.json'
+import supremeCourtVerdicts from './data/haestirettur.json'
+import courtOfAppealVerdicts from './data/landsrettur.json'
 
 /**
  * A verdict from an old court website.
@@ -39,7 +41,7 @@ type Rule = {
   /** Old ids that map directly to an island.is path */
   directPath?: { param: string; path: (id: string) => string }
   /** Legacy verdict that can be read from the url itself */
-  fromQuery?: (query: NextApiRequest['query']) => LegacyVerdict | undefined
+  fromQuery?: (query: ParsedUrlQuery) => LegacyVerdict | undefined
   /** Courts to look case numbers up in, unless the legacy verdict has one */
   courts: string[]
   /** Verdict list query params to fall back to */
@@ -61,10 +63,9 @@ const DISTRICT_COURTS = [
   'hd-reykjanes',
 ]
 
-const GUID_REGEX =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
-const getQueryValue = (query: NextApiRequest['query'], key: string) => {
+const getQueryValue = (query: ParsedUrlQuery, key: string) => {
   const matchingKey = Object.keys(query).find(
     (k) => k.toLowerCase() === key.toLowerCase(),
   )
@@ -81,7 +82,7 @@ const districtCourtFallback = (
 
 /** Old district court search ids, e.g. E200500321 -> E-321/2005 */
 const parseDistrictCourtSearchId = (
-  query: NextApiRequest['query'],
+  query: ParsedUrlQuery,
 ): LegacyVerdict | undefined => {
   const match = getQueryValue(query, 'id')?.match(/^([a-z])(\d{4})(\d{5})$/)
   if (!match) return undefined
@@ -202,7 +203,7 @@ const findVerdictIdByCaseNumber = async (
   return sameDay.length === 1 ? sameDay[0].id : null
 }
 
-const findLegacyVerdict = (rule: Rule, query: NextApiRequest['query']) => {
+const findLegacyVerdict = (rule: Rule, query: ParsedUrlQuery) => {
   for (const { param, table } of rule.lookups ?? []) {
     const oldId = getQueryValue(query, param)
     if (oldId && table[oldId]) return table[oldId]
@@ -212,7 +213,7 @@ const findLegacyVerdict = (rule: Rule, query: NextApiRequest['query']) => {
 
 const resolveVerdictId = async (
   rule: Rule,
-  query: NextApiRequest['query'],
+  query: ParsedUrlQuery,
   verdict?: LegacyVerdict,
 ) => {
   if (verdict?.id) return verdict.id
@@ -234,41 +235,134 @@ const resolveVerdictId = async (
   return null
 }
 
-/**
- * Redirects verdict urls from old court websites (landsrettur.is,
- * haestirettur.is, heradsdomstolar.is, domstolar.is, endurupptokudomur.is)
- * to the corresponding verdict on island.is.
- * The `site` and `kind` query params are set by the rewrites in next.config.js.
- */
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  const site = getQueryValue(req.query, 'site') ?? ''
-  const kind = getQueryValue(req.query, 'kind') ?? ''
-  const rule = RULES[site]?.[kind]
+/** Page ids the old court websites (all on the same CMS) used for verdicts */
+const LEGACY_VERDICT_PAGE_IDS = [
+  '347c3bb1-8926-11e5-80c6-005056bc6a40',
+  'd2ca19a6-a3fa-11e5-9402-005056bc0bdb',
+]
 
-  if (!rule) {
-    return res.redirect(302, '/domar')
-  }
+type Route = {
+  /** Lowercase paths, a :segment matches any single segment */
+  paths: string[]
+  rule: Rule
+  /** Also match the site root with a verdict pageid query param */
+  verdictPageAlias?: boolean
+}
+
+const DISTRICT_COURT_VERDICT_ROUTE: Route = {
+  paths: ['/domar/domur', '/heradsdomstolar/:court/domar/domur'],
+  rule: RULES.district.verdict,
+  verdictPageAlias: true,
+}
+
+/** Old court website routes, by host (without www) */
+const ROUTES: Record<string, Route[]> = {
+  'landsrettur.is': [
+    {
+      paths: [
+        '/domar-og-urskurdir/domur-urskurdur',
+        '/domar-og-urskurdir/domur',
+      ],
+      rule: RULES.landsrettur.verdict,
+      verdictPageAlias: true,
+    },
+    {
+      paths: ['/domar-og-urskurdir/domur-urskurdur/$verdict/download'],
+      rule: RULES.landsrettur.document,
+    },
+  ],
+  'haestirettur.is': [
+    {
+      paths: ['/domar/domur', '/domar/_domur'],
+      rule: RULES.haestirettur.verdict,
+      verdictPageAlias: true,
+    },
+    {
+      paths: [
+        '/akvardanir/_malskotsbeidni',
+        '/malskotsbeidnir/_malskotsbeidni',
+      ],
+      rule: RULES.haestirettur.determination,
+    },
+    { paths: ['/domar'], rule: RULES.haestirettur.nr },
+    { paths: ['/ifx_hr'], rule: RULES.haestirettur.ifx },
+  ],
+  'heradsdomstolar.is': [DISTRICT_COURT_VERDICT_ROUTE],
+  'domstolar.is': [
+    DISTRICT_COURT_VERDICT_ROUTE,
+    { paths: ['/domaleit/nanar'], rule: RULES.district.search },
+  ],
+  'endurupptokudomur.is': [
+    {
+      paths: ['/urskurdir/domur-urskurdur'],
+      rule: RULES.endurupptokudomur.verdict,
+      verdictPageAlias: true,
+    },
+  ],
+}
+
+const matchesPath = (pattern: string, path: string) => {
+  const patternSegments = pattern.split('/')
+  const pathSegments = path.split('/')
+  return (
+    patternSegments.length === pathSegments.length &&
+    patternSegments.every(
+      (segment, i) => segment.startsWith(':') || segment === pathSegments[i],
+    )
+  )
+}
+
+const isVerdictPageAlias = (path: string, query: ParsedUrlQuery) => {
+  const pageId = getQueryValue(query, 'pageid')
+  return (
+    (path === '' || path === '/default.aspx') &&
+    Boolean(pageId && LEGACY_VERDICT_PAGE_IDS.includes(pageId))
+  )
+}
+
+const findRule = (host: string, path: string, query: ParsedUrlQuery) =>
+  ROUTES[host]?.find(
+    (route) =>
+      route.paths.some((pattern) => matchesPath(pattern, path)) ||
+      (route.verdictPageAlias && isVerdictPageAlias(path, query)),
+  )?.rule
+
+/**
+ * Redirects verdict urls from old court websites to the corresponding
+ * verdict on island.is, or to the verdict list if it can't be found.
+ */
+const courtVerdictRedirect: LegacyRedirectHandler = async ({
+  host,
+  path,
+  query,
+}) => {
+  const rule = findRule(host, path, query)
+  if (!rule) return null
 
   if (rule.directPath) {
-    const oldId = getQueryValue(req.query, rule.directPath.param)
+    const oldId = getQueryValue(query, rule.directPath.param)
     if (oldId && GUID_REGEX.test(oldId)) {
-      return res.redirect(301, rule.directPath.path(oldId))
+      return { destination: rule.directPath.path(oldId), permanent: true }
     }
   }
 
-  const verdict = findLegacyVerdict(rule, req.query)
-  const newId = await resolveVerdictId(rule, req.query, verdict)
+  const verdict = findLegacyVerdict(rule, query)
+  const newId = await resolveVerdictId(rule, query, verdict)
 
   if (newId) {
-    return res.redirect(301, `/domar/${newId}`)
+    return { destination: `/domar/${newId}`, permanent: true }
   }
 
   const params = new URLSearchParams(rule.fallbackQuery(verdict))
   if (verdict?.caseNumber) {
     params.set('number', verdict.caseNumber)
   }
-  return res.redirect(302, `/domar?${params.toString()}`)
+  return { destination: `/domar?${params.toString()}`, permanent: false }
 }
+
+export const courtVerdictRedirects: Record<
+  string,
+  LegacyRedirectHandler
+> = Object.fromEntries(
+  Object.keys(ROUTES).map((host) => [host, courtVerdictRedirect]),
+)
