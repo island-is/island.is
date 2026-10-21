@@ -47,8 +47,12 @@ export const LanguageToggler = ({
   const client = useApolloClient()
   const Router = useRouter()
   const [showDialog, setShowDialog] = useState<boolean>(false)
-  const { contentfulIds, resolveLinkTypeLocally, globalNamespace, linkType } =
-    useContext(GlobalContext)
+  const {
+    contentfulIds,
+    resolveLinkTypeLocally,
+    globalNamespace,
+    linkType,
+  } = useContext(GlobalContext)
   const { activeLocale, locale, t } = useI18n()
   const gn = useNamespace(globalNamespace)
   const otherLanguage = (activeLocale === 'en' ? 'is' : 'en') as Locale
@@ -247,7 +251,7 @@ export const LanguageToggler = ({
     <ButtonElement {...buttonElementProps}>{t.otherLanguageName}</ButtonElement>
   )
 
-  const showConfirmButton = dialogConfig?.showConfirmButton ?? true
+  const showConfirmButton = dialogConfig?.showConfirmButton ?? false
 
   const onDialogConfirm = () => {
     const href = dialogConfig?.confirmButtonHref
@@ -276,13 +280,13 @@ export const LanguageToggler = ({
       initialVisibility={true}
       title={
         dialogConfig?.title ??
-        gn('switchToEnglishModalTitle', 'Translation not available')
+        gn('switchToEnglishModalTitle', 'This page is only in Icelandic')
       }
       description={
         dialogConfig?.description ??
         gn(
           'switchToEnglishModalText',
-          'The page you are viewing does not have an English translation yet',
+          'It has not been translated into English yet.',
         )
       }
       ariaLabel="Confirm switching to english"
@@ -293,7 +297,10 @@ export const LanguageToggler = ({
           ? dialogConfig?.confirmButtonText ?? 'Go to home page'
           : undefined
       }
-      buttonTextCancel={dialogConfig?.cancelButtonText ?? 'Keep viewing'}
+      buttonTextCancel={
+        dialogConfig?.cancelButtonText ??
+        gn('switchToEnglishModalCancelButtonText', 'View in Icelandic')
+      }
     />
   )
 
