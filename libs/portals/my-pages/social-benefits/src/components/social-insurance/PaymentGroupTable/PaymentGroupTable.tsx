@@ -1,4 +1,4 @@
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   EmptyTable,
@@ -15,6 +15,7 @@ import { PaymentGroupTableRow } from './PaymentGroupTableRow'
 import { SocialInsurancePaymentGroupType } from '@island.is/api/schema'
 
 export const PaymentGroupTable = () => {
+  useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
   const tableRef = useRef<HTMLDivElement>(null)
 
