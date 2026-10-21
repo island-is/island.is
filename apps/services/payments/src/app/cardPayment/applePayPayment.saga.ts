@@ -11,6 +11,11 @@ import {
   ApplePayPaymentSagaDefinition,
 } from './cardPayment.orchestrator'
 import { CardPaymentService } from './cardPayment.service'
+import {
+  keepDebtPayment,
+  notifyPaymentCompleted,
+  settleDebtStep,
+} from './cardPayment.debt'
 import { ApplePayChargeInput } from './dtos'
 
 export const createApplePayPaymentContext = (
@@ -79,6 +84,10 @@ export const createApplePayPaymentSaga = (
       return { paymentResult }
     },
     compensate: async (ctx) => {
+      if (await keepDebtPayment({ cardPaymentService, logger, ctx })) {
+        return
+      }
+
       const { paymentResult } = requireStepResult(ctx, 'CHARGE_APPLE_PAY')
 
       logger.info(
@@ -104,8 +113,13 @@ export const createApplePayPaymentSaga = (
           metadata: {
             payment: paymentResult,
             refund,
+            // Ties the refund to this payment, see PaymentFlowService.isCardPaymentRefunded
+            correlationId: ctx.trackingData.correlationId,
             originalError: ctx.error?.message,
             reasonForRefund: RefundType.PAYMENT_FAILURE,
+            ...(ctx.metadata?.fjsProblem
+              ? { fjsProblem: ctx.metadata.fjsProblem }
+              : {}),
           },
         })
 
@@ -145,53 +159,54 @@ export const createApplePayPaymentSaga = (
       })
     },
     compensate: async (ctx) => {
-      const deletedPaymentConfirmation =
-        await paymentFlowService.deleteCardPaymentConfirmation(
-          ctx.paymentFlowId,
-          ctx.trackingData.correlationId,
-        )
-
-      if (!deletedPaymentConfirmation) {
-        throw new Error('Failed to delete payment confirmation during rollback')
+      if (await keepDebtPayment({ cardPaymentService, logger, ctx })) {
+        return
       }
 
-      const deletedPaymentFulfillment =
-        await paymentFlowService.deletePaymentFulfillment({
-          paymentFlowId: ctx.paymentFlowId,
-          confirmationRefId: deletedPaymentConfirmation.id,
-          correlationId: ctx.trackingData.correlationId,
-        })
-
-      if (!deletedPaymentFulfillment) {
-        throw new Error('Failed to delete payment fulfillment during rollback')
-      }
+      await paymentFlowService.deleteCardPaymentConfirmationAndFulfillment(
+        ctx.paymentFlowId,
+        ctx.trackingData.correlationId,
+      )
 
       logger.info(`[${ctx.paymentFlowId}] Payment confirmation deleted`)
+    },
+  },
+  {
+    name: 'SETTLE_DEBT',
+    description:
+      'Register the payment with FJS for debt payments, no-op for charges',
+    execute: async (ctx) => {
+      const { paymentFlow, totalPrice } = requireStepResult(ctx, 'VALIDATE')
+      const { paymentResult } = requireStepResult(ctx, 'CHARGE_APPLE_PAY')
+
+      return await settleDebtStep({
+        cardPaymentService,
+        paymentFlow,
+        paymentResult,
+        trackingData: ctx.trackingData,
+        totalPrice,
+        onRejected: (problem) => {
+          ctx.metadata = { ...ctx.metadata, fjsProblem: problem }
+        },
+      })
     },
   },
   {
     name: 'NOTIFY_SUCCESSFUL_PAYMENT',
     description: 'Notify the successful payment',
     execute: async (ctx) => {
+      const { paymentFlow } = requireStepResult(ctx, 'VALIDATE')
       const { paymentResult } = requireStepResult(ctx, 'CHARGE_APPLE_PAY')
 
-      await paymentFlowService.logPaymentFlowUpdate(
-        {
-          paymentFlowId: ctx.paymentFlowId,
-          type: 'success',
-          occurredAt: new Date(),
-          paymentMethod: PaymentMethod.CARD,
-          reason: 'payment_completed',
-          message: `Apple Pay payment completed successfully`,
-          metadata: {
-            payment: paymentResult,
-          },
-        },
-        {
-          useRetry: true,
-          throwOnError: true,
-        },
-      )
+      await notifyPaymentCompleted({
+        paymentFlowService,
+        logger,
+        paymentFlowId: ctx.paymentFlowId,
+        paymentFlow,
+        settlement: ctx.stepResults.SETTLE_DEBT,
+        message: `Apple Pay payment completed successfully`,
+        paymentResult,
+      })
     },
   },
 ]

@@ -26,10 +26,12 @@ import { PaymentMethod } from '../../types'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { CallbackInput } from './dtos/callback.input'
-import { CreateInvoiceInput } from './dtos/createInvoice.input'
-import { CreateInvoiceResponse } from './dtos/createInvoice.response'
-import { PaidStatus } from './dtos/paidStatus.enum'
+import {
+  CallbackInput,
+  CreateInvoiceInput,
+  CreateInvoiceResponse,
+  PaidStatus,
+} from './dtos'
 import { InvoicePaymentService } from './invoicePayment.service'
 
 @UseGuards(FeatureFlagGuard)
@@ -54,10 +56,16 @@ export class InvoicePaymentController {
   async create(
     @Body() createInvoiceInput: CreateInvoiceInput,
   ): Promise<CreateInvoiceResponse> {
+    const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
+      createInvoiceInput.paymentFlowId,
+    )
+
+    // Debts cannot be paid by invoice. Rejected before the try so that no failure event is sent.
+    if (paymentFlow.type === 'debt') {
+      throw new BadRequestException(PaymentServiceCode.InvalidPaymentMethods)
+    }
+
     try {
-      const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
-        createInvoiceInput.paymentFlowId,
-      )
       const [{ catalogItems }, { paymentStatus }] = await Promise.all([
         this.paymentFlowService.getPaymentFlowChargeDetails(
           paymentFlow.organisationId,
