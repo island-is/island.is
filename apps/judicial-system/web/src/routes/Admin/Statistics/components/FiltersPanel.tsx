@@ -56,6 +56,7 @@ export const FiltersPanel: FC<FiltersPanelProps> = ({
           selected={fromDate}
           maxDate={new Date()}
           handleChange={(date: Date | null) => setFromDate(date ?? undefined)}
+          preventFlip
         />
 
         <DatePicker
@@ -67,6 +68,7 @@ export const FiltersPanel: FC<FiltersPanelProps> = ({
           minDate={fromDate}
           selected={toDate}
           handleChange={(date: Date | null) => setToDate(date ?? undefined)}
+          preventFlip
         />
       </Box>
       <Box display="flex" justifyContent="flexEnd" marginTop={1}>
