@@ -961,4 +961,91 @@ describe('PaymentFlowService', () => {
       )
     })
   })
+
+  describe('validateChargePaymentMethod', () => {
+    const cardOnlyFlow = {
+      id: uuid(),
+      payerNationalId: '0101307789',
+      availablePaymentMethods: [PaymentMethod.CARD],
+    }
+
+    const enableOnly = (feature: Features) =>
+      jest
+        .spyOn(featureFlagService, 'getValue')
+        .mockImplementation(async (f) => (f === feature) as never)
+
+    it('allows a method stored on the flow without reading the per-payer flags', async () => {
+      const getValueSpy = jest.spyOn(featureFlagService, 'getValue')
+      getValueSpy.mockClear()
+
+      await expect(
+        service.validateChargePaymentMethod(cardOnlyFlow, PaymentMethod.CARD),
+      ).resolves.toBeUndefined()
+      expect(getValueSpy).not.toHaveBeenCalled()
+    })
+
+    it.each([PaymentMethod.INVOICE, PaymentMethod.BANK_TRANSFER])(
+      'refuses %s on a flow that does not offer it',
+      async (paymentMethod) => {
+        jest
+          .spyOn(featureFlagService, 'getValue')
+          .mockResolvedValue(false as never)
+
+        await expect(
+          service.validateChargePaymentMethod(cardOnlyFlow, paymentMethod),
+        ).rejects.toThrow(PaymentServiceCode.InvalidPaymentMethods)
+      },
+    )
+
+    it('allows invoice for a payer the invoice flag allows', async () => {
+      const getValueSpy = enableOnly(
+        Features.isIslandisInvoicePaymentAllowedForUser,
+      )
+
+      await expect(
+        service.validateChargePaymentMethod(
+          cardOnlyFlow,
+          PaymentMethod.INVOICE,
+        ),
+      ).resolves.toBeUndefined()
+      expect(getValueSpy).toHaveBeenCalledWith(
+        Features.isIslandisInvoicePaymentAllowedForUser,
+        false,
+        { nationalId: cardOnlyFlow.payerNationalId },
+      )
+    })
+
+    it('allows bank transfer for a person the bank transfer flag allows', async () => {
+      enableOnly(Features.isIslandisBankTransferPaymentAllowedForUser)
+
+      await expect(
+        service.validateChargePaymentMethod(
+          cardOnlyFlow,
+          PaymentMethod.BANK_TRANSFER,
+        ),
+      ).resolves.toBeUndefined()
+    })
+
+    it('refuses bank transfer for a company even when the bank transfer flag allows it', async () => {
+      enableOnly(Features.isIslandisBankTransferPaymentAllowedForUser)
+
+      await expect(
+        service.validateChargePaymentMethod(
+          { ...cardOnlyFlow, payerNationalId: '6010100890' },
+          PaymentMethod.BANK_TRANSFER,
+        ),
+      ).rejects.toThrow(PaymentServiceCode.InvalidPaymentMethods)
+    })
+
+    it('does not let the invoice flag allow bank transfer', async () => {
+      enableOnly(Features.isIslandisInvoicePaymentAllowedForUser)
+
+      await expect(
+        service.validateChargePaymentMethod(
+          cardOnlyFlow,
+          PaymentMethod.BANK_TRANSFER,
+        ),
+      ).rejects.toThrow(PaymentServiceCode.InvalidPaymentMethods)
+    })
+  })
 })
