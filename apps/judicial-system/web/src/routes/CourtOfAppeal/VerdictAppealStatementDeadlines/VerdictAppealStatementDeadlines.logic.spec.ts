@@ -12,6 +12,7 @@ import {
   getStatementDeadlineMinDate,
   getStatementDeadlineParties,
   getStatementDeadlineStatusLabel,
+  getStatementUploadUrl,
 } from './VerdictAppealStatementDeadlines.logic'
 
 const theCase = {
@@ -287,5 +288,28 @@ describe('applyStatementDeadline', () => {
     const noAppeal = { id: 'case' } as WorkingCase
 
     expect(applyStatementDeadline(noAppeal, saved)).toBe(noAppeal)
+  })
+})
+
+describe('getStatementUploadUrl', () => {
+  it('names the appeal and the party', () => {
+    expect(
+      getStatementUploadUrl('case', 'appeal', { party: { defendantId: 'd1' } }),
+    ).toBe(
+      '/landsrettur/afryjun/greinargerd/case?appealCaseId=appeal&defendantId=d1',
+    )
+    expect(
+      getStatementUploadUrl('case', 'appeal', {
+        party: { civilClaimantId: 'c1' },
+      }),
+    ).toBe(
+      '/landsrettur/afryjun/greinargerd/case?appealCaseId=appeal&civilClaimantId=c1',
+    )
+  })
+
+  it('names nobody for the prosecution', () => {
+    expect(getStatementUploadUrl('case', 'appeal', { party: {} })).toBe(
+      '/landsrettur/afryjun/greinargerd/case?appealCaseId=appeal',
+    )
   })
 })
