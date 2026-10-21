@@ -26,6 +26,7 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useAppealStatementDeadline from '@island.is/judicial-system-web/src/utils/hooks/useAppealStatementDeadline'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -165,32 +166,36 @@ const VerdictAppealStatementUpload = () => {
                 {getStatementUploadHeaderLine(party)}
               </Text>
             </Box>
-            <Box component="section" marginBottom={5}>
-              <SectionHeading title="Greinargerð" required />
-              <InputFileUpload
-                {...uploadBox}
-                name="appealStatement"
-                files={statementFiles}
-                onChange={(files) => stage(files, categories.statement)}
-                onRemove={removeUploadFile}
-                onOpenFile={onOpenFile}
-              />
-            </Box>
-            <Box component="section" marginBottom={10}>
-              <SectionHeading title="Gögn" marginBottom={1} />
-              <Text marginBottom={3}>
-                Ef ný gögn eiga að fylgja greinargerðinni er hægt að hlaða þeim
-                upp hér að neðan.
-              </Text>
-              <InputFileUpload
-                {...uploadBox}
-                name="appealCaseFiles"
-                files={caseFiles}
-                onChange={(files) => stage(files, categories.caseFile)}
-                onRemove={removeUploadFile}
-                onOpenFile={onOpenFile}
-              />
-            </Box>
+            <div className={stack({ gap: 5 })}>
+              <section className={stack({ gap: 3 })}>
+                <SectionHeading title="Greinargerð" required marginBottom={0} />
+                <InputFileUpload
+                  {...uploadBox}
+                  name="appealStatement"
+                  files={statementFiles}
+                  onChange={(files) => stage(files, categories.statement)}
+                  onRemove={removeUploadFile}
+                  onOpenFile={onOpenFile}
+                />
+              </section>
+              <section className={stack({ gap: 3 })}>
+                <div className={stack({ gap: 1 })}>
+                  <SectionHeading title="Gögn" marginBottom={0} />
+                  <Text>
+                    Ef ný gögn eiga að fylgja greinargerðinni er hægt að hlaða
+                    þeim upp hér að neðan.
+                  </Text>
+                </div>
+                <InputFileUpload
+                  {...uploadBox}
+                  name="appealCaseFiles"
+                  files={caseFiles}
+                  onChange={(files) => stage(files, categories.caseFile)}
+                  onRemove={removeUploadFile}
+                  onOpenFile={onOpenFile}
+                />
+              </section>
+            </div>
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
