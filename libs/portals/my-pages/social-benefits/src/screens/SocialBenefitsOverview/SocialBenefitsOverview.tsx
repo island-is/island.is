@@ -1,5 +1,5 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { SOCIAL_BENEFITS_NAMESPACES } from '../../lib/messages'
+import { SHARED_NAMESPACE } from '../../lib/messages'
 import {
   ActionCard,
   ActionCardLoader,
@@ -7,8 +7,6 @@ import {
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { sharedMessages } from '../../lib/messages/shared'
-import { unemploymentBenefitsMessages as um } from '../../lib/messages/'
-import { activationAllowanceMessages as am } from '../../lib/messages'
 import { AlertMessage, Stack } from '@island.is/island-ui/core'
 import {
   ActivationAllowancePaths,
@@ -29,7 +27,7 @@ const getStatusTag = (
 })
 
 const SocialBenefitsOverview = () => {
-  useNamespaces(SOCIAL_BENEFITS_NAMESPACES)
+  useNamespaces(SHARED_NAMESPACE)
   const { formatMessage } = useLocale()
   const { value: vmstEnabled, loading: vmstFlagLoading } = useFeatureFlag(
     Features.isServicePortalUnemploymentBenefitsPageEnabled,
@@ -67,7 +65,7 @@ const SocialBenefitsOverview = () => {
           !error &&
           overview?.unemploymentApplication?.isVisible && (
             <ActionCard
-              heading={formatMessage(um.unemploymentBenefits)}
+              heading={formatMessage(coreMessages.unemploymentBenefits)}
               text={formatMessage(
                 sharedMessages.unemploymentBenefitsCardDescription,
               )}
@@ -89,7 +87,7 @@ const SocialBenefitsOverview = () => {
           !error &&
           overview?.activationGrant?.isVisible && (
             <ActionCard
-              heading={formatMessage(am.activationAllowance)}
+              heading={formatMessage(coreMessages.activationAllowance)}
               text={formatMessage(
                 sharedMessages.activationGrantCardDescription,
               )}

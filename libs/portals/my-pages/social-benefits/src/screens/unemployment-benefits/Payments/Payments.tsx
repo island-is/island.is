@@ -1,14 +1,14 @@
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { SOCIAL_BENEFITS_NAMESPACES } from '../../../lib/messages'
+import { UNEMPLOYMENT_NAMESPACE } from '../../../lib/messages'
 import { ActionButtons } from '../components/ActionButtons'
 import { useGetApplicantAvailableActionsQuery } from '../MyData/MyData.generated'
 import { ReportedIncome } from './ReportedIncome'
 
 // Atvinnuleysi – Greiðslur
 const Payments = () => {
-  useNamespaces(SOCIAL_BENEFITS_NAMESPACES)
+  useNamespaces(UNEMPLOYMENT_NAMESPACE)
   const { formatMessage } = useLocale()
 
   const { data: actionsData, loading: actionsLoading } =

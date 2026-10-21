@@ -1,10 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
-  maintenance: {
-    id: 'sp.social-insurance-maintenance:maintenance',
-    defaultMessage: 'Framfærsla',
-  },
   maintenanceFooter: {
     id: 'sp.social-insurance-maintenance:maintenance-footer',
     defaultMessage:

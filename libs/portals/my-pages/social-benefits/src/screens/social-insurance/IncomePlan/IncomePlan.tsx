@@ -1,6 +1,6 @@
 import { AlertMessage, Box, Inline, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { SOCIAL_INSURANCE_NAMESPACES } from '../../../lib/messages'
+import { SOCIAL_INSURANCE_NAMESPACE } from '../../../lib/messages'
 import {
   CardLoader,
   IntroWrapper,
@@ -36,7 +36,7 @@ const RENDER_LINK_BUTTON_CONDITIONALS: Status[] = [
 ]
 
 const IncomePlan = () => {
-  useNamespaces(SOCIAL_INSURANCE_NAMESPACES)
+  useNamespaces(SOCIAL_INSURANCE_NAMESPACE)
   const { formatMessage, locale } = useLocale()
 
   const { data, loading, error } = useGetIncomePlanQuery()

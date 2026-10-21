@@ -3,7 +3,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import { BffUser } from '@island.is/shared/types'
-import { m } from '../messages'
+import { m } from '@island.is/portals/my-pages/core'
 import { SocialInsuranceMaintenancePaths } from '../paths'
 
 const PaymentPlan = lazy(() =>
@@ -29,7 +29,7 @@ const PaymentTypes = lazy(() =>
 export const socialInsuranceRoutes = (userInfo: BffUser): PortalRoute[] => [
   // Section redirect: /framfaersla/almannatryggingar → /framfaersla/almannatryggingar/greidsluaetlun
   {
-    name: m.maintenance,
+    name: m.socialInsuranceMaintenance,
     path: SocialInsuranceMaintenancePaths.SocialInsuranceRoot,
     enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
     key: 'SocialInsurance',
@@ -55,7 +55,7 @@ export const socialInsuranceRoutes = (userInfo: BffUser): PortalRoute[] => [
     element: <IncomePlan />,
   },
   {
-    name: m.incomePlanDetail,
+    name: m.latestIncomePlan,
     path: SocialInsuranceMaintenancePaths.SocialInsuranceIncomePlanDetail,
     enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
     key: 'SocialInsuranceIncomePlan',

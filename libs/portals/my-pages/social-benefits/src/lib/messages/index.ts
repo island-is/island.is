@@ -3,17 +3,17 @@ export { activationAllowanceMessages } from './activationAllowance'
 export { sharedMessages } from './shared'
 export { unemploymentBenefitsMessages } from './unemployment'
 
-// The module navigation (sidebar) renders on every page in the module and uses
-// messages from all three namespaces below, so each route screen must load
-// them. Its social insurance entries use core messages, which the portal
-// layout already loads.
-export const SOCIAL_BENEFITS_NAMESPACES = [
-  'sp.social-benefits-shared',
-  'sp.social-benefits-unemployment',
-  'sp.social-benefits-activation-allowance',
+export const SHARED_NAMESPACE = 'sp.social-benefits-shared'
+export const UNEMPLOYMENT_NAMESPACE = 'sp.social-benefits-unemployment'
+export const SOCIAL_INSURANCE_NAMESPACE = 'sp.social-insurance-maintenance'
+
+export const UNEMPLOYMENT_STATUS_NAMESPACES = [
+  UNEMPLOYMENT_NAMESPACE,
+  SHARED_NAMESPACE,
 ]
 
-export const SOCIAL_INSURANCE_NAMESPACES = [
-  ...SOCIAL_BENEFITS_NAMESPACES,
-  'sp.social-insurance-maintenance',
+export const ACTIVATION_ALLOWANCE_STATUS_NAMESPACES = [
+  'sp.social-benefits-activation-allowance',
+  UNEMPLOYMENT_NAMESPACE,
+  SHARED_NAMESPACE,
 ]

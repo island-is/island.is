@@ -7,7 +7,7 @@ import {
   AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { SOCIAL_INSURANCE_NAMESPACES } from '../../../lib/messages'
+import { SOCIAL_INSURANCE_NAMESPACE } from '../../../lib/messages'
 import {
   EmptyTable,
   IntroWrapper,
@@ -20,7 +20,7 @@ import { useGetIncomePlanDetailQuery } from './IncomePlanDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 
 const IncomePlanDetail = () => {
-  useNamespaces(SOCIAL_INSURANCE_NAMESPACES)
+  useNamespaces(SOCIAL_INSURANCE_NAMESPACE)
   const { formatMessage } = useLocale()
 
   const { data, loading, error } = useGetIncomePlanDetailQuery()

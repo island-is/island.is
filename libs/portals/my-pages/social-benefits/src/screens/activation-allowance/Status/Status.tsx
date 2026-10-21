@@ -11,7 +11,7 @@ import {
 
 import { Box, SkeletonLoader, Tabs } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { SOCIAL_BENEFITS_NAMESPACES } from '../../../lib/messages'
+import { ACTIVATION_ALLOWANCE_STATUS_NAMESPACES } from '../../../lib/messages'
 import { OverviewTable } from '../../../components/shared/OverviewTable'
 import { ApplicantOverview } from '../../../components/shared/ApplicantOverview'
 import { Problem } from '@island.is/react-spa/shared'
@@ -19,7 +19,7 @@ import { ActionButtons } from '../../unemployment-benefits/components/ActionButt
 
 // Virknistyrkur – Staðan þín
 const Status = () => {
-  useNamespaces(SOCIAL_BENEFITS_NAMESPACES)
+  useNamespaces(ACTIVATION_ALLOWANCE_STATUS_NAMESPACES)
   const { formatMessage, locale } = useLocale()
   const { isMobile } = useIsMobile()
   const { data, loading, error } =

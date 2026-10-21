@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client'
 import { Navigate } from 'react-router-dom'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { SOCIAL_BENEFITS_NAMESPACES } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 import {
   IntroWrapper,
   m as coreMessages,
@@ -10,10 +9,8 @@ import { SkeletonLoader } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { UnemploymentBenefitsPaths } from '../../lib/paths'
 import { GET_VMST_APPLICATIONS_OVERVIEW_QUERY } from '@island.is/portals/my-pages/core'
-import { unemploymentBenefitsMessages as um } from '../../lib/messages/unemployment'
 
 export const UnemploymentBenefitsRoot = () => {
-  useNamespaces(SOCIAL_BENEFITS_NAMESPACES)
   const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery(
     GET_VMST_APPLICATIONS_OVERVIEW_QUERY,
@@ -24,7 +21,7 @@ export const UnemploymentBenefitsRoot = () => {
 
   if (loading) {
     return (
-      <IntroWrapper title={formatMessage(um.unemploymentBenefits)}>
+      <IntroWrapper title={formatMessage(coreMessages.unemploymentBenefits)}>
         <SkeletonLoader height={300} borderRadius="large" />
       </IntroWrapper>
     )
@@ -32,7 +29,7 @@ export const UnemploymentBenefitsRoot = () => {
 
   if (error) {
     return (
-      <IntroWrapper title={formatMessage(um.unemploymentBenefits)}>
+      <IntroWrapper title={formatMessage(coreMessages.unemploymentBenefits)}>
         <Problem
           type="no_data"
           noBorder={false}
@@ -49,7 +46,7 @@ export const UnemploymentBenefitsRoot = () => {
   }
 
   return (
-    <IntroWrapper title={formatMessage(um.unemploymentBenefits)}>
+    <IntroWrapper title={formatMessage(coreMessages.unemploymentBenefits)}>
       <Problem
         type="no_data"
         noBorder={false}
