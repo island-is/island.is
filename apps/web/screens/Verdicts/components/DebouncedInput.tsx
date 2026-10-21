@@ -68,7 +68,12 @@ export const DebouncedInput = ({
         label={label}
         tooltip={
           tooltip && (
-            <MarkdownText variant="small" replaceNewLinesWithBreaks={false}>
+            <MarkdownText
+              variant="small"
+              fontWeight="regular"
+              replaceNewLinesWithBreaks={false}
+              bulletColor="dark400"
+            >
               {tooltip}
             </MarkdownText>
           )

@@ -9,7 +9,7 @@ import {
   Text,
   TextProps,
 } from '@island.is/island-ui/core'
-import { helperStyles } from '@island.is/island-ui/theme'
+import { Colors, helperStyles } from '@island.is/island-ui/theme'
 
 import * as styles from './MarkdownText.css'
 
@@ -38,20 +38,24 @@ interface MarkdownTextProps {
   children: string
   color?: TextProps['color']
   variant?: TextProps['variant']
+  fontWeight?: TextProps['fontWeight']
   replaceNewLinesWithBreaks?: boolean
   /** Opens the links in a tab of their own, marked with an icon */
   openLinksInNewTab?: boolean
   /** What the icon says to a screen reader, e.g. "Opnast í nýjum flipa" */
   newTabLabel?: string
+  bulletColor?: Colors
 }
 
 export const MarkdownText = ({
   children,
   color,
   variant = 'default',
+  fontWeight = 'light',
   replaceNewLinesWithBreaks = true,
   openLinksInNewTab = false,
   newTabLabel,
+  bulletColor,
 }: MarkdownTextProps) => {
   const processedChildren = replaceNewLinesWithBreaks
     ? (children as string).replace(/\n/gi, '<br>')
@@ -66,7 +70,7 @@ export const MarkdownText = ({
             p: {
               component: Text,
               props: {
-                fontWeight: 'light',
+                fontWeight,
                 color,
                 variant,
                 lineHeight: 'lg',
@@ -75,7 +79,7 @@ export const MarkdownText = ({
             span: {
               component: Text,
               props: {
-                fontWeight: 'light',
+                fontWeight,
                 color,
                 variant,
                 lineHeight: 'lg',
@@ -96,10 +100,14 @@ export const MarkdownText = ({
               component: BulletList,
               props: {
                 space: 1,
+                color: bulletColor,
               },
             },
             li: {
               component: Bullet,
+              props: {
+                variant,
+              },
             },
             // Links written into the text itself, rather than handed to the
             // component, so they are marked up here for all of them at once
