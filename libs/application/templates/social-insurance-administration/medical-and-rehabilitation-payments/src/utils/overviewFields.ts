@@ -3,6 +3,7 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import {
   isFirstApplication,
   shouldShowConfirmationOfIllHealth,
+  shouldShowConfirmationOfJobSearch,
   shouldShowConfirmationOfPendingResolution,
   shouldShowConfirmedTreatment,
   shouldShowRehabilitationPlan,
@@ -14,6 +15,7 @@ import {
   benefitsFromAnotherCountryTable,
   commentItems,
   confirmationOfIllHealthItems,
+  confirmationOfJobSearchItems,
   confirmationOfPendingResolutionItems,
   confirmedTreatmentItems,
   employeeSickPayItems,
@@ -93,6 +95,12 @@ export const overviewFields = (editable?: boolean) => {
       items: confirmationOfIllHealthItems,
       condition: (_, externalData) =>
         shouldShowConfirmationOfIllHealth(externalData),
+    }),
+    buildOverviewField({
+      id: 'overview.confirmationOfJobSearch',
+      items: confirmationOfJobSearchItems,
+      condition: (_, externalData) =>
+        shouldShowConfirmationOfJobSearch(externalData),
     }),
     buildOverviewField({
       id: 'overview.selfAssessmentQuestionsOne',

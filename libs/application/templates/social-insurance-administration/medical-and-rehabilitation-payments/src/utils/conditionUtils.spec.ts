@@ -3,6 +3,7 @@ import {
   isExemptionCase,
   shouldShowCertificateForSicknessAndRehabilitation,
   shouldShowConfirmationOfIllHealth,
+  shouldShowConfirmationOfJobSearch,
   shouldShowConfirmationOfPendingResolution,
   shouldShowConfirmedTreatment,
   shouldShowRehabilitationPlan,
@@ -65,6 +66,11 @@ describe('exemption case (jaðartilvik)', () => {
         MedicalAndRehabilitationPaymentsApplicationType.SG1,
         MedicalAndRehabilitationPaymentsConfirmationType.HEILSUBRESTUR,
         shouldShowConfirmationOfIllHealth,
+      ],
+      [
+        MedicalAndRehabilitationPaymentsApplicationType.EH1,
+        MedicalAndRehabilitationPaymentsConfirmationType.ATVINNULEIT,
+        shouldShowConfirmationOfJobSearch,
       ],
     ]
 

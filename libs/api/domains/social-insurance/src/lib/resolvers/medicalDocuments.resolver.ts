@@ -11,6 +11,7 @@ import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { CertificateForSicknessAndRehabilitation } from '../models/medicalDocuments/certificateForSicknessAndRehabilitation.model'
 import { ConfirmationOfIllHealth } from '../models/medicalDocuments/confirmationOfIllHealth.model'
+import { ConfirmationOfJobSearch } from '../models/medicalDocuments/confirmationOfJobSearch.model'
 import { ConfirmationOfPendingResolution } from '../models/medicalDocuments/confirmationOfPendingResolution.model'
 import { ConfirmedTreatment } from '../models/medicalDocuments/confirmedTreatment.model'
 import { RehabilitationPlan } from '../models/medicalDocuments/rehabilitationPlan.model'
@@ -77,5 +78,12 @@ export class MedicalDocumentsResolver {
   })
   async siaGetConfirmationOfIllHealth(@CurrentUser() user: User) {
     return this.medicalDocumentsService.getConfirmationOfIllHealth(user)
+  }
+
+  @Query(() => ConfirmationOfJobSearch, {
+    name: 'socialInsuranceConfirmationOfJobSearch',
+  })
+  async siaGetConfirmationOfJobSearch(@CurrentUser() user: User) {
+    return this.medicalDocumentsService.getConfirmationOfJobSearch(user)
   }
 }

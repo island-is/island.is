@@ -1000,6 +1000,31 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
   }),
 
+  confirmationOfJobSearch: defineMessages({
+    sectionTitle: {
+      id: 'marp.application:confirmation.of.job.search.section.title',
+      defaultMessage: 'Staðfesting á atvinnuleit',
+      description: 'Confirmation of job search',
+    },
+    description: {
+      id: 'marp.application:confirmation.of.job.search.description',
+      defaultMessage:
+        'Forsenda fyrir áframhaldandi greiðslum er að staðfesting á atvinnuleit í kjölfar endurhæfingar eða viðurkenndri meðferð er lokið.',
+      description:
+        'A prerequisite for ongoing payments is a confirmation of job search',
+    },
+    applicationStartOfJobSearch: {
+      id: 'marp.application:confirmation.of.job.search.application.start.of.job.search',
+      defaultMessage: 'Upphaf atvinnuleitar',
+      description: 'Start of job search',
+    },
+    applicationEstimatedEnd: {
+      id: 'marp.application:confirmation.of.job.search.application.estimated.end',
+      defaultMessage: 'Áætluð lok',
+      description: 'Estimated end',
+    },
+  }),
+
   selfAssessment: defineMessages({
     sectionTitle: {
       id: 'marp.application:self.assessment.section.title',
@@ -1147,6 +1172,11 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:overiew.confirmation.of.ill.health.confirmed',
       defaultMessage: 'Þú hefur staðfest staðfestingu á heilsubresti',
       description: 'You have confirmed your confirmation of ill health',
+    },
+    confirmationOfJobSearchConfirmed: {
+      id: 'marp.application:overiew.confirmation.of.job.search.confirmed',
+      defaultMessage: 'Þú hefur staðfest staðfestingu á atvinnuleit',
+      description: 'You have confirmed your confirmation of job search',
     },
     selfAssessmentQuestionnaire: {
       id: 'marp.application:overiew.self.assessment.questionnaire',

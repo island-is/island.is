@@ -6,6 +6,7 @@ import { certificateForSicknessAndRehabilitationSection } from './certificateFor
 import { commentSection } from './commentSection'
 import { conclusionSection } from './conclusionSection'
 import { confirmationOfIllHealthSection } from './confirmationOfIllHealthSection'
+import { confirmationOfJobSearchSection } from './confirmationOfJobSearchSection'
 import { confirmationOfPendingResolutionSection } from './confirmationOfPendingResolutionSection'
 import { confirmedTreatmentSection } from './confirmedTreatmentSection'
 import { generalInformationSection } from './generalInformationSection'
@@ -25,6 +26,7 @@ export const MedicalAndRehabilitationPaymentsForm: Form = buildForm({
     confirmedTreatmentSection,
     confirmationOfPendingResolutionSection,
     confirmationOfIllHealthSection,
+    confirmationOfJobSearchSection,
     selfAssessmentSection,
     commentSection,
     overviewSection,

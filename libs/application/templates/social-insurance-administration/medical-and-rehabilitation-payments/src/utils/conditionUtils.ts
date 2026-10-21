@@ -139,3 +139,20 @@ export const shouldShowConfirmationOfIllHealth = (
       MedicalAndRehabilitationPaymentsConfirmationType.HEILSUBRESTUR
   )
 }
+
+export const shouldShowConfirmationOfJobSearch = (
+  externalData: ExternalData,
+) => {
+  const { marpApplicationType, marpConfirmationType } =
+    getApplicationExternalData(externalData)
+
+  return (
+    !isExemptionCase(externalData) &&
+    (marpApplicationType ===
+      MedicalAndRehabilitationPaymentsApplicationType.EH1 ||
+      marpApplicationType ===
+        MedicalAndRehabilitationPaymentsApplicationType.EH2) &&
+    marpConfirmationType ===
+      MedicalAndRehabilitationPaymentsConfirmationType.ATVINNULEIT
+  )
+}

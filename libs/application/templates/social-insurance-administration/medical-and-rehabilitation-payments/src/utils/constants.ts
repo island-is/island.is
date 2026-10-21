@@ -30,6 +30,7 @@ export enum MedicalAndRehabilitationPaymentsConfirmationType {
   ENDURHAEFING = 'ENDURHAEFING',
   HEILSUBRESTUR = 'HEILSUBRESTUR',
   VIDURKENND_MEDFERD = 'VIDURKENND_MEDFERD',
+  ATVINNULEIT = 'ATVINNULEIT',
 }
 
 export const OTHER = 'ANNAD'

@@ -7,6 +7,7 @@ import {
   TrWebContractsExternalServicePortalConfirmedTreatment,
   TrWebContractsExternalServicePortalConfirmationOfPendingResolution,
   TrWebContractsExternalServicePortalConfirmationOfIllHealth,
+  TrWebContractsExternalServicePortalConfirmationOfJobSearch,
 } from '../../../gen/fetch/v1'
 
 @Injectable()
@@ -54,5 +55,13 @@ export class SocialInsuranceAdministrationMedicalDocumentsService {
     return this.medicalDocumentsApiWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsConfirmationofillhealthGet()
+  }
+
+  async getConfirmationOfJobSearch(
+    user: User,
+  ): Promise<TrWebContractsExternalServicePortalConfirmationOfJobSearch> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsConfirmationofjobsearchGet()
   }
 }

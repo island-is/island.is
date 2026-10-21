@@ -30,4 +30,5 @@ export interface MedicalAndRehabilitationPaymentsDTO {
   confirmedTreatmentReference?: string
   confirmationOfPendingResolutionReference?: string
   confirmationOfIllHealthReference?: string
+  confirmationOfJobSearchReference?: string
 }

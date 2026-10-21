@@ -37,6 +37,7 @@ import {
   OTHER,
   shouldShowCalculatedRemunerationDate,
   shouldShowConfirmationOfIllHealth,
+  shouldShowConfirmationOfJobSearch,
   shouldShowConfirmationOfPendingResolution,
   shouldShowConfirmedTreatment,
   shouldShowIsStudyingFields,
@@ -459,6 +460,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     confirmedTreatmentReferenceId,
     confirmationOfPendingResolutionReferenceId,
     confirmationOfIllHealthReferenceId,
+    confirmationOfJobSearchReferenceId,
     educationalLevel,
     hadAssistance,
     mainProblem,
@@ -585,6 +587,9 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     }),
     ...(shouldShowConfirmationOfIllHealth(application.externalData) && {
       confirmationOfIllHealthReference: confirmationOfIllHealthReferenceId,
+    }),
+    ...(shouldShowConfirmationOfJobSearch(application.externalData) && {
+      confirmationOfJobSearchReference: confirmationOfJobSearchReferenceId,
     }),
     selfAssessment: {
       hadAssistance: hadAssistance === YES,

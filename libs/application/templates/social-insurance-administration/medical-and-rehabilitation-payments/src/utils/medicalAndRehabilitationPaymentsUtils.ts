@@ -154,6 +154,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'confirmationOfIllHealth.referenceId',
   )
 
+  const confirmationOfJobSearchConfirmation = getValueViaPath<string[]>(
+    answers,
+    'confirmationOfJobSearch.confirmation',
+  )
+
+  const confirmationOfJobSearchReferenceId = getValueViaPath<string>(
+    answers,
+    'confirmationOfJobSearch.referenceId',
+  )
+
   const hadAssistance = getValueViaPath<YesOrNo>(
     answers,
     'selfAssessmentQuestionsOne.hadAssistance',
@@ -266,6 +276,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     confirmationOfPendingResolutionReferenceId,
     confirmationOfIllHealthConfirmation,
     confirmationOfIllHealthReferenceId,
+    confirmationOfJobSearchConfirmation,
+    confirmationOfJobSearchReferenceId,
     hadAssistance,
     educationalLevel,
     comment,
@@ -458,9 +470,9 @@ export const getApplicationExternalData = (
     isEligible,
     professions,
     activitiesOfProfessions,
+    hasActiveExemption,
   }
 }
-    hasActiveExemption,
 
 export const getYesNoNotApplicableOptions = () => {
   return [
