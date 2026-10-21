@@ -169,6 +169,7 @@ export enum Features {
   isIslandisBankTransferPaymentEnabled = 'isIslandisBankTransferPaymentEnabled',
   isIslandisBankTransferPaymentAllowedForUser = 'isIslandisBankTransferPaymentAllowedForUser',
   isIslandisBankTransferPaymentAllowedForCompany = 'isIslandisBankTransferPaymentAllowedForCompany',
+  isIslandisDebtPaymentEnabled = 'isIslandisDebtPaymentEnabled',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',

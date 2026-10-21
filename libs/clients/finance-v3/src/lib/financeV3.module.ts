@@ -10,7 +10,7 @@ import { FinanceClientV3Service } from './financeV3.service'
   imports: [
     ConfigModule.forFeature(FinanceClientV3Config),
     ConfigModule.forFeature(XRoadConfig),
-    ConfigModule.forFeature(IdsClientConfig),
+    IdsClientConfig.registerOptional(),
   ],
   providers: [FinanceClientV3Service],
   exports: [FinanceClientV3Service],
@@ -34,9 +34,12 @@ export class FinanceClientV3Module {
         name: 'clients-finance-v3',
         organizationSlug: 'fjarsysla-rikisins',
         authSource: 'context',
+        timeout: config.fetchTimeout,
+        // 'auto' exchanges the user's token when a user is in the auth context
+        // and falls back to client credentials for machine calls (e.g. payDebt).
         autoAuth: idsClientConfig.isConfigured
           ? {
-              mode: 'tokenExchange',
+              mode: 'auto',
               issuer: idsClientConfig.issuer,
               clientId: idsClientConfig.clientId,
               clientSecret: idsClientConfig.clientSecret,

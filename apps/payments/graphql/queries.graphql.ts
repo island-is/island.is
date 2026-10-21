@@ -37,6 +37,8 @@ export const GetPaymentFlow = gql`
       bankTransferScaRedirectUrl
       bankTransferExpiresAt
       bankTransferPendingStatus
+      isClosed
+      type
     }
   }
 `
