@@ -10,7 +10,7 @@ import {
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { GetDebtsApi, MockPaymentCatalog } from '../../dataProviders'
+import { GetDebtsApi } from '../../dataProviders'
 import { debts as messages } from '../../lib/messages'
 import {
   DEBTS_EXTERNAL_DATA_ID,
@@ -70,10 +70,7 @@ export const DebtsLoader: FC<FieldBaseProps> = ({
           variables: {
             input: {
               id: application.id,
-              dataProviders: [
-                { actionId: GetDebtsApi.actionId, order: 0 },
-                { actionId: MockPaymentCatalog.actionId, order: 0 },
-              ],
+              dataProviders: [{ actionId: GetDebtsApi.actionId, order: 0 }],
             },
             locale,
           },

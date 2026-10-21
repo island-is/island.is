@@ -7,6 +7,14 @@ import { DownloadServiceConfig } from '@island.is/nest/config'
 import { AuditService } from '@island.is/nest/audit'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { PaymentService } from '@island.is/application/api/payment'
+import {
+  getDebtPaymentItems,
+  paymentMessages,
+} from '@island.is/application/templates/pay-debts'
+import { TemplateApiError } from '@island.is/nest/problem'
+
+const { noSelection } = paymentMessages
 
 // TODO: Remove the salary payer mock once FJS returns launagreiðandi on the
 // debt response; `salaryPayerName` should then come straight from `debt`.
@@ -27,8 +35,35 @@ export class PayDebtsService extends BaseTemplateApiService {
       typeof DownloadServiceConfig
     >,
     private readonly auditService: AuditService,
+    private readonly paymentService: PaymentService,
   ) {
     super(ApplicationTypes.PAY_DEBTS)
+  }
+
+  async createDebtPayment({
+    application,
+    auth,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
+    const debts = getDebtPaymentItems(application)
+
+    if (debts.length === 0) {
+      throw new TemplateApiError(
+        { title: noSelection.title, summary: noSelection.message },
+        400,
+      )
+    }
+
+    return this.paymentService.createDebtPayment(
+      auth,
+      application.id,
+      debts,
+      currentUserLocale,
+    )
+  }
+
+  async deleteDebtPayment({ application, auth }: TemplateApiModuleActionProps) {
+    await this.paymentService.deleteDebtPayment(application.id, auth)
   }
 
   async getCustomerDebts({ auth, application }: TemplateApiModuleActionProps) {

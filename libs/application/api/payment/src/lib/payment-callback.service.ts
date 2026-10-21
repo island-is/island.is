@@ -85,6 +85,18 @@ export class PaymentCallbackService {
       return
     }
 
+    if (
+      callback.type === 'error' &&
+      callback.details?.reason === 'payment_failed' &&
+      callback.details?.message === 'FJS rejected the debt payment'
+    ) {
+      const { paymentId, applicationId } = callback.paymentFlowMetadata ?? {}
+      if (paymentId && applicationId) {
+        await this.paymentService.rejectDebtPayment(paymentId, applicationId)
+      }
+      return
+    }
+
     if (callback.type === 'success') {
       if (!callback.paymentFlowMetadata) {
         throw new BadRequestException(

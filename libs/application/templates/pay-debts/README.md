@@ -38,6 +38,7 @@ stateDiagram-v2
     [*] --> Draft
     Draft --> Payment: SUBMIT
     Payment --> Completed: SUBMIT
+    Payment --> Draft: ABORT
 
     classDef applicant fill:#cfe2ff,stroke:#3d8bfd,color:#0a2a5e
     classDef success fill:#d1e7dd,stroke:#198754,color:#0f5132
@@ -53,8 +54,6 @@ The only state the applicant actively fills in. Data fetching from:
 
 - **Finance v3 (FJS)** — `getCustomerDebts` fetches the applicant's
   outstanding debts via X-Road. See [Setup § X-Road](#x-road) below.
-- **Mock payment catalog** — `MockPaymentCatalog`, dev/local only, lets
-  developers pay without a real charge.
 
 The applicant sees a table of debts (`DebtsLoader` +
 `buildInteractiveTableField`) and ticks the ones they want to pay. There
@@ -65,14 +64,22 @@ submit is blocked until at least one row is ticked. `Draft` runs on
 
 ### Payment
 
-Standard `buildPaymentState` against Fjársýsla ríkisins
-(`InstitutionNationalIds.FJARSYSLA_RIKISINS`). Charge items are built
-from the selected debts' `chargeTypeId` and `amountToPay`.
+Not `buildPaymentState`: a debt has no FJS catalog item. On entry,
+`createDebtPayment` creates a debt payment flow in services-payments
+(`POST /v1/payments/debts`) with each selected debt's `payID` and amount.
+FJS validates the debts then and again before the money is taken, and
+services-payments registers the payment with FJS (`payDebt`) afterwards.
+A creation error keeps the applicant on the debts screen.
 
-**Known gap:** `chargeTypeId` is a charge _category_ (Gjaldflokkur), not
-the item-level `chargeItemCode` (Gjaldliður) FJS actually expects —
-blocked on FJS exposing the correct per-debt code (or the `payID` it
-already sends). See the `TODO` in `src/lib/template.ts`.
+The application counts as paid at the `payment_completed` webhook. A
+later `payment_failed` marks it unpaid again; FJS rejected the payment,
+and services-payments refunds a card or flags a bank transfer for a
+manual refund. services-payments does not redeliver a failed webhook,
+so `getStatus` reads the flow itself while the payment looks unpaid.
+
+ABORT (`deleteDebtPayment`) never refunds: services-payments alone
+refunds a debt payment, since FJS has no reversal. It refuses while the
+flow is paid. Pruning skips debt payments for the same reason.
 
 ### Completed
 
@@ -108,9 +115,8 @@ long as you start things via `yarn dev application-system-form` (or
 need AWS access to the dev account for that script to connect — see
 [AWS secrets](https://docs.devland.is/repository/aws-secrets).
 
-If you don't need real FJS data at all, use the `shouldUseMockPayment`
-hidden input in the Draft form instead — it routes around the real charge
-creation in the Payment state.
+Paying needs services-payments with `isIslandisDebtPaymentEnabled` on.
+There is no mock payment: FJS validates every debt payment.
 
 ### Download service
 
@@ -136,7 +142,8 @@ only the per-debt invoice download link will fail.
 
 ### Fjársýsla ríkisins (FJS)
 
-Used to fetch the applicant's debts and to create the payment charge.
+Used to fetch the applicant's debts. Payments go through services-payments,
+which validates and registers them with FJS.
 
 - [Finance v3 client](https://github.com/island-is/island.is/tree/main/libs/clients/finance-v3)
 - [Service](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/pay-debts/pay-debts.service.ts)
@@ -146,9 +153,8 @@ Used to fetch the applicant's debts and to create the payment charge.
 - **Gervimaður 010-2989 and 010-2129**
   - Use as the applicant on dev. Both have dummy debt data seeded at FJS,
     so `getCustomerDebts` returns a non-empty debt list for them.
-- If you'd rather not create a real FJS charge, use the
-  `shouldUseMockPayment` hidden input (dev/local only) to skip to a mock
-  payment instead.
+- Pay with a test card on the pay page. Whether FJS accepts
+  services-payments' machine token on dev is not yet confirmed.
 
 ## Localization
 

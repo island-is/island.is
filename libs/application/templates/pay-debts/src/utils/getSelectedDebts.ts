@@ -39,3 +39,10 @@ export const getSelectedDebts = (application: Application): SelectedDebt[] => {
     return selected
   }, [])
 }
+
+export const getDebtPaymentItems = (application: Application) =>
+  getSelectedDebts(application).map((debt) => ({
+    payId: debt.payID,
+    amount: debt.amountToPay,
+    label: `${debt.chargeTypeName} - ${debt.chargeItemSubject}`.slice(0, 255),
+  }))

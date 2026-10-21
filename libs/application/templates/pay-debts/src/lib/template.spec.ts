@@ -1,4 +1,4 @@
-import { GetDebtsApi, MockPaymentCatalog } from '../dataProviders'
+import { GetDebtsApi } from '../dataProviders'
 import { Roles, States } from '../utils/constants'
 import template from './template'
 
@@ -15,11 +15,8 @@ describe('pay-debts template', () => {
       States.DRAFT
     ].meta?.roles?.find((role) => role.id === Roles.APPLICANT)
 
-    expect(draftRole?.api?.map((api) => api.actionId)).toEqual(
-      expect.arrayContaining([
-        GetDebtsApi.actionId,
-        MockPaymentCatalog.actionId,
-      ]),
-    )
+    expect(draftRole?.api?.map((api) => api.actionId)).toEqual([
+      GetDebtsApi.actionId,
+    ])
   })
 })

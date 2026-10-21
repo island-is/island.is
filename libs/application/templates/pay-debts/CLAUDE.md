@@ -8,9 +8,9 @@ Pays debts owed to the state, fetched from Fjársýsla ríkisins (FJS). The nx p
 
 Read the selection only through `getSelectedDebts`. It matches each tick to its `payID` and drops ids the current list no longer holds.
 
-## The charge code is a known gap
+## Payment runs on the debt rail
 
-`template.ts` sends `debt.chargeTypeId` as the charge code. That is a charge category (Gjaldflokkur), not the item code (Gjaldliður) FJS expects; see the TODO there. FJS's own `/payDebt` takes `payDebts: [{ payid, payAmount }]`, answers 202 on success and is not called yet.
+The PAYMENT state is written by hand, not with `buildPaymentState`: a debt has no FJS catalog item. `createDebtPayment` sends each selected `payID` and amount to services-payments (`POST /v1/payments/debts`), which validates with FJS and calls `payDebt` itself. Never refund a debt payment from the application; FJS has no reversal, so services-payments alone refunds. The flow is described in the README under `### Payment`.
 
 ## FJS data
 

@@ -55,7 +55,6 @@ describe('debtsSection', () => {
 
     expect(table?.id).toBe('selectedDebts')
     expect(table?.rowIds?.id).toBe('selectedDebtIds')
-    expect(children.map((child) => child.id)).toContain('shouldUseMockPayment')
   })
 
   it('offers no per-row amount, since a debt can only be paid in full', () => {

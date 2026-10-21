@@ -8,17 +8,21 @@ import {
   DefaultEvents,
   FormModes,
   ApplicationConfigurations,
-  InstitutionNationalIds,
   StateLifeCycle,
 } from '@island.is/application/types'
-import { buildPaymentState } from '@island.is/application/utils'
+import { getPaymentForm } from '@island.is/application/ui-forms'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
-import { GetDebtsApi, MockPaymentCatalog } from '../dataProviders'
-import { application, payment } from './messages'
-import { getSelectedDebts } from '../utils/getSelectedDebts'
 import {
+  CreateDebtPaymentApi,
+  DeleteDebtPaymentApi,
+  GetDebtsApi,
+} from '../dataProviders'
+import { application, payment } from './messages'
+import {
+  coreHistoryMessages,
+  corePendingActionMessages,
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -64,7 +68,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [GetDebtsApi, MockPaymentCatalog],
+              api: [GetDebtsApi],
               delete: true,
             },
           ],
@@ -75,28 +79,55 @@ const template: ApplicationTemplate<
           },
         },
       },
-      [States.PAYMENT]: buildPaymentState({
-        organizationId: InstitutionNationalIds.FJARSYSLA_RIKISINS,
-        // TODO: debt.chargeTypeId is a charge *category* (Gjaldflokkur), not
-        // guaranteed to match the FJS catalog's item-level chargeItemCode
-        // (Gjaldliður). Blocked on FJS exposing the correct item code (and
-        // possibly a debt reference such as payID) before this can be relied
-        // on to create a valid charge.
-        chargeItems: (application) => {
-          const selected = getSelectedDebts(application)
-
-          if (selected.length === 0) {
-            throw new Error('None of the selected debts are in the debt list')
-          }
-
-          return selected.map((debt) => ({
-            code: debt.chargeTypeId,
-            amount: debt.amountToPay,
-          }))
+      // Not buildPaymentState: a debt has no FJS catalog item
+      [States.PAYMENT]: {
+        meta: {
+          name: 'Greiðsla',
+          status: FormModes.IN_PROGRESS,
+          lifecycle: EphemeralStateLifeCycle,
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.paymentCancelled,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
+          },
+          onEntry: CreateDebtPaymentApi,
+          onExit: DeleteDebtPaymentApi.configure({
+            triggerEvent: DefaultEvents.ABORT,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: async () => getPaymentForm(),
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+                {
+                  event: DefaultEvents.ABORT,
+                  name: 'Hætta við',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              delete: true,
+            },
+          ],
         },
-        lifecycle: EphemeralStateLifeCycle,
-        submitTarget: States.COMPLETED,
-      }),
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
+        },
+      },
       [States.COMPLETED]: {
         meta: {
           name: application.stateMetaNameCompleted.defaultMessage,

@@ -1,8 +1,4 @@
-import {
-  defineTemplateApi,
-  InstitutionNationalIds,
-  MockablePaymentCatalogApi,
-} from '@island.is/application/types'
+import { defineTemplateApi } from '@island.is/application/types'
 
 export const GetDebtsApi = defineTemplateApi({
   action: 'getCustomerDebts',
@@ -10,10 +6,14 @@ export const GetDebtsApi = defineTemplateApi({
   namespace: 'PayDebts',
 })
 
-export const MockPaymentCatalog = MockablePaymentCatalogApi.configure({
-  params: {
-    organizationId: InstitutionNationalIds.FJARSYSLA_RIKISINS,
-    enableMockPayment: true,
-  },
-  externalDataId: 'payment',
+export const CreateDebtPaymentApi = defineTemplateApi({
+  action: 'createDebtPayment',
+  namespace: 'PayDebts',
+  shouldPersistToExternalData: false,
+})
+
+export const DeleteDebtPaymentApi = defineTemplateApi({
+  action: 'deleteDebtPayment',
+  namespace: 'PayDebts',
+  shouldPersistToExternalData: false,
 })

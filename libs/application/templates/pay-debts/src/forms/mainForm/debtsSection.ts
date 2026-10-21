@@ -1,6 +1,5 @@
 import {
   buildCustomField,
-  buildHiddenInput,
   buildInteractiveTableField,
   buildMultiField,
   buildSection,
@@ -12,7 +11,7 @@ import {
   ExternalData,
   StaticText,
 } from '@island.is/application/types'
-import { formatCurrency, isRunningOnEnvironment } from '@island.is/shared/utils'
+import { formatCurrency } from '@island.is/shared/utils'
 import { debts as messages } from '../../lib/messages'
 import {
   getDebts,
@@ -181,12 +180,6 @@ export const debtsSection = buildSection({
               },
             ]
           },
-        }),
-        buildHiddenInput({
-          id: 'shouldUseMockPayment',
-          defaultValue: true,
-          condition: () =>
-            isRunningOnEnvironment('dev') || isRunningOnEnvironment('local'),
         }),
       ],
     }),

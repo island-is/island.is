@@ -2,6 +2,7 @@ import type { ApplicationWithAttachments } from '@island.is/application/types'
 import type { User } from '@island.is/auth-nest-tools'
 import { FinanceClientV3Service } from '@island.is/clients/finance-v3'
 import type { AuditService } from '@island.is/nest/audit'
+import type { PaymentService } from '@island.is/application/api/payment'
 import { PayDebtsService } from './pay-debts.service'
 
 describe('PayDebtsService', () => {
@@ -39,6 +40,7 @@ describe('PayDebtsService', () => {
       financeClient,
       downloadServiceConfig,
       auditService,
+      {} as PaymentService,
     )
     const nationalId = '0101307789'
     const auth = { nationalId } as User

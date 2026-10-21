@@ -11,7 +11,7 @@ import {
   type ExternalData,
   type FieldBaseProps,
 } from '@island.is/application/types'
-import { GetDebtsApi, MockPaymentCatalog } from '../../dataProviders'
+import { GetDebtsApi } from '../../dataProviders'
 import { DebtsLoader } from './index'
 
 jest.mock('@island.is/localization', () => ({
@@ -69,10 +69,7 @@ const refreshMock = (
     variables: {
       input: {
         id,
-        dataProviders: [
-          { actionId: GetDebtsApi.actionId, order: 0 },
-          { actionId: MockPaymentCatalog.actionId, order: 0 },
-        ],
+        dataProviders: [{ actionId: GetDebtsApi.actionId, order: 0 }],
       },
       locale: 'is',
     },

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { FinanceClientV3Module } from '@island.is/clients/finance-v3'
 import { DownloadServiceConfig } from '@island.is/nest/config'
+import { PaymentModule } from '@island.is/application/api/payment'
 
 import { SharedTemplateAPIModule } from '../../shared'
 
@@ -10,6 +11,7 @@ import { PayDebtsService } from './pay-debts.service'
   imports: [
     FinanceClientV3Module,
     SharedTemplateAPIModule,
+    PaymentModule,
     ConfigModule.forFeature(DownloadServiceConfig),
   ],
   providers: [PayDebtsService],
