@@ -1,5 +1,6 @@
 import { Box, Button, Inline, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { SOCIAL_INSURANCE_NAMESPACES } from '../../../lib/messages'
 import {
   CardLoader,
   IntroWrapper,
@@ -19,7 +20,7 @@ import { PersonalTaxCreditTable } from './PersonalTaxCreditTable'
 import { usePersonalTaxCreditForm } from './usePersonalTaxCreditForm'
 
 const PersonalTaxCredit = () => {
-  useNamespaces('sp.social-insurance-maintenance')
+  useNamespaces(SOCIAL_INSURANCE_NAMESPACES)
   const { formatMessage } = useLocale()
 
   const { data, loading, error } = useGetPersonalTaxCreditQuery({

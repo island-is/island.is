@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client'
 import { Navigate } from 'react-router-dom'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { SOCIAL_BENEFITS_NAMESPACES } from '../../lib/messages'
 import {
   IntroWrapper,
   m as coreMessages,
@@ -12,6 +13,7 @@ import { GET_VMST_APPLICATIONS_OVERVIEW_QUERY } from '@island.is/portals/my-page
 import { activationAllowanceMessages as am } from '../../lib/messages/activationAllowance'
 
 export const ActivationAllowanceRoot = () => {
+  useNamespaces(SOCIAL_BENEFITS_NAMESPACES)
   const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery(
     GET_VMST_APPLICATIONS_OVERVIEW_QUERY,

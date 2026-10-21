@@ -15,6 +15,7 @@ import {
   Tag,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { SOCIAL_BENEFITS_NAMESPACES } from '../../../lib/messages'
 import {
   OverviewTable,
   RowTagRenderer,
@@ -27,7 +28,7 @@ import { getJobSearchConfirmationDateRange } from './jobSearchConfirmation'
 
 // Atvinnuleysi – Staðan þín
 const Status = () => {
-  useNamespaces('sp.social-benefits-unemployment')
+  useNamespaces(SOCIAL_BENEFITS_NAMESPACES)
   const { formatMessage, locale, lang } = useLocale()
   const { isMobile } = useIsMobile()
   const { data, loading, error } = useGetUnemploymentApplicationOverviewQuery({

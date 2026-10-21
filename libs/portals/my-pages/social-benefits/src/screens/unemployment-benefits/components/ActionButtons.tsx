@@ -1,5 +1,5 @@
 import { Box } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { VmstApplicationsAvailableActions } from '@island.is/portals/my-pages/graphql'
 import { LinkButton, useIsMobile } from '@island.is/portals/my-pages/core'
@@ -14,7 +14,6 @@ export const ActionButtons = ({
   loading,
 }: ActionButtonsProps) => {
   const { formatMessage } = useLocale()
-  useNamespaces('sp.social-benefits-unemployment')
   const { isMobile } = useIsMobile()
   const showContactButton = availableActions?.canContact === true
   const showSubmitDocumentsButton =

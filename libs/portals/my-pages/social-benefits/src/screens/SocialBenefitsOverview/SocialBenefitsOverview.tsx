@@ -1,4 +1,5 @@
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { SOCIAL_BENEFITS_NAMESPACES } from '../../lib/messages'
 import {
   ActionCard,
   ActionCardLoader,
@@ -28,6 +29,7 @@ const getStatusTag = (
 })
 
 const SocialBenefitsOverview = () => {
+  useNamespaces(SOCIAL_BENEFITS_NAMESPACES)
   const { formatMessage } = useLocale()
   const { value: vmstEnabled, loading: vmstFlagLoading } = useFeatureFlag(
     Features.isServicePortalUnemploymentBenefitsPageEnabled,
