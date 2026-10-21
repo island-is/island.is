@@ -2003,6 +2003,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     )}
                   </Text>
                   {(filterTags.length > 0 ||
+                    selectedCourts.length > 0 ||
+                    selectedDistrictCourts.length > 0 ||
                     Boolean(queryState[QueryParam.SEARCH_TERM])) && (
                     <Hidden below="lg">
                       <Button
