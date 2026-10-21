@@ -341,6 +341,7 @@ Array [
   "case.indictmentCounts.vehicleRegistrationNumber",
   "case.indictmentDecision",
   "case.indictmentDeniedExplanation",
+  "case.indictmentHash",
   "case.indictmentIntroduction",
   "case.indictmentReviewReturnedExplanation",
   "case.indictmentReviewedDate",
@@ -1889,6 +1890,12 @@ exports[`GraphQL operations select these field paths ReorderIndictmentCounts 1`]
 Array [
   "reorderIndictmentCounts.displayOrder",
   "reorderIndictmentCounts.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths ReplaceIndictmentPdf 1`] = `
+Array [
+  "replaceIndictmentPdf.success",
 ]
 `;
 
