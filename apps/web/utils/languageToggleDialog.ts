@@ -17,7 +17,7 @@ const getString = (value: unknown) =>
  *   "translationNotAvailableModal": {
  *     "title": "...",
  *     "description": "...",
- *     "cancelButtonText": "View in Icelandic",
+ *     "cancelButtonText": "Keep viewing",
  *     "showConfirmButton": true,
  *     "confirmButtonText": "Go to home page",
  *     "confirmButtonHref": "/en"

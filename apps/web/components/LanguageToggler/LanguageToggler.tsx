@@ -280,13 +280,13 @@ export const LanguageToggler = ({
       initialVisibility={true}
       title={
         dialogConfig?.title ??
-        gn('switchToEnglishModalTitle', 'This page is only in Icelandic')
+        gn('switchToEnglishModalTitle', 'Translation not available')
       }
       description={
         dialogConfig?.description ??
         gn(
           'switchToEnglishModalText',
-          'It has not been translated into English yet.',
+          'The page you are viewing does not have an English translation yet',
         )
       }
       ariaLabel="Confirm switching to english"
@@ -299,7 +299,7 @@ export const LanguageToggler = ({
       }
       buttonTextCancel={
         dialogConfig?.cancelButtonText ??
-        gn('switchToEnglishModalCancelButtonText', 'View in Icelandic')
+        gn('switchToEnglishModalCancelButtonText', 'Keep viewing')
       }
     />
   )
