@@ -10,6 +10,7 @@ import React, {
   ReactNode,
   forwardRef,
   useContext,
+  useId,
   useState,
 } from 'react'
 import { Input, InputProps } from './shared/Input/Input'
@@ -359,7 +360,9 @@ export const AsyncSearchInput = forwardRef<
     ref,
   ) => {
     const { colorScheme: colorSchemeContext } = useContext(ColorSchemeContext)
+    const fallbackId = useId()
     const {
+      id = fallbackId,
       value,
       inputSize: size,
       format,
@@ -442,6 +445,7 @@ export const AsyncSearchInput = forwardRef<
               inputSize={size}
               isClearable={showClearButton}
               {...restInputProps}
+              id={id}
               colored={restInputProps.colored || blueColorScheme}
               data-testid={dataTestId}
               color={inputColor}
@@ -454,6 +458,7 @@ export const AsyncSearchInput = forwardRef<
           ) : (
             <Input
               {...restInputProps}
+              id={id}
               value={value}
               inputSize={size}
               isClearable={showClearButton}
@@ -523,7 +528,7 @@ export const AsyncSearchInput = forwardRef<
             <label
               className={helperStyles.srOnly}
               id={inputProps['aria-labelledby']}
-              htmlFor={inputProps.id}
+              htmlFor={id}
             >
               {inputProps.placeholder}
             </label>
