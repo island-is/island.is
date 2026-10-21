@@ -393,6 +393,16 @@ const OJOITemplate: ApplicationTemplate<
     },
   },
   mapUserToRole(id: string, application: Application) {
+    // If-clause to ensure the ministry is given role ASSIGNEE in the submitted state for applications it made itself.
+    // This is so that the ministry can approve its own applications.
+    if (
+      application.state === ApplicationStates.SUBMITTED &&
+      id === InstitutionNationalIds.DOMSMALA_RADUNEYTID &&
+      application.assignees.includes(id)
+    ) {
+      return Roles.ASSIGNEE
+    }
+
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
