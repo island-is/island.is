@@ -142,6 +142,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
             courtDocument: Base64.btoa(indictmentPdf),
           },
         ],
+        caseId,
       )
       expect(then.result.delivered).toEqual(true)
     })
@@ -195,6 +196,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
             courtDocument: Base64.btoa(indictmentPdf),
           },
         ],
+        caseId,
       )
     })
   })

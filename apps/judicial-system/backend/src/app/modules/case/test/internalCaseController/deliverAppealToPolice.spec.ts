@@ -78,7 +78,11 @@ describe('InternalCaseController - Deliver appeal to police', () => {
     const caseConclusion = 'test conclusion'
     const appealRulingPdf = 'test appeal ruling'
     const appealCaseId = uuid()
-    const caseFile = { id: uuid(), category: CaseFileCategory.APPEAL_RULING }
+    const caseFile = {
+      id: uuid(),
+      name: 'appealRuling.pdf',
+      category: CaseFileCategory.APPEAL_RULING,
+    }
     const theCase = {
       id: caseId,
       origin: CaseOrigin.LOKE,
@@ -129,8 +133,10 @@ describe('InternalCaseController - Deliver appeal to police', () => {
           {
             type: PoliceDocumentType.RVUL,
             courtDocument: Base64.btoa(appealRulingPdf),
+            name: caseFile.name,
           },
         ],
+        caseId,
       )
       expect(then.result.delivered).toEqual(true)
     })

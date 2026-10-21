@@ -296,6 +296,50 @@ describe('CaseRepositoryService - case reads', () => {
     })
   })
 
+  describe('findByIdWithProsecutor', () => {
+    const transaction = {} as never
+    let result: Case | null
+
+    beforeEach(async () => {
+      result = await caseRepositoryService.findByIdWithProsecutor(caseId, {
+        transaction,
+      })
+    })
+
+    it('should read the case with its prosecutor and nothing else', () => {
+      expect(findByPkArgs()).toEqual([
+        caseId,
+        {
+          include: [{ model: User, as: 'prosecutor' }],
+          transaction,
+        },
+      ])
+      expect(result).toBe(theCase)
+    })
+
+    it('should resolve the police case numbers in the same transaction', () => {
+      expect(mockResolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+        [theCase],
+        { transaction },
+      )
+    })
+
+    describe('no case', () => {
+      beforeEach(async () => {
+        mockCaseModel.findByPk.mockReset()
+        mockResolvePoliceCaseNumbersForCases.mockClear()
+        mockCaseModel.findByPk.mockResolvedValue(null)
+
+        result = await caseRepositoryService.findByIdWithProsecutor(caseId)
+      })
+
+      it('should resolve nothing', () => {
+        expect(result).toBeNull()
+        expect(mockResolvePoliceCaseNumbersForCases).not.toHaveBeenCalled()
+      })
+    })
+  })
+
   describe('findLimitedAccessById', () => {
     const transaction = {} as never
 

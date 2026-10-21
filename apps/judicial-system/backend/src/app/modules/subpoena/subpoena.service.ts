@@ -42,7 +42,11 @@ import {
 import { DefendantService } from '../defendant/defendant.service'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
-import { PoliceDocumentType, PoliceService } from '../police'
+import {
+  isFileTooLargeForPolice,
+  PoliceDocumentType,
+  PoliceService,
+} from '../police'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
@@ -532,6 +536,11 @@ export class SubpoenaService {
 
       return { delivered: true }
     } catch (error) {
+      // Do not retry an upload LÖKE will never accept
+      if (isFileTooLargeForPolice(error)) {
+        return { delivered: true }
+      }
+
       this.logger.error(
         'Error delivering subpoena to the police centralized file service',
         error,

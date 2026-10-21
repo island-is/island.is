@@ -65,7 +65,12 @@ import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { FileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
-import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
+import {
+  isFileTooLargeForPolice,
+  PoliceDocument,
+  PoliceDocumentType,
+  PoliceService,
+} from '../police'
 import {
   AppealCase,
   AppealDecision,
@@ -1373,20 +1378,28 @@ export class InternalCaseService {
         theCase.validToDate) ||
       nowFactory() // The API requires a date so we send now as a dummy date
 
-    return this.policeService.updatePoliceCase(
-      user,
-      policeCaseId,
-      theCase.type,
-      theCase.state === CaseState.CORRECTING
-        ? CaseState.COMPLETED
-        : theCase.state,
-      theCase.policeCaseNumbers.length > 0 ? theCase.policeCaseNumbers[0] : '',
-      theCase.courtCaseNumber ?? '',
-      theCase.policeDefendantNationalId ?? '',
-      validToDate,
-      theCase.conclusion ?? '', // Indictments do not have a conclusion
-      courtDocuments,
-    )
+    try {
+      return await this.policeService.updatePoliceCase(
+        user,
+        policeCaseId,
+        theCase.type,
+        theCase.state === CaseState.CORRECTING
+          ? CaseState.COMPLETED
+          : theCase.state,
+        theCase.policeCaseNumbers.length > 0
+          ? theCase.policeCaseNumbers[0]
+          : '',
+        theCase.courtCaseNumber ?? '',
+        theCase.policeDefendantNationalId ?? '',
+        validToDate,
+        theCase.conclusion ?? '', // Indictments do not have a conclusion
+        courtDocuments,
+        theCase.id,
+      )
+    } catch (reason) {
+      // Do not retry an upload LÖKE will never accept
+      return isFileTooLargeForPolice(reason)
+    }
   }
 
   // Only updates the completed case in the police system.
@@ -1661,6 +1674,7 @@ export class InternalCaseService {
           return {
             type: PoliceDocumentType.RVUL,
             courtDocument: Base64.btoa(file.toString('binary')),
+            ...(caseFile.name ? { name: caseFile.name } : {}),
           }
         }) ?? [],
     )

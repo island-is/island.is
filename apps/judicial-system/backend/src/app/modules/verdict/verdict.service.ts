@@ -28,7 +28,11 @@ import { InternalCaseService, PdfService } from '../case'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { FileService } from '../file'
-import { PoliceDocumentType, PoliceService } from '../police'
+import {
+  isFileTooLargeForPolice,
+  PoliceDocumentType,
+  PoliceService,
+} from '../police'
 import {
   Case,
   CaseRepositoryService,
@@ -526,6 +530,11 @@ export class VerdictService {
 
       return { delivered: true }
     } catch (error) {
+      // Do not retry an upload LÖKE will never accept
+      if (isFileTooLargeForPolice(error)) {
+        return { delivered: true }
+      }
+
       this.logger.error(
         'Error delivering verdict to the national commissioners office',
         error,

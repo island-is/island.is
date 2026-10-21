@@ -107,6 +107,7 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
         date,
         '',
         [],
+        caseId,
       )
       expect(then.result.delivered).toEqual(true)
     })
