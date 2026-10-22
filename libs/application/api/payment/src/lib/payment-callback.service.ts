@@ -87,8 +87,7 @@ export class PaymentCallbackService {
 
     if (
       callback.type === 'error' &&
-      callback.details?.reason === 'payment_failed' &&
-      callback.details?.message === 'FJS rejected the debt payment'
+      callback.details?.reason === 'payment_failed'
     ) {
       const { paymentId, applicationId } = callback.paymentFlowMetadata ?? {}
       if (paymentId && applicationId) {

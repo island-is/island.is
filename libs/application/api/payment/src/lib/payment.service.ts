@@ -245,13 +245,17 @@ export class PaymentService {
     }
 
     // A bank transfer FJS rejected counts as paid until it is refunded by hand
+    return !(await this.isDebtFlowClosed(paymentFlowId))
+  }
+
+  private async isDebtFlowClosed(paymentFlowId: string): Promise<boolean> {
     const { isClosed } =
       await this.paymentsApi.paymentFlowControllerGetPaymentFlow({
         id: paymentFlowId,
         includeEvents: false,
       })
 
-    return !isClosed
+    return isClosed
   }
 
   async setUser4(
@@ -554,7 +558,12 @@ export class PaymentService {
     const payment = await this.paymentModel.findOne({
       where: { id: paymentId, application_id: applicationId },
     })
-    if (!payment || !isDebtPayment(payment)) {
+    if (
+      !payment ||
+      !isDebtPayment(payment) ||
+      !payment.request_id ||
+      !(await this.isDebtFlowClosed(payment.request_id))
+    ) {
       return
     }
 
