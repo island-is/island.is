@@ -12,9 +12,11 @@ import { CaseExistsForUpdateGuard } from '../caseExistsForUpdate.guard'
 import { IndictmentCaseExistsForDefendantGuard } from '../indictmentCaseExistsForDefendant.guard'
 import { LimitedAccessCaseExistsGuard } from '../limitedAccessCaseExists.guard'
 import { MinimalCaseExistsGuard } from '../minimalCaseExists.guard'
+import { MinimalCaseExistsForUpdateGuard } from '../minimalCaseExistsForUpdate.guard'
 import {
   CASE_LOAD_GUARD_TAG,
   CASE_LOAD_INCLUDE_TAG,
+  CASE_LOAD_ROUTE_TAG,
   CASE_LOAD_SPAN,
 } from '../traceCaseLoad'
 
@@ -27,7 +29,7 @@ describe('case load tracing', () => {
   const caseId = uuid()
   const theCase = { id: caseId }
   const mockTrace = tracer.trace as jest.Mock
-  let requestSpan: { addTags: jest.Mock }
+  const route = { method: 'GET', route: { path: '/api/case/:caseId' } }
 
   const activate = (
     guard: { canActivate: (context: ExecutionContext) => Promise<boolean> },
@@ -35,30 +37,27 @@ describe('case load tracing', () => {
   ) =>
     runInRequestContext(() =>
       guard.canActivate({
-        switchToHttp: () => ({ getRequest: () => request }),
+        switchToHttp: () => ({ getRequest: () => ({ ...route, ...request }) }),
       } as unknown as ExecutionContext),
     )
 
   beforeEach(() => {
-    requestSpan = { addTags: jest.fn() }
-    ;(tracer.scope as jest.Mock).mockImplementation(() => ({
-      active: () => requestSpan,
-    }))
     mockTrace.mockImplementation((_name, _options, fn) => fn())
   })
 
   const expectTraced = (guard: string, include: string) => {
-    const tags = {
-      [CASE_LOAD_GUARD_TAG]: guard,
-      [CASE_LOAD_INCLUDE_TAG]: include,
-    }
-
     expect(mockTrace).toHaveBeenCalledWith(
       CASE_LOAD_SPAN,
-      { resource: guard, tags },
+      {
+        resource: guard,
+        tags: {
+          [CASE_LOAD_GUARD_TAG]: guard,
+          [CASE_LOAD_INCLUDE_TAG]: include,
+          [CASE_LOAD_ROUTE_TAG]: 'GET /api/case/:caseId',
+        },
+      },
       expect.any(Function),
     )
-    expect(requestSpan.addTags).toHaveBeenCalledWith(tags)
   }
 
   it('CaseExistsGuard loads the full case', async () => {
@@ -95,6 +94,23 @@ describe('case load tracing', () => {
     })
 
     expectTraced('MinimalCaseExistsGuard', 'minimal')
+  })
+
+  it('MinimalCaseExistsForUpdateGuard loads the minimal case', async () => {
+    const { caseService, sequelize } = await createTestingCaseModule()
+    ;(sequelize.transaction as jest.Mock).mockResolvedValue({} as Transaction)
+    jest
+      .spyOn(caseService, 'findMinimalByIdForUpdate')
+      .mockResolvedValue(theCase as never)
+
+    await activate(
+      new MinimalCaseExistsForUpdateGuard(caseService, sequelize),
+      {
+        params: { caseId },
+      },
+    )
+
+    expectTraced('MinimalCaseExistsForUpdateGuard', 'minimal')
   })
 
   it('LimitedAccessCaseExistsGuard loads the limited access case', async () => {

@@ -29,8 +29,15 @@ import { PaymentMethod, PaymentStatus } from '../../types'
 import { environment } from '../../environments'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
+import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
 import {
+  PaymentFulfillment,
+  PaymentFlowAttributes,
+  PaymentFlowDebtAttributes,
+} from '../paymentFlow/models'
+import { CatalogItemWithQuantity } from '../../types/charges'
+import {
+  BankTransferPayerType,
   BankTransferPaymentResult,
   BankTransferPendingStatus,
   BankTransferStatus,
@@ -46,12 +53,14 @@ import {
   VerifyBankTransferInput,
   VerifyBankTransferResponse,
 } from './dtos'
-import { BankTransferPayment } from './models/bankTransferPayment.model'
+import { BankTransferPayment } from './models'
 import {
   bankTransferLogContext,
+  buildBankTransferPayInfo,
   deriveBankTransferFailureReason,
   generateBankTransferChargeFJSPayload,
   getBankTransferDebtor,
+  getBankTransferPayerType,
   isBankTransferFailureStatus,
   isBlikkStatus,
   isOnboardingRequired,
@@ -60,6 +69,7 @@ import {
   mapBlikkStatusToBankTransferStatus,
   mapRawStatusToBankTransferPendingStatus,
   rowLogContext,
+  toBlikkDebtItem,
   toBlikkItem,
   type BankTransferLogContext,
 } from './bankTransfer.utils'
@@ -84,6 +94,7 @@ export class BankTransferService {
       typeof PaymentFlowModuleConfig
     >,
     private readonly blikkClient: BlikkClientService,
+    private readonly debtSettlementService: DebtSettlementService,
   ) {}
 
   /** Initiates a new bank-transfer attempt with Blikk and persists the row. */
@@ -93,6 +104,7 @@ export class BankTransferService {
     const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
       input.paymentFlowId,
     )
+    const payerType = getBankTransferPayerType(paymentFlow.payerNationalId)
 
     const [isEligible, existing] = await Promise.all([
       this.paymentFlowService.isEligibleToBePaid(input.paymentFlowId),
@@ -115,6 +127,7 @@ export class BankTransferService {
     ) {
       this.logger.warn(
         `[${input.paymentFlowId}] Bank transfer requested for a payer it is not enabled for`,
+        { paymentFlowId: input.paymentFlowId, payerType },
       )
       throw new BadRequestException(
         BankTransferErrorCode.FailedToCreateBankTransfer,
@@ -129,6 +142,7 @@ export class BankTransferService {
       // The payment screen validates this; reaching here means a missing or non-person actor.
       this.logger.warn(
         `[${input.paymentFlowId}] Company bank transfer requested without a valid individual to authorise it`,
+        { paymentFlowId: input.paymentFlowId, payerType },
       )
       throw new BadRequestException(
         BankTransferErrorCode.InvalidActorNationalId,
@@ -140,11 +154,29 @@ export class BankTransferService {
       await this.handleExistingActiveBankTransferRow(existing)
     }
 
-    const { catalogItems, totalPrice } =
-      await this.paymentFlowService.getPaymentFlowChargeDetails(
-        paymentFlow.organisationId,
-        paymentFlow.charges,
+    let catalogItems: CatalogItemWithQuantity[] | undefined
+    let debts: PaymentFlowDebtAttributes[] | undefined
+    let totalPrice: number
+
+    if (paymentFlow.type === 'debt') {
+      // The debts can change after the flow was created, FJS has the final say.
+      await this.paymentFlowService.validateDebtPaymentFlow(
+        paymentFlow,
+        PaymentMethod.BANK_TRANSFER,
       )
+      const amountDetails =
+        await this.paymentFlowService.getPaymentFlowAmountDetails(paymentFlow)
+      totalPrice = amountDetails.totalPrice
+      debts = paymentFlow.debts
+    } else {
+      const chargeDetails =
+        await this.paymentFlowService.getPaymentFlowChargeDetails(
+          paymentFlow.organisationId,
+          paymentFlow.charges,
+        )
+      totalPrice = chargeDetails.totalPrice
+      catalogItems = chargeDetails.catalogItems
+    }
 
     const correlationId = uuid()
     const callbackUrl = `${this.paymentFlowConfig.webOrigin}/api/bank-transfer/callback`
@@ -152,6 +184,12 @@ export class BankTransferService {
     const expiresAtSeconds =
       Math.floor(Date.now() / 1000) + this.config.paymentTtlSeconds
     const expiresAt = new Date(expiresAtSeconds * 1000)
+
+    // Kept on the row only: flow events are delivered to the organisation, and this is a person's
+    // national id.
+    const actorNationalId = debtor.debtorCorpExternalId
+      ? debtor.debtorExternalId
+      : null
 
     let providerResult: BankTransferPaymentResult
     try {
@@ -164,6 +202,7 @@ export class BankTransferService {
         partnerRedirectUrl,
         expiresAt: expiresAtSeconds,
         items: catalogItems,
+        debts,
         ...debtor,
         bankAccountNumber: input.bankAccountNumber,
       })
@@ -179,7 +218,11 @@ export class BankTransferService {
           message: `Failed to create bank transfer: ${errorMessage}`,
           metadata: { error: errorMessage },
           // No `rrn`: the provider call is what failed, so there is no payment id yet.
-          logContext: { paymentFlowId: input.paymentFlowId, correlationId },
+          logContext: {
+            paymentFlowId: input.paymentFlowId,
+            correlationId,
+            payerType,
+          },
         },
         { useRetry: true, throwOnError: false },
       )
@@ -194,11 +237,7 @@ export class BankTransferService {
         provider: 'blikk',
         providerPaymentId: providerResult.providerPaymentId,
         scaRedirectUrl: providerResult.scaRedirectUrl,
-        // Kept on the row only: flow events are delivered to the organisation, and this is a
-        // person's national id.
-        actorNationalId: debtor.debtorCorpExternalId
-          ? debtor.debtorExternalId
-          : null,
+        actorNationalId,
         amount: totalPrice,
         lastKnownStatus: providerResult.rawStatus,
         expiresAt,
@@ -209,6 +248,7 @@ export class BankTransferService {
         input.paymentFlowId,
         correlationId,
         providerResult.providerPaymentId,
+        payerType,
       )
 
       // Best effort to cancel the Blikk payment if persisting the row fails
@@ -265,6 +305,7 @@ export class BankTransferService {
           input.paymentFlowId,
           correlationId,
           providerResult.providerPaymentId,
+          payerType,
         ),
       },
       { useRetry: true, throwOnError: false },
@@ -278,6 +319,7 @@ export class BankTransferService {
           id: correlationId,
           paymentFlowId: input.paymentFlowId,
           providerPaymentId: providerResult.providerPaymentId,
+          actorNationalId,
         },
         providerResult,
       )
@@ -570,7 +612,7 @@ export class BankTransferService {
     }
   }
 
-  /** Records a settled SUCCESS, creates the fulfillment + FJS charge, and notifies upstream. */
+  /** Records a settled SUCCESS, creates the fulfillment + FJS charge (debt flows: registers the debt payment with FJS instead), and notifies upstream. */
   async finalizeBankTransferSuccess({
     correlationId,
     paymentFlowId,
@@ -582,14 +624,23 @@ export class BankTransferService {
     providerPaymentId: string
     rawStatus: string
   }): Promise<void> {
+    const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
+      paymentFlowId,
+    )
+    const payerType = getBankTransferPayerType(paymentFlow.payerNationalId)
+    const isDebtFlow = paymentFlow.type === 'debt'
+
+    // Debt flows are registered with FJS as a debt payment (`payDebt`) instead of a charge.
     // Blikk gives us no settlement timestamp, so the moment we record SUCCESS is our best
     // proxy for when the bank transfer was paid (sent to FJS as the charge's effective date).
-    const chargePayload = await this.buildFjsChargePayload(
-      paymentFlowId,
-      providerPaymentId,
-      correlationId,
-      new Date(),
-    )
+    const chargePayload = isDebtFlow
+      ? undefined
+      : await this.buildFjsChargePayload(
+          paymentFlow,
+          providerPaymentId,
+          correlationId,
+          new Date(),
+        )
 
     // Create the fulfillment BEFORE marking the row SUCCESS so that a SUCCESS `lastKnownStatus`
     // always implies a committed fulfillment. If this throws the row stays in its prior state and
@@ -598,6 +649,7 @@ export class BankTransferService {
       paymentFlowId,
       confirmationRefId: correlationId,
       providerPaymentId,
+      payerType,
       chargePayload,
     })
 
@@ -615,46 +667,119 @@ export class BankTransferService {
       },
     )
 
-    if (affectedRows === 0) {
-      return
+    if (affectedRows > 0) {
+      await this.paymentFlowService.logPaymentFlowUpdate(
+        {
+          paymentFlowId,
+          type: 'success',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.BANK_TRANSFER,
+          reason: 'payment_completed',
+          message: 'Bank transfer payment completed',
+          metadata: { providerPaymentId },
+          logContext: bankTransferLogContext(
+            paymentFlowId,
+            correlationId,
+            providerPaymentId,
+            payerType,
+          ),
+        },
+        { useRetry: true, throwOnError: false },
+      )
     }
 
-    await this.paymentFlowService.logPaymentFlowUpdate(
-      {
-        paymentFlowId,
-        type: 'success',
-        occurredAt: new Date(),
-        paymentMethod: PaymentMethod.BANK_TRANSFER,
-        reason: 'payment_completed',
-        message: 'Bank transfer payment completed',
-        metadata: { providerPaymentId },
-        logContext: bankTransferLogContext(
-          paymentFlowId,
-          correlationId,
-          providerPaymentId,
-        ),
-      },
-      { useRetry: true, throwOnError: false },
-    )
+    // Also on repair runs, where SUCCESS was recorded earlier: settling is idempotent, and picks
+    // up a registration that never happened.
+    if (isDebtFlow) {
+      await this.settleDebt(paymentFlow, {
+        correlationId,
+        providerPaymentId,
+      })
+    }
   }
 
-  /** Inserts the fulfillment row and creates the FJS charge with retries. Idempotent. */
+  /**
+   * Registers the settled transfer of a debt flow with FJS. Never throws: the payment is settled
+   * and the worker retries what is left.
+   */
+  private async settleDebt(
+    paymentFlow: PaymentFlowAttributes,
+    {
+      correlationId,
+      providerPaymentId,
+    }: { correlationId: string; providerPaymentId: string },
+  ): Promise<void> {
+    const logContext = bankTransferLogContext(
+      paymentFlow.id,
+      correlationId,
+      providerPaymentId,
+      getBankTransferPayerType(paymentFlow.payerNationalId),
+    )
+
+    try {
+      const outcome = await this.debtSettlementService.attempt(
+        paymentFlow,
+        buildBankTransferPayInfo({
+          providerPaymentId,
+          totalPrice: (paymentFlow.debts ?? []).reduce(
+            (sum, debt) => sum + debt.amount,
+            0,
+          ),
+          correlationId,
+        }),
+      )
+
+      if (outcome.type === 'registered' && !outcome.alreadySettled) {
+        await this.paymentFlowService.logDebtPaymentFinalized(
+          paymentFlow.id,
+          PaymentMethod.BANK_TRANSFER,
+          outcome,
+        )
+      } else if (outcome.type === 'rejected' && !outcome.alreadySettled) {
+        // Blikk refunds need an SCA approval, so nothing refunds this automatically in v1.
+        this.logger.error(
+          `[${paymentFlow.id}] FJS rejected a settled debt bank transfer — refund it manually`,
+          { ...logContext, needsManualRefund: true, problem: outcome.problem },
+        )
+        await this.paymentFlowService.logDebtPaymentRejected(
+          paymentFlow.id,
+          PaymentMethod.BANK_TRANSFER,
+          outcome.problem,
+          { needsManualRefund: true },
+        )
+      }
+    } catch (error) {
+      this.logger.warn(
+        `[${paymentFlow.id}] Bank transfer settled but the debt payment could not be registered — the payment worker will retry`,
+        { ...logContext, error: (error as Error)?.message },
+      )
+    }
+  }
+
+  /**
+   * Inserts the fulfillment row and creates the FJS charge with retries. Idempotent. Debt flows
+   * pass no `chargePayload`: they get the fulfillment only.
+   */
   async createBankTransferFulfillment({
     paymentFlowId,
     confirmationRefId,
     // Logging only. `payInfo.RRN` holds it too, but typed optional there.
     providerPaymentId,
+    // Logging only.
+    payerType,
     chargePayload,
   }: {
     paymentFlowId: string
     confirmationRefId: string
     providerPaymentId: string
-    chargePayload: Charge
+    payerType: BankTransferPayerType | undefined
+    chargePayload?: Charge
   }): Promise<void> {
     const logContext = bankTransferLogContext(
       paymentFlowId,
       confirmationRefId,
       providerPaymentId,
+      payerType,
     )
     const existing = await this.paymentFulfillmentModel.findOne({
       where: { paymentFlowId, isDeleted: false },
@@ -678,6 +803,10 @@ export class BankTransferService {
           throw error
         }
       }
+    }
+
+    if (!chargePayload) {
+      return
     }
 
     // No `payableAmount`: identifiers only.
@@ -724,7 +853,9 @@ export class BankTransferService {
       callbackUrl: input.callbackUrl,
       partnerRedirectUrl: input.partnerRedirectUrl,
       expiresAt: input.expiresAt,
-      items: input.items?.map(toBlikkItem),
+      items: input.debts
+        ? input.debts.map(toBlikkDebtItem)
+        : input.items?.map(toBlikkItem),
       debtorExternalId: input.debtorExternalId,
       debtorCorpExternalId: input.debtorCorpExternalId,
       // Blikk expects a debtor name; we send the national id.
@@ -743,6 +874,9 @@ export class BankTransferService {
             // No `rrn`: the create call is what failed.
             paymentFlowId: input.paymentFlowId,
             correlationId: input.correlationId,
+            payerType: input.debtorCorpExternalId
+              ? BankTransferPayerType.COMPANY
+              : BankTransferPayerType.PERSON,
             status: e.status,
             error: e.message,
           },
@@ -893,10 +1027,10 @@ export class BankTransferService {
 
   /** Best-effort Blikk GET; logs and returns null on failure. Not for verify (which must throw). */
   private async refreshFromBlikkOrWarn(
-    // `id` is here only so the log can carry the correlationId; both callers pass a full row.
+    // `id` and `actorNationalId` are here only for the log context; both callers pass a full row.
     row: Pick<
       BankTransferPayment,
-      'providerPaymentId' | 'paymentFlowId' | 'id'
+      'providerPaymentId' | 'paymentFlowId' | 'id' | 'actorNationalId'
     >,
   ): Promise<BankTransferPaymentResult | null> {
     try {
@@ -997,7 +1131,7 @@ export class BankTransferService {
   private async logBankTransferFailed(
     row: Pick<
       BankTransferPayment,
-      'id' | 'paymentFlowId' | 'providerPaymentId'
+      'id' | 'paymentFlowId' | 'providerPaymentId' | 'actorNationalId'
     >,
     result: BankTransferPaymentResult,
   ): Promise<void> {
@@ -1096,14 +1230,11 @@ export class BankTransferService {
 
   /** Builds the FJS charge payload for a settled bank transfer. */
   private async buildFjsChargePayload(
-    paymentFlowId: string,
+    paymentFlow: PaymentFlowAttributes,
     providerPaymentId: string,
     correlationId: string,
     settledAt: Date,
   ): Promise<Charge> {
-    const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
-      paymentFlowId,
-    )
     const { catalogItems, totalPrice } =
       await this.paymentFlowService.getPaymentFlowChargeDetails(
         paymentFlow.organisationId,

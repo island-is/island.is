@@ -30,6 +30,7 @@ export class IndictmentCaseExistsForDefendantGuard implements CanActivate {
     request.case = await traceCaseLoad(
       IndictmentCaseExistsForDefendantGuard.name,
       'defendantIndictment',
+      request,
       () =>
         this.internalCaseService.findByIdAndDefendantNationalId(
           caseId,

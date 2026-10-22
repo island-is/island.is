@@ -40,7 +40,7 @@ import {
   BROKERS,
   ALCOHOL_LICENCES,
 } from './__mock-data__/responses'
-import { PersonType } from './syslumennClient.types'
+import { DebtTypes, PersonType } from './syslumennClient.types'
 import { SyslumennClientModule } from '../lib/syslumennClient.module'
 
 import {
@@ -205,6 +205,55 @@ describe('SyslumennService', () => {
         'Lögheimilisbreyting barns',
       )
       expect(response).toStrictEqual(mapDataUploadResponse(DATA_UPLOAD))
+    })
+  })
+
+  describe('getEstateInfoWithAvailableSettlements', () => {
+    it('should sort assets sent with asset types by name', async () => {
+      const [estate] = await service.getEstateInfoWithAvailableSettlements(
+        VALID_ESTATE_APPLICANT,
+      )
+
+      expect(estate.assets.map((a) => a.assetNumber)).toEqual(['F2010005'])
+      expect(estate.vehicles.map((a) => a.assetNumber)).toEqual(['VA334'])
+      expect(estate.bankAccounts).toEqual([
+        expect.objectContaining({
+          description: 'Bankareikningur',
+          marketValue: '1000',
+        }),
+      ])
+      expect(estate.otherDebts).toEqual([
+        expect.objectContaining({
+          description: 'Lán',
+          debtType: DebtTypes.Loan,
+        }),
+      ])
+      expect(estate.availableSettlements?.divisionOfEstateByHeirs).toBe(
+        'Í lagi',
+      )
+    })
+  })
+
+  describe('getEstateInfoForInheritanceReport', () => {
+    it('should sort assets sent with asset types by name', async () => {
+      const [report] = await service.getEstateInfoForInheritanceReport(
+        VALID_ESTATE_APPLICANT,
+      )
+
+      expect(report.assets.map((a) => a.assetNumber)).toEqual(['F2010005'])
+      expect(report.vehicles.map((a) => a.assetNumber)).toEqual(['VA334'])
+      expect(report.bankAccounts).toEqual([
+        expect.objectContaining({
+          description: 'Bankareikningur',
+          propertyValuation: '1000',
+        }),
+      ])
+      expect(report.otherDebts).toEqual([
+        expect.objectContaining({
+          description: 'Lán',
+          debtType: DebtTypes.Loan,
+        }),
+      ])
     })
   })
 

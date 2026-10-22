@@ -418,12 +418,8 @@ const RentalAgreementTemplate: ApplicationTemplate<
       return Roles.INSTITUTION
     }
 
-    if (applicantActors.length > 0) {
-      return Roles.DELEGATE
-    }
-
     if (id === applicant) {
-      return Roles.APPLICANT
+      return applicantActors.length > 0 ? Roles.DELEGATE : Roles.APPLICANT
     }
 
     if (assignees.includes(id) && id !== applicant) {

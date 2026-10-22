@@ -1,4 +1,4 @@
-import { UniqueConstraintError } from 'sequelize'
+import { Transaction, UniqueConstraintError } from 'sequelize'
 
 import {
   ConflictException,
@@ -46,12 +46,18 @@ export class UserService {
     return this.userRepositoryService.findAllActive()
   }
 
-  async getById(userId: string): Promise<User | null> {
-    return this.userRepositoryService.findById(userId)
+  async getById(
+    userId: string,
+    options?: { transaction?: Transaction },
+  ): Promise<User | null> {
+    return this.userRepositoryService.findById(userId, options)
   }
 
-  async findById(userId: string): Promise<User> {
-    const user = await this.getById(userId)
+  async findById(
+    userId: string,
+    options?: { transaction?: Transaction },
+  ): Promise<User> {
+    const user = await this.getById(userId, options)
 
     if (!user) {
       throw new NotFoundException(`User ${userId} does not exist`)

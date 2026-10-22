@@ -25,13 +25,9 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-import type {
-  AppealAppointmentLetter,
-  AppealSummonsPdfDefendant,
-} from '../../formatters'
+import type { AppealSummonsPdfDefendant } from '../../formatters'
 import {
   Confirmation,
-  createAppealAppointmentLetter,
   createAppealSummons,
   createCaseFilesRecord,
   createFineSentToPrisonAdminPdf,
@@ -301,6 +297,23 @@ export class PdfService {
       })
   }
 
+  private async uploadPdfToS3(
+    theCase: Case,
+    key: string,
+    pdf: Buffer,
+  ): Promise<void> {
+    try {
+      await this.awsS3Service.putObject(
+        theCase.type,
+        key,
+        pdf.toString('binary'),
+      )
+    } catch (reason) {
+      this.logger.error(`Failed to upload pdf ${key} to AWS S3`, { reason })
+      throw reason
+    }
+  }
+
   private async getFullOriginalCase(
     theCase: Case,
     transaction?: Transaction,
@@ -422,6 +435,57 @@ export class PdfService {
     }
 
     return generatedPdf
+  }
+
+  async replaceIndictmentPdf(
+    theCase: Case,
+    key: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    const indictmentKey = `${theCase.id}/indictment.pdf`
+
+    // The temporary upload and the frozen indictment share the case id
+    // prefix. Using the indictment key as the upload would overwrite, then
+    // delete the only copy of the Ákæra.
+    if (key === indictmentKey) {
+      throw new BadRequestException(
+        'Cannot replace the indictment with its own storage key',
+      )
+    }
+
+    const uploadedPdf = await this.awsS3Service.getObject(theCase.type, key)
+
+    if (uploadedPdf.subarray(0, 5).toString('latin1') !== '%PDF-') {
+      throw new BadRequestException('Uploaded file is not a PDF')
+    }
+
+    // Overwrite the frozen object first, then update the hash. S3 is not part
+    // of the DB transaction: if the hash update fails the new bytes are still
+    // served while the hash is set, which is preferable to a hash pointing at
+    // missing bytes. The temporary upload is deleted by the caller after
+    // commit so a rolled-back attempt can be retried.
+    await this.uploadPdfToS3(theCase, indictmentKey, uploadedPdf)
+
+    const { hash, hashAlgorithm } = getCaseFileHash(uploadedPdf)
+    const indictmentHash = JSON.stringify({ hash, hashAlgorithm })
+
+    await this.caseRepositoryService.update(
+      theCase.id,
+      { indictmentHash },
+      { transaction },
+    )
+
+    for (const splitCase of theCase.splitCases ?? []) {
+      await this.caseRepositoryService.update(
+        splitCase.id,
+        { indictmentHash },
+        { transaction },
+      )
+    }
+  }
+
+  async deleteIndictmentUpload(theCase: Case, key: string): Promise<void> {
+    await this.awsS3Service.deleteObject(theCase.type, key)
   }
 
   async getCaseFilesRecordPdf(
@@ -570,18 +634,6 @@ export class PdfService {
     return generatedPdf
   }
 
-  /**
-   * The letter by which the court of appeals appoints one party's advocate.
-   * Everything it prints is resolved by the caller - see
-   * buildAppealAppointmentLetter - so there is nothing to look up here and no
-   * translations to refresh.
-   */
-  async getAppealAppointmentLetterPdf(
-    letter: AppealAppointmentLetter,
-  ): Promise<Buffer> {
-    return createAppealAppointmentLetter(letter)
-  }
-
   async getRulingSentToPrisonAdminPdf(theCase: Case): Promise<Buffer> {
     if (
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
@@ -598,6 +650,23 @@ export class PdfService {
     summons?: AppealSummons,
     previewDefendants?: AppealSummonsPdfDefendant[],
   ): Promise<Buffer> {
+    // Same cache shape as subpoena: once confirmed (hash set), prefer the
+    // frozen object in S3 so later downloads do not drift with case edits.
+    const key = summons ? `${theCase.id}/appealSummons/${summons.id}.pdf` : ''
+
+    if (summons?.hash && key) {
+      const existingPdf = await this.tryGetPdfFromS3(theCase, key)
+
+      if (existingPdf) {
+        return existingPdf
+      }
+
+      // Do not regenerate: served bytes would no longer match the frozen hash.
+      throw new InternalServerErrorException(
+        `Appeal summons ${summons.id} has a hash but its PDF was not found in S3`,
+      )
+    }
+
     if (!theCase.rulingDate) {
       throw new BadRequestException(
         `Case ${theCase.id} has no ruling date; cannot generate an appeal summons PDF`,
@@ -615,6 +684,8 @@ export class PdfService {
 
     // Preview / draft: issuer is whoever is generating the PDF. Confirmed:
     // stamp and issuer must be the recorded confirmer — never the downloader.
+    let generatedPdf: Buffer
+
     if (summons?.confirmedDate) {
       const confirmedBy = summons.confirmedBy
 
@@ -629,7 +700,7 @@ export class PdfService {
         title: confirmedBy.title,
       }
 
-      return createAppealSummons(
+      generatedPdf = await createAppealSummons(
         theCase,
         defendants,
         issuer,
@@ -641,15 +712,23 @@ export class PdfService {
         },
         summons.confirmedDate,
       )
+    } else {
+      generatedPdf = await createAppealSummons(
+        theCase,
+        defendants,
+        { name: user.name, title: user.title },
+        undefined,
+        undefined,
+      )
     }
 
-    return createAppealSummons(
-      theCase,
-      defendants,
-      { name: user.name, title: user.title },
-      undefined,
-      undefined,
-    )
+    // Confirm awaits the upload before the caller persists the hash, so a
+    // failed put cannot leave a confirmed summons with no S3 object.
+    if (summons?.confirmedDate && key) {
+      await this.uploadPdfToS3(theCase, key, generatedPdf)
+    }
+
+    return generatedPdf
   }
 
   private getDefenceAppealDate(

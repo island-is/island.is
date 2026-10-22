@@ -1,5 +1,9 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
-import { UserRole } from '@island.is/judicial-system/types'
+import {
+  isPublicProsecutionUser,
+  type User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { UpdateCivilClaimantDto } from '../dto/updateCivilClaimant.dto'
 import { UpdateDefendantDto } from '../dto/updateDefendant.dto'
@@ -8,6 +12,16 @@ const limitedAccessFields: (keyof UpdateDefendantDto)[] = [
   'punishmentType',
   'isRegisteredInPrisonSystem',
 ]
+
+// The prosecutors who review indictments are prosecutors at the public
+// prosecutors office, not at a police prosecutors office. Decides on the user
+// alone, so it can run before the case is read.
+export const publicProsecutionProsecutorUpdateDefendantsRule: RolesRule = {
+  role: UserRole.PROSECUTOR,
+  type: RulesType.BASIC,
+  canActivate: (request: { user?: { currentUser?: User } }) =>
+    isPublicProsecutionUser(request.user?.currentUser),
+}
 
 // Allows prison staff to update a specific set of fields for defendant
 export const prisonSystemStaffUpdateRule: RolesRule = {
