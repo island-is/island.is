@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiError } from '@island.is/nest/problem'
 import type { Auth } from '@island.is/auth-nest-tools'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -18,7 +18,10 @@ import {
 } from '@island.is/clients/driving-license'
 import sortTeachers from './sortTeachers'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { CurrentLicenseParameters } from '@island.is/application/types'
+import {
+  CurrentLicenseParameters,
+  PhotoLookupCheckParameters,
+} from '@island.is/application/types'
 import {
   getFakeData,
   buildFakeCurrentLicense,
@@ -277,7 +280,8 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       }
       return result
     } catch {
-      return null
+      // Marked so photoLookupCheck can tell a failed lookup from "no photo"
+      return { fetchFailed: true }
     }
   }
 
@@ -300,11 +304,57 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
         auth,
       })
     } catch {
-      // Return empty rather than throwing — this provider runs for all
-      // flows but is only used by BE. Throwing here would block
-      // B-temp/B-full/65+ applications if the Thjodskra API is down.
-      return { images: [] }
+      // Return empty rather than throwing, so applicants who have a license
+      // registry photo can still continue while Thjodskra is down. The marker
+      // lets photoLookupCheck block everyone else with a retryable error
+      // instead of reading the failure as "no photo".
+      return { images: [], fetchFailed: true }
     }
+  }
+
+  async photoLookupCheck({
+    application,
+    params,
+  }: TemplateApiModuleActionProps<PhotoLookupCheckParameters>): Promise<void> {
+    const { externalData } = application
+    const thjodskra = getValueViaPath<{
+      images?: Array<{ contentSpecification?: string }>
+      fetchFailed?: boolean
+    }>(externalData, 'allPhotosFromThjodskra.data')
+    const rlsPhotoAndSignature = getValueViaPath<{
+      imageId?: number | null
+      fetchFailed?: boolean
+    }>(externalData, 'qualityPhotoAndSignature.data')
+
+    const lookupFailed =
+      thjodskra?.fetchFailed === true ||
+      (params?.rlsPhotoSource === 'qualityPhotoAndSignature' &&
+        rlsPhotoAndSignature?.fetchFailed === true)
+    if (!lookupFailed) {
+      return
+    }
+
+    const hasRlsPhoto =
+      params?.rlsPhotoSource === 'qualityPhotoAndSignature'
+        ? rlsPhotoAndSignature?.imageId != null
+        : getValueViaPath<boolean>(
+            externalData,
+            'qualityPhoto.data.hasQualityPhoto',
+          ) === true
+    const hasThjodskraPhoto = (thjodskra?.images ?? []).some(
+      (p) => p.contentSpecification === 'FACIAL',
+    )
+    if (hasRlsPhoto || hasThjodskraPhoto) {
+      return
+    }
+
+    throw new TemplateApiError(
+      {
+        title: coreErrorMessages.drivingLicensePhotoLookupFailedTitle,
+        summary: coreErrorMessages.drivingLicensePhotoLookupFailedSummary,
+      },
+      503,
+    )
   }
 
   async jurisdictions(): Promise<Jurisdiction[]> {
