@@ -18,8 +18,8 @@ export const resolveLegacyRedirect = async (
 ): Promise<LegacyRedirect | null> => {
   const [rawHost = '', ...pathSegments] = slug
   const host = rawHost.toLowerCase().replace(/^www\./, '')
+  if (!Object.hasOwn(HANDLERS, host)) return null
   const handler = HANDLERS[host]
-  if (!handler) return null
 
   const path = pathSegments.length
     ? `/${pathSegments.join('/').toLowerCase()}`
