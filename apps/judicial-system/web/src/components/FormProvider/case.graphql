@@ -183,6 +183,7 @@ query Case($input: CaseQueryInput!) {
     defendantWaivesRightToCounsel
     crimeScenes
     indictmentIntroduction
+    indictmentHash
     indictmentReviewedDate
     indictmentCounts {
       id

@@ -99,11 +99,14 @@ test.describe.serial('Verdict appeal tests', () => {
     await Promise.all([
       verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
       page
-        .getByRole('checkbox', { name: 'Ákærði óskar ekki eftir verjanda' })
+        .getByRole('checkbox', {
+          name: 'Ákærði óskar ekki eftir að sér sé skipaður verjandi',
+        })
         .check(),
     ])
     const confirmDefenderButton = page.getByRole('button', {
-      name: 'Staðfesta val á verjanda',
+      name: 'Staðfesta val',
+      exact: true,
     })
     await expect(confirmDefenderButton).toBeEnabled()
     await confirmDefenderButton.click()

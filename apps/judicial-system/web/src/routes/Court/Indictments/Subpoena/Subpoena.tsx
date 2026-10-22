@@ -106,7 +106,7 @@ const Subpoena: FC = () => {
   )
   const [modalContent, setModalContent] = useState<ModalContent>()
 
-  const { updateDefendant } = useDefendants()
+  const { updateDefendants } = useDefendants()
   const { setAndSendCaseToServer } = useCase()
   const { createSubpoenas } = useCreateSubpoenas()
   const { formatMessage } = useIntl()
@@ -169,32 +169,26 @@ const Subpoena: FC = () => {
         )
       : updates?.defendants
 
-    const promises: Promise<boolean>[] = []
-
-    defendantsToUpdate?.forEach((defendant) => {
-      promises.push(
-        updateDefendant({
-          caseId: workingCase.id,
-          defendantId: defendant.id,
-          isAlternativeService: defendant.isAlternativeService,
-          // Clear the alternative service description if the defendant
-          // is not being served by alternative means
-          alternativeServiceDescription: defendant.isAlternativeService
-            ? defendant.alternativeServiceDescription
-            : null,
-          // Clear the subpoena type if the defendant is
-          // being served by alternative means
-          subpoenaType: defendant.isAlternativeService
-            ? null
-            : defendant.subpoenaType,
-        }),
-      )
-    })
-
     // Make sure defendants are updated before submitting the court date
-    const allDefendantsUpdated = await Promise.all(promises)
+    const allDefendantsUpdated = await updateDefendants(
+      workingCase.id,
+      (defendantsToUpdate ?? []).map((defendant) => ({
+        defendantId: defendant.id,
+        isAlternativeService: defendant.isAlternativeService,
+        // Clear the alternative service description if the defendant
+        // is not being served by alternative means
+        alternativeServiceDescription: defendant.isAlternativeService
+          ? defendant.alternativeServiceDescription
+          : null,
+        // Clear the subpoena type if the defendant is
+        // being served by alternative means
+        subpoenaType: defendant.isAlternativeService
+          ? null
+          : defendant.subpoenaType,
+      })),
+    )
 
-    if (!allDefendantsUpdated.every((result) => result)) {
+    if (!allDefendantsUpdated) {
       setIsCreatingSubpoena(false)
       return
     }
@@ -287,7 +281,7 @@ const Subpoena: FC = () => {
     newSubpoenas,
     setAndSendCaseToServer,
     setWorkingCase,
-    updateDefendant,
+    updateDefendants,
     updates?.defendants,
     updates?.theCase.arraignmentDate,
     workingCase,

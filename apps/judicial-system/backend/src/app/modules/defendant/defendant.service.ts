@@ -5,6 +5,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
@@ -51,6 +52,7 @@ import {
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
+import { UpdateDefendantsItemDto } from './dto/updateDefendants.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { getMostPermissiveRequestSharedWithDefender } from './requestSharedWithDefender.logic'
 
@@ -697,6 +699,52 @@ export class DefendantService {
         transaction,
       )
     }
+  }
+
+  async updateMany(
+    theCase: Case,
+    updates: UpdateDefendantsItemDto[],
+    user: User,
+    transaction: Transaction,
+    registerVerdictAppeal?: boolean,
+  ): Promise<Defendant[]> {
+    const defendantIds = updates.map((update) => update.defendantId)
+
+    if (new Set(defendantIds).size !== defendantIds.length) {
+      throw new BadRequestException(
+        `A defendant of case ${theCase.id} is named more than once`,
+      )
+    }
+
+    const defendants = defendantIds.map((defendantId) => {
+      const defendant = theCase.defendants?.find((d) => d.id === defendantId)
+
+      if (!defendant) {
+        throw new NotFoundException(
+          `Defendant ${defendantId} of case ${theCase.id} does not exist`,
+        )
+      }
+
+      return defendant
+    })
+
+    const updatedDefendants: Defendant[] = []
+
+    // One at a time: the updates share the request's transaction, which runs
+    // one query at a time.
+    for (const [index, { defendantId: _, ...update }] of updates.entries()) {
+      updatedDefendants.push(
+        await this.update(
+          theCase,
+          defendants[index],
+          registerVerdictAppeal ? { ...update, registerVerdictAppeal } : update,
+          user,
+          transaction,
+        ),
+      )
+    }
+
+    return updatedDefendants
   }
 
   async updateRestricted(
