@@ -110,6 +110,7 @@ describe('BankTransferService', () => {
         totalPrice: 14000,
       }),
       isEligibleToBePaid: jest.fn().mockResolvedValue(true),
+      hasPaymentCompletedEvent: jest.fn().mockResolvedValue(false),
       isBankTransferAllowedForPayer: jest.fn().mockResolvedValue(true),
       logPaymentFlowUpdate: jest.fn().mockResolvedValue(undefined),
       logDebtPaymentFinalized: jest.fn().mockResolvedValue(undefined),
@@ -1156,8 +1157,28 @@ describe('BankTransferService', () => {
         paymentFlowService.isEligibleToBePaid.mockResolvedValue(false)
       })
 
+      it('settles again when the settlement never got a row, rather than wait for the worker', async () => {
+        mockGetPayment(BankTransferStatus.SUCCESS, 'SUCCESS')
+        const finalize = jest
+          .spyOn(service, 'finalizeBankTransferSuccess')
+          .mockResolvedValue()
+        paymentFlowService.getPaymentFlowDetails
+          .mockResolvedValueOnce(debtFlow(null))
+          .mockResolvedValueOnce(debtFlow({ status: 'registered' }))
+
+        const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+        expect(finalize).toHaveBeenCalledWith(
+          expect.objectContaining({
+            paymentFlowId: 'flow-1',
+            rawStatus: 'SUCCESS',
+          }),
+        )
+        expect(result.status).toBe(BankTransferStatus.SUCCESS)
+        expect(result.pendingStatus).toBeUndefined()
+      })
+
       it.each([
-        ['before the settlement starts', null],
         [
           'while an attempt runs',
           { status: 'pending', lastAttemptAt: recently() },
@@ -2212,6 +2233,57 @@ describe('BankTransferService', () => {
 
       expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
       expect(paymentFlowService.logDebtPaymentRejected).not.toHaveBeenCalled()
+    })
+
+    it('sends no payment_completed while another caller waits on FJS', async () => {
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'deferred',
+        reason: 'in_progress',
+      })
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      // The caller FJS answers reports the outcome, see the next test
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+    })
+
+    it('sends payment_completed from the caller FJS answered, also when it lost the row', async () => {
+      bankTransferPaymentModel.update.mockResolvedValueOnce([0])
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'registered',
+        dateCreated: '2026-10-12T10:00:00',
+        alreadySettled: false,
+      })
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      expect(paymentFlowService.hasPaymentCompletedEvent).toHaveBeenCalledWith(
+        'flow-1',
+        'btp-1',
+      )
+      expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+      expect(
+        paymentFlowService.logPaymentFlowUpdate.mock.calls[0][0],
+      ).toMatchObject({
+        reason: 'payment_completed',
+        metadata: { providerPaymentId: 'prov-1', correlationId: 'btp-1' },
+      })
+    })
+
+    it('does not repeat payment_completed once it is recorded', async () => {
+      paymentFlowService.hasPaymentCompletedEvent.mockResolvedValue(true)
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'registered',
+        dateCreated: '2026-10-12T10:00:00',
+        alreadySettled: false,
+      })
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+      expect(paymentFlowService.logDebtPaymentFinalized).toHaveBeenCalledTimes(
+        1,
+      )
     })
 
     it('does not settle charge flows', async () => {

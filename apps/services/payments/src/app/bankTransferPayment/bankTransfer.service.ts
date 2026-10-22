@@ -353,12 +353,19 @@ export class BankTransferService {
       throw new BadRequestException(BankTransferErrorCode.BankTransferNotFound)
     }
 
-    // Already-PAID short-circuit.
+    // Already-PAID short-circuit. A debt flow whose settlement has no row goes on to Blikk and
+    // the idempotent finaliser instead, so a settlement that never got started is tried again
+    // here and not left to the worker.
     const isEligible = await this.paymentFlowService.isEligibleToBePaid(
       row.paymentFlowId,
     )
     if (!isEligible) {
-      return this.getPaidFlowStatus(row.paymentFlowId)
+      const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
+        row.paymentFlowId,
+      )
+      if (paymentFlow.type !== 'debt' || paymentFlow.debtSettlement) {
+        return this.getPaidFlowStatus(paymentFlow)
+      }
     }
 
     // getPayment throws on transport failure — FE polling retries on the next tick.
@@ -367,7 +374,11 @@ export class BankTransferService {
 
     if (result.status === BankTransferStatus.SUCCESS) {
       return {
-        ...(await this.getPaidFlowStatus(row.paymentFlowId)),
+        ...this.getPaidFlowStatus(
+          await this.paymentFlowService.getPaymentFlowDetails(
+            row.paymentFlowId,
+          ),
+        ),
         message: result.message,
       }
     }
@@ -689,11 +700,20 @@ export class BankTransferService {
     // up a registration that never happened.
     const settlement = isDebtFlow
       ? await this.settleDebt(paymentFlow, { correlationId, providerPaymentId })
-      : undefined
+      : null
 
-    // As in the card saga, a debt payment is reported completed once FJS answered or the worker
-    // took it over, and not when FJS rejected it: `payment_failed` is its event.
-    if (affectedRows > 0 && settlement?.type !== 'rejected') {
+    // A charge flow is completed by the caller that flipped the row. A debt flow, as in the card
+    // saga, by the caller whose attempt FJS answered or that left it to the worker, which may be
+    // the caller that lost the row: `hasPaymentCompletedEvent` keeps it to one event per attempt.
+    const shouldNotifyCompleted = isDebtFlow
+      ? this.isSettlementToReport(settlement) &&
+        !(await this.paymentFlowService.hasPaymentCompletedEvent(
+          paymentFlowId,
+          correlationId,
+        ))
+      : affectedRows > 0
+
+    if (shouldNotifyCompleted) {
       await this.paymentFlowService.logPaymentFlowUpdate(
         {
           paymentFlowId,
@@ -702,7 +722,7 @@ export class BankTransferService {
           paymentMethod: PaymentMethod.BANK_TRANSFER,
           reason: 'payment_completed',
           message: 'Bank transfer payment completed',
-          metadata: { providerPaymentId },
+          metadata: { providerPaymentId, correlationId },
           logContext,
         },
         { useRetry: true, throwOnError: false },
@@ -711,6 +731,27 @@ export class BankTransferService {
 
     if (settlement) {
       await this.reportDebtSettlement(paymentFlow, settlement, logContext)
+    }
+  }
+
+  /**
+   * Whether the caller that got this outcome tells the organisation the payment completed: its
+   * own attempt got FJS's answer, or the worker takes the payment over. Another caller's attempt
+   * reports its own answer, and a rejected payment gets `payment_failed` instead.
+   */
+  private isSettlementToReport(outcome: DebtSettlementOutcome | null): boolean {
+    if (!outcome) {
+      return true
+    }
+
+    switch (outcome.type) {
+      case 'registered':
+      case 'reconcile':
+        return !outcome.alreadySettled
+      case 'rejected':
+        return false
+      case 'deferred':
+        return outcome.reason !== 'in_progress'
     }
   }
 
@@ -1077,13 +1118,9 @@ export class BankTransferService {
    * took over, so it stays pending while an attempt runs, which may be another caller's. One FJS
    * rejected is closed, the payer must not be told it went through while the refund is pending.
    */
-  private async getPaidFlowStatus(
-    paymentFlowId: string,
-  ): Promise<VerifyBankTransferResponse> {
-    const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
-      paymentFlowId,
-    )
-
+  private getPaidFlowStatus(
+    paymentFlow: PaymentFlowAttributes,
+  ): VerifyBankTransferResponse {
     if (paymentFlow.type !== 'debt') {
       return { status: BankTransferStatus.SUCCESS }
     }
