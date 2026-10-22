@@ -223,6 +223,7 @@ describe('DrivingLicenseProviderService — fakeData photo modes', () => {
             qualityPhotoAndSignature: entry({ imageId: null }),
           }),
         ).resolves.toBeUndefined()
+        expect(logger.info).not.toHaveBeenCalled()
       })
 
       it('throws when Thjodskra failed and the license registry has no photo', async () => {
@@ -232,6 +233,14 @@ describe('DrivingLicenseProviderService — fakeData photo modes', () => {
             qualityPhotoAndSignature: entry({ imageId: null }),
           }),
         ).rejects.toBeInstanceOf(TemplateApiError)
+        expect(logger.info).toHaveBeenCalledWith(
+          expect.stringContaining('blocking data step'),
+          {
+            thjodskraLookupFailed: true,
+            rlsLookupFailed: false,
+            rlsPhotoSource: 'qualityPhotoAndSignature',
+          },
+        )
       })
 
       it('passes when Thjodskra failed but the license registry has a photo', async () => {
@@ -259,6 +268,19 @@ describe('DrivingLicenseProviderService — fakeData photo modes', () => {
             qualityPhotoAndSignature: entry({ fetchFailed: true }),
           }),
         ).resolves.toBeUndefined()
+      })
+
+      it('throws when the license registry failed and Thjodskra has only non-facial images', async () => {
+        await expect(
+          check('qualityPhotoAndSignature', {
+            allPhotosFromThjodskra: entry({
+              images: [
+                { biometricId: 'id', contentSpecification: 'SIGNATURE' },
+              ],
+            }),
+            qualityPhotoAndSignature: entry({ fetchFailed: true }),
+          }),
+        ).rejects.toBeInstanceOf(TemplateApiError)
       })
     })
 

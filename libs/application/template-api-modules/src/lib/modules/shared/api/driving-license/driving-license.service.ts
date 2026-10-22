@@ -326,11 +326,11 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       fetchFailed?: boolean
     }>(externalData, 'qualityPhotoAndSignature.data')
 
-    const lookupFailed =
-      thjodskra?.fetchFailed === true ||
-      (params?.rlsPhotoSource === 'qualityPhotoAndSignature' &&
-        rlsPhotoAndSignature?.fetchFailed === true)
-    if (!lookupFailed) {
+    const thjodskraLookupFailed = thjodskra?.fetchFailed === true
+    const rlsLookupFailed =
+      params?.rlsPhotoSource === 'qualityPhotoAndSignature' &&
+      rlsPhotoAndSignature?.fetchFailed === true
+    if (!thjodskraLookupFailed && !rlsLookupFailed) {
       return
     }
 
@@ -348,6 +348,14 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       return
     }
 
+    this.logger.info(
+      '[driving-license] photo lookup failed and no photo found, blocking data step',
+      {
+        thjodskraLookupFailed,
+        rlsLookupFailed,
+        rlsPhotoSource: params?.rlsPhotoSource,
+      },
+    )
     throw new TemplateApiError(
       {
         title: coreErrorMessages.drivingLicensePhotoLookupFailedTitle,
