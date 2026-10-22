@@ -506,7 +506,17 @@ export class PaymentService {
       paymentUrl,
       paymentFlowUrls.id,
     )
-    this.auditPaymentCreation(user, applicationId, paymentModel.id)
+    this.auditService.audit({
+      auth: user,
+      action: 'createCharge',
+      resources: applicationId,
+      meta: {
+        applicationId,
+        id: paymentModel.id,
+        payIds: debts.map((debt) => debt.payId),
+        amount,
+      },
+    })
 
     return {
       id: paymentModel.id,

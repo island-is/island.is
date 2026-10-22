@@ -55,7 +55,10 @@ export class PayDebtsService extends BaseTemplateApiService {
   }
 
   async deleteDebtPayment({ application, auth }: TemplateApiModuleActionProps) {
-    await this.paymentService.deleteDebtPayment(application.id, auth)
+    await this.auditService.auditPromise(
+      { auth, action: 'deleteDebtPayment', resources: application.id },
+      this.paymentService.deleteDebtPayment(application.id, auth),
+    )
   }
 
   async getCustomerDebts({ auth, application }: TemplateApiModuleActionProps) {
