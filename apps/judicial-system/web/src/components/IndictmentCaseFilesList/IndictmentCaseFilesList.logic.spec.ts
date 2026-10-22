@@ -156,7 +156,11 @@ describe('getVisibleSubpoenas', () => {
 })
 
 describe('shouldShowReplaceIndictmentPdf', () => {
-  const prosecutor = {
+  const districtProsecutor = {
+    role: UserRole.PROSECUTOR,
+    institution: { type: InstitutionType.DISTRICT_PROSECUTORS_OFFICE },
+  } as User
+  const policeProsecutor = {
     role: UserRole.PROSECUTOR,
     institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
   } as User
@@ -166,15 +170,23 @@ describe('shouldShowReplaceIndictmentPdf', () => {
     indictmentHash: '{"hash":"frozen"}',
   } as CaseFilesListCase
 
-  it('shows the upload when the indictment pdf is already frozen', () => {
-    expect(shouldShowReplaceIndictmentPdf(submitted, prosecutor)).toBe(true)
+  it('shows the upload for Héraðssaksóknari when the pdf is frozen', () => {
+    expect(shouldShowReplaceIndictmentPdf(submitted, districtProsecutor)).toBe(
+      true,
+    )
+  })
+
+  it('hides it from police prosecutors', () => {
+    expect(shouldShowReplaceIndictmentPdf(submitted, policeProsecutor)).toBe(
+      false,
+    )
   })
 
   it('hides it before the indictment pdf has been frozen to S3', () => {
     expect(
       shouldShowReplaceIndictmentPdf(
         { ...submitted, indictmentHash: null },
-        prosecutor,
+        districtProsecutor,
       ),
     ).toBe(false)
   })
@@ -183,7 +195,7 @@ describe('shouldShowReplaceIndictmentPdf', () => {
     expect(
       shouldShowReplaceIndictmentPdf(
         { ...submitted, state: CaseState.WAITING_FOR_CONFIRMATION },
-        prosecutor,
+        districtProsecutor,
       ),
     ).toBe(false)
   })

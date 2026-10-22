@@ -3,6 +3,7 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  InstitutionType,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
@@ -79,13 +80,14 @@ export const shouldShowPoliceDigitalCaseFilesSection = (
     isCourtOfAppealsUser(user)) &&
   (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
 
-// Shown once the generated Ákæra has been frozen to S3 (indictmentHash set),
-// so a replace cannot race with the first getIndictmentPdf freeze.
+// Temporary one-off gate: only Héraðssaksóknari (district prosecutors office)
+// gets the replace control in the UI. The API is unchanged.
 export const shouldShowReplaceIndictmentPdf = (
   workingCase: CaseFilesListCase,
   user?: User,
 ): boolean =>
   isProsecutionUser(user) &&
+  user?.institution?.type === InstitutionType.DISTRICT_PROSECUTORS_OFFICE &&
   isIndictmentPdfReplaceableState(workingCase.state) &&
   Boolean(workingCase.indictmentHash)
 
