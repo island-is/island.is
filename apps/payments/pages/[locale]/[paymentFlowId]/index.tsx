@@ -193,10 +193,14 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   }
 
   if (paymentFlow) {
+    // Same ConfigCat user as services-payments' FeatureFlagService, which
+    // re-checks the per-payer flags, so both sides evaluate the same rules.
     const userObj = {
       identifier: paymentFlow.payerNationalId,
       custom: {
-        nationalId: paymentFlow.payerNationalId,
+        subjectType: isCompany(paymentFlow.payerNationalId)
+          ? 'legalEntity'
+          : 'person',
       },
     }
 
@@ -389,7 +393,8 @@ function PaymentPage({
     }
 
     // TEMPORARY (testing): force-surface bank transfer via the rollout flag.
-    // Once testing is done this flag is removed and the backend controls
+    // Once testing is done this flag is removed, here and in the payments
+    // service's validateChargePaymentMethod, and the backend controls
     // availability via availablePaymentMethods. Never for a company: company bank
     // transfers are controlled by the per-company flag in the payments service,
     // which would refuse the transfer anyway.
