@@ -22,9 +22,6 @@ When the applicant sends the draft to review (`inReview`), all landlords and ten
 
 ## URLs
 
-> [!NOTE]
-> Project is still only on DEV.
-
 - [Dev](https://rental-agreement-application-beta.dev01.devland.is/umsoknir/leigusamningur)
 - [Staging](https://beta.staging01.devland.is/umsoknir/leigusamningur)
 - [Production](https://island.is/umsoknir/leigusamningur)
