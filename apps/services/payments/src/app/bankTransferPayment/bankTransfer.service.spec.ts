@@ -112,7 +112,7 @@ describe('BankTransferService', () => {
       }),
       isEligibleToBePaid: jest.fn().mockResolvedValue(true),
       isBankTransferAllowedForPayer: jest.fn().mockResolvedValue(true),
-      validateChargePaymentMethod: jest.fn().mockResolvedValue(undefined),
+      validateChargePaymentMethod: jest.fn(),
       logPaymentFlowUpdate: jest.fn().mockResolvedValue(undefined),
       logDebtPaymentFinalized: jest.fn().mockResolvedValue(undefined),
       logDebtPaymentRejected: jest.fn().mockResolvedValue(undefined),
@@ -717,9 +717,9 @@ describe('BankTransferService', () => {
 
     // The payment page only offers the flow's methods, but the endpoint can be called directly.
     it('refuses a charge flow that does not offer bank transfer, without calling Blikk', async () => {
-      paymentFlowService.validateChargePaymentMethod.mockRejectedValue(
-        new BadRequestException(PaymentServiceCode.InvalidPaymentMethods),
-      )
+      paymentFlowService.validateChargePaymentMethod.mockImplementation(() => {
+        throw new BadRequestException(PaymentServiceCode.InvalidPaymentMethods)
+      })
       const blikkSpy = jest.spyOn(service, 'createBankTransferPayment')
 
       await expect(service.create(createInput)).rejects.toThrow(

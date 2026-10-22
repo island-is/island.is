@@ -410,7 +410,6 @@ Bank-transfer refunds reuse the FJS-charge deletion mechanism, orchestrated by t
 | Flag                                             | Scope                   |
 | ------------------------------------------------ | ----------------------- |
 | `isIslandisBankTransferPaymentEnabled`           | Global                  |
-| `isIslandisBankTransferPaymentAllowedForUser`    | Per-user (ConfigCat)    |
 | `isIslandisBankTransferPaymentAllowedForCompany` | Per-company (ConfigCat) |
 
 All are defined in [`features.ts`](../../../../../../libs/feature-flags/src/lib/features.ts).
@@ -418,7 +417,6 @@ All are defined in [`features.ts`](../../../../../../libs/feature-flags/src/lib/
 - **`isIslandisBankTransferPaymentEnabled`** — the offer kill-switch. Two effects:
   1. Guards the bank-transfer REST controller via `FeatureFlagGuard` — off → `create` / `verify` / `cancel` reject.
   2. Gates inclusion of `bank_transfer` in a flow's `availablePaymentMethods` at flow creation (see [`paymentFlow.service.ts`](../paymentFlow/paymentFlow.service.ts)) — off → the method is never listed, so the selector never shows a method whose endpoints are also closed. Combined with the payer check: individuals are offered it, companies only when `isIslandisBankTransferPaymentAllowedForCompany` allows them, temporary kennitalas never.
-- **`isIslandisBankTransferPaymentAllowedForUser`** — per-payer rollout/testing override. Evaluated in the FE `getServerSideProps` to force-surface `bank_transfer` in the selector, on top of whatever the flow lists. `create` honours it too: on a charge flow that doesn't list `bank_transfer`, `validateChargePaymentMethod` (in [`paymentFlow.service.ts`](../paymentFlow/paymentFlow.service.ts)) only accepts the method when this flag is on for the payer. Both sides evaluate it with the payer as the ConfigCat user (`identifier` = the payer's kennitala, `subjectType`), so target it by `Identifier`. Does not bypass the global flag's `FeatureFlagGuard`. Never applies to company payers, which only `isIslandisBankTransferPaymentAllowedForCompany` controls. The invoice counterpart, `isIslandisInvoicePaymentAllowedForUser`, is honoured the same way by invoice `create`. Removing either flag means removing it from both the payment page and `validateChargePaymentMethod`.
 - **`isIslandisBankTransferPaymentAllowedForCompany`** — the per-company rollout of [company payers](#company-payers), enforced in `services-payments`. Evaluated through `FeatureFlagService` with the company as the ConfigCat user (`identifier` = the company's kennitala, `subjectType` = `legalEntity`), so it can target single companies, or all companies via `subjectType`. Two effects, both on top of the global flag:
   1. Flow creation lists `bank_transfer` for a company payer only when it is on for that company.
   2. `create` refuses a company payer when it is off for that company, so neither a flow created while it was on nor a direct call can start a company transfer once it is turned off.

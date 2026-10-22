@@ -66,7 +66,7 @@ export class InvoicePaymentController {
       throw new BadRequestException(PaymentServiceCode.InvalidPaymentMethods)
     }
 
-    await this.paymentFlowService.validateChargePaymentMethod(
+    this.paymentFlowService.validateChargePaymentMethod(
       paymentFlow,
       PaymentMethod.INVOICE,
     )

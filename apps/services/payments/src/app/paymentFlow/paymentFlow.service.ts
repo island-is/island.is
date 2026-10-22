@@ -485,44 +485,13 @@ export class PaymentFlowService {
 
   /**
    * The payment page only offers the methods of a charge flow, but its endpoints are public, so the
-   * service has the final say. Allowed are the methods stored on the flow when it was created, plus
-   * the ones the payment page adds through the per-payer flags (same flags, same payers).
+   * service has the final say: only the methods stored on the flow when it was created are allowed.
    */
-  async validateChargePaymentMethod(
-    paymentFlow: Pick<
-      PaymentFlowAttributes,
-      'id' | 'payerNationalId' | 'availablePaymentMethods'
-    >,
+  validateChargePaymentMethod(
+    paymentFlow: Pick<PaymentFlowAttributes, 'id' | 'availablePaymentMethods'>,
     paymentMethod: PaymentMethod,
-  ): Promise<void> {
+  ): void {
     if (paymentFlow.availablePaymentMethods.includes(paymentMethod)) {
-      return
-    }
-
-    // Only `nationalId` is read by the service's user mapping.
-    const payer = { nationalId: paymentFlow.payerNationalId } as User
-
-    if (
-      paymentMethod === PaymentMethod.INVOICE &&
-      (await this.featureFlagService.getValue(
-        Features.isIslandisInvoicePaymentAllowedForUser,
-        false,
-        payer,
-      ))
-    ) {
-      return
-    }
-
-    // The payment page never adds bank transfer for a company, the company flag decides that.
-    if (
-      paymentMethod === PaymentMethod.BANK_TRANSFER &&
-      !isCompany(paymentFlow.payerNationalId) &&
-      (await this.featureFlagService.getValue(
-        Features.isIslandisBankTransferPaymentAllowedForUser,
-        false,
-        payer,
-      ))
-    ) {
       return
     }
 
