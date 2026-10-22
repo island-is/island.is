@@ -165,9 +165,10 @@ export const InputFieldRow = ({
         <Checkbox
           isChecked={hasOptionLabels}
           isDisabled={isDisabled}
+          helpText={`Options: ${contractField.options.join(', ')}`}
           onChange={() => onChange({ optionLabelsEnabled: !hasOptionLabels })}
         >
-          Custom option labels
+          Translate the options
         </Checkbox>
       )}
 

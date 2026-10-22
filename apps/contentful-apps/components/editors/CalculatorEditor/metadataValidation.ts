@@ -9,13 +9,11 @@ export const hasMetadataValidationError = (
   inputContract: InputFieldContract,
   outputContract: OutputFieldContract,
 ) => {
+  const inputValueFields = (config.inputSections ?? []).flatMap((section) =>
+    section.fields.filter(isInputValueField),
+  )
   const placedInputKeys = new Set(
-    (config.inputSections ?? []).flatMap((section) =>
-      section.fields
-        .filter(isInputValueField)
-        .map((field) => field.key)
-        .filter(Boolean),
-    ),
+    inputValueFields.map((field) => field.key).filter(Boolean),
   )
 
   if (
@@ -27,25 +25,17 @@ export const hasMetadataValidationError = (
   }
 
   if (
-    (config.inputSections ?? []).some((section) =>
-      section.fields
-        .filter(isInputValueField)
-        .some((field) => field.key && !inputContract.has(field.key)),
-    )
+    inputValueFields.some((field) => field.key && !inputContract.has(field.key))
   ) {
     return true
   }
 
   if (
-    (config.inputSections ?? []).some((section) =>
-      section.fields
-        .filter(isInputValueField)
-        .some(
-          (field) =>
-            field.optionLabelsEnabled &&
-            (inputContract.get(field.key)?.options ?? []).some(
-              (option) => !field.optionLabels?.[option]?.is?.trim(),
-            ),
+    inputValueFields.some(
+      (field) =>
+        field.optionLabelsEnabled &&
+        (inputContract.get(field.key)?.options ?? []).some(
+          (option) => !field.optionLabels?.[option]?.is?.trim(),
         ),
     )
   ) {
