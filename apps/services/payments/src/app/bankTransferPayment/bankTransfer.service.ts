@@ -30,6 +30,7 @@ import { environment } from '../../environments'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import {
+  DebtSettlementOutcome,
   DebtSettlementService,
   isDebtSettlementInProgress,
 } from '../debtPayment/debtSettlement.service'
@@ -640,6 +641,12 @@ export class BankTransferService {
     )
     const payerType = getBankTransferPayerType(paymentFlow.payerNationalId)
     const isDebtFlow = paymentFlow.type === 'debt'
+    const logContext = bankTransferLogContext(
+      paymentFlowId,
+      correlationId,
+      providerPaymentId,
+      payerType,
+    )
 
     // Debt flows are registered with FJS as a debt payment (`payDebt`) instead of a charge.
     // Blikk gives us no settlement timestamp, so the moment we record SUCCESS is our best
@@ -678,7 +685,15 @@ export class BankTransferService {
       },
     )
 
-    if (affectedRows > 0) {
+    // Also on repair runs, where SUCCESS was recorded earlier: settling is idempotent, and picks
+    // up a registration that never happened.
+    const settlement = isDebtFlow
+      ? await this.settleDebt(paymentFlow, { correlationId, providerPaymentId })
+      : undefined
+
+    // As in the card saga, a debt payment is reported completed once FJS answered or the worker
+    // took it over, and not when FJS rejected it: `payment_failed` is its event.
+    if (affectedRows > 0 && settlement?.type !== 'rejected') {
       await this.paymentFlowService.logPaymentFlowUpdate(
         {
           paymentFlowId,
@@ -688,30 +703,20 @@ export class BankTransferService {
           reason: 'payment_completed',
           message: 'Bank transfer payment completed',
           metadata: { providerPaymentId },
-          logContext: bankTransferLogContext(
-            paymentFlowId,
-            correlationId,
-            providerPaymentId,
-            payerType,
-          ),
+          logContext,
         },
         { useRetry: true, throwOnError: false },
       )
     }
 
-    // Also on repair runs, where SUCCESS was recorded earlier: settling is idempotent, and picks
-    // up a registration that never happened.
-    if (isDebtFlow) {
-      await this.settleDebt(paymentFlow, {
-        correlationId,
-        providerPaymentId,
-      })
+    if (settlement) {
+      await this.reportDebtSettlement(paymentFlow, settlement, logContext)
     }
   }
 
   /**
    * Registers the settled transfer of a debt flow with FJS. Never throws: the payment is settled
-   * and the worker retries what is left.
+   * and the worker retries what is left, so a failed attempt reports null.
    */
   private async settleDebt(
     paymentFlow: PaymentFlowAttributes,
@@ -719,16 +724,9 @@ export class BankTransferService {
       correlationId,
       providerPaymentId,
     }: { correlationId: string; providerPaymentId: string },
-  ): Promise<void> {
-    const logContext = bankTransferLogContext(
-      paymentFlow.id,
-      correlationId,
-      providerPaymentId,
-      getBankTransferPayerType(paymentFlow.payerNationalId),
-    )
-
+  ): Promise<DebtSettlementOutcome | null> {
     try {
-      const outcome = await this.debtSettlementService.attempt(
+      return await this.debtSettlementService.attempt(
         paymentFlow,
         buildBankTransferPayInfo({
           providerPaymentId,
@@ -739,30 +737,46 @@ export class BankTransferService {
           correlationId,
         }),
       )
-
-      if (outcome.type === 'registered' && !outcome.alreadySettled) {
-        await this.paymentFlowService.logDebtPaymentFinalized(
-          paymentFlow.id,
-          PaymentMethod.BANK_TRANSFER,
-          outcome,
-        )
-      } else if (outcome.type === 'rejected' && !outcome.alreadySettled) {
-        // Blikk refunds need an SCA approval, so nothing refunds this automatically in v1.
-        this.logger.error(
-          `[${paymentFlow.id}] FJS rejected a settled debt bank transfer — refund it manually`,
-          { ...logContext, needsManualRefund: true, problem: outcome.problem },
-        )
-        await this.paymentFlowService.logDebtPaymentRejected(
-          paymentFlow.id,
-          PaymentMethod.BANK_TRANSFER,
-          outcome.problem,
-          { needsManualRefund: true },
-        )
-      }
     } catch (error) {
       this.logger.warn(
         `[${paymentFlow.id}] Bank transfer settled but the debt payment could not be registered — the payment worker will retry`,
-        { ...logContext, error: (error as Error)?.message },
+        {
+          ...bankTransferLogContext(
+            paymentFlow.id,
+            correlationId,
+            providerPaymentId,
+            getBankTransferPayerType(paymentFlow.payerNationalId),
+          ),
+          error: (error as Error)?.message,
+        },
+      )
+      return null
+    }
+  }
+
+  /** Tells the organisation how FJS answered, from the attempt that got the answer. */
+  private async reportDebtSettlement(
+    paymentFlow: PaymentFlowAttributes,
+    outcome: DebtSettlementOutcome,
+    logContext: BankTransferLogContext,
+  ): Promise<void> {
+    if (outcome.type === 'registered' && !outcome.alreadySettled) {
+      await this.paymentFlowService.logDebtPaymentFinalized(
+        paymentFlow.id,
+        PaymentMethod.BANK_TRANSFER,
+        outcome,
+      )
+    } else if (outcome.type === 'rejected' && !outcome.alreadySettled) {
+      // Blikk refunds need an SCA approval, so nothing refunds this automatically in v1.
+      this.logger.error(
+        `[${paymentFlow.id}] FJS rejected a settled debt bank transfer — refund it manually`,
+        { ...logContext, needsManualRefund: true, problem: outcome.problem },
+      )
+      await this.paymentFlowService.logDebtPaymentRejected(
+        paymentFlow.id,
+        PaymentMethod.BANK_TRANSFER,
+        outcome.problem,
+        { needsManualRefund: true },
       )
     }
   }

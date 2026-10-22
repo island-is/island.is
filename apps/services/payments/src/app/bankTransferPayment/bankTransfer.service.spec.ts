@@ -2082,7 +2082,7 @@ describe('BankTransferService', () => {
       })
     })
 
-    it('sends payment_completed first and payment_finalized once registered', async () => {
+    it('asks FJS first, then sends payment_completed and payment_finalized', async () => {
       const order: string[] = []
       paymentFlowService.logPaymentFlowUpdate.mockImplementation(
         async ({ reason }) => {
@@ -2099,11 +2099,19 @@ describe('BankTransferService', () => {
         dateCreated: '2026-10-12T10:00:00',
         alreadySettled: false,
       }
-      debtSettlementService.attempt.mockResolvedValue(registered)
+      debtSettlementService.attempt.mockImplementation(async () => {
+        order.push('payDebt')
+        return registered
+      })
 
       await service.finalizeBankTransferSuccess(confirmInput)
 
-      expect(order).toEqual(['payment_completed', 'payment_finalized'])
+      // Like the card saga: the organisation hears of the payment once FJS answered
+      expect(order).toEqual([
+        'payDebt',
+        'payment_completed',
+        'payment_finalized',
+      ])
       expect(paymentFlowService.logDebtPaymentFinalized).toHaveBeenCalledWith(
         'flow-1',
         PaymentMethod.BANK_TRANSFER,
@@ -2127,7 +2135,7 @@ describe('BankTransferService', () => {
       expect(paymentFlowService.logDebtPaymentFinalized).not.toHaveBeenCalled()
     })
 
-    it('records a manual refund when FJS rejects the payment', async () => {
+    it('records a manual refund instead of payment_completed when FJS rejects the payment', async () => {
       const problem = { title: 'Bad request', detail: 'Amount exceeds debt' }
       debtSettlementService.attempt.mockResolvedValue({
         type: 'rejected',
@@ -2137,6 +2145,8 @@ describe('BankTransferService', () => {
 
       await service.finalizeBankTransferSuccess(confirmInput)
 
+      // The card saga sends no payment_completed for a rejected payment either
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
       expect(paymentFlowService.logDebtPaymentRejected).toHaveBeenCalledWith(
         'flow-1',
         PaymentMethod.BANK_TRANSFER,
@@ -2183,6 +2193,25 @@ describe('BankTransferService', () => {
         expect.stringContaining('the payment worker will retry'),
         expect.objectContaining({ error: 'db down' }),
       )
+      // The payment is kept and the worker registers it, so it is completed upstream
+      expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+      expect(
+        paymentFlowService.logPaymentFlowUpdate.mock.calls[0][0],
+      ).toMatchObject({
+        reason: 'payment_completed',
+      })
+    })
+
+    it('sends no payment_completed when another caller already saw FJS reject the payment', async () => {
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'rejected',
+        alreadySettled: true,
+      })
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+      expect(paymentFlowService.logDebtPaymentRejected).not.toHaveBeenCalled()
     })
 
     it('does not settle charge flows', async () => {

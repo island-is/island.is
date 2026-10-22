@@ -125,7 +125,9 @@ The loser still reaches `createFjsCharge` — see [Settlement & FJS charge](#set
 For a **debt flow** `verify` reports the flow, not just the transfer: it stays `pending` until FJS
 answered or the worker took over, which may be the other path's attempt, and a payment FJS
 rejected comes back as `success` with `isClosed: true`. The FE shows the refund-pending error for
-it instead of finishing the payment.
+it instead of finishing the payment. The organisation is told the same way as for a card:
+`payment_completed` once FJS answered or the worker took over, `payment_failed` instead when FJS
+rejected the payment.
 
 ## Blikk status model
 
