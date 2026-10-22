@@ -222,6 +222,8 @@ export const usePaymentOrchestration = ({
     overallIsSubmitting,
     paymentError,
     setPaymentError, // Expose to allow clearing error from page if needed (e.g. error display component has a dismiss)
+    // The page drives bank-transfer settlement through polling, and finishes it the same way
+    onPaymentSuccess: commonOnPaymentSuccess,
     handleFormSubmit,
     isThreeDSecureModalActive,
     threeDSecureDataForModal: cardPayment.threeDSecureDataForModal,

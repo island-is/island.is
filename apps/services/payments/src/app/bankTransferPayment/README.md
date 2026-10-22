@@ -115,12 +115,17 @@ sequenceDiagram
     B-->>SVC: { status: SUCCESS }
     SVC->>SVC: finalizeBankTransferSuccess (fulfillment + payment_completed)
     SVC->>FJS: create PAID charge (Milli, RRN = providerPaymentId)
-    FE->>U: Receipt screen
+    FE->>U: Back to the caller (redirectToReturnUrlOnSuccess), or the receipt screen
 ```
 
 The webhook and the FE polling loop are **two independent paths into the same `verify`**. Only the
 terminal state transition is idempotent: one caller wins the compare-and-set and emits the event.
 The loser still reaches `createFjsCharge` — see [Settlement & FJS charge](#settlement--fjs-charge).
+
+For a **debt flow** `verify` reports the flow, not just the transfer: it stays `pending` until FJS
+answered or the worker took over, which may be the other path's attempt, and a payment FJS
+rejected comes back as `success` with `isClosed: true`. The FE shows the refund-pending error for
+it instead of finishing the payment.
 
 ## Blikk status model
 
@@ -180,7 +185,9 @@ local hook state.
    `window.location.assign(scaRedirectUrl)`.
 3. **Pending screen** (`paymentStatus === bank_transfer_pending`), rendered by
    [`BankTransferPendingScreen`](../../../../../../apps/payments/components/BankTransferPendingScreen/BankTransferPendingScreen.tsx).
-   The FE polls `verify` in the background and reloads on a terminal result. What renders is
+   The FE polls `verify` in the background. On `success` it finishes like a card payment: back to
+   the caller when the flow sets `redirectToReturnUrlOnSuccess`, otherwise a reload to the
+   receipt. A failure, or a closed debt flow, shows the error screen. What renders is
    driven by the provider-neutral `bankTransferPendingStatus` sub-status (from the `getPaymentFlow`
    overlay at SSR, live-updated by the `verify` poll response) **combined with** the SCA URL —
    never by the URL alone:

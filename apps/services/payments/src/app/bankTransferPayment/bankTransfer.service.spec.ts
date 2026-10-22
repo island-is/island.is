@@ -1141,6 +1141,86 @@ describe('BankTransferService', () => {
       expect(result.status).toBe(BankTransferStatus.SUCCESS)
     })
 
+    describe('a settled debt flow', () => {
+      const debtFlow = (debtSettlement: object | null) => ({
+        id: 'flow-1',
+        type: 'debt',
+        payerNationalId: '0101307789',
+        debts: [{ payId: 'pay-1', amount: 10000 }],
+        debtSettlement,
+      })
+      const recently = () => new Date(Date.now() - 5_000)
+
+      beforeEach(() => {
+        bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)
+        paymentFlowService.isEligibleToBePaid.mockResolvedValue(false)
+      })
+
+      it.each([
+        ['before the settlement starts', null],
+        [
+          'while an attempt runs',
+          { status: 'pending', lastAttemptAt: recently() },
+        ],
+        ['before the attempt is claimed', { status: 'pending' }],
+      ])('stays pending %s', async (_, debtSettlement) => {
+        paymentFlowService.getPaymentFlowDetails.mockResolvedValue(
+          debtFlow(debtSettlement),
+        )
+
+        const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+        expect(result).toEqual({
+          status: BankTransferStatus.PENDING,
+          pendingStatus: BankTransferPendingStatus.PROCESSING,
+        })
+      })
+
+      it.each([
+        ['registered', { status: 'registered' }],
+        ['left for reconciliation', { status: 'needs_reconciliation' }],
+        [
+          'left for the worker',
+          { status: 'pending', lastAttemptAt: new Date(Date.now() - 120_000) },
+        ],
+      ])('reports SUCCESS once %s', async (_, debtSettlement) => {
+        paymentFlowService.getPaymentFlowDetails.mockResolvedValue(
+          debtFlow(debtSettlement),
+        )
+
+        const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+        expect(result).toEqual({ status: BankTransferStatus.SUCCESS })
+      })
+
+      it('reports the flow closed when FJS rejected the payment', async () => {
+        paymentFlowService.getPaymentFlowDetails.mockResolvedValue(
+          debtFlow({ status: 'rejected' }),
+        )
+
+        const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+        expect(result).toEqual({
+          status: BankTransferStatus.SUCCESS,
+          isClosed: true,
+        })
+      })
+
+      it('stays pending after finalizing while another caller holds the attempt', async () => {
+        paymentFlowService.isEligibleToBePaid.mockResolvedValue(true)
+        mockGetPayment(BankTransferStatus.SUCCESS, 'SUCCESS')
+        jest.spyOn(service, 'finalizeBankTransferSuccess').mockResolvedValue()
+        paymentFlowService.getPaymentFlowDetails.mockResolvedValue(
+          debtFlow({ status: 'pending', lastAttemptAt: recently() }),
+        )
+
+        const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+        expect(result.status).toBe(BankTransferStatus.PENDING)
+        expect(result.pendingStatus).toBe(BankTransferPendingStatus.PROCESSING)
+      })
+    })
+
     it.each<[BankTransferStatus, string, BankTransferFailureReason]>([
       [BankTransferStatus.ERROR, 'ERROR', BankTransferFailureReason.ERROR],
       [

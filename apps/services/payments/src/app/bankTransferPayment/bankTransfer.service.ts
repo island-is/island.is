@@ -29,13 +29,17 @@ import { PaymentMethod, PaymentStatus } from '../../types'
 import { environment } from '../../environments'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
+import {
+  DebtSettlementService,
+  isDebtSettlementInProgress,
+} from '../debtPayment/debtSettlement.service'
 import {
   PaymentFulfillment,
   PaymentFlowAttributes,
   PaymentFlowDebtAttributes,
 } from '../paymentFlow/models'
 import { CatalogItemWithQuantity } from '../../types/charges'
+import { isDebtFlowClosed } from '../../utils/fjsDebtPayment'
 import {
   BankTransferPayerType,
   BankTransferPaymentResult,
@@ -353,12 +357,19 @@ export class BankTransferService {
       row.paymentFlowId,
     )
     if (!isEligible) {
-      return { status: BankTransferStatus.SUCCESS }
+      return this.getPaidFlowStatus(row.paymentFlowId)
     }
 
     // getPayment throws on transport failure — FE polling retries on the next tick.
     const result = await this.getPayment(row.providerPaymentId)
     await this.finalizeFromBlikkResult(row, result)
+
+    if (result.status === BankTransferStatus.SUCCESS) {
+      return {
+        ...(await this.getPaidFlowStatus(row.paymentFlowId)),
+        message: result.message,
+      }
+    }
 
     const isPending = result.status === BankTransferStatus.PENDING
     // Blikk hands over the bank's authorisation page at SCA_REQUIRED and not before. The row's
@@ -1045,6 +1056,36 @@ export class BankTransferService {
       )
       return null
     }
+  }
+
+  /**
+   * What verify reports for a settled transfer. A debt flow is done once FJS answered or the worker
+   * took over, so it stays pending while an attempt runs, which may be another caller's. One FJS
+   * rejected is closed, the payer must not be told it went through while the refund is pending.
+   */
+  private async getPaidFlowStatus(
+    paymentFlowId: string,
+  ): Promise<VerifyBankTransferResponse> {
+    const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
+      paymentFlowId,
+    )
+
+    if (paymentFlow.type !== 'debt') {
+      return { status: BankTransferStatus.SUCCESS }
+    }
+
+    if (isDebtFlowClosed(paymentFlow)) {
+      return { status: BankTransferStatus.SUCCESS, isClosed: true }
+    }
+
+    if (isDebtSettlementInProgress(paymentFlow.debtSettlement)) {
+      return {
+        status: BankTransferStatus.PENDING,
+        pendingStatus: BankTransferPendingStatus.PROCESSING,
+      }
+    }
+
+    return { status: BankTransferStatus.SUCCESS }
   }
 
   /**

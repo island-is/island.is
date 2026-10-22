@@ -6,7 +6,10 @@ import {
   PaymentsBankTransferStatus,
   PaymentsBankTransferPendingStatus,
 } from '@island.is/api/schema'
-import { BankTransferErrorCode } from '@island.is/shared/constants'
+import {
+  BankTransferErrorCode,
+  DebtPaymentErrorCode,
+} from '@island.is/shared/constants'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 
 import { useVerifyBankTransferMutation } from '../graphql/mutations.graphql.generated'
@@ -160,7 +163,14 @@ export const useBankTransferStatusPolling = ({
         const status = verifyResult?.status
         if (status === PaymentsBankTransferStatus.success) {
           stop()
-          onSuccessRef.current()
+          if (verifyResult?.isClosed) {
+            // FJS rejected the debt payment, the transfer is refunded by hand
+            onFailureRef.current({
+              code: DebtPaymentErrorCode.DebtPaymentRejectedRefundPending,
+            })
+          } else {
+            onSuccessRef.current()
+          }
           return
         }
         if (

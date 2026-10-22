@@ -40,12 +40,7 @@ import {
   CompanyPayer,
 } from '../../../components/BankTransferPayment/BankTransferPayment'
 import { BankTransferPendingScreen } from '../../../components/BankTransferPendingScreen/BankTransferPendingScreen'
-import {
-  ALLOWED_LOCALES,
-  Locale,
-  getPaidFlowRedirectUrl,
-  isHttpsUrl,
-} from '../../../utils'
+import { ALLOWED_LOCALES, Locale, isHttpsUrl } from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
 import {
   bankTransfer,
@@ -197,18 +192,6 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     }
   }
 
-  // Also covers a bank transfer: the page reloads into here once it settles, or the payer comes
-  // back from the bank's approval page.
-  const paidFlowRedirectUrl = paymentFlow && getPaidFlowRedirectUrl(paymentFlow)
-  if (paidFlowRedirectUrl) {
-    return {
-      redirect: {
-        destination: paidFlowRedirectUrl,
-        permanent: false,
-      },
-    }
-  }
-
   if (paymentFlow) {
     const userObj = {
       identifier: paymentFlow.payerNationalId,
@@ -319,6 +302,7 @@ function PaymentPage({
     handleVerificationCancelledByModal,
     supportsApplePay,
     initiateApplePay,
+    onPaymentSuccess,
   } = usePaymentOrchestration({
     paymentFlow,
     productInformation,
@@ -338,8 +322,8 @@ function PaymentPage({
       paymentFlow?.paymentStatus ===
       PaymentsGetFlowPaymentStatus.bank_transfer_pending,
     expiresAt: paymentFlow?.bankTransferExpiresAt ?? undefined,
-    // Success reloads: the server render sends the payer back to the caller, or shows the receipt
-    onSuccess: () => router.reload(),
+    // Same as a card payment: back to the caller when the flow asks for it, else the receipt
+    onSuccess: () => onPaymentSuccess('bank_transfer'),
     onFailure: (error) => setPaymentError(error),
     onStatusUpdate: setLiveBankTransfer,
   })
