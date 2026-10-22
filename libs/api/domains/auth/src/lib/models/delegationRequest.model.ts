@@ -1,5 +1,7 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
+import { PendingDelegationConfirmation } from './delegationConfirmation.model'
+
 import { Identity } from '@island.is/api/domains/identity'
 import { DelegationRequestStatus } from '@island.is/clients/auth/delegation-api'
 
@@ -31,6 +33,9 @@ export class DelegationRequestScope {
 
   @Field(() => Boolean, { nullable: true })
   allowsWrite?: boolean | null
+
+  @Field(() => Boolean)
+  requiresConfirmation!: boolean
 
   @Field(() => Date, { nullable: true })
   validTo?: Date | null
@@ -67,6 +72,16 @@ export class DelegationRequest {
 
   @Field(() => String, { nullable: true })
   resolvedDelegationId?: string | null
+
+  @Field(() => Boolean)
+  awaitingConfirmation!: boolean
+
+  @Field(() => [PendingDelegationConfirmation], {
+    nullable: true,
+    description:
+      'The step-up the grantor must complete. Present only on the response to approving a request with sensitive scopes.',
+  })
+  pendingConfirmations?: PendingDelegationConfirmation[]
 
   fromNationalId!: string
   toNationalId!: string

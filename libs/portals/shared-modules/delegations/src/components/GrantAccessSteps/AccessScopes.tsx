@@ -75,8 +75,12 @@ export const AccessScopes = ({
   )
   const { selectedScopes, setSelectedScopes, requestedScopeNames } =
     useDelegationForm()
-  const { canGrant: canGrantSensitiveScopes, reason: sensitiveUnavailable } =
-    useSensitiveScopesAvailability()
+  const sensitiveScopes = useSensitiveScopesAvailability()
+  const canGrantSensitiveScopes =
+    Boolean(requestGrantorType) || sensitiveScopes.canGrant
+  const sensitiveUnavailable = requestGrantorType
+    ? undefined
+    : sensitiveScopes.reason
   const defaultDate = add(new Date(), { years: 1 })
 
   const allGrantableScopes = useMemo(() => {

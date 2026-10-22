@@ -24,7 +24,7 @@ import { DelegationPaths } from '../../lib/paths'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { ReviewRequestModal } from '../modals/ReviewRequestModal'
 import { RequestSectionHeader } from './RequestSectionHeader'
-import { requestStatusTag } from './requestStatusTag'
+import { requestTag } from './requestStatusTag'
 import * as styles from './DelegationRequests.css'
 import {
   useAuthDelegationRequestsIncomingQuery,
@@ -144,18 +144,15 @@ export const IncomingRequests = ({ search = '' }: { search?: string }) => {
                     justifyContent="flexEnd"
                     columnGap={3}
                   >
-                    {request.status !== AuthDelegationRequestStatus.pending &&
-                      requestStatusTag[request.status] && (
-                        <Tag
-                          variant={requestStatusTag[request.status]!.variant}
-                          outlined
-                          disabled
-                        >
-                          {formatMessage(
-                            requestStatusTag[request.status]!.label,
-                          )}
-                        </Tag>
-                      )}
+                    {requestTag(request) && (
+                      <Tag
+                        variant={requestTag(request)!.variant}
+                        outlined
+                        disabled
+                      >
+                        {formatMessage(requestTag(request)!.label)}
+                      </Tag>
+                    )}
                     <Button
                       variant="text"
                       icon="arrowForward"

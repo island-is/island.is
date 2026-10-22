@@ -21,7 +21,7 @@ import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
 import { RequestSectionHeader } from './RequestSectionHeader'
 import { ReviewRequestModal } from '../modals/ReviewRequestModal'
-import { requestStatusTag } from './requestStatusTag'
+import { requestTag } from './requestStatusTag'
 import * as styles from './DelegationRequests.css'
 import {
   useAuthDelegationRequestsOutgoingQuery,
@@ -107,7 +107,7 @@ export const OutgoingRequests = ({ search = '' }: { search?: string }) => {
           </T.Head>
           <T.Body>
             {requests.map((request) => {
-              const tag = requestStatusTag[request.status]
+              const tag = requestTag(request)
               return (
                 <T.Row key={request.id}>
                   <T.Data>

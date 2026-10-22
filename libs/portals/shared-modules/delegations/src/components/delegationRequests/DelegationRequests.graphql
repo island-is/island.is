@@ -16,6 +16,7 @@ fragment AuthDelegationRequestData on AuthDelegationRequest {
   expiresAt
   createdAt
   resolvedDelegationId
+  awaitingConfirmation
   scopes {
     scopeName
     displayName
@@ -24,6 +25,7 @@ fragment AuthDelegationRequestData on AuthDelegationRequest {
     organisationLogoUrl
     description
     allowsWrite
+    requiresConfirmation
     validTo
   }
 }
@@ -75,5 +77,15 @@ mutation ApproveAuthDelegationRequest(
     id
     status
     resolvedDelegationId
+    awaitingConfirmation
+    pendingConfirmations {
+      id
+      authentication {
+        method
+        verificationCode
+        interval
+        expiresIn
+      }
+    }
   }
 }

@@ -23,7 +23,19 @@ import {
   AuthDelegationRequestStatus,
 } from '@island.is/api/schema'
 
+import { findProblemInApolloError } from '@island.is/shared/problem'
+
 import { m } from '../../lib/messages'
+import {
+  canSelectScope,
+  useSensitiveScopesAvailability,
+} from '../../hooks/useCanGrantSensitiveScopes'
+import {
+  StepUpAuthentication,
+  StepUpMethod,
+  StepUpStart,
+} from '../StepUpAuthentication/StepUpAuthentication'
+import { useDelegationConfirmationStepUp } from '../StepUpAuthentication/useDelegationConfirmationStepUp'
 import {
   AuthScopeCategoriesDocument,
   AuthScopeCategoriesQuery,
@@ -73,20 +85,40 @@ export const ReviewRequestModal = ({
 
   const [selected, setSelected] = useState<Record<string, boolean>>({})
   const [validTo, setValidTo] = useState<Date | null>(null)
+  const [stepUp, setStepUp] = useState<{
+    confirmationId: string
+    start: StepUpStart
+  }>()
+  const { check } = useDelegationConfirmationStepUp(stepUp?.confirmationId)
+  const { canGrant: canGrantSensitiveScopes, reason: sensitiveUnavailable } =
+    useSensitiveScopesAvailability()
 
   useEffect(() => {
     if (request) {
       setSelected(
-        Object.fromEntries(request.scopes.map((s) => [s.scopeName, true])),
+        Object.fromEntries(
+          request.scopes.map((s) => [
+            s.scopeName,
+            canSelectScope(s, canGrantSensitiveScopes),
+          ]),
+        ),
       )
       setValidTo(defaultValidity(request))
+      setStepUp(undefined)
     }
-  }, [request])
+  }, [request, canGrantSensitiveScopes])
 
-  const [approveDelegationRequest, { loading: approveLoading }] =
+  const [approveDelegationRequest, { loading: approveLoading, client }] =
     useApproveAuthDelegationRequestMutation({
       refetchQueries: [
         { query: AuthDelegationRequestsIncomingDocument },
+        'AuthDelegationsGroupedByIdentityOutgoing',
+      ],
+    })
+  const refetchIncoming = () =>
+    client.refetchQueries({
+      include: [
+        AuthDelegationRequestsIncomingDocument,
         'AuthDelegationsGroupedByIdentityOutgoing',
       ],
     })
@@ -101,14 +133,37 @@ export const ReviewRequestModal = ({
     }
 
     try {
-      await approveDelegationRequest({
+      const { data } = await approveDelegationRequest({
         variables: { input: { requestId: request.id, scopes } },
       })
+      const [held] =
+        data?.approveAuthDelegationRequest.pendingConfirmations ?? []
+      if (held) {
+        setStepUp({
+          confirmationId: held.id,
+          start: {
+            ...held.authentication,
+            method: held.authentication.method as StepUpMethod,
+          },
+        })
+        return
+      }
       toast.success(formatMessage(m.requestApproveSuccess))
       onClose()
-    } catch {
-      toast.error(formatMessage(m.requestApproveError))
+    } catch (error) {
+      const status = findProblemInApolloError(error as never)?.status
+      toast.error(
+        formatMessage(
+          status === 403 ? m.stepUpUnavailable : m.requestApproveError,
+        ),
+      )
     }
+  }
+
+  const onStepUpConfirmed = () => {
+    toast.success(formatMessage(m.stepUpConfirmed))
+    void refetchIncoming()
+    onClose()
   }
 
   const hasSelection = request?.scopes.some((s) => selected[s.scopeName])
@@ -147,6 +202,11 @@ export const ReviewRequestModal = ({
       ? request.scopes.filter((s) => !grantableScopeNames.has(s.scopeName))
       : []
   const cannotGrant = ungrantableScopes.length > 0
+  const hasUnavailableSensitiveScopes =
+    isGrantorReview &&
+    !canGrantSensitiveScopes &&
+    !!sensitiveUnavailable &&
+    !!request?.scopes.some((s) => s.requiresConfirmation)
 
   const title = isOutgoing ? m.requestSentTitle : m.requestReviewTitle
 
@@ -159,7 +219,26 @@ export const ReviewRequestModal = ({
       isVisible={request !== null}
       eyebrow={formatMessage(coreMessages.digitalDelegations)}
     >
-      {request && (
+      {request && stepUp && (
+        <Box
+          display="flex"
+          flexDirection="column"
+          rowGap={2}
+          paddingBottom={[3, 3, 6]}
+        >
+          <StepUpAuthentication
+            key={stepUp.confirmationId}
+            stepUp={stepUp.start}
+            check={check}
+            onConfirmed={onStepUpConfirmed}
+            onRetry={() => onApprove(request)}
+            retrying={approveLoading}
+            context={formatMessage(m.stepUpContext)}
+            onBack={onClose}
+          />
+        </Box>
+      )}
+      {request && !stepUp && (
         <>
           <Box
             display="flex"
@@ -269,6 +348,9 @@ export const ReviewRequestModal = ({
                           <T.Data>
                             <Checkbox
                               name={`select-${scope.scopeName}`}
+                              disabled={
+                                !canSelectScope(scope, canGrantSensitiveScopes)
+                              }
                               checked={!!selected[scope.scopeName]}
                               onChange={() =>
                                 setSelected((prev) => ({
@@ -298,9 +380,20 @@ export const ReviewRequestModal = ({
                                 {scope.domainDisplayName}
                               </Text>
                             </Box>
-                            <Text variant="medium">
-                              {scope.displayName ?? scope.scopeName}
-                            </Text>
+                            <Box
+                              display="flex"
+                              alignItems="center"
+                              columnGap={1}
+                            >
+                              <Text variant="medium">
+                                {scope.displayName ?? scope.scopeName}
+                              </Text>
+                              {scope.requiresConfirmation && (
+                                <Tag variant="red" disabled>
+                                  {formatMessage(m.sensitiveScopeTag)}
+                                </Tag>
+                              )}
+                            </Box>
                           </Box>
                         </T.Data>
                         <T.Data>
@@ -356,6 +449,20 @@ export const ReviewRequestModal = ({
               )}
             </Box>
           </Box>
+
+          {hasUnavailableSensitiveScopes && (
+            <Box marginTop={3}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(m.sensitiveScopesUnavailableTitle)}
+                message={formatMessage(
+                  sensitiveUnavailable === 'card_session'
+                    ? m.sensitiveScopesUnavailableMessage
+                    : m.sensitiveScopesNotAvailableMessage,
+                )}
+              />
+            </Box>
+          )}
 
           {cannotGrant && (
             <Box marginTop={3}>

@@ -26,3 +26,11 @@ export const requestStatusTag: Partial<
     variant: 'red',
   },
 }
+
+export const requestTag = (request: {
+  status: AuthDelegationRequestStatus
+  awaitingConfirmation: boolean
+}) =>
+  request.awaitingConfirmation
+    ? { label: m.requestTagAwaitingConfirmation, variant: 'purple' as const }
+    : requestStatusTag[request.status]

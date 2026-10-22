@@ -871,6 +871,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:request-tag-cancelled',
     defaultMessage: 'Beiðni afturkölluð',
   },
+  requestTagAwaitingConfirmation: {
+    id: 'sp.access-control-delegations:request-tag-awaiting-confirmation',
+    defaultMessage: 'Bíður staðfestingar',
+  },
   requestDelegationTitle: {
     id: 'sp.access-control-delegations:request-delegation-title',
     defaultMessage: 'Biðja um umboð',
