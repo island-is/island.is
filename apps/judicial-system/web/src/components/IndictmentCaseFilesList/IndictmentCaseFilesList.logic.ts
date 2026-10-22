@@ -3,6 +3,7 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  InstitutionType,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
@@ -79,25 +80,16 @@ export const shouldShowPoliceDigitalCaseFilesSection = (
     isCourtOfAppealsUser(user)) &&
   (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
 
-// Temporary one-off gate: only these case ids get the replace control in the UI.
-// The API is unchanged; leave empty to hide the button everywhere.
-export const REPLACE_INDICTMENT_PDF_CASE_ID_ALLOWLIST: readonly string[] = [
-  'f8f48ddb-c765-4b51-aaeb-2353ceecd0a1',
-]
-
-// Shown once the generated Ákæra has been frozen to S3 (indictmentHash set),
-// so a replace cannot race with the first getIndictmentPdf freeze.
+// Temporary one-off gate: only Héraðssaksóknari (district prosecutors office)
+// gets the replace control in the UI. The API is unchanged.
 export const shouldShowReplaceIndictmentPdf = (
   workingCase: CaseFilesListCase,
   user?: User,
-  caseIdFromUrl?: string | null,
-  allowlist: readonly string[] = REPLACE_INDICTMENT_PDF_CASE_ID_ALLOWLIST,
 ): boolean =>
   isProsecutionUser(user) &&
+  user?.institution?.type === InstitutionType.DISTRICT_PROSECUTORS_OFFICE &&
   isIndictmentPdfReplaceableState(workingCase.state) &&
-  Boolean(workingCase.indictmentHash) &&
-  typeof caseIdFromUrl === 'string' &&
-  allowlist.includes(caseIdFromUrl)
+  Boolean(workingCase.indictmentHash)
 
 // Replacement uploads store `{ replaced: true }` in indictmentHash. Generated
 // freezes do not, so they keep the sent-to-court date in the display name.

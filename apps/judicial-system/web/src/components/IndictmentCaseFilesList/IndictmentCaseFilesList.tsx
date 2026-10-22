@@ -2,7 +2,6 @@ import type { FC, PropsWithChildren } from 'react'
 import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
-import { useRouter } from 'next/router'
 
 import {
   Accordion,
@@ -420,9 +419,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
   connectedCaseParentId,
 }) => {
   const { formatMessage } = useIntl()
-  const router = useRouter()
-  const caseIdFromUrl =
-    typeof router.query.id === 'string' ? router.query.id : undefined
   const { user, limitedAccess } = useContext(UserContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
@@ -539,11 +535,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 elementId="Ákæra"
               />
               {!connectedCaseParentId &&
-                shouldShowReplaceIndictmentPdf(
-                  workingCase,
-                  user,
-                  caseIdFromUrl,
-                ) && <ReplaceIndictmentPdf caseId={workingCase.id} />}
+                shouldShowReplaceIndictmentPdf(workingCase, user) && (
+                  <ReplaceIndictmentPdf caseId={workingCase.id} />
+                )}
             </Box>
           </Box>
         )}

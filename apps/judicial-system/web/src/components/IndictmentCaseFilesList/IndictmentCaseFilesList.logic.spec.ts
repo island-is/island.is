@@ -156,7 +156,11 @@ describe('getVisibleSubpoenas', () => {
 })
 
 describe('shouldShowReplaceIndictmentPdf', () => {
-  const prosecutor = {
+  const districtProsecutor = {
+    role: UserRole.PROSECUTOR,
+    institution: { type: InstitutionType.DISTRICT_PROSECUTORS_OFFICE },
+  } as User
+  const policeProsecutor = {
     role: UserRole.PROSECUTOR,
     institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
   } as User
@@ -165,32 +169,24 @@ describe('shouldShowReplaceIndictmentPdf', () => {
     state: CaseState.SUBMITTED,
     indictmentHash: '{"hash":"frozen"}',
   } as CaseFilesListCase
-  const allowlist = ['case-id']
 
-  it('shows the upload when the case id is allowlisted and the pdf is frozen', () => {
+  it('shows the upload for Héraðssaksóknari when the pdf is frozen', () => {
     expect(
-      shouldShowReplaceIndictmentPdf(
-        submitted,
-        prosecutor,
-        'case-id',
-        allowlist,
-      ),
+      shouldShowReplaceIndictmentPdf(submitted, districtProsecutor),
     ).toBe(true)
   })
 
-  it('hides it when the case id is not on the allowlist', () => {
-    expect(
-      shouldShowReplaceIndictmentPdf(submitted, prosecutor, 'case-id'),
-    ).toBe(false)
+  it('hides it from police prosecutors', () => {
+    expect(shouldShowReplaceIndictmentPdf(submitted, policeProsecutor)).toBe(
+      false,
+    )
   })
 
   it('hides it before the indictment pdf has been frozen to S3', () => {
     expect(
       shouldShowReplaceIndictmentPdf(
         { ...submitted, indictmentHash: null },
-        prosecutor,
-        'case-id',
-        allowlist,
+        districtProsecutor,
       ),
     ).toBe(false)
   })
@@ -199,9 +195,7 @@ describe('shouldShowReplaceIndictmentPdf', () => {
     expect(
       shouldShowReplaceIndictmentPdf(
         { ...submitted, state: CaseState.WAITING_FOR_CONFIRMATION },
-        prosecutor,
-        'case-id',
-        allowlist,
+        districtProsecutor,
       ),
     ).toBe(false)
   })
@@ -212,9 +206,7 @@ describe('shouldShowReplaceIndictmentPdf', () => {
       institution: { type: InstitutionType.DISTRICT_COURT },
     } as User
 
-    expect(
-      shouldShowReplaceIndictmentPdf(submitted, judge, 'case-id', allowlist),
-    ).toBe(false)
+    expect(shouldShowReplaceIndictmentPdf(submitted, judge)).toBe(false)
   })
 })
 
