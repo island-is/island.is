@@ -84,6 +84,20 @@ export class MedicalDocumentsResolver {
     name: 'socialInsuranceConfirmationOfJobSearch',
   })
   async siaGetConfirmationOfJobSearch(@CurrentUser() user: User) {
-    return this.medicalDocumentsService.getConfirmationOfJobSearch(user)
+    const confirmation =
+      await this.medicalDocumentsService.getConfirmationOfJobSearch(user)
+
+    // The phone number is not shown to the applicant, only that one exists, so
+    // the real number never leaves the API.
+    return {
+      ...confirmation,
+      serviceProvider: confirmation.serviceProvider && {
+        ...confirmation.serviceProvider,
+        phoneNumber: confirmation.serviceProvider.phoneNumber?.replace(
+          /\d/g,
+          '*',
+        ),
+      },
+    }
   }
 }
