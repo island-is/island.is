@@ -2059,7 +2059,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     )
 
     if (promises.length === 0) {
-      return { delivered: true }
+      return { delivered: false }
     }
 
     const recipients = await Promise.all(promises)
