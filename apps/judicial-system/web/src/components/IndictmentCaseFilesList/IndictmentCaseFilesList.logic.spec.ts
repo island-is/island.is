@@ -171,9 +171,9 @@ describe('shouldShowReplaceIndictmentPdf', () => {
   } as CaseFilesListCase
 
   it('shows the upload for Héraðssaksóknari when the pdf is frozen', () => {
-    expect(
-      shouldShowReplaceIndictmentPdf(submitted, districtProsecutor),
-    ).toBe(true)
+    expect(shouldShowReplaceIndictmentPdf(submitted, districtProsecutor)).toBe(
+      true,
+    )
   })
 
   it('hides it from police prosecutors', () => {
