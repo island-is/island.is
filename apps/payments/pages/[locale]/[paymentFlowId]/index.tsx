@@ -302,6 +302,7 @@ function PaymentPage({
     handleVerificationCancelledByModal,
     supportsApplePay,
     initiateApplePay,
+    onPaymentSuccess,
   } = usePaymentOrchestration({
     paymentFlow,
     productInformation,
@@ -321,8 +322,8 @@ function PaymentPage({
       paymentFlow?.paymentStatus ===
       PaymentsGetFlowPaymentStatus.bank_transfer_pending,
     expiresAt: paymentFlow?.bankTransferExpiresAt ?? undefined,
-    // Success needs a reload to land on the receipt screen
-    onSuccess: () => router.reload(),
+    // Same as a card payment: back to the caller when the flow asks for it, else the receipt
+    onSuccess: () => onPaymentSuccess('bank_transfer'),
     onFailure: (error) => setPaymentError(error),
     onStatusUpdate: setLiveBankTransfer,
   })
