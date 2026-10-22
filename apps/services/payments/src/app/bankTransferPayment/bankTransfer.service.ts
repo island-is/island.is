@@ -174,6 +174,10 @@ export class BankTransferService {
       totalPrice = amountDetails.totalPrice
       debts = paymentFlow.debts
     } else {
+      this.paymentFlowService.validateChargePaymentMethod(
+        paymentFlow,
+        PaymentMethod.BANK_TRANSFER,
+      )
       const chargeDetails =
         await this.paymentFlowService.getPaymentFlowChargeDetails(
           paymentFlow.organisationId,
