@@ -16,6 +16,7 @@ import {
 
 import { DelegationRequestStatus } from '../types/delegationRequestStatus'
 import { UpdateDelegationScopeDTO } from './delegation-scope.dto'
+import { PendingConfirmationDTO } from '../../delegation-confirmation/dto/delegation-confirmation.dto'
 
 export class DelegationRequestScopeDTO {
   @IsString()
@@ -51,6 +52,13 @@ export class DelegationRequestScopeDTO {
   @IsBoolean()
   @ApiPropertyOptional({ nullable: true, type: Boolean })
   allowsWrite?: boolean | null
+
+  @IsBoolean()
+  @ApiProperty({
+    description:
+      'Whether granting the scope requires the grantor to confirm with electronic ID.',
+  })
+  requiresConfirmation!: boolean
 
   @IsOptional()
   @IsDateString()
@@ -166,4 +174,18 @@ export class DelegationRequestDTO {
   @ApiPropertyOptional({ type: [DelegationRequestScopeDTO] })
   @IsArray()
   scopes?: DelegationRequestScopeDTO[]
+
+  @IsBoolean()
+  @ApiProperty({
+    description:
+      'Approved by the grantor, but waiting for them to confirm sensitive scopes with electronic ID.',
+  })
+  awaitingConfirmation!: boolean
+
+  @ApiPropertyOptional({
+    type: [PendingConfirmationDTO],
+    description:
+      'Set when approving held sensitive scopes: the step-up the grantor must complete.',
+  })
+  pendingConfirmations?: PendingConfirmationDTO[]
 }

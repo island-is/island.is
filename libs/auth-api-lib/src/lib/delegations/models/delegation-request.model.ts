@@ -19,6 +19,8 @@ import { DelegationRequestDTO } from '../dto/delegation-request.dto'
 import { DelegationRequestStatus } from '../types/delegationRequestStatus'
 import { DelegationRequestDelegation } from './delegation-request-delegation.model'
 import { DelegationRequestScope } from './delegation-request-scope.model'
+import { DelegationRequestConfirmation } from './delegation-request-confirmation.model'
+import { DelegationConfirmationStatus } from '../../delegation-confirmation/types/delegation-confirmation-status'
 
 @Table({
   tableName: 'delegation_request',
@@ -108,6 +110,9 @@ export class DelegationRequest extends Model<
   @HasMany(() => DelegationRequestDelegation, { onDelete: 'cascade' })
   resolvedDelegations?: NonAttribute<DelegationRequestDelegation[]>
 
+  @HasMany(() => DelegationRequestConfirmation, { onDelete: 'cascade' })
+  requestConfirmations?: NonAttribute<DelegationRequestConfirmation[]>
+
   toDTO(): DelegationRequestDTO {
     return {
       id: this.id,
@@ -121,6 +126,14 @@ export class DelegationRequest extends Model<
       resolvedDelegationId: this.resolvedDelegations?.[0]?.delegationId ?? null,
       expiresAt: this.expiresAt,
       createdAt: this.created,
+      awaitingConfirmation:
+        this.status === DelegationRequestStatus.Pending &&
+        (this.requestConfirmations ?? []).some(
+          ({ delegationConfirmation }) =>
+            delegationConfirmation?.status ===
+              DelegationConfirmationStatus.Pending &&
+            delegationConfirmation.expiresAt > new Date(),
+        ),
       scopes: this.requestScopes
         ? this.requestScopes.map((scope) => scope.toDTO())
         : [],

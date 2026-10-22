@@ -7,7 +7,13 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { and, Op, UniqueConstraintError } from 'sequelize'
+import {
+  and,
+  Op,
+  Transaction,
+  UniqueConstraintError,
+  WhereOptions,
+} from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { uuid } from 'uuidv4'
 import kennitala from 'kennitala'
@@ -37,6 +43,9 @@ import {
 } from './dto/delegation-request.dto'
 import { DelegationRequestDelegation } from './models/delegation-request-delegation.model'
 import { DelegationRequestScope } from './models/delegation-request-scope.model'
+import { DelegationRequestConfirmation } from './models/delegation-request-confirmation.model'
+import { DelegationConfirmation } from '../delegation-confirmation/models/delegation-confirmation.model'
+import { DelegationConfirmationStatus } from '../delegation-confirmation/types/delegation-confirmation-status'
 import { DelegationRequest } from './models/delegation-request.model'
 import { NamesService } from './names.service'
 import { DelegationRequestStatus } from './types/delegationRequestStatus'
@@ -58,6 +67,10 @@ export class DelegationRequestService {
     private apiScopeModel: typeof ApiScope,
     @InjectModel(DelegationRequestDelegation)
     private delegationRequestDelegationModel: typeof DelegationRequestDelegation,
+    @InjectModel(DelegationRequestConfirmation)
+    private delegationRequestConfirmationModel: typeof DelegationRequestConfirmation,
+    @InjectModel(DelegationConfirmation)
+    private delegationConfirmationModel: typeof DelegationConfirmation,
     private namesService: NamesService,
     private delegationResourceService: DelegationResourcesService,
     private delegationsOutgoingService: DelegationsOutgoingService,
@@ -69,6 +82,18 @@ export class DelegationRequestService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
+
+  private readonly requestIncludes = [
+    {
+      model: DelegationRequestScope,
+      include: [{ model: ApiScope, include: [Domain] }],
+    },
+    { model: DelegationRequestDelegation },
+    {
+      model: DelegationRequestConfirmation,
+      include: [DelegationConfirmation],
+    },
+  ]
 
   async createRequest(
     user: User,
@@ -175,15 +200,10 @@ export class DelegationRequestService {
 
   async findAllOutgoing(user: User): Promise<DelegationRequestDTO[]> {
     await this.expireStale({ toNationalId: user.nationalId })
+    await this.settleConfirmed({ toNationalId: user.nationalId })
     const requests = await this.delegationRequestModel.findAll({
       where: { toNationalId: user.nationalId },
-      include: [
-        {
-          model: DelegationRequestScope,
-          include: [{ model: ApiScope, include: [Domain] }],
-        },
-        { model: DelegationRequestDelegation },
-      ],
+      include: this.requestIncludes,
       order: [['created', 'DESC']],
     })
     return requests.map((r) => r.toDTO())
@@ -191,15 +211,10 @@ export class DelegationRequestService {
 
   async findAllIncoming(user: User): Promise<DelegationRequestDTO[]> {
     await this.expireStale({ fromNationalId: user.nationalId })
+    await this.settleConfirmed({ fromNationalId: user.nationalId })
     const requests = await this.delegationRequestModel.findAll({
       where: { fromNationalId: user.nationalId },
-      include: [
-        {
-          model: DelegationRequestScope,
-          include: [{ model: ApiScope, include: [Domain] }],
-        },
-        { model: DelegationRequestDelegation },
-      ],
+      include: this.requestIncludes,
       order: [['created', 'DESC']],
     })
     return requests.map((r) => r.toDTO())
@@ -215,6 +230,7 @@ export class DelegationRequestService {
     this.assertPending(request)
     await this.assertCanGrantRequestedScopes(user, request)
 
+    await this.supersedePendingConfirmations(id)
     await this.transitionFromPending(id, {
       status: DelegationRequestStatus.Rejected,
       resolvedByNationalId: user.actor?.nationalId ?? user.nationalId,
@@ -237,6 +253,7 @@ export class DelegationRequestService {
     }
     this.assertPending(request)
 
+    await this.supersedePendingConfirmations(id)
     await this.transitionFromPending(id, {
       status: DelegationRequestStatus.Cancelled,
     })
@@ -278,55 +295,69 @@ export class DelegationRequestService {
       scopes,
     }))
 
-    await this.sequelize.transaction(async (transaction) => {
-      const locked = await this.delegationRequestModel.findByPk(id, {
-        transaction,
-        lock: transaction.LOCK.UPDATE,
-      })
-      if (!locked) {
-        throw new NotFoundException('Delegation request not found.')
-      }
-      this.assertPending(locked)
-
-      const { delegationIds } =
-        await this.delegationsOutgoingService.createBatchInTransaction(
-          user,
-          delegations,
+    const pendingConfirmations = await this.sequelize.transaction(
+      async (transaction) => {
+        const locked = await this.delegationRequestModel.findByPk(id, {
           transaction,
+          lock: transaction.LOCK.UPDATE,
+        })
+        if (!locked) {
+          throw new NotFoundException('Delegation request not found.')
+        }
+        this.assertPending(locked)
+        await this.supersedePendingConfirmations(id, transaction)
+
+        const { delegationIds, pendingConfirmations } =
+          await this.delegationsOutgoingService.createBatchInTransaction(
+            user,
+            delegations,
+            transaction,
+          )
+
+        if (pendingConfirmations.length > 0) {
+          await this.delegationRequestConfirmationModel.bulkCreate(
+            pendingConfirmations.map((confirmation) => ({
+              id: uuid(),
+              delegationRequestId: id,
+              delegationConfirmationId: confirmation.id,
+            })),
+            { transaction },
+          )
+        } else {
+          await locked.update(
+            {
+              status: DelegationRequestStatus.Approved,
+              resolvedByNationalId: user.actor?.nationalId ?? user.nationalId,
+            },
+            { transaction },
+          )
+        }
+        await this.delegationRequestDelegationModel.bulkCreate(
+          delegationIds.map((delegationId) => ({
+            id: uuid(),
+            delegationRequestId: id,
+            delegationId,
+          })),
+          { transaction, ignoreDuplicates: true },
         )
 
-      await locked.update(
-        {
-          status: DelegationRequestStatus.Approved,
-          resolvedByNationalId: user.actor?.nationalId ?? user.nationalId,
-        },
-        { transaction },
-      )
-      await this.delegationRequestDelegationModel.bulkCreate(
-        delegationIds.map((delegationId) => ({
-          id: uuid(),
-          delegationRequestId: id,
-          delegationId,
-        })),
-        { transaction },
-      )
-    })
+        return pendingConfirmations
+      },
+    )
 
-    return this.findById(user, id)
+    const result = await this.findById(user, id)
+    return pendingConfirmations.length > 0
+      ? { ...result, pendingConfirmations }
+      : result
   }
 
   private async getParticipantRequest(
     user: User,
     id: string,
   ): Promise<DelegationRequest> {
+    await this.settleConfirmed({ id })
     const request = await this.delegationRequestModel.findByPk(id, {
-      include: [
-        {
-          model: DelegationRequestScope,
-          include: [{ model: ApiScope, include: [Domain] }],
-        },
-        { model: DelegationRequestDelegation },
-      ],
+      include: this.requestIncludes,
     })
     if (
       !request ||
@@ -342,14 +373,9 @@ export class DelegationRequestService {
     user: User,
     id: string,
   ): Promise<DelegationRequest> {
+    await this.settleConfirmed({ id })
     const request = await this.delegationRequestModel.findByPk(id, {
-      include: [
-        {
-          model: DelegationRequestScope,
-          include: [{ model: ApiScope, include: [Domain] }],
-        },
-        { model: DelegationRequestDelegation },
-      ],
+      include: this.requestIncludes,
     })
     // In company view user.nationalId is the company.
     if (!request || request.fromNationalId !== user.nationalId) {
@@ -494,6 +520,64 @@ export class DelegationRequestService {
     if (rejectionCount >= threshold) {
       throw new ForbiddenException(DelegationRequestError.Blocked)
     }
+  }
+
+  // A request whose held scopes the grantor has since confirmed is approved.
+  private async settleConfirmed(
+    where: WhereOptions<DelegationRequest>,
+  ): Promise<void> {
+    const confirmed = await this.delegationRequestModel.findAll({
+      where: { ...where, status: DelegationRequestStatus.Pending },
+      include: [
+        {
+          model: DelegationRequestConfirmation,
+          required: true,
+          include: [
+            {
+              model: DelegationConfirmation,
+              required: true,
+              where: { status: DelegationConfirmationStatus.Confirmed },
+            },
+          ],
+        },
+      ],
+    })
+    for (const request of confirmed) {
+      const confirmation =
+        request.requestConfirmations?.[0]?.delegationConfirmation
+      await this.delegationRequestModel.update(
+        {
+          status: DelegationRequestStatus.Approved,
+          resolvedByNationalId:
+            confirmation?.confirmingNationalId ?? request.fromNationalId,
+        },
+        { where: { id: request.id, status: DelegationRequestStatus.Pending } },
+      )
+    }
+  }
+
+  private async supersedePendingConfirmations(
+    requestId: string,
+    transaction?: Transaction,
+  ): Promise<void> {
+    const links = await this.delegationRequestConfirmationModel.findAll({
+      where: { delegationRequestId: requestId },
+      attributes: ['delegationConfirmationId'],
+      transaction,
+    })
+    if (links.length === 0) {
+      return
+    }
+    await this.delegationConfirmationModel.update(
+      { status: DelegationConfirmationStatus.Superseded },
+      {
+        where: {
+          id: links.map((link) => link.delegationConfirmationId),
+          status: DelegationConfirmationStatus.Pending,
+        },
+        transaction,
+      },
+    )
   }
 
   private async expireStale(
