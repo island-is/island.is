@@ -19,6 +19,10 @@ import {
 
 import IndictmentCaseFilesList from './IndictmentCaseFilesList'
 
+jest.mock('next/router', () => ({
+  useRouter: () => ({ query: { id: 'case-id' } }),
+}))
+
 describe('IndictmentCaseFilesList', () => {
   // The verdict service certificate. A completed case whose defendant has a
   // served verdict is the only state in which the row can appear at all.

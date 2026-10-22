@@ -165,9 +165,23 @@ describe('shouldShowReplaceIndictmentPdf', () => {
     state: CaseState.SUBMITTED,
     indictmentHash: '{"hash":"frozen"}',
   } as CaseFilesListCase
+  const allowlist = ['case-id']
 
-  it('shows the upload when the indictment pdf is already frozen', () => {
-    expect(shouldShowReplaceIndictmentPdf(submitted, prosecutor)).toBe(true)
+  it('shows the upload when the case id is allowlisted and the pdf is frozen', () => {
+    expect(
+      shouldShowReplaceIndictmentPdf(
+        submitted,
+        prosecutor,
+        'case-id',
+        allowlist,
+      ),
+    ).toBe(true)
+  })
+
+  it('hides it when the case id is not on the allowlist', () => {
+    expect(
+      shouldShowReplaceIndictmentPdf(submitted, prosecutor, 'case-id'),
+    ).toBe(false)
   })
 
   it('hides it before the indictment pdf has been frozen to S3', () => {
@@ -175,6 +189,8 @@ describe('shouldShowReplaceIndictmentPdf', () => {
       shouldShowReplaceIndictmentPdf(
         { ...submitted, indictmentHash: null },
         prosecutor,
+        'case-id',
+        allowlist,
       ),
     ).toBe(false)
   })
@@ -184,6 +200,8 @@ describe('shouldShowReplaceIndictmentPdf', () => {
       shouldShowReplaceIndictmentPdf(
         { ...submitted, state: CaseState.WAITING_FOR_CONFIRMATION },
         prosecutor,
+        'case-id',
+        allowlist,
       ),
     ).toBe(false)
   })
@@ -194,7 +212,9 @@ describe('shouldShowReplaceIndictmentPdf', () => {
       institution: { type: InstitutionType.DISTRICT_COURT },
     } as User
 
-    expect(shouldShowReplaceIndictmentPdf(submitted, judge)).toBe(false)
+    expect(
+      shouldShowReplaceIndictmentPdf(submitted, judge, 'case-id', allowlist),
+    ).toBe(false)
   })
 })
 
