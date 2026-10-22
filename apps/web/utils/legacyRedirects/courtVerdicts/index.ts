@@ -189,9 +189,11 @@ const findVerdictIdByCaseNumber = async (
     },
   })
 
-  const candidates = (response.data?.webVerdicts?.items ?? []).filter(
-    (item) => item.caseNumber === caseNumber,
-  )
+  const items = response.data?.webVerdicts?.items ?? []
+  // The right verdict may be on a later page, so only pick from a full list
+  if ((response.data?.webVerdicts?.total ?? 0) > items.length) return null
+
+  const candidates = items.filter((item) => item.caseNumber === caseNumber)
   if (candidates.length === 1) return candidates[0].id
 
   // verdictDate is typed as Date but arrives as an ISO string
