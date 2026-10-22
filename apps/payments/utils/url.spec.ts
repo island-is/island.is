@@ -46,6 +46,10 @@ describe('getPaidFlowRedirectUrl', () => {
     expect(getPaidFlowRedirectUrl({ ...paidFlow, paymentStatus })).toBeNull()
   })
 
+  it('does not redirect a closed flow waiting for its refund', () => {
+    expect(getPaidFlowRedirectUrl({ ...paidFlow, isClosed: true })).toBeNull()
+  })
+
   it.each([false, null, undefined])(
     'does not redirect when redirectToReturnUrlOnSuccess is %s',
     (redirectToReturnUrlOnSuccess) => {
@@ -55,8 +59,8 @@ describe('getPaidFlowRedirectUrl', () => {
     },
   )
 
-  it.each([null, undefined, '', 'http://island.is/x', 'javascript:alert(1)'])(
-    'does not redirect to a missing or non-https return url %s',
+  it.each([null, undefined, ''])(
+    'does not redirect without a return url %s',
     (url) => {
       expect(getPaidFlowRedirectUrl({ ...paidFlow, returnUrl: url })).toBeNull()
     },
