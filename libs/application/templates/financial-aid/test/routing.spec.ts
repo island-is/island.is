@@ -1,5 +1,9 @@
 import { ExternalData } from '@island.is/application/types'
-import { MunicipalityApi, TaxDataApi } from '../src/dataProviders'
+import {
+  CurrentApplicationApi,
+  MunicipalityApi,
+  TaxDataApi,
+} from '../src/dataProviders'
 import { ApplicantSubmitted } from '../src/forms/ApplicantSubmitted'
 import { SpouseSubmitted } from '../src/forms/SpouseSubmitted'
 import { Routes } from '../src/lib/constants'
@@ -40,6 +44,12 @@ describe('financial aid routing', () => {
 
   it('fetches applicant tax data after municipality routing is stored', () => {
     expect(TaxDataApi.order).toBeGreaterThan(MunicipalityApi.order ?? 0)
+  })
+
+  it('looks up the current application after municipality routing is stored', () => {
+    expect(CurrentApplicationApi.order).toBeGreaterThan(
+      MunicipalityApi.order ?? 0,
+    )
   })
 
   it.each([

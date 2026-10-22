@@ -426,8 +426,16 @@ export class FinancialAidService extends BaseTemplateApiService {
   }
 
   async currentApplication({
+    application,
     auth,
   }: Props): Promise<CurrentApplication | null> {
+    // Veita applications are never stored in the municipalities backend, so a
+    // lookup there cannot describe the applicant's current period and would
+    // wrongly block them from applying.
+    if (getFinancialAidRouting(application.externalData).backend === 'veita') {
+      return null
+    }
+
     const currentApplicationId = await this.applicationApiWithAuth(auth)
       .applicationControllerGetCurrentApplication()
       .catch(this.handle404)

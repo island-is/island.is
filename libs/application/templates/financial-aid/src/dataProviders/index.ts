@@ -9,6 +9,7 @@ export {
 
 export const CurrentApplicationApi = defineTemplateApi({
   action: ApiActions.CURRENTAPPLICATION,
+  order: 2, // After municipality so the backend is pinned before looking up a current application
 })
 
 export const CreateApplicationApi = defineTemplateApi({
