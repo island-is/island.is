@@ -4,6 +4,7 @@ import { FinanceClientV3Service } from '@island.is/clients/finance-v3'
 import type { AuditService } from '@island.is/nest/audit'
 import type { PaymentService } from '@island.is/application/api/payment'
 import type { Logger } from '@island.is/logging'
+import payDebtsTemplate from '@island.is/application/templates/pay-debts'
 import { PayDebtsService } from './pay-debts.service'
 
 describe('PayDebtsService', () => {
@@ -175,5 +176,87 @@ describe('PayDebtsService', () => {
     expect(result.debts).toHaveLength(1)
     expect(result.debts[0].salaryPayerName).toBeUndefined()
     expect(logger.warn).toHaveBeenCalled()
+  })
+
+  it('pays only the ticked debts, each in full', async () => {
+    const debt = (payID: string, debts: number) => ({
+      payID,
+      chargeTypeId: 'A1',
+      chargeTypeName: 'Þjónustugjald',
+      chargeItemSubject: payID,
+      timePeriod: '2026',
+      dueDate: '2026-02-01',
+      finalDueDate: '2026-03-01',
+      principal: debts,
+      interest: 0,
+      cost: 0,
+      debts,
+    })
+    const debts = [
+      debt('PAY-1', 10000),
+      debt('PAY-2', 20000),
+      debt('PAY-3', 30000),
+    ]
+    const createDebtPayment = jest.fn().mockResolvedValue({
+      id: 'payment-id',
+      paymentUrl: 'https://payment.example',
+    })
+    const service = new PayDebtsService(
+      {} as FinanceClientV3Service,
+      { baseUrl: 'http://localhost:3377', isConfigured: true },
+      { audit: jest.fn() } as unknown as AuditService,
+      { createDebtPayment } as unknown as PaymentService,
+      { warn: jest.fn() } as unknown as Logger,
+    )
+    const auth = { nationalId: '0101307789' } as User
+
+    await service.createDebtPayment({
+      application: {
+        id: 'application-id',
+        externalData: {
+          customerDebts: {
+            data: { debts },
+            date: new Date(),
+            status: 'success',
+          },
+        },
+        answers: {
+          selectedDebts: [true, false, true],
+          selectedDebtIds: debts.map((d) => d.payID),
+        },
+      } as unknown as ApplicationWithAttachments,
+      auth,
+      currentUserLocale: 'is',
+    })
+
+    expect(createDebtPayment).toHaveBeenCalledWith(
+      auth,
+      'application-id',
+      [
+        expect.objectContaining({ payId: 'PAY-1', amount: 10000 }),
+        expect.objectContaining({ payId: 'PAY-3', amount: 30000 }),
+      ],
+      'is',
+    )
+  })
+
+  it('implements every PayDebts action the template calls', () => {
+    const actions = Object.values(
+      payDebtsTemplate.stateMachineConfig.states,
+    ).flatMap(({ meta }) => [
+      ...[meta?.onEntry ?? []].flat(),
+      ...[meta?.onExit ?? []].flat(),
+      ...(meta?.roles ?? []).flatMap((role) => role.api ?? []),
+    ])
+    const payDebtsActions = actions
+      .filter((api) => api.actionId.startsWith('PayDebts.'))
+      .map((api) => api.action)
+
+    expect(payDebtsActions).toHaveLength(3)
+    payDebtsActions.forEach((action) =>
+      expect(
+        typeof PayDebtsService.prototype[action as keyof PayDebtsService],
+      ).toBe('function'),
+    )
   })
 })

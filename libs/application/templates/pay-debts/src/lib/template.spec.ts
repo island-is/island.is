@@ -1,4 +1,5 @@
-import { GetDebtsApi } from '../dataProviders'
+import { DefaultEvents } from '@island.is/application/types'
+import { CreateDebtPaymentApi, GetDebtsApi } from '../dataProviders'
 import { Roles, States } from '../utils/constants'
 import template from './template'
 
@@ -18,5 +19,20 @@ describe('pay-debts template', () => {
     expect(draftRole?.api?.map((api) => api.actionId)).toEqual([
       GetDebtsApi.actionId,
     ])
+  })
+
+  it('lets the draft applicant submit into payment, which starts the debt payment', () => {
+    const { states } = template.stateMachineConfig
+    const draftRole = states[States.DRAFT].meta?.roles?.find(
+      (role) => role.id === Roles.APPLICANT,
+    )
+
+    expect(draftRole?.actions?.map((action) => action.event)).toContain(
+      DefaultEvents.SUBMIT,
+    )
+    expect(states[States.DRAFT].on?.[DefaultEvents.SUBMIT]).toEqual({
+      target: States.PAYMENT,
+    })
+    expect(states[States.PAYMENT].meta?.onEntry).toBe(CreateDebtPaymentApi)
   })
 })
