@@ -482,21 +482,30 @@ export class PaymentService {
 
     const { returnUrl, cancelUrl } = await this.getReturnUrls(applicationId)
 
-    const paymentFlowUrls =
-      await this.paymentsApi.debtPaymentFlowControllerCreateDebtPaymentUrl({
-        createDebtPaymentFlowInput: {
-          payerNationalId: user.nationalId,
-          onUpdateUrl: onUpdateUrl.toString(),
-          metadata: {
-            applicationId,
-            paymentId: paymentModel.id,
+    let paymentFlowUrls
+    try {
+      paymentFlowUrls =
+        await this.paymentsApi.debtPaymentFlowControllerCreateDebtPaymentUrl({
+          createDebtPaymentFlowInput: {
+            payerNationalId: user.nationalId,
+            onUpdateUrl: onUpdateUrl.toString(),
+            metadata: {
+              applicationId,
+              paymentId: paymentModel.id,
+            },
+            returnUrl,
+            cancelUrl,
+            redirectToReturnUrlOnSuccess: true,
+            debts,
           },
-          returnUrl,
-          cancelUrl,
-          redirectToReturnUrlOnSuccess: true,
-          debts,
-        },
-      })
+        })
+    } catch (error) {
+      this.logError('Failed to create debt payment flow', applicationId, error)
+      throw error
+    }
+    this.logger.info(
+      `Debt payment flow ${paymentFlowUrls.id} created for application ${applicationId}`,
+    )
     const paymentUrl =
       locale === 'en' ? paymentFlowUrls.urls.en : paymentFlowUrls.urls.is
 
@@ -580,6 +589,10 @@ export class PaymentService {
     if (payment.fulfilled) {
       this.logger.error(
         `Debt payment ${paymentId} for application ${applicationId} was rejected by FJS after it was paid`,
+      )
+    } else {
+      this.logger.warn(
+        `Debt payment ${paymentId} for application ${applicationId} was rejected by FJS`,
       )
     }
 

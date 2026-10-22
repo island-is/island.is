@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
@@ -12,10 +12,11 @@ import {
   paymentMessages,
 } from '@island.is/application/templates/pay-debts'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { PaymentServiceCode } from '@island.is/shared/constants'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
-const { noSelection } = paymentMessages
+const { noSelection, alreadyPaid } = paymentMessages
 
 @Injectable()
 export class PayDebtsService extends BaseTemplateApiService {
@@ -55,10 +56,26 @@ export class PayDebtsService extends BaseTemplateApiService {
   }
 
   async deleteDebtPayment({ application, auth }: TemplateApiModuleActionProps) {
-    await this.auditService.auditPromise(
-      { auth, action: 'deleteDebtPayment', resources: application.id },
-      this.paymentService.deleteDebtPayment(application.id, auth),
-    )
+    await this.auditService
+      .auditPromise(
+        { auth, action: 'deleteDebtPayment', resources: application.id },
+        this.paymentService.deleteDebtPayment(application.id, auth),
+      )
+      .catch((error) => {
+        if (
+          error instanceof BadRequestException &&
+          error.message === PaymentServiceCode.PaymentFlowAlreadyPaid
+        ) {
+          this.logger.warn(
+            `Debt payment for application ${application.id} is already paid and cannot be deleted`,
+          )
+          throw new TemplateApiError(
+            { title: alreadyPaid.title, summary: alreadyPaid.message },
+            400,
+          )
+        }
+        throw error
+      })
   }
 
   async getCustomerDebts({ auth, application }: TemplateApiModuleActionProps) {

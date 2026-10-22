@@ -48,6 +48,21 @@ export const payment = {
         'Message shown when none of the selected debts are in the current list',
     },
   }),
+  alreadyPaid: defineMessages({
+    title: {
+      id: 'pd.application:payment.alreadyPaid.title',
+      defaultMessage: 'Greiðslan hefur þegar borist',
+      description:
+        'Title shown when the user goes back from a payment that is already paid',
+    },
+    message: {
+      id: 'pd.application:payment.alreadyPaid.message',
+      defaultMessage:
+        'Ekki er hægt að fara til baka eftir greiðslu. Endurhladdu síðuna til að halda áfram.',
+      description:
+        'Message shown when the user goes back from a payment that is already paid',
+    },
+  }),
   buttons: defineMessages({
     submit: {
       id: 'pd.application:payment.buttons.submit',
