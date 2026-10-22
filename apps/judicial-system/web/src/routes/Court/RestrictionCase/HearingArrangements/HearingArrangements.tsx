@@ -177,11 +177,7 @@ export const HearingArrangements = () => {
             />
           </Box>
         </Box>
-        <Box
-          component="section"
-          marginBottom={8}
-          className={stack({ gap: 3 })}
-        >
+        <Box component="section" marginBottom={8} className={stack({ gap: 3 })}>
           <SectionHeading
             title={formatMessage(
               defenderInfo.restrictionCases.sections.defender.title,
