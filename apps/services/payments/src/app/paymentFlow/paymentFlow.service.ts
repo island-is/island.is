@@ -907,11 +907,17 @@ export class PaymentFlowService {
       where: { paymentFlowId, reason: 'payment_completed' },
     })
 
-    return events.some(
-      (event) =>
-        (event.metadata as { payment?: { correlationID?: string } } | undefined)
-          ?.payment?.correlationID === correlationId,
-    )
+    return events.some((event) => {
+      const metadata = event.metadata as
+        | { correlationId?: string; payment?: { correlationID?: string } }
+        | undefined
+
+      // Card payments carry the id the gateway echoed, bank transfers their own
+      return (
+        (metadata?.correlationId ?? metadata?.payment?.correlationID) ===
+        correlationId
+      )
+    })
   }
 
   async logPaymentFlowUpdate(

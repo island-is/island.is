@@ -115,12 +115,24 @@ sequenceDiagram
     B-->>SVC: { status: SUCCESS }
     SVC->>SVC: finalizeBankTransferSuccess (fulfillment + payment_completed)
     SVC->>FJS: create PAID charge (Milli, RRN = providerPaymentId)
-    FE->>U: Receipt screen
+    FE->>U: Back to the caller (redirectToReturnUrlOnSuccess), or the receipt screen
 ```
 
 The webhook and the FE polling loop are **two independent paths into the same `verify`**. Only the
 terminal state transition is idempotent: one caller wins the compare-and-set and emits the event.
 The loser still reaches `createFjsCharge` — see [Settlement & FJS charge](#settlement--fjs-charge).
+
+For a **debt flow** `verify` reports the flow, not just the transfer: it stays `pending` until FJS
+answered or the worker took over, which may be the other path's attempt, and a payment FJS
+rejected comes back as `success` with `isClosed: true`. The FE shows the refund-pending error for
+it instead of finishing the payment. A paid debt flow whose settlement has no row is not
+short-circuited: `verify` goes through Blikk and the idempotent finaliser again, so a settlement
+that never got started is tried on the next poll rather than left to the worker.
+
+The organisation is told the same way as for a card: `payment_completed` once FJS answered or the
+worker took over, `payment_failed` instead when FJS rejected the payment. The caller whose attempt
+FJS answered sends `payment_completed`, even when the other path recorded the transfer, and
+`hasPaymentCompletedEvent` keeps it to one event per attempt.
 
 ## Blikk status model
 
@@ -180,7 +192,11 @@ local hook state.
    `window.location.assign(scaRedirectUrl)`.
 3. **Pending screen** (`paymentStatus === bank_transfer_pending`), rendered by
    [`BankTransferPendingScreen`](../../../../../../apps/payments/components/BankTransferPendingScreen/BankTransferPendingScreen.tsx).
-   The FE polls `verify` in the background and reloads on a terminal result. What renders is
+   The FE polls `verify` in the background. On `success` it finishes like a card payment: back to
+   the caller when the flow sets `redirectToReturnUrlOnSuccess`, otherwise a reload to the
+   receipt. A failure, or a closed debt flow, shows the error screen. The hard timeout at Blikk's
+   expiry is stretched by two minutes while the last poll said `processing`, so a transfer FJS is
+   still registering past its expiry is not reported expired. What renders is
    driven by the provider-neutral `bankTransferPendingStatus` sub-status (from the `getPaymentFlow`
    overlay at SSR, live-updated by the `verify` poll response) **combined with** the SCA URL —
    never by the URL alone:

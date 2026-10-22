@@ -6,7 +6,10 @@ import {
   PaymentsBankTransferStatus,
   PaymentsBankTransferPendingStatus,
 } from '@island.is/api/schema'
-import { BankTransferErrorCode } from '@island.is/shared/constants'
+import {
+  BankTransferErrorCode,
+  DebtPaymentErrorCode,
+} from '@island.is/shared/constants'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 
 import { useVerifyBankTransferMutation } from '../graphql/mutations.graphql.generated'
@@ -36,6 +39,9 @@ const POLL_INTERVALS_MS = [500, 1000, 2000, 3000, 5000]
 // Slower steady state once the SCA URL is on screen.
 const SCA_WAIT_POLL_MS = 10 * 1000
 const TIMEOUT_GRACE_MS = 30 * 1000 // 30 seconds
+// A debt flow is `processing` after the bank settled while FJS registers the payment, which can
+// run past Blikk's expiry. Blikk's own expiry comes back as a terminal failure, so waiting is safe.
+const PROCESSING_GRACE_MS = 2 * 60 * 1000 // 2 minutes
 // Matches the prod Blikk TTL (600s). Used only when `expiresAt` is missing.
 const FALLBACK_HARD_TIMEOUT_MS = 10 * 60 * 1000 // 10 minutes
 
@@ -122,6 +128,7 @@ export const useBankTransferStatusPolling = ({
     let timeoutId: ReturnType<typeof setTimeout> | null = null
     let attempt = 0
     let isAwaitingSca = false
+    let isProcessing = false
     const startedAt = Date.now()
     const hardTimeoutMs = computeHardTimeoutMs(expiresAt)
 
@@ -138,8 +145,11 @@ export const useBankTransferStatusPolling = ({
         return
       }
 
-      // hard timeout reached
-      if (Date.now() - startedAt > hardTimeoutMs) {
+      // hard timeout reached, stretched while a settled transfer is being registered
+      const timeoutMs = isProcessing
+        ? hardTimeoutMs + PROCESSING_GRACE_MS
+        : hardTimeoutMs
+      if (Date.now() - startedAt > timeoutMs) {
         stop()
         onFailureRef.current({
           code: BankTransferErrorCode.BankTransferExpired,
@@ -160,7 +170,14 @@ export const useBankTransferStatusPolling = ({
         const status = verifyResult?.status
         if (status === PaymentsBankTransferStatus.success) {
           stop()
-          onSuccessRef.current()
+          if (verifyResult?.isClosed) {
+            // FJS rejected the debt payment, the transfer is refunded by hand
+            onFailureRef.current({
+              code: DebtPaymentErrorCode.DebtPaymentRejectedRefundPending,
+            })
+          } else {
+            onSuccessRef.current()
+          }
           return
         }
         if (
@@ -188,6 +205,9 @@ export const useBankTransferStatusPolling = ({
           verifyResult?.pendingStatus ===
             PaymentsBankTransferPendingStatus.sca_required &&
           !!verifyResult?.scaRedirectUrl
+        isProcessing =
+          verifyResult?.pendingStatus ===
+          PaymentsBankTransferPendingStatus.processing
         timeoutId = setTimeout(poll, nextInterval(attempt, isAwaitingSca))
         attempt++
       } catch (e) {
