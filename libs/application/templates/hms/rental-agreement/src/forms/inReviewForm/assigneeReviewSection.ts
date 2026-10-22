@@ -3,7 +3,7 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
-import { buildContractOverviewFields } from '../draftForm/overviewSection/contractOverviewFields'
+import { buildContractOverviewFields } from '../shared/contractOverviewFields'
 import * as m from '../../lib/messages'
 
 export const AssigneeReviewSection = buildSection({

@@ -1,10 +1,6 @@
 import { getValueViaPath, YES, YesOrNoEnum } from '@island.is/application/core'
 import { isCompany } from 'kennitala'
-import {
-  Application,
-  ExternalData,
-  FormValue,
-} from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import { ApplicantsInfo, PropertyUnit } from '../shared/types'
 import * as m from '../lib/messages'
 import { getRentalPropertySize } from './utils'
@@ -136,36 +132,11 @@ export const shouldShowRepresentativeStaticTable = (answers: FormValue) => {
   return applicantRole === ApplicantsRole.REPRESENTATIVE
 }
 
-export const applicantIsIndividual = (
-  answers: FormValue,
-  externalData: ExternalData,
-) => {
-  const identityType = getValueViaPath<string>(
-    externalData,
-    'identity.data.type',
-  )
+export const applicantIsCompany = (answers: FormValue) =>
+  isCompany(getValueViaPath<string>(answers, 'applicant.nationalId') ?? '')
 
-  return identityType !== 'company'
-}
-
-export const applicantIsCompany = (
-  answers: FormValue,
-  externalData: ExternalData,
-) => {
-  const identityType = getValueViaPath<string>(
-    externalData,
-    'identity.data.type',
-  )
-
-  // Other parties to the contract can't read the applicant's external data
-  if (!identityType) {
-    return isCompany(
-      getValueViaPath<string>(answers, 'applicant.nationalId') ?? '',
-    )
-  }
-
-  return identityType === 'company'
-}
+export const applicantIsIndividual = (answers: FormValue) =>
+  !applicantIsCompany(answers)
 
 // HMS API disallows more than 1 room when type is TM_SPECIAL_TYPE_INDIVIDUAL_ROOMS
 export const shouldShowRoomTypeRoomCountError = (answers: FormValue) => {

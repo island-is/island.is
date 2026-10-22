@@ -1,5 +1,5 @@
 import { buildOverviewField } from '@island.is/application/core'
-import { Routes } from '../../../utils/enums'
+import { Routes } from '../../utils/enums'
 import {
   depositOverview,
   fireProtectionsOverview,
@@ -16,7 +16,7 @@ import {
   rentalPropertyOverview,
   specialProvisionsOverview,
   tenantOverview,
-} from '../../../utils/overviewUtils'
+} from '../../utils/overviewUtils'
 import {
   applicantIsCompany,
   securityDepositRequired,
@@ -24,8 +24,8 @@ import {
   singularOrPluralLandlordsTitle,
   singularOrPluralRepresentativeTitle,
   singularOrPluralTenantsTitle,
-} from '../../../utils/conditions'
-import * as m from '../../../lib/messages'
+} from '../../utils/conditions'
+import * as m from '../../lib/messages'
 
 // Without a backId the overview cards are rendered read-only (no edit link)
 export const buildContractOverviewFields = ({

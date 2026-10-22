@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { Routes } from '../../../utils/enums'
-import { buildContractOverviewFields } from './contractOverviewFields'
+import { buildContractOverviewFields } from '../../shared/contractOverviewFields'
 import * as m from '../../../lib/messages'
 
 export const overviewSection = buildSection({
