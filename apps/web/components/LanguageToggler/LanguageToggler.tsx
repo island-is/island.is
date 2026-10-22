@@ -248,7 +248,7 @@ export const LanguageToggler = ({
   const confirmButtonText = gn('switchToEnglishModalConfirmButtonText', '')
 
   const onDialogConfirm = () => {
-    const href = gn('switchToEnglishModalConfirmButtonHref', '')
+    const href: string = gn('switchToEnglishModalConfirmButtonHref', '')
     if (href.startsWith('/') && !href.startsWith('//')) {
       goToOtherLanguagePage(href)
       return
