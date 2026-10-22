@@ -351,9 +351,6 @@ export class VehiclesDetail {
   downloadServiceURL?: string
 
   @Field(() => Boolean, { nullable: true })
-  isDebtLess?: boolean
-
-  @Field(() => Boolean, { nullable: true })
   isOutOfCommission?: boolean
 
   @Directive(
