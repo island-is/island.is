@@ -46,7 +46,7 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
   }
 
   return (
-    <Box display="flex" flexDirection="column" rowGap={[1, 2]}>
+    <Box display="flex" flexDirection="column" rowGap={2}>
       {items.map((item, i) => {
         const isDisabled = item.enabled === false
         const title = formatMessage(item.customShortcut?.name ?? item.name)
@@ -92,7 +92,7 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
             position="relative"
             onMouseEnter={() => onHover(icon?.icon ?? '')}
             // Remove when category card supports no text
-            className={cn(styles.svgOutline, {
+            className={cn(styles.svgOutline, styles.cardText, {
               [styles.featuredCardNoText]: i >= 2,
               [styles.featuredCardWithImage]: showImage,
             })}
@@ -121,7 +121,8 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
               component={item.path ? Link : undefined}
               to={item.path}
               heading={title}
-              headingVariant="h4"
+              headingVariant={isMobile ? 'h3' : 'h4'}
+              textFontWeight="light"
               headingAs="h2"
               text={description ?? title}
               icon={iconEl}

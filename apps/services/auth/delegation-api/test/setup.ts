@@ -26,6 +26,7 @@ interface SetupOptions {
 
 const delegationConfig: ConfigType<typeof DelegationConfig> = {
   userInfoUrl: '',
+  identityServerIssuerUrl: 'https://identity-server.test',
   customScopeRules: [],
   defaultValidityPeriodInDays: 90,
   delegationRequestMaxPending: 2,
@@ -33,6 +34,13 @@ const delegationConfig: ConfigType<typeof DelegationConfig> = {
   delegationRequestMaxPerGrantorPerDay: 1,
   delegationRequestRejectionLockThreshold: 2,
   delegationRequestRejectionLockDays: 365,
+  confirmationLifetimeInMinutes: 15,
+  confirmationRequiredAcr: 'eidas-loa-high',
+  confirmationAllowFakeLogin: false,
+  confirmationCibaIssuerUrl: 'https://identity-server.test',
+  confirmationCibaClientId: '@island.is/clients/delegation-confirmation',
+  confirmationCibaClientSecret: 'test-secret',
+  confirmationCibaScope: 'openid @island.is/auth/delegation-confirmation',
   isConfigured: true,
 }
 

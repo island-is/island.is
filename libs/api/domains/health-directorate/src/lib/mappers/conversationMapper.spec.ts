@@ -10,6 +10,7 @@ import {
 import {
   getClosesAt,
   getTodaysWindow,
+  isVideoCallExpired,
   mapOpeningWindow,
   toRecipientAvailability,
   toReplyAvailability,
@@ -224,5 +225,27 @@ describe('getClosesAt', () => {
         new Date('2026-07-14T01:00:00Z'),
       ),
     ).toEqual(new Date('2026-07-14T02:00:00Z'))
+  })
+})
+
+describe('isVideoCallExpired', () => {
+  const appointmentDate = new Date('2026-07-13T10:30:00Z')
+
+  it('is not expired without an appointment date', () => {
+    expect(
+      isVideoCallExpired(undefined, new Date('2026-07-20T12:00:00Z')),
+    ).toBe(false)
+  })
+
+  it('is not expired later on the day of the call', () => {
+    expect(
+      isVideoCallExpired(appointmentDate, new Date('2026-07-13T23:59:59Z')),
+    ).toBe(false)
+  })
+
+  it('is expired from midnight the day after the call', () => {
+    expect(
+      isVideoCallExpired(appointmentDate, new Date('2026-07-14T00:00:00Z')),
+    ).toBe(true)
   })
 })

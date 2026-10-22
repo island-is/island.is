@@ -4,51 +4,40 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
-  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { GaldurExternalDomainModelsIncomeTRPaymentDTO } from '@island.is/clients/vmst-unemployment'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isSocialInsurance } from '../../../utils/conditions'
 import { PaymentFrequency } from '../../../utils/constants'
 import {
-  getCurrentMonthEndDate,
+  getMaxRegistrationDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
 import {
   formatIsCurrency,
-  formatIsDateLong,
-  formatIsDateLongOrDash,
+  formatIsDate,
+  formatIsDateOrIndefinite,
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
+import { buildCanEditRow, buildCanRemoveRow } from '../../../utils/reconcile'
 import {
+  getSocialInsuranceDefaults,
+  toSocialInsuranceRow,
+} from '../../../utils/persistedRows'
+import {
+  isOneTimePayment,
   periodToByFrequency,
   toRequiredNumber,
   toRequiredString,
 } from '../../../utils/rowCoercions'
 
-const getSocialInsuranceDefaults = (application: Application) => {
-  const payments =
-    getValueViaPath<GaldurExternalDomainModelsIncomeTRPaymentDTO[]>(
-      application.externalData,
-      'income.data.trPayments',
-    ) ?? []
-
-  return payments.map((payment) => ({
-    validationId: payment.id,
-    socialPaymentType: payment.incomeTypeId ?? '',
-    amountPerMonth:
-      payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
-    dateFrom: payment.periodFrom ?? '',
-    dateTo: payment.periodTo ?? '',
-  }))
-}
-
 const socialInsuranceValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerSocialInsurance',
   incomeTypeKey: 'trPayments',
   persistedPath: 'income.data.trPayments',
+  toRow: toSocialInsuranceRow,
   callbackId: 'SocialInsuranceValidation',
   messages: {
     fallbackErrorMessage: 'socialInsuranceValidationErrorMessage',
@@ -59,6 +48,7 @@ const socialInsuranceValidationProps: IncomeValidationFieldProps = {
     estimatedIncome: toRequiredNumber(row.amountPerMonth),
     periodFrom: toRequiredString(row.dateFrom),
     periodTo: periodToByFrequency(row),
+    oneTimePayment: isOneTimePayment(row),
   }),
 }
 
@@ -72,25 +62,21 @@ export const socialInsuranceSection = buildSubSection({
       title: m.application.socialInsuranceHeading,
       description: m.application.socialInsuranceDescription,
       children: [
-        buildDescriptionField({
-          title: () => {
-            const month = new Date().toLocaleDateString('is-IS', {
-              month: 'long',
-            })
-            return {
-              ...m.application.incomeTitle,
-              values: { month },
-            }
-          },
-          description: m.application.incomeDescriptionLink,
-          titleVariant: 'h4',
-          id: 'socialInsuranceDescription',
-        }),
+        ...buildIncomeDescriptionFields('socialInsuranceDescription'),
         buildTableRepeaterField({
           id: 'registerSocialInsurance',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getSocialInsuranceDefaults,
+          canRemoveRow: buildCanRemoveRow(
+            socialInsuranceValidationProps.persistedPath,
+          ),
+          removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
+          editField: true,
+          canEditRow: buildCanEditRow(
+            socialInsuranceValidationProps.persistedPath,
+          ),
+          editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
             socialPaymentType: {
@@ -125,6 +111,7 @@ export const socialInsuranceSection = buildSubSection({
               required: true,
               largeButtons: false,
               width: 'half',
+              defaultValue: PaymentFrequency.ONE_TIME,
               clearOnChange: (index: number) => [
                 `registerSocialInsurance[${index}].dateTo`,
               ],
@@ -148,15 +135,19 @@ export const socialInsuranceSection = buildSubSection({
                 `registerSocialInsurance[${index}].dateTo`,
               ],
               minDate: getCurrentMonthStartDate,
-              maxDate: getCurrentMonthEndDate,
+              maxDate: getMaxRegistrationDate,
             },
             dateTo: {
               component: 'date',
               label: m.application.dateTo,
               width: 'half',
-              required: (_application, activeField) =>
+              disabled: (_application, activeField) =>
                 activeField?.paymentFrequency === PaymentFrequency.ONE_TIME,
-              maxDate: getCurrentMonthEndDate,
+              placeholder: (_application, activeField) =>
+                activeField?.paymentFrequency === PaymentFrequency.MONTHLY
+                  ? m.application.indefinitePeriod
+                  : '',
+              maxDate: getMaxRegistrationDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {
@@ -195,8 +186,9 @@ export const socialInsuranceSection = buildSubSection({
                 const type = incomeTypes.find((t) => t.id === value)
                 return type?.name ?? value
               },
-              dateFrom: formatIsDateLong,
-              dateTo: formatIsDateLongOrDash,
+              dateFrom: formatIsDate,
+              dateTo: (value, _displayIndex, _application, row) =>
+                formatIsDateOrIndefinite(value, row?.paymentFrequency),
               amountPerMonth: formatIsCurrency,
             },
           },

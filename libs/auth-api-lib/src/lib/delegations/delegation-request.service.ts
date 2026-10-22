@@ -288,7 +288,7 @@ export class DelegationRequestService {
       }
       this.assertPending(locked)
 
-      const delegationIds =
+      const { delegationIds } =
         await this.delegationsOutgoingService.createBatchInTransaction(
           user,
           delegations,

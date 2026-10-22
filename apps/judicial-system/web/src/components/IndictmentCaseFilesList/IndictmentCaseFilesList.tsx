@@ -27,6 +27,7 @@ import {
   isPublicProsecutionUser,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   FileNotFoundModal,
   PdfButton,
@@ -35,7 +36,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileTable } from '@island.is/judicial-system-web/src/components/Table'
 import type {
-  Case,
   CaseFile,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -53,7 +53,13 @@ import {
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isAppealFileCategoryVisible } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { shouldShowPoliceDigitalCaseFilesSection } from './IndictmentCaseFilesList.logic'
+import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
+import {
+  getVisibleSubpoenas,
+  shouldShowPoliceDigitalCaseFilesSection,
+  shouldShowReplaceIndictmentPdf,
+} from './IndictmentCaseFilesList.logic'
+import ReplaceIndictmentPdf from './ReplaceIndictmentPdf'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -61,7 +67,7 @@ import * as styles from './IndictmentCaseFilesList.css'
 
 const getDefenderVisiblePoliceCaseNumbers = (
   userNationalId: string | undefined,
-  defendants: Case['defendants'] | undefined | null,
+  defendants: WorkingCase['defendants'] | undefined | null,
   allPoliceCaseNumbers: string[] | null | undefined,
 ) => {
   if (!userNationalId || !allPoliceCaseNumbers) {
@@ -98,8 +104,8 @@ const getDefenderVisiblePoliceCaseNumbers = (
 
 const getSpokespersonVisiblePoliceCaseNumbers = (
   userNationalId: string | undefined,
-  civilClaimants: Case['civilClaimants'] | undefined | null,
-  defendants: Case['defendants'] | undefined | null,
+  civilClaimants: WorkingCase['civilClaimants'] | undefined | null,
+  defendants: WorkingCase['defendants'] | undefined | null,
   allPoliceCaseNumbers: string[] | null | undefined,
 ) => {
   if (!userNationalId || !allPoliceCaseNumbers) {
@@ -153,8 +159,8 @@ const getSpokespersonVisiblePoliceCaseNumbers = (
 
 const getDefenceUserVisiblePoliceCaseNumbers = (
   userNationalId: string | undefined,
-  defendants: Case['defendants'] | undefined | null,
-  civilClaimants: Case['civilClaimants'] | undefined | null,
+  defendants: WorkingCase['defendants'] | undefined | null,
+  civilClaimants: WorkingCase['civilClaimants'] | undefined | null,
   allPoliceCaseNumbers: string[] | null | undefined,
 ) => {
   if (!userNationalId || !allPoliceCaseNumbers) {
@@ -214,7 +220,7 @@ const getDefenceUserVisiblePoliceCaseNumbers = (
 }
 
 interface Props {
-  workingCase: Case
+  workingCase: CaseFilesListCase
   displayGeneratedPDFs?: boolean
   displayHeading?: boolean
   forceDisplayAdditionalFiles?: boolean
@@ -294,7 +300,7 @@ const FileSection: FC<PropsWithChildren<FileSectionProps>> = (props) => {
 
 const useFilteredCaseFiles = (
   caseFiles?: CaseFile[] | null,
-  splitCases?: Case[] | null,
+  splitCases?: WorkingCase['splitCases'],
 ) => {
   return useMemo(() => {
     const splitCaseFiles =
@@ -342,7 +348,7 @@ const useFilteredCaseFiles = (
   }, [caseFiles, splitCases])
 }
 
-const useFilePermissions = (workingCase: Case, user?: User) => {
+const useFilePermissions = (workingCase: CaseFilesListCase, user?: User) => {
   return useMemo(
     () => ({
       canViewCriminalRecordUpdate:
@@ -359,6 +365,12 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
       canViewDefendantRulings: !isDefenceUser(user),
+      // Not the court of appeals. This certifies service of the verdict, and
+      // the only list of theirs this component reaches is the ruling appeal,
+      // which is a different proceeding - it appeals a ruling order made
+      // while the case ran, not the verdict. The backend route agrees and
+      // admits neither of their roles, so offering it only produced a link
+      // that answers 403.
       canViewVerdictServiceCertificate:
         isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
@@ -366,7 +378,7 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
   )
 }
 
-export const useSentToPrisonAdminDate = (workingCase: Case) => {
+export const useSentToPrisonAdminDate = (workingCase: CaseFilesListCase) => {
   return useMemo(() => {
     // For now we return the newest date on any defendant that has been sent to prison admin
     // but we may need to change this in the future depending on how we want to handle
@@ -414,44 +426,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const { prefixGeneratedDocumentNameWithDocumentOrder } =
     useFiledCourtDocuments()
 
-  const allSubpoenas = useMemo(
-    () => [
-      ...(workingCase.defendants?.flatMap((defendant) =>
-        (defendant.subpoenas ?? []).map((subpoena) => ({
-          defendant,
-          subpoena,
-          caseId: workingCase.id,
-        })),
-      ) ?? []),
-      ...(workingCase.splitCases?.flatMap((splitCase) =>
-        (splitCase.defendants ?? []).flatMap((defendant) =>
-          (defendant.subpoenas ?? []).map((subpoena) => ({
-            defendant,
-            subpoena,
-            caseId: workingCase.id,
-          })),
-        ),
-      ) ?? []),
-    ],
-    [workingCase],
-  )
-
-  const visibleSubpoenas = useMemo(() => {
-    if (!isDefenceUser(user)) {
-      return allSubpoenas
-    }
-
-    const normalizedUserNationalId = normalizeAndFormatNationalId(
-      user?.nationalId ?? '',
-    )
-
-    return allSubpoenas.filter(
-      ({ defendant }) =>
-        defendant.isDefenderChoiceConfirmed &&
-        defendant.defenderNationalId &&
-        normalizedUserNationalId.includes(defendant.defenderNationalId),
-    )
-  }, [allSubpoenas, user])
+  const visibleSubpoenas = getVisibleSubpoenas(workingCase, user)
 
   const showSubpoenaPdf = displayGeneratedPDFs && visibleSubpoenas.length > 0
 
@@ -562,6 +537,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 renderAs="row"
                 elementId="Ákæra"
               />
+              {!connectedCaseParentId &&
+                shouldShowReplaceIndictmentPdf(workingCase, user) && (
+                  <ReplaceIndictmentPdf caseId={workingCase.id} />
+                )}
             </Box>
           </Box>
         )}

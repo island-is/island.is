@@ -210,11 +210,15 @@ export abstract class BaseNotificationService {
   ) {
     const types = type ? [type].flat() : Object.values(TrackedNotificationType)
 
+    const normalizedAddress = address?.trim().toLowerCase()
+
     return notifications?.some((notification) => {
       return (
         types.includes(notification.type) &&
         notification.recipients.some(
-          (recipient) => recipient.address === address && recipient.success,
+          (recipient) =>
+            recipient.success &&
+            recipient.address?.trim().toLowerCase() === normalizedAddress,
         )
       )
     })

@@ -8,9 +8,9 @@ import { requirementsMet } from '../../lib/utils'
 
 // Informational screen: the licence is issued digitally first (available in the
 // Ísland.is app once processing completes), with the plastic card produced and
-// posted to the applicant's legal domicile afterwards. Same notice and Contentful
-// copy as the driving-license application (shared `dl.application:digitalLicense.*`
-// ids). Shown once the applicant is eligible for a duplicate, matching the other
+// posted to the applicant's legal domicile afterwards. Same notice as the
+// driving-license application, with its own `dld.application:digitalLicense.*`
+// ids. Shown once the applicant is eligible for a duplicate, matching the other
 // happy-path sections.
 export const sectionDigitalLicense = buildSection({
   id: 'digitalLicense',

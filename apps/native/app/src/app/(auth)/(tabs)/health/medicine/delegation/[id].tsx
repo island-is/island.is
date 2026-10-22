@@ -162,6 +162,9 @@ export default function MedicineDelegationDetailScreen() {
       value: intl.formatMessage({
         id: delegation?.isActive
           ? 'health.medicineDelegation.detail.statusActive'
+          : // A permit that has not taken effect yet is not expired.
+          delegation?.status === 'awaitingApproval'
+          ? 'health.medicineDelegation.detail.statusAwaitingApproval'
           : 'health.medicineDelegation.detail.statusExpired',
       }),
     },

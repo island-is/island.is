@@ -14,12 +14,9 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import {
-  addMessagesToQueue,
-  Message,
-  MessageService,
-} from '@island.is/judicial-system/message'
+import { Message, MessageService } from '@island.is/judicial-system/message'
 
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { awsS3ModuleConfig, AwsS3Service } from '../../aws-s3'
 import { InternalCaseService } from '../../case'
 import { CourtService } from '../../court'
@@ -44,6 +41,7 @@ import { NotificationService } from '../services/notification.service'
 import { NotificationDispatchService } from '../services/notificationDispatch.service'
 
 jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 
 export const createTestUsers = (
   roles: string[],
@@ -158,14 +156,16 @@ export const createTestingNotificationModule = async () => {
     })
     .compile()
 
-  const queuedMessages: Message[] = []
-  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
-  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
-    queuedMessages.push(...msgs)
+  // Every message the module queues goes through the helper, so this is the
+  // whole of what a request would send
+  const queuedMessagesAfterCommit: Message[] = []
+  const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+  mockQueueMessagesAfterCommit.mockImplementation((...msgs: Message[]) => {
+    queuedMessagesAfterCommit.push(...msgs)
   })
 
   const context = {
-    queuedMessages,
+    queuedMessagesAfterCommit,
     userService: notificationModule.get(UserService),
     internalCaseService: notificationModule.get(InternalCaseService),
     messageService: notificationModule.get(MessageService),

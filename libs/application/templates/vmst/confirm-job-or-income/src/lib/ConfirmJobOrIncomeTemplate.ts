@@ -24,7 +24,9 @@ import {
   WorkshiftPeriodsApi,
   SubmitApi,
 } from '../dataProviders'
+import { getEndOfDay } from '../utils/date'
 import { application as applicationMessages } from './messages'
+import { Features } from '@island.is/feature-flags'
 
 const ConfirmJobOrIncomeTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -38,6 +40,7 @@ const ConfirmJobOrIncomeTemplate: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.ConfirmJobOrIncome.translation,
   dataSchema,
+  featureFlag: Features.isConfirmJobOrIncomeEnabled,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -81,7 +84,12 @@ const ConfirmJobOrIncomeTemplate: ApplicationTemplate<
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              getEndOfDay(new Date(application.created)),
+          },
           actionCard: {
             tag: {
               label: applicationMessages.actionCardDraft,

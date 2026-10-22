@@ -29,6 +29,7 @@ import {
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { getLanguageToggleDialogConfig } from '@island.is/web/utils/languageToggleDialog'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import {
@@ -191,15 +192,15 @@ const PdfView = ({ item }: VerdictDetailsProps) => {
                 <PdfViewer
                   file={`data:application/pdf;base64,${item.pdfString}`}
                   showAllPages={true}
+                  lazyPages={true}
                   scale={calculatePdfScale(width)}
                 />
               </Box>
+              {/* Only the pages near the viewport are drawn, so printing the
+                  page itself would leave the rest blank. The print button
+                  prints the original PDF instead. */}
               <Box className={styles.hiddenOnScreen}>
-                <PdfViewer
-                  file={`data:application/pdf;base64,${item.pdfString}`}
-                  showAllPages={true}
-                  scale={1}
-                />
+                <Text>{formatMessage(m.verdictPage.printFromButton)}</Text>
               </Box>
             </Box>
           </GridContainer>
@@ -415,6 +416,9 @@ VerdictDetails.getProps = async ({ apolloClient, query, customPageData }) => {
       is: `/domar/${query.id}`,
       en: customPageData?.configJson?.englishFallbackUrl ?? '',
     },
+    languageToggleDialog: getLanguageToggleDialogConfig(
+      customPageData?.configJson,
+    ),
   }
 }
 

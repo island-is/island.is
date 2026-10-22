@@ -15,9 +15,16 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase } from '../appeal-case'
+import {
+  AppealCase,
+  AppealCourtSession,
+  AppealStatementDeadline,
+  DeleteAppealCourtSessionResponse,
+} from '../appeal-case'
+import { AppealSummons } from '../appeal-summons'
 import {
   Case,
+  ReplaceIndictmentPdfResponse,
   RequestSignatureResponse,
   SendNotificationResponse,
   SignatureConfirmationResponse,
@@ -65,6 +72,7 @@ import { Subpoena } from '../subpoena'
 import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
+import { withTraceContext } from './traceContext'
 
 type Transformer<TResult> = (data: never) => TResult
 
@@ -131,17 +139,18 @@ export class BackendService {
     options: RequestInit,
     transformer?: Transformer<TResult>,
   ): Promise<TResult> {
-    return fetch(`${this.config.backendUrl}/api/${route}`, options).then(
-      async (res) => {
-        const response = await res.json()
+    return fetch(
+      `${this.config.backendUrl}/api/${route}`,
+      withTraceContext(options),
+    ).then(async (res) => {
+      const response = await res.json()
 
-        if (res.ok) {
-          return transformer ? transformer(response as never) : response
-        }
+      if (res.ok) {
+        return transformer ? transformer(response as never) : response
+      }
 
-        throw new ProblemError(response)
-      },
-    )
+      throw new ProblemError(response)
+    })
   }
 
   private get<TResult>(
@@ -345,6 +354,50 @@ export class BackendService {
     )
   }
 
+  setAppealStatementDeadline(
+    caseId: string,
+    appealCaseId: string,
+    setAppealStatementDeadline: unknown,
+  ): Promise<AppealStatementDeadline> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/statementDeadline`,
+      setAppealStatementDeadline,
+    )
+  }
+
+  createAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    createAppealCourtSession: unknown,
+  ): Promise<AppealCourtSession> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession`,
+      createAppealCourtSession,
+    )
+  }
+
+  updateAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    appealCourtSessionId: string,
+    updateAppealCourtSession: unknown,
+  ): Promise<AppealCourtSession> {
+    return this.patch(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession/${appealCourtSessionId}`,
+      updateAppealCourtSession,
+    )
+  }
+
+  deleteAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    appealCourtSessionId: string,
+  ): Promise<DeleteAppealCourtSessionResponse> {
+    return this.delete(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession/${appealCourtSessionId}`,
+    )
+  }
+
   transitionAppealCase(
     caseId: string,
     appealCaseId: string,
@@ -523,6 +576,13 @@ export class BackendService {
     return this.post(`case/${caseId}/file/${fileId}/document`, attachDocument)
   }
 
+  replaceIndictmentPdf(
+    caseId: string,
+    replaceIndictmentPdf: { key: string },
+  ): Promise<ReplaceIndictmentPdfResponse> {
+    return this.post(`case/${caseId}/indictment/replace`, replaceIndictmentPdf)
+  }
+
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/file/${fileId}`)
   }
@@ -611,6 +671,13 @@ export class BackendService {
     )
   }
 
+  updateDefendants(
+    caseId: string,
+    updateDefendants: unknown,
+  ): Promise<Defendant[]> {
+    return this.patch(`case/${caseId}/defendant`, updateDefendants)
+  }
+
   limitedAccessUpdateDefendant(
     caseId: string,
     defendantId: string,
@@ -648,6 +715,41 @@ export class BackendService {
     },
   ): Promise<Subpoena[]> {
     return this.post(`case/${caseId}/subpoenas`, createSubpoenas)
+  }
+
+  createAppealSummons(
+    caseId: string,
+    createAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.post(`case/${caseId}/appealSummons`, createAppealSummons)
+  }
+
+  updateAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+    updateAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}`,
+      updateAppealSummons,
+    )
+  }
+
+  deleteAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<{ deleted: boolean }> {
+    return this.delete(`case/${caseId}/appealSummons/${appealSummonsId}`)
+  }
+
+  confirmAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}/confirm`,
+      {},
+    )
   }
 
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {

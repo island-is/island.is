@@ -1,8 +1,12 @@
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import { Feature } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import {
+  AppealCaseState,
+  AppealCaseType,
   CaseFileCategory,
   CaseType,
   UserRole,
@@ -16,6 +20,16 @@ import {
 
 import VerdictAppealFiles from './VerdictAppealFiles'
 
+jest.mock('next/router', () => ({
+  useRouter() {
+    return {
+      push: jest.fn(),
+      pathname: '',
+      query: {},
+    }
+  },
+}))
+
 /**
  * Which files reach the section, and for whom, is covered in
  * VerdictAppealFiles.logic.spec.ts. What is left for the rendered section is
@@ -26,9 +40,9 @@ describe('VerdictAppealFiles', () => {
   const defenderNationalId = '1111111111'
 
   const theCase = (
-    caseFiles: Case['caseFiles'],
+    caseFiles: WorkingCase['caseFiles'],
     appealDefenderName?: string,
-  ): Case => ({
+  ): WorkingCase => ({
     ...mockCase(CaseType.INDICTMENT),
     defendants: [
       {
@@ -52,18 +66,24 @@ describe('VerdictAppealFiles', () => {
     isKeyAccessible: true,
   }
 
-  const renderSection = (theCase: Case) =>
+  const renderSection = (
+    theCase: WorkingCase,
+    userRole: UserRole = UserRole.DEFENDER,
+    features: Feature[] = [Feature.INDICTMENT_APPEAL],
+  ) =>
     render(
       <MockedProvider mocks={[]} addTypename={false}>
         <IntlProviderWrapper>
-          <UserContextWrapper
-            userRole={UserRole.DEFENDER}
-            nationalId={defenderNationalId}
-          >
-            <FormContextWrapper theCase={theCase}>
-              <VerdictAppealFiles />
-            </FormContextWrapper>
-          </UserContextWrapper>
+          <FeatureContext.Provider value={{ features, isLoading: false }}>
+            <UserContextWrapper
+              userRole={userRole}
+              nationalId={defenderNationalId}
+            >
+              <FormContextWrapper theCase={theCase}>
+                <VerdictAppealFiles />
+              </FormContextWrapper>
+            </UserContextWrapper>
+          </FeatureContext.Provider>
         </IntlProviderWrapper>
       </MockedProvider>,
     )
@@ -109,5 +129,182 @@ describe('VerdictAppealFiles', () => {
     expect(
       await screen.findByText('Verjandi (VD) sendi inn'),
     ).toBeInTheDocument()
+  })
+
+  describe('the appeal summons', () => {
+    const appealed = (
+      caseFiles: WorkingCase['caseFiles'],
+      appealSummonses: NonNullable<
+        WorkingCase['verdictAppealCase']
+      >['appealSummonses'] = [],
+    ): WorkingCase => ({
+      ...theCase(caseFiles),
+      verdictAppealCase: {
+        id: 'verdict_appeal_id',
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.APPEALED,
+        appealSummonses,
+      },
+    })
+
+    // The prosecution can appeal without filing a declaration, and the office
+    // still has a summons to issue.
+    it('should tell the public prosecution office none has been issued, even before any declaration', async () => {
+      renderSection(appealed([]), UserRole.PUBLIC_PROSECUTOR_STAFF)
+
+      expect(await screen.findByText('Áfrýjunarferli')).toBeInTheDocument()
+      expect(
+        screen.getByText('Áfrýjunarstefna hefur ekki verið gefin út'),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: 'Gefa út áfrýjunarstefnu' }),
+      ).toBeInTheDocument()
+    })
+
+    it('should hide the summons subsection while the feature is off', async () => {
+      renderSection(
+        appealed([declaration]),
+        UserRole.PUBLIC_PROSECUTOR_STAFF,
+        [],
+      )
+
+      expect(await screen.findByText('yfirlysing.pdf')).toBeInTheDocument()
+      expect(
+        screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Gefa út áfrýjunarstefnu' }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('should list a draft summons above the declarations', async () => {
+      renderSection(
+        appealed(
+          [declaration],
+          [
+            {
+              id: 'summons_id',
+              created: '2026-10-07T12:00:00.000Z',
+              defendants: [],
+            },
+          ],
+        ),
+        UserRole.PUBLIC_PROSECUTOR_STAFF,
+      )
+
+      const summons = await screen.findByText('Áfrýjunarstefna 07.10.2026.pdf')
+
+      expect(
+        screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.getByText('Áfrýjunarstefna', { exact: true }),
+      ).toBeInTheDocument()
+      expect(
+        summons.compareDocumentPosition(screen.getByText('yfirlysing.pdf')) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy()
+      expect(
+        screen.getByRole('button', {
+          name: 'Valmynd fyrir Áfrýjunarstefna 07.10.2026.pdf',
+        }),
+      ).toBeInTheDocument()
+    })
+
+    it('should list the empty summons line above the declarations', async () => {
+      renderSection(appealed([declaration]), UserRole.PUBLIC_PROSECUTOR_STAFF)
+
+      const empty = await screen.findByText(
+        'Áfrýjunarstefna hefur ekki verið gefin út',
+      )
+
+      expect(
+        empty.compareDocumentPosition(screen.getByText('yfirlysing.pdf')) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy()
+    })
+
+    it('should not show it to a defender', async () => {
+      renderSection(appealed([declaration]))
+
+      expect(await screen.findByText('yfirlysing.pdf')).toBeInTheDocument()
+      expect(
+        screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Gefa út áfrýjunarstefnu' }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('should not show it to the court of appeals', async () => {
+      renderSection(appealed([declaration]), UserRole.COURT_OF_APPEALS_JUDGE)
+
+      expect(await screen.findByText('yfirlysing.pdf')).toBeInTheDocument()
+      expect(
+        screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Gefa út áfrýjunarstefnu' }),
+      ).not.toBeInTheDocument()
+    })
+  })
+
+  // Which parties get a letter is covered in the logic spec; what is left here
+  // is that the row reaches the page and opens the pdf route rather than a
+  // stored file.
+  describe('the letter of appointment', () => {
+    const confirmed = (caseFiles: WorkingCase['caseFiles']): WorkingCase => {
+      const base = theCase(caseFiles, 'Vaka Dagsdóttir')
+
+      return {
+        ...base,
+        defendants: (base.defendants ?? []).map((defendant) => ({
+          ...defendant,
+          isAppealDefenderConfirmed: true,
+        })),
+        verdictAppealCase: {
+          id: 'verdict_appeal_id',
+          appealType: AppealCaseType.VERDICT,
+          appealState: AppealCaseState.APPEALED,
+        },
+      }
+    }
+
+    it('should offer the court of appeals a row per confirmed advocate', async () => {
+      renderSection(confirmed([]), UserRole.COURT_OF_APPEALS_JUDGE)
+
+      expect(await screen.findByText('Áfrýjunarferli')).toBeInTheDocument()
+      expect(
+        screen.getByText('Skipunarbréf Vaka Dagsdóttir.pdf'),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByTestId('appealAppointmentLetterPDFButton'),
+      ).toBeInTheDocument()
+    })
+
+    // The letter is addressed to the advocate, so the party's own defender
+    // finds it in their appeal section - and this is the one place they can.
+    it('should offer a defender the letter of their own client', async () => {
+      renderSection(confirmed([]))
+
+      expect(await screen.findByText('Áfrýjunarferli')).toBeInTheDocument()
+      expect(
+        screen.getByText('Skipunarbréf Vaka Dagsdóttir.pdf'),
+      ).toBeInTheDocument()
+    })
+
+    it("should not offer a defender another defendant's letter", () => {
+      const other = confirmed([])
+
+      renderSection({
+        ...other,
+        defendants: (other.defendants ?? []).map((defendant) => ({
+          ...defendant,
+          defenderNationalId: '2222222222',
+        })),
+      })
+
+      expect(screen.queryByText('Áfrýjunarferli')).not.toBeInTheDocument()
+    })
   })
 })

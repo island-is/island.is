@@ -21,6 +21,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { MessageActions } from './components/MessageActions'
 import { Problem } from '@island.is/react-spa/shared'
+import { TextMarkdown } from '../../components/TextMarkdown/TextMarkdown'
 import { debounceTime } from '@island.is/shared/constants'
 import debounce from 'lodash/debounce'
 import { useEffect, useMemo, useState } from 'react'
@@ -250,11 +251,15 @@ const HealthConversations = () => {
   return (
     <IntroWrapper
       title={treatmentId ? messages.treatmentMessagesFromTeam : m.messages}
-      intro={
-        treatmentId
-          ? messages.treatmentConversationsIntro
-          : messages.healthConversationsIntro
-      }
+      {...(treatmentId
+        ? { intro: messages.treatmentConversationsIntro }
+        : {
+            introComponent: (
+              <TextMarkdown>
+                {formatMessage(messages.healthConversationsIntroWithLink)}
+              </TextMarkdown>
+            ),
+          })}
       serviceProvider={
         treatmentId
           ? {
@@ -268,7 +273,7 @@ const HealthConversations = () => {
       {canCreate && (
         <Box
           display={['inlineFlex', 'inlineFlex', 'inlineFlex', 'none']}
-          marginBottom={3}
+          marginBottom={4}
         >
           <LinkButton
             to={paths.conversationsNew}
@@ -393,7 +398,7 @@ const HealthConversations = () => {
               background="blue100"
               borderColor="blue200"
               borderBottomWidth="standard"
-              display="flex"
+              display={['none', 'none', 'flex']}
               justifyContent="spaceBetween"
               paddingX={2}
               paddingY={2}
@@ -416,7 +421,7 @@ const HealthConversations = () => {
                   background={item.isRead ? undefined : 'blueberry100'}
                   borderColor="blue200"
                   borderBottomWidth="standard"
-                  paddingX={2}
+                  paddingX={[1, 1, 2]}
                   paddingY="p2"
                   columnGap={2}
                 >

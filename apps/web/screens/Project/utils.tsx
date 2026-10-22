@@ -6,6 +6,7 @@ import {
   LinkGroup,
   ProjectPage,
 } from '@island.is/web/graphql/schema'
+import { LinkType } from '@island.is/web/hooks/useLinkResolver'
 import { LayoutProps } from '@island.is/web/layouts/main'
 
 const lightThemes = [
@@ -45,6 +46,41 @@ export const getThemeConfig = (
     }
   }
   return { themeConfig: { footerVersion, showHeader } }
+}
+
+export const projectEventLinkParams: {
+  eventLinkType: LinkType
+  eventOverviewLinkType: LinkType
+} = {
+  eventLinkType: 'projectevent',
+  eventOverviewLinkType: 'projecteventoverview',
+}
+
+type SliceLike = { __typename?: string; organizationSlug?: string | null }
+
+/**
+ * Events shown on a project page belong to the organization selected on the
+ * first LatestEventsSlice found on the project page or one of its subpages
+ */
+export const getProjectEventsOrganizationSlug = (
+  projectPage?: ProjectPage | null,
+): string | null => {
+  if (!projectPage) return null
+  const sliceLists: Array<SliceLike[] | null | undefined> = [
+    projectPage.slices as SliceLike[],
+    projectPage.bottomSlices as SliceLike[],
+    ...(projectPage.projectSubpages ?? []).flatMap((subpage) => [
+      subpage.slices as SliceLike[],
+      subpage.bottomSlices as SliceLike[],
+    ]),
+  ]
+  for (const slices of sliceLists) {
+    const slice = slices?.find(
+      (s) => s?.__typename === 'LatestEventsSlice' && s.organizationSlug,
+    )
+    if (slice?.organizationSlug) return slice.organizationSlug
+  }
+  return null
 }
 
 export const convertLinksToNavigationItem = (links: LinkSchema[]) =>

@@ -3,10 +3,11 @@ import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { errors } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CreateDefendantInput,
   UpdateDefendantInput,
+  UpdateDefendantsItem,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
@@ -15,6 +16,7 @@ import { useCreateDefendantMutation } from './createDefendant.generated'
 import { useDeleteDefendantMutation } from './deleteDefendant.generated'
 import { useLimitedAccessUpdateDefendantMutation } from './limitedAccessUpdateDefendant.generated'
 import { useUpdateDefendantMutation } from './updateDefendant.generated'
+import { useUpdateDefendantsMutation } from './updateDefendants.generated'
 
 const useDefendants = () => {
   const { formatMessage } = useIntl()
@@ -29,40 +31,62 @@ const useDefendants = () => {
   const [updateDefendantMutation, { loading: isUpdatingDefendant }] =
     useUpdateDefendantMutation({ refetchQueries: ['CaseTableMembership'] })
 
+  const [updateDefendantsMutation] = useUpdateDefendantsMutation({
+    refetchQueries: ['CaseTableMembership'],
+  })
+
   const [limitedAccessUpdateDefendantMutation] =
     useLimitedAccessUpdateDefendantMutation({
       refetchQueries: ['CaseTableMembership'],
     })
 
+  // Resolves to the new defendant's id, or undefined when the defendant was
+  // not created. Every failure is reported here, so callers only need to
+  // check the result before adding the defendant to the working case.
   const createDefendant = useCallback(
-    async (defendant: CreateDefendantInput) => {
-      try {
-        if (!isCreatingDefendant) {
-          const { data } = await createDefendantMutation({
-            variables: {
-              input: normalizeBlankStrings(defendant),
-            },
-          })
+    async (defendant: CreateDefendantInput): Promise<string | undefined> => {
+      if (isCreatingDefendant) {
+        return undefined
+      }
 
-          if (data) {
-            return data.createDefendant?.id
-          }
+      try {
+        const { data } = await createDefendantMutation({
+          variables: {
+            input: normalizeBlankStrings(defendant),
+          },
+        })
+
+        const defendantId = data?.createDefendant?.id
+
+        if (!defendantId) {
+          throw new Error('No defendant id returned')
         }
+
+        return defendantId
       } catch {
         toast.error(formatMessage(errors.createDefendant))
+
+        return undefined
       }
     },
     [createDefendantMutation, formatMessage, isCreatingDefendant],
   )
 
+  // Resolves to whether the defendant was deleted. The server can answer
+  // without deleting, so that case is reported the same way as a failed
+  // request and callers only need to check the result.
   const deleteDefendant = useCallback(
-    async (caseId: string, defendantId: string) => {
+    async (caseId: string, defendantId: string): Promise<boolean> => {
       try {
         const { data } = await deleteDefendantMutation({
           variables: { input: { caseId, defendantId } },
         })
 
-        return Boolean(data?.deleteDefendant?.deleted)
+        if (!data?.deleteDefendant?.deleted) {
+          throw new Error('Defendant was not deleted')
+        }
+
+        return true
       } catch {
         toast.error(formatMessage(errors.deleteDefendant))
 
@@ -74,6 +98,13 @@ const useDefendants = () => {
 
   const updateDefendant = useCallback(
     async (updateDefendant: UpdateDefendantInput) => {
+      // Request cases keep a client-side defendant before "Stofna mál" creates
+      // the case. Same as updateCase: keep local state, skip the API until both
+      // ids exist (empty string is the FormProvider placeholder).
+      if (!updateDefendant.caseId || !updateDefendant.defendantId) {
+        return false
+      }
+
       try {
         const { data } = await updateDefendantMutation({
           variables: {
@@ -91,8 +122,42 @@ const useDefendants = () => {
     [formatMessage, updateDefendantMutation],
   )
 
+  // One request for many defendants of a case, so the server locks and reads
+  // the case once instead of once per defendant. Nothing to send is a success.
+  const updateDefendants = useCallback(
+    async (caseId: string, defendants: UpdateDefendantsItem[]) => {
+      if (defendants.length === 0) {
+        return true
+      }
+
+      try {
+        const { data } = await updateDefendantsMutation({
+          variables: {
+            input: {
+              caseId,
+              defendants: defendants.map((defendant) =>
+                normalizeBlankStrings(defendant),
+              ),
+            },
+          },
+        })
+
+        return Boolean(data?.updateDefendants)
+      } catch {
+        toast.error(formatMessage(errors.updateDefendant))
+
+        return false
+      }
+    },
+    [formatMessage, updateDefendantsMutation],
+  )
+
   const limitedAccessUpdateDefendant = useCallback(
     async (updateDefendant: UpdateDefendantInput) => {
+      if (!updateDefendant.caseId || !updateDefendant.defendantId) {
+        return false
+      }
+
       try {
         const { data } = await limitedAccessUpdateDefendantMutation({
           variables: {
@@ -113,9 +178,9 @@ const useDefendants = () => {
   const updateDefendantState = useCallback(
     (
       update: UpdateDefendantInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
-      setWorkingCase((prevWorkingCase: Case) => {
+      setWorkingCase((prevWorkingCase: WorkingCase) => {
         if (!prevWorkingCase.defendants) {
           return prevWorkingCase
         }
@@ -139,10 +204,11 @@ const useDefendants = () => {
   const setAndSendDefendantToServer = useCallback(
     (
       update: UpdateDefendantInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
       updateDefendantState(update, setWorkingCase)
-      updateDefendant(update)
+
+      return updateDefendant(update)
     },
     [updateDefendant, updateDefendantState],
   )
@@ -151,6 +217,7 @@ const useDefendants = () => {
     createDefendant,
     deleteDefendant,
     updateDefendant,
+    updateDefendants,
     limitedAccessUpdateDefendant,
     isUpdatingDefendant,
     updateDefendantState,

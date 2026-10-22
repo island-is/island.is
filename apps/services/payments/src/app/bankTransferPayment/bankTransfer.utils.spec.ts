@@ -1,12 +1,17 @@
 import {
   BankTransferFailureReason,
+  BankTransferPayerType,
   BankTransferStatus,
   BankTransferPendingStatus,
 } from './bankTransfer.types'
 import {
+  buildBankTransferPayInfo,
   deriveBankTransferFailureReason,
+  getBankTransferDebtor,
+  getBankTransferPayerType,
   isOnboardingRequired,
   mapRawStatusToBankTransferPendingStatus,
+  rowLogContext,
 } from './bankTransfer.utils'
 
 const onboardingOrigin = 'https://light.blikk.tech'
@@ -116,5 +121,84 @@ describe('deriveBankTransferFailureReason', () => {
     [BankTransferStatus.PENDING, expired, null],
   ])('derives %s on %o as %s', (status, row, expectedReason) => {
     expect(deriveBankTransferFailureReason(status, row)).toBe(expectedReason)
+  })
+})
+
+describe('getBankTransferDebtor', () => {
+  const person = '0101302129'
+  const company = '6010100890'
+  const temporary = '8123456789'
+
+  it.each([
+    ['an individual payer', person, undefined, { debtorExternalId: person }],
+    // An individual sent alongside a non-company payer does not change who is debited.
+    [
+      'an individual payer with an individual',
+      person,
+      '0101307789',
+      { debtorExternalId: person },
+    ],
+    [
+      'a company payer with an individual',
+      company,
+      person,
+      { debtorExternalId: person, debtorCorpExternalId: company },
+    ],
+    ['a company payer without an individual', company, undefined, null],
+    ['a company payer with a company', company, company, null],
+    ['a company payer with a temporary kennitala', company, temporary, null],
+    ['a temporary-kennitala payer', temporary, undefined, null],
+  ])('resolves %s', (_, payerNationalId, actorNationalId, expected) => {
+    expect(getBankTransferDebtor(payerNationalId, actorNationalId)).toEqual(
+      expected,
+    )
+  })
+})
+
+describe('getBankTransferPayerType', () => {
+  it.each([
+    ['a company', '6010100890', BankTransferPayerType.COMPANY],
+    ['a person', '0101302129', BankTransferPayerType.PERSON],
+    ['a temporary kennitala', '8123456789', undefined],
+  ])('resolves %s', (_, payerNationalId, expected) => {
+    expect(getBankTransferPayerType(payerNationalId)).toBe(expected)
+  })
+})
+
+describe('rowLogContext', () => {
+  const row = {
+    paymentFlowId: 'flow-1',
+    id: 'corr-1',
+    providerPaymentId: 'prov-1',
+  }
+
+  // `create` stores the authorising individual for a company payer only.
+  it.each([
+    ['a company payer', '0101302129', BankTransferPayerType.COMPANY],
+    ['a person payer', null, BankTransferPayerType.PERSON],
+  ])('logs %s', (_, actorNationalId, payerType) => {
+    expect(rowLogContext({ ...row, actorNationalId })).toEqual({
+      paymentFlowId: 'flow-1',
+      correlationId: 'corr-1',
+      rrn: 'prov-1',
+      payerType,
+    })
+  })
+})
+
+describe('buildBankTransferPayInfo', () => {
+  it('carries the provider payment id in RRN and the attempt id as correlation id', () => {
+    expect(
+      buildBankTransferPayInfo({
+        providerPaymentId: 'provider-1',
+        totalPrice: 1500,
+        correlationId: 'btp-1',
+      }),
+    ).toEqual({
+      kind: 'transfer',
+      RRN: 'provider-1',
+      payableAmount: 1500,
+      correlationId: 'btp-1',
+    })
   })
 })

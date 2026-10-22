@@ -13,7 +13,10 @@ import {
   AssigneeChildrenCustodyInformationApiV3,
 } from '../../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
-import { nationalIdPreface } from '../../../utils/assigneeUtils'
+import {
+  nationalIdPreface,
+  assigneeExternalDataKey,
+} from '../../../utils/assigneeUtils'
 import { isHouseholdMemberApproved } from '../../../utils/conditions'
 
 export const externalDataSection = buildSection({
@@ -28,29 +31,41 @@ export const externalDataSection = buildSection({
       checkboxLabel: m.assigneeApproval.checkboxLabel,
       dataProviders: [
         buildDataProviderItem({
-          id: (application, user) =>
-            nationalIdPreface(application, user, 'assigneeUserProfile'),
+          id: (_application, user) =>
+            assigneeExternalDataKey(
+              user.profile.nationalId,
+              'assigneeUserProfile',
+            ),
           provider: AssigneeUserProfileApi,
           title: m.prereqMessages.userProfileTitle,
           subTitle: m.prereqMessages.userProfileSubtitle,
         }),
         buildDataProviderItem({
-          id: (application, user) =>
-            nationalIdPreface(application, user, 'assigneeNationalRegistry'),
+          id: (_application, user) =>
+            assigneeExternalDataKey(
+              user.profile.nationalId,
+              'assigneeNationalRegistry',
+            ),
           provider: AssigneeNationalRegistryApi,
           title: m.assigneeApproval.nationalRegistryTitle,
           subTitle: m.assigneeApproval.nationalRegistrySubTitle,
         }),
         buildDataProviderItem({
-          id: (application, user) =>
-            nationalIdPreface(application, user, 'assigneeTaxReturn'),
+          id: (_application, user) =>
+            assigneeExternalDataKey(
+              user.profile.nationalId,
+              'assigneeTaxReturn',
+            ),
           provider: AssigneePersonalTaxReturnApi,
           title: m.assigneeApproval.taxTitle,
           subTitle: m.assigneeApproval.taxSubtitle,
         }),
         buildDataProviderItem({
-          id: (application, user) =>
-            nationalIdPreface(application, user, 'assigneeChildrenCustody'),
+          id: (_application, user) =>
+            assigneeExternalDataKey(
+              user.profile.nationalId,
+              'assigneeChildrenCustody',
+            ),
           provider: AssigneeChildrenCustodyInformationApiV3,
           title: m.prereqMessages.childrenCustodyTitle,
           subTitle: m.prereqMessages.childrenCustodySubtitle,

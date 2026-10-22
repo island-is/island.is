@@ -16,6 +16,7 @@ import { ClientsService } from './services/clients.service'
 import { ConsentService } from './services/consent.service'
 import { ConsentTenantsService } from './services/consentTenants.service'
 import { DomainService } from './services/domain.service'
+import { MeDelegationConfirmationsService } from './services/meDelegationConfirmations.service'
 import { MeDelegationsService } from './services/meDelegations.service'
 import { LoginRestrictionResolver } from './resolvers/loginRestriction.resolver'
 import { LoginRestrictionService } from './services/loginRestriction.service'
@@ -26,6 +27,7 @@ import {
   DelegationRequestScopeResolver,
 } from './resolvers/delegationRequest.resolver'
 import { DelegationRequestsService } from './services/delegationRequests.service'
+import { DelegationConfirmationResolver } from './resolvers/delegationConfirmation.resolver'
 import { CustomDelegationResolver } from './resolvers/customDelegation.resolver'
 import { MergedDelegationResolver } from './resolvers/mergedDelegation.resolver'
 import { DelegationScopeResolver } from './resolvers/delegationScope.resolver'
@@ -43,6 +45,7 @@ import { ScopeCategoriesResolver } from './resolvers/scopeCategories.resolver'
     DelegationRequestResolver,
     DelegationRequestScopeResolver,
     DelegationRequestsService,
+    DelegationConfirmationResolver,
     CustomDelegationResolver,
     MergedDelegationResolver,
     DelegationScopeResolver,
@@ -52,6 +55,7 @@ import { ScopeCategoriesResolver } from './resolvers/scopeCategories.resolver'
     DomainService,
     ActorDelegationsService,
     MeDelegationsService,
+    MeDelegationConfirmationsService,
     ApiScopeService,
     ApiScopeLoader,
     ClientLoader,

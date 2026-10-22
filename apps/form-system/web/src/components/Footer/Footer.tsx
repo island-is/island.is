@@ -24,6 +24,7 @@ import { Box, Button, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import { useApplicationContext } from '../../context/ApplicationProvider'
+import { getPaymentFlow, getVisiblePaymentFields } from '../../utils/payment'
 import * as styles from './Footer.css'
 
 const emptyScreenError = {
@@ -124,32 +125,7 @@ export const Footer = ({
 
   const validate = async () => trigger()
 
-  const lastScreenDisplayOrder = state.application.sections
-    ?.at(-1)
-    ?.screens?.at(-1)?.displayOrder
-
-  const hasVisiblePaymentField = state.sections?.some((section) =>
-    section?.screens?.some((screen) =>
-      screen?.fields?.some(
-        (field) =>
-          field?.fieldType === FieldTypesEnum.PAYMENT &&
-          field?.isHidden === false,
-      ),
-    ),
-  )
-
-  const shouldShowPay =
-    currentSection?.data.sectionType === SectionTypes.PAYMENT ||
-    (currentSection?.data.sectionType === SectionTypes.SUMMARY &&
-      hasVisiblePaymentField)
-
-  const onSubmit =
-    currentSectionType === SectionTypes.PAYMENT ||
-    (currentSectionType === SectionTypes.SUMMARY &&
-      state.application.hasPayment !== true) ||
-    (state.application.hasPayment === false &&
-      state.application.hasSummaryScreen === false &&
-      state.currentScreen?.index === lastScreenDisplayOrder)
+  const { shouldShowPay, onSubmit } = getPaymentFlow(state)
 
   const isCompletedSection = currentSectionType === SectionTypes.COMPLETED
 
@@ -308,18 +284,7 @@ export const Footer = ({
         })
       })
 
-      const visiblePaymentFields =
-        state.sections?.flatMap(
-          (section) =>
-            section?.screens?.flatMap(
-              (screen) =>
-                screen?.fields?.filter(
-                  (field) =>
-                    field?.fieldType === FieldTypesEnum.PAYMENT &&
-                    field?.isHidden === false,
-                ) ?? [],
-            ) ?? [],
-        ) ?? []
+      const visiblePaymentFields = getVisiblePaymentFields(state.sections)
 
       const hasUnresolvedPaymentField = visiblePaymentFields.some((field) => {
         const code = field?.fieldSettings?.chargeItemCode

@@ -51,7 +51,7 @@ export const prosecutorCreatesIndictmentCase = async (
 
   if (secondAccusedName) {
     // The case does not exist yet, so this only adds a defendant locally -
-    // it is persisted with a CreateDefendant mutation when the case is
+    // it is persisted as part of the CreateCase mutation when the case is
     // created below. Every defendant in an indictment must have an Icelandic
     // national id, and the national registry lookup is also what fills in the
     // gender the step needs to be valid, so the second defendant is looked up
@@ -85,9 +85,6 @@ export const prosecutorCreatesIndictmentCase = async (
     verifyRequestCompletion(page, '/api/graphql', 'CreateCase').then(
       (res) => (caseId = res.data.createCase.id),
     ),
-    ...(secondAccusedName
-      ? [verifyRequestCompletion(page, '/api/graphql', 'CreateDefendant')]
-      : []),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
     page.getByRole('button', { name: 'Stofna mál' }).click(),
   ])
@@ -129,8 +126,15 @@ export const prosecutorCreatesIndictmentCase = async (
     page.getByText('Nei').last().click(),
   ])
 
+  // The indictment page saves twice as it opens: the introduction and demands
+  // autofill (UpdateCase) and the incident description editor's first
+  // debounced change (UpdateIndictmentCount). Each response replaces the
+  // indictment count in the working case, so a registration number typed
+  // before they land is wiped and the blur then saves an empty one.
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+    verifyRequestCompletion(page, '/api/graphql', 'UpdateIndictmentCount'),
     page.getByTestId('continueButton').click(),
   ])
 

@@ -13,6 +13,7 @@ import {
   isDefenceUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   ContextMenu,
   FormContext,
@@ -22,7 +23,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import type {
   AppealCase,
-  Case,
   CaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -53,7 +53,10 @@ const isProsecutorCategory = (category: CaseFileCategory | undefined | null) =>
   ].includes(category) ||
     prosecutorDeleteCategories.includes(category))
 
-const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
+const getFileSubmittedByText = (
+  file: CaseFile,
+  workingCase: WorkingCase,
+): string => {
   if (isProsecutorCategory(file.category)) {
     return formatFileSubmittedBy('Sækjandi')
   }

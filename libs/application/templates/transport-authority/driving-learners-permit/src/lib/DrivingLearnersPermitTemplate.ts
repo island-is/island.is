@@ -127,7 +127,6 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
                   Promise.resolve(module.Done),
                 ),
               write: 'all',
-              delete: true,
             },
           ],
         },

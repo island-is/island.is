@@ -608,6 +608,134 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:read-and-write',
     defaultMessage: 'Skoða og breyta',
   },
+  confirmDelegationExpiredTitle: {
+    id: 'sp.access-control-delegations:confirm-delegation-expired-title',
+    defaultMessage: 'Staðfestingin er útrunnin',
+  },
+  confirmDelegationExpiredMessage: {
+    id: 'sp.access-control-delegations:confirm-delegation-expired-message',
+    defaultMessage:
+      'Umboðið var ekki staðfest í tæka tíð og tók því ekki gildi. Þú getur reynt aftur.',
+  },
+  confirmDelegationFailedMessage: {
+    id: 'sp.access-control-delegations:confirm-delegation-failed-message',
+    defaultMessage:
+      'Ekki tókst að staðfesta umboðið og það var ekki veitt. Þú getur reynt aftur.',
+  },
+  stepUpTitle: {
+    id: 'sp.access-control-delegations:step-up-title',
+    defaultMessage: 'Staðfestu beiðnina',
+  },
+  stepUpFailedTitle: {
+    id: 'sp.access-control-delegations:step-up-failed-title',
+    defaultMessage: 'Auðkenning tókst ekki',
+  },
+  stepUpContext: {
+    id: 'sp.access-control-delegations:step-up-context',
+    defaultMessage: 'Beiðni um viðkvæmt umboð',
+  },
+  stepUpMethodSim: {
+    id: 'sp.access-control-delegations:step-up-method-sim',
+    defaultMessage: 'Rafræn skilríki í síma',
+  },
+  stepUpMethodApp: {
+    id: 'sp.access-control-delegations:step-up-method-app',
+    defaultMessage: 'Auðkennisappið',
+  },
+  stepUpBack: {
+    id: 'sp.access-control-delegations:step-up-back',
+    defaultMessage: 'Til baka',
+  },
+  stepUpRetry: {
+    id: 'sp.access-control-delegations:step-up-retry',
+    defaultMessage: 'Reyna aftur',
+  },
+  stepUpConfirmed: {
+    id: 'sp.access-control-delegations:step-up-confirmed',
+    defaultMessage: 'Umboðið er komið í gildi',
+  },
+  stepUpYourSecurityCode: {
+    id: 'sp.access-control-delegations:step-up-your-security-code',
+    defaultMessage: 'Öryggistalan þín er:',
+  },
+  stepUpSecurityCodeConfirmMessage: {
+    id: 'sp.access-control-delegations:step-up-security-code-confirm-message',
+    defaultMessage: 'Staðfestu ef sama tala birtist í símanum þínum.',
+  },
+  stepUpSecurityCodeConfirmMessageApp: {
+    id: 'sp.access-control-delegations:step-up-security-code-confirm-message-app',
+    defaultMessage: 'Staðfestu ef sama tala birtist í Auðkennisappinu.',
+  },
+  stepUpSecurityCodeConfirmSubtitle: {
+    id: 'sp.access-control-delegations:step-up-security-code-confirm-subtitle',
+    defaultMessage: 'Öryggistalan er ekki PIN-númer skilríkjanna.',
+  },
+  stepUpDeniedTitle: {
+    id: 'sp.access-control-delegations:step-up-denied-title',
+    defaultMessage: 'Hætt við auðkenningu',
+  },
+  stepUpDenied: {
+    id: 'sp.access-control-delegations:step-up-denied',
+    defaultMessage:
+      'Hætt var við auðkenninguna og beiðnin hefur ekki verið samþykkt.',
+  },
+  stepUpTimedOutTitle: {
+    id: 'sp.access-control-delegations:step-up-timed-out-title',
+    defaultMessage: 'Tíminn rann út',
+  },
+  stepUpTimedOut: {
+    id: 'sp.access-control-delegations:step-up-timed-out',
+    defaultMessage:
+      'Auðkenningin var ekki staðfest í tæka tíð og beiðnin hefur ekki verið samþykkt.',
+  },
+  stepUpUnavailableTitle: {
+    id: 'sp.access-control-delegations:step-up-unavailable-title',
+    defaultMessage: 'Ekki hægt að staðfesta',
+  },
+  stepUpUnavailable: {
+    id: 'sp.access-control-delegations:step-up-unavailable',
+    defaultMessage:
+      'Ekki er hægt að staðfesta umboðið með rafrænum skilríkjum, t.d. ef þú skráðir þig inn með skilríkjum á korti eða staðfesting er ekki í boði eins og er. Umboðið var ekki veitt.',
+  },
+  sensitiveScopeTag: {
+    id: 'sp.access-control-delegations:sensitive-scope-tag',
+    defaultMessage: 'Viðkvæmt',
+  },
+  sensitiveScopeTooltip: {
+    id: 'sp.access-control-delegations:sensitive-scope-tooltip',
+    defaultMessage:
+      'Þessi réttindi veita aðgang að viðkvæmum upplýsingum. Þú þarft að staðfesta umboðið með rafrænum skilríkjum.',
+  },
+  sensitiveScopesUnavailableTitle: {
+    id: 'sp.access-control-delegations:sensitive-scopes-unavailable-title',
+    defaultMessage: 'Viðkvæm réttindi eru ekki í boði',
+  },
+  sensitiveScopesUnavailableMessage: {
+    id: 'sp.access-control-delegations:sensitive-scopes-unavailable-message',
+    defaultMessage:
+      'Þú skráðir þig inn með skilríkjum á korti. Réttindi merkt „Viðkvæmt“ þarf að staðfesta með rafrænum skilríkjum í síma eða Auðkennisappinu og því er aðeins hægt að veita þau eftir innskráningu með þeim.',
+  },
+  sensitiveScopesNotAvailableMessage: {
+    id: 'sp.access-control-delegations:sensitive-scopes-not-available-message',
+    defaultMessage:
+      'Réttindi merkt „Viðkvæmt“ er ekki hægt að veita eins og er. Reyndu aftur síðar.',
+  },
+  sensitiveScopesSelectedTitle: {
+    id: 'sp.access-control-delegations:sensitive-scopes-selected-title',
+    defaultMessage: 'Þarfnast samþykkis með rafrænum skilríkjum',
+  },
+  confirmAccessSensitiveStepUpMessage: {
+    id: 'sp.access-control-delegations:confirm-access-sensitive-step-up-message',
+    defaultMessage: 'Þar sem umboðið inniheldur viðkvæm réttindi.',
+  },
+  confirmAccessAuthenticateButton: {
+    id: 'sp.access-control-delegations:confirm-access-authenticate-button',
+    defaultMessage: 'Auðkenna',
+  },
+  confirmAccessButton: {
+    id: 'sp.access-control-delegations:confirm-access-button',
+    defaultMessage: 'Staðfesta umboð',
+  },
   headerName: {
     id: 'sp.access-control-delegations:header-name',
     defaultMessage: 'Nafn',

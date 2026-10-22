@@ -10,6 +10,10 @@ import {
 import { useLocale } from '@island.is/localization'
 import { ScopesCategoriesList } from '../ScopesCategoriesList'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  canSelectScope,
+  useSensitiveScopesAvailability,
+} from '../../hooks/useCanGrantSensitiveScopes'
 import * as styles from './GrantAccessSteps.css'
 
 import { AuthApiScope, AuthDelegationDirection } from '@island.is/api/schema'
@@ -71,6 +75,8 @@ export const AccessScopes = ({
   )
   const { selectedScopes, setSelectedScopes, requestedScopeNames } =
     useDelegationForm()
+  const { canGrant: canGrantSensitiveScopes, reason: sensitiveUnavailable } =
+    useSensitiveScopesAvailability()
   const defaultDate = add(new Date(), { years: 1 })
 
   const allGrantableScopes = useMemo(() => {
@@ -163,7 +169,7 @@ export const AccessScopes = ({
   const onSelectScope = (scope: AuthApiScope) => {
     if (selectedScopes.some((s) => s.name === scope.name)) {
       setSelectedScopes(selectedScopes.filter((s) => s.name !== scope.name))
-    } else {
+    } else if (canSelectScope(scope, canGrantSensitiveScopes)) {
       setSelectedScopes([...selectedScopes, { ...scope, validTo: defaultDate }])
     }
   }
@@ -176,7 +182,9 @@ export const AccessScopes = ({
     } else {
       setSelectedScopes([
         ...selectedScopes,
-        ...scopes.map((s) => ({ ...s, validTo: defaultDate })),
+        ...scopes
+          .filter((s) => canSelectScope(s, canGrantSensitiveScopes))
+          .map((s) => ({ ...s, validTo: defaultDate })),
       ])
     }
   }
@@ -253,6 +261,22 @@ export const AccessScopes = ({
           />
         </Box>
       )}
+      {sensitiveUnavailable &&
+        categoriesData?.authScopeCategories.some((category) =>
+          category.scopes.some((scope) => scope.requiresConfirmation),
+        ) && (
+          <Box marginBottom={2} width="full">
+            <AlertMessage
+              type="info"
+              title={formatMessage(m.sensitiveScopesUnavailableTitle)}
+              message={formatMessage(
+                sensitiveUnavailable === 'card_session'
+                  ? m.sensitiveScopesUnavailableMessage
+                  : m.sensitiveScopesNotAvailableMessage,
+              )}
+            />
+          </Box>
+        )}
       <Box
         display="flex"
         columnGap={[0, 2]}

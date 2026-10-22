@@ -215,6 +215,12 @@ export const Payment = new XroadConf({
   },
 })
 
+const financesV3Path = {
+  dev: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v3',
+  staging: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v3',
+  prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v3',
+}
+
 export const Finance = new XroadConf({
   env: {
     XROAD_FINANCES_PATH: {
@@ -227,11 +233,7 @@ export const Finance = new XroadConf({
       staging: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v2',
       prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2',
     },
-    XROAD_FINANCES_V3_PATH: {
-      dev: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v3',
-      staging: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v3',
-      prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v3',
-    },
+    XROAD_FINANCES_V3_PATH: financesV3Path,
     XROAD_HMS_LOANS_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1',
@@ -242,6 +244,12 @@ export const Finance = new XroadConf({
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1',
       prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/husbot-v1',
     },
+  },
+})
+
+export const FinanceV3 = new XroadConf({
+  env: {
+    XROAD_FINANCES_V3_PATH: financesV3Path,
   },
 })
 
@@ -1030,6 +1038,17 @@ export const DirectorateOfEquality = new XroadConf({
       dev: 'IS-DEV/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti',
       staging: 'IS-TEST/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti',
       prod: 'IS/GOV/5804170510/DMR-Protected/api.ritstjorn-jafnretti',
+    },
+  },
+})
+
+// Placeholder service name until DMR registers the statistics service.
+export const DirectorateOfEqualityStatistics = new XroadConf({
+  env: {
+    XROAD_DIRECTORATE_OF_EQUALITY_STATISTICS_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/jafnretti-statistics',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/jafnretti-statistics',
+      prod: 'IS/GOV/5804170510/DMR-Protected/jafnretti-statistics',
     },
   },
 })

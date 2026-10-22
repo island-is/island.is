@@ -3,8 +3,8 @@ import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { errors } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CivilClaimant,
   CreateCivilClaimantInput,
   UpdateCivilClaimantInput,
@@ -84,9 +84,9 @@ const useCivilClaimants = () => {
   const updateCivilClaimantState = useCallback(
     (
       update: UpdateCivilClaimantInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
-      setWorkingCase((prevWorkingCase: Case) => {
+      setWorkingCase((prevWorkingCase: WorkingCase) => {
         if (!prevWorkingCase.civilClaimants) {
           return prevWorkingCase
         }
@@ -115,7 +115,7 @@ const useCivilClaimants = () => {
   const setAndSendCivilClaimantToServer = useCallback(
     (
       update: UpdateCivilClaimantInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
       updateCivilClaimantState(update, setWorkingCase)
       updateCivilClaimant(update)

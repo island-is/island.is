@@ -33,6 +33,7 @@ import { useEffect, useRef, useState } from 'react'
 import {
   Navigate,
   generatePath,
+  useLocation,
   useNavigate,
   useParams,
   useSearchParams,
@@ -63,6 +64,7 @@ const HealthConversationDetail = () => {
   const { id } = useParams() as UseParams
   const userInfo = useUserInfo()
   const navigate = useNavigate()
+  const location = useLocation()
   const paths = useTreatmentScopedPaths()
   const { isPhoneWidth } = useIsPhoneWidth()
   const treatmentIntroShown = useTreatmentIntroShown()
@@ -83,6 +85,20 @@ const HealthConversationDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [certificatePaymentCancelled])
 
+  const [justSent, setJustSent] = useState(
+    Boolean((location.state as { justSent?: boolean } | null)?.justSent),
+  )
+
+  useEffect(() => {
+    if (justSent) {
+      navigate(
+        { pathname: location.pathname, search: location.search },
+        { replace: true, state: null },
+      )
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const [replyOpen, setReplyOpen] = useState(false)
   const [replyText, setReplyText] = useState('')
 
@@ -90,6 +106,7 @@ const HealthConversationDetail = () => {
   const replyRef = useRef<HTMLDivElement>(null)
   const replyInputRef = useRef<HTMLTextAreaElement | null>(null)
   const replyButtonRef = useRef<HTMLButtonElement | null>(null)
+  const sentAlertRef = useRef<HTMLDivElement | null>(null)
   const replyWasOpenRef = useRef(false)
 
   const openReply = () => {
@@ -107,9 +124,13 @@ const HealthConversationDetail = () => {
       replyInputRef.current?.focus({ preventScroll: isPhoneWidth })
     } else if (replyWasOpenRef.current) {
       // Both reply triggers unmount while the form is open, so return focus
-      // to the re-rendered footer button
+      // to the re-rendered footer button or the sent alert
       replyWasOpenRef.current = false
-      replyButtonRef.current?.focus()
+      if (sentAlertRef.current) {
+        sentAlertRef.current.focus()
+      } else {
+        replyButtonRef.current?.focus()
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [replyOpen])
@@ -189,6 +210,16 @@ const HealthConversationDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item?.id, item?.isRead])
 
+  // Arriving from a new conversation, the sent alert only mounts once the
+  // thread has loaded, so focus it then to have it announced
+  const focusSentAlertOnLoadRef = useRef(justSent)
+  useEffect(() => {
+    if (focusSentAlertOnLoadRef.current && sentAlertRef.current) {
+      focusSentAlertOnLoadRef.current = false
+      sentAlertRef.current.focus()
+    }
+  }, [item?.id])
+
   if (loading && !data) {
     return (
       <ConversationDetailLayout>
@@ -245,6 +276,7 @@ const HealthConversationDetail = () => {
         },
       })
       setReplyText('')
+      setJustSent(true)
       setReplyOpen(false)
     } catch {
       toast.error(formatMessage(m.errorTitle))
@@ -296,7 +328,9 @@ const HealthConversationDetail = () => {
             <MessageActions
               bookmarked={item.isStarred}
               archived={item.isArchived}
-              onReply={!replyOpen && canReply ? openReply : undefined}
+              onReply={
+                !replyOpen && canReply && !justSent ? openReply : undefined
+              }
               onFav={() => {
                 if (item.isStarred) {
                   unstarMessage({ variables: { input: { id } } })
@@ -478,6 +512,10 @@ const HealthConversationDetail = () => {
               loading={replySending}
               fluid={isPhoneWidth}
             />
+          ) : justSent ? (
+            <Box ref={sentAlertRef} tabIndex={-1} className={styles.sentAlert}>
+              <ReplyBlockedAlert availability={ReplyAvailability.WAITING} />
+            </Box>
           ) : item.replyAvailability !== ReplyAvailability.CAN_REPLY ? (
             <ReplyBlockedAlert
               availability={item.replyAvailability}

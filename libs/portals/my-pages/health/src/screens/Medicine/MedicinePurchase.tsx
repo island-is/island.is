@@ -33,6 +33,7 @@ import {
   useGetDrugsBillsLazyQuery,
   useGetDrugsDataQuery,
 } from './Medicine.generated'
+import * as styles from './Medicine.css'
 import MedicineBillLines from './MedicineBillLines'
 import { MedicinePaymentParticipationWrapper } from './wrapper/MedicinePaymentParticipationWrapper'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
@@ -156,40 +157,42 @@ export const MedicinePurchase = () => {
             marginBottom={SECTION_GAP}
             justifyContent="flexStart"
           >
-            <Select
-              name="paymentPeroid"
-              size="xs"
-              label={formatMessage(messages.medicinePaymentPeriod)}
-              options={data.rightsPortalDrugPeriods.map((period) => ({
-                label: formatDatePeriod(
-                  period.dateFrom ? new Date(period.dateFrom) : null,
-                  period.dateTo ? new Date(period.dateTo) : null,
-                ),
-                value: period.id,
-              }))}
-              backgroundColor="blue"
-              value={
-                selectedPeriod &&
-                selectedPeriod?.id &&
-                selectedPeriod?.dateFrom &&
-                selectedPeriod?.dateTo
-                  ? {
-                      label: formatDatePeriod(
-                        selectedPeriod.dateFrom,
-                        selectedPeriod.dateTo,
-                      ),
-                      value: selectedPeriod.id,
-                    }
-                  : undefined
-              }
-              onChange={(option) =>
-                setSelectedPeriod(
-                  data.rightsPortalDrugPeriods.find(
-                    (period) => period.id === option?.value,
-                  ) ?? null,
-                )
-              }
-            />
+            <Box className={styles.periodSelect}>
+              <Select
+                name="paymentPeroid"
+                size="xs"
+                label={formatMessage(messages.medicinePaymentPeriod)}
+                options={data.rightsPortalDrugPeriods.map((period) => ({
+                  label: formatDatePeriod(
+                    period.dateFrom ? new Date(period.dateFrom) : null,
+                    period.dateTo ? new Date(period.dateTo) : null,
+                  ),
+                  value: period.id,
+                }))}
+                backgroundColor="blue"
+                value={
+                  selectedPeriod &&
+                  selectedPeriod?.id &&
+                  selectedPeriod?.dateFrom &&
+                  selectedPeriod?.dateTo
+                    ? {
+                        label: formatDatePeriod(
+                          selectedPeriod.dateFrom,
+                          selectedPeriod.dateTo,
+                        ),
+                        value: selectedPeriod.id,
+                      }
+                    : undefined
+                }
+                onChange={(option) =>
+                  setSelectedPeriod(
+                    data.rightsPortalDrugPeriods.find(
+                      (period) => period.id === option?.value,
+                    ) ?? null,
+                  )
+                }
+              />
+            </Box>
           </Box>
           <Box
             borderBottomWidth="standard"

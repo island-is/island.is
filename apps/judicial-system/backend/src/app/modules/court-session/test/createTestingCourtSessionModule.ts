@@ -17,9 +17,12 @@ import {
   CourtSessionStringRepositoryService,
   EventLogRepositoryService,
 } from '../../repository'
+import { CourtDocumentController } from '../courtDocument.controller'
+import { CourtDocumentService } from '../courtDocument.service'
 import { CourtSessionController } from '../courtSession.controller'
 import { CourtSessionService } from '../courtSession.service'
 
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../repository/services/courtSessionRepository.service')
 jest.mock('../../repository/services/appealDecisionRepository.service')
 jest.mock('../../repository/services/appealCaseRepository.service')
@@ -30,7 +33,7 @@ jest.mock('../../repository/services/eventLogRepository.service')
 
 export const createTestingCourtSessionModule = async () => {
   const courtSessionModule = await Test.createTestingModule({
-    controllers: [CourtSessionController],
+    controllers: [CourtSessionController, CourtDocumentController],
     providers: [
       CourtSessionRepositoryService,
       AppealDecisionRepositoryService,
@@ -59,6 +62,7 @@ export const createTestingCourtSessionModule = async () => {
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       CourtSessionService,
+      CourtDocumentService,
     ],
   })
     .useMocker((token) => {
@@ -119,6 +123,9 @@ export const createTestingCourtSessionModule = async () => {
     CourtSessionController,
   )
 
+  const courtDocumentController =
+    courtSessionModule.get<CourtDocumentController>(CourtDocumentController)
+
   // Event convergence reads existing APPEALED events; default to none so tests
   // that don't set it up don't blow up on the returned undefined.
   ;(
@@ -150,5 +157,6 @@ export const createTestingCourtSessionModule = async () => {
     eventLogService,
     courtSessionService,
     courtSessionController,
+    courtDocumentController,
   }
 }

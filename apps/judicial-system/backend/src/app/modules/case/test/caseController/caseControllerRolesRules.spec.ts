@@ -44,6 +44,15 @@ describe('CaseController - Update rules', () => {
   ])
 })
 
+describe('publicProsecutorStaffUpdateRule field allowlist', () => {
+  it('only allows indictment reviewer and appeal prosecutor assignment', () => {
+    expect(publicProsecutorStaffUpdateRule.dtoFields).toEqual([
+      'indictmentReviewerId',
+      'appealProsecutorId',
+    ])
+  })
+})
+
 describe('CaseController - Transition rules', () => {
   verifyRolesRules(CaseController, 'transition', [
     prosecutorTransitionRule,
@@ -202,5 +211,12 @@ describe('CaseController - Create court case rules', () => {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+  ])
+})
+
+describe('CaseController - Replace indictment pdf rules', () => {
+  verifyRolesRules(CaseController, 'replaceIndictmentPdf', [
+    prosecutorRule,
+    prosecutorRepresentativeRule,
   ])
 })

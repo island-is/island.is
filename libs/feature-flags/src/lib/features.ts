@@ -15,7 +15,6 @@ export enum Features {
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
-  university = 'isUniversityEnabled',
   homeSupport = 'isHomeSupportEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
   officialJournalOfIcelandRegulations = 'isOjoiRegulationApplicationPathEnabled',
@@ -34,21 +33,15 @@ export enum Features {
   disabilityPensionLightweightModeEnabled = 'isDisabilityPensionLightweightModeEnabled',
   pensionSupplementEnabled = 'isPensionSupplementEnabled',
   fireCompensationAppraisalEnabled = 'isFireCompensationAppraisalEnabled',
-  ExemptionForTransportation = 'isExemptionForTransportationEnabled',
   TerminateRentalAgreementEnabled = 'isterminaterentalagreementsenabled',
-  UnemploymentBenefitsEnabled = 'isUnemploymentBenefitsEnabled',
-  RegistrationOfNewPropertyNumbersEnabled = 'isRegistrationOfNewPropertyNumbersEnabled',
   fundingGovernmentProjectsEnabled = 'isFundingGovernmentProjectsEnabled',
-  editUnemploymentInformation = 'isEditUnemploymentInformationEnabled',
   estateReviewEnabled = 'isEstateReviewEnabled',
   inheritanceReportReviewEnabled = 'isInheritanceReportReviewEnabled',
-  isDeregisterUnemploymentBenefitsEnabled = 'isDeregisterUnemploymentBenefitsEnabled',
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
-  isTravelConfirmationEnabled = 'isTravelConfirmationEnabled',
-  isSubmitDocumentsEnabled = 'isSubmitDocumentsEnabled',
   isNewDrivingLicenseEnabled = 'isNewDrivingLicenseEnabled',
   isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
-  isU2ApplicationEnabled = 'isU2ApplicationEnabled',
+  isConfirmJobOrIncomeEnabled = 'isConfirmJobOrIncomeEnabled',
+
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
@@ -133,6 +126,11 @@ export enum Features {
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',
+  isApplicationSystemTranslationsEnabled = 'isApplicationSystemTranslationsEnabled',
+  isApplicationTranslationWorkspaceReadOnlyEnabled = 'isApplicationTranslationWorkspaceReadOnlyEnabled',
+
+  // When on, events missing from the role's actions are only logged, not rejected
+  applicationSystemDisableEventPermissionCheck = 'applicationSystemDisableEventPermissionCheck',
 
   // Search indexer
   shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
@@ -145,9 +143,12 @@ export enum Features {
 
   // Notifications
   isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
+  isServicePortalOnlyActionablePriorityNotificationsEnabled = 'isServicePortalOnlyActionablePriorityNotificationsEnabled',
 
   // New/updated delegation notification
   isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',
+
+  isDelegationConfirmationEnabled = 'isDelegationConfirmationEnabled',
 
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
 
@@ -167,6 +168,8 @@ export enum Features {
   isIslandisApplePayStrictSignatureVerificationEnabled = 'isIslandisApplePayStrictSignatureVerificationEnabled',
   isIslandisBankTransferPaymentEnabled = 'isIslandisBankTransferPaymentEnabled',
   isIslandisBankTransferPaymentAllowedForUser = 'isIslandisBankTransferPaymentAllowedForUser',
+  isIslandisBankTransferPaymentAllowedForCompany = 'isIslandisBankTransferPaymentAllowedForCompany',
+  isIslandisDebtPaymentEnabled = 'isIslandisDebtPaymentEnabled',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',

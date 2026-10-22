@@ -8,6 +8,7 @@ import {
 import { BffUser } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
 import { getLandlordOptionsForSelectedContract } from './rentalAgreementUtils'
+import { assigneeExternalDataKey } from './assigneeUtils'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 
@@ -332,15 +333,17 @@ const getPersonalTaxReturnData = (
   nationalId?: string,
 ): PersonalTaxReturnData | undefined => {
   if (!externalData) return undefined
-  const result = nationalId
-    ? getValueViaPath<{ status: 'success'; data: PersonalTaxReturnData }>(
-        externalData,
-        `${nationalId}.assigneeTaxReturn`,
-      )
-    : getValueViaPath<{ status: 'success'; data: PersonalTaxReturnData }>(
-        externalData,
-        'getPersonalTaxReturn',
-      )
+  if (nationalId) {
+    const entry = externalData[
+      assigneeExternalDataKey(nationalId, 'assigneeTaxReturn')
+    ] as { status?: string; data?: PersonalTaxReturnData } | undefined
+    if (!entry || entry.status !== 'success') return undefined
+    return entry.data
+  }
+  const result = getValueViaPath<{
+    status: 'success'
+    data: PersonalTaxReturnData
+  }>(externalData, 'getPersonalTaxReturn')
   if (!result || result.status !== 'success') return undefined
   return result.data as PersonalTaxReturnData | undefined
 }
@@ -376,18 +379,6 @@ export const isTaxReturnFiled = (
   const data = getPersonalTaxReturnData(externalData)
   if (!data) return false
   return data.handedInLastYear === true
-}
-
-/**
- * Applicant filed a tax return within the last five years but not last year. They must
- * file last year's return before applying, so we route them to a terminal info state.
- */
-export const mustFileTaxReturnBeforeApplying = (
-  application: Application,
-): boolean => {
-  const data = getPersonalTaxReturnData(application.externalData)
-  if (!data) return false
-  return data.handedInLastFiveYears === true && data.handedInLastYear === false
 }
 
 export const hasHouseholdMembers = (answers: FormValue): boolean =>

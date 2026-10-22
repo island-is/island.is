@@ -72,7 +72,7 @@ const ContactLinks = () => {
       callback={link.onClick}
       skipOutboundTrack={link.skipOutboundTrack}
     >
-      <Box paddingX={3} paddingY={2} width="full">
+      <Box paddingX={[2, 2, 3]} paddingY={2} width="full">
         <Box
           display="flex"
           justifyContent="spaceBetween"
@@ -81,26 +81,16 @@ const ContactLinks = () => {
           style={{ marginBottom: 4 }}
         >
           <Box flexGrow={1} minWidth={0}>
-            <Text
-              variant="medium"
-              fontWeight="semiBold"
-              lineHeight="lg"
-              color="blue400"
-              className={styles.titleText}
-            >
+            <Text variant="h5" color="blue400">
               {link.title}
             </Text>
           </Box>
-          <Box
-            flexShrink={0}
-            display="flex"
-            style={{ minWidth: 16, minHeight: 16, alignItems: 'center' }}
-          >
+          <Box flexShrink={0} display="flex" alignItems="center">
             <Icon
               icon={link.icon}
               type="outline"
               color="blue400"
-              size="small"
+              size="medium"
             />
           </Box>
         </Box>
@@ -115,6 +105,7 @@ const ContactLinks = () => {
       borderColor="blue200"
       borderRadius="large"
       background="white"
+      overflow="hidden"
     >
       {links.map((link, index) => (
         <Box
