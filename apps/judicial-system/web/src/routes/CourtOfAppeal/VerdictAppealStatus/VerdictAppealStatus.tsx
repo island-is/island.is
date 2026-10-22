@@ -202,6 +202,16 @@ const VerdictAppealStatus = () => {
     setCourtSession({})
   }
 
+  // Another status folds the form away, and a session held in it would
+  // otherwise keep the saving footer with nothing to show for it.
+  const chooseStatus = (value: Status) => {
+    setChosenStatus(value)
+
+    if (value !== Status.COURT_SESSION_SCHEDULED && isEditingSession) {
+      stopEditing()
+    }
+  }
+
   const saveChanges = async () => {
     if (
       !verdictAppealCase ||
@@ -320,7 +330,7 @@ const VerdictAppealStatus = () => {
                     id={`verdict-appeal-status-${value}`}
                     label={verdictAppealStatusLabels[value]}
                     checked={status === value}
-                    onChange={() => setChosenStatus(value)}
+                    onChange={() => chooseStatus(value)}
                     large
                     backgroundColor="white"
                   />

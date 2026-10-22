@@ -368,6 +368,32 @@ describe('VerdictAppealStatus', () => {
       expect(screen.getByTestId('continueButton')).toBeInTheDocument()
     })
 
+    it('is let go of when the court picks another status', async () => {
+      renderPage(caseWithBookedSession)
+
+      await openMenu()
+      await clickMenuItem('Breyta þinghaldi')
+      expect(await screen.findByText('Verið að breyta')).toBeInTheDocument()
+
+      await userEvent.click(screen.getByLabelText('Lokið'))
+
+      expect(
+        screen.queryByRole('button', { name: 'Hætta við' }),
+      ).not.toBeInTheDocument()
+      expect(screen.queryByTestId('saveChangesButton')).not.toBeInTheDocument()
+      expect(screen.getByTestId('continueButton')).toBeEnabled()
+
+      await userEvent.click(screen.getByLabelText('Boða til þinghalds'))
+
+      expect(
+        await screen.findByRole('heading', { name: 'Boða til þinghalds' }),
+      ).toBeInTheDocument()
+      await waitFor(() =>
+        expect(screen.queryByText('Verið að breyta')).not.toBeInTheDocument(),
+      )
+      expect(screen.getByLabelText(/Dómsalur/)).toHaveValue('')
+    })
+
     it('is saved with its changes once the court confirms', async () => {
       const updated = { ...bookedSession, courtRoom: '2' }
       mockUpdateAppealCourtSession.mockResolvedValue(updated)
