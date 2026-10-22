@@ -1,4 +1,5 @@
 import { getValueViaPath, YES, YesOrNoEnum } from '@island.is/application/core'
+import { isCompany } from 'kennitala'
 import {
   Application,
   ExternalData,
@@ -155,6 +156,13 @@ export const applicantIsCompany = (
     externalData,
     'identity.data.type',
   )
+
+  // Other parties to the contract can't read the applicant's external data
+  if (!identityType) {
+    return isCompany(
+      getValueViaPath<string>(answers, 'applicant.nationalId') ?? '',
+    )
+  }
 
   return identityType === 'company'
 }
