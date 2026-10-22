@@ -4,6 +4,7 @@ import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
+  getIndictmentPdfDisplayName,
   getVisibleSubpoenas,
   shouldShowPoliceDigitalCaseFilesSection,
   shouldShowReplaceIndictmentPdf,
@@ -194,5 +195,30 @@ describe('shouldShowReplaceIndictmentPdf', () => {
     } as User
 
     expect(shouldShowReplaceIndictmentPdf(submitted, judge)).toBe(false)
+  })
+})
+
+describe('getIndictmentPdfDisplayName', () => {
+  it('keeps the sent-to-court date for a generated indictment', () => {
+    expect(
+      getIndictmentPdfDisplayName({
+        id: 'case-id',
+        caseSentToCourtDate: '2026-10-21T12:00:00.000Z',
+        indictmentHash: JSON.stringify({ hash: 'frozen' }),
+      } as CaseFilesListCase),
+    ).toMatch(/^Ákæra .+\.pdf$/)
+  })
+
+  it('drops the date after the indictment has been replaced', () => {
+    expect(
+      getIndictmentPdfDisplayName({
+        id: 'case-id',
+        caseSentToCourtDate: '2026-10-21T12:00:00.000Z',
+        indictmentHash: JSON.stringify({
+          hash: 'replaced',
+          replaced: true,
+        }),
+      } as CaseFilesListCase),
+    ).toBe('Ákæra.pdf')
   })
 })

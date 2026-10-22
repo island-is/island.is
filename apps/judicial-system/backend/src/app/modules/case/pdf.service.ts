@@ -467,7 +467,13 @@ export class PdfService {
     await this.uploadPdfToS3(theCase, indictmentKey, uploadedPdf)
 
     const { hash, hashAlgorithm } = getCaseFileHash(uploadedPdf)
-    const indictmentHash = JSON.stringify({ hash, hashAlgorithm })
+    // `replaced` tells the UI to list the file as Ákæra.pdf without the
+    // sent-to-court date that generated indictments carry.
+    const indictmentHash = JSON.stringify({
+      hash,
+      hashAlgorithm,
+      replaced: true,
+    })
 
     await this.caseRepositoryService.update(
       theCase.id,
