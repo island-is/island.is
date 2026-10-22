@@ -1,9 +1,0 @@
-fragment Paging on PagingData {
-  page
-  pageSize
-  totalPages
-  offset
-  total
-  hasPreviousPage
-  hasNextPage
-}

@@ -36,7 +36,9 @@ const main = async () => {
     parseInt(process.env.NX_MAX_PARALLEL ?? nxParallel, 10) / 2,
   )
 
-  if (!schemaExists) {
+  // DMR: libs/api/schema (island.is gateway schema) is pruned; only seed the
+  // dummy file if that lib is ever present again.
+  if (!schemaExists && (await fileExists('libs/api/schema'))) {
     await promisify(writeFile)(SCHEMA_PATH, 'export default () => {}')
   }
 

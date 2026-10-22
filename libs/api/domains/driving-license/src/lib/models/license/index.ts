@@ -1,5 +1,0 @@
-export * from './drivingLicense.model'
-export * from './drivingLicenseType.model'
-export * from './applicationEligibility.model'
-export * from './remarkType.model'
-export * from './jurisdiction.model'

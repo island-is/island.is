@@ -1,6 +1,0 @@
-export * from './MixedChart/MixedChart'
-export * from './SimplePieChart/SimplePieChart'
-export * from './SimpleLineChart/SimpleLineChart'
-export * from './ChartsCard/ChartsCard'
-export * from './SimpleBarChart/SimpleBarChart'
-export * from './v2'

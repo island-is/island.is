@@ -193,3 +193,5 @@ charts/bootstrap
 .github/instructions/nx.instructions.md
 
 .claude/worktrees
+.tmp-build/
+docs/dmr/baseline/*.log

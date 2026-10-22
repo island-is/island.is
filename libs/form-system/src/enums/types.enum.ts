@@ -1,5 +1,0 @@
-export const TypesEnum = {
-  CERTIFICATION: 'CERTIFICATION',
-  FIELD_TYPE: 'FIELD_TYPE',
-  LIST_TYPE: 'LIST_TYPE',
-}

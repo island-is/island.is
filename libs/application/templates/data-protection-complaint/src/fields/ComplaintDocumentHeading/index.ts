@@ -1,1 +1,0 @@
-export { ComplaintDocumentHeading } from './ComplaintDocumentHeading'

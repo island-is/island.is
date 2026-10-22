@@ -1,7 +1,0 @@
-export * from '../gen/fetch'
-export * from './lib/firearmLicenseClient.config'
-export * from './lib/openFirearmLicenseClient.config'
-export * from './lib/firearmLicenseClient.module'
-export * from './lib/services/firearmApi.services'
-export * from './lib/services/openFirearmApi.services'
-export { FirearmCategories } from './lib/firearmApi.types'

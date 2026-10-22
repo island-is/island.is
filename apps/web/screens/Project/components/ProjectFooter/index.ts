@@ -1,1 +1,0 @@
-export { ProjectFooter } from './ProjectFooter'

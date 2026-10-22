@@ -1,7 +1,0 @@
-export * from './lib/workMachines.module'
-export * from '../gen/fetch'
-export * from './lib/workMachines.config'
-export * from './lib/workMachines.service'
-export * from './lib/workMachines.types'
-export * from './lib/workMachines.utils'
-export { WorkMachinesCollectionItem } from './lib/dtos/workMachineItem.dto'

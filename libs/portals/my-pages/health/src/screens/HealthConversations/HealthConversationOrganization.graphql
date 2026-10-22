@@ -1,4 +1,0 @@
-fragment HealthConversationOrganizationFragment on HealthDirectorateConversationOrganization {
-  name
-  logoUrl
-}

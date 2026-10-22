@@ -1,4 +1,0 @@
-export enum ApplicationType {
-  FRESHMAN = 'FRESHMAN',
-  GENERAL_APPLICATION = 'GENERAL_APPLICATION',
-}

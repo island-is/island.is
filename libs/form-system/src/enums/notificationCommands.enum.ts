@@ -1,5 +1,0 @@
-export const NotificationCommands = {
-  SUBMIT: 'SUBMIT',
-  VALIDATE: 'VALIDATE',
-  VALIDATE_ELIGIBILITY: 'VALIDATE_ELIGIBILITY',
-}

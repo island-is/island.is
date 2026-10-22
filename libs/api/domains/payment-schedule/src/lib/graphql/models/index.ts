@@ -1,6 +1,0 @@
-export { PaymentScheduleConditions } from './conditions.model'
-export { PaymentScheduleDebts } from './debts.model'
-export { PaymentScheduleDistribution } from './distribution.model'
-export { PaymentScheduleEmployer } from './employer.model'
-export { PaymentScheduleInitialSchedule } from './initialSchedule.model'
-export { PaymentScheduleCompanyConditions } from './companyConditions.model'

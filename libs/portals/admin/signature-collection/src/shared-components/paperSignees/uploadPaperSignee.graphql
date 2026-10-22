@@ -1,8 +1,0 @@
-mutation SignatureCollectionAdminUploadPaperSignature(
-  $input: SignatureCollectionUploadPaperSignatureInput!
-) {
-  signatureCollectionAdminUploadPaperSignature(input: $input) {
-    success
-    reasons
-  }
-}

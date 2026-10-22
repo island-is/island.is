@@ -1,5 +1,0 @@
-export { CertificateForSicknessAndRehabilitation } from './CertificateForSicknessAndRehabilitation'
-export { ConfirmationOfIllHealth } from './ConfirmationOfIllHealth'
-export { ConfirmationOfPendingResolution } from './ConfirmationOfPendingResolution'
-export { ConfirmedTreatment } from './ConfirmedTreatment'
-export { RehabilitationPlan } from './RehabilitationPlan'

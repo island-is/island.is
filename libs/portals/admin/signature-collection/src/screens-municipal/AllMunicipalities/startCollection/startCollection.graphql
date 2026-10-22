@@ -1,6 +1,0 @@
-mutation StartCollection($input: SignatureCollectionAreaInput!) {
-  signatureCollectionAdminStartMunicipalityCollection(input: $input) {
-    success
-    reasons
-  }
-}

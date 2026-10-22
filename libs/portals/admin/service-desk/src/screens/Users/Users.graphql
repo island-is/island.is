@@ -1,9 +1,0 @@
-query GetPaginatedUserProfiles($query: String!) {
-  UserProfileAdminProfiles(query: $query) {
-    totalCount
-    data {
-      nationalId
-      fullName
-    }
-  }
-}

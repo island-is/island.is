@@ -1,3 +1,0 @@
-query GetFinanceStatusDetails($input: GetFinancialOverviewInput!) {
-  getFinanceStatusDetails(input: $input)
-}

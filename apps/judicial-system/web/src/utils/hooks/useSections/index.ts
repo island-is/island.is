@@ -10,6 +10,7 @@ import {
   COURT_OF_APPEAL_SUMMARY_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
@@ -1577,6 +1578,7 @@ const useSections = (
       isActive:
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE) ||
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE),
       children: [
@@ -1613,20 +1615,52 @@ const useSections = (
               : undefined,
         },
         {
+          name: 'Greinargerðarfrestir',
+          isActive: isActive(
+            COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+          ),
+          href: appendAppealCaseIdQuery(
+            `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE}/${workingCase.id}`,
+            targetAppealCase?.id,
+          ),
+          // Going forward to it runs through the defender step's validation:
+          // a deadline is given to a party's advocate, so the court settles
+          // who that is first.
+          onClick:
+            !isActive(
+              COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+            ) &&
+            validateFormStepper(
+              isValid,
+              [COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE],
+              workingCase,
+            ) &&
+            onNavigationTo
+              ? async () =>
+                  await onNavigationTo(
+                    COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+                  )
+              : undefined,
+        },
+        {
           name: 'Staða og lyktir',
           isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE),
           href: appendAppealCaseIdQuery(
             `${COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           ),
-          // Going forward to it runs through the defender step's validation:
-          // the court does not record where the appeal stands before it has
-          // settled who represents each party.
+          // Going forward to it runs through the steps before it. The
+          // deadlines step holds nobody, so in practice that is the defender
+          // step: the court does not record where the appeal stands before it
+          // has settled who represents each party.
           onClick:
             !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE) &&
             validateFormStepper(
               isValid,
-              [COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE],
+              [
+                COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+                COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+              ],
               workingCase,
             ) &&
             onNavigationTo
@@ -1649,6 +1683,7 @@ const useSections = (
               isValid,
               [
                 COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+                COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
                 COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
               ],
               workingCase,
@@ -1661,6 +1696,15 @@ const useSections = (
               : undefined,
         },
       ],
+    },
+    // The outcome, which this court has not reached and has no screens for.
+    // Named anyway, because it is in the design and because the stepper draws
+    // no connecting line below its last section - without this the line stops
+    // at "Dómur Landsréttar" and its sub-steps hang beside a gap.
+    {
+      name: 'Niðurstaða',
+      isActive: false,
+      children: [],
     },
   ]
 

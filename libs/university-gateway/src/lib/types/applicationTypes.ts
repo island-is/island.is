@@ -1,6 +1,0 @@
-export enum ApplicationTypes {
-  DIPLOMA = 'DIPLOMA',
-  NOTFINISHED = 'NOTFINISHED',
-  THIRDLEVEL = 'THIRDLEVEL',
-  EXEMPTION = 'EXEMPTION',
-}

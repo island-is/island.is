@@ -1,1 +1,0 @@
-export { CommissionDocument } from './ComissionDocument'

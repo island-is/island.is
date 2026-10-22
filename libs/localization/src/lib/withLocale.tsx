@@ -1,12 +1,26 @@
 import React, { useContext, useEffect } from 'react'
 import { NextComponentType } from 'next'
-import { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { defaultLanguage, supportedLocales } from '@island.is/shared/constants'
 import gql from 'graphql-tag'
 
 import { LocaleContext } from './LocaleContext'
 import { polyfill } from './polyfills'
+
+// Local types for the getTranslations GraphQL query, previously imported from
+// the island.is API gateway schema (@island.is/api/schema). That gateway is
+// pruned out of the standalone judicial-system fork; LocaleContext.tsx in this
+// same lib already types the query locally, so mirror its shape here.
+interface QueryGetTranslationsArgs {
+  input: {
+    namespaces: string[]
+    lang: string
+  }
+}
+
+interface Query {
+  getTranslations: Record<string, string>
+}
 
 export const GET_TRANSLATIONS = gql`
   query GetTranslations($input: GetTranslationsInput!) {

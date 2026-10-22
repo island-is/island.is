@@ -28,10 +28,10 @@ test.describe.serial('Travel ban tests', () => {
 
     await page
       .getByRole('textbox', {
-        name: 'Sláðu inn málsnúmer úr lögreglukerfi (LÖKE)',
+        name: 'Slá inn LÖKE málsnúmer',
       })
       .fill(randomPoliceCaseNumber())
-    await page.getByRole('button', { name: 'Skrá númer' }).click()
+    await page.getByRole('button', { name: 'Bæta við númeri' }).click()
     await page
       .getByRole('checkbox', {
         name: 'Varnaraðili er ekki með íslenska kennitölu',

@@ -1,0 +1,14 @@
+{
+  "comment": "DMR judicial-system Docker build matrix. Single source of truth for CI (GitHub Actions) and the local build helper scripts/dmr/docker-build.sh. All services build from the shared multi-stage Dockerfile scripts/ci/Dockerfile; no per-service Dockerfile exists by design. The 'port' field is the app's compiled-in default (from src/main.ts, 2026-10-19) for local `docker run`; in ECS the JM-36 task-defs (terraform/dev/judicial_*.tf) inject PORT=3333 and set service_port=3333, so 3333 is the authoritative deploy-time port for web/api/backend. scheduler is a worker with no HTTP listener. Images push to the DMR shared ECR 592944621100.dkr.ecr.eu-west-1.amazonaws.com as judicial-system-<svc>:<tag>; the tag is consumed by locals.tf (*_image_tag).",
+  "dockerfile": "scripts/ci/Dockerfile",
+  "node_version": "22.22.3",
+  "services": [
+    { "name": "api",                 "app": "judicial-system-api",                 "home": "apps/judicial-system/api",                 "target": "output-express-yarn", "port": 3333 },
+    { "name": "backend",             "app": "judicial-system-backend",             "home": "apps/judicial-system/backend",             "target": "output-express-yarn", "port": 3344, "migrations": true },
+    { "name": "web",                 "app": "judicial-system-web",                 "home": "apps/judicial-system/web",                 "target": "output-next",         "port": 4200 },
+    { "name": "digital-mailbox-api", "app": "judicial-system-digital-mailbox-api", "home": "apps/judicial-system/digital-mailbox-api", "target": "output-express-yarn", "port": 3358 },
+    { "name": "message-handler",     "app": "judicial-system-message-handler",     "home": "apps/judicial-system/message-handler",     "target": "output-express-yarn", "port": 3366 },
+    { "name": "scheduler",           "app": "judicial-system-scheduler",           "home": "apps/judicial-system/scheduler",           "target": "output-express-yarn" },
+    { "name": "xrd-api",             "app": "judicial-system-xrd-api",             "home": "apps/judicial-system/xrd-api",             "target": "output-express-yarn", "port": 3355 }
+  ]
+}

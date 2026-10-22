@@ -1,6 +1,0 @@
-appId: ${APP_ID}
----
-- tapOn:
-    text: '${title}'
-    childOf:
-      id: 'TABBAR_MAIN'

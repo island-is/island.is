@@ -6,7 +6,7 @@ ARG PLAYWRIGHT_VERSION
 # ------------------------------------------------
 # Dependencies stage (no app-specific args)
 # ------------------------------------------------
-FROM public.ecr.aws/docker/library/node:22.22.3-bookworm-slim AS base
+FROM public.ecr.aws/docker/library/node:22.23.4-bookworm-slim AS base
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
@@ -27,12 +27,10 @@ WORKDIR /build
 COPY .yarnrc.yml package.json yarn.lock ./
 COPY .yarn/patches .yarn/patches
 COPY .yarn/releases .yarn/releases
-COPY apps/native/app/package.json ./apps/native/app/
 
 # Add logging to show what package.json files we're installing from
 RUN echo "=== Installing dependencies from the following package.json files ===" && \
   echo "Root package.json:" && cat package.json | jq '.name' && \
-  echo "Native app package.json:" && cat apps/native/app/package.json | jq '.name' && \
   echo "=== Starting yarn install ==="
 
 RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
@@ -73,7 +71,7 @@ RUN --mount=type=secret,id=nx_cloud_access_token \
 # ------------------------------------------------
 # Minimal node base for outputs
 # ------------------------------------------------
-FROM public.ecr.aws/docker/library/node:22.22.3-bookworm-slim AS output-base
+FROM public.ecr.aws/docker/library/node:22.23.4-bookworm-slim AS output-base
 ENV NODE_ENV=production
 WORKDIR /webapp
 RUN groupadd runners && useradd -m -g runners runner

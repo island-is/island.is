@@ -25,13 +25,9 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-import type {
-  AppealAppointmentLetter,
-  AppealSummonsPdfDefendant,
-} from '../../formatters'
+import type { AppealSummonsPdfDefendant } from '../../formatters'
 import {
   Confirmation,
-  createAppealAppointmentLetter,
   createAppealSummons,
   createCaseFilesRecord,
   createFineSentToPrisonAdminPdf,
@@ -441,6 +437,57 @@ export class PdfService {
     return generatedPdf
   }
 
+  async replaceIndictmentPdf(
+    theCase: Case,
+    key: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    const indictmentKey = `${theCase.id}/indictment.pdf`
+
+    // The temporary upload and the frozen indictment share the case id
+    // prefix. Using the indictment key as the upload would overwrite, then
+    // delete the only copy of the Ákæra.
+    if (key === indictmentKey) {
+      throw new BadRequestException(
+        'Cannot replace the indictment with its own storage key',
+      )
+    }
+
+    const uploadedPdf = await this.awsS3Service.getObject(theCase.type, key)
+
+    if (uploadedPdf.subarray(0, 5).toString('latin1') !== '%PDF-') {
+      throw new BadRequestException('Uploaded file is not a PDF')
+    }
+
+    // Overwrite the frozen object first, then update the hash. S3 is not part
+    // of the DB transaction: if the hash update fails the new bytes are still
+    // served while the hash is set, which is preferable to a hash pointing at
+    // missing bytes. The temporary upload is deleted by the caller after
+    // commit so a rolled-back attempt can be retried.
+    await this.uploadPdfToS3(theCase, indictmentKey, uploadedPdf)
+
+    const { hash, hashAlgorithm } = getCaseFileHash(uploadedPdf)
+    const indictmentHash = JSON.stringify({ hash, hashAlgorithm })
+
+    await this.caseRepositoryService.update(
+      theCase.id,
+      { indictmentHash },
+      { transaction },
+    )
+
+    for (const splitCase of theCase.splitCases ?? []) {
+      await this.caseRepositoryService.update(
+        splitCase.id,
+        { indictmentHash },
+        { transaction },
+      )
+    }
+  }
+
+  async deleteIndictmentUpload(theCase: Case, key: string): Promise<void> {
+    await this.awsS3Service.deleteObject(theCase.type, key)
+  }
+
   async getCaseFilesRecordPdf(
     theCase: Case,
     policeCaseNumber: string,
@@ -585,18 +632,6 @@ export class PdfService {
     })
 
     return generatedPdf
-  }
-
-  /**
-   * The letter by which the court of appeals appoints one party's advocate.
-   * Everything it prints is resolved by the caller - see
-   * buildAppealAppointmentLetter - so there is nothing to look up here and no
-   * translations to refresh.
-   */
-  async getAppealAppointmentLetterPdf(
-    letter: AppealAppointmentLetter,
-  ): Promise<Buffer> {
-    return createAppealAppointmentLetter(letter)
   }
 
   async getRulingSentToPrisonAdminPdf(theCase: Case): Promise<Buffer> {

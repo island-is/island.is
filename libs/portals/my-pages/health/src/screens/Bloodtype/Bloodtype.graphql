@@ -1,8 +1,0 @@
-query bloodType($locale: String) {
-  rightsPortalBloodType(locale: $locale) {
-    description
-    registered
-    type
-    link
-  }
-}

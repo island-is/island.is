@@ -1,1 +1,0 @@
-export { DeductionFactorsModel } from './models'

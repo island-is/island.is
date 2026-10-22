@@ -1,1 +1,0 @@
-export { getApplication } from './draft'

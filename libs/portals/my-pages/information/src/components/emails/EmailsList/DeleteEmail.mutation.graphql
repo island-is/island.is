@@ -1,3 +1,0 @@
-mutation DeleteEmail($input: DeleteEmailInput!) {
-  userEmailsDeleteEmail(input: $input)
-}

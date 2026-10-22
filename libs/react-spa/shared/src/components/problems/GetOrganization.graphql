@@ -1,8 +1,0 @@
-query GetOrganizations {
-  getOrganizations {
-    items {
-      title
-      slug
-    }
-  }
-}

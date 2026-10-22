@@ -1,7 +1,0 @@
-mutation AuthCheckDelegationConfirmationAuthentication(
-  $input: AuthDelegationConfirmationInput!
-) {
-  authCheckDelegationConfirmationAuthentication(input: $input) {
-    status
-  }
-}

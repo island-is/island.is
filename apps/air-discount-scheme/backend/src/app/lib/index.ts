@@ -1,1 +1,0 @@
-export { getUserFromContext } from './getUserFromContext'

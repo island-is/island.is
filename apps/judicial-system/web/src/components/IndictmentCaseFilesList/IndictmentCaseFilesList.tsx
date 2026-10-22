@@ -57,7 +57,9 @@ import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
   getVisibleSubpoenas,
   shouldShowPoliceDigitalCaseFilesSection,
+  shouldShowReplaceIndictmentPdf,
 } from './IndictmentCaseFilesList.logic'
+import ReplaceIndictmentPdf from './ReplaceIndictmentPdf'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -535,6 +537,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 renderAs="row"
                 elementId="Ákæra"
               />
+              {!connectedCaseParentId &&
+                shouldShowReplaceIndictmentPdf(workingCase, user) && (
+                  <ReplaceIndictmentPdf caseId={workingCase.id} />
+                )}
             </Box>
           </Box>
         )}

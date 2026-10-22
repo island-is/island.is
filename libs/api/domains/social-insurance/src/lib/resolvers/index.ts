@@ -1,8 +1,0 @@
-export { BankInformationResolver } from './bankInformation.resolver'
-export { GeneralResolver } from './general.resolver'
-export { IncomePlanResolver } from './incomePlan.resolver'
-export { MedicalDocumentsResolver } from './medicalDocuments.resolver'
-export { PaymentPlanResolver } from './paymentPlan.resolver'
-export { PensionResolver } from './pension.resolver'
-export { PaymentTypesOverviewResolver } from './paymentTypesOverview.resolver'
-export { PersonalTaxCreditResolver } from './personalTaxCredit.resolver'

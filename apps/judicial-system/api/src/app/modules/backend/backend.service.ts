@@ -18,11 +18,13 @@ import {
 import {
   AppealCase,
   AppealCourtSession,
+  AppealStatementDeadline,
   DeleteAppealCourtSessionResponse,
 } from '../appeal-case'
 import { AppealSummons } from '../appeal-summons'
 import {
   Case,
+  ReplaceIndictmentPdfResponse,
   RequestSignatureResponse,
   SendNotificationResponse,
   SignatureConfirmationResponse,
@@ -352,6 +354,17 @@ export class BackendService {
     )
   }
 
+  setAppealStatementDeadline(
+    caseId: string,
+    appealCaseId: string,
+    setAppealStatementDeadline: unknown,
+  ): Promise<AppealStatementDeadline> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/statementDeadline`,
+      setAppealStatementDeadline,
+    )
+  }
+
   createAppealCourtSession(
     caseId: string,
     appealCaseId: string,
@@ -563,6 +576,13 @@ export class BackendService {
     return this.post(`case/${caseId}/file/${fileId}/document`, attachDocument)
   }
 
+  replaceIndictmentPdf(
+    caseId: string,
+    replaceIndictmentPdf: { key: string },
+  ): Promise<ReplaceIndictmentPdfResponse> {
+    return this.post(`case/${caseId}/indictment/replace`, replaceIndictmentPdf)
+  }
+
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/file/${fileId}`)
   }
@@ -649,6 +669,13 @@ export class BackendService {
       `case/${caseId}/defendant/${defendantId}`,
       updateDefendant,
     )
+  }
+
+  updateDefendants(
+    caseId: string,
+    updateDefendants: unknown,
+  ): Promise<Defendant[]> {
+    return this.patch(`case/${caseId}/defendant`, updateDefendants)
   }
 
   limitedAccessUpdateDefendant(

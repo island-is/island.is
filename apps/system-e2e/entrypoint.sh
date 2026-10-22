@@ -4,7 +4,7 @@ set -euo pipefail
 
 : "${TEST_ENVIRONMENT:=local}"
 : "${TEST_TYPE:=smoke}"
-: "${TEST_PROJECT:=everything}"
+: "${TEST_PROJECT:=judicial-system}"
 : "${TEST_RESULTS_S3:=}"
 : "${TEST_FILTER:=$*}"
 : "${DD_ENV:=ci}"
@@ -34,9 +34,6 @@ yarn playwright test -c src --project="$TEST_PROJECT" "$@" || TEST_EXIT_CODE=$?
 if [[ -n "$TEST_RESULTS_S3" ]]; then
   zip -r -0 test-results playwright-report src/test-results
   aws s3 cp test-results.zip "$TEST_RESULTS_S3"
-fi
-if [ "$TEST_EXIT_CODE" != "0" ]; then
-  yarn node "$DIR/src/notifications/notify.js"
 fi
 
 cat <<EOF

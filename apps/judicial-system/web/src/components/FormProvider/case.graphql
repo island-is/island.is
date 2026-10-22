@@ -183,6 +183,7 @@ query Case($input: CaseQueryInput!) {
     defendantWaivesRightToCounsel
     crimeScenes
     indictmentIntroduction
+    indictmentHash
     indictmentReviewedDate
     indictmentCounts {
       id
@@ -259,6 +260,7 @@ query Case($input: CaseQueryInput!) {
       id
       appealState
       appealType
+      appealCaseNumber
       appealConclusion
       courtSessions {
         id
@@ -266,6 +268,14 @@ query Case($input: CaseQueryInput!) {
         sessionType
         sessionDate
         courtRoom
+      }
+      statementDeadlines {
+        id
+        created
+        modified
+        defendantId
+        civilClaimantId
+        deadline
       }
       appealJudge1 {
         id
@@ -285,6 +295,7 @@ query Case($input: CaseQueryInput!) {
         eventType
         appealOrigin
         defendantId
+        civilClaimantId
         userRole
         userName
         userTitle

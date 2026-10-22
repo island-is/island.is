@@ -1,6 +1,0 @@
-mutation ExtendDeadline($input: SignatureCollectionExtendDeadlineInput!) {
-  signatureCollectionAdminExtendDeadline(input: $input) {
-    success
-    reasons
-  }
-}

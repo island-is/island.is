@@ -1,5 +1,0 @@
-export { RskRentalDayRateClientModule } from './lib/RskRentalDayRateClientModule'
-export { RskRentalDayRateClientConfig } from './lib/RskRentalDayRateClientConfig'
-export { RskRentalDayRateClient } from './lib/RskRentalDayRateClient'
-export { RskRentalDaysClient } from './lib/RskRentalDaysClient'
-export * from '../gen/fetch'

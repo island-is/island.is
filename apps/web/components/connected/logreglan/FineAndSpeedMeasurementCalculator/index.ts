@@ -1,1 +1,0 @@
-export { FineAndSpeedMeasurementCalculator } from './FineAndSpeedMeasurementCalculator'

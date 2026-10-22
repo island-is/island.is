@@ -1,6 +1,0 @@
-query getPreviousPayments {
-  socialInsurancePayments {
-    nextPayment
-    previousPayment
-  }
-}

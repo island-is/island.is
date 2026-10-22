@@ -1,8 +1,0 @@
-mutation UserProfileUpdateActorProfile(
-  $input: UserProfileUpdateActorProfileInput!
-) {
-  userProfileUpdateActorProfile(input: $input) {
-    fromNationalId
-    emailNotifications
-  }
-}

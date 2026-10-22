@@ -1,6 +1,0 @@
-export { PrimarySchoolStudent } from './primarySchoolStudent.model'
-export { PrimarySchoolAssessment } from './primarySchoolAssessment.model'
-export { PrimarySchoolAssessmentResult } from './primarySchoolAssessmentResult.model'
-export { PrimarySchoolAssessmentGrade } from './primarySchoolAssessmentGrade.model'
-export { PrimarySchoolAssessmentPeriod } from './primarySchoolAssessmentPeriod.model'
-export { mapAssessment, mapResult } from './primarySchool.mapper'

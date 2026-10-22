@@ -1,5 +1,0 @@
-mutation PublishPermission($input: AuthAdminPublishScopeInput!) {
-  publishAuthAdminScope(input: $input) {
-    environment
-  }
-}

@@ -1,6 +1,0 @@
-export { HmsRentalAgreementClientModule } from './hmsRentalAgreement.module'
-export { HmsRentalAgreementService } from './hmsRentalAgreement.service'
-export * from '../gen/fetch'
-export * from './hmsRentalAgreement.config'
-export * from './dtos'
-export * from './types'

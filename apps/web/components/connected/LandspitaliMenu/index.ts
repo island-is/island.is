@@ -1,1 +1,0 @@
-export { LandspitaliMenu } from './LandspitaliMenu'

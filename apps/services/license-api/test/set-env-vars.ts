@@ -1,1 +1,0 @@
-process.env.TESTS = 'true'

@@ -1,7 +1,0 @@
-export * from './application'
-export * from './externalData'
-export * from './information'
-export * from './payment'
-export * from './conclusion'
-export * from './error'
-export * from './applicationCheck'

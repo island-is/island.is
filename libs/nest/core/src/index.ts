@@ -1,7 +1,0 @@
-export * from './lib/code-owner/code-owner.decorator'
-export * from './lib/code-owner/code-owner.interceptor'
-export * from './lib/decorators/nationalId.decorator'
-export * from './lib/decorators/ParsedUserAgent.decorator'
-export * from './lib/validators/isPersonNationalId.decorator'
-export * from './lib/validators/isNationalId.decorator'
-export * from './lib/validators/isLocale.decorator'

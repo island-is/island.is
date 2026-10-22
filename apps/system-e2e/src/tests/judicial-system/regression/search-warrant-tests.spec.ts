@@ -37,7 +37,7 @@ test.describe.serial('Search warrant tests', () => {
     await page
       .locator('input[name=policeCaseNumbers]')
       .fill(randomPoliceCaseNumber())
-    await page.getByRole('button', { name: 'Skrá númer' }).click()
+    await page.getByRole('button', { name: 'Bæta við númeri' }).click()
     await page.locator('#type').click()
     await page.locator('#react-select-type-option-0').click()
     await Promise.all([

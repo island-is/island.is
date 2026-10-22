@@ -1,6 +1,0 @@
-export { AgriculturalUniversityOfIcelandCareerClientConfig } from './agricultural-university-of-iceland/agriculturalUniversityOfIcelandCareerClient.config'
-export { BifrostUniversityCareerClientConfig } from './bifrost-university/bifrostUniversityCareerClient.config'
-export { HolarUniversityCareerClientConfig } from './holar-university/holarUniversityCareerClient.config'
-export { UniversityOfAkureyriCareerClientConfig } from './university-of-akureyri/universityOfAkureyriCareerClient.config'
-export { UniversityOfIcelandCareerClientConfig } from './university-of-iceland/universityOfIcelandCareerClient.config'
-export { IcelandUniversityOfTheArtsCareerClientConfig } from './iceland-university-of-the-arts/icelandUniversityOfTheArtsCareerClient.config'

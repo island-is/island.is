@@ -1,7 +1,0 @@
-export * from './application'
-export * from './delimitation'
-export * from './error'
-export * from './info'
-export * from './complaint'
-export * from './overview'
-export * from './externalData'

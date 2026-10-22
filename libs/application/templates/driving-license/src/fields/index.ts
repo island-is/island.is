@@ -1,7 +1,0 @@
-export { Declined } from './Done'
-export { default as HealthDeclaration } from './HealthDeclaration'
-export { EligibilitySummary } from './EligibilitySummary'
-export { SubmitAndDecline } from './SubmitAndDecline'
-export { PaymentPending } from './PaymentPending'
-export { QualityPhoto } from './QualityPhoto'
-export { default as HealthRemarks } from './HealthRemarks'

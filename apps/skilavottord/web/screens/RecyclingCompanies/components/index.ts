@@ -1,1 +1,0 @@
-export { RecyclingCompanyForm } from './RecyclingCompanyForm'

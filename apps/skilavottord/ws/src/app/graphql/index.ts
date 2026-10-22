@@ -1,1 +1,0 @@
-export { PageInfo } from './connection'

@@ -1,1 +1,0 @@
-export { OpenApiDocumentation } from './OpenApiDocumentation'

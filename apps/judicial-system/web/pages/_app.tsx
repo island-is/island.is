@@ -3,7 +3,6 @@ import App from 'next/app'
 import Head from 'next/head'
 import { ApolloProvider } from '@apollo/client'
 
-import type { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import { Box, ToastContainer } from '@island.is/island-ui/core'
 import { getPublicRuntimeEnv } from '@island.is/judicial-system-web/environments/runtimeEnvironment'
 import client from '@island.is/judicial-system-web/graphql/client'
@@ -31,6 +30,24 @@ if (typeof window !== 'undefined') {
       version: appVersion || 'unknown',
     })
   }
+}
+
+// Local types for the getTranslations GraphQL query. These were previously
+// imported from the island.is API gateway schema (@island.is/api/schema),
+// which is pruned out of the standalone judicial-system repo. The shape
+// mirrors the gateway resolver: getTranslations(input: GetTranslationsInput!)
+// returns a flat namespace->string map.
+interface GetTranslationsInput {
+  namespaces: string[]
+  lang: string
+}
+
+interface QueryGetTranslationsArgs {
+  input: GetTranslationsInput
+}
+
+interface Query {
+  getTranslations: Record<string, string>
 }
 
 const getTranslationStrings = (apolloClient: typeof client) => {

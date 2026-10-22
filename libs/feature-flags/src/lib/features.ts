@@ -126,6 +126,11 @@ export enum Features {
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',
+  isApplicationSystemTranslationsEnabled = 'isApplicationSystemTranslationsEnabled',
+  isApplicationTranslationWorkspaceReadOnlyEnabled = 'isApplicationTranslationWorkspaceReadOnlyEnabled',
+
+  // When on, events missing from the role's actions are only logged, not rejected
+  applicationSystemDisableEventPermissionCheck = 'applicationSystemDisableEventPermissionCheck',
 
   // Search indexer
   shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
@@ -164,6 +169,7 @@ export enum Features {
   isIslandisBankTransferPaymentEnabled = 'isIslandisBankTransferPaymentEnabled',
   isIslandisBankTransferPaymentAllowedForUser = 'isIslandisBankTransferPaymentAllowedForUser',
   isIslandisBankTransferPaymentAllowedForCompany = 'isIslandisBankTransferPaymentAllowedForCompany',
+  isIslandisDebtPaymentEnabled = 'isIslandisDebtPaymentEnabled',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',

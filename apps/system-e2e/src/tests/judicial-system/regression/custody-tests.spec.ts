@@ -63,7 +63,7 @@ test.describe.serial('Custody tests', () => {
     await page
       .locator('input[name=policeCaseNumbers]')
       .fill(randomPoliceCaseNumber())
-    await page.getByRole('button', { name: 'Skrá númer' }).click()
+    await page.getByRole('button', { name: 'Bæta við númeri' }).click()
     await page.getByRole('checkbox').first().check()
     await page.locator('input[name=inputName]').fill(faker.name.findName())
     await page.locator('input[name=accusedAddress]').fill('Einhversstaðar 1')
