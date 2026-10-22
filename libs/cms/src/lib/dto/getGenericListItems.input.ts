@@ -55,4 +55,9 @@ export class GetGenericListItemsInput {
 
   @CacheField(() => GetGenericListItemsInputOrderBy, { nullable: true })
   orderBy?: GetGenericListItemsInputOrderBy
+
+  @Field(() => Int, { nullable: true })
+  @IsInt()
+  @IsOptional()
+  year?: number
 }

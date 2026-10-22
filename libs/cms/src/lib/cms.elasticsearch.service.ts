@@ -511,6 +511,7 @@ export class CmsElasticsearchService {
     tagGroups?: Record<string, string[]>
     type: ListItemType
     orderBy?: GetGenericListItemsInputOrderBy
+    year?: number
   }): Promise<Omit<GenericListItemResponse, 'input'>> {
     let must: Record<string, unknown>[] = [
       {
@@ -635,24 +636,59 @@ export class CmsElasticsearchService {
       })
     }
 
-    const response: ApiResponse<SearchResponse<MappedData>> =
-      await this.elasticService.findByQuery(getElasticsearchIndex(input.lang), {
+    const response: ApiResponse<
+      SearchResponse<
+        MappedData,
+        { years?: { buckets: { key_as_string: string; doc_count: number }[] } }
+      >
+    > = await this.elasticService.findByQuery(
+      getElasticsearchIndex(input.lang),
+      {
         query: {
           bool: {
             must,
             should,
           },
         },
+        // The year filter is applied as a post filter so the year aggregation
+        // still reflects every year available given the other filters
+        ...(input.year
+          ? {
+              post_filter: {
+                range: {
+                  [SortField.RELEASE_DATE]: {
+                    gte: `${input.year}-01-01`,
+                    lt: `${input.year + 1}-01-01`,
+                  },
+                },
+              },
+            }
+          : {}),
+        aggs: {
+          years: {
+            date_histogram: {
+              field: SortField.RELEASE_DATE,
+              calendar_interval: 'year',
+              format: 'yyyy',
+              min_doc_count: 1,
+              order: { _key: 'desc' },
+            },
+          },
+        },
         sort,
         size,
         from: ((input.page ?? 1) - 1) * size,
-      })
+      },
+    )
 
     return {
       items: response.body.hits.hits
         .map((item) => JSON.parse(item._source.response ?? 'null'))
         .filter(Boolean),
       total: response.body.hits.total.value,
+      years: (response.body.aggregations?.years?.buckets ?? [])
+        .map((bucket) => Number(bucket.key_as_string))
+        .filter((year) => !isNaN(year)),
     }
   }
 
