@@ -206,7 +206,7 @@ describe('getIndictmentPdfDisplayName', () => {
         caseSentToCourtDate: '2026-10-21T12:00:00.000Z',
         indictmentHash: JSON.stringify({ hash: 'frozen' }),
       } as CaseFilesListCase),
-    ).toMatch(/^Ákæra .+\.pdf$/)
+    ).toBe('Ákæra 21.10.2026.pdf')
   })
 
   it('drops the date after the indictment has been replaced', () => {
