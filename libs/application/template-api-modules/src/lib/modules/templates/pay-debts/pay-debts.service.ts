@@ -6,25 +6,16 @@ import { FinanceClientV3Service } from '@island.is/clients/finance-v3'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { AuditService } from '@island.is/nest/audit'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { PaymentService } from '@island.is/application/api/payment'
 import {
   getDebtPaymentItems,
   paymentMessages,
 } from '@island.is/application/templates/pay-debts'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 const { noSelection } = paymentMessages
-
-// TODO: Remove the salary payer mock once FJS returns launagreiðandi on the
-// debt response; `salaryPayerName` should then come straight from `debt`.
-const MOCK_SALARY_PAYER_NAME = 'Mocklaunagreiðandi ehf.'
-
-const mockSalaryPayerName = (index: number) =>
-  (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) &&
-  index % 2 === 0
-    ? MOCK_SALARY_PAYER_NAME
-    : undefined
 
 @Injectable()
 export class PayDebtsService extends BaseTemplateApiService {
@@ -36,6 +27,7 @@ export class PayDebtsService extends BaseTemplateApiService {
     >,
     private readonly auditService: AuditService,
     private readonly paymentService: PaymentService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.PAY_DEBTS)
   }
@@ -67,9 +59,18 @@ export class PayDebtsService extends BaseTemplateApiService {
   }
 
   async getCustomerDebts({ auth, application }: TemplateApiModuleActionProps) {
-    const result = await this.financeClientV3Service.getCustomerDebts(auth, {
-      nationalID: auth.nationalId,
-    })
+    const [result, payrollDeduction] = await Promise.all([
+      this.financeClientV3Service.getCustomerDebts(auth, {
+        nationalID: auth.nationalId,
+      }),
+      this.financeClientV3Service
+        .getPayrollDeduction(auth, { nationalID: auth.nationalId })
+        .catch((error) => {
+          this.logger.warn('FJS payroll deduction lookup failed', { error })
+          return null
+        }),
+    ])
+    const deductibleChargeTypeIds = new Set(payrollDeduction?.chargeTypeId)
 
     this.auditService.audit({
       auth,
@@ -82,7 +83,7 @@ export class PayDebtsService extends BaseTemplateApiService {
       message: result?.message ?? '',
       timestamp: result?.timestamp ?? '',
       downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/finance/`,
-      debts: (result?.debts ?? []).map((debt, index) => ({
+      debts: (result?.debts ?? []).map((debt) => ({
         chargeTypeId: debt.chargeTypeId,
         chargeTypeName: debt.chargeTypeName,
         chargeItemSubject: debt.chargeItemSubject,
@@ -95,7 +96,9 @@ export class PayDebtsService extends BaseTemplateApiService {
         debts: Number(debt.debts),
         payID: debt.payID,
         documentID: debt.documentID,
-        salaryPayerName: mockSalaryPayerName(index),
+        salaryPayerName: deductibleChargeTypeIds.has(debt.chargeTypeId)
+          ? payrollDeduction?.name
+          : undefined,
       })),
     }
   }

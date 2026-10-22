@@ -113,7 +113,7 @@ export const debts = {
         'Invoice document link header of the expanded charge type sub-table',
     },
     salaryWithholdingInfo: {
-      id: 'pd.application:debts.table.salaryWithholdingInfo',
+      id: 'pd.application:debts.table.salaryWithholdingInfo#markdown',
       defaultMessage:
         'Þessi skuld er merkt til frádráttar af launum. Launagreiðandi er: {payerName}.\nViltu halda áfram með greiðsluferlið?',
       description:
