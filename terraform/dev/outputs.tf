@@ -17,3 +17,8 @@ output "judicial_backend_task_role_arn" {
   description = "Task IAM role ARN for the backend (S3/SQS/SES grants attach here)."
   value       = module.judicial_backend.tasks_iam_role_arn
 }
+
+output "github_ci_role_arn" {
+  description = "Role GitHub Actions in DMR-is/island.is assumes in the judicial dev account"
+  value       = aws_iam_role.github_ci.arn
+}
