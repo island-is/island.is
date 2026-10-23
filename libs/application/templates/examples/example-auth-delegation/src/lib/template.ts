@@ -29,7 +29,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EXAMPLE_AUTH_DELEGATION,
   name: 'example-auth-delegation template',
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: 'Stafrænt Ísland',
   translationNamespaces: [
     ApplicationConfigurations.ExampleAuthDelegation.translation,

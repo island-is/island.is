@@ -61,7 +61,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2,
   name: application.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   dataSchema,
   translationNamespaces: [configuration.translation],
   featureFlag: Features.childrenResidenceChangeV2,

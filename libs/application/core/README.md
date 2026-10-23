@@ -43,7 +43,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
  > = {
   type: ApplicationTypes.EXAMPLE,
   name: m.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
 + translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
 ```
@@ -85,7 +85,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
  > = {
   type: ApplicationTypes.EXAMPLE,
   name: m.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
 + institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
@@ -112,7 +112,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
  > = {
  type: ApplicationTypes.EXAMPLE,
  name: m.name,
- codeOwner: CodeOwners.NordaApplications,
+ codeOwner: CodeOwners.Origo,
  institution: m.institutionName,
 + featureFlag: Feature.exampleApplication
  translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
@@ -598,4 +598,4 @@ The reason default behavior does not work for all applications is because it cou
 
 ## Code owners and maintainers
 
-- [Norda](https://github.com/orgs/island-is/teams/norda-applications/members)
+- [Origo](https://github.com/orgs/island-is/teams/origo/members)

@@ -26,7 +26,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EXAMPLE_NO_INPUTS,
   name: 'Example No Inputs',
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   translationNamespaces: [
     ApplicationConfigurations.ExampleNoInputs.translation,
   ],
