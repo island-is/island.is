@@ -592,3 +592,6 @@ libs/portals/my-pages/social-benefits/src/screens/unemployment-benefits/        
 /apps/system-e2e/src/tests/islandis/web/                                                                                     @island-is/hugsmidjan @island-is/juni @island-is/stefna
 # Judicial system
 /apps/system-e2e/src/tests/judicial-system/                                                                                  @island-is/kolibri-justice-league
+
+# Claude Code skills
+/.claude/skills/xroad-postman/                                                                                               @island-is/origo
