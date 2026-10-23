@@ -18,7 +18,11 @@ import {
   isEarlyRetirement,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
-import { Application, ApplicationTypes } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationTypes,
+  PerformActionResult,
+} from '@island.is/application/types'
 import {
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
@@ -40,6 +44,7 @@ import { ConfigType } from '@nestjs/config'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationApiAction } from '../../template-api.service'
 import { sharedModuleConfig } from '../../shared'
 import {
   getOAPApplicationType,
@@ -52,7 +57,10 @@ import {
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
-import { ApplicationTypeEnum } from '@island.is/clients/social-insurance-administration'
+import {
+  ApplicationTypeEnum,
+  withApplicationGuidContext,
+} from '@island.is/clients/social-insurance-administration'
 import {
   IndividualDto,
   NationalRegistryV3ApplicationsClientService,
@@ -74,6 +82,32 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     private readonly nationalRegistryV3ApplicationsApi: NationalRegistryV3ApplicationsClientService,
   ) {
     super('SocialInsuranceAdministration')
+  }
+
+  /**
+   * SÍ wants the island.is application id on every request made for the
+   * medical and rehabilitation payments application, so run its actions in a
+   * context that the SÍ client reads the id from.
+   */
+  override async performAction(
+    action: ApplicationApiAction,
+    handleError: (
+      action: ApplicationApiAction,
+      error: Error,
+    ) => TemplateApiError,
+  ): Promise<PerformActionResult> {
+    const { application } = action.props
+
+    if (
+      application?.typeId ===
+      ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS
+    ) {
+      return withApplicationGuidContext(application.id, () =>
+        super.performAction(action, handleError),
+      )
+    }
+
+    return super.performAction(action, handleError)
   }
 
   private async initAttachments(

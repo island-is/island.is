@@ -17,7 +17,10 @@ import { RehabilitationPlan } from '../models/medicalDocuments/rehabilitationPla
 import { SocialInsuranceService } from '../socialInsurance.service'
 import type { Locale } from '@island.is/shared/types'
 import { DisabilityPensionCertificate } from '../models/medicalDocuments/disabilityPensionCertificate.model'
-import { SocialInsuranceAdministrationMedicalDocumentsService } from '@island.is/clients/social-insurance-administration'
+import {
+  SocialInsuranceAdministrationMedicalDocumentsService,
+  withApplicationGuidContext,
+} from '@island.is/clients/social-insurance-administration'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -32,8 +35,14 @@ export class MedicalDocumentsResolver {
   @Query(() => RehabilitationPlan, {
     name: 'socialInsuranceRehabilitationPlan',
   })
-  async siaGetRehabilitationPlan(@CurrentUser() user: User) {
-    return this.medicalDocumentsService.getRehabilitationPlan(user)
+  async siaGetRehabilitationPlan(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.medicalDocumentsService.getRehabilitationPlan(user),
+    )
   }
 
   @Query(() => CertificateForSicknessAndRehabilitation, {
@@ -41,9 +50,13 @@ export class MedicalDocumentsResolver {
   })
   async siaGetCertificateForSicknessAndRehabilitation(
     @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
   ) {
-    return this.medicalDocumentsService.getCertificateForSicknessAndRehabilitation(
-      user,
+    return withApplicationGuidContext(applicationId, () =>
+      this.medicalDocumentsService.getCertificateForSicknessAndRehabilitation(
+        user,
+      ),
     )
   }
 
@@ -61,21 +74,39 @@ export class MedicalDocumentsResolver {
   @Query(() => ConfirmedTreatment, {
     name: 'socialInsuranceConfirmedTreatment',
   })
-  async siaGetConfirmedTreatment(@CurrentUser() user: User) {
-    return this.medicalDocumentsService.getConfirmedTreatment(user)
+  async siaGetConfirmedTreatment(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.medicalDocumentsService.getConfirmedTreatment(user),
+    )
   }
 
   @Query(() => ConfirmationOfPendingResolution, {
     name: 'socialInsuranceConfirmationOfPendingResolution',
   })
-  async siaGetConfirmationOfPendingResolution(@CurrentUser() user: User) {
-    return this.medicalDocumentsService.getConfirmationOfPendingResolution(user)
+  async siaGetConfirmationOfPendingResolution(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.medicalDocumentsService.getConfirmationOfPendingResolution(user),
+    )
   }
 
   @Query(() => ConfirmationOfIllHealth, {
     name: 'socialInsuranceConfirmationOfIllHealth',
   })
-  async siaGetConfirmationOfIllHealth(@CurrentUser() user: User) {
-    return this.medicalDocumentsService.getConfirmationOfIllHealth(user)
+  async siaGetConfirmationOfIllHealth(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.medicalDocumentsService.getConfirmationOfIllHealth(user),
+    )
   }
 }

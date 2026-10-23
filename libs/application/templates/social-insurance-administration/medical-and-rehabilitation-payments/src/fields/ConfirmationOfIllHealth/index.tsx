@@ -45,7 +45,9 @@ export const ConfirmationOfIllHealth: FC<FieldBaseProps> = ({
     data,
     loading,
     error: confirmationOfIllHealthError,
-  } = useQuery<Query>(siaConfirmationOfIllHealthQuery)
+  } = useQuery<Query>(siaConfirmationOfIllHealthQuery, {
+    variables: { applicationId: application.id },
+  })
 
   setBeforeSubmitCallback?.(async () => {
     const { confirmationOfIllHealthConfirmation } = getApplicationAnswers(

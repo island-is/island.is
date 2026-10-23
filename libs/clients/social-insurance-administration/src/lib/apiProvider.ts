@@ -38,6 +38,7 @@ import { Provider } from '@nestjs/common'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { SocialInsuranceAdministrationClientConfig } from './config/socialInsuranceAdministrationClient.config'
 import { SocialInsuranceAdministrationClientConfigV2 } from './config/socialInsuranceAdministrationClientV2.config'
+import { applicationGuidMiddleware } from './utils/withApplicationGuid'
 
 const apiCollection: Array<{
   api: Api
@@ -163,6 +164,7 @@ export const ApplicationV2ApiProvider: Provider<ApplicationWriteApiV2> = {
         headers: {
           'X-Road-Client': xroadConfig.xRoadClient,
         },
+        middleware: [applicationGuidMiddleware],
       }),
     ),
   inject: [

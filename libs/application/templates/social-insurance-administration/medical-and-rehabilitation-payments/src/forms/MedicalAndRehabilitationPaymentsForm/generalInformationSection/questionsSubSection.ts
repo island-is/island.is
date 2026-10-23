@@ -101,10 +101,11 @@ export const questionsSubSection = buildSubSection({
               .questionsSelectSchool,
           width: 'half',
           loadingError: coreErrorMessages.failedDataProvider,
-          loadOptions: async ({ apolloClient }) => {
+          loadOptions: async ({ apolloClient, application }) => {
             const { data } =
               await apolloClient.query<SiaEducationalInstitutionsQuery>({
                 query: siaEducationalInstitutionsQuery,
+                variables: { applicationId: application.id },
               })
 
             return (

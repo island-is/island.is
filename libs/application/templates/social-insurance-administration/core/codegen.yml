@@ -5,7 +5,7 @@ generates:
   libs/application/templates/social-insurance-administration/core/src/types/schema.ts:
     plugins:
       - add:
-          content: 'import { Exact } from "@island.is/api/schema";'
+          content: 'import { Exact, InputMaybe, Scalars } from "@island.is/api/schema";'
       - typescript-operations
       - typescript-react-apollo
     config:

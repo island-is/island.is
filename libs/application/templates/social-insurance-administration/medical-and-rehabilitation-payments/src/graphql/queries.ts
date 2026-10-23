@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const siaRehabilitationPlanQuery = gql`
-  query SiaRehabilitationPlan {
-    socialInsuranceRehabilitationPlan {
+  query SiaRehabilitationPlan($applicationId: String) {
+    socialInsuranceRehabilitationPlan(applicationId: $applicationId) {
       referenceId
       serviceProvider {
         serviceProviderName
@@ -78,8 +78,10 @@ export const siaRehabilitationPlanQuery = gql`
 `
 
 export const siaCertificateForSicknessAndRehabilitationQuery = gql`
-  query SiaCertificateForSicknessAndRehabilitation {
-    socialInsuranceCertificateForSicknessAndRehabilitation {
+  query SiaCertificateForSicknessAndRehabilitation($applicationId: String) {
+    socialInsuranceCertificateForSicknessAndRehabilitation(
+      applicationId: $applicationId
+    ) {
       referenceId
       isAlmaCertificate
       doctor {
@@ -125,8 +127,8 @@ export const siaCertificateForSicknessAndRehabilitationQuery = gql`
 `
 
 export const siaConfirmedTreatmentQuery = gql`
-  query SiaConfirmedTreatment {
-    socialInsuranceConfirmedTreatment {
+  query SiaConfirmedTreatment($applicationId: String) {
+    socialInsuranceConfirmedTreatment(applicationId: $applicationId) {
       referenceId
       created
       serviceProvider {
@@ -158,8 +160,10 @@ export const siaConfirmedTreatmentQuery = gql`
 `
 
 export const siaConfirmationOfPendingResolutionQuery = gql`
-  query SiaConfirmationOfPendingResolution {
-    socialInsuranceConfirmationOfPendingResolution {
+  query SiaConfirmationOfPendingResolution($applicationId: String) {
+    socialInsuranceConfirmationOfPendingResolution(
+      applicationId: $applicationId
+    ) {
       referenceId
       created
       serviceProvider {
@@ -192,8 +196,8 @@ export const siaConfirmationOfPendingResolutionQuery = gql`
 `
 
 export const siaConfirmationOfIllHealthQuery = gql`
-  query SiaConfirmationOfIllHealth {
-    socialInsuranceConfirmationOfIllHealth {
+  query SiaConfirmationOfIllHealth($applicationId: String) {
+    socialInsuranceConfirmationOfIllHealth(applicationId: $applicationId) {
       referenceId
       created
       serviceProvider {

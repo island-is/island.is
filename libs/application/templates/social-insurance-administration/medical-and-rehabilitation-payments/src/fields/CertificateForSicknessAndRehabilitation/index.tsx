@@ -39,6 +39,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
 
   const { data, loading, error } = useQuery<Query>(
     siaCertificateForSicknessAndRehabilitationQuery,
+    { variables: { applicationId: application.id } },
   )
 
   setBeforeSubmitCallback?.(async () => {
