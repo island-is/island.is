@@ -26,7 +26,7 @@ interface JobResult {
 }
 
 @Processor('upload')
-@CodeOwner(CodeOwners.Origo)
+@CodeOwner(CodeOwners.ApplicationsCore)
 export class UploadProcessor {
   constructor(
     private readonly applicationService: ApplicationService,

@@ -3,6 +3,7 @@
  */
 export enum CodeOwners {
   Advania = 'Advania',
+  ApplicationsCore = 'applications-core',
   Aranja = 'aranja',
   Core = 'core',
   Deloitte = 'deloitte',

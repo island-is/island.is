@@ -26,7 +26,7 @@ import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@CodeOwner(CodeOwners.Origo)
+@CodeOwner(CodeOwners.ApplicationsCore)
 @Resolver(() => Application)
 export class ApplicationResolver {
   constructor(private applicationService: ApplicationService) {}

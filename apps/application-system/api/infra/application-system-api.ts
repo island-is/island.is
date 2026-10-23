@@ -83,7 +83,7 @@ export const workerSetup = (services: {
     .db()
     .serviceAccount('application-system-api-worker')
     .redis()
-    .codeOwner(CodeOwners.Origo)
+    .codeOwner(CodeOwners.ApplicationsCore)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -197,7 +197,7 @@ export const serviceSetup = (services: {
     .serviceAccount(serviceAccount)
     .command('node')
     .redis()
-    .codeOwner(CodeOwners.Origo)
+    .codeOwner(CodeOwners.ApplicationsCore)
     .args('main.cjs')
     .env({
       EMAIL_REGION: 'eu-west-1',
