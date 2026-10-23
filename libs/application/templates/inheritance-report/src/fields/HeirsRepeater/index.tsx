@@ -148,8 +148,8 @@ export const HeirsRepeater: FC<
 
   const inheritanceTaxFreeLimit = isPrePaidApplication
     ? 0
-    : estateData?.inheritanceReportInfo?.inheritanceTax
-        ?.taxExemptionLimit ?? DEFAULT_TAX_FREE_LIMIT
+    : estateData?.inheritanceReportInfo?.inheritanceTax?.taxExemptionLimit ??
+      DEFAULT_TAX_FREE_LIMIT
 
   const relations = isPrePaidApplication
     ? PrePaidHeirsRelations.map((relation) => ({
@@ -341,7 +341,11 @@ export const HeirsRepeater: FC<
       initialLoad()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fields.length, application.answers.estateInfoSelection, inheritanceTaxFreeLimit])
+  }, [
+    fields.length,
+    application.answers.estateInfoSelection,
+    inheritanceTaxFreeLimit,
+  ])
 
   useEffect(() => {
     if (!hasEstateMemberUnder18) {
