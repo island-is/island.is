@@ -2,50 +2,51 @@ import type { ParsedUrlQuery } from 'querystring'
 
 import initApollo from '@island.is/web/graphql/client'
 import {
+  GetUrlQuery,
+  GetUrlQueryVariables,
   GetVerdictExistsQuery,
   GetVerdictExistsQueryVariables,
   GetVerdictsQuery,
   GetVerdictsQueryVariables,
 } from '@island.is/web/graphql/schema'
+import { GET_URL_QUERY } from '@island.is/web/screens/queries'
 import {
   GET_VERDICT_EXISTS_QUERY,
   GET_VERDICTS_QUERY,
 } from '@island.is/web/screens/queries/Verdicts'
 
 import type { LegacyRedirectHandler } from '../types'
-import districtCourtVerdicts from './data/district.json'
-import retrialCourtVerdicts from './data/endurupptokudomur.json'
-import supremeCourtVerdicts from './data/haestirettur.json'
-import courtOfAppealVerdicts from './data/landsrettur.json'
 
 /**
- * A verdict from an old court website.
- * `id` is the island.is verdict id, when known. Otherwise the verdict is
- * looked up by `caseNumber` (and `verdictDate` if the case has several
- * verdicts) in `court` or the rule's courts.
+ * A verdict read from an old court website url, looked up by `caseNumber`
+ * in the rule's courts.
  */
 type LegacyVerdict = {
-  id?: string
-  caseNumber?: string
-  verdictDate?: string
-  court?: string
+  caseNumber: string
 }
 
-type LegacyVerdictTable = Record<string, LegacyVerdict>
+type Lookup = {
+  param: string
+  /**
+   * The old id is looked up in the CMS url entries as `<cmsPath>?<param>=<id>`
+   * (lowercase), and the entry's explicit redirect is used as the destination
+   */
+  cmsPath: string
+}
 
 type Rule = {
-  /** Query params to look up in legacy verdict tables, in order */
-  lookups?: { param: string; table: LegacyVerdictTable }[]
+  /** Query params to look up in the CMS url entries, in order */
+  lookups?: Lookup[]
   /** Old ids that may still be valid GoPro ids (g-{id}) */
   goproIdParam?: string
   /** Old ids that map directly to an island.is path */
   directPath?: { param: string; path: (id: string) => string }
   /** Legacy verdict that can be read from the url itself */
   fromQuery?: (query: ParsedUrlQuery) => LegacyVerdict | undefined
-  /** Courts to look case numbers up in, unless the legacy verdict has one */
+  /** Courts to look case numbers up in */
   courts: string[]
   /** Verdict list query params to fall back to */
-  fallbackQuery: (verdict?: LegacyVerdict) => Record<string, string>
+  fallbackQuery: Record<string, string>
 }
 
 const COURT_OF_APPEAL = 'landsrettur'
@@ -74,13 +75,6 @@ const getQueryValue = (query: ParsedUrlQuery, key: string) => {
   return (Array.isArray(value) ? value[0] : value)?.trim().toLowerCase()
 }
 
-const districtCourtFallback = (
-  verdict?: LegacyVerdict,
-): Record<string, string> =>
-  verdict?.court
-    ? { districtCourts: verdict.court }
-    : { court: ALL_DISTRICT_COURTS }
-
 /** Old district court search ids, e.g. E200500321 -> E-321/2005 */
 const parseDistrictCourtSearchId = (
   query: ParsedUrlQuery,
@@ -97,16 +91,30 @@ const RULES: Record<string, Record<string, Rule>> = {
   landsrettur: {
     verdict: {
       lookups: [
-        { param: 'verdictid', table: courtOfAppealVerdicts.verdictId },
-        { param: 'id', table: courtOfAppealVerdicts.caseId },
+        {
+          param: 'verdictid',
+          cmsPath:
+            '/redirects/landsrettur.is/domar-og-urskurdir/domur-urskurdur',
+        },
+        {
+          param: 'id',
+          cmsPath:
+            '/redirects/landsrettur.is/domar-og-urskurdir/domur-urskurdur',
+        },
       ],
       courts: [COURT_OF_APPEAL],
-      fallbackQuery: () => ({ court: COURT_OF_APPEAL }),
+      fallbackQuery: { court: COURT_OF_APPEAL },
     },
     document: {
-      lookups: [{ param: 'docid', table: courtOfAppealVerdicts.documentId }],
+      lookups: [
+        {
+          param: 'docid',
+          cmsPath:
+            '/redirects/landsrettur.is/domar-og-urskurdir/domur-urskurdur/$verdict/download',
+        },
+      ],
       courts: [COURT_OF_APPEAL],
-      fallbackQuery: () => ({ court: COURT_OF_APPEAL }),
+      fallbackQuery: { court: COURT_OF_APPEAL },
     },
   },
   haestirettur: {
@@ -116,7 +124,7 @@ const RULES: Record<string, Record<string, Rule>> = {
         path: (id) => `/domar/s-${id.toUpperCase()}`,
       },
       courts: [SUPREME_COURT],
-      fallbackQuery: () => ({ court: SUPREME_COURT }),
+      fallbackQuery: { court: SUPREME_COURT },
     },
     determination: {
       directPath: {
@@ -124,38 +132,45 @@ const RULES: Record<string, Record<string, Rule>> = {
         path: (id) => `/s/haestirettur/akvardanir/${id.toUpperCase()}`,
       },
       courts: [SUPREME_COURT],
-      fallbackQuery: () => ({ court: SUPREME_COURT }),
+      fallbackQuery: { court: SUPREME_COURT },
     },
     nr: {
-      lookups: [{ param: 'nr', table: supremeCourtVerdicts.nr }],
+      lookups: [{ param: 'nr', cmsPath: '/redirects/haestirettur.is/domar' }],
       courts: [SUPREME_COURT],
-      fallbackQuery: () => ({ court: SUPREME_COURT }),
+      fallbackQuery: { court: SUPREME_COURT },
     },
     ifx: {
-      lookups: [{ param: 'nr', table: supremeCourtVerdicts.ifxNr }],
+      lookups: [{ param: 'nr', cmsPath: '/redirects/haestirettur.is/ifx_hr' }],
       courts: [SUPREME_COURT],
-      fallbackQuery: () => ({ court: SUPREME_COURT }),
+      fallbackQuery: { court: SUPREME_COURT },
     },
   },
   district: {
     verdict: {
-      lookups: [{ param: 'id', table: districtCourtVerdicts.id }],
+      lookups: [
+        { param: 'id', cmsPath: '/redirects/heradsdomstolar.is/domar/domur' },
+      ],
       goproIdParam: 'id',
       courts: DISTRICT_COURTS,
-      fallbackQuery: districtCourtFallback,
+      fallbackQuery: { court: ALL_DISTRICT_COURTS },
     },
     search: {
       fromQuery: parseDistrictCourtSearchId,
       courts: DISTRICT_COURTS,
-      fallbackQuery: districtCourtFallback,
+      fallbackQuery: { court: ALL_DISTRICT_COURTS },
     },
   },
   endurupptokudomur: {
     verdict: {
-      lookups: [{ param: 'id', table: retrialCourtVerdicts.id }],
+      lookups: [
+        {
+          param: 'id',
+          cmsPath: '/redirects/endurupptokudomur.is/urskurdir/domur-urskurdur',
+        },
+      ],
       goproIdParam: 'id',
       courts: [RETRIAL_COURT],
-      fallbackQuery: () => ({ court: RETRIAL_COURT }),
+      fallbackQuery: { court: RETRIAL_COURT },
     },
   },
 }
@@ -172,12 +187,22 @@ const goproVerdictExists = async (id: string) => {
   return Boolean(response.data?.webVerdictById?.item)
 }
 
+const findCmsRedirect = async (url: string) => {
+  const apolloClient = initApollo({}, 'is')
+  const response = await apolloClient.query<
+    GetUrlQuery,
+    GetUrlQueryVariables
+  >({
+    query: GET_URL_QUERY,
+    variables: { input: { slug: url, lang: 'is' } },
+  })
+  return response.data?.getUrl?.explicitRedirect || null
+}
+
 const findVerdictIdByCaseNumber = async (
-  { caseNumber, verdictDate, court }: LegacyVerdict,
+  { caseNumber }: LegacyVerdict,
   courts: string[],
 ) => {
-  if (!caseNumber) return null
-
   const apolloClient = initApollo({}, 'is')
   const response = await apolloClient.query<
     GetVerdictsQuery,
@@ -185,7 +210,7 @@ const findVerdictIdByCaseNumber = async (
   >({
     query: GET_VERDICTS_QUERY,
     variables: {
-      input: { page: 1, court: court ? [court] : courts, caseNumber },
+      input: { page: 1, court: courts, caseNumber },
     },
   })
 
@@ -194,24 +219,18 @@ const findVerdictIdByCaseNumber = async (
   if ((response.data?.webVerdicts?.total ?? 0) > items.length) return null
 
   const candidates = items.filter((item) => item.caseNumber === caseNumber)
-  if (candidates.length === 1) return candidates[0].id
-
-  // verdictDate is typed as Date but arrives as an ISO string
-  const sameDay = candidates.filter(
-    (item) =>
-      verdictDate &&
-      item.verdictDate &&
-      new Date(item.verdictDate).toISOString().startsWith(verdictDate),
-  )
-  return sameDay.length === 1 ? sameDay[0].id : null
+  return candidates.length === 1 ? candidates[0].id : null
 }
 
-const findLegacyVerdict = (rule: Rule, query: ParsedUrlQuery) => {
-  for (const { param, table } of rule.lookups ?? []) {
+const findDestination = async (rule: Rule, query: ParsedUrlQuery) => {
+  for (const { param, cmsPath } of rule.lookups ?? []) {
     const oldId = getQueryValue(query, param)
-    if (oldId && table[oldId]) return table[oldId]
+    if (oldId) {
+      const destination = await findCmsRedirect(`${cmsPath}?${param}=${oldId}`)
+      if (destination) return destination
+    }
   }
-  return rule.fromQuery?.(query)
+  return null
 }
 
 const resolveVerdictId = async (
@@ -219,7 +238,6 @@ const resolveVerdictId = async (
   query: ParsedUrlQuery,
   verdict?: LegacyVerdict,
 ) => {
-  if (verdict?.id) return verdict.id
   try {
     if (verdict) {
       const id = await findVerdictIdByCaseNumber(verdict, rule.courts)
@@ -349,14 +367,23 @@ const courtVerdictRedirect: LegacyRedirectHandler = async ({
     }
   }
 
-  const verdict = findLegacyVerdict(rule, query)
+  try {
+    const destination = await findDestination(rule, query)
+    if (destination) {
+      return { destination: encodeURI(destination), permanent: true }
+    }
+  } catch {
+    // Fall through to the other lookups
+  }
+
+  const verdict = rule.fromQuery?.(query)
   const newId = await resolveVerdictId(rule, query, verdict)
 
   if (newId) {
     return { destination: `/domar/${newId}`, permanent: true }
   }
 
-  const params = new URLSearchParams(rule.fallbackQuery(verdict))
+  const params = new URLSearchParams(rule.fallbackQuery)
   if (verdict?.caseNumber) {
     params.set('number', verdict.caseNumber)
   }
