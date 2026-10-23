@@ -26,6 +26,7 @@ import {
   formSubmit,
   m,
 } from '@island.is/portals/my-pages/core'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { checkDelegation } from '@island.is/shared/utils'
 import { useEffect, useState } from 'react'
 
@@ -64,6 +65,12 @@ const FinanceStatus = () => {
   }, [featureFlagClient, userInfo?.profile?.nationalId])
 
   const isDelegation = userInfo && checkDelegation(userInfo)
+  const canPayDebts =
+    !isDelegation ||
+    [
+      AuthDelegationType.ProcurationHolder,
+      AuthDelegationType.GeneralMandate,
+    ].some((type) => userInfo?.profile?.delegationType?.includes(type))
 
   const { loading, error, ...statusQuery } = useGetFinanceStatusQuery()
 
@@ -121,7 +128,7 @@ const FinanceStatus = () => {
                   justifyContent="flexStart"
                   printHidden
                 >
-                  {!isDelegation && hasDebt && payDebtsEnabled && (
+                  {canPayDebts && hasDebt && payDebtsEnabled && (
                     <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                       <a
                         href="/umsoknir/greidum-rikinu/"
