@@ -60,7 +60,7 @@ export interface CreateBankTransferPaymentInput extends BankTransferDebtor {
   debts?: BankTransferDebt[]
   // Unix seconds.
   expiresAt?: number
-  bankAccountNumber?: string
+  bankAccountNumber: string
 }
 
 export interface BankTransferPaymentResult {
