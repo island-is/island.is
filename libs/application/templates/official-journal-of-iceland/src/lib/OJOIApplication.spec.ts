@@ -4,10 +4,11 @@ import {
   DefaultEvents,
   InstitutionNationalIds,
 } from '@island.is/application/types'
-import OJOITemplate, { ApplicationStates } from './OJOIApplication'
+import OJOITemplate, { ApplicationStates, Roles } from './OJOIApplication'
 
 const MINISTRY_ID = InstitutionNationalIds.DOMSMALA_RADUNEYTID
-const INSTITUTION_ID = '5402696029'
+// Fake ID for any submitting institution other than the ministry
+const INSTITUTION_ID = '0101303019'
 
 const createApplication = (overrides: Partial<Application> = {}): Application =>
   ({
@@ -20,12 +21,13 @@ const createApplication = (overrides: Partial<Application> = {}): Application =>
     ...overrides,
   } as Application)
 
-const roleInState = (nationalId: string, application: Application) => {
-  const role = OJOITemplate.mapUserToRole(nationalId, application)
+const resolveRole = (nationalId: string, application: Application) => {
+  const id = OJOITemplate.mapUserToRole(nationalId, application)
   const helper = new ApplicationTemplateHelper(application, OJOITemplate)
   return {
-    roleInState: role ? helper.getRoleInState(role) : undefined,
-    permittedEvents: role ? helper.getPermittedEventsForRole(role) : [],
+    id,
+    roleInState: id ? helper.getRoleInState(id) : undefined,
+    permittedEvents: id ? helper.getPermittedEventsForRole(id) : [],
   }
 }
 
@@ -37,46 +39,48 @@ const reviewEvents = [
 
 describe('OJOITemplate.mapUserToRole', () => {
   it('lets the ministry review, list and open its own submitted advert', () => {
-    const application = createApplication({ applicant: MINISTRY_ID })
-
-    const { roleInState: role, permittedEvents } = roleInState(
+    const { id, roleInState, permittedEvents } = resolveRole(
       MINISTRY_ID,
-      application,
+      createApplication({ applicant: MINISTRY_ID }),
     )
 
+    expect(id).toBe(Roles.MINISTRY_APPLICANT)
+    expect(roleInState).toBeDefined()
     expect(permittedEvents).toEqual(reviewEvents)
-    expect(role?.shouldBeListedForRole).not.toBe(false)
-    expect(role?.formLoader).toBeDefined()
+    expect(roleInState?.shouldBeListedForRole).not.toBe(false)
+    expect(roleInState?.formLoader).toBeDefined()
   })
 
   it('lets the ministry review a submitted advert from another institution without listing it', () => {
-    const { roleInState: role, permittedEvents } = roleInState(
+    const { id, roleInState, permittedEvents } = resolveRole(
       MINISTRY_ID,
       createApplication(),
     )
 
+    expect(id).toBe(Roles.ASSIGNEE)
     expect(permittedEvents).toEqual(reviewEvents)
-    expect(role?.shouldBeListedForRole).toBe(false)
+    expect(roleInState?.shouldBeListedForRole).toBe(false)
   })
 
   it('gives the submitting institution no review actions', () => {
-    const { roleInState: role, permittedEvents } = roleInState(
+    const { id, roleInState, permittedEvents } = resolveRole(
       INSTITUTION_ID,
       createApplication(),
     )
 
+    expect(id).toBe(Roles.APPLICANT)
     expect(permittedEvents).toEqual([])
-    expect(role?.formLoader).toBeDefined()
+    expect(roleInState?.formLoader).toBeDefined()
   })
 
-  it('keeps the ministry as applicant on its own draft', () => {
-    const application = createApplication({
-      state: ApplicationStates.DRAFT,
-      applicant: MINISTRY_ID,
-    })
+  it.each([ApplicationStates.DRAFT, ApplicationStates.COMPLETE])(
+    'keeps the ministry as applicant on its own advert in %s',
+    (state) => {
+      const application = createApplication({ state, applicant: MINISTRY_ID })
 
-    expect(OJOITemplate.mapUserToRole(MINISTRY_ID, application)).toBe(
-      'applicant',
-    )
-  })
+      expect(OJOITemplate.mapUserToRole(MINISTRY_ID, application)).toBe(
+        Roles.APPLICANT,
+      )
+    },
+  )
 })

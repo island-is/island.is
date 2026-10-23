@@ -31,7 +31,7 @@ export enum ApplicationStates {
   REJECTED = 'rejected',
 }
 
-enum Roles {
+export enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
   // The ministry reviewing an advert it submitted itself
