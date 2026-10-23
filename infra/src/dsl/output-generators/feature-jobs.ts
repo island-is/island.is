@@ -41,9 +41,10 @@ export const generateJobsForFeature = async (
           )
 
           return {
-            command: restoreConfig
-              ? ['/app/restore-db-wrapper.sh']
-              : ['/app/create-db.sh'],
+            command: ['/app/create-db.sh'],
+            // command: restoreConfig
+            //   ? ['/app/restore-db-wrapper.sh']
+            //   : ['/app/create-db.sh'],
             image,
             name: `${info!.username!.replace(/_/g, '-').substring(0, 60)}1`,
             securityContext,
