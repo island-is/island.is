@@ -20,6 +20,14 @@
 #   DOCKER_TAG        image tag (default: dev_<sha7>_<nonce>, the scheme the
 #                     ECS Terraform consumes; overridable with --tag)
 #   PLATFORM          build platform (default: linux/amd64 — ECS/Fargate)
+#   BUILDX_CACHE      "ecr" = layer cache in ECR, like island.is's S3 cache:
+#                     reads the shared deps cache + <app>:buildcache, writes
+#                     <app>:buildcache. CI default. Needs ECR login.
+#                     "gha" = GitHub Actions cache (capped at 10 GB per repo).
+#                     Unset = no external cache.
+#
+#   scripts/dmr/docker-build.sh deps   builds only the deps stage into the
+#                     shared cache (judicial-system-backend:buildcache-deps).
 #
 # The tag used is printed on the last line (TAG=<tag>) so CI can capture it.
 set -euo pipefail
@@ -38,6 +46,9 @@ REGISTRY="${DOCKER_REGISTRY:-judicial-system}"
 TAG="${DOCKER_TAG:-$(default_tag)}"
 PLATFORM="${PLATFORM:-linux/amd64}"
 PUBLISH=(--load)
+# ECR registry cache (BUILDX_CACHE=ecr). ECR needs the OCI image-manifest form.
+DEPS_CACHE_REF="$REGISTRY/judicial-system-backend:buildcache-deps"
+ECR_CACHE_OPTS="mode=max,image-manifest=true,oci-mediatypes=true"
 
 # Empty Nx Cloud token => Dockerfile builds without remote cache (allowed).
 # Kept outside the repo and removed on any exit, including a failed build.
@@ -69,8 +80,17 @@ build_one() {
   target="$(jq -r '.target' <<<"$row")"
   local dist="dist/$home"
 
+  local cache=()
+  case "${BUILDX_CACHE:-}" in
+    gha) cache=(--cache-from "type=gha,scope=$app" --cache-to "type=gha,mode=max,scope=$app") ;;
+    ecr) cache=(--cache-from "type=registry,ref=$DEPS_CACHE_REF"
+                --cache-from "type=registry,ref=$REGISTRY/$app:buildcache"
+                --cache-to "type=registry,ref=$REGISTRY/$app:buildcache,$ECR_CACHE_OPTS") ;;
+  esac
+
   echo "==> building $name  (app=$app target=$target tag=$TAG)"
   docker buildx build \
+    ${cache[@]+"${cache[@]}"} \
     --platform="$PLATFORM" \
     --file="$DOCKERFILE" \
     --target="$target" \
@@ -87,7 +107,25 @@ build_one() {
     "$ROOT"
 }
 
-if [[ "$SERVICE" == "all" ]]; then
+# Shared deps-stage cache, built once per run by the CI docker-deps job
+# (island.is: 10_prepare-docker-deps.sh). Lives in the backend repo because
+# there is no dedicated ECR repo for it.
+build_deps() {
+  [[ "${BUILDX_CACHE:-}" == "ecr" ]] || { echo "deps needs BUILDX_CACHE=ecr" >&2; exit 2; }
+  echo "==> building deps stage cache ($DEPS_CACHE_REF)"
+  docker buildx build \
+    --cache-from "type=registry,ref=$DEPS_CACHE_REF" \
+    --cache-to "type=registry,ref=$DEPS_CACHE_REF,$ECR_CACHE_OPTS" \
+    --platform="$PLATFORM" \
+    --file="$DOCKERFILE" \
+    --target=deps \
+    "$ROOT"
+}
+
+if [[ "$SERVICE" == "deps" ]]; then
+  build_deps
+  exit 0
+elif [[ "$SERVICE" == "all" ]]; then
   for s in $(jq -r '.services[].name' "$MATRIX"); do build_one "$s"; done
 else
   build_one "$SERVICE"

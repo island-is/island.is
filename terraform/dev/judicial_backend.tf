@@ -90,7 +90,7 @@ module "judicial_backend" {
     BLOCKED_API_INTEGRATION                 = ""
     USE_MICROSOFT_GRAPH_API_FOR_COURT_ROBOT = "false"
     AUDIT_TRAIL_USE_GENERIC_LOGGER          = "false"
-    AUDIT_TRAIL_GROUP_NAME                  = "k8s/judicial-system/audit-log"
+    AUDIT_TRAIL_GROUP_NAME                  = local.audit_log_group_name
     AUDIT_TRAIL_REGION                      = "eu-west-1"
     NOVA_SENDER_NAME                        = "Island Dev"
 
@@ -197,6 +197,7 @@ module "judicial_backend" {
       effect    = "Allow"
       actions   = ["ses:SendEmail", "ses:SendRawEmail"]
       resources = ["*"]
-    }
+    },
+    local.audit_log_task_statement,
   ]
 }

@@ -81,7 +81,7 @@ module "judicial_api" {
     ALLOW_AUTH_BYPASS              = "true"
     BACKEND_URL                    = local.backend_internal_url
     AUDIT_TRAIL_USE_GENERIC_LOGGER = "false"
-    AUDIT_TRAIL_GROUP_NAME         = "k8s/judicial-system/audit-log"
+    AUDIT_TRAIL_GROUP_NAME         = local.audit_log_group_name
     AUDIT_TRAIL_REGION             = "eu-west-1"
     CONTENTFUL_HOST                = "preview.contentful.com"
     CONTENTFUL_ENVIRONMENT         = "test"
@@ -99,4 +99,7 @@ module "judicial_api" {
     AUTH_TOKEN_SECRET_BASE64 = module.infra_outputs.secret_names["api/AUTH_TOKEN_SECRET_BASE64"]
     CONFIGCAT_SDK_KEY        = module.infra_outputs.secret_names["shared/CONFIGCAT_SDK_KEY"]
   }
+
+  # Task role: audit trail writes to CloudWatch (audit_log.tf).
+  tasks_iam_role_statements = [local.audit_log_task_statement]
 }

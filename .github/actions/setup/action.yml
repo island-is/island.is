@@ -1,0 +1,30 @@
+name: Setup node + yarn
+description: >-
+  Node from package.json engines, yarn via corepack, cached install.
+  Mirrors island.is .github/actions/setup-yarn (install skipped on cache hit),
+  on actions/cache instead of their runs-on S3 cache.
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: package.json
+
+    - name: Enable corepack
+      shell: bash
+      run: corepack enable && node -v && yarn --version
+
+    - name: Cache dependencies
+      id: deps
+      uses: actions/cache@v4
+      with:
+        path: |
+          .yarn/cache
+          node_modules
+        key: deps-${{ runner.os }}-${{ hashFiles('yarn.lock', '.yarnrc.yml') }}
+
+    - name: Install
+      if: steps.deps.outputs.cache-hit != 'true'
+      shell: bash
+      run: yarn install --immutable

@@ -11,6 +11,14 @@
 locals {
   github_org  = "DMR-is"
   github_repo = "island.is"
+
+  # GitHub's numeric ids for the org and repo. This repo has GitHub's
+  # "immutable subject" OIDC setting on, so the sub claim carries them:
+  #   repo:DMR-is@151839245/island.is@1387616580:<ref>
+  # Look them up with:
+  #   gh api repos/DMR-is/island.is/actions/oidc/customization/sub
+  github_org_id  = "151839245"
+  github_repo_id = "1387616580"
 }
 
 resource "aws_iam_openid_connect_provider" "github" {
@@ -38,7 +46,12 @@ data "aws_iam_policy_document" "github_ci_trust" {
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:${local.github_org}/${local.github_repo}:*"]
+      # First line: classic subject format. Second: immutable subject format
+      # (repo:<org>@<id>/<repo>@<id>:...), which this repo sends today.
+      values = [
+        "repo:${local.github_org}/${local.github_repo}:*",
+        "repo:${local.github_org}@${local.github_org_id}/${local.github_repo}@${local.github_repo_id}:*",
+      ]
     }
   }
 }
@@ -130,6 +143,18 @@ data "aws_iam_policy_document" "github_ci_deploy" {
       "arn:aws:iam::*:role/judicial-system-*",
       "arn:aws:iam::*:policy/judicial-system-*",
     ]
+  }
+
+  # CI writes the deployed image tag per service (image_tags.tf) before apply.
+  statement {
+    sid    = "ImageTagParameters"
+    effect = "Allow"
+    actions = [
+      "ssm:PutParameter",
+      "ssm:AddTagsToResource",
+      "ssm:RemoveTagsFromResource",
+    ]
+    resources = ["arn:aws:ssm:*:*:parameter/judicial-system/*"]
   }
 
   statement {

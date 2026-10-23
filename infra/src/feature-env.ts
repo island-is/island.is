@@ -1,12 +1,7 @@
 import yargs, { ArgumentsCamelCase } from 'yargs'
 import AWS from 'aws-sdk'
 import { Envs } from './environments'
-import {
-  ExcludedFeatureDeploymentServices,
-  FeatureDeploymentServices,
-  Services as IslandisServices,
-} from './uber-charts/islandis'
-import { Services as IDSServices } from './uber-charts/identity-server'
+import { Services as JudicialSystemServices } from './uber-charts/judicial-system'
 import { EnvironmentServices } from './dsl/types/charts'
 import { HelmService, Services } from './dsl/types/output-types'
 import { Deployments } from './uber-charts/all-charts'
@@ -22,11 +17,16 @@ import { ServiceBuilder, ScheduledJobBuilder } from './dsl/dsl'
 import { logger } from './logging'
 import fs from 'fs'
 
-type ChartName = 'islandis' | 'identity-server'
+// Feature deployments were an island.is-ecosystem concept with chart-specific
+// include/exclude lists. The pruned judicial-system fork has no such lists, so
+// these default to empty (no services force-included, none excluded).
+const FeatureDeploymentServices: ServiceBuilder<any>[] = []
+const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = []
+
+type ChartName = 'judicial-system'
 
 const charts: { [name in ChartName]: EnvironmentServices } = {
-  islandis: IslandisServices,
-  'identity-server': IDSServices,
+  'judicial-system': JudicialSystemServices,
 }
 
 interface Arguments extends ArgumentsCamelCase {
@@ -445,7 +445,7 @@ yargs(process.argv.slice(2))
         'List of comma separated Docker image names that have changed',
     },
     chart: {
-      choices: ['islandis', 'identity-server'] as const,
+      choices: ['judicial-system'] as const,
       demandOption: true,
       description: 'Name of the umbrella chart to use',
     },

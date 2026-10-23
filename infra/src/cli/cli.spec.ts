@@ -57,7 +57,7 @@ describe('infra CLI', () => {
           A: '/k8s/my-service/A',
         })
 
-      Charts.islandis = {
+      Charts['judicial-system'] = {
         dev: [myServiceSetup()],
         staging: [],
         prod: [],
@@ -100,7 +100,7 @@ describe('infra CLI', () => {
             JSON_URLS: '/k8s/my-service/JSON_URLS',
           })
       const myService = myServiceSetup()
-      Charts.islandis = {
+      Charts['judicial-system'] = {
         dev: [myService],
         staging: [],
         prod: [],

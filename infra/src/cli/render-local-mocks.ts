@@ -26,7 +26,7 @@ export async function renderLocalServices({
     dryRun,
     noUpdateSecrets,
   })
-  const chartName = 'islandis'
+  const chartName = 'judicial-system'
   const env = 'dev'
   const envConfig = Envs[Deployments[chartName][env]]
   envConfig.type = 'local'

@@ -1,0 +1,58 @@
+name: Terraform
+
+# fmt + validate + plan for terraform/dev against judicial dev (640538430394).
+# Plan only; apply stays manual for now.
+
+on:
+  pull_request:
+    paths:
+      - terraform/**
+      - .github/workflows/terraform.yml
+  push:
+    branches: [main]
+    paths:
+      - terraform/**
+  workflow_dispatch:
+
+concurrency:
+  group: terraform-dev
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: terraform/dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read terraform version
+        id: v
+        run: echo "version=$(cat ../.terraform-version)" >> "$GITHUB_OUTPUT"
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ steps.v.outputs.version }}
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::640538430394:role/dev-judicial-system-github-ci-role
+          aws-region: eu-west-1
+
+      - name: fmt
+        run: terraform fmt -check -recursive ..
+
+      - name: init
+        run: terraform init -input=false
+
+      - name: validate
+        run: terraform validate
+
+      - name: plan
+        run: terraform plan -input=false -lock-timeout=5m -no-color

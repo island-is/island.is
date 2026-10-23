@@ -19,11 +19,7 @@ locals {
   # `paths` + `listener_rule_priority` (single-host web `/` + api `/api/*` split).
   # Bump all three service modules together.
 
-  # Image tags — the exact builds islandis-prod runs for judicial-system
-  # (mirrored to DMR shared ECR by JM-32). web is on 94d0d52; api/backend 6f92630.
-  judicial_web_image_tag     = "dev_94d0d52_U6FZPgfAKpXoheNp"
-  judicial_api_image_tag     = "dev_6f92630_VedP50IT5YwH4cCJ"
-  judicial_backend_image_tag = "dev_6f92630_VedP50IT5YwH4cCJ"
+  # Image tags live in SSM, written by CI — see image_tags.tf.
 
   # Internal CloudMap base (ecs_cluster namespace = dmr.local). Services register
   # <service_name>.<namespace>; A records carry no port so the :3333 is explicit.

@@ -1,0 +1,281 @@
+name: CI
+
+# One pipeline for the judicial-system services on GitHub-hosted runners,
+# shaped like island.is push.yml:
+#
+#   prepare ─┬─ lint  (one job, all projects)
+#            ├─ test  (matrix, per project; backend in 6 shards)
+#            ├─ build (matrix, per project)
+#            ├─ docker-deps (one job: deps-stage layer cache in ECR) ── push / dispatch only
+#            │    └─ docker (matrix, per image, after build too) ── push / dispatch only
+#                                   └─ deploy (one job) ── main / dispatch only
+#
+# prepare runs install + codegen ONCE (.github/actions/load-deps) and caches
+# node_modules and the generated files; every matrix leg restores them.
+# deploy is a single job on purpose: all services share one Terraform state,
+# so parallel applies would only queue on the state lock.
+
+on:
+  pull_request:
+  push:
+    # TEMP(PR #5): feat/ci-images builds images to test the ECR push. Remove before merge.
+    branches: [main, feat/ci-images]
+  workflow_dispatch:
+    inputs:
+      images:
+        description: Comma-separated images to build
+        default: web,api,backend
+      deploy:
+        description: Deploy the built images to judicial dev
+        type: boolean
+        default: false
+
+concurrency:
+  group: ci-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  NX_DAEMON: 'false'
+  NX_NO_CLOUD: 'true'
+  NODE_OPTIONS: --max-old-space-size=6144
+  AWS_REGION: eu-west-1
+  ECR_ROLE: arn:aws:iam::592944621100:role/shared-github-ci-role
+  DEPLOY_ROLE: arn:aws:iam::640538430394:role/dev-judicial-system-github-ci-role
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      projects: ${{ steps.m.outputs.projects }}
+      tests: ${{ steps.m.outputs.tests }}
+      lint: ${{ steps.m.outputs.lint }}
+      images: ${{ steps.m.outputs.images }}
+      tag: ${{ steps.m.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/load-deps
+
+      # Projects come from the same matrix file docker-build.sh reads.
+      - id: m
+        env:
+          IMAGES: ${{ inputs.images || 'web,api,backend' }}
+        run: |
+          m=scripts/dmr/docker-build-matrix.json
+          echo "projects=$(jq -c '[.services[].app]' "$m")" >> "$GITHUB_OUTPUT"
+          # Backend has ~600 spec files; split it into 6 jest shards, others run whole.
+          echo "tests=$(jq -c '[.services[].app | if . == "judicial-system-backend"
+            then (range(1;7) as $i | {project: ., shard: "\($i)/6", id: "\(.)-s\($i)"})
+            else {project: ., shard: "", id: .} end]' "$m")" >> "$GITHUB_OUTPUT"
+          echo "lint=$(jq -c '[.services[].app] + ["system-e2e"]' "$m")" >> "$GITHUB_OUTPUT"
+          echo "images=$(jq -cn --arg s "${IMAGES// /}" '$s | split(",")')" >> "$GITHUB_OUTPUT"
+          echo "tag=dev_${GITHUB_SHA::7}_$(openssl rand -hex 8)" >> "$GITHUB_OUTPUT"
+
+  lint:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/load-deps
+      # One job for all projects: lint is cheap, so a matrix only adds runner start-up.
+      - env:
+          PROJECTS: ${{ needs.prepare.outputs.lint }}
+        run: |
+          yarn nx run-many -t lint --parallel=2 \
+            --projects="$(jq -r 'join(",")' <<< "$PROJECTS")"
+
+  test:
+    needs: prepare
+    name: test (${{ matrix.project }}${{ matrix.shard && format(' {0}', matrix.shard) || '' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.prepare.outputs.tests) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/load-deps
+
+      # ts-jest transform cache: unchanged files skip the TypeScript compile.
+      # (No .cache/nx here: Nx 22 refuses a restored local cache. See the
+      # Nx caching todo in docs/dmr/judicial-standalone-workplan.md.)
+      - uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/jest
+          key: test-${{ runner.os }}-${{ matrix.id }}-${{ github.sha }}
+          restore-keys: test-${{ runner.os }}-${{ matrix.id }}-
+
+      # Public-repo runners have 4 vCPU / 16 GB.
+      - env:
+          SHARD: ${{ matrix.shard }}
+        run: |
+          yarn nx run ${{ matrix.project }}:test --ci --maxWorkers=4 \
+            --cacheDirectory="$RUNNER_TEMP/jest" ${SHARD:+--shard="$SHARD"}
+
+  build:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        project: ${{ fromJSON(needs.prepare.outputs.projects) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/load-deps
+      - run: yarn nx run ${{ matrix.project }}:build
+
+  # Builds the Dockerfile's deps stage (yarn install) once into a shared ECR
+  # layer cache, so the docker legs reuse it instead of each installing
+  # (island.is: 10_prepare-docker-deps.sh with its S3 deps-cache).
+  docker-deps:
+    needs: prepare
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ECR_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+      - id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Login to Public ECR
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+        env:
+          AWS_REGION: us-east-1
+          AWS_DEFAULT_REGION: us-east-1
+      - uses: docker/setup-buildx-action@v3
+      - name: Build deps cache
+        env:
+          DOCKER_REGISTRY: ${{ steps.ecr.outputs.registry }}
+          BUILDX_CACHE: ecr
+        run: scripts/dmr/docker-build.sh deps
+
+  # Image build happens inside Docker (scripts/ci/Dockerfile, same as island.is),
+  # so this leg needs only the source plus the generated files — no host install.
+  docker:
+    # Wait for build: no point pushing an image whose app fails to build.
+    needs: [prepare, build, docker-deps]
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        service: ${{ fromJSON(needs.prepare.outputs.images) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore generated files
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/generated-files.tar.gz
+          key: generated-files-${{ github.sha }}
+          fail-on-cache-miss: true
+
+      - name: Extract generated files
+        run: tar -xzf "$RUNNER_TEMP/generated-files.tar.gz"
+
+      # Hosted runners start with ~14 GB free; drop toolchains we never use.
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ECR_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Authenticated base-image pulls; anonymous ones from shared runner IPs
+      # get 429. Public ECR auth only works from us-east-1.
+      - name: Login to Public ECR
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+        env:
+          AWS_REGION: us-east-1
+          AWS_DEFAULT_REGION: us-east-1
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        env:
+          DOCKER_REGISTRY: ${{ steps.ecr.outputs.registry }}
+          BUILDX_CACHE: ecr
+        run: scripts/dmr/docker-build.sh "${{ matrix.service }}" --push --tag "${{ needs.prepare.outputs.tag }}"
+
+      - name: Summary
+        run: |
+          echo "### judicial-system-${{ matrix.service }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "\`${{ steps.ecr.outputs.registry }}/judicial-system-${{ matrix.service }}:${{ needs.prepare.outputs.tag }}\`" >> "$GITHUB_STEP_SUMMARY"
+
+  # Writes each new tag to SSM (terraform/dev/image_tags.tf), then applies.
+  deploy:
+    needs: [prepare, lint, test, build, docker]
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && inputs.deploy)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: dev
+    concurrency:
+      group: terraform-dev
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: terraform/dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read terraform version
+        id: v
+        run: echo "version=$(cat ../.terraform-version)" >> "$GITHUB_OUTPUT"
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ steps.v.outputs.version }}
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.DEPLOY_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set image tags
+        env:
+          IMAGES: ${{ join(fromJSON(needs.prepare.outputs.images), ' ') }}
+          TAG: ${{ needs.prepare.outputs.tag }}
+        run: |
+          for s in $IMAGES; do
+            aws ssm put-parameter --overwrite --type String \
+              --name "/judicial-system/dev/$s/image-tag" --value "$TAG"
+            echo "$s -> $TAG" >> "$GITHUB_STEP_SUMMARY"
+          done
+
+      - run: terraform init -input=false
+      - run: terraform apply -input=false -auto-approve -lock-timeout=5m -no-color

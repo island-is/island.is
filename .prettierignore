@@ -6,7 +6,6 @@
 .github/workflows/stale-prs.yml
 
 # Schema and generated
-/libs/api/domains/application/gen
 gen/
 *.generated.ts
 /infra/helm/
@@ -26,8 +25,5 @@ gen/
 /tools/**/*.js
 **/*.hbs
 .yarn
-
-# Assets
-apps/web/public/assets/pdf.worker.min.mjs
 
 .nx/self-healing

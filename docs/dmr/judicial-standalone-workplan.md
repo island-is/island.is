@@ -68,6 +68,12 @@ Pipeline is **build → push → bump tag → `terraform apply`**, NOT render-ta
 - [ ] PR workflow: install + lint/test/build judicial only (node 22.22.3 + JDK + the 3 ordered codegen steps — see P0 baseline doc).
 - [ ] Delete inherited island.is workflows.
 - Local substitute until access: `scripts/dmr/docker-build.sh <svc> --load` (proven on backend) + `terraform plan` with a read-only profile.
+- [ ] **Later — Nx caching.** The `.cache/nx` restore in `ci.yml` is refused by Nx 22 ("Unrecognized Cache Artifacts": entries from another machine are untrusted without the `.nx/workspace-data` db). No config bypass on Nx 22 (`NX_REJECT_UNKNOWN_LOCAL_CACHE=0` only worked for the legacy file cache; newer Nx keeps the guard). `@nx/s3-cache` is deprecated (CREEP, CVE-2025-36852) — don't use. Options:
+  - Nx Cloud (what island.is used for task results; `nxCloudId` in upstream `nx.json`).
+  - Self-hosted remote cache: Nx 22.7.5 reads `NX_SELF_HOSTED_REMOTE_CACHE_SERVER` (+ `_ACCESS_TOKEN`). Run an OpenAPI-spec server (e.g. nxcite/nx-cache-server, S3 backend) as a localhost sidecar per job. Only `main` writes, PRs read-only, no overwrites (409). Needs an S3 bucket + CI role rights.
+  - `nx affected` (no cache; skips unchanged projects).
+  - Related: island.is caches deps/codegen/playwright in S3 via `runs-on/cache@v5` (bucket `shared-islandis-github-actions-cache`), not GitHub's 10 GB cache. Our copies of `setup-yarn`/`load-deps` use `actions/cache` instead; switch with the same bucket.
+  The `.cache/nx` steps were dropped from `ci.yml` (commit `b4c0e0de10`).
 
 ### P6 — Runbook + cutover (story)
 - [ ] `docs/dmr/runbook.md`: build locally, deploy a service to dev, rollback (previous task-def revision), run migrations, add an env var/secret.
