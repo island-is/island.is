@@ -221,6 +221,7 @@ export const Offenses = ({
           marginBottom={2}
         />
         <Select
+          id={`offenses-${indictmentCount.id}`}
           name="offenses"
           options={offensesOptions}
           label={formatMessage(strings.incidentLabel)}
@@ -320,6 +321,7 @@ export const Offenses = ({
                 alcoholValue,
               )
             }}
+            id={`alcohol-${indictmentCount.id}`}
             name="alcohol"
             autoComplete="off"
             label={formatMessage(strings.bloodAlcoholContentLabel)}
