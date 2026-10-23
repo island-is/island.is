@@ -2252,6 +2252,21 @@ export class CaseService {
     // payload without mutating the original update object.
     const { defendantEventLogDecisions, ...caseUpdate }: UpdateCase = update
 
+    // Turning civil claims off deletes the claimants in the controller; clear
+    // the stored civil demands text here so a later indictment PDF cannot
+    // pick up leftover wording after the user answered "nei". Drop any
+    // civilDemands on the same update so handleCaseStringUpdates cannot
+    // upsert the string back after this delete.
+    if (caseUpdate.hasCivilClaims === false) {
+      delete caseUpdate.civilDemands
+
+      await this.caseStringRepositoryService.deleteByCaseAndType(
+        theCase.id,
+        StringType.CIVIL_DEMANDS,
+        { transaction },
+      )
+    }
+
     await this.handleDateLogUpdates(theCase, caseUpdate, transaction)
     await this.handleCaseStringUpdates(theCase, caseUpdate, transaction)
 
