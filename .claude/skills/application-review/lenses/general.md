@@ -22,11 +22,15 @@ Read every changed function as a skeptic. Look for these:
 - **Silent drops:** a refactor that removes a hidden input, condition,
   message variant, DTO field or `try`/`catch`, and leaves its consumers
   unchanged.
+- **Two sources of truth:** a new way to derive a value the template
+  already derives elsewhere ("is a company" from `identity.data.type` and
+  from the kennitala). Name each pair of predicates that can now both be
+  true, or both false.
 
 Severity is high when the bug is reachable and the result is high by
 SKILL.md's definition; medium otherwise.
 
-Precedent: #21165, #21083, #21416, #20444, #20676, #21556, #20214, #22072.
+Precedent: #21165, #21083, #21416, #20444, #20676, #21556, #20214, #22072, #24257.
 
 ### Chesterton's fence: find out why deleted code existed
 
@@ -87,7 +91,8 @@ Then report two things:
   - The template's own utils.
   - The shared builders.
 - **Duplication:** logic duplicated across files, or across the template and
-  its API module.
+  its API module, and a second derivation of a value the template already
+  derives. G1 covers predicates that the second one makes disagree.
 - **Readability:**
   - Long inline functions in `condition`, `options`, `defaultValue` or
     overview `items`; move them to utils, with conditions in
@@ -246,7 +251,9 @@ Severity is low. Batch them into one line each.
   the diff now reaches (#22144 replaced the done-screen text #22003's BE
   flow inherited).
 - **CODEOWNERS:** a new template or template-api folder has its line, with
-  the org-level owner.
+  the org-level owner. The template's `codeOwner` names the same team
+  `.github/CODEOWNERS` gives its folder; a mismatch leaves the README's
+  owner (G6) in doubt.
 - **Deprecated:** `answerValidators` (use zod).
 - **Builders:** omit empty `title: ''`, and use a `MultiField` only with
   more than one child.

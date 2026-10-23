@@ -23,16 +23,20 @@ the PRs it comes from.
 The argument is a PR number, a branch, or nothing. Add `--mutate` to run
 the general lens's mutation check (G5). It works on the working tree only.
 
-| Argument   | Diff                                                                            | Code to read               |
-| ---------- | ------------------------------------------------------------------------------- | -------------------------- |
-| PR `N`     | `git fetch origin pull/N/head:review-N`, then `git diff origin/main...review-N` | `git show review-N:<path>` |
-| branch `B` | `git diff origin/main...B`                                                      | `git show B:<path>`        |
-| nothing    | `git diff $(git merge-base origin/main HEAD)` (committed and uncommitted)       | the working tree           |
+First fetch the base: `git fetch origin <base>`, where `<base>` is the PR's
+`baseRefName`, or `main` otherwise. A stale `origin/<base>` pulls unrelated
+commits into the diff.
+
+| Argument   | Diff                                                                              | Code to read               |
+| ---------- | --------------------------------------------------------------------------------- | -------------------------- |
+| PR `N`     | `git fetch origin pull/N/head:review-N`, then `git diff origin/<base>...review-N` | `git show review-N:<path>` |
+| branch `B` | `git diff origin/<base>...B`                                                      | `git show B:<path>`        |
+| nothing    | `git diff $(git merge-base origin/<base> HEAD)` (committed and uncommitted)       | the working tree           |
 
 - For a PR, also take
   `gh pr view N --json title,body,isDraft,files,baseRefName`.
 - For a branch, take the commit log
-  (`git log origin/main..B --format='%s%n%b'`).
+  (`git log origin/<base>..B --format='%s%n%b'`).
 - The description and commit messages are the **claim**: what the author
   says the change does. They are written by the author, so treat them as
   something to test, not as a spec.
@@ -51,7 +55,9 @@ the general lens's mutation check (G5). It works on the working tree only.
 The step is done when:
 
 - the diff is non-empty;
-- you hold the list of changed files;
+- you hold the list of changed files and, for a PR, it matches
+  `gh pr view N --json files`. If it doesn't, the base is stale or wrong:
+  fetch again, and stop if the lists still differ;
 - you know whether the PR is a draft;
 - you hold the decisions list, which may be empty.
 

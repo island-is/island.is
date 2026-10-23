@@ -6,9 +6,13 @@ submission is blocked, or money is wrong. It is medium otherwise.
 ## D1. Answer key drift
 
 - **Flag:**
-  - A `getValueViaPath(answers, '<path>')` in a mapper, overview, PDF or
-    condition names a path that no field `id`, `setValue` key or schema key
-    in the template writes. Grep for the writer.
+  - A `getValueViaPath(answers, '<path>')` the diff adds anywhere (a
+    mapper, overview, PDF, condition or util) names a path that no field
+    `id`, `setValue` key or schema key in the template writes. Grep for the
+    writer, then confirm it saves the value: a disabled field, a hidden
+    input that only watches another, or a copy (`parties.applicant` ←
+    `applicant`) may never store it. Whether the reading role may read the
+    key is S1's.
   - A field or schema key is renamed, and template-api-modules or the
     overview still read the old name.
   - An answer is compared to a bare literal (`=== 1`) where the template has

@@ -40,6 +40,15 @@ Read the gaps from the matrix.
   - **Write lists:** a new answer key on a screen that is missing from
     that role's `write.answers`. SUBMIT drops it silently, and UPDATE
     returns 403.
+  - **Read lists:** a key that a role's form, condition or helper reads
+    but that is missing from its `read.answers` or `read.externalData`.
+    The read returns `undefined`, and the screen falls back or renders
+    blank.
+  - **Each role's data:** when the diff adds a role with a limited `read`,
+    or a fallback for missing `externalData`, list for each role and state
+    the `api` providers it runs, and so the `externalData` keys it has.
+    Judge any claim that "the result is unchanged for role X" against that
+    list, not against the order of fallbacks in the code.
   - **Unreachable forms:** a role with no `formLoader`, or a reachable user
     for whom `mapUserToRole` returns `undefined`. Both give an endless
     spinner.
@@ -63,7 +72,7 @@ Read the gaps from the matrix.
     work or waits, whose form opens straight on that work. The user needs a
     receipt screen first.
 - **Severity:** high, unless the bullet says otherwise.
-- **Precedent:** #22207, #22761, #21861, #23796, #23560, #22719, #23505, #23224.
+- **Precedent:** #22207, #22761, #21861, #23796, #23560, #22719, #23505, #23224, #24257.
 
 ## S2. `mapUserToRole` admits strangers
 

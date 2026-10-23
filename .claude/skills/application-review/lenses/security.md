@@ -95,8 +95,12 @@ A role with `read: 'all'` or `write: 'all'` receives every answer and
     other parties are kept from them.
 - **Severity:** high when another party, or the browser, receives health,
   financial or third-party personal data. Medium for over-fetching the
-  applicant's own data.
-- **Precedent:** #21861, #23188.
+  applicant's own data. When the recipients are other parties to the same
+  application or contract and the data is contact or registry data (name,
+  address), report it under **FYI: security-sensitive changes** as a
+  question: list what they can read, and ask the author to confirm it is
+  intended.
+- **Precedent:** #21861, #23188, #24257.
 
 ### SE3. HTML and markdown injection
 

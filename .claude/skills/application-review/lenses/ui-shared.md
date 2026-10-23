@@ -169,13 +169,17 @@ lost, or a file reaches an institution unchecked. It is medium otherwise.
 - **Severity:** medium; raw keys are shown to users.
 - **Precedent:** #23879, #21599, #20325, #22864, #23293, #21375, #20238, #21219, #21168.
 
-## U6. `defaultMessage` edited
+## U6. Copy edited or at odds with the code
 
-- **Flag:** an edited `defaultMessage` on an existing id. Ask whether
-  Contentful was updated; once uploaded, the default is only a fallback.
-  Also flag copy that states a rule the code does not implement.
-- **Severity:** low.
-- **Precedent:** #23253, #23537, #22299.
+- **Flag:**
+  - An edited `defaultMessage` on an existing id. Ask whether Contentful
+    was updated; once uploaded, the default is only a fallback.
+  - New or edited copy that states a rule: who to contact, who can send or
+    edit, what happens next. Check it against the template's roles,
+    transitions and README decisions, for every role that sees it.
+- **Severity:** low; medium when the copy sends a user to the wrong party
+  or promises an action their role cannot take.
+- **Precedent:** #23253, #23537, #22299, #24257.
 
 ## U7. Form chrome and stepper
 
