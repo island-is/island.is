@@ -37,7 +37,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FIRE_COMPENSATION_APPRAISAL,
   name: m.miscMessages.applicationName,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: m.miscMessages.institutionName,
   featureFlag: Features.fireCompensationAppraisalEnabled,
   translationNamespaces:

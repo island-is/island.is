@@ -61,7 +61,7 @@ const FinancialAidTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FINANCIAL_AID,
   name: application.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   dataSchema,
   translationNamespaces: [ApplicationConfigurations.FinancialAid.translation],
   stateMachineConfig: {

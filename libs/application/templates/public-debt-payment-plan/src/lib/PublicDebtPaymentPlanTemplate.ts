@@ -47,7 +47,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN,
   name: application.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: application.institutionName,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   translationNamespaces:
