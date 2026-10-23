@@ -141,9 +141,17 @@ export const InteractiveTableFormFieldExpandedRow: FC<Props> = ({
             type="info"
             message={
               <Box flexGrow={1}>
-                <Text variant="small" whiteSpace="preLine">
-                  {formatText(info, application, formatMessage)}
-                </Text>
+                {formatText(info, application, formatMessage)
+                  .split(/\n\s*\n/)
+                  .map((paragraph, index) => (
+                    <Text
+                      key={`info-paragraph-${index}`}
+                      variant="small"
+                      whiteSpace="preLine"
+                    >
+                      {paragraph.trim()}
+                    </Text>
+                  ))}
               </Box>
             }
           />
