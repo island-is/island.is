@@ -3,7 +3,7 @@
   "info": {
     "title": "Finance Service  v3",
     "description": "Finance Service v3,   get customer records  ....",
-    "version": "3.1"
+    "version": "3.2"
   },
   "servers": [{ "url": "/rad/TBRIslandis.api.v3:financeServiceApi_v3" }],
   "paths": {
@@ -210,6 +210,43 @@
         },
         "x-codegen-request-body-name": "validateInput"
       }
+    },
+    "/payrollDeduction": {
+      "get": {
+        "description": "Returns chargeItemSubjects/periods  for nationalid/ assessment Year/charge type",
+        "operationId": "payrollDeduction_GET_5",
+        "parameters": [
+          {
+            "name": "nationalID",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/payrollDeduction_GET_response"
+                }
+              }
+            }
+          },
+          "401": { "description": "Access Denied", "content": {} },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/payrollDeduction_GET_response"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -341,6 +378,15 @@
           "payInfo": { "$ref": "#/components/schemas/payInfo" }
         }
       },
+      "payerOfWages_output": {
+        "required": ["chargeTypeId", "employerId", "name"],
+        "type": "object",
+        "properties": {
+          "employerId": { "type": "string", "description": "nationalId" },
+          "name": { "type": "string", "description": "payer name" },
+          "chargeTypeId": { "type": "array", "items": { "type": "string" } }
+        }
+      },
       "ProblemDetails_DT": {
         "required": ["detail", "status", "title"],
         "type": "object",
@@ -446,6 +492,16 @@
         "properties": {
           "payFlowId": { "type": "string" },
           "dateCreated": { "type": "string" }
+        }
+      },
+      "payrollDeduction_GET_response": {
+        "required": ["payrollDeductionResult"],
+        "type": "object",
+        "properties": {
+          "error": { "$ref": "#/components/schemas/ProblemDetails_DT" },
+          "payrollDeductionResult": {
+            "$ref": "#/components/schemas/payerOfWages_output"
+          }
         }
       },
       "customerRercords_output_dt": {

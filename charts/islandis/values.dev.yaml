@@ -545,6 +545,7 @@ application-system-api:
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'application_system_api'
     DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
+    DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
     EHIC_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic'
     EMAIL_REGION: 'eu-west-1'
     ENDORSEMENTS_API_BASE_PATH: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'

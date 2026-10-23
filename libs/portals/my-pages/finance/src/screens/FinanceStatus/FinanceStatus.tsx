@@ -15,6 +15,7 @@ import {
   Table as T,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
   amountFormat,
   ErrorScreen,
@@ -25,7 +26,9 @@ import {
   formSubmit,
   m,
 } from '@island.is/portals/my-pages/core'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { checkDelegation } from '@island.is/shared/utils'
+import { useEffect, useState } from 'react'
 
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
@@ -49,8 +52,25 @@ const FinanceStatus = () => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   useFinanceSwapHook()
+  const featureFlagClient = useFeatureFlagClient()
+  const [payDebtsEnabled, setPayDebtsEnabled] = useState(false)
+
+  useEffect(() => {
+    featureFlagClient
+      .getValue(Features.isPayDebtsApplicationEnabled, false, {
+        id: userInfo?.profile?.nationalId ?? '',
+        attributes: {},
+      })
+      .then((enabled) => setPayDebtsEnabled(Boolean(enabled)))
+  }, [featureFlagClient, userInfo?.profile?.nationalId])
 
   const isDelegation = userInfo && checkDelegation(userInfo)
+  const canPayDebts =
+    !isDelegation ||
+    [
+      AuthDelegationType.ProcurationHolder,
+      AuthDelegationType.GeneralMandate,
+    ].some((type) => userInfo?.profile?.delegationType?.includes(type))
 
   const { loading, error, ...statusQuery } = useGetFinanceStatusQuery()
 
@@ -68,19 +88,20 @@ const FinanceStatus = () => {
   const financeStatusData: FinanceStatusDataType =
     statusQuery.data?.getFinanceStatus || {}
 
-  const getChargeTypeTotal = () => {
+  const getChargeTypeTotalAmount = () => {
     const organizationChargeTypes = financeStatusData?.organizations?.map(
       (org) => org.chargeTypes,
     )
     const allChargeTypes = flatten(organizationChargeTypes)
 
-    const chargeTypeTotal =
-      allChargeTypes.length > 0
-        ? allChargeTypes.reduce((a, b) => a + b.totals, 0)
-        : 0
-
-    return amountFormat(chargeTypeTotal)
+    return allChargeTypes.length > 0
+      ? allChargeTypes.reduce((a, b) => a + b.totals, 0)
+      : 0
   }
+
+  const getChargeTypeTotal = () => amountFormat(getChargeTypeTotalAmount())
+
+  const hasDebt = getChargeTypeTotalAmount() > 0
 
   const endOfYearMessage = defineMessage({
     id: 'sp.finance-status:end-of-year',
@@ -107,6 +128,29 @@ const FinanceStatus = () => {
                   justifyContent="flexStart"
                   printHidden
                 >
+                  {canPayDebts && hasDebt && payDebtsEnabled && (
+                    <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                      <a
+                        href="/umsoknir/greidum-rikinu/"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <Button
+                          colorScheme="default"
+                          icon="card"
+                          iconType="filled"
+                          size="default"
+                          type="button"
+                          variant="utility"
+                          as="span"
+                          unfocusable
+                        >
+                          {formatMessage(messages.payDebt)}
+                        </Button>
+                      </a>
+                    </Box>
+                  )}
+
                   {!isDelegation && scheduleButtonVisible && (
                     <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                       <a
