@@ -2,6 +2,7 @@ import {
   AppealDecisionPartyRole,
   AppealEventType,
   AppealOrigin,
+  type AppealStatementParty,
   CaseAppealDecision,
   isDefenceUser,
   isProsecutionUser,
@@ -350,6 +351,42 @@ export const buildAdvocateConfirmedEvent = (params: {
     eventType: AppealEventType.ADVOCATE_CONFIRMED,
     defendantId: party.defendantId,
     civilClaimantId: party.civilClaimantId,
+    userRole: actor.role,
+    userId: actor.id,
+    nationalId: actor.nationalId,
+    userName: actor.name,
+    userTitle: actor.title,
+    institutionName: actor.institution?.name,
+  }
+}
+
+/**
+ * The record of the court of appeals giving a party a deadline to file its
+ * statement, or moving the deadline it had.
+ *
+ * The date itself lives on the appeal_statement_deadline row, which an
+ * extension overwrites; the event keeps who did it and when, which the row
+ * does not, and tells a first deadline from an extension, which the mails
+ * word differently. As with the advocate confirmation, userRole is the
+ * actor's own role: the deadline is an act of the court.
+ */
+export const buildStatementDeadlineEvent = (params: {
+  theCase: Case
+  appealCase: AppealCase
+  party: AppealStatementParty
+  actor: User
+  extended: boolean
+}): Partial<AppealEventLog> => {
+  const { theCase, appealCase, party, actor, extended } = params
+
+  return {
+    caseId: theCase.id,
+    appealCaseId: appealCase.id,
+    eventType: extended
+      ? AppealEventType.STATEMENT_DEADLINE_EXTENDED
+      : AppealEventType.STATEMENT_DEADLINE_SET,
+    defendantId: party.defendantId ?? undefined,
+    civilClaimantId: party.civilClaimantId ?? undefined,
     userRole: actor.role,
     userId: actor.id,
     nationalId: actor.nationalId,

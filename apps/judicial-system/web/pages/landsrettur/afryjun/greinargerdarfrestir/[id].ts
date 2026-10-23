@@ -1,0 +1,3 @@
+import VerdictAppealStatementDeadlines from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/VerdictAppealStatementDeadlines/VerdictAppealStatementDeadlines'
+
+export default VerdictAppealStatementDeadlines

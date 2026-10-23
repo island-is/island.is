@@ -5,6 +5,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
@@ -38,6 +39,7 @@ import { CourtService } from '../court'
 import {
   AppealCase,
   AppealEventLogRepositoryService,
+  AppealStatementDeadlineRepositoryService,
   Case,
   CaseFileRepositoryService,
   CaseRepositoryService,
@@ -50,6 +52,7 @@ import {
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
+import { UpdateDefendantsItemDto } from './dto/updateDefendants.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { getMostPermissiveRequestSharedWithDefender } from './requestSharedWithDefender.logic'
 
@@ -59,6 +62,7 @@ export class DefendantService {
     private readonly defendantRepositoryService: DefendantRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
+    private readonly appealStatementDeadlineRepositoryService: AppealStatementDeadlineRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly courtService: CourtService,
@@ -226,7 +230,9 @@ export class DefendantService {
 
   async createForNewCase(
     caseId: string,
-    defendantToCreate: CreateDefendantDto,
+    defendantToCreate: CreateDefendantDto & {
+      requestSharedWithDefender?: RequestSharedWithDefender
+    },
     transaction: Transaction,
   ): Promise<Defendant> {
     return this.defendantRepositoryService.create(
@@ -415,6 +421,15 @@ export class DefendantService {
         }),
         { transaction },
       )
+
+      // Telling the defender the court of appeals has recorded them. Queued
+      // after commit, so a confirmation that rolls back sends nothing.
+      queueMessagesAfterCommit({
+        type: MessageType.DEFENDANT_NOTIFICATION,
+        caseId: theCase.id,
+        elementId: defendant.id,
+        body: { type: DefendantNotificationType.APPEAL_DEFENDER_ASSIGNED },
+      })
     }
   }
 
@@ -686,6 +701,52 @@ export class DefendantService {
     }
   }
 
+  async updateMany(
+    theCase: Case,
+    updates: UpdateDefendantsItemDto[],
+    user: User,
+    transaction: Transaction,
+    registerVerdictAppeal?: boolean,
+  ): Promise<Defendant[]> {
+    const defendantIds = updates.map((update) => update.defendantId)
+
+    if (new Set(defendantIds).size !== defendantIds.length) {
+      throw new BadRequestException(
+        `A defendant of case ${theCase.id} is named more than once`,
+      )
+    }
+
+    const defendants = defendantIds.map((defendantId) => {
+      const defendant = theCase.defendants?.find((d) => d.id === defendantId)
+
+      if (!defendant) {
+        throw new NotFoundException(
+          `Defendant ${defendantId} of case ${theCase.id} does not exist`,
+        )
+      }
+
+      return defendant
+    })
+
+    const updatedDefendants: Defendant[] = []
+
+    // One at a time: the updates share the request's transaction, which runs
+    // one query at a time.
+    for (const [index, { defendantId: _, ...update }] of updates.entries()) {
+      updatedDefendants.push(
+        await this.update(
+          theCase,
+          defendants[index],
+          registerVerdictAppeal ? { ...update, registerVerdictAppeal } : update,
+          user,
+          transaction,
+        ),
+      )
+    }
+
+    return updatedDefendants
+  }
+
   async updateRestricted(
     theCase: Case,
     defendant: Defendant,
@@ -766,6 +827,14 @@ export class DefendantService {
     transaction: Transaction,
   ): Promise<boolean> {
     await this.caseFileRepositoryService.deleteAllForDefendant(
+      theCase.id,
+      defendantId,
+      { transaction },
+    )
+
+    // The deadlines reference the defendant without a cascade, so they go
+    // before the row they point at.
+    await this.appealStatementDeadlineRepositoryService.deleteAllForDefendant(
       theCase.id,
       defendantId,
       { transaction },

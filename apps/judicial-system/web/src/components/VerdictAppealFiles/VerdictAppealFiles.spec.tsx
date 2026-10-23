@@ -282,8 +282,27 @@ describe('VerdictAppealFiles', () => {
       ).toBeInTheDocument()
     })
 
-    it('should not offer it to a defender', () => {
+    // The letter is addressed to the advocate, so the party's own defender
+    // finds it in their appeal section - and this is the one place they can.
+    it('should offer a defender the letter of their own client', async () => {
       renderSection(confirmed([]))
+
+      expect(await screen.findByText('Áfrýjunarferli')).toBeInTheDocument()
+      expect(
+        screen.getByText('Skipunarbréf Vaka Dagsdóttir.pdf'),
+      ).toBeInTheDocument()
+    })
+
+    it("should not offer a defender another defendant's letter", () => {
+      const other = confirmed([])
+
+      renderSection({
+        ...other,
+        defendants: (other.defendants ?? []).map((defendant) => ({
+          ...defendant,
+          defenderNationalId: '2222222222',
+        })),
+      })
 
       expect(screen.queryByText('Áfrýjunarferli')).not.toBeInTheDocument()
     })

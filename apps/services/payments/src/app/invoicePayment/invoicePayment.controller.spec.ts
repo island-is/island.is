@@ -128,6 +128,7 @@ describe('InvoicePaymentController', () => {
         .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
         .mockResolvedValue({
           charges,
+          availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
         } as any)
       const getPaymentFlowChargeDetailsSpy = jest
         .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
@@ -168,6 +169,7 @@ describe('InvoicePaymentController', () => {
         .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
         .mockResolvedValue({
           charges,
+          availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
         } as any)
       const getPaymentFlowChargeDetailsSpy = jest
         .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
@@ -209,6 +211,7 @@ describe('InvoicePaymentController', () => {
         .mockResolvedValue({
           id: paymentFlowId,
           charges,
+          availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
         } as any)
       const getPaymentFlowChargeDetailsSpy = jest
         .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
@@ -248,7 +251,35 @@ describe('InvoicePaymentController', () => {
       createChargeSpy.mockRestore()
     })
 
-    // TODO
-    // it('should not be possible to create an invoice if it is not one of available payment methods')
+    // The payment page only offers the flow's methods, but the endpoint can be called directly.
+    it('should not be possible to create an invoice if it is not one of available payment methods', async () => {
+      const getPaymentFlowDetailsSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
+        .mockResolvedValue({
+          id: paymentFlowId,
+          payerNationalId: '9711755670',
+          charges,
+          availablePaymentMethods: [PaymentMethod.CARD],
+        } as any)
+
+      const createChargeSpy = jest
+        .spyOn(paymentFlowService, 'createFjsCharge')
+        .mockImplementation(() => Promise.resolve({} as any))
+
+      const response = await server
+        .post('/v1/payments/invoice/create')
+        .send({ paymentFlowId })
+
+      expect(response.status).toBe(400)
+      expect(response.body.detail).toBe(
+        PaymentServiceCode.InvalidPaymentMethods,
+      )
+      expect(createChargeSpy).not.toHaveBeenCalled()
+      // Refused before anything started, so the upstream is not told a payment failed.
+      expect(logPaymentFlowUpdateSpy).not.toHaveBeenCalled()
+
+      getPaymentFlowDetailsSpy.mockRestore()
+      createChargeSpy.mockRestore()
+    })
   })
 })

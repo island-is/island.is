@@ -6,7 +6,9 @@ import { renderHook } from '@testing-library/react'
 import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE,
@@ -203,7 +205,9 @@ describe('useSections getSections', () => {
       expect(sections[0].children.map((c) => c.name)).toEqual([
         'Yfirlit',
         'Verjandi',
+        'Greinargerðarfrestir',
         'Staða og lyktir',
+        'Samantekt',
       ])
       // Every step carries the appeal id for the same reason the overview
       // does: without it the next render resolves back to the ruling appeal.
@@ -211,30 +215,58 @@ describe('useSections getSections', () => {
         `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
       )
       expect(sections[0].children[2].href).toBe(
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
+      )
+      expect(sections[0].children[3].href).toBe(
         `${COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
+      )
+      expect(sections[0].children[4].href).toBe(
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
       )
     })
 
-    // The step after the defender step is gated on it: the court settles who
-    // represents each party before it records where the appeal stands.
-    it('withholds the status step until every advocate is confirmed', () => {
-      mockAppealCaseId = 'verdict-appeal'
-      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE
+    // The steps after the defender step are gated on it: a deadline is given
+    // to a party's advocate, and the court does not record where the appeal
+    // stands, before it has settled who represents each party. The deadlines
+    // step itself holds nobody, so the status step is gated on the defender
+    // step alone, through it.
+    describe.each([
+      ['deadlines', 2],
+      ['status', 3],
+    ])('the %s step', (_name, index) => {
+      it('is withheld until every advocate is confirmed', () => {
+        mockAppealCaseId = 'verdict-appeal'
+        mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE
 
-      const unconfirmed = {
-        ...caseWithBothAppeals,
-        defendants: [{ id: 'd1', isAppealDefenderConfirmed: false }],
-      } as unknown as WorkingCase
+        const unconfirmed = {
+          ...caseWithBothAppeals,
+          defendants: [{ id: 'd1', isAppealDefenderConfirmed: false }],
+        } as unknown as WorkingCase
+        const confirmed = {
+          ...caseWithBothAppeals,
+          defendants: [{ id: 'd1', isAppealDefenderConfirmed: true }],
+        } as unknown as WorkingCase
+
+        expect(
+          appealSections(unconfirmed, coaUser)[0].children[index].onClick,
+        ).toBeUndefined()
+        expect(
+          appealSections(confirmed, coaUser)[0].children[index].onClick,
+        ).toBeDefined()
+      })
+    })
+
+    it('reaches the status step from the deadlines step with nothing given', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE
+
       const confirmed = {
         ...caseWithBothAppeals,
         defendants: [{ id: 'd1', isAppealDefenderConfirmed: true }],
       } as unknown as WorkingCase
 
       expect(
-        appealSections(unconfirmed, coaUser)[0].children[2].onClick,
-      ).toBeUndefined()
-      expect(
-        appealSections(confirmed, coaUser)[0].children[2].onClick,
+        appealSections(confirmed, coaUser)[0].children[3].onClick,
       ).toBeDefined()
     })
 
@@ -245,8 +277,8 @@ describe('useSections getSections', () => {
       const sections = appealSections(caseWithBothAppeals, coaUser)
 
       expect(sections[0].isActive).toBe(true)
-      expect(sections[0].children[2].isActive).toBe(true)
-      expect(sections[0].children[2].onClick).toBeUndefined()
+      expect(sections[0].children[3].isActive).toBe(true)
+      expect(sections[0].children[3].onClick).toBeUndefined()
     })
 
     // The side panel works out which step you are on by finding the first

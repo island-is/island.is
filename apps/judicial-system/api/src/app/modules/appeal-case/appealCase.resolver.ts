@@ -22,11 +22,16 @@ import { BackendService } from '../backend'
 import { FeatureService } from '../feature/feature.service'
 import { AppealCase } from './dto/appealCase.response'
 import { AppealCourtSession } from './dto/appealCourtSession.response'
+import { AppealStatementDeadline } from './dto/appealStatementDeadline.response'
 import { CreateAppealCaseInput } from './dto/createAppealCase.input'
 import { CreateAppealCourtSessionInput } from './dto/createAppealCourtSession.input'
 import { CreateAppealEventLogInput } from './dto/createAppealEventLog.input'
+import { DeleteAppealCourtSessionInput } from './dto/deleteAppealCourtSession.input'
+import { DeleteAppealCourtSessionResponse } from './dto/deleteAppealCourtSession.response'
+import { SetAppealStatementDeadlineInput } from './dto/setAppealStatementDeadline.input'
 import { TransitionAppealCaseInput } from './dto/transitionAppealCase.input'
 import { UpdateAppealCaseInput } from './dto/updateAppealCase.input'
+import { UpdateAppealCourtSessionInput } from './dto/updateAppealCourtSession.input'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver(() => AppealCase)
@@ -110,6 +115,85 @@ export class AppealCaseResolver {
       user.id,
       AuditedAction.CREATE_APPEAL_COURT_SESSION,
       this.backendService.createAppealCourtSession(caseId, appealCaseId, body),
+      caseId,
+    )
+  }
+
+  @Mutation(() => AppealCourtSession, { nullable: true })
+  updateAppealCourtSession(
+    @Args('input', { type: () => UpdateAppealCourtSessionInput })
+    input: UpdateAppealCourtSessionInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealCourtSession> {
+    const { caseId, appealCaseId, appealCourtSessionId, ...body } = input
+
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Updating court session ${appealCourtSessionId} in appeal case ${appealCaseId} of case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPDATE_APPEAL_COURT_SESSION,
+      this.backendService.updateAppealCourtSession(
+        caseId,
+        appealCaseId,
+        appealCourtSessionId,
+        body,
+      ),
+      caseId,
+    )
+  }
+
+  @Mutation(() => DeleteAppealCourtSessionResponse, { nullable: true })
+  deleteAppealCourtSession(
+    @Args('input', { type: () => DeleteAppealCourtSessionInput })
+    input: DeleteAppealCourtSessionInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<DeleteAppealCourtSessionResponse> {
+    const { caseId, appealCaseId, appealCourtSessionId } = input
+
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Deleting court session ${appealCourtSessionId} in appeal case ${appealCaseId} of case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.DELETE_APPEAL_COURT_SESSION,
+      this.backendService.deleteAppealCourtSession(
+        caseId,
+        appealCaseId,
+        appealCourtSessionId,
+      ),
+      caseId,
+    )
+  }
+
+  @Mutation(() => AppealStatementDeadline, { nullable: true })
+  setAppealStatementDeadline(
+    @Args('input', { type: () => SetAppealStatementDeadlineInput })
+    input: SetAppealStatementDeadlineInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealStatementDeadline> {
+    const { caseId, appealCaseId, ...body } = input
+
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Setting a statement deadline in appeal case ${appealCaseId} of case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.SET_APPEAL_STATEMENT_DEADLINE,
+      this.backendService.setAppealStatementDeadline(
+        caseId,
+        appealCaseId,
+        body,
+      ),
       caseId,
     )
   }

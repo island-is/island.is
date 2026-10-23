@@ -28,12 +28,18 @@ export interface AppealAppointmentLetter {
   advocatePractice?: string | null
   /** The accused, who names the case whichever advocate is appointed. */
   defendantName: string
+  /**
+   * The party this advocate is appointed to, which the appointing sentence
+   * names. Only a defender's letter carries one - the injured party is not
+   * named on the letters this reproduces.
+   */
+  clientName?: string | null
   /** The district court and its case number, which a completed case always has. */
   courtName: string
   courtCaseNumber: string
   /** The court of appeals number, which nothing records yet. */
   appealCaseNumber?: string | null
-  /** When the áfrýjunarstefna was issued. Nothing records it yet. */
+  /** When the áfrýjunarstefna was issued, if one has been. */
   appealSummonsDate?: Date | string | null
   /** Who appointed the advocate, and when - read off the appointment event. */
   appointedBy: { name: string; title?: string | null }
@@ -42,12 +48,9 @@ export interface AppealAppointmentLetter {
   copyTo: string[]
 }
 
-// What stands in for a value the portal cannot know yet. The court of appeals
-// case number is recorded on a step that does not exist, and the áfrýjunarstefna
-// is a document that does not exist - so the two read differently: one is
-// missing, the other is not built.
+// What stands in for the court of appeals case number, which is recorded on a
+// step that does not exist yet.
 const NO_APPEAL_CASE_NUMBER = 'xxx/xxxx'
-const NO_APPEAL_SUMMONS_DATE = 'Ekki útfært'
 
 /**
  * What the copy line says in place of a party the case does not name. A party
@@ -167,13 +170,25 @@ export const getAppealAppointmentSubject = (
  * The paragraph that does the appointing, which is the point of the letter.
  * One paragraph rather than two lines: the notice about the deadline runs on
  * from the appointment in both letters.
+ *
+ * The court speaks in its own name rather than addressing the advocate in the
+ * formal plural. The old wording - "Þér eruð hér með skipaðir ..." - forced a
+ * gender on whoever it was sent to, and had no neutral form that courts use;
+ * the registry settled on this instead (parent ticket, 2026-10-09).
+ *
+ * The defender's letter names the accused they are appointed to, because a
+ * case may have several and each gets their own letter. The spokesperson's
+ * does not: the injured party is not named on the letters this reproduces.
  */
-export const getAppealAppointmentSentence = (kind: AppealAppointmentKind) =>
-  `Þér eruð hér með skipaðir ${
+export const getAppealAppointmentSentence = (
+  kind: AppealAppointmentKind,
+  clientName?: string | null,
+) =>
+  `Landsréttur hefur skipað þig ${
     kind === AppealAppointmentKind.DEFENDER
-      ? 'verjandi ákærða'
-      : 'réttargæslumaður brotaþola'
-  } fyrir Landsrétti. Tilkynnt verður síðar um frest til greinargerðar í málinu.`
+      ? `verjanda ákærða${clientName ? ` ${clientName}` : ''}`
+      : 'réttargæslumann brotaþola'
+  } í ofangreindu máli. Tilkynnt verður síðar um frest til greinargerðar í málinu.`
 
 /**
  * What reached this court, and how. It carries both values the portal cannot
@@ -196,7 +211,7 @@ export const getAppealAppointmentBody = (
   )} sem áfrýjað var með áfrýjunarstefnu útgefinni ${
     letter.appealSummonsDate
       ? formatDate(letter.appealSummonsDate, 'PPP')
-      : NO_APPEAL_SUMMONS_DATE
+      : NOT_RECORDED
   }. Málsnúmer fyrir Landsrétti er ${getAppealCaseNumberOrPlaceholder(
     letter.appealCaseNumber,
   )}.`
@@ -377,7 +392,7 @@ export const createAppealAppointmentLetter = (
 
   addNormalPlusJustifiedText(
     doc,
-    getAppealAppointmentSentence(letter.kind),
+    getAppealAppointmentSentence(letter.kind, letter.clientName),
     'Times-Roman',
   )
 

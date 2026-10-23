@@ -32,7 +32,16 @@ const schema = z.object({
   // users in custom delegations.
   customScopeRules: customScopeRuleSchema,
   userInfoUrl: z.string(),
+  identityServerIssuerUrl: z.string(),
   defaultValidityPeriodInDays: z.number().min(1),
+  confirmationLifetimeInMinutes: z.number().min(1),
+  confirmationRequiredAcr: z.string(),
+  confirmationAllowFakeLogin: z.boolean(),
+  confirmationCibaIssuerUrl: z.string(),
+  confirmationCibaClientId: z.string(),
+  confirmationCibaClientSecret: z.string(),
+  // Must include openid (CIBA requires it) and a scope that puts nationalId on the token.
+  confirmationCibaScope: z.string(),
 })
 
 export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
@@ -108,7 +117,33 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
         'IDENTITY_SERVER_ISSUER_URL',
         'https://identity-server.dev01.devland.is',
       ) + '/connect/userinfo',
+    identityServerIssuerUrl: env.required(
+      'IDENTITY_SERVER_ISSUER_URL',
+      'https://identity-server.dev01.devland.is',
+    ),
     defaultValidityPeriodInDays:
       env.optionalJSON('DELEGATION_DEFAULT_VALID_PERIOD_IN_DAYS') ?? 365,
+    confirmationLifetimeInMinutes:
+      env.optionalJSON('DELEGATION_CONFIRMATION_LIFETIME_IN_MINUTES') ?? 15,
+    confirmationRequiredAcr:
+      env.optional('DELEGATION_CONFIRMATION_REQUIRED_ACR') ?? 'eidas-loa-high',
+    // Only set for dev in infra: fake logins (gervimenn) can't reach the required acr.
+    confirmationAllowFakeLogin:
+      (env.optionalJSON('DELEGATION_CONFIRMATION_ALLOW_FAKE_LOGIN') ??
+        false) === true,
+    confirmationCibaIssuerUrl:
+      env.optional('DELEGATION_CONFIRMATION_CIBA_ISSUER_URL') ??
+      env.required(
+        'IDENTITY_SERVER_ISSUER_URL',
+        'https://identity-server.dev01.devland.is',
+      ),
+    confirmationCibaClientId:
+      env.optional('DELEGATION_CONFIRMATION_CIBA_CLIENT_ID') ??
+      '@island.is/clients/delegation-confirmation',
+    confirmationCibaClientSecret:
+      env.optional('DELEGATION_CONFIRMATION_CIBA_CLIENT_SECRET') ?? '',
+    confirmationCibaScope:
+      env.optional('DELEGATION_CONFIRMATION_CIBA_SCOPE') ??
+      'openid @island.is/auth/delegation-confirmation',
   }),
 })

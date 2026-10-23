@@ -9,6 +9,7 @@ import {
   CaseType,
   DefenderChoice,
   Gender,
+  RequestSharedWithDefender,
   User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -98,6 +99,11 @@ describe('CaseController - Extend', () => {
       gender: Gender.MALE,
       address: 'House 1',
       citizenship: 'Citizenship 1',
+      defenderName: 'Defender 1',
+      defenderNationalId: '0000000019',
+      defenderEmail: 'defender1@dummy.is',
+      defenderPhoneNumber: '1111111',
+      requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
     }
     const defendantTwo = {
       nationalId: '0000001111',
@@ -105,6 +111,11 @@ describe('CaseController - Extend', () => {
       gender: Gender.FEMALE,
       address: 'House 2',
       citizenship: 'Citizenship 2',
+      defenderName,
+      defenderNationalId,
+      defenderEmail,
+      defenderPhoneNumber,
+      requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
     }
     const theCase = {
       id: caseId,
@@ -182,63 +193,16 @@ describe('CaseController - Extend', () => {
         defendantTwo,
         transaction,
       )
+    })
+
+    it('should not copy the case defender onto every defendant', () => {
       expect(
         mockDefendantService.syncDefenderToAllDefendants,
-      ).toHaveBeenCalledWith(
-        extendedCaseId,
-        {
-          defenderName,
-          defenderNationalId,
-          defenderEmail,
-          defenderPhoneNumber,
-          defenderChoice: null,
-        },
-        transaction,
-      )
+      ).not.toHaveBeenCalled()
     })
   })
 
-  describe('syncs defender contact fields even when case has no defender', () => {
-    const userId = uuid()
-    const user = {
-      id: userId,
-      institution: { id: uuid() },
-    } as TUser
-    const caseId = uuid()
-    const extendedCaseId = uuid()
-    const extendedCase = { id: extendedCaseId }
-    const theCase = {
-      id: caseId,
-      type: CaseType.CUSTODY,
-      defendants: [{ nationalId: '0000000000', name: 'Defendant' }],
-    } as Case
-
-    beforeEach(async () => {
-      const mockCreate = mockCaseRepositoryService.create as jest.Mock
-      mockCreate.mockResolvedValueOnce(extendedCase)
-
-      await givenWhenThen(caseId, user, theCase)
-    })
-
-    it('should call syncDefenderToAllDefendants with contact fields', () => {
-      expect(
-        mockDefendantService.syncDefenderToAllDefendants,
-      ).toHaveBeenCalledWith(
-        extendedCaseId,
-        {
-          defenderName: undefined,
-          defenderNationalId: undefined,
-          defenderEmail: undefined,
-          defenderPhoneNumber: undefined,
-          defenderChoice: null,
-          requestSharedWithDefender: undefined,
-        },
-        transaction,
-      )
-    })
-  })
-
-  describe('syncs WAIVE when extending a case with waived counsel', () => {
+  describe('waived counsel when extending a case', () => {
     const userId = uuid()
     const user = {
       id: userId,
@@ -261,25 +225,16 @@ describe('CaseController - Extend', () => {
       await givenWhenThen(caseId, user, theCase)
     })
 
-    it('should sync with defenderChoice WAIVE and copy waive onto the new case', () => {
+    it('should set defenderChoice WAIVE on the new defendants and copy waive onto the new case', () => {
       expect(mockCaseRepositoryService.create).toHaveBeenCalledWith(
         expect.objectContaining({
           defendantWaivesRightToCounsel: true,
         }),
         { transaction },
       )
-      expect(
-        mockDefendantService.syncDefenderToAllDefendants,
-      ).toHaveBeenCalledWith(
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledWith(
         extendedCaseId,
-        {
-          defenderName: undefined,
-          defenderNationalId: undefined,
-          defenderEmail: undefined,
-          defenderPhoneNumber: undefined,
-          defenderChoice: DefenderChoice.WAIVE,
-          requestSharedWithDefender: undefined,
-        },
+        expect.objectContaining({ defenderChoice: DefenderChoice.WAIVE }),
         transaction,
       )
     })
