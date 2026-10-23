@@ -14,6 +14,17 @@ locals {
   judicial_backend_image        = "${local.shared_ecr_registry}/judicial-system-backend:${local.judicial_backend_image_tag}"
   judicial_backend_dd_version   = split("_", local.judicial_backend_image_tag)[1]
   judicial_backend_health       = "/liveness"
+
+  # DB env shared by the app and the migrations container.
+  judicial_backend_db_env = {
+    DB_HOST = module.infra_outputs.rds_cluster_endpoint
+    DB_USER = "judicial_system"
+    DB_NAME = "judicial_system"
+  }
+}
+
+data "aws_ssm_parameter" "judicial_db_pass" {
+  name = "/ecs/judicial-system/DB_PASSWORD"
 }
 
 module "judicial_backend" {
@@ -56,6 +67,37 @@ module "judicial_backend" {
   healthcheck_path    = local.judicial_backend_health
   healthcheck_matcher = "200"
 
+  # DB migrations — ECS version of island.is's `.migrations()` initContainer
+  # (infra/src/dsl/dsl.ts: `npx sequelize-cli db:migrate`). Runs in every new
+  # task before the app starts; the app waits for it to exit 0. A failed
+  # migration stops the task, and the deployment circuit breaker rolls back.
+  # sequelize-cli is installed globally in the output-express-yarn image, and
+  # /webapp holds .sequelizerc + migrations/ (backend project.json assets).
+  additional_container_definitions = {
+    migrations = {
+      name      = "migrations"
+      image     = local.judicial_backend_image
+      essential = false
+      command   = ["npx", "sequelize-cli", "db:migrate"]
+
+      # Must not restart: the app waits for exit 0 (condition SUCCESS).
+      restartPolicy = { enabled = false }
+
+      environment = [
+        for k, v in merge(local.judicial_backend_db_env, { NODE_ENV = "production" }) :
+        { name = k, value = v }
+      ]
+      secrets = [
+        { name = "DB_PASS", valueFrom = data.aws_ssm_parameter.judicial_db_pass.arn }
+      ]
+
+      enable_cloudwatch_logging              = true
+      create_cloudwatch_log_group            = true
+      cloudwatch_log_group_retention_in_days = 30
+    }
+  }
+  dependencies = [{ containerName = "migrations", condition = "SUCCESS" }]
+
   dd_enabled                     = true
   dd_apm_ignore_resources_string = "GET ${local.judicial_backend_health}"
   dd_service_name                = local.judicial_backend_service_name
@@ -95,10 +137,10 @@ module "judicial_backend" {
     NOVA_SENDER_NAME                        = "Island Dev"
 
     # DB (JM-34): plain env; DB_PASS via parameter_store_secret_names.
-    DB_HOST          = module.infra_outputs.rds_cluster_endpoint
+    DB_HOST          = local.judicial_backend_db_env.DB_HOST
     DB_REPLICAS_HOST = module.infra_outputs.rds_cluster_reader_endpoint
-    DB_USER          = "judicial_system"
-    DB_NAME          = "judicial_system"
+    DB_USER          = local.judicial_backend_db_env.DB_USER
+    DB_NAME          = local.judicial_backend_db_env.DB_NAME
 
     # X-Road (non-secret config) — real islandis dev values. The backend's
     # CourtClientModule validates ALL XROAD_* at boot (presence check) and
