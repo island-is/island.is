@@ -1,14 +1,14 @@
 # Remaining services: message-handler, scheduler, xrd-api, digital-mailbox-api
 
-Status: plan only (2026-10-22). Deploy once web/api/backend base is stable.
+Status (2026-10-23): message-handler + scheduler built (`terraform/dev/judicial_message_handler.tf`, `judicial_scheduler.tf`). xrd-api + digital-mailbox-api still plan only.
 Owner of deploy Terraform: `terraform/dev/` in this repo (same `ecs_service` pattern as web/api/backend).
 
 ## The four services
 
 | Service | Kind | Port | Callers | ECS shape |
 |---|---|---|---|---|
-| message-handler | Always-on SQS worker, calls backend | 3366 (health only) | none | `ecs_service`, no ingress |
-| scheduler | Runs once, exits | none | none | ECS scheduled task (EventBridge Scheduler -> RunTask) |
+| message-handler | Always-on SQS worker, calls backend | 3366 (health only) | none | APRÓ `ecs_service_worker`, no ALB |
+| scheduler | Runs once, exits | none | none | APRÓ `scheduled_ecs_tasks` (EventBridge rule -> Step Functions -> RunTask) |
 | xrd-api | HTTP API, internal | 3355 | police + courts via X-Road | `ecs_service`, X-Road path |
 | digital-mailbox-api | HTTP API, internal | 3358 | island.is mailbox via X-Road | `ecs_service`, X-Road path |
 
@@ -47,7 +47,7 @@ Owner of deploy Terraform: `terraform/dev/` in this repo (same `ecs_service` pat
 ## Per-service decisions
 
 1. **Scheduler** — decided: ECS task on a schedule, same as the k8s CronJob. island.is ran it at 02:00 and 09:00 (check timezone in `apps/judicial-system/scheduler/infra`). Check if the APRÓ modules have a scheduled-task module; otherwise `aws_scheduler_schedule` + task definition directly.
-2. **xrd-api + digital-mailbox-api** — DMR has its own X-Road Security Server. Needs network groundwork (likely VPC peering / routing from the security server to the judicial VPC, SG rule, internal ALB or CloudMap path). Tracked with X-Road milestone (JM-30). Deploy the services only when the path exists.
+2. **xrd-api + digital-mailbox-api** — DMR has its own X-Road Security Server (dev: `ss.xroad.dev.dmr-dev.cloud`, not connected to judicial yet). backend still points `XROAD_*` at island.is's `securityserver.dev01.devland.is`, so court/police jobs from message-handler fail to the DLQ until it is switched. Needs network groundwork (likely VPC peering / routing from the security server to the judicial VPC, SG rule, internal ALB or CloudMap path). Tracked with X-Road milestone (JM-30). Deploy the services only when the path exists.
 3. **digital-mailbox-api auth** — likely keeps trusting island.is IDS. Snorri to confirm.
 4. **Audit log group** — fixed 2026-10-22: `terraform/dev/audit_log.tf` creates `judicial-system/audit-log` and grants backend + api write rights. Was missing before (writes failed silently).
 

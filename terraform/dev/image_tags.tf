@@ -13,11 +13,18 @@ locals {
     web     = "dev_94d0d52_U6FZPgfAKpXoheNp"
     api     = "dev_6f92630_VedP50IT5YwH4cCJ"
     backend = "dev_6f92630_VedP50IT5YwH4cCJ"
+
+    # No image yet: the first CI run on main overwrites these before it applies.
+    # Kept in dev_<sha>_<rand> shape because dd version = split("_", tag)[1].
+    message-handler = "dev_bootstrap_none"
+    scheduler       = "dev_bootstrap_none"
   }
 
-  judicial_web_image_tag     = aws_ssm_parameter.image_tag["web"].insecure_value
-  judicial_api_image_tag     = aws_ssm_parameter.image_tag["api"].insecure_value
-  judicial_backend_image_tag = aws_ssm_parameter.image_tag["backend"].insecure_value
+  judicial_web_image_tag             = aws_ssm_parameter.image_tag["web"].insecure_value
+  judicial_api_image_tag             = aws_ssm_parameter.image_tag["api"].insecure_value
+  judicial_backend_image_tag         = aws_ssm_parameter.image_tag["backend"].insecure_value
+  judicial_message_handler_image_tag = aws_ssm_parameter.image_tag["message-handler"].insecure_value
+  judicial_scheduler_image_tag       = aws_ssm_parameter.image_tag["scheduler"].insecure_value
 }
 
 resource "aws_ssm_parameter" "image_tag" {

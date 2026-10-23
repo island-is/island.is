@@ -114,6 +114,10 @@ data "aws_iam_policy_document" "github_ci_deploy" {
       "ec2:UpdateSecurityGroupRuleDescriptionsEgress",
       "ec2:CreateTags",
       "ec2:DeleteTags",
+      # scheduler (scheduled_ecs_tasks): EventBridge rule -> Step Functions -> SNS.
+      "events:*",
+      "states:*",
+      "sns:*",
     ]
     resources = ["*"]
   }
@@ -165,7 +169,10 @@ data "aws_iam_policy_document" "github_ci_deploy" {
     condition {
       test     = "StringEquals"
       variable = "iam:PassedToService"
-      values   = ["ecs-tasks.amazonaws.com", "codedeploy.amazonaws.com", "application-autoscaling.amazonaws.com"]
+      values = [
+        "ecs-tasks.amazonaws.com", "codedeploy.amazonaws.com", "application-autoscaling.amazonaws.com",
+        "states.amazonaws.com", "events.amazonaws.com",
+      ]
     }
   }
 }
