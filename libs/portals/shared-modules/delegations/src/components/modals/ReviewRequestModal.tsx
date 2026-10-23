@@ -47,10 +47,14 @@ import {
   AuthDelegationRequestsIncomingDocument,
   AuthDelegationRequestsIncomingQuery,
 } from '../delegationRequests/DelegationRequests.generated'
+import { useAuthDelegationsGroupedByIdentityOutgoingQuery } from '../delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
 import * as styles from './Modals.css'
 
 type IncomingRequest =
   AuthDelegationRequestsIncomingQuery['authDelegationRequestsIncoming'][number]
+
+const isSameDay = (a?: Date | null, b?: Date | null) =>
+  Boolean(a && b) && a?.toDateString() === b?.toDateString()
 
 const defaultValidity = (request: IncomingRequest): Date => {
   const requested = request.scopes
@@ -202,6 +206,32 @@ export const ReviewRequestModal = ({
       ? request.scopes.filter((s) => !grantableScopeNames.has(s.scopeName))
       : []
   const cannotGrant = ungrantableScopes.length > 0
+  const { data: outgoingData } =
+    useAuthDelegationsGroupedByIdentityOutgoingQuery({
+      variables: { lang },
+      skip: !isGrantorReview || !request,
+    })
+  const alreadyGranted = (
+    outgoingData?.authDelegationsGroupedByIdentityOutgoing ?? []
+  )
+    .filter((group) => group.nationalId === request?.to.nationalId)
+    .flatMap((group) => group.scopes)
+  // Same rule as the server: an already granted sensitive scope with the same date needs no step-up.
+  const hasSensitiveScopeSelected =
+    isGrantorReview &&
+    !!request?.scopes.some(
+      (s) =>
+        s.requiresConfirmation &&
+        selected[s.scopeName] &&
+        !alreadyGranted.some(
+          (granted) =>
+            granted.name === s.scopeName &&
+            isSameDay(
+              granted.validTo ? new Date(granted.validTo) : null,
+              validTo,
+            ),
+        ),
+    )
   const hasUnavailableSensitiveScopes =
     isGrantorReview &&
     !canGrantSensitiveScopes &&
@@ -380,20 +410,9 @@ export const ReviewRequestModal = ({
                                 {scope.domainDisplayName}
                               </Text>
                             </Box>
-                            <Box
-                              display="flex"
-                              alignItems="center"
-                              columnGap={1}
-                            >
-                              <Text variant="medium">
-                                {scope.displayName ?? scope.scopeName}
-                              </Text>
-                              {scope.requiresConfirmation && (
-                                <Tag variant="red" disabled>
-                                  {formatMessage(m.sensitiveScopeTag)}
-                                </Tag>
-                              )}
-                            </Box>
+                            <Text variant="medium">
+                              {scope.displayName ?? scope.scopeName}
+                            </Text>
                           </Box>
                         </T.Data>
                         <T.Data>
@@ -402,13 +421,25 @@ export const ReviewRequestModal = ({
                           </Text>
                         </T.Data>
                         <T.Data>
-                          <Text variant="medium">
-                            {formatMessage(
-                              scope.allowsWrite
-                                ? m.accessTypeReadWrite
-                                : m.accessTypeRead,
+                          <Box
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="spaceBetween"
+                            columnGap={2}
+                          >
+                            <Text variant="medium">
+                              {formatMessage(
+                                scope.allowsWrite
+                                  ? m.accessTypeReadWrite
+                                  : m.accessTypeRead,
+                              )}
+                            </Text>
+                            {scope.requiresConfirmation && (
+                              <Tag variant="red" disabled>
+                                {formatMessage(m.sensitiveScopeTag)}
+                              </Tag>
                             )}
-                          </Text>
+                          </Box>
                         </T.Data>
                       </T.Row>
                     ))}
@@ -449,6 +480,16 @@ export const ReviewRequestModal = ({
               )}
             </Box>
           </Box>
+
+          {hasSensitiveScopeSelected && (
+            <Box marginTop={3}>
+              <AlertMessage
+                type="warning"
+                title={formatMessage(m.sensitiveScopesSelectedTitle)}
+                message={formatMessage(m.confirmAccessSensitiveStepUpMessage)}
+              />
+            </Box>
+          )}
 
           {hasUnavailableSensitiveScopes && (
             <Box marginTop={3}>

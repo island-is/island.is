@@ -133,44 +133,44 @@ const RequestDetails = ({
 
   return (
     <FormProvider {...methods}>
-      <Text variant="h3" marginBottom={4}>
-        {formatMessage(m.requestDetailsTitle)}
-      </Text>
-      <Box display="flex" flexDirection="column" rowGap={3}>
-        <SelectController
-          id="relationship"
-          name="relationship"
-          label={formatMessage(m.requestRelationshipLabel)}
-          placeholder={formatMessage(m.requestRelationshipPlaceholder)}
-          backgroundColor="blue"
-          options={relationshipOptions.map((o) => ({
-            value: o.value,
-            label: formatMessage(o.label),
-          }))}
-          rules={{
-            required: {
-              value: true,
-              message: formatMessage(m.requestRelationshipRequired),
-            },
-          }}
-        />
-        <InputController
-          control={control}
-          id="reason"
-          name="reason"
-          label={formatMessage(m.requestReasonLabel)}
-          placeholder={formatMessage(m.requestReasonPlaceholder)}
-          textarea
-          rows={3}
-          maxLength={1024}
-          backgroundColor="blue"
-          rules={{
-            required: {
-              value: true,
-              message: formatMessage(m.requestReasonRequired),
-            },
-          }}
-        />
+      <Box display="flex" flexDirection="column" rowGap={2} marginTop={2}>
+        <Text variant="h3">{formatMessage(m.requestDetailsTitle)}</Text>
+        <Box display="flex" flexDirection="column" rowGap={3}>
+          <SelectController
+            id="relationship"
+            name="relationship"
+            label={formatMessage(m.requestRelationshipLabel)}
+            placeholder={formatMessage(m.requestRelationshipPlaceholder)}
+            backgroundColor="blue"
+            options={relationshipOptions.map((o) => ({
+              value: o.value,
+              label: formatMessage(o.label),
+            }))}
+            rules={{
+              required: {
+                value: true,
+                message: formatMessage(m.requestRelationshipRequired),
+              },
+            }}
+          />
+          <InputController
+            control={control}
+            id="reason"
+            name="reason"
+            label={formatMessage(m.requestReasonLabel)}
+            placeholder={formatMessage(m.requestReasonPlaceholder)}
+            textarea
+            rows={3}
+            maxLength={1024}
+            backgroundColor="blue"
+            rules={{
+              required: {
+                value: true,
+                message: formatMessage(m.requestReasonRequired),
+              },
+            }}
+          />
+        </Box>
       </Box>
     </FormProvider>
   )
