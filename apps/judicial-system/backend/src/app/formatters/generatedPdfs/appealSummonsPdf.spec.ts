@@ -1,6 +1,9 @@
 import PDFDocument from 'pdfkit'
 
-import { AppealSummonsAppellantSide, CaseType } from '@island.is/judicial-system/types'
+import {
+  AppealSummonsAppellantSide,
+  CaseType,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../../modules/repository'
 import { createAppealSummons } from './appealSummonsPdf'
@@ -62,8 +65,7 @@ describe('createAppealSummons', () => {
         return originalText.apply(this, [text, ...args] as never)
       })
 
-    const claims =
-      'Ákærði krefst þess að hann verði sýknaður.\n\nNr 2'
+    const claims = 'Ákærði krefst þess að hann verði sýknaður.\n\nNr 2'
 
     await createAppealSummons(
       theCase,
