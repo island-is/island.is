@@ -15,6 +15,7 @@ import { getPaymentForm } from '@island.is/application/ui-forms'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { Features } from '@island.is/feature-flags'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { dataSchema } from './dataSchema'
 import {
   CreateDebtPaymentApi,
@@ -45,6 +46,7 @@ const template: ApplicationTemplate<
   codeOwner: CodeOwners.Origo,
   institution: application.institutionName,
   translationNamespaces: ApplicationConfigurations.PayDebts.translation,
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
