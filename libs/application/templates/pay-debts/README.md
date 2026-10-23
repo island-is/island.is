@@ -77,6 +77,9 @@ and services-payments refunds a card or flags a bank transfer for a
 manual refund. services-payments does not redeliver a failed webhook,
 so `getStatus` reads the flow itself while the payment looks unpaid.
 
+SUBMIT runs `VerifyPaymentApi`, which refuses the move to Completed
+unless `getStatus` says the payment is fulfilled.
+
 ABORT (`deleteDebtPayment`) never refunds: services-payments alone
 refunds a debt payment, since FJS has no reversal. It refuses while the
 flow is paid. Pruning skips debt payments for the same reason.

@@ -9,6 +9,7 @@ import {
   FormModes,
   ApplicationConfigurations,
   StateLifeCycle,
+  VerifyPaymentApi,
 } from '@island.is/application/types'
 import { getPaymentForm } from '@island.is/application/ui-forms'
 import { Events, Roles, States } from '../utils/constants'
@@ -105,9 +106,14 @@ const template: ApplicationTemplate<
             },
           },
           onEntry: CreateDebtPaymentApi,
-          onExit: DeleteDebtPaymentApi.configure({
-            triggerEvent: DefaultEvents.ABORT,
-          }),
+          onExit: [
+            VerifyPaymentApi.configure({
+              triggerEvent: DefaultEvents.SUBMIT,
+            }),
+            DeleteDebtPaymentApi.configure({
+              triggerEvent: DefaultEvents.ABORT,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
