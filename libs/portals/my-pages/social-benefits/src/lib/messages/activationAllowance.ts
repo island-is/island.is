@@ -1,10 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const activationAllowanceMessages = defineMessages({
-  activationAllowance: {
-    id: 'sp.social-benefits-activation-allowance:activationAllowance',
-    defaultMessage: 'Virknistyrkur',
-  },
   title: {
     id: 'sp.social-benefits-activation-allowance:title',
     defaultMessage: 'Staðan þín',

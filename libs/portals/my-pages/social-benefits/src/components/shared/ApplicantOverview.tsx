@@ -6,7 +6,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { UserInfoLine, LinkButton } from '@island.is/portals/my-pages/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import type { ReactElement } from 'react'
 import { sharedMessages as sm } from '../../lib/messages/shared'
@@ -38,7 +38,6 @@ interface ApplicantOverviewProps {
 }
 
 export const ApplicantOverview = ({ fields }: ApplicantOverviewProps) => {
-  useNamespaces('sp.social-benefits-shared')
   const { formatMessage, locale } = useLocale()
   const { data, loading, error } = useGetApplicantOverviewQuery({
     variables: { locale },
