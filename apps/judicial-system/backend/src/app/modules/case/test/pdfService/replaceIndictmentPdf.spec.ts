@@ -58,7 +58,11 @@ describe('PdfService - replaceIndictmentPdf', () => {
     await pdfService.replaceIndictmentPdf(theCase, key, transaction)
 
     const { hash, hashAlgorithm } = getCaseFileHash(uploaded)
-    const indictmentHash = JSON.stringify({ hash, hashAlgorithm })
+    const indictmentHash = JSON.stringify({
+      hash,
+      hashAlgorithm,
+      replaced: true,
+    })
 
     expect(caseRepositoryService.update).toHaveBeenCalledWith(
       caseId,

@@ -159,10 +159,6 @@ describe('CaseController - Extend', () => {
           state: CaseState.NEW,
           description,
           policeCaseNumbers,
-          defenderName,
-          defenderNationalId,
-          defenderEmail,
-          defenderPhoneNumber,
           leadInvestigator,
           courtId,
           translator,
@@ -193,12 +189,6 @@ describe('CaseController - Extend', () => {
         defendantTwo,
         transaction,
       )
-    })
-
-    it('should not copy the case defender onto every defendant', () => {
-      expect(
-        mockDefendantService.syncDefenderToAllDefendants,
-      ).not.toHaveBeenCalled()
     })
   })
 
@@ -326,10 +316,6 @@ describe('CaseController - Extend', () => {
           state: CaseState.NEW,
           description,
           policeCaseNumbers,
-          defenderName,
-          defenderNationalId,
-          defenderEmail,
-          defenderPhoneNumber,
           leadInvestigator,
           courtId,
           translator,

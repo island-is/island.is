@@ -1,9 +1,12 @@
 import { Response } from 'express'
 import { v4 as uuid } from 'uuid'
 
+import { ForbiddenException } from '@nestjs/common'
+
 import {
   AppealEventType,
   AppealSummonsAppellantSide,
+  InstitutionType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -48,6 +51,7 @@ describe('AppealSummonsController - PDF', () => {
     name: 'Test Skrifstofa Ríkissaksóknara',
     title: 'Skrifstofa Ríkissaksóknara',
     role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+    institution: { type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE },
   }
 
   it('returns the saved summons as a pdf', async () => {
@@ -64,6 +68,60 @@ describe('AppealSummonsController - PDF', () => {
       theCase,
       user,
       summons,
+    )
+    expect(res.end).toHaveBeenCalledWith(pdf)
+  })
+
+  it('rejects a court of appeals user before the summons has been sent', async () => {
+    const courtOfAppealsJudge = {
+      id: uuid(),
+      name: 'Landsréttardómari',
+      title: 'dómari',
+      role: UserRole.COURT_OF_APPEALS_JUDGE,
+      institution: { type: InstitutionType.COURT_OF_APPEALS },
+    }
+
+    await expect(
+      appealSummonsController.getPdf(
+        caseId,
+        summonsId,
+        theCase,
+        { ...summons, sentToCourtOfAppealsDate: null } as AppealSummons,
+        courtOfAppealsJudge as never,
+        res,
+      ),
+    ).rejects.toThrow(ForbiddenException)
+
+    expect(mockPdfService.getAppealSummonsPdf).not.toHaveBeenCalled()
+  })
+
+  it('allows a court of appeals user after the summons has been sent', async () => {
+    const courtOfAppealsJudge = {
+      id: uuid(),
+      name: 'Landsréttardómari',
+      title: 'dómari',
+      role: UserRole.COURT_OF_APPEALS_JUDGE,
+      institution: { type: InstitutionType.COURT_OF_APPEALS },
+    }
+    const sentSummons = {
+      ...summons,
+      confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
+      sentToCourtOfAppealsDate: new Date('2026-06-10T10:00:00.000Z'),
+    } as AppealSummons
+
+    await appealSummonsController.getPdf(
+      caseId,
+      summonsId,
+      theCase,
+      sentSummons,
+      courtOfAppealsJudge as never,
+      res,
+    )
+
+    expect(mockPdfService.getAppealSummonsPdf).toHaveBeenCalledWith(
+      theCase,
+      courtOfAppealsJudge,
+      sentSummons,
     )
     expect(res.end).toHaveBeenCalledWith(pdf)
   })

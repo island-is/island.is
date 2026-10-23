@@ -37,7 +37,7 @@ import {
 import { AppealSummonsController } from '../appealSummons.controller'
 import { AppealSummonsExistsGuard } from '../guards/appealSummonsExists.guard'
 
-// The guards of the six appeal summons routes, executed rather than merely
+// The guards of the seven appeal summons routes, executed rather than merely
 // declared.
 //
 // appealSummonsControllerGuards.spec.ts pins the declared order. It never runs
@@ -45,7 +45,7 @@ import { AppealSummonsExistsGuard } from '../guards/appealSummonsExists.guard'
 // execute in controller unit tests, so a chain that locks the case row for
 // every authenticated caller - or one that never reads the case the guards
 // after it depend on - passes the whole suite. This table runs them, in Nest's
-// order, for every user role on each route: the three that change a summons
+// order, for every user role on each route: the four that change a summons
 // lock the case row, and the three that do not must not.
 //
 // Authentication is out of the picture: every row supplies a user, and what is
@@ -138,6 +138,24 @@ const unassignedProsecutorRow: AllowedRow = [
   publicProsecutionUser(UserRole.PROSECUTOR),
 ]
 
+const courtOfAppealsUser = (role: UserRole) =>
+  userAt(role, uuid(), InstitutionType.COURT_OF_APPEALS)
+
+const courtOfAppealsJudgeRow: AllowedRow = [
+  'court of appeals judge',
+  courtOfAppealsUser(UserRole.COURT_OF_APPEALS_JUDGE),
+]
+
+const courtOfAppealsRegistrarRow: AllowedRow = [
+  'court of appeals registrar',
+  courtOfAppealsUser(UserRole.COURT_OF_APPEALS_REGISTRAR),
+]
+
+const courtOfAppealsAssistantRow: AllowedRow = [
+  'court of appeals assistant',
+  courtOfAppealsUser(UserRole.COURT_OF_APPEALS_ASSISTANT),
+]
+
 // Whether the route locks the case row, whether it names a summons, and who
 // gets through.
 const routes: [string, boolean, boolean, AllowedRow[]][] = [
@@ -145,7 +163,19 @@ const routes: [string, boolean, boolean, AllowedRow[]][] = [
   ['update', true, true, [staffRow]],
   ['delete', true, true, [staffRow]],
   ['confirm', false, true, [unassignedProsecutorRow]],
-  ['getPdf', false, true, [staffRow, unassignedProsecutorRow]],
+  ['sendToCourtOfAppeals', true, true, [staffRow]],
+  [
+    'getPdf',
+    false,
+    true,
+    [
+      staffRow,
+      unassignedProsecutorRow,
+      courtOfAppealsJudgeRow,
+      courtOfAppealsRegistrarRow,
+      courtOfAppealsAssistantRow,
+    ],
+  ],
   ['preview', false, false, [staffRow]],
 ]
 
@@ -375,7 +405,7 @@ describe.each(routes)(
 
     // What RolesGuard leaves: a caller in a listed role on a case they cannot
     // reach gets as far as the read, and is turned away by the access guard
-    // from the case it read. On the three locking routes that guard is the
+    // from the case it read. On the four locking routes that guard is the
     // write guard, and this row together with the allowed rows above pins
     // the swap from the read guard on the two case shapes here: the same
     // role gets through on the one and is refused on the other. That the

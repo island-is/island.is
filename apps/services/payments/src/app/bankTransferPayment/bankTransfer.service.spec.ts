@@ -70,6 +70,7 @@ describe('BankTransferService', () => {
     getPaymentFlowChargeDetails: jest.Mock
     isEligibleToBePaid: jest.Mock
     isBankTransferAllowedForPayer: jest.Mock
+    validateChargePaymentMethod: jest.Mock
     logPaymentFlowUpdate: jest.Mock
     logDebtPaymentFinalized: jest.Mock
     logDebtPaymentRejected: jest.Mock
@@ -112,6 +113,7 @@ describe('BankTransferService', () => {
       isEligibleToBePaid: jest.fn().mockResolvedValue(true),
       hasPaymentCompletedEvent: jest.fn().mockResolvedValue(false),
       isBankTransferAllowedForPayer: jest.fn().mockResolvedValue(true),
+      validateChargePaymentMethod: jest.fn(),
       logPaymentFlowUpdate: jest.fn().mockResolvedValue(undefined),
       logDebtPaymentFinalized: jest.fn().mockResolvedValue(undefined),
       logDebtPaymentRejected: jest.fn().mockResolvedValue(undefined),
@@ -710,6 +712,26 @@ describe('BankTransferService', () => {
       expect(
         paymentFlowService.isBankTransferAllowedForPayer,
       ).toHaveBeenCalledWith('8123456789')
+      expect(blikkSpy).not.toHaveBeenCalled()
+      expect(bankTransferPaymentModel.create).not.toHaveBeenCalled()
+    })
+
+    // The payment page only offers the flow's methods, but the endpoint can be called directly.
+    it('refuses a charge flow that does not offer bank transfer, without calling Blikk', async () => {
+      paymentFlowService.validateChargePaymentMethod.mockImplementation(() => {
+        throw new BadRequestException(PaymentServiceCode.InvalidPaymentMethods)
+      })
+      const blikkSpy = jest.spyOn(service, 'createBankTransferPayment')
+
+      await expect(service.create(createInput)).rejects.toThrow(
+        PaymentServiceCode.InvalidPaymentMethods,
+      )
+      expect(
+        paymentFlowService.validateChargePaymentMethod,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'flow-1' }),
+        PaymentMethod.BANK_TRANSFER,
+      )
       expect(blikkSpy).not.toHaveBeenCalled()
       expect(bankTransferPaymentModel.create).not.toHaveBeenCalled()
     })

@@ -1,7 +1,8 @@
 import type { ChangeEvent, FC } from 'react'
-import { useRef, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
@@ -12,6 +13,7 @@ interface Props {
 const ReplaceIndictmentPdf: FC<Props> = ({ caseId }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const { refreshCase } = useContext(FormContext)
   const { handleReplaceIndictmentPdf } = useS3Upload(caseId)
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -29,6 +31,7 @@ const ReplaceIndictmentPdf: FC<Props> = ({ caseId }) => {
     setIsUploading(false)
 
     if (succeeded) {
+      refreshCase()
       toast.success('Ákæru hefur verið skipt út')
     }
   }

@@ -426,7 +426,6 @@ Bank-transfer refunds reuse the FJS-charge deletion mechanism, orchestrated by t
 | Flag                                             | Scope                   |
 | ------------------------------------------------ | ----------------------- |
 | `isIslandisBankTransferPaymentEnabled`           | Global                  |
-| `isIslandisBankTransferPaymentAllowedForUser`    | Per-user (ConfigCat)    |
 | `isIslandisBankTransferPaymentAllowedForCompany` | Per-company (ConfigCat) |
 
 All are defined in [`features.ts`](../../../../../../libs/feature-flags/src/lib/features.ts).
@@ -434,7 +433,6 @@ All are defined in [`features.ts`](../../../../../../libs/feature-flags/src/lib/
 - **`isIslandisBankTransferPaymentEnabled`** — the offer kill-switch. Two effects:
   1. Guards the bank-transfer REST controller via `FeatureFlagGuard` — off → `create` / `verify` / `cancel` reject.
   2. Gates inclusion of `bank_transfer` in a flow's `availablePaymentMethods` at flow creation (see [`paymentFlow.service.ts`](../paymentFlow/paymentFlow.service.ts)) — off → the method is never listed, so the selector never shows a method whose endpoints are also closed. Combined with the payer check: individuals are offered it, companies only when `isIslandisBankTransferPaymentAllowedForCompany` allows them, temporary kennitalas never.
-- **`isIslandisBankTransferPaymentAllowedForUser`** — frontend-only. Evaluated in the FE `getServerSideProps` to force-surface `bank_transfer` in the selector during rollout/testing, on top of whatever the backend already lists. Independent of the global flag and does **not** unlock the endpoints. Never applies to company payers, which only `isIslandisBankTransferPaymentAllowedForCompany` controls.
 - **`isIslandisBankTransferPaymentAllowedForCompany`** — the per-company rollout of [company payers](#company-payers), enforced in `services-payments`. Evaluated through `FeatureFlagService` with the company as the ConfigCat user (`identifier` = the company's kennitala, `subjectType` = `legalEntity`), so it can target single companies, or all companies via `subjectType`. Two effects, both on top of the global flag:
   1. Flow creation lists `bank_transfer` for a company payer only when it is on for that company.
   2. `create` refuses a company payer when it is off for that company, so neither a flow created while it was on nor a direct call can start a company transfer once it is turned off.

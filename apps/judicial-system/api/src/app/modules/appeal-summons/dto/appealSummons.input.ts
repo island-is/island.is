@@ -72,3 +72,11 @@ export class ConfirmAppealSummonsInput {
   @Field(() => ID)
   readonly appealSummonsId!: string
 }
+
+@InputType()
+export class SendAppealSummonsToCourtOfAppealsInput {
+  @Allow()
+  @IsUUID()
+  @Field(() => ID)
+  readonly appealSummonsId!: string
+}
