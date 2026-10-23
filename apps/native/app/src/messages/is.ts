@@ -508,6 +508,14 @@ export const is = {
   'wallet.yourLicenses': 'Þín skírteini',
   'wallet.childLicenses': 'Skírteini barna þinna',
   'wallet.scanButton': 'Skanna',
+  'wallet.scanReminderTitle': 'Skannaðu alltaf skírteinið',
+  'wallet.scanReminderDescription':
+    'Skjámynd af skírteini sannar ekkert. Það er aðeins við skönnun sem mynd og réttindi handhafa koma í ljós.',
+  'wallet.scanCta': 'Skanna skírteini',
+  'walletPass.scanReminderTitle': 'Upplýsingarnar birtast við skönnun',
+  'walletPass.scanReminderDescription':
+    'Hér sést aðeins hvort skírteinið sé í gildi. Sá sem þarf að staðfesta réttindi þín skannar strikamerkið og fær þá mynd og réttindi upp á sínum síma.',
+  'licenseScannerResult.photoHint': 'Berðu myndina saman við handhafa',
 
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',
