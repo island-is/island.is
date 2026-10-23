@@ -46,7 +46,10 @@ const template: ApplicationTemplate<
   codeOwner: CodeOwners.Origo,
   institution: application.institutionName,
   translationNamespaces: ApplicationConfigurations.PayDebts.translation,
-  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
+  allowedDelegations: [
+    { type: AuthDelegationType.ProcurationHolder },
+    { type: AuthDelegationType.GeneralMandate },
+  ],
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
