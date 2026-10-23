@@ -15,6 +15,7 @@ import {
   Table as T,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
   amountFormat,
   ErrorScreen,
@@ -26,6 +27,7 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { checkDelegation } from '@island.is/shared/utils'
+import { useEffect, useState } from 'react'
 
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
@@ -49,6 +51,17 @@ const FinanceStatus = () => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   useFinanceSwapHook()
+  const featureFlagClient = useFeatureFlagClient()
+  const [payDebtsEnabled, setPayDebtsEnabled] = useState(false)
+
+  useEffect(() => {
+    featureFlagClient
+      .getValue(Features.isPayDebtsApplicationEnabled, false, {
+        id: userInfo?.profile?.nationalId ?? '',
+        attributes: {},
+      })
+      .then((enabled) => setPayDebtsEnabled(Boolean(enabled)))
+  }, [featureFlagClient, userInfo?.profile?.nationalId])
 
   const isDelegation = userInfo && checkDelegation(userInfo)
 
@@ -108,7 +121,7 @@ const FinanceStatus = () => {
                   justifyContent="flexStart"
                   printHidden
                 >
-                  {!isDelegation && hasDebt && (
+                  {!isDelegation && hasDebt && payDebtsEnabled && (
                     <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                       <a
                         href="/umsoknir/greidum-rikinu/"

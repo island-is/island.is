@@ -13,6 +13,7 @@ import {
 import { getPaymentForm } from '@island.is/application/ui-forms'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
+import { Features } from '@island.is/feature-flags'
 import { dataSchema } from './dataSchema'
 import {
   CreateDebtPaymentApi,
@@ -38,6 +39,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.PAY_DEBTS,
+  featureFlag: Features.isPayDebtsApplicationEnabled,
   name: application.name,
   codeOwner: CodeOwners.Origo,
   institution: application.institutionName,
