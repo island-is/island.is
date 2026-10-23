@@ -26,7 +26,7 @@ interface JobResult {
 }
 
 @Processor('upload')
-@CodeOwner(CodeOwners.NordaApplications)
+@CodeOwner(CodeOwners.Origo)
 export class UploadProcessor {
   constructor(
     private readonly applicationService: ApplicationService,

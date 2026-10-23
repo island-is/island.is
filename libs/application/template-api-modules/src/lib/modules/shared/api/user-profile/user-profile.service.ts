@@ -27,7 +27,7 @@ import {
 } from '@island.is/clients/fjs/bank-info'
 
 @Injectable()
-@CodeOwner(CodeOwners.NordaApplications)
+@CodeOwner(CodeOwners.Origo)
 export class UserProfileService extends BaseTemplateApiService {
   constructor(
     private readonly userProfileApi: V2MeApi,

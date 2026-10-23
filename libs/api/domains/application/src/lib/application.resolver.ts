@@ -26,7 +26,7 @@ import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@CodeOwner(CodeOwners.NordaApplications)
+@CodeOwner(CodeOwners.Origo)
 @Resolver(() => Application)
 export class ApplicationResolver {
   constructor(private applicationService: ApplicationService) {}
