@@ -86,7 +86,11 @@ export class PayDebtsService extends BaseTemplateApiService {
       this.financeClientV3Service
         .getPayrollDeduction(auth, { nationalID: auth.nationalId })
         .catch((error) => {
-          this.logger.warn('FJS payroll deduction lookup failed', { error })
+          this.logger.warn('FJS payroll deduction lookup failed', {
+            applicationId: application.id,
+            status: error?.status,
+            name: error?.name,
+          })
           return null
         }),
     ])
