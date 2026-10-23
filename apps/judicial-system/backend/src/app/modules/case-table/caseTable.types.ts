@@ -1,4 +1,4 @@
-import { WhereOptions } from 'sequelize'
+import { Model, ModelStatic, WhereOptions } from 'sequelize'
 
 import { DefendantEventType } from '@island.is/judicial-system/types'
 
@@ -34,28 +34,52 @@ export type ObjectKeys<T> = Extract<
 
 type SortDir = 'ASC' | 'DESC'
 
-export type CaseIncludes = Partial<{
-  [K in ObjectKeys<Case>]: {
-    attributes: (keyof DefinedObject<Case[K]>)[]
-    required?: boolean
-    where?: WhereOptions
-    includes?: Partial<{
-      [K2 in ObjectKeys<DefinedObject<Case[K]>>]: {
-        attributes: (keyof DefinedObject<DefinedObject<Case[K]>[K2]>)[]
-        required?: boolean
-        where?: WhereOptions
-      }
-    }>
-  }
+// One association in an include declaration: the attributes to read off it and
+// the associations to follow from it. The shape is the same at every depth, so
+// a column declares exactly the path its value needs and nothing else - the
+// head judge's initials are appealCase.appealJudge1.name, declared as such -
+// and the model maps below stay flat.
+export type IncludeNode<T> = {
+  attributes: (keyof T)[]
+  required?: boolean
+  where?: WhereOptions
+  includes?: IncludesOf<T>
+}
+
+export type IncludesOf<T> = Partial<{
+  [K in ObjectKeys<T>]: IncludeNode<DefinedObject<T[K]>>
 }>
+
+export type CaseIncludes = IncludesOf<Case>
+
+// The same tree without the model types, for the code that copies, merges and
+// builds include trees without knowing which model it is at.
+export type IncludeTreeNode = {
+  attributes: string[]
+  required?: boolean
+  where?: WhereOptions
+  includes?: IncludeTree
+}
+
+export type IncludeTree = Partial<Record<string, IncludeTreeNode>>
 
 type ModelCtor<T> = new (...args: never[]) => T
 
+// Everything a join of one alias needs that the declaration does not say: the
+// model, whether Sequelize fetches it in a query of its own, and its order.
 type ModelDef<M extends ModelCtor<unknown>> = {
   model: M
   separate: boolean
-  order?: [[keyof DefinedObject<InstanceType<M>>, SortDir]]
+  order?: [[Extract<keyof DefinedObject<InstanceType<M>>, string>, SortDir]]
 }
+
+export type AnyModelDef = {
+  model: ModelStatic<Model>
+  separate: boolean
+  order?: [[string, SortDir]]
+}
+
+export type ModelMap = Partial<Record<string, AnyModelDef>>
 
 export const modelMap: {
   dateLogs: ModelDef<typeof DateLog>
@@ -104,6 +128,13 @@ export const subModelMap: {
   subpoenas: { model: Subpoena, separate: false, order: [['created', 'DESC']] },
   verdicts: { model: Verdict, separate: false, order: [['created', 'DESC']] },
 }
+
+// The model definitions by depth in an include declaration: the case's own
+// associations and those of the models they reach.
+// Building an include tree walks a declaration down this list, so an
+// association deeper than the maps go is a declaration error, not a silent
+// missing join.
+export const modelMapsByDepth: ModelMap[] = [modelMap, subModelMap]
 
 /**
  * A case as a case table row sees it.
@@ -245,13 +276,28 @@ export const mergeAccessIncludes = (
  * where they stay for the lifetime of the process - so what one list fetches
  * comes to depend on which lists were requested before it.
  *
- * The nested level is copied too. An access include carries no nested includes
- * today, but a generator include does, and both go through the same merge.
+ * Every nested level is copied too. An access include carries no nested
+ * includes today, but a generator include does, and both go through the same
+ * merge.
  *
  * `where` is shared, not copied. Nothing merges into it - it is read straight
  * through to Sequelize - and copying it would mean walking the operator symbols
  * a where clause is built from.
  */
+export const copyIncludeNode = (node: IncludeTreeNode): IncludeTreeNode => {
+  const copy: IncludeTreeNode = { ...node, attributes: [...node.attributes] }
+
+  if (node.includes) {
+    copy.includes = Object.fromEntries(
+      Object.entries(node.includes).flatMap(([key, value]) =>
+        value ? [[key, copyIncludeNode(value)]] : [],
+      ),
+    )
+  }
+
+  return copy
+}
+
 export const copyIncludeInto = <K extends keyof CaseIncludes>(
   target: CaseIncludes,
   source: CaseIncludes,
@@ -263,28 +309,7 @@ export const copyIncludeInto = <K extends keyof CaseIncludes>(
     return
   }
 
-  const copy = { ...value, attributes: [...value.attributes] }
-
-  if (copy.includes) {
-    const nested = { ...copy.includes }
-
-    for (const nestedKey of Object.keys(nested) as Array<keyof typeof nested>) {
-      const nestedValue = nested[nestedKey]
-
-      if (!nestedValue) {
-        continue
-      }
-
-      nested[nestedKey] = {
-        ...nestedValue,
-        attributes: [...nestedValue.attributes],
-      }
-    }
-
-    copy.includes = nested
-  }
-
-  target[key] = copy
+  target[key] = copyIncludeNode(value as IncludeTreeNode) as CaseIncludes[K]
 }
 
 export const expandCasesWithDefendants = (cs: Case[]): CaseTableRowCase[] =>
