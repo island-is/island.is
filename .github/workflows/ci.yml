@@ -18,8 +18,7 @@ name: CI
 on:
   pull_request:
   push:
-    # TEMP(PR #5): feat/ci-images builds images to test the ECR push. Remove before merge.
-    branches: [main, feat/ci-images]
+    branches: [main]
   workflow_dispatch:
     inputs:
       images:
