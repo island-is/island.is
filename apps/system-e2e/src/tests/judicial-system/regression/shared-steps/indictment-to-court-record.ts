@@ -4,6 +4,7 @@ import {
   randomPoliceCaseNumber,
   getDaysFromNow,
   randomIndictmentCourtCaseNumber,
+  selectTestDefender,
 } from '../../utils/helpers'
 
 export const prosecutorCreatesIndictmentCase = async (
@@ -198,6 +199,11 @@ export const judgeReceivesIndictmentThroughAdvocates = async (
   page: Page,
   caseId: string,
   accusedName: string,
+  options?: {
+    // Assign the test defender on the advocates screen instead of the
+    // defendants waiving their right to counsel
+    assignDefender?: boolean
+  },
 ) => {
   const nextWeek = getDaysFromNow(7)
 
@@ -274,25 +280,37 @@ export const judgeReceivesIndictmentThroughAdvocates = async (
 
   await expect(page).toHaveURL(`domur/akaera/malflytjendur/${caseId}`)
 
-  // One defender choice per defendant
-  const defenderChoiceOptions = page
-    .locator('label')
-    .filter({ hasText: 'óskar ekki eftir að sé' })
-  await expect(defenderChoiceOptions.first()).toBeVisible()
-  const defenderChoiceCount = await defenderChoiceOptions.count()
-  for (let i = 0; i < defenderChoiceCount; i++) {
-    await defenderChoiceOptions.nth(i).click()
-  }
-  // One defender choice confirmation per defendant. The confirm button is
-  // removed once the choice is confirmed, so we always act on the first one
-  // still standing and wait for it to disappear before moving on.
-  const confirmDefenderChoiceButtons = page.getByRole('button', {
-    name: 'Staðfesta val',
-  })
-  for (let remaining = defenderChoiceCount; remaining > 0; remaining--) {
-    await confirmDefenderChoiceButtons.first().click()
-    await page.getByTestId('modalPrimaryButton').click()
-    await expect(confirmDefenderChoiceButtons).toHaveCount(remaining - 1)
+  if (options?.assignDefender) {
+    // Assign the test defender from the lawyer registry; selecting fires an
+    // UpdateDefendant with the defender fields
+    await selectTestDefender(page)
+    await page.getByRole('button', { name: 'Staðfesta val' }).click()
+    await Promise.all([
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
+      page.getByTestId('modalPrimaryButton').click(),
+    ])
+    await expect(page.getByText('Verjandi staðfestur')).toBeVisible()
+  } else {
+    // One defender choice per defendant
+    const defenderChoiceOptions = page
+      .locator('label')
+      .filter({ hasText: 'óskar ekki eftir að sé' })
+    await expect(defenderChoiceOptions.first()).toBeVisible()
+    const defenderChoiceCount = await defenderChoiceOptions.count()
+    for (let i = 0; i < defenderChoiceCount; i++) {
+      await defenderChoiceOptions.nth(i).click()
+    }
+    // One defender choice confirmation per defendant. The confirm button is
+    // removed once the choice is confirmed, so we always act on the first one
+    // still standing and wait for it to disappear before moving on.
+    const confirmDefenderChoiceButtons = page.getByRole('button', {
+      name: 'Staðfesta val',
+    })
+    for (let remaining = defenderChoiceCount; remaining > 0; remaining--) {
+      await confirmDefenderChoiceButtons.first().click()
+      await page.getByTestId('modalPrimaryButton').click()
+      await expect(confirmDefenderChoiceButtons).toHaveCount(remaining - 1)
+    }
   }
 
   await Promise.all([

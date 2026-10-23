@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 
 export const randomPoliceCaseNumber = () => {
@@ -27,6 +27,30 @@ export const getDaysFromNow = (days = 0) => {
   const daysAdded = day * days
 
   return new Date(new Date().getTime() + daysAdded).toLocaleDateString('is-IS')
+}
+
+// The defender login fixture, national id 0909090909. The backend seeders
+// put this entry in lawyer_registry (seed_lawyer_registry.js), so it is on the
+// list the advocate comboboxes fetch and no interception is needed.
+export const testDefender = {
+  name: 'Test Verjandi',
+  email: 'testverjandi@dummy.dd',
+  nationalId: '0909090909',
+}
+
+// Selects the test defender in an InputAdvocate lawyer combobox.
+export const selectTestDefender = async (page: Page) => {
+  await page.locator('#advocateName').click()
+  await page.keyboard.type(testDefender.name)
+  await page
+    .locator('[id^="react-select-advocateName-option"]')
+    .filter({ hasText: testDefender.name })
+    .first()
+    .click()
+  // Selecting a lawyer auto-fills email and phone from the registry entry.
+  await expect(page.getByTestId('defenderEmail')).toHaveValue(
+    testDefender.email,
+  )
 }
 
 const createFakePdf = (title: string) => {
