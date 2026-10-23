@@ -179,11 +179,30 @@ export const formatListItemDiff = (item: Element) => {
 
       const lidurLabel = liItemHtml === '' ? liLidur.toLowerCase() : liLidur
 
+      // Other items are only renumbered if an item that is both in the old
+      // and the new list follows this one
+      const renumbersOthers = Array.from(liItem.parentElement?.children ?? [])
+        .filter((e) => e.nodeName.toLowerCase() === 'li')
+        .slice(lidur)
+        .some((sibling) => {
+          const oldSibling = sibling.cloneNode(true) as Element
+          removeInsertions(oldSibling)
+          const newSibling = sibling.cloneNode(true) as Element
+          newSibling.querySelectorAll('del').forEach((e) => e.remove())
+          return (
+            !!oldSibling.textContent?.trim() && !!newSibling.textContent?.trim()
+          )
+        })
+
       if (isLiDeleted) {
         liItemHtml = (liItemHtml +
           `${getLiPoint(lidur, isStaflidur)}${
             isStaflidur ? lidurLabel : '. ' + lidurLabel
-          } fellur brott og breytist númer annarra liða til samræmis.`) as HTMLText
+          } fellur brott${
+            renumbersOthers
+              ? ' og breytist númer annarra liða til samræmis'
+              : ''
+          }.`) as HTMLText
 
         returningArray.push(liItemHtml)
         liItemHtml = '' as HTMLText
@@ -192,7 +211,11 @@ export const formatListItemDiff = (item: Element) => {
           `Á eftir ${getLiPoint(
             lidur - 1,
             isStaflidur,
-          )}${liLidurPassive} kemur nýr liður svohljóðandi, og breytist númer annarra liða til samræmis: ${ownLiText}`) as HTMLText
+          )}${liLidurPassive} kemur nýr liður svohljóðandi${
+            renumbersOthers
+              ? ', og breytist númer annarra liða til samræmis'
+              : ''
+          }: ${ownLiText}`) as HTMLText
 
         returningArray.push(liItemHtml, ...(nestedListHtml as HTMLText[]))
         liItemHtml = '' as HTMLText
