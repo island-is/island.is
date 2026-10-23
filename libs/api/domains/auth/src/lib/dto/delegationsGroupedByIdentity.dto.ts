@@ -12,6 +12,13 @@ export class DelegationsGroupedByIdentity {
   @Field(() => String, { nullable: true })
   type?: string
 
+  @Field(() => String, {
+    nullable: true,
+    description:
+      'Which direction this grouping came from ("incoming" or "outgoing"). Used to keep the two apart in the client cache.',
+  })
+  direction?: string
+
   @Field(() => String, { nullable: true })
   subjectId?: string | null
 

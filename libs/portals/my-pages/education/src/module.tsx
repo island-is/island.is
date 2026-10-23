@@ -83,6 +83,7 @@ export const educationModule: PortalModule = {
       name: 'Menntun',
       path: EducationPaths.EducationRoot,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <Navigate to={EducationPaths.EducationPrimarySchool} replace />,
     },
 
@@ -91,6 +92,7 @@ export const educationModule: PortalModule = {
       name: 'Grunnskóli',
       path: EducationPaths.EducationPrimarySchool,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       loader: primarySchoolGateLoader({ userInfo, ...rest }),
       element: <PrimarySchool />,
     },
@@ -98,6 +100,7 @@ export const educationModule: PortalModule = {
       name: 'Námsmat',
       path: EducationPaths.EducationAssessment,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       loader: educationAssessmentGateLoader({ userInfo, ...rest }),
       element: <EducationCareer />,
     },
@@ -108,6 +111,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.PrimarySchoolList,
       key: PRIMARY_SCHOOL_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <PrimarySchool />,
     },
     {
@@ -115,6 +119,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.PrimarySchoolStudent,
       key: PRIMARY_SCHOOL_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <Navigate to="yfirlit" replace />,
     },
     {
@@ -122,6 +127,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.PrimarySchoolOverview,
       key: PRIMARY_SCHOOL_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
         <PrimarySchoolStudentWrapper>
@@ -134,6 +140,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.PrimarySchoolAssessment,
       key: PRIMARY_SCHOOL_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
         <PrimarySchoolStudentWrapper>
@@ -147,6 +154,7 @@ export const educationModule: PortalModule = {
       name: 'Framhaldsskóli',
       path: EducationPaths.EducationFramhskoli,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: (
         <Navigate to={EducationPaths.EducationFramhskoliCareer} replace />
       ),
@@ -155,24 +163,28 @@ export const educationModule: PortalModule = {
       name: 'Framhaldsskóli - Námsferill',
       path: EducationPaths.EducationFramhskoliCareer,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <SecondarySchoolCareer />,
     },
     {
       name: 'Útskriftaryfirlit',
       path: EducationPaths.EducationFramhskoliGraduationOverview,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <SecondarySchoolGraduationOverview />,
     },
     {
       name: 'Útskriftarferill',
       path: EducationPaths.EducationFramhskoliGraduationSingle,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <SecondarySchoolGraduationSingle />,
     },
     {
       name: 'Útskriftarferill nánar',
       path: EducationPaths.EducationFramhskoliGraduationDetail,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <SecondarySchoolGraduationDetail />,
     },
 
@@ -181,6 +193,7 @@ export const educationModule: PortalModule = {
       name: 'Háskóli',
       path: EducationPaths.EducationHaskoli,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: (
         <Navigate to={EducationPaths.EducationHaskoliGraduation} replace />
       ),
@@ -189,6 +202,7 @@ export const educationModule: PortalModule = {
       name: 'Brautskráning',
       path: EducationPaths.EducationHaskoliGraduation,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: (
         <UniversityGraduation
           studyType={UniversityCareersStudyType.UNIVERSITY_STUDIES}
@@ -199,6 +213,7 @@ export const educationModule: PortalModule = {
       name: 'Brautskráning - nánar ',
       path: EducationPaths.EducationHaskoliGraduationDetail,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: (
         <UniversityGraduationDetail
           studyType={UniversityCareersStudyType.UNIVERSITY_STUDIES}
@@ -212,6 +227,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.EducationHaskoliMicroCredentials,
       key: MICRO_CREDENTIALS_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: (
         <UniversityGraduation
           studyType={UniversityCareersStudyType.MICRO_CREDENTIALS}
@@ -223,6 +239,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.EducationHaskoliMicroCredentialsDetail,
       key: MICRO_CREDENTIALS_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: (
         <UniversityGraduationDetail
           studyType={UniversityCareersStudyType.MICRO_CREDENTIALS}
@@ -235,6 +252,7 @@ export const educationModule: PortalModule = {
       name: 'Ökunám',
       path: EducationPaths.EducationDrivingLessons,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       dynamic: true,
       element: <DrivingLessonsBook />,
     },

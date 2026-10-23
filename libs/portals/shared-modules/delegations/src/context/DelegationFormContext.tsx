@@ -28,6 +28,9 @@ export interface DelegationFormState {
   selectedScopes: ScopeSelection[]
   setSelectedScopes: Dispatch<SetStateAction<ScopeSelection[]>>
 
+  requestedScopeNames?: string[]
+  setRequestedScopeNames: Dispatch<SetStateAction<string[] | undefined>>
+
   clearForm: () => void
   skipNextClear: () => void
 }
@@ -37,6 +40,8 @@ const defaultState: DelegationFormState = {
   setIdentities: () => undefined,
   selectedScopes: [],
   setSelectedScopes: () => undefined,
+  requestedScopeNames: undefined,
+  setRequestedScopeNames: () => undefined,
   clearForm: () => undefined,
   skipNextClear: () => undefined,
 }
@@ -50,6 +55,9 @@ export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
 }) => {
   const [identities, setIdentities] = useState<Identity[]>([])
   const [selectedScopes, setSelectedScopes] = useState<ScopeSelection[]>([])
+  const [requestedScopeNames, setRequestedScopeNames] = useState<
+    string[] | undefined
+  >(undefined)
 
   const skipClearRef = useRef(false)
 
@@ -64,6 +72,7 @@ export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
     }
     setIdentities([])
     setSelectedScopes([])
+    setRequestedScopeNames(undefined)
   }, [])
 
   const value = useMemo(
@@ -72,10 +81,12 @@ export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
       setIdentities,
       selectedScopes,
       setSelectedScopes,
+      requestedScopeNames,
+      setRequestedScopeNames,
       clearForm,
       skipNextClear,
     }),
-    [identities, selectedScopes, clearForm, skipNextClear],
+    [identities, selectedScopes, requestedScopeNames, clearForm, skipNextClear],
   )
 
   return (

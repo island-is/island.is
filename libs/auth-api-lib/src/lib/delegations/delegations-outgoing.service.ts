@@ -251,6 +251,77 @@ export class DelegationsOutgoingService {
     return results.map((result) => result.delegation)
   }
 
+  // Indexing and notifications run only once the caller's transaction commits.
+  async createBatchInTransaction(
+    user: User,
+    inputs: CreateDelegationDTO[],
+    transaction: Transaction,
+  ): Promise<{
+    delegationIds: string[]
+    pendingConfirmations: PendingConfirmationDTO[]
+  }> {
+    for (const input of inputs) {
+      await this.validateCreateDelegation(user, input)
+    }
+
+    const written: WrittenDelegation[] = []
+    for (const input of inputs) {
+      written.push(await this.writeForDomain(user, input, transaction))
+    }
+    const confirmations = await this.delegationConfirmationService.group(
+      written.flatMap((row) =>
+        row.pendingConfirmation ? [row.pendingConfirmation] : [],
+      ),
+      transaction,
+    )
+    const stepUp = await this.delegationConfirmationService.startAuthentication(
+      user,
+      confirmations,
+      transaction,
+    )
+
+    transaction.afterCommit(() => {
+      for (const toNationalId of new Set(written.map((w) => w.toNationalId))) {
+        void this.delegationIndexService.indexCustomDelegations(
+          toNationalId,
+          user,
+        )
+      }
+      Promise.all(
+        written.map(async ({ id, hadExistingScopes }) => ({
+          delegation: await this.findOneInternal(
+            user,
+            DelegationDirection.OUTGOING,
+            { id },
+          ),
+          hadExistingScopes,
+        })),
+      )
+        .then((results) =>
+          this.notifyByRecipient(
+            user,
+            results.flatMap(({ delegation, hadExistingScopes }) =>
+              delegation ? [{ delegation, hadExistingScopes }] : [],
+            ),
+          ),
+        )
+        .catch(() =>
+          this.logger.error('Failed to notify delegations after commit'),
+        )
+    })
+
+    return {
+      delegationIds: written.map((w) => w.id),
+      pendingConfirmations: stepUp
+        ? written.flatMap(({ pendingConfirmation }) =>
+            pendingConfirmation
+              ? [new PendingConfirmationDTO(pendingConfirmation, stepUp)]
+              : [],
+          )
+        : [],
+    }
+  }
+
   private async createOrUpdateMany(
     user: User,
     inputs: CreateDelegationDTO[],

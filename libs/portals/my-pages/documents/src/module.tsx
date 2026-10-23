@@ -21,6 +21,7 @@ export const documentsModule: PortalModule = {
       name: rootName,
       path: DocumentsPaths.ElectronicDocumentsRoot,
       enabled: userInfo.scopes?.includes(DocumentsScope.main),
+      requiredScopes: [DocumentsScope.main],
       loader: documentLoader({ userInfo, ...rest }),
       element: <Overview />,
       children: [
@@ -28,6 +29,7 @@ export const documentsModule: PortalModule = {
           name: rootName,
           path: DocumentsPaths.ElectronicDocumentSingle,
           enabled: userInfo.scopes?.includes(DocumentsScope.main),
+          requiredScopes: [DocumentsScope.main],
           loader: documentLoader({ userInfo, ...rest }),
           element: <Overview />,
         },
