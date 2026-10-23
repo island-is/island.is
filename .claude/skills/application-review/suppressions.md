@@ -35,7 +35,8 @@ reporting; a finding that fits one is dropped.
   - Check whether `set` is lodash `set`.
   - Check that writer and reader really use different paths.
 - **G. Payment and notification semantics are deliberate.** In
-  `libs/application/api/payment` and notification scheduling, ask rather
+  `libs/application/api/payment`, the charge service
+  (`apps/application-system/api/**/charge/`) and notification scheduling, ask rather
   than assert about refund and notification behaviour, unless a double
   charge or a lost refund is provable. This does not apply to S4 (template
   payment configuration) or SE9.
@@ -48,7 +49,8 @@ reporting; a finding that fits one is dropped.
   findings unless they print personal data.
 - **K. Severity is earned.** High is reserved for crashes, blocked
   submission, wrong data sent to an institution, money, personal data and
-  access. Everything else is medium or low.
+  access. Everything else is medium or low. A scenario that needs rare,
+  overlapping failures is low, whatever the check's stated severity.
 - **L. Leave these alone as well:**
   - typos that mirror an upstream API field;
   - Icelandic wording nits, which are fixed in Contentful;
@@ -64,3 +66,7 @@ reporting; a finding that fits one is dropped.
   - code that contradicts it;
   - a decision missing from the README, or recorded without its reason
     (check G6).
+- **N. A `#markdown` id may exist for line breaks.** The suffix gives
+  translators a multi-line editor in Contentful. When the text renders as
+  plain `preLine`, do not propose dropping it; at most, note that other
+  markdown would show raw.

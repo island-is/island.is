@@ -144,19 +144,39 @@ Each prompt carries:
 > Read beyond the hunk whenever a check needs it: follow an answer key to
 > its writer, a role to every state, a shared field to its other users
 > (`grep` the templates). Report only changed lines, or unchanged code that
-> the change breaks. Drop anything `suppressions.md` covers. For each
-> finding, return: `path:line`, check id, severity (the check's stated
-> severity; change it only with a one-line reason), what is wrong, a concrete failure scenario (input →
-> wrong outcome), and a one-line fix. Include any ledger, abuse cases or
+> the change breaks. Drop anything `suppressions.md` covers. Cite source
+> code as evidence; a test or fixture shows what the test sets up, not how
+> production behaves. For each finding, return: `path:line`, check id,
+> what is wrong, a concrete failure scenario (input → wrong outcome), its
+> preconditions and how often they hold ("every applicant", "on an FJS
+> 503", "two failures overlapping"), what the user or institution then
+> sees, read from the code that renders or receives it, severity, and a
+> one-line fix. The check's stated severity is a ceiling: rate by
+> consequence and frequency, with a one-line reason when lower. Include any ledger, abuse cases or
 > FYI list your lens asks for. End with a list of the checks you applied
 > that came up clean. Keep findings under 500 words; the extras may add up
 > to 200 more.
 
 ## 4. Verify
 
-Before you report a finding, read its cited lines yourself.
+Before you report a finding, read its cited lines yourself. The lines
+being real proves nothing; the scenario must be. For every high or medium
+finding, try to disprove it:
 
-- Confirm the failure scenario can occur.
+- Follow it to what the user sees. Read the field, `Screen.tsx` or
+  `PaymentPending` that renders the outcome; a field may already catch the
+  error.
+- Check how the user reaches it: is the state listed, when is `pruneAt`
+  set, does the page need a session? See `framework-rules.md`.
+- Check that each precondition holds, and weigh how often.
+- Check the decisions list and suppressions once more against the
+  scenario, not only the code.
+- When there are more than about five such findings, send them to one
+  `general-purpose` subagent per lens, in parallel, briefed to disprove
+  each and return kept, lowered or dropped with a one-line reason.
+
+Then:
+
 - Trace values to their source, as Suppressions A requires.
 - Drop what fails, and merge duplicates that two lenses both raised.
 - If a finding is plausible but you cannot confirm it, keep it and mark it
@@ -249,6 +269,8 @@ empty, except the counts and clean checks.
 
 - High covers crashes, blocked submission, wrong or missing data sent to an
   institution, money, personal data and access. Nothing else is high.
+- Medium needs a scenario that reaches users in normal use. One that needs
+  rare, overlapping failures, or that loses no money or data, is low.
 - Cite the precedent PR from the check, so the author can see the same bug
   shipped before.
 - Name a real bug as a bug, and quantify it where you can ("every applicant

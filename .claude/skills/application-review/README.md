@@ -33,6 +33,9 @@ README under `## Decisions`, one bullet each: the decision, the reason, who
 decided, and the date (`DD.MM.ÁÁÁÁ`). The reviewer reads that section and
 does not re-argue what it lists. You can also state a decision in the request.
 
+When you reject a finding after looking into it, record it there too, with
+the reason. Otherwise the next review raises it again.
+
 ## How it works
 
 1. **Pin the target.** Take the diff, the author's claim, and the decisions.
@@ -40,8 +43,10 @@ does not re-argue what it lists. You can also state a decision in the request.
    touches.
 3. **Dispatch.** Each lens runs as its own subagent, in parallel. A diff under
    about 200 changed lines goes to a single agent.
-4. **Verify.** The main agent reads the cited lines of every finding, and
-   keeps, drops or marks each one unverified.
+4. **Verify.** The main agent reads the cited lines of every finding, tries
+   to disprove each high or medium scenario (what the user sees, how they
+   reach it, how often), and keeps, lowers, drops or marks each one
+   unverified.
 5. **Report.** Findings are grouped by severity, with the scenario and a fix
    for each, plus what was checked and found clean.
 

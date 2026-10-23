@@ -163,7 +163,9 @@ line number if the code has moved. Abbreviations:
 - **Only `{ title, summary }` error shapes show their own text.** `values`
   are read from `summary` only. Other shapes fall back to the generic
   message. Any error with a `problem` property passes through as is; all
-  others become a generic 500.
+  others become a generic 500, shown as "Eitthvað fór úrskeiðis: Villa kom
+  upp". A field that calls a provider itself (`updateApplicationExternalData`)
+  may catch the error and show its own message, so read the field first.
 - **`shouldPersistToExternalData: false`** keeps a result in memory and in
   the response, but not in the database.
 - **The form's Apollo client retries network errors up to five times,
@@ -198,12 +200,21 @@ line number if the code has moved. Abbreviations:
   handling depends on it.
 - **The price shown (`PaymentChargeOverview`, from the catalog) and the
   price charged (`chargeItems`) must stay in step.**
+- **The payments page needs no island.is session.**
+  `apps/payments/pages/[locale]/[paymentFlowId]` loads a flow by its id
+  alone, so a flow stays payable from browser history until it is closed.
+  A session timeout does not end it.
+- **While it waits, `PaymentPending` shows only a spinner.** Its cancel and
+  retry buttons appear only after a submit error.
 
 ## Lifecycle, files and notifications
 
 - **`pruneAt` is set on create and on each state entry.**
   - Saving answers never extends it.
   - Give every state `meta.lifecycle`.
+- **Users delete applications only from the list** (`ApplicationList.tsx`).
+  In an unlisted state (`shouldBeListed: false`), `delete: true` is
+  reachable through the API alone, not by a user.
 - **The prune worker runs every 30 minutes.** It deletes attachments in
   `application.attachments`, refunds or deletes charges, and keeps only
   `adminDataConfig` keys.
