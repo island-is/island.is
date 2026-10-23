@@ -258,6 +258,29 @@ const RentalAgreementTemplate: ApplicationTemplate<
               delete: true,
               api: [UserProfileApi, IdentityApi],
             },
+            {
+              // Other parties to the contract may read it but only the applicant can edit or send it to signing
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.inReviewAssigneeForm),
+                ),
+              read: {
+                answers: [
+                  'applicant',
+                  'parties',
+                  'registerProperty',
+                  'propertyInfo',
+                  'rentalPeriod',
+                  'rentalAmount',
+                  'securityDeposit',
+                  'specialProvisions',
+                  'condition',
+                  'fireProtections',
+                  'otherFees',
+                ],
+              },
+            },
           ],
         },
         on: {

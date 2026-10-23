@@ -30,7 +30,6 @@ import {
   InstitutionType,
   investigationCases,
   RequestCaseNotificationType,
-  RequestSharedWithDefender,
   restrictionCases,
   ServiceStatus,
   StringType,
@@ -793,52 +792,6 @@ describe('CaseController - Update', () => {
             user,
             caseId,
           },
-          {
-            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId1,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId1,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId2,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId2,
-          },
-        ])
-      })
-    },
-  )
-
-  describe.each([...restrictionCases, ...investigationCases])(
-    'defender email updated for %s case',
-    (type) => {
-      const defenderEmail = uuid()
-      const caseToUpdate = { defenderEmail }
-      const updatedCase = { ...theCase, type, defenderEmail }
-
-      beforeEach(async () => {
-        const mockFindLiveById =
-          mockCaseRepositoryService.findLiveById as jest.Mock
-        mockFindLiveById.mockResolvedValueOnce(updatedCase)
-
-        await givenWhenThen(caseId, user, theCase, caseToUpdate)
-      })
-
-      it('should post to queue', () => {
-        expect(mockQueuedMessages).toEqual([
           {
             type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
             user,
@@ -2298,104 +2251,6 @@ describe('CaseController - Update', () => {
         verdict2,
         transaction,
       )
-    })
-  })
-
-  describe('defender fields on request cases', () => {
-    const requestCase = {
-      ...theCase,
-      type: CaseType.CUSTODY,
-      defenderName: 'Old Name',
-      defenderNationalId: '0000000000',
-      defenderEmail: 'old@example.is',
-      defenderPhoneNumber: '0000000',
-      defendantWaivesRightToCounsel: false,
-    } as Case
-
-    describe.each([
-      [
-        'defender contact fields',
-        {
-          defenderName: 'Jane Doe',
-          defenderNationalId: '1234567890',
-          defenderEmail: 'jane@example.is',
-          defenderPhoneNumber: '5551234',
-        },
-      ],
-      ['a cleared defender name', { defenderName: null }],
-      [
-        'defendantWaivesRightToCounsel',
-        { defendantWaivesRightToCounsel: true },
-      ],
-    ])('when %s change', (_, update) => {
-      beforeEach(async () => {
-        await givenWhenThen(
-          caseId,
-          user,
-          requestCase,
-          update as unknown as UpdateCaseDto,
-        )
-      })
-
-      it('should not fan out to the defendants', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).not.toHaveBeenCalled()
-      })
-    })
-
-    describe('does not sync for indictment cases', () => {
-      const indictmentCase = {
-        ...theCase,
-        type: CaseType.INDICTMENT,
-      } as Case
-
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, indictmentCase, {
-          defenderName: 'Someone',
-        } as UpdateCaseDto)
-      })
-
-      it('should not call syncDefenderToAllDefendants', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).not.toHaveBeenCalled()
-      })
-    })
-
-    describe('does not sync when non-defender fields change', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          courtLocation: 'Some court',
-        } as UpdateCaseDto)
-      })
-
-      it('should not call syncDefenderToAllDefendants', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).not.toHaveBeenCalled()
-      })
-    })
-
-    describe('syncs when requestSharedWithDefender changes on a request case', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
-        } as UpdateCaseDto)
-      })
-
-      it('should sync only the sharing timing onto the defendants', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).toHaveBeenCalledWith(
-          caseId,
-          {
-            requestSharedWithDefender:
-              RequestSharedWithDefender.READY_FOR_COURT,
-          },
-          transaction,
-        )
-      })
     })
   })
 

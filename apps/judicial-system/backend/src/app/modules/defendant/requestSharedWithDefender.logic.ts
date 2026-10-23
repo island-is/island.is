@@ -24,8 +24,7 @@ const normalizeDefenderEmail = (email?: string | null): string | null => {
 }
 
 /**
- * Most permissive request-sharing timing among defendants that share a
- * defender (or across a case for the case-level dual-write mirror).
+ * Most permissive request-sharing timing among the given values.
  * Order: READY_FOR_COURT > COURT_DATE > NOT_SHARED > null.
  */
 export const getMostPermissiveRequestSharedWithDefender = (
@@ -54,7 +53,7 @@ export const getMostPermissiveRequestSharedWithDefender = (
  * Sharing timing for a defender national id: most permissive among the
  * defendants they represent. If they match nobody (e.g. prison staff peeking
  * at limited-access fields), fall back to most permissive across all
- * defendants — same signal the case-level dual-write mirror carries.
+ * defendants.
  */
 export const getMostPermissiveRequestSharedWithDefenderForNationalId = (
   defendants: DefendantWithRequestSharing[] | null | undefined,

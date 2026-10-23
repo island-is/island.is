@@ -650,7 +650,7 @@ describe('CardPaymentController', () => {
           id: paymentFlowId,
           payerNationalId: '1234567890',
           charges: [],
-          availablePaymentMethods: [],
+          availablePaymentMethods: [PaymentMethod.CARD],
           onUpdateUrl: ON_UPDATE_URL,
           organisationId: '1234567890',
           created: new Date(),
@@ -679,6 +679,78 @@ describe('CardPaymentController', () => {
 
       const errorCode = response.body.detail
       expect(errorCode).toBe(PaymentServiceCode.PaymentFlowAlreadyPaid)
+
+      getPaymentFlowDetailsSpy.mockRestore()
+      getPaymentFlowChargeDetailsSpy.mockRestore()
+      getPaymentFlowStatusSpy.mockRestore()
+      fetchSpy.mockRestore()
+    })
+
+    // The payment page only offers the flow's methods, but the endpoint can be called directly.
+    it('should throw an error if trying to charge a payment flow that does not offer card', async () => {
+      const chargeInput: ChargeCardInput = {
+        paymentFlowId,
+        cardNumber: '4242424242424242',
+        expiryMonth: 12,
+        expiryYear: new Date().getFullYear() - 2000,
+        cvc: '123',
+      }
+
+      const fetchSpy = jest
+        .spyOn(global, 'fetch')
+        .mockImplementation(async (url) => {
+          if (typeof url === 'string') {
+            if (url === ON_UPDATE_URL) {
+              return {
+                json: async () => ({ isSuccess: true }),
+                status: 200,
+                ok: true,
+              } as Response
+            }
+          }
+
+          return {
+            json: async () => ({ error: 'Missing handler' }),
+            status: 500,
+            ok: false,
+          } as Response
+        })
+
+      const getPaymentFlowDetailsSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
+        .mockResolvedValue({
+          id: paymentFlowId,
+          payerNationalId: '1234567890',
+          charges: [],
+          availablePaymentMethods: [PaymentMethod.INVOICE],
+          onUpdateUrl: ON_UPDATE_URL,
+          organisationId: '1234567890',
+          created: new Date(),
+          modified: new Date(),
+          isDeleted: false,
+        })
+      const getPaymentFlowChargeDetailsSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
+        .mockResolvedValue({
+          catalogItems: [],
+          totalPrice: 1000,
+          firstProductTitle: 'TODO',
+        })
+      const getPaymentFlowStatusSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowStatus')
+        .mockResolvedValue({
+          paymentStatus: PaymentStatus.UNPAID,
+          updatedAt: new Date(Date.now() - 30 * 1000),
+        })
+
+      const response = await server
+        .post('/v1/payments/card/charge')
+        .send(chargeInput)
+
+      expect(response.status).toBe(400)
+      expect(response.body.detail).toBe(
+        PaymentServiceCode.InvalidPaymentMethods,
+      )
 
       getPaymentFlowDetailsSpy.mockRestore()
       getPaymentFlowChargeDetailsSpy.mockRestore()
@@ -1105,7 +1177,7 @@ describe('CardPaymentController', () => {
             organisationId: '5534567890',
             payerNationalId: '1234567890',
             charges: [],
-            availablePaymentMethods: [],
+            availablePaymentMethods: [PaymentMethod.CARD],
             onUpdateUrl: ON_UPDATE_URL,
             created: new Date(),
             modified: new Date(),
@@ -1237,7 +1309,7 @@ describe('CardPaymentController', () => {
             organisationId: '5534567890',
             payerNationalId: '1234567890',
             charges: [],
-            availablePaymentMethods: [],
+            availablePaymentMethods: [PaymentMethod.CARD],
             onUpdateUrl: ON_UPDATE_URL,
             created: new Date(),
             modified: new Date(),
@@ -1311,7 +1383,7 @@ describe('CardPaymentController', () => {
             id: paymentFlowId,
             payerNationalId: '1234567890',
             charges: [],
-            availablePaymentMethods: [],
+            availablePaymentMethods: [PaymentMethod.CARD],
             onUpdateUrl: ON_UPDATE_URL,
             organisationId: '1234567890',
             created: new Date(),
@@ -1445,7 +1517,7 @@ describe('CardPaymentController', () => {
             organisationId: '5534567890',
             payerNationalId: '1234567890',
             charges: [],
-            availablePaymentMethods: [],
+            availablePaymentMethods: [PaymentMethod.CARD],
             onUpdateUrl: ON_UPDATE_URL,
             created: new Date(),
             modified: new Date(),
@@ -1556,7 +1628,7 @@ describe('CardPaymentController', () => {
             organisationId: '5534567890',
             payerNationalId: '1234567890',
             charges: [],
-            availablePaymentMethods: [],
+            availablePaymentMethods: [PaymentMethod.CARD],
             onUpdateUrl: ON_UPDATE_URL,
             created: new Date(),
             modified: new Date(),
@@ -1657,7 +1729,7 @@ describe('CardPaymentController', () => {
             organisationId: '5534567890',
             payerNationalId: '1234567890',
             charges: [],
-            availablePaymentMethods: [],
+            availablePaymentMethods: [PaymentMethod.CARD],
             onUpdateUrl: ON_UPDATE_URL,
             created: new Date(),
             modified: new Date(),
