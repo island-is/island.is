@@ -4,6 +4,7 @@ import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
+  getIndictmentPdfDisplayName,
   getVisibleSubpoenas,
   shouldShowPoliceDigitalCaseFilesSection,
   shouldShowReplaceIndictmentPdf,
@@ -155,7 +156,11 @@ describe('getVisibleSubpoenas', () => {
 })
 
 describe('shouldShowReplaceIndictmentPdf', () => {
-  const prosecutor = {
+  const districtProsecutor = {
+    role: UserRole.PROSECUTOR,
+    institution: { type: InstitutionType.DISTRICT_PROSECUTORS_OFFICE },
+  } as User
+  const policeProsecutor = {
     role: UserRole.PROSECUTOR,
     institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
   } as User
@@ -165,15 +170,23 @@ describe('shouldShowReplaceIndictmentPdf', () => {
     indictmentHash: '{"hash":"frozen"}',
   } as CaseFilesListCase
 
-  it('shows the upload when the indictment pdf is already frozen', () => {
-    expect(shouldShowReplaceIndictmentPdf(submitted, prosecutor)).toBe(true)
+  it('shows the upload for Héraðssaksóknari when the pdf is frozen', () => {
+    expect(shouldShowReplaceIndictmentPdf(submitted, districtProsecutor)).toBe(
+      true,
+    )
+  })
+
+  it('hides it from police prosecutors', () => {
+    expect(shouldShowReplaceIndictmentPdf(submitted, policeProsecutor)).toBe(
+      false,
+    )
   })
 
   it('hides it before the indictment pdf has been frozen to S3', () => {
     expect(
       shouldShowReplaceIndictmentPdf(
         { ...submitted, indictmentHash: null },
-        prosecutor,
+        districtProsecutor,
       ),
     ).toBe(false)
   })
@@ -182,7 +195,7 @@ describe('shouldShowReplaceIndictmentPdf', () => {
     expect(
       shouldShowReplaceIndictmentPdf(
         { ...submitted, state: CaseState.WAITING_FOR_CONFIRMATION },
-        prosecutor,
+        districtProsecutor,
       ),
     ).toBe(false)
   })
@@ -194,5 +207,30 @@ describe('shouldShowReplaceIndictmentPdf', () => {
     } as User
 
     expect(shouldShowReplaceIndictmentPdf(submitted, judge)).toBe(false)
+  })
+})
+
+describe('getIndictmentPdfDisplayName', () => {
+  it('keeps the sent-to-court date for a generated indictment', () => {
+    expect(
+      getIndictmentPdfDisplayName({
+        id: 'case-id',
+        caseSentToCourtDate: '2026-10-21T12:00:00.000Z',
+        indictmentHash: JSON.stringify({ hash: 'frozen' }),
+      } as CaseFilesListCase),
+    ).toBe('Ákæra 21.10.2026.pdf')
+  })
+
+  it('drops the date after the indictment has been replaced', () => {
+    expect(
+      getIndictmentPdfDisplayName({
+        id: 'case-id',
+        caseSentToCourtDate: '2026-10-21T12:00:00.000Z',
+        indictmentHash: JSON.stringify({
+          hash: 'replaced',
+          replaced: true,
+        }),
+      } as CaseFilesListCase),
+    ).toBe('Ákæra.pdf')
   })
 })

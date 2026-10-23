@@ -55,6 +55,7 @@ import { isAppealFileCategoryVisible } from '@island.is/judicial-system-web/src/
 
 import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
+  getIndictmentPdfDisplayName,
   getVisibleSubpoenas,
   shouldShowPoliceDigitalCaseFilesSection,
   shouldShowReplaceIndictmentPdf,
@@ -526,11 +527,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 connectedCaseParentId={connectedCaseParentId}
                 title={prefixGeneratedDocumentNameWithDocumentOrder(
                   'indictment',
-                  `Ákæra${
-                    workingCase.caseSentToCourtDate
-                      ? ` ${formatDate(workingCase.caseSentToCourtDate)}`
-                      : ''
-                  }.pdf`,
+                  getIndictmentPdfDisplayName(workingCase),
                   workingCase.id,
                 )}
                 pdfType="indictment"
