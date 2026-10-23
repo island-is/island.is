@@ -1646,6 +1646,22 @@ describe('CaseController - Update', () => {
     })
   })
 
+  describe('civil claims turned off', () => {
+    const caseToUpdate = { hasCivilClaims: false }
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should delete the civil demands case string', () => {
+      expect(
+        mockCaseStringRepositoryService.deleteByCaseAndType,
+      ).toHaveBeenCalledWith(caseId, StringType.CIVIL_DEMANDS, {
+        transaction,
+      })
+    })
+  })
+
   describe('merge parent chosen for a received case', () => {
     const receivedCase = {
       ...theCase,
