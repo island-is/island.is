@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 
 import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -194,6 +195,50 @@ describe('VerdictAppealStatementDeadlines', () => {
     expect(
       card('Fyrsti Kröfuhafi').getByLabelText(/Frestur til/),
     ).toBeDisabled()
+  })
+
+  // The court files a statement itself through the card's menu. A party
+  // whose statement is in has none: there is nothing left to file.
+  it('offers to upload a statement for each party whose is not in', async () => {
+    renderPage()
+
+    expect(
+      card('Fyrsti Kröfuhafi').queryByRole('button', { name: /Valmynd/ }),
+    ).not.toBeInTheDocument()
+
+    await userEvent.click(
+      card('Gervimaður Jónsson').getByRole('button', {
+        name: 'Valmynd fyrir Gervimaður Jónsson',
+      }),
+    )
+    // The item's handler sits on the button inside the menu item, not on
+    // the item itself, so the click goes to the text.
+    await userEvent.click(
+      await screen.findByText('Hlaða upp greinargerð', { selector: 'button' }),
+    )
+
+    expect(mockPush).toHaveBeenCalledWith(
+      `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE}/case-id?appealCaseId=verdict-appeal&defendantId=d1`,
+    )
+  })
+
+  it('names nobody on the upload link for the prosecution', async () => {
+    renderPage()
+
+    await userEvent.click(
+      card('Sækjandi Sækjandason').getByRole('button', {
+        name: 'Valmynd fyrir Sækjandi Sækjandason',
+      }),
+    )
+    // The item's handler sits on the button inside the menu item, not on
+    // the item itself, so the click goes to the text.
+    await userEvent.click(
+      await screen.findByText('Hlaða upp greinargerð', { selector: 'button' }),
+    )
+
+    expect(mockPush).toHaveBeenCalledWith(
+      `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE}/case-id?appealCaseId=verdict-appeal`,
+    )
   })
 
   it('sends a first deadline after the court confirms it', async () => {
