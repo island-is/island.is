@@ -21,6 +21,7 @@ import {
   PaymentsApiClientConfig,
 } from '@island.is/clients/payments'
 import { IdsClientConfig } from '@island.is/nest/config'
+import { FetchError } from '@island.is/clients/middlewares'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
 import { SequelizeConfigService } from '../../../../sequelizeConfig.service'
@@ -262,5 +263,27 @@ describe('Debt payments', () => {
       mockPaymentsApi.paymentFlowControllerDeletePaymentFlow,
     ).toHaveBeenCalledWith({ id: 'flow-id' })
     expect(await service.findPaymentByApplicationId(unpaidId)).toBeNull()
+  })
+
+  it('deletes a rejected payment but leaves its flow to services-payments to refund', async () => {
+    const applicationId = await createApplication()
+    await service.createDebtPayment(user, applicationId, debts)
+    paidFlow(true)
+    mockPaymentsApi.paymentFlowControllerDeletePaymentFlow.mockRejectedValue(
+      await FetchError.buildMock(
+        {
+          status: 400,
+          headers: { 'content-type': 'application/problem+json' },
+        },
+        JSON.stringify({ status: 400, detail: 'PaymentFlowAlreadyPaid' }),
+      ),
+    )
+
+    await service.deleteDebtPayment(applicationId, user)
+
+    expect(
+      mockPaymentsApi.paymentFlowControllerDeletePaymentFlow,
+    ).toHaveBeenCalledWith({ id: 'flow-id' })
+    expect(await service.findPaymentByApplicationId(applicationId)).toBeNull()
   })
 })
