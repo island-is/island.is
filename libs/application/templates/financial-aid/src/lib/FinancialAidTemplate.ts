@@ -28,7 +28,7 @@ import {
   hasActiveCurrentApplication,
   hasSpouseCheck,
 } from './utils'
-import { FAApplication } from '..'
+import { FAApplication } from './types'
 import {
   CreateApplicationApi,
   CurrentApplicationApi,
@@ -41,10 +41,7 @@ import {
   SendSpouseEmailApi,
 } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
-import {
-  coreHistoryMessages,
-  corePendingActionMessages,
-} from '@island.is/application/core'
+import { corePendingActionMessages } from '@island.is/application/core'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -61,7 +58,7 @@ const FinancialAidTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FINANCIAL_AID,
   name: application.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   dataSchema,
   translationNamespaces: [ApplicationConfigurations.FinancialAid.translation],
   stateMachineConfig: {
@@ -217,13 +214,6 @@ const FinancialAidTemplate: ApplicationTemplate<
           })),
           actionCard: {
             description: stateDescriptions.spouse,
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: coreHistoryMessages.applicationApproved,
-                includeSubjectAndActor: true,
-              },
-            ],
             pendingAction: (_, role) => {
               return role === Roles.SPOUSE
                 ? {

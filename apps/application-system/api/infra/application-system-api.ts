@@ -31,6 +31,7 @@ import {
   Properties,
   RskCompanyInfo,
   RskCarRentalRate,
+  RVKFinancialAid,
   SeminarsVer,
   SocialInsuranceAdministration,
   TransportAuthority,
@@ -365,6 +366,11 @@ export const serviceSetup = (services: {
         staging: 'hh_env_staging',
         prod: 'hh_env_prod',
       },
+      PERSONAL_TAX_RETURN_URL: {
+        dev: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc',
+        staging: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc',
+        prod: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc',
+      },
       REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -434,6 +440,7 @@ export const serviceSetup = (services: {
       VMSTUnemployment,
       RecyclingFund,
       DirectorateOfEquality,
+      RVKFinancialAid,
     )
     .secrets({
       NOVA_URL: '/k8s/NOVA_URL_V1',
@@ -445,6 +452,10 @@ export const serviceSetup = (services: {
       CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
         '/k8s/application-system/api/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
       AUTH_JWT_SECRET: '/k8s/application-system/api/AUTH_JWT_SECRET',
+      // Municipality code -> Veita tenant JSON. Empty map routes every municipality
+      // through the original financial aid backend. Shared with the form service.
+      SI_PUBLIC_FINANCIAL_AID_VEITA_TENANTS:
+        '/k8s/application-system/FINANCIAL_AID_VEITA_TENANTS',
       DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
       EMAIL_FROM: '/k8s/application-system/api/EMAIL_FROM',
       EMAIL_FROM_NAME: '/k8s/application-system/api/EMAIL_FROM_NAME',
@@ -491,6 +502,10 @@ export const serviceSetup = (services: {
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
       REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
+      PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID:
+        '/k8s/application-system/api/PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID',
+      PERSONAL_TAX_RETURN_AGENT_ID:
+        '/k8s/application-system/api/PERSONAL_TAX_RETURN_AGENT_ID',
     })
     .db()
     .migrations()

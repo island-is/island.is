@@ -18,7 +18,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { RecordObject } from '@island.is/application/types'
 
 import { filesText, missingFiles } from '../../lib/messages'
-import { Files } from '..'
+import Files from '../Files/Files'
 import { FAFieldBaseProps, UploadFileType } from '../../lib/types'
 import useApplication from '../../lib/hooks/useApplication'
 import { Controller, useFormContext } from 'react-hook-form'

@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { ModalBase, Text, Box, Button } from '@island.is/island-ui/core'
 
 import { DirectTaxPayment } from '@island.is/financial-aid/shared/lib'
-import { TaxBreakdown } from '..'
+import TaxBreakdown from '../TaxBreakdown/TaxBreakdown'
 import { directTaxPaymentModal } from '../../lib/messages'
 
 import * as styles from './DirectTaxPaymentModal.css'
