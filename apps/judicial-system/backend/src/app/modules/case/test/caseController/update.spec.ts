@@ -1647,7 +1647,11 @@ describe('CaseController - Update', () => {
   })
 
   describe('civil claims turned off', () => {
-    const caseToUpdate = { hasCivilClaims: false }
+    const caseToUpdate = {
+      hasCivilClaims: false,
+      // Stale paired field must not reinsert the string after the delete
+      civilDemands: uuid(),
+    }
 
     beforeEach(async () => {
       await givenWhenThen(caseId, user, theCase, caseToUpdate)
@@ -1659,6 +1663,12 @@ describe('CaseController - Update', () => {
       ).toHaveBeenCalledWith(caseId, StringType.CIVIL_DEMANDS, {
         transaction,
       })
+    })
+
+    it('should not upsert civil demands from the same update', () => {
+      expect(
+        mockCaseStringRepositoryService.upsertByCaseAndType,
+      ).not.toHaveBeenCalled()
     })
   })
 
