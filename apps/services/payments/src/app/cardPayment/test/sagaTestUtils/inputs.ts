@@ -1,5 +1,6 @@
 import type { ApplePayChargeInput } from '../../applePay/dtos'
 import type { ChargeCardInput } from '../../card/dtos'
+import type { GooglePayChargeInput } from '../../googlePay/dtos'
 import { PAYMENT_FLOW_ID } from './mocks'
 
 export const getChargeCardInput = (): ChargeCardInput => ({
@@ -28,4 +29,9 @@ export const getApplePayChargeInput = (): ApplePayChargeInput => ({
     },
   },
   transactionIdentifier: TEST_APPLE_PAY_TRANSACTION_ID,
+})
+
+export const getGooglePayChargeInput = (): GooglePayChargeInput => ({
+  paymentFlowId: PAYMENT_FLOW_ID,
+  token: '{"protocolVersion":"ECv2"}',
 })

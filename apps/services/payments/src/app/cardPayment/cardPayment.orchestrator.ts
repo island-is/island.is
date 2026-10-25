@@ -12,6 +12,7 @@ import { PaymentContext } from '../refund/refund.orchestrator'
 import type { SettleDebtStepResult } from './cardPayment.debt'
 import { ApplePayChargeInput } from './applePay/dtos'
 import { ChargeCardInput } from './card/dtos'
+import { GooglePayChargeInput } from './googlePay/dtos'
 
 export {
   PaymentOrchestrator,
@@ -80,6 +81,33 @@ export interface ApplePayPaymentStepResults {
 export interface ApplePayPaymentContext
   extends PaymentContext<ApplePayPaymentStepResults> {
   input: ApplePayChargeInput
+  trackingData: PaymentTrackingData
+  metadata?: CardPaymentSagaMetadata
+}
+
+// Google Pay payment types
+export type GooglePayPaymentSagaDefinition = SagaDefinition<
+  GooglePayPaymentContext,
+  GooglePayPaymentStepResults
+>
+
+export interface GooglePayPaymentStepResults {
+  VALIDATE: {
+    paymentFlow: PaymentFlowAttributes
+    catalogItems: CatalogItemWithQuantity[]
+    totalPrice: number
+  }
+  CHARGE_GOOGLE_PAY: {
+    paymentResult: CardPaymentSuccessResponse
+  }
+  PERSIST_PAYMENT_CONFIRMATION: void
+  SETTLE_DEBT: SettleDebtStepResult
+  NOTIFY_SUCCESSFUL_PAYMENT: void
+}
+
+export interface GooglePayPaymentContext
+  extends PaymentContext<GooglePayPaymentStepResults> {
+  input: GooglePayChargeInput
   trackingData: PaymentTrackingData
   metadata?: CardPaymentSagaMetadata
 }

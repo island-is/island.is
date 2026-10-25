@@ -153,6 +153,29 @@ export const ApplePayDecryptedWalletPaymentPayloadSchema = z.object({
 export type ApplePayDecryptedWalletPaymentPayload = z.infer<
   typeof ApplePayDecryptedWalletPaymentPayloadSchema
 >
+
+/** Valitor Google Pay decrypted payment token payload (Sale operation with DecryptedPaymentTokenData) */
+const GooglePayDecryptedPaymentTokenDataSchema =
+  ApplePayDecryptedPaymentTokenDataSchema.extend({
+    eci: z.string().optional(),
+  })
+
+export const GooglePayDecryptedWalletPaymentPayloadSchema = z.object({
+  operation: z.literal('Sale'),
+  walletPaymentType: z.literal('GooglePay'),
+  googlePayWalletPayment: z.object({
+    decryptedPaymentTokenData: GooglePayDecryptedPaymentTokenDataSchema,
+  }),
+  paymentAdditionalData: z.object({
+    merchantReferenceData: z.string(),
+  }),
+  systemCalling: z.string(),
+  correlationId: z.string(),
+})
+
+export type GooglePayDecryptedWalletPaymentPayload = z.infer<
+  typeof GooglePayDecryptedWalletPaymentPayloadSchema
+>
 export type CardVerificationSuccessResponse = z.infer<
   typeof CardVerificationSuccessSchema
 >

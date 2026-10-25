@@ -11,6 +11,19 @@ import { CatalogItemWithQuantity } from '../../types/charges'
 
 export const iskToAur = (amount: number) => amount * 100
 
+export const generateWalletPaymentRequestHeaders = (
+  paymentApiConfig: CardPaymentModuleConfigType['paymentGateway'],
+) => {
+  const { paymentsApiSecret, paymentsApiHeaderKey, paymentsApiHeaderValue } =
+    paymentApiConfig
+
+  return {
+    'Content-Type': 'application/json',
+    Authorization: paymentsApiSecret,
+    [paymentsApiHeaderKey]: paymentsApiHeaderValue,
+  }
+}
+
 export const generateRefundRequestOptions = ({
   amount,
   cardNumber,

@@ -164,6 +164,7 @@ export enum Features {
   isIslandisInvoicePaymentEnabled = 'isIslandisInvoicePaymentEnabled',
   isIslandisApplePayPaymentEnabled = 'isIslandisApplePayPaymentEnabled',
   isIslandisApplePayStrictSignatureVerificationEnabled = 'isIslandisApplePayStrictSignatureVerificationEnabled',
+  isIslandisGooglePayPaymentEnabled = 'isIslandisGooglePayPaymentEnabled',
   isIslandisBankTransferPaymentEnabled = 'isIslandisBankTransferPaymentEnabled',
   isIslandisBankTransferPaymentAllowedForCompany = 'isIslandisBankTransferPaymentAllowedForCompany',
   isIslandisDebtPaymentEnabled = 'isIslandisDebtPaymentEnabled',

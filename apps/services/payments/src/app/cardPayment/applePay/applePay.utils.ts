@@ -3,22 +3,12 @@ import { Agent } from 'undici'
 
 import { ApplePayDecryptedWalletPaymentPayload } from '../../../types/cardPayment'
 import { CardPaymentModuleConfigType } from '../cardPayment.config'
-import { iskToAur } from '../cardPayment.utils'
+import {
+  generateWalletPaymentRequestHeaders,
+  iskToAur,
+} from '../cardPayment.utils'
 import { PaymentTrackingData } from '../../../types'
 import { APPLE_PAY_ALLOWED_VALIDATION_HOSTS } from './applePay.constants'
-
-export const generateApplePayRequestHeaders = (
-  paymentApiConfig: CardPaymentModuleConfigType['paymentGateway'],
-) => {
-  const { paymentsApiSecret, paymentsApiHeaderKey, paymentsApiHeaderValue } =
-    paymentApiConfig
-
-  return {
-    'Content-Type': 'application/json',
-    Authorization: paymentsApiSecret,
-    [paymentsApiHeaderKey]: paymentsApiHeaderValue,
-  }
-}
 
 export const validateAndParseApplePayValidationUrl = (
   validationURL: string,
@@ -328,7 +318,7 @@ export const generateApplePayDecryptedChargeRequestOptions = ({
 
   return {
     method: 'POST' as const,
-    headers: generateApplePayRequestHeaders(paymentApiConfig),
+    headers: generateWalletPaymentRequestHeaders(paymentApiConfig),
     body: JSON.stringify(body),
   }
 }

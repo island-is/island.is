@@ -62,6 +62,12 @@ export enum CardErrorCode {
   ApplePayNotConfigured = 'ApplePayNotConfigured',
   ApplePayReplayDetected = 'ApplePayReplayDetected',
   ApplePaySignatureVerificationFailed = 'ApplePaySignatureVerificationFailed',
+  GooglePayNotConfigured = 'GooglePayNotConfigured',
+  GooglePayKeysUnavailable = 'GooglePayKeysUnavailable',
+  GooglePayTokenInvalid = 'GooglePayTokenInvalid',
+  GooglePayTokenExpired = 'GooglePayTokenExpired',
+  GooglePayReplayDetected = 'GooglePayReplayDetected',
+  GooglePaySavedCardNotSupported = 'GooglePaySavedCardNotSupported',
 }
 
 export enum InvoiceErrorCode {
