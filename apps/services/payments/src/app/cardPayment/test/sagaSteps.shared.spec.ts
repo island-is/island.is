@@ -14,12 +14,13 @@ import { PaymentFlowService } from '../../paymentFlow/paymentFlow.service'
 import {
   createApplePayPaymentContext,
   createApplePayPaymentSaga,
-} from '../applePayPayment.saga'
+} from '../applePay/applePayPayment.saga'
 import {
   createCardPaymentContext,
   createCardPaymentSaga,
-} from '../cardPayment.saga'
-import type { ApplePayChargeInput, ChargeCardInput } from '../dtos'
+} from '../card/cardPayment.saga'
+import type { ApplePayChargeInput } from '../applePay/dtos'
+import type { ChargeCardInput } from '../card/dtos'
 import {
   createMockCardPaymentService,
   createMockLogger,

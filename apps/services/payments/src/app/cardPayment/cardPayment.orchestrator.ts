@@ -10,7 +10,8 @@ import { SagaDefinition } from '../../utils/orchestrator'
 import { PaymentFlowAttributes } from '../paymentFlow/models'
 import { PaymentContext } from '../refund/refund.orchestrator'
 import type { SettleDebtStepResult } from './cardPayment.debt'
-import { ApplePayChargeInput, ChargeCardInput } from './dtos'
+import { ApplePayChargeInput } from './applePay/dtos'
+import { ChargeCardInput } from './card/dtos'
 
 export {
   PaymentOrchestrator,

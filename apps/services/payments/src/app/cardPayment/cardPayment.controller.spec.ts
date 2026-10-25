@@ -32,11 +32,11 @@ import {
   SavedVerificationCompleteData,
   SavedVerificationPendingData,
 } from '../../types/cardPayment'
-import { generateMd, getPayloadFromMd } from './cardPayment.utils'
-import * as cardPaymentUtils from './cardPayment.utils'
-import { ChargeCardInput, VerificationCallbackInput } from './dtos'
+import { generateMd, getPayloadFromMd } from './card/card.utils'
+import * as applePayUtils from './applePay/applePay.utils'
+import { ChargeCardInput, VerificationCallbackInput } from './card/dtos'
 import { RefundPaymentInput } from '../refund/dtos/refundPayment.input'
-import { VerifyCardInput } from './dtos/verifyCard.input'
+import { VerifyCardInput } from './card/dtos/verifyCard.input'
 
 const charges = [
   {
@@ -1109,7 +1109,7 @@ describe('CardPaymentController', () => {
 
       beforeEach(() => {
         decryptSpy = jest
-          .spyOn(cardPaymentUtils, 'decryptApplePayPaymentToken')
+          .spyOn(applePayUtils, 'decryptApplePayPaymentToken')
           .mockReturnValue({
             cardNumber: '4761340000054693',
             expirationMonth: 12,

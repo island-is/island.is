@@ -36,28 +36,31 @@ import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import { paymentGatewayResponseCodes } from './cardPayment.constants'
-import { verifyApplePaySignature } from './applePaySignature'
+import { verifyApplePaySignature } from './applePay/applePaySignature'
+import {
+  buildCardPayInfo,
+  generateRefundRequestOptions,
+} from './cardPayment.utils'
 import {
   buildVerificationBrowserData,
   buildVerificationCardholderData,
+  generateChargeRequestOptions,
+  generateMd,
+  generateVerificationRequestOptions,
+  getPayloadFromMd,
+} from './card/card.utils'
+import {
   decryptApplePayPaymentToken,
   generateApplePayDecryptedChargeRequestOptions,
   generateApplePayValidationRequestOptions,
-  generateChargeRequestOptions,
-  generateMd,
-  buildCardPayInfo,
-  generateRefundRequestOptions,
-  generateVerificationRequestOptions,
-  getPayloadFromMd,
   validateAndParseApplePayValidationUrl,
-} from './cardPayment.utils'
+} from './applePay/applePay.utils'
+import { ApplePayChargeInput, ApplePaySessionResponse } from './applePay/dtos'
 import {
-  ApplePayChargeInput,
-  ApplePaySessionResponse,
   ChargeCardInput,
   VerificationCallbackInput,
   VerifyCardInput,
-} from './dtos'
+} from './card/dtos'
 
 @Injectable()
 export class CardPaymentService {

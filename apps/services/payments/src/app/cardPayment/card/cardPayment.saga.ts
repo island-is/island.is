@@ -3,19 +3,19 @@ import { uuid } from 'uuidv4'
 import { Logger } from '@island.is/logging'
 import { retry } from '@island.is/shared/utils/server'
 
-import { PaymentMethod, RefundType } from '../../types'
-import { requireStepResult } from '../../utils/orchestrator'
-import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
+import { PaymentMethod, RefundType } from '../../../types'
+import { requireStepResult } from '../../../utils/orchestrator'
+import { PaymentFlowService } from '../../paymentFlow/paymentFlow.service'
 import {
   CardPaymentContext,
   CardPaymentSagaDefinition,
-} from './cardPayment.orchestrator'
-import { CardPaymentService } from './cardPayment.service'
+} from '../cardPayment.orchestrator'
+import { CardPaymentService } from '../cardPayment.service'
 import {
   keepDebtPayment,
   notifyPaymentCompleted,
   settleDebtStep,
-} from './cardPayment.debt'
+} from '../cardPayment.debt'
 import { ChargeCardInput } from './dtos'
 
 export const createCardPaymentContext = (

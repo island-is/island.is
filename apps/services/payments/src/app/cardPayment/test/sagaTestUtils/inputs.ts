@@ -1,4 +1,5 @@
-import type { ApplePayChargeInput, ChargeCardInput } from '../../dtos'
+import type { ApplePayChargeInput } from '../../applePay/dtos'
+import type { ChargeCardInput } from '../../card/dtos'
 import { PAYMENT_FLOW_ID } from './mocks'
 
 export const getChargeCardInput = (): ChargeCardInput => ({

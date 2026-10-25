@@ -31,7 +31,7 @@ import { notifyKeptDebtPayment } from './cardPayment.debt'
 import {
   createApplePayPaymentContext,
   createApplePayPaymentSaga,
-} from './applePayPayment.saga'
+} from './applePay/applePayPayment.saga'
 import {
   ApplePayPaymentContext,
   ApplePayPaymentStepResults,
@@ -42,13 +42,15 @@ import {
 import {
   createCardPaymentContext,
   createCardPaymentSaga,
-} from './cardPayment.saga'
+} from './card/cardPayment.saga'
 import { CardPaymentService } from './cardPayment.service'
 import {
   ApplePayChargeInput,
   ApplePayChargeResponse,
   ApplePaySessionResponse,
   ValidateApplePayMerchantInput,
+} from './applePay/dtos'
+import {
   ChargeCardInput,
   ChargeCardResponse,
   GetVerificationStatus,
@@ -57,7 +59,7 @@ import {
   VerificationStatusResponse,
   VerifyCardInput,
   VerifyCardResponse,
-} from './dtos'
+} from './card/dtos'
 import { RefundService } from '../refund/refund.service'
 
 @UseGuards(FeatureFlagGuard)
