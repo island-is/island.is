@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
   buildInteractiveTableField,
   buildMultiField,
@@ -18,6 +19,7 @@ import {
   getDebtsFromExternalData,
   getDownloadServiceURL,
   hasFetchedDebts,
+  hasReachedDebtsLimit,
 } from '../../utils/getDebts'
 import { formatDate } from '../../utils/formatDate'
 import { CustomerDebt } from '../../utils/types'
@@ -51,6 +53,15 @@ export const debtsSection = buildSection({
           id: 'debtsLoader',
           component: 'DebtsLoader',
           doesNotRequireAnswer: true,
+        }),
+        buildAlertMessageField({
+          id: 'debtsLimitWarning',
+          alertType: 'warning',
+          marginTop: 0,
+          marginBottom: 1,
+          message: messages.limit.message,
+          condition: (_answers, externalData) =>
+            hasFetchedDebts(externalData) && hasReachedDebtsLimit(externalData),
         }),
         buildInteractiveTableField({
           id: 'selectedDebts',

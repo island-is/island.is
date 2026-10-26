@@ -19,6 +19,15 @@ export const debts = {
       description: 'Label of the submit button on the debts screen',
     },
   }),
+  limit: defineMessages({
+    message: {
+      id: 'pd.application:debts.limit.message',
+      defaultMessage:
+        'Ekki er hægt að birta allan skuldalistann í þessu viðmóti. Fyrir heildarlista skulda og heildarskuldastöðu, sjá [Fjármál á Mínum síðum](/minarsidur/fjarmal).',
+      description:
+        'Warning shown above the debts table when the list may be cut off',
+    },
+  }),
   fetch: defineMessages({
     errorTitle: {
       id: 'pd.application:debts.fetch.errorTitle',

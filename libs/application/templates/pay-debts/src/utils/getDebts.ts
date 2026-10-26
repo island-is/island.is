@@ -6,6 +6,8 @@ export const DEBTS_EXTERNAL_DATA_ID = 'customerDebts'
 
 export const DEBTS_MAX_AGE_MS = 60 * 60 * 1000
 
+export const DEBTS_LIST_LIMIT = 100
+
 export const hasFetchedDebts = (externalData: ExternalData): boolean =>
   externalData?.[DEBTS_EXTERNAL_DATA_ID]?.status === 'success'
 
@@ -32,6 +34,9 @@ export const getDebtsFromExternalData = (
     externalData,
     `${DEBTS_EXTERNAL_DATA_ID}.data.debts`,
   ) ?? []
+
+export const hasReachedDebtsLimit = (externalData: ExternalData): boolean =>
+  getDebtsFromExternalData(externalData).length >= DEBTS_LIST_LIMIT
 
 export const getDebts = (application: Application): CustomerDebt[] =>
   getDebtsFromExternalData(application.externalData)
