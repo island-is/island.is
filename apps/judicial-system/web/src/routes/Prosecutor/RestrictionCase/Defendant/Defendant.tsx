@@ -111,7 +111,16 @@ export const Defendant = () => {
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!workingCase.id) {
-        const createdCase = await createCase(workingCase)
+        // Case creation copies these onto the created defendant
+        const defendant = workingCase.defendants?.[0]
+        const createdCase = await createCase({
+          ...workingCase,
+          defenderName: defendant?.defenderName,
+          defenderNationalId: defendant?.defenderNationalId,
+          defenderEmail: defendant?.defenderEmail,
+          defenderPhoneNumber: defendant?.defenderPhoneNumber,
+          requestSharedWithDefender: defendant?.requestSharedWithDefender,
+        })
 
         if (
           createdCase &&

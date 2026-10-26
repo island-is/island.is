@@ -11,7 +11,9 @@ import { CaseExistsGuard } from '../caseExists.guard'
 import { CaseExistsForUpdateGuard } from '../caseExistsForUpdate.guard'
 import { IndictmentCaseExistsForDefendantGuard } from '../indictmentCaseExistsForDefendant.guard'
 import { LimitedAccessCaseExistsGuard } from '../limitedAccessCaseExists.guard'
+import { LimitedAccessCaseExistsForUpdateGuard } from '../limitedAccessCaseExistsForUpdate.guard'
 import { MinimalCaseExistsGuard } from '../minimalCaseExists.guard'
+import { MinimalCaseExistsForUpdateGuard } from '../minimalCaseExistsForUpdate.guard'
 import {
   CASE_LOAD_GUARD_TAG,
   CASE_LOAD_INCLUDE_TAG,
@@ -95,6 +97,23 @@ describe('case load tracing', () => {
     expectTraced('MinimalCaseExistsGuard', 'minimal')
   })
 
+  it('MinimalCaseExistsForUpdateGuard loads the minimal case', async () => {
+    const { caseService, sequelize } = await createTestingCaseModule()
+    ;(sequelize.transaction as jest.Mock).mockResolvedValue({} as Transaction)
+    jest
+      .spyOn(caseService, 'findMinimalByIdForUpdate')
+      .mockResolvedValue(theCase as never)
+
+    await activate(
+      new MinimalCaseExistsForUpdateGuard(caseService, sequelize),
+      {
+        params: { caseId },
+      },
+    )
+
+    expectTraced('MinimalCaseExistsForUpdateGuard', 'minimal')
+  })
+
   it('LimitedAccessCaseExistsGuard loads the limited access case', async () => {
     const { limitedAccessCaseService } = await createTestingCaseModule()
     jest
@@ -107,6 +126,25 @@ describe('case load tracing', () => {
     })
 
     expectTraced('LimitedAccessCaseExistsGuard', 'limitedAccess')
+  })
+
+  it('LimitedAccessCaseExistsForUpdateGuard loads the limited access case', async () => {
+    const { limitedAccessCaseService, sequelize } =
+      await createTestingCaseModule()
+    ;(sequelize.transaction as jest.Mock).mockResolvedValue({} as Transaction)
+    jest
+      .spyOn(limitedAccessCaseService, 'findByIdForUpdate')
+      .mockResolvedValue(theCase as never)
+
+    await activate(
+      new LimitedAccessCaseExistsForUpdateGuard(
+        limitedAccessCaseService,
+        sequelize,
+      ),
+      { params: { caseId }, user: { currentUser: { id: uuid() } } },
+    )
+
+    expectTraced('LimitedAccessCaseExistsForUpdateGuard', 'limitedAccess')
   })
 
   it('IndictmentCaseExistsForDefendantGuard loads the indictment for one defendant', async () => {

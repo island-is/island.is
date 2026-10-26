@@ -23,7 +23,7 @@ export class MemberService {
       await this.airDiscountSchemeClientService.getUserRelations(auth)
 
     return relations.map((relation) => ({
-      name: `${relation.firstName} ${relation.lastName}`,
+      name: relation.fullName,
       nationalId: relation.nationalId,
     }))
   }

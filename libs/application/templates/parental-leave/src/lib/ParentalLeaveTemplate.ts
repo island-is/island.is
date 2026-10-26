@@ -281,6 +281,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
               delete: true,
@@ -329,6 +336,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/DraftRequiresAction').then((val) =>
                   Promise.resolve(val.DraftRequiresAction),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
               delete: true,
@@ -366,6 +380,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
               delete: true,
@@ -446,6 +467,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
               delete: true,
@@ -493,6 +521,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/DraftRequiresAction').then((val) =>
                   Promise.resolve(val.DraftRequiresAction),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
               delete: true,
@@ -591,11 +626,46 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: parentalLeaveFormMessages.residenceGrantMessage
+                    .residenceGrantApplyTitle,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Approve',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Reject',
+                  type: 'reject',
+                },
+                {
+                  event: PLEvents.CLOSED,
+                  name: 'Close',
+                  type: 'primary',
+                },
+                {
+                  event: PLEvents.ADDITIONALDOCUMENTSREQUIRED,
+                  name: 'Additional documents required',
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -643,11 +713,25 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/DraftRequiresAction').then((val) =>
                   Promise.resolve(val.DraftRequiresAction),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
+              actions: [
+                {
+                  event: PLEvents.CLOSED,
+                  name: 'Close',
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -687,11 +771,26 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/AdditionalDocumentsRequired').then((val) =>
                   Promise.resolve(val.AdditionalDocumentsRequired),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: parentalLeaveFormMessages.attachmentScreen
+                    .additionalDocumentsEditSubmit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
+              actions: [
+                {
+                  event: PLEvents.CLOSED,
+                  name: 'Close',
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -730,11 +829,31 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/ResidenceGrantNoBirthDate').then((val) =>
                   Promise.resolve(val.ResidenceGrantNoBirthDate),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: parentalLeaveFormMessages.confirmation.cancel,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: parentalLeaveFormMessages.residenceGrantMessage
+                    .residenceGrantApplyTitle,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
+              actions: [
+                {
+                  event: PLEvents.CLOSED,
+                  name: 'Close',
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -805,11 +924,31 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/ResidenceGrant').then((val) =>
                   Promise.resolve(val.ResidenceGrant),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: parentalLeaveFormMessages.confirmation.cancel,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: parentalLeaveFormMessages.residenceGrantMessage
+                    .residenceGrantSubmit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
+              actions: [
+                {
+                  event: PLEvents.CLOSED,
+                  name: 'Close',
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -895,11 +1034,31 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: parentalLeaveFormMessages.residenceGrantMessage
+                    .residenceGrantApplyTitle,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
+              actions: [
+                {
+                  event: PLEvents.CLOSED,
+                  name: 'Close',
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -1001,11 +1160,30 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/EditOrAddEmployersAndPeriods').then((val) =>
                   Promise.resolve(val.EditOrAddEmployersAndPeriods),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.ABORT,
+                  name: parentalLeaveFormMessages.confirmation.cancel,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: parentalLeaveFormMessages.confirmation.submitButton,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
+              actions: [
+                {
+                  event: PLEvents.CLOSED,
+                  name: 'Close',
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -1096,11 +1274,25 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
+              actions: [
+                {
+                  event: PLEvents.CLOSED,
+                  name: 'Close',
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -1212,11 +1404,25 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
+              actions: [
+                {
+                  event: PLEvents.CLOSED,
+                  name: 'Close',
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -1294,11 +1500,31 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/EditsRequireAction').then((val) =>
                   Promise.resolve(val.EditsRequireAction),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.ABORT,
+                  name: parentalLeaveFormMessages.editFlow
+                    .editsNotApprovedDiscardButton,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.EDIT,
+                  name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
+              actions: [
+                {
+                  event: PLEvents.CLOSED,
+                  name: 'Close',
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -1429,11 +1655,46 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: parentalLeaveFormMessages.residenceGrantMessage
+                    .residenceGrantApplyTitle,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Approve',
+                  type: 'primary',
+                },
+                {
+                  event: PLEvents.CLOSED,
+                  name: 'Close',
+                  type: 'primary',
+                },
+                {
+                  event: PLEvents.ADDITIONALDOCUMENTSREQUIRED,
+                  name: 'Additional documents required',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Reject',
+                  type: 'reject',
+                },
+              ],
             },
           ],
         },
@@ -1514,11 +1775,31 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/EditsRequireAction').then((val) =>
                   Promise.resolve(val.EditsRequireAction),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.ABORT,
+                  name: parentalLeaveFormMessages.editFlow
+                    .editsNotApprovedDiscardButton,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.EDIT,
+                  name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
+              actions: [
+                {
+                  event: PLEvents.CLOSED,
+                  name: 'Close',
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },

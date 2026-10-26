@@ -10,6 +10,7 @@ import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { CreateDefendantDocument } from './createDefendant.generated'
 import { DeleteDefendantDocument } from './deleteDefendant.generated'
 import useDefendants from './index'
+import { UpdateDefendantsDocument } from './updateDefendants.generated'
 
 jest.mock('@island.is/judicial-system-web/src/utils/toast', () => ({
   toast: { error: jest.fn(), success: jest.fn() },
@@ -103,6 +104,82 @@ describe('useDefendants', () => {
       expect(toast.error).toHaveBeenCalledWith(
         'Upp kom villa við að eyða varnaraðila',
       )
+    })
+  })
+
+  describe('updateDefendants', () => {
+    const otherDefendantId = 'defendant-2'
+    const request = {
+      query: UpdateDefendantsDocument,
+      variables: {
+        input: {
+          caseId,
+          defendants: [
+            { defendantId, isDrivingLicenseSuspended: true },
+            {
+              defendantId: otherDefendantId,
+              alternativeServiceDescription: '',
+            },
+          ],
+        },
+      },
+    }
+
+    it('sends every defendant in one request', async () => {
+      const { result } = renderUseDefendants([
+        {
+          request,
+          result: {
+            data: {
+              updateDefendants: [
+                { __typename: 'Defendant', id: defendantId },
+                { __typename: 'Defendant', id: otherDefendantId },
+              ],
+            },
+          },
+        },
+      ])
+
+      let updated: boolean | undefined
+      await act(async () => {
+        updated = await result.current.updateDefendants(caseId, [
+          { defendantId, isDrivingLicenseSuspended: true },
+          // Blank strings are normalized per defendant, as on the single route
+          { defendantId: otherDefendantId, alternativeServiceDescription: ' ' },
+        ])
+      })
+
+      expect(updated).toBe(true)
+      expect(toast.error).not.toHaveBeenCalled()
+    })
+
+    it('sends nothing and succeeds when there is nothing to update', async () => {
+      const { result } = renderUseDefendants([])
+
+      let updated: boolean | undefined
+      await act(async () => {
+        updated = await result.current.updateDefendants(caseId, [])
+      })
+
+      expect(updated).toBe(true)
+      expect(toast.error).not.toHaveBeenCalled()
+    })
+
+    it('reports an error when the request fails', async () => {
+      const { result } = renderUseDefendants([
+        { request, result: { errors: [new GraphQLError('Forbidden')] } },
+      ])
+
+      let updated: boolean | undefined
+      await act(async () => {
+        updated = await result.current.updateDefendants(caseId, [
+          { defendantId, isDrivingLicenseSuspended: true },
+          { defendantId: otherDefendantId, alternativeServiceDescription: ' ' },
+        ])
+      })
+
+      expect(updated).toBe(false)
+      expect(toast.error).toHaveBeenCalled()
     })
   })
 

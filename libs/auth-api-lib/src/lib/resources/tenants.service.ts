@@ -4,21 +4,25 @@ import {
   Injectable,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op, UniqueConstraintError } from 'sequelize'
+import { Op, Transaction, UniqueConstraintError } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { NoContentException } from '@island.is/nest/problem'
 
 import { Client } from '../clients/models/client.model'
+import { TranslationService } from '../translation/translation.service'
 import { AdminCreateTenantDto } from './dto/admin-create-tenant.dto'
 import { AdminPatchTenantDto } from './dto/admin-patch-tenant.dto'
+import { AdminTenantDto } from './dto/admin-tenant.dto'
 import { TenantDto } from './dto/tenant.dto'
 import { ApiScopeGroup } from './models/api-scope-group.model'
 import { ApiScope } from './models/api-scope.model'
 import { Domain } from './models/domain.model'
 
 const ADMIN_TENANT_ID = '@admin.island.is'
+const TRANSLATION_CLASS_NAME = 'domain'
+const EN = 'en'
 
 /**
  * This is a service that is used to access the tenant resource.
@@ -35,6 +39,7 @@ export class TenantsService {
     private readonly apiScopeModel: typeof ApiScope,
     @InjectModel(ApiScopeGroup)
     private readonly apiScopeGroupModel: typeof ApiScopeGroup,
+    private readonly translationService: TranslationService,
   ) {}
 
   async findAllPublic(): Promise<TenantDto[]> {
@@ -105,8 +110,8 @@ export class TenantsService {
     }
   }
 
-  /** Returns all domain fields, including admin-only attributes. */
-  async findByIdForAdmin(id: string): Promise<Domain> {
+  /** Returns all editable tenant fields, including English translations. */
+  async findByIdForAdmin(id: string): Promise<AdminTenantDto> {
     const tenant = await this.domainModel.findOne({
       where: { name: id },
     })
@@ -115,7 +120,7 @@ export class TenantsService {
       throw new NoContentException()
     }
 
-    return tenant
+    return this.toAdminTenantDto(tenant)
   }
 
   async hasAccessToTenant(user: User, tenantId: string) {
@@ -151,18 +156,105 @@ export class TenantsService {
     }
   }
 
-  async update(name: string, dto: AdminPatchTenantDto): Promise<Domain> {
+  async update(
+    name: string,
+    dto: AdminPatchTenantDto,
+  ): Promise<AdminTenantDto> {
     if (Object.keys(dto).length === 0) {
       throw new BadRequestException('No fields provided to update')
     }
 
-    const existing = await this.domainModel.findOne({ where: { name } })
+    const { displayNameEn, descriptionEn, ...domainFields } = dto
 
-    if (!existing) {
-      throw new NoContentException()
+    const updated = await this.domainModel.sequelize!.transaction(
+      async (transaction) => {
+        const existing = await this.domainModel.findOne({
+          where: { name },
+          transaction,
+        })
+
+        if (!existing) {
+          throw new NoContentException()
+        }
+
+        await Promise.all([
+          this.setEnglishTranslation(
+            name,
+            'displayName',
+            displayNameEn,
+            transaction,
+          ),
+          this.setEnglishTranslation(
+            name,
+            'description',
+            descriptionEn,
+            transaction,
+          ),
+        ])
+
+        return Object.keys(domainFields).length > 0
+          ? existing.update({ ...domainFields }, { transaction })
+          : existing
+      },
+    )
+
+    return this.toAdminTenantDto(updated, true)
+  }
+
+  /**
+   * Upserts the English translation of a tenant field. An empty value removes
+   * the translation so the Icelandic value is used as fallback.
+   */
+  private async setEnglishTranslation(
+    name: string,
+    property: 'displayName' | 'description',
+    value: string | null | undefined,
+    transaction: Transaction,
+  ) {
+    if (value === undefined) {
+      return
     }
 
-    return existing.update({ ...dto })
+    const translation = {
+      className: TRANSLATION_CLASS_NAME,
+      key: name,
+      language: EN,
+      property,
+    }
+
+    if (!value?.trim()) {
+      await this.translationService.deleteTranslation(translation, transaction)
+    } else {
+      await this.translationService.upsertTranslation(
+        { ...translation, value: value.trim() },
+        transaction,
+      )
+    }
+  }
+
+  private async toAdminTenantDto(
+    tenant: Domain,
+    useMaster = false,
+  ): Promise<AdminTenantDto> {
+    const translations = await this.translationService.findTranslationMap(
+      TRANSLATION_CLASS_NAME,
+      [tenant.name],
+      useMaster,
+      EN,
+    )
+    const en = translations.get(tenant.name)
+
+    return {
+      name: tenant.name,
+      nationalId: tenant.nationalId,
+      displayName: tenant.displayName,
+      displayNameEn: en?.get('displayName'),
+      description: tenant.description,
+      descriptionEn: en?.get('description'),
+      organisationLogoKey: tenant.organisationLogoKey,
+      contactEmail: tenant.contactEmail,
+      municipalityCode: tenant.municipalityCode,
+    }
   }
 
   async delete(name: string): Promise<void> {
@@ -193,6 +285,10 @@ export class TenantsService {
         )
       }
 
+      await Promise.all([
+        this.setEnglishTranslation(name, 'displayName', null, transaction),
+        this.setEnglishTranslation(name, 'description', null, transaction),
+      ])
       await this.domainModel.destroy({ where: { name }, transaction })
     })
   }

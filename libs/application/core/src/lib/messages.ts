@@ -652,6 +652,19 @@ export const coreErrorMessages = defineMessages({
       'Flokkur "{categoryName}" á ökukírteini er útrunninn eða rennur út innan 6 mánaða',
     description: 'Driving License duplicate entry validation error',
   },
+  drivingLicensePhotoLookupFailedTitle: {
+    id: 'application.system:core.fetch.data.drivingLicensePhotoLookupFailedTitle',
+    defaultMessage: 'Ekki tókst að sækja ljósmynd',
+    description:
+      'Driving License photo lookup failed in the license or ID registry',
+  },
+  drivingLicensePhotoLookupFailedSummary: {
+    id: 'application.system:core.fetch.data.drivingLicensePhotoLookupFailedSummary',
+    defaultMessage:
+      'Ekki náðist samband við ökuskírteinaskrá eða skilríkjaskrá til að sækja ljósmyndina þína. Vinsamlegast reyndu aftur eftir smá stund. Ef villan endurtekur sig getur þú mætt með passamynd á ljósmyndapappír (4,5 cm x 3,5 cm) á næsta sýslumannsembætti.',
+    description:
+      'Driving License photo lookup failed in the license or ID registry',
+  },
   drivingLicenseNoTeachingRightsTitle: {
     id: 'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',
     defaultMessage: 'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá.',

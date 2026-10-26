@@ -134,7 +134,10 @@ compiles every route on first visit, which blows the suite's 15s request waits
 and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
 
 - Run it with `yarn playwright test -c apps/system-e2e/src --project judicial-system`,
-  or `/js-e2e` in Claude Code. When nothing listens on port 4200 the Playwright
+  or `/js-e2e` in Claude Code. The skill lives in `apps/judicial-system/.claude/skills`,
+  so from a session started at the repo root it only appears after Claude has
+  touched a file in this app (or after `/add-dir apps/judicial-system`).
+  When nothing listens on port 4200 the Playwright
   config builds the production bundle and serves it itself; a dev server on
   that port is reused as-is (slow, avoid). The port cannot change: the dev S3
   upload bucket only allows the `localhost:4200` origin.
@@ -176,6 +179,16 @@ profile, has to go through the helper and name its profile in
 ones. The api's `responseSize.plugin.ts` is the client-side counterpart: it
 tags the GraphQL route's middleware span with the operation name and the
 response bytes, which is enough for bytes per operation.
+
+**Outgoing `fetch` calls carry no trace context by themselves.** dd-trace's
+fetch instrumentation is disabled on every service (`DD_TRACE_DISABLED_INSTRUMENTATIONS=fetch`
+in the infra DSL), and global `fetch` is undici, so the remaining `http`-layer
+instrumentation never sees it. The api injects the context by hand on its
+calls to the backend, in `modules/backend/traceContext.ts`, which is what makes
+the backend's spans part of the GraphQL operation's trace. A new client that
+calls another judicial-system service with `fetch` needs the same, and the
+carrier it injects into must be a plain object: the propagator assigns
+properties, so a `Headers` instance silently gets nothing.
 
 ## Queue messages after commit
 
