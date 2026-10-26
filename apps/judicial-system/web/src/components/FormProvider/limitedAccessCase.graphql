@@ -41,11 +41,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         isDefaultJudgement
       }
     }
-    defenderName
-    defenderNationalId
-    defenderEmail
-    defenderPhoneNumber
-    requestSharedWithDefender
     court {
       ...InstitutionFields
     }

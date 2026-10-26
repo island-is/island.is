@@ -81,9 +81,6 @@ describe('InternalNotificationController - Send appeal statement notifications',
             id: caseId,
             prosecutor: { name: prosecutor.name, email: prosecutor.email },
             court: { name: 'Héraðsdómur Reykjavíkur' },
-            defenderNationalId,
-            defenderName: hasDefender ? defender.name : undefined,
-            defenderEmail: hasDefender ? defender.email : undefined,
             defendants: hasDefender
               ? [
                   {
