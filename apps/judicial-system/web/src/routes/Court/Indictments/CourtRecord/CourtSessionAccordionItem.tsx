@@ -858,7 +858,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         file &&
         file.category &&
         indictmentAdditionalCaseFileCategories.includes(
-          file.category as (typeof indictmentAdditionalCaseFileCategories)[number],
+          file.category as typeof indictmentAdditionalCaseFileCategories[number],
         )
       ) {
         const node = (
