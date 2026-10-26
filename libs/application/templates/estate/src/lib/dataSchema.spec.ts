@@ -3,8 +3,7 @@ import { m } from './messages'
 
 describe('estateSchema', () => {
   const vehicleSchema = estateSchema.shape.estate.shape.vehicles
-  const moneyAndDepositSchema =
-    estateSchema.shape.estate.shape.moneyAndDeposit
+  const moneyAndDepositSchema = estateSchema.shape.estate.shape.moneyAndDeposit
 
   const vehicle = {
     assetNumber: 'AB123',
