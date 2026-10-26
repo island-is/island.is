@@ -92,8 +92,8 @@ export const canDefenderViewRequest = ({
 
   if (requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE) {
     return (
-      (state === CaseState.RECEIVED || isCompletedCase(state)) &&
-      hasArraignmentDate
+      (state === CaseState.RECEIVED && hasArraignmentDate) ||
+      isCompletedCase(state)
     )
   }
 
