@@ -375,7 +375,10 @@ export class PoliceService {
 
   // The police system rejects files that exceed its size limit and no amount of
   // retrying will change that, so the prosecutor is asked to upload the file by hand.
-  private async notifyProsecutorOfFileTooLarge(caseId: string): Promise<void> {
+  // Returns true only when the email was sent - callers treat 413 as terminal only then.
+  private async notifyProsecutorOfFileTooLarge(
+    caseId: string,
+  ): Promise<boolean> {
     let theCase: Case | null = null
 
     try {
@@ -394,7 +397,7 @@ export class PoliceService {
         `No prosecutor email is available for case ${caseId}, so it cannot be notified that a file was too large for the police system`,
       )
 
-      return
+      return false
     }
 
     // Index 0 is the main police case number (first registered / locked in the UI).
@@ -423,11 +426,15 @@ export class PoliceService {
         text: body,
         html: body,
       })
+
+      return true
     } catch (reason) {
       this.logger.error(
         `Failed to notify that a file was too large for the police system for case ${caseId}`,
         { reason },
       )
+
+      return false
     }
   }
 
@@ -1324,9 +1331,14 @@ export class PoliceService {
 
         if (res.status === 413 && courtDocuments.length > 0) {
           // Size limits are expected; email the prosecutor instead of Slack.
-          await this.notifyProsecutorOfFileTooLarge(caseIdForNotification)
+          // Only terminal (no retry) when the prosecutor was actually notified.
+          const notified = await this.notifyProsecutorOfFileTooLarge(
+            caseIdForNotification,
+          )
 
-          throw new PayloadTooLargeException(message)
+          if (notified) {
+            throw new PayloadTooLargeException(message)
+          }
         }
 
         this.logPoliceFailureAndNotify(
@@ -1345,7 +1357,8 @@ export class PoliceService {
           return true
         }
 
-        // Propagate so callers can complete the delivery without retrying.
+        // Propagate so callers can complete the delivery without retrying
+        // (only thrown after a successful prosecutor notification).
         if (reason instanceof PayloadTooLargeException) {
           throw reason
         }
@@ -1411,15 +1424,20 @@ export class PoliceService {
         return { externalPoliceDocumentId: policeResponse.id }
       }
 
-      if (res.status === 413) {
-        await this.notifyProsecutorOfFileTooLarge(caseId)
+      const responseBody = await res.text()
 
-        throw new PayloadTooLargeException(await res.text())
+      if (res.status === 413) {
+        // Only terminal (no retry) when the prosecutor was actually notified.
+        const notified = await this.notifyProsecutorOfFileTooLarge(caseId)
+
+        if (notified) {
+          throw new PayloadTooLargeException(responseBody)
+        }
       }
 
-      throw await res.text()
+      throw responseBody
     } catch (error) {
-      // Already emailed the prosecutor; callers complete delivery without retry.
+      // Prosecutor emailed; callers complete delivery without retry.
       if (error instanceof PayloadTooLargeException) {
         throw error
       }
@@ -1590,15 +1608,20 @@ export class PoliceService {
         return { policeSubpoenaId: subpoenaResponse.id }
       }
 
-      if (res.status === 413) {
-        await this.notifyProsecutorOfFileTooLarge(theCase.id)
+      const responseBody = await res.text()
 
-        throw new PayloadTooLargeException(await res.text())
+      if (res.status === 413) {
+        // Only terminal (no retry) when the prosecutor was actually notified.
+        const notified = await this.notifyProsecutorOfFileTooLarge(theCase.id)
+
+        if (notified) {
+          throw new PayloadTooLargeException(responseBody)
+        }
       }
 
-      throw await res.text()
+      throw responseBody
     } catch (error) {
-      // Already emailed the prosecutor; callers complete delivery without retry.
+      // Prosecutor emailed; callers complete delivery without retry.
       if (error instanceof PayloadTooLargeException) {
         throw error
       }

@@ -306,6 +306,73 @@ describe('PoliceController - Update Police Case', () => {
     })
   })
 
+  describe('update police case fails because a file is too large and prosecutor notification fails', () => {
+    const caseIdForNotification = uuid()
+    let mockEventService: { postErrorEvent: jest.Mock }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as unknown as jest.Mock
+      mockFetch.mockReset()
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 413,
+        text: jest.fn().mockResolvedValueOnce('Payload Too Large'),
+      })
+
+      const {
+        policeService,
+        emailService,
+        eventService,
+        caseRepositoryService,
+      } = await createTestingPoliceModule()
+      mockEventService = eventService as unknown as {
+        postErrorEvent: jest.Mock
+      }
+
+      const mockSendEmail = emailService.sendEmail as jest.Mock
+      mockSendEmail.mockRejectedValueOnce(new Error('SMTP unavailable'))
+
+      const mockFindByIdWithProsecutor =
+        caseRepositoryService.findByIdWithProsecutor as jest.Mock
+      mockFindByIdWithProsecutor.mockResolvedValueOnce({
+        prosecutor: {
+          name: 'Prosecutor One',
+          email: 'prosecutor@omnitrix.is',
+        },
+        policeCaseNumbers: [policeCaseNumber],
+      })
+
+      then = await policeService
+        .updatePoliceCase(
+          user,
+          caseId,
+          caseType,
+          caseState,
+          policeCaseNumber,
+          courtCaseNumber,
+          defendantNationalId,
+          validToDate,
+          caseConclusion,
+          [
+            {
+              type: PoliceDocumentType.RVVS,
+              courtDocument: 'large file',
+            },
+          ],
+          caseIdForNotification,
+        )
+        .then((result) => ({ result } as Then))
+        .catch((error) => ({ error } as Then))
+    })
+
+    it('should not treat the size limit as terminal without a successful notification', () => {
+      expect(then.error).toBeUndefined()
+      expect(then.result).toBe(false)
+      expect(mockEventService.postErrorEvent).toHaveBeenCalled()
+    })
+  })
+
   describe('update police case fails with a response body', () => {
     const responseBody = '{"type":"Server.ClientProxy.IOError"}'
     let mockLogger: { error: jest.Mock }

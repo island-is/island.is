@@ -80,4 +80,50 @@ describe('PoliceService - Create Document', () => {
       expect(then.error).toBeInstanceOf(PayloadTooLargeException)
     })
   })
+
+  describe('file is too large and prosecutor notification fails', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as unknown as jest.Mock
+      mockFetch.mockReset()
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 413,
+        text: jest.fn().mockResolvedValueOnce('Payload Too Large'),
+      })
+
+      const { policeService, emailService, caseRepositoryService } =
+        await createTestingPoliceModule()
+
+      const mockSendEmail = emailService.sendEmail as jest.Mock
+      mockSendEmail.mockRejectedValueOnce(new Error('SMTP unavailable'))
+
+      const mockFindByIdWithProsecutor =
+        caseRepositoryService.findByIdWithProsecutor as jest.Mock
+      mockFindByIdWithProsecutor.mockResolvedValueOnce({
+        prosecutor,
+        policeCaseNumbers: [policeCaseNumber],
+      })
+
+      then = await policeService
+        .createDocument({
+          caseId,
+          defendantId,
+          user,
+          documentName: 'Dómur í máli R-1/2026',
+          documentFiles: [{ name: 'testFile.pdf', documentBase64: 'large-file' }],
+          documentDates: [],
+          fileTypeCode: 'RVDO',
+          caseSupplements: [],
+        })
+        .then((result) => ({ result } as Then))
+        .catch((error) => ({ error } as Then))
+    })
+
+    it('should not throw a payload too large exception when notification fails', () => {
+      expect(then.result).toBeUndefined()
+      expect(then.error).not.toBeInstanceOf(PayloadTooLargeException)
+    })
+  })
 })
