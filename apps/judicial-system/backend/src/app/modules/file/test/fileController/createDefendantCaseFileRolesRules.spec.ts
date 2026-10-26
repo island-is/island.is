@@ -1,4 +1,7 @@
 import {
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
   publicProsecutorStaffRule,
@@ -11,5 +14,8 @@ describe('FileController - Create defendant case file rules', () => {
     publicProsecutorStaffRule,
     prosecutorRule,
     prosecutorRepresentativeRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   ])
 })

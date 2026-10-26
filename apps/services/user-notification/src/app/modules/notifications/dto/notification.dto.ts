@@ -195,6 +195,51 @@ export class UnseenNotificationsCountDto {
   unseenCount!: number
 }
 
+export class NotificationCategoryLabelDto {
+  @ApiProperty({ example: 'Heilbrigðismál' })
+  @IsString()
+  is!: string
+
+  @ApiPropertyOptional({ example: 'Health' })
+  @IsOptional()
+  @IsString()
+  en?: string
+}
+
+export class NotificationCategoryDto {
+  @ApiProperty({
+    example: '1234567890',
+    description: 'National id of the notification sender',
+  })
+  @IsString()
+  senderId!: string
+
+  @ApiProperty({
+    example: 'heilbrigdismal',
+    description:
+      "Slugified Icelandic category label, 'almennt' for notifications without a category",
+  })
+  @IsString()
+  category!: string
+
+  @ApiProperty({ type: NotificationCategoryLabelDto })
+  @ValidateNested()
+  @Type(() => NotificationCategoryLabelDto)
+  categoryLabel!: NotificationCategoryLabelDto
+}
+
+export class NotificationCategoriesDto {
+  @ApiProperty({
+    type: [NotificationCategoryDto],
+    description:
+      'Distinct sender categories of notifications the current user has received',
+  })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => NotificationCategoryDto)
+  categories!: NotificationCategoryDto[]
+}
+
 export class ActorNotificationDto {
   @ApiProperty({ example: 123 })
   @IsInt()

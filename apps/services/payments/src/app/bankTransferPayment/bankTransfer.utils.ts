@@ -158,7 +158,25 @@ export type BankTransferLogContext = {
   rrn: string
   // Filters the logs by company and person payers (`@payerType:company`).
   payerType?: BankTransferPayerType
+  // The 4-digit bank part of the payer's account, and the bank it names (`@bank:indó`).
+  bankCode?: string
+  bank?: string
 }
+
+// The first two digits of the bank part name the institution, the last two the branch.
+// Source: indó's page on bank numbers, https://indo.is/indo-ordabok/bankanumer
+const BANK_NAMES: Record<string, string> = {
+  '01': 'Landsbankinn',
+  '03': 'Arion banki',
+  '05': 'Íslandsbanki',
+  '07': 'Kvika banki',
+  '11': 'Sparisjóðirnir',
+  '22': 'indó',
+}
+
+/** The bank a 4-digit bank code belongs to; the code itself for a bank not in the map. */
+export const bankName = (bankCode: string): string =>
+  BANK_NAMES[bankCode.slice(0, 2)] ?? bankCode
 
 /** `rrn` is the provider's payment id; `correlationId` our per-attempt key. */
 export const bankTransferLogContext = (
@@ -166,7 +184,16 @@ export const bankTransferLogContext = (
   correlationId: string,
   rrn: string,
   payerType: BankTransferPayerType | undefined,
-): BankTransferLogContext => ({ paymentFlowId, correlationId, rrn, payerType })
+  // Rows created before the column have none.
+  bankCode?: string | null,
+): BankTransferLogContext => ({
+  paymentFlowId,
+  correlationId,
+  rrn,
+  payerType,
+  bankCode: bankCode ?? undefined,
+  bank: bankCode ? bankName(bankCode) : undefined,
+})
 
 /**
  * Correlation id comes from `id`, not `sourceReferenceId` — `create` sets both to the same uuid.
@@ -175,7 +202,11 @@ export const bankTransferLogContext = (
 export const rowLogContext = (
   row: Pick<
     BankTransferPayment,
-    'paymentFlowId' | 'id' | 'providerPaymentId' | 'actorNationalId'
+    | 'paymentFlowId'
+    | 'id'
+    | 'providerPaymentId'
+    | 'actorNationalId'
+    | 'bankCode'
   >,
 ): BankTransferLogContext =>
   bankTransferLogContext(
@@ -185,6 +216,7 @@ export const rowLogContext = (
     row.actorNationalId
       ? BankTransferPayerType.COMPANY
       : BankTransferPayerType.PERSON,
+    row.bankCode,
   )
 
 /** True for any status that won't change again (SUCCESS and the three failure values). */

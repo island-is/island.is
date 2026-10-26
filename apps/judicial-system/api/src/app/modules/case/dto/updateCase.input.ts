@@ -26,7 +26,6 @@ import {
   CaseType,
   CourtSessionType,
   IndictmentDecision,
-  RequestSharedWithDefender,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
@@ -88,31 +87,6 @@ export class UpdateCaseInput {
   @Matches(POLICE_CASE_NUMBER_REGEX, { each: true })
   @Field(() => [String], { nullable: true })
   readonly policeCaseNumbers?: string[]
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly defenderName?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly defenderNationalId?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly defenderEmail?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly defenderPhoneNumber?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => RequestSharedWithDefender, { nullable: true })
-  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Allow()
   @IsOptional()

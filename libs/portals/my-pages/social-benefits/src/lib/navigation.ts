@@ -6,9 +6,6 @@ import {
   SocialInsuranceMaintenancePaths,
   UnemploymentBenefitsPaths,
 } from './paths'
-import { sharedMessages } from './messages'
-import { unemploymentBenefitsMessages } from './messages/unemployment'
-import { activationAllowanceMessages } from './messages/activationAllowance'
 
 export const socialBenefitsNavigation: PortalNavigationItem = {
   name: m.socialInsuranceMaintenance,
@@ -65,33 +62,33 @@ export const socialBenefitsNavigation: PortalNavigationItem = {
       ],
     },
     {
-      name: unemploymentBenefitsMessages.unemploymentBenefits,
+      name: m.unemploymentBenefits,
       path: UnemploymentBenefitsPaths.Root,
       children: [
         {
-          name: sharedMessages.myStatus,
+          name: m.myStatus,
           path: UnemploymentBenefitsPaths.Status,
         },
         {
-          name: sharedMessages.myIncome,
+          name: m.myIncome,
           path: UnemploymentBenefitsPaths.Income,
         },
         {
-          name: sharedMessages.myData,
+          name: m.myData,
           path: UnemploymentBenefitsPaths.MyData,
         },
       ],
     },
     {
-      name: activationAllowanceMessages.activationAllowance,
+      name: m.activationAllowance,
       path: ActivationAllowancePaths.Root,
       children: [
         {
-          name: sharedMessages.myStatus,
+          name: m.myStatus,
           path: ActivationAllowancePaths.Status,
         },
         {
-          name: sharedMessages.myData,
+          name: m.myData,
           path: ActivationAllowancePaths.MyData,
         },
       ],

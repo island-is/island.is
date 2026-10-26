@@ -99,6 +99,29 @@ describe('isAppealFileDeletionLocked', () => {
     ).toBe(true)
   })
 
+  // A verdict appeal statement is filed in support of an appeal that already
+  // stands, so it locks the way a kæra file does: on the case number.
+  it('should lock a verdict appeal statement only once the court of appeals has a case number', () => {
+    expect(
+      isAppealFileDeletionLocked(
+        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+        { appealCaseNumber: null },
+      ),
+    ).toBe(false)
+    expect(
+      isAppealFileDeletionLocked(
+        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+        { appealCaseNumber: 'LRE-1/2026' },
+      ),
+    ).toBe(true)
+    expect(
+      isAppealFileDeletionLocked(
+        CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+        { appealCaseNumber: 'LRE-1/2026' },
+      ),
+    ).toBe(true)
+  })
+
   it('should not lock a file that has nothing to do with an appeal', () => {
     expect(
       isAppealFileDeletionLocked(CaseFileCategory.COURT_RECORD, {
