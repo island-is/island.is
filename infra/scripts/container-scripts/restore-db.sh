@@ -36,20 +36,28 @@ aws s3 cp \
 echo "Restoring database from dump..."
 gunzip -c "$DUMP_FILE" | psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -v ON_ERROR_STOP=0
 
-# The database needs to bre restored ad root
-# which leaves table owner as root that makes 
-# the feature db owener unable ro run migrations.
-# here we are fixing that issue.
+# The dump is restored as the master user ($PGUSER), which leaves restored
+# objects owned by that user and prevents the feature DB owner ($DB_USER)
+# from running migrations. We fix that here.
 
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "ALTER SCHEMA public OWNER TO \"$DB_USER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "GRANT USAGE, CREATE ON SCHEMA public TO \"$DB_USER\""
-psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "GRANT \"$DB_USER\" TO \"$PGUSER\""
-psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "REASSIGN OWNED BY \"$PGUSER\" TO \"$DB_USER\""
+
+# Reassign ownership of tables, sequences and views in public to the feature role (scoped, per-object).
+psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -t -A -c \
+  "SELECT 'ALTER TABLE public.\"' || tablename || '\" OWNER TO \"$DB_USER\";' FROM pg_tables WHERE schemaname = 'public'" \
+  | psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -v ON_ERROR_STOP=1
+psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -t -A -c \
+  "SELECT 'ALTER SEQUENCE public.\"' || sequencename || '\" OWNER TO \"$DB_USER\";' FROM pg_sequences WHERE schemaname = 'public'" \
+  | psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -v ON_ERROR_STOP=1
+psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -t -A -c \
+  "SELECT 'ALTER VIEW public.\"' || viewname || '\" OWNER TO \"$DB_USER\";' FROM pg_views WHERE schemaname = 'public'" \
+  | psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -v ON_ERROR_STOP=1
+
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO \"$DB_USER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO \"$DB_USER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "ALTER DEFAULT PRIVILEGES FOR ROLE \"$DB_USER\" IN SCHEMA public GRANT ALL ON TABLES TO \"$DB_USER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "ALTER DEFAULT PRIVILEGES FOR ROLE \"$DB_USER\" IN SCHEMA public GRANT ALL ON SEQUENCES TO \"$DB_USER\""
-psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "REVOKE \"$DB_USER\" FROM \"$PGUSER\""
 
 
 # Verify
@@ -66,4 +74,3 @@ fi
 # Cleanup
 rm -f "$DUMP_FILE"
 echo "Restore complete."
-
