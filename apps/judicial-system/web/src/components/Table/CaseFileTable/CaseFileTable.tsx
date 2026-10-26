@@ -25,7 +25,10 @@ import {
 } from '@island.is/judicial-system-web/src/components/Table'
 import * as tableStyles from '@island.is/judicial-system-web/src/components/Table/Table.css'
 import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
-import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFileCategory,
+  CaseFileState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useFiledCourtDocuments,
   useSort,
@@ -162,11 +165,13 @@ const CaseFileTable: FC<Props> = ({
                       : formatDate(file.created, "dd.MM.yyyy 'kl.' HH:mm")}
                   </Text>
                   <Text variant="small">
-                    {`${getRoleTitleFromCaseFileCategory(
-                      file.category ?? null,
-                    )} ${initials ? `(${initials})` : ''} ${
-                      file.fileRepresentative ? 'lagði fram' : 'sendi inn'
-                    }`}
+                    {file.category === CaseFileCategory.COURT_CASE_FILE
+                      ? 'Dómari leggur fram'
+                      : `${getRoleTitleFromCaseFileCategory(
+                          file.category ?? null,
+                        )} ${initials ? `(${initials})` : ''} ${
+                          file.fileRepresentative ? 'lagði fram' : 'sendi inn'
+                        }`}
                   </Text>
                 </Box>
               </td>

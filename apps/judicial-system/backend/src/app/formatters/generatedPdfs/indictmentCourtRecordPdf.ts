@@ -10,10 +10,10 @@ import {
   Word,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseFileCategory,
   CourtDocumentType,
   CourtSessionRulingType,
   CourtSessionStringType,
+  indictmentAdditionalCaseFileCategories,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
@@ -37,6 +37,10 @@ import {
 const formatFiledBy = (submitterText: string, submittedBy?: string | null) => {
   if (submitterText === 'Ákærandi') {
     return 'Ákærandi lagði fram:'
+  }
+
+  if (submitterText === 'Dómari') {
+    return 'Dómari leggur fram:'
   }
 
   return [submitterText, submittedBy, 'lagði fram:'].filter(Boolean).join(' ')
@@ -63,13 +67,7 @@ export const getFiledBy = (
     if (
       file &&
       file.category &&
-      [
-        CaseFileCategory.PROSECUTOR_CASE_FILE,
-        CaseFileCategory.DEFENDANT_CASE_FILE,
-        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
-        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
-        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
-      ].includes(file.category)
+      indictmentAdditionalCaseFileCategories.includes(file.category)
     ) {
       const submitterText = getRoleTitleFromCaseFileCategory(file.category, {
         prosecutor: 'Ákærandi',

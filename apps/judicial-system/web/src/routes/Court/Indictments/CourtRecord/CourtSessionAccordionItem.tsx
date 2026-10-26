@@ -37,7 +37,10 @@ import {
   stripPdfExtension,
   Word,
 } from '@island.is/judicial-system/formatters'
-import { appealCorrectionLock } from '@island.is/judicial-system/types'
+import {
+  appealCorrectionLock,
+  indictmentAdditionalCaseFileCategories,
+} from '@island.is/judicial-system/types'
 import {
   BlueBox,
   CheckboxList,
@@ -832,10 +835,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       )
       const disabled = split ? (
         <Text variant="small" color="currentColor">
-          {`${split[0]} (${getRoleTitleFromCaseFileCategory(
-            split[1] as CaseFileCategory,
-            { notRegistered: 'Málsaðili' },
-          )})`}
+          {split[1] === CaseFileCategory.COURT_CASE_FILE
+            ? 'Dómari'
+            : `${split[0]} (${getRoleTitleFromCaseFileCategory(
+                split[1] as CaseFileCategory,
+                { notRegistered: 'Málsaðili' },
+              )})`}
         </Text>
       ) : null
 
@@ -852,21 +857,19 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       if (
         file &&
         file.category &&
-        [
-          CaseFileCategory.PROSECUTOR_CASE_FILE,
-          CaseFileCategory.DEFENDANT_CASE_FILE,
-          CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
-          CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
-          CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
-        ].includes(file.category)
+        indictmentAdditionalCaseFileCategories.includes(
+          file.category as (typeof indictmentAdditionalCaseFileCategories)[number],
+        )
       ) {
         const node = (
           <Text variant="small" color="currentColor">
-            {`${
-              file.fileRepresentative ?? file.submittedBy
-            } (${getRoleTitleFromCaseFileCategory(file.category, {
-              notRegistered: 'Málsaðili',
-            })})`}
+            {file.category === CaseFileCategory.COURT_CASE_FILE
+              ? 'Dómari'
+              : `${
+                  file.fileRepresentative ?? file.submittedBy
+                } (${getRoleTitleFromCaseFileCategory(file.category, {
+                  notRegistered: 'Málsaðili',
+                })})`}
           </Text>
         )
 

@@ -24,6 +24,7 @@ import {
   CaseState,
   CourtDocumentType,
   EventType,
+  indictmentAdditionalCaseFileCategories,
   isCompletedCase,
   isIndictmentCase,
   isRequestCase,
@@ -143,6 +144,7 @@ export class FileService {
       case CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE:
       case CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE:
       case CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE:
+      case CaseFileCategory.COURT_CASE_FILE:
       case CaseFileCategory.CRIMINAL_RECORD:
       case CaseFileCategory.COST_BREAKDOWN:
       case CaseFileCategory.CIVIL_CLAIM:
@@ -465,11 +467,7 @@ export class FileService {
       !isIndictmentCase(theCase.type) ||
       !file.category ||
       ![
-        CaseFileCategory.PROSECUTOR_CASE_FILE,
-        CaseFileCategory.DEFENDANT_CASE_FILE,
-        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
-        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
-        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+        ...indictmentAdditionalCaseFileCategories,
         CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ].includes(file.category)
     ) {
@@ -569,13 +567,7 @@ export class FileService {
       [CaseState.SUBMITTED, CaseState.RECEIVED].includes(theCase.state) &&
       theCase.withCourtSessions &&
       file.category &&
-      [
-        CaseFileCategory.PROSECUTOR_CASE_FILE,
-        CaseFileCategory.DEFENDANT_CASE_FILE,
-        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
-        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
-        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
-      ].includes(file.category)
+      indictmentAdditionalCaseFileCategories.includes(file.category)
     ) {
       await this.courtDocumentRepositoryService.create(
         theCase.id,

@@ -652,10 +652,16 @@ const transformCaseRepresentatives = (theCase: Case) => {
     return defendantAndDefender
   })
 
+  const courtRepresentative = {
+    name: 'Dómari',
+    caseFileCategory: CaseFileCategory.COURT_CASE_FILE,
+  }
+
   return [
     prosecutorRepresentativeProps,
     ...(civilClaimantSpokespersons ? civilClaimantSpokespersons : []),
     ...(defendantsAndDefenders ? defendantsAndDefenders : []),
+    courtRepresentative,
   ].filter((representative) => !!representative)
 }
 
@@ -845,7 +851,9 @@ const transformCase = (
               CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
                 user.nationalId,
                 theCase.civilClaimants,
-              ))),
+              )) ||
+            (file.category === CaseFileCategory.COURT_CASE_FILE &&
+              isDistrictCourtUser(user))),
       )
       .filter(
         (file) =>

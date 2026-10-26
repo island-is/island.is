@@ -624,6 +624,7 @@ export class CaseService {
       CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
       CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
       CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+      CaseFileCategory.COURT_CASE_FILE,
     ]
 
     for (const caseFile of theCase.caseFiles ?? []) {
@@ -1933,6 +1934,7 @@ export class CaseService {
           CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
           CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
           CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.COURT_CASE_FILE,
           CaseFileCategory.CIVIL_CLAIM,
         ].includes(file.category),
     ) ?? []) {
