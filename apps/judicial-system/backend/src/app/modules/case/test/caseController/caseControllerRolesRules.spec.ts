@@ -213,4 +213,3 @@ describe('CaseController - Create court case rules', () => {
     districtCourtAssistantRule,
   ])
 })
-

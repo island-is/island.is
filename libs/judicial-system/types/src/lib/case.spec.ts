@@ -70,7 +70,6 @@ describe('hasIndictmentCaseBeenSubmittedToCourt', () => {
   })
 })
 
-
 describe('getIndictmentCasePoliceState', () => {
   each`
     state                                    | policeState

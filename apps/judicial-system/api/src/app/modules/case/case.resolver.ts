@@ -274,7 +274,6 @@ export class CaseResolver {
     )
   }
 
-
   @Mutation(() => Case, { nullable: true })
   extendCase(
     @Args('input', { type: () => ExtendCaseInput })

@@ -437,7 +437,6 @@ export class PdfService {
     return generatedPdf
   }
 
-
   async getCaseFilesRecordPdf(
     theCase: Case,
     policeCaseNumber: string,

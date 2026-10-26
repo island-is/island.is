@@ -889,7 +889,6 @@ export class CaseController {
     res.end(pdf)
   }
 
-
   @UseGuards(
     RolesGuard,
     CaseExistsGuard,
