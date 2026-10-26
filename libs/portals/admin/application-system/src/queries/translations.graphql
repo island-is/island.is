@@ -281,14 +281,32 @@ mutation publishApplicationTranslations($input: PublishTranslationsInput!) {
     id
     namespace
     publishedAt
+    publishedByName
+    onBehalfOfName
+    rolledBackToPublishedAt
+    publishedInContentfulByName
+    publishedOutsideWorkspace
   }
 }
 
-query getApplicationTranslationPublishHistory($namespace: String!) {
-  applicationTranslationPublishHistory(namespace: $namespace) {
+query getApplicationTranslationPublishHistory(
+  $namespace: String!
+  $limit: Int
+  $skip: Int
+) {
+  applicationTranslationPublishHistory(
+    namespace: $namespace
+    limit: $limit
+    skip: $skip
+  ) {
     id
     namespace
     publishedAt
+    publishedByName
+    onBehalfOfName
+    rolledBackToPublishedAt
+    publishedInContentfulByName
+    publishedOutsideWorkspace
   }
 }
 
@@ -297,5 +315,10 @@ mutation rollbackApplicationTranslations($input: RollbackTranslationsInput!) {
     id
     namespace
     publishedAt
+    publishedByName
+    onBehalfOfName
+    rolledBackToPublishedAt
+    publishedInContentfulByName
+    publishedOutsideWorkspace
   }
 }

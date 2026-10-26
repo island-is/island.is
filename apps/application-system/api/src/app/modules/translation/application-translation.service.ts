@@ -4,6 +4,8 @@ import {
   Injectable,
   ServiceUnavailableException,
 } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
+import { Op } from 'sequelize'
 import type { User } from '@island.is/auth-nest-tools'
 import { isOwnedTranslationMessageId } from '@island.is/application/utils'
 import { logger } from '@island.is/logging'
@@ -19,8 +21,14 @@ import {
   ENGLISH_LOCALE,
   NamespaceEntryFields,
 } from '@island.is/application/api/core'
+import {
+  ApplicationTranslationPublish,
+  TranslationPublishAction,
+} from './application-translation-publish.model'
 
 const WRITE_COALESCE_MS = 3000
+const PUBLISH_HISTORY_PAGE_SIZE = 25
+const FAILED_USER_LOOKUP_TTL_MS = 5 * 60 * 1000
 
 export interface UpsertTranslationInput {
   namespace: string
@@ -33,6 +41,16 @@ export interface PublishHistoryItem {
   id?: string
   namespace: string
   publishedAt: Date
+  publishedByName?: string
+  onBehalfOfName?: string
+  rolledBackToPublishedAt?: Date
+  publishedInContentfulByName?: string
+  publishedOutsideWorkspace?: boolean
+}
+
+export interface PublishActor {
+  actorName: string
+  onBehalfOfName?: string | null
 }
 
 export const assertMessageKeyBelongsToNamespace = (
@@ -51,7 +69,13 @@ export class ApplicationTranslationService {
     private readonly managementClient: PlainClientAPI,
     @Inject(FeatureFlagService)
     private readonly featureFlagService: FeatureFlagService,
+    @InjectModel(ApplicationTranslationPublish)
+    private readonly publishModel: typeof ApplicationTranslationPublish,
   ) {}
+
+  private readonly contentfulUserNames = new Map<string, string>()
+  private readonly failedUserLookups = new Map<string, number>()
+  private currentContentfulUserId?: string
 
   private readonly pendingWrites = new Map<
     string,
@@ -482,9 +506,51 @@ export class ApplicationTranslationService {
     }
   }
 
+  private async recordPublish(
+    item: PublishHistoryItem,
+    action: TranslationPublishAction,
+    actor: PublishActor,
+    rolledBackTo?: { snapshotId: string; publishedAt: Date },
+  ): Promise<PublishHistoryItem> {
+    if (!item.id) {
+      logger.error(
+        `Translation ${action} for namespace "${item.namespace}" has no snapshot id; no publish record written`,
+      )
+      return item
+    }
+
+    const onBehalfOfName = actor.onBehalfOfName?.trim() || undefined
+
+    try {
+      await this.publishModel.create({
+        namespace: item.namespace,
+        action,
+        contentfulSnapshotId: item.id,
+        actorName: actor.actorName,
+        onBehalfOfName,
+        rolledBackToSnapshotId: rolledBackTo?.snapshotId,
+        rolledBackToPublishedAt: rolledBackTo?.publishedAt,
+      })
+    } catch (error) {
+      logger.error(
+        `Failed to write translation publish record for namespace "${item.namespace}", snapshot "${item.id}"`,
+        { message: error instanceof Error ? error.message : String(error) },
+      )
+      return item
+    }
+
+    return {
+      ...item,
+      publishedByName: actor.actorName,
+      onBehalfOfName,
+      rolledBackToPublishedAt: rolledBackTo?.publishedAt,
+    }
+  }
+
   async publishTranslations(
     namespace: string,
     user: User,
+    actor: PublishActor,
   ): Promise<PublishHistoryItem> {
     await this.assertWritesEnabled(user)
 
@@ -497,46 +563,143 @@ export class ApplicationTranslationService {
       )
     })
 
-    return this.getLatestPublishSnapshot(namespace, publishedEntry)
+    const item = await this.getLatestPublishSnapshot(namespace, publishedEntry)
+
+    return this.recordPublish(item, TranslationPublishAction.PUBLISH, actor)
   }
 
-  async getPublishHistory(namespace: string): Promise<PublishHistoryItem[]> {
+  async getPublishHistory(
+    namespace: string,
+    limit = PUBLISH_HISTORY_PAGE_SIZE,
+    skip = 0,
+  ): Promise<PublishHistoryItem[]> {
     const { sys } = await this.getVerifiedNamespaceEntry(namespace)
-    const items: PublishHistoryItem[] = []
-    const limit = 100
-    let skip = 0
+    const createdByBySnapshot = new Map<string, string>()
 
-    for (;;) {
-      const page =
-        await this.managementClient.snapshot.getManyForEntry<NamespaceEntryFields>(
-          { entryId: sys.id, query: { select: 'sys', limit, skip } },
-        )
+    const page =
+      await this.managementClient.snapshot.getManyForEntry<NamespaceEntryFields>(
+        { entryId: sys.id, query: { select: 'sys', limit, skip } },
+      )
 
-      for (const item of page.items) {
-        if (item.sys.snapshotType === 'publish') {
-          items.push({
-            id: item.sys.id,
-            namespace,
-            publishedAt: new Date(item.sys.createdAt),
-          })
+    const sorted: PublishHistoryItem[] = []
+    for (const item of page.items) {
+      if (item.sys.snapshotType === 'publish') {
+        sorted.push({
+          id: item.sys.id,
+          namespace,
+          publishedAt: new Date(item.sys.createdAt),
+        })
+        const createdById = item.sys.createdBy?.sys.id
+        if (createdById) {
+          createdByBySnapshot.set(item.sys.id, createdById)
+        }
+      }
+    }
+
+    sorted.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+
+    const records = await this.publishModel.findAll({
+      where: {
+        contentfulSnapshotId: { [Op.in]: sorted.flatMap((i) => i.id ?? []) },
+      },
+    })
+    const recordBySnapshot = new Map(
+      records.map((record) => [record.contentfulSnapshotId, record]),
+    )
+
+    const unrecorded = sorted.filter(
+      (item) => item.id && !recordBySnapshot.has(item.id),
+    )
+    const contentfulPublishers = await this.resolveContentfulPublishers(
+      unrecorded.flatMap(
+        (item) => createdByBySnapshot.get(item.id ?? '') ?? [],
+      ),
+    )
+
+    return sorted.map((item) => {
+      const record = item.id ? recordBySnapshot.get(item.id) : undefined
+      if (record) {
+        return {
+          ...item,
+          publishedByName: record.actorName,
+          onBehalfOfName: record.onBehalfOfName ?? undefined,
+          rolledBackToPublishedAt: record.rolledBackToPublishedAt ?? undefined,
         }
       }
 
-      if (page.items.length < limit) {
-        break
+      const createdById = item.id ? createdByBySnapshot.get(item.id) : undefined
+      if (!createdById || !contentfulPublishers) {
+        return item
       }
-      skip += limit
+      if (createdById === this.currentContentfulUserId) {
+        return item
+      }
+      const name = contentfulPublishers.get(createdById)
+      return name
+        ? { ...item, publishedInContentfulByName: name }
+        : { ...item, publishedOutsideWorkspace: true }
+    })
+  }
+
+  private async resolveContentfulPublishers(
+    userIds: string[],
+  ): Promise<Map<string, string> | null> {
+    if (userIds.length === 0) {
+      return new Map()
     }
 
-    return items.sort(
-      (a, b) => b.publishedAt.getTime() - a.publishedAt.getTime(),
+    try {
+      if (!this.currentContentfulUserId) {
+        const current = await this.managementClient.user.getCurrent()
+        this.currentContentfulUserId = current.sys.id
+      }
+    } catch (error) {
+      logger.warn('Could not resolve the Contentful token user', {
+        message: error instanceof Error ? error.message : String(error),
+      })
+      return null
+    }
+
+    const unknown = [...new Set(userIds)].filter(
+      (id) =>
+        id !== this.currentContentfulUserId &&
+        !this.contentfulUserNames.has(id) &&
+        (this.failedUserLookups.get(id) ?? 0) < Date.now(),
     )
+
+    await Promise.all(
+      unknown.map(async (userId) => {
+        try {
+          const user = await this.managementClient.user.getForSpace({ userId })
+          const name = `${user.firstName} ${user.lastName}`.trim()
+          if (name) {
+            this.contentfulUserNames.set(userId, name)
+          } else {
+            this.failedUserLookups.set(
+              userId,
+              Date.now() + FAILED_USER_LOOKUP_TTL_MS,
+            )
+          }
+        } catch (error) {
+          this.failedUserLookups.set(
+            userId,
+            Date.now() + FAILED_USER_LOOKUP_TTL_MS,
+          )
+          logger.warn(`Could not resolve Contentful user "${userId}"`, {
+            message: error instanceof Error ? error.message : String(error),
+          })
+        }
+      }),
+    )
+
+    return this.contentfulUserNames
   }
 
   async rollbackToPublish(
     snapshotId: string,
     namespace: string,
     user: User,
+    actor: PublishActor,
   ): Promise<PublishHistoryItem | null> {
     await this.assertWritesEnabled(user)
 
@@ -595,6 +758,11 @@ export class ApplicationTranslationService {
       )
     })
 
-    return this.getLatestPublishSnapshot(namespace, publishedEntry)
+    const item = await this.getLatestPublishSnapshot(namespace, publishedEntry)
+
+    return this.recordPublish(item, TranslationPublishAction.ROLLBACK, actor, {
+      snapshotId,
+      publishedAt: new Date(targetSnapshot.sys.createdAt),
+    })
   }
 }

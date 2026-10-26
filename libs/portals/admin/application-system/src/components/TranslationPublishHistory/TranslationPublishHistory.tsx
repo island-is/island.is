@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   Box,
   Button,
@@ -16,6 +16,18 @@ import {
   useGetApplicationTranslationPublishHistoryQuery,
   useRollbackApplicationTranslationsMutation,
 } from '../../queries/translations.generated'
+import { useTranslationPublishActor } from '../../hooks/useTranslationPublishActor'
+
+const PUBLISH_HISTORY_PAGE_SIZE = 25
+
+const formatDateTime = (value: string) =>
+  new Date(value).toLocaleDateString('is-IS', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 
 interface TranslationPublishHistoryProps {
   namespace: string
@@ -34,37 +46,82 @@ export const TranslationPublishHistory = ({
   unsavedCount,
   formatMessage,
 }: TranslationPublishHistoryProps) => {
-  const { data, loading, refetch } =
+  const { data, loading, refetch, fetchMore } =
     useGetApplicationTranslationPublishHistoryQuery({
-      variables: { namespace },
+      variables: { namespace, limit: PUBLISH_HISTORY_PAGE_SIZE, skip: 0 },
       skip: !isOpen || !namespace,
       fetchPolicy: 'network-only',
     })
+
+  const [exhausted, setExhausted] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+
+  useEffect(() => {
+    setExhausted(false)
+  }, [namespace, isOpen])
 
   const [rollback, { loading: rollingBack }] =
     useRollbackApplicationTranslationsMutation()
 
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
+  const publishActor = useTranslationPublishActor()
 
   const handleRollback = useCallback(
     async (publishId: string) => {
       try {
         await rollback({
-          variables: { input: { namespace, publishId } },
+          variables: { input: { namespace, publishId, ...publishActor } },
         })
         toast.success(formatMessage(m.translationRollbackSuccess))
         setConfirmingId(null)
         await refetch()
+        setExhausted(false)
         onRollbackComplete()
       } catch (err) {
         const detail = err instanceof Error ? err.message : 'Unknown error'
         toast.error(formatMessage(m.translationRollbackFailed, { detail }))
       }
     },
-    [namespace, rollback, formatMessage, refetch, onRollbackComplete],
+    [
+      namespace,
+      publishActor,
+      rollback,
+      formatMessage,
+      refetch,
+      onRollbackComplete,
+    ],
   )
 
   const history = data?.applicationTranslationPublishHistory ?? []
+  const hasMore =
+    !exhausted &&
+    history.length > 0 &&
+    history.length % PUBLISH_HISTORY_PAGE_SIZE === 0
+
+  const handleShowMore = async () => {
+    setLoadingMore(true)
+    try {
+      const result = await fetchMore({
+        variables: { skip: history.length },
+        updateQuery: (prev, { fetchMoreResult }) => ({
+          ...prev,
+          applicationTranslationPublishHistory: [
+            ...(prev.applicationTranslationPublishHistory ?? []),
+            ...(fetchMoreResult?.applicationTranslationPublishHistory ?? []),
+          ],
+        }),
+      })
+      const fetched =
+        result.data?.applicationTranslationPublishHistory?.length ?? 0
+      if (fetched < PUBLISH_HISTORY_PAGE_SIZE) {
+        setExhausted(true)
+      }
+    } catch (err) {
+      console.error('Failed to load more publish history', err)
+    } finally {
+      setLoadingMore(false)
+    }
+  }
 
   return (
     <Drawer
@@ -94,14 +151,7 @@ export const TranslationPublishHistory = ({
         )}
 
         {history.map((pub, index) => {
-          const date = new Date(pub.publishedAt)
-          const dateStr = date.toLocaleDateString('is-IS', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-          })
+          const dateStr = formatDateTime(pub.publishedAt)
           const isCurrent = index === 0
           const pubId = pub.id
 
@@ -121,6 +171,50 @@ export const TranslationPublishHistory = ({
                   <Text variant="small" fontWeight="semiBold">
                     {dateStr}
                   </Text>
+                  {pub.publishedByName && (
+                    <Text variant="small" color="dark300">
+                      {formatMessage(m.translationPublishedByLabel, {
+                        name: pub.publishedByName,
+                      })}
+                    </Text>
+                  )}
+                  {pub.onBehalfOfName && (
+                    <Text variant="small" color="dark300">
+                      {formatMessage(m.translationOnBehalfOfLabel, {
+                        name: pub.onBehalfOfName,
+                      })}
+                    </Text>
+                  )}
+                  {pub.rolledBackToPublishedAt && (
+                    <Text variant="small" color="dark400">
+                      {formatMessage(m.translationRolledBackToLabel, {
+                        date: formatDateTime(pub.rolledBackToPublishedAt),
+                      })}
+                    </Text>
+                  )}
+                  {!pub.publishedByName && pub.publishedInContentfulByName && (
+                    <Text variant="small" color="dark300">
+                      {formatMessage(m.translationPublishedInContentfulLabel, {
+                        name: pub.publishedInContentfulByName,
+                      })}
+                    </Text>
+                  )}
+                  {!pub.publishedByName &&
+                    !pub.publishedInContentfulByName &&
+                    pub.publishedOutsideWorkspace && (
+                      <Text variant="small" color="dark300">
+                        {formatMessage(
+                          m.translationPublishedOutsideWorkspaceLabel,
+                        )}
+                      </Text>
+                    )}
+                  {!pub.publishedByName &&
+                    !pub.publishedInContentfulByName &&
+                    !pub.publishedOutsideWorkspace && (
+                      <Text variant="small" color="dark300">
+                        {formatMessage(m.translationPublishedByUnknownLabel)}
+                      </Text>
+                    )}
                 </Stack>
                 <Box>
                   {isCurrent ? (
@@ -141,6 +235,19 @@ export const TranslationPublishHistory = ({
             </Box>
           )
         })}
+
+        {hasMore && (
+          <Box display="flex" justifyContent="center">
+            <Button
+              size="small"
+              variant="ghost"
+              loading={loadingMore}
+              onClick={handleShowMore}
+            >
+              {formatMessage(m.translationPublishHistoryShowMore)}
+            </Button>
+          </Box>
+        )}
       </Stack>
       <Modal
         id="translation-rollback-confirm"

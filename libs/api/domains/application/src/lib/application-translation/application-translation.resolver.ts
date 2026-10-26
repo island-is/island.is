@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import graphqlTypeJson from 'graphql-type-json'
 import type { User } from '@island.is/auth-nest-tools'
@@ -86,7 +86,10 @@ export class ApplicationTranslationResolver {
     @CurrentUser() user: User,
     @Args('input') input: PublishTranslationsInput,
   ): Promise<TranslationPublishGql> {
-    return this.translationClient.publishTranslations(user, input.namespace)
+    return this.translationClient.publishTranslations(user, input.namespace, {
+      actorName: input.actorName,
+      onBehalfOfName: input.onBehalfOfName,
+    })
   }
 
   @Query(() => [TranslationPublishGql], { nullable: true })
@@ -94,8 +97,15 @@ export class ApplicationTranslationResolver {
   async applicationTranslationPublishHistory(
     @CurrentUser() user: User,
     @Args('namespace') namespace: string,
+    @Args('limit', { type: () => Int, defaultValue: 25 }) limit: number,
+    @Args('skip', { type: () => Int, defaultValue: 0 }) skip: number,
   ): Promise<TranslationPublishGql[]> {
-    return this.translationClient.getPublishHistory(user, namespace)
+    return this.translationClient.getPublishHistory(
+      user,
+      namespace,
+      limit,
+      skip,
+    )
   }
 
   @Mutation(() => TranslationPublishGql)
@@ -108,6 +118,10 @@ export class ApplicationTranslationResolver {
       user,
       input.namespace,
       input.publishId,
+      {
+        actorName: input.actorName,
+        onBehalfOfName: input.onBehalfOfName,
+      },
     )
   }
 

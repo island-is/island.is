@@ -506,4 +506,19 @@ export class TranslationPublishGql {
 
   @Field()
   publishedAt!: string
+
+  @Field(() => String, { nullable: true })
+  publishedByName?: string
+
+  @Field(() => String, { nullable: true })
+  onBehalfOfName?: string
+
+  @Field(() => String, { nullable: true })
+  rolledBackToPublishedAt?: string
+
+  @Field(() => String, { nullable: true })
+  publishedInContentfulByName?: string
+
+  @Field(() => Boolean, { nullable: true })
+  publishedOutsideWorkspace?: boolean
 }

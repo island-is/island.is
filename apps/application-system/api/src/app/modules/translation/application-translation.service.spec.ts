@@ -3,6 +3,7 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
+import { getModelToken } from '@nestjs/sequelize'
 import type { User } from '@island.is/auth-nest-tools'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import {
@@ -13,6 +14,7 @@ import {
 } from '@island.is/application/api/core'
 
 import { ApplicationTranslationService } from './application-translation.service'
+import { ApplicationTranslationPublish } from './application-translation-publish.model'
 
 const buildEntry = (
   fields: NamespaceEntryFields,
@@ -58,6 +60,10 @@ describe('ApplicationTranslationService', () => {
   let managementSnapshotGetManyForEntrySpy: jest.Mock
   let managementSnapshotGetForEntrySpy: jest.Mock
   let featureFlagGetValueSpy: jest.Mock
+  let publishCreateSpy: jest.Mock
+  let publishFindAllSpy: jest.Mock
+  let userGetCurrentSpy: jest.Mock
+  let userGetForSpaceSpy: jest.Mock
 
   const user: User = {
     nationalId: '0101302989',
@@ -65,6 +71,8 @@ describe('ApplicationTranslationService', () => {
     authorization: '',
     client: 'test',
   }
+
+  const actor = { actorName: 'Jóna Jónsdóttir', onBehalfOfName: 'Arctic 65' }
 
   beforeEach(async () => {
     managementEntryGetSpy = jest.fn()
@@ -76,6 +84,12 @@ describe('ApplicationTranslationService', () => {
       .mockResolvedValue({ items: [] })
     managementSnapshotGetForEntrySpy = jest.fn()
     featureFlagGetValueSpy = jest.fn().mockResolvedValue(false)
+    publishCreateSpy = jest.fn().mockResolvedValue({})
+    publishFindAllSpy = jest.fn().mockResolvedValue([])
+    userGetCurrentSpy = jest
+      .fn()
+      .mockResolvedValue({ sys: { id: 'token-user' } })
+    userGetForSpaceSpy = jest.fn()
 
     const module = await Test.createTestingModule({
       providers: [
@@ -93,7 +107,15 @@ describe('ApplicationTranslationService', () => {
               getManyForEntry: managementSnapshotGetManyForEntrySpy,
               getForEntry: managementSnapshotGetForEntrySpy,
             },
+            user: {
+              getCurrent: userGetCurrentSpy,
+              getForSpace: userGetForSpaceSpy,
+            },
           },
+        },
+        {
+          provide: getModelToken(ApplicationTranslationPublish),
+          useValue: { create: publishCreateSpy, findAll: publishFindAllSpy },
         },
         {
           provide: FeatureFlagService,
@@ -495,7 +517,7 @@ describe('ApplicationTranslationService', () => {
       featureFlagGetValueSpy.mockResolvedValue(true)
 
       await expect(
-        service.publishTranslations('test.ns', user),
+        service.publishTranslations('test.ns', user, actor),
       ).rejects.toBeInstanceOf(ServiceUnavailableException)
 
       expect(managementEntryGetSpy).not.toHaveBeenCalled()
@@ -506,7 +528,7 @@ describe('ApplicationTranslationService', () => {
       managementEntryGetManySpy.mockResolvedValue({ items: [] })
 
       await expect(
-        service.publishTranslations('missing.ns', user),
+        service.publishTranslations('missing.ns', user, actor),
       ).rejects.toBeInstanceOf(BadRequestException)
     })
 
@@ -523,7 +545,7 @@ describe('ApplicationTranslationService', () => {
         items: [buildLatestPublishSnapshotItem('snap-4')],
       })
 
-      const result = await service.publishTranslations('test.ns', user)
+      const result = await service.publishTranslations('test.ns', user, actor)
 
       expect(managementEntryPublishSpy).toHaveBeenCalledWith(
         { entryId: 'test.ns' },
@@ -537,6 +559,8 @@ describe('ApplicationTranslationService', () => {
         id: 'snap-4',
         namespace: 'test.ns',
         publishedAt: new Date('2026-02-01T10:00:00.000Z'),
+        publishedByName: 'Jóna Jónsdóttir',
+        onBehalfOfName: 'Arctic 65',
       })
     })
 
@@ -557,7 +581,7 @@ describe('ApplicationTranslationService', () => {
         items: [buildLatestPublishSnapshotItem('snap-1')],
       })
 
-      const result = await service.publishTranslations('test.ns', user)
+      const result = await service.publishTranslations('test.ns', user, actor)
 
       expect(managementEntryGetSpy).toHaveBeenCalledTimes(2)
       expect(managementEntryPublishSpy).toHaveBeenCalledTimes(2)
@@ -590,7 +614,7 @@ describe('ApplicationTranslationService', () => {
         ],
       })
 
-      const result = await service.publishTranslations('test.ns', user)
+      const result = await service.publishTranslations('test.ns', user, actor)
 
       expect(result.id).toBe('snap-newest')
     })
@@ -607,7 +631,7 @@ describe('ApplicationTranslationService', () => {
       managementSnapshotGetManyForEntrySpy.mockResolvedValue({ items: [] })
 
       await expect(
-        service.publishTranslations('test.ns', user),
+        service.publishTranslations('test.ns', user, actor),
       ).resolves.toEqual({
         namespace: 'test.ns',
         publishedAt: new Date('2026-02-01T10:00:00.000Z'),
@@ -625,7 +649,7 @@ describe('ApplicationTranslationService', () => {
         new Error('timeout'),
       )
 
-      const result = await service.publishTranslations('test.ns', user)
+      const result = await service.publishTranslations('test.ns', user, actor)
 
       expect(result.id).toBeUndefined()
       expect(result.namespace).toBe('test.ns')
@@ -667,36 +691,33 @@ describe('ApplicationTranslationService', () => {
 
       expect(managementSnapshotGetManyForEntrySpy).toHaveBeenCalledWith({
         entryId: 'test.ns',
-        query: { select: 'sys', limit: 100, skip: 0 },
+        query: { select: 'sys', limit: 25, skip: 0 },
       })
       expect(history.map((h) => h.id)).toEqual(['snap-new', 'snap-old'])
     })
 
-    it('pages through multiple snapshot pages until a short page is seen', async () => {
+    it('reads only the requested page of snapshots', async () => {
       managementEntryGetSpy.mockResolvedValue(
         buildEntry({ namespace: { [DEFAULT_LOCALE]: 'test.ns' } }),
       )
-      const page = (id: string) => ({
-        sys: {
-          id,
-          snapshotType: 'publish',
-          createdAt: '2026-01-01T00:00:00.000Z',
-        },
+      const snapshot = (id: string, createdAt: string) => ({
+        sys: { id, snapshotType: 'publish', createdAt },
       })
-      managementSnapshotGetManyForEntrySpy
-        .mockResolvedValueOnce({
-          items: Array.from({ length: 100 }, (_, i) => page(`snap-${i}`)),
-        })
-        .mockResolvedValueOnce({ items: [page('snap-last')] })
+      managementSnapshotGetManyForEntrySpy.mockResolvedValue({
+        items: [
+          snapshot('snap-b', '2026-02-01T00:00:00.000Z'),
+          snapshot('snap-a', '2026-01-01T00:00:00.000Z'),
+        ],
+      })
 
-      const history = await service.getPublishHistory('test.ns')
+      const history = await service.getPublishHistory('test.ns', 2, 50)
 
-      expect(managementSnapshotGetManyForEntrySpy).toHaveBeenCalledTimes(2)
-      expect(managementSnapshotGetManyForEntrySpy).toHaveBeenNthCalledWith(2, {
+      expect(managementSnapshotGetManyForEntrySpy).toHaveBeenCalledTimes(1)
+      expect(managementSnapshotGetManyForEntrySpy).toHaveBeenCalledWith({
         entryId: 'test.ns',
-        query: { select: 'sys', limit: 100, skip: 100 },
+        query: { select: 'sys', limit: 2, skip: 50 },
       })
-      expect(history).toHaveLength(101)
+      expect(history.map((h) => h.id)).toEqual(['snap-b', 'snap-a'])
     })
   })
 
@@ -708,7 +729,7 @@ describe('ApplicationTranslationService', () => {
       managementSnapshotGetForEntrySpy.mockRejectedValue({ name: 'NotFound' })
 
       await expect(
-        service.rollbackToPublish('missing-snap', 'test.ns', user),
+        service.rollbackToPublish('missing-snap', 'test.ns', user, actor),
       ).resolves.toBeNull()
 
       expect(managementEntryUpdateSpy).not.toHaveBeenCalled()
@@ -726,6 +747,7 @@ describe('ApplicationTranslationService', () => {
       managementEntryGetSpy.mockRejectedValue({ name: 'NotFound' })
       managementEntryGetManySpy.mockResolvedValue({ items: [entry] })
       managementSnapshotGetForEntrySpy.mockResolvedValue({
+        sys: { createdAt: '2026-01-01T12:00:00.000Z' },
         snapshot: { fields: entry.fields },
       })
       managementEntryUpdateSpy.mockResolvedValue(entry)
@@ -734,7 +756,7 @@ describe('ApplicationTranslationService', () => {
         items: [buildLatestPublishSnapshotItem('snap-4')],
       })
 
-      await service.rollbackToPublish('snap-1', 'test.ns', user)
+      await service.rollbackToPublish('snap-1', 'test.ns', user, actor)
 
       expect(managementSnapshotGetForEntrySpy).toHaveBeenCalledWith({
         entryId: 'other-id',
@@ -758,7 +780,7 @@ describe('ApplicationTranslationService', () => {
       featureFlagGetValueSpy.mockResolvedValue(true)
 
       await expect(
-        service.rollbackToPublish('snap-id', 'test.ns', user),
+        service.rollbackToPublish('snap-id', 'test.ns', user, actor),
       ).rejects.toBeInstanceOf(ServiceUnavailableException)
 
       expect(managementSnapshotGetForEntrySpy).not.toHaveBeenCalled()
@@ -766,6 +788,7 @@ describe('ApplicationTranslationService', () => {
 
     it('restores target values and blanks keys absent from the target, without removing them', async () => {
       managementSnapshotGetForEntrySpy.mockResolvedValue({
+        sys: { createdAt: '2026-01-01T12:00:00.000Z' },
         snapshot: {
           fields: {
             strings: {
@@ -795,7 +818,12 @@ describe('ApplicationTranslationService', () => {
         items: [buildLatestPublishSnapshotItem('snap-7')],
       })
 
-      const result = await service.rollbackToPublish('snap-id', 'test.ns', user)
+      const result = await service.rollbackToPublish(
+        'snap-id',
+        'test.ns',
+        user,
+        actor,
+      )
 
       expect(managementEntryUpdateSpy).toHaveBeenCalledWith(
         { entryId: 'test.ns' },
@@ -822,6 +850,212 @@ describe('ApplicationTranslationService', () => {
         id: 'snap-7',
         namespace: 'test.ns',
         publishedAt: new Date('2026-02-01T10:00:00.000Z'),
+        publishedByName: 'Jóna Jónsdóttir',
+        onBehalfOfName: 'Arctic 65',
+        rolledBackToPublishedAt: new Date('2026-01-01T12:00:00.000Z'),
+      })
+    })
+  })
+
+  describe('publish records', () => {
+    const arrangePublish = () => {
+      const entry = buildEntry({
+        namespace: { [DEFAULT_LOCALE]: 'test.ns' },
+        strings: { [DEFAULT_LOCALE]: {}, [ENGLISH_LOCALE]: {} },
+      })
+      managementEntryGetSpy.mockResolvedValue(entry)
+      managementEntryPublishSpy.mockResolvedValue(
+        buildEntry(entry.fields, { publishedVersion: 4 }),
+      )
+      managementSnapshotGetManyForEntrySpy.mockResolvedValue({
+        items: [buildLatestPublishSnapshotItem('snap-4')],
+      })
+    }
+
+    it('records a publish against its snapshot with the actor names', async () => {
+      arrangePublish()
+
+      await service.publishTranslations('test.ns', user, actor)
+
+      expect(publishCreateSpy).toHaveBeenCalledWith({
+        namespace: 'test.ns',
+        action: 'publish',
+        contentfulSnapshotId: 'snap-4',
+        actorName: 'Jóna Jónsdóttir',
+        onBehalfOfName: 'Arctic 65',
+        rolledBackToSnapshotId: undefined,
+        rolledBackToPublishedAt: undefined,
+      })
+    })
+
+    it('stores no on-behalf-of name when it is blank', async () => {
+      arrangePublish()
+
+      const result = await service.publishTranslations('test.ns', user, {
+        actorName: 'Jóna Jónsdóttir',
+        onBehalfOfName: '  ',
+      })
+
+      expect(publishCreateSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ onBehalfOfName: undefined }),
+      )
+      expect(result.onBehalfOfName).toBeUndefined()
+    })
+
+    it('still resolves, without names, when the record cannot be written', async () => {
+      arrangePublish()
+      publishCreateSpy.mockRejectedValue(new Error('db down'))
+
+      const result = await service.publishTranslations('test.ns', user, actor)
+
+      expect(result.id).toBe('snap-4')
+      expect(result.publishedByName).toBeUndefined()
+    })
+
+    it('records a rollback with the restored version and its date', async () => {
+      const entry = buildEntry({
+        namespace: { [DEFAULT_LOCALE]: 'test.ns' },
+        strings: { [DEFAULT_LOCALE]: {}, [ENGLISH_LOCALE]: {} },
+      })
+      managementEntryGetSpy.mockResolvedValue(entry)
+      managementSnapshotGetForEntrySpy.mockResolvedValue({
+        sys: { createdAt: '2026-01-01T12:00:00.000Z' },
+        snapshot: { fields: { strings: {} } },
+      })
+      managementEntryUpdateSpy.mockResolvedValue(entry)
+      managementEntryPublishSpy.mockResolvedValue(
+        buildEntry(entry.fields, { publishedVersion: 4 }),
+      )
+      managementSnapshotGetManyForEntrySpy.mockResolvedValue({
+        items: [buildLatestPublishSnapshotItem('snap-7')],
+      })
+
+      await service.rollbackToPublish('snap-old', 'test.ns', user, actor)
+
+      expect(publishCreateSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          action: 'rollback',
+          contentfulSnapshotId: 'snap-7',
+          rolledBackToSnapshotId: 'snap-old',
+          rolledBackToPublishedAt: new Date('2026-01-01T12:00:00.000Z'),
+        }),
+      )
+    })
+
+    describe('getPublishHistory names', () => {
+      const historyItem = (
+        id: string,
+        createdAt: string,
+        createdBy?: string,
+      ) => ({
+        sys: {
+          id,
+          snapshotType: 'publish',
+          createdAt,
+          ...(createdBy ? { createdBy: { sys: { id: createdBy } } } : {}),
+        },
+      })
+
+      beforeEach(() => {
+        managementEntryGetSpy.mockResolvedValue(
+          buildEntry({ namespace: { [DEFAULT_LOCALE]: 'test.ns' } }),
+        )
+      })
+
+      it('attaches names by snapshot id and leaves unrecorded snapshots bare', async () => {
+        managementSnapshotGetManyForEntrySpy.mockResolvedValue({
+          items: [
+            historyItem('snap-old', '2026-01-01T00:00:00.000Z'),
+            historyItem('snap-new', '2026-02-01T00:00:00.000Z'),
+          ],
+        })
+        publishFindAllSpy.mockResolvedValue([
+          {
+            contentfulSnapshotId: 'snap-new',
+            actorName: 'Jóna Jónsdóttir',
+            onBehalfOfName: 'Arctic 65',
+            rolledBackToPublishedAt: new Date('2026-01-01T00:00:00.000Z'),
+          },
+        ])
+
+        const history = await service.getPublishHistory('test.ns')
+
+        expect(history).toEqual([
+          {
+            id: 'snap-new',
+            namespace: 'test.ns',
+            publishedAt: new Date('2026-02-01T00:00:00.000Z'),
+            publishedByName: 'Jóna Jónsdóttir',
+            onBehalfOfName: 'Arctic 65',
+            rolledBackToPublishedAt: new Date('2026-01-01T00:00:00.000Z'),
+          },
+          {
+            id: 'snap-old',
+            namespace: 'test.ns',
+            publishedAt: new Date('2026-01-01T00:00:00.000Z'),
+          },
+        ])
+      })
+
+      it('names a publish made in Contentful, and flags one whose user cannot be read', async () => {
+        managementSnapshotGetManyForEntrySpy.mockResolvedValue({
+          items: [
+            historyItem('snap-web', '2026-03-01T00:00:00.000Z', 'web-user'),
+            historyItem('snap-token', '2026-02-01T00:00:00.000Z', 'token-user'),
+            historyItem(
+              'snap-denied',
+              '2026-01-01T00:00:00.000Z',
+              'denied-user',
+            ),
+          ],
+        })
+        userGetForSpaceSpy.mockImplementation(
+          async ({ userId }: { userId: string }) => {
+            if (userId === 'web-user') {
+              return { firstName: 'Siggi', lastName: 'Sigurðsson' }
+            }
+            throw new Error('forbidden')
+          },
+        )
+
+        const history = await service.getPublishHistory('test.ns')
+
+        expect(history[0].publishedInContentfulByName).toBe('Siggi Sigurðsson')
+        expect(history[1].publishedInContentfulByName).toBeUndefined()
+        expect(history[1].publishedOutsideWorkspace).toBeUndefined()
+        expect(history[2].publishedOutsideWorkspace).toBe(true)
+        expect(userGetForSpaceSpy).not.toHaveBeenCalledWith({
+          userId: 'token-user',
+        })
+      })
+
+      it('does not look a failed user up again on the next call', async () => {
+        managementSnapshotGetManyForEntrySpy.mockResolvedValue({
+          items: [
+            historyItem('snap-gone', '2026-03-01T00:00:00.000Z', 'gone-user'),
+          ],
+        })
+        userGetForSpaceSpy.mockRejectedValue(new Error('not found'))
+
+        await service.getPublishHistory('test.ns')
+        const second = await service.getPublishHistory('test.ns')
+
+        expect(userGetForSpaceSpy).toHaveBeenCalledTimes(1)
+        expect(second[0].publishedOutsideWorkspace).toBe(true)
+      })
+
+      it('flags nothing when the token user cannot be resolved', async () => {
+        managementSnapshotGetManyForEntrySpy.mockResolvedValue({
+          items: [
+            historyItem('snap-web', '2026-03-01T00:00:00.000Z', 'web-user'),
+          ],
+        })
+        userGetCurrentSpy.mockRejectedValue(new Error('forbidden'))
+
+        const history = await service.getPublishHistory('test.ns')
+
+        expect(history[0].publishedInContentfulByName).toBeUndefined()
+        expect(history[0].publishedOutsideWorkspace).toBeUndefined()
       })
     })
   })

@@ -605,11 +605,31 @@ export const m = defineMessages({
   },
   translationPublishedByLabel: {
     id: 'admin-portal.application-system:translationPublishedByLabel',
-    defaultMessage: 'Kennitala: {nationalId}',
+    defaultMessage: 'Birt af: {name}',
   },
-  translationActorLabel: {
-    id: 'admin-portal.application-system:translationActorLabel',
-    defaultMessage: 'Umboðsaðili: {actorNationalId}',
+  translationOnBehalfOfLabel: {
+    id: 'admin-portal.application-system:translationOnBehalfOfLabel',
+    defaultMessage: 'Fyrir hönd: {name}',
+  },
+  translationRolledBackToLabel: {
+    id: 'admin-portal.application-system:translationRolledBackToLabel',
+    defaultMessage: 'Endurheimt útgáfa frá {date}',
+  },
+  translationPublishedInContentfulLabel: {
+    id: 'admin-portal.application-system:translationPublishedInContentfulLabel',
+    defaultMessage: 'Birt í Contentful: {name}',
+  },
+  translationPublishedOutsideWorkspaceLabel: {
+    id: 'admin-portal.application-system:translationPublishedOutsideWorkspaceLabel',
+    defaultMessage: 'Birt utan vinnusvæðis',
+  },
+  translationPublishHistoryShowMore: {
+    id: 'admin-portal.application-system:translationPublishHistoryShowMore',
+    defaultMessage: 'Sýna fleiri',
+  },
+  translationPublishedByUnknownLabel: {
+    id: 'admin-portal.application-system:translationPublishedByUnknownLabel',
+    defaultMessage: 'Nafn ekki skráð',
   },
   translationWorkspaceOverviewPreviewHint: {
     id: 'admin-portal.application-system:translationWorkspaceOverviewPreviewHint',
