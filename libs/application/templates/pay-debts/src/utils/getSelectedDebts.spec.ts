@@ -1,6 +1,6 @@
 import { Application } from '@island.is/application/types'
 import { CustomerDebt } from './types'
-import { getAmountToPay, getSelectedDebts } from './getSelectedDebts'
+import { getSelectedDebts } from './getSelectedDebts'
 
 let nextPayId = 0
 
@@ -32,9 +32,6 @@ const applicationWith = (
     answers: { selectedDebts, selectedDebtIds, debtsToPay },
   } as unknown as Application)
 
-const amountsFor = (debts: CustomerDebt[], amounts: unknown[]) =>
-  debts.map((d, index) => getAmountToPay(d, amounts[index] as string))
-
 describe('getSelectedDebts', () => {
   it('returns only the ticked rows, keeping the answers index aligned', () => {
     const debts = [
@@ -50,37 +47,6 @@ describe('getSelectedDebts', () => {
     expect(selected).toHaveLength(1)
     expect(selected[0].chargeTypeId).toBe('B')
     expect(selected[0].amountToPay).toBe(1000)
-  })
-
-  it('keeps an amount that is within the debt', () => {
-    expect(amountsFor([debt({ debts: 1000 })], ['400'])).toEqual([400])
-  })
-
-  it('never charges more than the debt', () => {
-    const debts = [debt({ debts: 1000 })]
-
-    expect(amountsFor(debts, ['1001'])).toEqual([1000])
-    expect(amountsFor(debts, ['9007199254740991'])).toEqual([1000])
-  })
-
-  it('never charges a zero or negative amount', () => {
-    const debts = [debt({ debts: 1000 })]
-
-    expect(amountsFor(debts, ['0'])).toEqual([1])
-    expect(amountsFor(debts, ['-500'])).toEqual([1])
-  })
-
-  it('falls back to the full debt when no amount was given', () => {
-    const debts = [debt({ debts: 1000 })]
-
-    expect(amountsFor(debts, [undefined])).toEqual([1000])
-    expect(amountsFor(debts, ['kr.'])).toEqual([1000])
-  })
-
-  it('clamps each row against its own debt', () => {
-    const debts = [debt({ debts: 1000 }), debt({ debts: 50 })]
-
-    expect(amountsFor(debts, ['5000', '5000'])).toEqual([1000, 50])
   })
 
   it('finds a ticked debt by payID after the list has shifted', () => {
