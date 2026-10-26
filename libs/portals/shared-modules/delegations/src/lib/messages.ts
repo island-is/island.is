@@ -652,7 +652,7 @@ export const m = defineMessages({
   },
   stepUpConfirmed: {
     id: 'sp.access-control-delegations:step-up-confirmed',
-    defaultMessage: 'Umboðið er komið í gildi',
+    defaultMessage: 'Umboðið hefur tekið gildi',
   },
   stepUpYourSecurityCode: {
     id: 'sp.access-control-delegations:step-up-your-security-code',
