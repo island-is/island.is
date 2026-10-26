@@ -39,7 +39,7 @@ export const generateJobsForFeature = async (
           const restoreConfig = featureDbRestores.find(
             (r) => r.service === baseDbName,
           )
-
+          // test with out restore. 
           return {
             command: ['/app/create-db.sh'],
             // command: restoreConfig

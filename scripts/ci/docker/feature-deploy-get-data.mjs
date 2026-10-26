@@ -104,7 +104,6 @@ async function main(testContext = null) {
       content.image.repository &&
       typeof content.image.repository === 'string'
     ) {
-      // TODO: && ids feature deploy is checked
       if (file.includes('identity-server')) {
         content.image.tag = await getLatestIdsImageTag()
       } else {
