@@ -41,7 +41,6 @@ import type { LimitedAccessCreatePresignedPostMutation } from './limitedAccessCr
 import { useLimitedAccessCreatePresignedPostMutation } from './limitedAccessCreatePresignedPost.generated'
 import type { LimitedAccessDeleteFileMutation } from './limitedAccessDeleteFile.generated'
 import { useLimitedAccessDeleteFileMutation } from './limitedAccessDeleteFile.generated'
-import { useReplaceIndictmentPdfMutation } from './replaceIndictmentPdf.generated'
 import { useUploadCriminalRecordFileMutation } from './uploadCriminalRecordFile.generated'
 import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generated'
 import { strings } from './useS3Upload.strings'
@@ -242,8 +241,6 @@ const useS3Upload = (
   const [uploadPoliceCaseFile] = useUploadPoliceCaseFileMutation()
   const [uploadCriminalRecordFile] = useUploadCriminalRecordFileMutation()
   const [attachRulingOrderDocument] = useAttachRulingOrderDocumentMutation()
-  const [replaceIndictmentPdf] = useReplaceIndictmentPdfMutation()
-
   const getPresignedPost = useCallback(
     async (file: TUploadFile) => {
       const mutation = limitedAccess
@@ -500,39 +497,6 @@ const useS3Upload = (
     [attachRulingOrderDocument, caseId, getPresignedPost, formatMessage],
   )
 
-  const handleReplaceIndictmentPdf = useCallback(
-    async (file: File) => {
-      const uploadFile: TUploadFile = {
-        id: uuid(),
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        originalFileObj: file,
-      }
-
-      try {
-        const presignedPost = await getPresignedPost(uploadFile)
-
-        await uploadToS3(uploadFile, presignedPost, () => undefined)
-
-        const { data } = await replaceIndictmentPdf({
-          variables: { input: { caseId, key: presignedPost.key } },
-        })
-
-        if (!data?.replaceIndictmentPdf?.success) {
-          throw Error('Failed to replace the indictment')
-        }
-
-        return true
-      } catch {
-        toast.error('Ekki tókst að skipta út ákæru')
-
-        return false
-      }
-    },
-    [caseId, getPresignedPost, replaceIndictmentPdf],
-  )
-
   const handleUploadCriminalRecord = (
     defendants: Defendant[],
     addUploadFile: (file: TUploadFile) => void,
@@ -731,7 +695,6 @@ const useS3Upload = (
     handleUploadFromPolice,
     handleUploadCriminalRecord,
     handleUploadRulingOrderDocument,
-    handleReplaceIndictmentPdf,
   }
 }
 

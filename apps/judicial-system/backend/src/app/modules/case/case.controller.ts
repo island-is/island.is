@@ -85,7 +85,6 @@ import { UpdateCase } from '../repository'
 import { UserService } from '../user'
 import { CaseAppealDecisionDto } from './dto/caseAppealDecision.dto'
 import { CreateCaseDto } from './dto/createCase.dto'
-import { ReplaceIndictmentPdfDto } from './dto/replaceIndictmentPdf.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
@@ -116,12 +115,10 @@ import {
   CasesInterceptor,
 } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
-import { ReplaceIndictmentPdfResponse } from './models/replaceIndictmentPdf.response'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
 import { CaseCloningService } from './caseCloning.service'
-import { canReplaceIndictmentPdf } from './indictmentPdfReplacement'
 import { PdfService } from './pdf.service'
 
 @Controller('api')
@@ -892,48 +889,6 @@ export class CaseController {
     res.end(pdf)
   }
 
-  @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
-    new CaseTypeGuard(indictmentCases),
-    CaseWriteGuard,
-  )
-  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
-  @Post('case/:caseId/indictment/replace')
-  @ApiCreatedResponse({
-    type: ReplaceIndictmentPdfResponse,
-    description:
-      'Replaces the indictment of an existing case with an uploaded pdf',
-  })
-  async replaceIndictmentPdf(
-    @Param('caseId') caseId: string,
-    @CurrentCase() theCase: Case,
-    @CurrentHttpUser() user: User,
-    @Body() { key }: ReplaceIndictmentPdfDto,
-  ): Promise<ReplaceIndictmentPdfResponse> {
-    this.logger.debug(`Replacing the indictment of case ${caseId}`)
-
-    if (!canReplaceIndictmentPdf(theCase, user)) {
-      throw new ForbiddenException(
-        `Cannot replace the indictment of case ${caseId}`,
-      )
-    }
-
-    if (!key.startsWith(`${caseId}/`) || key === `${caseId}/indictment.pdf`) {
-      throw new BadRequestException(
-        `Key does not belong to an upload of case ${caseId}`,
-      )
-    }
-
-    await this.sequelize.transaction((transaction) =>
-      this.pdfService.replaceIndictmentPdf(theCase, key, transaction),
-    )
-
-    // Outside the transaction: keep the temp upload if the hash update rolled back
-    await this.pdfService.deleteIndictmentUpload(theCase, key)
-
-    return { success: true }
-  }
 
   @UseGuards(
     RolesGuard,

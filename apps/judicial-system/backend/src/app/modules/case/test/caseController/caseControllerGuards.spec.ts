@@ -317,11 +317,3 @@ describe('CaseController - Create court case guards', () => {
   ])
 })
 
-describe('CaseController - Replace indictment pdf guards', () => {
-  verifyGuards(
-    CaseController,
-    'replaceIndictmentPdf',
-    [RolesGuard, CaseExistsGuard, CaseTypeGuard, CaseWriteGuard],
-    [{ guard: CaseTypeGuard, prop: { allowedCaseTypes: indictmentCases } }],
-  )
-})

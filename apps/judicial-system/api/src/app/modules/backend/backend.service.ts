@@ -25,7 +25,6 @@ import {
 import { AppealSummons } from '../appeal-summons'
 import {
   Case,
-  ReplaceIndictmentPdfResponse,
   RequestSignatureResponse,
   SendNotificationResponse,
   SignatureConfirmationResponse,
@@ -588,12 +587,6 @@ export class BackendService {
     return this.post(`case/${caseId}/file/${fileId}/document`, attachDocument)
   }
 
-  replaceIndictmentPdf(
-    caseId: string,
-    replaceIndictmentPdf: { key: string },
-  ): Promise<ReplaceIndictmentPdfResponse> {
-    return this.post(`case/${caseId}/indictment/replace`, replaceIndictmentPdf)
-  }
 
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/file/${fileId}`)
