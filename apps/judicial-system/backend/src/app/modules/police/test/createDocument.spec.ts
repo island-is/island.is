@@ -112,7 +112,9 @@ describe('PoliceService - Create Document', () => {
           defendantId,
           user,
           documentName: 'Dómur í máli R-1/2026',
-          documentFiles: [{ name: 'testFile.pdf', documentBase64: 'large-file' }],
+          documentFiles: [
+            { name: 'testFile.pdf', documentBase64: 'large-file' },
+          ],
           documentDates: [],
           fileTypeCode: 'RVDO',
           caseSupplements: [],
