@@ -208,6 +208,8 @@ export const buildContentSecurityPolicy = (
       'wss://*.zendesk.com',
       'https://paymentrelayservice.apple.com',
       'https://pay.google.com',
+      'https://google.com/pay',
+      'https://www.google.com/pay',
       'https://islandis.matomo.cloud/matomo.js',
       'https://islandis.matomo.cloud',
       ...(matomo ? [matomo] : []),
