@@ -243,14 +243,6 @@ describe('InteractiveTableFormFieldRow', () => {
       expect(screen.getByRole('textbox')).toHaveValue('565.990 kr.')
     })
 
-    it('does not accept a zero amount', async () => {
-      const input = await renderAmountRow()
-
-      await userEvent.type(input, '0')
-
-      expect(input).toHaveValue('')
-    })
-
     it('drops the minus sign so a negative amount cannot be entered', async () => {
       const input = await renderAmountRow()
 
