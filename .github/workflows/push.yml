@@ -619,9 +619,7 @@ jobs:
           IDS_WEB_TOKEN: ${{ steps.get-ids-token.outputs.token }}
           FEATURE_NAME: ${{ env.FEATURE_NAME }}
           # Branch in identity-server.web to build.
-          # TODO: switch to the monorepo feature branch ($GIT_BRANCH_DEPLOY) once
-          # the matching-branch flow is ready. Hardcoded to "main" for now.
-          IDS_BRANCH: main
+          IDS_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
         run: |
           set -euo pipefail
           repo_owner="island-is"
