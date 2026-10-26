@@ -90,7 +90,7 @@ describe('CardPaymentController — debt payments', () => {
     [
       'Google Pay',
       (c: CardPaymentController) =>
-        c.chargeGooglePay(getGooglePayChargeInput()),
+        c.chargeGooglePayVerified(getGooglePayChargeInput()),
     ],
   ])('answers DebtPaymentRejected for %s too', async (_name, charge) => {
     const controller = createController(rejected)
@@ -117,7 +117,7 @@ describe('CardPaymentController — debt payments', () => {
     [
       'Google Pay',
       (c: CardPaymentController) =>
-        c.chargeGooglePay(getGooglePayChargeInput()),
+        c.chargeGooglePayVerified(getGooglePayChargeInput()),
     ],
   ])(
     'answers the %s payment when the saga failed but the payment may be registered, and tells the organisation',

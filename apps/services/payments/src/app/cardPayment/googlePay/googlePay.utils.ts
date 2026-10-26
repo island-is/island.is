@@ -1,4 +1,7 @@
-import { GooglePayDecryptedWalletPaymentPayload } from '../../../types/cardPayment'
+import {
+  GooglePayDecryptedWalletPaymentPayload,
+  SavedVerificationCompleteData,
+} from '../../../types/cardPayment'
 import { CardPaymentModuleConfigType } from '../cardPayment.config'
 import {
   generateWalletPaymentRequestHeaders,
@@ -49,5 +52,47 @@ export const generateGooglePayDecryptedChargeRequestOptions = ({
     method: 'POST' as const,
     headers: generateWalletPaymentRequestHeaders(paymentApiConfig),
     body: JSON.stringify(body),
+  }
+}
+
+/**
+ * Valitor CardPayment for a PAN_ONLY card once it has passed 3-D Secure. No
+ * CVC: Google does not have one, and the gateway only requires it when no
+ * cardVerificationData is sent.
+ */
+export const generateGooglePaySavedCardChargeRequestOptions = ({
+  paymentMethodDetails,
+  verificationData,
+  paymentApiConfig,
+  paymentTrackingData,
+  amount,
+}: {
+  paymentMethodDetails: GooglePayPaymentMethodDetails
+  verificationData: SavedVerificationCompleteData
+  paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
+  paymentTrackingData: PaymentTrackingData
+  amount: number
+}) => {
+  const { systemCalling } = paymentApiConfig
+
+  return {
+    method: 'POST' as const,
+    headers: generateWalletPaymentRequestHeaders(paymentApiConfig),
+    body: JSON.stringify({
+      operation: 'Sale',
+      transactionType: 'WalletTransaction',
+      walletTransactionIdentifier: 'GooglePay',
+      cardNumber: paymentMethodDetails.pan,
+      expirationMonth: paymentMethodDetails.expirationMonth,
+      expirationYear: paymentMethodDetails.expirationYear,
+      currency: 'ISK',
+      amount: iskToAur(amount),
+      systemCalling,
+      cardVerificationData: verificationData,
+      additionalData: {
+        merchantReferenceData: paymentTrackingData.merchantReferenceData,
+      },
+      correlationId: paymentTrackingData.correlationId,
+    }),
   }
 }

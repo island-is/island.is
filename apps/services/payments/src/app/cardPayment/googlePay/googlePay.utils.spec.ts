@@ -1,5 +1,8 @@
 import { CardPaymentModuleConfigType } from '../cardPayment.config'
-import { generateGooglePayDecryptedChargeRequestOptions } from './googlePay.utils'
+import {
+  generateGooglePayDecryptedChargeRequestOptions,
+  generateGooglePaySavedCardChargeRequestOptions,
+} from './googlePay.utils'
 
 const paymentApiConfig = {
   paymentsApiSecret: 'APIKey secret',
@@ -68,5 +71,48 @@ describe('generateGooglePayDecryptedChargeRequestOptions', () => {
     expect(
       JSON.parse(options.body).googlePayWalletPayment.decryptedPaymentTokenData,
     ).not.toHaveProperty('eci')
+  })
+})
+
+describe('generateGooglePaySavedCardChargeRequestOptions', () => {
+  it('builds a Google Pay wallet CardPayment with the 3-D Secure result and no CVC', () => {
+    const options = generateGooglePaySavedCardChargeRequestOptions({
+      paymentMethodDetails: {
+        pan: '4111111111111111',
+        expirationMonth: 12,
+        expirationYear: 2030,
+        authMethod: 'PAN_ONLY',
+      },
+      verificationData: {
+        cavv: 'cavv',
+        mdStatus: '1',
+        xid: 'xid',
+        dsTransId: 'dsTransId',
+      },
+      paymentApiConfig,
+      paymentTrackingData,
+      amount: 250,
+    })
+
+    const body = JSON.parse(options.body)
+    expect(body).toEqual({
+      operation: 'Sale',
+      transactionType: 'WalletTransaction',
+      walletTransactionIdentifier: 'GooglePay',
+      cardNumber: '4111111111111111',
+      expirationMonth: 12,
+      expirationYear: 2030,
+      currency: 'ISK',
+      amount: 25000,
+      systemCalling: 'island.is',
+      cardVerificationData: {
+        cavv: 'cavv',
+        mdStatus: '1',
+        xid: 'xid',
+        dsTransId: 'dsTransId',
+      },
+      additionalData: { merchantReferenceData: 'rrn-1' },
+      correlationId: 'correlation-1',
+    })
   })
 })

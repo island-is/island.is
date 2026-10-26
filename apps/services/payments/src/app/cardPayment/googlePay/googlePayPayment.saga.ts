@@ -16,11 +16,11 @@ import {
   notifyPaymentCompleted,
   settleDebtStep,
 } from '../cardPayment.debt'
-import { GooglePayChargeInput } from './dtos'
+import { GooglePayDecryptedToken } from './googlePayToken'
 
 export const createGooglePayPaymentContext = (
   paymentFlowId: string,
-  input: GooglePayChargeInput,
+  input: GooglePayDecryptedToken,
 ): GooglePayPaymentContext => {
   const trackingData = {
     merchantReferenceData: uuid(),
@@ -75,11 +75,12 @@ export const createGooglePayPaymentSaga = (
         `[${ctx.paymentFlowId}][correlationId: ${ctx.trackingData.correlationId}][rrn: ${ctx.trackingData.merchantReferenceData}] Charging Google Pay`,
       )
 
-      const paymentResult = await cardPaymentService.chargeGooglePay(
-        ctx.input,
-        ctx.trackingData,
-        totalPrice,
-      )
+      const paymentResult = await cardPaymentService.chargeGooglePay({
+        paymentFlowId: ctx.paymentFlowId,
+        decryptedToken: ctx.input,
+        paymentTrackingData: ctx.trackingData,
+        amount: totalPrice,
+      })
 
       return { paymentResult }
     },

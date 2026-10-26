@@ -16,7 +16,8 @@ import {
   createMockLogger,
   createMockCardPaymentService,
   createMockPaymentFlowService,
-  getGooglePayChargeInput,
+  getGooglePayDecryptedToken,
+  PAYMENT_FLOW_ID,
 } from '../test/sagaTestUtils'
 
 const resolved = <T>(v: T): never => v as never
@@ -51,7 +52,7 @@ describe('Google Pay Payment Saga - CHARGE_GOOGLE_PAY step specific', () => {
 
   describe('createGooglePayPaymentContext', () => {
     it('should create context with paymentFlowId, input, and trackingData', () => {
-      const input = getGooglePayChargeInput()
+      const input = getGooglePayDecryptedToken()
       const context = createGooglePayPaymentContext('flow-123', input)
 
       expect(context.paymentFlowId).toBe('flow-123')
@@ -68,9 +69,9 @@ describe('Google Pay Payment Saga - CHARGE_GOOGLE_PAY step specific', () => {
   })
 
   describe('CHARGE_GOOGLE_PAY', () => {
-    it('should call chargeGooglePay with input and trackingData', async () => {
-      const input = getGooglePayChargeInput()
-      const context = createGooglePayPaymentContext(input.paymentFlowId, input)
+    it('should call chargeGooglePay with the decrypted token and trackingData', async () => {
+      const input = getGooglePayDecryptedToken()
+      const context = createGooglePayPaymentContext(PAYMENT_FLOW_ID, input)
       const saga = createGooglePayPaymentSaga(
         mockCardPaymentService,
         mockRefundService,
@@ -84,11 +85,12 @@ describe('Google Pay Payment Saga - CHARGE_GOOGLE_PAY step specific', () => {
 
       await orchestrator.execute(saga, context)
 
-      expect(mockCardPaymentService.chargeGooglePay).toHaveBeenCalledWith(
-        input,
-        context.trackingData,
-        expect.any(Number),
-      )
+      expect(mockCardPaymentService.chargeGooglePay).toHaveBeenCalledWith({
+        paymentFlowId: PAYMENT_FLOW_ID,
+        decryptedToken: input,
+        paymentTrackingData: context.trackingData,
+        amount: expect.any(Number),
+      })
     })
 
     it('should not run any compensate when CHARGE_GOOGLE_PAY fails', async () => {
@@ -96,8 +98,8 @@ describe('Google Pay Payment Saga - CHARGE_GOOGLE_PAY step specific', () => {
         new Error('Payment gateway error'),
       )
 
-      const input = getGooglePayChargeInput()
-      const context = createGooglePayPaymentContext(input.paymentFlowId, input)
+      const input = getGooglePayDecryptedToken()
+      const context = createGooglePayPaymentContext(PAYMENT_FLOW_ID, input)
       const saga = createGooglePayPaymentSaga(
         mockCardPaymentService,
         mockRefundService,
@@ -123,8 +125,8 @@ describe('Google Pay Payment Saga - CHARGE_GOOGLE_PAY step specific', () => {
         new Error('Database error'),
       )
 
-      const input = getGooglePayChargeInput()
-      const context = createGooglePayPaymentContext(input.paymentFlowId, input)
+      const input = getGooglePayDecryptedToken()
+      const context = createGooglePayPaymentContext(PAYMENT_FLOW_ID, input)
       const saga = createGooglePayPaymentSaga(
         mockCardPaymentService,
         mockRefundService,
@@ -142,7 +144,7 @@ describe('Google Pay Payment Saga - CHARGE_GOOGLE_PAY step specific', () => {
 
       expect(mockRefundService.refundWithCorrelationId).toHaveBeenCalledWith({
         paymentTrackingData: context.trackingData,
-        paymentFlowId: input.paymentFlowId,
+        paymentFlowId: PAYMENT_FLOW_ID,
       })
       expect(mockPaymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledWith(
         expect.objectContaining({

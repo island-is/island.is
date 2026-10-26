@@ -67,7 +67,6 @@ export enum CardErrorCode {
   GooglePayTokenInvalid = 'GooglePayTokenInvalid',
   GooglePayTokenExpired = 'GooglePayTokenExpired',
   GooglePayReplayDetected = 'GooglePayReplayDetected',
-  GooglePaySavedCardNotSupported = 'GooglePaySavedCardNotSupported',
 }
 
 export enum InvoiceErrorCode {

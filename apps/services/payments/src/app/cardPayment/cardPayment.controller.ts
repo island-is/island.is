@@ -66,7 +66,12 @@ import {
   VerifyCardInput,
   VerifyCardResponse,
 } from './card/dtos'
-import { GooglePayChargeInput } from './googlePay/dtos'
+import {
+  GooglePayChargeInput,
+  GooglePayChargeResponse,
+  GooglePayChargeVerifiedInput,
+} from './googlePay/dtos'
+import type { GooglePayDecryptedToken } from './googlePay/googlePayToken'
 import { RefundService } from '../refund/refund.service'
 
 @UseGuards(FeatureFlagGuard)
@@ -445,18 +450,161 @@ export class CardPaymentController {
   @FeatureFlag(Features.isIslandisGooglePayPaymentEnabled)
   @Post('/google-pay/charge')
   @ApiOkResponse({
-    type: ChargeCardResponse,
+    type: GooglePayChargeResponse,
   })
   async chargeGooglePay(
-    @Body() chargeCardInput: GooglePayChargeInput,
-  ): Promise<ChargeCardResponse> {
-    const paymentFlowId = chargeCardInput.paymentFlowId
+    @Body() chargeInput: GooglePayChargeInput,
+  ): Promise<GooglePayChargeResponse> {
+    const paymentFlowId = chargeInput.paymentFlowId
     this.logger.info(`[${paymentFlowId}] Google Pay charge endpoint called`)
 
-    const context = createGooglePayPaymentContext(
+    const decryptedToken = await this.decryptGooglePayToken(
       paymentFlowId,
-      chargeCardInput,
+      chargeInput.token,
     )
+
+    // A card saved in the Google account has no cryptogram: it passes
+    // 3-D Secure first and is then charged through charge-verified.
+    if (decryptedToken.paymentMethodDetails.authMethod === 'PAN_ONLY') {
+      return {
+        status: 'verification_required',
+        verification: await this.verifyGooglePaySavedCard(
+          chargeInput,
+          decryptedToken,
+        ),
+      }
+    }
+
+    return {
+      status: 'paid',
+      payment: await this.runGooglePayPaymentSaga(
+        paymentFlowId,
+        decryptedToken,
+      ),
+    }
+  }
+
+  @UseGuards(FeatureFlagGuard)
+  @FeatureFlag(Features.isIslandisGooglePayPaymentEnabled)
+  @Post('/google-pay/charge-verified')
+  @ApiOkResponse({
+    type: ChargeCardResponse,
+  })
+  async chargeGooglePayVerified(
+    @Body() chargeInput: GooglePayChargeVerifiedInput,
+  ): Promise<ChargeCardResponse> {
+    const paymentFlowId = chargeInput.paymentFlowId
+    this.logger.info(
+      `[${paymentFlowId}] Google Pay verified charge endpoint called`,
+    )
+
+    const decryptedToken = await this.decryptGooglePayToken(
+      paymentFlowId,
+      chargeInput.token,
+    )
+
+    return this.runGooglePayPaymentSaga(paymentFlowId, decryptedToken)
+  }
+
+  private async decryptGooglePayToken(paymentFlowId: string, token: string) {
+    try {
+      return await this.cardPaymentService.decryptGooglePayToken(
+        paymentFlowId,
+        token,
+      )
+    } catch (e) {
+      try {
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId,
+          type: 'update',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'payment_failed',
+          message: `Google Pay token was not accepted: ${e.message}`,
+          metadata: {
+            error: e.message,
+          },
+        })
+      } catch (logError) {
+        this.logger.warn(
+          `[${paymentFlowId}] Failed to log payment flow update and notify upstream after Google Pay token error: ${logError.message}`,
+          { paymentFlowId, logError },
+        )
+      }
+
+      throw new BadRequestException(
+        onlyReturnKnownErrorCode(
+          e.message,
+          CardErrorCode.GooglePayTokenInvalid,
+        ),
+      )
+    }
+  }
+
+  /** The verify endpoint's steps, with the card from the Google Pay token */
+  private async verifyGooglePaySavedCard(
+    chargeInput: GooglePayChargeInput,
+    decryptedToken: GooglePayDecryptedToken,
+  ): Promise<VerifyCardResponse> {
+    const paymentFlowId = chargeInput.paymentFlowId
+
+    try {
+      const { totalPrice } = await this.cardPaymentService.validatePaymentFlow(
+        paymentFlowId,
+      )
+
+      const verification =
+        await this.cardPaymentService.verifyGooglePaySavedCard({
+          input: chargeInput,
+          decryptedToken,
+          totalPrice,
+        })
+
+      await this.paymentFlowService.logPaymentFlowUpdate({
+        paymentFlowId,
+        type: 'update',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'payment_started',
+        message: `Google Pay card verification started`,
+      })
+
+      const { correlationID, ...rest } = verification
+      return {
+        ...rest,
+        correlationId: correlationID,
+      } as VerifyCardResponse
+    } catch (e) {
+      try {
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId,
+          type: 'update',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'payment_failed',
+          message: `Google Pay card verification was not started due to an error: ${e.message}`,
+          metadata: {
+            error: e.message,
+          },
+        })
+      } catch (logError) {
+        this.logger.warn(
+          `[${paymentFlowId}] Failed to log payment flow update and notify upstream after Google Pay verification error: ${logError.message}`,
+          { paymentFlowId, logError },
+        )
+      }
+
+      throw new BadRequestException(
+        onlyReturnKnownErrorCode(e.message, CardErrorCode.VerificationFailed),
+      )
+    }
+  }
+
+  private async runGooglePayPaymentSaga(
+    paymentFlowId: string,
+    decryptedToken: GooglePayDecryptedToken,
+  ): Promise<ChargeCardResponse> {
+    const context = createGooglePayPaymentContext(paymentFlowId, decryptedToken)
     const saga = createGooglePayPaymentSaga(
       this.cardPaymentService,
       this.refundService,

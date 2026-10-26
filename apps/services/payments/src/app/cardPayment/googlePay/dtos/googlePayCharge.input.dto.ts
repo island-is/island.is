@@ -1,18 +1,33 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsString, Length, MaxLength } from 'class-validator'
+import { ApiPropertyOptional } from '@nestjs/swagger'
+import { Type } from 'class-transformer'
+import {
+  IsOptional,
+  IsString,
+  MaxLength,
+  ValidateNested,
+} from 'class-validator'
 
-export class GooglePayChargeInput {
-  @IsString()
-  @Length(1, 128)
-  @ApiProperty({ description: 'Payment flow ID', type: String })
-  paymentFlowId!: string
+import { VerifyCardBrowserInfo } from '../../card/dtos'
+import { GooglePayChargeVerifiedInput } from './googlePayChargeVerified.input.dto'
 
+export class GooglePayChargeInput extends GooglePayChargeVerifiedInput {
+  @IsOptional()
   @IsString()
-  @MaxLength(16384)
-  @ApiProperty({
+  @MaxLength(100)
+  @ApiPropertyOptional({
     description:
-      'The paymentMethodData.tokenizationData.token string from Google Pay, forwarded unmodified',
+      'Name from the Google Pay billing address, forwarded to the payment gateway when a saved card goes through 3-D Secure',
     type: String,
   })
-  token!: string
+  cardholderName?: string
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => VerifyCardBrowserInfo)
+  @ApiPropertyOptional({
+    description:
+      'Browser environment of the payer, forwarded to the payment gateway when a saved card goes through 3-D Secure',
+    type: VerifyCardBrowserInfo,
+  })
+  browserInfo?: VerifyCardBrowserInfo
 }
