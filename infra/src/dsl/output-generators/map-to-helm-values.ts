@@ -897,7 +897,6 @@ function prepareFeatureDeployment(
 
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
-    
     s = prepareFeatureDeployment(s, env)
 
     // Feature deployments run in dev. Honor a scale-to-zero dev config
