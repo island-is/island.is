@@ -32,7 +32,7 @@ import {
 } from '@island.is/application/core'
 
 const completedLifecycle: StateLifeCycle = {
-  ...pruneAfterDays(30), // TODO: Does it need to be kept for 30 days?
+  ...pruneAfterDays(90),
   shouldBeListed: false,
 }
 
