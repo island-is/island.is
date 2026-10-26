@@ -538,6 +538,16 @@ describe('ScopesController', () => {
           actor: { nationalId: createNationalId('person') },
           scope: [],
         }),
+        customScopeRules: [
+          {
+            scopeName: 'settings/procuration-only',
+            onlyForDelegationType: [AuthDelegationType.ProcurationHolder],
+          },
+          {
+            scopeName: 'settings/custom-only',
+            onlyForDelegationType: [AuthDelegationType.Custom],
+          },
+        ],
       })
       server = request(app.getHttpServer())
       const factory = new FixtureFactory(app)
@@ -577,6 +587,18 @@ describe('ScopesController', () => {
           ...base,
           name: 'settings/disabled',
           enabled: false,
+        }),
+        factory.createApiScope({
+          ...base,
+          name: 'settings/procuration-only',
+          grantToAuthenticatedUser: true,
+          grantToProcuringHolders: true,
+        }),
+        factory.createApiScope({
+          ...base,
+          name: 'settings/custom-only',
+          grantToAuthenticatedUser: true,
+          grantToProcuringHolders: true,
         }),
       ])
     })
@@ -624,6 +646,25 @@ describe('ScopesController', () => {
         company: false,
       })
       expect(byName['settings/access-controlled'].requestable).toEqual({
+        individual: false,
+        company: false,
+      })
+    })
+
+    it('applies the custom scope rules for each kind of grantor', async () => {
+      const res = await server.get(
+        query(['settings/procuration-only', 'settings/custom-only']),
+      )
+
+      expect(res.status).toEqual(200)
+      const byName = Object.fromEntries(
+        res.body.scopes.map((s: { name: string }) => [s.name, s]),
+      )
+      expect(byName['settings/procuration-only'].requestable).toEqual({
+        individual: false,
+        company: true,
+      })
+      expect(byName['settings/custom-only'].requestable).toEqual({
         individual: false,
         company: false,
       })

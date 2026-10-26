@@ -323,6 +323,9 @@ export class DelegationResourcesService {
       apiScopeFilter.push({
         [col(prefix, 'isAccessControlled')]: { [Op.ne]: true },
       })
+      apiScopeFilter.push(
+        ...this.requestScopeRuleFilter(requestGrantorType, prefix),
+      )
 
       if (requestGrantorType === 'company') {
         apiScopeFilter.push({
@@ -415,6 +418,24 @@ export class DelegationResourcesService {
       duplicating: false,
       required: false,
     }
+  }
+
+  private requestScopeRuleFilter(
+    requestGrantorType: RequestGrantorType | undefined,
+    prefix?: string,
+  ): Array<WhereOptions<ApiScope>> {
+    const excluded = this.delegationConfig.customScopeRules
+      .filter(
+        (rule) =>
+          requestGrantorType === RequestGrantorType.individual ||
+          !rule.onlyForDelegationType.includes(
+            AuthDelegationType.ProcurationHolder,
+          ),
+      )
+      .map((rule) => rule.scopeName)
+    return excluded.length === 0
+      ? []
+      : [{ [col(prefix, 'name')]: { [Op.notIn]: excluded } }]
   }
 
   private accessControlFilter(
