@@ -554,6 +554,23 @@ jobs:
         run: |
           node scripts/ci/docker/write-data.mjs
 
+      - name: Publish affected-apps to path-to-deployment (best-effort)
+        continue-on-error: true
+        working-directory: monorepo
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
+          # Rollout gate: unset => the script no-ops. Set these repo VARIABLES
+          # to enable (one env at a time). The audience MUST match the
+          # api-server's AFFECTED_APPS_OIDC_AUDIENCE
+          # (path-to-deployment-affected-apps).
+          AFFECTED_APPS_INGEST_URL: ${{ vars.AFFECTED_APPS_INGEST_URL }}
+          AFFECTED_APPS_OIDC_AUDIENCE: ${{ vars.AFFECTED_APPS_OIDC_AUDIENCE }}
+          AFFECTED_APPS_TTL_DAYS: ${{ vars.AFFECTED_APPS_TTL_DAYS }}
+        run: |
+          node scripts/ci/docker/publish-affected.mjs
+
       - name: Get manifest data
         id: manifest
         working-directory: monorepo
