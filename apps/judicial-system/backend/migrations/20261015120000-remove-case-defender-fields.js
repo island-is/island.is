@@ -15,9 +15,13 @@ module.exports = {
       await queryInterface.removeColumn('case', 'defender_phone_number', {
         transaction,
       })
-      await queryInterface.removeColumn('case', 'request_shared_with_defender', {
-        transaction,
-      })
+      await queryInterface.removeColumn(
+        'case',
+        'request_shared_with_defender',
+        {
+          transaction,
+        },
+      )
       await queryInterface.sequelize.query(
         'DROP TYPE IF EXISTS "enum_case_request_shared_with_defender"',
         { transaction },
@@ -55,11 +59,7 @@ module.exports = {
         'case',
         'request_shared_with_defender',
         {
-          type: Sequelize.ENUM(
-            'READY_FOR_COURT',
-            'COURT_DATE',
-            'NOT_SHARED',
-          ),
+          type: Sequelize.ENUM('READY_FOR_COURT', 'COURT_DATE', 'NOT_SHARED'),
           allowNull: true,
         },
         { transaction },
