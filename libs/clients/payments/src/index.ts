@@ -23,4 +23,5 @@ export {
   GetPaymentFlowDTOLastBankTransferFailureEnum,
   GetPaymentFlowDTOBankTransferPendingStatusEnum,
   GetPaymentFlowDTOTypeEnum,
+  GooglePayChargeResponseStatusEnum,
 } from '../gen/fetch'
