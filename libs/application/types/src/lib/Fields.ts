@@ -316,6 +316,7 @@ export type AlertMessageLink = {
   title: MessageDescriptor | string
   url: MessageDescriptor | string
   isExternal: boolean
+  icon?: IconProps['icon']
 }
 export interface Option extends TestSupport {
   value: string

@@ -129,11 +129,19 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
                           href={formatMessage(link.url)}
                           target="_blank"
                           rel="noopener noreferrer"
+                          style={{ textDecoration: 'none' }}
                         >
                           <Button
                             variant="text"
-                            icon={link.isExternal ? 'open' : undefined}
-                            iconType={link.isExternal ? 'outline' : undefined}
+                            icon={
+                              link.icon ??
+                              (link.isExternal ? 'open' : undefined)
+                            }
+                            iconType={
+                              link.icon || link.isExternal
+                                ? 'outline'
+                                : undefined
+                            }
                             size="small"
                             as="span"
                           >

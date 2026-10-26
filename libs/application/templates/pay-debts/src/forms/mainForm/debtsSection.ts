@@ -59,7 +59,16 @@ export const debtsSection = buildSection({
           alertType: 'warning',
           marginTop: 0,
           marginBottom: 1,
+          title: messages.limit.title,
           message: messages.limit.message,
+          links: [
+            {
+              title: messages.limit.linkTitle,
+              url: '/minarsidur/fjarmal/stada',
+              isExternal: false,
+              icon: 'arrowForward',
+            },
+          ],
           condition: (_answers, externalData) =>
             hasFetchedDebts(externalData) && hasReachedDebtsLimit(externalData),
         }),

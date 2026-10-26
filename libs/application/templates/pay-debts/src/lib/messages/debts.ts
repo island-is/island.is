@@ -20,12 +20,24 @@ export const debts = {
     },
   }),
   limit: defineMessages({
+    title: {
+      id: 'pd.application:debts.limit.title',
+      defaultMessage: 'Athugið',
+      description:
+        'Title of the warning shown above the debts table when the list may be cut off',
+    },
     message: {
       id: 'pd.application:debts.limit.message',
       defaultMessage:
-        'Ekki er hægt að birta allan skuldalistann í þessu viðmóti. Fyrir heildarlista skulda og heildarskuldastöðu, sjá [Fjármál á Mínum síðum](/minarsidur/fjarmal).',
+        'Ekki er hægt að fá yfirlit yfir fleiri en 100 skuldir hér en þú getur nálgast heildaryfirlit yfir allar skuldir inni á Mínum síðum.',
       description:
         'Warning shown above the debts table when the list may be cut off',
+    },
+    linkTitle: {
+      id: 'pd.application:debts.limit.linkTitle',
+      defaultMessage: 'Skoða yfirlit á mínum síðum',
+      description:
+        'Link in the debts limit warning to the finance status on Mínar síður',
     },
   }),
   fetch: defineMessages({
