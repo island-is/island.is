@@ -221,7 +221,11 @@ export const usePaymentOrchestration = ({
       : false
 
   // Overall submitting state combines the local initiation with the hook's processing state.
-  const overallIsSubmitting = isInitiatingSubmit || combinedIsProcessing
+  // A Google Pay charge runs after its sheet closes, whichever method is selected
+  const overallIsSubmitting =
+    isInitiatingSubmit ||
+    combinedIsProcessing ||
+    googlePayPayment.isGooglePayProcessing
 
   const changePaymentMethod = (newMethod: string) => {
     setPaymentError(null)

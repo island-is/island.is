@@ -76,6 +76,7 @@ interface UseGooglePayProps {
 
 interface UseGooglePayReturn {
   supportsGooglePay: boolean
+  isGooglePayProcessing: boolean
   createGooglePayButton: () => HTMLElement | null
 }
 
@@ -91,6 +92,9 @@ export const useGooglePay = ({
   const clientRef = useRef<google.payments.api.PaymentsClient | null>(null)
   const isProcessingRef = useRef(false)
   const [supportsGooglePay, setSupportsGooglePay] = useState(false)
+  // The sheet closes as soon as the payer confirms, so the page shows the
+  // charge in progress until it succeeds or fails
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const [chargeGooglePayMutationHook] = useChargeGooglePayMutation()
   const [chargeGooglePayVerifiedMutationHook] =
@@ -194,6 +198,7 @@ export const useGooglePay = ({
     }
 
     isProcessingRef.current = true
+    setIsProcessing(true)
     const token = paymentData.paymentMethodData.tokenizationData.token
 
     try {
@@ -243,6 +248,7 @@ export const useGooglePay = ({
       onPaymentError({ code: getErrorCode(e) })
     } finally {
       isProcessingRef.current = false
+      setIsProcessing(false)
     }
   }, [
     supportsGooglePay,
@@ -275,6 +281,7 @@ export const useGooglePay = ({
 
   return {
     supportsGooglePay,
+    isGooglePayProcessing: isProcessing,
     createGooglePayButton,
   }
 }
