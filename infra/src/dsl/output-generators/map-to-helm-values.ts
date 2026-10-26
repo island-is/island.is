@@ -879,7 +879,7 @@ function prepareFeatureDeployment(
     'services-auth-public-api',
   ]
   const serviceName = s.image ?? s.name
-
+  // test
   Object.values(s.ingress).forEach((ingress) => {
     if (!Array.isArray(ingress.host.dev)) {
       ingress.host.dev = [ingress.host.dev]
@@ -897,6 +897,7 @@ function prepareFeatureDeployment(
 
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
+    
     s = prepareFeatureDeployment(s, env)
 
     // Feature deployments run in dev. Honor a scale-to-zero dev config
