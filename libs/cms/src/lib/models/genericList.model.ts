@@ -46,6 +46,9 @@ export class GenericList {
   @Field(() => Boolean, { nullable: true })
   alphabeticallyOrderFilterTags?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  showYearFilter?: boolean
+
   @CacheField(() => TextSearchOrder, { nullable: true })
   textSearchOrder?: TextSearchOrder
 }
@@ -93,4 +96,6 @@ export const mapGenericList = ({
   showSearchInput: fields.showSearchInput ?? true,
   alphabeticallyOrderFilterTags: fields.alphabeticallyOrderFilterTags ?? false,
   textSearchOrder: mapTextSearchOrder(fields.textSearchOrder),
+  // TODO: Revert default back to false before merging (set to true so the feature deploy shows the year filter)
+  showYearFilter: fields.showYearFilter ?? true,
 })

@@ -497,6 +497,8 @@ const defaultRenderComponent = {
       defaultOrder={slice.defaultOrder}
       showSearchInput={slice.showSearchInput ?? true}
       textSearchOrder={slice.textSearchOrder ?? 'Default'}
+      // TODO: Revert default back to false before merging (set to true so the feature deploy shows the year filter)
+      showYearFilter={slice.showYearFilter ?? true}
     />
   ),
   TeamList: (slice: TeamList) => (

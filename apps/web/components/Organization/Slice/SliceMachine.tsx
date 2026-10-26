@@ -221,6 +221,8 @@ export const renderSlice = (
           defaultOrder={(slice as GenericListSchema).defaultOrder}
           showSearchInput={(slice as GenericListSchema).showSearchInput ?? true}
           textSearchOrder={slice.textSearchOrder ?? 'Default'}
+          // TODO: Revert default back to false before merging (set to true so the feature deploy shows the year filter)
+          showYearFilter={(slice as GenericListSchema).showYearFilter ?? true}
         />
       )
     case 'TeamList':

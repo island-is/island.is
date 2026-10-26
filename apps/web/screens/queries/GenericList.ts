@@ -9,6 +9,7 @@ export const GET_GENERIC_LIST_ITEMS_QUERY = gql`
         page
         queryString
         tags
+        year
       }
       items {
         id
@@ -33,6 +34,7 @@ export const GET_GENERIC_LIST_ITEMS_QUERY = gql`
         }
       }
       total
+      years
     }
   }
   ${htmlFields}
