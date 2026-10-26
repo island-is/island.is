@@ -16,6 +16,7 @@ The PAYMENT state is written by hand, not with `buildPaymentState`: a debt has n
 
 - A debt with no due date arrives as `00010101` or `0001-01-01`. The second parses, so `formatDate` checks the year and returns `null`.
 - Amounts arrive as `bigint`; `PayDebtsService` converts them with `Number()`.
+- FJS never sends a debt of 0 kr. or less, so nothing filters them out.
 
 ## Shared fields built for this app
 

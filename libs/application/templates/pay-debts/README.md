@@ -4,8 +4,8 @@
 
 Application for paying debts owed to the Icelandic state ("Greiðum
 ríkinu", `ApplicationTypes.PAY_DEBTS`, slug `greidum-rikinu`). The
-applicant picks up one or more outstanding debts fetched from Fjársýsla
-ríkisins (FJS) and pays the selected debts via the standard payment flow.
+applicant picks one or more outstanding debts fetched from Fjársýsla
+ríkisins (FJS) and pays them through services-payments.
 
 A debt can currently only be paid in full — there is no per-row partial
 amount.
@@ -15,21 +15,46 @@ amount.
 
 ## Decisions
 
-- **Debts are paid in full.** Partial payment is left out for now, but its
-  code is kept: the commented-out `inputColumn` in `debtsSection.ts` (a
-  per-row amount saved as `debtsToPay`), the footer total beside it, and
-  `getAmountToPay` in `getSelectedDebts.ts`, which clamps a typed amount.
-  Re-enable them to bring partial payment back. Clearing a row's amount
-  then unchecks the row; this is intended.
-- **Up to 100 debts.** The flow supports at most 100 debts per applicant
-  for now. FJS returns them all in one response, so `nextKey` paging is
-  not used.
+- **Debts are paid in full.** FJS does not yet accept a partial payment.
+  Its code is kept: the commented-out `inputColumn` in `debtsSection.ts`
+  (a per-row amount saved as `debtsToPay`), the footer total beside it,
+  and `getAmountToPay` in `getSelectedDebts.ts`, which clamps a typed
+  amount. Re-enable them to bring partial payment back. Clearing a row's
+  amount then unchecks the row; this is intended.
+- **Up to 100 debts** (agreed by all involved). Someone with more debts
+  will not use this flow to pay them off. FJS returns them all in one
+  response, so `nextKey` paging is not used. At 100 or more, a warning
+  above the table points to Fjármál on Mínar síður for the full list.
+- **A payment, not an application.** Nobody applies; the payer picks
+  debts and pays them or not. Nothing is listed on Mínar síður, and an
+  abandoned payment has no consequence.
+- **`fjs:debts` opens only Staða.** On Mínar síður the scope opens
+  Fjármál › Staða and its downloads, not the rest of Fjármál. A delegate
+  who pays debts need not see loans, transactions or housing benefits.
 
 ## URLs
 
 - [Local - http://localhost:4242/umsoknir/greidum-rikinu](http://localhost:4242/umsoknir/greidum-rikinu)
 - [Dev - https://beta.dev01.devland.is/umsoknir/greidum-rikinu](https://beta.dev01.devland.is/umsoknir/greidum-rikinu)
 - [Production - https://island.is/umsoknir/greidum-rikinu](https://island.is/umsoknir/greidum-rikinu)
+
+## Access
+
+- **Feature flag:** `isPayDebtsApplicationEnabled` gates the template.
+- **Delegations:** these may pay for the person or company they
+  represent:
+
+  - a procuration holder (prókúruhafi);
+  - a general mandate holder (allsherjarumboð);
+  - a custom delegation holding `@island.is/applications/fjs:debts`
+    (`requiredScopes`). A company's prókúruhafi grants it to staff; an
+    individual grants it to another individual.
+
+  No other delegation type is allowed.
+
+- **Mínar síður:** Staða shows a "Greiða skuld" button when the flag is
+  on, the user owes money, and the user acts for themselves or holds one
+  of the delegations above.
 
 ## States
 
@@ -62,6 +87,13 @@ submit is blocked until at least one row is ticked. `Draft` runs on
 `EphemeralStateLifeCycle`, so merely opening the form doesn't leave a
 30-day draft on Mínar síður.
 
+- **Payroll deduction:** `getCustomerDebts` also asks FJS which charge
+  types are withheld from the applicant's wages. A matching debt names
+  the employer in its expanded row. If that lookup fails, the debts load
+  without the note.
+- **Fetch failure:** an error message with a retry button replaces the
+  table. An empty list shows that no debts were found and blocks submit.
+
 ### Payment
 
 Not `buildPaymentState`: a debt has no FJS catalog item. On entry,
@@ -69,7 +101,9 @@ Not `buildPaymentState`: a debt has no FJS catalog item. On entry,
 (`POST /v1/payments/debts`) with each selected debt's `payID` and amount.
 FJS validates the debts then and again before the money is taken, and
 services-payments registers the payment with FJS (`payDebt`) afterwards.
-A creation error keeps the applicant on the debts screen.
+A creation error shows on the payment overview, and the applicant stays
+in Draft. If FJS refuses a changed debt (`DebtPaymentInvalid`), the
+message asks the applicant to go back and pick again.
 
 The application counts as paid at the `payment_completed` webhook. A
 later `payment_failed` marks it unpaid again; FJS rejected the payment,
@@ -82,7 +116,7 @@ unless `getStatus` says the payment is fulfilled.
 
 ABORT (`deleteDebtPayment`) never refunds: services-payments alone
 refunds a debt payment, since FJS has no reversal. It refuses while the
-flow is paid. Pruning skips debt payments for the same reason.
+flow is paid. Pruning leaves the flow alone.
 
 ### Completed
 
@@ -137,8 +171,8 @@ only the per-debt invoice download link will fail.
 ## Lifecycle & Notifications
 
 - **Draft / Payment**: `EphemeralStateLifeCycle` — not listed, pruned
-  once the applicant moves past them.
-- **Completed**: `pruneAfterDays(30)`, `shouldBeListed: false`.
+  24 hours after the state is entered.
+- **Completed**: `pruneAfterDays(90)`, `shouldBeListed: false`.
 - No scheduled notifications are configured.
 
 ## External Services
@@ -156,8 +190,7 @@ which validates and registers them with FJS.
 - **Gervimaður 010-2989 and 010-2129**
   - Use as the applicant on dev. Both have dummy debt data seeded at FJS,
     so `getCustomerDebts` returns a non-empty debt list for them.
-- Pay with a test card on the pay page. Whether FJS accepts
-  services-payments' machine token on dev is not yet confirmed.
+- Pay with a test card on the pay page.
 
 ## Localization
 
