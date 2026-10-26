@@ -509,6 +509,7 @@ export const canDefenderViewRequest = (
     state &&
       allowedStates?.includes(state) &&
       (requestSharedWithDefender !== RequestSharedWithDefender.COURT_DATE ||
+        isCompletedCase(state) ||
         Boolean(DateLog.arraignmentDate(theCase.dateLogs)?.date)),
   )
 }
