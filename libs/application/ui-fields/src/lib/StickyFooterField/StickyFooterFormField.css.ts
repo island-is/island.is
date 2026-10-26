@@ -42,3 +42,22 @@ export const labelCell = style({
 export const valueCell = style({
   whiteSpace: 'nowrap',
 })
+
+export const inlineRow = style({
+  display: 'grid',
+  gridTemplateColumns: 'var(--sticky-footer-value-left, 1fr) auto',
+  alignItems: 'center',
+  height: 56,
+  borderTop: `1px solid ${theme.color.blue200}`,
+})
+
+export const inlineLabelCell = style({
+  minWidth: 0,
+  paddingLeft: `var(--sticky-footer-label-left, ${theme.spacing[2]}px)`,
+  paddingRight: theme.spacing[2],
+})
+
+export const inlineValueCell = style({
+  whiteSpace: 'nowrap',
+  paddingRight: theme.spacing[2],
+})

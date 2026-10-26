@@ -72,7 +72,7 @@ export const debtsSection = buildSection({
             },
             {
               label: messages.table.amountHeader,
-              width: 125,
+              width: 150,
             },
             // { label: messages.table.toPayLabel, width: 140 },
           ],
@@ -146,6 +146,7 @@ export const debtsSection = buildSection({
           watchFieldIds: ['selectedDebts'],
           labelOffset: 56,
           labelMinWidth: 180,
+          alignToRowTestId: 'interactive-table-footer-row',
           rows: (application: Application) => {
             const debts = getDebts(application)
             const selected =

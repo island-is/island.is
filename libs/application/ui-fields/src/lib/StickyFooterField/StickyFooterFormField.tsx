@@ -41,6 +41,8 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
     isFloating: boolean
     left: number
     width: number
+    labelLeft: number | null
+    valueLeft: number | null
   } | null>(null)
 
   useEffect(() => {
@@ -59,10 +61,28 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
       const footerHeight = footerRef.current?.offsetHeight ?? 0
       const floatingTopY = window.innerHeight - BOTTOM_GAP - footerHeight
 
+      const scroller = target.querySelector('table')?.parentElement
+      const overflows =
+        !!scroller && scroller.scrollWidth > scroller.clientWidth
+      const alignCells =
+        field.alignToRowTestId && !overflows
+          ? target.querySelectorAll<HTMLElement>(
+              `[data-testid="${field.alignToRowTestId}"] td[data-column-index]`,
+            )
+          : []
+      const textLeft = (cell?: HTMLElement) =>
+        cell
+          ? cell.getBoundingClientRect().left -
+            targetRect.left +
+            parseFloat(getComputedStyle(cell).paddingLeft)
+          : null
+
       setState({
         isFloating: targetRect.bottom > floatingTopY,
         left: targetRect.left,
         width: targetRect.width,
+        labelLeft: textLeft(alignCells[0]),
+        valueLeft: textLeft(alignCells[alignCells.length - 1]),
       })
     }
 
@@ -86,10 +106,40 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
       window.removeEventListener('scroll', scheduleUpdate)
       window.removeEventListener('resize', scheduleUpdate)
     }
-  }, [field.widthReferenceTestId])
+  }, [field.widthReferenceTestId, field.alignToRowTestId])
 
   if (!state) {
     return null
+  }
+
+  if (!state.isFloating && field.alignToRowTestId) {
+    const row = rows[0]
+
+    return (
+      <Box
+        ref={footerRef}
+        className={styles.inlineRow}
+        style={
+          {
+            '--sticky-footer-label-left':
+              state.labelLeft === null ? undefined : `${state.labelLeft}px`,
+            '--sticky-footer-value-left':
+              state.valueLeft === null ? undefined : `${state.valueLeft}px`,
+          } as CSSProperties
+        }
+      >
+        <Box className={styles.inlineLabelCell}>
+          <Text truncate variant="medium" fontWeight="semiBold">
+            {formatText(row.label, application, formatMessage)}
+          </Text>
+        </Box>
+        <Box className={styles.inlineValueCell}>
+          <Text variant="medium" fontWeight="semiBold" color="blue400">
+            {formatText(row.value, application, formatMessage)}
+          </Text>
+        </Box>
+      </Box>
+    )
   }
 
   const gridStyle = {

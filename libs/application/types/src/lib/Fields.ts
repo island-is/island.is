@@ -1121,6 +1121,7 @@ export interface StickyFooterField extends BaseField {
   watchFieldIds: string[]
   labelOffset?: number
   labelMinWidth?: number
+  alignToRowTestId?: string
 }
 
 export type PaginatedSearchableTableRow = Record<

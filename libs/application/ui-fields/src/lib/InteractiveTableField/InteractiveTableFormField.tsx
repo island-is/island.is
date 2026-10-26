@@ -318,11 +318,13 @@ export const InteractiveTableFormField: FC<Props> = ({
                   <T.Data
                     key={`footer-cell-${cellIndex}`}
                     data-column-index={cellIndex}
-                    text={
-                      cellIndex === footerRow.length - 1
-                        ? { fontWeight: 'semiBold' }
-                        : undefined
-                    }
+                    text={{
+                      variant: 'medium',
+                      fontWeight:
+                        cellIndex === footerRow.length - 1
+                          ? 'semiBold'
+                          : undefined,
+                    }}
                   >
                     {formatText(cell, application, formatMessage)}
                   </T.Data>

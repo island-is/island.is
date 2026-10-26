@@ -131,7 +131,7 @@ export const debts = {
     },
     totalDebtsLabel: {
       id: 'pd.application:debts.table.totalDebtsLabel',
-      defaultMessage: 'Heildarskuld',
+      defaultMessage: 'Heildarskuldastaða',
       description: 'Label for the total debts footer row',
     },
     totalToPayLabel: {
