@@ -3,6 +3,8 @@ import { m } from './messages'
 
 describe('estateSchema', () => {
   const vehicleSchema = estateSchema.shape.estate.shape.vehicles
+  const moneyAndDepositSchema =
+    estateSchema.shape.estate.shape.moneyAndDeposit
 
   const vehicle = {
     assetNumber: 'AB123',
@@ -49,5 +51,23 @@ describe('estateSchema', () => {
         },
       ]),
     ).not.toThrow()
+  })
+
+  it('accepts a money and deposit value without a description', () => {
+    expect(() =>
+      moneyAndDepositSchema.parse({
+        info: '',
+        value: '0',
+      }),
+    ).not.toThrow()
+  })
+
+  it('requires a value when a money and deposit description is provided', () => {
+    expect(
+      moneyAndDepositSchema.safeParse({
+        info: 'Cash',
+        value: '',
+      }).success,
+    ).toBe(false)
   })
 })
