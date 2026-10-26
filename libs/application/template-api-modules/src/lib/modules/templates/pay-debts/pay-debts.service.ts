@@ -12,11 +12,15 @@ import {
   paymentMessages,
 } from '@island.is/application/templates/pay-debts'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { PaymentServiceCode } from '@island.is/shared/constants'
+import {
+  DebtPaymentErrorCode,
+  PaymentServiceCode,
+} from '@island.is/shared/constants'
+import { FetchError } from '@island.is/clients/middlewares'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
-const { noSelection, alreadyPaid } = paymentMessages
+const { noSelection, alreadyPaid, unavailable } = paymentMessages
 
 @Injectable()
 export class PayDebtsService extends BaseTemplateApiService {
@@ -47,12 +51,29 @@ export class PayDebtsService extends BaseTemplateApiService {
       )
     }
 
-    return this.paymentService.createDebtPayment(
-      auth,
-      application.id,
-      debts,
-      currentUserLocale,
-    )
+    try {
+      return await this.paymentService.createDebtPayment(
+        auth,
+        application.id,
+        debts,
+        currentUserLocale,
+      )
+    } catch (error) {
+      const code = error instanceof FetchError ? error.problem?.detail : null
+      if (code === DebtPaymentErrorCode.DebtPaymentUnavailable) {
+        throw new TemplateApiError(
+          { title: unavailable.title, summary: unavailable.message },
+          503,
+        )
+      }
+      if (code === DebtPaymentErrorCode.DebtPaymentInvalid) {
+        throw new TemplateApiError(
+          { title: noSelection.title, summary: noSelection.message },
+          400,
+        )
+      }
+      throw error
+    }
   }
 
   async deleteDebtPayment({ application, auth }: TemplateApiModuleActionProps) {

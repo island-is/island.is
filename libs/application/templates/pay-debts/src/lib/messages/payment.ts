@@ -48,6 +48,21 @@ export const payment = {
         'Message shown when none of the selected debts are in the current list',
     },
   }),
+  unavailable: defineMessages({
+    title: {
+      id: 'pd.application:payment.unavailable.title',
+      defaultMessage: 'Ekki tókst að stofna greiðslu',
+      description:
+        'Title shown when the debt payment could not be created because FJS could not check the debts',
+    },
+    message: {
+      id: 'pd.application:payment.unavailable.message',
+      defaultMessage:
+        'Fjársýsla ríkisins svarar ekki eða önnur greiðsla vegna sömu skulda er í vinnslu. Reyndu aftur síðar.',
+      description:
+        'Message shown when the debt payment could not be created because FJS could not check the debts',
+    },
+  }),
   alreadyPaid: defineMessages({
     title: {
       id: 'pd.application:payment.alreadyPaid.title',
