@@ -16,6 +16,7 @@ import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { ApiScope } from '@island.is/auth/scopes'
 import { dataSchema } from './dataSchema'
 import {
   CreateDebtPaymentApi,
@@ -49,7 +50,9 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     { type: AuthDelegationType.ProcurationHolder },
     { type: AuthDelegationType.GeneralMandate },
+    { type: AuthDelegationType.Custom },
   ],
+  requiredScopes: [ApiScope.fjsDebts],
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,

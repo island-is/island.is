@@ -27,6 +27,7 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { ApiScope } from '@island.is/auth/scopes'
 import { checkDelegation } from '@island.is/shared/utils'
 import { useEffect, useState } from 'react'
 
@@ -70,7 +71,8 @@ const FinanceStatus = () => {
     [
       AuthDelegationType.ProcurationHolder,
       AuthDelegationType.GeneralMandate,
-    ].some((type) => userInfo?.profile?.delegationType?.includes(type))
+    ].some((type) => userInfo?.profile?.delegationType?.includes(type)) ||
+    userInfo?.scopes.includes(ApiScope.fjsDebts)
 
   const { loading, error, ...statusQuery } = useGetFinanceStatusQuery()
 
