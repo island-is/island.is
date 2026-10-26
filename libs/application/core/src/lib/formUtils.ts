@@ -197,11 +197,9 @@ const overwriteArrayMerge = (
   options: DeepmergeOptions,
 ) => {
   const destination = destinationArray.slice()
-  const lastSourceItem = sourceArray[sourceArray.length - 1]
 
   if (
-    lastSourceItem === null ||
-    typeof lastSourceItem !== 'object' ||
+    typeof sourceArray[sourceArray.length - 1] !== 'object' ||
     sourceArray.length < destinationArray.length // an element was removed
   ) {
     return sourceArray

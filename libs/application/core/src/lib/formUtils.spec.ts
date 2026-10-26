@@ -317,22 +317,6 @@ describe('mergeAnswers', () => {
       },
     ])
   })
-
-  it('should overwrite arrays of primitives that end in null', () => {
-    expect(
-      mergeAnswers(
-        { debtsToPay: ['500', '300', '400'] },
-        { debtsToPay: ['50', null, null] },
-      ),
-    ).toStrictEqual({ debtsToPay: ['50', null, null] })
-
-    expect(
-      mergeAnswers(
-        { selectedDebts: [true, true] },
-        { selectedDebts: [false, null] },
-      ),
-    ).toStrictEqual({ selectedDebts: [false, null] })
-  })
 })
 
 describe('getValueViaPath', () => {
