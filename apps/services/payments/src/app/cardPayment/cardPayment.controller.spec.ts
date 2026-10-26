@@ -2061,8 +2061,7 @@ describe('CardPaymentController', () => {
       const body = JSON.parse(chargeInit.body)
       expect(body).toMatchObject({
         operation: 'Sale',
-        transactionType: 'WalletTransaction',
-        walletTransactionIdentifier: 'GooglePay',
+        transactionType: 'ECommerce',
         cardNumber: '4111111111111111',
         expirationMonth: 12,
         expirationYear: 2030,

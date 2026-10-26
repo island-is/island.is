@@ -56,9 +56,10 @@ export const generateGooglePayDecryptedChargeRequestOptions = ({
 }
 
 /**
- * Valitor CardPayment for a PAN_ONLY card once it has passed 3-D Secure. No
- * CVC: Google does not have one, and the gateway only requires it when no
- * cardVerificationData is sent.
+ * Valitor CardPayment for a PAN_ONLY card once it has passed 3-D Secure, as
+ * Valitor's Google Pay guide describes for untokenized cards: an ECommerce
+ * payment like a typed card. No CVC: Google does not have one, and the gateway
+ * only requires it when no cardVerificationData is sent.
  */
 export const generateGooglePaySavedCardChargeRequestOptions = ({
   paymentMethodDetails,
@@ -80,8 +81,7 @@ export const generateGooglePaySavedCardChargeRequestOptions = ({
     headers: generateWalletPaymentRequestHeaders(paymentApiConfig),
     body: JSON.stringify({
       operation: 'Sale',
-      transactionType: 'WalletTransaction',
-      walletTransactionIdentifier: 'GooglePay',
+      transactionType: 'ECommerce',
       cardNumber: paymentMethodDetails.pan,
       expirationMonth: paymentMethodDetails.expirationMonth,
       expirationYear: paymentMethodDetails.expirationYear,

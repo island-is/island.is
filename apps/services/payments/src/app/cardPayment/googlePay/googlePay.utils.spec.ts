@@ -75,7 +75,7 @@ describe('generateGooglePayDecryptedChargeRequestOptions', () => {
 })
 
 describe('generateGooglePaySavedCardChargeRequestOptions', () => {
-  it('builds a Google Pay wallet CardPayment with the 3-D Secure result and no CVC', () => {
+  it('builds an ECommerce CardPayment with the 3-D Secure result and no CVC', () => {
     const options = generateGooglePaySavedCardChargeRequestOptions({
       paymentMethodDetails: {
         pan: '4111111111111111',
@@ -97,8 +97,7 @@ describe('generateGooglePaySavedCardChargeRequestOptions', () => {
     const body = JSON.parse(options.body)
     expect(body).toEqual({
       operation: 'Sale',
-      transactionType: 'WalletTransaction',
-      walletTransactionIdentifier: 'GooglePay',
+      transactionType: 'ECommerce',
       cardNumber: '4111111111111111',
       expirationMonth: 12,
       expirationYear: 2030,
