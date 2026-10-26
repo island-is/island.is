@@ -19,7 +19,8 @@
     "**/*.js",
     "**/*.jsx",
     "next-env.d.ts",
-    "applepay.d.ts"
+    "applepay.d.ts",
+    "googlepay.d.ts"
   ],
   "exclude": ["node_modules", "jest.config.ts"]
 }

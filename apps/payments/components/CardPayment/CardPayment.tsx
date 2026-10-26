@@ -5,10 +5,11 @@ import { Box, Input, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { card, cardValidationError } from '../../messages'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { validateCardCVC, validateCardExpiry } from './CardPayment.utils'
 
 const APPLE_PAY_BUTTON_ID = 'apple-pay-button'
+const GOOGLE_PAY_BUTTON_ID = 'google-pay-button'
 
 interface CardPaymentInput {
   cardholderName: string
@@ -34,13 +35,18 @@ const getCardType = (cardNumber: string) => {
 export const CardPayment = ({
   supportsApplePay,
   initiateApplePay,
+  supportsGooglePay,
+  createGooglePayButton,
 }: {
   supportsApplePay: boolean
   initiateApplePay: () => void
+  supportsGooglePay: boolean
+  createGooglePayButton: () => HTMLElement | null
 }) => {
   const { control, formState } = useFormContext<CardPaymentInput>()
   const { formatMessage } = useLocale()
   const [cardMask, setCardMask] = useState(CARD_MASK_BY_TYPE['default'])
+  const googlePayButtonRef = useRef<HTMLDivElement>(null)
 
   // add event listener to apple pay button if available
   useEffect(() => {
@@ -57,6 +63,19 @@ export const CardPayment = ({
     }
   }, [supportsApplePay, initiateApplePay])
 
+  // google pay renders its own button into the container
+  useEffect(() => {
+    const container = googlePayButtonRef.current
+    const googlePayButton = supportsGooglePay ? createGooglePayButton() : null
+    if (container && googlePayButton) {
+      container.replaceChildren(googlePayButton)
+
+      return () => {
+        container.replaceChildren()
+      }
+    }
+  }, [supportsGooglePay, createGooglePayButton])
+
   const handleCardChange = (cardNumber: string) => {
     const cardType = getCardType(cardNumber)
 
@@ -65,16 +84,21 @@ export const CardPayment = ({
 
   return (
     <Box display="flex" flexDirection="column" rowGap={[2]}>
-      {supportsApplePay && (
+      {(supportsApplePay || supportsGooglePay) && (
         <>
-          <Box display="flex" flexDirection="row" flexGrow={1}>
-            <apple-pay-button
-              id={APPLE_PAY_BUTTON_ID}
-              buttonstyle="black"
-              type="plain"
-              locale="is-IS" // apple does not support is-IS so this defaults to en-US
-            ></apple-pay-button>
-          </Box>
+          {supportsApplePay && (
+            <Box display="flex" flexDirection="row" flexGrow={1}>
+              <apple-pay-button
+                id={APPLE_PAY_BUTTON_ID}
+                buttonstyle="black"
+                type="plain"
+                locale="is-IS" // apple does not support is-IS so this defaults to en-US
+              ></apple-pay-button>
+            </Box>
+          )}
+          {supportsGooglePay && (
+            <div id={GOOGLE_PAY_BUTTON_ID} ref={googlePayButtonRef} />
+          )}
           <Box display="flex" alignItems="center" wrap="nowrap" columnGap={2}>
             <Box flexGrow={1}>
               <Divider />

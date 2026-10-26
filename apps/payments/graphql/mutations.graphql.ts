@@ -98,3 +98,41 @@ export const CancelBankTransferMutation = gql`
     }
   }
 `
+
+export const ChargeGooglePayMutation = gql`
+  mutation chargeGooglePay($input: PaymentsGooglePayChargeInput!) {
+    paymentsChargeGooglePay(input: $input) {
+      status
+      payment {
+        isSuccess
+        responseCode
+      }
+      verification {
+        cardVerificationRawResponse
+        postUrl
+        verificationFields {
+          name
+          value
+        }
+        additionalFields {
+          name
+          value
+        }
+        isSuccess
+        scriptPath
+        responseCode
+      }
+    }
+  }
+`
+
+export const ChargeGooglePayVerifiedMutation = gql`
+  mutation chargeGooglePayVerified(
+    $input: PaymentsGooglePayChargeVerifiedInput!
+  ) {
+    paymentsChargeGooglePayVerified(input: $input) {
+      isSuccess
+      responseCode
+    }
+  }
+`

@@ -83,6 +83,8 @@ export const buildContentSecurityPolicy = (
       'https://www.skra.is/library/Myndir/formio/',
       'https://*.zendesk.com',
       'https://gravatar.com',
+      // Google Pay button artwork
+      'https://www.gstatic.com',
     ],
     'media-src': [
       "'self'",
@@ -115,6 +117,7 @@ export const buildContentSecurityPolicy = (
       'http://static.zdassets.com',
       'https://*.zendesk.com',
       'https://applepay.cdn-apple.com',
+      'https://pay.google.com',
       'https://matomo.island.is/matomo.js',
       'https://islandis.matomo.cloud/matomo.js',
       ...(matomo ? [`${matomo}/matomo.js`] : []),
@@ -160,6 +163,7 @@ export const buildContentSecurityPolicy = (
       'https://*.valitor.com',
       'https://apps.mypurecloud.de',
       'https://applepay.cdn-apple.com',
+      'https://pay.google.com',
       'https://portal.land.is',
       'https://www.facebook.com/plugins/video.php',
       'https://beta.dev01.devland.is/*',
@@ -203,6 +207,7 @@ export const buildContentSecurityPolicy = (
       'https://*.zendesk.com',
       'wss://*.zendesk.com',
       'https://paymentrelayservice.apple.com',
+      'https://pay.google.com',
       'https://islandis.matomo.cloud/matomo.js',
       'https://islandis.matomo.cloud',
       ...(matomo ? [matomo] : []),

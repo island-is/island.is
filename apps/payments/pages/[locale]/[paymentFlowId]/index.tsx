@@ -87,6 +87,7 @@ interface PaymentPageProps {
     title: string
   }
   isApplePayPaymentEnabled: boolean
+  isGooglePayPaymentEnabled: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
@@ -203,6 +204,17 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     console.error('Error getting Apple Pay payment enabled', e)
   }
 
+  // Likewise for the service's Google Pay endpoints
+  let isGooglePayPaymentEnabled = false
+  try {
+    isGooglePayPaymentEnabled = await configCatClient.getValueAsync(
+      Features.isIslandisGooglePayPaymentEnabled,
+      false,
+    )
+  } catch (e) {
+    console.error('Error getting Google Pay payment enabled', e)
+  }
+
   return {
     props: {
       locale,
@@ -212,6 +224,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       organization,
       productInformation,
       isApplePayPaymentEnabled,
+      isGooglePayPaymentEnabled,
     },
   }
 }
@@ -221,6 +234,7 @@ function PaymentPage({
   organization,
   productInformation,
   isApplePayPaymentEnabled,
+  isGooglePayPaymentEnabled,
 }: PaymentPageProps) {
   const methods = useForm({
     mode: 'onBlur',
@@ -265,11 +279,14 @@ function PaymentPage({
     handleVerificationCancelledByModal,
     supportsApplePay,
     initiateApplePay,
+    supportsGooglePay,
+    createGooglePayButton,
     onPaymentSuccess,
   } = usePaymentOrchestration({
     paymentFlow,
     productInformation,
     isApplePayPaymentEnabled,
+    isGooglePayPaymentEnabled,
     onInvalidActorNationalId,
   })
   const router = useRouter()
@@ -506,6 +523,8 @@ function PaymentPage({
                     <CardPayment
                       supportsApplePay={supportsApplePay}
                       initiateApplePay={initiateApplePay}
+                      supportsGooglePay={supportsGooglePay}
+                      createGooglePayButton={createGooglePayButton}
                     />
                   )}
                   {selectedPaymentMethod === 'invoice' && (

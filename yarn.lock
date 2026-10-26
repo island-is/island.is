@@ -19079,6 +19079,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/googlepay@npm:0.7.13":
+  version: 0.7.13
+  resolution: "@types/googlepay@npm:0.7.13"
+  checksum: 10/ab11c4df555345b77176d625a73c6bcdf60575a490f4984d2f5577a70d27ef7c70f2f75dd8b763b70681dd46690ea4f6bb02242f29130e3d1ea3a00d0081d2fd
+  languageName: node
+  linkType: hard
+
 "@types/graceful-fs@npm:^4.1.3":
   version: 4.1.9
   resolution: "@types/graceful-fs@npm:4.1.9"
@@ -36279,6 +36286,7 @@ __metadata:
     "@types/express": "npm:5.0.6"
     "@types/faker": "npm:5.5.3"
     "@types/folder-hash": "npm:3.3.0"
+    "@types/googlepay": "npm:0.7.13"
     "@types/http-cache-semantics": "npm:4.0.1"
     "@types/identicon.js": "npm:2.3.0"
     "@types/imap-simple": "npm:4.2.5"
