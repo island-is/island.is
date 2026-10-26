@@ -19,7 +19,6 @@ describe('PoliceService - Create Document', () => {
   const caseId = uuid()
   const defendantId = uuid()
   const policeCaseNumber = '007-2026-012345'
-  const largeFileName = 'testFile.pdf'
   const prosecutor = {
     name: 'Prosecutor One',
     email: 'prosecutor@omnitrix.is',
@@ -55,9 +54,7 @@ describe('PoliceService - Create Document', () => {
           defendantId,
           user,
           documentName: 'Dómur í máli R-1/2026',
-          documentFiles: [
-            { name: largeFileName, documentBase64: 'large-file' },
-          ],
+          documentFiles: [{ name: 'testFile.pdf', documentBase64: 'large-file' }],
           documentDates: [],
           fileTypeCode: 'RVDO',
           caseSupplements: [],
@@ -66,12 +63,12 @@ describe('PoliceService - Create Document', () => {
         .catch((error) => ({ error } as Then))
     })
 
-    it('should notify the prosecutor with a masked file name', () => {
+    it('should notify the prosecutor', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Ekki tókst að hlaða upp skjali í LÖKE í máli ${policeCaseNumber}`,
-          text: 'Ekki tókst að hlaða upp skjali t******e.pdf í LÖKE vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í LÖKE.',
+          text: 'Ekki tókst að hlaða upp skjali í LÖKE vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í LÖKE.',
         }),
       )
     })

@@ -32,11 +32,11 @@ describe('PoliceService - Create Subpoena', () => {
     prosecutor,
     dateLogs: [],
     court: { address: 'Dómhúsið' },
-  } as Case
+  } as unknown as Case
   const defendant = {
     id: uuid(),
     nationalId: '1111111111',
-  } as Defendant
+  } as unknown as Defendant
 
   describe('file is too large for the police system', () => {
     let mockEmailService: { sendEmail: jest.Mock }
@@ -76,12 +76,12 @@ describe('PoliceService - Create Subpoena', () => {
         .catch((error) => ({ error } as Then))
     })
 
-    it('should notify the prosecutor with a masked file name', () => {
+    it('should notify the prosecutor', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Ekki tókst að hlaða upp skjali í LÖKE í máli ${policeCaseNumber}`,
-          text: 'Ekki tókst að hlaða upp skjali f*******l.pdf í LÖKE vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í LÖKE.',
+          text: 'Ekki tókst að hlaða upp skjali í LÖKE vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í LÖKE.',
         }),
       )
     })

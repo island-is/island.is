@@ -1674,7 +1674,6 @@ export class InternalCaseService {
           return {
             type: PoliceDocumentType.RVUL,
             courtDocument: Base64.btoa(file.toString('binary')),
-            ...(caseFile.name ? { name: caseFile.name } : {}),
           }
         }) ?? [],
     )

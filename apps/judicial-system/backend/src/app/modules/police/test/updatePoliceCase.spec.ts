@@ -223,7 +223,6 @@ describe('PoliceController - Update Police Case', () => {
   })
 
   describe('update police case fails because a file is too large', () => {
-    const largeFileName = 'testFile.pdf'
     const prosecutor = {
       name: 'Prosecutor One',
       email: 'prosecutor@omnitrix.is',
@@ -256,7 +255,10 @@ describe('PoliceController - Update Police Case', () => {
 
       mockFindByIdWithProsecutor =
         caseRepositoryService.findByIdWithProsecutor as jest.Mock
-      mockFindByIdWithProsecutor.mockResolvedValueOnce({ prosecutor })
+      mockFindByIdWithProsecutor.mockResolvedValueOnce({
+        prosecutor,
+        policeCaseNumbers: [policeCaseNumber],
+      })
 
       then = await policeService
         .updatePoliceCase(
@@ -273,7 +275,6 @@ describe('PoliceController - Update Police Case', () => {
             {
               type: PoliceDocumentType.RVVS,
               courtDocument: 'large file',
-              name: largeFileName,
             },
           ],
           caseIdForNotification,
@@ -282,7 +283,7 @@ describe('PoliceController - Update Police Case', () => {
         .catch((error) => ({ error } as Then))
     })
 
-    it('should notify the prosecutor with a masked file name', () => {
+    it('should notify the prosecutor', () => {
       expect(mockFindByIdWithProsecutor).toHaveBeenCalledWith(
         caseIdForNotification,
       )
@@ -290,7 +291,7 @@ describe('PoliceController - Update Police Case', () => {
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Ekki tókst að hlaða upp skjali í LÖKE í máli ${policeCaseNumber}`,
-          text: 'Ekki tókst að hlaða upp skjali t******e.pdf í LÖKE vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í LÖKE.',
+          text: 'Ekki tókst að hlaða upp skjali í LÖKE vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í LÖKE.',
         }),
       )
     })

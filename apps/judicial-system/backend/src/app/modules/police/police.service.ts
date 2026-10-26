@@ -83,24 +83,6 @@ export enum PoliceDocumentType {
 export interface PoliceDocument {
   type: PoliceDocumentType
   courtDocument: string
-  // RVG-only; stripped before the document is sent to the police API
-  name?: string
-}
-
-const DEFAULT_POLICE_DOCUMENT_FILE_NAMES: Record<PoliceDocumentType, string> = {
-  [PoliceDocumentType.RVKR]: 'krafa.pdf',
-  [PoliceDocumentType.RVTB]: 'thingbok.pdf',
-  [PoliceDocumentType.RVUR]: 'urskurdur.pdf',
-  [PoliceDocumentType.RVVI]: 'vistunarsedill.pdf',
-  [PoliceDocumentType.RVUL]: 'landsrettarurskurdur.pdf',
-  [PoliceDocumentType.RVDO]: 'domur.pdf',
-  [PoliceDocumentType.RVAS]: 'akaera.pdf',
-  [PoliceDocumentType.RVMG]: 'malsgogn.pdf',
-  [PoliceDocumentType.RVMV]: 'vidbotargogn_verjanda.pdf',
-  [PoliceDocumentType.RVVS]: 'vidbotargogn_saekjanda.pdf',
-  [PoliceDocumentType.RVFK]: 'fyrirkall.pdf',
-  [PoliceDocumentType.RVBD]: 'birtingarvottord.pdf',
-  [PoliceDocumentType.BRTNG_RVBD]: 'birtingarvottord_doms.pdf',
 }
 
 export interface SubpoenaInfo {
@@ -391,40 +373,9 @@ export class PoliceService {
     )
   }
 
-  private mask(value: string): string {
-    const valueIsFileName = value.split('.').pop() !== value
-    const fileNameEnding = valueIsFileName ? value.split('.').pop() : ''
-    const valueWithoutFileExtension = valueIsFileName
-      ? value.replace(`.${fileNameEnding}`, '')
-      : value
-
-    // The first and last letter are always kept, so there is nothing left to
-    // mask in shorter values
-    if (valueWithoutFileExtension.length < 2) {
-      return value
-    }
-
-    const firstLetterInValue = valueWithoutFileExtension[0]
-    const mask = '*'.repeat(valueWithoutFileExtension.length - 2)
-    const lastLetterInValueWithoutFileExtension =
-      valueWithoutFileExtension[valueWithoutFileExtension.length - 1]
-
-    return `${firstLetterInValue}${mask}${lastLetterInValueWithoutFileExtension}${
-      valueIsFileName ? `.${fileNameEnding}` : ''
-    }`
-  }
-
-  private getDocumentFileName(document: PoliceDocument): string {
-    return document.name ?? DEFAULT_POLICE_DOCUMENT_FILE_NAMES[document.type]
-  }
-
   // The police system rejects files that exceed its size limit and no amount of
   // retrying will change that, so the prosecutor is asked to upload the file by hand.
-  private async notifyProsecutorOfFileTooLarge(
-    caseId: string,
-    fileName: string,
-    policeCaseNumber?: string,
-  ): Promise<void> {
+  private async notifyProsecutorOfFileTooLarge(caseId: string): Promise<void> {
     let theCase: Case | null = null
 
     try {
@@ -446,16 +397,11 @@ export class PoliceService {
       return
     }
 
-    const caseNumber =
-      policeCaseNumber && policeCaseNumber.trim() !== ''
-        ? policeCaseNumber
-        : theCase?.policeCaseNumbers?.[0] ?? ''
-
-    const body = `Ekki tókst að hlaða upp skjali ${this.mask(
-      fileName,
-    )} í LÖKE vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í LÖKE.`
-
-    const subject = `Ekki tókst að hlaða upp skjali í LÖKE í máli ${caseNumber}`
+    // Index 0 is the main police case number (first registered / locked in the UI).
+    const policeCaseNumber = theCase?.policeCaseNumbers?.[0] ?? ''
+    const subject = `Ekki tókst að hlaða upp skjali í LÖKE í máli ${policeCaseNumber}`
+    const body =
+      'Ekki tókst að hlaða upp skjali í LÖKE vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í LÖKE.'
 
     try {
       await this.emailService.sendEmail({
@@ -1378,11 +1324,7 @@ export class PoliceService {
 
         if (res.status === 413 && courtDocuments.length > 0) {
           // Size limits are expected; email the prosecutor instead of Slack.
-          await this.notifyProsecutorOfFileTooLarge(
-            caseIdForNotification,
-            this.getDocumentFileName(courtDocuments[0]),
-            policeCaseNumber,
-          )
+          await this.notifyProsecutorOfFileTooLarge(caseIdForNotification)
 
           throw new PayloadTooLargeException(message)
         }
@@ -1470,11 +1412,7 @@ export class PoliceService {
       }
 
       if (res.status === 413) {
-        await this.notifyProsecutorOfFileTooLarge(
-          caseId,
-          documentFiles[0]?.name ??
-            DEFAULT_POLICE_DOCUMENT_FILE_NAMES[PoliceDocumentType.RVDO],
-        )
+        await this.notifyProsecutorOfFileTooLarge(caseId)
 
         throw new PayloadTooLargeException(await res.text())
       }
@@ -1653,11 +1591,7 @@ export class PoliceService {
       }
 
       if (res.status === 413) {
-        await this.notifyProsecutorOfFileTooLarge(
-          theCase.id,
-          DEFAULT_POLICE_DOCUMENT_FILE_NAMES[PoliceDocumentType.RVFK],
-          policeCaseNumbers?.[0],
-        )
+        await this.notifyProsecutorOfFileTooLarge(theCase.id)
 
         throw new PayloadTooLargeException(await res.text())
       }
