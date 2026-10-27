@@ -166,27 +166,25 @@ const HearingArrangements = () => {
             <Box marginBottom={workingCase.comments ? 2 : 5}>
               <AlertMessage
                 type="warning"
-                title={formatMessage(m.requestProsecutorOnlySession)}
+                title={m.requestProsecutorOnlySession}
                 message={workingCase.prosecutorOnlySessionRequest}
               />
             </Box>
           )}
         <ArraignmentAlert />
-        <PageTitle>{formatMessage(m.title)}</PageTitle>
+        <PageTitle>{m.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={stack({ gap: 5 })}>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(m.sections.sessionArrangements.heading)}
+              title={m.sections.sessionArrangements.heading}
               required
             />
             <BlueBox className={stack({ gap: 2 })}>
               <RadioButton
                 name="session-arrangements-all-present"
                 id="session-arrangements-all-present"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.allPresent,
-                )}
+                label={m.sections.sessionArrangements.options.allPresent}
                 checked={
                   checkedRadio === SessionArrangements.ALL_PRESENT ||
                   (!checkedRadio &&
@@ -212,9 +210,9 @@ const HearingArrangements = () => {
               <RadioButton
                 name="session-arrangements-all-present_spokesperson"
                 id="session-arrangements-all-present_spokesperson"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.allPresentSpokesperson,
-                )}
+                label={
+                  m.sections.sessionArrangements.options.allPresentSpokesperson
+                }
                 checked={
                   checkedRadio ===
                     SessionArrangements.ALL_PRESENT_SPOKESPERSON ||
@@ -242,9 +240,7 @@ const HearingArrangements = () => {
               <RadioButton
                 name="session-arrangements-prosecutor-present"
                 id="session-arrangements-prosecutor-present"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.prosecutorPresent,
-                )}
+                label={m.sections.sessionArrangements.options.prosecutorPresent}
                 checked={
                   checkedRadio === SessionArrangements.PROSECUTOR_PRESENT ||
                   (!checkedRadio &&
@@ -271,9 +267,7 @@ const HearingArrangements = () => {
               <RadioButton
                 name="session-arrangements-none-present"
                 id="session-arrangements-none-present"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.nonePresent,
-                )}
+                label={m.sections.sessionArrangements.options.nonePresent}
                 checked={
                   checkedRadio === SessionArrangements.NONE_PRESENT ||
                   (!checkedRadio &&
@@ -300,7 +294,7 @@ const HearingArrangements = () => {
           </Box>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(m.sections.requestedCourtDate.title)}
+              title={m.sections.requestedCourtDate.title}
             />
             <CourtArrangements
               handleCourtDateChange={handleCourtDateChange}

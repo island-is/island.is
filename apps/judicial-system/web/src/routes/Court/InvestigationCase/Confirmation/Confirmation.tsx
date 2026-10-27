@@ -146,7 +146,7 @@ const Confirmation: FC = () => {
         title={formatMessage(titles.court.investigationCases.conclusion)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={stack({ gap: 5 })}>
           <Accordion>
@@ -156,7 +156,7 @@ const Confirmation: FC = () => {
           </Accordion>
           <BlueBox className={stack({ gap: 2 })}>
             <Text as="h3" variant="h3" textAlign="center">
-              {formatMessage(strings.conclusionTitle)}
+              {strings.conclusionTitle}
             </Text>
             <Text variant="intro">{workingCase.conclusion}</Text>
             <Text variant="h4" textAlign="center">
@@ -192,17 +192,15 @@ const Confirmation: FC = () => {
               ? []
               : [
                   {
-                    text: formatMessage(
-                      isCompletedWithoutRuling
-                        ? strings.continueButtonTextCompletedWithoutRuling
-                        : workingCase.decision === CaseDecision.ACCEPTING
-                        ? strings.continueButtonTextAccepting
-                        : workingCase.decision === CaseDecision.REJECTING
-                        ? strings.continueButtonTextRejecting
-                        : workingCase.decision === CaseDecision.DISMISSING
-                        ? strings.continueButtonTextDismissing
-                        : strings.continueButtonTextAcceptingPartially,
-                    ),
+                    text: isCompletedWithoutRuling
+                      ? strings.continueButtonTextCompletedWithoutRuling
+                      : workingCase.decision === CaseDecision.ACCEPTING
+                      ? strings.continueButtonTextAccepting
+                      : workingCase.decision === CaseDecision.REJECTING
+                      ? strings.continueButtonTextRejecting
+                      : workingCase.decision === CaseDecision.DISMISSING
+                      ? strings.continueButtonTextDismissing
+                      : strings.continueButtonTextAcceptingPartially,
                     icon:
                       isAcceptingCaseDecision(workingCase.decision) ||
                       isCompletedWithoutRuling
@@ -221,7 +219,7 @@ const Confirmation: FC = () => {
           }
           infoBoxText={
             hideNextButton
-              ? formatMessage(strings.onlyAssigendJudgeCanSign)
+              ? strings.onlyAssigendJudgeCanSign
               : undefined
           }
         />
