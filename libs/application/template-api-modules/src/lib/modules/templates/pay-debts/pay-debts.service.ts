@@ -127,6 +127,7 @@ export class PayDebtsService extends BaseTemplateApiService {
     return {
       message: result?.message ?? '',
       timestamp: result?.timestamp ?? '',
+      moreDebts: result?.moreDebts ?? false,
       downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/finance/`,
       debts: (result?.debts ?? []).map((debt) => ({
         chargeTypeId: debt.chargeTypeId,

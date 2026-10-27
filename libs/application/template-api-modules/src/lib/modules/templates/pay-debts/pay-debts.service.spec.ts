@@ -12,6 +12,7 @@ describe('PayDebtsService', () => {
     const getCustomerDebts = jest.fn().mockResolvedValue({
       message: 'Success',
       timestamp: '2026-08-19T12:00:00Z',
+      moreDebts: true,
       debts: [
         {
           chargeTypeId: 'A1',
@@ -69,6 +70,7 @@ describe('PayDebtsService', () => {
     expect(result).toEqual({
       message: 'Success',
       timestamp: '2026-08-19T12:00:00Z',
+      moreDebts: true,
       downloadServiceURL: 'http://localhost:3377/download/v1/finance/',
       debts: [
         {

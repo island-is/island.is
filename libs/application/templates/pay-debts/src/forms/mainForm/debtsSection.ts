@@ -19,7 +19,7 @@ import {
   getDebtsFromExternalData,
   getDownloadServiceURL,
   hasFetchedDebts,
-  hasReachedDebtsLimit,
+  hasMoreDebts,
 } from '../../utils/getDebts'
 import { formatDate } from '../../utils/formatDate'
 import { CustomerDebt } from '../../utils/types'
@@ -70,7 +70,7 @@ export const debtsSection = buildSection({
             },
           ],
           condition: (_answers, externalData) =>
-            hasFetchedDebts(externalData) && hasReachedDebtsLimit(externalData),
+            hasFetchedDebts(externalData) && hasMoreDebts(externalData),
         }),
         buildInteractiveTableField({
           id: 'selectedDebts',

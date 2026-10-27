@@ -268,11 +268,12 @@
         }
       },
       "customerDebts_output": {
-        "required": ["debts", "message", "nextkey", "timestamp"],
+        "required": ["debts", "message", "moreDebts", "nextkey", "timestamp"],
         "type": "object",
         "properties": {
           "message": { "type": "string" },
           "timestamp": { "type": "string" },
+          "moreDebts": { "type": "boolean" },
           "nextkey": { "type": "string" },
           "debts": {
             "type": "array",
