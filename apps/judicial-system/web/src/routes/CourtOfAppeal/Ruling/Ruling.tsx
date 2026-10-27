@@ -372,10 +372,7 @@ const Ruling = () => {
               />
             </Box>
             <Box>
-              <SectionHeading
-                title={strings.courtConclusionHeading}
-                required
-              />
+              <SectionHeading title={strings.courtConclusionHeading} required />
               <InputFileUpload
                 name="appealRuling"
                 files={uploadFiles.filter((file) =>
