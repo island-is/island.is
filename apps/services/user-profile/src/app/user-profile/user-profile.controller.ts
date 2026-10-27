@@ -34,6 +34,8 @@ import { ActorProfileDto } from './dto/actor-profile.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { EmailsService } from './emails.service'
 import { EmailsDto } from './dto/emails.dto'
+import { NotificationSettingsDto } from './dto/notification-settings.dto'
+import { NotificationSettingsService } from './notification-settings.service'
 
 const namespace = '@island.is/user-profile/v2/users'
 
@@ -51,6 +53,7 @@ export class UserProfileController {
     private readonly userProfileService: UserProfileService,
     private readonly emailsService: EmailsService,
     private readonly auditService: AuditService,
+    private readonly notificationSettingsService: NotificationSettingsService,
   ) {}
 
   @Get('/')
@@ -119,6 +122,34 @@ export class UserProfileController {
       throw new BadRequestException('National id is not valid')
     }
     return this.userProfileService.findById(nationalId, false, clientType)
+  }
+
+  @Get('/.national-id/notification-settings')
+  @Documentation({
+    description:
+      'Get notification settings for given nationalId, including the sender categories the user has blocked.',
+    request: {
+      header: {
+        'X-Param-National-Id': {
+          required: true,
+          description: 'National id of the user to find',
+        },
+      },
+    },
+    response: { status: 200, type: NotificationSettingsDto },
+  })
+  @Audit<NotificationSettingsDto>({
+    resources: (settings) =>
+      settings.blockedCategories.map((blockedCategory) => blockedCategory.key),
+  })
+  async findNotificationSettings(
+    @Headers('X-Param-National-Id') nationalId: string,
+  ): Promise<NotificationSettingsDto> {
+    if (!kennitala.isValid(nationalId)) {
+      throw new BadRequestException('National id is not valid')
+    }
+
+    return this.notificationSettingsService.findSettings(nationalId)
   }
 
   @Get('/.to-national-id/actor-profiles/.from-national-id')

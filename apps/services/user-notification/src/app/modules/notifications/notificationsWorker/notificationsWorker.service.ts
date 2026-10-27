@@ -40,6 +40,7 @@ import { NotificationsService } from '../notifications.service'
 import { ActorNotification } from '../actor-notification.model'
 import { UserNotificationSender } from '../user-notification-sender.model'
 import {
+  DEFAULT_CATEGORY,
   isValidSenderId,
   mapToLocale,
   normalizeKennitala,
@@ -165,6 +166,65 @@ export class NotificationsWorkerService {
     }
 
     return shouldDeliver
+  }
+
+  // Whether the recipient has blocked the notification's sender and category.
+  // Fails open: if the settings cannot be fetched the notification is delivered.
+  private async isCategoryBlocked({
+    hasProfile,
+    nationalId,
+    senderId,
+    category,
+    urgent,
+    messageId,
+  }: {
+    hasProfile: boolean
+    nationalId: string
+    senderId?: string
+    category: string | null
+    urgent?: boolean
+    messageId: string
+  }): Promise<boolean> {
+    if (!hasProfile || urgent || !senderId) {
+      return false
+    }
+
+    const normalizedSenderId = normalizeKennitala(senderId)
+    if (!isValidSenderId(normalizedSenderId)) {
+      return false
+    }
+
+    // Templates without a category are presented to users as 'almennt'
+    const effectiveCategory = category ?? DEFAULT_CATEGORY
+
+    try {
+      const settings =
+        await this.userProfileApi.userProfileControllerFindNotificationSettings(
+          { xParamNationalId: nationalId },
+        )
+
+      const blocked = settings.blockedCategories.some(
+        (blockedCategory) =>
+          blockedCategory.senderId === normalizedSenderId &&
+          blockedCategory.category === effectiveCategory,
+      )
+
+      if (blocked) {
+        this.logger.info('Notification not sent because category is blocked', {
+          messageId,
+          senderId: normalizedSenderId,
+          category: effectiveCategory,
+        })
+      }
+
+      return blocked
+    } catch (error) {
+      this.logger.warn(
+        'Failed to fetch notification settings, proceeding with notification',
+        { messageId, error },
+      )
+      return false
+    }
   }
 
   private async handleActorNotification(
@@ -431,12 +491,22 @@ export class NotificationsWorkerService {
     // This allows users to quickly ignore notifications that are not urgent or actionable.
     // Templates with smsDelivery ALWAYS bypass this filter for SMS only (see
     // buildSmsPayload), so wasSent describes push/email delivery.
-    const shouldSendNotification = this.shouldDeliverByPriority({
-      profile: userProfile,
-      priorityType: template.priorityType,
-      urgent: args.urgent,
-      messageId,
-    })
+    // Users can also block a sender's category; urgent notifications bypass both.
+    const shouldSendNotification =
+      this.shouldDeliverByPriority({
+        profile: userProfile,
+        priorityType: template.priorityType,
+        urgent: args.urgent,
+        messageId,
+      }) &&
+      !(await this.isCategoryBlocked({
+        hasProfile: !!userProfile,
+        nationalId,
+        senderId: args.senderId,
+        category: toTemplateCategory(template.hnippCategoryIs),
+        urgent: args.urgent,
+        messageId,
+      }))
 
     const scope = template.scope || DocumentsScope.main
     const dbRecord = await this.createUserNotificationDbRecord(

@@ -16,6 +16,7 @@ import {
 } from '@island.is/clients/rsk/company-registry'
 import {
   ActorProfileDto,
+  BlockedCategoryDto,
   UserProfileDto,
   V2UsersApi,
 } from '@island.is/clients/user-profile'
@@ -91,6 +92,11 @@ export const MockV2UsersApi = {
         ) as UserProfileDto,
       )
     },
+  ),
+
+  userProfileControllerFindNotificationSettings: jest.fn(
+    (_params: { xParamNationalId: string }) =>
+      Promise.resolve({ blockedCategories: [] as BlockedCategoryDto[] }),
   ),
 
   userProfileControllerGetActorProfile: jest.fn(
@@ -1374,6 +1380,196 @@ describe('NotificationsWorkerService', () => {
       )
 
       bulkCreateSpy.mockRestore()
+    })
+  })
+
+  describe('Blocked sender categories', () => {
+    const recipient = userWithNoDelegations.nationalId
+    const senderId = createNationalId('company')
+    const otherSenderId = createNationalId('company')
+    const dashedSenderId = `${senderId.slice(0, 6)}-${senderId.slice(6)}`
+    const defaultImplementation =
+      MockV2UsersApi.userProfileControllerFindNotificationSettings.getMockImplementation()
+
+    const block = (blockedSenderId: string, category: string) =>
+      MockV2UsersApi.userProfileControllerFindNotificationSettings.mockResolvedValue(
+        {
+          blockedCategories: [
+            {
+              key: `${blockedSenderId}-${category}`,
+              senderId: blockedSenderId,
+              category,
+              categoryLabel: { is: category },
+            },
+          ],
+        },
+      )
+
+    const mockCategory = (
+      isLabel?: string,
+      overrides: Partial<ReturnType<typeof getMockHnippTemplate>> = {},
+    ) =>
+      jest.spyOn(notificationsService, 'getTemplate').mockResolvedValue(
+        getMockHnippTemplate({
+          hnippCategory: isLabel,
+          hnippCategoryIs: isLabel,
+          ...overrides,
+        }),
+      )
+
+    const send = async ({
+      sender = senderId,
+      urgent,
+    }: { sender?: string; urgent?: boolean } = {}) => {
+      await queue.add({
+        recipient,
+        senderId: sender,
+        templateId: mockTemplateId,
+        urgent,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+      })
+      await wait(2)
+    }
+
+    const expectDelivered = async (wasSent: boolean) => {
+      const notifications = await notificationModel.findAll({
+        where: { recipient },
+      })
+      expect(notifications).toHaveLength(1)
+      expect(notifications[0].wasSent).toBe(wasSent)
+      if (wasSent) {
+        expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
+        expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(
+          1,
+        )
+      } else {
+        expect(emailService.sendEmail).not.toHaveBeenCalled()
+        expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
+      }
+    }
+
+    afterEach(() => {
+      MockV2UsersApi.userProfileControllerFindNotificationSettings.mockReset()
+      if (defaultImplementation) {
+        MockV2UsersApi.userProfileControllerFindNotificationSettings.mockImplementation(
+          defaultImplementation,
+        )
+      }
+    })
+
+    it('should not deliver when the sender and category are blocked', async () => {
+      mockCategory('Heilbrigðismál')
+      block(senderId, 'heilbrigdismal')
+
+      await send()
+
+      await expectDelivered(false)
+      expect(
+        MockV2UsersApi.userProfileControllerFindNotificationSettings,
+      ).toHaveBeenCalledWith({ xParamNationalId: recipient })
+    })
+
+    it('should match a dashed sender id', async () => {
+      mockCategory('Heilbrigðismál')
+      block(senderId, 'heilbrigdismal')
+
+      await send({ sender: dashedSenderId })
+
+      await expectDelivered(false)
+    })
+
+    it('should treat a template without a category as almennt', async () => {
+      mockCategory(undefined)
+      block(senderId, 'almennt')
+
+      await send()
+
+      await expectDelivered(false)
+    })
+
+    it('should deliver when another category is blocked for the sender', async () => {
+      mockCategory('Heilbrigðismál')
+      block(senderId, 'skattar')
+
+      await send()
+
+      await expectDelivered(true)
+    })
+
+    it('should deliver when the category is blocked for another sender', async () => {
+      mockCategory('Heilbrigðismál')
+      block(otherSenderId, 'heilbrigdismal')
+
+      await send()
+
+      await expectDelivered(true)
+    })
+
+    it('should deliver urgent notifications even when the category is blocked', async () => {
+      mockCategory('Heilbrigðismál')
+      block(senderId, 'heilbrigdismal')
+
+      await send({ urgent: true })
+
+      await expectDelivered(true)
+    })
+
+    it('should not look up settings when the notification has no sender', async () => {
+      mockCategory('Heilbrigðismál')
+
+      await queue.add({
+        recipient,
+        templateId: mockTemplateId,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+      })
+      await wait(2)
+
+      await expectDelivered(true)
+      expect(
+        MockV2UsersApi.userProfileControllerFindNotificationSettings,
+      ).not.toHaveBeenCalled()
+    })
+
+    it('should deliver when the settings cannot be fetched', async () => {
+      mockCategory('Heilbrigðismál')
+      MockV2UsersApi.userProfileControllerFindNotificationSettings.mockRejectedValue(
+        new Error('user-profile unavailable'),
+      )
+
+      await send()
+
+      await expectDelivered(true)
+    })
+
+    it('should still send SMS for templates with smsDelivery ALWAYS but no email or push', async () => {
+      mockCategory('Heilbrigðismál', {
+        priorityType: 'Informative',
+        smsDelivery: 'ALWAYS',
+      })
+      block(senderId, 'heilbrigdismal')
+
+      await send()
+      await wait(5)
+
+      await expectDelivered(false)
+      const calledNumbers = (smsService.sendSms as jest.Mock).mock.calls.map(
+        (call) => call[0],
+      )
+      expect(calledNumbers).toContain(userWithNoDelegations.mobilePhoneNumber)
+    })
+
+    it('should not send SMS for OPT_IN templates', async () => {
+      mockCategory('Heilbrigðismál', {
+        priorityType: 'Informative',
+        smsDelivery: 'OPT_IN',
+      })
+      block(senderId, 'heilbrigdismal')
+
+      await send()
+      await wait(5)
+
+      await expectDelivered(false)
+      expect(smsService.sendSms).not.toHaveBeenCalled()
     })
   })
 
