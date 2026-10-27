@@ -138,9 +138,7 @@ const HearingArrangements = () => {
             />
           </Box>
           <Box component="section">
-            <SectionHeading
-              title={m.sections.translator.heading}
-            />
+            <SectionHeading title={m.sections.translator.heading} />
             <Input
               data-testid="translator"
               name="translator"

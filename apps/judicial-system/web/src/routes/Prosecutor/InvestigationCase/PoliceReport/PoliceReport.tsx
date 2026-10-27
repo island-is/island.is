@@ -52,7 +52,8 @@ const PoliceReport = () => {
       setAndSendCaseToServer(
         [
           {
-            prosecutorOnlySessionRequest: icReportForm.prosecutorOnly.input.defaultValue,
+            prosecutorOnlySessionRequest:
+              icReportForm.prosecutorOnly.input.defaultValue,
           },
         ],
         workingCase,

@@ -168,9 +168,15 @@ export const Overview = () => {
           <Box marginBottom={5}>
             <AlertMessage
               title={m.openedByDefenderAlert.title}
-              message={formatMessage({ id: m.openedByDefenderAlert.text, defaultMessage: m.openedByDefenderAlert.text }, {
-                when: formatDate(workingCase.openedByDefender, 'PPPp'),
-              })}
+              message={formatMessage(
+                {
+                  id: m.openedByDefenderAlert.text,
+                  defaultMessage: m.openedByDefenderAlert.text,
+                },
+                {
+                  when: formatDate(workingCase.openedByDefender, 'PPPp'),
+                },
+              )}
               type="info"
               testid="alertMessageOpenedByDefender"
             />

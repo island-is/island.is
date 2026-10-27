@@ -123,38 +123,41 @@ const PoliceDemands = () => {
     if (workingCase.defendants && workingCase.defendants.length > 0) {
       const courtClaim = workingCase.type && courtClaimPrefill[workingCase.type]
       const courtClaimText = courtClaim
-        ? formatMessage({ id: courtClaim.text, defaultMessage: courtClaim.text }, {
-            ...(courtClaim.format?.accused && {
-              accused: enumerate(
-                workingCase.defendants.map(
-                  (defendant) =>
-                    `${defendant.name} ${`${formatDOB(
-                      defendant.nationalId,
-                      defendant.noNationalId,
-                      '',
-                    )}`.trim()}`,
+        ? formatMessage(
+            { id: courtClaim.text, defaultMessage: courtClaim.text },
+            {
+              ...(courtClaim.format?.accused && {
+                accused: enumerate(
+                  workingCase.defendants.map(
+                    (defendant) =>
+                      `${defendant.name} ${`${formatDOB(
+                        defendant.nationalId,
+                        defendant.noNationalId,
+                        '',
+                      )}`.trim()}`,
+                  ),
+                  formatMessage(core.and),
                 ),
-                formatMessage(core.and),
-              ),
-            }),
-            ...(courtClaim.format?.address && {
-              address: workingCase.defendants.find((x) => x.address)?.address,
-            }),
-            ...(courtClaim.format?.court && {
-              court: workingCase.court?.name,
-            }),
-            ...(courtClaim.format?.institution && {
-              institution: formatInstitutionName(
-                workingCase.prosecutorsOffice?.name,
-              ),
-            }),
-            ...(courtClaim.format?.live && {
-              live: workingCase.defendants.length,
-            }),
-            ...(courtClaim.format?.year && {
-              year: new Date().getFullYear(),
-            }),
-          })
+              }),
+              ...(courtClaim.format?.address && {
+                address: workingCase.defendants.find((x) => x.address)?.address,
+              }),
+              ...(courtClaim.format?.court && {
+                court: workingCase.court?.name,
+              }),
+              ...(courtClaim.format?.institution && {
+                institution: formatInstitutionName(
+                  workingCase.prosecutorsOffice?.name,
+                ),
+              }),
+              ...(courtClaim.format?.live && {
+                live: workingCase.defendants.length,
+              }),
+              ...(courtClaim.format?.year && {
+                year: new Date().getFullYear(),
+              }),
+            },
+          )
         : undefined
 
       setAndSendCaseToServer(
@@ -193,9 +196,7 @@ const PoliceDemands = () => {
         <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
-            <SectionHeading
-              title={icDemands.sections.demands.heading}
-            />
+            <SectionHeading title={icDemands.sections.demands.heading} />
             <Input
               data-testid="demands"
               name="demands"
@@ -212,15 +213,19 @@ const PoliceDemands = () => {
             />
           </Box>
           <Box component="section">
-            <SectionHeading
-              title={icDemands.sections.lawsBroken.heading}
-            />
+            <SectionHeading title={icDemands.sections.lawsBroken.heading} />
             <Input
               data-testid="lawsBroken"
               name="lawsBroken"
-              label={formatMessage({ id: icDemands.sections.lawsBroken.label, defaultMessage: icDemands.sections.lawsBroken.label }, {
-                defendant: 'varnaraðila',
-              })}
+              label={formatMessage(
+                {
+                  id: icDemands.sections.lawsBroken.label,
+                  defaultMessage: icDemands.sections.lawsBroken.label,
+                },
+                {
+                  defendant: 'varnaraðila',
+                },
+              )}
               placeholder={icDemands.sections.lawsBroken.placeholder}
               value={lawsBrokenInput.value}
               errorMessage={lawsBrokenInput.errorMessage}
@@ -233,9 +238,7 @@ const PoliceDemands = () => {
             />
           </Box>
           <Box component="section">
-            <SectionHeading
-              title={icDemands.sections.legalBasis.heading}
-            />
+            <SectionHeading title={icDemands.sections.legalBasis.heading} />
             <Input
               data-testid="legalBasis"
               name="legalBasis"
