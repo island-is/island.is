@@ -337,7 +337,7 @@ const Processing: FC = () => {
         title={formatMessage(titles.prosecutor.indictments.processing)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <PageTitle>{strings.heading}</PageTitle>
         <Box marginBottom={5}>
           <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
         </Box>
@@ -347,7 +347,7 @@ const Processing: FC = () => {
         {workingCase.defendants && (
           <Box component="section" marginBottom={5}>
             <SectionHeading
-              title={formatMessage(strings.defendantPlea, {
+              title={formatMessage({ id: strings.defendantPlea, defaultMessage: strings.defendantPlea }, {
                 defendantCount: workingCase.defendants?.length ?? 0,
               })}
               heading="h2"
@@ -423,12 +423,12 @@ const Processing: FC = () => {
           ref={civilClaimRef}
         >
           <SectionHeading
-            title={formatMessage(strings.civilDemandsTitle)}
+            title={strings.civilDemandsTitle}
             heading="h2"
           />
           <BlueBox>
             <SectionHeading
-              title={formatMessage(strings.isCivilClaim)}
+              title={strings.isCivilClaim}
               marginBottom={2}
               heading="h3"
               variant="h4"
@@ -439,7 +439,7 @@ const Processing: FC = () => {
                 <RadioButton
                   name="isCivilClaim"
                   id="civil_claim_yes"
-                  label={formatMessage(strings.yes)}
+                  label={strings.yes}
                   large
                   backgroundColor="white"
                   onChange={() => {
@@ -452,7 +452,7 @@ const Processing: FC = () => {
                 <RadioButton
                   name="isCivilClaim"
                   id="civil_claim_no"
-                  label={formatMessage(strings.no)}
+                  label={strings.no}
                   large
                   backgroundColor="white"
                   onChange={() => handleHasCivilClaimsChange(false)}
@@ -470,7 +470,7 @@ const Processing: FC = () => {
                   key={civilClaimant.id}
                   civilClaimant={civilClaimant}
                   civilClaimantIndex={index}
-                  label={`${formatMessage(strings.civilClaimant)} ${index + 1}`}
+                  label={`${strings.civilClaimant} ${index + 1}`}
                   defendantSelectionWarningText="Veldu að minnsta kosti einn ákærða"
                   caseId={workingCase.id}
                   defendants={workingCase.defendants ?? []}
@@ -498,7 +498,7 @@ const Processing: FC = () => {
                 icon="add"
                 onClick={handleCreateCivilClaimantClick}
               >
-                {formatMessage(strings.addCivilClaimant)}
+                {strings.addCivilClaimant}
               </Button>
             </Box>
           </Box>

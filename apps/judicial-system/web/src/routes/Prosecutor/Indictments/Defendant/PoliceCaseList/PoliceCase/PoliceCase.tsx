@@ -209,7 +209,7 @@ export const PoliceCase: FC<Props> = ({
             variant="text"
             size="small"
           >
-            {formatMessage(strings.delete)}
+            {strings.delete}
           </Button>
         </Box>
       )}
@@ -264,7 +264,7 @@ export const PoliceCase: FC<Props> = ({
             )
           } else if (policeCaseNumberInput !== policeCaseNumber) {
             setPoliceCaseNumberErrorMessage(
-              formatMessage(strings.policeCaseNumberExists),
+              strings.policeCaseNumberExists,
             )
           } else {
             validateAndSetErrorMessage(
@@ -279,8 +279,8 @@ export const PoliceCase: FC<Props> = ({
         data-testid={`policeCaseNumber${index}`}
         name="policeCaseNumber"
         autoComplete="off"
-        label={formatMessage(strings.policeCaseNumberLabel)}
-        placeholder={formatMessage(strings.policeCaseNumberPlaceholder, {
+        label={strings.policeCaseNumberLabel}
+        placeholder={formatMessage({ id: strings.policeCaseNumberPlaceholder, defaultMessage: strings.policeCaseNumberPlaceholder }, {
           prefix:
             workingCase.prosecutorsOffice?.policeCaseNumberPrefix ??
             user?.institution?.policeCaseNumberPrefix ??
@@ -294,8 +294,8 @@ export const PoliceCase: FC<Props> = ({
       <Select
         name="case-type"
         options={options}
-        label={formatMessage(strings.indictmentTypeLabel)}
-        placeholder={formatMessage(strings.indictmentTypePlaceholder)}
+        label={strings.indictmentTypeLabel}
+        placeholder={strings.indictmentTypePlaceholder}
         onChange={(selectedOption) => {
           const indictmentSubtype = selectedOption?.value
 
@@ -323,7 +323,7 @@ export const PoliceCase: FC<Props> = ({
                   ),
                 })
               }
-              aria-label={formatMessage(strings.removeSubtype, {
+              aria-label={formatMessage({ id: strings.removeSubtype, defaultMessage: strings.removeSubtype }, {
                 subtype: indictmentSubtypes[subtype],
               })}
             >
@@ -338,8 +338,8 @@ export const PoliceCase: FC<Props> = ({
       <Input
         name="policeCasePlace"
         autoComplete="off"
-        label={formatMessage(strings.policeCasePlaceLabel)}
-        placeholder={formatMessage(strings.policeCasePlacePlaceholder)}
+        label={strings.policeCasePlaceLabel}
+        placeholder={strings.policeCasePlacePlaceholder}
         value={policeCaseNumberCrimeScene.place ?? ''}
         onChange={(event) =>
           setPoliceCase({

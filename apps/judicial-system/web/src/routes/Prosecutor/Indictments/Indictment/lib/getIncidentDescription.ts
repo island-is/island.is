@@ -87,7 +87,7 @@ export const getIncidentDescription = (
 
     if (hasOnlyOtherOffense) {
       return textToHtml(
-        formatMessage(strings.incidentDescriptionShortAutofill, {
+        formatMessage({ id: strings.incidentDescriptionShortAutofill, defaultMessage: strings.incidentDescriptionShortAutofill }, {
           incidentDate,
         }),
       )
@@ -107,7 +107,7 @@ export const getIncidentDescription = (
     const speedLimit = indictmentCount.speedLimit ?? '[Leyfilegur hraði]'
 
     return textToHtml(
-      formatMessage(strings.incidentDescriptionAutofill, {
+      formatMessage({ id: strings.incidentDescriptionAutofill, defaultMessage: strings.incidentDescriptionAutofill }, {
         incidentDate,
         vehicleRegistrationNumber: vehicleRegistration,
         reason,
@@ -121,7 +121,7 @@ export const getIncidentDescription = (
 
   if (subtypes.length === 1) {
     return textToHtml(
-      formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
+      formatMessage({ id: strings.indictmentDescriptionSubtypesAutofill, defaultMessage: strings.indictmentDescriptionSubtypesAutofill }, {
         subtypes: indictmentSubtypes[subtypes[0]],
         date: incidentDate,
       }),
@@ -133,7 +133,7 @@ export const getIncidentDescription = (
     .join(', ')
 
   return textToHtml(
-    formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
+    formatMessage({ id: strings.indictmentDescriptionSubtypesAutofill, defaultMessage: strings.indictmentDescriptionSubtypesAutofill }, {
       subtypes: allSubtypes,
       date: incidentDate,
     }),

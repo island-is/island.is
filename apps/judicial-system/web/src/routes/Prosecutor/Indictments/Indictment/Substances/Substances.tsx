@@ -59,7 +59,7 @@ export const Substances: FC<Props> = ({ offense, onChange }) => {
   return (
     <Box marginBottom={2}>
       <SectionHeading
-        title={formatMessage(strings.substanceTitle, {
+        title={formatMessage({ id: strings.substanceTitle, defaultMessage: strings.substanceTitle }, {
           substanceType: offenseType,
         })}
         heading="h4"
@@ -69,10 +69,10 @@ export const Substances: FC<Props> = ({ offense, onChange }) => {
         <Select
           name={`${offenseType}-offense-type`}
           options={getSubstanceOptions}
-          label={formatMessage(strings.substanceLabel, {
+          label={formatMessage({ id: strings.substanceLabel, defaultMessage: strings.substanceLabel }, {
             substanceType: offenseType,
           })}
-          placeholder={formatMessage(strings.substancePlaceholder, {
+          placeholder={formatMessage({ id: strings.substancePlaceholder, defaultMessage: strings.substancePlaceholder }, {
             substanceType: offenseType,
           })}
           onChange={(selectedOption) => {

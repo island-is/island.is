@@ -1,6 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { useState } from 'react'
-import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -37,7 +36,6 @@ export const SpeedingOffenseFields = ({
     setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => void
 }) => {
-  const { formatMessage } = useIntl()
 
   const [recordedSpeedErrorMessage, setRecordedSpeedErrorMessage] =
     useState<string>('')
@@ -46,7 +44,7 @@ export const SpeedingOffenseFields = ({
   return (
     <Box marginBottom={2}>
       <SectionHeading
-        title={formatMessage(strings.speedingTitle)}
+        title={strings.speedingTitle}
         heading="h4"
         marginBottom={2}
       />
@@ -85,7 +83,7 @@ export const SpeedingOffenseFields = ({
           id={`recordedSpeed-${indictmentCount.id}`}
           name="recordedSpeed"
           autoComplete="off"
-          label={formatMessage(strings.recordedSpeedLabel)}
+          label={strings.recordedSpeedLabel}
           placeholder="0"
           required
           errorMessage={recordedSpeedErrorMessage}
@@ -126,7 +124,7 @@ export const SpeedingOffenseFields = ({
         id={`speedLimit-${indictmentCount.id}`}
         name="speedLimit"
         autoComplete="off"
-        label={formatMessage(strings.speedLimitLabel)}
+        label={strings.speedLimitLabel}
         placeholder="0"
         required
         errorMessage={speedLimitErrorMessage}

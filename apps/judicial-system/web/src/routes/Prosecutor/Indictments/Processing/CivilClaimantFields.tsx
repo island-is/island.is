@@ -277,7 +277,7 @@ export const CivilClaimantFields = ({
         <Box marginBottom={2}>
           <Checkbox
             name={`civilClaimantNoNationalId-${civilClaimant.id}`}
-            label={formatMessage(strings.civilClaimantNoNationalId)}
+            label={strings.civilClaimantNoNationalId}
             checked={Boolean(civilClaimant.noNationalId)}
             onChange={() => {
               handleSetAndSendCivilClaimantToServer({
@@ -353,7 +353,7 @@ export const CivilClaimantFields = ({
                 })
               }
             >
-              {formatMessage(strings.addDefender)}
+              {strings.addDefender}
             </Button>
           )}
         </Box>
@@ -364,7 +364,7 @@ export const CivilClaimantFields = ({
                 <RadioButton
                   name={lawyerCheckboxId}
                   id={lawyerCheckboxId}
-                  label={formatMessage(strings.lawyer)}
+                  label={strings.lawyer}
                   large
                   backgroundColor="white"
                   onChange={() =>
@@ -380,7 +380,7 @@ export const CivilClaimantFields = ({
                 <RadioButton
                   name={legalProtectorCheckboxId}
                   id={legalProtectorCheckboxId}
-                  label={formatMessage(strings.legalRightsProtector)}
+                  label={strings.legalRightsProtector}
                   large
                   backgroundColor="white"
                   onChange={() =>
@@ -452,12 +452,9 @@ export const CivilClaimantFields = ({
             </Box>
             <Checkbox
               name={`civilClaimantShareFilesWithDefender-${civilClaimant.id}`}
-              label={formatMessage(
-                strings.civilClaimantShareFilesWithDefender,
-                {
+              label={formatMessage({ id: strings.civilClaimantShareFilesWithDefender, defaultMessage: strings.civilClaimantShareFilesWithDefender }, {
                   defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
-                },
-              )}
+                })}
               checked={Boolean(civilClaimant.caseFilesSharedWithSpokesperson)}
               onChange={() => {
                 handleSetAndSendCivilClaimantToServer({
@@ -470,12 +467,9 @@ export const CivilClaimantFields = ({
                 civilClaimant.spokespersonIsLawyer === null ||
                 civilClaimant.spokespersonIsLawyer === undefined
               }
-              tooltip={formatMessage(
-                strings.civilClaimantShareFilesWithDefenderTooltip,
-                {
+              tooltip={formatMessage({ id: strings.civilClaimantShareFilesWithDefenderTooltip, defaultMessage: strings.civilClaimantShareFilesWithDefenderTooltip }, {
                   defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
-                },
-              )}
+                })}
               backgroundColor="white"
               large
               filled
