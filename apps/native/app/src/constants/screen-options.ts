@@ -53,6 +53,11 @@ export const modalScreenOptions: StackScreenProps['options'] = {
   headerStyle: {
     backgroundColor: theme.color.white,
   },
+  // Match the header; otherwise the sheet body falls back to the navigation
+  // theme's grey background, which shows on iPad.
+  contentStyle: {
+    backgroundColor: theme.color.white,
+  },
   headerTitleAlign: 'left',
   headerTitleStyle: {
     fontFamily: 'IBMPlexSans_600SemiBold',

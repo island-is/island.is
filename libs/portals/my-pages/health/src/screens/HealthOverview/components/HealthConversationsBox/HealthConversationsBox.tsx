@@ -6,12 +6,7 @@ import {
   VisuallyHidden,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  formatDate,
-  LinkResolver,
-  m,
-  useIsMobile,
-} from '@island.is/portals/my-pages/core'
+import { formatDate, LinkResolver, m } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -60,7 +55,6 @@ const StateMessage = ({
 
 export const HealthConversationsBox = ({ limit }: Props) => {
   const { formatMessage } = useLocale()
-  const { isMobile } = useIsMobile()
   const userInfo = useUserInfo()
   const hasHealthScope = !!userInfo?.scopes?.includes(ApiScope.health)
 
@@ -128,7 +122,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
               icon="arrowForward"
               type="filled"
               color="blue400"
-              size={isMobile ? 'small' : 'medium'}
+              size="medium"
             />
           </LinkResolver>
         )}

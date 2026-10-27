@@ -37,10 +37,16 @@ describe('getDefenderVerdictTimelineItems', () => {
   const items = (
     verdict: Partial<Verdict>,
     verdictAppealCase?: Pick<AppealCase, 'appealEventLogs'> | null,
+    deadlines: {
+      verdictAppealDeadline?: string | null
+      isVerdictAppealDeadlineExpired?: boolean | null
+    } = {},
   ) =>
     getDefenderVerdictTimelineItems({
       defendantId: 'defendant_id',
       verdict: verdict as Verdict,
+      verdictAppealDeadline: deadlines.verdictAppealDeadline,
+      isVerdictAppealDeadlineExpired: deadlines.isVerdictAppealDeadlineExpired,
       verdictAppealCase,
       formatMessage,
     })
@@ -129,6 +135,29 @@ describe('getDefenderVerdictTimelineItems', () => {
 
     it('should say nothing about an appeal when no stance was recorded', () => {
       expect(items(served)).toEqual([{ text: 'Dómur birtur 01.06.2026' }])
+    })
+
+    it('should report the appeal deadline after service', () => {
+      expect(
+        items(served, null, {
+          verdictAppealDeadline: '2026-06-29T23:59:59.999Z',
+        }),
+      ).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+        { text: 'Áfrýjunarfrestur dómfellda er til 29.06.2026' },
+      ])
+    })
+
+    it('should report an expired appeal deadline', () => {
+      expect(
+        items(served, null, {
+          verdictAppealDeadline: '2026-06-29T23:59:59.999Z',
+          isVerdictAppealDeadlineExpired: true,
+        }),
+      ).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+        { text: 'Áfrýjunarfrestur dómfellda var til 29.06.2026' },
+      ])
     })
   })
 

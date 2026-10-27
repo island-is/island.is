@@ -33,6 +33,8 @@ export type VmstApplicationsIncomeValidationInput = {
 }
 
 export type VmstApplicationsIrregularJobValidationInput = {
+  // Set when an edited persisted row is sent as an update.
+  id?: string
   validationId: string
   employerSSN?: string
   periodFrom: string
@@ -42,37 +44,50 @@ export type VmstApplicationsIrregularJobValidationInput = {
 }
 
 export type VmstApplicationsContractorJobValidationInput = {
+  // Set when an edited persisted row is sent as an update.
+  id?: string
   validationId: string
   periodFrom: string
   periodTo?: string
 }
 
 export type VmstApplicationsCapitalIncomePaymentValidationInput = {
+  // Set when an edited persisted row is sent as an update.
+  id?: string
   validationId: string
   incomeTypeId: string
   estimatedIncome: number
   periodFrom: string
   periodTo?: string | null
+  oneTimePayment?: boolean
 }
 
 export type VmstApplicationsTRPaymentValidationInput = {
+  // Set when an edited persisted row is sent as an update.
+  id?: string
   validationId: string
   incomeTypeId: string
   estimatedIncome: number
   periodFrom: string
   periodTo?: string | null
+  oneTimePayment?: boolean
 }
 
 export type VmstApplicationsPensionPaymentValidationInput = {
+  // Set when an edited persisted row is sent as an update.
+  id?: string
   validationId: string
   incomeTypeId: string
   pensionFundId?: string
   estimatedIncome: number
   periodFrom: string
   periodTo?: string | null
+  oneTimePayment?: boolean
 }
 
 export type VmstApplicationsPartTimeJobValidationInput = {
+  // Set when an edited persisted row is sent as an update.
+  id?: string
   validationId: string
   employerSSN?: string
   periodFrom: string

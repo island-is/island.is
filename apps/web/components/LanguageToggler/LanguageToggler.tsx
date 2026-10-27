@@ -244,6 +244,30 @@ export const LanguageToggler = ({
     <ButtonElement {...buttonElementProps}>{t.otherLanguageName}</ButtonElement>
   )
 
+  // The confirm button is hidden unless a text is set for it in the CMS
+  const confirmButtonText = gn('switchToEnglishModalConfirmButtonText', '')
+
+  const onDialogConfirm = () => {
+    const href: string = gn('switchToEnglishModalConfirmButtonHref', '')
+    if (href.startsWith('/') && !href.startsWith('//')) {
+      goToOtherLanguagePage(href)
+      return
+    }
+    if (href) {
+      try {
+        const url = new URL(href)
+        // Only allow external http(s) links, never executable schemes like javascript:
+        if (url.protocol === 'https:' || url.protocol === 'http:') {
+          window.location.href = url.href
+          return
+        }
+      } catch {
+        // Invalid URL, fall back to the homepage
+      }
+    }
+    goToOtherLanguagePage(linkResolver('homepage', [], otherLanguage).href)
+  }
+
   const Dialog = (
     <DialogPrompt
       baseId={dialogId}
@@ -255,11 +279,12 @@ export const LanguageToggler = ({
       )}
       ariaLabel="Confirm switching to english"
       disclosureElement={Disclosure}
-      onConfirm={() => {
-        goToOtherLanguagePage(linkResolver('homepage', [], otherLanguage).href)
-      }}
-      buttonTextConfirm="Go to home page"
-      buttonTextCancel="Keep viewing"
+      onConfirm={onDialogConfirm}
+      buttonTextConfirm={confirmButtonText || undefined}
+      buttonTextCancel={gn(
+        'switchToEnglishModalCancelButtonText',
+        'Keep viewing',
+      )}
     />
   )
 

@@ -2,8 +2,12 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
-import { COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import { Box, Text } from '@island.is/island-ui/core'
+import {
+  COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+} from '@island.is/judicial-system/consts'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   AppealAppointmentLetterButtons,
   FormContentContainer,
@@ -20,7 +24,13 @@ import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/util
 
 import SelectAppealCivilClaimantAdvocate from './SelectAppealCivilClaimantAdvocate'
 import SelectAppealDefender from './SelectAppealDefender'
-import { areAllAppealAdvocatesConfirmed } from './VerdictAppealDefender.logic'
+import {
+  areAllAppealAdvocatesConfirmed,
+  getCivilClaimantSectionTitle,
+  getDefendantSectionTitle,
+  getVerdictAppealDefenderCaseNumber,
+  getVerdictAppealDefenderHeaderLines,
+} from './VerdictAppealDefender.logic'
 
 /**
  * Where the Court of Appeals settles who represents each party in the appeal.
@@ -57,6 +67,8 @@ const VerdictAppealDefender = () => {
   )
 
   const stepIsValid = areAllAppealAdvocatesConfirmed(workingCase)
+  const caseNumber = getVerdictAppealDefenderCaseNumber(workingCase)
+  const headerLines = getVerdictAppealDefenderHeaderLines(workingCase)
   const hasCivilClaimants = (workingCase.civilClaimants?.length ?? 0) > 0
 
   const handleNavigationTo = (destination: string) =>
@@ -77,10 +89,35 @@ const VerdictAppealDefender = () => {
     >
       <PageHeader title={titleForCase(formatMessage, workingCase)} />
       <FormContentContainer>
-        <PageTitle>Verjandi</PageTitle>
+        {/* Which appeal this is, and which district court case it came from.
+            The overview leads with the district court because the appeal has
+            barely begun there; by here the appeal is the case being worked
+            on. */}
+        <Box marginBottom={5}>
+          <PageTitle marginBottom={caseNumber || headerLines.length ? 1 : 0}>
+            Verjandi
+          </PageTitle>
+          {caseNumber && (
+            <Text as="h2" variant="h2">
+              {caseNumber}
+            </Text>
+          )}
+          {/* Detail lines, not headings: an h5 under the h1/h2 would skip
+              levels for anyone navigating by heading. */}
+          {headerLines.map((line) => (
+            <Text key={line} as="p" variant="h5">
+              {line}
+            </Text>
+          ))}
+        </Box>
         <div className={stack({ gap: 5 })}>
           <Box component="section">
-            <SectionHeading title="Verjendur ákærðu" marginBottom={3} />
+            <SectionHeading
+              title={getDefendantSectionTitle(
+                workingCase.defendants?.length ?? 0,
+              )}
+              marginBottom={3}
+            />
             <div className={stack({ gap: 5 })}>
               {workingCase.defendants?.map((defendant) => (
                 <SelectAppealDefender
@@ -93,7 +130,9 @@ const VerdictAppealDefender = () => {
           {hasCivilClaimants && (
             <Box component="section">
               <SectionHeading
-                title="Réttargæslumenn og lögmenn bótakröfuhafa"
+                title={getCivilClaimantSectionTitle(
+                  workingCase.civilClaimants?.length ?? 0,
+                )}
                 marginBottom={3}
               />
               <div className={stack({ gap: 5 })}>
@@ -113,10 +152,21 @@ const VerdictAppealDefender = () => {
         </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
-        {/* No continue action: this is the last step the court of appeals has
-            on a verdict appeal so far. The next one arrives with the step
-            that follows it. */}
-        <FormFooter previousUrl={overviewUrl} />
+        <FormFooter
+          previousUrl={overviewUrl}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              disabled: !stepIsValid,
+              onClick: () =>
+                handleNavigationTo(
+                  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+                ),
+              testId: 'continueButton',
+            },
+          ]}
+        />
       </FormContentContainer>
     </PageLayout>
   )

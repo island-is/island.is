@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
@@ -13,6 +14,8 @@ import {
 
 import { createTestingAppealSummonsModule } from './createTestingAppealSummonsModule'
 
+import { getOrCreateTransaction } from '../../../middleware'
+import { runInRequestContext } from '../../../test'
 import {
   AppealEventLog,
   AppealEventLogRepositoryService,
@@ -91,6 +94,7 @@ describe('AppealSummonsController - Create', () => {
 
   let mockAppealSummonsRepositoryService: AppealSummonsRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
+  let mockSequelize: Sequelize
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
   let appealSummonsController: AppealSummonsController
@@ -106,12 +110,11 @@ describe('AppealSummonsController - Create', () => {
     mockAppealSummonsRepositoryService = appealSummonsRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     appealSummonsController = controller
+    mockSequelize = sequelize
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => Promise<unknown>) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
     ;(mockAppealSummonsRepositoryService.create as jest.Mock).mockResolvedValue(
       { id: summonsId },
     )
@@ -128,13 +131,22 @@ describe('AppealSummonsController - Create', () => {
     givenWhenThen = async (theCase, dto, actingUser = user) => {
       const then = {} as Then
 
+      // The route is guarded by CaseExistsForUpdateGuard, so the request
+      // transaction is already open - and holding a lock on this case row -
+      // by the time the handler runs. Guards do not execute in controller
+      // unit tests, so the request context and that transaction are set up
+      // here instead.
       try {
-        then.result = await appealSummonsController.create(
-          caseId,
-          theCase,
-          dto,
-          actingUser,
-        )
+        await runInRequestContext(async () => {
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await appealSummonsController.create(
+            caseId,
+            theCase,
+            dto,
+            actingUser,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -150,7 +162,11 @@ describe('AppealSummonsController - Create', () => {
       then = await givenWhenThen(theCase, dto)
     })
 
-    it('creates the summons, defendant rows and an issued event', () => {
+    it('creates the summons, defendant rows and an issued event in the transaction the guard opened', () => {
+      // Once, by the stand-in for CaseExistsForUpdateGuard above. A second
+      // call would be the handler opening a transaction of its own, which
+      // would block on the guard's row lock and deadlock the request.
+      expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
       expect(mockAppealSummonsRepositoryService.create).toHaveBeenCalledWith(
         { caseId, appealCaseId },
         { transaction },

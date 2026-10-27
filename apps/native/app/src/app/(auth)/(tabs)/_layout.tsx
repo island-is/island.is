@@ -90,7 +90,9 @@ export default function TabLayout() {
           />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="index">
-          <NativeTabs.Trigger.Label hidden={Platform.OS === 'ios'}>
+          <NativeTabs.Trigger.Label
+            hidden={Platform.OS === 'ios' && !Platform.isPad}
+          >
             {intl.formatMessage({ id: 'home.screenTitle' })}
           </NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon

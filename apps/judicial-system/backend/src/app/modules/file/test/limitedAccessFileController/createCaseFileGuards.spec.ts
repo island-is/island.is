@@ -5,7 +5,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { verifyGuards } from '../../../../test'
-import { CaseTypeGuard, CaseWriteGuard } from '../../../case'
+import {
+  CaseTypeGuard,
+  CaseWriteGuard,
+  LimitedAccessCaseExistsForUpdateGuard,
+} from '../../../case'
 import { LimitedAccessCreateCaseFileGuard } from '../../guards/limitedAccessCreateCaseFile.guard'
 import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
 
@@ -13,7 +17,12 @@ describe('LimitedAccessFileController - Create case file guards', () => {
   verifyGuards(
     LimitedAccessFileController,
     'createCaseFile',
-    [CaseTypeGuard, CaseWriteGuard, LimitedAccessCreateCaseFileGuard],
+    [
+      LimitedAccessCaseExistsForUpdateGuard,
+      CaseTypeGuard,
+      CaseWriteGuard,
+      LimitedAccessCreateCaseFileGuard,
+    ],
     [
       {
         guard: CaseTypeGuard,

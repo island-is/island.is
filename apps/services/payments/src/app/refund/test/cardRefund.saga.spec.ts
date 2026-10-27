@@ -190,6 +190,7 @@ describe('Card Refund Saga', () => {
           message: 'Payment successfully refunded',
           metadata: expect.objectContaining({
             reason: input.reasonForRefund,
+            correlationId: mockCardPaymentConfirmation.id,
           }),
         }),
         expect.objectContaining({ useRetry: true, throwOnError: false }),
@@ -326,6 +327,9 @@ describe('Card Refund Saga', () => {
       ).rejects.toThrow('Log failed')
 
       expect(context.metadata?.refundSucceededButRollbackFailed).toBe(true)
+      expect(context.metadata?.correlationId).toBe(
+        mockCardPaymentConfirmation.id,
+      )
     })
   })
 

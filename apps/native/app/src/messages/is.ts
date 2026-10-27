@@ -59,6 +59,9 @@ export const is = {
   'onboarding.biometrics.type.biometrics': 'lífkenni',
   'onboarding.biometrics.type.fingerprint': 'fingrafar',
   'onboarding.biometrics.type.iris': 'augnskanna',
+  'biometrics.enrollmentChanged.title': 'Slökkt á lífkennum',
+  'biometrics.enrollmentChanged.message':
+    'Lífkennin sem skráð eru í tækinu hafa breyst. Opnaðu appið með PIN-númerinu og kveiktu aftur á lífkennum í stillingum.',
   'onboarding.pinKeypad.accessibilityLabel.iris': 'Nota augnskannaauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.fingerprint':
     'Nota fingrafarsauðkenningu',
@@ -298,6 +301,11 @@ export const is = {
   'documentDetail.bookmarkError': 'Ekki tókst að stjörnumerkja skjal',
   'documentDetail.unbookmarkError': 'Ekki tókst að fjarlægja stjörnumerkingu',
   'documentDetail.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
+  'documentDetail.downloadButton': 'Hlaða niður',
+  'documentDetail.archiveButton': 'Setja í geymslu',
+  'documentDetail.bookmarkButton': 'Stjörnumerkja',
+  'documentDetail.unarchiveButton': 'Taka úr geymslu',
+  'documentDetail.unbookmarkButton': 'Fjarlægja stjörnumerkingu',
 
   // document reply
   'documentReply.to': 'Til',
