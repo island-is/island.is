@@ -204,13 +204,28 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     console.error('Error getting Apple Pay payment enabled', e)
   }
 
-  // Likewise for the service's Google Pay endpoints
+  // Likewise for the service's Google Pay endpoints. The button is then rolled
+  // out per payer, with the payer as the flag user and subjectType as the
+  // service's flag user mapping sets it.
   let isGooglePayPaymentEnabled = false
   try {
-    isGooglePayPaymentEnabled = await configCatClient.getValueAsync(
-      Features.isIslandisGooglePayPaymentEnabled,
-      false,
-    )
+    const payerNationalId = paymentFlow?.payerNationalId
+    isGooglePayPaymentEnabled =
+      !!payerNationalId &&
+      (await configCatClient.getValueAsync(
+        Features.isIslandisGooglePayPaymentEnabled,
+        false,
+      )) &&
+      (await configCatClient.getValueAsync(
+        Features.isIslandisGooglePayPaymentAllowedForUser,
+        false,
+        {
+          identifier: payerNationalId,
+          custom: {
+            subjectType: isCompany(payerNationalId) ? 'legalEntity' : 'person',
+          },
+        },
+      ))
   } catch (e) {
     console.error('Error getting Google Pay payment enabled', e)
   }
