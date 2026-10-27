@@ -127,6 +127,27 @@ export const caseInclude: Includeable[] = [
         ],
       },
       {
+        model: AppealSummons,
+        as: 'sentAppealSummonses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+        include: [
+          {
+            model: User,
+            as: 'confirmedBy',
+            include: [{ model: Institution, as: 'institution' }],
+          },
+          {
+            model: AppealSummonsDefendant,
+            as: 'defendants',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
+        ],
+      },
+      {
         model: AppealCourtSession,
         as: 'courtSessions',
         required: false,
@@ -1358,6 +1379,10 @@ export const getLimitedAccessCaseInclude = (
           CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
           CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
           CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
+          CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT,
+          CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE,
           CaseFileCategory.APPEAL_RULING,
           CaseFileCategory.APPEAL_COURT_RECORD,
           CaseFileCategory.COURT_RECORD,

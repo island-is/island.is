@@ -105,7 +105,8 @@ const miscSchema = z
 //
 // For regulation application types (base_regulation / amending_regulation),
 // these fields live in the regulations-admin DB as single source of truth.
-// Only `regulation.draftId` is stored in application.answers.
+// Only `regulation.draftId` and `regulation.withoutImpacts` are stored in
+// application.answers.
 // The schema definitions are kept here for type inference, validation
 // schemas, and backward compatibility with legacy applications.
 // ---------------------------------------------------------------------------
@@ -135,6 +136,8 @@ export const regulationImpactSchema = z.object({
 const regulationSchema = z
   .object({
     draftId: z.string().optional(), // ID linking to regulations-admin draft in DB
+    // Amends a regulation not moved to island.is, so the text is written by hand
+    withoutImpacts: z.boolean().optional(),
     effectiveDate: z.string().optional(),
     fastTrack: z.boolean().optional(),
     lawChapters: z

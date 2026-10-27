@@ -52,12 +52,15 @@ export const getButtonsForActions = (
             isOutlined
             title={action.title}
             icon={icon}
+            ellipsis
             onPress={() =>
               isUrl ? openBrowser(action.data ?? '', componentId) : onShare()
             }
             style={{
               paddingTop: 9,
               paddingBottom: 9,
+              paddingLeft: 8,
+              paddingRight: 8,
             }}
           />
         </Action>

@@ -316,6 +316,10 @@ export class CardPaymentService {
         PaymentMethod.CARD,
       )
     } else {
+      this.paymentFlowService.validateChargePaymentMethod(
+        paymentFlow,
+        PaymentMethod.CARD,
+      )
       await this.paymentFlowService.validateCharge(paymentFlow, catalogItems)
     }
 

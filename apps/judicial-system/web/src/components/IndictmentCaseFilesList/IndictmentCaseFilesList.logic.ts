@@ -1,5 +1,9 @@
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
+import {
+  InstitutionType,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
@@ -76,12 +80,43 @@ export const shouldShowPoliceDigitalCaseFilesSection = (
     isCourtOfAppealsUser(user)) &&
   (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
 
-// Shown once the generated Ákæra has been frozen to S3 (indictmentHash set),
-// so a replace cannot race with the first getIndictmentPdf freeze.
+// Temporary one-off gate: only Héraðssaksóknari (district prosecutors office)
+// gets the replace control in the UI. The API is unchanged.
 export const shouldShowReplaceIndictmentPdf = (
   workingCase: CaseFilesListCase,
   user?: User,
 ): boolean =>
   isProsecutionUser(user) &&
+  user?.institution?.type === InstitutionType.DISTRICT_PROSECUTORS_OFFICE &&
   isIndictmentPdfReplaceableState(workingCase.state) &&
   Boolean(workingCase.indictmentHash)
+
+// Replacement uploads store `{ replaced: true }` in indictmentHash. Generated
+// freezes do not, so they keep the sent-to-court date in the display name.
+export const isReplacedIndictmentPdf = (
+  indictmentHash?: string | null,
+): boolean => {
+  if (!indictmentHash) {
+    return false
+  }
+
+  try {
+    const parsed = JSON.parse(indictmentHash) as { replaced?: unknown }
+
+    return parsed.replaced === true
+  } catch {
+    return false
+  }
+}
+
+export const getIndictmentPdfDisplayName = (
+  workingCase: CaseFilesListCase,
+): string => {
+  const withDate =
+    !isReplacedIndictmentPdf(workingCase.indictmentHash) &&
+    workingCase.caseSentToCourtDate
+      ? ` ${formatDate(workingCase.caseSentToCourtDate)}`
+      : ''
+
+  return `Ákæra${withDate}.pdf`
+}

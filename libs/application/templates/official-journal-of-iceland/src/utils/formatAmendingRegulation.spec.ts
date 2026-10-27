@@ -1435,3 +1435,114 @@ describe('formatAmendingRegTitle', () => {
     )
   })
 })
+
+describe('formatAmendingBodyWithArticlePrefix: items added or removed', () => {
+  const withList = (...items: string[]) =>
+    [
+      title('1. gr.'),
+      '<p>Reglugerð þessi gildir um:</p>',
+      `<ol>${items.map((item) => `<li>${item}</li>`).join('')}</ol>`,
+      title('2. gr. Gildistaka'),
+      GILDISTAKA,
+    ].join('')
+  const changes = (after: string) =>
+    formatAmendingBodyWithArticlePrefix([
+      {
+        id: '1',
+        type: 'amend',
+        name: '0123/2020',
+        diff: getStructuredDiff(
+          withList(
+            'fólksbifreiðar,',
+            'vörubifreiðar,',
+            'hópbifreiðar.',
+          ) as HTMLText,
+          after as HTMLText,
+        ).diff,
+      },
+    ])[0]
+  const intro =
+    '<p>Eftirfarandi breytingar verða á 1. mgr. 1. gr. reglugerðarinnar:</p> '
+
+  it('renumbers the items after one added in the middle', () => {
+    expect(
+      changes(
+        withList(
+          'fólksbifreiðar,',
+          'dráttarvélar,',
+          'vörubifreiðar,',
+          'hópbifreiðar.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        intro +
+          '<p>Á eftir 1. tölulið kemur nýr liður svohljóðandi, og breytist númer annarra liða til samræmis: dráttarvélar,</p>',
+      ),
+    )
+  })
+
+  it('renumbers nothing for an item added last', () => {
+    expect(
+      changes(
+        withList(
+          'fólksbifreiðar,',
+          'vörubifreiðar,',
+          'hópbifreiðar,',
+          'dráttarvélar.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        intro +
+          '<p>3. tölul. orðast svo: hópbifreiðar,</p>' +
+          '<p>Á eftir 3. tölulið kemur nýr liður svohljóðandi: dráttarvélar.</p>',
+      ),
+    )
+  })
+
+  it('renumbers nothing for items added last, one after another', () => {
+    expect(
+      changes(
+        withList(
+          'fólksbifreiðar,',
+          'vörubifreiðar,',
+          'hópbifreiðar,',
+          'dráttarvélar,',
+          'bifhjól.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        intro +
+          '<p>3. tölul. orðast svo: hópbifreiðar,</p>' +
+          '<p>Á eftir 3. tölulið kemur nýr liður svohljóðandi: dráttarvélar,</p>' +
+          '<p>Á eftir 4. tölulið kemur nýr liður svohljóðandi: bifhjól.</p>',
+      ),
+    )
+  })
+
+  it('renumbers the items after one removed in the middle', () => {
+    expect(changes(withList('fólksbifreiðar,', 'hópbifreiðar.'))).toBe(
+      article(
+        1,
+        intro +
+          '<p>2. töluliður fellur brott og breytist númer annarra liða til samræmis.</p>',
+      ),
+    )
+  })
+
+  it('renumbers nothing for the last item removed', () => {
+    expect(changes(withList('fólksbifreiðar,', 'vörubifreiðar.'))).toBe(
+      article(
+        1,
+        intro +
+          '<p>2. tölul. orðast svo: vörubifreiðar.</p>' +
+          '<p>3. töluliður fellur brott.</p>',
+      ),
+    )
+  })
+})

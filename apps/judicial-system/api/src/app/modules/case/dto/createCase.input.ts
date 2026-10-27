@@ -56,31 +56,6 @@ export class CreateCaseDefendantInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly citizenship?: string
-}
-
-@InputType()
-export class CreateCaseInput {
-  @Allow()
-  @Field(() => CaseType)
-  readonly type!: CaseType
-
-  @Allow()
-  @IsOptional()
-  @Field(() => GraphQLJSONObject, { nullable: true })
-  readonly indictmentSubtypes?: IndictmentSubtypeMap
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly description?: string
-
-  @Allow()
-  @IsArray()
-  @ArrayMinSize(1)
-  @IsString({ each: true })
-  @Matches(POLICE_CASE_NUMBER_REGEX, { each: true })
-  @Field(() => [String])
-  readonly policeCaseNumbers!: string[]
 
   @Allow()
   @IsOptional()
@@ -106,6 +81,31 @@ export class CreateCaseInput {
   @IsOptional()
   @Field(() => RequestSharedWithDefender, { nullable: true })
   readonly requestSharedWithDefender?: RequestSharedWithDefender
+}
+
+@InputType()
+export class CreateCaseInput {
+  @Allow()
+  @Field(() => CaseType)
+  readonly type!: CaseType
+
+  @Allow()
+  @IsOptional()
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly description?: string
+
+  @Allow()
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
+  @Matches(POLICE_CASE_NUMBER_REGEX, { each: true })
+  @Field(() => [String])
+  readonly policeCaseNumbers!: string[]
 
   @Allow()
   @IsOptional()

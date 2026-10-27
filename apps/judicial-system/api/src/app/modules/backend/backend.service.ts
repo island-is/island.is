@@ -18,6 +18,7 @@ import {
 import {
   AppealCase,
   AppealCourtSession,
+  AppealEventLog,
   AppealStatementDeadline,
   DeleteAppealCourtSessionResponse,
 } from '../appeal-case'
@@ -362,6 +363,17 @@ export class BackendService {
     return this.post(
       `case/${caseId}/appealCase/${appealCaseId}/statementDeadline`,
       setAppealStatementDeadline,
+    )
+  }
+
+  fileAppealStatement(
+    caseId: string,
+    appealCaseId: string,
+    fileAppealStatement: unknown,
+  ): Promise<AppealEventLog> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/statement`,
+      fileAppealStatement,
     )
   }
 
@@ -748,6 +760,16 @@ export class BackendService {
   ): Promise<AppealSummons> {
     return this.patch(
       `case/${caseId}/appealSummons/${appealSummonsId}/confirm`,
+      {},
+    )
+  }
+
+  sendAppealSummonsToCourtOfAppeals(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}/sendToCourtOfAppeals`,
       {},
     )
   }
