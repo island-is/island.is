@@ -120,6 +120,18 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         staging: 'XROAD:/IS-TEST/GOV/10000/island-is-protected/payments-v1',
         prod: 'XROAD:/IS/GOV/5501692829/island-is-protected/payments-v1',
       },
+      // TEST tokens carry Google's test cards; PRODUCTION tokens real cards
+      GOOGLE_PAY_ENVIRONMENT: {
+        dev: 'TEST',
+        staging: 'TEST',
+        prod: 'PRODUCTION',
+      },
+      // Google Pay Business Console merchant id, required in PRODUCTION
+      GOOGLE_PAY_MERCHANT_ID: {
+        dev: '',
+        staging: '',
+        prod: '',
+      },
     })
     .secrets({
       ...secrets,
@@ -135,6 +147,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_KEY',
       APPLE_PAY_PAYMENT_PROCESSING_KEY:
         '/k8s/services-payments/APPLE_PAY_PAYMENT_PROCESSING_KEY',
+      GOOGLE_PAY_PRIVATE_KEY: '/k8s/services-payments/GOOGLE_PAY_PRIVATE_KEY',
     })
     .ingress({
       primary: {
