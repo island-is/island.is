@@ -46,7 +46,8 @@ amount.
   represent:
 
   - a procuration holder (prókúruhafi);
-  - a general mandate holder (allsherjarumboð);
+  - a general mandate holder (allsherjarumboð). The seeder cannot grant
+    `fjs:debts` to a general mandate, so it is set in IDS admin;
   - a custom delegation holding `@island.is/applications/fjs:debts`
     (`requiredScopes`). A company's prókúruhafi grants it to staff; an
     individual grants it to another individual.
@@ -54,8 +55,8 @@ amount.
   No other delegation type is allowed.
 
 - **Mínar síður:** Staða shows a "Greiða skuld" button when the flag is
-  on, the user owes money, and the user acts for themselves or holds one
-  of the delegations above.
+  on, the user owes money, and the token carries `fjs:debts`. IDS
+  decides who gets the scope, so the button follows its settings.
 
 ## States
 

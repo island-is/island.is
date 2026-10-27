@@ -26,7 +26,6 @@ import {
   formSubmit,
   m,
 } from '@island.is/portals/my-pages/core'
-import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { checkDelegation } from '@island.is/shared/utils'
 import { useEffect, useState } from 'react'
@@ -66,13 +65,7 @@ const FinanceStatus = () => {
   }, [featureFlagClient, userInfo?.profile?.nationalId])
 
   const isDelegation = userInfo && checkDelegation(userInfo)
-  const canPayDebts =
-    !isDelegation ||
-    [
-      AuthDelegationType.ProcurationHolder,
-      AuthDelegationType.GeneralMandate,
-    ].some((type) => userInfo?.profile?.delegationType?.includes(type)) ||
-    userInfo?.scopes.includes(ApiScope.fjsDebts)
+  const canPayDebts = userInfo?.scopes.includes(ApiScope.fjsDebts)
 
   const { loading, error, ...statusQuery } = useGetFinanceStatusQuery()
 
