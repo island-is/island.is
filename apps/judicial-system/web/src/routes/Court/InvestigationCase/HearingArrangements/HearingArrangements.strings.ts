@@ -7,7 +7,8 @@ export const icHearingArrangements = {
       heading: 'Fyrirtaka',
       options: {
         allPresent: 'Fulltrúar málsaðila boðaðir',
-        allPresentSpokesperson: 'Fulltrúi ákæruvalds boðaður og dómari kallar til talsmann',
+        allPresentSpokesperson:
+          'Fulltrúi ákæruvalds boðaður og dómari kallar til talsmann',
         prosecutorPresent: 'Fulltrúi ákæruvalds boðaður',
         nonePresent: 'Krafa tekin fyrir án boðunar í þinghald',
       },
@@ -17,7 +18,8 @@ export const icHearingArrangements = {
     },
     defender: {
       title: '{defenderType}',
-      tooltip: 'Lögmaður sem er valinn hér verður skipaður {defenderType} í þinghaldi og fær sendan úrskurð rafrænt.',
+      tooltip:
+        'Lögmaður sem er valinn hér verður skipaður {defenderType} í þinghaldi og fær sendan úrskurð rafrænt.',
     },
   },
 }

@@ -293,9 +293,7 @@ const HearingArrangements = () => {
             </BlueBox>
           </Box>
           <Box component="section">
-            <SectionHeading
-              title={m.sections.requestedCourtDate.title}
-            />
+            <SectionHeading title={m.sections.requestedCourtDate.title} />
             <CourtArrangements
               handleCourtDateChange={handleCourtDateChange}
               handleCourtRoomChange={handleCourtRoomChange}

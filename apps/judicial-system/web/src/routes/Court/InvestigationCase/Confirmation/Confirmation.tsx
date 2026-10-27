@@ -218,9 +218,7 @@ const Confirmation: FC = () => {
                 ]
           }
           infoBoxText={
-            hideNextButton
-              ? strings.onlyAssigendJudgeCanSign
-              : undefined
+            hideNextButton ? strings.onlyAssigendJudgeCanSign : undefined
           }
         />
       </FormContentContainer>

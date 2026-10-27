@@ -155,8 +155,7 @@ const Ruling = () => {
                   [
                     {
                       isCompletedWithoutRuling: target.checked,
-                      conclusion:
-                        m.sections.completedWithoutRuling.conclusion,
+                      conclusion: m.sections.completedWithoutRuling.conclusion,
                       force: true,
                     },
                   ],
@@ -170,9 +169,7 @@ const Ruling = () => {
             />
           </Box>
           <Box component="section" marginBottom={5}>
-            <SectionHeading
-              title={m.sections.introduction.title}
-            />
+            <SectionHeading title={m.sections.introduction.title} />
             <Input
               data-testid="introduction"
               name="introduction"
@@ -190,9 +187,7 @@ const Ruling = () => {
             />
           </Box>
           <Box component="section">
-            <SectionHeading
-              title={m.sections.prosecutorDemands.title}
-            />
+            <SectionHeading title={m.sections.prosecutorDemands.title} />
             <Input
               data-testid="prosecutorDemands"
               name="prosecutorDemands"
