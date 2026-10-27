@@ -125,9 +125,9 @@ export const Overview = () => {
 
     // An SMS should have been sent
     if (notificationSent) {
-      setModalText(formatMessage(m.sections.modal.notificationSent))
+      setModalText(m.sections.modal.notificationSent)
     } else {
-      setModalText(formatMessage(m.sections.modal.notificationNotSent))
+      setModalText(m.sections.modal.notificationNotSent)
     }
 
     if (workingCase.state === CaseState.RECEIVED) {
@@ -161,8 +161,8 @@ export const Overview = () => {
             data-testid="rc-overview-info-panel"
           >
             <AlertMessage
-              title={formatMessage(m.receivedAlert.title)}
-              message={formatMessage(m.receivedAlert.message)}
+              title={m.receivedAlert.title}
+              message={m.receivedAlert.message}
               type="info"
             />
           </Box>
@@ -170,8 +170,8 @@ export const Overview = () => {
         {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(m.openedByDefenderAlert.title)}
-              message={formatMessage(m.openedByDefenderAlert.text, {
+              title={m.openedByDefenderAlert.title}
+              message={formatMessage({ id: m.openedByDefenderAlert.text, defaultMessage: m.openedByDefenderAlert.text }, {
                 when: formatDate(workingCase.openedByDefender, 'PPPp'),
               })}
               type="info"
@@ -180,7 +180,7 @@ export const Overview = () => {
           </Box>
         )}
         <PageTitle>
-          {formatMessage(m.headingV3, {
+          {formatMessage({ id: m.headingV3, defaultMessage: m.headingV3 }, {
             isExtended: Boolean(workingCase.parentCase),
             caseType: workingCase.type,
           })}
@@ -384,7 +384,7 @@ export const Overview = () => {
       <AnimatePresence>
         {modal === 'caseSubmittedModal' && (
           <Modal
-            title={formatMessage(m.sections.modal.headingV2, {
+            title={formatMessage({ id: m.sections.modal.headingV2, defaultMessage: m.sections.modal.headingV2 }, {
               caseType: workingCase.type,
             })}
             text={modalText}

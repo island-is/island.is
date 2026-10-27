@@ -51,16 +51,16 @@ export const PoliceReport = () => {
         title={formatMessage(titles.prosecutor.restrictionCases.policeReport)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(rcReportForm.heading)}</PageTitle>
+        <PageTitle>{rcReportForm.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
             <SectionHeading
-              title={formatMessage(rcReportForm.sections.demands.heading)}
+              title={rcReportForm.sections.demands.heading}
             />
             <Input
               name="demands"
-              label={formatMessage(rcReportForm.sections.demands.label)}
+              label={rcReportForm.sections.demands.label}
               placeholder={'Hverjar eru kröfur ákæruvaldsins?'}
               value={demandsInput.value}
               errorMessage={demandsInput.errorMessage}
@@ -74,16 +74,14 @@ export const PoliceReport = () => {
           </Box>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(rcReportForm.sections.caseFacts.heading)}
-              tooltip={formatMessage(rcReportForm.sections.caseFacts.tooltip)}
+              title={rcReportForm.sections.caseFacts.heading}
+              tooltip={rcReportForm.sections.caseFacts.tooltip}
             />
             <Input
               data-testid="caseFacts"
               name="caseFacts"
-              label={formatMessage(rcReportForm.sections.caseFacts.label)}
-              placeholder={formatMessage(
-                rcReportForm.sections.caseFacts.placeholder,
-              )}
+              label={rcReportForm.sections.caseFacts.label}
+              placeholder={rcReportForm.sections.caseFacts.placeholder}
               errorMessage={caseFactsInput.errorMessage}
               hasError={caseFactsInput.hasError}
               value={caseFactsInput.value}
@@ -96,20 +94,14 @@ export const PoliceReport = () => {
           </Box>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(
-                rcReportForm.sections.legalArguments.heading,
-              )}
-              tooltip={formatMessage(
-                rcReportForm.sections.legalArguments.tooltip,
-              )}
+              title={rcReportForm.sections.legalArguments.heading}
+              tooltip={rcReportForm.sections.legalArguments.tooltip}
             />
             <Input
               data-testid="legalArguments"
               name="legalArguments"
-              label={formatMessage(rcReportForm.sections.legalArguments.label)}
-              placeholder={formatMessage(
-                rcReportForm.sections.legalArguments.placeholder,
-              )}
+              label={rcReportForm.sections.legalArguments.label}
+              placeholder={rcReportForm.sections.legalArguments.placeholder}
               value={legalArgumentsInput.value}
               errorMessage={legalArgumentsInput.errorMessage}
               hasError={legalArgumentsInput.hasError}

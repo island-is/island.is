@@ -1,5 +1,4 @@
 import type { FC } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box, Tooltip } from '@island.is/island-ui/core'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
@@ -11,17 +10,15 @@ interface Props {
 }
 
 const ProsecutorSectionHeading: FC<Props> = ({ isIndictment = false }) => {
-  const { formatMessage } = useIntl()
-
   return (
     <SectionHeading
-      title={`${formatMessage(strings.title)} `}
+      title={`${strings.title} `}
       tooltip={
         <Box component="span" data-testid="prosecutor-tooltip">
           <Tooltip
-            text={formatMessage(
-              isIndictment ? strings.indictmentTooltip : strings.tooltip,
-            )}
+            text={
+              isIndictment ? strings.indictmentTooltip : strings.tooltip
+            }
           />
         </Box>
       }

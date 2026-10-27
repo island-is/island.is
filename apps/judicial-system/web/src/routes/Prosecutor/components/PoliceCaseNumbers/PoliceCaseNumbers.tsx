@@ -137,7 +137,7 @@ export const PoliceCaseNumbers: FC<Props> = ({
     if (!clientPoliceNumbers?.length) {
       return (
         <Text color="dark400" dataTestId="noPoliceCaseNumbersAssignedMessage">
-          {formatMessage(m.noPoliceCaseNumbersAssignedMessage)}
+          {m.noPoliceCaseNumbersAssignedMessage}
         </Text>
       )
     }
@@ -172,12 +172,12 @@ export const PoliceCaseNumbers: FC<Props> = ({
 
   return (
     <>
-      <SectionHeading title={formatMessage(m.heading)} required />
+      <SectionHeading title={m.heading} required />
       <MultipleValueList
         name="policeCaseNumbers"
         inputMask="police-case-numbers"
-        inputLabel={formatMessage(m.label)}
-        inputPlaceholder={formatMessage(m.placeholder, {
+        inputLabel={m.label}
+        inputPlaceholder={formatMessage({ id: m.placeholder, defaultMessage: m.placeholder }, {
           prefix:
             workingCase.prosecutorsOffice?.policeCaseNumberPrefix ??
             user?.institution?.policeCaseNumberPrefix ??
@@ -185,7 +185,7 @@ export const PoliceCaseNumbers: FC<Props> = ({
           year: new Date().getFullYear(),
         })}
         onAddValue={onAdd}
-        buttonText={formatMessage(m.buttonText)}
+        buttonText={m.buttonText}
         // this disables the button
         isButtonDisabled={(value) => {
           if (!value) return true
