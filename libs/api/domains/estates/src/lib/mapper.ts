@@ -37,8 +37,14 @@ const resolveText = (
   locale: LocaleEnum,
 ): string | undefined => {
   if (!t) return undefined
-  return (locale === LocaleEnum.En ? t.en : t.is) ?? undefined
+  return (
+    (locale === LocaleEnum.En ? t.english || t.icelandic : t.icelandic) ||
+    undefined
+  )
 }
+
+const toCompletedDate = (d?: Date | null) =>
+  d && d.getFullYear() > 1 ? d : undefined
 
 const mapAction = (
   a: EstateAction | null | undefined,
@@ -135,7 +141,7 @@ export const mapToEstatesCase = (
               order: s.order ?? undefined,
               code: s.code ?? undefined,
               state: s.state ?? undefined,
-              completedDate: s.completedDate ?? undefined,
+              completedDate: toCompletedDate(s.completedDate),
               description: resolveText(s.description, locale),
               information: resolveText(s.information, locale),
               action: mapAction(s.action, locale),

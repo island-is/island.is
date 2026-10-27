@@ -1671,6 +1671,51 @@
         ]
       }
     },
+    "/v1/NyskraAdfaraBeidni/Nytt": {
+      "post": {
+        "tags": ["NyskraAdfaraBeidni"],
+        "operationId": "NyskraAdfaraBeidni_Post2",
+        "requestBody": {
+          "x-name": "skilabod",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NyskraAdfararBeidniSkeyti"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NyskraAdfaraBeidniSvar"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
     "/v1/Fullnustusvid/Naudungarsala/UppbodFaFasteignir": {
       "get": {
         "tags": ["UppbodFaFasteignir"],
@@ -6453,6 +6498,320 @@
           }
         }
       },
+      "NyskraAdfararBeidniSkeyti": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "beidni": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AdfararBeidni"
+              }
+            ]
+          },
+          "audkenni": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "AdfararBeidni": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "gerdartholar": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/AdfararAdili"
+            }
+          },
+          "gerdarbeidandi": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AdfararAdili"
+              }
+            ]
+          },
+          "umbodsmadurGerdarbeidanda": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AdfararAdili"
+              }
+            ]
+          },
+          "adfararheimild": {
+            "$ref": "#/components/schemas/AdfararHeimild"
+          },
+          "upphaedKrofu": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "malsnumerGerdarbeidanda": {
+            "type": "string",
+            "nullable": true
+          },
+          "krofulysing": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/AdfararKrofulysing"
+            }
+          },
+          "fylgiskjol": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/AdfararFylgiskjol"
+            }
+          },
+          "fyrirsvarsmadurGerdarthola": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AdfararAdili"
+              }
+            ]
+          }
+        }
+      },
+      "AdfararAdili": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "heimili": {
+            "type": "string",
+            "nullable": true
+          },
+          "postfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "simi": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "AdfararHeimild": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "DomurEdaUrskurdurIslenskDomstols",
+          "AritudStefna",
+          "SattEdaNaudasamningurIslenskirDomstolar",
+          "SattFyrirYfirvoldumAdfararhaef",
+          "UrskurdurYfirvaldsAdfararhaefur",
+          "AkvordunYfirvaldsFesektirDagsektirFeviti",
+          "Skuldabref",
+          "VixillEdaTekki",
+          "KrafaUmSkattaOgOnnurGjold",
+          "KrafaSemNyturLogtaksrettar",
+          "UrlausnEdaAkvordunErlendsDomstolsEdaYfirvalds",
+          "SektirOgSakakostnadur"
+        ],
+        "enum": [
+          "DomurEdaUrskurdurIslenskDomstols",
+          "AritudStefna",
+          "SattEdaNaudasamningurIslenskirDomstolar",
+          "SattFyrirYfirvoldumAdfararhaef",
+          "UrskurdurYfirvaldsAdfararhaefur",
+          "AkvordunYfirvaldsFesektirDagsektirFeviti",
+          "Skuldabref",
+          "VixillEdaTekki",
+          "KrafaUmSkattaOgOnnurGjold",
+          "KrafaSemNyturLogtaksrettar",
+          "UrlausnEdaAkvordunErlendsDomstolsEdaYfirvalds",
+          "SektirOgSakakostnadur"
+        ]
+      },
+      "AdfararKrofulysing": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tegund": {
+            "$ref": "#/components/schemas/AdfararKrofulysingTegund"
+          },
+          "lysing": {
+            "type": "string",
+            "nullable": true
+          },
+          "upphaed": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "gjaldmidill": {
+            "$ref": "#/components/schemas/AdfararGjaldmidill"
+          }
+        }
+      },
+      "AdfararKrofulysingTegund": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Adfararbeidni",
+          "AdfarargjaldIRikissjod",
+          "BankaOgStimpilkostnadur",
+          "BirtingDoms",
+          "BirtingGreidsluaskorunar",
+          "Birtingarvottord",
+          "DratttarvextirTil",
+          "Fjarnamsbeidni",
+          "FjarnamsgjaldIRikissjod",
+          "Greidsluaskorun",
+          "Hofudstoll",
+          "Innborgun",
+          "Innheimtuthoknun",
+          "KostnadurVegnaFjarnams",
+          "Malskostnadur",
+          "RitunGreidsluaskorunar",
+          "SamningsvextirTil",
+          "VextirAfKostnadi",
+          "Virdisaukaskattur",
+          "Annad"
+        ],
+        "enum": [
+          "Adfararbeidni",
+          "AdfarargjaldIRikissjod",
+          "BankaOgStimpilkostnadur",
+          "BirtingDoms",
+          "BirtingGreidsluaskorunar",
+          "Birtingarvottord",
+          "DratttarvextirTil",
+          "Fjarnamsbeidni",
+          "FjarnamsgjaldIRikissjod",
+          "Greidsluaskorun",
+          "Hofudstoll",
+          "Innborgun",
+          "Innheimtuthoknun",
+          "KostnadurVegnaFjarnams",
+          "Malskostnadur",
+          "RitunGreidsluaskorunar",
+          "SamningsvextirTil",
+          "VextirAfKostnadi",
+          "Virdisaukaskattur",
+          "Annad"
+        ]
+      },
+      "AdfararGjaldmidill": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "ISK",
+          "USD",
+          "GBP",
+          "DKK",
+          "CAD",
+          "NOK",
+          "SEK",
+          "CHF",
+          "JPY",
+          "EUR",
+          "XDR"
+        ],
+        "enum": [
+          "ISK",
+          "USD",
+          "GBP",
+          "DKK",
+          "CAD",
+          "NOK",
+          "SEK",
+          "CHF",
+          "JPY",
+          "EUR",
+          "XDR"
+        ]
+      },
+      "AdfararFylgiskjol": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "numer": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegund": {
+            "$ref": "#/components/schemas/AdfararFylgiskjolTegund"
+          },
+          "lysing": {
+            "type": "string",
+            "nullable": true
+          },
+          "skjal": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          }
+        }
+      },
+      "AdfararFylgiskjolTegund": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Adfararbeidni",
+          "AritudStefna",
+          "Birtingarvottord",
+          "Domssatt",
+          "Domur",
+          "ErlendHeimild",
+          "Greidsluaskorun",
+          "Greidslustoduyfrlit",
+          "Greidsluyfrlit",
+          "Medlagsakvordun",
+          "Skuldabref",
+          "Urskurdur",
+          "Uthlutunargerd",
+          "VixillTekki",
+          "Yfirvaldsakvordun",
+          "Yfirvaldssatt",
+          "Annad",
+          "TilkynningTilGerdarthola",
+          "Hreyfingaryfrlit",
+          "Logreglusektir",
+          "Sektargerd",
+          "BodunVegnaFjarnams",
+          "Innheimtuvidvorun",
+          "Vettvangsskyrsla"
+        ],
+        "enum": [
+          "Adfararbeidni",
+          "AritudStefna",
+          "Birtingarvottord",
+          "Domssatt",
+          "Domur",
+          "ErlendHeimild",
+          "Greidsluaskorun",
+          "Greidslustoduyfrlit",
+          "Greidsluyfrlit",
+          "Medlagsakvordun",
+          "Skuldabref",
+          "Urskurdur",
+          "Uthlutunargerd",
+          "VixillTekki",
+          "Yfirvaldsakvordun",
+          "Yfirvaldssatt",
+          "Annad",
+          "TilkynningTilGerdarthola",
+          "Hreyfingaryfrlit",
+          "Logreglusektir",
+          "Sektargerd",
+          "BodunVegnaFjarnams",
+          "Innheimtuvidvorun",
+          "Vettvangsskyrsla"
+        ]
+      },
       "UppbodFasteignir": {
         "type": "object",
         "additionalProperties": false,
@@ -7124,8 +7483,28 @@
           "Yfirdrattur"
         ],
         "enum": [
-          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-          20, 21
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21
         ]
       },
       "UpplysingarUrDanarbuiRadstofunSkeyti": {
@@ -8404,11 +8783,11 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "is": {
+          "icelandic": {
             "type": "string",
             "nullable": true
           },
-          "en": {
+          "english": {
             "type": "string",
             "nullable": true
           }
