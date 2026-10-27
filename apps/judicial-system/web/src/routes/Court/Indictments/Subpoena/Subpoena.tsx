@@ -60,8 +60,12 @@ interface ModalContent {
 }
 
 const Subpoena: FC = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [updates, setUpdates] = useState<Updates>()
@@ -71,8 +75,9 @@ const Subpoena: FC = () => {
   >([])
   const [isCreatingSubpoena, setIsCreatingSubpoena] = useState<boolean>(false)
 
-  const [skipArraignmentSummons, setSkipArraignmentSummons] =
-    useState<boolean>(false)
+  const [skipArraignmentSummons, setSkipArraignmentSummons] = useState<boolean>(
+    false,
+  )
 
   const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
   const hasSkippedArraignmentSummons = Boolean(
@@ -390,9 +395,9 @@ const Subpoena: FC = () => {
       })
     } else if (isIssuingSubpoenas) {
       setModalContent({
-        title: formatMessage(strings.modalTitle),
+        title: strings.modalTitle,
         text: subpoenaText,
-        primaryButtonText: formatMessage(strings.modalPrimaryButtonText),
+        primaryButtonText: strings.modalPrimaryButtonText,
       })
     } else if (isSchedulingArraignmentDate) {
       setModalContent({
@@ -407,7 +412,6 @@ const Subpoena: FC = () => {
     isIssuingAlternativeServices,
     isIssuingSubpoenas,
     isSchedulingArraignmentDate,
-    formatMessage,
     modalContent,
     workingCase.civilClaimants,
   ])
@@ -429,15 +433,16 @@ const Subpoena: FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.subpoena)} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={stack({ gap: 5 })}>
           {updates?.defendants && (
             <SubpoenaType
               subpoenaItems={updates?.defendants?.map((defendant) => ({
                 defendant,
-                alternativeServiceDescriptionDisabled:
-                  !isRegisteringAlternativeServiceForDefendant(defendant),
+                alternativeServiceDescriptionDisabled: !isRegisteringAlternativeServiceForDefendant(
+                  defendant,
+                ),
                 subpoenaDisabled: !isIssuingSubpoenaForDefendant(defendant),
                 toggleNewAlternativeService: hasArraignmentBeenSettled
                   ? toggleNewAlternativeService(defendant)
@@ -495,7 +500,7 @@ const Subpoena: FC = () => {
                       })
                     }}
                   >
-                    {formatMessage(strings.newSubpoenaButtonText)}
+                    {strings.newSubpoenaButtonText}
                   </Button>
                 ) : null,
               }))}
@@ -503,9 +508,7 @@ const Subpoena: FC = () => {
             />
           )}
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(strings.courtArrangementsHeading)}
-            />
+            <SectionHeading title={strings.courtArrangementsHeading} />
             <BlueBox>
               {canSkipArraignmentSummons && (
                 <Box marginBottom={2}>
@@ -603,7 +606,7 @@ const Subpoena: FC = () => {
             {
               text: !isSchedulingArraignmentDate
                 ? formatMessage(core.continue)
-                : formatMessage(strings.nextButtonText),
+                : strings.nextButtonText,
               icon: 'arrowForward',
               onClick: () => {
                 if (!isSchedulingArraignmentDate) {
@@ -628,7 +631,7 @@ const Subpoena: FC = () => {
             text={modalContent.text}
             buttons={[
               {
-                text: formatMessage(strings.modalSecondaryButtonText),
+                text: strings.modalSecondaryButtonText,
                 onClick: () => setNavigateTo(undefined),
                 variant: 'ghost',
               },

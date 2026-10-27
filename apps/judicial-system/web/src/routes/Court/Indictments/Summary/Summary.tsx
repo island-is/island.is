@@ -222,9 +222,9 @@ const Summary: FC = () => {
       notFound={caseNotFound}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(strings.htmlTitle)} />
+      <PageHeader title={strings.htmlTitle} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <div className={stack({ gap: 5 })}>
           <AppealRulingModifiedAlert />
           <Box component="section" className={stack({ gap: 1 })}>
@@ -255,11 +255,11 @@ const Summary: FC = () => {
             workingCase.withCourtSessions) && (
             <div>
               <SectionHeading
-                title={formatMessage(strings.caseFiles)}
+                title={strings.caseFiles}
                 marginBottom={5}
               />
               <Text variant="h4" as="h4">
-                {formatMessage(strings.caseFilesSubtitleRuling)}
+                {strings.caseFilesSubtitleRuling}
               </Text>
               {
                 // We show a court record pdf button if the case should have court sessions
@@ -285,8 +285,8 @@ const Summary: FC = () => {
           )}
           <Box component="section">
             <SectionHeading
-              title={formatMessage(strings.courtEndTimeTitle)}
-              description={formatMessage(strings.courtEndTimeDescription)}
+              title={strings.courtEndTimeTitle}
+              description={strings.courtEndTimeDescription}
             />
             <DateTime
               name="courtEndDate"
@@ -308,7 +308,7 @@ const Summary: FC = () => {
               ? []
               : [
                   {
-                    text: formatMessage(strings.nextButtonText),
+                    text: strings.nextButtonText,
                     icon: 'checkmark',
                     onClick: handleNextButtonClick,
                     testId: 'continueButton',
@@ -318,7 +318,7 @@ const Summary: FC = () => {
           infoBoxText={
             canUserCompleteCase
               ? ''
-              : formatMessage(strings.onlyAssignedJudgeCanComplete)
+              : strings.onlyAssignedJudgeCanComplete
           }
         />
       </FormContentContainer>
@@ -404,7 +404,7 @@ const Summary: FC = () => {
       )}
       {modalVisible === 'CONFIRM_INDICTMENT' && (
         <Modal
-          title={formatMessage(strings.completeCaseModalTitle)}
+          title={strings.completeCaseModalTitle}
           text={
             <Box display="flex" rowGap={2} flexDirection="column">
               <Box>
@@ -428,12 +428,12 @@ const Summary: FC = () => {
           }
           buttons={[
             {
-              text: formatMessage(strings.completeCaseModalSecondaryButton),
+              text: strings.completeCaseModalSecondaryButton,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },
             {
-              text: formatMessage(strings.completeCaseModalPrimaryButton),
+              text: strings.completeCaseModalPrimaryButton,
               onClick: async () => await handleModalPrimaryButtonClick(),
               isLoading: isTransitioningCase,
             },
