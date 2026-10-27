@@ -4,6 +4,7 @@ import { arrangeRoutes, filterEnabledModules } from '../modules'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { BffUser } from '@island.is/shared/types'
 import { PortalModule, PortalRoute } from '../../types/portalCore'
+import { applyScopeDelegationSettings } from './applyScopeDelegationSettings'
 
 export type PrepareRouterDataProps = {
   userInfo: BffUser
@@ -34,11 +35,15 @@ export const prepareRouterData = async ({
     ...rest,
   })
 
-  const routes = await arrangeRoutes({
-    modules: Object.values(modules),
+  const routes = await applyScopeDelegationSettings({
+    routes: await arrangeRoutes({
+      modules: Object.values(modules),
+      client,
+      formatMessage,
+      ...rest,
+    }),
+    userInfo: rest.userInfo,
     client,
-    formatMessage,
-    ...rest,
   })
 
   return {

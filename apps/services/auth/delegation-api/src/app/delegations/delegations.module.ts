@@ -7,6 +7,7 @@ import { MeDelegationConfirmationsController } from './me-delegation-confirmatio
 import { MeDelegationsController } from './me-delegations.controller'
 import { DelegationIndexController } from './delegation-index.controller'
 import { DelegationsController } from './delegations.controller'
+import { DelegationRequestsController } from './delegation-requests.controller'
 
 @Module({
   imports: [AuthDelegationsModule, FeatureFlagModule],
@@ -15,6 +16,7 @@ import { DelegationsController } from './delegations.controller'
     MeDelegationConfirmationsController,
     DelegationIndexController,
     DelegationsController,
+    DelegationRequestsController,
   ],
   providers: [],
 })

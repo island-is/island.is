@@ -32,6 +32,7 @@ export const signatureCollectionModule: PortalModule = {
         name: m.signatureCollectionParliamentaryLists,
         path: SignatureCollectionPaths.RootPath,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        requiredScopes: [ApiScope.signatureCollection],
         element: (
           /* Default path to municipal lists since these are next */
           <Navigate
@@ -44,6 +45,7 @@ export const signatureCollectionModule: PortalModule = {
       {
         name: m.signatureCollectionParliamentaryLists,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        requiredScopes: [ApiScope.signatureCollection],
         path: SignatureCollectionPaths.SignatureCollectionParliamentaryLists,
         key: 'ParliamentaryLists',
         element: <SignatureCollectionParliamentary />,
@@ -52,6 +54,7 @@ export const signatureCollectionModule: PortalModule = {
         name: m.signatureCollectionParliamentaryLists,
         path: SignatureCollectionPaths.ViewParliamentaryList,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        requiredScopes: [ApiScope.signatureCollection],
         key: 'ParliamentaryLists',
         element: <ViewListParliamentary />,
       },
@@ -59,6 +62,7 @@ export const signatureCollectionModule: PortalModule = {
       {
         name: m.signatureCollectionPresidentialLists,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        requiredScopes: [ApiScope.signatureCollection],
         path: SignatureCollectionPaths.SignatureCollectionLists,
         key: 'PresidentialLists',
         element: <SignatureCollectionPresidential />,
@@ -68,12 +72,14 @@ export const signatureCollectionModule: PortalModule = {
         path: SignatureCollectionPaths.ViewList,
         key: 'PresidentialLists',
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        requiredScopes: [ApiScope.signatureCollection],
         element: <ViewListPresidential />,
       },
       // Municipal
       {
         name: m.signatureCollectionMunicipalLists,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        requiredScopes: [ApiScope.signatureCollection],
         path: SignatureCollectionPaths.SignatureCollectionMunicipalLists,
         key: 'MunicipalLists',
         element: <SignatureCollectionMunicipal />,
@@ -83,6 +89,7 @@ export const signatureCollectionModule: PortalModule = {
         path: SignatureCollectionPaths.ViewMunicipalList,
         key: 'MunicipalLists',
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        requiredScopes: [ApiScope.signatureCollection],
         element: <ViewListMunicipal />,
       },
     ]
@@ -95,12 +102,14 @@ export const signatureCollectionModule: PortalModule = {
       name: m.signatureCollectionParliamentaryLists,
       path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
       enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+      requiredScopes: [ApiScope.signatureCollection],
       element: <SignatureCollectionParliamentary />,
     },
     {
       name: m.signatureCollectionParliamentaryLists,
       path: SignatureCollectionPaths.CompanyViewParliamentaryList,
       enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+      requiredScopes: [ApiScope.signatureCollection],
       element: <ViewListParliamentary />,
     },
   ],

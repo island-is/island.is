@@ -1,0 +1,137 @@
+import { UseGuards } from '@nestjs/common'
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
+
+import { Identity } from '@island.is/api/domains/identity'
+import type { User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { DelegationRequestDTO } from '@island.is/clients/auth/delegation-api'
+import { IdentityClientService } from '@island.is/clients/identity'
+import { OrganizationLogoByNationalIdLoader } from '@island.is/cms'
+import type {
+  LogoUrl,
+  OrganizationLogoByNationalIdDataLoader,
+} from '@island.is/cms'
+import { Loader } from '@island.is/nest/dataloader'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
+
+import { CreateDelegationRequestInput } from '../dto/createDelegationRequest.input'
+import {
+  ApproveDelegationRequestInput,
+  DelegationRequestInput,
+} from '../dto/delegationRequest.input'
+import {
+  DelegationRequest,
+  DelegationRequestScope,
+} from '../models/delegationRequest.model'
+import { DelegationRequestsService } from '../services/delegationRequests.service'
+
+@UseGuards(IdsUserGuard, FeatureFlagGuard)
+@FeatureFlag(Features.isDelegationRequestsEnabled)
+@Resolver(() => DelegationRequest)
+export class DelegationRequestResolver {
+  constructor(
+    private delegationRequestsService: DelegationRequestsService,
+    private identityService: IdentityClientService,
+  ) {}
+
+  @Query(() => [DelegationRequest], {
+    name: 'authDelegationRequestsOutgoing',
+  })
+  getOutgoing(@CurrentUser() user: User): Promise<DelegationRequestDTO[]> {
+    return this.delegationRequestsService.getOutgoing(user)
+  }
+
+  @Query(() => [DelegationRequest], {
+    name: 'authDelegationRequestsIncoming',
+  })
+  getIncoming(@CurrentUser() user: User): Promise<DelegationRequestDTO[]> {
+    return this.delegationRequestsService.getIncoming(user)
+  }
+
+  @Query(() => DelegationRequest, { name: 'authDelegationRequest' })
+  getById(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => DelegationRequestInput })
+    input: DelegationRequestInput,
+  ): Promise<DelegationRequestDTO> {
+    return this.delegationRequestsService.getById(user, input.requestId)
+  }
+
+  @Mutation(() => DelegationRequest, { name: 'createAuthDelegationRequest' })
+  create(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => CreateDelegationRequestInput })
+    input: CreateDelegationRequestInput,
+  ): Promise<DelegationRequestDTO> {
+    return this.delegationRequestsService.create(user, input)
+  }
+
+  @Mutation(() => DelegationRequest, { name: 'rejectAuthDelegationRequest' })
+  reject(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => DelegationRequestInput })
+    input: DelegationRequestInput,
+  ): Promise<DelegationRequestDTO> {
+    return this.delegationRequestsService.reject(user, input.requestId)
+  }
+
+  @Mutation(() => DelegationRequest, { name: 'cancelAuthDelegationRequest' })
+  cancel(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => DelegationRequestInput })
+    input: DelegationRequestInput,
+  ): Promise<DelegationRequestDTO> {
+    return this.delegationRequestsService.cancel(user, input.requestId)
+  }
+
+  @Mutation(() => DelegationRequest, { name: 'approveAuthDelegationRequest' })
+  approve(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => ApproveDelegationRequestInput })
+    input: ApproveDelegationRequestInput,
+  ): Promise<DelegationRequestDTO> {
+    return this.delegationRequestsService.approve(user, input)
+  }
+
+  @ResolveField('from', () => Identity)
+  resolveFrom(@Parent() request: DelegationRequestDTO): Promise<Identity> {
+    return this.identityService.getIdentityWithFallback(
+      request.fromNationalId,
+      {},
+    )
+  }
+
+  @ResolveField('to', () => Identity)
+  resolveTo(@Parent() request: DelegationRequestDTO): Promise<Identity> {
+    return this.identityService.getIdentityWithFallback(
+      request.toNationalId,
+      {},
+    )
+  }
+}
+
+@Resolver(() => DelegationRequestScope)
+export class DelegationRequestScopeResolver {
+  @ResolveField('organisationLogoUrl', () => String, { nullable: true })
+  async resolveOrganisationLogoUrl(
+    @Loader(OrganizationLogoByNationalIdLoader)
+    organizationLogoLoader: OrganizationLogoByNationalIdDataLoader,
+    @Parent() scope: DelegationRequestScope,
+  ): Promise<LogoUrl> {
+    if (!scope.domainNationalId) {
+      return null
+    }
+    return organizationLogoLoader.load(scope.domainNationalId)
+  }
+}

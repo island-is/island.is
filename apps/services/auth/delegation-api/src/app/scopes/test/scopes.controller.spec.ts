@@ -14,7 +14,11 @@ import {
 import { CmsContentfulService } from '@island.is/cms'
 import { AuthScope, delegationScopes } from '@island.is/auth/scopes'
 import { FixtureFactory } from '@island.is/services/auth/testing'
-import { createCurrentUser } from '@island.is/testing/fixtures'
+import {
+  createCurrentUser,
+  createNationalId,
+} from '@island.is/testing/fixtures'
+import { AuthDelegationType } from '@island.is/shared/types'
 import {
   getRequestMethod,
   TestApp,
@@ -518,5 +522,165 @@ describe('ScopesController', () => {
         app.cleanUp()
       },
     )
+  })
+
+  describe('GET /v1/scopes/delegation-settings', () => {
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
+    const path = '/v1/scopes/delegation-settings'
+    const query = (names: string[]) =>
+      `${path}?${names.map((n) => `scopes=${encodeURIComponent(n)}`).join('&')}`
+
+    beforeAll(async () => {
+      app = await setupWithAuth({
+        user: createCurrentUser({
+          nationalId: createNationalId('person'),
+          actor: { nationalId: createNationalId('person') },
+          scope: [],
+        }),
+        customScopeRules: [
+          {
+            scopeName: 'settings/procuration-only',
+            onlyForDelegationType: [AuthDelegationType.ProcurationHolder],
+          },
+          {
+            scopeName: 'settings/custom-only',
+            onlyForDelegationType: [AuthDelegationType.Custom],
+          },
+        ],
+      })
+      server = request(app.getHttpServer())
+      const factory = new FixtureFactory(app)
+      const domain = await factory.createDomain({ name: 'settings-domain' })
+      const base = {
+        domainName: domain.name,
+        allowExplicitDelegationGrant: true,
+      }
+      await Promise.all([
+        factory.createApiScope({
+          ...base,
+          name: 'settings/personal',
+          grantToAuthenticatedUser: true,
+          grantToProcuringHolders: false,
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+          ],
+        }),
+        factory.createApiScope({
+          ...base,
+          name: 'settings/company',
+          grantToAuthenticatedUser: false,
+          grantToProcuringHolders: true,
+        }),
+        factory.createApiScope({
+          ...base,
+          name: 'settings/not-delegatable',
+          allowExplicitDelegationGrant: false,
+        }),
+        factory.createApiScope({
+          ...base,
+          name: 'settings/guardian-only',
+          allowExplicitDelegationGrant: false,
+          supportedDelegationTypes: [AuthDelegationType.LegalGuardian],
+        }),
+        factory.createApiScope({
+          ...base,
+          name: 'settings/access-controlled',
+          isAccessControlled: true,
+        }),
+        factory.createApiScope({
+          ...base,
+          name: 'settings/disabled',
+          enabled: false,
+        }),
+        factory.createApiScope({
+          ...base,
+          name: 'settings/procuration-only',
+          grantToAuthenticatedUser: true,
+          grantToProcuringHolders: true,
+        }),
+        factory.createApiScope({
+          ...base,
+          name: 'settings/custom-only',
+          grantToAuthenticatedUser: true,
+          grantToProcuringHolders: true,
+        }),
+      ])
+    })
+
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+
+    it('returns how delegation-relevant scopes can be delegated, for a user without delegation scopes', async () => {
+      const res = await server.get(
+        query([
+          'settings/personal',
+          'settings/company',
+          'settings/not-delegatable',
+          'settings/guardian-only',
+          'settings/access-controlled',
+          'settings/disabled',
+          'settings/unknown',
+        ]),
+      )
+
+      expect(res.status).toEqual(200)
+      const byName = Object.fromEntries(
+        res.body.scopes.map((s: { name: string }) => [s.name, s]),
+      )
+      expect(Object.keys(byName).sort()).toEqual([
+        'settings/company',
+        'settings/guardian-only',
+        'settings/personal',
+      ])
+      expect(byName['settings/personal']).toMatchObject({
+        domainName: 'settings-domain',
+        requestable: { individual: true, company: false },
+      })
+      expect(byName['settings/personal'].delegationTypes.sort()).toEqual([
+        AuthDelegationType.Custom,
+        AuthDelegationType.LegalGuardian,
+      ])
+      expect(byName['settings/company'].requestable).toEqual({
+        individual: false,
+        company: true,
+      })
+      expect(byName['settings/guardian-only']).toMatchObject({
+        delegationTypes: [AuthDelegationType.LegalGuardian],
+        requestable: { individual: false, company: false },
+      })
+    })
+
+    it('applies the custom scope rules for each kind of grantor', async () => {
+      const res = await server.get(
+        query(['settings/procuration-only', 'settings/custom-only']),
+      )
+
+      expect(res.status).toEqual(200)
+      const byName = Object.fromEntries(
+        res.body.scopes.map((s: { name: string }) => [s.name, s]),
+      )
+      expect(byName['settings/procuration-only'].requestable).toEqual({
+        individual: false,
+        company: true,
+      })
+      expect(byName['settings/custom-only']).toBeUndefined()
+    })
+
+    it('requires at least one scope', async () => {
+      const res = await server.get(path)
+
+      expect(res.status).toEqual(400)
+    })
+
+    it('limits the number of scopes', async () => {
+      const res = await server.get(
+        query(Array.from({ length: 201 }, (_, i) => `settings/${i}`)),
+      )
+
+      expect(res.status).toEqual(400)
+    })
   })
 })

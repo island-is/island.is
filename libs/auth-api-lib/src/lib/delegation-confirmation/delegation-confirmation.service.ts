@@ -264,6 +264,40 @@ export class DelegationConfirmationService {
     })
   }
 
+  async supersede(
+    confirmationIds: string[],
+    transaction: Transaction,
+  ): Promise<void> {
+    if (confirmationIds.length === 0) {
+      return
+    }
+    const superseded = await this.delegationConfirmationModel.findAll({
+      attributes: ['id', 'delegationId'],
+      where: {
+        id: confirmationIds,
+        status: DelegationConfirmationStatus.Pending,
+      },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    })
+    if (superseded.length === 0) {
+      return
+    }
+
+    await this.delegationConfirmationModel.update(
+      { status: DelegationConfirmationStatus.Superseded },
+      {
+        where: { id: superseded.map((confirmation) => confirmation.id) },
+        transaction,
+      },
+    )
+
+    await this.removeEmptyDelegations(
+      superseded.map((confirmation) => confirmation.delegationId),
+      transaction,
+    )
+  }
+
   private async removeEmptyDelegations(
     delegationIds: Array<string | null | undefined>,
     transaction?: Transaction,

@@ -79,6 +79,17 @@ interface WrittenDelegation {
   pendingConfirmation?: DelegationConfirmation
 }
 
+interface DelegationNames {
+  fromDisplayName: string
+  toName: string
+}
+
+/** Validated with names looked up, so the transaction that saves it makes no outside calls before the step-up. */
+export interface PreparedDelegationBatch {
+  inputs: CreateDelegationDTO[]
+  names: Map<string, DelegationNames>
+}
+
 /**
  * Service class for outgoing delegations.
  * This class supports domain based delegations.
@@ -251,6 +262,105 @@ export class DelegationsOutgoingService {
     return results.map((result) => result.delegation)
   }
 
+  async prepareBatch(
+    user: User,
+    inputs: CreateDelegationDTO[],
+  ): Promise<PreparedDelegationBatch> {
+    for (const input of inputs) {
+      await this.validateCreateDelegation(user, input)
+    }
+
+    const fromDisplayName = await this.namesService.getUserName(user)
+    const names = new Map<string, DelegationNames>()
+    for (const toNationalId of new Set(inputs.map((i) => i.toNationalId))) {
+      names.set(toNationalId, {
+        fromDisplayName,
+        toName: await this.namesService.validateRecipientNotDeceased(
+          toNationalId,
+        ),
+      })
+    }
+
+    return { inputs, names }
+  }
+
+  /**
+   * If any scope needs confirmation the whole batch waits for it, across domains.
+   * Indexing and notifications run only once the caller's transaction commits.
+   */
+  async createBatchInTransaction(
+    user: User,
+    { inputs, names }: PreparedDelegationBatch,
+    transaction: Transaction,
+  ): Promise<{
+    delegationIds: string[]
+    pendingConfirmations: PendingConfirmationDTO[]
+  }> {
+    const holdAll = await this.someNeedConfirmation(user, inputs, transaction)
+
+    const written: WrittenDelegation[] = []
+    for (const input of inputs) {
+      written.push(
+        await this.writeForDomain(user, input, transaction, {
+          names: names.get(input.toNationalId),
+          holdAll,
+        }),
+      )
+    }
+    const confirmations = await this.delegationConfirmationService.group(
+      written.flatMap((row) =>
+        row.pendingConfirmation ? [row.pendingConfirmation] : [],
+      ),
+      transaction,
+    )
+    const stepUp = await this.delegationConfirmationService.startAuthentication(
+      user,
+      confirmations,
+      transaction,
+    )
+
+    transaction.afterCommit(() => {
+      for (const toNationalId of new Set(written.map((w) => w.toNationalId))) {
+        void this.delegationIndexService.indexCustomDelegations(
+          toNationalId,
+          user,
+        )
+      }
+      Promise.all(
+        written.map(async ({ id, hadExistingScopes }) => ({
+          delegation: await this.findOneInternal(
+            user,
+            DelegationDirection.OUTGOING,
+            { id },
+          ),
+          hadExistingScopes,
+        })),
+      )
+        .then((results) =>
+          this.notifyByRecipient(
+            user,
+            results.flatMap(({ delegation, hadExistingScopes }) =>
+              delegation ? [{ delegation, hadExistingScopes }] : [],
+            ),
+          ),
+        )
+        .catch(() =>
+          this.logger.error('Failed to notify delegations after commit'),
+        )
+    })
+
+    return {
+      delegationIds: written.map((w) => w.id),
+      pendingConfirmations: stepUp
+        ? written.flatMap(({ pendingConfirmation }) =>
+            pendingConfirmation
+              ? [new PendingConfirmationDTO(pendingConfirmation, stepUp)]
+              : [],
+          )
+        : [],
+    }
+  }
+
   private async createOrUpdateMany(
     user: User,
     inputs: CreateDelegationDTO[],
@@ -352,10 +462,41 @@ export class DelegationsOutgoingService {
     }
   }
 
+  private async someNeedConfirmation(
+    user: User,
+    inputs: CreateDelegationDTO[],
+    transaction: Transaction,
+  ): Promise<boolean> {
+    for (const input of inputs) {
+      const delegation = await this.delegationModel.findOne({
+        attributes: ['id'],
+        where: {
+          fromNationalId: user.nationalId,
+          toNationalId: input.toNationalId,
+          domainName: input.domainName,
+        },
+        transaction,
+      })
+      const { needsConfirmation } = await this.findScopesToSave(
+        delegation?.id,
+        input.scopes ?? [],
+        transaction,
+      )
+      if (needsConfirmation) {
+        return true
+      }
+    }
+    return false
+  }
+
   private async writeForDomain(
     user: User,
     createDelegation: CreateDelegationDTO,
     transaction: Transaction,
+    {
+      names,
+      holdAll = false,
+    }: { names?: DelegationNames; holdAll?: boolean } = {},
   ): Promise<WrittenDelegation> {
     let delegation = await this.delegationModel.findOne({
       where: {
@@ -377,12 +518,12 @@ export class DelegationsOutgoingService {
       : false
 
     if (!delegation) {
-      const [fromDisplayName, toName] = await Promise.all([
-        this.namesService.getUserName(user),
-        this.namesService.validateRecipientNotDeceased(
+      const { fromDisplayName, toName }: DelegationNames = names ?? {
+        fromDisplayName: await this.namesService.getUserName(user),
+        toName: await this.namesService.validateRecipientNotDeceased(
           createDelegation.toNationalId,
         ),
-      ])
+      }
 
       delegation = await this.delegationModel.create(
         {
@@ -405,6 +546,7 @@ export class DelegationsOutgoingService {
       delegation,
       domainName: createDelegation.domainName ?? null,
       scopes: createDelegation.scopes ?? [],
+      holdAll,
       transaction,
     })
 
@@ -428,12 +570,14 @@ export class DelegationsOutgoingService {
     delegation,
     domainName,
     scopes,
+    holdAll = false,
     transaction,
   }: {
     user: User
     delegation: Delegation
     domainName: string | null
     scopes: UpdateDelegationScopeDTO[]
+    holdAll?: boolean
     transaction?: Transaction
   }): Promise<{
     grantable: UpdateDelegationScopeDTO[]
@@ -441,44 +585,9 @@ export class DelegationsOutgoingService {
       ReturnType<DelegationConfirmationService['request']>
     >
   }> {
-    if (scopes.length === 0) {
-      return { grantable: scopes }
-    }
-
-    // Not filtered by access again, so a hidden sensitive scope can't pass as an ordinary one.
-    const sensitiveScopeNames = (
-      await this.apiScopeModel.findAll({
-        attributes: ['name'],
-        where: {
-          name: scopes.map((scope) => scope.name),
-          requiresConfirmation: true,
-        },
-        transaction,
-      })
-    ).map((scope) => scope.name)
-
-    if (sensitiveScopeNames.length === 0) {
-      return { grantable: scopes }
-    }
-
-    // The edit form sends back already confirmed scopes; unchanged ones don't need a new confirmation.
-    const sensitive = new Set(sensitiveScopeNames)
-    const existing = await this.delegationScopeService.findByDelegationId(
-      delegation.id,
-      transaction,
-    )
-    const isUnchanged = (scope: UpdateDelegationScopeDTO) =>
-      Boolean(scope.validTo) &&
-      existing.some(
-        (granted) =>
-          granted.scopeName === scope.name &&
-          granted.validTo?.getTime() ===
-            startOfDay(new Date(scope.validTo)).getTime(),
-      )
-    const requested = scopes.filter(
-      (scope) => !(sensitive.has(scope.name) && isUnchanged(scope)),
-    )
-    if (!requested.some((scope) => sensitive.has(scope.name))) {
+    const { scopes: requested, needsConfirmation } =
+      await this.findScopesToSave(delegation.id, scopes, transaction)
+    if (!needsConfirmation && !(holdAll && requested.length > 0)) {
       return { grantable: requested }
     }
 
@@ -513,6 +622,59 @@ export class DelegationsOutgoingService {
       })
 
     return { grantable: [], pendingConfirmation }
+  }
+
+  private async findScopesToSave(
+    delegationId: string | undefined,
+    scopes: UpdateDelegationScopeDTO[],
+    transaction?: Transaction,
+  ): Promise<{
+    scopes: UpdateDelegationScopeDTO[]
+    needsConfirmation: boolean
+  }> {
+    if (scopes.length === 0) {
+      return { scopes, needsConfirmation: false }
+    }
+
+    // Not filtered by access again, so a hidden sensitive scope can't pass as an ordinary one.
+    const sensitiveScopeNames = (
+      await this.apiScopeModel.findAll({
+        attributes: ['name'],
+        where: {
+          name: scopes.map((scope) => scope.name),
+          requiresConfirmation: true,
+        },
+        transaction,
+      })
+    ).map((scope) => scope.name)
+
+    if (sensitiveScopeNames.length === 0) {
+      return { scopes, needsConfirmation: false }
+    }
+
+    // The edit form sends back already confirmed scopes; unchanged ones don't need a new confirmation.
+    const sensitive = new Set(sensitiveScopeNames)
+    const existing = delegationId
+      ? await this.delegationScopeService.findByDelegationId(
+          delegationId,
+          transaction,
+        )
+      : []
+    const isUnchanged = (scope: UpdateDelegationScopeDTO) =>
+      Boolean(scope.validTo) &&
+      existing.some(
+        (granted) =>
+          granted.scopeName === scope.name &&
+          granted.validTo?.getTime() ===
+            startOfDay(new Date(scope.validTo)).getTime(),
+      )
+    const requested = scopes.filter(
+      (scope) => !(sensitive.has(scope.name) && isUnchanged(scope)),
+    )
+    return {
+      scopes: requested,
+      needsConfirmation: requested.some((scope) => sensitive.has(scope.name)),
+    }
   }
 
   private async findScopeDisplayNames(
