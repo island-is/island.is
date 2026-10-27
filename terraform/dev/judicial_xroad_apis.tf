@@ -6,11 +6,21 @@
 # mailbox. On island.is they sat behind the internal nginx ingress.
 #
 # Here they run with no ALB: APRÓ ecs_service_worker + a CloudMap name
-# (judicial-system-<svc>.dmr.local:3333). The X-Road path to them (security
-# server -> TGW -> this VPC, its SG rule and DNS) is not built yet, so for now
-# nobody can call them. See docs/dmr/remaining-services-plan.md.
+# (judicial-system-<svc>.dmr.local:3333). The DMR dev security server reaches
+# them over the TGW; each service SG allows only its private subnets on 3333.
+# Still missing: SS name lookup for dmr.local and publishing the services on
+# the SS. See docs/dmr/remaining-services-plan.md.
 
 locals {
+  # Private subnets of the DMR dev X-Road VPC (vpc-02f760cbfff86a736, account
+  # 676907492469), where the security server ECS tasks run. Same ranges we
+  # route to the TGW.
+  xroad_ss_private_cidrs = {
+    euw1a = "10.67.0.0/26"
+    euw1b = "10.67.0.64/26"
+    euw1c = "10.67.0.128/26"
+  }
+
   judicial_xroad_apis = {
     xrd-api = {
       service_name = "judicial-system-xrd-api"
@@ -46,6 +56,18 @@ module "judicial_xroad_api" {
   subnet_ids           = module.infra_outputs.private_subnets
   security_group_ids   = [module.infra_outputs.services_shared_sg_id]
   service_discovery_id = module.infra_outputs.ecs_namespace_id
+
+  # Only the DMR dev security server may call these, over the TGW. The rules
+  # go on each service's OWN SG (made by the module), not the shared one, so
+  # backend/api stay closed to the X-Road VPC.
+  security_group_ingress_rules = {
+    for k, cidr in local.xroad_ss_private_cidrs : "xroad-ss-${k}" => {
+      cidr_ipv4   = cidr
+      from_port   = 3333
+      to_port     = 3333
+      description = "DMR dev X-Road security server (${k}) to ${each.value.service_name}"
+    }
+  }
 
   container_image  = "${local.shared_ecr_registry}/${each.value.service_name}:${each.value.image_tag}"
   cpu_architecture = "X86_64"
