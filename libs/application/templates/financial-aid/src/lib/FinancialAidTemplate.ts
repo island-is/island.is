@@ -20,6 +20,7 @@ import {
   application,
   missingFiles,
   stateDescriptions,
+  stateTags,
   summaryForm,
 } from './messages'
 import { dataSchema } from './dataSchema'
@@ -269,6 +270,9 @@ const FinancialAidTemplate: ApplicationTemplate<
           lifecycle: oneMonthLifeCycle,
           actionCard: {
             description: stateDescriptions.submitted,
+            tag: {
+              label: stateTags.submitted,
+            },
           },
           onEntry: CreateApplicationApi,
           roles: [
