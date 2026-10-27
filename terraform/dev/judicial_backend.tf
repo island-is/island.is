@@ -142,13 +142,13 @@ module "judicial_backend" {
     DB_USER          = local.judicial_backend_db_env.DB_USER
     DB_NAME          = local.judicial_backend_db_env.DB_NAME
 
-    # X-Road (non-secret config) — real islandis dev values. The backend's
+    # X-Road (non-secret config) — DMR dev security server, reached over the TGW. The backend's
     # CourtClientModule validates ALL XROAD_* at boot (presence check) and
     # exits(1) if absent. Secret creds are placeholder shells. NOT a cutover.
-    XROAD_BASE_PATH                    = "http://securityserver.dev01.devland.is"
-    XROAD_BASE_PATH_WITH_ENV           = "http://securityserver.dev01.devland.is/r1/IS-DEV"
-    XROAD_TLS_BASE_PATH                = "https://securityserver.dev01.devland.is"
-    XROAD_TLS_BASE_PATH_WITH_ENV       = "https://securityserver.dev01.devland.is/r1/IS-DEV"
+    XROAD_BASE_PATH                    = "http://ss.xroad.dev.dmr-dev.cloud"
+    XROAD_BASE_PATH_WITH_ENV           = "http://ss.xroad.dev.dmr-dev.cloud/r1/IS-DEV"
+    XROAD_TLS_BASE_PATH                = "https://ss.xroad.dev.dmr-dev.cloud"
+    XROAD_TLS_BASE_PATH_WITH_ENV       = "https://ss.xroad.dev.dmr-dev.cloud/r1/IS-DEV"
     XROAD_CLIENT_ID                    = "IS-DEV/GOV/10014/Rettarvorslugatt-Client"
     XROAD_COURT_MEMBER_CODE            = "10019"
     XROAD_POLICE_MEMBER_CODE           = "10005"
