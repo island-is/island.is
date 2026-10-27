@@ -136,18 +136,14 @@ export const CourtRecord: FC = () => {
 
     if (workingCase.translator) {
       autofillSessionBookings.push(
-        `${formatMessage(m.sections.sessionBookings.autofillTranslator, {
+        `${formatMessage({ id: m.sections.sessionBookings.autofillTranslator, defaultMessage: m.sections.sessionBookings.autofillTranslator }, {
           translator: workingCase.translator,
         })}\n\n`,
       )
     }
 
     autofillSessionBookings.push(
-      `${formatMessage(
-        m.sections.sessionBookings.autofillRightToRemainSilent,
-      )}\n\n${formatMessage(
-        m.sections.sessionBookings.autofillCourtDocumentOne,
-      )}\n\n${formatMessage(m.sections.sessionBookings.autofillAccusedPlea)}`,
+      `${m.sections.sessionBookings.autofillRightToRemainSilent}\n\n${m.sections.sessionBookings.autofillCourtDocumentOne}\n\n${m.sections.sessionBookings.autofillAccusedPlea}`,
     )
 
     populateEndOfCourtSessionBookingsIntro(workingCase, endOfSessionBookings)
@@ -162,18 +158,13 @@ export const CourtRecord: FC = () => {
       workingCase.type === CaseType.ADMISSION_TO_FACILITY
     ) {
       autofillSessionBookings.push(
-        `\n\n${formatMessage(
-          m.sections.sessionBookings.autofillPresentationsV3,
-          {
+        `\n\n${formatMessage({ id: m.sections.sessionBookings.autofillPresentationsV3, defaultMessage: m.sections.sessionBookings.autofillPresentationsV3 }, {
             caseType: workingCase.type,
-          },
-        )}`,
+          })}`,
       )
     } else if (workingCase.type === CaseType.TRAVEL_BAN) {
       autofillSessionBookings.push(
-        `\n\n${formatMessage(
-          m.sections.sessionBookings.autofillPresentationsTravelBan,
-        )}`,
+        `\n\n${m.sections.sessionBookings.autofillPresentationsTravelBan}`,
       )
     }
 
@@ -298,17 +289,15 @@ export const CourtRecord: FC = () => {
         title={formatMessage(titles.court.restrictionCases.courtRecord)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.sections.title)}</PageTitle>
+        <PageTitle>{m.sections.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <BlueBox>
             <Box marginBottom={3}>
               <DateTime
                 name="courtStartDate"
-                datepickerLabel={formatMessage(
-                  m.sections.courtStartDate.dateLabel,
-                )}
-                timeLabel={formatMessage(m.sections.courtStartDate.timeLabel)}
+                datepickerLabel={m.sections.courtStartDate.dateLabel}
+                timeLabel={m.sections.courtStartDate.timeLabel}
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
@@ -332,10 +321,10 @@ export const CourtRecord: FC = () => {
             <Input
               data-testid="courtLocation"
               name="courtLocation"
-              tooltip={formatMessage(m.sections.courtLocation.tooltip)}
-              label={formatMessage(m.sections.courtLocation.label)}
+              tooltip={m.sections.courtLocation.tooltip}
+              label={m.sections.courtLocation.label}
               value={workingCase.courtLocation || ''}
-              placeholder={formatMessage(m.sections.courtLocation.placeholder)}
+              placeholder={m.sections.courtLocation.placeholder}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLocation',
@@ -403,9 +392,9 @@ export const CourtRecord: FC = () => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.sessionBookings.title)} `}
+              {`${m.sections.sessionBookings.title} `}
               <Tooltip
-                text={formatMessage(m.sections.sessionBookings.tooltip)}
+                text={m.sections.sessionBookings.tooltip}
               />
             </Text>
           </Box>
@@ -413,11 +402,9 @@ export const CourtRecord: FC = () => {
             <Input
               data-testid="sessionBookings"
               name="sessionBookings"
-              label={formatMessage(m.sections.sessionBookings.label)}
+              label={m.sections.sessionBookings.label}
               value={sessionBookingsInput.value || ''}
-              placeholder={formatMessage(
-                m.sections.sessionBookings.placeholder,
-              )}
+              placeholder={m.sections.sessionBookings.placeholder}
               onChange={(evt) =>
                 sessionBookingsInput.onChange(evt.target.value)
               }
@@ -434,7 +421,7 @@ export const CourtRecord: FC = () => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                {formatMessage(m.sections.conclusion)}
+                {m.sections.conclusion}
               </Text>
             </Box>
             <BlueBox>
@@ -452,18 +439,16 @@ export const CourtRecord: FC = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.endOfSessionBookings.title)}
+              {m.sections.endOfSessionBookings.title}
             </Text>
           </Box>
           <Box marginBottom={5}>
             <Input
               data-testid="endOfSessionBookings"
               name="endOfSessionBookings"
-              label={formatMessage(m.sections.endOfSessionBookings.label)}
+              label={m.sections.endOfSessionBookings.label}
               value={endOfSessionBookingsInput.value || ''}
-              placeholder={formatMessage(
-                m.sections.endOfSessionBookings.placeholder,
-              )}
+              placeholder={m.sections.endOfSessionBookings.placeholder}
               onChange={(evt) =>
                 endOfSessionBookingsInput.onChange(evt.target.value)
               }
@@ -475,7 +460,7 @@ export const CourtRecord: FC = () => {
         <Box marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.endOfSessionTitle)}
+              {m.sections.endOfSessionTitle}
             </Text>
           </Box>
           <BlueBox>
@@ -484,10 +469,8 @@ export const CourtRecord: FC = () => {
                 <GridColumn>
                   <DateTime
                     name="courtEndTime"
-                    datepickerLabel={formatMessage(
-                      m.sections.courtEndTime.dateLabel,
-                    )}
-                    timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
+                    datepickerLabel={m.sections.courtEndTime.dateLabel}
+                    timeLabel={m.sections.courtEndTime.timeLabel}
                     minDate={
                       workingCase.courtStartDate
                         ? new Date(workingCase.courtStartDate)
@@ -569,7 +552,7 @@ export const CourtRecord: FC = () => {
             !workingCase.decision ||
             !workingCase.conclusion ||
             !workingCase.ruling
-              ? formatMessage(m.sections.nextButtonInfo.text)
+              ? m.sections.nextButtonInfo.text
               : ''
           }
         />

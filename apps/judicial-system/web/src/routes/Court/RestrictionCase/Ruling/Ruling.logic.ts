@@ -32,7 +32,7 @@ export const getConclusionAutofill = (
   )
 
   return decision === CaseDecision.DISMISSING
-    ? formatMessage(strings.sections.conclusion.dismissingAutofill, {
+    ? formatMessage({ id: strings.sections.conclusion.dismissingAutofill, defaultMessage: strings.sections.conclusion.dismissingAutofill }, {
         defendantName: defendant.name,
         isExtended:
           workingCase.parentCase &&
@@ -40,7 +40,7 @@ export const getConclusionAutofill = (
         caseType: workingCase.type,
       })
     : decision === CaseDecision.REJECTING
-    ? formatMessage(strings.sections.conclusion.rejectingAutofill, {
+    ? formatMessage({ id: strings.sections.conclusion.rejectingAutofill, defaultMessage: strings.sections.conclusion.rejectingAutofill }, {
         defendantName: defendant.name,
         defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
         isExtended:
@@ -48,7 +48,7 @@ export const getConclusionAutofill = (
           isAcceptingCaseDecision(workingCase.parentCase.decision),
         caseType: workingCase.type,
       })
-    : formatMessage(strings.sections.conclusion.acceptingAutofill, {
+    : formatMessage({ id: strings.sections.conclusion.acceptingAutofill, defaultMessage: strings.sections.conclusion.acceptingAutofill }, {
         defendantName: defendant.name,
         defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
         isExtended:

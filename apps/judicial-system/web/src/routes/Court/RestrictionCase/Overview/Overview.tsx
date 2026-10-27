@@ -103,20 +103,15 @@ export const JudgeOverview = () => {
         {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(
-                rcCourtOverview.sections.openedByDefenderAlert.title,
-              )}
-              message={formatMessage(
-                rcCourtOverview.sections.openedByDefenderAlert.text,
-                { when: formatDate(workingCase.openedByDefender, 'PPPp') },
-              )}
+              title={rcCourtOverview.sections.openedByDefenderAlert.title}
+              message={formatMessage({ id: rcCourtOverview.sections.openedByDefenderAlert.text, defaultMessage: rcCourtOverview.sections.openedByDefenderAlert.text }, { when: formatDate(workingCase.openedByDefender, 'PPPp') })}
               type="info"
               testid="alertMessageOpenedByDefender"
             />
           </Box>
         )}
         <PageTitle>
-          {formatMessage(rcCourtOverview.sections.title, {
+          {formatMessage({ id: rcCourtOverview.sections.title, defaultMessage: rcCourtOverview.sections.title }, {
             caseType: workingCase.type,
           })}
         </PageTitle>
@@ -290,7 +285,7 @@ export const JudgeOverview = () => {
           previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(rcCourtOverview.continueButton.label),
+              text: rcCourtOverview.continueButton.label,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

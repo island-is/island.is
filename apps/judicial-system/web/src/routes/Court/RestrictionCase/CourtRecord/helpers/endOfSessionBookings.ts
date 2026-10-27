@@ -35,7 +35,7 @@ export const populateEndOfCourtSessionForRestrictions = (
       }
 
       endOfSessionBookings.push(
-        formatMessage(rcCourtRecord.sections.custodyRestrictions.disclaimerV2, {
+        formatMessage({ id: rcCourtRecord.sections.custodyRestrictions.disclaimerV2, defaultMessage: rcCourtRecord.sections.custodyRestrictions.disclaimerV2 }, {
           caseType:
             workingCase.decision ===
             CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
@@ -53,12 +53,9 @@ export const populateEndOfCourtSessionForRestrictions = (
         `${
           workingCase.requestedOtherRestrictions &&
           `${workingCase.requestedOtherRestrictions}\n\n`
-        }${formatMessage(
-          rcCourtRecord.sections.custodyRestrictions.disclaimerV2,
-          {
+        }${formatMessage({ id: rcCourtRecord.sections.custodyRestrictions.disclaimerV2, defaultMessage: rcCourtRecord.sections.custodyRestrictions.disclaimerV2 }, {
             caseType: workingCase.type,
-          },
-        )}`,
+          })}`,
       )
     }
   }
