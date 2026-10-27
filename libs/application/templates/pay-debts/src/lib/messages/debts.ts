@@ -8,7 +8,7 @@ export const debts = {
       description: 'Title of first section',
     },
     description: {
-      id: 'pd.application:debts.general.description',
+      id: 'pd.application:debts.general.description#markdown',
       defaultMessage:
         'Yfirlit þeirra skulda sem hægt er að greiða til ríkisins. Nánara yfirlit og sundurliðun skulda er undir [Fjármál á Mínum síðum](/minarsidur/fjarmal).',
       description: 'Description shown under the first section title',
