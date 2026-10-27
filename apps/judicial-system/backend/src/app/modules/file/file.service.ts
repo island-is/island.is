@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid'
 
 import {
   BadRequestException,
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -26,6 +27,7 @@ import {
   EventType,
   indictmentAdditionalCaseFileCategories,
   isCompletedCase,
+  isDistrictCourtUser,
   isIndictmentCase,
   isRequestCase,
   isRulingOrderWithoutDocument,
@@ -386,6 +388,15 @@ export class FileService {
     transaction: Transaction,
   ): Promise<CaseFile> {
     const { key, rulingFileId } = createFile
+
+    if (
+      createFile.category === CaseFileCategory.COURT_CASE_FILE &&
+      !isDistrictCourtUser(user)
+    ) {
+      throw new ForbiddenException(
+        'Only district court users can create court case files',
+      )
+    }
 
     const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
 

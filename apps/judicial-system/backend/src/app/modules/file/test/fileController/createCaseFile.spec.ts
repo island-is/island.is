@@ -1,17 +1,19 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { BadRequestException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException } from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
+  InstitutionType,
   indictmentCases,
   investigationCases,
   restrictionCases,
   User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
@@ -38,6 +40,12 @@ describe('FileController - Create case file', () => {
   let mockCaseFileRepositoryService: CaseFileRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
+  let createCaseFileAs: (
+    caseId: string,
+    createCaseFile: CreateFileDto,
+    theCase: Case,
+    actingUser: User,
+  ) => Promise<Then>
 
   beforeEach(async () => {
     const {
@@ -56,20 +64,24 @@ describe('FileController - Create case file', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
-    givenWhenThen = async (
+    createCaseFileAs = async (
       caseId: string,
       createCaseFile: CreateFileDto,
       theCase: Case,
+      actingUser: User,
     ): Promise<Then> => {
       const then = {} as Then
 
       await fileController
-        .createCaseFile(caseId, user, theCase, createCaseFile)
+        .createCaseFile(caseId, actingUser, theCase, createCaseFile)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
       return then
     }
+
+    givenWhenThen = (caseId, createCaseFile, theCase) =>
+      createCaseFileAs(caseId, createCaseFile, theCase, user)
   })
 
   describe.each([...restrictionCases, ...investigationCases])(
@@ -283,6 +295,70 @@ describe('FileController - Create case file', () => {
       })
     },
   )
+
+  describe('court case file created by non-court user', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId, type: indictmentCases[0] } as Case
+    const uuId = uuid()
+    const createCaseFile: CreateFileDto = {
+      type: 'text/plain',
+      key: `${caseId}/${uuId}/test.txt`,
+      size: 99,
+      category: CaseFileCategory.COURT_CASE_FILE,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, createCaseFile, theCase)
+    })
+
+    it('should forbid creation', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(mockCaseFileRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('court case file created by district court user', () => {
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      type: indictmentCases[0],
+    } as Case
+    const uuId = uuid()
+    const createCaseFile: CreateFileDto = {
+      type: 'text/plain',
+      key: `${caseId}/${uuId}/test.txt`,
+      size: 99,
+      category: CaseFileCategory.COURT_CASE_FILE,
+      fileRepresentative: 'Dómari',
+    }
+    const fileId = uuid()
+    const caseFile = {
+      ...createCaseFile,
+      id: fileId,
+      name: 'test.txt',
+      userGeneratedFilename: 'test.txt',
+      state: CaseFileState.STORED_IN_RVG,
+      category: CaseFileCategory.COURT_CASE_FILE,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(caseFile)
+
+      then = await createCaseFileAs(caseId, createCaseFile, theCase, {
+        id: uuid(),
+        role: UserRole.DISTRICT_COURT_JUDGE,
+        institution: { type: InstitutionType.DISTRICT_COURT },
+      } as User)
+    })
+
+    it('should create a court case file', () => {
+      expect(then.error).toBeUndefined()
+      expect(then.result).toBe(caseFile)
+    })
+  })
 
   describe('malformed key', () => {
     const caseId = uuid()
