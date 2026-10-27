@@ -1,21 +1,27 @@
 export const appealSections = {
-  disclaimerV2: 'Dómari kynnir rétt til að kæra úrskurð og um kærufrest skv. 193. gr. laga nr. 88/2008.',
+  disclaimerV2:
+    'Dómari kynnir rétt til að kæra úrskurð og um kærufrest skv. 193. gr. laga nr. 88/2008.',
   titleV2: 'Ákvörðun um kæru',
   defendantTitleV2: 'Afstaða varnaraðila til málsins í lok þinghalds',
   defendantAppealV2: 'Varnaraðili kærir úrskurðinn',
-  defendantAnnouncementAutofillSpokespersonAppealV2: 'Talsmaður varnaraðila kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi.',
-  defendantAnnouncementAutofillAppealV2: 'Varnaraðili kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi{caseType, select, CUSTODY {, en til vara að gæsluvarðhaldi verði markaður skemmri tími/ honum verði gert að sæta farbanni í stað gæsluvarðahalds} other {}}.',
+  defendantAnnouncementAutofillSpokespersonAppealV2:
+    'Talsmaður varnaraðila kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi.',
+  defendantAnnouncementAutofillAppealV2:
+    'Varnaraðili kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi{caseType, select, CUSTODY {, en til vara að gæsluvarðhaldi verði markaður skemmri tími/ honum verði gert að sæta farbanni í stað gæsluvarðahalds} other {}}.',
   defendantAcceptV2: 'Varnaraðili unir úrskurðinum',
   defendantPostponeV2: 'Varnaraðili tekur sér lögboðinn frest',
   defendantNotApplicableV2: 'Á ekki við',
   defendantAnnouncementLabelV2: 'Yfirlýsing varnaraðila',
-  defendantAnnouncementPlaceholderV2: 'Hér er hægt að bóka frekar um það sem varnaraðili vill taka fram ef við á.',
+  defendantAnnouncementPlaceholderV2:
+    'Hér er hægt að bóka frekar um það sem varnaraðili vill taka fram ef við á.',
   prosecutorTitleV2: 'Afstaða sækjanda til málsins í lok þinghalds',
   prosecutorAppealV2: 'Sækjandi kærir úrskurðinn',
-  prosecutorAnnoncementAutofillAppealV2: 'Sækjandi kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi og krafa hans verði tekin til greina.',
+  prosecutorAnnoncementAutofillAppealV2:
+    'Sækjandi kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi og krafa hans verði tekin til greina.',
   prosecutorAcceptV2: 'Sækjandi unir úrskurðinum',
   prosecutorPostponeV2: 'Sækjandi tekur sér lögboðinn frest',
   prosecutorNotApplicableV2: 'Á ekki við',
   prosecutorAnnouncementLabelV2: 'Yfirlýsing sækjanda',
-  prosecutorAnnouncementPlaceholderV2: 'Hér er hægt að bóka frekar um það sem sækjandi vill taka fram ef við á.',
+  prosecutorAnnouncementPlaceholderV2:
+    'Hér er hægt að bóka frekar um það sem sækjandi vill taka fram ef við á.',
 }

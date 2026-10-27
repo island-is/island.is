@@ -245,10 +245,7 @@ const AppealSections: FC<Props> = ({
 
   return (
     <>
-      <SectionHeading
-        title={m.titleV2}
-        description={m.disclaimerV2}
-      />
+      <SectionHeading title={m.titleV2} description={m.disclaimerV2} />
       {lock && (
         <Box marginBottom={3}>
           <AlertMessage
@@ -288,7 +285,14 @@ const AppealSections: FC<Props> = ({
                       workingCase.sessionArrangements ===
                       SessionArrangements.ALL_PRESENT_SPOKESPERSON
                         ? m.defendantAnnouncementAutofillSpokespersonAppealV2
-                        : formatMessage({ id: m.defendantAnnouncementAutofillAppealV2, defaultMessage: m.defendantAnnouncementAutofillAppealV2 }, { caseType: workingCase.type }),
+                        : formatMessage(
+                            {
+                              id: m.defendantAnnouncementAutofillAppealV2,
+                              defaultMessage:
+                                m.defendantAnnouncementAutofillAppealV2,
+                            },
+                            { caseType: workingCase.type },
+                          ),
                   }
                   setCheckedAccusedRadio(CaseAppealDecision.APPEAL)
                   handleChange(update)
@@ -410,7 +414,8 @@ const AppealSections: FC<Props> = ({
               onChange={() => {
                 const update = {
                   prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-                  prosecutorAppealAnnouncement: m.prosecutorAnnoncementAutofillAppealV2,
+                  prosecutorAppealAnnouncement:
+                    m.prosecutorAnnoncementAutofillAppealV2,
                 }
                 setCheckedProsecutorRadio(CaseAppealDecision.APPEAL)
                 handleChange(update)

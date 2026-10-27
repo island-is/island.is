@@ -136,9 +136,15 @@ export const CourtRecord: FC = () => {
 
     if (workingCase.translator) {
       autofillSessionBookings.push(
-        `${formatMessage({ id: m.sections.sessionBookings.autofillTranslator, defaultMessage: m.sections.sessionBookings.autofillTranslator }, {
-          translator: workingCase.translator,
-        })}\n\n`,
+        `${formatMessage(
+          {
+            id: m.sections.sessionBookings.autofillTranslator,
+            defaultMessage: m.sections.sessionBookings.autofillTranslator,
+          },
+          {
+            translator: workingCase.translator,
+          },
+        )}\n\n`,
       )
     }
 
@@ -158,9 +164,15 @@ export const CourtRecord: FC = () => {
       workingCase.type === CaseType.ADMISSION_TO_FACILITY
     ) {
       autofillSessionBookings.push(
-        `\n\n${formatMessage({ id: m.sections.sessionBookings.autofillPresentationsV3, defaultMessage: m.sections.sessionBookings.autofillPresentationsV3 }, {
+        `\n\n${formatMessage(
+          {
+            id: m.sections.sessionBookings.autofillPresentationsV3,
+            defaultMessage: m.sections.sessionBookings.autofillPresentationsV3,
+          },
+          {
             caseType: workingCase.type,
-          })}`,
+          },
+        )}`,
       )
     } else if (workingCase.type === CaseType.TRAVEL_BAN) {
       autofillSessionBookings.push(
@@ -393,9 +405,7 @@ export const CourtRecord: FC = () => {
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
               {`${m.sections.sessionBookings.title} `}
-              <Tooltip
-                text={m.sections.sessionBookings.tooltip}
-              />
+              <Tooltip text={m.sections.sessionBookings.tooltip} />
             </Text>
           </Box>
           <Box marginBottom={3}>

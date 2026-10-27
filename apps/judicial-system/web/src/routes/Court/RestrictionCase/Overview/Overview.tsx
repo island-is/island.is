@@ -104,16 +104,29 @@ export const JudgeOverview = () => {
           <Box marginBottom={5}>
             <AlertMessage
               title={rcCourtOverview.sections.openedByDefenderAlert.title}
-              message={formatMessage({ id: rcCourtOverview.sections.openedByDefenderAlert.text, defaultMessage: rcCourtOverview.sections.openedByDefenderAlert.text }, { when: formatDate(workingCase.openedByDefender, 'PPPp') })}
+              message={formatMessage(
+                {
+                  id: rcCourtOverview.sections.openedByDefenderAlert.text,
+                  defaultMessage:
+                    rcCourtOverview.sections.openedByDefenderAlert.text,
+                },
+                { when: formatDate(workingCase.openedByDefender, 'PPPp') },
+              )}
               type="info"
               testid="alertMessageOpenedByDefender"
             />
           </Box>
         )}
         <PageTitle>
-          {formatMessage({ id: rcCourtOverview.sections.title, defaultMessage: rcCourtOverview.sections.title }, {
-            caseType: workingCase.type,
-          })}
+          {formatMessage(
+            {
+              id: rcCourtOverview.sections.title,
+              defaultMessage: rcCourtOverview.sections.title,
+            },
+            {
+              caseType: workingCase.type,
+            },
+          )}
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&

@@ -72,9 +72,15 @@ export const Ruling = () => {
     setAndSendCaseToServer(
       [
         {
-          introduction: formatMessage({ id: strings.sections.introduction.autofill, defaultMessage: strings.sections.introduction.autofill }, {
-            date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
-          }),
+          introduction: formatMessage(
+            {
+              id: strings.sections.introduction.autofill,
+              defaultMessage: strings.sections.introduction.autofill,
+            },
+            {
+              date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
+            },
+          ),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(
             ruling.sections.courtCaseFacts.prefill,
@@ -329,9 +335,7 @@ export const Ruling = () => {
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               {`${strings.sections.courtCaseFacts.title} `}
-              <Tooltip
-                text={strings.sections.courtCaseFacts.tooltip}
-              />
+              <Tooltip text={strings.sections.courtCaseFacts.tooltip} />
             </Text>
           </Box>
           <Box marginBottom={5}>
@@ -355,9 +359,7 @@ export const Ruling = () => {
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               {`${strings.sections.courtLegalArguments.title} `}
-              <Tooltip
-                text={strings.sections.courtLegalArguments.tooltip}
-              />
+              <Tooltip text={strings.sections.courtLegalArguments.tooltip} />
             </Text>
           </Box>
           <Box marginBottom={5}>

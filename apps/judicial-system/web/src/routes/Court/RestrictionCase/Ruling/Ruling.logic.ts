@@ -32,40 +32,58 @@ export const getConclusionAutofill = (
   )
 
   return decision === CaseDecision.DISMISSING
-    ? formatMessage({ id: strings.sections.conclusion.dismissingAutofill, defaultMessage: strings.sections.conclusion.dismissingAutofill }, {
-        defendantName: defendant.name,
-        isExtended:
-          workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision),
-        caseType: workingCase.type,
-      })
+    ? formatMessage(
+        {
+          id: strings.sections.conclusion.dismissingAutofill,
+          defaultMessage: strings.sections.conclusion.dismissingAutofill,
+        },
+        {
+          defendantName: defendant.name,
+          isExtended:
+            workingCase.parentCase &&
+            isAcceptingCaseDecision(workingCase.parentCase.decision),
+          caseType: workingCase.type,
+        },
+      )
     : decision === CaseDecision.REJECTING
-    ? formatMessage({ id: strings.sections.conclusion.rejectingAutofill, defaultMessage: strings.sections.conclusion.rejectingAutofill }, {
-        defendantName: defendant.name,
-        defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
-        isExtended:
-          workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision),
-        caseType: workingCase.type,
-      })
-    : formatMessage({ id: strings.sections.conclusion.acceptingAutofill, defaultMessage: strings.sections.conclusion.acceptingAutofill }, {
-        defendantName: defendant.name,
-        defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
-        isExtended:
-          workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision) &&
-          decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-        caseType:
-          decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? CaseType.TRAVEL_BAN
-            : workingCase.type,
-        validToDate: `${formatDate(validToDate, 'PPPPp')
-          ?.replace('dagur,', 'dagsins')
-          ?.replace(' kl.', ', kl.')}`,
-        hasIsolation: isAcceptingCaseDecision(decision) && isCustodyIsolation,
-        isolationEndsBeforeValidToDate,
-        isolationToDate: formatDate(isolationToDate, 'PPPPp')
-          ?.replace('dagur,', 'dagsins')
-          ?.replace(' kl.', ', kl.'),
-      })
+    ? formatMessage(
+        {
+          id: strings.sections.conclusion.rejectingAutofill,
+          defaultMessage: strings.sections.conclusion.rejectingAutofill,
+        },
+        {
+          defendantName: defendant.name,
+          defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
+          isExtended:
+            workingCase.parentCase &&
+            isAcceptingCaseDecision(workingCase.parentCase.decision),
+          caseType: workingCase.type,
+        },
+      )
+    : formatMessage(
+        {
+          id: strings.sections.conclusion.acceptingAutofill,
+          defaultMessage: strings.sections.conclusion.acceptingAutofill,
+        },
+        {
+          defendantName: defendant.name,
+          defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
+          isExtended:
+            workingCase.parentCase &&
+            isAcceptingCaseDecision(workingCase.parentCase.decision) &&
+            decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+          caseType:
+            decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+              ? CaseType.TRAVEL_BAN
+              : workingCase.type,
+          validToDate: `${formatDate(validToDate, 'PPPPp')
+            ?.replace('dagur,', 'dagsins')
+            ?.replace(' kl.', ', kl.')}`,
+          hasIsolation: isAcceptingCaseDecision(decision) && isCustodyIsolation,
+          isolationEndsBeforeValidToDate,
+          isolationToDate: formatDate(isolationToDate, 'PPPPp')
+            ?.replace('dagur,', 'dagsins')
+            ?.replace(' kl.', ', kl.'),
+        },
+      )
 }

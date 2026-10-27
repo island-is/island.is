@@ -5,5 +5,6 @@ export const confirmation = {
   continueButtonTextAcceptingPartially: 'Staðfesta og undirrita úrskurð',
   continueButtonTextRejecting: 'Hafna kröfu og undirrita úrskurð',
   continueButtonTextDismissing: 'Vísa kröfu frá og undirrita úrskurð',
-  continueButtonTextAcceptingAlternativeTravelBan: 'Staðfesta farbann og undirrita úrskurð',
+  continueButtonTextAcceptingAlternativeTravelBan:
+    'Staðfesta farbann og undirrita úrskurð',
 }
