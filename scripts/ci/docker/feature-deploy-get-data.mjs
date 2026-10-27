@@ -25,36 +25,28 @@ function getCommitMsg(context) {
 }
 
 async function getLatestIdsImageTag() {
-  // will not work untill https://github.com/island-is/identity-server.web/tree/feat/ids-feature-deploy
-  // is merged
+  const ecr = new AWS.ECR({ region: 'eu-west-1' })
+  const response = await ecr
+    .describeImages({
+      repositoryName: 'identity-server',
+      filter: { tagStatus: 'TAGGED' },
+      maxResults: 1000,
+    })
+    .promise()
 
-  console.log('test image')
-  return 'test_ids_feature_deploy_j98h09u'
+  const mainImages = response.imageDetails
+    ?.filter((img) => {
+      return (
+        img.imageTags && img.imageTags.some((tag) => tag.startsWith('main_'))
+      )
+    })
+    .sort((a, b) => {
+      const dateA = a.imagePushedAt ? new Date(a.imagePushedAt).getTime() : 0
+      const dateB = b.imagePushedAt ? new Date(b.imagePushedAt).getTime() : 0
+      return dateB - dateA
+    })
 
-  // const ecr = new AWS.ECR({ region: 'eu-west-1' })
-
-  // // get response from aws.
-  // const response = await ecr
-  //   .describeImages({
-  //     repositoryName: 'identity-server',
-  //     filter: { tagStatus: 'TAGGED' },
-  //     maxResults: 1000,
-  //   })
-  //   .promise()
-
-  // const mainImages = response.imageDetails
-  //   ?.filter((img) => {
-  //     return (
-  //       img.imageTags && img.imageTags.some((tag) => tag.startsWith('main_'))
-  //     )
-  //   })
-  //   .sort((a, b) => {
-  //     const dateA = a.imagePushedAt ? new Date(a.imagePushedAt).getTime() : 0
-  //     const dateB = b.imagePushedAt ? new Date(b.imagePushedAt).getTime() : 0
-  //     return dateB - dateA
-  //   })
-
-  // return mainImages?.[0].imageTags?.[0]
+  return mainImages?.[0].imageTags?.[0]
 }
 
 async function main(testContext = null) {
