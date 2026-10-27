@@ -211,7 +211,8 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             }
             onChange={() => {
               handleSetAndSendCivilClaimantToServer({
-                caseFilesSharedWithSpokesperson: !civilClaimant.caseFilesSharedWithSpokesperson,
+                caseFilesSharedWithSpokesperson:
+                  !civilClaimant.caseFilesSharedWithSpokesperson,
               })
             }}
             tooltip={formatMessage(
@@ -335,7 +336,8 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
               ),
               onClick: () => {
                 handleSetAndSendCivilClaimantToServer({
-                  isSpokespersonConfirmed: !civilClaimant.isSpokespersonConfirmed,
+                  isSpokespersonConfirmed:
+                    !civilClaimant.isSpokespersonConfirmed,
                 })
 
                 setDisplayModal(false)

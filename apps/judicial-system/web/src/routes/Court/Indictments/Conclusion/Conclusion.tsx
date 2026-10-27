@@ -132,31 +132,20 @@ const Conclusion: FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const {
     isUpdatingCase,
     setAndSendCaseToServer,
     splitDefendantFromCase,
     isSplittingDefendantFromCase,
   } = useCase()
-  const {
-    courtDate,
-    handleCourtDateChange,
-    handleCourtRoomChange,
-  } = useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
+  const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
+    useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
   const { createVerdicts, updateDefendantVerdictState } = useVerdict()
   const { updateDefendantState, updateDefendants } = useDefendants()
-  const {
-    uploadFiles,
-    addUploadFiles,
-    updateUploadFile,
-    removeUploadFile,
-  } = useUploadFiles(workingCase.caseFiles)
+  const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
+    useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
@@ -166,31 +155,21 @@ const Conclusion: FC = () => {
 
   const [selectedAction, setSelectedAction] = useState<IndictmentDecision>()
   const [postponementReason, setPostponementReason] = useState<string>()
-  const [
-    selectedCourtSessionType,
-    setSelectedCourtSessionType,
-  ] = useState<CourtSessionType>()
-  const [
-    selectedDecision,
-    setSelectedDecision,
-  ] = useState<CaseIndictmentRulingDecision>()
+  const [selectedCourtSessionType, setSelectedCourtSessionType] =
+    useState<CourtSessionType>()
+  const [selectedDecision, setSelectedDecision] =
+    useState<CaseIndictmentRulingDecision>()
   const [mergeCaseNumber, setMergeCaseNumber] = useState<string>()
-  const [
-    mergeCaseNumberErrorMessage,
-    setMergeCaseNumberErrorMessage,
-  ] = useState<string>()
+  const [mergeCaseNumberErrorMessage, setMergeCaseNumberErrorMessage] =
+    useState<string>()
   const [selectedDefendant, setSelectedDefendant] = useState<Defendant | null>(
     null,
   )
-  const [
-    completingForSomeSelections,
-    setCompletingForSomeSelections,
-  ] = useState<Record<string, CaseIndictmentRulingDecision | undefined>>({})
+  const [completingForSomeSelections, setCompletingForSomeSelections] =
+    useState<Record<string, CaseIndictmentRulingDecision | undefined>>({})
   const [splitCaseId, setSplitCaseId] = useState<string>()
-  const [
-    splitCaseCourtCaseNumber,
-    setSplitCaseCourtCaseNumber,
-  ] = useState<string>()
+  const [splitCaseCourtCaseNumber, setSplitCaseCourtCaseNumber] =
+    useState<string>()
   const [conclusionDate, setConclusionDate] = useState<string>()
   const [isSubmittingForSome, setIsSubmittingForSome] = useState(false)
   const [modalVisible, setModalVisible] = useState<
@@ -432,12 +411,10 @@ const Conclusion: FC = () => {
     )
   }
 
-  const isValidGeneratedIndictmentCourtRecord = isGeneratedIndictmentCourtRecordValid(
-    workingCase,
-  )
-  const isEmptyGeneratedIndictmentCourtRecord = isNoGeneratedIndictmentCourtRecord(
-    workingCase,
-  )
+  const isValidGeneratedIndictmentCourtRecord =
+    isGeneratedIndictmentCourtRecordValid(workingCase)
+  const isEmptyGeneratedIndictmentCourtRecord =
+    isNoGeneratedIndictmentCourtRecord(workingCase)
   const isCourtRecordValid = workingCase.withCourtSessions
     ? isValidGeneratedIndictmentCourtRecord
     : uploadFiles.some(

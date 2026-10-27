@@ -280,9 +280,7 @@ const Completed: FC = () => {
             )}
             {isRuling && (
               <Box component="section">
-                <SectionHeading
-                  title={strings.serviceRequirementTitle}
-                />
+                <SectionHeading title={strings.serviceRequirementTitle} />
                 <div className={stack({ gap: 4 })}>
                   {defendantsWithVerdict?.map((defendant) => {
                     const { verdict } = defendant

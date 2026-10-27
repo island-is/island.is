@@ -40,11 +40,8 @@ interface Props {
 const SelectDefender: FC<Props> = ({ defendant }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const {
-    updateDefendantState,
-    updateDefendant,
-    setAndSendDefendantToServer,
-  } = useDefendants()
+  const { updateDefendantState, updateDefendant, setAndSendDefendantToServer } =
+    useDefendants()
 
   const [displayModal, setDisplayModal] = useState<boolean>(false)
 

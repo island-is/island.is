@@ -254,10 +254,7 @@ const Summary: FC = () => {
             courtRecordFiles.length > 0 ||
             workingCase.withCourtSessions) && (
             <div>
-              <SectionHeading
-                title={strings.caseFiles}
-                marginBottom={5}
-              />
+              <SectionHeading title={strings.caseFiles} marginBottom={5} />
               <Text variant="h4" as="h4">
                 {strings.caseFilesSubtitleRuling}
               </Text>
@@ -316,9 +313,7 @@ const Summary: FC = () => {
                 ]
           }
           infoBoxText={
-            canUserCompleteCase
-              ? ''
-              : strings.onlyAssignedJudgeCanComplete
+            canUserCompleteCase ? '' : strings.onlyAssignedJudgeCanComplete
           }
         />
       </FormContentContainer>

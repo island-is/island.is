@@ -60,12 +60,8 @@ interface ModalContent {
 }
 
 const Subpoena: FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [updates, setUpdates] = useState<Updates>()
@@ -75,9 +71,8 @@ const Subpoena: FC = () => {
   >([])
   const [isCreatingSubpoena, setIsCreatingSubpoena] = useState<boolean>(false)
 
-  const [skipArraignmentSummons, setSkipArraignmentSummons] = useState<boolean>(
-    false,
-  )
+  const [skipArraignmentSummons, setSkipArraignmentSummons] =
+    useState<boolean>(false)
 
   const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
   const hasSkippedArraignmentSummons = Boolean(
@@ -440,9 +435,8 @@ const Subpoena: FC = () => {
             <SubpoenaType
               subpoenaItems={updates?.defendants?.map((defendant) => ({
                 defendant,
-                alternativeServiceDescriptionDisabled: !isRegisteringAlternativeServiceForDefendant(
-                  defendant,
-                ),
+                alternativeServiceDescriptionDisabled:
+                  !isRegisteringAlternativeServiceForDefendant(defendant),
                 subpoenaDisabled: !isIssuingSubpoenaForDefendant(defendant),
                 toggleNewAlternativeService: hasArraignmentBeenSettled
                   ? toggleNewAlternativeService(defendant)
