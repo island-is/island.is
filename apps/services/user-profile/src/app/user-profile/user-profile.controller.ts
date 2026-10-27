@@ -138,18 +138,26 @@ export class UserProfileController {
     },
     response: { status: 200, type: NotificationSettingsDto },
   })
-  @Audit<NotificationSettingsDto>({
-    resources: (settings) =>
-      settings.blockedCategories.map((blockedCategory) => blockedCategory.key),
-  })
   async findNotificationSettings(
+    @CurrentUser() user: User,
     @Headers('X-Param-National-Id') nationalId: string,
   ): Promise<NotificationSettingsDto> {
     if (!kennitala.isValid(nationalId)) {
       throw new BadRequestException('National id is not valid')
     }
 
-    return this.notificationSettingsService.findSettings(nationalId)
+    return this.auditService.auditPromise<NotificationSettingsDto>(
+      {
+        auth: user,
+        namespace,
+        action: 'findNotificationSettings',
+        resources: (settings) => [
+          nationalId,
+          ...settings.blockedCategories.map(({ key }) => key),
+        ],
+      },
+      this.notificationSettingsService.findSettings(nationalId),
+    )
   }
 
   @Get('/.to-national-id/actor-profiles/.from-national-id')
