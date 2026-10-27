@@ -5,15 +5,23 @@ import {
   Button,
   GridColumn,
   GridRow,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { useSubmitting } from '@island.is/react-spa/shared'
 import { useEffect, useState } from 'react'
-import { Form, Outlet, useActionData, useNavigate } from 'react-router-dom'
+import {
+  Form,
+  Outlet,
+  useActionData,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom'
 import { m } from '../lib/messages'
-import { DelegationAdminPaths } from '../lib/paths'
+import { DelegationAdminPaths, NOT_FOUND_PARAM } from '../lib/paths'
+import { hasDelegationAdminAccess } from '../lib/scopes'
 import { GetDelegationForNationalIdResult } from './Root.action'
 
 const Root = () => {
@@ -25,10 +33,13 @@ const Root = () => {
   const [error, setError] = useState({ hasError: false, message: '' })
   const navigate = useNavigate()
   const userInfo = useUserInfo()
+  const [searchParams] = useSearchParams()
+  const notFound = searchParams.get(NOT_FOUND_PARAM) === 'true'
 
-  const hasAdminAccess = userInfo?.scopes.includes(
-    AdminPortalScope.delegationSystemAdmin,
-  )
+  const isInstitutionOnly = !hasDelegationAdminAccess(userInfo?.scopes ?? [])
+  const hasAdminAccess =
+    !isInstitutionOnly &&
+    userInfo?.scopes.includes(AdminPortalScope.delegationSystemAdmin)
 
   useEffect(() => {
     if (actionData?.errors) {
@@ -51,7 +62,11 @@ const Root = () => {
     <>
       <IntroHeader
         title={m.delegationAdmin}
-        intro={m.delegationAdminDescription}
+        intro={
+          isInstitutionOnly
+            ? m.delegationOverviewDescription
+            : m.delegationAdminDescription
+        }
       >
         {hasAdminAccess && (
           <GridColumn span={['8/8', '3/8']}>
@@ -106,6 +121,11 @@ const Root = () => {
               errorMessage={error.hasError ? error.message : undefined}
             />
           </Form>
+          {notFound && !error.hasError && (
+            <Box marginTop={1}>
+              <Text variant="small">{formatMessage(m.noDelegationsFound)}</Text>
+            </Box>
+          )}
         </GridColumn>
       </GridRow>
       <Outlet />

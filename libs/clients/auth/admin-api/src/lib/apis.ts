@@ -6,6 +6,7 @@ import {
   AdminApi,
   Configuration,
   DelegationAdminApi,
+  MeDelegationOverviewApi,
   PublicApi,
 } from '../../gen/fetch'
 import { AuthAdminApiClientConfig } from './auth-admin-api-client.config'
@@ -75,6 +76,20 @@ exportedApis.push({
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-auth-delegation-admin-api',
+        }),
+        basePath: config.basePath,
+      }),
+    ),
+})
+
+exportedApis.push({
+  provide: MeDelegationOverviewApi,
+  inject: [AuthAdminApiClientConfig.KEY],
+  useFactory: (config: ConfigType<typeof AuthAdminApiClientConfig>) =>
+    new MeDelegationOverviewApi(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-auth-delegation-overview-api',
         }),
         basePath: config.basePath,
       }),

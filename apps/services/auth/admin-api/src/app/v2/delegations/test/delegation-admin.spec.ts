@@ -5,6 +5,7 @@ import { User, ZendeskAuthGuard } from '@island.is/auth-nest-tools'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import {
   createCurrentUser,
+  createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { DelegationAdminScopes } from '@island.is/auth/scopes'
@@ -15,13 +16,17 @@ import {
   DELEGATION_REVOKE_TAG,
   DELEGATION_TAG,
   DelegationDelegationType,
+  DelegationIndexMeta,
   DelegationsIndexService,
   SequelizeConfigService,
   ZENDESK_CUSTOM_FIELDS,
 } from '@island.is/auth-api-lib'
 
 import { AppModule } from '../../../app.module'
-import { AuthDelegationType } from '@island.is/shared/types'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 import { getModelToken } from '@nestjs/sequelize'
 import { faker } from '@island.is/shared/mocking'
 import { TicketStatus, ZendeskService } from '@island.is/clients/zendesk'
@@ -184,6 +189,77 @@ describe('DelegationAdmin - With authentication', () => {
       // Assert
       expect(res.status).toEqual(200)
       expect(res.body['outgoing'][0].id).toEqual(delegation.id)
+    })
+
+    it('GET /delegation-admin should return 400 for an invalid national id', async () => {
+      // Act
+      const res = await getRequestMethod(
+        server,
+        'GET',
+      )('/delegation-admin').set('X-Query-National-Id', '1234567890')
+
+      // Assert
+      expect(res.status).toEqual(400)
+    })
+
+    it('GET /delegation-admin should include delegations from the delegation index', async () => {
+      // Arrange
+      const nationalId = createNationalId('person')
+      const companyNationalId = createNationalId('company')
+      const wardNationalId = createNationalId('person')
+      const lastFullReindex = new Date('2026-10-01T00:00:00.000Z')
+      await factory.createDelegationIndexRecord({
+        fromNationalId: companyNationalId,
+        toNationalId: nationalId,
+        type: AuthDelegationType.ProcurationHolder,
+        provider: AuthDelegationProvider.CompanyRegistry,
+      })
+      await factory.createDelegationIndexRecord({
+        fromNationalId: nationalId,
+        toNationalId: wardNationalId,
+        type: AuthDelegationType.LegalGuardian,
+        provider: AuthDelegationProvider.NationalRegistry,
+      })
+      // Read from the delegation table, so the index copies are skipped.
+      await factory.createDelegationIndexRecord({
+        toNationalId: nationalId,
+        type: AuthDelegationType.Custom,
+        provider: AuthDelegationProvider.Custom,
+        customDelegationScopes: ['s1'],
+      })
+      await factory.createDelegationIndexRecord({
+        toNationalId: nationalId,
+        type: AuthDelegationType.GeneralMandate,
+        provider: AuthDelegationProvider.Custom,
+      })
+      await app
+        .get<typeof DelegationIndexMeta>(getModelToken(DelegationIndexMeta))
+        .create({ nationalId, nextReindex: new Date(), lastFullReindex })
+
+      // Act
+      const res = await getRequestMethod(
+        server,
+        'GET',
+      )('/delegation-admin').set('X-Query-National-Id', nationalId)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body.incoming).toEqual([
+        expect.objectContaining({
+          fromNationalId: companyNationalId,
+          type: AuthDelegationType.ProcurationHolder,
+          provider: AuthDelegationProvider.CompanyRegistry,
+          indexedAt: lastFullReindex.toISOString(),
+          scopes: [],
+        }),
+      ])
+      expect(res.body.outgoing).toEqual([
+        expect.objectContaining({
+          toNationalId: wardNationalId,
+          type: AuthDelegationType.LegalGuardian,
+          indexedAt: null,
+        }),
+      ])
     })
   })
 

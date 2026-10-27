@@ -22,6 +22,8 @@ import { ResourcesModule } from '../resources/resources.module'
 import { UserIdentitiesModule } from '../user-identities/user-identities.module'
 import { UserSystemNotificationModule } from '../user-notification'
 import { DelegationAdminCustomService } from './admin/delegation-admin-custom.service'
+import { DelegationIndexLookupService } from './admin/delegation-index-lookup.service'
+import { DelegationOverviewService } from './admin/delegation-overview.service'
 import { AliveStatusService } from './alive-status.service'
 import { DelegationConfig } from './DelegationConfig'
 import { DelegationProviderService } from './delegation-provider.service'
@@ -95,6 +97,8 @@ import { NationalRegistryV3FeatureService } from './national-registry-v3-feature
     DelegationsIndexService,
     DelegationProviderService,
     DelegationAdminCustomService,
+    DelegationOverviewService,
+    DelegationIndexLookupService,
     AliveStatusService,
     NationalRegistryV3FeatureService,
     DelegationConfirmationService,
@@ -122,6 +126,7 @@ import { NationalRegistryV3FeatureService } from './national-registry-v3-feature
     DelegationAdminCustomService,
     DelegationConfirmationService,
     CibaClient,
+    DelegationOverviewService,
   ],
 })
 export class DelegationsModule {}

@@ -9,6 +9,11 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:delegationAdminDescription',
     defaultMessage: 'Flettu upp notanda til að birta upplýsingar um umboð.',
   },
+  delegationOverviewDescription: {
+    id: 'admin.delegationAdmin:delegationOverviewDescription',
+    defaultMessage:
+      'Flettu upp kennitölu til að sjá hvort viðkomandi hafi fengið eða veitt umboð að þjónustum stofnunarinnar.',
+  },
   search: {
     id: 'admin.delegationAdmin:delegationAdminSearch',
     defaultMessage: 'Leita eftir kennitölu',
@@ -170,5 +175,106 @@ export const m = defineMessages({
   deceasedIndividualError: {
     id: 'admin.delegationAdmin:deceasedIndividualError',
     defaultMessage: 'Ekki er hægt að veita umboð til látins einstaklings.',
+  },
+  typeCustom: {
+    id: 'admin.delegationAdmin:typeCustom',
+    defaultMessage: 'Umboð',
+  },
+  typeLegalGuardian: {
+    id: 'admin.delegationAdmin:typeLegalGuardian',
+    defaultMessage: 'Forsjá',
+  },
+  typeProcurationHolder: {
+    id: 'admin.delegationAdmin:typeProcurationHolder',
+    defaultMessage: 'Prókúra',
+  },
+  typePersonalRepresentative: {
+    id: 'admin.delegationAdmin:typePersonalRepresentative',
+    defaultMessage: 'Persónulegur talsmaður',
+  },
+  typeGeneralMandate: {
+    id: 'admin.delegationAdmin:typeGeneralMandate',
+    defaultMessage: 'Allsherjarumboð',
+  },
+  typeLegalRepresentative: {
+    id: 'admin.delegationAdmin:typeLegalRepresentative',
+    defaultMessage: 'Lögráðamaður',
+  },
+  columnName: {
+    id: 'admin.delegationAdmin:columnName',
+    defaultMessage: 'Nafn',
+  },
+  columnDomain: {
+    id: 'admin.delegationAdmin:columnDomain',
+    defaultMessage: 'Stofnun',
+  },
+  columnType: {
+    id: 'admin.delegationAdmin:columnType',
+    defaultMessage: 'Tegund',
+  },
+  columnScopes: {
+    id: 'admin.delegationAdmin:columnScopes',
+    defaultMessage: 'Réttindi',
+  },
+  columnValidTo: {
+    id: 'admin.delegationAdmin:columnValidTo',
+    defaultMessage: 'Gildistími',
+  },
+  columnStatus: {
+    id: 'admin.delegationAdmin:columnStatus',
+    defaultMessage: 'Staða',
+  },
+  columnRegistered: {
+    id: 'admin.delegationAdmin:columnRegistered',
+    defaultMessage: 'Skráð',
+  },
+  statusActive: {
+    id: 'admin.delegationAdmin:statusActive',
+    defaultMessage: 'Í gildi',
+  },
+  statusExpired: {
+    id: 'admin.delegationAdmin:statusExpired',
+    defaultMessage: 'Útrunnið',
+  },
+  noValidTo: {
+    id: 'admin.delegationAdmin:noValidTo',
+    defaultMessage: 'Ótímabundið',
+  },
+  filterDomainAll: {
+    id: 'admin.delegationAdmin:filterDomainAll',
+    defaultMessage: 'Allar stofnanir',
+  },
+  filterClient: {
+    id: 'admin.delegationAdmin:filterClient',
+    defaultMessage: 'Forrit',
+  },
+  filterClientAll: {
+    id: 'admin.delegationAdmin:filterClientAll',
+    defaultMessage: 'Öll forrit',
+  },
+  filterStatus: {
+    id: 'admin.delegationAdmin:filterStatus',
+    defaultMessage: 'Staða',
+  },
+  filterStatusAll: {
+    id: 'admin.delegationAdmin:filterStatusAll',
+    defaultMessage: 'Öll umboð',
+  },
+  indexedAt: {
+    id: 'admin.delegationAdmin:indexedAt',
+    defaultMessage: 'Síðast uppfært úr opinberum skrám {date}',
+  },
+  indexedNever: {
+    id: 'admin.delegationAdmin:indexedNever',
+    defaultMessage: 'Hefur ekki verið uppfært úr opinberum skrám',
+  },
+  indexNotice: {
+    id: 'admin.delegationAdmin:indexNotice',
+    defaultMessage:
+      'Prókúra, forsjá og önnur umboð úr opinberum skrám eru uppfærð þegar umboðshafi skráir sig inn og geta því vantað eða verið úrelt.',
+  },
+  noDelegationsFound: {
+    id: 'admin.delegationAdmin:noDelegationsFound',
+    defaultMessage: 'Engin umboð fundust fyrir þessa kennitölu',
   },
 })

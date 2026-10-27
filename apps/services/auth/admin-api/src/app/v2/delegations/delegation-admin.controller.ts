@@ -9,7 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import flatMap from 'lodash/flatMap'
 
 import {
   BypassAuth,
@@ -30,9 +29,12 @@ import {
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { DelegationAdminScopes } from '@island.is/auth/scopes'
-import { isDefined } from '@island.is/shared/utils'
 
 import env from '../../../environments/environment'
+import {
+  auditableDelegationIds,
+  parseQueryNationalId,
+} from './query-national-id'
 
 const namespace = '@island.is/auth/delegation-admin'
 
@@ -61,16 +63,13 @@ export class DelegationAdminController {
   })
   @Audit<DelegationAdminCustomDto>({
     resources: (delegation) =>
-      flatMap([
-        ...delegation.incoming.map((d) => d.id ?? undefined),
-        ...delegation.outgoing.map((d) => d.id ?? undefined),
-      ]).filter(isDefined),
+      auditableDelegationIds([...delegation.incoming, ...delegation.outgoing]),
   })
   async getDelegationAdmin(
     @Headers('X-Query-National-Id') nationalId: string,
   ): Promise<DelegationAdminCustomDto> {
     return await this.delegationAdminService.getAllDelegationsByNationalId(
-      nationalId,
+      parseQueryNationalId(nationalId),
     )
   }
 

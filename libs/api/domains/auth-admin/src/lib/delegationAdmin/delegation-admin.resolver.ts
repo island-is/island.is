@@ -102,6 +102,17 @@ export class DelegationAdminResolver {
     return identityLoader.load(customDelegation.createdByNationalId)
   }
 
+  @ResolveField('indexedAt', () => Date, {
+    nullable: true,
+    description:
+      'For delegations from the delegation index, when the recipient was last fully reindexed. Only set by the delegation admin lookup.',
+  })
+  resolveIndexedAt(
+    @Parent() delegation: DelegationDTO & { indexedAt?: Date | null },
+  ): Date | null {
+    return delegation.indexedAt ?? null
+  }
+
   @ResolveField('validTo', () => Date, { nullable: true })
   resolveValidTo(@Parent() delegation: DelegationDTO): Date | undefined {
     if (!delegation.validTo) {

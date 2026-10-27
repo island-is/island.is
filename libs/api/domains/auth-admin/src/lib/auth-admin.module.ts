@@ -19,6 +19,11 @@ import { DelegationProviderService } from './delegationProvider/delegation-provi
 import { DelegationProviderResolver } from './delegationProvider/delegation-provider.resolver'
 import { DelegationAdminResolver } from './delegationAdmin/delegation-admin.resolver'
 import { DelegationAdminService } from './delegationAdmin/delegation-admin.service'
+import {
+  DelegationOverviewDelegationResolver,
+  DelegationOverviewResolver,
+} from './delegationAdmin/delegation-overview.resolver'
+import { DelegationOverviewService } from './delegationAdmin/delegation-overview.service'
 import { GrantTypeResolver } from './grant-type/grant-type.resolver'
 import { GrantTypeService } from './grant-type/grant-type.service'
 import { IdpProviderResolver } from './idp-provider/idp-provider.resolver'
@@ -46,6 +51,9 @@ import { PublicAuthService } from './public/public-auth.service'
     DelegationProviderResolver,
     DelegationAdminResolver,
     DelegationAdminService,
+    DelegationOverviewResolver,
+    DelegationOverviewDelegationResolver,
+    DelegationOverviewService,
     GrantTypeResolver,
     GrantTypeService,
     IdpProviderResolver,
