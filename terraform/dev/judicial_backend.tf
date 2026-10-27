@@ -149,7 +149,7 @@ module "judicial_backend" {
     XROAD_BASE_PATH_WITH_ENV           = "http://ss.xroad.dev.dmr-dev.cloud/r1/IS-DEV"
     XROAD_TLS_BASE_PATH                = "https://ss.xroad.dev.dmr-dev.cloud"
     XROAD_TLS_BASE_PATH_WITH_ENV       = "https://ss.xroad.dev.dmr-dev.cloud/r1/IS-DEV"
-    XROAD_CLIENT_ID                    = "IS-DEV/GOV/10014/DMR-Client"
+    XROAD_CLIENT_ID                    = "IS-DEV/GOV/10014/Rettarvorslugatt-Client"
     XROAD_COURT_MEMBER_CODE            = "10019"
     XROAD_POLICE_MEMBER_CODE           = "10005"
     XROAD_DMR_MEMBER_CODE              = "10014"

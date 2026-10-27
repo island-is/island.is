@@ -18,18 +18,28 @@ Dev reference: account `640538430394`, VPC `vpc-0014be8651be6f7e6` (`10.74.48.0/
 - [ ] DNS, our side: set `xroad.internal_zone_id` in `infrastructure/judicial/config/prod.yml`,
       add `judicial/prod/xroad_hosted_zone_association/terragrunt.hcl` (copy of dev) and apply.
 - [ ] Verify from a prod backend task: SS name resolves to a private IP and the client port answers.
+- [ ] DNS, other way (SS -> our APIs): add the prod judicial `dmr.local` zone id to
+      `internal_zone_ids_for_associations` in `infrastructure/xroad/config/prod.yml`, and the prod
+      VPC CIDR to `associated_internal_cidr_blocks`. Dev: `xroad/config/dev.yml` (JM-13),
+      zone `Z04274842LO8GBFISDS4J`, CIDR `10.74.48.0/20`.
+- [ ] SG, SS -> our APIs: allow the prod X-Road VPC private subnets on 3333 on the xrd-api and
+      digital-mailbox-api SGs only. Dev: `terraform/dev/judicial_xroad_apis.tf`, `xroad_ss_private_cidrs`.
 
 ## 2. X-Road client update (backend)
 
-Dev still points at island.is's server (`terraform/dev/judicial_backend.tf`).
+Dev points at `ss.xroad.dev.dmr-dev.cloud` (`terraform/dev/judicial_backend.tf`).
 
-- [ ] Register the `DMR-Client` subsystem on the prod SS. Backend uses `XROAD_CLIENT_ID=IS/GOV/10014/DMR-Client` (dev: `IS-DEV/GOV/10014/DMR-Client`).
+- [ ] Register the `Rettarvorslugatt-Client` subsystem on the prod SS. Backend uses `XROAD_CLIENT_ID=IS/GOV/<member>/Rettarvorslugatt-Client` (dev: `IS-DEV/GOV/10014/Rettarvorslugatt-Client`).
+- [ ] Register the `Rettarvorslugatt-Protected` subsystem on the prod SS. It publishes xrd-api and digital-mailbox-api (dev: `IS-DEV:GOV:10014:Rettarvorslugatt-Protected`).
 - [ ] Client TLS cert / key, if the SS requires mTLS, stored in Secrets Manager.
 - [ ] Access rights on the providers' side for the new client: courts (`10019`, `JusticePortal-v1`),
       police (`10005`, `rettarvarsla-v1`), DMR criminal record (`10014`, `sakaskra`).
 - [ ] Update `XROAD_BASE_PATH`, `XROAD_BASE_PATH_WITH_ENV`, `XROAD_TLS_BASE_PATH`,
       `XROAD_TLS_BASE_PATH_WITH_ENV`, `XROAD_CLIENT_ID` to the DMR prod SS.
-- [ ] Provider side for xrd-api and digital-mailbox-api: publish them as services on the SS.
+- [ ] Provider side for xrd-api and digital-mailbox-api: publish them as services under `Rettarvorslugatt-Protected` on the SS.
+      island.is had: mailbox = `Rettarvorslugatt-Private/judicial-system-mailbox-api`
+      (prod member `5804170510`, not `10014`) -> `judicial-system-digital-mailbox-api-xrd.internal.island.is`;
+      xrd-api -> `judicial-system-xrd-api.internal.island.is`. Ours: `judicial-system-<svc>.dmr.local:3333`.
 - [ ] Smoke test one court and one police call; check the message-handler DLQ is empty.
 
 ## 3. IDS cutover (login)
