@@ -20,11 +20,14 @@ name: 'payments'
 enabled: true
 env:
   ALLOW_APPLE_PAY: 'true'
+  ALLOW_GOOGLE_PAY: 'true'
   API_EXTERNAL_BASEPATH: 'https://beta.dev01.devland.is'
   API_INTERNAL_BASEPATH: 'http://api.islandis.svc.cluster.local'
   APP_EXTERNAL_BASEPATH: 'https://beta.dev01.devland.is'
   BASEPATH: '/greida'
   DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
+  GOOGLE_PAY_ENVIRONMENT: 'TEST'
+  GOOGLE_PAY_MERCHANT_ID: ''
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
@@ -85,6 +88,7 @@ resources:
     memory: '512Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  GOOGLE_PAY_PUBLIC_KEY: '/k8s/payments/GOOGLE_PAY_PUBLIC_KEY'
   PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET: '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET'
   SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
   SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
