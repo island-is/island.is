@@ -88,9 +88,7 @@ const Result = () => {
                 targetAppealCase?.requestAppealRulingNotToBePublished
                   ? [
                       {
-                        message: formatMessage(
-                          strings.requestAppealRulingNotToBePublished,
-                        ),
+                        message: strings.requestAppealRulingNotToBePublished,
                       },
                     ]
                   : undefined
@@ -189,7 +187,7 @@ const Result = () => {
             previousUrl={getStandardUserDashboardRoute(user)}
             actions={[
               {
-                text: formatMessage(strings.nextButtonText),
+                text: strings.nextButtonText,
                 onClick: () => setModalVisible('reopenCase'),
                 testId: 'continueButton',
               },
