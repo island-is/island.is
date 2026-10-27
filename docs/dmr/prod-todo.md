@@ -23,7 +23,7 @@ Dev reference: account `640538430394`, VPC `vpc-0014be8651be6f7e6` (`10.74.48.0/
 
 Dev still points at island.is's server (`terraform/dev/judicial_backend.tf`).
 
-- [ ] Register the DMR client subsystem on the prod SS (replaces `IS/GOV/10014/Rettarvorslugatt-Client`-style ID).
+- [ ] Register the `DMR-Client` subsystem on the prod SS. Backend uses `XROAD_CLIENT_ID=IS/GOV/10014/DMR-Client` (dev: `IS-DEV/GOV/10014/DMR-Client`).
 - [ ] Client TLS cert / key, if the SS requires mTLS, stored in Secrets Manager.
 - [ ] Access rights on the providers' side for the new client: courts (`10019`, `JusticePortal-v1`),
       police (`10005`, `rettarvarsla-v1`), DMR criminal record (`10014`, `sakaskra`).
