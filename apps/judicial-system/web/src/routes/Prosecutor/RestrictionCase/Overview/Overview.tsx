@@ -171,19 +171,28 @@ export const Overview = () => {
           <Box marginBottom={5}>
             <AlertMessage
               title={m.openedByDefenderAlert.title}
-              message={formatMessage({ id: m.openedByDefenderAlert.text, defaultMessage: m.openedByDefenderAlert.text }, {
-                when: formatDate(workingCase.openedByDefender, 'PPPp'),
-              })}
+              message={formatMessage(
+                {
+                  id: m.openedByDefenderAlert.text,
+                  defaultMessage: m.openedByDefenderAlert.text,
+                },
+                {
+                  when: formatDate(workingCase.openedByDefender, 'PPPp'),
+                },
+              )}
               type="info"
               testid="alertMessageOpenedByDefender"
             />
           </Box>
         )}
         <PageTitle>
-          {formatMessage({ id: m.headingV3, defaultMessage: m.headingV3 }, {
-            isExtended: Boolean(workingCase.parentCase),
-            caseType: workingCase.type,
-          })}
+          {formatMessage(
+            { id: m.headingV3, defaultMessage: m.headingV3 },
+            {
+              isExtended: Boolean(workingCase.parentCase),
+              caseType: workingCase.type,
+            },
+          )}
         </PageTitle>
         <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
@@ -384,9 +393,15 @@ export const Overview = () => {
       <AnimatePresence>
         {modal === 'caseSubmittedModal' && (
           <Modal
-            title={formatMessage({ id: m.sections.modal.headingV2, defaultMessage: m.sections.modal.headingV2 }, {
-              caseType: workingCase.type,
-            })}
+            title={formatMessage(
+              {
+                id: m.sections.modal.headingV2,
+                defaultMessage: m.sections.modal.headingV2,
+              },
+              {
+                caseType: workingCase.type,
+              },
+            )}
             text={modalText}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
             buttons={[

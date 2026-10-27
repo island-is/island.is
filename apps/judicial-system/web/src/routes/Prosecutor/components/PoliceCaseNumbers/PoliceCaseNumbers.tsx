@@ -177,13 +177,16 @@ export const PoliceCaseNumbers: FC<Props> = ({
         name="policeCaseNumbers"
         inputMask="police-case-numbers"
         inputLabel={m.label}
-        inputPlaceholder={formatMessage({ id: m.placeholder, defaultMessage: m.placeholder }, {
-          prefix:
-            workingCase.prosecutorsOffice?.policeCaseNumberPrefix ??
-            user?.institution?.policeCaseNumberPrefix ??
-            '',
-          year: new Date().getFullYear(),
-        })}
+        inputPlaceholder={formatMessage(
+          { id: m.placeholder, defaultMessage: m.placeholder },
+          {
+            prefix:
+              workingCase.prosecutorsOffice?.policeCaseNumberPrefix ??
+              user?.institution?.policeCaseNumberPrefix ??
+              '',
+            year: new Date().getFullYear(),
+          },
+        )}
         onAddValue={onAdd}
         buttonText={m.buttonText}
         // this disables the button

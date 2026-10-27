@@ -184,9 +184,7 @@ export const Defendant = () => {
                     justifyContent="spaceBetween"
                     marginBottom={2}
                   >
-                    <SectionHeading
-                      title={m.sections.accusedInfo.heading}
-                    />
+                    <SectionHeading title={m.sections.accusedInfo.heading} />
                     {showPoliceDefendantsUI && policeDefendantsLoading && (
                       <LoadingDots size="small" />
                     )}

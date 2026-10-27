@@ -82,21 +82,27 @@ export const getDemandsAutofill = (
     props.defendant.noNationalId,
     '',
   )
-  return formatMessage({ id: rcReportForm.sections.demands.autofill, defaultMessage: rcReportForm.sections.demands.autofill }, {
-    defendantName: props.defendant.name,
-    defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
-    isExtended:
-      props.parentCaseDecision &&
-      isAcceptingCaseDecision(props.parentCaseDecision),
-    caseType: props.caseType,
-    court: props.courtName?.replace('Héraðsdómur', 'Héraðsdóms'),
-    requestedValidToDate: formatDate(props.requestedValidToDate, 'PPPPp')
-      ?.replace('dagur,', 'dagsins')
-      ?.replace(' kl.', ', kl.'),
-    hasIsolationRequest: props.requestedCustodyRestrictions?.includes(
-      CaseCustodyRestrictions.ISOLATION,
-    ),
-  })
+  return formatMessage(
+    {
+      id: rcReportForm.sections.demands.autofill,
+      defaultMessage: rcReportForm.sections.demands.autofill,
+    },
+    {
+      defendantName: props.defendant.name,
+      defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
+      isExtended:
+        props.parentCaseDecision &&
+        isAcceptingCaseDecision(props.parentCaseDecision),
+      caseType: props.caseType,
+      court: props.courtName?.replace('Héraðsdómur', 'Héraðsdóms'),
+      requestedValidToDate: formatDate(props.requestedValidToDate, 'PPPPp')
+        ?.replace('dagur,', 'dagsins')
+        ?.replace(' kl.', ', kl.'),
+      hasIsolationRequest: props.requestedCustodyRestrictions?.includes(
+        CaseCustodyRestrictions.ISOLATION,
+      ),
+    },
+  )
 }
 
 export const PoliceDemands = () => {
@@ -207,9 +213,16 @@ export const PoliceDemands = () => {
               description={
                 workingCase.parentCase ? (
                   <Text>
-                    {formatMessage({ id: rcDemands.sections.demands.pastRestriction, defaultMessage: rcDemands.sections.demands.pastRestriction }, {
-                      caseType: workingCase.type,
-                    })}
+                    {formatMessage(
+                      {
+                        id: rcDemands.sections.demands.pastRestriction,
+                        defaultMessage:
+                          rcDemands.sections.demands.pastRestriction,
+                      },
+                      {
+                        caseType: workingCase.type,
+                      },
+                    )}
                     <Text as="span" fontWeight="semiBold">
                       {formatDate(
                         workingCase.parentCase.validToDate,
@@ -223,7 +236,14 @@ export const PoliceDemands = () => {
             <BlueBox className={stack({ gap: 2 })}>
               <DateTime
                 name="reqValidToDate"
-                datepickerLabel={formatMessage({ id: rcDemands.sections.demands.restrictionValidDateLabel, defaultMessage: rcDemands.sections.demands.restrictionValidDateLabel }, { caseType: workingCase.type })}
+                datepickerLabel={formatMessage(
+                  {
+                    id: rcDemands.sections.demands.restrictionValidDateLabel,
+                    defaultMessage:
+                      rcDemands.sections.demands.restrictionValidDateLabel,
+                  },
+                  { caseType: workingCase.type },
+                )}
                 minDate={new Date()}
                 selectedDate={workingCase.requestedValidToDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
@@ -309,9 +329,7 @@ export const PoliceDemands = () => {
           </Box>
           {workingCase.defendants && workingCase.defendants.length > 0 && (
             <Box component="section">
-              <SectionHeading
-                title={rcDemands.sections.lawsBroken.heading}
-              />
+              <SectionHeading title={rcDemands.sections.lawsBroken.heading} />
               <Input
                 data-testid="lawsBroken"
                 name="lawsBroken"
@@ -400,7 +418,9 @@ export const PoliceDemands = () => {
                 data-testid="legalBasis"
                 name="legalBasis"
                 label={rcDemands.sections.legalBasis.legalBasisLabel}
-                placeholder={rcDemands.sections.legalBasis.legalBasisPlaceholder}
+                placeholder={
+                  rcDemands.sections.legalBasis.legalBasisPlaceholder
+                }
                 value={legalBasisInput.value}
                 onChange={(evt) => legalBasisInput.onChange(evt.target.value)}
                 textarea
@@ -412,12 +432,26 @@ export const PoliceDemands = () => {
             workingCase.type === CaseType.ADMISSION_TO_FACILITY) && (
             <Box component="section" data-testid="custodyRestrictions">
               <SectionHeading
-                title={formatMessage({ id: rcDemands.sections.custodyRestrictions.headingV2, defaultMessage: rcDemands.sections.custodyRestrictions.headingV2 }, {
+                title={formatMessage(
+                  {
+                    id: rcDemands.sections.custodyRestrictions.headingV2,
+                    defaultMessage:
+                      rcDemands.sections.custodyRestrictions.headingV2,
+                  },
+                  {
                     caseType: workingCase.type,
-                  })}
-                description={formatMessage({ id: rcDemands.sections.custodyRestrictions.subHeadingV2, defaultMessage: rcDemands.sections.custodyRestrictions.subHeadingV2 }, {
+                  },
+                )}
+                description={formatMessage(
+                  {
+                    id: rcDemands.sections.custodyRestrictions.subHeadingV2,
+                    defaultMessage:
+                      rcDemands.sections.custodyRestrictions.subHeadingV2,
+                  },
+                  {
                     caseType: workingCase.type,
-                  })}
+                  },
+                )}
               />
               <CheckboxList
                 checkboxes={restrictionsCheckboxes}
@@ -437,12 +471,26 @@ export const PoliceDemands = () => {
           {workingCase.type === CaseType.TRAVEL_BAN && (
             <Box component="section" data-testid="travelBanRestrictions">
               <SectionHeading
-                title={formatMessage({ id: rcDemands.sections.custodyRestrictions.headingV2, defaultMessage: rcDemands.sections.custodyRestrictions.headingV2 }, {
+                title={formatMessage(
+                  {
+                    id: rcDemands.sections.custodyRestrictions.headingV2,
+                    defaultMessage:
+                      rcDemands.sections.custodyRestrictions.headingV2,
+                  },
+                  {
                     caseType: workingCase.type,
-                  })}
-                description={formatMessage({ id: rcDemands.sections.custodyRestrictions.subHeadingV2, defaultMessage: rcDemands.sections.custodyRestrictions.subHeadingV2 }, {
+                  },
+                )}
+                description={formatMessage(
+                  {
+                    id: rcDemands.sections.custodyRestrictions.subHeadingV2,
+                    defaultMessage:
+                      rcDemands.sections.custodyRestrictions.subHeadingV2,
+                  },
+                  {
                     caseType: workingCase.type,
-                  })}
+                  },
+                )}
               />
               <BlueBox className={stack({ gap: 2 })}>
                 <CheckboxList
@@ -465,7 +513,9 @@ export const PoliceDemands = () => {
                   data-testid="requestedOtherRestrictions"
                   label={rcDemands.sections.custodyRestrictions.label}
                   value={requestedOtherRestrictionsInput.value}
-                  placeholder={rcDemands.sections.custodyRestrictions.placeholder}
+                  placeholder={
+                    rcDemands.sections.custodyRestrictions.placeholder
+                  }
                   onChange={(evt) =>
                     requestedOtherRestrictionsInput.onChange(evt.target.value)
                   }

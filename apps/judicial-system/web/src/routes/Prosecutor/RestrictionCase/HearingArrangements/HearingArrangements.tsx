@@ -112,9 +112,7 @@ export const HearingArrangements = () => {
         )}
       />
       <FormContentContainer>
-        <PageTitle>
-          {rcRequestedHearingArrangements.heading}
-        </PageTitle>
+        <PageTitle>{rcRequestedHearingArrangements.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
           <ProsecutorSectionHeightenedSecurity />
@@ -156,7 +154,9 @@ export const HearingArrangements = () => {
               name="translator"
               autoComplete="off"
               label={rcRequestedHearingArrangements.sections.translator.label}
-              placeholder={rcRequestedHearingArrangements.sections.translator.placeholder}
+              placeholder={
+                rcRequestedHearingArrangements.sections.translator.placeholder
+              }
               value={translatorInput.value}
               onChange={(evt) => translatorInput.onChange(evt.target.value)}
               onBlur={(event) => translatorInput.onBlur(event.target.value)}
@@ -185,9 +185,15 @@ export const HearingArrangements = () => {
       {navigateTo !== undefined && (
         <Modal
           title={rcRequestedHearingArrangements.modal.heading}
-          text={formatMessage({ id: rcRequestedHearingArrangements.modal.textV2, defaultMessage: rcRequestedHearingArrangements.modal.textV2 }, {
-            caseType: workingCase.type,
-          })}
+          text={formatMessage(
+            {
+              id: rcRequestedHearingArrangements.modal.textV2,
+              defaultMessage: rcRequestedHearingArrangements.modal.textV2,
+            },
+            {
+              caseType: workingCase.type,
+            },
+          )}
           buttons={[
             {
               text: 'Halda áfram með kröfu',

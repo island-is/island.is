@@ -16,9 +16,7 @@ const ProsecutorSectionHeading: FC<Props> = ({ isIndictment = false }) => {
       tooltip={
         <Box component="span" data-testid="prosecutor-tooltip">
           <Tooltip
-            text={
-              isIndictment ? strings.indictmentTooltip : strings.tooltip
-            }
+            text={isIndictment ? strings.indictmentTooltip : strings.tooltip}
           />
         </Box>
       }

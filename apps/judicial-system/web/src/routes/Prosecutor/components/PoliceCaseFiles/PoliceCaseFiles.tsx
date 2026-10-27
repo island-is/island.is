@@ -96,21 +96,39 @@ const PoliceCaseFiles: FC<Props> = ({
       }
       warningMessage={
         !policeCaseFiles?.isLoading && policeCaseFiles?.files.length === 0
-          ? formatMessage({ id: strings.noFilesFoundInLOKEMessage, defaultMessage: strings.noFilesFoundInLOKEMessage }, {
-              isIndictmentCase: isIndictmentCase(workingCase.type),
-            })
+          ? formatMessage(
+              {
+                id: strings.noFilesFoundInLOKEMessage,
+                defaultMessage: strings.noFilesFoundInLOKEMessage,
+              },
+              {
+                isIndictmentCase: isIndictmentCase(workingCase.type),
+              },
+            )
           : undefined
       }
     />
   ) : (
     <AlertMessage
       type="info"
-      title={formatMessage({ id: strings.originNotLokeTitle, defaultMessage: strings.originNotLokeTitle }, {
-        isIndictmentCase: isIndictmentCase(workingCase.type),
-      })}
-      message={formatMessage({ id: strings.originNotLokeMessage, defaultMessage: strings.originNotLokeMessage }, {
-        isIndictmentCase: isIndictmentCase(workingCase.type),
-      })}
+      title={formatMessage(
+        {
+          id: strings.originNotLokeTitle,
+          defaultMessage: strings.originNotLokeTitle,
+        },
+        {
+          isIndictmentCase: isIndictmentCase(workingCase.type),
+        },
+      )}
+      message={formatMessage(
+        {
+          id: strings.originNotLokeMessage,
+          defaultMessage: strings.originNotLokeMessage,
+        },
+        {
+          isIndictmentCase: isIndictmentCase(workingCase.type),
+        },
+      )}
     />
   )
 }

@@ -55,9 +55,7 @@ export const PoliceReport = () => {
         <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
-            <SectionHeading
-              title={rcReportForm.sections.demands.heading}
-            />
+            <SectionHeading title={rcReportForm.sections.demands.heading} />
             <Input
               name="demands"
               label={rcReportForm.sections.demands.label}
