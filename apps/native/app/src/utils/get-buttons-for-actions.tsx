@@ -59,6 +59,8 @@ export const getButtonsForActions = (
             style={{
               paddingTop: 9,
               paddingBottom: 9,
+              paddingLeft: 8,
+              paddingRight: 8,
             }}
           />
         </Action>
