@@ -109,19 +109,17 @@ export const AccessScopes = ({
       return
     }
 
-    const scopesToAdd = requestedScopeNames
+    // A screen opens with any one of its required scopes, so only the first is asked for.
+    const scopeToAdd = requestedScopeNames
       .map((name) => allGrantableScopes.get(name))
-      .filter((scope): scope is AuthApiScope => Boolean(scope))
-      .map((scope) => ({ ...scope, validTo: defaultDate }))
+      .find((scope): scope is AuthApiScope => Boolean(scope))
 
-    if (scopesToAdd.length > 0) {
-      setSelectedScopes((prev) => {
-        const existingNames = new Set(prev.map((s) => s.name))
-        return [
-          ...prev,
-          ...scopesToAdd.filter((s) => !existingNames.has(s.name)),
-        ]
-      })
+    if (scopeToAdd) {
+      setSelectedScopes((prev) =>
+        prev.some((s) => s.name === scopeToAdd.name)
+          ? prev
+          : [...prev, { ...scopeToAdd, validTo: defaultDate }],
+      )
     }
     preselectDoneRef.current = true
     // defaultDate intentionally excluded so the effect isn't re-triggered each render
@@ -129,10 +127,14 @@ export const AccessScopes = ({
   }, [requestedScopeNames, allGrantableScopes, setSelectedScopes])
 
   const notGrantableScopeNames = useMemo(() => {
-    if (!requestedScopeNames || allGrantableScopes.size === 0) {
+    if (
+      !requestedScopeNames ||
+      allGrantableScopes.size === 0 ||
+      requestedScopeNames.some((name) => allGrantableScopes.has(name))
+    ) {
       return []
     }
-    return requestedScopeNames.filter((name) => !allGrantableScopes.has(name))
+    return requestedScopeNames
   }, [requestedScopeNames, allGrantableScopes])
 
   const { data: domainsData } = useAuthDomainsQuery({
