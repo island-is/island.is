@@ -767,9 +767,7 @@ export class VerdictsClientService {
       await this.supremeCourtApi.apiV2VerdictGetDeterminationsGet({
         page: input.page ?? 1,
         limit: 10,
-        caseTypes: input.caseTypes?.length
-          ? input.caseTypes.join(',')
-          : undefined,
+        caseTypes: input.caseTypes ? input.caseTypes : undefined,
         searchTerm: input.searchTerm ? input.searchTerm : undefined,
       })
 
