@@ -53,7 +53,7 @@ export class DiscountService {
             ...discount,
             user: {
               ...relation,
-              name: relation.firstName,
+              name: relation.givenName || relation.fullName,
               fund: discount.user.fund,
             },
           })
@@ -70,7 +70,10 @@ export class DiscountService {
           this.processDiscount(createdDiscount)
           discounts.push({
             ...createdDiscount,
-            user: { ...relation, name: relation.firstName },
+            user: {
+              ...relation,
+              name: relation.givenName || relation.fullName,
+            },
           })
         }
       }

@@ -114,6 +114,9 @@ export class VmstApplicantPensionPayment extends VmstApplicantIncomeRow {
 export class VmstApplicantCapitalIncomePayment extends VmstApplicantIncomeRow {
   @Field(() => String)
   incomeTypeId!: string
+
+  @Field(() => String, { nullable: true })
+  incomeTypeName?: string | null
 }
 
 @ObjectType('VmstApplicantTRPayment', {

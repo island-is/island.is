@@ -55,9 +55,12 @@ import { isAppealFileCategoryVisible } from '@island.is/judicial-system-web/src/
 
 import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
+  getIndictmentPdfDisplayName,
   getVisibleSubpoenas,
   shouldShowPoliceDigitalCaseFilesSection,
+  shouldShowReplaceIndictmentPdf,
 } from './IndictmentCaseFilesList.logic'
+import ReplaceIndictmentPdf from './ReplaceIndictmentPdf'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -524,17 +527,17 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 connectedCaseParentId={connectedCaseParentId}
                 title={prefixGeneratedDocumentNameWithDocumentOrder(
                   'indictment',
-                  `Ákæra${
-                    workingCase.caseSentToCourtDate
-                      ? ` ${formatDate(workingCase.caseSentToCourtDate)}`
-                      : ''
-                  }.pdf`,
+                  getIndictmentPdfDisplayName(workingCase),
                   workingCase.id,
                 )}
                 pdfType="indictment"
                 renderAs="row"
                 elementId="Ákæra"
               />
+              {!connectedCaseParentId &&
+                shouldShowReplaceIndictmentPdf(workingCase, user) && (
+                  <ReplaceIndictmentPdf caseId={workingCase.id} />
+                )}
             </Box>
           </Box>
         )}

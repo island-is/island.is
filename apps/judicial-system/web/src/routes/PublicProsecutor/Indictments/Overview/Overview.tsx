@@ -8,6 +8,7 @@ import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts
 import {
   canDefendantAppealVerdict,
   Feature,
+  isPublicProsecutionOfficeUser,
   isRulingOrDismissalCase,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -69,7 +70,9 @@ export const Overview = () => {
     ModalId | undefined
   >()
 
-  const assignMode = getPublicProsecutorOverviewAssignMode(workingCase)
+  const assignMode = isPublicProsecutionOfficeUser(user)
+    ? getPublicProsecutorOverviewAssignMode(workingCase)
+    : 'none'
 
   const assignReviewer = async () => {
     if (!selectedIndictmentReviewer) {

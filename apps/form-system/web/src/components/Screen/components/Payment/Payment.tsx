@@ -21,6 +21,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
+import { getVisiblePaymentFields } from '../../../../utils/payment'
 
 const paymentCatalogError = {
   title: {
@@ -53,11 +54,7 @@ export const Payment = () => {
     .flatMap((section) => section.screens ?? [])
     .filter(Boolean)
 
-  const paymentFields = screens
-    .flatMap((screen) => screen?.fields ?? [])
-    .filter(
-      (field) => field?.fieldType === FieldTypesEnum.PAYMENT && !field.isHidden,
-    )
+  const paymentFields = getVisiblePaymentFields(state.sections)
 
   const paymentQuantityFields = screens
     .flatMap((screen) => screen?.fields ?? [])
@@ -172,6 +169,8 @@ export const Payment = () => {
       </Stack>
     )
   }
+
+  if (paymentFields.length === 0) return null
 
   return (
     <GridContainer>
