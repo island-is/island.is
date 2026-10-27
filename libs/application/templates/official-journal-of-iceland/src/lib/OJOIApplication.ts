@@ -7,6 +7,7 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
+  CallToAction,
   DefaultEvents,
   InstitutionNationalIds,
   defineTemplateApi,
@@ -30,9 +31,11 @@ export enum ApplicationStates {
   REJECTED = 'rejected',
 }
 
-enum Roles {
+export enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
+  // The ministry reviewing an advert it submitted itself
+  MINISTRY_APPLICANT = 'ministryApplicant',
 }
 
 const getApplicationName = (application: Application) => {
@@ -60,6 +63,24 @@ export type OJOIEvents =
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.EDIT }
+
+const reviewActions: CallToAction<OJOIEvents>[] = [
+  {
+    event: DefaultEvents.APPROVE,
+    name: 'Samþykkja',
+    type: 'primary',
+  },
+  {
+    event: DefaultEvents.EDIT,
+    name: 'Breyta',
+    type: 'primary',
+  },
+  {
+    event: DefaultEvents.REJECT,
+    name: 'Hafna',
+    type: 'reject',
+  },
+]
 
 const OJOITemplate: ApplicationTemplate<
   ApplicationContext,
@@ -296,23 +317,18 @@ const OJOITemplate: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
-              actions: [
-                {
-                  event: DefaultEvents.APPROVE,
-                  name: 'Samþykkja',
-                  type: 'primary',
-                },
-                {
-                  event: DefaultEvents.EDIT,
-                  name: 'Breyta',
-                  type: 'primary',
-                },
-                {
-                  event: DefaultEvents.REJECT,
-                  name: 'Hafna',
-                  type: 'reject',
-                },
-              ],
+              actions: reviewActions,
+            },
+            {
+              id: Roles.MINISTRY_APPLICANT,
+              read: 'all',
+              write: 'all',
+              delete: false,
+              formLoader: () =>
+                import('../forms/Submitted').then((val) =>
+                  Promise.resolve(val.Submitted),
+                ),
+              actions: reviewActions,
             },
           ],
         },
@@ -393,6 +409,16 @@ const OJOITemplate: ApplicationTemplate<
     },
   },
   mapUserToRole(id: string, application: Application) {
+    // The ministry reviews its own adverts, so in SUBMITTED it needs the
+    // review actions while keeping the applicant's list entry and screen
+    if (
+      application.state === ApplicationStates.SUBMITTED &&
+      id === InstitutionNationalIds.DOMSMALA_RADUNEYTID &&
+      id === application.applicant
+    ) {
+      return Roles.MINISTRY_APPLICANT
+    }
+
     if (id === application.applicant) {
       return Roles.APPLICANT
     }

@@ -2,9 +2,11 @@ import { YES, NO } from '@island.is/application/core'
 import {
   ApplicationStatus,
   ApplicationTypes,
+  ExternalData,
 } from '@island.is/application/types'
 import { createApplication } from '@island.is/application/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 import { DrivingLicenseProviderService } from './driving-license.service'
 
@@ -123,6 +125,14 @@ describe('DrivingLicenseProviderService — fakeData photo modes', () => {
       await service.qualityPhotoAndSignature(buildProps())
       expect(logger.info).not.toHaveBeenCalled()
     })
+
+    it('returns a failure marker when the RLS lookup throws', async () => {
+      drivingLicenseService.getQualityPhotoAndSignature = jest.fn(async () => {
+        throw new Error('502 Bad Gateway')
+      })
+      const result = await service.qualityPhotoAndSignature(buildProps())
+      expect(result).toEqual({ fetchFailed: true })
+    })
   })
 
   describe('allPhotosFromThjodskra', () => {
@@ -169,6 +179,138 @@ describe('DrivingLicenseProviderService — fakeData photo modes', () => {
       ).toHaveBeenCalledTimes(1)
       expect(result).toMatchObject({
         images: [expect.objectContaining({ biometricId: 'real-biometric-id' })],
+      })
+    })
+
+    it('returns empty images with a failure marker when the lookup throws', async () => {
+      drivingLicenseService.getAllPhotosFromThjodskra = jest.fn(async () => {
+        throw new Error('502 Bad Gateway')
+      })
+      const result = await service.allPhotosFromThjodskra(buildProps())
+      expect(result).toEqual({ images: [], fetchFailed: true })
+    })
+  })
+
+  describe('photoLookupCheck', () => {
+    const entry = (data: object) => ({
+      data,
+      date: new Date(),
+      status: 'success' as const,
+    })
+    const thjodskraFailed = entry({ images: [], fetchFailed: true })
+    const thjodskraFacial = entry({
+      images: [{ biometricId: 'id', contentSpecification: 'FACIAL' }],
+    })
+
+    const check = (
+      rlsPhotoSource: 'qualityPhoto' | 'qualityPhotoAndSignature',
+      externalData: ExternalData,
+    ) =>
+      service.photoLookupCheck({
+        ...buildProps(),
+        application: createApplication({
+          externalData,
+          typeId: ApplicationTypes.DRIVING_LICENSE,
+        }),
+        params: { rlsPhotoSource },
+      })
+
+    describe('with qualityPhotoAndSignature as the license registry photo', () => {
+      it('passes when no lookup failed, even without a photo', async () => {
+        await expect(
+          check('qualityPhotoAndSignature', {
+            allPhotosFromThjodskra: entry({ images: [] }),
+            qualityPhotoAndSignature: entry({ imageId: null }),
+          }),
+        ).resolves.toBeUndefined()
+        expect(logger.info).not.toHaveBeenCalled()
+      })
+
+      it('throws when Thjodskra failed and the license registry has no photo', async () => {
+        await expect(
+          check('qualityPhotoAndSignature', {
+            allPhotosFromThjodskra: thjodskraFailed,
+            qualityPhotoAndSignature: entry({ imageId: null }),
+          }),
+        ).rejects.toBeInstanceOf(TemplateApiError)
+        expect(logger.info).toHaveBeenCalledWith(
+          expect.stringContaining('blocking data step'),
+          {
+            thjodskraLookupFailed: true,
+            rlsLookupFailed: false,
+            rlsPhotoSource: 'qualityPhotoAndSignature',
+          },
+        )
+      })
+
+      it('passes when Thjodskra failed but the license registry has a photo', async () => {
+        await expect(
+          check('qualityPhotoAndSignature', {
+            allPhotosFromThjodskra: thjodskraFailed,
+            qualityPhotoAndSignature: entry({ imageId: 123 }),
+          }),
+        ).resolves.toBeUndefined()
+      })
+
+      it('throws when the license registry failed and Thjodskra has no photo', async () => {
+        await expect(
+          check('qualityPhotoAndSignature', {
+            allPhotosFromThjodskra: entry({ images: [] }),
+            qualityPhotoAndSignature: entry({ fetchFailed: true }),
+          }),
+        ).rejects.toBeInstanceOf(TemplateApiError)
+      })
+
+      it('passes when the license registry failed but Thjodskra has a facial photo', async () => {
+        await expect(
+          check('qualityPhotoAndSignature', {
+            allPhotosFromThjodskra: thjodskraFacial,
+            qualityPhotoAndSignature: entry({ fetchFailed: true }),
+          }),
+        ).resolves.toBeUndefined()
+      })
+
+      it('throws when the license registry failed and Thjodskra has only non-facial images', async () => {
+        await expect(
+          check('qualityPhotoAndSignature', {
+            allPhotosFromThjodskra: entry({
+              images: [
+                { biometricId: 'id', contentSpecification: 'SIGNATURE' },
+              ],
+            }),
+            qualityPhotoAndSignature: entry({ fetchFailed: true }),
+          }),
+        ).rejects.toBeInstanceOf(TemplateApiError)
+      })
+    })
+
+    describe('with qualityPhoto as the license registry photo', () => {
+      it('throws when Thjodskra failed and there is no quality photo', async () => {
+        await expect(
+          check('qualityPhoto', {
+            allPhotosFromThjodskra: thjodskraFailed,
+            qualityPhoto: entry({ hasQualityPhoto: false, qualityPhoto: null }),
+          }),
+        ).rejects.toBeInstanceOf(TemplateApiError)
+      })
+
+      it('passes when Thjodskra failed but there is a quality photo', async () => {
+        await expect(
+          check('qualityPhoto', {
+            allPhotosFromThjodskra: thjodskraFailed,
+            qualityPhoto: entry({ hasQualityPhoto: true, qualityPhoto: 'b64' }),
+          }),
+        ).resolves.toBeUndefined()
+      })
+
+      it('ignores a qualityPhotoAndSignature failure it does not use', async () => {
+        await expect(
+          check('qualityPhoto', {
+            allPhotosFromThjodskra: entry({ images: [] }),
+            qualityPhoto: entry({ hasQualityPhoto: false, qualityPhoto: null }),
+            qualityPhotoAndSignature: entry({ fetchFailed: true }),
+          }),
+        ).resolves.toBeUndefined()
       })
     })
   })

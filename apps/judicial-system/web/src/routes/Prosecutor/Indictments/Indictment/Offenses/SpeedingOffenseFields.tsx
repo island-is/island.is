@@ -82,6 +82,7 @@ export const SpeedingOffenseFields = ({
 
             handleIndictmentCountChanges({ recordedSpeed })
           }}
+          id={`recordedSpeed-${indictmentCount.id}`}
           name="recordedSpeed"
           autoComplete="off"
           label={formatMessage(strings.recordedSpeedLabel)}
@@ -122,6 +123,7 @@ export const SpeedingOffenseFields = ({
 
           handleIndictmentCountChanges({ speedLimit })
         }}
+        id={`speedLimit-${indictmentCount.id}`}
         name="speedLimit"
         autoComplete="off"
         label={formatMessage(strings.speedLimitLabel)}

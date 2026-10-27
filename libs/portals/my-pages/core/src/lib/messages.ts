@@ -1972,6 +1972,26 @@ export const m = defineMessages({
     id: 'service.portal:payments-reasoning',
     defaultMessage: 'Forsenda greiðslna',
   },
+  unemploymentBenefits: {
+    id: 'service.portal:unemployment-benefits',
+    defaultMessage: 'Atvinnuleysisbætur',
+  },
+  activationAllowance: {
+    id: 'service.portal:activation-allowance',
+    defaultMessage: 'Virknistyrkur',
+  },
+  myStatus: {
+    id: 'service.portal:my-status',
+    defaultMessage: 'Staðan þín',
+  },
+  myIncome: {
+    id: 'service.portal:my-income',
+    defaultMessage: 'Tekjur',
+  },
+  myData: {
+    id: 'service.portal:my-data',
+    defaultMessage: 'Mín gögn',
+  },
   january: {
     id: 'service.portal:january',
     defaultMessage: 'Janúar',

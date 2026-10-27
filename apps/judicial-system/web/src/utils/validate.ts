@@ -174,14 +174,12 @@ const firstDefendantIsInvalid = (workingCase: WorkingCase): boolean => {
 }
 
 const areDefenderContactsValid = (workingCase: WorkingCase): boolean =>
-  validate([
-    [workingCase.defenderEmail, ['email-format']],
-    [workingCase.defenderPhoneNumber, ['phonenumber']],
-    ...(workingCase.defendants ?? []).flatMap((defendant): ValidateItem[] => [
+  validate(
+    (workingCase.defendants ?? []).flatMap((defendant): ValidateItem[] => [
       [defendant.defenderEmail, ['email-format']],
       [defendant.defenderPhoneNumber, ['phonenumber']],
     ]),
-  ]).isValid
+  ).isValid
 
 const someDefendantIsInvalid = (workingCase: WorkingCase): boolean => {
   return Boolean(

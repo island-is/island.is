@@ -1,21 +1,13 @@
 import { Type } from 'class-transformer'
-import { IsDate, IsOptional, IsUUID } from 'class-validator'
+import { IsDate } from 'class-validator'
 
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 
-// Which party gets the deadline: a defendant, a civil claimant, or the
-// prosecution when neither is named.
-export class SetAppealStatementDeadlineDto {
-  @IsOptional()
-  @IsUUID()
-  @ApiPropertyOptional({ type: String })
-  readonly defendantId?: string
+import { FileAppealStatementDto } from './fileAppealStatement.dto'
 
-  @IsOptional()
-  @IsUUID()
-  @ApiPropertyOptional({ type: String })
-  readonly civilClaimantId?: string
-
+// A deadline is a party and a date: the party the way every statement
+// request names it, and the day it has to file by.
+export class SetAppealStatementDeadlineDto extends FileAppealStatementDto {
   @Type(() => Date)
   @IsDate()
   @ApiProperty({ type: Date })

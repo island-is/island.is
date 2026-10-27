@@ -1,10 +1,13 @@
 import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
+  getIndictmentPdfDisplayName,
   getVisibleSubpoenas,
   shouldShowPoliceDigitalCaseFilesSection,
+  shouldShowReplaceIndictmentPdf,
 } from './IndictmentCaseFilesList.logic'
 
 const user = (role: UserRole, type?: InstitutionType): User =>
@@ -149,5 +152,85 @@ describe('getVisibleSubpoenas', () => {
 
   it('shows nothing to a defender without a national id', () => {
     expect(subpoenaIds(user(UserRole.DEFENDER))).toEqual([])
+  })
+})
+
+describe('shouldShowReplaceIndictmentPdf', () => {
+  const districtProsecutor = {
+    role: UserRole.PROSECUTOR,
+    institution: { type: InstitutionType.DISTRICT_PROSECUTORS_OFFICE },
+  } as User
+  const policeProsecutor = {
+    role: UserRole.PROSECUTOR,
+    institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+  } as User
+  const submitted = {
+    id: 'case-id',
+    state: CaseState.SUBMITTED,
+    indictmentHash: '{"hash":"frozen"}',
+  } as CaseFilesListCase
+
+  it('shows the upload for Héraðssaksóknari when the pdf is frozen', () => {
+    expect(shouldShowReplaceIndictmentPdf(submitted, districtProsecutor)).toBe(
+      true,
+    )
+  })
+
+  it('hides it from police prosecutors', () => {
+    expect(shouldShowReplaceIndictmentPdf(submitted, policeProsecutor)).toBe(
+      false,
+    )
+  })
+
+  it('hides it before the indictment pdf has been frozen to S3', () => {
+    expect(
+      shouldShowReplaceIndictmentPdf(
+        { ...submitted, indictmentHash: null },
+        districtProsecutor,
+      ),
+    ).toBe(false)
+  })
+
+  it('hides it before the indictment is confirmed', () => {
+    expect(
+      shouldShowReplaceIndictmentPdf(
+        { ...submitted, state: CaseState.WAITING_FOR_CONFIRMATION },
+        districtProsecutor,
+      ),
+    ).toBe(false)
+  })
+
+  it('hides it from court users', () => {
+    const judge = {
+      role: UserRole.DISTRICT_COURT_JUDGE,
+      institution: { type: InstitutionType.DISTRICT_COURT },
+    } as User
+
+    expect(shouldShowReplaceIndictmentPdf(submitted, judge)).toBe(false)
+  })
+})
+
+describe('getIndictmentPdfDisplayName', () => {
+  it('keeps the sent-to-court date for a generated indictment', () => {
+    expect(
+      getIndictmentPdfDisplayName({
+        id: 'case-id',
+        caseSentToCourtDate: '2026-10-21T12:00:00.000Z',
+        indictmentHash: JSON.stringify({ hash: 'frozen' }),
+      } as CaseFilesListCase),
+    ).toBe('Ákæra 21.10.2026.pdf')
+  })
+
+  it('drops the date after the indictment has been replaced', () => {
+    expect(
+      getIndictmentPdfDisplayName({
+        id: 'case-id',
+        caseSentToCourtDate: '2026-10-21T12:00:00.000Z',
+        indictmentHash: JSON.stringify({
+          hash: 'replaced',
+          replaced: true,
+        }),
+      } as CaseFilesListCase),
+    ).toBe('Ákæra.pdf')
   })
 })
