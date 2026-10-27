@@ -77,6 +77,12 @@ const StandaloneParentSubpage: Screen<
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
 
+  const indexableBySearchEngine = subpage.hideFromExternalSearchEngines
+    ? false
+    : organizationPage.organization?.canPagesBeFoundInSearchResults ??
+      organizationPage.canBeFoundInSearchResults ??
+      true
+
   return (
     <StandaloneLayout
       organizationPage={organizationPage}
@@ -84,7 +90,7 @@ const StandaloneParentSubpage: Screen<
         title: `${subpage.title} | ${organizationPage.title}`,
       }}
     >
-      {subpage.hideFromExternalSearchEngines && (
+      {!indexableBySearchEngine && (
         <Head>
           <meta name="robots" content="noindex, nofollow" />
         </Head>
