@@ -1,6 +1,6 @@
 # Remaining services: message-handler, scheduler, xrd-api, digital-mailbox-api
 
-Status (2026-10-23): message-handler + scheduler built (`terraform/dev/judicial_message_handler.tf`, `judicial_scheduler.tf`). xrd-api + digital-mailbox-api still plan only.
+Status (2026-10-23): message-handler + scheduler built (`terraform/dev/judicial_message_handler.tf`, `judicial_scheduler.tf`). xrd-api + digital-mailbox-api built 2026-10-27 (`terraform/dev/judicial_xroad_apis.tf`): ecs_service_worker + CloudMap `judicial-system-<svc>.dmr.local:3333`, no ALB. Not reachable yet: still needs SS -> judicial ingress (SG rule from the X-Road VPC `10.67.0.0/24` on 3333, plus a name the SS can resolve) and the services published on the SS. ERROR_EVENT_URL reuses the `backend/` secret.
 Owner of deploy Terraform: `terraform/dev/` in this repo (same `ecs_service` pattern as web/api/backend).
 
 ## The four services

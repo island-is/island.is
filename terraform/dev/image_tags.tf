@@ -18,6 +18,9 @@ locals {
     # Kept in dev_<sha>_<rand> shape because dd version = split("_", tag)[1].
     message-handler = "dev_bootstrap_none"
     scheduler       = "dev_bootstrap_none"
+
+    xrd-api             = "dev_bootstrap_none"
+    digital-mailbox-api = "dev_bootstrap_none"
   }
 
   judicial_web_image_tag             = aws_ssm_parameter.image_tag["web"].insecure_value

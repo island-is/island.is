@@ -23,7 +23,7 @@ on:
     inputs:
       images:
         description: Comma-separated images to build
-        default: web,api,backend,message-handler,scheduler
+        default: web,api,backend,message-handler,scheduler,xrd-api,digital-mailbox-api
       deploy:
         description: Deploy the built images to judicial dev
         type: boolean
@@ -62,7 +62,7 @@ jobs:
       # Projects come from the same matrix file docker-build.sh reads.
       - id: m
         env:
-          IMAGES: ${{ inputs.images || 'web,api,backend,message-handler,scheduler' }}
+          IMAGES: ${{ inputs.images || 'web,api,backend,message-handler,scheduler,xrd-api,digital-mailbox-api' }}
         run: |
           m=scripts/dmr/docker-build-matrix.json
           echo "projects=$(jq -c '[.services[].app]' "$m")" >> "$GITHUB_OUTPUT"
