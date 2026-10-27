@@ -1023,6 +1023,12 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths DeleteAppealCourtSession 1`] = `
+Array [
+  "deleteAppealCourtSession.deleted",
+]
+`;
+
 exports[`GraphQL operations select these field paths DeleteAppealSummons 1`] = `
 Array [
   "deleteAppealSummons.deleted",
@@ -2045,6 +2051,16 @@ Array [
   "updateAppealCase.isAppealCustodyIsolation",
   "updateAppealCase.prosecutorStatementDate",
   "updateAppealCase.requestAppealRulingNotToBePublished",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateAppealCourtSession 1`] = `
+Array [
+  "updateAppealCourtSession.courtRoom",
+  "updateAppealCourtSession.created",
+  "updateAppealCourtSession.id",
+  "updateAppealCourtSession.sessionDate",
+  "updateAppealCourtSession.sessionType",
 ]
 `;
 
