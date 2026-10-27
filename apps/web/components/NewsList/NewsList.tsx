@@ -102,10 +102,7 @@ export const NewsList = ({
             </Tag>
           </LinkV2>
           {filteredNewsTags?.map((tag, index) => (
-            <LinkV2
-              key={index}
-              href={newsOverviewUrl + '?tag=' + tag.slug}
-            >
+            <LinkV2 key={index} href={newsOverviewUrl + '?tag=' + tag.slug}>
               <Tag
                 key={index}
                 variant="blue"
