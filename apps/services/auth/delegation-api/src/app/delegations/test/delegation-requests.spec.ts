@@ -137,12 +137,21 @@ describe('DelegationRequestsController', () => {
   it('accepts relationship and reason up to the validated length', async () => {
     const res = await server.post(path).send({
       ...validBody(),
-      relationship: 'a'.repeat(1024),
+      relationship: 'a'.repeat(64),
       reason: 'b'.repeat(1024),
     })
 
     expect(res.status).toEqual(201)
   })
+
+  it.each(['a'.repeat(65), 'island-is.example', 'https://example', 'a@b'])(
+    'rejects a relationship the grantor could read as a link or address: %s',
+    async (relationship) => {
+      const res = await server.post(path).send({ ...validBody(), relationship })
+
+      expect(res.status).toEqual(400)
+    },
+  )
 
   it('still creates the request when the notification fails', async () => {
     jest
@@ -222,6 +231,21 @@ describe('DelegationRequestsController', () => {
 
     expect(third.status).toEqual(400)
     expect(third.body.detail).toEqual(DelegationRequestError.TooManyPending)
+  })
+
+  it('holds the pending cap when requests are sent at the same time', async () => {
+    const results = await Promise.all(
+      Array.from({ length: 4 }, () =>
+        server.post(path).send({
+          ...validBody(),
+          toGranterNationalId: createNationalId('person'),
+        }),
+      ),
+    )
+
+    expect(results.map((res) => res.status).sort()).toEqual([
+      201, 201, 400, 400,
+    ])
   })
 
   it('blocks a requester with too many recent rejections', async () => {

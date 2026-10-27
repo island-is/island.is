@@ -9,6 +9,7 @@ import {
   IsEnum,
   IsOptional,
   IsString,
+  Matches,
   MaxLength,
   MinLength,
   ValidateNested,
@@ -85,9 +86,11 @@ export class CreateDelegationRequestDTO {
   })
   toGranterNationalId!: string
 
+  // Shown to the grantor in a notification, so nothing that reads as a link or address.
   @IsString()
   @MinLength(1)
-  @MaxLength(1024)
+  @MaxLength(64)
+  @Matches(/^[^.:/\\@<>]+$/)
   @ApiProperty({ description: "The requester's relationship to the grantor." })
   relationship!: string
 

@@ -4,6 +4,7 @@ import faker from 'faker'
 import request from 'supertest'
 
 import {
+  Delegation,
   DelegationConfirmation,
   DelegationConfirmationStatus,
   DelegationRequest,
@@ -29,6 +30,8 @@ import { setupWithAuth } from '../../../../test/setup'
 
 const SENSITIVE_SCOPE = '@island.is/health/records'
 const ORDINARY_SCOPE = '@island.is/finances/schedule'
+const OTHER_DOMAIN = 'other-domain'
+const OTHER_DOMAIN_SCOPE = 'other-domain/ordinary'
 
 const grantorNationalId = createNationalId('person')
 
@@ -99,6 +102,16 @@ describe('Delegation requests with sensitive scopes', () => {
         },
       ],
     })
+    await new FixtureFactory(app).createDomain({
+      name: OTHER_DOMAIN,
+      apiScopes: [
+        {
+          name: OTHER_DOMAIN_SCOPE,
+          allowExplicitDelegationGrant: true,
+          grantToAuthenticatedUser: true,
+        },
+      ],
+    })
   })
 
   beforeEach(() => {
@@ -124,7 +137,9 @@ describe('Delegation requests with sensitive scopes', () => {
     await app.cleanUp()
   })
 
-  const createRequest = async () => {
+  const createRequest = async (
+    scopeNames = [ORDINARY_SCOPE, SENSITIVE_SCOPE],
+  ) => {
     const requesterNationalId = createNationalId('person')
     const created = await app.get(getModelToken(DelegationRequest)).create({
       id: faker.datatype.uuid(),
@@ -137,7 +152,7 @@ describe('Delegation requests with sensitive scopes', () => {
       expiresAt: addYears(new Date(), 1),
     })
     await app.get(getModelToken(DelegationRequestScope)).bulkCreate(
-      [ORDINARY_SCOPE, SENSITIVE_SCOPE].map((scopeName) => ({
+      scopeNames.map((scopeName) => ({
         id: faker.datatype.uuid(),
         delegationRequestId: created.id,
         scopeName,
@@ -146,13 +161,26 @@ describe('Delegation requests with sensitive scopes', () => {
     return created.id as string
   }
 
-  const approveBoth = (id: string) =>
+  const approveScopes = (id: string, scopeNames: string[]) =>
     svc.approve(grantor, id, {
-      scopes: [ORDINARY_SCOPE, SENSITIVE_SCOPE].map((name) => ({
+      scopes: scopeNames.map((name) => ({
         name,
         validTo: addYears(new Date(), 1),
       })),
     })
+
+  const approveBoth = (id: string) =>
+    approveScopes(id, [ORDINARY_SCOPE, SENSITIVE_SCOPE])
+
+  const requesterOf = async (id: string) =>
+    createCurrentUser({
+      nationalId: (await app.get(getModelToken(DelegationRequest)).findByPk(id))
+        .toNationalId,
+      scope: [...delegationScopes],
+    })
+
+  const delegationExists = async (delegationId: string) =>
+    Boolean(await app.get(getModelToken(Delegation)).findByPk(delegationId))
 
   const scopeNamesFor = async (delegationId: string) =>
     (
@@ -227,11 +255,110 @@ describe('Delegation requests with sensitive scopes', () => {
       .findByPk(confirmationId)
     expect(confirmation.status).toEqual(DelegationConfirmationStatus.Superseded)
     expect(
-      await scopeNamesFor(approved.resolvedDelegationId as string),
-    ).toEqual([])
+      await delegationExists(approved.resolvedDelegationId as string),
+    ).toBe(false)
+    const rejected = await svc.findById(grantor, id)
+    expect(rejected.status).toEqual(DelegationRequestStatus.Rejected)
+    expect(rejected.resolvedDelegationId).toBeNull()
+  })
+
+  it('removes the held delegation when the requester cancels', async () => {
+    const id = await createRequest()
+    const approved = await approveBoth(id)
+
+    await svc.cancel(await requesterOf(id), id)
+
+    expect(
+      await delegationExists(approved.resolvedDelegationId as string),
+    ).toBe(false)
     expect((await svc.findById(grantor, id)).status).toEqual(
-      DelegationRequestStatus.Rejected,
+      DelegationRequestStatus.Cancelled,
     )
+  })
+
+  it('does not let a cancel override a grant the grantor already confirmed', async () => {
+    const id = await createRequest()
+    const approved = await approveBoth(id)
+    await confirmedOnPhone(approved.pendingConfirmations?.[0].id as string)
+
+    await expect(svc.cancel(await requesterOf(id), id)).rejects.toThrow(
+      'not pending',
+    )
+
+    const result = await svc.findById(grantor, id)
+    expect(result.status).toEqual(DelegationRequestStatus.Approved)
+    expect(await scopeNamesFor(result.resolvedDelegationId as string)).toEqual(
+      [SENSITIVE_SCOPE, ORDINARY_SCOPE].sort(),
+    )
+  })
+
+  it('does not let a reject override a grant the grantor already confirmed', async () => {
+    const id = await createRequest()
+    const approved = await approveBoth(id)
+    await confirmedOnPhone(approved.pendingConfirmations?.[0].id as string)
+
+    await expect(svc.reject(grantor, id)).rejects.toThrow('not pending')
+
+    expect((await svc.findById(grantor, id)).status).toEqual(
+      DelegationRequestStatus.Approved,
+    )
+  })
+
+  it('approves a confirmed request even once it is past its expiry', async () => {
+    const id = await createRequest()
+    const approved = await approveBoth(id)
+    await confirmedOnPhone(approved.pendingConfirmations?.[0].id as string)
+    await app
+      .get(getModelToken(DelegationRequest))
+      .update({ expiresAt: new Date(Date.now() - 1000) }, { where: { id } })
+
+    expect((await svc.findById(grantor, id)).status).toEqual(
+      DelegationRequestStatus.Approved,
+    )
+  })
+
+  it('holds every domain of the request until the sensitive scopes are confirmed', async () => {
+    const id = await createRequest([SENSITIVE_SCOPE, OTHER_DOMAIN_SCOPE])
+
+    const approved = await approveScopes(id, [
+      SENSITIVE_SCOPE,
+      OTHER_DOMAIN_SCOPE,
+    ])
+
+    expect(ciba.start).toHaveBeenCalledTimes(1)
+    expect(approved.status).toEqual(DelegationRequestStatus.Pending)
+    expect(approved.pendingConfirmations).toHaveLength(2)
+    const otherDomainDelegation = await app
+      .get(getModelToken(Delegation))
+      .findOne({
+        where: {
+          fromNationalId: grantorNationalId,
+          toNationalId: approved.toNationalId,
+          domainName: OTHER_DOMAIN,
+        },
+      })
+    expect(await scopeNamesFor(otherDomainDelegation.id)).toEqual([])
+
+    await confirmedOnPhone(approved.pendingConfirmations?.[0].id as string)
+
+    expect((await svc.findById(grantor, id)).status).toEqual(
+      DelegationRequestStatus.Approved,
+    )
+    expect(await scopeNamesFor(otherDomainDelegation.id)).toEqual([
+      OTHER_DOMAIN_SCOPE,
+    ])
+  })
+
+  it('grants a request without sensitive scopes straight away', async () => {
+    const id = await createRequest([ORDINARY_SCOPE, OTHER_DOMAIN_SCOPE])
+
+    const approved = await approveScopes(id, [
+      ORDINARY_SCOPE,
+      OTHER_DOMAIN_SCOPE,
+    ])
+
+    expect(ciba.start).not.toHaveBeenCalled()
+    expect(approved.status).toEqual(DelegationRequestStatus.Approved)
   })
 
   it('supersedes an earlier confirmation when approving again', async () => {

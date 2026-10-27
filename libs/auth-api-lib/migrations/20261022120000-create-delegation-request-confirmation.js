@@ -41,6 +41,10 @@ module.exports = {
       type: 'unique',
       name: 'delegation_request_confirmation_unique',
     })
+    await queryInterface.addIndex('delegation_request_confirmation', {
+      name: 'delegation_request_confirmation_confirmation_idx',
+      fields: ['delegation_confirmation_id'],
+    })
   },
 
   async down(queryInterface) {

@@ -43,7 +43,7 @@ export class DelegationRequestDelegation extends Model<
   })
   delegationRequestId!: string
 
-  @BelongsTo(() => DelegationRequest)
+  @BelongsTo(() => DelegationRequest, { onDelete: 'CASCADE' })
   delegationRequest?: DelegationRequest
 
   @ForeignKey(() => Delegation)
@@ -53,7 +53,7 @@ export class DelegationRequestDelegation extends Model<
   })
   delegationId!: string
 
-  @BelongsTo(() => Delegation)
+  @BelongsTo(() => Delegation, { onDelete: 'CASCADE' })
   delegation?: Delegation
 
   @CreatedAt

@@ -150,6 +150,10 @@ module.exports = {
       name: 'delegation_request_to_status_idx',
       fields: ['to_national_id', 'status'],
     })
+    await queryInterface.addIndex('delegation_request_scope', {
+      name: 'delegation_request_scope_request_idx',
+      fields: ['delegation_request_id'],
+    })
   },
 
   async down(queryInterface) {
