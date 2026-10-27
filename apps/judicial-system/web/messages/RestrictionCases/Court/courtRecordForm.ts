@@ -24,7 +24,8 @@ export const rcCourtRecord = {
     },
     conclusion: 'Úrskurðarorð',
     custodyRestrictions: {
-      disclaimerV2: 'Dómari bendir varnaraðila á að honum sé heimilt að bera atriði er lúta að framkvæmd {caseType, select, ADMISSION_TO_FACILITY {vistunarinnar á viðeigandi stofnun} TRAVEL_BAN {farbannsins} other {gæsluvarðhaldsins}} undir dómara.',
+      disclaimerV2:
+        'Dómari bendir varnaraðila á að unnt er að bera atriði er varða framkvæmd gæsluvarðhalds undir dómara.',
     },
     endOfSessionBookings: {
       title: 'Bókanir í lok þinghalds',
