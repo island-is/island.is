@@ -96,11 +96,7 @@ export const NewsList = ({
 
       {filteredNewsTags && filteredNewsTags?.length > 0 && (
         <Inline space={1}>
-          <LinkV2
-            href={
-              linkResolver('organizationnewsoverview', [parentPageSlug]).href
-            }
-          >
+          <LinkV2 href={newsOverviewUrl}>
             <Tag variant="blue" active={!router?.query?.tag}>
               {n('showAllResults', 'Sýna allt')}
             </Tag>
@@ -108,12 +104,7 @@ export const NewsList = ({
           {filteredNewsTags?.map((tag, index) => (
             <LinkV2
               key={index}
-              href={
-                linkResolver('organizationnewsoverview', [parentPageSlug])
-                  .href +
-                '?tag=' +
-                tag.slug
-              }
+              href={newsOverviewUrl + '?tag=' + tag.slug}
             >
               <Tag
                 key={index}

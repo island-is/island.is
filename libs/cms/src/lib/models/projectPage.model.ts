@@ -75,6 +75,9 @@ export class ProjectPage {
   @CacheField(() => GenericTag, { nullable: true })
   newsTag!: GenericTag | null
 
+  @CacheField(() => [GenericTag], { nullable: true })
+  secondaryNewsTags?: GenericTag[] | null
+
   @CacheField(() => [ProjectSubpage])
   projectSubpages!: Array<ProjectSubpage>
 
@@ -244,6 +247,7 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
       .map(safelyMapSliceUnion)
       .filter(Boolean),
     newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
+    secondaryNewsTags: (fields.secondaryNewsTags ?? []).map(mapGenericTag),
     projectSubpages: (fields.projectSubpages ?? [])
       .filter((p) => p.fields?.title)
       .map(mapProjectSubpage),
