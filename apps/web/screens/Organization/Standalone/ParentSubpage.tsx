@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 import {
@@ -83,6 +84,11 @@ const StandaloneParentSubpage: Screen<
         title: `${subpage.title} | ${organizationPage.title}`,
       }}
     >
+      {subpage.hideFromExternalSearchEngines && (
+        <Head>
+          <meta name="robots" content="noindex, nofollow" />
+        </Head>
+      )}
       <LanguageToggleSetup
         ids={[organizationPage.id, parentSubpage.id, subpage.id]}
       />

@@ -102,6 +102,9 @@ const OrganizationParentSubpage: Screen<
       pageTitle={pageTitle}
       organizationPage={organizationPage}
       organizationSubpageId={subpage.id}
+      hideFromExternalSearchEngines={
+        subpage.hideFromExternalSearchEngines ?? false
+      }
       fullWidthContent={true}
       pageFeaturedImage={
         subpage?.featuredImage ?? organizationPage?.featuredImage
