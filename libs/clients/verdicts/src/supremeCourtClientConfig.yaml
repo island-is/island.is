@@ -296,6 +296,10 @@ paths:
                     type: integer
                   message:
                     type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getVerdicts:
     post:
@@ -323,7 +327,7 @@ paths:
                     type: string
                   currentPage:
                     type: integer
-                  itemsPerPage:
+                  limit:
                     type: integer
                   succeeded:
                     type: boolean
@@ -331,6 +335,8 @@ paths:
                     type: integer
                   message:
                     type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getAgenda/{id}:
     get:
@@ -357,6 +363,10 @@ paths:
                     type: integer
                   message:
                     type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getAgendas:
     post:
@@ -384,7 +394,7 @@ paths:
                     type: string
                   currentPage:
                     type: integer
-                  itemsPerPage:
+                  limit:
                     type: integer
                   succeeded:
                     type: boolean
@@ -392,6 +402,8 @@ paths:
                     type: integer
                   message:
                     type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getDetermination/{id}:
     get:
@@ -418,6 +430,10 @@ paths:
                     type: integer
                   message:
                     type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getDeterminations:
     get:
@@ -451,12 +467,10 @@ paths:
           in: query
           required: false
           schema:
-            type: array
-            items:
-              type: string
+            type: string
           style: form
-          explode: true
-          description: 'Filter by case types (e.g., caseTypes[]=Kæruleyfi)'
+          explode: false
+          description: 'Comma-separated case type labels (e.g., caseTypes=Kæruleyfi,Einkamál)'
       responses:
         '200':
           description: Successful response
@@ -470,10 +484,10 @@ paths:
                     items:
                       $ref: '#/components/schemas/DetailedVerdictData'
                   total:
-                    type: integer
+                    type: string
                   currentPage:
                     type: integer
-                  itemsPerPage:
+                  limit:
                     type: integer
                   succeeded:
                     type: boolean
@@ -481,6 +495,8 @@ paths:
                     type: integer
                   message:
                     type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
   /api/v2/Verdict/getAppeal/{id}:
     get:
       summary: Get a specific appeal by ID
@@ -506,6 +522,10 @@ paths:
                     type: integer
                   message:
                     type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getAppeals:
     get:
@@ -540,7 +560,7 @@ paths:
                     type: integer
                   currentPage:
                     type: integer
-                  itemsPerPage:
+                  limit:
                     type: integer
                   succeeded:
                     type: boolean
@@ -548,6 +568,8 @@ paths:
                     type: integer
                   message:
                     type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getLawyers:
     get:
@@ -582,7 +604,7 @@ paths:
                     type: integer
                   currentPage:
                     type: integer
-                  itemsPerPage:
+                  limit:
                     type: integer
                   succeeded:
                     type: boolean
@@ -590,3 +612,5 @@ paths:
                     type: integer
                   message:
                     type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
