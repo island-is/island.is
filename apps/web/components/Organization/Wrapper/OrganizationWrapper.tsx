@@ -26,7 +26,6 @@ import {
   LinkV2,
   Navigation,
   NavigationItem,
-  ProfileCard,
   ResponsiveSpace,
   Stack,
   Text,
@@ -40,16 +39,14 @@ import {
   HeadWithSocialSharing,
   OrganizationSearchInput,
   SearchBox,
+  SidebarCard,
   SidebarShipSearchInput,
   Sticky,
   WebChat,
   Webreader,
 } from '@island.is/web/components'
 import { DefaultHeader } from '@island.is/web/components'
-import {
-  SLICE_SPACING,
-  STICKY_NAV_MAX_WIDTH_LG,
-} from '@island.is/web/constants'
+import { SLICE_SPACING } from '@island.is/web/constants'
 import { GlobalContext } from '@island.is/web/context'
 import {
   GetWebChatQuery,
@@ -894,22 +891,11 @@ export const OrganizationWrapper: React.FC<
                   >
                     {(organizationPage.sidebarCards ?? []).map((card) => {
                       if (card.__typename === 'SidebarCard') {
-                        let imageUrl =
-                          card.image?.url ||
-                          'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
-
-                        imageUrl += `?w=${STICKY_NAV_MAX_WIDTH_LG}`
-
                         return (
-                          <ProfileCard
+                          <SidebarCard
                             key={card.id}
-                            title={card.title}
-                            description={card.contentString}
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-ignore make web strict
-                            link={card.link}
-                            image={imageUrl}
-                            size="small"
+                            sidebarCard={card}
+                            showImage={true}
                           />
                         )
                       }
@@ -1037,15 +1023,7 @@ export const OrganizationWrapper: React.FC<
               <Stack space={3}>
                 {sidebarCards.map((card) => {
                   if (card.__typename === 'SidebarCard') {
-                    return (
-                      <ProfileCard
-                        key={card.id}
-                        title={card.title}
-                        description={card.contentString}
-                        link={card.link ?? undefined}
-                        size="small"
-                      />
-                    )
+                    return <SidebarCard key={card.id} sidebarCard={card} />
                   }
 
                   if (card.__typename === 'ConnectedComponent') {

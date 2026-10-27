@@ -32,6 +32,9 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           url
         }
       }
+      sidebarCards {
+        ...SidebarCardFields
+      }
       footerConfig
       footerItems {
         title

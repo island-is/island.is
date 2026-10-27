@@ -22,6 +22,7 @@ import {
   OrganizationTheme,
 } from './organizationTheme.model'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
+import { mapSidebarCard, SidebarCard } from './sidebarCard.model'
 
 @ObjectType()
 class ProjectPageThemeProperties extends OrganizationTheme {}
@@ -53,6 +54,9 @@ export class ProjectPage {
 
   @CacheField(() => LinkGroup, { nullable: true })
   secondarySidebar?: LinkGroup | null
+
+  @CacheField(() => [SidebarCard], { nullable: true })
+  sidebarCards?: Array<SidebarCard> | null
 
   @Field()
   subtitle!: string
@@ -236,6 +240,9 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
     secondarySidebar: fields.secondarySidebar
       ? mapLinkGroup(fields.secondarySidebar)
       : null,
+    sidebarCards: (fields.sidebarCards ?? [])
+      .filter((card) => card.fields)
+      .map(mapSidebarCard),
     subtitle: fields.subtitle ?? '',
     intro: fields.intro ?? '',
     content: fields.content
@@ -247,7 +254,9 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
       .map(safelyMapSliceUnion)
       .filter(Boolean),
     newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
-    secondaryNewsTags: (fields.secondaryNewsTags ?? []).map(mapGenericTag),
+    secondaryNewsTags: (fields.secondaryNewsTags ?? [])
+      .filter((tag) => tag.fields)
+      .map(mapGenericTag),
     projectSubpages: (fields.projectSubpages ?? [])
       .filter((p) => p.fields?.title)
       .map(mapProjectSubpage),

@@ -4260,6 +4260,9 @@ export interface IProjectPageFields {
   /** Secondary Sidebar */
   secondarySidebar?: ILinkGroup | undefined
 
+  /** Sidebar Cards */
+  sidebarCards?: ISidebarCard[] | undefined
+
   /** Subtitle */
   subtitle?: string | undefined
 
