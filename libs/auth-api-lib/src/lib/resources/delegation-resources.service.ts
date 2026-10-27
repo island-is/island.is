@@ -129,18 +129,25 @@ export class DelegationResourcesService {
     }
 
     return new Map(
-      scopes.map((scope) => [
-        scope.name,
-        {
-          name: scope.name,
-          domainName: scope.domainName,
-          delegationTypes: typesByScope.get(scope.name) ?? [],
-          requestable: {
-            individual: individual.has(scope.name),
-            company: company.has(scope.name),
+      scopes
+        .filter(
+          (scope) =>
+            individual.has(scope.name) ||
+            company.has(scope.name) ||
+            typesByScope.has(scope.name),
+        )
+        .map((scope) => [
+          scope.name,
+          {
+            name: scope.name,
+            domainName: scope.domainName,
+            delegationTypes: typesByScope.get(scope.name) ?? [],
+            requestable: {
+              individual: individual.has(scope.name),
+              company: company.has(scope.name),
+            },
           },
-        },
-      ]),
+        ]),
     )
   }
 

@@ -580,6 +580,12 @@ describe('ScopesController', () => {
         }),
         factory.createApiScope({
           ...base,
+          name: 'settings/guardian-only',
+          allowExplicitDelegationGrant: false,
+          supportedDelegationTypes: [AuthDelegationType.LegalGuardian],
+        }),
+        factory.createApiScope({
+          ...base,
           name: 'settings/access-controlled',
           isAccessControlled: true,
         }),
@@ -607,12 +613,13 @@ describe('ScopesController', () => {
       await app.cleanUp()
     })
 
-    it('returns how each scope can be delegated, for a user without delegation scopes', async () => {
+    it('returns how delegation-relevant scopes can be delegated, for a user without delegation scopes', async () => {
       const res = await server.get(
         query([
           'settings/personal',
           'settings/company',
           'settings/not-delegatable',
+          'settings/guardian-only',
           'settings/access-controlled',
           'settings/disabled',
           'settings/unknown',
@@ -624,9 +631,8 @@ describe('ScopesController', () => {
         res.body.scopes.map((s: { name: string }) => [s.name, s]),
       )
       expect(Object.keys(byName).sort()).toEqual([
-        'settings/access-controlled',
         'settings/company',
-        'settings/not-delegatable',
+        'settings/guardian-only',
         'settings/personal',
       ])
       expect(byName['settings/personal']).toMatchObject({
@@ -641,13 +647,9 @@ describe('ScopesController', () => {
         individual: false,
         company: true,
       })
-      expect(byName['settings/not-delegatable'].requestable).toEqual({
-        individual: false,
-        company: false,
-      })
-      expect(byName['settings/access-controlled'].requestable).toEqual({
-        individual: false,
-        company: false,
+      expect(byName['settings/guardian-only']).toMatchObject({
+        delegationTypes: [AuthDelegationType.LegalGuardian],
+        requestable: { individual: false, company: false },
       })
     })
 
@@ -664,10 +666,7 @@ describe('ScopesController', () => {
         individual: false,
         company: true,
       })
-      expect(byName['settings/custom-only'].requestable).toEqual({
-        individual: false,
-        company: false,
-      })
+      expect(byName['settings/custom-only']).toBeUndefined()
     })
 
     it('requires at least one scope', async () => {
