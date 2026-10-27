@@ -17,7 +17,6 @@ import { DelegationSection } from './DelegationSection'
 interface DelegationsResultsProps {
   outgoing: DelegationView[]
   incoming: DelegationView[]
-  /** The organization's clients. Enables the client filter when set. */
   clients?: ClientView[]
   renderRowActions?: (delegation: DelegationView) => ReactNode
 }

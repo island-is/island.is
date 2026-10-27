@@ -10,9 +10,6 @@ export const allowedScopes: string[] = [
   AdminPortalScope.delegationSystemInstitution,
 ]
 
-/**
- * Users with only the institution scope get the per-client overview of their
- * own organization instead of the national delegation lookup.
- */
+/** Admin scopes take precedence over the institution scope. */
 export const hasDelegationAdminAccess = (scopes: string[]) =>
   scopes.some((scope) => adminScopes.includes(scope))

@@ -57,6 +57,13 @@ export class DelegationOverviewDelegationDto {
     description: 'The organization clients the delegation applies to.',
   })
   clientIds!: string[]
+
+  @ApiProperty({
+    type: [String],
+    description:
+      'The organization clients the delegation can currently be used to log in to.',
+  })
+  loginClientIds!: string[]
 }
 
 export class DelegationOverviewClientDto {

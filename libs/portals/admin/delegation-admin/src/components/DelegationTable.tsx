@@ -24,7 +24,6 @@ type SortKey = 'name' | 'validTo'
 interface DelegationTableProps {
   delegations: DelegationView[]
   direction: 'incoming' | 'outgoing'
-  /** Rendered in the expanded row, below the delegation's scopes. */
   renderRowActions?: (delegation: DelegationView) => ReactNode
 }
 

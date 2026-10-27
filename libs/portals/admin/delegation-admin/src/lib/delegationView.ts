@@ -25,22 +25,19 @@ export interface DelegationScopeView {
   validTo?: string | null
 }
 
-/** A delegation as shown in the delegation tables. */
 export interface DelegationView {
   id: string
   type: AuthDelegationType
   from: Person
   to: Person
-  /** The domain the delegation was given in, for custom delegations. */
   domain?: DomainView | null
   referenceId?: string | null
   validTo?: string | null
   isActive: boolean
-  /** When the delegation index was last refreshed for the recipient. */
   indexedAt?: string | null
   scopes: DelegationScopeView[]
-  /** Organization clients the delegation applies to, when known. */
   clientIds?: string[]
+  loginClientIds?: string[]
 }
 
 export interface ClientView {
@@ -90,7 +87,6 @@ export const latestValidTo = (scopes: DelegationScopeView[]) => {
   )
 }
 
-/** Maps a delegation from the national delegation lookup. */
 export const fromCustomDelegation = (
   delegation: Pick<
     AuthCustomDelegation,
@@ -127,13 +123,16 @@ export const fromCustomDelegation = (
   }
 }
 
-/**
- * Types that are only written to the delegation index when the recipient's
- * delegations are fully reindexed, so they can be missing or stale.
- */
+/** These types are only indexed when the recipient logs in, so they can be stale. */
 export const isIndexOnlyType = (type: AuthDelegationType) =>
   type !== AuthDelegationType.Custom &&
   type !== AuthDelegationType.GeneralMandate
+
+/** Expired delegations are kept so they can still be found with the status filter. */
+const appliesToClient = (delegation: DelegationView, clientId: string) =>
+  delegation.isActive
+    ? !!delegation.loginClientIds?.includes(clientId)
+    : !!delegation.clientIds?.includes(clientId)
 
 export const filterDelegations = (
   delegations: DelegationView[],
@@ -146,6 +145,6 @@ export const filterDelegations = (
   delegations.filter(
     (d) =>
       (status === 'all' || (status === 'active') === d.isActive) &&
-      (!clientId || d.clientIds?.includes(clientId)) &&
+      (!clientId || appliesToClient(d, clientId)) &&
       (!domainName || d.domain?.name === domainName),
   )

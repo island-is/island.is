@@ -1,8 +1,6 @@
 'use strict'
 
-// The primary key starts with to_national_id, so lookups by the giver of a
-// delegation (from_national_id) scan the whole table without this index.
-// Created concurrently to avoid locking the table, which can't run in a transaction.
+// The primary key starts with to_national_id. Concurrently, so no transaction.
 module.exports = {
   async up(queryInterface) {
     await queryInterface.addIndex('delegation_index', ['from_national_id'], {

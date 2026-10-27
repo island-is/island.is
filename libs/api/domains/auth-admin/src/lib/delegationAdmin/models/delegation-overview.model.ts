@@ -48,6 +48,12 @@ export class DelegationOverviewDelegationModel {
 
   @Field(() => [String])
   clientIds!: string[]
+
+  @Field(() => [String], {
+    description:
+      'The organization clients the delegation can currently be used to log in to.',
+  })
+  loginClientIds!: string[]
 }
 
 @ObjectType('DelegationOverviewClient')

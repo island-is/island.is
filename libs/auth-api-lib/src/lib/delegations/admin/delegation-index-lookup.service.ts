@@ -16,24 +16,14 @@ export interface IndexedDelegation {
   record: DelegationIndex
   /** The type as stored, e.g. `PersonalRepresentative:postholf`. */
   storedType: string
-  /** The type with personal representative rights collapsed. */
   type: AuthDelegationType
   provider: AuthDelegationProvider
   /** Index records have no id, so one is derived from the record's key. */
   id: string
-  /**
-   * When the recipient's delegations were last fully reindexed, null if never.
-   * Company and ward delegations are only written by a full reindex, which
-   * happens when the recipient logs in, so this tells how fresh they are.
-   */
+  /** Company and ward delegations are only indexed in the recipient's full reindex. */
   indexedAt: Date | null
 }
 
-/**
- * Reads a person's delegations from the delegation index for admin lookups.
- *
- * The index is best effort, see `indexedAt`.
- */
 @Injectable()
 export class DelegationIndexLookupService {
   constructor(

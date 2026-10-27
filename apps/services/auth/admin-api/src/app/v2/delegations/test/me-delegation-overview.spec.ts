@@ -279,6 +279,7 @@ describe('MeDelegationOverviewController', () => {
           type: AuthDelegationType.Custom,
           isActive: true,
           clientIds: ['own-client-a', 'own-client-b'],
+          loginClientIds: ['own-client-a', 'own-client-b'],
         }),
       ])
       expect(body.outgoing[0].scopes.map((s) => s.scopeName).sort()).toEqual([
@@ -290,6 +291,7 @@ describe('MeDelegationOverviewController', () => {
           id: incoming.id,
           fromNationalId: incoming.fromNationalId,
           clientIds: ['own-client-b'],
+          loginClientIds: ['own-client-b'],
           scopes: [expect.objectContaining({ scopeName: 'own-s2' })],
         }),
       ])
@@ -344,11 +346,13 @@ describe('MeDelegationOverviewController', () => {
             type: AuthDelegationType.ProcurationHolder,
             isActive: true,
             clientIds: ['own-client-no-custom'],
+            loginClientIds: ['own-client-no-custom'],
           }),
           expect.objectContaining({
             fromNationalId: expiredCompanyNationalId,
             isActive: false,
             clientIds: ['own-client-no-custom'],
+            loginClientIds: [],
           }),
         ]),
       )
@@ -360,6 +364,8 @@ describe('MeDelegationOverviewController', () => {
             'own-client-guardian',
             'own-client-guardian-require-scopes',
           ],
+          // No allowed scope of the second client supports guardianship.
+          loginClientIds: ['own-client-guardian'],
         }),
       ])
     })
@@ -392,6 +398,7 @@ describe('MeDelegationOverviewController', () => {
           id: expired.id,
           isActive: false,
           clientIds: ['own-client-a', 'own-client-b'],
+          loginClientIds: [],
         }),
       ])
     })
@@ -452,8 +459,55 @@ describe('MeDelegationOverviewController', () => {
           type: AuthDelegationType.GeneralMandate,
           isActive: true,
           clientIds: ['own-client-general-mandate'],
+          loginClientIds: ['own-client-general-mandate'],
         }),
       ])
+    })
+
+    it('should only give access controlled scopes at login when a company on the access list is the grantor', async () => {
+      // Arrange
+      const nationalId = createNationalId('person')
+      const companyWithAccess = createNationalId('company')
+      await factory.createApiScopeUserAccess({
+        nationalId: companyWithAccess,
+        scope: 'own-protected',
+      })
+      const grantors = {
+        companyWithAccess,
+        companyWithoutAccess: createNationalId('company'),
+        person: createNationalId('person'),
+      }
+      const ids: Record<string, string> = {}
+      for (const [key, fromNationalId] of Object.entries(grantors)) {
+        ids[key] = (
+          await factory.createCustomDelegation({
+            fromNationalId,
+            toNationalId: nationalId,
+            domainName: 'own-domain',
+            scopes: [{ scopeName: 'own-protected' }],
+          })
+        ).id
+      }
+
+      // Act
+      const res = await getRequestMethod(
+        server,
+        'GET',
+      )(path).set('X-Query-National-Id', nationalId)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      const byId = new Map(
+        (res.body as DelegationOverviewDto).incoming.map((d) => [d.id, d]),
+      )
+      for (const id of Object.values(ids)) {
+        expect(byId.get(id)?.clientIds).toEqual(['own-client-protected'])
+      }
+      expect(byId.get(ids.companyWithAccess)?.loginClientIds).toEqual([
+        'own-client-protected',
+      ])
+      expect(byId.get(ids.companyWithoutAccess)?.loginClientIds).toEqual([])
+      expect(byId.get(ids.person)?.loginClientIds).toEqual([])
     })
 
     it('should return no delegations when the person has none on the organization clients', async () => {
