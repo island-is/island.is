@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common'
 import * as kennitala from 'kennitala'
-import { validate as isUuid } from 'uuid'
+import { isUuid } from 'uuidv4'
 
 /**
  * Validates the `X-Query-National-Id` header. Headers can be missing or sent

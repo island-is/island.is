@@ -18,10 +18,7 @@ fragment DelegationOverviewDelegation on DelegationOverviewDelegation {
     validFrom
     validTo
   }
-  clients {
-    clientId
-    hasAccess
-  }
+  clientIds
 }
 
 query getDelegationOverview($nationalId: String!) {

@@ -16,16 +16,6 @@ export class DelegationOverviewScopeDto {
   validTo?: Date | null
 }
 
-export class DelegationOverviewClientAccessDto {
-  @ApiProperty()
-  clientId!: string
-
-  @ApiProperty({
-    description: 'Whether the delegation can currently be used to log in.',
-  })
-  hasAccess!: boolean
-}
-
 export class DelegationOverviewDelegationDto {
   @ApiProperty()
   id!: string
@@ -63,10 +53,10 @@ export class DelegationOverviewDelegationDto {
   scopes!: DelegationOverviewScopeDto[]
 
   @ApiProperty({
-    type: [DelegationOverviewClientAccessDto],
+    type: [String],
     description: 'The organization clients the delegation applies to.',
   })
-  clients!: DelegationOverviewClientAccessDto[]
+  clientIds!: string[]
 }
 
 export class DelegationOverviewClientDto {

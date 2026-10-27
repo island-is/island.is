@@ -40,7 +40,7 @@ export interface DelegationView {
   indexedAt?: string | null
   scopes: DelegationScopeView[]
   /** Organization clients the delegation applies to, when known. */
-  clients?: { clientId: string; hasAccess: boolean }[]
+  clientIds?: string[]
 }
 
 export interface ClientView {
@@ -146,6 +146,6 @@ export const filterDelegations = (
   delegations.filter(
     (d) =>
       (status === 'all' || (status === 'active') === d.isActive) &&
-      (!clientId || d.clients?.some((c) => c.clientId === clientId)) &&
+      (!clientId || d.clientIds?.includes(clientId)) &&
       (!domainName || d.domain?.name === domainName),
   )

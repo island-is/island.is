@@ -20,15 +20,6 @@ export class DelegationOverviewScopeModel {
   validTo?: Date | null
 }
 
-@ObjectType('DelegationOverviewClientAccess')
-export class DelegationOverviewClientAccessModel {
-  @Field(() => String)
-  clientId!: string
-
-  @Field(() => Boolean)
-  hasAccess!: boolean
-}
-
 @ObjectType('DelegationOverviewDelegation')
 export class DelegationOverviewDelegationModel {
   @Field(() => ID)
@@ -55,8 +46,8 @@ export class DelegationOverviewDelegationModel {
   @Field(() => [DelegationOverviewScopeModel])
   scopes!: DelegationOverviewScopeModel[]
 
-  @Field(() => [DelegationOverviewClientAccessModel])
-  clients!: DelegationOverviewClientAccessModel[]
+  @Field(() => [String])
+  clientIds!: string[]
 }
 
 @ObjectType('DelegationOverviewClient')

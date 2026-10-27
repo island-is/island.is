@@ -21,7 +21,6 @@ import { Domain } from '../../resources/models/domain.model'
 import { DelegationConfig } from '../DelegationConfig'
 import { DelegationDTO } from '../dto/delegation.dto'
 import {
-  DelegationOverviewClientAccessDto,
   DelegationOverviewClientDto,
   DelegationOverviewDelegationDto,
   DelegationOverviewDto,
@@ -65,10 +64,8 @@ interface TypeDelegation {
 
 /**
  * Lists the delegations a person has received or given that apply to clients
- * owned by the organization the user is acting on behalf of, and whether each
- * one can currently be used to log in to those clients.
+ * owned by the organization the user is acting on behalf of.
  *
- * Access mirrors the rules applied when delegations are offered at login.
  * Custom delegations and general mandates come from the delegation table and
  * other types from the delegation index. This is a read-only lookup, so it
  * reads the tables directly instead of the login services, which check the
@@ -128,7 +125,7 @@ export class DelegationOverviewService {
     ])
 
     const overview = [
-      ...custom.flatMap((d) => this.toCustomOverview(d, clients, accessList)),
+      ...custom.flatMap((d) => this.toCustomOverview(d, clients)),
       ...typeDelegations.flatMap((d) =>
         this.toTypeOverview(d, clients, accessList),
       ),
@@ -214,7 +211,7 @@ export class DelegationOverviewService {
         archived: null,
         clientType: { [Op.ne]: ClientType.machine },
       },
-      attributes: ['clientId', 'clientName', 'domainName', 'requireApiScopes'],
+      attributes: ['clientId', 'clientName', 'domainName'],
       include: [
         {
           model: Domain,
@@ -302,11 +299,14 @@ export class DelegationOverviewService {
   }
 
   /**
-   * Whether a delegation of the given type from `fromNationalId` can grant
-   * the scope. Access controlled scopes can only be delegated by companies
-   * on the scope's access list.
+   * Whether a delegation of the given type from `fromNationalId` gives the
+   * scope at login, mirroring `checkIfScopeAllowed` in
+   * DelegationsIncomingCustomService. Access controlled scopes are only given
+   * when a company on the scope's access list is the grantor. Not to be
+   * confused with which scopes a user may delegate onwards, see
+   * DelegationResourcesService.
    */
-  private canDelegateScope(
+  private grantsScopeAtLogin(
     scopeName: string,
     scope: ScopeInfo,
     delegationType: string,
@@ -327,9 +327,8 @@ export class DelegationOverviewService {
   private toCustomOverview(
     delegation: DelegationDTO,
     clients: OrganizationClient[],
-    accessList: AccessList,
   ): DelegationOverviewDelegationDto[] {
-    const access: DelegationOverviewClientAccessDto[] = []
+    const clientIds: string[] = []
     const scopes: DelegationOverviewScopeDto[] = []
 
     for (const { client, supportedTypes, scopes: clientScopes } of clients) {
@@ -347,23 +346,7 @@ export class DelegationOverviewService {
         continue
       }
 
-      const validScopes = clientDelegationScopes.filter(isScopeValidNow)
-      const grantedScopes = validScopes.filter((s) =>
-        this.canDelegateScope(
-          s.scopeName,
-          clientScopes.get(s.scopeName) as ScopeInfo,
-          AuthDelegationType.Custom,
-          delegation.fromNationalId,
-          accessList,
-        ),
-      )
-
-      access.push({
-        clientId: client.clientId,
-        hasAccess:
-          validScopes.length > 0 &&
-          (!client.requireApiScopes || grantedScopes.length > 0),
-      })
+      clientIds.push(client.clientId)
       scopes.push(
         ...clientDelegationScopes.map((s) => ({
           scopeName: s.scopeName,
@@ -374,7 +357,7 @@ export class DelegationOverviewService {
       )
     }
 
-    if (access.length === 0 || !delegation.id) {
+    if (clientIds.length === 0 || !delegation.id) {
       return []
     }
 
@@ -389,7 +372,7 @@ export class DelegationOverviewService {
         validTo: latestValidTo(delegationScopes),
         isActive: delegationScopes.some(isScopeValidNow),
         scopes: delegationScopes,
-        clients: access,
+        clientIds,
       },
     ]
   }
@@ -409,7 +392,7 @@ export class DelegationOverviewService {
     if (delegation.storedType !== AuthDelegationType.GeneralMandate) {
       return supportedTypes.has(delegation.storedType)
         ? [...scopes].filter(([name, scope]) =>
-            this.canDelegateScope(
+            this.grantsScopeAtLogin(
               name,
               scope,
               delegation.storedType,
@@ -457,7 +440,7 @@ export class DelegationOverviewService {
     const isActive =
       !delegation.validTo ||
       new Date(delegation.validTo) >= startOfDay(new Date())
-    const access: DelegationOverviewClientAccessDto[] = []
+    const clientIds: string[] = []
     const scopes: DelegationOverviewScopeDto[] = []
 
     for (const orgClient of clients) {
@@ -471,12 +454,7 @@ export class DelegationOverviewService {
         continue
       }
 
-      access.push({
-        clientId: orgClient.client.clientId,
-        hasAccess:
-          isActive &&
-          (!orgClient.client.requireApiScopes || grantedScopes.length > 0),
-      })
+      clientIds.push(orgClient.client.clientId)
       scopes.push(
         ...grantedScopes.map(([scopeName, scope]) => ({
           scopeName,
@@ -487,7 +465,7 @@ export class DelegationOverviewService {
       )
     }
 
-    if (access.length === 0) {
+    if (clientIds.length === 0) {
       return []
     }
 
@@ -501,7 +479,7 @@ export class DelegationOverviewService {
         isActive,
         indexedAt: delegation.indexedAt,
         scopes: uniqBy(scopes, 'scopeName'),
-        clients: access,
+        clientIds,
       },
     ]
   }
