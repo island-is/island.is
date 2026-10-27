@@ -11,9 +11,11 @@ import {
 } from '@island.is/shared/constants'
 
 import { PaymentMethod, PaymentStatus } from '../../types'
+import { FJS_DEBT_ORGANISATION_ID } from '../../utils/fjsDebtPayment'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
+import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
+import { PaymentFulfillment } from '../paymentFlow/models'
 import {
   BankTransferFailureReason,
   BankTransferPayerType,
@@ -22,8 +24,8 @@ import {
 } from './bankTransfer.types'
 import { BankTransferService } from './bankTransfer.service'
 import { BankTransferModuleConfig } from './bankTransfer.config'
-import { BankTransferLocale } from './dtos/createBankTransfer.input'
-import { BankTransferPayment } from './models/bankTransferPayment.model'
+import { BankTransferLocale } from './dtos'
+import { BankTransferPayment } from './models'
 
 const config: ConfigType<typeof BankTransferModuleConfig> = {
   paymentTtlSeconds: 300,
@@ -68,8 +70,12 @@ describe('BankTransferService', () => {
     getPaymentFlowChargeDetails: jest.Mock
     isEligibleToBePaid: jest.Mock
     isBankTransferAllowedForPayer: jest.Mock
+    validateChargePaymentMethod: jest.Mock
     logPaymentFlowUpdate: jest.Mock
+    logDebtPaymentFinalized: jest.Mock
+    logDebtPaymentRejected: jest.Mock
   }
+  let debtSettlementService: { attempt: jest.Mock }
 
   beforeEach(() => {
     logger = createMockLogger()
@@ -105,9 +111,14 @@ describe('BankTransferService', () => {
         totalPrice: 14000,
       }),
       isEligibleToBePaid: jest.fn().mockResolvedValue(true),
+      hasPaymentCompletedEvent: jest.fn().mockResolvedValue(false),
       isBankTransferAllowedForPayer: jest.fn().mockResolvedValue(true),
+      validateChargePaymentMethod: jest.fn(),
       logPaymentFlowUpdate: jest.fn().mockResolvedValue(undefined),
+      logDebtPaymentFinalized: jest.fn().mockResolvedValue(undefined),
+      logDebtPaymentRejected: jest.fn().mockResolvedValue(undefined),
     }
+    debtSettlementService = { attempt: jest.fn() }
     blikkClient = {
       createPayment: jest.fn(),
       getPayment: jest.fn(),
@@ -121,6 +132,7 @@ describe('BankTransferService', () => {
       paymentFlowService as unknown as PaymentFlowService,
       paymentFlowConfig,
       blikkClient as unknown as BlikkClientService,
+      debtSettlementService as unknown as DebtSettlementService,
     )
   })
 
@@ -598,6 +610,113 @@ describe('BankTransferService', () => {
       expect(rowArg.scaRedirectUrl).toBe('https://blikk/sca')
     })
 
+    describe('payer bank', () => {
+      const bankAccountNumber = '053726123456'
+
+      it('stores the bank part of the account number on the row and logs the bank', async () => {
+        mockBlikkCreate()
+
+        await service.create({ ...createInput, bankAccountNumber })
+
+        const rowArg = bankTransferPaymentModel.create.mock.calls[0][0]
+        expect(rowArg.bankCode).toBe('0537')
+        expect(JSON.stringify(rowArg)).not.toContain('26123456')
+        const [update] = paymentFlowService.logPaymentFlowUpdate.mock.calls[0]
+        expect(update.reason).toBe('payment_started')
+        expect(update.logContext).toMatchObject({
+          bankCode: '0537',
+          bank: 'Íslandsbanki',
+        })
+        expect(update.metadata).not.toHaveProperty('bankCode')
+      })
+
+      // Every create path that logs: success, Blikk refusing, the row insert failing, a payer the
+      // method is not enabled for, and a payment that is terminal on create.
+      it.each<[string, () => void]>([
+        [
+          'a created transfer',
+          () =>
+            blikkClient.createPayment.mockResolvedValue({
+              id: 'prov-1',
+              status: 'PENDING',
+              scaRedirectUrl: '',
+              message: '',
+            }),
+        ],
+        [
+          'Blikk refusing the payment',
+          () =>
+            blikkClient.createPayment.mockRejectedValue(
+              new BlikkClientError('Blikk request failed (400)', 400),
+            ),
+        ],
+        [
+          'the row insert failing',
+          () => {
+            blikkClient.createPayment.mockResolvedValue({
+              id: 'prov-1',
+              status: 'PENDING',
+              scaRedirectUrl: '',
+              message: '',
+            })
+            blikkClient.cancelPayment.mockRejectedValue(new Error('down'))
+            bankTransferPaymentModel.create.mockRejectedValue(
+              new Error('insert failed'),
+            )
+          },
+        ],
+        [
+          'a payer the method is not enabled for',
+          () =>
+            paymentFlowService.isBankTransferAllowedForPayer.mockResolvedValue(
+              false,
+            ),
+        ],
+        [
+          'a payment rejected on create',
+          () =>
+            blikkClient.createPayment.mockResolvedValue({
+              id: 'prov-1',
+              status: 'REJECTED',
+              scaRedirectUrl: '',
+              message: 'declined',
+            }),
+        ],
+      ])(
+        'logs the bank but never the account number for %s',
+        async (_, arrange) => {
+          arrange()
+
+          await service
+            .create({ ...createInput, bankAccountNumber })
+            .catch(() => undefined)
+
+          const logged = [
+            logger.info,
+            logger.warn,
+            logger.error,
+            logger.debug,
+            logger.verbose,
+          ].flatMap((log) => log.mock.calls as unknown[][])
+          const updates = paymentFlowService.logPaymentFlowUpdate.mock.calls
+          expect(logged.length + updates.length).toBeGreaterThan(0)
+          expect(JSON.stringify([logged, updates])).not.toContain('26123456')
+          for (const [, metadata] of logged) {
+            expect(metadata).toMatchObject({
+              bankCode: '0537',
+              bank: 'Íslandsbanki',
+            })
+          }
+          for (const [update] of updates) {
+            expect(update.logContext).toMatchObject({
+              bankCode: '0537',
+              bank: 'Íslandsbanki',
+            })
+          }
+        },
+      )
+    })
+
     describe('company payer', () => {
       const companyFlow = {
         id: 'flow-1',
@@ -629,6 +748,8 @@ describe('BankTransferService', () => {
         expect(logger.warn).toHaveBeenCalledWith(expect.any(String), {
           paymentFlowId: 'flow-1',
           payerType: BankTransferPayerType.COMPANY,
+          bankCode: '1234',
+          bank: '1234',
         })
       })
 
@@ -700,6 +821,26 @@ describe('BankTransferService', () => {
       expect(
         paymentFlowService.isBankTransferAllowedForPayer,
       ).toHaveBeenCalledWith('8123456789')
+      expect(blikkSpy).not.toHaveBeenCalled()
+      expect(bankTransferPaymentModel.create).not.toHaveBeenCalled()
+    })
+
+    // The payment page only offers the flow's methods, but the endpoint can be called directly.
+    it('refuses a charge flow that does not offer bank transfer, without calling Blikk', async () => {
+      paymentFlowService.validateChargePaymentMethod.mockImplementation(() => {
+        throw new BadRequestException(PaymentServiceCode.InvalidPaymentMethods)
+      })
+      const blikkSpy = jest.spyOn(service, 'createBankTransferPayment')
+
+      await expect(service.create(createInput)).rejects.toThrow(
+        PaymentServiceCode.InvalidPaymentMethods,
+      )
+      expect(
+        paymentFlowService.validateChargePaymentMethod,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'flow-1' }),
+        PaymentMethod.BANK_TRANSFER,
+      )
       expect(blikkSpy).not.toHaveBeenCalled()
       expect(bankTransferPaymentModel.create).not.toHaveBeenCalled()
     })
@@ -1069,6 +1210,31 @@ describe('BankTransferService', () => {
         },
       )
 
+    // Completion and failure rates per bank come from these two lines.
+    it.each<[string, BankTransferStatus, string]>([
+      ['payment_completed', BankTransferStatus.SUCCESS, 'SUCCESS'],
+      ['payment_failed', BankTransferStatus.REJECTED, 'REJECTED'],
+    ])(
+      'logs %s with the bank stored on the row',
+      async (reason, status, rawStatus) => {
+        bankTransferPaymentModel.findOne.mockResolvedValue({
+          ...activeRow,
+          bankCode: '2200',
+        })
+        mockGetPayment(status, rawStatus)
+
+        await service.verify({ providerPaymentId: 'prov-1' })
+
+        const update = paymentFlowService.logPaymentFlowUpdate.mock.calls
+          .map(([call]) => call)
+          .find((call) => call.reason === reason)
+        expect(update.logContext).toMatchObject({
+          bankCode: '2200',
+          bank: 'indó',
+        })
+      },
+    )
+
     it('looks up the active row by providerPaymentId, falling back to paymentFlowId', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)
       mockGetPayment(BankTransferStatus.PENDING, 'PENDING')
@@ -1130,6 +1296,106 @@ describe('BankTransferService', () => {
         rawStatus: 'SUCCESS',
       })
       expect(result.status).toBe(BankTransferStatus.SUCCESS)
+    })
+
+    describe('a settled debt flow', () => {
+      const debtFlow = (debtSettlement: object | null) => ({
+        id: 'flow-1',
+        type: 'debt',
+        payerNationalId: '0101307789',
+        debts: [{ payId: 'pay-1', amount: 10000 }],
+        debtSettlement,
+      })
+      const recently = () => new Date(Date.now() - 5_000)
+
+      beforeEach(() => {
+        bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)
+        paymentFlowService.isEligibleToBePaid.mockResolvedValue(false)
+      })
+
+      it('settles again when the settlement never got a row, rather than wait for the worker', async () => {
+        mockGetPayment(BankTransferStatus.SUCCESS, 'SUCCESS')
+        const finalize = jest
+          .spyOn(service, 'finalizeBankTransferSuccess')
+          .mockResolvedValue()
+        paymentFlowService.getPaymentFlowDetails
+          .mockResolvedValueOnce(debtFlow(null))
+          .mockResolvedValueOnce(debtFlow({ status: 'registered' }))
+
+        const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+        expect(finalize).toHaveBeenCalledWith(
+          expect.objectContaining({
+            paymentFlowId: 'flow-1',
+            rawStatus: 'SUCCESS',
+          }),
+        )
+        expect(result.status).toBe(BankTransferStatus.SUCCESS)
+        expect(result.pendingStatus).toBeUndefined()
+      })
+
+      it.each([
+        [
+          'while an attempt runs',
+          { status: 'pending', lastAttemptAt: recently() },
+        ],
+        ['before the attempt is claimed', { status: 'pending' }],
+      ])('stays pending %s', async (_, debtSettlement) => {
+        paymentFlowService.getPaymentFlowDetails.mockResolvedValue(
+          debtFlow(debtSettlement),
+        )
+
+        const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+        expect(result).toEqual({
+          status: BankTransferStatus.PENDING,
+          pendingStatus: BankTransferPendingStatus.PROCESSING,
+        })
+      })
+
+      it.each([
+        ['registered', { status: 'registered' }],
+        ['left for reconciliation', { status: 'needs_reconciliation' }],
+        [
+          'left for the worker',
+          { status: 'pending', lastAttemptAt: new Date(Date.now() - 120_000) },
+        ],
+      ])('reports SUCCESS once %s', async (_, debtSettlement) => {
+        paymentFlowService.getPaymentFlowDetails.mockResolvedValue(
+          debtFlow(debtSettlement),
+        )
+
+        const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+        expect(result).toEqual({ status: BankTransferStatus.SUCCESS })
+      })
+
+      it('reports the flow closed when FJS rejected the payment', async () => {
+        paymentFlowService.getPaymentFlowDetails.mockResolvedValue(
+          debtFlow({ status: 'rejected' }),
+        )
+
+        const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+        expect(result).toEqual({
+          status: BankTransferStatus.SUCCESS,
+          isClosed: true,
+        })
+      })
+
+      it('stays pending after finalizing while another caller holds the attempt', async () => {
+        paymentFlowService.isEligibleToBePaid.mockResolvedValue(true)
+        mockGetPayment(BankTransferStatus.SUCCESS, 'SUCCESS')
+        jest.spyOn(service, 'finalizeBankTransferSuccess').mockResolvedValue()
+        paymentFlowService.getPaymentFlowDetails.mockResolvedValue(
+          debtFlow({ status: 'pending', lastAttemptAt: recently() }),
+        )
+
+        const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+        expect(result.status).toBe(BankTransferStatus.PENDING)
+        expect(result.pendingStatus).toBe(BankTransferPendingStatus.PROCESSING)
+      })
     })
 
     it.each<[BankTransferStatus, string, BankTransferFailureReason]>([
@@ -1941,6 +2207,254 @@ describe('BankTransferService', () => {
       // Zero affected rows → the other writer won; no payment_cancelled from this call.
       expect(result).toEqual({ ok: true })
       expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('finalizeBankTransferSuccess — debt flow', () => {
+    const confirmInput = {
+      correlationId: 'btp-1',
+      paymentFlowId: 'flow-1',
+      providerPaymentId: 'prov-1',
+      rawStatus: 'SUCCESS',
+    }
+    const debtFlow = {
+      id: 'flow-1',
+      type: 'debt',
+      organisationId: FJS_DEBT_ORGANISATION_ID,
+      payerNationalId: '0101307789',
+      charges: [],
+      debts: [
+        { payId: 'pay-1', amount: 10000 },
+        { payId: 'pay-2', amount: 5000 },
+      ],
+    }
+
+    beforeEach(() => {
+      paymentFlowService.getPaymentFlowDetails.mockResolvedValue(debtFlow)
+    })
+
+    it('creates the fulfillment without an FJS charge and registers the payment', async () => {
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'registered',
+        dateCreated: '2026-10-12T10:00:00',
+        alreadySettled: false,
+      })
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      expect(paymentFulfillmentModel.create).toHaveBeenCalledWith({
+        paymentFlowId: 'flow-1',
+        paymentMethod: 'bank_transfer',
+        confirmationRefId: 'btp-1',
+      })
+      expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
+      expect(
+        paymentFlowService.getPaymentFlowChargeDetails,
+      ).not.toHaveBeenCalled()
+      expect(debtSettlementService.attempt).toHaveBeenCalledWith(debtFlow, {
+        kind: 'transfer',
+        RRN: 'prov-1',
+        payableAmount: 15000,
+        correlationId: 'btp-1',
+      })
+    })
+
+    it('asks FJS first, then sends payment_completed and payment_finalized', async () => {
+      const order: string[] = []
+      paymentFlowService.logPaymentFlowUpdate.mockImplementation(
+        async ({ reason }) => {
+          order.push(reason)
+        },
+      )
+      paymentFlowService.logDebtPaymentFinalized.mockImplementation(
+        async () => {
+          order.push('payment_finalized')
+        },
+      )
+      const registered = {
+        type: 'registered',
+        dateCreated: '2026-10-12T10:00:00',
+        alreadySettled: false,
+      }
+      debtSettlementService.attempt.mockImplementation(async () => {
+        order.push('payDebt')
+        return registered
+      })
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      // Like the card saga: the organisation hears of the payment once FJS answered
+      expect(order).toEqual([
+        'payDebt',
+        'payment_completed',
+        'payment_finalized',
+      ])
+      expect(paymentFlowService.logDebtPaymentFinalized).toHaveBeenCalledWith(
+        'flow-1',
+        PaymentMethod.BANK_TRANSFER,
+        registered,
+      )
+    })
+
+    it('does not repeat payment_finalized when a repair run finds it registered already', async () => {
+      // Row was already SUCCESS, so no transition and no payment_completed either
+      bankTransferPaymentModel.update.mockResolvedValueOnce([0])
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'registered',
+        dateCreated: '2026-10-12T10:00:00',
+        alreadySettled: true,
+      })
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      expect(debtSettlementService.attempt).toHaveBeenCalledTimes(1)
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+      expect(paymentFlowService.logDebtPaymentFinalized).not.toHaveBeenCalled()
+    })
+
+    it('records a manual refund instead of payment_completed when FJS rejects the payment', async () => {
+      const problem = { title: 'Bad request', detail: 'Amount exceeds debt' }
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'rejected',
+        problem,
+        alreadySettled: false,
+      })
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      // The card saga sends no payment_completed for a rejected payment either
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+      expect(paymentFlowService.logDebtPaymentRejected).toHaveBeenCalledWith(
+        'flow-1',
+        PaymentMethod.BANK_TRANSFER,
+        problem,
+        {
+          needsManualRefund: true,
+        },
+      )
+      expect(paymentFlowService.logDebtPaymentFinalized).not.toHaveBeenCalled()
+      expect(logger.error).toHaveBeenCalledWith(
+        expect.stringContaining('refund it manually'),
+        expect.objectContaining({ needsManualRefund: true }),
+      )
+    })
+
+    it.each(['deferred', 'reconcile'])(
+      'sends no finalized or failed event on %s',
+      async (type) => {
+        debtSettlementService.attempt.mockResolvedValue({
+          type,
+          alreadySettled: false,
+          reason: 'ambiguous',
+        })
+
+        await service.finalizeBankTransferSuccess(confirmInput)
+
+        expect(
+          paymentFlowService.logDebtPaymentFinalized,
+        ).not.toHaveBeenCalled()
+        expect(paymentFlowService.logDebtPaymentRejected).not.toHaveBeenCalled()
+        // payment_completed still went out
+        expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+      },
+    )
+
+    it('leaves the settled transfer be when the settlement throws', async () => {
+      debtSettlementService.attempt.mockRejectedValue(new Error('db down'))
+
+      await expect(
+        service.finalizeBankTransferSuccess(confirmInput),
+      ).resolves.toBeUndefined()
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('the payment worker will retry'),
+        expect.objectContaining({ error: 'db down' }),
+      )
+      // The payment is kept and the worker registers it, so it is completed upstream
+      expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+      expect(
+        paymentFlowService.logPaymentFlowUpdate.mock.calls[0][0],
+      ).toMatchObject({
+        reason: 'payment_completed',
+      })
+    })
+
+    it('sends no payment_completed when another caller already saw FJS reject the payment', async () => {
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'rejected',
+        alreadySettled: true,
+      })
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+      expect(paymentFlowService.logDebtPaymentRejected).not.toHaveBeenCalled()
+    })
+
+    it('sends no payment_completed while another caller waits on FJS', async () => {
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'deferred',
+        reason: 'in_progress',
+      })
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      // The caller FJS answers reports the outcome, see the next test
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+    })
+
+    it('sends payment_completed from the caller FJS answered, also when it lost the row', async () => {
+      bankTransferPaymentModel.update.mockResolvedValueOnce([0])
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'registered',
+        dateCreated: '2026-10-12T10:00:00',
+        alreadySettled: false,
+      })
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      expect(paymentFlowService.hasPaymentCompletedEvent).toHaveBeenCalledWith(
+        'flow-1',
+        'btp-1',
+      )
+      expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+      expect(
+        paymentFlowService.logPaymentFlowUpdate.mock.calls[0][0],
+      ).toMatchObject({
+        reason: 'payment_completed',
+        metadata: { providerPaymentId: 'prov-1', correlationId: 'btp-1' },
+      })
+    })
+
+    it('does not repeat payment_completed once it is recorded', async () => {
+      paymentFlowService.hasPaymentCompletedEvent.mockResolvedValue(true)
+      debtSettlementService.attempt.mockResolvedValue({
+        type: 'registered',
+        dateCreated: '2026-10-12T10:00:00',
+        alreadySettled: false,
+      })
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+      expect(paymentFlowService.logDebtPaymentFinalized).toHaveBeenCalledTimes(
+        1,
+      )
+    })
+
+    it('does not settle charge flows', async () => {
+      paymentFlowService.getPaymentFlowDetails.mockResolvedValue({
+        id: 'flow-1',
+        organisationId: 'org-1',
+        payerNationalId: '0101307789',
+        charges: [{ chargeType: 'AB', chargeItemCode: 'AB123', quantity: 1 }],
+        extraData: [],
+      })
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      expect(debtSettlementService.attempt).not.toHaveBeenCalled()
+      expect(paymentFlowService.createFjsCharge).toHaveBeenCalledTimes(1)
     })
   })
 

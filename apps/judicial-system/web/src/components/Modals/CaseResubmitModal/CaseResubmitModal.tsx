@@ -20,14 +20,16 @@ export const getCaseResubmittedText = (
   formatMessage: IntlShape['formatMessage'],
   workingCase: WorkingCase,
 ) => {
-  return formatMessage(strings.text, {
-    requestSharedWithDefender:
-      (workingCase.requestSharedWithDefender ===
+  const requestSharedWithDefender = (workingCase.defendants ?? []).some(
+    (defendant) =>
+      defendant.requestSharedWithDefender ===
+        RequestSharedWithDefender.READY_FOR_COURT ||
+      (defendant.requestSharedWithDefender ===
         RequestSharedWithDefender.COURT_DATE &&
-        Boolean(workingCase.arraignmentDate?.date)) ||
-      workingCase.requestSharedWithDefender ===
-        RequestSharedWithDefender.READY_FOR_COURT,
-  })
+        Boolean(workingCase.arraignmentDate?.date)),
+  )
+
+  return formatMessage(strings.text, { requestSharedWithDefender })
 }
 
 const CaseResubmitModal: FC<Props> = ({

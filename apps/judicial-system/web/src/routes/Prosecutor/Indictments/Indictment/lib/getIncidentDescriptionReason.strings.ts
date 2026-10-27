@@ -89,6 +89,11 @@ export const strings = {
       defaultMessage: 'o-Desmetýltramadól {amount} ng/ml',
       description: 'Notaður fyrir O-desmetýltramadól í blóði.',
     },
+    [Substance.ORPHENADRINE]: {
+      id: 'judicial.system.core:indictments_indictment.indictment_offense_count_enum.orphenadrine',
+      defaultMessage: 'orfenadrín {amount} ng/ml',
+      description: 'Notaður fyrir orfenadrín í blóði.',
+    },
     [Substance.TETRAHYDROCANNABINOL]: {
       id: 'judicial.system.core:indictments_indictment.indictment_offense_count_enum.tetrahydrocannabinol',
       defaultMessage: 'tetrahýdrókannabínól {amount} ng/ml',

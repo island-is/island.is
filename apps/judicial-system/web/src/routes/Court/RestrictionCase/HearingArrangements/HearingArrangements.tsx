@@ -2,7 +2,7 @@ import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Stack, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
   DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE,
@@ -35,6 +35,7 @@ import {
   useCase,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -176,7 +177,7 @@ export const HearingArrangements = () => {
             />
           </Box>
         </Box>
-        <Box component="section" marginBottom={8}>
+        <Box component="section" marginBottom={8} className={stack({ gap: 3 })}>
           <SectionHeading
             title={formatMessage(
               defenderInfo.restrictionCases.sections.defender.title,
@@ -189,19 +190,18 @@ export const HearingArrangements = () => {
                 placement="right"
               />
             }
+            marginBottom={0}
           />
-          <Stack space={3}>
-            {workingCase.defendants?.map((defendant, _index, defendants) => (
-              <BlueBox key={defendant.id}>
-                <RequestCaseDefenderInfo
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                  defendant={defendant}
-                  showDefendantName={defendants.length > 1}
-                />
-              </BlueBox>
-            ))}
-          </Stack>
+          {workingCase.defendants?.map((defendant, _index, defendants) => (
+            <BlueBox key={defendant.id}>
+              <RequestCaseDefenderInfo
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+                defendant={defendant}
+                showDefendantName={defendants.length > 1}
+              />
+            </BlueBox>
+          ))}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

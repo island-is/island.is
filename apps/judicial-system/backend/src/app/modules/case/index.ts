@@ -1,6 +1,7 @@
 export { CaseExistsGuard } from './guards/caseExists.guard'
 export { CaseExistsForUpdateGuard } from './guards/caseExistsForUpdate.guard'
 export { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
+export { LimitedAccessCaseExistsForUpdateGuard } from './guards/limitedAccessCaseExistsForUpdate.guard'
 export { CaseHasExistedGuard } from './guards/caseHasExisted.guard'
 export { CaseReadGuard } from './guards/caseRead.guard'
 export { CaseWriteGuard } from './guards/caseWrite.guard'

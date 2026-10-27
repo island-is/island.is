@@ -121,6 +121,7 @@ export const collectRegulationWarnings = (answers: {
     effectiveDate?: string
     lawChapters?: Array<{ slug: string; name: string }>
     impacts?: RegulationImpactSchema[]
+    withoutImpacts?: boolean
   }
   applicationType?: string
 }): RegulationWarning[] => {
@@ -288,7 +289,10 @@ export const collectRegulationWarnings = (answers: {
   }
 
   // Impacts section (for amending regulations)
-  if (answers.applicationType === 'amending_regulation') {
+  if (
+    answers.applicationType === 'amending_regulation' &&
+    !answers.regulation?.withoutImpacts
+  ) {
     if (
       !answers.regulation?.impacts ||
       answers.regulation.impacts.length === 0
