@@ -36,7 +36,6 @@ export const SpeedingOffenseFields = ({
     setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => void
 }) => {
-
   const [recordedSpeedErrorMessage, setRecordedSpeedErrorMessage] =
     useState<string>('')
   const [speedLimitErrorMessage, setSpeedLimitErrorMessage] =

@@ -57,9 +57,7 @@ export const getIncidentDescriptionReason = (
           acc += strings.incidentDescriptionDrunkDrivingAutofill
           break
         case IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING:
-          acc += `${
-            strings.incidentDescriptionDrugsDrivingPrefixAutofill[gender]
-          } ${strings.incidentDescriptionIllegalDrugsDrivingAutofill}`
+          acc += `${strings.incidentDescriptionDrugsDrivingPrefixAutofill[gender]} ${strings.incidentDescriptionIllegalDrugsDrivingAutofill}`
           break
         case IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING:
           acc +=

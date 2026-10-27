@@ -1,23 +1,25 @@
 import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const strings = {
-      heading: 'Ákæra',
-    indictmentIntroductionTitle: 'Inngangur',
-    indictmentIntroductionLabel: 'Inngangur',
-    indictmentIntroductionPlaceholder: 'Hver höfðar sakamál á hendur hverjum?',
-    indictmentIntroductionAutofillAnnounces: 'gjörir kunnugt:',
-    indictmentIntroductionAutofillCourt: 'Að höfða ber sakamál fyrir {court} á hendur',
-    indictmentIntroductionAutofillDefendant: '{defendantName}, kt. {defendantNationalId},',
-    indictmentCountHeading: 'Ákæruliður {count}',
-    addIndictmentCount: 'Bæta við ákærulið',
-    demandsTitle: 'Refsikrafa',
-    demandsRequestSuspension: 'Krefjast sviptingar',
-    demandsLabel: 'Refsikrafa',
-    demandsPlaceholder: 'Þess er krafist að...',
-    pdfButtonIndictment: 'Ákæra - PDF',
-    civilDemandsTitle: 'Einkaréttarkrafa',
-    civilDemandsLabel: 'Einkaréttarkrafa',
-    civilDemandsPlaceholder: 'Hver er krafa kröfuhafa?',
+  heading: 'Ákæra',
+  indictmentIntroductionTitle: 'Inngangur',
+  indictmentIntroductionLabel: 'Inngangur',
+  indictmentIntroductionPlaceholder: 'Hver höfðar sakamál á hendur hverjum?',
+  indictmentIntroductionAutofillAnnounces: 'gjörir kunnugt:',
+  indictmentIntroductionAutofillCourt:
+    'Að höfða ber sakamál fyrir {court} á hendur',
+  indictmentIntroductionAutofillDefendant:
+    '{defendantName}, kt. {defendantNationalId},',
+  indictmentCountHeading: 'Ákæruliður {count}',
+  addIndictmentCount: 'Bæta við ákærulið',
+  demandsTitle: 'Refsikrafa',
+  demandsRequestSuspension: 'Krefjast sviptingar',
+  demandsLabel: 'Refsikrafa',
+  demandsPlaceholder: 'Þess er krafist að...',
+  pdfButtonIndictment: 'Ákæra - PDF',
+  civilDemandsTitle: 'Einkaréttarkrafa',
+  civilDemandsLabel: 'Einkaréttarkrafa',
+  civilDemandsPlaceholder: 'Hver er krafa kröfuhafa?',
   demandsAutofill: {
     [Gender.MALE]:
       'Þess er krafist að ákærði verði dæmdur til refsingar og til greiðslu alls sakarkostnaðar.',

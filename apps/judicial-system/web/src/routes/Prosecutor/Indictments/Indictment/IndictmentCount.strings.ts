@@ -15,6 +15,7 @@ export const strings = {
   legalArgumentsTitle: 'Heimfærsla',
   legalArgumentsLabel: 'Heimfærsla',
   legalArgumentsPlaceholder: 'Telst háttsemi þessi varða við...',
-  legalArgumentsAutofill: 'Telst háttsemi þessi varða við {articles} umferðarlaga nr. 77/2019.',
+  legalArgumentsAutofill:
+    'Telst háttsemi þessi varða við {articles} umferðarlaga nr. 77/2019.',
   selectIndictmentSubtype: 'Veldu sakarefni',
 }

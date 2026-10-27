@@ -263,9 +263,7 @@ export const PoliceCase: FC<Props> = ({
               setPoliceCaseNumberErrorMessage,
             )
           } else if (policeCaseNumberInput !== policeCaseNumber) {
-            setPoliceCaseNumberErrorMessage(
-              strings.policeCaseNumberExists,
-            )
+            setPoliceCaseNumberErrorMessage(strings.policeCaseNumberExists)
           } else {
             validateAndSetErrorMessage(
               ['empty', 'police-casenumber-format'],
@@ -280,13 +278,19 @@ export const PoliceCase: FC<Props> = ({
         name="policeCaseNumber"
         autoComplete="off"
         label={strings.policeCaseNumberLabel}
-        placeholder={formatMessage({ id: strings.policeCaseNumberPlaceholder, defaultMessage: strings.policeCaseNumberPlaceholder }, {
-          prefix:
-            workingCase.prosecutorsOffice?.policeCaseNumberPrefix ??
-            user?.institution?.policeCaseNumberPrefix ??
-            '',
-          year: new Date().getFullYear(),
-        })}
+        placeholder={formatMessage(
+          {
+            id: strings.policeCaseNumberPlaceholder,
+            defaultMessage: strings.policeCaseNumberPlaceholder,
+          },
+          {
+            prefix:
+              workingCase.prosecutorsOffice?.policeCaseNumberPrefix ??
+              user?.institution?.policeCaseNumberPrefix ??
+              '',
+            year: new Date().getFullYear(),
+          },
+        )}
         hasError={policeCaseNumberErrorMessage !== ''}
         errorMessage={policeCaseNumberErrorMessage}
         required
@@ -323,9 +327,15 @@ export const PoliceCase: FC<Props> = ({
                   ),
                 })
               }
-              aria-label={formatMessage({ id: strings.removeSubtype, defaultMessage: strings.removeSubtype }, {
-                subtype: indictmentSubtypes[subtype],
-              })}
+              aria-label={formatMessage(
+                {
+                  id: strings.removeSubtype,
+                  defaultMessage: strings.removeSubtype,
+                },
+                {
+                  subtype: indictmentSubtypes[subtype],
+                },
+              )}
             >
               <Box display="flex" alignItems="center">
                 {capitalize(indictmentSubtypes[subtype])}

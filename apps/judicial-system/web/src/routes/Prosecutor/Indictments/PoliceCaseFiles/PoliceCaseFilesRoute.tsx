@@ -188,9 +188,15 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
           return (
             <Box key={index}>
               <SectionHeading
-                title={formatMessage({ id: strings.policeCaseNumberSectionHeading, defaultMessage: strings.policeCaseNumberSectionHeading }, {
-                  policeCaseNumber,
-                })}
+                title={formatMessage(
+                  {
+                    id: strings.policeCaseNumberSectionHeading,
+                    defaultMessage: strings.policeCaseNumberSectionHeading,
+                  },
+                  {
+                    policeCaseNumber,
+                  },
+                )}
                 marginBottom={2}
               />
               <Box marginBottom={3}>

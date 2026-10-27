@@ -452,9 +452,15 @@ export const CivilClaimantFields = ({
             </Box>
             <Checkbox
               name={`civilClaimantShareFilesWithDefender-${civilClaimant.id}`}
-              label={formatMessage({ id: strings.civilClaimantShareFilesWithDefender, defaultMessage: strings.civilClaimantShareFilesWithDefender }, {
+              label={formatMessage(
+                {
+                  id: strings.civilClaimantShareFilesWithDefender,
+                  defaultMessage: strings.civilClaimantShareFilesWithDefender,
+                },
+                {
                   defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
-                })}
+                },
+              )}
               checked={Boolean(civilClaimant.caseFilesSharedWithSpokesperson)}
               onChange={() => {
                 handleSetAndSendCivilClaimantToServer({
@@ -467,9 +473,16 @@ export const CivilClaimantFields = ({
                 civilClaimant.spokespersonIsLawyer === null ||
                 civilClaimant.spokespersonIsLawyer === undefined
               }
-              tooltip={formatMessage({ id: strings.civilClaimantShareFilesWithDefenderTooltip, defaultMessage: strings.civilClaimantShareFilesWithDefenderTooltip }, {
+              tooltip={formatMessage(
+                {
+                  id: strings.civilClaimantShareFilesWithDefenderTooltip,
+                  defaultMessage:
+                    strings.civilClaimantShareFilesWithDefenderTooltip,
+                },
+                {
                   defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
-                })}
+                },
+              )}
               backgroundColor="white"
               large
               filled

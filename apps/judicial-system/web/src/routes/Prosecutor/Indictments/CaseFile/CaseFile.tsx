@@ -112,9 +112,12 @@ const CaseFile = () => {
         </Box>
         <Box marginBottom={7}>
           {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
-            const caseFilesRecordFileName = formatMessage({ id: m.pdfButtonText, defaultMessage: m.pdfButtonText }, {
-              policeCaseNumber: policeCaseNumber,
-            })
+            const caseFilesRecordFileName = formatMessage(
+              { id: m.pdfButtonText, defaultMessage: m.pdfButtonText },
+              {
+                policeCaseNumber: policeCaseNumber,
+              },
+            )
 
             return (
               <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>

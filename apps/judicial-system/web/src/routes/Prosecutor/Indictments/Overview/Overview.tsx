@@ -280,9 +280,15 @@ const Overview: FC = () => {
               ? formatMessage(core.continue)
               : wantsReview && isIndictmentNew
               ? 'Senda í yfirlestur'
-              : formatMessage({ id: strings.nextButtonText, defaultMessage: strings.nextButtonText }, {
-                  isNewIndictment: isIndictmentNew,
-                }),
+              : formatMessage(
+                  {
+                    id: strings.nextButtonText,
+                    defaultMessage: strings.nextButtonText,
+                  },
+                  {
+                    isNewIndictment: isIndictmentNew,
+                  },
+                ),
             icon: canDuplicateIndictment
               ? undefined
               : ('arrowForward' as const),
@@ -543,9 +549,7 @@ const Overview: FC = () => {
           }
           actions={footerActions}
           infoBoxText={
-            isIndictmentReceived
-              ? strings.indictmentSentToCourt
-              : undefined
+            isIndictmentReceived ? strings.indictmentSentToCourt : undefined
           }
         />
       </FormContentContainer>

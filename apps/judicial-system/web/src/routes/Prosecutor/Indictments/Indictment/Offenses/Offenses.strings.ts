@@ -1,12 +1,12 @@
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const strings = {
-      incidentTitle: 'Brot',
-    incidentLabel: 'Brot',
-    incidentPlaceholder: 'Veldu brot',
-    bloodAlcoholContentTitle: 'Vínandamagn',
-    bloodAlcoholContentLabel: 'Vínandamagn (‰)',
-    bloodAlcoholContentPlaceholder: '0,00',
+  incidentTitle: 'Brot',
+  incidentLabel: 'Brot',
+  incidentPlaceholder: 'Veldu brot',
+  bloodAlcoholContentTitle: 'Vínandamagn',
+  bloodAlcoholContentLabel: 'Vínandamagn (‰)',
+  bloodAlcoholContentPlaceholder: '0,00',
   offenseText: {
     [IndictmentCountOffense.DRIVING_WITHOUT_LICENCE]: 'Sviptingarakstur',
     [IndictmentCountOffense.DRIVING_WITHOUT_VALID_LICENSE]:

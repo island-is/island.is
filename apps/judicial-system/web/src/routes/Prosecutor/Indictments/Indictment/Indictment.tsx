@@ -66,19 +66,31 @@ export const getIndictmentIntroductionAutofill = (
     ? [
         prosecutorsOffice?.name?.toUpperCase(),
         `\n\n${strings.indictmentIntroductionAutofillAnnounces}`,
-        `\n\n${formatMessage({ id: strings.indictmentIntroductionAutofillCourt, defaultMessage: strings.indictmentIntroductionAutofillCourt }, {
-          court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
-        })}`,
+        `\n\n${formatMessage(
+          {
+            id: strings.indictmentIntroductionAutofillCourt,
+            defaultMessage: strings.indictmentIntroductionAutofillCourt,
+          },
+          {
+            court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
+          },
+        )}`,
         `\n\n${defendants
           .map((defendant) => {
-            return `\n          ${formatMessage({ id: strings.indictmentIntroductionAutofillDefendant, defaultMessage: strings.indictmentIntroductionAutofillDefendant }, {
+            return `\n          ${formatMessage(
+              {
+                id: strings.indictmentIntroductionAutofillDefendant,
+                defaultMessage: strings.indictmentIntroductionAutofillDefendant,
+              },
+              {
                 defendantName: defendant.name
                   ? applyCase('þgf', defendant.name)
                   : 'Ekki skráð',
                 defendantNationalId: defendant.nationalId
                   ? formatNationalId(defendant.nationalId)
                   : 'Ekki skráð',
-              })}\n          ${
+              },
+            )}\n          ${
               defendant.address
                 ? applyCaseToAddress('þgf', defendant.address)
                 : 'Ekki skráð'
@@ -492,9 +504,7 @@ const Indictment = () => {
         <Box display="flex" flexDirection="column" rowGap={5}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
-            <SectionHeading
-              title={strings.indictmentIntroductionTitle}
-            />
+            <SectionHeading title={strings.indictmentIntroductionTitle} />
             <Input
               name="indictmentIntroduction"
               label={strings.indictmentIntroductionLabel}
@@ -576,9 +586,7 @@ const Indictment = () => {
           </Box>
           {workingCase.hasCivilClaims && (
             <Box component="section">
-              <SectionHeading
-                title={strings.civilDemandsTitle}
-              />
+              <SectionHeading title={strings.civilDemandsTitle} />
               <Input
                 name="civilDemands"
                 label={strings.civilDemandsLabel}

@@ -347,9 +347,15 @@ const Processing: FC = () => {
         {workingCase.defendants && (
           <Box component="section" marginBottom={5}>
             <SectionHeading
-              title={formatMessage({ id: strings.defendantPlea, defaultMessage: strings.defendantPlea }, {
-                defendantCount: workingCase.defendants?.length ?? 0,
-              })}
+              title={formatMessage(
+                {
+                  id: strings.defendantPlea,
+                  defaultMessage: strings.defendantPlea,
+                },
+                {
+                  defendantCount: workingCase.defendants?.length ?? 0,
+                },
+              )}
               heading="h2"
               tooltip="Hægt er að velja afstöðu sakbornings til að flýta fyrir úthlutun máls"
             />
@@ -422,10 +428,7 @@ const Processing: FC = () => {
           marginBottom={workingCase.hasCivilClaims === true ? 5 : 10}
           ref={civilClaimRef}
         >
-          <SectionHeading
-            title={strings.civilDemandsTitle}
-            heading="h2"
-          />
+          <SectionHeading title={strings.civilDemandsTitle} heading="h2" />
           <BlueBox>
             <SectionHeading
               title={strings.isCivilClaim}

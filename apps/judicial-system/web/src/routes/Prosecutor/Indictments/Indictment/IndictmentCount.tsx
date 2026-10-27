@@ -207,9 +207,15 @@ export const getLegalArguments = (
     } ${lawsBroken[i][1]}.`
   }
 
-  return formatMessage({ id: strings.legalArgumentsAutofill, defaultMessage: strings.legalArgumentsAutofill }, {
-    articles: `${articles} mgr. ${lawsBroken[lawsBroken.length - 1][0]}. gr.`,
-  })
+  return formatMessage(
+    {
+      id: strings.legalArgumentsAutofill,
+      defaultMessage: strings.legalArgumentsAutofill,
+    },
+    {
+      articles: `${articles} mgr. ${lawsBroken[lawsBroken.length - 1][0]}. gr.`,
+    },
+  )
 }
 
 export const IndictmentCount: FC<Props> = ({

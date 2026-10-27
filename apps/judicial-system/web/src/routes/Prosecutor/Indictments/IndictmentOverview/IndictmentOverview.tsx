@@ -181,9 +181,7 @@ const IndictmentOverview: FC = () => {
         />
         <FormContentContainer>
           <PageTitle>
-            {caseIsClosed
-              ? strings.completedTitle
-              : strings.inProgressTitle}
+            {caseIsClosed ? strings.completedTitle : strings.inProgressTitle}
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
           {workingCase.defendants?.map(
