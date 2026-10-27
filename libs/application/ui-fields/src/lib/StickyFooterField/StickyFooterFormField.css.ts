@@ -2,7 +2,7 @@ import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const footer = style({
-  zIndex: 1,
+  zIndex: theme.zIndex.above,
   backgroundColor: theme.color.overlayDefault,
 })
 
@@ -47,7 +47,7 @@ export const inlineRow = style({
   display: 'grid',
   gridTemplateColumns: 'var(--sticky-footer-value-left, 1fr) auto',
   alignItems: 'center',
-  height: 56,
+  height: theme.spacing[7],
   borderTop: `1px solid ${theme.color.blue200}`,
 })
 

@@ -12,23 +12,23 @@ globalStyle(`${tableWrapper} table`, {
 })
 
 globalStyle(`${tableWrapper} th`, {
-  height: 56,
-  padding: 16,
+  height: theme.spacing[7],
+  padding: theme.spacing[2],
 })
 
 globalStyle(`${tableWrapper} td`, {
-  height: 56,
-  padding: '12px 16px',
+  height: theme.spacing[7],
+  padding: `${theme.spacing.p2}px ${theme.spacing[2]}px`,
   overflowWrap: 'break-word',
 })
 
 globalStyle(`${tableWrapper} [data-column-index="0"]:not(:first-child)`, {
-  paddingLeft: 8,
+  paddingLeft: theme.spacing[1],
 })
 
 globalStyle(`${tableWrapper} input:not([type="checkbox"])`, {
   fontSize: 12,
-  padding: 8,
+  padding: theme.spacing[1],
   ...themeUtils.responsiveStyle({
     md: {
       fontSize: 14,
@@ -65,7 +65,7 @@ globalStyle(`${expandableCell} svg`, {
   flexShrink: 0,
 })
 
-export const checkboxColumnStyle = { width: 56 }
+export const checkboxColumnStyle = { width: theme.spacing[7] }
 export const inputColumnHeaderStyle = { width: 155 }
 
 export const footerRowTestId = 'interactive-table-footer-row'
@@ -103,7 +103,7 @@ globalStyle(`${tableWrapper} ${expandedTable} table`, {
 
 const expandedCell = {
   height: 'auto',
-  padding: '12px 16px',
+  padding: `${theme.spacing.p2}px ${theme.spacing[2]}px`,
   fontSize: 14,
   lineHeight: '18px',
 } as const
