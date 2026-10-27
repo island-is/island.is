@@ -112,6 +112,7 @@ describe('InternalCaseController - Deliver signed ruling to police', () => {
             courtDocument: Base64.btoa(rulingPdf),
           },
         ],
+        caseId,
       )
       expect(then.result.delivered).toEqual(true)
     })

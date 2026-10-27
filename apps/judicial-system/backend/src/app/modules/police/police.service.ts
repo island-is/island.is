@@ -12,10 +12,12 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  PayloadTooLargeException,
   ServiceUnavailableException,
 } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
 
+import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
@@ -283,6 +285,7 @@ export class PoliceService {
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(forwardRef(() => IndictmentCountService))
     private readonly indictmentCountService: IndictmentCountService,
+    private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -368,6 +371,71 @@ export class PoliceService {
       info,
       this.reasonToError(reason),
     )
+  }
+
+  // The police system rejects files that exceed its size limit and no amount of
+  // retrying will change that, so the prosecutor is asked to upload the file by hand.
+  // Returns true only when the email was sent - callers treat 413 as terminal only then.
+  private async notifyProsecutorOfFileTooLarge(
+    caseId: string,
+  ): Promise<boolean> {
+    let theCase: Case | null = null
+
+    try {
+      theCase = await this.caseRepositoryService.findByIdWithProsecutor(caseId)
+    } catch (reason) {
+      this.logger.error(
+        `Failed to look up case ${caseId} when notifying that a file was too large for the police system`,
+        { reason },
+      )
+    }
+
+    const prosecutorEmail = theCase?.prosecutor?.email
+
+    if (!prosecutorEmail) {
+      this.logger.error(
+        `No prosecutor email is available for case ${caseId}, so it cannot be notified that a file was too large for the police system`,
+      )
+
+      return false
+    }
+
+    // Index 0 is the main police case number (first registered / locked in the UI).
+    const policeCaseNumber = theCase?.policeCaseNumbers?.[0] ?? ''
+    const subject = `Ekki tókst að hlaða upp skjali í LÖKE í máli ${policeCaseNumber}`
+    const body =
+      'Ekki tókst að hlaða upp skjali í LÖKE vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í LÖKE.'
+
+    try {
+      await this.emailService.sendEmail({
+        from: {
+          name: this.config.fromName,
+          address: this.config.fromEmail,
+        },
+        replyTo: {
+          name: this.config.replyToName,
+          address: this.config.replyToEmail,
+        },
+        to: [
+          {
+            name: theCase?.prosecutor?.name ?? '',
+            address: prosecutorEmail,
+          },
+        ],
+        subject,
+        text: body,
+        html: body,
+      })
+
+      return true
+    } catch (reason) {
+      this.logger.error(
+        `Failed to notify that a file was too large for the police system for case ${caseId}`,
+        { reason },
+      )
+
+      return false
+    }
   }
 
   private async throttleUploadPoliceCaseFile(
@@ -1205,6 +1273,7 @@ export class PoliceService {
     validToDate: Date,
     caseConclusion: string,
     courtDocuments: PoliceDocument[],
+    caseIdForNotification = caseId,
   ): Promise<boolean> {
     const usesLegacyPoliceCaseUpdate = Boolean(defendantNationalId)
     const url = usesLegacyPoliceCaseUpdate
@@ -1222,7 +1291,10 @@ export class PoliceService {
       courtVerdict: caseState,
       expiringDate: validToDate?.toISOString(),
       courtVerdictString: caseConclusion,
-      courtDocuments,
+      courtDocuments: courtDocuments.map(({ type, courtDocument }) => ({
+        type,
+        courtDocument,
+      })),
     }
 
     const failureInfo = {
@@ -1257,6 +1329,18 @@ export class PoliceService {
             ? responseBody
             : `Police case update failed with empty response body (HTTP ${res.status})`
 
+        if (res.status === 413 && courtDocuments.length > 0) {
+          // Size limits are expected; email the prosecutor instead of Slack.
+          // Only terminal (no retry) when the prosecutor was actually notified.
+          const notified = await this.notifyProsecutorOfFileTooLarge(
+            caseIdForNotification,
+          )
+
+          if (notified) {
+            throw new PayloadTooLargeException(message)
+          }
+        }
+
         this.logPoliceFailureAndNotify(
           'Failed to update police case',
           `Failed to update police case ${caseId}`,
@@ -1271,6 +1355,12 @@ export class PoliceService {
           // Do not spam the logs with errors
           // Act as if the case was updated
           return true
+        }
+
+        // Propagate so callers can complete the delivery without retrying
+        // (only thrown after a successful prosecutor notification).
+        if (reason instanceof PayloadTooLargeException) {
+          throw reason
         }
 
         this.logPoliceFailureAndNotify(
@@ -1334,8 +1424,24 @@ export class PoliceService {
         return { externalPoliceDocumentId: policeResponse.id }
       }
 
-      throw await res.text()
+      const responseBody = await res.text()
+
+      if (res.status === 413) {
+        // Only terminal (no retry) when the prosecutor was actually notified.
+        const notified = await this.notifyProsecutorOfFileTooLarge(caseId)
+
+        if (notified) {
+          throw new PayloadTooLargeException(responseBody)
+        }
+      }
+
+      throw responseBody
     } catch (error) {
+      // Prosecutor emailed; callers complete delivery without retry.
+      if (error instanceof PayloadTooLargeException) {
+        throw error
+      }
+
       // Winston only - VerdictService.deliverVerdictToNationalCommissionersOffice
       // posts the Slack error for a failed delivery, so notifying here too would
       // double-post.
@@ -1502,8 +1608,24 @@ export class PoliceService {
         return { policeSubpoenaId: subpoenaResponse.id }
       }
 
-      throw await res.text()
+      const responseBody = await res.text()
+
+      if (res.status === 413) {
+        // Only terminal (no retry) when the prosecutor was actually notified.
+        const notified = await this.notifyProsecutorOfFileTooLarge(theCase.id)
+
+        if (notified) {
+          throw new PayloadTooLargeException(responseBody)
+        }
+      }
+
+      throw responseBody
     } catch (error) {
+      // Prosecutor emailed; callers complete delivery without retry.
+      if (error instanceof PayloadTooLargeException) {
+        throw error
+      }
+
       // Winston only - SubpoenaService.deliverSubpoenaToNationalCommissionersOffice
       // posts the Slack error for a failed delivery, so notifying here too would
       // double-post.
