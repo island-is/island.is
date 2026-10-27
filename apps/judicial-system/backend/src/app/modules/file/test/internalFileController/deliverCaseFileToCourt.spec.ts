@@ -150,6 +150,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     ${CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE}             | ${CourtDocumentFolder.CASE_DOCUMENTS}
     ${CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE} | ${CourtDocumentFolder.CASE_DOCUMENTS}
     ${CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE}       | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.COURT_CASE_FILE}                             | ${CourtDocumentFolder.CASE_DOCUMENTS}
     ${CaseFileCategory.CRIMINAL_RECORD}                             | ${CourtDocumentFolder.CASE_DOCUMENTS}
     ${CaseFileCategory.COST_BREAKDOWN}                              | ${CourtDocumentFolder.CASE_DOCUMENTS}
     ${CaseFileCategory.CIVIL_CLAIM}                                 | ${CourtDocumentFolder.CASE_DOCUMENTS}

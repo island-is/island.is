@@ -37,8 +37,8 @@ import {
 import { IDS_ACCESS_TOKEN_NAME } from '@island.is/judicial-system/consts'
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseFileCategory,
   CaseFileState,
+  indictmentAdditionalCaseFileCategories,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -307,19 +307,14 @@ export class FileController {
     }
 
     if (
-      caseFile.category !== CaseFileCategory.PROSECUTOR_CASE_FILE &&
-      caseFile.category !== CaseFileCategory.DEFENDANT_CASE_FILE &&
-      caseFile.category !== CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE &&
-      caseFile.category !==
-        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE &&
-      caseFile.category !==
-        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE
+      !caseFile.category ||
+      !indictmentAdditionalCaseFileCategories.includes(caseFile.category)
     ) {
       this.logger.error(
         `Attempt to reject case file ${fileId} of case ${caseId} with invalid category ${caseFile.category}`,
       )
       throw new BadRequestException(
-        'Only uploaded prosecutor, defendant and civil claimant case files can be rejected',
+        'Only uploaded prosecutor, defendant, civil claimant and court case files can be rejected',
       )
     }
 
