@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Checkbox } from '@island.is/island-ui/core'
@@ -18,7 +17,6 @@ import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 import { strings } from './ProsecutorSectionHeightenedSecurity.strings'
 
 const ProsecutorSectionHeightenedSecurity = () => {
-  const { formatMessage } = useIntl()
   const router = useRouter()
 
   const { workingCase, setWorkingCase } = useContext(FormContext)
@@ -72,8 +70,8 @@ const ProsecutorSectionHeightenedSecurity = () => {
         <ProsecutorSelection onChange={handleProsecutorChange} />
         <Checkbox
           name="isHeightenedSecurityLevel"
-          label={formatMessage(strings.heightenSecurityLabel)}
-          tooltip={formatMessage(strings.heightenSecurityInfo)}
+          label={strings.heightenSecurityLabel}
+          tooltip={strings.heightenSecurityInfo}
           disabled={
             user?.id !== workingCase.creatingProsecutor?.id &&
             user?.id !== workingCase.prosecutor?.id
@@ -97,18 +95,18 @@ const ProsecutorSectionHeightenedSecurity = () => {
       </BlueBox>
       {isProsecutorAccessModalVisible && (
         <Modal
-          title={formatMessage(strings.accessModalTitle)}
-          text={formatMessage(strings.accessModalText)}
+          title={strings.accessModalTitle}
+          text={strings.accessModalText}
           buttons={[
             {
-              text: formatMessage(strings.accessModalSecondaryButtonText),
+              text: strings.accessModalSecondaryButtonText,
               onClick: () => {
                 setIsProsecutorAccessModalVisible(false)
               },
               variant: 'ghost',
             },
             {
-              text: formatMessage(strings.accessModalPrimaryButtonText),
+              text: strings.accessModalPrimaryButtonText,
               onClick: async () => {
                 if (substituteProsecutorId) {
                   await setProsecutor(substituteProsecutorId)
