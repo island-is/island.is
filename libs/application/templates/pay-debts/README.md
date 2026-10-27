@@ -23,7 +23,7 @@ amount.
   amount then unchecks the row; this is intended.
 - **Up to 100 debts** (agreed by all involved). Someone with more debts
   will not use this flow to pay them off. FJS returns them all in one
-  response, so `nextKey` paging is not used. At 100 or more, a warning
+  response, so `nextKey` paging is not used. For users with more than a 100 debts, a warning
   above the table points to Fjármál on Mínar síður for the full list.
 - **A payment, not an application.** Nobody applies; the payer picks
   debts and pays them or not. Nothing is listed on Mínar síður, and an
