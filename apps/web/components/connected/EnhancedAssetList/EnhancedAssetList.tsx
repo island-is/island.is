@@ -17,8 +17,8 @@ import type {
   QueryGetPublishedMaterialArgs,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
-import { GET_PUBLISHED_MATERIAL_QUERY } from '@island.is/web/screens/queries/PublishedMaterial'
 import { PublishedMaterialItem } from '@island.is/web/screens/Organization/PublishedMaterial/components/PublishedMaterialItem'
+import { GET_PUBLISHED_MATERIAL_QUERY } from '@island.is/web/screens/queries/PublishedMaterial'
 
 import { m } from './translation.strings'
 
