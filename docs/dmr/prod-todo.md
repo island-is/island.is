@@ -29,14 +29,19 @@ Dev reference: account `640538430394`, VPC `vpc-0014be8651be6f7e6` (`10.74.48.0/
 
 Dev points at `ss.xroad.dev.dmr-dev.cloud` (`terraform/dev/judicial_backend.tf`).
 
-- [ ] Register the `Rettarvorslugatt-Client` subsystem on the prod SS. Backend uses `XROAD_CLIENT_ID=IS/GOV/<member>/Rettarvorslugatt-Client` (dev: `IS-DEV/GOV/10014/Rettarvorslugatt-Client`).
-- [ ] Register the `Rettarvorslugatt-Protected` subsystem on the prod SS. It publishes xrd-api and digital-mailbox-api (dev: `IS-DEV:GOV:10014:Rettarvorslugatt-Protected`).
+Dev status, cutover and IPs: `docs/dmr/xroad.md`.
+
+- [ ] Pick the prod member code (island.is prod used `5804170510`, not `10014`). Instance path `/r1/IS`.
+- [ ] Register the `Judicial-Client` subsystem on the prod SS. Backend uses `XROAD_CLIENT_ID=IS/GOV/<member>/Judicial-Client` (dev: `IS-DEV/GOV/10014/Judicial-Client`).
+- [ ] Register the `Judicial-Protected` subsystem on the prod SS. It publishes xrd-api (`judicial-system-v2`) and digital-mailbox-api (dev: `IS-DEV:GOV:10014:Judicial-Protected`).
+- [ ] Prod xroad config: courts egress on 5500/5577 (PR #88), internal NLB 5500 listener for sakaskra self-call (PR #89),
+      prod RLS IPs `194.105.255.131`, `194.105.255.132`.
 - [ ] Client TLS cert / key, if the SS requires mTLS, stored in Secrets Manager.
 - [ ] Access rights on the providers' side for the new client: courts (`10019`, `JusticePortal-v1`),
       police (`10005`, `rettarvarsla-v1`), DMR criminal record (`10014`, `sakaskra`).
 - [ ] Update `XROAD_BASE_PATH`, `XROAD_BASE_PATH_WITH_ENV`, `XROAD_TLS_BASE_PATH`,
       `XROAD_TLS_BASE_PATH_WITH_ENV`, `XROAD_CLIENT_ID` to the DMR prod SS.
-- [ ] Provider side for xrd-api and digital-mailbox-api: publish them as services under `Rettarvorslugatt-Protected` on the SS.
+- [ ] Provider side for xrd-api and digital-mailbox-api: publish them as services under `Judicial-Protected` on the SS.
       island.is had: mailbox = `Rettarvorslugatt-Private/judicial-system-mailbox-api`
       (prod member `5804170510`, not `10014`) -> `judicial-system-digital-mailbox-api-xrd.internal.island.is`;
       xrd-api -> `judicial-system-xrd-api.internal.island.is`. Ours: `judicial-system-<svc>.dmr.local:3333`.

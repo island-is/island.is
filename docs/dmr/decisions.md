@@ -1,5 +1,11 @@
 # Decisions
 
+## 2026-10-28 — New X-Road subsystems `Judicial-Client` / `Judicial-Protected`
+The old `Rettarvorslugatt-*` subsystems were registered on both the island.is SS and ours, so inbound calls could land on either.
+New names on our SS only; backend switched to `Judicial-Client` (PR #16). xrd-api service code is `judicial-system-v2`.
+`-Private` is dropped; the mailbox moves under `Judicial-Protected`. Old subsystems are deleted at cutover (see `xroad.md`).
+Client TLS material stays in Secrets Manager (`judicial/backend/XROAD_CLIENT_*`), not SSM like island.is — matches our other backend secrets.
+
 ## 2026-10-20 — Build on JM-36; repo owns ECS as Terraform HCL (supersedes the taskdef.json plan)
 Branch `chore/judicial-prune` rebased onto `origin/feat/JM-36-judicial-ecs-services` (clean, 0 conflicts — JM-36 touches only `terraform/`, our prune touches `apps/`/`libs/`/`scripts/`/config). Backup tag `backup/pre-jm36-rebase`.
 
