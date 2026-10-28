@@ -82,15 +82,25 @@ describe('InternalNotificationController - Send appeal court session booked noti
       {
         hasSpokesperson: true,
         isSpokespersonConfirmed: true,
-        spokespersonName: spokesperson.name,
-        spokespersonEmail: spokesperson.email,
-        spokespersonNationalId: spokesperson.nationalId,
+        spokespersonName: 'Talsmaður í héraði',
+        spokespersonEmail: 'heradstalsmadur@dummy.dd',
+        hasAppealSpokesperson: true,
+        isAppealSpokespersonConfirmed: true,
+        appealSpokespersonName: spokesperson.name,
+        appealSpokespersonEmail: spokesperson.email,
+        appealSpokespersonNationalId: spokesperson.nationalId,
       },
       {
-        hasSpokesperson: true,
-        isSpokespersonConfirmed: true,
-        spokespersonName: 'Talsmaður án kennitölu',
-        spokespersonEmail: 'talsmadur@dummy.dd',
+        hasAppealSpokesperson: true,
+        isAppealSpokespersonConfirmed: true,
+        appealSpokespersonName: 'Talsmaður án kennitölu',
+        appealSpokespersonEmail: 'talsmadur@dummy.dd',
+      },
+      {
+        hasAppealSpokesperson: false,
+        isAppealSpokespersonConfirmed: true,
+        appealSpokespersonName: 'Fyrrverandi talsmaður',
+        appealSpokespersonEmail: 'fyrrverandi@dummy.dd',
       },
     ],
   } as Case
@@ -187,7 +197,7 @@ describe('InternalNotificationController - Send appeal court session booked noti
       )
     })
 
-    it('should leave out the district court defender and unconfirmed appeal defenders', () => {
+    it('should leave out the district court defence, unconfirmed appeal defenders and removed appeal spokespersons', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(4)
       expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
         expect.objectContaining({
@@ -196,6 +206,20 @@ describe('InternalNotificationController - Send appeal court session booked noti
               name: districtCourtDefender.name,
               address: districtCourtDefender.email,
             },
+          ],
+        }),
+      )
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            { name: 'Talsmaður í héraði', address: 'heradstalsmadur@dummy.dd' },
+          ],
+        }),
+      )
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            { name: 'Fyrrverandi talsmaður', address: 'fyrrverandi@dummy.dd' },
           ],
         }),
       )

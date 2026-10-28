@@ -225,8 +225,8 @@ export class AppealCaseNotificationService extends BaseNotificationService {
   }
 
   // The defence in a verdict appeal: the defenders the defendants have for the
-  // appeal, not the district court ones, plus the civil claimants'
-  // spokespersons.
+  // appeal and the advocates the civil claimants have for it, not the district
+  // court ones.
   private getVerdictAppealDefenceRecipients(theCase: Case) {
     const recipients: DefenceRecipient[] = []
     const seen = new Set<string>()
@@ -246,9 +246,34 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       }
     }
 
-    this.collectSpokespersonRecipients(theCase, recipients, seen)
+    this.collectAppealSpokespersonRecipients(theCase, recipients, seen)
 
     return recipients
+  }
+
+  // The screen clears the confirmation when the advocate is removed, but
+  // nothing below it does, so a claimant the court has said has no advocate
+  // on appeal is left out whatever the confirmation says.
+  private collectAppealSpokespersonRecipients(
+    theCase: Case,
+    recipients: DefenceRecipient[],
+    seen: Set<string>,
+  ) {
+    for (const civilClaimant of theCase.civilClaimants ?? []) {
+      if (
+        civilClaimant.hasAppealSpokesperson !== false &&
+        civilClaimant.isAppealSpokespersonConfirmed &&
+        civilClaimant.appealSpokespersonEmail &&
+        !seen.has(civilClaimant.appealSpokespersonEmail)
+      ) {
+        seen.add(civilClaimant.appealSpokespersonEmail)
+        recipients.push({
+          name: civilClaimant.appealSpokespersonName ?? undefined,
+          email: civilClaimant.appealSpokespersonEmail,
+          nationalId: civilClaimant.appealSpokespersonNationalId ?? undefined,
+        })
+      }
+    }
   }
 
   private async sendSms(
