@@ -104,7 +104,7 @@ export const AccessScopes = ({
       !requestedScopeNames ||
       requestedScopeNames.length === 0 ||
       preselectDoneRef.current ||
-      allGrantableScopes.size === 0
+      !categoriesData
     ) {
       return
     }
@@ -124,18 +124,23 @@ export const AccessScopes = ({
     preselectDoneRef.current = true
     // defaultDate intentionally excluded so the effect isn't re-triggered each render
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [requestedScopeNames, allGrantableScopes, setSelectedScopes])
+  }, [
+    requestedScopeNames,
+    categoriesData,
+    allGrantableScopes,
+    setSelectedScopes,
+  ])
 
   const notGrantableScopeNames = useMemo(() => {
     if (
       !requestedScopeNames ||
-      allGrantableScopes.size === 0 ||
+      !categoriesData ||
       requestedScopeNames.some((name) => allGrantableScopes.has(name))
     ) {
       return []
     }
     return requestedScopeNames
-  }, [requestedScopeNames, allGrantableScopes])
+  }, [requestedScopeNames, categoriesData, allGrantableScopes])
 
   const { data: domainsData } = useAuthDomainsQuery({
     variables: {
@@ -340,6 +345,7 @@ export const AccessScopes = ({
           showCheckbox
           showSelectAll
           onSelectScope={onSelectScope}
+          canGrantSensitiveScopes={canGrantSensitiveScopes}
         />
       ) : (
         <ScopesCategoriesList
@@ -354,6 +360,7 @@ export const AccessScopes = ({
           onSelectScope={onSelectScope}
           selectedScopes={selectedScopes}
           onSelectCategory={onSelectCategory}
+          canGrantSensitiveScopes={canGrantSensitiveScopes}
         />
       )}
     </Box>

@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom'
-
 import { Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
@@ -23,7 +21,6 @@ export const RequestDelegationButton = ({
   size = 'small',
 }: RequestDelegationButtonProps) => {
   const { formatMessage } = useLocale()
-  const navigate = useNavigate()
   const { switchUser } = useAuth()
   const user = useUserInfo()
   const { value: enabled } = useFeatureFlag(
@@ -31,29 +28,24 @@ export const RequestDelegationButton = ({
     false,
   )
 
-  if (!enabled || !scopes?.length) {
+  const actorNationalId = user?.profile?.actor?.nationalId
+
+  if (!enabled || !scopes?.length || !actorNationalId) {
     return null
   }
 
-  const target = getDelegationRequestPath(scopes)
-  const actorNationalId = user?.profile?.actor?.nationalId
-
   const onClick = () => {
-    if (actorNationalId) {
-      const grantorNationalId = user?.profile?.nationalId
-      if (grantorNationalId) {
-        storeDelegationRequestGrantor(
-          { nationalId: grantorNationalId, name: user?.profile?.name ?? '' },
-          actorNationalId,
-        )
-      }
-      switchUser(
+    const grantorNationalId = user?.profile?.nationalId
+    if (grantorNationalId) {
+      storeDelegationRequestGrantor(
+        { nationalId: grantorNationalId, name: user?.profile?.name ?? '' },
         actorNationalId,
-        `${window.location.origin}/minarsidur${target}`,
       )
-    } else {
-      navigate(target)
     }
+    switchUser(
+      actorNationalId,
+      `${window.location.origin}/minarsidur${getDelegationRequestPath(scopes)}`,
+    )
   }
 
   return (
