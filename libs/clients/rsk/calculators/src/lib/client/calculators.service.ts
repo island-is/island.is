@@ -8,38 +8,38 @@ import {
   getVehicleTax,
   getWithholdingTax,
 } from '../../../gen/fetch'
-import { calculatorRegistry } from '../catalog/registry'
-import type { CalculatorKey } from '../catalog/registry'
 import {
-  toChildBenefitOutput,
-  toChildBenefitQuery,
-} from '../domains/childBenefit'
+  zGetChildBenefitData,
+  zGetVehicleTaxData,
+  zGetWithholdingTaxData,
+} from '../../../gen/fetch/zod.gen'
+import type { CalculatorKey } from '../catalog/registry'
+import { calculatorRegistry } from '../catalog/registry'
 import type { ChildBenefitInput } from '../domains/childBenefit'
+import { toChildBenefitOutput } from '../domains/childBenefit'
+import type { InterestBenefitInput } from '../domains/interestBenefit'
 import {
   toInterestBenefitOutput,
   toInterestBenefitQuery,
 } from '../domains/interestBenefit'
-import type { InterestBenefitInput } from '../domains/interestBenefit'
+import type { VehicleBenefitInput } from '../domains/vehicleBenefit'
 import {
   toVehicleBenefitOutput,
   toVehicleBenefitQuery,
 } from '../domains/vehicleBenefit'
-import type { VehicleBenefitInput } from '../domains/vehicleBenefit'
+import type { VehicleDepreciationInput } from '../domains/vehicleDepreciation'
 import {
   toVehicleDepreciationOutput,
   toVehicleDepreciationQuery,
 } from '../domains/vehicleDepreciation'
-import type { VehicleDepreciationInput } from '../domains/vehicleDepreciation'
-import { toVehicleTaxOutput, toVehicleTaxQuery } from '../domains/vehicleTax'
 import type { VehicleTaxInput } from '../domains/vehicleTax'
-import {
-  toWithholdingTaxOutput,
-  toWithholdingTaxQuery,
-} from '../domains/withholdingTax'
+import { toVehicleTaxOutput } from '../domains/vehicleTax'
 import type { WithholdingTaxInput } from '../domains/withholdingTax'
+import { toWithholdingTaxOutput } from '../domains/withholdingTax'
 import type { CalculatorContract } from '../types/calculator'
 import type { CalculatorOutputField } from '../types/output-field'
 import { byName } from '../utils/byName'
+import { toSpecQuery } from '../utils/toSpecQuery'
 
 @Injectable()
 export class CalculatorsClientService {
@@ -68,13 +68,15 @@ export class CalculatorsClientService {
 
   async getChildBenefit(input: ChildBenefitInput) {
     const { data } = await getChildBenefit({
-      query: toChildBenefitQuery(input),
+      query: toSpecQuery(zGetChildBenefitData.shape.query.shape, input),
     })
     return data && toChildBenefitOutput(data)
   }
 
   async getVehicleTax(input: VehicleTaxInput) {
-    const { data } = await getVehicleTax({ query: toVehicleTaxQuery(input) })
+    const { data } = await getVehicleTax({
+      query: toSpecQuery(zGetVehicleTaxData.shape.query.shape, input),
+    })
     return data && toVehicleTaxOutput(data)
   }
 
@@ -92,9 +94,9 @@ export class CalculatorsClientService {
     return data && toVehicleDepreciationOutput(data)
   }
 
-  async getWithholdingTax(input?: WithholdingTaxInput) {
+  async getWithholdingTax(input: WithholdingTaxInput) {
     const { data } = await getWithholdingTax({
-      query: input && toWithholdingTaxQuery(input),
+      query: toSpecQuery(zGetWithholdingTaxData.shape.query.shape, input),
     })
     return data && toWithholdingTaxOutput(data)
   }

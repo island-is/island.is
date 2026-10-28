@@ -7,16 +7,18 @@
   "paths": {
     "/api/Barnabaetur": {
       "get": {
-        "tags": ["Barnabaetur"],
+        "tags": [
+          "Barnabaetur"
+        ],
         "summary": "",
         "parameters": [
           {
             "name": "hjuskaparstada",
             "in": "query",
-            "description": "1 - Hjón/í sambúð 0 - Einstætt foreldri",
+            "description": "",
             "required": true,
             "schema": {
-              "type": "boolean"
+              "$ref": "#/components/schemas/Hjuskaparstada"
             }
           },
           {
@@ -25,8 +27,11 @@
             "description": "",
             "required": true,
             "schema": {
+              "maximum": 2025,
+              "minimum": 2018,
               "type": "integer",
-              "format": "int32"
+              "format": "int32",
+              "default": 2025
             }
           },
           {
@@ -35,6 +40,8 @@
             "description": "",
             "required": true,
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
@@ -45,6 +52,8 @@
             "description": "",
             "required": true,
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
@@ -53,26 +62,20 @@
             "name": "fjoldiBarnaUndir7ara",
             "in": "query",
             "description": "",
-            "required": true,
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
           },
           {
-            "name": "skiptBuseta",
-            "in": "query",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
             "name": "skiptBornYfir7ara",
             "in": "query",
-            "description": "Bara notað ef skiptBuseta == true",
+            "description": "",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
@@ -80,8 +83,10 @@
           {
             "name": "skiptBornUndir7ara",
             "in": "query",
-            "description": "Bara notað ef skiptBuseta == true",
+            "description": "",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
@@ -113,7 +118,9 @@
     },
     "/api/Bifreidagjold": {
       "get": {
-        "tags": ["Bifreidagjold"],
+        "tags": [
+          "Bifreidagjold"
+        ],
         "summary": "",
         "parameters": [
           {
@@ -122,8 +129,11 @@
             "description": "",
             "required": true,
             "schema": {
+              "maximum": 2026,
+              "minimum": 2019,
               "type": "integer",
-              "format": "int32"
+              "format": "int32",
+              "default": 2026
             }
           },
           {
@@ -138,10 +148,10 @@
           {
             "name": "gjaldtimabil",
             "in": "query",
-            "description": "bool 0 = 1 jan - 30 júlí, 1 = 1 júlí - 31 des",
+            "description": "",
             "required": true,
             "schema": {
-              "type": "boolean"
+              "$ref": "#/components/schemas/Gjaldtimabil"
             }
           },
           {
@@ -180,7 +190,9 @@
     },
     "/api/Bifreidahlunnindi": {
       "get": {
-        "tags": ["Bifreidahlunnindi"],
+        "tags": [
+          "Bifreidahlunnindi"
+        ],
         "summary": "",
         "parameters": [
           {
@@ -189,8 +201,11 @@
             "description": "",
             "required": true,
             "schema": {
+              "maximum": 2026,
+              "minimum": 2019,
               "type": "integer",
-              "format": "int32"
+              "format": "int32",
+              "default": 2026
             }
           },
           {
@@ -199,6 +214,8 @@
             "description": "",
             "required": true,
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
@@ -257,7 +274,9 @@
     },
     "/api/FyrningOkutaekja": {
       "get": {
-        "tags": ["FyrningOkutaekja"],
+        "tags": [
+          "FyrningOkutaekja"
+        ],
         "summary": "",
         "parameters": [
           {
@@ -266,6 +285,8 @@
             "description": "",
             "required": true,
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
@@ -276,6 +297,8 @@
             "description": "",
             "required": true,
             "schema": {
+              "maximum": 12,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -296,6 +319,8 @@
             "description": "",
             "required": true,
             "schema": {
+              "maximum": 12,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -337,40 +362,50 @@
     },
     "/api/Stadgreidsla": {
       "get": {
-        "tags": ["Stadgreidsla"],
+        "tags": [
+          "Stadgreidsla"
+        ],
         "summary": "",
         "parameters": [
           {
             "name": "launGreidast",
             "in": "query",
-            "description": "0 = Vikulega, 1 = Mánaðarlega",
+            "description": "",
+            "required": true,
             "schema": {
-              "type": "boolean"
+              "$ref": "#/components/schemas/LaunGreidast"
             }
           },
           {
             "name": "hjuskaparstada",
             "in": "query",
-            "description": "1 = Einhleypingur, 2 = Einstætt foreldri, 3 = Hjón/Sambúð.",
+            "description": "",
+            "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "$ref": "#/components/schemas/HjuskaparstadaStadgreidsla"
             }
           },
           {
             "name": "tekjuar",
             "in": "query",
             "description": "",
+            "required": true,
             "schema": {
+              "maximum": 2026,
+              "minimum": 2019,
               "type": "integer",
-              "format": "int32"
+              "format": "int32",
+              "default": 2026
             }
           },
           {
             "name": "launamanudur",
             "in": "query",
             "description": "",
+            "required": true,
             "schema": {
+              "maximum": 12,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -379,7 +414,10 @@
             "name": "laun",
             "in": "query",
             "description": "",
+            "required": true,
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
@@ -388,7 +426,10 @@
             "name": "lifeyrissjodurHlutfall",
             "in": "query",
             "description": "Hlutfall sem er greitt í lífeyrissjóð, gefið sem tala milli 0 og 1",
+            "required": true,
             "schema": {
+              "maximum": 1,
+              "minimum": 0,
               "type": "number",
               "format": "double"
             }
@@ -397,7 +438,10 @@
             "name": "sereignHlutfall",
             "in": "query",
             "description": "Hlutfall sem er greitt í séreignarsparnað, gefið sem tala milli 0 og 1",
+            "required": true,
             "schema": {
+              "maximum": 1,
+              "minimum": 0,
               "type": "number",
               "format": "double"
             }
@@ -406,7 +450,10 @@
             "name": "nytingSkattkorts",
             "in": "query",
             "description": "Nýting skattkorts, gefið sem tala milli 0 og 1",
+            "required": true,
             "schema": {
+              "maximum": 1,
+              "minimum": 0,
               "type": "number",
               "format": "double"
             }
@@ -415,7 +462,10 @@
             "name": "nytingSkattkortsMaka",
             "in": "query",
             "description": "Nýting skattkorts maka, gefið sem tala milli 0 og 1",
+            "required": true,
             "schema": {
+              "maximum": 1,
+              "minimum": 0,
               "type": "number",
               "format": "double"
             }
@@ -424,7 +474,10 @@
             "name": "uppsafnadurPersonuafslattur",
             "in": "query",
             "description": "",
+            "required": true,
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
@@ -433,7 +486,10 @@
             "name": "orlof",
             "in": "query",
             "description": "",
+            "required": true,
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
@@ -442,7 +498,10 @@
             "name": "stettarfelag",
             "in": "query",
             "description": "",
+            "required": true,
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
@@ -451,7 +510,10 @@
             "name": "annad",
             "in": "query",
             "description": "Annar frádráttur",
+            "required": true,
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
@@ -460,7 +522,10 @@
             "name": "motframlagLifeyrissjodur",
             "in": "query",
             "description": "Mótframlag, gefið sem tala milli 0 og 1",
+            "required": true,
             "schema": {
+              "maximum": 1,
+              "minimum": 0,
               "type": "number",
               "format": "double"
             }
@@ -469,7 +534,10 @@
             "name": "okutaekjastyrkurUtan",
             "in": "query",
             "description": "",
+            "required": true,
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
@@ -478,7 +546,10 @@
             "name": "idgjaldSlysatryggingSjomanna",
             "in": "query",
             "description": "",
+            "required": true,
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
@@ -510,7 +581,9 @@
     },
     "/api/Vaxtabaetur": {
       "get": {
-        "tags": ["Vaxtabaetur"],
+        "tags": [
+          "Vaxtabaetur"
+        ],
         "summary": "",
         "parameters": [
           {
@@ -630,6 +703,35 @@
           }
         },
         "additionalProperties": false
+      },
+      "Gjaldtimabil": {
+        "enum": [
+          "1. jan - 30. júlí",
+          "1. júlí - 31. des"
+        ],
+        "type": "string"
+      },
+      "Hjuskaparstada": {
+        "enum": [
+          "Gift/Í sambúð",
+          "Einstætt foreldri"
+        ],
+        "type": "string"
+      },
+      "HjuskaparstadaStadgreidsla": {
+        "enum": [
+          "Einhleypingur",
+          "Einstætt foreldri",
+          "Hjón/sambúð"
+        ],
+        "type": "string"
+      },
+      "LaunGreidast": {
+        "enum": [
+          "Vikulega",
+          "Mánaðarlega"
+        ],
+        "type": "string"
       },
       "NidurstadaBarnabaetur": {
         "type": "object",
