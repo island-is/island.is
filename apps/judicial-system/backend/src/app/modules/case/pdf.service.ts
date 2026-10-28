@@ -437,6 +437,63 @@ export class PdfService {
     return generatedPdf
   }
 
+  async replaceIndictmentPdf(
+    theCase: Case,
+    key: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    const indictmentKey = `${theCase.id}/indictment.pdf`
+
+    // The temporary upload and the frozen indictment share the case id
+    // prefix. Using the indictment key as the upload would overwrite, then
+    // delete the only copy of the Ákæra.
+    if (key === indictmentKey) {
+      throw new BadRequestException(
+        'Cannot replace the indictment with its own storage key',
+      )
+    }
+
+    const uploadedPdf = await this.awsS3Service.getObject(theCase.type, key)
+
+    if (uploadedPdf.subarray(0, 5).toString('latin1') !== '%PDF-') {
+      throw new BadRequestException('Uploaded file is not a PDF')
+    }
+
+    // Overwrite the frozen object first, then update the hash. S3 is not part
+    // of the DB transaction: if the hash update fails the new bytes are still
+    // served while the hash is set, which is preferable to a hash pointing at
+    // missing bytes. The temporary upload is deleted by the caller after
+    // commit so a rolled-back attempt can be retried.
+    await this.uploadPdfToS3(theCase, indictmentKey, uploadedPdf)
+
+    const { hash, hashAlgorithm } = getCaseFileHash(uploadedPdf)
+    // `replaced` tells the UI to list the file as Ákæra.pdf without the
+    // sent-to-court date that generated indictments carry.
+    const indictmentHash = JSON.stringify({
+      hash,
+      hashAlgorithm,
+      replaced: true,
+    })
+
+    await this.caseRepositoryService.update(
+      theCase.id,
+      { indictmentHash },
+      { transaction },
+    )
+
+    for (const splitCase of theCase.splitCases ?? []) {
+      await this.caseRepositoryService.update(
+        splitCase.id,
+        { indictmentHash },
+        { transaction },
+      )
+    }
+  }
+
+  async deleteIndictmentUpload(theCase: Case, key: string): Promise<void> {
+    await this.awsS3Service.deleteObject(theCase.type, key)
+  }
+
   async getCaseFilesRecordPdf(
     theCase: Case,
     policeCaseNumber: string,
@@ -598,6 +655,9 @@ export class PdfService {
     user: TUser,
     summons?: AppealSummons,
     previewDefendants?: AppealSummonsPdfDefendant[],
+    // Confirm generates inside a DB transaction and uploads after commit so a
+    // rolled-back confirmation cannot leave a PDF in S3. Pass false there.
+    options?: { cacheInS3?: boolean },
   ): Promise<Buffer> {
     // Same cache shape as subpoena: once confirmed (hash set), prefer the
     // frozen object in S3 so later downloads do not drift with case edits.
@@ -610,10 +670,8 @@ export class PdfService {
         return existingPdf
       }
 
-      // Do not regenerate: served bytes would no longer match the frozen hash.
-      throw new InternalServerErrorException(
-        `Appeal summons ${summons.id} has a hash but its PDF was not found in S3`,
-      )
+      // Hash set but S3 miss (e.g. confirm uploaded after commit and failed):
+      // regenerate, serve/upload only if bytes still match the frozen hash.
     }
 
     if (!theCase.rulingDate) {
@@ -671,13 +729,40 @@ export class PdfService {
       )
     }
 
-    // Confirm awaits the upload before the caller persists the hash, so a
-    // failed put cannot leave a confirmed summons with no S3 object.
-    if (summons?.confirmedDate && key) {
+    if (summons?.hash && key) {
+      const { hash } = getCaseFileHash(generatedPdf)
+
+      if (hash !== summons.hash) {
+        throw new InternalServerErrorException(
+          `Appeal summons ${summons.id} has a hash but its PDF was not found in S3`,
+        )
+      }
+
+      // Bytes match the frozen hash — serve them even if re-caching in S3 fails.
+      this.tryUploadPdfToS3(theCase, key, generatedPdf)
+
+      return generatedPdf
+    }
+
+    // Default: cache a confirmed PDF so the next GET can serve the same bytes.
+    // Confirm skips this and uploads after the transaction commits instead.
+    if (summons?.confirmedDate && key && (options?.cacheInS3 ?? true)) {
       await this.uploadPdfToS3(theCase, key, generatedPdf)
     }
 
     return generatedPdf
+  }
+
+  async uploadAppealSummonsPdf(
+    theCase: Case,
+    summonsId: string,
+    pdf: Buffer,
+  ): Promise<void> {
+    await this.uploadPdfToS3(
+      theCase,
+      `${theCase.id}/appealSummons/${summonsId}.pdf`,
+      pdf,
+    )
   }
 
   private getDefenceAppealDate(

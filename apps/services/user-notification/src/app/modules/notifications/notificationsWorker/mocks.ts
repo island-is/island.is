@@ -310,6 +310,8 @@ export const getMockHnippTemplate = ({
   smsPayer = 'Landlæknir',
   smsDelivery = 'OPT_IN',
   priorityType,
+  hnippCategory,
+  hnippCategoryIs,
 }: Partial<HnippTemplate>): HnippTemplate => ({
   templateId,
   title,
@@ -321,6 +323,8 @@ export const getMockHnippTemplate = ({
   smsPayer,
   smsDelivery,
   priorityType,
+  hnippCategory,
+  hnippCategoryIs,
 })
 
 export const userProfiles = [

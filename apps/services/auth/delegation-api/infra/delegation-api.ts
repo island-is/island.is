@@ -73,6 +73,11 @@ export const serviceSetup = (services: {
         staging: 'digitaliceland',
         dev: 'digitaliceland',
       },
+      DELEGATION_CONFIRMATION_ALLOW_FAKE_LOGIN: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',

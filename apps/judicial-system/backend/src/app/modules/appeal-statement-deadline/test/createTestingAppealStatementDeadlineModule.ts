@@ -17,6 +17,7 @@ import {
   AppealEventLogRepositoryService,
   AppealStatementDeadlineRepositoryService,
 } from '../../repository'
+import { AppealStatementController } from '../appealStatement.controller'
 import { AppealStatementDeadlineController } from '../appealStatementDeadline.controller'
 import { AppealStatementDeadlineService } from '../appealStatementDeadline.service'
 
@@ -32,7 +33,7 @@ export const createTestingAppealStatementDeadlineModule = async () => {
         load: [sharedAuthModuleConfig],
       }),
     ],
-    controllers: [AppealStatementDeadlineController],
+    controllers: [AppealStatementDeadlineController, AppealStatementController],
     providers: [
       SharedAuthModule,
       CaseService,
@@ -69,6 +70,11 @@ export const createTestingAppealStatementDeadlineModule = async () => {
       AppealStatementDeadlineController,
     )
 
+  const appealStatementController =
+    appealStatementDeadlineModule.get<AppealStatementController>(
+      AppealStatementController,
+    )
+
   // Every message the module queues goes through the helper, so this is the
   // whole of what a request would send.
   const queuedMessagesAfterCommit: Message[] = []
@@ -85,5 +91,6 @@ export const createTestingAppealStatementDeadlineModule = async () => {
     appealStatementDeadlineRepositoryService,
     sequelize,
     appealStatementDeadlineController,
+    appealStatementController,
   }
 }

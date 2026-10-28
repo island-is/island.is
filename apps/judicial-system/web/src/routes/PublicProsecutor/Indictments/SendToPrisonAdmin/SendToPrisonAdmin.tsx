@@ -117,14 +117,14 @@ const SendToPrisonAdmin: FC = () => {
       notFound={caseNotFound}
       isValid={true}
     >
-      <PageHeader title={formatMessage(strings.title)} />
+      <PageHeader title={strings.title} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <SectionHeading
           heading="h2"
-          title={formatMessage(strings.fileUploadTitle)}
-          description={formatMessage(strings.fileUploadDescription)}
+          title={strings.fileUploadTitle}
+          description={strings.fileUploadDescription}
         />
         <InputFileUpload
           name="sentToPrisonAdminFileUpload"
@@ -148,7 +148,7 @@ const SendToPrisonAdmin: FC = () => {
           previousUrl={`${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(strings.nextButtonText),
+              text: strings.nextButtonText,
               icon: 'arrowForward',
               onClick: handleNextButtonClick,
               testId: 'continueButton',
@@ -158,11 +158,17 @@ const SendToPrisonAdmin: FC = () => {
       </FormContentContainer>
       {modalVisible === AvailableModal.SUCCESS && defendant && (
         <Modal
-          title={formatMessage(strings.modalTitle)}
-          text={formatMessage(strings.modalText, {
-            courtCaseNumber: workingCase.courtCaseNumber,
-            defendant: defendant.name,
-          })}
+          title={strings.modalTitle}
+          text={formatMessage(
+            {
+              id: strings.modalText,
+              defaultMessage: strings.modalText,
+            },
+            {
+              courtCaseNumber: workingCase.courtCaseNumber,
+              defendant: defendant.name,
+            },
+          )}
           buttons={[
             {
               text: formatMessage(core.back),
@@ -170,7 +176,7 @@ const SendToPrisonAdmin: FC = () => {
               variant: 'ghost',
             },
             {
-              text: formatMessage(strings.modalNextButtonText),
+              text: strings.modalNextButtonText,
               onClick: handlePrimaryButtonClick,
               isLoading: isUpdatingDefendant,
             },

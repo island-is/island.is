@@ -5,6 +5,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Header,
   Inject,
@@ -25,9 +26,20 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { indictmentCases, type User } from '@island.is/judicial-system/types'
+import {
+  AppealSummonsAction,
+  canPerformAppealSummonsAction,
+  indictmentCases,
+  type User,
+} from '@island.is/judicial-system/types'
 
-import { prosecutorRule, publicProsecutorStaffRule } from '../../guards'
+import {
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
+  prosecutorRule,
+  publicProsecutorStaffRule,
+} from '../../guards'
 import { getOrCreateTransaction } from '../../middleware'
 import {
   CaseExistsForUpdateGuard,
@@ -46,13 +58,13 @@ import { AppealSummonsExistsGuard } from './guards/appealSummonsExists.guard'
 import { DeleteAppealSummonsResponse } from './models/deleteAppealSummons.response'
 import { AppealSummonsService } from './appealSummons.service'
 
-// The three routes that change an appeal summons - create, update and delete -
-// decide against the case row they read: create resolves the defendants and
-// their appellant sides from the case's verdict appeal, and update and delete
-// act on the summons that AppealSummonsExistsGuard found on that case. Each of
-// them reads the case under FOR UPDATE through the locking exists guard, so the
-// decision is made against a row no one else can change until the request's
-// transaction commits.
+// The four routes that change an appeal summons - create, update, delete and
+// sendToCourtOfAppeals - decide against the case row they read: create resolves
+// the defendants and their appellant sides from the case's verdict appeal, and
+// the others act on the summons that AppealSummonsExistsGuard found on that
+// case. Each of them reads the case under FOR UPDATE through the locking
+// exists guard, so the decision is made against a row no one else can change
+// until the request's transaction commits.
 //
 // That guard cannot sit at class level: confirm awaits an upload to S3 inside
 // a transaction of its own, and getPdf and preview only read, so those three
@@ -63,10 +75,10 @@ import { AppealSummonsService } from './appealSummons.service'
 // whichever guard put the case there.
 //
 // RolesGuard stays at class level, ahead of the locking read. It can, because
-// both rules on this controller are bare user roles with no canActivate:
-// neither reads request.case, so a caller a route has no rule for is turned
-// away before any case row is locked. appealSummonsGuardChain.spec.ts runs the
-// six chains.
+// every rule on this controller is a bare user role with no canActivate: none
+// reads request.case, so a caller a route has no rule for is turned away
+// before any case row is locked. appealSummonsGuardChain.spec.ts runs the
+// seven chains.
 @Controller('api/case/:caseId/appealSummons')
 @ApiTags('appeal summonses')
 @UseGuards(JwtAuthUserGuard, RolesGuard)
@@ -226,6 +238,42 @@ export class AppealSummonsController {
     )
   }
 
+  @UseGuards(
+    CaseExistsForUpdateGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    AppealSummonsExistsGuard,
+  )
+  @RolesRules(publicProsecutorStaffRule)
+  @Patch(':appealSummonsId/sendToCourtOfAppeals')
+  @ApiOkResponse({
+    type: AppealSummons,
+    description: 'Sends an appeal summons to the court of appeals',
+  })
+  async sendToCourtOfAppeals(
+    @Param('caseId') caseId: string,
+    @Param('appealSummonsId') appealSummonsId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentAppealSummons() summons: AppealSummons,
+    @CurrentHttpUser() user: User,
+  ): Promise<AppealSummons> {
+    this.logger.debug(
+      `Sending appeal summons ${appealSummonsId} of case ${caseId} to the court of appeals`,
+    )
+
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.appealSummonsService.sendToCourtOfAppeals(
+      theCase,
+      summons,
+      user,
+      transaction,
+    )
+  }
+
   // A read: no lock.
   @UseGuards(
     CaseExistsGuard,
@@ -233,7 +281,13 @@ export class AppealSummonsController {
     CaseReadGuard,
     AppealSummonsExistsGuard,
   )
-  @RolesRules(publicProsecutorStaffRule, prosecutorRule)
+  @RolesRules(
+    publicProsecutorStaffRule,
+    prosecutorRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+  )
   @Get(':appealSummonsId/pdf')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -251,6 +305,15 @@ export class AppealSummonsController {
     this.logger.debug(
       `Getting appeal summons ${appealSummonsId} of case ${caseId} as a pdf document`,
     )
+
+    // CoA may open only after send; staff/prosecutors keep broader OPEN rights.
+    if (
+      !canPerformAppealSummonsAction(AppealSummonsAction.OPEN, summons, user)
+    ) {
+      throw new ForbiddenException(
+        `User ${user.id} cannot open appeal summons ${appealSummonsId}`,
+      )
+    }
 
     const pdf = await this.pdfService.getAppealSummonsPdf(
       theCase,

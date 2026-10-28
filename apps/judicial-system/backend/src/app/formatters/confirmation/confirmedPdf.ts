@@ -46,6 +46,11 @@ interface ConfirmationFonts {
   bold: PDFFont
 }
 
+interface ConfirmationConfig {
+  confirmationText: string
+  boxes: ConfirmationBox[]
+}
+
 // Draws the same stamp as drawConfirmation in pdfHelpers, for documents that
 // were uploaded as finished PDFs rather than generated. pdf-lib measures y
 // from the bottom of the page and positions text by its baseline, so every
@@ -55,7 +60,7 @@ const drawConfirmation = (
   page: PDFPage,
   fonts: ConfirmationFonts,
   confirmation: Confirmation,
-  boxes: ConfirmationBox[],
+  { confirmationText, boxes }: ConfirmationConfig,
 ) => {
   const {
     pageMargin,
@@ -138,7 +143,7 @@ const drawConfirmation = (
 
   drawText(title, titleX, titleTextY, fonts.bold)
   drawText(
-    'Rafræn staðfesting',
+    confirmationText,
     titleX + fonts.bold.widthOfTextAtSize(`${title}  `, fontSize),
     titleTextY,
     fonts.regular,
@@ -212,6 +217,23 @@ const getConfirmationBoxes = (
   }
 }
 
+const stampFirstPage = async (
+  pdf: Buffer,
+  confirmation: Confirmation,
+  config: ConfirmationConfig,
+) => {
+  const pdfDoc = await PDFDocument.load(new Uint8Array(pdf))
+  const fonts = {
+    regular: await pdfDoc.embedFont(StandardFonts.TimesRoman),
+    bold: await pdfDoc.embedFont(StandardFonts.TimesRomanBold),
+  }
+
+  drawConfirmation(pdfDoc.getPage(0), fonts, confirmation, config)
+
+  const pdfBytes = await pdfDoc.save()
+  return Buffer.from(pdfBytes)
+}
+
 export const createConfirmedPdf = async (
   confirmation: Confirmation,
   pdf: Buffer,
@@ -221,19 +243,8 @@ export const createConfirmedPdf = async (
     throw new Error('CaseFileCategory not supported')
   }
 
-  const pdfDoc = await PDFDocument.load(new Uint8Array(pdf))
-  const fonts = {
-    regular: await pdfDoc.embedFont(StandardFonts.TimesRoman),
-    bold: await pdfDoc.embedFont(StandardFonts.TimesRomanBold),
-  }
-
-  drawConfirmation(
-    pdfDoc.getPage(0),
-    fonts,
-    confirmation,
-    getConfirmationBoxes(confirmation, fileType),
-  )
-
-  const pdfBytes = await pdfDoc.save()
-  return Buffer.from(pdfBytes)
+  return stampFirstPage(pdf, confirmation, {
+    confirmationText: 'Rafræn staðfesting',
+    boxes: getConfirmationBoxes(confirmation, fileType),
+  })
 }

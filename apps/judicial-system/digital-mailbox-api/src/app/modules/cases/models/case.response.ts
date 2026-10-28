@@ -106,10 +106,10 @@ export class CaseResponse {
               },
               {
                 label:
-                  internalCase.judge.role === UserRole.DISTRICT_COURT_ASSISTANT
+                  internalCase.judge?.role === UserRole.DISTRICT_COURT_ASSISTANT
                     ? t.districtCourtAssistant
                     : t.judge,
-                value: internalCase.judge.name,
+                value: internalCase.judge?.name ?? t.notAvailable,
               },
               {
                 label: t.institution,

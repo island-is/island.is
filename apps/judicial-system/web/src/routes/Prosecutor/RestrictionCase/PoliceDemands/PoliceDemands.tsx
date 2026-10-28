@@ -82,21 +82,27 @@ export const getDemandsAutofill = (
     props.defendant.noNationalId,
     '',
   )
-  return formatMessage(rcReportForm.sections.demands.autofill, {
-    defendantName: props.defendant.name,
-    defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
-    isExtended:
-      props.parentCaseDecision &&
-      isAcceptingCaseDecision(props.parentCaseDecision),
-    caseType: props.caseType,
-    court: props.courtName?.replace('Héraðsdómur', 'Héraðsdóms'),
-    requestedValidToDate: formatDate(props.requestedValidToDate, 'PPPPp')
-      ?.replace('dagur,', 'dagsins')
-      ?.replace(' kl.', ', kl.'),
-    hasIsolationRequest: props.requestedCustodyRestrictions?.includes(
-      CaseCustodyRestrictions.ISOLATION,
-    ),
-  })
+  return formatMessage(
+    {
+      id: rcReportForm.sections.demands.autofill,
+      defaultMessage: rcReportForm.sections.demands.autofill,
+    },
+    {
+      defendantName: props.defendant.name,
+      defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
+      isExtended:
+        props.parentCaseDecision &&
+        isAcceptingCaseDecision(props.parentCaseDecision),
+      caseType: props.caseType,
+      court: props.courtName?.replace('Héraðsdómur', 'Héraðsdóms'),
+      requestedValidToDate: formatDate(props.requestedValidToDate, 'PPPPp')
+        ?.replace('dagur,', 'dagsins')
+        ?.replace(' kl.', ', kl.'),
+      hasIsolationRequest: props.requestedCustodyRestrictions?.includes(
+        CaseCustodyRestrictions.ISOLATION,
+      ),
+    },
+  )
 }
 
 export const PoliceDemands = () => {
@@ -131,8 +137,13 @@ export const PoliceDemands = () => {
         [
           {
             requestedOtherRestrictions: formatMessage(
-              rcDemands.sections.custodyRestrictions
-                .requestedOtherRestrictionsAutofill,
+              {
+                id: rcDemands.sections.custodyRestrictions
+                  .requestedOtherRestrictionsAutofill,
+                defaultMessage:
+                  rcDemands.sections.custodyRestrictions
+                    .requestedOtherRestrictionsAutofill,
+              },
               { gender: workingCase.defendants[0].gender },
             ),
           },
@@ -193,18 +204,25 @@ export const PoliceDemands = () => {
         title={formatMessage(titles.prosecutor.restrictionCases.policeDemands)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(rcDemands.heading)}</PageTitle>
+        <PageTitle>{rcDemands.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
             <SectionHeading
-              title={formatMessage(rcDemands.sections.demands.heading)}
+              title={rcDemands.sections.demands.heading}
               description={
                 workingCase.parentCase ? (
                   <Text>
-                    {formatMessage(rcDemands.sections.demands.pastRestriction, {
-                      caseType: workingCase.type,
-                    })}
+                    {formatMessage(
+                      {
+                        id: rcDemands.sections.demands.pastRestriction,
+                        defaultMessage:
+                          rcDemands.sections.demands.pastRestriction,
+                      },
+                      {
+                        caseType: workingCase.type,
+                      },
+                    )}
                     <Text as="span" fontWeight="semiBold">
                       {formatDate(
                         workingCase.parentCase.validToDate,
@@ -219,7 +237,11 @@ export const PoliceDemands = () => {
               <DateTime
                 name="reqValidToDate"
                 datepickerLabel={formatMessage(
-                  rcDemands.sections.demands.restrictionValidDateLabel,
+                  {
+                    id: rcDemands.sections.demands.restrictionValidDateLabel,
+                    defaultMessage:
+                      rcDemands.sections.demands.restrictionValidDateLabel,
+                  },
                   { caseType: workingCase.type },
                 )}
                 minDate={new Date()}
@@ -307,16 +329,12 @@ export const PoliceDemands = () => {
           </Box>
           {workingCase.defendants && workingCase.defendants.length > 0 && (
             <Box component="section">
-              <SectionHeading
-                title={formatMessage(rcDemands.sections.lawsBroken.heading)}
-              />
+              <SectionHeading title={rcDemands.sections.lawsBroken.heading} />
               <Input
                 data-testid="lawsBroken"
                 name="lawsBroken"
                 label="Lagaákvæði sem ætluð brot varða við"
-                placeholder={formatMessage(
-                  rcDemands.sections.lawsBroken.placeholder,
-                )}
+                placeholder={rcDemands.sections.lawsBroken.placeholder}
                 value={lawsBrokenInput.value}
                 errorMessage={lawsBrokenInput.errorMessage}
                 hasError={lawsBrokenInput.hasError}
@@ -330,7 +348,7 @@ export const PoliceDemands = () => {
           )}
           <Box component="section">
             <SectionHeading
-              title={formatMessage(rcDemands.sections.legalBasis.heading)}
+              title={rcDemands.sections.legalBasis.heading}
               required
             />
             <BlueBox className={stack({ gap: 2 })}>
@@ -399,12 +417,10 @@ export const PoliceDemands = () => {
               <Input
                 data-testid="legalBasis"
                 name="legalBasis"
-                label={formatMessage(
-                  rcDemands.sections.legalBasis.legalBasisLabel,
-                )}
-                placeholder={formatMessage(
-                  rcDemands.sections.legalBasis.legalBasisPlaceholder,
-                )}
+                label={rcDemands.sections.legalBasis.legalBasisLabel}
+                placeholder={
+                  rcDemands.sections.legalBasis.legalBasisPlaceholder
+                }
                 value={legalBasisInput.value}
                 onChange={(evt) => legalBasisInput.onChange(evt.target.value)}
                 textarea
@@ -417,13 +433,21 @@ export const PoliceDemands = () => {
             <Box component="section" data-testid="custodyRestrictions">
               <SectionHeading
                 title={formatMessage(
-                  rcDemands.sections.custodyRestrictions.headingV2,
+                  {
+                    id: rcDemands.sections.custodyRestrictions.headingV2,
+                    defaultMessage:
+                      rcDemands.sections.custodyRestrictions.headingV2,
+                  },
                   {
                     caseType: workingCase.type,
                   },
                 )}
                 description={formatMessage(
-                  rcDemands.sections.custodyRestrictions.subHeadingV2,
+                  {
+                    id: rcDemands.sections.custodyRestrictions.subHeadingV2,
+                    defaultMessage:
+                      rcDemands.sections.custodyRestrictions.subHeadingV2,
+                  },
                   {
                     caseType: workingCase.type,
                   },
@@ -448,13 +472,21 @@ export const PoliceDemands = () => {
             <Box component="section" data-testid="travelBanRestrictions">
               <SectionHeading
                 title={formatMessage(
-                  rcDemands.sections.custodyRestrictions.headingV2,
+                  {
+                    id: rcDemands.sections.custodyRestrictions.headingV2,
+                    defaultMessage:
+                      rcDemands.sections.custodyRestrictions.headingV2,
+                  },
                   {
                     caseType: workingCase.type,
                   },
                 )}
                 description={formatMessage(
-                  rcDemands.sections.custodyRestrictions.subHeadingV2,
+                  {
+                    id: rcDemands.sections.custodyRestrictions.subHeadingV2,
+                    defaultMessage:
+                      rcDemands.sections.custodyRestrictions.subHeadingV2,
+                  },
                   {
                     caseType: workingCase.type,
                   },
@@ -479,13 +511,11 @@ export const PoliceDemands = () => {
                 <Input
                   name="requestedOtherRestrictions"
                   data-testid="requestedOtherRestrictions"
-                  label={formatMessage(
-                    rcDemands.sections.custodyRestrictions.label,
-                  )}
+                  label={rcDemands.sections.custodyRestrictions.label}
                   value={requestedOtherRestrictionsInput.value}
-                  placeholder={formatMessage(
-                    rcDemands.sections.custodyRestrictions.placeholder,
-                  )}
+                  placeholder={
+                    rcDemands.sections.custodyRestrictions.placeholder
+                  }
                   onChange={(evt) =>
                     requestedOtherRestrictionsInput.onChange(evt.target.value)
                   }

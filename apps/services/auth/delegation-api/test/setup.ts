@@ -31,7 +31,7 @@ const delegationConfig: ConfigType<typeof DelegationConfig> = {
   defaultValidityPeriodInDays: 90,
   confirmationLifetimeInMinutes: 15,
   confirmationRequiredAcr: 'eidas-loa-high',
-  confirmationAllowAnyAcrInDev: false,
+  confirmationAllowFakeLogin: false,
   confirmationCibaIssuerUrl: 'https://identity-server.test',
   confirmationCibaClientId: '@island.is/clients/delegation-confirmation',
   confirmationCibaClientSecret: 'test-secret',

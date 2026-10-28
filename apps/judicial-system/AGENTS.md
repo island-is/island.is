@@ -134,7 +134,10 @@ compiles every route on first visit, which blows the suite's 15s request waits
 and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
 
 - Run it with `yarn playwright test -c apps/system-e2e/src --project judicial-system`,
-  or `/js-e2e` in Claude Code. When nothing listens on port 4200 the Playwright
+  or `/js-e2e` in Claude Code. The skill lives in `apps/judicial-system/.claude/skills`,
+  so from a session started at the repo root it only appears after Claude has
+  touched a file in this app (or after `/add-dir apps/judicial-system`).
+  When nothing listens on port 4200 the Playwright
   config builds the production bundle and serves it itself; a dev server on
   that port is reused as-is (slow, avoid). The port cannot change: the dev S3
   upload bucket only allows the `localhost:4200` origin.

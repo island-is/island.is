@@ -98,7 +98,7 @@ const Summary: FC = () => {
     <>
       <AlertBanner
         variant="warning"
-        title={formatMessage(strings.alertBannerTitle)}
+        title={strings.alertBannerTitle}
         description={getAppealDecision(
           formatMessage,
           targetAppealCase?.appealRulingDecision,
@@ -110,9 +110,9 @@ const Summary: FC = () => {
         notFound={caseNotFound}
         onNavigationTo={handleNavigationTo}
       >
-        <PageHeader title={formatMessage(strings.htmlTitle)} />
+        <PageHeader title={strings.htmlTitle} />
         <FormContentContainer>
-          <PageTitle>{formatMessage(strings.title)}</PageTitle>
+          <PageTitle>{strings.title}</PageTitle>
 
           <CaseNumbers />
 
@@ -143,7 +143,7 @@ const Summary: FC = () => {
             )}
             actions={[
               {
-                text: formatMessage(strings.nextButtonFooter),
+                text: strings.nextButtonFooter,
                 icon: 'checkmark',
                 onClick: async () => await handleNextButtonClick(),
                 disabled: isTransitioningAppealCase,
@@ -154,8 +154,8 @@ const Summary: FC = () => {
         </FormContentContainer>
         {visibleModal === 'AppealCompleted' && (
           <Modal
-            title={formatMessage(strings.appealCompletedModalTitle)}
-            text={formatMessage(strings.appealCompletedModalText)}
+            title={strings.appealCompletedModalTitle}
+            text={strings.appealCompletedModalText}
             buttons={[
               {
                 text: formatMessage(core.closeModal),
@@ -180,8 +180,8 @@ const Summary: FC = () => {
         )}
         {visibleModal === 'AppealDiscontinued' && (
           <Modal
-            title={formatMessage(strings.appealDiscontinuedModalTitle)}
-            text={formatMessage(strings.appealDiscontinuedModalText)}
+            title={strings.appealDiscontinuedModalTitle}
+            text={strings.appealDiscontinuedModalText}
             buttons={[
               {
                 text: formatMessage(core.closeModal),
