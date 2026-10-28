@@ -51,7 +51,7 @@ export const NewUser = () => {
             'Notandi með þessa kennitölu, hlutverk og stofnun er nú þegar til',
           )
         } else {
-          toast.error(formatMessage(strings.createError))
+          toast.error(strings.createError)
         }
       },
     },
