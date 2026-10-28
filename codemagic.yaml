@@ -198,8 +198,8 @@ definitions:
         submit_to_app_store: false
     # auto-release iOS builds upload to TestFlight (both dev and prod app
     # records) but never submit for App Store review. Android auto-release
-    # builds sign only and publish to no store, so there is no matching
-    # auto-release Android publishing anchor.
+    # builds upload to the Google Play internal track (both dev and prod
+    # packages) via the shared android_publishing anchor below.
     ios_release_testflight: &ios_release_testflight
       app_store_connect:
         auth: integration
@@ -535,6 +535,7 @@ workflows:
     artifacts:
       - android/app/build/outputs/**/*.aab
     publishing:
+      <<: *android_publishing
       <<: *slack_errors
 
   mobile-release-android-prod:
@@ -566,4 +567,5 @@ workflows:
     artifacts:
       - android/app/build/outputs/**/*.aab
     publishing:
+      <<: *android_publishing
       <<: *slack_errors
