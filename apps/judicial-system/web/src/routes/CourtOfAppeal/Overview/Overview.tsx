@@ -99,9 +99,7 @@ const Overview = () => {
                 targetAppealCase?.requestAppealRulingNotToBePublished
                   ? [
                       {
-                        message: formatMessage(
-                          strings.requestAppealRulingNotToBePublished,
-                        ),
+                        message: strings.requestAppealRulingNotToBePublished,
                       },
                     ]
                   : undefined

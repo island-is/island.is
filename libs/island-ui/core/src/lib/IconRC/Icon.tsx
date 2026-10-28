@@ -92,7 +92,8 @@ export const Icon = ({
     >
       <IconSvg
         data-testid={`icon-${icon}`}
-        aria-hidden={ariaHidden}
+        // Icons without a title are decorative, so hide them from assistive tech unless told otherwise
+        aria-hidden={ariaHidden ?? !title}
         fill={colors[color]}
         color={colors[color]}
         stroke={useStroke && colors[color]}

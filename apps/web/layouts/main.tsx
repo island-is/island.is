@@ -62,7 +62,6 @@ import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_ORGANIZATION_LOGOS_QUERY } from '../screens/queries/Organization'
 import { Screen, ScreenContext } from '../types'
-import type { LanguageToggleDialogConfig } from '../utils/languageToggleDialog'
 import { getHeaderNavigationPropsFromUrl } from '../utils/organization'
 import Illustration from './Illustration'
 import * as styles from './main.css'
@@ -114,7 +113,6 @@ export interface LayoutProps {
     is: string
     en: string
   }
-  languageToggleDialog?: LanguageToggleDialogConfig
   footerVersion?: 'default' | 'organization'
 
   // @ts-expect-error make web strict
@@ -166,7 +164,6 @@ const Layout: Screen<LayoutProps> = ({
   showHeaderNavigation: showHeaderNavigationOverride,
   customTopLoginButtonItem,
   languageToggleHrefOverride,
-  languageToggleDialog,
 }) => {
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
@@ -414,7 +411,6 @@ const Layout: Screen<LayoutProps> = ({
                 customTopLoginButtonItem={customTopLoginButtonItem}
                 loginButtonType={n('minarsidurLoginButtonType', 'dropdown')}
                 languageToggleHrefOverride={languageToggleHrefOverride}
-                languageToggleDialog={languageToggleDialog}
               />
             </ColorSchemeContext.Provider>
           )}
@@ -734,7 +730,6 @@ interface LayoutComponentProps {
     is: string
     en: string
   }
-  languageToggleDialog?: LanguageToggleDialogConfig
 }
 
 export const withMainLayout = <T, C extends ScreenContext>(
@@ -787,10 +782,6 @@ export const withMainLayout = <T, C extends ScreenContext>(
       layoutComponentProps?.languageToggleHrefOverride ??
       layoutConfig.languageToggleHrefOverride
 
-    const languageToggleDialog =
-      layoutComponentProps?.languageToggleDialog ??
-      layoutConfig.languageToggleDialog
-
     const mergedLayoutProps = {
       ...layoutProps,
       ...layoutConfig,
@@ -801,7 +792,6 @@ export const withMainLayout = <T, C extends ScreenContext>(
       languageToggleQueryParams,
       customTopLoginButtonItem,
       languageToggleHrefOverride,
-      languageToggleDialog,
     }
 
     // Route restrictions are authoritative. Page config may hide navigation

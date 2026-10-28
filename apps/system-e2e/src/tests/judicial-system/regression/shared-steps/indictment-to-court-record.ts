@@ -127,8 +127,15 @@ export const prosecutorCreatesIndictmentCase = async (
     page.getByText('Nei').last().click(),
   ])
 
+  // The indictment page saves twice as it opens: the introduction and demands
+  // autofill (UpdateCase) and the incident description editor's first
+  // debounced change (UpdateIndictmentCount). Each response replaces the
+  // indictment count in the working case, so a registration number typed
+  // before they land is wiped and the blur then saves an empty one.
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+    verifyRequestCompletion(page, '/api/graphql', 'UpdateIndictmentCount'),
     page.getByTestId('continueButton').click(),
   ])
 

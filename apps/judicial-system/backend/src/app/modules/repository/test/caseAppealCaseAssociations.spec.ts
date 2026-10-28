@@ -41,4 +41,10 @@ describe('Case appeal case associations', () => {
     // scope excludes it without naming the type.
     expect(scope).toEqual({ rulingFileId: { [Op.not]: null } })
   })
+
+  it('scopes sent appeal summonses to rows with a send date', () => {
+    const { scope } = repository.AppealCase.associations.sentAppealSummonses
+
+    expect(scope).toEqual({ sentToCourtOfAppealsDate: { [Op.ne]: null } })
+  })
 })

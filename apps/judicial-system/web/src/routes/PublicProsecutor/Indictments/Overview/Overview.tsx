@@ -170,7 +170,7 @@ export const Overview = () => {
         })}
       />
       <FormContentContainer>
-        <PageTitle>{fm(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={stack({ gap: 5 })}>
           <div className={stack({ gap: 2 })}>{verdictStatusAlerts}</div>
@@ -257,11 +257,16 @@ export const Overview = () => {
       </FormContentContainer>
       {isReviewerAssignedModal(confirmationModal) && (
         <Modal
-          title={fm(strings.reviewerAssignedModalTitle)}
-          text={fm(strings.reviewerAssignedModalText, {
-            caseNumber: workingCase.courtCaseNumber,
-            reviewer: selectedIndictmentReviewer?.label,
-          })}
+          title={strings.reviewerAssignedModalTitle}
+          text={fm(
+            {
+              id: strings.reviewerAssignedModalText,
+              defaultMessage: strings.reviewerAssignedModalText,
+            },
+            {
+              caseNumber: workingCase.courtCaseNumber,
+            },
+          )}
           buttons={[
             {
               text: fm(core.back),

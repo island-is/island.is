@@ -55,9 +55,12 @@ import { isAppealFileCategoryVisible } from '@island.is/judicial-system-web/src/
 
 import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
+  getIndictmentPdfDisplayName,
   getVisibleSubpoenas,
   shouldShowPoliceDigitalCaseFilesSection,
+  shouldShowReplaceIndictmentPdf,
 } from './IndictmentCaseFilesList.logic'
+import ReplaceIndictmentPdf from './ReplaceIndictmentPdf'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -513,7 +516,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
         {displayGeneratedPDFs && (
           <Box>
             <SectionHeading
-              title={formatMessage(caseFiles.indictmentSection)}
+              title={caseFiles.indictmentSection}
               marginBottom={1}
               heading="h4"
               variant="h4"
@@ -524,29 +527,29 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 connectedCaseParentId={connectedCaseParentId}
                 title={prefixGeneratedDocumentNameWithDocumentOrder(
                   'indictment',
-                  `Ákæra${
-                    workingCase.caseSentToCourtDate
-                      ? ` ${formatDate(workingCase.caseSentToCourtDate)}`
-                      : ''
-                  }.pdf`,
+                  getIndictmentPdfDisplayName(workingCase),
                   workingCase.id,
                 )}
                 pdfType="indictment"
                 renderAs="row"
                 elementId="Ákæra"
               />
+              {!connectedCaseParentId &&
+                shouldShowReplaceIndictmentPdf(workingCase, user) && (
+                  <ReplaceIndictmentPdf caseId={workingCase.id} />
+                )}
             </Box>
           </Box>
         )}
         {showFiles && (
           <>
             <FileSection
-              title={formatMessage(caseFiles.criminalRecordSection)}
+              title={caseFiles.criminalRecordSection}
               files={filteredFiles.criminalRecords}
               onOpenFile={onOpen}
             />
             <FileSection
-              title={formatMessage(caseFiles.costBreakdownSection)}
+              title={caseFiles.costBreakdownSection}
               files={filteredFiles.costBreakdowns}
               onOpenFile={onOpen}
             />
@@ -588,7 +591,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
         )}
         {showFiles && (
           <FileSection
-            title={formatMessage(caseFiles.otherDocumentsSection)}
+            title={caseFiles.otherDocumentsSection}
             files={filteredFiles.others}
             onOpenFile={onOpen}
           />
@@ -856,7 +859,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               </Box>
             )}
             <FileSection
-              title={formatMessage(caseFiles.criminalRecordUpdateSection)}
+              title={caseFiles.criminalRecordUpdateSection}
               files={filteredFiles.criminalRecordUpdate}
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCriminalRecordUpdate}

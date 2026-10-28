@@ -141,7 +141,7 @@ export const DefendantList = () => {
         justifyContent="spaceBetween"
         marginBottom={2}
       >
-        <SectionHeading title={formatMessage(strings.defendantsHeading)} />
+        <SectionHeading title={strings.defendantsHeading} />
         {showPoliceDefendantsUI && loading && <LoadingDots size="small" />}
       </Box>
       <AnimatePresence>
@@ -182,7 +182,7 @@ export const DefendantList = () => {
               (!defendant.noNationalId && !defendant.nationalId),
           )}
         >
-          {formatMessage(strings.addDefendantButtonText)}
+          {strings.addDefendantButtonText}
         </Button>
       </Box>
     </>
