@@ -120,7 +120,7 @@ describe('InternalNotificationController - Send appeal court session cancelled n
   const expectedDetails = `Landsréttur hefur fellt niður þinghald í máli ${appealCaseNumber}.<br/><br/>Aðalmeðferð sem fara átti fram ${formatDate(
     sessionDate,
     'PPP',
-  )}, kl. 13:00, fellur niður.`
+  )}, kl. 13:00 í dómsal 1, fellur niður.`
 
   describe('session cancelled on a numbered appeal', () => {
     let then: Then

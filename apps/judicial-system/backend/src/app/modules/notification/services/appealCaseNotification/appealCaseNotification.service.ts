@@ -2220,7 +2220,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         appealCourtSessionTypeNames[appealCourtSession.sessionType]
       } sem fara átti fram ${this.appealCourtSessionWhen(
         appealCourtSession.sessionDate,
-      )}, fellur niður.`,
+      )} í dómsal ${appealCourtSession.courtRoom}, fellur niður.`,
     )
   }
   //#endregion
