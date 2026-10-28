@@ -59,9 +59,16 @@ export const OJOIAdvertDisplay = ({
           </Text>
         )}
       </Box>
-      <Box textAlign="center" display="flex" flexDirection="column">
-        <Text variant="h3">{advertType}</Text>
-        <Text variant="h4" className={s.advertDescription}>
+      <Box
+        component="h1"
+        textAlign="center"
+        display="flex"
+        flexDirection="column"
+      >
+        <Text as="span" variant="h3">
+          {advertType}
+        </Text>{' '}
+        <Text as="span" variant="h4" className={s.advertDescription}>
           {advertSubject}
         </Text>
       </Box>
