@@ -185,7 +185,7 @@ export const CaseOverview = () => {
           {isCompletedCase(workingCase.state) && (
             <Box marginBottom={6}>
               <Conclusion
-                title={formatMessage(conclusion.title)}
+                title={conclusion.title}
                 conclusionText={workingCase.conclusion}
                 judgeName={workingCase.judge?.name}
               />
@@ -194,7 +194,7 @@ export const CaseOverview = () => {
           {workingCase.appealCase?.appealConclusion && (
             <Box marginBottom={6}>
               <Conclusion
-                title={formatMessage(conclusion.appealTitle)}
+                title={conclusion.appealTitle}
                 conclusionText={workingCase.appealCase?.appealConclusion}
               />
             </Box>

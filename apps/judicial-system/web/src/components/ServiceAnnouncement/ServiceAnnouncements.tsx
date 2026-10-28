@@ -1,6 +1,6 @@
 import type { FC } from 'react'
 import { useContext, useEffect, useState } from 'react'
-import type { IntlShape, MessageDescriptor } from 'react-intl'
+import type { IntlShape } from 'react-intl'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
@@ -19,7 +19,7 @@ import { strings } from './ServiceAnnouncements.strings'
 
 const mapServiceStatusTitle = (
   serviceStatus?: ServiceStatus | null,
-): MessageDescriptor => {
+): string => {
   switch (serviceStatus) {
     case ServiceStatus.DEFENDER:
     case ServiceStatus.ELECTRONICALLY:
@@ -48,18 +48,30 @@ const mapServiceStatusMessages = (
             ? ` - ${formatDate(subpoena.serviceDate, 'dd.MM.y HH:mm')}`
             : ''
         }`,
-        formatMessage(strings.servedToDefender, {
-          lawyerName: lawyer?.name,
-          practice: lawyer?.practice,
-        }),
+        formatMessage(
+          {
+            id: strings.servedToDefender,
+            defaultMessage: strings.servedToDefender,
+          },
+          {
+            lawyerName: lawyer?.name,
+            practice: lawyer?.practice,
+          },
+        ),
       ]
     case ServiceStatus.ELECTRONICALLY:
       return [
-        formatMessage(strings.servedToElectronically, {
-          date: subpoena.serviceDate
-            ? formatDate(subpoena.serviceDate, 'dd.MM.y HH:mm')
-            : '',
-        }),
+        formatMessage(
+          {
+            id: strings.servedToElectronically,
+            defaultMessage: strings.servedToElectronically,
+          },
+          {
+            date: subpoena.serviceDate
+              ? formatDate(subpoena.serviceDate, 'dd.MM.y HH:mm')
+              : '',
+          },
+        ),
       ]
     case ServiceStatus.IN_PERSON:
     case ServiceStatus.FAILED:
@@ -72,14 +84,20 @@ const mapServiceStatusMessages = (
         subpoena.comment,
       ]
     case ServiceStatus.EXPIRED:
-      return [formatMessage(strings.serviceStatusExpiredMessage)]
+      return [strings.serviceStatusExpiredMessage]
     default:
       return [
-        formatMessage(strings.subpoenaCreated, {
-          date: subpoena.created
-            ? formatDate(subpoena.created, 'dd.MM.y HH:mm')
-            : '',
-        }),
+        formatMessage(
+          {
+            id: strings.subpoenaCreated,
+            defaultMessage: strings.subpoenaCreated,
+          },
+          {
+            date: subpoena.created
+              ? formatDate(subpoena.created, 'dd.MM.y HH:mm')
+              : '',
+          },
+        ),
       ]
   }
 }
@@ -138,9 +156,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   ) : (
     <Box marginBottom={2}>
       <AlertMessage
-        title={`${formatMessage(title)}${
-          defendantName ? ` - ${defendantName}` : ''
-        }`}
+        title={`${title}${defendantName ? ` - ${defendantName}` : ''}`}
         message={
           <Box>
             {messages.map((msg) => (
