@@ -1,7 +1,6 @@
 import type { Dispatch, FC, SetStateAction } from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { useIntl } from 'react-intl'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import type { EditableFields } from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
@@ -41,8 +40,6 @@ const UploadFiles: FC<Props> = (props) => {
     setEditCount,
     editableFileAttributes = editableFields,
   } = props
-  const { formatMessage } = useIntl()
-
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const toFileWithPreview = (file: File): FileWithPreviewURL => {
@@ -97,7 +94,7 @@ const UploadFiles: FC<Props> = (props) => {
     <div className={styles.container} {...getRootProps()}>
       <Box marginBottom={1}>
         <Text variant="h4" as="h4">
-          {formatMessage(strings.heading)}
+          {strings.heading}
         </Text>
       </Box>
       <Box marginBottom={2}>
@@ -105,7 +102,7 @@ const UploadFiles: FC<Props> = (props) => {
       </Box>
       <Box marginBottom={3}>
         <Button variant="ghost" size="small" icon="attach">
-          {formatMessage(strings.buttonText)}
+          {strings.buttonText}
         </Button>
       </Box>
       {files.map((file) => (

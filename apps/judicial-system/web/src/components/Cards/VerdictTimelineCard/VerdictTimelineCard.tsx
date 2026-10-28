@@ -185,7 +185,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
 
     if (isFine) {
       items.push({
-        text: formatMessage(strings.fineAppealDeadline, {
+        text: formatMessage({ id: strings.fineAppealDeadline, defaultMessage: strings.fineAppealDeadline }, {
           appealDeadlineIsInThePast: defendant.isVerdictAppealDeadlineExpired,
           appealDeadline: formatDate(defendant.verdictAppealDeadline),
         }),
@@ -193,7 +193,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     } else if (verdict?.serviceDate) {
       pushIf(
         !!isServiceRequired,
-        formatMessage(strings.defendantVerdictViewedDate, {
+        formatMessage({ id: strings.defendantVerdictViewedDate, defaultMessage: strings.defendantVerdictViewedDate }, {
           date: formatDate(verdict?.serviceDate),
         }),
       )
@@ -230,7 +230,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
 
     pushIf(
       !!(defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin),
-      formatMessage(strings.sendToPrisonAdminDate, {
+      formatMessage({ id: strings.sendToPrisonAdminDate, defaultMessage: strings.sendToPrisonAdminDate }, {
         date: formatDate(defendant.sentToPrisonAdminDate),
       }),
     )
@@ -578,12 +578,8 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                   <Box className={styles.dataContainer}>
                     <DateTime
                       name="defendantAppealDate"
-                      datepickerLabel={formatMessage(
-                        strings.defendantAppealDateLabel,
-                      )}
-                      datepickerPlaceholder={formatMessage(
-                        strings.defendantAppealDatePlaceholder,
-                      )}
+                      datepickerLabel={strings.defendantAppealDateLabel}
+                      datepickerPlaceholder={strings.defendantAppealDatePlaceholder}
                       size="sm"
                       onChange={(date, valid) =>
                         handleDateChange(date, valid, 'appealDate')
@@ -596,7 +592,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                       onClick={() => handleSetDate('appealDate')}
                       disabled={!dates.appealDate}
                     >
-                      {formatMessage(strings.defendantAppealDateButtonText)}
+                      {strings.defendantAppealDateButtonText}
                     </Button>
                   </Box>
                 </motion.div>
@@ -618,12 +614,8 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                   <Box className={styles.dataContainer}>
                     <DateTime
                       name="defendantServiceDate"
-                      datepickerLabel={formatMessage(
-                        strings.defendantVerdictServiceDateLabel,
-                      )}
-                      datepickerPlaceholder={formatMessage(
-                        strings.defendantVerdictServiceDatePlaceholder,
-                      )}
+                      datepickerLabel={strings.defendantVerdictServiceDateLabel}
+                      datepickerPlaceholder={strings.defendantVerdictServiceDatePlaceholder}
                       size="sm"
                       selectedDate={dates.serviceDate}
                       onChange={(date, valid) =>
@@ -638,9 +630,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                       onClick={() => handleSetDate('serviceDate')}
                       disabled={!dates.serviceDate}
                     >
-                      {formatMessage(
-                        strings.defendantVerdictServiceDateButtonText,
-                      )}
+                      {strings.defendantVerdictServiceDateButtonText}
                     </Button>
                   </Box>
                 </motion.div>

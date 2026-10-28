@@ -67,16 +67,16 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
   return (
     <AccordionItem
       id="courtRecordAccordionItem"
-      label={formatMessage(m.title)}
+      label={m.title}
       labelVariant="h3"
       labelUse="h3"
     >
       <AccordionListItem
-        title={formatMessage(m.sections.timeAndLocation.title)}
+        title={m.sections.timeAndLocation.title}
       >
         <Text>
           {!workingCase.courtEndTime
-            ? formatMessage(m.sections.timeAndLocation.textOngoing, {
+            ? formatMessage({ id: m.sections.timeAndLocation.textOngoing, defaultMessage: m.sections.timeAndLocation.textOngoing }, {
                 courtStartTime: formatDate(
                   workingCase.courtStartDate,
                   TIME_FORMAT,
@@ -87,7 +87,7 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
                 new Date(workingCase.courtStartDate),
                 new Date(workingCase.courtEndTime),
               )
-            ? formatMessage(m.sections.timeAndLocation.textSameDay, {
+            ? formatMessage({ id: m.sections.timeAndLocation.textSameDay, defaultMessage: m.sections.timeAndLocation.textSameDay }, {
                 courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
                 courtStartTime: formatDate(
                   workingCase.courtStartDate,
@@ -96,7 +96,7 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
                 courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
                 courtLocation: workingCase.courtLocation,
               })
-            : formatMessage(m.sections.timeAndLocation.text, {
+            : formatMessage({ id: m.sections.timeAndLocation.text, defaultMessage: m.sections.timeAndLocation.text }, {
                 courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
                 courtStartTime: formatDate(
                   workingCase.courtStartDate,
@@ -115,22 +115,22 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
       </AccordionListItem>
       {workingCase.courtAttendees?.trim() && (
         <AccordionListItem
-          title={formatMessage(m.sections.courtAttendees.title)}
+          title={m.sections.courtAttendees.title}
           breakSpaces
         >
           <Text>{workingCase.courtAttendees.trim()}</Text>
         </AccordionListItem>
       )}
-      <AccordionListItem title={formatMessage(m.sections.courtDocuments.title)}>
+      <AccordionListItem title={m.sections.courtDocuments.title}>
         <Text>
-          {formatMessage(m.sections.firstCourtDocument, {
+          {formatMessage({ id: m.sections.firstCourtDocument, defaultMessage: m.sections.firstCourtDocument }, {
             caseType: formatRequestCaseType(workingCase.type),
           })}
         </Text>
         {workingCase.courtDocuments?.map((courtDocument, index) => {
           return (
             <Text key={`${index}${courtDocument.name}`}>
-              {formatMessage(m.sections.courtDocuments.text, {
+              {formatMessage({ id: m.sections.courtDocuments.text, defaultMessage: m.sections.courtDocuments.text }, {
                 documentName: capitalize(courtDocument.name),
                 documentNumber: index + 2,
                 submittedBy: courtDocument.submittedBy,
@@ -140,14 +140,14 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
         })}
       </AccordionListItem>
       <AccordionListItem
-        title={formatMessage(m.sections.sessionBookings.title)}
+        title={m.sections.sessionBookings.title}
         breakSpaces
       >
         <Text>{workingCase.sessionBookings}</Text>
       </AccordionListItem>
       {isRestrictionCase(workingCase.type) && (
         <Box marginBottom={3}>
-          <Text>{formatMessage(m.sections.conclusion.disclaimer)}</Text>
+          <Text>{m.sections.conclusion.disclaimer}</Text>
         </Box>
       )}
       {
@@ -158,7 +158,7 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
                 SessionArrangements.ALL_PRESENT) && (
               <Box marginBottom={2}>
                 <Text>
-                  {formatMessage(m.sections.appealDecision.disclaimer)}
+                  {m.sections.appealDecision.disclaimer}
                 </Text>
               </Box>
             )}
@@ -181,7 +181,7 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
       }
       {workingCase.endOfSessionBookings && (
         <AccordionListItem
-          title={formatMessage(m.sections.endOfSessionBookings.title)}
+          title={m.sections.endOfSessionBookings.title}
           breakSpaces
         >
           <Text>{workingCase.endOfSessionBookings}</Text>

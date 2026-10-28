@@ -60,11 +60,11 @@ export const getVerdictViewDateText = (
   verdictViewDate?: string | null,
 ): string => {
   if (verdictViewDate) {
-    return formatMessage(strings.verdictDisplayedDate, {
+    return formatMessage({ id: strings.verdictDisplayedDate, defaultMessage: strings.verdictDisplayedDate }, {
       date: formatDate(verdictViewDate, 'PPP'),
     })
   } else {
-    return formatMessage(strings.serviceRequired)
+    return strings.serviceRequired
   }
 }
 

@@ -29,7 +29,7 @@ export const getCaseResubmittedText = (
         Boolean(workingCase.arraignmentDate?.date)),
   )
 
-  return formatMessage(strings.text, { requestSharedWithDefender })
+  return formatMessage({ id: strings.text, defaultMessage: strings.text }, { requestSharedWithDefender })
 }
 
 const CaseResubmitModal: FC<Props> = ({
@@ -42,17 +42,17 @@ const CaseResubmitModal: FC<Props> = ({
   const [explanation, setExplanation] = useState('')
   return (
     <Modal
-      title={formatMessage(strings.heading)}
+      title={strings.heading}
       text={getCaseResubmittedText(formatMessage, workingCase)}
       onClose={onClose}
       buttons={[
         {
-          text: formatMessage(strings.secondaryButtonText),
+          text: strings.secondaryButtonText,
           onClick: onClose,
           variant: 'ghost',
         },
         {
-          text: formatMessage(strings.primaryButtonText),
+          text: strings.primaryButtonText,
           onClick: () => {
             if (explanation) {
               onContinue(explanation)
@@ -66,8 +66,8 @@ const CaseResubmitModal: FC<Props> = ({
       <Box marginBottom={10}>
         <Input
           name="caseResentExplanation"
-          label={formatMessage(strings.inputLabel)}
-          placeholder={formatMessage(strings.inputPlaceholder)}
+          label={strings.inputLabel}
+          placeholder={strings.inputPlaceholder}
           onChange={(evt) => setExplanation(evt.target.value)}
           textarea
           rows={7}

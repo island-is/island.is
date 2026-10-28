@@ -192,7 +192,7 @@ const HeaderContainer = () => {
                 size="small"
                 onClick={() => window.open(FEEDBACK_FORM_URL, '_blank')}
               >
-                {formatMessage(header.feedbackButtonLabel)}
+                {header.feedbackButtonLabel}
               </Button>
             </Hidden>
           )}
@@ -215,7 +215,7 @@ const HeaderContainer = () => {
                           <Text>
                             {capitalize(
                               isDefenceUser(user)
-                                ? formatMessage(header.defender)
+                                ? header.defender
                                 : user.title,
                             )}
                           </Text>
@@ -259,11 +259,11 @@ const HeaderContainer = () => {
                       <Box>
                         {isLawyerInLawyersRegistry ? (
                           <Text>
-                            {formatMessage(header.tipDisclaimerDefenders)}
+                            {header.tipDisclaimerDefenders}
                           </Text>
                         ) : (
                           <MarkdownWrapper
-                            markdown={formatMessage(header.tipDisclaimer, {
+                            markdown={formatMessage({ id: header.tipDisclaimer, defaultMessage: header.tipDisclaimer }, {
                               linkStart: `<a href="mailto:${supportEmail}" rel="noopener noreferrer nofollow" target="_blank">${supportEmail}`,
                               linkEnd: '</a>',
                             })}

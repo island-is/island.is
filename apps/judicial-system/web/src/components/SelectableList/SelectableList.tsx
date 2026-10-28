@@ -1,6 +1,5 @@
 import type { FC, PropsWithChildren } from 'react'
 import { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
 import {
@@ -84,7 +83,6 @@ const SelectableList: FC<Props> = (props) => {
     warningMessage,
     onChange,
   } = props
-  const { formatMessage } = useIntl()
   const [selectableItems, setSelectableItems] = useState<SelectableItem[]>([])
   const [isHandlingCTA, setIsHandlingCTA] = useState<boolean>()
 
@@ -131,7 +129,7 @@ const SelectableList: FC<Props> = (props) => {
             label={
               selectAllText
                 ? selectAllText
-                : formatMessage(strings.selectAllLabel)
+                : strings.selectAllLabel
             }
             checked={
               validSelectableItems.length > 0 &&

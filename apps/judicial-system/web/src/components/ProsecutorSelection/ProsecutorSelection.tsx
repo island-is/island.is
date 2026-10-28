@@ -149,13 +149,13 @@ const ProsecutorSelection: FC<Props> = ({
       name="prosecutor"
       label={
         label ??
-        formatMessage(strings.label, {
+        formatMessage({ id: strings.label, defaultMessage: strings.label }, {
           isIndictmentCase: isIndictmentCase(workingCase.type),
         })
       }
       placeholder={
         placeholder ??
-        formatMessage(strings.placeholder, {
+        formatMessage({ id: strings.placeholder, defaultMessage: strings.placeholder }, {
           isIndictmentCase: isIndictmentCase(workingCase.type),
         })
       }

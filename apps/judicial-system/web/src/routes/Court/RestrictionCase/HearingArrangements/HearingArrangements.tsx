@@ -179,14 +179,10 @@ export const HearingArrangements = () => {
         </Box>
         <Box component="section" marginBottom={8} className={stack({ gap: 3 })}>
           <SectionHeading
-            title={formatMessage(
-              defenderInfo.restrictionCases.sections.defender.title,
-            )}
+            title={defenderInfo.restrictionCases.sections.defender.title}
             tooltip={
               <Tooltip
-                text={formatMessage(
-                  defenderInfo.restrictionCases.sections.defender.tooltip,
-                )}
+                text={defenderInfo.restrictionCases.sections.defender.tooltip}
                 placement="right"
               />
             }

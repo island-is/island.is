@@ -151,7 +151,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
       isCompletedCase(workingCase.state) ? (
         <Box marginTop={1}>
           <Text as="h5" variant="h5">
-            {formatMessage(strings.rulingDate, {
+            {formatMessage({ id: strings.rulingDate, defaultMessage: strings.rulingDate }, {
               rulingDate: formatDate(workingCase.rulingDate, 'PPP') ?? '',
             }).trim()}
           </Text>
