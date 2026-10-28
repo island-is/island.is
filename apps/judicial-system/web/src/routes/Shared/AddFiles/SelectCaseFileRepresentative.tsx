@@ -150,9 +150,7 @@ export const SelectCaseFileRepresentative: FC<
 
   return (
     <>
-      <SectionHeading
-        title={strings.uploadFilesRepresentativeSelectionTitle}
-      />
+      <SectionHeading title={strings.uploadFilesRepresentativeSelectionTitle} />
       <BlueBox>
         <Box display="flex" flexDirection="column" rowGap={2}>
           <SelectRepresentative
