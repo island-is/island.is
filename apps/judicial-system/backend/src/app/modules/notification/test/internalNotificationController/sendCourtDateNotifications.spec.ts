@@ -105,9 +105,6 @@ describe('InternalNotificationController - Send court date notifications', () =>
       prosecutor: { name: prosecutor.name, email: prosecutor.email },
       court: { name: courtName },
       courtCaseNumber,
-      defenderName: defender.name,
-      defenderEmail: defender.email,
-      defenderNationalId: defender.nationalId,
       defendants: [
         {
           defenderName: defender.name,
@@ -164,8 +161,6 @@ describe('InternalNotificationController - Send court date notifications', () =>
       prosecutor: { name: prosecutor.name, email: prosecutor.email },
       court: { name: courtName },
       courtCaseNumber,
-      defenderName: defender.name,
-      defenderEmail: defender.email,
       defendants: [
         {
           defenderName: defender.name,
@@ -218,8 +213,6 @@ describe('InternalNotificationController - Send court date notifications', () =>
       prosecutor: { name: prosecutor.name, email: prosecutor.email },
       court: { name: courtName },
       courtCaseNumber,
-      defenderName: defender.name,
-      defenderEmail: defender.email,
       defendants: [
         {
           defenderName: defender.name,
@@ -276,8 +269,6 @@ describe('InternalNotificationController - Send court date notifications', () =>
       court: { name: courtName },
       courtCaseNumber,
       // The defender is also the legal rights protector of one of the victims
-      defenderName: defender.name,
-      defenderEmail: defender.email,
       defendants: [
         {
           defenderName: defender.name,

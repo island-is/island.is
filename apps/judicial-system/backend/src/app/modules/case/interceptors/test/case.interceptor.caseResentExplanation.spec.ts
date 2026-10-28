@@ -160,6 +160,17 @@ describe('CaseInterceptor - caseResentExplanation', () => {
       expect(res.caseResentExplanation).toBe(caseResentExplanation)
     })
 
+    it('should reveal the resent explanation on a completed case shared from the court date even without an arraignment date', async () => {
+      const theCase = makeCase({
+        state: CaseState.ACCEPTED,
+        defendants: sharedWithDefender(RequestSharedWithDefender.COURT_DATE),
+      })
+
+      const res = await intercept(theCase, defender)
+
+      expect(res.caseResentExplanation).toBe(caseResentExplanation)
+    })
+
     it('should reveal the resent explanation on a completed case that was never shared', async () => {
       const theCase = makeCase({
         state: CaseState.ACCEPTED,

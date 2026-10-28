@@ -117,8 +117,6 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
               mobileNumber: prosecutor.mobile,
             },
             court: { name: 'Héraðsdómur Reykjavíkur', id: courtId },
-            defenderName: defender.name,
-            defenderEmail: defender.email,
             defendants: [
               {
                 defenderName: defender.name,

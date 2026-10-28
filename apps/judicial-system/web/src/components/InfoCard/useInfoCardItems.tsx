@@ -47,7 +47,6 @@ import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
 import { VictimInfo } from './VictimInfo/VictimInfo'
 import type { Item } from './InfoCard'
-import { getCaseDefenderFallback } from './useInfoCardItems.logic'
 import { strings } from './useInfoCardItems.strings'
 import * as styles from './InfoCard.css'
 
@@ -116,7 +115,6 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
                     defendant={defendant}
                     courtId={workingCase.court?.id}
                     defender={{
-                      ...getCaseDefenderFallback(workingCase),
                       sessionArrangement: workingCase.sessionArrangements,
                     }}
                     displayAppealExpirationInfo={displayAppealExpirationInfo}
