@@ -39,6 +39,8 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 import { AuthDelegationType } from '@island.is/shared/types'
+import cloneDeep from 'lodash/cloneDeep'
+import isEmpty from 'lodash/isEmpty'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
@@ -52,6 +54,7 @@ import {
   SocialInsuranceAdministrationEmploymentStatusesApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationMARPApplicationTypeApi,
   SocialInsuranceAdministrationMARPQuestionnairesApi,
   SocialInsuranceAdministrationProfessionsApi,
@@ -59,6 +62,7 @@ import {
 } from '../dataProviders'
 import {
   getApplicationAnswers,
+  getApplicationExternalData,
   isEligible,
 } from '../utils/medicalAndRehabilitationPaymentsUtils'
 import { dataSchema } from './dataSchema'
@@ -132,6 +136,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
                 SocialInsuranceAdministrationCategorizedIncomeTypesApi,
                 SocialInsuranceAdministrationCurrenciesApi,
+                SocialInsuranceAdministrationLatestIncomePlan,
                 SocialInsuranceAdministrationIncomePlanConditionsApi,
                 SocialInsuranceAdministrationMARPQuestionnairesApi,
                 SocialInsuranceAdministrationEctsUnitsApi,
@@ -358,8 +363,35 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
       populateIncomeTable: assign((context) => {
         const { application } = context
         const { answers } = application
+        const { latestIncomePlan } = getApplicationExternalData(
+          application.externalData,
+        )
 
-        set(answers, 'incomePlanTable', defaultIncomeTypes)
+        if (isEmpty(latestIncomePlan)) {
+          set(answers, 'incomePlanTable', cloneDeep(defaultIncomeTypes))
+        }
+
+        if (latestIncomePlan && latestIncomePlan.status === 'Accepted') {
+          latestIncomePlan.incomeTypeLines.forEach((income, i) => {
+            set(
+              answers,
+              `incomePlanTable[${i}].incomeType`,
+              income.incomeTypeName,
+            )
+            set(
+              answers,
+              `incomePlanTable[${i}].incomePerYear`,
+              String(income.totalSum),
+            )
+            set(answers, `incomePlanTable[${i}].currency`, income.currency)
+            set(answers, `incomePlanTable[${i}].income`, RatioType.YEARLY)
+            set(
+              answers,
+              `incomePlanTable[${i}].incomeCategory`,
+              income.incomeCategoryName,
+            )
+          })
+        }
 
         return context
       }),
