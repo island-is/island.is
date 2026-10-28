@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useState } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -47,7 +46,6 @@ export const ReviewDecisionModal: FC<Props> = (props) => {
     onClose,
     onConfirmed,
   } = props
-  const { formatMessage: fm } = useIntl()
   const { updateDefendants } = useDefendants()
   const [isSaving, setIsSaving] = useState(false)
 
@@ -79,7 +77,7 @@ export const ReviewDecisionModal: FC<Props> = (props) => {
   return (
     <Modal
       title={
-        isLate ? 'Áfrýjun eftir að fresti lauk' : fm(strings.reviewModalTitle)
+        isLate ? 'Áfrýjun eftir að fresti lauk' : strings.reviewModalTitle
       }
       text={
         <div className={stack({ gap: 2 })}>
@@ -113,7 +111,7 @@ export const ReviewDecisionModal: FC<Props> = (props) => {
           variant: 'ghost',
         },
         {
-          text: fm(strings.reviewModalPrimaryButtonText),
+          text: strings.reviewModalPrimaryButtonText,
           onClick: handleConfirm,
           isLoading: isSaving,
         },
