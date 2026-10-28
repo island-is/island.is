@@ -74,7 +74,9 @@ describe('DefendantInfo', () => {
         serviceRequirement,
       })
 
-      expect(dataSections.message.id).toStrictEqual(strings.appealExpirationDate)
+      expect(dataSections.message.id).toStrictEqual(
+        strings.appealExpirationDate,
+      )
       expect(dataSections.date).toStrictEqual('05.08.2024')
     })
 
@@ -89,7 +91,9 @@ describe('DefendantInfo', () => {
         serviceRequirement,
       })
 
-      expect(dataSections.message.id).toStrictEqual(strings.appealExpirationDate)
+      expect(dataSections.message.id).toStrictEqual(
+        strings.appealExpirationDate,
+      )
       expect(dataSections.date).toStrictEqual('05.08.2024')
     })
 
