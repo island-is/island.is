@@ -42,55 +42,19 @@ export const estatesMessages = defineMessages({
     id: 'sp.estates:view',
     defaultMessage: 'Skoða',
   },
+  resultCount: {
+    id: 'sp.estates:result-count',
+    defaultMessage: '{count, plural, one {# niðurstaða} other {# niðurstöður}}',
+  },
   noEstatesFound: {
     id: 'sp.estates:no-estates-found',
     defaultMessage: 'Engin dánarbú fundust',
   },
 
   // Detail screen
-  detailFallbackTitle: {
-    id: 'sp.estates:detail-fallback-title',
-    defaultMessage: 'Dánarbú',
-  },
-  deceasedName: {
-    id: 'sp.estates:deceased-name',
-    defaultMessage: 'Nafn látins',
-  },
-  deceasedNationalId: {
-    id: 'sp.estates:deceased-national-id',
-    defaultMessage: 'Kennitala látins',
-  },
-  dateOfDeath: {
-    id: 'sp.estates:date-of-death',
-    defaultMessage: 'Dánardagur hins látna',
-  },
-  // TODO: expose via API when estate(id) resolver is available
-  domicile: {
-    id: 'sp.estates:domicile',
-    defaultMessage: 'Lögheimili',
-  },
-  // TODO: expose via API when estate(id) resolver is available
-  assignedOffice: {
-    id: 'sp.estates:assigned-office',
-    defaultMessage: 'Embætti',
-  },
-  // TODO: expose via API when estate(id) resolver is available
-  hasMarriageContract: {
-    id: 'sp.estates:has-marriage-contract',
-    defaultMessage: 'Kaupmáli',
-  },
-  // TODO: expose via API when estate(id) resolver is available
-  hasWill: {
-    id: 'sp.estates:has-will',
-    defaultMessage: 'Erfðaskrá',
-  },
   basicInfoTitle: {
     id: 'sp.estates:basic-info-title',
     defaultMessage: 'Grunnupplýsingar dánarbús',
-  },
-  estateAgent: {
-    id: 'sp.estates:estate-agent',
-    defaultMessage: 'Umboðsmaður dánarbús',
   },
   tabHeirs: {
     id: 'sp.estates:tab-heirs',
@@ -112,21 +76,14 @@ export const estatesMessages = defineMessages({
     id: 'sp.estates:next-steps',
     defaultMessage: 'Næstu skref',
   },
-  sendApplication: {
-    id: 'sp.estates:send-application',
-    defaultMessage: 'Senda umsókn',
-  },
   deadline: {
     id: 'sp.estates:deadline',
     defaultMessage: 'Frestur',
   },
   daysLeft: {
     id: 'sp.estates:days-left',
-    defaultMessage: 'dagar eftir',
-  },
-  progressTimeline: {
-    id: 'sp.estates:progress-timeline',
-    defaultMessage: 'Framvinda skipta',
+    defaultMessage:
+      '{count, plural, one {# dagur eftir} other {# dagar eftir}}',
   },
   submitDocuments: {
     id: 'sp.estates:submit-documents',
@@ -142,10 +99,6 @@ export const estatesMessages = defineMessages({
   },
 
   // Files screen
-  filesTitle: {
-    id: 'sp.estates:files-title',
-    defaultMessage: 'Skjöl',
-  },
   filesIntro: {
     id: 'sp.estates:files-intro',
     defaultMessage:
@@ -159,16 +112,8 @@ export const estatesMessages = defineMessages({
     id: 'sp.estates:files-button-url',
     defaultMessage: 'https://island.is/danarbu/skila-gognum',
   },
-  viewFile: {
-    id: 'sp.estates:view-file',
-    defaultMessage: 'Skoða skjal',
-  },
   noFilesFound: {
     id: 'sp.estates:no-files-found',
     defaultMessage: 'Engin skjöl fundust',
-  },
-  fileName: {
-    id: 'sp.estates:file-name',
-    defaultMessage: 'Skjal',
   },
 })

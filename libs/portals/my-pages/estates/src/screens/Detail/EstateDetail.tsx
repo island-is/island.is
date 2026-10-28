@@ -1,19 +1,11 @@
+import { ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  CardLoader,
-  m,
-  IntroWrapper,
-  LinkButton,
-  SYSLUMENN_SLUG,
-} from '@island.is/portals/my-pages/core'
-import { estatesMessages as em } from '../../lib/messages'
+
 import {
   AccordionItem,
   ActionCard,
   AlertMessage,
   Box,
-  Button,
   FormStepperThemes,
   GridColumn,
   GridRow,
@@ -24,14 +16,44 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  CardLoader,
+  formatDateOnly,
+  IntroWrapper,
+  LinkButton,
+  m,
+  SYSLUMENN_SLUG,
+} from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+
+import { estatesMessages as em } from '../../lib/messages'
 import { EstatesPaths } from '../../lib/paths'
-import * as styles from './EstateDetail.css'
 import { useEstateDetailQuery } from './EstateDetail.generated'
+import * as styles from './EstateDetail.css'
+
+const DetailField = ({
+  label,
+  children,
+}: {
+  label?: string | null
+  children: ReactNode
+}) => (
+  <Box>
+    <Box component="dt">
+      <Text as="span" variant="medium">
+        {label}
+      </Text>
+    </Box>
+    <Box component="dd" marginTop={1}>
+      {children}
+    </Box>
+  </Box>
+)
 
 export const EstateDetail = () => {
   useNamespaces('sp.estates')
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
   const { id } = useParams<{ id: string }>()
 
   const { data, loading, error } = useEstateDetailQuery({
@@ -43,16 +65,18 @@ export const EstateDetail = () => {
   const isFinished = estate?.status?.isOpen === false
 
   const formatDate = (date?: string | null) =>
-    date ? new Date(date).toLocaleDateString(lang) : undefined
+    date ? formatDateOnly(date) : undefined
 
-  const agents = [
-    estate?.representative?.name,
-    estate?.estateManager?.name,
-  ].filter(Boolean)
+  // TODO: confirm representative vs. estateManager priority with Sýslumenn
+  const agentName = estate?.representative?.name ?? estate?.estateManager?.name
+
+  const latestDocuments = [...(estate?.documents ?? [])]
+    .sort((a, b) => (b.documentDate ?? '').localeCompare(a.documentDate ?? ''))
+    .slice(0, 3)
 
   return (
     <IntroWrapper
-      title={estate?.deceased?.name ?? formatMessage(em.detailFallbackTitle)}
+      title={estate?.deceased?.name?.value ?? formatMessage(m.estatesDetail)}
       intro={em.intro}
       marginBottom={6}
       serviceProvider={{
@@ -68,16 +92,7 @@ export const EstateDetail = () => {
             icon="open"
             variant="utility"
           />,
-          <Button
-            key="authorize"
-            disabled
-            variant="utility"
-            icon="person"
-            iconType="outline"
-          >
-            {/* TODO: wire up URL when available */}
-            {formatMessage(em.grantAuthorization)}
-          </Button>,
+          // TODO: add the "Veita umboð" (em.grantAuthorization) button once its URL is available
         ],
       }}
     >
@@ -90,7 +105,7 @@ export const EstateDetail = () => {
       {estate && (
         <>
           {/* Section 1 — Grunnupplýsingar */}
-          <Text variant="eyebrow" color="purple400" marginBottom={2}>
+          <Text as="h2" variant="eyebrow" color="purple400" marginBottom={2}>
             {formatMessage(em.basicInfoTitle)}
           </Text>
           <Box
@@ -101,85 +116,50 @@ export const EstateDetail = () => {
             marginBottom={4}
           >
             <Box display="flex" flexDirection={['column', 'row']}>
-              {/* Left column */}
-              <Box flexGrow={1}>
-                <Stack space={3}>
-                  <Box className={styles.fieldWithDivider}>
-                    <Text variant="small" color="dark400">
-                      {formatMessage(em.deceasedName)}
-                    </Text>
-                    <Text variant="medium" fontWeight="semiBold" marginTop={1}>
-                      {estate.deceased?.name}
-                    </Text>
-                  </Box>
-                  <Box className={styles.fieldWithDivider}>
-                    <Text variant="small" color="dark400">
-                      {formatMessage(em.deceasedNationalId)}
-                    </Text>
-                    <Text variant="medium" fontWeight="semiBold" marginTop={1}>
-                      {estate.deceased?.nationalId}
-                    </Text>
-                  </Box>
-                  {agents.length > 0 && (
-                    <Box className={styles.fieldWithDivider}>
-                      <Text variant="small" color="dark400">
-                        {formatMessage(em.estateAgent)}
-                      </Text>
-                      {agents.map((agent) => (
-                        <Text key={agent} fontWeight="semiBold" marginTop={1}>
-                          {agent}
-                        </Text>
-                      ))}
-                    </Box>
-                  )}
-                </Stack>
+              <Box
+                component="dl"
+                flexGrow={1}
+                className={[styles.fieldList, styles.fieldWithDivider]}
+              >
+                <DetailField label={estate.deceased?.name?.label}>
+                  <Text variant="h5">{estate.deceased?.name?.value}</Text>
+                </DetailField>
+                <DetailField label={estate.deceased?.nationalId?.label}>
+                  <Text variant="h5">{estate.deceased?.nationalId?.value}</Text>
+                </DetailField>
+                {agentName && (
+                  <DetailField label={estate.representative?.text}>
+                    <Text variant="h5">{agentName}</Text>
+                  </DetailField>
+                )}
               </Box>
 
-              {/* Right column */}
-              <Box flexGrow={1} paddingLeft={[0, 3]} paddingTop={[3, 0]}>
-                <Stack space={3}>
-                  <Box>
-                    <Text variant="small" color="dark400">
-                      {formatMessage(em.caseNumber)}
+              <Box
+                component="dl"
+                flexGrow={1}
+                paddingLeft={[0, 3]}
+                paddingTop={[3, 0]}
+                className={styles.fieldList}
+              >
+                <DetailField label={estate.caseId?.label}>
+                  <Text variant="h5">{estate.caseId?.value}</Text>
+                </DetailField>
+                {estate.deceased?.dateOfDeath && (
+                  <DetailField label={estate.deceased.dateOfDeath.label}>
+                    <Text variant="h5">
+                      {formatDate(estate.deceased.dateOfDeath.value)}
                     </Text>
-                    <Text variant="medium" fontWeight="semiBold" marginTop={1}>
-                      {estate.caseId}
-                    </Text>
-                  </Box>
-                  {estate.deceased?.dateOfDeath && (
-                    <Box>
-                      <Text variant="small" color="dark400">
-                        {formatMessage(em.dateOfDeath)}
-                      </Text>
-                      <Text
-                        variant="medium"
-                        fontWeight="semiBold"
-                        marginTop={1}
-                      >
-                        {formatDate(estate.deceased.dateOfDeath)}
-                      </Text>
-                    </Box>
-                  )}
-                  <Box>
-                    <Text variant="small" color="dark400">
-                      {formatMessage(m.status)}
-                    </Text>
-                    <Box marginTop={1}>
-                      <Tag
-                        variant={isFinished ? 'mint' : 'blue'}
-                        outlined
-                        disabled
-                      >
-                        {formatMessage(
-                          isFinished ? em.statusFinished : em.statusInProgress,
-                        )}
-                      </Tag>
-                    </Box>
-                  </Box>
-                </Stack>
+                  </DetailField>
+                )}
+                <DetailField label={formatMessage(m.status)}>
+                  <Tag variant={isFinished ? 'mint' : 'blue'} outlined disabled>
+                    {formatMessage(
+                      isFinished ? em.statusFinished : em.statusInProgress,
+                    )}
+                  </Tag>
+                </DetailField>
               </Box>
 
-              {/* TODO: replace with dove illustration once asset is added */}
               <Box
                 display={['none', 'flex']}
                 alignItems="flexStart"
@@ -188,7 +168,7 @@ export const EstateDetail = () => {
                 className={styles.illustrationWrapper}
               >
                 <img
-                  src="./assets/images/bench.svg"
+                  src="./assets/images/grieving.svg"
                   alt=""
                   className={styles.illustrationImg}
                 />
@@ -197,17 +177,22 @@ export const EstateDetail = () => {
           </Box>
 
           {/* Section 2 — Næstu skref + Frestur */}
-          {(estate.nextSteps?.length || estate.deadline) && (
+          {(!!estate.nextSteps?.length || !!estate.deadline) && (
             <Box marginBottom={4}>
               <GridRow>
                 {estate.nextSteps?.[0] && (
                   <GridColumn span={['12/12', '6/12']}>
-                    <Text variant="eyebrow" color="purple400" marginBottom={1}>
+                    <Text
+                      as="h2"
+                      variant="eyebrow"
+                      color="purple400"
+                      marginBottom={1}
+                    >
                       {formatMessage(em.nextSteps)}
                     </Text>
                     <Box border="standard" borderRadius="large" padding={3}>
                       {estate.nextSteps[0].description && (
-                        <Text variant="h4" marginBottom={2}>
+                        <Text as="h3" variant="h4" marginBottom={2}>
                           {estate.nextSteps[0].description}
                         </Text>
                       )}
@@ -222,6 +207,7 @@ export const EstateDetail = () => {
                         alignItems="center"
                       >
                         {estate.nextSteps[0].stepStatus?.text && (
+                          // TODO: map stepStatus.code to tag variant once the codes are known (e.g. red for "Umsókn ekki send inn")
                           <Tag variant="blue" outlined disabled>
                             {estate.nextSteps[0].stepStatus.text}
                           </Tag>
@@ -229,10 +215,7 @@ export const EstateDetail = () => {
                         {estate.nextSteps[0].action?.url && (
                           <LinkButton
                             to={estate.nextSteps[0].action.url}
-                            text={
-                              estate.nextSteps[0].action.label ??
-                              formatMessage(em.sendApplication)
-                            }
+                            text={estate.nextSteps[0].action.label ?? ''}
                             icon="arrowForward"
                             variant="text"
                           />
@@ -246,12 +229,17 @@ export const EstateDetail = () => {
                     span={['12/12', '6/12']}
                     paddingTop={[estate.nextSteps?.[0] ? 2 : 0, 0]}
                   >
-                    <Text variant="eyebrow" color="purple400" marginBottom={1}>
+                    <Text
+                      as="h2"
+                      variant="eyebrow"
+                      color="purple400"
+                      marginBottom={1}
+                    >
                       {formatMessage(em.deadline)}
                     </Text>
                     <Box border="standard" borderRadius="large" padding={3}>
                       {estate.deadline.description && (
-                        <Text variant="h4" marginBottom={2}>
+                        <Text as="h3" variant="h4" marginBottom={2}>
                           {estate.deadline.description}
                         </Text>
                       )}
@@ -262,9 +250,9 @@ export const EstateDetail = () => {
                       )}
                       {estate.deadline.daysRemaining != null && (
                         <Tag variant="purple" outlined disabled>
-                          {`${estate.deadline.daysRemaining} ${formatMessage(
-                            em.daysLeft,
-                          )}`}
+                          {formatMessage(em.daysLeft, {
+                            count: estate.deadline.daysRemaining,
+                          })}
                         </Tag>
                       )}
                     </Box>
@@ -275,10 +263,15 @@ export const EstateDetail = () => {
           )}
 
           {/* Section 3 — Framvinda skipta */}
-          {estate.progress?.steps?.length && (
+          {!!estate.progress?.steps?.length && (
             <>
-              <Text variant="eyebrow" color="purple400" marginBottom={2}>
-                {formatMessage(em.progressTimeline)}
+              <Text
+                as="h2"
+                variant="eyebrow"
+                color="purple400"
+                marginBottom={2}
+              >
+                {estate.progress?.title}
               </Text>
               <Box
                 border="standard"
@@ -343,9 +336,14 @@ export const EstateDetail = () => {
           )}
 
           {/* Section 4 — Erfingjar */}
-          {estate.inheritors?.length && (
+          {!!estate.inheritors?.length && (
             <>
-              <Text variant="eyebrow" color="purple400" marginBottom={2}>
+              <Text
+                as="h2"
+                variant="eyebrow"
+                color="purple400"
+                marginBottom={2}
+              >
                 {formatMessage(em.tabHeirs)}
               </Text>
               <Box marginBottom={4}>
@@ -362,15 +360,9 @@ export const EstateDetail = () => {
                   <T.Body>
                     {estate.inheritors.map((heir, i) => (
                       <T.Row key={i}>
-                        <T.Data>
-                          <Text variant="small">{heir.name}</Text>
-                        </T.Data>
-                        <T.Data>
-                          <Text variant="small">{heir.nationalId}</Text>
-                        </T.Data>
-                        <T.Data>
-                          <Text variant="small">{heir.relation?.text}</Text>
-                        </T.Data>
+                        <T.Data>{heir.name}</T.Data>
+                        <T.Data>{heir.nationalId}</T.Data>
+                        <T.Data>{heir.relation?.text}</T.Data>
                       </T.Row>
                     ))}
                   </T.Body>
@@ -380,22 +372,26 @@ export const EstateDetail = () => {
           )}
 
           {/* Section 5 — Skjöl preview */}
-          {estate.documents?.length && (
-            <>
-              <Text variant="eyebrow" color="purple400" marginBottom={2}>
-                {formatMessage(em.filesTitle)}
-              </Text>
-              <Box border="standard" borderRadius="large" padding={3}>
-                <Stack space={2}>
-                  {estate.documents.map((doc, i) => (
+          <Text as="h2" variant="eyebrow" color="purple400" marginBottom={2}>
+            {formatMessage(m.estatesFiles)}
+          </Text>
+          <Box border="standard" borderRadius="large" padding={3}>
+            {latestDocuments.length === 0 ? (
+              <Text>{formatMessage(em.noFilesFound)}</Text>
+            ) : (
+              <Stack space={2}>
+                {latestDocuments.map((doc, i) => {
+                  const url = doc.requestAction?.url
+                  const label = doc.requestAction?.label ?? ''
+                  return (
                     <ActionCard
-                      key={i}
+                      key={doc.islandIsDocumentId ?? i}
                       heading={doc.name ?? ''}
-                      headingVariant="h4"
                       text={formatDate(doc.documentDate)}
                       tag={
                         doc.availability
-                          ? {
+                          ? // TODO: map availability to tag variant once the values are known (Vantar red, Beðið yellow, Móttekið mint)
+                            {
                               label: doc.availability,
                               variant: 'blue',
                               outlined: true,
@@ -403,30 +399,35 @@ export const EstateDetail = () => {
                           : undefined
                       }
                       cta={
-                        doc.requestAction?.url
+                        url
                           ? {
-                              label: formatMessage(em.viewFile),
+                              label,
+                              ariaLabel: `${label}: ${doc.name ?? ''}`,
                               variant: 'text',
                               icon: 'arrowForward',
                               onClick: () =>
-                                window.open(doc.requestAction!.url!, '_blank'),
+                                window.open(
+                                  url,
+                                  '_blank',
+                                  'noopener,noreferrer',
+                                ),
                             }
                           : undefined
                       }
                     />
-                  ))}
-                </Stack>
-                <Box marginTop={3} display="flex" justifyContent="center">
-                  <LinkButton
-                    to={EstatesPaths.EstatesFiles.replace(':id', id ?? '')}
-                    text={formatMessage(em.seeFiles)}
-                    icon="arrowForward"
-                    variant="text"
-                  />
-                </Box>
-              </Box>
-            </>
-          )}
+                  )
+                })}
+              </Stack>
+            )}
+            <Box marginTop={3} display="flex" justifyContent="center">
+              <LinkButton
+                to={EstatesPaths.EstatesFiles.replace(':id', id ?? '')}
+                text={formatMessage(em.seeFiles)}
+                icon="arrowForward"
+                variant="text"
+              />
+            </Box>
+          </Box>
         </>
       )}
     </IntroWrapper>

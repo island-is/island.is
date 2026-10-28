@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { GraphQLISODateTime } from '@nestjs/graphql'
+
 import { Action } from './action.model'
 
 @ObjectType('EstatesProgressStep')

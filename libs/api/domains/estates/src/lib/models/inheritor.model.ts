@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { InheritorRelation } from './inheritorRelation.model'
 
 @ObjectType('EstatesInheritor')

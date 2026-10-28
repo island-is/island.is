@@ -1,8 +1,10 @@
+import { lazy } from 'react'
+
 import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
 import { Features } from '@island.is/react/feature-flags'
-import { lazy } from 'react'
+
 import { EstatesPaths } from './lib/paths'
 
 const EstatesOverview = lazy(() => import('./screens/Overview/EstatesOverview'))
@@ -24,14 +26,12 @@ export const estatesModule: PortalModule = {
       path: EstatesPaths.EstatesDetail,
       enabled: userInfo.scopes.includes(ApiScope.estates),
       element: <EstateDetail />,
-      children: [
-        {
-          name: m.myEstates,
-          path: EstatesPaths.EstatesFiles,
-          enabled: userInfo.scopes.includes(ApiScope.estates),
-          element: <EstateFiles />,
-        },
-      ],
+    },
+    {
+      name: m.estatesFiles,
+      path: EstatesPaths.EstatesFiles,
+      enabled: userInfo.scopes.includes(ApiScope.estates),
+      element: <EstateFiles />,
     },
   ],
 }

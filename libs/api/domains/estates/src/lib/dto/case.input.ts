@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
+
 import { LocaleEnum } from '@island.is/nest/graphql'
 
 @InputType('EstatesCaseInput')

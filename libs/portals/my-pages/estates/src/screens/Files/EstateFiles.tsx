@@ -1,31 +1,37 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useDebounce } from 'react-use'
+
 import {
-  CardLoader,
-  m,
-  IntroWrapper,
-  LinkButton,
-  SYSLUMENN_SLUG,
-} from '@island.is/portals/my-pages/core'
-import { estatesMessages as em } from '../../lib/messages'
-import {
+  ActionCard,
   Box,
   GridColumn,
   GridRow,
   Input,
-  Table as T,
-  Tag,
-  Text,
+  Stack,
+  VisuallyHidden,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  CardLoader,
+  formatDateOnly,
+  IntroWrapper,
+  LinkButton,
+  m,
+  SYSLUMENN_SLUG,
+} from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+
+import { estatesMessages as em } from '../../lib/messages'
 import { useEstateFilesQuery } from './EstateFiles.generated'
 
 export const EstateFiles = () => {
   useNamespaces('sp.estates')
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
   const { id } = useParams<{ id: string }>()
   const [search, setSearch] = useState('')
+  const [announcement, setAnnouncement] = useState('')
+  const searchTouched = useRef(false)
 
   const { data, loading, error } = useEstateFilesQuery({
     variables: { input: { caseId: id ?? '' } },
@@ -37,9 +43,21 @@ export const EstateFiles = () => {
     search ? d.name?.toLowerCase().includes(search.toLowerCase()) : true,
   )
 
+  useDebounce(
+    () => {
+      if (searchTouched.current) {
+        setAnnouncement(
+          formatMessage(em.resultCount, { count: filtered.length }),
+        )
+      }
+    },
+    500,
+    [search],
+  )
+
   return (
     <IntroWrapper
-      title={em.filesTitle}
+      title={m.estatesFiles}
       intro={em.filesIntro}
       serviceProvider={{
         slug: SYSLUMENN_SLUG,
@@ -57,7 +75,8 @@ export const EstateFiles = () => {
         ],
       }}
     >
-      <Box marginBottom={3}>
+      {/* TODO: add "Opna síu" availability filter once agreed on */}
+      <Box marginBottom={2}>
         <GridRow>
           <GridColumn span={['12/12', '6/12', '4/12']}>
             <Input
@@ -67,12 +86,19 @@ export const EstateFiles = () => {
               label={formatMessage(m.searchLabel)}
               placeholder={formatMessage(em.searchPlaceholder)}
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                searchTouched.current = true
+                setSearch(e.target.value)
+              }}
               name="estate-files-search"
             />
           </GridColumn>
         </GridRow>
       </Box>
+
+      <VisuallyHidden>
+        <span role="status">{announcement}</span>
+      </VisuallyHidden>
 
       {loading && (
         <Box width="full">
@@ -94,53 +120,45 @@ export const EstateFiles = () => {
       )}
 
       {!loading && !error && filtered.length > 0 && (
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>{formatMessage(em.fileName)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.status)}</T.HeadData>
-              <T.HeadData />
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {filtered.map((doc, i) => (
-              <T.Row key={i}>
-                <T.Data>
-                  <Text variant="small">{doc.name}</Text>
-                  {doc.documentTypeDescription && (
-                    <Text variant="small" color="dark300">
-                      {doc.documentTypeDescription}
-                    </Text>
-                  )}
-                  {doc.documentDate && (
-                    <Text variant="small" color="dark300">
-                      {new Date(doc.documentDate).toLocaleDateString(lang)}
-                    </Text>
-                  )}
-                </T.Data>
-                <T.Data>
-                  {doc.availability && (
-                    <Tag variant="blue" outlined>
-                      {doc.availability}
-                    </Tag>
-                  )}
-                </T.Data>
-                <T.Data>
-                  {doc.requestAction?.url && (
-                    <LinkButton
-                      to={doc.requestAction.url}
-                      text={
-                        doc.requestAction.label ?? formatMessage(em.viewFile)
+        <Stack space={3}>
+          {filtered.map((doc, i) => {
+            const url = doc.requestAction?.url
+            const label = doc.requestAction?.label ?? ''
+            return (
+              <ActionCard
+                key={doc.islandIsDocumentId ?? i}
+                heading={doc.name ?? ''}
+                text={
+                  doc.documentDate
+                    ? formatDateOnly(doc.documentDate)
+                    : undefined
+                }
+                tag={
+                  doc.availability
+                    ? // TODO: map availability to tag variant once the values are known (Vantar red, Beðið yellow, Móttekið mint)
+                      {
+                        label: doc.availability,
+                        variant: 'blue',
+                        outlined: true,
                       }
-                      variant="text"
-                      icon="open"
-                    />
-                  )}
-                </T.Data>
-              </T.Row>
-            ))}
-          </T.Body>
-        </T.Table>
+                    : undefined
+                }
+                cta={
+                  url
+                    ? {
+                        label,
+                        ariaLabel: `${label}: ${doc.name ?? ''}`,
+                        variant: 'text',
+                        icon: 'arrowForward',
+                        onClick: () =>
+                          window.open(url, '_blank', 'noopener,noreferrer'),
+                      }
+                    : undefined
+                }
+              />
+            )
+          })}
+        </Stack>
       )}
     </IntroWrapper>
   )

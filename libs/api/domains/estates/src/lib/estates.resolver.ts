@@ -1,5 +1,7 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { Args, Query, Resolver } from '@nestjs/graphql'
+
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -8,19 +10,19 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { ApiScope } from '@island.is/auth/scopes'
+import { CodeOwner } from '@island.is/nest/core'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
-import { CodeOwner } from '@island.is/nest/core'
-import { CodeOwners } from '@island.is/shared/constants'
 import { LocaleEnum } from '@island.is/nest/graphql'
+import { CodeOwners } from '@island.is/shared/constants'
+
+import { CaseInput } from './dto/case.input'
+import { EstateCase } from './models/case.model'
 import { Estate } from './models/estate.model'
 import { EstatesCollection } from './models/estatesCollection.model'
-import { EstateCase } from './models/case.model'
-import { CaseInput } from './dto/case.input'
 import { EstatesDomainService } from './estates.service'
 
 @CodeOwner(CodeOwners.Hugsmidjan)

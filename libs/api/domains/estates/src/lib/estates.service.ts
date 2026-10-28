@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common'
+
 import type { User } from '@island.is/auth-nest-tools'
-import { LocaleEnum } from '@island.is/nest/graphql'
 import { EstatesClientService } from '@island.is/clients/estates'
-import { mapToEstateCollection, mapToEstatesCase } from './mapper'
-import { EstatesCollection } from './models/estatesCollection.model'
+import { LocaleEnum } from '@island.is/nest/graphql'
+
 import { EstateCase } from './models/case.model'
+import { EstatesCollection } from './models/estatesCollection.model'
+import { mapToEstateCollection, mapToEstatesCase } from './mapper'
 
 @Injectable()
 export class EstatesDomainService {

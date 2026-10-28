@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { GraphQLISODateTime } from '@nestjs/graphql'
+
 import { EstatesRepresentative } from './estateRepresentative.model'
 
 @ObjectType()

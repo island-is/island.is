@@ -1,21 +1,23 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { DeceasedPerson } from './deceasedPerson.model'
-import { EstatesRepresentative } from './estateRepresentative.model'
-import { EstateManager } from './manager.model'
+
 import { CaseStatus } from './caseStatus.model'
-import { NextStep } from './nextStep.model'
 import { Deadline } from './deadline.model'
-import { Progress } from './progress.model'
-import { Inheritor } from './inheritor.model'
+import { DeceasedPerson } from './deceasedPerson.model'
 import { EstateDocument } from './document.model'
+import { EstatesRepresentative } from './estateRepresentative.model'
+import { EstatesFieldValue } from './fieldValue.model'
+import { Inheritor } from './inheritor.model'
+import { EstateManager } from './manager.model'
+import { NextStep } from './nextStep.model'
+import { Progress } from './progress.model'
 
 @ObjectType('EstatesCase')
 export class EstateCase {
   @Field({ nullable: true })
   id?: string
 
-  @Field({ nullable: true })
-  caseId?: string
+  @Field(() => EstatesFieldValue, { nullable: true })
+  caseId?: EstatesFieldValue
 
   @Field(() => DeceasedPerson, { nullable: true })
   deceased?: DeceasedPerson

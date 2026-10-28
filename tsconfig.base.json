@@ -838,21 +838,7 @@
       "@island.is/clients/energy-funds": [
         "libs/clients/energy-funds/src/index.ts"
       ],
-      "@island.is/clients/estates": [
-        "libs/clients/estates/src/index.ts"
-      ],
-      "@island.is/clients/farmers": [
-        "libs/clients/farmers/src/index.ts"
-      ],
-      "@island.is/clients/finance": [
-        "libs/clients/finance/src/index.ts"
-      ],
-      "@island.is/clients/finance-v2": [
-        "libs/clients/finance-v2/src/index.ts"
-      ],
-      "@island.is/clients/finance-v3": [
-        "libs/clients/finance-v3/src/index.ts"
-      ],
+      "@island.is/clients/estates": ["libs/clients/estates/src/index.ts"],
       "@island.is/clients/farmers": ["libs/clients/farmers/src/index.ts"],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/finance-v2": ["libs/clients/finance-v2/src/index.ts"],

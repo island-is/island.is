@@ -1,13 +1,16 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
+
 import { EstatesPaths } from './paths'
 
 export const estatesNavigation: PortalNavigationItem = {
   name: m.estates,
   description: m.myEstatesIntro,
   path: EstatesPaths.EstatesRoot,
+  breadcrumbHide: true,
+  searchHide: true,
   icon: {
-    icon: 'receipt',
+    icon: 'heart',
   },
   children: [
     {
@@ -16,12 +19,12 @@ export const estatesNavigation: PortalNavigationItem = {
       path: EstatesPaths.EstatesRoot,
       children: [
         {
-          name: m.estatesDetail,
+          name: 'id',
           navHide: true,
           path: EstatesPaths.EstatesDetail,
           children: [
             {
-              name: 'skjol',
+              name: m.estatesFiles,
               navHide: true,
               path: EstatesPaths.EstatesFiles,
             },

@@ -1,13 +1,7 @@
-import { useState } from 'react'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  CardLoader,
-  m,
-  IntroWrapper,
-  LinkButton,
-  SYSLUMENN_SLUG,
-} from '@island.is/portals/my-pages/core'
-import { estatesMessages as em } from '../../lib/messages'
+import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useDebounce } from 'react-use'
+
 import {
   ActionCard,
   Box,
@@ -15,11 +9,20 @@ import {
   Stack,
   Text,
   ToggleSwitchCheckbox,
+  VisuallyHidden,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  CardLoader,
+  IntroWrapper,
+  LinkButton,
+  m,
+  SYSLUMENN_SLUG,
+} from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useNavigate } from 'react-router-dom'
-import { EstatesPaths } from '../../lib/paths'
 
+import { estatesMessages as em } from '../../lib/messages'
+import { EstatesPaths } from '../../lib/paths'
 import { useEstatesOverviewQuery } from './EstatesOverview.generated'
 import * as styles from './EstatesOverview.css'
 
@@ -29,19 +32,36 @@ export const EstatesOverview = () => {
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const [showFinished, setShowFinished] = useState(false)
+  const [announcement, setAnnouncement] = useState('')
+  const searchTouched = useRef(false)
 
   const { data, loading, error } = useEstatesOverviewQuery()
 
   const estates = data?.estates?.data ?? []
-  const filtered = estates.filter((e) => {
-    if (!showFinished && e.isFinished) return false
-    if (
-      search &&
-      !e.nameOfDeceased.toLowerCase().includes(search.toLowerCase())
-    )
-      return false
-    return true
-  })
+  const filterEstates = (includeFinished: boolean) =>
+    estates.filter((e) => {
+      if (!includeFinished && e.isFinished) return false
+      if (
+        search &&
+        !e.nameOfDeceased.toLowerCase().includes(search.toLowerCase())
+      )
+        return false
+      return true
+    })
+  const filtered = filterEstates(showFinished)
+
+  const announceCount = (count: number) =>
+    setAnnouncement(formatMessage(em.resultCount, { count }))
+
+  useDebounce(
+    () => {
+      if (searchTouched.current) {
+        announceCount(filtered.length)
+      }
+    },
+    500,
+    [search],
+  )
 
   return (
     <IntroWrapper
@@ -76,7 +96,10 @@ export const EstatesOverview = () => {
           label={formatMessage(m.searchLabel)}
           placeholder={formatMessage(em.searchPlaceholder)}
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            searchTouched.current = true
+            setSearch(e.target.value)
+          }}
           name="estates-search"
         />
         <ToggleSwitchCheckbox
@@ -87,9 +110,15 @@ export const EstatesOverview = () => {
             </Text>
           }
           checked={showFinished}
-          onChange={setShowFinished}
+          onChange={(checked) => {
+            setShowFinished(checked)
+            announceCount(filterEstates(checked).length)
+          }}
         />
       </Box>
+      <VisuallyHidden>
+        <span role="status">{announcement}</span>
+      </VisuallyHidden>
       {loading && (
         <Box width="full">
           <CardLoader />
@@ -113,7 +142,7 @@ export const EstatesOverview = () => {
               key={estate.id}
               heading={estate.nameOfDeceased}
               headingVariant="h4"
-              text={`${formatMessage(em.caseNumber)}: ${estate.id}`}
+              text={`${formatMessage(em.caseNumber)} ${estate.id}`}
               tag={{
                 label: formatMessage(
                   estate.isFinished ? em.statusFinished : em.statusInProgress,
@@ -123,7 +152,11 @@ export const EstatesOverview = () => {
               }}
               cta={{
                 label: formatMessage(em.view),
+                ariaLabel: `${formatMessage(em.view)}: ${
+                  estate.nameOfDeceased
+                }`,
                 variant: 'text',
+                icon: 'arrowForward',
                 onClick: () =>
                   navigate(
                     EstatesPaths.EstatesDetail.replace(':id', estate.id),

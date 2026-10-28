@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css'
+
 import { theme } from '@island.is/island-ui/theme'
 
 export const fieldWithDivider = style({
@@ -17,6 +18,12 @@ export const fieldWithDivider = style({
       },
     },
   },
+})
+
+export const fieldList = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing[3],
 })
 
 export const illustrationWrapper = style({

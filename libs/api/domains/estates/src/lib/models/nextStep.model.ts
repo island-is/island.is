@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { StepStatus } from './stepStatus.model'
+
 import { Action } from './action.model'
+import { StepStatus } from './stepStatus.model'
 
 @ObjectType('EstatesNextStep')
 export class NextStep {

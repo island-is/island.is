@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { ProgressStep } from './progressStep.model'
 
 @ObjectType('EstatesProgress')

@@ -1,17 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { GraphQLISODateTime } from '@nestjs/graphql'
+
+import { EstatesDateFieldValue, EstatesFieldValue } from './fieldValue.model'
 
 @ObjectType('EstatesDeceasedPerson')
 export class DeceasedPerson {
   @Field({ nullable: true })
   title?: string
 
-  @Field({ nullable: true })
-  name?: string
+  @Field(() => EstatesFieldValue, { nullable: true })
+  name?: EstatesFieldValue
 
-  @Field({ nullable: true })
-  nationalId?: string
+  @Field(() => EstatesFieldValue, { nullable: true })
+  nationalId?: EstatesFieldValue
 
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  dateOfDeath?: Date
+  @Field(() => EstatesDateFieldValue, { nullable: true })
+  dateOfDeath?: EstatesDateFieldValue
 }

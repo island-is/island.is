@@ -1,14 +1,15 @@
 import type {
   Estate,
+  EstateAction,
   EstateCase,
   LocalizedText,
-  EstateAction,
 } from '@island.is/clients/estates'
-import { isDefined } from '@island.is/shared/utils'
 import { LocaleEnum } from '@island.is/nest/graphql'
-import { Estate as EstateModel } from './models/estate.model'
-import { EstateCase as EstateCaseModel } from './models/case.model'
+import { isDefined } from '@island.is/shared/utils'
+
 import { Action } from './models/action.model'
+import { EstateCase as EstateCaseModel } from './models/case.model'
+import { Estate as EstateModel } from './models/estate.model'
 
 export const mapToEstate = (e: Estate): EstateModel | undefined => {
   if (!e.caseId || !e.deceased?.name || !e.deceased?.sid) {
@@ -46,6 +47,14 @@ const resolveText = (
 const toCompletedDate = (d?: Date | null) =>
   d && d.getFullYear() > 1 ? d : undefined
 
+const mapFieldValue = <T extends string | Date>(
+  field: { value?: T | null; text?: LocalizedText | null } | null | undefined,
+  locale: LocaleEnum,
+): { label: string; value: T } | undefined =>
+  field?.value
+    ? { label: resolveText(field.text, locale) ?? '', value: field.value }
+    : undefined
+
 const mapAction = (
   a: EstateAction | null | undefined,
   locale: LocaleEnum,
@@ -70,9 +79,12 @@ export const mapToEstatesCase = (
     if (!d?.name?.value) return undefined
     return {
       title: resolveText(d.title, locale),
-      name: d.name.value ?? undefined,
-      nationalId: d.sid?.value ?? undefined,
-      dateOfDeath: d.dateOfDeath?.value ?? undefined,
+      name: mapFieldValue(d.name, locale),
+      nationalId: mapFieldValue(d.sid, locale),
+      dateOfDeath:
+        d.dateOfDeath?.value instanceof Date
+          ? mapFieldValue(d.dateOfDeath, locale)
+          : undefined,
     }
   })()
 
@@ -97,7 +109,7 @@ export const mapToEstatesCase = (
 
   return {
     id: caseId ? `${caseId}-${locale}` : undefined,
-    caseId,
+    caseId: mapFieldValue(c.caseId, locale),
     deceased,
     representative,
     estateManager,

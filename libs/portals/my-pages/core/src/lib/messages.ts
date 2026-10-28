@@ -1826,6 +1826,10 @@ export const m = defineMessages({
     id: 'service.portal:estates-detail',
     defaultMessage: 'Dánarbú',
   },
+  estatesFiles: {
+    id: 'service.portal:estates-files',
+    defaultMessage: 'Skjöl',
+  },
   estatesTooltip: {
     id: 'service.portal:estates-tooltip',
     defaultMessage: 'Sýslumaður hefur umsjón með gögnum um dánarbú.',

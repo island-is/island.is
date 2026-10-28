@@ -1,12 +1,24 @@
 query EstateDetail($input: EstatesCaseInput!) {
   estate(input: $input) {
     id
-    caseId
+    caseId {
+      label
+      value
+    }
     deceased {
       title
-      name
-      nationalId
-      dateOfDeath
+      name {
+        label
+        value
+      }
+      nationalId {
+        label
+        value
+      }
+      dateOfDeath {
+        label
+        value
+      }
     }
     representative {
       name
