@@ -31,9 +31,12 @@ const CaseScheduledCard: FC<Props> = (props) => {
               </Text>
               {<Text>{court.name}</Text>}
               <Text>
-                {formatMessage({ id: strings.courtRoom, defaultMessage: strings.courtRoom }, {
-                  courtRoom: courtRoom || 'NONE', // Must use || because courtRoom can be an empty string
-                })}
+                {formatMessage(
+                  { id: strings.courtRoom, defaultMessage: strings.courtRoom },
+                  {
+                    courtRoom: courtRoom || 'NONE', // Must use || because courtRoom can be an empty string
+                  },
+                )}
               </Text>
             </>
           ),

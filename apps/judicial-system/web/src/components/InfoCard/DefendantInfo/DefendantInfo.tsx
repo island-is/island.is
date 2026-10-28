@@ -147,7 +147,10 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     <Box display="flex" justifyContent="spaceBetween">
       <div className={stack({ gap: 1 })}>
         <Text>
-          <Text as="span" fontWeight="semiBold">{`${infoCardStrings.name}: `}</Text>
+          <Text
+            as="span"
+            fontWeight="semiBold"
+          >{`${infoCardStrings.name}: `}</Text>
           <Text as="span">
             {defendant.name}
             {defendant.nationalId &&
@@ -201,9 +204,15 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           )}
         {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
           <Text fontWeight="semiBold">
-            {formatMessage({ id: strings.sendToPrisonAdminDate, defaultMessage: strings.sendToPrisonAdminDate }, {
-              date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
-            })}
+            {formatMessage(
+              {
+                id: strings.sendToPrisonAdminDate,
+                defaultMessage: strings.sendToPrisonAdminDate,
+              },
+              {
+                date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
+              },
+            )}
           </Text>
         )}
         {isPublicProsecutionOfficeUser(user) &&

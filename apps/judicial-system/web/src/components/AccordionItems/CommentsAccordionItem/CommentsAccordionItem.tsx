@@ -23,9 +23,12 @@ const CommentsAccordionItem: FC<Props> = (props) => {
   return (
     <AccordionItem
       id="id_5"
-      label={formatMessage({ id: strings.label, defaultMessage: strings.label }, {
-        commentCount,
-      })}
+      label={formatMessage(
+        { id: strings.label, defaultMessage: strings.label },
+        {
+          commentCount,
+        },
+      )}
       labelVariant="h3"
     >
       {workingCase.comments && (

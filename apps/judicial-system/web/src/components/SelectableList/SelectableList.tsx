@@ -126,11 +126,7 @@ const SelectableList: FC<Props> = (props) => {
         <Box marginBottom={2}>
           <Checkbox
             name="select-all"
-            label={
-              selectAllText
-                ? selectAllText
-                : strings.selectAllLabel
-            }
+            label={selectAllText ? selectAllText : strings.selectAllLabel}
             checked={
               validSelectableItems.length > 0 &&
               validSelectableItems.every((item) => item.checked)

@@ -185,17 +185,29 @@ const VerdictTimelineCard: FC<Props> = (props) => {
 
     if (isFine) {
       items.push({
-        text: formatMessage({ id: strings.fineAppealDeadline, defaultMessage: strings.fineAppealDeadline }, {
-          appealDeadlineIsInThePast: defendant.isVerdictAppealDeadlineExpired,
-          appealDeadline: formatDate(defendant.verdictAppealDeadline),
-        }),
+        text: formatMessage(
+          {
+            id: strings.fineAppealDeadline,
+            defaultMessage: strings.fineAppealDeadline,
+          },
+          {
+            appealDeadlineIsInThePast: defendant.isVerdictAppealDeadlineExpired,
+            appealDeadline: formatDate(defendant.verdictAppealDeadline),
+          },
+        ),
       })
     } else if (verdict?.serviceDate) {
       pushIf(
         !!isServiceRequired,
-        formatMessage({ id: strings.defendantVerdictViewedDate, defaultMessage: strings.defendantVerdictViewedDate }, {
-          date: formatDate(verdict?.serviceDate),
-        }),
+        formatMessage(
+          {
+            id: strings.defendantVerdictViewedDate,
+            defaultMessage: strings.defendantVerdictViewedDate,
+          },
+          {
+            date: formatDate(verdict?.serviceDate),
+          },
+        ),
       )
 
       items.push({
@@ -230,9 +242,15 @@ const VerdictTimelineCard: FC<Props> = (props) => {
 
     pushIf(
       !!(defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin),
-      formatMessage({ id: strings.sendToPrisonAdminDate, defaultMessage: strings.sendToPrisonAdminDate }, {
-        date: formatDate(defendant.sentToPrisonAdminDate),
-      }),
+      formatMessage(
+        {
+          id: strings.sendToPrisonAdminDate,
+          defaultMessage: strings.sendToPrisonAdminDate,
+        },
+        {
+          date: formatDate(defendant.sentToPrisonAdminDate),
+        },
+      ),
     )
 
     pushIf(
@@ -579,7 +597,9 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                     <DateTime
                       name="defendantAppealDate"
                       datepickerLabel={strings.defendantAppealDateLabel}
-                      datepickerPlaceholder={strings.defendantAppealDatePlaceholder}
+                      datepickerPlaceholder={
+                        strings.defendantAppealDatePlaceholder
+                      }
                       size="sm"
                       onChange={(date, valid) =>
                         handleDateChange(date, valid, 'appealDate')
@@ -615,7 +635,9 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                     <DateTime
                       name="defendantServiceDate"
                       datepickerLabel={strings.defendantVerdictServiceDateLabel}
-                      datepickerPlaceholder={strings.defendantVerdictServiceDatePlaceholder}
+                      datepickerPlaceholder={
+                        strings.defendantVerdictServiceDatePlaceholder
+                      }
                       size="sm"
                       selectedDate={dates.serviceDate}
                       onChange={(date, valid) =>

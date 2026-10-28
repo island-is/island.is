@@ -282,9 +282,15 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
     const externalCourtCaseNumber = workingCase.mergeCaseNumber
     if (externalCourtCaseNumber) {
-      return formatMessage({ id: strings.externalMergeCase, defaultMessage: strings.externalMergeCase }, {
-        mergeCaseNumber: externalCourtCaseNumber,
-      })
+      return formatMessage(
+        {
+          id: strings.externalMergeCase,
+          defaultMessage: strings.externalMergeCase,
+        },
+        {
+          mergeCaseNumber: externalCourtCaseNumber,
+        },
+      )
     }
 
     return undefined
@@ -435,17 +441,25 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
           .filter((defendant) => defendant.indictmentReviewDecision)
           .map((defendant) => (
             <Text key={`${defendant.id}-${defendant.indictmentReviewDecision}`}>
-              {`${defendant.name} - ${formatMessage({ id: defendant.indictmentReviewDecision ===
-                  IndictmentCaseReviewDecision.ACCEPT
-                  ? strings.reviewTagAccepted
-                  : strings.reviewTagAppealed, defaultMessage: defendant.indictmentReviewDecision ===
-                  IndictmentCaseReviewDecision.ACCEPT
-                  ? strings.reviewTagAccepted
-                  : strings.reviewTagAppealed }, {
+              {`${defendant.name} - ${formatMessage(
+                {
+                  id:
+                    defendant.indictmentReviewDecision ===
+                    IndictmentCaseReviewDecision.ACCEPT
+                      ? strings.reviewTagAccepted
+                      : strings.reviewTagAppealed,
+                  defaultMessage:
+                    defendant.indictmentReviewDecision ===
+                    IndictmentCaseReviewDecision.ACCEPT
+                      ? strings.reviewTagAccepted
+                      : strings.reviewTagAppealed,
+                },
+                {
                   isFine:
                     workingCase.indictmentRulingDecision ===
                     CaseIndictmentRulingDecision.FINE,
-                })}`}
+                },
+              )}`}
             </Text>
           ))
       : [],

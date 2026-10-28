@@ -258,15 +258,19 @@ const HeaderContainer = () => {
                       </Box>
                       <Box>
                         {isLawyerInLawyersRegistry ? (
-                          <Text>
-                            {header.tipDisclaimerDefenders}
-                          </Text>
+                          <Text>{header.tipDisclaimerDefenders}</Text>
                         ) : (
                           <MarkdownWrapper
-                            markdown={formatMessage({ id: header.tipDisclaimer, defaultMessage: header.tipDisclaimer }, {
-                              linkStart: `<a href="mailto:${supportEmail}" rel="noopener noreferrer nofollow" target="_blank">${supportEmail}`,
-                              linkEnd: '</a>',
-                            })}
+                            markdown={formatMessage(
+                              {
+                                id: header.tipDisclaimer,
+                                defaultMessage: header.tipDisclaimer,
+                              },
+                              {
+                                linkStart: `<a href="mailto:${supportEmail}" rel="noopener noreferrer nofollow" target="_blank">${supportEmail}`,
+                                linkEnd: '</a>',
+                              },
+                            )}
                           />
                         )}
                       </Box>

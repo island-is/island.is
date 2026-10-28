@@ -71,41 +71,63 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
       labelVariant="h3"
       labelUse="h3"
     >
-      <AccordionListItem
-        title={m.sections.timeAndLocation.title}
-      >
+      <AccordionListItem title={m.sections.timeAndLocation.title}>
         <Text>
           {!workingCase.courtEndTime
-            ? formatMessage({ id: m.sections.timeAndLocation.textOngoing, defaultMessage: m.sections.timeAndLocation.textOngoing }, {
-                courtStartTime: formatDate(
-                  workingCase.courtStartDate,
-                  TIME_FORMAT,
-                ),
-              })
+            ? formatMessage(
+                {
+                  id: m.sections.timeAndLocation.textOngoing,
+                  defaultMessage: m.sections.timeAndLocation.textOngoing,
+                },
+                {
+                  courtStartTime: formatDate(
+                    workingCase.courtStartDate,
+                    TIME_FORMAT,
+                  ),
+                },
+              )
             : workingCase.courtStartDate &&
               isSameDay(
                 new Date(workingCase.courtStartDate),
                 new Date(workingCase.courtEndTime),
               )
-            ? formatMessage({ id: m.sections.timeAndLocation.textSameDay, defaultMessage: m.sections.timeAndLocation.textSameDay }, {
-                courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
-                courtStartTime: formatDate(
-                  workingCase.courtStartDate,
-                  TIME_FORMAT,
-                ),
-                courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
-                courtLocation: workingCase.courtLocation,
-              })
-            : formatMessage({ id: m.sections.timeAndLocation.text, defaultMessage: m.sections.timeAndLocation.text }, {
-                courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
-                courtStartTime: formatDate(
-                  workingCase.courtStartDate,
-                  TIME_FORMAT,
-                ),
-                courtEndDate: formatDate(workingCase.courtEndTime, 'PPP'),
-                courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
-                courtLocation: workingCase.courtLocation,
-              })}{' '}
+            ? formatMessage(
+                {
+                  id: m.sections.timeAndLocation.textSameDay,
+                  defaultMessage: m.sections.timeAndLocation.textSameDay,
+                },
+                {
+                  courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
+                  courtStartTime: formatDate(
+                    workingCase.courtStartDate,
+                    TIME_FORMAT,
+                  ),
+                  courtEndTime: formatDate(
+                    workingCase.courtEndTime,
+                    TIME_FORMAT,
+                  ),
+                  courtLocation: workingCase.courtLocation,
+                },
+              )
+            : formatMessage(
+                {
+                  id: m.sections.timeAndLocation.text,
+                  defaultMessage: m.sections.timeAndLocation.text,
+                },
+                {
+                  courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
+                  courtStartTime: formatDate(
+                    workingCase.courtStartDate,
+                    TIME_FORMAT,
+                  ),
+                  courtEndDate: formatDate(workingCase.courtEndTime, 'PPP'),
+                  courtEndTime: formatDate(
+                    workingCase.courtEndTime,
+                    TIME_FORMAT,
+                  ),
+                  courtLocation: workingCase.courtLocation,
+                },
+              )}{' '}
         </Text>
         {!workingCase.isClosedCourtHidden && (
           <Box marginBottom={3}>
@@ -114,35 +136,41 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
         )}
       </AccordionListItem>
       {workingCase.courtAttendees?.trim() && (
-        <AccordionListItem
-          title={m.sections.courtAttendees.title}
-          breakSpaces
-        >
+        <AccordionListItem title={m.sections.courtAttendees.title} breakSpaces>
           <Text>{workingCase.courtAttendees.trim()}</Text>
         </AccordionListItem>
       )}
       <AccordionListItem title={m.sections.courtDocuments.title}>
         <Text>
-          {formatMessage({ id: m.sections.firstCourtDocument, defaultMessage: m.sections.firstCourtDocument }, {
-            caseType: formatRequestCaseType(workingCase.type),
-          })}
+          {formatMessage(
+            {
+              id: m.sections.firstCourtDocument,
+              defaultMessage: m.sections.firstCourtDocument,
+            },
+            {
+              caseType: formatRequestCaseType(workingCase.type),
+            },
+          )}
         </Text>
         {workingCase.courtDocuments?.map((courtDocument, index) => {
           return (
             <Text key={`${index}${courtDocument.name}`}>
-              {formatMessage({ id: m.sections.courtDocuments.text, defaultMessage: m.sections.courtDocuments.text }, {
-                documentName: capitalize(courtDocument.name),
-                documentNumber: index + 2,
-                submittedBy: courtDocument.submittedBy,
-              })}
+              {formatMessage(
+                {
+                  id: m.sections.courtDocuments.text,
+                  defaultMessage: m.sections.courtDocuments.text,
+                },
+                {
+                  documentName: capitalize(courtDocument.name),
+                  documentNumber: index + 2,
+                  submittedBy: courtDocument.submittedBy,
+                },
+              )}
             </Text>
           )
         })}
       </AccordionListItem>
-      <AccordionListItem
-        title={m.sections.sessionBookings.title}
-        breakSpaces
-      >
+      <AccordionListItem title={m.sections.sessionBookings.title} breakSpaces>
         <Text>{workingCase.sessionBookings}</Text>
       </AccordionListItem>
       {isRestrictionCase(workingCase.type) && (
@@ -157,9 +185,7 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
               workingCase.sessionArrangements ===
                 SessionArrangements.ALL_PRESENT) && (
               <Box marginBottom={2}>
-                <Text>
-                  {m.sections.appealDecision.disclaimer}
-                </Text>
+                <Text>{m.sections.appealDecision.disclaimer}</Text>
               </Box>
             )}
             <Box marginBottom={2}>

@@ -7,5 +7,6 @@ export const strings = {
   defendantAppealDatePlaceholder: 'Veldu dagsetningu áfrýjunar',
   defendantAppealDateButtonText: 'Skrá áfrýjun ákærða',
   sendToPrisonAdminDate: 'Sent til fullnustu {date}',
-  fineAppealDeadline: 'Kærufrestur Ríkissaksóknara {appealDeadlineIsInThePast, select, true {var} other {er}} til {appealDeadline}',
+  fineAppealDeadline:
+    'Kærufrestur Ríkissaksóknara {appealDeadlineIsInThePast, select, true {var} other {er}} til {appealDeadline}',
 }

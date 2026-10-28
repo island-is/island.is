@@ -9,9 +9,7 @@ interface Props {
 }
 
 const RulingDateLabel: FC<Props> = ({ rulingDate, as }) => {
-  return (
-    <DateLabel text={strings.text} date={rulingDate} as={as} />
-  )
+  return <DateLabel text={strings.text} date={rulingDate} as={as} />
 }
 
 export default RulingDateLabel

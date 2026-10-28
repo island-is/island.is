@@ -41,7 +41,13 @@ const ControlCode: FC<{ controlCode?: string }> = ({ controlCode }) => {
     <>
       <Box marginBottom={2}>
         <Text variant="h2" color="blue400">
-          {formatMessage({ id: signingModalStrings.controlCode, defaultMessage: signingModalStrings.controlCode }, { controlCode })}
+          {formatMessage(
+            {
+              id: signingModalStrings.controlCode,
+              defaultMessage: signingModalStrings.controlCode,
+            },
+            { controlCode },
+          )}
         </Text>
       </Box>
       <Text>{signingModalStrings.controlCodeExplanation}</Text>
@@ -164,11 +170,17 @@ export const SignatureConfirmationModal: FC<
       if (signatureType === 'ruling') {
         return (
           <MarkdownWrapper
-            markdown={formatMessage({ id: signingModalStrings.successText, defaultMessage: signingModalStrings.successText }, {
-              summarySentToPrison:
-                workingCase.type === CaseType.CUSTODY ||
-                workingCase.type === CaseType.ADMISSION_TO_FACILITY,
-            })}
+            markdown={formatMessage(
+              {
+                id: signingModalStrings.successText,
+                defaultMessage: signingModalStrings.successText,
+              },
+              {
+                summarySentToPrison:
+                  workingCase.type === CaseType.CUSTODY ||
+                  workingCase.type === CaseType.ADMISSION_TO_FACILITY,
+              },
+            )}
           />
         )
       } else {

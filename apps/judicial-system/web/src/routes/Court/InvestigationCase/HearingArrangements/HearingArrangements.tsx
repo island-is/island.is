@@ -308,16 +308,32 @@ const HearingArrangements = () => {
               SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
             <section className={stack({ gap: 3 })}>
               <SectionHeading
-                title={formatMessage({ id: defenderInfo.investigationCases.sections.defender.title, defaultMessage: defenderInfo.investigationCases.sections.defender.title }, {
+                title={formatMessage(
+                  {
+                    id: defenderInfo.investigationCases.sections.defender.title,
+                    defaultMessage:
+                      defenderInfo.investigationCases.sections.defender.title,
+                  },
+                  {
                     defenderType:
                       workingCase.sessionArrangements ===
                       SessionArrangements.ALL_PRESENT_SPOKESPERSON
                         ? 'Talsmaður'
                         : 'Verjandi',
-                  })}
+                  },
+                )}
                 tooltip={
                   <Tooltip
-                    text={formatMessage({ id: defenderInfo.investigationCases.sections.defender.tooltip, defaultMessage: defenderInfo.investigationCases.sections.defender.tooltip }, { sessionArrangement: workingCase.sessionArrangements })}
+                    text={formatMessage(
+                      {
+                        id: defenderInfo.investigationCases.sections.defender
+                          .tooltip,
+                        defaultMessage:
+                          defenderInfo.investigationCases.sections.defender
+                            .tooltip,
+                      },
+                      { sessionArrangement: workingCase.sessionArrangements },
+                    )}
                     placement="right"
                   />
                 }

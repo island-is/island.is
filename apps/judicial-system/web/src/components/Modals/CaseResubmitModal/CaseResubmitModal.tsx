@@ -29,7 +29,10 @@ export const getCaseResubmittedText = (
         Boolean(workingCase.arraignmentDate?.date)),
   )
 
-  return formatMessage({ id: strings.text, defaultMessage: strings.text }, { requestSharedWithDefender })
+  return formatMessage(
+    { id: strings.text, defaultMessage: strings.text },
+    { requestSharedWithDefender },
+  )
 }
 
 const CaseResubmitModal: FC<Props> = ({

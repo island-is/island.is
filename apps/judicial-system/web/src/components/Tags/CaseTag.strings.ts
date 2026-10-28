@@ -9,7 +9,8 @@ export const strings = {
   reassignment: 'Endurúthlutun',
   received: 'Móttekið',
   complete: 'Lokið',
-  completed: '{indictmentRulingDecision, select, RULING {Dómur} FINE {Viðurlagaákvörðun} DISMISSAL {Frávísun} CANCELLATION {Niðurfelling} other {Lokið}}',
+  completed:
+    '{indictmentRulingDecision, select, RULING {Dómur} FINE {Viðurlagaákvörðun} DISMISSAL {Frávísun} CANCELLATION {Niðurfelling} other {Lokið}}',
   recalled: 'Afturkallað',
   merged: 'Sameinað',
   indictmentFine: 'Viðurlagaákvörðun',

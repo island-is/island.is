@@ -49,9 +49,7 @@ const IndictmentCaseScheduledCard: FC<Props> = (props) => {
           {
             title: strings.schedulingUntilVerdictTitle,
             value: (
-              <Text marginTop={2}>
-                {strings.schedulingUntilVerdictText}
-              </Text>
+              <Text marginTop={2}>{strings.schedulingUntilVerdictText}</Text>
             ),
           },
         ]}

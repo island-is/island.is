@@ -42,28 +42,40 @@ const RestrictionLength: FC<Props> = (props) => {
       <Box marginBottom={5}>
         <Text as="h3" variant="h3" marginBottom={3}>
           {capitalize(
-            formatMessage({ id: strings.caseType, defaultMessage: strings.caseType }, {
-              caseType:
-                workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  ? CaseType.TRAVEL_BAN
-                  : workingCase.type,
-            }),
-          )}
-        </Text>
-        <DateTime
-          name="validToDate"
-          datepickerLabel={formatMessage({ id: strings.validToDateLabel, defaultMessage: strings.validToDateLabel }, {
-            caseType: capitalize(
-              formatMessage({ id: strings.caseType, defaultMessage: strings.caseType }, {
+            formatMessage(
+              { id: strings.caseType, defaultMessage: strings.caseType },
+              {
                 caseType:
                   workingCase.decision ===
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                     ? CaseType.TRAVEL_BAN
                     : workingCase.type,
-              }),
+              },
             ),
-          })}
+          )}
+        </Text>
+        <DateTime
+          name="validToDate"
+          datepickerLabel={formatMessage(
+            {
+              id: strings.validToDateLabel,
+              defaultMessage: strings.validToDateLabel,
+            },
+            {
+              caseType: capitalize(
+                formatMessage(
+                  { id: strings.caseType, defaultMessage: strings.caseType },
+                  {
+                    caseType:
+                      workingCase.decision ===
+                      CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                        ? CaseType.TRAVEL_BAN
+                        : workingCase.type,
+                  },
+                ),
+              ),
+            },
+          )}
           selectedDate={
             isCOAUser
               ? workingCase.appealCase?.appealValidToDate

@@ -4,8 +4,10 @@ export const strings = {
   offense: 'Brot',
   indictmentReviewer: 'Yfirlestur',
   indictmentReviewDecision: 'Ákvörðun',
-  reviewTagAppealed: '{isFine, select, true {Kæra viðurlagaákvörðun} other {Áfrýja dómi}}',
-  reviewTagAccepted: 'Una {isFine, select, true {viðurlagaákvörðun} other {dómi}}',
+  reviewTagAppealed:
+    '{isFine, select, true {Kæra viðurlagaákvörðun} other {Áfrýja dómi}}',
+  reviewTagAccepted:
+    'Una {isFine, select, true {viðurlagaákvörðun} other {dómi}}',
   indictmentReviewedDateTitle: 'Dagsetning áritunar',
   indictmentMergedTitle: 'Sameinað máli',
   mergedFromTitle: 'Sameinað úr',

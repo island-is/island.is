@@ -48,18 +48,30 @@ const mapServiceStatusMessages = (
             ? ` - ${formatDate(subpoena.serviceDate, 'dd.MM.y HH:mm')}`
             : ''
         }`,
-        formatMessage({ id: strings.servedToDefender, defaultMessage: strings.servedToDefender }, {
-          lawyerName: lawyer?.name,
-          practice: lawyer?.practice,
-        }),
+        formatMessage(
+          {
+            id: strings.servedToDefender,
+            defaultMessage: strings.servedToDefender,
+          },
+          {
+            lawyerName: lawyer?.name,
+            practice: lawyer?.practice,
+          },
+        ),
       ]
     case ServiceStatus.ELECTRONICALLY:
       return [
-        formatMessage({ id: strings.servedToElectronically, defaultMessage: strings.servedToElectronically }, {
-          date: subpoena.serviceDate
-            ? formatDate(subpoena.serviceDate, 'dd.MM.y HH:mm')
-            : '',
-        }),
+        formatMessage(
+          {
+            id: strings.servedToElectronically,
+            defaultMessage: strings.servedToElectronically,
+          },
+          {
+            date: subpoena.serviceDate
+              ? formatDate(subpoena.serviceDate, 'dd.MM.y HH:mm')
+              : '',
+          },
+        ),
       ]
     case ServiceStatus.IN_PERSON:
     case ServiceStatus.FAILED:
@@ -75,11 +87,17 @@ const mapServiceStatusMessages = (
       return [strings.serviceStatusExpiredMessage]
     default:
       return [
-        formatMessage({ id: strings.subpoenaCreated, defaultMessage: strings.subpoenaCreated }, {
-          date: subpoena.created
-            ? formatDate(subpoena.created, 'dd.MM.y HH:mm')
-            : '',
-        }),
+        formatMessage(
+          {
+            id: strings.subpoenaCreated,
+            defaultMessage: strings.subpoenaCreated,
+          },
+          {
+            date: subpoena.created
+              ? formatDate(subpoena.created, 'dd.MM.y HH:mm')
+              : '',
+          },
+        ),
       ]
   }
 }
@@ -138,9 +156,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   ) : (
     <Box marginBottom={2}>
       <AlertMessage
-        title={`${title}${
-          defendantName ? ` - ${defendantName}` : ''
-        }`}
+        title={`${title}${defendantName ? ` - ${defendantName}` : ''}`}
         message={
           <Box>
             {messages.map((msg) => (

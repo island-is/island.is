@@ -542,9 +542,12 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     <>
       <AccordionItem
         id="IndictmentsCaseFilesAccordionItem"
-        label={formatMessage({ id: strings.title, defaultMessage: strings.title }, {
-          policeCaseNumber,
-        })}
+        label={formatMessage(
+          { id: strings.title, defaultMessage: strings.title },
+          {
+            policeCaseNumber,
+          },
+        )}
         labelVariant="h3"
         startExpanded={shouldStartExpanded}
       >
@@ -564,10 +567,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       you should not be able to put a file above the first chapter.
        */}
         <Box marginBottom={2}>
-          {renderChapter(
-            0,
-            strings.chapterIndictmentAndAccompanyingDocuments,
-          )}
+          {renderChapter(0, strings.chapterIndictmentAndAccompanyingDocuments)}
         </Box>
         <Reorder.Group
           axis="y"
@@ -596,10 +596,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <AlertMessage
-                  type="success"
-                  message={strings.noCaseFiles}
-                />
+                <AlertMessage type="success" message={strings.noCaseFiles} />
               </motion.div>
             )}
         </AnimatePresence>

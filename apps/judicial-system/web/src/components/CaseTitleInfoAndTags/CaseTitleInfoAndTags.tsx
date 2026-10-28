@@ -72,16 +72,26 @@ const CaseTitleInfoAndTags: FC = () => {
               targetAppealCase.appealReceivedByCourtDate && (
                 <Box marginTop={1}>
                   <Text as="h5" variant="h5">
-                    {formatMessage({ id: user.institution.type === InstitutionType.COURT_OF_APPEALS
-                        ? strings.COAAppealReceivedAt
-                        : strings.appealReceivedAt, defaultMessage: user.institution.type === InstitutionType.COURT_OF_APPEALS
-                        ? strings.COAAppealReceivedAt
-                        : strings.appealReceivedAt }, {
+                    {formatMessage(
+                      {
+                        id:
+                          user.institution.type ===
+                          InstitutionType.COURT_OF_APPEALS
+                            ? strings.COAAppealReceivedAt
+                            : strings.appealReceivedAt,
+                        defaultMessage:
+                          user.institution.type ===
+                          InstitutionType.COURT_OF_APPEALS
+                            ? strings.COAAppealReceivedAt
+                            : strings.appealReceivedAt,
+                      },
+                      {
                         appealReceived: formatDate(
                           targetAppealCase.appealReceivedByCourtDate,
                           'PPPp',
                         ),
-                      })}
+                      },
+                    )}
                   </Text>
                 </Box>
               )}

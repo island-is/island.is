@@ -506,9 +506,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
       {displayHeading && (
         <SectionHeading
           title={
-            isCourtOfAppealsUser(user)
-              ? 'Skjöl héraðsdómsmáls'
-              : strings.title
+            isCourtOfAppealsUser(user) ? 'Skjöl héraðsdómsmáls' : strings.title
           }
         />
       )}
@@ -564,9 +562,15 @@ const IndictmentCaseFilesList: FC<Props> = ({
               variant="h4"
             />
             {visiblePoliceCaseNumbers.map((policeCaseNumber, index) => {
-              const caseFilesRecordFileName = formatMessage({ id: strings.caseFileButtonText, defaultMessage: strings.caseFileButtonText }, {
+              const caseFilesRecordFileName = formatMessage(
+                {
+                  id: strings.caseFileButtonText,
+                  defaultMessage: strings.caseFileButtonText,
+                },
+                {
                   policeCaseNumber,
-                })
+                },
+              )
               return (
                 <Box key={`${policeCaseNumber}-${index}`}>
                   <PdfButton
@@ -602,11 +606,23 @@ const IndictmentCaseFilesList: FC<Props> = ({
               variant="h4"
             />
             {visibleSubpoenas.map(({ defendant, subpoena, caseId }) => {
-              const subpoenaFileName = formatMessage({ id: strings.subpoenaButtonText, defaultMessage: strings.subpoenaButtonText }, {
+              const subpoenaFileName = formatMessage(
+                {
+                  id: strings.subpoenaButtonText,
+                  defaultMessage: strings.subpoenaButtonText,
+                },
+                {
                   name: defendant.name,
                   date: formatDate(subpoena.created),
-                })
-              const serviceCertificateFileName = formatMessage({ id: strings.serviceCertificateButtonText, defaultMessage: strings.serviceCertificateButtonText }, { name: defendant.name })
+                },
+              )
+              const serviceCertificateFileName = formatMessage(
+                {
+                  id: strings.serviceCertificateButtonText,
+                  defaultMessage: strings.serviceCertificateButtonText,
+                },
+                { name: defendant.name },
+              )
 
               return (
                 <Box key={`subpoena-${subpoena.id}`}>
@@ -789,9 +805,15 @@ const IndictmentCaseFilesList: FC<Props> = ({
                       return null
                     }
 
-                    const serviceCertificateFileName = formatMessage({ id: strings.serviceCertificateButtonText, defaultMessage: strings.serviceCertificateButtonText }, {
+                    const serviceCertificateFileName = formatMessage(
+                      {
+                        id: strings.serviceCertificateButtonText,
+                        defaultMessage: strings.serviceCertificateButtonText,
+                      },
+                      {
                         name: defendant.name,
-                      })
+                      },
+                    )
 
                     return (
                       <PdfButton
