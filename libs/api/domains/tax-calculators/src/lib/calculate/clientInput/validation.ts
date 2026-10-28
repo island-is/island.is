@@ -40,6 +40,19 @@ export const booleanAt = (
   return typeof value === 'boolean' ? value : mistyped(key, 'boolean')
 }
 
+export const dateAt = (
+  values: SubmittedValues,
+  key: string,
+): Date | undefined => {
+  const value = values[key]
+
+  if (value === undefined) {
+    return undefined
+  }
+
+  return value instanceof Date ? value : mistyped(key, 'date')
+}
+
 /* Preserves the permitted literal union after option lookup. */
 export const optionAt = <T extends string>(
   values: SubmittedValues,

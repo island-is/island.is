@@ -54,66 +54,66 @@ describe('TaxCalculatorsService', () => {
         TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES,
       ).map((field) => field.key)
 
-      expect(keys).toContain('salary')
-      expect(keys).toContain('paymentFrequency')
+      expect(keys).toContain('laun')
+      expect(keys).toContain('launGreidast')
     })
   })
 
-  describe('child benefit conditional fields', () => {
-    it.each(['splitCustodyChildrenOver7', 'splitCustodyChildrenUnder7'])(
-      'gates %s on splitCustody being true',
-      (key) => {
-        const field = findField(TaxCalculatorType.CHILD_BENEFIT, key)
-
-        expect(field).toBeDefined()
-        expect(field?.required).toBe(false)
-        expect(field?.dependsOn).toEqual({
-          fieldKey: 'splitCustody',
-          equals: { value: true },
-        })
-      },
-    )
-
+  describe('child benefit fields', () => {
     it.each([
-      'splitCustody',
-      'marriedOrCohabiting',
-      'incomeYear',
-      'incomeBase',
-      'numberOfChildren',
-      'numberOfChildrenUnder7',
-    ])('leaves %s unconditional', (key) => {
-      expect(
-        findField(TaxCalculatorType.CHILD_BENEFIT, key)?.dependsOn,
-      ).toBeUndefined()
+      'hjuskaparstada',
+      'tekjuar',
+      'tekjustofn',
+      'fjoldiBarna',
+      'fjoldiBarnaUndir7ara',
+      'skiptBornYfir7ara',
+      'skiptBornUndir7ara',
+    ])('publishes %s unconditionally', (key) => {
+      const field = findField(TaxCalculatorType.CHILD_BENEFIT, key)
+
+      expect(field).toBeDefined()
+      expect(field?.dependsOn).toBeUndefined()
+    })
+
+    it('publishes hjuskaparstada as a select over the RSK enum values', () => {
+      const field = findField(TaxCalculatorType.CHILD_BENEFIT, 'hjuskaparstada') as
+        | SelectInputField
+        | undefined
+
+      expect(field?.type).toBe(TaxCalculatorInputFieldType.SELECT)
+      expect(field?.options).toEqual([
+        { value: 'Gift/Í sambúð' },
+        { value: 'Einstætt foreldri' },
+      ])
     })
   })
 
   describe('input field types', () => {
-    it('publishes period as a select with structured options', () => {
-      const field = findField(TaxCalculatorType.VEHICLE_TAX, 'period') as
+    it('publishes gjaldtimabil as a select over the RSK enum values', () => {
+      const field = findField(TaxCalculatorType.VEHICLE_TAX, 'gjaldtimabil') as
         | SelectInputField
         | undefined
 
       expect(field?.type).toBe(TaxCalculatorInputFieldType.SELECT)
       expect(field?.required).toBe(true)
       expect(field?.options).toEqual([
-        { value: 'firstHalf' },
-        { value: 'secondHalf' },
+        { value: '1. jan - 30. júlí' },
+        { value: '1. júlí - 31. des' },
       ])
     })
 
-    it('publishes periodSplitDate as an optional date carrying no options', () => {
-      const field = findField(TaxCalculatorType.VEHICLE_TAX, 'periodSplitDate')
+    it('publishes gjaldskipting as an optional date carrying no options', () => {
+      const field = findField(TaxCalculatorType.VEHICLE_TAX, 'gjaldskipting')
 
       expect(field?.type).toBe(TaxCalculatorInputFieldType.DATE)
       expect(field?.required).toBe(false)
       expect(field).not.toHaveProperty('options')
     })
 
-    it('publishes licensePlate as a string', () => {
-      expect(
-        findField(TaxCalculatorType.VEHICLE_TAX, 'licensePlate')?.type,
-      ).toBe(TaxCalculatorInputFieldType.STRING)
+    it('publishes bilnumer as a string', () => {
+      expect(findField(TaxCalculatorType.VEHICLE_TAX, 'bilnumer')?.type).toBe(
+        TaxCalculatorInputFieldType.STRING,
+      )
     })
 
     it('publishes isElectric as a boolean', () => {
@@ -129,19 +129,24 @@ describe('TaxCalculatorsService', () => {
       TaxCalculatorInputFieldSemantic
 
     it.each([
-      [TaxCalculatorType.CHILD_BENEFIT, 'incomeYear', YEAR],
-      [TaxCalculatorType.CHILD_BENEFIT, 'incomeBase', CURRENCY],
-      [TaxCalculatorType.CHILD_BENEFIT, 'numberOfChildren', COUNT],
-      [TaxCalculatorType.CHILD_BENEFIT, 'splitCustodyChildrenUnder7', COUNT],
-      [TaxCalculatorType.VEHICLE_TAX, 'year', YEAR],
+      [TaxCalculatorType.CHILD_BENEFIT, 'tekjuar', YEAR],
+      [TaxCalculatorType.CHILD_BENEFIT, 'tekjustofn', CURRENCY],
+      [TaxCalculatorType.CHILD_BENEFIT, 'fjoldiBarna', COUNT],
+      [TaxCalculatorType.CHILD_BENEFIT, 'skiptBornUndir7ara', COUNT],
+      [TaxCalculatorType.VEHICLE_TAX, 'ar', YEAR],
       [TaxCalculatorType.VEHICLE_BENEFIT, 'purchasePrice', CURRENCY],
       [TaxCalculatorType.VEHICLE_BENEFIT, 'purchaseYear', YEAR],
-      [TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES, 'salary', CURRENCY],
-      [TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES, 'payMonth', MONTH],
-      [TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES, 'vacationPay', CURRENCY],
+      [TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES, 'laun', CURRENCY],
+      [TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES, 'launamanudur', MONTH],
+      [TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES, 'orlof', CURRENCY],
       [
         TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES,
-        'taxCardUtilization',
+        'nytingSkattkorts',
+        PERCENTAGE,
+      ],
+      [
+        TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES,
+        'lifeyrissjodurHlutfall',
         PERCENTAGE,
       ],
     ])('types %s.%s as %s', (type, key, expected) => {
@@ -152,25 +157,6 @@ describe('TaxCalculatorsService', () => {
     })
   })
 
-  /* The source schema omits these sets; this test catches drift. */
-  describe('pension rate option sets', () => {
-    it.each([
-      ['pensionFundRatio', ['0%', '4%']],
-      ['privatePensionRatio', ['0%', '1%', '2%', '3%', '4%']],
-      [
-        'employerPensionMatchRatio',
-        ['0%', '8%', '8.5%', '10%', '10.5%', '11.5%', '12%', '13.5%'],
-      ],
-    ])('offers %s as a fixed set', (key, values) => {
-      const field = findField(
-        TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES,
-        key,
-      ) as SelectInputField | undefined
-
-      expect(field?.type).toBe(TaxCalculatorInputFieldType.SELECT)
-      expect(field?.options).toEqual(values.map((value) => ({ value })))
-    })
-  })
 })
 
 describe('TaxCalculatorsService output contract', () => {
@@ -269,9 +255,9 @@ describe('TaxCalculatorsService calculate', () => {
     TaxCalculatorCalculationErrorCode
 
   const vehicleTaxValues: InputFieldValue[] = [
-    { key: 'year', value: { numberValue: 2026 } },
-    { key: 'licensePlate', value: { stringValue: 'AB123' } },
-    { key: 'period', value: { stringValue: 'firstHalf' } },
+    { key: 'ar', value: { numberValue: 2026 } },
+    { key: 'bilnumer', value: { stringValue: 'AB123' } },
+    { key: 'gjaldtimabil', value: { stringValue: '1. jan - 30. júlí' } },
   ]
 
   afterEach(() => {
@@ -288,32 +274,38 @@ describe('TaxCalculatorsService calculate', () => {
       await service.calculate({
         type: TaxCalculatorType.CHILD_BENEFIT,
         values: [
-          { key: 'marriedOrCohabiting', value: { booleanValue: true } },
-          { key: 'incomeYear', value: { numberValue: 2026 } },
-          { key: 'incomeBase', value: { numberValue: 9000000 } },
-          { key: 'numberOfChildren', value: { numberValue: 2 } },
-          { key: 'numberOfChildrenUnder7', value: { numberValue: 1 } },
-          { key: 'splitCustody', value: { booleanValue: false } },
+          { key: 'hjuskaparstada', value: { stringValue: 'Gift/Í sambúð' } },
+          { key: 'tekjuar', value: { numberValue: 2025 } },
+          { key: 'tekjustofn', value: { numberValue: 9000000 } },
+          { key: 'fjoldiBarna', value: { numberValue: 2 } },
         ],
       })
 
       expect(call).toHaveBeenCalledWith(
-        expect.objectContaining({ incomeYear: 2026, numberOfChildren: 2 }),
+        expect.objectContaining({ tekjuar: 2025, fjoldiBarna: 2 }),
       )
     })
 
-    it('routes vehicle tax to getVehicleTax', async () => {
+    it('routes vehicle tax to getVehicleTax, passing the split date as a Date', async () => {
       const call = jest
         .spyOn(client, 'getVehicleTax')
         .mockResolvedValue({ totalVehicleTax: 1 })
+      const gjaldskipting = new Date('2026-03-01T00:00:00.000Z')
 
       await service.calculate({
         type: TaxCalculatorType.VEHICLE_TAX,
-        values: vehicleTaxValues,
+        values: [
+          ...vehicleTaxValues,
+          { key: 'gjaldskipting', value: { dateValue: gjaldskipting } },
+        ],
       })
 
       expect(call).toHaveBeenCalledWith(
-        expect.objectContaining({ licensePlate: 'AB123', period: 'firstHalf' }),
+        expect.objectContaining({
+          bilnumer: 'AB123',
+          gjaldtimabil: '1. jan - 30. júlí',
+          gjaldskipting,
+        }),
       )
     })
 
@@ -344,14 +336,27 @@ describe('TaxCalculatorsService calculate', () => {
       await service.calculate({
         type: TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES,
         values: [
-          { key: 'salary', value: { numberValue: 800000 } },
-          { key: 'incomeYear', value: { numberValue: 2026 } },
-          { key: 'payMonth', value: { numberValue: 9 } },
+          { key: 'launGreidast', value: { stringValue: 'Mánaðarlega' } },
+          { key: 'hjuskaparstada', value: { stringValue: 'Einhleypingur' } },
+          { key: 'tekjuar', value: { numberValue: 2026 } },
+          { key: 'launamanudur', value: { numberValue: 9 } },
+          { key: 'laun', value: { numberValue: 800000 } },
+          { key: 'lifeyrissjodurHlutfall', value: { numberValue: 4 } },
+          { key: 'sereignHlutfall', value: { numberValue: 2 } },
+          { key: 'nytingSkattkorts', value: { numberValue: 100 } },
+          { key: 'nytingSkattkortsMaka', value: { numberValue: 0 } },
+          { key: 'uppsafnadurPersonuafslattur', value: { numberValue: 0 } },
+          { key: 'orlof', value: { numberValue: 0 } },
+          { key: 'stettarfelag', value: { numberValue: 0 } },
+          { key: 'annad', value: { numberValue: 0 } },
+          { key: 'motframlagLifeyrissjodur', value: { numberValue: 11.5 } },
+          { key: 'okutaekjastyrkurUtan', value: { numberValue: 0 } },
+          { key: 'idgjaldSlysatryggingSjomanna', value: { numberValue: 0 } },
         ],
       })
 
       expect(call).toHaveBeenCalledWith(
-        expect.objectContaining({ salary: 800000 }),
+        expect.objectContaining({ laun: 800000, lifeyrissjodurHlutfall: 4 }),
       )
     })
   })
