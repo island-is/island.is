@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Box, Icon, Inline, Text } from '@island.is/island-ui/core'
 import * as styles from './ApplicationCard.css'
 import { ApplicationCardDelete } from './components/ApplicationCardDelete'
-import { dateFormat } from '@island.is/shared/constants'
+import { dateFormat, dateFormatWithTime } from '@island.is/shared/constants'
 import format from 'date-fns/format'
 import { ApplicationCardHistory } from './components/ApplicationCardHistory'
 import { ApplicationCardProgress } from './components/ApplicationCardProgress'
@@ -13,6 +13,7 @@ import { ApplicationCardFields } from './types'
 import { buildHistoryItems } from './utils/history'
 import { ApplicationStatus } from '@island.is/application/types'
 import { coreMessages } from '@island.is/application/core'
+import { toIcelandTime } from '@island.is/shared/utils'
 import { useOpenApplication } from '../../hooks/useOpenApplication'
 
 export type ApplicationCardProps = {
@@ -64,7 +65,9 @@ export const ApplicationCard = ({
   const { status, actionCard, modified, pruneAt } = application
   const { lang: locale, formatMessage } = useLocale()
   const { openApplication: defaultOpen, slug } = useOpenApplication(application)
-  const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
+  const dateTimeFormat =
+    locale === 'is' ? dateFormatWithTime.is : dateFormatWithTime.en
+  const dateOnlyFormat = locale === 'is' ? dateFormat.is : dateFormat.en
   const defaultData = defaultCardDataByStatus[status]
   const heading = actionCard?.title ?? application.name
   const openApplication = onClick
@@ -73,7 +76,7 @@ export const ApplicationCard = ({
   const historyItems = buildHistoryItems(
     application,
     formatMessage,
-    formattedDate,
+    { dateTimeFormat, dateOnlyFormat },
     shouldShowCardButtons ? openApplication : undefined,
   )
 
@@ -124,7 +127,7 @@ export const ApplicationCard = ({
           </Box>
           <Box display="flex" justifyContent="center">
             <Text variant="small">
-              {format(new Date(modified), formattedDate)}
+              {format(toIcelandTime(modified), dateTimeFormat)}
               {daysRemaining !== undefined && daysRemaining > 0 && (
                 <>
                   {' · '}
