@@ -24,6 +24,9 @@ import { HeadWithSocialSharing } from '../HeadWithSocialSharing/HeadWithSocialSh
 type WrapperProps = {
   pageTitle: string
   pageDescription?: string
+  // Overrides `pageDescription` in the meta tags only, for pages whose visible
+  // description is not a summary of the page
+  metaDescription?: string
   pageFeaturedImage?: string
   organization?: Organization
   breadcrumbItems?: BreadCrumbItem[]
@@ -38,6 +41,7 @@ type WrapperProps = {
 export const OJOIWrapper = ({
   pageTitle,
   pageDescription,
+  metaDescription,
   pageFeaturedImage,
   organization,
   breadcrumbItems,
@@ -67,7 +71,7 @@ export const OJOIWrapper = ({
     <>
       <HeadWithSocialSharing
         title={`${pageTitle}${metaTitleSuffix}`}
-        description={pageDescription}
+        description={metaDescription ?? pageDescription}
         imageUrl={pageFeaturedImage}
       />
 

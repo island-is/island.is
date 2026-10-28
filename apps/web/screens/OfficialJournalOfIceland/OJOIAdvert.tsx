@@ -29,6 +29,8 @@ import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
   formatDate,
+  getAdvertCitationTitle,
+  getAdvertMetaDescription,
   OJOIAdvertCard,
   OJOIAdvertDisplay,
   OJOIWrapper,
@@ -77,12 +79,26 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
     advert.publicationDate,
   )
 
+  const citationTitle =
+    getAdvertCitationTitle({
+      type: advert.type.title,
+      publicationNumber: advert.publicationNumber.full,
+      subject: advert.subject,
+    }) || advert.title
+
   return (
     <OJOIWrapper
-      pageTitle={advert.title}
+      pageTitle={citationTitle}
       hideTitle
       organization={organization ?? undefined}
       pageDescription={formatMessage(advertPdfDisclaimer)}
+      metaDescription={getAdvertMetaDescription({
+        citationTitle,
+        department: advert.department.title,
+        involvedParty: advert.involvedParty.title,
+        publicationDateLabel: formatMessage(m.advert.publicationDate),
+        publicationDate: advert.publicationDate,
+      })}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
       breadcrumbItems={breadcrumbItems}
       goBackUrl={searchUrl}
