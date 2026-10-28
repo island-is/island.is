@@ -194,6 +194,9 @@ export function Button({
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
+          // Let an ellipsized title shrink to the button's width rather than
+          // overflowing it before it is truncated.
+          ...(ellipsis ? { flexShrink: 1 } : {}),
         }}
       >
         <View
@@ -201,6 +204,7 @@ export function Button({
             flexDirection: 'row',
             alignItems: 'center',
             columnGap: theme.spacing.p1,
+            ...(ellipsis ? { flexShrink: 1 } : {}),
             // Stays mounted while loading so the button keeps its size; the
             // spinner is laid over it rather than replacing it.
             opacity: loading ? 0 : 1,
@@ -215,7 +219,7 @@ export function Button({
               isUtilityButton={isUtilityButton}
               isFilledUtilityButton={isFilledUtilityButton}
               disabled={rest.disabled}
-              style={textStyle}
+              style={[ellipsis ? { flexShrink: 1 } : undefined, textStyle]}
               numberOfLines={ellipsis ? 1 : undefined}
               ellipsizeMode={ellipsis ? 'tail' : undefined}
             >

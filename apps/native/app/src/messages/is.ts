@@ -301,6 +301,11 @@ export const is = {
   'documentDetail.bookmarkError': 'Ekki tókst að stjörnumerkja skjal',
   'documentDetail.unbookmarkError': 'Ekki tókst að fjarlægja stjörnumerkingu',
   'documentDetail.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
+  'documentDetail.downloadButton': 'Hlaða niður',
+  'documentDetail.archiveButton': 'Setja í geymslu',
+  'documentDetail.bookmarkButton': 'Stjörnumerkja',
+  'documentDetail.unarchiveButton': 'Taka úr geymslu',
+  'documentDetail.unbookmarkButton': 'Fjarlægja stjörnumerkingu',
 
   // document reply
   'documentReply.to': 'Til',

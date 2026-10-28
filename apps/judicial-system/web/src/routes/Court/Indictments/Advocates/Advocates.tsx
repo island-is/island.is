@@ -110,7 +110,7 @@ const Advocates = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.defender)} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
 
         <Box display="flex" columnGap={1} alignItems="center" marginBottom={3}>
@@ -133,7 +133,7 @@ const Advocates = () => {
                 marginBottom={3}
               >
                 <SectionHeading
-                  title={formatMessage(strings.civilClaimants)}
+                  title={strings.civilClaimants}
                   marginBottom={0}
                 />
                 <ConfirmationPendingWarning
