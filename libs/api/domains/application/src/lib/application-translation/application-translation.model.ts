@@ -520,5 +520,5 @@ export class TranslationPublishGql {
   publishedInContentfulByName?: string
 
   @Field(() => Boolean, { nullable: true })
-  publishedOutsideWorkspace?: boolean
+  publisherNameUnavailable?: boolean
 }

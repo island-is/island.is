@@ -605,7 +605,7 @@ export const m = defineMessages({
   },
   translationPublishedByLabel: {
     id: 'admin-portal.application-system:translationPublishedByLabel',
-    defaultMessage: 'Birt af: {name}',
+    defaultMessage: 'Útgefandi: {name}',
   },
   translationOnBehalfOfLabel: {
     id: 'admin-portal.application-system:translationOnBehalfOfLabel',
@@ -615,13 +615,9 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationRolledBackToLabel',
     defaultMessage: 'Endurheimt útgáfa frá {date}',
   },
-  translationPublishedInContentfulLabel: {
-    id: 'admin-portal.application-system:translationPublishedInContentfulLabel',
-    defaultMessage: 'Birt í Contentful: {name}',
-  },
-  translationPublishedOutsideWorkspaceLabel: {
-    id: 'admin-portal.application-system:translationPublishedOutsideWorkspaceLabel',
-    defaultMessage: 'Birt utan vinnusvæðis',
+  translationPublisherNameUnavailableLabel: {
+    id: 'admin-portal.application-system:translationPublisherNameUnavailableLabel',
+    defaultMessage: 'Nafn útgefanda ekki fáanlegt',
   },
   translationPublishHistoryShowMore: {
     id: 'admin-portal.application-system:translationPublishHistoryShowMore',
@@ -629,7 +625,7 @@ export const m = defineMessages({
   },
   translationPublishedByUnknownLabel: {
     id: 'admin-portal.application-system:translationPublishedByUnknownLabel',
-    defaultMessage: 'Nafn ekki skráð',
+    defaultMessage: 'Nafn útgefanda ekki skráð',
   },
   translationWorkspaceOverviewPreviewHint: {
     id: 'admin-portal.application-system:translationWorkspaceOverviewPreviewHint',

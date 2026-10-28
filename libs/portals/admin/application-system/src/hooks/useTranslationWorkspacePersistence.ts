@@ -247,9 +247,9 @@ export const useTranslationWorkspacePersistence = ({
   }, [])
 
   const handleRollbackComplete = useCallback(async () => {
+    setHistoryOpen(false)
     await refetchTranslations()
     clearEditedValues()
-    setHistoryOpen(false)
   }, [refetchTranslations, clearEditedValues])
 
   return {

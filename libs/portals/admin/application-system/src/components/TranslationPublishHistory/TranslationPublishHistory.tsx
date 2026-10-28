@@ -46,7 +46,7 @@ export const TranslationPublishHistory = ({
   unsavedCount,
   formatMessage,
 }: TranslationPublishHistoryProps) => {
-  const { data, loading, refetch, fetchMore } =
+  const { data, loading, fetchMore } =
     useGetApplicationTranslationPublishHistoryQuery({
       variables: { namespace, limit: PUBLISH_HISTORY_PAGE_SIZE, skip: 0 },
       skip: !isOpen || !namespace,
@@ -74,22 +74,13 @@ export const TranslationPublishHistory = ({
         })
         toast.success(formatMessage(m.translationRollbackSuccess))
         setConfirmingId(null)
-        await refetch()
-        setExhausted(false)
         onRollbackComplete()
       } catch (err) {
         const detail = err instanceof Error ? err.message : 'Unknown error'
         toast.error(formatMessage(m.translationRollbackFailed, { detail }))
       }
     },
-    [
-      namespace,
-      publishActor,
-      rollback,
-      formatMessage,
-      refetch,
-      onRollbackComplete,
-    ],
+    [namespace, publishActor, rollback, formatMessage, onRollbackComplete],
   )
 
   const history = data?.applicationTranslationPublishHistory ?? []
@@ -134,121 +125,147 @@ export const TranslationPublishHistory = ({
       }}
       hideOnClickOutside
     >
-      <Stack space={3}>
-        <Text variant="h3">{formatMessage(m.translationPublishHistory)}</Text>
+      <Box paddingRight={[6, 5, 3]}>
+        <Stack space={3}>
+          <Text variant="h3">{formatMessage(m.translationPublishHistory)}</Text>
 
-        {loading && history.length === 0 && (
-          <SkeletonLoader
-            height={64}
-            repeat={3}
-            space={2}
-            borderRadius="large"
-          />
-        )}
-
-        {!loading && history.length === 0 && (
-          <Text>{formatMessage(m.translationNoPublishHistory)}</Text>
-        )}
-
-        {history.map((pub, index) => {
-          const dateStr = formatDateTime(pub.publishedAt)
-          const isCurrent = index === 0
-          const pubId = pub.id
-
-          return (
-            <Box
-              key={pubId ?? pub.publishedAt}
-              border="standard"
+          {loading && history.length === 0 && (
+            <SkeletonLoader
+              height={64}
+              repeat={3}
+              space={2}
               borderRadius="large"
-              padding={3}
-            >
+            />
+          )}
+
+          {!loading && history.length === 0 && (
+            <Text>{formatMessage(m.translationNoPublishHistory)}</Text>
+          )}
+
+          {history.map((pub, index) => {
+            const dateStr = formatDateTime(pub.publishedAt)
+            const isCurrent = index === 0
+            const pubId = pub.id
+
+            return (
               <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                alignItems="center"
+                key={pubId ?? pub.publishedAt}
+                border="standard"
+                borderRadius="large"
+                padding={3}
               >
-                <Stack space={1}>
-                  <Text variant="small" fontWeight="semiBold">
-                    {dateStr}
-                  </Text>
-                  {pub.publishedByName && (
-                    <Text variant="small" color="dark300">
-                      {formatMessage(m.translationPublishedByLabel, {
-                        name: pub.publishedByName,
-                      })}
+                <Box
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  alignItems="center"
+                >
+                  <Stack space="smallGutter">
+                    <Text variant="small" fontWeight="semiBold">
+                      {dateStr}
                     </Text>
-                  )}
-                  {pub.onBehalfOfName && (
-                    <Text variant="small" color="dark300">
-                      {formatMessage(m.translationOnBehalfOfLabel, {
-                        name: pub.onBehalfOfName,
-                      })}
-                    </Text>
-                  )}
-                  {pub.rolledBackToPublishedAt && (
-                    <Text variant="small" color="dark400">
-                      {formatMessage(m.translationRolledBackToLabel, {
-                        date: formatDateTime(pub.rolledBackToPublishedAt),
-                      })}
-                    </Text>
-                  )}
-                  {!pub.publishedByName && pub.publishedInContentfulByName && (
-                    <Text variant="small" color="dark300">
-                      {formatMessage(m.translationPublishedInContentfulLabel, {
-                        name: pub.publishedInContentfulByName,
-                      })}
-                    </Text>
-                  )}
-                  {!pub.publishedByName &&
-                    !pub.publishedInContentfulByName &&
-                    pub.publishedOutsideWorkspace && (
-                      <Text variant="small" color="dark300">
-                        {formatMessage(
-                          m.translationPublishedOutsideWorkspaceLabel,
-                        )}
+                    {pub.publishedByName && (
+                      <Text variant="small" color="dark400">
+                        {formatMessage(m.translationPublishedByLabel, {
+                          name: (
+                            <Text
+                              as="span"
+                              variant="small"
+                              fontWeight="semiBold"
+                            >
+                              {pub.publishedByName}
+                            </Text>
+                          ),
+                        })}
                       </Text>
                     )}
-                  {!pub.publishedByName &&
-                    !pub.publishedInContentfulByName &&
-                    !pub.publishedOutsideWorkspace && (
-                      <Text variant="small" color="dark300">
-                        {formatMessage(m.translationPublishedByUnknownLabel)}
+                    {pub.onBehalfOfName && (
+                      <Text variant="small" color="dark400">
+                        {formatMessage(m.translationOnBehalfOfLabel, {
+                          name: (
+                            <Text
+                              as="span"
+                              variant="small"
+                              fontWeight="semiBold"
+                            >
+                              {pub.onBehalfOfName}
+                            </Text>
+                          ),
+                        })}
                       </Text>
                     )}
-                </Stack>
-                <Box>
-                  {isCurrent ? (
-                    <Tag variant="mint" outlined>
-                      {formatMessage(m.translationCurrentVersion)}
-                    </Tag>
-                  ) : pubId ? (
-                    <Button
-                      size="small"
-                      variant="ghost"
-                      onClick={() => setConfirmingId(pubId)}
-                    >
-                      {formatMessage(m.translationRollback)}
-                    </Button>
-                  ) : null}
+                    {pub.rolledBackToPublishedAt && (
+                      <Text variant="small" color="dark300">
+                        {formatMessage(m.translationRolledBackToLabel, {
+                          date: formatDateTime(pub.rolledBackToPublishedAt),
+                        })}
+                      </Text>
+                    )}
+                    {!pub.publishedByName && pub.publishedInContentfulByName && (
+                      <Text variant="small" color="dark400">
+                        {formatMessage(m.translationPublishedByLabel, {
+                          name: (
+                            <Text
+                              as="span"
+                              variant="small"
+                              fontWeight="semiBold"
+                            >
+                              {pub.publishedInContentfulByName}
+                            </Text>
+                          ),
+                        })}
+                      </Text>
+                    )}
+                    {!pub.publishedByName &&
+                      !pub.publishedInContentfulByName &&
+                      pub.publisherNameUnavailable && (
+                        <Text variant="small" color="dark400">
+                          {formatMessage(
+                            m.translationPublisherNameUnavailableLabel,
+                          )}
+                        </Text>
+                      )}
+                    {!pub.publishedByName &&
+                      !pub.publishedInContentfulByName &&
+                      !pub.publisherNameUnavailable && (
+                        <Text variant="small" color="dark400">
+                          {formatMessage(m.translationPublishedByUnknownLabel)}
+                        </Text>
+                      )}
+                  </Stack>
+                  <Box>
+                    {isCurrent ? (
+                      <Tag variant="mint" outlined>
+                        {formatMessage(m.translationCurrentVersion)}
+                      </Tag>
+                    ) : pubId ? (
+                      <Button
+                        size="small"
+                        variant="ghost"
+                        onClick={() => setConfirmingId(pubId)}
+                      >
+                        {formatMessage(m.translationRollback)}
+                      </Button>
+                    ) : null}
+                  </Box>
                 </Box>
               </Box>
-            </Box>
-          )
-        })}
+            )
+          })}
 
-        {hasMore && (
-          <Box display="flex" justifyContent="center">
-            <Button
-              size="small"
-              variant="ghost"
-              loading={loadingMore}
-              onClick={handleShowMore}
-            >
-              {formatMessage(m.translationPublishHistoryShowMore)}
-            </Button>
-          </Box>
-        )}
-      </Stack>
+          {hasMore && (
+            <Box display="flex" justifyContent="center">
+              <Button
+                size="small"
+                variant="ghost"
+                loading={loadingMore}
+                onClick={handleShowMore}
+              >
+                {formatMessage(m.translationPublishHistoryShowMore)}
+              </Button>
+            </Box>
+          )}
+        </Stack>
+      </Box>
       <Modal
         id="translation-rollback-confirm"
         isVisible={confirmingId !== null}

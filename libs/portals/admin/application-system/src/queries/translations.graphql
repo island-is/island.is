@@ -285,7 +285,7 @@ mutation publishApplicationTranslations($input: PublishTranslationsInput!) {
     onBehalfOfName
     rolledBackToPublishedAt
     publishedInContentfulByName
-    publishedOutsideWorkspace
+    publisherNameUnavailable
   }
 }
 
@@ -306,7 +306,7 @@ query getApplicationTranslationPublishHistory(
     onBehalfOfName
     rolledBackToPublishedAt
     publishedInContentfulByName
-    publishedOutsideWorkspace
+    publisherNameUnavailable
   }
 }
 
@@ -319,6 +319,6 @@ mutation rollbackApplicationTranslations($input: RollbackTranslationsInput!) {
     onBehalfOfName
     rolledBackToPublishedAt
     publishedInContentfulByName
-    publishedOutsideWorkspace
+    publisherNameUnavailable
   }
 }

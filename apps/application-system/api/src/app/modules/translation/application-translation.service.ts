@@ -45,7 +45,7 @@ export interface PublishHistoryItem {
   onBehalfOfName?: string
   rolledBackToPublishedAt?: Date
   publishedInContentfulByName?: string
-  publishedOutsideWorkspace?: boolean
+  publisherNameUnavailable?: boolean
 }
 
 export interface PublishActor {
@@ -631,13 +631,10 @@ export class ApplicationTranslationService {
       if (!createdById || !contentfulPublishers) {
         return item
       }
-      if (createdById === this.currentContentfulUserId) {
-        return item
-      }
       const name = contentfulPublishers.get(createdById)
       return name
         ? { ...item, publishedInContentfulByName: name }
-        : { ...item, publishedOutsideWorkspace: true }
+        : { ...item, publisherNameUnavailable: true }
     })
   }
 

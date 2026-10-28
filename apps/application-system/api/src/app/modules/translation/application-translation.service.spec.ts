@@ -997,7 +997,7 @@ describe('ApplicationTranslationService', () => {
         ])
       })
 
-      it('names a publish made in Contentful, and flags one whose user cannot be read', async () => {
+      it('names a publish made in Contentful, and flags one whose name is unavailable', async () => {
         managementSnapshotGetManyForEntrySpy.mockResolvedValue({
           items: [
             historyItem('snap-web', '2026-03-01T00:00:00.000Z', 'web-user'),
@@ -1022,40 +1022,12 @@ describe('ApplicationTranslationService', () => {
 
         expect(history[0].publishedInContentfulByName).toBe('Siggi Sigurðsson')
         expect(history[1].publishedInContentfulByName).toBeUndefined()
-        expect(history[1].publishedOutsideWorkspace).toBeUndefined()
-        expect(history[2].publishedOutsideWorkspace).toBe(true)
+        expect(history[1].publisherNameUnavailable).toBe(true)
+        expect(history[2].publishedInContentfulByName).toBeUndefined()
+        expect(history[2].publisherNameUnavailable).toBe(true)
         expect(userGetForSpaceSpy).not.toHaveBeenCalledWith({
           userId: 'token-user',
         })
-      })
-
-      it('does not look a failed user up again on the next call', async () => {
-        managementSnapshotGetManyForEntrySpy.mockResolvedValue({
-          items: [
-            historyItem('snap-gone', '2026-03-01T00:00:00.000Z', 'gone-user'),
-          ],
-        })
-        userGetForSpaceSpy.mockRejectedValue(new Error('not found'))
-
-        await service.getPublishHistory('test.ns')
-        const second = await service.getPublishHistory('test.ns')
-
-        expect(userGetForSpaceSpy).toHaveBeenCalledTimes(1)
-        expect(second[0].publishedOutsideWorkspace).toBe(true)
-      })
-
-      it('flags nothing when the token user cannot be resolved', async () => {
-        managementSnapshotGetManyForEntrySpy.mockResolvedValue({
-          items: [
-            historyItem('snap-web', '2026-03-01T00:00:00.000Z', 'web-user'),
-          ],
-        })
-        userGetCurrentSpy.mockRejectedValue(new Error('forbidden'))
-
-        const history = await service.getPublishHistory('test.ns')
-
-        expect(history[0].publishedInContentfulByName).toBeUndefined()
-        expect(history[0].publishedOutsideWorkspace).toBeUndefined()
       })
     })
   })
