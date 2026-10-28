@@ -14,9 +14,8 @@ export class RelationType {
   title!: LocalizedText
 }
 
-/** GET /allergies (contract §4.1). One flat list; `type` splits it into
- * food / medicine / environmental. `code` is not unique across types — key off
- * `id`. */
+/** Allergy lookup option, from `GET /key-options`. `type` splits the list into
+ * food / other. `code` is not unique across types, so key off `id`. */
 @ObjectType('EducationPrimarySchoolAllergy')
 export class Allergy {
   @Field(() => ID)

@@ -27,9 +27,9 @@ import type { Allergy, HealthProfileUpdateInput } from '../types'
  *
  * Saving stays disabled until the guardian actually changes something (isDirty).
  *
- * The allergy multi-selects load from MMS `GET /allergies` — one flat list
- * covering all categories, split by `type` into food / medicine / environmental
- * (values match AllergyCategory). See useAllergyOptions.
+ * The allergy multi-selects load from MMS `GET /key-options` and split by
+ * `type` into food / other, the two categories MMS actually serves (values
+ * match AllergyCategory). See useAllergyOptions.
  *
  * handleSave already assembles the whole HealthProfileUpdateInput (allergies
  * rebuilt from the three id lists tagged by category, epipen forced false when
@@ -47,9 +47,8 @@ export const HealthProfileEdit = () => {
     usePrimarySchoolKeyInfo(studentId)
   const { data: profile, loading, error } = healthProfile
 
-  // Allergy options come from MMS `GET /allergies` — one flat list covering all
-  // categories; `type` splits it into food / medicine / environmental (values
-  // match AllergyCategory).
+  // Allergy options come from MMS `GET /key-options`; `type` splits them into
+  // food / other (values match AllergyCategory).
   const {
     options: allergyOptions,
     loading: allergyOptionsLoading,
@@ -59,10 +58,7 @@ export const HealthProfileEdit = () => {
   const optionsInCategory = (category: AllergyCategory) =>
     allergyOptions.filter((option) => option.type === category)
   const foodAllergyOptions = optionsInCategory(AllergyCategory.Food)
-  const medicineAllergyOptions = optionsInCategory(AllergyCategory.Medicine)
-  const environmentalAllergyOptions = optionsInCategory(
-    AllergyCategory.Environmental,
-  )
+  const otherAllergyOptions = optionsInCategory(AllergyCategory.Other)
 
   const allergyIdsInCategory = (category: AllergyCategory) =>
     (profile?.allergies ?? [])
@@ -72,12 +68,9 @@ export const HealthProfileEdit = () => {
   const [foodAllergyIds, setFoodAllergyIds] = useState<string[]>(
     allergyIdsInCategory(AllergyCategory.Food),
   )
-  const [medicineAllergyIds, setMedicineAllergyIds] = useState<string[]>(
-    allergyIdsInCategory(AllergyCategory.Medicine),
+  const [otherAllergyIds, setOtherAllergyIds] = useState<string[]>(
+    allergyIdsInCategory(AllergyCategory.Other),
   )
-  const [environmentalAllergyIds, setEnvironmentalAllergyIds] = useState<
-    string[]
-  >(allergyIdsInCategory(AllergyCategory.Environmental))
   const [epipen, setEpipen] = useState<boolean>(profile?.epipen ?? false)
   const [medicalDiagnoses, setMedicalDiagnoses] = useState<boolean>(
     profile?.medicalDiagnoses ?? false,
@@ -93,12 +86,9 @@ export const HealthProfileEdit = () => {
   const [hasFoodAllergies, setHasFoodAllergies] = useState<boolean | undefined>(
     hasInCategory(AllergyCategory.Food),
   )
-  const [hasMedicineAllergies, setHasMedicineAllergies] = useState<
+  const [hasOtherAllergies, setHasOtherAllergies] = useState<
     boolean | undefined
-  >(hasInCategory(AllergyCategory.Medicine))
-  const [hasEnvironmentalAllergies, setHasEnvironmentalAllergies] = useState<
-    boolean | undefined
-  >(hasInCategory(AllergyCategory.Environmental))
+  >(hasInCategory(AllergyCategory.Other))
 
   // A value-based signature of the server data. `profile` is rebuilt as a fresh
   // object on every render in the hook, so it can't be used as an effect dep —
@@ -126,16 +116,12 @@ export const HealthProfileEdit = () => {
   // Prefill when the profile first arrives (and re-sync after a save/refetch).
   useEffect(() => {
     setFoodAllergyIds(allergyIdsInCategory(AllergyCategory.Food))
-    setMedicineAllergyIds(allergyIdsInCategory(AllergyCategory.Medicine))
-    setEnvironmentalAllergyIds(
-      allergyIdsInCategory(AllergyCategory.Environmental),
-    )
+    setOtherAllergyIds(allergyIdsInCategory(AllergyCategory.Other))
     setEpipen(profile?.epipen ?? false)
     setMedicalDiagnoses(profile?.medicalDiagnoses ?? false)
     setMedicationAssistance(profile?.medicationAssistance ?? false)
     setHasFoodAllergies(hasInCategory(AllergyCategory.Food))
-    setHasMedicineAllergies(hasInCategory(AllergyCategory.Medicine))
-    setHasEnvironmentalAllergies(hasInCategory(AllergyCategory.Environmental))
+    setHasOtherAllergies(hasInCategory(AllergyCategory.Other))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileSignature])
 
@@ -147,33 +133,21 @@ export const HealthProfileEdit = () => {
   const selectedIn = (options: typeof allergyOptions, ids: string[]) =>
     options.filter((option) => ids.includes(option.value))
   const selectedFoodAllergies = selectedIn(foodAllergyOptions, foodAllergyIds)
-  const selectedMedicineAllergies = selectedIn(
-    medicineAllergyOptions,
-    medicineAllergyIds,
-  )
-  const selectedEnvironmentalAllergies = selectedIn(
-    environmentalAllergyOptions,
-    environmentalAllergyIds,
+  const selectedOtherAllergies = selectedIn(
+    otherAllergyOptions,
+    otherAllergyIds,
   )
 
   // The adrenaline pen is only meaningful when at least one allergy is
   // registered (ticket §3).
-  const hasAnyAllergy =
-    foodAllergyIds.length +
-      medicineAllergyIds.length +
-      environmentalAllergyIds.length >
-    0
+  const hasAnyAllergy = foodAllergyIds.length + otherAllergyIds.length > 0
 
   // Value-based signature of the current form state, built the same way as
   // `profileSignature` (and normalized like the payload). Save stays disabled
   // until this diverges from the loaded profile, i.e. the guardian has actually
   // changed something.
   const currentSignature = JSON.stringify({
-    allergies: [
-      ...foodAllergyIds,
-      ...medicineAllergyIds,
-      ...environmentalAllergyIds,
-    ].sort(),
+    allergies: [...foodAllergyIds, ...otherAllergyIds].sort(),
     epipen: hasAnyAllergy ? epipen : false,
     medicalDiagnoses,
     medicationAssistance,
@@ -183,14 +157,11 @@ export const HealthProfileEdit = () => {
   // Every allergy category must be answered Já/Nei, and a "Já" must have at
   // least one allergy selected. Save stays blocked until then.
   const categoriesAnswered =
-    hasFoodAllergies !== undefined &&
-    hasMedicineAllergies !== undefined &&
-    hasEnvironmentalAllergies !== undefined
+    hasFoodAllergies !== undefined && hasOtherAllergies !== undefined
 
   const categoriesConsistent =
     (hasFoodAllergies !== true || foodAllergyIds.length > 0) &&
-    (hasMedicineAllergies !== true || medicineAllergyIds.length > 0) &&
-    (hasEnvironmentalAllergies !== true || environmentalAllergyIds.length > 0)
+    (hasOtherAllergies !== true || otherAllergyIds.length > 0)
 
   const isValid = categoriesAnswered && categoriesConsistent
 
@@ -201,7 +172,7 @@ export const HealthProfileEdit = () => {
   const handleSave = async () => {
     if (!isValid) return
 
-    // Rebuild allergies[] (whole document, per ticket) from the three id lists,
+    // Rebuild allergies[] (whole document, per ticket) from the two id lists,
     // tagging each with its category and label from the option list. The hook
     // reduces these to ids for the PATCH body (contract §4.5).
     const optionById = new Map(
@@ -216,8 +187,7 @@ export const HealthProfileEdit = () => {
     const payload: HealthProfileUpdateInput = {
       allergies: [
         ...toAllergies(foodAllergyIds, AllergyCategory.Food),
-        ...toAllergies(medicineAllergyIds, AllergyCategory.Medicine),
-        ...toAllergies(environmentalAllergyIds, AllergyCategory.Environmental),
+        ...toAllergies(otherAllergyIds, AllergyCategory.Other),
       ],
       // When no allergy is selected, epipen must be sent as false (ticket §3).
       epipen: hasAnyAllergy ? epipen : false,
@@ -299,95 +269,43 @@ export const HealthProfileEdit = () => {
                   <GridRow>
                     <GridColumn span={['12/12', '12/12', '10/12']}>
                       <Select
-                        name="hasMedicineAllergies"
+                        name="hasOtherAllergies"
                         required
                         backgroundColor="blue"
                         size="sm"
-                        label={formatMessage(kim.medicineAllergies)}
+                        label={formatMessage(kim.otherAllergies)}
                         options={yesNoOptions}
                         value={
                           yesNoOptions.find(
                             (option) =>
-                              option.value === String(hasMedicineAllergies),
+                              option.value === String(hasOtherAllergies),
                           ) ?? null
                         }
                         onChange={(option) => {
                           const next = option?.value === 'true'
-                          setHasMedicineAllergies(next)
-                          if (!next) setMedicineAllergyIds([])
+                          setHasOtherAllergies(next)
+                          if (!next) setOtherAllergyIds([])
                         }}
                       />
                     </GridColumn>
                   </GridRow>
-                  {hasMedicineAllergies === true && (
+                  {hasOtherAllergies === true && (
                     <GridRow>
                       <GridColumn span={['12/12', '12/12', '10/12']}>
                         <Select
-                          name="medicineAllergies"
+                          name="otherAllergies"
                           backgroundColor="blue"
-                          required={hasMedicineAllergies === true}
+                          required={hasOtherAllergies === true}
                           size="sm"
-                          label={formatMessage(kim.medicineAllergyChoose)}
+                          label={formatMessage(kim.otherAllergyChoose)}
                           isMulti
                           isSearchable
                           isClearable={false}
                           isLoading={allergyOptionsLoading}
-                          options={medicineAllergyOptions}
-                          value={selectedMedicineAllergies}
+                          options={otherAllergyOptions}
+                          value={selectedOtherAllergies}
                           onChange={(selected) =>
-                            setMedicineAllergyIds(
-                              (selected ?? []).map((option) => option.value),
-                            )
-                          }
-                        />
-                      </GridColumn>
-                    </GridRow>
-                  )}
-                </Stack>
-              </Box>
-              <Box>
-                <Stack space={2}>
-                  <GridRow>
-                    <GridColumn span={['12/12', '12/12', '10/12']}>
-                      <Select
-                        name="hasEnvironmentalAllergies"
-                        required
-                        backgroundColor="blue"
-                        size="sm"
-                        label={formatMessage(kim.environmentalAllergies)}
-                        options={yesNoOptions}
-                        value={
-                          yesNoOptions.find(
-                            (option) =>
-                              option.value ===
-                              String(hasEnvironmentalAllergies),
-                          ) ?? null
-                        }
-                        onChange={(option) => {
-                          const next = option?.value === 'true'
-                          setHasEnvironmentalAllergies(next)
-                          if (!next) setEnvironmentalAllergyIds([])
-                        }}
-                      />
-                    </GridColumn>
-                  </GridRow>
-                  {hasEnvironmentalAllergies === true && (
-                    <GridRow>
-                      <GridColumn span={['12/12', '12/12', '10/12']}>
-                        <Select
-                          name="environmentalAllergies"
-                          backgroundColor="blue"
-                          required={hasEnvironmentalAllergies === true}
-                          size="sm"
-                          label={formatMessage(kim.environmentalAllergyChoose)}
-                          isMulti
-                          isSearchable
-                          isClearable={false}
-                          isLoading={allergyOptionsLoading}
-                          options={environmentalAllergyOptions}
-                          value={selectedEnvironmentalAllergies}
-                          onChange={(selected) =>
-                            setEnvironmentalAllergyIds(
+                            setOtherAllergyIds(
                               (selected ?? []).map((option) => option.value),
                             )
                           }

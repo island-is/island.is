@@ -32,8 +32,11 @@ export const BaseInfoSection = ({ student, loading }: Props) => {
           type: 'action',
           label: psm.changeSchool,
           icon: 'arrowForward',
-          // TODO: link to the school-enrollment application (umsókn) once known.
-          action: () => console.log('Link to umsokn'),
+          // Leaves Mínar síður for the application system, so this is a real
+          // page load rather than a router link: /umsoknir is a separate app
+          // and react-router would only look for the path inside this SPA.
+          action: () =>
+            window.open(`${document.location.origin}/umsoknir/grunnskoli`),
         }}
       />
       <Divider />

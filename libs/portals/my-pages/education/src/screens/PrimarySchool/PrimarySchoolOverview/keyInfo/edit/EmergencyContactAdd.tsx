@@ -25,9 +25,7 @@ import { usePrimarySchoolKeyInfo } from '../usePrimarySchoolKeyInfo'
  *
  * The national id is entered; the contact's name is resolved from Þjóðskrá and
  * shown in a read-only field so the guardian can confirm the right person
- * before saving. Only the relation type is a free choice. On success the added
- * contact gets a document in their mailbox to update their own contact details
- * (kim.contactMailboxNotice).
+ * before saving. Only the relation type is a free choice.
  */
 export const EmergencyContactAdd = () => {
   useNamespaces('sp.education-primary-school')
@@ -79,7 +77,6 @@ export const EmergencyContactAdd = () => {
     try {
       await addAgent({ nationalId: sanitizedNationalId, relationTypeId })
       toast.success(formatMessage(kim.saveSuccess))
-      toast.success(formatMessage(kim.contactMailboxNotice))
       navigate(overviewPath)
     } catch {
       toast.error(formatMessage(kim.saveError))

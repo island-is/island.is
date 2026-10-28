@@ -3,13 +3,12 @@ import { usePrimarySchoolAllergiesQuery } from './PrimarySchoolKeyInfo.generated
 import type { MmsError } from './types'
 
 /**
- * `GET /allergies` (contract §4.1) — the selectable allergy reference list. One
- * flat list covering food / medicine / environmental; callers split by `type`
- * (values match AllergyCategory). Each entry resolves to a `{ value, label,
- * code, type }` pair in the active locale.
+ * The selectable allergy reference list, served by MMS as two `GET /key-options`
+ * lists. Callers split by `type` (values match AllergyCategory). Each entry
+ * resolves to a `{ value, label, code, type }` pair in the active locale.
  *
- * `code` is not unique across types (`code: "other"` exists in both food and
- * environmental) — always key selections off `value` (the id).
+ * `code` is not unique across types: `code: "other"` exists in both the food
+ * and the other list, so always key selections off `value` (the id).
  */
 export interface AllergySelectOption {
   /** allergy id — what HealthProfile.allergies[].id / a PATCH stores */
@@ -17,7 +16,7 @@ export interface AllergySelectOption {
   /** title resolved to the active UI locale */
   label: string
   code: string
-  /** food | medicine | environmental (AllergyCategory) */
+  /** food | other (AllergyCategory) */
   type: string
 }
 

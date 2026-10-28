@@ -1,5 +1,5 @@
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
-import { Button, Divider, useBreakpoint } from '@island.is/island-ui/core'
+import { Button, Divider, Text, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
 import { CardLoader, InfoLine } from '@island.is/portals/my-pages/core'
@@ -53,7 +53,12 @@ export const LanguageProfileSection = ({ profile, loading, error }: Props) => {
       <Divider />
       {loading && <CardLoader />}
       {!loading && error && <SectionError error={error} />}
-      {!loading && !error && (
+      {!loading && !error && !profile && (
+        <Text variant="default" color="dark400" paddingTop={2}>
+          {formatMessage(kim.languageProfileEmpty)}
+        </Text>
+      )}
+      {!loading && !error && profile && (
         <>
           <InfoLine
             label={kim.languageEnvironment}

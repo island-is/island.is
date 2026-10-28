@@ -32,7 +32,13 @@ export type AllergyOption = Option & { type: string }
 
 const RELATION_TYPE = 'relation'
 const LANGUAGE_ENVIRONMENT_TYPE = 'languageEnvironment'
-const ALLERGY_TYPES = ['allergy', 'foodAllergyAndIntolerance']
+
+/** The two key-option types MMS serves allergy lookups under. Exported because
+ * the education mapper has to derive an allergy's category from them. */
+export const FOOD_ALLERGY_TYPE = 'foodAllergyAndIntolerance'
+export const OTHER_ALLERGY_TYPE = 'allergy'
+
+const ALLERGY_TYPES = [OTHER_ALLERGY_TYPE, FOOD_ALLERGY_TYPE]
 
 @Injectable()
 export class FriggKeyInfoClientService {

@@ -93,11 +93,14 @@ export interface LanguageProfileUpdateInput {
 /* 3. Heilsufarsupplýsingar (health profile)                                   */
 /* -------------------------------------------------------------------------- */
 
-/** Categorisation of an allergy, taken from `allergies[].type` (per ticket). */
+/**
+ * Categorisation of an allergy, taken from `allergies[].type`. MMS serves one
+ * key-option list per category, so these are the only two that exist. The api
+ * folds MMS's `medicine` and `environmental` into `other`.
+ */
 export enum AllergyCategory {
   Food = 'food',
-  Medicine = 'medicine',
-  Environmental = 'environmental',
+  Other = 'other',
 }
 
 export interface Allergy {
@@ -108,9 +111,9 @@ export interface Allergy {
 }
 
 /**
- * GET /allergies — the selectable allergy reference list (not per-child). One
- * flat list covering all categories; `type` splits it into food / medicine /
- * environmental (values match AllergyCategory).
+ * The selectable allergy reference list (not per-child), from
+ * `GET /key-options`. One flat list; `type` splits it into food / other (values
+ * match AllergyCategory).
  */
 export interface AllergyOption {
   id: string

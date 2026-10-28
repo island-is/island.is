@@ -1,12 +1,15 @@
-import type {
-  AllergyOption,
-  AllergyOutput,
-  EmergencyContactOutput,
-  HealthProfileOutput,
-  LanguageProfileOutput,
-  Option,
+import {
+  FOOD_ALLERGY_TYPE,
+  type AllergyOption,
+  type AllergyOutput,
+  type ChildOutput,
+  type EmergencyContactOutput,
+  type HealthProfileOutput,
+  type LanguageProfileOutput,
+  type Option,
 } from '@island.is/clients/mms/frigg'
 import { PrimarySchoolAgent } from './agent.model'
+import { PrimarySchoolChild } from './child.model'
 import { Allergy, LanguageEnvironment, RelationType } from './lookups.model'
 import { LocalizedText } from './localizedText.model'
 import { HealthProfile, LanguageProfile } from './profiles.model'
@@ -34,26 +37,58 @@ const localize = (
   en: value.find((v) => v.language === 'en')?.content ?? value[0]?.content ?? '',
 })
 
+export const mapChild = (dto: ChildOutput): PrimarySchoolChild => ({
+  id: dto.id,
+  nationalId: dto.nationalId,
+  name: dto.name,
+  preferredName: dto.preferredName ?? undefined,
+  gradeLevel: dto.gradeLevel ?? undefined,
+})
+
 export const mapRelationType = (option: Option): RelationType => ({
   id: option.id,
   relation: option.key,
   title: localize(option.value),
 })
 
-/** Allergy *lookup* option — `type` is the key-option type it was served under
- * (`allergy` | `foodAllergyAndIntolerance`). */
+/**
+ * The two categories the UI groups allergies by, matching how MMS actually
+ * serves them: one key-option list per category.
+ */
+type AllergyCategory = 'food' | 'other'
+
+/**
+ * MMS uses two different vocabularies for an allergy's `type`. The lookup lists
+ * are served under two key-option types (`foodAllergyAndIntolerance` and
+ * `allergy`), while the allergies stored on a health profile carry a
+ * three-value `AllergyOutput.type` enum (food | medicine | environmental).
+ *
+ * The three-value enum cannot be derived from the lookups: the flat `allergy`
+ * list mixes medicine and environmental allergens with nothing in the payload
+ * to tell them apart. So both sides are normalised to the two categories MMS
+ * genuinely models, and `mapHealthAllergy` folds medicine and environmental
+ * into `other`.
+ */
+const toAllergyCategory = (keyOptionType: string): AllergyCategory =>
+  keyOptionType === FOOD_ALLERGY_TYPE ? 'food' : 'other'
+
+/** Allergy *lookup* option, tagged with the category the UI groups by. */
 export const mapAllergyOption = (option: AllergyOption): Allergy => ({
   id: option.id,
   code: option.key,
-  type: option.type,
+  type: toAllergyCategory(option.type),
   title: localize(option.value),
 })
 
-/** Allergy as stored on a health profile — carries its own `type` enum. */
+/**
+ * Allergy as stored on a health profile. MMS tags these with its three-value
+ * enum, so `medicine` and `environmental` are folded into `other` to match the
+ * two categories the lookup lists (and therefore the UI) are built around.
+ */
 const mapHealthAllergy = (dto: AllergyOutput): Allergy => ({
   id: dto.id,
   code: dto.key,
-  type: dto.type,
+  type: dto.type === 'food' ? 'food' : 'other',
   title: localize(dto.value),
 })
 

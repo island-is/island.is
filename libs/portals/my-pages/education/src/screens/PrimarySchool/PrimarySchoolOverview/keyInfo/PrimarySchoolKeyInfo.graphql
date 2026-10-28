@@ -154,3 +154,17 @@ mutation PrimarySchoolUpdateHealthProfile(
     ...PrimarySchoolHealthProfileFields
   }
 }
+
+# frigg /me/children. Frigg keys children on its own id, not the data-gateway
+# studentId the route uses, so the student hub matches the two by national id
+# to decide whether the child has key information at all.
+# See hasKeyInfoChild in PrimarySchoolStudentWrapper.
+query PrimarySchoolChildren {
+  primarySchoolChildren {
+    id
+    nationalId
+    name
+    preferredName
+    gradeLevel
+  }
+}

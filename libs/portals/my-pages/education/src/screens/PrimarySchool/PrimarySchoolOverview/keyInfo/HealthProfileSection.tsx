@@ -1,5 +1,5 @@
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
-import { Button, Divider, useBreakpoint } from '@island.is/island-ui/core'
+import { Button, Divider, Text, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
 import { CardLoader, InfoLine } from '@island.is/portals/my-pages/core'
@@ -21,7 +21,7 @@ interface Props {
  *
  * Display rules (ticket §3): do not render empty allergy rows; the adrenaline
  * pen is only shown when at least one allergy exists; allergies are grouped from
- * `allergies[].type` into food / medicine / environmental.
+ * `allergies[].type` into food / other, the two categories MMS serves.
  *
  * Editing lives on its own screen (PrimarySchoolHealthEdit) rather than an
  * inline toggle. Saving there stays disabled until MMS opens the health PATCH.
@@ -39,8 +39,7 @@ export const HealthProfileSection = ({ profile, loading, error }: Props) => {
       .join(', ')
 
   const foodAllergies = allergyLabels(AllergyCategory.Food)
-  const medicineAllergies = allergyLabels(AllergyCategory.Medicine)
-  const environmentalAllergies = allergyLabels(AllergyCategory.Environmental)
+  const otherAllergies = allergyLabels(AllergyCategory.Other)
   const hasAnyAllergy = (profile?.allergies?.length ?? 0) > 0
 
   const editPath = generatePath(EducationPaths.PrimarySchoolHealthEdit, {
@@ -66,7 +65,12 @@ export const HealthProfileSection = ({ profile, loading, error }: Props) => {
       <Divider />
       {loading && <CardLoader />}
       {!loading && error && <SectionError error={error} />}
-      {!loading && !error && (
+      {!loading && !error && !profile && (
+        <Text variant="default" color="dark400" paddingTop={2}>
+          {formatMessage(kim.healthProfileEmpty)}
+        </Text>
+      )}
+      {!loading && !error && profile && (
         <>
           {foodAllergies && (
             <>
@@ -78,21 +82,11 @@ export const HealthProfileSection = ({ profile, loading, error }: Props) => {
               <Divider />
             </>
           )}
-          {medicineAllergies && (
+          {otherAllergies && (
             <>
               <InfoLine
-                label={kim.medicineAllergies}
-                content={medicineAllergies}
-                paddingY={3}
-              />
-              <Divider />
-            </>
-          )}
-          {environmentalAllergies && (
-            <>
-              <InfoLine
-                label={kim.environmentalAllergies}
-                content={environmentalAllergies}
+                label={kim.otherAllergies}
+                content={otherAllergies}
                 paddingY={3}
               />
               <Divider />

@@ -267,10 +267,13 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     id: 'sp.education-primary-school:key-info-contacts-empty',
     defaultMessage: 'Engir aðstandendur eru skráðir.',
   },
-  contactMailboxNotice: {
-    id: 'sp.education-primary-school:key-info-contact-mailbox-notice',
-    defaultMessage:
-      'Aðstandandinn fær skjal í pósthólf og getur þar uppfært eigin tengiliðaupplýsingar.',
+  languageProfileEmpty: {
+    id: 'sp.education-primary-school:key-info-language-profile-empty',
+    defaultMessage: 'Engar upplýsingar um tungumálaumhverfi eru skráðar.',
+  },
+  healthProfileEmpty: {
+    id: 'sp.education-primary-school:key-info-health-profile-empty',
+    defaultMessage: 'Engar heilsufarsupplýsingar eru skráðar.',
   },
   contactInfoNotice: {
     id: 'sp.education-primary-school:key-info-contact-info-notice',
@@ -346,25 +349,17 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     id: 'sp.education-primary-school:key-info-food-allergies',
     defaultMessage: 'Fæðuofnæmi og óþol',
   },
-  medicineAllergies: {
-    id: 'sp.education-primary-school:key-info-medicine-allergies',
-    defaultMessage: 'Lyfjaofnæmi',
-  },
-  environmentalAllergies: {
-    id: 'sp.education-primary-school:key-info-environmental-allergies',
-    defaultMessage: 'Umhverfisofnæmi',
+  otherAllergies: {
+    id: 'sp.education-primary-school:key-info-other-allergies',
+    defaultMessage: 'Annað ofnæmi',
   },
   foodAllergyChoose: {
     id: 'sp.education-primary-school:key-info-allergy-choose',
     defaultMessage: 'Veldu ofnæmi og óþol',
   },
-  medicineAllergyChoose: {
-    id: 'sp.education-primary-school:key-info-medicine-allergy-choose',
-    defaultMessage: 'Veldu lyfjaofnæmi',
-  },
-  environmentalAllergyChoose: {
-    id: 'sp.education-primary-school:key-info-environmental-allergy-choose',
-    defaultMessage: 'Veldu umhverfisofnæmi',
+  otherAllergyChoose: {
+    id: 'sp.education-primary-school:key-info-other-allergy-choose',
+    defaultMessage: 'Veldu annað ofnæmi',
   },
   epipen: {
     id: 'sp.education-primary-school:key-info-epipen',
