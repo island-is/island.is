@@ -76,9 +76,7 @@ export const ReviewDecisionModal: FC<Props> = (props) => {
 
   return (
     <Modal
-      title={
-        isLate ? 'Áfrýjun eftir að fresti lauk' : strings.reviewModalTitle
-      }
+      title={isLate ? 'Áfrýjun eftir að fresti lauk' : strings.reviewModalTitle}
       text={
         <div className={stack({ gap: 2 })}>
           {isLate && (
