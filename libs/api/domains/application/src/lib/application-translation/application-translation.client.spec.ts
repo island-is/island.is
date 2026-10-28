@@ -94,6 +94,7 @@ describe('ApplicationTranslationClient', () => {
         user,
         'test.ns',
         '../../../public/translations/foo',
+        { actorName: 'Test User' },
       )
 
       expect(fetchMock).toHaveBeenCalledTimes(1)
@@ -116,7 +117,7 @@ describe('ApplicationTranslationClient', () => {
       } as unknown as Response)
 
       await expect(
-        client.getPublishHistory(user, 'test.ns'),
+        client.getPublishHistory(user, 'test.ns', 25, 0),
       ).rejects.toBeInstanceOf(ServiceUnavailableException)
     })
   })
