@@ -539,6 +539,8 @@ export class DelegationRequestService {
           toNationalId: requesterNationalId,
           fromNationalId: granterNationalId,
           created: { [Op.gte]: since },
+          // A cancelled request may be corrected and resent; the daily total still counts it.
+          status: { [Op.ne]: DelegationRequestStatus.Cancelled },
         },
         transaction,
       }),

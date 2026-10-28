@@ -270,14 +270,28 @@ describe('DelegationRequestsController', () => {
     expect(res.body.detail).toEqual(DelegationRequestError.Blocked)
   })
 
-  it('limits requests to the same grantor per day, cancelled ones included', async () => {
+  it('limits requests to the same grantor per day', async () => {
     const created = await server.post(path).send(validBody())
-    await server.post(`${path}/${created.body.id}/cancel`)
+    await app
+      .get(getModelToken(DelegationRequest))
+      .update(
+        { status: DelegationRequestStatus.Approved },
+        { where: { id: created.body.id } },
+      )
 
     const res = await server.post(path).send(validBody())
 
     expect(res.status).toEqual(400)
     expect(res.body.detail).toEqual(DelegationRequestError.RateLimited)
+  })
+
+  it('lets a cancelled request be resent to the same grantor the same day', async () => {
+    const created = await server.post(path).send(validBody())
+    await server.post(`${path}/${created.body.id}/cancel`)
+
+    const res = await server.post(path).send(validBody())
+
+    expect(res.status).toEqual(201)
   })
 
   it('limits the number of requests created per day', async () => {
