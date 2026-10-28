@@ -135,7 +135,9 @@ export class PrimarySchoolKeyInfoResolver {
   async primarySchoolLanguageEnvironments(
     @CurrentUser() user: User,
   ): Promise<LanguageEnvironment[]> {
-    const options = await this.keyInfoService.getLanguageEnvironmentOptions(user)
+    const options = await this.keyInfoService.getLanguageEnvironmentOptions(
+      user,
+    )
     return options.map(mapLanguageEnvironment)
   }
 

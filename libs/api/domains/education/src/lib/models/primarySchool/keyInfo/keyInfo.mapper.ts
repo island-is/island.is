@@ -33,8 +33,10 @@ interface LocalizableKeyOption {
 const localize = (
   value: Array<{ content: string; language: string }>,
 ): LocalizedText => ({
-  is: value.find((v) => v.language === 'is')?.content ?? value[0]?.content ?? '',
-  en: value.find((v) => v.language === 'en')?.content ?? value[0]?.content ?? '',
+  is:
+    value.find((v) => v.language === 'is')?.content ?? value[0]?.content ?? '',
+  en:
+    value.find((v) => v.language === 'en')?.content ?? value[0]?.content ?? '',
 })
 
 export const mapChild = (dto: ChildOutput): PrimarySchoolChild => ({
