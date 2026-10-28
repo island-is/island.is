@@ -61,13 +61,30 @@ jobs:
           printf 'sha=%s\n' "$target" >> "$GITHUB_OUTPUT"
           printf 'Queued target: %s\n\nA successful run only means the target was queued; the Codemagic builds run afterwards.\n' "$target" >> "$GITHUB_STEP_SUMMARY"
 
+  # Inlined from island-is/release-actions notify-mobile-release.yml: this repo
+  # is public, and GitHub does not let public repos call reusable workflows
+  # stored in a private repo.
   notify:
     name: Queue mobile release
     needs: validate
+    runs-on: arc-shared
+    timeout-minutes: 5
     permissions:
       id-token: write
       contents: read
-    uses: island-is/release-actions/.github/workflows/notify-mobile-release.yml@main
-    with:
-      sha: ${{ needs.validate.outputs.sha }}
-      test: true
+    steps:
+      - name: Authenticate to AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::821090935708:role/github-action-release-producer-mobile
+          aws-region: eu-west-1
+
+      - name: Send target message
+        shell: bash
+        env:
+          TARGET_SHA: ${{ needs.validate.outputs.sha }}
+        run: |
+          set -euo pipefail
+          aws sqs send-message \
+            --queue-url "https://sqs.eu-west-1.amazonaws.com/821090935708/islandis-release-mobile" \
+            --message-body "{\"commitSha\":\"$TARGET_SHA\"}"

@@ -24,6 +24,10 @@ export interface FormFooterAction {
 
 interface Props {
   previousUrl?: string
+  /** Replaces the back button's text, e.g. "Hætta við" while a form edits. */
+  previousButtonText?: string
+  /** Runs instead of navigating to previousUrl. */
+  onPreviousClick?: () => void
   hidePreviousButton?: boolean
   actions?: FormFooterAction[]
   infoBoxText?: string
@@ -31,6 +35,8 @@ interface Props {
 
 const FormFooter: FC<Props> = ({
   previousUrl,
+  previousButtonText,
+  onPreviousClick,
   hidePreviousButton,
   actions,
   infoBoxText,
@@ -53,13 +59,15 @@ const FormFooter: FC<Props> = ({
             variant="ghost"
             data-testid="previousButton"
             onClick={() => {
-              if (previousUrl) {
+              if (onPreviousClick) {
+                onPreviousClick()
+              } else if (previousUrl) {
                 router.push(previousUrl)
               }
             }}
             fluid
           >
-            {formatMessage(core.back)}
+            {previousButtonText ?? formatMessage(core.back)}
           </Button>
         </Box>
       )}

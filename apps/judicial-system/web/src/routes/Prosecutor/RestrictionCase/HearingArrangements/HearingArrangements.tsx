@@ -112,9 +112,7 @@ export const HearingArrangements = () => {
         )}
       />
       <FormContentContainer>
-        <PageTitle>
-          {formatMessage(rcRequestedHearingArrangements.heading)}
-        </PageTitle>
+        <PageTitle>{rcRequestedHearingArrangements.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
           <ProsecutorSectionHeightenedSecurity />
@@ -123,9 +121,7 @@ export const HearingArrangements = () => {
           </Box>
           {!workingCase.parentCase && (
             <ArrestDate
-              title={formatMessage(
-                rcRequestedHearingArrangements.sections.arrestDate.heading,
-              )}
+              title={rcRequestedHearingArrangements.sections.arrestDate.heading}
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
             />
@@ -151,20 +147,16 @@ export const HearingArrangements = () => {
           </Box>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(
-                rcRequestedHearingArrangements.sections.translator.heading,
-              )}
+              title={rcRequestedHearingArrangements.sections.translator.heading}
             />
             <Input
               data-testid="translator"
               name="translator"
               autoComplete="off"
-              label={formatMessage(
-                rcRequestedHearingArrangements.sections.translator.label,
-              )}
-              placeholder={formatMessage(
-                rcRequestedHearingArrangements.sections.translator.placeholder,
-              )}
+              label={rcRequestedHearingArrangements.sections.translator.label}
+              placeholder={
+                rcRequestedHearingArrangements.sections.translator.placeholder
+              }
               value={translatorInput.value}
               onChange={(evt) => translatorInput.onChange(evt.target.value)}
               onBlur={(event) => translatorInput.onBlur(event.target.value)}
@@ -192,10 +184,16 @@ export const HearingArrangements = () => {
       </FormContentContainer>
       {navigateTo !== undefined && (
         <Modal
-          title={formatMessage(rcRequestedHearingArrangements.modal.heading)}
-          text={formatMessage(rcRequestedHearingArrangements.modal.textV2, {
-            caseType: workingCase.type,
-          })}
+          title={rcRequestedHearingArrangements.modal.heading}
+          text={formatMessage(
+            {
+              id: rcRequestedHearingArrangements.modal.textV2,
+              defaultMessage: rcRequestedHearingArrangements.modal.textV2,
+            },
+            {
+              caseType: workingCase.type,
+            },
+          )}
           buttons={[
             {
               text: 'Halda áfram með kröfu',
