@@ -514,7 +514,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
         {displayGeneratedPDFs && (
           <Box>
             <SectionHeading
-              title={caseFiles.indictmentSection}
+              title={formatMessage(caseFiles.indictmentSection)}
               marginBottom={1}
               heading="h4"
               variant="h4"
@@ -542,12 +542,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
         {showFiles && (
           <>
             <FileSection
-              title={caseFiles.criminalRecordSection}
+              title={formatMessage(caseFiles.criminalRecordSection)}
               files={filteredFiles.criminalRecords}
               onOpenFile={onOpen}
             />
             <FileSection
-              title={caseFiles.costBreakdownSection}
+              title={formatMessage(caseFiles.costBreakdownSection)}
               files={filteredFiles.costBreakdowns}
               onOpenFile={onOpen}
             />
@@ -592,7 +592,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
         )}
         {showFiles && (
           <FileSection
-            title={caseFiles.otherDocumentsSection}
+            title={formatMessage(caseFiles.otherDocumentsSection)}
             files={filteredFiles.others}
             onOpenFile={onOpen}
           />
@@ -869,7 +869,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               </Box>
             )}
             <FileSection
-              title={caseFiles.criminalRecordUpdateSection}
+              title={formatMessage(caseFiles.criminalRecordUpdateSection)}
               files={filteredFiles.criminalRecordUpdate}
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCriminalRecordUpdate}

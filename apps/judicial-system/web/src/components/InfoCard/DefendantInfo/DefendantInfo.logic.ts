@@ -29,6 +29,11 @@ export type DefendantTagConfig = {
   key?: VerdictTagKey
 }
 
+const asMessageDescriptor = (message: string) => ({
+  id: message,
+  defaultMessage: message,
+})
+
 export const getAppealExpirationInfo = ({
   verdictAppealDeadline,
   isVerdictAppealDeadlineExpired,
@@ -39,11 +44,17 @@ export const getAppealExpirationInfo = ({
   serviceRequirement?: ServiceRequirement | null
 }) => {
   if (serviceRequirement === ServiceRequirement.NOT_REQUIRED) {
-    return { message: strings.serviceNotRequired, date: null }
+    return {
+      message: asMessageDescriptor(strings.serviceNotRequired),
+      date: null,
+    }
   }
 
   if (!verdictAppealDeadline) {
-    return { message: strings.appealDateNotBegun, date: null }
+    return {
+      message: asMessageDescriptor(strings.appealDateNotBegun),
+      date: null,
+    }
   }
 
   const expiryDate = new Date(verdictAppealDeadline)
@@ -52,7 +63,10 @@ export const getAppealExpirationInfo = ({
     ? strings.appealDateExpired
     : strings.appealExpirationDate
 
-  return { message, date: formatDate(expiryDate) }
+  return {
+    message: asMessageDescriptor(message),
+    date: formatDate(expiryDate),
+  }
 }
 
 export const getVerdictViewDateText = (

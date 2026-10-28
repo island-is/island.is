@@ -170,9 +170,9 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     onClick?: () => void,
   ): Item => ({
     id: 'prosecutor-item',
-    title: formatMessage(
-      isRequestCase(caseType) ? core.prosecutorPerson : strings.prosecutor,
-    ),
+    title: isRequestCase(caseType)
+      ? formatMessage(core.prosecutorPerson)
+      : strings.prosecutor,
     values: [
       RenderPersonalData({
         name: workingCase.prosecutor?.name,
