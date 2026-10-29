@@ -281,15 +281,31 @@ export const judgeReceivesIndictmentThroughAdvocates = async (
   await expect(page).toHaveURL(`domur/akaera/malflytjendur/${caseId}`)
 
   if (options?.assignDefender) {
-    // Assign the test defender from the lawyer registry; selecting fires an
-    // UpdateDefendant with the defender fields
-    await selectTestDefender(page)
-    await page.getByRole('button', { name: 'Staðfesta val' }).click()
-    await Promise.all([
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
-      page.getByTestId('modalPrimaryButton').click(),
-    ])
-    await expect(page.getByText('Verjandi staðfestur')).toBeVisible()
+    // Assign the test defender from the lawyer registry to every defendant;
+    // selecting fires an UpdateDefendant with the defender fields. Each
+    // defendant has its own section, and the confirm button is removed once
+    // the choice is confirmed, so we always act on the first section still
+    // standing and wait for it to disappear before moving on.
+    const unconfirmedDefenderSections = page.locator('section').filter({
+      has: page.getByRole('button', { name: 'Staðfesta val', exact: true }),
+    })
+    await expect(unconfirmedDefenderSections.first()).toBeVisible()
+    const defendantCount = await unconfirmedDefenderSections.count()
+    for (let remaining = defendantCount; remaining > 0; remaining--) {
+      const defenderSection = unconfirmedDefenderSections.first()
+      await selectTestDefender(page, defenderSection)
+      await defenderSection
+        .getByRole('button', { name: 'Staðfesta val', exact: true })
+        .click()
+      await Promise.all([
+        verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
+        page.getByTestId('modalPrimaryButton').click(),
+      ])
+      await expect(unconfirmedDefenderSections).toHaveCount(remaining - 1)
+    }
+    await expect(page.getByText('Verjandi staðfestur')).toHaveCount(
+      defendantCount,
+    )
   } else {
     // One defender choice per defendant
     const defenderChoiceOptions = page

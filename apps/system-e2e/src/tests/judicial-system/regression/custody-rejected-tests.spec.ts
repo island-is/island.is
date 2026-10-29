@@ -59,10 +59,13 @@ test.describe.serial('Custody rejection tests', () => {
       page.getByTestId('requestPDFButton').click(),
     ])
 
-    // The endpoint actually serves a pdf
-    const response = await page.request.get(pdfRequest.url())
-    expect(response.status()).toBe(200)
-    expect(response.headers()['content-type']).toContain('application/pdf')
+    // The button's own request is served a pdf. Chromium aborts the request
+    // once it decides to download it, but the status and headers have
+    // arrived by then; only the body is out of reach.
+    const response = await pdfRequest.response()
+    expect(response).not.toBeNull()
+    expect(response?.status()).toBe(200)
+    expect(response?.headers()['content-type']).toContain('application/pdf')
   })
 
   test('prosecutor should appeal the rejected ruling', async ({

@@ -1,4 +1,4 @@
-import { expect, Page } from '@playwright/test'
+import { expect, Locator, Page } from '@playwright/test'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 
 export const randomPoliceCaseNumber = () => {
@@ -39,8 +39,13 @@ export const testDefender = {
 }
 
 // Selects the test defender in an InputAdvocate lawyer combobox.
-export const selectTestDefender = async (page: Page) => {
-  await page.locator('#advocateName').click()
+// Picks the test defender in the lawyer registry combobox. A screen with one
+// combobox per defendant passes the defendant's section as the scope.
+export const selectTestDefender = async (
+  page: Page,
+  scope: Page | Locator = page,
+) => {
+  await scope.locator('#advocateName').click()
   await page.keyboard.type(testDefender.name)
   await page
     .locator('[id^="react-select-advocateName-option"]')
@@ -48,7 +53,7 @@ export const selectTestDefender = async (page: Page) => {
     .first()
     .click()
   // Selecting a lawyer auto-fills email and phone from the registry entry.
-  await expect(page.getByTestId('defenderEmail')).toHaveValue(
+  await expect(scope.getByTestId('defenderEmail')).toHaveValue(
     testDefender.email,
   )
 }
