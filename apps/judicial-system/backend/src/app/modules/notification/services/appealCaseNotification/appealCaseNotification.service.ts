@@ -762,6 +762,9 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         strings.caseAppealReceivedByCourt.body,
         {
           userHasAccessToRVG: Boolean(defenderUrl),
+          court: applyDativeCaseToCourtName(
+            theCase.court?.name || 'héraðsdómi',
+          ),
           courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           statementDeadline: formatDate(statementDeadline, 'PPPp'),
           linkStart: `<a href="${defenderUrl}">`,
@@ -898,6 +901,9 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           strings.caseAppealStatement.body,
           {
             userHasAccessToRVG: Boolean(defenderUrl),
+            court: applyDativeCaseToCourtName(
+              theCase.court?.name || 'héraðsdómi',
+            ),
             courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
             appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
             linkStart: `<a href="${defenderUrl}">`,
@@ -928,6 +934,9 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           strings.caseAppealStatement.body,
           {
             userHasAccessToRVG: Boolean(defenderUrl),
+            court: applyDativeCaseToCourtName(
+              theCase.court?.name || 'héraðsdómi',
+            ),
             courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
             appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
             linkStart: `<a href="${defenderUrl}">`,
@@ -1414,6 +1423,9 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           : strings.caseAppealCompleted.body,
         {
           userHasAccessToRVG: Boolean(defenderUrl),
+          court: applyDativeCaseToCourtName(
+            theCase.court?.name || 'héraðsdómi',
+          ),
           courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           appealCaseNumber: appealCase.appealCaseNumber,
           appealRulingDecision: getAppealResultTextByValue(
