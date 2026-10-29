@@ -39,7 +39,7 @@ import { toWithholdingTaxOutput } from '../domains/withholdingTax'
 import type { CalculatorContract } from '../types/calculator'
 import type { CalculatorOutputField } from '../types/output-field'
 import { byName } from '../utils/byName'
-import { toSpecQuery } from '../utils/toSpecQuery'
+import { toClientQuery } from '../utils/toClientQuery'
 
 @Injectable()
 export class CalculatorsClientService {
@@ -68,14 +68,14 @@ export class CalculatorsClientService {
 
   async getChildBenefit(input: ChildBenefitInput) {
     const { data } = await getChildBenefit({
-      query: toSpecQuery(zGetChildBenefitData.shape.query.shape, input),
+      query: toClientQuery(zGetChildBenefitData.shape.query.shape, input),
     })
     return data && toChildBenefitOutput(data)
   }
 
   async getVehicleTax(input: VehicleTaxInput) {
     const { data } = await getVehicleTax({
-      query: toSpecQuery(zGetVehicleTaxData.shape.query.shape, input),
+      query: toClientQuery(zGetVehicleTaxData.shape.query.shape, input),
     })
     return data && toVehicleTaxOutput(data)
   }
@@ -96,7 +96,7 @@ export class CalculatorsClientService {
 
   async getWithholdingTax(input: WithholdingTaxInput) {
     const { data } = await getWithholdingTax({
-      query: toSpecQuery(zGetWithholdingTaxData.shape.query.shape, input),
+      query: toClientQuery(zGetWithholdingTaxData.shape.query.shape, input),
     })
     return data && toWithholdingTaxOutput(data)
   }

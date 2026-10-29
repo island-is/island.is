@@ -18,7 +18,10 @@ const isRatio = (schema: ZodTypeAny) => {
   )
 }
 
-export const toSpecQuery = <TQuery extends object>(
+/* Maps client input to the generated client's query. Today that only scales
+ * whole percentages (0-100) to the 0-1 ratios RSK expects, detected from the
+ * generated zod schema so endpoints need no hand mapping. */
+export const toClientQuery = <TQuery extends object>(
   shape: ZodRawShape,
   input: TQuery,
 ): TQuery =>

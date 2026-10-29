@@ -22,11 +22,11 @@ Each calculator domain owns:
 - `output.ts` maps RSK responses to stable client output.
 
 The client service configures the generated client, exposes calculator
-definitions, builds spec-driven queries with `toSpecQuery`, and calls the
+definitions, builds spec-driven queries with `toClientQuery`, and calls the
 domain mappers. Shared types describe the contract; the catalog registers
 available calculators.
 
-Percentage inputs and outputs are whole percentages (`0-100`). `toSpecQuery`
+Percentage inputs and outputs are whole percentages (`0-100`). `toClientQuery`
 reads the generated zod request schemas and divides any non-integer
 parameter bounded `0-1` by 100; curated `input.ts` mappers convert their own.
 Output mappers convert RSK's ratios back. Mapped scalar values are optional

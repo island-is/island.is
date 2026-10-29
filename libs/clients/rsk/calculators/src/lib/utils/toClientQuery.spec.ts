@@ -8,9 +8,9 @@ import {
   zGetVehicleTaxData,
   zGetWithholdingTaxData,
 } from '../../../gen/fetch/zod.gen'
-import { toSpecQuery } from './toSpecQuery'
+import { toClientQuery } from './toClientQuery'
 
-describe('toSpecQuery', () => {
+describe('toClientQuery', () => {
   it('passes non-ratio values through unchanged', () => {
     const input: GetChildBenefitData['query'] = {
       hjuskaparstada: 'Gift/Í sambúð',
@@ -19,7 +19,7 @@ describe('toSpecQuery', () => {
       fjoldiBarna: 2,
     }
 
-    expect(toSpecQuery(zGetChildBenefitData.shape.query.shape, input)).toEqual(
+    expect(toClientQuery(zGetChildBenefitData.shape.query.shape, input)).toEqual(
       input,
     )
   })
@@ -44,7 +44,7 @@ describe('toSpecQuery', () => {
       idgjaldSlysatryggingSjomanna: 0,
     }
 
-    const query = toSpecQuery(zGetWithholdingTaxData.shape.query.shape, input)
+    const query = toClientQuery(zGetWithholdingTaxData.shape.query.shape, input)
 
     expect(query.lifeyrissjodurHlutfall).toBe(0.04)
     expect(query.nytingSkattkorts).toBe(1)
@@ -63,7 +63,7 @@ describe('toSpecQuery', () => {
     }
 
     expect(
-      toSpecQuery(zGetVehicleTaxData.shape.query.shape, input).gjaldskipting,
+      toClientQuery(zGetVehicleTaxData.shape.query.shape, input).gjaldskipting,
     ).toBe(gjaldskipting)
   })
 })
