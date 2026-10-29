@@ -91,14 +91,23 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
         <Text variant="h4" as={titleAs} marginBottom={2}>
           {capitalize(
             isRequestCase(caseType)
-              ? formatMessage(core.defendant, {
-                  suffix: isMultipleDefendants ? 'ar' : 'i',
-                })
+              ? formatMessage(
+                  { id: core.defendant, defaultMessage: core.defendant },
+                  {
+                    suffix: isMultipleDefendants ? 'ar' : 'i',
+                  },
+                )
               : isMultipleDefendants
-              ? formatMessage(core.indictmentDefendants)
-              : formatMessage(core.indictmentDefendant, {
-                  gender: getDefaultDefendantGender(defendants),
-                }),
+              ? core.indictmentDefendants
+              : formatMessage(
+                  {
+                    id: core.indictmentDefendant,
+                    defaultMessage: core.indictmentDefendant,
+                  },
+                  {
+                    gender: getDefaultDefendantGender(defendants),
+                  },
+                ),
           )}
         </Text>
       ),
@@ -170,9 +179,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     onClick?: () => void,
   ): Item => ({
     id: 'prosecutor-item',
-    title: isRequestCase(caseType)
-      ? formatMessage(core.prosecutorPerson)
-      : strings.prosecutor,
+    title: isRequestCase(caseType) ? core.prosecutorPerson : strings.prosecutor,
     values: [
       RenderPersonalData({
         name: workingCase.prosecutor?.name,
@@ -190,20 +197,20 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const policeCaseNumbers: Item = {
     id: 'police-case-number-item',
-    title: formatMessage(core.policeCaseNumber),
+    title: core.policeCaseNumber,
     values:
       workingCase.policeCaseNumbers?.map((n) => <Text key={n}>{n}</Text>) || [],
   }
 
   const court: Item = {
     id: 'court-item',
-    title: formatMessage(core.court),
+    title: core.court,
     values: [workingCase.court?.name || ''],
   }
 
   const courtCaseNumber: Item = {
     id: 'court-case-number-item',
-    title: formatMessage(core.courtCaseNumber),
+    title: core.courtCaseNumber,
     values: [workingCase.courtCaseNumber],
   }
 
@@ -224,7 +231,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const judge: Item = {
     id: 'judges-item',
-    title: formatMessage(core.judge),
+    title: core.judge,
     values: [
       RenderPersonalData({
         name: workingCase.judge?.name,
@@ -235,13 +242,13 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const caseType: Item = {
     id: 'case-type-item',
-    title: formatMessage(core.caseType),
+    title: core.caseType,
     values: [capitalize(formatCaseType(workingCase.type))],
   }
 
   const registrar: Item = {
     id: 'registrar-item',
-    title: formatMessage(core.registrar),
+    title: core.registrar,
     values: [
       RenderPersonalData({
         name: workingCase.registrar?.name,
@@ -304,7 +311,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const mergedCasePoliceCaseNumbers = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-police-case-number-item',
-    title: formatMessage(core.policeCaseNumber),
+    title: core.policeCaseNumber,
     values:
       mergedCase.policeCaseNumbers?.map((n) => <Text key={n}>{n}</Text>) || [],
   })
@@ -336,13 +343,13 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const mergedCaseJudge = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-judge-item',
-    title: formatMessage(core.judge),
+    title: core.judge,
     values: [mergedCase.judge?.name],
   })
 
   const mergedCaseCourt = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-court-item',
-    title: formatMessage(core.court),
+    title: core.court,
     values: [mergedCase.court?.name],
   })
 
@@ -401,19 +408,19 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const appealCaseNumber: Item = {
     id: 'appeal-case-number-item',
-    title: formatMessage(core.appealCaseNumberHeading),
+    title: core.appealCaseNumberHeading,
     values: [targetAppealCase?.appealCaseNumber],
   }
 
   const appealAssistant: Item = {
     id: 'appeal-assistant-item',
-    title: formatMessage(core.appealAssistantHeading),
+    title: core.appealAssistantHeading,
     values: [targetAppealCase?.appealAssistant?.name],
   }
 
   const appealJudges: Item = {
     id: 'appeal-judges-item',
-    title: formatMessage(core.appealJudgesHeading),
+    title: core.appealJudgesHeading,
     values: [
       <>
         {sortByIcelandicAlphabet([
@@ -474,10 +481,16 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const parentCaseValidToDate: Item = {
     id: 'parent-case-valid-to-date-item',
     title: workingCase.parentCase
-      ? formatMessage(core.pastRestrictionCase, {
-          caseType: workingCase.type,
-        })
-      : formatMessage(core.arrestDate),
+      ? formatMessage(
+          {
+            id: core.pastRestrictionCase,
+            defaultMessage: core.pastRestrictionCase,
+          },
+          {
+            caseType: workingCase.type,
+          },
+        )
+      : core.arrestDate,
     values: [
       workingCase.parentCase
         ? `${capitalize(

@@ -49,18 +49,27 @@ export const getDefendantLabel = (
   type?: CaseType | null,
 ) => {
   if (!isIndictmentCase(type)) {
-    return formatMessage(core.defendant, {
-      suffix: defendants.length > 1 ? 'ar' : 'i',
-    })
+    return formatMessage(
+      { id: core.defendant, defaultMessage: core.defendant },
+      {
+        suffix: defendants.length > 1 ? 'ar' : 'i',
+      },
+    )
   }
 
   if (defendants.length === 1) {
-    return formatMessage(core.indictmentDefendant, {
-      gender: defendants[0].gender,
-    })
+    return formatMessage(
+      {
+        id: core.indictmentDefendant,
+        defaultMessage: core.indictmentDefendant,
+      },
+      {
+        gender: defendants[0].gender,
+      },
+    )
   }
 
-  return formatMessage(core.indictmentDefendants)
+  return core.indictmentDefendants
 }
 
 interface Props {
@@ -86,7 +95,7 @@ const Defendants: FC<Props> = ({ workingCase }) => {
       )}
       value={enumerate(
         flatMap(activeDefendants, (d) => (d.name ? [d.name] : [])),
-        formatMessage(core.and),
+        core.and,
       )}
     />
   )
@@ -109,13 +118,12 @@ export const ProsecutorCaseInfo: FC<
   Props & { hideCourt?: boolean; hideDefendants?: boolean }
 > = ({ workingCase, hideCourt = false, hideDefendants = false }) => {
   const { policeCaseNumbers, court } = workingCase
-  const { formatMessage } = useIntl()
 
   return (
     <Box component="section" display="flex" flexDirection="column" rowGap={1}>
       <PoliceCaseNumbersTags policeCaseNumbers={policeCaseNumbers} />
       {!hideCourt && court?.name && (
-        <Entry label={formatMessage(core.court)} value={court?.name} />
+        <Entry label={core.court} value={court?.name} />
       )}
       {!hideDefendants && <Defendants workingCase={workingCase} />}
     </Box>
@@ -141,9 +149,12 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
       {workingCase.courtCaseNumber && (
         <Box marginBottom={1}>
           <Text variant="h2" as="h2">
-            {formatMessage(core.caseNumber, {
-              caseNumber: workingCase.courtCaseNumber,
-            })}
+            {formatMessage(
+              { id: core.caseNumber, defaultMessage: core.caseNumber },
+              {
+                caseNumber: workingCase.courtCaseNumber,
+              },
+            )}
           </Text>
         </Box>
       )}

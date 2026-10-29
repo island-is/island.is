@@ -89,9 +89,7 @@ export const JudgeOverview = () => {
       isValid={true}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.court.restrictionCases.overview)}
-      />
+      <PageHeader title={titles.court.restrictionCases.overview} />
       <FormContentContainer>
         {workingCase.caseResentExplanation && (
           <Box marginBottom={workingCase.openedByDefender ? 3 : 5}>
@@ -189,12 +187,7 @@ export const JudgeOverview = () => {
                     (legalProvision: CaseLegalProvisions, index: number) => {
                       return (
                         <div key={index}>
-                          <Text>
-                            {getLegalProvisionTitle(
-                              formatMessage,
-                              legalProvision,
-                            )}
-                          </Text>
+                          <Text>{getLegalProvisionTitle(legalProvision)}</Text>
                         </div>
                       )
                     },
@@ -277,9 +270,9 @@ export const JudgeOverview = () => {
           <Box marginBottom={3}>
             <PdfButton
               caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRequest)}
+              title={core.pdfButtonRequest}
               pdfType="request"
-              elementId={formatMessage(core.pdfButtonRequest)}
+              elementId={core.pdfButtonRequest}
             />
           </Box>
           <Button

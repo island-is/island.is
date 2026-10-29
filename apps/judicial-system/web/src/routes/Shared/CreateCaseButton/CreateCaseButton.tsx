@@ -1,5 +1,4 @@
 import { useContext, useMemo } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -17,7 +16,6 @@ import {
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const CreateCaseButton = () => {
-  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
   const items = useMemo(() => {
@@ -25,32 +23,32 @@ export const CreateCaseButton = () => {
       return [
         {
           href: PROSECUTION_CREATE_INDICTMENT_ROUTE,
-          title: capitalize(formatMessage(core.indictment)),
+          title: capitalize(core.indictment),
         },
       ]
     } else if (user?.role === UserRole.PROSECUTOR) {
       return [
         {
           href: PROSECUTION_CREATE_INDICTMENT_ROUTE,
-          title: capitalize(formatMessage(core.indictment)),
+          title: capitalize(core.indictment),
         },
         {
           href: PROSECUTION_CREATE_CUSTODY_CASE_ROUTE,
-          title: capitalize(formatMessage(core.restrictionCase)),
+          title: capitalize(core.restrictionCase),
         },
         {
           href: PROSECUTION_CREATE_TRAVEL_BAN_ROUTE,
-          title: capitalize(formatMessage(core.travelBan)),
+          title: capitalize(core.travelBan),
         },
         {
           href: PROSECUTION_CREATE_INVESTIGATION_CASE_ROUTE,
-          title: capitalize(formatMessage(core.investigationCase)),
+          title: capitalize(core.investigationCase),
         },
       ]
     } else {
       return []
     }
-  }, [formatMessage, user?.role])
+  }, [user?.role])
 
   return (
     <Box marginTop={[2, 2, 0]}>

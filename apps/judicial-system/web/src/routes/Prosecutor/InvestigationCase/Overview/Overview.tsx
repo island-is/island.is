@@ -148,9 +148,7 @@ export const Overview = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.investigationCases.overview)}
-      />
+      <PageHeader title={titles.prosecutor.investigationCases.overview} />
       <FormContentContainer>
         {workingCase.state === CaseState.RECEIVED && (
           <Box
@@ -313,9 +311,9 @@ export const Overview = () => {
           <Box>
             <PdfButton
               caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRequest)}
+              title={core.pdfButtonRequest}
               pdfType="request"
-              elementId={formatMessage(core.pdfButtonRequest)}
+              elementId={core.pdfButtonRequest}
             />
           </Box>
         </div>
@@ -364,7 +362,7 @@ export const Overview = () => {
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
             buttons={[
               {
-                text: formatMessage(core.closeModal),
+                text: core.closeModal,
                 onClick: () => {
                   router.push(getStandardUserDashboardRoute(user))
                 },
@@ -372,9 +370,7 @@ export const Overview = () => {
               },
             ]}
             errorMessage={
-              sendNotificationError
-                ? errors.sendNotification
-                : undefined
+              sendNotificationError ? errors.sendNotification : undefined
             }
           />
         )}

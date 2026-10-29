@@ -229,9 +229,12 @@ const Summary: FC = () => {
           <AppealRulingModifiedAlert />
           <Box component="section" className={stack({ gap: 1 })}>
             <Text variant="h2" as="h2">
-              {formatMessage(core.caseNumber, {
-                caseNumber: workingCase.courtCaseNumber,
-              })}
+              {formatMessage(
+                { id: core.caseNumber, defaultMessage: core.caseNumber },
+                {
+                  caseNumber: workingCase.courtCaseNumber,
+                },
+              )}
             </Text>
             <ProsecutorAndDefendantsEntries workingCase={workingCase} />
           </Box>

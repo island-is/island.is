@@ -1,5 +1,4 @@
 import { useCallback, useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -49,7 +48,6 @@ const HearingArrangements = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const translatorInput = useDebouncedInput('translator')
-  const { formatMessage } = useIntl()
   const {
     sendNotification,
     isSendingNotification,
@@ -106,9 +104,7 @@ const HearingArrangements = () => {
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader
-        title={formatMessage(
-          titles.prosecutor.investigationCases.hearingArrangements,
-        )}
+        title={titles.prosecutor.investigationCases.hearingArrangements}
       />
       <FormContentContainer>
         <PageTitle>{m.heading}</PageTitle>
@@ -157,7 +153,7 @@ const HearingArrangements = () => {
           previousUrl={`${PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: async () =>
                 await handleNavigationTo(
@@ -197,9 +193,7 @@ const HearingArrangements = () => {
           ]}
           onClose={() => setNavigateTo(undefined)}
           errorMessage={
-            sendNotificationError
-              ? errors.sendNotification
-              : undefined
+            sendNotificationError ? errors.sendNotification : undefined
           }
         />
       )}

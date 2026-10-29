@@ -109,11 +109,17 @@ export const CriminalRecordUpdate = ({
           (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
         )}
         accept="application/pdf"
-        title={formatMessage(core.uploadBoxTitle)}
-        buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-        description={formatMessage(core.uploadBoxDescription, {
-          fileEndings: '.pdf',
-        })}
+        title={core.uploadBoxTitle}
+        buttonLabel={core.uploadBoxButtonLabel}
+        description={formatMessage(
+          {
+            id: core.uploadBoxDescription,
+            defaultMessage: core.uploadBoxDescription,
+          },
+          {
+            fileEndings: '.pdf',
+          },
+        )}
         onChange={handleCriminalRecordUpdateUpload}
         onRemove={handleRemoveFile}
         onOpenFile={(file) => onOpenFile(file)}

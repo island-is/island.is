@@ -301,7 +301,7 @@ export const CivilClaimantFields = ({
           />
           {notFound && (
             <Text color="red600" variant="eyebrow" marginTop={1}>
-              {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
+              {core.nationalIdNotFoundInNationalRegistry}
             </Text>
           )}
         </Box>

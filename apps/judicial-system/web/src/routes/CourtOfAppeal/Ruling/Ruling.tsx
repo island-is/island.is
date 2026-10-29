@@ -257,9 +257,15 @@ const Ruling = () => {
               )}
               accept="application/pdf"
               title={strings.inputFieldLabel}
-              description={formatMessage(core.uploadBoxDescription, {
-                fileEndings: '.pdf',
-              })}
+              description={formatMessage(
+                {
+                  id: core.uploadBoxDescription,
+                  defaultMessage: core.uploadBoxDescription,
+                },
+                {
+                  fileEndings: '.pdf',
+                },
+              )}
               buttonLabel={strings.uploadButtonText}
               onChange={(files) => {
                 handleUpload(
@@ -384,9 +390,15 @@ const Ruling = () => {
                 )}
                 accept="application/pdf"
                 title={strings.inputFieldLabel}
-                description={formatMessage(core.uploadBoxDescription, {
-                  fileEndings: '.pdf',
-                })}
+                description={formatMessage(
+                  {
+                    id: core.uploadBoxDescription,
+                    defaultMessage: core.uploadBoxDescription,
+                  },
+                  {
+                    fileEndings: '.pdf',
+                  },
+                )}
                 buttonLabel={strings.uploadButtonText}
                 onChange={(files) => {
                   handleUpload(
@@ -413,7 +425,7 @@ const Ruling = () => {
           )}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               url: appendAppealCaseIdQuery(
                 `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,

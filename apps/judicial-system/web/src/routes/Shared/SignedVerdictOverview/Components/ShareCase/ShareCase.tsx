@@ -1,6 +1,5 @@
 import type { Dispatch, FC, SetStateAction } from 'react'
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 import type { SingleValue } from 'react-select'
 
 import { Box, Button, Select } from '@island.is/island-ui/core'
@@ -34,7 +33,6 @@ const ShareCase: FC<Props> = ({
   setSelectedSharingInstitutionOption,
   shareCaseWithAnotherInstitution,
 }) => {
-  const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
   const { user } = useContext(UserContext)
@@ -43,16 +41,16 @@ const ShareCase: FC<Props> = ({
   return (
     <Box component="section">
       <SectionHeading
-        title={formatMessage(m.sections.shareCase.title)}
-        tooltip={formatMessage(m.sections.shareCase.info)}
+        title={m.sections.shareCase.title}
+        tooltip={m.sections.shareCase.info}
       />
       <BlueBox>
         <Box display="flex">
           <Box flexGrow={1} marginRight={2}>
             <Select
               name="sharedWithProsecutorsOfficeId"
-              label={formatMessage(m.sections.shareCase.label)}
-              placeholder={formatMessage(m.sections.shareCase.placeholder)}
+              label={m.sections.shareCase.label}
+              placeholder={m.sections.shareCase.placeholder}
               size="sm"
               icon={
                 workingCase.sharedWithProsecutorsOffice
@@ -102,8 +100,8 @@ const ShareCase: FC<Props> = ({
             }
           >
             {workingCase.sharedWithProsecutorsOffice
-              ? formatMessage(m.sections.shareCase.close)
-              : formatMessage(m.sections.shareCase.open)}
+              ? m.sections.shareCase.close
+              : m.sections.shareCase.open}
           </Button>
         </Box>
       </BlueBox>

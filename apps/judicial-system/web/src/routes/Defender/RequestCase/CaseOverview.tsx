@@ -79,7 +79,7 @@ export const CaseOverview = () => {
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
       >
-        <PageHeader title={formatMessage(titles.defender.caseOverview)} />
+        <PageHeader title={titles.defender.caseOverview} />
         <FormContentContainer>
           {!isCompletedCase(workingCase.state) &&
             workingCase.caseResentExplanation && (
@@ -211,20 +211,18 @@ export const CaseOverview = () => {
                 <PdfButton
                   renderAs="row"
                   caseId={workingCase.id}
-                  title={formatMessage(core.pdfButtonRequest)}
+                  title={core.pdfButtonRequest}
                   pdfType="request"
-                  elementId={formatMessage(core.pdfButtonRequest)}
+                  elementId={core.pdfButtonRequest}
                 />
                 {isCompletedCase(workingCase.state) && (
                   <>
                     <PdfButton
                       renderAs="row"
                       caseId={workingCase.id}
-                      title={formatMessage(core.pdfButtonRulingShortVersion)}
+                      title={core.pdfButtonRulingShortVersion}
                       pdfType="courtRecord"
-                      elementId={formatMessage(
-                        core.pdfButtonRulingShortVersion,
-                      )}
+                      elementId={core.pdfButtonRulingShortVersion}
                     >
                       {workingCase.courtRecordSignatory ? (
                         <SignedDocument
@@ -236,9 +234,9 @@ export const CaseOverview = () => {
                     <PdfButton
                       renderAs="row"
                       caseId={workingCase.id}
-                      title={formatMessage(core.pdfButtonRuling)}
+                      title={core.pdfButtonRuling}
                       pdfType="ruling"
-                      elementId={formatMessage(core.pdfButtonRuling)}
+                      elementId={core.pdfButtonRuling}
                       disabled={workingCase.isCompletedWithoutRuling || false}
                     >
                       {workingCase.rulingSignatureDate ? (

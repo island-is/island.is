@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect } from 'react'
-import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
@@ -34,7 +33,6 @@ import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/ut
 const PoliceReport = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { formatMessage } = useIntl()
   const { updateCase, setAndSendCaseToServer } = useCase()
 
   const caseFactsInput = useDebouncedInput('caseFacts', ['empty'])
@@ -76,9 +74,7 @@ const PoliceReport = () => {
       onNavigationTo={handleNavigationTo}
       isValid={stepIsValid}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.investigationCases.policeReport)}
-      />
+      <PageHeader title={titles.prosecutor.investigationCases.policeReport} />
       <FormContentContainer>
         <PageTitle>{icReportForm.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
@@ -169,7 +165,7 @@ const PoliceReport = () => {
           previousUrl={`${PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(
