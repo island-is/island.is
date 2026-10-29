@@ -11,5 +11,5 @@ export const allowedScopes: string[] = [
 ]
 
 /** Admin scopes take precedence over the institution scope. */
-export const hasDelegationAdminAccess = (scopes: string[]) =>
+export const hasAnyDelegationAdminScope = (scopes: string[]) =>
   scopes.some((scope) => adminScopes.includes(scope))

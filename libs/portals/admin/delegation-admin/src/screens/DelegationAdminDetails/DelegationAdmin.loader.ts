@@ -7,7 +7,7 @@ import {
   GetCustomDelegationsAdminQuery,
   GetCustomDelegationsAdminQueryVariables,
 } from './DelegationAdmin.generated'
-import { DelegationAdminPaths, NOT_FOUND_PARAM } from '../../lib/paths'
+import { DelegationAdminPaths } from '../../lib/paths'
 import { unmaskString } from '@island.is/shared/utils'
 
 export type DelegationAdminResult = NonNullable<
@@ -47,12 +47,6 @@ export const delegationAdminLoader: WrappedLoaderFn = ({
 
     if (!res.data?.authAdminDelegationAdmin) {
       return redirect(DelegationAdminPaths.Root)
-    }
-
-    const { incoming, outgoing } = res.data.authAdminDelegationAdmin
-
-    if (incoming.length === 0 && outgoing.length === 0) {
-      return redirect(`${DelegationAdminPaths.Root}?${NOT_FOUND_PARAM}=true`)
     }
 
     return res.data.authAdminDelegationAdmin

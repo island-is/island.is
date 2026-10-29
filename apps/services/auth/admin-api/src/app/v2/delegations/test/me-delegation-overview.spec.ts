@@ -82,7 +82,7 @@ describe('MeDelegationOverviewController', () => {
   })
 
   describe('with institution scope', () => {
-    const organizationUser = createCurrentUser({
+    const organisationUser = createCurrentUser({
       nationalIdType: 'company',
       scope: [DelegationAdminScopes.institution],
     })
@@ -96,7 +96,7 @@ describe('MeDelegationOverviewController', () => {
       app = await setupApp({
         AppModule,
         SequelizeConfigService,
-        user: organizationUser,
+        user: organisationUser,
         dbType: 'postgres',
       })
       server = request(app.getHttpServer())
@@ -115,7 +115,7 @@ describe('MeDelegationOverviewController', () => {
 
       await factory.createDomain({
         name: 'own-domain',
-        nationalId: organizationUser.nationalId,
+        nationalId: organisationUser.nationalId,
         apiScopes: [
           { name: 'own-s1', ...customScope },
           { name: 'own-s2', ...customScope },
@@ -236,7 +236,7 @@ describe('MeDelegationOverviewController', () => {
       await app.cleanUp()
     })
 
-    it('should list delegations with the organization clients they apply to', async () => {
+    it('should list delegations with the organisation clients they apply to', async () => {
       // Arrange
       const outgoing = await factory.createCustomDelegation({
         fromNationalId: personNationalId,
@@ -506,7 +506,7 @@ describe('MeDelegationOverviewController', () => {
       expect(byId.has(ids.person)).toBe(false)
     })
 
-    it('should return no delegations when the person has none on the organization clients', async () => {
+    it('should return no delegations when the person has none on the organisation clients', async () => {
       // Act
       const res = await getRequestMethod(
         server,
@@ -519,8 +519,8 @@ describe('MeDelegationOverviewController', () => {
     })
   })
 
-  describe('as another organization', () => {
-    const otherOrganizationUser = createCurrentUser({
+  describe('as another organisation', () => {
+    const otherOrganisationUser = createCurrentUser({
       nationalIdType: 'company',
       scope: [DelegationAdminScopes.institution],
     })
@@ -532,7 +532,7 @@ describe('MeDelegationOverviewController', () => {
       app = await setupApp({
         AppModule,
         SequelizeConfigService,
-        user: otherOrganizationUser,
+        user: otherOrganisationUser,
         dbType: 'postgres',
       })
       server = request(app.getHttpServer())
@@ -543,7 +543,7 @@ describe('MeDelegationOverviewController', () => {
       await app.cleanUp()
     })
 
-    it("should not return delegations on another organization's clients", async () => {
+    it("should not return delegations on another organisation's clients", async () => {
       // Arrange
       const nationalId = createNationalId('person')
       await factory.createDomain({

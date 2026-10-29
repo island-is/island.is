@@ -5,7 +5,7 @@ import { lazy } from 'react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { delegationAdminLoader } from './screens/DelegationAdminDetails/DelegationAdmin.loader'
 import { delegationOverviewLoader } from './screens/DelegationOverview/DelegationOverview.loader'
-import { allowedScopes, hasDelegationAdminAccess } from './lib/scopes'
+import { allowedScopes, hasAnyDelegationAdminScope } from './lib/scopes'
 import { FindDelegationForNationalId } from './screens/Root.action'
 import { createDelegationAction } from './screens/CreateDelegation/CreateDelegation.action'
 
@@ -26,7 +26,7 @@ export const delegationAdminModule: PortalModule = {
     return userInfo.scopes.some((scope) => allowedScopes.includes(scope))
   },
   routes(props) {
-    const isAdmin = hasDelegationAdminAccess(props.userInfo.scopes)
+    const isAdmin = hasAnyDelegationAdminScope(props.userInfo.scopes)
 
     return [
       {
@@ -54,11 +54,9 @@ export const delegationAdminModule: PortalModule = {
         path: DelegationAdminPaths.CreateDelegation,
         element: <CreateDelegationScreen />,
         action: createDelegationAction(props),
-        enabled:
-          isAdmin &&
-          props.userInfo.scopes.includes(
-            AdminPortalScope.delegationSystemAdmin,
-          ),
+        enabled: props.userInfo.scopes.includes(
+          AdminPortalScope.delegationSystemAdmin,
+        ),
       },
     ]
   },

@@ -2,7 +2,7 @@ import sortBy from 'lodash/sortBy'
 import { ReactNode, useMemo, useState } from 'react'
 import * as kennitala from 'kennitala'
 
-import { Box, Icon, Stack, Table as T, Text } from '@island.is/island-ui/core'
+import { Box, Button, Stack, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   ExpandableRow,
@@ -63,22 +63,27 @@ export const DelegationTable = ({
       descending: current.key === key ? !current.descending : false,
     }))
 
-  const sortableHeader = (key: SortKey, label: string) => (
-    <T.HeadData>
-      <button type="button" onClick={() => toggleSort(key)}>
-        <Box display="flex" alignItems="center" columnGap={1}>
-          <Text variant="medium" fontWeight="semiBold" as="span">
-            {label}
-          </Text>
-          <Icon
-            icon={sort.key === key && sort.descending ? 'caretUp' : 'caretDown'}
-            color="blue400"
-            size="small"
-          />
-        </Box>
-      </button>
-    </T.HeadData>
-  )
+  const sortableHeader = (key: SortKey, label: string) => {
+    const isSorted = sort.key === key
+
+    return (
+      <T.HeadData
+        aria-sort={
+          isSorted ? (sort.descending ? 'descending' : 'ascending') : 'none'
+        }
+      >
+        <Button
+          variant="text"
+          size="small"
+          icon={isSorted && sort.descending ? 'caretUp' : 'caretDown'}
+          iconType="filled"
+          onClick={() => toggleSort(key)}
+        >
+          {label}
+        </Button>
+      </T.HeadData>
+    )
+  }
 
   return (
     <Box overflow="auto">

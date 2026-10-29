@@ -1,4 +1,4 @@
-fragment DelegationOverviewDelegation on DelegationOverviewDelegation {
+fragment DelegationOverviewDelegation on AuthAdminDelegationOverviewDelegation {
   id
   type
   validTo

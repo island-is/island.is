@@ -43,7 +43,7 @@ export class DelegationOverviewResolver {
       user,
       nationalId,
     )
-    // Only reveal the name of people with delegations on the organization's clients.
+    // Only reveal the name of people with delegations on the organisation's clients.
     const hasDelegations =
       overview.incoming.length > 0 || overview.outgoing.length > 0
     const identity = hasDelegations

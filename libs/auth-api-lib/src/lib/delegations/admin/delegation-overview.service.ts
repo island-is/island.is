@@ -40,7 +40,7 @@ interface ScopeInfo {
   isAccessControlled: boolean
 }
 
-interface OrganizationClient {
+interface OrganisationClient {
   client: Client
   supportedTypes: Set<string>
   scopes: Map<string, ScopeInfo>
@@ -81,7 +81,7 @@ export class DelegationOverviewService {
     user: User,
     nationalId: string,
   ): Promise<DelegationOverviewDto> {
-    const clients = await this.findOrganizationClients(user)
+    const clients = await this.findOrganisationClients(user)
 
     if (clients.length === 0) {
       return { clients: [], incoming: [], outgoing: [] }
@@ -191,9 +191,9 @@ export class DelegationOverviewService {
     }))
   }
 
-  private async findOrganizationClients(
+  private async findOrganisationClients(
     user: User,
-  ): Promise<OrganizationClient[]> {
+  ): Promise<OrganisationClient[]> {
     const clients = await this.clientModel.findAll({
       where: {
         enabled: true,
@@ -264,7 +264,7 @@ export class DelegationOverviewService {
   }
 
   private async findAccessList(
-    clients: OrganizationClient[],
+    clients: OrganisationClient[],
     fromNationalIds: string[],
   ): Promise<AccessList> {
     const protectedScopes = uniq(
@@ -287,7 +287,7 @@ export class DelegationOverviewService {
     return new Set(accesses.map((a) => `${a.scope}:${a.nationalId}`))
   }
 
-  /** Mirrors checkIfScopeAllowed at login, not which scopes a user may delegate onwards. */
+  /** Mirrors the per-scope check when the token is issued (IDS ScopePermissionValidator), not which scopes a user may delegate onwards. */
   private grantsScopeAtLogin(
     scopeName: string,
     scope: ScopeInfo,
@@ -308,7 +308,7 @@ export class DelegationOverviewService {
 
   private toCustomOverview(
     delegation: DelegationDTO,
-    clients: OrganizationClient[],
+    clients: OrganisationClient[],
     accessList: AccessList,
   ): DelegationOverviewDelegationDto[] {
     const clientIds: string[] = []
@@ -386,7 +386,7 @@ export class DelegationOverviewService {
   /** General mandates mirror findAllAvailableGeneralMandate. */
   private grantedScopes(
     delegation: TypeDelegation,
-    { supportedTypes, scopes }: OrganizationClient,
+    { supportedTypes, scopes }: OrganisationClient,
     accessList: AccessList,
   ): [string, ScopeInfo][] | null {
     if (delegation.storedType !== AuthDelegationType.GeneralMandate) {
@@ -434,7 +434,7 @@ export class DelegationOverviewService {
 
   private toTypeOverview(
     delegation: TypeDelegation,
-    clients: OrganizationClient[],
+    clients: OrganisationClient[],
     accessList: AccessList,
   ): DelegationOverviewDelegationDto[] {
     const isActive =
@@ -495,7 +495,7 @@ export class DelegationOverviewService {
 
 const toClientDto = ({
   client,
-}: OrganizationClient): DelegationOverviewClientDto => ({
+}: OrganisationClient): DelegationOverviewClientDto => ({
   clientId: client.clientId,
   clientName: client.clientName ?? null,
   domainName: client.domainName ?? '',

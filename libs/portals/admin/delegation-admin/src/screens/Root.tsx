@@ -21,7 +21,7 @@ import {
 } from 'react-router-dom'
 import { m } from '../lib/messages'
 import { DelegationAdminPaths, NOT_FOUND_PARAM } from '../lib/paths'
-import { hasDelegationAdminAccess } from '../lib/scopes'
+import { hasAnyDelegationAdminScope } from '../lib/scopes'
 import { GetDelegationForNationalIdResult } from './Root.action'
 
 const Root = () => {
@@ -36,10 +36,10 @@ const Root = () => {
   const [searchParams] = useSearchParams()
   const notFound = searchParams.get(NOT_FOUND_PARAM) === 'true'
 
-  const isInstitutionOnly = !hasDelegationAdminAccess(userInfo?.scopes ?? [])
-  const hasAdminAccess =
-    !isInstitutionOnly &&
-    userInfo?.scopes.includes(AdminPortalScope.delegationSystemAdmin)
+  const isInstitutionOnly = !hasAnyDelegationAdminScope(userInfo?.scopes ?? [])
+  const canManageDelegations = userInfo?.scopes.includes(
+    AdminPortalScope.delegationSystemAdmin,
+  )
 
   useEffect(() => {
     if (actionData?.errors) {
@@ -68,7 +68,7 @@ const Root = () => {
             : m.delegationAdminDescription
         }
       >
-        {hasAdminAccess && (
+        {canManageDelegations && (
           <GridColumn span={['8/8', '3/8']}>
             <Box
               display={'flex'}

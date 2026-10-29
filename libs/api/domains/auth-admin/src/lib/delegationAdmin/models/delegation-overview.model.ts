@@ -2,10 +2,8 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { Identity } from '@island.is/api/domains/identity'
 import { AuthDelegationType } from '@island.is/clients/auth/delegation-api'
-// Registers the AuthDelegationType GraphQL enum.
-import '@island.is/api/domains/auth'
 
-@ObjectType('DelegationOverviewScope')
+@ObjectType('AuthAdminDelegationOverviewScope')
 export class DelegationOverviewScopeModel {
   @Field(() => String)
   name!: string
@@ -20,7 +18,7 @@ export class DelegationOverviewScopeModel {
   validTo?: Date | null
 }
 
-@ObjectType('DelegationOverviewDelegation')
+@ObjectType('AuthAdminDelegationOverviewDelegation')
 export class DelegationOverviewDelegationModel {
   @Field(() => ID)
   id!: string
@@ -51,12 +49,12 @@ export class DelegationOverviewDelegationModel {
 
   @Field(() => [String], {
     description:
-      'The organization clients the delegation can currently be used to log in to.',
+      'The organisation clients the delegation can currently be used to log in to.',
   })
   loginClientIds!: string[]
 }
 
-@ObjectType('DelegationOverviewClient')
+@ObjectType('AuthAdminDelegationOverviewClient')
 export class DelegationOverviewClientModel {
   @Field(() => String)
   clientId!: string
@@ -68,7 +66,7 @@ export class DelegationOverviewClientModel {
   domainName!: string
 }
 
-@ObjectType('DelegationOverview')
+@ObjectType('AuthAdminDelegationOverview')
 export class DelegationOverviewModel {
   @Field(() => String)
   nationalId!: string
@@ -76,7 +74,7 @@ export class DelegationOverviewModel {
   @Field(() => String, {
     nullable: true,
     description:
-      'Only set when the person has delegations on the organization clients.',
+      'Only set when the person has delegations on the organisation clients.',
   })
   name?: string | null
 

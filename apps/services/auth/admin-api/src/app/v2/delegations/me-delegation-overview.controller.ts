@@ -36,7 +36,7 @@ export class MeDelegationOverviewController {
   @Scopes(DelegationAdminScopes.institution)
   @Documentation({
     description:
-      'Custom delegations a person has received or given on clients owned by the current organization.',
+      'Delegations a person has received or given that apply to clients owned by the current organisation.',
     response: { status: 200, type: DelegationOverviewDto },
     request: {
       header: {

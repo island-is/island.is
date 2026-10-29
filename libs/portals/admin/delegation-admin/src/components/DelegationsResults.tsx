@@ -2,7 +2,14 @@ import sortBy from 'lodash/sortBy'
 import uniqBy from 'lodash/uniqBy'
 import { ReactNode, useState } from 'react'
 
-import { AlertMessage, Box, Select, Stack } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  GridColumn,
+  GridColumnProps,
+  GridRow,
+  Select,
+  Stack,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import {
@@ -13,6 +20,8 @@ import {
 } from '../lib/delegationView'
 import { m } from '../lib/messages'
 import { DelegationSection } from './DelegationSection'
+
+const FILTER_SPAN: GridColumnProps['span'] = ['12/12', '6/12', '4/12']
 
 interface DelegationsResultsProps {
   outgoing: DelegationView[]
@@ -58,9 +67,9 @@ export const DelegationsResults = ({
 
   return (
     <Stack space={6}>
-      <Box display="flex" columnGap={2} flexWrap="wrap" rowGap={2}>
+      <GridRow rowGap={2}>
         {domainOptions.length > 1 && (
-          <Box style={{ minWidth: 280 }}>
+          <GridColumn span={FILTER_SPAN}>
             <Select
               name="domain"
               size="xs"
@@ -70,10 +79,10 @@ export const DelegationsResults = ({
               value={domainOptions.find((o) => o.value === (domainName ?? ''))}
               onChange={(option) => setDomainName(option?.value || undefined)}
             />
-          </Box>
+          </GridColumn>
         )}
         {clients && (
-          <Box style={{ minWidth: 280 }}>
+          <GridColumn span={FILTER_SPAN}>
             <Select
               name="client"
               size="xs"
@@ -83,9 +92,9 @@ export const DelegationsResults = ({
               value={clientOptions.find((o) => o.value === (clientId ?? ''))}
               onChange={(option) => setClientId(option?.value || undefined)}
             />
-          </Box>
+          </GridColumn>
         )}
-        <Box style={{ minWidth: 280 }}>
+        <GridColumn span={FILTER_SPAN}>
           <Select
             name="status"
             size="xs"
@@ -95,8 +104,8 @@ export const DelegationsResults = ({
             value={statusOptions.find((o) => o.value === status)}
             onChange={(option) => setStatus(option?.value ?? 'all')}
           />
-        </Box>
-      </Box>
+        </GridColumn>
+      </GridRow>
 
       <AlertMessage type="info" message={formatMessage(m.indexNotice)} />
 

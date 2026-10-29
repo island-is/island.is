@@ -33,6 +33,7 @@ export {
   DelegationProviderDto,
   DelegationAdminApi,
   DelegationAdminCustomDto,
+  DelegationAdminDelegationDto,
   MeDelegationOverviewApi,
   DelegationOverviewDto,
   DelegationOverviewDelegationDto,

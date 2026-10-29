@@ -29,7 +29,7 @@ const DelegationAdminScreen = () => {
   const [deleteDelegation, { loading: deleting }] =
     useDeleteCustomDelegationAdminMutation()
 
-  const hasAdminAccess = userInfo?.scopes.includes(
+  const canManageDelegations = userInfo?.scopes.includes(
     AdminPortalScope.delegationSystemAdmin,
   )
   const allDelegations = [
@@ -61,7 +61,7 @@ const DelegationAdminScreen = () => {
         title={delegationAdmin.name}
         intro={formatNationalId(delegationAdmin.nationalId)}
       >
-        {hasAdminAccess && (
+        {canManageDelegations && (
           <GridColumn span={['8/8', '3/8']}>
             <Box
               display={'flex'}
@@ -98,7 +98,7 @@ const DelegationAdminScreen = () => {
         outgoing={delegationAdmin.outgoing.map(fromCustomDelegation)}
         incoming={delegationAdmin.incoming.map(fromCustomDelegation)}
         renderRowActions={(delegation) =>
-          hasAdminAccess &&
+          canManageDelegations &&
           delegation.referenceId && (
             <Box display="flex" justifyContent="flexEnd">
               <Button

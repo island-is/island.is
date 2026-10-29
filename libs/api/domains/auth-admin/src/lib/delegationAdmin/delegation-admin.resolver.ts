@@ -23,6 +23,7 @@ import {
 } from '@island.is/api/domains/identity'
 import { Loader } from '@island.is/nest/dataloader'
 import { DelegationDTO } from '@island.is/auth-api-lib'
+import type { DelegationAdminDelegationDto } from '@island.is/clients/auth/admin-api'
 import {
   type DomainDataLoader,
   CustomDelegation,
@@ -105,10 +106,10 @@ export class DelegationAdminResolver {
   @ResolveField('indexedAt', () => Date, {
     nullable: true,
     description:
-      'For delegations from the delegation index, when the recipient was last fully reindexed. Only set by the delegation admin lookup.',
+      "For delegations from the delegation index, when the recipient's delegations were last fully reindexed.",
   })
   resolveIndexedAt(
-    @Parent() delegation: DelegationDTO & { indexedAt?: Date | null },
+    @Parent() delegation: DelegationAdminDelegationDto,
   ): Date | null {
     return delegation.indexedAt ?? null
   }
