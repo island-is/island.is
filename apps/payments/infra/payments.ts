@@ -42,20 +42,20 @@ export const serviceSetup = (services: {
         staging: 'true',
         prod: 'true',
       },
-      ALLOW_GOOGLE_PAY: {
-        dev: 'true',
-        staging: 'true',
-        prod: 'false',
-      },
       GOOGLE_PAY_ENVIRONMENT: {
         dev: 'TEST',
         staging: 'TEST',
         prod: 'PRODUCTION',
       },
       GOOGLE_PAY_MERCHANT_ID: {
-        dev: '',
-        staging: '',
-        prod: '',
+        dev: 'BCR2DN6DZKR7P3SG',
+        staging: 'BCR2DN6DZKR7P3SG',
+        prod: 'BCR2DN6DZKR7P3SG',
+      },
+      GOOGLE_PAY_GATEWAY_MERCHANT_ID: {
+        dev: '349060',
+        staging: '349060',
+        prod: '349060',
       },
     })
     .secrets({
@@ -63,7 +63,6 @@ export const serviceSetup = (services: {
       SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
       PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET:
         '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET',
-      GOOGLE_PAY_PUBLIC_KEY: '/k8s/payments/GOOGLE_PAY_PUBLIC_KEY',
     })
     .ingress({
       primary: {
