@@ -698,6 +698,7 @@ export class WorkerService {
           fulfillment.confirmationRefId,
           bankTransferPayment.providerPaymentId,
           getBankTransferPayerType(paymentFlow.payerNationalId),
+          bankTransferPayment.bankCode,
         ),
       )
     }

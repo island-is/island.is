@@ -24,4 +24,5 @@ export {
   GetPaymentFlowDTOBankTransferPendingStatusEnum,
   GetPaymentFlowDTOTypeEnum,
   GooglePayChargeResponseStatusEnum,
+  DebtInput,
 } from '../gen/fetch'

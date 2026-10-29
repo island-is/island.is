@@ -1,5 +1,4 @@
 import type { FC } from 'react'
-import { useIntl } from 'react-intl'
 
 import {
   Accordion,
@@ -16,8 +15,6 @@ interface Props {
 }
 
 const ParentCaseFiles: FC<Props> = ({ files }) => {
-  const { formatMessage } = useIntl()
-
   if (!files || files.length < 1) {
     return null
   }
@@ -28,7 +25,7 @@ const ParentCaseFiles: FC<Props> = ({ files }) => {
         <AccordionItem
           id="parentCaseFiles"
           labelVariant="h3"
-          label={`${formatMessage(m.heading)} (${files.length})`}
+          label={`${m.heading} (${files.length})`}
         >
           {files.map((file, index) => (
             <Box key={`${file.id}-${index}`} marginTop={3}>

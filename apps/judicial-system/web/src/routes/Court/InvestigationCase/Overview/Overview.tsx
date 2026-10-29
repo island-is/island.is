@@ -100,11 +100,13 @@ const Overview = () => {
         {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(
-                icCourtOverview.sections.openedByDefenderAlert.title,
-              )}
+              title={icCourtOverview.sections.openedByDefenderAlert.title}
               message={formatMessage(
-                icCourtOverview.sections.openedByDefenderAlert.text,
+                {
+                  id: icCourtOverview.sections.openedByDefenderAlert.text,
+                  defaultMessage:
+                    icCourtOverview.sections.openedByDefenderAlert.text,
+                },
                 {
                   when: formatDate(workingCase.openedByDefender, 'PPPp'),
                 },
@@ -255,7 +257,7 @@ const Overview = () => {
           previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(icCourtOverview.continueButton.label),
+              text: icCourtOverview.continueButton.label,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

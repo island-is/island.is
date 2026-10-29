@@ -610,6 +610,113 @@ describe('BankTransferService', () => {
       expect(rowArg.scaRedirectUrl).toBe('https://blikk/sca')
     })
 
+    describe('payer bank', () => {
+      const bankAccountNumber = '053726123456'
+
+      it('stores the bank part of the account number on the row and logs the bank', async () => {
+        mockBlikkCreate()
+
+        await service.create({ ...createInput, bankAccountNumber })
+
+        const rowArg = bankTransferPaymentModel.create.mock.calls[0][0]
+        expect(rowArg.bankCode).toBe('0537')
+        expect(JSON.stringify(rowArg)).not.toContain('26123456')
+        const [update] = paymentFlowService.logPaymentFlowUpdate.mock.calls[0]
+        expect(update.reason).toBe('payment_started')
+        expect(update.logContext).toMatchObject({
+          bankCode: '0537',
+          bank: 'Íslandsbanki',
+        })
+        expect(update.metadata).not.toHaveProperty('bankCode')
+      })
+
+      // Every create path that logs: success, Blikk refusing, the row insert failing, a payer the
+      // method is not enabled for, and a payment that is terminal on create.
+      it.each<[string, () => void]>([
+        [
+          'a created transfer',
+          () =>
+            blikkClient.createPayment.mockResolvedValue({
+              id: 'prov-1',
+              status: 'PENDING',
+              scaRedirectUrl: '',
+              message: '',
+            }),
+        ],
+        [
+          'Blikk refusing the payment',
+          () =>
+            blikkClient.createPayment.mockRejectedValue(
+              new BlikkClientError('Blikk request failed (400)', 400),
+            ),
+        ],
+        [
+          'the row insert failing',
+          () => {
+            blikkClient.createPayment.mockResolvedValue({
+              id: 'prov-1',
+              status: 'PENDING',
+              scaRedirectUrl: '',
+              message: '',
+            })
+            blikkClient.cancelPayment.mockRejectedValue(new Error('down'))
+            bankTransferPaymentModel.create.mockRejectedValue(
+              new Error('insert failed'),
+            )
+          },
+        ],
+        [
+          'a payer the method is not enabled for',
+          () =>
+            paymentFlowService.isBankTransferAllowedForPayer.mockResolvedValue(
+              false,
+            ),
+        ],
+        [
+          'a payment rejected on create',
+          () =>
+            blikkClient.createPayment.mockResolvedValue({
+              id: 'prov-1',
+              status: 'REJECTED',
+              scaRedirectUrl: '',
+              message: 'declined',
+            }),
+        ],
+      ])(
+        'logs the bank but never the account number for %s',
+        async (_, arrange) => {
+          arrange()
+
+          await service
+            .create({ ...createInput, bankAccountNumber })
+            .catch(() => undefined)
+
+          const logged = [
+            logger.info,
+            logger.warn,
+            logger.error,
+            logger.debug,
+            logger.verbose,
+          ].flatMap((log) => log.mock.calls as unknown[][])
+          const updates = paymentFlowService.logPaymentFlowUpdate.mock.calls
+          expect(logged.length + updates.length).toBeGreaterThan(0)
+          expect(JSON.stringify([logged, updates])).not.toContain('26123456')
+          for (const [, metadata] of logged) {
+            expect(metadata).toMatchObject({
+              bankCode: '0537',
+              bank: 'Íslandsbanki',
+            })
+          }
+          for (const [update] of updates) {
+            expect(update.logContext).toMatchObject({
+              bankCode: '0537',
+              bank: 'Íslandsbanki',
+            })
+          }
+        },
+      )
+    })
+
     describe('company payer', () => {
       const companyFlow = {
         id: 'flow-1',
@@ -641,6 +748,8 @@ describe('BankTransferService', () => {
         expect(logger.warn).toHaveBeenCalledWith(expect.any(String), {
           paymentFlowId: 'flow-1',
           payerType: BankTransferPayerType.COMPANY,
+          bankCode: '1234',
+          bank: '1234',
         })
       })
 
@@ -1100,6 +1209,31 @@ describe('BankTransferService', () => {
           return [1]
         },
       )
+
+    // Completion and failure rates per bank come from these two lines.
+    it.each<[string, BankTransferStatus, string]>([
+      ['payment_completed', BankTransferStatus.SUCCESS, 'SUCCESS'],
+      ['payment_failed', BankTransferStatus.REJECTED, 'REJECTED'],
+    ])(
+      'logs %s with the bank stored on the row',
+      async (reason, status, rawStatus) => {
+        bankTransferPaymentModel.findOne.mockResolvedValue({
+          ...activeRow,
+          bankCode: '2200',
+        })
+        mockGetPayment(status, rawStatus)
+
+        await service.verify({ providerPaymentId: 'prov-1' })
+
+        const update = paymentFlowService.logPaymentFlowUpdate.mock.calls
+          .map(([call]) => call)
+          .find((call) => call.reason === reason)
+        expect(update.logContext).toMatchObject({
+          bankCode: '2200',
+          bank: 'indó',
+        })
+      },
+    )
 
     it('looks up the active row by providerPaymentId, falling back to paymentFlowId', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)

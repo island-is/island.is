@@ -1,6 +1,5 @@
 import type { ChangeEvent, FC, FocusEvent } from 'react'
 import { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
 import { DatePicker, Input } from '@island.is/island-ui/core'
@@ -51,8 +50,6 @@ const DateTime: FC<Props> = ({
   defaultTime = '',
   onChange,
 }) => {
-  const { formatMessage } = useIntl()
-
   const getTimeFromDate = (date: Date | undefined): string =>
     date
       ? `${date.getHours().toString().padStart(2, '0')}:${date
@@ -214,8 +211,8 @@ const DateTime: FC<Props> = ({
             value={currentTime}
             data-testid={`${name}-time`}
             name={`${name}-time`}
-            label={timeLabel ?? formatMessage(strings.timeLabel)}
-            placeholder={formatMessage(strings.timePlaceholder)}
+            label={timeLabel ?? strings.timeLabel}
+            placeholder={strings.timePlaceholder}
             errorMessage={timeErrorMessage}
             hasError={timeErrorMessage !== undefined}
             icon={locked ? { name: 'lockClosed', type: 'outline' } : undefined}

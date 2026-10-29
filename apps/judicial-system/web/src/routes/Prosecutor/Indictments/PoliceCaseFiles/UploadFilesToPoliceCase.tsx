@@ -158,9 +158,9 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
         name="fileUpload"
         files={uploadFiles}
         accept="application/pdf"
-        title={formatMessage(strings.inputFileUpload.header)}
-        description={formatMessage(strings.inputFileUpload.description)}
-        buttonLabel={formatMessage(strings.inputFileUpload.buttonLabel)}
+        title={strings.inputFileUpload.header}
+        description={strings.inputFileUpload.description}
+        buttonLabel={strings.inputFileUpload.buttonLabel}
         onChange={(files) =>
           handleUpload(
             addUploadFiles(files, {

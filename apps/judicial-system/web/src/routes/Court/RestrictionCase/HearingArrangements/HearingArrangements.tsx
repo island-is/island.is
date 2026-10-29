@@ -159,12 +159,12 @@ export const HearingArrangements = () => {
       />
       <FormContentContainer>
         <ArraignmentAlert />
-        <PageTitle>{formatMessage(m.title)}</PageTitle>
+        <PageTitle>{m.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.requestedCourtDate.title)}
+              {m.sections.requestedCourtDate.title}
             </Text>
           </Box>
           <Box marginBottom={3}>
@@ -179,14 +179,10 @@ export const HearingArrangements = () => {
         </Box>
         <Box component="section" marginBottom={8} className={stack({ gap: 3 })}>
           <SectionHeading
-            title={formatMessage(
-              defenderInfo.restrictionCases.sections.defender.title,
-            )}
+            title={defenderInfo.restrictionCases.sections.defender.title}
             tooltip={
               <Tooltip
-                text={formatMessage(
-                  defenderInfo.restrictionCases.sections.defender.tooltip,
-                )}
+                text={defenderInfo.restrictionCases.sections.defender.tooltip}
                 placement="right"
               />
             }
