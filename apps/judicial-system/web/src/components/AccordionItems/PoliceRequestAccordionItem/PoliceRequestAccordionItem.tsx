@@ -100,10 +100,7 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
       <AccordionListItem title="Dómkröfur">
         <Text>{workingCase.demands}</Text>
       </AccordionListItem>
-      <AccordionListItem
-        title={lawsBrokenAccordion.heading}
-        breakSpaces
-      >
+      <AccordionListItem title={lawsBrokenAccordion.heading} breakSpaces>
         <Text>{workingCase.lawsBroken}</Text>
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði sem krafan er byggð á" breakSpaces>

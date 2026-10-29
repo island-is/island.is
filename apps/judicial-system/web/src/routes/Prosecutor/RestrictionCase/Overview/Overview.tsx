@@ -418,9 +418,7 @@ export const Overview = () => {
               },
             ]}
             errorMessage={
-              sendNotificationError
-                ? errors.sendNotification
-                : undefined
+              sendNotificationError ? errors.sendNotification : undefined
             }
           />
         )}

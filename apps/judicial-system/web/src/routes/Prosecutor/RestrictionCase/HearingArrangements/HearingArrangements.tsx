@@ -217,9 +217,7 @@ export const HearingArrangements = () => {
           ]}
           onClose={() => setNavigateTo(undefined)}
           errorMessage={
-            sendNotificationError
-              ? errors.sendNotification
-              : undefined
+            sendNotificationError ? errors.sendNotification : undefined
           }
         />
       )}

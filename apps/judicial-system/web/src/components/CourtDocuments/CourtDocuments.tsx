@@ -116,12 +116,16 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
             </Text>
           </Box>
           <div className={styles.firstCourtDocument}>
-            <Text marginBottom={[1, 1, 1, 0]}>
-              {courtDocuments.text}
-            </Text>
+            <Text marginBottom={[1, 1, 1, 0]}>{courtDocuments.text}</Text>
             <Box component="span">
               <Tag variant="darkerBlue" outlined disabled>
-                {formatMessage({ id: courtDocuments.tag, defaultMessage: courtDocuments.tag }, { index: 1 })}
+                {formatMessage(
+                  {
+                    id: courtDocuments.tag,
+                    defaultMessage: courtDocuments.tag,
+                  },
+                  { index: 1 },
+                )}
               </Tag>
             </Box>
           </div>
@@ -159,9 +163,15 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
                     <Tag variant="darkerBlue" outlined disabled>
                       {
                         // +2 because index is zero based and "Krafa um ..." is number 1
-                        formatMessage({ id: courtDocuments.tag, defaultMessage: courtDocuments.tag }, {
-                          index: index + 2,
-                        })
+                        formatMessage(
+                          {
+                            id: courtDocuments.tag,
+                            defaultMessage: courtDocuments.tag,
+                          },
+                          {
+                            index: index + 2,
+                          },
+                        )
                       }
                     </Tag>
                   </Box>
