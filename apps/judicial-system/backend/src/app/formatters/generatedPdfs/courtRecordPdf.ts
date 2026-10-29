@@ -16,7 +16,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
-import { courtRecord, icuMessage } from '../../messages'
+import { courtRecord, formatIcuMessage } from '../../messages'
 import { Case } from '../../modules/repository'
 import {
   addCoatOfArms,
@@ -37,7 +37,7 @@ export const formatCourtEndDate = (
   courtEndTime?: Date,
 ): string => {
   return courtEndTime
-    ? formatMessage(icuMessage(courtRecord.signOff), {
+    ? formatIcuMessage(courtRecord.signOff, {
         endDate:
           courtStartDate && isSameDay(courtStartDate, courtEndTime)
             ? 'NONE'
@@ -83,14 +83,14 @@ const constructRestrictionCourtRecordPdf = (
   setLineGap(doc, 30)
   addMediumHeading(
     doc,
-    formatMessage(icuMessage(courtRecord.caseNumber), {
+    formatIcuMessage(courtRecord.caseNumber, {
       caseNumber: theCase.courtCaseNumber,
     }),
   )
   setLineGap(doc, 1)
   addNormalJustifiedText(
     doc,
-    formatMessage(icuMessage(courtRecord.intro), {
+    formatIcuMessage(courtRecord.intro, {
       courtDate: capitalize(
         formatDate(theCase.courtStartDate, 'eeee d. MMMM yyyy')?.replace(
           'dagur',
@@ -130,7 +130,7 @@ const constructRestrictionCourtRecordPdf = (
   )
   addNormalJustifiedText(
     doc,
-    `${formatMessage(icuMessage(courtRecord.defendantIs), {
+    `${formatIcuMessage(courtRecord.defendantIs, {
       suffix: theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
       isSuffix: theCase.defendants && theCase.defendants.length > 1 ? 'u' : '',
     })}${
@@ -169,7 +169,7 @@ const constructRestrictionCourtRecordPdf = (
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    `${formatMessage(icuMessage(courtRecord.courtDocuments.request), {
+    `${formatIcuMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
     })} ${formatMessage(courtRecord.courtDocuments.announcement)}`,
     'Times-Roman',
@@ -178,7 +178,7 @@ const constructRestrictionCourtRecordPdf = (
   theCase.courtDocuments?.forEach((courtDocument, index) =>
     addNormalJustifiedText(
       doc,
-      formatMessage(icuMessage(courtRecord.courtDocuments.other), {
+      formatIcuMessage(courtRecord.courtDocuments.other, {
         documentName: courtDocument.name,
         documentNumber: index + 2,
         submittedBy: courtDocument.submittedBy,
@@ -217,7 +217,7 @@ const constructRestrictionCourtRecordPdf = (
     addEmptyLines(doc)
     addNormalJustifiedText(
       doc,
-      formatMessage(icuMessage(courtRecord.registrarWitness), {
+      formatIcuMessage(courtRecord.registrarWitness, {
         registrarNameAndTitle: `${theCase.registrar.name} ${lowercase(
           theCase.registrar.title,
         )}`,
@@ -237,7 +237,7 @@ const constructRestrictionCourtRecordPdf = (
   addFooter(
     doc,
     completedRequestCaseStates.includes(theCase.state) && user
-      ? formatMessage(icuMessage(courtRecord.smallPrint), {
+      ? formatIcuMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name || 'NONE',
           date: formatDate(nowFactory(), 'PPPp'),
@@ -290,14 +290,14 @@ const constructInvestigationCourtRecordPdf = (
   setLineGap(doc, 30)
   addMediumHeading(
     doc,
-    formatMessage(icuMessage(courtRecord.caseNumber), {
+    formatIcuMessage(courtRecord.caseNumber, {
       caseNumber: theCase.courtCaseNumber,
     }),
   )
   setLineGap(doc, 1)
   addNormalJustifiedText(
     doc,
-    formatMessage(icuMessage(courtRecord.intro), {
+    formatIcuMessage(courtRecord.intro, {
       courtDate: capitalize(
         formatDate(theCase.courtStartDate, 'eeee d. MMMM yyyy')?.replace(
           'dagur',
@@ -337,7 +337,7 @@ const constructInvestigationCourtRecordPdf = (
   )
   addNormalJustifiedText(
     doc,
-    `${formatMessage(icuMessage(courtRecord.defendantIs), {
+    `${formatIcuMessage(courtRecord.defendantIs, {
       suffix: theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
       isSuffix: theCase.defendants && theCase.defendants.length > 1 ? 'u' : '',
     })}${
@@ -376,7 +376,7 @@ const constructInvestigationCourtRecordPdf = (
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    `${formatMessage(icuMessage(courtRecord.courtDocuments.request), {
+    `${formatIcuMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
     })} ${formatMessage(courtRecord.courtDocuments.announcement)}`,
     'Times-Roman',
@@ -385,7 +385,7 @@ const constructInvestigationCourtRecordPdf = (
   theCase.courtDocuments?.forEach((courtDocument, index) =>
     addNormalJustifiedText(
       doc,
-      formatMessage(icuMessage(courtRecord.courtDocuments.other), {
+      formatIcuMessage(courtRecord.courtDocuments.other, {
         documentName: courtDocument.name,
         documentNumber: index + 2,
         submittedBy: courtDocument.submittedBy,
@@ -430,7 +430,7 @@ const constructInvestigationCourtRecordPdf = (
     addEmptyLines(doc)
     addNormalJustifiedText(
       doc,
-      formatMessage(icuMessage(courtRecord.registrarWitness), {
+      formatIcuMessage(courtRecord.registrarWitness, {
         registrarNameAndTitle: `${theCase.registrar.name} ${lowercase(
           theCase.registrar.title,
         )}`,
@@ -450,7 +450,7 @@ const constructInvestigationCourtRecordPdf = (
   addFooter(
     doc,
     completedRequestCaseStates.includes(theCase.state) && user
-      ? formatMessage(icuMessage(courtRecord.smallPrint), {
+      ? formatIcuMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name || 'NONE',
           date: formatDate(nowFactory(), 'PPPp'),

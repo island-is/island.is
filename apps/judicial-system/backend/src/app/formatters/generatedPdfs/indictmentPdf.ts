@@ -11,7 +11,7 @@ import {
 import { sortIndictmentCounts } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
-import { icuMessage, indictment } from '../../messages'
+import { formatIcuMessage, indictment } from '../../messages'
 import { Case, CaseString } from '../../modules/repository'
 import {
   addEmptyLines,
@@ -153,7 +153,7 @@ export const createIndictment = async (
   addEmptyLines(doc, 2)
   addNormalPlusCenteredText(
     doc,
-    formatMessage(icuMessage(indictment.signature), {
+    formatIcuMessage(indictment.signature, {
       prosecutorsOfficeName:
         lowercase(theCase.prosecutorsOffice?.name)
           .replace('lögreglustjórinn', 'lögreglustjórans')

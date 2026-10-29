@@ -1,7 +1,14 @@
-import type { MessageDescriptor } from '@formatjs/intl'
+import { IntlMessageFormat } from 'intl-messageformat'
 
-/** Nest formatMessage only interpolates MessageDescriptors, not plain strings. */
-export const icuMessage = (message: string): MessageDescriptor => ({
-  id: message,
-  defaultMessage: message,
-})
+/**
+ * Interpolate an ICU message template without looking it up in the CMS
+ * catalog (avoids MISSING_TRANSLATION warnings from Nest FormatMessage).
+ */
+export const formatIcuMessage = (
+  message: string,
+  values?: Record<string, unknown>,
+): string => {
+  const formatted = new IntlMessageFormat(message, 'is').format(values)
+
+  return typeof formatted === 'string' ? formatted : formatted.join('')
+}
