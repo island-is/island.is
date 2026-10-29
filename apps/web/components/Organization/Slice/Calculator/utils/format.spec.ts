@@ -76,11 +76,12 @@ describe('formatOutputValue', () => {
     ).toBe('hali')
   })
 
-  /* Handed to `new Date(...)` the contract's `yyyy-MM-dd` would be read as UTC
-   * midnight and shift the day backwards for any viewer west of Greenwich. */
   it('renders a date without shifting the day', () => {
     const formatted = formatOutputValue(
-      { type: TaxCalculatorOutputFieldType.Date, stringValue: '2026-03-14' },
+      {
+        type: TaxCalculatorOutputFieldType.Date,
+        dateValue: new Date('2026-03-14T00:00:00.000Z'),
+      },
       undefined,
       'is',
     )
