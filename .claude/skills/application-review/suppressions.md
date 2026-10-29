@@ -70,3 +70,9 @@ reporting; a finding that fits one is dropped.
   translators a multi-line editor in Contentful. When the text renders as
   plain `preLine`, do not propose dropping it; at most, note that other
   markdown would show raw.
+- **O. The applicant chooses the reviewer.** In many templates the
+  applicant names who reviews (the buyer, the employer, a co-owner). That
+  is by design: the receiving institution verifies the reviewer. Do not
+  flag that a reviewer's identity comes from the applicant's answers. Do
+  flag the applicant becoming their own reviewer, and anyone changing a
+  reviewer's identity or approval after assignment (S10).

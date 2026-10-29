@@ -35,7 +35,7 @@ line number if the code has moved. Abbreviations:
 - **A SUBMIT validation error shows only as a toast.** Field errors are
   parsed from update errors only (`ui-shell/src/components/Screen.tsx:254-256`).
 - **`answerValidators` run server-side on the untrimmed payload, before
-  merge** (VAL:188-191). They are deprecated; use zod.
+  merge** (VAL:229-232). They are deprecated; use zod.
 - **Zod custom messages are translated only from a namespaced descriptor**
   (`params: m.x`, id `namespace:key`).
 - **Enforce consent in the schema,** not in controller `rules`.
@@ -79,17 +79,36 @@ line number if the code has moved. Abbreviations:
 ## Access
 
 - **Delegated users act as the subject.** `mapUserToRole` and `cond`
-  receive the subject's kennitala, never the actor's (VAL:142; ACT:148).
-- **`mapUserToRole` decides who acts** (VAL:142-186). Return a role only for a
+  receive the subject's kennitala, never the actor's (VAL:183; ACT:148).
+- **`mapUserToRole` decides who acts** (VAL:183-227). Return a role only for a
   user who should act on the application, and `undefined` for everyone
   else. The role must exist in every state the user can reach, or the user
   gets no form (see Client).
-- **A role's `actions` define buttons.** Restrict an event to one party with
-  a `cond` over `event.nationalId`, or over data the server wrote. An event
-  outside the state's `on` is a plain `Error`, which becomes a 500
-  (ATH:154-161).
+- **A role's `actions` define its buttons and the events it may send.**
+  SUBMIT returns 403 for an event outside the role's `actions` in the stored
+  state, unless the `applicationSystemDisableEventPermissionCheck` flag is
+  on (VAL:130-169; CTRL:790; #24214). Several parties may hold the same
+  role, so restrict an event to one party with a `cond` over
+  `event.nationalId`, or over data the server wrote. An event outside the
+  state's `on` is a plain `Error`, which becomes a 500 (ATH:154-161).
 - **Role `write.answers` / `read.answers` match top-level keys only**
-  (VAL:169-185). A dotted path never matches.
+  (VAL:210-226). A dotted path never matches.
+- **Write access is separate from `actions`.** UPDATE checks the caller's
+  `write` list for the current state and nothing else (CTRL:603-667,
+  VAL:171-227). A role with no buttons in a state can still change every
+  key it may write. Removing an action does not remove write access.
+- **A writable array is writable in full.** A role that may write a
+  top-level array may add, remove or change any entry, including entries
+  that describe another party (their kennitala, `approved` flag or
+  consent). Write access cannot be scoped to "my entry".
+- **Only server-side code knows the caller.** `answerValidators` receive
+  `(newAnswer, application)`, not the user
+  (`libs/application/types/src/lib/AnswerValidator.ts`), so they cannot
+  enforce who changes a value. The caller is known to `cond` and `assign`
+  as `event.nationalId` (ACT:148), and to template-api actions as `auth`.
+  The client cannot write `externalData`: the update and submit DTOs take
+  only `answers`, and the externalData endpoint takes provider ids. Data a
+  server action wrote there can be trusted.
 - **`read: 'all'` or `write: 'all'` sends every answer and all of
   externalData to that role's browser** (ATH:196-197). Give it only to a
   party who may see all of it. Treat row fields such as `applicantActors`
@@ -102,7 +121,7 @@ line number if the code has moved. Abbreviations:
 - **A data provider needs two permissions:** its `actionId` in the role's
   `api` list (CTRL:711-725, first match wins), and its resolved
   `externalDataId` in `write.externalData`, unless `write: 'all'`
-  (VAL:220-242).
+  (VAL:261-283).
 - **Delegations are rejected unless the template declares
   `allowedDelegations`.** That setting is template-wide, not per state.
   Custom delegations also need `requiredScopes`.

@@ -13,6 +13,15 @@ apply S1. For each state, list:
 - the actions;
 - the `on` events.
 
+In states where more than one party has a role, add two columns for S10.
+Fill them only for keys whose write access the diff changes, and for keys
+that hold a party's identity, approval or consent:
+
+- **whose it is:** the party the value describes or decides for (the
+  applicant's sale data, the buyer's insurance, a co-owner's approval);
+- **who trusts it on the server:** `mapUserToRole`, `assignees`, a `cond`,
+  the submit mapper, or notifications.
+
 Then read `mapUserToRole` and note which conditions decide each role. If it
 ignores `application.state`, every role it can return applies in **every**
 state, including `draft` after EDIT or REJECT,
@@ -165,6 +174,10 @@ Read the gaps from the matrix.
   - **A transition meant for one party** (applicant-only SUBMIT,
     assignee-only APPROVE) with no `cond` enforcing it. Use a `cond` over
     `event.nationalId` or server-written data.
+  - **"Everyone approved" decided in the browser:** a form that picks the
+    event from answers (last reviewer → SUBMIT, otherwise APPROVE), with
+    no `cond` that checks the same on the server.
+  - **Not here:** who may write another party's answers belongs to S10.
 - **Severity:** high.
 - **Precedent:** #23188, #22375.
 
@@ -231,3 +244,50 @@ Read the gaps from the matrix.
     notifies. It re-runs.
 - **Severity:** high when external side effects or live applications are
   affected; medium otherwise.
+
+## S10. One party writes another's answers
+
+Only the top-level key is checked, and every write list applies on UPDATE
+whether or not the role has buttons (see framework-rules, Access). Use the
+"whose it is" column of the matrix.
+
+- **Flag:**
+  - **Another party's data:** in a state where several parties act, a role
+    whose write list holds a key that belongs to another party. Examples:
+    a reviewer who can write the applicant's sale data (price, mileage,
+    dates); an applicant who can write a reviewer's details or approval
+    during review; one reviewer who can write another's entry.
+  - **Shared arrays of parties:** per-party entries (identity, approval,
+    consent) kept in one array that more than one party may write.
+  - **`write: 'all'` on a non-applicant role:** it can rewrite everything
+    the applicant entered before the institution receives it. (What the
+    role can _see_ belongs to SE2.)
+  - **Writing what is being approved:** the applicant keeps write access to
+    data in a state where another party approves it. The approval then
+    covers values that can change afterwards.
+  - **Identity answers trusted later:** a kennitala in answers that
+    becomes an assignee, decides a role in `mapUserToRole`, or is sent to
+    the institution as a party or approver, while some role can still
+    change it after the party was assigned. Also a value prefilled from
+    the registry and read-only only in the UI, which the server then
+    reads from answers instead of `externalData`.
+  - **Self-assignment:** an identity answer that becomes an assignee with
+    no server check that it differs from `application.applicant`, or a
+    `mapUserToRole` that checks assignees before the applicant. Flag it
+    unless the template README's `## Decisions` allows self-review.
+  - **A fix that removes a button but not the write access:** an action
+    removed from a role while its write list in that state is unchanged.
+- **Not here:**
+  - approvals read by a transition `cond`, and events any party can send
+    (S6);
+  - the applicant choosing who reviews (Suppressions O);
+  - a party writing its own entry, as long as no other party can;
+  - server code acting on a kennitala from answers (SE1).
+- **Fix:**
+  - Narrow the write list to the keys the role owns.
+  - Move per-party data out of shared arrays into a key per party.
+  - Decide approvals in a `cond` over `event.nationalId`, or over data a
+    server action wrote.
+- **Severity:** high when another party's identity or approval, or data
+  sent to the institution, can change. Medium otherwise.
+- **Precedent:** #24214 (the event side of the same boundary).

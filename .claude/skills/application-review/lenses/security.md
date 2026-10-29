@@ -13,6 +13,8 @@ These checks live in other lenses. Do not repeat them here:
 - S4: payment checks and amounts taken from answers;
 - S6: the trust boundary (client flags, approvals in answers, single-party
   transitions);
+- S10: one party writing another party's answers, `write: 'all'` on a
+  non-applicant role, and self-assignment;
 - T4: personal data in logs and URLs;
 - T6: file types and sizes forwarded to institutions;
 - SC7: resolvers without `@Scopes`;
@@ -190,5 +192,7 @@ looks at them even when no check fired:
 - a new category of personal data stored;
 - a new upload handler;
 - a new role with `read` or `write: 'all'`;
+- a key added to a non-applicant role's write list, or to the applicant's
+  write list in a state where another party acts;
 - a new delegation type;
 - a change to `adminDataConfig` or lifecycle retention.
