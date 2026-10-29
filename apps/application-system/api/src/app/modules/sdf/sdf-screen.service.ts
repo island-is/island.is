@@ -132,6 +132,13 @@ function getScreenSubmitField(
   return undefined
 }
 
+const isExternalDataProviderScreen = (
+  screen: FormScreen | undefined,
+): screen is ExternalDataProviderScreen =>
+  !!screen &&
+  'type' in screen &&
+  screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
+
 interface ScreenRenderContext {
   application: ApplicationWithAttachments
   /**
@@ -868,48 +875,15 @@ export class SdfScreenService {
         ? [...application.applicantActors, user.actor.nationalId]
         : application.applicantActors
 
-    if (
-      currentScreen &&
-      'type' in currentScreen &&
-      currentScreen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
-    ) {
-      const edpScreen = currentScreen as ExternalDataProviderScreen
-      const dataProviders = edpScreen.dataProviders ?? []
-      const relevantProviders = dataProviders.filter((p) => p.action)
-
-      if (relevantProviders.length > 0) {
-        const apisFromRole = roleInState.api ?? []
-
-        const templateApis = relevantProviders
-          .map((p) => apisFromRole.find((a) => a.actionId === p.action))
-          .filter(Boolean) as TemplateApi[]
-
-        if (templateApis.length > 0) {
-          this.assertApisWritePermitted(
-            application as Application,
-            user,
-            roleInState,
-            templateApis,
-          )
-
-          const result =
-            await this.applicationActionService.performActionOnApplication(
-              application,
-              template,
-              user,
-              templateApis,
-              locale,
-              'SUBMIT',
-            )
-          if (result.hasError) {
-            throw new Error(
-              typeof result.error === 'string'
-                ? result.error
-                : 'Failed to fetch external data',
-            )
-          }
-        }
-      }
+    if (isExternalDataProviderScreen(currentScreen)) {
+      await this.runScreenDataProviders(
+        currentScreen,
+        application,
+        template,
+        roleInState,
+        user,
+        locale,
+      )
 
       const newPageIndex = await this.resolveAdvancedPageIndex(
         application,
@@ -1074,6 +1048,51 @@ export class SdfScreenService {
     return this.getScreen(applicationId, undefined, locale, user)
   }
 
+  /**
+   * Runs the providers that the data-provider `screen` declares and the role
+   * may run, and returns whether any ran. Throws if one fails.
+   */
+  private async runScreenDataProviders(
+    screen: ExternalDataProviderScreen,
+    application: ApplicationWithAttachments,
+    template: ApplicationTemplate,
+    roleInState: RoleInState,
+    user: User,
+    locale: Locale,
+  ): Promise<boolean> {
+    const apisFromRole = roleInState.api ?? []
+    const templateApis = (screen.dataProviders ?? [])
+      .filter((p) => p.action)
+      .map((p) => apisFromRole.find((a) => a.actionId === p.action))
+      .filter(Boolean) as TemplateApi[]
+    if (templateApis.length === 0) return false
+
+    this.assertApisWritePermitted(
+      application as Application,
+      user,
+      roleInState,
+      templateApis,
+    )
+
+    const result =
+      await this.applicationActionService.performActionOnApplication(
+        application,
+        template,
+        user,
+        templateApis,
+        locale,
+        'SUBMIT',
+      )
+    if (result.hasError) {
+      throw new Error(
+        typeof result.error === 'string'
+          ? result.error
+          : 'Failed to fetch external data',
+      )
+    }
+    return true
+  }
+
   private async validateScreenAnswers(
     currentScreen: FormScreen | undefined,
     template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
@@ -1159,13 +1178,8 @@ export class SdfScreenService {
 
     const template = await getApplicationTemplateByTypeId(application.typeId)
 
-    const role = template.mapUserToRole(
-      user.nationalId,
-      application as Application,
-    )
-    if (!role) {
-      throw new ForbiddenException('Access denied')
-    }
+    const roleInState = this.resolveRoleInState(application, template, user)
+    const role = roleInState.id
 
     const writableAnswers = this.dropUnwritableAnswers(
       application,
@@ -1212,6 +1226,19 @@ export class SdfScreenService {
       return screen
     }
 
+    // A data-provider screen can be the last one, left with SUBMIT instead of
+    // NEXT_PAGE, so its providers run here too.
+    const ranDataProviders = isExternalDataProviderScreen(currentScreen)
+      ? await this.runScreenDataProviders(
+          currentScreen,
+          application,
+          template,
+          roleInState,
+          user,
+          locale,
+        )
+      : false
+
     const hasAnswers = Object.keys(writableAnswers).length > 0
     const actorToRecord = isNewActor(application, user)
       ? user.actor?.nationalId
@@ -1225,6 +1252,8 @@ export class SdfScreenService {
           applicantActors: [...application.applicantActors, actorToRecord],
         }),
       })
+    }
+    if (hasAnswers || actorToRecord || ranDataProviders) {
       application = await this.requireApplicationForUser(applicationId, user)
     }
 

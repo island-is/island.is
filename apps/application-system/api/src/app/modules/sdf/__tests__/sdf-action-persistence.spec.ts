@@ -902,6 +902,40 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       stateChanges: [{ answers: {}, event: SUBMIT_EVENT }],
     },
     {
+      // A data-provider screen can be the last one, so SUBMIT runs its
+      // providers before the state change. Only those the screen declares.
+      label: 'from a data-provider screen',
+      form: dataProviderThenPageForm,
+      dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
+      saves: [{ pageIndex: 0 }],
+      persistingActions: [
+        {
+          actions: [providerApi.action],
+          event: DefaultEvents.SUBMIT,
+          answers: {},
+        },
+      ],
+      ephemeralActions: [],
+      stateChanges: [{ answers: {}, event: SUBMIT_EVENT }],
+    },
+    {
+      label: 'from a data-provider screen when the provider fails',
+      form: dataProviderThenPageForm,
+      persistingActionResult: providerFailed,
+      dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
+      rejects: { message: /Provider failed/ },
+      saves: [],
+      persistingActions: [
+        {
+          actions: [providerApi.action],
+          event: DefaultEvents.SUBMIT,
+          answers: {},
+        },
+      ],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
       label: 'that fails validation',
       form: twoPageForm,
       dataSchema: strictSchema,
