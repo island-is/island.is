@@ -10,6 +10,7 @@ import {
   ExtensionPublishedVerdictApi,
   ExtensionPublishedBookingApi,
   ExtensionLawyerApi,
+  ExtensionPublishedCaseApi,
   ExternalIntegrationAPISecurityApi,
 } from '../../gen/fetch/gopro'
 import {
@@ -140,6 +141,7 @@ export class VerdictsClientService {
     private readonly supremeCourtApi: DefaultApi,
     private readonly goproCourtAgendasApi: ExtensionPublishedBookingApi,
     private readonly goproLawyersApi: ExtensionLawyerApi,
+    private readonly goproCaseApi: ExtensionPublishedCaseApi,
     private readonly goproAuthenticationApi: ExternalIntegrationAPISecurityApi,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -164,6 +166,7 @@ export class VerdictsClientService {
       goproCourtAgendasApi:
         this.goproCourtAgendasApi.withMiddleware(middleware),
       goproLawyersApi: this.goproLawyersApi.withMiddleware(middleware),
+      goproCaseApi: this.goproCaseApi.withMiddleware(middleware),
     }
   }
 
@@ -846,6 +849,33 @@ export class VerdictsClientService {
           appealPolicyDate: item.appealPolicyDate,
           registrationDate: item.registrationDate,
           verdictDate: item.verdictDate,
+        })),
+      input,
+    }
+  }
+
+  async getCourtOfAppealAppeals(input: { page: number }) {
+    const { goproCaseApi } = await this.getAuthenticatedGoproApis()
+    const response = await goproCaseApi.getPublishedAppealCasesV2({
+      pageNumber: input.page ?? 1,
+      itemsPerPage: ITEMS_PER_PAGE,
+      orderBy: 'publishdate',
+      orderDirection: 'desc',
+    })
+
+    return {
+      total: response.total ?? 0,
+      items: (response.items ?? [])
+        .filter((item) => Boolean(item.recordId) && Boolean(item.caseNumber))
+        .map((item) => ({
+          id: item.recordId as string,
+          title: (item.caseTitleRaw ?? '').replace(/\s+/g, ' ').trim(),
+          caseNumber: item.caseNumber as string,
+          status: item.status || null,
+          appealDate:
+            item.appealDate && isValidDate(item.appealDate)
+              ? item.appealDate.toISOString()
+              : null,
         })),
       input,
     }
