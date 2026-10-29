@@ -38,7 +38,6 @@ export const testDefender = {
   nationalId: '0909090909',
 }
 
-// Selects the test defender in an InputAdvocate lawyer combobox.
 // Picks the test defender in the lawyer registry combobox. A screen with one
 // combobox per defendant passes the defendant's section as the scope.
 export const selectTestDefender = async (
