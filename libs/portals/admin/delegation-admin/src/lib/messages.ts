@@ -244,6 +244,10 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:filterDomainAll',
     defaultMessage: 'Allar stofnanir',
   },
+  filterTypeAll: {
+    id: 'admin.delegationAdmin:filterTypeAll',
+    defaultMessage: 'Allar tegundir',
+  },
   filterClient: {
     id: 'admin.delegationAdmin:filterClient',
     defaultMessage: 'Forrit',

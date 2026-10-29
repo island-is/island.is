@@ -134,16 +134,29 @@ const appliesToClient = (delegation: DelegationView, clientId: string) =>
     ? !!delegation.loginClientIds?.includes(clientId)
     : !!delegation.clientIds?.includes(clientId)
 
+/** Guardianship of minors and older children is one type to staff. */
+export const delegationTypeGroup = (type: AuthDelegationType) =>
+  type === AuthDelegationType.LegalGuardianMinor
+    ? AuthDelegationType.LegalGuardian
+    : type
+
 export const filterDelegations = (
   delegations: DelegationView[],
   {
     status,
     clientId,
     domainName,
-  }: { status: DelegationStatusFilter; clientId?: string; domainName?: string },
+    type,
+  }: {
+    status: DelegationStatusFilter
+    clientId?: string
+    domainName?: string
+    type?: AuthDelegationType
+  },
 ) =>
   delegations.filter(
     (d) =>
+      (!type || delegationTypeGroup(d.type) === type) &&
       (status === 'all' || (status === 'active') === d.isActive) &&
       (!clientId || appliesToClient(d, clientId)) &&
       (!domainName || d.domain?.name === domainName),

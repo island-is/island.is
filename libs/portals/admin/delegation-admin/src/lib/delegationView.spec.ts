@@ -55,4 +55,26 @@ describe('filterDelegations', () => {
       ),
     ).toEqual(['expired'])
   })
+
+  it('filters by type, treating guardianship of minors as guardianship', () => {
+    const guardian = delegation({
+      id: 'guardian',
+      type: AuthDelegationType.LegalGuardian,
+    })
+    const guardianMinor = delegation({
+      id: 'guardian-minor',
+      type: AuthDelegationType.LegalGuardianMinor,
+    })
+    const procuration = delegation({
+      id: 'procuration',
+      type: AuthDelegationType.ProcurationHolder,
+    })
+
+    expect(
+      filterDelegations([guardian, guardianMinor, procuration], {
+        status: 'all',
+        type: AuthDelegationType.LegalGuardian,
+      }).map((d) => d.id),
+    ).toEqual(['guardian', 'guardian-minor'])
+  })
 })

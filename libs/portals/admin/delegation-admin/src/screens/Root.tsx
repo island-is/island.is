@@ -37,9 +37,9 @@ const Root = () => {
   const notFound = searchParams.get(NOT_FOUND_PARAM) === 'true'
 
   const isInstitutionOnly = !hasAnyDelegationAdminScope(userInfo?.scopes ?? [])
-  const canManageDelegations = userInfo?.scopes.includes(
-    AdminPortalScope.delegationSystemAdmin,
-  )
+  const canManageDelegations =
+    !isInstitutionOnly &&
+    userInfo?.scopes.includes(AdminPortalScope.delegationSystemAdmin)
 
   useEffect(() => {
     if (actionData?.errors) {

@@ -1,6 +1,9 @@
 import sortBy from 'lodash/sortBy'
+import uniq from 'lodash/uniq'
 import uniqBy from 'lodash/uniqBy'
 import { ReactNode, useState } from 'react'
+
+import { AuthDelegationType } from '@island.is/api/schema'
 
 import {
   AlertMessage,
@@ -16,6 +19,8 @@ import {
   ClientView,
   DelegationStatusFilter,
   DelegationView,
+  delegationTypeGroup,
+  delegationTypeMessage,
   filterDelegations,
 } from '../lib/delegationView'
 import { m } from '../lib/messages'
@@ -40,6 +45,7 @@ export const DelegationsResults = ({
   const [status, setStatus] = useState<DelegationStatusFilter>('all')
   const [clientId, setClientId] = useState<string>()
   const [domainName, setDomainName] = useState<string>()
+  const [type, setType] = useState<AuthDelegationType>()
 
   const statusOptions: { label: string; value: DelegationStatusFilter }[] = [
     { label: formatMessage(m.filterStatusAll), value: 'all' },
@@ -63,7 +69,16 @@ export const DelegationsResults = ({
       'displayName',
     ).map((domain) => ({ label: domain.displayName, value: domain.name })),
   ]
-  const filter = { status, clientId, domainName }
+  const typeOptions = [
+    { label: formatMessage(m.filterTypeAll), value: '' },
+    ...uniq(
+      [...incoming, ...outgoing].map((d) => delegationTypeGroup(d.type)),
+    ).map((value) => ({
+      label: formatMessage(delegationTypeMessage(value)),
+      value,
+    })),
+  ]
+  const filter = { status, clientId, domainName, type }
 
   return (
     <Stack space={6}>
@@ -91,6 +106,21 @@ export const DelegationsResults = ({
               options={clientOptions}
               value={clientOptions.find((o) => o.value === (clientId ?? ''))}
               onChange={(option) => setClientId(option?.value || undefined)}
+            />
+          </GridColumn>
+        )}
+        {typeOptions.length > 2 && (
+          <GridColumn span={FILTER_SPAN}>
+            <Select
+              name="type"
+              size="xs"
+              backgroundColor="blue"
+              label={formatMessage(m.columnType)}
+              options={typeOptions}
+              value={typeOptions.find((o) => o.value === (type ?? ''))}
+              onChange={(option) =>
+                setType((option?.value || undefined) as AuthDelegationType)
+              }
             />
           </GridColumn>
         )}

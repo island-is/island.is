@@ -54,9 +54,11 @@ export const delegationAdminModule: PortalModule = {
         path: DelegationAdminPaths.CreateDelegation,
         element: <CreateDelegationScreen />,
         action: createDelegationAction(props),
-        enabled: props.userInfo.scopes.includes(
-          AdminPortalScope.delegationSystemAdmin,
-        ),
+        enabled:
+          isAdmin &&
+          props.userInfo.scopes.includes(
+            AdminPortalScope.delegationSystemAdmin,
+          ),
       },
     ]
   },

@@ -2,7 +2,14 @@ import sortBy from 'lodash/sortBy'
 import { ReactNode, useMemo, useState } from 'react'
 import * as kennitala from 'kennitala'
 
-import { Box, Button, Stack, Table as T, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Stack,
+  Table as T,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   ExpandableRow,
@@ -126,11 +133,7 @@ export const DelegationTable = ({
                   ...(showDomain
                     ? [{ value: <DomainCell domain={delegation.domain} /> }]
                     : []),
-                  {
-                    value: formatMessage(
-                      delegationTypeMessage(delegation.type),
-                    ),
-                  },
+                  { value: <DelegationTypeCell delegation={delegation} /> },
                   { value: delegation.scopes.length || '-' },
                   {
                     value: delegation.validTo
@@ -146,15 +149,6 @@ export const DelegationTable = ({
               >
                 <Stack space={2}>
                   <DelegationScopesTable delegation={delegation} />
-                  {isIndexOnlyType(delegation.type) && (
-                    <Text variant="small">
-                      {delegation.indexedAt
-                        ? formatMessage(m.indexedAt, {
-                            date: formatDate(delegation.indexedAt),
-                          })
-                        : formatMessage(m.indexedNever)}
-                    </Text>
-                  )}
                   {renderRowActions?.(delegation)}
                 </Stack>
               </ExpandableRow>
@@ -162,6 +156,30 @@ export const DelegationTable = ({
           })}
         </T.Body>
       </T.Table>
+    </Box>
+  )
+}
+
+const DelegationTypeCell = ({ delegation }: { delegation: DelegationView }) => {
+  const { formatMessage } = useLocale()
+
+  return (
+    <Box display="flex" alignItems="center" columnGap={1}>
+      <Text variant="medium" as="span">
+        {formatMessage(delegationTypeMessage(delegation.type))}
+      </Text>
+      {isIndexOnlyType(delegation.type) && (
+        <Tooltip
+          placement="top"
+          text={
+            delegation.indexedAt
+              ? formatMessage(m.indexedAt, {
+                  date: formatDate(delegation.indexedAt),
+                })
+              : formatMessage(m.indexedNever)
+          }
+        />
+      )}
     </Box>
   )
 }
