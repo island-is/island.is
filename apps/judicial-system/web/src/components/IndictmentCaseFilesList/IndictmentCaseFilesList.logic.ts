@@ -3,11 +3,9 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
-  InstitutionType,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
-  isIndictmentPdfReplaceableState,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import type {
@@ -79,17 +77,6 @@ export const shouldShowPoliceDigitalCaseFilesSection = (
     isDistrictCourtUser(user) ||
     isCourtOfAppealsUser(user)) &&
   (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
-
-// Temporary one-off gate: only Héraðssaksóknari (district prosecutors office)
-// gets the replace control in the UI. The API is unchanged.
-export const shouldShowReplaceIndictmentPdf = (
-  workingCase: CaseFilesListCase,
-  user?: User,
-): boolean =>
-  isProsecutionUser(user) &&
-  user?.institution?.type === InstitutionType.DISTRICT_PROSECUTORS_OFFICE &&
-  isIndictmentPdfReplaceableState(workingCase.state) &&
-  Boolean(workingCase.indictmentHash)
 
 // Replacement uploads store `{ replaced: true }` in indictmentHash. Generated
 // freezes do not, so they keep the sent-to-court date in the display name.

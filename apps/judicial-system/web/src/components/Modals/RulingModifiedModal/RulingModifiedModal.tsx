@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
 import {
@@ -38,7 +37,6 @@ const RulingModifiedModal: FC<Props> = ({
   fieldToModify,
   appealCaseId,
 }) => {
-  const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { updateCase } = useCase()
   const { updateAppealCase } = useAppealCase()
@@ -94,16 +92,16 @@ const RulingModifiedModal: FC<Props> = ({
 
   return (
     <Modal
-      title={formatMessage(strings.title)}
+      title={strings.title}
       text={description}
       buttons={[
         {
-          text: formatMessage(strings.cancel),
+          text: strings.cancel,
           onClick: onCancel,
           variant: 'ghost',
         },
         {
-          text: formatMessage(strings.continue),
+          text: strings.continue,
           onClick: handleContinue,
           isLoading: continueDisabled,
           isDisabled: errorMessage !== '',
@@ -114,7 +112,7 @@ const RulingModifiedModal: FC<Props> = ({
         <Input
           id="reason"
           name="reason"
-          label={formatMessage(strings.label)}
+          label={strings.label}
           value={explanation}
           onChange={(event) => {
             handleExplanationChange(event.target.value)

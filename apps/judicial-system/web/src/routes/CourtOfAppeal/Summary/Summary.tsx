@@ -118,14 +118,14 @@ const Summary: FC = () => {
 
           <Box marginBottom={6}>
             <Conclusion
-              title={formatMessage(conclusion.title)}
+              title={conclusion.title}
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
           </Box>
           <Box marginBottom={6}>
             <Conclusion
-              title={formatMessage(conclusion.appealTitle)}
+              title={conclusion.appealTitle}
               conclusionText={targetAppealCase?.appealConclusion}
             />
           </Box>

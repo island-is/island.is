@@ -1,5 +1,4 @@
 import type { Dispatch, FC, SetStateAction } from 'react'
-import { useIntl } from 'react-intl'
 
 import { RadioButton } from '@island.is/island-ui/core'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
@@ -23,13 +22,12 @@ const RequestCaseDefenderSharing: FC<Props> = ({
   setWorkingCase,
   defendant,
 }) => {
-  const { formatMessage } = useIntl()
   const { setAndSendDefendantToServer } = useDefendants()
 
   const sections = isRestrictionCase(workingCase.type)
     ? defenderInfo.restrictionCases.sections
     : defenderInfo.investigationCases.sections
-  const requestAccessTitle = formatMessage(sections.defenderRequestAccess.title)
+  const requestAccessTitle = sections.defenderRequestAccess.title
   const hasDefender = Boolean(defendant.defenderName)
 
   const options = [
@@ -70,7 +68,7 @@ const RequestCaseDefenderSharing: FC<Props> = ({
             key={id}
             name={`defender-access-${defendant.id}`}
             id={`${id}-${defendant.id}`}
-            label={formatMessage(label)}
+            label={label}
             checked={defendant.requestSharedWithDefender === value}
             onChange={() => {
               setAndSendDefendantToServer(
