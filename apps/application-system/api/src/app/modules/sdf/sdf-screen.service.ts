@@ -1212,9 +1212,18 @@ export class SdfScreenService {
       return screen
     }
 
-    if (Object.keys(writableAnswers).length > 0) {
+    const hasAnswers = Object.keys(writableAnswers).length > 0
+    const actorToRecord = isNewActor(application, user)
+      ? user.actor?.nationalId
+      : undefined
+    if (hasAnswers || actorToRecord) {
       await this.applicationService.update(applicationId, {
-        answers: stripEmptyFormValue(submitMergedAnswers),
+        ...(hasAnswers && {
+          answers: stripEmptyFormValue(submitMergedAnswers),
+        }),
+        ...(actorToRecord && {
+          applicantActors: [...application.applicantActors, actorToRecord],
+        }),
       })
       application = await this.requireApplicationForUser(applicationId, user)
     }

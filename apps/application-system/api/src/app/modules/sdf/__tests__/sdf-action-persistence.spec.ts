@@ -865,7 +865,6 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       ],
     },
     {
-      // Unlike NEXT_PAGE, SUBMIT doesn't add the actor to applicantActors.
       label: 'by a delegated actor',
       form: twoPageForm,
       user: { actor: { nationalId: ACTOR } } as Partial<User>,
@@ -875,13 +874,23 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         answers: { field0: 'value' },
       },
       saves: [
-        { answers: { field0: 'value' } },
+        { answers: { field0: 'value' }, applicantActors: [ACTOR] },
         { pageIndex: 0 },
         { pageIndex: 1 },
       ],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: { field0: 'value' }, event: SUBMIT_EVENT }],
+    },
+    {
+      label: 'by a delegated actor, without answers',
+      form: twoPageForm,
+      user: { actor: { nationalId: ACTOR } } as Partial<User>,
+      dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
+      saves: [{ applicantActors: [ACTOR] }, { pageIndex: 0 }],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [{ answers: {}, event: SUBMIT_EVENT }],
     },
     {
       label: 'without answers',
