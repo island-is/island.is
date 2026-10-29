@@ -11,3 +11,16 @@ export const enterExitTransition: Transition = {
   duration: 0.25,
   ease: 'easeOut',
 }
+
+// One content giving way to another in the same place. It plays out and
+// then in, so each half is kept shorter than an entrance.
+export const swapTransition: Transition = {
+  duration: 0.15,
+  ease: 'easeOut',
+}
+
+// The same change of state for users who have asked for reduced motion:
+// made at once, so what opens still opens.
+export const instantTransition: Transition = {
+  duration: 0,
+}

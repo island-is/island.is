@@ -1,15 +1,15 @@
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { appealCourtSessionTypeNames } from '@island.is/judicial-system/types'
 import { getProsecutionVerdictAppealDate } from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/prosecutionVerdictAppeal.logic'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { AppealCourtSessionType } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 /**
  * Where the Court of Appeals stands with a verdict appeal.
  *
- * Frontend only for now: nothing is written anywhere, and the values below
- * exist so the screen has something to hold. When the backend learns about
- * the status these move to `@island.is/judicial-system/types` and the
- * generated GraphQL enum takes their place.
+ * Held in page state only: nothing in the backend stores the status, so the
+ * values are defined here rather than in the shared types.
  */
 export enum VerdictAppealStatus {
   STATEMENT_DEADLINE_GRANTED = 'STATEMENT_DEADLINE_GRANTED',
@@ -37,56 +37,87 @@ export const verdictAppealStatuses: VerdictAppealStatus[] = [
 ]
 
 /**
- * The sessions the Court of Appeals holds in a verdict appeal.
- *
- * Its own list rather than the district court's `CourtSessionType`: the court
- * of appeals holds three kinds of session and names the last one differently
- * (dómsuppkvaðning, not dómsuppsaga). Frontend only, like the status above.
+ * The type options the session form offers, in the order the court reads
+ * them.
  */
-export enum AppealCourtSessionType {
-  MAIN_HEARING = 'MAIN_HEARING',
-  PREPARATORY_HEARING = 'PREPARATORY_HEARING',
-  VERDICT = 'VERDICT',
-}
-
-export const appealCourtSessionTypeLabels: Record<
-  AppealCourtSessionType,
-  string
-> = {
-  [AppealCourtSessionType.MAIN_HEARING]: 'Aðalmeðferð',
-  [AppealCourtSessionType.PREPARATORY_HEARING]: 'Undirbúningsþinghald',
-  [AppealCourtSessionType.VERDICT]: 'Dómsuppkvaðning',
-}
-
 export const appealCourtSessionTypeOptions: ReactSelectOption[] = Object.values(
   AppealCourtSessionType,
 ).map((type) => ({
-  label: appealCourtSessionTypeLabels[type],
+  label: appealCourtSessionTypeNames[type],
   value: type,
 }))
 
 /**
  * One session, as the form holds it. Every field is optional because the
  * form fills them one at a time; `isAppealCourtSessionComplete` says when
- * all of them are in.
+ * all of them are in. The field names are the saved session's, so the two
+ * read alike.
  */
-export interface AppealCourtSession {
-  type?: AppealCourtSessionType
-  date?: Date
+export interface AppealCourtSessionDraft {
+  sessionType?: AppealCourtSessionType
+  sessionDate?: Date
+  // Whether the date and time fields hold a complete value. The last complete
+  // `sessionDate` is kept while the court corrects or clears the time, so
+  // that the picker does not lose the day, and so the date alone cannot say
+  // the field is filled in.
+  isSessionDateValid?: boolean
   courtRoom?: string
 }
 
 export const isAppealCourtSessionComplete = (
-  session: AppealCourtSession,
-): boolean => Boolean(session.type && session.date && session.courtRoom?.trim())
+  session: AppealCourtSessionDraft,
+): boolean =>
+  Boolean(
+    session.sessionType &&
+      session.sessionDate &&
+      session.isSessionDateValid !== false &&
+      session.courtRoom?.trim(),
+  )
+
+// Untouched, as opposed to half filled: the court can move on past an empty
+// form once a session is booked, but not past one it has started on.
+export const isAppealCourtSessionEmpty = (
+  session: AppealCourtSessionDraft,
+): boolean =>
+  !session.sessionType && !session.sessionDate && !session.courtRoom?.trim()
 
 /**
- * The lines under the page title: the court's own case number, the district
- * court's, and who appealed when.
- *
- * The case number of the appeal is the first line and the largest, because it
- * is how the court refers to the case from here on. It is left out while the
- * court has not assigned one - the step that does is not built yet.
+ * A booked session as the form holds it, so the court can change it in place.
+ * The saved date is an ISO string; the picker wants a Date.
+ */
+export const toAppealCourtSessionDraft = (session: {
+  sessionType?: AppealCourtSessionType | null
+  sessionDate?: string | null
+  courtRoom?: string | null
+}): AppealCourtSessionDraft => ({
+  sessionType: session.sessionType ?? undefined,
+  sessionDate: session.sessionDate ? new Date(session.sessionDate) : undefined,
+  courtRoom: session.courtRoom ?? undefined,
+})
+
+/**
+ * The line under a booked session's type: `12.12.2026 kl. 14:00 · Dómsalur 1`.
+ */
+export const formatAppealCourtSessionDetails = (session: {
+  sessionDate?: Date | string | null
+  courtRoom?: string | null
+}): string => {
+  const parts: string[] = []
+
+  if (session.sessionDate) {
+    parts.push(`${formatDate(session.sessionDate, "dd.MM.yyyy 'kl.' HH:mm")}`)
+  }
+
+  if (session.courtRoom?.trim()) {
+    parts.push(`Dómsalur ${session.courtRoom.trim()}`)
+  }
+
+  return parts.join(' · ')
+}
+
+/**
+ * The lines under the page title: the district court's case number and who
+ * appealed when.
  *
  * Who appealed is read per defendant, the same way the verdict timeline card
  * reads it: the defendant's own appeal is dated on their verdict, the

@@ -3,13 +3,19 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
+import { MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseNotificationType,
   AppealCaseType,
   AppealCourtSessionType,
+  type User,
 } from '@island.is/judicial-system/types'
 
 import { createTestingAppealCourtSessionModule } from './createTestingAppealCourtSessionModule'
 
+import { getOrCreateTransaction } from '../../../middleware'
+import { queueMessagesAfterCommit } from '../../../middleware/queueMessagesAfterCommit'
+import { runInRequestContext } from '../../../test'
 import {
   AppealCase,
   AppealCourtSession,
@@ -29,6 +35,7 @@ describe('AppealCourtSessionController - Create', () => {
   const caseId = uuid()
   const appealCaseId = uuid()
   const theCase = { id: caseId } as Case
+  const user = { id: uuid() } as User
   const verdictAppeal = {
     id: appealCaseId,
     appealType: AppealCaseType.VERDICT,
@@ -41,6 +48,7 @@ describe('AppealCourtSessionController - Create', () => {
   const created = { id: uuid(), ...dto } as AppealCourtSession
   const transaction = {} as Transaction
 
+  let mockTransaction: jest.Mock
   let mockAppealCourtSessionRepositoryService: AppealCourtSessionRepositoryService
   let givenWhenThen: GivenWhenThen
 
@@ -51,22 +59,43 @@ describe('AppealCourtSessionController - Create', () => {
       appealCourtSessionController,
     } = await createTestingAppealCourtSessionModule()
 
+    const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+    mockQueueMessagesAfterCommit.mockClear()
+
     mockAppealCourtSessionRepositoryService =
       appealCourtSessionRepositoryService
     const mockCreate =
       mockAppealCourtSessionRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(created)
 
-    const mockTransaction = sequelize.transaction as jest.Mock
-    mockTransaction.mockImplementation((fn) => fn(transaction))
+    mockTransaction = sequelize.transaction as jest.Mock
+    mockTransaction.mockResolvedValue(transaction)
 
     givenWhenThen = async (appealCase: AppealCase) => {
       const then = {} as Then
 
-      await appealCourtSessionController
-        .create(caseId, appealCase.id, theCase, appealCase, dto)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      try {
+        // The routes are guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open by the time the handler runs. Guards do
+        // not execute in controller unit tests, so the request context is set
+        // up here instead.
+        await runInRequestContext(async () => {
+          // Stand in for CaseExistsForUpdateGuard, which opens the request
+          // transaction before the handler runs.
+          await getOrCreateTransaction(sequelize)
+
+          then.result = await appealCourtSessionController.create(
+            caseId,
+            appealCase.id,
+            user,
+            theCase,
+            appealCase,
+            dto,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -88,6 +117,30 @@ describe('AppealCourtSessionController - Create', () => {
     expect(then.result).toBe(created)
   })
 
+  it('tells the parties once the booking has committed', async () => {
+    await givenWhenThen(verdictAppeal)
+
+    expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId,
+      elementId: appealCaseId,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_COURT_SESSION_BOOKED,
+        appealCourtSessionId: created.id,
+      },
+    })
+  })
+
+  // One call to sequelize.transaction: the guard's. A handler that opened a
+  // transaction of its own, the deadlock the controller warns about, would
+  // make it two.
+  it('joins the transaction the guard opened rather than open one', async () => {
+    await givenWhenThen(verdictAppeal)
+
+    expect(mockTransaction).toHaveBeenCalledTimes(1)
+  })
+
   // The guard matches any of the case's appeals to the id in the URL. A ruling
   // appeal is decided on the papers, so a session in one is a mistake.
   it('refuses a ruling appeal', async () => {
@@ -100,5 +153,6 @@ describe('AppealCourtSessionController - Create', () => {
     expect(
       mockAppealCourtSessionRepositoryService.create,
     ).not.toHaveBeenCalled()
+    expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
   })
 })

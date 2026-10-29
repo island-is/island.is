@@ -38,6 +38,7 @@ interface MarkdownTextProps {
   children: string
   color?: TextProps['color']
   variant?: TextProps['variant']
+  fontWeight?: TextProps['fontWeight']
   replaceNewLinesWithBreaks?: boolean
   /** Opens the links in a tab of their own, marked with an icon */
   openLinksInNewTab?: boolean
@@ -49,6 +50,7 @@ export const MarkdownText = ({
   children,
   color,
   variant = 'default',
+  fontWeight = 'light',
   replaceNewLinesWithBreaks = true,
   openLinksInNewTab = false,
   newTabLabel,
@@ -66,7 +68,7 @@ export const MarkdownText = ({
             p: {
               component: Text,
               props: {
-                fontWeight: 'light',
+                fontWeight,
                 color,
                 variant,
                 lineHeight: 'lg',
@@ -75,7 +77,7 @@ export const MarkdownText = ({
             span: {
               component: Text,
               props: {
-                fontWeight: 'light',
+                fontWeight,
                 color,
                 variant,
                 lineHeight: 'lg',
@@ -100,6 +102,9 @@ export const MarkdownText = ({
             },
             li: {
               component: Bullet,
+              props: {
+                variant,
+              },
             },
             // Links written into the text itself, rather than handed to the
             // component, so they are marked up here for all of them at once

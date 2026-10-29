@@ -148,8 +148,8 @@ export const HeirsRepeater: FC<
 
   const inheritanceTaxFreeLimit = isPrePaidApplication
     ? 0
-    : externalData?.inheritanceReportInfos?.[0]?.inheritanceTax
-        ?.taxExemptionLimit ?? DEFAULT_TAX_FREE_LIMIT
+    : estateData?.inheritanceReportInfo?.inheritanceTax?.taxExemptionLimit ??
+      DEFAULT_TAX_FREE_LIMIT
 
   const relations = isPrePaidApplication
     ? PrePaidHeirsRelations.map((relation) => ({
@@ -335,14 +335,17 @@ export const HeirsRepeater: FC<
     })
   }, [fields, getValues, id, updateValues])
 
-  // Only run initialLoad on mount and when fields length changes from 0
-  // Do NOT include heirsRelations as it causes infinite loop
+  // Recalculate when the selected estate changes its tax-free inheritance limit.
   useEffect(() => {
     if (fields.length > 0) {
       initialLoad()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fields.length])
+  }, [
+    fields.length,
+    application.answers.estateInfoSelection,
+    inheritanceTaxFreeLimit,
+  ])
 
   useEffect(() => {
     if (!hasEstateMemberUnder18) {

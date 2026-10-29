@@ -835,6 +835,35 @@ describe('getAppealCaseStatementDates', () => {
       expect(dates.civilClaimantStatementDates).toEqual([])
     })
 
+    // A statement the court files on the prosecution's behalf names no
+    // party, as the prosecution's own would; the role that wrote it does not
+    // decide whose it is.
+    it("counts a statement the court filed on the prosecution's behalf", () => {
+      const appealCase = {
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.COURT_OF_APPEALS_ASSISTANT,
+            created: later,
+          },
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.COURT_OF_APPEALS_ASSISTANT,
+            defendantId: 'defendant-1',
+            created: earlier,
+          },
+        ] as AppealEventLog[],
+      } as AppealCase
+      const theCase = { type: CaseType.INDICTMENT } as Case
+
+      const dates = getAppealCaseStatementDates(appealCase, theCase)
+
+      expect(dates.prosecutorStatementDate).toEqual(later)
+      expect(dates.defendantStatementDates).toEqual([
+        { defendantId: 'defendant-1', statementDate: earlier },
+      ])
+    })
+
     it('returns the latest prosecutor statement date across prosecution roles', () => {
       const appealCase = {
         appealEventLogs: [

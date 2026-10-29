@@ -1,6 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
 import { Box, Icon, Input, Select, Tag } from '@island.is/island-ui/core'
@@ -102,7 +101,6 @@ export const Offenses = ({
     setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => void
 }) => {
-  const { formatMessage } = useIntl()
   const [bloodAlcoholContentErrorMessage, setBloodAlcoholContentErrorMessage] =
     useState<string>('')
 
@@ -217,14 +215,15 @@ export const Offenses = ({
       <Box marginBottom={2}>
         <SectionHeading
           heading="h4"
-          title={formatMessage(strings.incidentTitle)}
+          title={strings.incidentTitle}
           marginBottom={2}
         />
         <Select
+          id={`offenses-${indictmentCount.id}`}
           name="offenses"
           options={offensesOptions}
-          label={formatMessage(strings.incidentLabel)}
-          placeholder={formatMessage(strings.incidentPlaceholder)}
+          label={strings.incidentLabel}
+          placeholder={strings.incidentPlaceholder}
           onChange={async (so) =>
             handleCreateOffense(so?.value as IndictmentCountOffense)
           }
@@ -264,7 +263,7 @@ export const Offenses = ({
       {drunkDrivingOffense && (
         <Box marginBottom={2}>
           <SectionHeading
-            title={formatMessage(strings.bloodAlcoholContentTitle)}
+            title={strings.bloodAlcoholContentTitle}
             heading="h4"
             marginBottom={2}
           />
@@ -320,10 +319,11 @@ export const Offenses = ({
                 alcoholValue,
               )
             }}
+            id={`alcohol-${indictmentCount.id}`}
             name="alcohol"
             autoComplete="off"
-            label={formatMessage(strings.bloodAlcoholContentLabel)}
-            placeholder={formatMessage(strings.bloodAlcoholContentPlaceholder)}
+            label={strings.bloodAlcoholContentLabel}
+            placeholder={strings.bloodAlcoholContentPlaceholder}
             errorMessage={bloodAlcoholContentErrorMessage}
             hasError={bloodAlcoholContentErrorMessage !== ''}
             required

@@ -11,7 +11,7 @@ import {
 import { sortIndictmentCounts } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
-import { indictment } from '../../messages'
+import { formatIcuMessage, indictment } from '../../messages'
 import { Case, CaseString } from '../../modules/repository'
 import {
   addEmptyLines,
@@ -55,6 +55,20 @@ const roman = (num: number) => {
   }
 
   return str
+}
+
+// Only include civil demands when the case still has civil claims. Turning
+// claims off leaves the stored string until it is deleted, so the PDF must
+// not treat leftover text as active.
+export const getIndictmentCivilDemands = (
+  hasCivilClaims?: boolean,
+  civilDemands?: string,
+): string | undefined => {
+  if (!hasCivilClaims || !civilDemands) {
+    return undefined
+  }
+
+  return civilDemands
 }
 
 export const createIndictment = async (
@@ -142,7 +156,10 @@ export const createIndictment = async (
   addEmptyLines(doc, 2)
   addNormalPlusJustifiedText(doc, theCase.demands ?? '')
 
-  const civilDemands = CaseString.civilDemands(theCase.caseStrings)
+  const civilDemands = getIndictmentCivilDemands(
+    theCase.hasCivilClaims,
+    CaseString.civilDemands(theCase.caseStrings),
+  )
 
   if (civilDemands) {
     addEmptyLines(doc, 2)
@@ -153,7 +170,7 @@ export const createIndictment = async (
   addEmptyLines(doc, 2)
   addNormalPlusCenteredText(
     doc,
-    formatMessage(indictment.signature, {
+    formatIcuMessage(indictment.signature, {
       prosecutorsOfficeName:
         lowercase(theCase.prosecutorsOffice?.name)
           .replace('lögreglustjórinn', 'lögreglustjórans')

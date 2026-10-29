@@ -25,7 +25,7 @@ export class DiscountAdminService {
         ...item,
         user: {
           ...item.user,
-          name: item.user.firstName,
+          name: item.user.givenName || item.user.fullName,
         },
       }
     })
@@ -44,7 +44,7 @@ export class DiscountAdminService {
         ...item,
         user: {
           ...item.user,
-          name: item.user.firstName,
+          name: item.user.givenName || item.user.fullName,
         },
       }
     })

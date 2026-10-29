@@ -6,6 +6,7 @@ import {
 } from '@island.is/api/schema'
 import { SectionTypes } from '@island.is/form-system/enums'
 import { ApplicationState, FieldTypesEnum } from '@island.is/form-system/ui'
+import { updatePaymentSectionVisibility } from '../utils/payment'
 
 const normalizeDependencies = (
   dependencies: Maybe<Maybe<Dependency>[]> | undefined,
@@ -13,20 +14,6 @@ const normalizeDependencies = (
   return (dependencies ?? []).filter(
     (d): d is Dependency => !!d && !!d.parentProp,
   )
-}
-
-const buildGraph = (dependencies: Dependency[]): Record<string, string[]> => {
-  const graph: Record<string, string[]> = {}
-
-  for (const dep of dependencies) {
-    if (dep?.parentProp) {
-      graph[dep.parentProp] = (dep.childProps ?? []).filter(
-        (c): c is string => typeof c === 'string',
-      )
-    }
-  }
-
-  return graph
 }
 
 const buildFieldMap = (
@@ -87,38 +74,45 @@ const buildControllerParentsByFieldId = (
 
 const collectCascadeOffParents = (
   dependencies: Dependency[],
-  initiallyOff: string[],
-  fieldsById: Record<string, FormSystemField>,
+  sections: FormSystemSection[],
 ): Set<string> => {
-  const graph = buildGraph(dependencies)
   const controllerParentsByFieldId = buildControllerParentsByFieldId(
-    fieldsById,
+    buildFieldMap(sections),
     dependencies,
   )
+  const off = new Set<string>()
+  let changed = true
 
-  const off = new Set(initiallyOff)
-  const queue = [...initiallyOff]
+  while (changed) {
+    changed = false
+    const activeDependencies = dependencies.map((dependency) =>
+      off.has(dependency.parentProp ?? '')
+        ? { ...dependency, isSelected: false }
+        : dependency,
+    )
+    const visibleSections = applyVisibilityToSections(
+      sections,
+      activeDependencies,
+    )
 
-  while (queue.length > 0) {
-    const parent = queue.shift() as string
-    const children = graph[parent] ?? []
-
-    for (const child of children) {
-      if (!off.has(child)) {
-        off.add(child)
-        queue.push(child)
-      }
-
-      const controllerParents = controllerParentsByFieldId[child]
-      if (controllerParents) {
-        for (const cp of controllerParents) {
-          if (!off.has(cp)) {
-            off.add(cp)
-            queue.push(cp)
+    visibleSections.forEach((section) => {
+      section.screens?.forEach((screen) => {
+        screen?.fields?.forEach((field) => {
+          if (
+            !field ||
+            !(section.isHidden || screen.isHidden || field.isHidden)
+          ) {
+            return
           }
-        }
-      }
-    }
+          for (const parent of controllerParentsByFieldId[field.id] ?? []) {
+            if (!off.has(parent)) {
+              off.add(parent)
+              changed = true
+            }
+          }
+        })
+      })
+    })
   }
 
   return off
@@ -148,7 +142,10 @@ const applyVisibilityToSections = (
   dependencies: Dependency[],
 ): FormSystemSection[] => {
   return sections.map((section) => {
-    if (section.sectionType === SectionTypes.PARTIES) {
+    if (
+      section.sectionType === SectionTypes.PARTIES ||
+      section.sectionType === SectionTypes.SUMMARY
+    ) {
       return section
     }
     const sectionHidden = isHiddenByDependencies(section.id, dependencies)
@@ -156,16 +153,38 @@ const applyVisibilityToSections = (
     const screens = section.screens?.map((screen) => {
       if (!screen) return screen
 
-      const screenHidden = isHiddenByDependencies(screen.id, dependencies)
+      const screenHidden =
+        sectionHidden || isHiddenByDependencies(screen.id, dependencies)
 
       const fields = screen.fields?.map((field) => {
         if (!field) return field
 
-        const fieldHidden = isHiddenByDependencies(field.id, dependencies)
+        const fieldHidden =
+          screenHidden || isHiddenByDependencies(field.id, dependencies)
+        const isCheckbox = field.fieldType === FieldTypesEnum.CHECKBOX
+        const isList =
+          field.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+          field.fieldType === FieldTypesEnum.RADIO_BUTTONS
 
         return {
           ...field,
           isHidden: fieldHidden,
+          values:
+            fieldHidden && (isCheckbox || isList)
+              ? field.values?.map((value) =>
+                  value
+                    ? {
+                        ...value,
+                        json: {
+                          ...value.json,
+                          ...(isCheckbox
+                            ? { checkboxValue: false }
+                            : { label: null, value: null }),
+                        },
+                      }
+                    : value,
+                )
+              : field.values,
         }
       }) as typeof screen.fields
 
@@ -272,8 +291,6 @@ export const setFieldValue = (
   const normalizedDeps = normalizeDependencies(state.application.dependencies)
   let depsArray = [...normalizedDeps]
 
-  const fieldsById = buildFieldMap(updatedSectionsBeforeDeps)
-
   const controller = isControllerField(currentField, depsArray)
 
   if (!controller) {
@@ -305,8 +322,6 @@ export const setFieldValue = (
   const selectedItemId = (selectedItem?.id as string) ?? undefined
   const parentId = isListField ? selectedItemId ?? '' : fieldId
 
-  const turnedOffParents: string[] = []
-
   if (isListField) {
     const listItemIds =
       currentField?.list?.map((item) => item?.id).filter(Boolean) ?? []
@@ -316,14 +331,9 @@ export const setFieldValue = (
         return dep
       }
 
-      const wasSelected = dep.isSelected
       const nowSelected = selectedItemId
         ? dep.parentProp === selectedItemId
         : false
-
-      if (wasSelected && !nowSelected) {
-        turnedOffParents.push(dep.parentProp ?? '')
-      }
 
       return {
         ...dep,
@@ -338,10 +348,6 @@ export const setFieldValue = (
     depsArray = depsArray.map((dep) => {
       if (dep.parentProp !== parentId) return dep
 
-      if (prevSelected && !newSelected) {
-        turnedOffParents.push(parentId)
-      }
-
       return {
         ...dep,
         isSelected: newSelected,
@@ -349,27 +355,24 @@ export const setFieldValue = (
     })
   }
 
-  if (turnedOffParents.length > 0) {
-    const allOffParents = collectCascadeOffParents(
-      depsArray,
-      turnedOffParents,
-      fieldsById,
-    )
-
-    depsArray = depsArray.map((dep) => {
-      if (allOffParents.has(dep.parentProp ?? '')) {
-        return {
-          ...dep,
-          isSelected: false,
-        }
-      }
-      return dep
-    })
-  }
-
-  const updatedSections = applyVisibilityToSections(
-    updatedSectionsBeforeDeps,
+  const allOffParents = collectCascadeOffParents(
     depsArray,
+    updatedSectionsBeforeDeps,
+  )
+
+  depsArray = depsArray.map((dep) => {
+    if (allOffParents.has(dep.parentProp ?? '')) {
+      return {
+        ...dep,
+        isSelected: false,
+      }
+    }
+    return dep
+  })
+
+  const updatedSections = updatePaymentSectionVisibility(
+    applyVisibilityToSections(updatedSectionsBeforeDeps, depsArray),
+    state.application.hasPayment,
   )
 
   const updatedState = {

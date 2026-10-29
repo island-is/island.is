@@ -140,7 +140,7 @@ const Confirmation: FC = () => {
         title={formatMessage(titles.court.restrictionCases.conclusion)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box marginBottom={9}>
           <Accordion>
@@ -151,7 +151,7 @@ const Confirmation: FC = () => {
         </Box>
         <Box marginBottom={7}>
           <Conclusion
-            title={formatMessage(strings.conclusionTitle)}
+            title={strings.conclusionTitle}
             conclusionText={workingCase.conclusion}
             judgeName={workingCase.judge?.name}
           />
@@ -179,7 +179,7 @@ const Confirmation: FC = () => {
               ? []
               : [
                   {
-                    text: formatMessage(
+                    text:
                       workingCase.decision === CaseDecision.ACCEPTING
                         ? strings.continueButtonTextAccepting
                         : workingCase.decision ===
@@ -190,7 +190,6 @@ const Confirmation: FC = () => {
                         : workingCase.decision === CaseDecision.DISMISSING
                         ? strings.continueButtonTextDismissing
                         : strings.continueButtonTextAcceptingAlternativeTravelBan,
-                    ),
                     icon:
                       isAcceptingCaseDecision(workingCase.decision) ||
                       workingCase.decision ===

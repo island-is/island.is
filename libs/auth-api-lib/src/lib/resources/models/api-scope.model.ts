@@ -43,6 +43,7 @@ interface ModelAttributes {
   alsoForDelegatedUser: boolean
   isAccessControlled?: boolean
   allowsWrite: boolean
+  requiresConfirmation: boolean
   thirdPartyLoginUrl: string
   userClaims?: ApiScopeUserClaim[]
   order: number
@@ -68,6 +69,7 @@ type CreationAttributes = Optional<
   | 'automaticDelegationGrant'
   | 'alsoForDelegatedUser'
   | 'allowsWrite'
+  | 'requiresConfirmation'
   | 'thirdPartyLoginUrl'
   | 'order'
   | 'required'

@@ -4,8 +4,14 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { AppealCaseType } from '@island.is/judicial-system/types'
+import { MessageType } from '@island.is/judicial-system/message'
+import {
+  AppealCaseNotificationType,
+  AppealCaseType,
+  type User,
+} from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware/queueMessagesAfterCommit'
 import {
   AppealCase,
   AppealCourtSession,
@@ -13,6 +19,7 @@ import {
   Case,
 } from '../repository'
 import { CreateAppealCourtSessionDto } from './dto/createAppealCourtSession.dto'
+import { UpdateAppealCourtSessionDto } from './dto/updateAppealCourtSession.dto'
 
 @Injectable()
 export class AppealCourtSessionService {
@@ -21,11 +28,13 @@ export class AppealCourtSessionService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  // Books a session in a verdict appeal.
+  // Books a session in a verdict appeal and tells the parties once the
+  // booking has committed.
   async create(
     theCase: Case,
     appealCase: AppealCase,
     dto: CreateAppealCourtSessionDto,
+    user: User,
     transaction: Transaction,
   ): Promise<AppealCourtSession> {
     // A ruling appeal is decided on the papers, so the route exists only for
@@ -41,7 +50,7 @@ export class AppealCourtSessionService {
       `Creating an appeal court session for case ${theCase.id} and appeal case ${appealCase.id}`,
     )
 
-    return this.appealCourtSessionRepositoryService.create(
+    const session = await this.appealCourtSessionRepositoryService.create(
       {
         caseId: theCase.id,
         appealCaseId: appealCase.id,
@@ -51,5 +60,105 @@ export class AppealCourtSessionService {
       },
       { transaction },
     )
+
+    queueMessagesAfterCommit({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      elementId: appealCase.id,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_COURT_SESSION_BOOKED,
+        appealCourtSessionId: session.id,
+      },
+    })
+
+    return session
+  }
+
+  // Changes a booked session and tells the parties once the change has
+  // committed. No verdict-appeal check here or on delete: the session the
+  // guard resolved hangs off the appeal, and only a verdict appeal can
+  // have one.
+  async update(
+    theCase: Case,
+    appealCase: AppealCase,
+    session: AppealCourtSession,
+    dto: UpdateAppealCourtSessionDto,
+    user: User,
+    transaction: Transaction,
+  ): Promise<AppealCourtSession> {
+    const update = {
+      ...(dto.sessionType !== undefined && { sessionType: dto.sessionType }),
+      ...(dto.sessionDate !== undefined && { sessionDate: dto.sessionDate }),
+      ...(dto.courtRoom !== undefined && { courtRoom: dto.courtRoom }),
+    }
+
+    if (Object.keys(update).length === 0) {
+      throw new BadRequestException(
+        `Nothing to update in appeal court session ${session.id} of case ${theCase.id}`,
+      )
+    }
+
+    this.logger.debug(
+      `Updating appeal court session ${session.id} of appeal case ${appealCase.id} in case ${theCase.id}`,
+    )
+
+    const updated = await this.appealCourtSessionRepositoryService.update(
+      session.id,
+      appealCase.id,
+      update,
+      { transaction },
+    )
+
+    queueMessagesAfterCommit({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      elementId: appealCase.id,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_COURT_SESSION_CHANGED,
+        appealCourtSessionId: session.id,
+      },
+    })
+
+    return updated
+  }
+
+  // Cancels a session and tells the parties once the cancellation has
+  // committed. The row is gone by then, so the message carries what the
+  // mail says about the session.
+  async delete(
+    theCase: Case,
+    appealCase: AppealCase,
+    session: AppealCourtSession,
+    user: User,
+    transaction: Transaction,
+  ): Promise<boolean> {
+    this.logger.debug(
+      `Deleting appeal court session ${session.id} of appeal case ${appealCase.id} in case ${theCase.id}`,
+    )
+
+    const deleted = await this.appealCourtSessionRepositoryService.delete(
+      session.id,
+      appealCase.id,
+      { transaction },
+    )
+
+    queueMessagesAfterCommit({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      elementId: appealCase.id,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_COURT_SESSION_CANCELLED,
+        appealCourtSession: {
+          sessionType: session.sessionType,
+          sessionDate: session.sessionDate,
+          courtRoom: session.courtRoom,
+        },
+      },
+    })
+
+    return deleted
   }
 }

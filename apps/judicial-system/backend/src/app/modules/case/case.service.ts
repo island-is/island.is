@@ -718,13 +718,6 @@ export class CaseService {
     }
   }
 
-  private addMessagesForDefenderEmailChangeToQueue(
-    theCase: Case,
-    user: TUser,
-  ): void {
-    this.addMessagesForDeliverDefendantToCourtToQueue(theCase, user)
-  }
-
   private addMessagesForProsecutorChangeToQueue(
     theCase: Case,
     user: TUser,
@@ -1253,15 +1246,7 @@ export class CaseService {
           this.addMessagesForProsecutorChangeToQueue(updatedCase, user)
         }
 
-        if (
-          !isIndictment &&
-          updatedCase.defenderEmail !== theCase.defenderEmail
-        ) {
-          // New defender email
-          this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
-        }
-
-        // Same mutual exclusion as prosecutor/defender above and appeal roles:
+        // Same mutual exclusion as prosecutor above and appeal roles:
         // connect (number change) syncs current roles; this branch handles
         // later assignment changes only.
         if (
@@ -1484,20 +1469,6 @@ export class CaseService {
       await this.defendantService.createForNewCase(
         theCase.id,
         defendant,
-        transaction,
-      )
-    }
-
-    if (isRequestCase(caseToCreate.type)) {
-      await this.defendantService.syncDefenderToAllDefendants(
-        theCase.id,
-        {
-          defenderName: caseToCreate.defenderName,
-          defenderNationalId: caseToCreate.defenderNationalId,
-          defenderEmail: caseToCreate.defenderEmail,
-          defenderPhoneNumber: caseToCreate.defenderPhoneNumber,
-          requestSharedWithDefender: caseToCreate.requestSharedWithDefender,
-        },
         transaction,
       )
     }
@@ -2252,6 +2223,21 @@ export class CaseService {
     // payload without mutating the original update object.
     const { defendantEventLogDecisions, ...caseUpdate }: UpdateCase = update
 
+    // Turning civil claims off deletes the claimants in the controller; clear
+    // the stored civil demands text here so a later indictment PDF cannot
+    // pick up leftover wording after the user answered "nei". Drop any
+    // civilDemands on the same update so handleCaseStringUpdates cannot
+    // upsert the string back after this delete.
+    if (caseUpdate.hasCivilClaims === false) {
+      delete caseUpdate.civilDemands
+
+      await this.caseStringRepositoryService.deleteByCaseAndType(
+        theCase.id,
+        StringType.CIVIL_DEMANDS,
+        { transaction },
+      )
+    }
+
     await this.handleDateLogUpdates(theCase, caseUpdate, transaction)
     await this.handleCaseStringUpdates(theCase, caseUpdate, transaction)
 
@@ -2381,58 +2367,6 @@ export class CaseService {
       await this.caseRepositoryService.update(theCase.id, caseUpdate, {
         transaction,
       })
-    }
-
-    // Keep defendant-level defender fields in sync with case-level fields for
-    // request cases. This dual-write is the first step toward per-defendant
-    // defenders — later phases will flip readers to the defendant rows and
-    // eventually drop the case-level columns.
-    if (isRequestCase(theCase.type)) {
-      const defenderFieldChanged =
-        caseUpdate.defenderName !== undefined ||
-        caseUpdate.defenderNationalId !== undefined ||
-        caseUpdate.defenderEmail !== undefined ||
-        caseUpdate.defenderPhoneNumber !== undefined ||
-        caseUpdate.defendantWaivesRightToCounsel !== undefined ||
-        caseUpdate.requestSharedWithDefender !== undefined
-
-      if (defenderFieldChanged) {
-        // Contact fields + waive → defenderChoice.WAIVE. R-cases do not use
-        // CHOOSE or isDefenderChoiceConfirmed (indictment confirmation).
-        // requestSharedWithDefender is dual-written so defendant rows stay
-        // aligned until readers flip to the defendant column.
-        const waives =
-          caseUpdate.defendantWaivesRightToCounsel !== undefined
-            ? caseUpdate.defendantWaivesRightToCounsel
-            : theCase.defendantWaivesRightToCounsel
-
-        await this.defendantService.syncDefenderToAllDefendants(
-          theCase.id,
-          {
-            defenderName:
-              caseUpdate.defenderName !== undefined
-                ? caseUpdate.defenderName
-                : theCase.defenderName,
-            defenderNationalId:
-              caseUpdate.defenderNationalId !== undefined
-                ? caseUpdate.defenderNationalId
-                : theCase.defenderNationalId,
-            defenderEmail:
-              caseUpdate.defenderEmail !== undefined
-                ? caseUpdate.defenderEmail
-                : theCase.defenderEmail,
-            defenderPhoneNumber:
-              caseUpdate.defenderPhoneNumber !== undefined
-                ? caseUpdate.defenderPhoneNumber
-                : theCase.defenderPhoneNumber,
-            defenderChoice: waives ? DefenderChoice.WAIVE : null,
-            // undefined → sync skips; avoids clobbering per-defendant values
-            // on contact-only edits
-            requestSharedWithDefender: caseUpdate.requestSharedWithDefender,
-          },
-          transaction,
-        )
-      }
     }
 
     // Update police case numbers of case files if necessary
@@ -2920,10 +2854,6 @@ export class CaseService {
       'type',
       'description',
       'policeCaseNumbers',
-      'defenderName',
-      'defenderNationalId',
-      'defenderEmail',
-      'defenderPhoneNumber',
       'defendantWaivesRightToCounsel',
       'leadInvestigator',
       'courtId',
@@ -2970,28 +2900,25 @@ export class CaseService {
               gender: defendant.gender,
               address: defendant.address,
               citizenship: defendant.citizenship,
+              // Each defendant keeps its own defender and sharing timing
+              ...(isRequestCase(theCase.type)
+                ? {
+                    defenderName: defendant.defenderName,
+                    defenderNationalId: defendant.defenderNationalId,
+                    defenderEmail: defendant.defenderEmail,
+                    defenderPhoneNumber: defendant.defenderPhoneNumber,
+                    requestSharedWithDefender:
+                      defendant.requestSharedWithDefender,
+                    ...(theCase.defendantWaivesRightToCounsel
+                      ? { defenderChoice: DefenderChoice.WAIVE }
+                      : {}),
+                  }
+                : {}),
             },
             transaction,
           ),
         ),
       )
-
-      if (isRequestCase(theCase.type)) {
-        await this.defendantService.syncDefenderToAllDefendants(
-          extendedCase.id,
-          {
-            defenderName: theCase.defenderName,
-            defenderNationalId: theCase.defenderNationalId,
-            defenderEmail: theCase.defenderEmail,
-            defenderPhoneNumber: theCase.defenderPhoneNumber,
-            defenderChoice: theCase.defendantWaivesRightToCounsel
-              ? DefenderChoice.WAIVE
-              : null,
-            requestSharedWithDefender: theCase.requestSharedWithDefender,
-          },
-          transaction,
-        )
-      }
     }
 
     return extendedCase

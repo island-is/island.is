@@ -50,7 +50,10 @@ type Props = Partial<{
  * so the developer doesn't have to write the same code over and over again.
  *
  * @param  alertTitle  Title of the green alert message.
- * @param  alertMessage The message inside the green alert box.
+ * @param  alertMessage The message inside the green alert box. Optional - pass
+ *                      `alertMessage: undefined` to leave it out, which renders the
+ *                      alert with just a centered title. Omitting the key entirely
+ *                      keeps the default message.
  * @param  alertType The type of alert, can be success, warning, error, info. * JUST ADDED *
  * @param  multiFieldTitle Title of the conclusion section. * JUST ADDED *
  * @param  accordion If false, there will be no accordion.
@@ -70,30 +73,38 @@ type Props = Partial<{
  * @param  infoAlertTitle The title for an optional info alert
  * @param  infoAlertMessage The message for an optional info alert
  */
-export const buildFormConclusionSection = ({
-  alertTitle = conclusion.alertMessageField.title,
-  alertMessage = conclusion.alertMessageField.message,
-  alertType = 'success',
-  multiFieldTitle = conclusion.information.formTitle,
-  accordion = true,
-  expandableHeader = conclusion.expandableDescriptionField.title,
-  expandableIntro = conclusion.expandableDescriptionField.introText,
-  expandableDescription = conclusion.expandableDescriptionField.description,
-  conclusionLinkS3FileKey = '',
-  conclusionLink = '',
-  conclusionLinkLabel = undefined,
-  sectionTitle = conclusion.information.sectionTitle,
-  tabTitle = conclusion.information.sectionTitle,
-  bottomButtonLink = '/minarsidur/umsoknir',
-  bottomButtonLabel = coreMessages.openServicePortalButtonTitle,
-  bottomButtonMessage = coreMessages.openServicePortalMessageText,
-  descriptionFieldTitle = undefined,
-  descriptionFieldDescription = undefined,
-  condition,
-  infoAlertTitle = undefined,
-  infoAlertMessage = undefined,
-  image,
-}: Props) => {
+export const buildFormConclusionSection = (props: Props) => {
+  // The message is only defaulted when the caller leaves the key out, so that
+  // `alertMessage: undefined` can be used to render the alert without a message.
+  const alertMessage =
+    'alertMessage' in props
+      ? props.alertMessage
+      : conclusion.alertMessageField.message
+
+  const {
+    alertTitle = conclusion.alertMessageField.title,
+    alertType = 'success',
+    multiFieldTitle = conclusion.information.formTitle,
+    accordion = true,
+    expandableHeader = conclusion.expandableDescriptionField.title,
+    expandableIntro = conclusion.expandableDescriptionField.introText,
+    expandableDescription = conclusion.expandableDescriptionField.description,
+    conclusionLinkS3FileKey = '',
+    conclusionLink = '',
+    conclusionLinkLabel = undefined,
+    sectionTitle = conclusion.information.sectionTitle,
+    tabTitle = conclusion.information.sectionTitle,
+    bottomButtonLink = '/minarsidur/umsoknir',
+    bottomButtonLabel = coreMessages.openServicePortalButtonTitle,
+    bottomButtonMessage = coreMessages.openServicePortalMessageText,
+    descriptionFieldTitle = undefined,
+    descriptionFieldDescription = undefined,
+    condition,
+    infoAlertTitle = undefined,
+    infoAlertMessage = undefined,
+    image,
+  } = props
+
   const expandableDescriptionField = accordion
     ? [
         buildExpandableDescriptionField({

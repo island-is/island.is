@@ -12,7 +12,7 @@ export const propertySearchSubsection = buildSubSection({
   title: m.propertySearch.search.subsectionName,
   children: [
     buildMultiField({
-      id: Routes.PROPERTYSEARCH,
+      id: Routes.PROPERTYSEARCHPAGE,
       title: m.propertySearch.search.pageTitle,
       description: m.propertySearch.search.pageDescription,
       children: [
@@ -21,7 +21,7 @@ export const propertySearchSubsection = buildSubSection({
           component: 'PropertySearch',
         }),
         buildDescriptionField({
-          id: Routes.PROPERTYSEARCH,
+          id: `${Routes.PROPERTYSEARCH}.description`,
           description: m.propertySearch.search.spouseFamilyNotice,
           marginTop: 2,
         }),
