@@ -7,9 +7,7 @@
   "paths": {
     "/api/Barnabaetur": {
       "get": {
-        "tags": [
-          "Barnabaetur"
-        ],
+        "tags": ["Barnabaetur"],
         "summary": "",
         "parameters": [
           {
@@ -118,9 +116,7 @@
     },
     "/api/Bifreidagjold": {
       "get": {
-        "tags": [
-          "Bifreidagjold"
-        ],
+        "tags": ["Bifreidagjold"],
         "summary": "",
         "parameters": [
           {
@@ -190,9 +186,7 @@
     },
     "/api/Bifreidahlunnindi": {
       "get": {
-        "tags": [
-          "Bifreidahlunnindi"
-        ],
+        "tags": ["Bifreidahlunnindi"],
         "summary": "",
         "parameters": [
           {
@@ -274,9 +268,7 @@
     },
     "/api/FyrningOkutaekja": {
       "get": {
-        "tags": [
-          "FyrningOkutaekja"
-        ],
+        "tags": ["FyrningOkutaekja"],
         "summary": "",
         "parameters": [
           {
@@ -362,9 +354,7 @@
     },
     "/api/Stadgreidsla": {
       "get": {
-        "tags": [
-          "Stadgreidsla"
-        ],
+        "tags": ["Stadgreidsla"],
         "summary": "",
         "parameters": [
           {
@@ -581,9 +571,7 @@
     },
     "/api/Vaxtabaetur": {
       "get": {
-        "tags": [
-          "Vaxtabaetur"
-        ],
+        "tags": ["Vaxtabaetur"],
         "summary": "",
         "parameters": [
           {
@@ -705,32 +693,19 @@
         "additionalProperties": false
       },
       "Gjaldtimabil": {
-        "enum": [
-          "1. jan - 30. júlí",
-          "1. júlí - 31. des"
-        ],
+        "enum": ["1. jan - 30. júlí", "1. júlí - 31. des"],
         "type": "string"
       },
       "Hjuskaparstada": {
-        "enum": [
-          "Gift/Í sambúð",
-          "Einstætt foreldri"
-        ],
+        "enum": ["Gift/Í sambúð", "Einstætt foreldri"],
         "type": "string"
       },
       "HjuskaparstadaStadgreidsla": {
-        "enum": [
-          "Einhleypingur",
-          "Einstætt foreldri",
-          "Hjón/sambúð"
-        ],
+        "enum": ["Einhleypingur", "Einstætt foreldri", "Hjón/sambúð"],
         "type": "string"
       },
       "LaunGreidast": {
-        "enum": [
-          "Vikulega",
-          "Mánaðarlega"
-        ],
+        "enum": ["Vikulega", "Mánaðarlega"],
         "type": "string"
       },
       "NidurstadaBarnabaetur": {

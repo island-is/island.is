@@ -76,9 +76,10 @@ describe('TaxCalculatorsService', () => {
     })
 
     it('publishes hjuskaparstada as a select over the RSK enum values', () => {
-      const field = findField(TaxCalculatorType.CHILD_BENEFIT, 'hjuskaparstada') as
-        | SelectInputField
-        | undefined
+      const field = findField(
+        TaxCalculatorType.CHILD_BENEFIT,
+        'hjuskaparstada',
+      ) as SelectInputField | undefined
 
       expect(field?.type).toBe(TaxCalculatorInputFieldType.SELECT)
       expect(field?.options).toEqual([
@@ -156,7 +157,6 @@ describe('TaxCalculatorsService', () => {
       expect(field?.semantic).toBe(expected)
     })
   })
-
 })
 
 describe('TaxCalculatorsService output contract', () => {

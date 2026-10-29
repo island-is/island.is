@@ -118,7 +118,10 @@ describe('validateCalculationInput', () => {
   describe('dates', () => {
     it('accepts a date', () => {
       const startedAt = new Date('2026-02-28T00:00:00.000Z')
-      const result = validate([number('amount', 1), date('startedAt', startedAt)])
+      const result = validate([
+        number('amount', 1),
+        date('startedAt', startedAt),
+      ])
 
       expect(result.errors).toEqual([])
       expect(result.values.startedAt).toBe(startedAt)
