@@ -1,4 +1,5 @@
 import { Box, Select } from '@island.is/island-ui/core'
+import type { Option } from '@island.is/island-ui/core'
 import {
   SDF_FIELD_CONTROL_PADDING_TOP,
   getSdfFieldMargins,
@@ -46,10 +47,12 @@ export const SdfSelectField = ({
           options={options}
           value={getSelectedOptions(options, currentValue)}
           onChange={(selectedOptions) => {
+            // `Array.isArray` doesn't narrow react-select's read-only
+            // MultiValue out of the else branch, hence the cast.
             handleChange(
               Array.isArray(selectedOptions)
                 ? selectedOptions.map((opt) => opt.value)
-                : selectedOptions?.value,
+                : (selectedOptions as Option<string> | null)?.value,
             )
             // Fire a screen-rebuild REFETCH when the select either needs new
             // template-API data (`onSelectRefetchTemplateApis`) or only needs
