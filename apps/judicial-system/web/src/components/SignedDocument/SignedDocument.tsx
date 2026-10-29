@@ -19,10 +19,13 @@ const SignedDocument = (props: Props) => {
     <div className={styles.container}>
       <div className={styles.textContainer}>
         <Text>
-          {formatMessage(signedDocument, {
-            date: formatDate(signingDate),
-            time: formatDate(signingDate, 'HH:mm'),
-          })}
+          {formatMessage(
+            { id: signedDocument, defaultMessage: signedDocument },
+            {
+              date: formatDate(signingDate),
+              time: formatDate(signingDate, 'HH:mm'),
+            },
+          )}
         </Text>
         <Text variant="small">{signatory}</Text>
       </div>

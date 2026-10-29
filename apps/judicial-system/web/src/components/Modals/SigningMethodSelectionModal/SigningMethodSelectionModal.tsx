@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useState } from 'react'
-import { useIntl } from 'react-intl'
 
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -28,7 +27,6 @@ interface SigningMethodSelectionModalProps {
 export const SigningMethodSelectionModal: FC<
   SigningMethodSelectionModalProps
 > = ({ workingCase, signatureType, onClose, onSignatureRequested }) => {
-  const { formatMessage } = useIntl()
   const [loadingMethod, setLoadingMethod] = useState<LoadingMethod | undefined>(
     undefined,
   )
@@ -60,11 +58,9 @@ export const SigningMethodSelectionModal: FC<
 
     if (!response) {
       toast.error(
-        formatMessage(
-          signatureType === 'ruling'
-            ? errorMessages.requestRulingSignature
-            : errorMessages.requestCourtRecordSignature,
-        ),
+        signatureType === 'ruling'
+          ? errorMessages.requestRulingSignature
+          : errorMessages.requestCourtRecordSignature,
       )
       setLoadingMethod(undefined)
       return

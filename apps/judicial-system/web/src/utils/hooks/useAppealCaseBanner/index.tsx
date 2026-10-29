@@ -57,20 +57,20 @@ export const getAppealDecision = (
 ) => {
   switch (appealRulingDecision) {
     case AppealCaseRulingDecision.ACCEPTING:
-      return formatMessage(appealRuling.decisionAccept)
+      return appealRuling.decisionAccept
     case AppealCaseRulingDecision.REPEAL:
-      return formatMessage(appealRuling.decisionRepeal)
+      return appealRuling.decisionRepeal
     case AppealCaseRulingDecision.CHANGED:
     case AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY:
-      return formatMessage(appealRuling.decisionChanged)
+      return appealRuling.decisionChanged
     case AppealCaseRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
-      return formatMessage(appealRuling.decisionDismissedFromCourtOfAppeal)
+      return appealRuling.decisionDismissedFromCourtOfAppeal
     case AppealCaseRulingDecision.DISMISSED_FROM_COURT:
-      return formatMessage(appealRuling.decisionDismissedFromCourt)
+      return appealRuling.decisionDismissedFromCourt
     case AppealCaseRulingDecision.REMAND:
-      return formatMessage(appealRuling.decisionRemand)
+      return appealRuling.decisionRemand
     case AppealCaseRulingDecision.DISCONTINUED:
-      return formatMessage(appealRuling.decisionDiscontinued)
+      return appealRuling.decisionDiscontinued
     default:
       return undefined
   }
