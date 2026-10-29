@@ -82,6 +82,8 @@ export const DelegationsResults = ({
 
   return (
     <Stack space={6}>
+      <AlertMessage type="info" message={formatMessage(m.indexNotice)} />
+
       <GridRow rowGap={2}>
         {domainOptions.length > 1 && (
           <GridColumn span={FILTER_SPAN}>
@@ -136,8 +138,6 @@ export const DelegationsResults = ({
           />
         </GridColumn>
       </GridRow>
-
-      <AlertMessage type="info" message={formatMessage(m.indexNotice)} />
 
       <DelegationSection
         title={formatMessage(m.delegationTo)}
