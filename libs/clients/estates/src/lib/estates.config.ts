@@ -1,5 +1,6 @@
-import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
+
+import { defineConfig } from '@island.is/nest/config'
 
 const schema = z.object({
   xRoadServicePath: z.string(),

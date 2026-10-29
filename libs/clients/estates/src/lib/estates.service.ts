@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common'
+
 import { User, withAuthContext } from '@island.is/auth-nest-tools'
 import { dataOr404Null } from '@island.is/clients/middlewares'
+
 import {
-  islandIsEstatePagesGetEstatePages,
-  islandIsEstatePagesGetEstateCase,
+  type EDocument,
   type Estate,
   type EstateCase,
+  islandIsEstatePagesDocument,
+  islandIsEstatePagesGetEstateCase,
+  islandIsEstatePagesGetEstatePages,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -21,6 +25,12 @@ export class EstatesClientService {
   async getEstateCase(user: User, caseId: string): Promise<EstateCase | null> {
     return withAuthContext(user, () =>
       dataOr404Null(islandIsEstatePagesGetEstateCase({ path: { caseId } })),
+    )
+  }
+
+  async getDocument(user: User, documentId: string): Promise<EDocument | null> {
+    return withAuthContext(user, () =>
+      dataOr404Null(islandIsEstatePagesDocument({ path: { documentId } })),
     )
   }
 }

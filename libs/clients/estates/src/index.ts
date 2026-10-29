@@ -6,4 +6,5 @@ export type {
   EstateCase,
   LocalizedText,
   EstateAction,
+  EDocument,
 } from '../gen/fetch'

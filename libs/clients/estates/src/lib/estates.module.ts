@@ -1,10 +1,12 @@
 import { Inject, Module } from '@nestjs/common'
-import { EstatesClientService } from './estates.service'
-import { XRoadConfig, IdsClientConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
+
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
+
 import { client } from '../../gen/fetch/client.gen'
 import { EstatesClientConfig } from './estates.config'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { EstatesClientService } from './estates.service'
 
 @Module({
   providers: [EstatesClientService],
