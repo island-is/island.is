@@ -3,14 +3,18 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
+import { MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseNotificationType,
   AppealCaseType,
   AppealCourtSessionType,
+  type User,
 } from '@island.is/judicial-system/types'
 
 import { createTestingAppealCourtSessionModule } from './createTestingAppealCourtSessionModule'
 
 import { getOrCreateTransaction } from '../../../middleware'
+import { queueMessagesAfterCommit } from '../../../middleware/queueMessagesAfterCommit'
 import { runInRequestContext } from '../../../test'
 import {
   AppealCase,
@@ -25,6 +29,7 @@ describe('AppealCourtSessionController - Update', () => {
   const appealCaseId = uuid()
   const sessionId = uuid()
   const theCase = { id: caseId } as Case
+  const user = { id: uuid() } as User
   const appealCase = {
     id: appealCaseId,
     appealType: AppealCaseType.VERDICT,
@@ -46,6 +51,9 @@ describe('AppealCourtSessionController - Update', () => {
     const { sequelize, appealCourtSessionController, ...testingModule } =
       await createTestingAppealCourtSessionModule()
 
+    const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+    mockQueueMessagesAfterCommit.mockClear()
+
     mockAppealCourtSessionRepositoryService =
       testingModule.appealCourtSessionRepositoryService
     mockTransaction = sequelize.transaction as jest.Mock
@@ -65,6 +73,7 @@ describe('AppealCourtSessionController - Update', () => {
           caseId,
           appealCaseId,
           sessionId,
+          user,
           theCase,
           appealCase,
           session,
@@ -95,6 +104,21 @@ describe('AppealCourtSessionController - Update', () => {
     expect(result).toBe(updated)
   })
 
+  it('tells the parties once the change has committed', async () => {
+    await update({ courtRoom: '2' })
+
+    expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId,
+      elementId: appealCaseId,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_COURT_SESSION_CHANGED,
+        appealCourtSessionId: sessionId,
+      },
+    })
+  })
+
   it('joins the transaction the guard opened rather than open one', async () => {
     await update({ courtRoom: '2' })
 
@@ -118,5 +142,6 @@ describe('AppealCourtSessionController - Update', () => {
     expect(
       mockAppealCourtSessionRepositoryService.update,
     ).not.toHaveBeenCalled()
+    expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
   })
 })

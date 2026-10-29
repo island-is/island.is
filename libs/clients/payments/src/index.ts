@@ -22,4 +22,6 @@ export {
   VerifyBankTransferResponseFailureReasonEnum,
   GetPaymentFlowDTOLastBankTransferFailureEnum,
   GetPaymentFlowDTOBankTransferPendingStatusEnum,
+  GetPaymentFlowDTOTypeEnum,
+  DebtInput,
 } from '../gen/fetch'

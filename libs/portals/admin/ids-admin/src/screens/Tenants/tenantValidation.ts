@@ -6,6 +6,11 @@ export const safeTextSchema = z
   .min(1, 'errorRequired')
   .regex(/^[^<>%$]+$/, 'errorUnsafeChars')
 
+export const optionalSafeTextSchema = z
+  .string()
+  .regex(/^[^<>%$]*$/, 'errorUnsafeChars')
+  .optional()
+
 export const nationalIdSchema = z
   .string()
   .min(1, 'errorNationalId')

@@ -10,6 +10,7 @@ import {
   defaultIncomeTypes,
   Events,
   INCOME,
+  OAPEvents,
   RatioType,
   Roles,
   States,
@@ -223,6 +224,13 @@ const IncomePlanTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: OAPEvents.INREVIEW,
+                  name: 'Í vinnslu',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
             },
           ],
@@ -263,6 +271,13 @@ const IncomePlanTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
             },
           ],

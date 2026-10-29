@@ -4,6 +4,8 @@ export * from './shared'
 export { serviceErrors as errorMsgs } from './lib/messages'
 export const getFields = () => import('./fields/')
 
+export * from './lib/messages'
+
 export type UnemploymentBenefitsAnswers = UnemploymentBenefits
 
 export default template

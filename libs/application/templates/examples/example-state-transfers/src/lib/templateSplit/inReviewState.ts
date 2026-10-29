@@ -31,6 +31,13 @@ export const inReviewState: StateNodeConfig<
           import('../../forms/applicantInReviewForm').then((module) =>
             Promise.resolve(module.ApplicantInReviewForm),
           ),
+        actions: [
+          {
+            event: 'EDIT',
+            name: 'Move application back to DRAFT',
+            type: 'primary',
+          },
+        ],
         read: 'all',
       },
       {
@@ -39,8 +46,12 @@ export const inReviewState: StateNodeConfig<
           import('../../forms/assigneeInReviewForm').then((module) =>
             Promise.resolve(module.AssigneeInReviewForm),
           ),
+        actions: [
+          { event: 'APPROVE', name: 'Approve', type: 'primary' },
+          { event: 'REJECT', name: 'Reject', type: 'reject' },
+        ],
         read: 'all',
-        write: 'all',
+        write: { answers: ['approveOrReject', 'approveOrRejectReason'] },
       },
     ],
   },

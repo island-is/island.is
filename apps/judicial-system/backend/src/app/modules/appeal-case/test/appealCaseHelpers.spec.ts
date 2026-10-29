@@ -1,14 +1,16 @@
 import {
   AppealEventType,
+  CaseFileCategory,
   CaseType,
   InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase, AppealEventLog, Case } from '../../repository'
+import { AppealCase, AppealEventLog, Case, CaseFile } from '../../repository'
 import {
   appellantRepresentativeNationalIds,
+  findAppealCaseOfCaseFile,
   hasStandingVerdictAppeal,
   standingVerdictAppellantIds,
   standingVerdictAppellants,
@@ -29,6 +31,52 @@ const prosecutor = {
 
 const defender = (nationalId: string) =>
   ({ role: UserRole.DEFENDER, nationalId } as User)
+
+describe('findAppealCaseOfCaseFile', () => {
+  const rulingAppeal = { id: 'ruling-appeal' } as AppealCase
+  const verdictAppeal = { id: 'verdict-appeal' } as AppealCase
+  const rulingOrderAppeal = {
+    id: 'ruling-order-appeal',
+    rulingFileId: 'ruling-order',
+  } as AppealCase
+  const theCase = {
+    appealCase: rulingAppeal,
+    verdictAppealCase: verdictAppeal,
+    rulingOrderAppealCases: [rulingOrderAppeal],
+  } as Case
+
+  it('finds the ruling-order appeal a file names', () => {
+    expect(
+      findAppealCaseOfCaseFile(theCase, {
+        rulingFileId: 'ruling-order',
+        category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+      } as CaseFile),
+    ).toBe(rulingOrderAppeal)
+  })
+
+  // A verdict appeal is case level like the ruling appeal; its files are
+  // told apart by their categories alone.
+  it.each([
+    CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+    CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
+    CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+    CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+    CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT,
+    CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+  ])('finds the verdict appeal for %s', (category) => {
+    expect(findAppealCaseOfCaseFile(theCase, { category } as CaseFile)).toBe(
+      verdictAppeal,
+    )
+  })
+
+  it('falls back to the case-level ruling appeal for a kæra file', () => {
+    expect(
+      findAppealCaseOfCaseFile(theCase, {
+        category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+      } as CaseFile),
+    ).toBe(rulingAppeal)
+  })
+})
 
 describe('userIsAppellant', () => {
   it('is false when the appeal case has no APPEALED event', () => {
