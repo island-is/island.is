@@ -48,6 +48,7 @@ import {
 import { fetchVeitaMunicipalitySettings } from './veitaMunicipalitySettings'
 import { serializeVeitaDirectTaxPayments } from './veitaDirectTaxPayments'
 import {
+  CreateApplicationDocument,
   CreateIslandisApplicationRequest,
   ForIslandisApi,
 } from '@island.is/clients/rvk-financial-aid'
@@ -155,21 +156,19 @@ export class FinancialAidService extends BaseTemplateApiService {
     const formatFilesRvk = async (
       files: ApplicationAnswerFile[],
       type: FileType,
-    ) => {
+    ): Promise<CreateApplicationDocument[]> => {
       if (!files || files.length <= 0) {
         return []
       }
       return await Promise.all(
         files.map(async (f) => {
           return {
-            name: f.name ?? '',
-            key:
+            presignedUrl:
               (await this.attachmentService.getAttachmentUrl(
                 application,
                 f.key,
                 300_000,
               )) ?? '',
-            size: 0,
             type: type,
           }
         }),
@@ -229,6 +228,7 @@ export class FinancialAidService extends BaseTemplateApiService {
     }
 
     let files: ApplicationAnswerFile[] = []
+    let veitaFiles: CreateApplicationDocument[] = []
 
     const routing = getFinancialAidRouting(externalData)
 
@@ -241,7 +241,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       ApproveOptions.Yes
 
     if (routing.backend === 'veita') {
-      files = (
+      veitaFiles = (
         await formatFilesRvk(answers.rvkTaxReturnFiles, FileType.TAXRETURN)
       )
         .concat(
@@ -331,6 +331,7 @@ export class FinancialAidService extends BaseTemplateApiService {
     if (routing.backend === 'veita') {
       const rvkRequest: CreateIslandisApplicationRequest = {
         createApplicationRequest: {
+          municipalityCode,
           name: externalData.nationalRegistry.data.fullName,
           nationalId: externalData.nationalRegistry.data.nationalId,
           nationality: externalData.nationalRegistry.data.citizenship?.code,
@@ -359,7 +360,7 @@ export class FinancialAidService extends BaseTemplateApiService {
               ? answers.employment.custom || ''
               : '',
           formComment: answers.formComment,
-          files: files, // attachments
+          files: veitaFiles, // attachments
           children: childrenRvk,
           childrenComment: answers.childrenComment,
           spouseNationalId:
