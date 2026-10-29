@@ -190,10 +190,7 @@ export const JudgeOverview = () => {
                       return (
                         <div key={index}>
                           <Text>
-                            {getLegalProvisionTitle(
-                              formatMessage,
-                              legalProvision,
-                            )}
+                            {getLegalProvisionTitle(legalProvision)}
                           </Text>
                         </div>
                       )

@@ -1,7 +1,5 @@
 import type { ReactElement } from 'react'
 import { useContext } from 'react'
-import type { IntlShape } from 'react-intl'
-import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Button, Text, Tooltip } from '@island.is/island-ui/core'
@@ -52,7 +50,6 @@ const renderLinkButton = (text: string, href: string) => (
 )
 
 export const getAppealDecision = (
-  formatMessage: IntlShape['formatMessage'],
   appealRulingDecision?: AppealCaseRulingDecision | null,
 ) => {
   switch (appealRulingDecision) {
@@ -61,8 +58,9 @@ export const getAppealDecision = (
     case AppealCaseRulingDecision.REPEAL:
       return appealRuling.decisionRepeal
     case AppealCaseRulingDecision.CHANGED:
-    case AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY:
       return appealRuling.decisionChanged
+    case AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY:
+      return appealRuling.decisionChangedSignificantly
     case AppealCaseRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
       return appealRuling.decisionDismissedFromCourtOfAppeal
     case AppealCaseRulingDecision.DISMISSED_FROM_COURT:
@@ -77,7 +75,6 @@ export const getAppealDecision = (
 }
 
 const useAppealCaseBanner = () => {
-  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, setWorkingCase, refreshCase } =
     useContext(FormContext)
@@ -164,7 +161,7 @@ const useAppealCaseBanner = () => {
   ) {
     if (appealState === AppealCaseState.COMPLETED) {
       title = `Niðurstaða Landsréttar ${formatDate(appealRulingDate, 'PPP')}`
-      description = getAppealDecision(formatMessage, appealRulingDecision)
+      description = getAppealDecision(appealRulingDecision)
     } else {
       title = 'Úrskurður kærður'
       description = `Frestur til að skila greinargerð ${
@@ -215,7 +212,7 @@ const useAppealCaseBanner = () => {
     }
   } else if (appealState === AppealCaseState.COMPLETED) {
     title = `Niðurstaða Landsréttar ${formatDate(appealRulingDate, 'PPP')}`
-    description = getAppealDecision(formatMessage, appealRulingDecision)
+    description = getAppealDecision(appealRulingDecision)
   }
   // When case has been appealed by prosecutor or defender
   else if (hasBeenAppealed) {

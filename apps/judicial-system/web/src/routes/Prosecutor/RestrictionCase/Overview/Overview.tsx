@@ -259,10 +259,7 @@ export const Overview = () => {
                       return (
                         <div key={index}>
                           <Text>
-                            {getLegalProvisionTitle(
-                              formatMessage,
-                              legalProvision,
-                            )}
+                            {getLegalProvisionTitle(legalProvision)}
                           </Text>
                         </div>
                       )

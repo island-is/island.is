@@ -112,7 +112,7 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
                   return (
                     <div key={index}>
                       <Text>
-                        {getLegalProvisionTitle(formatMessage, legalProvision)}
+                        {getLegalProvisionTitle(legalProvision)}
                       </Text>
                     </div>
                   )

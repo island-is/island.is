@@ -100,7 +100,6 @@ const Summary: FC = () => {
         variant="warning"
         title={strings.alertBannerTitle}
         description={getAppealDecision(
-          formatMessage,
           targetAppealCase?.appealRulingDecision,
         )}
       />
