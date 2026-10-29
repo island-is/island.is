@@ -299,14 +299,17 @@ query getApplicationTranslationPublishHistory(
     limit: $limit
     skip: $skip
   ) {
-    id
-    namespace
-    publishedAt
-    publishedByName
-    onBehalfOfName
-    rolledBackToPublishedAt
-    publishedInContentfulByName
-    publisherNameUnavailable
+    items {
+      id
+      namespace
+      publishedAt
+      publishedByName
+      onBehalfOfName
+      rolledBackToPublishedAt
+      publishedInContentfulByName
+      publisherNameUnavailable
+    }
+    nextSkip
   }
 }
 

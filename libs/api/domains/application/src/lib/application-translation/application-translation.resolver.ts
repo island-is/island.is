@@ -18,6 +18,7 @@ import {
   TemplateIntrospectionGql,
   TemplateListItemGql,
   TranslationPublishGql,
+  TranslationPublishHistoryGql,
 } from './application-translation.model'
 import { ApplicationTranslationClient } from './application-translation.client'
 import { GoogleTranslateService } from './google-translate.service'
@@ -92,14 +93,14 @@ export class ApplicationTranslationResolver {
     })
   }
 
-  @Query(() => [TranslationPublishGql], { nullable: true })
+  @Query(() => TranslationPublishHistoryGql, { nullable: true })
   @Scopes(...TRANSLATION_SCOPES)
   async applicationTranslationPublishHistory(
     @CurrentUser() user: User,
     @Args('namespace') namespace: string,
     @Args('limit', { type: () => Int, defaultValue: 25 }) limit: number,
     @Args('skip', { type: () => Int, defaultValue: 0 }) skip: number,
-  ): Promise<TranslationPublishGql[]> {
+  ): Promise<TranslationPublishHistoryGql> {
     return this.translationClient.getPublishHistory(
       user,
       namespace,

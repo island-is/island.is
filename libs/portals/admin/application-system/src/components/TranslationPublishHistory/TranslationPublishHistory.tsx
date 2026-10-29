@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import {
   Box,
   Button,
@@ -17,6 +17,7 @@ import {
   useRollbackApplicationTranslationsMutation,
 } from '../../queries/translations.generated'
 import { useTranslationPublishActor } from '../../hooks/useTranslationPublishActor'
+import * as styles from './TranslationPublishHistory.css'
 
 const PUBLISH_HISTORY_PAGE_SIZE = 25
 
@@ -53,12 +54,7 @@ export const TranslationPublishHistory = ({
       fetchPolicy: 'network-only',
     })
 
-  const [exhausted, setExhausted] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
-
-  useEffect(() => {
-    setExhausted(false)
-  }, [namespace, isOpen])
 
   const [rollback, { loading: rollingBack }] =
     useRollbackApplicationTranslationsMutation()
@@ -83,30 +79,30 @@ export const TranslationPublishHistory = ({
     [namespace, publishActor, rollback, formatMessage, onRollbackComplete],
   )
 
-  const history = data?.applicationTranslationPublishHistory ?? []
-  const hasMore =
-    !exhausted &&
-    history.length > 0 &&
-    history.length % PUBLISH_HISTORY_PAGE_SIZE === 0
+  const history = data?.applicationTranslationPublishHistory?.items ?? []
+  const nextSkip = data?.applicationTranslationPublishHistory?.nextSkip
+  const hasMore = nextSkip != null
 
   const handleShowMore = async () => {
     setLoadingMore(true)
     try {
-      const result = await fetchMore({
-        variables: { skip: history.length },
-        updateQuery: (prev, { fetchMoreResult }) => ({
-          ...prev,
-          applicationTranslationPublishHistory: [
-            ...(prev.applicationTranslationPublishHistory ?? []),
-            ...(fetchMoreResult?.applicationTranslationPublishHistory ?? []),
-          ],
-        }),
+      await fetchMore({
+        variables: { skip: nextSkip },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          const prevPage = prev.applicationTranslationPublishHistory
+          const nextPage = fetchMoreResult?.applicationTranslationPublishHistory
+          if (!prevPage || !nextPage) {
+            return prev
+          }
+          return {
+            ...prev,
+            applicationTranslationPublishHistory: {
+              ...nextPage,
+              items: [...prevPage.items, ...nextPage.items],
+            },
+          }
+        },
       })
-      const fetched =
-        result.data?.applicationTranslationPublishHistory?.length ?? 0
-      if (fetched < PUBLISH_HISTORY_PAGE_SIZE) {
-        setExhausted(true)
-      }
     } catch (err) {
       console.error('Failed to load more publish history', err)
     } finally {
@@ -124,8 +120,14 @@ export const TranslationPublishHistory = ({
         if (!visible) onClose()
       }}
       hideOnClickOutside
+      contentClassName={styles.drawerContent}
     >
-      <Box paddingRight={[6, 5, 3]}>
+      <Box
+        flexGrow={1}
+        overflow="auto"
+        paddingX={[3, 6, 8]}
+        paddingBottom={[3, 6, 8]}
+      >
         <Stack space={3}>
           <Text variant="h3">{formatMessage(m.translationPublishHistory)}</Text>
 

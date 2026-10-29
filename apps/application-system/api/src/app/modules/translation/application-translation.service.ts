@@ -48,6 +48,11 @@ export interface PublishHistoryItem {
   publisherNameUnavailable?: boolean
 }
 
+export interface PublishHistoryPage {
+  items: PublishHistoryItem[]
+  nextSkip?: number
+}
+
 export interface PublishActor {
   actorName: string
   onBehalfOfName?: string | null
@@ -572,17 +577,17 @@ export class ApplicationTranslationService {
     namespace: string,
     limit = PUBLISH_HISTORY_PAGE_SIZE,
     skip = 0,
-  ): Promise<PublishHistoryItem[]> {
+  ): Promise<PublishHistoryPage> {
     const { sys } = await this.getVerifiedNamespaceEntry(namespace)
     const createdByBySnapshot = new Map<string, string>()
 
     const page =
       await this.managementClient.snapshot.getManyForEntry<NamespaceEntryFields>(
-        { entryId: sys.id, query: { select: 'sys', limit, skip } },
+        { entryId: sys.id, query: { select: 'sys', limit: limit + 1, skip } },
       )
 
     const sorted: PublishHistoryItem[] = []
-    for (const item of page.items) {
+    for (const item of page.items.slice(0, limit)) {
       if (item.sys.snapshotType === 'publish') {
         sorted.push({
           id: item.sys.id,
@@ -597,6 +602,8 @@ export class ApplicationTranslationService {
     }
 
     sorted.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+
+    const nextSkip = page.items.length > limit ? skip + limit : undefined
 
     const records = await this.publishModel.findAll({
       where: {
@@ -616,7 +623,7 @@ export class ApplicationTranslationService {
       ),
     )
 
-    return sorted.map((item) => {
+    const items = sorted.map((item) => {
       const record = item.id ? recordBySnapshot.get(item.id) : undefined
       if (record) {
         return {
@@ -636,6 +643,8 @@ export class ApplicationTranslationService {
         ? { ...item, publishedInContentfulByName: name }
         : { ...item, publisherNameUnavailable: true }
     })
+
+    return { items, nextSkip }
   }
 
   private async resolveContentfulPublishers(

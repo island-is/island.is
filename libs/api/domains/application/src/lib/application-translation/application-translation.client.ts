@@ -19,6 +19,7 @@ import type {
   ApplicationTranslationGql,
   TemplateIntrospectionGql,
   TranslationPublishGql,
+  TranslationPublishHistoryGql,
 } from './application-translation.model'
 
 const APPLICATION_TYPE_IDS = new Set<string>(Object.values(ApplicationTypes))
@@ -209,12 +210,12 @@ export class ApplicationTranslationClient {
     namespace: string,
     limit: number,
     skip: number,
-  ): Promise<TranslationPublishGql[]> {
+  ): Promise<TranslationPublishHistoryGql> {
     const params = new URLSearchParams({
       limit: String(limit),
       skip: String(skip),
     })
-    return this.request<TranslationPublishGql[]>(
+    return this.request<TranslationPublishHistoryGql>(
       user,
       `${this.namespacePath(
         namespace,

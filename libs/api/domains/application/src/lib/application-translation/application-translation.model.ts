@@ -522,3 +522,12 @@ export class TranslationPublishGql {
   @Field(() => Boolean, { nullable: true })
   publisherNameUnavailable?: boolean
 }
+
+@ObjectType()
+export class TranslationPublishHistoryGql {
+  @Field(() => [TranslationPublishGql])
+  items!: TranslationPublishGql[]
+
+  @Field(() => Int, { nullable: true })
+  nextSkip?: number
+}

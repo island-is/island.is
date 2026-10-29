@@ -691,22 +691,28 @@ describe('ApplicationTranslationService', () => {
 
       expect(managementSnapshotGetManyForEntrySpy).toHaveBeenCalledWith({
         entryId: 'test.ns',
-        query: { select: 'sys', limit: 25, skip: 0 },
+        query: { select: 'sys', limit: 26, skip: 0 },
       })
-      expect(history.map((h) => h.id)).toEqual(['snap-new', 'snap-old'])
+      expect(history.items.map((h) => h.id)).toEqual(['snap-new', 'snap-old'])
+      expect(history.nextSkip).toBeUndefined()
     })
 
-    it('reads only the requested page of snapshots', async () => {
+    it('reads only the requested page, and offsets the next by raw snapshots', async () => {
       managementEntryGetSpy.mockResolvedValue(
         buildEntry({ namespace: { [DEFAULT_LOCALE]: 'test.ns' } }),
       )
-      const snapshot = (id: string, createdAt: string) => ({
-        sys: { id, snapshotType: 'publish', createdAt },
+      const snapshot = (
+        id: string,
+        createdAt: string,
+        snapshotType: string,
+      ) => ({
+        sys: { id, snapshotType, createdAt },
       })
       managementSnapshotGetManyForEntrySpy.mockResolvedValue({
         items: [
-          snapshot('snap-b', '2026-02-01T00:00:00.000Z'),
-          snapshot('snap-a', '2026-01-01T00:00:00.000Z'),
+          snapshot('snap-b', '2026-02-01T00:00:00.000Z', 'publish'),
+          snapshot('snap-x', '2026-01-01T00:00:00.000Z', 'archive'),
+          snapshot('snap-next', '2025-12-01T00:00:00.000Z', 'publish'),
         ],
       })
 
@@ -715,9 +721,10 @@ describe('ApplicationTranslationService', () => {
       expect(managementSnapshotGetManyForEntrySpy).toHaveBeenCalledTimes(1)
       expect(managementSnapshotGetManyForEntrySpy).toHaveBeenCalledWith({
         entryId: 'test.ns',
-        query: { select: 'sys', limit: 2, skip: 50 },
+        query: { select: 'sys', limit: 3, skip: 50 },
       })
-      expect(history.map((h) => h.id)).toEqual(['snap-b', 'snap-a'])
+      expect(history.items.map((h) => h.id)).toEqual(['snap-b'])
+      expect(history.nextSkip).toBe(52)
     })
   })
 
@@ -980,7 +987,7 @@ describe('ApplicationTranslationService', () => {
 
         const history = await service.getPublishHistory('test.ns')
 
-        expect(history).toEqual([
+        expect(history.items).toEqual([
           {
             id: 'snap-new',
             namespace: 'test.ns',
@@ -1018,7 +1025,7 @@ describe('ApplicationTranslationService', () => {
           },
         )
 
-        const history = await service.getPublishHistory('test.ns')
+        const { items: history } = await service.getPublishHistory('test.ns')
 
         expect(history[0].publishedInContentfulByName).toBe('Siggi Sigurðsson')
         expect(history[1].publishedInContentfulByName).toBeUndefined()
