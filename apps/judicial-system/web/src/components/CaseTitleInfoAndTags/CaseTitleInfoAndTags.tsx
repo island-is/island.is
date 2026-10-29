@@ -54,7 +54,7 @@ const CaseTitleInfoAndTags: FC = () => {
           (workingCase.isCompletedWithoutRuling ? (
             <DateLabel
               date={workingCase.rulingDate}
-              text={formatMessage(strings.caseCompletedDatePrefix)}
+              text={strings.caseCompletedDatePrefix}
             />
           ) : (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
@@ -73,9 +73,18 @@ const CaseTitleInfoAndTags: FC = () => {
                 <Box marginTop={1}>
                   <Text as="h5" variant="h5">
                     {formatMessage(
-                      user.institution.type === InstitutionType.COURT_OF_APPEALS
-                        ? strings.COAAppealReceivedAt
-                        : strings.appealReceivedAt,
+                      {
+                        id:
+                          user.institution.type ===
+                          InstitutionType.COURT_OF_APPEALS
+                            ? strings.COAAppealReceivedAt
+                            : strings.appealReceivedAt,
+                        defaultMessage:
+                          user.institution.type ===
+                          InstitutionType.COURT_OF_APPEALS
+                            ? strings.COAAppealReceivedAt
+                            : strings.appealReceivedAt,
+                      },
                       {
                         appealReceived: formatDate(
                           targetAppealCase.appealReceivedByCourtDate,

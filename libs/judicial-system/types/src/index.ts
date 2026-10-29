@@ -127,6 +127,8 @@ export {
   HashAlgorithm,
   partyAppealFileCategories,
   verdictAppealDeclarationFileCategories,
+  verdictAppealStatementFileCategories,
+  verdictAppealFileCategories,
   isAppealFileDeletionLocked,
   isRulingOrderWithoutDocument,
   PoliceFileTypeCode,

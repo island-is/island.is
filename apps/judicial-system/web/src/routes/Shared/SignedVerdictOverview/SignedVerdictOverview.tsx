@@ -510,7 +510,7 @@ export const SignedVerdictOverview: FC = () => {
               </Accordion>
             )}
             <Conclusion
-              title={formatMessage(conclusion.title)}
+              title={conclusion.title}
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
@@ -518,7 +518,7 @@ export const SignedVerdictOverview: FC = () => {
               AppealCaseState.COMPLETED &&
               workingCase.appealCase?.appealConclusion && (
                 <Conclusion
-                  title={formatMessage(conclusion.appealTitle)}
+                  title={conclusion.appealTitle}
                   conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}

@@ -185,9 +185,9 @@ const AppealCase: FC = () => {
         notFound={false}
         onNavigationTo={handleNavigationTo}
       >
-        <PageHeader title={formatMessage(strings.title)} />
+        <PageHeader title={strings.title} />
         <FormContentContainer>
-          <PageTitle>{formatMessage(strings.title)}</PageTitle>
+          <PageTitle>{strings.title}</PageTitle>
           <Box component="section" marginBottom={5}>
             <SectionHeading
               title={formatMessage(core.appealCaseNumberHeading)}
@@ -201,8 +201,8 @@ const AppealCase: FC = () => {
             />
             <Select
               name="assistant"
-              label={formatMessage(strings.assistantLabel)}
-              placeholder={formatMessage(strings.assistantPlaceholder)}
+              label={strings.assistantLabel}
+              placeholder={strings.assistantPlaceholder}
               value={
                 appealAssistant
                   ? {
@@ -227,16 +227,16 @@ const AppealCase: FC = () => {
                 <Box marginBottom={2} key={`${seat}`}>
                   <Select
                     name="judge"
-                    label={formatMessage(
+                    label={
                       seat === 0
                         ? strings.judgeForepersonLabel
-                        : strings.judgeLabel,
-                    )}
-                    placeholder={formatMessage(
+                        : strings.judgeLabel
+                    }
+                    placeholder={
                       seat === 0
                         ? strings.judgeForepersonPlaceholder
-                        : strings.judgePlaceholder,
-                    )}
+                        : strings.judgePlaceholder
+                    }
                     value={
                       judge
                         ? { label: judge.name ?? '', value: judge.id }
@@ -277,11 +277,11 @@ const AppealCase: FC = () => {
       <AnimatePresence>
         {modalVisible && (
           <Modal
-            title={formatMessage(strings.modalHeading)}
-            text={formatMessage(strings.modalMessage)}
+            title={strings.modalHeading}
+            text={strings.modalMessage}
             buttons={[
               {
-                text: formatMessage(strings.modalPrimaryButton),
+                text: strings.modalPrimaryButton,
                 onClick: () =>
                   router.push(
                     appendAppealCaseIdQuery(

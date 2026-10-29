@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
@@ -13,6 +14,8 @@ import {
 
 import { createTestingAppealSummonsModule } from './createTestingAppealSummonsModule'
 
+import { getOrCreateTransaction } from '../../../middleware'
+import { runInRequestContext } from '../../../test'
 import { AwsS3Service } from '../../aws-s3'
 import {
   AppealCase,
@@ -80,8 +83,32 @@ describe('AppealSummonsController - Update', () => {
   let mockAppealSummonsRepositoryService: AppealSummonsRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let mockAwsS3Service: AwsS3Service
+  let mockSequelize: Sequelize
   let transaction: Transaction
   let appealSummonsController: AppealSummonsController
+
+  // The route is guarded by CaseExistsForUpdateGuard, so the request
+  // transaction is already open - and holding a lock on this case row - by
+  // the time the handler runs. Guards do not execute in controller unit
+  // tests, so the request context and that transaction are set up here
+  // instead.
+  const update = (
+    summons: AppealSummons,
+    caseToUpdate: Case = theCase,
+    updateDto: CreateAppealSummonsDto = dto,
+  ) =>
+    runInRequestContext(async () => {
+      await getOrCreateTransaction(mockSequelize)
+
+      return appealSummonsController.update(
+        caseId,
+        summonsId,
+        caseToUpdate,
+        summons,
+        updateDto,
+        user,
+      )
+    })
 
   beforeEach(async () => {
     const {
@@ -96,6 +123,7 @@ describe('AppealSummonsController - Update', () => {
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockAwsS3Service = awsS3Service
     appealSummonsController = controller
+    mockSequelize = sequelize
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {
@@ -103,9 +131,7 @@ describe('AppealSummonsController - Update', () => {
         void callback()
       }),
     } as unknown as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => Promise<unknown>) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
     ;(
       mockAppealSummonsRepositoryService.deleteDefendants as jest.Mock
     ).mockResolvedValue(1)
@@ -121,18 +147,15 @@ describe('AppealSummonsController - Update', () => {
     ;(mockAwsS3Service.deleteObject as jest.Mock).mockResolvedValue(true)
   })
 
-  it('replaces defendant rows and does not write an issued event', async () => {
+  it('replaces defendant rows in the transaction the guard opened and does not write an issued event', async () => {
     const summons = { id: summonsId } as AppealSummons
 
-    const result = await appealSummonsController.update(
-      caseId,
-      summonsId,
-      theCase,
-      summons,
-      dto,
-      user,
-    )
+    const result = await update(summons)
 
+    // Once, by the stand-in for CaseExistsForUpdateGuard above. A second call
+    // would be the handler opening a transaction of its own, which would
+    // block on the guard's row lock and deadlock the request.
+    expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
     expect(
       mockAppealSummonsRepositoryService.deleteDefendants,
     ).toHaveBeenCalledWith(summonsId, { transaction })
@@ -159,14 +182,7 @@ describe('AppealSummonsController - Update', () => {
       hash: 'abc',
     } as AppealSummons
 
-    await appealSummonsController.update(
-      caseId,
-      summonsId,
-      theCase,
-      summons,
-      dto,
-      user,
-    )
+    await update(summons)
 
     expect(mockAppealSummonsRepositoryService.update).toHaveBeenCalledWith(
       summonsId,
@@ -177,7 +193,7 @@ describe('AppealSummonsController - Update', () => {
         hash: null,
         hashAlgorithm: null,
       },
-      { transaction },
+      { transaction, where: { sentToCourtOfAppealsDate: null } },
     )
     expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(
       theCase.type,
@@ -199,14 +215,7 @@ describe('AppealSummonsController - Update', () => {
       hash: 'reconfirmed-hash',
     } as AppealSummons)
 
-    await appealSummonsController.update(
-      caseId,
-      summonsId,
-      theCase,
-      summons,
-      dto,
-      user,
-    )
+    await update(summons)
 
     expect(mockAwsS3Service.deleteObject).not.toHaveBeenCalled()
   })
@@ -239,14 +248,7 @@ describe('AppealSummonsController - Update', () => {
       ],
     }
 
-    await appealSummonsController.update(
-      caseId,
-      summonsId,
-      caseWithWithdrawn,
-      summons,
-      dtoWithWithdrawn,
-      user,
-    )
+    await update(summons, caseWithWithdrawn, dtoWithWithdrawn)
 
     expect(
       mockAppealSummonsRepositoryService.createDefendant,
@@ -267,16 +269,7 @@ describe('AppealSummonsController - Update', () => {
       sentToCourtOfAppealsDate: new Date(),
     } as AppealSummons
 
-    await expect(
-      appealSummonsController.update(
-        caseId,
-        summonsId,
-        theCase,
-        summons,
-        dto,
-        user,
-      ),
-    ).rejects.toBeInstanceOf(ForbiddenException)
+    await expect(update(summons)).rejects.toBeInstanceOf(ForbiddenException)
 
     expect(
       mockAppealSummonsRepositoryService.deleteDefendants,
@@ -289,16 +282,7 @@ describe('AppealSummonsController - Update', () => {
       services: [{ id: uuid() }],
     } as unknown as AppealSummons
 
-    await expect(
-      appealSummonsController.update(
-        caseId,
-        summonsId,
-        theCase,
-        summons,
-        dto,
-        user,
-      ),
-    ).rejects.toBeInstanceOf(ForbiddenException)
+    await expect(update(summons)).rejects.toBeInstanceOf(ForbiddenException)
 
     expect(
       mockAppealSummonsRepositoryService.deleteDefendants,

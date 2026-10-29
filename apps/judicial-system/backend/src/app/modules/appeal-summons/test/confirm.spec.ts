@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
@@ -54,6 +55,7 @@ describe('AppealSummonsController - Confirm', () => {
   let mockAppealSummonsRepositoryService: AppealSummonsRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let mockPdfService: PdfService
+  let mockSequelize: Sequelize
   let transaction: Transaction
   let appealSummonsController: AppealSummonsController
 
@@ -70,9 +72,14 @@ describe('AppealSummonsController - Confirm', () => {
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockPdfService = pdfService
     appealSummonsController = controller
+    mockSequelize = sequelize
 
     const mockTransaction = sequelize.transaction as jest.Mock
-    transaction = {} as Transaction
+    transaction = {
+      afterCommit: jest.fn((callback: () => void) => {
+        void callback()
+      }),
+    } as unknown as Transaction
     mockTransaction.mockImplementation(
       (fn: (transaction: Transaction) => Promise<unknown>) => fn(transaction),
     )
@@ -108,6 +115,9 @@ describe('AppealSummonsController - Confirm', () => {
     ;(
       mockAppealEventLogRepositoryService.create as jest.Mock
     ).mockResolvedValueOnce({})
+    ;(mockPdfService.uploadAppealSummonsPdf as jest.Mock).mockResolvedValueOnce(
+      undefined,
+    )
 
     const result = await appealSummonsController.confirm(
       caseId,
@@ -117,6 +127,11 @@ describe('AppealSummonsController - Confirm', () => {
       user,
     )
 
+    // Not on the request transaction, unlike create, update and delete: the
+    // handler opens a transaction of its own, because the PDF upload it
+    // awaits must not run under a FOR UPDATE lock on the case row.
+    expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
+    expect(mockSequelize.transaction).toHaveBeenCalledWith(expect.any(Function))
     expect(mockAppealSummonsRepositoryService.update).toHaveBeenNthCalledWith(
       1,
       summonsId,
@@ -131,6 +146,8 @@ describe('AppealSummonsController - Confirm', () => {
       theCase,
       user,
       afterConfirm,
+      undefined,
+      { cacheInS3: false },
     )
     expect(mockAppealSummonsRepositoryService.update).toHaveBeenNthCalledWith(
       2,
@@ -153,7 +170,51 @@ describe('AppealSummonsController - Confirm', () => {
       },
       { transaction },
     )
+    expect(transaction.afterCommit).toHaveBeenCalled()
+    expect(mockPdfService.uploadAppealSummonsPdf).toHaveBeenCalledWith(
+      theCase,
+      summonsId,
+      pdf,
+    )
     expect(result).toBe(afterHash)
+  })
+
+  it('keeps the confirmation when the post-commit PDF upload fails', async () => {
+    const pdf = Buffer.from('%PDF-confirmed')
+    const { hash, hashAlgorithm } = getCaseFileHash(pdf)
+    const afterConfirm = {
+      id: summonsId,
+      caseId,
+      confirmedById: user.id,
+      confirmedDate: new Date(),
+      confirmedBy: user,
+      defendants: [],
+    } as AppealSummons
+    const afterHash = {
+      ...afterConfirm,
+      hash,
+      hashAlgorithm,
+    } as AppealSummons
+
+    ;(mockAppealSummonsRepositoryService.update as jest.Mock)
+      .mockResolvedValueOnce(afterConfirm)
+      .mockResolvedValueOnce(afterHash)
+    ;(mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock)
+      .mockResolvedValueOnce(afterConfirm)
+      .mockResolvedValueOnce(afterHash)
+    ;(mockPdfService.getAppealSummonsPdf as jest.Mock).mockResolvedValueOnce(
+      pdf,
+    )
+    ;(
+      mockAppealEventLogRepositoryService.create as jest.Mock
+    ).mockResolvedValueOnce({})
+    ;(mockPdfService.uploadAppealSummonsPdf as jest.Mock).mockRejectedValueOnce(
+      new Error('upload failed'),
+    )
+
+    await expect(
+      appealSummonsController.confirm(caseId, summonsId, theCase, draft, user),
+    ).resolves.toBe(afterHash)
   })
 
   it('rejects when the summons is already confirmed', async () => {

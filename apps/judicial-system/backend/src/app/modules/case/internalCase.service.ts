@@ -54,7 +54,7 @@ import {
   getRequestPdfAsString,
   stripHtmlTags,
 } from '../../formatters'
-import { courtUpload, notifications } from '../../messages'
+import { courtUpload, formatIcuMessage, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import {
   CourtDocumentFolder,
@@ -232,7 +232,7 @@ export class InternalCaseService {
     buffer: Buffer,
     user: TUser,
   ): Promise<boolean> {
-    const fileName = this.formatMessage(courtUpload.ruling, {
+    const fileName = formatIcuMessage(courtUpload.ruling, {
       courtCaseNumber: theCase.courtCaseNumber,
       date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
     })
@@ -283,7 +283,7 @@ export class InternalCaseService {
         }
       }
 
-      const fileName = this.formatMessage(courtUpload.courtRecord, {
+      const fileName = formatIcuMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
         date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
       })
@@ -318,7 +318,7 @@ export class InternalCaseService {
   ): Promise<boolean> {
     return getRequestPdfAsBuffer(theCase, this.formatMessage)
       .then((pdf) => {
-        const fileName = this.formatMessage(courtUpload.request, {
+        const fileName = formatIcuMessage(courtUpload.request, {
           caseType: formatCaseType(theCase.type),
           date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
         })
@@ -371,7 +371,7 @@ export class InternalCaseService {
         }
       }
 
-      const fileName = this.formatMessage(courtUpload.courtRecord, {
+      const fileName = formatIcuMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
         date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
       })
@@ -819,7 +819,7 @@ export class InternalCaseService {
       .then(async (pdf) => {
         await this.refreshFormatMessage()
 
-        const fileName = this.formatMessage(courtUpload.indictment, {
+        const fileName = formatIcuMessage(courtUpload.indictment, {
           courtCaseNumber: theCase.courtCaseNumber,
         })
 
@@ -1157,7 +1157,7 @@ export class InternalCaseService {
       .then(async (pdf) => {
         await this.refreshFormatMessage()
 
-        const fileName = this.formatMessage(courtUpload.caseFilesRecord, {
+        const fileName = formatIcuMessage(courtUpload.caseFilesRecord, {
           policeCaseNumber,
         })
 

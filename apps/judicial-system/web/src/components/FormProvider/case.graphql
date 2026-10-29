@@ -183,6 +183,7 @@ query Case($input: CaseQueryInput!) {
     defendantWaivesRightToCounsel
     crimeScenes
     indictmentIntroduction
+    indictmentHash
     indictmentReviewedDate
     indictmentCounts {
       id
@@ -298,6 +299,18 @@ query Case($input: CaseQueryInput!) {
         institutionName
       }
       appealSummonses {
+        id
+        created
+        confirmedDate
+        sentToCourtOfAppealsDate
+        defendants {
+          id
+          defendantId
+          appellantSide
+          claims
+        }
+      }
+      sentAppealSummonses {
         id
         created
         confirmedDate

@@ -4,6 +4,7 @@ import {
   CardErrorCode,
   InvoiceErrorCode,
   BankTransferErrorCode,
+  DebtPaymentErrorCode,
   PaymentErrorCode,
 } from '@island.is/shared/constants'
 
@@ -13,6 +14,7 @@ const ERROR_ENUMS = [
   CardErrorCode,
   InvoiceErrorCode,
   BankTransferErrorCode,
+  DebtPaymentErrorCode,
 ]
 
 export const onlyReturnKnownErrorCode = (

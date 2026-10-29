@@ -55,14 +55,10 @@ export class LimitedAccessCaseService {
     caseId: string,
     options?: { transaction?: Transaction; user?: TUser },
   ): Promise<Case> {
-    const user = options?.user
-
     const theCase = await this.caseRepositoryService.findLimitedAccessById(
       caseId,
       {
-        // Only a defence user has their view of the linked cases narrowed
-        defenceUserNationalId:
-          user && isDefenceUser(user) ? user.nationalId : undefined,
+        defenceUserNationalId: this.defenceUserNationalId(options?.user),
         transaction: options?.transaction,
       },
     )
@@ -72,6 +68,35 @@ export class LimitedAccessCaseService {
     }
 
     return theCase
+  }
+
+  /**
+   * findById with the case row locked for the rest of the transaction. Used
+   * by `LimitedAccessCaseExistsForUpdateGuard` so that a limited access route
+   * that mutates decides against a case row no one else can change until it
+   * commits. The user narrows the read exactly as in findById.
+   */
+  async findByIdForUpdate(
+    caseId: string,
+    transaction: Transaction,
+    user?: TUser,
+  ): Promise<Case> {
+    const theCase =
+      await this.caseRepositoryService.findLimitedAccessByIdForUpdate(caseId, {
+        defenceUserNationalId: this.defenceUserNationalId(user),
+        transaction,
+      })
+
+    if (!theCase) {
+      throw new NotFoundException(`Case ${caseId} does not exist`)
+    }
+
+    return theCase
+  }
+
+  // Only a defence user has their view of the linked cases narrowed
+  private defenceUserNationalId(user?: TUser): string | undefined {
+    return user && isDefenceUser(user) ? user.nationalId : undefined
   }
 
   async update(

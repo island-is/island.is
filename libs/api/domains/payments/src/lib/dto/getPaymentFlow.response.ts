@@ -4,6 +4,7 @@ import {
   GetPaymentFlowDTOBankTransferPendingStatusEnum,
   GetPaymentFlowDTOLastBankTransferFailureEnum,
   GetPaymentFlowDTOPaymentStatusEnum,
+  GetPaymentFlowDTOTypeEnum,
 } from '@island.is/clients/payments'
 import { PaymentFlowEvent } from './paymentFlowEvent.dto'
 
@@ -17,6 +18,10 @@ registerEnumType(GetPaymentFlowDTOLastBankTransferFailureEnum, {
 
 registerEnumType(GetPaymentFlowDTOBankTransferPendingStatusEnum, {
   name: 'PaymentsBankTransferPendingStatus',
+})
+
+registerEnumType(GetPaymentFlowDTOTypeEnum, {
+  name: 'PaymentsFlowType',
 })
 
 @ObjectType('PaymentsGetPaymentFlowResponse')
@@ -72,6 +77,18 @@ export class GetPaymentFlowResponse {
 
   @Field(() => Date)
   updatedAt!: Date
+
+  @Field(() => Boolean, {
+    description:
+      'True when the flow can no longer be paid and the payer has to start a new one, e.g. a debt flow whose settlement was rejected.',
+  })
+  isClosed!: boolean
+
+  @Field(() => GetPaymentFlowDTOTypeEnum, {
+    description:
+      'charge: paying catalog charges. debt: paying debts owed to the state, the pay page shows its own title for these.',
+  })
+  type!: GetPaymentFlowDTOTypeEnum
 
   @Field(() => GetPaymentFlowDTOLastBankTransferFailureEnum, {
     nullable: true,
