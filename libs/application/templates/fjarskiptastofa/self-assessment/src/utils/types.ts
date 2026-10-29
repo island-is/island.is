@@ -40,6 +40,9 @@ export interface AssessmentCategoryScore {
 export interface SelfAssessmentResult {
   averageOverallScore: number
   categoryScores: AssessmentCategoryScore[]
+  // Fjarskiptastofa's own reading of the overall score, shown as-is; optional so
+  // a result stored before the field existed still renders.
+  scoreInterpretation?: string
   // The reference number (tilvísunarnúmer) the submit api assigns. Optional
   // until the API returns it; a placeholder is shown in the meantime.
   referenceNumber?: string

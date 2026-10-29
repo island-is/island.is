@@ -55,6 +55,8 @@ export const AssessmentResultsPdf: FC<AssessmentResultsPdfProps> = ({
     ) ?? application.modified,
   )
 
+  const referenceNumber = getReferenceNumber(result)
+
   const categoryLabels = new Map(
     (questionsData?.categories ?? []).map(
       (category) => [category.id, category.label] as const,
@@ -91,11 +93,13 @@ export const AssessmentResultsPdf: FC<AssessmentResultsPdfProps> = ({
                 ? `${formatMessage(m.results.title)} – ${companyName}`
                 : formatMessage(m.results.title)}
             </Text>
-            <Text style={styles.metaLine}>
-              {`${formatMessage(
-                m.results.referenceNumber,
-              )}: ${getReferenceNumber(result)}`}
-            </Text>
+            {referenceNumber ? (
+              <Text style={styles.metaLine}>
+                {`${formatMessage(
+                  m.results.referenceNumber,
+                )}: ${referenceNumber}`}
+              </Text>
+            ) : null}
             {submissionDate ? (
               <Text style={styles.metaLine}>
                 {`${formatMessage(m.resultsPdf.dateLabel)}: ${submissionDate}`}

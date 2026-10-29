@@ -26,8 +26,7 @@ export enum InstitutionContentfulIds {
   HUSNAEDIS_OG_MANNVIRKJASTOFNUN = '53jrbgxPKpbNtordSfEZUK',
   HEILSUGAESLA_HOFUDBORDARSVAEDISINS = '5H6d3uPjeKCIybpy1ZclmS',
   JAFNRETTISSTOFA = '26BquaSZ4fhC8UBDJZmrNI',
-  // TODO: Replace with the real Contentful entry id for Fjarskiptastofa
-  FJARSKIPTASTOFA = 'TODO_FJARSKIPTASTOFA_CONTENTFUL_ID',
+  FJARSKIPTASTOFA = '2wPf6ISCKCqmPHquvsKzBi',
 }
 
 /* eslint-disable local-rules/disallow-kennitalas */
@@ -60,8 +59,7 @@ export enum InstitutionNationalIds {
   HUSNAEDIS_OG_MANNVIRKJASTOFNUN = '5812191480',
   HEILSUGAESLA_HOFUDBORDARSVAEDISINS = '5210050760',
   JAFNRETTISSTOFA = '7108002940',
-  // TODO: Replace with the real national id (kennitala) for Fjarskiptastofa
-  FJARSKIPTASTOFA = '0000000000',
+  FJARSKIPTASTOFA = '5703972499',
 }
 
 // This slug is the institution slug from the graphql endpoint getOrganizations

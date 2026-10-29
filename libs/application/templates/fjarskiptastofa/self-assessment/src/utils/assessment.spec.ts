@@ -11,7 +11,6 @@ import {
   groupQuestionsByCategory,
   isQuestionAnswered,
   parseQuestionId,
-  PLACEHOLDER_REFERENCE_NUMBER,
 } from './assessment'
 import {
   ASSESSMENT_ANSWERS_ID,
@@ -112,14 +111,14 @@ describe('assessment utils', () => {
       ).toBe('999')
     })
 
-    it('should fall back to the placeholder when there is no result', () => {
-      expect(getReferenceNumber(undefined)).toBe(PLACEHOLDER_REFERENCE_NUMBER)
+    it('should return undefined when there is no result', () => {
+      expect(getReferenceNumber(undefined)).toBeUndefined()
     })
 
-    it('should fall back to the placeholder when the result has no reference number', () => {
+    it('should return undefined when the result has no reference number', () => {
       expect(
         getReferenceNumber({ averageOverallScore: 0, categoryScores: [] }),
-      ).toBe(PLACEHOLDER_REFERENCE_NUMBER)
+      ).toBeUndefined()
     })
   })
 

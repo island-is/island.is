@@ -89,27 +89,15 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
       assessmentResponses,
     }
 
-    // DEBUG: confirm the submit action is reached and inspect the payload.
-    this.logger.info('[self-assessment] submitSelfAssessment hit', {
+    // The answers and the scoring are confidential, so only the application and
+    // the number of answers are logged, never the payload or the response.
+    this.logger.info('[self-assessment] submitting self-assessment', {
       applicationId: application.id,
-      submitterSSN,
       responseCount: assessmentResponses.length,
-      payload,
     })
 
     try {
-      const response = await this.selfAssessmentClient.submitAnswers(
-        auth,
-        payload,
-      )
-
-      // DEBUG: log the response returned by Fjarskiptastofa.
-      this.logger.info('[self-assessment] submitSelfAssessment response', {
-        applicationId: application.id,
-        response,
-      })
-
-      return response
+      return await this.selfAssessmentClient.submitAnswers(auth, payload)
     } catch (error) {
       // DEBUG: surface the failure (status/body) from the Fjarskiptastofa call.
       this.logger.error('[self-assessment] submitSelfAssessment failed', {

@@ -29,6 +29,7 @@ export const AssessmentResults: FC<FieldBaseProps> = ({ application }) => {
 
   const result = getSelfAssessmentResult(application.externalData)
   const questionsData = getQuestionsData(application.externalData)
+  const referenceNumber = getReferenceNumber(result)
 
   const companyName =
     getValueViaPath<string>(application.externalData, 'identity.data.name') ??
@@ -92,12 +93,14 @@ export const AssessmentResults: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h2" as="h1">
           {formatMessage(m.results.completedTitle)}
         </Text>
-        <Box textAlign="right">
-          <Text variant="h5" color="dark400">
-            {formatMessage(m.results.referenceNumber)}
-          </Text>
-          <Text variant="small">{getReferenceNumber(result)}</Text>
-        </Box>
+        {referenceNumber && (
+          <Box textAlign="right">
+            <Text variant="h5" color="dark400">
+              {formatMessage(m.results.referenceNumber)}
+            </Text>
+            <Text variant="small">{referenceNumber}</Text>
+          </Box>
+        )}
       </Box>
 
       <AlertMessage
@@ -175,11 +178,13 @@ export const AssessmentResults: FC<FieldBaseProps> = ({ application }) => {
         </Box>
       )}
 
-      <AlertMessage
-        type="default"
-        title={formatMessage(m.results.interpetationTitle)}
-        message={'Vísbendingar eru um að nokkuð vanti upp á hlítni.'}
-      />
+      {result.scoreInterpretation && (
+        <AlertMessage
+          type="default"
+          title={formatMessage(m.results.interpetationTitle)}
+          message={result.scoreInterpretation}
+        />
+      )}
 
       <Box marginTop={5}>
         <Text variant="h3" as="h2" marginBottom={2}>
@@ -224,6 +229,7 @@ export const AssessmentResults: FC<FieldBaseProps> = ({ application }) => {
           style={{ textDecoration: 'none' }}
         >
           <Button
+            as="span"
             icon="download"
             iconType="outline"
             loading={pdfInstance.loading}

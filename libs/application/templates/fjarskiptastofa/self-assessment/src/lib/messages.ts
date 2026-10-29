@@ -94,7 +94,7 @@ export const m = {
     description: {
       id: 'fjs.sa.application:notAllowed.description',
       defaultMessage:
-        'Þú ert ekki skráð/ur inn á umboði fyrirtækis eða stofnunar sem þú starfar hjá. Til að nálgast sjálfsmatið þarftu að skrá þig inn á umboð, og prókúruhafi hjá þínu fyrirtæki eða stofnun þarf að hafa gefið þér réttindi á sjálfsmatið.Við bendum á opið sjálfsmat á sviði netöryggis á Ísland.is fyrir aðila sem ekki eru eftirlitsskyldir.',
+        'Þú ert ekki skráð/ur inn á umboði fyrirtækis eða stofnunar sem þú starfar hjá. Til að nálgast sjálfsmatið þarftu að skrá þig inn á umboð, og prókúruhafi hjá þínu fyrirtæki eða stofnun þarf að hafa gefið þér réttindi á sjálfsmatið. Við bendum á opið sjálfsmat á sviði netöryggis á Ísland.is fyrir aðila sem ekki eru eftirlitsskyldir.',
       description: 'Not allowed description',
     },
   }),

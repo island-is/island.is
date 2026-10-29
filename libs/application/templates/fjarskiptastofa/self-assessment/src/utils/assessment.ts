@@ -50,15 +50,12 @@ export const getSelfAssessmentResult = (
     `${SUBMIT_EXTERNAL_DATA_ID}.data`,
   )
 
-// Placeholder reference number shown until the submit API returns a real one.
-// TODO: remove once the API populates result.referenceNumber.
-export const PLACEHOLDER_REFERENCE_NUMBER = '117995'
-
-// The reference number flows from the submit result once the API returns it,
-// falling back to the placeholder so the screen and PDF stay in sync.
+// The reference number (tilvísunarnúmer) flows from the submit result. The
+// submit API does not return a user-facing reference yet, so the screen and the
+// PDF leave the field out entirely rather than show a made-up number.
 export const getReferenceNumber = (
   result: SelfAssessmentResult | undefined,
-): string => result?.referenceNumber ?? PLACEHOLDER_REFERENCE_NUMBER
+): string | undefined => result?.referenceNumber
 
 export const getAssessmentAnswers = (answers: FormValue): AssessmentAnswers =>
   getValueViaPath<AssessmentAnswers>(answers, ASSESSMENT_ANSWERS_ID) ?? {}

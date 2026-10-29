@@ -160,6 +160,7 @@ describe('FjarskiptastofaSelfAssessmentService', () => {
       await submit(ACCESS_WINDOW_OPEN[0])
 
       expect(client.submitAnswers).toHaveBeenCalledWith(expect.anything(), {
+        language: 'en',
         submitterSSN: ACCESS_WINDOW_OPEN[0],
         assessmentResponses: [
           { questionId: 1, answerValue: 'Yes', remark: 'done' },

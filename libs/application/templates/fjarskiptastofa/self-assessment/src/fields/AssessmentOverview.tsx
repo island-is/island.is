@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import {
   Accordion,
@@ -7,7 +7,6 @@ import {
   Box,
   Button,
   Checkbox,
-  Divider,
   Table as T,
   Tag,
   Text,
@@ -104,17 +103,18 @@ export const AssessmentOverview: FC<FieldBaseProps> = ({
   // The submit button stays clickable, but submitting is blocked with an error
   // until every question is fully answered and the confirmation is ticked.
   const canSubmit = allAnswered && confirmed
-  useEffect(() => {
-    if (!setBeforeSubmitCallback) return
 
-    setBeforeSubmitCallback(async () => {
-      if (!canSubmit) {
-        setShowError(true)
-        return [false, formatMessage(m.overview.incompleteHint)]
-      }
-      return [true, null]
-    })
-  }, [setBeforeSubmitCallback, canSubmit, formatMessage])
+  // Registered during render (not in a useEffect): the ui-shell Screen clears any
+  // beforeSubmit callback once on mount, and because child effects run before the
+  // parent's clearing effect, a useEffect registration would be wiped out and
+  // never re-run, so the first click would submit an incomplete assessment.
+  setBeforeSubmitCallback?.(async () => {
+    if (!canSubmit) {
+      setShowError(true)
+      return [false, formatMessage(m.overview.incompleteHint)]
+    }
+    return [true, null]
+  })
 
   if (!questionsData || questionsData.questions.length === 0) {
     return null
