@@ -258,9 +258,7 @@ export const Overview = () => {
                     (legalProvision: CaseLegalProvisions, index: number) => {
                       return (
                         <div key={index}>
-                          <Text>
-                            {getLegalProvisionTitle(legalProvision)}
-                          </Text>
+                          <Text>{getLegalProvisionTitle(legalProvision)}</Text>
                         </div>
                       )
                     },
