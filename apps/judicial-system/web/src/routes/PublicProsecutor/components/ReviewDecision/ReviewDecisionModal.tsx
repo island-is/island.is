@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { useIntl } from 'react-intl'
+import { useState } from 'react'
 
 import { Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -23,10 +23,6 @@ interface Props {
   // only changes what the confirmation says.
   indictmentAppealDeadline?: string | null
   onClose: () => void
-  // Called with the defendants whose decision was saved, whether or not every
-  // save succeeded, so the page can stop counting them as changed and a retry
-  // sends only what failed.
-  onSaved: (savedDefendantIds: string[]) => void
   // Called once every changed decision has been saved.
   onConfirmed: () => void
 }
@@ -48,54 +44,39 @@ export const ReviewDecisionModal: FC<Props> = (props) => {
     isFine,
     indictmentAppealDeadline,
     onClose,
-    onSaved,
     onConfirmed,
   } = props
-  const { formatMessage: fm } = useIntl()
-  const { updateDefendant, isUpdatingDefendant } = useDefendants()
+  const { updateDefendants } = useDefendants()
+  const [isSaving, setIsSaving] = useState(false)
 
   const isLate = isLateVerdictAppeal(
     changedDefendants,
     indictmentAppealDeadline,
   )
 
-  // The saves are independent requests, not one transaction: some may succeed
-  // while another fails. Those that did are reported back so they are not sent
-  // again; the modal stays open for the rest.
+  // The decisions are saved in one transaction: either every one of them and
+  // its verdict appeal lands, or none does and the modal stays open.
   const handleConfirm = async () => {
-    const results = await Promise.all(
-      changedDefendants.map(async (defendant) => ({
-        defendant,
-        saved: Boolean(
-          await updateDefendant({
-            caseId,
-            defendantId: defendant.id,
-            indictmentReviewDecision: defendant.indictmentReviewDecision,
-          }),
-        ),
+    setIsSaving(true)
+
+    const saved = await updateDefendants(
+      caseId,
+      changedDefendants.map((defendant) => ({
+        defendantId: defendant.id,
+        indictmentReviewDecision: defendant.indictmentReviewDecision,
       })),
     )
 
-    const savedDefendantIds = results
-      .filter(({ saved }) => saved)
-      .map(({ defendant }) => defendant.id)
+    setIsSaving(false)
 
-    if (savedDefendantIds.length > 0) {
-      onSaved(savedDefendantIds)
+    if (saved) {
+      onConfirmed()
     }
-
-    if (savedDefendantIds.length < changedDefendants.length) {
-      return
-    }
-
-    onConfirmed()
   }
 
   return (
     <Modal
-      title={
-        isLate ? 'Áfrýjun eftir að fresti lauk' : fm(strings.reviewModalTitle)
-      }
+      title={isLate ? 'Áfrýjun eftir að fresti lauk' : strings.reviewModalTitle}
       text={
         <div className={stack({ gap: 2 })}>
           {isLate && (
@@ -128,9 +109,9 @@ export const ReviewDecisionModal: FC<Props> = (props) => {
           variant: 'ghost',
         },
         {
-          text: fm(strings.reviewModalPrimaryButtonText),
+          text: strings.reviewModalPrimaryButtonText,
           onClick: handleConfirm,
-          isLoading: isUpdatingDefendant,
+          isLoading: isSaving,
         },
       ]}
       onClose={onClose}

@@ -1,5 +1,4 @@
 import type { FC } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
 import { courtSessionTypeNames } from '@island.is/judicial-system/types'
@@ -31,14 +30,12 @@ const IndictmentCaseScheduledCard: FC<Props> = (props) => {
     postponedIndefinitelyExplanation,
     courtSessionType,
   } = props
-  const { formatMessage } = useIntl()
-
   return indictmentDecision ? (
     indictmentDecision === IndictmentDecision.POSTPONING ? (
       <IconCard
         data={[
           {
-            title: formatMessage(strings.postponingTitle),
+            title: strings.postponingTitle,
             value: (
               <Text marginTop={2}>{postponedIndefinitelyExplanation}</Text>
             ),
@@ -50,11 +47,9 @@ const IndictmentCaseScheduledCard: FC<Props> = (props) => {
       <IconCard
         data={[
           {
-            title: formatMessage(strings.schedulingUntilVerdictTitle),
+            title: strings.schedulingUntilVerdictTitle,
             value: (
-              <Text marginTop={2}>
-                {formatMessage(strings.schedulingUntilVerdictText)}
-              </Text>
+              <Text marginTop={2}>{strings.schedulingUntilVerdictText}</Text>
             ),
           },
         ]}

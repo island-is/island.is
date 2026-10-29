@@ -72,11 +72,29 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     expect(body(amend(after))).toEqual([
       article(
         1,
-        '<p>Á eftir 1. mgr. 1. gr. reglugerðarinnar kemur ný málsgrein sem orðast svo:</p><p>Zulu yankee xray whiskey.</p>',
+        '<p>Eftirfarandi breytingar verða á 1. gr. reglugerðarinnar:</p><ol type="a">' +
+          '<li><p>Á eftir 1. mgr. kemur ný málsgrein sem orðast svo:</p><p>Zulu yankee xray whiskey.</p></li>' +
+          '<li><p>3. mgr. fellur brott.</p></li></ol>',
       ),
-      article(2, '<p>3. mgr. 1. gr. reglugerðarinnar fellur brott.</p>'),
-      article(3, CLOSING),
+      article(2, CLOSING),
     ])
+  })
+
+  it('adds new paragraphs after the last one to the article', () => {
+    const [first] = body(
+      amend(
+        BASE.replace(
+          '<p>Golf hotel india.</p>',
+          '<p>Golf hotel india.</p><p>Zulu yankee xray whiskey.</p><p>Kilo lima mike november.</p>',
+        ),
+      ),
+    )
+    expect(first).toBe(
+      article(
+        1,
+        '<p>Við 1. gr. reglugerðarinnar bætast tvær nýjar málsgreinar, svohljóðandi:</p><p>Zulu yankee xray whiskey.</p><p>Kilo lima mike november.</p>',
+      ),
+    )
   })
 
   it('adds consecutive new paragraphs as one amendment', () => {
@@ -144,7 +162,7 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     expect(first).toBe(
       article(
         1,
-        '<p>Á eftir 2. gr. reglugerðarinnar kemur ný grein, 3. gr., ásamt fyrirsögn, svohljóðandi:</p> <p>Nýr texti.</p>',
+        '<p>Á eftir 2. gr. reglugerðarinnar kemur ný grein, 3. gr., ásamt fyrirsögn, svohljóðandi:</p> <p style="text-align: center;"><em>Nýtt</em></p><p>Nýr texti.</p>',
       ),
     )
   })
@@ -386,7 +404,7 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
         other + TABLE.replace('100', '150'),
       )
       expect(body(amend(after, {}, WITH_TABLE)).join('')).toContain(
-        '<p>Í töflu í 1. gr. reglugerðarinnar er gerð breyting, svohljóðandi:</p>',
+        '<li><p>Í töflu er gerð breyting, svohljóðandi:</p>',
       )
     })
 
@@ -422,6 +440,64 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
       'Eftirfarandi breytingar eru gerðar á Viðauka I',
       undefined, // gildistaka
     ])
+  })
+
+  describe('new appendixes', () => {
+    const newAppendix = (title: string) => ({
+      title,
+      diff: '<div data-diff="new"><p>Efni.</p></div>',
+    })
+    const added = (text: string, ...titles: string[]) =>
+      body(
+        amend(BASE.replace('Golf hotel india.', text), {
+          appendixes: titles.map(newAppendix),
+        }),
+      )
+        .join('')
+        .match(/Við reglugerðina bætist [^,]+, [^,]+/g) ?? []
+
+    it('leaves out the article of an appendix the text names', () => {
+      expect(added('Sjá nánar í viðauka II.', 'Viðauki II')).toEqual([])
+      expect(added('Sjá nánar í II. viðauka.', 'Viðauki II')).toEqual([])
+    })
+
+    it('adds an article for each appendix the text does not name', () => {
+      expect(
+        added('Sjá nánar í viðauka II.', 'Viðauki II', 'Viðauki III'),
+      ).toEqual(['Við reglugerðina bætist nýr viðauki, Viðauki III'])
+    })
+
+    it('does not take an existing appendix for the new one', () => {
+      expect(added('Sjá nánar í viðauka I.', 'Viðauki II')).toEqual([
+        'Við reglugerðina bætist nýr viðauki, Viðauki II',
+      ])
+      expect(added('Sjá nánar í viðauka III.', 'Viðauki II')).toEqual([
+        'Við reglugerðina bætist nýr viðauki, Viðauki II',
+      ])
+    })
+
+    it('does not take a viðauki for a fylgiskjal', () => {
+      expect(
+        added('Sjá XIII. viðauka EES-samningsins.', 'Fylgiskjal 1'),
+      ).toEqual(['Við reglugerðina bætist nýtt fylgiskjal, Fylgiskjal 1'])
+      expect(
+        body(
+          amend(
+            BASE.replace(
+              'Golf hotel india.',
+              'Sjá XIII. viðauka EES-samningsins.',
+            ),
+            { appendixes: [newAppendix('Fylgiskjal')] },
+          ),
+        ).join(''),
+      ).toContain('Við reglugerðina bætist nýtt fylgiskjal sem birt er')
+    })
+
+    it('always adds the article of an appendix named neither', () => {
+      expect(added('Sjá nánar í viðauka I.', 'Gjaldskrá')).toEqual([
+        'Við reglugerðina bætist nýr viðauki, Gjaldskrá',
+      ])
+    })
   })
 
   it('keeps a chapter heading change in document order', () => {
@@ -468,19 +544,19 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     ])
   })
 
-  it('uses the date of the change, not the base regulation', () => {
+  it('names no date, even when the change has one', () => {
     const output = body(
       amend(BASE.replace('Alfa bravo', 'Alfa kilo'), { date: '2026-12-01' }),
     )
     expect(output[output.length - 1]).toBe(
       article(
         2,
-        '<p>Reglugerð þessi er sett með heimild í lögum nr. 1/2000 og öðlast gildi 1. desember 2026.</p>',
+        '<p>Reglugerð þessi er sett með heimild í lögum nr. 1/2000 og öðlast þegar gildi.</p>',
       ),
     )
   })
 
-  it('dates each change when only some of them have a date', () => {
+  it('names no date when only some changes have one', () => {
     const output = body(
       amend(BASE.replace('Alfa bravo', 'Alfa kilo'), {
         name: '0001/2020',
@@ -496,9 +572,7 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     expect(output[output.length - 1]).toBe(
       article(
         3,
-        '<p>Reglugerð þessi er sett með heimild í lögum nr. 1/2000.</p>' +
-          '<p>Ákvæði 1. gr. reglugerðarinnar öðlast gildi 1. desember 2026.</p>' +
-          '<p>Ákvæði 2. gr. reglugerðarinnar öðlast þegar gildi.</p>',
+        '<p>Reglugerð þessi er sett með heimild í lögum nr. 1/2000 og öðlast þegar gildi.</p>',
       ),
     )
   })
@@ -555,12 +629,12 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     expect(output[output.length - 1]).toBe(
       article(
         2,
-        '<p>Reglugerð þessi er sett með heimild í [] og öðlast gildi 1. desember 2026.</p>',
+        '<p>Reglugerð þessi er sett með heimild í [] og öðlast þegar gildi.</p>',
       ),
     )
   })
 
-  it('keeps each regulation together and dates each group of articles', () => {
+  it('keeps each regulation together and names no dates', () => {
     const b = [
       title('1. gr.'),
       '<p>Alfa.</p>',
@@ -592,9 +666,7 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     expect(output[3]).toBe(
       article(
         4,
-        '<p>Reglugerð þessi er sett með heimild í [].</p>' +
-          '<p>Ákvæði 1. gr. og 2. gr. reglugerðarinnar öðlast gildi 1. nóvember 2026.</p>' +
-          '<p>Ákvæði 3. gr. reglugerðarinnar öðlast gildi 1. desember 2026.</p>',
+        '<p>Reglugerð þessi er sett með heimild í [] og öðlast þegar gildi.</p>',
       ),
     )
   })
@@ -998,11 +1070,11 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
       },
     ])
     expect(
-      output.slice(0, 3).map((a) => a.match(/<p>(.*?)<\/p>/)?.[1]),
+      Array.from(output[0].matchAll(/<li><p>(.*?)<\/p>/g), (m) => m[1]),
     ).toEqual([
-      'Á eftir 1. mgr. 1. gr. reglugerðarinnar kemur ný málsgrein sem orðast svo:',
-      'Töluliðir í 1. mgr. 1. gr. reglugerðarinnar verða stafliðir.',
-      'Á eftir 1. mgr. 1. gr. reglugerðarinnar kemur ný málsgrein sem orðast svo:',
+      'Á eftir 1. mgr. kemur ný málsgrein sem orðast svo:',
+      'Töluliðir í 1. mgr. verða stafliðir.',
+      'Á eftir 1. mgr. kemur ný málsgrein sem orðast svo:',
     ])
   })
 
@@ -1013,6 +1085,225 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
         withList('a', '<em>fólksbifreiðar,</em>', '<em>vörubifreiðar.</em>'),
       ),
     ).not.toContain('verða töluliðir')
+  })
+})
+
+// The changes of 1020/2026 made to an abridged 324/2023, its base regulation.
+// Expected wording follows 1020/2026 as published in Stjórnartíðindi.
+describe('formatAmendingBodyWithArticlePrefix: 1020/2026 on 324/2023', () => {
+  const heading = (number: string, name: string) =>
+    title(`${number} <em class="article__name">${name}</em>`)
+  const p = (text: string) => `<p>${text}</p>`
+  const lettered = (...items: string[]) =>
+    `<ol type="a">${items.map((item) => `<li>${item}</li>`).join('')}</ol>`
+
+  const BASE_324 = [
+    heading('2. gr.', 'Auðkenni.'),
+    p(
+      'Leigubifreið sem ekið er samkvæmt gjaldmæli skal auðkennd með þakljósi.',
+    ),
+    p(
+      'Leigubifreið sem ekið er samkvæmt fyrirframumsömdu heildargjaldi skal auðkennd með leyfisnúmeri.',
+    ),
+    p('Enn fremur skal leigubifreið bera merki stöðvarinnar.'),
+    p(
+      'Leigubifreiðastjóri skal við leiguakstur ávallt hafa meðferðis og sýnilegt leyfisskírteini.',
+    ),
+    heading('3. gr.', 'Umsókn og útgáfa leyfis.'),
+    p('Umsækjandi sem óskar leyfis Samgöngustofu skal sækja um það rafrænt.'),
+    heading('4. gr.', 'Námskeið.'),
+    p('Námskeið skal fara fram hjá viðurkenndum námskeiðshaldara.'),
+    heading('5. gr.', 'Sérstakar skyldur leigubifreiðastöðvar.'),
+    p(
+      'Leigubifreiðastöð skal tilkynna Samgöngustofu að rekstrarleyfishafi hafi afgreiðslu á stöðinni.',
+    ),
+    p(
+      'Verði leigubifreiðastöð þess vör að leyfishafi fari ekki eftir fyrirmælum laga skal hún tilkynna það.',
+    ),
+    p(
+      'Leigubifreiðastöð sem fengið hefur starfsleyfi skal hafa fullnægjandi fjárhagsstöðu.',
+    ),
+    heading('8. gr.', 'Rafrænn gagnagrunnur.'),
+    p('Samgöngustofa sér um að reka rafrænan gagnagrunn.'),
+    heading('9. gr.', 'Lagastoð og gildistaka.'),
+    p(
+      'Reglugerð þessi, sem sett er með heimild í lögum nr. 120/2022 um leigubifreiðaakstur öðlast þegar gildi.',
+    ),
+  ].join('')
+
+  const NEW_FIRST = 'Leigubifreið skal auðkennd með sérstöku skráningarmerki.'
+  const DASHBOARD =
+    'Leigubifreiðastjóri skal við leiguakstur ávallt hafa meðferðis og sýnilegt leyfisskírteini. Leyfisskírteinið skal vera staðsett á mælaborði fyrir miðju.'
+  const REVOCATION =
+    'Hafi umsækjandi verið sviptur leyfi skal umsókninni hafnað.'
+  const SUPERVISION = 'Samgöngustofa skal árlega hafa sérstakt eftirlit.'
+  const REPORT = 'Samgöngustofa skal árlega skila ráðherra skýrslu.'
+  const CODE = 'Stöð skal setja og birta hátternisreglur.'
+  const CODE_LEAD = 'Í hátternisreglum skal að minnsta kosti fjallað um:'
+  const CODE_ITEMS = lettered(
+    'Markmið og gildissvið reglnanna.',
+    'Kvartanir og viðurlög.',
+  )
+  const REFUSAL =
+    'Hafi atvinnuhafi ítrekað brotið gegn reglunum getur hún hafnað honum.'
+  const INCIDENTS = 'Halda skal rafræna atvikaskrá um frávik.'
+  const MODEL =
+    'Fyrirmynd að hátternisreglum er birt í fylgiskjali með reglugerð þessari.'
+  const RECORD =
+    'Leigubifreiðastöð skal halda rafræna skrá yfir allar seldar ferðir:'
+  const RECORD_ITEMS = lettered(
+    'upphafs- og endastöðvar ferðar,',
+    'verðupplýsingar fyrir selda ferð.',
+  )
+  const KEPT = 'Skráin skal vistuð í öruggu kerfi.'
+  const TRANSITIONAL =
+    'Rekstrarleyfishafi án starfsleyfis skal sinna skyldum stöðvar.'
+
+  const AFTER_324 = BASE_324.replace(
+    heading('2. gr.', 'Auðkenni.'),
+    heading('2. gr.', 'Auðkenni.') + p(NEW_FIRST),
+  )
+    .replace(
+      p(
+        'Leigubifreiðastjóri skal við leiguakstur ávallt hafa meðferðis og sýnilegt leyfisskírteini.',
+      ),
+      p(DASHBOARD),
+    )
+    .replace(
+      heading('4. gr.', 'Námskeið.'),
+      // Typed without the space, as the tester did
+      heading('3. gr.a', 'Leyfissvipting.') +
+        p(REVOCATION) +
+        heading('3. gr. b', 'Framkvæmd eftirlits.') +
+        p(SUPERVISION) +
+        p(REPORT) +
+        heading('4. gr.', 'Námskeið.'),
+    )
+    .replace(
+      heading('8. gr.', 'Rafrænn gagnagrunnur.'),
+      [CODE, CODE_LEAD].map(p).join('') +
+        CODE_ITEMS +
+        [REFUSAL, INCIDENTS, MODEL].map(p).join('') +
+        heading('8. gr.', 'Rafrænn gagnagrunnur.'),
+    )
+    .replace(
+      heading('9. gr.', 'Lagastoð og gildistaka.'),
+      heading('8. gr. a', 'Rafræn skrá.') +
+        p(RECORD) +
+        RECORD_ITEMS +
+        p(KEPT) +
+        heading('9. gr.', 'Lagastoð og gildistaka.'),
+    )
+    .concat(title('Ákvæði til bráðabirgða.') + p(TRANSITIONAL))
+
+  const NEW_APPENDIX = {
+    title: 'Fylgiskjal.',
+    diff: '<div data-diff="new"><p>Fyrirmynd að hátternisreglum.</p></div>',
+  }
+
+  const output = body(
+    amend(AFTER_324, { appendixes: [NEW_APPENDIX] }, BASE_324),
+  )
+  const subtitle = (text: string) =>
+    `<p style="text-align: center;"><em>${text}</em></p>`
+
+  it('makes the changes to 2. gr. one article, lettered', () => {
+    expect(output[0]).toBe(
+      article(
+        1,
+        '<p>Eftirfarandi breytingar verða á 2. gr. reglugerðarinnar:</p><ol type="a">' +
+          `<li><p>Á undan 1. mgr. kemur ný málsgrein svohljóðandi: </p>${p(
+            NEW_FIRST,
+          )}</li>` +
+          `<li><p>4. mgr. breytist og orðast svo:</p>${p(DASHBOARD)}</li></ol>`,
+      ),
+    )
+  })
+
+  it('adds 3. gr. a and 3. gr. b as one article, with their subtitles', () => {
+    expect(output[1]).toBe(
+      article(
+        2,
+        '<p>Á eftir 3. gr. reglugerðarinnar koma tvær nýjar greinar, 3. gr. a og 3. gr. b, ásamt fyrirsögnum, svohljóðandi:</p> ' +
+          `<p>a. (3. gr. a)</p>${subtitle('Leyfissvipting.')}${p(REVOCATION)}` +
+          `<p>b. (3. gr. b)</p>${subtitle('Framkvæmd eftirlits.')}${p(
+            SUPERVISION,
+          )}${p(REPORT)}`,
+      ),
+    )
+  })
+
+  it('adds the paragraphs and the list in them to 5. gr. as one article', () => {
+    expect(output[2]).toBe(
+      article(
+        3,
+        '<p>Við 5. gr. reglugerðarinnar bætast fimm nýjar málsgreinar, svohljóðandi:</p>' +
+          [CODE, CODE_LEAD].map(p).join('') +
+          CODE_ITEMS +
+          [REFUSAL, INCIDENTS, MODEL].map(p).join(''),
+      ),
+    )
+  })
+
+  it('adds 8. gr. a with its letter, its subtitle and its lettered list', () => {
+    expect(output[3]).toBe(
+      article(
+        4,
+        '<p>Á eftir 8. gr. reglugerðarinnar kemur ný grein, 8. gr. a, ásamt fyrirsögn, svohljóðandi:</p> ' +
+          subtitle('Rafræn skrá.') +
+          p(RECORD) +
+          RECORD_ITEMS +
+          p(KEPT),
+      ),
+    )
+  })
+
+  it('adds a transitional provision', () => {
+    expect(output[4]).toBe(
+      article(
+        5,
+        '<p>Við reglugerðina bætist nýtt ákvæði til bráðabirgða, svohljóðandi:</p>' +
+          p(TRANSITIONAL),
+      ),
+    )
+  })
+
+  it('leaves out the appendix article when the text names the appendix', () => {
+    expect(output).toHaveLength(6)
+    expect(output.join('')).not.toContain('bætist nýtt fylgiskjal')
+  })
+
+  it('adds the appendix article when no text names the appendix', () => {
+    const unnamed = body(
+      amend(
+        AFTER_324.replace(p(MODEL), ''),
+        { appendixes: [NEW_APPENDIX] },
+        BASE_324,
+      ),
+    )
+    expect(unnamed).toContainEqual(
+      article(
+        6,
+        '<p>Við reglugerðina bætist nýtt fylgiskjal sem birt er með reglugerð þessari.</p>',
+      ),
+    )
+  })
+
+  it('reads a list styled by the editor as stafliðir', () => {
+    const list = (style: string, ...items: string[]) =>
+      `<ol${style}>${items.map((item) => `<li>${item}</li>`).join('')}</ol>`
+    const styled = ' style="list-style-type: lower-alpha;"'
+    const before = BASE.replace(
+      '<p>Delta echo foxtrot.</p>',
+      '<p>Delta echo foxtrot.</p>' + list(styled, 'kilo,', 'lima.'),
+    )
+    const after = before.replace('lima.', 'mike.')
+    expect(body(amend(after, {}, before))[0]).toBe(
+      article(
+        1,
+        '<p>Eftirfarandi breytingar verða á 2. mgr. 1. gr. reglugerðarinnar:</p> <p>b-liður orðast svo: mike.</p>',
+      ),
+    )
   })
 })
 
@@ -1141,6 +1432,117 @@ describe('formatAmendingRegTitle', () => {
       ]),
     ).toBe(
       'Reglugerð um breytingu á reglugerð um A, nr. 1/2020 og brottfellingu reglugerðar nr. 2/2020 um B.',
+    )
+  })
+})
+
+describe('formatAmendingBodyWithArticlePrefix: items added or removed', () => {
+  const withList = (...items: string[]) =>
+    [
+      title('1. gr.'),
+      '<p>Reglugerð þessi gildir um:</p>',
+      `<ol>${items.map((item) => `<li>${item}</li>`).join('')}</ol>`,
+      title('2. gr. Gildistaka'),
+      GILDISTAKA,
+    ].join('')
+  const changes = (after: string) =>
+    formatAmendingBodyWithArticlePrefix([
+      {
+        id: '1',
+        type: 'amend',
+        name: '0123/2020',
+        diff: getStructuredDiff(
+          withList(
+            'fólksbifreiðar,',
+            'vörubifreiðar,',
+            'hópbifreiðar.',
+          ) as HTMLText,
+          after as HTMLText,
+        ).diff,
+      },
+    ])[0]
+  const intro =
+    '<p>Eftirfarandi breytingar verða á 1. mgr. 1. gr. reglugerðarinnar:</p> '
+
+  it('renumbers the items after one added in the middle', () => {
+    expect(
+      changes(
+        withList(
+          'fólksbifreiðar,',
+          'dráttarvélar,',
+          'vörubifreiðar,',
+          'hópbifreiðar.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        intro +
+          '<p>Á eftir 1. tölulið kemur nýr liður svohljóðandi, og breytist númer annarra liða til samræmis: dráttarvélar,</p>',
+      ),
+    )
+  })
+
+  it('renumbers nothing for an item added last', () => {
+    expect(
+      changes(
+        withList(
+          'fólksbifreiðar,',
+          'vörubifreiðar,',
+          'hópbifreiðar,',
+          'dráttarvélar.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        intro +
+          '<p>3. tölul. orðast svo: hópbifreiðar,</p>' +
+          '<p>Á eftir 3. tölulið kemur nýr liður svohljóðandi: dráttarvélar.</p>',
+      ),
+    )
+  })
+
+  it('renumbers nothing for items added last, one after another', () => {
+    expect(
+      changes(
+        withList(
+          'fólksbifreiðar,',
+          'vörubifreiðar,',
+          'hópbifreiðar,',
+          'dráttarvélar,',
+          'bifhjól.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        intro +
+          '<p>3. tölul. orðast svo: hópbifreiðar,</p>' +
+          '<p>Á eftir 3. tölulið kemur nýr liður svohljóðandi: dráttarvélar,</p>' +
+          '<p>Á eftir 4. tölulið kemur nýr liður svohljóðandi: bifhjól.</p>',
+      ),
+    )
+  })
+
+  it('renumbers the items after one removed in the middle', () => {
+    expect(changes(withList('fólksbifreiðar,', 'hópbifreiðar.'))).toBe(
+      article(
+        1,
+        intro +
+          '<p>2. töluliður fellur brott og breytist númer annarra liða til samræmis.</p>',
+      ),
+    )
+  })
+
+  it('renumbers nothing for the last item removed', () => {
+    expect(changes(withList('fólksbifreiðar,', 'vörubifreiðar.'))).toBe(
+      article(
+        1,
+        intro +
+          '<p>2. tölul. orðast svo: vörubifreiðar.</p>' +
+          '<p>3. töluliður fellur brott.</p>',
+      ),
     )
   })
 })

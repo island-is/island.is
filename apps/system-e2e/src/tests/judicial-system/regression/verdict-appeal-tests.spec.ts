@@ -99,11 +99,14 @@ test.describe.serial('Verdict appeal tests', () => {
     await Promise.all([
       verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
       page
-        .getByRole('checkbox', { name: 'Ákærði óskar ekki eftir verjanda' })
+        .getByRole('checkbox', {
+          name: 'Ákærði óskar ekki eftir að sér sé skipaður verjandi',
+        })
         .check(),
     ])
     const confirmDefenderButton = page.getByRole('button', {
-      name: 'Staðfesta val á verjanda',
+      name: 'Staðfesta val',
+      exact: true,
     })
     await expect(confirmDefenderButton).toBeEnabled()
     await confirmDefenderButton.click()
@@ -111,6 +114,36 @@ test.describe.serial('Verdict appeal tests', () => {
       page.getByTestId('modalPrimaryButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
     ])
+    await page.getByTestId('continueButton').click()
+
+    // Statement deadlines: the court gives the defendant a deadline, confirms
+    // it, and is offered an extension once it is saved.
+    await expect(page).toHaveURL(
+      new RegExp(
+        `/landsrettur/afryjun/greinargerdarfrestir/${caseId}(\\?.*)?$`,
+      ),
+    )
+    await expect(
+      page.getByRole('heading', { name: 'Greinargerðarfrestir', level: 1 }),
+    ).toBeVisible()
+    const defendantCard = page.getByRole('region', { name: accusedName })
+    await defendantCard.getByLabel('Frestur til').fill(getDaysFromNow(7))
+    await page.keyboard.press('Escape')
+    await defendantCard.getByRole('button', { name: 'Senda frest' }).click()
+    await expect(
+      page.getByRole('dialog', { name: 'Viltu senda út greinargerðarfrest?' }),
+    ).toBeVisible()
+    await Promise.all([
+      verifyRequestCompletion(
+        page,
+        '/api/graphql',
+        'SetAppealStatementDeadline',
+      ),
+      page.getByTestId('confirmStatementDeadlineButton').click(),
+    ])
+    await expect(
+      defendantCard.getByRole('button', { name: 'Framlengja frest' }),
+    ).toBeVisible()
     await page.getByTestId('continueButton').click()
 
     // Status

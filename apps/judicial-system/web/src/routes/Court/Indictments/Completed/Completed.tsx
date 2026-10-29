@@ -213,7 +213,7 @@ const Completed: FC = () => {
       >
         <PageHeader title={formatMessage(titles.court.indictments.completed)} />
         <FormContentContainer>
-          <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+          <PageTitle>{strings.heading}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
           {defendantsWithVerdict?.map(
             (defendant) =>
@@ -280,9 +280,7 @@ const Completed: FC = () => {
             )}
             {isRuling && (
               <Box component="section">
-                <SectionHeading
-                  title={formatMessage(strings.serviceRequirementTitle)}
-                />
+                <SectionHeading title={strings.serviceRequirementTitle} />
                 <div className={stack({ gap: 4 })}>
                   {defendantsWithVerdict?.map((defendant) => {
                     const { verdict } = defendant
@@ -326,7 +324,7 @@ const Completed: FC = () => {
                 ? []
                 : [
                     {
-                      text: formatMessage(strings.sendToPublicProsecutor),
+                      text: strings.sendToPublicProsecutor,
                       onClick: () =>
                         setModalVisible(
                           'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR',

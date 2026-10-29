@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import {
   BelongsTo,
   Column,
@@ -21,6 +22,7 @@ import {
 
 import { AppealCourtSession } from './appealCourtSession.model'
 import { AppealEventLog } from './appealEventLog.model'
+import { AppealStatementDeadline } from './appealStatementDeadline.model'
 import { AppealSummons } from './appealSummons.model'
 import { Case } from './case.model'
 import { CaseFile } from './caseFile.model'
@@ -272,9 +274,29 @@ export class AppealCase extends Model {
   appealSummonses?: AppealSummons[]
 
   /**********
+   * Summonses that have been sent to the court of appeals. Staff keep the
+   * unscoped association above; Landsréttur only ever joins this one.
+   **********/
+  @HasMany(() => AppealSummons, {
+    foreignKey: 'appealCaseId',
+    as: 'sentAppealSummonses',
+    scope: { sentToCourtOfAppealsDate: { [Op.ne]: null } },
+  })
+  @ApiPropertyOptional({ type: () => AppealSummons, isArray: true })
+  sentAppealSummonses?: AppealSummons[]
+
+  /**********
    * Court sessions (þinghöld) the court of appeals has called in this verdict appeal
    **********/
   @HasMany(() => AppealCourtSession, 'appealCaseId')
   @ApiPropertyOptional({ type: () => AppealCourtSession, isArray: true })
   courtSessions?: AppealCourtSession[]
+
+  /**********
+   * The deadlines (greinargerðarfrestir) the court of appeals has given the
+   * parties of this verdict appeal to file their statements, one per party
+   **********/
+  @HasMany(() => AppealStatementDeadline, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealStatementDeadline, isArray: true })
+  statementDeadlines?: AppealStatementDeadline[]
 }

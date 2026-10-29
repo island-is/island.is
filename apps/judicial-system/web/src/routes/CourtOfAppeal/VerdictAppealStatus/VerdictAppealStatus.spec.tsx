@@ -1,12 +1,15 @@
+import type { FC, PropsWithChildren } from 'react'
+import { useState } from 'react'
 import addDays from 'date-fns/addDays'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {
-  COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
 } from '@island.is/judicial-system/consts'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { FormContext } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseState,
   AppealCaseType,
@@ -18,7 +21,6 @@ import {
 import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   ApolloProviderWrapper,
-  FormContextWrapper,
   IntlProviderWrapper,
   UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
@@ -27,6 +29,8 @@ import VerdictAppealStatus from './VerdictAppealStatus'
 
 const mockPush = jest.fn()
 const mockCreateAppealCourtSession = jest.fn()
+const mockUpdateAppealCourtSession = jest.fn()
+const mockDeleteAppealCourtSession = jest.fn()
 
 jest.mock(
   '@island.is/judicial-system-web/src/utils/hooks/useAppealCourtSession',
@@ -35,6 +39,10 @@ jest.mock(
     default: () => ({
       createAppealCourtSession: mockCreateAppealCourtSession,
       isCreatingAppealCourtSession: false,
+      updateAppealCourtSession: mockUpdateAppealCourtSession,
+      isUpdatingAppealCourtSession: false,
+      deleteAppealCourtSession: mockDeleteAppealCourtSession,
+      isDeletingAppealCourtSession: false,
     }),
   }),
 )
@@ -90,17 +98,49 @@ const caseWithBookedSession = {
   },
 } as unknown as WorkingCase
 
+// Holds the case in state, unlike the shared wrapper, so what the page writes
+// back after booking, changing or cancelling a session shows in the list.
+const StatefulFormContext: FC<PropsWithChildren<{ theCase: WorkingCase }>> = ({
+  theCase,
+  children,
+}) => {
+  const [workingCase, setWorkingCase] = useState(theCase)
+
+  return (
+    <FormContext.Provider
+      value={{
+        workingCase,
+        setWorkingCase,
+        isLoadingWorkingCase: false,
+        caseNotFound: false,
+        isCaseUpToDate: true,
+        refreshCase: jest.fn(),
+        getCase: jest.fn(),
+        isCreating: false,
+      }}
+    >
+      {children}
+    </FormContext.Provider>
+  )
+}
+
 const renderPage = (c: WorkingCase = theCase) =>
   render(
     <IntlProviderWrapper>
       <ApolloProviderWrapper>
         <UserContextWrapper userRole={UserRole.COURT_OF_APPEALS_JUDGE}>
-          <FormContextWrapper theCase={c}>
+          <StatefulFormContext theCase={c}>
             <VerdictAppealStatus />
-          </FormContextWrapper>
+          </StatefulFormContext>
         </UserContextWrapper>
       </ApolloProviderWrapper>
     </IntlProviderWrapper>,
+  )
+
+// The menu item's role sits on the list item; what reacts is the button in it.
+const clickMenuItem = async (name: string) =>
+  userEvent.click(
+    within(await screen.findByRole('menuitem', { name })).getByRole('button'),
   )
 
 // Tomorrow rather than a fixed day: the picker refuses dates in the past.
@@ -147,6 +187,8 @@ describe('VerdictAppealStatus', () => {
   beforeEach(() => {
     mockPush.mockClear()
     mockCreateAppealCourtSession.mockReset()
+    mockUpdateAppealCourtSession.mockReset()
+    mockDeleteAppealCourtSession.mockReset()
   })
 
   it('names the case and who appealed', () => {
@@ -265,13 +307,177 @@ describe('VerdictAppealStatus', () => {
     expect(screen.getByTestId('continueButton')).toBeDisabled()
   })
 
-  it('leads back to the defender step with the appeal id', async () => {
+  it('leads back to the deadlines step with the appeal id', async () => {
     renderPage()
 
     await userEvent.click(screen.getByTestId('previousButton'))
 
     expect(mockPush).toHaveBeenCalledWith(
-      `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/case-id?appealCaseId=verdict-appeal`,
+      `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE}/case-id?appealCaseId=verdict-appeal`,
     )
+  })
+
+  describe('a booked session', () => {
+    const openMenu = async () => {
+      await userEvent.click(
+        screen.getByRole('button', { name: /^Valmynd fyrir Aðalmeðferð/ }),
+      )
+    }
+
+    it('can be changed or cancelled from its menu', async () => {
+      renderPage(caseWithBookedSession)
+
+      await openMenu()
+
+      expect(
+        (await screen.findAllByRole('menuitem')).map(
+          (item) => item.textContent,
+        ),
+      ).toEqual(['Breyta þinghaldi', 'Eyða þinghaldi'])
+    })
+
+    // Changing a session takes over the form and the footer: the form holds
+    // the session, the row says so, and the footer saves or gives up instead
+    // of continuing.
+    it('is held in the form while it is changed, until the court gives up', async () => {
+      renderPage(caseWithBookedSession)
+
+      await openMenu()
+      await clickMenuItem('Breyta þinghaldi')
+
+      expect(
+        await screen.findByRole('heading', { name: 'Breyta þinghaldi' }),
+      ).toBeInTheDocument()
+      expect(screen.getByText('Verið að breyta')).toBeInTheDocument()
+      expect(screen.getByLabelText(/Dómsalur/)).toHaveValue('1')
+      expect(
+        screen.getByRole('button', { name: 'Hætta við' }),
+      ).toBeInTheDocument()
+      expect(screen.getByTestId('saveChangesButton')).toBeEnabled()
+      expect(screen.queryByTestId('continueButton')).not.toBeInTheDocument()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Hætta við' }))
+
+      expect(
+        await screen.findByRole('heading', { name: 'Boða til þinghalds' }),
+      ).toBeInTheDocument()
+      await waitFor(() =>
+        expect(screen.queryByText('Verið að breyta')).not.toBeInTheDocument(),
+      )
+      expect(screen.getByLabelText(/Dómsalur/)).toHaveValue('')
+      expect(screen.getByTestId('continueButton')).toBeInTheDocument()
+    })
+
+    it('is let go of when the court picks another status', async () => {
+      renderPage(caseWithBookedSession)
+
+      await openMenu()
+      await clickMenuItem('Breyta þinghaldi')
+      expect(await screen.findByText('Verið að breyta')).toBeInTheDocument()
+
+      await userEvent.click(screen.getByLabelText('Lokið'))
+
+      expect(
+        screen.queryByRole('button', { name: 'Hætta við' }),
+      ).not.toBeInTheDocument()
+      expect(screen.queryByTestId('saveChangesButton')).not.toBeInTheDocument()
+      expect(screen.getByTestId('continueButton')).toBeEnabled()
+
+      await userEvent.click(screen.getByLabelText('Boða til þinghalds'))
+
+      expect(
+        await screen.findByRole('heading', { name: 'Boða til þinghalds' }),
+      ).toBeInTheDocument()
+      await waitFor(() =>
+        expect(screen.queryByText('Verið að breyta')).not.toBeInTheDocument(),
+      )
+      expect(screen.getByLabelText(/Dómsalur/)).toHaveValue('')
+    })
+
+    it('is saved with its changes once the court confirms', async () => {
+      const updated = { ...bookedSession, courtRoom: '2' }
+      mockUpdateAppealCourtSession.mockResolvedValue(updated)
+      renderPage(caseWithBookedSession)
+
+      await openMenu()
+      await clickMenuItem('Breyta þinghaldi')
+      await userEvent.clear(screen.getByLabelText(/Dómsalur/))
+      await userEvent.type(screen.getByLabelText(/Dómsalur/), '2')
+      await userEvent.click(screen.getByTestId('saveChangesButton'))
+
+      expect(
+        screen.getByRole('heading', { name: 'Boða til þinghalds?' }),
+      ).toBeInTheDocument()
+
+      await userEvent.click(screen.getByTestId('confirmChangesButton'))
+
+      expect(mockUpdateAppealCourtSession).toHaveBeenCalledWith({
+        caseId: 'case-id',
+        appealCaseId: 'verdict-appeal',
+        appealCourtSessionId: 'session-1',
+        sessionType: AppealCourtSessionType.MAIN_HEARING,
+        sessionDate: bookedSession.sessionDate,
+        courtRoom: '2',
+      })
+      await waitFor(() =>
+        expect(
+          screen.getByText('12.12.2026 kl. 14:00 · Dómsalur 2'),
+        ).toBeInTheDocument(),
+      )
+      await waitFor(() =>
+        expect(screen.queryByText('Verið að breyta')).not.toBeInTheDocument(),
+      )
+      expect(mockPush).not.toHaveBeenCalled()
+    })
+
+    it('is cancelled once the court confirms', async () => {
+      mockDeleteAppealCourtSession.mockResolvedValue(true)
+      renderPage(caseWithBookedSession)
+
+      await openMenu()
+      await clickMenuItem('Eyða þinghaldi')
+
+      expect(
+        screen.getByRole('heading', { name: 'Eyða þinghaldi?' }),
+      ).toBeInTheDocument()
+      expect(mockDeleteAppealCourtSession).not.toHaveBeenCalled()
+
+      await userEvent.click(screen.getByTestId('confirmDeleteSessionButton'))
+
+      expect(mockDeleteAppealCourtSession).toHaveBeenCalledWith({
+        caseId: 'case-id',
+        appealCaseId: 'verdict-appeal',
+        appealCourtSessionId: 'session-1',
+      })
+      await waitFor(() =>
+        expect(
+          screen.queryByText('12.12.2026 kl. 14:00 · Dómsalur 1'),
+        ).not.toBeInTheDocument(),
+      )
+      // The form stays where it was, rather than folding away now that no
+      // session says the court is calling one.
+      expect(screen.getByLabelText('Boða til þinghalds')).toBeChecked()
+      expect(
+        screen.getByRole('heading', { name: 'Boða til þinghalds' }),
+      ).toBeInTheDocument()
+    })
+
+    it('stays booked when the court thinks better of cancelling it', async () => {
+      renderPage(caseWithBookedSession)
+
+      await openMenu()
+      await clickMenuItem('Eyða þinghaldi')
+      await userEvent.click(screen.getByRole('button', { name: 'Hætta við' }))
+
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('heading', { name: 'Eyða þinghaldi?' }),
+        ).not.toBeInTheDocument(),
+      )
+      expect(mockDeleteAppealCourtSession).not.toHaveBeenCalled()
+      expect(
+        screen.getByText('12.12.2026 kl. 14:00 · Dómsalur 1'),
+      ).toBeInTheDocument()
+    })
   })
 })

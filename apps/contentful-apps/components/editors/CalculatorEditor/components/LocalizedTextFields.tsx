@@ -10,6 +10,8 @@ export const LocalizedTextFields = ({
   onChange,
   clearWhenEmpty,
   isDisabled,
+  isInvalid,
+  isRequired,
 }: {
   label: string
   value?: CalculatorLocalizedText
@@ -17,6 +19,8 @@ export const LocalizedTextFields = ({
   /* Omits blank optional localized values. */
   clearWhenEmpty?: boolean
   isDisabled?: boolean
+  isInvalid?: boolean
+  isRequired?: boolean
 }) => {
   /* Labels each localized input separately. */
   const isId = useId()
@@ -32,11 +36,15 @@ export const LocalizedTextFields = ({
   }
 
   return (
-    <FormControl marginBottom="none">
-      <FormControl.Label htmlFor={isId}>{label}</FormControl.Label>
+    <FormControl
+      id={isId}
+      marginBottom="none"
+      isInvalid={isInvalid}
+      isRequired={isRequired}
+    >
+      <FormControl.Label>{label}</FormControl.Label>
       <Stack flexDirection="row" alignItems="center" spacing="spacingXs">
         <TextInput
-          id={isId}
           aria-label={`${label} (Icelandic)`}
           placeholder="Icelandic"
           value={is}
@@ -44,13 +52,21 @@ export const LocalizedTextFields = ({
           onChange={(ev) => update(ev.target.value, en)}
         />
         <TextInput
+          id={`${isId}-en`}
           aria-label={`${label} (English)`}
           placeholder="English"
           value={en}
           isDisabled={isDisabled}
+          isInvalid={false}
+          isRequired={false}
           onChange={(ev) => update(is, ev.target.value)}
         />
       </Stack>
+      {isInvalid && (
+        <FormControl.ValidationMessage>
+          Icelandic label is required.
+        </FormControl.ValidationMessage>
+      )}
     </FormControl>
   )
 }

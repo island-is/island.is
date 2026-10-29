@@ -11,7 +11,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { SessionArrangements } from '@island.is/judicial-system/types'
 
-import { custodyNotice } from '../../messages'
+import { custodyNotice, formatIcuMessage } from '../../messages'
 import { Case } from '../../modules/repository'
 import { formatCustodyRestrictions } from '../formatters'
 import {
@@ -73,7 +73,9 @@ const constructCustodyNoticePdf = (
   addHugeHeading(doc, 'Vistunarseðill', 'Helvetica-Bold')
   addLargeHeading(
     doc,
-    formatMessage(custodyNotice.rulingTitle, { caseType: theCase.type }),
+    formatIcuMessage(custodyNotice.rulingTitle, {
+      caseType: theCase.type,
+    }),
   )
   addLargeHeading(
     doc,
@@ -128,7 +130,9 @@ const constructCustodyNoticePdf = (
   setLineGap(doc, 8)
   addMediumText(
     doc,
-    formatMessage(custodyNotice.rulingTitle, { caseType: theCase.type }),
+    formatIcuMessage(custodyNotice.rulingTitle, {
+      caseType: theCase.type,
+    }),
     'Helvetica-Bold',
   )
   addNormalText(
@@ -175,7 +179,9 @@ const constructCustodyNoticePdf = (
     setLineGap(doc, 8)
     addMediumText(
       doc,
-      formatMessage(custodyNotice.arrangement, { caseType: theCase.type }),
+      formatIcuMessage(custodyNotice.arrangement, {
+        caseType: theCase.type,
+      }),
       'Helvetica-Bold',
     )
 
@@ -187,7 +193,7 @@ const constructCustodyNoticePdf = (
       addNormalText(
         doc,
         capitalize(
-          formatMessage(custodyNotice.isolationDisclaimer, {
+          formatIcuMessage(custodyNotice.isolationDisclaimer, {
             isolationPeriod,
           }),
         ),
