@@ -147,9 +147,16 @@ export default function QuestionnaireDetailScreen() {
   const isDraft = base?.status === QuestionnaireQuestionnairesStatusEnum.Draft
   const isNotAnswered =
     base?.status === QuestionnaireQuestionnairesStatusEnum.NotAnswered
+  const isExpired =
+    base?.status === QuestionnaireQuestionnairesStatusEnum.Expired
   const hasSubmissions = (questionnaire?.submissions?.length ?? 0) > 0
+  const hasSubmittedAnswer =
+    questionnaire?.submissions?.some((sub) => !sub.isDraft) ?? false
   const canSubmit = questionnaire?.canSubmit ?? false
   const canSubmitAgain = canSubmit && hasSubmissions
+  const canViewAnswer =
+    ((isAnswered || isDraft) && hasSubmissions) ||
+    (isExpired && hasSubmittedAnswer)
   const isInitialLoading = loading && !base
 
   return (
@@ -215,7 +222,7 @@ export default function QuestionnaireDetailScreen() {
                       style={{ borderWidth: 1, borderColor: 'transparent' }}
                     />
                   )}
-                  {(isAnswered || isDraft) && hasSubmissions && (
+                  {canViewAnswer && (
                     <Button
                       title={intl.formatMessage({
                         id: 'health.questionnaires.action.view-answer',

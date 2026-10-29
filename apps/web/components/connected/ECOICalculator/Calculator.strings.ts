@@ -31,8 +31,8 @@ export const m = {
   answerLabel: defineMessages({
     '0': {
       id: 'web.ecoi.calculator:form.answerLabel0',
-      defaultMessage: 'Já',
-      description: 'Já',
+      defaultMessage: 'Nei',
+      description: 'Nei',
     },
     '1': {
       id: 'web.ecoi.calculator:form.answerLabel1',
@@ -46,8 +46,8 @@ export const m = {
     },
     '3': {
       id: 'web.ecoi.calculator:form.answerLabel3',
-      defaultMessage: 'Nei',
-      description: 'Nei',
+      defaultMessage: 'Já',
+      description: 'Já',
     },
   }),
   results: defineMessages({
@@ -109,22 +109,22 @@ export const m = {
       description: 'Túlkun',
     },
     bracket4Text: {
-      id: 'web.ecoi.calculator:results.bracket4Text',
+      id: 'web.ecoi.calculator:results.bracket4Text#markdown',
       defaultMessage: 'Vísbendingar um góða hlítni',
       description: '2,6-3,0',
     },
     bracket3Text: {
-      id: 'web.ecoi.calculator:results.bracket3Text',
+      id: 'web.ecoi.calculator:results.bracket3Text#markdown',
       defaultMessage: 'Vísbendingar um hlítni',
       description: '1,8-2,5',
     },
     bracket2Text: {
-      id: 'web.ecoi.calculator:results.bracket2Text',
+      id: 'web.ecoi.calculator:results.bracket2Text#markdown',
       defaultMessage: 'Vísbendingar um að nokkuð vanti upp á hlítni',
       description: '1,2-1,7',
     },
     bracket1Text: {
-      id: 'web.ecoi.calculator:results.bracket1Text',
+      id: 'web.ecoi.calculator:results.bracket1Text#markdown',
       defaultMessage: 'Vísbendingar um að verulega vanti upp á hlítni',
       description: '0-1,1',
     },

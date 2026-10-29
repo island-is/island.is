@@ -19,7 +19,6 @@ import {
   BlueBox,
   CourtArrangements,
   CourtCaseInfo,
-  DefenderInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -27,10 +26,13 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RequestCaseDefenderInfo,
   SectionHeading,
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { defenderInfo } from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo.strings'
+import { anyDefendantHasDefender } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import { LegalRightsProtectorInputFields } from '@island.is/judicial-system-web/src/components/VictimInfo/LegalRightsProtectorInputFields'
 import {
   SessionArrangements,
@@ -100,7 +102,7 @@ const HearingArrangements = () => {
     setAndSendCaseToServer(
       [
         {
-          sessionArrangements: workingCase.defenderName
+          sessionArrangements: anyDefendantHasDefender(workingCase.defendants)
             ? SessionArrangements.ALL_PRESENT
             : undefined,
         },
@@ -164,27 +166,25 @@ const HearingArrangements = () => {
             <Box marginBottom={workingCase.comments ? 2 : 5}>
               <AlertMessage
                 type="warning"
-                title={formatMessage(m.requestProsecutorOnlySession)}
+                title={m.requestProsecutorOnlySession}
                 message={workingCase.prosecutorOnlySessionRequest}
               />
             </Box>
           )}
         <ArraignmentAlert />
-        <PageTitle>{formatMessage(m.title)}</PageTitle>
+        <PageTitle>{m.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={stack({ gap: 5 })}>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(m.sections.sessionArrangements.heading)}
+              title={m.sections.sessionArrangements.heading}
               required
             />
             <BlueBox className={stack({ gap: 2 })}>
               <RadioButton
                 name="session-arrangements-all-present"
                 id="session-arrangements-all-present"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.allPresent,
-                )}
+                label={m.sections.sessionArrangements.options.allPresent}
                 checked={
                   checkedRadio === SessionArrangements.ALL_PRESENT ||
                   (!checkedRadio &&
@@ -210,9 +210,9 @@ const HearingArrangements = () => {
               <RadioButton
                 name="session-arrangements-all-present_spokesperson"
                 id="session-arrangements-all-present_spokesperson"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.allPresentSpokesperson,
-                )}
+                label={
+                  m.sections.sessionArrangements.options.allPresentSpokesperson
+                }
                 checked={
                   checkedRadio ===
                     SessionArrangements.ALL_PRESENT_SPOKESPERSON ||
@@ -240,9 +240,7 @@ const HearingArrangements = () => {
               <RadioButton
                 name="session-arrangements-prosecutor-present"
                 id="session-arrangements-prosecutor-present"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.prosecutorPresent,
-                )}
+                label={m.sections.sessionArrangements.options.prosecutorPresent}
                 checked={
                   checkedRadio === SessionArrangements.PROSECUTOR_PRESENT ||
                   (!checkedRadio &&
@@ -269,9 +267,7 @@ const HearingArrangements = () => {
               <RadioButton
                 name="session-arrangements-none-present"
                 id="session-arrangements-none-present"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.nonePresent,
-                )}
+                label={m.sections.sessionArrangements.options.nonePresent}
                 checked={
                   checkedRadio === SessionArrangements.NONE_PRESENT ||
                   (!checkedRadio &&
@@ -297,9 +293,7 @@ const HearingArrangements = () => {
             </BlueBox>
           </Box>
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(m.sections.requestedCourtDate.title)}
-            />
+            <SectionHeading title={m.sections.requestedCourtDate.title} />
             <CourtArrangements
               handleCourtDateChange={handleCourtDateChange}
               handleCourtRoomChange={handleCourtRoomChange}
@@ -312,12 +306,50 @@ const HearingArrangements = () => {
             SessionArrangements.ALL_PRESENT ||
             workingCase.sessionArrangements ===
               SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
-            <Box component="section">
-              <DefenderInfo
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
+            <section className={stack({ gap: 3 })}>
+              <SectionHeading
+                title={formatMessage(
+                  {
+                    id: defenderInfo.investigationCases.sections.defender.title,
+                    defaultMessage:
+                      defenderInfo.investigationCases.sections.defender.title,
+                  },
+                  {
+                    defenderType:
+                      workingCase.sessionArrangements ===
+                      SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                        ? 'Talsmaður'
+                        : 'Verjandi',
+                  },
+                )}
+                tooltip={
+                  <Tooltip
+                    text={formatMessage(
+                      {
+                        id: defenderInfo.investigationCases.sections.defender
+                          .tooltip,
+                        defaultMessage:
+                          defenderInfo.investigationCases.sections.defender
+                            .tooltip,
+                      },
+                      { sessionArrangement: workingCase.sessionArrangements },
+                    )}
+                    placement="right"
+                  />
+                }
+                marginBottom={0}
               />
-            </Box>
+              {workingCase.defendants?.map((defendant, _index, defendants) => (
+                <BlueBox key={defendant.id}>
+                  <RequestCaseDefenderInfo
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    defendant={defendant}
+                    showDefendantName={defendants.length > 1}
+                  />
+                </BlueBox>
+              ))}
+            </section>
           )}
           {workingCase.sessionArrangements ===
             SessionArrangements.ALL_PRESENT &&

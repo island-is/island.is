@@ -194,7 +194,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: buildPaymentState({
+      [States.PAYMENT]: buildPaymentState<Events>({
         organizationId: InstitutionNationalIds.SYSLUMENN,
         roles: [
           {
@@ -202,6 +202,14 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             formLoader: async () => {
               return PaymentForm
             },
+            actions: [
+              { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+              {
+                event: DefaultEvents.ABORT,
+                name: 'Hætta við',
+                type: 'primary',
+              },
+            ],
           },
         ],
         chargeItems: (application) => {

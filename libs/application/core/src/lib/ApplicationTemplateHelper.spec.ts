@@ -267,6 +267,41 @@ describe('ApplicationTemplate', () => {
     })
   })
 
+  describe('getPermittedEventsForRole', () => {
+    it('should return the events in the actions of the role in the current state', () => {
+      expect(templateHelper.getPermittedEventsForRole('applicant')).toEqual([
+        'SUBMIT',
+      ])
+    })
+
+    it('should return no events if the role has no actions in the current state', () => {
+      const helper = new ApplicationTemplateHelper(
+        createMockApplication({ state: 'inReview' }),
+        testApplicationTemplate,
+      )
+
+      expect(helper.getPermittedEventsForRole('applicant')).toEqual([])
+    })
+
+    it('should return no events if the role is not in the current state', () => {
+      expect(templateHelper.getPermittedEventsForRole('reviewer')).toEqual([])
+    })
+
+    it('should return the event type when an action event is an event object', () => {
+      const template = createTestApplicationTemplate()
+      const draftRole =
+        template.stateMachineConfig.states.draft.meta?.roles?.[0]
+      if (draftRole) {
+        draftRole.actions = [
+          { event: { type: 'SUBMIT' }, name: 'Submit', type: 'primary' },
+        ]
+      }
+      const helper = new ApplicationTemplateHelper(application, template)
+
+      expect(helper.getPermittedEventsForRole('applicant')).toEqual(['SUBMIT'])
+    })
+  })
+
   describe('getPermittedAnswersAndExternalData', () => {
     const answers: FormValue = {
       person: {

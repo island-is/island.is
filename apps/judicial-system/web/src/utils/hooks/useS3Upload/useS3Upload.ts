@@ -4,7 +4,10 @@ import { v4 as uuid } from 'uuid'
 
 import type { UploadFile } from '@island.is/island-ui/core'
 import { FileUploadStatus } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  stripPdfExtension,
+} from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import type {
@@ -125,7 +128,9 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
       size: file.size,
       percent: 0,
       originalFileObj: file,
-      userGeneratedFilename: setUserGeneratedFilename ? file.name : undefined,
+      userGeneratedFilename: setUserGeneratedFilename
+        ? stripPdfExtension(file.name)
+        : undefined,
       previewUrl: file.previewUrl,
       ...overRides,
     }))
@@ -236,7 +241,6 @@ const useS3Upload = (
   const [uploadPoliceCaseFile] = useUploadPoliceCaseFileMutation()
   const [uploadCriminalRecordFile] = useUploadCriminalRecordFileMutation()
   const [attachRulingOrderDocument] = useAttachRulingOrderDocumentMutation()
-
   const getPresignedPost = useCallback(
     async (file: TUploadFile) => {
       const mutation = limitedAccess

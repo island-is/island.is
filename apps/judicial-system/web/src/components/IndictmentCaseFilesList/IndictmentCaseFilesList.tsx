@@ -55,6 +55,7 @@ import { isAppealFileCategoryVisible } from '@island.is/judicial-system-web/src/
 
 import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
+  getIndictmentPdfDisplayName,
   getVisibleSubpoenas,
   shouldShowPoliceDigitalCaseFilesSection,
 } from './IndictmentCaseFilesList.logic'
@@ -503,9 +504,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
       {displayHeading && (
         <SectionHeading
           title={
-            isCourtOfAppealsUser(user)
-              ? 'Skjöl héraðsdómsmáls'
-              : formatMessage(strings.title)
+            isCourtOfAppealsUser(user) ? 'Skjöl héraðsdómsmáls' : strings.title
           }
         />
       )}
@@ -513,7 +512,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
         {displayGeneratedPDFs && (
           <Box>
             <SectionHeading
-              title={formatMessage(caseFiles.indictmentSection)}
+              title={caseFiles.indictmentSection}
               marginBottom={1}
               heading="h4"
               variant="h4"
@@ -524,11 +523,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 connectedCaseParentId={connectedCaseParentId}
                 title={prefixGeneratedDocumentNameWithDocumentOrder(
                   'indictment',
-                  `Ákæra${
-                    workingCase.caseSentToCourtDate
-                      ? ` ${formatDate(workingCase.caseSentToCourtDate)}`
-                      : ''
-                  }.pdf`,
+                  getIndictmentPdfDisplayName(workingCase),
                   workingCase.id,
                 )}
                 pdfType="indictment"
@@ -541,12 +536,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
         {showFiles && (
           <>
             <FileSection
-              title={formatMessage(caseFiles.criminalRecordSection)}
+              title={caseFiles.criminalRecordSection}
               files={filteredFiles.criminalRecords}
               onOpenFile={onOpen}
             />
             <FileSection
-              title={formatMessage(caseFiles.costBreakdownSection)}
+              title={caseFiles.costBreakdownSection}
               files={filteredFiles.costBreakdowns}
               onOpenFile={onOpen}
             />
@@ -555,14 +550,17 @@ const IndictmentCaseFilesList: FC<Props> = ({
         {displayGeneratedPDFs && (
           <Box>
             <SectionHeading
-              title={formatMessage(strings.caseFileTitle)}
+              title={strings.caseFileTitle}
               marginBottom={1}
               heading="h4"
               variant="h4"
             />
             {visiblePoliceCaseNumbers.map((policeCaseNumber, index) => {
               const caseFilesRecordFileName = formatMessage(
-                strings.caseFileButtonText,
+                {
+                  id: strings.caseFileButtonText,
+                  defaultMessage: strings.caseFileButtonText,
+                },
                 {
                   policeCaseNumber,
                 },
@@ -588,7 +586,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
         )}
         {showFiles && (
           <FileSection
-            title={formatMessage(caseFiles.otherDocumentsSection)}
+            title={caseFiles.otherDocumentsSection}
             files={filteredFiles.others}
             onOpenFile={onOpen}
           />
@@ -596,21 +594,27 @@ const IndictmentCaseFilesList: FC<Props> = ({
         {displayGeneratedPDFs && showSubpoenaPdf && (
           <Box>
             <SectionHeading
-              title={formatMessage(strings.subpoenaTitle)}
+              title={strings.subpoenaTitle}
               marginBottom={1}
               heading="h4"
               variant="h4"
             />
             {visibleSubpoenas.map(({ defendant, subpoena, caseId }) => {
               const subpoenaFileName = formatMessage(
-                strings.subpoenaButtonText,
+                {
+                  id: strings.subpoenaButtonText,
+                  defaultMessage: strings.subpoenaButtonText,
+                },
                 {
                   name: defendant.name,
                   date: formatDate(subpoena.created),
                 },
               )
               const serviceCertificateFileName = formatMessage(
-                strings.serviceCertificateButtonText,
+                {
+                  id: strings.serviceCertificateButtonText,
+                  defaultMessage: strings.serviceCertificateButtonText,
+                },
                 { name: defendant.name },
               )
 
@@ -655,7 +659,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           showDigitalCaseFilesSection) && (
           <>
             <FileSection
-              title={formatMessage(strings.civilClaimsTitle)}
+              title={strings.civilClaimsTitle}
               files={filteredFiles.civilClaims}
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCivilClaims}
@@ -739,7 +743,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               filteredFiles.rulingOrders.length > 0) && (
               <div>
                 <SectionHeading
-                  title={formatMessage(strings.rulingAndCourtRecordsTitle)}
+                  title={strings.rulingAndCourtRecordsTitle}
                   marginBottom={1}
                   heading="h4"
                   variant="h4"
@@ -796,7 +800,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     }
 
                     const serviceCertificateFileName = formatMessage(
-                      strings.serviceCertificateButtonText,
+                      {
+                        id: strings.serviceCertificateButtonText,
+                        defaultMessage: strings.serviceCertificateButtonText,
+                      },
                       {
                         name: defendant.name,
                       },
@@ -856,13 +863,13 @@ const IndictmentCaseFilesList: FC<Props> = ({
               </Box>
             )}
             <FileSection
-              title={formatMessage(caseFiles.criminalRecordUpdateSection)}
+              title={caseFiles.criminalRecordUpdateSection}
               files={filteredFiles.criminalRecordUpdate}
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCriminalRecordUpdate}
             />
             <FileSection
-              title={formatMessage(strings.sentToPrisonAdmin)}
+              title={strings.sentToPrisonAdmin}
               files={filteredFiles.sentToPrisonAdminFiles}
               onOpenFile={onOpen}
               shouldRender={permissions.canViewSentToPrisonAdminFiles}
@@ -879,7 +886,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
             </FileSection>
             <Box>
               <SectionHeading
-                title={formatMessage(strings.uploadedCaseFiles)}
+                title={strings.uploadedCaseFiles}
                 marginBottom={3}
                 heading="h4"
                 variant="h4"

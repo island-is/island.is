@@ -1,10 +1,10 @@
 import {
-  allSameDay,
   escapeHtml,
   extractArticleTitleDisplay,
   extractAuthority,
   formatDate,
-  hasSubtitle,
+  hasAnyChange,
+  splitArticleTitle,
   updateAppendixWording,
 } from './formatAmendingUtils'
 
@@ -105,15 +105,19 @@ describe('escapeHtml', () => {
   })
 })
 
-describe('extractArticleTitleDisplay and hasSubtitle', () => {
+describe('extractArticleTitleDisplay and splitArticleTitle', () => {
   it.each([
     ['3. gr.', '3. gr.', false],
     ['3. gr. Gildistaka.', '3. gr.', true],
-    ['3. gr. a. Undanþágur', '3. gr. a.', true],
+    ['3. gr. a. Undanþágur', '3. gr. a', true],
+    ['3. gr. a Leyfissvipting.', '3. gr. a', true],
+    ['3. gr.a Leyfissvipting.', '3. gr. a', true],
+    ['3. gr. a', '3. gr. a', false],
+    ['3. gr. Á sjó.', '3. gr.', true],
     ['II. Kafli', 'II. Kafli', false],
   ])('"%s"', (title, display, subtitle) => {
     expect(extractArticleTitleDisplay(title)).toBe(display)
-    expect(hasSubtitle(title)).toBe(subtitle)
+    expect(!!splitArticleTitle(title).subtitle).toBe(subtitle)
   })
 })
 
@@ -134,19 +138,21 @@ describe('formatDate', () => {
   })
 })
 
-describe('allSameDay', () => {
-  it('treats a missing date as its own value', () => {
-    expect(allSameDay([{ date: new Date(2026, 0, 1) }, {}])).toBe(false)
-    expect(allSameDay([{}, {}])).toBe(true)
-    expect(allSameDay([])).toBe(true)
+describe('hasAnyChange', () => {
+  it('finds inserted or deleted text', () => {
+    expect(hasAnyChange('<p>a <ins class="diffins">b</ins></p>')).toBe(true)
+    expect(hasAnyChange('<p>a <del class="diffdel">b</del></p>')).toBe(true)
   })
 
-  it('is false for different days', () => {
+  it('finds a changed element that has no text, such as a rule', () => {
+    expect(hasAnyChange('<p>a</p><hr data-diff="insert"><p>b</p>')).toBe(true)
+  })
+
+  it('ignores unchanged text, including section labels', () => {
     expect(
-      allSameDay([
-        { date: new Date(2026, 0, 1) },
-        { date: new Date(2026, 0, 2) },
-      ]),
+      hasAnyChange(
+        '<h3 class="article__title" data-diff-section="1. gr.">1. gr.</h3><p>a</p><hr>',
+      ),
     ).toBe(false)
   })
 })

@@ -2,6 +2,11 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    courtsFrontpageLinkAlt: {
+      id: 'web.verdicts:listPage.courtsFrontpageLinkAlt',
+      defaultMessage: 'Dómstólar forsíða',
+      description: 'Alt texti á skjaldarmerki sem vísar á forsíðu dómstóla',
+    },
     downloadGuide: {
       id: 'web.verdicts:listPage.downloadGuide',
       defaultMessage: 'Sjá leiðbeiningar',
@@ -104,7 +109,7 @@ export const m = {
       description: 'Label á "Lagagreinar" input',
     },
     lawsInputTooltip: {
-      id: 'web.verdicts:listPage.lawsInputTooltip',
+      id: 'web.verdicts:listPage.lawsInputTooltip#markdown',
       defaultMessage: 'Dæmi: 57. gr. laga nr. 91/1991',
       description: 'Skýringartexti í upplýsingabólu fyrir "Lagagreinar" input',
     },
@@ -129,7 +134,7 @@ export const m = {
       description: 'Placeholder fyrir leitarbox',
     },
     searchInputTooltip: {
-      id: 'web.verdicts:listPage.searchInputTooltip',
+      id: 'web.verdicts:listPage.searchInputTooltip#markdown',
       defaultMessage:
         'Ef leitað er eftir hluta úr orði þarf að nota * á eftir orðhluta.',
       description: 'Skýringartexti í upplýsingabólu fyrir aðalleitarbox',

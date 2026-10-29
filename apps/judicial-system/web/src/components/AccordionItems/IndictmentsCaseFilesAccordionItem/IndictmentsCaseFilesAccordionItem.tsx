@@ -351,7 +351,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(0, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(strings.chapterInvesitgationProcess),
+        displayText: strings.chapterInvesitgationProcess,
         chapter: 1,
         isHeading: true,
         isDivider: false,
@@ -359,7 +359,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(1, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(strings.chapterWitnesses),
+        displayText: strings.chapterWitnesses,
         chapter: 2,
         isHeading: true,
         isDivider: false,
@@ -367,7 +367,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(2, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(strings.chapterDefendant),
+        displayText: strings.chapterDefendant,
         chapter: 3,
         isHeading: true,
         isDivider: false,
@@ -375,7 +375,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(3, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(strings.chapterCaseFiles),
+        displayText: strings.chapterCaseFiles,
         chapter: 4,
         isHeading: true,
         isDivider: false,
@@ -383,7 +383,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(4, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(strings.chapterElectronicDocuments),
+        displayText: strings.chapterElectronicDocuments,
         chapter: 5,
         isHeading: true,
         isDivider: false,
@@ -391,9 +391,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(5, caseFiles),
       {
         id: uuid(),
-        displayText: `${formatMessage(
-          strings.unorderedFilesTitle,
-        )}|${formatMessage(strings.unorderedFilesExplanation)}`,
+        displayText: `${strings.unorderedFilesTitle}|${strings.unorderedFilesExplanation}`,
         isHeading: false,
         isDivider: true,
       },
@@ -466,7 +464,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
         },
       })
     } catch {
-      toast.error(formatMessage(strings.reorderFailedErrorMessage))
+      toast.error(strings.reorderFailedErrorMessage)
     }
   }
 
@@ -503,7 +501,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
         },
       })
     } catch {
-      toast.error(formatMessage(strings.renameFailedErrorMessage))
+      toast.error(strings.renameFailedErrorMessage)
     }
   }
 
@@ -536,7 +534,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
         },
       })
     } catch {
-      toast.error(formatMessage(strings.reorderFailedErrorMessage))
+      toast.error(strings.reorderFailedErrorMessage)
     }
   }
 
@@ -544,9 +542,12 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     <>
       <AccordionItem
         id="IndictmentsCaseFilesAccordionItem"
-        label={formatMessage(strings.title, {
-          policeCaseNumber,
-        })}
+        label={formatMessage(
+          { id: strings.title, defaultMessage: strings.title },
+          {
+            policeCaseNumber,
+          },
+        )}
         labelVariant="h3"
         startExpanded={shouldStartExpanded}
       >
@@ -559,17 +560,14 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
           />
         </Box>
         <Box marginBottom={3}>
-          <Text>{formatMessage(strings.explanation)}</Text>
+          <Text>{strings.explanation}</Text>
         </Box>
         {/* 
       Render the first chapter here, outside the reorder group because 
       you should not be able to put a file above the first chapter.
        */}
         <Box marginBottom={2}>
-          {renderChapter(
-            0,
-            formatMessage(strings.chapterIndictmentAndAccompanyingDocuments),
-          )}
+          {renderChapter(0, strings.chapterIndictmentAndAccompanyingDocuments)}
         </Box>
         <Reorder.Group
           axis="y"
@@ -598,10 +596,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <AlertMessage
-                  type="success"
-                  message={formatMessage(strings.noCaseFiles)}
-                />
+                <AlertMessage type="success" message={strings.noCaseFiles} />
               </motion.div>
             )}
         </AnimatePresence>

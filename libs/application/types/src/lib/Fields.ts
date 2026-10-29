@@ -153,7 +153,7 @@ export type RepeaterItem = {
   emailLabel?: StaticText
   customNameLabel?: StaticText
   customNationalIdLabel?: StaticText
-  placeholder?: StaticText
+  placeholder?: MaybeWithApplicationAndActiveField<StaticText>
   options?: TableRepeaterOptions
   filterOptions?: (
     options: RepeaterOption[],
@@ -316,6 +316,7 @@ export type AlertMessageLink = {
   title: MessageDescriptor | string
   url: MessageDescriptor | string
   isExternal: boolean
+  icon?: IconProps['icon']
 }
 export interface Option extends TestSupport {
   value: string
@@ -447,6 +448,7 @@ export enum FieldTypes {
   VEHICLE_RADIO = 'VEHICLE_RADIO',
   VEHICLE_SELECT = 'VEHICLE_SELECT',
   STATIC_TABLE = 'STATIC_TABLE',
+  INTERACTIVE_TABLE = 'INTERACTIVE_TABLE',
   PAGINATED_SEARCHABLE_TABLE = 'PAGINATED_SEARCHABLE_TABLE',
   SLIDER = 'SLIDER',
   INFORMATION_CARD = 'INFORMATION_CARD',
@@ -458,6 +460,7 @@ export enum FieldTypes {
   COPY_LINK = 'COPY_LINK',
   VEHICLE_PERMNO_WITH_INFO = 'VEHICLE_PERMNO_WITH_INFO',
   SCALE = 'SCALE',
+  STICKY_FOOTER = 'STICKY_FOOTER',
 }
 
 export enum FieldComponents {
@@ -494,6 +497,7 @@ export enum FieldComponents {
   VEHICLE_RADIO = 'VehicleRadioFormField',
   VEHICLE_SELECT = 'VehicleSelectFormField',
   STATIC_TABLE = 'StaticTableFormField',
+  INTERACTIVE_TABLE = 'InteractiveTableFormField',
   PAGINATED_SEARCHABLE_TABLE = 'PaginatedSearchableTableFormField',
   SLIDER = 'SliderFormField',
   INFORMATION_CARD = 'InformationCardFormField',
@@ -505,6 +509,7 @@ export enum FieldComponents {
   COPY_LINK = 'CopyLinkFormField',
   VEHICLE_PERMNO_WITH_INFO = 'VehiclePermnoWithInfoFormField',
   SCALE = 'ScaleFormField',
+  STICKY_FOOTER = 'StickyFooterFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -795,15 +800,33 @@ export interface PaymentChargeOverviewField extends BaseField {
   readonly type: FieldTypes.PAYMENT_CHARGE_OVERVIEW
   component: FieldComponents.PAYMENT_CHARGE_OVERVIEW
   forPaymentLabel: StaticText
+  forPaymentLabelVariant?: TitleVariants
   totalLabel: StaticText
   unitPriceLabel?: StaticText
   quantityLabel?: StaticText
   quantityUnitLabel?: StaticText
   totalPerUnitLabel?: StaticText
+  /**
+   * When set (true, or an options object), renders each selected charge item
+   * as a single name/price row instead of the default per-item unit-price/
+   * quantity/total-per-unit breakdown. Opt-in — defaults to false/undefined,
+   * existing consumers unaffected.
+   */
+  simplifiedList?:
+    | boolean
+    | {
+        preventAmountWrap?: boolean
+      }
+  additionalSummaryLabel?: StaticText
+  getAdditionalSummaryAmount?: (application: Application) => number
   getSelectedChargeItems: (application: Application) => {
     chargeItemCode: string
     chargeItemQuantity?: number
     extraLabel?: StaticText
+    chargeItemName?: string
+    chargeItemAmount?: number
+    subLabel?: StaticText
+    subAmount?: number
   }[]
 }
 
@@ -901,10 +924,22 @@ export type TableRepeaterField = BaseField & {
   /** Shown on hover when `canRemoveRow` returns false. No tooltip if omitted. */
   removeButtonDisabledTooltipText?: StaticText
   editButtonTooltipText?: StaticText
+  /** Shown on hover when `canEditRow` returns false. No tooltip if omitted. */
+  editButtonDisabledTooltipText?: StaticText
   editField?: boolean
   titleVariant?: TitleVariants
   /** Per row gate for the delete button. Defaults to every row being removable. */
   canRemoveRow?: (
+    application: Application,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    row: Record<string, any>,
+    index: number,
+  ) => boolean
+  /**
+   * Per row gate for the edit button. Only applies when `editField` is true.
+   * Defaults to every row being editable.
+   */
+  canEditRow?: (
     application: Application,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     row: Record<string, any>,
@@ -944,6 +979,7 @@ export type TableRepeaterField = BaseField & {
         value: string,
         displayIndex: number,
         application?: Application,
+        row?: Record<string, string>,
       ) => string | StaticText
     >
   }
@@ -1092,6 +1128,65 @@ export interface StaticTableField extends BaseField {
     | ((application: Application) => { label: StaticText; value: StaticText }[])
 }
 
+export type InteractiveTableHeaderCell =
+  | StaticText
+  | {
+      label: StaticText
+      width?: number
+      truncate?: boolean
+      expandable?: boolean
+      link?: boolean
+      tooltip?: StaticText
+    }
+
+export interface InteractiveTableField extends BaseField {
+  readonly type: FieldTypes.INTERACTIVE_TABLE
+  component: FieldComponents.INTERACTIVE_TABLE
+  header:
+    | InteractiveTableHeaderCell[]
+    | ((application: Application) => InteractiveTableHeaderCell[])
+  rows: StaticText[][] | ((application: Application) => StaticText[][])
+  titleVariant?: TitleVariants
+  selectable?: boolean
+  inputColumn?: {
+    id: string
+    getMaxAmount?: (application: Application) => Array<number | undefined>
+    placeholder?: StaticText
+  }
+  rowIds?: {
+    id: string
+    getIds: (application: Application) => string[]
+  }
+  footerRow?: StaticText[] | ((application: Application) => StaticText[])
+  expandedRows?: {
+    header:
+      | InteractiveTableHeaderCell[]
+      | ((application: Application) => InteractiveTableHeaderCell[])
+    rows: StaticText[][][] | ((application: Application) => StaticText[][][])
+    info?:
+      | (StaticText | undefined)[]
+      | ((application: Application) => (StaticText | undefined)[])
+  }
+  isSubmitDisabled?: (params: {
+    selectedRows: boolean[]
+    inputValues: string[]
+    application: Application
+  }) => boolean
+}
+
+export interface StickyFooterField extends BaseField {
+  readonly type: FieldTypes.STICKY_FOOTER
+  component: FieldComponents.STICKY_FOOTER
+  rows:
+    | { label: StaticText; value: StaticText }[]
+    | ((application: Application) => { label: StaticText; value: StaticText }[])
+  widthReferenceTestId: string
+  watchFieldIds: string[]
+  labelOffset?: number
+  labelMinWidth?: number
+  alignToRowTestId?: string
+}
+
 export type PaginatedSearchableTableRow = Record<
   string,
   string | number | boolean | null | undefined
@@ -1233,6 +1328,8 @@ export type KeyValueItem = {
   boldValueText?: boolean
   lineAboveKeyText?: boolean
   hideIfEmpty?: boolean
+  // Renders keyText and valueText in a de-emphasized color, e.g. for deleted entries
+  muted?: boolean
   tag?: {
     label: FormText
     variant?: TagVariant
@@ -1360,6 +1457,7 @@ export type Field =
   | VehicleRadioField
   | VehicleSelectField
   | StaticTableField
+  | InteractiveTableField
   | PaginatedSearchableTableField
   | SliderField
   | InformationCardField
@@ -1371,3 +1469,4 @@ export type Field =
   | CopyLinkField
   | VehiclePermnoWithInfoField
   | ScaleField
+  | StickyFooterField

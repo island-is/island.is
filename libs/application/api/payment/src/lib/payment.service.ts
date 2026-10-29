@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { Op } from 'sequelize'
@@ -27,6 +32,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CreatePaymentFlowInputAvailablePaymentMethodsEnum,
+  DebtInput,
   PaymentsApi,
   GetPaymentFlowStatusDTOPaymentStatusEnum,
 } from '@island.is/clients/payments'
@@ -37,6 +43,19 @@ export enum PaymentMethod {
   CARD = 'card',
   INVOICE = 'invoice',
 }
+
+const DEBT_PAYMENT_TYPE = 'debt'
+
+// TEXT in the database but JSONB in the model, so tests read an object
+const parseDefinition = (payment: Payment): Record<string, unknown> => {
+  const { definition } = payment.dataValues
+  return typeof definition === 'string'
+    ? JSON.parse(definition)
+    : definition ?? {}
+}
+
+export const isDebtPayment = (payment: Payment): boolean =>
+  parseDefinition(payment).type === DEBT_PAYMENT_TYPE
 
 @Injectable()
 export class PaymentService {
@@ -116,9 +135,7 @@ export class PaymentService {
     requestId: string,
   ): Promise<void> {
     const payment = await this.findPaymentByApplicationId(applicationId)
-    const definition = JSON.parse(
-      (payment?.definition as unknown as string) ?? '{}', // definition is a JSONB field so it is returned as a string
-    )
+    const definition = payment ? parseDefinition(payment) : {}
     await this.paymentModel.update(
       {
         definition: {
@@ -168,15 +185,77 @@ export class PaymentService {
       }
     }
 
-    const paymentUrl: string = JSON.parse(
-      foundPayment.dataValues.definition,
-    ).paymentUrl
+    const definition = parseDefinition(foundPayment)
+    const paymentUrl = definition.paymentUrl as string
+    let fulfilled = foundPayment.fulfilled || false
+
+    if (
+      !fulfilled &&
+      definition.type === DEBT_PAYMENT_TYPE &&
+      !definition.rejected &&
+      foundPayment.request_id
+    ) {
+      fulfilled = await this.reconcileDebtPayment(
+        foundPayment,
+        foundPayment.request_id,
+      )
+    }
 
     return {
-      fulfilled: foundPayment.fulfilled || false,
+      fulfilled,
       paymentUrl,
       paymentId: foundPayment.id,
     }
+  }
+
+  // services-payments does not redeliver a failed webhook
+  private async reconcileDebtPayment(
+    payment: Payment,
+    paymentFlowId: string,
+  ): Promise<boolean> {
+    try {
+      if (!(await this.isDebtPaymentPaid(paymentFlowId))) {
+        return false
+      }
+    } catch (error) {
+      this.logError(
+        'Failed to read debt payment flow',
+        payment.application_id,
+        error,
+      )
+      return false
+    }
+
+    this.logger.warn(
+      `Debt payment for application ${payment.application_id} is paid but no success callback arrived, fulfilling it`,
+    )
+    await this.fulfillPayment(payment.id, payment.application_id)
+
+    return true
+  }
+
+  private async isDebtPaymentPaid(paymentFlowId: string): Promise<boolean> {
+    const { paymentStatus } =
+      await this.paymentsApi.paymentFlowControllerGetPaymentFlowStatus({
+        id: paymentFlowId,
+      })
+
+    if (paymentStatus !== GetPaymentFlowStatusDTOPaymentStatusEnum.paid) {
+      return false
+    }
+
+    // A bank transfer FJS rejected counts as paid until it is refunded by hand
+    return !(await this.isDebtFlowClosed(paymentFlowId))
+  }
+
+  private async isDebtFlowClosed(paymentFlowId: string): Promise<boolean> {
+    const { isClosed } =
+      await this.paymentsApi.paymentFlowControllerGetPaymentFlow({
+        id: paymentFlowId,
+        includeEvents: false,
+      })
+
+    return isClosed
   }
 
   async setUser4(
@@ -368,6 +447,159 @@ export class PaymentService {
       id: paymentModel.id,
       paymentUrl,
     }
+  }
+
+  async createDebtPayment(
+    user: User,
+    applicationId: string,
+    debts: DebtInput[],
+    locale?: string,
+  ): Promise<CreateChargeResult> {
+    const amount = debts.reduce((sum, debt) => sum + debt.amount, 0)
+    const definition = { type: DEBT_PAYMENT_TYPE, debts }
+
+    let paymentModel = await this.findPaymentByApplicationId(applicationId)
+
+    if (!paymentModel) {
+      paymentModel = await this.paymentModel.create({
+        application_id: applicationId,
+        fulfilled: false,
+        amount,
+        definition,
+        payment_method: PaymentMethod.CARD,
+        request_id: '',
+      })
+    } else {
+      const { paymentUrl } = parseDefinition(paymentModel)
+      if (paymentUrl) {
+        return { id: paymentModel.id, paymentUrl: paymentUrl as string }
+      }
+      await paymentModel.update({ amount, definition })
+    }
+
+    const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
+    onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
+
+    const { returnUrl, cancelUrl } = await this.getReturnUrls(applicationId)
+
+    let paymentFlowUrls
+    try {
+      paymentFlowUrls =
+        await this.paymentsApi.debtPaymentFlowControllerCreateDebtPaymentUrl({
+          createDebtPaymentFlowInput: {
+            payerNationalId: user.nationalId,
+            onUpdateUrl: onUpdateUrl.toString(),
+            metadata: {
+              applicationId,
+              paymentId: paymentModel.id,
+            },
+            returnUrl,
+            cancelUrl,
+            redirectToReturnUrlOnSuccess: true,
+            debts,
+          },
+        })
+    } catch (error) {
+      this.logError('Failed to create debt payment flow', applicationId, error)
+      throw error
+    }
+    this.logger.info(
+      `Debt payment flow ${paymentFlowUrls.id} created for application ${applicationId}`,
+    )
+    const paymentUrl =
+      locale === 'en' ? paymentFlowUrls.urls.en : paymentFlowUrls.urls.is
+
+    await this.addPaymentUrlAndRequestId(
+      applicationId,
+      paymentModel.id,
+      paymentUrl,
+      paymentFlowUrls.id,
+    )
+    this.auditService.audit({
+      auth: user,
+      action: 'createCharge',
+      resources: applicationId,
+      meta: {
+        applicationId,
+        id: paymentModel.id,
+        payIds: debts.map((debt) => debt.payId),
+        amount,
+      },
+    })
+
+    return {
+      id: paymentModel.id,
+      paymentUrl,
+    }
+  }
+
+  // Never refunds: FJS has no reversal, so services-payments alone refunds debts
+  async deleteDebtPayment(applicationId: string, user: User): Promise<void> {
+    const payment = await this.findPaymentByApplicationId(applicationId)
+    if (!payment) {
+      return
+    }
+
+    if (payment.request_id) {
+      if (await this.isDebtPaymentPaid(payment.request_id)) {
+        throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
+      }
+
+      try {
+        await this.paymentsApi.paymentFlowControllerDeletePaymentFlow({
+          id: payment.request_id,
+        })
+      } catch (error) {
+        // A rejected flow can still count as paid; it stays for its refund
+        if (
+          !(
+            error instanceof FetchError &&
+            error.problem?.detail === PaymentServiceCode.PaymentFlowAlreadyPaid
+          )
+        ) {
+          this.logError(
+            'Failed to delete debt payment flow',
+            applicationId,
+            error,
+          )
+          throw error
+        }
+      }
+    }
+
+    await this.delete(applicationId, user)
+  }
+
+  async rejectDebtPayment(
+    paymentId: string,
+    applicationId: string,
+  ): Promise<void> {
+    const payment = await this.paymentModel.findOne({
+      where: { id: paymentId, application_id: applicationId },
+    })
+    if (
+      !payment ||
+      !isDebtPayment(payment) ||
+      !payment.request_id ||
+      !(await this.isDebtFlowClosed(payment.request_id))
+    ) {
+      return
+    }
+
+    if (payment.fulfilled) {
+      this.logger.error(
+        `Debt payment ${paymentId} for application ${applicationId} was rejected by FJS after it was paid`,
+      )
+    } else {
+      this.logger.warn(
+        `Debt payment ${paymentId} for application ${applicationId} was rejected by FJS`,
+      )
+    }
+
+    await payment.update({
+      fulfilled: false,
+      definition: { ...parseDefinition(payment), rejected: true },
+    })
   }
 
   async refundPayment(

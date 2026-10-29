@@ -1,6 +1,7 @@
-import { Transaction } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 
 import {
+  ConflictException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -16,6 +17,8 @@ import {
 
 import { AppealSummons } from '../models/appealSummons.model'
 import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
+import { Institution } from '../models/institution.model'
+import { User } from '../models/user.model'
 
 export type CreateAppealSummons = {
   caseId: string
@@ -32,6 +35,7 @@ export type CreateAppealSummonsDefendant = {
 export type UpdateAppealSummons = {
   confirmedById?: string | null
   confirmedDate?: Date | null
+  sentToCourtOfAppealsDate?: Date | null
   hash?: string | null
   hashAlgorithm?: HashAlgorithm | null
 }
@@ -84,6 +88,11 @@ export class AppealSummonsRepositoryService {
         where: { id, caseId },
         include: [
           {
+            model: User,
+            as: 'confirmedBy',
+            include: [{ model: Institution, as: 'institution' }],
+          },
+          {
             model: AppealSummonsDefendant,
             as: 'defendants',
             required: false,
@@ -104,6 +113,50 @@ export class AppealSummonsRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error finding appeal summons ${id} for case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  /**
+   * The summonses of a verdict appeal that have been confirmed, and so
+   * issued, oldest first. Each carries its defendant rows, which say who it
+   * was issued against.
+   */
+  async findConfirmedByAppealCaseId(
+    appealCaseId: string,
+    options?: { transaction?: Transaction },
+  ): Promise<AppealSummons[]> {
+    try {
+      this.logger.debug(
+        `Finding confirmed appeal summonses for appeal case ${appealCaseId}`,
+      )
+
+      const result = await this.appealSummonsModel.findAll({
+        where: { appealCaseId, confirmedDate: { [Op.ne]: null } },
+        include: [
+          {
+            model: AppealSummonsDefendant,
+            as: 'defendants',
+            required: false,
+            separate: true,
+            order: [['created', 'ASC']],
+          },
+        ],
+        order: [['confirmedDate', 'ASC']],
+        transaction: options?.transaction,
+      })
+
+      this.logger.debug(
+        `Found ${result.length} confirmed appeal summonses for appeal case ${appealCaseId}`,
+      )
+
+      return result
+    } catch (error) {
+      this.logger.error(
+        `Error finding confirmed appeal summonses for appeal case ${appealCaseId}:`,
         { error },
       )
 
@@ -143,7 +196,15 @@ export class AppealSummonsRepositoryService {
     id: string,
     caseId: string,
     data: UpdateAppealSummons,
-    options: { transaction: Transaction },
+    options: {
+      transaction: Transaction
+      // Optional extra predicates so a concurrent update that matches no row
+      // is rejected before side effects (event log, notifications, etc.).
+      where?: {
+        sentToCourtOfAppealsDate?: null
+        confirmedDate?: Date | null
+      }
+    },
   ): Promise<AppealSummons> {
     try {
       this.logger.debug(`Updating appeal summons ${id} of case ${caseId}`)
@@ -151,12 +212,18 @@ export class AppealSummonsRepositoryService {
       const [numberOfAffectedRows] = await this.appealSummonsModel.update(
         data,
         {
-          where: { id, caseId },
+          where: { id, caseId, ...options.where },
           transaction: options.transaction,
         },
       )
 
       if (numberOfAffectedRows < 1) {
+        if (options.where) {
+          throw new ConflictException(
+            `Could not update appeal summons ${id} of case ${caseId}`,
+          )
+        }
+
         throw new InternalServerErrorException(
           `Could not update appeal summons ${id} of case ${caseId}`,
         )
@@ -216,7 +283,10 @@ export class AppealSummonsRepositoryService {
   async delete(
     id: string,
     caseId: string,
-    options: { transaction: Transaction },
+    options: {
+      transaction: Transaction
+      where?: { sentToCourtOfAppealsDate?: null }
+    },
   ): Promise<boolean> {
     try {
       this.logger.debug(`Deleting appeal summons ${id} of case ${caseId}`)
@@ -224,11 +294,17 @@ export class AppealSummonsRepositoryService {
       await this.deleteDefendants(id, options)
 
       const numberOfDeletedRows = await this.appealSummonsModel.destroy({
-        where: { id, caseId },
+        where: { id, caseId, ...options.where },
         transaction: options.transaction,
       })
 
       if (numberOfDeletedRows < 1) {
+        if (options.where) {
+          throw new ConflictException(
+            `Could not delete appeal summons ${id} of case ${caseId}`,
+          )
+        }
+
         throw new InternalServerErrorException(
           `Could not delete appeal summons ${id} of case ${caseId}`,
         )

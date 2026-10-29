@@ -1,4 +1,4 @@
-import { Transform, Type } from 'class-transformer'
+import { Type } from 'class-transformer'
 import {
   ArrayMinSize,
   IsArray,
@@ -9,7 +9,6 @@ import {
   IsOptional,
   IsString,
   IsUUID,
-  Length,
   Matches,
   MaxLength,
   ValidateNested,
@@ -31,11 +30,8 @@ import {
   CourtDocument,
   CourtSessionType,
   IndictmentDecision,
-  RequestSharedWithDefender,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-
-import { nationalIdTransformer } from '../../../transformers'
 
 class UpdateDateLog {
   @IsOptional()
@@ -91,36 +87,6 @@ export class UpdateCaseDto {
   @Matches(POLICE_CASE_NUMBER_REGEX, { each: true })
   @ApiPropertyOptional({ type: String, isArray: true })
   readonly policeCaseNumbers?: string[]
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  @ApiPropertyOptional({ type: String })
-  readonly defenderName?: string
-
-  @IsOptional()
-  @IsString()
-  @Length(10, 10)
-  @Transform(nationalIdTransformer)
-  @ApiPropertyOptional({ type: String })
-  readonly defenderNationalId?: string
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  @ApiPropertyOptional({ type: String })
-  readonly defenderEmail?: string
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  @ApiPropertyOptional({ type: String })
-  readonly defenderPhoneNumber?: string
-
-  @IsOptional()
-  @IsEnum(RequestSharedWithDefender)
-  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
-  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @IsOptional()
   @IsBoolean()

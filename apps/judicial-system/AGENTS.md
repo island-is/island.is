@@ -12,11 +12,17 @@ lib instead.
 
 ## Localization strings
 
-We are moving away from Contentful. **Do not add new Contentful-backed
-localization strings** — whether in `.strings.ts` files, `messages/` modules,
-`notifications.ts`, or anywhere else using `defineMessage` / `defineMessages`.
-New user-facing text should be hardcoded directly where it is used (e.g. template
-literals in the calling code). Existing strings may stay as-is until migrated.
+Contentful is being removed from judicial-system. **Do not add
+`defineMessage` / `defineMessages` or Contentful message `id`s** in
+`.strings.ts` files, `messages/` modules, `notifications.ts`, or elsewhere.
+
+New user-facing text should be plain strings in code (string modules or
+template literals at the call site). For ICU / placeholders, keep the template
+as a plain string and format with `formatMessage({ id, defaultMessage }, values)`
+using that string for both `id` and `defaultMessage` (so a Contentful map cannot
+override it while fetch still runs). Migrate remaining descriptors in the
+persona/case-type PRs; leave the four service-interruption banner keys until
+their admin replacement ships.
 
 ## Async style
 
@@ -134,7 +140,10 @@ compiles every route on first visit, which blows the suite's 15s request waits
 and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
 
 - Run it with `yarn playwright test -c apps/system-e2e/src --project judicial-system`,
-  or `/js-e2e` in Claude Code. When nothing listens on port 4200 the Playwright
+  or `/js-e2e` in Claude Code. The skill lives in `apps/judicial-system/.claude/skills`,
+  so from a session started at the repo root it only appears after Claude has
+  touched a file in this app (or after `/add-dir apps/judicial-system`).
+  When nothing listens on port 4200 the Playwright
   config builds the production bundle and serves it itself; a dev server on
   that port is reused as-is (slow, avoid). The port cannot change: the dev S3
   upload bucket only allows the `localhost:4200` origin.
@@ -153,6 +162,39 @@ and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
   that was already in flight.
 - Never put a `.spec.ts` under `pages/` in the web app - Next compiles it as a
   route and the production build fails.
+
+## Case loads are traced per guard
+
+Every guard that reads a case onto the request does so through
+`traceCaseLoad` in `case/guards/traceCaseLoad.ts`, which runs the load in a
+`judicial_system.case_load` span (underscore: the Datadog agent normalises a
+hyphen in a span name to one) named after the guard and tagged with
+`case_load.guard`, `case_load.include` and `case_load.route`. That is what
+lets Postgres volume and load time be attributed to the guard and include
+profile that caused them, route by route, in Datadog.
+
+The route is carried on the span on purpose. The span active inside a guard
+is Nest's `router.middleware` span, not the `express.request` entry span, and
+dd-trace keeps the entry span in a private map, so tags set from a guard never
+reach the route or status code. Query the `case_load` span and group by its
+own tags instead of expecting them on the request.
+
+A new guard that loads a case, or a guard moving to a narrower include
+profile, has to go through the helper and name its profile in
+`CaseLoadInclude`; `guards/test/caseLoadTracing.spec.ts` pins the existing
+ones. The api's `responseSize.plugin.ts` is the client-side counterpart: it
+tags the GraphQL route's middleware span with the operation name and the
+response bytes, which is enough for bytes per operation.
+
+**Outgoing `fetch` calls carry no trace context by themselves.** dd-trace's
+fetch instrumentation is disabled on every service (`DD_TRACE_DISABLED_INSTRUMENTATIONS=fetch`
+in the infra DSL), and global `fetch` is undici, so the remaining `http`-layer
+instrumentation never sees it. The api injects the context by hand on its
+calls to the backend, in `modules/backend/traceContext.ts`, which is what makes
+the backend's spans part of the GraphQL operation's trace. A new client that
+calls another judicial-system service with `fetch` needs the same, and the
+carrier it injects into must be a plain object: the propagator assigns
+properties, so a `Headers` instance silently gets nothing.
 
 ## Queue messages after commit
 

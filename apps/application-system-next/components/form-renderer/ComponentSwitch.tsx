@@ -93,6 +93,8 @@ const unsupportedFieldTypes = new Set([
   'SdfActionCardListField',
   'SdfTableRepeaterField',
   'SdfFindVehicleField',
+  'SdfInteractiveTableField',
+  'SdfStickyFooterField',
 ])
 
 export const ComponentSwitch = ({

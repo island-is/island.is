@@ -8,6 +8,7 @@ import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts
 import {
   canDefendantAppealVerdict,
   Feature,
+  isPublicProsecutionOfficeUser,
   isRulingOrDismissalCase,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -69,7 +70,9 @@ export const Overview = () => {
     ModalId | undefined
   >()
 
-  const assignMode = getPublicProsecutorOverviewAssignMode(workingCase)
+  const assignMode = isPublicProsecutionOfficeUser(user)
+    ? getPublicProsecutorOverviewAssignMode(workingCase)
+    : 'none'
 
   const assignReviewer = async () => {
     if (!selectedIndictmentReviewer) {
@@ -167,7 +170,7 @@ export const Overview = () => {
         })}
       />
       <FormContentContainer>
-        <PageTitle>{fm(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={stack({ gap: 5 })}>
           <div className={stack({ gap: 2 })}>{verdictStatusAlerts}</div>
@@ -254,11 +257,16 @@ export const Overview = () => {
       </FormContentContainer>
       {isReviewerAssignedModal(confirmationModal) && (
         <Modal
-          title={fm(strings.reviewerAssignedModalTitle)}
-          text={fm(strings.reviewerAssignedModalText, {
-            caseNumber: workingCase.courtCaseNumber,
-            reviewer: selectedIndictmentReviewer?.label,
-          })}
+          title={strings.reviewerAssignedModalTitle}
+          text={fm(
+            {
+              id: strings.reviewerAssignedModalText,
+              defaultMessage: strings.reviewerAssignedModalText,
+            },
+            {
+              caseNumber: workingCase.courtCaseNumber,
+            },
+          )}
           buttons={[
             {
               text: fm(core.back),

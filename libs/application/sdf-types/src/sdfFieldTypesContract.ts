@@ -50,6 +50,8 @@ export const FIELD_TYPE_TO_GRAPHQL_TYPENAME: Record<FieldTypes, string> = {
   [FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE]:
     'SdfHiddenInputWithWatchedValueField',
   [FieldTypes.FIND_VEHICLE]: 'SdfFindVehicleField',
+  [FieldTypes.INTERACTIVE_TABLE]: 'SdfInteractiveTableField',
+  [FieldTypes.STICKY_FOOTER]: 'SdfStickyFooterField',
   [FieldTypes.VEHICLE_RADIO]: 'SdfRadioField',
   [FieldTypes.VEHICLE_SELECT]: 'SdfSelectField',
   [FieldTypes.DISPLAY]: 'SdfDisplayField',

@@ -1,6 +1,6 @@
 export { Case } from './models/case.model'
 export { Notification } from './models/notification.model'
-export { SendNotificationResponse } from './models/sendNotification.response'
 export { RequestSignatureResponse } from './models/requestSignature.response'
+export { SendNotificationResponse } from './models/sendNotification.response'
 export { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 export { CaseRepresentative } from './models/caseRepresentative.model'

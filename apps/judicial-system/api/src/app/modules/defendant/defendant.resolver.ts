@@ -20,6 +20,7 @@ import { FeatureService } from '../feature/feature.service'
 import { CreateDefendantInput } from './dto/createDefendant.input'
 import { DeleteDefendantInput } from './dto/deleteDefendant.input'
 import { UpdateDefendantInput } from './dto/updateDefendant.input'
+import { UpdateDefendantsInput } from './dto/updateDefendants.input'
 import { Defendant } from './models/defendant.model'
 import { DeleteDefendantResponse } from './models/delete.response'
 import { assertAppealAdvocatesAvailable } from './appealAdvocates'
@@ -84,6 +85,36 @@ export class DefendantResolver {
         ...(registersVerdictAppeal ? { registerVerdictAppeal: true } : {}),
       }),
       defendantId,
+    )
+  }
+
+  @Mutation(() => [Defendant], { nullable: true })
+  updateDefendants(
+    @Args('input', { type: () => UpdateDefendantsInput })
+    input: UpdateDefendantsInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<Defendant[]> {
+    const { caseId, defendants } = input
+    this.logger.debug(
+      `Updating ${defendants.length} defendants for case ${caseId}`,
+    )
+
+    // As on the single defendant route: a changed review decision files or
+    // withdraws the prosecution's verdict appeal only while the feature is
+    // shown.
+    const registersVerdictAppeal =
+      defendants.some(
+        (defendant) => defendant.indictmentReviewDecision !== undefined,
+      ) && !this.featureService.isHidden(Feature.INDICTMENT_APPEAL)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPDATE_DEFENDANT,
+      this.backendService.updateDefendants(caseId, {
+        defendants,
+        ...(registersVerdictAppeal ? { registerVerdictAppeal: true } : {}),
+      }),
+      caseId,
     )
   }
 

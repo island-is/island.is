@@ -94,6 +94,16 @@ export {
   CaseAppealDecision,
 } from './lib/appealCase'
 export type { AppealCorrectionLock } from './lib/appealCase'
+export {
+  AppealCourtSessionType,
+  appealCourtSessionTypeNames,
+} from './lib/appealCourtSession'
+export {
+  findAppealStatementDeadline,
+  hasFiledAppealStatement,
+  isSameAppealStatementParty,
+} from './lib/appealStatementDeadline'
+export type { AppealStatementParty } from './lib/appealStatementDeadline'
 
 export { DateType, dateTypes } from './lib/dateLog'
 
@@ -107,6 +117,8 @@ export {
   HashAlgorithm,
   partyAppealFileCategories,
   verdictAppealDeclarationFileCategories,
+  verdictAppealStatementFileCategories,
+  verdictAppealFileCategories,
   isAppealFileDeletionLocked,
   isRulingOrderWithoutDocument,
   PoliceFileTypeCode,

@@ -23,6 +23,7 @@ import {
 import { CourtService } from '../court'
 import {
   AppealEventLogRepositoryService,
+  AppealStatementDeadlineRepositoryService,
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
   CaseFileRepositoryService,
@@ -37,6 +38,7 @@ export class CivilClaimantService {
   constructor(
     private readonly civilClaimantRepositoryService: CivilClaimantRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
+    private readonly appealStatementDeadlineRepositoryService: AppealStatementDeadlineRepositoryService,
     private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     private readonly courtService: CourtService,
@@ -202,6 +204,18 @@ export class CivilClaimantService {
         }),
         { transaction },
       )
+
+      // Telling the advocate the court of appeals has recorded them. A
+      // lögmaður hears the same way a réttargæslumaður does; only the letter
+      // of appointment tells them apart.
+      queueMessagesAfterCommit({
+        type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+        caseId: theCase.id,
+        elementId: civilClaimant.id,
+        body: {
+          type: CivilClaimantNotificationType.APPEAL_SPOKESPERSON_ASSIGNED,
+        },
+      })
     }
 
     this.addMessagesForUpdateCivilClaimantToQueue(
@@ -252,6 +266,14 @@ export class CivilClaimantService {
     transaction: Transaction,
   ): Promise<boolean> {
     await this.caseFileRepositoryService.deleteAllForCivilClaimant(
+      caseId,
+      civilClaimantId,
+      { transaction },
+    )
+
+    // The deadlines reference the claimant without a cascade, so they go
+    // before the row they point at.
+    await this.appealStatementDeadlineRepositoryService.deleteAllForCivilClaimant(
       caseId,
       civilClaimantId,
       { transaction },

@@ -1,4 +1,5 @@
 import { Module, DynamicModule } from '@nestjs/common'
+import { CmsTranslationCacheModule } from '@island.is/cms-translations'
 import { ApplicationResolver } from './application.resolver'
 import { ApplicationV2Resolver } from './applicationV2.resolver'
 import { ApplicationService } from './application.service'
@@ -14,6 +15,10 @@ import { ApplicationAdminV2Resolver } from './application-admin/application-admi
 import { ApplicationAdminV2Service } from './application-admin/application-adminV2.service'
 import { SdfResolver } from './sdf.resolver'
 import { SdfService } from './sdf.service'
+import { ApplicationTranslationResolver } from './application-translation/application-translation.resolver'
+import { ApplicationTranslationClient } from './application-translation/application-translation.client'
+import { applicationTranslationFetch } from './application-translation/application-translation.fetch'
+import { GoogleTranslateService } from './application-translation/google-translate.service'
 import {
   ApplicationsApi as FormSystemApplicationsApi,
   AdminApi as FormSystemAdminApi,
@@ -30,15 +35,20 @@ export class ApplicationModule {
   static register(config: Config): DynamicModule {
     return {
       module: ApplicationModule,
+      imports: [CmsTranslationCacheModule],
       providers: [
         ApplicationResolver,
         ApplicationV2Resolver,
         ApplicationAdminV2Resolver,
         SdfResolver,
+        ApplicationTranslationResolver,
         ApplicationService,
         ApplicationV2Service,
         ApplicationAdminV2Service,
         SdfService,
+        applicationTranslationFetch,
+        ApplicationTranslationClient,
+        GoogleTranslateService,
         {
           provide: ApplicationsApi,
           useValue: new ApplicationsApi(

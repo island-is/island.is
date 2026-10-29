@@ -997,6 +997,42 @@ export class SdfFindVehicleField {
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
+@ObjectType('SdfInteractiveTableField')
+export class SdfInteractiveTableField {
+  @Field()
+  id!: string
+
+  @Field()
+  label!: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
+}
+
+@ObjectType('SdfStickyFooterField')
+export class SdfStickyFooterField {
+  @Field()
+  id!: string
+
+  @Field()
+  label!: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
+}
+
 @ObjectType('SdfDisplayField')
 export class SdfDisplayField {
   @Field()
@@ -1566,6 +1602,8 @@ const allComponentTypes = () =>
     SdfHiddenInputField,
     SdfHiddenInputWithWatchedValueField,
     SdfFindVehicleField,
+    SdfInteractiveTableField,
+    SdfStickyFooterField,
     SdfDisplayField,
     SdfImageField,
     SdfBankAccountField,
@@ -1621,6 +1659,8 @@ const resolveComponentTypeByName = (
     HIDDEN_INPUT: SdfHiddenInputField,
     HIDDEN_INPUT_WITH_WATCHED_VALUE: SdfHiddenInputWithWatchedValueField,
     FIND_VEHICLE: SdfFindVehicleField,
+    INTERACTIVE_TABLE: SdfInteractiveTableField,
+    STICKY_FOOTER: SdfStickyFooterField,
     DISPLAY: SdfDisplayField,
     IMAGE: SdfImageField,
     BANK_ACCOUNT: SdfBankAccountField,

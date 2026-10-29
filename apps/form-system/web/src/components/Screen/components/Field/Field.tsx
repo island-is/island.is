@@ -61,6 +61,7 @@ export const Field = ({ field, valueIndex = 0 }: Props) => {
     valueIndex,
     control,
     dispatch,
+    ...(field.fieldType === FieldTypesEnum.BANK_ACCOUNT && { state }),
     ...(field.fieldType === FieldTypesEnum.ISK_SUMBOX && { state }),
     ...(field.fieldType === FieldTypesEnum.ASSETS && { state, field }),
     ...(field.fieldType === FieldTypesEnum.FAMILY && { state, field }),
