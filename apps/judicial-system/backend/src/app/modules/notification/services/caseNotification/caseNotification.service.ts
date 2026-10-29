@@ -1462,6 +1462,9 @@ export class CaseNotificationService extends BaseNotificationService {
             actorName: user.name,
             actorTitle: lowercase(user.title),
             courtCaseNumber: theCase.courtCaseNumber,
+            courtName: applyDativeCaseToCourtName(
+              theCase.court?.name || 'héraðsdómi',
+            ),
             defenderHasAccessToRvg: Boolean(defenderNationalId),
             linkStart: `<a href="${formatDefenderRoute(
               this.config.clientUrl,
@@ -1478,6 +1481,9 @@ export class CaseNotificationService extends BaseNotificationService {
             actorName: user.name,
             actorTitle: lowercase(user.title),
             courtCaseNumber: theCase.courtCaseNumber,
+            courtName: applyDativeCaseToCourtName(
+              theCase.court?.name || 'héraðsdómi',
+            ),
             defenderHasAccessToRvg: Boolean(defenderNationalId),
             linkStart: `<a href="${formatDefenderRoute(
               this.config.clientUrl,
