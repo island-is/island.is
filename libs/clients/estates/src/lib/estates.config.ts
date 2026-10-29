@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { DistrictCommissionersScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
 
 const schema = z.object({
@@ -15,6 +16,6 @@ export const EstatesClientConfig = defineConfig<z.infer<typeof schema>>({
       'XROAD_ESTATES_PATH',
       'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
     ),
-    scope: ['@syslumenn.is/starfsleyfi'],
+    scope: [DistrictCommissionersScope.estatesScope],
   }),
 })

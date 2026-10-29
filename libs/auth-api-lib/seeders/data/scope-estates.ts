@@ -12,7 +12,10 @@ export const up = compose(
     name: '@syslumenn.is/danarbu',
     displayName: 'Dánarbú',
     description: 'Veitir aðgang að upplýsingum um dánarbú',
-    addToClients: ['@island.is/clients/api'],
+    addToClients: [
+      '@island.is/clients/api',
+      '@island.is/clients/download-service',
+    ],
     addToResource: '@syslumenn.is',
   }),
 )

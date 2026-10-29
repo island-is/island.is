@@ -28,9 +28,15 @@ export class EstatesClientService {
     )
   }
 
-  async getDocument(user: User, documentId: string): Promise<EDocument | null> {
+  async getDocument(
+    user: User,
+    documentId: string,
+    signal?: AbortSignal,
+  ): Promise<EDocument | null> {
     return withAuthContext(user, () =>
-      dataOr404Null(islandIsEstatePagesDocument({ path: { documentId } })),
+      dataOr404Null(
+        islandIsEstatePagesDocument({ path: { documentId }, signal }),
+      ),
     )
   }
 }
