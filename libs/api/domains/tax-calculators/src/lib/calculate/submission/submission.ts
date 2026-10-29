@@ -9,7 +9,7 @@ import type { InputFieldValue } from '../../models/inputFieldValue.model'
 import type { InputValue } from '../../models/inputValue.model'
 import { NUMERIC_SEMANTIC_RANGE } from '../../shared/numericSemanticRange'
 
-export type SubmittedValue = string | number | boolean
+export type SubmittedValue = string | number | boolean | Date
 export type SubmittedValues = Record<string, SubmittedValue>
 
 export interface CalculationInputValidation {
@@ -22,6 +22,7 @@ export interface CalculationInputValidation {
  * without narrowing a GraphQL union. The contract is already publishable. */
 
 const INTEGER_SEMANTICS: readonly CalculatorFieldSemantic[] = [
+  'currency',
   'year',
   'month',
   'count',
@@ -29,6 +30,10 @@ const INTEGER_SEMANTICS: readonly CalculatorFieldSemantic[] = [
 
 /* Only the empty string is absent; other strings are validated. */
 const toSubmittedValue = (value: InputValue): SubmittedValue | undefined => {
+  if (value.dateValue instanceof Date) {
+    return value.dateValue
+  }
+
   if (typeof value.numberValue === 'number') {
     return value.numberValue
   }
@@ -44,26 +49,10 @@ const toSubmittedValue = (value: InputValue): SubmittedValue | undefined => {
   return undefined
 }
 
-const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
-
-const isCalendarDate = (value: string): boolean => {
-  if (!DATE_PATTERN.test(value)) {
-    return false
-  }
-
-  const [year, month, day] = value.split('-').map(Number)
-
-  if (month < 1 || month > 12) {
-    return false
-  }
-
-  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate()
-
-  return day >= 1 && day <= daysInMonth
-}
-
 const describeKind = (value: SubmittedValue): string =>
-  typeof value === 'number'
+  value instanceof Date
+    ? 'a date'
+    : typeof value === 'number'
     ? 'a number'
     : typeof value === 'boolean'
     ? 'a boolean'
@@ -83,7 +72,7 @@ const describeProblem = (
         return 'expects a finite number'
       }
 
-      /* Year, month, and count values are integers. */
+      /* Currency, year, month, and count values are integers. */
       if (
         field.semantic &&
         INTEGER_SEMANTICS.includes(field.semantic) &&
@@ -120,15 +109,10 @@ const describeProblem = (
       return typeof value === 'string'
         ? undefined
         : `expects a string, received ${describeKind(value)}`
-    case 'date': {
-      if (typeof value !== 'string') {
-        return `expects a string, received ${describeKind(value)}`
-      }
-
-      return isCalendarDate(value)
+    case 'date':
+      return value instanceof Date
         ? undefined
-        : `expects a calendar date formatted yyyy-MM-dd, received "${value}"`
-    }
+        : `expects a date, received ${describeKind(value)}`
     case 'select': {
       if (typeof value !== 'string') {
         return `expects a string, received ${describeKind(value)}`

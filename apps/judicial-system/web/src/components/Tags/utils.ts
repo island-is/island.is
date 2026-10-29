@@ -7,7 +7,7 @@ export const getIndictmentRulingDecisionTag = (
   indictmentRulingDecision?: CaseIndictmentRulingDecision | null,
 ): {
   color: TagVariant
-  text: { id: string; defaultMessage: string; description: string }
+  text: string
 } => {
   switch (indictmentRulingDecision) {
     case CaseIndictmentRulingDecision.FINE:

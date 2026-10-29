@@ -54,14 +54,10 @@ export const getIncidentDescriptionReason = (
             strings.incidentDescriptionDrivingWithoutEverHavingLicenceAutofill
           break
         case IndictmentCountOffense.DRUNK_DRIVING:
-          acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)
+          acc += strings.incidentDescriptionDrunkDrivingAutofill
           break
         case IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING:
-          acc += `${
-            strings.incidentDescriptionDrugsDrivingPrefixAutofill[gender]
-          } ${formatMessage(
-            strings.incidentDescriptionIllegalDrugsDrivingAutofill,
-          )}`
+          acc += `${strings.incidentDescriptionDrugsDrivingPrefixAutofill[gender]} ${strings.incidentDescriptionIllegalDrugsDrivingAutofill}`
           break
         case IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING:
           acc +=
@@ -70,9 +66,7 @@ export const getIncidentDescriptionReason = (
             )
               ? ''
               : `${strings.incidentDescriptionDrugsDrivingPrefixAutofill[gender]} `) +
-            formatMessage(
-              strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
-            )
+            strings.incidentDescriptionPrescriptionDrugsDrivingAutofill
           break
       }
       return acc
@@ -83,17 +77,21 @@ export const getIncidentDescriptionReason = (
     .flatMap(({ substances }) => Object.entries(substances as SubstanceMap))
   reason += substances.reduce((acc, substance, index) => {
     if (index === 0) {
-      acc += ` (${formatMessage(
-        strings.incidentDescriptionSubstancesPrefixAutofill,
-      )} `
+      acc += ` (${strings.incidentDescriptionSubstancesPrefixAutofill} `
     } else if (index === substances.length - 1) {
       acc += ' og '
     } else {
       acc += ', '
     }
-    acc += formatMessage(strings[substance[0] as Substance], {
-      amount: substance[1],
-    })
+    acc += formatMessage(
+      {
+        id: strings[substance[0] as Substance],
+        defaultMessage: strings[substance[0] as Substance],
+      },
+      {
+        amount: substance[1],
+      },
+    )
     if (index === substances.length - 1) {
       acc += ')'
     }

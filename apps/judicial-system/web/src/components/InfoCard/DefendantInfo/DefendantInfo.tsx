@@ -123,8 +123,8 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const defenderLabel =
     defender?.sessionArrangement ===
     SessionArrangements.ALL_PRESENT_SPOKESPERSON
-      ? formatMessage(strings.spokesperson)
-      : formatMessage(strings.defender)
+      ? strings.spokesperson
+      : strings.defender
   const defenderName = defendant.defenderName || defender?.name
   const defenderEmail = defendant.defenderEmail || defender?.email
   const defenderPhoneNumber =
@@ -147,9 +147,10 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     <Box display="flex" justifyContent="spaceBetween">
       <div className={stack({ gap: 1 })}>
         <Text>
-          <Text as="span" fontWeight="semiBold">{`${formatMessage(
-            infoCardStrings.name,
-          )}: `}</Text>
+          <Text
+            as="span"
+            fontWeight="semiBold"
+          >{`${infoCardStrings.name}: `}</Text>
           <Text as="span">
             {defendant.name}
             {defendant.nationalId &&
@@ -177,7 +178,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
               breakSpaces: false,
             })
           ) : (
-            <Text as="span">{formatMessage(strings.noDefender)}</Text>
+            <Text as="span">{strings.noDefender}</Text>
           )}
         </Text>
         {displayAppealExpirationInfo && (
@@ -203,9 +204,15 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           )}
         {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
           <Text fontWeight="semiBold">
-            {formatMessage(strings.sendToPrisonAdminDate, {
-              date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
-            })}
+            {formatMessage(
+              {
+                id: strings.sendToPrisonAdminDate,
+                defaultMessage: strings.sendToPrisonAdminDate,
+              },
+              {
+                date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
+              },
+            )}
           </Text>
         )}
         {isPublicProsecutionOfficeUser(user) &&
