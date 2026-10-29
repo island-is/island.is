@@ -48,6 +48,7 @@ import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 import { ApplicationActionService } from '../application/application-action.service'
 import { ApplicationAccessService } from '../application/tools/applicationAccess.service'
+import { ApplicationValidationService } from '../application/tools/applicationTemplateValidation.service'
 import { getApplicationNameTranslationString } from '../application/utils/application'
 import { isNewActor } from '../application/utils/delegationUtils'
 import { I18nResolverService, FormTextResolver } from './i18n-resolver.service'
@@ -169,6 +170,7 @@ export class SdfScreenService {
     private readonly i18nResolverService: I18nResolverService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly applicationActionService: ApplicationActionService,
+    private readonly applicationValidationService: ApplicationValidationService,
   ) {}
 
   private async requireApplicationForUser(
@@ -1154,6 +1156,14 @@ export class SdfScreenService {
     user: User,
   ): Promise<ScreenDto> {
     let application = await this.requireApplicationForUser(applicationId, user)
+
+    // Checked against the stored application, so answers in this request
+    // cannot change the role
+    await this.applicationValidationService.validateIncomingEvent(
+      application as Application,
+      event,
+      user,
+    )
 
     const template = await getApplicationTemplateByTypeId(application.typeId)
 

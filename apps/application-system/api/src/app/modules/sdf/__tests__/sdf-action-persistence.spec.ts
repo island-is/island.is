@@ -29,6 +29,7 @@ import {
 import cloneDeep from 'lodash/cloneDeep'
 import escapeRegExp from 'lodash/escapeRegExp'
 
+import { ApplicationValidationService } from '../../application/tools/applicationTemplateValidation.service'
 import { SdfController } from '../sdf.controller'
 import { SdfScreenService } from '../sdf-screen.service'
 import { ExecuteActionDto, SdfActionType } from '../dto/action.dto'
@@ -192,6 +193,11 @@ const createTemplate = (
               {
                 id: 'applicant',
                 formLoader: () => Promise.resolve(form()),
+                // The only event the role may send. The state also accepts
+                // SUBMIT, for the rows that send an event the role may not.
+                actions: [
+                  { event: SUBMIT_EVENT, name: 'Approve', type: 'primary' },
+                ],
                 read: 'all',
                 write,
                 api: [providerApi, otherApi],
@@ -280,6 +286,11 @@ const buildController = (
     info: jest.fn(),
     warn: jest.fn(),
   }
+  const applicationValidationService = new ApplicationValidationService(
+    logger as never,
+    // The feature flag that turns the event check off stays off.
+    { getValue: jest.fn().mockResolvedValue(false) } as never,
+  )
   const service = new SdfScreenService(
     logger as never,
     applicationService as never,
@@ -289,6 +300,7 @@ const buildController = (
     { createResolver: jest.fn().mockResolvedValue(createResolver()) } as never,
     {} as never,
     applicationActionService as never,
+    applicationValidationService,
   )
   return {
     controller: new SdfController(service),
@@ -355,9 +367,14 @@ interface PersistenceCase {
   // When set, the (path, answer) pairs the answer validators received, in call
   // order.
   validatorCalls?: [string, unknown][]
+  // When set, the event the event permission check must log a warning for.
+  // Defaults to no warning.
+  eventWarning?: string
 }
 
 const SUBMIT_EVENT = DefaultEvents.APPROVE
+// Accepted by the state, but not in the role's actions.
+const UNPERMITTED_EVENT = DefaultEvents.SUBMIT
 
 // For the rows that check new answers are merged into saved ones, including a
 // dotted key that has to land inside an existing nested object.
@@ -1012,6 +1029,37 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       ephemeralActions: [],
       stateChanges: [{ answers: { field0: 'value' }, event: SUBMIT_EVENT }],
     },
+    {
+      label: 'with an event the role may not send',
+      form: twoPageForm,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: UNPERMITTED_EVENT,
+        answers: { field0: 'value' },
+      },
+      rejects: { type: ForbiddenException },
+      saves: [],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+      eventWarning: UNPERMITTED_EVENT,
+    },
+    {
+      label: 'by a user with no role',
+      form: twoPageForm,
+      noRole: true,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { field0: 'value' },
+      },
+      rejects: { type: ForbiddenException },
+      saves: [],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+      eventWarning: SUBMIT_EVENT,
+    },
   ],
   [SdfActionType.REFETCH]: [
     {
@@ -1276,5 +1324,9 @@ describe('SDF action persistence', () => {
     if (c.validatorCalls) {
       expect(answerValidator.mock.calls).toEqual(c.validatorCalls)
     }
+    const eventWarnings = logger.warn.mock.calls
+      .filter(([message]) => String(message).startsWith('Event is not'))
+      .map(([, meta]) => (meta as { event: string }).event)
+    expect(eventWarnings).toEqual(c.eventWarning ? [c.eventWarning] : [])
   })
 })

@@ -293,6 +293,7 @@ describe('SdfScreenService handleRefetch', () => {
       },
       {},
       applicationActionService,
+      {},
     )
 
     await service.handleRefetch(
@@ -372,6 +373,7 @@ describe('SdfScreenService handleRefetch', () => {
       },
       {},
       applicationActionService,
+      {},
     )
 
     await expect(
@@ -445,6 +447,7 @@ describe('SdfScreenService handleRefetch', () => {
       },
       {},
       applicationActionService,
+      {},
     )
 
     const screen = await service.handleRefetch(
@@ -510,6 +513,7 @@ describe('SdfScreenService handleRefetch', () => {
         performActionOnApplication: jest.fn(),
         performEphemeralActionOnApplication: jest.fn(),
       },
+      {},
     )
 
     const screen = await service.getScreen(application.id, undefined, 'is', {
@@ -570,6 +574,7 @@ describe('SdfScreenService handleRefetch', () => {
         performActionOnApplication: jest.fn(),
         performEphemeralActionOnApplication: jest.fn(),
       },
+      {},
     )
 
     const result = await service.validateFields(

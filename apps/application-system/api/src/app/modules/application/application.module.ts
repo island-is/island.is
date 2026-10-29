@@ -57,6 +57,10 @@ import { IdentityClientModule } from '@island.is/clients/identity'
     TemplateApiActionRunner,
     ApplicationActionService,
   ],
-  exports: [ApplicationActionService, ApplicationAccessService],
+  exports: [
+    ApplicationActionService,
+    ApplicationAccessService,
+    ApplicationValidationService,
+  ],
 })
 export class ApplicationModule {}

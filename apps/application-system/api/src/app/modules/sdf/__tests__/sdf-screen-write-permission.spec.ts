@@ -74,6 +74,8 @@ const buildService = (
     { createResolver: jest.fn().mockResolvedValue(createResolver()) } as never,
     {} as never,
     applicationActionService as never,
+    // Allows every event; the event check has its own tests.
+    { validateIncomingEvent: jest.fn() } as never,
   )
 
 // Both templates below give the role an `api: [restrictedApi]` entry —

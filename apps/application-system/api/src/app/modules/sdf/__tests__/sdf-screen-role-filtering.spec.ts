@@ -60,6 +60,7 @@ const buildService = () =>
     {} as never,
     {} as never,
     {} as never,
+    {} as never,
   )
 
 describe('SdfScreenService filterDataByRole', () => {
@@ -303,6 +304,7 @@ describe('SdfScreenService getScreen — role filtering holds at the render laye
       } as never,
       {} as never,
       { performActionOnApplication: jest.fn() } as never,
+      {} as never,
     )
 
     const screen = await service.getScreen(application.id, undefined, 'is', {
