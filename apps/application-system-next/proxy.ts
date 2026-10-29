@@ -15,8 +15,9 @@ export const proxy = (request: NextRequest) => {
   const { pathname } = request.nextUrl
   const slug = pathname.split('/')[1]
 
-  if (!slug || SDF_ENABLED_SLUGS.has(slug)) {
-    // SDF page request → own the CSP here with a fresh per-request nonce.
+  // The sign-in handoff (`/auth/login`) is a page of this app too.
+  if (!slug || slug === 'auth' || SDF_ENABLED_SLUGS.has(slug)) {
+    // Page served by this app → own the CSP here with a fresh per-request nonce.
     const nonce = generateNonce()
     const csp = buildCsp(nonce)
 
@@ -45,6 +46,6 @@ export const proxy = (request: NextRequest) => {
 
 export const config = {
   // Relative to basePath (Next prefixes it with `/umsoknir/sdf`). Skip Next
-  // internals, the auth handoff routes, and any file request (has a dot).
-  matcher: '/((?!_next/static|_next/image|auth|favicon.ico|.*\\..*).*)',
+  // internals and any file request (has a dot).
+  matcher: '/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)',
 }
