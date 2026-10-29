@@ -761,8 +761,24 @@ export class ZendeskService {
                   ? (rawJson as Record<string, unknown>)
                   : {}
 
+              const isChoiceField =
+                field.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+                field.fieldType === FieldTypesEnum.RADIO_BUTTONS
+              const optionValue =
+                isChoiceField &&
+                typeof json.value === 'string' &&
+                json.value.length > 0
+                  ? json.value
+                  : undefined
+
               const formattedEntries = Object.entries(json)
                 .map(([key, rawVal]) => {
+                  if (optionValue !== undefined) {
+                    return key === 'value'
+                      ? { key, value: optionValue }
+                      : undefined
+                  }
+
                   if (rawVal === null || rawVal === undefined) {
                     return undefined
                   }
