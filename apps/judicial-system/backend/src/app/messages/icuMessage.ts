@@ -1,6 +1,6 @@
 import type { MessageDescriptor } from '@formatjs/intl'
 
-/** Dump-backed ICU template for formatMessage (plain strings skip interpolation). */
+/** Nest formatMessage only interpolates MessageDescriptors, not plain strings. */
 export const icuMessage = (message: string): MessageDescriptor => ({
   id: message,
   defaultMessage: message,
