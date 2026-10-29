@@ -1627,6 +1627,7 @@ const allComponentTypes = () =>
 const resolveComponentTypeByName = (
   typeName: string,
 ): (new () => unknown) | undefined => {
+  // Keep in sync with FIELD_TYPE_TO_GRAPHQL_TYPENAME in @island.is/application/sdf-types
   const typeMap: Record<string, new () => unknown> = {
     TEXT: SdfTextField,
     EMAIL: SdfTextField,

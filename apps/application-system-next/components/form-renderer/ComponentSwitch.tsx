@@ -81,6 +81,7 @@ const fieldRenderers: Record<
   SdfTextField,
 }
 
+// Keep in sync with FIELD_TYPE_TO_GRAPHQL_TYPENAME in @island.is/application/sdf-types
 const unsupportedFieldTypes = new Set([
   'SdfRedirectToServicePortalField',
   'SdfTitleField',

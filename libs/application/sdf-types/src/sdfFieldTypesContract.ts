@@ -6,7 +6,7 @@
  */
 import { FieldTypes } from '@island.is/application/types'
 
-/** Every FieldTypes enum value except synthetic routing-only kinds. */
+/** Every FieldTypes enum value. */
 export const ALL_SDF_FIELD_TYPES: FieldTypes[] = Object.values(
   FieldTypes,
 ) as FieldTypes[]
