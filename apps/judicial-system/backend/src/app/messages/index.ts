@@ -1,3 +1,4 @@
+export { icuMessage } from './icuMessage'
 export { core } from './pdfCore'
 export { request } from './pdfRequest'
 export { ruling } from './pdfRuling'

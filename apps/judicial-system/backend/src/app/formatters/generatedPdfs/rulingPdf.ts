@@ -5,7 +5,7 @@ import { FormatMessage } from '@island.is/cms-translations'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 
 import { nowFactory } from '../../factories'
-import { ruling } from '../../messages'
+import { icuMessage, ruling } from '../../messages'
 import { Case } from '../../modules/repository'
 import {
   addCoatOfArms,
@@ -58,7 +58,7 @@ const constructRulingPdf = (
   setLineGap(doc, 30)
   addMediumHeading(
     doc,
-    formatMessage(ruling.caseNumber, {
+    formatMessage(icuMessage(ruling.caseNumber), {
       caseNumber: theCase.courtCaseNumber,
     }),
   )
@@ -76,7 +76,7 @@ const constructRulingPdf = (
   )
   addNormalJustifiedText(
     doc,
-    `${formatMessage(ruling.defendantIs, {
+    `${formatMessage(icuMessage(ruling.defendantIs), {
       suffix: theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
       isSuffix: theCase.defendants && theCase.defendants.length > 1 ? 'u' : '',
     })}${

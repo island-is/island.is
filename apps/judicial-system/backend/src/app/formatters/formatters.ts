@@ -28,7 +28,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { core, custodyNotice, notifications } from '../messages'
+import { core, custodyNotice, icuMessage, notifications } from '../messages'
 import { Case, DateLog } from '../modules/repository'
 
 type SubjectAndBody = {
@@ -710,7 +710,7 @@ export const formatCustodyRestrictions = (
   )
 
   if (restrictions.length === 0) {
-    return formatMessage(custodyNotice.noFutherRestrictions, {
+    return formatMessage(icuMessage(custodyNotice.noFutherRestrictions), {
       hasIsolation: isCustodyIsolation,
       caseType,
     })
@@ -723,7 +723,7 @@ export const formatCustodyRestrictions = (
     'og',
   )
 
-  return formatMessage(custodyNotice.withFurtherRestrictions, {
+  return formatMessage(icuMessage(custodyNotice.withFurtherRestrictions), {
     restrictions: formatedRestrictions,
     caseType: caseType,
   })
