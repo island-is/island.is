@@ -372,62 +372,67 @@ export const EstateDetail = () => {
           )}
 
           {/* Section 5 — Skjöl preview */}
-          <Text as="h2" variant="eyebrow" color="purple400" marginBottom={2}>
-            {formatMessage(m.estatesFiles)}
-          </Text>
-          <Box border="standard" borderRadius="large" padding={3}>
-            {latestDocuments.length === 0 ? (
-              <Text>{formatMessage(em.noFilesFound)}</Text>
-            ) : (
-              <Stack space={2}>
-                {latestDocuments.map((doc, i) => {
-                  const url = doc.requestAction?.url
-                  const label = doc.requestAction?.label ?? ''
-                  return (
-                    <ActionCard
-                      key={doc.islandIsDocumentId ?? i}
-                      heading={doc.name ?? ''}
-                      text={formatDate(doc.documentDate)}
-                      tag={
-                        doc.availability
-                          ? // TODO: map availability to tag variant once the values are known (Vantar red, Beðið yellow, Móttekið mint)
-                            {
-                              label: doc.availability,
-                              variant: 'blue',
-                              outlined: true,
-                            }
-                          : undefined
-                      }
-                      cta={
-                        url
-                          ? {
-                              label,
-                              ariaLabel: `${label}: ${doc.name ?? ''}`,
-                              variant: 'text',
-                              icon: 'arrowForward',
-                              onClick: () =>
-                                window.open(
-                                  url,
-                                  '_blank',
-                                  'noopener,noreferrer',
-                                ),
-                            }
-                          : undefined
-                      }
-                    />
-                  )
-                })}
-              </Stack>
-            )}
-            <Box marginTop={3} display="flex" justifyContent="center">
-              <LinkButton
-                to={EstatesPaths.EstatesFiles.replace(':id', id ?? '')}
-                text={formatMessage(em.seeFiles)}
-                icon="arrowForward"
-                variant="text"
-              />
-            </Box>
-          </Box>
+          {latestDocuments.length > 0 && (
+            <>
+              <Text
+                as="h2"
+                variant="eyebrow"
+                color="purple400"
+                marginBottom={2}
+              >
+                {formatMessage(m.estatesFiles)}
+              </Text>
+              <Box border="standard" borderRadius="large" padding={3}>
+                <Stack space={2}>
+                  {latestDocuments.map((doc, i) => {
+                    const url = doc.requestAction?.url
+                    const label = doc.requestAction?.label ?? ''
+                    return (
+                      <ActionCard
+                        key={doc.islandIsDocumentId ?? i}
+                        heading={doc.name ?? ''}
+                        text={formatDate(doc.documentDate)}
+                        tag={
+                          doc.availability
+                            ? // TODO: map availability to tag variant once the values are known (Vantar red, Beðið yellow, Móttekið mint)
+                              {
+                                label: doc.availability,
+                                variant: 'blue',
+                                outlined: true,
+                              }
+                            : undefined
+                        }
+                        cta={
+                          url
+                            ? {
+                                label,
+                                ariaLabel: `${label}: ${doc.name ?? ''}`,
+                                variant: 'text',
+                                icon: 'arrowForward',
+                                onClick: () =>
+                                  window.open(
+                                    url,
+                                    '_blank',
+                                    'noopener,noreferrer',
+                                  ),
+                              }
+                            : undefined
+                        }
+                      />
+                    )
+                  })}
+                </Stack>
+                <Box marginTop={3} display="flex" justifyContent="center">
+                  <LinkButton
+                    to={EstatesPaths.EstatesFiles.replace(':id', id ?? '')}
+                    text={formatMessage(em.seeFiles)}
+                    icon="arrowForward"
+                    variant="text"
+                  />
+                </Box>
+              </Box>
+            </>
+          )}
         </>
       )}
     </IntroWrapper>
