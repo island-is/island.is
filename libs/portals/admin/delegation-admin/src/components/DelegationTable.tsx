@@ -25,6 +25,7 @@ import {
 } from '../lib/delegationView'
 import { m } from '../lib/messages'
 import { DelegationStatusTag } from './DelegationStatusTag'
+import * as styles from './DelegationTable.css'
 
 type SortKey = 'name' | 'validTo'
 
@@ -79,15 +80,17 @@ export const DelegationTable = ({
           isSorted ? (sort.descending ? 'descending' : 'ascending') : 'none'
         }
       >
-        <Button
-          variant="text"
-          size="small"
-          icon={isSorted && sort.descending ? 'caretUp' : 'caretDown'}
-          iconType="filled"
-          onClick={() => toggleSort(key)}
-        >
-          {label}
-        </Button>
+        <span className={styles.noWrap}>
+          <Button
+            variant="text"
+            size="small"
+            icon={isSorted && sort.descending ? 'caretUp' : 'caretDown'}
+            iconType="filled"
+            onClick={() => toggleSort(key)}
+          >
+            {label}
+          </Button>
+        </span>
       </T.HeadData>
     )
   }
