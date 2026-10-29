@@ -1,8 +1,13 @@
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
+import {
+  InstitutionType,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
+  isIndictmentPdfReplaceableState,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import type {
@@ -19,7 +24,9 @@ import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayH
 // split cases of its own in the payload, and its indictment row is named
 // without a date.
 export type CaseFilesListCase = MergedCase &
-  Partial<Pick<WorkingCase, 'caseSentToCourtDate' | 'splitCases'>>
+  Partial<
+    Pick<WorkingCase, 'caseSentToCourtDate' | 'splitCases' | 'indictmentHash'>
+  >
 
 // Every subpoena on the case and on the cases split from it, each with the
 // defendant it was issued to. A defence user only gets the ones for
@@ -72,3 +79,44 @@ export const shouldShowPoliceDigitalCaseFilesSection = (
     isDistrictCourtUser(user) ||
     isCourtOfAppealsUser(user)) &&
   (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
+
+// Temporary one-off gate: only Héraðssaksóknari (district prosecutors office)
+// gets the replace control in the UI. The API is unchanged.
+export const shouldShowReplaceIndictmentPdf = (
+  workingCase: CaseFilesListCase,
+  user?: User,
+): boolean =>
+  isProsecutionUser(user) &&
+  user?.institution?.type === InstitutionType.DISTRICT_PROSECUTORS_OFFICE &&
+  isIndictmentPdfReplaceableState(workingCase.state) &&
+  Boolean(workingCase.indictmentHash)
+
+// Replacement uploads store `{ replaced: true }` in indictmentHash. Generated
+// freezes do not, so they keep the sent-to-court date in the display name.
+export const isReplacedIndictmentPdf = (
+  indictmentHash?: string | null,
+): boolean => {
+  if (!indictmentHash) {
+    return false
+  }
+
+  try {
+    const parsed = JSON.parse(indictmentHash) as { replaced?: unknown }
+
+    return parsed.replaced === true
+  } catch {
+    return false
+  }
+}
+
+export const getIndictmentPdfDisplayName = (
+  workingCase: CaseFilesListCase,
+): string => {
+  const withDate =
+    !isReplacedIndictmentPdf(workingCase.indictmentHash) &&
+    workingCase.caseSentToCourtDate
+      ? ` ${formatDate(workingCase.caseSentToCourtDate)}`
+      : ''
+
+  return `Ákæra${withDate}.pdf`
+}

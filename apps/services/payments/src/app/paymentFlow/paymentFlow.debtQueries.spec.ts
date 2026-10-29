@@ -341,6 +341,25 @@ describe('PaymentFlowService — debt flows for the worker', () => {
       )
     })
 
+    it('matches a bank transfer by its own correlation id', async () => {
+      const flowId = await createFlow()
+      await paymentFlowEventModel.create({
+        paymentFlowId: flowId,
+        type: 'success',
+        reason: 'payment_completed',
+        paymentMethod: 'bank_transfer',
+        occurredAt: new Date(),
+        message: 'Bank transfer payment completed',
+        metadata: { providerPaymentId: 'prov-1', correlationId: 'btp-1' },
+        deliveredToUpstream: false,
+      })
+
+      expect(await service.hasPaymentCompletedEvent(flowId, 'btp-1')).toBe(true)
+      expect(await service.hasPaymentCompletedEvent(flowId, 'prov-1')).toBe(
+        false,
+      )
+    })
+
     it('is false for an earlier payment on the same flow', async () => {
       const flowId = await createFlow({ type: 'charge' })
       await addCompleted(flowId, 'payment-1')

@@ -87,9 +87,15 @@ export const getIncidentDescription = (
 
     if (hasOnlyOtherOffense) {
       return textToHtml(
-        formatMessage(strings.incidentDescriptionShortAutofill, {
-          incidentDate,
-        }),
+        formatMessage(
+          {
+            id: strings.incidentDescriptionShortAutofill,
+            defaultMessage: strings.incidentDescriptionShortAutofill,
+          },
+          {
+            incidentDate,
+          },
+        ),
       )
     }
 
@@ -107,24 +113,36 @@ export const getIncidentDescription = (
     const speedLimit = indictmentCount.speedLimit ?? '[Leyfilegur hraði]'
 
     return textToHtml(
-      formatMessage(strings.incidentDescriptionAutofill, {
-        incidentDate,
-        vehicleRegistrationNumber: vehicleRegistration,
-        reason,
-        incidentLocation,
-        isSpeeding,
-        recordedSpeed,
-        speedLimit,
-      }),
+      formatMessage(
+        {
+          id: strings.incidentDescriptionAutofill,
+          defaultMessage: strings.incidentDescriptionAutofill,
+        },
+        {
+          incidentDate,
+          vehicleRegistrationNumber: vehicleRegistration,
+          reason,
+          incidentLocation,
+          isSpeeding,
+          recordedSpeed,
+          speedLimit,
+        },
+      ),
     )
   }
 
   if (subtypes.length === 1) {
     return textToHtml(
-      formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-        subtypes: indictmentSubtypes[subtypes[0]],
-        date: incidentDate,
-      }),
+      formatMessage(
+        {
+          id: strings.indictmentDescriptionSubtypesAutofill,
+          defaultMessage: strings.indictmentDescriptionSubtypesAutofill,
+        },
+        {
+          subtypes: indictmentSubtypes[subtypes[0]],
+          date: incidentDate,
+        },
+      ),
     )
   }
 
@@ -133,9 +151,15 @@ export const getIncidentDescription = (
     .join(', ')
 
   return textToHtml(
-    formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-      subtypes: allSubtypes,
-      date: incidentDate,
-    }),
+    formatMessage(
+      {
+        id: strings.indictmentDescriptionSubtypesAutofill,
+        defaultMessage: strings.indictmentDescriptionSubtypesAutofill,
+      },
+      {
+        subtypes: allSubtypes,
+        date: incidentDate,
+      },
+    ),
   )
 }

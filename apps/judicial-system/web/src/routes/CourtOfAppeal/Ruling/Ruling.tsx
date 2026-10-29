@@ -202,14 +202,14 @@ const Ruling = () => {
       isValid={isStepValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(strings.title)} />
+      <PageHeader title={strings.title} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CaseNumbers />
         <Box marginBottom={5}>
           <Box marginBottom={3} display="flex">
             <Text as="h3" variant="h3">
-              {formatMessage(strings.decision)}
+              {strings.decision}
             </Text>
             <Box marginLeft="smallGutter">
               <Text as="span" variant="h3" color="red400">
@@ -245,7 +245,7 @@ const Ruling = () => {
         {targetAppealCase?.appealRulingDecision ===
         AppealCaseRulingDecision.DISCONTINUED ? (
           <Box>
-            <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
+            <SectionHeading title={strings.courtRecordHeading} />
             <InputFileUpload
               name="appealCourtRecord"
               files={uploadFiles.filter((file) =>
@@ -256,11 +256,11 @@ const Ruling = () => {
                 ),
               )}
               accept="application/pdf"
-              title={formatMessage(strings.inputFieldLabel)}
+              title={strings.inputFieldLabel}
               description={formatMessage(core.uploadBoxDescription, {
                 fileEndings: '.pdf',
               })}
-              buttonLabel={formatMessage(strings.uploadButtonText)}
+              buttonLabel={strings.uploadButtonText}
               onChange={(files) => {
                 handleUpload(
                   addUploadFiles(files, {
@@ -318,13 +318,13 @@ const Ruling = () => {
               )}
             <Box marginBottom={5}>
               <Text as="h3" variant="h3" marginBottom={3}>
-                {formatMessage(strings.conclusionHeading)}
+                {strings.conclusionHeading}
               </Text>
               <Input
-                label={formatMessage(strings.conclusionHeading)}
+                label={strings.conclusionHeading}
                 name="rulingConclusion"
                 value={targetAppealCase?.appealConclusion || ''}
-                placeholder={formatMessage(strings.conclusionPlaceholder)}
+                placeholder={strings.conclusionPlaceholder}
                 onChange={(event) => {
                   const value = replaceTabs(event.target.value)
 
@@ -372,10 +372,7 @@ const Ruling = () => {
               />
             </Box>
             <Box>
-              <SectionHeading
-                title={formatMessage(strings.courtConclusionHeading)}
-                required
-              />
+              <SectionHeading title={strings.courtConclusionHeading} required />
               <InputFileUpload
                 name="appealRuling"
                 files={uploadFiles.filter((file) =>
@@ -386,11 +383,11 @@ const Ruling = () => {
                   ),
                 )}
                 accept="application/pdf"
-                title={formatMessage(strings.inputFieldLabel)}
+                title={strings.inputFieldLabel}
                 description={formatMessage(core.uploadBoxDescription, {
                   fileEndings: '.pdf',
                 })}
-                buttonLabel={formatMessage(strings.uploadButtonText)}
+                buttonLabel={strings.uploadButtonText}
                 onChange={(files) => {
                   handleUpload(
                     addUploadFiles(files, {

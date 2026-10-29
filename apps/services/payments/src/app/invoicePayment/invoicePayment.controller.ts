@@ -60,10 +60,16 @@ export class InvoicePaymentController {
       createInvoiceInput.paymentFlowId,
     )
 
-    // Debts cannot be paid by invoice. Rejected before the try so that no failure event is sent.
+    // Debts cannot be paid by invoice, and neither can a flow that does not offer it. Rejected before
+    // the try so that no failure event is sent.
     if (paymentFlow.type === 'debt') {
       throw new BadRequestException(PaymentServiceCode.InvalidPaymentMethods)
     }
+
+    this.paymentFlowService.validateChargePaymentMethod(
+      paymentFlow,
+      PaymentMethod.INVOICE,
+    )
 
     try {
       const [{ catalogItems }, { paymentStatus }] = await Promise.all([

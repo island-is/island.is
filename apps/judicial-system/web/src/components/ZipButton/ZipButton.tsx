@@ -1,5 +1,4 @@
 import type { FC } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Button } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
@@ -13,7 +12,6 @@ interface Props {
 }
 
 const ZipButton: FC<Props> = (props) => {
-  const { formatMessage } = useIntl()
   const { caseId, courtCaseNumber } = props
 
   return (
@@ -29,7 +27,7 @@ const ZipButton: FC<Props> = (props) => {
         icon="download"
         iconType="outline"
       >
-        {formatMessage(strings.getAllDocuments)}
+        {strings.getAllDocuments}
       </Button>
     </a>
   )

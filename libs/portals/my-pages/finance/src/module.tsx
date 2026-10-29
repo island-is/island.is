@@ -38,13 +38,16 @@ export const financeModule: PortalModule = {
         ApiScope.financeOverview,
         ApiScope.financeSalary,
         ApiScope.financeSchedule,
+        ApiScope.fjsDebts,
       ].some((scope) => userInfo.scopes.includes(scope)),
       element: <Navigate to={FinancePaths.FinanceStatus} replace />,
     },
     {
       name: m.financeStatus,
       path: FinancePaths.FinanceStatus,
-      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+      enabled: [ApiScope.financeOverview, ApiScope.fjsDebts].some((scope) =>
+        userInfo.scopes.includes(scope),
+      ),
       element: <FinanceStatus />,
       loader: financeDomainLoader({ userInfo, ...rest }),
     },

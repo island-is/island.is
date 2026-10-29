@@ -233,6 +233,122 @@ describe.each([
   },
 )
 
+describe.each([
+  FieldTypesEnum.CHECKBOX,
+  FieldTypesEnum.DROPDOWN_LIST,
+  FieldTypesEnum.RADIO_BUTTONS,
+])('ApplicationsService.saveScreen hidden %s values', (fieldType) => {
+  it.each([
+    { hiddenLevel: 'field', onCurrentScreen: false },
+    { hiddenLevel: 'screen', onCurrentScreen: false },
+    { hiddenLevel: 'section', onCurrentScreen: false },
+    { hiddenLevel: 'field', onCurrentScreen: true },
+    { hiddenLevel: 'screen', onCurrentScreen: true },
+    { hiddenLevel: 'section', onCurrentScreen: true },
+  ])(
+    'clears stored values for hidden $hiddenLevel with onCurrentScreen=$onCurrentScreen',
+    async ({ hiddenLevel, onCurrentScreen }) => {
+      const transaction = {}
+      const application = {
+        id: 'application',
+        formId: 'form',
+        save: jest.fn().mockResolvedValue(undefined),
+      }
+      const sections: SectionDto[] = ['current', 'other'].map((id) => ({
+        id,
+        name: { is: '', en: '' },
+        sectionType: SectionTypes.INPUT,
+        displayOrder: 0,
+        isHidden: id === 'other' && hiddenLevel === 'section',
+        isCompleted: false,
+        screens: [
+          {
+            id: `${id}-screen`,
+            identifier: `${id}-screen`,
+            sectionId: id,
+            name: { is: '', en: '' },
+            displayOrder: 0,
+            isHidden: id === 'other' && hiddenLevel === 'screen',
+            isCompleted: false,
+            multiMax: 1,
+            isMulti: false,
+            shouldValidate: false,
+            fields: [fieldType, FieldTypesEnum.TEXTBOX].map((type) => ({
+              id: `${id}-${type}`,
+              identifier: `${id}-${type}`,
+              screenId: `${id}-screen`,
+              name: { is: '', en: '' },
+              description: { is: '', en: '' },
+              displayOrder: 0,
+              fieldType: type,
+              isHidden: id === 'other' && hiddenLevel === 'field',
+              isPartOfMultiset: onCurrentScreen && type === fieldType,
+              isRequired: false,
+              values: [],
+            })),
+          },
+        ],
+      }))
+      const update = jest.fn().mockResolvedValue([2])
+      const destroy = jest.fn()
+      const create = jest.fn()
+      const literal = jest.fn((sql: string) => sql)
+      const escape = jest.fn((json: string) => `'${json}'`)
+      const service = Object.assign(
+        Object.create(ApplicationsService.prototype),
+        {
+          applicationModel: {
+            findByPk: jest.fn().mockResolvedValue(application),
+          },
+          formModel: { findByPk: jest.fn().mockResolvedValue({}) },
+          getLoginTypes: jest.fn().mockResolvedValue([]),
+          hasDelegation: jest.fn().mockReturnValue(true),
+          doesUserMatchApplication: jest.fn().mockReturnValue(true),
+          valueModel: { update, destroy, create },
+          sequelize: {
+            transaction: jest
+              .fn()
+              .mockImplementation((callback) => callback(transaction)),
+            literal,
+            escape,
+          },
+        },
+      ) as ApplicationsService
+
+      await service.saveScreen(
+        {
+          applicationId: application.id,
+          sectionId: onCurrentScreen ? 'other' : 'current',
+          screenId: onCurrentScreen ? 'other-screen' : 'current-screen',
+          sections,
+        },
+        { nationalId: '0101307789' } as User,
+      )
+
+      const resetJson = JSON.stringify(
+        fieldType === FieldTypesEnum.CHECKBOX
+          ? { checkboxValue: false }
+          : { label: null, value: null },
+      )
+      expect(escape).toHaveBeenCalledWith(resetJson)
+      expect(update).toHaveBeenCalledTimes(1)
+      expect(update).toHaveBeenCalledWith(
+        { json: `COALESCE("json", '{}'::jsonb) || '${resetJson}'::jsonb` },
+        {
+          where: {
+            applicationId: application.id,
+            fieldId: `other-${fieldType}`,
+          },
+          transaction,
+        },
+      )
+      expect(destroy).not.toHaveBeenCalled()
+      expect(create).not.toHaveBeenCalled()
+      expect(application.save).toHaveBeenCalledWith({ transaction })
+    },
+  )
+})
+
 describe('ApplicationsService.calculateDraftTotalSteps', () => {
   it.each([
     { hasSummaryScreen: true, hiddenTotal: 3, visibleTotal: 3 },

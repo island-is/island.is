@@ -32,6 +32,24 @@ const PAY_DEBT_TIMEOUT_MS = 15_000
  */
 export const ATTEMPT_CLAIM_WINDOW_MS = 60_000
 
+const isAttemptClaimed = (lastAttemptAt?: Date | null): boolean =>
+  !!lastAttemptAt &&
+  lastAttemptAt.getTime() > Date.now() - ATTEMPT_CLAIM_WINDOW_MS
+
+/**
+ * Whether FJS has yet to answer for a captured debt payment: nothing sent yet, or an attempt still
+ * inside its claim. Once that ends the payment is registered, rejected, or left for the worker.
+ */
+export const isDebtSettlementInProgress = (
+  settlement?: Pick<
+    DebtSettlementAttributes,
+    'status' | 'lastAttemptAt'
+  > | null,
+): boolean =>
+  !settlement ||
+  (settlement.status === 'pending' &&
+    (!settlement.lastAttemptAt || isAttemptClaimed(settlement.lastAttemptAt)))
+
 export type DebtSettlementFlow = {
   id: string
   payerNationalId: string
@@ -116,9 +134,7 @@ export class DebtSettlementService {
       return null
     }
 
-    const isAttemptRunning =
-      !!row.lastAttemptAt &&
-      row.lastAttemptAt.getTime() > Date.now() - ATTEMPT_CLAIM_WINDOW_MS
+    const isAttemptRunning = isAttemptClaimed(row.lastAttemptAt)
 
     if (
       row.status === 'pending' &&

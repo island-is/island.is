@@ -102,9 +102,15 @@ export const CaseOverview = () => {
               <Box marginBottom={5}>
                 <AlertMessage
                   type="info"
-                  title={formatMessage(strings.modifiedDatesHeading, {
-                    caseType: workingCase.type,
-                  })}
+                  title={formatMessage(
+                    {
+                      id: strings.modifiedDatesHeading,
+                      defaultMessage: strings.modifiedDatesHeading,
+                    },
+                    {
+                      caseType: workingCase.type,
+                    },
+                  )}
                   message={
                     <MarkdownWrapper
                       markdown={workingCase.caseModifiedExplanation}
@@ -179,7 +185,7 @@ export const CaseOverview = () => {
           {isCompletedCase(workingCase.state) && (
             <Box marginBottom={6}>
               <Conclusion
-                title={formatMessage(conclusion.title)}
+                title={conclusion.title}
                 conclusionText={workingCase.conclusion}
                 judgeName={workingCase.judge?.name}
               />
@@ -188,7 +194,7 @@ export const CaseOverview = () => {
           {workingCase.appealCase?.appealConclusion && (
             <Box marginBottom={6}>
               <Conclusion
-                title={formatMessage(conclusion.appealTitle)}
+                title={conclusion.appealTitle}
                 conclusionText={workingCase.appealCase?.appealConclusion}
               />
             </Box>
@@ -199,7 +205,7 @@ export const CaseOverview = () => {
           {shouldDisplayDocuments && (
             <Box marginBottom={10}>
               <Text as="h3" variant="h3" marginBottom={1}>
-                {formatMessage(strings.documentHeading)}
+                {strings.documentHeading}
               </Text>
               <Box>
                 <PdfButton
@@ -241,9 +247,9 @@ export const CaseOverview = () => {
                           signingDate={workingCase.rulingSignatureDate}
                         />
                       ) : workingCase.isCompletedWithoutRuling ? (
-                        <Text>{formatMessage(strings.noRuling)}</Text>
+                        <Text>{strings.noRuling}</Text>
                       ) : (
-                        <Text>{formatMessage(strings.unsignedRuling)}</Text>
+                        <Text>{strings.unsignedRuling}</Text>
                       )}
                     </PdfButton>
                     <Box marginTop={7}>

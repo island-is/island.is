@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Checkbox } from '@island.is/island-ui/core'
 import BlueBox from '@island.is/judicial-system-web/src/components/BlueBox/BlueBox'
@@ -14,7 +13,6 @@ import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { requestAppealRulingNotToBePublishedCheckbox as strings } from './RequestAppealRulingNotToBePublishedCheckbox.strings'
 
 const RequestAppealRulingNotToBePublishedCheckbox: FC = () => {
-  const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { updateAppealCase } = useAppealCase()
   const { user } = useContext(UserContext)
@@ -22,7 +20,7 @@ const RequestAppealRulingNotToBePublishedCheckbox: FC = () => {
   return (
     <BlueBox>
       <Checkbox
-        label={formatMessage(strings.requestAppealRulingNotToBePublished)}
+        label={strings.requestAppealRulingNotToBePublished}
         name="requestAppealRulingNotToBePublished"
         checked={
           user &&
