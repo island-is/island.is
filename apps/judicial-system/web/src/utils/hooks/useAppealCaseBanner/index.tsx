@@ -58,9 +58,8 @@ export const getAppealDecision = (
     case AppealCaseRulingDecision.REPEAL:
       return appealRuling.decisionRepeal
     case AppealCaseRulingDecision.CHANGED:
-      return appealRuling.decisionChanged
     case AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY:
-      return appealRuling.decisionChangedSignificantly
+      return appealRuling.decisionChanged
     case AppealCaseRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
       return appealRuling.decisionDismissedFromCourtOfAppeal
     case AppealCaseRulingDecision.DISMISSED_FROM_COURT:
