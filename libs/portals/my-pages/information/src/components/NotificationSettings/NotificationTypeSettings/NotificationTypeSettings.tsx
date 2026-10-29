@@ -133,27 +133,25 @@ export const NotificationTypeSettings = () => {
     userProfileSettings?.getUserProfile?.onlyActionablePriorityNotifications ??
     false
 
-  // console.log(
-  //   'data:',
-  //   userNotificationSettings?.userNotificationSettings.senders,
-  // )
+  const isActionablePrioritySettingAvailable =
+    isServicePortalOnlyActionablePriorityNotificationsEnabled &&
+    isOnlyActionablePriorityNotificationsEnabled
 
   return (
     <Stack space={4}>
-      {isServicePortalOnlyActionablePriorityNotificationsEnabled &&
-        isOnlyActionablePriorityNotificationsEnabled && (
-          <ActionableOnlySettingsCard
-            title={formatMessage(mNotifications.actionablePriorityOnlyTitle)}
-            subtitle={formatMessage(
-              mNotifications.actionablePriorityOnlyDescription,
-            )}
-            toggleLabel={formatMessage(
-              mNotifications.actionablePriorityOnlyAriaLabel,
-            )}
-            checked={onlyActionablePriorityNotifications}
-            onChange={handleActionablePriorityChange}
-          />
-        )}
+      {isActionablePrioritySettingAvailable && (
+        <ActionableOnlySettingsCard
+          title={formatMessage(mNotifications.actionablePriorityOnlyTitle)}
+          subtitle={formatMessage(
+            mNotifications.actionablePriorityOnlyDescription,
+          )}
+          toggleLabel={formatMessage(
+            mNotifications.actionablePriorityOnlyAriaLabel,
+          )}
+          checked={onlyActionablePriorityNotifications}
+          onChange={handleActionablePriorityChange}
+        />
+      )}
 
       <Stack space={1}>
         <Text variant="h4" as="h2">
