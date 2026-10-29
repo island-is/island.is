@@ -86,7 +86,7 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
         </AccordionListItem>
       )}
       {workingCase.requestedCourtDate && (
-        <AccordionListItem title={formatMessage(requestCourtDate.heading)}>
+        <AccordionListItem title={requestCourtDate.heading}>
           <Text>
             {`${capitalize(
               formatDate(workingCase.requestedCourtDate, 'PPPP') ?? '',
@@ -101,7 +101,7 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
         <Text>{workingCase.demands}</Text>
       </AccordionListItem>
       <AccordionListItem
-        title={formatMessage(lawsBrokenAccordion.heading)}
+        title={lawsBrokenAccordion.heading}
         breakSpaces
       >
         <Text>{workingCase.lawsBroken}</Text>
@@ -129,9 +129,15 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
       </AccordionListItem>
       {isRestrictionCase(workingCase.type) && (
         <AccordionListItem
-          title={formatMessage(restrictionsV2.title, {
-            caseType: workingCase.type,
-          })}
+          title={formatMessage(
+            {
+              id: restrictionsV2.title,
+              defaultMessage: restrictionsV2.title,
+            },
+            {
+              caseType: workingCase.type,
+            },
+          )}
         >
           <Text>
             {formatRequestedCustodyRestrictions(

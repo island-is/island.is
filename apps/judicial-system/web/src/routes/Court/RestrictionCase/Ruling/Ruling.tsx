@@ -82,18 +82,12 @@ export const Ruling = () => {
             },
           ),
           prosecutorDemands: workingCase.demands,
-          courtCaseFacts: formatMessage(
-            ruling.sections.courtCaseFacts.prefill,
-            {
+          courtCaseFacts: formatMessage({ id: ruling.sections.courtCaseFacts.prefill, defaultMessage: ruling.sections.courtCaseFacts.prefill }, {
               caseFacts: workingCase.caseFacts,
-            },
-          ),
-          courtLegalArguments: formatMessage(
-            ruling.sections.courtLegalArguments.prefill,
-            { legalArguments: workingCase.legalArguments },
-          ),
+            }),
+          courtLegalArguments: formatMessage({ id: ruling.sections.courtLegalArguments.prefill, defaultMessage: ruling.sections.courtLegalArguments.prefill }, { legalArguments: workingCase.legalArguments }),
           ruling: !workingCase.parentCase
-            ? `\n${formatMessage(ruling.autofill, {
+            ? `\n${formatMessage({ id: ruling.autofill, defaultMessage: ruling.autofill }, {
                 judgeName: workingCase.judge?.name,
               })}`
             : isAcceptingCaseDecision(workingCase.decision)
@@ -400,62 +394,31 @@ export const Ruling = () => {
           <Box marginBottom={5}>
             <Decision
               workingCase={workingCase}
-              acceptedLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision.acceptLabel,
-                {
-                  caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
-                    {
+              acceptedLabelText={formatMessage({ id: ruling.restrictionCases.sections.decision.acceptLabel, defaultMessage: ruling.restrictionCases.sections.decision.acceptLabel }, {
+                  caseType: formatMessage({ id: ruling.restrictionCases.sections.decision.caseType, defaultMessage: ruling.restrictionCases.sections.decision.caseType }, {
                       caseType: workingCase.type,
-                    },
-                  ),
-                },
-              )}
-              rejectedLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision.rejectLabel,
-                {
-                  caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
-                    {
+                    }),
+                })}
+              rejectedLabelText={formatMessage({ id: ruling.restrictionCases.sections.decision.rejectLabel, defaultMessage: ruling.restrictionCases.sections.decision.rejectLabel }, {
+                  caseType: formatMessage({ id: ruling.restrictionCases.sections.decision.caseType, defaultMessage: ruling.restrictionCases.sections.decision.caseType }, {
                       caseType: workingCase.type,
-                    },
-                  ),
-                },
-              )}
-              partiallyAcceptedLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision.partiallyAcceptLabel,
-                {
-                  caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
-                    {
+                    }),
+                })}
+              partiallyAcceptedLabelText={formatMessage({ id: ruling.restrictionCases.sections.decision.partiallyAcceptLabel, defaultMessage: ruling.restrictionCases.sections.decision.partiallyAcceptLabel }, {
+                  caseType: formatMessage({ id: ruling.restrictionCases.sections.decision.caseType, defaultMessage: ruling.restrictionCases.sections.decision.caseType }, {
                       caseType: workingCase.type,
-                    },
-                  ),
-                },
-              )}
-              dismissLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision.dismissLabel,
-                {
-                  caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
-                    {
+                    }),
+                })}
+              dismissLabelText={formatMessage({ id: ruling.restrictionCases.sections.decision.dismissLabel, defaultMessage: ruling.restrictionCases.sections.decision.dismissLabel }, {
+                  caseType: formatMessage({ id: ruling.restrictionCases.sections.decision.caseType, defaultMessage: ruling.restrictionCases.sections.decision.caseType }, {
                       caseType: workingCase.type,
-                    },
-                  ),
-                },
-              )}
-              acceptingAlternativeTravelBanLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision
-                  .acceptingAlternativeTravelBanLabel,
-                {
-                  caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
-                    {
+                    }),
+                })}
+              acceptingAlternativeTravelBanLabelText={formatMessage({ id: ruling.restrictionCases.sections.decision.acceptingAlternativeTravelBanLabel, defaultMessage: ruling.restrictionCases.sections.decision.acceptingAlternativeTravelBanLabel }, {
+                  caseType: formatMessage({ id: ruling.restrictionCases.sections.decision.caseType, defaultMessage: ruling.restrictionCases.sections.decision.caseType }, {
                       caseType: workingCase.type,
-                    },
-                  ),
-                },
-              )}
+                    }),
+                })}
               onChange={(decision) => {
                 let conclusion = undefined
                 let ruling = undefined

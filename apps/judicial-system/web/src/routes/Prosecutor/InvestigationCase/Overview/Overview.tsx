@@ -246,7 +246,7 @@ export const Overview = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_1"
-                label={formatMessage(lawsBrokenAccordion.heading)}
+                label={lawsBrokenAccordion.heading}
               >
                 <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
               </AccordionItem>
@@ -373,7 +373,7 @@ export const Overview = () => {
             ]}
             errorMessage={
               sendNotificationError
-                ? formatMessage(errors.sendNotification)
+                ? errors.sendNotification
                 : undefined
             }
           />

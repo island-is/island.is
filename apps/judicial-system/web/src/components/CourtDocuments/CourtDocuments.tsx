@@ -35,15 +35,15 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
     },
     {
       value: UserRole.PROSECUTOR,
-      label: formatMessage(courtDocuments.whoFiled.prosecutor),
+      label: courtDocuments.whoFiled.prosecutor,
     },
     {
       value: UserRole.DEFENDER,
-      label: formatMessage(courtDocuments.whoFiled.defendant),
+      label: courtDocuments.whoFiled.defendant,
     },
     {
       value: UserRole.DISTRICT_COURT_JUDGE,
-      label: formatMessage(courtDocuments.whoFiled.court),
+      label: courtDocuments.whoFiled.court,
     },
   ]
 
@@ -96,15 +96,15 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
     <>
       <Box marginBottom={2}>
         <Text as="h3" variant="h3">
-          {formatMessage(courtDocuments.header)}
+          {courtDocuments.header}
         </Text>
       </Box>
       <MultipleValueList
         name="court-documents"
         onAddValue={handleAddDocument}
-        inputLabel={formatMessage(courtDocuments.add.label)}
-        inputPlaceholder={formatMessage(courtDocuments.add.placeholder)}
-        buttonText={formatMessage(courtDocuments.add.buttonText)}
+        inputLabel={courtDocuments.add.label}
+        inputPlaceholder={courtDocuments.add.placeholder}
+        buttonText={courtDocuments.add.buttonText}
         isButtonDisabled={(value) => !value}
       >
         <>
@@ -117,11 +117,11 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
           </Box>
           <div className={styles.firstCourtDocument}>
             <Text marginBottom={[1, 1, 1, 0]}>
-              {formatMessage(courtDocuments.text)}
+              {courtDocuments.text}
             </Text>
             <Box component="span">
               <Tag variant="darkerBlue" outlined disabled>
-                {formatMessage(courtDocuments.tag, { index: 1 })}
+                {formatMessage({ id: courtDocuments.tag, defaultMessage: courtDocuments.tag }, { index: 1 })}
               </Tag>
             </Box>
           </div>
@@ -159,7 +159,7 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
                     <Tag variant="darkerBlue" outlined disabled>
                       {
                         // +2 because index is zero based and "Krafa um ..." is number 1
-                        formatMessage(courtDocuments.tag, {
+                        formatMessage({ id: courtDocuments.tag, defaultMessage: courtDocuments.tag }, {
                           index: index + 2,
                         })
                       }

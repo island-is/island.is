@@ -175,7 +175,7 @@ export const JudgeOverview = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_1"
-                label={formatMessage(lawsBrokenAccordion.heading)}
+                label={lawsBrokenAccordion.heading}
               >
                 <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
               </AccordionItem>
@@ -206,9 +206,15 @@ export const JudgeOverview = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_3"
-                label={formatMessage(restrictionsV2.title, {
-                  caseType: workingCase.type,
-                })}
+                label={formatMessage(
+                  {
+                    id: restrictionsV2.title,
+                    defaultMessage: restrictionsV2.title,
+                  },
+                  {
+                    caseType: workingCase.type,
+                  },
+                )}
               >
                 {formatRequestedCustodyRestrictions(
                   formatMessage,
