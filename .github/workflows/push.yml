@@ -604,17 +604,15 @@ jobs:
           -d "{\"event_type\":\"deploy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}}"
       - name: Get token for identity-server.web
         id: get-ids-token
-        if: ${{ needs.prepare.outputs.IDS_FEATURE_DEPLOY == 'true' }}
         shell: bash
         working-directory: monorepo
         env:
-          APP_ID: ${{ secrets.IDS_FEATURE_DEPLOYMENT_ID }} # App Feature Deployment
+          APP_ID: ${{ secrets.IDS_FEATURE_DEPLOYMENT_ID }}
           PRIVATE_KEY: ${{ secrets.IDS_FEATURE_DEPLOYMENT_PK }}
         run: |
           node ./scripts/ci/docker/get-github-token.mjs
 
       - name: Dispatch IDS feature deploy to identity-server.web
-        if: ${{ needs.prepare.outputs.IDS_FEATURE_DEPLOY == 'true' }}
         env:
           IDS_WEB_TOKEN: ${{ steps.get-ids-token.outputs.token }}
           FEATURE_NAME: ${{ env.FEATURE_NAME }}

@@ -879,7 +879,6 @@ function prepareFeatureDeployment(
     'services-auth-public-api',
   ]
   const serviceName = s.image ?? s.name
-  // test
   Object.values(s.ingress).forEach((ingress) => {
     if (!Array.isArray(ingress.host.dev)) {
       ingress.host.dev = [ingress.host.dev]
