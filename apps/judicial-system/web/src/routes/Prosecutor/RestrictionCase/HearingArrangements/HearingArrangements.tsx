@@ -107,9 +107,7 @@ export const HearingArrangements = () => {
       onNavigationTo={stepIsValid ? handleNavigationTo : undefined}
     >
       <PageHeader
-        title={formatMessage(
-          titles.prosecutor.restrictionCases.hearingArrangements,
-        )}
+        title={titles.prosecutor.restrictionCases.hearingArrangements}
       />
       <FormContentContainer>
         <PageTitle>{rcRequestedHearingArrangements.heading}</PageTitle>
@@ -169,7 +167,7 @@ export const HearingArrangements = () => {
           previousUrl={`${PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: async () =>
                 await handleNavigationTo(
@@ -217,9 +215,7 @@ export const HearingArrangements = () => {
           ]}
           onClose={() => setNavigateTo(undefined)}
           errorMessage={
-            sendNotificationError
-              ? errors.sendNotification
-              : undefined
+            sendNotificationError ? errors.sendNotification : undefined
           }
         />
       )}

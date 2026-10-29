@@ -75,9 +75,7 @@ const CaseFile = () => {
       isValid={true}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.caseFile)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.caseFile} />
       <FormContentContainer>
         <PageTitle>{m.heading}</PageTitle>
         <Box marginBottom={5}>
@@ -137,7 +135,7 @@ const CaseFile = () => {
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

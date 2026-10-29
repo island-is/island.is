@@ -133,7 +133,9 @@ describe('getExtensionInfoText', () => {
     } as WorkingCase
     const res = fn(theCase, prosecutor)
 
-    expect(res).toEqual('Ekki hægt að framlengja gæsluvarðhald sem var hafnað.')
+    expect(res).toEqual(
+      'Ekki er hægt að framlengja gæsluvarðhald sem var hafnað.',
+    )
   })
 
   test('should format for rejected admission case', () => {
@@ -144,7 +146,7 @@ describe('getExtensionInfoText', () => {
     const res = fn(theCase, prosecutor)
 
     expect(res).toEqual(
-      'Ekki hægt að framlengja vistun á viðeigandi stofnun sem var hafnað.',
+      'Ekki er hægt að framlengja vistun á viðeigandi stofnun sem var hafnað.',
     )
   })
 
@@ -155,7 +157,7 @@ describe('getExtensionInfoText', () => {
     } as WorkingCase
     const res = fn(theCase, prosecutor)
 
-    expect(res).toEqual('Ekki hægt að framlengja farbann sem var hafnað.')
+    expect(res).toEqual('Ekki er hægt að framlengja farbann sem var hafnað.')
   })
 
   test('should format for rejected investigation case', () => {
@@ -165,7 +167,7 @@ describe('getExtensionInfoText', () => {
     } as WorkingCase
     const res = fn(theCase, prosecutor)
 
-    expect(res).toEqual('Ekki hægt að framlengja kröfu sem var hafnað.')
+    expect(res).toEqual('Ekki er hægt að framlengja kröfu sem var hafnað.')
   })
 
   test('should format for dismissed investigation case', () => {
@@ -175,7 +177,7 @@ describe('getExtensionInfoText', () => {
     } as WorkingCase
     const res = fn(theCase, prosecutor)
 
-    expect(res).toEqual('Ekki hægt að framlengja kröfu sem var vísað frá.')
+    expect(res).toEqual('Ekki er hægt að framlengja kröfu sem var vísað frá.')
   })
 
   test('should format for custody case with valid to date in the past', () => {
@@ -185,7 +187,9 @@ describe('getExtensionInfoText', () => {
     } as WorkingCase
     const res = fn(theCase, prosecutor)
 
-    expect(res).toEqual('Ekki hægt að framlengja gæsluvarðhald sem er lokið.')
+    expect(res).toEqual(
+      'Ekki er hægt að framlengja gæsluvarðhald sem er lokið.',
+    )
   })
 
   test('should format for case with accepting alternative travel ban', () => {
@@ -196,7 +200,7 @@ describe('getExtensionInfoText', () => {
     const res = fn(theCase, prosecutor)
 
     expect(res).toEqual(
-      'Ekki hægt að framlengja gæsluvarðhald þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.',
+      'Ekki er hægt að framlengja gæsluvarðhald þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.',
     )
   })
 

@@ -152,13 +152,13 @@ export const SignatureConfirmationModal: FC<
     } else {
       // courtRecord
       if (signingProgress === 'inProgress') {
-        return formatMessage(m.sections.courtRecordSignatureModal.titleSigning)
+        return m.sections.courtRecordSignatureModal.titleSigning
       } else if (signingProgress === 'success') {
-        return formatMessage(m.sections.courtRecordSignatureModal.titleSuccess)
+        return m.sections.courtRecordSignatureModal.titleSuccess
       } else if (signingProgress === 'canceled') {
-        return formatMessage(m.sections.courtRecordSignatureModal.titleCanceled)
+        return m.sections.courtRecordSignatureModal.titleCanceled
       } else {
-        return formatMessage(m.sections.courtRecordSignatureModal.titleFailure)
+        return m.sections.courtRecordSignatureModal.titleFailure
       }
     }
   }
@@ -185,14 +185,14 @@ export const SignatureConfirmationModal: FC<
         )
       } else {
         // courtRecord
-        return formatMessage(m.sections.courtRecordSignatureModal.completed)
+        return m.sections.courtRecordSignatureModal.completed
       }
     } else {
       // error or canceled
       if (signatureType === 'ruling') {
         return signingModalStrings.errorText
       } else {
-        return formatMessage(m.sections.courtRecordSignatureModal.notCompleted)
+        return m.sections.courtRecordSignatureModal.notCompleted
       }
     }
   }
@@ -225,7 +225,7 @@ export const SignatureConfirmationModal: FC<
               {
                 text:
                   signingProgress === 'success'
-                    ? formatMessage(core.closeModal)
+                    ? core.closeModal
                     : signingModalStrings.secondaryButtonErrorText,
                 onClick:
                   signingProgress === 'success' ? handleClose : handleRetry,

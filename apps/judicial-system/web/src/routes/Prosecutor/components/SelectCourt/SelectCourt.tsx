@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Select } from '@island.is/island-ui/core'
 import { selectCourt as m } from '@island.is/judicial-system-web/messages'
@@ -18,7 +17,6 @@ import {
 type CourtSelectOption = ReactSelectOption & { court: Institution }
 
 const SelectCourt: FC = () => {
-  const { formatMessage } = useIntl()
   const { updateCase } = useCase()
   const { districtCourts } = useInstitution()
   const { workingCase, setWorkingCase } = useContext(FormContext)
@@ -52,11 +50,11 @@ const SelectCourt: FC = () => {
 
   return (
     <>
-      <SectionHeading title={formatMessage(m.title)} heading="h2" />
+      <SectionHeading title={m.title} heading="h2" />
       <Select
         name="court"
-        label={formatMessage(m.label)}
-        placeholder={formatMessage(m.placeholder)}
+        label={m.label}
+        placeholder={m.placeholder}
         value={defaultCourt}
         options={selectCourts}
         onChange={(selectedOption) => {

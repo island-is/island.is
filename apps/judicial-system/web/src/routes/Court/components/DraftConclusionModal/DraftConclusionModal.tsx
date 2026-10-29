@@ -1,5 +1,4 @@
 import type { Dispatch, FC, SetStateAction } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
 import { core } from '@island.is/judicial-system-web/messages'
@@ -22,8 +21,6 @@ const DraftConclusionModal: FC<Props> = ({
   isDraftingConclusion,
   setIsDraftingConclusion,
 }) => {
-  const { formatMessage } = useIntl()
-
   return (
     <AnimatePresence>
       {isDraftingConclusion && (
@@ -37,7 +34,7 @@ const DraftConclusionModal: FC<Props> = ({
           }
           buttons={[
             {
-              text: formatMessage(core.closeModal),
+              text: core.closeModal,
               onClick: () => setIsDraftingConclusion(false),
             },
           ]}

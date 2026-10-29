@@ -92,9 +92,7 @@ const ReceptionAndAssignment = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.court.shared.receptionAndAssignment)}
-      />
+      <PageHeader title={titles.court.shared.receptionAndAssignment} />
       <FormContentContainer>
         {isIndictment && workingCase.comments && (
           <Box
@@ -145,7 +143,7 @@ const ReceptionAndAssignment = () => {
           }
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () => handleNavigationTo(getNextRoute),
               disabled: !stepIsValid,

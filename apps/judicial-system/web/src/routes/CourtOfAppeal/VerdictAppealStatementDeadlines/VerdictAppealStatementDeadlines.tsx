@@ -152,7 +152,7 @@ const VerdictAppealStatementDeadlines = () => {
           previousUrl={defenderUrl}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE),

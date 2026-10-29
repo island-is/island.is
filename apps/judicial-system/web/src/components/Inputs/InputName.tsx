@@ -1,6 +1,5 @@
 import type { ChangeEvent, FC, FocusEvent } from 'react'
 import { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -31,8 +30,6 @@ const InputName: FC<InputProps> = (props) => {
 
     onChange,
   } = props
-
-  const { formatMessage } = useIntl()
 
   const [errorMessage, setErrorMessage] = useState<string>()
   const [inputValue, setInputValue] = useState<string>(value || '')
@@ -86,8 +83,8 @@ const InputName: FC<InputProps> = (props) => {
       data-testid="inputName"
       name="inputName"
       autoComplete="off"
-      label={label ? label : formatMessage(core.fullName)}
-      placeholder={placeholder ? placeholder : formatMessage(core.fullName)}
+      label={label ? label : core.fullName}
+      placeholder={placeholder ? placeholder : core.fullName}
       errorMessage={errorMessage}
       hasError={errorMessage !== undefined}
       onChange={handleChange}

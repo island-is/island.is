@@ -86,9 +86,7 @@ const Overview = () => {
       isValid={true}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.court.investigationCases.overview)}
-      />
+      <PageHeader title={titles.court.investigationCases.overview} />
       <FormContentContainer>
         {workingCase.caseResentExplanation && (
           <Box marginBottom={workingCase.openedByDefender ? 3 : 5}>
@@ -230,9 +228,9 @@ const Overview = () => {
           <Box alignItems="flexStart" className={stack({ gap: 2 })}>
             <PdfButton
               caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRequest)}
+              title={core.pdfButtonRequest}
               pdfType="request"
-              elementId={formatMessage(core.pdfButtonRequest)}
+              elementId={core.pdfButtonRequest}
             />
             <Button
               data-testid="draftConclusionButton"

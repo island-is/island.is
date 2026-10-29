@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -34,7 +33,6 @@ export const PoliceReport = () => {
   const demandsInput = useDebouncedInput('demands', ['empty'])
   const caseFactsInput = useDebouncedInput('caseFacts', ['empty'])
   const legalArgumentsInput = useDebouncedInput('legalArguments', ['empty'])
-  const { formatMessage } = useIntl()
   const stepIsValid = isPoliceReportStepValidRC(workingCase)
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
@@ -47,9 +45,7 @@ export const PoliceReport = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.restrictionCases.policeReport)}
-      />
+      <PageHeader title={titles.prosecutor.restrictionCases.policeReport} />
       <FormContentContainer>
         <PageTitle>{rcReportForm.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
@@ -120,7 +116,7 @@ export const PoliceReport = () => {
           previousUrl={`${PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () => {
                 handleNavigationTo(

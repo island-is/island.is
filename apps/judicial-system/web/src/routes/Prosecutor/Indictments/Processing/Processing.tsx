@@ -333,9 +333,7 @@ const Processing: FC = () => {
       onNavigationTo={handleNavigationTo}
       isValid={stepIsValid}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.processing)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.processing} />
       <FormContentContainer>
         <PageTitle>{strings.heading}</PageTitle>
         <Box marginBottom={5}>
@@ -512,7 +510,7 @@ const Processing: FC = () => {
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               url: `${PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE}/${workingCase.id}`,
               disabled: !stepIsValid,

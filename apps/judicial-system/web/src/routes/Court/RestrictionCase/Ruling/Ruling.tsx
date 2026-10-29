@@ -82,14 +82,29 @@ export const Ruling = () => {
             },
           ),
           prosecutorDemands: workingCase.demands,
-          courtCaseFacts: formatMessage({ id: ruling.sections.courtCaseFacts.prefill, defaultMessage: ruling.sections.courtCaseFacts.prefill }, {
+          courtCaseFacts: formatMessage(
+            {
+              id: ruling.sections.courtCaseFacts.prefill,
+              defaultMessage: ruling.sections.courtCaseFacts.prefill,
+            },
+            {
               caseFacts: workingCase.caseFacts,
-            }),
-          courtLegalArguments: formatMessage({ id: ruling.sections.courtLegalArguments.prefill, defaultMessage: ruling.sections.courtLegalArguments.prefill }, { legalArguments: workingCase.legalArguments }),
+            },
+          ),
+          courtLegalArguments: formatMessage(
+            {
+              id: ruling.sections.courtLegalArguments.prefill,
+              defaultMessage: ruling.sections.courtLegalArguments.prefill,
+            },
+            { legalArguments: workingCase.legalArguments },
+          ),
           ruling: !workingCase.parentCase
-            ? `\n${formatMessage({ id: ruling.autofill, defaultMessage: ruling.autofill }, {
-                judgeName: workingCase.judge?.name,
-              })}`
+            ? `\n${formatMessage(
+                { id: ruling.autofill, defaultMessage: ruling.autofill },
+                {
+                  judgeName: workingCase.judge?.name,
+                },
+              )}`
             : isAcceptingCaseDecision(workingCase.decision)
             ? workingCase.parentCase.ruling
             : undefined,
@@ -266,7 +281,7 @@ export const Ruling = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
+      <PageHeader title={titles.court.restrictionCases.ruling} />
       <FormContentContainer>
         <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
@@ -394,31 +409,105 @@ export const Ruling = () => {
           <Box marginBottom={5}>
             <Decision
               workingCase={workingCase}
-              acceptedLabelText={formatMessage({ id: ruling.restrictionCases.sections.decision.acceptLabel, defaultMessage: ruling.restrictionCases.sections.decision.acceptLabel }, {
-                  caseType: formatMessage({ id: ruling.restrictionCases.sections.decision.caseType, defaultMessage: ruling.restrictionCases.sections.decision.caseType }, {
+              acceptedLabelText={formatMessage(
+                {
+                  id: ruling.restrictionCases.sections.decision.acceptLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision.acceptLabel,
+                },
+                {
+                  caseType: formatMessage(
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
+                    {
                       caseType: workingCase.type,
-                    }),
-                })}
-              rejectedLabelText={formatMessage({ id: ruling.restrictionCases.sections.decision.rejectLabel, defaultMessage: ruling.restrictionCases.sections.decision.rejectLabel }, {
-                  caseType: formatMessage({ id: ruling.restrictionCases.sections.decision.caseType, defaultMessage: ruling.restrictionCases.sections.decision.caseType }, {
+                    },
+                  ),
+                },
+              )}
+              rejectedLabelText={formatMessage(
+                {
+                  id: ruling.restrictionCases.sections.decision.rejectLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision.rejectLabel,
+                },
+                {
+                  caseType: formatMessage(
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
+                    {
                       caseType: workingCase.type,
-                    }),
-                })}
-              partiallyAcceptedLabelText={formatMessage({ id: ruling.restrictionCases.sections.decision.partiallyAcceptLabel, defaultMessage: ruling.restrictionCases.sections.decision.partiallyAcceptLabel }, {
-                  caseType: formatMessage({ id: ruling.restrictionCases.sections.decision.caseType, defaultMessage: ruling.restrictionCases.sections.decision.caseType }, {
+                    },
+                  ),
+                },
+              )}
+              partiallyAcceptedLabelText={formatMessage(
+                {
+                  id: ruling.restrictionCases.sections.decision
+                    .partiallyAcceptLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision
+                      .partiallyAcceptLabel,
+                },
+                {
+                  caseType: formatMessage(
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
+                    {
                       caseType: workingCase.type,
-                    }),
-                })}
-              dismissLabelText={formatMessage({ id: ruling.restrictionCases.sections.decision.dismissLabel, defaultMessage: ruling.restrictionCases.sections.decision.dismissLabel }, {
-                  caseType: formatMessage({ id: ruling.restrictionCases.sections.decision.caseType, defaultMessage: ruling.restrictionCases.sections.decision.caseType }, {
+                    },
+                  ),
+                },
+              )}
+              dismissLabelText={formatMessage(
+                {
+                  id: ruling.restrictionCases.sections.decision.dismissLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision.dismissLabel,
+                },
+                {
+                  caseType: formatMessage(
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
+                    {
                       caseType: workingCase.type,
-                    }),
-                })}
-              acceptingAlternativeTravelBanLabelText={formatMessage({ id: ruling.restrictionCases.sections.decision.acceptingAlternativeTravelBanLabel, defaultMessage: ruling.restrictionCases.sections.decision.acceptingAlternativeTravelBanLabel }, {
-                  caseType: formatMessage({ id: ruling.restrictionCases.sections.decision.caseType, defaultMessage: ruling.restrictionCases.sections.decision.caseType }, {
+                    },
+                  ),
+                },
+              )}
+              acceptingAlternativeTravelBanLabelText={formatMessage(
+                {
+                  id: ruling.restrictionCases.sections.decision
+                    .acceptingAlternativeTravelBanLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision
+                      .acceptingAlternativeTravelBanLabel,
+                },
+                {
+                  caseType: formatMessage(
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
+                    {
                       caseType: workingCase.type,
-                    }),
-                })}
+                    },
+                  ),
+                },
+              )}
               onChange={(decision) => {
                 let conclusion = undefined
                 let ruling = undefined
@@ -485,9 +574,9 @@ export const Ruling = () => {
         </Box>
         <PdfButton
           caseId={workingCase.id}
-          title={formatMessage(core.pdfButtonRuling)}
+          title={core.pdfButtonRuling}
           pdfType="ruling"
-          elementId={formatMessage(core.pdfButtonRuling)}
+          elementId={core.pdfButtonRuling}
         />
       </FormContentContainer>
       <FormContentContainer isFooter>
@@ -495,7 +584,7 @@ export const Ruling = () => {
           previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

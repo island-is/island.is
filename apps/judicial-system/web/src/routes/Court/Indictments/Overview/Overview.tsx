@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect, useRef } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
@@ -61,15 +60,13 @@ const OverviewBody = ({
   const router = useRouter()
 
   const { workingCase, isLoadingWorkingCase } = useContext(FormContext)
-
-  const { formatMessage } = useIntl()
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
   return (
     <>
-      <PageHeader title={formatMessage(titles.court.indictments.overview)} />
+      <PageHeader title={titles.court.indictments.overview} />
       <FormContentContainer>
         <PageTitle>{strings.inProgressTitle}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
@@ -184,7 +181,7 @@ const OverviewBody = ({
           previousUrl={getStandardUserDashboardRoute(user)}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

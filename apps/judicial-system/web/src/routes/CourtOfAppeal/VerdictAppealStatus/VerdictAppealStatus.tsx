@@ -373,7 +373,7 @@ const VerdictAppealStatus = () => {
             previousUrl={statementDeadlinesUrl}
             actions={[
               {
-                text: formatMessage(core.continue),
+                text: core.continue,
                 icon: 'arrowForward',
                 disabled: !stepIsValid,
                 onClick: handleContinue,

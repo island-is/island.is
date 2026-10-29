@@ -133,11 +133,17 @@ const SendToPrisonAdmin: FC = () => {
               file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
           )}
           accept="application/pdf"
-          title={formatMessage(core.uploadBoxTitle)}
-          description={formatMessage(core.uploadBoxDescription, {
-            fileEndings: '.pdf',
-          })}
-          buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+          title={core.uploadBoxTitle}
+          description={formatMessage(
+            {
+              id: core.uploadBoxDescription,
+              defaultMessage: core.uploadBoxDescription,
+            },
+            {
+              fileEndings: '.pdf',
+            },
+          )}
+          buttonLabel={core.uploadBoxButtonLabel}
           onChange={handleFileUpload}
           onRemove={handleRemoveFile}
           onOpenFile={(file) => onOpenFile(file)}
@@ -171,7 +177,7 @@ const SendToPrisonAdmin: FC = () => {
           )}
           buttons={[
             {
-              text: formatMessage(core.back),
+              text: core.back,
               onClick: handleSecondaryButtonClick,
               variant: 'ghost',
             },

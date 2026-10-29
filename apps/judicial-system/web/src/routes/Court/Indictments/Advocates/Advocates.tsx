@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useCallback, useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { Tooltip, TooltipAnchor, TooltipProvider } from '@ariakit/react'
@@ -79,8 +78,6 @@ const Advocates = () => {
     useContext(FormContext)
   const router = useRouter()
 
-  const { formatMessage } = useIntl()
-
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       router.push(`${destination}/${workingCase.id}`)
@@ -108,7 +105,7 @@ const Advocates = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(titles.court.indictments.defender)} />
+      <PageHeader title={titles.court.indictments.defender} />
       <FormContentContainer>
         <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
@@ -159,7 +156,7 @@ const Advocates = () => {
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

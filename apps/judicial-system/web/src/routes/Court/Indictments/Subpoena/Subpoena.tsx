@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { Fragment, useCallback, useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
@@ -109,7 +108,6 @@ const Subpoena: FC = () => {
   const { updateDefendants } = useDefendants()
   const { setAndSendCaseToServer } = useCase()
   const { createSubpoenas } = useCreateSubpoenas()
-  const { formatMessage } = useIntl()
 
   const isIssuingSubpoenaForDefendant = (defendant: Defendant) =>
     !defendant.isAlternativeService &&
@@ -426,7 +424,7 @@ const Subpoena: FC = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(titles.court.indictments.subpoena)} />
+      <PageHeader title={titles.court.indictments.subpoena} />
       <FormContentContainer>
         <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
@@ -599,7 +597,7 @@ const Subpoena: FC = () => {
           actions={[
             {
               text: !isSchedulingArraignmentDate
-                ? formatMessage(core.continue)
+                ? core.continue
                 : strings.nextButtonText,
               icon: 'arrowForward',
               onClick: () => {
