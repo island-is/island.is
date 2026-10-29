@@ -3,7 +3,11 @@ import GraphQLJSON from 'graphql-type-json'
 import { CacheField } from '@island.is/nest/graphql'
 import { getProjectPageUrlPrefix } from '@island.is/shared/utils'
 
-import { ILinkFields, IProjectPage } from '../generated/contentfulTypes'
+import {
+  ILinkFields,
+  IProjectPage,
+  IProjectSubpage,
+} from '../generated/contentfulTypes'
 import {
   mapDocument,
   safelyMapSliceUnion,
@@ -119,6 +123,11 @@ export class ProjectPage {
   alertBanner?: AlertBanner
 }
 
+const belongsToProjectPage = (
+  subpage: { fields?: { projectPage?: { sys?: { id?: string } } } } | undefined,
+  projectPage: IProjectPage,
+) => subpage?.fields?.projectPage?.sys?.id === projectPage.sys.id
+
 const processSidebarLinks = (projectPage: IProjectPage) => {
   let hasFrontpageLink = false
 
@@ -150,12 +159,13 @@ const processSidebarLinks = (projectPage: IProjectPage) => {
       return true
     }
 
-    // Filter out links that are not present in the projectSubpages array (since those links will result in a 404)
+    // Filter out subpages that belong to a different project page (since those links will result in a 404)
     return (
       linkGroupContentTypeId === 'projectSubpage' &&
-      projectPage.fields.projectSubpages?.some((subpage) => {
-        return subpage.sys.id === linkGroup.fields.primaryLink?.sys.id
-      })
+      belongsToProjectPage(
+        linkGroup.fields.primaryLink as IProjectSubpage,
+        projectPage,
+      )
     )
   })
 
@@ -213,9 +223,7 @@ const processSidebarLinks = (projectPage: IProjectPage) => {
         }
         return (
           childLinkContentTypeId === 'projectSubpage' &&
-          projectPage.fields.projectSubpages?.some(
-            (subpage) => subpage.sys.id === childLink.sys.id,
-          )
+          belongsToProjectPage(childLink as IProjectSubpage, projectPage)
         )
       }) ?? []
   }
@@ -223,7 +231,10 @@ const processSidebarLinks = (projectPage: IProjectPage) => {
   return filteredItems
 }
 
-export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
+export const mapProjectPage = (
+  projectPage: IProjectPage,
+  projectSubpages: IProjectSubpage[] = [],
+): ProjectPage => {
   const { sys, fields } = projectPage
 
   return {
@@ -257,7 +268,7 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
     secondaryNewsTags: (fields.secondaryNewsTags ?? [])
       .filter((tag) => tag.fields)
       .map(mapGenericTag),
-    projectSubpages: (fields.projectSubpages ?? [])
+    projectSubpages: projectSubpages
       .filter((p) => p.fields?.title)
       .map(mapProjectSubpage),
     featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,

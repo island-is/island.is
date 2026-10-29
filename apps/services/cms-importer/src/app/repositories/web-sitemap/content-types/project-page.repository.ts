@@ -16,40 +16,45 @@ export class ProjectPageRepository implements SitemapUrlFetcher {
       content_type: 'projectPage',
       limit: itemsPerPage,
       skip: pageIndex * itemsPerPage,
-      select: 'fields.slug,fields.title,sys,fields.projectSubpages',
+      select: 'fields.slug,fields.title,sys',
       'sys.publishedAt[exists]': true,
     })
     if (!projectPageResponse.ok) throw projectPageResponse.error
 
-    const projectSubpageIds: string[] = []
-    for (const projectPage of projectPageResponse.data.items)
-      for (const subpage of projectPage.fields.projectSubpages?.[LOCALE] ?? [])
-        projectSubpageIds.push(subpage.sys.id)
+    const projectPageIds: string[] = projectPageResponse.data.items.map(
+      (projectPage) => projectPage.sys.id,
+    )
 
-    const projectSubpageMap = new Map<
+    const projectSubpagesByProjectPageId = new Map<
       string,
       {
         slug: { [LOCALE]: string; [EN_LOCALE]: string }
         title: { [LOCALE]: string; [EN_LOCALE]: string }
         publishedAt: string | undefined
-      }
+      }[]
     >()
 
-    while (projectSubpageIds.length > 0) {
-      const ids = projectSubpageIds.splice(0, 15)
+    while (projectPageIds.length > 0) {
+      const ids = projectPageIds.splice(0, 15)
       const projectSubpageResponse = await this.managementClient.getEntries({
         content_type: 'projectSubpage',
-        select: 'fields.slug,fields.title,sys',
-        'sys.id[in]': ids.join(','),
+        select: 'fields.slug,fields.title,fields.projectPage,sys',
+        'fields.projectPage.sys.id[in]': ids.join(','),
         'sys.publishedAt[exists]': true,
       })
       if (!projectSubpageResponse.ok) throw projectSubpageResponse.error
-      for (const projectSubpage of projectSubpageResponse.data.items)
-        projectSubpageMap.set(projectSubpage.sys.id, {
+      for (const projectSubpage of projectSubpageResponse.data.items) {
+        const projectPageId =
+          projectSubpage.fields.projectPage?.[LOCALE]?.sys?.id
+        if (!projectPageId) continue
+        const subpages = projectSubpagesByProjectPageId.get(projectPageId) ?? []
+        subpages.push({
           slug: projectSubpage.fields.slug,
           title: projectSubpage.fields.title,
           publishedAt: projectSubpage.sys.publishedAt,
         })
+        projectSubpagesByProjectPageId.set(projectPageId, subpages)
+      }
     }
 
     const urls: SitemapUrl[] = []
@@ -81,10 +86,9 @@ export class ProjectPageRepository implements SitemapUrlFetcher {
         },
       })
 
-      for (const subpage of projectPage.fields.projectSubpages?.[LOCALE] ??
-        []) {
-        const projectSubpage = projectSubpageMap.get(subpage.sys.id)
-        if (!projectSubpage) continue
+      for (const projectSubpage of projectSubpagesByProjectPageId.get(
+        projectPage.sys.id,
+      ) ?? []) {
         const subpageSlug = projectSubpage.slug?.[LOCALE]
         const subpageEnSlug = projectSubpage.slug?.[EN_LOCALE]
         if (!subpageSlug && !subpageEnSlug) continue

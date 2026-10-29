@@ -4305,9 +4305,6 @@ export interface IProjectPageFields {
   /** Secondary news tags */
   secondaryNewsTags?: IGenericTag[] | undefined
 
-  /** Project Subpages */
-  projectSubpages?: IProjectSubpage[] | undefined
-
   /** Featured Image */
   featuredImage?: Asset | undefined
 
@@ -4373,6 +4370,9 @@ export interface IProjectPage extends Entry<IProjectPageFields> {
 }
 
 export interface IProjectSubpageFields {
+  /** Project Page */
+  projectPage?: IProjectPage | undefined
+
   /** Title */
   title: string
 
