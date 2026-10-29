@@ -32,10 +32,13 @@ interface EnhancedAssetListProps {
 
 /**
  * Lists enhanced assets for an organization with a fixed filter set in the
- * connected component config. Users can narrow the results with a search
- * string, but the configured filter always applies.
+ * connected component's localized JSON field. Users can narrow the results
+ * with a search string, but the configured filter always applies.
  *
- * Config example:
+ * The JSON is localized since organization slugs differ between Icelandic
+ * and English.
+ *
+ * JSON example:
  * {
  *   "organizationSlug": "stafraent-island",
  *   "tags": ["arsskyrsla"],
@@ -57,7 +60,8 @@ const EnhancedAssetList = ({ slice }: EnhancedAssetListProps) => {
   const searchStringRef = useRef(searchString)
   searchStringRef.current = searchString
 
-  const config = slice.configJson ?? {}
+  const config = slice.json ?? {}
+  const organizationSlug: string | undefined = config.organizationSlug
   const tags: string[] = config.tags ?? []
   const tagGroups: Record<string, string[]> =
     config.tagGroups && Object.keys(config.tagGroups).length > 0
@@ -85,7 +89,7 @@ const EnhancedAssetList = ({ slice }: EnhancedAssetListProps) => {
     variables: {
       input: {
         lang: activeLocale,
-        organizationSlug: config.organizationSlug,
+        organizationSlug,
         tags,
         tagGroups,
         page: 1,
@@ -95,7 +99,7 @@ const EnhancedAssetList = ({ slice }: EnhancedAssetListProps) => {
       },
     },
     // Avoid an unfiltered request that would list assets from all organizations
-    skip: !config.organizationSlug,
+    skip: !organizationSlug,
   })
 
   const items = data?.getPublishedMaterial?.items ?? []
@@ -114,7 +118,7 @@ const EnhancedAssetList = ({ slice }: EnhancedAssetListProps) => {
       variables: {
         input: {
           lang: activeLocale,
-          organizationSlug: config.organizationSlug,
+          organizationSlug,
           tags,
           tagGroups,
           page: nextPage,
