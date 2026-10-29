@@ -1,11 +1,3 @@
-# mutation BlockNotificationCategories($input: NotificationCategoriesInput!) {
-#   blockNotificationCategories(input: $input)
-# }
-
-# mutation UnblockNotificationCategories($input: NotificationCategoriesInput!) {
-#   unblockNotificationCategories(input: $input)
-# }
-
 mutation UpdateNotificationCategorySettings(
   $input: UpdateNotificationCategoriesInput!
 ) {
