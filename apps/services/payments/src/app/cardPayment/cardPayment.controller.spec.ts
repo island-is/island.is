@@ -1997,6 +1997,38 @@ describe('CardPaymentController', () => {
       expect(chargeCalls()).toHaveLength(0)
     })
 
+    it('sends 3-D Secure and the charge the same four-digit year however the gateway returns the card', async () => {
+      mockFetch({
+        decryption: () =>
+          gatewayResponse({
+            ...decryptionResponse(),
+            googlePayCardInformation: {
+              pan: '4111111111111111',
+              expirationMonth: '7',
+              expirationYear: '30',
+            },
+          }),
+      })
+      const googlePayToken = token()
+
+      expect((await charge(googlePayToken)).status).toBe(201)
+      const [[, verificationInit]] = cardVerificationCalls()
+      expect(JSON.parse(verificationInit.body)).toMatchObject({
+        expirationMonth: 7,
+        expirationYear: 2030,
+      })
+      expect(
+        (await completeVerification(JSON.parse(verificationInit.body))).status,
+      ).toBe(201)
+
+      expect((await chargeVerified(googlePayToken)).status).toBe(201)
+      const [[, chargeInit]] = chargeCalls()
+      expect(JSON.parse(chargeInit.body)).toMatchObject({
+        expirationMonth: 7,
+        expirationYear: 2030,
+      })
+    })
+
     it('charges a saved card with the 3-D Secure result after verification, once', async () => {
       mockFetch()
       const googlePayToken = token()
