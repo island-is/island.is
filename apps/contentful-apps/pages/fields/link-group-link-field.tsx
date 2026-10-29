@@ -178,6 +178,22 @@ const LinkGroupLinkField = () => {
       }
     }
 
+    if (
+      contentTypeId === 'projectSubpage' &&
+      pageAbove?.sys?.contentType?.sys?.id === 'projectPage'
+    ) {
+      fields = {
+        projectPage: {
+          [DEFAULT_LOCALE]: {
+            sys: {
+              id: pageAbove.sys.id,
+              linkType: 'Entry',
+            },
+          },
+        },
+      }
+    }
+
     try {
       const entry = await cma.entry.create(
         {
@@ -192,26 +208,6 @@ const LinkGroupLinkField = () => {
 
       props.onCreated(entry)
       sdk.navigator.openEntry(entry.sys.id, { slideIn: true })
-
-      if (
-        contentTypeId === 'projectSubpage' &&
-        pageAbove?.sys?.contentType?.sys?.id === 'projectPage'
-      ) {
-        const data = await cma.entry.get({
-          contentTypeId: 'projectPage',
-          entryId: pageAbove.sys.id,
-        })
-        if (data) {
-          data.fields.projectSubpages[DEFAULT_LOCALE].push({
-            sys: {
-              id: entry.sys.id,
-              linkType: 'Entry',
-              type: 'Link',
-            },
-          })
-          cma.entry.update({ entryId: data.sys.id }, data)
-        }
-      }
     } catch (error) {
       console.error('Error creating entry:', error)
     }

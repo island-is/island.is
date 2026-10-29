@@ -584,9 +584,29 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IProjectPageFields>(lang, params, 5)
       .catch(errorHandler('getProjectPage'))
 
-    return result.items.length
-      ? mapProjectPage(result.items[0] as IProjectPage)
-      : null
+    if (!result.items.length) {
+      return null
+    }
+
+    const projectPage = result.items[0] as IProjectPage
+
+    const subpageResult = await this.contentfulRepository
+      .getLocalizedEntries<types.IProjectSubpageFields>(
+        lang,
+        {
+          ['content_type']: 'projectSubpage',
+          'fields.projectPage.sys.id': projectPage.sys.id,
+          order: 'sys.createdAt',
+          limit: 1000,
+        },
+        5,
+      )
+      .catch(errorHandler('getProjectPage'))
+
+    return mapProjectPage(
+      projectPage,
+      subpageResult.items as types.IProjectSubpage[],
+    )
   }
 
   async getArticle(slug: string, lang: string): Promise<Article | null> {
