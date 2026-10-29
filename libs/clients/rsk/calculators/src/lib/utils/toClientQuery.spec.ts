@@ -19,9 +19,9 @@ describe('toClientQuery', () => {
       fjoldiBarna: 2,
     }
 
-    expect(toClientQuery(zGetChildBenefitData.shape.query.shape, input)).toEqual(
-      input,
-    )
+    expect(
+      toClientQuery(zGetChildBenefitData.shape.query.shape, input),
+    ).toEqual(input)
   })
 
   it('divides 0–1 bounded non-integer parameters by 100', () => {
