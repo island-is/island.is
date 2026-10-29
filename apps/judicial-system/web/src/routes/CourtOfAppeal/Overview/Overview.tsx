@@ -171,7 +171,7 @@ const Overview = () => {
                   )}
                 </Accordion>
                 <Conclusion
-                  title={formatMessage(conclusion.title)}
+                  title={conclusion.title}
                   conclusionText={workingCase.conclusion}
                   judgeName={workingCase.judge?.name}
                 />
