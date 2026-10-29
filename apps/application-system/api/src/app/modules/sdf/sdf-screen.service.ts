@@ -345,7 +345,9 @@ export class SdfScreenService {
 
     const roleInState = stateInfo.roles?.find((r) => r.id === role)
     if (!roleInState) {
-      throw new Error(`Role ${role} not found in state ${application.state}`)
+      throw new ForbiddenException(
+        `Role ${role} not found in state ${application.state}`,
+      )
     }
 
     return roleInState
@@ -806,13 +808,8 @@ export class SdfScreenService {
     }
 
     const template = await getApplicationTemplateByTypeId(application.typeId)
-    const role = template.mapUserToRole(
-      user.nationalId,
-      application as Application,
-    )
-    if (!role) {
-      throw new ForbiddenException('Access denied')
-    }
+    const roleInState = this.resolveRoleInState(application, template, user)
+    const role = roleInState.id
 
     const write = this.getWritePermissions(application, template, role)
     const writableAnswers = this.dropUnwritableAnswers(
@@ -881,18 +878,13 @@ export class SdfScreenService {
       const relevantProviders = dataProviders.filter((p) => p.action)
 
       if (relevantProviders.length > 0) {
-        const helper = new ApplicationTemplateHelper(
-          application as Application,
-          template,
-        )
-        const roleInState = helper.getRoleInState(role)
-        const apisFromRole = roleInState?.api ?? []
+        const apisFromRole = roleInState.api ?? []
 
         const templateApis = relevantProviders
           .map((p) => apisFromRole.find((a) => a.actionId === p.action))
           .filter(Boolean) as TemplateApi[]
 
-        if (templateApis.length > 0 && roleInState) {
+        if (templateApis.length > 0) {
           this.assertApisWritePermitted(
             application as Application,
             user,

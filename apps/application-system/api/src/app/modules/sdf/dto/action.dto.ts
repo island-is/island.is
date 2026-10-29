@@ -37,7 +37,7 @@ export class ExecuteActionDto {
   @IsNumber()
   @ApiPropertyOptional({
     description:
-      'The page index the client believes is current. Rejects writes on mismatch for idempotency.',
+      'NEXT_PAGE: the page index the client believes is current; a mismatch is rejected with 409 before anything is saved. VALIDATE: the page to compute display values for. Ignored by other actions.',
   })
   readonly lastKnownPageIndex?: number
 

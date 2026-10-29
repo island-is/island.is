@@ -335,6 +335,9 @@ interface PersistenceCase {
   write?: ReadWriteValues
   // When true, the template maps the user to no role.
   noRole?: boolean
+  // When set, the template maps the user to this role instead of the one the
+  // state declares.
+  mappedRole?: string
   // The stored application before the action. Defaults to page 0, no answers.
   application?: Partial<ApplicationRow>
   user?: Partial<User>
@@ -713,6 +716,21 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         lastKnownPageIndex: 0,
       },
       saves: [{ answers: {}, applicantActors: [], pageIndex: 1 }],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      label: 'by a role the state does not declare',
+      form: twoPageForm,
+      mappedRole: 'reviewer',
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { field0: 'value' },
+        lastKnownPageIndex: 0,
+      },
+      rejects: { type: ForbiddenException },
+      saves: [],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [],
@@ -1198,7 +1216,11 @@ describe('SDF action persistence', () => {
       c.write ?? 'all',
     )
     getApplicationTemplateByTypeIdMock.mockResolvedValue(
-      c.noRole ? { ...template, mapUserToRole: () => undefined } : template,
+      c.noRole
+        ? { ...template, mapUserToRole: () => undefined }
+        : c.mappedRole
+        ? { ...template, mapUserToRole: () => c.mappedRole }
+        : template,
     )
     const { controller, applicationService, applicationActionService, logger } =
       buildController(row, {
