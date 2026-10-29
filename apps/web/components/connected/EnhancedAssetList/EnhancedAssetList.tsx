@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useDebounce } from 'react-use'
 import { useQuery } from '@apollo/client'
@@ -52,18 +52,23 @@ const EnhancedAssetList = ({ slice }: EnhancedAssetListProps) => {
   const { activeLocale } = useI18n()
   const [searchValue, setSearchValue] = useState('')
   const [searchString, setSearchString] = useState('')
-  // The page number is 1-based meaning that page 1 is the first page
-  const [page, setPage] = useState(1)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [loadMoreError, setLoadMoreError] = useState(false)
+  const searchStringRef = useRef(searchString)
+  searchStringRef.current = searchString
 
   const config = slice.configJson ?? {}
   const tags: string[] = config.tags ?? []
   const tagGroups: Record<string, string[]> =
-    config.tagGroups ?? (tags.length > 0 ? { preselected: tags } : {})
+    config.tagGroups && Object.keys(config.tagGroups).length > 0
+      ? config.tagGroups
+      : tags.length > 0
+      ? { preselected: tags }
+      : {}
   const size: number = config.size ?? DEFAULT_ITEMS_PER_PAGE
 
   useDebounce(
     () => {
-      setPage(1)
       // Remove a trailing acute accent since it's a dead key that is still being composed
       setSearchString(
         searchValue.endsWith('´') ? searchValue.slice(0, -1) : searchValue,
@@ -89,6 +94,8 @@ const EnhancedAssetList = ({ slice }: EnhancedAssetListProps) => {
         sort: config.sort ?? DEFAULT_SORT,
       },
     },
+    // Avoid an unfiltered request that would list assets from all organizations
+    skip: !config.organizationSlug,
   })
 
   const items = data?.getPublishedMaterial?.items ?? []
@@ -96,8 +103,13 @@ const EnhancedAssetList = ({ slice }: EnhancedAssetListProps) => {
   const numberOfItemsThatCouldBeLoaded = total - items.length
 
   const loadMore = () => {
-    const nextPage = page + 1
-    setPage(nextPage)
+    if (isLoadingMore) return
+    // Derive the next page from what's loaded since the cache may already hold several pages
+    // The page number is 1-based meaning that page 1 is the first page
+    const nextPage = Math.floor(items.length / size) + 1
+    const requestSearchString = searchString
+    setIsLoadingMore(true)
+    setLoadMoreError(false)
     fetchMore({
       variables: {
         input: {
@@ -106,22 +118,34 @@ const EnhancedAssetList = ({ slice }: EnhancedAssetListProps) => {
           tags,
           tagGroups,
           page: nextPage,
-          searchString,
+          searchString: requestSearchString,
           size,
           sort: config.sort ?? DEFAULT_SORT,
         },
       },
-      updateQuery: (prevResult, { fetchMoreResult }) => ({
-        ...fetchMoreResult,
-        getPublishedMaterial: {
-          ...fetchMoreResult.getPublishedMaterial,
-          items: [
-            ...prevResult.getPublishedMaterial.items,
-            ...fetchMoreResult.getPublishedMaterial.items,
-          ],
-        },
-      }),
+      updateQuery: (prevResult, { fetchMoreResult }) => {
+        // Ignore stale responses if the search changed while the request was pending
+        if (requestSearchString !== searchStringRef.current) {
+          return prevResult
+        }
+        return {
+          ...fetchMoreResult,
+          getPublishedMaterial: {
+            ...fetchMoreResult.getPublishedMaterial,
+            items: [
+              ...prevResult.getPublishedMaterial.items,
+              ...fetchMoreResult.getPublishedMaterial.items,
+            ],
+          },
+        }
+      },
     })
+      .catch(() => {
+        setLoadMoreError(true)
+      })
+      .finally(() => {
+        setIsLoadingMore(false)
+      })
   }
 
   return (
@@ -158,8 +182,15 @@ const EnhancedAssetList = ({ slice }: EnhancedAssetListProps) => {
       )}
 
       {numberOfItemsThatCouldBeLoaded > 0 && (
-        <Box display="flex" justifyContent="center" marginTop={3}>
-          <Button onClick={loadMore} disabled={loading}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          rowGap={2}
+          marginTop={3}
+        >
+          {loadMoreError && <Text>{formatMessage(m.errorLoading)}</Text>}
+          <Button onClick={loadMore} disabled={loading || isLoadingMore}>
             {formatMessage(m.seeMore)} ({numberOfItemsThatCouldBeLoaded})
           </Button>
         </Box>
