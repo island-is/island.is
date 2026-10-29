@@ -6,7 +6,6 @@
 import { createApplication } from '@island.is/application/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { Test, TestingModule } from '@nestjs/testing'
-import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { FjarskiptastofaSelfAssessmentClientService } from '@island.is/clients/fjarskiptastofa/self-assessment'
 import { SharedTemplateApiService } from '../../../shared'
 import { FjarskiptastofaSelfAssessmentService } from './self-assessment.service'
@@ -25,7 +24,6 @@ describe('FjarskiptastofaSelfAssessmentService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FjarskiptastofaSelfAssessmentService,
-        { provide: LOGGER_PROVIDER, useValue: logger },
         { provide: SharedTemplateApiService, useValue: {} },
         {
           provide: FjarskiptastofaSelfAssessmentClientService,

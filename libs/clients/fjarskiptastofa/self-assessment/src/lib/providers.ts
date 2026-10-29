@@ -16,7 +16,9 @@ const ConfigFactory = (
   fetchApi: createEnhancedFetch({
     name: 'clients-fjarskiptastofa-self-assessment',
     organizationSlug: 'fjarskiptastofa',
-    logErrorResponseBody: true,
+    // The self-assessment answers are confidential, so error response bodies
+    // (which can echo the submitted payload) stay out of the logs.
+    logErrorResponseBody: false,
   }),
   basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
   headers: {

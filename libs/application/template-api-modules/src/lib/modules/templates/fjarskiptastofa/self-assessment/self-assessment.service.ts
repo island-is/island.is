@@ -1,6 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
+import { Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -21,7 +19,6 @@ type StoredAssessmentAnswers = Record<
 @Injectable()
 export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService {
   constructor(
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly selfAssessmentClient: FjarskiptastofaSelfAssessmentClientService,
   ) {
@@ -89,24 +86,6 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
       assessmentResponses,
     }
 
-    // The answers and the scoring are confidential, so only the application and
-    // the number of answers are logged, never the payload or the response.
-    this.logger.info('[self-assessment] submitting self-assessment', {
-      applicationId: application.id,
-      responseCount: assessmentResponses.length,
-    })
-
-    try {
-      return await this.selfAssessmentClient.submitAnswers(auth, payload)
-    } catch (error) {
-      // DEBUG: surface the failure (status/body) from the Fjarskiptastofa call.
-      this.logger.error('[self-assessment] submitSelfAssessment failed', {
-        applicationId: application.id,
-        message: error?.message,
-        status: error?.status ?? error?.response?.status,
-        body: error?.body ?? error?.response?.data,
-      })
-      throw error
-    }
+    return this.selfAssessmentClient.submitAnswers(auth, payload)
   }
 }
