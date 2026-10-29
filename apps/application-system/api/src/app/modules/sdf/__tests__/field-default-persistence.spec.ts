@@ -25,6 +25,9 @@ const page = (children: unknown[]): FormScreen =>
     children,
   } as unknown as FormScreen)
 
+// For the cases that do not test write permissions.
+const allWritable = () => true
+
 describe('applyResolvedFieldDefaults', () => {
   it('seeds a static text default when the answer is absent', () => {
     const merged: FormValue = {}
@@ -41,6 +44,7 @@ describe('applyResolvedFieldDefaults', () => {
       makeApplication(),
       'is',
       new Set(),
+      allWritable,
     )
     expect(merged.foo).toBe('bar')
   })
@@ -70,6 +74,7 @@ describe('applyResolvedFieldDefaults', () => {
       application,
       'is',
       new Set(),
+      allWritable,
     )
     expect(merged).toEqual({ applicant: { name: 'Jón Jónsson' } })
   })
@@ -89,6 +94,7 @@ describe('applyResolvedFieldDefaults', () => {
       makeApplication(),
       'is',
       new Set(),
+      allWritable,
     )
     expect(merged.foo).toBe('user-typed')
   })
@@ -108,6 +114,7 @@ describe('applyResolvedFieldDefaults', () => {
       makeApplication(),
       'is',
       new Set(),
+      allWritable,
     )
     expect(merged.computed).toBeUndefined()
   })
@@ -128,6 +135,7 @@ describe('applyResolvedFieldDefaults', () => {
       makeApplication(),
       'is',
       new Set(),
+      allWritable,
     )
     expect(merged.conditional).toBeUndefined()
   })
@@ -148,6 +156,7 @@ describe('applyResolvedFieldDefaults', () => {
       makeApplication(),
       'is',
       new Set(),
+      allWritable,
     )
     expect(merged.conditional).toBe('seed')
   })
@@ -167,6 +176,7 @@ describe('applyResolvedFieldDefaults', () => {
       makeApplication(),
       'is',
       new Set(),
+      allWritable,
     )
     expect(merged.hidden).toBeUndefined()
   })
@@ -184,6 +194,7 @@ describe('applyResolvedFieldDefaults', () => {
         makeApplication(),
         'is',
         new Set(),
+        allWritable,
       ),
     ).toBe(merged)
     expect(Object.keys(merged)).toHaveLength(0)
@@ -220,6 +231,7 @@ describe('applyResolvedFieldDefaults', () => {
       model,
       'is',
       new Set(),
+      allWritable,
     )
     expect(merged).toEqual({ applicant: { email: 'a@b.is' } })
   })
@@ -241,6 +253,7 @@ describe('applyResolvedFieldDefaults', () => {
       makeApplication(),
       'is',
       new Set(),
+      allWritable,
     )
     expect(merged.boom).toBeUndefined()
   })
@@ -260,6 +273,7 @@ describe('applyResolvedFieldDefaults', () => {
       makeApplication(),
       'is',
       new Set(['cleared']),
+      allWritable,
     )
     expect(merged.cleared).toBe('')
   })
@@ -279,6 +293,7 @@ describe('applyResolvedFieldDefaults', () => {
       makeApplication(),
       'is',
       new Set(['other']),
+      allWritable,
     )
     expect(merged.untouched).toBe('seed')
   })
@@ -298,6 +313,7 @@ describe('applyResolvedFieldDefaults', () => {
       makeApplication(),
       'is',
       new Set(['applicant.phone']),
+      allWritable,
     )
     expect(merged).toEqual({ applicant: { phone: '' } })
   })
@@ -318,7 +334,34 @@ describe('applyResolvedFieldDefaults', () => {
       'is',
       // Matched by exact field id, so `applicant` does not cover `applicant.phone`.
       new Set(['applicant']),
+      allWritable,
     )
     expect(merged).toEqual({ applicant: { name: 'B', phone: '+354' } })
+  })
+
+  it('does not seed a field the role may not write', () => {
+    const merged: FormValue = {}
+    applyResolvedFieldDefaults(
+      page([
+        {
+          id: 'readOnly',
+          type: FieldTypes.TEXT,
+          isNavigable: true,
+          defaultValue: 'seed',
+        },
+        {
+          id: 'writable',
+          type: FieldTypes.TEXT,
+          isNavigable: true,
+          defaultValue: 'seed',
+        },
+      ]),
+      merged,
+      makeApplication(),
+      'is',
+      new Set(),
+      (fieldId) => fieldId === 'writable',
+    )
+    expect(merged).toEqual({ writable: 'seed' })
   })
 })

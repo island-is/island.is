@@ -121,7 +121,7 @@ export class SdfController {
       case SdfActionType.VALIDATE:
         // fieldIds may be empty when the caller only wants recomputed
         // displayValues (no error surface). In that case validation is skipped
-        // and only the displayValues map is returned. See plan §2d.
+        // and only the displayValues map is returned.
         return this.sdfScreenService.validateFields(
           applicationId,
           dto.answers ?? {},

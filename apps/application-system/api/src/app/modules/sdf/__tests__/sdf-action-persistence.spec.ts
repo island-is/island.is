@@ -15,13 +15,19 @@ import {
 } from '@island.is/application/types'
 import type {
   ApplicationWithAttachments,
+  ReadWriteValues,
   TemplateApi,
 } from '@island.is/application/types'
 import { createApplicationTemplate } from '@island.is/application/testing'
 import type { User } from '@island.is/auth-nest-tools'
 import { z } from 'zod'
-import { ConflictException, HttpException } from '@nestjs/common'
+import {
+  ConflictException,
+  ForbiddenException,
+  HttpException,
+} from '@nestjs/common'
 import cloneDeep from 'lodash/cloneDeep'
+import escapeRegExp from 'lodash/escapeRegExp'
 
 import { SdfController } from '../sdf.controller'
 import { SdfScreenService } from '../sdf-screen.service'
@@ -159,12 +165,21 @@ const templateRequiredSchema = z.object({
   field0: z.string().refine((value) => !!value, { params: field0Required }),
 })
 
+// Called with (path, answer) by the template's answer validators, which accept
+// every answer.
+const answerValidator = jest.fn()
+
 const createTemplate = (
   form: () => ReturnType<typeof buildForm>,
   dataSchema: z.ZodTypeAny,
+  write: ReadWriteValues,
 ) =>
   createApplicationTemplate({
     dataSchema,
+    answerValidators: {
+      field0: (answer) => answerValidator('field0', answer),
+      field1: (answer) => answerValidator('field1', answer),
+    },
     stateMachineConfig: {
       initial: 'draft',
       states: {
@@ -178,7 +193,7 @@ const createTemplate = (
                 id: 'applicant',
                 formLoader: () => Promise.resolve(form()),
                 read: 'all',
-                write: 'all',
+                write,
                 api: [providerApi, otherApi],
               },
             ],
@@ -259,13 +274,14 @@ const buildController = (
     ),
     changeState: jest.fn().mockResolvedValue(results.changeState),
   }
+  const logger = {
+    debug: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+  }
   const service = new SdfScreenService(
-    {
-      debug: jest.fn(),
-      error: jest.fn(),
-      info: jest.fn(),
-      warn: jest.fn(),
-    } as never,
+    logger as never,
     applicationService as never,
     {
       findOneByIdAndNationalId: jest.fn(async () => ({ ...row })),
@@ -278,6 +294,7 @@ const buildController = (
     controller: new SdfController(service),
     applicationService,
     applicationActionService,
+    logger,
   }
 }
 
@@ -302,6 +319,10 @@ interface PersistenceCase {
   label: string
   form: () => ReturnType<typeof buildForm>
   dataSchema?: z.ZodTypeAny
+  // The role's write permissions. Defaults to 'all'.
+  write?: ReadWriteValues
+  // When true, the template maps the user to no role.
+  noRole?: boolean
   // The stored application before the action. Defaults to page 0, no answers.
   application?: Partial<ApplicationRow>
   user?: Partial<User>
@@ -327,6 +348,13 @@ interface PersistenceCase {
   ephemeralActions: ActionCall[]
   // The answers and event passed to each changeState call.
   stateChanges: StateChangeCall[]
+  // The dropped answer keys the warning must list: those the role may not
+  // write and whose value differs from the stored one. Defaults to none, which
+  // means no warning.
+  droppedChangedKeys?: string[]
+  // When set, the (path, answer) pairs the answer validators received, in call
+  // order.
+  validatorCalls?: [string, unknown][]
 }
 
 const SUBMIT_EVENT = DefaultEvents.APPROVE
@@ -345,6 +373,12 @@ const providerFailed: ActionResult = {
   error: 'Provider failed',
 }
 const roleActions = [providerApi.action, otherApi.action]
+// For the rows that check that answers the role may not write are dropped. The
+// role may write its actions' external data, so SUBMIT can still run them.
+const writesField0: ReadWriteValues = {
+  answers: ['field0'],
+  externalData: roleActions,
+}
 
 // One entry per SdfActionType, each with at least one row. A row states what
 // the action saves, which template API actions it runs with which event, and
@@ -551,6 +585,139 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       ephemeralActions: [],
       stateChanges: [],
     },
+    {
+      label: 'with an answer the role may not write',
+      form: twoPageForm,
+      write: writesField0,
+      application: { answers: { field1: 'stored' } },
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { field0: 'value', field1: 'changed' },
+        lastKnownPageIndex: 0,
+      },
+      saves: [
+        {
+          answers: { field0: 'value', field1: 'stored' },
+          applicantActors: [],
+          pageIndex: 1,
+        },
+      ],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+      droppedChangedKeys: ['field1'],
+      validatorCalls: [['field0', 'value']],
+    },
+    {
+      // The sent dotted key is compared with the stored nested value.
+      label: 'with an unchanged nested answer the role may not write',
+      form: twoPageForm,
+      write: writesField0,
+      application: { answers: { applicant: { phone: '1' } } },
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { field0: 'v', 'applicant.phone': '1' },
+        lastKnownPageIndex: 0,
+      },
+      saves: [
+        {
+          answers: { field0: 'v', applicant: { phone: '1' } },
+          applicantActors: [],
+          pageIndex: 1,
+        },
+      ],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      // Dropped without a warning, because the value matches the stored one.
+      label: 'with an unchanged answer the role may not write',
+      form: twoPageForm,
+      write: writesField0,
+      application: { answers: { field1: 'stored' } },
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { field0: 'value', field1: 'stored' },
+        lastKnownPageIndex: 0,
+      },
+      saves: [
+        {
+          answers: { field0: 'value', field1: 'stored' },
+          applicantActors: [],
+          pageIndex: 1,
+        },
+      ],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+      droppedChangedKeys: [],
+    },
+    {
+      label: 'with path keys the role may and may not write',
+      form: twoPageForm,
+      write: { answers: ['applicant'] },
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { 'applicant.phone': '1', 'items[0]': 'a' },
+        lastKnownPageIndex: 0,
+      },
+      saves: [
+        {
+          answers: { applicant: { phone: '1' } },
+          applicantActors: [],
+          pageIndex: 1,
+        },
+      ],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+      droppedChangedKeys: ['items[0]'],
+    },
+    {
+      label: 'by a role that may write no answers',
+      form: twoPageForm,
+      write: { externalData: [] },
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { field0: 'value' },
+        lastKnownPageIndex: 0,
+      },
+      saves: [{ answers: {}, applicantActors: [], pageIndex: 1 }],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+      droppedChangedKeys: ['field0'],
+    },
+    {
+      label: 'with a default for a field the role may not write',
+      form: defaultedFieldForm('field0', 'seed'),
+      write: { answers: ['field1'], externalData: [] },
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: {},
+        lastKnownPageIndex: 0,
+      },
+      saves: [{ answers: {}, applicantActors: [], pageIndex: 1 }],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      label: 'by a user with no role',
+      form: twoPageForm,
+      noRole: true,
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { field0: 'value' },
+        lastKnownPageIndex: 0,
+      },
+      rejects: { type: ForbiddenException },
+      saves: [],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
   ],
   [SdfActionType.PREV_PAGE]: [
     {
@@ -746,6 +913,52 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       ephemeralActions: [],
       stateChanges: [],
     },
+    {
+      label: 'with an answer the role may not write',
+      form: twoPageForm,
+      write: writesField0,
+      application: { answers: { other: 'stored' } },
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { field0: 'value', other: 'changed' },
+      },
+      saves: [
+        { answers: { field0: 'value', other: 'stored' } },
+        { pageIndex: 0 },
+        { pageIndex: 1 },
+      ],
+      persistingActions: [
+        {
+          actions: roleActions,
+          event: SUBMIT_EVENT,
+          answers: { field0: 'value', other: 'stored' },
+        },
+      ],
+      ephemeralActions: [],
+      stateChanges: [
+        { answers: { field0: 'value', other: 'stored' }, event: SUBMIT_EVENT },
+      ],
+      droppedChangedKeys: ['other'],
+    },
+    {
+      // Nothing is left to save, but the state change still runs.
+      label: 'with only answers the role may not write',
+      form: twoPageForm,
+      write: writesField0,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { other: 'changed' },
+      },
+      saves: [{ pageIndex: 0 }],
+      persistingActions: [
+        { actions: roleActions, event: SUBMIT_EVENT, answers: {} },
+      ],
+      ephemeralActions: [],
+      stateChanges: [{ answers: {}, event: SUBMIT_EVENT }],
+      droppedChangedKeys: ['other'],
+    },
     // The two rows below document current behaviour: the answers and the
     // role's actions are saved before the state change is attempted, and only
     // the pageIndex reset is skipped when it fails.
@@ -869,6 +1082,29 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       ephemeralActions: [],
       stateChanges: [],
     },
+    {
+      // The action runs on the stored value, not the one the role sent.
+      label: 'with an answer the role may not write',
+      form: twoPageForm,
+      write: writesField0,
+      application: { answers: { field1: 'stored' } },
+      dto: {
+        actionType: SdfActionType.REFETCH,
+        answers: { field0: 'value', field1: 'forged' },
+        refetchTemplateApiActions: [providerApi.action],
+      },
+      saves: [],
+      persistingActions: [],
+      ephemeralActions: [
+        {
+          actions: [providerApi.action],
+          event: SdfActionType.REFETCH,
+          answers: { field0: 'value', field1: 'stored' },
+        },
+      ],
+      stateChanges: [],
+      droppedChangedKeys: ['field1'],
+    },
   ],
   [SdfActionType.VALIDATE]: [
     {
@@ -883,6 +1119,41 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [],
+    },
+    {
+      // The value the role may not write never reaches the schema, so the
+      // required field is reported as missing.
+      label: 'with an answer the role may not write',
+      form: twoPageForm,
+      dataSchema: templateRequiredSchema,
+      write: { answers: ['field1'] },
+      dto: {
+        actionType: SdfActionType.VALIDATE,
+        answers: { field0: 'value' },
+        fieldIds: ['field0'],
+      },
+      validationErrors: ['field0'],
+      saves: [],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+      droppedChangedKeys: ['field0'],
+    },
+    {
+      label: 'with answers the role may and may not write',
+      form: twoPageForm,
+      write: writesField0,
+      dto: {
+        actionType: SdfActionType.VALIDATE,
+        answers: { field0: 'value', field1: 'forged' },
+        fieldIds: ['field0', 'field1'],
+      },
+      saves: [],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+      droppedChangedKeys: ['field1'],
+      validatorCalls: [['field0', 'value']],
     },
   ],
 }
@@ -918,10 +1189,15 @@ describe('SDF action persistence', () => {
 
   it.each(rows)('$actionType $label', async (c) => {
     const row = createApplicationRow(c.application ?? {})
-    getApplicationTemplateByTypeIdMock.mockResolvedValue(
-      createTemplate(c.form, c.dataSchema ?? permissiveSchema),
+    const template = createTemplate(
+      c.form,
+      c.dataSchema ?? permissiveSchema,
+      c.write ?? 'all',
     )
-    const { controller, applicationService, applicationActionService } =
+    getApplicationTemplateByTypeIdMock.mockResolvedValue(
+      c.noRole ? { ...template, mapUserToRole: () => undefined } : template,
+    )
+    const { controller, applicationService, applicationActionService, logger } =
       buildController(row, {
         persistingAction: c.persistingActionResult ?? succeeded,
         ephemeralAction: c.ephemeralActionResult ?? succeeded,
@@ -984,5 +1260,21 @@ describe('SDF action persistence', () => {
         event,
       })),
     ).toEqual(c.stateChanges)
+    const droppedChangedKeys = c.droppedChangedKeys ?? []
+    const droppedWarnings = logger.warn.mock.calls
+      .map(([message]) => String(message))
+      .filter((message) => message.includes('may not write'))
+    expect(droppedWarnings).toEqual(
+      droppedChangedKeys.length > 0
+        ? [
+            expect.stringMatching(
+              new RegExp(`: ${escapeRegExp(droppedChangedKeys.join(', '))}$`),
+            ),
+          ]
+        : [],
+    )
+    if (c.validatorCalls) {
+      expect(answerValidator.mock.calls).toEqual(c.validatorCalls)
+    }
   })
 })

@@ -87,8 +87,8 @@ const collectPageFields = (screen: FormScreen | undefined): FieldDef[] => {
  * `condition` visibility is not; it is read from `isNavigable` on `screen`, which
  * the caller builds from the stored answers before this request's values apply.
  *
- * `clientAnswerKeys` holds the field ids the client sent in this request; those
- * fields are never seeded, even when the value sent is empty (`''`, `[]`,
+ * `clientAnswerKeys` holds the field ids whose value this request already set;
+ * those fields are never seeded, even when the value sent is empty (`''`, `[]`,
  * `null`). This only protects the request that sends the empty value. Empty
  * strings are stripped before saving, so a cleared text field is stored as
  * absent, and a later request that does not send it (e.g. after a reload, when
@@ -96,6 +96,8 @@ const collectPageFields = (screen: FormScreen | undefined): FieldDef[] => {
  * match is by exact field id, not by path prefix, so a dotted child field
  * (`applicant.phone`) still gets its default when the client sent only its
  * parent object (`applicant`).
+ *
+ * Fields for which `isWritableAnswerKey` returns false are not seeded.
  *
  * `mergedAnswers` is mutated in place and also returned.
  */
@@ -105,6 +107,7 @@ export const applyResolvedFieldDefaults = (
   application: Application,
   locale: Locale,
   clientAnswerKeys: ReadonlySet<string>,
+  isWritableAnswerKey: (fieldId: string) => boolean,
 ): FormValue => {
   const fields = collectPageFields(screen)
   if (fields.length === 0) return mergedAnswers
@@ -130,8 +133,9 @@ export const applyResolvedFieldDefaults = (
     // Hidden by a server `condition` (already reflected in `isNavigable`).
     if (field.isNavigable === false) continue
     if (NON_VALUE_BEARING_FIELD_TYPES.has(field.type as string)) continue
-    // A field the client sent in this request wins, even when it sent an empty value.
+    // A field this request already set wins, even with an empty value.
     if (clientAnswerKeys.has(field.id)) continue
+    if (!isWritableAnswerKey(field.id)) continue
 
     const rawDefault = (field as { defaultValue?: unknown }).defaultValue
     if (rawDefault === undefined) continue

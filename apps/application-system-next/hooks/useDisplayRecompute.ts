@@ -34,7 +34,7 @@ const getCurrentPageAnswerSnapshot = (
  * `applicationSdfValidate` mutation with the current page's answers. The
  * backend invokes the template-defined `value(answers, externalData)` closure
  * without persisting data, so it is safe to call on every (debounced)
- * keystroke. See plan §2d.
+ * keystroke.
  *
  * Returns an overlay map (`{ [fieldId]: computedString }`) that is merged into
  * the renderer, taking precedence over the stale `component.value` produced at

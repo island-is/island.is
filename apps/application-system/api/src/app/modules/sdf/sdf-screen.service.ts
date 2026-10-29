@@ -18,6 +18,7 @@ import {
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import {
   Application,
+  ApplicationRole,
   ApplicationWithAttachments,
   ExternalData,
   FieldTypes,
@@ -25,6 +26,7 @@ import {
   FormExpression,
   FormItemTypes,
   FormValue,
+  ReadWriteValues,
   RoleInState,
   StaticText,
   SubmitField,
@@ -51,9 +53,11 @@ import { isNewActor } from '../application/utils/delegationUtils'
 import { I18nResolverService, FormTextResolver } from './i18n-resolver.service'
 import { mapScreenToComponents } from './screen-mapper'
 import cloneDeep from 'lodash/cloneDeep'
+import isEqual from 'lodash/isEqual'
 import { applyResolvedFieldDefaults } from './field-default-persistence'
 import { applyFlatAnswers } from './apply-flat-answers'
 import { stripEmptyFormValue } from './strip-empty-answers'
+import { isAnswerKeyWritable, splitWritableAnswers } from './writable-answers'
 import { buildStepper } from './stepper-builder'
 import { buildFooterButtons } from './footer-builder'
 import {
@@ -473,9 +477,7 @@ export class SdfScreenService {
     const storedAnswers = application.answers ?? {}
 
     for (const fieldId of pageFieldIds) {
-      const value =
-        getValueViaPath(storedAnswers, fieldId) ??
-        (fieldId in storedAnswers ? storedAnswers[fieldId] : undefined)
+      const value = getValueViaPath(storedAnswers, fieldId)
       if (value !== undefined) {
         pageAnswers[fieldId] = value
       }
@@ -532,7 +534,12 @@ export class SdfScreenService {
       throw new ForbiddenException('Access denied')
     }
 
-    const mergedAnswers = applyFlatAnswers(application.answers, answers)
+    const writableAnswers = this.dropUnwritableAnswers(
+      application,
+      this.getWritePermissions(application, template, role),
+      answers,
+    )
+    const mergedAnswers = applyFlatAnswers(application.answers, writableAnswers)
 
     let workingApplication = {
       ...toApplicationSnapshot(application),
@@ -624,8 +631,13 @@ export class SdfScreenService {
       throw new ForbiddenException('Access denied')
     }
 
+    const writableAnswers = this.dropUnwritableAnswers(
+      application,
+      this.getWritePermissions(application, template, role),
+      answers,
+    )
     const errors: ValidationErrorDto[] = []
-    const mergedAnswers = applyFlatAnswers(application.answers, answers)
+    const mergedAnswers = applyFlatAnswers(application.answers, writableAnswers)
 
     const helper = new ApplicationTemplateHelper(
       application as Application,
@@ -657,7 +669,7 @@ export class SdfScreenService {
 
     if (fieldIds.length > 0) {
       const validatorErrors = await helper.applyAnswerValidators(
-        applyFlatAnswers({}, answers),
+        applyFlatAnswers({}, writableAnswers),
         (descriptor, values) => formatResolver.resolve(descriptor as any),
       )
       if (validatorErrors) {
@@ -791,9 +803,22 @@ export class SdfScreenService {
       }
     }
 
-    const mergedAnswers = applyFlatAnswers(application.answers, answers)
-
     const template = await getApplicationTemplateByTypeId(application.typeId)
+    const role = template.mapUserToRole(
+      user.nationalId,
+      application as Application,
+    )
+    if (!role) {
+      throw new ForbiddenException('Access denied')
+    }
+
+    const write = this.getWritePermissions(application, template, role)
+    const writableAnswers = this.dropUnwritableAnswers(
+      application,
+      write,
+      answers,
+    )
+    const mergedAnswers = applyFlatAnswers(application.answers, writableAnswers)
 
     const currentScreen = await this.getCurrentScreen(
       application,
@@ -808,18 +833,19 @@ export class SdfScreenService {
       mergedAnswers,
       application as Application,
       locale,
-      new Set(Object.keys(answers)),
+      new Set(Object.keys(writableAnswers)),
+      (fieldId) => isAnswerKeyWritable(write, fieldId),
     )
 
-    // Validation, the error screen and routing use the answers as sent, so a
-    // cleared field reaches the schema as `''` and the template's own
-    // messages apply. Empty strings are stripped only when saving.
+    // Validation, the error screen and routing use the writable answers as
+    // sent, so a cleared field reaches the schema as `''` and the template's
+    // own messages apply. Empty strings are stripped only when saving.
     const validationErrors = await this.validateScreenAnswers(
       currentScreen,
       template,
       application,
       mergedAnswers,
-      answers,
+      writableAnswers,
       locale,
     )
     if (validationErrors.length > 0) {
@@ -853,15 +879,11 @@ export class SdfScreenService {
       const relevantProviders = dataProviders.filter((p) => p.action)
 
       if (relevantProviders.length > 0) {
-        const role = template.mapUserToRole(
-          user.nationalId,
-          application as Application,
-        )
         const helper = new ApplicationTemplateHelper(
           application as Application,
           template,
         )
-        const roleInState = role ? helper.getRoleInState(role) : undefined
+        const roleInState = helper.getRoleInState(role)
         const apisFromRole = roleInState?.api ?? []
 
         const templateApis = relevantProviders
@@ -1143,11 +1165,20 @@ export class SdfScreenService {
       throw new ForbiddenException('Access denied')
     }
 
+    const writableAnswers = this.dropUnwritableAnswers(
+      application,
+      this.getWritePermissions(application, template, role),
+      answers,
+    )
     const currentPageIndex: number =
       (application as ApplicationWithPageIndex).pageIndex ?? 0
-    // Validated as sent, so a cleared field reaches the schema as `''` and the
-    // template's own messages apply. Empty strings are stripped only when saving.
-    const submitMergedAnswers = applyFlatAnswers(application.answers, answers)
+    // The writable answers are validated as sent, so a cleared field reaches
+    // the schema as `''` and the template's own messages apply. Empty strings
+    // are stripped only when saving.
+    const submitMergedAnswers = applyFlatAnswers(
+      application.answers,
+      writableAnswers,
+    )
     const currentScreen = await this.getCurrentScreen(
       application,
       template,
@@ -1160,7 +1191,7 @@ export class SdfScreenService {
       template,
       application,
       submitMergedAnswers,
-      answers,
+      writableAnswers,
       locale,
     )
     if (validationErrors.length > 0) {
@@ -1179,7 +1210,7 @@ export class SdfScreenService {
       return screen
     }
 
-    if (answers && Object.keys(answers).length > 0) {
+    if (Object.keys(writableAnswers).length > 0) {
       await this.applicationService.update(applicationId, {
         answers: stripEmptyFormValue(submitMergedAnswers),
       })
@@ -1332,6 +1363,44 @@ export class SdfScreenService {
     }
 
     return { answers: filteredAnswers, externalData: filteredExternalData }
+  }
+
+  /** The role's `write` permissions in the application's current state. */
+  private getWritePermissions(
+    application: ApplicationWithAttachments,
+    template: ApplicationTemplate,
+    role: ApplicationRole,
+  ): ReadWriteValues | undefined {
+    return new ApplicationTemplateHelper(
+      application as Application,
+      template,
+    ).getWritableAnswersAndExternalData(role)
+  }
+
+  /**
+   * Returns the answers whose keys `write` allows. Logs the keys of the other
+   * answers whose value differs from the stored one.
+   *
+   * Not an error: clients send back answers the role can only read.
+   */
+  private dropUnwritableAnswers(
+    application: ApplicationWithAttachments,
+    write: ReadWriteValues | undefined,
+    answers: Record<string, unknown> | undefined,
+  ): Record<string, unknown> {
+    const { writable, forbidden } = splitWritableAnswers(write, answers)
+    const storedAnswers = application.answers ?? {}
+    const changedKeys = Object.keys(forbidden).filter(
+      (key) => !isEqual(forbidden[key], getValueViaPath(storedAnswers, key)),
+    )
+    if (changedKeys.length > 0) {
+      this.logger.warn(
+        `SDF dropped changed answers the role may not write on application ${
+          application.id
+        }: ${changedKeys.join(', ')}`,
+      )
+    }
+    return writable
   }
 
   /**
