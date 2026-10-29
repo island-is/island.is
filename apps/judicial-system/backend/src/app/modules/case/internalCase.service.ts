@@ -64,7 +64,7 @@ import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { FileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
-import { courtUpload, formatIcuMessage, notifications } from '../messages'
+import { courtUpload, formatIcuMessage, notifications } from '../../messages'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import {
   AppealCase,
