@@ -976,13 +976,10 @@ export class InternalCaseService {
           courtCaseNumber: courtCaseNumber || 'NONE',
         }),
         stripHtmlTags(
-          `${formatIcuMessage(
-            notifications.courtRevokedIndictmentEmail.body,
-            {
-              prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
-              caseNumber,
-            },
-          )} ${formatIcuMessage(notifications.emailTail, {
+          `${formatIcuMessage(notifications.courtRevokedIndictmentEmail.body, {
+            prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
+            caseNumber,
+          })} ${formatIcuMessage(notifications.emailTail, {
             linkStart: `<a href="${this.config.clientUrl}">`,
             linkEnd: '</a>',
           })}`,
