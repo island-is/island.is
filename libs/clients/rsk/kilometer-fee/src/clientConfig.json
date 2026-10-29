@@ -9,11 +9,6 @@
       "url": "/ws/Kilometragjald"
     }
   ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
   "paths": {
     "/kilometer-fee/{permno}": {
       "get": {
@@ -21,15 +16,28 @@
         "operationId": "getKilometerFee",
         "parameters": [
           {
-            "$ref": "#/components/parameters/permno"
+            "name": "permno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           },
           {
-            "$ref": "#/components/parameters/year"
+            "name": "year",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 2024,
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -39,13 +47,20 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/ProblemDetails"
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
           },
           "404": {
-            "description": "Not found, or not the owner"
+            "description": "Not Found"
           }
         }
       }
@@ -56,10 +71,23 @@
         "operationId": "getKilometerFeeExport",
         "parameters": [
           {
-            "$ref": "#/components/parameters/permno"
+            "name": "permno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           },
           {
-            "$ref": "#/components/parameters/year"
+            "name": "year",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 2024,
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
@@ -75,144 +103,45 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/ProblemDetails"
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
           },
           "404": {
-            "description": "Not found, or not the owner"
+            "description": "Not Found"
           }
         }
       }
     }
   },
   "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
-      }
-    },
-    "parameters": {
-      "permno": {
-        "name": "permno",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "year": {
-        "name": "year",
-        "in": "query",
-        "required": true,
-        "schema": {
-          "type": "integer",
-          "format": "int32",
-          "minimum": 2024
-        }
-      }
-    },
-    "responses": {
-      "ProblemDetails": {
-        "description": "Bad request",
-        "content": {
-          "application/problem+json": {
-            "schema": {
-              "$ref": "#/components/schemas/ProblemDetails"
-            }
-          }
-        }
-      }
-    },
     "schemas": {
-      "YearMonth": {
-        "type": "object",
-        "required": ["year", "month"],
-        "properties": {
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "month": {
-            "type": "integer",
-            "format": "int32",
-            "minimum": 1,
-            "maximum": 12
-          }
-        }
-      },
       "DifferenceOutcome": {
-        "type": "string",
-        "enum": ["Refunded", "AddedToNextInvoice", "Reversed"]
-      },
-      "KilometerFeePeriod": {
-        "type": "object",
-        "required": [
-          "year",
-          "month",
-          "provisionalPayment",
-          "settlementPayment",
-          "difference",
-          "differenceOutcome",
-          "description"
-        ],
-        "properties": {
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "month": {
-            "type": "integer",
-            "format": "int32",
-            "minimum": 1,
-            "maximum": 12
-          },
-          "provisionalPayment": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "settlementPayment": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true,
-            "description": "Null until settled"
-          },
-          "difference": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "differenceOutcome": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/DifferenceOutcome"
-              }
-            ]
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          }
-        }
+        "enum": ["Refunded", "Billed", "Reversed"],
+        "type": "string"
       },
       "KilometerFee": {
-        "type": "object",
         "required": [
-          "permno",
           "firstRegistration",
           "periods",
+          "permno",
           "provisionalPaymentTotal",
-          "settlementPaymentTotal",
-          "reversalThreshold"
+          "reversalThreshold",
+          "settlementPaymentTotal"
         ],
+        "type": "object",
         "properties": {
           "reversalThreshold": {
             "type": "integer",
-            "format": "int32",
-            "description": "Differences below this amount are reversed"
+            "format": "int32"
           },
           "permno": {
             "type": "string"
@@ -234,11 +163,62 @@
             "type": "integer",
             "format": "int32"
           }
-        }
+        },
+        "additionalProperties": false
+      },
+      "KilometerFeePeriod": {
+        "required": [
+          "description",
+          "difference",
+          "differenceOutcome",
+          "month",
+          "provisionalPayment",
+          "settlementPayment",
+          "year"
+        ],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "maximum": 12,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "provisionalPayment": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "settlementPayment": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "difference": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "differenceOutcome": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DifferenceOutcome"
+              }
+            ],
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "ProblemDetails": {
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "type": {
             "type": "string",
@@ -261,8 +241,37 @@
             "type": "string",
             "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
+      },
+      "YearMonth": {
+        "required": ["month", "year"],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "maximum": 12,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
-  }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
 }

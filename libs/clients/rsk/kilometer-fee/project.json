@@ -22,6 +22,18 @@
         "command": "yarn openapi-ts -f libs/clients/rsk/kilometer-fee/src/lib/openapi-ts.config.ts"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl --fail --silent --show-error -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10006/Skatturinn/getOpenAPI?serviceCode=Kilometragjald-kilometer-fee -o src/clientConfig.json",
+          "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json > src/clientConfig.tmp.json && mv src/clientConfig.tmp.json src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/rsk/kilometer-fee"
+      }
     }
   }
 }

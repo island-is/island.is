@@ -11,7 +11,7 @@ const differenceOutcomeMap: Record<
   MileageFeeDifferenceOutcome
 > = {
   Refunded: MileageFeeDifferenceOutcome.REFUNDED,
-  AddedToNextInvoice: MileageFeeDifferenceOutcome.ADDED_TO_NEXT_INVOICE,
+  Billed: MileageFeeDifferenceOutcome.BILLED,
   Reversed: MileageFeeDifferenceOutcome.REVERSED,
 }
 

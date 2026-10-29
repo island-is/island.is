@@ -39,7 +39,7 @@ const PeriodLabel = ({
   month,
 }: Pick<VehiclesMileageFeePeriod, 'year' | 'month'>) => {
   const { formatDateFns } = useLocale()
-  return <>{`${year} - ${formatDateFns(new Date(year, month - 1), 'LLLL')}`}</>
+  return `${year} - ${formatDateFns(new Date(year, month - 1), 'LLLL')}`
 }
 
 const DifferenceInfo = ({
@@ -90,7 +90,7 @@ const DifferenceValue = ({ period }: { period: VehiclesMileageFeePeriod }) => {
   }
   const text = formatDifference(difference)
   switch (differenceOutcome) {
-    case VehiclesMileageFeeDifferenceOutcome.ADDED_TO_NEXT_INVOICE:
+    case VehiclesMileageFeeDifferenceOutcome.BILLED:
       return (
         <>
           <Text as="span" variant="medium" color="red600">
@@ -127,7 +127,7 @@ const DifferenceValue = ({ period }: { period: VehiclesMileageFeePeriod }) => {
         </>
       )
     default:
-      return <>{text}</>
+      return text
   }
 }
 

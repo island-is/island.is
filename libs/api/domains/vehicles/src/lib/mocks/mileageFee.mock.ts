@@ -16,7 +16,7 @@ const SETTLEMENTS: Array<
   {
     settlementPayment: 4600,
     difference: 600,
-    differenceOutcome: 'AddedToNextInvoice',
+    differenceOutcome: 'Billed',
   },
   {
     settlementPayment: 3500,

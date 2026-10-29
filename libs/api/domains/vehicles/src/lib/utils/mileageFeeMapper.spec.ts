@@ -31,7 +31,7 @@ describe('mapMileageFee', () => {
   it('maps difference outcomes to the GraphQL enum', () => {
     const result = mapMileageFee(fee, 2026, 'https://dl.test')
     expect(result.periods.slice(0, 3).map((p) => p.differenceOutcome)).toEqual([
-      MileageFeeDifferenceOutcome.ADDED_TO_NEXT_INVOICE,
+      MileageFeeDifferenceOutcome.BILLED,
       MileageFeeDifferenceOutcome.REFUNDED,
       MileageFeeDifferenceOutcome.REVERSED,
     ])
