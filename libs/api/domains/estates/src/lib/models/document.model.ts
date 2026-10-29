@@ -20,6 +20,9 @@ export class EstateDocument {
   @Field({ nullable: true })
   islandIsDocumentId?: string
 
+  @Field({ nullable: true })
+  downloadServiceUrl?: string
+
   @Field(() => Action, { nullable: true })
   requestAction?: Action
 }

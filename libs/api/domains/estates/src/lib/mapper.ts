@@ -71,6 +71,7 @@ const mapAction = (
 export const mapToEstatesCase = (
   c: EstateCase,
   locale: LocaleEnum,
+  downloadServiceBaseUrl: string,
 ): EstateCaseModel => {
   const caseId = c.caseId?.value ?? undefined
 
@@ -180,6 +181,9 @@ export const mapToEstatesCase = (
         documentDate: d.documentDate ?? undefined,
         availability: d.availability ?? undefined,
         islandIsDocumentId: d.islandIsDocumentId ?? undefined,
+        downloadServiceUrl: d.islandIsDocumentId
+          ? `${downloadServiceBaseUrl}/download/v1/estates/document/${d.islandIsDocumentId}`
+          : undefined,
         requestAction: mapAction(d.requestAction, locale),
       }))
       .filter(isDefined),
