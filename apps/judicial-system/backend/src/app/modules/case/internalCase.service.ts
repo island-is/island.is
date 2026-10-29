@@ -53,6 +53,7 @@ import {
   getRequestPdfAsString,
   stripHtmlTags,
 } from '../../formatters'
+import { courtUpload, formatIcuMessage, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import {
   CourtDocumentFolder,
@@ -64,7 +65,6 @@ import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { FileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
-import { courtUpload, formatIcuMessage, notifications } from '../../messages'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import {
   AppealCase,
