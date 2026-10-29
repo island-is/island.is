@@ -1870,8 +1870,8 @@ describe('CardPaymentController', () => {
       decryption = () => gatewayResponse(decryptionResponse()),
       cardPayment = () => gatewayResponse(chargeResponse()),
     }: {
-      decryption?: () => Response
-      cardPayment?: () => Response
+      decryption?: () => Response | Promise<Response>
+      cardPayment?: () => Response | Promise<Response>
     } = {}) => {
       fetchSpy = jest
         .spyOn(global, 'fetch')
@@ -2138,6 +2138,47 @@ describe('CardPaymentController', () => {
 
       expect(response.status).toBe(400)
       expect(cardVerificationCalls()).toHaveLength(0)
+    })
+
+    it('lets only the first of two concurrent charges of the same token reach the gateway', async () => {
+      // The charge's decryption is held until the test releases it, so the
+      // first charge is parked in the gateway holding its claim while the
+      // second arrives with the verification still in place
+      let releaseDecryption!: () => void
+      const heldDecryption = new Promise<void>((resolve) => {
+        releaseDecryption = resolve
+      })
+      let decryptions = 0
+      mockFetch({
+        decryption: () => {
+          decryptions += 1
+          return decryptions === 1
+            ? gatewayResponse(decryptionResponse())
+            : heldDecryption.then(() => gatewayResponse(decryptionResponse()))
+        },
+      })
+      const googlePayToken = token()
+
+      expect((await charge(googlePayToken)).status).toBe(201)
+      const [[, verificationInit]] = cardVerificationCalls()
+      expect(
+        (await completeVerification(JSON.parse(verificationInit.body))).status,
+      ).toBe(201)
+
+      const first = chargeVerified(googlePayToken).then((response) => response)
+      const deadline = Date.now() + 2000
+      while (decryptions < 2 && Date.now() < deadline) {
+        await new Promise((resolve) => setTimeout(resolve, 5))
+      }
+      expect(decryptions).toBe(2)
+
+      const second = await chargeVerified(googlePayToken)
+      expect(second.status).toBe(400)
+      expect(second.body.detail).toBe(CardErrorCode.GooglePayReplayDetected)
+
+      releaseDecryption()
+      expect((await first).status).toBe(201)
+      expect(chargeCalls()).toHaveLength(1)
     })
 
     it('keeps the replay marker when the gateway charge fails', async () => {

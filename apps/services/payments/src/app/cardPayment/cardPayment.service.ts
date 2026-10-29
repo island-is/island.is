@@ -740,10 +740,9 @@ export class CardPaymentService {
   }
 
   /**
-   * Have Valitor decrypt the token (gateway `valitor`). Only a card saved in
-   * the Google account (PAN_ONLY) is offered, for which Valitor answers Q8
-   * with the card. The card only lives in memory for this request: it is
-   * decrypted again from the same token when it is charged after 3-D Secure.
+   * Have Valitor decrypt a token that is not claimed for a charge yet, to
+   * start 3-D Secure for its card. The card only lives in memory for this
+   * request: it is decrypted again from the same token when it is charged.
    */
   async decryptGooglePayToken({
     paymentFlowId,
@@ -754,17 +753,43 @@ export class CardPaymentService {
     token: string
     amount: number
   }): Promise<GooglePayCardInformation> {
-    const logPrefix = `[${paymentFlowId}] [GOOGLEPAY]`
     const tokenId = this.googlePayTokenId(token)
 
-    // Reject replay of a previously charged Google Pay token.
-    if (await this.cacheManager.get(this.googlePayReplayCacheKey(tokenId))) {
-      this.logger.warn(`${logPrefix} Google Pay replay detected`, {
-        paymentFlowId,
-        tokenId,
-      })
+    // Reject replay of a Google Pay token that is being, or has been, charged.
+    if (await this.isGooglePayTokenCharged(tokenId)) {
+      this.logger.warn(
+        `[${paymentFlowId}] [GOOGLEPAY] Google Pay replay detected`,
+        {
+          paymentFlowId,
+          tokenId,
+        },
+      )
       throw new BadRequestException(CardErrorCode.GooglePayReplayDetected)
     }
+
+    return this.decryptGooglePayTokenWithGateway({
+      paymentFlowId,
+      token,
+      amount,
+    })
+  }
+
+  /**
+   * Have Valitor decrypt the token (gateway `valitor`). Only a card saved in
+   * the Google account (PAN_ONLY) is offered, for which Valitor answers Q8
+   * with the card.
+   */
+  private async decryptGooglePayTokenWithGateway({
+    paymentFlowId,
+    token,
+    amount,
+  }: {
+    paymentFlowId: string
+    token: string
+    amount: number
+  }): Promise<GooglePayCardInformation> {
+    const logPrefix = `[${paymentFlowId}] [GOOGLEPAY]`
+    const tokenId = this.googlePayTokenId(token)
 
     let parsedToken: unknown
     try {
@@ -908,7 +933,22 @@ export class CardPaymentService {
       throw new BadRequestException(PaymentServiceCode.MissingVerification)
     }
 
-    const card = await this.decryptGooglePayToken({
+    // Checked and marked BEFORE the gateway is called, as for Apple Pay, so a
+    // retry of a mid-flight failure can not charge the token twice. The check
+    // and the mark are two cache commands, so two requests arriving within
+    // the same Redis round-trip can both pass; the one-active-row-per-flow
+    // index then fails the second saga, which refunds its charge.
+    if (await this.isGooglePayTokenCharged(tokenId)) {
+      this.logger.warn(`${logPrefix} Google Pay replay detected`, {
+        paymentFlowId,
+        tokenId,
+      })
+      throw new BadRequestException(CardErrorCode.GooglePayReplayDetected)
+    }
+    await this.markGooglePayTokenCharged(paymentFlowId, tokenId)
+
+    // The mark is this request's own, so the replay check is skipped
+    const card = await this.decryptGooglePayTokenWithGateway({
       paymentFlowId,
       token,
       amount,
@@ -918,7 +958,6 @@ export class CardPaymentService {
 
     const data = await this.sendGooglePayCharge({
       paymentFlowId,
-      tokenId,
       gatewayUrl: `${paymentsGatewayApiUrl}/Payment/CardPayment`,
       requestOptions: generateGooglePaySavedCardChargeRequestOptions({
         card,
@@ -946,31 +985,14 @@ export class CardPaymentService {
 
   private async sendGooglePayCharge({
     paymentFlowId,
-    tokenId,
     gatewayUrl,
     requestOptions,
   }: {
     paymentFlowId: string
-    tokenId: string
     gatewayUrl: string
     requestOptions: RequestInit
   }): Promise<CardPaymentSuccessResponse> {
     const logPrefix = `[${paymentFlowId}] [GOOGLEPAY]`
-
-    // Mark the token as consumed BEFORE calling Valitor, as for Apple Pay,
-    // so a mid-flight failure can't be retried into a double charge.
-    try {
-      await this.cacheManager.set(
-        this.googlePayReplayCacheKey(tokenId),
-        true,
-        Math.max(this.config.memCacheExpiryMinutes, 60 * 24) * 60000,
-      )
-    } catch (e) {
-      this.logger.error(
-        `${logPrefix} Failed to record Google Pay token for replay protection (continuing without)`,
-        e,
-      )
-    }
 
     let response: Response
     try {
@@ -1007,6 +1029,35 @@ export class CardPaymentService {
 
   private googlePayReplayCacheKey(tokenId: string): string {
     return `googlepay:token:${tokenId}`
+  }
+
+  /** Whether a charge has been started for the token, by this or an earlier request */
+  private async isGooglePayTokenCharged(tokenId: string): Promise<boolean> {
+    return !!(await this.cacheManager.get(
+      this.googlePayReplayCacheKey(tokenId),
+    ))
+  }
+
+  /**
+   * Mark the token as charged for the replay window. Kept when the charge
+   * fails, so a retry can not double charge.
+   */
+  private async markGooglePayTokenCharged(
+    paymentFlowId: string,
+    tokenId: string,
+  ): Promise<void> {
+    try {
+      await this.cacheManager.set(
+        this.googlePayReplayCacheKey(tokenId),
+        true,
+        Math.max(this.config.memCacheExpiryMinutes, 60 * 24) * 60000,
+      )
+    } catch (e) {
+      this.logger.error(
+        `[${paymentFlowId}] [GOOGLEPAY] Failed to record Google Pay token for replay protection (continuing without)`,
+        e,
+      )
+    }
   }
 
   private googlePayVerificationCacheKey(correlationId: string): string {
