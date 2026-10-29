@@ -1231,30 +1231,6 @@ export class SdfScreenService {
       application,
     ) as ApplicationWithAttachments
 
-    const helper = new ApplicationTemplateHelper(
-      applicationSnapshot as Application,
-      template,
-    )
-    const roleInState = helper.getRoleInState(role)
-    const apisFromRole = roleInState?.api ?? []
-    if (apisFromRole.length > 0 && roleInState) {
-      this.assertApisWritePermitted(
-        applicationSnapshot as Application,
-        user,
-        roleInState,
-        apisFromRole,
-      )
-
-      await this.applicationActionService.performActionOnApplication(
-        applicationSnapshot,
-        template,
-        user,
-        apisFromRole,
-        locale,
-        event,
-      )
-    }
-
     const result = await this.applicationActionService.changeState(
       applicationSnapshot,
       template,

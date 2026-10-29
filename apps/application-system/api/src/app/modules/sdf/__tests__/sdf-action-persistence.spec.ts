@@ -389,12 +389,9 @@ const providerFailed: ActionResult = {
   hasError: true,
   error: 'Provider failed',
 }
-const roleActions = [providerApi.action, otherApi.action]
-// For the rows that check that answers the role may not write are dropped. The
-// role may write its actions' external data, so SUBMIT can still run them.
+// For the rows that check that answers the role may not write are dropped.
 const writesField0: ReadWriteValues = {
   answers: ['field0'],
-  externalData: roleActions,
 }
 
 // One entry per SdfActionType, each with at least one row. A row states what
@@ -807,13 +804,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         { pageIndex: 0 },
         { pageIndex: 1 },
       ],
-      persistingActions: [
-        {
-          actions: roleActions,
-          event: SUBMIT_EVENT,
-          answers: { field0: 'value' },
-        },
-      ],
+      persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: { field0: 'value' }, event: SUBMIT_EVENT }],
     },
@@ -827,9 +818,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         answers: newAnswers,
       },
       saves: [{ answers: mergedAnswers }, { pageIndex: 0 }, { pageIndex: 1 }],
-      persistingActions: [
-        { actions: roleActions, event: SUBMIT_EVENT, answers: mergedAnswers },
-      ],
+      persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: mergedAnswers, event: SUBMIT_EVENT }],
     },
@@ -848,13 +837,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         { pageIndex: 0 },
         { pageIndex: 0 },
       ],
-      persistingActions: [
-        {
-          actions: roleActions,
-          event: SUBMIT_EVENT,
-          answers: { applicant: { name: 'B', phone: '1' } },
-        },
-      ],
+      persistingActions: [],
       ephemeralActions: [],
       stateChanges: [
         {
@@ -878,13 +861,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         { pageIndex: 0 },
         { pageIndex: 1 },
       ],
-      persistingActions: [
-        {
-          actions: roleActions,
-          event: SUBMIT_EVENT,
-          answers: { field0: 'value' },
-        },
-      ],
+      persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: { field0: 'value' }, event: SUBMIT_EVENT }],
     },
@@ -893,9 +870,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       form: twoPageForm,
       dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
       saves: [{ pageIndex: 0 }],
-      persistingActions: [
-        { actions: roleActions, event: SUBMIT_EVENT, answers: {} },
-      ],
+      persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: {}, event: SUBMIT_EVENT }],
     },
@@ -945,13 +920,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         { pageIndex: 0 },
         { pageIndex: 1 },
       ],
-      persistingActions: [
-        {
-          actions: roleActions,
-          event: SUBMIT_EVENT,
-          answers: { field0: 'value', other: 'stored' },
-        },
-      ],
+      persistingActions: [],
       ephemeralActions: [],
       stateChanges: [
         { answers: { field0: 'value', other: 'stored' }, event: SUBMIT_EVENT },
@@ -969,16 +938,14 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         answers: { other: 'changed' },
       },
       saves: [{ pageIndex: 0 }],
-      persistingActions: [
-        { actions: roleActions, event: SUBMIT_EVENT, answers: {} },
-      ],
+      persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: {}, event: SUBMIT_EVENT }],
       droppedChangedKeys: ['other'],
     },
-    // The two rows below document current behaviour: the answers and the
-    // role's actions are saved before the state change is attempted, and only
-    // the pageIndex reset is skipped when it fails.
+    // The two rows below document current behaviour: the answers are saved
+    // before the state change is attempted, and only the pageIndex reset is
+    // skipped when it fails.
     {
       label: 'when the state change fails',
       form: twoPageForm,
@@ -994,13 +961,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       },
       rejects: { message: /State transition failed/ },
       saves: [{ answers: { field0: 'value' } }],
-      persistingActions: [
-        {
-          actions: roleActions,
-          event: SUBMIT_EVENT,
-          answers: { field0: 'value' },
-        },
-      ],
+      persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: { field0: 'value' }, event: SUBMIT_EVENT }],
     },
@@ -1019,13 +980,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       },
       rejects: { type: ConflictException, problemType: EVENT_NOT_HANDLED },
       saves: [{ answers: { field0: 'value' } }],
-      persistingActions: [
-        {
-          actions: roleActions,
-          event: SUBMIT_EVENT,
-          answers: { field0: 'value' },
-        },
-      ],
+      persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: { field0: 'value' }, event: SUBMIT_EVENT }],
     },

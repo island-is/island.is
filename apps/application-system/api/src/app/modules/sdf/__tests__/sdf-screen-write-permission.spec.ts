@@ -10,7 +10,6 @@ import {
 import {
   ApplicationStatus,
   ApplicationTypes,
-  DefaultEvents,
   defineTemplateApi,
 } from '@island.is/application/types'
 import type { ApplicationWithAttachments } from '@island.is/application/types'
@@ -74,11 +73,10 @@ const buildService = (
     { createResolver: jest.fn().mockResolvedValue(createResolver()) } as never,
     {} as never,
     applicationActionService as never,
-    // Allows every event; the event check has its own tests.
-    { validateIncomingEvent: jest.fn() } as never,
+    {} as never,
   )
 
-// Both templates below give the role an `api: [restrictedApi]` entry —
+// The template below gives the role an `api: [restrictedApi]` entry —
 // enough to run it under the old code, which only checked `api`-list
 // membership. The only thing that varies is `write.externalData`.
 const createEdpTemplate = (write: 'all' | { externalData: string[] }) =>
@@ -125,53 +123,6 @@ const createEdpTemplate = (write: 'all' | { externalData: string[] }) =>
               },
             ],
           },
-        },
-      },
-    },
-  })
-
-const createSubmitTemplate = (write: 'all' | { externalData: string[] }) =>
-  createApplicationTemplate({
-    stateMachineConfig: {
-      initial: 'draft',
-      states: {
-        draft: {
-          meta: {
-            name: 'draft',
-            status: 'draft',
-            lifecycle: DefaultStateLifeCycle,
-            roles: [
-              {
-                id: 'applicant',
-                formLoader: () =>
-                  Promise.resolve(
-                    buildForm({
-                      id: 'form',
-                      title: 'Form',
-                      children: [
-                        buildSection({
-                          id: 'section',
-                          title: 'Section',
-                          children: [
-                            buildMultiField({
-                              id: 'page',
-                              title: 'Page',
-                              children: [
-                                buildTextField({ id: 'field', title: 'Field' }),
-                              ],
-                            }),
-                          ],
-                        }),
-                      ],
-                    }),
-                  ),
-                read: 'all',
-                write,
-                api: [restrictedApi],
-              },
-            ],
-          },
-          on: { SUBMIT: { target: 'draft' } },
         },
       },
     },
@@ -271,76 +222,6 @@ describe('SdfScreenService — write-permission check on persisting action-run p
       expect(
         applicationActionService.performActionOnApplication,
       ).toHaveBeenCalled()
-    })
-  })
-
-  describe('handleSubmit', () => {
-    it('rejects triggering a data provider outside the role’s write.externalData, and never reaches changeState', async () => {
-      const application = createApplication({ pageIndex: 0 })
-      getApplicationTemplateByTypeIdMock.mockResolvedValue(
-        createSubmitTemplate({ externalData: ['someOtherProvider'] }),
-      )
-
-      const applicationService = { update: jest.fn() }
-      const applicationActionService = {
-        performActionOnApplication: jest.fn(),
-        changeState: jest
-          .fn()
-          .mockResolvedValue({ hasError: false, hasChanged: true }),
-      }
-      const service = buildService(
-        application,
-        applicationService,
-        applicationActionService,
-      )
-
-      await expect(
-        service.handleSubmit(
-          application.id,
-          DefaultEvents.SUBMIT,
-          undefined,
-          'is',
-          { nationalId: application.applicant } as never,
-        ),
-      ).rejects.toThrow()
-
-      expect(
-        applicationActionService.performActionOnApplication,
-      ).not.toHaveBeenCalled()
-      expect(applicationActionService.changeState).not.toHaveBeenCalled()
-    })
-
-    it('allows it and reaches changeState when the role has write access', async () => {
-      const application = createApplication({ pageIndex: 0 })
-      getApplicationTemplateByTypeIdMock.mockResolvedValue(
-        createSubmitTemplate({ externalData: ['restrictedProvider'] }),
-      )
-
-      const applicationService = { update: jest.fn() }
-      const applicationActionService = {
-        performActionOnApplication: jest.fn().mockResolvedValue({}),
-        changeState: jest
-          .fn()
-          .mockResolvedValue({ hasError: false, hasChanged: true }),
-      }
-      const service = buildService(
-        application,
-        applicationService,
-        applicationActionService,
-      )
-
-      await service.handleSubmit(
-        application.id,
-        DefaultEvents.SUBMIT,
-        undefined,
-        'is',
-        { nationalId: application.applicant } as never,
-      )
-
-      expect(
-        applicationActionService.performActionOnApplication,
-      ).toHaveBeenCalled()
-      expect(applicationActionService.changeState).toHaveBeenCalled()
     })
   })
 })
