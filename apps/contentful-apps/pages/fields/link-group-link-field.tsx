@@ -186,6 +186,7 @@ const LinkGroupLinkField = () => {
         projectPage: {
           [DEFAULT_LOCALE]: {
             sys: {
+              type: 'Link',
               id: pageAbove.sys.id,
               linkType: 'Entry',
             },
