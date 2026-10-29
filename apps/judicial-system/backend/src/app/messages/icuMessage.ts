@@ -1,3 +1,4 @@
+import type { PrimitiveType } from 'intl-messageformat'
 import { IntlMessageFormat } from 'intl-messageformat'
 
 /**
@@ -6,9 +7,17 @@ import { IntlMessageFormat } from 'intl-messageformat'
  */
 export const formatIcuMessage = (
   message: string,
-  values?: Record<string, unknown>,
+  values?: Record<string, PrimitiveType>,
 ): string => {
   const formatted = new IntlMessageFormat(message, 'is').format(values)
 
-  return typeof formatted === 'string' ? formatted : formatted.join('')
+  if (typeof formatted === 'string') {
+    return formatted
+  }
+
+  if (Array.isArray(formatted)) {
+    return formatted.join('')
+  }
+
+  return String(formatted)
 }
