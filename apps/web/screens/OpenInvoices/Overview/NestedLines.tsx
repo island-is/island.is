@@ -73,8 +73,7 @@ export const NestedLines = ({
 
     return payments.map((payment) => {
       const invoiceTotal = payment.invoice.totalAmount
-      const isFullyPaid =
-        invoiceTotal == null || payment.amount === invoiceTotal
+      const isFullyPaid = !payment.isPartialPayment || invoiceTotal == null
       const itemizationsCount = payment.invoice.itemizations?.length ?? 0
       const invoiceAmountBackground =
         itemizationsCount % 2 === 0 ? 'white' : undefined
