@@ -326,15 +326,7 @@ export class DelegationOverviewService {
           ?.delegationTypes.has(AuthDelegationType.Custom),
       )
 
-      if (clientDelegationScopes.length === 0) {
-        continue
-      }
-
-      clientIds.push(client.clientId)
-
-      // Same checks as when the delegation is offered at login.
-      const validScopes = clientDelegationScopes.filter(isScopeValidNow)
-      const grantedScopes = validScopes.filter((s) =>
+      const grantedScopes = clientDelegationScopes.filter((s) =>
         this.grantsScopeAtLogin(
           s.scopeName,
           clientScopes.get(s.scopeName) as ScopeInfo,
@@ -343,9 +335,19 @@ export class DelegationOverviewService {
           accessList,
         ),
       )
+
+      // A delegation applies to a client when it would work at login if valid.
       if (
-        validScopes.length > 0 &&
-        (!client.requireApiScopes || grantedScopes.length > 0)
+        clientDelegationScopes.length === 0 ||
+        (client.requireApiScopes && grantedScopes.length === 0)
+      ) {
+        continue
+      }
+
+      clientIds.push(client.clientId)
+      if (
+        clientDelegationScopes.some(isScopeValidNow) &&
+        (!client.requireApiScopes || grantedScopes.some(isScopeValidNow))
       ) {
         loginClientIds.push(client.clientId)
       }
@@ -449,15 +451,15 @@ export class DelegationOverviewService {
         accessList,
       )
 
-      if (!grantedScopes) {
+      if (
+        !grantedScopes ||
+        (orgClient.client.requireApiScopes && grantedScopes.length === 0)
+      ) {
         continue
       }
 
       clientIds.push(orgClient.client.clientId)
-      if (
-        isActive &&
-        (!orgClient.client.requireApiScopes || grantedScopes.length > 0)
-      ) {
+      if (isActive) {
         loginClientIds.push(orgClient.client.clientId)
       }
       scopes.push(

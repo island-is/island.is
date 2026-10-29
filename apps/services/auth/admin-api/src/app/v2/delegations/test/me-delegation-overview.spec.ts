@@ -360,11 +360,8 @@ describe('MeDelegationOverviewController', () => {
         expect.objectContaining({
           toNationalId: wardNationalId,
           type: AuthDelegationType.LegalGuardian,
-          clientIds: [
-            'own-client-guardian',
-            'own-client-guardian-require-scopes',
-          ],
-          // No allowed scope of the second client supports guardianship.
+          // No allowed scope of own-client-guardian-require-scopes supports guardianship.
+          clientIds: ['own-client-guardian'],
           loginClientIds: ['own-client-guardian'],
         }),
       ])
@@ -464,7 +461,7 @@ describe('MeDelegationOverviewController', () => {
       ])
     })
 
-    it('should only give access controlled scopes at login when a company on the access list is the grantor', async () => {
+    it('should only apply access controlled scopes when a company on the access list is the grantor', async () => {
       // Arrange
       const nationalId = createNationalId('person')
       const companyWithAccess = createNationalId('company')
@@ -500,14 +497,13 @@ describe('MeDelegationOverviewController', () => {
       const byId = new Map(
         (res.body as DelegationOverviewDto).incoming.map((d) => [d.id, d]),
       )
-      for (const id of Object.values(ids)) {
-        expect(byId.get(id)?.clientIds).toEqual(['own-client-protected'])
-      }
-      expect(byId.get(ids.companyWithAccess)?.loginClientIds).toEqual([
-        'own-client-protected',
-      ])
-      expect(byId.get(ids.companyWithoutAccess)?.loginClientIds).toEqual([])
-      expect(byId.get(ids.person)?.loginClientIds).toEqual([])
+      expect(byId.get(ids.companyWithAccess)).toMatchObject({
+        clientIds: ['own-client-protected'],
+        loginClientIds: ['own-client-protected'],
+      })
+      // own-client-protected requires scopes, so these can never be used there.
+      expect(byId.has(ids.companyWithoutAccess)).toBe(false)
+      expect(byId.has(ids.person)).toBe(false)
     })
 
     it('should return no delegations when the person has none on the organization clients', async () => {
