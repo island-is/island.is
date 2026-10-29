@@ -691,7 +691,12 @@ describe('ApplicationTranslationService', () => {
 
       expect(managementSnapshotGetManyForEntrySpy).toHaveBeenCalledWith({
         entryId: 'test.ns',
-        query: { select: 'sys', limit: 26, skip: 0 },
+        query: {
+          select: 'sys',
+          order: '-sys.createdAt',
+          limit: 26,
+          skip: 0,
+        },
       })
       expect(history.items.map((h) => h.id)).toEqual(['snap-new', 'snap-old'])
       expect(history.nextSkip).toBeUndefined()
@@ -721,7 +726,12 @@ describe('ApplicationTranslationService', () => {
       expect(managementSnapshotGetManyForEntrySpy).toHaveBeenCalledTimes(1)
       expect(managementSnapshotGetManyForEntrySpy).toHaveBeenCalledWith({
         entryId: 'test.ns',
-        query: { select: 'sys', limit: 3, skip: 50 },
+        query: {
+          select: 'sys',
+          order: '-sys.createdAt',
+          limit: 3,
+          skip: 50,
+        },
       })
       expect(history.items.map((h) => h.id)).toEqual(['snap-b'])
       expect(history.nextSkip).toBe(52)

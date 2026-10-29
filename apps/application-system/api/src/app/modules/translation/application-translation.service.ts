@@ -583,7 +583,15 @@ export class ApplicationTranslationService {
 
     const page =
       await this.managementClient.snapshot.getManyForEntry<NamespaceEntryFields>(
-        { entryId: sys.id, query: { select: 'sys', limit: limit + 1, skip } },
+        {
+          entryId: sys.id,
+          query: {
+            select: 'sys',
+            order: '-sys.createdAt',
+            limit: limit + 1,
+            skip,
+          },
+        },
       )
 
     const sorted: PublishHistoryItem[] = []
