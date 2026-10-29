@@ -8,22 +8,23 @@ import {
   ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
+  NotificationType,
 } from '@island.is/application/types'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   ParentalLeaveApi,
-  ApplicationInformationApi,
+  ApplicationApi,
   ParentalLeaveGetPeriodLengthRequest,
   ParentalLeaveGetPeriodEndDateRequest,
   PeriodLengthResponse,
   PeriodEndDateResponse,
 } from '@island.is/clients/vmst'
 import {
-  ADOPTION,
   Period,
   calculatePeriodLength,
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
+  RejectedBy,
   SINGLE,
 } from '@island.is/application/templates/parental-leave'
 import { EmailService } from '@island.is/email-service'
@@ -35,10 +36,11 @@ import { SmsService } from '@island.is/nova-sms'
 import { ChildrenService } from './children/children.service'
 import { PaymentService } from '@island.is/application/api/payment'
 import { sharedModuleConfig } from '../../shared/shared.config'
-import { ApplicationService } from '@island.is/application/api/core'
 import { S3Service } from '@island.is/nest/aws'
+import { ApplicationService } from '@island.is/application/api/core'
 import { NO, YES } from '@island.is/application/core'
 import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
+import { NotificationsService } from '../../../notification/notifications.service'
 
 const nationalId = '1234564321'
 let id = 0
@@ -128,15 +130,32 @@ const createApplication = (): Application => ({
   status: ApplicationStatus.IN_PROGRESS,
 })
 
+// A follow-up of a leave VMST lists for the applicant, as the children
+// provider stores it.
+const asVmstFollowUp = (
+  application: Application,
+  vmstApplicationId = 'root-application-id',
+) => {
+  set(application, 'answers.initialQuery', vmstApplicationId)
+  set(application, 'externalData.children.data.childApplicationLinks', [
+    { childKey: `vmst:${vmstApplicationId}`, vmstApplicationId },
+  ])
+  return application
+}
+
 describe('ParentalLeaveService', () => {
   let parentalLeaveService: ParentalLeaveService
   let sharedService: SharedTemplateApiService
-  let applicationGetApplicationInformation: jest.Mock
-  let templateFindQuery: jest.Mock
+  let applicationGetApplication: jest.Mock
+  let parentalLeaveGetParentalLeaves: jest.Mock
+  let sendNotification: jest.Mock
 
   beforeEach(async () => {
-    applicationGetApplicationInformation = jest.fn(() => Promise.reject())
-    templateFindQuery = jest.fn(() => Promise.resolve([]))
+    sendNotification = jest.fn(() => Promise.resolve({ id: 'notification' }))
+    applicationGetApplication = jest.fn(() => Promise.reject())
+    parentalLeaveGetParentalLeaves = jest.fn(() =>
+      Promise.resolve({ parentalLeaves: [] }),
+    )
 
     const module = await Test.createTestingModule({
       providers: [
@@ -158,14 +177,15 @@ describe('ParentalLeaveService', () => {
           useValue: logger,
         },
         {
-          provide: ApplicationInformationApi,
+          provide: ApplicationApi,
           useClass: jest.fn(() => ({
-            applicationGetApplicationInformation,
+            applicationGetApplication,
           })),
         },
         {
           provide: ParentalLeaveApi,
           useClass: jest.fn(() => ({
+            parentalLeaveGetParentalLeaves,
             parentalLeaveSetParentalLeave: () =>
               Promise.resolve({
                 id: '1337',
@@ -222,7 +242,16 @@ describe('ParentalLeaveService', () => {
         },
         {
           provide: ConfigService,
-          useValue: {},
+          useValue: {
+            get: (key: string) =>
+              key === 'SharedModuleConfig.clientLocationOrigin'
+                ? 'https://island.is/umsoknir'
+                : undefined,
+          },
+        },
+        {
+          provide: NotificationsService,
+          useValue: { sendNotification },
         },
         {
           provide: EmailService,
@@ -237,10 +266,9 @@ describe('ParentalLeaveService', () => {
           useValue: {},
         },
         {
+          // Needed by SharedTemplateApiService
           provide: ApplicationService,
-          useValue: {
-            customTemplateFindQuery: () => templateFindQuery,
-          },
+          useValue: {},
         },
         {
           provide: S3Service,
@@ -254,26 +282,88 @@ describe('ParentalLeaveService', () => {
     sharedService = module.get(SharedTemplateApiService)
   })
 
+  describe('notifyApplicantOfRejection', () => {
+    it.each([
+      [RejectedBy.OTHER_PARENT, 'Hitt foreldrið'],
+      [RejectedBy.EMPLOYER, 'Vinnuveitandi'],
+      [RejectedBy.VMST, 'Vinnumálastofnun'],
+    ])(
+      'should send the applicant a Hnipp when rejected by %s',
+      async (rejectedBy, rejectedByName) => {
+        const application = createApplication()
+        set(application.answers, 'rejectedBy', rejectedBy)
+
+        await parentalLeaveService.notifyApplicantOfRejection({
+          application,
+        } as TemplateApiModuleActionProps)
+
+        expect(sendNotification).toHaveBeenCalledWith({
+          type: NotificationType.ParentalLeaveRejected,
+          messageParties: { recipient: application.applicant },
+          applicationId: application.id,
+          args: {
+            rejectedBy: rejectedByName,
+            applicationLink: `https://island.is/umsoknir/faedingarorlof/${application.id}`,
+          },
+        })
+      },
+    )
+
+    it('should not notify when the application has not been rejected', async () => {
+      await parentalLeaveService.notifyApplicantOfRejection({
+        application: createApplication(),
+      } as TemplateApiModuleActionProps)
+
+      expect(sendNotification).not.toHaveBeenCalled()
+    })
+
+    it('should not notify for a mock application', async () => {
+      const application = createApplication()
+      set(application.answers, 'rejectedBy', RejectedBy.EMPLOYER)
+      set(application.answers, 'mock.useMockData', YES)
+
+      await parentalLeaveService.notifyApplicantOfRejection({
+        application,
+      } as TemplateApiModuleActionProps)
+
+      expect(sendNotification).not.toHaveBeenCalled()
+    })
+  })
+
   describe('setApplicationFundId', () => {
     it('should return applicationFundId from VMST application information', async () => {
-      const application = createApplication()
-      applicationGetApplicationInformation.mockResolvedValue({
-        applicationFundId: '2025-03076',
+      const application = asVmstFollowUp(createApplication())
+      applicationGetApplication.mockResolvedValue({
+        application: { applicationFundId: '2025-03076' },
       })
 
       const res = await parentalLeaveService.setApplicationFundId({
         application,
       } as TemplateApiModuleActionProps)
 
-      expect(applicationGetApplicationInformation).toHaveBeenCalledWith({
-        applicationId: application.id,
+      expect(applicationGetApplication).toHaveBeenCalledWith({
+        applicationId: 'root-application-id',
       })
       expect(res).toBe('2025-03076')
     })
 
-    it('should return null when VMST application information has no applicationFundId', async () => {
+    it('should not ask VMST about a leave it does not list for the applicant', async () => {
+      // `initialQuery` comes from the browser and VMST's application lookup does
+      // not check ownership.
       const application = createApplication()
-      applicationGetApplicationInformation.mockResolvedValue({})
+      set(application, 'answers.initialQuery', 'someone-elses-application-id')
+
+      const res = await parentalLeaveService.setApplicationFundId({
+        application,
+      } as TemplateApiModuleActionProps)
+
+      expect(applicationGetApplication).not.toHaveBeenCalled()
+      expect(res).toBeNull()
+    })
+
+    it('should return null when VMST application information has no applicationFundId', async () => {
+      const application = asVmstFollowUp(createApplication())
+      applicationGetApplication.mockResolvedValue({ application: {} })
 
       const res = await parentalLeaveService.setApplicationFundId({
         application,
@@ -294,7 +384,7 @@ describe('ParentalLeaveService', () => {
         application,
       } as TemplateApiModuleActionProps)
 
-      expect(applicationGetApplicationInformation).not.toHaveBeenCalled()
+      expect(applicationGetApplication).not.toHaveBeenCalled()
       expect(res).toBe('2025-03076')
     })
 
@@ -302,17 +392,17 @@ describe('ParentalLeaveService', () => {
       // VMST keys `GET /applications/{applicationId}` on the island.is uuid, so a
       // change application has to identify itself by the id of the application it
       // descends from — otherwise VMST has no record of it.
-      const application = createApplication()
+      const application = asVmstFollowUp(createApplication())
       set(application, 'answers.vmstApplicationId', 'root-application-id')
-      applicationGetApplicationInformation.mockResolvedValue({
-        applicationFundId: '2025-03076',
+      applicationGetApplication.mockResolvedValue({
+        application: { applicationFundId: '2025-03076' },
       })
 
       await parentalLeaveService.setApplicationFundId({
         application,
       } as TemplateApiModuleActionProps)
 
-      expect(applicationGetApplicationInformation).toHaveBeenCalledWith({
+      expect(applicationGetApplication).toHaveBeenCalledWith({
         applicationId: 'root-application-id',
       })
     })
@@ -320,7 +410,7 @@ describe('ParentalLeaveService', () => {
 
   describe('prerequisites onExit actions', () => {
     // A follow-up application runs all of these on exit from prerequisites, before
-    // `prefillFromPreviousApplication` has seeded anything. None of them may throw:
+    // `prefillFromVMST` has seeded anything. None of them may throw:
     // `setChildrenInformation` has throwOnError, and the others surface as a
     // generic 500 if they throw something without a structured reason.
     const followUpApplication = () => {
@@ -343,7 +433,7 @@ describe('ParentalLeaveService', () => {
     ] as const)(
       '%s should not throw for a follow-up application',
       async (action) => {
-        applicationGetApplicationInformation.mockResolvedValue({})
+        applicationGetApplication.mockResolvedValue({})
 
         await expect(
           (
@@ -358,54 +448,13 @@ describe('ParentalLeaveService', () => {
     )
   })
 
-  describe('setVMSTPeriods for a follow-up application', () => {
-    it("should mark the predecessor's periods approved so they cannot be deleted", async () => {
-      // It runs on exit from prerequisites, before prefill copies the periods
-      // over, so its own answers are still empty. Without the fallback the change
-      // form gets periods with no `approved` key and `formatPeriods` lets the
-      // applicant delete periods VMST has already accepted.
-      const application = createApplication()
-      application.answers = { mock: { useMockData: YES } }
-      set(application, 'externalData.previousApplication', {
-        data: {
-          answers: {
-            periods: [
-              { startDate: '2027-04-01', endDate: '2027-06-01', ratio: '100' },
-            ],
-          },
-        },
-        date: new Date(),
-        status: 'success',
-      })
-
-      const res = (await parentalLeaveService.setVMSTPeriods({
-        application,
-      } as TemplateApiModuleActionProps)) as {
-        approved: boolean
-        from: string
-      }[]
-
-      expect(res).toHaveLength(1)
-      expect(res[0]).toMatchObject({ from: '2027-04-01', approved: true })
-    })
-
-    it("should prefer the application's own periods once it has them", async () => {
+  describe('setVMSTPeriods in mock mode', () => {
+    it("should use the application's own periods", async () => {
       const application = createApplication()
       set(application, 'answers.mock', { useMockData: YES })
       set(application, 'answers.periods', [
         { startDate: '2028-01-01', endDate: '2028-03-01', ratio: '100' },
       ])
-      set(application, 'externalData.previousApplication', {
-        data: {
-          answers: {
-            periods: [
-              { startDate: '2027-04-01', endDate: '2027-06-01', ratio: '100' },
-            ],
-          },
-        },
-        date: new Date(),
-        status: 'success',
-      })
 
       const res = (await parentalLeaveService.setVMSTPeriods({
         application,
@@ -413,118 +462,23 @@ describe('ParentalLeaveService', () => {
 
       expect(res[0].from).toBe('2028-01-01')
     })
-
-    it('should use synthesized mock application information periods when available', async () => {
-      const application = createApplication()
-      set(application, 'answers.mock', { useMockData: YES })
-      set(application, 'externalData.previousApplication', {
-        data: {
-          mockApplicationInformation: {
-            periods: [
-              {
-                from: '2027-04-01',
-                to: '2027-06-01',
-                ratio: 'D60',
-                approved: true,
-                paid: false,
-                rightsCodePeriod: 'M-L-GR',
-                firstPeriodStart: 'specificDate',
-                days: '60',
-              },
-            ],
-            applicationRights: [],
-          },
-        },
-        date: new Date(),
-        status: 'success',
-      })
-
-      const res = (await parentalLeaveService.setVMSTPeriods({
-        application,
-      } as TemplateApiModuleActionProps)) as {
-        from: string
-        days: string
-        ratio: string
-      }[]
-
-      expect(res[0]).toMatchObject({
-        from: '2027-04-01',
-        days: '60',
-        ratio: 'D60',
-      })
-    })
   })
 
-  describe('setApplicationInformation for a mock follow-up application', () => {
-    it('should return synthesized VMST-shaped information from the previous application provider', async () => {
-      const application = createApplication()
-      set(application, 'answers.mock', { useMockData: YES })
-      set(application, 'externalData.previousApplication', {
-        data: {
-          mockApplicationInformation: {
-            applicationFundId: 'mock-application-fund-id',
-            periods: [],
-            applicationRights: [
-              {
-                rightsUnit: 'ORLOF-FBF',
-                rightsDescription: 'Multiple births',
-                months: '3',
-                days: '90',
-                daysLeft: '90',
-              },
-            ],
-          },
-        },
-        date: new Date(),
-        status: 'success',
-      })
-
-      const res = (await parentalLeaveService.setApplicationInformation({
-        application,
-      } as TemplateApiModuleActionProps)) as {
-        applicationFundId: string
-        applicationRights: { rightsUnit: string }[]
-      }
-
-      expect(res.applicationFundId).toBe('mock-application-fund-id')
-      expect(res.applicationRights[0].rightsUnit).toBe('ORLOF-FBF')
-      expect(applicationGetApplicationInformation).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('mock mode for a follow-up application', () => {
-    // Why the first submit worked but the change did not: validateApplication
-    // returns early in mock mode, so the initial application never called VMST.
-    // The change application did not carry the mock answer, so it called VMST for
-    // real with a fund id that only exists in mock.
-    const changeOfAMockApplication = (mockAnswer?: unknown) => {
+  describe('validateApplication in mock mode', () => {
+    it('should skip VMST for a mock application that holds the mock fund id', async () => {
+      // The fund id is the authority, not the mock answer, which can change.
       const application = createApplication()
       application.state = 'editOrAddEmployersAndPeriods'
-      if (mockAnswer !== undefined) {
-        set(application, 'answers.mock', mockAnswer)
-      }
-      set(application, 'externalData.previousApplication', {
-        data: { applicationFundId: 'mock-application-fund-id' },
+      set(application, 'answers.mock', { useMockData: NO })
+      set(application, 'externalData.navId', {
+        data: 'mock-application-fund-id',
         date: new Date(),
         status: 'success',
       })
-      return application
-    }
 
-    it('should skip VMST when the inherited fund id is the mock one', async () => {
       await expect(
         parentalLeaveService.validateApplication({
-          application: changeOfAMockApplication(),
-        } as TemplateApiModuleActionProps),
-      ).resolves.toBeUndefined()
-    })
-
-    it('should skip VMST even when the application says mock is off', async () => {
-      // The prerequisites screen can write `mock.useMockData: 'no'` on the new
-      // application. The fund id is the authority, not that answer.
-      await expect(
-        parentalLeaveService.validateApplication({
-          application: changeOfAMockApplication({ useMockData: 'no' }),
+          application,
         } as TemplateApiModuleActionProps),
       ).resolves.toBeUndefined()
     })
@@ -573,190 +527,110 @@ describe('ParentalLeaveService', () => {
     })
   })
 
-  describe('getPreviousApplication', () => {
-    it('should return null for a first-time application', async () => {
-      const application = createApplication()
+  describe('verifyFollowUpLeave', () => {
+    it('should pass a first-time application', async () => {
+      await expect(
+        parentalLeaveService.verifyFollowUpLeave({
+          application: createApplication(),
+        } as TemplateApiModuleActionProps),
+      ).resolves.toBeUndefined()
+    })
 
-      const res = await parentalLeaveService.getPreviousApplication({
+    it('should pass a follow-up of a leave VMST lists for the applicant', async () => {
+      await expect(
+        parentalLeaveService.verifyFollowUpLeave({
+          application: asVmstFollowUp(createApplication()),
+        } as TemplateApiModuleActionProps),
+      ).resolves.toBeUndefined()
+    })
+
+    // `initialQuery` comes from the browser and VMST's application lookup does
+    // not check ownership. This also refuses a follow-up of a mock application,
+    // which VMST never received.
+    it('should refuse a follow-up whose leave VMST does not list for the applicant', async () => {
+      const application = createApplication()
+      set(application, 'answers.initialQuery', 'someone-elses-application-id')
+
+      await expect(
+        parentalLeaveService.verifyFollowUpLeave({
+          application,
+        } as TemplateApiModuleActionProps),
+      ).rejects.toMatchObject({
+        problem: {
+          errorReason: expect.objectContaining({
+            summary: expect.stringContaining('someone-elses-application-id'),
+          }),
+        },
+      })
+    })
+  })
+
+  describe('setApplicationInformation for a follow-up of a VMST leave', () => {
+    it('should add what only the parental-leaves list returns', async () => {
+      const application = asVmstFollowUp(createApplication())
+      applicationGetApplication.mockResolvedValue({
+        application: { applicationId: 'root-application-id', periods: [] },
+      })
+      parentalLeaveGetParentalLeaves.mockResolvedValue({
+        parentalLeaves: [
+          {
+            applicationId: 'another-leave',
+            language: 'IS',
+          },
+          {
+            applicationId: 'root-application-id',
+            language: 'EN',
+            otherParentBlocked: true,
+            noOfChildren: '2',
+            adoptionDate: '2027-03-04',
+          },
+        ],
+      })
+
+      const res = await parentalLeaveService.setApplicationInformation({
         application,
       } as TemplateApiModuleActionProps)
 
-      expect(res).toBeNull()
-      expect(templateFindQuery).not.toHaveBeenCalled()
+      expect(parentalLeaveGetParentalLeaves).toHaveBeenCalledWith({
+        nationalRegistryId: application.applicant,
+      })
+      expect(res).toMatchObject({
+        applicationId: 'root-application-id',
+        language: 'EN',
+        otherParentBlocked: true,
+        noOfChildren: '2',
+        adoptionDate: '2027-03-04',
+      })
     })
 
-    it("should scope the lookup to the applicant so another person's application can never be read", async () => {
-      // The id arrives from the browser, so `applicant` has to be part of the
-      // where clause rather than checked afterwards.
-      const application = createApplication()
-      set(application, 'answers.initialQuery', 'someone-elses-application')
+    it('should keep the application information when the list lookup fails', async () => {
+      const application = asVmstFollowUp(createApplication())
+      applicationGetApplication.mockResolvedValue({
+        application: { applicationId: 'root-application-id', periods: [] },
+      })
+      parentalLeaveGetParentalLeaves.mockRejectedValue(new Error('down'))
 
-      const res = await parentalLeaveService.getPreviousApplication({
+      const res = await parentalLeaveService.setApplicationInformation({
         application,
       } as TemplateApiModuleActionProps)
 
-      expect(templateFindQuery).toHaveBeenCalledWith({
-        id: 'someone-elses-application',
-        applicant: application.applicant,
-      })
-      expect(res).toBeNull()
+      expect(res).toMatchObject({ applicationId: 'root-application-id' })
     })
+  })
 
-    it('should carry over only non-refillable context and the root VMST id', async () => {
-      const application = createApplication()
-      set(application, 'answers.initialQuery', 'previous-application-id')
+  describe('setChildrenInformation', () => {
+    it("should keep VMST's child links when it replaces the children data", async () => {
+      // They are how a follow-up proves which leave it continues; losing them
+      // would cut every later VMST lookup off.
+      const application = asVmstFollowUp(createApplication())
 
-      const previous = createApplication()
-      set(previous, 'id', 'previous-application-id')
-      set(previous, 'answers.applicationType.option', PARENTAL_LEAVE)
-      set(previous, 'answers.noChildrenFound.typeOfApplication', ADOPTION)
-      set(previous, 'answers.employers', [
-        {
-          email: 'employer@employer.test',
-          ratio: '100',
-          isApproved: true,
-          reviewerNationalRegistryId: '1111111119',
-        },
-      ])
-      set(previous, 'answers.payments.bank', '011126111111')
-      set(previous, 'answers.actionName', 'period')
-      set(previous, 'answers.addEmployer', YES)
-      set(previous, 'externalData.navId', {
-        data: '2025-03076',
-        date: new Date(),
-        status: 'success',
+      const res = await parentalLeaveService.setChildrenInformation({
+        application,
+      } as TemplateApiModuleActionProps)
+
+      expect(res).toMatchObject({
+        childApplicationLinks: [{ vmstApplicationId: 'root-application-id' }],
       })
-      templateFindQuery.mockResolvedValue([previous])
-
-      const res = (await parentalLeaveService.getPreviousApplication({
-        application,
-      } as TemplateApiModuleActionProps)) as {
-        applicationId: string
-        vmstApplicationId: string
-        applicationFundId: string
-        answers: Record<string, unknown>
-      }
-
-      expect(res.applicationId).toBe('previous-application-id')
-      // No vmstApplicationId on the predecessor means it is itself the root.
-      expect(res.vmstApplicationId).toBe('previous-application-id')
-      expect(res.applicationFundId).toBe('2025-03076')
-
-      expect(res.answers.applicationType).toBeUndefined()
-      expect(res.answers.noChildrenFound).toEqual(
-        previous.answers.noChildrenFound,
-      )
-      expect(res.answers.periods).toBeUndefined()
-      expect(res.answers.payments).toBeUndefined()
-      expect(res.answers.employers).toBeUndefined()
-
-      // Per-action bookkeeping must not make the new application look like it has
-      // already changed something.
-      expect(res.answers.actionName).toBeUndefined()
-      expect(res.answers.addEmployer).toBeUndefined()
-    })
-
-    it('should return the child itself, not the index that pointed at it', async () => {
-      // `selectedChild` is an index into the children list, and the new
-      // application builds its own list, so carrying the index over could point at
-      // a different child.
-      const application = createApplication()
-      set(application, 'answers.initialQuery', 'previous-application-id')
-
-      const previous = createApplication()
-      set(previous, 'id', 'previous-application-id')
-      set(previous, 'answers.selectedChild', '0')
-      templateFindQuery.mockResolvedValue([previous])
-
-      const res = (await parentalLeaveService.getPreviousApplication({
-        application,
-      } as TemplateApiModuleActionProps)) as {
-        selectedChild: { expectedDateOfBirth: string } | null
-        answers: Record<string, unknown>
-      }
-
-      expect(res.answers.selectedChild).toBeUndefined()
-      expect(res.selectedChild?.expectedDateOfBirth).toBe(
-        (
-          previous.externalData.children.data as {
-            children: { expectedDateOfBirth: string }[]
-          }
-        ).children[0].expectedDateOfBirth,
-      )
-    })
-
-    it('should keep pointing at the original root when changing a change', async () => {
-      const application = createApplication()
-      set(application, 'answers.initialQuery', 'previous-change-id')
-
-      const previous = createApplication()
-      set(previous, 'id', 'previous-change-id')
-      set(previous, 'answers.vmstApplicationId', 'root-application-id')
-      templateFindQuery.mockResolvedValue([previous])
-
-      const res = (await parentalLeaveService.getPreviousApplication({
-        application,
-      } as TemplateApiModuleActionProps)) as { vmstApplicationId: string }
-
-      expect(res.vmstApplicationId).toBe('root-application-id')
-    })
-
-    it('should synthesize VMST application information for mock follow-ups', async () => {
-      const application = createApplication()
-      set(application, 'answers.initialQuery', 'previous-application-id')
-
-      const previous = createApplication()
-      set(previous, 'id', 'previous-application-id')
-      set(previous, 'answers.mock.useMockData', YES)
-      set(previous, 'answers.employment.isSelfEmployed', YES)
-      set(previous, 'answers.periods', [
-        {
-          startDate: '2027-04-01',
-          endDate: '2027-06-01',
-          ratio: '100',
-          firstPeriodStart: 'specificDate',
-        },
-      ])
-      set(previous, 'answers.multipleBirths.hasMultipleBirths', YES)
-      set(previous, 'answers.multipleBirths.multipleBirths', 2)
-      set(previous, 'answers.multipleBirthsRequestDays', 90)
-      set(previous, 'answers.otherParentObj.otherParentId', '2910932999')
-      set(previous, 'answers.otherParentObj.otherParentName', 'Sigurþór')
-      set(previous, 'externalData.navId', {
-        data: 'mock-application-fund-id',
-        date: new Date(),
-        status: 'success',
-      })
-      templateFindQuery.mockResolvedValue([previous])
-
-      const res = (await parentalLeaveService.getPreviousApplication({
-        application,
-      } as TemplateApiModuleActionProps)) as {
-        mockApplicationInformation: {
-          applicationFundId: string
-          otherParentId: string
-          otherParentName: string
-          periods: { from: string; firstPeriodStart: string; ratio: string }[]
-          applicationRights: { rightsUnit: string; days: string }[]
-        }
-      }
-
-      expect(res.mockApplicationInformation.applicationFundId).toBe(
-        'mock-application-fund-id',
-      )
-      expect(res.mockApplicationInformation.otherParentId).toBe('2910932999')
-      expect(res.mockApplicationInformation.otherParentName).toBe('Sigurþór')
-      expect(res.mockApplicationInformation.periods[0]).toMatchObject({
-        from: '2027-04-01',
-        firstPeriodStart: 'specificDate',
-        ratio: '100',
-      })
-      expect(res.mockApplicationInformation.applicationRights).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ rightsUnit: 'M-S-GR', days: '180' }),
-          expect.objectContaining({ rightsUnit: 'ORLOF-FBF', days: '90' }),
-        ]),
-      )
     })
   })
 

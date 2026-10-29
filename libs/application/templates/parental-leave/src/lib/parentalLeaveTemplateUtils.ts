@@ -5,6 +5,7 @@ import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  States,
 } from '../constants'
 import {
   getApplicationAnswers,
@@ -73,6 +74,33 @@ export const needsOtherParentApproval = (context: ApplicationContext) => {
   )
 }
 
+const EDIT_FLOW_REVIEW_STATES: string[] = [
+  States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+  States.EMPLOYER_APPROVE_EDITS,
+  States.VINNUMALASTOFNUN_APPROVE_EDITS,
+]
+
+/**
+ * What the applicant is told before taking an application back from review.
+ *
+ * A first-time application goes back to DRAFT. On resubmit every approval is
+ * asked for again, because `clearEmployers` resets employer approvals. In the
+ * edit flow, only the parties the new changes concern review them again, and
+ * that is not known until the applicant has made them.
+ */
+export const getReapprovalAfterEdit = (application: Application) => {
+  if (EDIT_FLOW_REVIEW_STATES.includes(application.state)) {
+    return { isEditFlow: true, otherParent: false, employer: false }
+  }
+
+  const context = { application } as ApplicationContext
+  return {
+    isEditFlow: false,
+    otherParent: needsOtherParentApproval(context),
+    employer: hasEmployer(context),
+  }
+}
+
 export const needsOtherParentApprovalForEdits = (
   context: ApplicationContext,
 ) => {
@@ -133,12 +161,11 @@ export const isChangeApplication = (context: ApplicationContext) => {
 }
 
 /**
- * True once VMST has a record of the application (either a fund id was returned
- * from `sendApplication` / `setApplicationFundId`, or the application was
- * created as a change of an already-submitted one). Used to hide the delete
- * button from states like DRAFT that can be re-entered after VMST approval —
- * once VMST has the application, deleting it from our side would leave the
- * two systems out of sync.
+ * True once VMST has a record of this application: its own `sendApplication`
+ * returned an id, or `setApplicationFundId` stored one for a first-time
+ * application. Used to hide the delete button from states like DRAFT that can
+ * be re-entered after VMST approval — once VMST has the application, deleting
+ * it from our side would leave the two systems out of sync.
  */
 export const hasBeenSubmittedToVMST = (application: Application) => {
   const navIdData = getValueViaPath<string>(
@@ -150,10 +177,20 @@ export const hasBeenSubmittedToVMST = (application: Application) => {
     application.externalData,
     'sendApplication.data.id',
   )
+  if (sendApplicationId) {
+    return true
+  }
+
+  // A change application inherits its predecessor's fund id into `navId` before
+  // its own `sendApplication` runs. That id is not evidence VMST has this row.
+  const { applicationAction } = getApplicationAnswers(application.answers)
+  if (applicationAction === ApplicationAction.CHANGE) {
+    return false
+  }
+
   return Boolean(
     (typeof navIdData === 'string' && navIdData) ||
-      (typeof rawNavId === 'string' && rawNavId) ||
-      sendApplicationId,
+      (typeof rawNavId === 'string' && rawNavId),
   )
 }
 
@@ -186,14 +223,14 @@ export const restructureVMSTPeriods = (
 
   const newPeriods: Period[] = []
   VMSTPeriods?.forEach((period, index) => {
-    const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+    const rightsCodePeriod = (period.rightsCodePeriod ?? '').split(',')[0]
     const obj = {
       startDate: period.from,
       endDate: period.to,
       ratio: period.ratio.split(',')[0],
       rawIndex: index,
       rightCodePeriod: rightsCodePeriod,
-      daysToUse: period.days,
+      daysToUse: period.days ?? undefined,
       paid: period.paid,
       approved: period.approved,
     }

@@ -14,3 +14,4 @@ export { default as EmployerApprovalExtraInformation } from './EmployerApprovalE
 export { PeriodPercentage } from './PeriodPercentage/PeriodPercentage'
 export { PeriodRatioWarning } from './PeriodPercentage/PeriodRatioWarning'
 export { default as StartChangeApplication } from './StartChangeApplication'
+export { default as InProgressApplications } from './InProgressApplications'

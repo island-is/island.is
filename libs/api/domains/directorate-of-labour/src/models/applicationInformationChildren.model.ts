@@ -2,15 +2,15 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class ApplicationInformationChildren {
-  @Field(() => String)
-  expectedDateOfBirth!: string
+  @Field(() => String, { nullable: true })
+  expectedDateOfBirth?: string | null
 
-  @Field(() => String)
-  dateOfBirth!: string
+  @Field(() => String, { nullable: true })
+  dateOfBirth?: string | null
 
-  @Field(() => String)
-  nationalRegistryId!: string
+  @Field(() => String, { nullable: true })
+  nationalRegistryId?: string | null
 
-  @Field(() => String)
-  name!: string
+  @Field(() => String, { nullable: true })
+  name?: string | null
 }

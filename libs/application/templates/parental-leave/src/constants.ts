@@ -65,9 +65,8 @@ export enum ApiModuleActions {
   assignEmployers = 'assignEmployers',
   assignEmployer = 'assignEmployer',
   sendApplication = 'sendApplication',
-  notifyApplicantOfRejectionFromOtherParent = 'notifyApplicantOfRejectionFromOtherParent',
+  notifyApplicantOfRejection = 'notifyApplicantOfRejection',
   validateApplication = 'validateApplication',
-  notifyApplicantOfRejectionFromEmployer = 'notifyApplicantOfRejectionFromEmployer',
   setChildrenInformation = 'setChildrenInformation',
   setBirthDateForNoPrimaryParent = 'setBirthDateForNoPrimaryParent',
   setBirthDate = 'setBirthDate',
@@ -82,10 +81,10 @@ export enum ApiModuleActions {
   setApplicationRights = 'setApplicationRights',
   setOtherParent = 'setOtherParent',
   /**
-   * Loads the application this one continues (`answers.initialQuery`) and returns
-   * the answers to carry over plus its `vmstApplicationId`.
+   * Refuses a follow-up whose leave (`answers.initialQuery`) VMST does not list
+   * for the applicant.
    */
-  getPreviousApplication = 'getPreviousApplication',
+  verifyFollowUpLeave = 'verifyFollowUpLeave',
 }
 
 export enum ApplicationAction {
@@ -114,14 +113,11 @@ export enum States {
   DRAFT = 'draft',
 
   OTHER_PARENT_APPROVAL = 'otherParentApproval',
-  OTHER_PARENT_ACTION = 'otherParentRequiresAction',
 
   EMPLOYER_WAITING_TO_ASSIGN = 'employerWaitingToAssign',
   EMPLOYER_APPROVAL = 'employerApproval',
-  EMPLOYER_ACTION = 'employerRequiresAction',
 
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
-  VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
   ADDITIONAL_DOCUMENTS_REQUIRED_FOR_EDITS = 'additionalDocumentsRequiredForEdits',
@@ -133,20 +129,29 @@ export enum States {
   EDIT_OR_ADD_EMPLOYERS_AND_PERIODS = 'editOrAddEmployersAndPeriods',
 
   OTHER_PARENT_APPROVAL_FOR_EDITS = 'otherParentApprovalForEdits',
-  OTHER_PARENT_EDITS_ACTION = 'otherParentRequiresActionOnEdits',
 
   EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS = 'employerWaitingToAssignForEdits',
   EMPLOYER_APPROVE_EDITS = 'employerApproveEdits',
-  EMPLOYER_EDITS_ACTION = 'employerRequiresActionOnEdits',
 
   VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
-  VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 
   RESIDENCE_GRANT_APPLICATION = 'residenceGrantApplication',
   RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE = 'residenceGrantApplicationNoBirthDate',
 }
 
+/**
+ * Who sent the application back to the applicant. Stored in
+ * `answers.rejectedBy` until the applicant resubmits.
+ */
+export enum RejectedBy {
+  OTHER_PARENT = 'otherParent',
+  EMPLOYER = 'employer',
+  VMST = 'vmst',
+}
+
 export enum AnswerValidationConstants {
+  // Server-side check that the chosen child is not held by another application
+  SELECTED_CHILD = 'selectedChild',
   EMPLOYER = 'employer',
   REQUEST_RIGHTS = 'requestRights',
   GIVE_RIGHTS = 'giveRights',

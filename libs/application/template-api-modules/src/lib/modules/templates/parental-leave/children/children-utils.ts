@@ -3,6 +3,7 @@ import { Application } from '@island.is/application/types'
 import type { DistributiveOmit } from '@island.is/shared/types'
 
 import {
+  ApplicationAction,
   ParentalRelations,
   States,
   getMaxMultipleBirthsDays,
@@ -18,6 +19,7 @@ import {
   parentalLeaveFormMessages,
 } from '@island.is/application/templates/parental-leave'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { MOCK_APPLICATION_FUND_ID } from '../constants'
 
 // Change-flow states where the applicant still has unfinished business with the
 // existing application; picking the same child again should re-open it.
@@ -25,9 +27,15 @@ const CHANGE_IN_PROGRESS_STATES: readonly string[] = [
   States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
   States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
   States.EMPLOYER_APPROVE_EDITS,
-  States.EMPLOYER_EDITS_ACTION,
   States.VINNUMALASTOFNUN_APPROVE_EDITS,
-  States.VINNUMALASTOFNUN_EDITS_ACTION,
+]
+
+// States in which an application has finished, one way or the other. Anything
+// else is still in flight and holds its child.
+const FINISHED_STATES: readonly string[] = [
+  States.PREREQUISITES,
+  States.APPROVED,
+  States.CLOSED,
 ]
 
 // We do not require hasRights or remainingDays in this step
@@ -124,6 +132,13 @@ export const applicationsToExistingChildApplication = (
       const { applicationFundId } = getApplicationExternalData(
         application.externalData,
       )
+
+      // A mock application never reached VMST, so there is no leave a change
+      // could continue. Its child is offered as a first-time application.
+      if (applicationFundId === MOCK_APPLICATION_FUND_ID) {
+        continue
+      }
+
       result.push({
         applicationId: application.id,
         expectedDateOfBirth: childInformation.expectedDateOfBirth,
@@ -134,6 +149,57 @@ export const applicationsToExistingChildApplication = (
         ),
       })
     }
+  }
+
+  return result
+}
+
+/**
+ * The applicant's own unfinished applications. Each one holds its child: picking
+ * that child again would put a second application for the same leave next to
+ * it. Read from island.is whatever VMST lists, because VMST does not know about
+ * applications still waiting for the other parent or the employer, and does not
+ * say whether a change is under way.
+ */
+export const applicationsToInProgressChildApplications = (
+  applications: Application[],
+): ExistingChildApplication[] => {
+  const result: ExistingChildApplication[] = []
+
+  for (const application of applications) {
+    if (FINISHED_STATES.includes(application.state)) {
+      continue
+    }
+
+    const childInformation = getSelectedChild(
+      application.answers,
+      application.externalData,
+    )
+    if (childInformation === null) {
+      continue
+    }
+
+    const { applicationFundId } = getApplicationExternalData(
+      application.externalData,
+    )
+    // A mock application never reaches VMST, so it cannot clash with a real one.
+    if (applicationFundId === MOCK_APPLICATION_FUND_ID) {
+      continue
+    }
+
+    const { applicationAction } = getApplicationAnswers(application.answers)
+    const isChange =
+      applicationAction === ApplicationAction.CHANGE ||
+      CHANGE_IN_PROGRESS_STATES.includes(application.state)
+
+    result.push({
+      applicationId: application.id,
+      expectedDateOfBirth: childInformation.expectedDateOfBirth,
+      adoptionDate: childInformation.adoptionDate,
+      hasApplicationFundId: !!applicationFundId,
+      isChangeInProgress: isChange,
+      isApplicationInProgress: !isChange,
+    })
   }
 
   return result
@@ -174,11 +240,11 @@ export const vmstParentalLeavesToExistingChildApplications = (
  */
 export const vmstParentalLeavesToChildApplicationLinks = (
   parentalLeaves: Array<{
-    applicationId?: string
-    applicationFundId?: string
-    expectedDateOfBirth?: string
-    dateOfBirth?: string
-    adoptionDate?: string
+    applicationId?: string | null
+    applicationFundId?: string | null
+    expectedDateOfBirth?: string | null
+    dateOfBirth?: string | null
+    adoptionDate?: string | null
   }> = [],
   previousLinks: ChildApplicationLink[] = [],
 ): ChildApplicationLink[] => {
@@ -309,7 +375,11 @@ export const findExistingApplicationForChild = (
       (!!child.adoptionDate && existing.adoptionDate === child.adoptionDate),
   )
 
-  return matches.find((match) => match.isChangeInProgress) ?? matches[0]
+  return (
+    matches.find(
+      (match) => match.isChangeInProgress || match.isApplicationInProgress,
+    ) ?? matches[0]
+  )
 }
 
 /**
@@ -318,21 +388,41 @@ export const findExistingApplicationForChild = (
  * application rather than a second first-time application.
  */
 export const withExistingApplicationId = <
-  T extends { expectedDateOfBirth?: string; adoptionDate?: string },
+  T extends {
+    expectedDateOfBirth?: string
+    adoptionDate?: string
+    existingApplicationId?: string
+    existingApplicationHasFundId?: boolean
+    existingApplicationIsChangeInProgress?: boolean
+    existingApplicationIsInProgress?: boolean
+  },
 >(
   child: T,
   existingApplications: ExistingChildApplication[],
 ): T => {
+  // A child copied from an earlier application's snapshot carries the link that
+  // was current back then. Only the current lookup decides.
+  const {
+    existingApplicationId: _existingApplicationId,
+    existingApplicationHasFundId: _existingApplicationHasFundId,
+    existingApplicationIsChangeInProgress:
+      _existingApplicationIsChangeInProgress,
+    existingApplicationIsInProgress: _existingApplicationIsInProgress,
+    ...rest
+  } = child
   const existing = findExistingApplicationForChild(existingApplications, child)
 
-  return existing
-    ? {
-        ...child,
-        existingApplicationId: existing.applicationId,
-        existingApplicationHasFundId: existing.hasApplicationFundId,
-        existingApplicationIsChangeInProgress: existing.isChangeInProgress,
-      }
-    : child
+  return (
+    existing
+      ? {
+          ...rest,
+          existingApplicationId: existing.applicationId,
+          existingApplicationHasFundId: existing.hasApplicationFundId,
+          existingApplicationIsChangeInProgress: existing.isChangeInProgress,
+          existingApplicationIsInProgress: !!existing.isApplicationInProgress,
+        }
+      : rest
+  ) as T
 }
 
 /**
@@ -383,10 +473,13 @@ export const getChildren = (
   existingApplications: ExistingChildApplication[]
   childApplicationLinks: ChildApplicationLink[]
 } => {
-  const existingApplications =
-    vmstExistingApplications.length > 0
+  const existingApplications = [
+    // First, so an unfinished application wins over the leave it continues.
+    ...applicationsToInProgressChildApplications(applicationsWhereApplicant),
+    ...(vmstExistingApplications.length > 0
       ? vmstExistingApplications
-      : applicationsToExistingChildApplication(applicationsWhereApplicant)
+      : applicationsToExistingChildApplication(applicationsWhereApplicant)),
+  ]
 
   const children = collectChildren(
     [

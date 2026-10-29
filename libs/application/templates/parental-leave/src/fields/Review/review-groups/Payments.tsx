@@ -60,7 +60,7 @@ export const Payments = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.paymentInformationBank,
                 )}
-                value={formatBankInfo(bank) ?? ''}
+                value={bank ? formatBankInfo(bank) : ''}
               />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -107,7 +107,7 @@ export const Payments = ({
           label={formatMessage(
             parentalLeaveFormMessages.shared.paymentInformationBank,
           )}
-          value={formatBankInfo(bank) ?? ''}
+          value={bank ? formatBankInfo(bank) : ''}
         />
       )}
     </ReviewGroup>

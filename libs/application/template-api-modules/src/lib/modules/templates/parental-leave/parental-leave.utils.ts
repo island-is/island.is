@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken'
 import get from 'lodash/get'
-import set from 'lodash/set'
 import { join } from 'path'
 
 import {
@@ -28,7 +27,7 @@ import {
   ApplicationWithAttachments,
 } from '@island.is/application/types'
 import {
-  ApplicationRights,
+  ApplicationRight,
   Attachment,
   Employer,
   ParentalLeave,
@@ -39,7 +38,7 @@ import {
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
-import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import { NO, YES } from '@island.is/application/core'
 
 // Check whether phoneNumber is GSM
 export const checkIfPhoneNumberIsGSM = (phoneNumber: string): boolean => {
@@ -373,7 +372,7 @@ export const transformApplicationToParentalLeaveDTO = (
     | 'empdoc'
     | 'empdocper'
     | undefined,
-  applicationRights?: ApplicationRights[],
+  applicationRights?: ApplicationRight[],
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -554,53 +553,9 @@ export const getFromDate = (
     : period.startDate
 }
 
-export const isFixedRight = (right: string | undefined) => {
+export const isFixedRight = (right: string | null | undefined) => {
   if (!right) {
     return false
   }
   return ['VEIKMEÐG', 'ÖRYGGI-L', 'DVALSTYRK', 'DVAL.FJÖL'].includes(right)
-}
-
-/**
- * Answer paths a follow-up application inherits from the application it
- * continues. These describe the leave itself, so a `change` application starts
- * from what the applicant already told us rather than asking again.
- *
- * Deliberately absent: anything scoped to a single action. `actionName`,
- * `addEmployer`, `addPeriods`, `changeEmployer`, `changePeriods`,
- * `changeApplicationInfo`, `isResidenceGrant`, `hasAppliedForReidenceGrant` and
- * the per-action file uploads all describe what the *previous* action did and
- * would make the new application look like it had already changed something.
- */
-const CARRY_OVER_ANSWER_PATHS = [
-  // A mock application was never really sent to VMST — its fund id is the literal
-  // 'mock-application-fund-id'. A follow-up therefore has to stay in mock mode,
-  // otherwise it calls VMST for real with a fund id that does not exist there.
-  'mock',
-  'noChildrenFound',
-  'fosterCareOrAdoption',
-  'noPrimaryParent',
-] as const
-
-/**
- * Picks the answers a follow-up application inherits. Paths that are absent on
- * the source are left out entirely rather than written as `undefined`, so the new
- * application's answers stay clean and `getValueViaPath` defaults still apply.
- */
-export const pickCarryOverAnswers = (
-  answers: Application['answers'],
-): Record<string, unknown> => {
-  const carried: Record<string, unknown> = {}
-
-  for (const path of CARRY_OVER_ANSWER_PATHS) {
-    const value = getValueViaPath(answers, path)
-
-    if (value === undefined || value === null) {
-      continue
-    }
-
-    set(carried, path, value)
-  }
-
-  return carried
 }

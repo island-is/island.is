@@ -10,30 +10,35 @@ import {
 } from '@island.is/application/types'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
 import {
+  ADOPTION,
   ApplicationAction,
   PARENTAL_LEAVE,
   SPOUSE,
   States as ApplicationStates,
   PARENTAL_GRANT,
   PLEvents,
+  RejectedBy,
   Roles,
 } from '../constants'
 
 import { createNationalId } from '@island.is/testing/fixtures'
+import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import {
-  ChildrenApi,
-  GetPersonInformation,
-  PreviousApplicationApi,
-} from '../dataProviders'
-import {
+  getReapprovalAfterEdit,
   isChangeApplication,
   isResidenceGrantApplication,
 } from './parentalLeaveTemplateUtils'
+import {
+  draftStateDescription,
+  editOrAddPeriodsStatePendingAction,
+} from './parentalLeaveUtils'
+import { parentalLeaveFormMessages, statesMessages } from './messages'
 
 const buildApplication = (data: {
   answers?: FormValue
   externalData?: ExternalData
   state?: string
+  assignees?: string[]
 }): Application => {
   const {
     answers = {},
@@ -55,11 +60,12 @@ const buildApplication = (data: {
       },
     },
     state = 'draft',
+    assignees = [],
   } = data
 
   return {
     id: '12345',
-    assignees: [],
+    assignees,
     applicant: '1234567890',
     typeId: ApplicationTypes.PARENTAL_LEAVE,
     created: new Date(),
@@ -874,16 +880,18 @@ describe('Parental Leave Application Template', () => {
   describe('edit flow', () => {
     const CHANGE_ANSWERS = {
       applicationAction: ApplicationAction.CHANGE,
-      previousApplicationId: 'previous-app-id',
       vmstApplicationId: 'root-app-id',
     }
 
-    it('should resolve the child index from the predecessor on the way out of prerequisites', () => {
+    it('should resolve the child index from the VMST leave on the way out of prerequisites', () => {
       // If this match fails, `selectedChild` stays unset and everything downstream
       // that needs the child throws "Missing selected child".
       const helper = new ApplicationTemplateHelper(
         buildApplication({
-          answers: { applicationAction: ApplicationAction.CHANGE },
+          answers: {
+            applicationAction: ApplicationAction.CHANGE,
+            initialQuery: 'root-application-id',
+          },
           externalData: {
             children: {
               data: {
@@ -892,22 +900,23 @@ describe('Parental Leave Application Template', () => {
                     hasRights: true,
                     remainingDays: 180,
                     parentalRelation: 'primary',
+                    expectedDateOfBirth: '2026-01-01',
+                  },
+                  {
+                    hasRights: true,
+                    remainingDays: 180,
+                    parentalRelation: 'primary',
                     expectedDateOfBirth: '2027-03-04',
-                    existingApplicationId: 'previous-application-id',
+                    existingApplicationId: 'root-application-id',
                   },
                 ],
                 existingApplications: [],
-              },
-              date: new Date(),
-              status: 'success',
-            },
-            previousApplication: {
-              data: {
-                applicationId: 'previous-application-id',
-                vmstApplicationId: 'root-application-id',
-                applicationFundId: '2025-03076',
-                selectedChild: { expectedDateOfBirth: '2027-03-04' },
-                answers: { periods: [] },
+                childApplicationLinks: [
+                  {
+                    childKey: 'vmst:root-application-id',
+                    vmstApplicationId: 'root-application-id',
+                  },
+                ],
               },
               date: new Date(),
               status: 'success',
@@ -924,13 +933,96 @@ describe('Parental Leave Application Template', () => {
 
       expect(hasChanged).toBe(true)
       expect(newState).toBe(ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS)
-      expect(newApplication.answers.selectedChild).toBe('0')
+      expect(newApplication.answers.selectedChild).toBe('1')
       expect(newApplication.answers.vmstApplicationId).toBe(
         'root-application-id',
       )
-      expect(newApplication.answers.previousApplicationId).toBe(
-        'previous-application-id',
+    })
+
+    it('should not trust a follow-up id VMST does not list for the applicant', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            applicationAction: ApplicationAction.CHANGE,
+            initialQuery: 'someone-elses-application-id',
+            selectedChild: '0',
+          },
+          externalData: {
+            children: {
+              data: { children: [], childApplicationLinks: [] },
+              date: new Date(),
+              status: 'success',
+            },
+          },
+          state: ApplicationStates.PREREQUISITES,
+        }),
+        ParentalLeaveTemplate,
       )
+
+      const [, , newApplication] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
+      })
+
+      expect(newApplication.answers.vmstApplicationId).not.toBe(
+        'someone-elses-application-id',
+      )
+    })
+
+    it('should prefill an adoption follow-up from VMST rights without replacing the matched child', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            applicationAction: ApplicationAction.CHANGE,
+            initialQuery: 'root-application-id',
+          },
+          externalData: {
+            children: {
+              data: {
+                children: [
+                  {
+                    hasRights: true,
+                    remainingDays: 180,
+                    parentalRelation: 'primary',
+                    expectedDateOfBirth: '2026-01-01',
+                  },
+                  {
+                    hasRights: true,
+                    remainingDays: 180,
+                    parentalRelation: 'primary',
+                    expectedDateOfBirth: '',
+                    adoptionDate: '2027-03-04',
+                    existingApplicationId: 'root-application-id',
+                  },
+                ],
+                childApplicationLinks: [
+                  {
+                    childKey: 'vmst:root-application-id',
+                    vmstApplicationId: 'root-application-id',
+                  },
+                ],
+              },
+              date: new Date(),
+              status: 'success',
+            },
+            VMSTApplicationRights: {
+              data: [{ rightsUnit: 'M-Æ-L-GR', days: '180' }],
+              date: new Date(),
+              status: 'success',
+            },
+          },
+          state: ApplicationStates.PREREQUISITES,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [, , newApplication] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
+      })
+
+      expect(newApplication.answers.noChildrenFound).toEqual({
+        typeOfApplication: ADOPTION,
+      })
+      expect(newApplication.answers.selectedChild).toBe('1')
     })
 
     it('should go from prerequisites straight into the change form when the application is a change', () => {
@@ -975,7 +1067,6 @@ describe('Parental Leave Application Template', () => {
         buildApplication({
           answers: {
             applicationAction: ApplicationAction.RESIDENCE_GRANT,
-            previousApplicationId: 'previous-app-id',
             selectedChild: '0',
           },
           state: ApplicationStates.PREREQUISITES,
@@ -1134,13 +1225,13 @@ describe('Parental Leave Application Template', () => {
               status: 'success',
             },
           },
-          state: ApplicationStates.EMPLOYER_EDITS_ACTION,
+          state: ApplicationStates.EMPLOYER_APPROVE_EDITS,
         }),
         ParentalLeaveTemplate,
       )
 
       const [hasChanged, newState, newApplication] = helper.changeState({
-        type: DefaultEvents.EDIT,
+        type: DefaultEvents.REJECT,
       })
 
       expect(hasChanged).toBe(true)
@@ -1180,26 +1271,15 @@ describe('Parental Leave Application Template', () => {
       expect(newApplication.answers.changeEmployer).toBeUndefined()
     })
 
-    it('should restore the submitted change baseline when the applicant cancels', () => {
-      const baselineAnswers = {
-        ...CHANGE_ANSWERS,
-        employment: {
-          isSelfEmployed: NO,
-          isReceivingUnemploymentBenefits: NO,
-        },
-        employers: [{ email: 'baseline@test.is', ratio: '50' }],
-        periods: [
-          {
-            ratio: '50',
-            endDate: '2021-05-10T00:00:00Z',
-            startDate: '2021-01-10',
-          },
-        ],
-      }
+    it('should restore the VMST change baseline when the applicant cancels', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
-            ...baselineAnswers,
+            ...CHANGE_ANSWERS,
+            employment: {
+              isSelfEmployed: NO,
+              isReceivingUnemploymentBenefits: NO,
+            },
             employers: [{ email: 'changed@test.is', ratio: '100' }],
             periods: [
               {
@@ -1216,8 +1296,25 @@ describe('Parental Leave Application Template', () => {
               status: 'success',
               date: new Date(),
             },
-            previousApplication: {
-              data: { answers: baselineAnswers },
+            VMSTApplicationInformation: {
+              data: {
+                employers: [
+                  {
+                    email: 'baseline@test.is',
+                    nationalRegistryId: '0101302719',
+                  },
+                ],
+                periods: [
+                  {
+                    from: '2021-01-10',
+                    to: '2021-05-10T00:00:00Z',
+                    ratio: '50',
+                    approved: true,
+                    paid: false,
+                    rightsCodePeriod: 'M-L-GR',
+                  },
+                ],
+              },
               status: 'success',
               date: new Date(),
             },
@@ -1233,33 +1330,20 @@ describe('Parental Leave Application Template', () => {
 
       expect(hasChanged).toBe(true)
       expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS)
-      expect(newApplication.answers.employers).toEqual(
-        baselineAnswers.employers,
-      )
-      expect(newApplication.answers.periods).toEqual([
-        expect.objectContaining(baselineAnswers.periods[0]),
+      expect(newApplication.answers.employers).toEqual([
+        {
+          email: 'baseline@test.is',
+          ratio: '',
+          companyNationalRegistryId: '0101302719',
+        },
       ])
-      expect(newApplication.answers.changeEmployer).toBeUndefined()
-    })
-
-    it('should return the applicant to the change form when they discard edits after an employer rejection', () => {
-      const helper = new ApplicationTemplateHelper(
-        buildApplication({
-          answers: {
-            ...CHANGE_ANSWERS,
-            changeEmployer: true,
-          },
-          state: ApplicationStates.EMPLOYER_EDITS_ACTION,
+      expect(newApplication.answers.periods).toEqual([
+        expect.objectContaining({
+          ratio: '50',
+          endDate: '2021-05-10T00:00:00Z',
+          startDate: '2021-01-10',
         }),
-        ParentalLeaveTemplate,
-      )
-
-      const [hasChanged, newState, newApplication] = helper.changeState({
-        type: DefaultEvents.ABORT,
-      })
-
-      expect(hasChanged).toBe(true)
-      expect(newState).toBe(ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS)
+      ])
       expect(newApplication.answers.changeEmployer).toBeUndefined()
     })
 
@@ -1497,7 +1581,6 @@ describe('Parental Leave Application Template', () => {
     it.each([
       ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
       ApplicationStates.EMPLOYER_APPROVE_EDITS,
-      ApplicationStates.EMPLOYER_EDITS_ACTION,
     ])(
       'should rewind %s to the delete-allowed change form for a follow-up change on EDIT',
       (state) => {
@@ -1522,7 +1605,6 @@ describe('Parental Leave Application Template', () => {
     it.each([
       ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
       ApplicationStates.EMPLOYER_APPROVE_EDITS,
-      ApplicationStates.EMPLOYER_EDITS_ACTION,
     ])(
       'should rewind %s to the no-delete change form for an edit application on EDIT',
       (state) => {
@@ -1542,59 +1624,61 @@ describe('Parental Leave Application Template', () => {
       },
     )
 
-    it('should rewind vinnumalastofnunAction to draft on EDIT so the applicant can fix or delete the rejected submission', () => {
+    it('should send a VMST rejection straight to draft so the applicant can fix or delete the rejected submission', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: { selectedChild: '0' },
-          state: ApplicationStates.VINNUMALASTOFNUN_ACTION,
+          state: ApplicationStates.VINNUMALASTOFNUN_APPROVAL,
         }),
         ParentalLeaveTemplate,
       )
 
-      const [hasChanged, newState] = helper.changeState({
-        type: DefaultEvents.EDIT,
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.REJECT,
       })
 
       expect(hasChanged).toBe(true)
       expect(newState).toBe(ApplicationStates.DRAFT)
+      expect(newApplication.answers.rejectedBy).toBe(RejectedBy.VMST)
     })
 
-    it('should return vinnumalastofnunAction corrections to initial VMST review on submit', () => {
+    it('should return VMST rejection corrections to initial VMST review on submit', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: { selectedChild: '0' },
-          state: ApplicationStates.VINNUMALASTOFNUN_ACTION,
+          state: ApplicationStates.VINNUMALASTOFNUN_APPROVAL,
         }),
         ParentalLeaveTemplate,
       )
 
       const [, , correctionApplication] = helper.changeState({
-        type: DefaultEvents.EDIT,
+        type: DefaultEvents.REJECT,
       })
       const correctionHelper = new ApplicationTemplateHelper(
         correctionApplication,
         ParentalLeaveTemplate,
       )
 
-      const [hasChanged, newState] = correctionHelper.changeState({
+      const [hasChanged, newState, resubmitted] = correctionHelper.changeState({
         type: DefaultEvents.SUBMIT,
       })
 
       expect(hasChanged).toBe(true)
       expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVAL)
+      expect(resubmitted.answers.rejectedBy).toBeUndefined()
     })
 
     it('should not offer ABORT from draft after a VMST rejection', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: { selectedChild: '0' },
-          state: ApplicationStates.VINNUMALASTOFNUN_ACTION,
+          state: ApplicationStates.VINNUMALASTOFNUN_APPROVAL,
         }),
         ParentalLeaveTemplate,
       )
 
       const [, , correctionApplication] = helper.changeState({
-        type: DefaultEvents.EDIT,
+        type: DefaultEvents.REJECT,
       })
       const correctionHelper = new ApplicationTemplateHelper(
         correctionApplication,
@@ -1689,8 +1773,17 @@ describe('Parental Leave Application Template', () => {
         isSelfEmployed: NO,
         isReceivingUnemploymentBenefits: NO,
       }
+      // As `getVMSTApplicationAnswers` maps VMST's period below
       const baselinePeriods = [
-        { ratio: '100', endDate: '2027-04-20', startDate: '2027-04-06' },
+        {
+          startDate: '2027-04-06',
+          endDate: '2027-04-20',
+          ratio: '100',
+          rawIndex: 0,
+          rightCodePeriod: 'M-L-GR',
+          paid: false,
+          approved: true,
+        },
       ]
       const helper = new ApplicationTemplateHelper(
         buildApplication({
@@ -1703,9 +1796,20 @@ describe('Parental Leave Application Template', () => {
             applicant: { email: 'new-email@island.is' },
           },
           externalData: {
-            previousApplication: {
+            VMSTApplicationInformation: {
               data: {
-                answers: { employment, periods: baselinePeriods },
+                periods: [
+                  {
+                    from: '2027-04-06',
+                    to: '2027-04-20',
+                    ratio: '100',
+                    approved: true,
+                    paid: false,
+                    rightsCodePeriod: 'M-L-GR',
+                  },
+                ],
+                applicationRights: [{ rightsUnit: 'M-L-GR', days: '180' }],
+                employers: [],
               },
               status: 'success',
               date: new Date(),
@@ -1823,18 +1927,20 @@ describe('Parental Leave Application Template', () => {
             ],
           },
           externalData: {
-            previousApplication: {
+            VMSTApplicationInformation: {
               data: {
-                answers: {
-                  employment,
-                  periods: [
-                    {
-                      ratio: '100',
-                      endDate: '2027-04-20',
-                      startDate: '2027-04-06',
-                    },
-                  ],
-                },
+                periods: [
+                  {
+                    from: '2027-04-06',
+                    to: '2027-04-20',
+                    ratio: '100',
+                    approved: true,
+                    paid: false,
+                    rightsCodePeriod: 'M-L-GR',
+                  },
+                ],
+                applicationRights: [{ rightsUnit: 'M-L-GR', days: '180' }],
+                employers: [],
               },
               status: 'success',
               date: new Date(),
@@ -1850,6 +1956,94 @@ describe('Parental Leave Application Template', () => {
       expect(newState).toBe(
         ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
       )
+    })
+  })
+
+  describe('late VMST callbacks after DRAFT rewind', () => {
+    // After the applicant EDITs their way out of VINNUMALASTOFNUN_APPROVAL the
+    // row is back in DRAFT but VMST still has a record of it. Without an
+    // APPROVE/REJECT handler on DRAFT a late VMST callback would be dropped.
+    it('should transition DRAFT to APPROVED on APPROVE once VMST has a fund id', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: { selectedChild: '0' },
+          externalData: {
+            navId: {
+              data: '2017-05152',
+              status: 'success',
+              date: new Date(),
+            },
+          },
+          state: ApplicationStates.DRAFT,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: DefaultEvents.APPROVE,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.APPROVED)
+    })
+
+    it('should keep DRAFT and flag a late VMST REJECT once VMST has a fund id', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: { selectedChild: '0' },
+          externalData: {
+            navId: {
+              data: '2017-05152',
+              status: 'success',
+              date: new Date(),
+            },
+          },
+          state: ApplicationStates.DRAFT,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.REJECT,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.DRAFT)
+      expect(newApplication.answers.rejectedBy).toBe(RejectedBy.VMST)
+    })
+
+    it('should ignore APPROVE from DRAFT when VMST has no record yet', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: { selectedChild: '0' },
+          state: ApplicationStates.DRAFT,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: DefaultEvents.APPROVE,
+      })
+
+      expect(hasChanged).toBe(false)
+      expect(newState).toBe(ApplicationStates.DRAFT)
+    })
+
+    it('should ignore REJECT from DRAFT when VMST has no record yet', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: { selectedChild: '0' },
+          state: ApplicationStates.DRAFT,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: DefaultEvents.REJECT,
+      })
+
+      expect(hasChanged).toBe(false)
+      expect(newState).toBe(ApplicationStates.DRAFT)
     })
   })
 
@@ -1901,15 +2095,10 @@ describe('Parental Leave Application Template', () => {
 
   describe('data provider ordering', () => {
     it('should run the children provider after the ones it reads from', () => {
-      // getChildren reads `person` (applicant gender) and, for a follow-up,
-      // `previousApplication` (whether the application being continued was on mock
-      // data). Providers default to order 0 and run in parallel, so Children has
-      // to be later or it races them and sees neither.
+      // getChildren reads `person` (applicant gender). Providers default to
+      // order 0 and run in parallel, so Children has to be later or it races it.
       expect(ChildrenApi.order ?? 0).toBeGreaterThan(
         GetPersonInformation.order ?? 0,
-      )
-      expect(ChildrenApi.order ?? 0).toBeGreaterThan(
-        PreviousApplicationApi.order ?? 0,
       )
     })
   })
@@ -1936,14 +2125,10 @@ describe('Parental Leave Application Template', () => {
       expect(canApplicantDelete(ApplicationStates.OTHER_PARENT_APPROVAL)).toBe(
         true,
       )
-      expect(canApplicantDelete(ApplicationStates.OTHER_PARENT_ACTION)).toBe(
-        true,
-      )
       expect(
         canApplicantDelete(ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN),
       ).toBe(true)
       expect(canApplicantDelete(ApplicationStates.EMPLOYER_APPROVAL)).toBe(true)
-      expect(canApplicantDelete(ApplicationStates.EMPLOYER_ACTION)).toBe(true)
       expect(
         canApplicantDelete(ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS),
       ).toBe(true)
@@ -1955,9 +2140,6 @@ describe('Parental Leave Application Template', () => {
       expect(canApplicantDelete(ApplicationStates.EMPLOYER_APPROVE_EDITS)).toBe(
         true,
       )
-      expect(canApplicantDelete(ApplicationStates.EMPLOYER_EDITS_ACTION)).toBe(
-        true,
-      )
     })
 
     it('should not let the applicant delete once the record is with VMST', () => {
@@ -1967,37 +2149,51 @@ describe('Parental Leave Application Template', () => {
       expect(
         canApplicantDelete(ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS),
       ).toBe(false)
-      expect(
-        canApplicantDelete(ApplicationStates.VINNUMALASTOFNUN_EDITS_ACTION),
-      ).toBe(false)
       expect(canApplicantDelete(ApplicationStates.APPROVED)).toBe(false)
     })
 
-    // DRAFT can be re-entered from vinnumalastofnunApproval / vinnumalastofnunAction
-    // via the EDIT event once VMST already holds a record for the application
+    // DRAFT can be re-entered from vinnumalastofnunApproval via EDIT or REJECT once VMST already holds a record for the application
     // (sendApplication has fired at least once, populating sendApplication.data.id).
     // Deleting the application locally in that case would leave our system out
     // of sync with VMST, so the dynamic delete predicate must return false.
-    it('should not let the applicant delete DRAFT once VMST has assigned a fund id', () => {
-      const application = buildApplication({
-        answers: { selectedChild: '0' },
+    it.each<{ externalData: ExternalData; source: string }>([
+      {
         externalData: {
           sendApplication: {
             data: { id: 'VMST-12345' },
-            status: 'success',
+            status: 'success' as const,
             date: new Date(),
           },
         },
-        state: ApplicationStates.DRAFT,
-      })
-      const roleInState = new ApplicationTemplateHelper(
-        application,
-        ParentalLeaveTemplate,
-      ).getRoleInState(Roles.APPLICANT)
-      const del = roleInState?.delete
-      const canDelete = typeof del === 'function' ? del(application) : !!del
-      expect(canDelete).toBe(false)
-    })
+        source: 'sendApplication',
+      },
+      {
+        externalData: {
+          navId: {
+            data: 'VMST-12345',
+            status: 'success' as const,
+            date: new Date(),
+          },
+        },
+        source: 'legacy navId',
+      },
+    ])(
+      'should not let the applicant delete DRAFT once VMST has assigned an id through $source',
+      ({ externalData }) => {
+        const application = buildApplication({
+          answers: { selectedChild: '0' },
+          externalData,
+          state: ApplicationStates.DRAFT,
+        })
+        const roleInState = new ApplicationTemplateHelper(
+          application,
+          ParentalLeaveTemplate,
+        ).getRoleInState(Roles.APPLICANT)
+        const del = roleInState?.delete
+        const canDelete = typeof del === 'function' ? del(application) : !!del
+        expect(canDelete).toBe(false)
+      },
+    )
 
     // Edit-flow states are entered as part of a change / VMST-rejection edit.
     // Once this application itself has been sent to VMST (its own
@@ -2009,7 +2205,6 @@ describe('Parental Leave Application Template', () => {
         ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
         ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
         ApplicationStates.EMPLOYER_APPROVE_EDITS,
-        ApplicationStates.EMPLOYER_EDITS_ACTION,
       ]
 
       for (const state of editFlowStates) {
@@ -2051,11 +2246,6 @@ describe('Parental Leave Application Template', () => {
             status: 'success',
             date: new Date(),
           },
-          previousApplication: {
-            data: { applicationFundId: '2017-05152' },
-            status: 'success',
-            date: new Date(),
-          },
         },
         state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
       })
@@ -2069,18 +2259,257 @@ describe('Parental Leave Application Template', () => {
     })
   })
 
-  describe('Spouse rejection', () => {
-    it('should remove personalAllowanceFromSpouse on spouse rejection', () => {
+  it('should persist the default access consent for a manual other parent', () => {
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+        answers: {
+          otherParentObj: {
+            chooseOtherParent: 'manual',
+            otherParentId: createNationalId('person'),
+          },
+        },
+      }),
+      ParentalLeaveTemplate,
+    )
+
+    const [hasChanged, , application] = helper.changeState({
+      type: DefaultEvents.SUBMIT,
+    })
+
+    expect(hasChanged).toBe(true)
+    expect(application.answers).toMatchObject({
+      otherParentRightOfAccess: YES,
+    })
+  })
+
+  describe('actions bound to a single transition', () => {
+    const reviewerId = createNationalId('person')
+    const companyId = createNationalId('company')
+    const pendingEmployerAnswers = () => ({
+      applicationType: { option: PARENTAL_LEAVE },
+      selectedChild: '0',
+      employerNationalRegistryId: companyId,
+      employers: [
+        {
+          email: 'employer@example.is',
+          ratio: '100',
+          isApproved: false,
+          reviewerNationalRegistryId: reviewerId,
+        },
+      ],
+    })
+
+    it('should mark the employer approved when the employer approves', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
-          answers: {
-            personalAllowanceFromSpouse: {
-              usePersonalAllowance: YES,
-              useAsMuchAsPossible: YES,
-              usage: '100',
+          state: ApplicationStates.EMPLOYER_APPROVAL,
+          assignees: [reviewerId],
+          answers: pendingEmployerAnswers(),
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.APPROVE,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVAL)
+      expect(newApplication.assignees).toEqual([])
+      expect(newApplication.answers.employers).toEqual([
+        expect.objectContaining({
+          isApproved: true,
+          companyNationalRegistryId: companyId,
+        }),
+      ])
+    })
+
+    it.each<[DefaultEvents.REJECT | DefaultEvents.EDIT, string]>([
+      [DefaultEvents.REJECT, ApplicationStates.DRAFT],
+      [DefaultEvents.EDIT, ApplicationStates.DRAFT],
+    ])(
+      'should not mark the employer approved on %s',
+      (event, expectedState) => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            state: ApplicationStates.EMPLOYER_APPROVAL,
+            assignees: [reviewerId],
+            answers: pendingEmployerAnswers(),
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const [hasChanged, newState, newApplication] = helper.changeState({
+          type: event,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newState).toBe(expectedState)
+        expect(newApplication.assignees).toEqual([])
+        expect(newApplication.answers.employers).toEqual([
+          expect.objectContaining({ isApproved: false }),
+        ])
+      },
+    )
+
+    it.each([
+      [
+        ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN,
+        ApplicationStates.EMPLOYER_APPROVAL,
+      ],
+      [
+        ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+        ApplicationStates.EMPLOYER_APPROVE_EDITS,
+      ],
+    ])(
+      'should record the assigned employer reviewer when assigned in %s',
+      (state, expectedState) => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            state,
+            assignees: [reviewerId],
+            answers: {
+              applicationType: { option: PARENTAL_LEAVE },
+              selectedChild: '0',
+              employers: [
+                {
+                  email: 'employer@example.is',
+                  ratio: '100',
+                  isApproved: false,
+                },
+              ],
             },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const [hasChanged, newState, newApplication] = helper.changeState({
+          type: DefaultEvents.ASSIGN,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newState).toBe(expectedState)
+        expect(newApplication.answers).toMatchObject({
+          employerReviewerNationalRegistryId: reviewerId,
+          employers: [{ reviewerNationalRegistryId: reviewerId }],
+        })
+      },
+    )
+
+    it('should not record an employer reviewer when the applicant edits instead', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN,
+          answers: {
+            applicationType: { option: PARENTAL_LEAVE },
+            selectedChild: '0',
+            employers: [
+              { email: 'employer@example.is', ratio: '100', isApproved: false },
+            ],
           },
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.EDIT,
+      })
+
+      expect(newState).toBe(ApplicationStates.DRAFT)
+      expect(
+        newApplication.answers.employerReviewerNationalRegistryId,
+      ).toBeUndefined()
+    })
+
+    it.each<
+      [DefaultEvents.APPROVE | DefaultEvents.REJECT, string, string | undefined]
+    >([
+      [
+        DefaultEvents.APPROVE,
+        ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS,
+        YES,
+      ],
+      [DefaultEvents.REJECT, ApplicationStates.CLOSED, undefined],
+    ])(
+      'should only record the residence grant as applied for on %s',
+      (event, expectedState, expected) => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            state: ApplicationStates.RESIDENCE_GRANT_APPLICATION,
+            answers: {
+              applicationType: { option: PARENTAL_LEAVE },
+              selectedChild: '0',
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const [hasChanged, newState, newApplication] = helper.changeState({
+          type: event,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newState).toBe(expectedState)
+        expect(newApplication.answers.hasAppliedForReidenceGrant).toBe(expected)
+      },
+    )
+
+    it('should keep a pending employer change when the change form is re-entered', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: ApplicationStates.EMPLOYER_APPROVE_EDITS,
+          assignees: [reviewerId],
+          answers: {
+            ...pendingEmployerAnswers(),
+            applicationAction: ApplicationAction.CHANGE,
+            changeEmployer: YES,
+          },
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.EDIT,
+      })
+
+      expect(newState).toBe(ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS)
+      expect(newApplication.answers.changeEmployer).toBe(YES)
+    })
+
+    it('should keep the rejected employer change in the change form for the applicant to fix', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: ApplicationStates.EMPLOYER_APPROVE_EDITS,
+          assignees: [reviewerId],
+          answers: {
+            ...pendingEmployerAnswers(),
+            applicationAction: ApplicationAction.CHANGE,
+            changeEmployer: YES,
+          },
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.REJECT,
+      })
+
+      expect(newState).toBe(ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS)
+      expect(newApplication.answers.changeEmployer).toBe(YES)
+      expect(newApplication.answers.rejectedBy).toBe(RejectedBy.EMPLOYER)
+      expect(newApplication.assignees).toEqual([])
+    })
+
+    it('should clear the assignees when the other parent rejects the application', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
           state: ApplicationStates.OTHER_PARENT_APPROVAL,
+          assignees: [reviewerId],
+          answers: {
+            applicationType: { option: PARENTAL_LEAVE },
+            selectedChild: '0',
+          },
         }),
         ParentalLeaveTemplate,
       )
@@ -2090,9 +2519,244 @@ describe('Parental Leave Application Template', () => {
       })
 
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
-      expect(newApplication.answers.personalAllowanceFromSpouse).toBeUndefined()
+      expect(newState).toBe(ApplicationStates.DRAFT)
+      expect(newApplication.assignees).toEqual([])
     })
+
+    it('should clear the assignees when the application is closed while awaiting employer edits', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: ApplicationStates.EMPLOYER_APPROVE_EDITS,
+          assignees: [reviewerId],
+          answers: {
+            applicationType: { option: PARENTAL_LEAVE },
+            selectedChild: '0',
+          },
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: 'CLOSED',
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.CLOSED)
+      expect(newApplication.assignees).toEqual([])
+    })
+  })
+
+  describe('rejection', () => {
+    it.each([
+      [
+        ApplicationStates.OTHER_PARENT_APPROVAL,
+        ApplicationStates.DRAFT,
+        RejectedBy.OTHER_PARENT,
+      ],
+      [
+        ApplicationStates.EMPLOYER_APPROVAL,
+        ApplicationStates.DRAFT,
+        RejectedBy.EMPLOYER,
+      ],
+      [
+        ApplicationStates.VINNUMALASTOFNUN_APPROVAL,
+        ApplicationStates.DRAFT,
+        RejectedBy.VMST,
+      ],
+      [
+        ApplicationStates.OTHER_PARENT_APPROVAL_FOR_EDITS,
+        ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+        RejectedBy.OTHER_PARENT,
+      ],
+      [
+        ApplicationStates.EMPLOYER_APPROVE_EDITS,
+        ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+        RejectedBy.EMPLOYER,
+      ],
+      [
+        ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS,
+        ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+        RejectedBy.VMST,
+      ],
+    ])(
+      'should send a rejection in %s straight back to %s and record who rejected',
+      (state, expectedState, rejectedBy) => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            state,
+            assignees: [createNationalId('person')],
+            answers: {
+              applicationType: { option: PARENTAL_LEAVE },
+              selectedChild: '0',
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const [hasChanged, newState, newApplication] = helper.changeState({
+          type: DefaultEvents.REJECT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newState).toBe(expectedState)
+        expect(newApplication.answers.rejectedBy).toBe(rejectedBy)
+        expect(newApplication.assignees).toEqual([])
+      },
+    )
+
+    it('should clear who rejected once the applicant resubmits the change form', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          answers: {
+            applicationType: { option: PARENTAL_LEAVE },
+            selectedChild: '0',
+            rejectedBy: RejectedBy.VMST,
+          },
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasChanged, , newApplication] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newApplication.answers.rejectedBy).toBeUndefined()
+    })
+
+    it.each([
+      ApplicationStates.DRAFT,
+      ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+    ])(
+      'should notify the applicant when %s is entered by a rejection',
+      (state) => {
+        const onEntry =
+          ParentalLeaveTemplate.stateMachineConfig.states?.[state]?.meta
+            ?.onEntry
+
+        expect(onEntry).toEqual(
+          expect.objectContaining({
+            action: 'notifyApplicantOfRejection',
+            triggerEvent: DefaultEvents.REJECT,
+            throwOnError: false,
+          }),
+        )
+      },
+    )
+
+    it('should explain on the draft card who rejected the application', () => {
+      expect(draftStateDescription(buildApplication({ answers: {} }))).toBe(
+        statesMessages.draftDescription,
+      )
+      expect(
+        draftStateDescription(
+          buildApplication({ answers: { rejectedBy: RejectedBy.EMPLOYER } }),
+        ),
+      ).toBe(parentalLeaveFormMessages.draftFlow.draftNotApprovedEmployerDesc)
+    })
+
+    it('should show why the change form was reopened', () => {
+      expect(
+        editOrAddPeriodsStatePendingAction(buildApplication({ answers: {} }))
+          .title,
+      ).toBe(statesMessages.editOrAddPeriodsTitle)
+      expect(
+        editOrAddPeriodsStatePendingAction(
+          buildApplication({ answers: { rejectedBy: RejectedBy.VMST } }),
+        ).title,
+      ).toBe(statesMessages.vinnumalastofnunApproveEditsRejectHistoryLogMessage)
+    })
+  })
+
+  describe('taking an application back to edit it', () => {
+    it('should ask every party again when a first-time application is resubmitted', () => {
+      const application = buildApplication({
+        state: ApplicationStates.EMPLOYER_APPROVAL,
+        answers: {
+          applicationType: { option: PARENTAL_LEAVE },
+          otherParent: SPOUSE,
+          usePersonalAllowanceFromSpouse: YES,
+          employment: {
+            isSelfEmployed: NO,
+            isReceivingUnemploymentBenefits: NO,
+          },
+          employers: [{ email: 'employer@example.is', ratio: '100' }],
+        },
+      })
+
+      expect(getReapprovalAfterEdit(application)).toEqual({
+        isEditFlow: false,
+        otherParent: true,
+        employer: true,
+      })
+    })
+
+    it('should leave out parties a first-time application does not need', () => {
+      const application = buildApplication({
+        state: ApplicationStates.VINNUMALASTOFNUN_APPROVAL,
+        answers: {
+          applicationType: { option: PARENTAL_LEAVE },
+          employment: {
+            isSelfEmployed: YES,
+            isReceivingUnemploymentBenefits: NO,
+          },
+        },
+      })
+
+      expect(getReapprovalAfterEdit(application)).toEqual({
+        isEditFlow: false,
+        otherParent: false,
+        employer: false,
+      })
+    })
+
+    it.each([
+      ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+      ApplicationStates.EMPLOYER_APPROVE_EDITS,
+      ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS,
+    ])('should treat %s as the edit flow', (state) => {
+      expect(
+        getReapprovalAfterEdit(buildApplication({ state })).isEditFlow,
+      ).toBe(true)
+    })
+  })
+
+  describe('Spouse rejection', () => {
+    it.each([
+      [ApplicationStates.OTHER_PARENT_APPROVAL, ApplicationStates.DRAFT],
+      [
+        ApplicationStates.OTHER_PARENT_APPROVAL_FOR_EDITS,
+        ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+      ],
+    ])(
+      'should remove personalAllowanceFromSpouse on spouse rejection from %s',
+      (state, expectedState) => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              personalAllowanceFromSpouse: {
+                usePersonalAllowance: YES,
+                useAsMuchAsPossible: YES,
+                usage: '100',
+              },
+            },
+            state,
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const [hasChanged, newState, newApplication] = helper.changeState({
+          type: DefaultEvents.REJECT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newState).toBe(expectedState)
+        expect(
+          newApplication.answers.personalAllowanceFromSpouse,
+        ).toBeUndefined()
+      },
+    )
 
     it('should remove periods on spouse rejection', () => {
       const periods = [
@@ -2127,7 +2791,7 @@ describe('Parental Leave Application Template', () => {
       })
 
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
+      expect(newState).toBe(ApplicationStates.DRAFT)
       expect(newApplication.answers.periods).toBeUndefined()
     })
 
@@ -2162,7 +2826,7 @@ describe('Parental Leave Application Template', () => {
       })
 
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
+      expect(newState).toBe(ApplicationStates.DRAFT)
       expect(newApplication.answers.validatedPeriods).toBeUndefined()
     })
 
@@ -2185,7 +2849,7 @@ describe('Parental Leave Application Template', () => {
       })
 
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
+      expect(newState).toBe(ApplicationStates.DRAFT)
       expect(newApplication.answers.requestRights).toEqual({
         isRequestingRights: NO,
         requestDays: '0',
@@ -2215,7 +2879,7 @@ describe('Parental Leave Application Template', () => {
       })
 
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
+      expect(newState).toBe(ApplicationStates.DRAFT)
       expect(newApplication.answers.giveRights).toEqual({
         isGivingRights: NO,
         giveDays: '0',

@@ -50,6 +50,12 @@ describe('dataSchema multipleBirths', () => {
     expect(multipleBirthsSchema.safeParse({}).success).toBe(true)
   })
 
+  it('should treat an empty conditional answer as absent', () => {
+    expect(
+      multipleBirthsSchema.safeParse({ hasMultipleBirths: '' }).success,
+    ).toBe(true)
+  })
+
   it('should accept being absent entirely', () => {
     expect(multipleBirthsSchema.safeParse(undefined).success).toBe(true)
   })
@@ -81,4 +87,3 @@ describe('dataSchema multipleBirths', () => {
     ).toBe(true)
   })
 })
-

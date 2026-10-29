@@ -67,7 +67,11 @@ export const BaseInformation = ({
               label={formatMessage(
                 parentalLeaveFormMessages.applicant.phoneNumber,
               )}
-              value={formatPhoneNumber(applicantPhoneNumber) ?? ''}
+              value={
+                applicantPhoneNumber
+                  ? formatPhoneNumber(applicantPhoneNumber)
+                  : ''
+              }
               error={hasError('applicant.phoneNumber')}
             />
           </GridColumn>

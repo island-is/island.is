@@ -67,24 +67,12 @@ export class ChildrenService {
       this.applicationApiService.customTemplateFindQuery(
         application.typeId,
       ) as CustomTemplateFindQuery
-    const hasOwnMockAnswers =
-      getValueViaPath<string>(application.answers, 'mock.useMockData', NO) ===
-      YES
-    const inheritedMock =
-      getValueViaPath<string>(
-        application.externalData,
-        'previousApplication.data.answers.mock.useMockData',
-        NO,
-      ) === YES
     const shouldUseMockData =
-      (hasOwnMockAnswers || inheritedMock) && !this.isRunningOnProduction
+      getValueViaPath<string>(application.answers, 'mock.useMockData', NO) ===
+        YES && !this.isRunningOnProduction
 
     if (shouldUseMockData) {
-      return await this.getMockData(
-        application,
-        customTemplateFindQuery,
-        hasOwnMockAnswers,
-      )
+      return await this.getMockData(application, customTemplateFindQuery)
     }
 
     const parentalLeavesAndPregnancyStatus =
@@ -163,16 +151,15 @@ export class ChildrenService {
   async getMockData(
     application: Application,
     customTemplateFindQuery: CustomTemplateFindQuery,
-    hasOwnMockAnswers = true,
   ): Promise<{
     children: ChildInformation[]
     existingApplications: ExistingChildApplication[]
     childApplicationLinks: ChildApplicationLink[]
   }> {
-    // Resolved the same way as the real path so the change flow can be exercised
-    // with mock data: mock-apply for a child, then start another application and
-    // the child comes back as changeable — without having to retype the exact same
-    // date of birth, which is the only thing children are matched on.
+    // Children from earlier applications are listed so a mocked child does not
+    // have to be retyped. A mock application never reached VMST, so its child is
+    // never offered as a change: `applicationsToExistingChildApplication` leaves
+    // mock applications out.
     const applicationsWhereApplicant = await this.applicationsWhereApplicant(
       application,
       customTemplateFindQuery,
@@ -183,18 +170,6 @@ export class ChildrenService {
     const childrenFromEarlierApplications = applicationsToChildInformation(
       applicationsWhereApplicant,
     ) as ChildInformation[]
-
-    // Mock inherited from the predecessor rather than answered here: there are no
-    // mock answers on this application to synthesize a child from, and none are
-    // wanted — the child being changed is the predecessor's, which is already in
-    // `childrenFromEarlierApplications`.
-    if (!hasOwnMockAnswers) {
-      return {
-        children: childrenFromEarlierApplications,
-        existingApplications,
-        childApplicationLinks: [],
-      }
-    }
 
     const useApplication = getValueViaPath(
       application.answers,
@@ -376,10 +351,8 @@ export class ChildrenService {
           state === States.PREREQUISITES ||
           state === States.DRAFT ||
           state === States.OTHER_PARENT_APPROVAL ||
-          state === States.OTHER_PARENT_ACTION ||
           state === States.EMPLOYER_WAITING_TO_ASSIGN ||
-          state === States.EMPLOYER_APPROVAL ||
-          state === States.EMPLOYER_ACTION
+          state === States.EMPLOYER_APPROVAL
 
         // The primary parent's application has to have reached VMST, otherwise the
         // secondary parent is offered a child they cannot apply for: VMST answers
@@ -477,10 +450,8 @@ export class ChildrenService {
   }
 
   async getParentalLeaves(nationalId: string): Promise<ParentalLeave[] | null> {
-    if (this.isRunningInDevelopment) {
-      return []
-    }
-
+    // Called in every environment, development included: a follow-up can only
+    // continue a leave this list contains (`getPreviousVmstLeave`).
     try {
       const results =
         await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({

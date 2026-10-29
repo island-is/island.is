@@ -4,7 +4,13 @@ import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 import { FieldBaseProps, DefaultEvents } from '@island.is/application/types'
-import { Box, Button, Text, ActionCard } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Text,
+  ActionCard,
+  DialogPrompt,
+} from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { handleServerError } from '@island.is/application/ui-components'
 import { Review } from '../Review/Review'
@@ -12,9 +18,11 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getApplicationAnswers,
   getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
+  getVmstApplicationId,
   isFosterCareAndAdoption,
   showResidenceGrant,
 } from '../../lib/parentalLeaveUtils'
+import { getReapprovalAfterEdit } from '../../lib/parentalLeaveTemplateUtils'
 import {
   ApplicationAction,
   States as ApplicationStates,
@@ -23,14 +31,18 @@ import {
 } from '../../constants'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
 import { useStartFollowUpApplication } from '../../hooks/useStartFollowUpApplication'
-import { YES } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 
 const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application, field, refetch, errors } = props
   const { hasAppliedForReidenceGrant, periods } = getApplicationAnswers(
     application.answers,
   )
-  const showResidenceGrantCard = showResidenceGrant(application)
+  // A mock application never reached VMST, so there is no leave a residence
+  // grant could continue.
+  const showResidenceGrantCard =
+    showResidenceGrant(application) &&
+    getValueViaPath(application.answers, 'mock.useMockData') !== YES
   const { start: startResidenceGrant } = useStartFollowUpApplication(
     ApplicationAction.RESIDENCE_GRANT,
   )
@@ -62,11 +74,43 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
     application.state === ApplicationStates.EMPLOYER_APPROVE_EDITS ||
     application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS
 
-  const lastEndDate = new Date(periods[periods.length - 1].endDate)
+  const lastPeriodEndDate = periods?.[periods.length - 1]?.endDate
+  const hasFuturePeriod =
+    Boolean(lastPeriodEndDate) &&
+    new Date(lastPeriodEndDate).getTime() > new Date().getTime()
 
-  const isUsedAllRights =
-    useRemainingRights(application) > 0 ||
-    lastEndDate.getTime() > new Date().getTime()
+  const isUsedAllRights = useRemainingRights(application) > 0 || hasFuturePeriod
+
+  const reapproval = getReapprovalAfterEdit(application)
+  const approvers = [
+    reapproval.otherParent &&
+      formatMessage(parentalLeaveFormMessages.reviewScreen.approverOtherParent),
+    reapproval.employer &&
+      formatMessage(parentalLeaveFormMessages.reviewScreen.approverEmployer),
+    formatMessage(parentalLeaveFormMessages.reviewScreen.approverVMST),
+  ].filter((approver): approver is string => Boolean(approver))
+  const approverList =
+    approvers.length > 1
+      ? `${approvers.slice(0, -1).join(', ')} ${formatMessage(
+          parentalLeaveFormMessages.reviewScreen.listAnd,
+        )} ${approvers[approvers.length - 1]}`
+      : approvers[0]
+  const editConfirmTitle = formatMessage(
+    reapproval.isEditFlow
+      ? parentalLeaveFormMessages.reviewScreen.editConfirmTitleEdits
+      : parentalLeaveFormMessages.reviewScreen.editConfirmTitle,
+  )
+  const editConfirmDescription = reapproval.isEditFlow
+    ? formatMessage(
+        parentalLeaveFormMessages.reviewScreen.editConfirmDescriptionEdits,
+      )
+    : formatMessage(
+        parentalLeaveFormMessages.reviewScreen.editConfirmDescription,
+        {
+          approvers: approverList,
+          hasOtherApprovers: String(approvers.length > 1),
+        },
+      )
 
   const handleSubmit = async (event: string) => {
     const res = await submitApplication({
@@ -133,21 +177,36 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
         <Box>
           {canBeEdited && isUsedAllRights && (
             <Box display="inlineBlock">
-              <Button
-                colorScheme="default"
-                iconType="filled"
-                size="small"
-                type="button"
-                variant="text"
-                icon="pencil"
-                loading={loadingSubmit}
-                disabled={loadingSubmit}
-                onClick={() => handleSubmit(DefaultEvents.EDIT)}
-              >
-                {formatMessage(
-                  parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+              <DialogPrompt
+                baseId="parental-leave-edit-confirm"
+                ariaLabel={editConfirmTitle}
+                title={editConfirmTitle}
+                description={editConfirmDescription}
+                buttonTextCancel={formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.editConfirmCancel,
                 )}
-              </Button>
+                buttonTextConfirm={formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.editConfirmButton,
+                )}
+                buttonPropsConfirm={{ variant: 'primary' }}
+                onConfirm={() => handleSubmit(DefaultEvents.EDIT)}
+                disclosureElement={
+                  <Button
+                    colorScheme="default"
+                    iconType="filled"
+                    size="small"
+                    type="button"
+                    variant="text"
+                    icon="pencil"
+                    loading={loadingSubmit}
+                    disabled={loadingSubmit}
+                  >
+                    {formatMessage(
+                      parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                    )}
+                  </Button>
+                }
+              />
             </Box>
           )}
         </Box>
@@ -177,13 +236,14 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
                     .residenceGrantApplyTitle,
                 ),
                 // The residence grant is its own action, so it gets its own
-                // application seeded from this one. Marking this application as
-                // applied-for is what hides this card from now on.
+                // application for the same VMST leave. Marking this application
+                // as applied-for is what hides this card from now on.
                 onClick: () =>
                   startResidenceGrant({
-                    previousApplicationId: application.id,
+                    previousApplicationId: getVmstApplicationId(application),
                     previousAnswersPatch: {
-                      hasAppliedForReidenceGrant: YES,
+                      applicationId: application.id,
+                      answers: { hasAppliedForReidenceGrant: YES },
                     },
                   }),
               }}

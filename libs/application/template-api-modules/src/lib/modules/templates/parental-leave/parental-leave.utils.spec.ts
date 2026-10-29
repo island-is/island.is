@@ -22,7 +22,6 @@ import {
   getRightsCode,
   getRatio,
   getEmployer,
-  pickCarryOverAnswers,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 import { NO, YES } from '@island.is/application/core'
@@ -73,62 +72,6 @@ const createExternalDataChild = (
 let application: Application
 beforeEach(() => {
   application = createApplicationBase()
-})
-
-describe('pickCarryOverAnswers', () => {
-  it('should carry mock mode so a follow-up never calls VMST with a fake fund id', () => {
-    // A mock application's fund id is the literal 'mock-application-fund-id'. If a
-    // follow-up loses mock mode it calls VMST for real with that id and fails.
-    const carried = pickCarryOverAnswers({
-      mock: { useMockData: 'yes', useMockedDateOfBirth: '20270304' },
-    })
-
-    expect(carried.mock).toEqual({
-      useMockData: 'yes',
-      useMockedDateOfBirth: '20270304',
-    })
-  })
-
-  it('should carry only non-refillable context and drop refillable answers', () => {
-    const carried = pickCarryOverAnswers({
-      noChildrenFound: { typeOfApplication: 'primary_adoption' },
-      periods: [
-        { startDate: '2027-01-01', endDate: '2027-06-01', ratio: '100' },
-      ],
-      payments: { bank: '011126111111' },
-      employers: [
-        {
-          email: 'a@b.is',
-          ratio: '100',
-          isApproved: true,
-          reviewerNationalRegistryId: '1',
-        },
-      ],
-      actionName: 'period',
-      addEmployer: 'yes',
-      changeEmployer: true,
-      changeApplicationInfo: 'yes',
-      isResidenceGrant: 'yes',
-      // An index into a list the new application rebuilds — must not come along.
-      selectedChild: '0',
-    })
-
-    expect(carried.applicationType).toBeUndefined()
-    expect(carried.noChildrenFound).toEqual({
-      typeOfApplication: 'primary_adoption',
-    })
-
-    expect(carried.periods).toBeUndefined()
-    expect(carried.payments).toBeUndefined()
-    expect(carried.employers).toBeUndefined()
-
-    expect(carried.actionName).toBeUndefined()
-    expect(carried.addEmployer).toBeUndefined()
-    expect(carried.changeEmployer).toBeUndefined()
-    expect(carried.changeApplicationInfo).toBeUndefined()
-    expect(carried.isResidenceGrant).toBeUndefined()
-    expect(carried.selectedChild).toBeUndefined()
-  })
 })
 
 describe('getPersonalAllowance', () => {

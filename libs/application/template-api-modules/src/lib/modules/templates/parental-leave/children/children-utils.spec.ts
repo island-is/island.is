@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/types'
 
 import {
+  applicationsToInProgressChildApplications,
   collectChildren,
   getChildren,
   getChildrenFromMockData,
@@ -19,6 +20,7 @@ import {
   ChildInformationWithoutRights,
   PregnancyStatus,
   ChildInformation,
+  States,
 } from '@island.is/application/templates/parental-leave'
 
 let id = 0
@@ -32,6 +34,7 @@ const createApplicationWithChildren = (
   children: ChildInformationWithoutRights[],
   selectedChildIndex: number,
   answers?: FormValue,
+  state: string = States.APPROVED,
 ): Application => {
   const externalData: Application['externalData'] = {}
 
@@ -52,7 +55,7 @@ const createApplicationWithChildren = (
     externalData,
     id: `${id++}`,
     modified: new Date(),
-    state: '',
+    state,
     status: 'inprogress' as Application['status'],
     typeId: 'ParentalLeave' as Application['typeId'],
   }
@@ -87,6 +90,112 @@ describe('applicationsToChildInformation', () => {
     expect(applicationsToChildInformation(applicationsWhereApplicant)).toEqual(
       children,
     )
+  })
+})
+
+describe('applicationsToExistingChildApplication', () => {
+  const child: ChildInformationWithoutRights = {
+    expectedDateOfBirth: '2027-03-04',
+    parentalRelation: ParentalRelations.primary,
+  }
+  const withFundId = (fundId: string) => {
+    const application = createApplicationWithChildren(
+      PRIMARY_PARENT_ID,
+      [child],
+      0,
+    )
+    set(application, 'externalData.navId', {
+      data: fundId,
+      date: new Date(),
+      status: 'success',
+    })
+    return application
+  }
+
+  it('should link a child to an application VMST has received', () => {
+    expect(
+      applicationsToExistingChildApplication([withFundId('2025-03076')]),
+    ).toEqual([
+      expect.objectContaining({
+        expectedDateOfBirth: '2027-03-04',
+        hasApplicationFundId: true,
+      }),
+    ])
+  })
+
+  // A mock application never reached VMST, so there is no leave a change could
+  // continue: its child is offered as a first-time application instead.
+  it('should not link a child to a mock application', () => {
+    expect(
+      applicationsToExistingChildApplication([
+        withFundId('mock-application-fund-id'),
+      ]),
+    ).toEqual([])
+  })
+})
+
+describe('applicationsToInProgressChildApplications', () => {
+  const child: ChildInformationWithoutRights = {
+    expectedDateOfBirth: '2027-03-04',
+    parentalRelation: ParentalRelations.primary,
+  }
+  const inState = (state: string, answers?: FormValue) =>
+    createApplicationWithChildren(PRIMARY_PARENT_ID, [child], 0, answers, state)
+
+  it.each([
+    States.DRAFT,
+    States.OTHER_PARENT_APPROVAL,
+    States.EMPLOYER_WAITING_TO_ASSIGN,
+    States.EMPLOYER_APPROVAL,
+    States.VINNUMALASTOFNUN_APPROVAL,
+    States.ADDITIONAL_DOCUMENTS_REQUIRED,
+  ])('should hold the child of a first-time application in %s', (state) => {
+    expect(applicationsToInProgressChildApplications([inState(state)])).toEqual(
+      [
+        expect.objectContaining({
+          expectedDateOfBirth: '2027-03-04',
+          isApplicationInProgress: true,
+          isChangeInProgress: false,
+        }),
+      ],
+    )
+  })
+
+  it.each([
+    States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+    States.EMPLOYER_APPROVE_EDITS,
+    States.VINNUMALASTOFNUN_APPROVE_EDITS,
+  ])('should hold the child of a change in %s', (state) => {
+    expect(
+      applicationsToInProgressChildApplications([
+        inState(state, { applicationAction: 'change' }),
+      ]),
+    ).toEqual([
+      expect.objectContaining({
+        isApplicationInProgress: false,
+        isChangeInProgress: true,
+      }),
+    ])
+  })
+
+  it.each([States.PREREQUISITES, States.APPROVED, States.CLOSED])(
+    'should not hold the child of an application in %s',
+    (state) => {
+      expect(
+        applicationsToInProgressChildApplications([inState(state)]),
+      ).toEqual([])
+    },
+  )
+
+  it('should not hold the child of a mock application', () => {
+    const application = inState(States.VINNUMALASTOFNUN_APPROVAL)
+    set(application, 'externalData.navId', {
+      data: 'mock-application-fund-id',
+      date: new Date(),
+      status: 'success',
+    })
+
+    expect(applicationsToInProgressChildApplications([application])).toEqual([])
   })
 })
 
@@ -254,6 +363,7 @@ describe('getChildren', () => {
         existingApplicationId: existingApplication.id,
         existingApplicationHasFundId: false,
         existingApplicationIsChangeInProgress: false,
+        existingApplicationIsInProgress: false,
       },
     ]
 
@@ -265,6 +375,77 @@ describe('getChildren', () => {
 
     expect(expectedExistingApplications.length).toBe(1)
     expect(result).toStrictEqual(expected)
+  })
+
+  // VMST does not know about an application still with the other parent or the
+  // employer, and its list never says a change is under way.
+  it.each([
+    [States.EMPLOYER_APPROVAL, undefined, 'existingApplicationIsInProgress'],
+    [
+      States.VINNUMALASTOFNUN_APPROVE_EDITS,
+      { applicationAction: 'change' },
+      'existingApplicationIsChangeInProgress',
+    ],
+  ] as const)(
+    'should hold a child with an unfinished application in %s even when VMST lists the leave',
+    (state, answers, flag) => {
+      const children: ChildInformationWithoutRights[] = [
+        {
+          expectedDateOfBirth: '2020-10-10',
+          parentalRelation: ParentalRelations.primary,
+        },
+      ]
+      const unfinished = createApplicationWithChildren(
+        PRIMARY_PARENT_ID,
+        children,
+        0,
+        answers,
+        state,
+      )
+
+      const { children: result } = getChildren([unfinished], [], undefined, [
+        {
+          applicationId: 'vmst-app-123',
+          expectedDateOfBirth: '2020-10-10',
+          hasApplicationFundId: true,
+          isChangeInProgress: false,
+        },
+      ])
+
+      expect(result[0].existingApplicationId).toBe(unfinished.id)
+      expect(result[0][flag]).toBe(true)
+    },
+  )
+
+  it('should drop a stale link copied from an earlier application', () => {
+    const children: ChildInformationWithoutRights[] = [
+      {
+        expectedDateOfBirth: '2020-10-10',
+        parentalRelation: ParentalRelations.primary,
+        existingApplicationId: 'long-gone-mock-application',
+        existingApplicationHasFundId: true,
+        existingApplicationIsChangeInProgress: true,
+      },
+    ]
+    const earlier = createApplicationWithChildren(
+      PRIMARY_PARENT_ID,
+      children,
+      0,
+    )
+    set(earlier, 'externalData.navId', {
+      data: 'mock-application-fund-id',
+      date: new Date(),
+      status: 'success',
+    })
+
+    const { children: result } = getChildren([earlier], [], undefined)
+
+    expect(result).toStrictEqual([
+      {
+        expectedDateOfBirth: '2020-10-10',
+        parentalRelation: ParentalRelations.primary,
+      },
+    ])
   })
 
   it('should prefer a VMST match over a local historical application when both exist', () => {
@@ -389,6 +570,7 @@ describe('getChildren', () => {
         existingApplicationId: existingApplication.id,
         existingApplicationHasFundId: false,
         existingApplicationIsChangeInProgress: false,
+        existingApplicationIsInProgress: false,
       },
     ]
 
@@ -493,6 +675,7 @@ describe('getChildren', () => {
         existingApplicationId: existingApplication.id,
         existingApplicationHasFundId: false,
         existingApplicationIsChangeInProgress: false,
+        existingApplicationIsInProgress: false,
       },
     ]
 

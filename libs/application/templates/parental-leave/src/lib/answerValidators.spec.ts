@@ -10,7 +10,8 @@ import format from 'date-fns/format'
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
 import { MANUAL, ParentalRelations } from '../constants'
 import { answerValidators } from './answerValidators'
-import { errorMessages } from './messages'
+import set from 'lodash/set'
+import { errorMessages, parentalLeaveFormMessages } from './messages'
 import { StartDateOptions, AnswerValidationConstants } from '../constants'
 import { NO, YES } from '@island.is/application/core'
 
@@ -686,5 +687,53 @@ describe('when constructing a new period', () => {
         application,
       ),
     ).toEqual(undefined)
+  })
+})
+
+describe('when selecting a child', () => {
+  const withChildren = (children: Record<string, unknown>[]) => {
+    const application = createBaseApplication()
+    set(application, 'externalData.children.data.children', children)
+    return application
+  }
+
+  it('should refuse a child that already has an unfinished application', () => {
+    const application = withChildren([
+      {
+        expectedDateOfBirth: DEFAULT_DOB,
+        parentalRelation: ParentalRelations.primary,
+        existingApplicationId: 'waiting-for-approval-id',
+        existingApplicationIsInProgress: true,
+      },
+    ])
+
+    expect(
+      answerValidators[AnswerValidationConstants.SELECTED_CHILD](
+        '0',
+        application,
+      ),
+    ).toMatchObject({
+      message: parentalLeaveFormMessages.selectChild.childInProgressError,
+      path: 'selectedChild',
+    })
+  })
+
+  it('should accept a child whose earlier application has finished', () => {
+    const application = withChildren([
+      {
+        expectedDateOfBirth: DEFAULT_DOB,
+        parentalRelation: ParentalRelations.primary,
+        existingApplicationId: 'approved-id',
+        existingApplicationIsInProgress: false,
+        existingApplicationIsChangeInProgress: false,
+      },
+    ])
+
+    expect(
+      answerValidators[AnswerValidationConstants.SELECTED_CHILD](
+        '0',
+        application,
+      ),
+    ).toBeUndefined()
   })
 })

@@ -17,18 +17,25 @@ import { ApplicationAction } from '../constants'
 const slug = ApplicationConfigurations.ParentalLeave.slug
 
 type Options = {
-  /** The application the new one continues. */
+  /**
+   * The VMST application id of the leave the new application continues (see
+   * `getVmstApplicationId`). It becomes the new application's `initialQuery`.
+   */
   previousApplicationId: string
   /** Use the application currently open in the prerequisite flow. */
   applicationId?: string
   /** Refresh the current application after an in-place state transition. */
   refetch?: () => void
   /**
-   * Answers to write back onto the predecessor. Needed where the predecessor
-   * tracks that a follow-up was started — e.g. `hasAppliedForReidenceGrant`,
-   * which is what hides its "apply for the residence grant" card.
+   * Answers to write back onto the island.is application the follow-up was
+   * started from. Needed where it tracks that a follow-up was started — e.g.
+   * `hasAppliedForReidenceGrant`, which is what hides its "apply for the
+   * residence grant" card.
    */
-  previousAnswersPatch?: Record<string, unknown>
+  previousAnswersPatch?: {
+    applicationId: string
+    answers: Record<string, unknown>
+  }
 }
 
 /**
@@ -36,11 +43,10 @@ type Options = {
  * change or a residence grant is a new application rather than a re-entry into the
  * one it descends from.
  *
- * The predecessor's id goes out as `initialQuery`, which the application system
+ * The leave's id goes out as `initialQuery`, which the application system
  * persists as `answers.initialQuery` (see `initialQueryParameter` on the
- * template). From there the `getPreviousApplication` template api resolves the
- * answers to carry over server-side, so nothing sensitive travels through the
- * browser.
+ * template). The follow-up then reads the leave from VMST, and only once VMST's
+ * list for the applicant confirms it is theirs.
  */
 export const useStartFollowUpApplication = (action: ApplicationAction) => {
   const navigate = useNavigate()
@@ -104,7 +110,7 @@ export const useStartFollowUpApplication = (action: ApplicationAction) => {
           throw new Error('Create application returned no id')
         }
 
-        // `initialQuery` can only carry the predecessor's id, so the action is
+        // `initialQuery` can only carry the leave's id, so the action is
         // written separately. It has to land before the applicant submits
         // prerequisites, because that is what routes them to the right form.
         await updateApplication({
@@ -121,8 +127,8 @@ export const useStartFollowUpApplication = (action: ApplicationAction) => {
           await updateApplication({
             variables: {
               input: {
-                id: previousApplicationId,
-                answers: previousAnswersPatch,
+                id: previousAnswersPatch.applicationId,
+                answers: previousAnswersPatch.answers,
               },
               locale,
             },

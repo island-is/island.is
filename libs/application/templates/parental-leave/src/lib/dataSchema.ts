@@ -92,9 +92,7 @@ export const dataSchema = z.object({
       ApplicationAction.RESIDENCE_GRANT,
     ])
     .optional(),
-  // The application this one continues, and the id VMST knows the whole
-  // sequence by. Both empty/absent for a first-time application.
-  previousApplicationId: z.string().optional(),
+  // The id VMST knows the whole sequence of applications for a leave by.
   vmstApplicationId: z.string().optional(),
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
@@ -329,7 +327,10 @@ export const dataSchema = z.object({
     .optional(),
   multipleBirths: z
     .object({
-      hasMultipleBirths: z.enum([YES, NO]).optional(),
+      hasMultipleBirths: z.preprocess(
+        (value) => (value === '' ? undefined : value),
+        z.enum([YES, NO]).optional(),
+      ),
       multipleBirths: z.string().optional(),
     })
     .refine(

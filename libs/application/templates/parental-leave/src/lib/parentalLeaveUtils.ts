@@ -1,7 +1,6 @@
 import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import {
   Application,
-  ApplicationLifecycle,
   ExternalData,
   Field,
   FormValue,
@@ -54,6 +53,7 @@ import {
   PARENTAL_LEAVE,
   PERMANENT_FOSTER_CARE,
   ParentalRelations,
+  RejectedBy,
   Roles,
   SINGLE,
   SPOUSE,
@@ -81,15 +81,11 @@ import {
   Period,
   PersonInformation,
   PregnancyStatusAndRightsResults,
-  PreviousApplication,
   SelectOption,
   VMSTPeriod,
   VMSTOtherParent,
 } from '../types'
-import {
-  ApplicationInformation,
-  ApplicationRights,
-} from '@island.is/clients/vmst'
+import { NewApplication, ApplicationRight } from '@island.is/clients/vmst'
 
 export const currentDateStartTime = () => {
   const today = new Date().toDateString()
@@ -99,8 +95,13 @@ export const currentDateStartTime = () => {
 const multipleBirthRightsUnits = ['ORLOF-FBF', 'ST-FBF']
 const addOnRightsUnits = [...multipleBirthRightsUnits, 'EITTFOR', 'FSAL-GR']
 
-type VMSTApplicationInformationWithFollowUpFields = ApplicationInformation & {
+// `GET /applications/{id}` does not return these; they are merged in from
+// VMST's per-applicant parental-leaves list (`setApplicationInformation`).
+type VMSTApplicationInformationWithFollowUpFields = NewApplication & {
   language?: string | null
+  otherParentBlocked?: boolean | null
+  noOfChildren?: string | null
+  adoptionDate?: string | null
 }
 
 /**
@@ -658,12 +659,7 @@ export const getApplicationExternalData = (
 
   const applicationFundId =
     navId ||
-    (getValueViaPath<string>(externalData, 'sendApplication.data.id') ?? '') ||
-    (getValueViaPath<string>(
-      externalData,
-      'previousApplication.data.applicationFundId',
-    ) ??
-      '')
+    (getValueViaPath<string>(externalData, 'sendApplication.data.id') ?? '')
 
   const VMSTPeriods = getValueViaPath(
     externalData,
@@ -673,7 +669,7 @@ export const getApplicationExternalData = (
   const VMSTApplicationRights = getValueViaPath(
     externalData,
     'VMSTApplicationRights.data',
-  ) as ApplicationRights[]
+  ) as ApplicationRight[]
 
   const VMSTOtherParent = getValueViaPath(
     externalData,
@@ -684,12 +680,7 @@ export const getApplicationExternalData = (
   const VMSTApplicationInformation = getValueViaPath(
     externalData,
     'VMSTApplicationInformation.data',
-  ) as ApplicationInformation | null
-
-  const previousApplication = getValueViaPath(
-    externalData,
-    'previousApplication.data',
-  ) as PreviousApplication | null
+  ) as VMSTApplicationInformationWithFollowUpFields | null
 
   return {
     applicantName,
@@ -703,7 +694,6 @@ export const getApplicationExternalData = (
     userEmail,
     userPhoneNumber,
     dateOfBirth,
-    previousApplication,
     VMSTPeriods,
     VMSTApplicationRights,
     VMSTOtherParent,
@@ -712,32 +702,91 @@ export const getApplicationExternalData = (
 }
 
 /**
- * The application id VMST knows this application by. VMST keys
- * `GET /applications/{applicationId}` on the island.is application uuid, so a
- * `change` application has to keep using the id of the application it descends
- * from. Falls back to the application's own id, which is correct both for a
- * first-time `apply` and for any application created before
- * `vmstApplicationId` existed.
+ * The application id VMST knows this leave by: the island.is uuid of the first
+ * application for the child, which VMST keys its records on.
+ *
+ * Seeded into `answers.vmstApplicationId` by `prefillFromVMST`. Before that
+ * (the prerequisites template apis run ahead of it), a follow-up gets it from
+ * the VMST leave its `initialQuery` points at, once that leave is confirmed to
+ * be the applicant's own (`getPreviousVmstLeave`). A first-time application is
+ * its own root.
  */
-export const getVmstApplicationId = (application: Application): string => {
-  const fromAnswers = getValueViaPath<string>(
+export const getVmstApplicationId = (application: Application): string =>
+  getValueViaPath<string>(application.answers, 'vmstApplicationId') ||
+  getPreviousVmstLeave(application)?.vmstApplicationId ||
+  application.id
+
+/**
+ * VMST's record of the leave a follow-up application continues, as listed in
+ * the applicant's own VMST parental-leaves list. `initialQuery` comes from the
+ * browser and `GET /applications/{id}` does not check ownership, so only an id
+ * found here may be looked up in VMST.
+ *
+ * `undefined` for a first-time application and for a follow-up VMST does not
+ * list for this applicant.
+ */
+export const getPreviousVmstLeave = (
+  application: Application,
+): ChildApplicationLink | undefined => {
+  const initialQuery = getValueViaPath<string>(
     application.answers,
-    'vmstApplicationId',
+    'initialQuery',
   )
 
-  if (fromAnswers) {
-    return fromAnswers
+  if (!initialQuery) {
+    return undefined
   }
 
-  // Not seeded yet: `prefillFromPreviousApplication` is a prerequisites *exit*
-  // action and the template apis that need this id run before it. The provider
-  // data is already available at that point, so read it from there.
-  const fromProvider = getValueViaPath<string>(
+  const { childApplicationLinks } = getApplicationExternalData(
     application.externalData,
-    'previousApplication.data.vmstApplicationId',
   )
 
-  return fromProvider || application.id
+  return childApplicationLinks.find(
+    (link) => link.vmstApplicationId === initialQuery,
+  )
+}
+
+const toDay = (date?: string | null) => (date ?? '').slice(0, 10)
+
+/**
+ * Index of the child a follow-up application is for, in its own children list.
+ *
+ * The select-child screen starts a follow-up from the child's
+ * `existingApplicationId`, which becomes `initialQuery`. Failing that link, the
+ * child is matched on the dates VMST holds for the leave. `-1` when neither
+ * finds it.
+ */
+export const getFollowUpChildIndex = (application: Application): number => {
+  const { children, VMSTApplicationInformation } = getApplicationExternalData(
+    application.externalData,
+  )
+  const linkedIds = [
+    getValueViaPath<string>(application.answers, 'initialQuery'),
+    getVmstApplicationId(application),
+  ].filter(Boolean)
+
+  const linked = children.findIndex(
+    (child) =>
+      !!child.existingApplicationId &&
+      linkedIds.includes(child.existingApplicationId),
+  )
+  if (linked >= 0) {
+    return linked
+  }
+
+  const expectedDateOfBirth = toDay(
+    VMSTApplicationInformation?.expectedDateOfBirth,
+  )
+  const dateOfBirth = toDay(VMSTApplicationInformation?.dateOfBirth)
+  const adoptionDate = toDay(VMSTApplicationInformation?.adoptionDate)
+
+  return children.findIndex(
+    (child) =>
+      (!!expectedDateOfBirth &&
+        toDay(child.expectedDateOfBirth) === expectedDateOfBirth) ||
+      (!!dateOfBirth && toDay(child.dateOfBirth) === dateOfBirth) ||
+      (!!adoptionDate && toDay(child.adoptionDate) === adoptionDate),
+  )
 }
 
 const vmstPeriodsToAnswers = (periods: unknown): Period[] => {
@@ -749,10 +798,10 @@ const vmstPeriodsToAnswers = (periods: unknown): Period[] => {
     startDate: period.from,
     endDate: period.to,
     ratio: period.ratio.split(',')[0],
-    firstPeriodStart: period.firstPeriodStart,
+    firstPeriodStart: period.firstPeriodStart ?? undefined,
     rawIndex: index,
-    rightCodePeriod: period.rightsCodePeriod.split(',')[0],
-    daysToUse: period.days,
+    rightCodePeriod: (period.rightsCodePeriod ?? '').split(',')[0],
+    daysToUse: period.days ?? undefined,
     paid: period.paid,
     approved: period.approved,
   }))
@@ -790,7 +839,10 @@ const vmstEmployersToAnswers = (employers: unknown): EmployerRow[] => {
     })
 }
 
-const getMultipleBirthsFromRights = (rights: unknown) => {
+const getMultipleBirthsFromRights = (
+  rights: unknown,
+  noOfChildren?: string | null,
+) => {
   if (!Array.isArray(rights)) {
     return null
   }
@@ -809,12 +861,15 @@ const getMultipleBirthsFromRights = (rights: unknown) => {
     return null
   }
 
+  const children = Number(noOfChildren)
+
   return {
     multipleBirths: {
       hasMultipleBirths: YES,
-      // VMST rights are the source of truth for follow-up multiple-birth days;
-      // this minimum child-count value only satisfies the shared answer schema.
-      multipleBirths: '2',
+      // VMST rights are the source of truth for follow-up multiple-birth days.
+      // The child count comes from VMST's `noOfChildren` when it has one;
+      // otherwise the minimum only satisfies the shared answer schema.
+      multipleBirths: children > 1 ? String(children) : '2',
     },
     multipleBirthsRequestDays: days,
   }
@@ -864,6 +919,58 @@ const getIsSelfEmployedFromRights = (rights: unknown): YesOrNo | undefined => {
   return baseRight.includes('-S-GR') ? YES : NO
 }
 
+/**
+ * Adoption and permanent foster care are encoded in the rights code prefix
+ * (`M-Æ-L-GR`, `F-FÓ-GR`, ...). Rights cannot tell an `other` no-children-found
+ * leave from a normal birth.
+ */
+export const getTypeOfApplicationFromRights = (
+  rights: unknown,
+): typeof ADOPTION | typeof PERMANENT_FOSTER_CARE | undefined => {
+  if (!Array.isArray(rights)) {
+    return undefined
+  }
+
+  const segments = rights.flatMap((right) =>
+    typeof right?.rightsUnit === 'string' ? right.rightsUnit.split('-') : [],
+  )
+
+  if (segments.includes('Æ')) {
+    return ADOPTION
+  }
+
+  if (segments.includes('FÓ')) {
+    return PERMANENT_FOSTER_CARE
+  }
+
+  return undefined
+}
+
+/** The type of application of the leave VMST holds for this follow-up. */
+export const getVMSTTypeOfApplication = (
+  externalData: Application['externalData'],
+) => {
+  const { VMSTApplicationInformation, VMSTApplicationRights } =
+    getApplicationExternalData(externalData)
+
+  return getTypeOfApplicationFromRights(
+    VMSTApplicationInformation?.applicationRights ?? VMSTApplicationRights,
+  )
+}
+
+// VMST's `applicationInformation.phoneNumber` can be a `;`-separated list;
+// the schema only accepts a single valid IS phone number.
+export const pickFirstPhoneNumber = (
+  value: string | null | undefined,
+): string | undefined => {
+  if (!value) return undefined
+  const first = value
+    .split(';')
+    .map((part) => part.trim())
+    .find(Boolean)
+  return first || undefined
+}
+
 export const getVMSTApplicationAnswers = (
   externalData: Application['externalData'],
 ): FormValue => {
@@ -874,8 +981,7 @@ export const getVMSTApplicationAnswers = (
     VMSTOtherParent,
   } = getApplicationExternalData(externalData)
   const answers: FormValue = {}
-  const applicationInformation =
-    VMSTApplicationInformation as VMSTApplicationInformationWithFollowUpFields | null
+  const applicationInformation = VMSTApplicationInformation
   const rights =
     applicationInformation?.applicationRights ?? VMSTApplicationRights
   const periods = applicationInformation?.periods ?? VMSTPeriods
@@ -888,15 +994,18 @@ export const getVMSTApplicationAnswers = (
     set(answers, 'applicant.email', applicationInformation.email)
   }
 
-  if (applicationInformation?.phoneNumber) {
-    set(answers, 'applicant.phoneNumber', applicationInformation.phoneNumber)
+  const phoneNumber = pickFirstPhoneNumber(applicationInformation?.phoneNumber)
+  if (phoneNumber) {
+    set(answers, 'applicant.phoneNumber', phoneNumber)
   }
 
   if (applicationInformation) {
     set(
       answers,
       'applicant.language',
-      applicationInformation.language ?? Languages.IS,
+      applicationInformation.language?.toUpperCase() === Languages.EN
+        ? Languages.EN
+        : Languages.IS,
     )
   }
 
@@ -976,6 +1085,15 @@ export const getVMSTApplicationAnswers = (
     set(answers, 'otherParentObj.chooseOtherParent', MANUAL)
     set(answers, 'otherParentObj.otherParentId', otherParentId ?? '')
     set(answers, 'otherParentObj.otherParentName', otherParentName ?? '')
+
+    // Right of access is only asked about a manually entered other parent
+    if (typeof applicationInformation?.otherParentBlocked === 'boolean') {
+      set(
+        answers,
+        'otherParentRightOfAccess',
+        applicationInformation.otherParentBlocked ? NO : YES,
+      )
+    }
   }
 
   const vmstPeriods = vmstPeriodsToAnswers(periods)
@@ -990,7 +1108,10 @@ export const getVMSTApplicationAnswers = (
     set(answers, 'employers', vmstEmployers)
   }
 
-  const multipleBirths = getMultipleBirthsFromRights(rights)
+  const multipleBirths = getMultipleBirthsFromRights(
+    rights,
+    applicationInformation?.noOfChildren,
+  )
   if (multipleBirths) {
     set(answers, 'multipleBirths', multipleBirths.multipleBirths)
     set(
@@ -1004,32 +1125,14 @@ export const getVMSTApplicationAnswers = (
 }
 
 /**
- * Previous island.is answers retained as a fallback baseline. Follow-up
- * applications should prefer VMST data for refillable application details; these
- * answers are now limited to context VMST cannot yet reconstruct and to legacy
- * applications that predate the VMST-first follow-up flow.
- *
- * Falls back to `rewindBaseline.data.answers` for an in-place rewind of a
- * first-time leave, where there is no predecessor.
+ * Island.is answers snapshotted before an in-place rewind of a first-time leave,
+ * which has no predecessor. Follow-up applications carry no answers over; their
+ * baseline is VMST data alone.
  */
-export const getPreviousApplicationAnswers = (
+export const getRewindBaselineAnswers = (
   externalData: Application['externalData'],
-): FormValue => {
-  const fromPredecessor = getValueViaPath(
-    externalData,
-    'previousApplication.data.answers',
-  ) as FormValue | undefined
-
-  if (fromPredecessor && Object.keys(fromPredecessor).length > 0) {
-    return fromPredecessor
-  }
-
-  return getValueViaPath(
-    externalData,
-    'rewindBaseline.data.answers',
-    {},
-  ) as FormValue
-}
+): FormValue =>
+  getValueViaPath(externalData, 'rewindBaseline.data.answers', {}) as FormValue
 
 /** Coerce a value into a string so undefined, null, '' and 0 compare consistently on both sides of a baseline diff. */
 export const normalize = (val: unknown): string => String(val ?? '')
@@ -1040,18 +1143,19 @@ export const normalize = (val: unknown): string => String(val ?? '')
  *
  * This replaces the old `temp*` answers. Those were written into the application's
  * own answers on entry to the change form and restored on cancel, which is what
- * made cancelling an edit a rollback problem. The baseline now comes from the
- * application this one descends from: it is external data, it is never written
- * back, and cancelling simply closes this application.
+ * made cancelling an edit a rollback problem. The baseline now comes from VMST
+ * (or, for an in-place rewind of a first-time leave, a snapshot of its answers):
+ * it is external data, it is never written back, and cancelling simply closes
+ * this application.
  *
- * `null` when there is neither VMST data nor a legacy fallback baseline.
+ * `null` when there is neither VMST data nor a rewind baseline.
  */
 export const getChangeBaseline = (
   externalData: Application['externalData'],
 ) => {
   const vmstAnswers = getVMSTApplicationAnswers(externalData)
   const previousAnswers = {
-    ...getPreviousApplicationAnswers(externalData),
+    ...getRewindBaselineAnswers(externalData),
     ...vmstAnswers,
   }
 
@@ -1410,11 +1514,17 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   ) as YesOrNo
 
   // default value as 0 for adoption, foster care and father without mother
-  // since primary parent doesn't choose a child
+  // since primary parent doesn't choose a child. Only a first-time application
+  // has that single synthesized child; a follow-up's child is matched in
+  // `prefillFromVMST`.
+  const isFirstTimeApplication =
+    getValueViaPath(answers, 'applicationAction', ApplicationAction.APPLY) ===
+    ApplicationAction.APPLY
   const selectedChild =
-    noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
-    noChildrenFoundTypeOfApplication === ADOPTION ||
-    noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND
+    isFirstTimeApplication &&
+    (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
+      noChildrenFoundTypeOfApplication === ADOPTION ||
+      noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND)
       ? '0'
       : (getValueViaPath(answers, 'selectedChild') as string)
 
@@ -1553,12 +1663,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     ApplicationAction.APPLY,
   ) as ApplicationAction
 
-  const previousApplicationId = getValueViaPath(
-    answers,
-    'previousApplicationId',
-    '',
-  ) as string
-
   const addEmployer = getValueViaPath(answers, 'addEmployer') as YesOrNo
 
   const addPeriods = getValueViaPath(answers, 'addPeriods') as YesOrNo
@@ -1636,7 +1740,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     changeEmployerFile,
     hasAppliedForReidenceGrant,
     applicationAction,
-    previousApplicationId,
     addEmployer,
     addPeriods,
     language,
@@ -1697,14 +1800,14 @@ export const requiresOtherParentApproval = (
   }
 
   const selectedChild = getSelectedChild(answers, externalData)
-  const { navId } = getApplicationExternalData(externalData)
+  const { applicationFundId } = getApplicationExternalData(externalData)
   const { isRequestingRights, usePersonalAllowanceFromSpouse } =
     applicationAnswers
 
   const needsApprovalForRequestingRights =
     selectedChild?.parentalRelation === ParentalRelations.primary
 
-  if (navId) {
+  if (applicationFundId) {
     return false
   }
 
@@ -1717,7 +1820,7 @@ export const requiresOtherParentApproval = (
 /**
  * Whether a change application needs to route through the other parent again.
  *
- * Unlike `requiresOtherParentApproval` we cannot skip on `navId`: every change
+ * Unlike `requiresOtherParentApproval` we cannot skip on the fund id: every change
  * application inherits one from its predecessor. Instead we diff against the
  * change baseline so we only trigger approval when the applicant actually
  * altered what they are asking of the other parent — a rights transfer they did
@@ -2177,14 +2280,14 @@ export const synchronizeVMSTPeriods = (
   const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
   const today = new Date()
   VMSTPeriods?.forEach((period, index) => {
-    const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+    const rightsCodePeriod = (period.rightsCodePeriod ?? '').split(',')[0]
     const obj = {
       startDate: period.from,
       endDate: period.to,
       ratio: period.ratio.split(',')[0],
       rawIndex: index,
       rightCodePeriod: rightsCodePeriod,
-      daysToUse: period.days,
+      daysToUse: period.days ?? undefined,
       paid: period.paid,
       approved: period.approved,
     }
@@ -2471,6 +2574,85 @@ export const otherParentApprovalStatePendingAction = (
   }
 }
 
+/** Who rejects an application in each review state. */
+export const getRejectedByFromState = (state: string): RejectedBy => {
+  switch (state) {
+    case States.OTHER_PARENT_APPROVAL:
+    case States.OTHER_PARENT_APPROVAL_FOR_EDITS:
+      return RejectedBy.OTHER_PARENT
+    case States.EMPLOYER_APPROVAL:
+    case States.EMPLOYER_APPROVE_EDITS:
+      return RejectedBy.EMPLOYER
+    default:
+      return RejectedBy.VMST
+  }
+}
+
+export const getRejectedBy = (answers: Application['answers']) =>
+  getValueViaPath<RejectedBy>(answers, 'rejectedBy')
+
+/** Text for the banner shown at the top of the form after a rejection. */
+export const getRejectionAlertMessage = (
+  answers: Application['answers'],
+  flow: 'draft' | 'edit',
+) => {
+  switch (getRejectedBy(answers)) {
+    case RejectedBy.OTHER_PARENT:
+      return parentalLeaveFormMessages.draftFlow.draftNotApprovedOtherParentDesc
+    case RejectedBy.EMPLOYER:
+      return flow === 'draft'
+        ? parentalLeaveFormMessages.draftFlow.draftNotApprovedEmployerDesc
+        : parentalLeaveFormMessages.editFlow.editsNotApprovedEmployerDesc
+    case RejectedBy.VMST:
+      return flow === 'draft'
+        ? parentalLeaveFormMessages.draftFlow.draftNotApprovedVMLSTDesc
+        : parentalLeaveFormMessages.editFlow.editsNotApprovedVMLSTDesc
+    default:
+      return undefined
+  }
+}
+
+/**
+ * Draft cards show their description rather than a pending action, so a
+ * rejection has to be explained here.
+ */
+export const draftStateDescription = (application: Application) =>
+  getRejectionAlertMessage(application.answers, 'draft') ??
+  statesMessages.draftDescription
+
+export const editOrAddPeriodsStatePendingAction = (
+  application: Application,
+): PendingAction => {
+  switch (getRejectedBy(application.answers)) {
+    case RejectedBy.OTHER_PARENT:
+      return {
+        title: statesMessages.otherParentActionPendingActionTitle,
+        content: statesMessages.otherParentActionPendingActionContent,
+        displayStatus: 'warning',
+      }
+    case RejectedBy.EMPLOYER:
+      return {
+        title: statesMessages.employerEditsActionDescription,
+        content:
+          parentalLeaveFormMessages.editFlow.editsNotApprovedEmployerDesc,
+        displayStatus: 'warning',
+      }
+    case RejectedBy.VMST:
+      return {
+        title:
+          statesMessages.vinnumalastofnunApproveEditsRejectHistoryLogMessage,
+        content: parentalLeaveFormMessages.editFlow.editsNotApprovedVMLSTDesc,
+        displayStatus: 'warning',
+      }
+    default:
+      return {
+        title: statesMessages.editOrAddPeriodsTitle,
+        content: statesMessages.editOrAddPeriodsDescription,
+        displayStatus: 'warning',
+      }
+  }
+}
+
 export const employerApprovalStatePendingAction = (
   _: Application,
   role: string,
@@ -2491,6 +2673,69 @@ export const employerApprovalStatePendingAction = (
 }
 
 /**
+ * True when the applicant already has an unfinished application for this child,
+ * whether a first-time application or a change. The child cannot be picked for
+ * another application until that one is approved or closed.
+ */
+export const isChildInProgress = (child: {
+  existingApplicationIsChangeInProgress?: boolean
+  existingApplicationIsInProgress?: boolean
+}) =>
+  !!child.existingApplicationIsChangeInProgress ||
+  !!child.existingApplicationIsInProgress
+
+/** How a child is named on the select-child screen, e.g. "Barn væntanlegt 29.10.2027". */
+export const getChildLabel = (child: ChildInformation) => {
+  const formatDateOfBirth = (value: string) =>
+    format(new Date(value), dateFormat.is)
+  const primaryParentTypeOfApplication =
+    child.parentalRelation === ParentalRelations.secondary
+      ? child.primaryParentTypeOfApplication
+      : undefined
+
+  if (primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE) {
+    return {
+      ...parentalLeaveFormMessages.selectChild.fosterCare,
+      values: { dateOfBirth: formatDateOfBirth(child.adoptionDate ?? '') },
+    }
+  }
+
+  if (primaryParentTypeOfApplication === ADOPTION) {
+    return {
+      ...parentalLeaveFormMessages.selectChild.adoption,
+      values: { dateOfBirth: formatDateOfBirth(child.adoptionDate ?? '') },
+    }
+  }
+
+  return {
+    ...parentalLeaveFormMessages.selectChild.baby,
+    values: { dateOfBirth: formatDateOfBirth(child.expectedDateOfBirth) },
+  }
+}
+
+/**
+ * Children the select-child screen disables because the applicant already has
+ * an unfinished application for them, with the application to open instead.
+ */
+export const getChildrenInProgress = (
+  externalData: Application['externalData'],
+) => {
+  const { children } = getApplicationExternalData(externalData)
+
+  return children.flatMap((child) =>
+    isChildInProgress(child) && child.existingApplicationId
+      ? [
+          {
+            label: getChildLabel(child),
+            applicationId: child.existingApplicationId,
+            isChange: !!child.existingApplicationIsChangeInProgress,
+          },
+        ]
+      : [],
+  )
+}
+
+/**
  * Options for the select-child screen, in three groups:
  *
  *   1. children with no application yet          → a new application
@@ -2501,21 +2746,15 @@ export const employerApprovalStatePendingAction = (
 export const getChildrenOptions = (application: Application) => {
   const { children } = getApplicationExternalData(application.externalData)
 
-  const formatDateOfBirth = (value: string) =>
-    format(new Date(value), dateFormat.is)
-
   const options = children.map((child, index) => {
     const primaryParentNationalRegistryId =
       child.parentalRelation === ParentalRelations.secondary
         ? child.primaryParentNationalRegistryId
         : undefined
-    const primaryParentTypeOfApplication =
-      child.parentalRelation === ParentalRelations.secondary
-        ? child.primaryParentTypeOfApplication
-        : undefined
-
     const subLabel = child.existingApplicationIsChangeInProgress
       ? parentalLeaveFormMessages.selectChild.existingApplicationInProgress
+      : child.existingApplicationIsInProgress
+      ? parentalLeaveFormMessages.selectChild.applicationInProgress
       : child.existingApplicationId
       ? parentalLeaveFormMessages.selectChild.existingApplication
       : child.parentalRelation === ParentalRelations.secondary
@@ -2530,33 +2769,13 @@ export const getChildrenOptions = (application: Application) => {
     return {
       isChange: !!child.existingApplicationId,
       option: {
-        disabled: child.existingApplicationIsChangeInProgress,
+        disabled: isChildInProgress(child),
         // Original index, not the sorted position.
         value: `${index}`,
         dataTestId: child.existingApplicationId
           ? `existing-application-${index}`
           : `child-${index}`,
-        label:
-          primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE
-            ? {
-                ...parentalLeaveFormMessages.selectChild.fosterCare,
-                values: {
-                  dateOfBirth: formatDateOfBirth(child.adoptionDate ?? ''),
-                },
-              }
-            : primaryParentTypeOfApplication === ADOPTION
-            ? {
-                ...parentalLeaveFormMessages.selectChild.adoption,
-                values: {
-                  dateOfBirth: formatDateOfBirth(child.adoptionDate ?? ''),
-                },
-              }
-            : {
-                ...parentalLeaveFormMessages.selectChild.baby,
-                values: {
-                  dateOfBirth: formatDateOfBirth(child.expectedDateOfBirth),
-                },
-              },
+        label: getChildLabel(child),
         subLabel,
       },
     }
@@ -2737,29 +2956,6 @@ export const getAttachments = (application: Application) => {
   }
 
   return attachments
-}
-
-export const calculatePruneDate = (application: Application) => {
-  const { pruneAt } = application as unknown as ApplicationLifecycle
-  const { dateOfBirth } = getApplicationExternalData(application.externalData)
-
-  // If date of birth is set then we use that date + 2 years as prune date
-  if (dateOfBirth?.data?.dateOfBirth) {
-    const pruneDate = new Date(dateOfBirth.data.dateOfBirth)
-    pruneDate.setFullYear(pruneDate.getFullYear() + 2)
-
-    return pruneDate
-  }
-
-  // Just to be sure that we have some date set for prune date
-  if (!pruneAt) {
-    const pruneDate = new Date()
-    pruneDate.setMonth(pruneDate.getMonth() + 24)
-
-    return pruneDate
-  }
-
-  return pruneAt
 }
 
 export const getSelectOptionLabel = (options: SelectOption[], id?: string) => {

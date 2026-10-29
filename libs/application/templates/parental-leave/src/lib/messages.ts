@@ -1132,6 +1132,46 @@ export const parentalLeaveFormMessages = {
       description:
         'Change application - shown when child already has an application',
     },
+    inProgressTitle: {
+      id: 'pl.application:selectChild.inProgress.title',
+      defaultMessage: 'Umsókn í vinnslu',
+      description: 'Application in progress',
+    },
+    inProgressDescription: {
+      id: 'pl.application:selectChild.inProgress.description',
+      defaultMessage:
+        'Ekki er hægt að sækja aftur um fyrir barn sem er með umsókn í vinnslu. Opnaðu umsóknina til að halda áfram með hana, breyta henni eða eyða henni. Ef hún bíður afgreiðslu hjá Vinnumálastofnun þarftu að hafa samband við Vinnumálastofnun.',
+      description:
+        'You cannot apply again for a child with an application in progress. Open the application to continue, edit or delete it. If it is waiting for the Directorate of Labour, contact the Directorate of Labour.',
+    },
+    inProgressApplicationFor: {
+      id: 'pl.application:selectChild.inProgress.applicationFor',
+      defaultMessage: '{child}: umsókn í vinnslu',
+      description: '{child}: application in progress',
+    },
+    inProgressChangeFor: {
+      id: 'pl.application:selectChild.inProgress.changeFor',
+      defaultMessage: '{child}: breyting í vinnslu',
+      description: '{child}: change in progress',
+    },
+    openApplication: {
+      id: 'pl.application:selectChild.inProgress.open',
+      defaultMessage: 'Opna umsókn',
+      description: 'Open application',
+    },
+    applicationInProgress: {
+      id: 'pl.application:selectChild.applicationInProgress',
+      defaultMessage: 'Umsókn í vinnslu',
+      description:
+        'Application in progress - shown when the child already has an unfinished application',
+    },
+    childInProgressError: {
+      id: 'pl.application:selectChild.childInProgressError',
+      defaultMessage:
+        'Umsókn fyrir þetta barn er þegar í vinnslu. Kláraðu hana eða bíddu eftir afgreiðslu áður en þú sækir um aftur.',
+      description:
+        'An application for this child is already in progress. Finish it or wait for it to be processed before applying again.',
+    },
     existingApplicationInProgress: {
       id: 'pl.application:selectChild.existingApplicationInProgress',
       defaultMessage: 'Breyting í vinnslu',
@@ -2104,6 +2144,61 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Breyta umsókn',
       description: 'Edit application',
     },
+    editConfirmTitle: {
+      id: 'pl.application:review.editConfirm.title',
+      defaultMessage: 'Viltu draga umsóknina til baka?',
+      description: 'Do you want to take the application back?',
+    },
+    editConfirmTitleEdits: {
+      id: 'pl.application:review.editConfirm.titleEdits',
+      defaultMessage: 'Viltu draga breytingarnar til baka?',
+      description: 'Do you want to take your changes back?',
+    },
+    editConfirmDescription: {
+      id: 'pl.application:review.editConfirm.description',
+      defaultMessage:
+        'Umsóknin verður dregin til baka svo þú getir breytt henni. Þú þarft að senda hana inn aftur og þá fer hún aftur til samþykktar hjá {approvers}{hasOtherApprovers, select, true {, líka hjá þeim sem hafa þegar samþykkt hana} other {}}.',
+      description:
+        'The application will be taken back so you can edit it. You will need to submit it again, and it will then need to be approved again by {approvers}{hasOtherApprovers, select, true {, including anyone who has already approved it} other {}}.',
+    },
+    editConfirmDescriptionEdits: {
+      id: 'pl.application:review.editConfirm.descriptionEdits',
+      defaultMessage:
+        'Breytingarnar verða dregnar til baka svo þú getir haldið áfram að breyta þeim. Þú þarft að senda þær inn aftur og þá fara þær aftur til samþykktar hjá Vinnumálastofnun og, ef breytingarnar snerta þau, hjá hinu foreldrinu og vinnuveitanda þínum.',
+      description:
+        'Your changes will be taken back so you can keep editing them. You will need to submit them again, and they will then be reviewed again by the Directorate of Labour and, where the changes affect them, by the other parent and your employer.',
+    },
+    editConfirmButton: {
+      id: 'pl.application:review.editConfirm.button',
+      defaultMessage: 'Draga til baka og breyta',
+      description: 'Take back and edit',
+    },
+    editConfirmCancel: {
+      id: 'pl.application:review.editConfirm.cancel',
+      defaultMessage: 'Hætta við',
+      description: 'Cancel',
+    },
+    approverOtherParent: {
+      id: 'pl.application:review.approver.otherParent',
+      defaultMessage: 'hinu foreldrinu',
+      description:
+        'the other parent (dative, as in "approved by the other parent")',
+    },
+    approverEmployer: {
+      id: 'pl.application:review.approver.employer',
+      defaultMessage: 'vinnuveitanda þínum',
+      description: 'your employer (dative)',
+    },
+    approverVMST: {
+      id: 'pl.application:review.approver.vmst',
+      defaultMessage: 'Vinnumálastofnun',
+      description: 'the Directorate of Labour (dative)',
+    },
+    listAnd: {
+      id: 'pl.application:review.listAnd',
+      defaultMessage: 'og',
+      description: 'and',
+    },
     otherParentTitle: {
       id: 'pl.application:review.otherParent.title',
       defaultMessage: 'Annað foreldri samþykkir umsóknina',
@@ -2316,11 +2411,6 @@ export const parentalLeaveFormMessages = {
         'Breytingar þínar voru ekki samþykktar af Vinnumálastofnun, þú getur valið að eyða breytingunum eða breytt umsókn og sent aftur til skoðunar.',
       description:
         'Your edits were not approved by the Directorate of Labour. You can choose to discard your previous edits or edit the application and resend it for review.',
-    },
-    editsNotApprovedDiscardButton: {
-      id: 'pl.application:editFlow.requiresAction.discardButtonLabel',
-      defaultMessage: 'Eyða breytingum',
-      description: 'Discard my edits',
     },
     backToOverview: {
       id: 'pl.application:editFlow.backToOverview',
@@ -3115,11 +3205,6 @@ export const statesMessages = defineMessages({
     id: 'pl.application:employerAction.description',
     defaultMessage: 'Vinnuveitandi krefst aðgerða vegna umsóknar þinnar.',
     description: 'Description of the state - employerAction',
-  },
-  employerActionDeleteChanges: {
-    id: 'pl.application:employerAction.delete.changes',
-    defaultMessage: 'Umsækjandi eyddi ósamþykktu tímabili.',
-    description: 'Applicant deleted unapproved period.',
   },
 
   vinnumalastofnunApprovalTitle: {

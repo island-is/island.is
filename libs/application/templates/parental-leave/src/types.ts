@@ -61,10 +61,11 @@ export interface VMSTPeriod {
   from: string
   to: string
   ratio: string
-  firstPeriodStart: string
+  firstPeriodStart?: string | null
   paid: boolean
-  rightsCodePeriod: string
-  days: string
+  rightsCodePeriod?: string | null
+  // No longer returned by VMST; only present on mocked/legacy external data.
+  days?: string | null
   approved: boolean
 }
 
@@ -134,8 +135,8 @@ interface BaseChildInformation {
   dateOfBirth?: string
   /**
    * Set when the applicant already has an application for this child. Selecting
-   * the child then starts a change application seeded from that one instead of a
-   * new first-time application.
+   * the child then starts a change application for that leave instead of a new
+   * first-time application. The VMST application id when VMST lists the leave.
    */
   existingApplicationId?: string
   // False when that existing application has not been forwarded to VMST yet; a
@@ -144,6 +145,9 @@ interface BaseChildInformation {
   // True when the existing application is itself a change already in flight;
   // the select-child screen opens it in place instead of spawning another change.
   existingApplicationIsChangeInProgress?: boolean
+  // True when the applicant has an unfinished first-time application for this
+  // child; the child cannot be selected for another application until it ends.
+  existingApplicationIsInProgress?: boolean
 }
 
 export type ChildInformation =
@@ -166,6 +170,8 @@ export interface ExistingChildApplication {
   hasApplicationFundId: boolean
   // True when the application is itself a change already in flight.
   isChangeInProgress: boolean
+  // True when the application is an unfinished first-time application.
+  isApplicationInProgress?: boolean
 }
 
 /**
@@ -183,28 +189,6 @@ export interface ChildApplicationLink {
   expectedDateOfBirth?: string
   dateOfBirth?: string
   adoptionDate?: string
-}
-
-/**
- * The application a `change` / `residenceGrant` application descends from, as
- * returned by the `getPreviousApplication` template api. `answers` holds only the
- * carried-over answer groups and doubles as the baseline the change form diffs
- * against.
- */
-export interface PreviousApplication {
-  applicationId: string
-  vmstApplicationId: string
-  applicationFundId: string
-  /**
-   * The child the predecessor was for. Identified by date rather than by the
-   * `selectedChild` index, because the new application builds its own children
-   * list and the same index can point at a different child.
-   */
-  selectedChild: {
-    expectedDateOfBirth: string
-    adoptionDate?: string
-  } | null
-  answers: Record<string, unknown>
 }
 
 export interface PregnancyStatus {

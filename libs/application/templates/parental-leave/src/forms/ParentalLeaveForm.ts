@@ -70,6 +70,8 @@ import {
   getMultipleBirthRequestDays,
   getOtherParentOptions,
   getPeriodSectionTitle,
+  getRejectedBy,
+  getRejectionAlertMessage,
   getRatioTitle,
   getRightsDescTitle,
   getSelectedChild,
@@ -1356,8 +1358,11 @@ export const ParentalLeaveForm: Form = buildForm({
                   description: parentalLeaveFormMessages.dateRange.description,
                   isPartOfRepeater: true,
                   children: [
+                    // `PeriodDateRange` writes `startDate` and `endDate`. The id
+                    // has to be one of those for the shell to see this screen as
+                    // answered when it resumes a saved application.
                     buildCustomField({
-                      id: 'dateRange',
+                      id: 'endDate',
                       title: parentalLeaveFormMessages.dateRange.title,
                       component: 'PeriodDateRange',
                       width: 'half',
@@ -1372,6 +1377,7 @@ export const ParentalLeaveForm: Form = buildForm({
                       id: 'ratioWarning',
                       title: '',
                       component: 'PeriodRatioWarning',
+                      doesNotRequireAnswer: true,
                     }),
                   ],
                 }),
@@ -1432,6 +1438,15 @@ export const ParentalLeaveForm: Form = buildForm({
         buildMultiField({
           id: 'confirmation',
           children: [
+            buildAlertMessageField({
+              id: 'rejectedByAlert',
+              title: parentalLeaveFormMessages.draftFlow.draftNotApprovedTitle,
+              message: (application) =>
+                getRejectionAlertMessage(application.answers, 'draft'),
+              alertType: 'warning',
+              doesNotRequireAnswer: true,
+              condition: (answers) => Boolean(getRejectedBy(answers)),
+            }),
             buildCustomField(
               {
                 id: 'confirmationScreen',

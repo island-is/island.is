@@ -33,16 +33,13 @@ import {
   PERMANENT_FOSTER_CARE,
   ParentalRelations,
 } from '../constants'
-import {
-  ChildrenApi,
-  GetPersonInformation,
-  PreviousApplicationApi,
-} from '../dataProviders'
+import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import { errorMessages, parentalLeaveFormMessages } from '../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getApplicationTypeOptions,
+  getChildrenInProgress,
   getChildrenOptions,
   getFosterCareOrAdoptionDesc,
   getSelectedChild,
@@ -56,12 +53,8 @@ import {
 export const MockDataSubSection = buildSubSection({
   id: 'mockData',
   title: parentalLeaveFormMessages.shared.mockDataTitle,
-  // A follow-up application inherits mock mode from the application it continues —
-  // a mock predecessor has no real VMST record behind it, so the follow-up has no
-  // choice in the matter. Asking here is not just redundant: the answer is
-  // overwritten by `prefillFromPreviousApplication`, and an answer of "no" left on
-  // the new application is what previously made it call VMST for real with a mock
-  // fund id.
+  // A follow-up continues a real VMST leave, so it is never mocked. Mock mode
+  // only ever creates first-time applications.
   condition: (answers) => !isFollowUpApplication(answers),
   children: [
     buildMultiField({
@@ -291,12 +284,6 @@ export const ExternalDataSubSection = buildSubSection({
           subTitle:
             parentalLeaveFormMessages.shared.childrenInformationSubTitle,
         }),
-        // No title: this only resolves the application a change descends from, so
-        // there is nothing to ask the applicant's consent for. It has to be listed
-        // here regardless — providers not on this screen are never invoked.
-        buildDataProviderItem({
-          provider: PreviousApplicationApi,
-        }),
       ],
       otherPermissions: [
         buildDataProviderPermissionItem({
@@ -520,6 +507,14 @@ export const SelectChildSubSection = buildSubSection({
             return children.length > 0
           },
         }),
+        buildCustomField({
+          id: 'inProgressApplications',
+          title: '',
+          component: 'InProgressApplications',
+          doesNotRequireAnswer: true,
+          condition: (_answers, externalData) =>
+            getChildrenInProgress(externalData).length > 0,
+        }),
         buildRadioField({
           id: 'multipleBirths.hasMultipleBirths',
           title: parentalLeaveFormMessages.selectChild.multipleBirthsName,
@@ -541,8 +536,8 @@ export const SelectChildSubSection = buildSubSection({
             },
           ],
           // Not asked for a child that already has an application: that answer
-          // came with the application being changed and must not be contradicted
-          // here. See `multipleBirths` in CARRY_OVER_ANSWER_PATHS.
+          // is prefilled from VMST for the leave being changed and must not be
+          // contradicted here. See `getVMSTApplicationAnswers`.
           condition: (answers, externalData) => {
             const selectedChild = getSelectedChild(answers, externalData)
 
@@ -577,7 +572,7 @@ export const SelectChildSubSection = buildSubSection({
       ],
     }),
     // The applicant picked a child they have already applied for. This screen
-    // creates a new application seeded from the existing one and navigates there,
+    // creates a new application for the same VMST leave and navigates there,
     // so a change is its own application rather than a re-entry into that one.
     buildMultiField({
       id: 'startChangeApplicationScreen',
@@ -602,8 +597,8 @@ export const SelectChildSubSection = buildSubSection({
 export const ApplicationTypeSubSection = buildSubSection({
   id: 'applicationType',
   title: parentalLeaveFormMessages.shared.applicationTypeTitle,
-  // A follow-up application skips this: the type is carried over from the
-  // application it continues and must not be changeable there.
+  // A follow-up application skips this: the type is prefilled from VMST rights
+  // for the leave it continues and must not be changeable there.
   condition: (answers, externalData) => {
     if (isFollowUpApplication(answers)) return false
     // The no-children-found chain carries its own submit, same as when the
@@ -652,10 +647,11 @@ export const ApplicationTypeSubSection = buildSubSection({
 /**
  * Prerequisites for a follow-up application — a change or a residence grant.
  *
- * Everything the select-child and application-type screens would ask has already
- * been answered on the application this one continues, and is seeded from it on
- * exit from prerequisites. So all that is left is a submit, which routes to the
- * form for whichever action this application was created for.
+ * Everything the select-child and application-type screens would ask is already
+ * known to VMST for the leave this one continues, and is prefilled from it on
+ * exit from prerequisites (`prefillFromVMST`). So all that is left is a submit,
+ * which routes to the form for whichever action this application was created
+ * for.
  */
 export const FollowUpSubSection = buildSubSection({
   id: 'followUp',
