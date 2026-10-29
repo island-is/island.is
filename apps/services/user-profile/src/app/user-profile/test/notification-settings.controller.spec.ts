@@ -90,12 +90,14 @@ describe('UserProfileController - GET /v2/users/.national-id/notification-settin
       })
 
       it('should return no blocked categories for an unknown user', async () => {
+        const nationalId = createNationalId('person')
+
         const res = await server
           .get(path)
-          .set('X-Param-National-Id', createNationalId('person'))
+          .set('X-Param-National-Id', nationalId)
 
         expect(res.status).toBe(200)
-        expect(res.body).toEqual({ blockedCategories: [] })
+        expect(res.body).toEqual({ nationalId, blockedCategories: [] })
       })
 
       it('should return the blocked categories of the requested user only', async () => {
@@ -121,6 +123,7 @@ describe('UserProfileController - GET /v2/users/.national-id/notification-settin
 
         expect(res.status).toBe(200)
         expect(res.body).toEqual({
+          nationalId,
           blockedCategories: [
             {
               key: `${senderId}-heilbrigdismal`,
