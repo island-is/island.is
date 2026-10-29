@@ -1,0 +1,40 @@
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  ISLANDIS_SLUG,
+  IntroWrapper,
+  m,
+} from '@island.is/portals/my-pages/core'
+
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { ActorNotificationSettings } from '../../components/NotificationSettings/ActorNotificationSettings/ActorNotificationSettings'
+import { mNotifications } from '../../lib/messages'
+import { ActorProfileNotificationSettings } from '../../components/NotificationSettings/ActorProfileNotificationSettings/ActorProfileNotificationSettings'
+
+const UserProfile = () => {
+  useNamespaces('sp.notifications')
+  const { formatMessage } = useLocale()
+  const { profile } = useUserInfo()
+  const isActor = !!profile?.actor
+
+  return (
+    <>
+      <IntroWrapper
+        marginBottom={[4, 8]}
+        title={formatMessage(m.mySettingsNotifications)}
+        intro={formatMessage(mNotifications.intro)}
+        serviceProvider={{
+          slug: ISLANDIS_SLUG,
+          tooltip: formatMessage(m.userProfileTooltip),
+        }}
+        desktopContentSpan="10/12"
+      />
+      {isActor ? (
+        <ActorProfileNotificationSettings />
+      ) : (
+        <ActorNotificationSettings />
+      )}
+    </>
+  )
+}
+
+export default UserProfile

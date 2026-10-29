@@ -8,6 +8,7 @@ interface SettingsCardProps {
   toggleLabel?: string
   checked: boolean
   onChange(active: boolean): void
+  variant?: 'default' | 'card'
 }
 
 export const SettingsCard = ({
@@ -16,6 +17,7 @@ export const SettingsCard = ({
   toggleLabel,
   checked,
   onChange,
+  variant = 'default',
 }: SettingsCardProps) => {
   return (
     <Box
@@ -23,6 +25,9 @@ export const SettingsCard = ({
       alignItems="center"
       justifyContent="spaceBetween"
       columnGap={3}
+      border={variant === 'card' ? 'standard' : undefined}
+      borderRadius={variant === 'card' ? 'large' : undefined}
+      padding={variant === 'card' ? 3 : undefined}
     >
       <div>
         <Text variant="h5" as="h4" marginBottom={1}>
