@@ -12,7 +12,7 @@ import { PaymentContext } from '../refund/refund.orchestrator'
 import type { SettleDebtStepResult } from './cardPayment.debt'
 import { ApplePayChargeInput } from './applePay/dtos'
 import { ChargeCardInput } from './card/dtos'
-import type { GooglePayDecryptedToken } from './googlePay/googlePayToken'
+import { GooglePayChargeVerifiedInput } from './googlePay/dtos'
 
 export {
   PaymentOrchestrator,
@@ -107,8 +107,8 @@ export interface GooglePayPaymentStepResults {
 
 export interface GooglePayPaymentContext
   extends PaymentContext<GooglePayPaymentStepResults> {
-  /** Decrypted by the controller, which picks the path by authMethod */
-  input: GooglePayDecryptedToken
+  /** Decrypted again by Valitor when charged, after 3-D Secure */
+  input: GooglePayChargeVerifiedInput
   trackingData: PaymentTrackingData
   metadata?: CardPaymentSagaMetadata
 }

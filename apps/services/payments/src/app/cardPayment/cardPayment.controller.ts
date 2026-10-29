@@ -71,7 +71,6 @@ import {
   GooglePayChargeResponse,
   GooglePayChargeVerifiedInput,
 } from './googlePay/dtos'
-import type { GooglePayDecryptedToken } from './googlePay/googlePayToken'
 import { RefundService } from '../refund/refund.service'
 
 @UseGuards(FeatureFlagGuard)
@@ -458,29 +457,11 @@ export class CardPaymentController {
     const paymentFlowId = chargeInput.paymentFlowId
     this.logger.info(`[${paymentFlowId}] Google Pay charge endpoint called`)
 
-    const decryptedToken = await this.decryptGooglePayToken(
-      paymentFlowId,
-      chargeInput.token,
-    )
-
-    // A card saved in the Google account has no cryptogram: it passes
-    // 3-D Secure first and is then charged through charge-verified.
-    if (decryptedToken.paymentMethodDetails.authMethod === 'PAN_ONLY') {
-      return {
-        status: 'verification_required',
-        verification: await this.verifyGooglePaySavedCard(
-          chargeInput,
-          decryptedToken,
-        ),
-      }
-    }
-
+    // Only cards saved in the Google account are offered: they pass 3-D
+    // Secure first and are then charged through charge-verified.
     return {
-      status: 'paid',
-      payment: await this.runGooglePayPaymentSaga(
-        paymentFlowId,
-        decryptedToken,
-      ),
+      status: 'verification_required',
+      verification: await this.verifyGooglePaySavedCard(chargeInput),
     }
   }
 
@@ -498,53 +479,12 @@ export class CardPaymentController {
       `[${paymentFlowId}] Google Pay verified charge endpoint called`,
     )
 
-    const decryptedToken = await this.decryptGooglePayToken(
-      paymentFlowId,
-      chargeInput.token,
-    )
-
-    return this.runGooglePayPaymentSaga(paymentFlowId, decryptedToken)
+    return this.runGooglePayPaymentSaga(chargeInput)
   }
 
-  private async decryptGooglePayToken(paymentFlowId: string, token: string) {
-    try {
-      return await this.cardPaymentService.decryptGooglePayToken(
-        paymentFlowId,
-        token,
-      )
-    } catch (e) {
-      try {
-        await this.paymentFlowService.logPaymentFlowUpdate({
-          paymentFlowId,
-          type: 'update',
-          occurredAt: new Date(),
-          paymentMethod: PaymentMethod.CARD,
-          reason: 'payment_failed',
-          message: `Google Pay token was not accepted: ${e.message}`,
-          metadata: {
-            error: e.message,
-          },
-        })
-      } catch (logError) {
-        this.logger.warn(
-          `[${paymentFlowId}] Failed to log payment flow update and notify upstream after Google Pay token error: ${logError.message}`,
-          { paymentFlowId, logError },
-        )
-      }
-
-      throw new BadRequestException(
-        onlyReturnKnownErrorCode(
-          e.message,
-          CardErrorCode.GooglePayTokenInvalid,
-        ),
-      )
-    }
-  }
-
-  /** The verify endpoint's steps, with the card from the Google Pay token */
+  /** The verify endpoint's steps, with the card Valitor decrypts from the Google Pay token */
   private async verifyGooglePaySavedCard(
     chargeInput: GooglePayChargeInput,
-    decryptedToken: GooglePayDecryptedToken,
   ): Promise<VerifyCardResponse> {
     const paymentFlowId = chargeInput.paymentFlowId
 
@@ -553,10 +493,16 @@ export class CardPaymentController {
         paymentFlowId,
       )
 
+      const card = await this.cardPaymentService.decryptGooglePayToken({
+        paymentFlowId,
+        token: chargeInput.token,
+        amount: totalPrice,
+      })
+
       const verification =
         await this.cardPaymentService.verifyGooglePaySavedCard({
           input: chargeInput,
-          decryptedToken,
+          card,
           totalPrice,
         })
 
@@ -601,10 +547,10 @@ export class CardPaymentController {
   }
 
   private async runGooglePayPaymentSaga(
-    paymentFlowId: string,
-    decryptedToken: GooglePayDecryptedToken,
+    chargeInput: GooglePayChargeVerifiedInput,
   ): Promise<ChargeCardResponse> {
-    const context = createGooglePayPaymentContext(paymentFlowId, decryptedToken)
+    const paymentFlowId = chargeInput.paymentFlowId
+    const context = createGooglePayPaymentContext(paymentFlowId, chargeInput)
     const saga = createGooglePayPaymentSaga(
       this.cardPaymentService,
       this.refundService,

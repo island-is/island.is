@@ -154,28 +154,25 @@ export type ApplePayDecryptedWalletPaymentPayload = z.infer<
   typeof ApplePayDecryptedWalletPaymentPayloadSchema
 >
 
-/** Valitor Google Pay decrypted payment token payload (Sale operation with DecryptedPaymentTokenData) */
-const GooglePayDecryptedPaymentTokenDataSchema =
-  ApplePayDecryptedPaymentTokenDataSchema.extend({
-    eci: z.string().optional(),
+/**
+ * Google Pay token decrypted by Valitor: Q8 and the card of a token saved in
+ * the Google account, to go through 3-D Secure and be charged like a typed card
+ */
+export const GooglePayDecryptionSuccessSchema =
+  PaymentGatewaySuccessSchema.extend({
+    responseCode: z.literal('Q8'),
+    googlePayCardInformation: z.object({
+      pan: z.string(),
+      expirationMonth: z.number(),
+      expirationYear: z.number(),
+    }),
   })
 
-export const GooglePayDecryptedWalletPaymentPayloadSchema = z.object({
-  operation: z.literal('Sale'),
-  walletPaymentType: z.literal('GooglePay'),
-  googlePayWalletPayment: z.object({
-    decryptedPaymentTokenData: GooglePayDecryptedPaymentTokenDataSchema,
-  }),
-  paymentAdditionalData: z.object({
-    merchantReferenceData: z.string(),
-  }),
-  systemCalling: z.string(),
-  correlationId: z.string(),
-})
+export const GooglePayDecryptionErrorSchema = PaymentGatewayErrorSchema
 
-export type GooglePayDecryptedWalletPaymentPayload = z.infer<
-  typeof GooglePayDecryptedWalletPaymentPayloadSchema
->
+export type GooglePayCardInformation = z.infer<
+  typeof GooglePayDecryptionSuccessSchema
+>['googlePayCardInformation']
 export type CardVerificationSuccessResponse = z.infer<
   typeof CardVerificationSuccessSchema
 >

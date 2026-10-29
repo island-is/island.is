@@ -35,7 +35,6 @@ import {
   getApplePayChargeInput,
   getChargeCardInput,
   getGooglePayChargeInput,
-  getGooglePayDecryptedToken,
   mockPaymentFlow,
   mockPaymentResult,
 } from './sagaTestUtils'
@@ -115,12 +114,7 @@ const sagaConfigs: SagaConfig[] = [
   },
   {
     name: 'GooglePay',
-    // The controller decrypts the token before the saga starts
-    createContext: (paymentFlowId) =>
-      createGooglePayPaymentContext(
-        paymentFlowId,
-        getGooglePayDecryptedToken(),
-      ),
+    createContext: createGooglePayPaymentContext,
     createSaga: createGooglePayPaymentSaga,
     chargeStepName: 'CHARGE_GOOGLE_PAY',
     getInput: getGooglePayChargeInput,

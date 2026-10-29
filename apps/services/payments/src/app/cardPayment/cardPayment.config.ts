@@ -22,10 +22,6 @@ const schema = z.object({
     applePayMerchantIdentityCert: z.string().optional(),
     applePayMerchantIdentityKey: z.string().optional(),
     applePayPaymentProcessingKey: z.string().optional(),
-    googlePayPrivateKey: z.string().optional(),
-    googlePayPreviousPrivateKey: z.string().optional(),
-    googlePayMerchantId: z.string().optional(),
-    googlePayEnvironment: z.enum(['TEST', 'PRODUCTION']),
   }),
   tokenExpiryMinutes: z.number().int(),
   memCacheExpiryMinutes: z.number().int(),
@@ -71,15 +67,6 @@ export const CardPaymentModuleConfig = defineConfig({
       applePayPaymentProcessingKey: env.optional(
         'APPLE_PAY_PAYMENT_PROCESSING_KEY',
       ),
-      googlePayPrivateKey: env.optional('GOOGLE_PAY_PRIVATE_KEY'),
-      googlePayPreviousPrivateKey: env.optional(
-        'GOOGLE_PAY_PREVIOUS_PRIVATE_KEY',
-      ),
-      googlePayMerchantId: env.optional('GOOGLE_PAY_MERCHANT_ID'),
-      googlePayEnvironment:
-        env.optional('GOOGLE_PAY_ENVIRONMENT') === 'PRODUCTION'
-          ? ('PRODUCTION' as const)
-          : ('TEST' as const),
     },
     tokenExpiryMinutes: env.optionalJSON('PAYMENTS_TOKEN_EXPIRY_MINUTES') ?? 2,
     memCacheExpiryMinutes:

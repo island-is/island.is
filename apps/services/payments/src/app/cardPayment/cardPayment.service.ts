@@ -21,6 +21,9 @@ import {
   CardVerificationErrorSchema,
   CardVerificationSuccessResponse,
   CardVerificationSuccessSchema,
+  GooglePayCardInformation,
+  GooglePayDecryptionErrorSchema,
+  GooglePayDecryptionSuccessSchema,
   MdNormalised,
   PaymentTrackingData,
   RefundErrorSchema,
@@ -57,17 +60,7 @@ import {
 } from './applePay/applePay.utils'
 import { ApplePayChargeInput, ApplePaySessionResponse } from './applePay/dtos'
 import {
-  GOOGLE_PAY_TEST_RECIPIENT_ID,
-  GooglePayEnvironment,
-} from './googlePay/googlePay.constants'
-import { fetchGooglePayRootKeys } from './googlePay/googlePayRootKeys'
-import {
-  GooglePayDecryptedToken,
-  GooglePayRootSigningKey,
-  verifyAndDecryptGooglePayToken,
-} from './googlePay/googlePayToken'
-import {
-  generateGooglePayDecryptedChargeRequestOptions,
+  generateGooglePayDecryptionRequestOptions,
   generateGooglePaySavedCardChargeRequestOptions,
 } from './googlePay/googlePay.utils'
 import { GooglePayChargeInput } from './googlePay/dtos'
@@ -83,16 +76,6 @@ export class CardPaymentService {
   private applePayMerchantAgent: Agent | null = null
   /** True once we've parsed the Apple Pay payment processing PEM successfully. */
   private applePayProcessingKeyValidated = false
-  /** True once the configured Google Pay private keys have parsed successfully. */
-  private googlePayPrivateKeysValidated = false
-  /** Google's root signing keys and when Google's cache lifetime for them ends. */
-  private googlePayRootKeys: {
-    keys: GooglePayRootSigningKey[]
-    expiresAt: number
-  } | null = null
-  /** The root keys request in flight, shared by concurrent charges. */
-  private googlePayRootKeysRequest: Promise<GooglePayRootSigningKey[]> | null =
-    null
 
   constructor(
     @Inject(LOGGER_PROVIDER)
@@ -748,194 +731,135 @@ export class CardPaymentService {
 
   // GOOGLE PAY METHODS ------------------------------------------------------------------------------------------------
 
-  /** Private keys (current first, previous during a rotation) and the recipient id Google signs for */
-  private requireGooglePayConfig() {
-    const {
-      googlePayPrivateKey,
-      googlePayPreviousPrivateKey,
-      googlePayMerchantId,
-      googlePayEnvironment,
-    } = this.config.paymentGateway
-
-    if (
-      !googlePayPrivateKey ||
-      (googlePayEnvironment === 'PRODUCTION' && !googlePayMerchantId)
-    ) {
-      throw new BadRequestException(CardErrorCode.GooglePayNotConfigured)
-    }
-
-    return {
-      privateKeys: [googlePayPrivateKey, googlePayPreviousPrivateKey].filter(
-        (key): key is string => !!key,
-      ),
-      // Google signs TEST tokens for a fixed recipient whatever our merchant id is
-      recipientId:
-        googlePayEnvironment === 'PRODUCTION'
-          ? `merchant:${googlePayMerchantId}`
-          : GOOGLE_PAY_TEST_RECIPIENT_ID,
-      environment: googlePayEnvironment,
-    }
+  /**
+   * Google signs each token once, so its hash identifies the token across the
+   * charge and the charge after 3-D Secure without keeping the token itself.
+   */
+  private googlePayTokenId(token: string): string {
+    return crypto.createHash('sha256').update(token).digest('hex')
   }
 
   /**
-   * Parse the private keys once on first use so a misconfigured key surfaces
-   * as GooglePayNotConfigured instead of a failed decrypt on every token.
+   * Have Valitor decrypt the token (gateway `valitor`). Only a card saved in
+   * the Google account (PAN_ONLY) is offered, for which Valitor answers Q8
+   * with the card. The card only lives in memory for this request: it is
+   * decrypted again from the same token when it is charged after 3-D Secure.
    */
-  private validateGooglePayPrivateKeysOnce(privateKeys: string[]) {
-    if (this.googlePayPrivateKeysValidated) {
-      return
-    }
-
-    try {
-      for (const key of privateKeys) {
-        crypto.createPrivateKey({ key, format: 'pem' })
-      }
-    } catch {
-      throw new BadRequestException(CardErrorCode.GooglePayNotConfigured)
-    }
-
-    this.googlePayPrivateKeysValidated = true
-  }
-
-  /**
-   * Google's root signing keys, cached for the lifetime Google gives them.
-   * When a refresh fails the cached keys are still used: the token check
-   * skips any key past its own expiry, so stale keys never weaken it.
-   */
-  private async getGooglePayRootKeys(
-    environment: GooglePayEnvironment,
-  ): Promise<GooglePayRootSigningKey[]> {
-    if (
-      this.googlePayRootKeys &&
-      this.googlePayRootKeys.expiresAt > Date.now()
-    ) {
-      return this.googlePayRootKeys.keys
-    }
-
-    this.googlePayRootKeysRequest ??= fetchGooglePayRootKeys(environment)
-      .then(({ keys, maxAgeMs }) => {
-        this.googlePayRootKeys = { keys, expiresAt: Date.now() + maxAgeMs }
-        return keys
-      })
-      .finally(() => {
-        this.googlePayRootKeysRequest = null
-      })
-
-    try {
-      return await this.googlePayRootKeysRequest
-    } catch (e) {
-      if (this.googlePayRootKeys) {
-        this.logger.warn(
-          '[GOOGLEPAY] Root signing key refresh failed, using the cached keys',
-          { error: (e as Error).message },
-        )
-        return this.googlePayRootKeys.keys
-      }
-
-      this.logger.error('[GOOGLEPAY] Root signing keys unavailable', {
-        error: (e as Error).message,
-      })
-      throw new BadRequestException(CardErrorCode.GooglePayKeysUnavailable)
-    }
-  }
-
-  /**
-   * Verify Google's signatures and decrypt the token. The card it holds only
-   * lives in memory for this request: a saved card is decrypted again from
-   * the same token when it is charged after 3-D Secure.
-   */
-  async decryptGooglePayToken(
-    paymentFlowId: string,
-    token: string,
-  ): Promise<GooglePayDecryptedToken> {
+  async decryptGooglePayToken({
+    paymentFlowId,
+    token,
+    amount,
+  }: {
+    paymentFlowId: string
+    token: string
+    amount: number
+  }): Promise<GooglePayCardInformation> {
     const logPrefix = `[${paymentFlowId}] [GOOGLEPAY]`
+    const tokenId = this.googlePayTokenId(token)
 
-    const { privateKeys, recipientId, environment } =
-      this.requireGooglePayConfig()
-
-    this.validateGooglePayPrivateKeysOnce(privateKeys)
-
-    const rootKeys = await this.getGooglePayRootKeys(environment)
-
-    let decrypted: GooglePayDecryptedToken
-    try {
-      decrypted = verifyAndDecryptGooglePayToken({
-        token,
-        privateKeys,
-        rootKeys,
-        recipientId,
-      })
-    } catch (e) {
-      const message = (e as Error).message
-      const failureStage = message.match(/\[stage=([^\]]+)\]/)?.[1] ?? 'unknown'
-      this.logger.error(`${logPrefix} Token rejected`, {
-        paymentFlowId,
-        failureStage,
-        failureReason: message,
-      })
-      throw new BadRequestException(
-        failureStage === 'root-keys'
-          ? CardErrorCode.GooglePayKeysUnavailable
-          : failureStage === 'intermediate-expiry' ||
-            failureStage === 'message-expiry'
-          ? CardErrorCode.GooglePayTokenExpired
-          : CardErrorCode.GooglePayTokenInvalid,
-      )
-    }
-
-    const { messageId, paymentMethodDetails } = decrypted
-
-    this.logger.info(`${logPrefix} Token decrypted`, {
-      paymentFlowId,
-      messageId,
-      authMethod: paymentMethodDetails.authMethod,
-    })
-
-    // Reject replay of a previously charged Google Pay message.
-    if (await this.cacheManager.get(this.googlePayReplayCacheKey(messageId))) {
+    // Reject replay of a previously charged Google Pay token.
+    if (await this.cacheManager.get(this.googlePayReplayCacheKey(tokenId))) {
       this.logger.warn(`${logPrefix} Google Pay replay detected`, {
         paymentFlowId,
-        messageId,
+        tokenId,
       })
       throw new BadRequestException(CardErrorCode.GooglePayReplayDetected)
     }
 
-    return decrypted
+    let parsedToken: unknown
+    try {
+      parsedToken = JSON.parse(token)
+    } catch {
+      this.logger.error(`${logPrefix} Google Pay token is not JSON`, {
+        paymentFlowId,
+        tokenId,
+      })
+      throw new BadRequestException(CardErrorCode.GooglePayTokenInvalid)
+    }
+
+    // Valitor charges a device token (CRYPTOGRAM_3DS) outright instead of
+    // answering Q8. Only PAN_ONLY is offered, but should one get through, the
+    // correlationId in this log is what refunds it.
+    const correlationId = uuid()
+    this.logger.info(`${logPrefix} Google Pay token decryption started`, {
+      paymentFlowId,
+      tokenId,
+      correlationId,
+    })
+
+    const { paymentsGatewayApiUrl } = this.config.paymentGateway
+    const gatewayUrl = `${paymentsGatewayApiUrl}/Payment/CardPayment`
+
+    let response: Response
+    try {
+      response = await fetch(
+        gatewayUrl,
+        generateGooglePayDecryptionRequestOptions({
+          token: parsedToken,
+          paymentApiConfig: this.config.paymentGateway,
+          correlationId,
+          amount,
+        }),
+      )
+    } catch (e) {
+      this.logger.error(`${logPrefix} Google Pay gateway fetch failed`, {
+        paymentFlowId,
+        gatewayUrl,
+        error: (e as Error).message,
+      })
+      throw e
+    }
+
+    const { googlePayCardInformation } =
+      await this.parsePaymentGatewayResponseAndHandleErrors({
+        paymentFlowId,
+        response,
+        schema: GooglePayDecryptionSuccessSchema,
+        errorSchema: GooglePayDecryptionErrorSchema,
+        errorMessage: 'Failed to decrypt Google Pay token',
+      })
+
+    this.logger.info(`${logPrefix} Google Pay token decrypted`, {
+      paymentFlowId,
+      tokenId,
+      correlationId,
+    })
+
+    return googlePayCardInformation
   }
 
   /**
    * Start 3-D Secure for a card saved in the Google account (PAN_ONLY), as
-   * verify() does for a typed card. The verification is tied to the token's
-   * messageId so only this token can be charged with its result.
+   * verify() does for a typed card. The verification is tied to the token so
+   * only this token can be charged with its result.
    */
   async verifyGooglePaySavedCard({
     input,
-    decryptedToken,
+    card,
     totalPrice,
   }: {
     input: GooglePayChargeInput
-    decryptedToken: GooglePayDecryptedToken
+    card: GooglePayCardInformation
     totalPrice: number
   }): Promise<CardVerificationSuccessResponse> {
     const { tokenExpiryMinutes, memCacheExpiryMinutes } = this.config
-    const { messageId, paymentMethodDetails } = decryptedToken
     const correlationId = uuid()
 
     // Outlives the verification: the callback has tokenExpiryMinutes to
     // arrive and its result is then kept for memCacheExpiryMinutes.
     await this.cacheManager.set(
       this.googlePayVerificationCacheKey(correlationId),
-      messageId,
+      this.googlePayTokenId(input.token),
       (tokenExpiryMinutes + memCacheExpiryMinutes) * 60000,
     )
 
     return this.verify(
       {
         paymentFlowId: input.paymentFlowId,
-        cardNumber: paymentMethodDetails.pan,
-        expiryMonth: paymentMethodDetails.expirationMonth,
+        cardNumber: card.pan,
+        expiryMonth: card.expirationMonth,
         // verify() takes the two-digit year of the card form
-        expiryYear: paymentMethodDetails.expirationYear % 100,
+        expiryYear: card.expirationYear % 100,
         cardholderName: input.cardholderName,
         browserInfo: input.browserInfo,
       },
@@ -945,69 +869,59 @@ export class CardPaymentService {
   }
 
   /**
-   * Charge a decrypted Google Pay token: a device token (CRYPTOGRAM_3DS) with
-   * its cryptogram through WalletPayment, a saved card (PAN_ONLY) through
-   * CardPayment with the 3-D Secure result of verifyGooglePaySavedCard.
+   * Charge a card saved in the Google account through CardPayment with the
+   * 3-D Secure result of verifyGooglePaySavedCard, decrypting the token again.
    */
   async chargeGooglePay({
     paymentFlowId,
-    decryptedToken,
+    token,
     paymentTrackingData,
     amount,
   }: {
     paymentFlowId: string
-    decryptedToken: GooglePayDecryptedToken
+    token: string
     paymentTrackingData: PaymentTrackingData
     amount: number
   }): Promise<CardPaymentSuccessResponse> {
     const logPrefix = `[${paymentFlowId}] [GOOGLEPAY]`
-    const { messageId, paymentMethodDetails } = decryptedToken
-    const { authMethod, cryptogram } = paymentMethodDetails
+    const tokenId = this.googlePayTokenId(token)
 
     this.logger.info(`${logPrefix} Google Pay charge started`, {
       paymentFlowId,
       totalPrice: amount,
-      authMethod,
+      tokenId,
       correlationId: paymentTrackingData.correlationId,
       merchantReferenceData: paymentTrackingData.merchantReferenceData,
     })
 
-    const { paymentsGatewayApiUrl } = this.config.paymentGateway
-
-    if (authMethod === 'CRYPTOGRAM_3DS' && cryptogram) {
-      return this.sendGooglePayCharge({
-        paymentFlowId,
-        messageId,
-        gatewayUrl: `${paymentsGatewayApiUrl}/Payment/WalletPayment`,
-        requestOptions: generateGooglePayDecryptedChargeRequestOptions({
-          paymentMethodDetails: { ...paymentMethodDetails, cryptogram },
-          paymentApiConfig: this.config.paymentGateway,
-          paymentTrackingData,
-          amount,
-        }),
-      })
-    }
-
     const { correlationId, verificationData } =
       await this.requireCompletedVerification(paymentFlowId)
 
-    const verifiedMessageId = await this.cacheManager.get(
+    const verifiedTokenId = await this.cacheManager.get(
       this.googlePayVerificationCacheKey(correlationId),
     )
-    if (verifiedMessageId !== messageId) {
+    if (verifiedTokenId !== tokenId) {
       this.logger.warn(
         `${logPrefix} No 3-D Secure verification for this Google Pay token`,
-        { paymentFlowId, messageId, hasVerification: !!verifiedMessageId },
+        { paymentFlowId, tokenId, hasVerification: !!verifiedTokenId },
       )
       throw new BadRequestException(PaymentServiceCode.MissingVerification)
     }
 
+    const card = await this.decryptGooglePayToken({
+      paymentFlowId,
+      token,
+      amount,
+    })
+
+    const { paymentsGatewayApiUrl } = this.config.paymentGateway
+
     const data = await this.sendGooglePayCharge({
       paymentFlowId,
-      messageId,
+      tokenId,
       gatewayUrl: `${paymentsGatewayApiUrl}/Payment/CardPayment`,
       requestOptions: generateGooglePaySavedCardChargeRequestOptions({
-        paymentMethodDetails,
+        card,
         verificationData,
         paymentApiConfig: this.config.paymentGateway,
         paymentTrackingData,
@@ -1032,28 +946,28 @@ export class CardPaymentService {
 
   private async sendGooglePayCharge({
     paymentFlowId,
-    messageId,
+    tokenId,
     gatewayUrl,
     requestOptions,
   }: {
     paymentFlowId: string
-    messageId: string
+    tokenId: string
     gatewayUrl: string
     requestOptions: RequestInit
   }): Promise<CardPaymentSuccessResponse> {
     const logPrefix = `[${paymentFlowId}] [GOOGLEPAY]`
 
-    // Mark the message as consumed BEFORE calling Valitor, as for Apple Pay,
+    // Mark the token as consumed BEFORE calling Valitor, as for Apple Pay,
     // so a mid-flight failure can't be retried into a double charge.
     try {
       await this.cacheManager.set(
-        this.googlePayReplayCacheKey(messageId),
+        this.googlePayReplayCacheKey(tokenId),
         true,
         Math.max(this.config.memCacheExpiryMinutes, 60 * 24) * 60000,
       )
     } catch (e) {
       this.logger.error(
-        `${logPrefix} Failed to record Google Pay messageId for replay protection (continuing without)`,
+        `${logPrefix} Failed to record Google Pay token for replay protection (continuing without)`,
         e,
       )
     }
@@ -1091,8 +1005,8 @@ export class CardPaymentService {
     return data
   }
 
-  private googlePayReplayCacheKey(messageId: string): string {
-    return `googlepay:msg:${messageId}`
+  private googlePayReplayCacheKey(tokenId: string): string {
+    return `googlepay:token:${tokenId}`
   }
 
   private googlePayVerificationCacheKey(correlationId: string): string {

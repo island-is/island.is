@@ -31,9 +31,10 @@ const BASE_CARD_PAYMENT_METHOD: google.payments.api.IsReadyToPayPaymentMethodSpe
   {
     type: 'CARD',
     parameters: {
-      // PAN_ONLY is a card saved in the Google account, charged after 3-D
-      // Secure. CRYPTOGRAM_3DS is a card in an Android device wallet.
-      allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+      // A card saved in the Google account, charged after 3-D Secure. Not
+      // CRYPTOGRAM_3DS: Valitor charges a device token outright when it
+      // decrypts it, which skips the payment saga.
+      allowedAuthMethods: ['PAN_ONLY'],
       allowedCardNetworks: ['VISA', 'MASTERCARD'],
       // The name is the cardholder for 3-D Secure of a saved card
       billingAddressRequired: true,
@@ -102,13 +103,10 @@ export const useGooglePay = ({
 
   // check if google pay is available
   useEffect(() => {
-    const { allowGooglePay, googlePayEnvironment, googlePayPublicKey } =
-      getPublicRuntimeEnv()
+    const { googlePayEnvironment } = getPublicRuntimeEnv()
     const hasCard = paymentFlow?.availablePaymentMethods.includes('card')
 
     if (
-      allowGooglePay !== 'true' ||
-      !googlePayPublicKey ||
       !isEnabled ||
       !hasCard ||
       typeof window === 'undefined' ||
@@ -154,7 +152,8 @@ export const useGooglePay = ({
       return
     }
 
-    const { googlePayMerchantId, googlePayPublicKey } = getPublicRuntimeEnv()
+    const { googlePayMerchantId, googlePayGatewayMerchantId } =
+      getPublicRuntimeEnv()
 
     let paymentData: google.payments.api.PaymentData
     try {
@@ -164,11 +163,15 @@ export const useGooglePay = ({
         allowedPaymentMethods: [
           {
             ...BASE_CARD_PAYMENT_METHOD,
+            // Valitor decrypts the token, so we never need a PCI DSS
+            // attestation with Google for decrypting it ourselves
             tokenizationSpecification: {
-              type: 'DIRECT',
+              type: 'PAYMENT_GATEWAY',
               parameters: {
-                protocolVersion: 'ECv2',
-                publicKey: googlePayPublicKey as string,
+                gateway: 'valitor',
+                ...(googlePayGatewayMerchantId
+                  ? { gatewayMerchantId: googlePayGatewayMerchantId }
+                  : {}),
               },
             },
           },

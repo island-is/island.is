@@ -1,7 +1,6 @@
 import type { ApplePayChargeInput } from '../../applePay/dtos'
 import type { ChargeCardInput } from '../../card/dtos'
 import type { GooglePayChargeInput } from '../../googlePay/dtos'
-import type { GooglePayDecryptedToken } from '../../googlePay/googlePayToken'
 import { PAYMENT_FLOW_ID } from './mocks'
 
 export const getChargeCardInput = (): ChargeCardInput => ({
@@ -35,16 +34,4 @@ export const getApplePayChargeInput = (): ApplePayChargeInput => ({
 export const getGooglePayChargeInput = (): GooglePayChargeInput => ({
   paymentFlowId: PAYMENT_FLOW_ID,
   token: '{"protocolVersion":"ECv2"}',
-})
-
-export const getGooglePayDecryptedToken = (): GooglePayDecryptedToken => ({
-  messageId: 'AH2EjtfmrQ',
-  messageExpiration: Date.now() + 60 * 60 * 1000,
-  paymentMethodDetails: {
-    pan: '4111111111111111',
-    expirationMonth: 12,
-    expirationYear: 2030,
-    authMethod: 'CRYPTOGRAM_3DS',
-    cryptogram: 'AAAAAA0ZfXkAAAAAAAAAAAAAAAA=',
-  },
 })

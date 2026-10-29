@@ -1,6 +1,6 @@
 import { CardPaymentModuleConfigType } from '../cardPayment.config'
 import {
-  generateGooglePayDecryptedChargeRequestOptions,
+  generateGooglePayDecryptionRequestOptions,
   generateGooglePaySavedCardChargeRequestOptions,
 } from './googlePay.utils'
 
@@ -17,20 +17,19 @@ const paymentTrackingData = {
   paymentDate: new Date(),
 }
 
-const paymentMethodDetails = {
-  pan: '4111111111111111',
-  expirationMonth: 12,
-  expirationYear: 2030,
-  authMethod: 'CRYPTOGRAM_3DS' as const,
-  cryptogram: 'AAAAAA0ZfXkAAAAAAAAAAAAAAAA=',
-}
+describe('generateGooglePayDecryptionRequestOptions', () => {
+  it('builds a GooglePay WalletTransaction with the token as Google sent it', () => {
+    const token = {
+      signature: 'signature',
+      intermediateSigningKey: { signedKey: 'signedKey', signatures: ['sig'] },
+      protocolVersion: 'ECv2',
+      signedMessage: 'signedMessage',
+    }
 
-describe('generateGooglePayDecryptedChargeRequestOptions', () => {
-  it('builds a GooglePay WalletPayment sale with the decrypted card and cryptogram', () => {
-    const options = generateGooglePayDecryptedChargeRequestOptions({
-      paymentMethodDetails: { ...paymentMethodDetails, eciIndicator: '05' },
+    const options = generateGooglePayDecryptionRequestOptions({
+      token,
       paymentApiConfig,
-      paymentTrackingData,
+      correlationId: 'correlation-1',
       amount: 250,
     })
 
@@ -42,46 +41,23 @@ describe('generateGooglePayDecryptedChargeRequestOptions', () => {
     })
     expect(JSON.parse(options.body)).toEqual({
       operation: 'Sale',
-      walletPaymentType: 'GooglePay',
-      googlePayWalletPayment: {
-        decryptedPaymentTokenData: {
-          amount: '25000',
-          cardNumber: '4111111111111111',
-          currency: 'ISK',
-          expirationMonth: 12,
-          expirationYear: 2030,
-          paymentCryptogram: 'AAAAAA0ZfXkAAAAAAAAAAAAAAAA=',
-          eci: '05',
-        },
-      },
-      paymentAdditionalData: { merchantReferenceData: 'rrn-1' },
+      transactionType: 'WalletTransaction',
+      currency: 'ISK',
+      amount: 25000,
+      Wallet: { WalletType: 'GooglePay', GooglePay: token },
       systemCalling: 'island.is',
       correlationId: 'correlation-1',
     })
-  })
-
-  it('omits eci when Google did not supply one', () => {
-    const options = generateGooglePayDecryptedChargeRequestOptions({
-      paymentMethodDetails,
-      paymentApiConfig,
-      paymentTrackingData,
-      amount: 250,
-    })
-
-    expect(
-      JSON.parse(options.body).googlePayWalletPayment.decryptedPaymentTokenData,
-    ).not.toHaveProperty('eci')
   })
 })
 
 describe('generateGooglePaySavedCardChargeRequestOptions', () => {
   it('builds an ECommerce CardPayment with the 3-D Secure result and no CVC', () => {
     const options = generateGooglePaySavedCardChargeRequestOptions({
-      paymentMethodDetails: {
+      card: {
         pan: '4111111111111111',
         expirationMonth: 12,
         expirationYear: 2030,
-        authMethod: 'PAN_ONLY',
       },
       verificationData: {
         cavv: 'cavv',

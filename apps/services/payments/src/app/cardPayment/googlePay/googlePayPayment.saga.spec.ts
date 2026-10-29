@@ -16,7 +16,7 @@ import {
   createMockLogger,
   createMockCardPaymentService,
   createMockPaymentFlowService,
-  getGooglePayDecryptedToken,
+  getGooglePayChargeInput,
   PAYMENT_FLOW_ID,
 } from '../test/sagaTestUtils'
 
@@ -52,7 +52,7 @@ describe('Google Pay Payment Saga - CHARGE_GOOGLE_PAY step specific', () => {
 
   describe('createGooglePayPaymentContext', () => {
     it('should create context with paymentFlowId, input, and trackingData', () => {
-      const input = getGooglePayDecryptedToken()
+      const input = getGooglePayChargeInput()
       const context = createGooglePayPaymentContext('flow-123', input)
 
       expect(context.paymentFlowId).toBe('flow-123')
@@ -69,8 +69,8 @@ describe('Google Pay Payment Saga - CHARGE_GOOGLE_PAY step specific', () => {
   })
 
   describe('CHARGE_GOOGLE_PAY', () => {
-    it('should call chargeGooglePay with the decrypted token and trackingData', async () => {
-      const input = getGooglePayDecryptedToken()
+    it('should call chargeGooglePay with the token and trackingData', async () => {
+      const input = getGooglePayChargeInput()
       const context = createGooglePayPaymentContext(PAYMENT_FLOW_ID, input)
       const saga = createGooglePayPaymentSaga(
         mockCardPaymentService,
@@ -87,7 +87,7 @@ describe('Google Pay Payment Saga - CHARGE_GOOGLE_PAY step specific', () => {
 
       expect(mockCardPaymentService.chargeGooglePay).toHaveBeenCalledWith({
         paymentFlowId: PAYMENT_FLOW_ID,
-        decryptedToken: input,
+        token: input.token,
         paymentTrackingData: context.trackingData,
         amount: expect.any(Number),
       })
@@ -98,7 +98,7 @@ describe('Google Pay Payment Saga - CHARGE_GOOGLE_PAY step specific', () => {
         new Error('Payment gateway error'),
       )
 
-      const input = getGooglePayDecryptedToken()
+      const input = getGooglePayChargeInput()
       const context = createGooglePayPaymentContext(PAYMENT_FLOW_ID, input)
       const saga = createGooglePayPaymentSaga(
         mockCardPaymentService,
@@ -125,7 +125,7 @@ describe('Google Pay Payment Saga - CHARGE_GOOGLE_PAY step specific', () => {
         new Error('Database error'),
       )
 
-      const input = getGooglePayDecryptedToken()
+      const input = getGooglePayChargeInput()
       const context = createGooglePayPaymentContext(PAYMENT_FLOW_ID, input)
       const saga = createGooglePayPaymentSaga(
         mockCardPaymentService,

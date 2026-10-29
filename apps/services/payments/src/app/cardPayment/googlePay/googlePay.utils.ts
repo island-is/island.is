@@ -1,5 +1,5 @@
 import {
-  GooglePayDecryptedWalletPaymentPayload,
+  GooglePayCardInformation,
   SavedVerificationCompleteData,
 } from '../../../types/cardPayment'
 import { CardPaymentModuleConfigType } from '../cardPayment.config'
@@ -8,50 +8,41 @@ import {
   iskToAur,
 } from '../cardPayment.utils'
 import { PaymentTrackingData } from '../../../types'
-import { GooglePayPaymentMethodDetails } from './googlePayToken'
 
-/** Valitor WalletPayment with DecryptedPaymentTokenData for a CRYPTOGRAM_3DS token */
-export const generateGooglePayDecryptedChargeRequestOptions = ({
-  paymentMethodDetails,
+/**
+ * Valitor CardPayment WalletTransaction that decrypts a Google Pay token
+ * (gateway `valitor`). For a card saved in the Google account it answers Q8
+ * with the card, which then goes through 3-D Secure and an ECommerce payment.
+ * @see https://valitorpay.github.io/
+ */
+export const generateGooglePayDecryptionRequestOptions = ({
+  token,
   paymentApiConfig,
-  paymentTrackingData,
+  correlationId,
   amount,
 }: {
-  paymentMethodDetails: GooglePayPaymentMethodDetails & { cryptogram: string }
+  token: unknown
   paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
-  paymentTrackingData: PaymentTrackingData
+  correlationId: string
   amount: number
 }) => {
   const { systemCalling } = paymentApiConfig
 
-  const body: GooglePayDecryptedWalletPaymentPayload = {
-    operation: 'Sale',
-    walletPaymentType: 'GooglePay',
-    googlePayWalletPayment: {
-      decryptedPaymentTokenData: {
-        amount: String(iskToAur(amount)),
-        cardNumber: paymentMethodDetails.pan,
-        currency: 'ISK',
-        expirationMonth: paymentMethodDetails.expirationMonth,
-        expirationYear: paymentMethodDetails.expirationYear,
-        paymentCryptogram: paymentMethodDetails.cryptogram,
-        // Google requires the ECI to reach the authorisation unaltered
-        ...(paymentMethodDetails.eciIndicator && {
-          eci: paymentMethodDetails.eciIndicator,
-        }),
-      },
-    },
-    paymentAdditionalData: {
-      merchantReferenceData: paymentTrackingData.merchantReferenceData,
-    },
-    systemCalling,
-    correlationId: paymentTrackingData.correlationId,
-  }
-
   return {
     method: 'POST' as const,
     headers: generateWalletPaymentRequestHeaders(paymentApiConfig),
-    body: JSON.stringify(body),
+    body: JSON.stringify({
+      operation: 'Sale',
+      transactionType: 'WalletTransaction',
+      currency: 'ISK',
+      amount: iskToAur(amount),
+      Wallet: {
+        WalletType: 'GooglePay',
+        GooglePay: token,
+      },
+      systemCalling,
+      correlationId,
+    }),
   }
 }
 
@@ -62,13 +53,13 @@ export const generateGooglePayDecryptedChargeRequestOptions = ({
  * only requires it when no cardVerificationData is sent.
  */
 export const generateGooglePaySavedCardChargeRequestOptions = ({
-  paymentMethodDetails,
+  card,
   verificationData,
   paymentApiConfig,
   paymentTrackingData,
   amount,
 }: {
-  paymentMethodDetails: GooglePayPaymentMethodDetails
+  card: GooglePayCardInformation
   verificationData: SavedVerificationCompleteData
   paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
   paymentTrackingData: PaymentTrackingData
@@ -82,9 +73,9 @@ export const generateGooglePaySavedCardChargeRequestOptions = ({
     body: JSON.stringify({
       operation: 'Sale',
       transactionType: 'ECommerce',
-      cardNumber: paymentMethodDetails.pan,
-      expirationMonth: paymentMethodDetails.expirationMonth,
-      expirationYear: paymentMethodDetails.expirationYear,
+      cardNumber: card.pan,
+      expirationMonth: card.expirationMonth,
+      expirationYear: card.expirationYear,
       currency: 'ISK',
       amount: iskToAur(amount),
       systemCalling,

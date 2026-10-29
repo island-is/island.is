@@ -37,8 +37,6 @@ import * as applePayUtils from './applePay/applePay.utils'
 import { ChargeCardInput, VerificationCallbackInput } from './card/dtos'
 import { RefundPaymentInput } from '../refund/dtos/refundPayment.input'
 import { VerifyCardInput } from './card/dtos/verifyCard.input'
-import { GOOGLE_PAY_ROOT_KEYS_URLS } from './googlePay/googlePay.constants'
-import { createGooglePaySender, toPkcs8Pem } from './test/googlePayTokens'
 
 const charges = [
   {
@@ -58,8 +56,6 @@ const getCreatePaymentFlowPayload = (): CreatePaymentFlowInput => ({
   onUpdateUrl: ON_UPDATE_URL,
   organisationId: '5534567890',
 })
-
-const googlePaySender = createGooglePaySender()
 
 const TOKEN_SIGNING_SECRET = 'supersecret'
 const TOKEN_SIGNING_ALGORITHM = 'HS256'
@@ -116,9 +112,6 @@ describe('CardPaymentController', () => {
       },
     ).privateKey as string
     process.env.APPLE_PAY_MERCHANT_IDENTIFIER = 'merchant.com.test'
-    process.env.GOOGLE_PAY_PRIVATE_KEY = toPkcs8Pem(
-      googlePaySender.merchant.privateKey,
-    )
 
     app = await testServer({
       appModule: AppModule,
@@ -200,7 +193,6 @@ describe('CardPaymentController', () => {
     process.env.PAYMENTS_TOKEN_SIGNING_ALGORITHM = previousTokenSigningAlgorithm
     delete process.env.APPLE_PAY_PAYMENT_PROCESSING_KEY
     delete process.env.APPLE_PAY_MERCHANT_IDENTIFIER
-    delete process.env.GOOGLE_PAY_PRIVATE_KEY
 
     jest.clearAllMocks()
     jest.restoreAllMocks()
@@ -1815,30 +1807,32 @@ describe('CardPaymentController', () => {
       correlationID: uuid(),
     })
 
-    // A token the way pay.js hands it over, with a fresh messageId so the
-    // replay cache does not carry over between tests
-    const token = (
-      seal: Parameters<typeof googlePaySender.seal>[0] = {},
-    ): string =>
-      JSON.stringify(
-        googlePaySender.seal({
-          plaintext: googlePaySender.cryptogramPlaintext({ messageId: uuid() }),
-          ...seal,
-        }),
-      )
+    // Valitor's answer for a decrypted card saved in the Google account
+    const decryptionResponse = () => ({
+      googlePayCardInformation: {
+        pan: '4111111111111111',
+        expirationMonth: 12,
+        expirationYear: 2030,
+      },
+      isSuccess: true,
+      responseCode: 'Q8',
+      responseDescription:
+        'Decryption of GooglePay Token was successful. Please proceed with Card verification followed by Card payment.',
+      responseTime: '00:00:00',
+      correlationID: uuid(),
+    })
 
-    // A card saved in the Google account: no cryptogram, so 3-D Secure first
-    const savedCardToken = (): string =>
-      token({
-        plaintext: googlePaySender.cryptogramPlaintext({
-          messageId: uuid(),
-          paymentMethodDetails: {
-            pan: '4111111111111111',
-            expirationMonth: 12,
-            expirationYear: 2030,
-            authMethod: 'PAN_ONLY',
-          },
-        }),
+    // A token the way pay.js hands it over, unique so the replay cache does
+    // not carry over between tests
+    const token = (): string =>
+      JSON.stringify({
+        signature: uuid(),
+        intermediateSigningKey: {
+          signedKey: '{"keyValue":"key","keyExpiration":"1"}',
+          signatures: ['signature'],
+        },
+        protocolVersion: 'ECv2',
+        signedMessage: uuid(),
       })
 
     const charge = (googlePayToken: string) =>
@@ -1863,83 +1857,63 @@ describe('CardPaymentController', () => {
         dsTransId: 'dsTransId',
       })
 
+    const gatewayResponse = (body: unknown) =>
+      ({ json: async () => body, status: 200, ok: true } as Response)
+
     let fetchSpy: jest.SpyInstance
     let flowSpies: jest.SpyInstance[]
 
-    // Answers the organisation's update URL, Google's root keys and the
-    // gateway; each can be overridden per test
+    // Answers the organisation's update URL and the gateway, where
+    // CardPayment both decrypts (WalletTransaction) and charges (ECommerce);
+    // each can be overridden per test
     const mockFetch = ({
-      walletPayment = () =>
-        ({
-          json: async () => chargeResponse(),
-          status: 200,
-          ok: true,
-        } as Response),
-      cardPayment = () =>
-        ({
-          json: async () => chargeResponse(),
-          status: 200,
-          ok: true,
-        } as Response),
-      rootKeys = () =>
-        ({
-          json: async () => ({ keys: googlePaySender.rootKeys }),
-          headers: new Headers({ 'cache-control': 'max-age=3600' }),
-          status: 200,
-          ok: true,
-        } as Response),
+      decryption = () => gatewayResponse(decryptionResponse()),
+      cardPayment = () => gatewayResponse(chargeResponse()),
     }: {
-      walletPayment?: () => Response
+      decryption?: () => Response
       cardPayment?: () => Response
-      rootKeys?: () => Response
     } = {}) => {
-      fetchSpy = jest.spyOn(global, 'fetch').mockImplementation(async (url) => {
-        if (typeof url === 'string') {
-          if (url.includes(ON_UPDATE_URL)) {
-            return {
-              json: async () => ({ isSuccess: true }),
-              status: 200,
-              ok: true,
-            } as Response
+      fetchSpy = jest
+        .spyOn(global, 'fetch')
+        .mockImplementation(async (url, init) => {
+          if (typeof url === 'string') {
+            if (url.includes(ON_UPDATE_URL)) {
+              return gatewayResponse({ isSuccess: true })
+            }
+            if (url.includes('/Payment/CardPayment')) {
+              return JSON.parse(init?.body as string).transactionType ===
+                'WalletTransaction'
+                ? decryption()
+                : cardPayment()
+            }
+            if (url.includes('/CardVerification')) {
+              return gatewayResponse(mockVerificationSuccessResponse)
+            }
           }
-          if (url === GOOGLE_PAY_ROOT_KEYS_URLS.TEST) {
-            return rootKeys()
-          }
-          if (url.includes('/Payment/WalletPayment')) {
-            return walletPayment()
-          }
-          if (url.includes('/Payment/CardPayment')) {
-            return cardPayment()
-          }
-          if (url.includes('/CardVerification')) {
-            return {
-              json: async () => mockVerificationSuccessResponse,
-              status: 200,
-              ok: true,
-            } as Response
-          }
-        }
 
-        return {
-          json: async () => ({ error: 'Missing handler' }),
-          status: 500,
-          ok: false,
-        } as Response
-      })
+          return {
+            json: async () => ({ error: 'Missing handler' }),
+            status: 500,
+            ok: false,
+          } as Response
+        })
     }
 
-    const gatewayCalls = (path: string) =>
+    const cardPaymentCalls = (transactionType: string) =>
       fetchSpy.mock.calls.filter(
-        ([url]) => typeof url === 'string' && url.includes(path),
+        ([url, init]) =>
+          typeof url === 'string' &&
+          url.includes('/Payment/CardPayment') &&
+          JSON.parse(init.body).transactionType === transactionType,
       )
-    const walletPaymentCalls = () => gatewayCalls('/Payment/WalletPayment')
-    const cardPaymentCalls = () => gatewayCalls('/Payment/CardPayment')
-    const cardVerificationCalls = () => gatewayCalls('/CardVerification')
+    const decryptionCalls = () => cardPaymentCalls('WalletTransaction')
+    const chargeCalls = () => cardPaymentCalls('ECommerce')
+    const cardVerificationCalls = () =>
+      fetchSpy.mock.calls.filter(
+        ([url]) => typeof url === 'string' && url.includes('/CardVerification'),
+      )
 
     beforeEach(() => {
-      // Start every test without Google's root keys cached
-      Object.assign(app.get(CardPaymentService), { googlePayRootKeys: null })
-
       flowSpies = [
         jest
           .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
@@ -1987,41 +1961,11 @@ describe('CardPaymentController', () => {
       fetchSpy?.mockRestore()
     })
 
-    it('charges a device token with the decrypted card, cryptogram and ECI', async () => {
+    it('has the gateway decrypt the token and sends its card to 3-D Secure, charging nothing', async () => {
       mockFetch()
+      const googlePayToken = token()
 
-      const response = await charge(token())
-
-      expect(response.status).toBe(201)
-      expect(response.body.status).toBe('paid')
-      expect(response.body.payment.isSuccess).toBe(true)
-      expect(response.body.payment).toHaveProperty('correlationId')
-      expect(cardVerificationCalls()).toHaveLength(0)
-
-      const [[, init]] = walletPaymentCalls()
-      const body = JSON.parse(init.body)
-      expect(body).toMatchObject({
-        operation: 'Sale',
-        walletPaymentType: 'GooglePay',
-        googlePayWalletPayment: {
-          decryptedPaymentTokenData: {
-            amount: '100000',
-            cardNumber: '4111111111111111',
-            currency: 'ISK',
-            expirationMonth: 12,
-            expirationYear: 2030,
-            paymentCryptogram: 'AAAAAA0ZfXkAAAAAAAAAAAAAAAA=',
-            eci: '05',
-          },
-        },
-      })
-      expect(body.googlePayWalletPayment).not.toHaveProperty('paymentToken')
-    })
-
-    it('sends a saved card to 3-D Secure with its card number, expiry and name, and charges nothing', async () => {
-      mockFetch()
-
-      const response = await charge(savedCardToken())
+      const response = await charge(googlePayToken)
 
       expect(response.status).toBe(201)
       expect(response.body.status).toBe('verification_required')
@@ -2030,21 +1974,32 @@ describe('CardPaymentController', () => {
       })
       expect(response.body).not.toHaveProperty('payment')
 
-      const [[, init]] = cardVerificationCalls()
-      expect(JSON.parse(init.body)).toMatchObject({
+      const [[, decryptionInit]] = decryptionCalls()
+      expect(JSON.parse(decryptionInit.body)).toMatchObject({
+        operation: 'Sale',
+        transactionType: 'WalletTransaction',
+        currency: 'ISK',
+        amount: 100000,
+        Wallet: {
+          WalletType: 'GooglePay',
+          GooglePay: JSON.parse(googlePayToken),
+        },
+      })
+
+      const [[, verificationInit]] = cardVerificationCalls()
+      expect(JSON.parse(verificationInit.body)).toMatchObject({
         cardNumber: '4111111111111111',
         expirationMonth: 12,
         expirationYear: 2030,
         amount: 100000,
         cardHolderData: { cardholderName: 'Jón Jónsson' },
       })
-      expect(walletPaymentCalls()).toHaveLength(0)
-      expect(cardPaymentCalls()).toHaveLength(0)
+      expect(chargeCalls()).toHaveLength(0)
     })
 
     it('charges a saved card with the 3-D Secure result after verification, once', async () => {
       mockFetch()
-      const googlePayToken = savedCardToken()
+      const googlePayToken = token()
 
       expect((await charge(googlePayToken)).status).toBe(201)
       const [[, verificationInit]] = cardVerificationCalls()
@@ -2056,8 +2011,10 @@ describe('CardPaymentController', () => {
 
       expect(response.status).toBe(201)
       expect(response.body.isSuccess).toBe(true)
+      // The card only lives in memory, so the gateway decrypts it again
+      expect(decryptionCalls()).toHaveLength(2)
 
-      const [[, chargeInit]] = cardPaymentCalls()
+      const [[, chargeInit]] = chargeCalls()
       const body = JSON.parse(chargeInit.body)
       expect(body).toMatchObject({
         operation: 'Sale',
@@ -2075,17 +2032,18 @@ describe('CardPaymentController', () => {
       })
       expect(body).not.toHaveProperty('cvc')
 
+      // The charge used up the verification, so a second charge stops there
       const secondResponse = await chargeVerified(googlePayToken)
       expect(secondResponse.status).toBe(400)
       expect(secondResponse.body.detail).toBe(
-        CardErrorCode.GooglePayReplayDetected,
+        PaymentServiceCode.MissingVerification,
       )
-      expect(cardPaymentCalls()).toHaveLength(1)
+      expect(chargeCalls()).toHaveLength(1)
     })
 
     it('does not charge a saved card that has not passed 3-D Secure', async () => {
       mockFetch()
-      const googlePayToken = savedCardToken()
+      const googlePayToken = token()
 
       expect((await charge(googlePayToken)).status).toBe(201)
 
@@ -2093,72 +2051,66 @@ describe('CardPaymentController', () => {
 
       expect(response.status).toBe(400)
       expect(response.body.detail).toBe(PaymentServiceCode.MissingVerification)
-      expect(cardPaymentCalls()).toHaveLength(0)
+      expect(decryptionCalls()).toHaveLength(1)
+      expect(chargeCalls()).toHaveLength(0)
     })
 
-    it('does not charge another saved card with the 3-D Secure result of the verified one', async () => {
+    it('does not charge another token with the 3-D Secure result of the verified one', async () => {
       mockFetch()
 
-      expect((await charge(savedCardToken())).status).toBe(201)
+      expect((await charge(token())).status).toBe(201)
       const [[, verificationInit]] = cardVerificationCalls()
       expect(
         (await completeVerification(JSON.parse(verificationInit.body))).status,
       ).toBe(201)
 
-      const response = await chargeVerified(savedCardToken())
+      const response = await chargeVerified(token())
 
       expect(response.status).toBe(400)
       expect(response.body.detail).toBe(PaymentServiceCode.MissingVerification)
-      expect(cardPaymentCalls()).toHaveLength(0)
+      expect(chargeCalls()).toHaveLength(0)
     })
 
-    it('rejects a token signed for another merchant before the gateway is called', async () => {
+    it('rejects a token that is not JSON before the gateway is called', async () => {
       mockFetch()
 
-      const response = await charge(
-        token({ signedFor: 'merchant:99999999999999999999' }),
-      )
+      const response = await charge('not a token')
 
       expect(response.status).toBe(400)
       expect(response.body.detail).toBe(CardErrorCode.GooglePayTokenInvalid)
-      expect(walletPaymentCalls()).toHaveLength(0)
+      expect(decryptionCalls()).toHaveLength(0)
     })
 
-    it('rejects an expired token', async () => {
-      mockFetch()
-
-      const response = await charge(
-        token({
-          plaintext: googlePaySender.cryptogramPlaintext({
-            messageId: uuid(),
-            messageExpiration: String(Date.now() - 1000),
+    it('does not start 3-D Secure when the gateway can not decrypt the token', async () => {
+      mockFetch({
+        decryption: () =>
+          gatewayResponse({
+            isSuccess: false,
+            responseCode: 'Q9',
+            responseDescription: 'Decryption of GooglePay Token failed.',
+            responseTime: '00:00:00',
+            correlationID: uuid(),
           }),
-        }),
-      )
+      })
+
+      const response = await charge(token())
 
       expect(response.status).toBe(400)
-      expect(response.body.detail).toBe(CardErrorCode.GooglePayTokenExpired)
-      expect(walletPaymentCalls()).toHaveLength(0)
+      expect(cardVerificationCalls()).toHaveLength(0)
     })
 
-    it('rejects a replayed token on the second call', async () => {
-      mockFetch()
-      const googlePayToken = token()
+    it('does not start 3-D Secure when the gateway charges the token instead of decrypting it', async () => {
+      mockFetch({ decryption: () => gatewayResponse(chargeResponse()) })
 
-      const firstResponse = await charge(googlePayToken)
-      expect(firstResponse.status).toBe(201)
+      const response = await charge(token())
 
-      const secondResponse = await charge(googlePayToken)
-      expect(secondResponse.status).toBe(400)
-      expect(secondResponse.body.detail).toBe(
-        CardErrorCode.GooglePayReplayDetected,
-      )
-      expect(walletPaymentCalls()).toHaveLength(1)
+      expect(response.status).toBe(400)
+      expect(cardVerificationCalls()).toHaveLength(0)
     })
 
     it('keeps the replay marker when the gateway charge fails', async () => {
       mockFetch({
-        walletPayment: () =>
+        cardPayment: () =>
           ({
             json: async () => ({}),
             text: async () => 'gateway exploded',
@@ -2169,48 +2121,19 @@ describe('CardPaymentController', () => {
       })
       const googlePayToken = token()
 
-      const firstResponse = await charge(googlePayToken)
+      expect((await charge(googlePayToken)).status).toBe(201)
+      const [[, verificationInit]] = cardVerificationCalls()
+      expect(
+        (await completeVerification(JSON.parse(verificationInit.body))).status,
+      ).toBe(201)
+
+      const firstResponse = await chargeVerified(googlePayToken)
       expect(firstResponse.status).toBe(400)
 
       const secondResponse = await charge(googlePayToken)
       expect(secondResponse.body.detail).toBe(
         CardErrorCode.GooglePayReplayDetected,
       )
-    })
-
-    it("fails closed when Google's root keys can not be fetched", async () => {
-      mockFetch({
-        rootKeys: () =>
-          ({ status: 503, ok: false, json: async () => ({}) } as Response),
-      })
-
-      const response = await charge(token())
-
-      expect(response.status).toBe(400)
-      expect(response.body.detail).toBe(CardErrorCode.GooglePayKeysUnavailable)
-      expect(walletPaymentCalls()).toHaveLength(0)
-    })
-
-    it('keeps using the cached root keys when a refresh fails', async () => {
-      let rootKeysAvailable = true
-      mockFetch({
-        rootKeys: () =>
-          rootKeysAvailable
-            ? ({
-                json: async () => ({ keys: googlePaySender.rootKeys }),
-                // Expired at once, so the next charge refreshes
-                headers: new Headers({ 'cache-control': 'max-age=0' }),
-                status: 200,
-                ok: true,
-              } as Response)
-            : ({ status: 503, ok: false, json: async () => ({}) } as Response),
-      })
-
-      expect((await charge(token())).status).toBe(201)
-
-      rootKeysAvailable = false
-
-      expect((await charge(token())).status).toBe(201)
     })
 
     it('is not available when the Google Pay flag is off', async () => {
@@ -2226,7 +2149,7 @@ describe('CardPaymentController', () => {
 
         expect(response.status).toBe(403)
         expect((await chargeVerified(token())).status).toBe(403)
-        expect(walletPaymentCalls()).toHaveLength(0)
+        expect(decryptionCalls()).toHaveLength(0)
       } finally {
         ffs.getValue.mockImplementation(
           originalImpl ?? (() => Promise.resolve(false) as Promise<unknown>),

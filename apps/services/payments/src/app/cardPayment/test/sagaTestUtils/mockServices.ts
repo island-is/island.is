@@ -11,7 +11,6 @@ import {
   mockPaymentResult,
   PAYMENT_FLOW_ID,
 } from './mocks'
-import { getGooglePayDecryptedToken } from './inputs'
 
 /** Cast for mockResolvedValue to satisfy strict jest.Mock from @jest/globals */
 const resolved = <T>(v: T): never => v as never
@@ -34,9 +33,6 @@ export const createMockCardPaymentService = (
     ),
     charge: jest.fn().mockResolvedValue(resolved(mockPaymentResult)),
     chargeApplePay: jest.fn().mockResolvedValue(resolved(mockPaymentResult)),
-    decryptGooglePayToken: jest
-      .fn()
-      .mockResolvedValue(resolved(getGooglePayDecryptedToken())),
     chargeGooglePay: jest.fn().mockResolvedValue(resolved(mockPaymentResult)),
     persistPaymentConfirmation: jest
       .fn()
