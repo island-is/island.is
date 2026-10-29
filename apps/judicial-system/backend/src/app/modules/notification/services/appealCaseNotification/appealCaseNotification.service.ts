@@ -2212,9 +2212,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     )
 
     for (const assigned of [
-      appealCase.appealJudge1,
-      appealCase.appealJudge2,
-      appealCase.appealJudge3,
+      ...getAppealJudges(appealCase),
       appealCase.appealAssistant,
     ]) {
       addRecipient(assigned?.name, assigned?.email)
