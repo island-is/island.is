@@ -120,6 +120,23 @@ const caseEventsToLog = [
   'VERDICT_SERVICE_STATUS',
 ]
 
+// What an event names about a case: enough of it that a case read back after
+// an update - an UpdatedCase - can be posted about as well as a full Case.
+export type EventCase = Pick<
+  Case,
+  | 'id'
+  | 'type'
+  | 'policeCaseNumbers'
+  | 'indictmentSubtypes'
+  | 'courtCaseNumber'
+  | 'prosecutorsOffice'
+  | 'court'
+  | 'appealCase'
+  | 'judge'
+  | 'registrar'
+  | 'dateLogs'
+>
+
 @Injectable()
 export class EventService {
   constructor(
@@ -131,7 +148,7 @@ export class EventService {
 
   async postEvent(
     event: Event,
-    theCase: Case,
+    theCase: EventCase,
     info?: { [key: string]: string | boolean | Date | undefined },
   ) {
     try {
@@ -391,7 +408,7 @@ export class EventService {
     return infoText
   }
 
-  logInfo = (event: Event, theCase: Case) => {
+  logInfo = (event: Event, theCase: EventCase) => {
     if (!caseEventsToLog.includes(event)) {
       return
     }

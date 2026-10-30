@@ -23,4 +23,4 @@ export { MinimalCaseExistsForUpdateGuard } from './guards/minimalCaseExistsForUp
 export { MinimalCurrentCase } from './guards/minimalCase.decorator'
 export { MinimalCaseAccessGuard } from './guards/minimalCaseAccess.guard'
 export { MinimalCaseWriteGuard } from './guards/minimalCaseWrite.guard'
-export { MinimalCase } from './models/case.types'
+export { MinimalCase, UpdatedCase } from './models/case.types'

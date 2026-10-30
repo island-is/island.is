@@ -14,6 +14,7 @@ import {
   caseInclude,
   getLimitedAccessCaseInclude,
   limitedAccessCaseAttributes,
+  updatedCaseInclude,
 } from '../types/caseRepository.types'
 
 // The node of an include graph that reads a given association
@@ -199,6 +200,55 @@ describe('CaseRepositoryService - case reads', () => {
         )
         expect(result).toBe(theCase)
       })
+    })
+  })
+
+  describe('findUpdatedById', () => {
+    const transaction = {} as never
+    let result: Case | null
+
+    beforeEach(async () => {
+      result = await caseRepositoryService.findUpdatedById(caseId, {
+        transaction,
+      })
+    })
+
+    it('should read the case back, deleted or not, with the graph an update reads', () => {
+      expect(findOneOptions()).toEqual({
+        include: updatedCaseInclude,
+        where: { id: caseId, isArchived: false },
+        transaction,
+      })
+      expect(result).toBe(theCase)
+    })
+
+    it('should resolve the police case numbers in the same transaction', () => {
+      expect(mockResolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+        [theCase],
+        { transaction },
+      )
+    })
+
+    // What an update's side effects compare, what the event posted about it
+    // names and what the web reads off the update routes' responses - and
+    // nothing else. UpdatedCase omits every other association of Case; widen
+    // the two together.
+    it('should read only the associations the update and its response consume', () => {
+      expect(
+        updatedCaseInclude.map((include) => (include as IncludeOptions).as),
+      ).toEqual([
+        'prosecutorsOffice',
+        'court',
+        'appealCase',
+        'appealDecisions',
+        'prosecutor',
+        'judge',
+        'registrar',
+        'defendants',
+        'civilClaimants',
+        'caseFiles',
+        'dateLogs',
+      ])
     })
   })
 
