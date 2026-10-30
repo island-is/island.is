@@ -57,6 +57,7 @@ import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
   getIndictmentPdfDisplayName,
   getVisibleSubpoenas,
+  shouldHideCaseFilesRecordFromDefender,
   shouldShowPoliceDigitalCaseFilesSection,
 } from './IndictmentCaseFilesList.logic'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
@@ -446,6 +447,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+  const hideCaseFilesRecord = shouldHideCaseFilesRecordFromDefender(
+    workingCase.id,
+    user,
+  )
+
   const visiblePoliceCaseNumbers = useMemo(
     () =>
       isDefenceUser(user)
@@ -547,7 +553,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
             />
           </>
         )}
-        {displayGeneratedPDFs && (
+        {displayGeneratedPDFs && !hideCaseFilesRecord && (
           <Box>
             <SectionHeading
               title={strings.caseFileTitle}
