@@ -246,18 +246,18 @@ export const CaseFiles = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(strings.title)} />
+      <PageHeader title={strings.title} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <PageTitle>{strings.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <ParentCaseFiles files={workingCase.parentCase?.caseFiles} />
           <section>
             <SectionHeading
-              title={formatMessage(strings.policeCaseFilesHeading)}
+              title={strings.policeCaseFilesHeading}
               description={
                 workingCase.origin === CaseOrigin.LOKE
-                  ? formatMessage(strings.policeCaseFilesIntroduction)
+                  ? strings.policeCaseFilesIntroduction
                   : undefined
               }
             />
@@ -284,13 +284,13 @@ export const CaseFiles = () => {
           </section>
           <section>
             <SectionHeading
-              title={formatMessage(strings.filesHeading)}
+              title={strings.filesHeading}
               description="Gögnin í pakkanum hér fyrir neðan munu liggja frammi í þinghaldinu. Samkvæmt reglum dómstólasýslunnar skulu skjöl hafa lýsandi heiti."
             />
             <ReorderableFileUpload
               files={uploadFiles.filter((file) => !file.category)}
-              dropzoneTitle={formatMessage(strings.filesLabel)}
-              dropzoneButtonLabel={formatMessage(strings.filesButtonLabel)}
+              dropzoneTitle={strings.filesLabel}
+              dropzoneButtonLabel={strings.filesButtonLabel}
               onFilesChange={(files) =>
                 handleUpload(addUploadFiles(files), updateUploadFile)
               }
@@ -306,13 +306,13 @@ export const CaseFiles = () => {
           </section>
           <section>
             <SectionHeading
-              title={formatMessage(strings.commentsHeading)}
-              tooltip={formatMessage(strings.commentsTooltip)}
+              title={strings.commentsHeading}
+              tooltip={strings.commentsTooltip}
             />
             <Input
               name="caseFilesComments"
-              label={formatMessage(strings.commentsLabel)}
-              placeholder={formatMessage(strings.commentsPlaceholder)}
+              label={strings.commentsLabel}
+              placeholder={strings.commentsPlaceholder}
               value={caseFilesComments.value}
               onChange={(evt) => caseFilesComments.onChange(evt.target.value)}
               textarea

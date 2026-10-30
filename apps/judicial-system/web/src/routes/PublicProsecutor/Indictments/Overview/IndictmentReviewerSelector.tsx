@@ -57,19 +57,25 @@ export const IndictmentReviewerSelector = ({
   return (
     <>
       <SectionHeading
-        title={fm(strings.reviewerTitle)}
+        title={strings.reviewerTitle}
         description={
           <Text variant="eyebrow">
-            {fm(strings.reviewerSubtitle, {
-              isFine:
-                workingCase.indictmentRulingDecision ===
-                CaseIndictmentRulingDecision.FINE,
-              indictmentAppealDeadline: formatDate(
-                workingCase.indictmentAppealDeadline,
-              ),
-              appealDeadlineIsInThePast:
-                workingCase.indictmentVerdictAppealDeadlineExpired,
-            })}
+            {fm(
+              {
+                id: strings.reviewerSubtitle,
+                defaultMessage: strings.reviewerSubtitle,
+              },
+              {
+                isFine:
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.FINE,
+                indictmentAppealDeadline: formatDate(
+                  workingCase.indictmentAppealDeadline,
+                ),
+                appealDeadlineIsInThePast:
+                  workingCase.indictmentVerdictAppealDeadlineExpired,
+              },
+            )}
           </Text>
         }
       />
@@ -78,7 +84,7 @@ export const IndictmentReviewerSelector = ({
           name="reviewer"
           dataTestId="select-reviewer"
           label="Veldu saksóknara"
-          placeholder={fm(strings.reviewerPlaceholder)}
+          placeholder={strings.reviewerPlaceholder}
           value={
             selectedIndictmentReviewer
               ? selectedIndictmentReviewer

@@ -1,4 +1,4 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql'
+import { Field, Float, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
 
 import { TaxCalculatorOutputFieldType } from './enums'
 
@@ -17,13 +17,12 @@ export class OutputScalarValue {
   @Field(() => Float, { nullable: true })
   numberValue?: number
 
-  @Field({
-    nullable: true,
-    description:
-      'Value for a `STRING` or `DATE` item field; dates use `yyyy-MM-dd`.',
-  })
+  @Field({ nullable: true })
   stringValue?: string
 
   @Field({ nullable: true })
   booleanValue?: boolean
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  dateValue?: Date
 }

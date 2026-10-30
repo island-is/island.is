@@ -180,6 +180,9 @@ export class ApplicationStatistics {
 
   @Field(() => String, { nullable: true })
   institutionContentfulSlug?: string
+
+  @Field(() => Boolean, { nullable: true })
+  isFormSystem?: boolean
 }
 
 @ObjectType()

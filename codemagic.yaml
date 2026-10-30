@@ -153,11 +153,56 @@ definitions:
           .maestro/ \
           --apiKey "$DCD_API_KEY" \
           --quiet
+    # Steps used by the auto-release mobile-release-* workflows. The release
+    # worker starts those builds through the Codemagic API and passes the commit
+    # and build numbers as environment variables.
+    - &checkout_release_target
+      name: Check out the commit auto-release requested
+      working_directory: .
+      script: |
+        set -euo pipefail
+        : "${MOBILE_REQUEST_ID:?required}"
+        : "${MOBILE_TARGET_SHA:?required}"
+        : "${MOBILE_RELEASE_VERSION:?required}"
+        if [[ ! "$MOBILE_TARGET_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+          echo "MOBILE_TARGET_SHA must be a full lowercase 40-character SHA" >&2
+          exit 1
+        fi
+        printf 'MOBILE_REQUEST_ID=%s\nMOBILE_TARGET_SHA=%s\nMOBILE_RELEASE_VERSION=%s\n' \
+          "$MOBILE_REQUEST_ID" "$MOBILE_TARGET_SHA" "$MOBILE_RELEASE_VERSION"
+        # Codemagic clones the branch tip; build the exact commit auto-release sent.
+        git fetch --no-tags origin "$MOBILE_TARGET_SHA"
+        git checkout --detach "$MOBILE_TARGET_SHA"
+        test "$(git rev-parse HEAD)" = "$MOBILE_TARGET_SHA"
+    - &apply_release_android_version_code
+      name: Apply auto-release Android version code
+      script: |
+        set -euo pipefail
+        : "${MOBILE_BUILD_NUMBER_ANDROID:?required}"
+        # app.config.js reads ANDROID_VERSION_CODE during prebuild.
+        echo "ANDROID_VERSION_CODE=$MOBILE_BUILD_NUMBER_ANDROID" >> "$CM_ENV"
+        echo "Using Android version code: $MOBILE_BUILD_NUMBER_ANDROID"
+    - &apply_release_ios_build_number
+      name: Apply auto-release iOS build number
+      script: |
+        set -euo pipefail
+        : "${MOBILE_BUILD_NUMBER_IOS:?required}"
+        cd ios
+        agvtool new-version -all "$MOBILE_BUILD_NUMBER_IOS"
+        echo "Using iOS build number: $MOBILE_BUILD_NUMBER_IOS"
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
         auth: integration
         submit_to_testflight: false
+        submit_to_app_store: false
+    # auto-release iOS builds upload to TestFlight (both dev and prod app
+    # records) but never submit for App Store review. Android auto-release
+    # builds upload to the Google Play internal track (both dev and prod
+    # packages) via the shared android_publishing anchor below.
+    ios_release_testflight: &ios_release_testflight
+      app_store_connect:
+        auth: integration
         submit_to_app_store: false
     android_publishing: &android_publishing
       google_play:
@@ -376,3 +421,150 @@ workflows:
       - *run_devicecloud_android
     artifacts:
       - android/app/build/outputs/**/*.apk
+
+  # Started only by the auto-release mobile worker. Each release target triggers
+  # four builds, one per (platform, variant):
+  #   CODEMAGIC_WORKFLOW_ID_IOS_DEV      -> mobile-release-ios-dev
+  #   CODEMAGIC_WORKFLOW_ID_IOS_PROD     -> mobile-release-ios-prod
+  #   CODEMAGIC_WORKFLOW_ID_ANDROID_DEV  -> mobile-release-android-dev
+  #   CODEMAGIC_WORKFLOW_ID_ANDROID_PROD -> mobile-release-android-prod
+  # Based on dev-app-* / prod-app-*, but every request builds: no `when:
+  # changeset`, no check_changes, and the build number comes from auto-release
+  # instead of the stores. iOS variants upload the signed .ipa to TestFlight
+  # (dev and prod app records) but never submit for App Store review. Android
+  # variants sign only and publish to no store; the signed .aab is an artifact.
+  mobile-release-ios-dev:
+    name: Island.is Mobile Release iOS Dev (auto-release)
+    max_build_duration: 120
+    working_directory: apps/native/app
+    instance_type: mac_mini_m2
+    cache: *ios_cache
+    integrations:
+      app_store_connect: 'Island.is API Key'
+    environment:
+      <<: *environment
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: is.island.app.dev
+      vars:
+        <<: *shared_envs
+        BUNDLE_ID: 'is.island.app.dev'
+        APP_STORE_APPLE_ID: 1570427360
+        APP_VARIANT: 'development'
+    scripts:
+      - *checkout_release_target
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *prebuild_ios
+      - *cocoapods
+      - *provisioning_profiles
+      - *apply_release_ios_build_number
+      - *build_ipa
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      <<: *ios_release_testflight
+      <<: *slack_errors
+
+  mobile-release-ios-prod:
+    name: Island.is Mobile Release iOS Prod (auto-release)
+    max_build_duration: 120
+    working_directory: apps/native/app
+    instance_type: mac_mini_m2
+    cache: *ios_cache
+    integrations:
+      app_store_connect: 'Island.is API Key'
+    environment:
+      <<: *environment
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: is.island.app
+      vars:
+        <<: *shared_envs
+        BUNDLE_ID: 'is.island.app'
+        APP_STORE_APPLE_ID: 1569828682
+        APP_VARIANT: 'production'
+    scripts:
+      - *checkout_release_target
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *prebuild_ios
+      - *cocoapods
+      - *provisioning_profiles
+      - *apply_release_ios_build_number
+      - *build_ipa
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      <<: *ios_release_testflight
+      <<: *slack_errors
+
+  mobile-release-android-dev:
+    name: Island.is Mobile Release Android Dev (auto-release)
+    max_build_duration: 120
+    working_directory: apps/native/app
+    instance_type: linux_x2
+    cache: *android_cache
+    environment:
+      <<: *environment
+      android_signing:
+        - island-upload-keystore
+      groups:
+        - google_credentials
+        - firebase_credentials_dev
+      vars:
+        <<: *shared_envs
+        PACKAGE_NAME: 'is.island.app.dev'
+        APP_VARIANT: 'development'
+    scripts:
+      - *checkout_release_target
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *apply_release_android_version_code
+      - *prebuild_android
+      - *set_android_location
+      - *build_android
+    artifacts:
+      - android/app/build/outputs/**/*.aab
+    publishing:
+      <<: *android_publishing
+      <<: *slack_errors
+
+  mobile-release-android-prod:
+    name: Island.is Mobile Release Android Prod (auto-release)
+    max_build_duration: 120
+    working_directory: apps/native/app
+    instance_type: linux_x2
+    cache: *android_cache
+    environment:
+      <<: *environment
+      android_signing:
+        - island-upload-keystore
+      groups:
+        - google_credentials
+        - firebase_credentials
+      vars:
+        <<: *shared_envs
+        PACKAGE_NAME: 'is.island.app'
+        APP_VARIANT: 'production'
+    scripts:
+      - *checkout_release_target
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *apply_release_android_version_code
+      - *prebuild_android
+      - *set_android_location
+      - *build_android
+    artifacts:
+      - android/app/build/outputs/**/*.aab
+    publishing:
+      <<: *android_publishing
+      <<: *slack_errors

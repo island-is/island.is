@@ -1,8 +1,3 @@
-export { VEHICLE_TAX_PERIODS, vehicleTaxCalculator } from './definition'
-export type {
-  VehicleTaxInput,
-  VehicleTaxOutput,
-  VehicleTaxPeriod,
-} from './definition'
-export { toVehicleTaxQuery } from './input'
+export { vehicleTaxCalculator } from './definition'
+export type { VehicleTaxInput, VehicleTaxOutput } from './definition'
 export { toVehicleTaxOutput } from './output'

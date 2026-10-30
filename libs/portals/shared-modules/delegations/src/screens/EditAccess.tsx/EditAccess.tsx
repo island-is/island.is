@@ -130,6 +130,7 @@ const EditAccess = () => {
       validTo: scope.validTo ? new Date(scope.validTo) : undefined,
       validFrom: scope.validFrom ? new Date(scope.validFrom) : undefined,
       allowsWrite: scope.apiScope?.allowsWrite ?? false,
+      requiresConfirmation: scope.apiScope?.requiresConfirmation ?? false,
     })) as ScopeSelection[]
     setSelectedScopes(scopes)
     setInitialScopes(scopes)
@@ -265,6 +266,7 @@ const EditAccess = () => {
           onClose={() => setIsConfirmModalVisible(false)}
           isVisible={isConfirmModalVisible}
           removedScopes={removedScopes}
+          initialScopes={initialScopes}
         />
 
         {recipient && (

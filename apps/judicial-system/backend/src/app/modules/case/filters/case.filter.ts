@@ -617,9 +617,10 @@ export const canUserAccessCase = (
 export const canUserAccessMinimalCase = (
   theCase: MinimalCase,
   user: User,
+  forUpdate: boolean,
 ): boolean => {
   if (isProsecutionUser(user)) {
-    return canProsecutionUserAccessCase(theCase, user, false)
+    return canProsecutionUserAccessCase(theCase, user, forUpdate)
   }
 
   if (isDistrictCourtUser(user)) {

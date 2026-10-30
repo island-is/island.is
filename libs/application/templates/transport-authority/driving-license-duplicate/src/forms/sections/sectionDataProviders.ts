@@ -14,6 +14,7 @@ import {
 } from '@island.is/application/types'
 import {
   DuplicateEligibilityApi,
+  DuplicatePhotoLookupCheckApi,
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../../dataProviders'
@@ -52,6 +53,9 @@ export const sectionDataProviders = (
           }),
           buildDataProviderItem({
             provider: DuplicateEligibilityApi,
+          }),
+          buildDataProviderItem({
+            provider: DuplicatePhotoLookupCheckApi,
           }),
           buildDataProviderItem({
             provider: allowFakeData ? undefined : UserProfileApi,

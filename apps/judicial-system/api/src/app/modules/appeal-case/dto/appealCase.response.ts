@@ -12,6 +12,7 @@ import { CaseFile } from '../../file'
 import { User } from '../../user'
 import { AppealCourtSession } from './appealCourtSession.response'
 import { AppealEventLog } from './appealEventLog.response'
+import { AppealStatementDeadline } from './appealStatementDeadline.response'
 
 registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
 registerEnumType(AppealCaseType, { name: 'AppealCaseType' })
@@ -149,7 +150,17 @@ export class AppealCase {
   @Field(() => [AppealSummons], { nullable: true })
   readonly appealSummonses?: AppealSummons[]
 
+  // Summonses already sent to Landsréttur. Staff keep appealSummonses; CoA
+  // reads this field only.
+  @Field(() => [AppealSummons], { nullable: true })
+  readonly sentAppealSummonses?: AppealSummons[]
+
   // Only a verdict appeal carries sessions; a ruling appeal is decided on the papers.
   @Field(() => [AppealCourtSession], { nullable: true })
   readonly courtSessions?: AppealCourtSession[]
+
+  // The statement deadlines the court of appeals has given the parties of a
+  // verdict appeal, one per party.
+  @Field(() => [AppealStatementDeadline], { nullable: true })
+  readonly statementDeadlines?: AppealStatementDeadline[]
 }

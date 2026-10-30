@@ -13,6 +13,60 @@ import { Form } from './models/form.model'
 import { ApplicationJsonDto } from '../applications/models/dto/application.json.dto'
 import { User } from '@island.is/auth-nest-tools'
 
+describe('FormsService update draft steps', () => {
+  it.each(
+    [0, 1, 3].flatMap((inputSections) =>
+      [false, true].flatMap((hasSummaryScreen) =>
+        [false, true].map((hasPayment) => ({
+          inputSections,
+          hasSummaryScreen,
+          hasPayment,
+        })),
+      ),
+    ),
+  )(
+    'recalculates draft steps from sections and settings: %j',
+    async (settings) => {
+      const user = { nationalId: 'owner', scope: [] } as unknown as User
+      const form = {
+        id: 'form-id',
+        organizationNationalId: user.nationalId,
+        hasSummaryScreen: false,
+        hasPayment: false,
+        draftTotalSteps: 99,
+        save: jest.fn().mockResolvedValue(undefined),
+      }
+      const transaction = { id: 'transaction' }
+      const sectionModel = {
+        count: jest.fn().mockResolvedValue(settings.inputSections),
+      }
+      const service = Object.assign(Object.create(FormsService.prototype), {
+        formModel: { findByPk: jest.fn().mockResolvedValue(form) },
+        sectionModel,
+        sequelize: {
+          transaction: jest.fn((callback) => callback(transaction)),
+        },
+      }) as FormsService
+
+      await service.update(user, form.id, {
+        hasSummaryScreen: settings.hasSummaryScreen,
+        hasPayment: settings.hasPayment,
+      })
+
+      expect(sectionModel.count).toHaveBeenCalledWith({
+        where: { formId: form.id, sectionType: SectionTypes.INPUT },
+        transaction,
+      })
+      expect(form.draftTotalSteps).toBe(
+        settings.inputSections +
+          1 +
+          (settings.hasSummaryScreen || settings.hasPayment ? 1 : 0),
+      )
+      expect(form.save).toHaveBeenCalledWith({ transaction })
+    },
+  )
+})
+
 describe('FormsService import', () => {
   const user = { nationalId: 'destination', scope: [] } as unknown as User
   const setup = () => {

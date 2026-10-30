@@ -173,6 +173,7 @@ const calculationResult = {
           numberValue: 120000,
           stringValue: null,
           booleanValue: null,
+          dateValue: null,
           arrayValue: null,
         },
         {
@@ -181,6 +182,7 @@ const calculationResult = {
           numberValue: 692762,
           stringValue: null,
           booleanValue: null,
+          dateValue: null,
           arrayValue: null,
         },
       ],

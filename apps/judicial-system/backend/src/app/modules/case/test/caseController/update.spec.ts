@@ -23,7 +23,6 @@ import {
   DateType,
   DefendantEventType,
   DefendantNotificationType,
-  DefenderChoice,
   EventType,
   IndictmentCaseNotificationType,
   indictmentCases,
@@ -31,7 +30,6 @@ import {
   InstitutionType,
   investigationCases,
   RequestCaseNotificationType,
-  RequestSharedWithDefender,
   restrictionCases,
   ServiceStatus,
   StringType,
@@ -795,52 +793,6 @@ describe('CaseController - Update', () => {
             user,
             caseId,
           },
-          {
-            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId1,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId1,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId2,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId2,
-          },
-        ])
-      })
-    },
-  )
-
-  describe.each([...restrictionCases, ...investigationCases])(
-    'defender email updated for %s case',
-    (type) => {
-      const defenderEmail = uuid()
-      const caseToUpdate = { defenderEmail }
-      const updatedCase = { ...theCase, type, defenderEmail }
-
-      beforeEach(async () => {
-        const mockFindUpdatedById =
-          mockCaseRepositoryService.findUpdatedById as jest.Mock
-        mockFindUpdatedById.mockResolvedValueOnce(updatedCase)
-
-        await givenWhenThen(caseId, user, theCase, caseToUpdate)
-      })
-
-      it('should post to queue', () => {
-        expect(mockQueuedMessages).toEqual([
           {
             type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
             user,
@@ -1648,6 +1600,32 @@ describe('CaseController - Update', () => {
     })
   })
 
+  describe('civil claims turned off', () => {
+    const caseToUpdate = {
+      hasCivilClaims: false,
+      // Stale paired field must not reinsert the string after the delete
+      civilDemands: uuid(),
+    }
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should delete the civil demands case string', () => {
+      expect(
+        mockCaseStringRepositoryService.deleteByCaseAndType,
+      ).toHaveBeenCalledWith(caseId, StringType.CIVIL_DEMANDS, {
+        transaction,
+      })
+    })
+
+    it('should not upsert civil demands from the same update', () => {
+      expect(
+        mockCaseStringRepositoryService.upsertByCaseAndType,
+      ).not.toHaveBeenCalled()
+    })
+  })
+
   describe('merge parent chosen for a received case', () => {
     const receivedCase = {
       ...theCase,
@@ -2072,7 +2050,10 @@ describe('CaseController - Update', () => {
       expect(mockEventService.postEvent).toHaveBeenCalledWith(
         CaseTransition.MOVE,
         movedCase,
-        { from: 'Héraðsdómur Reykjavíkur', to: 'Héraðsdómur Reykjaness' },
+        {
+          from: 'Héraðsdómur Reykjavíkur',
+          to: 'Héraðsdómur Reykjaness',
+        },
       )
     })
   })
@@ -2297,159 +2278,6 @@ describe('CaseController - Update', () => {
         verdict2,
         transaction,
       )
-    })
-  })
-
-  describe('dual-write defender to defendants for request cases', () => {
-    const defenderName = 'Jane Doe'
-    const defenderNationalId = '1234567890'
-    const defenderEmail = 'jane@example.is'
-    const defenderPhoneNumber = '5551234'
-    const requestCase = {
-      ...theCase,
-      type: CaseType.CUSTODY,
-      defenderName: 'Old Name',
-      defenderNationalId: '0000000000',
-      defenderEmail: 'old@example.is',
-      defenderPhoneNumber: '0000000',
-      defendantWaivesRightToCounsel: false,
-    } as Case
-
-    describe('syncs defender fields when defenderName changes on a request case', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          defenderName,
-          defenderNationalId,
-          defenderEmail,
-          defenderPhoneNumber,
-        } as UpdateCaseDto)
-      })
-
-      it('should call syncDefenderToAllDefendants with merged contact fields', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).toHaveBeenCalledWith(
-          caseId,
-          {
-            defenderName,
-            defenderNationalId,
-            defenderEmail,
-            defenderPhoneNumber,
-            defenderChoice: null,
-            requestSharedWithDefender: undefined,
-          },
-          transaction,
-        )
-      })
-    })
-
-    describe('clears defender fields when defenderName is set to null', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          defenderName: null,
-        } as unknown as UpdateCaseDto)
-      })
-
-      it('should call syncDefenderToAllDefendants with null name and remaining contacts', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).toHaveBeenCalledWith(
-          caseId,
-          {
-            defenderName: null,
-            defenderNationalId: '0000000000',
-            defenderEmail: 'old@example.is',
-            defenderPhoneNumber: '0000000',
-            defenderChoice: null,
-            requestSharedWithDefender: undefined,
-          },
-          transaction,
-        )
-      })
-    })
-
-    describe('sets WAIVE when defendantWaivesRightToCounsel is true', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          defendantWaivesRightToCounsel: true,
-        } as UpdateCaseDto)
-      })
-
-      it('should sync contact fields with defenderChoice WAIVE', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).toHaveBeenCalledWith(
-          caseId,
-          {
-            defenderName: 'Old Name',
-            defenderNationalId: '0000000000',
-            defenderEmail: 'old@example.is',
-            defenderPhoneNumber: '0000000',
-            defenderChoice: DefenderChoice.WAIVE,
-            requestSharedWithDefender: undefined,
-          },
-          transaction,
-        )
-      })
-    })
-
-    describe('does not sync for indictment cases', () => {
-      const indictmentCase = {
-        ...theCase,
-        type: CaseType.INDICTMENT,
-      } as Case
-
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, indictmentCase, {
-          defenderName: 'Someone',
-        } as UpdateCaseDto)
-      })
-
-      it('should not call syncDefenderToAllDefendants', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).not.toHaveBeenCalled()
-      })
-    })
-
-    describe('does not sync when non-defender fields change', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          courtLocation: 'Some court',
-        } as UpdateCaseDto)
-      })
-
-      it('should not call syncDefenderToAllDefendants', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).not.toHaveBeenCalled()
-      })
-    })
-
-    describe('syncs when requestSharedWithDefender changes on a request case', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
-        } as UpdateCaseDto)
-      })
-
-      it('should call syncDefenderToAllDefendants with sharing and contact fields', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).toHaveBeenCalledWith(
-          caseId,
-          {
-            defenderName: 'Old Name',
-            defenderNationalId: '0000000000',
-            defenderEmail: 'old@example.is',
-            defenderPhoneNumber: '0000000',
-            defenderChoice: null,
-            requestSharedWithDefender:
-              RequestSharedWithDefender.READY_FOR_COURT,
-          },
-          transaction,
-        )
-      })
     })
   })
 

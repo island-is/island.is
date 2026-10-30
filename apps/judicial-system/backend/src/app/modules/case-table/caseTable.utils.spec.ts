@@ -4,6 +4,7 @@ import {
   AppealEventType,
   CaseActionType,
   CaseState,
+  CaseTableColumnKey,
   CaseType,
   ContextMenuCaseActionType,
   InstitutionType,
@@ -17,6 +18,7 @@ import {
   canDeleteIndictmentCase,
   canDeleteRequestCase,
   getActionOnRowClick,
+  getAllIncludes,
   getAttributes,
   getContextMenuActions,
   getGlobalIncludes,
@@ -83,6 +85,92 @@ describe('caseTable.utils', () => {
     // put the term under "0", where nothing reads it.
     it('does not smuggle the order in under a numeric key', () => {
       expect(Object.keys(dateLogsInclude())).not.toContain('0')
+    })
+  })
+
+  // A column declares the whole path its value needs, down to the attributes of
+  // an association of an association. The model maps say only how each alias
+  // joins; which attributes and associations to read comes from the columns.
+  describe('nested includes', () => {
+    const judge = {
+      id: 'judge_id',
+      role: UserRole.DISTRICT_COURT_JUDGE,
+      institution: { type: InstitutionType.DISTRICT_COURT },
+    } as User
+
+    type IncludeShape = {
+      as?: string
+      attributes?: string[]
+      include?: IncludeShape[]
+    }
+
+    const findInclude = (includes: unknown[], as: string) =>
+      includes.find((include) => (include as IncludeShape).as === as) as
+        | IncludeShape
+        | undefined
+
+    it('builds an association of an association from the declaration', () => {
+      const [includes] = getGlobalIncludes(
+        {
+          appealCase: {
+            attributes: [],
+            includes: { appealJudge1: { attributes: ['name'] } },
+          },
+        },
+        judge,
+      )
+
+      const appealJudge1 = findInclude(
+        findInclude(includes, 'appealCase')?.include ?? [],
+        'appealJudge1',
+      )
+
+      expect(appealJudge1).toMatchObject({
+        as: 'appealJudge1',
+        separate: false,
+        attributes: ['id', 'name'],
+      })
+    })
+
+    it('merges what two declarations read off the same nested association', () => {
+      const [includes] = getAllIncludes(
+        {
+          appealCase: {
+            attributes: [],
+            includes: { appealJudge1: { attributes: ['title'] } },
+          },
+        },
+        ['courtOfAppealsHead' as CaseTableColumnKey],
+        judge,
+      )
+
+      const appealJudge1 = findInclude(
+        findInclude(includes, 'appealCase')?.include ?? [],
+        'appealJudge1',
+      )
+
+      expect(appealJudge1?.attributes).toEqual(
+        expect.arrayContaining(['id', 'title', 'name']),
+      )
+    })
+
+    it('names the path of an association the model maps do not reach', () => {
+      expect(() =>
+        getGlobalIncludes(
+          {
+            appealCase: {
+              attributes: [],
+              includes: {
+                appealJudge1: {
+                  attributes: [],
+                  includes: { institution: { attributes: ['name'] } },
+                },
+              },
+            },
+          },
+          judge,
+        ),
+      ).toThrow('appealCase.appealJudge1.institution')
     })
   })
 
