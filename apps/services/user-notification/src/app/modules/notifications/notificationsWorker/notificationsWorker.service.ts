@@ -194,6 +194,16 @@ export class NotificationsWorkerService {
       return false
     }
 
+    const enabled = await this.featureFlagService.getValue(
+      Features.isNotificationBlockedCategoriesEnabled,
+      false,
+      { nationalId } as User,
+    )
+
+    if (!enabled) {
+      return false
+    }
+
     // Templates without a category are presented to users as 'almennt'
     const effectiveCategory = category ?? DEFAULT_CATEGORY
 

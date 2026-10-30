@@ -25,7 +25,7 @@ import { createNationalId } from '@island.is/testing/fixtures'
 import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
 import { QueueService, getQueueServiceToken } from '@island.is/message-queue'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { testServer, truncate, useDatabase } from '@island.is/testing/nest'
 
 import { UserNotificationsConfig } from '../../../../config'
@@ -1467,6 +1467,31 @@ describe('NotificationsWorkerService', () => {
       expect(
         MockV2UsersApi.userProfileControllerFindNotificationSettings,
       ).toHaveBeenCalledWith({ xParamNationalId: recipient })
+    })
+
+    it('should ignore blocked categories when the feature flag is disabled', async () => {
+      const featureFlagService = app.get(FeatureFlagService)
+      const getValue = featureFlagService.getValue.bind(featureFlagService)
+      const getValueSpy = jest
+        .spyOn(featureFlagService, 'getValue')
+        .mockImplementation((feature, defaultValue, user) =>
+          feature === Features.isNotificationBlockedCategoriesEnabled
+            ? Promise.resolve(false)
+            : getValue(feature, defaultValue, user),
+        )
+      mockCategory('Heilbrigðismál')
+      block(senderId, 'heilbrigdismal')
+
+      try {
+        await send()
+      } finally {
+        getValueSpy.mockRestore()
+      }
+
+      await expectDelivered(true)
+      expect(
+        MockV2UsersApi.userProfileControllerFindNotificationSettings,
+      ).not.toHaveBeenCalled()
     })
 
     it('should match a dashed sender id', async () => {
