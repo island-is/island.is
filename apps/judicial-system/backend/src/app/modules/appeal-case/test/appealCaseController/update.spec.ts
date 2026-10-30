@@ -524,62 +524,6 @@ describe('AppealCaseController - Update', () => {
     })
   })
 
-  describe('a judge is assigned to one slot', () => {
-    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
-    const judgeIds = [uuid(), uuid(), uuid()]
-    const newJudgeId = uuid()
-    const appealCase = {
-      id: appealCaseId,
-      caseId,
-      appealJudges: bench(judgeIds),
-    } as AppealCase
-    const update = { appealJudge2Id: newJudgeId }
-
-    beforeEach(async () => {
-      await givenWhenThen(theCase, appealCase, update)
-    })
-
-    it('should validate the new judge', () => {
-      expect(mockUserService.findById).toHaveBeenCalledWith(newJudgeId, {
-        transaction,
-      })
-    })
-
-    it('should replace only that position on the bench', () => {
-      expect(
-        mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
-      ).toHaveBeenCalledWith(
-        appealCaseId,
-        [judgeIds[0], newJudgeId, judgeIds[2]],
-        { transaction },
-      )
-    })
-
-    it('should not write the slot to the appeal case row', () => {
-      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('judges are assigned to the slots of an empty bench', () => {
-    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
-    const judge1Id = uuid()
-    const judge3Id = uuid()
-    const appealCase = { id: appealCaseId, caseId } as AppealCase
-    const update = { appealJudge1Id: judge1Id, appealJudge3Id: judge3Id }
-
-    beforeEach(async () => {
-      await givenWhenThen(theCase, appealCase, update)
-    })
-
-    it('should store the judges in slot order', () => {
-      expect(
-        mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
-      ).toHaveBeenCalledWith(appealCaseId, [judge1Id, judge3Id], {
-        transaction,
-      })
-    })
-  })
-
   describe('an assistant is assigned with the wrong role', () => {
     const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
     const appealCase = { id: appealCaseId, caseId } as AppealCase

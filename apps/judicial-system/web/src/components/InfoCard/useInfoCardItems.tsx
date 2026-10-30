@@ -15,6 +15,7 @@ import {
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
+  getAppealJudges,
   isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
@@ -416,11 +417,9 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     title: formatMessage(core.appealJudgesHeading),
     values: [
       <>
-        {sortByIcelandicAlphabet([
-          targetAppealCase?.appealJudge1?.name || '',
-          targetAppealCase?.appealJudge2?.name || '',
-          targetAppealCase?.appealJudge3?.name || '',
-        ]).map((judge, index) => (
+        {sortByIcelandicAlphabet(
+          getAppealJudges(targetAppealCase).map((judge) => judge.name || ''),
+        ).map((judge, index) => (
           <Text key={`${judge}_${index}`}>{judge}</Text>
         ))}
       </>,

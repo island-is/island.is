@@ -6,6 +6,7 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  hasAllAppealJudges,
   isCourtOfAppealsUser,
   isDefenceUser,
   isIndictmentCase,
@@ -174,9 +175,7 @@ export const shouldUseAppealWithdrawnRoutes = (
     appealCase?.appealState === AppealCaseState.WITHDRAWN &&
     (!appealCase.appealAssistant ||
       !appealCase.appealCaseNumber ||
-      !appealCase.appealJudge1 ||
-      !appealCase.appealJudge2 ||
-      !appealCase.appealJudge3)
+      !hasAllAppealJudges(appealCase))
   )
 }
 
