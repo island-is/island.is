@@ -20,6 +20,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDateOnly,
+  formSubmit,
   IntroWrapper,
   LinkButton,
   m,
@@ -385,6 +386,7 @@ export const EstateDetail = () => {
               <Box border="standard" borderRadius="large" padding={3}>
                 <Stack space={2}>
                   {latestDocuments.map((doc, i) => {
+                    const downloadUrl = doc.downloadServiceUrl
                     const url = doc.requestAction?.url
                     const label = doc.requestAction?.label ?? ''
                     return (
@@ -403,7 +405,18 @@ export const EstateDetail = () => {
                             : undefined
                         }
                         cta={
-                          url
+                          downloadUrl
+                            ? {
+                                label: formatMessage(m.view),
+                                ariaLabel: `${formatMessage(m.view)}: ${
+                                  doc.name ?? ''
+                                }`,
+                                variant: 'text',
+                                icon: 'open',
+                                iconType: 'outline',
+                                onClick: () => formSubmit(downloadUrl),
+                              }
+                            : url
                             ? {
                                 label,
                                 ariaLabel: `${label}: ${doc.name ?? ''}`,

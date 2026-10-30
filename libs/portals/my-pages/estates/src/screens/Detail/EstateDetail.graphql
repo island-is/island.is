@@ -86,6 +86,7 @@ query EstateDetail($input: EstatesCaseInput!) {
       documentDate
       availability
       islandIsDocumentId
+      downloadServiceUrl
       requestAction {
         type
         label
