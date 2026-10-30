@@ -213,7 +213,10 @@ describe('FjarskiptastofaSelfAssessmentService', () => {
     // The form blocks an incomplete submit; these cover a submit that gets
     // past it, which must not reach Fjarskiptastofa as a finished assessment.
     it.each<[string, StoredAnswers]>([
-      ['an unanswered question', { q1: { answerValue: 'Yes', remark: 'done' } }],
+      [
+        'an unanswered question',
+        { q1: { answerValue: 'Yes', remark: 'done' } },
+      ],
       [
         'a question with no answer value',
         { ...completeAnswers, q2: { remark: 'left blank' } },
