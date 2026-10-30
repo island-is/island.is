@@ -23,17 +23,10 @@ import {
   toInterestBenefitQuery,
 } from '../domains/interestBenefit'
 import type { VehicleBenefitInput } from '../domains/vehicleBenefit'
-import {
-  toVehicleBenefitOutput,
-  toVehicleBenefitQuery,
-} from '../domains/vehicleBenefit'
+import { toVehicleBenefitQuery } from '../domains/vehicleBenefit'
 import type { VehicleDepreciationInput } from '../domains/vehicleDepreciation'
-import {
-  toVehicleDepreciationOutput,
-  toVehicleDepreciationQuery,
-} from '../domains/vehicleDepreciation'
+import { toVehicleDepreciationQuery } from '../domains/vehicleDepreciation'
 import type { VehicleTaxInput } from '../domains/vehicleTax'
-import { toVehicleTaxOutput } from '../domains/vehicleTax'
 import type { WithholdingTaxInput } from '../domains/withholdingTax'
 import { toWithholdingTaxOutput } from '../domains/withholdingTax'
 import type { CalculatorContract } from '../types/calculator'
@@ -77,21 +70,21 @@ export class CalculatorsClientService {
     const { data } = await getVehicleTax({
       query: toClientQuery(zGetVehicleTaxData.shape.query.shape, input),
     })
-    return data && toVehicleTaxOutput(data)
+    return data
   }
 
   async getVehicleBenefit(input: VehicleBenefitInput) {
     const { data } = await getVehicleBenefit({
       query: toVehicleBenefitQuery(input),
     })
-    return data && toVehicleBenefitOutput(data)
+    return data
   }
 
   async getVehicleDepreciation(input: VehicleDepreciationInput) {
     const { data } = await getVehicleDepreciation({
       query: toVehicleDepreciationQuery(input),
     })
-    return data && toVehicleDepreciationOutput(data)
+    return data
   }
 
   async getWithholdingTax(input: WithholdingTaxInput) {

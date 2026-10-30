@@ -1,3 +1,4 @@
+import type { VehicleDepreciationResult } from '../../../../gen/fetch'
 import {
   defineCalculator,
   defineInputFields,
@@ -13,38 +14,38 @@ const vehicleDepreciationInputFields = defineInputFields([
 ] as const)
 
 const vehicleDepreciationOutputFields = defineOutputFields([
-  { name: 'hasPurchaseInvoice', kind: 'scalar', type: 'boolean' },
-  { name: 'price', kind: 'scalar', type: 'number', semantic: 'currency' },
-  { name: 'vat', kind: 'scalar', type: 'number', semantic: 'currency' },
-  { name: 'markup', kind: 'scalar', type: 'number', semantic: 'currency' },
-  { name: 'exciseFee', kind: 'scalar', type: 'number', semantic: 'currency' },
-  { name: 'insurance', kind: 'scalar', type: 'number', semantic: 'currency' },
+  { name: 'kaupreikningur', kind: 'scalar', type: 'boolean' },
+  { name: 'verd', kind: 'scalar', type: 'number', semantic: 'currency' },
+  { name: 'vsk', kind: 'scalar', type: 'number', semantic: 'currency' },
+  { name: 'alagning', kind: 'scalar', type: 'number', semantic: 'currency' },
+  { name: 'vorugjald', kind: 'scalar', type: 'number', semantic: 'currency' },
+  { name: 'vatrygging', kind: 'scalar', type: 'number', semantic: 'currency' },
   {
-    name: 'transportFee',
+    name: 'flutningsgjald',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'first12MonthsDepreciation',
+    name: 'fyrstu12Manudir',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'next24MonthsDepreciation',
+    name: 'naestu24Manudir',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'remainingValue',
+    name: 'rest',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'totalDepreciation',
+    name: 'totalFyrning',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
@@ -66,17 +67,4 @@ export interface VehicleDepreciationInput {
   arrivalYear: number
 }
 
-export interface VehicleDepreciationOutput {
-  hasPurchaseInvoice?: boolean
-  price?: number
-  vat?: number
-  markup?: number
-  exciseFee?: number
-  insurance?: number
-  transportFee?: number
-  first12MonthsDepreciation?: number
-  next24MonthsDepreciation?: number
-  remainingValue?: number
-  totalDepreciation?: number
-  finalAmount?: number
-}
+export type VehicleDepreciationOutput = VehicleDepreciationResult

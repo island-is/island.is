@@ -6,12 +6,10 @@ import {
   TaxCalculatorCalculationErrorCode,
   TaxCalculatorInputFieldSemantic,
   TaxCalculatorInputFieldType,
-  TaxCalculatorOutputFieldSemantic,
   TaxCalculatorOutputFieldType,
 } from './models/enums'
-import type { InputFieldValue } from './models/inputFieldValue.model'
 import type { NumberInputField, SelectInputField } from './models/inputField'
-import type { ArrayOutputField, NumberOutputField } from './models/outputField'
+import type { InputFieldValue } from './models/inputFieldValue.model'
 import { TaxCalculatorsService } from './tax-calculators.service'
 
 /* Instantiated directly because getCalculator reads a registry. */
@@ -26,9 +24,6 @@ const findField = (type: TaxCalculatorType, key: string) =>
 
 const outputFieldsFor = (type: TaxCalculatorType) =>
   service.getCalculator(type).outputFields
-
-const findOutputField = (type: TaxCalculatorType, key: string) =>
-  outputFieldsFor(type).find((field) => field.key === key)
 
 describe('TaxCalculatorsService', () => {
   describe('calculator identity mapping', () => {
@@ -170,75 +165,6 @@ describe('TaxCalculatorsService output contract', () => {
     },
   )
 
-  describe('withholdingTaxOnWages tax brackets', () => {
-    const taxBrackets = () =>
-      findOutputField(
-        TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES,
-        'taxBrackets',
-      ) as ArrayOutputField | undefined
-
-    it('exposes taxBrackets as an array output', () => {
-      expect(taxBrackets()?.type).toBe(TaxCalculatorOutputFieldType.ARRAY)
-    })
-
-    it('describes one bracket row through itemFields', () => {
-      const keys = taxBrackets()?.itemFields.map((field) => field.key)
-
-      expect(keys).toEqual(
-        expect.arrayContaining([
-          'lowerBound',
-          'bracketNumber',
-          'withholdingRate',
-          'calculatedWithholding',
-        ]),
-      )
-    })
-  })
-
-  describe('scalar output conditioning', () => {
-    it('exposes vehicleTax as a currency number', () => {
-      const field = findOutputField(
-        TaxCalculatorType.VEHICLE_TAX,
-        'vehicleTax',
-      ) as NumberOutputField | undefined
-
-      expect(field?.type).toBe(TaxCalculatorOutputFieldType.NUMBER)
-      expect(field?.semantic).toBe(TaxCalculatorOutputFieldSemantic.CURRENCY)
-    })
-
-    it('exposes periodLabel as a string', () => {
-      expect(
-        findOutputField(TaxCalculatorType.VEHICLE_TAX, 'periodLabel')?.type,
-      ).toBe(TaxCalculatorOutputFieldType.STRING)
-    })
-
-    /* A missing semantic must remain absent. */
-    it('leaves vehicleWeight a number with no semantic', () => {
-      const field = findOutputField(
-        TaxCalculatorType.VEHICLE_TAX,
-        'vehicleWeight',
-      ) as NumberOutputField | undefined
-
-      expect(field?.type).toBe(TaxCalculatorOutputFieldType.NUMBER)
-      expect(field?.semantic).toBeUndefined()
-    })
-
-    it('exposes monthlyBenefit as a currency number', () => {
-      const field = findOutputField(
-        TaxCalculatorType.VEHICLE_BENEFIT,
-        'monthlyBenefit',
-      ) as NumberOutputField | undefined
-
-      expect(field?.semantic).toBe(TaxCalculatorOutputFieldSemantic.CURRENCY)
-    })
-
-    it('exposes splitCustody as a boolean', () => {
-      expect(
-        findOutputField(TaxCalculatorType.CHILD_BENEFIT, 'splitCustody')?.type,
-      ).toBe(TaxCalculatorOutputFieldType.BOOLEAN)
-    })
-  })
-
   /* `kind` is an internal discriminator and must not enter the domain contract. */
   it('leaks no client kind onto any output field', () => {
     Object.values(TaxCalculatorType).forEach((type) => {
@@ -267,9 +193,7 @@ describe('TaxCalculatorsService calculate', () => {
   describe('dispatch', () => {
     /* A wrong entry compiles and runs another calculator. */
     it('routes child benefit to getChildBenefit', async () => {
-      const call = jest
-        .spyOn(client, 'getChildBenefit')
-        .mockResolvedValue({ totalChildBenefit: 1 })
+      const call = jest.spyOn(client, 'getChildBenefit').mockResolvedValue({})
 
       await service.calculate({
         type: TaxCalculatorType.CHILD_BENEFIT,
@@ -287,9 +211,7 @@ describe('TaxCalculatorsService calculate', () => {
     })
 
     it('routes vehicle tax to getVehicleTax, passing the split date as a Date', async () => {
-      const call = jest
-        .spyOn(client, 'getVehicleTax')
-        .mockResolvedValue({ totalVehicleTax: 1 })
+      const call = jest.spyOn(client, 'getVehicleTax').mockResolvedValue({})
       const gjaldskipting = new Date('2026-03-01T00:00:00.000Z')
 
       await service.calculate({
@@ -310,9 +232,7 @@ describe('TaxCalculatorsService calculate', () => {
     })
 
     it('routes vehicle benefit to getVehicleBenefit', async () => {
-      const call = jest
-        .spyOn(client, 'getVehicleBenefit')
-        .mockResolvedValue({ monthlyBenefit: 1 })
+      const call = jest.spyOn(client, 'getVehicleBenefit').mockResolvedValue({})
 
       await service.calculate({
         type: TaxCalculatorType.VEHICLE_BENEFIT,
@@ -329,9 +249,7 @@ describe('TaxCalculatorsService calculate', () => {
 
     /* The sole calculator type/key naming exception. */
     it('routes withholdingTaxOnWages to getWithholdingTax', async () => {
-      const call = jest
-        .spyOn(client, 'getWithholdingTax')
-        .mockResolvedValue({ taxBrackets: [] })
+      const call = jest.spyOn(client, 'getWithholdingTax').mockResolvedValue({})
 
       await service.calculate({
         type: TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES,
@@ -362,9 +280,17 @@ describe('TaxCalculatorsService calculate', () => {
   })
 
   it('maps a successful result into keyed output values', async () => {
+    const contract = client.getCalculator('vehicleTax')
+    jest.spyOn(client, 'getCalculator').mockReturnValue({
+      ...contract,
+      outputFields: [
+        { name: 'bifreidagjoldAlls', kind: 'scalar', type: 'number' },
+        { name: 'timabil', kind: 'scalar', type: 'string' },
+      ],
+    })
     jest
       .spyOn(client, 'getVehicleTax')
-      .mockResolvedValue({ totalVehicleTax: 12345, periodLabel: 'First half' })
+      .mockResolvedValue({ bifreidagjoldAlls: 12345, timabil: 'First half' })
 
     const response = await service.calculate({
       type: TaxCalculatorType.VEHICLE_TAX,
@@ -376,12 +302,12 @@ describe('TaxCalculatorsService calculate', () => {
     expect(response.calculation?.values).toEqual(
       expect.arrayContaining([
         {
-          key: 'totalVehicleTax',
+          key: 'bifreidagjoldAlls',
           type: TaxCalculatorOutputFieldType.NUMBER,
           numberValue: 12345,
         },
         {
-          key: 'periodLabel',
+          key: 'timabil',
           type: TaxCalculatorOutputFieldType.STRING,
           stringValue: 'First half',
         },

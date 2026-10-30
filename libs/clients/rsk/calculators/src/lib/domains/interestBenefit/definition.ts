@@ -1,3 +1,4 @@
+import type { InterestBenefitResult } from '../../../../gen/fetch'
 import {
   defineCalculator,
   defineInputFields,
@@ -28,98 +29,103 @@ const interestBenefitInputFields = defineInputFields([
 ] as const)
 
 const interestBenefitOutputFields = defineOutputFields([
-  { name: 'maritalStatusLabel', kind: 'scalar', type: 'string' },
-  { name: 'incomeYear', kind: 'scalar', type: 'number', semantic: 'year' },
-  { name: 'benefitYear', kind: 'scalar', type: 'number', semantic: 'year' },
+  { name: 'hjuskaparstada', kind: 'scalar', type: 'string' },
+  { name: 'tekjuar', kind: 'scalar', type: 'number', semantic: 'year' },
+  { name: 'botaar', kind: 'scalar', type: 'number', semantic: 'year' },
   {
-    name: 'maximumInterestExpenses',
+    name: 'hamarkVaxtagjalda',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'interestExpensesForCalculation',
+    name: 'vaxtagjoldTilUtreiknings',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
-  { name: 'incomeBase', kind: 'scalar', type: 'number', semantic: 'currency' },
-  { name: 'assetBase', kind: 'scalar', type: 'number', semantic: 'currency' },
-  { name: 'loanBalance', kind: 'scalar', type: 'number', semantic: 'currency' },
+  { name: 'tekjustofn', kind: 'scalar', type: 'number', semantic: 'currency' },
+  { name: 'eignastofn', kind: 'scalar', type: 'number', semantic: 'currency' },
   {
-    name: 'interestExpenses',
-    kind: 'scalar',
-    type: 'number',
-    semantic: 'currency',
-  },
-  {
-    name: 'maximumInterestBenefit',
+    name: 'eftirstodvar',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'incomeReduction',
+    name: 'vaxtagjold',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'interestBenefitAfterIncomeReduction',
+    name: 'hamarkVaxtabota',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'incomeReductionRate',
+    name: 'skerdingVegnaTekna',
+    kind: 'scalar',
+    type: 'number',
+    semantic: 'currency',
+  },
+  {
+    name: 'vaxtabaeturEftirSkerdinguTekna',
+    kind: 'scalar',
+    type: 'number',
+    semantic: 'currency',
+  },
+  {
+    name: 'tekjuskerdingarhlutfall',
     kind: 'scalar',
     type: 'number',
     semantic: 'percentage',
   },
   {
-    name: 'debtReductionRate',
+    name: 'skuldaskerdingarhlutfall',
     kind: 'scalar',
     type: 'number',
     semantic: 'percentage',
   },
   {
-    name: 'assetReduction',
+    name: 'skerdingVegnaEigna',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'assetReductionRate',
+    name: 'eignaskerdingarhlutfall',
     kind: 'scalar',
     type: 'number',
     semantic: 'percentage',
   },
   {
-    name: 'reductionLaw2003',
+    name: 'skerdingLog2003',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'reductionLaw2004',
+    name: 'skerdingLog2004',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'totalInterestBenefit',
+    name: 'vaxtabaeturAlls',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'specialInterestReimbursement',
+    name: 'serstokVaxtanidurgreidsla',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
-  { name: 'reachedMaximum', kind: 'scalar', type: 'boolean' },
-  { name: 'wasBelowMinimum', kind: 'scalar', type: 'boolean' },
+  { name: 'nadiHamarki', kind: 'scalar', type: 'boolean' },
+  { name: 'varUndirLamarki', kind: 'scalar', type: 'boolean' },
 ] as const)
 
 export const interestBenefitCalculator = defineCalculator({
@@ -137,27 +143,4 @@ export interface InterestBenefitInput {
   paidInterest: number
 }
 
-export interface InterestBenefitOutput {
-  maritalStatusLabel?: string
-  incomeYear?: number
-  benefitYear?: number
-  maximumInterestExpenses?: number
-  interestExpensesForCalculation?: number
-  incomeBase?: number
-  assetBase?: number
-  loanBalance?: number
-  interestExpenses?: number
-  maximumInterestBenefit?: number
-  incomeReduction?: number
-  interestBenefitAfterIncomeReduction?: number
-  incomeReductionRate?: number
-  debtReductionRate?: number
-  assetReduction?: number
-  assetReductionRate?: number
-  reductionLaw2003?: number
-  reductionLaw2004?: number
-  totalInterestBenefit?: number
-  specialInterestReimbursement?: number
-  reachedMaximum?: boolean
-  wasBelowMinimum?: boolean
-}
+export type InterestBenefitOutput = InterestBenefitResult

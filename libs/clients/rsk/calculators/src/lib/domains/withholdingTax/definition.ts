@@ -1,4 +1,8 @@
-import type { GetWithholdingTaxData } from '../../../../gen/fetch'
+import type {
+  GetWithholdingTaxData,
+  TaxBracket,
+  WithholdingTaxResult,
+} from '../../../../gen/fetch'
 import { HjuskaparstadaStadgreidsla, LaunGreidast } from '../../../../gen/fetch'
 import {
   defineCalculator,
@@ -83,133 +87,143 @@ const withholdingTaxInputFields = defineInputFields([
 
 const withholdingTaxOutputFields = defineOutputFields([
   {
-    name: 'monthlySalary',
+    name: 'manadarlaun',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'appliedPensionFundRatio',
+    name: 'lifeyrisjodurProsenta',
     kind: 'scalar',
     type: 'number',
     semantic: 'percentage',
   },
   {
-    name: 'appliedPrivatePensionRatio',
+    name: 'sereignProsenta',
     kind: 'scalar',
     type: 'number',
     semantic: 'percentage',
   },
   {
-    name: 'pensionFundPayment',
+    name: 'lifeyrissjodur',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'privatePensionPayment',
+    name: 'sereignarsjodur',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'totalDeductions',
+    name: 'fradratturAlls',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'personalTaxCredit',
+    name: 'personuafslattur',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'spousePersonalTaxCredit',
+    name: 'personuafslatturFraMaka',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
-  { name: 'taxBase', kind: 'scalar', type: 'number', semantic: 'currency' },
+  { name: 'skattstofn', kind: 'scalar', type: 'number', semantic: 'currency' },
   {
-    name: 'calculatedWithholding',
-    kind: 'scalar',
-    type: 'number',
-    semantic: 'currency',
-  },
-  {
-    name: 'paidWithholding',
+    name: 'reiknudStadgreidsla',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'highIncomeTax',
-    kind: 'scalar',
-    type: 'number',
-    semantic: 'currency',
-  },
-  { name: 'highIncomeTaxApplied', kind: 'scalar', type: 'boolean' },
-  {
-    name: 'salaryAfterDeductions',
+    name: 'greiddStadgreidsla',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'accumulatedPersonalTaxCredit',
+    name: 'hatekjuskattur',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
-  { name: 'incomeYear', kind: 'scalar', type: 'number', semantic: 'year' },
-  { name: 'maritalStatusCode', kind: 'scalar', type: 'number' },
-  { name: 'payMonth', kind: 'scalar', type: 'number', semantic: 'month' },
+  { name: 'reiknadiHatekjuskatt', kind: 'scalar', type: 'boolean' },
   {
-    name: 'childIncomeLimit',
+    name: 'utborgudLaun',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
-  { name: 'childBirthYear', kind: 'scalar', type: 'number', semantic: 'year' },
   {
-    name: 'withholdingRate',
+    name: 'uppsafnadurPersonuafslattur',
+    kind: 'scalar',
+    type: 'number',
+    semantic: 'currency',
+  },
+  { name: 'tekjuar', kind: 'scalar', type: 'number', semantic: 'year' },
+  { name: 'hjuskaparstada', kind: 'scalar', type: 'number' },
+  { name: 'launamanudur', kind: 'scalar', type: 'number', semantic: 'month' },
+  {
+    name: 'fritekjumarkBarns',
+    kind: 'scalar',
+    type: 'number',
+    semantic: 'currency',
+  },
+  {
+    name: 'faedingararBarns',
+    kind: 'scalar',
+    type: 'number',
+    semantic: 'year',
+  },
+  {
+    name: 'stadgreidsluhlutfall',
     kind: 'scalar',
     type: 'number',
     semantic: 'percentage',
   },
   {
-    name: 'employerPensionMatch',
+    name: 'motframlag',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'payrollTaxBase',
+    name: 'tryggingagjaldsstofn',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
-  { name: 'payrollTax', kind: 'scalar', type: 'number', semantic: 'currency' },
   {
-    name: 'taxBrackets',
+    name: 'tryggingagjald',
+    kind: 'scalar',
+    type: 'number',
+    semantic: 'currency',
+  },
+  {
+    name: 'skattthrep',
     kind: 'array',
     itemFields: [
       {
-        name: 'lowerBound',
+        name: 'nedriMork',
         kind: 'scalar',
         type: 'number',
         semantic: 'currency',
       },
-      { name: 'bracketNumber', kind: 'scalar', type: 'number' },
+      { name: 'numerThreps', kind: 'scalar', type: 'number' },
       {
-        name: 'withholdingRate',
+        name: 'stadgreidsluhlutfall',
         kind: 'scalar',
         type: 'number',
         semantic: 'percentage',
       },
       {
-        name: 'calculatedWithholding',
+        name: 'reiknudStadgreidsla',
         kind: 'scalar',
         type: 'number',
         semantic: 'currency',
@@ -226,37 +240,6 @@ export const withholdingTaxCalculator = defineCalculator({
 
 export type WithholdingTaxInput = GetWithholdingTaxData['query']
 
-export interface WithholdingTaxBracketOutput {
-  lowerBound?: number
-  bracketNumber?: number
-  withholdingRate?: number
-  calculatedWithholding?: number
-}
+export type WithholdingTaxBracketOutput = TaxBracket
 
-export interface WithholdingTaxOutput {
-  monthlySalary?: number
-  appliedPensionFundRatio?: number
-  appliedPrivatePensionRatio?: number
-  pensionFundPayment?: number
-  privatePensionPayment?: number
-  totalDeductions?: number
-  personalTaxCredit?: number
-  spousePersonalTaxCredit?: number
-  taxBase?: number
-  calculatedWithholding?: number
-  paidWithholding?: number
-  highIncomeTax?: number
-  highIncomeTaxApplied?: boolean
-  salaryAfterDeductions?: number
-  accumulatedPersonalTaxCredit?: number
-  incomeYear?: number
-  maritalStatusCode?: number
-  payMonth?: number
-  childIncomeLimit?: number
-  childBirthYear?: number
-  withholdingRate?: number
-  employerPensionMatch?: number
-  payrollTaxBase?: number
-  payrollTax?: number
-  taxBrackets: WithholdingTaxBracketOutput[]
-}
+export type WithholdingTaxOutput = WithholdingTaxResult

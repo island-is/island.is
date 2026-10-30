@@ -1,4 +1,4 @@
-import type { GetVehicleTaxData } from '../../../../gen/fetch'
+import type { GetVehicleTaxData, VehicleTaxResult } from '../../../../gen/fetch'
 import { Gjaldtimabil } from '../../../../gen/fetch'
 import {
   defineCalculator,
@@ -20,21 +20,26 @@ const vehicleTaxInputFields = defineInputFields([
 ] as const)
 
 const vehicleTaxOutputFields = defineOutputFields([
-  { name: 'periodLabel', kind: 'scalar', type: 'string' },
-  { name: 'feeYear', kind: 'scalar', type: 'number', semantic: 'year' },
-  { name: 'vehicleWeight', kind: 'scalar', type: 'number' },
+  { name: 'timabil', kind: 'scalar', type: 'string' },
+  { name: 'gjaldar', kind: 'scalar', type: 'number', semantic: 'year' },
+  { name: 'eiginthyngd', kind: 'scalar', type: 'number' },
   { name: 'co2', kind: 'scalar', type: 'number' },
   { name: 'nedc', kind: 'scalar', type: 'number' },
   { name: 'wltp', kind: 'scalar', type: 'number' },
-  { name: 'vehicleTax', kind: 'scalar', type: 'number', semantic: 'currency' },
   {
-    name: 'recyclingFee',
+    name: 'bifreidagjold',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'totalVehicleTax',
+    name: 'urvinnslugjald',
+    kind: 'scalar',
+    type: 'number',
+    semantic: 'currency',
+  },
+  {
+    name: 'bifreidagjoldAlls',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
@@ -49,14 +54,4 @@ export const vehicleTaxCalculator = defineCalculator({
 
 export type VehicleTaxInput = GetVehicleTaxData['query']
 
-export interface VehicleTaxOutput {
-  periodLabel?: string
-  feeYear?: number
-  vehicleWeight?: number
-  co2?: number
-  nedc?: number
-  wltp?: number
-  vehicleTax?: number
-  recyclingFee?: number
-  totalVehicleTax?: number
-}
+export type VehicleTaxOutput = VehicleTaxResult

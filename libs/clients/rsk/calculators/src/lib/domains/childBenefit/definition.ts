@@ -1,4 +1,7 @@
-import type { GetChildBenefitData } from '../../../../gen/fetch'
+import type {
+  ChildBenefitResult,
+  GetChildBenefitData,
+} from '../../../../gen/fetch'
 import { Hjuskaparstada } from '../../../../gen/fetch'
 import {
   defineCalculator,
@@ -38,146 +41,146 @@ const childBenefitInputFields = defineInputFields([
 ] as const)
 
 const childBenefitOutputFields = defineOutputFields([
-  { name: 'maritalStatusLabel', kind: 'scalar', type: 'string' },
+  { name: 'hjuskaparstada', kind: 'scalar', type: 'string' },
   {
-    name: 'numberOfChildren',
+    name: 'fjoldiBarna',
     kind: 'scalar',
     type: 'number',
     semantic: 'count',
   },
   {
-    name: 'numberOfChildrenUnder7',
+    name: 'fjoldiBarnaUndir7ara',
     kind: 'scalar',
     type: 'number',
     semantic: 'count',
   },
-  { name: 'incomeYear', kind: 'scalar', type: 'number', semantic: 'year' },
-  { name: 'benefitYear', kind: 'scalar', type: 'number', semantic: 'year' },
-  { name: 'incomeBase', kind: 'scalar', type: 'number', semantic: 'currency' },
+  { name: 'tekjuar', kind: 'scalar', type: 'number', semantic: 'year' },
+  { name: 'botaAr', kind: 'scalar', type: 'number', semantic: 'year' },
+  { name: 'tekjustofn', kind: 'scalar', type: 'number', semantic: 'currency' },
   {
-    name: 'reductionRate',
+    name: 'skerdingarhlutfall',
     kind: 'scalar',
     type: 'number',
     semantic: 'percentage',
   },
   {
-    name: 'reductionThreshold',
+    name: 'skerdingarmork',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'upperReductionThreshold',
+    name: 'efriSkerdingarmork',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'reductionBase',
+    name: 'stofnTilSkerdingar',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'excessReductionBase',
+    name: 'stofnTilUmframskerdingar',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'incomeReduction',
+    name: 'skerdingVegnaTekna',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'excessIncomeReduction',
+    name: 'umframskerdingVegnaTekna',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'excessReductionRate',
+    name: 'umframskerdingarhlutfall',
     kind: 'scalar',
     type: 'number',
     semantic: 'percentage',
   },
   {
-    name: 'unreducedChildBenefit',
+    name: 'oskertarBarnabaetur',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'childBenefitPerChild',
+    name: 'barnabaeturPerBarn',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'totalChildBenefit',
+    name: 'barnabaeturAlls',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'quarterlyPayments',
+    name: 'greidslurArsfjordungi',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'incomeRelatedChildBenefit',
+    name: 'tekjutengdarBarnabaetur',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'totalChildBenefitPerCouple',
+    name: 'barnabaeturAllsPrHjon',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'additionalBenefitForChildrenUnder7',
+    name: 'vidbotBornYngriEn7ara',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'additionalBenefitPerChildUnder7',
+    name: 'vidbotPerBarnYngraEn7ara',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'reductionForChildrenUnder7',
+    name: 'skerdingUndir7ara',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'reductionRateForChildrenUnder7',
+    name: 'skerdingarhlutfallUndir7ara',
     kind: 'scalar',
     type: 'number',
     semantic: 'percentage',
   },
-  { name: 'childrenBirthYears', kind: 'scalar', type: 'string' },
-  { name: 'splitCustody', kind: 'scalar', type: 'boolean' },
+  { name: 'faedingararBarna', kind: 'scalar', type: 'string' },
+  { name: 'skiptBuseta', kind: 'scalar', type: 'boolean' },
   {
-    name: 'splitCustodyChildrenOver7',
+    name: 'skiptYfir7ara',
     kind: 'scalar',
     type: 'number',
     semantic: 'count',
   },
   {
-    name: 'splitCustodyChildrenUnder7',
+    name: 'skiptUndir7ara',
     kind: 'scalar',
     type: 'number',
     semantic: 'count',
   },
   {
-    name: 'childBenefitBeforeSplit',
+    name: 'barnabaeturFyrirSkiptingu',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
@@ -192,34 +195,4 @@ export const childBenefitCalculator = defineCalculator({
 
 export type ChildBenefitInput = GetChildBenefitData['query']
 
-export interface ChildBenefitOutput {
-  maritalStatusLabel?: string
-  numberOfChildren?: number
-  numberOfChildrenUnder7?: number
-  incomeYear?: number
-  benefitYear?: number
-  incomeBase?: number
-  reductionRate?: number
-  reductionThreshold?: number
-  upperReductionThreshold?: number
-  reductionBase?: number
-  excessReductionBase?: number
-  incomeReduction?: number
-  excessIncomeReduction?: number
-  excessReductionRate?: number
-  unreducedChildBenefit?: number
-  childBenefitPerChild?: number
-  totalChildBenefit?: number
-  quarterlyPayments?: number
-  incomeRelatedChildBenefit?: number
-  totalChildBenefitPerCouple?: number
-  additionalBenefitForChildrenUnder7?: number
-  additionalBenefitPerChildUnder7?: number
-  reductionForChildrenUnder7?: number
-  reductionRateForChildrenUnder7?: number
-  childrenBirthYears?: string
-  splitCustody?: boolean
-  splitCustodyChildrenOver7?: number
-  splitCustodyChildrenUnder7?: number
-  childBenefitBeforeSplit?: number
-}
+export type ChildBenefitOutput = ChildBenefitResult

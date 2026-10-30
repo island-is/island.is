@@ -1,3 +1,4 @@
+import type { VehicleBenefitResult } from '../../../../gen/fetch'
 import {
   defineCalculator,
   defineInputFields,
@@ -18,21 +19,21 @@ const vehicleBenefitInputFields = defineInputFields([
 ] as const)
 
 const vehicleBenefitOutputFields = defineOutputFields([
-  { name: 'purchaseYear', kind: 'scalar', type: 'number', semantic: 'year' },
+  { name: 'kaupar', kind: 'scalar', type: 'number', semantic: 'year' },
   {
-    name: 'purchasePrice',
+    name: 'kaupverd',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'annualBenefit',
+    name: 'arshlunnindi',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
   },
   {
-    name: 'monthlyBenefit',
+    name: 'manadarhlunnindi',
     kind: 'scalar',
     type: 'number',
     semantic: 'currency',
@@ -53,9 +54,4 @@ export interface VehicleBenefitInput {
   employeePaysRunningCosts?: boolean
 }
 
-export interface VehicleBenefitOutput {
-  purchaseYear?: number
-  purchasePrice?: number
-  annualBenefit?: number
-  monthlyBenefit?: number
-}
+export type VehicleBenefitOutput = VehicleBenefitResult
