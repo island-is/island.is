@@ -721,19 +721,26 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const { marpApplicationType, isEligible } = getMARPApplicationExternalData(
-      application.externalData,
-    )
+    const { marpApplicationType, isEligible, hasActiveExemption } =
+      getMARPApplicationExternalData(application.externalData)
 
-    // Exemption cases (ísl. jaðartilvik) have no application type
-    if (!isEligible?.isEligible || !marpApplicationType) {
+    if (!isEligible?.isEligible) {
       return null
     }
 
-    return await this.siaClientService.getEducationLevels(
-      auth,
-      marpApplicationType,
-    )
+    // Exemption cases (ísl. jaðartilvik) have no application type from TR, so
+    // fall back to the first sickness payment type to get the education levels
+    const applicationType = marpApplicationType
+      ? marpApplicationType
+      : hasActiveExemption
+      ? MedicalAndRehabilitationPaymentsApplicationType.SG1
+      : undefined
+
+    if (!applicationType) {
+      return null
+    }
+
+    return await this.siaClientService.getEducationLevels(auth, applicationType)
   }
 
   async getEducationLevelsWithEnum({
