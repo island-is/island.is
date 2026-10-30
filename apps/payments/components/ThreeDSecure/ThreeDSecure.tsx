@@ -15,6 +15,7 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
   isActive,
   postUrl,
   scriptPath,
+  cardVerificationRawResponse,
   verificationFields,
   tdsMethodPostUrl,
   tdsMethodFields,
@@ -41,6 +42,7 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
         const formHtml = generateFormHtml({
           postUrl,
           scriptPath,
+          cardVerificationRawResponse,
           verificationFields,
           tdsMethodPostUrl,
           tdsMethodFields,
@@ -56,6 +58,7 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
     isActive,
     postUrl,
     scriptPath,
+    cardVerificationRawResponse,
     verificationFields,
     tdsMethodPostUrl,
     tdsMethodFields,

@@ -5,6 +5,7 @@ type FormField = { name: string; value: string }
 export interface ThreeDSFormData {
   postUrl: string
   scriptPath?: string | null
+  cardVerificationRawResponse?: string | null
   verificationFields: FormField[]
   tdsMethodPostUrl?: string | null
   tdsMethodFields?: FormField[] | null
@@ -39,6 +40,34 @@ const isGatewayScriptUrl = (url: string) => {
   }
 }
 
+// The gateway's scriptPath is not always its execution script: Rapyd UAT has
+// returned a logging library (first a Datadog agent, then
+// datadog-3ds-core.js), which never submits the form. The gateway's own 3DS
+// page (cardVerificationRawResponse) loads the execution script (red.js) as
+// its last script, so prefer that and fall back to scriptPath.
+const getGatewayScriptUrl = (
+  scriptPath?: string | null,
+  rawResponse?: string | null,
+) => {
+  const rawResponseScripts = Array.from(
+    (rawResponse ?? '').matchAll(/<script[^>]*\ssrc=["']([^"']+)["']/gi),
+    (match) => match[1],
+  ).filter(isGatewayScriptUrl)
+
+  if (rawResponseScripts.length > 0) {
+    return rawResponseScripts[rawResponseScripts.length - 1]
+  }
+
+  if (scriptPath && !isGatewayScriptUrl(scriptPath)) {
+    console.error('Ignoring 3DS scriptPath outside the gateway domain', {
+      scriptPath,
+    })
+    return null
+  }
+
+  return scriptPath ?? null
+}
+
 // Builds the custom 3DS redirection form. Rapyd requires merchants using
 // postUrl + verificationFields to run the form with the gateway script from
 // `scriptPath`, unchanged and from its remote location, and to perform the 3DS
@@ -50,6 +79,7 @@ const isGatewayScriptUrl = (url: string) => {
 export const generateFormHtml = ({
   postUrl,
   scriptPath,
+  cardVerificationRawResponse,
   verificationFields,
   tdsMethodPostUrl,
   tdsMethodFields,
@@ -79,18 +109,13 @@ export const generateFormHtml = ({
     !!tdsMethodHtml &&
     !verificationFields.some((field) => field.name === 'txid')
 
-  if (scriptPath && !isGatewayScriptUrl(scriptPath)) {
-    console.error('Ignoring 3DS scriptPath outside the gateway domain')
-  }
-
   // The gateway script submits the form itself (after the 3DS Method when
   // present). Our own submit script is only a fallback for responses without
-  // a usable scriptPath. Both are external files, inline scripts are blocked
-  // by CSP.
+  // a usable gateway script. Both are external files, inline scripts are
+  // blocked by CSP.
   const submitScriptSrc =
-    scriptPath && isGatewayScriptUrl(scriptPath)
-      ? scriptPath
-      : `${basepath ?? ''}/scripts/submitForm.js`
+    getGatewayScriptUrl(scriptPath, cardVerificationRawResponse) ??
+    `${basepath ?? ''}/scripts/submitForm.js`
 
   return `
       <div id="flowType" data-value="${escapeHtml(

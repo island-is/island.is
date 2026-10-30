@@ -591,6 +591,9 @@ function PaymentPage({
         hasData={!!threeDSecureDataForModal}
         postUrl={threeDSecureDataForModal?.postUrl}
         scriptPath={threeDSecureDataForModal?.scriptPath}
+        cardVerificationRawResponse={
+          threeDSecureDataForModal?.cardVerificationRawResponse
+        }
         verificationFields={threeDSecureDataForModal?.verificationFields ?? []}
         tdsMethodPostUrl={threeDSecureDataForModal?.tdsMethodPostUrl}
         tdsMethodFields={threeDSecureDataForModal?.tdsMethodFields}

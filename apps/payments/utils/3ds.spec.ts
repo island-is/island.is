@@ -71,6 +71,48 @@ describe('generateFormHtml', () => {
     }
   })
 
+  it('loads the execution script from the gateway page instead of a logging scriptPath', () => {
+    // Shape of the Rapyd UAT response from 2026-10-30
+    const container = render({
+      ...baseData,
+      scriptPath:
+        'https://rapyd3ds.uat.valitor.com/ThreeDSecureManager/js/datadog-3ds-logging/datadog-3ds-core.js',
+      cardVerificationRawResponse: `<html><head>
+        <script src="https://rapyd3ds.uat.valitor.com/ThreeDSecureManager/js/datadog-3ds-logging/datadog-3ds-core.js"></script>
+        <script src="https://rapyd3ds.uat.valitor.com/ThreeDSecureManager/js/datadog-3ds-logging/init.js"></script>
+        </head><body><form id="webform0"></form>
+        <script src="${SCRIPT_PATH}"></script>
+        </body></html>`,
+    })
+
+    const scripts = container.querySelectorAll('script')
+    expect(scripts).toHaveLength(1)
+    expect(scripts[0].getAttribute('src')).toBe(SCRIPT_PATH)
+  })
+
+  it('ignores scripts outside the gateway domain in the gateway page', () => {
+    const container = render({
+      ...baseData,
+      cardVerificationRawResponse: `<script src="${SCRIPT_PATH}"></script>
+        <script src="https://www.datadoghq-browser-agent.com/eu1/v6/datadog-logs.js"></script>`,
+    })
+
+    expect(container.querySelector('script')?.getAttribute('src')).toBe(
+      SCRIPT_PATH,
+    )
+  })
+
+  it('falls back to scriptPath when the gateway page has no gateway script', () => {
+    const container = render({
+      ...baseData,
+      cardVerificationRawResponse: '<html><body></body></html>',
+    })
+
+    expect(container.querySelector('script')?.getAttribute('src')).toBe(
+      SCRIPT_PATH,
+    )
+  })
+
   it('renders the 3DS Method iframe and form when the gateway requires it', () => {
     const container = render({
       ...baseData,
