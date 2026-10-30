@@ -31,11 +31,8 @@ const BaseInformation: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   application,
   goToScreen,
 }) => {
-  const {
-    applicantEmail,
-    applicantPhoneNumber,
-    language,
-  } = getApplicationAnswers(application.answers)
+  const { applicantEmail, applicantPhoneNumber, language } =
+    getApplicationAnswers(application.answers)
 
   const { applicantName } = getApplicationExternalData(application.externalData)
   const { formatMessage } = useLocale()

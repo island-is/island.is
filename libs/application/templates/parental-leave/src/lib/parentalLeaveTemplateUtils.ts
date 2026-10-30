@@ -76,6 +76,7 @@ export const needsOtherParentApproval = (context: ApplicationContext) => {
 }
 
 const EDIT_FLOW_REVIEW_STATES: string[] = [
+  States.OTHER_PARENT_APPROVAL_FOR_EDITS,
   States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
   States.EMPLOYER_APPROVE_EDITS,
   States.VINNUMALASTOFNUN_APPROVE_EDITS,

@@ -1361,9 +1361,9 @@ describe('Parental Leave Application Template', () => {
           ParentalLeaveTemplate,
         )
 
-        expect(() =>
-          helper.changeState({ type: DefaultEvents.EDIT }),
-        ).toThrowError(`EDIT is invalid for state ${state}`)
+        expect(() => helper.changeState({ type: DefaultEvents.EDIT })).toThrow(
+          `EDIT is invalid for state ${state}`,
+        )
       })
     })
 
@@ -1577,10 +1577,11 @@ describe('Parental Leave Application Template', () => {
       )
     })
 
-    // The employer has been notified but VMST has not been sent this change, so a
+    // The other parent or employer has been notified but VMST has not been sent this change, so a
     // follow-up applicant walking away should be able to delete the draft rather
     // than wait 970 days for it to prune.
     it.each([
+      ApplicationStates.OTHER_PARENT_APPROVAL_FOR_EDITS,
       ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
       ApplicationStates.EMPLOYER_APPROVE_EDITS,
     ])(
@@ -1605,6 +1606,7 @@ describe('Parental Leave Application Template', () => {
     // Same states, review of an edit/residence-grant application: VMST holds
     // this record so the rewind must keep landing in a no-delete state.
     it.each([
+      ApplicationStates.OTHER_PARENT_APPROVAL_FOR_EDITS,
       ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
       ApplicationStates.EMPLOYER_APPROVE_EDITS,
     ])(
@@ -1689,7 +1691,7 @@ describe('Parental Leave Application Template', () => {
 
       expect(() =>
         correctionHelper.changeState({ type: DefaultEvents.ABORT }),
-      ).toThrowError(`ABORT is invalid for state ${ApplicationStates.DRAFT}`)
+      ).toThrow(`ABORT is invalid for state ${ApplicationStates.DRAFT}`)
     })
 
     it('should return initial VMST review corrections to initial VMST review on submit', () => {
@@ -2743,6 +2745,7 @@ describe('Parental Leave Application Template', () => {
     })
 
     it.each([
+      ApplicationStates.OTHER_PARENT_APPROVAL_FOR_EDITS,
       ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
       ApplicationStates.EMPLOYER_APPROVE_EDITS,
       ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS,

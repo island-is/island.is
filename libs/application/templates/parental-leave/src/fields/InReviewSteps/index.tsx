@@ -75,6 +75,7 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
     application.state === ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN ||
     application.state === ApplicationStates.EMPLOYER_APPROVAL ||
     application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVAL ||
+    application.state === ApplicationStates.OTHER_PARENT_APPROVAL_FOR_EDITS ||
     application.state ===
       ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS ||
     application.state === ApplicationStates.EMPLOYER_APPROVE_EDITS ||

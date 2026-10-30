@@ -153,7 +153,7 @@ interface NotificationKeysMap {
 }
 
 const defineNotificationConfig = <
-  T extends Record<NotificationType, { templateId: string }>
+  T extends Record<NotificationType, { templateId: string }>,
 >(
   config: T,
 ) => config
@@ -296,8 +296,7 @@ export const NotificationConfig = defineNotificationConfig({
 
 export type NotificationConfigType = typeof NotificationConfig
 export type NotificationTypeKey = keyof NotificationConfigType
-export type NotificationArgs<
-  T extends NotificationType
-> = T extends keyof NotificationKeysMap
-  ? NotificationKeysMap[T]
-  : Record<string, never>
+export type NotificationArgs<T extends NotificationType> =
+  T extends keyof NotificationKeysMap
+    ? NotificationKeysMap[T]
+    : Record<string, never>
