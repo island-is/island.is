@@ -150,6 +150,19 @@ export const getPresidingAppealJudge = <U>(
   appealCase?: AppealJudgesFields<U> | null,
 ): U | undefined => getAppealJudges(appealCase)[0]
 
+// The judge at a given display order, for the fixed seats appealJudge1..3 that
+// clients not yet on appealJudges still use. Keyed by display order rather than
+// by position on the bench: a bench copied from the legacy columns can have a
+// hole (seat 2 empty, seat 3 filled), and a seat must be read and written the
+// same way or filling the hole overwrites the judge after it.
+export const getAppealJudgeInSeat = <U>(
+  appealCase?: AppealJudgesFields<U> | null,
+  seat = 0,
+): U | undefined =>
+  getOrderedAppealJudges(appealCase).find(
+    (judge) => (judge.displayOrder ?? 0) === seat,
+  )?.user ?? undefined
+
 // The user ids of the judges in bench order, read from the row's user id and
 // falling back to the loaded user.
 export const getAppealJudgeUserIds = (

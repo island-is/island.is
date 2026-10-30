@@ -560,6 +560,35 @@ describe('AppealCaseController - Update', () => {
     })
   })
 
+  // A bench copied from the legacy columns with seat 2 empty and seat 3 filled.
+  describe('a judge is assigned to a hole in a legacy bench', () => {
+    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
+    const judge1Id = uuid()
+    const judge3Id = uuid()
+    const newJudgeId = uuid()
+    const appealCase = {
+      id: appealCaseId,
+      caseId,
+      appealJudges: [
+        { userId: judge1Id, displayOrder: 0 },
+        { userId: judge3Id, displayOrder: 2 },
+      ] as AppealCaseJudge[],
+    } as AppealCase
+    const update = { appealJudge2Id: newJudgeId }
+
+    beforeEach(async () => {
+      await givenWhenThen(theCase, appealCase, update)
+    })
+
+    it('should fill the hole and keep the judge after it', () => {
+      expect(
+        mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
+      ).toHaveBeenCalledWith(appealCaseId, [judge1Id, newJudgeId, judge3Id], {
+        transaction,
+      })
+    })
+  })
+
   describe('judges are assigned to the slots of an empty bench', () => {
     const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
     const judge1Id = uuid()

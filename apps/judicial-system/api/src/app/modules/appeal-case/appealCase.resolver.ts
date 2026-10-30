@@ -15,7 +15,7 @@ import {
 import {
   AppealCaseType,
   Feature,
-  getAppealJudges,
+  getAppealJudgeInSeat,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -59,17 +59,17 @@ export class AppealCaseResolver {
 
   @ResolveField('appealJudge1', () => UserResponse, { nullable: true })
   appealJudge1(@Parent() appealCase: AppealCase): UserResponse | undefined {
-    return getAppealJudges(appealCase)[0]
+    return getAppealJudgeInSeat(appealCase, 0)
   }
 
   @ResolveField('appealJudge2', () => UserResponse, { nullable: true })
   appealJudge2(@Parent() appealCase: AppealCase): UserResponse | undefined {
-    return getAppealJudges(appealCase)[1]
+    return getAppealJudgeInSeat(appealCase, 1)
   }
 
   @ResolveField('appealJudge3', () => UserResponse, { nullable: true })
   appealJudge3(@Parent() appealCase: AppealCase): UserResponse | undefined {
-    return getAppealJudges(appealCase)[2]
+    return getAppealJudgeInSeat(appealCase, 2)
   }
 
   @Mutation(() => AppealCase, { nullable: true })

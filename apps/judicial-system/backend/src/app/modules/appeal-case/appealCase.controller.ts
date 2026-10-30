@@ -31,7 +31,7 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 import {
   AppealCaseType,
-  getAppealJudgeUserIds,
+  getOrderedAppealJudges,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -246,8 +246,11 @@ export class AppealCaseController {
   }
 
   // Turns the slot ids appealJudge1Id..appealJudge3Id into the whole bench: each
-  // slot replaces the judge at its position on the stored bench. A judge that
-  // ends up in two positions keeps the first.
+  // slot replaces the judge at that display order on the stored bench, which is
+  // how the api resolves the slots on the way out. A bench copied from the
+  // legacy columns can have a hole (seat 2 empty, seat 3 filled), so filling the
+  // hole must not overwrite the judge after it. A judge that ends up in two
+  // positions keeps the first.
   private withJudgeSlotsOnBench(
     updateDto: UpdateAppealCaseDto,
     appealCase: AppealCase,
@@ -260,7 +263,11 @@ export class AppealCaseController {
       return update
     }
 
-    const bench = getAppealJudgeUserIds(appealCase)
+    const bench: (string | undefined)[] = []
+
+    getOrderedAppealJudges(appealCase).forEach((judge, index) => {
+      bench[judge.displayOrder ?? index] = judge.userId ?? judge.user?.id
+    })
 
     slots.forEach((id, index) => {
       if (id) {
@@ -270,7 +277,9 @@ export class AppealCaseController {
 
     return {
       ...update,
-      appealJudgeIds: [...new Set(bench.filter((id) => Boolean(id)))],
+      appealJudgeIds: [
+        ...new Set(bench.filter((id): id is string => Boolean(id))),
+      ],
     }
   }
 
