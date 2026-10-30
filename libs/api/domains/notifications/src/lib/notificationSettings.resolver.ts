@@ -3,7 +3,11 @@ import { IdsUserGuard, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { notificationScopes } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { Inject, UseGuards } from '@nestjs/common'
+import {
+  Inject,
+  InternalServerErrorException,
+  UseGuards,
+} from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { NotificationSettingsService } from './notificationSettings.service'
 import { toCategoryKey } from './notificationSettings.utils'
@@ -98,7 +102,27 @@ export class NotificationSettingsResolver {
       throw e
     }
 
-    return this.service.getNotificationSettings(user, locale, titleLoader)
+    try {
+      return await this.service.getNotificationSettings(
+        user,
+        locale,
+        titleLoader,
+      )
+    } catch (e) {
+      // The update was already applied and audited, so don't report failure.
+      this.logger.warn(
+        'failed to read notification settings after successful update',
+        {
+          category: LOG_CATEGORY,
+          error: e,
+        },
+      )
+      return {
+        senders: [],
+        onlyActionablePriorityNotifications:
+          input.onlyActionablePriorityNotifications,
+      }
+    }
   }
 
   private async updateSettings(
@@ -108,10 +132,24 @@ export class NotificationSettingsResolver {
   ): Promise<void> {
     await this.service.updateCategories(user, categories)
     if (typeof input.onlyActionablePriorityNotifications === 'boolean') {
-      await this.service.updateOnlyActionablePriorityNotifications(
-        user,
-        input.onlyActionablePriorityNotifications,
-      )
+      try {
+        await this.service.updateOnlyActionablePriorityNotifications(
+          user,
+          input.onlyActionablePriorityNotifications,
+        )
+      } catch (e) {
+        // The two writes hit separate endpoints and cannot be made atomic, so
+        // make it explicit that the category changes were already applied.
+        this.logger.error('partial notification settings update', {
+          category: LOG_CATEGORY,
+          error: e,
+        })
+        throw new InternalServerErrorException(
+          categories.length > 0
+            ? 'Category settings were updated, but updating onlyActionablePriorityNotifications failed'
+            : 'Updating onlyActionablePriorityNotifications failed',
+        )
+      }
     }
   }
 }
