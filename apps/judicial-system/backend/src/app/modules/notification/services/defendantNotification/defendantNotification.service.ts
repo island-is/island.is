@@ -32,6 +32,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { formatDefenderRoute } from '../../../../formatters'
+import { formatIcuMessage } from '../../../../messages'
 import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import {
@@ -107,14 +108,14 @@ export class DefendantNotificationService extends BaseNotificationService {
   private sendDefendantSelectedDefenderNotification(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    const formattedSubject = this.formatMessage(
+    const formattedSubject = formatIcuMessage(
       strings.defendantSelectedDefenderSubject,
       {
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
 
-    const formattedBody = this.formatMessage(
+    const formattedBody = formatIcuMessage(
       strings.defendantSelectedDefenderBody,
       {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -144,14 +145,14 @@ export class DefendantNotificationService extends BaseNotificationService {
   private sendDefendantDelegatedDefenderChoiceNotification(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    const formattedSubject = this.formatMessage(
+    const formattedSubject = formatIcuMessage(
       strings.defendantDelegatedDefenderChoiceSubject,
       {
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
 
-    const formattedBody = this.formatMessage(
+    const formattedBody = formatIcuMessage(
       strings.defendantDelegatedDefenderChoiceBody,
       {
         linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
@@ -336,14 +337,14 @@ export class DefendantNotificationService extends BaseNotificationService {
       institution: { type: InstitutionType.PRISON_ADMIN },
     })
 
-    const formattedSubject = this.formatMessage(
+    const formattedSubject = formatIcuMessage(
       strings.indictmentSentToPrisonAdminSubject,
       {
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
 
-    const formattedBody = this.formatMessage(
+    const formattedBody = formatIcuMessage(
       strings.indictmentSentToPrisonAdminBody,
       {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -385,14 +386,14 @@ export class DefendantNotificationService extends BaseNotificationService {
   ) {
     const courtCaseNumber = theCase.courtCaseNumber
 
-    const formattedSubject = this.formatMessage(
+    const formattedSubject = formatIcuMessage(
       strings.indictmentWithdrawnFromPrisonAdminSubject,
       {
         courtCaseNumber,
       },
     )
 
-    const formattedBody = this.formatMessage(
+    const formattedBody = formatIcuMessage(
       strings.indictmentWithdrawnFromPrisonAdminBody,
       {
         courtCaseNumber,
