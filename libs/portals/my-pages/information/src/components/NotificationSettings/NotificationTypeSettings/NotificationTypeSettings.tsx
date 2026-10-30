@@ -55,7 +55,7 @@ export const NotificationTypeSettings = () => {
   const [updateUserProfileSettings, { loading: updatingProfile }] =
     useUpdateUserProfileSettingsMutation()
 
-  const [updateNotificationCategorySettings, { loading: updating }] =
+  const [updateNotificationCategorySettings] =
     useUpdateNotificationCategorySettingsMutation({
       refetchQueries: [
         { query: UserNotificationSettingsDocument, variables: { locale } },
