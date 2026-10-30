@@ -273,7 +273,7 @@ export const HearingArrangements = () => {
           ]}
           errorMessage={
             isModalDeferring && sendNotificationError
-              ? formatMessage(errors.sendNotification)
+              ? errors.sendNotification
               : undefined
           }
         />

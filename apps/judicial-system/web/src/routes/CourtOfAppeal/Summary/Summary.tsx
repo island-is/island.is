@@ -99,10 +99,7 @@ const Summary: FC = () => {
       <AlertBanner
         variant="warning"
         title={strings.alertBannerTitle}
-        description={getAppealDecision(
-          formatMessage,
-          targetAppealCase?.appealRulingDecision,
-        )}
+        description={getAppealDecision(targetAppealCase?.appealRulingDecision)}
       />
       <PageLayout
         workingCase={workingCase}

@@ -1,52 +1,10 @@
-import { defineMessages } from 'react-intl'
-
-export const appealRuling = defineMessages({
-  decisionAccept: {
-    id: 'judicial.system.core:appeal_ruling.decision_accept',
-    defaultMessage: 'Staðfesting',
-    description:
-      'Staðfesting á "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
-  },
-  decisionRepeal: {
-    id: 'judicial.system.core:appeal_ruling.decision_repeal',
-    defaultMessage: 'Fella úr gildi',
-    description:
-      'Fallið úr gildi í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
-  },
-  decisionChanged: {
-    id: 'judicial.system.core:appeal_ruling.decision_changed',
-    defaultMessage: 'Niðurstöðu breytt',
-    description:
-      'Niðurstöðu breytt í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
-  },
-  decisionChangedSignificantly: {
-    id: 'judicial.system.core:appeal_ruling.decision_changed_significantly',
-    defaultMessage: 'Niðurstöðu breytt að verulegu leyti',
-    description:
-      'Niðurstöðu breytt í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
-  },
-  decisionDismissedFromCourtOfAppeal: {
-    id: 'judicial.system.core:appeal_ruling.decision_dismissed_from_court_of_appeal',
-    defaultMessage: 'Frávísun frá Landsrétti',
-    description:
-      'Frávísun frá Landsrétti í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
-  },
-  decisionDismissedFromCourt: {
-    id: 'judicial.system.core:appeal_ruling.decision_dismissed_from_court',
-    defaultMessage: 'Frávísun frá héraðsdómi',
-    description:
-      'Frávísun frá héraðsdómi í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
-  },
-  decisionRemand: {
-    id: 'judicial.system.core:appeal_ruling.decision_remand',
-    defaultMessage: 'Ómerking og heimvísun',
-    description:
-      'Ómerking og heimvísun í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
-  },
-  decisionDiscontinued: {
-    id: 'judicial.system.core:appeal_ruling.decision_discontinued',
-    defaultMessage: 'Niðurfelling',
-    description:
-      'Kæra afturkölluð/niðurfelld í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
-  },
-})
+export const appealRuling = {
+  decisionAccept: 'Staðfesting',
+  decisionRepeal: 'Fellt úr gildi',
+  decisionChanged: 'Niðurstöðu breytt að einhverju leyti',
+  decisionChangedSignificantly: 'Niðurstöðu breytt að verulegu leyti',
+  decisionDismissedFromCourtOfAppeal: 'Frávísun frá Landsrétti',
+  decisionDismissedFromCourt: 'Frávísun frá héraðsdómi',
+  decisionRemand: 'Ómerking og heimvísun',
+  decisionDiscontinued: 'Niðurfelling',
+}

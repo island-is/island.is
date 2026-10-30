@@ -1,5 +1,4 @@
 import type { FC } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
 import { ruling as m } from '@island.is/judicial-system-web/messages'
@@ -20,15 +19,14 @@ const RulingInput: FC<Props> = ({
   placeholder,
   required = false,
 }) => {
-  const { formatMessage } = useIntl()
   const rulingInput = useDebouncedInput('ruling', [])
 
   return (
     <Input
       data-testid="ruling"
       name="ruling"
-      label={label || formatMessage(m.label)}
-      placeholder={placeholder || formatMessage(m.placeholder)}
+      label={label || m.label}
+      placeholder={placeholder || m.placeholder}
       value={rulingInput.value ?? ''}
       required={required}
       onChange={(evt) => rulingInput.onChange(evt.target.value)}

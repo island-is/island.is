@@ -1,5 +1,4 @@
 import { useCallback, useContext, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
@@ -71,7 +70,6 @@ const useCaseList = () => {
   const { user, limitedAccess } = useContext(UserContext)
   const { features } = useContext(FeatureContext)
   const { getCase } = useContext(FormContext)
-  const { formatMessage } = useIntl()
   const { isTransitioningCase, isSendingNotification } = useCase()
   const router = useRouter()
 
@@ -252,7 +250,7 @@ const useCaseList = () => {
 
               return prev
             })
-            toast.error(formatMessage(errors.getCaseToOpen))
+            toast.error(errors.getCaseToOpen)
           },
         )
       }
@@ -270,7 +268,6 @@ const useCaseList = () => {
     },
     [
       clickedCase,
-      formatMessage,
       getCase,
       isSendingNotification,
       isTransitioningCase,
