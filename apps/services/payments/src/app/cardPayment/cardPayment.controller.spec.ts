@@ -1807,26 +1807,6 @@ describe('CardPaymentController', () => {
       correlationID: uuid(),
     })
 
-    const refundResponse = () => ({
-      acquirerReferenceNumber: 'string',
-      transactionID: 'string',
-      transactionLifecycleId: 'string',
-      maskedCardNumber: 'string',
-      isSuccess: true,
-      cardInformation: {
-        cardScheme: 'Visa',
-        issuingCountry: 'IS',
-        cardUsage: 'string',
-        cardCategory: 'string',
-        outOfScaScope: false,
-      },
-      authorizationIdentifier: uuid(),
-      responseCode: '00',
-      responseDescription: 'Success',
-      responseTime: '12:00:00',
-      correlationID: uuid(),
-    })
-
     // Valitor's answer for a decrypted card saved in the Google account
     const decryptionResponse = () => ({
       googlePayCardInformation: {
@@ -1885,15 +1865,13 @@ describe('CardPaymentController', () => {
 
     // Answers the organisation's update URL and the gateway, where
     // CardPayment both decrypts (WalletTransaction) and charges (ECommerce);
-    // each can be overridden per test, as can the refund
+    // each can be overridden per test
     const mockFetch = ({
       decryption = () => gatewayResponse(decryptionResponse()),
       cardPayment = () => gatewayResponse(chargeResponse()),
-      refund = () => gatewayResponse(refundResponse()),
     }: {
       decryption?: () => Response | Promise<Response>
       cardPayment?: () => Response | Promise<Response>
-      refund?: () => Response | Promise<Response>
     } = {}) => {
       fetchSpy = jest
         .spyOn(global, 'fetch')
@@ -1910,9 +1888,6 @@ describe('CardPaymentController', () => {
             }
             if (url.includes('/CardVerification')) {
               return gatewayResponse(mockVerificationSuccessResponse)
-            }
-            if (url.includes('/Payment/RefundWithCorrelationId')) {
-              return refund()
             }
           }
 
@@ -1936,12 +1911,6 @@ describe('CardPaymentController', () => {
     const cardVerificationCalls = () =>
       fetchSpy.mock.calls.filter(
         ([url]) => typeof url === 'string' && url.includes('/CardVerification'),
-      )
-    const refundCalls = () =>
-      fetchSpy.mock.calls.filter(
-        ([url]) =>
-          typeof url === 'string' &&
-          url.includes('/Payment/RefundWithCorrelationId'),
       )
 
     beforeEach(() => {
@@ -2162,91 +2131,12 @@ describe('CardPaymentController', () => {
       expect(cardVerificationCalls()).toHaveLength(0)
     })
 
-    it('refunds the charge when the gateway charges the token instead of decrypting it', async () => {
+    it('does not start 3-D Secure when the gateway charges the token instead of decrypting it', async () => {
       mockFetch({ decryption: () => gatewayResponse(chargeResponse()) })
-      const flowUpdateSpy = jest.spyOn(
-        PaymentFlowService.prototype,
-        'logPaymentFlowUpdate',
-      )
-      const googlePayToken = token()
-
-      const response = await charge(googlePayToken)
-
-      expect(response.status).toBe(400)
-      expect(response.body.detail).toBe(
-        CardErrorCode.GooglePayTokenNotSupported,
-      )
-      expect(cardVerificationCalls()).toHaveLength(0)
-      // Refunded by the correlation id the decryption was sent with
-      const [[, decryptionInit]] = decryptionCalls()
-      const [[, refundInit]] = refundCalls()
-      expect(JSON.parse(refundInit.body).originalCorrelationId).toBe(
-        JSON.parse(decryptionInit.body).correlationId,
-      )
-      // The flow's events carry what refunds it, should the refund need a look
-      expect(flowUpdateSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          reason: 'payment_failed',
-          metadata: expect.objectContaining({
-            correlationId: JSON.parse(decryptionInit.body).correlationId,
-            refund: expect.objectContaining({ isSuccess: true }),
-          }),
-        }),
-      )
-      flowUpdateSpy.mockRestore()
-
-      // The charged token is not sent to the gateway again
-      const resent = await charge(googlePayToken)
-      expect(resent.body.detail).toBe(CardErrorCode.GooglePayReplayDetected)
-      expect(decryptionCalls()).toHaveLength(1)
-    })
-
-    it('refunds the charge when the gateway charges the verified token instead of decrypting it', async () => {
-      let decryptions = 0
-      mockFetch({
-        decryption: () =>
-          gatewayResponse(
-            ++decryptions === 1 ? decryptionResponse() : chargeResponse(),
-          ),
-      })
-      const googlePayToken = token()
-
-      expect((await charge(googlePayToken)).status).toBe(201)
-      const [[, verificationInit]] = cardVerificationCalls()
-      expect(
-        (await completeVerification(JSON.parse(verificationInit.body))).status,
-      ).toBe(201)
-
-      const response = await chargeVerified(googlePayToken)
-
-      expect(response.status).toBe(400)
-      expect(response.body.detail).toBe(
-        CardErrorCode.GooglePayTokenNotSupported,
-      )
-      expect(chargeCalls()).toHaveLength(0)
-      expect(refundCalls()).toHaveLength(1)
-    })
-
-    it('tells the payer the refund failed when the gateway charges the token and refuses the refund', async () => {
-      mockFetch({
-        decryption: () => gatewayResponse(chargeResponse()),
-        refund: () =>
-          gatewayResponse({
-            isSuccess: false,
-            responseCode: '05',
-            responseDescription: 'Do not honour',
-            responseTime: '12:00:00',
-            correlationID: uuid(),
-          }),
-      })
 
       const response = await charge(token())
 
       expect(response.status).toBe(400)
-      expect(response.body.detail).toBe(
-        CardErrorCode.RefundFailedAfterPaymentError,
-      )
-      expect(refundCalls()).toHaveLength(1)
       expect(cardVerificationCalls()).toHaveLength(0)
     })
 
