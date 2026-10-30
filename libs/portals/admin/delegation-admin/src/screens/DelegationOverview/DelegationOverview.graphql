@@ -1,0 +1,40 @@
+fragment DelegationOverviewDelegation on AuthAdminDelegationOverviewDelegation {
+  id
+  type
+  validTo
+  isActive
+  indexedAt
+  from {
+    name
+    nationalId
+  }
+  to {
+    name
+    nationalId
+  }
+  scopes {
+    name
+    displayName
+    validFrom
+    validTo
+  }
+  clientIds
+  loginClientIds
+}
+
+query getDelegationOverview($nationalId: String!) {
+  authAdminDelegationOverview(nationalId: $nationalId) {
+    name
+    nationalId
+    clients {
+      clientId
+      clientName
+    }
+    incoming {
+      ...DelegationOverviewDelegation
+    }
+    outgoing {
+      ...DelegationOverviewDelegation
+    }
+  }
+}

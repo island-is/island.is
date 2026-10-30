@@ -5,6 +5,7 @@ query getCustomDelegationsAdmin($nationalId: String!) {
     incoming {
       id
       validTo
+      indexedAt
       referenceId
       domain {
         name
@@ -30,12 +31,14 @@ query getCustomDelegationsAdmin($nationalId: String!) {
         name
         displayName
         id
+        validFrom
         validTo
       }
     }
     outgoing {
       id
       validTo
+      indexedAt
       referenceId
       domain {
         name
@@ -61,6 +64,7 @@ query getCustomDelegationsAdmin($nationalId: String!) {
         name
         displayName
         id
+        validFrom
         validTo
       }
     }
