@@ -106,7 +106,7 @@ export const ServiceInterruptionBannerAdmin = () => {
   }
 
   return (
-    <Box background="purple100" minHeight="viewport">
+    <Box background="purple100">
       <PageHeader title="Gulur borði - Réttarvörslugátt" />
       <FormContentContainer>
         <Text variant="h1" as="h1" marginBottom={2}>
