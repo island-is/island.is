@@ -864,6 +864,31 @@ describe('getAppealCaseStatementDates', () => {
       ])
     })
 
+    // The events backfilled from the appeal case's legacy statement dates
+    // name no party; the defender's is told by its role.
+    it("does not count a legacy defender statement as the prosecution's", () => {
+      const appealCase = {
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.PROSECUTOR,
+            created: earlier,
+          },
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.DEFENDER,
+            created: later,
+          },
+        ] as AppealEventLog[],
+      } as AppealCase
+      const theCase = { type: CaseType.INDICTMENT } as Case
+
+      const dates = getAppealCaseStatementDates(appealCase, theCase)
+
+      expect(dates.prosecutorStatementDate).toEqual(earlier)
+      expect(dates.defendantStatementDates).toEqual([])
+    })
+
     it('returns the latest prosecutor statement date across prosecution roles', () => {
       const appealCase = {
         appealEventLogs: [

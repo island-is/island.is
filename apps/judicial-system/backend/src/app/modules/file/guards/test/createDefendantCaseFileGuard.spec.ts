@@ -61,6 +61,8 @@ describe('Create Defendant Case File Guard', () => {
     )
   }
 
+  // The prosecution's files on a defendant; the court of appeals has no part
+  // in them.
   describe.each([
     CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
     CaseFileCategory.CRIMINAL_RECORD,
@@ -73,6 +75,13 @@ describe('Create Defendant Case File Guard', () => {
 
       expect(then.error).toBeUndefined()
       expect(then.result).toBe(true)
+    })
+
+    it('cannot be created by the court of appeals', () => {
+      expectForbidden(
+        givenWhenThen(courtOfAppealsAssistant, category),
+        category,
+      )
     })
   })
 

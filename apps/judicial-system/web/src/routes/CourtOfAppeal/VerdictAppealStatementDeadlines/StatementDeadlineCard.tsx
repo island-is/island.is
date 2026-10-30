@@ -3,7 +3,12 @@ import { useRef, useState } from 'react'
 import { AnimatePresence } from 'motion/react'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { DateTime, Modal } from '@island.is/judicial-system-web/src/components'
+import {
+  ContextMenu,
+  DateTime,
+  IconButton,
+  Modal,
+} from '@island.is/judicial-system-web/src/components'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import type { StatementDeadlineParty } from './VerdictAppealStatementDeadlines.logic'
@@ -21,6 +26,8 @@ interface Props {
   // Sends the picked deadline for the party. Resolves true once it is saved.
   onSend: (party: StatementDeadlineParty, deadline: Date) => Promise<boolean>
   isSending: boolean
+  // Takes the court to where it uploads the party's statement on its behalf.
+  onUpload?: (party: StatementDeadlineParty) => void
 }
 
 /**
@@ -28,9 +35,15 @@ interface Props {
  * date the court gives them, and the action that sends it.
  *
  * The date is a draft until sent. A party whose statement is in has nothing
- * left to be given, so its date is shown locked and the action is gone.
+ * left to be given, so its date is shown locked, the action is gone, and so
+ * is the menu through which the court would have filed it.
  */
-const StatementDeadlineCard: FC<Props> = ({ party, onSend, isSending }) => {
+const StatementDeadlineCard: FC<Props> = ({
+  party,
+  onSend,
+  isSending,
+  onUpload,
+}) => {
   const [pickedDate, setPickedDate] = useState<Date>()
   const [isConfirming, setIsConfirming] = useState(false)
 
@@ -98,6 +111,27 @@ const StatementDeadlineCard: FC<Props> = ({ party, onSend, isSending }) => {
         disabled={party.hasFiledStatement}
         onChange={(date) => setPickedDate(date)}
       />
+      {!party.hasFiledStatement && onUpload && (
+        <div className={styles.menu}>
+          <ContextMenu
+            placement="bottom-end"
+            items={[
+              {
+                title: 'Hlaða upp greinargerð',
+                icon: 'attach',
+                onClick: () => onUpload(party),
+              },
+            ]}
+            render={
+              <IconButton
+                icon="ellipsisVertical"
+                colorScheme="transparent"
+                ariaLabel={`Valmynd fyrir ${party.name || party.roleLabel}`}
+              />
+            }
+          />
+        </div>
+      )}
       {!party.hasFiledStatement && (
         <div className={styles.action}>
           <Button
