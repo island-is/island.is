@@ -38,77 +38,110 @@ const ConclusionDraft: FC<Props> = ({ workingCase, setWorkingCase }) => {
           acceptedLabelText={
             isRestrictionCase(workingCase.type)
               ? formatMessage(
-                  m.restrictionCases.sections.decision.acceptLabel,
+                  {
+                    id: m.restrictionCases.sections.decision.acceptLabel,
+                    defaultMessage:
+                      m.restrictionCases.sections.decision.acceptLabel,
+                  },
                   {
                     caseType: formatMessage(
-                      m.restrictionCases.sections.decision.caseType,
+                      {
+                        id: m.restrictionCases.sections.decision.caseType,
+                        defaultMessage:
+                          m.restrictionCases.sections.decision.caseType,
+                      },
                       {
                         caseType: workingCase.type,
                       },
                     ),
                   },
                 )
-              : formatMessage(
-                  m.investigationCases.sections.decision.acceptLabel,
-                )
+              : m.investigationCases.sections.decision.acceptLabel
           }
           rejectedLabelText={
             isRestrictionCase(workingCase.type)
               ? formatMessage(
-                  m.restrictionCases.sections.decision.rejectLabel,
+                  {
+                    id: m.restrictionCases.sections.decision.rejectLabel,
+                    defaultMessage:
+                      m.restrictionCases.sections.decision.rejectLabel,
+                  },
                   {
                     caseType: formatMessage(
-                      m.restrictionCases.sections.decision.caseType,
+                      {
+                        id: m.restrictionCases.sections.decision.caseType,
+                        defaultMessage:
+                          m.restrictionCases.sections.decision.caseType,
+                      },
                       {
                         caseType: workingCase.type,
                       },
                     ),
                   },
                 )
-              : formatMessage(
-                  m.investigationCases.sections.decision.rejectLabel,
-                )
+              : m.investigationCases.sections.decision.rejectLabel
           }
           partiallyAcceptedLabelText={`${
             isRestrictionCase(workingCase.type)
               ? formatMessage(
-                  m.restrictionCases.sections.decision.partiallyAcceptLabel,
+                  {
+                    id: m.restrictionCases.sections.decision
+                      .partiallyAcceptLabel,
+                    defaultMessage:
+                      m.restrictionCases.sections.decision.partiallyAcceptLabel,
+                  },
                   {
                     caseType: formatMessage(
-                      m.restrictionCases.sections.decision.caseType,
+                      {
+                        id: m.restrictionCases.sections.decision.caseType,
+                        defaultMessage:
+                          m.restrictionCases.sections.decision.caseType,
+                      },
                       {
                         caseType: workingCase.type,
                       },
                     ),
                   },
                 )
-              : formatMessage(
-                  m.investigationCases.sections.decision.partiallyAcceptLabel,
-                )
+              : m.investigationCases.sections.decision.partiallyAcceptLabel
           }`}
           dismissLabelText={
             isRestrictionCase(workingCase.type)
               ? formatMessage(
-                  m.restrictionCases.sections.decision.dismissLabel,
+                  {
+                    id: m.restrictionCases.sections.decision.dismissLabel,
+                    defaultMessage:
+                      m.restrictionCases.sections.decision.dismissLabel,
+                  },
                   {
                     caseType: formatMessage(
-                      m.restrictionCases.sections.decision.caseType,
+                      {
+                        id: m.restrictionCases.sections.decision.caseType,
+                        defaultMessage:
+                          m.restrictionCases.sections.decision.caseType,
+                      },
                       {
                         caseType: workingCase.type,
                       },
                     ),
                   },
                 )
-              : formatMessage(
-                  m.investigationCases.sections.decision.dismissLabel,
-                )
+              : m.investigationCases.sections.decision.dismissLabel
           }
           acceptingAlternativeTravelBanLabelText={formatMessage(
-            m.restrictionCases.sections.decision
-              .acceptingAlternativeTravelBanLabel,
+            {
+              id: m.restrictionCases.sections.decision
+                .acceptingAlternativeTravelBanLabel,
+              defaultMessage:
+                m.restrictionCases.sections.decision
+                  .acceptingAlternativeTravelBanLabel,
+            },
             {
               caseType: formatMessage(
-                m.restrictionCases.sections.decision.caseType,
+                {
+                  id: m.restrictionCases.sections.decision.caseType,
+                  defaultMessage: m.restrictionCases.sections.decision.caseType,
+                },
                 {
                   caseType: workingCase.type,
                 },

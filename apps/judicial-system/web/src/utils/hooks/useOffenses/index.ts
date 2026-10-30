@@ -1,5 +1,4 @@
 import { useCallback } from 'react'
-import { useIntl } from 'react-intl'
 
 import type { SubstanceMap } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -23,8 +22,6 @@ export interface UpdateOffense
 }
 
 const useOffenses = () => {
-  const { formatMessage } = useIntl()
-
   const [createOffenseMutation] = useCreateOffenseMutation()
   const [updateOffenseMutation] = useUpdateOffenseMutation()
   const [deleteOffenseMutation] = useDeleteOffenseMutation()
@@ -47,15 +44,15 @@ const useOffenses = () => {
         })
 
         if (!data) {
-          toast.error(formatMessage(errors.createOffense))
+          toast.error(errors.createOffense)
         }
 
         return data?.createOffense
       } catch {
-        toast.error(formatMessage(errors.createOffense))
+        toast.error(errors.createOffense)
       }
     },
-    [createOffenseMutation, formatMessage],
+    [createOffenseMutation],
   )
 
   const deleteOffense = useCallback(
@@ -73,10 +70,10 @@ const useOffenses = () => {
 
         return data?.deleteOffense?.deleted
       } catch {
-        toast.error(formatMessage(errors.deleteOffense))
+        toast.error(errors.deleteOffense)
       }
     },
-    [deleteOffenseMutation, formatMessage],
+    [deleteOffenseMutation],
   )
 
   const updateOffense = useCallback(
@@ -99,14 +96,14 @@ const useOffenses = () => {
         })
 
         if (!data) {
-          toast.error(formatMessage(errors.updateOffense))
+          toast.error(errors.updateOffense)
         }
         return data?.updateOffense
       } catch {
-        toast.error(formatMessage(errors.updateOffense))
+        toast.error(errors.updateOffense)
       }
     },
-    [updateOffenseMutation, formatMessage],
+    [updateOffenseMutation],
   )
 
   return {
