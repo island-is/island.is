@@ -276,8 +276,7 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     defaultMessage: 'Engar upplýsingar um tungumálaumhverfi eru skráðar.',
   },
   languageProfileEmptyDescription: {
-    id:
-      'sp.education-primary-school:key-info-language-profile-empty-description',
+    id: 'sp.education-primary-school:key-info-language-profile-empty-description',
     defaultMessage: 'Þú getur skráð upplýsingarnar með því að smella á Breyta.',
   },
   healthProfileEmpty: {
