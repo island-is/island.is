@@ -250,11 +250,11 @@ export const m = defineMessages({
   },
   filterClient: {
     id: 'admin.delegationAdmin:filterClient',
-    defaultMessage: 'Forrit',
+    defaultMessage: 'Kerfi',
   },
   filterClientAll: {
     id: 'admin.delegationAdmin:filterClientAll',
-    defaultMessage: 'Öll forrit',
+    defaultMessage: 'Öll kerfi',
   },
   filterStatus: {
     id: 'admin.delegationAdmin:filterStatus',
