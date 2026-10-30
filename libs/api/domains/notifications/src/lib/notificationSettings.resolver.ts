@@ -3,11 +3,7 @@ import { IdsUserGuard, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { notificationScopes } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import {
-  Inject,
-  InternalServerErrorException,
-  UseGuards,
-} from '@nestjs/common'
+import { Inject, InternalServerErrorException, UseGuards } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { NotificationSettingsService } from './notificationSettings.service'
 import { toCategoryKey } from './notificationSettings.utils'
