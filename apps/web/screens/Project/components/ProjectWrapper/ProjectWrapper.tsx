@@ -12,6 +12,7 @@ import {
   Icon,
   Link,
 } from '@island.is/island-ui/core'
+import { SidebarCards } from '@island.is/web/components'
 import { ProjectPage } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
@@ -28,7 +29,8 @@ interface ProjectWrapperProps {
   breadcrumbItems: BreadCrumbItem[]
   sidebarNavigationTitle: string
   backLink?: { url: string; text: string }
-  isSubpage?: boolean
+  isSubpage?: boolean // Only controls the header size (smallerSubpageHeader in the project namespace), use isFrontpage to check if the page is a subpage
+  isFrontpage?: boolean
 }
 
 export const ProjectWrapper: React.FC<
@@ -41,6 +43,7 @@ export const ProjectWrapper: React.FC<
   sidebarNavigationTitle,
   children,
   isSubpage,
+  isFrontpage = false,
 }) => {
   const router = useRouter()
 
@@ -71,6 +74,8 @@ export const ProjectWrapper: React.FC<
   )
 
   const showBackLink = projectPage.backLink?.url && projectPage.backLink?.text
+
+  const sidebarCards = projectPage.sidebarCards ?? []
 
   const aboveChildren = (
     <>
@@ -128,12 +133,24 @@ export const ProjectWrapper: React.FC<
               )}
               {projectPage.sidebarLinks?.length > 0 &&
                 projectPageSidebarNavigationComponent()}
+              {sidebarCards.length > 0 && (
+                <Box marginY={3}>
+                  <SidebarCards cards={sidebarCards} showImages={true} />
+                </Box>
+              )}
               {sidebarContent}
             </>
           }
         >
           {aboveChildren}
           {children}
+          {isFrontpage && sidebarCards.length > 0 && (
+            <Hidden above="sm">
+              <Box marginY={4}>
+                <SidebarCards cards={sidebarCards} />
+              </Box>
+            </Hidden>
+          )}
         </SidebarLayout>
       ) : (
         <Box className={styles.fullWidthContainer}>

@@ -32,6 +32,9 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           url
         }
       }
+      sidebarCards {
+        ...SidebarCardFields
+      }
       footerConfig
       footerItems {
         title
@@ -90,6 +93,11 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         ${nestedFields}
       }
       newsTag {
+        id
+        title
+        slug
+      }
+      secondaryNewsTags {
         id
         title
         slug
