@@ -29,6 +29,7 @@ env:
   DB_NAME: 'services_endorsements_api'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'services_endorsements_api'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   EMAIL_FROM_ADDRESS: 'development@island.is'
   EMAIL_FROM_NAME: 'devland.is'
   EMAIL_REGION: 'eu-west-1'

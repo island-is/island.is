@@ -1,8 +1,11 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { createTestingVictimModule } from './createTestingVictimModule'
 
-import { Case, Victim } from '../../repository'
+import { getOrCreateTransaction } from '../../../middleware'
+import { runInRequestContext } from '../../../test'
+import { Case, Victim, VictimRepositoryService } from '../../repository'
 
 interface Then {
   result: Victim
@@ -20,24 +23,45 @@ describe('VictimController - Create', () => {
   const victimId = uuid()
   const createdVictim = { id: victimId, caseId }
 
-  let mockVictimModel: typeof Victim
+  let mockVictimRepositoryService: VictimRepositoryService
+  let mockTransaction: jest.Mock
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { victimController, victimModel } = await createTestingVictimModule()
+    const { victimController, victimRepositoryService, sequelize } =
+      await createTestingVictimModule()
 
-    mockVictimModel = victimModel
+    mockVictimRepositoryService = victimRepositoryService
+    mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockResolvedValue(transaction)
 
-    const mockCreate = mockVictimModel.create as jest.Mock
+    const mockCreate = mockVictimRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(createdVictim)
 
     givenWhenThen = async () => {
       const then = {} as Then
 
-      await victimController
-        .create(theCase.id, theCase as Case, victimToCreate)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      try {
+        // The routes are guarded by MinimalCaseExistsForUpdateGuard, so the
+        // request transaction is already open by the time the handler runs.
+        // Guards do not execute in controller unit tests, so the request
+        // context is set up here instead.
+        await runInRequestContext(async () => {
+          // Stand in for the guard, which opens the request transaction
+          // before the handler runs.
+          await getOrCreateTransaction(sequelize)
+
+          then.result = await victimController.create(
+            theCase.id,
+            theCase as Case,
+            victimToCreate,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -50,11 +74,19 @@ describe('VictimController - Create', () => {
       then = await givenWhenThen()
     })
 
-    it('should create a victim', () => {
-      expect(mockVictimModel.create).toHaveBeenCalledWith({
-        ...victimToCreate,
+    // One call to sequelize.transaction: the guard's. A handler that opened a
+    // transaction of its own - the deadlock the controller warns about - would
+    // make it two, and the mock would resolve the same stub for both.
+    it('should join the transaction the guard opened rather than open one', () => {
+      expect(mockTransaction).toHaveBeenCalledTimes(1)
+    })
+
+    it('should create a victim under the request transaction', () => {
+      expect(mockVictimRepositoryService.create).toHaveBeenCalledWith(
         caseId,
-      })
+        victimToCreate,
+        { transaction },
+      )
     })
 
     it('should return victim', () => {
@@ -66,7 +98,7 @@ describe('VictimController - Create', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockVictimModel.create as jest.Mock
+      const mockCreate = mockVictimRepositoryService.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen()

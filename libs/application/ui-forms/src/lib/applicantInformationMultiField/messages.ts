@@ -60,6 +60,12 @@ export const applicantInformation = {
         'Ef netfang og símanúmer er ekki rétt hér að ofan þá verður að breyta þeim upplýsingum á mínum síðum Ísland.is og opna nýja umsókn.',
       description: 'Applicant alert message',
     },
+    alertMessageEmailOnly: {
+      id: 'uiForms.application:applicantInfo.labels.alertMessageEmailOnly',
+      defaultMessage:
+        'Ef netfangið hér að ofan er ekki rétt þá verður að breyta þeim upplýsingum á mínum síðum Ísland.is og opna nýja umsókn.',
+      description: 'Applicant alert message when only email is read-only',
+    },
     alertMessageLink: {
       id: 'uiForms.application:applicantInfo.labels.alertMessageLink',
       defaultMessage: '/minarsidur',

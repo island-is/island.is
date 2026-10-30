@@ -1,5 +1,5 @@
 import { Inject, Logger, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -14,11 +14,13 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { FeatureService } from '../feature/feature.service'
 import { CreateCivilClaimantInput } from './dto/createCivilClaimant.input'
 import { DeleteCivilClaimantInput } from './dto/deleteCivilClaimant.input'
 import { UpdateCivilClaimantInput } from './dto/updateCivilClaimant.input'
 import { CivilClaimant } from './models/civilClaimant.model'
 import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
+import { assertAppealAdvocatesAvailable } from './appealAdvocates'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver(() => CivilClaimant)
@@ -27,6 +29,8 @@ export class CivilClaimantResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
+    private readonly featureService: FeatureService,
   ) {}
 
   @Mutation(() => CivilClaimant)
@@ -34,15 +38,13 @@ export class CivilClaimantResolver {
     @Args('input', { type: () => CreateCivilClaimantInput })
     input: CreateCivilClaimantInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CivilClaimant> {
     const { caseId, ...createCivilClaimant } = input
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_CIVIL_CLAIMANT,
-      backendService.createCivilClaimant(caseId, createCivilClaimant),
+      this.backendService.createCivilClaimant(caseId, createCivilClaimant),
       (civilClaimant) => civilClaimant.id,
     )
   }
@@ -52,15 +54,17 @@ export class CivilClaimantResolver {
     @Args('input', { type: () => UpdateCivilClaimantInput })
     input: UpdateCivilClaimantInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CivilClaimant> {
     const { caseId, civilClaimantId, ...updateCivilClaimant } = input
+
+    // The appeal proceeding's advocate belongs to the hidden feature, so the
+    // write path closes with it.
+    assertAppealAdvocatesAvailable(this.featureService, updateCivilClaimant)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_CIVIL_CLAIMANT,
-      backendService.updateCivilClaimant(
+      this.backendService.updateCivilClaimant(
         caseId,
         civilClaimantId,
         updateCivilClaimant,
@@ -74,15 +78,13 @@ export class CivilClaimantResolver {
     @Args('input', { type: () => DeleteCivilClaimantInput })
     input: DeleteCivilClaimantInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<DeleteCivilClaimantResponse> {
     const { caseId, civilClaimantId } = input
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.DELETE_CIVIL_CLAIMANT,
-      backendService.deleteCivilClaimant(caseId, civilClaimantId),
+      this.backendService.deleteCivilClaimant(caseId, civilClaimantId),
       civilClaimantId,
     )
   }

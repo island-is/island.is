@@ -26,7 +26,7 @@ import {
 import { useFormContext } from 'react-hook-form'
 import { FC, useEffect, useState } from 'react'
 import format from 'date-fns/format'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import {
   energyFundsLabel,
   extractDetails,
@@ -240,6 +240,10 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       vehicleDetailsWithGrant.firstRegistrationDate || '',
     )
     setValue(`${field.id}.vin`, vehicleDetailsWithGrant.vin)
+    setValue(
+      `${field.id}.vehicleRegistrationCode`,
+      vehicleDetailsWithGrant.vehicleRegistrationCode,
+    )
     setValue(`${field.id}.grantAmount`, vehicleDetailsWithGrant.vehicleGrant)
     setValue(
       `${field.id}.grantItemCode`,

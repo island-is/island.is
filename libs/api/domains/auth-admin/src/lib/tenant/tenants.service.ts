@@ -118,10 +118,13 @@ export class TenantsService extends MultiEnvironmentService {
           environment: environments[index],
           name: domain.name,
           displayName: [{ locale: 'is', value: domain.displayName }],
+          displayNameEn: domain.displayNameEn,
           nationalId: domain.nationalId,
           description: domain.description,
+          descriptionEn: domain.descriptionEn,
           organisationLogoKey: domain.organisationLogoKey,
           contactEmail: domain.contactEmail,
+          municipalityCode: domain.municipalityCode,
         }),
         prefixErrorMessage: `Failed to fetch admin details for tenant ${id}`,
       },
@@ -140,6 +143,7 @@ export class TenantsService extends MultiEnvironmentService {
       contactEmail: primary.contactEmail,
       description: primary.description,
       organisationLogoKey: primary.organisationLogoKey,
+      municipalityCode: primary.municipalityCode,
     }
   }
 
@@ -159,6 +163,9 @@ export class TenantsService extends MultiEnvironmentService {
               organisationLogoKey: input.organisationLogoKey,
               ...(input.contactEmail
                 ? { contactEmail: input.contactEmail }
+                : {}),
+              ...(input.municipalityCode
+                ? { municipalityCode: input.municipalityCode }
                 : {}),
             },
           }),
@@ -205,10 +212,13 @@ export class TenantsService extends MultiEnvironmentService {
         environment: targetEnvironments[index],
         name: domain.name,
         displayName: [{ locale: 'is', value: domain.displayName }],
+        displayNameEn: domain.displayNameEn,
         nationalId: domain.nationalId,
         description: domain.description,
+        descriptionEn: domain.descriptionEn,
         organisationLogoKey: domain.organisationLogoKey,
         contactEmail: domain.contactEmail,
+        municipalityCode: domain.municipalityCode,
       }),
       prefixErrorMessage: `Failed to update tenant ${tenantId}`,
     })
@@ -251,6 +261,9 @@ export class TenantsService extends MultiEnvironmentService {
             ...(source.contactEmail
               ? { contactEmail: source.contactEmail }
               : {}),
+            ...(source.municipalityCode
+              ? { municipalityCode: source.municipalityCode }
+              : {}),
           },
         }),
     )
@@ -261,14 +274,52 @@ export class TenantsService extends MultiEnvironmentService {
       )
     }
 
+    // The tenant already exists in the target at this point, so a failed
+    // translation patch must not fail the publish (a retry would hit a 409).
+    // The English values can then be set by editing the tenant.
+    let translations: Pick<
+      TenantEnvironment,
+      'displayNameEn' | 'descriptionEn'
+    > = {}
+    if (source.displayNameEn || source.descriptionEn) {
+      try {
+        const patched = await this.makeRequest(
+          user,
+          input.targetEnvironment,
+          (targetApi) =>
+            targetApi.meTenantsControllerUpdateRaw({
+              tenantId: created.name,
+              adminPatchTenantDto: {
+                ...(source.displayNameEn
+                  ? { displayNameEn: source.displayNameEn }
+                  : {}),
+                ...(source.descriptionEn
+                  ? { descriptionEn: source.descriptionEn }
+                  : {}),
+              },
+            }),
+        )
+        translations = {
+          displayNameEn: patched?.displayNameEn,
+          descriptionEn: patched?.descriptionEn,
+        }
+      } catch {
+        this.logger.warn(
+          `Published tenant ${created.name} to ${input.targetEnvironment} without English translations`,
+        )
+      }
+    }
+
     return {
       environment: input.targetEnvironment,
       name: created.name,
       displayName: [{ locale: 'is', value: created.displayName }],
       nationalId: created.nationalId,
       description: created.description,
+      ...translations,
       organisationLogoKey: created.organisationLogoKey,
       contactEmail: created.contactEmail,
+      municipalityCode: created.municipalityCode,
     }
   }
 

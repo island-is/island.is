@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
 import { ConfigModule } from '@nestjs/config'
 
 import {
@@ -29,6 +31,8 @@ import { PatchClientInput } from './dto/patch-client.input'
 import { AdminClientDto } from '@island.is/auth-api-lib'
 import { PublishClientInput } from './dto/publish-client.input'
 import { RotateSecretInput } from './dto/rotate-secret.input'
+import { DeleteClientInput } from './dto/delete-client.input'
+import { RestoreClientInput } from './dto/restore-client.input'
 import { ClientSecret } from './models/client-secret.model'
 
 const baseResponse: AdminClientDto = {
@@ -96,6 +100,12 @@ const createMockAdminApi = () => ({
     ]),
   ),
   meClientSecretsControllerDeleteRaw: jest
+    .fn()
+    .mockResolvedValue(createMockApiResponse({})),
+  meClientsControllerDeleteRaw: jest
+    .fn()
+    .mockResolvedValue(createMockApiResponse({})),
+  meClientsControllerRestoreRaw: jest
     .fn()
     .mockResolvedValue(createMockApiResponse({})),
   meTenantsControllerFindByIdRaw: jest.fn().mockResolvedValue(
@@ -179,11 +189,15 @@ describe('ClientsService', () => {
         createClientsInput,
       )
 
-      expect(mockAdminDevApi.meClientsControllerCreateRaw).toBeCalledTimes(1)
-      expect(mockAdminStagingApi.meClientsControllerCreateRaw).toBeCalledTimes(
-        1,
-      )
-      expect(mockAdminProdApi.meClientsControllerCreateRaw).toBeCalledTimes(1)
+      expect(
+        mockAdminDevApi.meClientsControllerCreateRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminStagingApi.meClientsControllerCreateRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminProdApi.meClientsControllerCreateRaw,
+      ).toHaveBeenCalledTimes(1)
       expect(response).toEqual([
         {
           environment: Environment.Development,
@@ -212,22 +226,28 @@ describe('ClientsService', () => {
         createClientsInput,
       )
 
-      expect(mockAdminDevApi.meClientsControllerCreateRaw).toBeCalledTimes(1)
-      expect(mockAdminStagingApi.meClientsControllerCreateRaw).toBeCalledTimes(
-        0,
-      )
-      expect(mockAdminProdApi.meClientsControllerCreateRaw).toBeCalledTimes(0)
+      expect(
+        mockAdminDevApi.meClientsControllerCreateRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminStagingApi.meClientsControllerCreateRaw,
+      ).toHaveBeenCalledTimes(0)
+      expect(
+        mockAdminProdApi.meClientsControllerCreateRaw,
+      ).toHaveBeenCalledTimes(0)
 
-      expect(mockAdminDevApi.meClientsControllerCreateRaw).toBeCalledWith({
-        adminCreateClientDto: {
-          clientId: 'test-application-id',
-          clientType: CreateClientType.web,
-          clientName: 'Test Application',
-          contactEmail: 'test@test.is',
-          sso: ClientSso.enabled,
+      expect(mockAdminDevApi.meClientsControllerCreateRaw).toHaveBeenCalledWith(
+        {
+          adminCreateClientDto: {
+            clientId: 'test-application-id',
+            clientType: CreateClientType.web,
+            clientName: 'Test Application',
+            contactEmail: 'test@test.is',
+            sso: ClientSso.enabled,
+          },
+          tenantId: 'test-tenant-id',
         },
-        tenantId: 'test-tenant-id',
-      })
+      )
 
       expect(response).toEqual([
         {
@@ -250,21 +270,25 @@ describe('ClientsService', () => {
         publishClientInput,
       )
 
-      expect(mockAdminDevApi.meClientsControllerCreateRaw).toBeCalledTimes(1)
-      expect(mockAdminStagingApi.meClientsControllerCreateRaw).toBeCalledTimes(
-        0,
-      )
-      expect(mockAdminProdApi.meClientsControllerCreateRaw).toBeCalledTimes(0)
+      expect(
+        mockAdminDevApi.meClientsControllerCreateRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminStagingApi.meClientsControllerCreateRaw,
+      ).toHaveBeenCalledTimes(0)
+      expect(
+        mockAdminProdApi.meClientsControllerCreateRaw,
+      ).toHaveBeenCalledTimes(0)
 
       expect(
         mockAdminDevApi.meClientsControllerFindByTenantIdAndClientIdRaw,
-      ).toBeCalledTimes(0)
+      ).toHaveBeenCalledTimes(0)
       expect(
         mockAdminStagingApi.meClientsControllerFindByTenantIdAndClientIdRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
       expect(
         mockAdminProdApi.meClientsControllerFindByTenantIdAndClientIdRaw,
-      ).toBeCalledTimes(0)
+      ).toHaveBeenCalledTimes(0)
 
       expect(response).toEqual({
         ...baseResponse,
@@ -313,11 +337,15 @@ describe('ClientsService', () => {
         patchClientsInput,
       )
 
-      expect(mockAdminDevApi.meClientsControllerUpdateRaw).toBeCalledTimes(1)
-      expect(mockAdminStagingApi.meClientsControllerUpdateRaw).toBeCalledTimes(
-        1,
-      )
-      expect(mockAdminProdApi.meClientsControllerUpdateRaw).toBeCalledTimes(1)
+      expect(
+        mockAdminDevApi.meClientsControllerUpdateRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminStagingApi.meClientsControllerUpdateRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminProdApi.meClientsControllerUpdateRaw,
+      ).toHaveBeenCalledTimes(1)
       expect(response).toEqual({
         environments: [
           {
@@ -371,11 +399,15 @@ describe('ClientsService', () => {
         patchClientsInput,
       )
 
-      expect(mockAdminDevApi.meClientsControllerUpdateRaw).toBeCalledTimes(1)
-      expect(mockAdminStagingApi.meClientsControllerUpdateRaw).toBeCalledTimes(
-        0,
-      )
-      expect(mockAdminProdApi.meClientsControllerUpdateRaw).toBeCalledTimes(0)
+      expect(
+        mockAdminDevApi.meClientsControllerUpdateRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminStagingApi.meClientsControllerUpdateRaw,
+      ).toHaveBeenCalledTimes(0)
+      expect(
+        mockAdminProdApi.meClientsControllerUpdateRaw,
+      ).toHaveBeenCalledTimes(0)
       expect(response).toEqual({
         environments: [
           {
@@ -410,13 +442,13 @@ describe('ClientsService', () => {
       // Assert
       expect(
         mockAdminDevApi.meClientSecretsControllerCreateRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
       expect(
         mockAdminStagingApi.meClientSecretsControllerCreateRaw,
-      ).toBeCalledTimes(0)
+      ).toHaveBeenCalledTimes(0)
       expect(
         mockAdminProdApi.meClientSecretsControllerCreateRaw,
-      ).toBeCalledTimes(0)
+      ).toHaveBeenCalledTimes(0)
       expect(response).toEqual({
         ...secretResponse,
         clientId: rotateSecretInput.clientId,
@@ -442,39 +474,135 @@ describe('ClientsService', () => {
       expect.assertions(12)
       expect(
         mockAdminDevApi.meClientSecretsControllerFindAllRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
       expect(
         mockAdminDevApi.meClientSecretsControllerDeleteRaw,
-      ).toBeCalledTimes(2)
-      expect(mockAdminDevApi.meClientSecretsControllerDeleteRaw).nthCalledWith(
-        1,
-        {
-          clientId: rotateSecretInput.clientId,
-          tenantId: rotateSecretInput.tenantId,
-          secretId: '1',
-        },
-      )
-      expect(mockAdminDevApi.meClientSecretsControllerDeleteRaw).nthCalledWith(
-        2,
-        {
-          clientId: rotateSecretInput.clientId,
-          tenantId: rotateSecretInput.tenantId,
-          secretId: '2',
-        },
-      )
+      ).toHaveBeenCalledTimes(2)
+      expect(
+        mockAdminDevApi.meClientSecretsControllerDeleteRaw,
+      ).toHaveBeenNthCalledWith(1, {
+        clientId: rotateSecretInput.clientId,
+        tenantId: rotateSecretInput.tenantId,
+        secretId: '1',
+      })
+      expect(
+        mockAdminDevApi.meClientSecretsControllerDeleteRaw,
+      ).toHaveBeenNthCalledWith(2, {
+        clientId: rotateSecretInput.clientId,
+        tenantId: rotateSecretInput.tenantId,
+        secretId: '2',
+      })
       expect(
         mockAdminDevApi.meClientSecretsControllerCreateRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
       ;[mockAdminStagingApi, mockAdminProdApi].map((api) => {
-        expect(api.meClientSecretsControllerFindAllRaw).toBeCalledTimes(0)
-        expect(api.meClientSecretsControllerDeleteRaw).toBeCalledTimes(0)
-        expect(api.meClientSecretsControllerCreateRaw).toBeCalledTimes(0)
+        expect(api.meClientSecretsControllerFindAllRaw).toHaveBeenCalledTimes(0)
+        expect(api.meClientSecretsControllerDeleteRaw).toHaveBeenCalledTimes(0)
+        expect(api.meClientSecretsControllerCreateRaw).toHaveBeenCalledTimes(0)
       })
 
       expect(response).toEqual({
         ...secretResponse,
         clientId: rotateSecretInput.clientId,
       })
+    })
+    it('should archive the client in all environments by default', async () => {
+      const input: DeleteClientInput = {
+        tenantId: 'test-tenant-id',
+        clientId: 'test-client-id',
+      }
+
+      const response = await clientsService.deleteClient(currentUser, input)
+
+      expect(response).toBe(true)
+      expect(mockAdminDevApi.meClientsControllerDeleteRaw).toHaveBeenCalledWith(
+        input,
+      )
+      expect(
+        mockAdminStagingApi.meClientsControllerDeleteRaw,
+      ).toHaveBeenCalledWith(input)
+      expect(
+        mockAdminProdApi.meClientsControllerDeleteRaw,
+      ).toHaveBeenCalledWith(input)
+    })
+
+    it('should only archive the client in the given environments', async () => {
+      const response = await clientsService.deleteClient(currentUser, {
+        tenantId: 'test-tenant-id',
+        clientId: 'test-client-id',
+        environments: [Environment.Development],
+      })
+
+      expect(response).toBe(true)
+      expect(mockAdminDevApi.meClientsControllerDeleteRaw).toHaveBeenCalledWith(
+        { tenantId: 'test-tenant-id', clientId: 'test-client-id' },
+      )
+      expect(
+        mockAdminStagingApi.meClientsControllerDeleteRaw,
+      ).not.toHaveBeenCalled()
+      expect(
+        mockAdminProdApi.meClientsControllerDeleteRaw,
+      ).not.toHaveBeenCalled()
+    })
+
+    it('should only restore the client in the given environments', async () => {
+      const input: RestoreClientInput = {
+        tenantId: 'test-tenant-id',
+        clientId: 'test-client-id',
+        environments: [Environment.Staging, Environment.Production],
+      }
+
+      const response = await clientsService.restoreClient(currentUser, input)
+
+      expect(response).toBe(true)
+      expect(
+        mockAdminDevApi.meClientsControllerRestoreRaw,
+      ).not.toHaveBeenCalled()
+      expect(
+        mockAdminStagingApi.meClientsControllerRestoreRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminProdApi.meClientsControllerRestoreRaw,
+      ).toHaveBeenCalledTimes(1)
+    })
+
+    it('should restore the client in all environments by default', async () => {
+      const input: RestoreClientInput = {
+        tenantId: 'test-tenant-id',
+        clientId: 'test-client-id',
+      }
+
+      const response = await clientsService.restoreClient(currentUser, input)
+
+      expect(response).toBe(true)
+      expect(
+        mockAdminDevApi.meClientsControllerRestoreRaw,
+      ).toHaveBeenCalledWith(input)
+      expect(
+        mockAdminStagingApi.meClientsControllerRestoreRaw,
+      ).toHaveBeenCalledWith(input)
+      expect(
+        mockAdminProdApi.meClientsControllerRestoreRaw,
+      ).toHaveBeenCalledWith(input)
+    })
+
+    it('should report failure when archiving fails in one of the environments', async () => {
+      mockAdminStagingApi.meClientsControllerDeleteRaw.mockRejectedValueOnce(
+        new Error('staging down'),
+      )
+
+      const response = await clientsService.deleteClient(currentUser, {
+        tenantId: 'test-tenant-id',
+        clientId: 'test-client-id',
+      })
+
+      expect(response).toBe(false)
+      expect(
+        mockAdminDevApi.meClientsControllerDeleteRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminProdApi.meClientsControllerDeleteRaw,
+      ).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -500,10 +628,49 @@ describe('ClientsService', () => {
             .useValue(authAdminClientConfig),
       })
 
-      expect(mockLogger.error).toBeCalledTimes(1)
-      expect(mockLogger.error).toBeCalledWith(
+      expect(mockLogger.error).toHaveBeenCalledTimes(1)
+      expect(mockLogger.error).toHaveBeenCalledWith(
         'No admin api clients configured, at least one configured api is required.',
       )
     })
   })
+})
+
+describe('environments input validation', () => {
+  const base = { tenantId: 'test-tenant-id', clientId: 'test-client-id' }
+
+  it.each([DeleteClientInput, RestoreClientInput])(
+    '%p rejects an empty environments list',
+    async (Input) => {
+      const errors = await validate(
+        plainToInstance(Input, { ...base, environments: [] }),
+      )
+
+      expect(errors.map((e) => e.property)).toEqual(['environments'])
+    },
+  )
+
+  it.each([DeleteClientInput, RestoreClientInput])(
+    '%p rejects duplicate environments',
+    async (Input) => {
+      const errors = await validate(
+        plainToInstance(Input, {
+          ...base,
+          environments: [Environment.Development, Environment.Development],
+        }),
+      )
+
+      expect(errors.map((e) => e.property)).toEqual(['environments'])
+    },
+  )
+
+  it.each([DeleteClientInput, RestoreClientInput])(
+    '%p allows omitted or null environments',
+    async (Input) => {
+      expect(await validate(plainToInstance(Input, base))).toHaveLength(0)
+      expect(
+        await validate(plainToInstance(Input, { ...base, environments: null })),
+      ).toHaveLength(0)
+    },
+  )
 })

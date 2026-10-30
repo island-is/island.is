@@ -8,7 +8,8 @@ import { useSwipeable } from 'react-swipeable'
 
 type Props = {
   ariaLabel: string
-  disclosure: React.ReactElement
+  // Widened props type so the disclosure can be cloned with extra props below.
+  disclosure: React.ReactElement<any>
   initialVisibility?: boolean
   labelShowResult?: string
   labelClearAll?: string
@@ -33,7 +34,6 @@ export const FilterDrawerAriakit = ({
     defaultOpen: !!initialVisibility,
     animated: true,
   })
-  const open = store.getState().open
   // Only the “grabber” area listens for swipe-down to close.
   const handlers = useSwipeable({
     onSwipedDown: () => store.setOpen(false),
@@ -48,8 +48,6 @@ export const FilterDrawerAriakit = ({
       render={(props) =>
         React.cloneElement(disclosure, {
           ...props,
-          'aria-haspopup': 'dialog',
-          'aria-expanded': open,
           onClick: (e: React.MouseEvent) => {
             disclosure.props?.onClick?.(e)
             props.onClick?.(e)

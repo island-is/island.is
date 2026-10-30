@@ -1,13 +1,14 @@
 import sha256 from 'crypto-js/sha256'
-import getConfig from 'next/config'
 import { ApolloLink } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { HttpLink } from '@apollo/client/link/http'
 import { createPersistedQueryLink } from '@apollo/client/link/persisted-queries'
 
+import {
+  getPublicRuntimeEnv,
+  getServerRuntimeEnv,
+} from '../environments/runtimeEnvironment'
 import { ClientOptions } from './options'
-
-const { publicRuntimeConfig = {}, serverRuntimeConfig = {} } = getConfig() ?? {}
 
 // Only import and use enhanced fetch on the server.
 // This is mainly to enable connection pooling from NextJS server to GraphQL API.
@@ -41,17 +42,27 @@ const createBypassCacheLink = (options: ClientOptions) =>
 export function createHttpLink(options: ClientOptions) {
   if (typeof window !== 'undefined') {
     // Use hashed GET queries on the client side to enable CDN caching of GraphQL queries.
-    const { graphqlUrl, graphqlEndpoint } = publicRuntimeConfig
+    const { graphqlUrl, graphqlEndpoint } = getPublicRuntimeEnv()
     return createPersistedQueryLink({
       sha256: (query) => sha256(query).toString(),
       useGETForHashedQueries: true,
     })
       .concat(createBypassCacheLink(options))
-      .concat(new HttpLink({ uri: `${graphqlUrl}${graphqlEndpoint}`, fetch }))
+      .concat(
+        new HttpLink({
+          uri: `${graphqlUrl}${graphqlEndpoint}`,
+          fetch,
+          headers: {
+            // Apollo Server's CSRF prevention rejects GET requests without a
+            // content-type unless they carry a preflight header.
+            'apollo-require-preflight': 'true',
+          },
+        }),
+      )
   } else {
     // Use batched POST requests on the server side to reduce the number of
     // outgoing requests and CPU needed for run-time hashing.
-    const { graphqlUrl, graphqlEndpoint } = serverRuntimeConfig
+    const { graphqlUrl, graphqlEndpoint } = getServerRuntimeEnv()
     return createBypassCacheLink(options).concat(
       new BatchHttpLink({
         uri: `${graphqlUrl}${graphqlEndpoint}`,

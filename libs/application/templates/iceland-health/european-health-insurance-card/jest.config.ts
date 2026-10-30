@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-templates-european-health-insurance-card',
   preset: '../../../../../jest.preset.js',
   transform: {

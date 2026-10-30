@@ -1,5 +1,6 @@
 import { useCallback, useContext } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { applyCase as applyCaseToAddress } from 'beygla/addresses'
 import { applyCase } from 'beygla/strict'
 import router from 'next/router'
@@ -14,7 +15,7 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system/types'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -28,18 +29,21 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
-import {
-  CaseOrigin,
+import type {
   Defendant,
   IndictmentCount as TIndictmentCount,
-  IndictmentCountOffense,
   Institution,
   Maybe,
   Offense,
   PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  UpdateIndictmentCount,
+  CaseOrigin,
+  IndictmentCountOffense,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { usePoliceCaseInfoQuery } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/Defendant/PoliceCaseList/PoliceCaseInfo/policeCaseInfo.generated'
+import type { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
   useCase,
   useDebouncedInput,
   useIndictmentCounts,
@@ -48,7 +52,6 @@ import {
 import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
 import { isIndictmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { usePoliceCaseInfoQuery } from '../Defendant/PoliceCaseList/PoliceCaseInfo/policeCaseInfo.generated'
 import { IndictmentCountsList } from './IndictmentCountsList'
 import { strings } from './Indictment.strings'
 import * as styles from './Indictment.css'
@@ -62,14 +65,23 @@ export const getIndictmentIntroductionAutofill = (
   return defendants && defendants.length > 0
     ? [
         prosecutorsOffice?.name?.toUpperCase(),
-        `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
-        `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
-          court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
-        })}`,
+        `\n\n${strings.indictmentIntroductionAutofillAnnounces}`,
+        `\n\n${formatMessage(
+          {
+            id: strings.indictmentIntroductionAutofillCourt,
+            defaultMessage: strings.indictmentIntroductionAutofillCourt,
+          },
+          {
+            court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
+          },
+        )}`,
         `\n\n${defendants
           .map((defendant) => {
             return `\n          ${formatMessage(
-              strings.indictmentIntroductionAutofillDefendant,
+              {
+                id: strings.indictmentIntroductionAutofillDefendant,
+                defaultMessage: strings.indictmentIntroductionAutofillDefendant,
+              },
               {
                 defendantName: defendant.name
                   ? applyCase('þgf', defendant.name)
@@ -488,19 +500,15 @@ const Indictment = () => {
         title={formatMessage(titles.prosecutor.indictments.indictment)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <PageTitle>{strings.heading}</PageTitle>
         <Box display="flex" flexDirection="column" rowGap={5}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(strings.indictmentIntroductionTitle)}
-            />
+            <SectionHeading title={strings.indictmentIntroductionTitle} />
             <Input
               name="indictmentIntroduction"
-              label={formatMessage(strings.indictmentIntroductionLabel)}
-              placeholder={formatMessage(
-                strings.indictmentIntroductionPlaceholder,
-              )}
+              label={strings.indictmentIntroductionLabel}
+              placeholder={strings.indictmentIntroductionPlaceholder}
               value={indictmentIntroductionInput.value ?? ''}
               errorMessage={indictmentIntroductionInput.errorMessage}
               hasError={indictmentIntroductionInput.hasError}
@@ -530,15 +538,15 @@ const Indictment = () => {
               onClick={handleCreateIndictmentCount}
               disabled={false}
             >
-              {formatMessage(strings.addIndictmentCount)}
+              {strings.addIndictmentCount}
             </Button>
           </Box>
           <Box component="section">
-            <SectionHeading title={formatMessage(strings.demandsTitle)} />
+            <SectionHeading title={strings.demandsTitle} />
             <BlueBox className={styles.demandsGrid}>
               <Checkbox
                 name="requestDriversLicenseSuspension"
-                label={formatMessage(strings.demandsRequestSuspension)}
+                label={strings.demandsRequestSuspension}
                 checked={Boolean(workingCase.requestDriversLicenseSuspension)}
                 onChange={() => {
                   setAndSendCaseToServer(
@@ -562,8 +570,8 @@ const Indictment = () => {
               />
               <Input
                 name="demands"
-                label={formatMessage(strings.demandsLabel)}
-                placeholder={formatMessage(strings.demandsPlaceholder)}
+                label={strings.demandsLabel}
+                placeholder={strings.demandsPlaceholder}
                 value={demandsInput.value ?? ''}
                 onChange={(evt) => demandsInput.onChange(evt.target.value)}
                 onBlur={(evt) => demandsInput.onBlur(evt.target.value)}
@@ -578,13 +586,11 @@ const Indictment = () => {
           </Box>
           {workingCase.hasCivilClaims && (
             <Box component="section">
-              <SectionHeading
-                title={formatMessage(strings.civilDemandsTitle)}
-              />
+              <SectionHeading title={strings.civilDemandsTitle} />
               <Input
                 name="civilDemands"
-                label={formatMessage(strings.civilDemandsLabel)}
-                placeholder={formatMessage(strings.civilDemandsPlaceholder)}
+                label={strings.civilDemandsLabel}
+                placeholder={strings.civilDemandsPlaceholder}
                 value={civilDemandsInput.value ?? ''}
                 errorMessage={civilDemandsInput.errorMessage}
                 hasError={civilDemandsInput.hasError}
@@ -600,10 +606,10 @@ const Indictment = () => {
           <Box component="section">
             <InputPenalties />
           </Box>
-          <Box marginBottom={10}>
+          <Box>
             <PdfButton
               caseId={workingCase.id}
-              title={formatMessage(strings.pdfButtonIndictment)}
+              title={strings.pdfButtonIndictment}
               pdfType="indictment"
               elementId="Ákæra"
             />
@@ -612,13 +618,20 @@ const Indictment = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isLoadingWorkingCase}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

@@ -74,7 +74,9 @@ const TariffDetailView = ({ item, date, onBack }: DetailViewProps) => {
           paddingBottom={2}
         >
           <Box style={{ minWidth: LABEL_WIDTH }}>
-            <Text fontWeight="semiBold">{formatMessage(m.tariffName)}</Text>
+            <Text fontWeight="semiBold">
+              {formatMessage(m.exemptionColumnKey)}
+            </Text>
           </Box>
           <Text>{item.name}</Text>
         </Box>
@@ -110,6 +112,7 @@ const TariffDetailView = ({ item, date, onBack }: DetailViewProps) => {
 const CustomsGeneralTariffs = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [system, setSystem] = useState<'I' | 'U'>('I')
   const [selectedItem, setSelectedItem] = useState<TariffItem | null>(null)
   const handleBack = useDetailViewBack(!!selectedItem, () =>
     setSelectedItem(null),
@@ -118,15 +121,19 @@ const CustomsGeneralTariffs = () => {
   const columns = [
     {
       key: 'name' as const,
-      label: formatMessage(m.tariffName),
+      label: formatMessage(m.exemptionColumnKey),
       render: (value: unknown) => (
         <span className={styles.link}>{String(value ?? '')}</span>
       ),
     },
+    {
+      key: 'description' as const,
+      label: formatMessage(m.exemptionColumnDescription),
+    },
   ]
 
   const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_TARIFFS, {
-    variables: { input: { date: toApiDate(selectedDate), system: 'U' } },
+    variables: { input: { date: toApiDate(selectedDate), system } },
   })
 
   const items: TariffItem[] = (data?.customsGeneralTariffs ?? []).map(
@@ -158,6 +165,8 @@ const CustomsGeneralTariffs = () => {
       onDateChange={setSelectedDate}
       dateLabel={formatMessage(m.dateLabel)}
       errorTitle={formatMessage(m.errorTitle)}
+      system={system}
+      onSystemChange={setSystem}
       onRowClick={(row) => setSelectedItem(row as TariffItem)}
     />
   )

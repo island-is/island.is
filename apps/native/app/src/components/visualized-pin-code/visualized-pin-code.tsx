@@ -67,8 +67,8 @@ export function VisualizedPinCode({
 }: VisualizedPinCodeProps) {
   const charsCount = Math.max(minChars, Math.min(maxChars, code.length))
   const value = useRef(new Animated.Value(0))
-  const animation = useRef<Animated.CompositeAnimation>()
-  const colorAnimation = useRef<Animated.CompositeAnimation>()
+  const animation = useRef<Animated.CompositeAnimation>(undefined)
+  const colorAnimation = useRef<Animated.CompositeAnimation>(undefined)
 
   const opacityForError = useRef(new Animated.Value(0))
   const colors = useRef(

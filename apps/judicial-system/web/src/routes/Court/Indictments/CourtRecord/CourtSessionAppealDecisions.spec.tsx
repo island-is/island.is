@@ -1,10 +1,11 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { CourtSessionResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  AppealCaseState,
   AppealDecisionPartyRole,
-  Case,
   CaseAppealDecision,
-  CourtSessionResponse,
   CourtSessionRulingType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/testHelpers'
@@ -37,7 +38,7 @@ describe('CourtSessionAppealDecisions - radio group identity across sessions', (
     defendants: [{ id: defendantId, name: 'Jón Jónsson' }],
     civilClaimants: [],
     appealDecisions: [],
-  } as unknown as Case
+  } as unknown as WorkingCase
 
   const session = (id: string, rulingFileId: string): CourtSessionResponse =>
     ({
@@ -122,7 +123,7 @@ describe('CourtSessionAppealDecisions - announcement preservation', () => {
             },
           ]
         : [],
-    } as unknown as Case
+    } as unknown as WorkingCase
 
     return render(
       <IntlProviderWrapper>
@@ -194,5 +195,124 @@ describe('CourtSessionAppealDecisions - announcement preservation', () => {
         announcement: 'Sérstök yfirlýsing',
       }),
     )
+  })
+})
+
+// Correcting the court record re-opens the session, so `isConfirmed` stops
+// protecting the decisions at exactly the moment they are most exposed. Once the
+// appeal they produced has left the court record's reach the section stays
+// locked through the correction, mirroring the backend guard in
+// courtSession.service.upsertAppealDecision.
+describe('CourtSessionAppealDecisions - locked by the appeal state', () => {
+  const rulingFileId = 'file-a'
+  const defendantId = 'defendant-1'
+
+  const openSession = {
+    id: 'session-a',
+    rulingFileId,
+    isConfirmed: false,
+    rulingType: CourtSessionRulingType.ORDER,
+  } as unknown as CourtSessionResponse
+
+  const caseWith = (appealCase?: Record<string, unknown>) =>
+    ({
+      id: 'case-1',
+      defendants: [{ id: defendantId, name: 'Jón Jónsson' }],
+      civilClaimants: [],
+      appealDecisions: [],
+      rulingOrderAppealCases: appealCase ? [appealCase] : [],
+    } as unknown as WorkingCase)
+
+  const renderWith = (workingCase: WorkingCase) =>
+    render(
+      <IntlProviderWrapper>
+        <CourtSessionAppealDecisions
+          courtSession={openSession}
+          workingCase={workingCase}
+          setWorkingCase={jest.fn()}
+        />
+      </IntlProviderWrapper>,
+    )
+
+  afterEach(() => jest.clearAllMocks())
+
+  it('leaves the section editable for an in-court appeal at the district court', () => {
+    renderWith(
+      caseWith({
+        id: 'appeal-1',
+        rulingFileId,
+        appealState: AppealCaseState.APPEALED,
+        appealedOutOfCourt: false,
+      }),
+    )
+
+    expect(
+      screen
+        .getAllByRole('radio')
+        .every((radio) => !radio.hasAttribute('disabled')),
+    ).toBe(true)
+  })
+
+  it('disables every input and says why when the ruling was appealed out of court', () => {
+    renderWith(
+      caseWith({
+        id: 'appeal-1',
+        rulingFileId,
+        appealState: AppealCaseState.APPEALED,
+        appealedOutOfCourt: true,
+      }),
+    )
+
+    expect(
+      screen
+        .getAllByRole('radio')
+        .every((radio) => radio.hasAttribute('disabled')),
+    ).toBe(true)
+    expect(screen.getByText(/kærður utan þinghalds/)).toBeInTheDocument()
+  })
+
+  it('disables every input and says why when the appeal has reached Landsréttur', () => {
+    renderWith(
+      caseWith({
+        id: 'appeal-1',
+        rulingFileId,
+        appealState: AppealCaseState.RECEIVED,
+        appealedOutOfCourt: false,
+      }),
+    )
+
+    expect(
+      screen
+        .getAllByRole('radio')
+        .every((radio) => radio.hasAttribute('disabled')),
+    ).toBe(true)
+    expect(screen.getByText(/komin til Landsréttar/)).toBeInTheDocument()
+  })
+
+  it('locks the ruling for every party, not just the appellant', () => {
+    renderWith(
+      caseWith({
+        id: 'appeal-1',
+        rulingFileId,
+        appealState: AppealCaseState.APPEALED,
+        appealedOutOfCourt: true,
+      }),
+    )
+
+    expect(
+      screen
+        .getAllByRole('textbox')
+        .every((input) => input.hasAttribute('disabled')),
+    ).toBe(true)
+  })
+
+  it('leaves the section editable when the ruling has no appeal', () => {
+    renderWith(caseWith())
+
+    expect(
+      screen
+        .getAllByRole('radio')
+        .every((radio) => !radio.hasAttribute('disabled')),
+    ).toBe(true)
   })
 })

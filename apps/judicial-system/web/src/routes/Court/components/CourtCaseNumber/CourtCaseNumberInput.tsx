@@ -1,5 +1,5 @@
-import { FC, useContext, useState } from 'react'
-import { useDebounce } from 'react-use'
+import type { FC } from 'react'
+import { useContext, useRef, useState } from 'react'
 
 import { Button, Input } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
@@ -8,8 +8,12 @@ import {
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  removeErrorMessageIfValid,
+  validateAndSetErrorMessage,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 
 import * as styles from './CourtCaseNumber.css'
 
@@ -32,56 +36,66 @@ export const CourtCaseNumberInput: FC<Props> = (props) => {
 
   const { updateCase, createCourtCase, isCreatingCourtCase } = useCase()
 
-  const [value, setValue] = useState<string>(courtCaseNumber ?? '')
-  const [courtCaseNumberErrorMessage, setCourtCaseNumberErrorMessage] =
-    useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const [createCourtCaseSuccess, setCreateCourtCaseSuccess] =
     useState<boolean>(false)
 
-  const policeCaseNumberValidator = isIndictmentCase
-    ? 'S-case-number'
-    : 'R-case-number'
+  // Assigning a court case number is not an idempotent write: the backend reads
+  // an update carrying one on a submitted case as receiving the case, and a
+  // changed number resets case file states. So blur persists only what the user
+  // actually did, guarded twice over:
+  //
+  // - `hasUserEdited` means a value that arrived from anywhere other than the
+  //   keyboard is never echoed back. That covers the working case being filled
+  //   in or refreshed while the field happens to hold focus.
+  // - `valueOnFocus` means typing something and undoing it within one focus
+  //   session sends nothing either.
+  const valueOnFocus = useRef(courtCaseNumber ?? '')
+  const hasUserEdited = useRef(false)
+
+  const validations: Validation[] = [
+    'empty',
+    isIndictmentCase ? 'S-case-number' : 'R-case-number',
+  ]
+
+  const handleChange = (value: string) => {
+    hasUserEdited.current = true
+    setCreateCourtCaseSuccess(false)
+    removeErrorMessageIfValid(validations, value, errorMessage, setErrorMessage)
+    setCourtCaseNumber(value)
+  }
+
+  const handleBlur = (value: string) => {
+    const isValid = validateAndSetErrorMessage(
+      validations,
+      value,
+      setErrorMessage,
+    )
+
+    if (!isValid || !hasUserEdited.current || value === valueOnFocus.current) {
+      return
+    }
+
+    valueOnFocus.current = value
+    updateCase(caseId, { courtCaseNumber: value })
+  }
 
   const handleCreateCourtCase = async () => {
-    const courtCaseNumber = await createCourtCase(caseId)
+    const createdCourtCaseNumber = await createCourtCase(caseId)
 
-    setCourtCaseNumber(courtCaseNumber)
+    setCourtCaseNumber(createdCourtCaseNumber)
 
-    if (courtCaseNumber !== '') {
-      setCourtCaseNumberErrorMessage('')
-      setValue(courtCaseNumber)
+    if (createdCourtCaseNumber !== '') {
+      // The server assigned it, so a later blur must not send it back.
+      valueOnFocus.current = createdCourtCaseNumber
+      setErrorMessage('')
       setCreateCourtCaseSuccess(true)
     } else {
-      setCourtCaseNumberErrorMessage(
+      setErrorMessage(
         'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
       )
     }
   }
-
-  const updateCourtCaseNumber = async () => {
-    const isValid = validate([
-      [value, ['empty', policeCaseNumberValidator]],
-    ]).isValid
-
-    if (!isValid) {
-      return
-    }
-
-    updateCase(caseId, { courtCaseNumber: value })
-    setCourtCaseNumber(value)
-  }
-
-  const validateInput = (inputValue: string) => {
-    const validation = validate([
-      [inputValue, ['empty', policeCaseNumberValidator]],
-    ])
-
-    setCourtCaseNumberErrorMessage(
-      validation.isValid ? '' : validation.errorMessage,
-    )
-  }
-
-  useDebounce(updateCourtCaseNumber, 500, [value])
 
   return (
     <BlueBox className={styles.createCourtCaseContainer}>
@@ -107,21 +121,19 @@ export const CourtCaseNumberInput: FC<Props> = (props) => {
           autoComplete="off"
           size="sm"
           backgroundColor="white"
-          value={value}
+          value={courtCaseNumber ?? ''}
           icon={
             courtCaseNumber && createCourtCaseSuccess
               ? { name: 'checkmark' }
               : undefined
           }
-          errorMessage={courtCaseNumberErrorMessage}
-          hasError={!isCreatingCourtCase && courtCaseNumberErrorMessage !== ''}
-          onChange={(evt) => {
-            setCourtCaseNumberErrorMessage('')
-            setCreateCourtCaseSuccess(false)
-            setValue(evt.target.value)
-            setCourtCaseNumber(evt.target.value)
+          errorMessage={errorMessage}
+          hasError={!isCreatingCourtCase && errorMessage !== ''}
+          onFocus={(evt) => {
+            valueOnFocus.current = evt.target.value
           }}
-          onBlur={(evt) => validateInput(evt.target.value)}
+          onChange={(evt) => handleChange(evt.target.value)}
+          onBlur={(evt) => handleBlur(evt.target.value)}
           disabled={isDisabled}
           required
         />

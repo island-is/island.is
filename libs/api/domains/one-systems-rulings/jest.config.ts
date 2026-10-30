@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'api-domains-one-systems-rulings',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

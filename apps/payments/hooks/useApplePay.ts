@@ -4,8 +4,7 @@ import { ApolloError } from '@apollo/client'
 import { CardErrorCode } from '@island.is/shared/constants'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 
-import getConfig from 'next/config'
-
+import { getPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 import {
   useChargeApplePayMutation,
   useValidateApplePayMerchantMutation,
@@ -31,7 +30,7 @@ declare global {
 }
 
 interface UseApplePayProps {
-  isEnabledForUser: boolean
+  isEnabled: boolean
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
   productInformation: {
     amount: number
@@ -47,7 +46,7 @@ interface UseApplePayReturn {
 }
 
 export const useApplePay = ({
-  isEnabledForUser,
+  isEnabled,
   paymentFlow,
   productInformation,
   onPaymentSuccess,
@@ -62,9 +61,9 @@ export const useApplePay = ({
 
   // check if apple pay is available
   useEffect(() => {
-    const { publicRuntimeConfig } = getConfig()
-    // if apple pay is not enabled or if apple pay is not allowed, set supports apple pay to false
-    if (publicRuntimeConfig.allowApplePay !== 'true' || !isEnabledForUser) {
+    const { allowApplePay } = getPublicRuntimeEnv()
+    // if apple pay is not allowed here or not enabled, set supports apple pay to false
+    if (allowApplePay !== 'true' || !isEnabled) {
       setSupportsApplePay(false)
       return
     }
@@ -79,7 +78,7 @@ export const useApplePay = ({
         }
       }
     }
-  }, [isEnabledForUser, paymentFlow])
+  }, [isEnabled, paymentFlow])
 
   // click handler for apple pay button
   const initiateApplePay = useCallback(() => {

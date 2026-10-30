@@ -20,29 +20,35 @@ import {
   isIndictmentCase,
   isRequestCase,
 } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
-import { requestCourtDate } from '@island.is/judicial-system-web/messages'
-import {
-  Case,
-  CaseIndictmentRulingDecision,
+import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { LinkComponent } from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type {
   CaseType,
   Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import useTargetAppealCaseByAppealCaseId from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import {
+  canDefenceUserOpenLinkedCase,
+  getDefaultDefendantGender,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
-import { isNonEmptyArray } from '../../utils/arrayHelpers'
-import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
-import { getDefaultDefendantGender } from '../../utils/utils'
-import { FormContext } from '../FormProvider/FormProvider'
-import { LinkComponent } from '../MarkdownWrapper/MarkdownWrapper'
-import { UserContext } from '../UserProvider/UserProvider'
 import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
 import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
 import { VictimInfo } from './VictimInfo/VictimInfo'
-import { Item } from './InfoCard'
+import type { Item } from './InfoCard'
+import { getCaseDefenderFallback } from './useInfoCardItems.logic'
 import { strings } from './useInfoCardItems.strings'
-import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './InfoCard.css'
 
 type HeadingLevel = 'h2' | 'h3' | 'h4' | 'h5'
@@ -53,6 +59,11 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { limitedAccess, user } = useContext(UserContext)
+  // Which appeal these details belong to. A case can carry a case level appeal
+  // and an appeal of each ruling order at once, and the Court of Appeals opens
+  // one page per appeal, naming it in the query string. Falls back to the case
+  // level appeal, which is what every page without that query string wants.
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
 
   const defendants = ({
     caseType,
@@ -93,7 +104,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
       ),
       values: defendants
         ? [
-            <div key="defendants-grid" className={grid({ gap: 3 })}>
+            <div key="defendants-grid" className={stack({ gap: 3 })}>
               {defendants.map((defendant, index) => (
                 <div
                   key={`defendants-grid-${defendant.id}`}
@@ -105,9 +116,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
                     defendant={defendant}
                     courtId={workingCase.court?.id}
                     defender={{
-                      name: workingCase.defenderName,
-                      email: workingCase.defenderEmail,
-                      phoneNumber: workingCase.defenderPhoneNumber,
+                      ...getCaseDefenderFallback(workingCase),
                       sessionArrangement: workingCase.sessionArrangements,
                     }}
                     displayAppealExpirationInfo={displayAppealExpirationInfo}
@@ -152,7 +161,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const indictmentCreated: Item = {
     id: 'indictment-created-item',
-    title: formatMessage(strings.indictmentSentToCourt),
+    title: strings.indictmentSentToCourt,
     values: [formatDate(workingCase.caseSentToCourtDate, 'PP')],
   }
 
@@ -161,9 +170,9 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     onClick?: () => void,
   ): Item => ({
     id: 'prosecutor-item',
-    title: formatMessage(
-      isRequestCase(caseType) ? core.prosecutorPerson : strings.prosecutor,
-    ),
+    title: isRequestCase(caseType)
+      ? formatMessage(core.prosecutorPerson)
+      : strings.prosecutor,
     values: [
       RenderPersonalData({
         name: workingCase.prosecutor?.name,
@@ -200,7 +209,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const offenses: Item = {
     id: 'offenses-item',
-    title: formatMessage(strings.offense),
+    title: strings.offense,
     values: [
       <>
         {readableIndictmentSubtypes(
@@ -252,16 +261,36 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   }
 
   const getMergeCaseValue = () => {
+    const mergeCaseId = workingCase.mergeCase?.id
     const internalCourtCaseNumber = workingCase.mergeCase?.courtCaseNumber
     if (internalCourtCaseNumber) {
-      return internalCourtCaseNumber
+      const shouldLink =
+        Boolean(mergeCaseId) &&
+        canDefenceUserOpenLinkedCase(user, workingCase.mergeCase)
+
+      return shouldLink ? (
+        <LinkComponent
+          href={`${ROUTE_HANDLER_ROUTE}/${mergeCaseId}`}
+          key={mergeCaseId}
+        >
+          {internalCourtCaseNumber}
+        </LinkComponent>
+      ) : (
+        internalCourtCaseNumber
+      )
     }
 
     const externalCourtCaseNumber = workingCase.mergeCaseNumber
     if (externalCourtCaseNumber) {
-      return formatMessage(strings.externalMergeCase, {
-        mergeCaseNumber: externalCourtCaseNumber,
-      })
+      return formatMessage(
+        {
+          id: strings.externalMergeCase,
+          defaultMessage: strings.externalMergeCase,
+        },
+        {
+          mergeCaseNumber: externalCourtCaseNumber,
+        },
+      )
     }
 
     return undefined
@@ -269,36 +298,49 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const mergeCase: Item = {
     id: 'merge-case-item',
-    title: formatMessage(strings.indictmentMergedTitle),
+    title: strings.indictmentMergedTitle,
     values: [getMergeCaseValue()],
   }
 
-  const mergedCasePoliceCaseNumbers = (mergedCase: Case): Item => ({
+  const mergedCasePoliceCaseNumbers = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-police-case-number-item',
     title: formatMessage(core.policeCaseNumber),
     values:
       mergedCase.policeCaseNumbers?.map((n) => <Text key={n}>{n}</Text>) || [],
   })
 
-  const mergedCaseCourtCaseNumber = (mergedCase: Case): Item => ({
+  const mergedCaseCourtCaseNumber = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-court-case-number-item',
-    title: formatMessage(strings.mergedFromTitle),
-    values: [mergedCase.courtCaseNumber],
+    title: strings.mergedFromTitle,
+    values: mergedCase.courtCaseNumber
+      ? [
+          canDefenceUserOpenLinkedCase(user, mergedCase) ? (
+            <LinkComponent
+              href={`${ROUTE_HANDLER_ROUTE}/${mergedCase.id}`}
+              key={mergedCase.id}
+            >
+              {mergedCase.courtCaseNumber}
+            </LinkComponent>
+          ) : (
+            mergedCase.courtCaseNumber
+          ),
+        ]
+      : [],
   })
 
-  const mergedCaseProsecutor = (mergedCase: Case): Item => ({
+  const mergedCaseProsecutor = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-prosecutor-item',
     title: isIndictmentCase(mergedCase.type) ? 'Ákæruvald' : 'Sóknaraðili',
     values: [mergedCase.prosecutorsOffice?.name],
   })
 
-  const mergedCaseJudge = (mergedCase: Case): Item => ({
+  const mergedCaseJudge = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-judge-item',
     title: formatMessage(core.judge),
     values: [mergedCase.judge?.name],
   })
 
-  const mergedCaseCourt = (mergedCase: Case): Item => ({
+  const mergedCaseCourt = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-court-item',
     title: formatMessage(core.court),
     values: [mergedCase.court?.name],
@@ -316,13 +358,21 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     title: 'Klofinn frá',
     values: isNonEmptyArray(splitCaseEntries)
       ? [
-          <div key="split-cases-grid" className={grid({ gap: 2 })}>
+          <div key="split-cases-grid" className={stack({ gap: 2 })}>
             {splitCaseEntries.map(({ defendant, splitCase }) => (
               <div key={`split-cases-grid-${splitCase.id}-${defendant.id}`}>
                 <Text>{defendant.name}</Text>
-                <LinkComponent href={`${ROUTE_HANDLER_ROUTE}/${splitCase.id}`}>
-                  {splitCase.courtCaseNumber}
-                </LinkComponent>
+                {/* A defence user is shown every case this one was split into,
+                    but can only follow the ones they are a party to. */}
+                {canDefenceUserOpenLinkedCase(user, splitCase) ? (
+                  <LinkComponent
+                    href={`${ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
+                  >
+                    {splitCase.courtCaseNumber}
+                  </LinkComponent>
+                ) : (
+                  <Text>{splitCase.courtCaseNumber}</Text>
+                )}
               </div>
             ))}
           </div>,
@@ -352,13 +402,13 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const appealCaseNumber: Item = {
     id: 'appeal-case-number-item',
     title: formatMessage(core.appealCaseNumberHeading),
-    values: [workingCase.appealCase?.appealCaseNumber],
+    values: [targetAppealCase?.appealCaseNumber],
   }
 
   const appealAssistant: Item = {
     id: 'appeal-assistant-item',
     title: formatMessage(core.appealAssistantHeading),
-    values: [workingCase.appealCase?.appealAssistant?.name],
+    values: [targetAppealCase?.appealAssistant?.name],
   }
 
   const appealJudges: Item = {
@@ -367,9 +417,9 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     values: [
       <>
         {sortByIcelandicAlphabet([
-          workingCase.appealCase?.appealJudge1?.name || '',
-          workingCase.appealCase?.appealJudge2?.name || '',
-          workingCase.appealCase?.appealJudge3?.name || '',
+          targetAppealCase?.appealJudge1?.name || '',
+          targetAppealCase?.appealJudge2?.name || '',
+          targetAppealCase?.appealJudge3?.name || '',
         ]).map((judge, index) => (
           <Text key={`${judge}_${index}`}>{judge}</Text>
         ))}
@@ -379,23 +429,31 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const indictmentReviewer: Item = {
     id: 'indictment-reviewer-item',
-    title: formatMessage(strings.indictmentReviewer),
+    title: strings.indictmentReviewer,
     values: [workingCase.indictmentReviewer?.name],
   }
 
   const indictmentReviewDecision: Item = {
     id: 'indictment-review-decision-item',
-    title: formatMessage(strings.indictmentReviewDecision),
+    title: strings.indictmentReviewDecision,
     values: isNonEmptyArray(workingCase.defendants)
       ? workingCase.defendants
           .filter((defendant) => defendant.indictmentReviewDecision)
           .map((defendant) => (
             <Text key={`${defendant.id}-${defendant.indictmentReviewDecision}`}>
               {`${defendant.name} - ${formatMessage(
-                defendant.indictmentReviewDecision ===
-                  IndictmentCaseReviewDecision.ACCEPT
-                  ? strings.reviewTagAccepted
-                  : strings.reviewTagAppealed,
+                {
+                  id:
+                    defendant.indictmentReviewDecision ===
+                    IndictmentCaseReviewDecision.ACCEPT
+                      ? strings.reviewTagAccepted
+                      : strings.reviewTagAppealed,
+                  defaultMessage:
+                    defendant.indictmentReviewDecision ===
+                    IndictmentCaseReviewDecision.ACCEPT
+                      ? strings.reviewTagAccepted
+                      : strings.reviewTagAppealed,
+                },
                 {
                   isFine:
                     workingCase.indictmentRulingDecision ===
@@ -409,7 +467,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const indictmentReviewedDate = (date: string): Item => ({
     id: 'indictment-reviewed-date-item',
-    title: formatMessage(strings.indictmentReviewedDateTitle),
+    title: strings.indictmentReviewedDateTitle,
     values: [formatDate(date, 'PP')],
   })
 
@@ -440,14 +498,14 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
         {capitalize(
           isNonEmptyArray(workingCase.civilClaimants) &&
             workingCase.civilClaimants.length > 1
-            ? formatMessage(strings.civilClaimants)
-            : formatMessage(strings.civilClaimant),
+            ? strings.civilClaimants
+            : strings.civilClaimant,
         )}
       </Text>
     ),
     values: isNonEmptyArray(workingCase.civilClaimants)
       ? [
-          <div key="civil-claimants-grid" className={grid({ gap: 3 })}>
+          <div key="civil-claimants-grid" className={stack({ gap: 3 })}>
             {workingCase.civilClaimants.map((civilClaimant, index) => (
               <div
                 key={civilClaimant.id}
@@ -476,11 +534,11 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     ),
     values: isNonEmptyArray(workingCase.victims)
       ? [
-          <div key="victims-grid" className={grid({ gap: 3 })}>
+          <div key="victims-grid" className={stack({ gap: 3 })}>
             {workingCase.victims.map((victim, index) => (
               <div
                 key={victim.id}
-                className={cn(grid({ gap: 1 }), {
+                className={cn(stack({ gap: 1 }), {
                   [styles.renderDividerFull]:
                     isNonEmptyArray(workingCase.victims) &&
                     index !== workingCase.victims.length - 1,
@@ -494,7 +552,39 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
       : [],
   }
 
+  // The cases this one is linked to, as sections rather than items: both
+  // indictment cards render exactly this, and building it twice is how they
+  // came to disagree about whether to show it at all.
+  const linkedCaseSections = [
+    ...(isNonEmptyArray(workingCase.mergedCases)
+      ? workingCase.mergedCases.map((mergedCase) => ({
+          id: mergedCase.id,
+          items: [
+            mergedCasePoliceCaseNumbers(mergedCase),
+            mergedCaseCourtCaseNumber(mergedCase),
+            mergedCaseProsecutor(mergedCase),
+            mergedCaseJudge(mergedCase),
+            mergedCaseCourt(mergedCase),
+          ],
+          columns: 2 as const,
+        }))
+      : []),
+    ...(isNonEmptyArray(splitCaseEntries)
+      ? [
+          {
+            id: 'split-cases-section',
+            items: [splitCases],
+            columns: 2 as const,
+          },
+        ]
+      : []),
+    ...(workingCase.splitCase
+      ? [{ id: 'split-case-section', items: [splitCase], columns: 2 as const }]
+      : []),
+  ]
+
   return {
+    linkedCaseSections,
     defendants,
     cancelledAndDismissedDefendants,
     indictmentCreated,

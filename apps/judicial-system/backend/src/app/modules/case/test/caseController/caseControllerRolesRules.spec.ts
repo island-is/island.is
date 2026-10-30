@@ -2,7 +2,6 @@ import {
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
-  defenderRule,
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
@@ -45,6 +44,15 @@ describe('CaseController - Update rules', () => {
   ])
 })
 
+describe('publicProsecutorStaffUpdateRule field allowlist', () => {
+  it('only allows indictment reviewer and appeal prosecutor assignment', () => {
+    expect(publicProsecutorStaffUpdateRule.dtoFields).toEqual([
+      'indictmentReviewerId',
+      'appealProsecutorId',
+    ])
+  })
+})
+
 describe('CaseController - Transition rules', () => {
   verifyRolesRules(CaseController, 'transition', [
     prosecutorTransitionRule,
@@ -53,10 +61,6 @@ describe('CaseController - Transition rules', () => {
     districtCourtRegistrarTransitionRule,
     districtCourtAssistantTransitionRule,
   ])
-})
-
-describe('CaseController - Get all rules', () => {
-  verifyRolesRules(CaseController, 'getAll', [defenderRule])
 })
 
 describe('CaseController - Get by id rules', () => {

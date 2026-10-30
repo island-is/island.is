@@ -1,38 +1,105 @@
 import faker from 'faker'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type {
   AppealCase,
+  CaseFile,
+  CivilClaimant,
+  CourtSessionString,
+  Defendant,
+  Notification,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   AppealCaseState,
   AppealDecisionPartyRole,
-  Case,
   CaseAppealDecision,
-  CaseFile,
   CaseFileCategory,
   CaseType,
-  CivilClaimant,
-  Defendant,
+  CourtSessionStringType,
   Gender,
   InstitutionType,
-  Notification,
   TrackedNotificationType,
-  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as formatters from './formatters'
 import {
+  applyMergedCaseEntries,
+  canSkipArraignmentSummons,
   getAppealActorText,
   getDefaultDefendantGender,
   hasAcceptedRulingOrderInCourt,
   hasSentNotification,
   isAppealFileCategoryVisible,
+  isCurrentAppellantRepresentative,
+  isMatchingAppealCourtFile,
+  isSentToPublicProsecutor,
   mapStringToGender,
   reconcileAppealDecisionsForRulingFileChange,
+  revertCaseLevelAppealDecision,
+  rulingOrderChoices,
   userHasActiveInCourtAppeal,
 } from './utils'
 
 describe('Utils', () => {
+  describe('isSentToPublicProsecutor', () => {
+    test('should be true when the case was sent to the public prosecutor after completion', () => {
+      // Arrange
+      const workingCase = {
+        indictmentCompletedDate: '2024-01-01',
+        indictmentSentToPublicProsecutorDate: '2024-01-02',
+      } as WorkingCase
+
+      // Act
+      const res = isSentToPublicProsecutor(workingCase)
+
+      // Assert
+      expect(res).toBe(true)
+    })
+
+    test('should be false when the case was sent to the public prosecutor before completion', () => {
+      // Arrange
+      const workingCase = {
+        indictmentCompletedDate: '2024-01-02',
+        indictmentSentToPublicProsecutorDate: '2024-01-01',
+      } as WorkingCase
+
+      // Act
+      const res = isSentToPublicProsecutor(workingCase)
+
+      // Assert
+      expect(res).toBe(false)
+    })
+
+    test('should be false when the case has not been sent to the public prosecutor', () => {
+      // Arrange
+      const workingCase = {
+        indictmentCompletedDate: '2024-01-01',
+      } as WorkingCase
+
+      // Act
+      const res = isSentToPublicProsecutor(workingCase)
+
+      // Assert
+      expect(res).toBe(false)
+    })
+
+    test('should be false when the case has no completed date', () => {
+      // Arrange
+      const workingCase = {
+        indictmentSentToPublicProsecutorDate: '2024-01-02',
+      } as WorkingCase
+
+      // Act
+      const res = isSentToPublicProsecutor(workingCase)
+
+      // Assert
+      expect(res).toBe(false)
+    })
+  })
+
   describe('removeTabs', () => {
     test('should replace a single tab with a single space', () => {
       // Arrange
@@ -353,6 +420,68 @@ describe('Utils', () => {
     })
   })
 
+  describe('canSkipArraignmentSummons', () => {
+    const alternativeDefendant = {
+      id: 'defendant-1',
+      isAlternativeService: true,
+    }
+    const subpoenaDefendant = {
+      id: 'defendant-2',
+      isAlternativeService: false,
+    }
+
+    test('should be true on first pass when all defendants are served by alternative means', () => {
+      expect(
+        canSkipArraignmentSummons([alternativeDefendant], {
+          isArraignmentScheduled: false,
+        }),
+      ).toBe(true)
+    })
+
+    test('should be false when any defendant is receiving a subpoena', () => {
+      expect(
+        canSkipArraignmentSummons([alternativeDefendant, subpoenaDefendant], {
+          isArraignmentScheduled: false,
+        }),
+      ).toBe(false)
+    })
+
+    test('should be false when arraignment is scheduled and nobody is re-entering alternative service', () => {
+      expect(
+        canSkipArraignmentSummons([alternativeDefendant], {
+          isArraignmentScheduled: true,
+          newAlternativeServiceDefendantIds: [],
+        }),
+      ).toBe(false)
+    })
+
+    test('should be true when arraignment is scheduled but every defendant is re-entering alternative service', () => {
+      expect(
+        canSkipArraignmentSummons([alternativeDefendant], {
+          isArraignmentScheduled: true,
+          newAlternativeServiceDefendantIds: [alternativeDefendant.id],
+        }),
+      ).toBe(true)
+    })
+
+    test('should be false when only some defendants are re-entering alternative service', () => {
+      const otherAlternativeDefendant = {
+        id: 'defendant-3',
+        isAlternativeService: true,
+      }
+
+      expect(
+        canSkipArraignmentSummons(
+          [alternativeDefendant, otherAlternativeDefendant],
+          {
+            isArraignmentScheduled: true,
+            newAlternativeServiceDefendantIds: [alternativeDefendant.id],
+          },
+        ),
+      ).toBe(false)
+    })
+  })
+
   describe('getAppealActorText', () => {
     const appealedDate = '2026-04-01T12:00:00.000Z'
     const dateStr = formatDate(appealedDate, 'PPPp') ?? ''
@@ -361,9 +490,15 @@ describe('Utils', () => {
       test('returns "Sækjandi kærði í þinghaldi" when prosecutor appealed in court', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.PROSECUTOR,
+              decision: CaseAppealDecision.APPEAL,
+            },
+          ],
           appealCase: { appealedByRole: UserRole.PROSECUTOR } as AppealCase,
-        } as Case
+        } as unknown as WorkingCase
 
         expect(getAppealActorText(workingCase)).toBe(
           'Sækjandi kærði í þinghaldi',
@@ -373,9 +508,15 @@ describe('Utils', () => {
       test('returns "Varnaraðili kærði í þinghaldi" when defender appealed in court', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          accusedAppealDecision: CaseAppealDecision.APPEAL,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.DEFENDANT,
+              decision: CaseAppealDecision.APPEAL,
+            },
+          ],
           appealCase: { appealedByRole: UserRole.DEFENDER } as AppealCase,
-        } as Case
+        } as unknown as WorkingCase
 
         expect(getAppealActorText(workingCase)).toBe(
           'Varnaraðili kærði í þinghaldi',
@@ -385,55 +526,91 @@ describe('Utils', () => {
       test('returns "Kært af sækjanda {date}" for out-of-court prosecutor appeal', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.PROSECUTOR,
+              decision: CaseAppealDecision.POSTPONE,
+            },
+          ],
           appealCase: {
             appealedByRole: UserRole.PROSECUTOR,
             appealedDate,
           } as AppealCase,
-        } as Case
+        } as unknown as WorkingCase
 
         expect(getAppealActorText(workingCase)).toBe(
           `Kært af sækjanda ${dateStr}`,
         )
       })
 
-      test('returns "Verjandi {name} kærði úrskurðinn {date}" for confirmed defender', () => {
-        const nationalId = '0101011010'
+      test('returns "Verjandi {name} kærði úrskurðinn {date}" when defendants share one defender name', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          accusedAppealDecision: CaseAppealDecision.POSTPONE,
-          defendants: [
+          appealDecisions: [
             {
-              id: 'defendant-1',
-              isDefenderChoiceConfirmed: true,
-              defenderNationalId: nationalId,
-              defenderName: 'Jón Jónsson',
-            } as Defendant,
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.DEFENDANT,
+              decision: CaseAppealDecision.POSTPONE,
+            },
+          ],
+          defendants: [
+            { id: 'd1', defenderName: 'Jón Jónsson' },
+            { id: 'd2', defenderName: 'Jón Jónsson' },
           ],
           appealCase: {
             appealedByRole: UserRole.DEFENDER,
-            appealedByNationalId: nationalId,
             appealedDate,
           } as AppealCase,
-        } as Case
+        } as unknown as WorkingCase
 
         expect(getAppealActorText(workingCase)).toBe(
           `Verjandi Jón Jónsson kærði úrskurðinn ${dateStr}`,
         )
       })
 
-      test('falls back to "Kært af verjanda {date}" when defender national id has no match', () => {
+      test('falls back to "Kært af verjanda {date}" when defendants have different defenders', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          accusedAppealDecision: CaseAppealDecision.POSTPONE,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.DEFENDANT,
+              decision: CaseAppealDecision.POSTPONE,
+            },
+          ],
+          defendants: [
+            { id: 'd1', defenderName: 'Jón Jónsson' },
+            { id: 'd2', defenderName: 'Guðrún Guðmundsdóttir' },
+          ],
+          appealCase: {
+            appealedByRole: UserRole.DEFENDER,
+            appealedDate,
+          } as AppealCase,
+        } as unknown as WorkingCase
+
+        expect(getAppealActorText(workingCase)).toBe(
+          `Kært af verjanda ${dateStr}`,
+        )
+      })
+
+      test('falls back to "Kært af verjanda {date}" when the case has no defender name', () => {
+        const workingCase = {
+          type: CaseType.CUSTODY,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.DEFENDANT,
+              decision: CaseAppealDecision.POSTPONE,
+            },
+          ],
           defendants: [],
           civilClaimants: [],
           appealCase: {
             appealedByRole: UserRole.DEFENDER,
-            appealedByNationalId: '0202022020',
             appealedDate,
           } as AppealCase,
-        } as unknown as Case
+        } as unknown as WorkingCase
 
         expect(getAppealActorText(workingCase)).toBe(
           `Kært af verjanda ${dateStr}`,
@@ -449,7 +626,7 @@ describe('Utils', () => {
             appealedByRole: UserRole.PROSECUTOR,
             appealedDate,
           } as AppealCase,
-        } as Case
+        } as WorkingCase
 
         expect(getAppealActorText(workingCase)).toBe(
           `Kært af ákæranda ${dateStr}`,
@@ -462,10 +639,9 @@ describe('Utils', () => {
           defendants: [],
           appealCase: {
             appealedByRole: UserRole.DEFENDER,
-            appealedByNationalId: '0202022020',
             appealedDate,
           } as AppealCase,
-        } as unknown as Case
+        } as unknown as WorkingCase
 
         expect(getAppealActorText(workingCase)).toBe(
           `Kært af verjanda ${dateStr}`,
@@ -475,7 +651,7 @@ describe('Utils', () => {
 
     describe('indictment ruling-order appeals', () => {
       test('returns "Kært í þinghaldi {date}" when appealed in court', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           rulingFileId: 'file-1',
           appealedInCourt: true,
@@ -488,7 +664,7 @@ describe('Utils', () => {
       })
 
       test('uses subject-verb form for prosecutor', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           rulingFileId: 'file-1',
           appealedByRole: UserRole.PROSECUTOR,
@@ -512,11 +688,11 @@ describe('Utils', () => {
               defenderName: 'Jón Jónsson',
             } as Defendant,
           ],
-        } as Case
+        } as WorkingCase
         const appealCase = {
           rulingFileId: 'file-1',
           appealedByRole: UserRole.DEFENDER,
-          appealedByNationalId: nationalId,
+          appealedByDefendantId: 'defendant-1',
           appealedDate,
         } as AppealCase
 
@@ -539,11 +715,11 @@ describe('Utils', () => {
               spokespersonName: 'Anna Önnudóttir',
             } as CivilClaimant,
           ],
-        } as Case
+        } as WorkingCase
         const appealCase = {
           rulingFileId: 'file-1',
           appealedByRole: UserRole.DEFENDER,
-          appealedByNationalId: nationalId,
+          appealedByCivilClaimantId: 'cc-1',
           appealedDate,
         } as AppealCase
 
@@ -556,11 +732,10 @@ describe('Utils', () => {
         const workingCase = {
           type: CaseType.INDICTMENT,
           defendants: [],
-        } as unknown as Case
+        } as unknown as WorkingCase
         const appealCase = {
           rulingFileId: 'file-1',
           appealedByRole: UserRole.DEFENDER,
-          appealedByNationalId: '0404044040',
           appealedDate,
         } as AppealCase
 
@@ -571,12 +746,93 @@ describe('Utils', () => {
     })
   })
 
+  describe('applyMergedCaseEntries', () => {
+    const entries = (
+      mergedCaseId: string,
+      value: string,
+      id?: string,
+    ): CourtSessionString =>
+      ({
+        id,
+        caseId: 'case-1',
+        courtSessionId: 'session-1',
+        mergedCaseId,
+        stringType: CourtSessionStringType.ENTRIES,
+        value,
+      } as CourtSessionString)
+
+    const edit = (mergedCaseId: string, value: string) => ({
+      caseId: 'case-1',
+      courtSessionId: 'session-1',
+      mergedCaseId,
+      value,
+    })
+
+    it('appends a row for a merged case that has not been written about', () => {
+      expect(
+        applyMergedCaseEntries(undefined, edit('merged-1', 'Bókað')),
+      ).toEqual([
+        {
+          caseId: 'case-1',
+          courtSessionId: 'session-1',
+          mergedCaseId: 'merged-1',
+          stringType: CourtSessionStringType.ENTRIES,
+          value: 'Bókað',
+        },
+      ])
+    })
+
+    it('updates the existing row of that merged case', () => {
+      expect(
+        applyMergedCaseEntries(
+          [entries('merged-1', 'Bókað', 'string-1')],
+          edit('merged-1', 'Leiðrétt'),
+        ),
+      ).toEqual([entries('merged-1', 'Leiðrétt', 'string-1')])
+    })
+
+    it('leaves the rows of other merged cases untouched', () => {
+      expect(
+        applyMergedCaseEntries(
+          [
+            entries('merged-1', 'Eitt', 'string-1'),
+            entries('merged-2', 'Tvö', 'string-2'),
+          ],
+          edit('merged-2', 'Tvö, leiðrétt'),
+        ),
+      ).toEqual([
+        entries('merged-1', 'Eitt', 'string-1'),
+        entries('merged-2', 'Tvö, leiðrétt', 'string-2'),
+      ])
+    })
+
+    // Rows appended here have no `id` until the case is refetched. Matching on
+    // `id` would make them collide on `undefined`, so an edit to one merged
+    // case would overwrite the other's booking.
+    it('does not overwrite a sibling row that has no id yet', () => {
+      const inserted = applyMergedCaseEntries(
+        applyMergedCaseEntries(undefined, edit('merged-1', 'Eitt')),
+        edit('merged-2', 'Tvö'),
+      )
+
+      expect(
+        applyMergedCaseEntries(inserted, edit('merged-1', 'Eitt, leiðrétt')),
+      ).toEqual([
+        expect.objectContaining({
+          mergedCaseId: 'merged-1',
+          value: 'Eitt, leiðrétt',
+        }),
+        expect.objectContaining({ mergedCaseId: 'merged-2', value: 'Tvö' }),
+      ])
+    })
+  })
+
   describe('reconcileAppealDecisionsForRulingFileChange', () => {
     const decisions = [
       { id: 'd1', rulingFileId: 'file-a' },
       { id: 'd2', rulingFileId: 'file-a' },
       { id: 'd3', rulingFileId: 'other-file' },
-    ] as unknown as Case['appealDecisions']
+    ] as unknown as WorkingCase['appealDecisions']
 
     it('re-keys the ruling decisions onto the new file on a swap', () => {
       expect(
@@ -661,7 +917,7 @@ describe('Utils', () => {
           ...decision,
           rulingFileId,
         })),
-      } as unknown as Case)
+      } as unknown as WorkingCase)
 
     it("is true when the defence user's defendant accepted in court", () => {
       const workingCase = caseWith([
@@ -772,7 +1028,7 @@ describe('Utils', () => {
         ],
         civilClaimants: [],
         appealDecisions: [{ ...decision, rulingFileId }],
-      } as unknown as Case)
+      } as unknown as WorkingCase)
 
     it('is true when the defendant appealed in court and has not withdrawn', () => {
       const workingCase = caseWith({
@@ -832,6 +1088,127 @@ describe('Utils', () => {
         userHasActiveInCourtAppeal(workingCase, undefined, rulingFileId),
       ).toBe(false)
     })
+
+    it('is true when one of several represented clients still has a standing appeal', () => {
+      const otherDefendantId = 'defendant-2'
+      // The defender represents two defendants: the first accepted in court, the
+      // second appealed and has not withdrawn. Resolving across all represented
+      // parties, the defender may still withdraw.
+      const workingCase = {
+        defendants: [
+          {
+            id: defendantId,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId,
+          },
+          {
+            id: otherDefendantId,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId,
+          },
+        ],
+        civilClaimants: [],
+        appealDecisions: [
+          {
+            partyRole: AppealDecisionPartyRole.DEFENDANT,
+            defendantId,
+            decision: CaseAppealDecision.ACCEPT,
+            rulingFileId,
+          },
+          {
+            partyRole: AppealDecisionPartyRole.DEFENDANT,
+            defendantId: otherDefendantId,
+            decision: CaseAppealDecision.APPEAL,
+            rulingFileId,
+          },
+        ],
+      } as unknown as WorkingCase
+
+      expect(
+        userHasActiveInCourtAppeal(workingCase, defenceUser, rulingFileId),
+      ).toBe(true)
+    })
+  })
+
+  describe('isCurrentAppellantRepresentative', () => {
+    it('is true for the current confirmed defender of the appellant defendant', () => {
+      const workingCase = {
+        defendants: [
+          {
+            id: 'd-1',
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId: '0101011010',
+          },
+        ],
+      } as WorkingCase
+      const appealCase = { appealedByDefendantId: 'd-1' } as AppealCase
+
+      expect(
+        isCurrentAppellantRepresentative(workingCase, appealCase, '0101011010'),
+      ).toBe(true)
+    })
+
+    it('is false for a different national id (survives a defender swap)', () => {
+      const workingCase = {
+        defendants: [
+          {
+            id: 'd-1',
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId: 'new-defender',
+          },
+        ],
+      } as unknown as WorkingCase
+      const appealCase = { appealedByDefendantId: 'd-1' } as AppealCase
+
+      // The old (frozen) defender no longer matches; only the current one does.
+      expect(
+        isCurrentAppellantRepresentative(
+          workingCase,
+          appealCase,
+          'old-defender',
+        ),
+      ).toBe(false)
+      expect(
+        isCurrentAppellantRepresentative(
+          workingCase,
+          appealCase,
+          'new-defender',
+        ),
+      ).toBe(true)
+    })
+
+    it('is true for the current confirmed spokesperson of the appellant civil claimant', () => {
+      const workingCase = {
+        civilClaimants: [
+          {
+            id: 'cc-1',
+            hasSpokesperson: true,
+            isSpokespersonConfirmed: true,
+            spokespersonNationalId: '0303033030',
+          },
+        ],
+      } as unknown as WorkingCase
+      const appealCase = { appealedByCivilClaimantId: 'cc-1' } as AppealCase
+
+      expect(
+        isCurrentAppellantRepresentative(workingCase, appealCase, '0303033030'),
+      ).toBe(true)
+    })
+
+    it('is false when there is no appellant party or no user', () => {
+      const workingCase = { defendants: [] } as unknown as WorkingCase
+
+      expect(
+        isCurrentAppellantRepresentative(workingCase, {} as AppealCase, '123'),
+      ).toBe(false)
+      expect(
+        isCurrentAppellantRepresentative(
+          workingCase,
+          { appealedByDefendantId: 'd-1' } as AppealCase,
+          undefined,
+        ),
+      ).toBe(false)
+    })
   })
 
   describe('isAppealFileCategoryVisible', () => {
@@ -851,7 +1228,7 @@ describe('Utils', () => {
 
     describe('briefs — appellant role', () => {
       test('shows prosecutor brief when prosecutor appealed', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.PROSECUTOR,
         } as AppealCase
@@ -867,7 +1244,7 @@ describe('Utils', () => {
       })
 
       test('hides prosecutor brief when defender appealed', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.DEFENDER,
         } as AppealCase
@@ -883,7 +1260,7 @@ describe('Utils', () => {
       })
 
       test('shows defendant brief when defender appealed', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.DEFENDER,
         } as AppealCase
@@ -899,7 +1276,7 @@ describe('Utils', () => {
       })
 
       test('hides defendant brief when prosecutor appealed', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.PROSECUTOR,
         } as AppealCase
@@ -914,21 +1291,14 @@ describe('Utils', () => {
         ).toBe(false)
       })
 
-      test("indictment: shows defendant brief when appellant national id matches the file's defender", () => {
-        const nationalId = '0101011010'
+      test("indictment: shows defendant brief when the appellant is the file's defendant", () => {
         const workingCase = {
           type: CaseType.INDICTMENT,
-          defendants: [
-            {
-              id: 'd-1',
-              isDefenderChoiceConfirmed: true,
-              defenderNationalId: nationalId,
-            } as Defendant,
-          ],
-        } as Case
+          defendants: [{ id: 'd-1' } as Defendant],
+        } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.DEFENDER,
-          appealedByNationalId: nationalId,
+          appealedByDefendantId: 'd-1',
         } as AppealCase
 
         expect(
@@ -943,28 +1313,17 @@ describe('Utils', () => {
         ).toBe(true)
       })
 
-      test("indictment: hides defendant brief when appellant national id does NOT match the file's defender", () => {
+      test('indictment: hides defendant brief when the appellant is a different defendant', () => {
         const workingCase = {
           type: CaseType.INDICTMENT,
-          defendants: [
-            {
-              id: 'd-1',
-              isDefenderChoiceConfirmed: true,
-              defenderNationalId: '0101011010',
-            } as Defendant,
-            {
-              id: 'd-2',
-              isDefenderChoiceConfirmed: true,
-              defenderNationalId: '0202022020',
-            } as Defendant,
-          ],
-        } as Case
+          defendants: [{ id: 'd-1' } as Defendant, { id: 'd-2' } as Defendant],
+        } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.DEFENDER,
-          appealedByNationalId: '0101011010',
+          appealedByDefendantId: 'd-1',
         } as AppealCase
 
-        // d-2's brief should be hidden — appellant is d-1's defender.
+        // d-2's brief should be hidden — appellant is d-1.
         expect(
           isAppealFileCategoryVisible(
             workingCase,
@@ -977,22 +1336,14 @@ describe('Utils', () => {
         ).toBe(false)
       })
 
-      test("indictment: shows defendant brief when appellant matches the file's civil-claimant spokesperson", () => {
-        const nationalId = '0303033030'
+      test("indictment: shows defendant brief when the appellant is the file's civil claimant", () => {
         const workingCase = {
           type: CaseType.INDICTMENT,
-          civilClaimants: [
-            {
-              id: 'cc-1',
-              hasSpokesperson: true,
-              isSpokespersonConfirmed: true,
-              spokespersonNationalId: nationalId,
-            } as CivilClaimant,
-          ],
-        } as Case
+          civilClaimants: [{ id: 'cc-1' } as CivilClaimant],
+        } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.DEFENDER,
-          appealedByNationalId: nationalId,
+          appealedByCivilClaimantId: 'cc-1',
         } as AppealCase
 
         expect(
@@ -1010,7 +1361,7 @@ describe('Utils', () => {
 
     describe('statements — request cases (singular gate)', () => {
       test('shows defence statement when defendantStatementDate is set', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           defendantStatementDate: '2026-04-01T12:00:00.000Z',
         } as AppealCase
@@ -1026,7 +1377,7 @@ describe('Utils', () => {
       })
 
       test('hides defence statement when defendantStatementDate is unset', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {} as AppealCase
 
         expect(
@@ -1040,7 +1391,7 @@ describe('Utils', () => {
       })
 
       test('shows prosecutor statement when prosecutorStatementDate is set', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           prosecutorStatementDate: '2026-04-01T12:00:00.000Z',
         } as AppealCase
@@ -1058,7 +1409,7 @@ describe('Utils', () => {
 
     describe('statements — indictment cases (per-party gate)', () => {
       test('shows defendant statement when that defendant has submitted', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           defendantStatementDates: [
             { defendantId: 'd-1', statementDate: '2026-04-01T12:00:00.000Z' },
@@ -1078,7 +1429,7 @@ describe('Utils', () => {
       })
 
       test('hides defendant statement when that defendant has NOT submitted', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           defendantStatementDates: [
             { defendantId: 'd-1', statementDate: '2026-04-01T12:00:00.000Z' },
@@ -1098,7 +1449,7 @@ describe('Utils', () => {
       })
 
       test('shows civil-claimant statement when that claimant has submitted', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           civilClaimantStatementDates: [
             {
@@ -1121,7 +1472,7 @@ describe('Utils', () => {
       })
 
       test('hides defence statement file with no party id attached', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           defendantStatementDates: [
             { defendantId: 'd-1', statementDate: '2026-04-01T12:00:00.000Z' },
@@ -1141,7 +1492,7 @@ describe('Utils', () => {
 
     describe('APPEAL_RULING and APPEAL_COURT_RECORD', () => {
       test('shows APPEAL_COURT_RECORD to all parties at COMPLETED', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           appealState: AppealCaseState.COMPLETED,
         } as AppealCase
@@ -1157,7 +1508,7 @@ describe('Utils', () => {
       })
 
       test('hides APPEAL_COURT_RECORD pre-COMPLETED to non-Court-of-Appeals users', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           appealState: AppealCaseState.RECEIVED,
         } as AppealCase
@@ -1173,7 +1524,7 @@ describe('Utils', () => {
       })
 
       test('shows APPEAL_RULING to Court of Appeals at any state', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {
           appealState: AppealCaseState.APPEALED,
         } as AppealCase
@@ -1191,7 +1542,7 @@ describe('Utils', () => {
 
     describe('free-form *_APPEAL_CASE_FILE', () => {
       test('shows PROSECUTOR_APPEAL_CASE_FILE to prosecutors in request cases', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {} as AppealCase
         const prosecutor = { role: UserRole.PROSECUTOR } as User
 
@@ -1206,7 +1557,7 @@ describe('Utils', () => {
       })
 
       test('hides PROSECUTOR_APPEAL_CASE_FILE from defenders in request cases', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {} as AppealCase
         const defender = { role: UserRole.DEFENDER } as User
 
@@ -1221,7 +1572,7 @@ describe('Utils', () => {
       })
 
       test('shows PROSECUTOR_APPEAL_CASE_FILE to defenders in indictment cases', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {} as AppealCase
         const defender = { role: UserRole.DEFENDER } as User
 
@@ -1236,7 +1587,7 @@ describe('Utils', () => {
       })
 
       test('shows DEFENDANT_APPEAL_CASE_FILE always', () => {
-        const workingCase = { type: CaseType.CUSTODY } as Case
+        const workingCase = { type: CaseType.CUSTODY } as WorkingCase
         const appealCase = {} as AppealCase
 
         expect(
@@ -1252,7 +1603,7 @@ describe('Utils', () => {
 
     describe('rulingFileId scoping', () => {
       test('shows ruling-order file when its rulingFileId matches the appeal-case row', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           rulingFileId: 'ruling-1',
           appealedByRole: UserRole.PROSECUTOR,
@@ -1271,7 +1622,7 @@ describe('Utils', () => {
       })
 
       test('hides ruling-order file when its rulingFileId points to a different appeal', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           rulingFileId: 'ruling-1',
           appealedByRole: UserRole.PROSECUTOR,
@@ -1290,7 +1641,7 @@ describe('Utils', () => {
       })
 
       test('hides ruling-order file from a case-level appeal-case row', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           appealedByRole: UserRole.PROSECUTOR,
         } as AppealCase
@@ -1308,7 +1659,7 @@ describe('Utils', () => {
       })
 
       test('hides case-level file from a ruling-order appeal-case row', () => {
-        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const workingCase = { type: CaseType.INDICTMENT } as WorkingCase
         const appealCase = {
           rulingFileId: 'ruling-1',
           appealedByRole: UserRole.PROSECUTOR,
@@ -1326,7 +1677,7 @@ describe('Utils', () => {
     })
 
     test('returns false when no appealCase row is provided', () => {
-      const workingCase = { type: CaseType.CUSTODY } as Case
+      const workingCase = { type: CaseType.CUSTODY } as WorkingCase
 
       expect(
         isAppealFileCategoryVisible(
@@ -1337,5 +1688,301 @@ describe('Utils', () => {
         ),
       ).toBe(false)
     })
+  })
+
+  describe('isMatchingAppealCourtFile', () => {
+    test('matches a case level appeal file when no ruling file id is given', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          { category: CaseFileCategory.APPEAL_RULING, rulingFileId: null },
+          CaseFileCategory.APPEAL_RULING,
+          undefined,
+        ),
+      ).toBe(true)
+    })
+
+    test('matches a ruling order appeal file with the same ruling file id', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_RULING,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-1',
+        ),
+      ).toBe(true)
+    })
+
+    test('does not match a ruling order appeal file on a case level appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_RULING,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          null,
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match a case level appeal file on a ruling order appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          { category: CaseFileCategory.APPEAL_RULING, rulingFileId: null },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-1',
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match a file belonging to another ruling order appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_RULING,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-2',
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match another category on the same appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_COURT_RECORD,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-1',
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match a file without a category', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {},
+          CaseFileCategory.APPEAL_RULING,
+          undefined,
+        ),
+      ).toBe(false)
+    })
+  })
+})
+
+// A ruling order pronounced orally exists as a case file from the moment it is
+// pronounced, but has no document until the district court writes it up. The
+// court record therefore offers it as its own choice rather than as one of the
+// documents on the case.
+describe('rulingOrderChoices', () => {
+  const sessionId = 'court-session-1'
+  const otherSessionId = 'court-session-2'
+
+  const writtenRuling = {
+    id: 'written',
+    category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+    key: 'case/file/urskurdur.pdf',
+  } as CaseFile
+
+  const pronouncedOrally = {
+    id: 'oral',
+    category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+    isPronouncedOrally: true,
+    key: '',
+  } as CaseFile
+
+  const otherFile = {
+    id: 'other',
+    category: CaseFileCategory.COURT_RECORD,
+    key: 'case/file/thingbok.pdf',
+  } as CaseFile
+
+  const makeCase = (
+    caseFiles: CaseFile[],
+    courtSessions: { id: string; rulingFileId?: string | null }[] = [],
+  ) => ({ caseFiles, courtSessions } as unknown as WorkingCase)
+
+  it('offers only written rulings as documents to pick', () => {
+    const { files } = rulingOrderChoices(
+      makeCase([writtenRuling, pronouncedOrally, otherFile]),
+      { id: sessionId, rulingFileId: null },
+    )
+
+    expect(files).toEqual([writtenRuling])
+  })
+
+  it('offers a ruling pronounced orally as a document once written up', () => {
+    const writtenUp = { ...pronouncedOrally, key: 'case/file/oral.pdf' }
+
+    const { files } = rulingOrderChoices(makeCase([writtenUp]), {
+      id: sessionId,
+      rulingFileId: null,
+    })
+
+    expect(files).toEqual([writtenUp])
+  })
+
+  it('marks rulings another session pronounces as taken', () => {
+    const { takenIds } = rulingOrderChoices(
+      makeCase(
+        [writtenRuling],
+        [
+          { id: sessionId, rulingFileId: null },
+          { id: otherSessionId, rulingFileId: writtenRuling.id },
+        ],
+      ),
+      { id: sessionId, rulingFileId: null },
+    )
+
+    expect(takenIds.has(writtenRuling.id)).toBe(true)
+  })
+
+  it('does not mark the session own ruling as taken', () => {
+    const { takenIds } = rulingOrderChoices(
+      makeCase(
+        [writtenRuling],
+        [{ id: sessionId, rulingFileId: writtenRuling.id }],
+      ),
+      { id: sessionId, rulingFileId: writtenRuling.id },
+    )
+
+    expect(takenIds.has(writtenRuling.id)).toBe(false)
+  })
+
+  it('resolves the session own orally pronounced ruling', () => {
+    const { pronouncedOrally: resolved } = rulingOrderChoices(
+      makeCase([pronouncedOrally]),
+      { id: sessionId, rulingFileId: pronouncedOrally.id },
+    )
+
+    expect(resolved).toBe(pronouncedOrally)
+  })
+
+  // The whole point of deriving it from the session's own ruling: a correction
+  // must not be offered a second oral ruling, which would detach the document
+  // the court wrote up for the first and the appeal made against it.
+  it('keeps resolving it once it has been written up', () => {
+    const writtenUp = { ...pronouncedOrally, key: 'case/file/oral.pdf' }
+
+    const { pronouncedOrally: resolved } = rulingOrderChoices(
+      makeCase([writtenUp]),
+      { id: sessionId, rulingFileId: writtenUp.id },
+    )
+
+    expect(resolved).toBe(writtenUp)
+  })
+
+  // Once written up, the session's own oral ruling is a document like any other
+  // - it must not also be offered as a written ruling, or the same file renders
+  // as two checked radios in one group.
+  it('offers a written-up oral ruling only as the oral one', () => {
+    const writtenUp = { ...pronouncedOrally, key: 'case/file/oral.pdf' }
+
+    const { files, pronouncedOrally: resolved } = rulingOrderChoices(
+      makeCase([writtenRuling, writtenUp]),
+      { id: sessionId, rulingFileId: writtenUp.id },
+    )
+
+    expect(resolved).toBe(writtenUp)
+    expect(files).toEqual([writtenRuling])
+  })
+
+  it('still offers a written-up oral ruling of another session as a document', () => {
+    const writtenUp = { ...pronouncedOrally, key: 'case/file/oral.pdf' }
+
+    const { files, pronouncedOrally: resolved } = rulingOrderChoices(
+      makeCase(
+        [writtenUp],
+        [{ id: otherSessionId, rulingFileId: writtenUp.id }],
+      ),
+      { id: sessionId, rulingFileId: null },
+    )
+
+    expect(resolved).toBeUndefined()
+    expect(files).toEqual([writtenUp])
+  })
+
+  it('resolves nothing when the session pronounces a written ruling', () => {
+    const { pronouncedOrally: resolved } = rulingOrderChoices(
+      makeCase([writtenRuling, pronouncedOrally]),
+      { id: sessionId, rulingFileId: writtenRuling.id },
+    )
+
+    expect(resolved).toBeUndefined()
+  })
+
+  it('resolves nothing when the session pronounces no ruling', () => {
+    const { pronouncedOrally: resolved } = rulingOrderChoices(
+      makeCase([pronouncedOrally]),
+      { id: sessionId, rulingFileId: null },
+    )
+
+    expect(resolved).toBeUndefined()
+  })
+})
+
+describe('revertCaseLevelAppealDecision', () => {
+  const prosecutorDecision = {
+    partyRole: AppealDecisionPartyRole.PROSECUTOR,
+    rulingFileId: null,
+    decision: CaseAppealDecision.ACCEPT,
+  } as NonNullable<WorkingCase['appealDecisions']>[number]
+  const defendantDecision = {
+    partyRole: AppealDecisionPartyRole.DEFENDANT,
+    rulingFileId: null,
+    decision: CaseAppealDecision.POSTPONE,
+  } as NonNullable<WorkingCase['appealDecisions']>[number]
+  const rulingOrderDecision = {
+    partyRole: AppealDecisionPartyRole.DEFENDANT,
+    rulingFileId: 'ruling_file_id',
+    decision: CaseAppealDecision.APPEAL,
+  } as NonNullable<WorkingCase['appealDecisions']>[number]
+
+  it('puts the previous row back for the party', () => {
+    const optimistic = [
+      prosecutorDecision,
+      { ...defendantDecision, decision: CaseAppealDecision.APPEAL },
+    ]
+
+    const result = revertCaseLevelAppealDecision(
+      optimistic,
+      [prosecutorDecision, defendantDecision],
+      AppealDecisionPartyRole.DEFENDANT,
+    )
+
+    expect(result).toEqual(
+      expect.arrayContaining([prosecutorDecision, defendantDecision]),
+    )
+    expect(result).toHaveLength(2)
+  })
+
+  it('drops the row when the party had none before', () => {
+    const result = revertCaseLevelAppealDecision(
+      [prosecutorDecision, defendantDecision],
+      [prosecutorDecision],
+      AppealDecisionPartyRole.DEFENDANT,
+    )
+
+    expect(result).toEqual([prosecutorDecision])
+  })
+
+  it('leaves the other party and ruling-order rows alone', () => {
+    const otherPartyUpdated = {
+      ...prosecutorDecision,
+      decision: CaseAppealDecision.APPEAL,
+    }
+
+    const result = revertCaseLevelAppealDecision(
+      [otherPartyUpdated, rulingOrderDecision, defendantDecision],
+      [prosecutorDecision, rulingOrderDecision],
+      AppealDecisionPartyRole.DEFENDANT,
+    )
+
+    expect(result).toEqual([otherPartyUpdated, rulingOrderDecision])
   })
 })

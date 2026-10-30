@@ -22,6 +22,7 @@ import { Display } from '../Display/Display'
 import { Payment } from '../Payment/Payment'
 import { useEffect, useMemo } from 'react'
 import { hasError } from '../../../../utils/validation'
+import { getVisiblePaymentFields } from '../../../../utils/payment'
 
 interface Props {
   state?: ApplicationState
@@ -70,24 +71,9 @@ export const Summary = ({ state }: Props) => {
     })
   }, [dispatch, hasAnyMissingRequired])
 
-  const hasPayment = state?.application.hasPayment
-  const paymentSection = state?.sections?.find(
-    (s) => s.sectionType === SectionTypes.PAYMENT,
-  )
-  const paymentScreens = Array.isArray(paymentSection?.screens)
-    ? paymentSection.screens.filter(
-        (s): s is NonNullable<typeof s> => s != null,
-      )
-    : []
-  const paymentFields = (paymentScreens[0]?.fields ?? [])
-    .filter((f) => f != null && !f.isHidden)
-    .filter(
-      (field): field is NonNullable<typeof field> =>
-        field != null && !field.isHidden,
-    )
-
   const displayPayment =
-    hasPayment && paymentFields != null && paymentFields.length > 0
+    state?.application.hasPayment !== false &&
+    getVisiblePaymentFields(state?.sections).length > 0
 
   const updateCompleted = useMutation(UPDATE_APPLICATION_SETTINGS)
 
@@ -113,7 +99,7 @@ export const Summary = ({ state }: Props) => {
   return (
     <Box marginTop={2}>
       <Text fontWeight="light" as="p">
-        {formatMessage(m.reviewApplication)}
+        {formatMessage(m.reviewApplication2)}
       </Text>
 
       {sections?.map((section, sectionIndex) =>

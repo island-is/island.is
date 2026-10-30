@@ -3,44 +3,67 @@ import AnimateHeight from 'react-animate-height'
 import {
   Box,
   Button,
-  GridColumn,
-  GridRow,
+  DialogPrompt,
   Stack,
   Table as T,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { formatCurrency } from '@island.is/shared/utils'
 import { messages } from '../../lib/messages'
+import { GENDER_LABELS, SALARY_COMPONENT_KEYS } from '../../utils/constants'
+import { formatDateValue } from '../../utils/dates'
+import type { Employee } from '../../utils/types'
 import {
-  EDUCATION_LABELS,
-  GENDER_LABELS,
-  SALARY_COMPONENT_KEYS,
-} from '../../utils/constants'
-import type { Employee, SalaryComponentKey } from '../../utils/types'
-import { formatCurrency, formatStartDate, formatWorkRatio } from './utils'
+  formatPaidHours,
+  getSalaryComponentLabels,
+  getSalaryComponentDetailTooltips,
+} from './utils'
 import * as styles from './EmployeesEditor.css'
 
 type Props = {
   employee: Employee
+  roleTitleById: Record<string, string>
+  // Locks edit/remove while another change is syncing.
+  disabled?: boolean
+  isRemoving?: boolean
   onRemove: () => void
+  onEdit: () => void
 }
 
-// Alternating white / transparent (blue container shows through) rows.
-const DetailItem: FC<{ label: string; value: string; highlight: boolean }> = ({
+type DetailItemProps = {
+  label: string
+  value: string
+  highlight: boolean
+  tooltip?: string
+}
+
+// Alternating white / transparent (blue container shows through) rows, one
+// full-width list with a 2:1 label/value split. The column gap keeps a long
+// label from running straight into its value.
+const DetailItem: FC<DetailItemProps> = ({
   label,
   value,
   highlight,
+  tooltip,
 }) => (
   <Box
     display="flex"
+    columnGap={2}
     paddingX={3}
     paddingY={2}
     borderRadius="large"
     background={highlight ? 'white' : 'transparent'}
   >
-    <Box style={{ flex: 1 }}>
+    <Box style={{ flex: 2 }}>
       <Text variant="medium" fontWeight="semiBold">
         {label}
+        {tooltip && (
+          <Box component="span" marginLeft={1}>
+            <Tooltip placement="top" text={tooltip} />
+          </Box>
+        )}
       </Text>
     </Box>
     <Box style={{ flex: 1 }}>
@@ -49,52 +72,48 @@ const DetailItem: FC<{ label: string; value: string; highlight: boolean }> = ({
   </Box>
 )
 
-export const EmployeeRow: FC<Props> = ({ employee, onRemove }) => {
+export const EmployeeRow: FC<Props> = ({
+  employee,
+  roleTitleById,
+  disabled = false,
+  isRemoving = false,
+  onRemove,
+  onEdit,
+}) => {
   const { formatMessage } = useLocale()
   const [expanded, setExpanded] = useState(false)
   const m = messages.report.employees
 
   const background = expanded ? 'blue100' : 'transparent'
 
-  const leftItems = [
-    { label: formatMessage(m.identifierLabel), value: employee.identifier },
+  const componentLabels = getSalaryComponentLabels(formatMessage)
+  const componentTooltips = getSalaryComponentDetailTooltips(formatMessage)
+
+  const detailItems: Omit<DetailItemProps, 'highlight'>[] = [
+    { label: formatMessage(m.ordinalLabel), value: String(employee.ordinal) },
+    { label: formatMessage(m.fieldLabel), value: employee.field ?? '' },
     {
-      label: formatMessage(m.educationLabel),
-      value: EDUCATION_LABELS[employee.education] ?? employee.education,
+      label: formatMessage(m.departmentLabel),
+      value: employee.department ?? '',
     },
-    { label: formatMessage(m.fieldLabel), value: employee.field },
-    { label: formatMessage(m.departmentLabel), value: employee.department },
     {
       label: formatMessage(m.startDateLabel),
-      value: formatStartDate(employee.startDate),
+      value: formatDateValue(employee.startDate),
     },
-  ]
-
-  const componentLabels: Record<SalaryComponentKey, string> = {
-    additionalFixedOvertime: formatMessage(m.additionalFixedOvertimeLabel),
-    additionalFixedCarAllowance: formatMessage(
-      m.additionalFixedCarAllowanceLabel,
-    ),
-    bonusOccasionalCarAllowance: formatMessage(
-      m.bonusOccasionalCarAllowanceLabel,
-    ),
-    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeLabel),
-    bonusPayments: formatMessage(m.bonusPaymentsLabel),
-    bonusOther: formatMessage(m.bonusOtherLabel),
-  }
-
-  const rightItems = [
     {
-      label: formatMessage(m.workRatioLabel),
-      value: formatWorkRatio(employee.workRatio),
+      label: formatMessage(m.paidHoursLabel),
+      value: formatPaidHours(employee.paidHours),
+      tooltip: formatMessage(m.paidHoursDetailTooltip),
     },
     {
       label: formatMessage(m.baseSalaryLabel),
       value: formatCurrency(employee.baseSalary),
+      tooltip: formatMessage(m.baseSalaryTooltip),
     },
     ...SALARY_COMPONENT_KEYS.map((key) => ({
       label: componentLabels[key],
-      value: formatCurrency(employee[key]),
+      value: formatCurrency(employee[key] ?? 0),
+      tooltip: componentTooltips[key],
     })),
   ]
 
@@ -115,23 +134,54 @@ export const EmployeeRow: FC<Props> = ({ employee, onRemove }) => {
             title={formatMessage(m.nameColumn)}
           />
         </T.Data>
-        <T.Data box={{ background }}>{employee.identifier}</T.Data>
-        <T.Data box={{ background }}>{employee.roleTitle}</T.Data>
+        <T.Data box={{ background }}>{employee.ordinal}</T.Data>
+        <T.Data box={{ background }}>
+          {roleTitleById[employee.roleId] ?? ''}
+        </T.Data>
         <T.Data box={{ background }}>
           {GENDER_LABELS[employee.gender] ?? employee.gender}
         </T.Data>
         <T.Data box={{ background, textAlign: 'right' }}>
-          <Button
-            circle
-            colorScheme="light"
-            icon="trash"
-            iconType="outline"
-            onClick={onRemove}
-            size="small"
-            type="button"
-            variant="ghost"
-            title={formatMessage(m.removeButton)}
-          />
+          <Box display="flex" justifyContent="flexEnd">
+            <Button
+              circle
+              colorScheme="light"
+              icon="pencil"
+              iconType="outline"
+              onClick={onEdit}
+              disabled={disabled}
+              size="small"
+              type="button"
+              variant="ghost"
+              title={formatMessage(m.editButton)}
+            />
+            <Box marginLeft={1}>
+              <DialogPrompt
+                baseId={`employee_remove_dialog_${employee.id}`}
+                title={formatMessage(m.removeConfirmTitle)}
+                description={formatMessage(m.removeConfirmDescription)}
+                ariaLabel={formatMessage(m.removeButton)}
+                disclosureElement={
+                  <Button
+                    circle
+                    colorScheme="light"
+                    icon="trash"
+                    iconType="outline"
+                    disabled={disabled}
+                    loading={isRemoving}
+                    size="small"
+                    type="button"
+                    variant="ghost"
+                    title={formatMessage(m.removeButton)}
+                  />
+                }
+                onConfirm={onRemove}
+                buttonTextConfirm={formatMessage(m.removeConfirmButton)}
+                buttonTextCancel={formatMessage(m.cancelButton)}
+                buttonPropsConfirm={{ colorScheme: 'destructive' }}
+              />
+            </Box>
+          </Box>
         </T.Data>
       </T.Row>
       <T.Row>
@@ -143,32 +193,17 @@ export const EmployeeRow: FC<Props> = ({ employee, onRemove }) => {
           <AnimateHeight duration={300} height={expanded ? 'auto' : 0}>
             {expanded && <div className={styles.line} />}
             <Box paddingX={3} paddingTop={3} paddingBottom={3}>
-              <GridRow>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <Stack space={0} dividers={false}>
-                    {leftItems.map((item, i) => (
-                      <DetailItem
-                        key={item.label}
-                        label={item.label}
-                        value={item.value}
-                        highlight={i % 2 === 0}
-                      />
-                    ))}
-                  </Stack>
-                </GridColumn>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <Stack space={0} dividers={false}>
-                    {rightItems.map((item, i) => (
-                      <DetailItem
-                        key={item.label}
-                        label={item.label}
-                        value={item.value}
-                        highlight={i % 2 === 0}
-                      />
-                    ))}
-                  </Stack>
-                </GridColumn>
-              </GridRow>
+              <Stack space={0} dividers={false}>
+                {detailItems.map((item, i) => (
+                  <DetailItem
+                    key={item.label}
+                    label={item.label}
+                    value={item.value}
+                    tooltip={item.tooltip}
+                    highlight={i % 2 === 0}
+                  />
+                ))}
+              </Stack>
             </Box>
           </AnimateHeight>
         </T.Data>

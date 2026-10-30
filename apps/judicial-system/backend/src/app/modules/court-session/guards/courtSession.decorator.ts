@@ -1,7 +1,8 @@
-import { createParamDecorator } from '@nestjs/common'
+import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 
 import { CourtSession } from '../../repository'
 
 export const CurrentCourtSession = createParamDecorator(
-  (data, { args: [_1, { req }] }): CourtSession => req.courtSession,
+  (data, context: ExecutionContext): CourtSession =>
+    context.switchToHttp().getRequest().courtSession,
 )

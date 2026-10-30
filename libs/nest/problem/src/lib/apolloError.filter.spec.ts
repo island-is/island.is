@@ -1,10 +1,12 @@
 import { ProblemType } from '@island.is/shared/problem'
-import { ForbiddenError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { CreateRequest, setup } from './test/setup'
 import { expectGraphqlProblem } from './test/expectGraphqlProblem'
 
 const handler = () => {
-  throw new ForbiddenError('User does not access.')
+  throw new GraphQLError('User does not access.', {
+    extensions: { code: 'FORBIDDEN' },
+  })
 }
 
 describe('ApolloErrorFilter', () => {
@@ -41,6 +43,30 @@ describe('ApolloErrorFilter', () => {
       status: 403,
       title: 'Forbidden',
       type: ProblemType.HTTP_FORBIDDEN,
+    })
+  })
+})
+
+describe('ApolloErrorFilter with unrecognized error code', () => {
+  let request: CreateRequest
+  beforeAll(async () => {
+    ;[request] = await setup({
+      handler: () => {
+        throw new GraphQLError('Unexpected resolver failure.')
+      },
+    })
+  })
+
+  it('maps to internal server error instead of bad request', async () => {
+    // Act
+    const response = await request()
+
+    // Assert
+    expect(response.status).toBe(500)
+    expect(response.body).toMatchObject({
+      status: 500,
+      title: 'Internal server error',
+      type: ProblemType.HTTP_INTERNAL_SERVER_ERROR,
     })
   })
 })

@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import initApollo from '../graphql/client'
@@ -8,9 +11,7 @@ jest.mock('../graphql/client', () => ({
   default: jest.fn(),
 }))
 
-jest.mock('next/config', () => () => ({
-  serverRuntimeConfig: { verificationCallbackSigningSecret: 'test-secret' },
-}))
+process.env.PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET = 'test-secret'
 
 jest.mock('jsonwebtoken', () => ({
   sign: jest.fn(() => 'signed-token'),

@@ -1,9 +1,10 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { UserContext } from '../UserProvider/UserProvider'
 import LandWightsLogo from './LandWightsLogo'
 import PoliceStar from './PoliceStar'
 import * as styles from './Logo.css'

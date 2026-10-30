@@ -68,9 +68,12 @@ export const IframeModal: FC<React.PropsWithChildren<IframeModalProps>> = ({
   return (
     <>
       {!!disclosure && (
-        <DialogDisclosure {...dialog} {...disclosure.props}>
-          {(disclosureProps: any) =>
-            React.cloneElement(disclosure, disclosureProps)
+        // reakit's types don't model this disclosure render-prop pattern; the
+        // `as any` casts keep it compiling. Remove when this migrates to ariakit.
+        <DialogDisclosure {...dialog} {...(disclosure.props as any)}>
+          {
+            ((disclosureProps: any) =>
+              React.cloneElement(disclosure, disclosureProps)) as any
           }
         </DialogDisclosure>
       )}

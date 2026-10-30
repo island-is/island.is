@@ -29,7 +29,7 @@ export const EmptyCard = ({ title, description, img }: EmptyCardProps) => {
     >
       <Box marginRight={isMobile ? 0 : 3}>
         <Text
-          variant="h3"
+          variant="h4"
           marginBottom={isMobile ? 1 : 0}
           textAlign={isMobile ? 'center' : 'left'}
         >

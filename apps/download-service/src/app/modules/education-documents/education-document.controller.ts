@@ -13,19 +13,39 @@ import {
 } from '@island.is/clients/university-careers'
 import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
 import { AuditService } from '@island.is/nest/audit'
+import { ConfigType } from '@nestjs/config'
 import {
   Controller,
   Header,
+  HttpCode,
   Inject,
+  NotFoundException,
   Param,
   Post,
   Res,
+  StreamableFile,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse } from '@nestjs/swagger'
+import {
+  ApiBadRequestResponse,
+  ApiForbiddenResponse,
+  ApiGatewayTimeoutResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger'
 import { Response } from 'express'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import {
+  LOGGER_PROVIDER,
+  type Logger,
+  withLoggingContext,
+} from '@island.is/logging'
 import { unmaskString } from '@island.is/shared/utils'
+import { HttpProblemResponse } from '@island.is/nest/problem'
+import { PrimarySchoolAssignmentResultParamsDto } from './dto/primarySchoolAssignmentResultParams.dto'
+import { EducationDocumentsConfig } from './education-document.config'
+import { withTimeout } from './withTimeout'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
@@ -36,6 +56,10 @@ export class EducationController {
     private readonly primarySchoolService: PrimarySchoolClientService,
     private readonly auditService: AuditService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(EducationDocumentsConfig.KEY)
+    private readonly educationDocumentsConfig: ConfigType<
+      typeof EducationDocumentsConfig
+    >,
   ) {}
 
   @Post('/graduation/:university/:file')
@@ -144,5 +168,62 @@ export class EducationController {
       })
       return res.status(500).end()
     }
+  }
+
+  @Post('/primary-school/:studentId/result/:assignmentResultId/pdf-v2')
+  @HttpCode(200)
+  @Header('X-Content-Type-Options', 'nosniff')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Get a primary school assignment result PDF',
+  })
+  @ApiBadRequestResponse({ type: HttpProblemResponse })
+  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
+  @ApiForbiddenResponse({ type: HttpProblemResponse })
+  @ApiNotFoundResponse({ type: HttpProblemResponse })
+  @ApiInternalServerErrorResponse({ type: HttpProblemResponse })
+  @ApiGatewayTimeoutResponse({ type: HttpProblemResponse })
+  async getPrimarySchoolAssignmentResultPdfV2(
+    @Param() params: PrimarySchoolAssignmentResultParamsDto,
+    @CurrentUser() user: User,
+  ) {
+    const { studentId, assignmentResultId } = params
+
+    this.logger.debug('Serving primary school assignment result PDF request', {
+      studentId,
+      assignmentResultId,
+    })
+
+    return withLoggingContext({ studentId, assignmentResultId }, async () => {
+      const blob = await withTimeout(
+        this.educationDocumentsConfig.primarySchoolPdfTimeoutMs,
+        (signal) =>
+          this.primarySchoolService.getAssignmentResultPdf(
+            user,
+            studentId,
+            assignmentResultId,
+            signal,
+          ),
+      )
+
+      if (!blob) {
+        throw new NotFoundException(
+          'Primary school assignment result PDF not found',
+        )
+      }
+
+      this.auditService.audit({
+        action: 'getPrimarySchoolAssignmentResultPdf',
+        auth: user,
+        resources: `${studentId}/${assignmentResultId}`,
+      })
+
+      const buffer = Buffer.from(await blob.arrayBuffer())
+      return new StreamableFile(buffer, {
+        type: 'application/pdf',
+        disposition: `attachment; filename="namsmat-${assignmentResultId}.pdf"`,
+        length: buffer.length,
+      })
+    })
   }
 }

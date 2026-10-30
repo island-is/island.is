@@ -1,7 +1,7 @@
 import yargs from 'yargs'
 import { Charts, Deployments } from '../infra/src/uber-charts/all-charts'
 import { Client } from 'pg'
-import { SSM } from 'aws-sdk'
+import { GetParameterCommand, SSMClient } from '@aws-sdk/client-ssm'
 import { branchNameToFeatureName } from './_common'
 import { prepareServicesForEnv } from '../infra/src/dsl/processing/rendering-pipeline'
 import { Envs } from '../infra/src/environments'
@@ -48,18 +48,18 @@ void (async function () {
   })
   const targetService = out[0]
 
-  const ssmClient = new SSM({
-    apiVersion: '2014-11-06',
+  const ssmClient = new SSMClient({
     region: 'eu-west-1',
   })
   if (targetService.postgres) {
     console.log(`Retrieving secret ${targetService.postgres.passwordSecret}`)
     const password = await ssmClient
-      .getParameter({
-        Name: targetService.postgres.passwordSecret!,
-        WithDecryption: true,
-      })
-      .promise()
+      .send(
+        new GetParameterCommand({
+          Name: targetService.postgres.passwordSecret!,
+          WithDecryption: true,
+        }),
+      )
       .catch((r) => {
         console.error(`No DB password secret found. Wrong feature name?`)
         throw r

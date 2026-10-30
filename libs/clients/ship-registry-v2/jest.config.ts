@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'ship-registry-v2',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

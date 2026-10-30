@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -39,10 +40,14 @@ import {
   PageTitle,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
+import { getRequestCaseDefenderNames } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
+import type { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseAppealDecision,
+  AppealDecisionPartyRole,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { AppealSections } from '@island.is/judicial-system-web/src/routes/Court/components'
+import { populateEndOfCourtSessionBookingsIntro } from '@island.is/judicial-system-web/src/routes/Court/shared/populateEndOfCourtSessionBookingsIntro'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -52,14 +57,14 @@ import {
   useCase,
   useDebouncedInput,
   useOnceOn,
+  useSerializedSave,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { withCaseLevelAppealDecision } from '@island.is/judicial-system-web/src/utils/utils'
 import {
   isCourtRecordStepValidRC,
   isNullOrUndefined,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { AppealSections } from '../../components'
-import { populateEndOfCourtSessionBookingsIntro } from '../../shared/populateEndOfCourtSessionBookingsIntro'
 import { populateEndOfCourtSessionForRestrictions } from './helpers/endOfSessionBookings'
 
 export const CourtRecord: FC = () => {
@@ -75,6 +80,8 @@ export const CourtRecord: FC = () => {
     useState<string>('')
 
   const router = useRouter()
+  // Runs court end time saves one at a time and knows which value the server has
+  const saveCourtEndTime = useSerializedSave<string | null | undefined>()
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
@@ -89,6 +96,7 @@ export const CourtRecord: FC = () => {
     const autofillAttendees = []
     const autofillSessionBookings = []
     const endOfSessionBookings: string[] = []
+    const defenderNames = getRequestCaseDefenderNames(workingCase.defendants)
 
     if (workingCase.courtAttendees !== '') {
       if (workingCase.prosecutor) {
@@ -99,16 +107,13 @@ export const CourtRecord: FC = () => {
         )
       }
 
-      if (workingCase.defenderName) {
+      defenderNames.forEach((defenderName) => {
         autofillAttendees.push(
-          `\n${workingCase.defenderName} skipaður verjandi ${formatMessage(
-            core.defendant,
-            {
-              suffix: 'a',
-            },
-          )}`,
+          `\n${defenderName} skipaður verjandi ${formatMessage(core.defendant, {
+            suffix: 'a',
+          })}`,
         )
-      }
+      })
 
       if (workingCase.translator) {
         autofillAttendees.push(`\n${workingCase.translator} túlkur`)
@@ -123,28 +128,28 @@ export const CourtRecord: FC = () => {
       }
     }
 
-    if (workingCase.defenderName) {
+    defenderNames.forEach((defenderName) => {
       autofillSessionBookings.push(
-        `${formatMessage(m.sections.sessionBookings.autofillDefender, {
-          defender: workingCase.defenderName,
-        })}\n\n`,
+        `${defenderName} lögmaður er skipaður verjandi varnaraðila að hans ósk, sbr. 3. mgr. 33. gr. laga nr. 88/2008.\n\n`,
       )
-    }
+    })
 
     if (workingCase.translator) {
       autofillSessionBookings.push(
-        `${formatMessage(m.sections.sessionBookings.autofillTranslator, {
-          translator: workingCase.translator,
-        })}\n\n`,
+        `${formatMessage(
+          {
+            id: m.sections.sessionBookings.autofillTranslator,
+            defaultMessage: m.sections.sessionBookings.autofillTranslator,
+          },
+          {
+            translator: workingCase.translator,
+          },
+        )}\n\n`,
       )
     }
 
     autofillSessionBookings.push(
-      `${formatMessage(
-        m.sections.sessionBookings.autofillRightToRemainSilent,
-      )}\n\n${formatMessage(
-        m.sections.sessionBookings.autofillCourtDocumentOne,
-      )}\n\n${formatMessage(m.sections.sessionBookings.autofillAccusedPlea)}`,
+      `${m.sections.sessionBookings.autofillRightToRemainSilent}\n\n${m.sections.sessionBookings.autofillCourtDocumentOne}\n\n${m.sections.sessionBookings.autofillAccusedPlea}`,
     )
 
     populateEndOfCourtSessionBookingsIntro(workingCase, endOfSessionBookings)
@@ -160,7 +165,10 @@ export const CourtRecord: FC = () => {
     ) {
       autofillSessionBookings.push(
         `\n\n${formatMessage(
-          m.sections.sessionBookings.autofillPresentationsV3,
+          {
+            id: m.sections.sessionBookings.autofillPresentationsV3,
+            defaultMessage: m.sections.sessionBookings.autofillPresentationsV3,
+          },
           {
             caseType: workingCase.type,
           },
@@ -168,9 +176,7 @@ export const CourtRecord: FC = () => {
       )
     } else if (workingCase.type === CaseType.TRAVEL_BAN) {
       autofillSessionBookings.push(
-        `\n\n${formatMessage(
-          m.sections.sessionBookings.autofillPresentationsTravelBan,
-        )}`,
+        `\n\n${m.sections.sessionBookings.autofillPresentationsTravelBan}`,
       )
     }
 
@@ -219,20 +225,44 @@ export const CourtRecord: FC = () => {
     prosecutorAppealAnnouncement?: string
   }) => {
     const endOfSessionBookings: string[] = []
+    let appealDecisions = workingCase.appealDecisions
+    if (
+      !isNullOrUndefined(accusedAppealDecision) ||
+      !isNullOrUndefined(accusedAppealAnnouncement)
+    ) {
+      appealDecisions = withCaseLevelAppealDecision(
+        appealDecisions,
+        AppealDecisionPartyRole.DEFENDANT,
+        {
+          ...(!isNullOrUndefined(accusedAppealDecision)
+            ? { decision: accusedAppealDecision }
+            : {}),
+          ...(!isNullOrUndefined(accusedAppealAnnouncement)
+            ? { announcement: accusedAppealAnnouncement }
+            : {}),
+        },
+      )
+    }
+    if (
+      !isNullOrUndefined(prosecutorAppealDecision) ||
+      !isNullOrUndefined(prosecutorAppealAnnouncement)
+    ) {
+      appealDecisions = withCaseLevelAppealDecision(
+        appealDecisions,
+        AppealDecisionPartyRole.PROSECUTOR,
+        {
+          ...(!isNullOrUndefined(prosecutorAppealDecision)
+            ? { decision: prosecutorAppealDecision }
+            : {}),
+          ...(!isNullOrUndefined(prosecutorAppealAnnouncement)
+            ? { announcement: prosecutorAppealAnnouncement }
+            : {}),
+        },
+      )
+    }
     const updatedCase = {
       ...workingCase,
-      ...(!isNullOrUndefined(accusedAppealDecision)
-        ? { accusedAppealDecision }
-        : {}),
-      ...(!isNullOrUndefined(accusedAppealAnnouncement)
-        ? { accusedAppealAnnouncement }
-        : {}),
-      ...(!isNullOrUndefined(prosecutorAppealDecision)
-        ? { prosecutorAppealDecision }
-        : {}),
-      ...(!isNullOrUndefined(prosecutorAppealAnnouncement)
-        ? { prosecutorAppealAnnouncement }
-        : {}),
+      appealDecisions,
     }
     populateEndOfCourtSessionBookingsIntro(updatedCase, endOfSessionBookings)
     populateEndOfCourtSessionForRestrictions(
@@ -271,17 +301,15 @@ export const CourtRecord: FC = () => {
         title={formatMessage(titles.court.restrictionCases.courtRecord)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.sections.title)}</PageTitle>
+        <PageTitle>{m.sections.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <BlueBox>
             <Box marginBottom={3}>
               <DateTime
                 name="courtStartDate"
-                datepickerLabel={formatMessage(
-                  m.sections.courtStartDate.dateLabel,
-                )}
-                timeLabel={formatMessage(m.sections.courtStartDate.timeLabel)}
+                datepickerLabel={m.sections.courtStartDate.dateLabel}
+                timeLabel={m.sections.courtStartDate.timeLabel}
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
@@ -305,10 +333,10 @@ export const CourtRecord: FC = () => {
             <Input
               data-testid="courtLocation"
               name="courtLocation"
-              tooltip={formatMessage(m.sections.courtLocation.tooltip)}
-              label={formatMessage(m.sections.courtLocation.label)}
+              tooltip={m.sections.courtLocation.tooltip}
+              label={m.sections.courtLocation.label}
               value={workingCase.courtLocation || ''}
-              placeholder={formatMessage(m.sections.courtLocation.placeholder)}
+              placeholder={m.sections.courtLocation.placeholder}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLocation',
@@ -376,21 +404,17 @@ export const CourtRecord: FC = () => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.sessionBookings.title)} `}
-              <Tooltip
-                text={formatMessage(m.sections.sessionBookings.tooltip)}
-              />
+              {`${m.sections.sessionBookings.title} `}
+              <Tooltip text={m.sections.sessionBookings.tooltip} />
             </Text>
           </Box>
           <Box marginBottom={3}>
             <Input
               data-testid="sessionBookings"
               name="sessionBookings"
-              label={formatMessage(m.sections.sessionBookings.label)}
+              label={m.sections.sessionBookings.label}
               value={sessionBookingsInput.value || ''}
-              placeholder={formatMessage(
-                m.sections.sessionBookings.placeholder,
-              )}
+              placeholder={m.sections.sessionBookings.placeholder}
               onChange={(evt) =>
                 sessionBookingsInput.onChange(evt.target.value)
               }
@@ -407,7 +431,7 @@ export const CourtRecord: FC = () => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                {formatMessage(m.sections.conclusion)}
+                {m.sections.conclusion}
               </Text>
             </Box>
             <BlueBox>
@@ -425,18 +449,16 @@ export const CourtRecord: FC = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.endOfSessionBookings.title)}
+              {m.sections.endOfSessionBookings.title}
             </Text>
           </Box>
           <Box marginBottom={5}>
             <Input
               data-testid="endOfSessionBookings"
               name="endOfSessionBookings"
-              label={formatMessage(m.sections.endOfSessionBookings.label)}
+              label={m.sections.endOfSessionBookings.label}
               value={endOfSessionBookingsInput.value || ''}
-              placeholder={formatMessage(
-                m.sections.endOfSessionBookings.placeholder,
-              )}
+              placeholder={m.sections.endOfSessionBookings.placeholder}
               onChange={(evt) =>
                 endOfSessionBookingsInput.onChange(evt.target.value)
               }
@@ -448,7 +470,7 @@ export const CourtRecord: FC = () => {
         <Box marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.endOfSessionTitle)}
+              {m.sections.endOfSessionTitle}
             </Text>
           </Box>
           <BlueBox>
@@ -457,10 +479,8 @@ export const CourtRecord: FC = () => {
                 <GridColumn>
                   <DateTime
                     name="courtEndTime"
-                    datepickerLabel={formatMessage(
-                      m.sections.courtEndTime.dateLabel,
-                    )}
-                    timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
+                    datepickerLabel={m.sections.courtEndTime.dateLabel}
+                    timeLabel={m.sections.courtEndTime.timeLabel}
                     minDate={
                       workingCase.courtStartDate
                         ? new Date(workingCase.courtStartDate)
@@ -470,16 +490,36 @@ export const CourtRecord: FC = () => {
                     selectedDate={workingCase.courtEndTime}
                     onChange={(date: Date | undefined, valid: boolean) => {
                       if (date && valid) {
-                        setAndSendCaseToServer(
-                          [
-                            {
-                              courtEndTime: formatDateForServer(date),
-                              force: true,
-                            },
-                          ],
-                          workingCase,
-                          setWorkingCase,
-                        )
+                        const courtEndTime = formatDateForServer(date)
+
+                        // A failed save toasts, but the optimistic value would still
+                        // validate the step and let the judge continue with a court
+                        // end time the server never got. The save rolls the field
+                        // back to the value the server has, so the step stays invalid
+                        // until the time is actually persisted.
+                        saveCourtEndTime({
+                          // Per case: the page is reused when the judge moves to another case
+                          key: `courtEndTime:${workingCase.id}`,
+                          confirmed: workingCase.courtEndTime,
+                          value: courtEndTime,
+                          persist: () =>
+                            setAndSendCaseToServer(
+                              [{ courtEndTime, force: true }],
+                              workingCase,
+                              setWorkingCase,
+                            ),
+                          rollback: (confirmedCourtEndTime) =>
+                            setWorkingCase((prev) =>
+                              // A save that fails after the judge has moved on to another
+                              // case must not touch that case
+                              prev.id !== workingCase.id
+                                ? prev
+                                : {
+                                    ...prev,
+                                    courtEndTime: confirmedCourtEndTime,
+                                  },
+                            ),
+                        })
                       }
                     }}
                     blueBox={false}
@@ -490,35 +530,39 @@ export const CourtRecord: FC = () => {
             </GridContainer>
           </BlueBox>
         </Box>
-        <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRulingShortVersion)}
-            pdfType="courtRecord"
-            elementId={formatMessage(core.pdfButtonRulingShortVersion)}
-          />
-        </Box>
+        <PdfButton
+          caseId={workingCase.id}
+          title={formatMessage(core.pdfButtonRulingShortVersion)}
+          pdfType="courtRecord"
+          elementId={formatMessage(core.pdfButtonRulingShortVersion)}
+        />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              DISTRICT_COURT_RESTRICTION_CASE_CONFIRMATION_ROUTE,
-            )
-          }
-          nextIsDisabled={!stepIsValid}
-          hideNextButton={
+          actions={
             !workingCase.decision ||
             !workingCase.conclusion ||
             !workingCase.ruling
+              ? []
+              : [
+                  {
+                    text: formatMessage(core.continue),
+                    icon: 'arrowForward',
+                    onClick: () =>
+                      handleNavigationTo(
+                        DISTRICT_COURT_RESTRICTION_CASE_CONFIRMATION_ROUTE,
+                      ),
+                    disabled: !stepIsValid,
+                    testId: 'continueButton',
+                  },
+                ]
           }
           infoBoxText={
             !workingCase.decision ||
             !workingCase.conclusion ||
             !workingCase.ruling
-              ? formatMessage(m.sections.nextButtonInfo.text)
+              ? m.sections.nextButtonInfo.text
               : ''
           }
         />

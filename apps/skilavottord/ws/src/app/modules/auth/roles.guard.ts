@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { ForbiddenError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 
 import { getRequest } from '@island.is/auth-nest-tools'
 
@@ -16,7 +16,9 @@ export class RolesGuard implements CanActivate {
       roles.length > 0 &&
       !roles.find((role) => role === user.role)
     ) {
-      throw new ForbiddenError('Forbidden')
+      throw new GraphQLError('Forbidden', {
+        extensions: { code: 'FORBIDDEN' },
+      })
     }
     return true
   }

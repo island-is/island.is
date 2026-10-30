@@ -9,7 +9,7 @@ import * as styles from './SubSectionsV2.css'
 export const SubSections: FC<
   React.PropsWithChildren<{
     isActive?: boolean
-    subSections?: React.ReactNodeArray
+    subSections?: ReadonlyArray<React.ReactNode>
   }>
 > = ({ isActive = false, subSections }) => {
   const containerRef = useRef<HTMLDivElement>(null)

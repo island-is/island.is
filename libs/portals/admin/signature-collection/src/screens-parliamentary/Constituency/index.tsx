@@ -20,7 +20,7 @@ import format from 'date-fns/format'
 import { getTagConfig } from '../../lib/utils'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
-import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg?url'
 import EmptyState from '../../shared-components/emptyState'
 
 export const Constituency = () => {

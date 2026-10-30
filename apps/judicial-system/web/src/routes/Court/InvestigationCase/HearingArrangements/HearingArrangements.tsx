@@ -19,7 +19,6 @@ import {
   BlueBox,
   CourtArrangements,
   CourtCaseInfo,
-  DefenderInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -27,22 +26,25 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RequestCaseDefenderInfo,
   SectionHeading,
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { defenderInfo } from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo.strings'
+import { anyDefendantHasDefender } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import { LegalRightsProtectorInputFields } from '@island.is/judicial-system-web/src/components/VictimInfo/LegalRightsProtectorInputFields'
 import {
   SessionArrangements,
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
-import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -67,6 +69,7 @@ const HearingArrangements = () => {
   const {
     setAndSendCaseToServer,
     sendNotification,
+    isUpdatingCase,
     isSendingNotification,
     sendNotificationError,
   } = useCase()
@@ -99,7 +102,7 @@ const HearingArrangements = () => {
     setAndSendCaseToServer(
       [
         {
-          sessionArrangements: workingCase.defenderName
+          sessionArrangements: anyDefendantHasDefender(workingCase.defendants)
             ? SessionArrangements.ALL_PRESENT
             : undefined,
         },
@@ -123,12 +126,11 @@ const HearingArrangements = () => {
   const isCorrectingRuling = Boolean(workingCase.requestCompletedDate)
 
   const handleNavigationTo = async (destination: keyof stepValidationsType) => {
-    await sendCourtDateToServer()
-
     if (
       isCorrectingRuling ||
       (courtDateNotification.hasSent && !courtDateHasChanged)
     ) {
+      await sendCourtDateToServer()
       router.push(`${destination}/${workingCase.id}`)
     } else {
       setNavigateTo(destination)
@@ -139,6 +141,11 @@ const HearingArrangements = () => {
     workingCase,
     courtDate,
   )
+
+  const isModalConfirming = modalButtonLoading === ModalButtonLoading.PRIMARY
+  const isModalDeferring = modalButtonLoading === ModalButtonLoading.SECONDARY
+  const isModalLoading = isModalConfirming && isUpdatingCase
+  const isModalDeferringLoading = isModalDeferring && isSendingNotification
 
   return (
     <PageLayout
@@ -159,27 +166,25 @@ const HearingArrangements = () => {
             <Box marginBottom={workingCase.comments ? 2 : 5}>
               <AlertMessage
                 type="warning"
-                title={formatMessage(m.requestProsecutorOnlySession)}
+                title={m.requestProsecutorOnlySession}
                 message={workingCase.prosecutorOnlySessionRequest}
               />
             </Box>
           )}
         <ArraignmentAlert />
-        <PageTitle>{formatMessage(m.title)}</PageTitle>
+        <PageTitle>{m.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(m.sections.sessionArrangements.heading)}
+              title={m.sections.sessionArrangements.heading}
               required
             />
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <RadioButton
                 name="session-arrangements-all-present"
                 id="session-arrangements-all-present"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.allPresent,
-                )}
+                label={m.sections.sessionArrangements.options.allPresent}
                 checked={
                   checkedRadio === SessionArrangements.ALL_PRESENT ||
                   (!checkedRadio &&
@@ -205,9 +210,9 @@ const HearingArrangements = () => {
               <RadioButton
                 name="session-arrangements-all-present_spokesperson"
                 id="session-arrangements-all-present_spokesperson"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.allPresentSpokesperson,
-                )}
+                label={
+                  m.sections.sessionArrangements.options.allPresentSpokesperson
+                }
                 checked={
                   checkedRadio ===
                     SessionArrangements.ALL_PRESENT_SPOKESPERSON ||
@@ -235,9 +240,7 @@ const HearingArrangements = () => {
               <RadioButton
                 name="session-arrangements-prosecutor-present"
                 id="session-arrangements-prosecutor-present"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.prosecutorPresent,
-                )}
+                label={m.sections.sessionArrangements.options.prosecutorPresent}
                 checked={
                   checkedRadio === SessionArrangements.PROSECUTOR_PRESENT ||
                   (!checkedRadio &&
@@ -264,9 +267,7 @@ const HearingArrangements = () => {
               <RadioButton
                 name="session-arrangements-none-present"
                 id="session-arrangements-none-present"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.nonePresent,
-                )}
+                label={m.sections.sessionArrangements.options.nonePresent}
                 checked={
                   checkedRadio === SessionArrangements.NONE_PRESENT ||
                   (!checkedRadio &&
@@ -292,9 +293,7 @@ const HearingArrangements = () => {
             </BlueBox>
           </Box>
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(m.sections.requestedCourtDate.title)}
-            />
+            <SectionHeading title={m.sections.requestedCourtDate.title} />
             <CourtArrangements
               handleCourtDateChange={handleCourtDateChange}
               handleCourtRoomChange={handleCourtRoomChange}
@@ -307,17 +306,55 @@ const HearingArrangements = () => {
             SessionArrangements.ALL_PRESENT ||
             workingCase.sessionArrangements ===
               SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
-            <Box component="section">
-              <DefenderInfo
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
+            <section className={stack({ gap: 3 })}>
+              <SectionHeading
+                title={formatMessage(
+                  {
+                    id: defenderInfo.investigationCases.sections.defender.title,
+                    defaultMessage:
+                      defenderInfo.investigationCases.sections.defender.title,
+                  },
+                  {
+                    defenderType:
+                      workingCase.sessionArrangements ===
+                      SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                        ? 'Talsmaður'
+                        : 'Verjandi',
+                  },
+                )}
+                tooltip={
+                  <Tooltip
+                    text={formatMessage(
+                      {
+                        id: defenderInfo.investigationCases.sections.defender
+                          .tooltip,
+                        defaultMessage:
+                          defenderInfo.investigationCases.sections.defender
+                            .tooltip,
+                      },
+                      { sessionArrangement: workingCase.sessionArrangements },
+                    )}
+                    placement="right"
+                  />
+                }
+                marginBottom={0}
               />
-            </Box>
+              {workingCase.defendants?.map((defendant, _index, defendants) => (
+                <BlueBox key={defendant.id}>
+                  <RequestCaseDefenderInfo
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    defendant={defendant}
+                    showDefendantName={defendants.length > 1}
+                  />
+                </BlueBox>
+              ))}
+            </section>
           )}
           {workingCase.sessionArrangements ===
             SessionArrangements.ALL_PRESENT &&
             isNonEmptyArray(workingCase.victims) && (
-              <section className={grid({ gap: 4 })}>
+              <section className={stack({ gap: 4 })}>
                 <SectionHeading
                   title={
                     workingCase.victims && workingCase.victims.length > 1
@@ -351,67 +388,86 @@ const HearingArrangements = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextButtonText={formatMessage(m.continueButton.label)}
+          actions={[
+            {
+              text: 'Halda áfram',
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {navigateTo !== undefined && (
         <Modal
-          title={formatMessage(m.modal.heading)}
+          title="Viltu staðfesta fyrirtökutíma?"
           onClose={handleCloseModal}
-          text={formatMessage(
-            workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
-              ? m.modal.allPresentText
-              : workingCase.sessionArrangements ===
-                SessionArrangements.ALL_PRESENT_SPOKESPERSON
-              ? m.modal.allPresentSpokespersonText
-              : m.modal.prosecutorPresentText,
-            { courtDateHasChanged },
-          )}
-          primaryButton={{
-            text: formatMessage(m.modal.primaryButtonText),
-            onClick: async () => {
-              setModalButtonLoading(ModalButtonLoading.PRIMARY)
+          loading={isModalConfirming}
+          text={(() => {
+            const recipients =
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT
+                ? 'saksóknara og verjanda, hafi verjandi verið skráður'
+                : workingCase.sessionArrangements ===
+                  SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'saksóknara og talsmann, hafi talsmaður verið skráður'
+                : 'saksóknara'
 
-              const notificationSent = await sendNotification(
-                workingCase.id,
-                TrackedNotificationType.COURT_DATE,
-              )
+            return courtDateHasChanged
+              ? `Fyrirtökutíma hefur verið breytt. Tilkynning um fyrirtöku verður send á ${recipients}.`
+              : `Málið fer á dagskrá og tilkynning um fyrirtöku verður send á ${recipients}.`
+          })()}
+          buttons={[
+            {
+              text: 'Nei, staðfesta seinna',
+              isDisabled: isModalConfirming,
+              onClick: async () => {
+                setModalButtonLoading(ModalButtonLoading.SECONDARY)
 
-              if (notificationSent) {
+                // The arraignment date is not confirmed, so we only let registered
+                // advocates know that they are on the case. This is their only
+                // notification, so we do not navigate away until it has been sent.
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  TrackedNotificationType.ADVOCATE_ASSIGNED,
+                )
+
+                if (!notificationSent) {
+                  setModalButtonLoading(undefined)
+                  return
+                }
+
                 router.push(`${navigateTo}/${workingCase.id}`)
-              }
+              },
+              isLoading: isModalDeferringLoading,
+              variant: 'ghost',
             },
-            isLoading:
-              isSendingNotification &&
-              modalButtonLoading === ModalButtonLoading.PRIMARY,
-          }}
-          secondaryButton={{
-            text: formatMessage(m.modal.secondaryButtonText, {
-              courtDateHasChanged,
-            }),
-            onClick: async () => {
-              setModalButtonLoading(ModalButtonLoading.SECONDARY)
+            {
+              text: 'Já, staðfesta',
+              onClick: async () => {
+                setModalButtonLoading(ModalButtonLoading.PRIMARY)
 
-              await sendNotification(
-                workingCase.id,
-                TrackedNotificationType.COURT_DATE,
-                true,
-              )
+                // Saving the arraignment date triggers the court date notifications
+                const courtDateSaved = await sendCourtDateToServer()
 
-              router.push(`${navigateTo}/${workingCase.id}`)
+                if (!courtDateSaved) {
+                  setModalButtonLoading(undefined)
+                  return
+                }
+
+                router.push(`${navigateTo}/${workingCase.id}`)
+              },
+              isLoading: isModalLoading,
+              isDisabled: isModalDeferring,
             },
-            isLoading:
-              isSendingNotification &&
-              modalButtonLoading === ModalButtonLoading.SECONDARY,
-          }}
+          ]}
           errorMessage={
-            modalButtonLoading && sendNotificationError
+            isModalDeferring && sendNotificationError
               ? formatMessage(errors.sendNotification)
               : undefined
           }

@@ -55,18 +55,19 @@ export class ScopeService {
     private nationalRegistryService: NationalRegistryV3ClientService,
   ) {}
 
-  /**
-   * Looks up the user's municipality from the National Registry and finds
-   * a matching domain by comparing against Domain.displayName.
-   */
-  private async getUserMunicipalDomain(user: User): Promise<string | null> {
-    let sveitarfelag: string | undefined
+  // First four digits of logheimiliskodi are the municipality number
+  // (sveitarfélagsnúmer); foreign domiciles ("99" + country code) never match.
+  private async getUserMunicipalDomain(
+    user: User,
+    candidateDomainNames: string[],
+  ): Promise<string | null> {
+    let municipalityCode: string | undefined
 
     try {
-      const address = await this.nationalRegistryService.getAddress(
+      const housing = await this.nationalRegistryService.getHousing(
         user.nationalId,
       )
-      sveitarfelag = address?.sveitarfelag?.trim()
+      municipalityCode = housing?.logheimiliskodi?.slice(0, 4)
     } catch {
       this.logger.warn(
         'Failed to fetch municipality, falling back to normal categories',
@@ -74,11 +75,14 @@ export class ScopeService {
       return null
     }
 
-    if (!sveitarfelag) return null
+    if (!municipalityCode || !/^\d{4}$/.test(municipalityCode)) return null
 
     const domain = await this.domainModel.findOne({
       attributes: ['name'],
-      where: { displayName: sveitarfelag },
+      where: {
+        name: { [Op.in]: candidateDomainNames },
+        municipalityCode,
+      },
     })
 
     return domain?.name ?? null
@@ -111,6 +115,7 @@ export class ScopeService {
         'order',
         'domainName',
         'allowsWrite',
+        'requiresConfirmation',
       ],
       where: {
         name: {
@@ -156,6 +161,7 @@ export class ScopeService {
         order: 0,
         domainName: DEFAULT_DOMAIN,
         allowsWrite: false,
+        requiresConfirmation: false,
       })),
     ]
   }
@@ -187,6 +193,7 @@ export class ScopeService {
         'domainName',
         'order',
         'allowsWrite',
+        'requiresConfirmation',
       ],
       additionalIncludes: [
         {
@@ -214,6 +221,7 @@ export class ScopeService {
         domainName: scope.domainName,
         order: scope.order || 0,
         allowsWrite: scope.allowsWrite ?? false,
+        requiresConfirmation: scope.requiresConfirmation ?? false,
       } as ScopeDTO
 
       if (categoryIds.length === 0) {
@@ -314,6 +322,7 @@ export class ScopeService {
           'domainName',
           'order',
           'allowsWrite',
+          'requiresConfirmation',
         ],
         additionalIncludes: [
           {
@@ -343,6 +352,7 @@ export class ScopeService {
           domainName: scope.domainName,
           order: scope.order || 0,
           allowsWrite: scope.allowsWrite ?? false,
+          requiresConfirmation: scope.requiresConfirmation ?? false,
         } as ScopeDTO)
       }
     }
@@ -381,7 +391,13 @@ export class ScopeService {
     )
 
     if (sveitarfelagTag && sveitarfelagTag.scopes.length > 0) {
-      const municipalDomainName = await this.getUserMunicipalDomain(user)
+      const candidateDomainNames = [
+        ...new Set(sveitarfelagTag.scopes.map((scope) => scope.domainName)),
+      ]
+      const municipalDomainName = await this.getUserMunicipalDomain(
+        user,
+        candidateDomainNames,
+      )
 
       if (municipalDomainName) {
         const municipalScopes = sveitarfelagTag.scopes.filter(

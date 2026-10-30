@@ -1,4 +1,5 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -16,13 +17,13 @@ import {
   InputAdvocate,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseState,
+import type {
   CivilClaimant,
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCivilClaimants } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './Advocates.strings'
 import * as styles from './Advocates.css'
@@ -31,8 +32,10 @@ interface Props {
   civilClaimant: CivilClaimant
 }
 
-interface UpdateCivilClaimant
-  extends Omit<UpdateCivilClaimantInput, 'caseId' | 'civilClaimantId'> {}
+type UpdateCivilClaimant = Omit<
+  UpdateCivilClaimantInput,
+  'caseId' | 'civilClaimantId'
+>
 
 const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
@@ -70,7 +73,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
   }
 
   return (
-    <BlueBox className={grid({ gap: 2 })}>
+    <BlueBox className={stack({ gap: 2 })}>
       <Box display="flex" justifyContent="spaceBetween">
         <Text variant="h4">{civilClaimant.name}</Text>
         {civilClaimant.hasSpokesperson && (
@@ -112,7 +115,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             <RadioButton
               name="civilClaimantAdvocateType"
               id={`civil_claimant_lawyer-${civilClaimant.id}`}
-              label={formatMessage(strings.lawyer)}
+              label={strings.lawyer}
               large
               backgroundColor="white"
               checked={civilClaimant.spokespersonIsLawyer === true}
@@ -129,7 +132,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             <RadioButton
               name="civilClaimantAdvocateType"
               id={`civil_claimant_legal_rights_protector-${civilClaimant.id}`}
-              label={formatMessage(strings.legalRightsProtector)}
+              label={strings.legalRightsProtector}
               large
               backgroundColor="white"
               checked={civilClaimant.spokespersonIsLawyer === false}
@@ -190,9 +193,15 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
           />
           <Checkbox
             name={`shareFilesWithCivilClaimantAdvocate-${civilClaimant.id}`}
-            label={formatMessage(strings.shareFilesWithCivilClaimantAdvocate, {
-              defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
-            })}
+            label={formatMessage(
+              {
+                id: strings.shareFilesWithCivilClaimantAdvocate,
+                defaultMessage: strings.shareFilesWithCivilClaimantAdvocate,
+              },
+              {
+                defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
+              },
+            )}
             checked={Boolean(civilClaimant.caseFilesSharedWithSpokesperson)}
             disabled={
               civilClaimant.spokespersonIsLawyer === null ||
@@ -207,7 +216,11 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
               })
             }}
             tooltip={formatMessage(
-              strings.shareFilesWithCivilClaimantAdvocateTooltip,
+              {
+                id: strings.shareFilesWithCivilClaimantAdvocateTooltip,
+                defaultMessage:
+                  strings.shareFilesWithCivilClaimantAdvocateTooltip,
+              },
               {
                 defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
               },
@@ -218,10 +231,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
           />
         </>
       ) : (
-        <AlertMessage
-          message={formatMessage(strings.noCivilClaimantAdvocate)}
-          type="info"
-        />
+        <AlertMessage message={strings.noCivilClaimantAdvocate} type="info" />
       )}
       {civilClaimant.isSpokespersonConfirmed &&
         civilClaimant.spokespersonName && (
@@ -251,9 +261,15 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             }}
             disabled={workingCase.state === CaseState.CORRECTING}
           >
-            {formatMessage(strings.confirmSpokespersonChoice, {
-              spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
-            })}
+            {formatMessage(
+              {
+                id: strings.confirmSpokespersonChoice,
+                defaultMessage: strings.confirmSpokespersonChoice,
+              },
+              {
+                spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
+              },
+            )}
           </Button>
         </Box>
       )}
@@ -276,36 +292,58 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             }
             disabled={workingCase.state === CaseState.CORRECTING}
           >
-            {formatMessage(strings.addCivilClaimantAdvocate)}
+            {strings.addCivilClaimantAdvocate}
           </Button>
         </Box>
       )}
       {displayModal && (
         <Modal
-          title={formatMessage(strings.confirmSpokespersonModalTitle, {
-            isSpokespersonConfirmed: civilClaimant.isSpokespersonConfirmed,
-            spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
-          })}
-          text={formatMessage(strings.confirmSpokespersonModalText, {
-            isSpokespersonConfirmed: civilClaimant.isSpokespersonConfirmed,
-            spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
-          })}
-          primaryButton={{
-            text: formatMessage(strings.confirmModalPrimaryButtonText, {
-              isConfirming: !civilClaimant.isSpokespersonConfirmed,
-            }),
-            onClick: () => {
-              handleSetAndSendCivilClaimantToServer({
-                isSpokespersonConfirmed: !civilClaimant.isSpokespersonConfirmed,
-              })
-
-              setDisplayModal(false)
+          title={formatMessage(
+            {
+              id: strings.confirmSpokespersonModalTitle,
+              defaultMessage: strings.confirmSpokespersonModalTitle,
             },
-          }}
-          secondaryButton={{
-            text: formatMessage(strings.confirmModalSecondaryButtonText),
-            onClick: () => setDisplayModal(false),
-          }}
+            {
+              isSpokespersonConfirmed: civilClaimant.isSpokespersonConfirmed,
+              spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
+            },
+          )}
+          text={formatMessage(
+            {
+              id: strings.confirmSpokespersonModalText,
+              defaultMessage: strings.confirmSpokespersonModalText,
+            },
+            {
+              isSpokespersonConfirmed: civilClaimant.isSpokespersonConfirmed,
+              spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
+            },
+          )}
+          buttons={[
+            {
+              text: strings.confirmModalSecondaryButtonText,
+              onClick: () => setDisplayModal(false),
+              variant: 'ghost',
+            },
+            {
+              text: formatMessage(
+                {
+                  id: strings.confirmModalPrimaryButtonText,
+                  defaultMessage: strings.confirmModalPrimaryButtonText,
+                },
+                {
+                  isConfirming: !civilClaimant.isSpokespersonConfirmed,
+                },
+              ),
+              onClick: () => {
+                handleSetAndSendCivilClaimantToServer({
+                  isSpokespersonConfirmed:
+                    !civilClaimant.isSpokespersonConfirmed,
+                })
+
+                setDisplayModal(false)
+              },
+            },
+          ]}
         />
       )}
     </BlueBox>

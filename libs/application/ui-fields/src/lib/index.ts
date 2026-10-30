@@ -30,6 +30,7 @@ export { FindVehicleFormField } from './FindVehicleFormField/FindVehicleFormFiel
 export { VehicleRadioFormField } from './VehicleRadioFormField/VehicleRadioFormField'
 export { VehicleSelectFormField } from './VehicleSelectFormField/VehicleSelectFormField'
 export { StaticTableFormField } from './StaticTableFormField/StaticTableFormField'
+export { InteractiveTableFormField } from './InteractiveTableField/InteractiveTableFormField'
 export { PaginatedSearchableTableFormField } from './PaginatedSearchableTableFormField/PaginatedSearchableTableFormField'
 export { SliderFormField } from './SliderFormField/SliderFormField'
 export { InformationCardFormField } from './InformationCardFormField/InformationCardFormField'
@@ -39,3 +40,5 @@ export { BankAccountFormField } from './BankAccountFormField/BankAccountFormFiel
 export { OverviewFormField } from './OverviewFormField/OverviewFormField'
 export { CopyLinkFormField } from './CopyLinkFormField/CopyLinkFormField'
 export { VehiclePermnoWithInfoFormField } from './VehiclePermnoWithInfoFormField/VehiclePermnoWithInfoFormField'
+export { ScaleFormField } from './ScaleFormField/ScaleFormField'
+export { StickyFooterFormField } from './StickyFooterField/StickyFooterFormField'

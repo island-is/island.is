@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-smart-solutions-v2',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

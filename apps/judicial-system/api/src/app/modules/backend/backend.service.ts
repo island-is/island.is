@@ -1,7 +1,7 @@
-import { DataSource, DataSourceConfig } from 'apollo-datasource'
 import { Request } from 'express'
 
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, Scope } from '@nestjs/common'
+import { CONTEXT } from '@nestjs/graphql'
 
 import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
@@ -15,14 +15,20 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase } from '../appeal-case'
+import {
+  AppealCase,
+  AppealCourtSession,
+  AppealEventLog,
+  AppealStatementDeadline,
+  DeleteAppealCourtSessionResponse,
+} from '../appeal-case'
+import { AppealSummons } from '../appeal-summons'
 import {
   Case,
   RequestSignatureResponse,
   SendNotificationResponse,
   SignatureConfirmationResponse,
 } from '../case'
-import { CaseListEntry } from '../case-list'
 import {
   CaseTableMembershipResponse,
   CaseTableResponse,
@@ -66,6 +72,7 @@ import { Subpoena } from '../subpoena'
 import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
+import { withTraceContext } from './traceContext'
 
 type Transformer<TResult> = (data: never) => TResult
 
@@ -91,27 +98,39 @@ const lawyerTransformer: Transformer<Lawyer> = (data) => mapToLawyer(data)
 const lawyersTransformer: Transformer<Lawyer[]> = (lawyers: []) =>
   lawyers.map((lawyer) => mapToLawyer(lawyer))
 
-@Injectable()
-export class BackendService extends DataSource<{ req: Request }> {
-  private headers!: { [key: string]: string }
-  private secretTokenHeaders!: { [key: string]: string }
+// The GraphQL context is shaped as `{ req }` (see app.module). When the
+// service is resolved outside of a GraphQL request (e.g. from a REST
+// controller such as the auth controller), the injected value is the express
+// request itself, so we fall back to reading headers off of it directly.
+// Only the per-request GraphQL resolvers rely on the forwarded auth headers;
+// the REST callers exclusively use the secret-token endpoints below.
+interface GqlContext {
+  req?: Request
+}
+
+@Injectable({ scope: Scope.REQUEST })
+export class BackendService {
+  private readonly headers: { [key: string]: string }
+  private readonly secretTokenHeaders: { [key: string]: string }
 
   constructor(
     @Inject(backendModuleConfig.KEY)
     private readonly config: ConfigType<typeof backendModuleConfig>,
+    @Inject(CONTEXT) context: GqlContext | Request,
   ) {
-    super()
     this.secretTokenHeaders = {
       'Content-Type': 'application/json',
       authorization: `Bearer ${this.config.secretToken}`,
     }
-  }
 
-  initialize(config: DataSourceConfig<{ req: Request }>): void {
+    const req = (context as GqlContext)?.req ?? (context as Request | undefined)
+
     this.headers = {
       'Content-Type': 'application/json',
-      authorization: config.context.req.headers.authorization as string,
-      cookie: config.context.req.headers.cookie as string,
+      ...(req?.headers?.authorization
+        ? { authorization: req.headers.authorization as string }
+        : {}),
+      ...(req?.headers?.cookie ? { cookie: req.headers.cookie as string } : {}),
     }
   }
 
@@ -120,17 +139,18 @@ export class BackendService extends DataSource<{ req: Request }> {
     options: RequestInit,
     transformer?: Transformer<TResult>,
   ): Promise<TResult> {
-    return fetch(`${this.config.backendUrl}/api/${route}`, options).then(
-      async (res) => {
-        const response = await res.json()
+    return fetch(
+      `${this.config.backendUrl}/api/${route}`,
+      withTraceContext(options),
+    ).then(async (res) => {
+      const response = await res.json()
 
-        if (res.ok) {
-          return transformer ? transformer(response as never) : response
-        }
+      if (res.ok) {
+        return transformer ? transformer(response as never) : response
+      }
 
-        throw new ProblemError(response)
-      },
-    )
+      throw new ProblemError(response)
+    })
   }
 
   private get<TResult>(
@@ -220,10 +240,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     updateMessageSuspension: unknown,
   ): Promise<MessageSuspension> {
     return this.patch(`message-suspension/${category}`, updateMessageSuspension)
-  }
-
-  getCases(): Promise<CaseListEntry[]> {
-    return this.get('cases')
   }
 
   getCase(caseId: string): Promise<Case> {
@@ -335,6 +351,61 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch(
       `case/${caseId}/appealCase/${appealCaseId}`,
       updateAppealCase,
+    )
+  }
+
+  setAppealStatementDeadline(
+    caseId: string,
+    appealCaseId: string,
+    setAppealStatementDeadline: unknown,
+  ): Promise<AppealStatementDeadline> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/statementDeadline`,
+      setAppealStatementDeadline,
+    )
+  }
+
+  fileAppealStatement(
+    caseId: string,
+    appealCaseId: string,
+    fileAppealStatement: unknown,
+  ): Promise<AppealEventLog> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/statement`,
+      fileAppealStatement,
+    )
+  }
+
+  createAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    createAppealCourtSession: unknown,
+  ): Promise<AppealCourtSession> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession`,
+      createAppealCourtSession,
+    )
+  }
+
+  updateAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    appealCourtSessionId: string,
+    updateAppealCourtSession: unknown,
+  ): Promise<AppealCourtSession> {
+    return this.patch(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession/${appealCourtSessionId}`,
+      updateAppealCourtSession,
+    )
+  }
+
+  deleteAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    appealCourtSessionId: string,
+  ): Promise<DeleteAppealCourtSessionResponse> {
+    return this.delete(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession/${appealCourtSessionId}`,
     )
   }
 
@@ -508,6 +579,14 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${caseId}/file/${fileId}/confirm`)
   }
 
+  attachRulingOrderDocument(
+    caseId: string,
+    fileId: string,
+    attachDocument: unknown,
+  ): Promise<CaseFile> {
+    return this.post(`case/${caseId}/file/${fileId}/document`, attachDocument)
+  }
+
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/file/${fileId}`)
   }
@@ -596,6 +675,13 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  updateDefendants(
+    caseId: string,
+    updateDefendants: unknown,
+  ): Promise<Defendant[]> {
+    return this.patch(`case/${caseId}/defendant`, updateDefendants)
+  }
+
   limitedAccessUpdateDefendant(
     caseId: string,
     defendantId: string,
@@ -633,6 +719,51 @@ export class BackendService extends DataSource<{ req: Request }> {
     },
   ): Promise<Subpoena[]> {
     return this.post(`case/${caseId}/subpoenas`, createSubpoenas)
+  }
+
+  createAppealSummons(
+    caseId: string,
+    createAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.post(`case/${caseId}/appealSummons`, createAppealSummons)
+  }
+
+  updateAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+    updateAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}`,
+      updateAppealSummons,
+    )
+  }
+
+  deleteAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<{ deleted: boolean }> {
+    return this.delete(`case/${caseId}/appealSummons/${appealSummonsId}`)
+  }
+
+  confirmAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}/confirm`,
+      {},
+    )
+  }
+
+  sendAppealSummonsToCourtOfAppeals(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}/sendToCourtOfAppeals`,
+      {},
+    )
   }
 
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
@@ -770,6 +901,23 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  updateCaseAppealDecision(
+    caseId: string,
+    updateAppealDecision: unknown,
+  ): Promise<AppealDecisionResponse> {
+    return this.patch(`case/${caseId}/appealDecision`, updateAppealDecision)
+  }
+
+  pronounceRulingOrally(
+    caseId: string,
+    courtSessionId: string,
+  ): Promise<CourtSessionResponse> {
+    return this.post(
+      `case/${caseId}/courtSession/${courtSessionId}/pronounceRulingOrally`,
+      {},
+    )
+  }
+
   deleteCourtSession(
     caseId: string,
     courtSessionId: string,
@@ -861,17 +1009,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch<unknown, Case>(
       `case/${caseId}/limitedAccess`,
       updateCase,
-      caseTransformer,
-    )
-  }
-
-  limitedAccessTransitionCase(
-    caseId: string,
-    transitionCase: unknown,
-  ): Promise<Case> {
-    return this.patch<unknown, Case>(
-      `case/${caseId}/limitedAccess/state`,
-      transitionCase,
       caseTransformer,
     )
   }
@@ -983,16 +1120,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.callBackend<User[]>(`user?${params.toString()}`, {
       headers: this.secretTokenHeaders,
     })
-  }
-
-  findDefenderByNationalId(nationalId: string): Promise<User> {
-    const params = new URLSearchParams()
-    params.append('nationalId', nationalId)
-
-    return this.callBackend<User>(
-      `cases/limitedAccess/defender?${params.toString()}`,
-      { headers: this.secretTokenHeaders },
-    )
   }
 
   getLawyers(lawyerType?: LawyerType): Promise<Lawyer[]> {

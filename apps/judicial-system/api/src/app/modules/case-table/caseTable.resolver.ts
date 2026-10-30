@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -27,6 +27,7 @@ export class CaseTableResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Query(() => CaseTableResponse)
@@ -34,15 +35,13 @@ export class CaseTableResolver {
     @Args('input', { type: () => CaseTableQueryInput })
     input: CaseTableQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CaseTableResponse> {
     this.logger.debug(`Getting a case table of type ${input.type}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASE_TABLE,
-      backendService.getCaseTable(input.type),
+      this.backendService.getCaseTable(input.type),
       (response) => response.rows.map((row) => row.caseId),
     )
   }
@@ -52,15 +51,13 @@ export class CaseTableResolver {
     @Args('input', { type: () => SearchCasesQueryInput })
     input: SearchCasesQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<SearchCasesResponse> {
     this.logger.debug(`Searching for cases`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.SEARCH_CASES,
-      backendService.searchCases(input.query),
+      this.backendService.searchCases(input.query),
       (response) => response.rows.map((row) => row.caseId),
     )
   }
@@ -72,12 +69,10 @@ export class CaseTableResolver {
   })
   caseTableMembership(
     @Args('caseId', { type: () => String }) caseId: string,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CaseTableMembershipResponse | null> {
     this.logger.debug(`Getting case table membership for case ${caseId}`)
 
-    return backendService
+    return this.backendService
       .getCaseTableMembership(caseId)
       .catch((error: unknown) => {
         const status =

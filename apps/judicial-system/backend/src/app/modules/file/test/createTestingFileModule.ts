@@ -1,7 +1,6 @@
 import { mock } from 'jest-mock-extended'
 import { Sequelize } from 'sequelize-typescript'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { IntlService } from '@island.is/cms-translations'
@@ -13,23 +12,22 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import {
-  addMessagesToQueue,
-  Message,
-  MessageService,
-} from '@island.is/judicial-system/message'
+import { Message, MessageService } from '@island.is/judicial-system/message'
 
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
-import { CaseFile } from '../../repository'
+import { CaseFileRepositoryService } from '../../repository'
 import { fileModuleConfig } from '../file.config'
 import { FileController } from '../file.controller'
 import { FileService } from '../file.service'
 import { InternalFileController } from '../internalFile.controller'
 import { LimitedAccessFileController } from '../limitedAccessFile.controller'
+import { PoliceDigitalCaseFileService } from '../policeDigitalCaseFiles/policeDigitalCaseFile.service'
 
 jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../aws-s3/awsS3.service.ts')
 jest.mock('../../court/court.service.ts')
 jest.mock('../../case/case.service.ts')
@@ -68,17 +66,21 @@ export const createTestingFileModule = async () => {
         useValue: {
           debug: jest.fn(),
           info: jest.fn(),
+          warn: jest.fn(),
           error: jest.fn(),
         },
       },
       {
-        provide: getModelToken(CaseFile),
+        provide: CaseFileRepositoryService,
         useValue: {
+          findLiveByIdAndCase: jest.fn(),
+          findByCaseAndPoliceFileId: jest.fn(),
+          getNextOrderWithinChapterForUpdate: jest.fn().mockResolvedValue(null),
           create: jest.fn(),
-          findAll: jest.fn(),
-          findOne: jest.fn(),
-          update: jest.fn(),
-          max: jest.fn().mockResolvedValue(null),
+          updateById: jest.fn(),
+          updateByIdAndCase: jest.fn(),
+          updateByIdAndCaseWithoutDocument: jest.fn(),
+          resetStoredInCourtFilesForCase: jest.fn(),
         },
       },
       FileService,
@@ -98,8 +100,8 @@ export const createTestingFileModule = async () => {
 
   const courtService = fileModule.get<CourtService>(CourtService)
 
-  const fileModel = await fileModule.resolve<typeof CaseFile>(
-    getModelToken(CaseFile),
+  const caseFileRepositoryService = fileModule.get<CaseFileRepositoryService>(
+    CaseFileRepositoryService,
   )
 
   const fileConfig = fileModule.get<ConfigType<typeof fileModuleConfig>>(
@@ -107,6 +109,9 @@ export const createTestingFileModule = async () => {
   )
 
   const fileService = fileModule.get<FileService>(FileService)
+
+  const policeDigitalCaseFileService =
+    fileModule.get<PoliceDigitalCaseFileService>(PoliceDigitalCaseFileService)
 
   const fileController = fileModule.get<FileController>(FileController)
 
@@ -119,23 +124,26 @@ export const createTestingFileModule = async () => {
 
   const sequelize = fileModule.get<Sequelize>(Sequelize)
 
-  const queuedMessages: Message[] = []
-  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
-  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
-    queuedMessages.push(...msgs)
+  // Every message the module queues goes through the helper, so this is the
+  // whole of what a request would send
+  const queuedMessagesAfterCommit: Message[] = []
+  const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+  mockQueueMessagesAfterCommit.mockImplementation((...msgs: Message[]) => {
+    queuedMessagesAfterCommit.push(...msgs)
   })
 
   fileModule.close()
 
   return {
-    queuedMessages,
+    queuedMessagesAfterCommit,
     sequelize,
     messageService,
     awsS3Service,
     courtService,
-    fileModel,
+    caseFileRepositoryService,
     fileConfig,
     fileService,
+    policeDigitalCaseFileService,
     fileController,
     internalFileController,
     limitedAccessFileController,

@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 
 import { Authorize, CurrentUser, Role, User } from '../auth'
 
@@ -31,7 +31,7 @@ export class AccessControlResolver {
   private verifyDeveloperAccess(user: User, role: Role) {
     const isDeveloper = user.role === Role.developer
     if (!isDeveloper && role === Role.developer) {
-      throw new ApolloError('Only developers can modify developer access')
+      throw new GraphQLError('Only developers can modify developer access')
     }
   }
 
@@ -70,10 +70,9 @@ export class AccessControlResolver {
       try {
         return this.accessControlService.findByRecyclingPartner(user.partnerId)
       } catch (error) {
-        throw new ApolloError(
-          'Failed to fetch municipality access controls',
-          'MUNICIPALITY_ACCESS_ERROR',
-        )
+        throw new GraphQLError('Failed to fetch municipality access controls', {
+          extensions: { code: 'MUNICIPALITY_ACCESS_ERROR' },
+        })
       }
     }
 

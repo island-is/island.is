@@ -18,15 +18,18 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseNumberInput } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
 import {
   useFileList,
   useS3Upload,
   useTargetAppealCaseByAppealCaseId,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  appendAppealCaseIdQuery,
+  isMatchingAppealCourtFile,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
-import { CaseNumberInput } from '../components'
 import { strings } from './WithdrawnAppealCase.strings'
 
 const WithdrawnAppealCase = () => {
@@ -57,35 +60,40 @@ const WithdrawnAppealCase = () => {
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.withdrawAppeal)} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(core.appealCaseNumberHeading)} />
           <CaseNumberInput />
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section">
           <SectionHeading
-            title={formatMessage(strings.courtRecordFileTitle)}
+            title={strings.courtRecordFileTitle}
             marginBottom={1}
           />
           <Text marginBottom={3}>
-            {formatMessage(strings.courtRecordFileSubtitle)}
+            {strings.courtRecordFileSubtitle}
             {'\n'}
           </Text>
           <InputFileUpload
             name="appealCourtRecord"
-            files={uploadFiles.filter(
-              (file) => file.category === CaseFileCategory.APPEAL_COURT_RECORD,
+            files={uploadFiles.filter((file) =>
+              isMatchingAppealCourtFile(
+                file,
+                CaseFileCategory.APPEAL_COURT_RECORD,
+                targetAppealCase?.rulingFileId,
+              ),
             )}
             accept={'application/pdf'}
-            title={formatMessage(strings.uploadBoxTitle)}
+            title={strings.uploadBoxTitle}
             description={formatMessage(core.uploadBoxDescription, {
               fileEndings: '.pdf',
             })}
-            buttonLabel={formatMessage(strings.uploadBoxButtonLabel)}
+            buttonLabel={strings.uploadBoxButtonLabel}
             onChange={(files) =>
               handleUpload(
                 addUploadFiles(files, {
                   category: CaseFileCategory.APPEAL_COURT_RECORD,
+                  rulingFileId: targetAppealCase?.rulingFileId,
                 }),
                 updateUploadFile,
               )
@@ -102,17 +110,22 @@ const WithdrawnAppealCase = () => {
             `${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           )}
-          onNextButtonClick={async () => {
-            router.push(
-              appendAppealCaseIdQuery(
-                `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
-                targetAppealCase?.id,
-              ),
-            )
-          }}
-          nextButtonText={formatMessage(strings.continueButton)}
-          nextIsDisabled={!isStepValid}
-          nextButtonIcon="arrowForward"
+          actions={[
+            {
+              text: strings.continueButton,
+              icon: 'arrowForward',
+              onClick: async () => {
+                router.push(
+                  appendAppealCaseIdQuery(
+                    `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+                    targetAppealCase?.id,
+                  ),
+                )
+              },
+              disabled: !isStepValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

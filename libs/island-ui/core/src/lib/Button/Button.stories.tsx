@@ -3,7 +3,7 @@ import { withFigma } from '../../utils/withFigma'
 
 import { Box } from '../Box/Box'
 import { Button, ButtonBaseProps } from './Button'
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-webpack5'
 
 const config: Meta<typeof Button> = {
   title: 'Core/Button',

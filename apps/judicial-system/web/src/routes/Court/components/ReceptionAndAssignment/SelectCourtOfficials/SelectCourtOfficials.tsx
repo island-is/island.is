@@ -12,7 +12,7 @@ import {
   useCase,
   useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './SelectCourtOfficials.strings'
 
@@ -112,7 +112,7 @@ const SelectCourtOfficials = () => {
           <Tooltip text={formatMessage(strings.tooltip)} placement="right" />
         }
       />
-      <BlueBox className={grid({ gap: 2 })}>
+      <BlueBox className={stack({ gap: 2 })}>
         <Select
           name="judge"
           label={formatMessage(strings.setJudgeLabel)}

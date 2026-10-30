@@ -1,5 +1,4 @@
-import { FC } from 'react'
-import { useIntl } from 'react-intl'
+import type { FC } from 'react'
 
 import DateLabel from './DateLabel'
 import { rulingDateLabel as strings } from './RulingDateLabel.strings'
@@ -10,11 +9,7 @@ interface Props {
 }
 
 const RulingDateLabel: FC<Props> = ({ rulingDate, as }) => {
-  const { formatMessage } = useIntl()
-
-  return (
-    <DateLabel text={formatMessage(strings.text)} date={rulingDate} as={as} />
-  )
+  return <DateLabel text={strings.text} date={rulingDate} as={as} />
 }
 
 export default RulingDateLabel

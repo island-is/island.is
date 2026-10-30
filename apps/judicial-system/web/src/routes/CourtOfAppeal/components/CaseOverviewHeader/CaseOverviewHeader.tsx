@@ -1,4 +1,5 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
@@ -19,7 +20,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useTargetAppealCaseByAppealCaseId } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
 
@@ -48,10 +49,16 @@ const AppealResultAccessed = () => {
     date: string
   }) => (
     <AlertMessage
-      message={formatMessage(strings.appealResultOpenedBy, {
-        userRole: role,
-        when: formatDate(date, 'PPPp'),
-      })}
+      message={formatMessage(
+        {
+          id: strings.appealResultOpenedBy,
+          defaultMessage: strings.appealResultOpenedBy,
+        },
+        {
+          userRole: role,
+          when: formatDate(date, 'PPPp'),
+        },
+      )}
       type="info"
     />
   )
@@ -97,12 +104,12 @@ const CaseOverviewHeader: FC<Props> = (props) => {
     targetAppealCase.appealedDate > workingCase.appealDeadline
 
   return (
-    <div className={grid({ gap: 5 })}>
-      <Box className={grid({ gap: 2 })}>
+    <div className={stack({ gap: 5 })}>
+      <Box className={stack({ gap: 2 })}>
         {!targetAppealCase?.appealRulingDecision &&
           wasAppealedAfterDeadline && (
             <AlertMessage
-              message={formatMessage(strings.appealSentAfterDeadline)}
+              message={strings.appealSentAfterDeadline}
               type="warning"
             />
           )}

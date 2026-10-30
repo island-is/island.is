@@ -1,13 +1,13 @@
-import { TagVariant } from '@island.is/island-ui/core'
+import type { TagVariant } from '@island.is/island-ui/core'
+import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { CaseIndictmentRulingDecision } from '../../graphql/schema'
 import { strings } from './CaseTag.strings'
 
 export const getIndictmentRulingDecisionTag = (
   indictmentRulingDecision?: CaseIndictmentRulingDecision | null,
 ): {
   color: TagVariant
-  text: { id: string; defaultMessage: string; description: string }
+  text: string
 } => {
   switch (indictmentRulingDecision) {
     case CaseIndictmentRulingDecision.FINE:

@@ -31,6 +31,7 @@ export enum DefendantEventType {
   INDICTMENT_REVIEWED = 'INDICTMENT_REVIEWED',
   INDICTMENT_DISMISSED = 'INDICTMENT_DISMISSED',
   INDICTMENT_CANCELLED = 'INDICTMENT_CANCELLED',
+  CLOSED_WITHOUT_ENFORCEMENT = 'CLOSED_WITHOUT_ENFORCEMENT',
 }
 
 export const defendantEventTypes = Object.values(DefendantEventType)
@@ -41,6 +42,40 @@ export enum AppealEventType {
   // court session confirmation) or directly by the party within the appeal deadline
   APPEALED = 'APPEALED',
   APPEAL_WITHDRAWN = 'APPEAL_WITHDRAWN',
+  APPEAL_SUMMONS_ISSUED = 'APPEAL_SUMMONS_ISSUED',
+  APPEAL_SUMMONS_CONFIRMED = 'APPEAL_SUMMONS_CONFIRMED',
+  APPEAL_SUMMONS_SENT_TO_COURT_OF_APPEALS = 'APPEAL_SUMMONS_SENT_TO_COURT_OF_APPEALS',
+  // The court of appeals settled who represents a party in the appeal.
+  // Confirmed rather than appointed: a civil claimant's lawyer is confirmed
+  // the same way but is never formally appointed, and gets no letter.
+  ADVOCATE_CONFIRMED = 'ADVOCATE_CONFIRMED',
+  // The court of appeals gave a party a deadline to file its statement, or
+  // moved the one it had. The date lives on appeal_statement_deadline; the
+  // event keeps who did it and when, and tells a first deadline from an
+  // extension, which the mails word differently.
+  STATEMENT_DEADLINE_SET = 'STATEMENT_DEADLINE_SET',
+  STATEMENT_DEADLINE_EXTENDED = 'STATEMENT_DEADLINE_EXTENDED',
 }
 
 export const appealEventTypes = Object.values(AppealEventType)
+
+// Where an APPEALED event came from. Only meaningful for APPEALED events, so it
+// is null on the others.
+//
+// This has to be recorded rather than derived. An in-court appeal is normally
+// identified by a decision = APPEAL row, but a party that appealed OUT of court
+// has no such row - they appealed precisely because they postponed in court. So
+// "no APPEAL row" cannot distinguish an out-of-court appellant from an in-court
+// one whose decision was later corrected away, and correction reconciliation
+// must not treat the two alike: the first has to be preserved, the second
+// discarded.
+//
+// Set on every APPEALED event - enforced by the
+// appeal_event_log_appeal_origin_check constraint, which also requires the other
+// event types to leave it null.
+export enum AppealOrigin {
+  IN_COURT = 'IN_COURT',
+  OUT_OF_COURT = 'OUT_OF_COURT',
+}
+
+export const appealOrigins = Object.values(AppealOrigin)

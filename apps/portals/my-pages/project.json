@@ -6,76 +6,25 @@
   "tags": ["scope:portals-mypages"],
   "targets": {
     "build": {
-      "executor": "@nx/webpack:webpack",
-      "options": {
-        "baseHref": "/minarsidur/",
-        "outputPath": "dist/apps/portals/my-pages",
-        "index": "apps/portals/my-pages/src/index.html",
-        "main": "apps/portals/my-pages/src/Main.tsx",
-        "polyfills": "apps/portals/my-pages/src/polyfills.ts",
-        "tsConfig": "apps/portals/my-pages/tsconfig.app.json",
-        "assets": [
-          "apps/portals/my-pages/src/favicon.ico",
-          "apps/portals/my-pages/src/mockServiceWorker.js",
-          "apps/portals/my-pages/src/assets"
-        ],
-        "styles": ["apps/portals/my-pages/src/styles.css"],
-        "scripts": [],
-        "webpackConfig": "apps/portals/my-pages/webpack.config.js",
-        "maxWorkers": 2
-      },
-      "configurations": {
-        "production": {
-          "optimization": true,
-          "outputHashing": "all",
-          "index": "apps/portals/my-pages/src/index.src.html",
-          "sourceMap": false,
-          "extractCss": true,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false,
-          "budgets": [
-            {
-              "type": "initial",
-              "maximumWarning": "2mb",
-              "maximumError": "5mb"
-            }
-          ]
-        }
-      },
-      "outputs": ["{options.outputPath}"],
-      "dependsOn": [
-        {
-          "target": "generateDevIndexHTML"
-        }
-      ]
-    },
-    "generateDevIndexHTML": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "node scripts/dockerfile-assets/bash/extract-environment.js apps/portals/my-pages/src"
-        ]
-      },
-      "outputs": ["{workspaceRoot}/apps/portals/my-pages/src/index.html"]
-    },
-    "serve": {
-      "executor": "@nx/webpack:dev-server",
-      "options": {
-        "buildTarget": "service-portal:build",
-        "hmr": true
+        "command": "vite build --config apps/portals/my-pages/vite.config.ts"
       },
       "configurations": {
-        "production": {
-          "buildTarget": "service-portal:build:production",
-          "hmr": false
-        }
+        "production": {}
       },
-      "dependsOn": [
-        {
-          "target": "generateDevIndexHTML"
-        }
-      ]
+      "outputs": ["{workspaceRoot}/dist/apps/portals/my-pages"],
+      "cache": true,
+      "inputs": ["production", "^production"]
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite serve --config apps/portals/my-pages/vite.config.ts"
+      },
+      "configurations": {
+        "production": {}
+      }
     },
     "lint": {
       "executor": "@nx/eslint:lint"
@@ -126,6 +75,14 @@
     },
     "docker-static": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-static`"
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p apps/portals/my-pages/tsconfig.app.json"
+      },
+      "cache": true,
+      "inputs": ["production", "^production"]
     }
   }
 }

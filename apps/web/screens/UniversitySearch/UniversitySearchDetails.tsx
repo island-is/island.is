@@ -3,7 +3,6 @@ import ReactHtmlParser from 'react-html-parser'
 import format from 'date-fns/format'
 import en from 'date-fns/locale/en-US'
 import is from 'date-fns/locale/is'
-import getConfig from 'next/config'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -30,6 +29,7 @@ import {
   OrganizationHeader,
   Webreader,
 } from '@island.is/web/components'
+import { getPublicRuntimeEnv } from '@island.is/web/environments/runtimeEnvironment'
 import {
   ContentLanguage,
   GetNamespaceQuery,
@@ -57,7 +57,6 @@ import {
 import { TranslationDefaults } from './TranslationDefaults'
 import * as styles from './UniversitySearch.css'
 
-const { publicRuntimeConfig = {} } = getConfig() ?? {}
 interface UniversityDetailsProps {
   data: UniversityGatewayProgramDetails
   namespace: Record<string, string>
@@ -609,9 +608,10 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
 
   let showPagesFeatureFlag = false
 
-  if (publicRuntimeConfig?.environment === 'prod') {
+  const { environment } = getPublicRuntimeEnv()
+  if (environment === 'prod') {
     showPagesFeatureFlag = Boolean(namespace?.showPagesProdFeatureFlag)
-  } else if (publicRuntimeConfig?.environment === 'staging') {
+  } else if (environment === 'staging') {
     showPagesFeatureFlag = Boolean(namespace?.showPagesStagingFeatureFlag)
   } else {
     showPagesFeatureFlag = Boolean(namespace?.showPagesDevFeatureFlag)

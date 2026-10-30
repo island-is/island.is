@@ -9,7 +9,7 @@ import {
   getTextStyles,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC, useEffect, useRef } from 'react'
+import React, { FC, useEffect, useRef, useMemo } from 'react'
 import { Markdown } from '@island.is/shared/components'
 import { AlertMessageField, FieldBaseProps } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
@@ -32,11 +32,29 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
   const { formatMessage, lang: locale } = useLocale()
   const { getValues } = useFormContext()
   const user = useUserInfo()
+  const values = getValues()
 
   // Persist callback ID across renders to prevent duplicate registration
   const callbackIdRef = useRef(`AlertMessageFormField-${uuid()}`)
 
   const showAlertMessage = useRef(!field.shouldBlockInSetBeforeSubmitCallback)
+
+  const updatedApplication = useMemo(() => {
+    return {
+      ...application,
+      answers: {
+        ...application.answers,
+        ...values,
+      },
+    }
+  }, [application, values])
+
+  const finalAlertType = useMemo(() => {
+    const maybeAlertType = field.alertType ?? 'default'
+    return typeof maybeAlertType === 'function'
+      ? maybeAlertType(updatedApplication, field, locale)
+      : maybeAlertType
+  }, [updatedApplication, field, locale])
 
   useEffect(() => {
     if (field.shouldBlockInSetBeforeSubmitCallback) {
@@ -70,6 +88,8 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const hasMessage = field.message != null || !!field.links?.length
+
   return (
     showAlertMessage.current && (
       <Box
@@ -77,59 +97,63 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
         marginBottom={field.marginBottom ?? 2}
       >
         <AlertMessage
-          type={field.alertType ?? 'default'}
+          type={finalAlertType}
           title={formatTextWithLocale(
             field.title ?? '',
-            application,
+            updatedApplication,
             locale as Locale,
             formatMessage,
           )}
           message={
-            <Box>
-              <Box component="span" display="block">
-                {field.message != null ? (
-                  <Box component="div" className={divWithSmallText}>
-                    <Markdown>
-                      {formatTextWithLocale(
-                        field.message,
-                        {
-                          ...application,
-                          answers: {
-                            ...application.answers,
-                            ...getValues(),
-                          },
-                        },
-                        locale as Locale,
-                        formatMessage,
-                      )}
-                    </Markdown>
-                  </Box>
-                ) : null}
-              </Box>
-              {field.links && (
-                <Box display="flex" flexWrap="wrap" marginTop={2}>
-                  {field.links.map((link, index) => (
-                    <Box component="span" marginRight={2} key={index}>
-                      <a
-                        href={formatMessage(link.url)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button
-                          variant="text"
-                          icon={link.isExternal ? 'open' : undefined}
-                          iconType={link.isExternal ? 'outline' : undefined}
-                          size="small"
-                          as="span"
-                        >
-                          {formatMessage(link.title)}
-                        </Button>
-                      </a>
+            hasMessage ? (
+              <Box>
+                <Box component="span" display="block">
+                  {field.message != null ? (
+                    <Box component="div" className={divWithSmallText}>
+                      <Markdown options={{ openLinksInNewTab: true }}>
+                        {formatTextWithLocale(
+                          field.message,
+                          updatedApplication,
+                          locale as Locale,
+                          formatMessage,
+                        )}
+                      </Markdown>
                     </Box>
-                  ))}
+                  ) : null}
                 </Box>
-              )}
-            </Box>
+                {field.links && (
+                  <Box display="flex" flexWrap="wrap" marginTop={2}>
+                    {field.links.map((link, index) => (
+                      <Box component="span" marginRight={2} key={index}>
+                        <a
+                          href={formatMessage(link.url)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ textDecoration: 'none' }}
+                        >
+                          <Button
+                            variant="text"
+                            icon={
+                              link.icon ??
+                              (link.isExternal ? 'open' : undefined)
+                            }
+                            iconType={
+                              link.icon || link.isExternal
+                                ? 'outline'
+                                : undefined
+                            }
+                            size="small"
+                            as="span"
+                          >
+                            {formatMessage(link.title)}
+                          </Button>
+                        </a>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+              </Box>
+            ) : undefined
           }
         />
       </Box>

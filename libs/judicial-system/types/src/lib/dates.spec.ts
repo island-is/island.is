@@ -37,6 +37,76 @@ describe('getIndictmentAppealDeadline', () => {
     // Assert
     expect(actualDate).toStrictEqual(endOfDay(new Date(2024, 1, 29)))
   })
+
+  test('should not expire before the last day of the window is over', () => {
+    // Arrange
+    const baseDate = new Date(2024, 1, 1)
+    // The last moment of the last day of the window
+    const mockTodayDate = new Date(2024, 1, 29, 23, 59, 59, 999)
+
+    // Act
+    jest.useFakeTimers().setSystemTime(mockTodayDate)
+    const { isDeadlineExpired } = getIndictmentAppealDeadline({
+      baseDate,
+      isFine: false,
+    })
+
+    // Assert
+    expect(isDeadlineExpired).toBe(false)
+  })
+
+  test('should not expire during the last day when the base date has a timestamp', () => {
+    // Arrange
+    const baseDate = new Date(2024, 1, 1, 14, 30)
+    // Past the time of day the verdict was served, but still the last day
+    const mockTodayDate = new Date(2024, 1, 29, 20, 0)
+
+    // Act
+    jest.useFakeTimers().setSystemTime(mockTodayDate)
+    const { isDeadlineExpired } = getIndictmentAppealDeadline({
+      baseDate,
+      isFine: false,
+    })
+
+    // Assert
+    expect(isDeadlineExpired).toBe(false)
+  })
+
+  test('should expire once the last day of the window is over', () => {
+    // Arrange
+    const baseDate = new Date(2024, 1, 1)
+    const mockTodayDate = new Date(2024, 2, 1, 0, 0, 0, 1)
+
+    // Act
+    jest.useFakeTimers().setSystemTime(mockTodayDate)
+    const { isDeadlineExpired } = getIndictmentAppealDeadline({
+      baseDate,
+      isFine: false,
+    })
+
+    // Assert
+    expect(isDeadlineExpired).toBe(true)
+  })
+
+  test('should expire once the last day of the fine window is over', () => {
+    // Arrange
+    const baseDate = new Date(2024, 1, 1)
+    const mockTodayDate = new Date(2024, 1, 5, 0, 0, 0, 1)
+
+    // Act
+    jest.useFakeTimers().setSystemTime(mockTodayDate)
+    const { isDeadlineExpired } = getIndictmentAppealDeadline({
+      baseDate,
+      isFine: true,
+    })
+
+    // Assert
+    expect(isDeadlineExpired).toBe(true)
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
 })
 
 describe('getAppealDeadlineDate', () => {

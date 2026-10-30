@@ -1,6 +1,7 @@
-import { Dispatch, FC, SetStateAction, useContext } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { SingleValue } from 'react-select'
+import type { SingleValue } from 'react-select'
 
 import { Box, Button, Select } from '@island.is/island-ui/core'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
@@ -10,8 +11,8 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import type { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface InstitutionSelectOption extends ReactSelectOption {

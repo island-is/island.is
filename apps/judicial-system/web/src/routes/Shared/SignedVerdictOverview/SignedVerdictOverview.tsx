@@ -1,5 +1,7 @@
-import { FC, ReactNode, useCallback, useContext, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { FC, ReactNode } from 'react'
+import { useCallback, useContext, useState } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
@@ -22,6 +24,10 @@ import {
   signedVerdictOverview as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
+import type {
+  SignatureType,
+  WorkingCase,
+} from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseFilesOverview,
   AppealRulingModifiedAlert,
@@ -47,31 +53,32 @@ import {
   RulingAccordionItem,
   RulingModifiedAlert,
   SignatureConfirmationModal,
-  SignatureType,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
-import {
-  AppealCaseState,
-  Case,
-  CaseDecision,
-  CaseOrigin,
-  CaseState,
+import type {
   Institution,
   RequestSignatureResponse,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  UpdateCase,
+  AppealCaseState,
+  CaseDecision,
+  CaseOrigin,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
   useAppealCaseBanner,
   useCase,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
-import ShareCase, { InstitutionOption } from './Components/ShareCase/ShareCase'
+import type { InstitutionOption } from './Components/ShareCase/ShareCase'
+import ShareCase from './Components/ShareCase/ShareCase'
 
 interface ModalControls {
   open: boolean
@@ -79,7 +86,7 @@ interface ModalControls {
   text: ReactNode
 }
 
-export const shouldHideNextButton = (workingCase: Case, user?: User) => {
+export const shouldHideNextButton = (workingCase: WorkingCase, user?: User) => {
   // Hide the next button if there is no user
   if (!user) {
     return true
@@ -102,7 +109,7 @@ export const shouldHideNextButton = (workingCase: Case, user?: User) => {
 
 const getNextButtonText = (
   formatMessage: IntlShape['formatMessage'],
-  workingCase: Case,
+  workingCase: WorkingCase,
   user?: User,
 ) =>
   isProsecutionUser(user)
@@ -113,7 +120,7 @@ const getNextButtonText = (
 
 export const getExtensionInfoText = (
   formatMessage: IntlShape['formatMessage'],
-  workingCase: Case,
+  workingCase: WorkingCase,
   user?: User,
 ): string | undefined => {
   if (!isProsecutionUser(user)) {
@@ -410,7 +417,7 @@ export const SignedVerdictOverview: FC = () => {
                 />
               )}
           </Box>
-          <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <div className={stack({ gap: 5 })}>
             {workingCase.caseModifiedExplanation && (
               <AlertMessage
                 type="info"
@@ -504,7 +511,7 @@ export const SignedVerdictOverview: FC = () => {
               </Accordion>
             )}
             <Conclusion
-              title={formatMessage(conclusion.title)}
+              title={conclusion.title}
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
@@ -512,7 +519,7 @@ export const SignedVerdictOverview: FC = () => {
               AppealCaseState.COMPLETED &&
               workingCase.appealCase?.appealConclusion && (
                 <Conclusion
-                  title={formatMessage(conclusion.appealTitle)}
+                  title={conclusion.appealTitle}
                   conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}
@@ -546,10 +553,18 @@ export const SignedVerdictOverview: FC = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            hideNextButton={shouldHideNextButton(workingCase, user)}
-            nextButtonText={getNextButtonText(formatMessage, workingCase, user)}
-            onNextButtonClick={() => handleNextButtonClick()}
-            nextIsLoading={isExtendingCase}
+            actions={
+              shouldHideNextButton(workingCase, user)
+                ? []
+                : [
+                    {
+                      text: getNextButtonText(formatMessage, workingCase, user),
+                      onClick: () => handleNextButtonClick(),
+                      loading: isExtendingCase,
+                      testId: 'continueButton',
+                    },
+                  ]
+            }
             infoBoxText={getExtensionInfoText(formatMessage, workingCase, user)}
           />
         </FormContentContainer>
@@ -557,10 +572,12 @@ export const SignedVerdictOverview: FC = () => {
           <Modal
             title={shareCaseModal.title}
             text={shareCaseModal.text}
-            primaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => setSharedCaseModal(undefined),
-            }}
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => setSharedCaseModal(undefined),
+              },
+            ]}
           />
         )}
         <AnimatePresence>

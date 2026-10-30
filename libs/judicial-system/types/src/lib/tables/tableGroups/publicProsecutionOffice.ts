@@ -58,6 +58,12 @@ const publicProsecutionOfficeIndictmentsTableGroup = {
       description: 'Yfirlesnir dómar með beiðni um áfrýjunarleyfi.',
       includeCounter: true,
     },
+    {
+      type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_CLOSED_WITHOUT_ENFORCEMENT,
+      route: 'lokid-an-fullnustu',
+      title: 'Lokið án fullnustu',
+      description: 'Mál sem hefur verið lokið án fullnustu.',
+    },
   ],
 }
 

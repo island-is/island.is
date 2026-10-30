@@ -1,0 +1,44 @@
+diff --git a/packages/dd-trace/src/external-logger/src/index.js b/packages/dd-trace/src/external-logger/src/index.js
+index c00e519f5eb0d2a6578245db5fa674fe50d90c4f..6840b50ae72dd656bc36419519ab2801bedcfae8 100644
+--- a/packages/dd-trace/src/external-logger/src/index.js
++++ b/packages/dd-trace/src/external-logger/src/index.js
+@@ -83,7 +83,7 @@ class ExternalLogger {
+     let encodedLogs
+ 
+     if (!this.queue.length) {
+-      setImmediate(() => cb())
++      setTimeout(() => cb(), 0)
+       return
+     }
+ 
+@@ -95,7 +95,7 @@ class ExternalLogger {
+       encodedLogs = JSON.stringify(logs)
+     } catch (error) {
+       tracerLogger.error(`failed to encode ${numLogs} logs`)
+-      setImmediate(() => cb(error))
++      setTimeout(() => cb(error), 0)
+       return
+     }
+ 
+diff --git a/packages/dd-trace/src/telemetry/dependencies.js b/packages/dd-trace/src/telemetry/dependencies.js
+index dbdac5823246e6f31648607577d1df981cd94207..1d340f64520cc067a66e1822033e9011f991ecea 100644
+--- a/packages/dd-trace/src/telemetry/dependencies.js
++++ b/packages/dd-trace/src/telemetry/dependencies.js
+@@ -22,7 +22,7 @@ let getRetryData
+ let updateRetryData
+ 
+ function waitAndSend (config, application, host) {
+-  setImmediate(() => {
++  setTimeout(() => {
+     if (savedDependenciesToSend.size === 0) {
+       return
+     }
+@@ -75,7 +75,7 @@ function waitAndSend (config, application, host) {
+     if (savedDependenciesToSend.size > 0) {
+       waitAndSend(config, application, host)
+     }
+-  }).unref?.()
++  }, 0).unref?.()
+ }
+ 
+ function loadAllTheLoadedModules () {

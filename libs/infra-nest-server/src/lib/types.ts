@@ -76,9 +76,10 @@ export type RunServerOptions = {
   healthCheck?: boolean | HealthCheckOptions
 
   /**
-   * Enables CORS (Cross-Origin Resource Sharing)
+   * Enables CORS (Cross-Origin Resource Sharing). When `path` is set, CORS is
+   * applied to matching routes only instead of the whole app.
    */
-  enableCors?: CorsOptions
+  enableCors?: CorsOptions & { path?: string | string[] }
 
   /**
    * Hook to run before app is initialized.

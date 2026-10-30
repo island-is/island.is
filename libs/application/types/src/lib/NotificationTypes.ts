@@ -41,6 +41,8 @@ export enum NotificationType {
   HmsHousingBenefitsRejectedByInstitution = 'HmsHousingBenefitsRejectedByInstitutionNotification',
   HmsHousingBenefitsPruneReminder = 'HmsHousingBenefitsPruneReminderNotification',
   HmsHousingBenefitsPruned = 'HmsHousingBenefitsPrunedNotification',
+  ApplicationPruneReminder = 'ApplicationPruneReminderNotification',
+  ApplicationPeriodEndingReminder = 'ApplicationPeriodEndingReminderNotification',
   ParentalLeaveRejected = 'ParentalLeaveRejectedNotification',
 }
 
@@ -151,7 +153,7 @@ interface NotificationKeysMap {
 }
 
 const defineNotificationConfig = <
-  T extends Record<NotificationType, { templateId: string }>,
+  T extends Record<NotificationType, { templateId: string }>
 >(
   config: T,
 ) => config
@@ -281,6 +283,12 @@ export const NotificationConfig = defineNotificationConfig({
   [NotificationType.HmsHousingBenefitsPruned]: {
     templateId: 'HNIPP.AS.HMS.HB.PRUNED',
   },
+  [NotificationType.ApplicationPruneReminder]: {
+    templateId: 'HNIPP.AS.PRUNE.REMINDER',
+  },
+  [NotificationType.ApplicationPeriodEndingReminder]: {
+    templateId: 'HNIPP.AS.PERIOD.ENDING.REMINDER',
+  },
   [NotificationType.ParentalLeaveRejected]: {
     templateId: 'HNIPP.AS.PL.REJECTED',
   },
@@ -288,7 +296,8 @@ export const NotificationConfig = defineNotificationConfig({
 
 export type NotificationConfigType = typeof NotificationConfig
 export type NotificationTypeKey = keyof NotificationConfigType
-export type NotificationArgs<T extends NotificationType> =
-  T extends keyof NotificationKeysMap
-    ? NotificationKeysMap[T]
-    : Record<string, never>
+export type NotificationArgs<
+  T extends NotificationType
+> = T extends keyof NotificationKeysMap
+  ? NotificationKeysMap[T]
+  : Record<string, never>

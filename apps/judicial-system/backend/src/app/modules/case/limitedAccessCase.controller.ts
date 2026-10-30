@@ -11,7 +11,6 @@ import {
   Inject,
   Param,
   Patch,
-  Query,
   Res,
   UseGuards,
   UseInterceptors,
@@ -27,7 +26,6 @@ import {
   JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
-  TokenGuard,
 } from '@island.is/judicial-system/auth'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
@@ -44,9 +42,10 @@ import {
 
 import { nowFactory } from '../../factories'
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
+import { getOrCreateTransaction } from '../../middleware'
 import { EventService } from '../event'
 import { getDefenceUserVisiblePoliceCaseNumbers } from '../file'
-import { Case, CivilClaimant, Defendant, User } from '../repository'
+import { Case, CivilClaimant, Defendant } from '../repository'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
@@ -55,6 +54,7 @@ import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
+import { LimitedAccessCaseExistsForUpdateGuard } from './guards/limitedAccessCaseExistsForUpdate.guard'
 import { MergedCaseExistsGuard } from './guards/mergedCaseExists.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import {
@@ -119,10 +119,13 @@ export class LimitedAccessCaseController {
     return theCase
   }
 
+  // The rule decides from the user and the body, never from the case, so
+  // RolesGuard stays ahead of the locking read and an unauthorized caller
+  // takes no lock on the case row.
   @UseGuards(
     JwtAuthUserGuard,
     RolesGuard,
-    LimitedAccessCaseExistsGuard,
+    LimitedAccessCaseExistsForUpdateGuard,
     new CaseTypeGuard([
       ...restrictionCases,
       ...investigationCases,
@@ -135,35 +138,26 @@ export class LimitedAccessCaseController {
   @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId/limitedAccess')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
-  update(
+  async update(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: TUser,
     @CurrentCase() theCase: Case,
     @Body() updateDto: UpdateCaseDto,
   ): Promise<Case> {
     this.logger.debug(`Updating case ${caseId}`)
-    return this.sequelize.transaction((transaction) =>
-      this.limitedAccessCaseService.update(
-        theCase,
-        updateDto,
-        user,
-        transaction,
-      ),
+
+    // The transaction LimitedAccessCaseExistsForUpdateGuard opened, holding
+    // the lock on this case row. Opening one here instead would block on
+    // that lock while it waits for this handler to return, which is a
+    // deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.limitedAccessCaseService.update(
+      theCase,
+      updateDto,
+      user,
+      transaction,
     )
-  }
-
-  @UseGuards(TokenGuard)
-  @Get('cases/limitedAccess/defender')
-  @ApiOkResponse({
-    type: User,
-    description: 'Gets a defender by national id',
-  })
-  findDefenderByNationalId(
-    @Query('nationalId') nationalId: string,
-  ): Promise<User> {
-    this.logger.debug(`Getting a defender by national id`)
-
-    return this.limitedAccessCaseService.findDefenderByNationalId(nationalId)
   }
 
   @UseGuards(

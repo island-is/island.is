@@ -1,13 +1,10 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams, useRouter } from 'next/navigation'
 
-import {
-  Box,
-  FileUploadStatus,
-  InputFileUpload,
-  UploadFile,
-} from '@island.is/island-ui/core'
+import type { UploadFile } from '@island.is/island-ui/core'
+import { FileUploadStatus, InputFileUpload } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { core, errors } from '@island.is/judicial-system-web/messages'
 import {
@@ -120,58 +117,70 @@ const SendToPrisonAdmin: FC = () => {
       notFound={caseNotFound}
       isValid={true}
     >
-      <PageHeader title={formatMessage(strings.title)} />
+      <PageHeader title={strings.title} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <SectionHeading
           heading="h2"
-          title={formatMessage(strings.fileUploadTitle)}
-          description={formatMessage(strings.fileUploadDescription)}
+          title={strings.fileUploadTitle}
+          description={strings.fileUploadDescription}
         />
-        <Box marginBottom={10}>
-          <InputFileUpload
-            name="sentToPrisonAdminFileUpload"
-            files={uploadFiles.filter(
-              (file) =>
-                file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
-            )}
-            accept="application/pdf"
-            title={formatMessage(core.uploadBoxTitle)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-            onChange={handleFileUpload}
-            onRemove={handleRemoveFile}
-            onOpenFile={(file) => onOpenFile(file)}
-          />
-        </Box>
+        <InputFileUpload
+          name="sentToPrisonAdminFileUpload"
+          files={uploadFiles.filter(
+            (file) =>
+              file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+          )}
+          accept="application/pdf"
+          title={formatMessage(core.uploadBoxTitle)}
+          description={formatMessage(core.uploadBoxDescription, {
+            fileEndings: '.pdf',
+          })}
+          buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+          onChange={handleFileUpload}
+          onRemove={handleRemoveFile}
+          onOpenFile={(file) => onOpenFile(file)}
+        />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
-          nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={handleNextButtonClick}
+          actions={[
+            {
+              text: strings.nextButtonText,
+              icon: 'arrowForward',
+              onClick: handleNextButtonClick,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {modalVisible === AvailableModal.SUCCESS && defendant && (
         <Modal
-          title={formatMessage(strings.modalTitle)}
-          text={formatMessage(strings.modalText, {
-            courtCaseNumber: workingCase.courtCaseNumber,
-            defendant: defendant.name,
-          })}
-          primaryButton={{
-            text: formatMessage(strings.modalNextButtonText),
-            onClick: handlePrimaryButtonClick,
-            isLoading: isUpdatingDefendant,
-          }}
-          secondaryButton={{
-            text: formatMessage(core.back),
-            onClick: handleSecondaryButtonClick,
-          }}
+          title={strings.modalTitle}
+          text={formatMessage(
+            {
+              id: strings.modalText,
+              defaultMessage: strings.modalText,
+            },
+            {
+              courtCaseNumber: workingCase.courtCaseNumber,
+              defendant: defendant.name,
+            },
+          )}
+          buttons={[
+            {
+              text: formatMessage(core.back),
+              onClick: handleSecondaryButtonClick,
+              variant: 'ghost',
+            },
+            {
+              text: strings.modalNextButtonText,
+              onClick: handlePrimaryButtonClick,
+              isLoading: isUpdatingDefendant,
+            },
+          ]}
           onClose={handleSecondaryButtonClick}
           loading={isUpdatingDefendant}
           errorMessage={uploadFileError}

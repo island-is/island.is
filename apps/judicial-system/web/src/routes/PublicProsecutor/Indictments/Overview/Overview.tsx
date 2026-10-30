@@ -1,16 +1,23 @@
-import { useCallback, useContext, useMemo, useState } from 'react'
+import { type JSX, useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Option } from '@island.is/island-ui/core'
+import type { Option } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
+import {
+  canDefendantAppealVerdict,
+  Feature,
+  isPublicProsecutionOfficeUser,
+  isRulingOrDismissalCase,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
   AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -22,27 +29,32 @@ import {
   PageTitle,
   RulingModifiedAlert,
   UserContext,
+  VerdictAppealFiles,
   VerdictTimelineCard,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   AppealCaseState,
   CaseIndictmentRulingDecision,
-  ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-
+import type { ModalId } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import {
+  APPEAL_PROSECUTOR_ASSIGNED,
+  isAppealProsecutorAssignedModal,
   isReviewerAssignedModal,
-  ModalId,
   REVIEWER_ASSIGNED,
-} from '../../components/utils'
+} from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+
+import { AppealProsecutorSelector } from './AppealProsecutorSelector'
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
+import { getPublicProsecutorOverviewAssignMode } from './Overview.logic'
 import { strings } from './Overview.strings'
 
 export const Overview = () => {
   const { user } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
   const { updateCase } = useCase()
@@ -51,19 +63,16 @@ export const Overview = () => {
 
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
+  const [selectedAppealProsecutor, setSelectedAppealProsecutor] =
+    useState<Option<string> | null>()
 
   const [confirmationModal, setConfirmationModal] = useState<
     ModalId | undefined
   >()
 
-  // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
-  // Defendants whose indictment was cancelled or dismissed (completed for some)
-  // do not receive a verdict, so no review decision is required for them.
-  const isReviewMissing = workingCase.defendants?.some(
-    (defendant) =>
-      !defendant.indictmentCancelledOrDismissedState &&
-      !defendant.indictmentReviewDecision,
-  )
+  const assignMode = isPublicProsecutionOfficeUser(user)
+    ? getPublicProsecutorOverviewAssignMode(workingCase)
+    : 'none'
 
   const assignReviewer = async () => {
     if (!selectedIndictmentReviewer) {
@@ -77,6 +86,20 @@ export const Overview = () => {
     }
 
     setConfirmationModal(REVIEWER_ASSIGNED)
+  }
+
+  const assignAppealProsecutor = async () => {
+    if (!selectedAppealProsecutor) {
+      return
+    }
+    const updatedCase = await updateCase(workingCase.id, {
+      appealProsecutorId: selectedAppealProsecutor.value,
+    })
+    if (!updatedCase) {
+      return
+    }
+
+    setConfirmationModal(APPEAL_PROSECUTOR_ASSIGNED)
   }
 
   const handleNavigationTo = useCallback(
@@ -98,20 +121,11 @@ export const Overview = () => {
 
         const { verdict } = defendant
 
-        const isServiceRequired =
-          verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+        const canAppealVerdict = canDefendantAppealVerdict(verdict)
 
-        const isServiceNotApplicable =
-          verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
-
-        const canDefendantAppealVerdict = !!(
-          verdict &&
-          !verdict.isDefaultJudgement &&
-          (isServiceNotApplicable ||
-            (isServiceRequired && !!verdict.serviceDate))
-        )
-
-        if (verdict) {
+        // Service and appeal alerts are noise for defendants whose case was
+        // closed without enforcement.
+        if (verdict && !defendant.isClosedWithoutEnforcement) {
           acc.verdictStatusAlerts.push(
             <VerdictStatusAlert
               key={`${defendant.id}_verdict_status_alert`}
@@ -128,7 +142,7 @@ export const Overview = () => {
           >
             <VerdictTimelineCard
               defendant={defendant}
-              canDefendantAppealVerdict={canDefendantAppealVerdict}
+              canDefendantAppealVerdict={canAppealVerdict}
             />
           </Box>,
         )
@@ -156,10 +170,10 @@ export const Overview = () => {
         })}
       />
       <FormContentContainer>
-        <PageTitle>{fm(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
-          <div className={grid({ gap: 2 })}>{verdictStatusAlerts}</div>
+        <div className={stack({ gap: 5 })}>
+          <div className={stack({ gap: 2 })}>{verdictStatusAlerts}</div>
           {verdictTimelineCards}
           <AppealRulingModifiedAlert />
           <RulingModifiedAlert />
@@ -188,13 +202,23 @@ export const Overview = () => {
                 conclusionText={workingCase.appealCase?.appealConclusion}
               />
             )}
+          {features.includes(Feature.INDICTMENT_APPEAL) && (
+            <VerdictAppealFiles />
+          )}
           <AllIndictmentCaseFiles />
           <Box component="section">
-            {isReviewMissing && (
+            {assignMode === 'reviewer' && (
               <IndictmentReviewerSelector
                 workingCase={workingCase}
                 selectedIndictmentReviewer={selectedIndictmentReviewer}
                 setSelectedIndictmentReviewer={setSelectedIndictmentReviewer}
+              />
+            )}
+            {assignMode === 'appealProsecutor' && (
+              <AppealProsecutorSelector
+                workingCase={workingCase}
+                selectedAppealProsecutor={selectedAppealProsecutor}
+                setSelectedAppealProsecutor={setSelectedAppealProsecutor}
               />
             )}
           </Box>
@@ -202,31 +226,67 @@ export const Overview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={getStandardUserDashboardRoute(user)}
-          hideNextButton={!isReviewMissing}
-          nextIsLoading={isLoadingWorkingCase}
-          nextIsDisabled={
-            !selectedIndictmentReviewer ||
-            selectedIndictmentReviewer.value ===
-              workingCase.indictmentReviewer?.id ||
-            isLoadingWorkingCase
+          actions={
+            assignMode === 'none'
+              ? []
+              : [
+                  {
+                    text: fm(core.continue),
+                    icon: 'arrowForward',
+                    onClick:
+                      assignMode === 'appealProsecutor'
+                        ? assignAppealProsecutor
+                        : assignReviewer,
+                    disabled:
+                      assignMode === 'appealProsecutor'
+                        ? !selectedAppealProsecutor ||
+                          selectedAppealProsecutor.value ===
+                            workingCase.appealProsecutor?.id ||
+                          isLoadingWorkingCase
+                        : !selectedIndictmentReviewer ||
+                          selectedIndictmentReviewer.value ===
+                            workingCase.indictmentReviewer?.id ||
+                          isLoadingWorkingCase,
+                    loading: isLoadingWorkingCase,
+                    testId: 'continueButton',
+                  },
+                ]
           }
-          onNextButtonClick={assignReviewer}
-          nextButtonText={fm(core.continue)}
         />
       </FormContentContainer>
       {isReviewerAssignedModal(confirmationModal) && (
         <Modal
-          title={fm(strings.reviewerAssignedModalTitle)}
-          text={fm(strings.reviewerAssignedModalText, {
-            caseNumber: workingCase.courtCaseNumber,
-            reviewer: selectedIndictmentReviewer?.label,
-          })}
-          secondaryButton={{
-            text: fm(core.back),
-            onClick: () => router.push(getStandardUserDashboardRoute(user)),
-          }}
+          title={strings.reviewerAssignedModalTitle}
+          text={fm(
+            {
+              id: strings.reviewerAssignedModalText,
+              defaultMessage: strings.reviewerAssignedModalText,
+            },
+            {
+              caseNumber: workingCase.courtCaseNumber,
+            },
+          )}
+          buttons={[
+            {
+              text: fm(core.back),
+              onClick: () => router.push(getStandardUserDashboardRoute(user)),
+              variant: 'ghost',
+            },
+          ]}
+        />
+      )}
+      {isAppealProsecutorAssignedModal(confirmationModal) && (
+        <Modal
+          title="Úthlutun áfrýjunarmáls tókst"
+          text="Áfrýjunarmáli hefur verið úthlutað á saksóknara."
+          buttons={[
+            {
+              text: fm(core.back),
+              onClick: () => router.push(getStandardUserDashboardRoute(user)),
+              variant: 'ghost',
+            },
+          ]}
         />
       )}
     </PageLayout>

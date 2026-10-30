@@ -1,17 +1,17 @@
-import { Dispatch, SetStateAction, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type { Dispatch, SetStateAction } from 'react'
+import { useState } from 'react'
 import { InputMask } from '@react-input/mask'
 
 import { Box, Input } from '@island.is/island-ui/core'
 import { SPEED } from '@island.is/judicial-system/consts'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
-import {
-  Case,
+import type {
   IndictmentCount,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { removeErrorMessageIfValid } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
+import type {
   UpdateIndictmentCount,
   UpdateIndictmentCountState,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -24,7 +24,7 @@ export const SpeedingOffenseFields = ({
   handleIndictmentCountChanges,
   updateIndictmentCountState,
 }: {
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   indictmentCount: IndictmentCount
   handleIndictmentCountChanges: (
     update: UpdateIndictmentCount,
@@ -33,11 +33,9 @@ export const SpeedingOffenseFields = ({
   updateIndictmentCountState: (
     indictmentCountId: string,
     update: UpdateIndictmentCountState,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => void
 }) => {
-  const { formatMessage } = useIntl()
-
   const [recordedSpeedErrorMessage, setRecordedSpeedErrorMessage] =
     useState<string>('')
   const [speedLimitErrorMessage, setSpeedLimitErrorMessage] =
@@ -45,7 +43,7 @@ export const SpeedingOffenseFields = ({
   return (
     <Box marginBottom={2}>
       <SectionHeading
-        title={formatMessage(strings.speedingTitle)}
+        title={strings.speedingTitle}
         heading="h4"
         marginBottom={2}
       />
@@ -81,9 +79,10 @@ export const SpeedingOffenseFields = ({
 
             handleIndictmentCountChanges({ recordedSpeed })
           }}
+          id={`recordedSpeed-${indictmentCount.id}`}
           name="recordedSpeed"
           autoComplete="off"
-          label={formatMessage(strings.recordedSpeedLabel)}
+          label={strings.recordedSpeedLabel}
           placeholder="0"
           required
           errorMessage={recordedSpeedErrorMessage}
@@ -121,9 +120,10 @@ export const SpeedingOffenseFields = ({
 
           handleIndictmentCountChanges({ speedLimit })
         }}
+        id={`speedLimit-${indictmentCount.id}`}
         name="speedLimit"
         autoComplete="off"
-        label={formatMessage(strings.speedLimitLabel)}
+        label={strings.speedLimitLabel}
         placeholder="0"
         required
         errorMessage={speedLimitErrorMessage}

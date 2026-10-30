@@ -1,55 +1,73 @@
-import { FC, Fragment, useCallback, useContext } from 'react'
+import type { FC } from 'react'
+import { Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
-import { DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE } from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE,
+  DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE,
+  getStandardUserDashboardRoute,
+} from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  Feature,
   isCompletedCase,
   isRulingOrDismissalCase,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components'
 import {
   AllIndictmentCaseFiles,
   AlternativeServiceAnnouncement,
   AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
+  DefenderVerdictTimelineCard,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
   IndictmentCaseScheduledCard,
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
+  Modal,
   PageHeader,
   PageLayout,
   PageTitle,
   RulingModifiedAlert,
   serviceAnnouncementsStrings,
   UserContext,
+  VerdictAppealFiles,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
+import { hasVerdictServiceDecision } from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/DefenderVerdictTimelineCard.logic'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
+import type {
+  Defendant,
+  Subpoena,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
+  AppealCaseTransition,
   CaseIndictmentRulingDecision,
   CaseState,
-  Defendant,
   IndictmentDecision,
   ServiceStatus,
-  Subpoena,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import {
+  useAppealCase,
+  useAppealCaseBanner,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isCaseCivilClaimantSpokesperson,
   isCaseDefendantDefender,
   shouldDisplayGeneratedPdfFiles,
 } from '@island.is/judicial-system-web/src/utils/utils'
+
+import { getVerdictAppealAction } from './verdictAppealActions.logic'
 
 interface ServiceAnnouncementProps {
   defendant: Defendant
@@ -58,12 +76,9 @@ interface ServiceAnnouncementProps {
 
 const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   const { defendant, subpoena } = props
-  const { formatMessage } = useIntl()
 
   const getTitle = (defendantName?: string | null): string => {
-    const successMessage = formatMessage(
-      serviceAnnouncementsStrings.serviceStatusSuccess,
-    )
+    const successMessage = serviceAnnouncementsStrings.serviceStatusSuccess
 
     return defendantName
       ? `${successMessage} - ${defendantName}`
@@ -99,13 +114,18 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 }
 
 const IndictmentOverview: FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound, refreshCase } =
     useContext(FormContext)
 
   const { user } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { appealBanner, appealModals } = useAppealCaseBanner()
+  const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
+  // The defendant whose verdict appeal the user is about to withdraw, while the
+  // confirmation is open.
+  const [withdrawingAppealFor, setWithdrawingAppealFor] = useState<Defendant>()
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
@@ -120,6 +140,15 @@ const IndictmentOverview: FC = () => {
     (isCaseDefendantDefender(user, workingCase) ||
       isCaseCivilClaimantSpokesperson(user, workingCase))
 
+  // Defence users get the same verdict service and appeal information the
+  // public prosecution office has, but only on a case that ended in a verdict -
+  // there is no verdict timeline to show for a fine or a dismissal. Each
+  // defendant's card also waits for the public prosecution office to decide
+  // whether that verdict must be served (hasVerdictServiceDecision).
+  const displayVerdictTimeline =
+    caseIsClosed &&
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
   const shouldDisplayAppealBanner =
     workingCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.DISMISSAL &&
@@ -132,6 +161,67 @@ const IndictmentOverview: FC = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
+
+  // The one appeal action the verdict timeline card offers for a defendant:
+  // file a verdict appeal, or take back the one this defender filed. Which, if either,
+  // is decided by getVerdictAppealAction.
+  const getVerdictTimelineMenuItems = (
+    defendant: Defendant,
+  ): ContextMenuItem[] => {
+    const action = getVerdictAppealAction(
+      workingCase,
+      defendant,
+      user,
+      features.includes(Feature.INDICTMENT_APPEAL),
+    )
+
+    switch (action) {
+      case 'APPEAL':
+        return [
+          {
+            title: 'Áfrýja dómi',
+            onClick: () =>
+              router.push(
+                `${DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE}/${workingCase.id}?defendantId=${defendant.id}`,
+              ),
+          },
+        ]
+      case 'WITHDRAW':
+        return [
+          {
+            title: 'Afturkalla áfrýjun',
+            onClick: () => setWithdrawingAppealFor(defendant),
+          },
+        ]
+      default:
+        return []
+    }
+  }
+
+  const handleWithdrawVerdictAppeal = async () => {
+    const appealCaseId = workingCase.verdictAppealCase?.id
+
+    if (!withdrawingAppealFor || !appealCaseId) {
+      return
+    }
+
+    const withdrawn = await transitionAppealCase(
+      workingCase.id,
+      appealCaseId,
+      AppealCaseTransition.WITHDRAW_APPEAL,
+      undefined,
+      withdrawingAppealFor.id,
+    )
+
+    if (!withdrawn) {
+      return
+    }
+
+    setWithdrawingAppealFor(undefined)
+    // The card reads the per-defendant appeal date off the verdict, which the
+    // backend clears on withdrawal, so the whole case is reloaded.
+    refreshCase()
+  }
 
   return (
     <>
@@ -182,31 +272,50 @@ const IndictmentOverview: FC = () => {
                 </Box>
               ),
           )}
-          {workingCase.defendants?.map((defendant) => (
-            <Fragment key={defendant.id}>
-              {defendant.alternativeServiceDescription && (
-                <AlternativeServiceAnnouncement
-                  alternativeServiceDescription={
-                    defendant.alternativeServiceDescription
-                  }
-                  defendantName={defendant.name}
-                />
-              )}
-              {defendant.subpoenas
-                ?.filter((subpoena) =>
-                  isSuccessfulServiceStatus(subpoena.serviceStatus),
-                )
-                .map((subpoena) => (
-                  <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
-                    <ServiceAnnouncement
+          {displayVerdictTimeline &&
+            workingCase.defendants?.map(
+              (defendant) =>
+                defendant.verdict &&
+                hasVerdictServiceDecision(defendant.verdict) && (
+                  <Box
+                    key={`${defendant.id}${defendant.verdict.id}-timeline`}
+                    marginBottom={2}
+                    dataTestId="defenderVerdictTimelineCard"
+                  >
+                    <DefenderVerdictTimelineCard
                       defendant={defendant}
-                      subpoena={subpoena}
+                      verdictAppealCase={workingCase.verdictAppealCase}
+                      contextMenuItems={getVerdictTimelineMenuItems(defendant)}
                     />
                   </Box>
-                ))}
-            </Fragment>
-          ))}
-          <div className={grid({ gap: 5, marginBottom: 10 })}>
+                ),
+            )}
+          {!caseIsClosed &&
+            workingCase.defendants?.map((defendant) => (
+              <Fragment key={defendant.id}>
+                {defendant.alternativeServiceDescription && (
+                  <AlternativeServiceAnnouncement
+                    alternativeServiceDescription={
+                      defendant.alternativeServiceDescription
+                    }
+                    defendantName={defendant.name}
+                  />
+                )}
+                {defendant.subpoenas
+                  ?.filter((subpoena) =>
+                    isSuccessfulServiceStatus(subpoena.serviceStatus),
+                  )
+                  .map((subpoena) => (
+                    <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
+                      <ServiceAnnouncement
+                        defendant={defendant}
+                        subpoena={subpoena}
+                      />
+                    </Box>
+                  ))}
+              </Fragment>
+            ))}
+          <div className={stack({ gap: 5 })}>
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
             {caseHasBeenReceivedByCourt &&
@@ -232,15 +341,7 @@ const IndictmentOverview: FC = () => {
               )}
             <Box component="section">
               {caseIsClosed ? (
-                <InfoCardClosedIndictment
-                  displayAppealExpirationInfo={
-                    workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.RULING &&
-                    (user?.role === UserRole.DEFENDER ||
-                      workingCase.indictmentReviewer?.id === user?.id)
-                  }
-                  displayVerdictViewDate
-                />
+                <InfoCardClosedIndictment />
               ) : (
                 <InfoCardActiveIndictment displayVerdictViewDate />
               )}
@@ -266,6 +367,7 @@ const IndictmentOverview: FC = () => {
                   conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}
+            {displayVerdictTimeline && <VerdictAppealFiles />}
             <AllIndictmentCaseFiles
               displayGeneratedPDFs={displayGeneratedPDFs}
               forceDisplayAdditionalFiles={canAddFiles}
@@ -296,12 +398,30 @@ const IndictmentOverview: FC = () => {
           </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
-          <FormFooter
-            previousUrl={getStandardUserDashboardRoute(user)}
-            hideNextButton
-          />
+          <FormFooter previousUrl={getStandardUserDashboardRoute(user)} />
         </FormContentContainer>
         {appealModals}
+        {withdrawingAppealFor && (
+          <Modal
+            title="Afturkalla áfrýjun"
+            text={`Ertu viss um að þú viljir afturkalla áfrýjun dóms fyrir ${
+              withdrawingAppealFor.name ?? 'dómfellda'
+            }?`}
+            buttons={[
+              {
+                text: 'Hætta við',
+                onClick: () => setWithdrawingAppealFor(undefined),
+                variant: 'ghost',
+              },
+              {
+                text: 'Afturkalla',
+                onClick: handleWithdrawVerdictAppeal,
+                colorScheme: 'destructive',
+                isLoading: isTransitioningAppealCase,
+              },
+            ]}
+          />
+        )}
       </PageLayout>
     </>
   )

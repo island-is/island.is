@@ -26,6 +26,27 @@ export const m = defineMessages({
     defaultMessage: 'Nýtt',
     description: 'New',
   },
+  exportForm: {
+    id: 'form.system:export-form',
+    defaultMessage: 'Flytja út',
+    description: 'Export',
+  },
+  importForm: {
+    id: 'form.system:import-form',
+    defaultMessage: 'Flytja inn',
+    description: 'Import',
+  },
+  exportFormError: {
+    id: 'form.system:export-form-error',
+    defaultMessage: 'Ekki tókst að flytja út eyðublað.',
+    description: 'Form export failed',
+  },
+  importFormError: {
+    id: 'form.system:import-form-error',
+    defaultMessage:
+      'Ekki tókst að flytja inn eyðublað. Athugaðu skrána og stillingar stofnunar.',
+    description: 'Form import failed',
+  },
   newApplication: {
     id: 'form.system:new-application',
     defaultMessage: 'Ný umsókn',
@@ -162,6 +183,27 @@ export const m = defineMessages({
     defaultMessage: 'Birta yfirlit áður en umsókn er send inn',
     description: 'Display summary before submission',
   },
+  enableApplicationPdfDownload: {
+    id: 'form.system:enable-application-pdf-download',
+    defaultMessage: 'Leyfa notanda að hlaða niður umsókn sem PDF',
+    description: 'Allow the user to download the application as a PDF',
+  },
+  downloadApplicationPdf: {
+    id: 'form.system:download-application-pdf',
+    defaultMessage: 'Sækja PDF',
+    description: 'Download PDF',
+  },
+  applicationPdfDownloadDescription: {
+    id: 'form.system:application-pdf-download-description',
+    defaultMessage:
+      'Þú getur sótt umsóknina á PDF með því að smella á hnappinn',
+    description: 'Application PDF download instructions',
+  },
+  applicationPdfDownloadError: {
+    id: 'form.system:application-pdf-download-error',
+    defaultMessage: 'Ekki tókst að sækja PDF. Vinsamlegast reyndu aftur.',
+    description: 'Failed to download the application PDF. Please try again.',
+  },
   payment: {
     id: 'form.system:payment',
     defaultMessage: 'Greiðsla',
@@ -254,10 +296,10 @@ export const m = defineMessages({
     defaultMessage: 'Einstaklingur í umboði lögaðila',
     description: 'Individual on behalf of a legal entity',
   },
-  legalGuardianOnBehalfOfIndividual: {
-    id: 'form.system:legal-guardian-on-behalf-of-individual',
-    defaultMessage: 'Forsjáraðili í umboði einstaklings',
-    description: 'Legal guardian on behalf of an individual',
+  legalGuardian: {
+    id: 'form.system:legal-guardian',
+    defaultMessage: 'Forsjáraðili',
+    description: 'Legal guardian',
   },
   individualWithPowerOfAttorney: {
     id: 'form.system:individual-with-power-of-attorney',
@@ -432,8 +474,8 @@ export const m = defineMessages({
   },
   submitUrls: {
     id: 'form.system:submitUrls',
-    defaultMessage: 'Veldu slóð',
-    description: 'Choose URL',
+    defaultMessage: 'Veldu slóð á vefþjónustu eða málakerfi',
+    description: 'Choose a URL for a web service or case management system',
   },
   permissions: {
     id: 'form.system:permissions',
@@ -663,6 +705,16 @@ export const m = defineMessages({
     defaultMessage: 'Afrita',
     description: 'Copy',
   },
+  copyToDifferentOrganization: {
+    id: 'form.system:copy-to-different-organization',
+    defaultMessage: 'Afrita á aðra stofnun',
+    description: 'Copy to different organization',
+  },
+  copyToDifferentOrganizationSuccess: {
+    id: 'form.system:copy-to-different-organization-success',
+    defaultMessage: 'Formið hefur verið afritað á {organization}',
+    description: 'Form copied to organization success message',
+  },
   publish: {
     id: 'form.system:publish',
     defaultMessage: 'Gefa út',
@@ -811,6 +863,11 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: 'National ID',
   },
+  maritalStatus: {
+    id: 'form.system:marital-status',
+    defaultMessage: 'Hjúskaparstaða',
+    description: 'Marital status',
+  },
   basicErrorMessage: {
     id: 'form.system:basic-error-message',
     defaultMessage: 'Villa kom upp',
@@ -844,6 +901,13 @@ export const m = defineMessages({
     defaultMessage: 'Ógild kennitala',
     description: 'Invalid national ID',
   },
+  nationalIdLookupFailed: {
+    id: 'form.system:national-id-lookup-failed',
+    defaultMessage:
+      'Leitin skilaði ekki niðurstöðu. Kennitala fannst ekki eða þjónusta ekki tiltæk.',
+    description:
+      'The search yielded no results. The ID number was not found, or the service is unavailable.',
+  },
   invalidPhoneNumber: {
     id: 'form.system:invalid-phone-number',
     defaultMessage: 'Ógilt símanúmer',
@@ -853,6 +917,11 @@ export const m = defineMessages({
     id: 'form.system:invalid-property-number',
     defaultMessage: 'Ógilt fasteignanúmer',
     description: 'Invalid property number',
+  },
+  propertySearchFailed: {
+    id: 'form.system:property-search-failed',
+    defaultMessage: 'Leit að fasteign skilaði ekki niðurstöðu',
+    description: 'Property search did not return a successful response',
   },
   pickHour: {
     id: 'form.system:pick-hour',
@@ -866,15 +935,18 @@ export const m = defineMessages({
   },
   reviewApplication: {
     id: 'form.system:review-application',
-    defaultMessage:
-      'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
-    description: 'Please review the application before submitting it.',
+    defaultMessage: 'Vinsamlega farðu vel yfir áður en þú sendir inn umsókn.',
+    description: 'Please review before submitting the application.',
+  },
+  reviewApplication2: {
+    id: 'form.system:review-application-2',
+    defaultMessage: 'Vinsamlega farðu vel yfir áður en þú sendir inn.',
+    description: 'Please review before submitting.',
   },
   externalDataTitle: {
     id: 'form.system:external-data-title',
-    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
-    description:
-      'The following data will be retrieved electronically with your consent',
+    defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
+    description: 'The following information will be retrieved electronically',
   },
   externalDataHeader: {
     id: 'form.system:external-data-header',
@@ -888,30 +960,29 @@ export const m = defineMessages({
   },
   externalDataAgreement: {
     id: 'form.system:externalData.agreement',
-    defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
-    description: 'I have read the above regarding data collection',
+    defaultMessage: 'Ég skil að ofangreindra upplýsinga verði aflað',
+    description:
+      'I understand that the above-mentioned information will be collected',
   },
   icelandicRegistryTitle: {
     id: 'form.system:icelandic-registry-title',
-    defaultMessage: 'Upplýsingar úr Þjóðskrá',
-    description: 'Icelandic registry',
+    defaultMessage: 'Upplýsingar frá Þjóðskrá',
+    description: 'Information from Registers Iceland',
   },
   icelandicRegistryDescription: {
     id: 'form.system:icelandic-registry-description',
-    defaultMessage: 'Upplýsingar um þig',
-    description: 'Information about you',
+    defaultMessage: 'Upplýsingar um nafn, kennitölu og lögheimili',
+    description: 'Information regarding name, National ID, and legal domicile',
   },
   myPagesTitle: {
     id: 'form.system:my-pages-title',
-    defaultMessage: 'Mínar upplýsingar á Mínum síðum Ísland.is',
-    description: 'My information on My Pages on Ísland.is',
+    defaultMessage: 'Upplýsingar frá Ísland.is',
+    description: 'Information from Ísland.is',
   },
   myPagesDescription: {
     id: 'form.system:my-pages-description',
-    defaultMessage:
-      'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
-    description:
-      'Information about phone number and email to facilitate the application process',
+    defaultMessage: 'Upplýsingar um símanúmer og netfang',
+    description: 'Information on phone number and email address',
   },
   continue: {
     id: 'form.system:continue',
@@ -962,6 +1033,11 @@ export const m = defineMessages({
     id: 'form.system:submit-application',
     defaultMessage: 'Senda inn umsókn',
     description: 'Submit application',
+  },
+  submitApplication2: {
+    id: 'form.system:submit-application-2',
+    defaultMessage: 'Senda inn',
+    description: 'Submit',
   },
   openMyPages: {
     id: 'form.system:open-my-pages',
@@ -1109,6 +1185,27 @@ export const m = defineMessages({
     defaultMessage: 'Þessi umsókn styður ekki þessa tegund innskráningar.',
     description: 'This application does not support this type of login.',
   },
+  delegationRequired: {
+    id: 'form.system:delegation-required',
+    defaultMessage: 'Rangt umboð',
+    description: 'Wrong delegation',
+  },
+  applicationRequiresDelegation: {
+    id: 'form.system:application-requires-delegation',
+    defaultMessage: 'Þú hefur ekki rétt umboð til að opna þessa umsóknartegund',
+    description:
+      'You do not have the correct delegation to open this application type',
+  },
+  applicationInaccessibleHeader: {
+    id: 'form.system:application-inaccessible-header',
+    defaultMessage: 'Umsóknartegundin er ekki aðgengileg',
+    description: 'The application type is not accessible',
+  },
+  applicationInaccessibleDescription: {
+    id: 'form.system:application-inaccessible-description',
+    defaultMessage: 'Þessi umsóknartegund hefur verið tekin úr notkun.',
+    description: 'This application type has been deprecated.',
+  },
   errorFetchingApplication: {
     id: 'form.system:error-fetching-application',
     defaultMessage: 'Villa kom upp við að sækja umsóknina.',
@@ -1200,6 +1297,17 @@ export const m = defineMessages({
     defaultMessage: 'Nota þjónustuna til að yfirfara (e. validate) gögnin',
     description: 'Use the service to validate the data',
   },
+  disableUseValidateTitle: {
+    id: 'form.system:disable-use-validate-title',
+    defaultMessage: 'Slökkva á yfirferð gagna?',
+    description: 'Disable data validation title',
+  },
+  disableUseValidateMessage: {
+    id: 'form.system:disable-use-validate-message',
+    defaultMessage:
+      'Ef slökkt er á yfirferð gagna verður yfirferð fjarlægð af öllum skjám í forminu.',
+    description: 'Disable data validation confirmation message',
+  },
   screenValidate: {
     id: 'form.system:screen-validate',
     defaultMessage: 'Senda skjá/umsókn til yfirferðar (e. validation)',
@@ -1207,8 +1315,8 @@ export const m = defineMessages({
   },
   completedMessage: {
     id: 'form.system:completed-message',
-    defaultMessage: 'Skilaboð á lokasíðu',
-    description: 'Message on completed page',
+    defaultMessage: 'Lokasíða',
+    description: 'Completed page',
   },
   isPartOfMulti: {
     id: 'form.system:is-part-of-multi',
@@ -1229,6 +1337,13 @@ export const m = defineMessages({
     id: 'form.system:remove-multi',
     defaultMessage: 'Fjarlægja',
     description: 'Remove',
+  },
+  testApplicationBanner: {
+    id: 'form.system:test-application-banner',
+    defaultMessage:
+      'Þetta form er í þróun og hefur ekki verið útgefið. Innsending mun ekki skila sér til afgreiðslu.',
+    description:
+      'This form is in development and has not been published. Submissions will not be processed.',
   },
   applicationLifetime: {
     id: 'form.system:application-lifetime',
@@ -1267,6 +1382,11 @@ export const m = defineMessages({
     defaultMessage: 'Samtals',
     description: 'Total',
   },
+  toPay: {
+    id: 'form.system:to-pay',
+    defaultMessage: 'Til greiðslu',
+    description: 'To pay',
+  },
   price: {
     id: 'form.system:price',
     defaultMessage: 'Verð',
@@ -1288,6 +1408,20 @@ export const m = defineMessages({
       'Ekki er hægt að gefa út formið. Allir reitir með íslensku þurfa enska þýðingu.',
     description:
       'The form cannot be published. All name fields with Icelandic text require an English translation.',
+  },
+  zendeskSettingsNeededError: {
+    id: 'form.system:zendesk-settings-needed-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Zendesk brand ID og Zendesk instance þurfa að vera skilgreind.',
+    description:
+      'The form cannot be published. Zendesk brand ID and Zendesk instance must be configured.',
+  },
+  unsupportedZendeskInstanceError: {
+    id: 'form.system:unsupported-zendesk-instance-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Zendesk instance er ekki stutt.',
+    description:
+      'The form cannot be published. The Zendesk instance is not supported.',
   },
   copyFieldHover: {
     id: 'form.system:copy-field-hover',

@@ -93,36 +93,48 @@ export class Grant {
   fund?: Fund
 }
 
-const parseStatus = (fields: IGrantFields): GrantStatus => {
+export const getAutomaticGrantStatus = (
+  dateFrom?: string,
+  dateTo?: string,
+  isFromDateEstimated?: boolean,
+): GrantStatus => {
+  if (!dateTo || !dateFrom) {
+    return GrantStatus.INVALID
+  }
+
+  const parsedDateTo = new Date(dateTo)
+  const parsedDateFrom = new Date(dateFrom)
+
+  if (!isValidDate(parsedDateTo) || !isValidDate(parsedDateFrom)) {
+    return GrantStatus.INVALID
+  }
+
+  const today = new Date()
+
+  //opens soon!
+  if (today < parsedDateFrom) {
+    return isFromDateEstimated
+      ? GrantStatus.CLOSED_OPENING_SOON_WITH_ESTIMATION
+      : GrantStatus.CLOSED_OPENING_SOON
+  }
+  if (today < parsedDateTo) {
+    return GrantStatus.OPEN
+  }
+  return GrantStatus.CLOSED
+}
+
+const parseStatus = (
+  fields: IGrantFields,
+  dateFrom?: string,
+  dateTo?: string,
+): GrantStatus => {
   switch (fields.grantStatus) {
     case 'Automatic': {
-      const dateTo = parseDate(fields.grantDateTo, fields.grantOpenToHour)
-      const dateFrom = parseDate(fields.grantDateFrom, fields.grantOpenFromHour)
-
-      if (!dateTo || !dateFrom) {
-        return GrantStatus.INVALID
-      }
-
-      const parsedDateTo = new Date(dateTo)
-      const parsedDateFrom = new Date(dateFrom)
-
-      if (!isValidDate(parsedDateTo) || !isValidDate(parsedDateFrom)) {
-        return GrantStatus.INVALID
-      }
-
-      const today = new Date()
-
-      //opens soon!
-      if (today < parsedDateFrom) {
-        const status = fields.grantFromDateIsEstimated
-          ? GrantStatus.CLOSED_OPENING_SOON_WITH_ESTIMATION
-          : GrantStatus.CLOSED_OPENING_SOON
-        return status
-      }
-      if (today < parsedDateTo) {
-        return GrantStatus.OPEN
-      }
-      return GrantStatus.CLOSED
+      return getAutomaticGrantStatus(
+        dateFrom,
+        dateTo,
+        fields.grantFromDateIsEstimated,
+      )
     }
     case 'Always open':
       return GrantStatus.ALWAYS_OPEN
@@ -147,7 +159,9 @@ const parseDate = (date?: string, time?: number): string | undefined => {
 }
 
 export const mapGrant = ({ fields, sys }: IGrant): Grant => {
-  const status = parseStatus(fields)
+  const dateFrom = parseDate(fields.grantDateFrom, fields.grantOpenFromHour)
+  const dateTo = parseDate(fields.grantDateTo, fields.grantOpenToHour)
+  const status = parseStatus(fields, dateFrom, dateTo)
   return {
     id: sys.id,
     name: fields.grantName,
@@ -176,8 +190,8 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => {
           sys.id + ':answering-questions',
         )
       : [],
-    dateFrom: parseDate(fields.grantDateFrom, fields.grantOpenFromHour),
-    dateTo: parseDate(fields.grantDateTo, fields.grantOpenToHour),
+    dateFrom,
+    dateTo,
     status: status,
     statusText: fields.grantStatusNote,
     fund: fields.grantFund ? mapFund(fields.grantFund) : undefined,

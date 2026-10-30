@@ -1,3 +1,5 @@
+import { normalizePersonAddress } from '@island.is/judicial-system/formatters'
+
 /**
  * Builds a string in the format "{gata og númer}, {póstnúmer} {staður}" (e.g. "Gervigata 2, 100 Garðabær").
  */
@@ -28,5 +30,5 @@ export const formatNationalRegistryAddress = (
     .filter(Boolean)
     .join(', ')
 
-  return streetCommaPostcodeAndLocality || undefined
+  return normalizePersonAddress(streetCommaPostcodeAndLocality || undefined)
 }

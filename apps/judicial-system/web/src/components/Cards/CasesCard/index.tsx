@@ -1,7 +1,7 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { Box, LinkV2, LoadingDots, Text } from '@island.is/island-ui/core'
-import { CaseTableType } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseTableType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCaseTableQuery } from '@island.is/judicial-system-web/src/routes/Shared/CaseTable/caseTable.generated'
 
 import * as styles from './index.css'
@@ -50,7 +50,7 @@ const CasesCard: FC<CasesCardProps> = (props) => (
       height="full"
       className={styles.container}
     >
-      {props.includeCounter && props.type !== CaseTableType.STATISTICS ? (
+      {props.includeCounter ? (
         <TitleWithCounter title={props.title} type={props.type} />
       ) : (
         <Text variant="h4" color="blue400" marginBottom={1}>

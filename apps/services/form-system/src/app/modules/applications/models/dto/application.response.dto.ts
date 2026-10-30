@@ -17,4 +17,16 @@ export class ApplicationResponseDto {
 
   @ApiPropertyOptional()
   isLoginTypeAllowed?: boolean
+
+  @ApiPropertyOptional()
+  hasRequiredDelegation?: boolean
+
+  @ApiPropertyOptional()
+  isInaccessible?: boolean
+
+  @ApiPropertyOptional()
+  validateEligibility?: boolean
+
+  @ApiPropertyOptional()
+  enableApplicationPdfDownload?: boolean
 }

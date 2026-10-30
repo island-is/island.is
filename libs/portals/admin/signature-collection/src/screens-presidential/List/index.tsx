@@ -15,7 +15,7 @@ import {
 import Signees from '../../shared-components/signees'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { PaperSignees } from '../../shared-components/paperSignees'
-import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg?url'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
 

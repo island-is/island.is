@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-rsk-personal-tax-return',
   preset: './jest.preset.js',
   rootDir: '../../../..',

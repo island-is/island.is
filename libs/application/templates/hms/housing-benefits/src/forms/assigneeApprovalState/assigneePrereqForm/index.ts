@@ -5,6 +5,7 @@ import { externalDataSection } from './externalDataSection'
 import { assigneeMockDataSection } from './mockDataSection'
 import { otherApprovalSection } from './otherApprovalSection'
 import { approveBeingAHousholdMemberSection } from './approveBeingAHousholdMemberSection'
+import { shouldRenderMockDataSection } from '../../../utils/prerequisiteMockDataUtils'
 
 export const AssigneePrereqForm = buildForm({
   id: 'AssigneePrereq',
@@ -13,7 +14,7 @@ export const AssigneePrereqForm = buildForm({
   renderLastScreenBackButton: true,
   logo: HmsLogo,
   children: [
-    assigneeMockDataSection,
+    ...(shouldRenderMockDataSection() ? [assigneeMockDataSection] : []),
     approveBeingAHousholdMemberSection,
     otherApprovalSection,
     externalDataSection,

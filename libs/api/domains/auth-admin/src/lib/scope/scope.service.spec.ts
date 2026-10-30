@@ -78,6 +78,13 @@ const createFindAllScopesMock = (environment: Environment, len = 3) =>
     environment,
   }))
 
+// The update endpoint answers with an empty body, so only the status matters.
+const createMockVoidApiResponse = (status: number) =>
+  Promise.resolve({
+    raw: { status },
+    value: () => Promise.resolve(undefined),
+  })
+
 const createMockAdminApi = (
   createData: AdminCreateScopeDto,
   findAllData: AdminScopeDTO[],
@@ -96,6 +103,9 @@ const createMockAdminApi = (
   meScopeClientsControllerFindAllRaw: jest
     .fn()
     .mockResolvedValue(createMockApiResponse([])),
+  meScopeClientsControllerUpdateScopeClientsRaw: jest
+    .fn()
+    .mockResolvedValue(createMockVoidApiResponse(200)),
   meScopeUsersControllerFindUsersByScopeRaw: jest
     .fn()
     .mockResolvedValue(createMockApiResponse([])),
@@ -151,6 +161,10 @@ describe('ScopeService', () => {
     mockAdminDevApi.meScopeClientsControllerFindAllRaw.mockClear()
     mockAdminStagingApi.meScopeClientsControllerFindAllRaw.mockClear()
     mockAdminProdApi.meScopeClientsControllerFindAllRaw.mockClear()
+    // Update scope clients
+    mockAdminDevApi.meScopeClientsControllerUpdateScopeClientsRaw.mockClear()
+    mockAdminStagingApi.meScopeClientsControllerUpdateScopeClientsRaw.mockClear()
+    mockAdminProdApi.meScopeClientsControllerUpdateScopeClientsRaw.mockClear()
   })
 
   describe('with multiple environments', () => {
@@ -193,9 +207,15 @@ describe('ScopeService', () => {
         ],
       })
 
-      expect(mockAdminDevApi.meScopesControllerCreateRaw).toBeCalledTimes(1)
-      expect(mockAdminStagingApi.meScopesControllerCreateRaw).toBeCalledTimes(1)
-      expect(mockAdminProdApi.meScopesControllerCreateRaw).toBeCalledTimes(1)
+      expect(mockAdminDevApi.meScopesControllerCreateRaw).toHaveBeenCalledTimes(
+        1,
+      )
+      expect(
+        mockAdminStagingApi.meScopesControllerCreateRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminProdApi.meScopesControllerCreateRaw,
+      ).toHaveBeenCalledTimes(1)
       expect(scopeResponses).toEqual([
         {
           scopeName: mockCreateScopes.scope1.name,
@@ -220,9 +240,15 @@ describe('ScopeService', () => {
         environments: [Environment.Production],
       })
 
-      expect(mockAdminDevApi.meScopesControllerCreateRaw).toBeCalledTimes(0)
-      expect(mockAdminStagingApi.meScopesControllerCreateRaw).toBeCalledTimes(0)
-      expect(mockAdminProdApi.meScopesControllerCreateRaw).toBeCalledTimes(1)
+      expect(mockAdminDevApi.meScopesControllerCreateRaw).toHaveBeenCalledTimes(
+        0,
+      )
+      expect(
+        mockAdminStagingApi.meScopesControllerCreateRaw,
+      ).toHaveBeenCalledTimes(0)
+      expect(
+        mockAdminProdApi.meScopesControllerCreateRaw,
+      ).toHaveBeenCalledTimes(1)
       expect(scopeResponses).toEqual([
         {
           scopeName: mockCreateScopes.scope1.name,
@@ -263,13 +289,13 @@ describe('ScopeService', () => {
       // Assert
       expect(
         mockAdminDevApi.meScopesControllerFindAllByTenantIdRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
       expect(
         mockAdminStagingApi.meScopesControllerFindAllByTenantIdRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
       expect(
         mockAdminProdApi.meScopesControllerFindAllByTenantIdRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
 
       expect(scopeResponses).toEqual({
         data: scopeModels,
@@ -308,13 +334,13 @@ describe('ScopeService', () => {
       // Assert
       expect(
         mockAdminDevApi.meScopesControllerFindByTenantIdAndScopeNameRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
       expect(
         mockAdminStagingApi.meScopesControllerFindByTenantIdAndScopeNameRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
       expect(
         mockAdminProdApi.meScopesControllerFindByTenantIdAndScopeNameRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
       expect(scopeResponses).toEqual({
         scopeName: mockedScope.name,
         environments: environments,
@@ -354,19 +380,19 @@ describe('ScopeService', () => {
       // Assert
       expect(
         mockAdminDevApi.meScopeClientsControllerFindAllRaw,
-      ).toBeCalledTimes(1)
-      expect(mockAdminDevApi.meScopeClientsControllerFindAllRaw).toBeCalledWith(
-        {
-          tenantId: TENANT_ID,
-          scopeName,
-        },
-      )
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminDevApi.meScopeClientsControllerFindAllRaw,
+      ).toHaveBeenCalledWith({
+        tenantId: TENANT_ID,
+        scopeName,
+      })
       expect(
         mockAdminStagingApi.meScopeClientsControllerFindAllRaw,
-      ).not.toBeCalled()
+      ).not.toHaveBeenCalled()
       expect(
         mockAdminProdApi.meScopeClientsControllerFindAllRaw,
-      ).not.toBeCalled()
+      ).not.toHaveBeenCalled()
 
       expect(result).toEqual([
         {
@@ -381,6 +407,48 @@ describe('ScopeService', () => {
           clientId: '@island.is/native',
           clientType: 'native',
           displayName: [{ locale: 'is', value: 'App' }],
+        },
+      ])
+    })
+
+    it('should report a successful client update as a successful environment', async () => {
+      // Act
+      const result = await scopeService.updateScopeClients(currentUser, {
+        tenantId: TENANT_ID,
+        scopeName: '@island.is/scope1',
+        addedClientIds: ['@island.is/web'],
+        removedClientIds: [],
+        environments: [Environment.Development],
+      })
+
+      // Assert
+      expect(result).toEqual({
+        environments: [Environment.Development],
+      })
+    })
+
+    it('should report a 204 client update as a failed environment', async () => {
+      // Arrange
+      // The admin api answers 204 when the scope does not belong to the tenant.
+      mockAdminDevApi.meScopeClientsControllerUpdateScopeClientsRaw.mockResolvedValueOnce(
+        createMockVoidApiResponse(204),
+      )
+
+      // Act
+      const result = await scopeService.updateScopeClients(currentUser, {
+        tenantId: TENANT_ID,
+        scopeName: '@other.is/scope',
+        addedClientIds: ['@island.is/web'],
+        removedClientIds: [],
+        environments: [Environment.Development],
+      })
+
+      // Assert
+      expect(result.environments).toBeUndefined()
+      expect(result.failedEnvironments).toEqual([
+        {
+          environment: Environment.Development,
+          message: expect.stringContaining('does not belong to tenant'),
         },
       ])
     })

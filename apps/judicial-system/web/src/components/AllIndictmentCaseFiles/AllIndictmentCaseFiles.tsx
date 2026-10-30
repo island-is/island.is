@@ -1,11 +1,11 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 
 import { Accordion, Box } from '@island.is/island-ui/core'
-
-import ConnectedCaseFilesAccordionItem from '../AccordionItems/ConnectedCaseFilesAccordionItem/ConnectedCaseFilesAccordionItem'
-import AppealCaseFilesOverview from '../AppealCaseFilesOverview/AppealCaseFilesOverview'
-import { FormContext } from '../FormProvider/FormProvider'
-import IndictmentCaseFilesList from '../IndictmentCaseFilesList/IndictmentCaseFilesList'
+import ConnectedCaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/ConnectedCaseFilesAccordionItem/ConnectedCaseFilesAccordionItem'
+import AppealCaseFilesOverview from '@island.is/judicial-system-web/src/components/AppealCaseFilesOverview/AppealCaseFilesOverview'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 
 interface Props {
   displayGeneratedPDFs?: boolean

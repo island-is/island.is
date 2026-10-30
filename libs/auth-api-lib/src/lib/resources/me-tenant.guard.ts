@@ -18,7 +18,7 @@ export class MeTenantGuard implements CanActivate {
     const user = request.user
     const { tenantId } = request.params
 
-    if (!tenantId || !user) {
+    if (!tenantId || typeof tenantId !== 'string' || !user) {
       throw new InternalServerErrorException(
         'Missing tenantId param or user auth',
       )

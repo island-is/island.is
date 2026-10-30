@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-transport-authority-vehicle-infolocks',
   preset: './jest.preset.js',
   rootDir: '../../../..',

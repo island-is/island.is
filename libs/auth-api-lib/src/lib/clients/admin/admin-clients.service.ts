@@ -35,6 +35,7 @@ import { ClientRedirectUri } from '../models/client-redirect-uri.model'
 import { Client } from '../models/client.model'
 import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
 import { AdminClientDto } from './dto/admin-client.dto'
+import { AdminClientListDto } from './dto/admin-client-list.dto'
 import { AdminCreateClientDto } from './dto/admin-create-client.dto'
 import {
   AdminPatchClientDto,
@@ -105,6 +106,33 @@ export class AdminClientsService {
     return clients.map((client) =>
       this.formatClient(client, clientTranslations.get(client.clientId)),
     )
+  }
+
+  async findAll(): Promise<AdminClientListDto[]> {
+    const clients = await this.clientModel.findAll({
+      where: {
+        archived: null,
+        enabled: true,
+      },
+      attributes: ['clientId', 'clientName', 'clientType', 'domainName'],
+      order: [['clientId', 'ASC']],
+    })
+
+    const clientTranslations = await this.translationService.findTranslationMap(
+      'client',
+      clients.map((client) => client.clientId),
+    )
+
+    return clients.map((client) => ({
+      clientId: client.clientId,
+      tenantId: client.domainName ?? '',
+      clientType: client.clientType,
+      displayName: this.adminTranslationService.createTranslatedValueDTOs({
+        key: 'clientName',
+        defaultValueIS: client.clientName ?? '',
+        translations: clientTranslations.get(client.clientId),
+      }),
+    }))
   }
 
   async findByTenantIdAndClientId(
@@ -563,6 +591,16 @@ export class AdminClientsService {
       })
     }
 
+    if (addedDelegationTypes?.length || removedDelegationTypes?.length) {
+      // Serializes concurrent delegation changes, so the booleans derived below
+      // are computed from every committed delegation type.
+      await this.clientModel.findOne({
+        where: { clientId: data.clientId },
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+    }
+
     if (addedDelegationTypes && addedDelegationTypes.length > 0) {
       await this.clientsService.addClientDelegationTypes({
         clientId: data.clientId,
@@ -580,6 +618,13 @@ export class AdminClientsService {
         options: {
           transaction,
         },
+      })
+    }
+
+    if (addedDelegationTypes?.length || removedDelegationTypes?.length) {
+      await this.clientsService.updateClientDelegationTypeBooleans({
+        clientId: data.clientId,
+        options: { transaction },
       })
     }
   }

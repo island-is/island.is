@@ -7,6 +7,7 @@ import {
   FormValue,
   ApplicationStatus,
 } from '@island.is/application/types'
+import { NO, YES } from '@island.is/application/core'
 import OldAgePensionTemplate from './OldAgePensionTemplate'
 import { OAPEvents } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
@@ -251,6 +252,54 @@ describe('Old Age Pension Template', () => {
       })
       expect(hasChanged).toBe(true)
       expect(newState).toBe('dismissed')
+    })
+  })
+
+  describe('clearIncomePlanOnOnePaymentPerYear', () => {
+    const incomePlanTable = [
+      {
+        incomeCategory: 'Atvinnutekjur',
+        incomeType: 'Laun',
+        income: 'yearly',
+        incomePerYear: '1000000',
+        currency: 'ISK',
+      },
+    ]
+
+    it('should discard the income plan on submit when a single yearly payment is requested', () => {
+      const application = buildApplication({
+        answers: {
+          onePaymentPerYear: { question: YES },
+          incomePlanTable,
+          incomePlan: { shouldShow: false },
+        },
+      })
+      const helper = new ApplicationTemplateHelper(
+        application,
+        OldAgePensionTemplate,
+      )
+
+      helper.changeState({ type: DefaultEvents.SUBMIT })
+
+      expect(application.answers.incomePlanTable).toBeUndefined()
+      expect(application.answers.incomePlan).toBeUndefined()
+    })
+
+    it('should keep the income plan on submit when a single yearly payment is declined', () => {
+      const application = buildApplication({
+        answers: {
+          onePaymentPerYear: { question: NO },
+          incomePlanTable,
+        },
+      })
+      const helper = new ApplicationTemplateHelper(
+        application,
+        OldAgePensionTemplate,
+      )
+
+      helper.changeState({ type: DefaultEvents.SUBMIT })
+
+      expect(application.answers.incomePlanTable).toEqual(incomePlanTable)
     })
   })
 })

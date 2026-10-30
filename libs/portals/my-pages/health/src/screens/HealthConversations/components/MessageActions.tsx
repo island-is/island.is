@@ -22,7 +22,10 @@ const blurAfter =
   (handler?: React.MouseEventHandler<HTMLElement>) =>
   (e: React.MouseEvent<HTMLElement>) => {
     handler?.(e)
-    e.currentTarget.blur()
+    // Keyboard activation has detail 0; keep focus there so it isn't lost
+    if (e.detail > 0) {
+      e.currentTarget.blur()
+    }
   }
 
 export const MessageActions: React.FC<MessageActionsProps> = ({
@@ -35,7 +38,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   loading,
   stashLabels,
   colorScheme = 'light',
-  size = 'small',
+  size = 'default',
 }) => {
   const { formatMessage } = useLocale()
 
@@ -50,7 +53,8 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   return (
     <Box
       className={cn(styles.filterActionButtons, {
-        [styles.hoverWhite]: colorScheme === 'light',
+        [styles.circleActionButtons]: colorScheme === 'light',
+        [styles.rowActionButtons]: colorScheme === 'negative',
       })}
       display="flex"
       height="full"

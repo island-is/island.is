@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'react-spa-shared',
   preset: './jest.preset.js',
   rootDir: '../../..',

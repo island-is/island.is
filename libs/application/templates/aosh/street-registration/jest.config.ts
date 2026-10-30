@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-templates-aosh-street-registration',
   preset: '../../../../../jest.preset.js',
   transform: {

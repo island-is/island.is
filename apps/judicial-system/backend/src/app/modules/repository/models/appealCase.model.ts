@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import {
   BelongsTo,
   Column,
@@ -15,10 +16,14 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { AppealCourtSession } from './appealCourtSession.model'
 import { AppealEventLog } from './appealEventLog.model'
+import { AppealStatementDeadline } from './appealStatementDeadline.model'
+import { AppealSummons } from './appealSummons.model'
 import { Case } from './case.model'
 import { CaseFile } from './caseFile.model'
 import { User } from './user.model'
@@ -76,6 +81,20 @@ export class AppealCase extends Model {
   @BelongsTo(() => CaseFile, 'rulingFileId')
   @ApiPropertyOptional({ type: () => CaseFile })
   rulingFile?: CaseFile
+
+  /**********
+   * Which decision this appeal challenges: a ruling appeal or a verdict appeal.
+   * Set once, when the appeal is created. The Case model's `appealCase` association
+   * scope filters on it, so a verdict appeal never reaches the lists and views built
+   * for ruling appeals.
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(AppealCaseType),
+  })
+  @ApiProperty({ enum: AppealCaseType })
+  appealType!: AppealCaseType
 
   /**********
    * The case appeal state
@@ -232,15 +251,6 @@ export class AppealCase extends Model {
   appealIsolationToDate?: Date
 
   /**********
-   * The national ID of the person who filed the appeal — used for indictment
-   * cases where multiple defenders/civil claimant lawyers exist.
-   * Not used for request cases.
-   **********/
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  appealedByNationalId?: string
-
-  /**********
    * The time of appeal - the court session end time for in-court appeals
    * (case-level court end time in request cases), the appeal creation time
    * for appeals filed later
@@ -255,4 +265,38 @@ export class AppealCase extends Model {
   @HasMany(() => AppealEventLog, 'appealCaseId')
   @ApiPropertyOptional({ type: () => AppealEventLog, isArray: true })
   appealEventLogs?: AppealEventLog[]
+
+  /**********
+   * Appeal summonses (áfrýjunarstefna) issued for this verdict appeal
+   **********/
+  @HasMany(() => AppealSummons, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealSummons, isArray: true })
+  appealSummonses?: AppealSummons[]
+
+  /**********
+   * Summonses that have been sent to the court of appeals. Staff keep the
+   * unscoped association above; Landsréttur only ever joins this one.
+   **********/
+  @HasMany(() => AppealSummons, {
+    foreignKey: 'appealCaseId',
+    as: 'sentAppealSummonses',
+    scope: { sentToCourtOfAppealsDate: { [Op.ne]: null } },
+  })
+  @ApiPropertyOptional({ type: () => AppealSummons, isArray: true })
+  sentAppealSummonses?: AppealSummons[]
+
+  /**********
+   * Court sessions (þinghöld) the court of appeals has called in this verdict appeal
+   **********/
+  @HasMany(() => AppealCourtSession, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealCourtSession, isArray: true })
+  courtSessions?: AppealCourtSession[]
+
+  /**********
+   * The deadlines (greinargerðarfrestir) the court of appeals has given the
+   * parties of this verdict appeal to file their statements, one per party
+   **********/
+  @HasMany(() => AppealStatementDeadline, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealStatementDeadline, isArray: true })
+  statementDeadlines?: AppealStatementDeadline[]
 }

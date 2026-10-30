@@ -1,10 +1,10 @@
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import cn from 'classnames'
 
 import { Box, Text } from '@island.is/island-ui/core'
+import BlueBox from '@island.is/judicial-system-web/src/components/BlueBox/BlueBox'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import BlueBox from '../BlueBox/BlueBox'
-import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './InfoCard.css'
 
 interface Section {
@@ -41,7 +41,7 @@ const InfoCard: FC<Props> = (props) => {
     .filter((section) => section.items.length > 0)
 
   return (
-    <BlueBox className={grid({ gap: 3 })}>
+    <BlueBox className={stack({ gap: 3 })}>
       {visibleSections.map((section, index) => (
         <Box
           className={cn(styles.grid, {

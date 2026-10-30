@@ -2,7 +2,17 @@ import { InstitutionUser } from '../user'
 import {
   courtOfAppealsCasesCompleted,
   courtOfAppealsCasesInProgress,
+  courtOfAppealsVerdictAppealsCompleted,
+  courtOfAppealsVerdictAppealsInProgress,
 } from './caseTables/courtOfAppeals'
+import {
+  defenceIndictmentsAppealed,
+  defenceIndictmentsCompleted,
+  defenceIndictmentsInProgress,
+  defenceRequestCasesAppealed,
+  defenceRequestCasesCompleted,
+  defenceRequestCasesInProgress,
+} from './caseTables/defence'
 import {
   districtCourtIndictmentsAppealed,
   districtCourtIndictmentsCompleted,
@@ -34,6 +44,7 @@ import {
   prosecutionRequestCasesAppealed,
   prosecutionRequestCasesCompleted,
   prosecutionRequestCasesInProgress,
+  publicProsecutionIndictmentsAppealed,
   publicProsecutionIndictmentsInReview,
   publicProsecutionIndictmentsReviewed,
 } from './caseTables/prosecution'
@@ -41,6 +52,7 @@ import {
   publicProsecutionOfficeIndictmentsAcquitted,
   publicProsecutionOfficeIndictmentsAppealed,
   publicProsecutionOfficeIndictmentsAppealPeriodExpired,
+  publicProsecutionOfficeIndictmentsClosedWithoutEnforcement,
   publicProsecutionOfficeIndictmentsInReview,
   publicProsecutionOfficeIndictmentsNew,
   publicProsecutionOfficeIndictmentsRequestedAppeal,
@@ -68,6 +80,10 @@ export const getCaseTableType = (
 export const caseTables: Record<CaseTableType, CaseTable> = {
   COURT_OF_APPEALS_CASES_IN_PROGRESS: courtOfAppealsCasesInProgress,
   COURT_OF_APPEALS_CASES_COMPLETED: courtOfAppealsCasesCompleted,
+  COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS:
+    courtOfAppealsVerdictAppealsInProgress,
+  COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED:
+    courtOfAppealsVerdictAppealsCompleted,
   DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS: districtCourtRequestCasesInProgress,
   DISTRICT_COURT_REQUEST_CASES_APPEALED: districtCourtRequestCasesAppealed,
   DISTRICT_COURT_REQUEST_CASES_COMPLETED: districtCourtRequestCasesCompleted,
@@ -101,9 +117,12 @@ export const caseTables: Record<CaseTableType, CaseTable> = {
     publicProsecutionOfficeIndictmentsAcquitted,
   PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL:
     publicProsecutionOfficeIndictmentsRequestedAppeal,
+  PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_CLOSED_WITHOUT_ENFORCEMENT:
+    publicProsecutionOfficeIndictmentsClosedWithoutEnforcement,
   PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW:
     publicProsecutionIndictmentsInReview,
   PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED: publicProsecutionIndictmentsReviewed,
+  PUBLIC_PROSECUTION_INDICTMENTS_APPEALED: publicProsecutionIndictmentsAppealed,
   PROSECUTION_REQUEST_CASES_IN_PROGRESS: prosecutionRequestCasesInProgress,
   PROSECUTION_REQUEST_CASES_ACTIVE: prosecutionRequestCasesActive,
   PROSECUTION_REQUEST_CASES_APPEALED: prosecutionRequestCasesAppealed,
@@ -114,11 +133,10 @@ export const caseTables: Record<CaseTableType, CaseTable> = {
   PROSECUTION_INDICTMENTS_IN_PROGRESS: prosecutionIndictmentsInProgress,
   PROSECUTION_INDICTMENTS_APPEALED: prosecutionIndictmentsAppealed,
   PROSECUTION_INDICTMENTS_COMPLETED: prosecutionIndictmentsCompleted,
-  // Exception: Not implemented as a static table but we currently need to preserve the case table type
-  STATISTICS: {
-    title: '',
-    hasMyCasesFilter: false,
-    columnKeys: [],
-    columns: [],
-  },
+  DEFENCE_REQUEST_CASES_IN_PROGRESS: defenceRequestCasesInProgress,
+  DEFENCE_REQUEST_CASES_APPEALED: defenceRequestCasesAppealed,
+  DEFENCE_REQUEST_CASES_COMPLETED: defenceRequestCasesCompleted,
+  DEFENCE_INDICTMENTS_IN_PROGRESS: defenceIndictmentsInProgress,
+  DEFENCE_INDICTMENTS_APPEALED: defenceIndictmentsAppealed,
+  DEFENCE_INDICTMENTS_COMPLETED: defenceIndictmentsCompleted,
 }

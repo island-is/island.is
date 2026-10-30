@@ -1,4 +1,7 @@
 export interface Lawyer {
+  // The registry row id. It is regenerated whenever the registry is replaced,
+  // so use it to tell entries apart within one list, never to store a lawyer.
+  id: string
   name: string
   practice: string
   email: string
@@ -57,6 +60,7 @@ export type LawyerRegistry = {
 
 export const mapToLawyer = (lawyer: LawyerRegistry): Lawyer => {
   return {
+    id: lawyer.id,
     name: lawyer.name,
     practice: lawyer.practice,
     email: lawyer.email,

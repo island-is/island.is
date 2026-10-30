@@ -96,6 +96,10 @@ export default function VehicleMileageScreen() {
       ? +data[0].mileage
       : 0
 
+  const mileageUnit = info.data?.vehiclesDetail?.mainInfo?.hasMilesOdometer
+    ? 'mi'
+    : 'km'
+
   const isFormEditable = !!res.data?.vehicleMileageDetails?.editing
   const canRegisterMileage =
     !!res.data?.vehicleMileageDetails?.canRegisterMileage
@@ -145,10 +149,13 @@ export default function VehicleMileageScreen() {
     [latestMileage, intl],
   )
 
-  const handleFailedToUpdate = () => {
+  // Samgöngustofa explains why a registration was rejected (mileage too low,
+  // interval not elapsed, ...) - prefer that over the generic copy.
+  const handleFailedToUpdate = (serviceMessage?: string) => {
     Alert.alert(
       intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
-      intl.formatMessage({ id: 'vehicle.mileage.errorFailedToUpdate' }),
+      serviceMessage ??
+        intl.formatMessage({ id: 'vehicle.mileage.errorFailedToUpdate' }),
     )
   }
 
@@ -163,13 +170,21 @@ export default function VehicleMileageScreen() {
       },
     })
       .then((res) => {
-        if (res.data?.vehicleMileagePost?.mileage !== String(mileage)) {
-          handleFailedToUpdate()
-        } else {
+        const result = res.data?.vehicleMileagePostV2
+        if (
+          result?.__typename === 'VehicleMileageDetail' &&
+          result.mileage === String(mileage)
+        ) {
           setInput('')
           Alert.alert(
             intl.formatMessage({ id: 'vehicle.mileage.successTitle' }),
             intl.formatMessage({ id: 'vehicle.mileage.successMessage' }),
+          )
+        } else {
+          handleFailedToUpdate(
+            result?.__typename === 'VehiclesMileageUpdateError'
+              ? result.message
+              : undefined,
           )
         }
       })
@@ -201,12 +216,20 @@ export default function VehicleMileageScreen() {
         },
       })
         .then((res) => {
-          if (res.data?.vehicleMileagePut?.mileage !== String(mileage)) {
-            handleFailedToUpdate()
-          } else {
+          const result = res.data?.vehicleMileagePutV2
+          if (
+            result?.__typename === 'VehicleMileagePutModel' &&
+            result.mileage === String(mileage)
+          ) {
             Alert.alert(
               intl.formatMessage({ id: 'vehicle.mileage.successTitle' }),
               intl.formatMessage({ id: 'vehicle.mileage.successMessage' }),
+            )
+          } else {
+            handleFailedToUpdate(
+              result?.__typename === 'VehiclesMileageUpdateError'
+                ? result.message
+                : undefined,
             )
           }
         })
@@ -234,7 +257,11 @@ export default function VehicleMileageScreen() {
 
   return (
     <>
-      <StackScreen networkStatus={[res.networkStatus, info.networkStatus]} />
+      <StackScreen
+        closeable
+        options={{ title: '' }}
+        networkStatus={[res.networkStatus, info.networkStatus]}
+      />
       <FlatList
         data={data}
         renderItem={({ item, index }) =>
@@ -251,7 +278,9 @@ export default function VehicleMileageScreen() {
               }
               accessory={
                 item.mileage
-                  ? `${intl.formatNumber(parseInt(item.mileage, 10))} km`
+                  ? `${intl.formatNumber(
+                      parseInt(item.mileage, 10),
+                    )} ${mileageUnit}`
                   : '-'
               }
               editable={!shouldDisableMileageEdit && index === 0}
@@ -264,6 +293,12 @@ export default function VehicleMileageScreen() {
         keyExtractor={(item, index) => String(item.internalId ?? index)}
         ListHeaderComponent={
           <View key="list-header">
+            <Typography
+              variant="heading3"
+              style={{ marginTop: 8, marginBottom: 16 }}
+            >
+              {intl.formatMessage({ id: 'vehicles.registerMileage' })}
+            </Typography>
             <NavigationBarSheet
               componentId="vehicle-mileage"
               title={

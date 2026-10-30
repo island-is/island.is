@@ -11,7 +11,8 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/auth-admin-web"
+        "outputPath": "dist/apps/auth-admin-web",
+        "webpack": true
       },
       "configurations": {
         "development": {
@@ -49,7 +50,8 @@
       "options": {
         "buildTarget": "auth-admin-web:build",
         "dev": true,
-        "customServerTarget": "auth-admin-web:serve-custom-server"
+        "customServerTarget": "auth-admin-web:serve-custom-server",
+        "webpack": true
       },
       "configurations": {
         "development": {

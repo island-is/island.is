@@ -1,5 +1,7 @@
-import { FC, useCallback, useContext } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useCallback, useContext } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
@@ -17,6 +19,7 @@ import {
   icCourtRecord as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   CourtCaseInfo,
@@ -32,58 +35,60 @@ import {
   PdfButton,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { getRequestCaseDefenderNames } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
+import type { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
-  CaseAppealDecision,
+  AppealDecisionPartyRole,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import AppealSections from '@island.is/judicial-system-web/src/routes/Court/components/AppealSections/AppealSections'
+import { populateEndOfCourtSessionBookingsIntro } from '@island.is/judicial-system-web/src/routes/Court/shared/populateEndOfCourtSessionBookingsIntro'
 import {
   formatDateForServer,
   useCase,
   useDebouncedInput,
   useOnceOn,
+  useSerializedSave,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { withCaseLevelAppealDecision } from '@island.is/judicial-system-web/src/utils/utils'
+import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   isCourtRecordStepValidIC,
   isNullOrUndefined,
-  Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
-
-import AppealSections from '../../components/AppealSections/AppealSections'
-import { populateEndOfCourtSessionBookingsIntro } from '../../shared/populateEndOfCourtSessionBookingsIntro'
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
-  workingCase: Case,
+  workingCase: WorkingCase,
 ) => {
   const autofillSessionBookings = []
 
-  if (workingCase.defenderName) {
-    autofillSessionBookings.push(
-      `${formatMessage(m.sections.sessionBookings.autofillDefender, {
-        defender: workingCase.defenderName,
-      })}\n\n`,
-    )
-  }
+  getRequestCaseDefenderNames(workingCase.defendants).forEach(
+    (defenderName) => {
+      autofillSessionBookings.push(
+        `${defenderName} lögmaður er skipaður verjandi varnaraðila að hans ósk, sbr. 3. mgr. 33. gr. laga nr. 88/2008.\n\n`,
+      )
+    },
+  )
 
   if (workingCase.translator) {
     autofillSessionBookings.push(
-      `${formatMessage(m.sections.sessionBookings.autofillTranslator, {
-        translator: workingCase.translator,
-      })}\n\n`,
+      `${formatMessage(
+        {
+          id: m.sections.sessionBookings.autofillTranslator,
+          defaultMessage: m.sections.sessionBookings.autofillTranslator,
+        },
+        {
+          translator: workingCase.translator,
+        },
+      )}\n\n`,
     )
   }
 
   autofillSessionBookings.push(
-    `${formatMessage(
-      m.sections.sessionBookings.autofillRightToRemainSilent,
-    )}\n\n${formatMessage(
-      m.sections.sessionBookings.autofillCourtDocumentOne,
-    )}\n\n${formatMessage(
-      m.sections.sessionBookings.autofillAccusedPlea,
-    )}\n\n${formatMessage(m.sections.sessionBookings.autofillAllPresent)}`,
+    `${m.sections.sessionBookings.autofillRightToRemainSilent}\n\n${m.sections.sessionBookings.autofillCourtDocumentOne}\n\n${m.sections.sessionBookings.autofillAccusedPlea}\n\n${m.sections.sessionBookings.autofillAllPresent}`,
   )
   return autofillSessionBookings.length > 0
     ? autofillSessionBookings.join('')
@@ -93,6 +98,8 @@ const getSessionBookingsAutofill = (
 const CourtRecord: FC = () => {
   const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
+  // Runs court end time saves one at a time and knows which value the server has
+  const saveCourtEndTime = useSerializedSave<string | null | undefined>()
   const {
     workingCase,
     setWorkingCase,
@@ -136,17 +143,20 @@ const CourtRecord: FC = () => {
       }
 
       if (
-        workingCase.defenderName &&
         workingCase.sessionArrangements !==
-          SessionArrangements.PROSECUTOR_PRESENT
+        SessionArrangements.PROSECUTOR_PRESENT
       ) {
-        autofillAttendees.push(
-          `\n${workingCase.defenderName} skipaður ${
-            workingCase.sessionArrangements ===
-            SessionArrangements.ALL_PRESENT_SPOKESPERSON
-              ? 'talsmaður'
-              : 'verjandi'
-          } ${formatMessage(core.defendant, { suffix: 'a' })}`,
+        getRequestCaseDefenderNames(workingCase.defendants).forEach(
+          (defenderName) => {
+            autofillAttendees.push(
+              `\n${defenderName} skipaður ${
+                workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                  ? 'talsmaður'
+                  : 'verjandi'
+              } ${formatMessage(core.defendant, { suffix: 'a' })}`,
+            )
+          },
         )
       }
 
@@ -185,27 +195,23 @@ const CourtRecord: FC = () => {
             workingCase.type === CaseType.RESTRAINING_ORDER ||
             workingCase.type ===
               CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME
-              ? formatMessage(
-                  m.sections.sessionBookings.autofillRestrainingOrder,
-                )
+              ? m.sections.sessionBookings.autofillRestrainingOrder
               : workingCase.type === CaseType.EXPULSION_FROM_HOME
-              ? formatMessage(
-                  m.sections.sessionBookings.autofillExpulsionFromHome,
-                )
+              ? m.sections.sessionBookings.autofillExpulsionFromHome
               : workingCase.type === CaseType.AUTOPSY
-              ? formatMessage(m.sections.sessionBookings.autofillAutopsy)
+              ? m.sections.sessionBookings.autofillAutopsy
               : workingCase.sessionArrangements ===
                 SessionArrangements.ALL_PRESENT
               ? getSessionBookingsAutofill(formatMessage, workingCase)
               : workingCase.sessionArrangements ===
                 SessionArrangements.ALL_PRESENT_SPOKESPERSON
-              ? formatMessage(m.sections.sessionBookings.autofillSpokeperson)
+              ? m.sections.sessionBookings.autofillSpokeperson
               : workingCase.sessionArrangements ===
                 SessionArrangements.PROSECUTOR_PRESENT
-              ? formatMessage(m.sections.sessionBookings.autofillProsecutor)
+              ? m.sections.sessionBookings.autofillProsecutor
               : workingCase.sessionArrangements ===
                 SessionArrangements.NONE_PRESENT
-              ? formatMessage(m.sections.sessionBookings.autofillNonePresent)
+              ? m.sections.sessionBookings.autofillNonePresent
               : undefined,
           endOfSessionBookings:
             endOfSessionBookings.length > 0
@@ -238,20 +244,44 @@ const CourtRecord: FC = () => {
     prosecutorAppealAnnouncement?: string
   }) => {
     const endOfSessionBookings: string[] = []
+    let appealDecisions = workingCase.appealDecisions
+    if (
+      !isNullOrUndefined(accusedAppealDecision) ||
+      !isNullOrUndefined(accusedAppealAnnouncement)
+    ) {
+      appealDecisions = withCaseLevelAppealDecision(
+        appealDecisions,
+        AppealDecisionPartyRole.DEFENDANT,
+        {
+          ...(!isNullOrUndefined(accusedAppealDecision)
+            ? { decision: accusedAppealDecision }
+            : {}),
+          ...(!isNullOrUndefined(accusedAppealAnnouncement)
+            ? { announcement: accusedAppealAnnouncement }
+            : {}),
+        },
+      )
+    }
+    if (
+      !isNullOrUndefined(prosecutorAppealDecision) ||
+      !isNullOrUndefined(prosecutorAppealAnnouncement)
+    ) {
+      appealDecisions = withCaseLevelAppealDecision(
+        appealDecisions,
+        AppealDecisionPartyRole.PROSECUTOR,
+        {
+          ...(!isNullOrUndefined(prosecutorAppealDecision)
+            ? { decision: prosecutorAppealDecision }
+            : {}),
+          ...(!isNullOrUndefined(prosecutorAppealAnnouncement)
+            ? { announcement: prosecutorAppealAnnouncement }
+            : {}),
+        },
+      )
+    }
     const updatedCase = {
       ...workingCase,
-      ...(!isNullOrUndefined(accusedAppealDecision)
-        ? { accusedAppealDecision }
-        : {}),
-      ...(!isNullOrUndefined(accusedAppealAnnouncement)
-        ? { accusedAppealAnnouncement }
-        : {}),
-      ...(!isNullOrUndefined(prosecutorAppealDecision)
-        ? { prosecutorAppealDecision }
-        : {}),
-      ...(!isNullOrUndefined(prosecutorAppealAnnouncement)
-        ? { prosecutorAppealAnnouncement }
-        : {}),
+      appealDecisions,
     }
     populateEndOfCourtSessionBookingsIntro(updatedCase, endOfSessionBookings)
 
@@ -285,17 +315,15 @@ const CourtRecord: FC = () => {
         title={formatMessage(titles.court.investigationCases.courtRecord)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.sections.title)}</PageTitle>
+        <PageTitle>{m.sections.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <Box component="section">
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <DateTime
                 name="courtStartDate"
-                datepickerLabel={formatMessage(
-                  m.sections.courtStartDate.dateLabel,
-                )}
-                timeLabel={formatMessage(m.sections.courtStartDate.timeLabel)}
+                datepickerLabel={m.sections.courtStartDate.dateLabel}
+                timeLabel={m.sections.courtStartDate.timeLabel}
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
@@ -318,12 +346,10 @@ const CourtRecord: FC = () => {
               <Input
                 data-testid="courtLocation"
                 name="courtLocation"
-                tooltip={formatMessage(m.sections.courtLocation.tooltip)}
-                label={formatMessage(m.sections.courtLocation.label)}
+                tooltip={m.sections.courtLocation.tooltip}
+                label={m.sections.courtLocation.label}
                 value={courtLocationInput.value || ''}
-                placeholder={formatMessage(
-                  m.sections.courtLocation.placeholder,
-                )}
+                placeholder={m.sections.courtLocation.placeholder}
                 onChange={(evt) =>
                   courtLocationInput.onChange(evt.target.value)
                 }
@@ -374,17 +400,15 @@ const CourtRecord: FC = () => {
           </Box>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(m.sections.sessionBookings.title)}
-              tooltip={formatMessage(m.sections.sessionBookings.tooltip)}
+              title={m.sections.sessionBookings.title}
+              tooltip={m.sections.sessionBookings.tooltip}
             />
             <Input
               data-testid="sessionBookings"
               name="sessionBookings"
-              label={formatMessage(m.sections.sessionBookings.label)}
+              label={m.sections.sessionBookings.label}
               value={sessionBookingsInput.value ?? ''}
-              placeholder={formatMessage(
-                m.sections.sessionBookings.placeholder,
-              )}
+              placeholder={m.sections.sessionBookings.placeholder}
               onChange={(evt) =>
                 sessionBookingsInput.onChange(evt.target.value)
               }
@@ -398,7 +422,7 @@ const CourtRecord: FC = () => {
           </Box>
           {workingCase.conclusion && (
             <Box component="section">
-              <SectionHeading title={formatMessage(m.sections.conclusion)} />
+              <SectionHeading title={m.sections.conclusion} />
               <BlueBox>
                 <Text>{workingCase.conclusion}</Text>
               </BlueBox>
@@ -412,17 +436,13 @@ const CourtRecord: FC = () => {
             />
           </Box>
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(m.sections.endOfSessionBookings.title)}
-            />
+            <SectionHeading title={m.sections.endOfSessionBookings.title} />
             <Input
               data-testid="endOfSessionBookings"
               name="endOfSessionBookings"
-              label={formatMessage(m.sections.endOfSessionBookings.label)}
+              label={m.sections.endOfSessionBookings.label}
               value={endOfSessionBookingsInput.value || ''}
-              placeholder={formatMessage(
-                m.sections.endOfSessionBookings.placeholder,
-              )}
+              placeholder={m.sections.endOfSessionBookings.placeholder}
               onChange={(evt) =>
                 endOfSessionBookingsInput.onChange(evt.target.value)
               }
@@ -431,16 +451,12 @@ const CourtRecord: FC = () => {
             />
           </Box>
           <Box>
-            <SectionHeading
-              title={formatMessage(m.sections.endOfSessionTitle)}
-            />
+            <SectionHeading title={m.sections.endOfSessionTitle} />
             <BlueBox>
               <DateTime
                 name="courtEndTime"
-                datepickerLabel={formatMessage(
-                  m.sections.courtEndTime.dateLabel,
-                )}
-                timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
+                datepickerLabel={m.sections.courtEndTime.dateLabel}
+                timeLabel={m.sections.courtEndTime.timeLabel}
                 minDate={
                   workingCase.courtStartDate
                     ? new Date(workingCase.courtStartDate)
@@ -450,16 +466,33 @@ const CourtRecord: FC = () => {
                 selectedDate={workingCase.courtEndTime}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    setAndSendCaseToServer(
-                      [
-                        {
-                          courtEndTime: formatDateForServer(date),
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
+                    const courtEndTime = formatDateForServer(date)
+
+                    // A failed save toasts, but the optimistic value would still
+                    // validate the step and let the judge continue with a court
+                    // end time the server never got. The save rolls the field
+                    // back to the value the server has, so the step stays invalid
+                    // until the time is actually persisted.
+                    saveCourtEndTime({
+                      // Per case: the page is reused when the judge moves to another case
+                      key: `courtEndTime:${workingCase.id}`,
+                      confirmed: workingCase.courtEndTime,
+                      value: courtEndTime,
+                      persist: () =>
+                        setAndSendCaseToServer(
+                          [{ courtEndTime, force: true }],
+                          workingCase,
+                          setWorkingCase,
+                        ),
+                      rollback: (confirmedCourtEndTime) =>
+                        setWorkingCase((prev) =>
+                          // A save that fails after the judge has moved on to another
+                          // case must not touch that case
+                          prev.id !== workingCase.id
+                            ? prev
+                            : { ...prev, courtEndTime: confirmedCourtEndTime },
+                        ),
+                    })
                   }
                 }}
                 blueBox={false}
@@ -479,22 +512,36 @@ const CourtRecord: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE,
-            )
+          actions={
+            hasMissingInfoInRulingStep
+              ? []
+              : [
+                  {
+                    text: formatMessage(core.continue),
+                    icon: 'arrowForward',
+                    onClick: () =>
+                      handleNavigationTo(
+                        DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE,
+                      ),
+                    disabled: !stepIsValid,
+                    loading: isLoadingWorkingCase,
+                    testId: 'continueButton',
+                  },
+                ]
           }
-          nextIsDisabled={!stepIsValid}
-          hideNextButton={hasMissingInfoInRulingStep}
           infoBoxText={
             hasMissingInfoInRulingStep
-              ? formatMessage(m.sections.nextButtonInfo.text, {
-                  isCompletedWithoutRuling:
-                    workingCase.isCompletedWithoutRuling,
-                })
+              ? formatMessage(
+                  {
+                    id: m.sections.nextButtonInfo.text,
+                    defaultMessage: m.sections.nextButtonInfo.text,
+                  },
+                  {
+                    isCompletedWithoutRuling:
+                      workingCase.isCompletedWithoutRuling,
+                  },
+                )
               : ''
           }
         />

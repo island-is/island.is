@@ -1,5 +1,5 @@
 import React from 'react'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-webpack5'
 
 import { withFigma } from '../../utils/withFigma'
 import { ContentBlock } from '../ContentBlock/ContentBlock'

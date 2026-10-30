@@ -1,27 +1,28 @@
-import { uuid } from 'uuidv4'
-import { Inject, Injectable } from '@nestjs/common'
-import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache as CacheManager } from 'cache-manager'
+import { uuid } from 'uuidv4'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Inject, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 
-import { Discount, ExplicitCode } from './discount.model'
+import { ConnectionDiscountCode } from '@island.is/air-discount-scheme/types'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { Flight } from '../flight/flight.model'
 import {
   AKUREYRI_FLIGHT_CODES,
   CONNECTING_FLIGHT_GRACE_PERIOD,
   REYKJAVIK_FLIGHT_CODES,
 } from '../flight/flight.service'
-import { ConnectionDiscountCode } from '@island.is/air-discount-scheme/types'
-import { User } from '../user/user.model'
-import { InjectModel } from '@nestjs/sequelize'
+import { CachedUser, User } from '../user/user.model'
 import { UserService } from '../user/user.service'
-import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { ExplicitFlight } from './dto/ExplicitFlight.dto'
+import { Discount, ExplicitCode } from './discount.model'
 import { CreateSuperExplicitDiscountCodeParams } from './dto'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 
 interface CachedDiscount {
-  user: User
+  user: CachedUser
   discountCode: string
   connectionDiscountCodes: ConnectionDiscountCode[]
   nationalId: string
@@ -90,7 +91,7 @@ export class DiscountService {
     value: T,
     ttl: number = ONE_DAY,
   ): Promise<void> {
-    return this.cacheManager.set(key, value, ttl * 1000)
+    await this.cacheManager.set(key, value, ttl * 1000)
   }
 
   private async getCache<T>(cacheKey: string): Promise<T | undefined> {
@@ -99,7 +100,21 @@ export class DiscountService {
       return
     }
 
-    return this.cacheManager.get(cacheId)
+    return (await this.cacheManager.get<T>(cacheId)) ?? undefined
+  }
+
+  /**
+   * Remaining time-to-live for a cache key, in seconds.
+   *
+   * cache-manager's `ttl()` returns the absolute expiry timestamp (epoch ms),
+   * so the remaining time is computed here.
+   */
+  private async getRemainingTtl(cacheKey: string): Promise<number> {
+    const expiresAt = await this.cacheManager.ttl(cacheKey)
+    if (!expiresAt) {
+      return 0
+    }
+    return Math.max(0, Math.round((expiresAt - Date.now()) / 1000))
   }
 
   async createDiscountCode(
@@ -307,7 +322,7 @@ export class DiscountService {
       return null
     }
 
-    const ttl = (await this.cacheManager.store.ttl(cacheKey)) / 1000
+    const ttl = await this.getRemainingTtl(cacheKey)
 
     return new Discount(
       cacheValue.user,
@@ -328,7 +343,7 @@ export class DiscountService {
       return await this.getDiscountByConnectionDiscountCode(discountCode)
     }
 
-    const ttl = (await this.cacheManager.store.ttl(cacheKey)) / 1000
+    const ttl = await this.getRemainingTtl(cacheKey)
     return new Discount(
       cacheValue.user,
       discountCode,
@@ -356,7 +371,7 @@ export class DiscountService {
       return null
     }
 
-    const ttl = (await this.cacheManager.store.ttl(cacheKey)) / 1000
+    const ttl = await this.getRemainingTtl(cacheKey)
     return new Discount(
       cacheValue.user,
       cacheValue.discountCode,
@@ -443,7 +458,7 @@ export class DiscountService {
       }
 
       if (cacheId) {
-        const ttl = (await this.cacheManager.store.ttl(cacheId)) / 1000
+        const ttl = await this.getRemainingTtl(cacheId)
         await this.setCache<string>(CACHE_KEYS.flight(flightId), cacheId, ttl)
       }
     }
@@ -466,7 +481,7 @@ export class DiscountService {
       return
     }
 
-    const ttl = (await this.cacheManager.store.ttl(cacheId)) / 1000
+    const ttl = await this.getRemainingTtl(cacheId)
 
     // Point the discount code back to the old cache
     await this.setCache<CachedDiscount>(cacheId, cacheValue)

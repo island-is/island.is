@@ -2,7 +2,7 @@ import { recipe } from '@vanilla-extract/recipes'
 
 import { theme } from '@island.is/island-ui/theme'
 
-export const grid = recipe({
+export const stack = recipe({
   base: {
     display: 'flex',
     flexDirection: 'column',
@@ -23,21 +23,6 @@ export const grid = recipe({
       15: { gap: theme.spacing[15] },
       20: { gap: theme.spacing[20] },
     },
-    marginBottom: {
-      1: { marginBottom: theme.spacing[1] },
-      2: { marginBottom: theme.spacing[2] },
-      3: { marginBottom: theme.spacing[3] },
-      4: { marginBottom: theme.spacing[4] },
-      5: { marginBottom: theme.spacing[5] },
-      6: { marginBottom: theme.spacing[6] },
-      7: { marginBottom: theme.spacing[7] },
-      8: { marginBottom: theme.spacing[8] },
-      9: { marginBottom: theme.spacing[9] },
-      10: { marginBottom: theme.spacing[10] },
-      12: { marginBottom: theme.spacing[12] },
-      15: { marginBottom: theme.spacing[15] },
-      20: { marginBottom: theme.spacing[20] },
-    },
     marginTop: {
       1: { marginTop: theme.spacing[1] },
       2: { marginTop: theme.spacing[2] },
@@ -56,7 +41,36 @@ export const grid = recipe({
   },
   defaultVariants: {
     gap: theme.spacing[2],
-    marginBottom: theme.spacing[0],
     marginTop: theme.spacing[0],
+  },
+})
+
+/**
+ * Two equal columns that fill the row, falling back to one on narrow screens.
+ *
+ * What a pair of radio buttons needs to reach both edges of the box it sits
+ * in: a flex row sizes each to its own label and leaves the right-hand side
+ * short. The district court's advocate screen has carried its own copy of this
+ * since before there was anywhere shared to put it.
+ */
+export const twoColumn = recipe({
+  base: {
+    display: 'grid',
+    alignItems: 'flex-end',
+    '@media': {
+      [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+        gridTemplateColumns: '1fr 1fr',
+      },
+    },
+  },
+  variants: {
+    gap: {
+      1: { gap: theme.spacing[1] },
+      2: { gap: theme.spacing[2] },
+      3: { gap: theme.spacing[3] },
+    },
+  },
+  defaultVariants: {
+    gap: 2,
   },
 })

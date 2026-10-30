@@ -7,7 +7,11 @@ import {
   PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { rcReportForm, titles } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  rcReportForm,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   CommentsInput,
   FormContentContainer,
@@ -20,7 +24,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { useDebouncedInput } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const PoliceReport = () => {
@@ -47,16 +51,14 @@ export const PoliceReport = () => {
         title={formatMessage(titles.prosecutor.restrictionCases.policeReport)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(rcReportForm.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <PageTitle>{rcReportForm.heading}</PageTitle>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(rcReportForm.sections.demands.heading)}
-            />
+            <SectionHeading title={rcReportForm.sections.demands.heading} />
             <Input
               name="demands"
-              label={formatMessage(rcReportForm.sections.demands.label)}
+              label={rcReportForm.sections.demands.label}
               placeholder={'Hverjar eru kröfur ákæruvaldsins?'}
               value={demandsInput.value}
               errorMessage={demandsInput.errorMessage}
@@ -70,16 +72,14 @@ export const PoliceReport = () => {
           </Box>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(rcReportForm.sections.caseFacts.heading)}
-              tooltip={formatMessage(rcReportForm.sections.caseFacts.tooltip)}
+              title={rcReportForm.sections.caseFacts.heading}
+              tooltip={rcReportForm.sections.caseFacts.tooltip}
             />
             <Input
               data-testid="caseFacts"
               name="caseFacts"
-              label={formatMessage(rcReportForm.sections.caseFacts.label)}
-              placeholder={formatMessage(
-                rcReportForm.sections.caseFacts.placeholder,
-              )}
+              label={rcReportForm.sections.caseFacts.label}
+              placeholder={rcReportForm.sections.caseFacts.placeholder}
               errorMessage={caseFactsInput.errorMessage}
               hasError={caseFactsInput.hasError}
               value={caseFactsInput.value}
@@ -92,20 +92,14 @@ export const PoliceReport = () => {
           </Box>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(
-                rcReportForm.sections.legalArguments.heading,
-              )}
-              tooltip={formatMessage(
-                rcReportForm.sections.legalArguments.tooltip,
-              )}
+              title={rcReportForm.sections.legalArguments.heading}
+              tooltip={rcReportForm.sections.legalArguments.tooltip}
             />
             <Input
               data-testid="legalArguments"
               name="legalArguments"
-              label={formatMessage(rcReportForm.sections.legalArguments.label)}
-              placeholder={formatMessage(
-                rcReportForm.sections.legalArguments.placeholder,
-              )}
+              label={rcReportForm.sections.legalArguments.label}
+              placeholder={rcReportForm.sections.legalArguments.placeholder}
               value={legalArgumentsInput.value}
               errorMessage={legalArgumentsInput.errorMessage}
               hasError={legalArgumentsInput.hasError}
@@ -123,12 +117,20 @@ export const PoliceReport = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() => {
-            handleNavigationTo(PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE)
-          }}
-          nextIsDisabled={!stepIsValid}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () => {
+                handleNavigationTo(
+                  PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE,
+                )
+              },
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

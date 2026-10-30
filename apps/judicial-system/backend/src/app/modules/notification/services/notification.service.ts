@@ -1,16 +1,9 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
-import {
-  CaseState,
-  RequestCaseNotificationType,
-  type User,
-} from '@island.is/judicial-system/types'
+import { MessageType } from '@island.is/judicial-system/message'
+import { CaseState, type User } from '@island.is/judicial-system/types'
 
-import { EventService } from '../../event'
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { type Case } from '../../repository'
 import { UserInitiatedAppealNotificationType } from '../dto/appealNotification.dto'
 import { UserInitiatedNotificationType } from '../dto/notification.dto'
@@ -18,16 +11,12 @@ import { SendNotificationResponse } from '../models/sendNotification.response'
 
 @Injectable()
 export class NotificationService {
-  constructor(private readonly eventService: EventService) {}
-
   private addMessageForNotificationToQueue(
-    type:
-      | UserInitiatedNotificationType
-      | RequestCaseNotificationType.ADVOCATE_ASSIGNED,
+    type: UserInitiatedNotificationType,
     user: User,
     theCase: Case,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -45,7 +34,7 @@ export class NotificationService {
   ): Promise<SendNotificationResponse> {
     switch (type) {
       case UserInitiatedAppealNotificationType.APPEAL_CASE_FILES_UPDATED:
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           user,
           caseId: theCase.id,
@@ -64,7 +53,6 @@ export class NotificationService {
 
   async addMessagesForNotificationToQueue(
     type: UserInitiatedNotificationType,
-    eventOnly = false,
     theCase: Case,
     user: User,
   ): Promise<SendNotificationResponse> {
@@ -73,29 +61,14 @@ export class NotificationService {
         this.addMessageForNotificationToQueue(type, user, theCase)
 
         if (theCase.state === CaseState.RECEIVED) {
-          addMessagesToQueue({
+          queueMessagesAfterCommit({
             type: MessageType.DELIVERY_TO_COURT_REQUEST,
             user,
             caseId: theCase.id,
           })
         }
         break
-      case UserInitiatedNotificationType.COURT_DATE:
-        if (eventOnly) {
-          this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase, true)
-
-          // We still want to send the defender a link to the case even if
-          // the judge chooses not to send a calendar invitation
-          // Note: This is only relevant for non-indictment cases
-          this.addMessageForNotificationToQueue(
-            RequestCaseNotificationType.ADVOCATE_ASSIGNED,
-            user,
-            theCase,
-          )
-        } else {
-          this.addMessageForNotificationToQueue(type, user, theCase)
-        }
-        break
+      case UserInitiatedNotificationType.ADVOCATE_ASSIGNED:
       case UserInitiatedNotificationType.HEADS_UP:
       case UserInitiatedNotificationType.CASE_FILES_UPDATED:
         this.addMessageForNotificationToQueue(type, user, theCase)

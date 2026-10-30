@@ -34,6 +34,9 @@ export const FormFragment = gql`
     submissionDaysToLive
     derivedFrom
     allowProceedOnValidationFail
+    isInaccessible
+    validateEligibility
+    enableApplicationPdfDownload
     hasSummaryScreen
     organizationZendeskInstance {
       zendeskInstance
@@ -63,6 +66,7 @@ export const FormFragment = gql`
     }
     status
     lastModifiedBy
+    delegations
   }
   ${LanguageFields}
   ${FormApplicantFragment}

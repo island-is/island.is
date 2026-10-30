@@ -19,7 +19,7 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { application as am } from './messages'
-import { JobSearchEligibilityApi } from '../dataProviders'
+import { JobSearchEligibilityApi, QuestionnaireApi } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
@@ -56,7 +56,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [JobSearchEligibilityApi],
+              api: [JobSearchEligibilityApi, QuestionnaireApi],
               delete: true,
             },
           ],

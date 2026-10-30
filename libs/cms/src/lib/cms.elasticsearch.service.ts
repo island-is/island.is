@@ -57,7 +57,7 @@ import {
   GrantsAvailabilityStatus,
   GrantsSortBy,
 } from './dto/getGrants.input'
-import { Grant } from './models/grant.model'
+import { getAutomaticGrantStatus, Grant } from './models/grant.model'
 import { GrantList } from './models/grantList.model'
 import { BloodDonationRestrictionGenericTagList } from './models/bloodDonationRestriction.model'
 import { sortAlpha } from '@island.is/shared/utils'
@@ -1184,9 +1184,24 @@ export class CmsElasticsearchService {
       })
     return {
       total: grantListResponse.body.hits.total.value,
-      items: grantListResponse.body.hits.hits.map<Grant>((response) =>
-        JSON.parse(response._source.response ?? '[]'),
-      ),
+      items: grantListResponse.body.hits.hits.map<Grant>((response) => {
+        const grant: Grant = JSON.parse(response._source.response ?? '[]')
+        const tags = response._source.tags ?? []
+        const isAutomatic = tags.some(
+          (tag) => tag.type === 'status' && tag.key === 'Automatic',
+        )
+        if (isAutomatic) {
+          const isFromDateEstimated = tags.some(
+            (tag) => tag.type === 'grantFromDateIsEstimated',
+          )
+          grant.status = getAutomaticGrantStatus(
+            grant.dateFrom,
+            grant.dateTo,
+            isFromDateEstimated,
+          )
+        }
+        return grant
+      }),
     }
   }
 

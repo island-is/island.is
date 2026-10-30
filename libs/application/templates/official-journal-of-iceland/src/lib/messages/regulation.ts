@@ -74,6 +74,74 @@ export const regulation = {
           'Warning about diff precision when editing amending regulation content',
       },
     }),
+    updateText: defineMessages({
+      title: {
+        id: 'ojoi.application:regulation.content.updateText.title',
+        defaultMessage: 'Uppfæra texta',
+        description:
+          'Title of the prompt to regenerate the amending regulation text from its impacts',
+      },
+      button: {
+        id: 'ojoi.application:regulation.content.updateText.button',
+        defaultMessage: 'Uppfæra texta út frá breytingum',
+        description:
+          'Button that regenerates the amending regulation text from its impacts',
+      },
+      description: {
+        id: 'ojoi.application:regulation.content.updateText.description',
+        defaultMessage:
+          'Titill og texti breytingareglugerðar verða búin til aftur út frá breytingunum sem skráðar eru á stofnreglugerð. Breytingar sem þú hefur gert á titli og texta tapast.',
+        description:
+          'Explains that regenerating the text discards manual edits to the title and text',
+      },
+      impactsChanged: {
+        id: 'ojoi.application:regulation.content.updateText.impactsChanged',
+        defaultMessage:
+          'Ósamræmi er í texta stofnreglugerðar og breytingareglugerðar. Texti breytingareglugerðar þarf að samræmast breytingum sem gerðar hafa verið á stofnreglugerð, eigi breytingarnar að færast inn með réttum hætti. Ef þú uppfærir tapast breytingar sem þú hefur gert á titli og texta.',
+        description:
+          'Prompt shown after an impact changes while the amending regulation text already exists',
+      },
+      confirm: {
+        id: 'ojoi.application:regulation.content.updateText.confirm',
+        defaultMessage: 'Uppfæra',
+        description: 'Confirm regenerating the amending regulation text',
+      },
+      cancel: {
+        id: 'ojoi.application:regulation.content.updateText.cancel',
+        defaultMessage: 'Hætta við',
+        description: 'Cancel regenerating the amending regulation text',
+      },
+      keep: {
+        id: 'ojoi.application:regulation.content.updateText.keep',
+        defaultMessage: 'Halda núverandi texta',
+        description:
+          'Keep the current amending regulation text instead of regenerating it',
+      },
+    }),
+    baseChanges: defineMessages({
+      legend: {
+        id: 'ojoi.application:regulation.content.baseChanges.legend',
+        defaultMessage: 'Breytingar á stofnreglugerð',
+        description:
+          'Heading of the panel that shows the changes recorded on the base regulations',
+      },
+      repealed: {
+        id: 'ojoi.application:regulation.content.baseChanges.repealed',
+        defaultMessage: 'Reglugerðin fellur brott.',
+        description: 'Shown for a base regulation that the impact repeals',
+      },
+      newTitle: {
+        id: 'ojoi.application:regulation.content.baseChanges.newTitle',
+        defaultMessage: 'Titill reglugerðarinnar verður: {title}',
+        description:
+          'Shown when an amend impact changes the base regulation title',
+      },
+      noTextChange: {
+        id: 'ojoi.application:regulation.content.baseChanges.noTextChange',
+        defaultMessage: 'Engar breytingar á texta.',
+        description: 'Shown for an amend impact whose diff has no changes',
+      },
+    }),
   },
   meta: {
     general: defineMessages({
@@ -225,6 +293,40 @@ export const regulation = {
         id: 'ojoi.application:regulation.impacts.alerts.revokeRegulation',
         defaultMessage: 'Fella hana brott',
         description: 'Button label for revoking a regulation',
+      },
+      notMigrated: {
+        id: 'ojoi.application:regulation.impacts.alerts.notMigrated',
+        defaultMessage:
+          'Reglugerð {name} hefur ekki verið flutt á island.is og því er ekki hægt að skrá breytingar eða brottfellingu á henni hér.',
+        description:
+          'Shown instead of the impact buttons when the selected regulation has not been moved to island.is',
+      },
+      notMigratedAmending: {
+        id: 'ojoi.application:regulation.impacts.alerts.notMigratedAmending',
+        defaultMessage:
+          'Hægt er að halda áfram án áhrifaskráningar og skrifa texta breytingareglugerðarinnar handvirkt.',
+        description:
+          'Explains the option to continue without impacts when amending a regulation not moved to island.is',
+      },
+      continueWithoutImpacts: {
+        id: 'ojoi.application:regulation.impacts.alerts.continueWithoutImpacts',
+        defaultMessage: 'Halda áfram án áhrifaskráningar',
+        description:
+          'Button for amending a regulation not moved to island.is without recording impacts',
+      },
+      withoutImpactsNote: {
+        id: 'ojoi.application:regulation.impacts.alerts.withoutImpactsNote',
+        defaultMessage:
+          'Haldið verður áfram án áhrifaskráningar. Texta breytingareglugerðarinnar þarf þá að skrifa handvirkt.',
+        description:
+          'Shown when the user has chosen to continue without recording impacts',
+      },
+      hasRepeal: {
+        id: 'ojoi.application:regulation.impacts.alerts.hasRepeal',
+        defaultMessage:
+          'Reglugerð er með virka brottfellingu og því ekki hægt að skrá frekari áhrifafærslur.',
+        description:
+          'Shown instead of the impact buttons when this draft already repeals the selected regulation',
       },
       requireImpact: {
         id: 'ojoi.application:regulation.impacts.alerts.requireImpact',
@@ -388,6 +490,62 @@ export const regulation = {
         id: 'ojoi.application:regulation.summary.labels.no',
         defaultMessage: 'Nei',
         description: 'No label',
+      },
+    }),
+    dateWarnings: defineMessages({
+      effectiveBeforePublish: {
+        id: 'ojoi.application:regulation.summary.dateWarnings.effectiveBeforePublish',
+        defaultMessage:
+          'Valinn gildistökudagur er á undan útgáfudegi. Almennt er miðað við að reglugerð öðlist gildi eftir birtingu.',
+        description:
+          'Warning when the effective date is before the requested publish date',
+      },
+      effectiveDateEarly: {
+        id: 'ojoi.application:regulation.summary.dateWarnings.effectiveDateEarly',
+        defaultMessage: 'Valinn gildistökudagur er á undan deginum í dag.',
+        description: 'Warning when the effective date is in the past',
+      },
+    }),
+    impactsAfterEffectiveDate: defineMessages({
+      title: {
+        id: 'ojoi.application:regulation.summary.impactsAfterEffectiveDate.title',
+        defaultMessage: 'Gildistökudagur er á undan dagsetningu áhrifa',
+        description:
+          'Title of the warning when the effective date is before an impact date',
+      },
+      message: {
+        id: 'ojoi.application:regulation.summary.impactsAfterEffectiveDate.message',
+        defaultMessage:
+          'Reglugerðin tekur gildi {effectiveDate} en áhrif hennar á {regulations} eru dagsett síðar. Slíkt tíðkast aðeins í undantekningartilvikum. Gakktu úr skugga um að dagsetningarnar séu réttar.',
+        description:
+          'Message of the warning when the effective date is before an impact date',
+      },
+    }),
+    textComparison: defineMessages({
+      heading: {
+        id: 'ojoi.application:regulation.summary.textComparison.heading',
+        defaultMessage: 'Samanburður við stofnreglugerð',
+        description:
+          'Heading of the section comparing the amending text with the base regulation changes',
+      },
+      intro: {
+        id: 'ojoi.application:regulation.summary.textComparison.intro',
+        defaultMessage:
+          'Texti breytingareglugerðarinnar er sá texti sem birtist. Breytingarnar á stofnreglugerð eru færðar inn eins og þær eru skráðar hér, óháð texta breytingareglugerðarinnar. Berðu þetta tvennt saman og gakktu úr skugga um að textinn geri hvorki meiri né minni breytingar en skráðar eru.',
+        description:
+          'Explains that the amending text is published as is and the base changes are applied as recorded',
+      },
+      amendingText: {
+        id: 'ojoi.application:regulation.summary.textComparison.amendingText',
+        defaultMessage: 'Texti breytingareglugerðar',
+        description: 'Heading above the amending regulation text',
+      },
+      confirm: {
+        id: 'ojoi.application:regulation.summary.textComparison.confirm',
+        defaultMessage:
+          'Ég hef borið texta breytingareglugerðarinnar saman við breytingarnar á stofnreglugerð og þau samræmast.',
+        description:
+          'Checkbox confirming the amending text matches the base regulation changes',
       },
     }),
   },

@@ -1,14 +1,14 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 
-import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
 import { strings } from './CommentsAccordionItem.strings'
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
 }
 
 const CommentsAccordionItem: FC<Props> = (props) => {
@@ -23,16 +23,19 @@ const CommentsAccordionItem: FC<Props> = (props) => {
   return (
     <AccordionItem
       id="id_5"
-      label={formatMessage(strings.label, {
-        commentCount,
-      })}
+      label={formatMessage(
+        { id: strings.label, defaultMessage: strings.label },
+        {
+          commentCount,
+        },
+      )}
       labelVariant="h3"
     >
       {workingCase.comments && (
         <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
           <Box marginBottom={1}>
             <Text variant="h4" as="h4">
-              {formatMessage(strings.comments)}
+              {strings.comments}
             </Text>
           </Box>
           <Text whiteSpace="breakSpaces">{workingCase.comments}</Text>
@@ -42,7 +45,7 @@ const CommentsAccordionItem: FC<Props> = (props) => {
         <Box marginBottom={workingCase.caseResentExplanation ? 3 : 0}>
           <Box marginBottom={1}>
             <Text variant="h4" as="h4">
-              {formatMessage(strings.caseFilesComments)}
+              {strings.caseFilesComments}
             </Text>
           </Box>
           <Text whiteSpace="breakSpaces">{workingCase.caseFilesComments}</Text>
@@ -52,7 +55,7 @@ const CommentsAccordionItem: FC<Props> = (props) => {
         <>
           <Box marginBottom={1}>
             <Text variant="h4" as="h4">
-              {formatMessage(strings.caseResentExplanation)}
+              {strings.caseResentExplanation}
             </Text>
           </Box>
           <MarkdownWrapper markdown={workingCase.caseResentExplanation} />

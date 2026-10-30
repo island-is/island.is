@@ -1,19 +1,12 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react'
-import { ApolloError } from '@apollo/client'
+import type { Dispatch, SetStateAction } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
-import {
-  Case,
-  CaseFile,
-  CaseFileState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useUploadFileToCourtMutation } from './uploadFileToCourt.generated'
+import { resolveCourtUploadError } from './useCourtUpload.logic'
 
 export enum UploadState {
   ALL_UPLOADED = 'ALL_UPLOADED',
@@ -40,14 +33,18 @@ export interface CaseFileWithStatus extends CaseFile {
 }
 
 export const useCourtUpload = (
-  workingCase: Case,
-  setWorkingCase: Dispatch<SetStateAction<Case>>,
+  workingCase: WorkingCase,
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
 ) => {
   const [uploadState, setUploadState] = useState<UploadState>()
   const [uploadFileToCourtMutation] = useUploadFileToCourtMutation()
 
   const setFileUploadStatus = useCallback(
-    (theCase: Case, file: CaseFileWithStatus, status: CaseFileStatus) => {
+    (
+      theCase: WorkingCase,
+      file: CaseFileWithStatus,
+      status: CaseFileStatus,
+    ) => {
       const files = theCase.caseFiles as CaseFileWithStatus[]
 
       if (files) {
@@ -136,18 +133,7 @@ export const useCourtUpload = (
             )
           }
         } catch (error) {
-          const { errorCode, detail } = {
-            errorCode:
-              error instanceof ApolloError &&
-              (error as ApolloError).graphQLErrors[0].extensions?.code,
-            detail:
-              (error instanceof ApolloError &&
-                (
-                  (error as ApolloError).graphQLErrors[0].extensions
-                    ?.problem as { detail: string }
-                )?.detail) ||
-              '',
-          }
+          const { errorCode, detail } = resolveCourtUploadError(error)
 
           if (errorCode === 'https://httpstatuses.org/404') {
             if (detail?.startsWith('Case Not Found')) {

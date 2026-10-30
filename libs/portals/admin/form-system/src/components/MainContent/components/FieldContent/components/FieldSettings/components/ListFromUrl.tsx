@@ -21,9 +21,8 @@ export const ListFromUrl = () => {
   const exampleRequest = {
     slug: form.slug,
     identifier: currentItem.identifier,
-    loggedInUserNationalId:
-      userInfo?.profile?.actor?.nationalId ?? '0000000000',
-    applicantNationalId: userInfo?.profile?.nationalId ?? '0000000000',
+    actorNationalId: userInfo?.profile?.actor?.nationalId ?? '0000000000',
+    nationalId: userInfo?.profile?.nationalId ?? '0000000000',
     isTest: !form.beenPublished,
     fieldType: currentItem.fieldType,
   }

@@ -1,18 +1,22 @@
 import { createHttpLink } from '@apollo/client'
-import getConfig from 'next/config'
 import fetch from 'isomorphic-unfetch'
+import {
+  getPublicRuntimeEnv,
+  getServerRuntimeEnv,
+} from '../environments/runtimeEnvironment'
 
-const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
+const isBrowser: boolean = process.browser
 
 // Polyfill fetch() on the server (used by apollo-client)
-if (!process.browser) {
+if (!isBrowser) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ;(global as any).fetch = fetch
 }
 
 export default createHttpLink({
-  uri:
-    serverRuntimeConfig.graphqlEndpoint || publicRuntimeConfig.graphqlEndpoint,
+  uri: isBrowser
+    ? getPublicRuntimeEnv().graphqlEndpoint
+    : getServerRuntimeEnv().graphqlEndpoint,
   credentials: 'include',
   fetch,
 })

@@ -1,7 +1,7 @@
 import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Query, Mutation, Resolver, Int } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -53,7 +53,7 @@ export class MainResolver {
       input.licenseId,
     )
     if (url === null) {
-      throw new ApolloError('Could not create a download link')
+      throw new GraphQLError('Could not create a download link')
     }
 
     this.auditService.audit({
@@ -93,7 +93,7 @@ export class MainResolver {
     const familyMember = family?.[familyIndex]
 
     if (!familyMember) {
-      throw new ApolloError('The requested nationalId is not a part of family')
+      throw new GraphQLError('The requested nationalId is not a part of family')
     }
 
     return this.auditService.auditPromise(

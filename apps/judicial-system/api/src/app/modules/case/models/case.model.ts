@@ -245,24 +245,6 @@ export class Case {
   @Field(() => String, { nullable: true })
   readonly endOfSessionBookings?: string
 
-  @Field(() => CaseAppealDecision, { nullable: true })
-  readonly accusedAppealDecision?: CaseAppealDecision
-
-  @Field(() => String, { nullable: true })
-  readonly accusedAppealAnnouncement?: string
-
-  @Field(() => CaseAppealDecision, { nullable: true })
-  readonly prosecutorAppealDecision?: CaseAppealDecision
-
-  @Field(() => String, { nullable: true })
-  readonly prosecutorAppealAnnouncement?: string
-
-  @Field(() => String, { nullable: true })
-  readonly accusedPostponedAppealDate?: string
-
-  @Field(() => String, { nullable: true })
-  readonly prosecutorPostponedAppealDate?: string
-
   @Field(() => Boolean, { nullable: true })
   readonly isAppealDeadlineExpired?: boolean
 
@@ -320,6 +302,10 @@ export class Case {
   @Field(() => String, { nullable: true })
   readonly indictmentIntroduction?: string
 
+  // Set once the generated Ákæra has been frozen to S3; gates replacing it
+  @Field(() => String, { nullable: true })
+  readonly indictmentHash?: string
+
   @Field(() => [IndictmentCount], { nullable: true })
   readonly indictmentCounts?: IndictmentCount[]
 
@@ -365,6 +351,15 @@ export class Case {
   @Field(() => User, { nullable: true })
   readonly indictmentReviewer?: User
 
+  @Field(() => User, { nullable: true })
+  readonly appealProsecutor?: User
+
+  @Field(() => User, { nullable: true })
+  readonly indictmentApprover?: User
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentReviewReturnedExplanation?: string
+
   @Field(() => String, {
     nullable: true,
     description: 'appeal deadline for public prosecutor',
@@ -403,6 +398,9 @@ export class Case {
 
   @Field(() => Boolean, { nullable: true })
   readonly isCompletedWithoutRuling?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isArraignmentSummonsSkipped?: boolean
 
   @Field(() => String, { nullable: true })
   readonly caseSentToCourtDate?: string
@@ -451,6 +449,12 @@ export class Case {
 
   @Field(() => [AppealCase], { nullable: true })
   readonly rulingOrderAppealCases?: AppealCase[]
+
+  // The appeal of an indictment verdict, when one has been filed. One per case
+  // however many defendants have joined it; who appealed and when is in its
+  // event log.
+  @Field(() => AppealCase, { nullable: true })
+  readonly verdictAppealCase?: AppealCase
 
   @Field(() => [AppealDecisionResponse], { nullable: true })
   readonly appealDecisions?: AppealDecisionResponse[]

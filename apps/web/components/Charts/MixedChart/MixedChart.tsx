@@ -47,10 +47,8 @@ export const MixedChart = ({ graphData }: GraphProps) => {
         label={parsedDatakeys.yAxis?.label}
         labelRight={parsedDatakeys.yAxis?.labelRight}
       />
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height={380}>
         <ComposedChart
-          width={250}
-          height={150}
           data={parsedData}
           margin={{
             top: 30,

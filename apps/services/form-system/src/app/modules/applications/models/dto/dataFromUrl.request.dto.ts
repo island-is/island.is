@@ -55,12 +55,12 @@ export class DataFromUrlReqDto {
   @IsString()
   @ApiPropertyOptional()
   @IsOptional()
-  loggedInUserNationalId?: string
+  actorNationalId?: string
 
   @IsString()
   @ApiPropertyOptional()
   @IsOptional()
-  applicantNationalId?: string
+  nationalId?: string
 
   @IsString()
   @ApiPropertyOptional()
@@ -73,6 +73,9 @@ export class DataFromUrlReqDto {
 
   @ApiHideProperty()
   zendeskInstance?: string
+
+  @ApiHideProperty()
+  zendeskBrandId?: string
 
   //   @ApiPropertyOptional({ type: [InputValue] })
   //   @ValidateNested({ each: true })

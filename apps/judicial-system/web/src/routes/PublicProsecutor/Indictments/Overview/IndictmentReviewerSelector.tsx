@@ -1,18 +1,18 @@
-import { Dispatch, SetStateAction, useContext, useMemo } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Option, Select, Text } from '@island.is/island-ui/core'
+import type { Option } from '@island.is/island-ui/core'
+import { Select, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
-import {
-  Case,
-  CaseIndictmentRulingDecision,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './Overview.strings'
 
@@ -21,7 +21,7 @@ export const IndictmentReviewerSelector = ({
   selectedIndictmentReviewer,
   setSelectedIndictmentReviewer,
 }: {
-  workingCase: Case
+  workingCase: WorkingCase
   selectedIndictmentReviewer: Option<string> | null | undefined
   setSelectedIndictmentReviewer: Dispatch<
     SetStateAction<Option<string> | null | undefined>
@@ -57,19 +57,25 @@ export const IndictmentReviewerSelector = ({
   return (
     <>
       <SectionHeading
-        title={fm(strings.reviewerTitle)}
+        title={strings.reviewerTitle}
         description={
           <Text variant="eyebrow">
-            {fm(strings.reviewerSubtitle, {
-              isFine:
-                workingCase.indictmentRulingDecision ===
-                CaseIndictmentRulingDecision.FINE,
-              indictmentAppealDeadline: formatDate(
-                workingCase.indictmentAppealDeadline,
-              ),
-              appealDeadlineIsInThePast:
-                workingCase.indictmentVerdictAppealDeadlineExpired,
-            })}
+            {fm(
+              {
+                id: strings.reviewerSubtitle,
+                defaultMessage: strings.reviewerSubtitle,
+              },
+              {
+                isFine:
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.FINE,
+                indictmentAppealDeadline: formatDate(
+                  workingCase.indictmentAppealDeadline,
+                ),
+                appealDeadlineIsInThePast:
+                  workingCase.indictmentVerdictAppealDeadlineExpired,
+              },
+            )}
           </Text>
         }
       />
@@ -78,7 +84,7 @@ export const IndictmentReviewerSelector = ({
           name="reviewer"
           dataTestId="select-reviewer"
           label="Veldu saksóknara"
-          placeholder={fm(strings.reviewerPlaceholder)}
+          placeholder={strings.reviewerPlaceholder}
           value={
             selectedIndictmentReviewer
               ? selectedIndictmentReviewer

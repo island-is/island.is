@@ -1,3 +1,5 @@
+import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
@@ -8,7 +10,19 @@ import {
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case, CivilClaimant } from '../../../repository'
+import { getOrCreateTransaction } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
+
+// This spec imports the middleware barrel, which would otherwise load the
+// real helper before createTestingDefendantModule mocks it.
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
+
+import {
+  Case,
+  CaseDefendantPoliceCaseNumberRepositoryService,
+  CivilClaimant,
+  CivilClaimantRepositoryService,
+} from '../../../repository'
 import { UpdateCivilClaimantDto } from '../../dto/updateCivilClaimant.dto'
 
 interface Then {
@@ -31,15 +45,32 @@ describe('CivilClaimantController - Update', () => {
   const theCase = { id: caseId, courtCaseNumber } as Case
 
   let mockQueuedMessages: Message[]
-  let mockCivilClaimantModel: typeof CivilClaimant
+  let mockCivilClaimantRepositoryService: CivilClaimantRepositoryService
+  let mockCaseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService
+  let transaction: Transaction
+  let mockSequelize: Sequelize
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queuedMessages, civilClaimantModel, civilClaimantController } =
-      await createTestingDefendantModule()
+    const {
+      queuedMessagesAfterCommit,
+      sequelize,
+      civilClaimantRepositoryService,
+      caseDefendantPoliceCaseNumberRepositoryService,
+      civilClaimantController,
+    } = await createTestingDefendantModule()
 
-    mockQueuedMessages = queuedMessages
-    mockCivilClaimantModel = civilClaimantModel
+    // The handler takes the request's transaction, so the confirmation and
+    // the appeal event recording it land together or not at all.
+    mockSequelize = sequelize
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockResolvedValue(transaction)
+
+    mockQueuedMessages = queuedMessagesAfterCommit
+    mockCivilClaimantRepositoryService = civilClaimantRepositoryService
+    mockCaseDefendantPoliceCaseNumberRepositoryService =
+      caseDefendantPoliceCaseNumberRepositoryService
 
     givenWhenThen = async (
       theCase: Case,
@@ -49,17 +80,24 @@ describe('CivilClaimantController - Update', () => {
     ) => {
       const then = {} as Then
 
-      await civilClaimantController
-        .update(
-          caseId,
-          civilClaimantId,
-          theCase,
-          user as User,
-          civilClaimant,
-          updateData,
-        )
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // Guards do not execute in controller unit tests, so the request
+      // context the handler takes its transaction from is set up here.
+      try {
+        await runInRequestContext(async () => {
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await civilClaimantController.update(
+            caseId,
+            civilClaimantId,
+            theCase,
+            user as User,
+            civilClaimant,
+            updateData,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -75,25 +113,73 @@ describe('CivilClaimantController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+      const mockUpdate =
+        mockCivilClaimantRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        civilClaimants: [updatedCivilClaimant],
+      })
 
       then = await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
     })
 
     it('should update the civil claimant', () => {
-      expect(mockCivilClaimantModel.update).toHaveBeenCalledWith(
-        civilClaimantUpdate,
-        {
-          where: { id: civilClaimantId, caseId },
-          returning: true,
-        },
-      )
+      expect(
+        mockCivilClaimantRepositoryService.updateByIdAndCase,
+      ).toHaveBeenCalledWith(civilClaimantId, caseId, civilClaimantUpdate, {
+        transaction,
+      })
       expect(mockQueuedMessages).toEqual([])
     })
 
     it('should return the updated civil claimant', () => {
       expect(then.result).toBe(updatedCivilClaimant)
+    })
+  })
+
+  describe('civil claimant defendants narrowed by police case numbers', () => {
+    const civilClaimantUpdate = {
+      policeCaseNumbers: ['007-1', '007-2'],
+      defendantIds: ['def-a', 'def-b'],
+    }
+    const updatedCivilClaimant = {
+      id: civilClaimantId,
+      caseId,
+      ...civilClaimantUpdate,
+    }
+
+    beforeEach(async () => {
+      const mockFindAssignedDefendantIds =
+        mockCaseDefendantPoliceCaseNumberRepositoryService.findAssignedDefendantIds as jest.Mock
+      mockFindAssignedDefendantIds.mockResolvedValueOnce(['def-b'])
+
+      const mockUpdate =
+        mockCivilClaimantRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        civilClaimants: [updatedCivilClaimant],
+      })
+
+      await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
+    })
+
+    it('should only keep the defendants still linked to the police case numbers', () => {
+      expect(
+        mockCaseDefendantPoliceCaseNumberRepositoryService.findAssignedDefendantIds,
+      ).toHaveBeenCalledWith(caseId, ['007-1', '007-2'], ['def-a', 'def-b'], {
+        transaction,
+      })
+      expect(
+        mockCivilClaimantRepositoryService.updateByIdAndCase,
+      ).toHaveBeenCalledWith(
+        civilClaimantId,
+        caseId,
+        {
+          policeCaseNumbers: ['007-1', '007-2'],
+          defendantIds: ['def-b'],
+        },
+        { transaction },
+      )
     })
   })
 
@@ -110,8 +196,12 @@ describe('CivilClaimantController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+      const mockUpdate =
+        mockCivilClaimantRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        civilClaimants: [updatedCivilClaimant],
+      })
 
       then = await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
     })
@@ -156,8 +246,12 @@ describe('CivilClaimantController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+      const mockUpdate =
+        mockCivilClaimantRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        civilClaimants: [updatedCivilClaimant],
+      })
 
       await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate, {
         id: civilClaimantId,
@@ -181,8 +275,12 @@ describe('CivilClaimantController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+      const mockUpdate =
+        mockCivilClaimantRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        civilClaimants: [updatedCivilClaimant],
+      })
 
       await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
     })
@@ -224,8 +322,12 @@ describe('CivilClaimantController - Update', () => {
     const caseWithoutCourtCaseNumber = { id: caseId } as Case
 
     beforeEach(async () => {
-      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+      const mockUpdate =
+        mockCivilClaimantRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        civilClaimants: [updatedCivilClaimant],
+      })
 
       await givenWhenThen(
         caseWithoutCourtCaseNumber,
@@ -259,7 +361,8 @@ describe('CivilClaimantController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
+      const mockUpdate =
+        mockCivilClaimantRepositoryService.updateByIdAndCase as jest.Mock
       mockUpdate.mockRejectedValue(new Error('Test error'))
 
       then = await givenWhenThen(theCase, civilClaimantId, {})

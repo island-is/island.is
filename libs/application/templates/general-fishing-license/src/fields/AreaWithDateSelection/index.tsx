@@ -120,7 +120,7 @@ export const AreaWithDateSelection: FC<
             getErrorViaPath(errors, `fishingLicenseFurtherInformation.date`)
           }
           minDate={getMinDate()}
-          maxDate={getMaxDate()}
+          maxDate={getMaxDate() ?? undefined}
         />
       </Box>
     </Box>

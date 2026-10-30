@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'api-domains-social-insurance',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

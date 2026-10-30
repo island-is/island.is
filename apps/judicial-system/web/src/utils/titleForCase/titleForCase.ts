@@ -1,11 +1,11 @@
-import { IntlShape } from 'react-intl'
+import type { IntlShape } from 'react-intl'
 
 import {
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
-  Case,
   CaseDecision,
   CaseState,
   CaseType,
@@ -15,7 +15,7 @@ import { strings } from './titleForCase.strings'
 
 export const titleForCase = (
   formatMessage: IntlShape['formatMessage'],
-  theCase: Case,
+  theCase: WorkingCase,
 ) => {
   if (isIndictmentCase(theCase.type)) {
     return 'Máli lokið'

@@ -1,8 +1,10 @@
 import type { User } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
+  AppealEventType,
   CaseActionType,
   CaseState,
+  CaseTableColumnKey,
   CaseType,
   ContextMenuCaseActionType,
   InstitutionType,
@@ -16,7 +18,10 @@ import {
   canDeleteIndictmentCase,
   canDeleteRequestCase,
   getActionOnRowClick,
+  getAllIncludes,
+  getAttributes,
   getContextMenuActions,
+  getGlobalIncludes,
   isMyCase,
 } from './caseTable.utils'
 
@@ -35,13 +40,162 @@ const districtCourtJudge = (id: string): User =>
     institution: { type: InstitutionType.DISTRICT_COURT },
   } as User)
 
+const defenceUser = (nationalId: string): User =>
+  ({
+    id: 'defender-1',
+    role: UserRole.DEFENDER,
+    nationalId,
+  } as User)
+
 describe('caseTable.utils', () => {
+  // A `separate: true` include is fetched by its own query, so the only place
+  // its ordering can be stated is on the include itself - it cannot ride along
+  // in the parent query's ORDER BY the way a joined include does.
+  //
+  // Sequelize drops an option it does not recognise without a word, so getting
+  // the key wrong here costs nothing visible: the child query simply comes back
+  // in whatever order the database felt like.
+  describe('order on a separate include', () => {
+    const judge = {
+      id: 'judge_id',
+      role: UserRole.DISTRICT_COURT_JUDGE,
+      institution: { type: InstitutionType.DISTRICT_COURT },
+    } as User
+
+    const dateLogsInclude = () => {
+      const [includes] = getGlobalIncludes(
+        { dateLogs: { attributes: ['date', 'dateType'] } },
+        judge,
+      )
+
+      return includes.find(
+        (include) => (include as { as?: string }).as === 'dateLogs',
+      ) as Record<string, unknown>
+    }
+
+    it('reaches Sequelize under the key it reads', () => {
+      expect(dateLogsInclude()).toMatchObject({
+        as: 'dateLogs',
+        separate: true,
+        order: [['created', 'DESC']],
+      })
+    })
+
+    // The way it went wrong: spreading the order array rather than naming it
+    // put the term under "0", where nothing reads it.
+    it('does not smuggle the order in under a numeric key', () => {
+      expect(Object.keys(dateLogsInclude())).not.toContain('0')
+    })
+  })
+
+  // A column declares the whole path its value needs, down to the attributes of
+  // an association of an association. The model maps say only how each alias
+  // joins; which attributes and associations to read comes from the columns.
+  describe('nested includes', () => {
+    const judge = {
+      id: 'judge_id',
+      role: UserRole.DISTRICT_COURT_JUDGE,
+      institution: { type: InstitutionType.DISTRICT_COURT },
+    } as User
+
+    type IncludeShape = {
+      as?: string
+      attributes?: string[]
+      include?: IncludeShape[]
+    }
+
+    const findInclude = (includes: unknown[], as: string) =>
+      includes.find((include) => (include as IncludeShape).as === as) as
+        | IncludeShape
+        | undefined
+
+    it('builds an association of an association from the declaration', () => {
+      const [includes] = getGlobalIncludes(
+        {
+          appealCase: {
+            attributes: [],
+            includes: { appealJudge1: { attributes: ['name'] } },
+          },
+        },
+        judge,
+      )
+
+      const appealJudge1 = findInclude(
+        findInclude(includes, 'appealCase')?.include ?? [],
+        'appealJudge1',
+      )
+
+      expect(appealJudge1).toMatchObject({
+        as: 'appealJudge1',
+        separate: false,
+        attributes: ['id', 'name'],
+      })
+    })
+
+    it('merges what two declarations read off the same nested association', () => {
+      const [includes] = getAllIncludes(
+        {
+          appealCase: {
+            attributes: [],
+            includes: { appealJudge1: { attributes: ['title'] } },
+          },
+        },
+        ['courtOfAppealsHead' as CaseTableColumnKey],
+        judge,
+      )
+
+      const appealJudge1 = findInclude(
+        findInclude(includes, 'appealCase')?.include ?? [],
+        'appealJudge1',
+      )
+
+      expect(appealJudge1?.attributes).toEqual(
+        expect.arrayContaining(['id', 'title', 'name']),
+      )
+    })
+
+    it('names the path of an association the model maps do not reach', () => {
+      expect(() =>
+        getGlobalIncludes(
+          {
+            appealCase: {
+              attributes: [],
+              includes: {
+                appealJudge1: {
+                  attributes: [],
+                  includes: { institution: { attributes: ['name'] } },
+                },
+              },
+            },
+          },
+          judge,
+        ),
+      ).toThrow('appealCase.appealJudge1.institution')
+    })
+  })
+
+  describe('getAttributes', () => {
+    // canCancelAppeal (via userIsAppellant) only sees the attributes fetched for
+    // the user's role, so every case column it reads must be listed here
+    it('fetches the case attributes canCancelAppeal reads for prosecution users', () => {
+      const attributes = getAttributes([], prosecutionUser('p-1'))
+      expect(attributes).toEqual(expect.arrayContaining(['type']))
+    })
+
+    it('fetches the case attributes canCancelAppeal reads for defence users', () => {
+      const attributes = getAttributes([], defenceUser('1111111111'))
+      expect(attributes).toEqual(expect.arrayContaining(['type']))
+      expect(attributes).not.toContain('defenderNationalId')
+    })
+  })
+
   describe('isMyCase', () => {
     it('returns true for prosecution user when they are creating prosecutor', () => {
       const user = prosecutionUser('user-1')
       const theCase = {
         creatingProsecutorId: 'user-1',
         prosecutorId: 'other',
+        indictmentApproverId: null,
         judgeId: null,
         registrarId: null,
       } as unknown as Case
@@ -53,6 +207,19 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: 'other',
         prosecutorId: 'user-1',
+        indictmentApproverId: null,
+        judgeId: null,
+        registrarId: null,
+      } as unknown as Case
+      expect(isMyCase(theCase, user)).toBe(true)
+    })
+
+    it('returns true for prosecution user when they are indictment approver', () => {
+      const user = prosecutionUser('user-1')
+      const theCase = {
+        creatingProsecutorId: 'other',
+        prosecutorId: 'other2',
+        indictmentApproverId: 'user-1',
         judgeId: null,
         registrarId: null,
       } as unknown as Case
@@ -64,6 +231,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: 'other',
         prosecutorId: 'other2',
+        indictmentApproverId: 'other3',
         judgeId: null,
         registrarId: null,
       } as unknown as Case
@@ -75,6 +243,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: null,
         prosecutorId: null,
+        indictmentApproverId: null,
         judgeId: 'judge-1',
         registrarId: null,
       } as unknown as Case
@@ -86,6 +255,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: null,
         prosecutorId: null,
+        indictmentApproverId: null,
         judgeId: null,
         registrarId: 'reg-1',
       } as unknown as Case
@@ -97,6 +267,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: null,
         prosecutorId: null,
+        indictmentApproverId: null,
         judgeId: 'other',
         registrarId: 'other2',
       } as unknown as Case
@@ -159,8 +330,11 @@ describe('caseTable.utils', () => {
   })
 
   describe('canDeleteIndictmentCase', () => {
-    it('returns true for DRAFT and WAITING_FOR_CONFIRMATION', () => {
+    it('returns true for DRAFT, WAITING_FOR_REVIEW, and WAITING_FOR_CONFIRMATION', () => {
       expect(canDeleteIndictmentCase({ state: CaseState.DRAFT })).toBe(true)
+      expect(
+        canDeleteIndictmentCase({ state: CaseState.WAITING_FOR_REVIEW }),
+      ).toBe(true)
       expect(
         canDeleteIndictmentCase({ state: CaseState.WAITING_FOR_CONFIRMATION }),
       ).toBe(true)
@@ -210,72 +384,257 @@ describe('caseTable.utils', () => {
   })
 
   describe('canCancelAppeal', () => {
-    it('returns false for non-prosecution user', () => {
-      const user = districtCourtJudge('judge-1')
+    const prosecutorAppealed = {
+      eventType: AppealEventType.APPEALED,
+      userRole: UserRole.PROSECUTOR,
+    }
+    const defenderAppealed = {
+      eventType: AppealEventType.APPEALED,
+      userRole: UserRole.DEFENDER,
+    }
+
+    it('returns false for a court user even when the case was appealed', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: AppealCaseState.APPEALED },
-            prosecutorPostponedAppealDate: new Date('2024-01-01'),
+            appeal: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [prosecutorAppealed],
+            },
           } as unknown as Case,
-          user,
+          districtCourtJudge('judge-1'),
         ),
       ).toBe(false)
     })
 
-    it('returns true for indictment case when prosecution appealed', () => {
-      const user = prosecutionUser('p-1')
+    it('returns true for prosecution when a prosecution APPEALED event exists', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.INDICTMENT,
-            appealCase: { appealState: AppealCaseState.APPEALED },
-            prosecutorPostponedAppealDate: new Date('2024-01-01'),
+            appeal: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [prosecutorAppealed],
+            },
           } as unknown as Case,
-          user,
+          prosecutionUser('p-1'),
         ),
       ).toBe(true)
     })
 
-    it('returns true when prosecution, request case, appealed and has postponed date', () => {
-      const user = prosecutionUser('p-1')
+    it('returns true for prosecution on a RECEIVED appeal', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: AppealCaseState.APPEALED },
-            prosecutorPostponedAppealDate: new Date('2024-01-01'),
+            appeal: {
+              appealState: AppealCaseState.RECEIVED,
+              appealEventLogs: [prosecutorAppealed],
+            },
           } as unknown as Case,
-          user,
+          prosecutionUser('p-1'),
         ),
       ).toBe(true)
     })
 
-    it('returns true for RECEIVED appeal state', () => {
-      const user = prosecutionUser('p-1')
+    it('returns false for prosecution when only the defence appealed', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: AppealCaseState.RECEIVED },
-            prosecutorPostponedAppealDate: new Date('2024-01-01'),
+            appeal: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [defenderAppealed],
+            },
           } as unknown as Case,
-          user,
+          prosecutionUser('p-1'),
+        ),
+      ).toBe(false)
+    })
+
+    it('returns false when there are no APPEALED events', () => {
+      expect(
+        canCancelAppeal(
+          {
+            type: CaseType.CUSTODY,
+            appeal: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [],
+            },
+          } as unknown as Case,
+          prosecutionUser('p-1'),
+        ),
+      ).toBe(false)
+    })
+
+    it('returns true for the assigned defender when the defence appealed a request case', () => {
+      expect(
+        canCancelAppeal(
+          {
+            type: CaseType.CUSTODY,
+            defendants: [{ defenderNationalId: '1111111111' }],
+            appeal: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [defenderAppealed],
+            },
+          } as unknown as Case,
+          defenceUser('1111111111'),
         ),
       ).toBe(true)
     })
 
-    it('returns false when no prosecutorPostponedAppealDate', () => {
-      const user = prosecutionUser('p-1')
+    it('returns false for a defence user who is not the assigned defender of a request case', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: AppealCaseState.APPEALED },
-            prosecutorPostponedAppealDate: undefined,
+            defendants: [{ defenderNationalId: '1111111111' }],
+            appeal: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [defenderAppealed],
+            },
           } as unknown as Case,
-          user,
+          defenceUser('2222222222'),
+        ),
+      ).toBe(false)
+    })
+
+    it('returns false for the defender when only the prosecution appealed a request case', () => {
+      expect(
+        canCancelAppeal(
+          {
+            type: CaseType.CUSTODY,
+            defendants: [{ defenderNationalId: '1111111111' }],
+            appeal: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [prosecutorAppealed],
+            },
+          } as unknown as Case,
+          defenceUser('1111111111'),
+        ),
+      ).toBe(false)
+    })
+
+    // Request cases have one collective appeal and the prosecution's appeal takes
+    // precedence, so the defender cannot withdraw when the prosecution also
+    // appealed - only the prosecution can.
+    it('returns false for the defender of a request case when the prosecution also appealed', () => {
+      expect(
+        canCancelAppeal(
+          {
+            type: CaseType.CUSTODY,
+            defendants: [{ defenderNationalId: '1111111111' }],
+            appeal: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [prosecutorAppealed, defenderAppealed],
+            },
+          } as unknown as Case,
+          defenceUser('1111111111'),
+        ),
+      ).toBe(false)
+    })
+
+    // Prosecution precedence is request-case only: a dismissed indictment appeal
+    // is per party, so the defender of an appealing defendant may withdraw even
+    // when the prosecution also appealed.
+    it('returns true for the confirmed defender of a dismissed indictment even when the prosecution also appealed', () => {
+      expect(
+        canCancelAppeal(
+          {
+            type: CaseType.INDICTMENT,
+            defendants: [
+              {
+                id: 'd-1',
+                isDefenderChoiceConfirmed: true,
+                defenderNationalId: '1111111111',
+              },
+            ],
+            appeal: {
+              appealState: AppealCaseState.RECEIVED,
+              appealEventLogs: [
+                prosecutorAppealed,
+                {
+                  eventType: AppealEventType.APPEALED,
+                  userRole: UserRole.DEFENDER,
+                  defendantId: 'd-1',
+                },
+              ],
+            },
+          } as unknown as Case,
+          defenceUser('1111111111'),
+        ),
+      ).toBe(true)
+    })
+
+    it('returns true for the confirmed defender of a defendant who appealed a dismissed indictment', () => {
+      expect(
+        canCancelAppeal(
+          {
+            type: CaseType.INDICTMENT,
+            defendants: [
+              {
+                id: 'd-1',
+                isDefenderChoiceConfirmed: true,
+                defenderNationalId: '1111111111',
+              },
+            ],
+            appeal: {
+              appealState: AppealCaseState.RECEIVED,
+              appealEventLogs: [
+                {
+                  eventType: AppealEventType.APPEALED,
+                  userRole: UserRole.DEFENDER,
+                  defendantId: 'd-1',
+                },
+              ],
+            },
+          } as unknown as Case,
+          defenceUser('1111111111'),
+        ),
+      ).toBe(true)
+    })
+
+    it('returns false for a defender who is not the confirmed defender of the appealing defendant', () => {
+      expect(
+        canCancelAppeal(
+          {
+            type: CaseType.INDICTMENT,
+            defendants: [
+              {
+                id: 'd-1',
+                isDefenderChoiceConfirmed: true,
+                defenderNationalId: '1111111111',
+              },
+            ],
+            appeal: {
+              appealState: AppealCaseState.RECEIVED,
+              appealEventLogs: [
+                {
+                  eventType: AppealEventType.APPEALED,
+                  userRole: UserRole.DEFENDER,
+                  defendantId: 'd-1',
+                },
+              ],
+            },
+          } as unknown as Case,
+          defenceUser('2222222222'),
+        ),
+      ).toBe(false)
+    })
+
+    it('returns false once the appeal has been concluded', () => {
+      expect(
+        canCancelAppeal(
+          {
+            type: CaseType.CUSTODY,
+            defendants: [{ defenderNationalId: '1111111111' }],
+            appeal: {
+              appealState: AppealCaseState.COMPLETED,
+              appealEventLogs: [defenderAppealed],
+            },
+          } as unknown as Case,
+          defenceUser('1111111111'),
         ),
       ).toBe(false)
     })
@@ -307,8 +666,36 @@ describe('caseTable.utils', () => {
       const theCase = {
         type: CaseType.CUSTODY,
         state: CaseState.ACCEPTED,
-        appealCase: { appealState: AppealCaseState.APPEALED },
-        prosecutorPostponedAppealDate: new Date('2024-01-01'),
+        appeal: {
+          appealState: AppealCaseState.APPEALED,
+          appealEventLogs: [
+            {
+              eventType: AppealEventType.APPEALED,
+              userRole: UserRole.PROSECUTOR,
+            },
+          ],
+        },
+      } as unknown as Case
+      expect(getContextMenuActions(theCase, user)).toContain(
+        ContextMenuCaseActionType.WITHDRAW_APPEAL,
+      )
+    })
+
+    it('includes WITHDRAW_APPEAL when the defence user can cancel appeal', () => {
+      const user = defenceUser('1111111111')
+      const theCase = {
+        type: CaseType.CUSTODY,
+        state: CaseState.ACCEPTED,
+        defendants: [{ defenderNationalId: '1111111111' }],
+        appeal: {
+          appealState: AppealCaseState.APPEALED,
+          appealEventLogs: [
+            {
+              eventType: AppealEventType.APPEALED,
+              userRole: UserRole.DEFENDER,
+            },
+          ],
+        },
       } as unknown as Case
       expect(getContextMenuActions(theCase, user)).toContain(
         ContextMenuCaseActionType.WITHDRAW_APPEAL,

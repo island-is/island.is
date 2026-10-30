@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -7,16 +7,13 @@ import {
   formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import {
+import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import {
-  CaseType,
-  Defendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { getDefendantLabel } from '../CaseInfo/CaseInfo'
+import { getDefendantLabel } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   policeCaseNumber: string

@@ -21,7 +21,7 @@ import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
+@Scopes(ApiScope.financeOverview, ApiScope.financeSalary, ApiScope.fjsDebts)
 @Controller('finance')
 export class FinanceDocumentController {
   constructor(

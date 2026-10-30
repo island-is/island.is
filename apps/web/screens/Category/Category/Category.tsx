@@ -119,16 +119,10 @@ const Category: Screen<CategoryProps> = ({
   const handleAccordionClick = (groupSlug: string) => {
     const updatedArr = updateHashArray(hashArray, groupSlug)
     setHashArray(updatedArr)
-    window.location.href = `#${getHashString(updatedArr)}`
+    window.history.replaceState(null, '', `#${getHashString(updatedArr)}`)
   }
 
-  const PageGroupComponent = ({
-    group,
-    index,
-  }: {
-    group: CategoryGroups[number]
-    index: number
-  }) => {
+  const renderPageGroup = (group: CategoryGroups[number], index: number) => {
     const groupSlug = group.slug
     const expanded = hashArray.includes(groupSlug)
 
@@ -336,7 +330,9 @@ const Category: Screen<CategoryProps> = ({
         </Box>
         <Stack space={2}>
           {groups.map((group, index) => (
-            <PageGroupComponent group={group} index={index} key={index} />
+            <React.Fragment key={group.slug}>
+              {renderPageGroup(group, index)}
+            </React.Fragment>
           ))}
           {lifeEvents.map(
             (

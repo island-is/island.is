@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
@@ -29,7 +30,7 @@ import {
   StartDateOptions,
   States,
 } from '../../constants'
-import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { usageMaxMonths } from '../../config'
 import { useStartFollowUpApplication } from '../../hooks/useStartFollowUpApplication'
 import { getValueViaPath, YES } from '@island.is/application/core'
 
@@ -57,6 +58,11 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const dob = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
   const dobDate = dob ? new Date(dob) : null
 
+  // Periods can't end later than usageMaxMonths after the birth or adoption
+  // date, so editing after that can't change anything
+  const rightsWindowClosed =
+    !!dobDate && new Date() >= addMonths(dobDate, usageMaxMonths)
+
   // States where EDIT still rewinds *this* application to its own form — i.e. the
   // action it represents is not finished yet. VMST accepts updates to an
   // application it already has via `vmstApplicationId`, so
@@ -73,13 +79,6 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
       ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS ||
     application.state === ApplicationStates.EMPLOYER_APPROVE_EDITS ||
     application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS
-
-  const lastPeriodEndDate = periods?.[periods.length - 1]?.endDate
-  const hasFuturePeriod =
-    Boolean(lastPeriodEndDate) &&
-    new Date(lastPeriodEndDate).getTime() > new Date().getTime()
-
-  const isUsedAllRights = useRemainingRights(application) > 0 || hasFuturePeriod
 
   const reapproval = getReapprovalAfterEdit(application)
   const approvers = [
@@ -175,7 +174,7 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
           </Text>
         )}
         <Box>
-          {canBeEdited && isUsedAllRights && (
+          {canBeEdited && !rightsWindowClosed && (
             <Box display="inlineBlock">
               <DialogPrompt
                 baseId="parental-leave-edit-confirm"

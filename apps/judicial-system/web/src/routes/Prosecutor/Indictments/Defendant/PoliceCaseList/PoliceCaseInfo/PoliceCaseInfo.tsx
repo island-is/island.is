@@ -1,16 +1,14 @@
-import { FC, useContext, useMemo } from 'react'
-import { useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useContext, useMemo } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
+import type { Item } from '@island.is/judicial-system-web/src/components'
 import {
   FormContext,
-  Item,
   SelectableList,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseOrigin,
-  PoliceCaseInfo as TPoliceCaseInfo,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { PoliceCaseInfo as TPoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'
 import { strings } from './PoliceCaseInfo.strings'
@@ -24,7 +22,6 @@ export const PoliceCaseInfo: FC<Props> = ({
   onPoliceCaseInfoLoaded,
   onAddPoliceCaseInfo,
 }) => {
-  const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
   const { data, loading, error } = usePoliceCaseInfoQuery({
@@ -93,14 +90,14 @@ export const PoliceCaseInfo: FC<Props> = ({
           name: availablePoliceCase.policeCaseNumber,
         }))}
         CTAButton={{
-          label: formatMessage(strings.selectNumbersButton),
+          label: strings.selectNumbersButton,
           onClick: handleAddPoliceCaseInfo,
         }}
         isLoading={loading}
-        errorMessage={error ? formatMessage(strings.errorMessage) : undefined}
+        errorMessage={error ? strings.errorMessage : undefined}
         successMessage={
           availablePoliceCases?.length === 0
-            ? formatMessage(strings.allNumbersSelected)
+            ? strings.allNumbersSelected
             : undefined
         }
       />

@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'portals-my-pages-education',
   preset: './jest.preset.js',
   rootDir: '../../../..',

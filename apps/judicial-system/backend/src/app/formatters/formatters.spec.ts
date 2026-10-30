@@ -105,12 +105,15 @@ describe('formatLegalProvisions', () => {
   test('should sort provisions when formatting legal provisions', () => {
     // Arrange
     const legalProvisions = [
+      CaseLegalProvisions._115_1_B,
       CaseLegalProvisions._95_1_C,
       CaseLegalProvisions._95_1_D,
       CaseLegalProvisions._95_1_A,
+      CaseLegalProvisions._115_1,
       CaseLegalProvisions._95_2,
       CaseLegalProvisions._99_1_B,
       CaseLegalProvisions._95_1_B,
+      CaseLegalProvisions._115_1_A,
       CaseLegalProvisions._100_1,
     ]
 
@@ -119,8 +122,23 @@ describe('formatLegalProvisions', () => {
 
     // Assert
     expect(res).toBe(
-      'a-lið 1. mgr. 95. gr. sml.\nb-lið 1. mgr. 95. gr. sml.\nc-lið 1. mgr. 95. gr. sml.\nd-lið 1. mgr. 95. gr. sml.\n2. mgr. 95. gr. sml.\nb-lið 1. mgr. 99. gr. sml.\n1. mgr. 100. gr. sml.',
+      'a-lið 1. mgr. 95. gr. sml.\nb-lið 1. mgr. 95. gr. sml.\nc-lið 1. mgr. 95. gr. sml.\nd-lið 1. mgr. 95. gr. sml.\n2. mgr. 95. gr. sml.\nb-lið 1. mgr. 99. gr. sml.\n1. mgr. 100. gr. sml.\n115. gr. útl.\na-lið 115. gr. útl.\nb-lið 115. gr. útl.',
     )
+  })
+
+  test('should format legal provisions when only 115. gr. útl. provisions are selected', () => {
+    // Arrange
+    const legalProvisions = [
+      CaseLegalProvisions._115_1_H,
+      CaseLegalProvisions._115_1,
+      CaseLegalProvisions._115_1_C,
+    ]
+
+    // Act
+    const res = formatLegalProvisions(legalProvisions)
+
+    // Assert
+    expect(res).toBe('115. gr. útl.\nc-lið 115. gr. útl.\nh-lið 115. gr. útl.')
   })
 
   test('should format legal provisions when some provisions are selected and additional freetext provided', () => {
@@ -1777,7 +1795,7 @@ describe('formatCustodyRestrictions', () => {
 
     // Assert
     expect(result).toEqual(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði án annara takmarkana.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði án annarra takmarkana.',
     )
   })
 
@@ -1795,7 +1813,7 @@ describe('formatCustodyRestrictions', () => {
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með fjölmiðlabanni (E) skv. 99. gr. laga nr. 88/2008.',
     )
   })
 
@@ -1813,7 +1831,7 @@ describe('formatCustodyRestrictions', () => {
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að vistun verði með bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að vistun verði með bréfaskoðun og símabanni (D) og fjölmiðlabanni (E) skv. 99. gr. laga nr. 88/2008.',
     )
   })
 
@@ -1832,7 +1850,7 @@ describe('formatCustodyRestrictions', () => {
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði með banni við útvegun persónulegra nauðsynja, bréfaskoðun og símabanni og vinnubanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með banni við útvegun persónulegra nauðsynja (A), bréfaskoðun og símabanni (D) og vinnubanni (F) skv. 99. gr. laga nr. 88/2008.',
     )
   })
 })
@@ -1899,7 +1917,7 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
     )
 
     expect(result.body).toEqual(
-      'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="https://rettarvorslugatt.island.is/overviewUrl">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
+      'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur endursent kröfuna á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="https://rettarvorslugatt.island.is/overviewUrl">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
     expect(result.subject).toEqual('Krafa í máli R-2022/999')
   })

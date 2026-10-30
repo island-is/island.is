@@ -1,8 +1,6 @@
 import { prosecutorsOfficeTypes } from '@island.is/judicial-system/types'
-import {
-  Institution,
-  InstitutionType,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useInstitutionsQuery } from './institutions.generated'
 

@@ -10,13 +10,7 @@ export const Urls = () => {
   return (
     <>
       <GridRow>
-        <Box
-          display="flex"
-          flexDirection="row"
-          alignItems="center"
-          columnGap={4}
-          marginLeft={2}
-        >
+        <Box marginLeft={1}>
           <Text variant="h3">{formatMessage(m.submitUrls)}</Text>
         </Box>
       </GridRow>

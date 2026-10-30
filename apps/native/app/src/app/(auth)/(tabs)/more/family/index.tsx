@@ -85,7 +85,7 @@ export default function FamilyScreen() {
   const router = useRouter()
   const authStore = useAuthStore()
   const scrollY = useRef(new Animated.Value(0)).current
-  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
   const familyRes = useNationalRegistryPersonQuery()
 
   const { biologicalChildren, spouse, childCustody } =
@@ -156,9 +156,9 @@ export default function FamilyScreen() {
               light: theme.color.blue200,
             }}
             overlayOpacity={1}
-            height={104}
+            height={82}
             style={{
-              borderRadius: 16,
+              borderRadius: 8,
               marginBottom: theme.spacing[2],
             }}
           />

@@ -8,6 +8,8 @@ import {
   UseGuards,
   Put,
   Body,
+  Post,
+  Delete,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -28,6 +30,7 @@ import {
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { OrganizationAdminDto } from './models/dto/organizationAdmin.dto'
 import { OrganizationZendeskInstanceDto } from './models/dto/organizationZendeskInstance.dto'
+import { OrganizationDelegationDto } from './models/dto/organizationDelegation.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)
@@ -68,6 +71,42 @@ export class OrganizationsController {
     return await this.organizationsService.updateZendeskInstance(
       user,
       organizationZendeskInstanceDto,
+    )
+  }
+
+  @ApiOperation({ summary: 'Add organization delegation' })
+  @ApiNoContentResponse({
+    description: 'Add organization delegation',
+  })
+  @ApiBody({ type: OrganizationDelegationDto })
+  @Post('delegation')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async addDelegation(
+    @CurrentUser()
+    user: User,
+    @Body() organizationDelegationDto: OrganizationDelegationDto,
+  ): Promise<void> {
+    return await this.organizationsService.addDelegation(
+      user,
+      organizationDelegationDto,
+    )
+  }
+
+  @ApiOperation({ summary: 'Delete organization delegation' })
+  @ApiNoContentResponse({
+    description: 'Delete organization delegation',
+  })
+  @ApiBody({ type: OrganizationDelegationDto })
+  @Delete('delegation')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteDelegation(
+    @CurrentUser()
+    user: User,
+    @Body() organizationDelegationDto: OrganizationDelegationDto,
+  ): Promise<void> {
+    return await this.organizationsService.deleteDelegation(
+      user,
+      organizationDelegationDto,
     )
   }
 }

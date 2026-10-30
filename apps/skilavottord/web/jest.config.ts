@@ -1,6 +1,5 @@
-/* eslint-disable */
 const path = require('path')
-export default {
+module.exports = {
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],

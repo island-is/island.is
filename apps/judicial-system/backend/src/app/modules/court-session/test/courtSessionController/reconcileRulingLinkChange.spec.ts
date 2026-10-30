@@ -5,14 +5,18 @@ import { BadRequestException } from '@nestjs/common'
 
 import {
   AppealCaseState,
+  AppealEventType,
+  AppealOrigin,
   CaseFileCategory,
   CourtSessionRulingType,
   EventType,
   User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
+import { runInRequestContext } from '../../../../test'
 import { EventLogService } from '../../../event-log'
 import { FileService } from '../../../file'
 import {
@@ -25,10 +29,7 @@ import {
 } from '../../../repository'
 import { UpdateCourtSessionDto } from '../../dto/updateCourtSession.dto'
 
-jest.mock('@island.is/judicial-system/message', () => ({
-  ...jest.requireActual('@island.is/judicial-system/message'),
-  addMessagesToQueue: jest.fn(),
-}))
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: CourtSession | null
@@ -69,6 +70,13 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
     id: newRulingFileId,
     rulingFileId: null,
     category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+  }
+
+  const outOfCourtAppealedEvent = {
+    appealCaseId,
+    eventType: AppealEventType.APPEALED,
+    appealOrigin: AppealOrigin.OUT_OF_COURT,
+    userRole: UserRole.DEFENDER,
   }
 
   const caseWith = (options: {
@@ -134,16 +142,18 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     mockAppealDecisionRepositoryService = appealDecisionRepositoryService
-    // Default: the swap target is a clean ruling file (no recorded decisions).
+    // Default: no recorded decisions, and the swap target is a clean ruling
+    // file.
     ;(
-      mockAppealDecisionRepositoryService.findAll as jest.Mock
+      mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
     ).mockResolvedValue([])
+    ;(
+      mockAppealDecisionRepositoryService.existsForRuling as jest.Mock
+    ).mockResolvedValue(false)
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockFileService = fileService
@@ -168,14 +178,20 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
       } as unknown as CourtSession
 
       try {
-        then.result = await courtSessionController.update(
-          caseId,
-          courtSessionId,
-          update,
-          user,
-          theCase,
-          existingCourtSession,
-        )
+        // The routes are guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open by the time the handler runs. Guards do
+        // not execute in controller unit tests, so the request context is set
+        // up here instead.
+        await runInRequestContext(async () => {
+          then.result = await courtSessionController.update(
+            caseId,
+            courtSessionId,
+            update,
+            user,
+            theCase,
+            existingCourtSession,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -335,10 +351,8 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealDecisionRepositoryService.findAll as jest.Mock
-      ).mockResolvedValue([
-        { id: 'existing-decision', rulingFileId: newRulingFileId },
-      ])
+        mockAppealDecisionRepositoryService.existsForRuling as jest.Mock
+      ).mockResolvedValue(true)
 
       then = await givenWhenThen(
         caseWith({ appealState: AppealCaseState.APPEALED, appealFiles: true }),
@@ -351,6 +365,9 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
     })
 
     it('should reject the swap and write nothing', () => {
+      expect(
+        mockAppealDecisionRepositoryService.existsForRuling,
+      ).toHaveBeenCalledWith(caseId, newRulingFileId, { transaction })
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(mockCourtSessionRepositoryService.update).not.toHaveBeenCalled()
       expect(
@@ -442,6 +459,61 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
       expect(
         mockAppealDecisionRepositoryService.deleteAllForRuling,
       ).not.toHaveBeenCalled()
+    })
+  })
+  // A party's own appeal is not the court record's to take away. Removing the
+  // ruling would leave it pointing at a ruling the record no longer says was
+  // pronounced, with its decisions deleted - so the correction is rejected
+  // instead. (A swap is fine: the appeal moves onto the new file with everything
+  // else - covered above, and asserted for this case below.)
+  describe('removing the ruling (ORDER -> NONE) of an out-of-court appeal', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      ;(
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
+      ).mockResolvedValue([outOfCourtAppealedEvent])
+
+      then = await givenWhenThen(
+        caseWith({ appealState: AppealCaseState.APPEALED, appealFiles: true }),
+        { rulingType: CourtSessionRulingType.NONE } as UpdateCourtSessionDto,
+        { rulingType: CourtSessionRulingType.NONE, rulingFileId: null },
+      )
+    })
+
+    it('should reject the change and not write the session', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockCourtSessionRepositoryService.update).not.toHaveBeenCalled()
+    })
+
+    it('should not delete or discard anything', () => {
+      expect(mockAppealCaseRepositoryService.delete).not.toHaveBeenCalled()
+      expect(mockFileService.deleteCaseFile).not.toHaveBeenCalled()
+      expect(
+        mockAppealDecisionRepositoryService.deleteAllForRuling,
+      ).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('swapping the ruling file of an out-of-court appeal', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      ;(
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
+      ).mockResolvedValue([outOfCourtAppealedEvent])
+
+      then = await swapTo(AppealCaseState.APPEALED)
+    })
+
+    it('should be allowed and re-point the appeal onto the new file', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { rulingFileId: newRulingFileId },
+        { transaction },
+      )
+      expect(mockAppealCaseRepositoryService.delete).not.toHaveBeenCalled()
     })
   })
 })

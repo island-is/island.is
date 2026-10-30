@@ -29,6 +29,9 @@ import { RestoreClientInput } from './dto/restore-client.input'
 import { ClientsPayload } from './dto/clients.payload'
 import { RevokeSecretsInput } from './dto/revoke-secrets.input'
 import { PatchClientResponse } from './models/patch-client-response.model'
+import { GrantableClient } from './models/grantable-client.model'
+
+const GRANTABLE_CLIENTS_FETCH_LIMIT = 10000
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
@@ -76,6 +79,30 @@ export class ClientsService extends MultiEnvironmentService {
       totalCount: clients.length,
       pageInfo: { hasNextPage: false },
     }
+  }
+
+  async getGrantableClients(
+    user: User,
+    environment: Environment,
+  ): Promise<GrantableClient[]> {
+    const clients = await this.makeRequest(user, environment, (api) =>
+      api.clientsControllerFindAllRaw(),
+    )
+
+    let capped = clients ?? []
+    if (capped.length > GRANTABLE_CLIENTS_FETCH_LIMIT) {
+      this.logger.warn(
+        `getGrantableClients truncated response from ${capped.length} to ${GRANTABLE_CLIENTS_FETCH_LIMIT} clients in environment ${environment}`,
+      )
+      capped = capped.slice(0, GRANTABLE_CLIENTS_FETCH_LIMIT)
+    }
+
+    return capped.map((client) => ({
+      clientId: client.clientId,
+      tenantId: client.tenantId,
+      clientType: client.clientType as GrantableClient['clientType'],
+      displayName: client.displayName,
+    }))
   }
 
   async getClientById(
@@ -284,14 +311,17 @@ export class ClientsService extends MultiEnvironmentService {
   }
 
   /**
-   * Run a void API call across all environments. Returns true only if
-   * all environments succeeded.
+   * Run a void API call across the given environments, defaulting to all.
+   * Returns true only if every targeted environment succeeded.
    */
-  private async runOnAllEnvironments(
+  private async runOnEnvironments(
     user: User,
     request: (api: AdminApi) => Promise<ApiResponse<void>>,
+    targetEnvironments?: Environment[],
   ): Promise<boolean> {
-    const targets = environments.map((env) => ({
+    const targets = (
+      targetEnvironments?.length ? targetEnvironments : environments
+    ).map((env) => ({
       environment: env,
       success: false,
     }))
@@ -378,20 +408,26 @@ export class ClientsService extends MultiEnvironmentService {
   }
 
   async deleteClient(user: User, input: DeleteClientInput): Promise<boolean> {
-    return this.runOnAllEnvironments(user, (api) =>
-      api.meClientsControllerDeleteRaw({
-        tenantId: input.tenantId,
-        clientId: input.clientId,
-      }),
+    return this.runOnEnvironments(
+      user,
+      (api) =>
+        api.meClientsControllerDeleteRaw({
+          tenantId: input.tenantId,
+          clientId: input.clientId,
+        }),
+      input.environments,
     )
   }
 
   async restoreClient(user: User, input: RestoreClientInput): Promise<boolean> {
-    return this.runOnAllEnvironments(user, (api) =>
-      api.meClientsControllerRestoreRaw({
-        tenantId: input.tenantId,
-        clientId: input.clientId,
-      }),
+    return this.runOnEnvironments(
+      user,
+      (api) =>
+        api.meClientsControllerRestoreRaw({
+          tenantId: input.tenantId,
+          clientId: input.clientId,
+        }),
+      input.environments,
     )
   }
 

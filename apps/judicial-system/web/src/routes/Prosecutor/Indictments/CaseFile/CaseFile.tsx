@@ -8,7 +8,7 @@ import {
   PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE,
   PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -20,11 +20,11 @@ import {
   PdfButton,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   CaseFile as TCaseFile,
-  CaseFileCategory,
   PoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import { usePoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { caseFile as m } from './CaseFile.strings'
@@ -79,12 +79,12 @@ const CaseFile = () => {
         title={formatMessage(titles.prosecutor.indictments.caseFile)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.heading)}</PageTitle>
+        <PageTitle>{m.heading}</PageTitle>
         <Box marginBottom={5}>
           <ProsecutorCaseInfo workingCase={workingCase} />
         </Box>
         <Box marginBottom={7}>
-          <AlertMessage type="info" message={formatMessage(m.infoPanel)} />
+          <AlertMessage type="info" message={m.infoPanel} />
         </Box>
         <Box marginBottom={5}>
           <LayoutGroup>
@@ -112,9 +112,12 @@ const CaseFile = () => {
         </Box>
         <Box marginBottom={7}>
           {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
-            const caseFilesRecordFileName = formatMessage(m.pdfButtonText, {
-              policeCaseNumber: policeCaseNumber,
-            })
+            const caseFilesRecordFileName = formatMessage(
+              { id: m.pdfButtonText, defaultMessage: m.pdfButtonText },
+              {
+                policeCaseNumber: policeCaseNumber,
+              },
+            )
 
             return (
               <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
@@ -131,13 +134,20 @@ const CaseFile = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE)
-          }
-          nextIsLoading={isLoadingWorkingCase}
-          nextIsDisabled={editCount > 0}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE,
+                ),
+              disabled: editCount > 0,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

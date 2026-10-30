@@ -1,8 +1,9 @@
 import { Locale } from '@island.is/shared/types'
 
 import { OrganizationPage, OrganizationTheme } from '../graphql/schema'
-import { linkResolver, pathIsRoute } from '../hooks'
+import { linkResolver, pathIsRoute, typeResolver } from '../hooks'
 import { isLocale } from '../i18n/I18n'
+import { safelyExtractPathnameFromUrl } from './safelyExtractPathnameFromUrl'
 
 // TODO: Perhaps add this functionality to the linkResolver
 export const getOrganizationLink = (
@@ -51,4 +52,30 @@ export const extractOrganizationSlugFromPathname = (
   const segments = pathname.split('/').filter((x) => x)
   const localeSegment = isLocale(segments[0]) ? segments[0] : ''
   return (localeSegment ? segments[2] : segments[1]) ?? ''
+}
+
+// Project pages live under /v/[slug] (is) and /en/p/[slug] (en) and all
+// resolve to a `project*` link type (projectpage, projectsubpage,
+// projectnews, ...). Query/hash are stripped first so typeResolver's
+// anchored full-path match still succeeds.
+export const pathIsProjectPage = (pathname: string) => {
+  const path = pathname.split(/[?#]/)[0]
+  return Boolean(typeResolver(path)?.type?.startsWith('project'))
+}
+
+export const getHeaderNavigationPropsFromUrl = (
+  url: string | undefined,
+  locale: Locale,
+) => {
+  const pathname = safelyExtractPathnameFromUrl(url)
+  const organizationSearchFilter = extractOrganizationSlugFromPathname(
+    pathname,
+    locale,
+  )
+
+  return {
+    organizationSearchFilter,
+    showHeaderNavigation:
+      !organizationSearchFilter && !pathIsProjectPage(pathname),
+  }
 }

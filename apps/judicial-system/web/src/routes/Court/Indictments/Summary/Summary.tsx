@@ -1,15 +1,10 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import router from 'next/router'
 
-import {
-  Accordion,
-  Box,
-  PdfViewer,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Accordion, Box, PdfViewer, Text } from '@island.is/island-ui/core'
 import {
   DISTRICT_COURT_INDICTMENT_CASE_COMPLETED_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
@@ -39,8 +34,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { ProsecutorAndDefendantsEntries } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseFile,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -52,7 +47,8 @@ import {
   useFileList,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { strings } from './Summary.strings'
 import * as styles from './Summary.css'
@@ -226,12 +222,12 @@ const Summary: FC = () => {
       notFound={caseNotFound}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(strings.htmlTitle)} />
+      <PageHeader title={strings.htmlTitle} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <PageTitle>{strings.title}</PageTitle>
+        <div className={stack({ gap: 5 })}>
           <AppealRulingModifiedAlert />
-          <Box component="section" className={grid({ gap: 1 })}>
+          <Box component="section" className={stack({ gap: 1 })}>
             <Text variant="h2" as="h2">
               {formatMessage(core.caseNumber, {
                 caseNumber: workingCase.courtCaseNumber,
@@ -258,12 +254,9 @@ const Summary: FC = () => {
             courtRecordFiles.length > 0 ||
             workingCase.withCourtSessions) && (
             <div>
-              <SectionHeading
-                title={formatMessage(strings.caseFiles)}
-                marginBottom={5}
-              />
+              <SectionHeading title={strings.caseFiles} marginBottom={5} />
               <Text variant="h4" as="h4">
-                {formatMessage(strings.caseFilesSubtitleRuling)}
+                {strings.caseFilesSubtitleRuling}
               </Text>
               {
                 // We show a court record pdf button if the case should have court sessions
@@ -289,8 +282,8 @@ const Summary: FC = () => {
           )}
           <Box component="section">
             <SectionHeading
-              title={formatMessage(strings.courtEndTimeTitle)}
-              description={formatMessage(strings.courtEndTimeDescription)}
+              title={strings.courtEndTimeTitle}
+              description={strings.courtEndTimeDescription}
             />
             <DateTime
               name="courtEndDate"
@@ -307,14 +300,20 @@ const Summary: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE}/${workingCase.id}`}
-          nextButtonIcon="checkmark"
-          nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={handleNextButtonClick}
-          hideNextButton={!canUserCompleteCase}
+          actions={
+            !canUserCompleteCase
+              ? []
+              : [
+                  {
+                    text: strings.nextButtonText,
+                    icon: 'checkmark',
+                    onClick: handleNextButtonClick,
+                    testId: 'continueButton',
+                  },
+                ]
+          }
           infoBoxText={
-            canUserCompleteCase
-              ? ''
-              : formatMessage(strings.onlyAssignedJudgeCanComplete)
+            canUserCompleteCase ? '' : strings.onlyAssignedJudgeCanComplete
           }
         />
       </FormContentContainer>
@@ -358,21 +357,24 @@ const Summary: FC = () => {
               </Box>
             </Box>
           }
-          primaryButton={{
-            text: 'Staðfesta',
-            onClick: async () => await handleModalPrimaryButtonClick(),
-            isLoading: isTransitioningCase,
-            isDisabled: !hasReviewed || pdfError,
-          }}
-          secondaryButton={{
-            text: 'Hætta við',
-            onClick: () => {
-              setIsLoading(true)
-              setModalVisible(undefined)
-              setHasReviewed(false)
-              setPDFError(false)
+          buttons={[
+            {
+              text: 'Hætta við',
+              onClick: () => {
+                setIsLoading(true)
+                setModalVisible(undefined)
+                setHasReviewed(false)
+                setPDFError(false)
+              },
+              variant: 'ghost',
             },
-          }}
+            {
+              text: 'Staðfesta',
+              onClick: async () => await handleModalPrimaryButtonClick(),
+              isLoading: isTransitioningCase,
+              isDisabled: !hasReviewed || pdfError,
+            },
+          ]}
           footerCheckbox={{
             label: 'Ég hef rýnt þetta dómskjal',
             checked: hasReviewed,
@@ -397,7 +399,7 @@ const Summary: FC = () => {
       )}
       {modalVisible === 'CONFIRM_INDICTMENT' && (
         <Modal
-          title={formatMessage(strings.completeCaseModalTitle)}
+          title={strings.completeCaseModalTitle}
           text={
             <Box display="flex" rowGap={2} flexDirection="column">
               <Box>
@@ -419,15 +421,18 @@ const Summary: FC = () => {
               <Text>Niðurstaða málsins verður send málflytjendum.</Text>
             </Box>
           }
-          primaryButton={{
-            text: formatMessage(strings.completeCaseModalPrimaryButton),
-            onClick: async () => await handleModalPrimaryButtonClick(),
-            isLoading: isTransitioningCase,
-          }}
-          secondaryButton={{
-            text: formatMessage(strings.completeCaseModalSecondaryButton),
-            onClick: () => setModalVisible(undefined),
-          }}
+          buttons={[
+            {
+              text: strings.completeCaseModalSecondaryButton,
+              onClick: () => setModalVisible(undefined),
+              variant: 'ghost',
+            },
+            {
+              text: strings.completeCaseModalPrimaryButton,
+              onClick: async () => await handleModalPrimaryButtonClick(),
+              isLoading: isTransitioningCase,
+            },
+          ]}
         />
       )}
       {modalVisible === 'CORRECTION_EXPLANATION' && (

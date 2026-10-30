@@ -8,7 +8,7 @@ import {
   PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE,
   PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -70,13 +70,13 @@ const CaseFiles = () => {
         title={formatMessage(titles.prosecutor.indictments.caseFiles)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.caseFiles.heading)}</PageTitle>
+        <PageTitle>{strings.caseFiles.heading}</PageTitle>
         <Box marginBottom={5}>
           <ProsecutorCaseInfo workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.criminalRecordSection)}
+            title={strings.caseFiles.criminalRecordSection}
             heading="h2"
           />
           <Box marginBottom={3}>
@@ -103,8 +103,8 @@ const CaseFiles = () => {
               (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            title={formatMessage(strings.caseFiles.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
+            title={strings.caseFiles.inputFieldLabel}
+            buttonLabel={strings.caseFiles.buttonLabel}
             onChange={(files) =>
               handleUpload(
                 addUploadFiles(files, {
@@ -120,7 +120,7 @@ const CaseFiles = () => {
         </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.costBreakdownSection)}
+            title={strings.caseFiles.costBreakdownSection}
             heading="h2"
           />
           <InputFileUpload
@@ -129,8 +129,8 @@ const CaseFiles = () => {
               (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            title={formatMessage(strings.caseFiles.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
+            title={strings.caseFiles.inputFieldLabel}
+            buttonLabel={strings.caseFiles.buttonLabel}
             onChange={(files) =>
               handleUpload(
                 addUploadFiles(files, {
@@ -144,9 +144,9 @@ const CaseFiles = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section">
           <SectionHeading
-            title={formatMessage(strings.caseFiles.otherDocumentsSection)}
+            title={strings.caseFiles.otherDocumentsSection}
             heading="h2"
           />
           <InputFileUpload
@@ -155,8 +155,8 @@ const CaseFiles = () => {
               (file) => file.category === CaseFileCategory.CASE_FILE,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            title={formatMessage(strings.caseFiles.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
+            title={strings.caseFiles.inputFieldLabel}
+            buttonLabel={strings.caseFiles.buttonLabel}
             onChange={(files) =>
               handleUpload(
                 addUploadFiles(files, { category: CaseFileCategory.CASE_FILE }),
@@ -171,13 +171,20 @@ const CaseFiles = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isLoadingWorkingCase}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

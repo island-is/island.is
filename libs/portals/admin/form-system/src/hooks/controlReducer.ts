@@ -138,6 +138,7 @@ type ChangeActions =
       payload: { lang: 'en' | 'is'; newValue: string; id: string }
     }
   | { type: 'CHANGE_NAME'; payload: { lang: 'en' | 'is'; newValue: string } }
+  | { type: 'CHANGE_IDENTIFIER'; payload: { newValue: string } }
   | {
       type: 'CHANGE_FORM_NAME'
       payload: { lang: 'en' | 'is'; newValue: string }
@@ -156,10 +157,24 @@ type ChangeActions =
     }
   | { type: 'CHANGE_DRAFT_DAYS_TO_LIVE'; payload: { value: number } }
   | { type: 'CHANGE_SUBMISSION_DAYS_TO_LIVE'; payload: { value: number } }
-  | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
+  | {
+      type: 'CHANGE_INVALIDATION_DATE'
+      payload: { value: Date | null }
+    }
   | {
       type: 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
+  | {
+      type: 'CHANGE_IS_INACCESSIBLE'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
+  | {
+      type: 'TOGGLE_VALIDATE_ELIGIBILITY'
+      payload: {
+        checked: boolean
+        update: (updatedForm: FormSystemForm) => void
+      }
     }
   | {
       type: 'CHANGE_HAS_SUMMARY_SCREEN'
@@ -167,6 +182,10 @@ type ChangeActions =
     }
   | {
       type: 'CHANGE_HAS_PAYMENT'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
+  | {
+      type: 'CHANGE_ENABLE_APPLICATION_PDF_DOWNLOAD'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | { type: 'CHANGE_FORM_SETTINGS'; payload: { newForm: FormSystemForm } }
@@ -271,6 +290,7 @@ type InputSettingsActions =
       payload: {
         field: FormSystemField
         property:
+          | 'isAddressRequired'
           | 'isPhoneRequired'
           | 'isEmailRequired'
           | 'fetchEmailFromMyPages'
@@ -299,12 +319,18 @@ type InputSettingsActions =
     }
   | {
       type: 'CHANGE_LIST_ITEM'
-      payload: {
-        property: 'label' | 'description'
-        lang: 'is' | 'en'
-        value: string
-        id: UniqueIdentifier
-      }
+      payload:
+        | {
+            property: 'label' | 'description'
+            lang: 'is' | 'en'
+            value: string
+            id: UniqueIdentifier
+          }
+        | {
+            property: 'value'
+            value: string
+            id: UniqueIdentifier
+          }
     }
   | { type: 'ADD_LIST_ITEM'; payload: { newListItem: FormSystemListItem } }
   | {
@@ -373,7 +399,6 @@ type InputSettingsActions =
         chargeItemName?: string
         chargeType?: string
         performingOrgID?: string
-        priceAmount?: number
         update: (updatedActiveItem?: ActiveItem) => void
       }
     }
@@ -748,6 +773,44 @@ export const controlReducer = (
       }
     }
 
+    case 'CHANGE_IDENTIFIER': {
+      if (
+        !activeItem.data ||
+        (activeItem.type !== 'Screen' && activeItem.type !== 'Field')
+      ) {
+        return state
+      }
+      if (activeItem.type === 'Screen') {
+        const newData = {
+          ...(activeItem.data as FormSystemScreen),
+          identifier: action.payload.newValue,
+        }
+        return {
+          ...state,
+          activeItem: { ...activeItem, data: newData },
+          form: {
+            ...form,
+            screens: screens?.map((screen) =>
+              screen?.id === newData.id ? newData : screen,
+            ),
+          },
+        }
+      }
+      const newData = {
+        ...(activeItem.data as FormSystemField),
+        identifier: action.payload.newValue,
+      }
+      return {
+        ...state,
+        activeItem: { ...activeItem, data: newData },
+        form: {
+          ...form,
+          fields: fields?.map((field) =>
+            field?.id === newData.id ? newData : field,
+          ),
+        },
+      }
+    }
     case 'CHANGE_NAME': {
       const { lang, newValue } = action.payload
       let newData
@@ -900,6 +963,28 @@ export const controlReducer = (
       action.payload.update({ ...updatedState.form })
       return updatedState
     }
+    case 'CHANGE_IS_INACCESSIBLE': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          isInaccessible: action.payload.value,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
+    case 'TOGGLE_VALIDATE_ELIGIBILITY': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          validateEligibility: action.payload.checked,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
     case 'CHANGE_HAS_SUMMARY_SCREEN': {
       const updatedState = {
         ...state,
@@ -922,9 +1007,22 @@ export const controlReducer = (
       action.payload.update({ ...updatedState.form })
       return updatedState
     }
+    case 'CHANGE_ENABLE_APPLICATION_PDF_DOWNLOAD': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          enableApplicationPdfDownload: action.payload.value,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
     case 'CHANGE_SUBMISSION_URL': {
       const nextUrl = action.payload.value
       const useValidate = action.payload.useValidate
+      const nextUseValidate =
+        useValidate !== undefined ? useValidate : form.useValidate
 
       // Only force these flags when switching to Zendesk
       const nextFields =
@@ -952,6 +1050,12 @@ export const controlReducer = (
               }
             })
           : fields
+      const nextScreens =
+        form.useValidate === true && nextUseValidate === false
+          ? screens?.map((screen) =>
+              screen ? { ...screen, shouldValidate: false } : screen,
+            )
+          : screens
 
       const updatedState = {
         ...state,
@@ -959,8 +1063,11 @@ export const controlReducer = (
           ...form,
           submissionServiceUrl: nextUrl,
           fields: nextFields,
-          useValidate:
-            useValidate !== undefined ? useValidate : form.useValidate,
+          screens: nextScreens,
+          useValidate: nextUseValidate,
+          validateEligibility: nextUseValidate
+            ? form.validateEligibility
+            : false,
         },
       }
       return updatedState
@@ -990,11 +1097,22 @@ export const controlReducer = (
       return updatedState
     }
     case 'CHANGE_USE_VALIDATE': {
+      const nextScreens =
+        form.useValidate === true && action.payload.value === false
+          ? screens?.map((screen) =>
+              screen ? { ...screen, shouldValidate: false } : screen,
+            )
+          : screens
+
       const updatedState = {
         ...state,
         form: {
           ...form,
+          screens: nextScreens,
           useValidate: action.payload.value,
+          validateEligibility: action.payload.value
+            ? form.validateEligibility
+            : false,
         },
       }
       return updatedState
@@ -1378,10 +1496,12 @@ export const controlReducer = (
         chargeItemName,
         chargeType,
         performingOrgID,
-        priceAmount,
         update,
         field,
       } = action.payload
+      const { priceAmount, ...fieldSettings } = removeTypename(
+        field.fieldSettings ?? {},
+      )
 
       const newField = {
         ...field,
@@ -1390,16 +1510,13 @@ export const controlReducer = (
           en: chargeItemName,
         },
         fieldSettings: {
-          ...field.fieldSettings,
-          __typename: undefined,
+          ...fieldSettings,
           chargeItemCode,
           chargeItemName,
           chargeType,
           performingOrgID,
-          priceAmount,
         },
       }
-      console.log('Updating payment settings with', newField.fieldSettings)
       update({ type: 'Field', data: newField })
       return {
         ...state,
@@ -1523,15 +1640,18 @@ export const controlReducer = (
     case 'CHANGE_LIST_ITEM': {
       const field = activeItem.data as FormSystemField
       const list = field.list as FormSystemListItem[]
-      const { property, lang, value, id } = action.payload
+      const { value, id } = action.payload
       const listItem = list?.find((l) => l?.id === id) as FormSystemListItem
 
       const newListItem = {
         ...listItem,
-        [property]: {
-          ...listItem[property],
-          [lang]: value,
-        },
+        [action.payload.property]:
+          action.payload.property === 'value'
+            ? value
+            : {
+                ...listItem[action.payload.property],
+                [action.payload.lang]: value,
+              },
       }
 
       const newField = {

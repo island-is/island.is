@@ -110,6 +110,7 @@ export class FormApplicantTypesService {
         applicantType.id !== ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION &&
         applicantType.id !== ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN
           ? {
+              isAddressRequired: false,
               isPhoneRequired: true,
               isEmailRequired: true,
               fetchEmailFromMyPages: true,

@@ -1,22 +1,21 @@
-import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   DateTime,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Case,
-  CaseType,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   formatDateForServer,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   title: string
 }
 

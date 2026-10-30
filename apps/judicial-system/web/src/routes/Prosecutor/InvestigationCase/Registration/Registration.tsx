@@ -1,8 +1,8 @@
-import { FC, useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import router from 'next/router'
 
-import { Box, Input, Select, toast } from '@island.is/island-ui/core'
+import { Box, Input, Select } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   getStandardUserDashboardRoute,
@@ -13,7 +13,6 @@ import {
   capitalize,
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
-import { errors } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -25,15 +24,17 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  PoliceCaseNumbers,
+  usePoliceCaseNumbers,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import {
   useCase,
   useDebouncedInput,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isRegistrationStepValid } from '@island.is/judicial-system-web/src/utils/validate'
-
-import { PoliceCaseNumbers, usePoliceCaseNumbers } from '../../components'
 
 const Registration: FC = () => {
   // This state is needed because type is initially set to OTHER on the
@@ -41,7 +42,6 @@ const Registration: FC = () => {
   // from the case type list to allow the user to continue.
   const [caseType, setCaseType] = useState<CaseType | null>()
 
-  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -70,8 +70,6 @@ const Registration: FC = () => {
 
       if (createdCase) {
         router.push(`${destination}/${createdCase.id}`)
-      } else {
-        toast.error(formatMessage(errors.createCase))
       }
     } else {
       router.push(`${destination}/${workingCase.id}`)
@@ -90,7 +88,7 @@ const Registration: FC = () => {
       <PageHeader title="Efni kröfu - Réttarvörslugátt" />
       <FormContentContainer>
         <PageTitle>Rannsóknarheimild</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <Box component="section">
             <PoliceCaseNumbers
               workingCase={workingCase}
@@ -101,7 +99,7 @@ const Registration: FC = () => {
           </Box>
           <Box component="section">
             <SectionHeading title="Efni kröfu" />
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <Select
                 name="type"
                 options={InvestigationCaseTypes}
@@ -159,14 +157,20 @@ const Registration: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={getStandardUserDashboardRoute(user)}
-          onNextButtonClick={() =>
-            handleNavigationTo(PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isCreatingCase}
-          nextButtonText={workingCase.id === '' ? 'Stofna mál' : 'Halda áfram'}
+          actions={[
+            {
+              text: workingCase.id === '' ? 'Stofna mál' : 'Halda áfram',
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isCreatingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

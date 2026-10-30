@@ -16,6 +16,7 @@ import { useCardPayment } from './useCardPayment'
 import { useInvoicePayment } from './useInvoicePayment'
 import { useApplePay } from './useApplePay'
 import { useBankTransferPayment } from './useBankTransferPayment'
+import { toBankAccountNumber } from '../components/BankTransferPayment/BankTransferPayment.utils'
 
 interface UsePaymentOrchestrationProps {
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
@@ -23,7 +24,10 @@ interface UsePaymentOrchestrationProps {
     amount: number
     title: string
   }
-  isApplePayPaymentEnabledForUser: boolean
+  isApplePayPaymentEnabled: boolean
+  // The server refused the individual authorising a company's transfer. Shown on its input, so the
+  // payer stays on the form to correct it rather than landing on the error screen.
+  onInvalidActorNationalId: () => void
 }
 
 const deriveInitialBankTransferError = (
@@ -50,7 +54,8 @@ const deriveInitialBankTransferError = (
 export const usePaymentOrchestration = ({
   paymentFlow,
   productInformation,
-  isApplePayPaymentEnabledForUser,
+  isApplePayPaymentEnabled,
+  onInvalidActorNationalId,
 }: UsePaymentOrchestrationProps) => {
   const router = useRouter()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>(
@@ -107,16 +112,28 @@ export const usePaymentOrchestration = ({
   })
 
   const applePayPayment = useApplePay({
-    isEnabledForUser: isApplePayPaymentEnabledForUser,
+    isEnabled: isApplePayPaymentEnabled,
     paymentFlow,
     productInformation,
     onPaymentSuccess: commonOnPaymentSuccess,
     onPaymentError: commonOnPaymentError,
   })
 
+  const bankTransferOnPaymentError = useCallback(
+    (error: PaymentError) => {
+      if (error.code === BankTransferErrorCode.InvalidActorNationalId) {
+        setIsInitiatingSubmit(false)
+        onInvalidActorNationalId()
+        return
+      }
+      commonOnPaymentError(error)
+    },
+    [commonOnPaymentError, onInvalidActorNationalId],
+  )
+
   const bankTransferPayment = useBankTransferPayment({
     paymentFlowId: paymentFlow?.id,
-    onPaymentError: commonOnPaymentError,
+    onPaymentError: bankTransferOnPaymentError,
   })
 
   const handleFormSubmit: SubmitHandler<Record<string, string>> = useCallback(
@@ -141,7 +158,8 @@ export const usePaymentOrchestration = ({
           const [month, year] = cardExpiry.split('/')
           await cardPayment.processCardPayment({
             cardholderName,
-            number: card,
+            // The form stores the masked value; the processor needs digits.
+            number: card.replace(/\D/g, ''),
             expiryMonth: Number(month),
             expiryYear: Number(year),
             cvc: cardCVC,
@@ -149,17 +167,20 @@ export const usePaymentOrchestration = ({
         } else if (selectedPaymentMethod === 'invoice') {
           await invoicePayment.processInvoicePayment()
         } else if (selectedPaymentMethod === 'bank_transfer') {
-          const { bankAccountNumber } = data
-          if (!bankAccountNumber) {
+          const { bank, ledger, account, actorNationalId } = data
+          if (!bank || !ledger || !account) {
             setPaymentError({
               code: BankTransferErrorCode.MissingBankAccountNumber,
             })
             setIsInitiatingSubmit(false)
             return
           }
-          await bankTransferPayment.processBankTransferPayment(
-            bankAccountNumber,
-          )
+          // The service needs the 12-digit account number and a bare national id. The actor is only
+          // rendered (and so only filled in) when the payer is a company.
+          await bankTransferPayment.processBankTransferPayment({
+            bankAccountNumber: toBankAccountNumber({ bank, ledger, account }),
+            actorNationalId: actorNationalId?.replace(/\D/g, '') || undefined,
+          })
         }
       } catch (e: unknown) {
         if (
@@ -201,6 +222,8 @@ export const usePaymentOrchestration = ({
     overallIsSubmitting,
     paymentError,
     setPaymentError, // Expose to allow clearing error from page if needed (e.g. error display component has a dismiss)
+    // The page drives bank-transfer settlement through polling, and finishes it the same way
+    onPaymentSuccess: commonOnPaymentSuccess,
     handleFormSubmit,
     isThreeDSecureModalActive,
     threeDSecureDataForModal: cardPayment.threeDSecureDataForModal,

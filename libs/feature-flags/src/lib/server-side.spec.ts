@@ -23,13 +23,13 @@ describe('Server-side feature flags', () => {
 
   it('should throw an error when used in the browser', () => {
     const flags = new ServerSideFeaturesOnTheClientSide()
-    expect(() => flags.isOn(ServerSideFeature.testing)).toThrowError()
+    expect(() => flags.isOn(ServerSideFeature.testing)).toThrow()
   })
 
   it('should throw an error when no flags info provided in production', () => {
     process.env.NODE_ENV = 'production'
     const flags = new ServerSideFeatures()
-    expect(() => flags.isOn(ServerSideFeature.testing)).toThrowError()
+    expect(() => flags.isOn(ServerSideFeature.testing)).toThrow()
   })
 
   it('should not throw an error when no flags info provided in development', () => {

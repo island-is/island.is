@@ -1,5 +1,4 @@
 import { Box, Hidden, Icon, NavigationItem } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { useHeaderVisibility } from '../../context/HeaderVisibilityContext'
@@ -9,14 +8,38 @@ import {
   ModuleAlertBannerSection,
   Navigation,
   ServicePortalNavigationItem,
+  useIsMobile,
+  useIsPhoneWidth,
 } from '@island.is/portals/my-pages/core'
-import { ReactNode } from 'react'
-import { Link as ReactLink } from 'react-router-dom'
-import { useWindowSize } from 'react-use'
+import cn from 'classnames'
+import { ReactNode, useMemo, useRef } from 'react'
+import { Link as ReactLink, matchPath } from 'react-router-dom'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
-import Sticky from '../Sticky/Sticky'
 import * as styles from './Layout.css'
 import SidebarLayout from './SidebarLayout'
+import { useScrollShadows } from './useScrollShadows'
+
+/* Modules opt in to the mobile takeover (hidden breadcrumbs, sub-nav and
+   sidebar footer at phone widths) per route via the `mobileTakeover` flag
+   on their navigation items — see PortalNavigationItem. */
+const isMobileTakeoverRoute = (
+  pathname: string,
+  item?: PortalNavigationItem,
+): boolean => {
+  if (!item) {
+    return false
+  }
+
+  const matchesThisRoute =
+    item.mobileTakeover && item.path && matchPath(item.path, pathname)
+
+  return (
+    Boolean(matchesThisRoute) ||
+    (item.children ?? []).some((child) =>
+      isMobileTakeoverRoute(pathname, child),
+    )
+  )
+}
 
 interface NarrowLayoutProps {
   activeParent?: PortalNavigationItem
@@ -37,9 +60,20 @@ export const NarrowLayout = ({
 }: NarrowLayoutProps) => {
   const { formatMessage } = useLocale()
 
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+  const { isMobile } = useIsMobile()
+  const { isPhoneWidth } = useIsPhoneWidth()
   const { headerVisible, headerHeight } = useHeaderVisibility()
+
+  const sidebarRef = useRef<HTMLDivElement>(null)
+  const { atTop, atBottom } = useScrollShadows(sidebarRef)
+
+  /* The takeover is only worth it at true phone widths — narrower than the
+   `md` cutoff isMobile uses. */
+  const isTakeoverRoute = useMemo(
+    () => isMobileTakeoverRoute(pathname, activeParent),
+    [pathname, activeParent],
+  )
+  const isMobileTakeover = isPhoneWidth && isTakeoverRoute
 
   // headerHeight is the measured height of the fixed header, so the sticky
   // menu clears whatever it contains (e.g. the delegation banner)
@@ -75,87 +109,111 @@ export const NarrowLayout = ({
       return mapChildren(item)
     })
 
-  return (
-    <SidebarLayout
-      isSticky={true}
-      sidebarContent={
-        <Sticky>
-          <Box style={{ marginTop: height }} paddingBottom={4}>
-            <GoBack />
-
-            {subNavItems && subNavItems.length > 0 && (
-              <Box borderRadius="large" background="blue100">
-                <Navigation
-                  renderLink={(link, item: SubNavItemType | undefined) => {
-                    return item?.href ? (
-                      <ReactLink to={item?.href}>
-                        {link}
-                        {item.enabled === false && !item.items?.length && (
-                          <Icon
-                            color="blue600"
-                            type="filled"
-                            icon="lockClosed"
-                            size="small"
-                            className={styles.lock}
-                          />
-                        )}
-                      </ReactLink>
-                    ) : (
-                      link
-                    )
-                  }}
-                  asSpan
-                  baseId={'service-portal-navigation'}
-                  title={formatMessage(activeParent?.name ?? m.tableOfContents)}
-                  items={subNavItems ?? []}
-                  expand
-                  titleIcon={activeParent?.icon}
-                />
-              </Box>
-            )}
-            {sidebarFooter}
+  const sidebar = (
+    <>
+      <Box
+        className={cn(styles.stickyGoBack, {
+          [styles.stickyGoBackShadow]: !atTop,
+        })}
+        paddingBottom={2}
+      >
+        <GoBack marginBottom={0} />
+      </Box>
+      <Box ref={sidebarRef} className={styles.scrollArea} paddingBottom={4}>
+        {subNavItems && subNavItems.length > 0 && (
+          <Box
+            borderRadius="large"
+            background="blue100"
+            className={styles.navGutter}
+          >
+            <Navigation
+              renderLink={(link, item: SubNavItemType | undefined) => {
+                return item?.href ? (
+                  <ReactLink to={item?.href}>
+                    {link}
+                    {item.enabled === false && !item.items?.length && (
+                      <Icon
+                        color="blue600"
+                        type="filled"
+                        icon="lockClosed"
+                        size="small"
+                        className={styles.lock}
+                      />
+                    )}
+                  </ReactLink>
+                ) : (
+                  link
+                )
+              }}
+              asSpan
+              baseId={'service-portal-navigation'}
+              title={formatMessage(activeParent?.name ?? m.tableOfContents)}
+              items={subNavItems ?? []}
+              expand
+              singleAccordion
+              titleIcon={activeParent?.icon}
+            />
           </Box>
-        </Sticky>
-      }
-    >
+        )}
+        {sidebarFooter}
+        <Box
+          className={cn(styles.scrollShadowBottom, {
+            [styles.scrollShadowVisible]: !atBottom,
+          })}
+        />
+      </Box>
+    </>
+  )
+
+  /* Takeover routes render without the layout chrome at phone widths:
+  no breadcrumbs, mobile sub-nav or footer — the screen is expected to
+  provide its own back navigation. */
+  return (
+    <SidebarLayout isSticky={true} sidebarContent={sidebar} offsetTop={height}>
       <Box
         as="main"
         paddingBottom={9}
         component="main"
         style={{ marginTop: height }}
       >
-        <ContentBreadcrumbs />
-        {isMobile && subNavItems && subNavItems.length > 0 && (
-          <Box
-            paddingBottom={3}
-            width="full"
-            className={styles.mobileNav}
-            style={{ top: stickyHeight }}
-          >
-            <Navigation
-              renderLink={(link, item) => {
-                return item?.href ? (
-                  <ReactLink to={item?.href}>{link}</ReactLink>
-                ) : (
-                  link
-                )
-              }}
-              asSpan
-              baseId="service-portal-mobile-navigation"
-              title={
-                activeParent?.name
-                  ? formatMessage(activeParent?.name)
-                  : formatMessage(m.tableOfContents)
-              }
-              items={subNavItems}
-              titleIcon={activeParent?.icon}
-              isMenuDialog={true}
-            />
-          </Box>
-        )}
+        {!isMobileTakeover && <ContentBreadcrumbs />}
+        {!isMobileTakeover &&
+          isMobile &&
+          subNavItems &&
+          subNavItems.length > 0 && (
+            <Box
+              paddingBottom={3}
+              width="full"
+              className={styles.mobileNav}
+              style={{ top: stickyHeight }}
+            >
+              <Navigation
+                renderLink={(link, item) => {
+                  return item?.href ? (
+                    <ReactLink to={item?.href}>{link}</ReactLink>
+                  ) : (
+                    link
+                  )
+                }}
+                asSpan
+                baseId="service-portal-mobile-navigation"
+                title={
+                  activeParent?.name
+                    ? formatMessage(activeParent?.name)
+                    : formatMessage(m.tableOfContents)
+                }
+                items={subNavItems}
+                titleIcon={activeParent?.icon}
+                singleAccordion
+                isMenuDialog={true}
+              />
+            </Box>
+          )}
         <ModuleAlertBannerSection />
         {children}
-        {sidebarFooter && <Hidden above="sm">{sidebarFooter}</Hidden>}
+        {!isMobileTakeover && sidebarFooter && (
+          <Hidden above="sm">{sidebarFooter}</Hidden>
+        )}
       </Box>
     </SidebarLayout>
   )

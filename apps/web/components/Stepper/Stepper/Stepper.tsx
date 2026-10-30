@@ -169,7 +169,6 @@ const Stepper = ({
 
   const n = useNamespace(namespace)
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   const [_, setCounter] = useState(0)
 
   const stepperMachine = useMemo(() => getStepperMachine(stepper), [stepper])

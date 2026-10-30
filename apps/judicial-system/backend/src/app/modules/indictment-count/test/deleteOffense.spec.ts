@@ -1,8 +1,11 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
-import { Offense } from '../../repository'
+import { getOrCreateTransaction } from '../../../middleware'
+import { runInRequestContext } from '../../../test'
+import { OffenseRepositoryService } from '../../repository'
 import { DeleteResponse } from '../models/delete.response'
 
 interface Then {
@@ -17,14 +20,19 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('IndictmentCountController - Delete offense', () => {
-  let mockOffenseModel: typeof Offense
+  let mockOffenseRepositoryService: OffenseRepositoryService
   let givenWhenThen: GivenWhenThen
+  let transaction: Transaction
+  let mockTransaction: jest.Mock
 
   beforeEach(async () => {
-    const { offenseModel, indictmentCountController } =
+    const { offenseRepositoryService, indictmentCountController, sequelize } =
       await createTestingIndictmentCountModule()
 
-    mockOffenseModel = offenseModel
+    mockOffenseRepositoryService = offenseRepositoryService
+    mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockResolvedValue(transaction)
 
     givenWhenThen = async (
       caseId: string,
@@ -34,11 +42,21 @@ describe('IndictmentCountController - Delete offense', () => {
       const then = {} as Then
 
       try {
-        then.result = await indictmentCountController.deleteOffense(
-          caseId,
-          indictmentCountId,
-          offenseId,
-        )
+        // The routes are guarded by MinimalCaseExistsForUpdateGuard, so the
+        // request transaction is already open by the time the handler runs.
+        // Guards do not execute in controller unit tests, so the request
+        // context is set up here instead.
+        await runInRequestContext(async () => {
+          // Stand in for the guard, which opens the request transaction
+          // before the handler runs.
+          await getOrCreateTransaction(sequelize)
+
+          then.result = await indictmentCountController.deleteOffense(
+            caseId,
+            indictmentCountId,
+            offenseId,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -54,16 +72,24 @@ describe('IndictmentCountController - Delete offense', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockDestroy = mockOffenseModel.destroy as jest.Mock
-      mockDestroy.mockResolvedValueOnce(1)
+      const mockDeleteByIdAndIndictmentCount =
+        mockOffenseRepositoryService.deleteByIdAndIndictmentCount as jest.Mock
+      mockDeleteByIdAndIndictmentCount.mockResolvedValueOnce(1)
 
       then = await givenWhenThen(caseId, indictmentCountId, offenseId)
     })
 
-    it('should delete the offense', () => {
-      expect(mockOffenseModel.destroy).toHaveBeenCalledWith({
-        where: { id: offenseId, indictmentCountId },
-      })
+    // One call to sequelize.transaction: the guard's. A handler that opened a
+    // transaction of its own - the deadlock the controller warns about - would
+    // make it two, and the mock would resolve the same stub for both.
+    it('should join the transaction the guard opened rather than open one', () => {
+      expect(mockTransaction).toHaveBeenCalledTimes(1)
+    })
+
+    it('should delete the offense under the request transaction', () => {
+      expect(
+        mockOffenseRepositoryService.deleteByIdAndIndictmentCount,
+      ).toHaveBeenCalledWith(offenseId, indictmentCountId, { transaction })
       expect(then.result).toEqual({ deleted: true })
     })
   })
@@ -75,8 +101,11 @@ describe('IndictmentCountController - Delete offense', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockDestroy = mockOffenseModel.destroy as jest.Mock
-      mockDestroy.mockRejectedValueOnce(new Error('Some error'))
+      const mockDeleteByIdAndIndictmentCount =
+        mockOffenseRepositoryService.deleteByIdAndIndictmentCount as jest.Mock
+      mockDeleteByIdAndIndictmentCount.mockRejectedValueOnce(
+        new Error('Some error'),
+      )
 
       then = await givenWhenThen(caseId, indictmentCountId, offenseId)
     })

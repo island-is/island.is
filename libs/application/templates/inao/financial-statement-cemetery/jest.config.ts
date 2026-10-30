@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'financial-statement-cemetery',
   preset: '../../../../../jest.preset.js',
   transform: {

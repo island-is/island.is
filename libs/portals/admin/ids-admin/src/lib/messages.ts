@@ -694,6 +694,26 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permission-applications-type',
     defaultMessage: 'Type',
   },
+  permissionApplicationsAdd: {
+    id: 'ap.ids-admin:permission-applications-add',
+    defaultMessage: 'Add client',
+  },
+  permissionApplicationsPlaceholder: {
+    id: 'ap.ids-admin:permission-applications-placeholder',
+    defaultMessage: 'Choose clients',
+  },
+  permissionApplicationsNoOptions: {
+    id: 'ap.ids-admin:permission-applications-no-options',
+    defaultMessage: 'No clients available',
+  },
+  permissionApplicationsRemove: {
+    id: 'ap.ids-admin:permission-applications-remove',
+    defaultMessage: 'Remove clients',
+  },
+  permissionApplicationsOtherTenantGroup: {
+    id: 'ap.ids-admin:permission-applications-other-tenant-group',
+    defaultMessage: 'Other tenants',
+  },
   successfullySaved: {
     id: 'ap.ids-admin:successfully-saved',
     defaultMessage: 'Successfully saved',
@@ -1512,9 +1532,30 @@ export const m = defineMessages({
     defaultMessage: 'Archive client',
   },
   deleteClientAlertMessage: {
-    id: 'ap.ids-admin:delete-client-alert-message',
+    id: 'ap.ids-admin:delete-client-alert-message-environments',
     defaultMessage:
-      'The client ID will be archived from all available environments and cannot be reused. Authentications will stop working immediately for your client.',
+      'The client will be archived in the selected environments and authentications will stop working there immediately. An archived client ID cannot be reused.',
+  },
+  deleteClientSelectEnvironments: {
+    id: 'ap.ids-admin:delete-client-select-environments',
+    defaultMessage: 'Select environments to archive from',
+  },
+  deleteClientEnvironmentRequired: {
+    id: 'ap.ids-admin:delete-client-environment-required',
+    defaultMessage: 'Select at least one environment to archive from',
+  },
+  clientArchivedInEnvironment: {
+    id: 'ap.ids-admin:client-archived-in-environment',
+    defaultMessage: 'This client is archived in {environment}',
+  },
+  clientArchivedInEnvironmentDescription: {
+    id: 'ap.ids-admin:client-archived-in-environment-description',
+    defaultMessage:
+      'Authentications do not work in this environment until the client is restored.',
+  },
+  restoreInEnvironment: {
+    id: 'ap.ids-admin:restore-in-environment',
+    defaultMessage: 'Restore in {environment}',
   },
   partiallyCreatedClient: {
     id: 'ap.ids-admin:partially-created-client',
@@ -1783,9 +1824,35 @@ export const m = defineMessages({
     id: 'ap.ids-admin:tenant-description',
     defaultMessage: 'Description',
   },
+  tenantDisplayNameEn: {
+    id: 'ap.ids-admin:tenant-display-name-en',
+    defaultMessage: 'Display name (English)',
+  },
+  tenantDescriptionEn: {
+    id: 'ap.ids-admin:tenant-description-en',
+    defaultMessage: 'Description (English)',
+  },
+  tenantEnglishTooltip: {
+    id: 'ap.ids-admin:tenant-english-tooltip',
+    defaultMessage:
+      'Shown when the user has selected English. If empty, the Icelandic value is used.',
+  },
   tenantContactEmail: {
     id: 'ap.ids-admin:tenant-contact-email',
     defaultMessage: 'Contact email',
+  },
+  tenantMunicipalityCode: {
+    id: 'ap.ids-admin:tenant-municipality-code',
+    defaultMessage: 'Municipality number',
+  },
+  tenantMunicipalityCodeTooltip: {
+    id: 'ap.ids-admin:tenant-municipality-code-tooltip',
+    defaultMessage:
+      'Only for municipality domains: the 4-digit municipality number (sveitarfélagsnúmer). Used to match users to their municipality.',
+  },
+  errorMunicipalityCode: {
+    id: 'ap.ids-admin:error-municipality-code',
+    defaultMessage: 'Municipality number must be 4 digits',
   },
   errorTenantName: {
     id: 'ap.ids-admin:error-tenant-name',

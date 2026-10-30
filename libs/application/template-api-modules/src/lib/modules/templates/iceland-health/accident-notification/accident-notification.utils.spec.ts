@@ -24,7 +24,7 @@ describe('getApplicationDocumentId', () => {
   it('should throw when there is no valid application submission document id', () => {
     const application = createMockPartialApplication(undefined)
 
-    expect(() => utils.getApplicationDocumentId(application)).toThrowError(
+    expect(() => utils.getApplicationDocumentId(application)).toThrow(
       'No documentId found on application',
     )
   })

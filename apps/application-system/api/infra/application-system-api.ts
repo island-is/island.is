@@ -290,6 +290,11 @@ export const serviceSetup = (services: {
       ENDORSEMENTS_API_BASE_PATH: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
+      DOWNLOAD_SERVICE_BASE_PATH: {
+        dev: 'https://api.dev01.devland.is',
+        staging: 'https://api.staging01.devland.is',
+        prod: 'https://api.island.is',
+      },
       XROAD_COURT_BANKRUPTCY_CERT_PATH: {
         dev: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
         staging: 'IS-TEST/GOV/10019/Domstolasyslan/JusticePortal-v1',
@@ -442,6 +447,8 @@ export const serviceSetup = (services: {
       DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
       SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN',
+      CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
+        '/k8s/application-system/api/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
       AUTH_JWT_SECRET: '/k8s/application-system/api/AUTH_JWT_SECRET',
       DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
       EMAIL_FROM: '/k8s/application-system/api/EMAIL_FROM',

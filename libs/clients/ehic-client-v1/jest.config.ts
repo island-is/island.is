@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-ehic-client-v1',
   preset: '../../../jest.preset.js',
   globals: {},

@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiError } from '@island.is/nest/problem'
+import type { Auth } from '@island.is/auth-nest-tools'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -17,7 +18,10 @@ import {
 } from '@island.is/clients/driving-license'
 import sortTeachers from './sortTeachers'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { CurrentLicenseParameters } from '@island.is/application/types'
+import {
+  CurrentLicenseParameters,
+  PhotoLookupCheckParameters,
+} from '@island.is/application/types'
 import {
   getFakeData,
   buildFakeCurrentLicense,
@@ -38,14 +42,14 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     super('DrivingLicenseShared')
   }
 
-  private async hasTeachingRights(token: string): Promise<boolean> {
-    return await this.drivingLicenseService.getIsTeacher({ token })
+  private async hasTeachingRights(auth: Auth): Promise<boolean> {
+    return await this.drivingLicenseService.getIsTeacher({ auth })
   }
 
   async getHasTeachingRights({
     auth,
   }: TemplateApiModuleActionProps): Promise<boolean> {
-    const teachingRights = await this.hasTeachingRights(auth.authorization)
+    const teachingRights = await this.hasTeachingRights(auth)
     if (teachingRights) {
       return true
     } else {
@@ -152,11 +156,11 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
         drivingLicense =
           await this.drivingLicenseService.legacyGetCurrentLicense({
             nationalId: auth.nationalId,
-            token: auth.authorization,
+            auth,
           })
       } else {
         drivingLicense = await this.drivingLicenseService.getCurrentLicense({
-          token: auth.authorization,
+          auth,
         })
       }
     }
@@ -212,11 +216,11 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
 
     const hasQualityPhoto = await this.drivingLicenseService.getHasQualityPhoto(
-      { token: auth.authorization },
+      { auth },
     )
 
     const qualityPhoto = await this.drivingLicenseService.getQualityPhoto({
-      token: auth.authorization,
+      auth,
     })
 
     return {
@@ -236,7 +240,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
     const hasQualitySignature =
       await this.drivingLicenseService.getHasQualitySignature({
-        token: auth.authorization,
+        auth,
       })
     return {
       hasQualitySignature,
@@ -259,7 +263,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     try {
       const result =
         await this.drivingLicenseService.getQualityPhotoAndSignature({
-          token: auth.authorization,
+          auth,
         })
       // Some legacy RLS records return metadata + signature but no photo
       // binary. Submission still resolves the photo by imageId, but log the
@@ -276,7 +280,8 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       }
       return result
     } catch {
-      return null
+      // Marked so photoLookupCheck can tell a failed lookup from "no photo"
+      return { fetchFailed: true }
     }
   }
 
@@ -296,14 +301,68 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
     try {
       return await this.drivingLicenseService.getAllPhotosFromThjodskra({
-        token: auth.authorization,
+        auth,
       })
     } catch {
-      // Return empty rather than throwing — this provider runs for all
-      // flows but is only used by BE. Throwing here would block
-      // B-temp/B-full/65+ applications if the Thjodskra API is down.
-      return { images: [] }
+      // Return empty rather than throwing, so applicants who have a license
+      // registry photo can still continue while Thjodskra is down. The marker
+      // lets photoLookupCheck block everyone else with a retryable error
+      // instead of reading the failure as "no photo".
+      return { images: [], fetchFailed: true }
     }
+  }
+
+  async photoLookupCheck({
+    application,
+    params,
+  }: TemplateApiModuleActionProps<PhotoLookupCheckParameters>): Promise<void> {
+    const { externalData } = application
+    const thjodskra = getValueViaPath<{
+      images?: Array<{ contentSpecification?: string }>
+      fetchFailed?: boolean
+    }>(externalData, 'allPhotosFromThjodskra.data')
+    const rlsPhotoAndSignature = getValueViaPath<{
+      imageId?: number | null
+      fetchFailed?: boolean
+    }>(externalData, 'qualityPhotoAndSignature.data')
+
+    const thjodskraLookupFailed = thjodskra?.fetchFailed === true
+    const rlsLookupFailed =
+      params?.rlsPhotoSource === 'qualityPhotoAndSignature' &&
+      rlsPhotoAndSignature?.fetchFailed === true
+    if (!thjodskraLookupFailed && !rlsLookupFailed) {
+      return
+    }
+
+    const hasRlsPhoto =
+      params?.rlsPhotoSource === 'qualityPhotoAndSignature'
+        ? rlsPhotoAndSignature?.imageId != null
+        : getValueViaPath<boolean>(
+            externalData,
+            'qualityPhoto.data.hasQualityPhoto',
+          ) === true
+    const hasThjodskraPhoto = (thjodskra?.images ?? []).some(
+      (p) => p.contentSpecification === 'FACIAL',
+    )
+    if (hasRlsPhoto || hasThjodskraPhoto) {
+      return
+    }
+
+    this.logger.info(
+      '[driving-license] photo lookup failed and no photo found, blocking data step',
+      {
+        thjodskraLookupFailed,
+        rlsLookupFailed,
+        rlsPhotoSource: params?.rlsPhotoSource,
+      },
+    )
+    throw new TemplateApiError(
+      {
+        title: coreErrorMessages.drivingLicensePhotoLookupFailedTitle,
+        summary: coreErrorMessages.drivingLicensePhotoLookupFailedSummary,
+      },
+      503,
+    )
   }
 
   async jurisdictions(): Promise<Jurisdiction[]> {
@@ -311,10 +370,10 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   }
 
   private async getDrivingAssessment(
-    token: string,
+    auth: Auth,
   ): Promise<StudentAssessment | null> {
     const assessment = await this.drivingLicenseService.getDrivingAssessment({
-      token,
+      auth,
     })
 
     if (!assessment) {
@@ -348,6 +407,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       return buildFakeDrivingAssessment()
     }
 
-    return await this.getDrivingAssessment(auth.authorization)
+    return await this.getDrivingAssessment(auth)
   }
 }

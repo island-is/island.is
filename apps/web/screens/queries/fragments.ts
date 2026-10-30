@@ -223,6 +223,13 @@ export const slices = gql`
     thumbnailImageUrl
   }
 
+  fragment CalculatorFields on Calculator {
+    __typename
+    id
+    calculatorType
+    configJson
+  }
+
   fragment SectionWithImageFields on SectionWithImage {
     __typename
     id
@@ -919,6 +926,7 @@ export const slices = gql`
 
   fragment LatestEventsSliceFields on LatestEventsSlice {
     title
+    organizationSlug
     events {
       title
       slug
@@ -989,6 +997,15 @@ export const slices = gql`
     displayTimestamp
   }
 
+  fragment ChartNumberBoxGroupFields on ChartNumberBoxGroup {
+    __typename
+    id
+    columnCount
+    components {
+      ...ChartNumberBoxFields
+    }
+  }
+
   fragment GenericListFields on GenericList {
     __typename
     id
@@ -1042,6 +1059,7 @@ export const slices = gql`
         id
         title
         slug
+        url
         organizationPage {
           slug
         }
@@ -1157,6 +1175,7 @@ export const slices = gql`
     ...ImageFields
     ...AssetFields
     ...EmbeddedVideoFields
+    ...CalculatorFields
     ...SectionWithVideoFields
     ...TabSectionFields
     ...TeamListFields
@@ -1184,6 +1203,7 @@ export const slices = gql`
     ...LatestEventsSliceFields
     ...ChartFields
     ...ChartNumberBoxFields
+    ...ChartNumberBoxGroupFields
     ...FeaturedEventsFields
     ...GenericListFields
     ...LatestGenericListItemsFields

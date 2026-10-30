@@ -53,6 +53,7 @@ export const serviceSetup = (services: {
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/download-service/IDENTITY_SERVER_CLIENT_SECRET',
+      REQUEST_TIMEOUT_MS: '/k8s/download-service/REQUEST_TIMEOUT_MS',
       POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID',
       POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET',
       POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL',

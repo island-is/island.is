@@ -473,7 +473,7 @@ const TimelineItem = ({
       }
 
   const [visible, setVisible] = useState(false)
-  const portalRef = useRef()
+  const portalRef = useRef(undefined)
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

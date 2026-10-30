@@ -6,18 +6,19 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  Matches,
 } from 'class-validator'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
 
+import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import type {
   CourtDocument,
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
-  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -25,7 +26,6 @@ import {
   CaseType,
   CourtSessionType,
   IndictmentDecision,
-  RequestSharedWithDefender,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
@@ -84,33 +84,9 @@ export class UpdateCaseInput {
   @IsArray()
   @ArrayMinSize(1)
   @IsString({ each: true })
+  @Matches(POLICE_CASE_NUMBER_REGEX, { each: true })
   @Field(() => [String], { nullable: true })
   readonly policeCaseNumbers?: string[]
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly defenderName?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly defenderNationalId?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly defenderEmail?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly defenderPhoneNumber?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => RequestSharedWithDefender, { nullable: true })
-  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Allow()
   @IsOptional()
@@ -335,26 +311,6 @@ export class UpdateCaseInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => CaseAppealDecision, { nullable: true })
-  readonly accusedAppealDecision?: CaseAppealDecision
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly accusedAppealAnnouncement?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => CaseAppealDecision, { nullable: true })
-  readonly prosecutorAppealDecision?: CaseAppealDecision
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly prosecutorAppealAnnouncement?: string
-
-  @Allow()
-  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly rulingSignatureDate?: string
 
@@ -425,6 +381,21 @@ export class UpdateCaseInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => ID, { nullable: true })
+  readonly appealProsecutorId?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => ID, { nullable: true })
+  readonly indictmentApproverId?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly indictmentReviewReturnedExplanation?: string
+
+  @Allow()
+  @IsOptional()
   @Field(() => IndictmentDecision, { nullable: true })
   readonly indictmentDecision?: IndictmentDecision
 
@@ -457,6 +428,11 @@ export class UpdateCaseInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly isCompletedWithoutRuling?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isArraignmentSummonsSkipped?: boolean
 
   @Allow()
   @IsOptional()

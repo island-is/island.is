@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-icelandic-government-institution-vacancies',
   preset: '../../../jest.preset.js',
   globals: {},

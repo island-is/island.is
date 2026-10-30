@@ -39,8 +39,11 @@ query TenantDetails($id: String!) {
       environment
       name
       nationalId
+      displayNameEn
       description
+      descriptionEn
       contactEmail
+      municipalityCode
       displayName {
         locale
         value
@@ -61,8 +64,11 @@ mutation UpdateTenant($input: UpdateAuthAdminTenantInput!) {
     environment
     name
     nationalId
+    displayNameEn
     description
+    descriptionEn
     contactEmail
+    municipalityCode
     displayName {
       locale
       value

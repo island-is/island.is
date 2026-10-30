@@ -1,5 +1,5 @@
-import { FC, PropsWithChildren, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type { FC, PropsWithChildren } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 
 import {
@@ -9,10 +9,10 @@ import {
   Icon,
   LoadingDots,
 } from '@island.is/island-ui/core'
+import { IconAndText } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { IconAndText } from '../../routes/Prosecutor/components'
 import { selectableList as strings } from './SelectableList.strings'
-import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './SelectableList.css'
 
 interface CTAButtonAttributes {
@@ -83,7 +83,6 @@ const SelectableList: FC<Props> = (props) => {
     warningMessage,
     onChange,
   } = props
-  const { formatMessage } = useIntl()
   const [selectableItems, setSelectableItems] = useState<SelectableItem[]>([])
   const [isHandlingCTA, setIsHandlingCTA] = useState<boolean>()
 
@@ -116,7 +115,7 @@ const SelectableList: FC<Props> = (props) => {
   const validSelectableItems = selectableItems.filter((item) => !item.invalid)
 
   return (
-    <div className={grid({ gap: 3 })}>
+    <div className={stack({ gap: 3 })}>
       <Box
         borderColor="blue200"
         borderWidth="standard"
@@ -127,11 +126,7 @@ const SelectableList: FC<Props> = (props) => {
         <Box marginBottom={2}>
           <Checkbox
             name="select-all"
-            label={
-              selectAllText
-                ? selectAllText
-                : formatMessage(strings.selectAllLabel)
-            }
+            label={selectAllText ? selectAllText : strings.selectAllLabel}
             checked={
               validSelectableItems.length > 0 &&
               validSelectableItems.every((item) => item.checked)
@@ -152,15 +147,21 @@ const SelectableList: FC<Props> = (props) => {
         </Box>
         <AnimatePresence mode="wait">
           {isLoading ? (
-            <Box
-              textAlign="center"
-              paddingTop={1}
-              paddingBottom={2}
-              paddingX={3}
+            <motion.div
               key="loading-dots"
+              initial={{ y: 10 }}
+              animate={{ y: 0 }}
+              exit={{ y: 10 }}
             >
-              <LoadingDots />
-            </Box>
+              <Box
+                textAlign="center"
+                paddingTop={1}
+                paddingBottom={2}
+                paddingX={3}
+              >
+                <LoadingDots />
+              </Box>
+            </motion.div>
           ) : errorMessage ? (
             <AnimateChildren id="error-message" key="error-message">
               <IconAndText
@@ -186,7 +187,13 @@ const SelectableList: FC<Props> = (props) => {
               />
             </AnimateChildren>
           ) : (
-            <ul className={styles.grid} key="list">
+            <motion.ul
+              className={styles.grid}
+              key="list"
+              initial={{ y: 10 }}
+              animate={{ y: 0 }}
+              exit={{ y: 10 }}
+            >
               {selectableItems.map((item, index) => (
                 <motion.li
                   custom={index}
@@ -245,7 +252,7 @@ const SelectableList: FC<Props> = (props) => {
                   </Box>
                 </motion.li>
               ))}
-            </ul>
+            </motion.ul>
           )}
         </AnimatePresence>
       </Box>

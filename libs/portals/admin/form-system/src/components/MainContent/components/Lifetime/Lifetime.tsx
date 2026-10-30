@@ -1,8 +1,8 @@
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
-  GridColumn,
-  GridRow,
+  GridColumn as Column,
+  GridRow as Row,
   Input,
   Stack,
   Text,
@@ -19,21 +19,27 @@ export const Lifetime = () => {
 
   return (
     <>
-      <GridRow>
-        <Box
-          display="flex"
-          flexDirection="row"
-          alignItems="center"
-          columnGap={4}
-          marginLeft={2}
-        >
+      <Row>
+        <Box marginLeft={1}>
           <Text variant="h3">{formatMessage(m.applicationLifetime)}</Text>
         </Box>
-      </GridRow>
-      <Box marginTop={7}>
+      </Row>
+      <Box marginTop={2}></Box>
+      <Row>
+        <Column span="6/10">
+          <Text variant="medium">
+            Veldu hversu lengi umsóknin lifir í kerfinu á meðan hún er í vinnslu
+            áður en henni verður eytt úr kerfinu og hversu lengi umsóknin lifir
+            eftir að hún hefur verið send inn áður en hún verður prúnuð. <br />{' '}
+            Þegar umsókn er prúnuð verður öllum innsláttargögnum hennar eytt úr
+            kerfinu en við höldum eftir sögu hennar.
+          </Text>
+        </Column>
+      </Row>
+      <Box marginTop={2}>
         <Stack space={2}>
-          <GridRow>
-            <GridColumn span="5/10">
+          <Row>
+            <Column span="5/10">
               <Input
                 label={formatMessage(m.lifetimeWhileInDraft)}
                 placeholder={formatMessage(m.max60Days)}
@@ -71,10 +77,10 @@ export const Lifetime = () => {
                   }
                 }}
               />
-            </GridColumn>
-          </GridRow>
-          <GridRow>
-            <GridColumn span="5/10">
+            </Column>
+          </Row>
+          <Row>
+            <Column span="5/10">
               <Input
                 label={formatMessage(m.lifetimeAfterSubmission)}
                 placeholder={formatMessage(m.max30Days)}
@@ -114,8 +120,8 @@ export const Lifetime = () => {
                   }
                 }}
               />
-            </GridColumn>
-          </GridRow>
+            </Column>
+          </Row>
         </Stack>
       </Box>
     </>

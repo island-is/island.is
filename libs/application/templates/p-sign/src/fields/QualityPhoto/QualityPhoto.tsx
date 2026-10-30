@@ -11,10 +11,12 @@ interface QualityPhotoData {
   application: Application
 }
 
-const Photo: FC<React.PropsWithChildren<QualityPhotoData>> = ({
+// Called as a plain function (`Photo({...})`), so it needs an explicit
+// ReactElement return type.
+const Photo = ({
   qualityPhoto,
   application,
-}: QualityPhotoData) => {
+}: QualityPhotoData): React.ReactElement | null => {
   const { formatMessage } = useLocale()
 
   if (!qualityPhoto) {

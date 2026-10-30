@@ -49,6 +49,47 @@ describe('HTTPRoute definitions', () => {
     ])
   })
 
+  it('enable-global-auth: false propagates to httpRoute.noAuth', async () => {
+    const sut = service('api').ingress({
+      primary: {
+        host: { dev: 'a', staging: 'a', prod: 'a' },
+        paths: ['/'],
+        extraAnnotations: {
+          dev: { 'nginx.ingress.kubernetes.io/enable-global-auth': 'false' },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          prod: {},
+        },
+      },
+    })
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+
+    expect(result.serviceDef[0].httpRoute!['primary-gw'].noAuth).toBe(true)
+  })
+
+  it('routes without the opt-out annotation have no noAuth flag', async () => {
+    const sut = service('api').ingress({
+      primary: {
+        host: { dev: 'a', staging: 'a', prod: 'a' },
+        paths: ['/'],
+      },
+    })
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+
+    expect(result.serviceDef[0].httpRoute!['primary-gw'].noAuth).toBeUndefined()
+  })
+
   it('Internal ingress produces internal gateway HTTPRoute', async () => {
     const sut = service('api').ingress({
       primary: {

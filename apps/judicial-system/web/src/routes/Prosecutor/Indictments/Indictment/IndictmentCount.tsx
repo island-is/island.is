@@ -1,12 +1,7 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -20,33 +15,33 @@ import {
   capitalize,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import {
-  isTrafficViolationIndictmentCount,
-  SubstanceMap,
-} from '@island.is/judicial-system/types'
+import type { SubstanceMap } from '@island.is/judicial-system/types'
+import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   CheckboxList,
   IndictmentInfo,
+  RichTextEditor,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Case,
+import type {
   IndictmentCount as TIndictmentCount,
-  IndictmentCountOffense,
   IndictmentSubtype,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import { textToHtml } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
+import type {
   UpdateIndictmentCount,
   UpdateIndictmentCountState,
-  useLawTag,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useLawTag } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   getDefaultDefendantGender,
   isPartiallyVisible,
@@ -58,8 +53,8 @@ import { strings } from './IndictmentCount.strings'
 
 interface Props {
   indictmentCount: TIndictmentCount
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   onChange: (
     indictmentCountId: string,
     indictmentCountUpdate: UpdateIndictmentCount,
@@ -69,7 +64,7 @@ interface Props {
   updateIndictmentCountState: (
     indictmentCountId: string,
     indictmentCountUpdate: UpdateIndictmentCountState,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => void
 }
 
@@ -212,9 +207,15 @@ export const getLegalArguments = (
     } ${lawsBroken[i][1]}.`
   }
 
-  return formatMessage(strings.legalArgumentsAutofill, {
-    articles: `${articles} mgr. ${lawsBroken[lawsBroken.length - 1][0]}. gr.`,
-  })
+  return formatMessage(
+    {
+      id: strings.legalArgumentsAutofill,
+      defaultMessage: strings.legalArgumentsAutofill,
+    },
+    {
+      articles: `${articles} mgr. ${lawsBroken[lawsBroken.length - 1][0]}. gr.`,
+    },
+  )
 }
 
 export const IndictmentCount: FC<Props> = ({
@@ -243,6 +244,12 @@ export const IndictmentCount: FC<Props> = ({
   const subtypes: IndictmentSubtype[] = indictmentCount.policeCaseNumber
     ? workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber]
     : []
+
+  // Legacy counts store the incident description as plain text; convert it so
+  // the rich text editor preserves its line breaks. Rich text passes through.
+  const incidentDescriptionHtml = textToHtml(
+    indictmentCount.incidentDescription ?? '',
+  )
 
   const gender = useMemo(
     () => getDefaultDefendantGender(workingCase.defendants),
@@ -425,13 +432,13 @@ export const IndictmentCount: FC<Props> = ({
             variant="text"
             size="small"
           >
-            {formatMessage(strings.delete)}
+            {strings.delete}
           </Button>
         </Box>
       )}
       <SectionHeading
         heading="h4"
-        title={formatMessage(strings.policeCaseNumberTitle)}
+        title={strings.policeCaseNumberTitle}
         marginBottom={2}
       />
       <Box marginBottom={1}>
@@ -442,8 +449,8 @@ export const IndictmentCount: FC<Props> = ({
             value: val,
             label: val,
           }))}
-          label={formatMessage(strings.policeCaseNumberLabel)}
-          placeholder={formatMessage(strings.policeCaseNumberPlaceholder)}
+          label={strings.policeCaseNumberLabel}
+          placeholder={strings.policeCaseNumberPlaceholder}
           onChange={async (so) => {
             const policeCaseNumber = so?.value
 
@@ -478,7 +485,7 @@ export const IndictmentCount: FC<Props> = ({
         {subtypes?.length > 1 && (
           <Box marginBottom={2}>
             <SectionHeading
-              title={formatMessage(strings.selectIndictmentSubtype)}
+              title={strings.selectIndictmentSubtype}
               heading="h4"
               marginBottom={2}
             />
@@ -501,17 +508,16 @@ export const IndictmentCount: FC<Props> = ({
         <>
           <SectionHeading
             heading="h4"
-            title={formatMessage(strings.vehicleRegistrationNumberTitle)}
+            title={strings.vehicleRegistrationNumberTitle}
             marginBottom={2}
           />
           <Box marginBottom={2}>
             <Input
+              id={`vehicleRegistrationNumber-${indictmentCount.id}`}
               name="vehicleRegistrationNumber"
               autoComplete="off"
-              label={formatMessage(strings.vehicleRegistrationNumberLabel)}
-              placeholder={formatMessage(
-                strings.vehicleRegistrationNumberPlaceholder,
-              )}
+              label={strings.vehicleRegistrationNumberLabel}
+              placeholder={strings.vehicleRegistrationNumberPlaceholder}
               value={indictmentCount.vehicleRegistrationNumber ?? ''}
               onChange={(event) => {
                 removeErrorMessageIfValid(
@@ -555,14 +561,15 @@ export const IndictmentCount: FC<Props> = ({
               <Box marginBottom={2}>
                 <SectionHeading
                   heading="h4"
-                  title={formatMessage(strings.lawsBrokenTitle)}
+                  title={strings.lawsBrokenTitle}
                   marginBottom={2}
                 />
                 <Select
+                  id={`lawsBroken-${indictmentCount.id}`}
                   name="lawsBroken"
                   options={lawsBrokenOptions}
-                  label={formatMessage(strings.lawsBrokenLabel)}
-                  placeholder={formatMessage(strings.lawsBrokenPlaceholder)}
+                  label={strings.lawsBrokenLabel}
+                  placeholder={strings.lawsBrokenPlaceholder}
                   value={null}
                   onChange={(selectedOption) => {
                     const law = (selectedOption as LawsBrokenOption).law
@@ -633,61 +640,61 @@ export const IndictmentCount: FC<Props> = ({
       <Box component="section" marginBottom={3}>
         <SectionHeading
           heading="h4"
-          title={formatMessage(strings.incidentDescriptionTitle)}
+          title={strings.incidentDescriptionTitle}
           marginBottom={2}
         />
         <Box marginBottom={2}>
-          <Input
-            name="incidentDescription"
-            autoComplete="off"
-            label={formatMessage(strings.incidentDescriptionLabel)}
-            placeholder={formatMessage(strings.incidentDescriptionPlaceholder)}
-            errorMessage={incidentDescriptionErrorMessage}
-            hasError={incidentDescriptionErrorMessage !== ''}
-            value={indictmentCount.incidentDescription ?? ''}
-            onChange={(event) => {
+          <RichTextEditor
+            data-testid="incidentDescription"
+            label={strings.incidentDescriptionLabel}
+            placeholder={strings.incidentDescriptionPlaceholder}
+            defaultValue={incidentDescriptionHtml}
+            value={incidentDescriptionHtml}
+            errorMessage={incidentDescriptionErrorMessage || undefined}
+            height={250}
+            onChange={(html) => {
               removeErrorMessageIfValid(
                 ['empty'],
-                event.target.value,
+                html,
                 incidentDescriptionErrorMessage,
                 setIncidentDescriptionErrorMessage,
               )
 
               updateIndictmentCountState(
                 indictmentCount.id,
-                { incidentDescription: event.target.value },
+                { incidentDescription: html },
                 setWorkingCase,
               )
             }}
-            onBlur={(event) => {
+            onDebouncedChange={(html) =>
+              onChange(indictmentCount.id, { incidentDescription: html })
+            }
+            onBlur={(html) => {
               validateAndSetErrorMessage(
                 ['empty'],
-                event.target.value,
+                html,
                 setIncidentDescriptionErrorMessage,
               )
 
-              onChange(indictmentCount.id, {
-                incidentDescription: event.target.value.trim(),
-              })
+              onChange(indictmentCount.id, { incidentDescription: html })
             }}
             required
-            rows={7}
-            textarea
           />
         </Box>
       </Box>
       <Box component="section">
         <SectionHeading
           heading="h4"
-          title={formatMessage(strings.legalArgumentsTitle)}
+          title={strings.legalArgumentsTitle}
           marginBottom={2}
         />
 
         <Input
+          id={`legalArguments-${indictmentCount.id}`}
           name="legalArguments"
           autoComplete="off"
-          label={formatMessage(strings.legalArgumentsLabel)}
-          placeholder={formatMessage(strings.legalArgumentsPlaceholder)}
+          label={strings.legalArgumentsLabel}
+          placeholder={strings.legalArgumentsPlaceholder}
           errorMessage={legalArgumentsErrorMessage}
           hasError={legalArgumentsErrorMessage !== ''}
           value={indictmentCount.legalArguments ?? ''}

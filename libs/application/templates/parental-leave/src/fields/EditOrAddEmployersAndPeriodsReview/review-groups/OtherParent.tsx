@@ -3,8 +3,8 @@ import {
   DataValue,
   RadioValue,
   ReviewGroup,
-  formatPhoneNumber,
 } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 import { NO, YES } from '@island.is/application/core'
 import {
   Box,

@@ -1,4 +1,4 @@
-import { IntlShape } from 'react-intl'
+import type { IntlShape } from 'react-intl'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -15,6 +15,7 @@ type VerdictTagKey =
   | 'appealRequested'
   | 'defaultJudgement'
   | 'verdict'
+  | 'closedWithoutEnforcement'
 
 type DefendantVerdictTagInput = {
   isAcquittedByPublicProsecutionOffice?: boolean | null
@@ -28,6 +29,11 @@ export type DefendantTagConfig = {
   key?: VerdictTagKey
 }
 
+const asMessageDescriptor = (message: string) => ({
+  id: message,
+  defaultMessage: message,
+})
+
 export const getAppealExpirationInfo = ({
   verdictAppealDeadline,
   isVerdictAppealDeadlineExpired,
@@ -38,11 +44,17 @@ export const getAppealExpirationInfo = ({
   serviceRequirement?: ServiceRequirement | null
 }) => {
   if (serviceRequirement === ServiceRequirement.NOT_REQUIRED) {
-    return { message: strings.serviceNotRequired, date: null }
+    return {
+      message: asMessageDescriptor(strings.serviceNotRequired),
+      date: null,
+    }
   }
 
   if (!verdictAppealDeadline) {
-    return { message: strings.appealDateNotBegun, date: null }
+    return {
+      message: asMessageDescriptor(strings.appealDateNotBegun),
+      date: null,
+    }
   }
 
   const expiryDate = new Date(verdictAppealDeadline)
@@ -51,7 +63,10 @@ export const getAppealExpirationInfo = ({
     ? strings.appealDateExpired
     : strings.appealExpirationDate
 
-  return { message, date: formatDate(expiryDate) }
+  return {
+    message: asMessageDescriptor(message),
+    date: formatDate(expiryDate),
+  }
 }
 
 export const getVerdictViewDateText = (
@@ -59,11 +74,17 @@ export const getVerdictViewDateText = (
   verdictViewDate?: string | null,
 ): string => {
   if (verdictViewDate) {
-    return formatMessage(strings.verdictDisplayedDate, {
-      date: formatDate(verdictViewDate, 'PPP'),
-    })
+    return formatMessage(
+      {
+        id: strings.verdictDisplayedDate,
+        defaultMessage: strings.verdictDisplayedDate,
+      },
+      {
+        date: formatDate(verdictViewDate, 'PPP'),
+      },
+    )
   } else {
-    return formatMessage(strings.serviceRequired)
+    return strings.serviceRequired
   }
 }
 
@@ -71,11 +92,21 @@ export const getDefendantTagConfig = ({
   verdict,
   isPublicProsecutionOffice,
   indictmentRulingDecision,
+  isClosedWithoutEnforcement,
 }: {
   verdict?: DefendantVerdictTagInput | null
   isPublicProsecutionOffice: boolean
   indictmentRulingDecision?: CaseIndictmentRulingDecision | null
+  isClosedWithoutEnforcement?: boolean | null
 }): DefendantTagConfig | null => {
+  if (isClosedWithoutEnforcement && isPublicProsecutionOffice) {
+    return {
+      key: 'closedWithoutEnforcement',
+      label: 'Lokið',
+      variant: 'rose',
+    }
+  }
+
   if (verdict) {
     if (
       verdict.isAcquittedByPublicProsecutionOffice &&

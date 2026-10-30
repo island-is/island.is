@@ -23,22 +23,24 @@ import {
   PageHeader,
   PageLayout,
   PdfButton,
+  RulingModifiedAlert,
   SignedDocument,
+  UserContext,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseState,
-  RequestSharedWithDefender,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import InfoCard from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
+import { canDefenderViewRequest } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import InfoCard from '../../../components/InfoCard/InfoCard'
-import useInfoCardItems from '../../../components/InfoCard/useInfoCardItems'
 import { strings } from './CaseOverview.strings'
 
 export const CaseOverview = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { user } = useContext(UserContext)
 
   const { formatMessage } = useIntl()
   const { appealBanner, appealModals } = useAppealCaseBanner()
@@ -61,6 +63,13 @@ export const CaseOverview = () => {
   const shouldDisplayAppealBanner =
     isCompletedCase(workingCase.state) &&
     (workingCase.canDefenderAppeal || workingCase.hasBeenAppealed)
+
+  const shouldDisplayDocuments = canDefenderViewRequest({
+    defendants: workingCase.defendants,
+    nationalId: user?.nationalId,
+    state: workingCase.state,
+    hasArraignmentDate: Boolean(workingCase.arraignmentDate?.date),
+  })
 
   return (
     <>
@@ -93,9 +102,15 @@ export const CaseOverview = () => {
               <Box marginBottom={5}>
                 <AlertMessage
                   type="info"
-                  title={formatMessage(strings.modifiedDatesHeading, {
-                    caseType: workingCase.type,
-                  })}
+                  title={formatMessage(
+                    {
+                      id: strings.modifiedDatesHeading,
+                      defaultMessage: strings.modifiedDatesHeading,
+                    },
+                    {
+                      caseType: workingCase.type,
+                    },
+                  )}
                   message={
                     <MarkdownWrapper
                       markdown={workingCase.caseModifiedExplanation}
@@ -105,8 +120,9 @@ export const CaseOverview = () => {
                 />
               </Box>
             )}
-          <Box marginBottom={5}>
+          <Box className={stack({ gap: 5 })} marginBottom={5}>
             <AppealRulingModifiedAlert />
+            <RulingModifiedAlert />
           </Box>
           {workingCase.state === CaseState.RECEIVED &&
             workingCase.arraignmentDate?.date &&
@@ -169,7 +185,7 @@ export const CaseOverview = () => {
           {isCompletedCase(workingCase.state) && (
             <Box marginBottom={6}>
               <Conclusion
-                title={formatMessage(conclusion.title)}
+                title={conclusion.title}
                 conclusionText={workingCase.conclusion}
                 judgeName={workingCase.judge?.name}
               />
@@ -178,7 +194,7 @@ export const CaseOverview = () => {
           {workingCase.appealCase?.appealConclusion && (
             <Box marginBottom={6}>
               <Conclusion
-                title={formatMessage(conclusion.appealTitle)}
+                title={conclusion.appealTitle}
                 conclusionText={workingCase.appealCase?.appealConclusion}
               />
             </Box>
@@ -186,14 +202,10 @@ export const CaseOverview = () => {
           <Box marginBottom={6}>
             <AppealCaseFilesOverview />
           </Box>
-          {(workingCase.requestSharedWithDefender ===
-            RequestSharedWithDefender.READY_FOR_COURT ||
-            workingCase.requestSharedWithDefender ===
-              RequestSharedWithDefender.COURT_DATE ||
-            isCompletedCase(workingCase.state)) && (
+          {shouldDisplayDocuments && (
             <Box marginBottom={10}>
               <Text as="h3" variant="h3" marginBottom={1}>
-                {formatMessage(strings.documentHeading)}
+                {strings.documentHeading}
               </Text>
               <Box>
                 <PdfButton
@@ -235,9 +247,9 @@ export const CaseOverview = () => {
                           signingDate={workingCase.rulingSignatureDate}
                         />
                       ) : workingCase.isCompletedWithoutRuling ? (
-                        <Text>{formatMessage(strings.noRuling)}</Text>
+                        <Text>{strings.noRuling}</Text>
                       ) : (
-                        <Text>{formatMessage(strings.unsignedRuling)}</Text>
+                        <Text>{strings.unsignedRuling}</Text>
                       )}
                     </PdfButton>
                     <Box marginTop={7}>

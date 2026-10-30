@@ -1,9 +1,8 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import cn from 'classnames'
 
 import { Box, Icon, Text } from '@island.is/island-ui/core'
-
-import * as styles from '../Table.css'
+import * as styles from '@island.is/judicial-system-web/src/components/Table/Table.css'
 
 interface Props {
   title: string

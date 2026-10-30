@@ -3,11 +3,15 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
-import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
+import {
+  containsHtml,
+  formatDate,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import { sortIndictmentCounts } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
-import { indictment } from '../../messages'
+import { formatIcuMessage, indictment } from '../../messages'
 import { Case, CaseString } from '../../modules/repository'
 import {
   addEmptyLines,
@@ -16,6 +20,8 @@ import {
   addNormalPlusJustifiedText,
   addNormalPlusText,
   addNormalText,
+  addRichText,
+  basePlusFontSize,
   Confirmation,
   drawConfirmation,
   formatActor,
@@ -49,6 +55,20 @@ const roman = (num: number) => {
   }
 
   return str
+}
+
+// Only include civil demands when the case still has civil claims. Turning
+// claims off leaves the stored string until it is deleted, so the PDF must
+// not treat leftover text as active.
+export const getIndictmentCivilDemands = (
+  hasCivilClaims?: boolean,
+  civilDemands?: string,
+): string | undefined => {
+  if (!hasCivilClaims || !civilDemands) {
+    return undefined
+  }
+
+  return civilDemands
 }
 
 export const createIndictment = async (
@@ -104,6 +124,10 @@ export const createIndictment = async (
   setLineCap(2)
   addNormalPlusText(doc, theCase.indictmentIntroduction ?? '')
 
+  if (theCase.indictmentIntroduction) {
+    addEmptyLines(doc)
+  }
+
   const hasManyCounts =
     theCase.indictmentCounts && theCase.indictmentCounts.length > 1
   sortIndictmentCounts(theCase.indictmentCounts ?? []).forEach(
@@ -112,9 +136,16 @@ export const createIndictment = async (
 
       if (hasManyCounts) {
         addNormalPlusCenteredText(doc, `${roman(index + 1)}.`)
-        addNormalPlusJustifiedText(doc, count.incidentDescription ?? '')
+      }
+
+      const incidentDescription = count.incidentDescription ?? ''
+
+      // Newer indictments store the incident description as rich text from
+      // the TinyMCE editor, while older ones store plain text.
+      if (containsHtml(incidentDescription)) {
+        addRichText(doc, incidentDescription, 0, basePlusFontSize, 'justify')
       } else {
-        addNormalPlusJustifiedText(doc, count.incidentDescription ?? '')
+        addNormalPlusJustifiedText(doc, incidentDescription)
       }
       addEmptyLines(doc)
       addNormalPlusJustifiedText(doc, count.legalArguments ?? '')
@@ -125,7 +156,10 @@ export const createIndictment = async (
   addEmptyLines(doc, 2)
   addNormalPlusJustifiedText(doc, theCase.demands ?? '')
 
-  const civilDemands = CaseString.civilDemands(theCase.caseStrings)
+  const civilDemands = getIndictmentCivilDemands(
+    theCase.hasCivilClaims,
+    CaseString.civilDemands(theCase.caseStrings),
+  )
 
   if (civilDemands) {
     addEmptyLines(doc, 2)
@@ -136,7 +170,7 @@ export const createIndictment = async (
   addEmptyLines(doc, 2)
   addNormalPlusCenteredText(
     doc,
-    formatMessage(indictment.signature, {
+    formatIcuMessage(indictment.signature, {
       prosecutorsOfficeName:
         lowercase(theCase.prosecutorsOffice?.name)
           .replace('lögreglustjórinn', 'lögreglustjórans')

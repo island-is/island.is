@@ -1,4 +1,5 @@
-import { forwardRef, ReactElement, useState } from 'react'
+import type { ReactElement } from 'react'
+import { forwardRef, useState } from 'react'
 import cn from 'classnames'
 import {
   Menu,
@@ -8,12 +9,12 @@ import {
   useMenuStore,
 } from '@ariakit/react'
 
+import type { IconMapIcon } from '@island.is/island-ui/core'
 import {
   Box,
   Button,
   getTextStyles,
   Icon,
-  IconMapIcon,
   useBoxStyles,
 } from '@island.is/island-ui/core'
 

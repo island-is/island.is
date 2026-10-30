@@ -1,21 +1,21 @@
-import { FC } from 'react'
-import Select, {
+import type { FC } from 'react'
+import type {
   ActionMeta,
   MultiValue,
   PropsValue,
   SingleValue as ReactSelectSingleValue,
 } from 'react-select'
+import Select from 'react-select'
 
-import { Option as CoreOption } from '@island.is/island-ui/core'
+import type { Option as CoreOption } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-
-import { ReactSelectOption } from '../../types'
 import {
   DropdownIndicator,
   Option,
   Placeholder,
   SingleValue,
-} from '../SelectComponents/SelectComponents'
+} from '@island.is/judicial-system-web/src/components/SelectComponents/SelectComponents'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
   options: ReactSelectOption[]

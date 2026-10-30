@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-intellectual-properties',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

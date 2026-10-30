@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-consultation-portal',
   preset: './jest.preset.js',
   rootDir: '../../..',

@@ -1,9 +1,6 @@
 import { Application } from '@island.is/application/types'
-import {
-  DataValue,
-  ReviewGroup,
-  formatBankInfo,
-} from '@island.is/application/ui-components'
+import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
+import { formatBankInfo } from '@island.is/shared/utils'
 import { YES } from '@island.is/application/core'
 import {
   Box,

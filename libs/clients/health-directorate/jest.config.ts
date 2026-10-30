@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-occupational-licenses',
   preset: './jest.preset.js',
   rootDir: '../../..',

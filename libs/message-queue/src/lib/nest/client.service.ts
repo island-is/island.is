@@ -14,7 +14,6 @@ import {
   Message,
   QueueAttributeName,
 } from '@aws-sdk/client-sqs'
-import { AbortController } from '@aws-sdk/abort-controller'
 import { type Logger } from '@island.is/logging'
 
 @Injectable()

@@ -1,37 +1,25 @@
-import {
-  ChangeEvent,
-  FC,
-  isValidElement,
-  PropsWithChildren,
-  ReactNode,
-  useEffect,
-  useId,
-} from 'react'
+import type { ChangeEvent, FC, PropsWithChildren, ReactNode } from 'react'
+import { isValidElement, useEffect, useId } from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
 import cn from 'classnames'
-import { motion } from 'motion/react'
+import { motion, useIsPresent } from 'motion/react'
 
-import {
-  Box,
-  BoxProps,
-  Button,
-  Checkbox,
-  Icon,
-  IconMapIcon,
-  Text,
-} from '@island.is/island-ui/core'
+import type { BoxProps, IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, Icon, Text } from '@island.is/island-ui/core'
 import { useKeyboardCombo } from '@island.is/judicial-system-web/src/utils/hooks/useKeyboardCombo/useKeyboardCombo'
 
 import * as styles from './Modal.css'
 
-interface ButtonProps {
+export interface ModalButton {
   text: string
-  icon?: IconMapIcon
   onClick: () => void
+  icon?: IconMapIcon
   isLoading?: boolean
   isDisabled?: boolean
   colorScheme?: 'default' | 'destructive'
+  variant?: 'primary' | 'ghost'
+  dataTestId?: string
 }
 
 interface FooterCheckbox {
@@ -44,30 +32,29 @@ interface FooterCheckbox {
 interface ModalProps {
   title: string
   text?: string | ReactNode
-  primaryButton?: ButtonProps
-  secondaryButton?: ButtonProps
+  buttons?: ModalButton[]
   footerCheckbox?: FooterCheckbox
   onClose?: () => void
   errorMessage?: string
   children?: ReactNode
-  invertButtonColors?: boolean
   loading?: boolean
   position?: 'center' | 'top' | 'bottom'
   footerJustifyContent?: BoxProps['justifyContent']
+  // Smooth reposition when content size changes (e.g. select menu expanding)
+  animateLayout?: boolean
 }
 
 export const Modal: FC<PropsWithChildren<ModalProps>> = ({
   title,
   text,
-  primaryButton,
-  secondaryButton,
+  buttons,
   footerCheckbox,
   onClose,
   errorMessage,
   children,
-  invertButtonColors,
   loading,
   footerJustifyContent = 'spaceBetween',
+  animateLayout = false,
 }: ModalProps) => {
   const modalVariants = {
     open: {
@@ -83,6 +70,8 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
 
   const footerCheckboxId = useId()
   const titleId = useId()
+  const lastButtonIndex = buttons ? buttons.length - 1 : -1
+  const isPresent = useIsPresent()
 
   useKeyboardCombo('Escape', () => {
     if (onClose && !loading) {
@@ -100,37 +89,50 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
 
   return (
     <FocusLock autoFocus={false}>
-      <motion.div
-        key="modal"
-        className={styles.container}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      {/* The backdrop fades through CSS rather than motion. Motion runs an
+          opacity exit through the Web Animations API and cancels it the
+          moment it finishes, writing the final value a frame later - so the
+          backdrop painted at full opacity for one frame before the dialog
+          unmounted, which read as a flash. A class toggled on leaving is
+          already in the DOM when the node goes. */}
+      <div
+        className={cn(styles.container, { [styles.leaving]: !isPresent })}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         data-testid="modal"
-        layout
-        transition={{
-          layout: {
-            duration: 0.3,
-            ease: 'easeInOut',
-          },
-        }}
       >
+        {/* Clicking outside the panel closes. The click target is a real
+            button under the panel rather than a handler on the dialog, so
+            assistive technology finds a named close control. It is kept out
+            of the tab order; Escape, handled above, is the keyboard's way. */}
+        {onClose && (
+          <button
+            type="button"
+            className={styles.backdropButton}
+            onClick={onClose}
+            disabled={loading}
+            tabIndex={-1}
+            aria-label="Loka glugga"
+          />
+        )}
         <motion.div
           className={styles.modalContainer}
           initial="closed"
           animate="open"
           exit="closed"
-          layout="position"
-          transition={{
-            layout: {
-              duration: 0.3,
-              ease: 'easeInOut',
-              type: 'tween',
-            },
-          }}
+          layout={animateLayout ? 'position' : false}
+          transition={
+            animateLayout
+              ? {
+                  layout: {
+                    duration: 0.3,
+                    ease: 'easeInOut',
+                    type: 'tween',
+                  },
+                }
+              : undefined
+          }
           variants={modalVariants}
         >
           {onClose && (
@@ -183,30 +185,35 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
               />
             )}
             <Box display="flex" columnGap={3}>
-              {secondaryButton && (
-                <Button
-                  data-testid="modalSecondaryButton"
-                  variant={invertButtonColors ? undefined : 'ghost'}
-                  onClick={secondaryButton.onClick}
-                  loading={secondaryButton.isLoading}
-                  disabled={loading || !!secondaryButton.isDisabled}
-                >
-                  {secondaryButton.text}
-                </Button>
-              )}
-              {primaryButton && (
-                <Button
-                  data-testid="modalPrimaryButton"
-                  variant={invertButtonColors ? 'ghost' : undefined}
-                  onClick={primaryButton.onClick}
-                  icon={primaryButton.icon}
-                  loading={loading || !!primaryButton.isLoading}
-                  disabled={loading || !!primaryButton.isDisabled}
-                  colorScheme={primaryButton.colorScheme || 'default'}
-                >
-                  {primaryButton.text}
-                </Button>
-              )}
+              {buttons?.map((button, index) => {
+                const isLastButton = index === lastButtonIndex
+                const defaultTestId =
+                  buttons.length > 2
+                    ? `modalButton-${index}`
+                    : isLastButton &&
+                      !(buttons.length === 1 && button.variant === 'ghost')
+                    ? 'modalPrimaryButton'
+                    : 'modalSecondaryButton'
+
+                return (
+                  <Button
+                    key={`${button.text}-${index}`}
+                    data-testid={button.dataTestId ?? defaultTestId}
+                    variant={button.variant === 'ghost' ? 'ghost' : undefined}
+                    onClick={button.onClick}
+                    icon={button.icon}
+                    loading={(isLastButton && loading) || !!button.isLoading}
+                    disabled={loading || !!button.isDisabled}
+                    colorScheme={
+                      button.variant === 'ghost'
+                        ? button.colorScheme
+                        : button.colorScheme || 'default'
+                    }
+                  >
+                    {button.text}
+                  </Button>
+                )
+              })}
             </Box>
           </Box>
           {errorMessage && (
@@ -222,7 +229,7 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
             </Box>
           )}
         </motion.div>
-      </motion.div>
+      </div>
     </FocusLock>
   )
 }
@@ -244,6 +251,8 @@ export const ModalContainer = ({
     },
   }
 
+  const isPresent = useIsPresent()
+
   useKeyboardCombo('Escape', () => {
     onClose && onClose()
   })
@@ -260,35 +269,36 @@ export const ModalContainer = ({
 
   return (
     <FocusLock autoFocus={false}>
-      <motion.div
-        key="modal"
+      {/* CSS fade for the same reason as in Modal above. */}
+      <div
         className={cn(styles.container, {
           [styles.alignItems[position]]: position,
+          [styles.leaving]: !isPresent,
         })}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
         role="dialog"
         aria-modal="true"
         data-testid="modal"
-        onClick={() => {
-          onClose && onClose()
-        }}
       >
+        {/* Backdrop close button, as in Modal above. */}
+        {onClose && (
+          <button
+            type="button"
+            className={styles.backdropButton}
+            onClick={onClose}
+            tabIndex={-1}
+            aria-label="Loka glugga"
+          />
+        )}
         <motion.div
           className={styles.modalContainerBare}
           initial="closed"
           animate="open"
           exit="closed"
           variants={modalVariants}
-          onClick={(e) => {
-            // Prevent click events from bubbling up to the container
-            e.stopPropagation()
-          }}
         >
           {children}
         </motion.div>
-      </motion.div>
+      </div>
     </FocusLock>
   )
 }
@@ -296,15 +306,14 @@ export const ModalContainer = ({
 const ModalPortal = ({
   title,
   text,
-  primaryButton,
-  secondaryButton,
+  buttons,
   footerCheckbox,
   onClose,
   errorMessage,
   children,
-  invertButtonColors,
   loading,
   footerJustifyContent,
+  animateLayout,
 }: ModalProps) => {
   const modalRoot =
     document.getElementById('modal') ?? document.createElement('div')
@@ -313,15 +322,14 @@ const ModalPortal = ({
     <Modal
       title={title}
       text={text}
-      primaryButton={primaryButton}
-      secondaryButton={secondaryButton}
+      buttons={buttons}
       footerCheckbox={footerCheckbox}
       onClose={onClose}
       errorMessage={errorMessage}
       children={children}
-      invertButtonColors={invertButtonColors}
       loading={loading}
       footerJustifyContent={footerJustifyContent}
+      animateLayout={animateLayout}
     />,
     modalRoot,
   )

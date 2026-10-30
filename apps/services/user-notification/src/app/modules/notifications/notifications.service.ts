@@ -15,6 +15,7 @@ import { NoContentException } from '@island.is/nest/problem'
 import { Notification } from './notification.model'
 import { ActorNotification } from './actor-notification.model'
 import { NotificationDelivery } from './notification-delivery.model'
+import { UserNotificationSender } from './user-notification-sender.model'
 import { ArgumentDto } from './dto/createHnippNotification.dto'
 import { NotificationDeliveryDto } from './dto/notificationDelivery.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
@@ -26,6 +27,8 @@ import {
   ExtendedPaginationDto,
   UnseenNotificationsCountDto,
   UnreadNotificationsCountDto,
+  NotificationCategoriesDto,
+  NotificationCategoryLabelDto,
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
 import {
@@ -33,14 +36,18 @@ import {
   mapToLocale,
   cleanString,
   SmsDelivery,
+  DEFAULT_CATEGORY,
+  DEFAULT_CATEGORY_LABEL,
+  toTemplateCategory,
 } from './utils'
 import {
   CmsService,
   GetTemplateByTemplateId,
   GetTemplates,
+  GetTemplateCategories,
   GetOrganizationByNationalId,
 } from '@island.is/clients/cms'
-import { DocumentsScope } from '@island.is/auth/scopes'
+import { ApiScope, DocumentsScope } from '@island.is/auth/scopes'
 import { Op } from 'sequelize'
 
 /**
@@ -68,6 +75,8 @@ export class NotificationsService {
     private readonly actorNotificationModel: typeof ActorNotification,
     @InjectModel(NotificationDelivery)
     private readonly notificationDeliveryModel: typeof NotificationDelivery,
+    @InjectModel(UserNotificationSender)
+    private readonly userNotificationSenderModel: typeof UserNotificationSender,
     private readonly cmsService: CmsService,
   ) {}
 
@@ -235,23 +244,19 @@ export class NotificationsService {
     }
   }
 
-  /**
-   * Sanitizes arguments by filtering out any that don't exist in the template.
-   * Logs warnings for invalid args and returns only valid ones.
-   */
+  /** Filters out arguments that don't exist in the template. */
   sanitize(template: HnippTemplate, args: ArgumentDto[]): ArgumentDto[] {
     const validArgs: ArgumentDto[] = []
 
-    // Filter args and log warnings for invalid ones
     for (const arg of args) {
       if (template.args.includes(arg.key)) {
         validArgs.push(arg)
       } else {
-        this.logger.warn(
-          `Filtering out invalid argument '${arg.key}' for template '${
-            template.templateId
-          }'. Valid args are: ${template.args.join(', ')}`,
-        )
+        this.logger.warn('Filtering out invalid notification argument', {
+          templateId: template.templateId,
+          invalidArgKey: arg.key,
+          validArgKeys: template.args,
+        })
       }
     }
 
@@ -372,9 +377,15 @@ export class NotificationsService {
       orderOption: [['id', 'DESC']],
       where: {
         recipient: nationalId,
-        scope: {
-          [Op.in]: scopes || [DocumentsScope.main],
-        },
+        // Callers with @island.is/internal see all their own notifications,
+        // regardless of scope (recipient still restricts to their own).
+        ...(scopes.includes(ApiScope.internal)
+          ? {}
+          : {
+              scope: {
+                [Op.in]: scopes || [DocumentsScope.main],
+              },
+            }),
       },
     })
 
@@ -446,6 +457,81 @@ export class NotificationsService {
       throw new InternalServerErrorException(
         'Error getting unread notifications count',
       )
+    }
+  }
+
+  async findCategories(nationalId: string): Promise<NotificationCategoriesDto> {
+    const templateRows = await this.userNotificationSenderModel.findAll({
+      attributes: ['senderId', 'templateId', 'category'],
+      where: { recipient: nationalId },
+      order: [
+        ['senderId', 'ASC'],
+        ['category', 'ASC NULLS FIRST'],
+      ],
+    })
+
+    // Rows are per template, so several templates can share a category
+    const rows = [
+      ...new Map(
+        templateRows.map((row) => [`${row.senderId}-${row.category}`, row]),
+      ).values(),
+    ]
+
+    // Labels come from the CMS so they are always current. Sorted so the same
+    // templates make the same request, which the CMS client caches by URL.
+    const templateIds = [
+      ...new Set(
+        templateRows
+          .filter(({ category }) => category)
+          .map(({ templateId }) => templateId),
+      ),
+    ].sort()
+    const labels =
+      templateIds.length > 0
+        ? await this.getCategoryLabels(templateIds)
+        : new Map<string, NotificationCategoryLabelDto>()
+
+    return {
+      categories: rows.map(({ senderId, category }) => ({
+        senderId,
+        category: category ?? DEFAULT_CATEGORY,
+        categoryLabel: category
+          ? labels.get(category) ?? { is: category }
+          : DEFAULT_CATEGORY_LABEL,
+      })),
+    }
+  }
+
+  private async getCategoryLabels(
+    templateIds: string[],
+  ): Promise<Map<string, NotificationCategoryLabelDto>> {
+    try {
+      const res = (await this.cmsService.fetchData(GetTemplateCategories, {
+        templateIds,
+      })) as unknown as {
+        hnippTemplateCollection: {
+          items: { categoryIs?: string | null; categoryEn?: string | null }[]
+        }
+      }
+
+      const { items } = res.hnippTemplateCollection
+      const labels = new Map<string, NotificationCategoryLabelDto>()
+      for (const { categoryIs, categoryEn } of items) {
+        const category = toTemplateCategory(categoryIs)
+        if (category) {
+          const enLabel = categoryEn?.trim()
+          labels.set(category, {
+            is: (categoryIs as string).trim(),
+            ...(enLabel && { en: enLabel }),
+          })
+        }
+      }
+      return labels
+    } catch (error) {
+      this.logger.warn('Failed to fetch notification category labels', {
+        error,
+      })
+      return new Map()
     }
   }
 

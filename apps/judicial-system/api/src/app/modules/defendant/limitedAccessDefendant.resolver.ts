@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -25,6 +25,7 @@ export class LimitedAccessDefendantResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Mutation(() => Defendant, { nullable: true })
@@ -32,8 +33,6 @@ export class LimitedAccessDefendantResolver {
     @Args('input', { type: () => UpdateDefendantInput })
     input: UpdateDefendantInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Defendant> {
     const { caseId, defendantId, ...updateDefendant } = input
     this.logger.debug(
@@ -43,7 +42,7 @@ export class LimitedAccessDefendantResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_DEFENDANT,
-      backendService.limitedAccessUpdateDefendant(
+      this.backendService.limitedAccessUpdateDefendant(
         caseId,
         defendantId,
         updateDefendant,

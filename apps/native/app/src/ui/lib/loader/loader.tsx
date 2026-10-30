@@ -46,7 +46,7 @@ interface LoaderProps {
 }
 
 export function Loader({ text }: LoaderProps) {
-  const animRef = useRef<Animated.CompositeAnimation>()
+  const animRef = useRef<Animated.CompositeAnimation>(undefined)
   const scales = useRef<Animated.Value[]>([
     new Animated.Value(0),
     new Animated.Value(0),

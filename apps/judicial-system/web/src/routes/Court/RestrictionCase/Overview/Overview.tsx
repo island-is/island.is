@@ -17,7 +17,6 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
-  laws,
   rcCourtOverview,
   restrictionsV2,
   titles,
@@ -42,19 +41,19 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
+import type { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseLegalProvisions,
   CaseOrigin,
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { DraftConclusionModal } from '@island.is/judicial-system-web/src/routes/Court/components'
 import {
   UploadState,
   useCourtUpload,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getLegalProvisionTitle } from '@island.is/judicial-system-web/src/utils/laws'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-
-import { DraftConclusionModal } from '../../components'
 
 export const JudgeOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -104,11 +103,13 @@ export const JudgeOverview = () => {
         {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(
-                rcCourtOverview.sections.openedByDefenderAlert.title,
-              )}
+              title={rcCourtOverview.sections.openedByDefenderAlert.title}
               message={formatMessage(
-                rcCourtOverview.sections.openedByDefenderAlert.text,
+                {
+                  id: rcCourtOverview.sections.openedByDefenderAlert.text,
+                  defaultMessage:
+                    rcCourtOverview.sections.openedByDefenderAlert.text,
+                },
                 { when: formatDate(workingCase.openedByDefender, 'PPPp') },
               )}
               type="info"
@@ -117,9 +118,15 @@ export const JudgeOverview = () => {
           </Box>
         )}
         <PageTitle>
-          {formatMessage(rcCourtOverview.sections.title, {
-            caseType: workingCase.type,
-          })}
+          {formatMessage(
+            {
+              id: rcCourtOverview.sections.title,
+              defaultMessage: rcCourtOverview.sections.title,
+            },
+            {
+              caseType: workingCase.type,
+            },
+          )}
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
@@ -183,7 +190,10 @@ export const JudgeOverview = () => {
                       return (
                         <div key={index}>
                           <Text>
-                            {formatMessage(laws[legalProvision].title)}
+                            {getLegalProvisionTitle(
+                              formatMessage,
+                              legalProvision,
+                            )}
                           </Text>
                         </div>
                       )
@@ -285,15 +295,19 @@ export const JudgeOverview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
-            )
-          }
-          nextIsDisabled={uploadState === UploadState.UPLOADING}
-          nextButtonText={formatMessage(rcCourtOverview.continueButton.label)}
+          actions={[
+            {
+              text: rcCourtOverview.continueButton.label,
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+                ),
+              disabled: uploadState === UploadState.UPLOADING,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

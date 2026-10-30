@@ -34,7 +34,7 @@ export const innerWrapper = style({
 export const graphWrapper = style({
   display: 'flex',
   justifyContent: 'center',
-  alignItems: 'center',
+  alignItems: 'stretch',
   width: '889px',
   height: '100%',
 })

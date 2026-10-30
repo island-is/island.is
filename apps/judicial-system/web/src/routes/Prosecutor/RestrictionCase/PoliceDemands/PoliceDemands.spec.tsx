@@ -1,12 +1,13 @@
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
-  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
-import { DemandsAutofillProps, getDemandsAutofill } from './PoliceDemands'
+import type { DemandsAutofillProps } from './PoliceDemands'
+import { getDemandsAutofill } from './PoliceDemands'
 
 describe('getDemandsAutofill', () => {
   const baseDefendant = {
@@ -67,7 +68,7 @@ describe('getDemandsAutofill', () => {
     const result = f(props)
 
     expect(result).toEqual(
-      'Þess er krafist að Blær, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms, til miðvikudagsins 1. janúar 2020, kl. 00:00, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+      'Þess er krafist að Blær, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms, til miðvikudagsins 1. janúar 2020, kl. 00:00, og verði gert að sæta einangrun á meðan á gæsluvarðhaldi stendur.',
     )
   })
 

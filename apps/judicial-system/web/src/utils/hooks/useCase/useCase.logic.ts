@@ -3,10 +3,15 @@ import isNil from 'lodash/isNil'
 import isUndefined from 'lodash/isUndefined'
 import omitBy from 'lodash/omitBy'
 
-import {
-  Case,
+import { isIndictmentCase } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type {
+  CreateCaseInput,
+  Defendant,
   UpdateCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+
+import { normalizeBlankStrings } from '../../formatters'
 
 type ChildKeys = Pick<
   UpdateCaseInput,
@@ -16,6 +21,8 @@ type ChildKeys = Pick<
   | 'registrarId'
   | 'judgeId'
   | 'indictmentReviewerId'
+  | 'appealProsecutorId'
+  | 'indictmentApproverId'
   | 'mergeCaseId'
 >
 
@@ -31,17 +38,21 @@ const isChildKey = (key: keyof UpdateCaseInput): key is keyof ChildKeys => {
     'registrarId',
     'judgeId',
     'indictmentReviewerId',
+    'appealProsecutorId',
+    'indictmentApproverId',
     'mergeCaseId',
   ].includes(key)
 }
 
-const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
+const childof: { [Property in keyof ChildKeys]-?: keyof WorkingCase } = {
   courtId: 'court',
   prosecutorId: 'prosecutor',
   sharedWithProsecutorsOfficeId: 'sharedWithProsecutorsOffice',
   registrarId: 'registrar',
   judgeId: 'judge',
   indictmentReviewerId: 'indictmentReviewer',
+  appealProsecutorId: 'appealProsecutor',
+  indictmentApproverId: 'indictmentApprover',
   mergeCaseId: 'mergeCase',
 }
 
@@ -51,33 +62,40 @@ const overwrite = (update: UpdateCase): UpdateCase => {
   return validUpdates
 }
 
-const fieldHasValue = (workingCase: Case) => (value: unknown, key: string) => {
-  const theKey = key as keyof UpdateCaseInput
+const fieldHasValue =
+  (workingCase: WorkingCase) => (value: unknown, key: string) => {
+    const theKey = key as keyof UpdateCaseInput
 
-  let currentValue: unknown
+    let currentValue: unknown
 
-  if (theKey === 'defendantEventLogDecisions') {
-    return false
-  } else if (isChildKey(theKey)) {
-    currentValue = workingCase[childof[theKey]]
-  } else {
-    currentValue = workingCase[theKey]
+    if (theKey === 'defendantEventLogDecisions') {
+      return false
+    } else if (isChildKey(theKey)) {
+      currentValue = workingCase[childof[theKey]]
+    } else {
+      currentValue = workingCase[theKey]
+    }
+
+    if (isNil(currentValue)) {
+      return value === undefined
+    }
+
+    return true
   }
 
-  if (isNil(currentValue)) {
-    return value === undefined
-  }
-
-  return true
-}
-
-export const update = (update: UpdateCase, workingCase: Case): UpdateCase => {
+export const update = (
+  update: UpdateCase,
+  workingCase: WorkingCase,
+): UpdateCase => {
   const validUpdates = omitBy<UpdateCase>(update, fieldHasValue(workingCase))
 
   return validUpdates
 }
 
-export const formatUpdates = (updates: UpdateCase[], workingCase: Case) => {
+export const formatUpdates = (
+  updates: UpdateCase[],
+  workingCase: WorkingCase,
+) => {
   const changes: UpdateCase[] = updates.map((entry) => {
     if (entry.force) {
       return overwrite(entry)
@@ -98,4 +116,66 @@ export const formatUpdates = (updates: UpdateCase[], workingCase: Case) => {
 
 export const formatDateForServer = (date: Date) => {
   return formatISO(date, { representation: 'complete' })
+}
+
+// The fields a prosecutor can enter for a defendant before the case exists.
+// A blank national id is sent as null, since the server validates the length
+// of any string it receives.
+const toCreateCaseDefendantInput = (
+  defendant: Defendant,
+  { includeDefender }: { includeDefender: boolean },
+) =>
+  normalizeBlankStrings({
+    noNationalId: defendant.noNationalId,
+    nationalId: defendant.nationalId || null,
+    name: defendant.name,
+    gender: defendant.gender,
+    address: defendant.address,
+    citizenship: defendant.citizenship,
+    ...(includeDefender
+      ? {
+          defenderName: defendant.defenderName,
+          defenderNationalId: defendant.defenderNationalId,
+          defenderEmail: defendant.defenderEmail,
+          defenderPhoneNumber: defendant.defenderPhoneNumber,
+          requestSharedWithDefender: defendant.requestSharedWithDefender,
+        }
+      : {}),
+  })
+
+// Indictments collect their defendants before the case exists, so they are
+// sent with the case and created in the same transaction: the case is created
+// whole or not at all. Request cases may send the first defendant's defender
+// details at create time; otherwise the server starts from an empty defendant.
+// Undefined when the case is missing what it takes to be created.
+export const createCaseInput = (
+  theCase: WorkingCase,
+): CreateCaseInput | undefined => {
+  if (!theCase.type || !theCase.policeCaseNumbers) {
+    return undefined
+  }
+
+  const includeDefender = !isIndictmentCase(theCase.type)
+  const defendants = theCase.defendants?.length
+    ? isIndictmentCase(theCase.type)
+      ? theCase.defendants.map((defendant) =>
+          toCreateCaseDefendantInput(defendant, { includeDefender }),
+        )
+      : [
+          toCreateCaseDefendantInput(theCase.defendants[0], {
+            includeDefender,
+          }),
+        ]
+    : undefined
+
+  return {
+    type: theCase.type,
+    indictmentSubtypes: theCase.indictmentSubtypes,
+    description: theCase.description,
+    policeCaseNumbers: theCase.policeCaseNumbers,
+    leadInvestigator: theCase.leadInvestigator,
+    crimeScenes: theCase.crimeScenes,
+    prosecutorId: theCase.prosecutor?.id,
+    ...(defendants ? { defendants } : {}),
+  }
 }

@@ -65,7 +65,7 @@ const mockIdsService = {
 const createLoginAttempt = (mockConfig: ConfigType<typeof BffConfig>) => ({
   originUrl: `${mockConfig.clientBaseUrl}${mockConfig.clientBasePath}`,
   codeVerifier: 'test_code_verifier',
-  targetLinkUri: undefined,
+  targetLinkUri: `${mockConfig.clientBaseUrl}${mockConfig.clientBasePath}`,
 })
 
 describe('UserController', () => {
@@ -164,7 +164,7 @@ describe('UserController', () => {
         .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
-      expect(callbackRes.status).toBe(HttpStatus.FOUND)
+      expect(callbackRes.status).toBe(HttpStatus.OK)
 
       // Act - Get user data
       const res = await server

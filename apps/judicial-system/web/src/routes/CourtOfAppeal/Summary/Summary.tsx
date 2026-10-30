@@ -1,4 +1,5 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -27,6 +28,7 @@ import {
   AppealCaseState,
   AppealCaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseNumbers } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
 import {
   getAppealDecision,
   useAppealCase,
@@ -38,7 +40,6 @@ import {
   shouldUseAppealWithdrawnRoutes,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { CaseNumbers } from '../components'
 import RulingModifiedModal from './RulingModifiedModal/RulingModifiedModal'
 import { strings } from './Summary.strings'
 
@@ -97,7 +98,7 @@ const Summary: FC = () => {
     <>
       <AlertBanner
         variant="warning"
-        title={formatMessage(strings.alertBannerTitle)}
+        title={strings.alertBannerTitle}
         description={getAppealDecision(
           formatMessage,
           targetAppealCase?.appealRulingDecision,
@@ -109,22 +110,22 @@ const Summary: FC = () => {
         notFound={caseNotFound}
         onNavigationTo={handleNavigationTo}
       >
-        <PageHeader title={formatMessage(strings.htmlTitle)} />
+        <PageHeader title={strings.htmlTitle} />
         <FormContentContainer>
-          <PageTitle>{formatMessage(strings.title)}</PageTitle>
+          <PageTitle>{strings.title}</PageTitle>
 
           <CaseNumbers />
 
           <Box marginBottom={6}>
             <Conclusion
-              title={formatMessage(conclusion.title)}
+              title={conclusion.title}
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
           </Box>
           <Box marginBottom={6}>
             <Conclusion
-              title={formatMessage(conclusion.appealTitle)}
+              title={conclusion.appealTitle}
               conclusionText={targetAppealCase?.appealConclusion}
             />
           </Box>
@@ -140,27 +141,35 @@ const Summary: FC = () => {
                 : `${COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
               targetAppealCase?.id,
             )}
-            nextButtonIcon="checkmark"
-            nextButtonText={formatMessage(strings.nextButtonFooter)}
-            onNextButtonClick={async () => await handleNextButtonClick()}
-            nextIsDisabled={isTransitioningAppealCase}
+            actions={[
+              {
+                text: strings.nextButtonFooter,
+                icon: 'checkmark',
+                onClick: async () => await handleNextButtonClick(),
+                disabled: isTransitioningAppealCase,
+                testId: 'continueButton',
+              },
+            ]}
           />
         </FormContentContainer>
         {visibleModal === 'AppealCompleted' && (
           <Modal
-            title={formatMessage(strings.appealCompletedModalTitle)}
-            text={formatMessage(strings.appealCompletedModalText)}
-            secondaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => {
-                router.push(
-                  appendAppealCaseIdQuery(
-                    `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
-                    targetAppealCase?.id,
-                  ),
-                )
+            title={strings.appealCompletedModalTitle}
+            text={strings.appealCompletedModalText}
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => {
+                  router.push(
+                    appendAppealCaseIdQuery(
+                      `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                      targetAppealCase?.id,
+                    ),
+                  )
+                },
+                variant: 'ghost',
               },
-            }}
+            ]}
           />
         )}
         {visibleModal === 'AppealRulingModified' && (
@@ -171,19 +180,22 @@ const Summary: FC = () => {
         )}
         {visibleModal === 'AppealDiscontinued' && (
           <Modal
-            title={formatMessage(strings.appealDiscontinuedModalTitle)}
-            text={formatMessage(strings.appealDiscontinuedModalText)}
-            secondaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => {
-                router.push(
-                  appendAppealCaseIdQuery(
-                    `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
-                    targetAppealCase?.id,
-                  ),
-                )
+            title={strings.appealDiscontinuedModalTitle}
+            text={strings.appealDiscontinuedModalText}
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => {
+                  router.push(
+                    appendAppealCaseIdQuery(
+                      `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                      targetAppealCase?.id,
+                    ),
+                  )
+                },
+                variant: 'ghost',
               },
-            }}
+            ]}
           />
         )}
       </PageLayout>

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'equality-report',
   preset: '../../../../../jest.preset.js',
   transform: {

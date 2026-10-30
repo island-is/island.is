@@ -1,7 +1,8 @@
-import { createParamDecorator } from '@nestjs/common'
+import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 
 import { Subpoena } from '../../repository'
 
 export const CurrentSubpoena = createParamDecorator(
-  (data, { args: [_1, { req }] }): Subpoena => req.subpoena,
+  (data, context: ExecutionContext): Subpoena =>
+    context.switchToHttp().getRequest().subpoena,
 )

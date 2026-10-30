@@ -56,7 +56,7 @@ describe('healthInsuranceTest', () => {
 
       expect(async () => {
         await service.isHealthInsured(kennitala, new Date())
-      }).rejects.toThrowError('Some unexpected error')
+      }).rejects.toThrow('Some unexpected error')
     })
 
     it('is healthInsured return false', async () => {

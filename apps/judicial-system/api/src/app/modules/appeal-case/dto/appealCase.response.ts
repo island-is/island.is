@@ -3,13 +3,19 @@ import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { AppealSummons } from '../../appeal-summons'
 import { CaseFile } from '../../file'
 import { User } from '../../user'
+import { AppealCourtSession } from './appealCourtSession.response'
+import { AppealEventLog } from './appealEventLog.response'
+import { AppealStatementDeadline } from './appealStatementDeadline.response'
 
 registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
+registerEnumType(AppealCaseType, { name: 'AppealCaseType' })
 registerEnumType(AppealCaseRulingDecision, { name: 'AppealCaseRulingDecision' })
 
 @ObjectType()
@@ -43,6 +49,10 @@ export class AppealCase {
 
   @Field(() => AppealCaseState, { nullable: true })
   readonly appealState?: AppealCaseState
+
+  // RULING for a ruling appeal, VERDICT for a verdict appeal.
+  @Field(() => AppealCaseType, { nullable: true })
+  readonly appealType?: AppealCaseType
 
   @Field(() => String, { nullable: true })
   readonly appealCaseNumber?: string
@@ -98,8 +108,11 @@ export class AppealCase {
   @Field(() => String, { nullable: true })
   readonly appealIsolationToDate?: string
 
-  @Field(() => String, { nullable: true })
-  readonly appealedByNationalId?: string
+  @Field(() => ID, { nullable: true })
+  readonly appealedByDefendantId?: string
+
+  @Field(() => ID, { nullable: true })
+  readonly appealedByCivilClaimantId?: string
 
   @Field(() => UserRole, { nullable: true })
   readonly appealedByRole?: UserRole
@@ -109,6 +122,12 @@ export class AppealCase {
 
   @Field(() => Boolean, { nullable: true })
   readonly appealedInCourt?: boolean
+
+  // A party filed the appeal itself rather than it being recorded in court.
+  // Unlike appealedInCourt this is meaningful for case-level appeals, since it
+  // comes from the appeal event's origin rather than a ruling's decision rows.
+  @Field(() => Boolean, { nullable: true })
+  readonly appealedOutOfCourt?: boolean
 
   @Field(() => String, { nullable: true })
   readonly statementDeadline?: string
@@ -121,4 +140,27 @@ export class AppealCase {
 
   @Field(() => CaseFile, { nullable: true })
   readonly rulingFile?: CaseFile
+
+  // Only carried by a verdict appeal case: the backend folds the event log of a
+  // ruling appeal into the appealedBy* fields above and strips it from the payload.
+  @Field(() => [AppealEventLog], { nullable: true })
+  readonly appealEventLogs?: AppealEventLog[]
+
+  // Only meaningful on a verdict appeal case (áfrýjunarstefna).
+  @Field(() => [AppealSummons], { nullable: true })
+  readonly appealSummonses?: AppealSummons[]
+
+  // Summonses already sent to Landsréttur. Staff keep appealSummonses; CoA
+  // reads this field only.
+  @Field(() => [AppealSummons], { nullable: true })
+  readonly sentAppealSummonses?: AppealSummons[]
+
+  // Only a verdict appeal carries sessions; a ruling appeal is decided on the papers.
+  @Field(() => [AppealCourtSession], { nullable: true })
+  readonly courtSessions?: AppealCourtSession[]
+
+  // The statement deadlines the court of appeals has given the parties of a
+  // verdict appeal, one per party.
+  @Field(() => [AppealStatementDeadline], { nullable: true })
+  readonly statementDeadlines?: AppealStatementDeadline[]
 }

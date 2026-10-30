@@ -1,4 +1,5 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
@@ -11,25 +12,25 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { isPublicProsecutionOfficeUser } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import RenderPersonalData from '@island.is/judicial-system-web/src/components/InfoCard/RenderPersonalInfo/RenderPersonalInfo'
+import { strings as infoCardStrings } from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems.strings'
+import { link } from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper.css'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
-  Defendant,
   ServiceRequirement,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { UserContext } from '../../UserProvider/UserProvider'
-import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
 import {
   getAppealExpirationInfo,
   getDefendantTagConfig,
   getVerdictViewDateText,
 } from './DefendantInfo.logic'
-import { strings as infoCardStrings } from '../useInfoCardItems.strings'
 import { strings } from './DefendantInfo.strings'
-import { link } from '../../MarkdownWrapper/MarkdownWrapper.css'
 import * as styles from './DefendantInfo.css'
 
 interface Defender {
@@ -122,8 +123,8 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const defenderLabel =
     defender?.sessionArrangement ===
     SessionArrangements.ALL_PRESENT_SPOKESPERSON
-      ? formatMessage(strings.spokesperson)
-      : formatMessage(strings.defender)
+      ? strings.spokesperson
+      : strings.defender
   const defenderName = defendant.defenderName || defender?.name
   const defenderEmail = defendant.defenderEmail || defender?.email
   const defenderPhoneNumber =
@@ -139,15 +140,17 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     verdict: defendant.verdict,
     isPublicProsecutionOffice: isPublicProsecutionOfficeUser(user),
     indictmentRulingDecision,
+    isClosedWithoutEnforcement: defendant.isClosedWithoutEnforcement,
   })
 
   return (
     <Box display="flex" justifyContent="spaceBetween">
-      <div className={grid({ gap: 1 })}>
+      <div className={stack({ gap: 1 })}>
         <Text>
-          <Text as="span" fontWeight="semiBold">{`${formatMessage(
-            infoCardStrings.name,
-          )}: `}</Text>
+          <Text
+            as="span"
+            fontWeight="semiBold"
+          >{`${infoCardStrings.name}: `}</Text>
           <Text as="span">
             {defendant.name}
             {defendant.nationalId &&
@@ -175,7 +178,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
               breakSpaces: false,
             })
           ) : (
-            <Text as="span">{formatMessage(strings.noDefender)}</Text>
+            <Text as="span">{strings.noDefender}</Text>
           )}
         </Text>
         {displayAppealExpirationInfo && (
@@ -201,11 +204,27 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           )}
         {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
           <Text fontWeight="semiBold">
-            {formatMessage(strings.sendToPrisonAdminDate, {
-              date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
-            })}
+            {formatMessage(
+              {
+                id: strings.sendToPrisonAdminDate,
+                defaultMessage: strings.sendToPrisonAdminDate,
+              },
+              {
+                date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
+              },
+            )}
           </Text>
         )}
+        {isPublicProsecutionOfficeUser(user) &&
+          defendant.isClosedWithoutEnforcement &&
+          defendant.closedWithoutEnforcementDate && (
+            <Text fontWeight="semiBold">
+              {`Máli lokið án fullnustu ${formatDate(
+                defendant.closedWithoutEnforcementDate,
+                'PPP',
+              )}`}
+            </Text>
+          )}
         {defendant.indictmentCancelledOrDismissedState && (
           <Text fontWeight="semiBold">{`${
             defendant.indictmentCancelledOrDismissedState.type ===

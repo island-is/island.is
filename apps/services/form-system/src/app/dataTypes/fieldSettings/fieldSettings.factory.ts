@@ -50,6 +50,7 @@ export class FieldSettingsFactory {
       case FieldTypesEnum.APPLICANT:
         keys = [
           'applicantType',
+          'isAddressRequired',
           'isPhoneRequired',
           'isEmailRequired',
           'fetchEmailFromMyPages',
@@ -78,6 +79,9 @@ export class FieldSettingsFactory {
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.ASSETS:
         keys = ['assetType', 'isDropdown', ...keys]
+        return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.FAMILY:
+        keys = ['familyType', ...keys]
         return this.pickSettings(fieldSettings, keys)
       default:
         return this.pickSettings(fieldSettings, keys)

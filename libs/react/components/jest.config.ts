@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'react-components',
   preset: './jest.preset.js',
   rootDir: '../../..',

@@ -19,7 +19,7 @@ export const useHistorySync = (
   const navigate = useNavigate()
   const navigationType = useNavigationType()
   const location = useLocation()
-  const urlRef = useRef<string>()
+  const urlRef = useRef<string>(undefined)
   urlRef.current = `${location.pathname}${location.search}${location.hash}`
 
   // Set up history state.

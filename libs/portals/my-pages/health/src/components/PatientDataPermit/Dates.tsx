@@ -20,7 +20,7 @@ const Dates: FC<DatesProps> = ({
   formState,
   setFormState,
 }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   return (
     <Box>
       <Text variant="eyebrow" color="purple400">
@@ -85,6 +85,7 @@ const Dates: FC<DatesProps> = ({
           }}
           label={formatMessage(messages.period)}
           placeholderText={formatMessage(messages.choosePeriod)}
+          locale={lang}
           size="xs"
         />
         {formState?.dates.validFrom != null ||

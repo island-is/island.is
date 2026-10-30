@@ -2,15 +2,14 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { ServiceStatus } from '@island.is/judicial-system/types'
 
-interface SubpoenaUpdate
-  extends Pick<
-    SubpoenaInfo,
-    | 'serviceStatus'
-    | 'comment'
-    | 'servedBy'
-    | 'defenderNationalId'
-    | 'serviceDate'
-  > {}
+type SubpoenaUpdate = Pick<
+  SubpoenaInfo,
+  | 'serviceStatus'
+  | 'comment'
+  | 'servedBy'
+  | 'defenderNationalId'
+  | 'serviceDate'
+>
 
 const subpoenaUpdateKeys: Array<keyof SubpoenaUpdate> = [
   'serviceStatus',
@@ -40,7 +39,7 @@ export class SubpoenaInfo {
     )
   }
 
-  @ApiProperty({ type: ServiceStatus })
+  @ApiProperty({ enum: ServiceStatus, enumName: 'ServiceStatus' })
   serviceStatus?: ServiceStatus
 
   @ApiPropertyOptional({ type: String })

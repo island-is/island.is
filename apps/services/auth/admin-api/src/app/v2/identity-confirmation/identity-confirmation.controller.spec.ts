@@ -123,8 +123,8 @@ describe('ConfirmIdentityController', () => {
 
         // Assert
         expect(response.status).toBe(200)
-        expect(smsService.sendSms).not.toBeCalled()
-        expect(zendeskService.updateTicket).toBeCalled()
+        expect(smsService.sendSms).not.toHaveBeenCalled()
+        expect(zendeskService.updateTicket).toHaveBeenCalled()
 
         // Db check
         const identityConfirmation = await identityConfirmationModel.findOne({
@@ -145,8 +145,8 @@ describe('ConfirmIdentityController', () => {
 
         // Assert
         expect(response.status).toBe(200)
-        expect(smsService.sendSms).not.toBeCalled()
-        expect(zendeskService.updateTicket).toBeCalled()
+        expect(smsService.sendSms).not.toHaveBeenCalled()
+        expect(zendeskService.updateTicket).toHaveBeenCalled()
 
         // Db check
         const identityConfirmation = await identityConfirmationModel.findOne({
@@ -154,7 +154,7 @@ describe('ConfirmIdentityController', () => {
         })
 
         expect(identityConfirmation).not.toBeNull()
-        expect(smsService.sendSms).not.toBeCalled()
+        expect(smsService.sendSms).not.toHaveBeenCalled()
       })
     })
 
@@ -169,8 +169,8 @@ describe('ConfirmIdentityController', () => {
 
         // Assert
         expect(response.status).toBe(200)
-        expect(smsService.sendSms).toBeCalled()
-        expect(zendeskService.updateTicket).not.toBeCalled()
+        expect(smsService.sendSms).toHaveBeenCalled()
+        expect(zendeskService.updateTicket).not.toHaveBeenCalled()
         // Db check
         const identityConfirmation = await identityConfirmationModel.findOne({
           where: { ticketId: '1' },
@@ -188,8 +188,8 @@ describe('ConfirmIdentityController', () => {
 
         // Assert
         expect(response.status).toBe(400)
-        expect(zendeskService.updateTicket).not.toBeCalled()
-        expect(smsService.sendSms).not.toBeCalled()
+        expect(zendeskService.updateTicket).not.toHaveBeenCalled()
+        expect(smsService.sendSms).not.toHaveBeenCalled()
       })
     })
   })

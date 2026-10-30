@@ -15,8 +15,9 @@ import {
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
-import { randomDate } from '../../../../test'
-import { Case, CaseFile } from '../../../repository'
+import { getOrCreateTransaction } from '../../../../middleware'
+import { randomDate, runInRequestContext } from '../../../../test'
+import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { CreateFileDto } from '../../dto/createFile.dto'
 
 interface Then {
@@ -34,27 +35,31 @@ describe('limitedAccessFileController - Create case file', () => {
   const user = { id: uuid() } as User
 
   let mockQueuedMessages: Message[]
-  let mockFileModel: typeof CaseFile
+  let mockCaseFileRepositoryService: CaseFileRepositoryService
+  let mockTransaction: jest.Mock
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
-      queuedMessages,
+      queuedMessagesAfterCommit,
       sequelize,
-      fileModel,
+      caseFileRepositoryService,
       limitedAccessFileController,
     } = await createTestingFileModule()
 
-    mockQueuedMessages = queuedMessages
-    mockFileModel = fileModel
+    mockQueuedMessages = queuedMessagesAfterCommit
+    mockCaseFileRepositoryService = caseFileRepositoryService
 
-    const mockTransaction = sequelize.transaction as jest.Mock
+    mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
+    // The route is guarded by LimitedAccessCaseExistsForUpdateGuard, so the
+    // request transaction is already open - and holding a lock on this case
+    // row - by the time the handler runs. Guards do not execute in
+    // controller unit tests, so the request context and that transaction are
+    // set up here instead.
     givenWhenThen = async (
       caseId: string,
       createCaseFile: CreateFileDto,
@@ -62,14 +67,30 @@ describe('limitedAccessFileController - Create case file', () => {
     ): Promise<Then> => {
       const then = {} as Then
 
-      await limitedAccessFileController
-        .createCaseFile(caseId, user, theCase, createCaseFile)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      try {
+        then.result = await runInRequestContext(async () => {
+          await getOrCreateTransaction(sequelize)
+
+          return limitedAccessFileController.createCaseFile(
+            caseId,
+            user,
+            theCase,
+            createCaseFile,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
   })
+
+  // Once, by the stand-in for the guard above. A second call would be the
+  // handler opening a transaction of its own, which would block on the
+  // guard's row lock and deadlock the request.
+  const expectTheGuardsTransactionOnly = () =>
+    expect(mockTransaction).toHaveBeenCalledTimes(1)
 
   describe.each([...restrictionCases, ...investigationCases])(
     'case file created for %s case',
@@ -102,21 +123,22 @@ describe('limitedAccessFileController - Create case file', () => {
       let then: Then
 
       beforeEach(async () => {
-        const mockCreate = mockFileModel.create as jest.Mock
+        const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
         mockCreate.mockResolvedValueOnce(caseFile)
 
         then = await givenWhenThen(caseId, createCaseFile, theCase)
       })
 
       it('should create a case file', () => {
-        expect(mockFileModel.create).toHaveBeenCalledWith(
+        expectTheGuardsTransactionOnly()
+        expect(mockCaseFileRepositoryService.create).toHaveBeenCalledWith(
+          caseId,
           {
             type: 'text/plain',
             state: CaseFileState.STORED_IN_RVG,
             key: `${caseId}/${uuId}/test.txt`,
             size: 99,
             category: CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-            caseId,
             name: 'test.txt',
             userGeneratedFilename: 'test.txt',
           },
@@ -157,20 +179,21 @@ describe('limitedAccessFileController - Create case file', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockFileModel.create as jest.Mock
+      const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(caseFile)
 
       then = await givenWhenThen(caseId, createCaseFile, theCase)
     })
 
     it('should create a case file', () => {
-      expect(mockFileModel.create).toHaveBeenCalledWith(
+      expectTheGuardsTransactionOnly()
+      expect(mockCaseFileRepositoryService.create).toHaveBeenCalledWith(
+        caseId,
         {
           type: 'text/plain',
           state: CaseFileState.STORED_IN_RVG,
           key: `${caseId}/${uuId}/test.txt`,
           size: 99,
-          caseId,
           name: 'test.txt',
           userGeneratedFilename: 'test.txt',
         },
@@ -196,6 +219,7 @@ describe('limitedAccessFileController - Create case file', () => {
     })
 
     it('should throw bad gateway exception', () => {
+      expectTheGuardsTransactionOnly()
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(then.error.message).toBe(
         `${caseId}/${uuId}/test.txt is not a valid key for case ${caseId}`,
@@ -215,13 +239,14 @@ describe('limitedAccessFileController - Create case file', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockFileModel.create as jest.Mock
+      const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, createCaseFile, theCase)
     })
 
     it('should throw error', () => {
+      expectTheGuardsTransactionOnly()
       expect(then.error).toBeInstanceOf(Error)
       expect(then.error.message).toBe('Some error')
     })

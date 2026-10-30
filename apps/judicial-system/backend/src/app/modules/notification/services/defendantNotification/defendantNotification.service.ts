@@ -5,7 +5,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
@@ -33,6 +32,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { formatDefenderRoute } from '../../../../formatters'
+import { formatIcuMessage } from '../../../../messages'
 import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import {
@@ -40,19 +40,22 @@ import {
   Defendant,
   DefendantEventLog,
   InstitutionContactRepositoryService,
-  Notification,
+  NotificationRepositoryService,
   Recipient,
 } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
+import {
+  appealAdvocateAssignedBody,
+  appealAdvocateAssignedSubject,
+} from '../appealAdvocateAssigned'
 import { BaseNotificationService } from '../baseNotification.service'
 import { strings } from './defendantNotification.strings'
 
 @Injectable()
 export class DefendantNotificationService extends BaseNotificationService {
   constructor(
-    @InjectModel(Notification)
-    notificationModel: typeof Notification,
+    notificationRepositoryService: NotificationRepositoryService,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
@@ -63,7 +66,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     private readonly institutionContactRepositoryService: InstitutionContactRepositoryService,
   ) {
     super(
-      notificationModel,
+      notificationRepositoryService,
       emailService,
       intlService,
       courtService,
@@ -105,14 +108,14 @@ export class DefendantNotificationService extends BaseNotificationService {
   private sendDefendantSelectedDefenderNotification(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    const formattedSubject = this.formatMessage(
+    const formattedSubject = formatIcuMessage(
       strings.defendantSelectedDefenderSubject,
       {
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
 
-    const formattedBody = this.formatMessage(
+    const formattedBody = formatIcuMessage(
       strings.defendantSelectedDefenderBody,
       {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -142,14 +145,14 @@ export class DefendantNotificationService extends BaseNotificationService {
   private sendDefendantDelegatedDefenderChoiceNotification(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    const formattedSubject = this.formatMessage(
+    const formattedSubject = formatIcuMessage(
       strings.defendantDelegatedDefenderChoiceSubject,
       {
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
 
-    const formattedBody = this.formatMessage(
+    const formattedBody = formatIcuMessage(
       strings.defendantDelegatedDefenderChoiceBody,
       {
         linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
@@ -247,29 +250,30 @@ export class DefendantNotificationService extends BaseNotificationService {
 
     if (shouldSend) {
       const courtName = theCase.court?.name
+
+      if (!courtName) {
+        this.logger.error(
+          `Missing court name for case ${theCase.id} when sending defender assigned notification`,
+        )
+
+        return { delivered: false }
+      }
+
       const defenderHasAccessToRVG = !!defendant.defenderNationalId
 
-      const formattedSubject = this.formatMessage(
-        strings.defenderAssignedSubject,
-        {
-          courtName,
-        },
-      )
+      const subject = `${courtName} - aðgangur að máli`
 
-      const formattedBody = this.formatMessage(strings.defenderAssignedBody, {
-        courtName,
-        courtCaseNumber: theCase.courtCaseNumber,
-        defenderHasAccessToRVG,
-        // This link only works if the user is already logged in
-        linkStart: `<a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}">`,
-        linkEnd: '</a>',
-      })
+      // This link only works if the user is already logged in
+      const accessInfo = defenderHasAccessToRVG
+        ? `Hægt er að nálgast málið á <a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}">yfirlitssíðu málsins í Réttarvörslugátt</a>`
+        : 'Þú getur nálgast málið hjá dómstólnum'
+      const body = `${courtName} hefur skráð þig sem verjanda í máli ${theCase.courtCaseNumber}.<br /><br />${accessInfo}.`
 
       return this.sendEmails(
         theCase,
         TrackedNotificationType.DEFENDER_ASSIGNED,
-        formattedSubject,
-        formattedBody,
+        subject,
+        body,
         [{ name: defendant.defenderName, email: defendant.defenderEmail }],
       )
     }
@@ -278,20 +282,69 @@ export class DefendantNotificationService extends BaseNotificationService {
     return { delivered: true }
   }
 
+  /**
+   * The court of appeals telling an advocate it has recorded them on the
+   * appeal.
+   *
+   * Deliberately not a link to the case: confirming an advocate grants them
+   * no access yet, so a link would lead to a refusal. The text is the one on
+   * the ticket.
+   *
+   * Dedupe is per recipient address, so replacing a defender tells the new one
+   * without telling the old one twice.
+   */
+  private async sendAppealDefenderAssignedNotification(
+    theCase: Case,
+    defendant: Defendant,
+  ): Promise<DeliverResponse> {
+    // Sent once per defendant, not once per lawyer: one lawyer may defend
+    // several of the accused on the same case, and each appointment is its own
+    // and has to be told. The confirmation that triggers this only crosses from
+    // unconfirmed to confirmed once per party, so there is nothing to suppress
+    // beyond that.
+    if (
+      !defendant.isAppealDefenderConfirmed ||
+      !defendant.appealDefenderEmail
+    ) {
+      // Nothing should be sent so we return a successful response
+      return { delivered: true }
+    }
+
+    // Not through sendEmails: that one drops a recipient with no name, and an
+    // advocate the court typed in by hand may have only an address. The
+    // address is what the mail needs.
+    const recipient = await this.sendEmail({
+      subject: appealAdvocateAssignedSubject(),
+      html: appealAdvocateAssignedBody(
+        'verjanda',
+        theCase.verdictAppealCase?.appealCaseNumber,
+      ),
+      recipientName: defendant.appealDefenderName,
+      recipientEmail: defendant.appealDefenderEmail,
+      attachments: undefined,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.APPEAL_DEFENDER_ASSIGNED,
+      [recipient],
+    )
+  }
+
   private async sendIndictmentSentToPrisonAdminNotification(theCase: Case) {
     const dashboardRoute = getStandardUserDashboardRoute({
       role: UserRole.PRISON_SYSTEM_STAFF,
       institution: { type: InstitutionType.PRISON_ADMIN },
     })
 
-    const formattedSubject = this.formatMessage(
+    const formattedSubject = formatIcuMessage(
       strings.indictmentSentToPrisonAdminSubject,
       {
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
 
-    const formattedBody = this.formatMessage(
+    const formattedBody = formatIcuMessage(
       strings.indictmentSentToPrisonAdminBody,
       {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -333,14 +386,14 @@ export class DefendantNotificationService extends BaseNotificationService {
   ) {
     const courtCaseNumber = theCase.courtCaseNumber
 
-    const formattedSubject = this.formatMessage(
+    const formattedSubject = formatIcuMessage(
       strings.indictmentWithdrawnFromPrisonAdminSubject,
       {
         courtCaseNumber,
       },
     )
 
-    const formattedBody = this.formatMessage(
+    const formattedBody = formatIcuMessage(
       strings.indictmentWithdrawnFromPrisonAdminBody,
       {
         courtCaseNumber,
@@ -493,6 +546,8 @@ export class DefendantNotificationService extends BaseNotificationService {
         return this.sendDefendantDelegatedDefenderChoiceNotification(theCase)
       case DefendantNotificationType.DEFENDER_ASSIGNED:
         return this.sendDefenderAssignedNotification(theCase, defendant)
+      case DefendantNotificationType.APPEAL_DEFENDER_ASSIGNED:
+        return this.sendAppealDefenderAssignedNotification(theCase, defendant)
       case DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN:
         return this.sendIndictmentSentToPrisonAdminNotification(theCase)
       case DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN:

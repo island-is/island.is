@@ -1,10 +1,10 @@
 import { sign } from 'jsonwebtoken'
-import getConfig from 'next/config'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
 
 import { findProblemInApolloError } from '@island.is/shared/problem'
 
+import { getServerRuntimeEnv } from '../../../environments/runtimeEnvironment'
 import initApollo from '../../../graphql/client'
 import {
   VerificationCallbackMutation,
@@ -85,9 +85,7 @@ export default async function cardVerificationCallbackHandler(
 
   const client = initApollo()
 
-  const {
-    serverRuntimeConfig: { verificationCallbackSigningSecret },
-  } = getConfig()
+  const { verificationCallbackSigningSecret } = getServerRuntimeEnv()
 
   // The verification callback will only accept signed tokens
   const verificationToken = sign(

@@ -298,7 +298,7 @@ describe('getPensionFund', () => {
 
     expect(() => {
       getPensionFund(application)
-    }).toThrowError()
+    }).toThrow()
   })
 
   it('should return default empty id for no selected private pension fund', () => {

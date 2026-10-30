@@ -48,9 +48,9 @@ export const parseStatus = (
         applicationStatus: 'closed',
         deadlineStatus: date
           ? formatMessage(
-              containsTimePart(date)
-                ? m.search.applicationWasOpenToAndWith
-                : m.search.applicationWasOpenTo,
+              grant.dateTo && containsTimePart(grant.dateTo)
+                ? m.search.applicationWasOpenTo
+                : m.search.applicationWasOpenToAndWith,
               {
                 arg: date,
               },

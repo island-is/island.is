@@ -55,14 +55,16 @@ export const updateActiveItemFn = async (
         },
       })
     } else if (type === 'Screen') {
-      const { id, name, multiMax, isMulti, shouldValidate } = currentActiveItem
-        ? (currentActiveItem.data as FormSystemScreen)
-        : (activeItem.data as FormSystemScreen)
+      const { id, identifier, name, multiMax, isMulti, shouldValidate } =
+        currentActiveItem
+          ? (currentActiveItem.data as FormSystemScreen)
+          : (activeItem.data as FormSystemScreen)
       updateScreen({
         variables: {
           input: {
             id,
             updateScreenDto: {
+              identifier,
               name,
               multiMax: multiMax ? multiMax : 0,
               isMulti: isMulti ? isMulti : false,
@@ -74,6 +76,7 @@ export const updateActiveItemFn = async (
     } else if (type === 'Field') {
       const {
         id,
+        identifier,
         name,
         description,
         isPartOfMultiset,
@@ -89,6 +92,7 @@ export const updateActiveItemFn = async (
           input: {
             id: id,
             updateFieldDto: {
+              identifier,
               name,
               description,
               isPartOfMultiset,

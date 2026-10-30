@@ -11,7 +11,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { SessionArrangements } from '@island.is/judicial-system/types'
 
-import { custodyNotice } from '../../messages'
+import { custodyNotice, formatIcuMessage } from '../../messages'
 import { Case } from '../../modules/repository'
 import { formatCustodyRestrictions } from '../formatters'
 import {
@@ -24,6 +24,30 @@ import {
   setLineGap,
   setTitle,
 } from '../pdfHelpers'
+
+/**
+ * Custody notices are typically single-defendant; use the first defendant's
+ * defender (same source as name/address above on the PDF).
+ */
+export const formatCustodyNoticeDefender = (
+  theCase: Pick<Case, 'defendants' | 'sessionArrangements'>,
+): string => {
+  if (
+    theCase.sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
+  ) {
+    return 'Ekki skráður'
+  }
+
+  const defendant = theCase.defendants?.[0]
+
+  if (!defendant?.defenderName) {
+    return 'Ekki skráður'
+  }
+
+  return `${defendant.defenderName}${
+    defendant.defenderPhoneNumber ? `, s. ${defendant.defenderPhoneNumber}` : ''
+  }${defendant.defenderEmail ? `, ${defendant.defenderEmail}` : ''}`
+}
 
 const constructCustodyNoticePdf = (
   theCase: Case,
@@ -49,7 +73,9 @@ const constructCustodyNoticePdf = (
   addHugeHeading(doc, 'Vistunarseðill', 'Helvetica-Bold')
   addLargeHeading(
     doc,
-    formatMessage(custodyNotice.rulingTitle, { caseType: theCase.type }),
+    formatIcuMessage(custodyNotice.rulingTitle, {
+      caseType: theCase.type,
+    }),
   )
   addLargeHeading(
     doc,
@@ -104,7 +130,9 @@ const constructCustodyNoticePdf = (
   setLineGap(doc, 8)
   addMediumText(
     doc,
-    formatMessage(custodyNotice.rulingTitle, { caseType: theCase.type }),
+    formatIcuMessage(custodyNotice.rulingTitle, {
+      caseType: theCase.type,
+    }),
     'Helvetica-Bold',
   )
   addNormalText(
@@ -137,19 +165,7 @@ const constructCustodyNoticePdf = (
     'Helvetica',
   )
   addNormalText(doc, 'Verjandi: ', 'Helvetica-Bold', true)
-  addNormalText(
-    doc,
-    theCase.defenderName &&
-      theCase.sessionArrangements !==
-        SessionArrangements.ALL_PRESENT_SPOKESPERSON
-      ? `${theCase.defenderName}${
-          theCase.defenderPhoneNumber
-            ? `, s. ${theCase.defenderPhoneNumber}`
-            : ''
-        }${theCase.defenderEmail ? `, ${theCase.defenderEmail}` : ''}`
-      : 'Ekki skráður',
-    'Helvetica',
-  )
+  addNormalText(doc, formatCustodyNoticeDefender(theCase), 'Helvetica')
 
   const custodyRestrictions = formatCustodyRestrictions(
     formatMessage,
@@ -163,7 +179,9 @@ const constructCustodyNoticePdf = (
     setLineGap(doc, 8)
     addMediumText(
       doc,
-      formatMessage(custodyNotice.arrangement, { caseType: theCase.type }),
+      formatIcuMessage(custodyNotice.arrangement, {
+        caseType: theCase.type,
+      }),
       'Helvetica-Bold',
     )
 
@@ -175,7 +193,7 @@ const constructCustodyNoticePdf = (
       addNormalText(
         doc,
         capitalize(
-          formatMessage(custodyNotice.isolationDisclaimer, {
+          formatIcuMessage(custodyNotice.isolationDisclaimer, {
             isolationPeriod,
           }),
         ),

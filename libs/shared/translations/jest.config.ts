@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'shared-translations',
   preset: './jest.preset.js',
   rootDir: '../../..',

@@ -20,10 +20,16 @@ import {
   formatPostponedCourtDateEmailNotification,
   stripHtmlTags,
 } from '../../../formatters'
-import { notifications } from '../../../messages'
+import { formatIcuMessage, notifications } from '../../../messages'
 import { CourtService } from '../../court'
 import { EventService } from '../../event'
-import { Case, DateLog, Notification, Recipient } from '../../repository'
+import {
+  Case,
+  DateLog,
+  Notification,
+  NotificationRepositoryService,
+  Recipient,
+} from '../../repository'
 import { DeliverResponse } from '../models/deliver.response'
 import { notificationModuleConfig } from '../notification.config'
 
@@ -36,7 +42,7 @@ interface Attachment {
 @Injectable()
 export abstract class BaseNotificationService {
   constructor(
-    private readonly notificationModel: typeof Notification,
+    private readonly notificationRepositoryService: NotificationRepositoryService,
     private readonly emailService: EmailService,
     private readonly intlService: IntlService,
     private readonly courtService: CourtService,
@@ -62,7 +68,7 @@ export abstract class BaseNotificationService {
 
   private async handleWhitelist(recipients: string[]): Promise<string[]> {
     const whitelist = this.formatMessage(notifications.emailWhitelist)
-    const whitelistDomains = this.formatMessage(
+    const whitelistDomains = formatIcuMessage(
       notifications.emailWhitelistDomains,
     )
 
@@ -110,7 +116,7 @@ export abstract class BaseNotificationService {
       html =
         html.match(/<a/g) || skipTail
           ? html
-          : `${html} ${this.formatMessage(notifications.emailTail, {
+          : `${html} ${formatIcuMessage(notifications.emailTail, {
               linkStart: `<a href="${this.config.clientUrl}">`,
               linkEnd: '</a>',
             })}`
@@ -176,7 +182,7 @@ export abstract class BaseNotificationService {
     type: TrackedNotificationType,
     recipients: Recipient[],
   ): Promise<DeliverResponse> {
-    await this.notificationModel.create({
+    await this.notificationRepositoryService.create({
       caseId,
       type,
       recipients,
@@ -204,11 +210,15 @@ export abstract class BaseNotificationService {
   ) {
     const types = type ? [type].flat() : Object.values(TrackedNotificationType)
 
+    const normalizedAddress = address?.trim().toLowerCase()
+
     return notifications?.some((notification) => {
       return (
         types.includes(notification.type) &&
         notification.recipients.some(
-          (recipient) => recipient.address === address && recipient.success,
+          (recipient) =>
+            recipient.success &&
+            recipient.address?.trim().toLowerCase() === normalizedAddress,
         )
       )
     })
@@ -267,9 +277,9 @@ export abstract class BaseNotificationService {
 
   protected async uploadEmailToCourt(
     theCase: Case,
-    user: UserDescriptor,
     subject: string,
     body: string,
+    user?: UserDescriptor,
     recipients?: string,
   ): Promise<void> {
     try {
@@ -301,7 +311,7 @@ export abstract class BaseNotificationService {
     recipientEmail,
   }: {
     theCase: Case
-    user: UserDescriptor
+    user: UserDescriptor | undefined
     arraignmentDateLog: DateLog
     recipientName: string
     recipientEmail: string
@@ -329,7 +339,7 @@ export abstract class BaseNotificationService {
     }).then((recipient) => {
       if (recipient.success) {
         // No need to wait
-        this.uploadEmailToCourt(theCase, user, subject, body, recipientEmail)
+        this.uploadEmailToCourt(theCase, subject, body, user, recipientEmail)
       }
 
       return recipient
@@ -345,7 +355,7 @@ export abstract class BaseNotificationService {
     recipientHasAccessToRVG,
   }: {
     theCase: Case
-    user: UserDescriptor
+    user: UserDescriptor | undefined
     courtDate: DateLog
     recipientName: string
     recipientEmail: string
@@ -374,7 +384,7 @@ export abstract class BaseNotificationService {
     }).then((recipient) => {
       if (recipient.success) {
         // No need to wait
-        this.uploadEmailToCourt(theCase, user, subject, body, recipientEmail)
+        this.uploadEmailToCourt(theCase, subject, body, user, recipientEmail)
       }
 
       return recipient
@@ -396,7 +406,7 @@ export abstract class BaseNotificationService {
     recipientHasAccessToRVG,
   }: {
     theCase: Case
-    user: UserDescriptor
+    user: UserDescriptor | undefined
     recipientName: string
     recipientEmail: string
     recipientHasAccessToRVG: boolean

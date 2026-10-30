@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName:
     'application-templates-transport-authority-digital-tachograph-drivers-card',
   preset: './jest.preset.js',

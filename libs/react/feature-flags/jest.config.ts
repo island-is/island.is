@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'react-feature-flags',
   preset: './jest.preset.js',
   rootDir: '../../..',

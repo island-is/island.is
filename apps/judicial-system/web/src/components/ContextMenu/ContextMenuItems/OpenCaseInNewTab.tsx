@@ -1,6 +1,5 @@
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
-
-import { ContextMenuItem } from '../ContextMenu'
 
 export const useOpenCaseInNewTab = () => {
   const { handleOpenCase } = useCaseList()

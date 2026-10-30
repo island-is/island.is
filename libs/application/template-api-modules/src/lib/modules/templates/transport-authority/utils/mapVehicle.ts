@@ -16,17 +16,12 @@ import {
   VehiclePlateOrderingClient,
 } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import {
-  VehicleDebtStatus,
-  VehicleServiceFjsV1Client,
-} from '@island.is/clients/vehicle-service-fjs-v1'
-import {
   MileageReadingApi,
   MileageReadingDto,
 } from '@island.is/clients/vehicles-mileage'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 
 interface MapVehicleDeps {
-  vehicleServiceFjsV1Client?: VehicleServiceFjsV1Client
   vehicleOperatorsClient?: VehicleOperatorsClient
   vehiclePlateOrderingClient?: VehiclePlateOrderingClient
   vehicleOwnerChangeClient?: VehicleOwnerChangeClient
@@ -45,7 +40,6 @@ export const mapVehicle = async (
     | OperatorChangeValidation
     | PlateOrderValidation
     | undefined
-  let debtStatus: VehicleDebtStatus | undefined
   let mileageReadings: MileageReadingDto[] | undefined
   let regGroup: string | undefined
 
@@ -102,14 +96,6 @@ export const mapVehicle = async (
         permno: vehicle.permno || '',
       })
     }
-
-    // Get debt status
-    if (deps.vehicleServiceFjsV1Client) {
-      debtStatus = await deps.vehicleServiceFjsV1Client.getVehicleDebtStatus(
-        auth,
-        vehicle.permno || '',
-      )
-    }
   }
 
   return {
@@ -123,6 +109,6 @@ export const mapVehicle = async (
       : null,
     requireMileage: vehicle.requiresMileageRegistration,
     mileageReading: mileageReadings?.[0]?.mileage?.toString() ?? '',
-    isDebtLess: debtStatus?.isDebtLess,
+    isDebtLess: true,
   }
 }

@@ -2,12 +2,15 @@ import { BadRequestException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { TestApp } from '@island.is/testing/nest'
 import { v4 as uuid } from 'uuid'
 
 import { setupTestApp } from '../../../test/setup'
+import * as webhookAuthUtils from '../../utils/webhookAuth.utils'
 import {
   CatalogItemWithQuantity,
   PaymentMethod,
@@ -17,6 +20,7 @@ import { BankTransferPayment } from '../bankTransferPayment/models/bankTransferP
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { FjsCharge } from './models/fjsCharge.model'
 import { PaymentFlow } from './models/paymentFlow.model'
+import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 import { PaymentFulfillment } from './models/paymentFulfillment.model'
 import { PaymentFlowService } from './paymentFlow.service'
 
@@ -46,6 +50,11 @@ describe('PaymentFlowService', () => {
     // it on so the individuals-only tests exercise the kennitala gate. The
     // flag-off case is asserted explicitly below.
     featureFlagService = app.get<FeatureFlagService>(FeatureFlagService)
+    jest.spyOn(featureFlagService, 'getValue').mockResolvedValue(true as never)
+  })
+
+  afterEach(() => {
+    // Tests may override the flag; restore the default of every flag on.
     jest.spyOn(featureFlagService, 'getValue').mockResolvedValue(true as never)
   })
 
@@ -132,10 +141,62 @@ describe('PaymentFlowService', () => {
       expect(methods).toEqual([PaymentMethod.CARD, PaymentMethod.BANK_TRANSFER])
     })
 
-    it('should not offer bank transfer to a company payer', async () => {
+    it('should offer bank transfer to a company payer the company flag allows', async () => {
+      const getValue = jest.spyOn(featureFlagService, 'getValue')
+      getValue.mockClear()
+
+      const methods = await createFlowAndReadMethods('6010100890') // valid company kennitala
+
+      expect(methods).toEqual([PaymentMethod.CARD, PaymentMethod.BANK_TRANSFER])
+      // Evaluated for this company.
+      expect(getValue).toHaveBeenCalledWith(
+        Features.isIslandisBankTransferPaymentAllowedForCompany,
+        false,
+        expect.objectContaining({ nationalId: '6010100890' }),
+      )
+    })
+
+    it('should not offer bank transfer to a company payer the company flag does not allow', async () => {
+      jest
+        .spyOn(featureFlagService, 'getValue')
+        .mockImplementation(
+          (async (feature: Features) =>
+            feature !==
+            Features.isIslandisBankTransferPaymentAllowedForCompany) as never,
+        )
+
       const methods = await createFlowAndReadMethods('6010100890') // valid company kennitala
 
       expect(methods).toEqual([PaymentMethod.CARD])
+    })
+
+    it('should not consult the company flag for an individual payer', async () => {
+      const getValue = jest.spyOn(featureFlagService, 'getValue')
+      getValue.mockClear()
+
+      const methods = await createFlowAndReadMethods('0101302129') // valid person kennitala
+
+      expect(methods).toEqual([PaymentMethod.CARD, PaymentMethod.BANK_TRANSFER])
+      expect(getValue).not.toHaveBeenCalledWith(
+        Features.isIslandisBankTransferPaymentAllowedForCompany,
+        expect.anything(),
+        expect.anything(),
+      )
+    })
+
+    it('should not consult the company flag when the feature flag is off', async () => {
+      const getValue = jest.spyOn(featureFlagService, 'getValue')
+      getValue.mockClear()
+      getValue.mockResolvedValueOnce(false as never)
+
+      const methods = await createFlowAndReadMethods('6010100890') // valid company kennitala
+
+      expect(methods).toEqual([PaymentMethod.CARD])
+      expect(getValue).not.toHaveBeenCalledWith(
+        Features.isIslandisBankTransferPaymentAllowedForCompany,
+        expect.anything(),
+        expect.anything(),
+      )
     })
 
     it('should not offer bank transfer to a temporary kennitala payer', async () => {
@@ -340,6 +401,85 @@ describe('PaymentFlowService', () => {
         { isDeleted: true },
         { where: { id: paymentFlowId, isDeleted: false } },
       )
+    })
+  })
+
+  describe('logPaymentFlowUpdate', () => {
+    const paymentFlowId = uuid()
+    const onUpdateUrl = 'https://www.island.is/greida/update'
+    let fetchMock: jest.Mock
+    let spies: jest.SpyInstance[]
+    const originalFetch = global.fetch
+
+    const update = {
+      paymentFlowId,
+      type: 'update' as const,
+      occurredAt: new Date(),
+      paymentMethod: PaymentMethod.CARD,
+      reason: 'payment_started' as const,
+      message: 'Card verification started',
+    }
+
+    const sentBody = () => JSON.parse(fetchMock.mock.calls[0][1].body)
+
+    // Earlier tests stub the method on the instance and leave it stubbed
+    const logPaymentFlowUpdate = (
+      ...args: Parameters<PaymentFlowService['logPaymentFlowUpdate']>
+    ) => PaymentFlowService.prototype.logPaymentFlowUpdate.apply(service, args)
+
+    beforeEach(() => {
+      spies = [
+        jest
+          .spyOn((service as TestPartial).paymentFlowModel, 'findOne')
+          .mockResolvedValue({
+            toJSON: () => ({ id: paymentFlowId, onUpdateUrl, metadata: {} }),
+          }),
+        jest
+          .spyOn((service as TestPartial).paymentFlowEventModel, 'create')
+          .mockResolvedValue({ id: uuid() }),
+        jest
+          .spyOn((service as TestPartial).paymentFlowEventModel, 'update')
+          .mockResolvedValue([1]),
+        jest
+          .spyOn(webhookAuthUtils, 'generateWebhookJwt')
+          .mockReturnValue('jwt'),
+      ]
+      fetchMock = jest.fn().mockResolvedValue({ ok: true })
+      global.fetch = fetchMock as never
+    })
+
+    afterEach(() => {
+      spies.forEach((spy) => spy.mockRestore())
+      global.fetch = originalFetch
+    })
+
+    it('sends an event without fields with an empty eventMetadata object', async () => {
+      await logPaymentFlowUpdate(update)
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        onUpdateUrl,
+        expect.objectContaining({
+          method: 'POST',
+          signal: expect.any(AbortSignal),
+        }),
+      )
+      expect(sentBody().details).toEqual({
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'payment_started',
+        message: 'Card verification started',
+        eventMetadata: {},
+      })
+    })
+
+    it('sends the event fields as eventMetadata', async () => {
+      await logPaymentFlowUpdate({
+        ...update,
+        metadata: { correlationId: 'correlation-1' },
+      })
+
+      expect(sentBody().details.eventMetadata).toEqual({
+        correlationId: 'correlation-1',
+      })
     })
   })
 
@@ -581,6 +721,177 @@ describe('PaymentFlowService', () => {
         ),
       ).rejects.toBeInstanceOf(BadRequestException)
     })
+
+    it('adopts the winner and logs the orphaned reception id when the local insert loses the unique-index race', async () => {
+      const paymentFlowModel = app.get<typeof PaymentFlow>(
+        getModelToken(PaymentFlow),
+      )
+      const paymentFulfillmentModel = app.get<typeof PaymentFulfillment>(
+        getModelToken(PaymentFulfillment),
+      )
+      const fjsChargeModel = app.get<typeof FjsCharge>(getModelToken(FjsCharge))
+      const chargeFjsService = app.get<ChargeFjsV2ClientService>(
+        ChargeFjsV2ClientService,
+      )
+      const logger = app.get<Logger>(LOGGER_PROVIDER)
+
+      const paymentFlowId = uuid()
+      await paymentFlowModel.create({
+        id: paymentFlowId,
+        payerNationalId: '1234567890',
+        availablePaymentMethods: [PaymentMethod.CARD],
+        organisationId: '5534567890',
+      } as TestPartial)
+      await paymentFulfillmentModel.create({
+        paymentFlowId,
+        paymentMethod: 'bank_transfer',
+        confirmationRefId: uuid(),
+      } as TestPartial)
+
+      jest.spyOn(fjsChargeModel, 'findOne').mockRestore()
+
+      // The concurrent finalizer's row, already committed.
+      const winner = await fjsChargeModel.create({
+        paymentFlowId,
+        receptionId: 'recept-winner',
+        user4: 'doc-winner',
+        status: 'paid',
+      } as TestPartial)
+
+      // FJS's dedup did not hold, so we come back with a second, distinct reception id.
+      jest.spyOn(chargeFjsService, 'createCharge').mockResolvedValueOnce({
+        receptionID: 'recept-duplicate',
+        user4: 'doc-duplicate',
+      } as TestPartial)
+
+      // No mock for the failing insert: the index is declared on the model, so the real partial
+      // unique constraint rejects it — the winner above holds the one active row for this flow.
+
+      // `logger` is a singleton, so `spyOn` may return an earlier test's spy with its history.
+      // Clear rather than restore — restoring would uninstall a spy other spec files rely on.
+      const errorSpy = jest.spyOn(logger, 'error')
+      errorSpy.mockClear()
+
+      const result = await service.createFjsCharge(
+        paymentFlowId,
+        chargePayloadWithPayInfo(paymentFlowId),
+      )
+
+      // Adopted the winner rather than failing a caller whose charge did reach FJS.
+      expect(result.id).toBe(winner.id)
+      expect(result.receptionId).toBe('recept-winner')
+
+      // The duplicate's reception id is the only handle for reversing the extra charge.
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('FJS accepted a duplicate charge'),
+        expect.objectContaining({
+          // Part of the alerting contract, so pinned here.
+          needsManualReversal: true,
+          receptionId: 'recept-duplicate',
+          user4: 'doc-duplicate',
+        }),
+      )
+
+      // And the fulfillment ends up linked to exactly one charge.
+      const fulfillment = await paymentFulfillmentModel.findOne({
+        where: { paymentFlowId, isDeleted: false },
+      })
+      expect(fulfillment?.fjsChargeId).toBe(winner.id)
+
+      // Persisted too, so the orphan outlives the log line.
+      const paymentFlowEventModel = app.get<typeof PaymentFlowEvent>(
+        getModelToken(PaymentFlowEvent),
+      )
+      const events = await paymentFlowEventModel.findAll({
+        where: { paymentFlowId },
+      })
+      expect(events).toHaveLength(1)
+      expect(events[0]).toMatchObject({
+        type: 'error',
+        reason: 'other',
+        paymentMethod: 'system',
+        metadata: {
+          needsManualReversal: true,
+          receptionId: 'recept-duplicate',
+          user4: 'doc-duplicate',
+        },
+      })
+    })
+
+    it('does not claim a duplicate when FJS returns the reception id we already hold', async () => {
+      const paymentFlowModel = app.get<typeof PaymentFlow>(
+        getModelToken(PaymentFlow),
+      )
+      const paymentFulfillmentModel = app.get<typeof PaymentFulfillment>(
+        getModelToken(PaymentFulfillment),
+      )
+      const fjsChargeModel = app.get<typeof FjsCharge>(getModelToken(FjsCharge))
+      const chargeFjsService = app.get<ChargeFjsV2ClientService>(
+        ChargeFjsV2ClientService,
+      )
+      const logger = app.get<Logger>(LOGGER_PROVIDER)
+
+      const paymentFlowId = uuid()
+      await paymentFlowModel.create({
+        id: paymentFlowId,
+        payerNationalId: '1234567890',
+        availablePaymentMethods: [PaymentMethod.CARD],
+        organisationId: '5534567890',
+      } as TestPartial)
+      await paymentFulfillmentModel.create({
+        paymentFlowId,
+        paymentMethod: 'bank_transfer',
+        confirmationRefId: uuid(),
+      } as TestPartial)
+
+      jest.spyOn(fjsChargeModel, 'findOne').mockRestore()
+
+      const existing = await fjsChargeModel.create({
+        paymentFlowId,
+        receptionId: 'recept-same',
+        user4: 'doc-same',
+        status: 'paid',
+      } as TestPartial)
+
+      // FJS hands back the charge it already had, so the reception id matches the row we collide
+      // with. Nothing was duplicated.
+      jest.spyOn(chargeFjsService, 'createCharge').mockResolvedValueOnce({
+        receptionID: 'recept-same',
+        user4: 'doc-same',
+      } as TestPartial)
+
+      jest
+        .spyOn(fjsChargeModel, 'create')
+        .mockRejectedValueOnce(
+          Object.assign(
+            new Error('duplicate key value violates unique constraint'),
+            { name: 'SequelizeUniqueConstraintError' },
+          ),
+        )
+
+      // `logger` is a singleton, so `spyOn` may return an earlier test's spy with its history.
+      // Clear rather than restore — restoring would uninstall a spy other spec files rely on.
+      const errorSpy = jest.spyOn(logger, 'error')
+      errorSpy.mockClear()
+
+      const result = await service.createFjsCharge(
+        paymentFlowId,
+        chargePayloadWithPayInfo(paymentFlowId),
+      )
+
+      expect(result.id).toBe(existing.id)
+      // The alert must not fire: there is no orphaned charge to reverse.
+      expect(errorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining('FJS accepted a duplicate charge'),
+        expect.anything(),
+      )
+      const paymentFlowEventModel = app.get<typeof PaymentFlowEvent>(
+        getModelToken(PaymentFlowEvent),
+      )
+      expect(
+        await paymentFlowEventModel.count({ where: { paymentFlowId } }),
+      ).toBe(0)
+    })
   })
 
   describe('deleteFjsCharge', () => {
@@ -649,5 +960,27 @@ describe('PaymentFlowService', () => {
         { where: { paymentFlowId, isDeleted: false } },
       )
     })
+  })
+
+  describe('validateChargePaymentMethod', () => {
+    const cardOnlyFlow = {
+      id: uuid(),
+      availablePaymentMethods: [PaymentMethod.CARD],
+    }
+
+    it('allows a method stored on the flow', () => {
+      expect(() =>
+        service.validateChargePaymentMethod(cardOnlyFlow, PaymentMethod.CARD),
+      ).not.toThrow()
+    })
+
+    it.each([PaymentMethod.INVOICE, PaymentMethod.BANK_TRANSFER])(
+      'refuses %s on a flow that does not offer it',
+      (paymentMethod) => {
+        expect(() =>
+          service.validateChargePaymentMethod(cardOnlyFlow, paymentMethod),
+        ).toThrow(PaymentServiceCode.InvalidPaymentMethods)
+      },
+    )
   })
 })

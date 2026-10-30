@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'portals-shared-modules-delegations',
   preset: './jest.preset.js',
   rootDir: '../../../..',

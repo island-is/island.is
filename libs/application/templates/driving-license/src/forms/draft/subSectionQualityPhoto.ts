@@ -26,12 +26,15 @@ export const subSectionQualityPhoto = buildSubSection({
       answers,
     )
     if (!matchesType) return false
-    // When the 65+ redesign flag is on, the new photoStep65 takes over
-    // for B_FULL_RENEWAL_65 — suppress this old subsection for that case.
+    // When a redesign flag is on, the new photoStep* subsection takes over for
+    // that product — suppress this old subsection for those cases.
     const isRedesigned65 =
       answers.applicationFor === B_FULL_RENEWAL_65 &&
       getValueViaPath(answers, 'is65RenewalRedesignEnabled') === true
-    return !isRedesigned65
+    const isRedesignedBFull =
+      answers.applicationFor === B_FULL &&
+      getValueViaPath(answers, 'isBFullRedesignEnabled') === true
+    return !isRedesigned65 && !isRedesignedBFull
   }, hasNoDrivingLicenseInOtherCountry),
   children: [
     buildMultiField({

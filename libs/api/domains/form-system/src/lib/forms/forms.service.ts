@@ -2,10 +2,11 @@ import { ApolloError } from '@apollo/client'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 
 import {
   FormsApi,
+  FormsControllerCopyRequest,
   FormsControllerCreateRequest,
   FormsControllerFindAllRequest,
   FormsControllerFindOneRequest,
@@ -17,9 +18,11 @@ import {
   UpdateFormStatusInput,
 } from '@island.is/form-system/shared'
 import {
+  CopyFormInput,
   CreateFormInput,
   GetFormInput,
   GetFormsInput,
+  ImportFormInput,
   UpdateFormInput,
 } from '../../dto/form.input'
 import { FormResponse } from '../../models/form.model'
@@ -53,10 +56,29 @@ export class FormsService {
     return response as FormResponse
   }
 
-  async copyForm(auth: User, input: GetFormInput): Promise<FormResponse> {
-    const response = await this.formsApiWithAuth(auth).formsControllerCopy(
-      input as FormsControllerFindOneRequest,
-    )
+  async copyForm(auth: User, input: CopyFormInput): Promise<FormResponse> {
+    const response = await this.formsApiWithAuth(auth).formsControllerCopy({
+      id: input.id,
+      copyFormDto: {
+        organizationNationalId: input.organizationNationalId,
+      },
+    } as FormsControllerCopyRequest)
+    return response as FormResponse
+  }
+
+  async exportForm(auth: User, input: GetFormInput): Promise<string> {
+    if (!input.id) throw new BadRequestException('Form ID is required')
+    return this.formsApiWithAuth(auth).formsControllerExportForm({
+      id: input.id,
+    })
+  }
+
+  async importForm(auth: User, input: ImportFormInput): Promise<FormResponse> {
+    const response = await this.formsApiWithAuth(
+      auth,
+    ).formsControllerImportForm({
+      importFormDto: input,
+    })
     return response as FormResponse
   }
 

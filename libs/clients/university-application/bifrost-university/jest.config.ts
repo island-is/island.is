@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-university-application-bifrost-university',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

@@ -13,7 +13,9 @@ import {
   BlankExcelTemplateApi,
   CompanyRegistryApi,
   DoeCompanyApi,
-  IdentityApi,
+  IdentityApiProvider,
+  SalaryReportEligibilityApi,
+  SubCriterionCatalogApi,
   UserProfileApi,
 } from '../../dataProviders'
 import { messages } from '../../lib/messages'
@@ -25,13 +27,13 @@ export const Prerequisites = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'forsendur',
+      id: 'prerequisitesSection',
       tabTitle: messages.prerequisites.section.sectionTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
           title: messages.prerequisites.section.title,
-          description: messages.prerequisites.section.intro,
+          description: messages.prerequisites.section.description,
           checkboxLabel: messages.prerequisites.section.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',
@@ -53,9 +55,15 @@ export const Prerequisites = buildForm({
               provider: BlankExcelTemplateApi,
             }),
             buildDataProviderItem({
+              provider: SubCriterionCatalogApi,
+            }),
+            buildDataProviderItem({
               provider: ActiveEqualityReportApi,
               title: messages.prerequisites.activeEqualityReport.title,
               subTitle: messages.prerequisites.activeEqualityReport.intro,
+            }),
+            buildDataProviderItem({
+              provider: SalaryReportEligibilityApi,
             }),
             buildDataProviderItem({
               provider: CompanyRegistryApi,
@@ -68,7 +76,7 @@ export const Prerequisites = buildForm({
               subTitle: messages.prerequisites.userProfile.intro,
             }),
             buildDataProviderItem({
-              provider: IdentityApi,
+              provider: IdentityApiProvider,
               title: messages.prerequisites.nationalRegistry.title,
               subTitle: messages.prerequisites.nationalRegistry.intro,
             }),

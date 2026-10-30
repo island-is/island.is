@@ -93,7 +93,7 @@ export const FormCard = <Intent extends string>({
   const { formatMessage } = useLocale()
   const [allEnvironmentsCheck, setAllEnvironmentsCheck] = useState(inSync)
   const formRef = useRef<HTMLFormElement | null>(null)
-  const prevFormData = useRef<FormData | undefined>()
+  const prevFormData = useRef<FormData | undefined>(undefined)
   const [dirty, setDirty] = useState(false)
   const shouldSupportMultiEnv = useMultiEnvSupport(
     shouldSupportMultiEnvironment,
@@ -182,7 +182,6 @@ export const FormCard = <Intent extends string>({
       prevFormData.current = new FormData(formRef.current)
       setDirty(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedEnvironment])
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { getFinancialLimit } from '../../../utils/helpers'
 import { GREATER, LESS } from '../../../utils/constants'
 

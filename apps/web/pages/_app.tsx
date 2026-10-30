@@ -1,18 +1,17 @@
 import type { AppProps } from 'next/app'
-import getConfig from 'next/config'
 import Head from 'next/head'
 
 import { globalStyles } from '@island.is/island-ui/core'
 import { MatomoTracker } from '@island.is/matomo'
+
+import { getPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 
 import '@island.is/api/mocks'
 
 globalStyles()
 
 const IslandWebApp = ({ Component, pageProps }: AppProps) => {
-  const {
-    publicRuntimeConfig: { matomoSiteId, matomoDomain, isMatomoEnabled },
-  } = getConfig()
+  const { matomoSiteId, matomoDomain, isMatomoEnabled } = getPublicRuntimeEnv()
 
   return (
     <>
@@ -22,8 +21,8 @@ const IslandWebApp = ({ Component, pageProps }: AppProps) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <MatomoTracker
-        matomoDomain={matomoDomain}
-        matomoSiteId={matomoSiteId}
+        matomoDomain={matomoDomain ?? ''}
+        matomoSiteId={matomoSiteId ?? ''}
         enabled={isMatomoEnabled}
       />
       <Component {...pageProps} />

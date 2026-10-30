@@ -7,7 +7,7 @@ import {
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 
-import { caseFilesRecord } from '../../messages'
+import { caseFilesRecord, formatIcuMessage } from '../../messages'
 import {
   Case,
   Defendant,
@@ -102,6 +102,7 @@ export const createCaseFilesRecord = async (
   theCase: Case,
   policeCaseNumber: string,
   caseFiles: (() => Promise<{
+    id?: string
     date: Date
     name: string
     chapter: number
@@ -109,6 +110,10 @@ export const createCaseFilesRecord = async (
   }>)[],
   policeDigitalCaseFiles: PoliceDigitalCaseFile[],
   formatMessage: FormatMessage,
+  onUnreadableFile?: (
+    file: { id?: string; name: string },
+    reason: unknown,
+  ) => void,
 ): Promise<Buffer> => {
   const pageMargin = 70
   const headerMargin = 35
@@ -133,30 +138,44 @@ export const createCaseFilesRecord = async (
 
   // Create the PDF document
   const pdfDocument = await PdfDocument(
-    formatMessage(caseFilesRecord.title, { policeCaseNumber }),
+    formatIcuMessage(caseFilesRecord.title, { policeCaseNumber }),
   )
 
   pdfDocument.setMargins(pageMargin, pageMargin, pageMargin, pageMargin)
 
+  const addPlaceholderPage = (title: string, name: string) => {
+    pdfDocument
+      .addPage()
+      .addText(title, titleFontSize, {
+        alignment: Alignment.Center,
+        bold: true,
+      })
+      .addText(name, subtitleFontSize, {
+        alignment: Alignment.Center,
+        bold: true,
+        maxWidth: 500,
+      })
+  }
+
   // Add each case file to the document
   for (const caseFile of caseFiles) {
-    const { date, name, chapter, buffer } = await caseFile()
+    const { id, date, name, chapter, buffer } = await caseFile()
     const pageNumber = pdfDocument.getPageCount()
 
-    if (buffer) {
-      await pdfDocument.mergeDocument(buffer)
+    if (!buffer) {
+      addPlaceholderPage(formatMessage(caseFilesRecord.missingFile), name)
     } else {
-      pdfDocument
-        .addPage()
-        .addText(formatMessage(caseFilesRecord.missingFile), titleFontSize, {
-          alignment: Alignment.Center,
-          bold: true,
-        })
-        .addText(name, subtitleFontSize, {
-          alignment: Alignment.Center,
-          bold: true,
-          maxWidth: 500,
-        })
+      try {
+        await pdfDocument.mergeDocument(buffer)
+      } catch (reason) {
+        // A file that was fetched but cannot be parsed, for instance an
+        // encrypted PDF or a non-PDF uploaded as one, must not fail the whole
+        // record. It gets a placeholder page like a missing file does, so the
+        // record still generates and the reader sees which file is affected.
+        onUnreadableFile?.({ id, name }, reason)
+
+        addPlaceholderPage('Ólesanlegt skjal', name)
+      }
     }
 
     // Store reference for table of contents
@@ -208,12 +227,14 @@ export const createCaseFilesRecord = async (
       position: { y: headerMargin + pageMargin },
     })
     .addText(
-      formatMessage(caseFilesRecord.policeCaseNumber, { policeCaseNumber }),
+      formatIcuMessage(caseFilesRecord.policeCaseNumber, {
+        policeCaseNumber,
+      }),
       titleFontSize,
       { alignment: Alignment.Center, bold: true },
     )
     .addText(
-      formatMessage(caseFilesRecord.accused, {
+      formatIcuMessage(caseFilesRecord.accused, {
         suffix:
           theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'ur',
       }),
@@ -315,7 +336,7 @@ export const createCaseFilesRecord = async (
 
     // Add chapter heading
     pdfDocument.addText(
-      formatMessage(caseFilesRecord.chapterName, { chapter }),
+      formatIcuMessage(caseFilesRecord.chapterName, { chapter }),
       textFontSize,
       { bold: true, marginTop: chapter > 0 ? 4 : 0 },
     )

@@ -15,11 +15,14 @@ import {
 import {
   getValueViaPath,
   pruneAfterDays,
+  endOfDayFromCreation,
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
   getReviewStatePendingAction,
+  schedulePruneReminderBefore,
 } from '@island.is/application/core'
+import { Features } from '@island.is/feature-flags'
 import { Events, States, Roles } from './constants'
 import { ApiActions, OperatorInformation, UserInformation } from '../shared'
 import { ChangeOperatorOfVehicleSchema } from './dataSchema'
@@ -30,7 +33,11 @@ import {
   CurrentVehiclesApi,
   MockableSamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
-import { application as applicationMessage, information } from './messages'
+import {
+  application as applicationMessage,
+  information,
+  review,
+} from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
@@ -45,13 +52,8 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
 
-const pruneInDaysAtMidnight = (application: Application, days: number) => {
-  const date = new Date(application.created)
-  date.setDate(date.getDate() + days)
-  const pruneDate = new Date(date)
-  pruneDate.setUTCHours(23, 59, 59)
-  return pruneDate
-}
+// days until application gets pruned when in review state
+const pruneLifeTimeInReview = 7
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -236,7 +238,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAtMidnight(application, 7),
+              endOfDayFromCreation(application, pruneLifeTimeInReview),
             shouldDeleteChargeIfPaymentFulfilled: true,
             pruneMessage: (application) => {
               const plate = getValueViaPath(
@@ -253,6 +255,13 @@ const template: ApplicationTemplate<
               }
             },
           },
+          scheduledNotifications: (application) =>
+            schedulePruneReminderBefore(
+              endOfDayFromCreation(application, pruneLifeTimeInReview),
+              2,
+              applicationMessage.pruneReason,
+              Features.changeOperatorOfVehicleScheduledNotifications,
+            ),
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
           }),
@@ -263,6 +272,23 @@ const template: ApplicationTemplate<
                 import('../forms/ReviewSeller').then((module) =>
                   Promise.resolve(module.ReviewSellerForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: review.buttons.reject,
+                  type: 'reject',
+                },
+              ],
               write: {
                 answers: [],
               },
@@ -275,6 +301,23 @@ const template: ApplicationTemplate<
                 import('../forms/Review').then((module) =>
                   Promise.resolve(module.ReviewForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: review.buttons.reject,
+                  type: 'reject',
+                },
+              ],
               write: {
                 answers: ['ownerCoOwner', 'operators', 'rejecter'],
               },

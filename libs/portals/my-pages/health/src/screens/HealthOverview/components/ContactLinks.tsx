@@ -1,6 +1,14 @@
-import { Box, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { LinkResolver, parseFullNumber } from '@island.is/portals/my-pages/core'
+import {
+  formatPlausiblePathToParams,
+  LinkResolver,
+} from '@island.is/portals/my-pages/core'
+import {
+  healthOverviewSendMessageClick,
+  healthOverviewWebchatClick,
+} from '@island.is/plausible'
+import { useLocation } from 'react-router-dom'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
 import * as styles from './ContactLinks.css'
@@ -10,42 +18,45 @@ type ContactLinkItem = {
   description: string
   emergencyDescription?: string
   href: string
+  icon: IconMapIcon
+  onClick?: () => void
+  skipOutboundTrack?: boolean
 }
 
 const ContactLinks = () => {
   const { formatMessage } = useLocale()
+  const { pathname } = useLocation()
 
   const links: ContactLinkItem[] = [
     {
       title: formatMessage(messages.contactChat),
       description: formatMessage(messages.contactChatDesc),
       href: formatMessage(messages.heilsuveraChatLink),
-    },
-    {
-      title: formatMessage(messages.contactPhone),
-      description: formatMessage(messages.contactPhoneDesc),
-      emergencyDescription: formatMessage(messages.contactPhoneEmergencyDesc),
-      href: `tel:${parseFullNumber(
-        formatMessage(messages.contactPhoneNumber),
-      )}`,
+      icon: 'open',
+      onClick: () =>
+        healthOverviewWebchatClick(formatPlausiblePathToParams(pathname)),
+      skipOutboundTrack: true,
     },
     {
       title: formatMessage(messages.contactSendMessage),
       description: formatMessage(messages.contactSendMessageDesc),
       href: HealthPaths.HealthConversationsNew,
+      icon: 'arrowForward',
+      onClick: () =>
+        healthOverviewSendMessageClick(formatPlausiblePathToParams(pathname)),
     },
   ]
 
   const renderDescription = (link: ContactLinkItem) => (
     <>
-      <Text variant="medium" fontWeight="light" lineHeight="lg" color="dark400">
+      <Text variant="medium" fontWeight="light" lineHeight="md" color="dark400">
         {link.description}
       </Text>
       {link.emergencyDescription ? (
         <Text
           variant="medium"
           fontWeight="light"
-          lineHeight="lg"
+          lineHeight="md"
           color="red600"
         >
           {link.emergencyDescription}
@@ -55,35 +66,37 @@ const ContactLinks = () => {
   )
 
   const renderRowContent = (link: ContactLinkItem) => (
-    <Box
-      display="flex"
-      justifyContent="spaceBetween"
-      alignItems="flexStart"
-      paddingX={3}
-      paddingY={2}
-      width="full"
+    <LinkResolver
+      href={link.href}
+      className={styles.rowLink}
+      callback={link.onClick}
+      skipOutboundTrack={link.skipOutboundTrack}
     >
-      <Box flexGrow={1} minWidth={0}>
-        <Text
-          variant="medium"
-          fontWeight="semiBold"
-          lineHeight="lg"
-          color="blue400"
-          className={styles.titleText}
+      <Box paddingX={[2, 2, 3]} paddingY={2} width="full">
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="flexStart"
+          columnGap={2}
+          style={{ marginBottom: 4 }}
         >
-          {link.title}
-        </Text>
+          <Box flexGrow={1} minWidth={0}>
+            <Text variant="h5" color="blue400">
+              {link.title}
+            </Text>
+          </Box>
+          <Box flexShrink={0} display="flex" alignItems="center">
+            <Icon
+              icon={link.icon}
+              type="outline"
+              color="blue400"
+              size="medium"
+            />
+          </Box>
+        </Box>
         {renderDescription(link)}
       </Box>
-      <Box
-        flexShrink={0}
-        marginLeft={2}
-        display="flex"
-        style={{ minWidth: 16, minHeight: 16, alignItems: 'center' }}
-      >
-        <Icon icon="arrowForward" color="blue400" size="small" />
-      </Box>
-    </Box>
+    </LinkResolver>
   )
 
   return (
@@ -92,6 +105,7 @@ const ContactLinks = () => {
       borderColor="blue200"
       borderRadius="large"
       background="white"
+      overflow="hidden"
     >
       {links.map((link, index) => (
         <Box
@@ -99,15 +113,7 @@ const ContactLinks = () => {
           borderTopWidth={index > 0 ? 'standard' : undefined}
           borderColor="blue200"
         >
-          {link.href.startsWith('tel:') ? (
-            <a href={link.href} className={styles.telLink}>
-              {renderRowContent(link)}
-            </a>
-          ) : (
-            <LinkResolver href={link.href}>
-              {renderRowContent(link)}
-            </LinkResolver>
-          )}
+          {renderRowContent(link)}
         </Box>
       ))}
     </Box>

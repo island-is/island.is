@@ -1,5 +1,5 @@
-import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { ForbiddenException, Inject, UseGuards } from '@nestjs/common'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -12,9 +12,14 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import { type User } from '@island.is/judicial-system/types'
+import {
+  AppealCaseType,
+  Feature,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { FeatureService } from '../feature/feature.service'
 import { AppealCase } from './dto/appealCase.response'
 import { CreateAppealCaseInput } from './dto/createAppealCase.input'
 import { CreateAppealEventLogInput } from './dto/createAppealEventLog.input'
@@ -27,6 +32,8 @@ export class LimitedAccessAppealCaseResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
+    private readonly featureService: FeatureService,
   ) {}
 
   @Mutation(() => AppealCase, { nullable: true })
@@ -34,17 +41,24 @@ export class LimitedAccessAppealCaseResolver {
     @Args('input', { type: () => CreateAppealCaseInput })
     input: CreateAppealCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
     const { caseId, ...body } = input
+
+    // The flag hides the verdict appeal action in the web; closing the write path here
+    // too means a hidden feature cannot be reached by calling the API directly.
+    if (
+      body.appealType === AppealCaseType.VERDICT &&
+      this.featureService.isHidden(Feature.INDICTMENT_APPEAL)
+    ) {
+      throw new ForbiddenException('Indictment appeals are not available')
+    }
 
     this.logger.debug(`Creating limited access appeal case for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_APPEAL_CASE,
-      backendService.limitedAccessCreateAppealCase(caseId, body),
+      this.backendService.limitedAccessCreateAppealCase(caseId, body),
       caseId,
     )
   }
@@ -53,8 +67,6 @@ export class LimitedAccessAppealCaseResolver {
   limitedAccessCreateAppealEventLog(
     @Args('input', { type: () => CreateAppealEventLogInput })
     input: CreateAppealEventLogInput,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
     const { caseId, appealCaseId, eventType } = input
 
@@ -62,7 +74,7 @@ export class LimitedAccessAppealCaseResolver {
       `Creating appeal event log ${eventType} on limited access appeal case ${appealCaseId} of case ${caseId}`,
     )
 
-    return backendService.limitedAccessCreateAppealEventLog(
+    return this.backendService.limitedAccessCreateAppealEventLog(
       caseId,
       appealCaseId,
       eventType,
@@ -74,8 +86,6 @@ export class LimitedAccessAppealCaseResolver {
     @Args('input', { type: () => TransitionAppealCaseInput })
     input: TransitionAppealCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
     const { caseId, appealCaseId, ...transitionAppealCase } = input
 
@@ -86,7 +96,7 @@ export class LimitedAccessAppealCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.TRANSITION_APPEAL_CASE,
-      backendService.limitedAccessTransitionAppealCase(
+      this.backendService.limitedAccessTransitionAppealCase(
         caseId,
         appealCaseId,
         transitionAppealCase,

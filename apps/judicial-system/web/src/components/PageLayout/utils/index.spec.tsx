@@ -1,5 +1,6 @@
-import { FC } from 'react'
-import { IntlFormatters, useIntl } from 'react-intl'
+import type { FC } from 'react'
+import type { IntlFormatters } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 

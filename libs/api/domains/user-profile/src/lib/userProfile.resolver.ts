@@ -36,7 +36,7 @@ import { Response } from './response.model'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UserProfileSetActorProfileEmailInput } from './dto/userProfileSetActorProfileEmail.input'
@@ -90,7 +90,7 @@ export class UserProfileResolver {
     )
 
     if (!nationalId) {
-      throw new ApolloError('Failed to update user profile')
+      throw new GraphQLError('Failed to update user profile')
     }
 
     return {
@@ -119,7 +119,7 @@ export class UserProfileResolver {
     )
 
     if (!nationalId) {
-      throw new ApolloError('Failed to update user profile')
+      throw new GraphQLError('Failed to update user profile')
     }
 
     return {

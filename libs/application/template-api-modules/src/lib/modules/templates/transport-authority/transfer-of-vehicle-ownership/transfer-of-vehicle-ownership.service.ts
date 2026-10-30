@@ -24,7 +24,6 @@ import { mapVehicle } from '../utils'
 import { getPaymentIdFromExternalData } from '@island.is/clients/charge-fjs-v2'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
-import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -42,7 +41,6 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleCodetablesClient: VehicleCodetablesClient,
-    private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly mileageReadingApi: MileageReadingApi,
     private readonly paymentService: PaymentService,
@@ -104,7 +102,6 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         if (totalRecords > 5) {
           return mapVehicle(auth, vehicle, false, {
             vehicleOwnerChangeClient: this.vehicleOwnerChangeClient,
-            vehicleServiceFjsV1Client: this.vehicleServiceFjsV1Client,
             mileageReadingApi: this.mileageReadingApi,
           })
         }
@@ -113,7 +110,6 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         // Display radio buttons, validate all vehicles now
         return mapVehicle(auth, vehicle, true, {
           vehicleOwnerChangeClient: this.vehicleOwnerChangeClient,
-          vehicleServiceFjsV1Client: this.vehicleServiceFjsV1Client,
           mileageReadingApi: this.mileageReadingApi,
         })
       }),

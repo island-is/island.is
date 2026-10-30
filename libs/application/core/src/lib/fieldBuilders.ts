@@ -38,6 +38,7 @@ import {
   ActionCardListField,
   TableRepeaterField,
   StaticTableField,
+  InteractiveTableField,
   PaginatedSearchableTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
@@ -54,7 +55,9 @@ import {
   OverviewField,
   CopyLinkField,
   VehiclePermnoWithInfoField,
+  ScaleField,
   MaybeWithAnswersAndExternalData,
+  StickyFooterField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -409,6 +412,8 @@ export const buildPaginatedSearchableTableField = (
     savePropertyNames,
     pageSize,
     callbackId,
+    disabledKey,
+    disabledReason,
   } = data
 
   return {
@@ -426,6 +431,8 @@ export const buildPaginatedSearchableTableField = (
     savePropertyNames,
     pageSize,
     callbackId,
+    disabledKey,
+    disabledReason,
   }
 }
 
@@ -782,11 +789,15 @@ export const buildPaymentChargeOverviewField = (
   const {
     id,
     forPaymentLabel,
+    forPaymentLabelVariant,
     totalLabel,
     quantityLabel,
     quantityUnitLabel,
     unitPriceLabel,
     totalPerUnitLabel,
+    simplifiedList,
+    additionalSummaryLabel,
+    getAdditionalSummaryAmount,
     getSelectedChargeItems,
   } = data
   return {
@@ -794,11 +805,15 @@ export const buildPaymentChargeOverviewField = (
     children: undefined,
     id,
     forPaymentLabel,
+    forPaymentLabelVariant,
     totalLabel,
     quantityLabel,
     quantityUnitLabel,
     unitPriceLabel,
     totalPerUnitLabel,
+    simplifiedList,
+    additionalSummaryLabel,
+    getAdditionalSummaryAmount,
     getSelectedChargeItems,
     type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
     component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
@@ -999,13 +1014,18 @@ export const buildTableRepeaterField = (
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    removeButtonDisabledTooltipText,
     editButtonTooltipText,
+    editButtonDisabledTooltipText,
     editField,
+    canRemoveRow,
+    canEditRow,
     getStaticTableData,
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
     initActiveFieldIfEmpty,
+    hideTableHeaderIfEmpty,
   } = data
 
   return {
@@ -1020,13 +1040,18 @@ export const buildTableRepeaterField = (
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    removeButtonDisabledTooltipText,
     editButtonTooltipText,
+    editButtonDisabledTooltipText,
     editField,
+    canRemoveRow,
+    canEditRow,
     getStaticTableData,
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
     initActiveFieldIfEmpty,
+    hideTableHeaderIfEmpty,
   }
 }
 
@@ -1116,6 +1141,114 @@ export const buildStaticTableField = (
     marginTop,
     marginBottom,
     titleVariant,
+  }
+}
+
+export const buildInteractiveTableField = (
+  data: Omit<
+    InteractiveTableField,
+    | 'type'
+    | 'component'
+    | 'children'
+    | 'id'
+    | 'doesNotRequireAnswer'
+    | 'colSpan'
+    | 'defaultValue'
+    | 'disabled'
+    | 'width'
+  > & {
+    id?: string
+  },
+): InteractiveTableField => {
+  const {
+    id = '',
+    header,
+    condition,
+    dataTestId,
+    title = '',
+    description,
+    rows,
+    marginBottom,
+    marginTop = 2,
+    titleVariant = 'h4',
+    selectable = false,
+    inputColumn,
+    rowIds,
+    footerRow,
+    expandedRows,
+    isSubmitDisabled,
+  } = data
+
+  return {
+    id,
+    title,
+    width: 'full',
+    doesNotRequireAnswer: !selectable,
+    condition,
+    description,
+    dataTestId,
+    children: undefined,
+    type: FieldTypes.INTERACTIVE_TABLE,
+    component: FieldComponents.INTERACTIVE_TABLE,
+    header,
+    rows,
+    marginTop,
+    marginBottom,
+    titleVariant,
+    selectable,
+    inputColumn,
+    rowIds,
+    footerRow,
+    expandedRows,
+    isSubmitDisabled,
+  }
+}
+
+export const buildStickyFooterField = (
+  data: Omit<
+    StickyFooterField,
+    | 'type'
+    | 'component'
+    | 'children'
+    | 'id'
+    | 'doesNotRequireAnswer'
+    | 'colSpan'
+    | 'defaultValue'
+    | 'disabled'
+    | 'width'
+  > & {
+    id?: string
+  },
+): StickyFooterField => {
+  const {
+    id = '',
+    rows,
+    condition,
+    marginTop,
+    marginBottom,
+    widthReferenceTestId,
+    watchFieldIds,
+    labelOffset,
+    labelMinWidth,
+    alignToRowTestId,
+  } = data
+
+  return {
+    id,
+    width: 'full',
+    doesNotRequireAnswer: true,
+    condition,
+    children: undefined,
+    type: FieldTypes.STICKY_FOOTER,
+    component: FieldComponents.STICKY_FOOTER,
+    rows,
+    marginTop,
+    marginBottom,
+    widthReferenceTestId,
+    watchFieldIds,
+    labelOffset,
+    labelMinWidth,
+    alignToRowTestId,
   }
 }
 
@@ -1250,6 +1383,7 @@ export const buildAccordionField = (
     marginTop,
     marginBottom,
     condition,
+    singleExpand = true,
   } = data
   return {
     children: undefined,
@@ -1260,6 +1394,7 @@ export const buildAccordionField = (
     marginBottom,
     accordionItems,
     condition,
+    singleExpand,
     type: FieldTypes.ACCORDION,
     component: FieldComponents.ACCORDION,
   }
@@ -1376,5 +1511,25 @@ export const buildVehiclePermnoWithInfoField = (
     fallbackErrorMessage,
     validationFailedErrorMessage,
     isTrailer,
+  }
+}
+
+export const buildScaleField = (
+  data: Omit<ScaleField, 'type' | 'component' | 'children'>,
+): ScaleField => {
+  const { min, max, step, minLabel, maxLabel, showLabels, required } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.SCALE,
+    component: FieldComponents.SCALE,
+    min,
+    max,
+    step,
+    minLabel,
+    maxLabel,
+    showLabels,
+    required,
   }
 }

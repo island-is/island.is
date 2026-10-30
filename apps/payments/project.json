@@ -11,7 +11,8 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/payments"
+        "outputPath": "dist/apps/payments",
+        "webpack": true
       },
       "configurations": {
         "development": {
@@ -49,7 +50,8 @@
       "options": {
         "buildTarget": "payments:build",
         "dev": true,
-        "customServerTarget": "payments:serve-custom-server"
+        "customServerTarget": "payments:serve-custom-server",
+        "webpack": true
       },
       "configurations": {
         "development": {

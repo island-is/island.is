@@ -25,12 +25,17 @@ export const mapAssessment = (
   }
 }
 
+export type PrimarySchoolPdfImplementation = 'current' | 'new'
+
 export const mapResult = (
   item: IslandIsSimpleAssignmentResultDto,
   studentId: string,
   downloadServiceBaseUrl: string,
+  implementation: PrimarySchoolPdfImplementation = 'current',
 ): PrimarySchoolAssessmentResult | null => {
   if (!item.id || item.gradeLevel == null) return null
+
+  const pdfPathSuffix = implementation === 'new' ? 'pdf-v2' : 'pdf'
 
   return {
     id: item.id,
@@ -43,6 +48,6 @@ export const mapResult = (
       startDate: item.scheduleStart ?? undefined,
       startDateString: item.scheduleString ?? undefined,
     },
-    downloadServiceUrl: `${downloadServiceBaseUrl}/download/v1/education/primary-school/${studentId}/result/${item.id}/pdf`,
+    downloadServiceUrl: `${downloadServiceBaseUrl}/download/v1/education/primary-school/${studentId}/result/${item.id}/${pdfPathSuffix}`,
   }
 }

@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   Box,
@@ -8,27 +9,27 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   InputName,
   InputNationalId,
   RequiredStar,
 } from '@island.is/judicial-system-web/src/components'
+import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
+import type { Victim } from '@island.is/judicial-system-web/src/graphql/schema'
+import { RequestSharedWhen } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
-  RequestSharedWhen,
-  Victim,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import { useVictim } from '@island.is/judicial-system-web/src/utils/hooks'
-import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
+  useNationalRegistry,
+  useVictim,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
-import RadioGroup from '../RadioGroup/RadioGroup'
 import { LegalRightsProtectorInputFields } from './LegalRightsProtectorInputFields'
 
 interface Props {
   victim: Victim
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   onDelete: (victim: Victim) => void
 }
 
@@ -80,7 +81,15 @@ export const VictimInfo: React.FC<Props> = ({
     <Box marginBottom={3}>
       <BlueBox>
         <Box>
-          <Box marginBottom={2} display="flex" justifyContent="flexEnd">
+          <Box
+            marginBottom={2}
+            display="flex"
+            alignItems="center"
+            justifyContent="spaceBetween"
+          >
+            <Text as="h3" variant="h4">
+              Brotaþoli
+            </Text>
             <Button
               onClick={() => onDelete(victim)}
               colorScheme="destructive"
@@ -157,7 +166,7 @@ export const VictimInfo: React.FC<Props> = ({
             </Box>
           </Box>
         </Box>
-        <Box marginTop={4}>
+        <Box marginTop={2}>
           <LegalRightsProtectorInputFields
             victim={victim}
             workingCase={workingCase}

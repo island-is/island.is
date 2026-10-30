@@ -4,7 +4,6 @@ import {
   Box,
   Checkbox,
   GridColumn as Column,
-  DatePicker,
   Input,
   GridRow as Row,
   Stack,
@@ -209,27 +208,7 @@ export const BaseSettings = () => {
           />
         </Column>
       </Row>
-      <Box marginTop={5} />
-      <Row>
-        <Column span="5/10">
-          <DatePicker
-            label={formatMessage(m.deadline)}
-            placeholderText={formatMessage(m.chooseDate)}
-            backgroundColor="blue"
-            disabled={isReadOnly}
-            selected={
-              form.invalidationDate ? new Date(form.invalidationDate) : null
-            }
-            handleChange={(e) => {
-              controlDispatch({
-                type: 'CHANGE_INVALIDATION_DATE',
-                payload: { value: e },
-              })
-            }}
-            handleCloseCalendar={() => formUpdate()}
-          />
-        </Column>
-      </Row>
+      <Box marginTop={1} />
       <Row>
         <Column>
           <Checkbox
@@ -258,6 +237,7 @@ export const BaseSettings = () => {
           />
         </Column>
       </Row>
+      <Box marginTop={1} />
       <Row>
         <Column>
           <Checkbox

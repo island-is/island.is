@@ -1,4 +1,5 @@
-import { FC, memo, useCallback, useContext, useEffect, useState } from 'react'
+import type { FC } from 'react'
+import { memo, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
 import router from 'next/router'
@@ -8,11 +9,11 @@ import {
   PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE,
   PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE,
 } from '@island.is/judicial-system/consts'
-import {
+import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -25,20 +26,18 @@ import {
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   CaseFile,
-  CaseOrigin,
   Defendant,
   PoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { PoliceCaseFilesData } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import type { PoliceDigitalCaseFilesData } from '@island.is/judicial-system-web/src/routes/Prosecutor/components/PoliceCaseFiles/PoliceDigitalCaseFiles'
+import { PoliceDigitalCaseFilesList } from '@island.is/judicial-system-web/src/routes/Prosecutor/components/PoliceCaseFiles/PoliceDigitalCaseFiles'
 import { usePoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { PoliceCaseFilesData } from '../../components'
-import {
-  PoliceDigitalCaseFilesData,
-  PoliceDigitalCaseFilesList,
-} from '../../components/PoliceCaseFiles/PoliceDigitalCaseFiles'
 import { useIndictmentPoliceCaseFilesQuery } from './indictmentPoliceCaseFiles.generated'
 import UploadFilesToPoliceCase from './UploadFilesToPoliceCase'
 import { strings } from './PoliceCaseFilesRoute.strings'
@@ -175,7 +174,7 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
     ])
 
     return (
-      <Box className={grid({ gap: 4 })}>
+      <Box className={stack({ gap: 4 })}>
         {policeCaseNumbers?.map((policeCaseNumber, index) => {
           const currentDigitalCaseFiles =
             digitalCaseFiles?.filter(
@@ -189,9 +188,15 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
           return (
             <Box key={index}>
               <SectionHeading
-                title={formatMessage(strings.policeCaseNumberSectionHeading, {
-                  policeCaseNumber,
-                })}
+                title={formatMessage(
+                  {
+                    id: strings.policeCaseNumberSectionHeading,
+                    defaultMessage: strings.policeCaseNumberSectionHeading,
+                  },
+                  {
+                    policeCaseNumber,
+                  },
+                )}
                 marginBottom={2}
               />
               <Box marginBottom={3}>
@@ -297,10 +302,10 @@ const PoliceCaseFilesRoute = () => {
         title={formatMessage(titles.prosecutor.indictments.policeCaseFiles)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <PageTitle>{strings.heading}</PageTitle>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
-          <InfoBox text={formatMessage(strings.infoBox)} />
+          <InfoBox text={strings.infoBox} />
           <PoliceUploadListMemo
             caseId={workingCase.id}
             caseFiles={workingCase.caseFiles}
@@ -315,13 +320,18 @@ const PoliceCaseFilesRoute = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isLoadingWorkingCase}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

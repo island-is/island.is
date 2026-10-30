@@ -14,6 +14,10 @@ export const GET_ALL_APPLICATIONS = gql`
       }
       total
       isLoginTypeAllowed
+      hasRequiredDelegation
+      isInaccessible
+      validateEligibility
+      enableApplicationPdfDownload
     }
   }
   ${ApplicationFragment}

@@ -4,7 +4,6 @@ import {
   Body,
   Controller,
   Inject,
-  InternalServerErrorException,
   Param,
   Patch,
   Post,
@@ -27,7 +26,13 @@ import {
 } from '@island.is/judicial-system/message'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
+import { getOrCreateTransaction } from '../../middleware'
+import {
+  CaseExistsForUpdateGuard,
+  CaseExistsGuard,
+  CaseTypeGuard,
+  CurrentCase,
+} from '../case'
 import { CurrentDefendant, SplitDefendantExistsGuard } from '../defendant'
 import { Case, Defendant, Subpoena } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
@@ -35,6 +40,7 @@ import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { PoliceSubpoenaExistsGuard } from './guards/policeSubpoenaExists.guard'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
+import { SubpoenaOnCaseGuard } from './guards/subpoenaOnCase.guard'
 import { DeliverResponse } from './models/deliver.response'
 import { SubpoenaService } from './subpoena.service'
 
@@ -49,10 +55,27 @@ export class InternalSubpoenaController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(PoliceSubpoenaExistsGuard)
+  // The police name the subpoena, not the case: PoliceSubpoenaExistsGuard
+  // resolves it by its police subpoena id and puts the case id on the request
+  // params, which is where CaseExistsForUpdateGuard reads it from - so it has
+  // to run first. The case is then read under FOR UPDATE, and
+  // SubpoenaOnCaseGuard swaps the subpoena, and the defendant it summons, for
+  // the copies the locked case carries: the first read happened before the
+  // lock, so its fields may be stale, and the service status change below is
+  // decided from them. Two deliveries of the same status at once both read the
+  // subpoena unserved before either locks; the second serializes behind the
+  // first's commit and then sees the status already there, so it neither files
+  // a second service certificate nor announces twice.
+  @UseGuards(
+    PoliceSubpoenaExistsGuard,
+    CaseExistsForUpdateGuard,
+    SubpoenaOnCaseGuard,
+  )
   @Patch('subpoena/:policeSubpoenaId')
-  updateSubpoena(
+  async updateSubpoena(
     @Param('policeSubpoenaId') policeSubpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
     @CurrentSubpoena() subpoena: Subpoena,
     @Body() update: UpdateSubpoenaDto,
   ): Promise<Subpoena> {
@@ -60,24 +83,17 @@ export class InternalSubpoenaController {
       `Updating subpoena by police subpoena id ${policeSubpoenaId}`,
     )
 
-    const theCase = subpoena.case
-    const defendant = subpoena.defendant
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
 
-    if (!theCase || !defendant) {
-      // This should never happen because of the PoliceSubpoenaExistsGuard
-      throw new InternalServerErrorException(
-        `Cannot update subpoena with police subpoena id ${policeSubpoenaId} because it is not linked to a case and/or a defendant`,
-      )
-    }
-
-    return this.sequelize.transaction((transaction) =>
-      this.subpoenaService.update(
-        theCase,
-        defendant,
-        subpoena,
-        update,
-        transaction,
-      ),
+    return this.subpoenaService.update(
+      theCase,
+      defendant,
+      subpoena,
+      update,
+      transaction,
     )
   }
 
@@ -170,45 +186,6 @@ export class InternalSubpoenaController {
   )
   @Post(
     `case/:caseId/${
-      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE]
-    }/:defendantId/:subpoenaId`,
-  )
-  @ApiOkResponse({
-    type: DeliverResponse,
-    description: 'Delivers a subpoena to the police',
-  })
-  deliverSubpoenaFileToPolice(
-    @Param('caseId') caseId: string,
-    @Param('defendantId') defendantId: string,
-    @Param('subpoenaId') subpoenaId: string,
-    @CurrentCase() theCase: Case,
-    @CurrentDefendant() defendant: Defendant,
-    @CurrentSubpoena() subpoena: Subpoena,
-    @Body() deliverDto: DeliverDto,
-  ): Promise<DeliverResponse> {
-    this.logger.debug(
-      `Delivering subpoena ${subpoenaId} pdf to police for defendant ${defendantId} of case ${caseId}`,
-    )
-
-    return this.sequelize.transaction((transaction) =>
-      this.subpoenaService.deliverSubpoenaFileToPolice(
-        theCase,
-        defendant,
-        subpoena,
-        deliverDto.user,
-        transaction,
-      ),
-    )
-  }
-
-  @UseGuards(
-    CaseExistsGuard,
-    new CaseTypeGuard(indictmentCases),
-    SplitDefendantExistsGuard,
-    SubpoenaExistsGuard,
-  )
-  @Post(
-    `case/:caseId/${
       messageEndpoint[MessageType.DELIVERY_TO_COURT_SUBPOENA]
     }/:defendantId/:subpoenaId`,
   )
@@ -269,6 +246,42 @@ export class InternalSubpoenaController {
     )
 
     return this.subpoenaService.deliverServiceCertificateToCourt(
+      theCase,
+      defendant,
+      subpoena,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    SplitDefendantExistsGuard,
+    SubpoenaExistsGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SERVICE_CERTIFICATE]
+    }/:defendantId/:subpoenaId`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a service certificate to the police',
+  })
+  deliverServiceCertificateToPolice(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @CurrentSubpoena() subpoena: Subpoena,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering service certificate pdf to police for subpoena ${subpoenaId} of defendant ${defendantId} and case ${caseId}`,
+    )
+
+    return this.subpoenaService.deliverServiceCertificateToPolice(
       theCase,
       defendant,
       subpoena,

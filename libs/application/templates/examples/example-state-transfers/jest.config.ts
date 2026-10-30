@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'example-state-transfers',
   preset: '../../../../../jest.preset.js',
   transform: {

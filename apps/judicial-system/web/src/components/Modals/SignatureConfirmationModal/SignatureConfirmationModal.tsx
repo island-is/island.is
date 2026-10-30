@@ -1,7 +1,7 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { ApolloError } from '@apollo/client'
+import type { ApolloError } from '@apollo/client'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
@@ -9,16 +9,14 @@ import {
   core,
   signedVerdictOverview as m,
 } from '@island.is/judicial-system-web/messages'
-import {
-  Case,
-  CaseType,
-  RequestSignatureResponse,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { Modal } from '@island.is/judicial-system-web/src/components'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { useRulingSignatureConfirmationQuery } from '@island.is/judicial-system-web/src/components/Modals/SigningMethodSelectionModal/rulingSignatureConfirmation.generated'
+import type { RequestSignatureResponse } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCourtRecordSignatureConfirmationQuery } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/courtRecordSignatureConfirmation.generated'
 
-import { Modal } from '../..'
-import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
-import { useRulingSignatureConfirmationQuery } from '../SigningMethodSelectionModal/rulingSignatureConfirmation.generated'
 import { signingModal as signingModalStrings } from './SignatureConfirmationModal.strings'
 
 export type SignatureType = 'ruling' | 'courtRecord'
@@ -26,7 +24,7 @@ export type SignatureType = 'ruling' | 'courtRecord'
 type SigningProgress = 'inProgress' | 'success' | 'error' | 'canceled'
 
 interface SignatureConfirmationModalProps {
-  workingCase: Case
+  workingCase: WorkingCase
   signatureResponse: RequestSignatureResponse
   signatureType: SignatureType
   isAudkenni: boolean
@@ -43,10 +41,16 @@ const ControlCode: FC<{ controlCode?: string }> = ({ controlCode }) => {
     <>
       <Box marginBottom={2}>
         <Text variant="h2" color="blue400">
-          {formatMessage(signingModalStrings.controlCode, { controlCode })}
+          {formatMessage(
+            {
+              id: signingModalStrings.controlCode,
+              defaultMessage: signingModalStrings.controlCode,
+            },
+            { controlCode },
+          )}
         </Text>
       </Box>
-      <Text>{formatMessage(signingModalStrings.controlCodeExplanation)}</Text>
+      <Text>{signingModalStrings.controlCodeExplanation}</Text>
     </>
   )
 }
@@ -137,13 +141,13 @@ export const SignatureConfirmationModal: FC<
   const getTitle = () => {
     if (signatureType === 'ruling') {
       if (signingProgress === 'inProgress') {
-        return formatMessage(signingModalStrings.inProgressTitle)
+        return signingModalStrings.inProgressTitle
       } else if (signingProgress === 'success') {
-        return formatMessage(signingModalStrings.successTitle)
+        return signingModalStrings.successTitle
       } else if (signingProgress === 'canceled') {
-        return formatMessage(signingModalStrings.canceledTitle)
+        return signingModalStrings.canceledTitle
       } else {
-        return formatMessage(signingModalStrings.errorTitle)
+        return signingModalStrings.errorTitle
       }
     } else {
       // courtRecord
@@ -166,11 +170,17 @@ export const SignatureConfirmationModal: FC<
       if (signatureType === 'ruling') {
         return (
           <MarkdownWrapper
-            markdown={formatMessage(signingModalStrings.successText, {
-              summarySentToPrison:
-                workingCase.type === CaseType.CUSTODY ||
-                workingCase.type === CaseType.ADMISSION_TO_FACILITY,
-            })}
+            markdown={formatMessage(
+              {
+                id: signingModalStrings.successText,
+                defaultMessage: signingModalStrings.successText,
+              },
+              {
+                summarySentToPrison:
+                  workingCase.type === CaseType.CUSTODY ||
+                  workingCase.type === CaseType.ADMISSION_TO_FACILITY,
+              },
+            )}
           />
         )
       } else {
@@ -180,7 +190,7 @@ export const SignatureConfirmationModal: FC<
     } else {
       // error or canceled
       if (signatureType === 'ruling') {
-        return formatMessage(signingModalStrings.errorText)
+        return signingModalStrings.errorText
       } else {
         return formatMessage(m.sections.courtRecordSignatureModal.notCompleted)
       }
@@ -208,29 +218,32 @@ export const SignatureConfirmationModal: FC<
     <Modal
       title={getTitle()}
       text={getText()}
-      primaryButton={
-        signingProgress === 'error' || signingProgress === 'canceled'
-          ? {
-              text: formatMessage(signingModalStrings.primaryButtonErrorText),
-              onClick: handleClose,
-            }
-          : undefined
-      }
-      secondaryButton={
-        signingProgress === 'inProgress'
-          ? undefined
-          : {
-              text:
-                signingProgress === 'success'
-                  ? formatMessage(core.closeModal)
-                  : formatMessage(signingModalStrings.secondaryButtonErrorText),
-              onClick:
-                signingProgress === 'success' ? handleClose : handleRetry,
-            }
-      }
-      invertButtonColors={
-        signingProgress === 'canceled' || signingProgress === 'error'
-      }
+      buttons={[
+        ...(signingProgress === 'inProgress'
+          ? []
+          : [
+              {
+                text:
+                  signingProgress === 'success'
+                    ? formatMessage(core.closeModal)
+                    : signingModalStrings.secondaryButtonErrorText,
+                onClick:
+                  signingProgress === 'success' ? handleClose : handleRetry,
+                ...(signingProgress === 'success'
+                  ? { variant: 'ghost' as const }
+                  : {}),
+              },
+            ]),
+        ...(signingProgress === 'error' || signingProgress === 'canceled'
+          ? [
+              {
+                text: signingModalStrings.primaryButtonErrorText,
+                onClick: handleClose,
+                variant: 'ghost' as const,
+              },
+            ]
+          : []),
+      ]}
     />
   )
 }

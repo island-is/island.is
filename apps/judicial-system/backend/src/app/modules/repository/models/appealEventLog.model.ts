@@ -9,7 +9,11 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { AppealEventType, UserRole } from '@island.is/judicial-system/types'
+import {
+  AppealEventType,
+  AppealOrigin,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { AppealCase } from './appealCase.model'
 import { Case } from './case.model'
@@ -64,6 +68,25 @@ export class AppealEventLog extends Model {
     return AppealEventLog.getEventLogDateByEventType(
       eventType,
       eventLogs.filter((eventLog) => roles.includes(eventLog.userRole)),
+    )
+  }
+
+  // The latest event of the type that names no party. In an indictment case
+  // that is the prosecution's: a defence event always names the defendant or
+  // claimant it is for, whoever wrote it.
+  static getLatestDateWithoutParty(
+    eventType: AppealEventType,
+    eventLogs: AppealEventLog[] | undefined,
+  ): Date | undefined {
+    if (!eventLogs) {
+      return undefined
+    }
+
+    return AppealEventLog.getEventLogDateByEventType(
+      eventType,
+      eventLogs.filter(
+        (eventLog) => !eventLog.defendantId && !eventLog.civilClaimantId,
+      ),
     )
   }
 
@@ -144,6 +167,20 @@ export class AppealEventLog extends Model {
   })
   @ApiProperty({ enum: AppealEventType })
   eventType!: AppealEventType
+
+  /**********
+   * Where an APPEALED event came from - the court record or a party filing
+   * directly. Optional because the other event types must leave it null - it
+   * means nothing for them. The appeal_event_log_appeal_origin_check constraint
+   * enforces exactly that: set on APPEALED, null on everything else.
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(AppealOrigin),
+  })
+  @ApiPropertyOptional({ enum: AppealOrigin })
+  appealOrigin?: AppealOrigin
 
   @ForeignKey(() => Defendant)
   @Column({ type: DataType.UUID, allowNull: true })

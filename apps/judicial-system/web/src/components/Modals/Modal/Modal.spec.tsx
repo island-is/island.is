@@ -1,8 +1,27 @@
+import { AnimatePresence } from 'motion/react'
 import { fireEvent, render, screen } from '@testing-library/react'
 
-import { Modal } from './Modal'
+import { Modal, ModalContainer } from './Modal'
+import * as styles from './Modal.css'
 
 describe('Modal', () => {
+  // The backdrop's fade-out is a class, not a motion exit: a motion exit
+  // left the backdrop at full opacity for one frame before unmount.
+  it('marks the backdrop as leaving while the dialog plays out', async () => {
+    const { rerender } = render(
+      <AnimatePresence>
+        <Modal key="modal" title="Titill" />
+      </AnimatePresence>,
+    )
+
+    const dialog = await screen.findByRole('dialog')
+    expect(dialog).not.toHaveClass(styles.leaving)
+
+    rerender(<AnimatePresence>{null}</AnimatePresence>)
+
+    expect(dialog).toHaveClass(styles.leaving)
+  })
+
   it('labels the dialog with its title via aria-labelledby', async () => {
     render(<Modal title="Ertu viss?" />)
 
@@ -15,19 +34,58 @@ describe('Modal', () => {
     const onClose = jest.fn()
     render(<Modal title="Titill" onClose={onClose} />)
 
-    const closeButton = await screen.findByRole('button', {
+    // The backdrop shares the name; the X is the one in the tab order.
+    const buttons = await screen.findAllByRole('button', {
       name: 'Loka glugga',
     })
-    fireEvent.click(closeButton)
+    const closeButton = buttons.find(
+      (button) => button.getAttribute('tabindex') !== '-1',
+    )
+    expect(closeButton).toBeDefined()
+    if (closeButton) {
+      fireEvent.click(closeButton)
+    }
 
     expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('closes when the backdrop is clicked but not when the panel is', async () => {
+    const onClose = jest.fn()
+    render(
+      <Modal title="Titill" onClose={onClose}>
+        <p>Innihald</p>
+      </Modal>,
+    )
+
+    fireEvent.click(await screen.findByText('Innihald'))
+    expect(onClose).not.toHaveBeenCalled()
+
+    // Two buttons share the name: the X in the panel and the backdrop.
+    const [backdrop] = screen.getAllByRole('button', { name: 'Loka glugga' })
+    expect(backdrop).toHaveAttribute('tabindex', '-1')
+    fireEvent.click(backdrop)
+
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not close on a backdrop click while loading', async () => {
+    const onClose = jest.fn()
+    render(<Modal title="Titill" onClose={onClose} loading />)
+
+    const [backdrop] = await screen.findAllByRole('button', {
+      name: 'Loka glugga',
+    })
+    expect(backdrop).toHaveAttribute('tabindex', '-1')
+    fireEvent.click(backdrop)
+
+    expect(onClose).not.toHaveBeenCalled()
   })
 
   it('closes the modal when Escape is pressed', async () => {
     const onClose = jest.fn()
     render(<Modal title="Titill" onClose={onClose} />)
 
-    await screen.findByRole('button', { name: 'Loka glugga' })
+    await screen.findAllByRole('button', { name: 'Loka glugga' })
     fireEvent.keyDown(window, { key: 'Escape' })
 
     expect(onClose).toHaveBeenCalledTimes(1)
@@ -37,7 +95,7 @@ describe('Modal', () => {
     const onClose = jest.fn()
     render(<Modal title="Titill" onClose={onClose} loading />)
 
-    await screen.findByRole('button', { name: 'Loka glugga' })
+    await screen.findAllByRole('button', { name: 'Loka glugga' })
     fireEvent.keyDown(window, { key: 'Escape' })
 
     expect(onClose).not.toHaveBeenCalled()
@@ -49,5 +107,111 @@ describe('Modal', () => {
     const alert = await screen.findByRole('alert')
     expect(alert).toHaveTextContent('Eitthvað fór úrskeiðis')
     expect(alert).toHaveAttribute('aria-live', 'assertive')
+  })
+
+  it('renders buttons in order with per-button variants', async () => {
+    const onSecondary = jest.fn()
+    const onPrimary = jest.fn()
+
+    render(
+      <Modal
+        title="Titill"
+        buttons={[
+          {
+            text: 'Hætta við',
+            onClick: onSecondary,
+            variant: 'ghost',
+            dataTestId: 'modalSecondaryButton',
+          },
+          {
+            text: 'Staðfesta',
+            onClick: onPrimary,
+            dataTestId: 'modalPrimaryButton',
+          },
+        ]}
+      />,
+    )
+
+    const secondary = await screen.findByTestId('modalSecondaryButton')
+    const primary = await screen.findByTestId('modalPrimaryButton')
+
+    fireEvent.click(secondary)
+    fireEvent.click(primary)
+
+    expect(onSecondary).toHaveBeenCalledTimes(1)
+    expect(onPrimary).toHaveBeenCalledTimes(1)
+  })
+
+  it('generates unique default test ids for three or more buttons', async () => {
+    render(
+      <Modal
+        title="Titill"
+        buttons={[
+          { text: 'A', onClick: jest.fn(), variant: 'ghost' },
+          { text: 'B', onClick: jest.fn(), variant: 'ghost' },
+          { text: 'C', onClick: jest.fn() },
+        ]}
+      />,
+    )
+
+    expect(await screen.findByTestId('modalButton-0')).toHaveTextContent('A')
+    expect(await screen.findByTestId('modalButton-1')).toHaveTextContent('B')
+    expect(await screen.findByTestId('modalButton-2')).toHaveTextContent('C')
+  })
+})
+
+describe('ModalContainer', () => {
+  it('closes when the backdrop is clicked but not when the panel is', async () => {
+    const onClose = jest.fn()
+    render(
+      <ModalContainer title="Leit" onClose={onClose}>
+        <p>Innihald</p>
+      </ModalContainer>,
+    )
+
+    fireEvent.click(await screen.findByText('Innihald'))
+    expect(onClose).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Loka glugga' }))
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps the backdrop control out of the tab order', async () => {
+    render(
+      <ModalContainer title="Leit" onClose={jest.fn()}>
+        <p>Innihald</p>
+      </ModalContainer>,
+    )
+
+    expect(
+      await screen.findByRole('button', { name: 'Loka glugga' }),
+    ).toHaveAttribute('tabindex', '-1')
+  })
+
+  it('has no backdrop control when it cannot be closed', async () => {
+    render(
+      <ModalContainer title="Leit">
+        <p>Innihald</p>
+      </ModalContainer>,
+    )
+
+    await screen.findByRole('dialog')
+    expect(
+      screen.queryByRole('button', { name: 'Loka glugga' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('closes when Escape is pressed', async () => {
+    const onClose = jest.fn()
+    render(
+      <ModalContainer title="Leit" onClose={onClose}>
+        <p>Innihald</p>
+      </ModalContainer>,
+    )
+
+    await screen.findByRole('dialog')
+    fireEvent.keyDown(window, { key: 'Escape' })
+
+    expect(onClose).toHaveBeenCalledTimes(1)
   })
 })

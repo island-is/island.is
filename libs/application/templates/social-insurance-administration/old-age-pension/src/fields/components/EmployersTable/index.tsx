@@ -4,7 +4,7 @@ import { useLocale } from '@island.is/localization'
 
 import { Employer } from '../../../utils/types'
 import { RatioType } from '../../../utils/constants'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 
 interface EmployerTableProps {
   employers: Employer[] | undefined

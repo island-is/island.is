@@ -1,4 +1,5 @@
 import type { Logger } from '@island.is/logging'
+import { DebtPaymentErrorCode } from '@island.is/shared/constants'
 
 import {
   ApplePayPaymentContext,
@@ -25,6 +26,7 @@ import {
   createMockPaymentFlowService,
   getApplePayChargeInput,
   getChargeCardInput,
+  mockPaymentFlow,
   mockPaymentResult,
 } from './sagaTestUtils'
 
@@ -96,7 +98,7 @@ const getSagaSteps = (
  */
 describe('Card Payment Saga - Shared Steps', () => {
   describe('structural parity', () => {
-    it('both sagas have same step structure (VALIDATE, charge, PERSIST, NOTIFY)', () => {
+    it('both sagas have same step structure (VALIDATE, charge, PERSIST, SETTLE_DEBT, NOTIFY)', () => {
       const mockLogger = createMockLogger()
       const mockCard = {} as CardPaymentService
       const mockRefund = {} as RefundService
@@ -117,18 +119,21 @@ describe('Card Payment Saga - Shared Steps', () => {
         'VALIDATE',
         'CHARGE_CARD',
         'PERSIST_PAYMENT_CONFIRMATION',
+        'SETTLE_DEBT',
         'NOTIFY_SUCCESSFUL_PAYMENT',
       ])
       expect(appleSteps.map((s) => s.name)).toEqual([
         'VALIDATE',
         'CHARGE_APPLE_PAY',
         'PERSIST_PAYMENT_CONFIRMATION',
+        'SETTLE_DEBT',
         'NOTIFY_SUCCESSFUL_PAYMENT',
       ])
 
       expect(cardSteps[0].name).toBe(appleSteps[0].name)
       expect(cardSteps[2].name).toBe(appleSteps[2].name)
       expect(cardSteps[3].name).toBe(appleSteps[3].name)
+      expect(cardSteps[4].name).toBe(appleSteps[4].name)
     })
   })
 
@@ -220,7 +225,21 @@ describe('Card Payment Saga - Shared Steps', () => {
       expect(context.completedSteps).toContain('VALIDATE')
       expect(context.completedSteps).toContain(config.chargeStepName)
       expect(context.completedSteps).toContain('PERSIST_PAYMENT_CONFIRMATION')
+      expect(context.completedSteps).toContain('SETTLE_DEBT')
       expect(context.completedSteps).toContain('NOTIFY_SUCCESSFUL_PAYMENT')
+    })
+
+    it('SETTLE_DEBT does nothing for charge flows', async () => {
+      const { context, saga, orchestrator } = setupSaga()
+      await orchestrator.execute(saga as never, context as never)
+
+      expect(mockCardPaymentService.settleDebt).not.toHaveBeenCalled()
+      expect(context.stepResults.SETTLE_DEBT).toEqual({ type: 'skipped' })
+      expect(
+        mockPaymentFlowService.logPaymentFlowUpdate.mock.calls.filter(
+          ([update]) => update.reason === 'payment_finalized',
+        ),
+      ).toHaveLength(0)
     })
 
     it('VALIDATE failure stops saga execution', async () => {
@@ -235,6 +254,326 @@ describe('Card Payment Saga - Shared Steps', () => {
       ).rejects.toThrow('Payment flow not found')
 
       expect(mockCardPaymentService[config.chargeMock]).not.toHaveBeenCalled()
+    })
+
+    describe('debt flows', () => {
+      const debtFlow = {
+        ...mockPaymentFlow,
+        type: 'debt' as const,
+        debts: [{ payId: 'pay-1', amount: 1000 }],
+      }
+      const problem = { title: 'Bad request', detail: 'Amount exceeds debt' }
+
+      const refundMock = () =>
+        config.name === 'CardPayment'
+          ? mockCardPaymentService.refund
+          : mockRefundService.refundWithCorrelationId
+
+      const loggedReasons = () =>
+        mockPaymentFlowService.logPaymentFlowUpdate.mock.calls
+          .map(([update]) => update.reason)
+          // Apple Pay also announces that the payment started
+          .filter((reason) => reason !== 'payment_started')
+
+      const callFor = (reason: string) =>
+        mockPaymentFlowService.logPaymentFlowUpdate.mock.calls.find(
+          ([update]) => update.reason === reason,
+        ) as never as unknown[]
+
+      beforeEach(() => {
+        mockCardPaymentService.validatePaymentFlow.mockResolvedValue({
+          paymentFlow: debtFlow,
+          catalogItems: [],
+          totalPrice: 1000,
+          paymentStatus: 'unpaid',
+        } as never)
+      })
+
+      it('registers the payment with the card details and the flow', async () => {
+        const { context, saga, orchestrator } = setupSaga()
+        await orchestrator.execute(saga as never, context as never)
+
+        expect(mockCardPaymentService.settleDebt).toHaveBeenCalledWith({
+          paymentFlow: debtFlow,
+          paymentResult: mockPaymentResult,
+          trackingData: context.trackingData,
+          totalPrice: 1000,
+        })
+      })
+
+      it('sends payment_completed, then payment_finalized with the FJS registration', async () => {
+        const { context, saga, orchestrator } = setupSaga()
+        await orchestrator.execute(saga as never, context as never)
+
+        expect(loggedReasons()).toEqual([
+          'payment_completed',
+          'payment_finalized',
+        ])
+        expect(callFor('payment_finalized')).toEqual([
+          expect.objectContaining({
+            type: 'update',
+            metadata: {
+              dateCreated: '2026-10-12T10:00:00',
+            },
+          }),
+          expect.objectContaining({ throwOnError: false }),
+        ])
+      })
+
+      it('refunds the card, closes the flow and reports a rejection', async () => {
+        mockCardPaymentService.settleDebt.mockResolvedValue({
+          type: 'rejected',
+          problem,
+          alreadySettled: false,
+        } as never)
+
+        const { context, saga, orchestrator } = setupSaga()
+
+        await expect(
+          orchestrator.execute(saga as never, context as never),
+        ).rejects.toThrow(DebtPaymentErrorCode.DebtPaymentRejected)
+
+        expect(refundMock()).toHaveBeenCalledTimes(1)
+        expect(context.metadata?.refundSucceeded).toBe(true)
+        expect(
+          mockPaymentFlowService.deleteCardPaymentConfirmationAndFulfillment,
+        ).toHaveBeenCalled()
+        // No payment_completed, and the refund event tells the organisation it failed
+        expect(loggedReasons()).toEqual(['payment_failed'])
+        expect(
+          mockPaymentFlowService.logPaymentFlowUpdate,
+        ).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: 'error',
+            reason: 'payment_failed',
+            metadata: expect.objectContaining({
+              originalError: DebtPaymentErrorCode.DebtPaymentRejected,
+              fjsProblem: problem,
+              // Ties the refund to this payment for the worker
+              correlationId: context.trackingData.correlationId,
+            }),
+          }),
+        )
+      })
+
+      it.each([
+        ['deferred', { type: 'deferred', reason: 'ambiguous' }],
+        ['reconcile', { type: 'reconcile', alreadySettled: false }],
+      ])(
+        'completes the payment without finalizing it when %s',
+        async (_name, outcome) => {
+          mockCardPaymentService.settleDebt.mockResolvedValue(outcome as never)
+
+          const { context, saga, orchestrator } = setupSaga()
+          const result = await orchestrator.execute(
+            saga as never,
+            context as never,
+          )
+
+          expect(result.success).toBe(true)
+          expect(refundMock()).not.toHaveBeenCalled()
+          expect(loggedReasons()).toEqual(['payment_completed'])
+        },
+      )
+
+      it('does not finalize again when the registration was made earlier', async () => {
+        mockCardPaymentService.settleDebt.mockResolvedValue({
+          type: 'registered',
+          dateCreated: '2026-10-12T10:00:00',
+          alreadySettled: true,
+        } as never)
+
+        const { context, saga, orchestrator } = setupSaga()
+        await orchestrator.execute(saga as never, context as never)
+
+        expect(loggedReasons()).toEqual(['payment_completed'])
+      })
+
+      it('does not refund a registered payment when the webhook fails', async () => {
+        mockPaymentFlowService.logPaymentFlowUpdate.mockImplementation(
+          async ({ reason }) => {
+            if (reason !== 'payment_started') {
+              throw new Error('Webhook failed')
+            }
+          },
+        )
+
+        const { context, saga, orchestrator } = setupSaga()
+        const result = await orchestrator.execute(
+          saga as never,
+          context as never,
+        )
+
+        expect(result.success).toBe(true)
+        expect(refundMock()).not.toHaveBeenCalled()
+        expect(
+          mockPaymentFlowService.deleteCardPaymentConfirmationAndFulfillment,
+        ).not.toHaveBeenCalled()
+      })
+
+      it('sends the completed webhook without throwing on errors', async () => {
+        const { context, saga, orchestrator } = setupSaga()
+        await orchestrator.execute(saga as never, context as never)
+
+        expect(callFor('payment_completed')[1]).toEqual(
+          expect.objectContaining({ useRetry: true, throwOnError: false }),
+        )
+      })
+
+      it('refunds when the settlement itself fails', async () => {
+        mockCardPaymentService.settleDebt.mockRejectedValue(
+          new Error('Database error'),
+        )
+
+        const { context, saga, orchestrator } = setupSaga()
+
+        await expect(
+          orchestrator.execute(saga as never, context as never),
+        ).rejects.toThrow('Database error')
+
+        expect(refundMock()).toHaveBeenCalledTimes(1)
+        expect(
+          mockCardPaymentService.findPossibleDebtRegistration,
+        ).toHaveBeenCalledWith(context.paymentFlowId)
+      })
+
+      describe('when the saga fails after a payment that may be registered', () => {
+        const registration = {
+          status: 'pending',
+          hadAmbiguousAttempt: true,
+          isAttemptRunning: true,
+        }
+
+        // Stands in for the step timeout: the attempt is sent and the step still fails
+        beforeEach(() => {
+          mockCardPaymentService.settleDebt.mockRejectedValue(
+            new Error('Step timeout'),
+          )
+        })
+
+        it('keeps the payment: no refund, the fulfillment stays', async () => {
+          mockCardPaymentService.findPossibleDebtRegistration.mockResolvedValue(
+            registration as never,
+          )
+
+          const { context, saga, orchestrator } = setupSaga()
+
+          await expect(
+            orchestrator.execute(saga as never, context as never),
+          ).rejects.toThrow('Step timeout')
+
+          expect(refundMock()).not.toHaveBeenCalled()
+          expect(
+            mockPaymentFlowService.deleteCardPaymentConfirmationAndFulfillment,
+          ).not.toHaveBeenCalled()
+          expect(loggedReasons()).toEqual([])
+          expect(context.metadata).toMatchObject({ debtPaymentKept: true })
+          expect(context.metadata?.refundSucceeded).toBeUndefined()
+          expect(mockLogger.error).toHaveBeenCalledWith(
+            expect.stringContaining('reconcile manually'),
+            expect.objectContaining({
+              debtRefundRefused: true,
+              failedStep: 'SETTLE_DEBT',
+              ...registration,
+            }),
+          )
+        })
+
+        it('asks once for both compensations', async () => {
+          mockCardPaymentService.findPossibleDebtRegistration.mockResolvedValue(
+            registration as never,
+          )
+
+          const { context, saga, orchestrator } = setupSaga()
+          await orchestrator
+            .execute(saga as never, context as never)
+            .catch(() => undefined)
+
+          expect(
+            mockCardPaymentService.findPossibleDebtRegistration,
+          ).toHaveBeenCalledTimes(1)
+        })
+
+        it('keeps the payment when the registration state can not be read', async () => {
+          mockCardPaymentService.findPossibleDebtRegistration.mockRejectedValue(
+            new Error('Database error'),
+          )
+
+          const { context, saga, orchestrator } = setupSaga()
+
+          await expect(
+            orchestrator.execute(saga as never, context as never),
+          ).rejects.toThrow('Step timeout')
+
+          expect(refundMock()).not.toHaveBeenCalled()
+          expect(
+            mockPaymentFlowService.deleteCardPaymentConfirmationAndFulfillment,
+          ).not.toHaveBeenCalled()
+          expect(context.metadata).toMatchObject({ debtPaymentKept: true })
+          expect(mockLogger.error).toHaveBeenCalledWith(
+            expect.stringContaining('could not tell'),
+            expect.objectContaining({
+              debtRefundRefused: true,
+              error: 'Database error',
+            }),
+          )
+        })
+
+        it('refunds a charge flow regardless', async () => {
+          mockCardPaymentService.validatePaymentFlow.mockResolvedValue({
+            paymentFlow: mockPaymentFlow,
+            catalogItems: [],
+            totalPrice: 1000,
+            paymentStatus: 'unpaid',
+          } as never)
+          mockCardPaymentService.findPossibleDebtRegistration.mockResolvedValue(
+            registration as never,
+          )
+          mockPaymentFlowService.logPaymentFlowUpdate.mockImplementation(
+            async (update, logConfig) => {
+              if (
+                logConfig?.throwOnError &&
+                update.reason === 'payment_completed'
+              ) {
+                throw new Error('Webhook failed')
+              }
+            },
+          )
+
+          const { context, saga, orchestrator } = setupSaga()
+
+          await expect(
+            orchestrator.execute(saga as never, context as never),
+          ).rejects.toThrow('Webhook failed')
+
+          expect(refundMock()).toHaveBeenCalledTimes(1)
+          expect(
+            mockCardPaymentService.findPossibleDebtRegistration,
+          ).not.toHaveBeenCalled()
+        })
+      })
+
+      it('refunds without asking FJS when the saga fails before the attempt', async () => {
+        mockCardPaymentService.persistPaymentConfirmation.mockRejectedValue(
+          new Error('Database error'),
+        )
+        mockCardPaymentService.findPossibleDebtRegistration.mockResolvedValue({
+          status: 'pending',
+          hadAmbiguousAttempt: true,
+          isAttemptRunning: true,
+        } as never)
+
+        const { context, saga, orchestrator } = setupSaga()
+
+        await expect(
+          orchestrator.execute(saga as never, context as never),
+        ).rejects.toThrow('Database error')
+
+        expect(refundMock()).toHaveBeenCalledTimes(1)
+        expect(
+          mockCardPaymentService.findPossibleDebtRegistration,
+        ).not.toHaveBeenCalled()
+      })
     })
 
     it('PERSIST compensate runs when NOTIFY fails', async () => {
@@ -256,19 +595,10 @@ describe('Card Payment Saga - Shared Steps', () => {
       ).rejects.toThrow('Webhook failed')
 
       expect(
-        mockPaymentFlowService.deleteCardPaymentConfirmation,
+        mockPaymentFlowService.deleteCardPaymentConfirmationAndFulfillment,
       ).toHaveBeenCalledWith(
         input.paymentFlowId,
         context.trackingData.correlationId,
-      )
-      expect(
-        mockPaymentFlowService.deletePaymentFulfillment,
-      ).toHaveBeenCalledWith(
-        expect.objectContaining({
-          paymentFlowId: input.paymentFlowId,
-          confirmationRefId: expect.any(String),
-          correlationId: context.trackingData.correlationId,
-        }),
       )
     })
   })

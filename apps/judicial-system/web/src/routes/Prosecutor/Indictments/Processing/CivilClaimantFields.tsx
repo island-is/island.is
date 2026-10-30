@@ -21,13 +21,13 @@ import {
   InputNationalId,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
-import {
-  CaseFileCategory,
+import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import type {
   CivilClaimant,
   Defendant,
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   getAvailableDefendantsForCivilClaimant,
   isCivilClaimantDefendantSelectionValid,
@@ -36,12 +36,11 @@ import {
   useCivilClaimants,
   useNationalRegistry,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload'
 
 import { strings } from './processing.strings'
 
-interface UpdateCivilClaimant
-  extends Omit<UpdateCivilClaimantInput, 'caseId'> {}
+type UpdateCivilClaimant = Omit<UpdateCivilClaimantInput, 'caseId'>
 
 export const CivilClaimantFields = ({
   caseId,
@@ -278,7 +277,7 @@ export const CivilClaimantFields = ({
         <Box marginBottom={2}>
           <Checkbox
             name={`civilClaimantNoNationalId-${civilClaimant.id}`}
-            label={formatMessage(strings.civilClaimantNoNationalId)}
+            label={strings.civilClaimantNoNationalId}
             checked={Boolean(civilClaimant.noNationalId)}
             onChange={() => {
               handleSetAndSendCivilClaimantToServer({
@@ -354,7 +353,7 @@ export const CivilClaimantFields = ({
                 })
               }
             >
-              {formatMessage(strings.addDefender)}
+              {strings.addDefender}
             </Button>
           )}
         </Box>
@@ -365,7 +364,7 @@ export const CivilClaimantFields = ({
                 <RadioButton
                   name={lawyerCheckboxId}
                   id={lawyerCheckboxId}
-                  label={formatMessage(strings.lawyer)}
+                  label={strings.lawyer}
                   large
                   backgroundColor="white"
                   onChange={() =>
@@ -381,7 +380,7 @@ export const CivilClaimantFields = ({
                 <RadioButton
                   name={legalProtectorCheckboxId}
                   id={legalProtectorCheckboxId}
-                  label={formatMessage(strings.legalRightsProtector)}
+                  label={strings.legalRightsProtector}
                   large
                   backgroundColor="white"
                   onChange={() =>
@@ -454,7 +453,10 @@ export const CivilClaimantFields = ({
             <Checkbox
               name={`civilClaimantShareFilesWithDefender-${civilClaimant.id}`}
               label={formatMessage(
-                strings.civilClaimantShareFilesWithDefender,
+                {
+                  id: strings.civilClaimantShareFilesWithDefender,
+                  defaultMessage: strings.civilClaimantShareFilesWithDefender,
+                },
                 {
                   defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
                 },
@@ -472,7 +474,11 @@ export const CivilClaimantFields = ({
                 civilClaimant.spokespersonIsLawyer === undefined
               }
               tooltip={formatMessage(
-                strings.civilClaimantShareFilesWithDefenderTooltip,
+                {
+                  id: strings.civilClaimantShareFilesWithDefenderTooltip,
+                  defaultMessage:
+                    strings.civilClaimantShareFilesWithDefenderTooltip,
+                },
                 {
                   defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
                 },

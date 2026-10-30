@@ -28,5 +28,6 @@ import { FileModule } from '../file/file.module'
   ],
   controllers: [FormsController],
   providers: [FormsService],
+  exports: [FormsService],
 })
 export class FormsModule {}

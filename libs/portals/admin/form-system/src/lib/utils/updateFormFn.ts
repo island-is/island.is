@@ -38,18 +38,20 @@ export const updateFormFn = async (
               en: newForm.organizationDisplayName?.en ?? '',
             },
             slug: newForm.slug,
-            invalidationDate:
-              newForm.invalidationDate === null
-                ? undefined
-                : newForm.invalidationDate,
+            invalidationDate: newForm.invalidationDate,
             isTranslated: newForm.isTranslated,
             draftDaysToLive: newForm.draftDaysToLive,
             submissionDaysToLive: newForm.submissionDaysToLive,
             allowProceedOnValidationFail: newForm.allowProceedOnValidationFail,
+            isInaccessible: newForm.isInaccessible,
+            validateEligibility: newForm.validateEligibility,
+            enableApplicationPdfDownload: newForm.enableApplicationPdfDownload,
             hasPayment: newForm.hasPayment,
             zendeskInternal: newForm.zendeskInternal,
             useValidate: newForm.useValidate,
             submissionServiceUrl: newForm.submissionServiceUrl,
+            zendeskBrandId:
+              newForm.organizationZendeskInstance?.zendeskBrandId ?? '',
             hasSummaryScreen: newForm.hasSummaryScreen,
             sectionInfo: {
               title: {

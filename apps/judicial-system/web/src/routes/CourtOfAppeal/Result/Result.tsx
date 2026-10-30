@@ -26,14 +26,17 @@ import {
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  CaseFilesOverview,
+  CaseOverviewHeader,
+} from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
+import {
   useAppealCaseBanner,
   usePoliceDigitalCaseFile,
   useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
-import { CaseFilesOverview, CaseOverviewHeader } from '../components'
 import { result as strings } from './Result.strings'
 
 type modalTypes = 'reopenCase' | 'none'
@@ -79,15 +82,13 @@ const Result = () => {
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <div className={stack({ gap: 5 })}>
             <CaseOverviewHeader
               alerts={
                 targetAppealCase?.requestAppealRulingNotToBePublished
                   ? [
                       {
-                        message: formatMessage(
-                          strings.requestAppealRulingNotToBePublished,
-                        ),
+                        message: strings.requestAppealRulingNotToBePublished,
                       },
                     ]
                   : undefined
@@ -133,7 +134,7 @@ const Result = () => {
             {isIndictment ? (
               <>
                 <Conclusion
-                  title={formatMessage(conclusion.appealTitle)}
+                  title={conclusion.appealTitle}
                   conclusionText={targetAppealCase?.appealConclusion}
                 />
                 <AllIndictmentCaseFiles />
@@ -168,12 +169,12 @@ const Result = () => {
                   )}
                 </Accordion>
                 <Conclusion
-                  title={formatMessage(conclusion.title)}
+                  title={conclusion.title}
                   conclusionText={workingCase.conclusion}
                   judgeName={workingCase.judge?.name}
                 />
                 <Conclusion
-                  title={formatMessage(conclusion.appealTitle)}
+                  title={conclusion.appealTitle}
                   conclusionText={targetAppealCase?.appealConclusion}
                 />
                 <CaseFilesOverview />
@@ -184,8 +185,13 @@ const Result = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            nextButtonText={formatMessage(strings.nextButtonText)}
-            onNextButtonClick={() => setModalVisible('reopenCase')}
+            actions={[
+              {
+                text: strings.nextButtonText,
+                onClick: () => setModalVisible('reopenCase'),
+                testId: 'continueButton',
+              },
+            ]}
           />
         </FormContentContainer>
       </PageLayout>

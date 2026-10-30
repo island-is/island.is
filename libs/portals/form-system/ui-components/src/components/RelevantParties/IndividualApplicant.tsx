@@ -34,7 +34,8 @@ export const IndividualApplicant = ({
 }: Props) => {
   const { locale, formatMessage } = useIntl()
   const { lang } = useLocale()
-  const { control, setValue, unregister, trigger } = useFormContext()
+  const { control, setValue, unregister, trigger, clearErrors } =
+    useFormContext()
 
   const emailFromState = getValue(applicant, 'email') ?? ''
   const phoneNumberFromState = getValue(applicant, 'phoneNumber') ?? ''
@@ -50,7 +51,7 @@ export const IndividualApplicant = ({
         setValue(key, emailFromState, {
           shouldDirty: false,
           shouldTouch: false,
-          shouldValidate: true,
+          shouldValidate: false,
         })
       }
     } else {
@@ -91,26 +92,29 @@ export const IndividualApplicant = ({
             nationalId={nationalId}
             name={getValue(applicant, 'name')}
           />
-          {/* <GridRow>
-            <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
-              <Input
-                label={formatMessage(m.address)}
-                name="address"
-                readOnly
-                value={getValue(applicant, 'address') || ''}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '12/12', '4/12', '4/12']}>
-              <Box marginTop={[2, 2, 0, 0]}>
+
+          {applicant.fieldSettings?.isAddressRequired && (
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
                 <Input
-                  label={formatMessage(m.postalCode)}
-                  name="postalCode"
+                  label={formatMessage(m.address)}
+                  name={`${applicant.id}.address`}
                   readOnly
-                  value={getValue(applicant, 'postalCode') || ''}
+                  value={getValue(applicant, 'address') || ''}
                 />
-              </Box>
-            </GridColumn>
-          </GridRow> */}
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '4/12', '4/12']}>
+                <Box marginTop={[2, 2, 0, 0]}>
+                  <Input
+                    label={formatMessage(m.postalCode)}
+                    name={`${applicant.id}.postalCode`}
+                    readOnly
+                    value={getValue(applicant, 'postalCode') || ''}
+                  />
+                </Box>
+              </GridColumn>
+            </GridRow>
+          )}
 
           {applicant.fieldSettings?.isEmailRequired && (
             <Controller
@@ -134,7 +138,11 @@ export const IndividualApplicant = ({
                   label={formatMessage(m.email)}
                   value={field.value}
                   onChange={(e) => {
-                    field.onChange(e)
+                    setValue(field.name, e.target.value, {
+                      shouldDirty: true,
+                      shouldValidate: false,
+                    })
+                    clearErrors(field.name)
                     if (dispatch) {
                       dispatch({
                         type: 'SET_EMAIL',

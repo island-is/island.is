@@ -213,7 +213,7 @@ interface SitemapNodeProps {
   language: 'is-IS' | 'en'
   status: 'draft' | 'published'
   mode: 'edit' | 'select'
-  selectedNodesRef: React.RefObject<TreeNode[]>
+  selectedNodesRef: React.RefObject<TreeNode[] | null>
   isDraggable?: boolean
 }
 

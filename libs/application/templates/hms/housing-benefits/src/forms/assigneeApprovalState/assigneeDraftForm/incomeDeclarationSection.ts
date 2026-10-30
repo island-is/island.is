@@ -7,6 +7,7 @@ import {
 import * as m from '../../../lib/messages'
 import { nationalIdPreface } from '../../../utils/assigneeUtils'
 import { isAssigneeTaxReturnNotFiled } from '../../../utils/utils'
+import { MAX_TEXT_LENGTH } from '../../../utils/constants'
 
 export const incomeDeclarationSection = buildSection({
   condition: isAssigneeTaxReturnNotFiled,
@@ -33,6 +34,7 @@ export const incomeDeclarationSection = buildSection({
           variant: 'textarea',
           rows: 10,
           required: true,
+          maxLength: MAX_TEXT_LENGTH,
         }),
       ],
     }),

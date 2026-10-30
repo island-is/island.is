@@ -414,7 +414,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     tr:not(:first-child) > td
     `,
     {
-      borderTop: '0 !imporant', // Override TinyMCE
+      borderTop: '0 !important', // Override TinyMCE
     },
   )
   global(

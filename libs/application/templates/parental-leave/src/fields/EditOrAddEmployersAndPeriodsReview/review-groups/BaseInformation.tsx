@@ -1,9 +1,6 @@
 import { Application } from '@island.is/application/types'
-import {
-  DataValue,
-  ReviewGroup,
-  formatPhoneNumber,
-} from '@island.is/application/ui-components'
+import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 import {
   Box,
   GridColumn,
@@ -34,8 +31,11 @@ const BaseInformation: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   application,
   goToScreen,
 }) => {
-  const { applicantEmail, applicantPhoneNumber, language } =
-    getApplicationAnswers(application.answers)
+  const {
+    applicantEmail,
+    applicantPhoneNumber,
+    language,
+  } = getApplicationAnswers(application.answers)
 
   const { applicantName } = getApplicationExternalData(application.externalData)
   const { formatMessage } = useLocale()

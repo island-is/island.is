@@ -44,6 +44,7 @@ export const useEligibility = (
   application: Application,
   is65RenewalRedesignEnabled: boolean,
   isBTempRedesignEnabled: boolean,
+  isBFullRedesignEnabled: boolean,
 ): UseEligibilityResult => {
   const fakeData = getValueViaPath<DrivingLicenseFakeData>(
     application.answers,
@@ -94,7 +95,8 @@ export const useEligibility = (
   const usesNewPhotoSelector =
     applicationFor === BE ||
     (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled) ||
-    (applicationFor === B_TEMP && isBTempRedesignEnabled)
+    (applicationFor === B_TEMP && isBTempRedesignEnabled) ||
+    (applicationFor === B_FULL && isBFullRedesignEnabled)
 
   if (usingFakeData) {
     let hasPhoto: boolean
@@ -129,6 +131,7 @@ export const useEligibility = (
         hasPhoto,
         is65RenewalRedesignEnabled,
         isBTempRedesignEnabled,
+        isBFullRedesignEnabled,
       ),
     }
   }
@@ -233,6 +236,27 @@ export const useEligibility = (
   }
 
   if (application.answers.applicationFor === B_TEMP && isBTempRedesignEnabled) {
+    const hasUsablePhoto = computeUsablePhoto()
+
+    return {
+      loading: loading,
+      eligibility: {
+        isEligible: loading
+          ? undefined
+          : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
+            hasUsablePhoto,
+        requirements: [
+          ...eligibility,
+          {
+            key: RequirementKey.hasNoPhoto,
+            requirementMet: hasUsablePhoto,
+          },
+        ],
+      },
+    }
+  }
+
+  if (application.answers.applicationFor === B_FULL && isBFullRedesignEnabled) {
     const hasUsablePhoto = computeUsablePhoto()
 
     return {

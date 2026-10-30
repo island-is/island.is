@@ -5,6 +5,7 @@ import {
   InputError,
   RadioButton,
   Text,
+  useBreakpoint,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch, useEffect, useMemo } from 'react'
@@ -23,6 +24,7 @@ interface Props {
 export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
   const { formatMessage, lang } = useLocale()
   const { control, trigger } = useFormContext()
+  const { lg } = useBreakpoint()
 
   const radioButtons = useMemo(
     () => (item.list as FormSystemListItem[]) ?? [],
@@ -91,7 +93,7 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
 
               return (
                 <Box
-                  width="half"
+                  style={{ width: lg ? '50%' : '100%' }}
                   padding={1}
                   onClick={() => {
                     field.onChange(rbValue)

@@ -1,7 +1,5 @@
 import { defineConfig } from '@island.is/nest/config'
 
-import { splitStringByComma } from '@island.is/judicial-system/formatters'
-
 export const caseModuleConfig = defineConfig({
   name: 'CaseModule',
   load: (env) => ({
@@ -9,6 +7,5 @@ export const caseModuleConfig = defineConfig({
       (env.optional('ROBOT_MESSAGE_DELAY') ?? '300') // 5 minutes, convert to number with +
     ),
     clientUrl: env.required('CLIENT_URL', 'http://localhost:4200'),
-    hiddenFeatures: splitStringByComma(env.optional('HIDDEN_FEATURES')),
   }),
 })

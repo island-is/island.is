@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 
 import {
   Box,
@@ -7,20 +7,21 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Case,
-  CaseState,
+import type {
   Defendant,
-  SubpoenaType as SubpoenaTypeEnum,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-
-import * as styles from '../../Indictments/Subpoena/Subpoena.css'
+import {
+  CaseState,
+  SubpoenaType as SubpoenaTypeEnum,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import * as styles from '@island.is/judicial-system-web/src/routes/Court/Indictments/Subpoena/Subpoena.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 interface SubpoenaTypeProps {
   subpoenaItems: {
@@ -31,7 +32,7 @@ interface SubpoenaTypeProps {
     children?: ReactNode
     toggleNewAlternativeService?: () => void
   }[]
-  workingCase: Case
+  workingCase: WorkingCase
   required?: boolean
 }
 
@@ -51,7 +52,7 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
           }
         >
           <Box marginBottom={item.children ? 2 : 0}>
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <Text as="h4" variant="h4">
                 {item.defendant.name}
               </Text>
@@ -68,7 +69,14 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
                   item.toggleNewAlternativeService &&
                     item.toggleNewAlternativeService()
 
-                  item.onUpdate({ caseId, defendantId, isAlternativeService })
+                  item.onUpdate({
+                    caseId,
+                    defendantId,
+                    isAlternativeService,
+                    // A subpoena type does not apply when the indictment
+                    // is served by other means
+                    ...(isAlternativeService ? { subpoenaType: null } : {}),
+                  })
                 }}
                 tooltip={
                   'Ef ákæra og fyrirkall eru birt utan gáttarinnar, t.d. í þinghaldi eða í Lögbirtingablaðinu, þá er hægt að haka í þennan reit til að komast áfram án þess að gefa út fyrirkall í gegnum Réttarvörslugátt.'

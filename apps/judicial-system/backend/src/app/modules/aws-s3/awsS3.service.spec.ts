@@ -6,22 +6,22 @@ import { CaseType } from '@island.is/judicial-system/types'
 import { awsS3ModuleConfig } from './awsS3.config'
 import { AwsS3Service } from './awsS3.service'
 
-const mockCopyObject = jest
-  .fn()
-  .mockReturnValue({ promise: () => Promise.resolve({}) })
+const mockSend = jest.fn().mockResolvedValue({})
 
-jest.mock('aws-sdk', () => ({
-  S3: jest.fn().mockImplementation(() => ({
-    copyObject: mockCopyObject,
-  })),
-}))
+jest.mock('@aws-sdk/client-s3', () => {
+  const actual = jest.requireActual('@aws-sdk/client-s3')
+  return {
+    ...actual,
+    S3Client: jest.fn().mockImplementation(() => ({ send: mockSend })),
+  }
+})
 
 describe('AwsS3Service - copyObject', () => {
   const bucket = 'test-bucket'
   let service: AwsS3Service
 
   beforeEach(() => {
-    mockCopyObject.mockClear()
+    mockSend.mockClear()
 
     service = new AwsS3Service(
       { region: 'eu-west-1', bucket } as ConfigType<typeof awsS3ModuleConfig>,
@@ -35,8 +35,8 @@ describe('AwsS3Service - copyObject', () => {
 
     await service.copyObject(CaseType.INDICTMENT, sourceKey, destKey)
 
-    expect(mockCopyObject).toHaveBeenCalledTimes(1)
-    const arg = mockCopyObject.mock.calls[0][0]
+    expect(mockSend).toHaveBeenCalledTimes(1)
+    const arg = mockSend.mock.calls[0][0].input
 
     // The bucket and structural slashes are preserved, but each segment is
     // URL-encoded so the source object resolves (space -> %20, ó -> %C3%B3).
@@ -58,7 +58,7 @@ describe('AwsS3Service - copyObject', () => {
       'newCaseId/uuid2/file.pdf',
     )
 
-    const arg = mockCopyObject.mock.calls[0][0]
+    const arg = mockSend.mock.calls[0][0].input
 
     expect(arg.CopySource).toBe('test-bucket/indictments/caseId/uuid/file.pdf')
   })

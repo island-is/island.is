@@ -42,6 +42,8 @@ jobs:
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml
     secrets: inherit
+    with:
+      runner_label: arc-mergequeue
   prepare:
     permissions:
       contents: 'read'
@@ -52,14 +54,15 @@ jobs:
       run_merge_queue: true
       force_all_to_be_affected: ${{ github.event_name == 'workflow_dispatch' }}
       main_branch: ${{ github.event.merge_group.base_ref || github.ref_name }}
+      runner_label: arc-mergequeue
     needs:
       - pre-checks
   docker-build:
     needs:
       - prepare
       - pre-checks
-    runs-on: arc-shared
-    if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS }}
+    runs-on: arc-mergequeue
+    if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
     permissions:
       actions: read
       contents: read
@@ -193,13 +196,15 @@ jobs:
     uses: ./.github/workflows/e2e.yml
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    # Not run again for a release that reuses every image of its pre-release
+    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.MQ_ALL_IMAGES_REUSED != 'true' }}
     secrets: inherit
     with:
       e2e_build_id: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
       nx_base: ${{ needs.prepare.outputs.NX_BASE }}
       nx_head: ${{ needs.prepare.outputs.NX_HEAD }}
       affected_projects: ${{ matrix.projects }}
+      runner_label: arc-mergequeue
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
@@ -207,8 +212,9 @@ jobs:
   tests:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-shared
+    # Not run again for a release that reuses every image of its pre-release
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.MQ_ALL_IMAGES_REUSED != 'true' }}
+    runs-on: arc-mergequeue
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -235,52 +241,101 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
+  typecheck:
+    needs:
+      - prepare
+    # Not run again for a release that reuses every image of its pre-release
+    if: ${{ needs.prepare.outputs.MQ_ALL_IMAGES_REUSED != 'true' }}
+    permissions:
+      contents: 'read'
+    runs-on: arc-mergequeue
+    timeout-minutes: 35
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch NX_BASE commit
+        run: git fetch --depth=1 origin ${{ needs.prepare.outputs.NX_BASE }}
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      # The vite builds do not type check (unlike the webpack builds they
+      # replaced), so projects with a typecheck target are checked here.
+      - name: Type checking
+        run: yarn nx affected --target=typecheck
+
   success:
-    runs-on: arc-shared
+    runs-on: arc-mergequeue
     if: ${{ !cancelled() }}
     needs:
       - prepare
       - tests
+      - typecheck
       - docker-build
+    env:
+      # There is something to deploy: images were built and/or reused
+      HAS_DOCKER_DATA: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" && ${{ needs.tests.result }} != "abandoned" && ${{ needs.tests.result }} != "cancelled" ]] || exit 1'
+      - name: Check typecheck success
+        env:
+          RESULT: ${{ needs.typecheck.result }}
+          ALL_IMAGES_REUSED: ${{ needs.prepare.outputs.MQ_ALL_IMAGES_REUSED }}
+        run: |
+          # Must succeed, and may only be skipped when every image is reused
+          [[ "$RESULT" == "success" || ( "$RESULT" == "skipped" && "$ALL_IMAGES_REUSED" == "true" ) ]] || exit 1
       - name: Check build success
         run: '[[ ${{ needs.docker-build.result }} != "failure" && ${{ needs.docker-build.result }} != "abandoned" && ${{ needs.docker-build.result }} != "cancelled" ]] || exit 1'
+      - name: Summary of reused release
+        if: ${{ needs.prepare.outputs.MQ_ALL_IMAGES_REUSED == 'true' }}
+        env:
+          REUSED_DOCKER_DATA: ${{ needs.prepare.outputs.MQ_REUSED_DOCKER_DATA }}
+        run: |
+          echo "All $(echo "$REUSED_DOCKER_DATA" | jq 'length') images were reused from the pre-release of this commit. Tests, typecheck, e2e and docker builds were not run again." >> "$GITHUB_STEP_SUMMARY"
       - name: Get docker-build output
         uses: cloudposse/github-action-matrix-outputs-read@v1
         id: read
+        if: ${{ needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
         with:
           matrix-step-name: docker-build
       - name: checkout
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ env.HAS_DOCKER_DATA == 'true' }}
         uses: actions/checkout@v4
 
       - name: Record deploy start time
         id: dora-start
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ env.HAS_DOCKER_DATA == 'true' }}
         uses: ./.github/actions/dora-deployment
         with:
           mode: start
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ env.HAS_DOCKER_DATA == 'true' }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ env.HAS_DOCKER_DATA == 'true' }}
       - name: Prepare artifact to be uploaded
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ env.HAS_DOCKER_DATA == 'true' }}
         env:
           JSON_DATA: ${{ steps.read.outputs.result }}
+          REUSED_DOCKER_DATA: ${{ needs.prepare.outputs.MQ_REUSED_DOCKER_DATA }}
         run: |
           node scripts/ci/docker/write-data.mjs
       - name: Get manifest data
         id: manifest
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ env.HAS_DOCKER_DATA == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -288,7 +343,7 @@ jobs:
           node scripts/ci/docker/get-data.mjs
       - name: Update helm-values repository
         uses: ./.github/actions/update-helm-values
-        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' && needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' && env.HAS_DOCKER_DATA == 'true' }}
         with:
           files: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
           ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
@@ -335,7 +390,7 @@ jobs:
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: arc-shared
+    runs-on: arc-mergequeue
     env:
       CHECK: 'false'
     steps:

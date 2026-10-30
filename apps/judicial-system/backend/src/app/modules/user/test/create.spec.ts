@@ -1,11 +1,14 @@
+import { UniqueConstraintError } from 'sequelize'
 import { v4 as uuid } from 'uuid'
+
+import { ConflictException } from '@nestjs/common'
 
 import { UserRole } from '@island.is/judicial-system/types'
 
 import { createTestingUserModule } from './createTestingUserModule'
 
 import { randomEnum } from '../../../test'
-import { User } from '../../repository'
+import { User, UserRepositoryService } from '../../repository'
 
 interface Then {
   result: User
@@ -24,13 +27,14 @@ describe('UserController - Create', () => {
   const institutionId = uuid()
   const active = true
   const canConfirmIndictment = false
-  let mockUserModel: typeof User
+  let mockUserRepositoryService: UserRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { userModel, userController } = await createTestingUserModule()
+    const { userRepositoryService, userController } =
+      await createTestingUserModule()
 
-    mockUserModel = userModel
+    mockUserRepositoryService = userRepositoryService
 
     givenWhenThen = async () => {
       const then = {} as Then
@@ -59,14 +63,14 @@ describe('UserController - Create', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockUserModel.create as jest.Mock
+      const mockCreate = mockUserRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(user)
 
       then = await givenWhenThen()
     })
 
     it('should return the created user', () => {
-      expect(mockUserModel.create).toHaveBeenCalledWith({
+      expect(mockUserRepositoryService.create).toHaveBeenCalledWith({
         nationalId,
         name,
         title,
@@ -78,6 +82,40 @@ describe('UserController - Create', () => {
         canConfirmIndictment,
       })
       expect(then.result).toBe(user)
+    })
+  })
+
+  describe('user already exists', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockUserRepositoryService.create as jest.Mock
+      mockCreate.mockRejectedValueOnce(new UniqueConstraintError({}))
+
+      then = await givenWhenThen()
+    })
+
+    it('should throw a conflict exception', () => {
+      expect(then.error).toBeInstanceOf(ConflictException)
+      expect(then.error.message).toBe(
+        'A user with this national id, role and institution already exists',
+      )
+    })
+  })
+
+  describe('user creation fails', () => {
+    const error = new Error('database error')
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockUserRepositoryService.create as jest.Mock
+      mockCreate.mockRejectedValueOnce(error)
+
+      then = await givenWhenThen()
+    })
+
+    it('should rethrow the error', () => {
+      expect(then.error).toBe(error)
     })
   })
 })

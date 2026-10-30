@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -15,6 +15,7 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { AttachRulingOrderDocumentInput } from './dto/attachRulingOrderDocument.input'
 import { ConfirmRulingOrderInput } from './dto/confirmRulingOrder.input'
 import { CreateCivilClaimantFileInput } from './dto/createCivilClaimantFile.input'
 import { CreateCriminalRecordInput } from './dto/createCriminalRecord.input'
@@ -41,6 +42,7 @@ export class FileResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Mutation(() => PresignedPost)
@@ -48,8 +50,6 @@ export class FileResolver {
     @Args('input', { type: () => CreatePresignedPostInput })
     input: CreatePresignedPostInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<PresignedPost> {
     const { caseId, ...createPresignedPost } = input
 
@@ -58,7 +58,7 @@ export class FileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_PRESIGNED_POST,
-      backendService.createCasePresignedPost(caseId, createPresignedPost),
+      this.backendService.createCasePresignedPost(caseId, createPresignedPost),
       caseId,
     )
   }
@@ -68,8 +68,6 @@ export class FileResolver {
     @Args('input', { type: () => CreateFileInput })
     input: CreateFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CaseFile> {
     const { caseId, ...createFile } = input
 
@@ -78,7 +76,7 @@ export class FileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_FILE,
-      backendService.createCaseFile(caseId, createFile),
+      this.backendService.createCaseFile(caseId, createFile),
       (file) => file.id,
     )
   }
@@ -88,8 +86,6 @@ export class FileResolver {
     @Args('input', { type: () => CreateDefendantFileInput })
     input: CreateDefendantFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CaseFile> {
     const { caseId, defendantId, ...createFile } = input
 
@@ -100,7 +96,11 @@ export class FileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_FILE,
-      backendService.createDefendantCaseFile(caseId, createFile, defendantId),
+      this.backendService.createDefendantCaseFile(
+        caseId,
+        createFile,
+        defendantId,
+      ),
       (file) => file.id,
     )
   }
@@ -110,8 +110,6 @@ export class FileResolver {
     @Args('input', { type: () => CreateCriminalRecordInput })
     input: CreateCriminalRecordInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<UploadCriminalRecordFileResponse> {
     const { caseId, defendantId } = input
     this.logger.debug(
@@ -121,7 +119,7 @@ export class FileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPLOAD_CRIMINAL_RECORD_CASE_FILE,
-      backendService.uploadCriminalRecordFile(caseId, defendantId),
+      this.backendService.uploadCriminalRecordFile(caseId, defendantId),
       input.caseId,
     )
   }
@@ -131,8 +129,6 @@ export class FileResolver {
     @Args('input', { type: () => CreateCivilClaimantFileInput })
     input: CreateCivilClaimantFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CaseFile> {
     const { caseId, civilClaimantId, ...createFile } = input
 
@@ -143,7 +139,7 @@ export class FileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_FILE,
-      backendService.createCivilClaimantCaseFile(
+      this.backendService.createCivilClaimantCaseFile(
         caseId,
         createFile,
         civilClaimantId,
@@ -157,8 +153,6 @@ export class FileResolver {
     @Args('input', { type: () => GetSignedUrlInput })
     input: GetSignedUrlInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<SignedUrl> {
     const { caseId, id, mergedCaseId } = input
 
@@ -167,7 +161,7 @@ export class FileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_SIGNED_URL,
-      backendService.getCaseFileSignedUrl(caseId, id, mergedCaseId),
+      this.backendService.getCaseFileSignedUrl(caseId, id, mergedCaseId),
       id,
     )
   }
@@ -177,8 +171,6 @@ export class FileResolver {
     @Args('input', { type: () => RejectFileInput })
     input: RejectFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CaseFile> {
     const { caseId, id } = input
 
@@ -187,7 +179,7 @@ export class FileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.REJECT_FILE,
-      backendService.rejectCaseFile(caseId, id),
+      this.backendService.rejectCaseFile(caseId, id),
       id,
     )
   }
@@ -197,8 +189,6 @@ export class FileResolver {
     @Args('input', { type: () => ConfirmRulingOrderInput })
     input: ConfirmRulingOrderInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CaseFile> {
     const { caseId, id } = input
 
@@ -207,7 +197,27 @@ export class FileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CONFIRM_RULING_ORDER,
-      backendService.confirmRulingOrder(caseId, id),
+      this.backendService.confirmRulingOrder(caseId, id),
+      id,
+    )
+  }
+
+  @Mutation(() => CaseFile)
+  attachRulingOrderDocument(
+    @Args('input', { type: () => AttachRulingOrderDocumentInput })
+    input: AttachRulingOrderDocumentInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<CaseFile> {
+    const { caseId, id, ...attachDocument } = input
+
+    this.logger.debug(
+      `Attaching a document to ruling order ${id} of case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.ATTACH_RULING_ORDER_DOCUMENT,
+      this.backendService.attachRulingOrderDocument(caseId, id, attachDocument),
       id,
     )
   }
@@ -217,8 +227,6 @@ export class FileResolver {
     @Args('input', { type: () => DeleteFileInput })
     input: DeleteFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<DeleteFileResponse> {
     const { caseId, id } = input
 
@@ -227,7 +235,7 @@ export class FileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.DELETE_FILE,
-      backendService.deleteCaseFile(caseId, id),
+      this.backendService.deleteCaseFile(caseId, id),
       id,
     )
   }
@@ -237,8 +245,6 @@ export class FileResolver {
     @Args('input', { type: () => UploadFileToCourtInput })
     input: UploadFileToCourtInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<UploadFileToCourtResponse> {
     const { caseId, id } = input
 
@@ -247,7 +253,7 @@ export class FileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPLOAD_FILE_TO_COURT,
-      backendService.uploadCaseFileToCourt(caseId, id),
+      this.backendService.uploadCaseFileToCourt(caseId, id),
       id,
     )
   }
@@ -257,8 +263,6 @@ export class FileResolver {
     @Args('input', { type: () => UpdateFilesInput })
     input: UpdateFilesInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<UpdateFilesResponse> {
     const { caseId, files } = input
 
@@ -267,7 +271,7 @@ export class FileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_FILES,
-      backendService.updateFiles(caseId, files),
+      this.backendService.updateFiles(caseId, files),
       (response) => response.caseFiles.map((f) => f.id),
     )
   }

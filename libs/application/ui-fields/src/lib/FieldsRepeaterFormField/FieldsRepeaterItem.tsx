@@ -78,7 +78,9 @@ export const Item = ({
 }: ItemFieldProps) => {
   const { formatMessage, lang } = useLocale()
   const { setValue, getValues, control, clearErrors } = useFormContext()
-  const prevWatchedValuesRef = useRef<string | (string | undefined)[]>()
+  const prevWatchedValuesRef = useRef<string | (string | undefined)[]>(
+    undefined,
+  )
   const apolloClient = useApolloClient()
 
   const getSpan = (component: string, width: string) => {
@@ -317,6 +319,13 @@ export const Item = ({
     labelVal = label
   }
 
+  let placeholderVal: StaticText
+  if (typeof placeholder === 'function') {
+    placeholderVal = placeholder(application, activeValues)
+  } else {
+    placeholderVal = placeholder
+  }
+
   const setOnChangeFunc =
     setOnChange &&
     (async (optionValue: RepeaterOptionValue) => {
@@ -338,7 +347,7 @@ export const Item = ({
     selectAsyncProps = {
       id: id,
       title: labelVal,
-      placeholder: placeholder,
+      placeholder: placeholderVal,
       type: FieldTypes.ASYNC_SELECT,
       component: FieldComponents.ASYNC_SELECT,
       children: undefined,
@@ -551,7 +560,7 @@ export const Item = ({
             }}
             application={application}
             large={true}
-            placeholder={formatText(placeholder, application, formatMessage)}
+            placeholder={formatText(placeholderVal, application, formatMessage)}
             clearOnChange={clearOnChangeVal}
             clearOnChangeDefaultValue={clearOnChangeDefaultValue}
             setOnChange={setOnChangeFunc}

@@ -30,11 +30,13 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
+import { getOrCreateTransaction } from '../../middleware'
 import {
   CaseReadGuard,
   CaseTypeGuard,
   CaseWriteGuard,
   CurrentCase,
+  LimitedAccessCaseExistsForUpdateGuard,
   LimitedAccessCaseExistsGuard,
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
@@ -44,6 +46,7 @@ import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { DeleteAppealCaseFileGuard } from './guards/deleteAppealCaseFile.guard'
 import { LimitedAccessCreateCaseFileGuard } from './guards/limitedAccessCreateCaseFile.guard'
 import { LimitedAccessCreateCivilClaimantCaseFileGuard } from './guards/limitedAccessCreateCivilClaimantCaseFile.guard'
 import { LimitedAccessCreateDefendantCaseFileGuard } from './guards/limitedAccessCreateDefendantCaseFile.guard'
@@ -55,9 +58,14 @@ import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { FileService } from './file.service'
 
+// Each route names its own case-exists guard: the three that create a file
+// decide against a case row locked for the request, and the others - the
+// presigned post, the signed url and the delete, none of which runs in a
+// transaction - keep the plain read. The roles rules are bare, so RolesGuard
+// stays at class level ahead of either read.
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('files')
-@UseGuards(JwtAuthUserGuard, RolesGuard, LimitedAccessCaseExistsGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard)
 export class LimitedAccessFileController {
   constructor(
     private readonly fileService: FileService,
@@ -66,6 +74,7 @@ export class LimitedAccessFileController {
   ) {}
 
   @UseGuards(
+    LimitedAccessCaseExistsGuard,
     new CaseTypeGuard([
       ...restrictionCases,
       ...investigationCases,
@@ -90,6 +99,7 @@ export class LimitedAccessFileController {
   }
 
   @UseGuards(
+    LimitedAccessCaseExistsForUpdateGuard,
     new CaseTypeGuard([
       ...restrictionCases,
       ...investigationCases,
@@ -104,7 +114,7 @@ export class LimitedAccessFileController {
     type: CaseFile,
     description: 'Creates a new case file',
   })
-  createCaseFile(
+  async createCaseFile(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
@@ -112,12 +122,22 @@ export class LimitedAccessFileController {
   ): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.createCaseFile(theCase, createFile, user, transaction),
+    // The transaction LimitedAccessCaseExistsForUpdateGuard opened, holding
+    // the lock on this case row. Opening one here instead would block on
+    // that lock while it waits for this handler to return, which is a
+    // deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.createCaseFile(
+      theCase,
+      createFile,
+      user,
+      transaction,
     )
   }
 
   @UseGuards(
+    LimitedAccessCaseExistsForUpdateGuard,
     new CaseTypeGuard([...indictmentCases]),
     CaseWriteGuard,
     DefendantExistsGuard,
@@ -129,7 +149,7 @@ export class LimitedAccessFileController {
     type: CaseFile,
     description: 'Creates a new case file for a defendant',
   })
-  createDefendantCaseFile(
+  async createDefendantCaseFile(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @CurrentHttpUser() user: User,
@@ -140,17 +160,20 @@ export class LimitedAccessFileController {
       `Creating a file for case ${caseId} and defendant ${defendantId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.createCaseFile(
-        theCase,
-        { ...createFile, defendantId },
-        user,
-        transaction,
-      ),
+    // The transaction LimitedAccessCaseExistsForUpdateGuard opened - see
+    // createCaseFile.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.createCaseFile(
+      theCase,
+      { ...createFile, defendantId },
+      user,
+      transaction,
     )
   }
 
   @UseGuards(
+    LimitedAccessCaseExistsForUpdateGuard,
     new CaseTypeGuard([...indictmentCases]),
     CaseWriteGuard,
     CivilClaimantExistsGuard,
@@ -162,7 +185,7 @@ export class LimitedAccessFileController {
     type: CaseFile,
     description: 'Creates a new case file for a civil claimant',
   })
-  createCivilClaimantCaseFile(
+  async createCivilClaimantCaseFile(
     @Param('caseId') caseId: string,
     @Param('civilClaimantId') civilClaimantId: string,
     @CurrentHttpUser() user: User,
@@ -173,17 +196,20 @@ export class LimitedAccessFileController {
       `Creating a file for case ${caseId} and civil claimant ${civilClaimantId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.createCaseFile(
-        theCase,
-        { ...createFile, civilClaimantId },
-        user,
-        transaction,
-      ),
+    // The transaction LimitedAccessCaseExistsForUpdateGuard opened - see
+    // createCaseFile.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.createCaseFile(
+      theCase,
+      { ...createFile, civilClaimantId },
+      user,
+      transaction,
     )
   }
 
   @UseGuards(
+    LimitedAccessCaseExistsGuard,
     CaseReadGuard,
     MergedCaseExistsGuard,
     SplitCaseFileExistsGuard,
@@ -209,6 +235,7 @@ export class LimitedAccessFileController {
   }
 
   @UseGuards(
+    LimitedAccessCaseExistsGuard,
     new CaseTypeGuard([
       ...restrictionCases,
       ...investigationCases,
@@ -217,6 +244,7 @@ export class LimitedAccessFileController {
     CaseWriteGuard,
     CaseFileExistsGuard,
     LimitedAccessDeleteCaseFileGuard,
+    DeleteAppealCaseFileGuard,
   )
   @RolesRules(defenderRule)
   @Delete('file/:fileId')

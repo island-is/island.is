@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-rsk-customs-calculator',
   preset: './jest.preset.js',
   rootDir: '../../../..',

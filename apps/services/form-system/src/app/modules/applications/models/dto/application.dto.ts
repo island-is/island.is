@@ -14,6 +14,9 @@ export class ApplicationDto {
   @ApiPropertyOptional()
   nationalId?: string
 
+  @ApiPropertyOptional()
+  actorNationalId?: string
+
   @ApiPropertyOptional({ type: LanguageType })
   organizationName?: LanguageType
 
@@ -46,6 +49,9 @@ export class ApplicationDto {
 
   @ApiPropertyOptional()
   status?: string
+
+  @ApiPropertyOptional()
+  pruned?: boolean
 
   @ApiPropertyOptional()
   draftFinishedSteps?: number

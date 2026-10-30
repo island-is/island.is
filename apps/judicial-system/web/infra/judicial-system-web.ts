@@ -13,8 +13,13 @@ export const serviceSetup = (services: {
         prod: 'https://rettarvorslugatt.island.is',
       },
       INTERNAL_API_URL: ref((h) => `http://${h.svc(services.api)}`),
+      ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
+      // The api routes authenticate the session cookie themselves, so they
+      // need the secret judicial-system-api signs it with.
+      AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
+      DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
       NATIONAL_REGISTRY_API_KEY:
         '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY',
       LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY',

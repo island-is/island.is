@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Box, GridRow, Input } from '@island.is/island-ui/core'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { m } from '../../lib/messages'
 import DoubleColumnRow from '../DoubleColumnRow'
 

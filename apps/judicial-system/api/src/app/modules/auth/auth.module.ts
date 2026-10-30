@@ -1,9 +1,7 @@
-import { redisInsStore } from 'cache-manager-ioredis-yet'
-
 import { CacheModule as NestCacheModule } from '@nestjs/cache-manager'
 import { Module } from '@nestjs/common'
 
-import { createRedisCluster } from '@island.is/cache'
+import { createRedisCacheStores } from '@island.is/cache'
 import { type ConfigType } from '@island.is/nest/config'
 
 import { BackendModule } from '../backend/backend.module'
@@ -23,8 +21,8 @@ import { TokenStorageService } from './tokenStorage.service'
         const hasRedis = redis.nodes.length > 0 && redis.name
 
         return {
-          store: hasRedis
-            ? redisInsStore(createRedisCluster(redis))
+          stores: hasRedis
+            ? createRedisCacheStores(redis, { legacyKeyFallback: true })
             : undefined,
         }
       },

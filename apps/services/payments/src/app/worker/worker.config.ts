@@ -5,6 +5,8 @@ import { defineConfig } from '@island.is/nest/config'
 const schema = z.object({
   workerMaxFailureEventsPerFlow: z.number().int().positive(),
   workerMinutesToWaitBeforeCreatingFjsCharge: z.number().int().positive(),
+  workerMinutesToWaitBeforeSettlingDebt: z.number().int().positive(),
+  workerRetryDelayMinutesAfterFailure: z.number().int().positive(),
 })
 
 export type WorkerModuleConfigType = z.infer<typeof schema>
@@ -19,5 +21,12 @@ export const WorkerModuleConfig = defineConfig({
       env.optionalJSON(
         'PAYMENTS_WORKER_MINUTES_TO_WAIT_BEFORE_CREATING_FJS_CHARGE',
       ) ?? 5,
+    workerMinutesToWaitBeforeSettlingDebt:
+      env.optionalJSON(
+        'PAYMENTS_WORKER_MINUTES_TO_WAIT_BEFORE_SETTLING_DEBT',
+      ) ?? 1,
+    workerRetryDelayMinutesAfterFailure:
+      env.optionalJSON('PAYMENTS_WORKER_RETRY_DELAY_MINUTES_AFTER_FAILURE') ??
+      60,
   }),
 })

@@ -15,10 +15,6 @@ import {
   VehicleCodetablesClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-codetables'
 import {
-  VehicleServiceFjsV1ClientModule,
-  VehicleServiceFjsV1ClientConfig,
-} from '@island.is/clients/vehicle-service-fjs-v1'
-import {
   VehiclesClientModule,
   VehiclesClientConfig,
 } from '@island.is/clients/vehicles'
@@ -34,7 +30,6 @@ import { PaymentModule } from '@island.is/application/api/payment'
     VehicleOwnerChangeClientModule,
     VehicleOperatorsClientModule,
     VehicleCodetablesClientModule,
-    VehicleServiceFjsV1ClientModule,
     VehiclesClientModule,
     VehiclesMileageClientModule,
     PaymentModule,
@@ -44,7 +39,6 @@ import { PaymentModule } from '@island.is/application/api/payment'
         VehicleOwnerChangeClientConfig,
         VehicleOperatorsClientConfig,
         VehicleCodetablesClientConfig,
-        VehicleServiceFjsV1ClientConfig,
         VehiclesClientConfig,
         VehiclesMileageClientConfig,
       ],

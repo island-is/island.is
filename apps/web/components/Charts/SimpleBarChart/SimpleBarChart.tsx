@@ -39,10 +39,8 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
   return (
     <Box width="full" height="full">
       <YAxisLabel label={parsedDatakeys.yAxis?.label} />
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height={380}>
         <BarChart
-          width={20}
-          height={150}
           data={parsedData}
           margin={{
             top: 30,

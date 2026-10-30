@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'api-domains-housing-benefit-calculator',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

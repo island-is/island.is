@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -30,6 +30,7 @@ export class PoliceDigitalCaseFileResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Query(() => [PoliceDigitalCaseFile], { nullable: true })
@@ -37,8 +38,6 @@ export class PoliceDigitalCaseFileResolver {
     @Args('input', { type: () => PoliceDigitalCaseFilesQueryInput })
     input: PoliceDigitalCaseFilesQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<PoliceDigitalCaseFile[]> {
     this.logger.debug(
       `Syncing and getting police digital case files for case ${input.caseId}`,
@@ -47,7 +46,7 @@ export class PoliceDigitalCaseFileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_POLICE_DIGITAL_CASE_FILES,
-      backendService.getPoliceDigitalCaseFiles(input.caseId),
+      this.backendService.getPoliceDigitalCaseFiles(input.caseId),
       input.caseId,
     )
   }
@@ -57,8 +56,6 @@ export class PoliceDigitalCaseFileResolver {
     @Args('input', { type: () => PoliceDigitalCaseFileTokenUrlInput })
     input: PoliceDigitalCaseFileTokenUrlInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<string> {
     this.logger.debug(
       `Getting token URL for police digital case file ${input.policeDigitalFileId} in case ${input.caseId}`,
@@ -67,7 +64,7 @@ export class PoliceDigitalCaseFileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_POLICE_DIGITAL_CASE_FILE_TOKEN_URL,
-      backendService.getPoliceDigitalCaseFileTokenUrl(
+      this.backendService.getPoliceDigitalCaseFileTokenUrl(
         input.caseId,
         input.policeDigitalFileId,
       ),
@@ -80,8 +77,6 @@ export class PoliceDigitalCaseFileResolver {
     @Args('input', { type: () => UpdatePoliceDigitalCaseFilesInput })
     input: UpdatePoliceDigitalCaseFilesInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<UpdatePoliceDigitalCaseFilesResponse> {
     const { caseId, files } = input
 
@@ -92,9 +87,9 @@ export class PoliceDigitalCaseFileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_POLICE_DIGITAL_CASE_FILES,
-      backendService
+      this.backendService
         .updatePoliceDigitalCaseFiles(caseId, files)
-        .then(() => backendService.getPoliceDigitalCaseFiles(caseId))
+        .then(() => this.backendService.getPoliceDigitalCaseFiles(caseId))
         .then((policeDigitalCaseFiles) => ({ policeDigitalCaseFiles })),
       caseId,
     )
@@ -105,8 +100,6 @@ export class PoliceDigitalCaseFileResolver {
     @Args('input', { type: () => DeletePoliceDigitalCaseFileInput })
     input: DeletePoliceDigitalCaseFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<DeleteFileResponse> {
     const { caseId, fileId } = input
 
@@ -117,7 +110,7 @@ export class PoliceDigitalCaseFileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.DELETE_POLICE_DIGITAL_CASE_FILE,
-      backendService.deletePoliceDigitalCaseFile(caseId, fileId),
+      this.backendService.deletePoliceDigitalCaseFile(caseId, fileId),
       fileId,
     )
   }

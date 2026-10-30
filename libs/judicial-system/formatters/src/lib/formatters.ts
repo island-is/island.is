@@ -33,6 +33,26 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
   }
 }
 
+// The name a ruling order is given when it is pronounced orally in a court
+// session - "S-123/2026 Úrskurður 12.11.2026". Generated once, when the ruling
+// is pronounced, and the document the district court writes up later keeps it.
+//
+// Shared so that the name the court record previews before pronouncing is the
+// name that gets stored: the court would otherwise be shown one name and given
+// another. Both sides fall back to the current date when the session has no
+// start date yet.
+export const formatRulingOrderPronouncedOrallyName = (
+  courtCaseNumber: string | undefined | null,
+  pronouncedDate: Date | string,
+): string =>
+  `${courtCaseNumber ?? ''} Úrskurður ${formatDate(pronouncedDate)}`.trim()
+
+// Court record entries name the document, not the file type — clerks were
+// always stripping ".pdf" by hand in the filing UI.
+export const stripPdfExtension = (
+  fileName: string | null | undefined,
+): string => (fileName ?? '').replace(/\.pdf$/i, '')
+
 export const formatDate = (
   date: Date | string | undefined | null,
   formatPattern = 'dd.MM.yyyy',
@@ -92,6 +112,21 @@ export const normalizeAndFormatNationalId = (
   return [nationalId?.replace(/-/g, '') ?? '', formatNationalId(nationalId)]
 }
 
+/** Replaces Þjóðskrá/LÖKE placeholder "Ótilgreindu" with clearer wording. */
+export const normalizePersonAddress = <T extends string | null | undefined>(
+  address: T,
+): T | 'ótilgreindu lögheimili' => {
+  if (address === null || address === undefined) {
+    return address
+  }
+
+  if (address.trim().toLowerCase() === 'ótilgreindu') {
+    return 'ótilgreindu lögheimili'
+  }
+
+  return address
+}
+
 export const getInitials = (name?: string | null): string | undefined => {
   if (!name?.trim()) return undefined
 
@@ -102,6 +137,15 @@ export const getInitials = (name?: string | null): string | undefined => {
       : names[0][0]
 
   return initials.toUpperCase()
+}
+
+export const formatFileSubmittedBy = (
+  role: string,
+  name?: string | null,
+): string => {
+  const initials = getInitials(name)
+
+  return initials ? `${role} (${initials}) lagði fram` : `${role} lagði fram`
 }
 
 export const formatPhoneNumber = (phoneNumber?: string | null) => {
@@ -127,6 +171,15 @@ export const laws = {
   _97_1: '1. mgr. 97. gr. sml.',
   _99_1_B: 'b-lið 1. mgr. 99. gr. sml.',
   _100_1: '1. mgr. 100. gr. sml.',
+  _115_1: '115. gr. útl.',
+  _115_1_A: 'a-lið 115. gr. útl.',
+  _115_1_B: 'b-lið 115. gr. útl.',
+  _115_1_C: 'c-lið 115. gr. útl.',
+  _115_1_D: 'd-lið 115. gr. útl.',
+  _115_1_E: 'e-lið 115. gr. útl.',
+  _115_1_F: 'f-lið 115. gr. útl.',
+  _115_1_G: 'g-lið 115. gr. útl.',
+  _115_1_H: 'h-lið 115. gr. útl.',
 }
 
 export const getHumanReadableCaseIndictmentRulingDecision = (
@@ -540,6 +593,15 @@ export const applyDativeCaseToCourtName = (courtName: string) => {
   return courtName
 }
 
+// ef to dómur ("dómi Héraðsdóms Reykjavíkur")
+export const applyGenitiveCaseToCourtName = (courtName: string) => {
+  const target = 'dómur'
+  if (courtName.includes(target)) {
+    return courtName.replace(target, 'dóms')
+  }
+  return courtName
+}
+
 export const getServiceStatusText = (serviceStatus: ServiceStatus) => {
   return serviceStatus === ServiceStatus.DEFENDER
     ? 'Birt fyrir verjanda'
@@ -632,3 +694,9 @@ export const getVerdictAppealDecision = (
       return 'Ekki skráð'
   }
 }
+
+// Recognizes only the tags the rich text editor produces, so plain text
+// containing angle-bracket placeholders (e.g. "<nafn ökumanns>") is not
+// mistaken for HTML.
+export const containsHtml = (str: string): boolean =>
+  /<\/?(?:p|strong|em|b|i|span|br|ul|ol|li)(?:[\s/>])/i.test(str)
