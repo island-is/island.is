@@ -267,13 +267,26 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     id: 'sp.education-primary-school:key-info-contacts-empty',
     defaultMessage: 'Engir aðstandendur eru skráðir.',
   },
+  contactsEmptyDescription: {
+    id: 'sp.education-primary-school:key-info-contacts-empty-description',
+    defaultMessage: 'Þú getur bætt við aðstandanda barnsins hér fyrir neðan.',
+  },
   languageProfileEmpty: {
     id: 'sp.education-primary-school:key-info-language-profile-empty',
     defaultMessage: 'Engar upplýsingar um tungumálaumhverfi eru skráðar.',
   },
+  languageProfileEmptyDescription: {
+    id:
+      'sp.education-primary-school:key-info-language-profile-empty-description',
+    defaultMessage: 'Þú getur skráð upplýsingarnar með því að smella á Breyta.',
+  },
   healthProfileEmpty: {
     id: 'sp.education-primary-school:key-info-health-profile-empty',
     defaultMessage: 'Engar heilsufarsupplýsingar eru skráðar.',
+  },
+  healthProfileEmptyDescription: {
+    id: 'sp.education-primary-school:key-info-health-profile-empty-description',
+    defaultMessage: 'Þú getur skráð upplýsingarnar með því að smella á Breyta.',
   },
   contactInfoNotice: {
     id: 'sp.education-primary-school:key-info-contact-info-notice',

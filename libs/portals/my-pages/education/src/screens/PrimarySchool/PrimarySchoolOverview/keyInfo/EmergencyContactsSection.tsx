@@ -14,11 +14,12 @@ import {
 import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
-import { CardLoader, Modal } from '@island.is/portals/my-pages/core'
+import { CardLoader, EmptyCard, Modal } from '@island.is/portals/my-pages/core'
 import { primarySchoolKeyInfoMessages as kim } from '../../../../lib/messages'
 import { EducationPaths } from '../../../../lib/paths'
 import { KeyInfoSection } from './KeyInfoSection'
 import { SectionError } from './SectionError'
+import * as styles from './keyInfoEmpty.css'
 import type { EmergencyContact, MmsError } from './types'
 
 interface Props {
@@ -82,9 +83,13 @@ export const EmergencyContactsSection = ({
       {loading && <CardLoader />}
       {!loading && error && <SectionError error={error} />}
       {!loading && !error && (!contacts || contacts.length === 0) && (
-        <Text variant="default" color="dark400">
-          {formatMessage(kim.contactsEmpty)}
-        </Text>
+        <Box paddingY={2} className={styles.emptyCard}>
+          <EmptyCard
+            title={formatMessage(kim.contactsEmpty)}
+            description={formatMessage(kim.contactsEmptyDescription)}
+            img="./assets/images/coffee.svg"
+          />
+        </Box>
       )}
       {!loading &&
         !error &&

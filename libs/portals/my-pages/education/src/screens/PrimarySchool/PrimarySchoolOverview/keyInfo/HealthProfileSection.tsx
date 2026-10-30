@@ -1,12 +1,17 @@
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
-import { Button, Divider, Text, useBreakpoint } from '@island.is/island-ui/core'
+import { Box, Button, Divider, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
-import { CardLoader, InfoLine } from '@island.is/portals/my-pages/core'
+import {
+  CardLoader,
+  EmptyCard,
+  InfoLine,
+} from '@island.is/portals/my-pages/core'
 import { primarySchoolKeyInfoMessages as kim } from '../../../../lib/messages'
 import { EducationPaths } from '../../../../lib/paths'
 import { KeyInfoSection } from './KeyInfoSection'
 import { SectionError } from './SectionError'
+import * as styles from './keyInfoEmpty.css'
 import { AllergyCategory } from './types'
 import type { HealthProfile, MmsError } from './types'
 
@@ -66,9 +71,13 @@ export const HealthProfileSection = ({ profile, loading, error }: Props) => {
       {loading && <CardLoader />}
       {!loading && error && <SectionError error={error} />}
       {!loading && !error && !profile && (
-        <Text variant="default" color="dark400" paddingTop={2}>
-          {formatMessage(kim.healthProfileEmpty)}
-        </Text>
+        <Box paddingY={2} className={styles.emptyCard}>
+          <EmptyCard
+            title={formatMessage(kim.healthProfileEmpty)}
+            description={formatMessage(kim.healthProfileEmptyDescription)}
+            img="./assets/images/coffee.svg"
+          />
+        </Box>
       )}
       {!loading && !error && profile && (
         <>

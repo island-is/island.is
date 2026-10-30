@@ -243,6 +243,7 @@ export class PrimarySchoolKeyInfoResolver {
   ): Promise<HealthProfile | null> {
     const friggChildId = await this.resolveFriggChildId(user, childId)
     if (!friggChildId) return null
+
     const profile = await this.keyInfoService.getHealthProfile(
       user,
       friggChildId,
@@ -255,9 +256,11 @@ export class PrimarySchoolKeyInfoResolver {
     @CurrentUser() user: User,
     @Args('input') input: UpdateHealthProfileInput,
   ): Promise<HealthProfile> {
+    const friggChildId = await this.requireFriggChildId(user, input.childId)
+
     const profile = await this.keyInfoService.updateHealthProfile(
       user,
-      await this.requireFriggChildId(user, input.childId),
+      friggChildId,
       {
         epipen: input.epipen,
         medicalDiagnoses: input.medicalDiagnoses,

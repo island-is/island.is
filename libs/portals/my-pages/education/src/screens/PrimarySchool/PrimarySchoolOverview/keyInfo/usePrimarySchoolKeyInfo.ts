@@ -26,6 +26,7 @@ import type {
   LanguageProfile,
   LanguageProfileUpdateInput,
   MmsError,
+  SectionState,
 } from './types'
 
 /**
@@ -42,12 +43,6 @@ import type {
 interface LocalizedTitle {
   is: string
   en: string
-}
-
-interface SectionState<T> {
-  data: T | undefined
-  loading: boolean
-  error: MmsError | undefined
 }
 
 export interface PrimarySchoolKeyInfo {

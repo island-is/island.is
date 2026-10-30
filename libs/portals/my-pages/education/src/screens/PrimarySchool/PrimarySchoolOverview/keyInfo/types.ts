@@ -145,6 +145,17 @@ export interface HealthProfileUpdateInput {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Section state                                                               */
+/* -------------------------------------------------------------------------- */
+
+/** What each key-info section receives: its data plus its own fetch state. */
+export interface SectionState<T> {
+  data: T | undefined
+  loading: boolean
+  error: MmsError | undefined
+}
+
+/* -------------------------------------------------------------------------- */
 /* Errors                                                                      */
 /* -------------------------------------------------------------------------- */
 

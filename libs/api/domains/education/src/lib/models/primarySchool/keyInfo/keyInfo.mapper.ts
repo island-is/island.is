@@ -30,11 +30,19 @@ interface LocalizableKeyOption {
   value: Array<{ content: string; language: string }>
 }
 
+/** Folds a key-option's translations into the `{is, en}` shape the frontend
+ * reads, falling back to the first translation when a locale is missing. */
 const localize = (
-  value: Array<{ content: string; language: string }>,
+  value: Array<{ content: string; language: string }> | undefined,
 ): LocalizedText => ({
-  is: value.find((v) => v.language === 'is')?.content ?? value[0]?.content ?? '',
-  en: value.find((v) => v.language === 'en')?.content ?? value[0]?.content ?? '',
+  is:
+    value?.find((v) => v.language === 'is')?.content ??
+    value?.[0]?.content ??
+    '',
+  en:
+    value?.find((v) => v.language === 'en')?.content ??
+    value?.[0]?.content ??
+    '',
 })
 
 export const mapChild = (dto: ChildOutput): PrimarySchoolChild => ({
