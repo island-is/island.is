@@ -28,6 +28,7 @@ import { Notification } from './models/notification.model'
 import { Offense } from './models/offense.model'
 import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 import { RobotLog } from './models/robotLog.model'
+import { ServiceInterruptionBanner } from './models/serviceInterruptionBanner.model'
 import { Subpoena } from './models/subpoena.model'
 import { User } from './models/user.model'
 import { Verdict } from './models/verdict.model'
@@ -69,6 +70,7 @@ export const repositoryModels = [
   LawyerRegistry,
   MessageSuspension,
   Notification,
+  ServiceInterruptionBanner,
   Offense,
   PoliceDigitalCaseFile,
   RobotLog,

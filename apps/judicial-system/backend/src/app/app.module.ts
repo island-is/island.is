@@ -54,6 +54,7 @@ import {
   PoliceModule,
   policeModuleConfig,
   RepositoryModule,
+  ServiceInterruptionBannerModule,
   StatisticsModule,
   SubpoenaModule,
   UserModule,
@@ -92,6 +93,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     StatisticsModule,
     RepositoryModule,
     MessageSuspensionModule,
+    ServiceInterruptionBannerModule,
     MessageModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({

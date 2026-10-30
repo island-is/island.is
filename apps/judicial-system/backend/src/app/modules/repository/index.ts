@@ -25,6 +25,7 @@ export { InstitutionContact } from './models/institutionContact.model'
 export { LawyerRegistry } from './models/lawyerRegistry.model'
 export { MessageSuspension } from './models/messageSuspension.model'
 export { Notification, Recipient } from './models/notification.model'
+export { ServiceInterruptionBanner } from './models/serviceInterruptionBanner.model'
 export { Offense } from './models/offense.model'
 export { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 export { RobotLog } from './models/robotLog.model'
@@ -113,6 +114,10 @@ export {
   NotificationRepositoryService,
   CreateNotification,
 } from './services/notificationRepository.service'
+export {
+  ServiceInterruptionBannerRepositoryService,
+  SERVICE_INTERRUPTION_BANNER_ID,
+} from './services/serviceInterruptionBannerRepository.service'
 export {
   OffenseRepositoryService,
   UpdateOffense,

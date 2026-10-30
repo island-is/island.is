@@ -32,6 +32,7 @@ import { NotificationRepositoryService } from './services/notificationRepository
 import { OffenseRepositoryService } from './services/offenseRepository.service'
 import { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 import { RobotLogRepositoryService } from './services/robotLogRepository.service'
+import { ServiceInterruptionBannerRepositoryService } from './services/serviceInterruptionBannerRepository.service'
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 import { UserRepositoryService } from './services/userRepository.service'
 import { VerdictRepositoryService } from './services/verdictRepository.service'
@@ -74,6 +75,7 @@ import { repositoryModels } from './repositoryModels'
     OffenseRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
     RobotLogRepositoryService,
+    ServiceInterruptionBannerRepositoryService,
     SubpoenaRepositoryService,
     UserRepositoryService,
     VerdictRepositoryService,
@@ -109,6 +111,7 @@ import { repositoryModels } from './repositoryModels'
     OffenseRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
     RobotLogRepositoryService,
+    ServiceInterruptionBannerRepositoryService,
     SubpoenaRepositoryService,
     UserRepositoryService,
     VerdictRepositoryService,
