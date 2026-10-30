@@ -122,22 +122,42 @@ describe('FjarskiptastofaSelfAssessmentService', () => {
   })
 
   describe('submitSelfAssessment', () => {
-    const submit = (applicant: string) =>
+    // The questions the applicant was shown, as the questions data provider
+    // stores them in externalData.
+    const questionsExternalData = (ids: number[]) => ({
+      selfAssessmentQuestions: {
+        data: { questions: ids.map((id) => ({ id })) },
+        date: new Date(),
+        status: 'success' as const,
+      },
+    })
+
+    type StoredAnswers = Record<
+      string,
+      { answerValue?: string; remark?: string }
+    >
+
+    const submitWith = (
+      applicant: string,
+      answers: StoredAnswers,
+      questionIds: number[] = [1, 2],
+    ) =>
       service.submitSelfAssessment({
         application: createApplication({
           applicant,
-          answers: {
-            assessment: {
-              // Answered question: submitted.
-              q1: { answerValue: 'Yes', remark: 'done' },
-              // No answerValue: filtered out of the payload.
-              q2: { remark: 'left blank' },
-            },
-          },
+          answers: { assessment: answers },
+          externalData: questionsExternalData(questionIds),
         }),
         auth: createCurrentUser(),
         currentUserLocale: 'en',
       } as never)
+
+    const completeAnswers = {
+      q1: { answerValue: 'Yes', remark: 'done' },
+      q2: { answerValue: 'No', remark: 'not started' },
+    }
+
+    const submit = (applicant: string) => submitWith(applicant, completeAnswers)
 
     beforeEach(() => {
       ;(client.submitAnswers as jest.Mock).mockResolvedValue({
@@ -154,7 +174,7 @@ describe('FjarskiptastofaSelfAssessmentService', () => {
       )
     })
 
-    it('should send only the answered questions', async () => {
+    it('should send an answer for every question the applicant was shown', async () => {
       await submit(ACCESS_WINDOW_OPEN[0])
 
       expect(client.submitAnswers).toHaveBeenCalledWith(expect.anything(), {
@@ -162,13 +182,69 @@ describe('FjarskiptastofaSelfAssessmentService', () => {
         submitterSSN: ACCESS_WINDOW_OPEN[0],
         assessmentResponses: [
           { questionId: 1, answerValue: 'Yes', remark: 'done' },
+          { questionId: 2, answerValue: 'No', remark: 'not started' },
         ],
       })
+    })
+
+    it('should ignore stored answers to questions that are no longer asked', async () => {
+      await submitWith(
+        ACCESS_WINDOW_OPEN[0],
+        { ...completeAnswers, q99: { answerValue: 'Yes', remark: 'stale' } },
+        [1, 2],
+      )
+
+      expect(client.submitAnswers).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          assessmentResponses: [
+            { questionId: 1, answerValue: 'Yes', remark: 'done' },
+            { questionId: 2, answerValue: 'No', remark: 'not started' },
+          ],
+        }),
+      )
     })
 
     it('should return the response from the client', async () => {
       const result = await submit(ACCESS_WINDOW_OPEN[0])
       expect(result).toEqual({ referenceNumber: '1' })
+    })
+
+    // The form blocks an incomplete submit; these cover a submit that gets
+    // past it, which must not reach Fjarskiptastofa as a finished assessment.
+    it.each<[string, StoredAnswers]>([
+      ['an unanswered question', { q1: { answerValue: 'Yes', remark: 'done' } }],
+      [
+        'a question with no answer value',
+        { ...completeAnswers, q2: { remark: 'left blank' } },
+      ],
+      [
+        'a question with a blank remark',
+        { ...completeAnswers, q2: { answerValue: 'No', remark: '  ' } },
+      ],
+      [
+        'a question with no remark',
+        { ...completeAnswers, q2: { answerValue: 'No' } },
+      ],
+    ])('should not submit an assessment with %s', async (_, answers) => {
+      await expect(submitWith(ACCESS_WINDOW_OPEN[0], answers)).rejects.toThrow()
+
+      expect(client.submitAnswers).not.toHaveBeenCalled()
+    })
+
+    it('should not submit when the questions are missing from external data', async () => {
+      await expect(
+        service.submitSelfAssessment({
+          application: createApplication({
+            applicant: ACCESS_WINDOW_OPEN[0],
+            answers: { assessment: completeAnswers },
+          }),
+          auth: createCurrentUser(),
+          currentUserLocale: 'en',
+        } as never),
+      ).rejects.toThrow()
+
+      expect(client.submitAnswers).not.toHaveBeenCalled()
     })
   })
 })

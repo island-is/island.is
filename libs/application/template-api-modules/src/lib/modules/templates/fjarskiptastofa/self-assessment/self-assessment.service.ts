@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { m } from '@island.is/application/templates/fjarskiptastofa/self-assessment'
 import {
   AnswerRequest,
   AnswerStatus,
@@ -15,6 +17,10 @@ type StoredAssessmentAnswers = Record<
   string,
   { answerValue?: string; remark?: string }
 >
+
+// The questions the applicant was shown, as stored in externalData by the
+// questions data provider.
+type StoredQuestions = { id: number }[]
 
 @Injectable()
 export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService {
@@ -67,13 +73,48 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
         'assessment',
       ) ?? {}
 
-    const assessmentResponses: AnswerRequest[] = Object.entries(storedAnswers)
-      .filter(([, answer]) => Boolean(answer?.answerValue))
-      .map(([key, answer]) => ({
-        questionId: Number(key.replace(/^q/, '')),
+    // Build the payload from the questions the applicant was shown rather than
+    // from the stored answers, so a missing answer is caught instead of being
+    // silently left out of the submission.
+    const questions =
+      getValueViaPath<StoredQuestions>(
+        application.externalData,
+        'selfAssessmentQuestions.data.questions',
+      ) ?? []
+
+    if (questions.length === 0) {
+      throw new TemplateApiError(
+        {
+          title: m.overview.errorTitle,
+          summary: m.assessment.loadError,
+        },
+        400,
+      )
+    }
+
+    // Fjarskiptastofa only accepts a complete self-assessment: every question
+    // needs both an answer and a remark. The form blocks an incomplete submit,
+    // so this is the guard for a submit that gets past it - a partial
+    // assessment must not reach Fjarskiptastofa as a finished one.
+    const assessmentResponses: AnswerRequest[] = questions.map(({ id }) => {
+      const answer = storedAnswers[`q${id}`]
+
+      if (!answer?.answerValue || !answer.remark?.trim()) {
+        throw new TemplateApiError(
+          {
+            title: m.overview.errorTitle,
+            summary: m.assessment.requiredError,
+          },
+          400,
+        )
+      }
+
+      return {
+        questionId: id,
         answerValue: answer.answerValue as AnswerStatus,
         remark: answer.remark,
-      }))
+      }
+    })
 
     // The company the application belongs to is the submitter.
     const submitterSSN = application.applicant
