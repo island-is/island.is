@@ -1,9 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator'
 
-import { CardInformation } from './CardInformation.dto'
+import { CardInformation } from '../../dtos/CardInformation.dto'
 
-export class ChargeCardResponse {
+export class ApplePayChargeResponse {
   @ApiProperty({ description: 'Acquirer reference number', type: String })
   @IsString()
   acquirerReferenceNumber!: string
@@ -20,7 +20,10 @@ export class ChargeCardResponse {
   @IsString()
   transactionLifecycleId!: string
 
-  @ApiProperty({ description: 'Masked card number', type: String })
+  @ApiProperty({
+    description: 'Masked card number returned by the payment gateway',
+    type: String,
+  })
   @IsString()
   maskedCardNumber!: string
 

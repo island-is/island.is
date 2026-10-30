@@ -23,12 +23,24 @@ export const buildPublicRuntimeEnv = () => {
     API_EXTERNAL_BASEPATH = 'http://localhost:4444',
     BASEPATH = '/greida',
     ALLOW_APPLE_PAY,
+    GOOGLE_PAY_ENVIRONMENT,
+    GOOGLE_PAY_MERCHANT_ID,
+    GOOGLE_PAY_GATEWAY_MERCHANT_ID,
   } = process.env
 
   return {
     graphqlEndpoint: `${API_EXTERNAL_BASEPATH}${graphqlPath}`,
     basepath: BASEPATH,
     allowApplePay: ALLOW_APPLE_PAY || 'false',
+    // Google Pay sends all three in the browser's payment request: the merchant
+    // id is only required in production, the gateway merchant id is our
+    // merchant agreement number with Valitor, which decrypts the tokens.
+    googlePayEnvironment:
+      GOOGLE_PAY_ENVIRONMENT === 'PRODUCTION'
+        ? ('PRODUCTION' as const)
+        : ('TEST' as const),
+    googlePayMerchantId: GOOGLE_PAY_MERCHANT_ID,
+    googlePayGatewayMerchantId: GOOGLE_PAY_GATEWAY_MERCHANT_ID,
   }
 }
 

@@ -10,7 +10,9 @@ import { SagaDefinition } from '../../utils/orchestrator'
 import { PaymentFlowAttributes } from '../paymentFlow/models'
 import { PaymentContext } from '../refund/refund.orchestrator'
 import type { SettleDebtStepResult } from './cardPayment.debt'
-import { ApplePayChargeInput, ChargeCardInput } from './dtos'
+import { ApplePayChargeInput } from './applePay/dtos'
+import { ChargeCardInput } from './card/dtos'
+import { GooglePayChargeVerifiedInput } from './googlePay/dtos'
 
 export {
   PaymentOrchestrator,
@@ -79,6 +81,34 @@ export interface ApplePayPaymentStepResults {
 export interface ApplePayPaymentContext
   extends PaymentContext<ApplePayPaymentStepResults> {
   input: ApplePayChargeInput
+  trackingData: PaymentTrackingData
+  metadata?: CardPaymentSagaMetadata
+}
+
+// Google Pay payment types
+export type GooglePayPaymentSagaDefinition = SagaDefinition<
+  GooglePayPaymentContext,
+  GooglePayPaymentStepResults
+>
+
+export interface GooglePayPaymentStepResults {
+  VALIDATE: {
+    paymentFlow: PaymentFlowAttributes
+    catalogItems: CatalogItemWithQuantity[]
+    totalPrice: number
+  }
+  CHARGE_GOOGLE_PAY: {
+    paymentResult: CardPaymentSuccessResponse
+  }
+  PERSIST_PAYMENT_CONFIRMATION: void
+  SETTLE_DEBT: SettleDebtStepResult
+  NOTIFY_SUCCESSFUL_PAYMENT: void
+}
+
+export interface GooglePayPaymentContext
+  extends PaymentContext<GooglePayPaymentStepResults> {
+  /** Decrypted again by Valitor when charged, after 3-D Secure */
+  input: GooglePayChargeVerifiedInput
   trackingData: PaymentTrackingData
   metadata?: CardPaymentSagaMetadata
 }

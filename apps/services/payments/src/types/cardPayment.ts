@@ -153,6 +153,32 @@ export const ApplePayDecryptedWalletPaymentPayloadSchema = z.object({
 export type ApplePayDecryptedWalletPaymentPayload = z.infer<
   typeof ApplePayDecryptedWalletPaymentPayloadSchema
 >
+
+/**
+ * Google Pay token decrypted by Valitor: Q8 and the card of a token saved in
+ * the Google account, to go through 3-D Secure and be charged like a typed card
+ */
+export const GooglePayDecryptionSuccessSchema =
+  PaymentGatewaySuccessSchema.extend({
+    responseCode: z.literal('Q8'),
+    // Not observed against UAT yet (it answers Q9), so the month and year are
+    // taken as numbers or strings and the year as two or four digits. The
+    // card then carries the four-digit year a typed card is charged with.
+    googlePayCardInformation: z.object({
+      pan: z.string(),
+      expirationMonth: z.coerce.number().int().min(1).max(12),
+      expirationYear: z.coerce
+        .number()
+        .int()
+        .transform((year) => (year < 100 ? 2000 + year : year)),
+    }),
+  })
+
+export const GooglePayDecryptionErrorSchema = PaymentGatewayErrorSchema
+
+export type GooglePayCardInformation = z.infer<
+  typeof GooglePayDecryptionSuccessSchema
+>['googlePayCardInformation']
 export type CardVerificationSuccessResponse = z.infer<
   typeof CardVerificationSuccessSchema
 >
