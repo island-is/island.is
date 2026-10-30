@@ -1,5 +1,4 @@
 import { useCallback } from 'react'
-import { useIntl } from 'react-intl'
 
 import { errors } from '@island.is/judicial-system-web/messages'
 import type { CreateEventLogInput } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -8,7 +7,6 @@ import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { useCreateEventLogMutation } from './createEventLog.generated'
 
 const useEventLog = () => {
-  const { formatMessage } = useIntl()
   const [createEventLogMutation] = useCreateEventLogMutation()
 
   const createEventLog = useCallback(
@@ -22,12 +20,12 @@ const useEventLog = () => {
 
         return Boolean(data?.createEventLog)
       } catch {
-        toast.error(formatMessage(errors.createEventLog))
+        toast.error(errors.createEventLog)
 
         return false
       }
     },
-    [createEventLogMutation, formatMessage],
+    [createEventLogMutation],
   )
 
   return {

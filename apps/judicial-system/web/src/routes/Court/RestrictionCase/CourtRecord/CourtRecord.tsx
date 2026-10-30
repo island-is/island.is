@@ -367,7 +367,7 @@ export const CourtRecord: FC = () => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={3}>
             <HideableText
-              text={formatMessage(closedCourt.text)}
+              text={closedCourt.text}
               isHidden={workingCase.isClosedCourtHidden}
               onToggleVisibility={(isVisible: boolean) =>
                 setAndSendCaseToServer(
@@ -381,7 +381,7 @@ export const CourtRecord: FC = () => {
                   setWorkingCase,
                 )
               }
-              tooltip={formatMessage(closedCourt.tooltip)}
+              tooltip={closedCourt.tooltip}
             />
           </Box>
           <Input

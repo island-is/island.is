@@ -226,7 +226,7 @@ const Ruling = () => {
                 <RadioButton
                   name="case-decision"
                   id={option.id}
-                  label={formatMessage(option.message)}
+                  label={option.message}
                   checked={
                     targetAppealCase?.appealRulingDecision === option.decision
                   }

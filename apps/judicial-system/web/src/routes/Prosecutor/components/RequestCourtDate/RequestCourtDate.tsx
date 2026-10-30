@@ -1,5 +1,4 @@
 import type { FC } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { requestCourtDate as m } from '@island.is/judicial-system-web/messages'
@@ -15,26 +14,21 @@ interface Props {
 }
 
 const RequestCourtDate: FC<Props> = ({ workingCase, onChange }) => {
-  const { formatMessage } = useIntl()
-
   return (
     <>
-      <SectionHeading
-        title={formatMessage(m.heading)}
-        tooltip={formatMessage(m.tooltip)}
-      />
+      <SectionHeading title={m.heading} tooltip={m.tooltip} />
       <DateTime
         name="reqCourtDate"
         selectedDate={workingCase.requestedCourtDate}
         onChange={onChange}
-        timeLabel={formatMessage(m.dateInput.timeLabel)}
+        timeLabel={m.dateInput.timeLabel}
         locked={Boolean(workingCase.arraignmentDate?.date)}
         minDate={new Date()}
         required
       />
       {workingCase.arraignmentDate?.date && (
         <Box marginTop={1}>
-          <Text variant="eyebrow">{formatMessage(m.courtDate)}</Text>
+          <Text variant="eyebrow">{m.courtDate}</Text>
         </Box>
       )}
     </>

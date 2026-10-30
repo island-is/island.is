@@ -105,8 +105,8 @@ const mapServiceStatusMessages = (
 const renderError = (formatMessage: IntlShape['formatMessage']) => (
   <AlertMessage
     type="error"
-    title={formatMessage(errors.getSubpoenaStatusTitle)}
-    message={formatMessage(errors.getSubpoenaStatus)}
+    title={errors.getSubpoenaStatusTitle}
+    message={errors.getSubpoenaStatus}
   />
 )
 
