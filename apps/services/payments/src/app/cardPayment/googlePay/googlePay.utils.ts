@@ -87,3 +87,100 @@ export const generateGooglePaySavedCardChargeRequestOptions = ({
     }),
   }
 }
+
+// TEMPORARY: verbose logging while Google Pay is tested on production, where
+// Valitor's answers are first seen. Remove, with the calls in
+// CardPaymentService, once the flow is verified there.
+
+/** The shape of the token pay.js handed over, without its contents */
+export const describeGooglePayTokenForTesting = (parsed: unknown) => {
+  const token = (parsed ?? {}) as Record<string, unknown>
+  const signingKey = (token.intermediateSigningKey ?? {}) as Record<
+    string,
+    unknown
+  >
+  let keyExpiration: string | undefined
+  try {
+    const signedKey = JSON.parse(String(signingKey.signedKey ?? '{}')) as {
+      keyExpiration?: string
+    }
+    keyExpiration = signedKey.keyExpiration
+      ? new Date(Number(signedKey.keyExpiration)).toISOString()
+      : undefined
+  } catch {
+    keyExpiration = 'unparseable'
+  }
+
+  return {
+    keys: Object.keys(token),
+    protocolVersion: token.protocolVersion,
+    signedMessageLength:
+      typeof token.signedMessage === 'string'
+        ? token.signedMessage.length
+        : undefined,
+    hasSignature: typeof token.signature === 'string',
+    signingKeySignatures: Array.isArray(signingKey.signatures)
+      ? signingKey.signatures.length
+      : undefined,
+    signingKeyExpiration: keyExpiration,
+  }
+}
+
+const GATEWAY_RESPONSE_FIELDS_LOGGED = [
+  'isSuccess',
+  'responseCode',
+  'responseDescription',
+  'responseTime',
+  'correlationID',
+  'cardInformation',
+  'maskedCardNumber',
+  'transactionID',
+  'authorizationCode',
+  'acquirerReferenceNumber',
+  'transactionLifecycleId',
+  'authorizationIdentifier',
+  'authenticationMethod',
+  'authorizedAmount',
+  'marketInformation',
+  'transactionType',
+  'currency',
+  'isCardPresent',
+  'postUrl',
+  'threeDSMessageVersion',
+  'scriptPath',
+  'additionalFields',
+  'title',
+  'errors',
+] as const
+
+/**
+ * A gateway response as it may be logged: known non-card fields as they are,
+ * every key named, and the decrypted card described without its number or
+ * expiry.
+ */
+export const describeGatewayResponseForTesting = (raw: unknown) => {
+  const body = (raw ?? {}) as Record<string, unknown>
+  const logged: Record<string, unknown> = { keys: Object.keys(body) }
+  for (const field of GATEWAY_RESPONSE_FIELDS_LOGGED) {
+    if (field in body) logged[field] = body[field]
+  }
+
+  const card = body.googlePayCardInformation as
+    | Record<string, unknown>
+    | undefined
+  if (card && typeof card === 'object') {
+    const pan = typeof card.pan === 'string' ? card.pan : undefined
+    const year = card.expirationYear
+    logged.googlePayCardInformation = {
+      keys: Object.keys(card),
+      panLength: pan?.length,
+      panLast4: pan?.slice(-4),
+      expirationMonthType: typeof card.expirationMonth,
+      expirationYearType: typeof year,
+      expirationYearDigits:
+        year === undefined ? undefined : String(year).length,
+    }
+  }
+
+  return logged
+}

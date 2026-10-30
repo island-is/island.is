@@ -60,6 +60,8 @@ import {
 } from './applePay/applePay.utils'
 import { ApplePayChargeInput, ApplePaySessionResponse } from './applePay/dtos'
 import {
+  describeGatewayResponseForTesting,
+  describeGooglePayTokenForTesting,
   generateGooglePayDecryptionRequestOptions,
   generateGooglePaySavedCardChargeRequestOptions,
 } from './googlePay/googlePay.utils'
@@ -811,6 +813,15 @@ export class CardPaymentService {
       tokenId,
       correlationId,
     })
+    // TEMPORARY: verbose logging while Google Pay is tested on production.
+    // Remove once the flow is verified there.
+    this.logger.info(`${logPrefix} [TESTING] Google Pay token received`, {
+      paymentFlowId,
+      tokenId,
+      correlationId,
+      amount,
+      token: describeGooglePayTokenForTesting(parsedToken),
+    })
 
     const { paymentsGatewayApiUrl } = this.config.paymentGateway
     const gatewayUrl = `${paymentsGatewayApiUrl}/Payment/CardPayment`
@@ -834,6 +845,15 @@ export class CardPaymentService {
       })
       throw e
     }
+
+    // TEMPORARY: verbose logging while Google Pay is tested on production.
+    // Remove once the flow is verified there.
+    await this.logGooglePayGatewayResponseForTesting({
+      stage: 'token decryption',
+      paymentFlowId,
+      correlationId,
+      response,
+    })
 
     const { googlePayCardInformation } =
       await this.parsePaymentGatewayResponseAndHandleErrors({
@@ -878,7 +898,7 @@ export class CardPaymentService {
       (tokenExpiryMinutes + memCacheExpiryMinutes) * 60000,
     )
 
-    return this.verify(
+    const verification = await this.verify(
       {
         paymentFlowId: input.paymentFlowId,
         cardNumber: card.pan,
@@ -891,6 +911,32 @@ export class CardPaymentService {
       totalPrice,
       correlationId,
     )
+
+    // TEMPORARY: verbose logging while Google Pay is tested on production.
+    // Remove once the flow is verified there.
+    this.logger.info(
+      `[${input.paymentFlowId}] [GOOGLEPAY] [TESTING] 3-D Secure started for the decrypted card`,
+      {
+        paymentFlowId: input.paymentFlowId,
+        tokenId: this.googlePayTokenId(input.token),
+        correlationId,
+        totalPrice,
+        hasBrowserInfo: !!input.browserInfo,
+        responseCode: verification.responseCode,
+        responseDescription: verification.responseDescription,
+        gatewayCorrelationId: verification.correlationID,
+        postUrl: verification.postUrl,
+        threeDSMessageVersion: verification.threeDSMessageVersion,
+        hasScriptPath: !!verification.scriptPath,
+        verificationFieldNames: verification.verificationFields.map(
+          (field) => field.name,
+        ),
+        additionalFields: verification.additionalFields,
+        cardInformation: verification.cardInformation,
+      },
+    )
+
+    return verification
   }
 
   /**
@@ -925,6 +971,18 @@ export class CardPaymentService {
     const verifiedTokenId = await this.cacheManager.get(
       this.googlePayVerificationCacheKey(correlationId),
     )
+    // TEMPORARY: verbose logging while Google Pay is tested on production.
+    // Remove once the flow is verified there.
+    this.logger.info(`${logPrefix} [TESTING] 3-D Secure result found`, {
+      paymentFlowId,
+      tokenId,
+      verificationCorrelationId: correlationId,
+      verifiedTokenMatches: verifiedTokenId === tokenId,
+      mdStatus: verificationData.mdStatus,
+      hasCavv: !!verificationData.cavv,
+      hasXid: !!verificationData.xid,
+      hasDsTransId: !!verificationData.dsTransId,
+    })
     if (verifiedTokenId !== tokenId) {
       this.logger.warn(
         `${logPrefix} No 3-D Secure verification for this Google Pay token`,
@@ -1006,6 +1064,14 @@ export class CardPaymentService {
       throw e
     }
 
+    // TEMPORARY: verbose logging while Google Pay is tested on production.
+    // Remove once the flow is verified there.
+    await this.logGooglePayGatewayResponseForTesting({
+      stage: 'ECommerce charge',
+      paymentFlowId,
+      response,
+    })
+
     const data = await this.parsePaymentGatewayResponseAndHandleErrors({
       paymentFlowId,
       response,
@@ -1025,6 +1091,55 @@ export class CardPaymentService {
     })
 
     return data
+  }
+
+  /**
+   * TEMPORARY: verbose logging while Google Pay is tested on production.
+   * Remove once the flow is verified there. Logs the gateway's answer as it
+   * came, with the card's number and expiry left out, so Valitor's responses
+   * can be read in the logs without a redeploy. Reads a clone, so the parser
+   * still gets the body; a response that can not be cloned is skipped.
+   */
+  private async logGooglePayGatewayResponseForTesting({
+    stage,
+    paymentFlowId,
+    correlationId,
+    response,
+  }: {
+    stage: string
+    paymentFlowId: string
+    correlationId?: string
+    response: Response
+  }): Promise<void> {
+    const logPrefix = `[${paymentFlowId}] [GOOGLEPAY] [TESTING]`
+    try {
+      if (typeof response.clone !== 'function') {
+        return
+      }
+      const clone = response.clone()
+      const text = await clone.text()
+      let body: unknown
+      try {
+        body = JSON.parse(text)
+      } catch {
+        body = undefined
+      }
+      this.logger.info(`${logPrefix} ${stage} gateway response`, {
+        paymentFlowId,
+        correlationId,
+        status: response.status,
+        ok: response.ok,
+        bodyLength: text.length,
+        ...(body === undefined
+          ? { bodyStart: text.slice(0, 300) }
+          : describeGatewayResponseForTesting(body)),
+      })
+    } catch (e) {
+      this.logger.warn(`${logPrefix} Could not log the ${stage} response`, {
+        paymentFlowId,
+        error: (e as Error).message,
+      })
+    }
   }
 
   private googlePayReplayCacheKey(tokenId: string): string {
