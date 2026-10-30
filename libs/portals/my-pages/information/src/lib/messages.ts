@@ -514,10 +514,18 @@ export const mNotifications = defineMessages({
     id: 'sp.notifications:notifications-how-intro',
     defaultMessage: 'Veldu hvernig þú vilt fá tilkynningar frá stofnunum',
   },
+  howIntroTitle: {
+    id: 'sp.notifications:notifications-how-intro-title',
+    defaultMessage: 'Samskiptaleiðir',
+  },
   whatIntro: {
     id: 'sp.notifications:notifications-what-intro',
     defaultMessage:
       'Veldu frá hvaða stofnun eða flokki þú vilt frá tilkynningar. Hér birtast aðeins stofnanir og flokkar sem þú hefur fengið skilaboð frá.',
+  },
+  whatIntroTitle: {
+    id: 'sp.notifications:notifications-what-intro-title',
+    defaultMessage: 'Stofnanir',
   },
   searchPlaceholder: {
     id: 'sp.notifications:search-placeholder',
@@ -527,6 +535,15 @@ export const mNotifications = defineMessages({
     id: 'sp.notifications:categories-blocked-count',
     defaultMessage:
       '{count, plural, one {# flokkur afþakkaður} other {# flokkar afþakkaðir}}',
+  },
+  actorNotificationSettingsIntroTitle: {
+    id: 'sp.notifications:actor-notification-settings-intro-title',
+    defaultMessage: 'Tilkynningastillingar umboðsaðila',
+  },
+  actorNotificationSettingsIntro: {
+    id: 'sp.notifications:actor-notification-settings-intro',
+    defaultMessage:
+      'Hér stillir þú tilkynningar sem þú færð í umboði fyrir aðra, ekki þínar eigin. Þú velur hvernig og hvaða tilkynningar þú færð fyrir hvern aðila sem hefur veitt þér umboð. Tilkynningar sem krefjast viðbragða berast þér alltaf á meðan umboðið er í gildi.',
   },
 })
 

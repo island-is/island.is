@@ -128,7 +128,7 @@ export const NotificationSettingsV2 = () => {
     <Stack space={4}>
       <Stack space={1}>
         <Text variant="h4" as="h2">
-          Samskiptaleiðir
+          {formatMessage(mNotifications.howIntroTitle)}
         </Text>
         <Text variant="medium">{formatMessage(mNotifications.howIntro)}</Text>
       </Stack>

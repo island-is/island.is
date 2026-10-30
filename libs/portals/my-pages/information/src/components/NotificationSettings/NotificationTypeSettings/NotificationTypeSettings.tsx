@@ -1,6 +1,5 @@
 import {
   AccordionCard,
-  AlertMessage,
   Box,
   Input,
   SkeletonLoader,
@@ -153,98 +152,97 @@ export const NotificationTypeSettings = () => {
         />
       )}
 
-      <Stack space={1}>
-        <Text variant="h4" as="h2">
-          Stofnanir
-        </Text>
-        <Text variant="medium">{formatMessage(mNotifications.whatIntro)}</Text>
-      </Stack>
+      {!onlyActionablePriorityNotifications && (
+        <>
+          <Stack space={1}>
+            <Text variant="h4" as="h2">
+              {formatMessage(mNotifications.whatIntroTitle)}
+            </Text>
+            <Text variant="medium">
+              {formatMessage(mNotifications.whatIntro)}
+            </Text>
+          </Stack>
 
-      {onlyActionablePriorityNotifications && (
-        <AlertMessage
-          title={formatMessage(mNotifications.actionablePriorityOnlyAlertTitle)}
-          message={formatMessage(
-            mNotifications.actionablePriorityOnlyAlertMessage,
-          )}
-          type="info"
-        />
-      )}
-
-      <Stack space={2}>
-        <Input
-          id="data-search"
-          name="data-search"
-          placeholder={formatMessage(mNotifications.searchPlaceholder)}
-          value={query}
-          icon={{ name: 'search' }}
-          backgroundColor="blue"
-          size="sm"
-          onChange={(event) => setQuery(event.target.value)}
-        />
-        <Stack space={1}>
-          {filteredData.map((sender) => (
-            <AccordionCard
-              key={sender.sender.id}
-              id={`notification-type-settings-${sender.sender.id}`}
-              label={
-                <Box
-                  display="flex"
-                  justifyContent={'spaceBetween'}
-                  zIndex={10}
-                  width="full"
-                >
-                  <Text variant="h4">{sender.sender.title}</Text>
-
-                  {sender.categories.some((category) => category.blocked) && (
-                    <Tag variant="rose" outlined>
-                      {formatMessage(mNotifications.categoriesBlockedCount, {
-                        count: sender.categories.filter(
-                          (category) => category.blocked,
-                        ).length,
-                      })}
-                    </Tag>
-                  )}
-                </Box>
-              }
-            >
-              <Box paddingY={2} paddingBottom={1}>
-                {sender.categories.map((category, index) => (
-                  <Box
-                    key={category.key}
-                    background={index % 2 === 0 ? 'blue100' : 'white'}
-                    padding={2}
-                  >
+          <Stack space={2}>
+            <Input
+              id="data-search"
+              name="data-search"
+              placeholder={formatMessage(mNotifications.searchPlaceholder)}
+              value={query}
+              icon={{ name: 'search' }}
+              backgroundColor="blue"
+              size="sm"
+              onChange={(event) => setQuery(event.target.value)}
+            />
+            <Stack space={1}>
+              {filteredData.map((sender) => (
+                <AccordionCard
+                  key={sender.sender.id}
+                  id={`notification-type-settings-${sender.sender.id}`}
+                  label={
                     <Box
                       display="flex"
-                      alignItems="center"
-                      justifyContent="spaceBetween"
-                      columnGap={2}
+                      justifyContent={'spaceBetween'}
+                      zIndex={10}
+                      width="full"
                     >
-                      <Text>{category.label}</Text>
-                      <ToggleSwitchButton
-                        label={category.label}
-                        checked={!category.blocked}
-                        disabled={
-                          updating || onlyActionablePriorityNotifications
-                        }
-                        hiddenLabel
-                        className={styles.toggleButton}
-                        onChange={(checked) =>
-                          handleCategoryChange(
-                            sender.sender.id,
-                            category.category,
-                            checked,
-                          )
-                        }
-                      />
+                      <Text variant="h4">{sender.sender.title}</Text>
+
+                      {sender.categories.some(
+                        (category) => category.blocked,
+                      ) && (
+                        <Tag variant="rose" outlined>
+                          {formatMessage(
+                            mNotifications.categoriesBlockedCount,
+                            {
+                              count: sender.categories.filter(
+                                (category) => category.blocked,
+                              ).length,
+                            },
+                          )}
+                        </Tag>
+                      )}
                     </Box>
+                  }
+                >
+                  <Box paddingY={2} paddingBottom={1}>
+                    {sender.categories.map((category, index) => (
+                      <Box
+                        key={category.key}
+                        background={index % 2 === 0 ? 'blue100' : 'white'}
+                        padding={2}
+                      >
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="spaceBetween"
+                          columnGap={2}
+                        >
+                          <Text>{category.label}</Text>
+                          <ToggleSwitchButton
+                            label={category.label}
+                            checked={!category.blocked}
+                            disabled={onlyActionablePriorityNotifications}
+                            hiddenLabel
+                            className={styles.toggleButton}
+                            onChange={(checked) =>
+                              handleCategoryChange(
+                                sender.sender.id,
+                                category.category,
+                                checked,
+                              )
+                            }
+                          />
+                        </Box>
+                      </Box>
+                    ))}
                   </Box>
-                ))}
-              </Box>
-            </AccordionCard>
-          ))}
-        </Stack>
-      </Stack>
+                </AccordionCard>
+              ))}
+            </Stack>
+          </Stack>
+        </>
+      )}
     </Stack>
   )
 }

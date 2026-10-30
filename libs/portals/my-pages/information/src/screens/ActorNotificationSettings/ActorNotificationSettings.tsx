@@ -19,9 +19,9 @@ const UserProfile = () => {
   return (
     <>
       <IntroWrapper
-        marginBottom={[4, 8]}
-        title={formatMessage(m.mySettingsNotifications)}
-        intro={formatMessage(mNotifications.intro)}
+        marginBottom={2}
+        title={formatMessage(m.mySettingsActorNotifications)}
+        intro={formatMessage(mNotifications.actorNotificationSettingsIntro)}
         serviceProvider={{
           slug: ISLANDIS_SLUG,
           tooltip: formatMessage(m.userProfileTooltip),
