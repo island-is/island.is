@@ -41,12 +41,11 @@ export class DrivingLicenseApi {
   // about the caller (getCurrentLicenseV4, getAllLicensesV4, getTeachersV4 and
   // the legacyGetCurrentLicense path).
   //
-  // v5 is KEPT for the four legacy submits that the redesign flags still route
-  // to and that v6 either removed or reshaped: the B-temp and B-full submits,
-  // the B-temp submit that carries a health declaration, and the legacy 65+
-  // submit (which RLS has since removed from v5 too — see
-  // `postRenewLicenseOver65`). Each dies with its flag; drop the v5 injection
-  // here when the last one is permanently ON in prod.
+  // v5 is KEPT for the three legacy submits that the B redesign flags still
+  // route to and that v6 reshaped: the B-temp and B-full submits, and the
+  // B-temp submit that carries a health declaration. Each dies with its flag;
+  // drop the v5 injection here when both are permanently ON in prod. (The
+  // legacy 65+ submit is gone: RLS removed its endpoint.)
   constructor(
     private readonly v4: v4.ApiV4,
     private readonly v6: v6.ApiV6,
@@ -734,31 +733,6 @@ export class DrivingLicenseApi {
       success: response.result ?? false,
       applicationGuid: response.applicationGuid ?? null,
     }
-  }
-
-  // Legacy 65+ submit endpoint, used when `is65RenewalRedesignEnabled` is OFF.
-  // RLS removed it from v6 and has now removed it from v5 too (already gone on
-  // IS-DEV; gone from prod with RLS's next release), so this path cannot be
-  // relied on. Don't offer 65+ in prod with the redesign flag OFF; delete this
-  // method, and the flag-OFF branch that calls it, in a follow-up.
-  async postRenewLicenseOver65(params: {
-    token: string
-    districtId: number
-    pickupPlasticAtDistrict?: boolean
-    sendPlasticToPerson?: boolean
-  }): Promise<v5.DtoV5Renewal65AndOver> {
-    return await this.v5.apiDrivinglicenseV5ApplicationsRenewal65Post({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token.replace('Bearer ', ''),
-      modelsV5PostRenewal65AndOver: {
-        userId: v5.DRIVING_LICENSE_API_USER_ID,
-        districtId: params.districtId,
-        renewalDate: new Date(),
-        pickupPlasticAtDistrict: params.pickupPlasticAtDistrict,
-        sendPlasticToPerson: params.sendPlasticToPerson,
-      },
-    })
   }
 
   async postApplyForBELicense(params: {
