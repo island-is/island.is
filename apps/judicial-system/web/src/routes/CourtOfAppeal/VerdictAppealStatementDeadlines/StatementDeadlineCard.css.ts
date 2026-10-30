@@ -25,13 +25,16 @@ export const card = style({
 
 // On a narrow screen the menu goes first, in the top right corner of the
 // card, where a card menu is looked for; the grid's own flow would have put
-// it between the picker and its action.
+// it between the picker and its action. From md the menu has its own column
+// and takes its place in the flow again, or it would start a row of its own
+// ahead of the party.
 export const menu = style({
   order: -1,
   justifySelf: 'end',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      order: 0,
       gridColumn: 3,
     },
   },
