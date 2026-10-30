@@ -37,7 +37,9 @@ export const EditTenant = () => {
     checkEnvironmentsSync(tenant.environments, [
       'nationalId',
       'displayName',
+      'displayNameEn',
       'description',
+      'descriptionEn',
       'contactEmail',
       'municipalityCode',
     ])
@@ -108,6 +110,20 @@ export const EditTenant = () => {
                 </GridColumn>
                 <GridColumn span="12/12">
                   <Input
+                    key={`displayNameEn-${selectedEnvironment.environment}`}
+                    name="displayNameEn"
+                    label={formatMessage(m.tenantDisplayNameEn)}
+                    size="sm"
+                    backgroundColor="blue"
+                    defaultValue={selectedEnvironment.displayNameEn ?? ''}
+                    errorMessage={formatErrorMessage(
+                      actionData?.errors?.displayNameEn,
+                    )}
+                    tooltip={formatMessage(m.tenantEnglishTooltip)}
+                  />
+                </GridColumn>
+                <GridColumn span="12/12">
+                  <Input
                     key={`description-${selectedEnvironment.environment}`}
                     name="description"
                     label={formatMessage(m.tenantDescription)}
@@ -118,6 +134,22 @@ export const EditTenant = () => {
                       actionData?.errors?.description,
                     )}
                     tooltip={formatMessage(m.tenantDescriptionTooltip)}
+                    textarea
+                    rows={2}
+                  />
+                </GridColumn>
+                <GridColumn span="12/12">
+                  <Input
+                    key={`descriptionEn-${selectedEnvironment.environment}`}
+                    name="descriptionEn"
+                    label={formatMessage(m.tenantDescriptionEn)}
+                    size="sm"
+                    backgroundColor="blue"
+                    defaultValue={selectedEnvironment.descriptionEn ?? ''}
+                    errorMessage={formatErrorMessage(
+                      actionData?.errors?.descriptionEn,
+                    )}
+                    tooltip={formatMessage(m.tenantEnglishTooltip)}
                     textarea
                     rows={2}
                   />

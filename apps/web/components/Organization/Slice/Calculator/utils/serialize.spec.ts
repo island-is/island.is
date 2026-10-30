@@ -12,7 +12,7 @@ const entry = (
   const contractField: InputContractField = { key, type, required: false }
 
   return {
-    field: { uid: `uid-${key}`, key, span: 6 },
+    field: { uid: `uid-${key}`, key, kind: 'field', size: 'medium' },
     contractField,
     label: key,
     disabled: false,
@@ -59,16 +59,18 @@ describe('toInputFieldValues', () => {
     expect(rows).toEqual([{ key: 'incomeYear', value: { numberValue: 2024 } }])
   })
 
-  /* `DatePickerController` already emits `yyyy-MM-dd`, so no conversion happens
-   * anywhere in the web layer. */
-  it('submits a date unchanged', () => {
+  /* `DatePickerController` emits `yyyy-MM-dd`, which parses as UTC midnight. */
+  it('submits a date as dateValue', () => {
     const rows = toInputFieldValues(
       applicable(entry('startDate', TaxCalculatorInputFieldType.Date)),
       { startDate: '2026-03-14' },
     )
 
     expect(rows).toEqual([
-      { key: 'startDate', value: { stringValue: '2026-03-14' } },
+      {
+        key: 'startDate',
+        value: { dateValue: new Date('2026-03-14T00:00:00.000Z') },
+      },
     ])
   })
 

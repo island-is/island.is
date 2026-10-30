@@ -17,6 +17,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import type { SubstanceMap } from '@island.is/judicial-system/types'
 import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   CheckboxList,
@@ -25,7 +26,6 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   IndictmentCount as TIndictmentCount,
   IndictmentSubtype,
   Offense,
@@ -53,8 +53,8 @@ import { strings } from './IndictmentCount.strings'
 
 interface Props {
   indictmentCount: TIndictmentCount
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   onChange: (
     indictmentCountId: string,
     indictmentCountUpdate: UpdateIndictmentCount,
@@ -64,7 +64,7 @@ interface Props {
   updateIndictmentCountState: (
     indictmentCountId: string,
     indictmentCountUpdate: UpdateIndictmentCountState,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => void
 }
 
@@ -207,9 +207,15 @@ export const getLegalArguments = (
     } ${lawsBroken[i][1]}.`
   }
 
-  return formatMessage(strings.legalArgumentsAutofill, {
-    articles: `${articles} mgr. ${lawsBroken[lawsBroken.length - 1][0]}. gr.`,
-  })
+  return formatMessage(
+    {
+      id: strings.legalArgumentsAutofill,
+      defaultMessage: strings.legalArgumentsAutofill,
+    },
+    {
+      articles: `${articles} mgr. ${lawsBroken[lawsBroken.length - 1][0]}. gr.`,
+    },
+  )
 }
 
 export const IndictmentCount: FC<Props> = ({
@@ -426,13 +432,13 @@ export const IndictmentCount: FC<Props> = ({
             variant="text"
             size="small"
           >
-            {formatMessage(strings.delete)}
+            {strings.delete}
           </Button>
         </Box>
       )}
       <SectionHeading
         heading="h4"
-        title={formatMessage(strings.policeCaseNumberTitle)}
+        title={strings.policeCaseNumberTitle}
         marginBottom={2}
       />
       <Box marginBottom={1}>
@@ -443,8 +449,8 @@ export const IndictmentCount: FC<Props> = ({
             value: val,
             label: val,
           }))}
-          label={formatMessage(strings.policeCaseNumberLabel)}
-          placeholder={formatMessage(strings.policeCaseNumberPlaceholder)}
+          label={strings.policeCaseNumberLabel}
+          placeholder={strings.policeCaseNumberPlaceholder}
           onChange={async (so) => {
             const policeCaseNumber = so?.value
 
@@ -479,7 +485,7 @@ export const IndictmentCount: FC<Props> = ({
         {subtypes?.length > 1 && (
           <Box marginBottom={2}>
             <SectionHeading
-              title={formatMessage(strings.selectIndictmentSubtype)}
+              title={strings.selectIndictmentSubtype}
               heading="h4"
               marginBottom={2}
             />
@@ -502,17 +508,16 @@ export const IndictmentCount: FC<Props> = ({
         <>
           <SectionHeading
             heading="h4"
-            title={formatMessage(strings.vehicleRegistrationNumberTitle)}
+            title={strings.vehicleRegistrationNumberTitle}
             marginBottom={2}
           />
           <Box marginBottom={2}>
             <Input
+              id={`vehicleRegistrationNumber-${indictmentCount.id}`}
               name="vehicleRegistrationNumber"
               autoComplete="off"
-              label={formatMessage(strings.vehicleRegistrationNumberLabel)}
-              placeholder={formatMessage(
-                strings.vehicleRegistrationNumberPlaceholder,
-              )}
+              label={strings.vehicleRegistrationNumberLabel}
+              placeholder={strings.vehicleRegistrationNumberPlaceholder}
               value={indictmentCount.vehicleRegistrationNumber ?? ''}
               onChange={(event) => {
                 removeErrorMessageIfValid(
@@ -556,14 +561,15 @@ export const IndictmentCount: FC<Props> = ({
               <Box marginBottom={2}>
                 <SectionHeading
                   heading="h4"
-                  title={formatMessage(strings.lawsBrokenTitle)}
+                  title={strings.lawsBrokenTitle}
                   marginBottom={2}
                 />
                 <Select
+                  id={`lawsBroken-${indictmentCount.id}`}
                   name="lawsBroken"
                   options={lawsBrokenOptions}
-                  label={formatMessage(strings.lawsBrokenLabel)}
-                  placeholder={formatMessage(strings.lawsBrokenPlaceholder)}
+                  label={strings.lawsBrokenLabel}
+                  placeholder={strings.lawsBrokenPlaceholder}
                   value={null}
                   onChange={(selectedOption) => {
                     const law = (selectedOption as LawsBrokenOption).law
@@ -634,14 +640,14 @@ export const IndictmentCount: FC<Props> = ({
       <Box component="section" marginBottom={3}>
         <SectionHeading
           heading="h4"
-          title={formatMessage(strings.incidentDescriptionTitle)}
+          title={strings.incidentDescriptionTitle}
           marginBottom={2}
         />
         <Box marginBottom={2}>
           <RichTextEditor
             data-testid="incidentDescription"
-            label={formatMessage(strings.incidentDescriptionLabel)}
-            placeholder={formatMessage(strings.incidentDescriptionPlaceholder)}
+            label={strings.incidentDescriptionLabel}
+            placeholder={strings.incidentDescriptionPlaceholder}
             defaultValue={incidentDescriptionHtml}
             value={incidentDescriptionHtml}
             errorMessage={incidentDescriptionErrorMessage || undefined}
@@ -679,15 +685,16 @@ export const IndictmentCount: FC<Props> = ({
       <Box component="section">
         <SectionHeading
           heading="h4"
-          title={formatMessage(strings.legalArgumentsTitle)}
+          title={strings.legalArgumentsTitle}
           marginBottom={2}
         />
 
         <Input
+          id={`legalArguments-${indictmentCount.id}`}
           name="legalArguments"
           autoComplete="off"
-          label={formatMessage(strings.legalArgumentsLabel)}
-          placeholder={formatMessage(strings.legalArgumentsPlaceholder)}
+          label={strings.legalArgumentsLabel}
+          placeholder={strings.legalArgumentsPlaceholder}
           errorMessage={legalArgumentsErrorMessage}
           hasError={legalArgumentsErrorMessage !== ''}
           value={indictmentCount.legalArguments ?? ''}

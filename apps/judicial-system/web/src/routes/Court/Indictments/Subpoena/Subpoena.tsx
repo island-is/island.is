@@ -11,6 +11,7 @@ import {
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core, titles } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   CourtArrangements,
@@ -26,7 +27,6 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -50,7 +50,7 @@ import { pdfButtonGrid } from './Subpoena.css'
 
 export interface Updates {
   defendants?: Defendant[] | null
-  theCase: Case
+  theCase: WorkingCase
 }
 
 interface ModalContent {
@@ -106,7 +106,7 @@ const Subpoena: FC = () => {
   )
   const [modalContent, setModalContent] = useState<ModalContent>()
 
-  const { updateDefendant } = useDefendants()
+  const { updateDefendants } = useDefendants()
   const { setAndSendCaseToServer } = useCase()
   const { createSubpoenas } = useCreateSubpoenas()
   const { formatMessage } = useIntl()
@@ -169,32 +169,26 @@ const Subpoena: FC = () => {
         )
       : updates?.defendants
 
-    const promises: Promise<boolean>[] = []
-
-    defendantsToUpdate?.forEach((defendant) => {
-      promises.push(
-        updateDefendant({
-          caseId: workingCase.id,
-          defendantId: defendant.id,
-          isAlternativeService: defendant.isAlternativeService,
-          // Clear the alternative service description if the defendant
-          // is not being served by alternative means
-          alternativeServiceDescription: defendant.isAlternativeService
-            ? defendant.alternativeServiceDescription
-            : null,
-          // Clear the subpoena type if the defendant is
-          // being served by alternative means
-          subpoenaType: defendant.isAlternativeService
-            ? null
-            : defendant.subpoenaType,
-        }),
-      )
-    })
-
     // Make sure defendants are updated before submitting the court date
-    const allDefendantsUpdated = await Promise.all(promises)
+    const allDefendantsUpdated = await updateDefendants(
+      workingCase.id,
+      (defendantsToUpdate ?? []).map((defendant) => ({
+        defendantId: defendant.id,
+        isAlternativeService: defendant.isAlternativeService,
+        // Clear the alternative service description if the defendant
+        // is not being served by alternative means
+        alternativeServiceDescription: defendant.isAlternativeService
+          ? defendant.alternativeServiceDescription
+          : null,
+        // Clear the subpoena type if the defendant is
+        // being served by alternative means
+        subpoenaType: defendant.isAlternativeService
+          ? null
+          : defendant.subpoenaType,
+      })),
+    )
 
-    if (!allDefendantsUpdated.every((result) => result)) {
+    if (!allDefendantsUpdated) {
       setIsCreatingSubpoena(false)
       return
     }
@@ -287,7 +281,7 @@ const Subpoena: FC = () => {
     newSubpoenas,
     setAndSendCaseToServer,
     setWorkingCase,
-    updateDefendant,
+    updateDefendants,
     updates?.defendants,
     updates?.theCase.arraignmentDate,
     workingCase,
@@ -396,9 +390,9 @@ const Subpoena: FC = () => {
       })
     } else if (isIssuingSubpoenas) {
       setModalContent({
-        title: formatMessage(strings.modalTitle),
+        title: strings.modalTitle,
         text: subpoenaText,
-        primaryButtonText: formatMessage(strings.modalPrimaryButtonText),
+        primaryButtonText: strings.modalPrimaryButtonText,
       })
     } else if (isSchedulingArraignmentDate) {
       setModalContent({
@@ -413,7 +407,6 @@ const Subpoena: FC = () => {
     isIssuingAlternativeServices,
     isIssuingSubpoenas,
     isSchedulingArraignmentDate,
-    formatMessage,
     modalContent,
     workingCase.civilClaimants,
   ])
@@ -435,7 +428,7 @@ const Subpoena: FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.subpoena)} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={stack({ gap: 5 })}>
           {updates?.defendants && (
@@ -501,7 +494,7 @@ const Subpoena: FC = () => {
                       })
                     }}
                   >
-                    {formatMessage(strings.newSubpoenaButtonText)}
+                    {strings.newSubpoenaButtonText}
                   </Button>
                 ) : null,
               }))}
@@ -509,9 +502,7 @@ const Subpoena: FC = () => {
             />
           )}
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(strings.courtArrangementsHeading)}
-            />
+            <SectionHeading title={strings.courtArrangementsHeading} />
             <BlueBox>
               {canSkipArraignmentSummons && (
                 <Box marginBottom={2}>
@@ -609,7 +600,7 @@ const Subpoena: FC = () => {
             {
               text: !isSchedulingArraignmentDate
                 ? formatMessage(core.continue)
-                : formatMessage(strings.nextButtonText),
+                : strings.nextButtonText,
               icon: 'arrowForward',
               onClick: () => {
                 if (!isSchedulingArraignmentDate) {
@@ -634,7 +625,7 @@ const Subpoena: FC = () => {
             text={modalContent.text}
             buttons={[
               {
-                text: formatMessage(strings.modalSecondaryButtonText),
+                text: strings.modalSecondaryButtonText,
                 onClick: () => setNavigateTo(undefined),
                 variant: 'ghost',
               },

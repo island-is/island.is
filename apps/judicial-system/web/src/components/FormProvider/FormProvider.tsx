@@ -36,6 +36,11 @@ import { useLimitedAccessCaseLazyQuery } from './limitedAccessCase.generated'
 export type WorkingCase = NonNullable<CaseQuery['case']> &
   NonNullable<LimitedAccessCaseQuery['limitedAccessCase']>
 
+// A case merged into the working case, as the case queries select it under
+// mergedCases: a narrower projection than the working case, so code handed one
+// cannot read what was never fetched for it.
+export type MergedCase = NonNullable<WorkingCase['mergedCases']>[number]
+
 type ProviderState =
   | 'creating'
   | 'fetch'

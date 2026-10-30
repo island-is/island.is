@@ -71,13 +71,13 @@ const OverviewBody = ({
     <>
       <PageHeader title={formatMessage(titles.court.indictments.overview)} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
+        <PageTitle>{strings.inProgressTitle}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
         <div className={stack({ gap: 5 })}>
           {workingCase.comments && (
             <AlertMessage
-              title={formatMessage(commentsInput.heading)}
+              title={commentsInput.heading}
               message={workingCase.comments}
               type="warning"
             />
@@ -159,7 +159,7 @@ const OverviewBody = ({
               }}
               disabled={workingCase.state === CaseState.CORRECTING}
             >
-              {formatMessage(strings.addFilesButtonText)}
+              {strings.addFilesButtonText}
             </Button>
             {isDistrictCourtUser(user) && (
               <Button
@@ -205,7 +205,7 @@ const IndictmentOverview = () => {
   const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, caseNotFound, isCaseUpToDate } =
     useContext(FormContext)
-  const { updateDefendant } = useDefendants()
+  const { updateDefendants } = useDefendants()
 
   // Once the user finishes or dismisses the modal we must not re-open it for the
   // same loaded case — workingCase.state stays WAITING_FOR_CANCELLATION until the
@@ -253,23 +253,21 @@ const IndictmentOverview = () => {
         return
       }
 
-      const promises = defendants.map((defendant) =>
-        updateDefendant({
-          caseId: workingCase.id,
+      const allDataSentToServer = await updateDefendants(
+        workingCase.id,
+        defendants.map((defendant) => ({
           defendantId: defendant.id,
           subpoenaType: defendant.subpoenaType,
-        }),
+        })),
       )
 
-      const allDataSentToServer = await Promise.all(promises)
-
-      if (!allDataSentToServer.every(Boolean)) {
+      if (!allDataSentToServer) {
         return
       }
 
       router.push(`${destination}/${workingCase.id}`)
     },
-    [defendants, router, updateDefendant, workingCase.id],
+    [defendants, router, updateDefendants, workingCase.id],
   )
 
   return (

@@ -1,6 +1,11 @@
-import { style, styleVariants } from '@vanilla-extract/css'
+import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
+
+const fadeIn = keyframes({
+  from: { opacity: 0 },
+  to: { opacity: 1 },
+})
 
 export const container = style({
   position: 'fixed',
@@ -13,6 +18,22 @@ export const container = style({
   justifyContent: 'center',
   zIndex: 100,
   background: 'rgba(203, 203, 215, 0.8)',
+  animation: `${fadeIn} 0.3s ease-in-out`,
+  transition: 'opacity 0.2s ease-in-out',
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none',
+      transition: 'none',
+    },
+  },
+})
+
+// Fades out over the same 0.2s as the dialog's exit, so both leave together.
+// The entrance animation is cancelled so a close inside its first 0.3s, say
+// an immediate Escape, fades out rather than finishing the fade in.
+export const leaving = style({
+  opacity: 0,
+  animation: 'none',
 })
 
 export const alignItems = styleVariants({
@@ -43,6 +64,18 @@ export const modalContainer = style({
       maxWidth: '50vw',
     },
   },
+})
+
+export const backdropButton = style({
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+  padding: 0,
+  border: 'none',
+  background: 'transparent',
+  cursor: 'default',
 })
 
 export const modalContainerBare = style({

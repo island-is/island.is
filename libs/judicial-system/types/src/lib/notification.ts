@@ -2,11 +2,19 @@ export enum TrackedNotificationType {
   ADVOCATE_ASSIGNED = 'ADVOCATE_ASSIGNED',
   APPEAL_CASE_FILES_UPDATED = 'APPEAL_CASE_FILES_UPDATED',
   APPEAL_COMPLETED = 'APPEAL_COMPLETED',
+  APPEAL_COURT_SESSION_BOOKED = 'APPEAL_COURT_SESSION_BOOKED',
+  APPEAL_COURT_SESSION_CANCELLED = 'APPEAL_COURT_SESSION_CANCELLED',
+  APPEAL_COURT_SESSION_CHANGED = 'APPEAL_COURT_SESSION_CHANGED',
   APPEAL_JUDGES_ASSIGNED = 'APPEAL_JUDGES_ASSIGNED',
   APPEAL_PROSECUTOR_ASSIGNED = 'APPEAL_PROSECUTOR_ASSIGNED',
   APPEAL_RECEIVED_BY_COURT = 'APPEAL_RECEIVED_BY_COURT',
   APPEAL_STATEMENT = 'APPEAL_STATEMENT',
+  APPEAL_STATEMENT_DEADLINE_SET = 'APPEAL_STATEMENT_DEADLINE_SET',
+  APPEAL_STATEMENT_DEADLINE_EXTENDED = 'APPEAL_STATEMENT_DEADLINE_EXTENDED',
   APPEAL_TO_COURT_OF_APPEALS = 'APPEAL_TO_COURT_OF_APPEALS',
+  APPEAL_SUMMONS_SENT_TO_COURT_OF_APPEALS = 'APPEAL_SUMMONS_SENT_TO_COURT_OF_APPEALS',
+  APPEAL_DEFENDER_ASSIGNED = 'APPEAL_DEFENDER_ASSIGNED',
+  APPEAL_SPOKESPERSON_ASSIGNED = 'APPEAL_SPOKESPERSON_ASSIGNED',
   APPEAL_WITHDRAWN = 'APPEAL_WITHDRAWN',
   CASE_FILES_UPDATED = 'CASE_FILES_UPDATED',
   COURT_DATE = 'COURT_DATE',
@@ -79,14 +87,27 @@ export enum IndictmentCaseNotificationType {
 export enum AppealCaseNotificationType {
   APPEAL_CASE_FILES_UPDATED = TrackedNotificationType.APPEAL_CASE_FILES_UPDATED,
   APPEAL_COMPLETED = TrackedNotificationType.APPEAL_COMPLETED,
+  APPEAL_COURT_SESSION_BOOKED = TrackedNotificationType.APPEAL_COURT_SESSION_BOOKED,
+  APPEAL_COURT_SESSION_CANCELLED = TrackedNotificationType.APPEAL_COURT_SESSION_CANCELLED,
+  APPEAL_COURT_SESSION_CHANGED = TrackedNotificationType.APPEAL_COURT_SESSION_CHANGED,
   APPEAL_JUDGES_ASSIGNED = TrackedNotificationType.APPEAL_JUDGES_ASSIGNED,
   APPEAL_RECEIVED_BY_COURT = TrackedNotificationType.APPEAL_RECEIVED_BY_COURT,
   APPEAL_STATEMENT = TrackedNotificationType.APPEAL_STATEMENT,
+  // The court of appeals gave a party a deadline to file its statement, or
+  // moved the one it had. Both the party and everyone else are told.
+  APPEAL_STATEMENT_DEADLINE_SET = TrackedNotificationType.APPEAL_STATEMENT_DEADLINE_SET,
+  APPEAL_STATEMENT_DEADLINE_EXTENDED = TrackedNotificationType.APPEAL_STATEMENT_DEADLINE_EXTENDED,
+  APPEAL_SUMMONS_SENT_TO_COURT_OF_APPEALS = TrackedNotificationType.APPEAL_SUMMONS_SENT_TO_COURT_OF_APPEALS,
   APPEAL_TO_COURT_OF_APPEALS = TrackedNotificationType.APPEAL_TO_COURT_OF_APPEALS,
   APPEAL_WITHDRAWN = TrackedNotificationType.APPEAL_WITHDRAWN,
 }
 
 export enum DefendantNotificationType {
+  // The court of appeals confirming this defendant's defender for the appeal.
+  // Distinct from DEFENDER_ASSIGNED, which is the district court doing the
+  // same for the case below: they are two appointments, and a defender who
+  // acted at both stages has to hear about each.
+  APPEAL_DEFENDER_ASSIGNED = TrackedNotificationType.APPEAL_DEFENDER_ASSIGNED,
   DEFENDANT_DELEGATED_DEFENDER_CHOICE = TrackedNotificationType.DEFENDANT_DELEGATED_DEFENDER_CHOICE,
   DEFENDANT_SELECTED_DEFENDER = TrackedNotificationType.DEFENDANT_SELECTED_DEFENDER,
   DEFENDER_ASSIGNED = TrackedNotificationType.DEFENDER_ASSIGNED,
@@ -98,6 +119,11 @@ export enum DefendantNotificationType {
 }
 
 export enum CivilClaimantNotificationType {
+  // The court of appeals confirming this claimant's advocate for the appeal.
+  // One type for both: a lögmaður and a réttargæslumaður get the same mail
+  // with the role named differently, and only the latter is also appointed by
+  // letter.
+  APPEAL_SPOKESPERSON_ASSIGNED = TrackedNotificationType.APPEAL_SPOKESPERSON_ASSIGNED,
   SPOKESPERSON_ASSIGNED = TrackedNotificationType.SPOKESPERSON_ASSIGNED,
   SPOKESPERSON_COURT_DATE_FOLLOW_UP = TrackedNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
 }

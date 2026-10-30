@@ -15,6 +15,7 @@ import {
   Req,
   UnauthorizedException,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
 import {
@@ -57,6 +58,7 @@ import {
 import {
   CaseExistsGuard,
   CaseNotCompletedGuard,
+  CaseOriginalAncestorInterceptor,
   CaseReadGuard,
   CaseReceivedGuard,
   CaseTypeGuard,
@@ -168,6 +170,9 @@ export class FileController {
     publicProsecutorStaffRule,
     prosecutorRule,
     prosecutorRepresentativeRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Post('defendant/:defendantId/file')
   @ApiCreatedResponse({
@@ -205,6 +210,9 @@ export class FileController {
     publicProsecutorStaffRule,
     prosecutorRule,
     prosecutorRepresentativeRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Post('civilClaimant/:civilClaimantId/file')
   @ApiCreatedResponse({
@@ -522,6 +530,11 @@ export class FileController {
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
   )
+  // The guards above run against the case in the url - the one the user is
+  // looking at. Police digital case files live on the original ancestor
+  // (the first case of an extension chain, or the case an indictment was
+  // split or duplicated from), so the interceptor swaps it in afterwards.
+  @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Get('policeDigitalCaseFiles')
   @ApiOkResponse({
     type: PoliceDigitalCaseFileSyncResult,
@@ -535,11 +548,11 @@ export class FileController {
     @CurrentCase() theCase: Case,
   ): Promise<PoliceDigitalCaseFileSyncResult[]> {
     this.logger.debug(
-      `Syncing and getting police digital case files for case ${caseId}`,
+      `Syncing and getting police digital case files for case ${caseId} from original ancestor ${theCase.id}`,
     )
 
     return this.policeDigitalCaseFileService.syncAndGetPoliceDigitalCaseFiles(
-      caseId,
+      theCase.id,
       theCase.type,
       theCase.state,
       theCase.courtCaseNumber,
@@ -561,6 +574,7 @@ export class FileController {
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
   )
+  @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Get('policeDigitalCaseFileTokenUrl')
   @ApiOkResponse({
     type: SignedUrl,
@@ -582,11 +596,11 @@ export class FileController {
     }
 
     this.logger.debug(
-      `Getting token URL for police digital case file ${policeDigitalFileId} in case ${caseId}`,
+      `Getting token URL for police digital case file ${policeDigitalFileId} in case ${caseId} from original ancestor ${theCase.id}`,
     )
 
     return this.policeDigitalCaseFileService
-      .getTokenUrl(caseId, user, policeDigitalFileId, {
+      .getTokenUrl(theCase.id, user, policeDigitalFileId, {
         courtCaseNumber: theCase.courtCaseNumber,
         policeCaseNumbers: theCase.policeCaseNumbers,
       })
@@ -595,6 +609,7 @@ export class FileController {
 
   @UseGuards(CaseWriteGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Delete('policeDigitalCaseFile/:fileId')
   @ApiOkResponse({
     type: DeleteFileResponse,
@@ -616,21 +631,23 @@ export class FileController {
 
   @UseGuards(new CaseTypeGuard(indictmentCases), CaseWriteGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Patch('policeDigitalCaseFiles')
   @ApiOkResponse({
     description: 'Updates order of police digital case files',
   })
   async updatePoliceDigitalCaseFiles(
     @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
     @Body() updateDto: UpdatePoliceDigitalCaseFilesDto,
   ): Promise<object> {
     this.logger.debug(
-      `Updating police digital case file orders for case ${caseId}`,
+      `Updating police digital case file orders for case ${caseId} on original ancestor ${theCase.id}`,
     )
 
     await this.sequelize.transaction((transaction) =>
       this.policeDigitalCaseFileService.updatePoliceDigitalCaseFileOrders(
-        caseId,
+        theCase.id,
         updateDto.files,
         transaction,
       ),

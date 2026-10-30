@@ -14,8 +14,8 @@ import {
   defendant as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
-  DefenderInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -23,11 +23,11 @@ import {
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
+  RequestCaseDefenderInfo,
   SectionHeading,
   VictimInfo,
 } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -77,7 +77,7 @@ const Defendant = () => {
 
   const updateDefendantState = useCallback(
     (update: UpdateDefendantInput) => {
-      setWorkingCase((prevWorkingCase: Case) => {
+      setWorkingCase((prevWorkingCase: WorkingCase) => {
         if (!prevWorkingCase.defendants) {
           return prevWorkingCase
         }
@@ -194,25 +194,26 @@ const Defendant = () => {
         title={formatMessage(titles.prosecutor.investigationCases.defendant)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.heading)}</PageTitle>
+        <PageTitle>{m.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
-          <ProsecutorCaseInfo
-            workingCase={workingCase}
-            hideDefendants
-            hideCourt
-          />
-          <Box component="section" className={stack({ gap: 3 })}>
+          <div className={stack({ gap: 2 })}>
             <Box
               display="flex"
               alignItems="center"
               justifyContent="spaceBetween"
-              marginBottom={2}
             >
               <SectionHeading title="Varnaraðili" marginBottom={0} />
               {showPoliceDefendantsUI && policeDefendantsLoading && (
                 <LoadingDots size="small" />
               )}
             </Box>
+            <ProsecutorCaseInfo
+              workingCase={workingCase}
+              hideDefendants
+              hideCourt
+            />
+          </div>
+          <Box component="section" className={stack({ gap: 3 })}>
             <AnimatePresence>
               {workingCase.defendants &&
                 workingCase.defendants.map((defendant, index) => (
@@ -234,7 +235,13 @@ const Defendant = () => {
                       }
                       onChange={handleUpdateDefendant}
                       updateDefendantState={updateDefendantState}
-                    />
+                    >
+                      <RequestCaseDefenderInfo
+                        workingCase={workingCase}
+                        setWorkingCase={setWorkingCase}
+                        defendant={defendant}
+                      />
+                    </DefendantInfo>
                   </motion.div>
                 ))}
             </AnimatePresence>
@@ -253,22 +260,10 @@ const Defendant = () => {
                     (!defendant.noNationalId && !defendant.nationalId),
                 )}
               >
-                {formatMessage(m.sections.defendantInfo.addDefendantButtonText)}
+                {m.sections.defendantInfo.addDefendantButtonText}
               </Button>
             </Box>
           </Box>
-          <AnimatePresence>
-            <motion.section
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-            >
-              <DefenderInfo
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-              />
-            </motion.section>
-          </AnimatePresence>
           {workingCase.id &&
             (workingCase.victims && workingCase.victims?.length === 0 ? (
               <Box component="section" display="flex" justifyContent="flexEnd">

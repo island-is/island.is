@@ -5,8 +5,10 @@ import {
   getDefendantVerdictAppealDecisionLabel,
   getServiceRequirementText,
 } from '@island.is/judicial-system/formatters'
+import { getAppealExpirationInfo } from '@island.is/judicial-system-web/src/components/InfoCard/DefendantInfo/DefendantInfo.logic'
 import type {
   AppealCase,
+  Defendant,
   Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -28,19 +30,21 @@ export const hasVerdictServiceDecision = (
 interface DefenderVerdictTimeline {
   defendantId: string
   verdict: Verdict
+  verdictAppealDeadline?: Defendant['verdictAppealDeadline']
+  isVerdictAppealDeadlineExpired?: Defendant['isVerdictAppealDeadlineExpired']
   verdictAppealCase?: Pick<AppealCase, 'appealEventLogs'> | null
   formatMessage: IntlShape['formatMessage']
 }
 
 /**
  * The bullets a defence user sees about the service and appeal of one verdict.
- * Deliberately leaves out the appeal deadline, which defence users already get
- * from InfoCardClosedIndictment, and everything about enforcement, which is
- * internal to the prosecution.
+ * Leaves out enforcement details, which are internal to the prosecution.
  */
 export const getDefenderVerdictTimelineItems = ({
   defendantId,
   verdict,
+  verdictAppealDeadline,
+  isVerdictAppealDeadlineExpired,
   verdictAppealCase,
   formatMessage,
 }: DefenderVerdictTimeline): VerdictTimelineItem[] => {
@@ -54,9 +58,15 @@ export const getDefenderVerdictTimelineItems = ({
     verdict.serviceDate
   ) {
     items.push({
-      text: formatMessage(strings.defendantVerdictViewedDate, {
-        date: formatDate(verdict.serviceDate),
-      }),
+      text: formatMessage(
+        {
+          id: strings.defendantVerdictViewedDate,
+          defaultMessage: strings.defendantVerdictViewedDate,
+        },
+        {
+          date: formatDate(verdict.serviceDate),
+        },
+      ),
     })
   } else if (verdict.serviceRequirement) {
     const serviceRequirementText = getServiceRequirementText(
@@ -66,6 +76,22 @@ export const getDefenderVerdictTimelineItems = ({
     if (serviceRequirementText) {
       items.push({ text: serviceRequirementText })
     }
+  }
+
+  if (verdictAppealDeadline) {
+    const appealExpirationInfo = getAppealExpirationInfo({
+      verdictAppealDeadline,
+      isVerdictAppealDeadlineExpired,
+    })
+
+    items.push({
+      text: formatMessage(appealExpirationInfo.message, {
+        appealExpirationDate: appealExpirationInfo.date,
+        deadlineType: verdict.isDefaultJudgement
+          ? 'Endurupptökufrestur'
+          : 'Áfrýjunarfrestur',
+      }),
+    })
   }
 
   // The stance the defendant took at service only matters while it is still open

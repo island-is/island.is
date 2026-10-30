@@ -29,7 +29,8 @@ import { DirectorateOfEqualityApplicationService } from './directorate-of-equali
 // Sync carries an arbitrary per-screen payload, and the employee list queries
 // carry a live page number — neither has a channel through defineTemplateApi
 // providers (those only take a static actionId), hence a resolver of their own.
-@Scopes(ApiScope.directorateOfEquality)
+// Each handler names its scope: the salary report and the equality report are
+// granted separately.
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.isDirectorateOfEqualityApplicationsEnabled)
 @Resolver()
@@ -42,6 +43,7 @@ export class DirectorateOfEqualityApplicationResolver {
   @Mutation(() => Boolean, {
     name: 'directorateOfEqualitySyncSalaryReportDraft',
   })
+  @Scopes(ApiScope.directorateOfEqualitySalary)
   @Audit()
   syncSalaryReportDraft(
     @Args('input') input: SyncSalaryReportDraftInput,
@@ -56,6 +58,7 @@ export class DirectorateOfEqualityApplicationResolver {
   @Query(() => DraftEmployeesResponseModel, {
     name: 'directorateOfEqualityDraftEmployees',
   })
+  @Scopes(ApiScope.directorateOfEqualitySalary)
   @Audit()
   draftEmployees(
     @Args('input') input: DraftEmployeesInput,
@@ -70,6 +73,7 @@ export class DirectorateOfEqualityApplicationResolver {
   @Query(() => DraftEmployeesWithStepsResponseModel, {
     name: 'directorateOfEqualityDraftEmployeesWithSteps',
   })
+  @Scopes(ApiScope.directorateOfEqualitySalary)
   @Audit()
   draftEmployeesWithSteps(
     @Args('input') input: DraftEmployeesInput,
@@ -84,6 +88,7 @@ export class DirectorateOfEqualityApplicationResolver {
   @Mutation(() => Boolean, {
     name: 'directorateOfEqualityUpdateEqualityDraftContent',
   })
+  @Scopes(ApiScope.directorateOfEquality)
   @Audit()
   updateEqualityDraftContent(
     @Args('input') input: UpdateEqualityDraftContentInput,
@@ -98,6 +103,7 @@ export class DirectorateOfEqualityApplicationResolver {
   @Mutation(() => Boolean, {
     name: 'directorateOfEqualityEditEqualityContent',
   })
+  @Scopes(ApiScope.directorateOfEquality)
   @Audit()
   editEqualityContent(
     @Args('input') input: EditEqualityContentInput,

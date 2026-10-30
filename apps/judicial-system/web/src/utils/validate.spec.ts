@@ -1,6 +1,6 @@
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
   AppealCase,
-  Case,
   CivilClaimant,
   CourtSessionResponse,
   DateLog,
@@ -77,10 +77,10 @@ const POLICE_CASE_NUMBER = '012-3456-7890'
 
 const createWorkingCase = (
   indictmentSubtypes: Record<string, IndictmentSubtype[]>,
-): Case =>
+): WorkingCase =>
   ({
     indictmentSubtypes,
-  } as Case)
+  } as WorkingCase)
 
 describe('isIndictmentCountComplete', () => {
   test('returns true for a complete non-traffic count', () => {
@@ -547,7 +547,7 @@ describe('areAppealDecisionsComplete', () => {
   const baseCase = {
     defendants: [{ id: 'd1' }],
     civilClaimants: [{ id: 'c1' }],
-  } as Case
+  } as WorkingCase
 
   it('is true when every party has a decision', () => {
     const workingCase = {
@@ -563,7 +563,7 @@ describe('areAppealDecisionsComplete', () => {
           civilClaimantId: 'c1',
         }),
       ],
-    } as Case
+    } as WorkingCase
 
     expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(true)
   })
@@ -578,7 +578,7 @@ describe('areAppealDecisionsComplete', () => {
           civilClaimantId: 'c1',
         }),
       ],
-    } as Case
+    } as WorkingCase
 
     expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(false)
   })
@@ -597,7 +597,7 @@ describe('areAppealDecisionsComplete', () => {
           civilClaimantId: 'c1',
         }),
       ],
-    } as Case
+    } as WorkingCase
 
     expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(false)
   })
@@ -630,7 +630,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [subpoenaDefendant],
       arraignmentDate,
-    } as Case
+    } as WorkingCase
 
     expect(isSubpoenaStepValid(workingCase)).toBe(true)
   })
@@ -639,7 +639,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [subpoenaDefendant],
       arraignmentDate: { location: 'Dómsalur 1' } as DateLog,
-    } as Case
+    } as WorkingCase
 
     expect(isSubpoenaStepValid(workingCase)).toBe(false)
   })
@@ -648,7 +648,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [subpoenaDefendant],
       arraignmentDate: { date: '2026-09-01T10:00:00.000Z' } as DateLog,
-    } as Case
+    } as WorkingCase
 
     expect(isSubpoenaStepValid(workingCase)).toBe(false)
   })
@@ -657,7 +657,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [alternativeServiceDefendant],
       isArraignmentSummonsSkipped: true,
-    } as Case
+    } as WorkingCase
 
     expect(isSubpoenaStepValid(workingCase)).toBe(true)
   })
@@ -666,7 +666,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [alternativeServiceDefendant, subpoenaDefendant],
       isArraignmentSummonsSkipped: true,
-    } as Case
+    } as WorkingCase
 
     expect(isSubpoenaStepValid(workingCase)).toBe(false)
   })
@@ -675,7 +675,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [alternativeServiceDefendant],
       isArraignmentSummonsSkipped: true,
-    } as Case
+    } as WorkingCase
 
     expect(
       isSubpoenaStepValid(
@@ -691,7 +691,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [{ id: 'defendant-1', isAlternativeService: true }],
       isArraignmentSummonsSkipped: true,
-    } as Case
+    } as WorkingCase
 
     expect(isSubpoenaStepValid(workingCase)).toBe(false)
   })
@@ -700,7 +700,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [],
       isArraignmentSummonsSkipped: true,
-    } as unknown as Case
+    } as unknown as WorkingCase
 
     expect(isSubpoenaStepValid(workingCase)).toBe(false)
   })
@@ -718,19 +718,23 @@ describe('isCourtOfAppealRulingStepValid', () => {
   })
 
   it('is true when the case level appeal has its own appeal ruling', () => {
-    const workingCase = { caseFiles: [appealRulingFile(null)] } as Case
+    const workingCase = { caseFiles: [appealRulingFile(null)] } as WorkingCase
 
     expect(isCourtOfAppealRulingStepValid(workingCase, appealCase)).toBe(true)
   })
 
   it('is false when the only appeal ruling belongs to a ruling order appeal', () => {
-    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+    const workingCase = {
+      caseFiles: [appealRulingFile('ruling-1')],
+    } as WorkingCase
 
     expect(isCourtOfAppealRulingStepValid(workingCase, appealCase)).toBe(false)
   })
 
   it('is true when the ruling order appeal has its own appeal ruling', () => {
-    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+    const workingCase = {
+      caseFiles: [appealRulingFile('ruling-1')],
+    } as WorkingCase
 
     expect(
       isCourtOfAppealRulingStepValid(workingCase, {
@@ -741,7 +745,9 @@ describe('isCourtOfAppealRulingStepValid', () => {
   })
 
   it('is false when the appeal ruling belongs to another ruling order appeal', () => {
-    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+    const workingCase = {
+      caseFiles: [appealRulingFile('ruling-1')],
+    } as WorkingCase
 
     expect(
       isCourtOfAppealRulingStepValid(workingCase, {
@@ -752,7 +758,7 @@ describe('isCourtOfAppealRulingStepValid', () => {
   })
 
   it('does not require an appeal ruling when the appeal was discontinued', () => {
-    const workingCase = { caseFiles: [] } as unknown as Case
+    const workingCase = { caseFiles: [] } as unknown as WorkingCase
 
     expect(
       isCourtOfAppealRulingStepValid(workingCase, {
@@ -881,7 +887,7 @@ const validDefendant = {
 
 describe('isRegistrationStepValid', () => {
   test('is true when the type matches and every police case number is well formed', () => {
-    const workingCase = { type: CaseType.CUSTODY } as Case
+    const workingCase = { type: CaseType.CUSTODY } as WorkingCase
 
     expect(
       isRegistrationStepValid(workingCase, CaseType.CUSTODY, [
@@ -893,7 +899,7 @@ describe('isRegistrationStepValid', () => {
   test.each([[], undefined, null])(
     'is false when the police case numbers are %j',
     (policeCaseNumbers) => {
-      const workingCase = { type: CaseType.CUSTODY } as Case
+      const workingCase = { type: CaseType.CUSTODY } as WorkingCase
 
       expect(
         isRegistrationStepValid(
@@ -906,7 +912,7 @@ describe('isRegistrationStepValid', () => {
   )
 
   test('is false when the selected type has not been saved to the case', () => {
-    const workingCase = { type: CaseType.CUSTODY } as Case
+    const workingCase = { type: CaseType.CUSTODY } as WorkingCase
 
     expect(
       isRegistrationStepValid(workingCase, CaseType.TRAVEL_BAN, [
@@ -916,7 +922,7 @@ describe('isRegistrationStepValid', () => {
   })
 
   test('is false when a police case number is malformed', () => {
-    const workingCase = { type: CaseType.CUSTODY } as Case
+    const workingCase = { type: CaseType.CUSTODY } as WorkingCase
 
     expect(
       isRegistrationStepValid(workingCase, CaseType.CUSTODY, [
@@ -932,7 +938,7 @@ describe('isDefendantStepValidRC', () => {
     type: CaseType.CUSTODY,
     defendants: [validDefendant],
     leadInvestigator: 'Lögreglumaður',
-  } as Case
+  } as WorkingCase
 
   test('is true for a complete custody case', () => {
     expect(isDefendantStepValidRC(validCase, [POLICE_CASE_NUMBER])).toBe(true)
@@ -951,7 +957,7 @@ describe('isDefendantStepValidRC', () => {
 
   test('is false when the case has no defendants', () => {
     expect(
-      isDefendantStepValidRC({ ...validCase, defendants: [] } as Case, [
+      isDefendantStepValidRC({ ...validCase, defendants: [] } as WorkingCase, [
         POLICE_CASE_NUMBER,
       ]),
     ).toBe(false)
@@ -963,7 +969,7 @@ describe('isDefendantStepValidRC', () => {
       const workingCase = {
         ...validCase,
         defendants: [{ ...validDefendant, [field]: undefined }],
-      } as Case
+      } as WorkingCase
 
       expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(
         false,
@@ -975,7 +981,7 @@ describe('isDefendantStepValidRC', () => {
     const workingCase = {
       ...validCase,
       defendants: [{ ...validDefendant, nationalId: '0101010101X' }],
-    } as Case
+    } as WorkingCase
 
     expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(
       false,
@@ -988,7 +994,7 @@ describe('isDefendantStepValidRC', () => {
       defendants: [
         { ...validDefendant, noNationalId: true, nationalId: '01.01.1990' },
       ],
-    } as Case
+    } as WorkingCase
 
     expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(true)
   })
@@ -1003,7 +1009,7 @@ describe('isDefendantStepValidRC', () => {
           gender: undefined,
         },
       ],
-    } as Case
+    } as WorkingCase
 
     expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(true)
   })
@@ -1012,13 +1018,16 @@ describe('isDefendantStepValidRC', () => {
     const workingCase = {
       ...validCase,
       defendants: [validDefendant, { id: 'd2' }],
-    } as Case
+    } as WorkingCase
 
     expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(true)
   })
 
   test('requires a lead investigator for custody cases', () => {
-    const workingCase = { ...validCase, leadInvestigator: undefined } as Case
+    const workingCase = {
+      ...validCase,
+      leadInvestigator: undefined,
+    } as WorkingCase
 
     expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(
       false,
@@ -1030,13 +1039,16 @@ describe('isDefendantStepValidRC', () => {
       ...validCase,
       type: CaseType.TRAVEL_BAN,
       leadInvestigator: undefined,
-    } as Case
+    } as WorkingCase
 
     expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(true)
   })
 
-  test('requires a decision on sharing the request when a defender is named', () => {
-    const withDefender = { ...validCase, defenderName: 'Verjandi' } as Case
+  test('requires the defendant to have a decision on sharing the request when a defender is named', () => {
+    const withDefender = {
+      ...validCase,
+      defendants: [{ ...validDefendant, defenderName: 'Verjandi' }],
+    } as WorkingCase
 
     expect(isDefendantStepValidRC(withDefender, [POLICE_CASE_NUMBER])).toBe(
       false,
@@ -1044,24 +1056,58 @@ describe('isDefendantStepValidRC', () => {
     expect(
       isDefendantStepValidRC(
         {
-          ...withDefender,
-          requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
-        } as Case,
+          ...validCase,
+          defendants: [
+            {
+              ...validDefendant,
+              defenderName: 'Verjandi',
+              requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+            },
+          ],
+        } as WorkingCase,
         [POLICE_CASE_NUMBER],
       ),
     ).toBe(true)
   })
 
-  test('is false when the defender email is malformed', () => {
-    const workingCase = { ...validCase, defenderEmail: 'not-an-email' } as Case
+  test('does not accept a case-level sharing decision', () => {
+    const workingCase = {
+      ...validCase,
+      requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+      defendants: [{ ...validDefendant, defenderName: 'Verjandi' }],
+    } as WorkingCase
 
     expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(
       false,
     )
   })
 
-  test('is false when the defender phone number is malformed', () => {
-    const workingCase = { ...validCase, defenderPhoneNumber: '12345' } as Case
+  test('ignores the sharing decision of defendants the form does not show', () => {
+    const workingCase = {
+      ...validCase,
+      defendants: [validDefendant, { id: 'd2', defenderName: 'Verjandi' }],
+    } as WorkingCase
+
+    expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(true)
+  })
+
+  test('does not rely on the case-level defender name', () => {
+    const workingCase = {
+      ...validCase,
+      defenderName: 'Verjandi',
+    } as WorkingCase
+
+    expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(true)
+  })
+
+  test.each([
+    ['defenderEmail', 'not-an-email'],
+    ['defenderPhoneNumber', '12345'],
+  ])('is false when any defendant has a malformed %s', (field, value) => {
+    const workingCase = {
+      ...validCase,
+      defendants: [validDefendant, { id: 'd2', [field]: value }],
+    } as WorkingCase
 
     expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(
       false,
@@ -1073,7 +1119,7 @@ describe('isDefendantStepValidIC', () => {
   const validCase = {
     type: CaseType.SEARCH_WARRANT,
     defendants: [validDefendant],
-  } as Case
+  } as WorkingCase
 
   const validVictim = {
     id: 'v1',
@@ -1088,7 +1134,7 @@ describe('isDefendantStepValidIC', () => {
 
   test('is false when the case has no defendants', () => {
     expect(
-      isDefendantStepValidIC({ ...validCase, defendants: [] } as Case),
+      isDefendantStepValidIC({ ...validCase, defendants: [] } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1096,7 +1142,7 @@ describe('isDefendantStepValidIC', () => {
     const workingCase = {
       ...validCase,
       defendants: [validDefendant, { id: 'd2' }],
-    } as Case
+    } as WorkingCase
 
     expect(isDefendantStepValidIC(workingCase)).toBe(false)
   })
@@ -1105,7 +1151,7 @@ describe('isDefendantStepValidIC', () => {
     const person = {
       ...validCase,
       defendants: [{ ...validDefendant, gender: undefined }],
-    } as Case
+    } as WorkingCase
     const business = {
       ...validCase,
       defendants: [
@@ -1115,7 +1161,7 @@ describe('isDefendantStepValidIC', () => {
           gender: undefined,
         },
       ],
-    } as Case
+    } as WorkingCase
 
     expect(isDefendantStepValidIC(person)).toBe(false)
     expect(isDefendantStepValidIC(business)).toBe(true)
@@ -1123,7 +1169,10 @@ describe('isDefendantStepValidIC', () => {
 
   test('is true when every victim is complete', () => {
     expect(
-      isDefendantStepValidIC({ ...validCase, victims: [validVictim] } as Case),
+      isDefendantStepValidIC({
+        ...validCase,
+        victims: [validVictim],
+      } as WorkingCase),
     ).toBe(true)
   })
 
@@ -1131,7 +1180,7 @@ describe('isDefendantStepValidIC', () => {
     const workingCase = {
       ...validCase,
       victims: [{ ...validVictim, name: undefined }],
-    } as Case
+    } as WorkingCase
 
     expect(isDefendantStepValidIC(workingCase)).toBe(false)
   })
@@ -1140,7 +1189,7 @@ describe('isDefendantStepValidIC', () => {
     const workingCase = {
       ...validCase,
       victims: [{ ...validVictim, nationalId: undefined }],
-    } as Case
+    } as WorkingCase
 
     expect(isDefendantStepValidIC(workingCase)).toBe(false)
   })
@@ -1151,7 +1200,7 @@ describe('isDefendantStepValidIC', () => {
       victims: [
         { ...validVictim, hasNationalId: false, nationalId: '01.01.1990' },
       ],
-    } as Case
+    } as WorkingCase
 
     expect(isDefendantStepValidIC(workingCase)).toBe(true)
   })
@@ -1160,7 +1209,7 @@ describe('isDefendantStepValidIC', () => {
     const withLawyer = {
       ...validCase,
       victims: [{ ...validVictim, lawyerNationalId: NATIONAL_ID }],
-    } as Case
+    } as WorkingCase
     const withAccess = {
       ...validCase,
       victims: [
@@ -1170,34 +1219,105 @@ describe('isDefendantStepValidIC', () => {
           lawyerAccessToRequest: RequestSharedWhen.READY_FOR_COURT,
         },
       ],
-    } as Case
+    } as WorkingCase
 
     expect(isDefendantStepValidIC(withLawyer)).toBe(false)
     expect(isDefendantStepValidIC(withAccess)).toBe(true)
   })
 
-  test('requires a decision on sharing the request when a defender is named', () => {
-    const withDefender = { ...validCase, defenderName: 'Verjandi' } as Case
-
-    expect(isDefendantStepValidIC(withDefender)).toBe(false)
+  test('requires the defendant to have a decision on sharing the request when a defender is named', () => {
     expect(
       isDefendantStepValidIC({
-        ...withDefender,
-        requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
-      } as Case),
-    ).toBe(true)
-  })
-
-  test('is false when the defender contact details are malformed', () => {
-    expect(
-      isDefendantStepValidIC({ ...validCase, defenderEmail: 'nope' } as Case),
+        ...validCase,
+        defendants: [{ ...validDefendant, defenderName: 'Verjandi' }],
+      } as WorkingCase),
     ).toBe(false)
     expect(
       isDefendantStepValidIC({
         ...validCase,
-        defenderPhoneNumber: '1',
-      } as Case),
+        defendants: [
+          {
+            ...validDefendant,
+            defenderName: 'Verjandi',
+            requestSharedWithDefender:
+              RequestSharedWithDefender.READY_FOR_COURT,
+          },
+        ],
+      } as WorkingCase),
+    ).toBe(true)
+  })
+
+  test('requires a sharing decision from every defendant with a defender', () => {
+    const decided = {
+      ...validDefendant,
+      defenderName: 'Verjandi A',
+      requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+    }
+    const undecided = {
+      ...validDefendant,
+      id: 'd2',
+      defenderName: 'Verjandi B',
+    }
+
+    expect(
+      isDefendantStepValidIC({
+        ...validCase,
+        requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+        defendants: [decided, undecided],
+      } as WorkingCase),
     ).toBe(false)
+    expect(
+      isDefendantStepValidIC({
+        ...validCase,
+        defendants: [
+          decided,
+          {
+            ...undecided,
+            requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+          },
+        ],
+      } as WorkingCase),
+    ).toBe(true)
+  })
+
+  test('does not require a sharing decision from a defendant without a defender', () => {
+    expect(
+      isDefendantStepValidIC({
+        ...validCase,
+        defendants: [
+          {
+            ...validDefendant,
+            defenderName: 'Verjandi',
+            requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+          },
+          { ...validDefendant, id: 'd2' },
+        ],
+      } as WorkingCase),
+    ).toBe(true)
+  })
+
+  test('does not rely on the case-level defender name', () => {
+    expect(
+      isDefendantStepValidIC({
+        ...validCase,
+        defenderName: 'Verjandi',
+      } as WorkingCase),
+    ).toBe(true)
+  })
+
+  test.each([
+    ['defenderEmail', 'nope'],
+    ['defenderPhoneNumber', '1'],
+  ])('is false when any defendant has a malformed %s', (field, value) => {
+    const workingCase = {
+      ...validCase,
+      defendants: [
+        validDefendant,
+        { ...validDefendant, id: 'd2', [field]: value },
+      ],
+    } as WorkingCase
+
+    expect(isDefendantStepValidIC(workingCase)).toBe(false)
   })
 })
 
@@ -1208,7 +1328,7 @@ describe('isDefendantStepValidIndictments', () => {
     policeCaseNumbers: [POLICE_CASE_NUMBER],
     indictmentSubtypes: { [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT] },
     defendants: [validDefendant],
-  } as Case
+  } as WorkingCase
 
   test('is true for a complete case', () => {
     expect(isDefendantStepValidIndictments(validCase)).toBe(true)
@@ -1219,7 +1339,7 @@ describe('isDefendantStepValidIndictments', () => {
       isDefendantStepValidIndictments({
         ...validCase,
         prosecutor: undefined,
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1230,7 +1350,7 @@ describe('isDefendantStepValidIndictments', () => {
         isDefendantStepValidIndictments({
           ...validCase,
           policeCaseNumbers,
-        } as Case),
+        } as WorkingCase),
       ).toBe(false)
     },
   )
@@ -1244,7 +1364,7 @@ describe('isDefendantStepValidIndictments', () => {
         [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
         [malformed]: [IndictmentSubtype.THEFT],
       },
-    } as Case
+    } as WorkingCase
 
     expect(isDefendantStepValidIndictments(workingCase)).toBe(false)
   })
@@ -1256,7 +1376,7 @@ describe('isDefendantStepValidIndictments', () => {
         isDefendantStepValidIndictments({
           ...validCase,
           indictmentSubtypes,
-        } as Case),
+        } as WorkingCase),
       ).toBe(false)
     },
   )
@@ -1266,7 +1386,7 @@ describe('isDefendantStepValidIndictments', () => {
       isDefendantStepValidIndictments({
         ...validCase,
         defendants: [],
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1275,7 +1395,7 @@ describe('isDefendantStepValidIndictments', () => {
       isDefendantStepValidIndictments({
         ...validCase,
         defendants: [validDefendant, { id: 'd2' }],
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 })
@@ -1287,7 +1407,7 @@ describe('isHearingArrangementsStepValidRC', () => {
     court: { id: 'c1' },
     requestedCourtDate: ISO_DATE,
     arrestDate: ISO_DATE,
-  } as Case
+  } as WorkingCase
 
   test('is true for a complete custody case', () => {
     expect(isHearingArrangementsStepValidRC(validCase)).toBe(true)
@@ -1303,7 +1423,7 @@ describe('isHearingArrangementsStepValidRC', () => {
       isHearingArrangementsStepValidRC({
         ...validCase,
         [field]: undefined,
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1312,7 +1432,7 @@ describe('isHearingArrangementsStepValidRC', () => {
       isHearingArrangementsStepValidRC({
         ...validCase,
         requestedCourtDate: '01.01.2024',
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1322,7 +1442,7 @@ describe('isHearingArrangementsStepValidRC', () => {
         ...validCase,
         type: CaseType.TRAVEL_BAN,
         arrestDate: undefined,
-      } as Case),
+      } as WorkingCase),
     ).toBe(true)
   })
 
@@ -1332,7 +1452,7 @@ describe('isHearingArrangementsStepValidRC', () => {
         ...validCase,
         parentCase: { id: 'parent' },
         arrestDate: undefined,
-      } as Case),
+      } as WorkingCase),
     ).toBe(true)
   })
 })
@@ -1342,7 +1462,7 @@ describe('isHearingArrangementsStepValidIC', () => {
     prosecutor: { id: 'p1' },
     court: { id: 'c1' },
     requestedCourtDate: ISO_DATE,
-  } as Case
+  } as WorkingCase
 
   test('is true for a complete case', () => {
     expect(isHearingArrangementsStepValidIC(validCase)).toBe(true)
@@ -1355,7 +1475,7 @@ describe('isHearingArrangementsStepValidIC', () => {
         isHearingArrangementsStepValidIC({
           ...validCase,
           [field]: undefined,
-        } as Case),
+        } as WorkingCase),
       ).toBe(false)
     },
   )
@@ -1365,7 +1485,7 @@ describe('isHearingArrangementsStepValidIC', () => {
       isHearingArrangementsStepValidIC({
         ...validCase,
         arrestDate: undefined,
-      } as Case),
+      } as WorkingCase),
     ).toBe(true)
   })
 })
@@ -1381,7 +1501,7 @@ describe('isProcessingStepValidIndictments', () => {
     court: { id: 'c1' },
     hasCivilClaims: false,
     defendants: [pleadingDefendant],
-  } as Case
+  } as WorkingCase
 
   const validCivilClaimant = {
     id: 'cc1',
@@ -1400,7 +1520,7 @@ describe('isProcessingStepValidIndictments', () => {
       isProcessingStepValidIndictments({
         ...validCase,
         court: undefined,
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1411,7 +1531,7 @@ describe('isProcessingStepValidIndictments', () => {
         isProcessingStepValidIndictments({
           ...validCase,
           hasCivilClaims,
-        } as Case),
+        } as WorkingCase),
       ).toBe(false)
     },
   )
@@ -1421,7 +1541,7 @@ describe('isProcessingStepValidIndictments', () => {
       isProcessingStepValidIndictments({
         ...validCase,
         defendants: [],
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1430,7 +1550,7 @@ describe('isProcessingStepValidIndictments', () => {
       isProcessingStepValidIndictments({
         ...validCase,
         defendants: [pleadingDefendant, { ...validDefendant, id: 'd2' }],
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1440,7 +1560,7 @@ describe('isProcessingStepValidIndictments', () => {
         ...validCase,
         hasCivilClaims: true,
         civilClaimants: [{ ...validCivilClaimant, ...civilClaimant }],
-      } as Case)
+      } as WorkingCase)
 
     test('is true when every civil claimant is complete', () => {
       expect(isProcessingStepValidIndictments(withClaims({}))).toBe(true)
@@ -1452,7 +1572,7 @@ describe('isProcessingStepValidIndictments', () => {
           ...validCase,
           hasCivilClaims: true,
           civilClaimants: undefined,
-        } as Case),
+        } as WorkingCase),
       ).toBe(false)
     })
 
@@ -1502,7 +1622,7 @@ describe('isIndictmentStepValid', () => {
     demands: 'Kröfur',
     hasCivilClaims: false,
     indictmentCounts: [completeCount],
-  } as Case
+  } as WorkingCase
 
   test('is true for a complete indictment', () => {
     expect(isIndictmentStepValid(validCase)).toBe(true)
@@ -1510,19 +1630,22 @@ describe('isIndictmentStepValid', () => {
 
   test('is false without demands', () => {
     expect(
-      isIndictmentStepValid({ ...validCase, demands: undefined } as Case),
+      isIndictmentStepValid({
+        ...validCase,
+        demands: undefined,
+      } as WorkingCase),
     ).toBe(false)
   })
 
   test('requires civil demands when the case has civil claims', () => {
-    const withClaims = { ...validCase, hasCivilClaims: true } as Case
+    const withClaims = { ...validCase, hasCivilClaims: true } as WorkingCase
 
     expect(isIndictmentStepValid(withClaims)).toBe(false)
     expect(
       isIndictmentStepValid({
         ...withClaims,
         civilDemands: 'Bótakrafa',
-      } as Case),
+      } as WorkingCase),
     ).toBe(true)
   })
 
@@ -1531,7 +1654,7 @@ describe('isIndictmentStepValid', () => {
       isIndictmentStepValid({
         ...validCase,
         indictmentSubtypes: undefined,
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1539,7 +1662,10 @@ describe('isIndictmentStepValid', () => {
     'is false when the indictment counts are %j',
     (indictmentCounts) => {
       expect(
-        isIndictmentStepValid({ ...validCase, indictmentCounts } as Case),
+        isIndictmentStepValid({
+          ...validCase,
+          indictmentCounts,
+        } as WorkingCase),
       ).toBe(false)
     },
   )
@@ -1552,7 +1678,7 @@ describe('isIndictmentStepValid', () => {
           completeCount,
           { ...completeCount, legalArguments: undefined },
         ],
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 })
@@ -1562,7 +1688,7 @@ describe('isPoliceDemandsStepValidRC', () => {
     lawsBroken: 'Lagaákvæði',
     requestedValidToDate: ISO_DATE,
     legalProvisions: [CaseLegalProvisions._95_1_A],
-  } as Case
+  } as WorkingCase
 
   test('is true with legal provisions', () => {
     expect(isPoliceDemandsStepValidRC(validCase)).toBe(true)
@@ -1574,7 +1700,7 @@ describe('isPoliceDemandsStepValidRC', () => {
         ...validCase,
         legalProvisions: [],
         legalBasis: 'Lagagrundvöllur',
-      } as Case),
+      } as WorkingCase),
     ).toBe(true)
   })
 
@@ -1583,7 +1709,7 @@ describe('isPoliceDemandsStepValidRC', () => {
       isPoliceDemandsStepValidRC({
         ...validCase,
         legalProvisions: undefined,
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1594,7 +1720,7 @@ describe('isPoliceDemandsStepValidRC', () => {
         isPoliceDemandsStepValidRC({
           ...validCase,
           [field]: undefined,
-        } as Case),
+        } as WorkingCase),
       ).toBe(false)
     },
   )
@@ -1604,7 +1730,7 @@ describe('isPoliceDemandsStepValidRC', () => {
       isPoliceDemandsStepValidRC({
         ...validCase,
         requestedValidToDate: '01.01.2024',
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 })
@@ -1614,7 +1740,7 @@ describe('isPoliceDemandsStepValidIC', () => {
     demands: 'Kröfur',
     lawsBroken: 'Lagaákvæði',
     legalBasis: 'Lagagrundvöllur',
-  } as Case
+  } as WorkingCase
 
   test('is true when every field is filled in', () => {
     expect(isPoliceDemandsStepValidIC(validCase)).toBe(true)
@@ -1627,7 +1753,7 @@ describe('isPoliceDemandsStepValidIC', () => {
         isPoliceDemandsStepValidIC({
           ...validCase,
           [field]: undefined,
-        } as Case),
+        } as WorkingCase),
       ).toBe(false)
     },
   )
@@ -1638,7 +1764,7 @@ describe('isPoliceReportStepValidRC', () => {
     demands: 'Kröfur',
     caseFacts: 'Málsatvik',
     legalArguments: 'Lagarök',
-  } as Case
+  } as WorkingCase
 
   test('is true when every field is filled in', () => {
     expect(isPoliceReportStepValidRC(validCase)).toBe(true)
@@ -1648,7 +1774,10 @@ describe('isPoliceReportStepValidRC', () => {
     'is false when %s is missing',
     (field) => {
       expect(
-        isPoliceReportStepValidRC({ ...validCase, [field]: undefined } as Case),
+        isPoliceReportStepValidRC({
+          ...validCase,
+          [field]: undefined,
+        } as WorkingCase),
       ).toBe(false)
     },
   )
@@ -1658,7 +1787,7 @@ describe('isPoliceReportStepValidIC', () => {
   const validCase = {
     caseFacts: 'Málsatvik',
     legalArguments: 'Lagarök',
-  } as Case
+  } as WorkingCase
 
   test('is true when every field is filled in', () => {
     expect(isPoliceReportStepValidIC(validCase)).toBe(true)
@@ -1666,7 +1795,10 @@ describe('isPoliceReportStepValidIC', () => {
 
   test('does not require demands', () => {
     expect(
-      isPoliceReportStepValidIC({ ...validCase, demands: undefined } as Case),
+      isPoliceReportStepValidIC({
+        ...validCase,
+        demands: undefined,
+      } as WorkingCase),
     ).toBe(true)
   })
 
@@ -1674,7 +1806,10 @@ describe('isPoliceReportStepValidIC', () => {
     'is false when %s is missing',
     (field) => {
       expect(
-        isPoliceReportStepValidIC({ ...validCase, [field]: undefined } as Case),
+        isPoliceReportStepValidIC({
+          ...validCase,
+          [field]: undefined,
+        } as WorkingCase),
       ).toBe(false)
     },
   )
@@ -1684,36 +1819,36 @@ describe('isReceptionAndAssignmentStepValid', () => {
   const judge = { id: 'j1' }
 
   test('requires an R case number for request cases', () => {
-    const custody = { type: CaseType.CUSTODY, judge } as Case
+    const custody = { type: CaseType.CUSTODY, judge } as WorkingCase
 
     expect(
       isReceptionAndAssignmentStepValid({
         ...custody,
         courtCaseNumber: 'R-1/2024',
-      } as Case),
+      } as WorkingCase),
     ).toBe(true)
     expect(
       isReceptionAndAssignmentStepValid({
         ...custody,
         courtCaseNumber: 'S-1/2024',
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
   test('requires an S case number for indictment cases', () => {
-    const indictment = { type: CaseType.INDICTMENT, judge } as Case
+    const indictment = { type: CaseType.INDICTMENT, judge } as WorkingCase
 
     expect(
       isReceptionAndAssignmentStepValid({
         ...indictment,
         courtCaseNumber: 'S-1/2024',
-      } as Case),
+      } as WorkingCase),
     ).toBe(true)
     expect(
       isReceptionAndAssignmentStepValid({
         ...indictment,
         courtCaseNumber: 'R-1/2024',
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1722,7 +1857,7 @@ describe('isReceptionAndAssignmentStepValid', () => {
       isReceptionAndAssignmentStepValid({
         type: CaseType.CUSTODY,
         courtCaseNumber: 'R-1/2024',
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1731,7 +1866,7 @@ describe('isReceptionAndAssignmentStepValid', () => {
       isReceptionAndAssignmentStepValid({
         type: CaseType.CUSTODY,
         judge,
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 })
@@ -1741,29 +1876,29 @@ describe('isCourtHearingArrangemenstStepValidRC', () => {
 
   test('is true when the case has an arraignment date', () => {
     expect(
-      isCourtHearingArrangemenstStepValidRC({ arraignmentDate } as Case),
+      isCourtHearingArrangemenstStepValidRC({ arraignmentDate } as WorkingCase),
     ).toBe(true)
   })
 
   test('is false when the arraignment date is missing', () => {
-    expect(isCourtHearingArrangemenstStepValidRC({} as Case)).toBe(false)
+    expect(isCourtHearingArrangemenstStepValidRC({} as WorkingCase)).toBe(false)
   })
 
   test('is false when the arraignment date is not in ISO format', () => {
     expect(
       isCourtHearingArrangemenstStepValidRC({
         arraignmentDate: { date: '01.01.2024' },
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
   test('prefers the updated arraignment date over the persisted one', () => {
     expect(
-      isCourtHearingArrangemenstStepValidRC({} as Case, arraignmentDate),
+      isCourtHearingArrangemenstStepValidRC({} as WorkingCase, arraignmentDate),
     ).toBe(true)
     expect(
       isCourtHearingArrangemenstStepValidRC(
-        { arraignmentDate } as Case,
+        { arraignmentDate } as WorkingCase,
         {
           date: undefined,
         } as DateLog,
@@ -1771,19 +1906,32 @@ describe('isCourtHearingArrangemenstStepValidRC', () => {
     ).toBe(false)
   })
 
-  test('is false when the defender contact details are malformed', () => {
+  test.each([
+    ['defenderEmail', 'nope'],
+    ['defenderPhoneNumber', '1'],
+  ])('is false when any defendant has a malformed %s', (field, value) => {
     expect(
       isCourtHearingArrangemenstStepValidRC({
         arraignmentDate,
-        defenderEmail: 'nope',
-      } as Case),
+        defendants: [{ id: 'd1' }, { id: 'd2', [field]: value }],
+      } as WorkingCase),
     ).toBe(false)
+  })
+
+  test('is true when every defendant has valid defender details', () => {
     expect(
       isCourtHearingArrangemenstStepValidRC({
         arraignmentDate,
-        defenderPhoneNumber: '1',
-      } as Case),
-    ).toBe(false)
+        defendants: [
+          {
+            id: 'd1',
+            defenderName: 'Verjandi',
+            defenderEmail: 'verjandi@dummy.dd',
+          },
+          { id: 'd2' },
+        ],
+      } as WorkingCase),
+    ).toBe(true)
   })
 })
 
@@ -1792,7 +1940,7 @@ describe('isCourtHearingArrangementsStepValidIC', () => {
   const validCase = {
     sessionArrangements: SessionArrangements.ALL_PRESENT,
     arraignmentDate,
-  } as Case
+  } as WorkingCase
 
   test('is true for a complete case', () => {
     expect(isCourtHearingArrangementsStepValidIC(validCase)).toBe(true)
@@ -1803,7 +1951,7 @@ describe('isCourtHearingArrangementsStepValidIC', () => {
       isCourtHearingArrangementsStepValidIC({
         ...validCase,
         sessionArrangements: undefined,
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1812,14 +1960,14 @@ describe('isCourtHearingArrangementsStepValidIC', () => {
       isCourtHearingArrangementsStepValidIC({
         ...validCase,
         arraignmentDate: undefined,
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
   test('prefers the updated arraignment date over the persisted one', () => {
     expect(
       isCourtHearingArrangementsStepValidIC(
-        { ...validCase, arraignmentDate: undefined } as Case,
+        { ...validCase, arraignmentDate: undefined } as WorkingCase,
         arraignmentDate,
       ),
     ).toBe(true)
@@ -1830,12 +1978,15 @@ describe('isCourtHearingArrangementsStepValidIC', () => {
     ).toBe(false)
   })
 
-  test('is false when the defender email is malformed', () => {
+  test.each([
+    ['defenderEmail', 'nope'],
+    ['defenderPhoneNumber', '1'],
+  ])('is false when any defendant has a malformed %s', (field, value) => {
     expect(
       isCourtHearingArrangementsStepValidIC({
         ...validCase,
-        defenderEmail: 'nope',
-      } as Case),
+        defendants: [{ id: 'd1' }, { id: 'd2', [field]: value }],
+      } as WorkingCase),
     ).toBe(false)
   })
 })
@@ -1845,7 +1996,7 @@ describe('isRulingValidRC', () => {
     prosecutorDemands: 'Dómkröfur',
     courtCaseFacts: 'Málsatvik',
     courtLegalArguments: 'Lagarök',
-  } as Case
+  } as WorkingCase
 
   test('is true when every field is filled in', () => {
     expect(isRulingValidRC(validCase)).toBe(true)
@@ -1856,9 +2007,9 @@ describe('isRulingValidRC', () => {
     'courtCaseFacts',
     'courtLegalArguments',
   ] as const)('is false when %s is missing', (field) => {
-    expect(isRulingValidRC({ ...validCase, [field]: undefined } as Case)).toBe(
-      false,
-    )
+    expect(
+      isRulingValidRC({ ...validCase, [field]: undefined } as WorkingCase),
+    ).toBe(false)
   })
 })
 
@@ -1867,7 +2018,7 @@ describe('isRulingValidIC', () => {
     prosecutorDemands: 'Dómkröfur',
     courtCaseFacts: 'Málsatvik',
     courtLegalArguments: 'Lagarök',
-  } as Case
+  } as WorkingCase
 
   test('is true when every field is filled in', () => {
     expect(isRulingValidIC(validCase)).toBe(true)
@@ -1878,15 +2029,15 @@ describe('isRulingValidIC', () => {
     'courtCaseFacts',
     'courtLegalArguments',
   ] as const)('is false when %s is missing', (field) => {
-    expect(isRulingValidIC({ ...validCase, [field]: undefined } as Case)).toBe(
-      false,
-    )
+    expect(
+      isRulingValidIC({ ...validCase, [field]: undefined } as WorkingCase),
+    ).toBe(false)
   })
 
   test('is true when the case is completed without a ruling', () => {
-    expect(isRulingValidIC({ isCompletedWithoutRuling: true } as Case)).toBe(
-      true,
-    )
+    expect(
+      isRulingValidIC({ isCompletedWithoutRuling: true } as WorkingCase),
+    ).toBe(true)
   })
 })
 
@@ -1911,7 +2062,7 @@ describe('isCourtRecordStepValidRC', () => {
     decision: CaseDecision.ACCEPTING,
     conclusion: 'Úrskurðarorð',
     ruling: 'Úrskurður',
-  } as Case
+  } as WorkingCase
 
   test('is true for a complete court record', () => {
     expect(isCourtRecordStepValidRC(validCase)).toBe(true)
@@ -1927,7 +2078,10 @@ describe('isCourtRecordStepValidRC', () => {
     'ruling',
   ] as const)('is false when %s is missing', (field) => {
     expect(
-      isCourtRecordStepValidRC({ ...validCase, [field]: undefined } as Case),
+      isCourtRecordStepValidRC({
+        ...validCase,
+        [field]: undefined,
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1940,7 +2094,7 @@ describe('isCourtRecordStepValidRC', () => {
       appealDecisions: caseLevelAppealDecisions.filter(
         (decision) => decision.partyRole !== partyRole,
       ),
-    } as Case
+    } as WorkingCase
 
     expect(isCourtRecordStepValidRC(workingCase)).toBe(false)
   })
@@ -1952,7 +2106,7 @@ describe('isCourtRecordStepValidRC', () => {
         ...decision,
         rulingFileId: 'ruling-1',
       })),
-    } as Case
+    } as WorkingCase
 
     expect(isCourtRecordStepValidRC(workingCase)).toBe(false)
   })
@@ -1969,7 +2123,7 @@ describe('isCourtRecordStepValidIC', () => {
     decision: CaseDecision.ACCEPTING,
     conclusion: 'Úrskurðarorð',
     ruling: 'Úrskurður',
-  } as Case
+  } as WorkingCase
 
   test('is true for a complete court record', () => {
     expect(isCourtRecordStepValidIC(validCase)).toBe(true)
@@ -1985,7 +2139,10 @@ describe('isCourtRecordStepValidIC', () => {
     'ruling',
   ] as const)('is false when %s is missing', (field) => {
     expect(
-      isCourtRecordStepValidIC({ ...validCase, [field]: undefined } as Case),
+      isCourtRecordStepValidIC({
+        ...validCase,
+        [field]: undefined,
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -1995,7 +2152,7 @@ describe('isCourtRecordStepValidIC', () => {
         ...validCase,
         sessionArrangements: SessionArrangements.NONE_PRESENT,
         sessionBookings: undefined,
-      } as Case),
+      } as WorkingCase),
     ).toBe(true)
   })
 
@@ -2006,7 +2163,7 @@ describe('isCourtRecordStepValidIC', () => {
         isCompletedWithoutRuling: true,
         conclusion: undefined,
         ruling: undefined,
-      } as Case),
+      } as WorkingCase),
     ).toBe(true)
   })
 
@@ -2019,7 +2176,7 @@ describe('isCourtRecordStepValidIC', () => {
       appealDecisions: caseLevelAppealDecisions.filter(
         (decision) => decision.partyRole !== partyRole,
       ),
-    } as Case
+    } as WorkingCase
 
     expect(isCourtRecordStepValidIC(workingCase)).toBe(false)
   })
@@ -2029,20 +2186,23 @@ describe('isDefenderStepValid', () => {
   const validCase = {
     prosecutor: { id: 'p1' },
     defendants: [{ id: 'd1', defenderChoice: DefenderChoice.WAIVE }],
-  } as Case
+  } as WorkingCase
 
   test('is false without a prosecutor', () => {
     expect(
-      isDefenderStepValid({ ...validCase, prosecutor: undefined } as Case),
+      isDefenderStepValid({
+        ...validCase,
+        prosecutor: undefined,
+      } as WorkingCase),
     ).toBe(false)
   })
 
   test.each([[], undefined])(
     'is false when the defendants are %j',
     (defendants) => {
-      expect(isDefenderStepValid({ ...validCase, defendants } as Case)).toBe(
-        false,
-      )
+      expect(
+        isDefenderStepValid({ ...validCase, defendants } as WorkingCase),
+      ).toBe(false)
     },
   )
 
@@ -2056,7 +2216,7 @@ describe('isDefenderStepValid', () => {
       isDefenderStepValid({
         ...validCase,
         defendants: [{ id: 'd1', defenderChoice: choice }],
-      } as Case),
+      } as WorkingCase),
     ).toBe(true)
   })
 
@@ -2072,7 +2232,7 @@ describe('isDefenderStepValid', () => {
             ...defendant,
           },
         ],
-      } as Case)
+      } as WorkingCase)
 
     test('is true with a name and well formed contact details', () => {
       expect(
@@ -2109,7 +2269,7 @@ describe('isDefenderStepValid', () => {
           { id: 'd1', defenderChoice: DefenderChoice.WAIVE },
           { id: 'd2', defenderChoice: DefenderChoice.CHOOSE },
         ],
-      } as Case
+      } as WorkingCase
 
       expect(isDefenderStepValid(workingCase)).toBe(false)
     })
@@ -2117,7 +2277,7 @@ describe('isDefenderStepValid', () => {
 })
 
 describe('isCourtSessionValid', () => {
-  const workingCase = { defendants: [{ id: 'd1' }] } as Case
+  const workingCase = { defendants: [{ id: 'd1' }] } as WorkingCase
 
   const validSession = {
     id: 'cs1',
@@ -2203,7 +2363,7 @@ describe('isCourtSessionValid', () => {
           decision: CaseAppealDecision.APPEAL,
         },
       ],
-    } as Case
+    } as WorkingCase
 
     test('is valid once every party has decided on the ruling', () => {
       expect(isCourtSessionValid(order, decidedCase)).toBeTruthy()
@@ -2278,7 +2438,7 @@ describe('isGeneratedIndictmentCourtRecordValid', () => {
     expect(
       isGeneratedIndictmentCourtRecordValid({
         courtSessions: [{ isConfirmed: true }, { isConfirmed: true }],
-      } as Case),
+      } as WorkingCase),
     ).toBe(true)
   })
 
@@ -2286,7 +2446,7 @@ describe('isGeneratedIndictmentCourtRecordValid', () => {
     expect(
       isGeneratedIndictmentCourtRecordValid({
         courtSessions: [{ isConfirmed: true }, { isConfirmed: false }],
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -2294,7 +2454,7 @@ describe('isGeneratedIndictmentCourtRecordValid', () => {
     'is false when the court sessions are %j',
     (courtSessions) => {
       expect(
-        isGeneratedIndictmentCourtRecordValid({ courtSessions } as Case),
+        isGeneratedIndictmentCourtRecordValid({ courtSessions } as WorkingCase),
       ).toBe(false)
     },
   )
@@ -2305,7 +2465,7 @@ describe('isNoGeneratedIndictmentCourtRecord', () => {
     'is true when the court sessions are %j',
     (courtSessions) => {
       expect(
-        isNoGeneratedIndictmentCourtRecord({ courtSessions } as Case),
+        isNoGeneratedIndictmentCourtRecord({ courtSessions } as WorkingCase),
       ).toBe(true)
     },
   )
@@ -2314,7 +2474,7 @@ describe('isNoGeneratedIndictmentCourtRecord', () => {
     expect(
       isNoGeneratedIndictmentCourtRecord({
         courtSessions: [{ id: 'cs1' }],
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 })
@@ -2323,14 +2483,14 @@ describe('isConclusionStepValid', () => {
   test('requires an explanation when postponing indefinitely', () => {
     const postponing = {
       indictmentDecision: IndictmentDecision.POSTPONING,
-    } as Case
+    } as WorkingCase
 
     expect(isConclusionStepValid(postponing)).toBe(false)
     expect(
       isConclusionStepValid({
         ...postponing,
         postponedIndefinitelyExplanation: 'Skýring',
-      } as Case),
+      } as WorkingCase),
     ).toBe(true)
   })
 
@@ -2339,17 +2499,20 @@ describe('isConclusionStepValid', () => {
       indictmentDecision: IndictmentDecision.SCHEDULING,
       courtSessionType: CourtSessionType.MAIN_HEARING,
       courtDate: { date: ISO_DATE },
-    } as Case
+    } as WorkingCase
 
     expect(isConclusionStepValid(scheduling)).toBe(true)
     expect(
       isConclusionStepValid({
         ...scheduling,
         courtSessionType: undefined,
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
     expect(
-      isConclusionStepValid({ ...scheduling, courtDate: undefined } as Case),
+      isConclusionStepValid({
+        ...scheduling,
+        courtDate: undefined,
+      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -2357,7 +2520,9 @@ describe('isConclusionStepValid', () => {
     IndictmentDecision.POSTPONING_UNTIL_VERDICT,
     IndictmentDecision.REDISTRIBUTING,
   ])('is true when the decision is %s', (indictmentDecision) => {
-    expect(isConclusionStepValid({ indictmentDecision } as Case)).toBe(true)
+    expect(isConclusionStepValid({ indictmentDecision } as WorkingCase)).toBe(
+      true,
+    )
   })
 
   test.each([
@@ -2365,7 +2530,9 @@ describe('isConclusionStepValid', () => {
     IndictmentDecision.COMPLETING_FOR_SOME,
     IndictmentDecision.SPLITTING,
   ])('is false when the decision is %s', (indictmentDecision) => {
-    expect(isConclusionStepValid({ indictmentDecision } as Case)).toBe(false)
+    expect(isConclusionStepValid({ indictmentDecision } as WorkingCase)).toBe(
+      false,
+    )
   })
 
   describe('when completing', () => {
@@ -2377,11 +2544,11 @@ describe('isConclusionStepValid', () => {
     const confirmedSession = { id: 'cs1', isConfirmed: true }
     const unconfirmedSession = { id: 'cs2', isConfirmed: false }
 
-    const completing = (workingCase: Partial<Case>) =>
+    const completing = (workingCase: Partial<WorkingCase>) =>
       ({
         indictmentDecision: IndictmentDecision.COMPLETING,
         ...workingCase,
-      } as Case)
+      } as WorkingCase)
 
     test('is false without a ruling decision', () => {
       expect(isConclusionStepValid(completing({}))).toBe(false)
@@ -2476,7 +2643,7 @@ describe('isConclusionStepValid', () => {
     })
 
     describe('when merging', () => {
-      const merging = (workingCase: Partial<Case>) =>
+      const merging = (workingCase: Partial<WorkingCase>) =>
         completing({
           indictmentRulingDecision: CaseIndictmentRulingDecision.MERGE,
           ...workingCase,
@@ -2659,19 +2826,19 @@ describe('isCourtOfAppealWithdrawnCaseStepValid', () => {
     expect(
       isCourtOfAppealWithdrawnCaseStepValid({
         appealCase: { appealCaseNumber: '1/2024' },
-      } as Case),
+      } as WorkingCase),
     ).toBe(true)
   })
 
   test('is false without an appeal case', () => {
-    expect(isCourtOfAppealWithdrawnCaseStepValid({} as Case)).toBe(false)
+    expect(isCourtOfAppealWithdrawnCaseStepValid({} as WorkingCase)).toBe(false)
   })
 
   test('is false when the appeal case number is malformed', () => {
     expect(
       isCourtOfAppealWithdrawnCaseStepValid({
         appealCase: { appealCaseNumber: 'A-1/2024' },
-      } as Case),
+      } as WorkingCase),
     ).toBe(false)
   })
 })

@@ -103,11 +103,13 @@ export const JudgeOverview = () => {
         {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(
-                rcCourtOverview.sections.openedByDefenderAlert.title,
-              )}
+              title={rcCourtOverview.sections.openedByDefenderAlert.title}
               message={formatMessage(
-                rcCourtOverview.sections.openedByDefenderAlert.text,
+                {
+                  id: rcCourtOverview.sections.openedByDefenderAlert.text,
+                  defaultMessage:
+                    rcCourtOverview.sections.openedByDefenderAlert.text,
+                },
                 { when: formatDate(workingCase.openedByDefender, 'PPPp') },
               )}
               type="info"
@@ -116,9 +118,15 @@ export const JudgeOverview = () => {
           </Box>
         )}
         <PageTitle>
-          {formatMessage(rcCourtOverview.sections.title, {
-            caseType: workingCase.type,
-          })}
+          {formatMessage(
+            {
+              id: rcCourtOverview.sections.title,
+              defaultMessage: rcCourtOverview.sections.title,
+            },
+            {
+              caseType: workingCase.type,
+            },
+          )}
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
@@ -167,7 +175,7 @@ export const JudgeOverview = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_1"
-                label={formatMessage(lawsBrokenAccordion.heading)}
+                label={lawsBrokenAccordion.heading}
               >
                 <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
               </AccordionItem>
@@ -181,12 +189,7 @@ export const JudgeOverview = () => {
                     (legalProvision: CaseLegalProvisions, index: number) => {
                       return (
                         <div key={index}>
-                          <Text>
-                            {getLegalProvisionTitle(
-                              formatMessage,
-                              legalProvision,
-                            )}
-                          </Text>
+                          <Text>{getLegalProvisionTitle(legalProvision)}</Text>
                         </div>
                       )
                     },
@@ -198,9 +201,15 @@ export const JudgeOverview = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_3"
-                label={formatMessage(restrictionsV2.title, {
-                  caseType: workingCase.type,
-                })}
+                label={formatMessage(
+                  {
+                    id: restrictionsV2.title,
+                    defaultMessage: restrictionsV2.title,
+                  },
+                  {
+                    caseType: workingCase.type,
+                  },
+                )}
               >
                 {formatRequestedCustodyRestrictions(
                   formatMessage,
@@ -290,7 +299,7 @@ export const JudgeOverview = () => {
           previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(rcCourtOverview.continueButton.label),
+              text: rcCourtOverview.continueButton.label,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

@@ -100,6 +100,10 @@ export const fieldReducer = (
       const { value, id, valueIndex } = action.payload
       return setFieldValue(state, 'name', id, value, valueIndex)
     }
+    case 'SET_MARITAL_STATUS': {
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(state, 'maritalStatus', id, value, valueIndex)
+    }
     case 'SET_ADDRESS': {
       const { address, postalCode, municipality, id, valueIndex } =
         action.payload

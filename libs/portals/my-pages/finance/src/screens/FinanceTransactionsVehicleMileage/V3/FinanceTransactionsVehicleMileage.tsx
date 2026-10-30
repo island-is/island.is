@@ -45,7 +45,7 @@ import { FinancePaths } from '../../../lib/paths'
 const VEHICLE_MILEAGE_CHARGE_TYPE = 'BM'
 
 const FinanceTransactions = () => {
-  useNamespaces('sp.finance-transactions')
+  useNamespaces(['sp.finance-transactions', 'sp.finance'])
   useFinanceSwapHook()
   const { formatMessage } = useLocale()
   const backInTheDay = sub(new Date(), {

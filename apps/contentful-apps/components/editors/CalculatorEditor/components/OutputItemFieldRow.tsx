@@ -96,7 +96,7 @@ export const OutputItemFieldRow = ({
 
       {!item.key && (
         <Text fontColor="gray600" fontSize="fontSizeS">
-          Not saved yet — pick an item field.
+          This row isn&apos;t saved until an item field is picked.
         </Text>
       )}
 

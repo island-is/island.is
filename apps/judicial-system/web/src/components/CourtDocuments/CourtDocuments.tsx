@@ -6,12 +6,12 @@ import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import type { CourtDocument } from '@island.is/judicial-system/types'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BaseSelect,
   IconButton,
 } from '@island.is/judicial-system-web/src/components'
 import MultipleValueList from '@island.is/judicial-system-web/src/components/MultipleValueList/MultipleValueList'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -19,8 +19,8 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as styles from './CourtDocuments.css'
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
 }
 
 const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
@@ -35,15 +35,15 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
     },
     {
       value: UserRole.PROSECUTOR,
-      label: formatMessage(courtDocuments.whoFiled.prosecutor),
+      label: courtDocuments.whoFiled.prosecutor,
     },
     {
       value: UserRole.DEFENDER,
-      label: formatMessage(courtDocuments.whoFiled.defendant),
+      label: courtDocuments.whoFiled.defendant,
     },
     {
       value: UserRole.DISTRICT_COURT_JUDGE,
-      label: formatMessage(courtDocuments.whoFiled.court),
+      label: courtDocuments.whoFiled.court,
     },
   ]
 
@@ -96,15 +96,15 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
     <>
       <Box marginBottom={2}>
         <Text as="h3" variant="h3">
-          {formatMessage(courtDocuments.header)}
+          {courtDocuments.header}
         </Text>
       </Box>
       <MultipleValueList
         name="court-documents"
         onAddValue={handleAddDocument}
-        inputLabel={formatMessage(courtDocuments.add.label)}
-        inputPlaceholder={formatMessage(courtDocuments.add.placeholder)}
-        buttonText={formatMessage(courtDocuments.add.buttonText)}
+        inputLabel={courtDocuments.add.label}
+        inputPlaceholder={courtDocuments.add.placeholder}
+        buttonText={courtDocuments.add.buttonText}
         isButtonDisabled={(value) => !value}
       >
         <>
@@ -116,12 +116,16 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
             </Text>
           </Box>
           <div className={styles.firstCourtDocument}>
-            <Text marginBottom={[1, 1, 1, 0]}>
-              {formatMessage(courtDocuments.text)}
-            </Text>
+            <Text marginBottom={[1, 1, 1, 0]}>{courtDocuments.text}</Text>
             <Box component="span">
               <Tag variant="darkerBlue" outlined disabled>
-                {formatMessage(courtDocuments.tag, { index: 1 })}
+                {formatMessage(
+                  {
+                    id: courtDocuments.tag,
+                    defaultMessage: courtDocuments.tag,
+                  },
+                  { index: 1 },
+                )}
               </Tag>
             </Box>
           </div>
@@ -159,9 +163,15 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
                     <Tag variant="darkerBlue" outlined disabled>
                       {
                         // +2 because index is zero based and "Krafa um ..." is number 1
-                        formatMessage(courtDocuments.tag, {
-                          index: index + 2,
-                        })
+                        formatMessage(
+                          {
+                            id: courtDocuments.tag,
+                            defaultMessage: courtDocuments.tag,
+                          },
+                          {
+                            index: index + 2,
+                          },
+                        )
                       }
                     </Tag>
                   </Box>

@@ -7,7 +7,7 @@ import {
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 
-import { caseFilesRecord } from '../../messages'
+import { caseFilesRecord, formatIcuMessage } from '../../messages'
 import {
   Case,
   Defendant,
@@ -138,7 +138,7 @@ export const createCaseFilesRecord = async (
 
   // Create the PDF document
   const pdfDocument = await PdfDocument(
-    formatMessage(caseFilesRecord.title, { policeCaseNumber }),
+    formatIcuMessage(caseFilesRecord.title, { policeCaseNumber }),
   )
 
   pdfDocument.setMargins(pageMargin, pageMargin, pageMargin, pageMargin)
@@ -227,12 +227,14 @@ export const createCaseFilesRecord = async (
       position: { y: headerMargin + pageMargin },
     })
     .addText(
-      formatMessage(caseFilesRecord.policeCaseNumber, { policeCaseNumber }),
+      formatIcuMessage(caseFilesRecord.policeCaseNumber, {
+        policeCaseNumber,
+      }),
       titleFontSize,
       { alignment: Alignment.Center, bold: true },
     )
     .addText(
-      formatMessage(caseFilesRecord.accused, {
+      formatIcuMessage(caseFilesRecord.accused, {
         suffix:
           theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'ur',
       }),
@@ -334,7 +336,7 @@ export const createCaseFilesRecord = async (
 
     // Add chapter heading
     pdfDocument.addText(
-      formatMessage(caseFilesRecord.chapterName, { chapter }),
+      formatIcuMessage(caseFilesRecord.chapterName, { chapter }),
       textFontSize,
       { bold: true, marginTop: chapter > 0 ? 4 : 0 },
     )

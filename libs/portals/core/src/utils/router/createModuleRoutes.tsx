@@ -30,7 +30,9 @@ const createRoutes = ({ routes, childRoute }: CreateRoutes): RouteObject[] => {
           element: <ModuleRoute route={route} />,
           loader: route.loader,
           action: route.action,
-          handle: route.handle,
+          handle: route.layout
+            ? { ...route.handle, layout: route.layout }
+            : route.handle,
           id: route.id,
           errorElement: childRoute
             ? route.errorElement

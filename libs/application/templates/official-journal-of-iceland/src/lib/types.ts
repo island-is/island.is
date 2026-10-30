@@ -39,6 +39,7 @@ export const InputFields = {
   },
   regulation: {
     draftId: 'regulation.draftId',
+    withoutImpacts: 'regulation.withoutImpacts',
     effectiveDate: 'regulation.effectiveDate',
     fastTrack: 'regulation.fastTrack',
     lawChapters: 'regulation.lawChapters',

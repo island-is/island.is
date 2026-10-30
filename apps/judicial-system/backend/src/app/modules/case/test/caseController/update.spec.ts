@@ -23,7 +23,6 @@ import {
   DateType,
   DefendantEventType,
   DefendantNotificationType,
-  DefenderChoice,
   EventType,
   IndictmentCaseNotificationType,
   indictmentCases,
@@ -31,7 +30,6 @@ import {
   InstitutionType,
   investigationCases,
   RequestCaseNotificationType,
-  RequestSharedWithDefender,
   restrictionCases,
   ServiceStatus,
   StringType,
@@ -823,52 +821,6 @@ describe('CaseController - Update', () => {
     },
   )
 
-  describe.each([...restrictionCases, ...investigationCases])(
-    'defender email updated for %s case',
-    (type) => {
-      const defenderEmail = uuid()
-      const caseToUpdate = { defenderEmail }
-      const updatedCase = { ...theCase, type, defenderEmail }
-
-      beforeEach(async () => {
-        const mockFindLiveById =
-          mockCaseRepositoryService.findLiveById as jest.Mock
-        mockFindLiveById.mockResolvedValueOnce(updatedCase)
-
-        await givenWhenThen(caseId, user, theCase, caseToUpdate)
-      })
-
-      it('should post to queue', () => {
-        expect(mockQueuedMessages).toEqual([
-          {
-            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId1,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId1,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId2,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId2,
-          },
-        ])
-      })
-    },
-  )
-
   describe('prosecutor updated for case', () => {
     const prosecutorId = uuid()
     const caseToUpdate = { prosecutorId }
@@ -995,6 +947,135 @@ describe('CaseController - Update', () => {
       })
     },
   )
+
+  describe('court case number updated for indictment with pre-assigned court roles', () => {
+    const newCourtCaseNumber = uuid()
+    const caseToUpdate = { courtCaseNumber: newCourtCaseNumber }
+    const policeCaseNumber = uuid()
+    const judge = {
+      id: uuid(),
+      nationalId: '0101017890',
+      email: 'judge@court.is',
+      role: UserRole.DISTRICT_COURT_JUDGE,
+    }
+    const registrar = {
+      id: uuid(),
+      nationalId: '0202027890',
+      email: 'registrar@court.is',
+      role: UserRole.DISTRICT_COURT_REGISTRAR,
+    }
+    const originalCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.SUBMITTED,
+      courtCaseNumber: undefined,
+      policeCaseNumbers: [policeCaseNumber],
+      caseFiles: [],
+      judge,
+      registrar,
+      judgeId: judge.id,
+      registrarId: registrar.id,
+    } as Case
+    const updatedCase = {
+      ...originalCase,
+      courtCaseNumber: newCourtCaseNumber,
+      state: CaseState.RECEIVED,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+    })
+
+    it('should deliver already assigned court roles to the court', () => {
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          {
+            type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+            user,
+            caseId,
+            elementId: judge.nationalId,
+          },
+          {
+            type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+            user,
+            caseId,
+            elementId: registrar.nationalId,
+          },
+        ]),
+      )
+    })
+
+    it('should deliver each court role only once', () => {
+      const courtRoleMessages = mockQueuedMessages.filter(
+        (message) =>
+          message.type === MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+      )
+
+      expect(courtRoleMessages).toHaveLength(2)
+    })
+  })
+
+  describe('court case number and judge assigned together on indictment', () => {
+    const newCourtCaseNumber = uuid()
+    const judge = {
+      id: uuid(),
+      nationalId: '0101017890',
+      email: 'judge@court.is',
+      role: UserRole.DISTRICT_COURT_JUDGE,
+    }
+    const caseToUpdate = {
+      courtCaseNumber: newCourtCaseNumber,
+      judgeId: judge.id,
+    } as UpdateCaseDto
+    const originalCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.SUBMITTED,
+      courtCaseNumber: undefined,
+      policeCaseNumbers: [uuid()],
+      caseFiles: [],
+    } as Case
+    const updatedCase = {
+      ...originalCase,
+      courtCaseNumber: newCourtCaseNumber,
+      state: CaseState.RECEIVED,
+      judge,
+      judgeId: judge.id,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindById = mockUserService.findById as jest.Mock
+      mockFindById.mockResolvedValueOnce(judge)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+    })
+
+    // Connect syncs current roles; assignment-path robot delivery is skipped
+    // when the court case number just changed (same mutual exclusion as
+    // prosecutor on R-case connect).
+    it('should deliver the judge to the court only once', () => {
+      const courtRoleMessages = mockQueuedMessages.filter(
+        (message) =>
+          message.type === MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+      )
+
+      expect(courtRoleMessages).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+          user,
+          caseId,
+          elementId: judge.nationalId,
+        },
+      ])
+    })
+  })
 
   describe.each(restrictionCases)(
     'case modified explanation is updated for %s case',
@@ -1518,6 +1599,32 @@ describe('CaseController - Update', () => {
     })
   })
 
+  describe('civil claims turned off', () => {
+    const caseToUpdate = {
+      hasCivilClaims: false,
+      // Stale paired field must not reinsert the string after the delete
+      civilDemands: uuid(),
+    }
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should delete the civil demands case string', () => {
+      expect(
+        mockCaseStringRepositoryService.deleteByCaseAndType,
+      ).toHaveBeenCalledWith(caseId, StringType.CIVIL_DEMANDS, {
+        transaction,
+      })
+    })
+
+    it('should not upsert civil demands from the same update', () => {
+      expect(
+        mockCaseStringRepositoryService.upsertByCaseAndType,
+      ).not.toHaveBeenCalled()
+    })
+  })
+
   describe('merge parent chosen for a received case', () => {
     const receivedCase = {
       ...theCase,
@@ -1942,7 +2049,10 @@ describe('CaseController - Update', () => {
       expect(mockEventService.postEvent).toHaveBeenCalledWith(
         CaseTransition.MOVE,
         movedCase,
-        { from: 'Héraðsdómur Reykjavíkur', to: 'Héraðsdómur Reykjaness' },
+        {
+          from: 'Héraðsdómur Reykjavíkur',
+          to: 'Héraðsdómur Reykjaness',
+        },
       )
     })
   })
@@ -2170,159 +2280,6 @@ describe('CaseController - Update', () => {
     })
   })
 
-  describe('dual-write defender to defendants for request cases', () => {
-    const defenderName = 'Jane Doe'
-    const defenderNationalId = '1234567890'
-    const defenderEmail = 'jane@example.is'
-    const defenderPhoneNumber = '5551234'
-    const requestCase = {
-      ...theCase,
-      type: CaseType.CUSTODY,
-      defenderName: 'Old Name',
-      defenderNationalId: '0000000000',
-      defenderEmail: 'old@example.is',
-      defenderPhoneNumber: '0000000',
-      defendantWaivesRightToCounsel: false,
-    } as Case
-
-    describe('syncs defender fields when defenderName changes on a request case', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          defenderName,
-          defenderNationalId,
-          defenderEmail,
-          defenderPhoneNumber,
-        } as UpdateCaseDto)
-      })
-
-      it('should call syncDefenderToAllDefendants with merged contact fields', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).toHaveBeenCalledWith(
-          caseId,
-          {
-            defenderName,
-            defenderNationalId,
-            defenderEmail,
-            defenderPhoneNumber,
-            defenderChoice: null,
-            requestSharedWithDefender: undefined,
-          },
-          transaction,
-        )
-      })
-    })
-
-    describe('clears defender fields when defenderName is set to null', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          defenderName: null,
-        } as unknown as UpdateCaseDto)
-      })
-
-      it('should call syncDefenderToAllDefendants with null name and remaining contacts', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).toHaveBeenCalledWith(
-          caseId,
-          {
-            defenderName: null,
-            defenderNationalId: '0000000000',
-            defenderEmail: 'old@example.is',
-            defenderPhoneNumber: '0000000',
-            defenderChoice: null,
-            requestSharedWithDefender: undefined,
-          },
-          transaction,
-        )
-      })
-    })
-
-    describe('sets WAIVE when defendantWaivesRightToCounsel is true', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          defendantWaivesRightToCounsel: true,
-        } as UpdateCaseDto)
-      })
-
-      it('should sync contact fields with defenderChoice WAIVE', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).toHaveBeenCalledWith(
-          caseId,
-          {
-            defenderName: 'Old Name',
-            defenderNationalId: '0000000000',
-            defenderEmail: 'old@example.is',
-            defenderPhoneNumber: '0000000',
-            defenderChoice: DefenderChoice.WAIVE,
-            requestSharedWithDefender: undefined,
-          },
-          transaction,
-        )
-      })
-    })
-
-    describe('does not sync for indictment cases', () => {
-      const indictmentCase = {
-        ...theCase,
-        type: CaseType.INDICTMENT,
-      } as Case
-
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, indictmentCase, {
-          defenderName: 'Someone',
-        } as UpdateCaseDto)
-      })
-
-      it('should not call syncDefenderToAllDefendants', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).not.toHaveBeenCalled()
-      })
-    })
-
-    describe('does not sync when non-defender fields change', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          courtLocation: 'Some court',
-        } as UpdateCaseDto)
-      })
-
-      it('should not call syncDefenderToAllDefendants', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).not.toHaveBeenCalled()
-      })
-    })
-
-    describe('syncs when requestSharedWithDefender changes on a request case', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
-        } as UpdateCaseDto)
-      })
-
-      it('should call syncDefenderToAllDefendants with sharing and contact fields', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).toHaveBeenCalledWith(
-          caseId,
-          {
-            defenderName: 'Old Name',
-            defenderNationalId: '0000000000',
-            defenderEmail: 'old@example.is',
-            defenderPhoneNumber: '0000000',
-            defenderChoice: null,
-            requestSharedWithDefender:
-              RequestSharedWithDefender.READY_FOR_COURT,
-          },
-          transaction,
-        )
-      })
-    })
-  })
-
   describe.each([
     {
       role: 'judge',
@@ -2389,16 +2346,16 @@ describe('CaseController - Update', () => {
         it('should queue the notification and deliver the court role to the court', () => {
           expect(mockQueuedMessages).toEqual([
             {
-              type: MessageType.NOTIFICATION,
-              user,
-              caseId,
-              body: { type: notificationType },
-            },
-            {
               type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
               user,
               caseId,
               elementId: assignee.nationalId,
+            },
+            {
+              type: MessageType.NOTIFICATION,
+              user,
+              caseId,
+              body: { type: notificationType },
             },
           ])
         })
@@ -2457,10 +2414,22 @@ describe('CaseController - Update', () => {
     })
 
     // The delivery resolves one role per message, so both assignments must be
-    // delivered - the judge first, matching the notifications above and the
-    // order the controller validates the two assignees in
+    // delivered - the judge first, matching the order the controller validates
+    // the two assignees in. Robot delivery is queued before email notifications.
     it('should deliver both court roles to the court', () => {
       expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+          user,
+          caseId,
+          elementId: judge.nationalId,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+          user,
+          caseId,
+          elementId: registrar.nationalId,
+        },
         {
           type: MessageType.NOTIFICATION,
           user,
@@ -2476,18 +2445,6 @@ describe('CaseController - Update', () => {
           body: {
             type: IndictmentCaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
           },
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
-          user,
-          caseId,
-          elementId: judge.nationalId,
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
-          user,
-          caseId,
-          elementId: registrar.nationalId,
         },
       ])
     })

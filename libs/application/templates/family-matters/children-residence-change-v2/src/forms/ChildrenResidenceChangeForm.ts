@@ -11,9 +11,9 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
-import { selectDurationInputs } from '../fields/Duration'
-import { confirmContractIds } from '../fields/Overview'
-import { contactInfoIds } from '../fields/ContactInfo'
+import { selectDurationInputs } from '../fields/Duration/constants'
+import { confirmContractIds } from '../fields/Overview/constants'
+import { contactInfoIds } from '../fields/ContactInfo/constants'
 import * as m from '../lib/messages'
 import { Answers } from '../types'
 

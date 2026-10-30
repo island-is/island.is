@@ -24,12 +24,6 @@ import {
   signedAssigneesAccessAgreementOverviewTitle,
 } from './getOverviewItems'
 
-jest.mock('@island.is/application/ui-components', () => ({
-  formatBankInfo: (value: string) => value,
-  formatCurrency: (value: string) => value,
-  formatPhoneNumberWithIcelandicCountryCode: (value: string) => value,
-}))
-
 const APPLICANT_ID = '0101303019'
 const ASSIGNEE_ID = '0101307789'
 const CHILD_ID = kennitala.generatePerson(new Date(2018, 5, 15))
