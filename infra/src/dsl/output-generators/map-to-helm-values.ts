@@ -8,6 +8,7 @@ import {
   Resources,
   ServiceDefinition,
   ServiceDefinitionForEnv,
+  EnvironmentVariableValue,
 } from '../types/input-types'
 import {
   ContainerRunHelm,
@@ -280,7 +281,6 @@ const serializeService: SerializeMethod<HelmService> = async (
     }
   }
 
-  // initContainers
   if (typeof serviceDef.initContainers !== 'undefined') {
     if (serviceDef.initContainers.containers.length > 0) {
       result.initContainer = {
@@ -657,17 +657,247 @@ function getFeatureDeploymentNamespace(env: EnvironmentConfig) {
   return `feature-${env.feature}`
 }
 
-export const HelmOutput: OutputFormat<HelmService> = {
-  featureDeployment(s: ServiceDefinition, env): void {
-    // Set feature-deployment prefix for URLs
-    Object.values(s.ingress).forEach((ingress) => {
-      if (!Array.isArray(ingress.host.dev)) {
-        ingress.host.dev = [ingress.host.dev]
-      }
+const getFeatureIdsHost = (env: EnvironmentConfig) =>
+  `${env.feature}.identity-server.${env.domain}`
+
+const getFeatureIdsUrl = (env: EnvironmentConfig, path = '') =>
+  `https://${getFeatureIdsHost(env)}${path}`
+
+const getFeaturePortalUrl = (env: EnvironmentConfig, path = '') =>
+  `https://${env.feature}-beta.${env.domain}${path}`
+
+const getFeatureInternalUrl = (env: EnvironmentConfig, value: string) => {
+  const url = new URL(value)
+  const internalSuffixes = [
+    `.internal.${env.domain}`,
+    `.internal.identity-server.${env.domain}`,
+  ]
+  const suffix = internalSuffixes.find((candidate) =>
+    url.hostname.endsWith(candidate),
+  )
+
+  if (!suffix || url.hostname.startsWith(`${env.feature}-`)) {
+    return value
+  }
+
+  return `https://${env.feature}-${url.hostname}${url.pathname}${url.search}${url.hash}`
+}
+
+const rewriteDevEnv = (
+  value: EnvironmentVariableValue,
+  rewrite: (value: string) => string,
+): EnvironmentVariableValue => {
+  if (typeof value === 'string') {
+    return rewrite(value)
+  }
+
+  //trigger
+  if (typeof value === 'object' && value !== null && 'dev' in value) {
+    if (typeof value.dev === 'string') {
+      return rewrite(value.dev)
+    }
+
+    if (typeof value.dev === 'function') {
+      return value.dev
+    }
+  }
+
+  return value
+}
+
+/**
+ *
+ * @param s Rewrites sercices parameters for ids feature.
+ * @param env
+ * @returns
+ */
+function rewriteIdsFeatureServiceUrls(
+  s: ServiceDefinition,
+  env: EnvironmentConfig,
+): ServiceDefinition {
+  const featureIdsHost = getFeatureIdsHost(env)
+
+  const idsServices = [
+    'identity-server',
+    'auth-admin-web',
+    'services-auth-admin-api',
+    'services-auth-public-api',
+    'services-auth-ids-api',
+    'services-auth-delegation-api',
+    'services-auth-personal-representative',
+    'services-auth-personal-representative-public',
+  ]
+
+  const serviceName = s.image ?? s.name
+
+  if (s.env.SERVICE_PORTAL_BASE_URL !== undefined) {
+    s.env.SERVICE_PORTAL_BASE_URL = rewriteDevEnv(
+      s.env.SERVICE_PORTAL_BASE_URL,
+      (value) => {
+        const url = new URL(value)
+
+        return `https://${env.feature}-beta.${env.domain}${url.pathname}${url.search}${url.hash}`
+      },
+    )
+  }
+
+  for (const [name, value] of Object.entries(s.env)) {
+    if (
+      typeof value === 'object' &&
+      value !== null &&
+      'dev' in value &&
+      typeof value.dev === 'string' &&
+      value.dev.startsWith('http')
+    ) {
+      s.env[name] = rewriteDevEnv(value, (devValue) =>
+        getFeatureInternalUrl(env, devValue),
+      )
+    }
+  }
+
+  if (s.env.IDENTITY_SERVER_ISSUER_URL_LIST !== undefined) {
+    s.env.IDENTITY_SERVER_ISSUER_URL_LIST = rewriteDevEnv(
+      s.env.IDENTITY_SERVER_ISSUER_URL_LIST,
+      (value) => {
+        const issuers = JSON.parse(value) as string[]
+        const featureIssuer = getFeatureIdsUrl(env)
+
+        return JSON.stringify([
+          featureIssuer,
+          ...issuers.filter((issuer) => issuer !== featureIssuer),
+        ])
+      },
+    )
+  }
+
+  const idsUrlVariables = [
+    'IDENTITY_SERVER_ISSUER_URL',
+    'AUTH_PUBLIC_API_URL',
+    'AUTH_ADMIN_API_PATH',
+    'AUTH_IDS_API_URL',
+  ] as const
+
+  for (const name of idsUrlVariables) {
+    const value = s.env[name]
+
+    if (value === undefined) {
+      continue
+    }
+
+    s.env[name] = rewriteDevEnv(value, (currentValue) => {
+      const url = new URL(currentValue)
+      const path = url.pathname === '/' ? '' : url.pathname
+
+      return getFeatureIdsUrl(env, `${path}${url.search}${url.hash}`)
+    })
+  }
+
+  //test
+  if (s.env.AUTH_ADMIN_API_PATHS !== undefined) {
+    s.env.AUTH_ADMIN_API_PATHS = rewriteDevEnv(
+      s.env.AUTH_ADMIN_API_PATHS,
+      (value) => {
+        const paths = JSON.parse(value) as Record<string, string>
+        const developmentPath = paths.development
+          ? new URL(paths.development)
+          : null
+
+        return JSON.stringify({
+          ...paths,
+          ...(developmentPath
+            ? {
+                development: getFeatureIdsUrl(
+                  env,
+                  `${developmentPath.pathname}${developmentPath.search}${developmentPath.hash}`,
+                ),
+              }
+            : {}),
+        })
+      },
+    )
+  }
+
+  if (idsServices.includes(serviceName)) {
+    const rewriteIdsUrl = (value: string) => {
+      const url = new URL(value)
+      return getFeatureIdsUrl(env, `${url.pathname}${url.search}${url.hash}`)
+    }
+
+    if (s.env.PUBLIC_URL !== undefined) {
+      s.env.PUBLIC_URL = rewriteDevEnv(s.env.PUBLIC_URL, rewriteIdsUrl)
+    }
+    if (s.env.BASE_URL !== undefined) {
+      s.env.BASE_URL = rewriteDevEnv(s.env.BASE_URL, rewriteIdsUrl)
+    }
+    if (s.env.NEXTAUTH_URL !== undefined) {
+      s.env.NEXTAUTH_URL = rewriteDevEnv(s.env.NEXTAUTH_URL, rewriteIdsUrl)
+    }
+
+    if (s.env.IDENTITYSERVER_DOMAIN !== undefined) {
+      s.env.IDENTITYSERVER_DOMAIN = rewriteDevEnv(
+        s.env.IDENTITYSERVER_DOMAIN,
+        () => featureIdsHost,
+      )
+    }
+  }
+
+  if (s.env.Application__AllowedRedirectUris) {
+    s.env.Application__AllowedRedirectUris = rewriteDevEnv(
+      s.env.Application__AllowedRedirectUris,
+      (value) =>
+        value
+          .split(',')
+          .map((uri) => {
+            const url = new URL(uri)
+            if (url.hostname !== `beta.${env.domain}`) {
+              return uri
+            }
+            return getFeaturePortalUrl(
+              env,
+              `${url.pathname}${url.search}${url.hash}`,
+            )
+          })
+          .join(','),
+    )
+  }
+
+  return s
+}
+
+function prepareFeatureDeployment(
+  s: ServiceDefinition,
+  env: EnvironmentConfig,
+): ServiceDefinition {
+  s = rewriteIdsFeatureServiceUrls(s, env)
+
+  const featureIdsHost = getFeatureIdsHost(env)
+
+  const publicIdsServices = [
+    'identity-server',
+    'auth-admin-web',
+    'services-auth-admin-api',
+    'services-auth-public-api',
+  ]
+  const serviceName = s.image ?? s.name
+  Object.values(s.ingress).forEach((ingress) => {
+    if (!Array.isArray(ingress.host.dev)) {
+      ingress.host.dev = [ingress.host.dev]
+    }
+    if (publicIdsServices.includes(serviceName)) {
+      ingress.host.dev = ingress.host.dev.map(() => featureIdsHost)
+    } else {
       ingress.host.dev = ingress.host.dev.map(
         (host) => `${env.feature}-${host}`,
       )
-    })
+    }
+  })
+  return s
+}
+
+export const HelmOutput: OutputFormat<HelmService> = {
+  featureDeployment(s: ServiceDefinition, env): void {
+    s = prepareFeatureDeployment(s, env)
+
     // Feature deployments run in dev. Honor a scale-to-zero dev config
     // verbatim; otherwise keep the existing cap of 1 replica.
     const featureRc = resolveReplicaCount(s.replicaCount, env)
