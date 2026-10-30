@@ -210,6 +210,8 @@ export enum Features {
 
   // Notifications settings
   isOnlyActionablePriorityNotificationsEnabled = 'isOnlyActionablePriorityNotificationsEnabled',
+  // Should user-notification skip notifications in categories the user has blocked
+  isNotificationBlockedCategoriesEnabled = 'isNotificationBlockedCategoriesEnabled',
 
   // Primary school (guardian-facing)
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',

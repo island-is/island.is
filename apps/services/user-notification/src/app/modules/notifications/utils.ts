@@ -21,6 +21,20 @@ export const cleanString = (str: string): string =>
   str.replace(/\s+/g, ' ').trim()
 
 /**
+ * Extracts a printable message from a caught value of unknown type.
+ */
+export const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) return error.message
+  if (typeof error === 'string') return error
+  try {
+    // JSON.stringify returns undefined for e.g. undefined, functions and symbols
+    return JSON.stringify(error) ?? 'An unknown error occurred'
+  } catch {
+    return 'An unknown error occurred'
+  }
+}
+
+/**
  * Normalizes a sender id (kennitala) by stripping all non-digit characters,
  * e.g. '550169-2829' -> '5501692829'.
  */

@@ -12,7 +12,11 @@ import {
   EinstaklingurDTONafnItar,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
-import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
+import {
+  UserProfileDto,
+  UserProfileControllerFindUserProfileIncludeEnum as UserProfileInclude,
+  V2UsersApi,
+} from '@island.is/clients/user-profile'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -40,6 +44,8 @@ import { NotificationsService } from '../notifications.service'
 import { ActorNotification } from '../actor-notification.model'
 import { UserNotificationSender } from '../user-notification-sender.model'
 import {
+  DEFAULT_CATEGORY,
+  getErrorMessage,
   isValidSenderId,
   mapToLocale,
   normalizeKennitala,
@@ -165,6 +171,83 @@ export class NotificationsWorkerService {
     }
 
     return shouldDeliver
+  }
+
+  /**
+   * The user's blocked categories are only needed (and fetched together with
+   * the user profile) for non-urgent notifications with a valid sender id
+   * while the feature flag is enabled.
+   */
+  private async shouldIncludeBlockedCategories({
+    nationalId,
+    senderId,
+    urgent,
+    messageId,
+  }: {
+    nationalId: string
+    senderId?: string
+    urgent?: boolean
+    messageId: string
+  }): Promise<boolean> {
+    if (urgent || !senderId) {
+      return false
+    }
+
+    if (!isValidSenderId(normalizeKennitala(senderId))) {
+      return false
+    }
+
+    try {
+      return await this.featureFlagService.getValue(
+        Features.isNotificationBlockedCategoriesEnabled,
+        false,
+        { nationalId } as User,
+      )
+    } catch (error: unknown) {
+      this.logger.warn(
+        'Failed to check blocked categories feature flag, proceeding with notification',
+        { messageId, error: getErrorMessage(error) },
+      )
+      return false
+    }
+  }
+
+  // Whether the recipient has blocked the notification's sender and category.
+  private isCategoryBlocked({
+    userProfile,
+    senderId,
+    category,
+    messageId,
+  }: {
+    userProfile?: UserProfileDto
+    senderId?: string
+    category: string | null
+    messageId: string
+  }): boolean {
+    // Only present when blocked categories were requested with the profile
+    if (!userProfile?.blockedCategories || !senderId) {
+      return false
+    }
+
+    const normalizedSenderId = normalizeKennitala(senderId)
+    // Templates without a category are presented to users as 'almennt'
+    const effectiveCategory = category ?? DEFAULT_CATEGORY
+
+    const blocked = userProfile.blockedCategories.some(
+      (blockedCategory) =>
+        blockedCategory.senderId === normalizedSenderId &&
+        blockedCategory.category === effectiveCategory,
+    )
+
+    if (blocked) {
+      this.logger.info('Notification not sent because category is blocked', {
+        messageId,
+        senderId: normalizedSenderId,
+        category: effectiveCategory,
+      })
+    }
+
+    return blocked
   }
 
   private async handleActorNotification(
@@ -378,9 +461,20 @@ export class NotificationsWorkerService {
     let locale: Locale = 'is'
 
     if (!isCompany(nationalId)) {
+      const includeBlockedCategories =
+        await this.shouldIncludeBlockedCategories({
+          nationalId,
+          senderId: args.senderId,
+          urgent: args.urgent,
+          messageId,
+        })
+
       userProfile =
         await this.userProfileApi.userProfileControllerFindUserProfile({
           xParamNationalId: nationalId,
+          include: includeBlockedCategories
+            ? [UserProfileInclude.NotificationSettings]
+            : undefined,
         })
 
       if (!userProfile) {
@@ -431,12 +525,20 @@ export class NotificationsWorkerService {
     // This allows users to quickly ignore notifications that are not urgent or actionable.
     // Templates with smsDelivery ALWAYS bypass this filter for SMS only (see
     // buildSmsPayload), so wasSent describes push/email delivery.
-    const shouldSendNotification = this.shouldDeliverByPriority({
-      profile: userProfile,
-      priorityType: template.priorityType,
-      urgent: args.urgent,
-      messageId,
-    })
+    // Users can also block a sender's category; urgent notifications bypass both.
+    const shouldSendNotification =
+      this.shouldDeliverByPriority({
+        profile: userProfile,
+        priorityType: template.priorityType,
+        urgent: args.urgent,
+        messageId,
+      }) &&
+      !this.isCategoryBlocked({
+        userProfile,
+        senderId: args.senderId,
+        category: toTemplateCategory(template.hnippCategoryIs),
+        messageId,
+      })
 
     const scope = template.scope || DocumentsScope.main
     const dbRecord = await this.createUserNotificationDbRecord(
