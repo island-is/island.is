@@ -11,5 +11,5 @@ metrics()
       'Metrics job failed; check collector configuration and database availability',
       { error },
     )
-    process.exitCode = 1
+    process.exit(1)
   })
