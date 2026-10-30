@@ -1498,6 +1498,29 @@ describe('NotificationsWorkerService', () => {
       expectIncludesSettings(false)
     })
 
+    it('should deliver without blocked categories when the feature flag lookup fails', async () => {
+      const featureFlagService = app.get(FeatureFlagService)
+      const getValue = featureFlagService.getValue.bind(featureFlagService)
+      const getValueSpy = jest
+        .spyOn(featureFlagService, 'getValue')
+        .mockImplementation((feature, defaultValue, user) =>
+          feature === Features.isNotificationBlockedCategoriesEnabled
+            ? Promise.reject(new Error('feature flag service unavailable'))
+            : getValue(feature, defaultValue, user),
+        )
+      mockCategory('Heilbrigðismál')
+      block(senderId, 'heilbrigdismal')
+
+      try {
+        await send()
+      } finally {
+        getValueSpy.mockRestore()
+      }
+
+      await expectDelivered(true)
+      expectIncludesSettings(false)
+    })
+
     it('should match a dashed sender id', async () => {
       mockCategory('Heilbrigðismál')
       block(senderId, 'heilbrigdismal')

@@ -45,6 +45,7 @@ import { ActorNotification } from '../actor-notification.model'
 import { UserNotificationSender } from '../user-notification-sender.model'
 import {
   DEFAULT_CATEGORY,
+  getErrorMessage,
   isValidSenderId,
   mapToLocale,
   normalizeKennitala,
@@ -181,10 +182,12 @@ export class NotificationsWorkerService {
     nationalId,
     senderId,
     urgent,
+    messageId,
   }: {
     nationalId: string
     senderId?: string
     urgent?: boolean
+    messageId: string
   }): Promise<boolean> {
     if (urgent || !senderId) {
       return false
@@ -194,11 +197,19 @@ export class NotificationsWorkerService {
       return false
     }
 
-    return this.featureFlagService.getValue(
-      Features.isNotificationBlockedCategoriesEnabled,
-      false,
-      { nationalId } as User,
-    )
+    try {
+      return await this.featureFlagService.getValue(
+        Features.isNotificationBlockedCategoriesEnabled,
+        false,
+        { nationalId } as User,
+      )
+    } catch (error: unknown) {
+      this.logger.warn(
+        'Failed to check blocked categories feature flag, proceeding with notification',
+        { messageId, error: getErrorMessage(error) },
+      )
+      return false
+    }
   }
 
   // Whether the recipient has blocked the notification's sender and category.
@@ -455,6 +466,7 @@ export class NotificationsWorkerService {
           nationalId,
           senderId: args.senderId,
           urgent: args.urgent,
+          messageId,
         })
 
       userProfile =
