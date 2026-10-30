@@ -936,6 +936,30 @@ describe('CardPaymentController', () => {
         expect(status.body).toEqual({ isVerified: false, isFailed: true })
       })
 
+      it('completes the attempt when the callback has no xid', async () => {
+        const correlationId = uuid()
+        await cacheManager.set(correlationId, { paymentFlowId })
+        await cacheManager.set(paymentFlowId, {
+          isVerified: false,
+          correlationId,
+        })
+
+        const response = await server
+          .post('/v1/payments/card/verify-callback')
+          .send({
+            md: mdFor(correlationId),
+            mdStatus: '1',
+            cavv: 'cavv',
+            dsTransId: 'ds-1',
+          })
+
+        expect(response.status).toBe(201)
+        const status = await server.get(
+          `/v1/payments/card/verification-status/${paymentFlowId}`,
+        )
+        expect(status.body).toEqual({ isVerified: true, isFailed: false })
+      })
+
       it('ignores a late success from an earlier attempt', async () => {
         const earlierCorrelationId = uuid()
         await cacheManager.set(earlierCorrelationId, { paymentFlowId })

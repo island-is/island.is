@@ -147,7 +147,9 @@ export class PaymentsService {
     const { cavv, xid, md, mdStatus, dsTransId, threeDSMessageVersion } =
       decoded
 
-    if (!cavv || !xid || !md || !mdStatus || !dsTransId) {
+    // xid is optional, it is not used for the charge and not sent by every EMV
+    // 3DS flow
+    if (!cavv || !md || !mdStatus || !dsTransId) {
       throw new Error('Invalid verification token contents')
     }
 

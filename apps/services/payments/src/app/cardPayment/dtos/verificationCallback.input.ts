@@ -26,11 +26,13 @@ export class VerificationCallbackInput {
   cavv!: string
 
   @IsString()
-  @ApiProperty({
-    description: 'Request id',
+  @IsOptional()
+  @ApiPropertyOptional({
+    description:
+      'Request id. Not used for the charge and not sent by every EMV 3DS flow.',
     type: String,
   })
-  xid!: string
+  xid?: string
 
   @IsString()
   @ApiProperty({

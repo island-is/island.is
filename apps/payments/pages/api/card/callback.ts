@@ -24,7 +24,9 @@ import {
 // a return-flow outcome, not a server crash: throwing renders a broken 500 page inside
 // the ACS iframe and blocks the payer, so we redirect to the failure screen instead.
 const VerificationCallbackSchema = z.object({
-  xid: z.string().min(1, 'xid is required'),
+  // Not used for the charge (the gateway removed it from CardVerificationData)
+  // and not sent by every EMV 3DS flow, so it must not decide the outcome
+  xid: z.string().optional(),
   mdStatus: z.string().min(1, 'mdStatus status is required'),
   MD: z.string().min(1, 'MD is required'),
   cavv: z.string().min(1, 'cavv is required'),
@@ -37,6 +39,17 @@ const VerificationCallbackSchema = z.object({
 // Never log cavv, xid, MD, dsTransId or cardholderInfo. Values come from an
 // external POST, so they are capped in length.
 const MAX_DIAGNOSTIC_LENGTH = 64
+
+// mdStatus values the payments service charges with (see toGatewayMdStatus in
+// the payments service). Any other mdStatus means the 3DS attempt failed.
+const CHARGEABLE_MD_STATUSES = ['1', '2', '4', '5']
+
+// Only an mdStatus that cannot be charged reports the attempt as failed. A
+// callback that is merely missing fields could be a partial or malformed
+// request, and marking the attempt failed on it would stop a valid result for
+// the same attempt (e.g. from the gateway server) from completing the payment.
+const isFailedAuthentication = (mdStatus: string | null) =>
+  !!mdStatus && !CHARGEABLE_MD_STATUSES.includes(mdStatus)
 
 const getCallbackDiagnostics = (body: Record<string, unknown>) => {
   const read = (key: string) =>
@@ -150,21 +163,26 @@ export default async function cardVerificationCallbackHandler(
       const value = body[key]
       return typeof value === 'string' && value.length > 0
     }
-    const requiredFields = ['xid', 'mdStatus', 'MD', 'cavv', 'TDS2.dsTransID']
+    const requiredFields = ['mdStatus', 'MD', 'cavv', 'TDS2.dsTransID']
+    const diagnostics = getCallbackDiagnostics(body)
+    const isFailed = isFailedAuthentication(diagnostics.mdStatus)
 
     console.error(
       'Card verification callback: incomplete or invalid callback',
       {
-        ...getCallbackDiagnostics(body),
+        ...diagnostics,
         hasXid: isPresent('xid'),
         hasMd: isPresent('MD'),
         hasCavv: isPresent('cavv'),
         hasDsTransId: isPresent('TDS2.dsTransID'),
         missingFields: requiredFields.filter((key) => !isPresent(key)),
+        reportedAsFailed: isFailed,
       },
     )
 
-    await reportFailedVerification(body)
+    if (isFailed) {
+      await reportFailedVerification(body)
+    }
 
     return res.redirect(303, FAILURE_REDIRECT)
   }

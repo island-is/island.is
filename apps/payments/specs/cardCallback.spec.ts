@@ -164,6 +164,59 @@ describe('card verification callback handler', () => {
     expect(res.redirect).toHaveBeenCalledWith(303, FAILURE_REDIRECT)
   })
 
+  it('verifies a completed authentication without xid', async () => {
+    const res = createRes()
+
+    await handler(
+      createReq({
+        body: {
+          mdStatus: '1',
+          MD: 'md-1',
+          cavv: 'cavv-1',
+          'TDS2.dsTransID': 'ds-1',
+        },
+      }),
+      res,
+    )
+
+    expect(mockMutate).toHaveBeenCalledWith(
+      expect.objectContaining({ mutation: 'VerificationCallbackDocument' }),
+    )
+    expect(res.redirect).toHaveBeenCalledWith(303, SUCCESS_REDIRECT)
+  })
+
+  it('does not report a failed verification when an authenticated callback is only missing fields', async () => {
+    const res = createRes()
+
+    // A partial or malformed request must not cancel the attempt, a complete
+    // result for it (e.g. from the gateway server) can still arrive
+    await handler(
+      createReq({
+        body: { mdStatus: '1', MD: 'md-1', callbackSource: 'Server' },
+      }),
+      res,
+    )
+
+    expect(mockMutate).not.toHaveBeenCalled()
+    expect(console.error).toHaveBeenCalledWith(
+      'Card verification callback: incomplete or invalid callback',
+      expect.objectContaining({
+        missingFields: ['cavv', 'TDS2.dsTransID'],
+        reportedAsFailed: false,
+      }),
+    )
+    expect(res.redirect).toHaveBeenCalledWith(303, FAILURE_REDIRECT)
+  })
+
+  it('does not report a failed verification when the callback has no mdStatus', async () => {
+    const res = createRes()
+
+    await handler(createReq({ body: { MD: 'md-1' } }), res)
+
+    expect(mockMutate).not.toHaveBeenCalled()
+    expect(res.redirect).toHaveBeenCalledWith(303, FAILURE_REDIRECT)
+  })
+
   it('still redirects to the failure page when reporting the failure fails', async () => {
     mockMutate.mockRejectedValue(new Error('network down'))
     const res = createRes()
