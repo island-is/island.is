@@ -116,9 +116,15 @@ export const LanguageProfileEdit = () => {
   })
 
   const handleSave = async () => {
-    // The undefined checks also narrow interpreter/signLanguage to boolean for
-    // the required LanguageProfileUpdateInput.
-    if (!isValid || interpreter === undefined || signLanguage === undefined)
+    // The undefined checks also narrow languageEnvironmentId to string and
+    // interpreter/signLanguage to boolean for the required
+    // LanguageProfileUpdateInput.
+    if (
+      !isValid ||
+      !languageEnvironmentId ||
+      interpreter === undefined ||
+      signLanguage === undefined
+    )
       return
     try {
       await saveLanguageProfile({

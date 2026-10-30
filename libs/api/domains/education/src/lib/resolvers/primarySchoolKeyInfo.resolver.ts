@@ -225,8 +225,7 @@ export class PrimarySchoolKeyInfoResolver {
       user,
       await this.requireFriggChildId(user, input.childId),
       {
-        // MMS requires an id here; the UI select enforces a choice.
-        languageEnvironmentId: input.languageEnvironmentId ?? '',
+        languageEnvironmentId: input.languageEnvironmentId,
         preferredLanguage: input.preferredLanguage ?? null,
         languages: input.languages,
         interpreter: input.interpreter,

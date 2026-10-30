@@ -82,7 +82,7 @@ export interface LanguageProfile {
 
 /** PATCH body */
 export interface LanguageProfileUpdateInput {
-  languageEnvironmentId?: string
+  languageEnvironmentId: string
   preferredLanguage?: string
   languages: string[]
   interpreter: boolean

@@ -62,8 +62,8 @@ export class UpdateLanguageProfileInput {
   @Field(() => ID)
   childId!: string
 
-  @Field(() => ID, { nullable: true })
-  languageEnvironmentId?: string
+  @Field(() => ID)
+  languageEnvironmentId!: string
 
   /** ISO 639-1 */
   @Field({ nullable: true })
