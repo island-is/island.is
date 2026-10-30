@@ -3,15 +3,19 @@ import { IdsUserGuard, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { notificationScopes } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { Inject, UseGuards } from '@nestjs/common'
+import { Inject, InternalServerErrorException, UseGuards } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { NotificationSettingsService } from './notificationSettings.service'
 import { toCategoryKey } from './notificationSettings.utils'
 import {
+  NotificationCategoryInput,
   NotificationSettings,
   UpdateNotificationCategoriesInput,
 } from './notificationSettings.model'
 import { AUDIT_NAMESPACE } from './notifications.resolver'
+import { Loader } from '@island.is/nest/dataloader'
+import { OrganizationTitleByNationalIdLoader } from '@island.is/cms'
+import type { OrganizationTitleByNationalIdDataLoader } from '@island.is/cms'
 import type { Locale } from '@island.is/shared/types'
 
 const LOG_CATEGORY = 'notification-settings-resolver'
@@ -31,11 +35,17 @@ export class NotificationSettingsResolver {
   @Audit()
   async getNotificationSettings(
     @CurrentUser() user: User,
+    @Loader(OrganizationTitleByNationalIdLoader)
+    titleLoader: OrganizationTitleByNationalIdDataLoader,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
   ): Promise<NotificationSettings> {
     try {
-      return await this.service.getNotificationSettings(user, locale)
+      return await this.service.getNotificationSettings(
+        user,
+        locale,
+        titleLoader,
+      )
     } catch (e) {
       this.logger.info('failed to get notification settings', {
         category: LOG_CATEGORY,
@@ -45,13 +55,20 @@ export class NotificationSettingsResolver {
     }
   }
 
-  @Mutation(() => Boolean, { name: 'updateNotificationCategorySettings' })
+  @Mutation(() => NotificationSettings, {
+    name: 'updateNotificationCategorySettings',
+  })
   async updateNotificationCategorySettings(
     @CurrentUser() user: User,
+    @Loader(OrganizationTitleByNationalIdLoader)
+    titleLoader: OrganizationTitleByNationalIdDataLoader,
     @Args('input') input: UpdateNotificationCategoriesInput,
-  ): Promise<boolean> {
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ): Promise<NotificationSettings> {
+    const categories = input.categories ?? []
     const keysWhere = (blocked: boolean) =>
-      input.categories
+      categories
         .filter((c) => c.blocked === blocked)
         .map(({ senderId, category }) => toCategoryKey(senderId, category))
 
@@ -61,12 +78,17 @@ export class NotificationSettingsResolver {
           auth: user,
           namespace: AUDIT_NAMESPACE,
           action: 'updateNotificationCategorySettings',
-          resources: input.categories.map(({ senderId, category }) =>
+          resources: categories.map(({ senderId, category }) =>
             toCategoryKey(senderId, category),
           ),
-          meta: { blocked: keysWhere(true), unblocked: keysWhere(false) },
+          meta: {
+            blocked: keysWhere(true),
+            unblocked: keysWhere(false),
+            onlyActionablePriorityNotifications:
+              input.onlyActionablePriorityNotifications,
+          },
         },
-        this.service.updateCategories(user, input.categories),
+        this.updateSettings(user, categories, input),
       )
     } catch (e) {
       this.logger.info('failed to update notification category settings', {
@@ -76,6 +98,54 @@ export class NotificationSettingsResolver {
       throw e
     }
 
-    return true
+    try {
+      return await this.service.getNotificationSettings(
+        user,
+        locale,
+        titleLoader,
+      )
+    } catch (e) {
+      // The update was already applied and audited, so don't report failure.
+      this.logger.warn(
+        'failed to read notification settings after successful update',
+        {
+          category: LOG_CATEGORY,
+          error: e,
+        },
+      )
+      return {
+        senders: [],
+        onlyActionablePriorityNotifications:
+          input.onlyActionablePriorityNotifications,
+      }
+    }
+  }
+
+  private async updateSettings(
+    user: User,
+    categories: NotificationCategoryInput[],
+    input: UpdateNotificationCategoriesInput,
+  ): Promise<void> {
+    await this.service.updateCategories(user, categories)
+    if (typeof input.onlyActionablePriorityNotifications === 'boolean') {
+      try {
+        await this.service.updateOnlyActionablePriorityNotifications(
+          user,
+          input.onlyActionablePriorityNotifications,
+        )
+      } catch (e) {
+        // The two writes hit separate endpoints and cannot be made atomic, so
+        // make it explicit that the category changes were already applied.
+        this.logger.error('partial notification settings update', {
+          category: LOG_CATEGORY,
+          error: e,
+        })
+        throw new InternalServerErrorException(
+          categories.length > 0
+            ? 'Category settings were updated, but updating onlyActionablePriorityNotifications failed'
+            : 'Updating onlyActionablePriorityNotifications failed',
+        )
+      }
+    }
   }
 }
