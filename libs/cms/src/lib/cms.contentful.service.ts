@@ -761,16 +761,14 @@ export class CmsContentfulService {
     id,
   }: GetContentSlugInput): Promise<ContentSlug | null> {
     const result = await this.contentfulRepository
-      .getClient()
-      .getEntry<{
+      .getLocalizedEntry<{
         slug: Record<string, string>
         title: Record<string, string>
         url: Record<string, string>
         question?: Record<string, string>
         activeTranslations?: { 'is-IS': Record<string, boolean> }
         parent?: { 'is-IS': { fields: { slug: Record<string, string> } } }
-      }>(id, {
-        locale: '*',
+      }>(id, '*', {
         include: 1,
       })
       .catch(errorHandler('getContentSlug'))
