@@ -66,7 +66,6 @@ export const extractDetails = function (
   ) {
     return {
       ...extractCommonVehicleInfo(response.basicVehicleInformation),
-      isDebtLess: response.isDebtLess ?? true,
       validationErrorMessages: response?.validationErrorMessages ?? [],
     }
   } else if (
@@ -77,7 +76,6 @@ export const extractDetails = function (
   ) {
     return {
       ...extractCommonVehicleInfo(response.basicVehicleInformation),
-      isDebtLess: true,
       validationErrorMessages: response?.validationErrorMessages ?? [],
     }
   } else if (
@@ -94,7 +92,6 @@ export const extractDetails = function (
   ) {
     return {
       ...extractCommonVehicleInfo(response),
-      isDebtLess: true,
     }
   } else {
     // Handle unexpected response types
