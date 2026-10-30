@@ -22,6 +22,8 @@ import {
 import {
   Period,
   calculatePeriodLength,
+  errorMessages,
+  getApplicationExternalData,
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
   RejectedBy,
@@ -557,9 +559,10 @@ describe('ParentalLeaveService', () => {
         } as TemplateApiModuleActionProps),
       ).rejects.toMatchObject({
         problem: {
-          errorReason: expect.objectContaining({
-            summary: expect.stringContaining('someone-elses-application-id'),
-          }),
+          errorReason: {
+            title: errorMessages.followUpLeaveNotFoundTitle,
+            summary: errorMessages.followUpLeaveNotFoundSummary,
+          },
         },
       })
     })
@@ -631,6 +634,45 @@ describe('ParentalLeaveService', () => {
       expect(res).toMatchObject({
         childApplicationLinks: [{ vmstApplicationId: 'root-application-id' }],
       })
+    })
+
+    it('should build the child from the no-children-found answers after "Ný umsókn"', async () => {
+      const application = createApplication()
+      set(application, 'answers.selectedChild', 'new')
+      set(
+        application,
+        'answers.noChildrenFound.typeOfApplication',
+        'primary_adoption',
+      )
+      set(application, 'answers.fosterCareOrAdoption', {
+        birthDate: '2026-09-01',
+        adoptionDate: '2026-11-15',
+      })
+
+      const res = await parentalLeaveService.setChildrenInformation({
+        application,
+      } as TemplateApiModuleActionProps)
+
+      expect(res).toMatchObject({
+        children: [{ expectedDateOfBirth: '', adoptionDate: '2026-11-15' }],
+      })
+    })
+
+    it('should keep the registry children when one was picked after answering them', async () => {
+      const application = createApplication()
+      const { children } = getApplicationExternalData(application.externalData)
+      set(application, 'answers.selectedChild', '0')
+      set(
+        application,
+        'answers.noChildrenFound.typeOfApplication',
+        'primary_adoption',
+      )
+
+      const res = await parentalLeaveService.setChildrenInformation({
+        application,
+      } as TemplateApiModuleActionProps)
+
+      expect(res).toMatchObject({ children })
     })
   })
 

@@ -73,13 +73,10 @@ export const useStartFollowUpApplication = (action: ApplicationAction) => {
             initialQuery: previousApplicationId,
           }
 
-          await updateApplication({
-            variables: {
-              input: { id: applicationId, answers },
-              locale,
-            },
-          })
-
+          // Sent only with the submit, which persists answers on success alone.
+          // Saving them beforehand would leave a failed start (e.g. VMST not
+          // listing the leave) stuck as a follow-up with no way back to
+          // selecting a child.
           await submitApplication({
             variables: {
               input: {

@@ -23,6 +23,7 @@ import isEqual from 'date-fns/isEqual'
 import isSameDay from 'date-fns/isSameDay'
 import isSameMonth from 'date-fns/isSameMonth'
 import isThisMonth from 'date-fns/isThisMonth'
+import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
@@ -1516,17 +1517,25 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   // default value as 0 for adoption, foster care and father without mother
   // since primary parent doesn't choose a child. Only a first-time application
   // has that single synthesized child; a follow-up's child is matched in
-  // `prefillFromVMST`.
+  // `prefillFromVMST`. Not while `selectedChild` is set: "Ný umsókn" is still
+  // in front of the registry children during prerequisites (index 0 would be
+  // one of them), the synthesized child replaces them with `selectedChild`
+  // pointed at it on the way out, and a registry child picked later wins.
   const isFirstTimeApplication =
     getValueViaPath(answers, 'applicationAction', ApplicationAction.APPLY) ===
     ApplicationAction.APPLY
+  const answeredSelectedChild = getValueViaPath<string>(
+    answers,
+    'selectedChild',
+  )
   const selectedChild =
     isFirstTimeApplication &&
+    answeredSelectedChild === undefined &&
     (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
       noChildrenFoundTypeOfApplication === ADOPTION ||
       noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND)
       ? '0'
-      : (getValueViaPath(answers, 'selectedChild') as string)
+      : (answeredSelectedChild as string)
 
   const transferRights = getValueViaPath(
     answers,
@@ -2686,8 +2695,10 @@ export const isChildInProgress = (child: {
 
 /** How a child is named on the select-child screen, e.g. "Barn væntanlegt 29.10.2027". */
 export const getChildLabel = (child: ChildInformation) => {
-  const formatDateOfBirth = (value: string) =>
-    format(new Date(value), dateFormat.is)
+  const formatDateOfBirth = (value?: string) => {
+    const date = value ? new Date(value) : undefined
+    return date && isValid(date) ? format(date, dateFormat.is) : ''
+  }
   const primaryParentTypeOfApplication =
     child.parentalRelation === ParentalRelations.secondary
       ? child.primaryParentTypeOfApplication
@@ -2696,14 +2707,23 @@ export const getChildLabel = (child: ChildInformation) => {
   if (primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE) {
     return {
       ...parentalLeaveFormMessages.selectChild.fosterCare,
-      values: { dateOfBirth: formatDateOfBirth(child.adoptionDate ?? '') },
+      values: { dateOfBirth: formatDateOfBirth(child.adoptionDate) },
     }
   }
 
   if (primaryParentTypeOfApplication === ADOPTION) {
     return {
       ...parentalLeaveFormMessages.selectChild.adoption,
-      values: { dateOfBirth: formatDateOfBirth(child.adoptionDate ?? '') },
+      values: { dateOfBirth: formatDateOfBirth(child.adoptionDate) },
+    }
+  }
+
+  // The applicant's own foster or adopted child has no expected date of birth,
+  // only the date it came into their care, and does not record which of the two.
+  if (!child.expectedDateOfBirth && child.adoptionDate) {
+    return {
+      ...parentalLeaveFormMessages.selectChild.adoptionOrFosterCare,
+      values: { dateOfBirth: formatDateOfBirth(child.adoptionDate) },
     }
   }
 
@@ -2799,6 +2819,18 @@ export const getChildrenOptions = (application: Application) => {
  */
 export const isChildNotInDataSelected = (answers: Application['answers']) =>
   getValueViaPath(answers, 'selectedChild') === CHILD_NOT_IN_DATA
+
+/**
+ * Whether the no-children-found answers (`noChildrenFound`, `fosterCareOrAdoption`,
+ * `noPrimaryParent`) describe the child: the registry had no children to pick
+ * from, or the applicant picked "Ný umsókn". An applicant can answer them, go
+ * back and pick a registry child instead, which leaves them behind but stale.
+ */
+export const isNoChildrenFoundPath = (answers: Application['answers']) => {
+  const selectedChild = getValueViaPath<string>(answers, 'selectedChild')
+
+  return selectedChild === undefined || selectedChild === CHILD_NOT_IN_DATA
+}
 
 // applicant that cannot apply for residence grant: secondary parents, adoption and foster care
 export const showResidenceGrant = (application: Application) => {

@@ -46,6 +46,7 @@ import {
   isChildNotInDataSelected,
   isEligibleForParentalLeave,
   isFollowUpApplication,
+  isNoChildrenFoundPath,
   isNotEligibleForParentWithoutBirthParent,
   isParentWithoutBirthParent,
 } from '../lib/parentalLeaveUtils'
@@ -337,6 +338,8 @@ export const FosterCareOrAdoptionSubSection = buildSubSection({
   id: 'fosterCareOrAdoptionApplication',
   title: parentalLeaveFormMessages.selectChild.screenTitle,
   condition: (answers, externalData) => {
+    if (!isNoChildrenFoundPath(answers)) return false
+
     const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(answers)
 
     if (
@@ -346,11 +349,12 @@ export const FosterCareOrAdoptionSubSection = buildSubSection({
       return true
     }
 
-    // Show by default when no children and no selection yet,
-    // so the next button remains visible on the previous step
+    // Show by default until a type is picked, so the previous step still has a
+    // screen after it and keeps its next button. The no-children-found chain is
+    // reached when the registry had no children or "Ný umsókn" was picked.
     if (!noChildrenFoundTypeOfApplication && externalData?.children?.data) {
       const { children } = getApplicationExternalData(externalData)
-      return children.length === 0
+      return children.length === 0 || isChildNotInDataSelected(answers)
     }
 
     return false
@@ -401,7 +405,10 @@ export const NoPrimaryParentSubSection = buildSubSection({
   condition: (answers) => {
     const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(answers)
 
-    return noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND
+    return (
+      isNoChildrenFoundPath(answers) &&
+      noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND
+    )
   },
   children: [
     buildMultiField({
@@ -700,10 +707,12 @@ export const PrerequisitesForm: Form = buildForm({
       children: [
         ...(shouldRenderMockDataSubSection ? [MockDataSubSection] : []),
         ExternalDataSubSection,
+        // Before the no-children-found chain: picking "Ný umsókn" here leads on
+        // to it, and the shell only moves forward through the form's order.
+        SelectChildSubSection,
         NoChildrenFoundSubSection,
         FosterCareOrAdoptionSubSection,
         NoPrimaryParentSubSection,
-        SelectChildSubSection,
         ApplicationTypeSubSection,
         FollowUpSubSection,
       ],

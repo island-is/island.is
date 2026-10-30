@@ -153,6 +153,8 @@ export enum AnswerValidationConstants {
   // Server-side check that the chosen child is not held by another application
   SELECTED_CHILD = 'selectedChild',
   EMPLOYER = 'employer',
+  // At least one employer for applicants that are asked to list them
+  EMPLOYERS = 'employers',
   REQUEST_RIGHTS = 'requestRights',
   GIVE_RIGHTS = 'giveRights',
   // When attempting to continue from the periods repeater main screen

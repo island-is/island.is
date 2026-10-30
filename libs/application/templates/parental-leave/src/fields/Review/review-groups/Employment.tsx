@@ -104,11 +104,28 @@ export const Employment = ({
             </GridRow>
           )
         ))}
+      {applicationType !== PARENTAL_LEAVE && (
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+            <RadioValue
+              label={formatMessage(
+                parentalLeaveFormMessages.employer.employerLastSixMonths,
+              )}
+              value={employerLastSixMonths}
+            />
+          </GridColumn>
+        </GridRow>
+      )}
       {((isSelfEmployed === NO && isReceivingUnemploymentBenefits === NO) ||
         employerLastSixMonths === YES) && (
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-            <Box display="flex" alignItems="center" columnGap={1}>
+            <Box
+              display="flex"
+              alignItems="center"
+              columnGap={1}
+              paddingTop={applicationType !== PARENTAL_LEAVE ? 3 : 0}
+            >
               <Label>
                 {formatMessage(parentalLeaveFormMessages.employer.title)}
               </Label>

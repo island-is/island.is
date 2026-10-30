@@ -32,6 +32,7 @@ import { MOCK_APPLICATION_FUND_ID } from '../constants'
 import {
   applicationsToChildInformation,
   applicationsToExistingChildApplication,
+  applicationsToInProgressChildApplications,
   collectChildren,
   getChildren,
   getChildrenFromMockData,
@@ -159,14 +160,17 @@ export class ChildrenService {
     // Children from earlier applications are listed so a mocked child does not
     // have to be retyped. A mock application never reached VMST, so its child is
     // never offered as a change: `applicationsToExistingChildApplication` leaves
-    // mock applications out.
+    // mock applications out. Unfinished applications come first, same as in
+    // `getChildren`, so a child whose application has not reached VMST yet is
+    // held as in progress instead of being offered as a change VMST would refuse.
     const applicationsWhereApplicant = await this.applicationsWhereApplicant(
       application,
       customTemplateFindQuery,
     )
-    const existingApplications = applicationsToExistingChildApplication(
-      applicationsWhereApplicant,
-    )
+    const existingApplications = [
+      ...applicationsToInProgressChildApplications(applicationsWhereApplicant),
+      ...applicationsToExistingChildApplication(applicationsWhereApplicant),
+    ]
     const childrenFromEarlierApplications = applicationsToChildInformation(
       applicationsWhereApplicant,
     ) as ChildInformation[]

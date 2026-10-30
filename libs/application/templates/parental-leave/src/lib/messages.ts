@@ -1056,6 +1056,12 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Barn frumættleidd {dateOfBirth}',
       description: 'Child copy radio button',
     },
+    adoptionOrFosterCare: {
+      id: 'pl.application:selectChild.adoptionOrFosterCare',
+      defaultMessage: 'Barn ættleitt eða tekið í fóstur {dateOfBirth}',
+      description:
+        "Child copy radio button for the applicant's own adopted or foster child",
+    },
     fosterCareOrAdoption: {
       id: 'pl.application:selectChild.foster.care.or.adoption',
       defaultMessage: 'Barn kemur inn á heimili {dateOfBirth}',
@@ -2823,6 +2829,19 @@ export const otherParentApprovalFormMessages = defineMessages({
 })
 
 export const errorMessages = defineMessages({
+  followUpLeaveNotFoundTitle: {
+    id: 'pl.application:error.followUpLeaveNotFound.title',
+    defaultMessage: 'Fæðingarorlofið fannst ekki',
+    description:
+      'Title when VMST does not list the leave a change or residence grant continues',
+  },
+  followUpLeaveNotFoundSummary: {
+    id: 'pl.application:error.followUpLeaveNotFound.summary',
+    defaultMessage:
+      'Vinnumálastofnun er ekki með skráð fæðingarorlofið sem þessi umsókn byggir á. Ef þú telur að það eigi að vera skráð skaltu hafa samband við Vinnumálastofnun.',
+    description:
+      'Shown when VMST does not list the leave a change or residence grant continues',
+  },
   phoneNumber: {
     id: 'pl.application:dataSchema.phoneNumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',

@@ -1,9 +1,10 @@
 import React, { FC, useEffect, useMemo } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { useFormContext, useWatch } from 'react-hook-form'
 import parseISO from 'date-fns/parseISO'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
+import isValid from 'date-fns/isValid'
 
 import { FieldBaseProps, CustomField } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
@@ -22,11 +23,14 @@ import { StartDateOptions } from '../../constants'
 
 type PeriodDateRangeProps = FieldBaseProps & CustomField
 
+const toDateString = (date: Date) =>
+  isValid(date) ? format(date, 'yyyy-MM-dd') : undefined
+
 export const PeriodDateRange: FC<
   React.PropsWithChildren<PeriodDateRangeProps>
 > = ({ field, application }) => {
   const { formatMessage } = useLocale()
-  const { setValue, register } = useFormContext()
+  const { setValue, register, control } = useFormContext()
   const currentIndex = getPeriodIndex(field)
   const { periods, rawPeriods } = getApplicationAnswers(application.answers)
 
@@ -36,6 +40,17 @@ export const PeriodDateRange: FC<
   const useLengthFieldId = `periods[${currentIndex}].useLength`
 
   const currentPeriod = rawPeriods[currentIndex]
+
+  // The picked range lives in form state until the screen is submitted, so it
+  // is read from there rather than from `application.answers`.
+  const watchedStartDate: string | undefined = useWatch({
+    control,
+    name: startFieldId,
+  })
+  const watchedEndDate: string | undefined = useWatch({
+    control,
+    name: endFieldId,
+  })
 
   const expectedDob =
     getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
@@ -71,6 +86,28 @@ export const PeriodDateRange: FC<
     const otherPeriods = periods.filter((_, index) => index !== currentIndex)
     return getAllPeriodDates(otherPeriods)
   }, [periods, currentIndex])
+
+  // DatePicker resets its displayed range whenever this object changes, so it
+  // is memoized on primitive values only: form state first (what the user just
+  // picked), then saved answers, then the default.
+  const startDateValue =
+    watchedStartDate ||
+    currentPeriod?.startDate ||
+    toDateString(defaultStartDate)
+  const endDateValue =
+    watchedEndDate ||
+    currentPeriod?.endDate ||
+    (startDateValue
+      ? toDateString(addDays(parseISO(startDateValue), 14))
+      : undefined)
+
+  const selectedRange = useMemo(
+    () => ({
+      startDate: startDateValue ? parseISO(startDateValue) : null,
+      endDate: endDateValue ? parseISO(endDateValue) : null,
+    }),
+    [startDateValue, endDateValue],
+  )
 
   // Pre-fill start and end dates if not already set
   useEffect(() => {
@@ -110,16 +147,6 @@ export const PeriodDateRange: FC<
     return null
   }
 
-  const selectedStartDate = currentPeriod?.startDate
-    ? parseISO(currentPeriod.startDate)
-    : defaultStartDate
-
-  const selectedEndDate = currentPeriod?.endDate
-    ? parseISO(currentPeriod.endDate)
-    : defaultStartDate
-    ? addDays(defaultStartDate, 14)
-    : null
-
   const handleChange = (startDate: Date, endDate?: Date) => {
     setValue(startFieldId, format(startDate, 'yyyy-MM-dd'))
     if (endDate) {
@@ -140,10 +167,7 @@ export const PeriodDateRange: FC<
         minDate={minDate}
         maxDate={maxDate}
         excludeDates={excludeDates}
-        selectedRange={{
-          startDate: selectedStartDate ?? null,
-          endDate: selectedEndDate,
-        }}
+        selectedRange={selectedRange}
         handleChange={handleChange}
       />
       <input type="hidden" {...register(startFieldId)} />

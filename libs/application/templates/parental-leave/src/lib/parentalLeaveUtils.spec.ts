@@ -39,6 +39,9 @@ import {
   isEligibleForParentalLeave,
   isFollowUpApplication,
   getChildrenInProgress,
+  getApplicationAnswers,
+  getChildLabel,
+  isNoChildrenFoundPath,
   getChildrenOptions,
   isChildNotInDataSelected,
   getPeriodIndex,
@@ -73,7 +76,11 @@ import { NO, YES } from '@island.is/application/core'
 import {
   ApplicationTypeSubSection,
   FollowUpSubSection,
+  FosterCareOrAdoptionSubSection,
   MockDataSubSection,
+  NoChildrenFoundSubSection,
+  NoPrimaryParentSubSection,
+  PrerequisitesForm,
   SelectChildSubSection,
 } from '../forms/Prerequisites'
 
@@ -1231,6 +1238,82 @@ describe('getChildrenInProgress', () => {
       },
     ])
   })
+
+  it("should not throw for the applicant's own unfinished adoption", () => {
+    // The synthesized child of an adoption or foster care application has no
+    // expected date of birth. Formatting it used to throw, which crashed the
+    // prerequisites of every new application while that one was in progress.
+    const externalData: ExternalData = {
+      children: {
+        data: {
+          children: [
+            {
+              expectedDateOfBirth: '',
+              adoptionDate: '2026-11-15',
+              parentalRelation: ParentalRelations.primary,
+              existingApplicationId: 'adoption-in-progress',
+              existingApplicationIsInProgress: true,
+            },
+          ],
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+
+    expect(getChildrenInProgress(externalData)).toEqual([
+      {
+        label: expect.objectContaining({
+          id: parentalLeaveFormMessages.selectChild.adoptionOrFosterCare.id,
+          values: { dateOfBirth: '15.11.2026' },
+        }),
+        applicationId: 'adoption-in-progress',
+        isChange: false,
+      },
+    ])
+  })
+})
+
+describe('getChildLabel', () => {
+  it('should name a registry child by its expected date of birth', () => {
+    expect(
+      getChildLabel({
+        expectedDateOfBirth: '2027-10-29',
+        parentalRelation: ParentalRelations.primary,
+        hasRights: true,
+        remainingDays: 180,
+      }),
+    ).toEqual({
+      ...parentalLeaveFormMessages.selectChild.baby,
+      values: { dateOfBirth: '29.10.2027' },
+    })
+  })
+
+  it("should name the applicant's own adopted or foster child by its adoption date", () => {
+    expect(
+      getChildLabel({
+        expectedDateOfBirth: '',
+        adoptionDate: '2026-11-15',
+        parentalRelation: ParentalRelations.primary,
+        hasRights: true,
+        remainingDays: 180,
+      }),
+    ).toEqual({
+      ...parentalLeaveFormMessages.selectChild.adoptionOrFosterCare,
+      values: { dateOfBirth: '15.11.2026' },
+    })
+  })
+
+  it('should not throw when there is no date at all', () => {
+    expect(
+      getChildLabel({
+        expectedDateOfBirth: '',
+        parentalRelation: ParentalRelations.primary,
+        hasRights: true,
+        remainingDays: 180,
+      }).values,
+    ).toEqual({ dateOfBirth: '' })
+  })
 })
 
 describe('getChildrenOptions', () => {
@@ -1450,6 +1533,147 @@ describe('isChildNotInDataSelected', () => {
     expect(isChildNotInDataSelected({ selectedChild: 'new' })).toBe(true)
     expect(isChildNotInDataSelected({ selectedChild: '0' })).toBe(false)
     expect(isChildNotInDataSelected({})).toBe(false)
+  })
+})
+
+describe('isNoChildrenFoundPath', () => {
+  it('should be true when no registry child was picked', () => {
+    expect(isNoChildrenFoundPath({ selectedChild: 'new' })).toBe(true)
+    expect(isNoChildrenFoundPath({})).toBe(true)
+  })
+
+  it('should be false once a registry child is picked', () => {
+    expect(
+      isNoChildrenFoundPath({
+        selectedChild: '0',
+        noChildrenFound: { typeOfApplication: 'primary_adoption' },
+      }),
+    ).toBe(false)
+  })
+})
+
+describe('selected child on the no-children-found path', () => {
+  const registry: ExternalData = {
+    children: {
+      data: {
+        children: [
+          {
+            expectedDateOfBirth: '2027-10-29',
+            parentalRelation: ParentalRelations.primary,
+            existingApplicationId: 'approved-leave',
+          },
+          {
+            expectedDateOfBirth: '2027-11-17',
+            parentalRelation: ParentalRelations.primary,
+          },
+        ],
+      },
+      date: new Date(),
+      status: 'success',
+    },
+  }
+  const adoption = { typeOfApplication: 'primary_adoption' }
+
+  it('should not resolve "Ný umsókn" to a registry child during prerequisites', () => {
+    // Index 0 is a registry child here, not the synthesized one. Resolving to it
+    // made the change screen start a change for that child's leave.
+    expect(
+      getSelectedChild(
+        { selectedChild: 'new', noChildrenFound: adoption },
+        registry,
+      ),
+    ).toBeNull()
+  })
+
+  it('should keep a registry child picked after answering the screens', () => {
+    expect(
+      getSelectedChild(
+        { selectedChild: '1', noChildrenFound: adoption },
+        registry,
+      )?.expectedDateOfBirth,
+    ).toBe('2027-11-17')
+  })
+
+  it('should still point at the synthesized child when none was ever picked', () => {
+    // An empty registry never asks for a child, so `selectedChild` stays unset.
+    expect(
+      getApplicationAnswers({ noChildrenFound: adoption }).selectedChild,
+    ).toBe('0')
+  })
+})
+
+describe('no-children-found prerequisites', () => {
+  const externalData: ExternalData = {
+    children: {
+      data: {
+        children: [
+          {
+            expectedDateOfBirth: '2027-10-29',
+            parentalRelation: ParentalRelations.primary,
+          },
+        ],
+      },
+      date: new Date(),
+      status: 'success',
+    },
+  }
+
+  const isShown = (
+    section: { condition?: unknown },
+    answers: FormValue,
+  ): boolean =>
+    (
+      section.condition as (
+        answers: FormValue,
+        externalData: ExternalData,
+      ) => boolean
+    )(answers, externalData)
+
+  it('should come after child selection, which is where "Ný umsókn" is picked', () => {
+    // The shell only moves forward through the form's order. Before child
+    // selection, picking "Ný umsókn" left no screen ahead and a blank page.
+    const ids = PrerequisitesForm.children[0].children?.map(({ id }) => id)
+    const selectChild = ids?.indexOf(SelectChildSubSection.id) ?? -1
+
+    expect(selectChild).toBeGreaterThan(-1)
+    for (const section of [
+      NoChildrenFoundSubSection,
+      FosterCareOrAdoptionSubSection,
+      NoPrimaryParentSubSection,
+    ]) {
+      expect(ids?.indexOf(section.id)).toBeGreaterThan(selectChild)
+    }
+  })
+
+  it('should follow "Ný umsókn" with the no-children-found screens', () => {
+    const answers = {
+      selectedChild: 'new',
+      noChildrenFound: { typeOfApplication: 'primary_adoption' },
+    }
+
+    expect(isShown(NoChildrenFoundSubSection, answers)).toBe(true)
+    expect(isShown(FosterCareOrAdoptionSubSection, answers)).toBe(true)
+  })
+
+  it('should keep a screen after "Umsókn vegna" before a type is picked', () => {
+    // Otherwise the shell finds nothing ahead and renders no next button.
+    expect(
+      isShown(FosterCareOrAdoptionSubSection, { selectedChild: 'new' }),
+    ).toBe(true)
+  })
+
+  it('should hide them again when a registry child is picked afterwards', () => {
+    const adoption = {
+      selectedChild: '0',
+      noChildrenFound: { typeOfApplication: 'primary_adoption' },
+    }
+    const other = {
+      selectedChild: '0',
+      noChildrenFound: { typeOfApplication: 'other' },
+    }
+
+    expect(isShown(FosterCareOrAdoptionSubSection, adoption)).toBe(false)
+    expect(isShown(NoPrimaryParentSubSection, other)).toBe(false)
   })
 })
 

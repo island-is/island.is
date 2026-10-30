@@ -35,6 +35,8 @@ import {
   getTransferredDaysInMonths,
   getUnApprovedEmployers,
   isParentWithoutBirthParent,
+  isNoChildrenFoundPath,
+  errorMessages,
   Period as AnswerPeriod,
   getPersonalDays,
   getPersonalDaysInMonths,
@@ -296,9 +298,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return
     }
 
-    throw this.internalError(
-      'Could not find the parental leave this application continues',
-      `VMST does not list ${initialQuery} for application ${application.id}`,
+    // The ids stay in the log; the applicant gets a translated explanation.
+    this.logger.warn(
+      `Parental leave: VMST does not list ${initialQuery} for application ${application.id}`,
+    )
+
+    throw new TemplateApiError(
+      {
+        title: errorMessages.followUpLeaveNotFoundTitle,
+        summary: errorMessages.followUpLeaveNotFoundSummary,
+      },
+      400,
     )
   }
 
@@ -341,6 +351,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     // which leave it continues (`getPreviousVmstLeave`).
     const { applicantGenderCode, children, childApplicationLinks } =
       getApplicationExternalData(application.externalData)
+
+    // The applicant picked a registry child after answering the
+    // no-children-found screens: keep that child, not one built from them.
+    if (!isNoChildrenFoundPath(application.answers)) {
+      return { children, childApplicationLinks }
+    }
 
     if (noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND) {
       const child: ChildInformation = {

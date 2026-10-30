@@ -7,6 +7,7 @@ import { giveRightsValidationSection } from './answerValidationSections/giveRigh
 import { validateLatestPeriodValidationSection } from './answerValidationSections/validateLatestPeriodValidationSection'
 import { validatePeriodsValidationSection } from './answerValidationSections/validatePeriodsValidationSection'
 import { selectedChildValidationSection } from './answerValidationSections/selectedChildValidationSection'
+import { employersValidationSection } from './answerValidationSections/employersValidationSection'
 
 const {
   REQUEST_RIGHTS,
@@ -14,6 +15,7 @@ const {
   VALIDATE_LATEST_PERIOD,
   VALIDATE_PERIODS,
   SELECTED_CHILD,
+  EMPLOYERS,
 } = AnswerValidationConstants
 
 export const answerValidators: Record<string, AnswerValidator> = {
@@ -22,4 +24,5 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [VALIDATE_LATEST_PERIOD]: validateLatestPeriodValidationSection,
   [VALIDATE_PERIODS]: validatePeriodsValidationSection,
   [SELECTED_CHILD]: selectedChildValidationSection,
+  [EMPLOYERS]: employersValidationSection,
 }

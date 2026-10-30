@@ -2,6 +2,7 @@ import {
   ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
+  FormValue,
 } from '@island.is/application/types'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
@@ -735,5 +736,54 @@ describe('when selecting a child', () => {
         application,
       ),
     ).toBeUndefined()
+  })
+})
+
+describe('when continuing from the employers table', () => {
+  const withAnswers = (answers: FormValue) => {
+    const application = createBaseApplication()
+    application.answers = { ...application.answers, ...answers }
+    return application
+  }
+  const validate = (employers: unknown, application: Application) =>
+    answerValidators[AnswerValidationConstants.EMPLOYERS](
+      employers,
+      application,
+    )
+  const employee = {
+    employment: { isSelfEmployed: NO, isReceivingUnemploymentBenefits: NO },
+  }
+
+  it('should require an employer from an employee', () => {
+    expect(validate([], withAnswers(employee))).toMatchObject({
+      message: parentalLeaveFormMessages.employer.addEmployerError,
+      path: 'employers',
+    })
+  })
+
+  it('should require an employer from a grant applicant who had one', () => {
+    const application = withAnswers({
+      applicationType: { option: 'parentalGrant' },
+      employerLastSixMonths: YES,
+    })
+
+    expect(validate([], application)).toMatchObject({ path: 'employers' })
+  })
+
+  it('should accept an employee with an employer', () => {
+    expect(
+      validate(
+        [{ email: 'vinnuveitandi@test.is', ratio: '100' }],
+        withAnswers(employee),
+      ),
+    ).toBeUndefined()
+  })
+
+  it('should not require one from the self-employed', () => {
+    const application = withAnswers({
+      employment: { isSelfEmployed: YES, isReceivingUnemploymentBenefits: NO },
+    })
+
+    expect(validate([], application)).toBeUndefined()
   })
 })

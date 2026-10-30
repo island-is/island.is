@@ -2091,6 +2091,34 @@ describe('Parental Leave Application Template', () => {
 
       expect(newApplication.answers.selectedChild).toBe('2')
     })
+
+    it('should keep the registry child picked after answering the no-children-found screens', () => {
+      // Picking "Ný umsókn", answering adoption and then going back to a
+      // registry child leaves those answers behind; they must not win.
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            selectedChild: '2',
+            noChildrenFound: { typeOfApplication: 'primary_adoption' },
+            fosterCareOrAdoption: {
+              birthDate: '2027-01-01',
+              adoptionDate: '2027-06-01',
+            },
+          },
+          state: ApplicationStates.PREREQUISITES,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [, , newApplication] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
+      })
+
+      expect(newApplication.answers.selectedChild).toBe('2')
+      // They would otherwise steer the draft form, e.g. ask for an adoption upload.
+      expect(newApplication.answers.noChildrenFound).toBeUndefined()
+      expect(newApplication.answers.fosterCareOrAdoption).toBeUndefined()
+    })
   })
 
   describe('data provider ordering', () => {

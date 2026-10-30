@@ -65,6 +65,7 @@ import {
   getSelectedChild,
   getSpouse,
   isFollowUpApplication,
+  isNoChildrenFoundPath,
   isParentWithoutBirthParent,
   normalize,
   otherParentApprovalStatePendingAction,
@@ -1532,6 +1533,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
        *
        * A follow-up never has a synthesized child: its child was matched in
        * `prefillFromVMST`, which this must not overwrite.
+       *
+       * A registry child picked after answering the no-children-found screens
+       * keeps its index; those answers no longer describe the child and are
+       * dropped so they do not steer the draft form (e.g. its adoption upload).
        */
       setSelectedChildForSynthesizedChild: assign((context) => {
         const { application } = context
@@ -1543,6 +1548,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           !noChildrenFoundTypeOfApplication ||
           isFollowUpApplication(application.answers)
         ) {
+          return context
+        }
+
+        if (!isNoChildrenFoundPath(application.answers)) {
+          unset(application.answers, 'noChildrenFound')
+          unset(application.answers, 'fosterCareOrAdoption')
+          unset(application.answers, 'noPrimaryParent')
+
           return context
         }
 
