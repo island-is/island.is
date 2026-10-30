@@ -55,7 +55,7 @@ export const HealthProfileSection = ({ profile, loading, error }: Props) => {
     <KeyInfoSection
       title={kim.healthProfileTitle}
       action={
-        !loading && !error ? (
+        !loading && !error && profile?.canEdit ? (
           <Button
             variant="text"
             icon="pencil"

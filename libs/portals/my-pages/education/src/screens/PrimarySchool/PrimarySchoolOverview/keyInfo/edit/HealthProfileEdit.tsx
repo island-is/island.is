@@ -172,17 +172,19 @@ export const HealthProfileEdit = () => {
   const handleSave = async () => {
     if (!isValid) return
 
-    // Rebuild allergies[] (whole document, per ticket) from the two id lists,
-    // tagging each with its category and label from the option list. The hook
-    // reduces these to ids for the PATCH body (contract §4.5).
+    // Rebuild allergies[] (whole document, per ticket) from the two id lists.
+    // The hook reduces these to ids for the PATCH body (contract §4.5), so an
+    // id is sent whether or not the lookup list still carries a label for it —
+    // filtering on the lookup would silently drop a registered allergy.
     const optionById = new Map(
       allergyOptions.map((option) => [option.value, option]),
     )
     const toAllergies = (ids: string[], category: AllergyCategory): Allergy[] =>
-      ids.flatMap((id) => {
-        const option = optionById.get(id)
-        return option ? [{ id, type: category, label: option.label }] : []
-      })
+      ids.map((id) => ({
+        id,
+        type: category,
+        label: optionById.get(id)?.label ?? '',
+      }))
 
     const payload: HealthProfileUpdateInput = {
       allergies: [
@@ -404,7 +406,13 @@ export const HealthProfileEdit = () => {
                 variant="primary"
                 size="small"
                 onClick={handleSave}
-                disabled={!isValid || !isDirty}
+                disabled={
+                  !isValid ||
+                  !isDirty ||
+                  !profile?.canEdit ||
+                  allergyOptionsLoading ||
+                  Boolean(allergyOptionsError)
+                }
                 loading={saving}
               >
                 {formatMessage(kim.save)}

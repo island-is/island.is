@@ -165,6 +165,7 @@ export const usePrimarySchoolKeyInfo = (
     epipen: profile.epipen,
     medicalDiagnoses: profile.medicalDiagnoses,
     medicationAssistance: profile.medicationAssistance,
+    canEdit: profile.canEdit,
   })
 
   const agents = agentsQuery.data?.primarySchoolAgents

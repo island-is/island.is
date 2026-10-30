@@ -561,14 +561,9 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUMALASTOFNUN,
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
-  // TODO(fjarskiptastofa-self-assessment): the NIS2 self-assessment type is
-  // already in the generated application enum (openapi.yaml) but Fjarskiptastofa
-  // is not registered as an institution yet. This placeholder keeps
-  // institutionMapper exhaustive so the api type-checks; swap in the real
-  // Fjarskiptastofa nationalId / slug / contentfulId once they are confirmed.
   FjarskiptastofaSelfAssessment: {
-    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
-    slug: InstitutionTypes.STAFRAENT_ISLAND,
-    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+    nationalId: InstitutionNationalIds.FJARSKIPTASTOFA,
+    slug: InstitutionTypes.FJARSKIPTASTOFA,
+    contentfulId: InstitutionContentfulIds.FJARSKIPTASTOFA,
   },
 }

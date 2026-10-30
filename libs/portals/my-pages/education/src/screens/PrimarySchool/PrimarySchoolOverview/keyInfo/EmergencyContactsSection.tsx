@@ -1,6 +1,4 @@
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
 import {
   Box,
   Button,
@@ -10,6 +8,7 @@ import {
   Icon,
   Text,
   Tooltip,
+  toast,
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
@@ -50,7 +49,7 @@ export const EmergencyContactsSection = ({
   saving,
   onRemove,
 }: Props) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDateFns } = useLocale()
   const navigate = useNavigate()
   const { studentId } = useParams<{ studentId: string }>()
 
@@ -69,7 +68,12 @@ export const EmergencyContactsSection = ({
 
   const handleConfirmRemove = async () => {
     if (!contactToRemove) return
-    await onRemove?.(contactToRemove.id)
+    try {
+      await onRemove?.(contactToRemove.id)
+    } catch {
+      toast.error(formatMessage(kim.saveError))
+      return
+    }
     setContactToRemove(undefined)
   }
   const canEdit = (contact: EmergencyContact) => contact.canEdit === true
@@ -126,10 +130,9 @@ export const EmergencyContactsSection = ({
                         {formatMessage(kim.contactRegisteredBy)}{' '}
                         {contact.createdBy?.name}
                         {contact.createdDate &&
-                          ` · ${format(
-                            new Date(contact.createdDate),
+                          ` · ${formatDateFns(
+                            contact.createdDate,
                             'd. MMMM yyyy',
-                            { locale: is },
                           )}`}
                       </Text>
                     )}
