@@ -336,6 +336,14 @@ export const en: TranslatedMessages = {
   'wallet.screenTitle': 'Wallet',
   'wallet.bottomTabText': 'Wallet',
   'wallet.scanButton': 'Scan',
+  'wallet.scanReminderTitle': 'Always scan the licence',
+  'wallet.scanReminderDescription':
+    "A licence on a screen proves nothing. Only a scan reveals the holder's photo and what they are entitled to.",
+  'wallet.scanCta': 'Scan a licence',
+  'walletPass.scanReminderTitle': 'The details appear when scanned',
+  'walletPass.scanReminderDescription':
+    'This screen only shows whether the licence is valid. Whoever needs to confirm your rights scans the barcode and sees your photo and entitlements on their own phone.',
+  'licenseScannerResult.photoHint': 'Compare the photo with the holder',
   'wallet.alertMessage':
     'To use certificates as valid credentials, you need to transfer them to Apple Wallet.',
   'wallet.emptyListTitle': 'There are currently no documents',
