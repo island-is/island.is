@@ -1,0 +1,8 @@
+query ServiceInterruptionBanner {
+  serviceInterruptionBanner {
+    title
+    globalMessage
+    prosecutorMessage
+    courtMessage
+  }
+}

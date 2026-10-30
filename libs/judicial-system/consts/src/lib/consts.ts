@@ -260,6 +260,7 @@ export const ADMIN_CREATE_USER_ROUTE = '/notendur/nyr'
 export const ADMIN_CHANGE_USER_ROUTE = '/notendur/breyta'
 export const ADMIN_STATISTICS_ROUTE = '/notendur/tolfraedi'
 export const ADMIN_MESSAGE_SUSPENSION_ROUTE = '/notendur/bidrod'
+export const ADMIN_SERVICE_INTERRUPTION_BANNER_ROUTE = '/notendur/gulur-bordi'
 
 //#endregion Admin user routes
 

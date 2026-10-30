@@ -1988,6 +1988,15 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths ServiceInterruptionBanner 1`] = `
+Array [
+  "serviceInterruptionBanner.courtMessage",
+  "serviceInterruptionBanner.globalMessage",
+  "serviceInterruptionBanner.prosecutorMessage",
+  "serviceInterruptionBanner.title",
+]
+`;
+
 exports[`GraphQL operations select these field paths SetAppealStatementDeadline 1`] = `
 Array [
   "setAppealStatementDeadline.civilClaimantId",
@@ -2258,6 +2267,15 @@ exports[`GraphQL operations select these field paths UpdatePoliceDigitalCaseFile
 Array [
   "updatePoliceDigitalCaseFiles.policeDigitalCaseFiles.id",
   "updatePoliceDigitalCaseFiles.policeDigitalCaseFiles.orderWithinChapter",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateServiceInterruptionBanner 1`] = `
+Array [
+  "updateServiceInterruptionBanner.courtMessage",
+  "updateServiceInterruptionBanner.globalMessage",
+  "updateServiceInterruptionBanner.prosecutorMessage",
+  "updateServiceInterruptionBanner.title",
 ]
 `;
 
