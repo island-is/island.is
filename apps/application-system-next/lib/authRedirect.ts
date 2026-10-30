@@ -30,6 +30,24 @@ export const buildProtectedApplicationUrl = ({
   return `${resolvedProtocol}://${host}${path}`
 }
 
+// The application system's root (the legacy form). The BFF only accepts an
+// absolute target, so without a host only the path is returned.
+export const buildApplicationSystemRootUrl = ({
+  host,
+  protocol,
+}: {
+  host?: string
+  protocol?: string
+}): string => {
+  if (!host) {
+    return '/umsoknir'
+  }
+
+  const resolvedProtocol = protocol ?? (isLocalHost(host) ? 'http' : 'https')
+
+  return `${resolvedProtocol}://${host}/umsoknir`
+}
+
 export const buildLoginHandoffUrl = (targetLinkUri: string): string =>
   `/auth/login?target_link_uri=${encodeURIComponent(targetLinkUri)}`
 
