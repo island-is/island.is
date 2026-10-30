@@ -13,10 +13,4 @@ export class ServiceInterruptionBanner {
 
   @Field(() => String)
   readonly courtMessage!: string
-
-  @Field(() => String, { nullable: true })
-  readonly modified?: string
-
-  @Field(() => String, { nullable: true })
-  readonly modifiedBy?: string
 }

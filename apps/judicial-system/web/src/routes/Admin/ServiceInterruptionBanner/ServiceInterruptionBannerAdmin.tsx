@@ -29,6 +29,21 @@ const emptyForm: BannerFormState = {
   courtMessage: '',
 }
 
+const buildChangedInput = (
+  form: BannerFormState,
+  initial: BannerFormState,
+): Partial<BannerFormState> => {
+  const input: Partial<BannerFormState> = {}
+
+  ;(Object.keys(form) as Array<keyof BannerFormState>).forEach((field) => {
+    if (form[field] !== initial[field]) {
+      input[field] = form[field]
+    }
+  })
+
+  return input
+}
+
 export const ServiceInterruptionBannerAdmin = () => {
   const { user } = useContext(UserContext)
 
@@ -38,6 +53,7 @@ export const ServiceInterruptionBannerAdmin = () => {
   })
 
   const [form, setForm] = useState<BannerFormState>(emptyForm)
+  const [initial, setInitial] = useState<BannerFormState>(emptyForm)
 
   useEffect(() => {
     const banner = data?.serviceInterruptionBanner
@@ -46,12 +62,15 @@ export const ServiceInterruptionBannerAdmin = () => {
       return
     }
 
-    setForm({
+    const nextForm: BannerFormState = {
       title: banner.title ?? '',
       globalMessage: banner.globalMessage ?? '',
       prosecutorMessage: banner.prosecutorMessage ?? '',
       courtMessage: banner.courtMessage ?? '',
-    })
+    }
+
+    setForm(nextForm)
+    setInitial(nextForm)
   }, [data?.serviceInterruptionBanner])
 
   const [updateBanner, { loading: updating }] =
@@ -75,15 +94,14 @@ export const ServiceInterruptionBannerAdmin = () => {
       return
     }
 
+    const input = buildChangedInput(form, initial)
+
+    if (Object.keys(input).length === 0) {
+      return
+    }
+
     updateBanner({
-      variables: {
-        input: {
-          title: form.title,
-          globalMessage: form.globalMessage,
-          prosecutorMessage: form.prosecutorMessage,
-          courtMessage: form.courtMessage,
-        },
-      },
+      variables: { input },
     })
   }
 
@@ -116,6 +134,7 @@ export const ServiceInterruptionBannerAdmin = () => {
                 name="title"
                 label="Titill"
                 value={form.title}
+                maxLength={255}
                 disabled={updating}
                 onChange={(event) => setField('title', event.target.value)}
               />

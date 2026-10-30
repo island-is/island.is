@@ -4,7 +4,5 @@ query ServiceInterruptionBanner {
     globalMessage
     prosecutorMessage
     courtMessage
-    modified
-    modifiedBy
   }
 }

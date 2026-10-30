@@ -1,10 +1,11 @@
-import { IsOptional, IsString } from 'class-validator'
+import { IsOptional, IsString, MaxLength } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateServiceInterruptionBannerDto {
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly title?: string
 

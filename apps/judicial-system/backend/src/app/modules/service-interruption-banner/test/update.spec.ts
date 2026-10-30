@@ -84,4 +84,26 @@ describe('ServiceInterruptionBannerController - Update', () => {
       expect(then.result).toBe(updated)
     })
   })
+
+  describe('null fields treated as omitted', () => {
+    beforeEach(async () => {
+      const mockUpdate = mockRepository.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce({ id: 1 } as ServiceInterruptionBanner)
+
+      await givenWhenThen(user, {
+        title: null as unknown as string,
+        globalMessage: '  texti  ',
+      })
+    })
+
+    it('should not pass null through to the repository', () => {
+      expect(mockRepository.update).toHaveBeenCalledWith({
+        title: undefined,
+        globalMessage: 'texti',
+        prosecutorMessage: undefined,
+        courtMessage: undefined,
+        modifiedBy: user.nationalId,
+      })
+    })
+  })
 })

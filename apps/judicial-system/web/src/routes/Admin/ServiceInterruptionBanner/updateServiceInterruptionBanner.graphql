@@ -6,7 +6,5 @@ mutation UpdateServiceInterruptionBanner(
     globalMessage
     prosecutorMessage
     courtMessage
-    modified
-    modifiedBy
   }
 }

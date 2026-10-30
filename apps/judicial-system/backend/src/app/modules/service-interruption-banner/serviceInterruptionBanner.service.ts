@@ -9,8 +9,8 @@ import {
 } from '../repository'
 import { UpdateServiceInterruptionBannerDto } from './dto/updateServiceInterruptionBanner.dto'
 
-const trimOrEmpty = (value: string | undefined): string | undefined => {
-  if (value === undefined) {
+const trimOrEmpty = (value?: string | null): string | undefined => {
+  if (value === undefined || value === null) {
     return undefined
   }
 
