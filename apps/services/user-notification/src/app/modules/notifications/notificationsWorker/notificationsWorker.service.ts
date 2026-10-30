@@ -41,6 +41,7 @@ import { ActorNotification } from '../actor-notification.model'
 import { UserNotificationSender } from '../user-notification-sender.model'
 import {
   DEFAULT_CATEGORY,
+  getErrorMessage,
   isValidSenderId,
   mapToLocale,
   normalizeKennitala,
@@ -228,10 +229,10 @@ export class NotificationsWorkerService {
       }
 
       return blocked
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.warn(
         'Failed to fetch notification settings, proceeding with notification',
-        { messageId, error },
+        { messageId, error: getErrorMessage(error) },
       )
       return false
     }
