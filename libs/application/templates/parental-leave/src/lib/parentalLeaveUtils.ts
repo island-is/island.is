@@ -58,6 +58,7 @@ import {
   Roles,
   SINGLE,
   SPOUSE,
+  StartDateOptions,
   States,
   TransferRightsOption,
   UnEmployedBenefitTypes,
@@ -790,6 +791,23 @@ export const getFollowUpChildIndex = (application: Application): number => {
   )
 }
 
+const VMST_ACTUAL_DATE_OF_BIRTH = ['date_of_birth', 'date_of_birth_months']
+
+/**
+ * Maps VMST's `firstPeriodStart` onto the answer value. A leave that starts on
+ * the actual date of birth has to stay `actualDateOfBirth` so `sendApplication`
+ * keeps sending `date_of_birth` and the leave moves with the birth. VMST can
+ * move the start date and still report `date_of_birth`, so once the period has
+ * started the date it sent is used instead.
+ */
+export const vmstFirstPeriodStartToAnswer = (
+  period: Pick<VMSTPeriod, 'from' | 'firstPeriodStart'>,
+): StartDateOptions =>
+  VMST_ACTUAL_DATE_OF_BIRTH.includes(period.firstPeriodStart ?? '') &&
+  new Date(period.from).getTime() > new Date().getTime()
+    ? StartDateOptions.ACTUAL_DATE_OF_BIRTH
+    : StartDateOptions.SPECIFIC_DATE
+
 const vmstPeriodsToAnswers = (periods: unknown): Period[] => {
   if (!Array.isArray(periods)) {
     return []
@@ -799,7 +817,7 @@ const vmstPeriodsToAnswers = (periods: unknown): Period[] => {
     startDate: period.from,
     endDate: period.to,
     ratio: period.ratio.split(',')[0],
-    firstPeriodStart: period.firstPeriodStart ?? undefined,
+    firstPeriodStart: vmstFirstPeriodStartToAnswer(period),
     rawIndex: index,
     rightCodePeriod: (period.rightsCodePeriod ?? '').split(',')[0],
     daysToUse: period.days ?? undefined,
@@ -1252,7 +1270,9 @@ export const getChangeBaseline = (
  * Have the periods been changed relative to the predecessor?
  *
  * Compare only the fields the applicant controls (`startDate`, `endDate`,
- * `ratio`). Everything else on a `Period` — `paid`, `approved`,
+ * `ratio`, and whether the leave starts on the actual date of birth). Only that
+ * one `firstPeriodStart` value is compared, since estimated vs specific date
+ * just follows the picked start date. Everything else on a `Period` — `paid`, `approved`,
  * `rightCodePeriod`, `daysToUse`, `rawIndex`, `useLength`, `months`,
  * `endDateAdjustLength` — is either VMST-derived or a UI helper, and merely
  * opening the edit-periods screen re-syncs them from live VMST, which would
@@ -1271,7 +1291,9 @@ export const periodsHaveChanged = (
     return (
       baseline.startDate !== current.startDate ||
       baseline.endDate !== current.endDate ||
-      baseline.ratio !== current.ratio
+      baseline.ratio !== current.ratio ||
+      (baseline.firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH) !==
+        (current.firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH)
     )
   })
 }
@@ -2295,6 +2317,7 @@ export const synchronizeVMSTPeriods = (
       endDate: period.to,
       ratio: period.ratio.split(',')[0],
       rawIndex: index,
+      firstPeriodStart: vmstFirstPeriodStartToAnswer(period),
       rightCodePeriod: rightsCodePeriod,
       daysToUse: period.days ?? undefined,
       paid: period.paid,
@@ -2370,6 +2393,7 @@ export const synchronizeVMSTPeriods = (
           new Date(period.endDate).getTime() !==
             new Date(periods[i].endDate).getTime() ||
           period.ratio !== periods[i].ratio ||
+          period.firstPeriodStart !== periods[i].firstPeriodStart ||
           period.paid !== periods[i].paid ||
           period.approved !== periods[i].approved
         ) {
@@ -2423,6 +2447,66 @@ export const isFosterCareAndAdoption = (application: Application) => {
         noChildrenFoundTypeOfApplication === ADOPTION
     : selectedChild.primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE ||
         selectedChild.primaryParentTypeOfApplication === ADOPTION
+}
+
+/**
+ * Whether the first period can be set to start on the actual date of birth,
+ * so VMST moves it with the birth. Only for a child that has not been born,
+ * and, as before, not when the expected date is before this month.
+ */
+export const canStartOnActualDateOfBirth = (application: Application) => {
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+  const { dateOfBirth } = getApplicationExternalData(application.externalData)
+
+  if (
+    !selectedChild?.expectedDateOfBirth ||
+    dateOfBirth?.data?.dateOfBirth ||
+    isFosterCareAndAdoption(application)
+  ) {
+    return false
+  }
+
+  const expectedDateOfBirth = parseISO(selectedChild.expectedDateOfBirth)
+
+  return (
+    isValid(expectedDateOfBirth) &&
+    expectedDateOfBirth.getTime() >=
+      getBeginningOfThisMonth().setHours(0, 0, 0, 0)
+  )
+}
+
+/**
+ * `firstPeriodStart` for a first period picked as a date range. Starting on the
+ * expected date of birth (or adoption date) is validated against that date
+ * rather than the picked one; any other start is a specific date.
+ */
+export const getFirstPeriodStartForDate = (
+  application: Application,
+  startDate?: string,
+): StartDateOptions => {
+  const expectedDateOfBirth =
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
+
+  if (
+    !startDate ||
+    !expectedDateOfBirth ||
+    startDate.slice(0, 10) !== expectedDateOfBirth.slice(0, 10)
+  ) {
+    return StartDateOptions.SPECIFIC_DATE
+  }
+
+  // Foster care and adoption have no expected date of birth, only the date the
+  // child comes into the home.
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+  return selectedChild?.expectedDateOfBirth === ''
+    ? StartDateOptions.ADOPTION_DATE
+    : StartDateOptions.ESTIMATED_DATE_OF_BIRTH
 }
 
 export const convertBirthDay = (birthDay: string) => {

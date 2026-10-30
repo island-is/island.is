@@ -19,6 +19,7 @@ import {
   PLEvents,
   RejectedBy,
   Roles,
+  StartDateOptions,
 } from '../constants'
 
 import { createNationalId } from '@island.is/testing/fixtures'
@@ -1107,6 +1108,7 @@ describe('Parental Leave Application Template', () => {
           daysToUse: '30',
           endDate: '2026-04-30',
           startDate: '2026-04-01',
+          firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
           rightCodePeriod: 'FSAL-GR',
         },
       ]
@@ -1779,6 +1781,7 @@ describe('Parental Leave Application Template', () => {
           startDate: '2027-04-06',
           endDate: '2027-04-20',
           ratio: '100',
+          firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
           rawIndex: 0,
           rightCodePeriod: 'M-L-GR',
           paid: false,

@@ -1,5 +1,6 @@
 export { default as PeriodsRepeater } from './PeriodsRepeater'
 export { PeriodDateRange } from './PeriodDateRange/PeriodDateRange'
+export { PeriodActualDateOfBirth } from './PeriodDateRange/PeriodActualDateOfBirth'
 export { TransferRights } from './Rights/TransferRights'
 export { default as RequestDaysInput } from './Rights/RequestDaysInput'
 export { default as MultipleBirthsDaysInput } from './Rights/MultipleBirthsDaysInput'

@@ -15,10 +15,11 @@ import {
   getApplicationAnswers,
   getAllPeriodDates,
   getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
+  getFirstPeriodStartForDate,
   getMinimumStartDate,
   getPeriodIndex,
 } from '../../lib/parentalLeaveUtils'
-import { usageMaxMonths } from '../../config'
+import { minPeriodDays, usageMaxMonths } from '../../config'
 import { StartDateOptions } from '../../constants'
 
 type PeriodDateRangeProps = FieldBaseProps & CustomField
@@ -40,6 +41,7 @@ export const PeriodDateRange: FC<
   const useLengthFieldId = `periods[${currentIndex}].useLength`
 
   const currentPeriod = rawPeriods[currentIndex]
+  const isFirstPeriod = currentIndex === 0
 
   // The picked range lives in form state until the screen is submitted, so it
   // is read from there rather than from `application.answers`.
@@ -51,9 +53,24 @@ export const PeriodDateRange: FC<
     control,
     name: endFieldId,
   })
+  // Set by `PeriodActualDateOfBirth`: the start is then the birth itself and
+  // only the end date is picked.
+  const watchedFirstPeriodStart: string | undefined = useWatch({
+    control,
+    name: firstPeriodStartFieldId,
+  })
+  const startsOnActualDob =
+    isFirstPeriod &&
+    (watchedFirstPeriodStart ?? currentPeriod?.firstPeriodStart) ===
+      StartDateOptions.ACTUAL_DATE_OF_BIRTH
 
   const expectedDob =
     getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
+
+  const getFirstPeriodStart = (startDate?: string) =>
+    isFirstPeriod
+      ? getFirstPeriodStartForDate(application, startDate)
+      : StartDateOptions.SPECIFIC_DATE
 
   // Determine initial start date:
   // - First period: estimated birthdate
@@ -122,9 +139,9 @@ export const PeriodDateRange: FC<
     if (!currentPeriod?.firstPeriodStart) {
       setValue(
         firstPeriodStartFieldId,
-        currentIndex === 0
-          ? StartDateOptions.ESTIMATED_DATE_OF_BIRTH
-          : StartDateOptions.SPECIFIC_DATE,
+        getFirstPeriodStart(
+          currentPeriod?.startDate ?? toDateString(defaultStartDate),
+        ),
       )
     }
     // Set useLength to 'no' (user picks end date directly via range picker)
@@ -148,28 +165,56 @@ export const PeriodDateRange: FC<
   }
 
   const handleChange = (startDate: Date, endDate?: Date) => {
-    setValue(startFieldId, format(startDate, 'yyyy-MM-dd'))
+    const start = format(startDate, 'yyyy-MM-dd')
+    setValue(startFieldId, start)
     if (endDate) {
       setValue(endFieldId, format(endDate, 'yyyy-MM-dd'))
     }
+    if (isFirstPeriod) {
+      setValue(firstPeriodStartFieldId, getFirstPeriodStart(start))
+    }
+  }
+
+  const handleEndDateChange = (endDate: Date) => {
+    setValue(endFieldId, format(endDate, 'yyyy-MM-dd'))
   }
 
   return (
     <Box marginTop={2}>
-      <DatePicker
-        id={`periods-${currentIndex}-dateRange`}
-        label={formatMessage(parentalLeaveFormMessages.dateRange.label)}
-        placeholderText={formatMessage(
-          parentalLeaveFormMessages.dateRange.placeholder,
-        )}
-        locale="is"
-        range
-        minDate={minDate}
-        maxDate={maxDate}
-        excludeDates={excludeDates}
-        selectedRange={selectedRange}
-        handleChange={handleChange}
-      />
+      {startsOnActualDob ? (
+        <DatePicker
+          id={`periods-${currentIndex}-endDate`}
+          label={formatMessage(parentalLeaveFormMessages.endDate.label)}
+          placeholderText={formatMessage(
+            parentalLeaveFormMessages.endDate.placeholder,
+          )}
+          locale="is"
+          minDate={
+            startDateValue
+              ? addDays(parseISO(startDateValue), minPeriodDays)
+              : minDate
+          }
+          maxDate={maxDate}
+          excludeDates={excludeDates}
+          selected={endDateValue ? parseISO(endDateValue) : null}
+          handleChange={handleEndDateChange}
+        />
+      ) : (
+        <DatePicker
+          id={`periods-${currentIndex}-dateRange`}
+          label={formatMessage(parentalLeaveFormMessages.dateRange.label)}
+          placeholderText={formatMessage(
+            parentalLeaveFormMessages.dateRange.placeholder,
+          )}
+          locale="is"
+          range
+          minDate={minDate}
+          maxDate={maxDate}
+          excludeDates={excludeDates}
+          selectedRange={selectedRange}
+          handleChange={handleChange}
+        />
+      )}
       <input type="hidden" {...register(startFieldId)} />
       <input type="hidden" {...register(endFieldId)} />
       <input type="hidden" {...register(firstPeriodStartFieldId)} />

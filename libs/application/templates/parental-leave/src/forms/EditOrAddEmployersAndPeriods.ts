@@ -851,6 +851,12 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                       width: 'half',
                     }),
                     buildCustomField({
+                      id: 'actualDateOfBirth',
+                      title: '',
+                      component: 'PeriodActualDateOfBirth',
+                      doesNotRequireAnswer: true,
+                    }),
+                    buildCustomField({
                       id: 'ratioWarning',
                       title: '',
                       component: 'PeriodRatioWarning',

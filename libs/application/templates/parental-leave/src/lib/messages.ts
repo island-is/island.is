@@ -1593,6 +1593,13 @@ export const parentalLeaveFormMessages = {
       description:
         'When a user first picks the period start date, they will have three options (estimated dob, actual dob, and certain a date)',
     },
+    dateOfBirthOptionDescription: {
+      id: 'pl.application:periods.first.period.actualDateOfBirth.description',
+      defaultMessage:
+        'Tímabilið hefst þann dag sem barnið fæðist. Áætlaður fæðingardagur er {expectedDateOfBirth}.',
+      description:
+        'The period starts on the day the child is born. The expected date of birth is {expectedDateOfBirth}.',
+    },
     specificDateOption: {
       id: 'pl.application:periods.first.period.specificDate',
       defaultMessage: 'Ég vil byrja á ákveðinni dagsetningu',

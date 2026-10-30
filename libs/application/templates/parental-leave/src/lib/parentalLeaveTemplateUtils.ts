@@ -15,6 +15,7 @@ import {
   requiresOtherParentApproval,
   requiresOtherParentApprovalForEdits,
   residentGrantIsOpenForApplication,
+  vmstFirstPeriodStartToAnswer,
 } from '../lib/parentalLeaveUtils'
 import { EmployerRow, Period } from '../types'
 
@@ -229,6 +230,7 @@ export const restructureVMSTPeriods = (
       endDate: period.to,
       ratio: period.ratio.split(',')[0],
       rawIndex: index,
+      firstPeriodStart: vmstFirstPeriodStartToAnswer(period),
       rightCodePeriod: rightsCodePeriod,
       daysToUse: period.days ?? undefined,
       paid: period.paid,

@@ -22,6 +22,7 @@ import {
   PERMANENT_FOSTER_CARE,
   States,
   FileType,
+  StartDateOptions,
 } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
@@ -70,6 +71,9 @@ import {
   getVMSTApplicationAnswers,
   getChangeBaseline,
   pickFirstPhoneNumber,
+  vmstFirstPeriodStartToAnswer,
+  canStartOnActualDateOfBirth,
+  periodsHaveChanged,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 import { NO, YES } from '@island.is/application/core'
@@ -2701,5 +2705,117 @@ describe('getApplicationExternalData applicationFundId', () => {
     } as unknown as ExternalData)
 
     expect(applicationFundId).toBe('2017-05140')
+  })
+})
+
+describe('vmstFirstPeriodStartToAnswer', () => {
+  const future = addDays(new Date(), 30).toISOString().slice(0, 10)
+  const past = addDays(new Date(), -30).toISOString().slice(0, 10)
+
+  it.each(['date_of_birth', 'date_of_birth_months'])(
+    'maps a future %s period to actualDateOfBirth',
+    (firstPeriodStart) => {
+      expect(
+        vmstFirstPeriodStartToAnswer({ from: future, firstPeriodStart }),
+      ).toBe(StartDateOptions.ACTUAL_DATE_OF_BIRTH)
+    },
+  )
+
+  it('uses the date VMST sent once a date_of_birth period has started', () => {
+    expect(
+      vmstFirstPeriodStartToAnswer({
+        from: past,
+        firstPeriodStart: 'date_of_birth',
+      }),
+    ).toBe(StartDateOptions.SPECIFIC_DATE)
+  })
+
+  it.each([null, undefined, 'specific_date'])(
+    'maps %s to specificDate',
+    (firstPeriodStart) => {
+      expect(
+        vmstFirstPeriodStartToAnswer({ from: future, firstPeriodStart }),
+      ).toBe(StartDateOptions.SPECIFIC_DATE)
+    },
+  )
+})
+
+describe('canStartOnActualDateOfBirth', () => {
+  const withChild = (child: object, dateOfBirth?: string) => {
+    const application = buildApplication({ answers: { selectedChild: '0' } })
+    set(application.externalData, 'children.data.children', [
+      { parentalRelation: ParentalRelations.primary, ...child },
+    ])
+    if (dateOfBirth) {
+      set(application.externalData, 'dateOfBirth.data.dateOfBirth', dateOfBirth)
+    }
+    return application
+  }
+  const inAMonth = addDays(new Date(), 30).toISOString().slice(0, 10)
+
+  it('is true for a child that is expected and not yet born', () => {
+    expect(
+      canStartOnActualDateOfBirth(withChild({ expectedDateOfBirth: inAMonth })),
+    ).toBe(true)
+  })
+
+  it('is false once the child is born', () => {
+    expect(
+      canStartOnActualDateOfBirth(
+        withChild({ expectedDateOfBirth: inAMonth }, inAMonth),
+      ),
+    ).toBe(false)
+  })
+
+  it('is false for adoption and foster care', () => {
+    expect(
+      canStartOnActualDateOfBirth(
+        withChild({ expectedDateOfBirth: '', adoptionDate: inAMonth }),
+      ),
+    ).toBe(false)
+  })
+
+  it('is false when the expected date of birth is before this month', () => {
+    expect(
+      canStartOnActualDateOfBirth(
+        withChild({ expectedDateOfBirth: '2020-01-15' }),
+      ),
+    ).toBe(false)
+  })
+})
+
+describe('periodsHaveChanged', () => {
+  const period = {
+    startDate: '2027-01-15',
+    endDate: '2027-03-15',
+    ratio: '100',
+  }
+
+  it('flags switching to or from the actual date of birth', () => {
+    expect(
+      periodsHaveChanged(
+        [{ ...period, firstPeriodStart: StartDateOptions.SPECIFIC_DATE }],
+        [
+          {
+            ...period,
+            firstPeriodStart: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
+          },
+        ],
+      ),
+    ).toBe(true)
+  })
+
+  it('ignores estimated vs specific date when the dates are the same', () => {
+    expect(
+      periodsHaveChanged(
+        [{ ...period, firstPeriodStart: StartDateOptions.SPECIFIC_DATE }],
+        [
+          {
+            ...period,
+            firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+          },
+        ],
+      ),
+    ).toBe(false)
   })
 })
