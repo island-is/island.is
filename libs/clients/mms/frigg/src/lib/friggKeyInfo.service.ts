@@ -77,7 +77,9 @@ export class FriggKeyInfoClientService {
   async getAllergyOptions(user: User): Promise<AllergyOption[]> {
     const lists = await Promise.all(
       ALLERGY_TYPES.map(async (type) =>
-        (await this.keyOptions(user, type)).map((option) => ({
+        (
+          await this.keyOptions(user, type)
+        ).map((option) => ({
           ...option,
           type,
         })),
@@ -124,7 +126,10 @@ export class FriggKeyInfoClientService {
     childId: string,
     agentId: string,
   ): Promise<void> {
-    await this.mnarSurWithAuth(user).deleteEmergencyContact({ childId, agentId })
+    await this.mnarSurWithAuth(user).deleteEmergencyContact({
+      childId,
+      agentId,
+    })
   }
 
   /* -- Health profile ------------------------------------------------------ */
