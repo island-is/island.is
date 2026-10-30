@@ -1,19 +1,4 @@
-import type { User } from '@island.is/auth-nest-tools'
-import {
-  CurrentUser,
-  IdsUserGuard,
-  Scopes,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
-import { ApiScope } from '@island.is/auth/scopes'
-import {
-  UniversityCareersClientService,
-  UniversityIdShort,
-  UniversityShortIdMap,
-} from '@island.is/clients/university-careers'
-import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
-import { AuditService } from '@island.is/nest/audit'
-import { ConfigType } from '@nestjs/config'
+import { Response } from 'express'
 import {
   Controller,
   Header,
@@ -26,6 +11,7 @@ import {
   StreamableFile,
   UseGuards,
 } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import {
   ApiBadRequestResponse,
   ApiForbiddenResponse,
@@ -35,17 +21,33 @@ import {
   ApiOkResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
-import { Response } from 'express'
+
+import { ApiScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
 import {
-  LOGGER_PROVIDER,
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
+import {
+  UniversityCareersClientService,
+  UniversityIdShort,
+  UniversityShortIdMap,
+} from '@island.is/clients/university-careers'
+import {
   type Logger,
+  LOGGER_PROVIDER,
   withLoggingContext,
 } from '@island.is/logging'
-import { unmaskString } from '@island.is/shared/utils'
+import { AuditService } from '@island.is/nest/audit'
 import { HttpProblemResponse } from '@island.is/nest/problem'
+import { unmaskString } from '@island.is/shared/utils'
+
+import { withTimeout } from '../../utils/withTimeout'
 import { PrimarySchoolAssignmentResultParamsDto } from './dto/primarySchoolAssignmentResultParams.dto'
 import { EducationDocumentsConfig } from './education-document.config'
-import { withTimeout } from './withTimeout'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)

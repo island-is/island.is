@@ -1,5 +1,6 @@
 import { GatewayTimeout } from '@island.is/nest/problem'
-import { acceptableTimeSignal } from '../../utils/acceptableTime'
+
+import { acceptableTimeSignal } from './acceptableTime'
 
 export const withTimeout = async <T>(
   timeoutMs: number,
