@@ -5,6 +5,8 @@ import { IsOptional, IsString, MaxLength } from 'class-validator'
 // non-sensitive outcome fields are passed on, for logging and the flow event.
 export class VerificationCallbackFailedInput {
   @IsString()
+  // A signed token of a few hundred characters, anything longer is not ours
+  @MaxLength(1024)
   @ApiProperty({
     description: 'Encoded MD object with custom request data.',
     type: String,

@@ -208,6 +208,18 @@ describe('card verification callback handler', () => {
     expect(res.redirect).toHaveBeenCalledWith(303, FAILURE_REDIRECT)
   })
 
+  it('does not report a failed verification for an MD that is too long to be ours', async () => {
+    const res = createRes()
+
+    await handler(
+      createReq({ body: { mdStatus: '96', MD: 'x'.repeat(1025) } }),
+      res,
+    )
+
+    expect(mockMutate).not.toHaveBeenCalled()
+    expect(res.redirect).toHaveBeenCalledWith(303, FAILURE_REDIRECT)
+  })
+
   it('does not report a failed verification when the callback has no mdStatus', async () => {
     const res = createRes()
 

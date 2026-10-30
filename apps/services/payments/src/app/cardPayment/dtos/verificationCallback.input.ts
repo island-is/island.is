@@ -3,6 +3,8 @@ import { IsOptional, IsString, MaxLength } from 'class-validator'
 
 export class VerificationCallbackInput {
   @IsString()
+  // A signed token of a few hundred characters, anything longer is not ours
+  @MaxLength(1024)
   @ApiProperty({
     description: 'Encoded MD object with custom request data.',
     type: String,

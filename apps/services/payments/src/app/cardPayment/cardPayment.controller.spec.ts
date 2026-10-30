@@ -684,6 +684,22 @@ describe('CardPaymentController', () => {
         expect(await getFailedVerificationEvents()).toHaveLength(1)
       })
 
+      it('rejects an md that is too long before decoding it', async () => {
+        const getMdPayloadSpy = jest.spyOn(
+          CardPaymentService.prototype,
+          'getMdPayload',
+        )
+
+        const response = await server
+          .post('/v1/payments/card/verify-callback-failed')
+          .send({ md: 'x'.repeat(1025), mdStatus: '96' })
+
+        expect(response.status).toBe(400)
+        expect(getMdPayloadSpy).not.toHaveBeenCalled()
+
+        getMdPayloadSpy.mockRestore()
+      })
+
       it('rejects an invalid md', async () => {
         const response = await server
           .post('/v1/payments/card/verify-callback-failed')

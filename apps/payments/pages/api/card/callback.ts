@@ -39,6 +39,7 @@ const VerificationCallbackSchema = z.object({
 // Never log cavv, xid, MD, dsTransId or cardholderInfo. Values come from an
 // external POST, so they are capped in length.
 const MAX_DIAGNOSTIC_LENGTH = 64
+const MAX_MD_LENGTH = 1024
 
 // mdStatus values the payments service charges with (see toGatewayMdStatus in
 // the payments service). Any other mdStatus means the 3DS attempt failed.
@@ -85,7 +86,9 @@ const getErrorDetail = (e: unknown) => {
 const reportFailedVerification = async (body: Record<string, unknown>) => {
   const md = typeof body.MD === 'string' ? body.MD : ''
 
-  if (!md) {
+  // The MD is our own signed token of a few hundred characters. Anything else
+  // is not worth a round trip to the payments service.
+  if (!md || md.length > MAX_MD_LENGTH) {
     return
   }
 

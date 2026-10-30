@@ -69,9 +69,20 @@ export const useCardPayment = ({
     // the token and cache expiry in the payments service (cardPayment.config).
     const maximumWaitTimeSeconds = 10 * 60
     let remainingWaitTimeInMilliSeconds = maximumWaitTimeSeconds * 1000
-    const interval = 5000
+    // Most challenges are answered within the first couple of minutes, poll
+    // less often after that (e.g. while the payer approves in a banking app)
+    const fastPollingMilliSeconds = 2 * 60 * 1000
+    const fastInterval = 5000
+    const slowInterval = 15000
 
     while (remainingWaitTimeInMilliSeconds > 0) {
+      const elapsedMilliSeconds =
+        maximumWaitTimeSeconds * 1000 - remainingWaitTimeInMilliSeconds
+      const interval =
+        elapsedMilliSeconds < fastPollingMilliSeconds
+          ? fastInterval
+          : slowInterval
+
       if (!isVerifyingRef.current) {
         throw new Error(CardErrorCode.VerificationCancelledByUser)
       }
