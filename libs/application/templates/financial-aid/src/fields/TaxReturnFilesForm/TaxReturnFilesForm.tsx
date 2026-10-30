@@ -7,9 +7,13 @@ import {
 } from '@island.is/island-ui/core'
 import { taxReturnForm } from '../../lib/messages'
 
-import { FAFieldBaseProps, OverrideAnswerSchema, UploadFileType } from '../..'
+import {
+  FAFieldBaseProps,
+  OverrideAnswerSchema,
+  UploadFileType,
+} from '../../lib/types'
 
-import { Files } from '..'
+import Files from '../Files/Files'
 import { getTaxFormContent } from './taxFormContent'
 
 const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {

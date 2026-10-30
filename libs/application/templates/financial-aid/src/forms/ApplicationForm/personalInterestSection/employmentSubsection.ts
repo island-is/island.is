@@ -14,7 +14,7 @@ export const employmentSubsection = buildSubSection({
   title: m.employmentForm.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'employmentMultiField',
+      id: Routes.EMPLOYMENTMULTIFIELD,
       title: m.employmentForm.general.pageTitle,
       children: [
         buildRadioField({

@@ -6,7 +6,9 @@ import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { confirmation, copyUrl } from '../../lib/messages'
-import { DescriptionText, ConfirmationSectionImage, CopyUrl } from '..'
+import DescriptionText from '../DescriptionText/DescriptionText'
+import ConfirmationSectionImage from '../ConfirmationSectionImage/ConfirmationSectionImage'
+import CopyUrl from '../CopyUrl/CopyUrl'
 
 interface Props {
   firstStepText?: MessageDescriptor
@@ -14,6 +16,7 @@ interface Props {
   hasSpouse?: boolean
   spouseEmailSuccess?: boolean
   municipalityHomepage?: string
+  isVeita?: boolean
 }
 
 const Confirmation = ({
@@ -22,6 +25,7 @@ const Confirmation = ({
   hasSpouse,
   spouseEmailSuccess,
   municipalityHomepage,
+  isVeita = false,
 }: Props) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
@@ -33,7 +37,11 @@ const Confirmation = ({
           <AlertMessage
             type="warning"
             title={formatMessage(confirmation.alertMessages.dataNeeded)}
-            message={formatMessage(confirmation.alertMessages.dataNeededText)}
+            message={formatMessage(
+              isVeita
+                ? confirmation.alertMessages.dataNeededTextVeita
+                : confirmation.alertMessages.dataNeededText,
+            )}
           />
         ) : (
           <AlertMessage

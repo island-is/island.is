@@ -16,7 +16,7 @@ export const spouseIncomeSection = buildSection({
   title: m.incomeForm.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'incomeMultiField',
+      id: Routes.INCOMEMULTIFIELD,
       title: m.incomeForm.general.pageTitle,
       children: [
         buildRadioField({

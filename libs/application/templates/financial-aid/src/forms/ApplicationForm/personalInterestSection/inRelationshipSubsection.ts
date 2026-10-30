@@ -16,7 +16,7 @@ export const inRelationshipSubsection = buildSubSection({
   id: Routes.INRELATIONSHIP,
   children: [
     buildMultiField({
-      id: 'inRelationshipMultiField',
+      id: Routes.INRELATIONSHIPMULTIFIELD,
       title: m.inRelationship.general.pageTitle,
       children: [
         buildDescriptionField({

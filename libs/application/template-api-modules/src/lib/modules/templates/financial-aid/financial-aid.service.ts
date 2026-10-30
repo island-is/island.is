@@ -1,52 +1,82 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import {
   ApproveOptions,
   CurrentApplication,
   FAApplication,
   findFamilyStatus,
+  FinancialAidRouting,
+  getFinancialAidRouting,
+  getVeitaTenant,
   TaxData,
 } from '@island.is/application/templates/financial-aid'
 import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   ApplicationState,
+  Employment,
   FileType,
+  HomeCircumstances,
   UserType,
 } from '@island.is/financial-aid/shared/lib'
 import {
   ApplicationApi,
   MunicipalityApi,
-  MunicipalityModel,
   PersonalTaxReturnApi,
 } from '@island.is/clients/municipalities-financial-aid'
+import { PersonalTaxReturnApi as RskPersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
 
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationAnswerFile,
   ApplicationTypes,
+  ApplicationWithAttachments,
 } from '@island.is/application/types'
 import { FetchError } from '@island.is/clients/middlewares'
 import { messages } from '@island.is/application/templates/financial-aid'
 import { TemplateApiError } from '@island.is/nest/problem'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { AttachmentS3Service } from '../../shared/services'
+import {
+  fetchDirectTaxPaymentsFromRsk,
+  fetchPersonalTaxReturnFromRsk,
+  shouldFetchTaxDataFromRsk,
+} from './taxDataFromRsk'
+import { fetchVeitaMunicipalitySettings } from './veitaMunicipalitySettings'
+import { serializeVeitaDirectTaxPayments } from './veitaDirectTaxPayments'
+import {
+  CreateIslandisApplicationRequest,
+  ForIslandisApi,
+} from '@island.is/clients/rvk-financial-aid'
 
 type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
-  application: FAApplication
+  application: FAApplication & ApplicationWithAttachments
 }
 
 @Injectable()
 export class FinancialAidService extends BaseTemplateApiService {
   constructor(
     private applicationApi: ApplicationApi,
+    private rvkApplicationsApi: ForIslandisApi,
     private municipalityApi: MunicipalityApi,
     private personalTaxReturnApi: PersonalTaxReturnApi,
+    private rskPersonalTaxReturnApi: RskPersonalTaxReturnApi,
+    private readonly attachmentService: AttachmentS3Service,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {
     super(ApplicationTypes.FINANCIAL_AID)
   }
 
   private applicationApiWithAuth(auth: Auth) {
     return this.applicationApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private rvkApplicationsApiWithAuth(auth: Auth) {
+    return this.rvkApplicationsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private municipalityApiWithAuth(auth: Auth) {
@@ -76,6 +106,9 @@ export class FinancialAidService extends BaseTemplateApiService {
   }: Props): Promise<CurrentApplication> {
     const { id, answers, externalData } = application
 
+    const municipalityCode =
+      externalData.nationalRegistry.data.address?.municipalityCode
+
     if (externalData.currentApplication.data?.currentApplicationId) {
       return {
         currentApplicationId:
@@ -87,6 +120,17 @@ export class FinancialAidService extends BaseTemplateApiService {
           return {
             name: child.fullName,
             nationalId: child.nationalId,
+            school: child.school,
+            livesWithApplicant: child.livesWithApplicant,
+            livesWithBothParents: child.livesWithBothParents,
+          }
+        })
+      : []
+    const childrenRvk = answers.childrenSchoolInfo
+      ? answers.childrenSchoolInfo.map((child) => {
+          return {
+            name: child.fullName,
+            kennitala: child.nationalId,
             school: child.school,
             livesWithApplicant: child.livesWithApplicant,
             livesWithBothParents: child.livesWithBothParents,
@@ -105,6 +149,39 @@ export class FinancialAidService extends BaseTemplateApiService {
           size: 0,
           type: type,
         }
+      })
+    }
+
+    const formatFilesRvk = async (
+      files: ApplicationAnswerFile[],
+      type: FileType,
+    ) => {
+      if (!files || files.length <= 0) {
+        return []
+      }
+      return await Promise.all(
+        files.map(async (f) => {
+          return {
+            name: f.name ?? '',
+            key:
+              (await this.attachmentService.getAttachmentUrl(
+                application,
+                f.key,
+                300_000,
+              )) ?? '',
+            size: 0,
+            type: type,
+          }
+        }),
+      ).catch((error) => {
+        this.logger.error('Error preparing application attachments', { error })
+        throw new TemplateApiError(
+          {
+            title: messages.serviceErrors.createApplication.title,
+            summary: messages.serviceErrors.createApplication.summary,
+          },
+          500,
+        )
       })
     }
 
@@ -151,13 +228,57 @@ export class FinancialAidService extends BaseTemplateApiService {
       )
     }
 
-    const files = formatFiles(answers.taxReturnFiles, FileType.TAXRETURN)
-      .concat(formatFiles(answers.incomeFiles, FileType.INCOME))
-      .concat(formatFiles(answers.spouseIncomeFiles, FileType.SPOUSEFILES))
-      .concat(formatFiles(answers.spouseTaxReturnFiles, FileType.SPOUSEFILES))
-      .concat(formatFiles(spouseTaxFiles(), FileType.SPOUSEFILES))
-      .concat(formatFiles(applicantTaxFiles(), FileType.TAXRETURN))
-      .concat(formatFiles(answers.childrenFiles, FileType.CHILDRENFILES))
+    let files: ApplicationAnswerFile[] = []
+
+    const routing = getFinancialAidRouting(externalData)
+
+    // The application system keeps answers from branches the applicant left,
+    // so Veita is only sent values whose screens still apply.
+    const hasIncome = answers.income === ApproveOptions.Yes
+    const spouseHasIncome = answers.spouseIncome === ApproveOptions.Yes
+    const isInUnregisteredCohabitation =
+      answers.relationshipStatus?.unregisteredCohabitation ===
+      ApproveOptions.Yes
+
+    if (routing.backend === 'veita') {
+      files = (
+        await formatFilesRvk(answers.rvkTaxReturnFiles, FileType.TAXRETURN)
+      )
+        .concat(
+          await formatFilesRvk(
+            hasIncome ? answers.rvkIncomeFiles : [],
+            FileType.INCOME,
+          ),
+        )
+        .concat(
+          await formatFilesRvk(
+            spouseHasIncome ? answers.rvkSpouseIncomeFiles : [],
+            FileType.SPOUSEFILES,
+          ),
+        )
+        .concat(
+          await formatFilesRvk(
+            answers.rvkSpouseTaxReturnFiles,
+            FileType.SPOUSEFILES,
+          ),
+        )
+        .concat(await formatFilesRvk(spouseTaxFiles(), FileType.SPOUSEFILES))
+        .concat(await formatFilesRvk(applicantTaxFiles(), FileType.TAXRETURN))
+        .concat(
+          await formatFilesRvk(
+            answers.rvkChildrenFiles,
+            FileType.CHILDRENFILES,
+          ),
+        )
+    } else {
+      files = formatFiles(answers.taxReturnFiles, FileType.TAXRETURN)
+        .concat(formatFiles(answers.incomeFiles, FileType.INCOME))
+        .concat(formatFiles(answers.spouseIncomeFiles, FileType.SPOUSEFILES))
+        .concat(formatFiles(answers.spouseTaxReturnFiles, FileType.SPOUSEFILES))
+        .concat(formatFiles(spouseTaxFiles(), FileType.SPOUSEFILES))
+        .concat(formatFiles(applicantTaxFiles(), FileType.TAXRETURN))
+        .concat(formatFiles(answers.childrenFiles, FileType.CHILDRENFILES))
+    }
 
     const newApplication = {
       name: externalData.nationalRegistry.data.fullName,
@@ -197,8 +318,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       streetName: externalData.nationalRegistry.data.address?.streetAddress,
       postalCode: externalData.nationalRegistry.data.address?.postalCode,
       city: externalData.nationalRegistry.data.address?.locality,
-      municipalityCode:
-        externalData.nationalRegistry.data.address?.municipalityCode,
+      municipalityCode,
       directTaxPayments: directTaxPayments(),
       hasFetchedDirectTaxPayment:
         externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.success,
@@ -208,27 +328,114 @@ export class FinancialAidService extends BaseTemplateApiService {
       applicationSystemId: id,
     }
 
-    return await this.applicationApiWithAuth(auth)
-      .applicationControllerCreate({
-        createApplicationDto: newApplication as any,
-      })
-      .then((res) => {
-        return { currentApplicationId: res.id }
-      })
-      .catch(() => {
-        throw new TemplateApiError(
-          {
-            title: messages.serviceErrors.createApplication.title,
-            summary: messages.serviceErrors.createApplication.summary,
-          },
-          500,
-        )
-      })
+    if (routing.backend === 'veita') {
+      const rvkRequest: CreateIslandisApplicationRequest = {
+        createApplicationRequest: {
+          name: externalData.nationalRegistry.data.fullName,
+          nationalId: externalData.nationalRegistry.data.nationalId,
+          nationality: externalData.nationalRegistry.data.citizenship?.code,
+          phoneNumber: answers.contactInfo.phone,
+          email: answers.contactInfo.email,
+          homeCircumstances: answers.homeCircumstances.type,
+          homeCircumstancesCustom:
+            answers.homeCircumstances.type === HomeCircumstances.OTHER
+              ? answers.homeCircumstances.custom || ''
+              : '',
+          student: Boolean(answers.student.isStudent === ApproveOptions.Yes),
+          studentCustom:
+            answers.student.isStudent === ApproveOptions.Yes
+              ? answers.student.custom || ''
+              : '',
+          hasIncome,
+          usePersonalTaxCredit: Boolean(
+            answers.personalTaxCredit === ApproveOptions.Yes,
+          ),
+          bankNumber: answers.bankInfo.bankNumber,
+          ledger: answers.bankInfo.ledger,
+          accountNumber: answers.bankInfo.accountNumber,
+          employment: answers.employment.type,
+          employmentCustom:
+            answers.employment.type === Employment.OTHER
+              ? answers.employment.custom || ''
+              : '',
+          formComment: answers.formComment,
+          files: files, // attachments
+          children: childrenRvk,
+          childrenComment: answers.childrenComment,
+          spouseNationalId:
+            externalData.nationalRegistrySpouse.data?.nationalId ||
+            (isInUnregisteredCohabitation
+              ? answers.relationshipStatus?.spouseNationalId
+              : undefined),
+          spouseEmail:
+            answers.spouseContactInfo?.email ||
+            answers.spouse?.email ||
+            (isInUnregisteredCohabitation
+              ? answers.relationshipStatus?.spouseEmail
+              : undefined),
+          spousePhoneNumber: answers.spouseContactInfo?.phone,
+          spouseName:
+            externalData.nationalRegistrySpouse.data?.name ||
+            answers.spouseName,
+          spouseFormComment: answers.spouseFormComment,
+          familyStatus: findFamilyStatus(answers, externalData),
+          streetName: externalData.nationalRegistry.data.address?.streetAddress,
+          postalCode: externalData.nationalRegistry.data.address?.postalCode,
+          city: externalData.nationalRegistry.data.address?.locality,
+          directTaxPayments: serializeVeitaDirectTaxPayments(externalData),
+          applicationSystemId: id,
+        },
+        xTenantIdentifier: routing.veitaTenant,
+        xUserPermissions: 'financialaid:write',
+      }
+
+      return await this.rvkApplicationsApiWithAuth(auth)
+        .createIslandisApplication(rvkRequest)
+        .then(() => {
+          return { currentApplicationId: newApplication.applicationSystemId }
+        })
+        .catch((e) => {
+          this.logger.error('Error creating application', { error: e })
+          throw new TemplateApiError(
+            {
+              title: messages.serviceErrors.createApplication.title,
+              summary: messages.serviceErrors.createApplication.summary,
+            },
+            500,
+          )
+        })
+    } else {
+      return await this.applicationApiWithAuth(auth)
+        .applicationControllerCreate({
+          createApplicationDto: newApplication as any,
+        })
+        .then((res) => {
+          return { currentApplicationId: res.id }
+        })
+        .catch((e) => {
+          this.logger.error('Error creating application', { error: e })
+          throw new TemplateApiError(
+            {
+              title: messages.serviceErrors.createApplication.title,
+              summary: messages.serviceErrors.createApplication.summary,
+            },
+            500,
+          )
+        })
+    }
   }
 
   async currentApplication({
+    application,
     auth,
   }: Props): Promise<CurrentApplication | null> {
+    // Veita applications are never stored in the municipalities backend, so a
+    // lookup there cannot describe the applicant's current period and would
+    // wrongly block them from applying.
+    if (getFinancialAidRouting(application.externalData).backend === 'veita') {
+      return null
+    }
+
     const currentApplicationId = await this.applicationApiWithAuth(auth)
       .applicationControllerGetCurrentApplication()
       .catch(this.handle404)
@@ -239,23 +446,69 @@ export class FinancialAidService extends BaseTemplateApiService {
       : null
   }
 
-  async municipality({
-    auth,
-    application,
-  }: Props): Promise<MunicipalityModel | null> {
-    const municiplaityCode =
+  async municipality({ auth, application }: Props) {
+    const storedMunicipality = application.externalData.municipality
+    // A failed refetch would replace external data and erase the pinned route.
+    if (storedMunicipality?.status === 'success') {
+      return storedMunicipality.data ?? null
+    }
+
+    const municipalityCode =
       application.externalData.nationalRegistry.data.address?.municipalityCode
-    if (municiplaityCode == null) {
+
+    if (municipalityCode == null) {
       return null
     }
 
-    return await this.municipalityApiWithAuth(auth)
-      .municipalityControllerGetById({ id: municiplaityCode })
+    const veitaTenant = getVeitaTenant(municipalityCode)
+    const routing: FinancialAidRouting = veitaTenant
+      ? { backend: 'veita', veitaTenant }
+      : { backend: 'municipalities' }
+
+    if (routing.backend === 'veita') {
+      const municipality = await fetchVeitaMunicipalitySettings(
+        this.rvkApplicationsApiWithAuth(auth),
+        this.logger,
+        { veitaTenant: routing.veitaTenant, municipalityCode },
+      )
+      return municipality ? { ...municipality, ...routing } : null
+    }
+
+    const municipality = await this.municipalityApiWithAuth(auth)
+      .municipalityControllerGetById({ id: municipalityCode })
       .catch(this.handle404)
+    return municipality ? { ...municipality, ...routing } : null
   }
 
   async taxData({ auth, application }: Props): Promise<TaxData> {
     try {
+      if (application.externalData.municipality?.status === 'failure') {
+        throw new Error('Municipality settings could not be fetched')
+      }
+
+      if (shouldFetchTaxDataFromRsk(application.externalData)) {
+        const municipalitiesPersonalTaxReturn =
+          await fetchPersonalTaxReturnFromRsk(
+            this.rskPersonalTaxReturnApi,
+            this.attachmentService,
+            application,
+            auth.nationalId,
+            this.logger,
+          )
+        const municipalitiesDirectTaxPayments =
+          await fetchDirectTaxPaymentsFromRsk(
+            this.rskPersonalTaxReturnApi,
+            auth.nationalId,
+            this.logger,
+            application.id,
+          )
+
+        return {
+          municipalitiesPersonalTaxReturn,
+          municipalitiesDirectTaxPayments,
+        }
+      }
+
       const personalTaxReturn = await this.personalTaxReturnApiWithAuth(
         auth,
       ).personalTaxReturnControllerMunicipalitiesPersonalTaxReturn({
