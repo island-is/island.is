@@ -276,7 +276,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           },
           to: [{ name: defender.name, address: defender.email }],
           subject: `Krafa í máli ${courtCaseNumber}`,
-          html: `Sækjandi í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="${mockNotificationConfig.clientUrl}${DEFENDER_REQUEST_CASE_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `Sækjandi í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur endursent kröfuna á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="${mockNotificationConfig.clientUrl}${DEFENDER_REQUEST_CASE_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
           attachments: undefined,
         }),
       )
@@ -405,7 +405,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
         expect.objectContaining({
           to: [{ name: defender.name, address: defender.email }],
           subject: `Krafa í máli ${courtCaseNumber}`,
-          html: expect.stringContaining('hefur breytt kröfunni'),
+          html: expect.stringContaining('hefur endursent kröfuna'),
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
