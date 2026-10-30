@@ -149,6 +149,13 @@ export enum RejectedBy {
   VMST = 'vmst',
 }
 
+/**
+ * Fund id handed out instead of calling VMST when an application runs on mock
+ * data. Its presence means there is no real VMST record behind the application,
+ * so nothing may be sent to or validated against VMST for it.
+ */
+export const MOCK_APPLICATION_FUND_ID = 'mock-application-fund-id'
+
 export enum AnswerValidationConstants {
   // Server-side check that the chosen child is not held by another application
   SELECTED_CHILD = 'selectedChild',
@@ -157,6 +164,7 @@ export enum AnswerValidationConstants {
   EMPLOYERS = 'employers',
   REQUEST_RIGHTS = 'requestRights',
   GIVE_RIGHTS = 'giveRights',
+  MULTIPLE_BIRTHS_REQUEST_DAYS = 'multipleBirthsRequestDays',
   // When attempting to continue from the periods repeater main screen
   // this validator will get called to validate all of the periods
   VALIDATE_PERIODS = 'validatedPeriods',

@@ -87,3 +87,94 @@ describe('dataSchema multipleBirths', () => {
     ).toBe(true)
   })
 })
+
+describe('dataSchema rights days', () => {
+  const giveRightsSchema = dataSchema.shape.giveRights
+  const requestRightsSchema = dataSchema.shape.requestRights
+  const multipleBirthsRequestDaysSchema =
+    dataSchema.shape.multipleBirthsRequestDays
+
+  // A negative gift flips sign in `getTransferredDays` and becomes a request.
+  it('should reject negative days to give', () => {
+    expect(
+      giveRightsSchema.safeParse({ isGivingRights: 'yes', giveDays: '-30' })
+        .success,
+    ).toBe(false)
+  })
+
+  it('should reject negative days to request', () => {
+    expect(
+      requestRightsSchema.safeParse({
+        isRequestingRights: 'yes',
+        requestDays: '-30',
+      }).success,
+    ).toBe(false)
+  })
+
+  it('should reject more days than may be given or requested', () => {
+    expect(
+      giveRightsSchema.safeParse({ isGivingRights: 'yes', giveDays: '46' })
+        .success,
+    ).toBe(false)
+    expect(
+      requestRightsSchema.safeParse({
+        isRequestingRights: 'yes',
+        requestDays: '46',
+      }).success,
+    ).toBe(false)
+  })
+
+  it('should reject fractional and empty days', () => {
+    expect(
+      giveRightsSchema.safeParse({ isGivingRights: 'yes', giveDays: '1.5' })
+        .success,
+    ).toBe(false)
+    expect(
+      requestRightsSchema.safeParse({
+        isRequestingRights: 'yes',
+        requestDays: '',
+      }).success,
+    ).toBe(false)
+  })
+
+  it('should accept days within the range', () => {
+    expect(
+      giveRightsSchema.safeParse({ isGivingRights: 'yes', giveDays: '45' })
+        .success,
+    ).toBe(true)
+    expect(
+      requestRightsSchema.safeParse({
+        isRequestingRights: 'yes',
+        requestDays: '0',
+      }).success,
+    ).toBe(true)
+  })
+
+  it('should bound multiple-birth days, accepting the number VMST seeds', () => {
+    expect(multipleBirthsRequestDaysSchema.safeParse('-30').success).toBe(false)
+    expect(multipleBirthsRequestDaysSchema.safeParse('100000').success).toBe(
+      false,
+    )
+    expect(multipleBirthsRequestDaysSchema.safeParse('180').success).toBe(true)
+    expect(multipleBirthsRequestDaysSchema.safeParse(360).success).toBe(true)
+    expect(multipleBirthsRequestDaysSchema.safeParse(undefined).success).toBe(
+      true,
+    )
+  })
+})
+
+describe('dataSchema employers ratio', () => {
+  const employersSchema = dataSchema.shape.employers
+  const withRatio = (ratio: string) => [{ email: 'employer@island.is', ratio }]
+
+  it.each(['0', '', '-10', '101', 'abc'])(
+    'should reject a ratio of %p',
+    (ratio) => {
+      expect(employersSchema.safeParse(withRatio(ratio)).success).toBe(false)
+    },
+  )
+
+  it.each(['1', '50', '100'])('should accept a ratio of %p', (ratio) => {
+    expect(employersSchema.safeParse(withRatio(ratio)).success).toBe(true)
+  })
+})

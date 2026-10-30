@@ -16,6 +16,7 @@ import {
 } from '../../../constants'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
 import {
+  employersHaveChanged,
   getApplicationAnswers,
   getChangeBaseline,
 } from '../../../lib/parentalLeaveUtils'
@@ -47,7 +48,7 @@ const Employers: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
 
   const hasChanges =
     isSelfEmployed !== YES &&
-    JSON.stringify(employers) !== JSON.stringify(previousEmployers)
+    employersHaveChanged(previousEmployers, employers ?? [])
 
   const hasEmployer =
     (applicationType === PARENTAL_LEAVE &&

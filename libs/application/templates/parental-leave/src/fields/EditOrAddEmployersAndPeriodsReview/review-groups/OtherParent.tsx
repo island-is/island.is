@@ -26,7 +26,7 @@ import {
   getOtherParentId,
   getOtherParentName,
   normalize,
-  requiresOtherParentApproval,
+  requiresOtherParentApprovalForEdits,
 } from '../../../lib/parentalLeaveUtils'
 
 interface ReviewScreenProps {
@@ -69,7 +69,7 @@ const OtherParent: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   const hasChangedOtherParent =
     hasChangedName || hasChangedId || hasChangedRelation
   const hasPreviousOtherParentDetails = !!(oldName || oldId)
-  const otherParentWillApprove = requiresOtherParentApproval(
+  const otherParentWillApprove = requiresOtherParentApprovalForEdits(
     application.answers,
     application.externalData,
   )

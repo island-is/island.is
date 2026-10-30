@@ -1962,6 +1962,135 @@ describe('Parental Leave Application Template', () => {
         ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
       )
     })
+
+    // Answers round-trip through JSONB, which does not keep key order, and
+    // `restructureVMSTPeriods` emits keys in a different order to the baseline
+    // mapper. An unchanged schedule and employer list must still compare equal.
+    it('should not route through the employer when only key order differs from the baseline', () => {
+      const employment = {
+        isSelfEmployed: NO,
+        isReceivingUnemploymentBenefits: NO,
+      }
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            ...CHANGE_ANSWERS,
+            selectedChild: '0',
+            employment,
+            applicationType: { option: PARENTAL_LEAVE },
+            periods: [
+              {
+                approved: true,
+                paid: false,
+                rightCodePeriod: 'M-L-GR',
+                firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+                rawIndex: 0,
+                ratio: '100',
+                endDate: '2027-04-20',
+                startDate: '2027-04-06',
+              },
+            ],
+            employers: [
+              {
+                stillEmployed: YES,
+                companyNationalRegistryId: '0101302719',
+                ratio: '100',
+                email: 'employer@island.is',
+                isApproved: true,
+              },
+            ],
+            payments: { bank: '051226054678' },
+          },
+          externalData: {
+            VMSTApplicationInformation: {
+              data: {
+                periods: [
+                  {
+                    from: '2027-04-06',
+                    to: '2027-04-20',
+                    ratio: '100',
+                    approved: true,
+                    paid: false,
+                    rightsCodePeriod: 'M-L-GR',
+                  },
+                ],
+                applicationRights: [{ rightsUnit: 'M-L-GR', days: '180' }],
+                employers: [
+                  {
+                    email: 'employer@island.is',
+                    nationalRegistryId: '0101302719',
+                    ratio: 100,
+                    stillEmployed: true,
+                  },
+                ],
+              },
+              status: 'success',
+              date: new Date(),
+            },
+          },
+          state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [, newState, application] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
+      })
+
+      expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS)
+      expect(application.answers.addEmployer).not.toBe(YES)
+    })
+
+    it('should route through the employer when an employer ratio changes', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            ...CHANGE_ANSWERS,
+            selectedChild: '0',
+            employment: {
+              isSelfEmployed: NO,
+              isReceivingUnemploymentBenefits: NO,
+            },
+            applicationType: { option: PARENTAL_LEAVE },
+            periods: [
+              { ratio: '100', endDate: '2027-04-20', startDate: '2027-04-06' },
+            ],
+            employers: [{ email: 'employer@island.is', ratio: '50' }],
+          },
+          externalData: {
+            VMSTApplicationInformation: {
+              data: {
+                periods: [
+                  {
+                    from: '2027-04-06',
+                    to: '2027-04-20',
+                    ratio: '100',
+                    approved: true,
+                    paid: false,
+                    rightsCodePeriod: 'M-L-GR',
+                  },
+                ],
+                applicationRights: [{ rightsUnit: 'M-L-GR', days: '180' }],
+                employers: [{ email: 'employer@island.is', ratio: 100 }],
+              },
+              status: 'success',
+              date: new Date(),
+            },
+          },
+          state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [, newState, application] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
+      })
+
+      expect(newState).toBe(
+        ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+      )
+      expect(application.answers.addEmployer).toBe(YES)
+    })
   })
 
   describe('late VMST callbacks after DRAFT rewind', () => {

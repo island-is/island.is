@@ -23,6 +23,7 @@ import {
   States,
   FileType,
   StartDateOptions,
+  MOCK_APPLICATION_FUND_ID,
 } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
@@ -74,7 +75,9 @@ import {
   vmstFirstPeriodStartToAnswer,
   canStartOnActualDateOfBirth,
   periodsHaveChanged,
+  employersHaveChanged,
 } from './parentalLeaveUtils'
+import { hasBeenSubmittedToVMST } from './parentalLeaveTemplateUtils'
 import { PersonInformation } from '../types'
 import { NO, YES } from '@island.is/application/core'
 import {
@@ -2249,6 +2252,31 @@ describe('requiresOtherParentApproval', () => {
     ).toBe(true)
   })
 
+  // A mock application gets the mock fund id as it leaves prerequisites; that
+  // must not make it skip the other parent.
+  it('should still require approval when the fund id is the mock one', () => {
+    const application = buildApplication({
+      answers: {
+        otherParent: 'spouse',
+        usePersonalAllowanceFromSpouse: YES,
+      },
+      externalData: {
+        navId: {
+          data: MOCK_APPLICATION_FUND_ID,
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(
+      requiresOtherParentApproval(
+        application.answers,
+        application.externalData,
+      ),
+    ).toBe(true)
+  })
+
   it('should return false once the application has a fund id from sendApplication', () => {
     const application = buildApplication({
       answers: {
@@ -2817,5 +2845,84 @@ describe('periodsHaveChanged', () => {
         ],
       ),
     ).toBe(false)
+  })
+})
+
+describe('employersHaveChanged', () => {
+  const employer = {
+    email: 'employer@island.is',
+    ratio: '100',
+    stillEmployed: YES,
+  } as const
+
+  it('ignores key order and workflow fields', () => {
+    expect(
+      employersHaveChanged(
+        [{ ...employer }],
+        [
+          {
+            stillEmployed: YES,
+            isApproved: true,
+            reviewerNationalRegistryId: '0101302399',
+            ratio: '100',
+            email: 'employer@island.is',
+          },
+        ],
+      ),
+    ).toBe(false)
+  })
+
+  it('flags a changed email or ratio', () => {
+    expect(
+      employersHaveChanged([employer], [{ ...employer, ratio: '50' }]),
+    ).toBe(true)
+    expect(
+      employersHaveChanged(
+        [employer],
+        [{ ...employer, email: 'other@island.is' }],
+      ),
+    ).toBe(true)
+  })
+
+  it('flags an added or removed employer', () => {
+    expect(employersHaveChanged([employer], [employer, employer])).toBe(true)
+    expect(employersHaveChanged([employer], [])).toBe(true)
+  })
+
+  it('only compares stillEmployed when VMST reported it', () => {
+    const { stillEmployed: _stillEmployed, ...withoutStillEmployed } = employer
+    expect(employersHaveChanged([withoutStillEmployed], [employer])).toBe(false)
+    expect(
+      employersHaveChanged([employer], [{ ...employer, stillEmployed: NO }]),
+    ).toBe(true)
+  })
+})
+
+describe('hasBeenSubmittedToVMST', () => {
+  it('should be true for a real fund id', () => {
+    const application = buildApplication({
+      externalData: {
+        navId: { data: '2017-05140', date: new Date(), status: 'success' },
+      },
+    })
+    expect(hasBeenSubmittedToVMST(application)).toBe(true)
+  })
+
+  it('should be false for the mock fund id', () => {
+    const application = buildApplication({
+      externalData: {
+        navId: {
+          data: MOCK_APPLICATION_FUND_ID,
+          date: new Date(),
+          status: 'success',
+        },
+        sendApplication: {
+          data: { id: MOCK_APPLICATION_FUND_ID },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+    expect(hasBeenSubmittedToVMST(application)).toBe(false)
   })
 })

@@ -857,7 +857,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   dataTestId: 'employment-ratio',
                   type: 'number',
                   suffix: '%',
-                  min: 0,
+                  min: 1,
                   max: 100,
                 },
                 stillEmployed: {

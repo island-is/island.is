@@ -57,6 +57,8 @@ const MultipleBirthsDaysInput: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             defaultValue={String(defaultDays)}
             backgroundColor="blue"
             required
+            allowNegative={false}
+            decimalScale={0}
             min={0}
             max={maxDays}
           />

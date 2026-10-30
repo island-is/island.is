@@ -2,6 +2,7 @@ import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { Application, ApplicationContext } from '@island.is/application/types'
 import {
   ApplicationAction,
+  MOCK_APPLICATION_FUND_ID,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
@@ -10,8 +11,10 @@ import {
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  employersHaveChanged,
   getChangeBaseline,
   normalize,
+  periodsHaveChanged,
   requiresOtherParentApproval,
   requiresOtherParentApprovalForEdits,
   residentGrantIsOpenForApplication,
@@ -130,11 +133,10 @@ export const hasEmployerRelevantChange = (context: ApplicationContext) => {
 
   const employersChanged =
     isSelfEmployed !== YES &&
-    JSON.stringify(employers) !== JSON.stringify(baseline.employers)
+    employersHaveChanged(baseline.employers, employers ?? [])
   const selfEmployedChanged =
     normalize(baseline.employment.isSelfEmployed) !== normalize(isSelfEmployed)
-  const periodsChanged =
-    JSON.stringify(periods) !== JSON.stringify(baseline.periods)
+  const periodsChanged = periodsHaveChanged(baseline.periods, periods ?? [])
 
   return employersChanged || selfEmployedChanged || periodsChanged
 }
@@ -179,7 +181,11 @@ export const hasBeenSubmittedToVMST = (application: Application) => {
     application.externalData,
     'sendApplication.data.id',
   )
-  if (sendApplicationId) {
+  // The mock fund id is handed out without ever contacting VMST.
+  const isRealId = (id: unknown): id is string =>
+    typeof id === 'string' && !!id && id !== MOCK_APPLICATION_FUND_ID
+
+  if (isRealId(sendApplicationId)) {
     return true
   }
 
@@ -190,10 +196,7 @@ export const hasBeenSubmittedToVMST = (application: Application) => {
     return false
   }
 
-  return Boolean(
-    (typeof navIdData === 'string' && navIdData) ||
-      (typeof rawNavId === 'string' && rawNavId),
-  )
+  return isRealId(navIdData) || isRealId(rawNavId)
 }
 
 export const isInPlaceRewind = (context: ApplicationContext) =>

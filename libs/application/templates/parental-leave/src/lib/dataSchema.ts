@@ -23,7 +23,11 @@ import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
 import { yearFosterCareOrAdoption, yearInMonths } from '../config'
 import { coreErrorMessages, NO, YES } from '@island.is/application/core'
-import { defaultMultipleBirthsMonths } from '../config'
+import {
+  defaultMultipleBirthsMonths,
+  maxDaysToGiveOrReceive,
+  multipleBirthsDefaultDays,
+} from '../config'
 
 const PersonalAllowance = z
   .object({
@@ -80,6 +84,28 @@ const FileSchema = z.object({
  * been moved to the answerValidators because it needs to be more advanced than
  * what zod can handle.
  */
+const isNumberInRange = (value: unknown, min: number, max: number) => {
+  if (value === '' || value === null || value === undefined) {
+    return false
+  }
+  const n = Number(value)
+  return !isNaN(n) && n >= min && n <= max
+}
+
+const isWholeNumberInRange = (value: unknown, min: number, max: number) =>
+  isNumberInRange(value, min, max) && Number.isInteger(Number(value))
+
+const rightsDays = z
+  .string()
+  .refine((v) => isWholeNumberInRange(v, 0, maxDaysToGiveOrReceive), {
+    params: errorMessages.rightsDaysOutOfRange,
+  })
+
+// Upper bound for the largest supported multiple birth; the per-application
+// maximum is checked by the `multipleBirthsRequestDays` answer validator.
+const maxMultipleBirthsRequestDays =
+  defaultMultipleBirthsMonths * multipleBirthsDefaultDays
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   selectedChild: z.string().min(1),
@@ -258,18 +284,12 @@ export const dataSchema = z.object({
   employerLastSixMonths: z.enum([YES, NO]),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
-    requestDays: z
-      .string()
-      .refine((v) => !isNaN(Number(v)))
-      .optional(),
+    requestDays: rightsDays.optional(),
   }),
   giveRights: z
     .object({
       isGivingRights: z.enum([YES, NO]),
-      giveDays: z
-        .string()
-        .refine((v) => !isNaN(Number(v)))
-        .optional(),
+      giveDays: rightsDays.optional(),
     })
     .optional(),
   transferRights: z.enum([
@@ -362,6 +382,13 @@ export const dataSchema = z.object({
       },
     )
     .optional(),
+  // Seeded from VMST as a number, entered in the form as a string.
+  multipleBirthsRequestDays: z
+    .union([z.string(), z.number()])
+    .refine((v) => isWholeNumberInRange(v, 0, maxMultipleBirthsRequestDays), {
+      params: errorMessages.rightsDaysOutOfRange,
+    })
+    .optional(),
   addEmployer: z.enum([YES, NO]),
   addPeriods: z.enum([YES, NO]),
   fileUpload: z.object({
@@ -448,7 +475,9 @@ export const dataSchema = z.object({
               { params: errorMessages.phoneNumber },
             )
             .optional(),
-          ratio: z.string(),
+          ratio: z.string().refine((v) => isNumberInRange(v, 1, 100), {
+            params: errorMessages.employersRatioInvalid,
+          }),
           stillEmployed: z.enum([YES, NO]).optional(),
         })
         .refine((e) => ('stillEmployed' in e ? !!e.stillEmployed : true), {

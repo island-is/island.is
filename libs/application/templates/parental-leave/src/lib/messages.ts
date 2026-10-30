@@ -2895,6 +2895,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Ekkert hlutfall hefur verið valið',
     description: 'Copy when days to be used by period is missing',
   },
+  employersRatioInvalid: {
+    id: 'pl.application:answerValidators.employersRatioInvalid',
+    defaultMessage: 'Starfshlutfall þarf að vera á bilinu 1 til 100%',
+    description: 'Employer ratio is outside the allowed 1-100% range',
+  },
   employersStillEmployedMissing: {
     id: 'pl.application:answerValidators.employersStillEmployedMissing',
     defaultMessage: 'Vinsamlegast veldu annan hvorn möguleikann',
@@ -3163,6 +3168,13 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Ekki er hægt að færa daga ef forsjárlausa foreldrið hefur ekki samþykki fyrir umgengni í þessu fæðingarorlofi. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to transfer days!',
+  },
+  rightsDaysOutOfRange: {
+    id: 'pl.application:errors.rights.days.out.of.range',
+    defaultMessage:
+      'Fjöldi daga þarf að vera heil tala sem er ekki hærri en leyfilegt hámark',
+    description:
+      'Number of days to give/request is negative, not a whole number or above the maximum',
   },
 })
 

@@ -787,3 +787,37 @@ describe('when continuing from the employers table', () => {
     expect(validate([], application)).toBeUndefined()
   })
 })
+
+describe('when choosing extra days for a multiple birth', () => {
+  const validate = (days: unknown, multipleBirths: string) => {
+    const application = createBaseApplication()
+    application.answers = {
+      ...application.answers,
+      multipleBirths: { hasMultipleBirths: YES, multipleBirths },
+    }
+    return answerValidators[
+      AnswerValidationConstants.MULTIPLE_BIRTHS_REQUEST_DAYS
+    ](days, application)
+  }
+
+  it('should accept days within the maximum for the number of children', () => {
+    expect(validate('180', '2')).toBeUndefined()
+    expect(validate('0', '2')).toBeUndefined()
+  })
+
+  it('should reject more days than the number of children allows', () => {
+    expect(validate('181', '2')).toMatchObject({
+      message: errorMessages.rightsDaysOutOfRange,
+      path: 'multipleBirthsRequestDays',
+    })
+  })
+
+  it('should reject negative and fractional days', () => {
+    expect(validate('-30', '2')).toMatchObject({
+      path: 'multipleBirthsRequestDays',
+    })
+    expect(validate('1.5', '2')).toMatchObject({
+      path: 'multipleBirthsRequestDays',
+    })
+  })
+})

@@ -46,6 +46,7 @@ import {
   FileType,
   Languages,
   MANUAL,
+  MOCK_APPLICATION_FUND_ID,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   OTHER_NO_CHILDREN_FOUND,
@@ -1298,6 +1299,36 @@ export const periodsHaveChanged = (
   })
 }
 
+/**
+ * Have the employers been changed relative to the predecessor?
+ *
+ * Compare field by field rather than with `JSON.stringify`: answers are stored
+ * as JSONB, which does not preserve key order, so the raw objects never
+ * serialise the same as the baseline built from VMST data. Only the fields that
+ * matter to the employer are compared (`email`, `ratio`, and `stillEmployed`
+ * when VMST reported it). Phone numbers are left out because VMST and the form
+ * do not format them the same way, and approval/reviewer fields are workflow
+ * state, not edits.
+ */
+export const employersHaveChanged = (
+  baselineEmployers: EmployerRow[],
+  currentEmployers: EmployerRow[],
+): boolean => {
+  if (baselineEmployers.length !== currentEmployers.length) {
+    return true
+  }
+
+  return baselineEmployers.some((baseline, index) => {
+    const current = currentEmployers[index]
+    return (
+      normalize(baseline.email) !== normalize(current.email) ||
+      normalize(baseline.ratio) !== normalize(current.ratio) ||
+      (baseline.stillEmployed !== undefined &&
+        normalize(baseline.stillEmployed) !== normalize(current.stillEmployed))
+    )
+  })
+}
+
 export const getApplicationAnswers = (answers: Application['answers']) => {
   let applicationType = getValueViaPath(answers, 'applicationType.option')
 
@@ -1838,7 +1869,9 @@ export const requiresOtherParentApproval = (
   const needsApprovalForRequestingRights =
     selectedChild?.parentalRelation === ParentalRelations.primary
 
-  if (applicationFundId) {
+  // Mock applications get a mock fund id as they leave prerequisites; it does
+  // not mean VMST already has the application, so it must not skip approval.
+  if (applicationFundId && applicationFundId !== MOCK_APPLICATION_FUND_ID) {
     return false
   }
 

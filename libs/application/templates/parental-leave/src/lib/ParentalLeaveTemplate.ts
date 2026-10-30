@@ -49,6 +49,7 @@ import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import {
   determineNameFromApplicationAnswers,
   draftStateDescription,
+  employersHaveChanged,
   editOrAddPeriodsStatePendingAction,
   employerApprovalStatePendingAction,
   getRejectedByFromState,
@@ -1913,8 +1914,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const selfEmployedChanged =
           normalize(baseline.employment.isSelfEmployed) !==
           normalize(isSelfEmployed)
-        const employersChanged =
-          JSON.stringify(employers) !== JSON.stringify(baseline.employers)
+        const employersChanged = employersHaveChanged(
+          baseline.employers,
+          employers ?? [],
+        )
 
         if (selfEmployedChanged || employersChanged) {
           set(answers, 'addEmployer', YES)

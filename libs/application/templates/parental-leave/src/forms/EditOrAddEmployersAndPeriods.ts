@@ -53,6 +53,7 @@ import {
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
   allowOtherParent,
+  employersHaveChanged,
   getApplicationAnswers,
   getChangeBaseline,
   getConclusionScreenSteps,
@@ -66,6 +67,7 @@ import {
   getSelectedChild,
   getSpouse,
   normalize,
+  periodsHaveChanged,
   requiresOtherParentApprovalForEdits,
 } from '../lib/parentalLeaveUtils'
 
@@ -129,12 +131,14 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                       return true
                     }
 
-                    const periodsChanged =
-                      JSON.stringify(periods) !==
-                      JSON.stringify(baseline.periods)
-                    const employersChanged =
-                      JSON.stringify(employers) !==
-                      JSON.stringify(baseline.employers)
+                    const periodsChanged = periodsHaveChanged(
+                      baseline.periods,
+                      periods ?? [],
+                    )
+                    const employersChanged = employersHaveChanged(
+                      baseline.employers,
+                      employers ?? [],
+                    )
                     const selfEmployedChanged =
                       normalize(baseline.employment.isSelfEmployed) !==
                       normalize(isSelfEmployed)
@@ -1006,7 +1010,7 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                       dataTestId: 'employment-ratio',
                       type: 'number',
                       suffix: '%',
-                      min: 0,
+                      min: 1,
                       max: 100,
                       maxLength: 3,
                     },

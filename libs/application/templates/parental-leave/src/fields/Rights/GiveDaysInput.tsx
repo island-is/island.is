@@ -54,6 +54,8 @@ const GiveDaysInput: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             defaultValue="0"
             backgroundColor="blue"
             required
+            allowNegative={false}
+            decimalScale={0}
             min={1}
             max={maxDaysToGiveOrReceive}
           />
