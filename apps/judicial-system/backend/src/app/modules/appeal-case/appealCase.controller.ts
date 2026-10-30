@@ -29,7 +29,11 @@ import {
   RouteRolesGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
-import { AppealCaseType, UserRole } from '@island.is/judicial-system/types'
+import {
+  AppealCaseType,
+  getOrderedAppealJudges,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import {
   courtOfAppealsAssistantRule,
@@ -214,33 +218,19 @@ export class AppealCaseController {
     // which is a deadlock rather than a race.
     const transaction = await getOrCreateTransaction(this.sequelize)
 
-    if (updateDto.appealAssistantId) {
+    const update = this.withJudgeSlotsOnBench(updateDto, appealCase)
+
+    if (update.appealAssistantId) {
       await this.validateAssignedUser(
-        updateDto.appealAssistantId,
+        update.appealAssistantId,
         [UserRole.COURT_OF_APPEALS_ASSISTANT],
         transaction,
       )
     }
 
-    if (updateDto.appealJudge1Id) {
+    for (const appealJudgeId of update.appealJudgeIds ?? []) {
       await this.validateAssignedUser(
-        updateDto.appealJudge1Id,
-        [UserRole.COURT_OF_APPEALS_JUDGE],
-        transaction,
-      )
-    }
-
-    if (updateDto.appealJudge2Id) {
-      await this.validateAssignedUser(
-        updateDto.appealJudge2Id,
-        [UserRole.COURT_OF_APPEALS_JUDGE],
-        transaction,
-      )
-    }
-
-    if (updateDto.appealJudge3Id) {
-      await this.validateAssignedUser(
-        updateDto.appealJudge3Id,
+        appealJudgeId,
         [UserRole.COURT_OF_APPEALS_JUDGE],
         transaction,
       )
@@ -249,10 +239,48 @@ export class AppealCaseController {
     return this.appealCaseService.update(
       theCase,
       appealCase,
-      updateDto,
+      update,
       user,
       transaction,
     )
+  }
+
+  // Turns the slot ids appealJudge1Id..appealJudge3Id into the whole bench: each
+  // slot replaces the judge at that display order on the stored bench, which is
+  // how the api resolves the slots on the way out. A bench copied from the
+  // legacy columns can have a hole (seat 2 empty, seat 3 filled), so filling the
+  // hole must not overwrite the judge after it. A judge that ends up in two
+  // positions keeps the first.
+  private withJudgeSlotsOnBench(
+    updateDto: UpdateAppealCaseDto,
+    appealCase: AppealCase,
+  ): UpdateAppealCaseDto {
+    const { appealJudge1Id, appealJudge2Id, appealJudge3Id, ...update } =
+      updateDto
+    const slots = [appealJudge1Id, appealJudge2Id, appealJudge3Id]
+
+    if (update.appealJudgeIds || slots.every((id) => !id)) {
+      return update
+    }
+
+    const bench: (string | undefined)[] = []
+
+    getOrderedAppealJudges(appealCase).forEach((judge, index) => {
+      bench[judge.displayOrder ?? index] = judge.userId ?? judge.user?.id
+    })
+
+    slots.forEach((id, index) => {
+      if (id) {
+        bench[index] = id
+      }
+    })
+
+    return {
+      ...update,
+      appealJudgeIds: [
+        ...new Set(bench.filter((id): id is string => Boolean(id))),
+      ],
+    }
   }
 
   @UseGuards(

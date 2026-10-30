@@ -114,22 +114,35 @@ describe('caseTable.utils', () => {
         {
           appealCase: {
             attributes: [],
-            includes: { appealJudge1: { attributes: ['name'] } },
+            includes: {
+              appealJudges: {
+                attributes: ['displayOrder'],
+                includes: { user: { attributes: ['name'] } },
+              },
+            },
           },
         },
         judge,
       )
 
-      const appealJudge1 = findInclude(
+      const appealJudges = findInclude(
         findInclude(includes, 'appealCase')?.include ?? [],
-        'appealJudge1',
+        'appealJudges',
       )
 
-      expect(appealJudge1).toMatchObject({
-        as: 'appealJudge1',
-        separate: false,
-        attributes: ['id', 'name'],
+      expect(appealJudges).toMatchObject({
+        as: 'appealJudges',
+        separate: true,
+        order: [['displayOrder', 'ASC']],
+        attributes: ['id', 'displayOrder'],
       })
+      expect(appealJudges?.include).toEqual([
+        expect.objectContaining({
+          as: 'user',
+          separate: false,
+          attributes: ['id', 'name'],
+        }),
+      ])
     })
 
     it('merges what two declarations read off the same nested association', () => {
@@ -137,19 +150,27 @@ describe('caseTable.utils', () => {
         {
           appealCase: {
             attributes: [],
-            includes: { appealJudge1: { attributes: ['title'] } },
+            includes: {
+              appealJudges: {
+                attributes: [],
+                includes: { user: { attributes: ['title'] } },
+              },
+            },
           },
         },
         ['courtOfAppealsHead' as CaseTableColumnKey],
         judge,
       )
 
-      const appealJudge1 = findInclude(
-        findInclude(includes, 'appealCase')?.include ?? [],
-        'appealJudge1',
+      const user = findInclude(
+        findInclude(
+          findInclude(includes, 'appealCase')?.include ?? [],
+          'appealJudges',
+        )?.include ?? [],
+        'user',
       )
 
-      expect(appealJudge1?.attributes).toEqual(
+      expect(user?.attributes).toEqual(
         expect.arrayContaining(['id', 'title', 'name']),
       )
     })
@@ -161,16 +182,21 @@ describe('caseTable.utils', () => {
             appealCase: {
               attributes: [],
               includes: {
-                appealJudge1: {
+                appealJudges: {
                   attributes: [],
-                  includes: { institution: { attributes: ['name'] } },
+                  includes: {
+                    user: {
+                      attributes: [],
+                      includes: { institution: { attributes: ['name'] } },
+                    },
+                  },
                 },
               },
             },
           },
           judge,
         ),
-      ).toThrow('appealCase.appealJudge1.institution')
+      ).toThrow('appealCase.appealJudges.user.institution')
     })
   })
 

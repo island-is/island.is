@@ -4,6 +4,7 @@ import { DefendantEventType } from '@island.is/judicial-system/types'
 
 import {
   AppealCase,
+  AppealCaseJudge,
   AppealEventLog,
   Case,
   CaseFile,
@@ -37,8 +38,8 @@ type SortDir = 'ASC' | 'DESC'
 // One association in an include declaration: the attributes to read off it and
 // the associations to follow from it. The shape is the same at every depth, so
 // a column declares exactly the path its value needs and nothing else - the
-// head judge's initials are appealCase.appealJudge1.name, declared as such -
-// and the model maps below stay flat.
+// presiding judge's initials are appealCase.appealJudges.user.name, declared as
+// such - and the model maps below stay flat.
 export type IncludeNode<T> = {
   attributes: (keyof T)[]
   required?: boolean
@@ -114,14 +115,18 @@ export const modelMap: {
 }
 
 export const subModelMap: {
-  appealJudge1: ModelDef<typeof User>
+  appealJudges: ModelDef<typeof AppealCaseJudge>
   appealEventLogs: ModelDef<typeof AppealEventLog>
   eventLogs: ModelDef<typeof DefendantEventLog>
   rulingFile: ModelDef<typeof CaseFile>
   subpoenas: ModelDef<typeof Subpoena>
   verdicts: ModelDef<typeof Verdict>
 } = {
-  appealJudge1: { model: User, separate: false },
+  appealJudges: {
+    model: AppealCaseJudge,
+    separate: true,
+    order: [['displayOrder', 'ASC']],
+  },
   appealEventLogs: { model: AppealEventLog, separate: true },
   eventLogs: { model: DefendantEventLog, separate: true },
   rulingFile: { model: CaseFile, separate: false },
@@ -129,12 +134,22 @@ export const subModelMap: {
   verdicts: { model: Verdict, separate: false, order: [['created', 'DESC']] },
 }
 
+export const subSubModelMap: {
+  user: ModelDef<typeof User>
+} = {
+  user: { model: User, separate: false },
+}
+
 // The model definitions by depth in an include declaration: the case's own
-// associations and those of the models they reach.
+// associations, those of the models they reach, and those one level further.
 // Building an include tree walks a declaration down this list, so an
 // association deeper than the maps go is a declaration error, not a silent
 // missing join.
-export const modelMapsByDepth: ModelMap[] = [modelMap, subModelMap]
+export const modelMapsByDepth: ModelMap[] = [
+  modelMap,
+  subModelMap,
+  subSubModelMap,
+]
 
 /**
  * A case as a case table row sees it.
