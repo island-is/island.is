@@ -18,8 +18,7 @@ export const apiProvider = [FriggApi, MnarSurApi].map((apiRecord) => ({
   ) => {
     // Only the key-info endpoints need the student.* scopes; FriggApi keeps the
     // bare nemendagrunnur token the application-system's client is granted.
-    const scope =
-      apiRecord === MnarSurApi ? config.keyInfoScope : config.scope
+    const scope = apiRecord === MnarSurApi ? config.keyInfoScope : config.scope
 
     return new apiRecord(
       new Configuration(
