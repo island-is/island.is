@@ -133,6 +133,62 @@ export const generateFormHtml = ({
     `
 }
 
+// Longer than the gateway script's own safety net (15 s, after which it shows
+// a submit button) and the 3DS Method it runs before submitting.
+export const GATEWAY_FORM_SUBMIT_TIMEOUT_MS = 20000
+
+// Submits the 3DS form if nothing has started a navigation in the iframe after
+// the timeout, e.g. when the gateway script failed to load or the gateway
+// returned a script that does not submit the form. Without it the payer waits
+// for a blank modal until the client stops waiting for the 3DS result. Returns
+// a function that cancels the watch.
+export const watchGatewayFormSubmit = (
+  iframeWindow: Window,
+  timeoutMs = GATEWAY_FORM_SUBMIT_TIMEOUT_MS,
+): (() => void) => {
+  let hasNavigated = false
+  const onNavigate = () => {
+    hasNavigated = true
+  }
+  iframeWindow.addEventListener('beforeunload', onNavigate)
+
+  // Once the iframe has navigated to the gateway its window is cross-origin
+  // and cannot be accessed
+  const stopListening = () => {
+    try {
+      iframeWindow.removeEventListener('beforeunload', onNavigate)
+    } catch {
+      // Cross-origin, the listener went with the document it was added to
+    }
+  }
+
+  const timer = setTimeout(() => {
+    stopListening()
+
+    if (hasNavigated) {
+      return
+    }
+
+    try {
+      const form = iframeWindow.document.getElementById(
+        'webform0',
+      ) as HTMLFormElement | null
+
+      if (form) {
+        console.error('3DS form was not submitted by the gateway script')
+        form.submit()
+      }
+    } catch {
+      // Cross-origin, the iframe has navigated to the gateway
+    }
+  }, timeoutMs)
+
+  return () => {
+    clearTimeout(timer)
+    stopListening()
+  }
+}
+
 export const generatePopupHtml = (formData: ThreeDSFormData): string => {
   return `
     <html>

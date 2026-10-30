@@ -2,8 +2,19 @@ import React, { useEffect, useRef } from 'react'
 
 import { Box, ModalBase, SkeletonLoader } from '@island.is/island-ui/core'
 
-import { generateFormHtml, ThreeDSFormData } from '../../utils/3ds'
+import {
+  generateFormHtml,
+  ThreeDSFormData,
+  watchGatewayFormSubmit,
+} from '../../utils/3ds'
 import * as styles from './ThreeDSecure.css'
+
+const cancelSubmitWatch = (
+  cancelRef: React.MutableRefObject<(() => void) | null>,
+) => {
+  cancelRef.current?.()
+  cancelRef.current = null
+}
 
 interface ThreeDSecureProps extends ThreeDSFormData {
   isActive: boolean
@@ -25,9 +36,14 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
   const iframeContainerRef = useRef<HTMLIFrameElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const formReadyRef = useRef(false)
+  const cancelSubmitWatchRef = useRef<(() => void) | null>(null)
+
+  // Stop watching the form when the modal goes away
+  useEffect(() => () => cancelSubmitWatch(cancelSubmitWatchRef), [])
 
   useEffect(() => {
     if (!isActive) {
+      cancelSubmitWatch(cancelSubmitWatchRef)
       if (iframeRef.current) {
         iframeRef.current.contentWindow?.document.close()
         iframeRef.current = null
@@ -52,6 +68,13 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
         iframeDoc.write(formHtml)
         iframeDoc.close()
         formReadyRef.current = true
+
+        // After writing, document.open() removes the window's listeners
+        const iframeWindow = iframeRef.current.contentWindow
+        if (iframeWindow) {
+          cancelSubmitWatch(cancelSubmitWatchRef)
+          cancelSubmitWatchRef.current = watchGatewayFormSubmit(iframeWindow)
+        }
       }
     }
   }, [

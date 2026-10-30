@@ -1,7 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { generateFormHtml, ThreeDSFormData } from './3ds'
+import {
+  generateFormHtml,
+  GATEWAY_FORM_SUBMIT_TIMEOUT_MS,
+  ThreeDSFormData,
+  watchGatewayFormSubmit,
+} from './3ds'
 
 jest.mock('../environments/runtimeEnvironment', () => ({
   getPublicRuntimeEnv: () => ({ basepath: '/greida' }),
@@ -199,5 +204,75 @@ describe('generateFormHtml', () => {
     expect(
       container.querySelector<HTMLInputElement>('input[name="MD"]')?.value,
     ).toBe('"><script src="https://evil.example"></script>')
+  })
+})
+
+describe('watchGatewayFormSubmit', () => {
+  let iframe: HTMLIFrameElement
+  let iframeWindow: Window
+  let submitSpy: jest.SpyInstance
+
+  beforeEach(() => {
+    jest.useFakeTimers()
+    jest.spyOn(console, 'error').mockImplementation(() => undefined)
+
+    iframe = document.createElement('iframe')
+    document.body.appendChild(iframe)
+    iframeWindow = iframe.contentWindow as Window
+    iframeWindow.document.body.innerHTML = generateFormHtml(baseData)
+
+    // The form belongs to the iframe's own window
+    const IframeFormElement = (
+      iframeWindow as Window & { HTMLFormElement: typeof HTMLFormElement }
+    ).HTMLFormElement
+    submitSpy = jest
+      .spyOn(IframeFormElement.prototype, 'submit')
+      .mockImplementation(() => undefined)
+  })
+
+  afterEach(() => {
+    iframe.remove()
+    jest.useRealTimers()
+    jest.restoreAllMocks()
+  })
+
+  it('submits the form when nothing has navigated the iframe in time', () => {
+    watchGatewayFormSubmit(iframeWindow)
+
+    jest.advanceTimersByTime(GATEWAY_FORM_SUBMIT_TIMEOUT_MS - 1)
+    expect(submitSpy).not.toHaveBeenCalled()
+
+    jest.advanceTimersByTime(1)
+    expect(submitSpy).toHaveBeenCalledTimes(1)
+    expect(submitSpy.mock.instances[0]).toBe(
+      iframeWindow.document.getElementById('webform0'),
+    )
+  })
+
+  it('does not submit again when the gateway script already navigated the iframe', () => {
+    watchGatewayFormSubmit(iframeWindow)
+
+    iframeWindow.dispatchEvent(new Event('beforeunload'))
+    jest.advanceTimersByTime(GATEWAY_FORM_SUBMIT_TIMEOUT_MS)
+
+    expect(submitSpy).not.toHaveBeenCalled()
+  })
+
+  it('does not submit after the watch is cancelled', () => {
+    const cancel = watchGatewayFormSubmit(iframeWindow)
+
+    cancel()
+    jest.advanceTimersByTime(GATEWAY_FORM_SUBMIT_TIMEOUT_MS)
+
+    expect(submitSpy).not.toHaveBeenCalled()
+  })
+
+  it('does nothing when the iframe has no 3DS form', () => {
+    iframeWindow.document.body.innerHTML = ''
+    watchGatewayFormSubmit(iframeWindow)
+
+    jest.advanceTimersByTime(GATEWAY_FORM_SUBMIT_TIMEOUT_MS)
+
+    expect(submitSpy).not.toHaveBeenCalled()
   })
 })
