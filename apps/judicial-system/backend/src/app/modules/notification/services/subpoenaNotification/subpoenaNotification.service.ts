@@ -1,5 +1,3 @@
-import { MessageDescriptor } from '@formatjs/intl'
-
 import {
   Inject,
   Injectable,
@@ -17,6 +15,7 @@ import {
   TrackedNotificationType,
 } from '@island.is/judicial-system/types'
 
+import { formatIcuMessage } from '../../../../messages'
 import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import {
@@ -55,15 +54,15 @@ export class SubpoenaNotificationService extends BaseNotificationService {
   private async sendEmails(
     theCase: Case,
     notificationType: TrackedNotificationType,
-    subject: MessageDescriptor,
-    body: MessageDescriptor,
+    subject: string,
+    body: string,
     to: { name?: string; email?: string }[],
   ) {
-    const formattedSubject = this.formatMessage(subject, {
+    const formattedSubject = formatIcuMessage(subject, {
       courtCaseNumber: theCase.courtCaseNumber,
     })
 
-    const formattedBody = this.formatMessage(body, {
+    const formattedBody = formatIcuMessage(body, {
       courtCaseNumber: theCase.courtCaseNumber,
       linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
       linkEnd: '</a>',

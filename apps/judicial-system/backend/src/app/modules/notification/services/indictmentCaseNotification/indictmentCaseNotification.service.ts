@@ -27,7 +27,7 @@ import {
   formatDefenderRoute,
   formatPostponedCourtDateEmailNotification,
 } from '../../../../formatters'
-import { notifications } from '../../../../messages'
+import { formatIcuMessage, notifications } from '../../../../messages'
 import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import {
@@ -105,7 +105,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   private async sendCriminalRecordFilesUploadedNotification(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    const formattedSubject = this.formatMessage(
+    const formattedSubject = formatIcuMessage(
       strings.criminalRecordFilesUploadedEmail.subject,
       {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -114,7 +114,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     const courtName =
       theCase.court && theCase.court.name ? theCase.court.name : undefined
 
-    const formattedBody = this.formatMessage(
+    const formattedBody = formatIcuMessage(
       strings.criminalRecordFilesUploadedEmail.body,
       {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -131,7 +131,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       formattedBody,
       [
         {
-          name: this.formatMessage(
+          name: formatIcuMessage(
             notifications.emailNames.publicProsecutorCriminalRecords,
           ),
           email: this.config.email.publicProsecutorCriminalRecordsEmail,
