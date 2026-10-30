@@ -1,11 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 
-import {
-  AlertBanner,
-  Box,
-  Input,
-  Text,
-} from '@island.is/island-ui/core'
+import { AlertBanner, Box, Input, Text } from '@island.is/island-ui/core'
 import { ADMIN_USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {
   FormContentContainer,
@@ -100,9 +95,8 @@ export const ServiceInterruptionBannerAdmin = () => {
           Gulur borði
         </Text>
         <Text marginBottom={5}>
-          Stjórna skilaboðum sem birtast í gula viðvörunarborðanum. Tómur
-          texti (eða aðeins bil) þýðir að engir skilaboð birtast fyrir þá
-          tegund.
+          Stjórna skilaboðum sem birtast í gula viðvörunarborðanum. Tómur texti
+          (eða aðeins bil) þýðir að engir skilaboð birtast fyrir þá tegund.
         </Text>
         {loading ? (
           <Skeleton />
@@ -168,25 +162,22 @@ export const ServiceInterruptionBannerAdmin = () => {
           </Box>
         )}
       </FormContentContainer>
-      {!loading &&
-        isAuthorized &&
-        !error &&
-        data?.serviceInterruptionBanner && (
-          <FormContentContainer isFooter>
-            <FormFooter
-              previousUrl={ADMIN_USERS_ROUTE}
-              previousButtonText="Hætta við"
-              actions={[
-                {
-                  text: 'Vista',
-                  onClick: save,
-                  disabled: updating,
-                  loading: updating,
-                },
-              ]}
-            />
-          </FormContentContainer>
-        )}
+      {!loading && isAuthorized && !error && data?.serviceInterruptionBanner && (
+        <FormContentContainer isFooter>
+          <FormFooter
+            previousUrl={ADMIN_USERS_ROUTE}
+            previousButtonText="Hætta við"
+            actions={[
+              {
+                text: 'Vista',
+                onClick: save,
+                disabled: updating,
+                loading: updating,
+              },
+            ]}
+          />
+        </FormContentContainer>
+      )}
     </Box>
   )
 }

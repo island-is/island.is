@@ -30,23 +30,15 @@ const ServiceInterruptionBanner = () => {
 
   if (hasMessage(banner.globalMessage)) {
     displayMessage = banner.globalMessage.trim()
-  } else if (
-    isProsecutionUser(user) &&
-    hasMessage(banner.prosecutorMessage)
-  ) {
+  } else if (isProsecutionUser(user) && hasMessage(banner.prosecutorMessage)) {
     displayMessage = banner.prosecutorMessage.trim()
-  } else if (
-    isDistrictCourtUser(user) &&
-    hasMessage(banner.courtMessage)
-  ) {
+  } else if (isDistrictCourtUser(user) && hasMessage(banner.courtMessage)) {
     displayMessage = banner.courtMessage.trim()
   } else {
     return null
   }
 
-  const title = hasMessage(banner.title)
-    ? banner.title.trim()
-    : DEFAULT_TITLE
+  const title = hasMessage(banner.title) ? banner.title.trim() : DEFAULT_TITLE
 
   return (
     <AlertBanner

@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Patch,
-  UseGuards,
-} from '@nestjs/common'
+import { Body, Controller, Get, Inject, Patch, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
