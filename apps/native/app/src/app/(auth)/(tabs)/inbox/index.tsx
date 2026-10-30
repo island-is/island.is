@@ -624,6 +624,7 @@ export default function InboxScreen() {
               selectState ? (
                 <Pressable
                   onPress={resetSelectState}
+                  accessibilityRole="button"
                   style={{
                     height: 46,
                     justifyContent: 'center',

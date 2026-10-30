@@ -75,20 +75,20 @@ const getSessionBookingsAutofill = (
 
   if (workingCase.translator) {
     autofillSessionBookings.push(
-      `${formatMessage(m.sections.sessionBookings.autofillTranslator, {
-        translator: workingCase.translator,
-      })}\n\n`,
+      `${formatMessage(
+        {
+          id: m.sections.sessionBookings.autofillTranslator,
+          defaultMessage: m.sections.sessionBookings.autofillTranslator,
+        },
+        {
+          translator: workingCase.translator,
+        },
+      )}\n\n`,
     )
   }
 
   autofillSessionBookings.push(
-    `${formatMessage(
-      m.sections.sessionBookings.autofillRightToRemainSilent,
-    )}\n\n${formatMessage(
-      m.sections.sessionBookings.autofillCourtDocumentOne,
-    )}\n\n${formatMessage(
-      m.sections.sessionBookings.autofillAccusedPlea,
-    )}\n\n${formatMessage(m.sections.sessionBookings.autofillAllPresent)}`,
+    `${m.sections.sessionBookings.autofillRightToRemainSilent}\n\n${m.sections.sessionBookings.autofillCourtDocumentOne}\n\n${m.sections.sessionBookings.autofillAccusedPlea}\n\n${m.sections.sessionBookings.autofillAllPresent}`,
   )
   return autofillSessionBookings.length > 0
     ? autofillSessionBookings.join('')
@@ -195,27 +195,23 @@ const CourtRecord: FC = () => {
             workingCase.type === CaseType.RESTRAINING_ORDER ||
             workingCase.type ===
               CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME
-              ? formatMessage(
-                  m.sections.sessionBookings.autofillRestrainingOrder,
-                )
+              ? m.sections.sessionBookings.autofillRestrainingOrder
               : workingCase.type === CaseType.EXPULSION_FROM_HOME
-              ? formatMessage(
-                  m.sections.sessionBookings.autofillExpulsionFromHome,
-                )
+              ? m.sections.sessionBookings.autofillExpulsionFromHome
               : workingCase.type === CaseType.AUTOPSY
-              ? formatMessage(m.sections.sessionBookings.autofillAutopsy)
+              ? m.sections.sessionBookings.autofillAutopsy
               : workingCase.sessionArrangements ===
                 SessionArrangements.ALL_PRESENT
               ? getSessionBookingsAutofill(formatMessage, workingCase)
               : workingCase.sessionArrangements ===
                 SessionArrangements.ALL_PRESENT_SPOKESPERSON
-              ? formatMessage(m.sections.sessionBookings.autofillSpokeperson)
+              ? m.sections.sessionBookings.autofillSpokeperson
               : workingCase.sessionArrangements ===
                 SessionArrangements.PROSECUTOR_PRESENT
-              ? formatMessage(m.sections.sessionBookings.autofillProsecutor)
+              ? m.sections.sessionBookings.autofillProsecutor
               : workingCase.sessionArrangements ===
                 SessionArrangements.NONE_PRESENT
-              ? formatMessage(m.sections.sessionBookings.autofillNonePresent)
+              ? m.sections.sessionBookings.autofillNonePresent
               : undefined,
           endOfSessionBookings:
             endOfSessionBookings.length > 0
@@ -319,17 +315,15 @@ const CourtRecord: FC = () => {
         title={formatMessage(titles.court.investigationCases.courtRecord)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.sections.title)}</PageTitle>
+        <PageTitle>{m.sections.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={stack({ gap: 5 })}>
           <Box component="section">
             <BlueBox className={stack({ gap: 2 })}>
               <DateTime
                 name="courtStartDate"
-                datepickerLabel={formatMessage(
-                  m.sections.courtStartDate.dateLabel,
-                )}
-                timeLabel={formatMessage(m.sections.courtStartDate.timeLabel)}
+                datepickerLabel={m.sections.courtStartDate.dateLabel}
+                timeLabel={m.sections.courtStartDate.timeLabel}
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
@@ -352,12 +346,10 @@ const CourtRecord: FC = () => {
               <Input
                 data-testid="courtLocation"
                 name="courtLocation"
-                tooltip={formatMessage(m.sections.courtLocation.tooltip)}
-                label={formatMessage(m.sections.courtLocation.label)}
+                tooltip={m.sections.courtLocation.tooltip}
+                label={m.sections.courtLocation.label}
                 value={courtLocationInput.value || ''}
-                placeholder={formatMessage(
-                  m.sections.courtLocation.placeholder,
-                )}
+                placeholder={m.sections.courtLocation.placeholder}
                 onChange={(evt) =>
                   courtLocationInput.onChange(evt.target.value)
                 }
@@ -408,17 +400,15 @@ const CourtRecord: FC = () => {
           </Box>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(m.sections.sessionBookings.title)}
-              tooltip={formatMessage(m.sections.sessionBookings.tooltip)}
+              title={m.sections.sessionBookings.title}
+              tooltip={m.sections.sessionBookings.tooltip}
             />
             <Input
               data-testid="sessionBookings"
               name="sessionBookings"
-              label={formatMessage(m.sections.sessionBookings.label)}
+              label={m.sections.sessionBookings.label}
               value={sessionBookingsInput.value ?? ''}
-              placeholder={formatMessage(
-                m.sections.sessionBookings.placeholder,
-              )}
+              placeholder={m.sections.sessionBookings.placeholder}
               onChange={(evt) =>
                 sessionBookingsInput.onChange(evt.target.value)
               }
@@ -432,7 +422,7 @@ const CourtRecord: FC = () => {
           </Box>
           {workingCase.conclusion && (
             <Box component="section">
-              <SectionHeading title={formatMessage(m.sections.conclusion)} />
+              <SectionHeading title={m.sections.conclusion} />
               <BlueBox>
                 <Text>{workingCase.conclusion}</Text>
               </BlueBox>
@@ -446,17 +436,13 @@ const CourtRecord: FC = () => {
             />
           </Box>
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(m.sections.endOfSessionBookings.title)}
-            />
+            <SectionHeading title={m.sections.endOfSessionBookings.title} />
             <Input
               data-testid="endOfSessionBookings"
               name="endOfSessionBookings"
-              label={formatMessage(m.sections.endOfSessionBookings.label)}
+              label={m.sections.endOfSessionBookings.label}
               value={endOfSessionBookingsInput.value || ''}
-              placeholder={formatMessage(
-                m.sections.endOfSessionBookings.placeholder,
-              )}
+              placeholder={m.sections.endOfSessionBookings.placeholder}
               onChange={(evt) =>
                 endOfSessionBookingsInput.onChange(evt.target.value)
               }
@@ -465,16 +451,12 @@ const CourtRecord: FC = () => {
             />
           </Box>
           <Box>
-            <SectionHeading
-              title={formatMessage(m.sections.endOfSessionTitle)}
-            />
+            <SectionHeading title={m.sections.endOfSessionTitle} />
             <BlueBox>
               <DateTime
                 name="courtEndTime"
-                datepickerLabel={formatMessage(
-                  m.sections.courtEndTime.dateLabel,
-                )}
-                timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
+                datepickerLabel={m.sections.courtEndTime.dateLabel}
+                timeLabel={m.sections.courtEndTime.timeLabel}
                 minDate={
                   workingCase.courtStartDate
                     ? new Date(workingCase.courtStartDate)
@@ -550,10 +532,16 @@ const CourtRecord: FC = () => {
           }
           infoBoxText={
             hasMissingInfoInRulingStep
-              ? formatMessage(m.sections.nextButtonInfo.text, {
-                  isCompletedWithoutRuling:
-                    workingCase.isCompletedWithoutRuling,
-                })
+              ? formatMessage(
+                  {
+                    id: m.sections.nextButtonInfo.text,
+                    defaultMessage: m.sections.nextButtonInfo.text,
+                  },
+                  {
+                    isCompletedWithoutRuling:
+                      workingCase.isCompletedWithoutRuling,
+                  },
+                )
               : ''
           }
         />

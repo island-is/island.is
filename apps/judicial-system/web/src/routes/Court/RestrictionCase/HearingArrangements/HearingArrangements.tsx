@@ -2,7 +2,7 @@ import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Stack, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
   DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE,
@@ -35,6 +35,7 @@ import {
   useCase,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -158,12 +159,12 @@ export const HearingArrangements = () => {
       />
       <FormContentContainer>
         <ArraignmentAlert />
-        <PageTitle>{formatMessage(m.title)}</PageTitle>
+        <PageTitle>{m.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.requestedCourtDate.title)}
+              {m.sections.requestedCourtDate.title}
             </Text>
           </Box>
           <Box marginBottom={3}>
@@ -176,32 +177,27 @@ export const HearingArrangements = () => {
             />
           </Box>
         </Box>
-        <Box component="section" marginBottom={8}>
+        <Box component="section" marginBottom={8} className={stack({ gap: 3 })}>
           <SectionHeading
-            title={formatMessage(
-              defenderInfo.restrictionCases.sections.defender.title,
-            )}
+            title={defenderInfo.restrictionCases.sections.defender.title}
             tooltip={
               <Tooltip
-                text={formatMessage(
-                  defenderInfo.restrictionCases.sections.defender.tooltip,
-                )}
+                text={defenderInfo.restrictionCases.sections.defender.tooltip}
                 placement="right"
               />
             }
+            marginBottom={0}
           />
-          <Stack space={3}>
-            {workingCase.defendants?.map((defendant, _index, defendants) => (
-              <BlueBox key={defendant.id}>
-                <RequestCaseDefenderInfo
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                  defendant={defendant}
-                  showDefendantName={defendants.length > 1}
-                />
-              </BlueBox>
-            ))}
-          </Stack>
+          {workingCase.defendants?.map((defendant, _index, defendants) => (
+            <BlueBox key={defendant.id}>
+              <RequestCaseDefenderInfo
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+                defendant={defendant}
+                showDefendantName={defendants.length > 1}
+              />
+            </BlueBox>
+          ))}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

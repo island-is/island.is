@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
 import {
@@ -37,7 +36,6 @@ const Statistics = () => {
     institution?: { label: string; value: string }
   }>({})
 
-  const { formatMessage } = useIntl()
   const { districtCourts } = useInstitution()
 
   const queryVariables = useMemo(() => {
@@ -109,9 +107,7 @@ const Statistics = () => {
                                 {'Öll mál '}
                                 <Tooltip
                                   placement="right"
-                                  text={formatMessage(
-                                    strings.allCasesStatisticsTooltip,
-                                  )}
+                                  text={strings.allCasesStatisticsTooltip}
                                 />
                               </Text>
                             ),
@@ -134,9 +130,7 @@ const Statistics = () => {
                                 {'R mál '}
                                 <Tooltip
                                   placement="right"
-                                  text={formatMessage(
-                                    strings.requestCaseStatisticsTooltip,
-                                  )}
+                                  text={strings.requestCaseStatisticsTooltip}
                                 />
                               </Text>
                             ),
@@ -176,9 +170,7 @@ const Statistics = () => {
                                 {'S mál '}
                                 <Tooltip
                                   placement="right"
-                                  text={formatMessage(
-                                    strings.indictmentStatisticsTooltip,
-                                  )}
+                                  text={strings.indictmentStatisticsTooltip}
                                 />
                               </Text>
                             ),
@@ -219,9 +211,7 @@ const Statistics = () => {
                                 {'Fyrirköll '}
                                 <Tooltip
                                   placement="right"
-                                  text={formatMessage(
-                                    strings.subpoenaStatisticsTooltip,
-                                  )}
+                                  text={strings.subpoenaStatisticsTooltip}
                                 />
                               </Text>
                             ),

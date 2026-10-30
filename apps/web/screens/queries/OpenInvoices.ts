@@ -145,6 +145,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP = gql`
         id
         date
         amount
+        isPartialPayment
         invoice {
           id
           number

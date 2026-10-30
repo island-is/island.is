@@ -961,4 +961,26 @@ describe('PaymentFlowService', () => {
       )
     })
   })
+
+  describe('validateChargePaymentMethod', () => {
+    const cardOnlyFlow = {
+      id: uuid(),
+      availablePaymentMethods: [PaymentMethod.CARD],
+    }
+
+    it('allows a method stored on the flow', () => {
+      expect(() =>
+        service.validateChargePaymentMethod(cardOnlyFlow, PaymentMethod.CARD),
+      ).not.toThrow()
+    })
+
+    it.each([PaymentMethod.INVOICE, PaymentMethod.BANK_TRANSFER])(
+      'refuses %s on a flow that does not offer it',
+      (paymentMethod) => {
+        expect(() =>
+          service.validateChargePaymentMethod(cardOnlyFlow, paymentMethod),
+        ).toThrow(PaymentServiceCode.InvalidPaymentMethods)
+      },
+    )
+  })
 })

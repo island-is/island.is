@@ -718,13 +718,6 @@ export class CaseService {
     }
   }
 
-  private addMessagesForDefenderEmailChangeToQueue(
-    theCase: Case,
-    user: TUser,
-  ): void {
-    this.addMessagesForDeliverDefendantToCourtToQueue(theCase, user)
-  }
-
   private addMessagesForProsecutorChangeToQueue(
     theCase: Case,
     user: TUser,
@@ -1253,15 +1246,7 @@ export class CaseService {
           this.addMessagesForProsecutorChangeToQueue(updatedCase, user)
         }
 
-        if (
-          !isIndictment &&
-          updatedCase.defenderEmail !== theCase.defenderEmail
-        ) {
-          // New defender email
-          this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
-        }
-
-        // Same mutual exclusion as prosecutor/defender above and appeal roles:
+        // Same mutual exclusion as prosecutor above and appeal roles:
         // connect (number change) syncs current roles; this branch handles
         // later assignment changes only.
         if (
@@ -1484,20 +1469,6 @@ export class CaseService {
       await this.defendantService.createForNewCase(
         theCase.id,
         defendant,
-        transaction,
-      )
-    }
-
-    if (isRequestCase(caseToCreate.type)) {
-      await this.defendantService.syncDefenderToAllDefendants(
-        theCase.id,
-        {
-          defenderName: caseToCreate.defenderName,
-          defenderNationalId: caseToCreate.defenderNationalId,
-          defenderEmail: caseToCreate.defenderEmail,
-          defenderPhoneNumber: caseToCreate.defenderPhoneNumber,
-          requestSharedWithDefender: caseToCreate.requestSharedWithDefender,
-        },
         transaction,
       )
     }
@@ -2252,6 +2223,21 @@ export class CaseService {
     // payload without mutating the original update object.
     const { defendantEventLogDecisions, ...caseUpdate }: UpdateCase = update
 
+    // Turning civil claims off deletes the claimants in the controller; clear
+    // the stored civil demands text here so a later indictment PDF cannot
+    // pick up leftover wording after the user answered "nei". Drop any
+    // civilDemands on the same update so handleCaseStringUpdates cannot
+    // upsert the string back after this delete.
+    if (caseUpdate.hasCivilClaims === false) {
+      delete caseUpdate.civilDemands
+
+      await this.caseStringRepositoryService.deleteByCaseAndType(
+        theCase.id,
+        StringType.CIVIL_DEMANDS,
+        { transaction },
+      )
+    }
+
     await this.handleDateLogUpdates(theCase, caseUpdate, transaction)
     await this.handleCaseStringUpdates(theCase, caseUpdate, transaction)
 
@@ -2381,21 +2367,6 @@ export class CaseService {
       await this.caseRepositoryService.update(theCase.id, caseUpdate, {
         transaction,
       })
-    }
-
-    // Request-case sharing timing is still dual-written from the case onto
-    // every defendant so that a case-level write reaches the defendant rows
-    // that access is decided on. Defender contact fields are not fanned out:
-    // each defendant has its own defender.
-    if (
-      isRequestCase(theCase.type) &&
-      caseUpdate.requestSharedWithDefender !== undefined
-    ) {
-      await this.defendantService.syncDefenderToAllDefendants(
-        theCase.id,
-        { requestSharedWithDefender: caseUpdate.requestSharedWithDefender },
-        transaction,
-      )
     }
 
     // Update police case numbers of case files if necessary
@@ -2883,10 +2854,6 @@ export class CaseService {
       'type',
       'description',
       'policeCaseNumbers',
-      'defenderName',
-      'defenderNationalId',
-      'defenderEmail',
-      'defenderPhoneNumber',
       'defendantWaivesRightToCounsel',
       'leadInvestigator',
       'courtId',

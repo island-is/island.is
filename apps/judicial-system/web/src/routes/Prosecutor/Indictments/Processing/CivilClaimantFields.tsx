@@ -277,7 +277,7 @@ export const CivilClaimantFields = ({
         <Box marginBottom={2}>
           <Checkbox
             name={`civilClaimantNoNationalId-${civilClaimant.id}`}
-            label={formatMessage(strings.civilClaimantNoNationalId)}
+            label={strings.civilClaimantNoNationalId}
             checked={Boolean(civilClaimant.noNationalId)}
             onChange={() => {
               handleSetAndSendCivilClaimantToServer({
@@ -353,7 +353,7 @@ export const CivilClaimantFields = ({
                 })
               }
             >
-              {formatMessage(strings.addDefender)}
+              {strings.addDefender}
             </Button>
           )}
         </Box>
@@ -364,7 +364,7 @@ export const CivilClaimantFields = ({
                 <RadioButton
                   name={lawyerCheckboxId}
                   id={lawyerCheckboxId}
-                  label={formatMessage(strings.lawyer)}
+                  label={strings.lawyer}
                   large
                   backgroundColor="white"
                   onChange={() =>
@@ -380,7 +380,7 @@ export const CivilClaimantFields = ({
                 <RadioButton
                   name={legalProtectorCheckboxId}
                   id={legalProtectorCheckboxId}
-                  label={formatMessage(strings.legalRightsProtector)}
+                  label={strings.legalRightsProtector}
                   large
                   backgroundColor="white"
                   onChange={() =>
@@ -453,7 +453,10 @@ export const CivilClaimantFields = ({
             <Checkbox
               name={`civilClaimantShareFilesWithDefender-${civilClaimant.id}`}
               label={formatMessage(
-                strings.civilClaimantShareFilesWithDefender,
+                {
+                  id: strings.civilClaimantShareFilesWithDefender,
+                  defaultMessage: strings.civilClaimantShareFilesWithDefender,
+                },
                 {
                   defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
                 },
@@ -471,7 +474,11 @@ export const CivilClaimantFields = ({
                 civilClaimant.spokespersonIsLawyer === undefined
               }
               tooltip={formatMessage(
-                strings.civilClaimantShareFilesWithDefenderTooltip,
+                {
+                  id: strings.civilClaimantShareFilesWithDefenderTooltip,
+                  defaultMessage:
+                    strings.civilClaimantShareFilesWithDefenderTooltip,
+                },
                 {
                   defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
                 },

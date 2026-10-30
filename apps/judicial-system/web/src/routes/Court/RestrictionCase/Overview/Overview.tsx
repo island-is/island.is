@@ -103,11 +103,13 @@ export const JudgeOverview = () => {
         {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(
-                rcCourtOverview.sections.openedByDefenderAlert.title,
-              )}
+              title={rcCourtOverview.sections.openedByDefenderAlert.title}
               message={formatMessage(
-                rcCourtOverview.sections.openedByDefenderAlert.text,
+                {
+                  id: rcCourtOverview.sections.openedByDefenderAlert.text,
+                  defaultMessage:
+                    rcCourtOverview.sections.openedByDefenderAlert.text,
+                },
                 { when: formatDate(workingCase.openedByDefender, 'PPPp') },
               )}
               type="info"
@@ -116,9 +118,15 @@ export const JudgeOverview = () => {
           </Box>
         )}
         <PageTitle>
-          {formatMessage(rcCourtOverview.sections.title, {
-            caseType: workingCase.type,
-          })}
+          {formatMessage(
+            {
+              id: rcCourtOverview.sections.title,
+              defaultMessage: rcCourtOverview.sections.title,
+            },
+            {
+              caseType: workingCase.type,
+            },
+          )}
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
@@ -290,7 +298,7 @@ export const JudgeOverview = () => {
           previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(rcCourtOverview.continueButton.label),
+              text: rcCourtOverview.continueButton.label,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

@@ -16,11 +16,12 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CurrentHttpUser,
   JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { indictmentCases } from '@island.is/judicial-system/types'
+import { indictmentCases, type User } from '@island.is/judicial-system/types'
 
 import {
   courtOfAppealsAssistantRule,
@@ -90,6 +91,7 @@ export class AppealCourtSessionController {
   async create(
     @Param('caseId') caseId: string,
     @Param('appealCaseId') appealCaseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentAppealCase() appealCase: AppealCase,
     @Body() dto: CreateAppealCourtSessionDto,
@@ -104,6 +106,7 @@ export class AppealCourtSessionController {
       theCase,
       appealCase,
       dto,
+      user,
       transaction,
     )
   }
@@ -123,6 +126,7 @@ export class AppealCourtSessionController {
     @Param('caseId') caseId: string,
     @Param('appealCaseId') appealCaseId: string,
     @Param('appealCourtSessionId') appealCourtSessionId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentAppealCase() appealCase: AppealCase,
     @CurrentAppealCourtSession() session: AppealCourtSession,
@@ -139,6 +143,7 @@ export class AppealCourtSessionController {
       appealCase,
       session,
       dto,
+      user,
       transaction,
     )
   }
@@ -158,6 +163,7 @@ export class AppealCourtSessionController {
     @Param('caseId') caseId: string,
     @Param('appealCaseId') appealCaseId: string,
     @Param('appealCourtSessionId') appealCourtSessionId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentAppealCase() appealCase: AppealCase,
     @CurrentAppealCourtSession() session: AppealCourtSession,
@@ -172,6 +178,7 @@ export class AppealCourtSessionController {
       theCase,
       appealCase,
       session,
+      user,
       transaction,
     )
 

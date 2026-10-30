@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { SequelizeModule } from '@nestjs/sequelize'
 import {
   ApplicationApiCoreModule,
   ContentfulTranslationModule,
@@ -10,6 +11,7 @@ import {
 } from '@island.is/cms-translations'
 import { TranslationController } from './translation.controller'
 import { ApplicationTranslationService } from './application-translation.service'
+import { ApplicationTranslationPublish } from './application-translation-publish.model'
 
 @Module({
   imports: [
@@ -17,6 +19,7 @@ import { ApplicationTranslationService } from './application-translation.service
     ContentfulTranslationModule,
     FeatureFlagModule,
     CmsTranslationCacheModule,
+    SequelizeModule.forFeature([ApplicationTranslationPublish]),
   ],
   providers: [CmsTranslationCacheService, ApplicationTranslationService],
   controllers: [TranslationController],

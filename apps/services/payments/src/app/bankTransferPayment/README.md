@@ -115,12 +115,24 @@ sequenceDiagram
     B-->>SVC: { status: SUCCESS }
     SVC->>SVC: finalizeBankTransferSuccess (fulfillment + payment_completed)
     SVC->>FJS: create PAID charge (Milli, RRN = providerPaymentId)
-    FE->>U: Receipt screen
+    FE->>U: Back to the caller (redirectToReturnUrlOnSuccess), or the receipt screen
 ```
 
 The webhook and the FE polling loop are **two independent paths into the same `verify`**. Only the
 terminal state transition is idempotent: one caller wins the compare-and-set and emits the event.
 The loser still reaches `createFjsCharge` — see [Settlement & FJS charge](#settlement--fjs-charge).
+
+For a **debt flow** `verify` reports the flow, not just the transfer: it stays `pending` until FJS
+answered or the worker took over, which may be the other path's attempt, and a payment FJS
+rejected comes back as `success` with `isClosed: true`. The FE shows the refund-pending error for
+it instead of finishing the payment. A paid debt flow whose settlement has no row is not
+short-circuited: `verify` goes through Blikk and the idempotent finaliser again, so a settlement
+that never got started is tried on the next poll rather than left to the worker.
+
+The organisation is told the same way as for a card: `payment_completed` once FJS answered or the
+worker took over, `payment_failed` instead when FJS rejected the payment. The caller whose attempt
+FJS answered sends `payment_completed`, even when the other path recorded the transfer, and
+`hasPaymentCompletedEvent` keeps it to one event per attempt.
 
 ## Blikk status model
 
@@ -180,7 +192,11 @@ local hook state.
    `window.location.assign(scaRedirectUrl)`.
 3. **Pending screen** (`paymentStatus === bank_transfer_pending`), rendered by
    [`BankTransferPendingScreen`](../../../../../../apps/payments/components/BankTransferPendingScreen/BankTransferPendingScreen.tsx).
-   The FE polls `verify` in the background and reloads on a terminal result. What renders is
+   The FE polls `verify` in the background. On `success` it finishes like a card payment: back to
+   the caller when the flow sets `redirectToReturnUrlOnSuccess`, otherwise a reload to the
+   receipt. A failure, or a closed debt flow, shows the error screen. The hard timeout at Blikk's
+   expiry is stretched by two minutes while the last poll said `processing`, so a transfer FJS is
+   still registering past its expiry is not reported expired. What renders is
    driven by the provider-neutral `bankTransferPendingStatus` sub-status (from the `getPaymentFlow`
    overlay at SSR, live-updated by the `verify` poll response) **combined with** the SCA URL —
    never by the URL alone:
@@ -410,7 +426,6 @@ Bank-transfer refunds reuse the FJS-charge deletion mechanism, orchestrated by t
 | Flag                                             | Scope                   |
 | ------------------------------------------------ | ----------------------- |
 | `isIslandisBankTransferPaymentEnabled`           | Global                  |
-| `isIslandisBankTransferPaymentAllowedForUser`    | Per-user (ConfigCat)    |
 | `isIslandisBankTransferPaymentAllowedForCompany` | Per-company (ConfigCat) |
 
 All are defined in [`features.ts`](../../../../../../libs/feature-flags/src/lib/features.ts).
@@ -418,7 +433,6 @@ All are defined in [`features.ts`](../../../../../../libs/feature-flags/src/lib/
 - **`isIslandisBankTransferPaymentEnabled`** — the offer kill-switch. Two effects:
   1. Guards the bank-transfer REST controller via `FeatureFlagGuard` — off → `create` / `verify` / `cancel` reject.
   2. Gates inclusion of `bank_transfer` in a flow's `availablePaymentMethods` at flow creation (see [`paymentFlow.service.ts`](../paymentFlow/paymentFlow.service.ts)) — off → the method is never listed, so the selector never shows a method whose endpoints are also closed. Combined with the payer check: individuals are offered it, companies only when `isIslandisBankTransferPaymentAllowedForCompany` allows them, temporary kennitalas never.
-- **`isIslandisBankTransferPaymentAllowedForUser`** — frontend-only. Evaluated in the FE `getServerSideProps` to force-surface `bank_transfer` in the selector during rollout/testing, on top of whatever the backend already lists. Independent of the global flag and does **not** unlock the endpoints. Never applies to company payers, which only `isIslandisBankTransferPaymentAllowedForCompany` controls.
 - **`isIslandisBankTransferPaymentAllowedForCompany`** — the per-company rollout of [company payers](#company-payers), enforced in `services-payments`. Evaluated through `FeatureFlagService` with the company as the ConfigCat user (`identifier` = the company's kennitala, `subjectType` = `legalEntity`), so it can target single companies, or all companies via `subjectType`. Two effects, both on top of the global flag:
   1. Flow creation lists `bank_transfer` for a company payer only when it is on for that company.
   2. `create` refuses a company payer when it is off for that company, so neither a flow created while it was on nor a direct call can start a company transfer once it is turned off.
@@ -449,11 +463,15 @@ Bank-transfer log lines carry the context from
 | `correlationId` | The attempt's row id.                                                                   |
 | `rrn`           | Blikk's payment id.                                                                     |
 | `payerType`     | `company` or `person`. Read from the flow's payer, or from the row's `actorNationalId`. |
+| `bankCode`      | The 4-digit bank part of the payer's account, stored on the row at create.              |
+| `bank`          | The bank that `bankCode` names, or the code itself for a bank not in the map.           |
 
 A field the call site does not know is left out rather than filled with a placeholder. Filter
 company payers in Datadog with `service:services-payments @payerType:company`. For person payers,
 search for `@payerType:person` rather than negating `company`, which also matches lines without
-the field. The national ids themselves are never logged.
+the field. The national ids themselves are never logged, nor is the payer's account number.
+`@bank` and `@bankCode` are on lines from this release onward; older rows have no bank code and
+their lines carry neither field.
 
 Lines that do not carry `payerType`, so a `payerType` filter leaves them out:
 

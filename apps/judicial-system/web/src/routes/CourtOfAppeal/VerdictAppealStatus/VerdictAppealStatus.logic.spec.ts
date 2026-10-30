@@ -11,6 +11,7 @@ import {
   getVerdictAppealStatusHeaderLines,
   isAppealCourtSessionComplete,
   isAppealCourtSessionEmpty,
+  toAppealCourtSessionDraft,
 } from './VerdictAppealStatus.logic'
 
 describe('getVerdictAppealStatusHeaderLines', () => {
@@ -110,5 +111,26 @@ describe('court session draft', () => {
         courtRoom: '1',
       }),
     ).toMatch(/^12\.12\.2026 kl\. \d\d:\d\d · Dómsalur 1$/)
+  })
+
+  it('turns a booked session into a draft the form can hold', () => {
+    const draft = toAppealCourtSessionDraft({
+      sessionType: AppealCourtSessionType.VERDICT,
+      sessionDate: '2026-12-12T14:00:00.000Z',
+      courtRoom: '1',
+    })
+
+    expect(draft.sessionType).toBe(AppealCourtSessionType.VERDICT)
+    expect(draft.sessionDate).toEqual(new Date('2026-12-12T14:00:00.000Z'))
+    expect(draft.courtRoom).toBe('1')
+    expect(isAppealCourtSessionComplete(draft)).toBe(true)
+  })
+
+  it('leaves out what the booked session lacks', () => {
+    expect(toAppealCourtSessionDraft({ courtRoom: null })).toEqual({
+      sessionType: undefined,
+      sessionDate: undefined,
+      courtRoom: undefined,
+    })
   })
 })
