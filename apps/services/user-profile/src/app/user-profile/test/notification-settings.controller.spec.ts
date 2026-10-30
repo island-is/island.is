@@ -14,9 +14,10 @@ import { FixtureFactory } from '../../../../test/fixture-factory'
 import { UserProfile } from '../models/userProfile.model'
 import { BlockedNotification } from '../models/blockedNotification.model'
 
-const path = '/v2/users/.national-id/notification-settings'
+const basePath = '/v2/users/.national-id'
+const path = `${basePath}?include=notificationSettings`
 
-describe('UserProfileController - GET /v2/users/.national-id/notification-settings', () => {
+describe('UserProfileController - GET /v2/users/.national-id?include=notificationSettings', () => {
   describe('No auth', () => {
     it('should return 401 when user is not authenticated', async () => {
       const app = await setupAppWithoutAuth({
@@ -97,7 +98,50 @@ describe('UserProfileController - GET /v2/users/.national-id/notification-settin
           .set('X-Param-National-Id', nationalId)
 
         expect(res.status).toBe(200)
-        expect(res.body).toEqual({ nationalId, blockedCategories: [] })
+        expect(res.body).toMatchObject({ nationalId, blockedCategories: [] })
+      })
+
+      it('should return 400 for an unknown include value', async () => {
+        const res = await server
+          .get(`${basePath}?include=unknown`)
+          .set('X-Param-National-Id', createNationalId('person'))
+
+        expect(res.status).toBe(400)
+      })
+
+      it('should accept multiple comma separated include values', async () => {
+        const nationalId = createNationalId('person')
+
+        const res = await server
+          .get(`${basePath}?include=notificationSettings,notificationSettings`)
+          .set('X-Param-National-Id', nationalId)
+
+        expect(res.status).toBe(200)
+        expect(res.body.blockedCategories).toEqual([])
+      })
+
+      it('should return 400 when any include value is unknown', async () => {
+        const res = await server
+          .get(`${basePath}?include=notificationSettings,unknown`)
+          .set('X-Param-National-Id', createNationalId('person'))
+
+        expect(res.status).toBe(400)
+      })
+
+      it('should not return blocked categories unless requested', async () => {
+        const nationalId = createNationalId('person')
+        await fixtureFactory.createUserProfile({ nationalId })
+        await fixtureFactory.createBlockedNotification({
+          nationalId,
+          senderId: createNationalId('company'),
+        })
+
+        const res = await server
+          .get(basePath)
+          .set('X-Param-National-Id', nationalId)
+
+        expect(res.status).toBe(200)
+        expect(res.body).not.toHaveProperty('blockedCategories')
       })
 
       it('should return the blocked categories of the requested user only', async () => {
@@ -122,7 +166,7 @@ describe('UserProfileController - GET /v2/users/.national-id/notification-settin
           .set('X-Param-National-Id', nationalId)
 
         expect(res.status).toBe(200)
-        expect(res.body).toEqual({
+        expect(res.body).toMatchObject({
           nationalId,
           blockedCategories: [
             {

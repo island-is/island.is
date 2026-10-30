@@ -12,7 +12,11 @@ import {
   EinstaklingurDTONafnItar,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
-import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
+import {
+  UserProfileDto,
+  UserProfileControllerFindUserProfileIncludeEnum as UserProfileInclude,
+  V2UsersApi,
+} from '@island.is/clients/user-profile'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -41,7 +45,6 @@ import { ActorNotification } from '../actor-notification.model'
 import { UserNotificationSender } from '../user-notification-sender.model'
 import {
   DEFAULT_CATEGORY,
-  getErrorMessage,
   isValidSenderId,
   mapToLocale,
   normalizeKennitala,
@@ -169,73 +172,71 @@ export class NotificationsWorkerService {
     return shouldDeliver
   }
 
-  // Whether the recipient has blocked the notification's sender and category.
-  // Fails open: if the settings cannot be fetched the notification is delivered.
-  private async isCategoryBlocked({
-    hasProfile,
+  /**
+   * The user's blocked categories are only needed (and fetched together with
+   * the user profile) for non-urgent notifications with a valid sender id
+   * while the feature flag is enabled.
+   */
+  private async shouldIncludeBlockedCategories({
     nationalId,
     senderId,
-    category,
     urgent,
-    messageId,
   }: {
-    hasProfile: boolean
     nationalId: string
     senderId?: string
-    category: string | null
     urgent?: boolean
-    messageId: string
   }): Promise<boolean> {
-    if (!hasProfile || urgent || !senderId) {
+    if (urgent || !senderId) {
       return false
     }
 
-    const normalizedSenderId = normalizeKennitala(senderId)
-    if (!isValidSenderId(normalizedSenderId)) {
+    if (!isValidSenderId(normalizeKennitala(senderId))) {
       return false
     }
 
-    const enabled = await this.featureFlagService.getValue(
+    return this.featureFlagService.getValue(
       Features.isNotificationBlockedCategoriesEnabled,
       false,
       { nationalId } as User,
     )
+  }
 
-    if (!enabled) {
+  // Whether the recipient has blocked the notification's sender and category.
+  private isCategoryBlocked({
+    userProfile,
+    senderId,
+    category,
+    messageId,
+  }: {
+    userProfile?: UserProfileDto
+    senderId?: string
+    category: string | null
+    messageId: string
+  }): boolean {
+    // Only present when blocked categories were requested with the profile
+    if (!userProfile?.blockedCategories || !senderId) {
       return false
     }
 
+    const normalizedSenderId = normalizeKennitala(senderId)
     // Templates without a category are presented to users as 'almennt'
     const effectiveCategory = category ?? DEFAULT_CATEGORY
 
-    try {
-      const settings =
-        await this.userProfileApi.userProfileControllerFindNotificationSettings(
-          { xParamNationalId: nationalId },
-        )
+    const blocked = userProfile.blockedCategories.some(
+      (blockedCategory) =>
+        blockedCategory.senderId === normalizedSenderId &&
+        blockedCategory.category === effectiveCategory,
+    )
 
-      const blocked = settings.blockedCategories.some(
-        (blockedCategory) =>
-          blockedCategory.senderId === normalizedSenderId &&
-          blockedCategory.category === effectiveCategory,
-      )
-
-      if (blocked) {
-        this.logger.info('Notification not sent because category is blocked', {
-          messageId,
-          senderId: normalizedSenderId,
-          category: effectiveCategory,
-        })
-      }
-
-      return blocked
-    } catch (error: unknown) {
-      this.logger.warn(
-        'Failed to fetch notification settings, proceeding with notification',
-        { messageId, error: getErrorMessage(error) },
-      )
-      return false
+    if (blocked) {
+      this.logger.info('Notification not sent because category is blocked', {
+        messageId,
+        senderId: normalizedSenderId,
+        category: effectiveCategory,
+      })
     }
+
+    return blocked
   }
 
   private async handleActorNotification(
@@ -449,9 +450,19 @@ export class NotificationsWorkerService {
     let locale: Locale = 'is'
 
     if (!isCompany(nationalId)) {
+      const includeBlockedCategories =
+        await this.shouldIncludeBlockedCategories({
+          nationalId,
+          senderId: args.senderId,
+          urgent: args.urgent,
+        })
+
       userProfile =
         await this.userProfileApi.userProfileControllerFindUserProfile({
           xParamNationalId: nationalId,
+          include: includeBlockedCategories
+            ? [UserProfileInclude.NotificationSettings]
+            : undefined,
         })
 
       if (!userProfile) {
@@ -510,14 +521,12 @@ export class NotificationsWorkerService {
         urgent: args.urgent,
         messageId,
       }) &&
-      !(await this.isCategoryBlocked({
-        hasProfile: !!userProfile,
-        nationalId,
+      !this.isCategoryBlocked({
+        userProfile,
         senderId: args.senderId,
         category: toTemplateCategory(template.hnippCategoryIs),
-        urgent: args.urgent,
         messageId,
-      }))
+      })
 
     const scope = template.scope || DocumentsScope.main
     const dbRecord = await this.createUserNotificationDbRecord(

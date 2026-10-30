@@ -18,6 +18,7 @@ import {
   ActorProfileDto,
   BlockedCategoryDto,
   UserProfileDto,
+  UserProfileControllerFindUserProfileIncludeEnum as UserProfileInclude,
   V2UsersApi,
 } from '@island.is/clients/user-profile'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -83,20 +84,27 @@ const workingHoursDelta = 1000 * 60 * 60 // 1 hour
 const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
 const outsideWorkingHours = new Date(2021, 1, 1, 7, 0, 0)
 
+let mockBlockedCategories: BlockedCategoryDto[] = []
+
 export const MockV2UsersApi = {
   userProfileControllerFindUserProfile: jest.fn(
-    ({ xParamNationalId }: { xParamNationalId: string }) => {
+    ({
+      xParamNationalId,
+      include,
+    }: {
+      xParamNationalId: string
+      include?: UserProfileInclude[]
+    }) => {
+      const userProfile = userProfiles.find(
+        (u) => u.nationalId === xParamNationalId,
+      ) as UserProfileDto
+
       return Promise.resolve(
-        userProfiles.find(
-          (u) => u.nationalId === xParamNationalId,
-        ) as UserProfileDto,
+        include?.includes(UserProfileInclude.NotificationSettings)
+          ? { ...userProfile, blockedCategories: mockBlockedCategories }
+          : userProfile,
       )
     },
-  ),
-
-  userProfileControllerFindNotificationSettings: jest.fn(
-    (_params: { xParamNationalId: string }) =>
-      Promise.resolve({ blockedCategories: [] as BlockedCategoryDto[] }),
   ),
 
   userProfileControllerGetActorProfile: jest.fn(
@@ -1388,22 +1396,27 @@ describe('NotificationsWorkerService', () => {
     const senderId = createNationalId('company')
     const otherSenderId = createNationalId('company')
     const dashedSenderId = `${senderId.slice(0, 6)}-${senderId.slice(6)}`
-    const defaultImplementation =
-      MockV2UsersApi.userProfileControllerFindNotificationSettings.getMockImplementation()
 
-    const block = (blockedSenderId: string, category: string) =>
-      MockV2UsersApi.userProfileControllerFindNotificationSettings.mockResolvedValue(
+    const block = (blockedSenderId: string, category: string) => {
+      mockBlockedCategories = [
         {
-          blockedCategories: [
-            {
-              key: `${blockedSenderId}-${category}`,
-              senderId: blockedSenderId,
-              category,
-              categoryLabel: { is: category },
-            },
-          ],
+          key: `${blockedSenderId}-${category}`,
+          senderId: blockedSenderId,
+          category,
+          categoryLabel: { is: category },
         },
-      )
+      ]
+    }
+
+    const expectIncludesSettings = (included: boolean) =>
+      expect(
+        MockV2UsersApi.userProfileControllerFindUserProfile,
+      ).toHaveBeenCalledWith({
+        xParamNationalId: recipient,
+        include: included
+          ? [UserProfileInclude.NotificationSettings]
+          : undefined,
+      })
 
     const mockCategory = (
       isLabel?: string,
@@ -1449,12 +1462,7 @@ describe('NotificationsWorkerService', () => {
     }
 
     afterEach(() => {
-      MockV2UsersApi.userProfileControllerFindNotificationSettings.mockReset()
-      if (defaultImplementation) {
-        MockV2UsersApi.userProfileControllerFindNotificationSettings.mockImplementation(
-          defaultImplementation,
-        )
-      }
+      mockBlockedCategories = []
     })
 
     it('should not deliver when the sender and category are blocked', async () => {
@@ -1464,9 +1472,7 @@ describe('NotificationsWorkerService', () => {
       await send()
 
       await expectDelivered(false)
-      expect(
-        MockV2UsersApi.userProfileControllerFindNotificationSettings,
-      ).toHaveBeenCalledWith({ xParamNationalId: recipient })
+      expectIncludesSettings(true)
     })
 
     it('should ignore blocked categories when the feature flag is disabled', async () => {
@@ -1489,9 +1495,7 @@ describe('NotificationsWorkerService', () => {
       }
 
       await expectDelivered(true)
-      expect(
-        MockV2UsersApi.userProfileControllerFindNotificationSettings,
-      ).not.toHaveBeenCalled()
+      expectIncludesSettings(false)
     })
 
     it('should match a dashed sender id', async () => {
@@ -1537,6 +1541,7 @@ describe('NotificationsWorkerService', () => {
       await send({ urgent: true })
 
       await expectDelivered(true)
+      expectIncludesSettings(false)
     })
 
     it('should not look up settings when the notification has no sender', async () => {
@@ -1550,20 +1555,7 @@ describe('NotificationsWorkerService', () => {
       await wait(2)
 
       await expectDelivered(true)
-      expect(
-        MockV2UsersApi.userProfileControllerFindNotificationSettings,
-      ).not.toHaveBeenCalled()
-    })
-
-    it('should deliver when the settings cannot be fetched', async () => {
-      mockCategory('Heilbrigðismál')
-      MockV2UsersApi.userProfileControllerFindNotificationSettings.mockRejectedValue(
-        new Error('user-profile unavailable'),
-      )
-
-      await send()
-
-      await expectDelivered(true)
+      expectIncludesSettings(false)
     })
 
     it('should still send SMS for templates with smsDelivery ALWAYS but no email or push', async () => {
