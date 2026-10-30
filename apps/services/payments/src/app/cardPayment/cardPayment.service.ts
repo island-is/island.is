@@ -135,20 +135,6 @@ export class CardPaymentService {
       memCacheExpiryMinutes * 60000,
     )
 
-    // Make this the current attempt for the flow. This replaces any status left
-    // by a previous attempt (only cleared after a successful charge), so the
-    // client waits for this attempt's 3DS result instead of charging with stale
-    // verification data, and late results from earlier attempts are ignored.
-    const currentAttemptStatus: CachePaymentFlowStatus = {
-      isVerified: false,
-      correlationId,
-    }
-    await this.cacheManager.set(
-      paymentFlowId,
-      currentAttemptStatus,
-      memCacheExpiryMinutes * 60000,
-    )
-
     const requestOptions = generateVerificationRequestOptions({
       verifyCardInput,
       paymentApiConfig: this.config.paymentGateway,
@@ -174,26 +160,25 @@ export class CardPaymentService {
       throw new BadRequestException(CardErrorCode.VerificationFailed)
     }
 
-    // The charge needs the EMV 3DS message version. The callback normally
-    // includes it, keep the one from this response as a fallback. Only while
-    // the attempt is still pending, a completed callback must not be replaced.
-    if (data.threeDSMessageVersion) {
-      const savedData = (await this.cacheManager.get(correlationId)) as
-        | SavedVerificationPendingData
-        | SavedVerificationCompleteData
-        | undefined
-
-      if (savedData && !isVerificationComplete(savedData)) {
-        await this.cacheManager.set(
-          correlationId,
-          {
-            ...savedData,
-            threeDSMessageVersion: data.threeDSMessageVersion,
-          },
-          memCacheExpiryMinutes * 60000,
-        )
-      }
+    // Make this the current attempt for the flow. This replaces any status left
+    // by a previous attempt (only cleared after a successful charge), so the
+    // client waits for this attempt's 3DS result instead of charging with stale
+    // verification data, and results from other attempts are ignored. Only
+    // after the gateway accepted the verification, so a request that fails
+    // (e.g. made up card data from someone who knows the flow id) cannot reset
+    // the status of a payment in progress.
+    const currentAttemptStatus: CachePaymentFlowStatus = {
+      isVerified: false,
+      correlationId,
+      // The charge needs the EMV 3DS message version. The callback normally
+      // includes it, keep the one from this response as a fallback.
+      threeDSMessageVersion: data.threeDSMessageVersion,
     }
+    await this.cacheManager.set(
+      paymentFlowId,
+      currentAttemptStatus,
+      memCacheExpiryMinutes * 60000,
+    )
 
     return data
   }
@@ -262,6 +247,19 @@ export class CardPaymentService {
 
     const { paymentFlowId } = savedVerificationPendingData
 
+    // Only the current attempt can complete, and only once: a late result from
+    // an earlier attempt must not make the client charge the payer's new card
+    // with it, and a failed result that already arrived is kept.
+    const status = await this.getFullVerificationStatus(paymentFlowId)
+
+    if (status?.correlationId !== correlationId || status.isFailed) {
+      return {
+        success: false,
+        isCurrentAttempt: false,
+        paymentFlowId,
+      }
+    }
+
     const gatewayMdStatus = toGatewayMdStatus(mdStatus)
 
     if (!gatewayMdStatus) {
@@ -280,8 +278,7 @@ export class CardPaymentService {
       mdStatus: gatewayMdStatus,
       dsTransId,
       threeDSMessageVersion:
-        threeDSMessageVersion ||
-        savedVerificationPendingData.threeDSMessageVersion,
+        threeDSMessageVersion || status.threeDSMessageVersion,
     }
 
     // Save verified information to payment flow
@@ -293,6 +290,7 @@ export class CardPaymentService {
     )
 
     const paymentFlowStatus: CachePaymentFlowStatus = {
+      ...status,
       isVerified: true,
       correlationId,
     }
@@ -305,6 +303,7 @@ export class CardPaymentService {
 
     return {
       success: true,
+      isCurrentAttempt: true,
       paymentFlowId,
     }
   }
@@ -326,8 +325,16 @@ export class CardPaymentService {
 
   /**
    * Marks the current verification attempt as failed so the client stops
-   * waiting. Returns false when the result belongs to an earlier attempt (the
-   * payer already retried), in which case nothing is changed.
+   * waiting. Returns false, and changes nothing, when the result belongs to an
+   * earlier attempt (the payer already retried) or the attempt already has a
+   * result: the browser and the gateway server can both report on one attempt,
+   * and a failure must never replace a success.
+   *
+   * The checks are made right before the write, but are not atomic with it
+   * (the cache has no compare-and-set). A success handled at the same moment,
+   * within milliseconds, can still interleave with it: either the payer sees a
+   * failure and can retry, or the payment completes after a failure was
+   * already reported upstream.
    */
   async markVerificationFailed({
     paymentFlowId,
@@ -338,13 +345,25 @@ export class CardPaymentService {
   }): Promise<boolean> {
     const status = await this.getFullVerificationStatus(paymentFlowId)
 
-    if (status?.correlationId !== correlationId) {
+    if (
+      status?.correlationId !== correlationId ||
+      status.isVerified ||
+      status.isFailed
+    ) {
       return false
     }
 
-    await this.cacheManager.del(correlationId)
+    const savedData = (await this.cacheManager.get(correlationId)) as
+      | SavedVerificationPendingData
+      | SavedVerificationCompleteData
+      | undefined
+
+    if (savedData && isVerificationComplete(savedData)) {
+      return false
+    }
 
     const failedStatus: CachePaymentFlowStatus = {
+      ...status,
       isVerified: false,
       isFailed: true,
       correlationId,

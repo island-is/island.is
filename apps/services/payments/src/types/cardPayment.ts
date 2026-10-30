@@ -7,13 +7,13 @@ export interface CachePaymentFlowStatus {
   isFailed?: boolean
   // Correlation id of the current verification attempt for the payment flow
   correlationId?: string
+  // From the CardVerification response of the current attempt, used for the
+  // charge when the 3DS callback does not include it
+  threeDSMessageVersion?: string
 }
 
 export interface SavedVerificationPendingData {
   paymentFlowId: string
-  // From the CardVerification response, used for the charge when the 3DS
-  // callback does not include it
-  threeDSMessageVersion?: string
 }
 
 export interface SavedVerificationCompleteData {

@@ -459,6 +459,43 @@ describe('CardPaymentController', () => {
       fetchSpy.mockRestore()
     })
 
+    it('keeps the status of the attempt in progress when the gateway rejects a new verification', async () => {
+      // e.g. someone who knows the flow id sending made up card data between
+      // the payer's 3DS and charge
+      const inProgressStatus = {
+        isVerified: true,
+        correlationId: 'attempt-in-progress',
+      }
+      await cacheManager.set(paymentFlowId, inProgressStatus)
+
+      const fetchSpy = jest.spyOn(global, 'fetch').mockImplementation(
+        async () =>
+          ({
+            json: async () => ({
+              isSuccess: false,
+              responseCode: 'C6-M',
+              responseDescription: 'Card verification failed',
+              responseTime: '12:00:00',
+              correlationID: 'gateway-correlation',
+            }),
+            status: 200,
+            ok: true,
+          } as Response),
+      )
+
+      const response = await server.post('/v1/payments/card/verify').send({
+        cardNumber: '4242424242424242',
+        expiryMonth: 12,
+        expiryYear: new Date().getFullYear() - 2000,
+        paymentFlowId,
+      } as VerifyCardInput)
+
+      expect(response.status).toBe(400)
+      expect(await cacheManager.get(paymentFlowId)).toEqual(inProgressStatus)
+
+      fetchSpy.mockRestore()
+    })
+
     describe('verify-callback-failed', () => {
       const startAttempt = async (correlationId: string) => {
         await cacheManager.set(correlationId, { paymentFlowId })
@@ -562,6 +599,91 @@ describe('CardPaymentController', () => {
         expect(await getFailedVerificationEvents()).toHaveLength(0)
       })
 
+      it('keeps a success that completes while a failed result is being handled', async () => {
+        const correlationId = uuid()
+        const md = await startAttempt(correlationId)
+        // The failed result read the attempt while it was still pending, then
+        // the successful result for it completed before the failure was written
+        const getPendingSpy = jest
+          .spyOn(
+            CardPaymentService.prototype,
+            'getSavedVerificationPendingData',
+          )
+          .mockResolvedValueOnce({ paymentFlowId })
+        const completeData: SavedVerificationCompleteData = {
+          paymentFlowId,
+          cavv: 'cavv',
+          mdStatus: 'MdFullyAuthenticated',
+          dsTransId: 'dsTransId',
+        }
+        await cacheManager.set(correlationId, completeData)
+        await cacheManager.set(paymentFlowId, {
+          isVerified: true,
+          correlationId,
+        })
+
+        const response = await server
+          .post('/v1/payments/card/verify-callback-failed')
+          .send({ md, mdStatus: '96', callbackSource: 'Server' })
+
+        expect(response.status).toBe(201)
+        expect(getPendingSpy).toHaveBeenCalled()
+        expect(await cacheManager.get(correlationId)).toEqual(completeData)
+        const status = await server.get(
+          `/v1/payments/card/verification-status/${paymentFlowId}`,
+        )
+        expect(status.body).toEqual({ isVerified: true, isFailed: false })
+        expect(await getFailedVerificationEvents()).toHaveLength(0)
+
+        getPendingSpy.mockRestore()
+      })
+
+      it('keeps a success whose flow status is not written yet', async () => {
+        const correlationId = uuid()
+        const md = await startAttempt(correlationId)
+        // The success has stored its 3DS data but not yet the flow status
+        const completeData: SavedVerificationCompleteData = {
+          paymentFlowId,
+          cavv: 'cavv',
+          mdStatus: 'MdFullyAuthenticated',
+          dsTransId: 'dsTransId',
+        }
+        const getPendingSpy = jest
+          .spyOn(
+            CardPaymentService.prototype,
+            'getSavedVerificationPendingData',
+          )
+          .mockResolvedValueOnce({ paymentFlowId })
+        await cacheManager.set(correlationId, completeData)
+
+        await server
+          .post('/v1/payments/card/verify-callback-failed')
+          .send({ md, mdStatus: '96', callbackSource: 'Server' })
+
+        expect(await cacheManager.get(correlationId)).toEqual(completeData)
+        const status = await server.get(
+          `/v1/payments/card/verification-status/${paymentFlowId}`,
+        )
+        expect(status.body).toEqual({ isVerified: false, isFailed: false })
+        expect(await getFailedVerificationEvents()).toHaveLength(0)
+
+        getPendingSpy.mockRestore()
+      })
+
+      it('reports a repeated failed result for the same attempt only once', async () => {
+        const md = await startAttempt(uuid())
+
+        await server
+          .post('/v1/payments/card/verify-callback-failed')
+          .send({ md, mdStatus: '96', callbackSource: 'Browser' })
+        const second = await server
+          .post('/v1/payments/card/verify-callback-failed')
+          .send({ md, mdStatus: '96', callbackSource: 'Server' })
+
+        expect(second.status).toBe(201)
+        expect(await getFailedVerificationEvents()).toHaveLength(1)
+      })
+
       it('rejects an invalid md', async () => {
         const response = await server
           .post('/v1/payments/card/verify-callback-failed')
@@ -638,9 +760,19 @@ describe('CardPaymentController', () => {
         paymentFlowId,
       }
 
+      const originalCorrelationId = uuid()
+      const currentAttemptStatus: CachePaymentFlowStatus = {
+        isVerified: false,
+        correlationId: originalCorrelationId,
+      }
+
       const cacheGetSpy = jest
         .spyOn(cacheManager, 'get')
-        .mockResolvedValue(pendingVerificationInCache)
+        .mockImplementation(async (key) =>
+          key === paymentFlowId
+            ? currentAttemptStatus
+            : pendingVerificationInCache,
+        )
       const cacheSetSpy = jest.spyOn(cacheManager, 'set')
       const cacheDelSpy = jest.spyOn(cacheManager, 'del')
 
@@ -662,7 +794,6 @@ describe('CardPaymentController', () => {
           } as Response
         })
 
-      const originalCorrelationId = uuid()
       const md = generateMd({
         correlationId: originalCorrelationId,
         paymentsTokenSigningSecret: TOKEN_SIGNING_SECRET,
@@ -799,6 +930,67 @@ describe('CardPaymentController', () => {
           })
 
         expect(response.status).toBe(400)
+        const status = await server.get(
+          `/v1/payments/card/verification-status/${paymentFlowId}`,
+        )
+        expect(status.body).toEqual({ isVerified: false, isFailed: true })
+      })
+
+      it('ignores a late success from an earlier attempt', async () => {
+        const earlierCorrelationId = uuid()
+        await cacheManager.set(earlierCorrelationId, { paymentFlowId })
+        // The payer retried, e.g. with another card, before the earlier
+        // attempt's result arrived
+        const currentCorrelationId = uuid()
+        await cacheManager.set(currentCorrelationId, { paymentFlowId })
+        await cacheManager.set(paymentFlowId, {
+          isVerified: false,
+          correlationId: currentCorrelationId,
+        })
+
+        const response = await server
+          .post('/v1/payments/card/verify-callback')
+          .send({
+            md: mdFor(earlierCorrelationId),
+            mdStatus: '1',
+            cavv: 'cavv-earlier',
+            xid: 'xid',
+            dsTransId: 'ds-earlier',
+          })
+
+        expect(response.status).toBe(201)
+        expect(await cacheManager.get(earlierCorrelationId)).toEqual({
+          paymentFlowId,
+        })
+        expect(await cacheManager.get(paymentFlowId)).toEqual({
+          isVerified: false,
+          correlationId: currentCorrelationId,
+        })
+      })
+
+      it('ignores a success after the attempt was marked as failed', async () => {
+        const correlationId = uuid()
+        await cacheManager.set(correlationId, { paymentFlowId })
+        await cacheManager.set(paymentFlowId, {
+          isVerified: false,
+          isFailed: true,
+          correlationId,
+        })
+
+        const response = await server
+          .post('/v1/payments/card/verify-callback')
+          .send({
+            md: mdFor(correlationId),
+            mdStatus: '1',
+            cavv: 'cavv',
+            xid: 'xid',
+            dsTransId: 'ds-1',
+          })
+
+        expect(response.status).toBe(201)
+        expect(await cacheManager.get(correlationId)).toEqual({
+          paymentFlowId,
+        })
         const status = await server.get(
           `/v1/payments/card/verification-status/${paymentFlowId}`,
         )

@@ -168,12 +168,19 @@ export class CardPaymentController {
     let isVerified = false
 
     try {
-      const { success } =
+      const { success, isCurrentAttempt } =
         await this.cardPaymentService.verifyThreeDSecureCallback({
           cardVerificationCallbackInput,
           mdPayload,
           savedVerificationPendingData,
         })
+
+      if (!isCurrentAttempt) {
+        this.logger.info(
+          `[${paymentFlowId}] Ignoring card verification callback for an attempt that is not current or already failed`,
+        )
+        return { paymentFlowId }
+      }
 
       if (!success) {
         throw new BadRequestException(PaymentServiceCode.CouldNotVerifyCallback)
@@ -252,25 +259,19 @@ export class CardPaymentController {
       )
     const { paymentFlowId } = savedVerificationData
 
-    // A successful result for this attempt already arrived (e.g. from the
-    // payer's browser before the gateway server), keep it
-    if (isVerificationComplete(savedVerificationData)) {
-      this.logger.info(
-        `[${paymentFlowId}] Ignoring failed card verification result after a successful one`,
-        outcome,
-      )
-      return { paymentFlowId }
-    }
-
-    const isCurrentAttempt =
-      await this.cardPaymentService.markVerificationFailed({
+    // Changes nothing when the attempt is not current or already has a result,
+    // e.g. a success from the payer's browser before the gateway server's
+    // failure, or a repeated failure
+    const isMarkedFailed = await this.cardPaymentService.markVerificationFailed(
+      {
         paymentFlowId,
         correlationId,
-      })
+      },
+    )
 
-    if (!isCurrentAttempt) {
+    if (!isMarkedFailed) {
       this.logger.info(
-        `[${paymentFlowId}] Ignoring failed card verification result from an earlier attempt`,
+        `[${paymentFlowId}] Ignoring failed card verification result for an attempt that is not current or already has a result`,
         outcome,
       )
       return { paymentFlowId }
