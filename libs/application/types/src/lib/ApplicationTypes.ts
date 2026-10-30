@@ -566,4 +566,12 @@ export const ApplicationConfigurations = {
     slug: 'u2-vottord',
     translation: ['vmst.u2c.application', 'uiForms.application'],
   },
+  // TODO(fjarskiptastofa-self-assessment): placeholder config — the NIS2
+  // self-assessment type is in the generated application enum (openapi.yaml)
+  // but its template is not registered here yet. Keeps this map exhaustive so
+  // the api type-checks; replace with the real slug / translation once set.
+  FjarskiptastofaSelfAssessment: {
+    slug: 'fjarskiptastofa-self-assessment',
+    translation: 'fjarskiptastofa.application',
+  },
 }

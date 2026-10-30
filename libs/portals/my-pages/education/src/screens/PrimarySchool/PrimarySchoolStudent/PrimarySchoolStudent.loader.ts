@@ -6,6 +6,9 @@ import {
 
 export type PrimarySchoolStudentLoaderData = {
   studentName: string | null
+  /** National id of the routed student — used to match the frigg key-info
+   * child, whose id space differs from the routed (nemendagrunnur) id. */
+  nationalId: string | null
 }
 
 export const primarySchoolStudentLoader: WrappedLoaderFn =
@@ -18,8 +21,11 @@ export const primarySchoolStudentLoader: WrappedLoaderFn =
       const student = data?.primarySchoolStudents?.find(
         (s) => s.id === params['studentId'],
       )
-      return { studentName: student?.name ?? null }
+      return {
+        studentName: student?.name ?? null,
+        nationalId: student?.nationalId ?? null,
+      }
     } catch {
-      return { studentName: null }
+      return { studentName: null, nationalId: null }
     }
   }

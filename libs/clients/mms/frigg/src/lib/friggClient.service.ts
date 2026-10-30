@@ -1,5 +1,6 @@
 import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
+import { uuid } from 'uuidv4'
 import {
   ActiveApplicationsModel,
   FormSubmitSuccessModel,
@@ -84,6 +85,8 @@ export class FriggClientService {
     form: RegistrationApplicationInput,
   ): Promise<FormSubmitSuccessModel> {
     return this.friggApiWithAuth(user).submitForm({
+      // MMS now requires an idempotency/trace id on form submission.
+      xRequestId: uuid(),
       registrationApplicationInput: form,
     })
   }

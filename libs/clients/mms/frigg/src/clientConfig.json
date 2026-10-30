@@ -4,7 +4,14 @@
     "/forms/registrations": {
       "post": {
         "operationId": "submitForm",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "x-request-id",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -309,6 +316,287 @@
         "security": [{ "bearer": [] }],
         "summary": "Gets if student has active applications.",
         "tags": ["Frigg"]
+      }
+    },
+    "/me/children": {
+      "get": {
+        "description": "Each `id` is `base.users.id`, the identifier the data gateway returns and Ísland.is puts in its URLs. A caller in the roster who holds no custody gets `[]`.",
+        "operationId": "listChildren",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ChildOutput" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "The caller's children with an enrollment in effect today",
+        "tags": ["Mínar síður"]
+      }
+    },
+    "/me/children/{childId}/emergency-contacts": {
+      "get": {
+        "operationId": "listEmergencyContacts",
+        "parameters": [
+          {
+            "name": "childId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EmergencyContactOutput"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "A child's emergency contacts with `canEdit` per row",
+        "tags": ["Mínar síður"]
+      },
+      "post": {
+        "description": "The name comes from Þjóðskrá. No notification is sent in release 1 (plan Phase 8).",
+        "operationId": "createEmergencyContact",
+        "parameters": [
+          {
+            "name": "childId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmergencyContactInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmergencyContactOutput"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Register an emergency contact by kennitala",
+        "tags": ["Mínar síður"]
+      }
+    },
+    "/me/children/{childId}/emergency-contacts/{agentId}": {
+      "patch": {
+        "operationId": "updateEmergencyContact",
+        "parameters": [
+          {
+            "name": "childId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "agentId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEmergencyContactInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmergencyContactOutput"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Change an emergency contact's relation type",
+        "tags": ["Mínar síður"]
+      },
+      "delete": {
+        "operationId": "deleteEmergencyContact",
+        "parameters": [
+          {
+            "name": "childId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "agentId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "204": { "description": "" } },
+        "security": [{ "bearer": [] }],
+        "summary": "Remove an emergency contact",
+        "tags": ["Mínar síður"]
+      }
+    },
+    "/me/children/{childId}/language-profile": {
+      "get": {
+        "operationId": "getLanguageProfile",
+        "parameters": [
+          {
+            "name": "childId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LanguageProfileOutput"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "A child's language profile",
+        "tags": ["Mínar síður"]
+      },
+      "patch": {
+        "operationId": "replaceLanguageProfile",
+        "parameters": [
+          {
+            "name": "childId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLanguageProfileInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LanguageProfileOutput"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Replace a child's language profile",
+        "tags": ["Mínar síður"]
+      }
+    },
+    "/me/children/{childId}/health-profile": {
+      "get": {
+        "operationId": "getHealthProfile",
+        "parameters": [
+          {
+            "name": "childId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthProfileOutput" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "A child's health profile",
+        "tags": ["Mínar síður"]
+      },
+      "patch": {
+        "description": "Closed (403 FEATURE_DISABLED) until the data-protection assessment for guardian-written health data is done and schools see changes in Mín miðstöð (plan section 6).",
+        "operationId": "replaceHealthProfile",
+        "parameters": [
+          {
+            "name": "childId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateHealthProfileInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthProfileOutput" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Replace a child's health profile",
+        "tags": ["Mínar síður"]
       }
     }
   },
@@ -886,7 +1174,8 @@
               "principal",
               "student",
               "teacher",
-              "staff"
+              "staff",
+              "siteAdministrator"
             ]
           },
           "classificationId": { "type": "string" },
@@ -1032,6 +1321,287 @@
         "type": "object",
         "properties": { "hasActiveApplications": { "type": "boolean" } },
         "required": ["hasActiveApplications"]
+      },
+      "ChildSchoolOutput": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "municipality": { "type": "string", "nullable": true }
+        },
+        "required": ["id", "name", "municipality"]
+      },
+      "MyGuardianshipOutput": {
+        "type": "object",
+        "properties": {
+          "sharedWithOtherGuardian": {
+            "type": "boolean",
+            "description": "Whether my custody is in a mutual-edit set with another guardian of this child (contract 2.2). The only custody information published."
+          }
+        },
+        "required": ["sharedWithOtherGuardian"]
+      },
+      "ChildOutput": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "base.users.id, the id the data gateway returns."
+          },
+          "nationalId": { "type": "string" },
+          "name": { "type": "string" },
+          "preferredName": { "type": "string", "nullable": true },
+          "school": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/ChildSchoolOutput" }]
+          },
+          "gradeLevel": { "type": "string", "nullable": true, "example": "3" },
+          "myGuardianship": {
+            "$ref": "#/components/schemas/MyGuardianshipOutput"
+          }
+        },
+        "required": [
+          "id",
+          "nationalId",
+          "name",
+          "preferredName",
+          "school",
+          "gradeLevel",
+          "myGuardianship"
+        ]
+      },
+      "ContactPersonOutput": {
+        "type": "object",
+        "properties": {
+          "nationalId": { "type": "string" },
+          "name": { "type": "string" }
+        },
+        "required": ["nationalId", "name"]
+      },
+      "KeyOptionValueOutput": {
+        "type": "object",
+        "properties": {
+          "content": { "type": "string" },
+          "language": { "type": "string", "example": "is" }
+        },
+        "required": ["content", "language"]
+      },
+      "KeyOptionOutput": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "key": { "type": "string", "example": "grandparent" },
+          "value": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/KeyOptionValueOutput" }
+          }
+        },
+        "required": ["id", "key", "value"]
+      },
+      "CreatedByOutput": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": ["guardian", "organization", "unknown"]
+          },
+          "displayName": { "type": "string", "nullable": true },
+          "at": { "type": "string", "format": "date-time" }
+        },
+        "required": ["kind", "displayName", "at"]
+      },
+      "EmergencyContactOutput": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "person": { "$ref": "#/components/schemas/ContactPersonOutput" },
+          "relationType": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/KeyOptionOutput" }]
+          },
+          "createdBy": { "$ref": "#/components/schemas/CreatedByOutput" },
+          "canEdit": {
+            "type": "boolean",
+            "description": "Whether the caller may change or remove this contact (decision emergency-contact-provenance-and-guardian-edit-rule)."
+          }
+        },
+        "required": ["id", "person", "relationType", "createdBy", "canEdit"]
+      },
+      "CreateEmergencyContactInput": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "description": "Kennitala of the contact person; the name comes from Þjóðskrá.",
+            "example": "2002655555"
+          },
+          "relationTypeId": {
+            "type": "string",
+            "description": "An id from GET /key-options?type=relation."
+          }
+        },
+        "required": ["nationalId", "relationTypeId"]
+      },
+      "UpdateEmergencyContactInput": {
+        "type": "object",
+        "properties": {
+          "relationTypeId": {
+            "type": "string",
+            "description": "An id from GET /key-options?type=relation."
+          }
+        },
+        "required": ["relationTypeId"]
+      },
+      "UpdatedByOutput": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": ["guardian", "organization", "system"]
+          },
+          "displayName": { "type": "string", "nullable": true }
+        },
+        "required": ["kind", "displayName"]
+      },
+      "LanguageProfileOutput": {
+        "type": "object",
+        "properties": {
+          "languageEnvironment": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/KeyOptionOutput" }]
+          },
+          "preferredLanguage": { "type": "string", "nullable": true },
+          "languages": { "type": "array", "items": { "type": "string" } },
+          "interpreter": { "type": "boolean" },
+          "signLanguage": { "type": "boolean" },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updatedBy": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/UpdatedByOutput" }]
+          }
+        },
+        "required": [
+          "languageEnvironment",
+          "preferredLanguage",
+          "languages",
+          "interpreter",
+          "signLanguage",
+          "updatedAt",
+          "updatedBy"
+        ]
+      },
+      "UpdateLanguageProfileInput": {
+        "type": "object",
+        "properties": {
+          "languageEnvironmentId": {
+            "type": "string",
+            "description": "An id from GET /key-options?type=languageEnvironment."
+          },
+          "languages": {
+            "description": "ISO 639-1 codes of the languages spoken at home.",
+            "example": ["is", "pl"],
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "preferredLanguage": {
+            "type": "string",
+            "nullable": true,
+            "description": "The child's main language, one of `languages`; null when none is.",
+            "example": "pl"
+          },
+          "interpreter": {
+            "type": "boolean",
+            "description": "The guardian needs an interpreter with the school."
+          },
+          "signLanguage": {
+            "type": "boolean",
+            "description": "The child uses a sign language. Recorded here, never in `languages`: ISO 639-1 has no sign languages."
+          }
+        },
+        "required": [
+          "languageEnvironmentId",
+          "languages",
+          "preferredLanguage",
+          "interpreter",
+          "signLanguage"
+        ]
+      },
+      "AllergyOutput": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "key": { "type": "string", "example": "grandparent" },
+          "value": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/KeyOptionValueOutput" }
+          },
+          "type": {
+            "type": "string",
+            "enum": ["food", "medicine", "environmental"]
+          }
+        },
+        "required": ["id", "key", "value", "type"]
+      },
+      "HealthProfileOutput": {
+        "type": "object",
+        "properties": {
+          "epipen": { "type": "boolean" },
+          "medicalDiagnoses": { "type": "boolean" },
+          "medicationAssistance": { "type": "boolean" },
+          "allergies": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AllergyOutput" }
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updatedBy": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/UpdatedByOutput" }]
+          }
+        },
+        "required": [
+          "epipen",
+          "medicalDiagnoses",
+          "medicationAssistance",
+          "allergies",
+          "updatedAt",
+          "updatedBy"
+        ]
+      },
+      "UpdateHealthProfileInput": {
+        "type": "object",
+        "properties": {
+          "epipen": {
+            "type": "boolean",
+            "description": "The child carries an epinephrine auto-injector."
+          },
+          "medicalDiagnoses": {
+            "type": "boolean",
+            "description": "Medical diagnoses the school must be able to act on."
+          },
+          "medicationAssistance": {
+            "type": "boolean",
+            "description": "Needs help with medication during the school day."
+          },
+          "allergies": {
+            "description": "Ids from GET /key-options?type=foodAllergyAndIntolerance and ?type=allergy.",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": [
+          "epipen",
+          "medicalDiagnoses",
+          "medicationAssistance",
+          "allergies"
+        ]
       }
     }
   }

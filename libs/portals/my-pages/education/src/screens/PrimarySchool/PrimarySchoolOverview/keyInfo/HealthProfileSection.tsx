@@ -1,0 +1,136 @@
+import { generatePath, useNavigate, useParams } from 'react-router-dom'
+import { Box, Button, Divider, useBreakpoint } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { sharedMessages } from '@island.is/shared/translations'
+import {
+  CardLoader,
+  EmptyCard,
+  InfoLine,
+} from '@island.is/portals/my-pages/core'
+import { primarySchoolKeyInfoMessages as kim } from '../../../../lib/messages'
+import { EducationPaths } from '../../../../lib/paths'
+import { KeyInfoSection } from './KeyInfoSection'
+import { SectionError } from './SectionError'
+import * as styles from './keyInfoEmpty.css'
+import { AllergyCategory } from './types'
+import type { HealthProfile, MmsError } from './types'
+
+interface Props {
+  profile: HealthProfile | undefined
+  loading: boolean
+  error: MmsError | undefined
+}
+
+/**
+ * 3. Heilsufarsupplýsingar — GET/PATCH /me/children/{childId}/health-profile
+ *
+ * Display rules (ticket §3): do not render empty allergy rows; the adrenaline
+ * pen is only shown when at least one allergy exists; allergies are grouped from
+ * `allergies[].type` into food / other, the two categories MMS serves.
+ *
+ * Editing lives on its own screen (PrimarySchoolHealthEdit) rather than an
+ * inline toggle. Saving there stays disabled until MMS opens the health PATCH.
+ */
+export const HealthProfileSection = ({ profile, loading, error }: Props) => {
+  const { formatMessage } = useLocale()
+  const { sm } = useBreakpoint()
+  const navigate = useNavigate()
+  const { studentId } = useParams<{ studentId: string }>()
+
+  const allergyLabels = (category: AllergyCategory) =>
+    profile?.allergies
+      ?.filter((a) => a.type === category)
+      .map((a) => a.label)
+      .join(', ')
+
+  const foodAllergies = allergyLabels(AllergyCategory.Food)
+  const otherAllergies = allergyLabels(AllergyCategory.Other)
+  const hasAnyAllergy = (profile?.allergies?.length ?? 0) > 0
+
+  const editPath = generatePath(EducationPaths.PrimarySchoolHealthEdit, {
+    studentId: studentId ?? '',
+  })
+
+  return (
+    <KeyInfoSection
+      title={kim.healthProfileTitle}
+      action={
+        !loading && !error && profile?.canEdit ? (
+          <Button
+            variant="text"
+            icon="pencil"
+            size="small"
+            onClick={() => navigate(editPath)}
+          >
+            {formatMessage(sm ? sharedMessages.edit : kim.healthEditTitle)}
+          </Button>
+        ) : undefined
+      }
+    >
+      <Divider />
+      {loading && <CardLoader />}
+      {!loading && error && <SectionError error={error} />}
+      {!loading && !error && !profile && (
+        <Box paddingY={2} className={styles.emptyCard}>
+          <EmptyCard
+            title={formatMessage(kim.healthProfileEmpty)}
+            description={formatMessage(kim.healthProfileEmptyDescription)}
+            img="./assets/images/coffee.svg"
+          />
+        </Box>
+      )}
+      {!loading && !error && profile && (
+        <>
+          {foodAllergies && (
+            <>
+              <InfoLine
+                label={kim.foodAllergies}
+                content={foodAllergies}
+                paddingY={3}
+              />
+              <Divider />
+            </>
+          )}
+          {otherAllergies && (
+            <>
+              <InfoLine
+                label={kim.otherAllergies}
+                content={otherAllergies}
+                paddingY={3}
+              />
+              <Divider />
+            </>
+          )}
+          {hasAnyAllergy && (
+            <>
+              <InfoLine
+                label={kim.epipen}
+                content={formatMessage(profile?.epipen ? kim.yes : kim.no)}
+                paddingY={3}
+              />
+              <Divider />
+            </>
+          )}
+          <InfoLine
+            label={kim.medicalDiagnoses}
+            content={formatMessage(
+              profile?.medicalDiagnoses ? kim.yes : kim.no,
+            )}
+            paddingY={3}
+          />
+          <Divider />
+          <InfoLine
+            label={kim.medicationAssistance}
+            content={formatMessage(
+              profile?.medicationAssistance ? kim.yes : kim.no,
+            )}
+            paddingY={3}
+          />
+          <Divider />
+        </>
+      )}
+    </KeyInfoSection>
+  )
+}
+
+export default HealthProfileSection
