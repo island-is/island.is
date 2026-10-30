@@ -1218,6 +1218,13 @@ export const getLimitedAccessCaseInclude = (
           where: { eventType: appealEventTypes },
           separate: true,
         },
+        {
+          model: AppealCourtSession,
+          as: 'courtSessions',
+          required: false,
+          order: [['sessionDate', 'ASC']],
+          separate: true,
+        },
       ],
     },
     {

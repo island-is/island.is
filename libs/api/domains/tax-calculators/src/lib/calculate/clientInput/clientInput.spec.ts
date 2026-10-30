@@ -18,7 +18,7 @@ const sampleValue = (field: CalculatorField): SubmittedValue => {
     case 'boolean':
       return true
     case 'date':
-      return '2026-01-01'
+      return new Date('2026-01-01')
     case 'select':
       return field.options?.[0]?.value ?? ''
     case 'string':

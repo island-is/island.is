@@ -19,6 +19,7 @@ import type {
   ApplicationTranslationGql,
   TemplateIntrospectionGql,
   TranslationPublishGql,
+  TranslationPublishHistoryGql,
 } from './application-translation.model'
 
 const APPLICATION_TYPE_IDS = new Set<string>(Object.values(ApplicationTypes))
@@ -192,12 +193,14 @@ export class ApplicationTranslationClient {
   publishTranslations(
     user: User,
     namespace: string,
+    actor: { actorName: string; onBehalfOfName?: string },
   ): Promise<TranslationPublishGql> {
     return this.request<TranslationPublishGql>(
       user,
       this.namespacePath(namespace, '/publish'),
       {
         method: 'POST',
+        body: JSON.stringify(actor),
       },
     )
   }
@@ -205,10 +208,19 @@ export class ApplicationTranslationClient {
   getPublishHistory(
     user: User,
     namespace: string,
-  ): Promise<TranslationPublishGql[]> {
-    return this.request<TranslationPublishGql[]>(
+    limit: number,
+    skip: number,
+  ): Promise<TranslationPublishHistoryGql> {
+    const params = new URLSearchParams({
+      limit: String(limit),
+      skip: String(skip),
+    })
+    return this.request<TranslationPublishHistoryGql>(
       user,
-      this.namespacePath(namespace, '/publish-history'),
+      `${this.namespacePath(
+        namespace,
+        '/publish-history',
+      )}?${params.toString()}`,
     )
   }
 
@@ -216,6 +228,7 @@ export class ApplicationTranslationClient {
     user: User,
     namespace: string,
     publishId: string,
+    actor: { actorName: string; onBehalfOfName?: string },
   ): Promise<TranslationPublishGql> {
     return this.request<TranslationPublishGql>(
       user,
@@ -224,6 +237,7 @@ export class ApplicationTranslationClient {
       )}`,
       {
         method: 'POST',
+        body: JSON.stringify(actor),
       },
     )
   }

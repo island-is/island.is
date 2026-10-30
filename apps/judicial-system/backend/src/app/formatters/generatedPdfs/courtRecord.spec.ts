@@ -17,7 +17,7 @@ describe('formatCourtEndDate', () => {
     const endDate = undefined
 
     const result = fn(startDate, endDate)
-    expect(result).toBe(courtRecord.inSession.defaultMessage)
+    expect(result).toBe(courtRecord.inSession)
   })
 
   test('should format court end date when ending on same day as starting', () => {

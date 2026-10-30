@@ -13,3 +13,7 @@ export const defineOutputFields = <T extends readonly CalculatorOutputField[]>(
 export const defineCalculator = <T extends CalculatorContract>(
   contract: T,
 ): T => contract
+
+export const enumOptions = <TValue extends string>(
+  values: Record<string, TValue>,
+) => Object.values(values).map((value) => ({ value }))

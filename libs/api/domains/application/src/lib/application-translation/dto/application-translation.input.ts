@@ -2,12 +2,13 @@ import { Field, InputType } from '@nestjs/graphql'
 import {
   ArrayMaxSize,
   IsArray,
+  IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
   ValidateNested,
 } from 'class-validator'
-import { Type } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 
 import {
   GOOGLE_TRANSLATE_MAX_CHARS_PER_REQUEST,
@@ -19,6 +20,10 @@ import {
 const TRANSLATION_NAMESPACE_MAX_LENGTH = 255
 const TRANSLATION_MESSAGE_KEY_MAX_LENGTH = 512
 const TRANSLATION_BULK_MAX_ITEMS = 500
+const TRANSLATION_ACTOR_NAME_MAX_LENGTH = 255
+
+const trim = ({ value }: { value: unknown }) =>
+  typeof value === 'string' ? value.trim() : value
 
 @InputType()
 export class TranslationItemInput {
@@ -59,6 +64,20 @@ export class PublishTranslationsInput {
   @IsString()
   @MaxLength(TRANSLATION_NAMESPACE_MAX_LENGTH)
   namespace!: string
+
+  @Field()
+  @Transform(trim)
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(TRANSLATION_ACTOR_NAME_MAX_LENGTH)
+  actorName!: string
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @Transform(trim)
+  @IsString()
+  @MaxLength(TRANSLATION_ACTOR_NAME_MAX_LENGTH)
+  onBehalfOfName?: string
 }
 
 @InputType()
@@ -71,6 +90,20 @@ export class RollbackTranslationsInput {
   @Field()
   @IsString()
   publishId!: string
+
+  @Field()
+  @Transform(trim)
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(TRANSLATION_ACTOR_NAME_MAX_LENGTH)
+  actorName!: string
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @Transform(trim)
+  @IsString()
+  @MaxLength(TRANSLATION_ACTOR_NAME_MAX_LENGTH)
+  onBehalfOfName?: string
 }
 
 @InputType()
