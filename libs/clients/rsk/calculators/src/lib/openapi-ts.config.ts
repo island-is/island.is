@@ -52,5 +52,6 @@ export default defineConfig({
     },
     { dates: true, name: '@hey-api/transformers' },
     { name: '@hey-api/sdk', transformer: true },
+    { compatibilityVersion: 3, name: 'zod' },
   ],
 })

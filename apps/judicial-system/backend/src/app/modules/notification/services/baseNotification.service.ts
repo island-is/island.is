@@ -20,7 +20,7 @@ import {
   formatPostponedCourtDateEmailNotification,
   stripHtmlTags,
 } from '../../../formatters'
-import { notifications } from '../../../messages'
+import { formatIcuMessage, notifications } from '../../../messages'
 import { CourtService } from '../../court'
 import { EventService } from '../../event'
 import {
@@ -68,7 +68,7 @@ export abstract class BaseNotificationService {
 
   private async handleWhitelist(recipients: string[]): Promise<string[]> {
     const whitelist = this.formatMessage(notifications.emailWhitelist)
-    const whitelistDomains = this.formatMessage(
+    const whitelistDomains = formatIcuMessage(
       notifications.emailWhitelistDomains,
     )
 
@@ -116,7 +116,7 @@ export abstract class BaseNotificationService {
       html =
         html.match(/<a/g) || skipTail
           ? html
-          : `${html} ${this.formatMessage(notifications.emailTail, {
+          : `${html} ${formatIcuMessage(notifications.emailTail, {
               linkStart: `<a href="${this.config.clientUrl}">`,
               linkEnd: '</a>',
             })}`
