@@ -12,7 +12,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
-import { PaymentMethod, PaymentStatus } from '../../types'
+import { PaymentMethod, PaymentStatus, RefundType } from '../../types'
 import {
   CachePaymentFlowStatus,
   CardPaymentErrorSchema,
@@ -37,6 +37,7 @@ import { mapToCardErrorCode } from '../../utils/paymentErrors'
 import { PaymentFlowAttributes } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
+import { RefundService } from '../refund/refund.service'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import { paymentGatewayResponseCodes } from './cardPayment.constants'
 import { verifyApplePaySignature } from './applePay/applePaySignature'
@@ -87,6 +88,7 @@ export class CardPaymentService {
     private readonly paymentFlowService: PaymentFlowService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly debtSettlementService: DebtSettlementService,
+    private readonly refundService: RefundService,
   ) {}
 
   // VERIFICATION METHODS ------------------------------------------------------------------------------------------------
@@ -802,10 +804,10 @@ export class CardPaymentService {
       throw new BadRequestException(CardErrorCode.GooglePayTokenInvalid)
     }
 
-    // Valitor charges a device token (CRYPTOGRAM_3DS) outright instead of
-    // answering Q8. Only PAN_ONLY is offered, but should one get through, the
-    // correlationId in this log is what refunds it.
+    // The correlationId and the time are what refund the charge should Valitor
+    // charge the token instead of decrypting it, see refundGooglePayTokenCharge
     const correlationId = uuid()
+    const requestedAt = new Date()
     this.logger.info(`${logPrefix} Google Pay token decryption started`, {
       paymentFlowId,
       tokenId,
@@ -835,14 +837,27 @@ export class CardPaymentService {
       throw e
     }
 
-    const { googlePayCardInformation } =
-      await this.parsePaymentGatewayResponseAndHandleErrors({
+    const data = await this.parsePaymentGatewayResponseAndHandleErrors({
+      paymentFlowId,
+      response,
+      // Q8 with the card, or the charge of a token Valitor did not decrypt
+      schema: z.union([
+        GooglePayDecryptionSuccessSchema,
+        CardPaymentSuccessSchema,
+      ]),
+      errorSchema: GooglePayDecryptionErrorSchema,
+      errorMessage: 'Failed to decrypt Google Pay token',
+    })
+
+    if (!('googlePayCardInformation' in data)) {
+      return this.refundGooglePayTokenCharge({
         paymentFlowId,
-        response,
-        schema: GooglePayDecryptionSuccessSchema,
-        errorSchema: GooglePayDecryptionErrorSchema,
-        errorMessage: 'Failed to decrypt Google Pay token',
+        tokenId,
+        correlationId,
+        requestedAt,
+        payment: data,
       })
+    }
 
     this.logger.info(`${logPrefix} Google Pay token decrypted`, {
       paymentFlowId,
@@ -850,7 +865,95 @@ export class CardPaymentService {
       correlationId,
     })
 
-    return googlePayCardInformation
+    return data.googlePayCardInformation
+  }
+
+  /**
+   * Valitor charges a device token (CRYPTOGRAM_3DS) outright instead of
+   * answering Q8. Only PAN_ONLY is offered, but the token is the payer's to
+   * send, so a charge nothing asked for is refunded here and now: it has no
+   * confirmation, so no saga would otherwise refund it. The token is marked
+   * charged so a resend is a replay, not another charge.
+   */
+  private async refundGooglePayTokenCharge({
+    paymentFlowId,
+    tokenId,
+    correlationId,
+    requestedAt,
+    payment,
+  }: {
+    paymentFlowId: string
+    tokenId: string
+    correlationId: string
+    requestedAt: Date
+    payment: CardPaymentSuccessResponse
+  }): Promise<never> {
+    const logPrefix = `[${paymentFlowId}] [GOOGLEPAY]`
+    const logContext = {
+      paymentFlowId,
+      tokenId,
+      correlationId,
+      transactionId: payment.transactionID,
+    }
+
+    this.logger.error(
+      `${logPrefix} Google Pay token was charged instead of decrypted, refunding`,
+      logContext,
+    )
+    await this.markGooglePayTokenCharged(paymentFlowId, tokenId)
+
+    let refund: RefundSuccessResponse
+    try {
+      refund = await this.refundService.refundWithCorrelationId({
+        paymentFlowId,
+        paymentTrackingData: { correlationId, paymentDate: requestedAt },
+      })
+    } catch (e) {
+      this.logger.error(
+        `${logPrefix} CRITICAL: Google Pay token was charged instead of decrypted and the refund failed. Manual intervention required.`,
+        {
+          ...logContext,
+          paymentDate: requestedAt.toISOString(),
+          error: (e as Error).message,
+        },
+      )
+      await this.paymentFlowService.logPaymentFlowUpdate({
+        paymentFlowId,
+        type: 'error',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'payment_failed',
+        message:
+          'Google Pay token was charged by the gateway instead of decrypted and the refund failed. Manual intervention required.',
+        metadata: {
+          payment,
+          correlationId,
+          paymentDate: requestedAt.toISOString(),
+          refundError: (e as Error).message,
+        },
+        logLevel: 'warn',
+      })
+      throw new BadRequestException(CardErrorCode.RefundFailedAfterPaymentError)
+    }
+
+    await this.paymentFlowService.logPaymentFlowUpdate({
+      paymentFlowId,
+      type: 'error',
+      occurredAt: new Date(),
+      paymentMethod: PaymentMethod.CARD,
+      reason: 'payment_failed',
+      message:
+        'Google Pay token was charged by the gateway instead of decrypted; the charge was refunded.',
+      metadata: {
+        payment,
+        refund,
+        correlationId,
+        reasonForRefund: RefundType.PAYMENT_FAILURE,
+      },
+      logLevel: 'warn',
+    })
+
+    throw new BadRequestException(CardErrorCode.GooglePayTokenNotSupported)
   }
 
   /**

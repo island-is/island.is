@@ -213,6 +213,11 @@ export const paymentErrorToTitleAndMessage = (
         title: cardError.errorGettingApplePaySessionTitle,
         message: cardError.errorGettingApplePaySession,
       }
+    case CardErrorCode.GooglePayTokenNotSupported:
+      return {
+        title: cardError.googlePayTokenNotSupportedTitle,
+        message: cardError.googlePayTokenNotSupported,
+      }
     case BankTransferErrorCode.BankTransferRejected:
       return {
         title: bankTransferError.rejectedTitle,

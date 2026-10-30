@@ -431,6 +431,18 @@ export const cardError = defineMessages({
     defaultMessage: 'Ekki var hægt að tengjast Apple Pay. Reyndu aftur síðar.',
     description: 'Error connecting to Apple Pay description',
   },
+  googlePayTokenNotSupportedTitle: {
+    id: 'payments:cardError.googlePayTokenNotSupportedTitle',
+    defaultMessage: 'Kortið er ekki stutt',
+    description: 'Card not supported',
+  },
+  googlePayTokenNotSupported: {
+    id: 'payments:cardError.googlePayTokenNotSupported',
+    defaultMessage:
+      'Ekki er hægt að greiða með þessu korti í gegnum Google Pay. Engin greiðsla var tekin. Vinsamlegast notaðu annað kort eða sláðu kortanúmerið inn.',
+    description:
+      'This card cannot be used with Google Pay. No payment was taken. Please use another card or enter the card number.',
+  },
   unknownTitle: {
     id: 'payments:cardError.unknownTitle',
     defaultMessage: 'Óvænt villa',

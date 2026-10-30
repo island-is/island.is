@@ -27,7 +27,10 @@ export class RefundService {
     paymentTrackingData,
     paymentFlowId,
   }: {
-    paymentTrackingData: PaymentTrackingData
+    paymentTrackingData: Pick<
+      PaymentTrackingData,
+      'correlationId' | 'paymentDate'
+    >
     paymentFlowId?: string
   }): Promise<RefundSuccessResponse> {
     const { paymentsGatewayApiUrl } = this.config.paymentGateway
@@ -55,7 +58,10 @@ export class RefundService {
 
   private buildRefundWithCorrelationIdRequest(
     gatewayConfig: RefundModuleConfigType['paymentGateway'],
-    paymentTrackingData: PaymentTrackingData,
+    paymentTrackingData: Pick<
+      PaymentTrackingData,
+      'correlationId' | 'paymentDate'
+    >,
   ): RequestInit {
     const {
       paymentsApiSecret,
