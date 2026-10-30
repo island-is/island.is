@@ -31,9 +31,11 @@ const BASE_CARD_PAYMENT_METHOD: google.payments.api.IsReadyToPayPaymentMethodSpe
   {
     type: 'CARD',
     parameters: {
-      // A card saved in the Google account, charged after 3-D Secure. Not
-      // CRYPTOGRAM_3DS: Valitor charges a device token outright when it
-      // decrypts it, which skips the payment saga.
+      // Only a card saved in the Google account, charged after 3-D Secure,
+      // until device tokens (CRYPTOGRAM_3DS) are implemented. Valitor charges
+      // a device token when it decrypts it, so that flow has to treat the
+      // decryption response as the charge, inside the payment saga, and
+      // Valitor has yet to confirm how its web decryption call handles one.
       allowedAuthMethods: ['PAN_ONLY'],
       allowedCardNetworks: ['VISA', 'MASTERCARD'],
       // The name is the cardholder for 3-D Secure of a saved card
