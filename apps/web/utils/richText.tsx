@@ -128,6 +128,7 @@ import {
 } from '../components/connected/CustomsGeneral'
 import { DigitalIcelandStatistics } from '../components/connected/DigitalIcelandStatistics/DigitalIcelandStatistics'
 import { ECOICalculator } from '../components/connected/ECOICalculator/Calculator'
+import { EnhancedAssetList } from '../components/connected/EnhancedAssetList'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
@@ -314,6 +315,9 @@ export const webRenderConnectedComponent = (
       break
     case 'KVTH/Rulings':
       connectedComponent = <ComplaintsCommitteeRulings slice={slice} />
+      break
+    case 'EnhancedAssetList':
+      connectedComponent = <EnhancedAssetList slice={slice} />
       break
     case 'VERAnnouncementCalculator':
       connectedComponent = <VerAnnouncementCalculator />

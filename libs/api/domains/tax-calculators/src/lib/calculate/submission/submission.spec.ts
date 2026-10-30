@@ -42,6 +42,11 @@ const boolean = (key: string, booleanValue: boolean): InputFieldValue => ({
   value: { booleanValue },
 })
 
+const date = (key: string, dateValue: Date): InputFieldValue => ({
+  key,
+  value: { dateValue },
+})
+
 const validate = (submitted: InputFieldValue[]) =>
   validateCalculationInput(fields, submitted)
 
@@ -111,37 +116,37 @@ describe('validateCalculationInput', () => {
   })
 
   describe('dates', () => {
-    it('accepts a real calendar date', () => {
-      expect(
-        validate([number('amount', 1), string('startedAt', '2026-02-28')])
-          .errors,
-      ).toEqual([])
+    it('accepts a date', () => {
+      const startedAt = new Date('2026-02-28T00:00:00.000Z')
+      const result = validate([
+        number('amount', 1),
+        date('startedAt', startedAt),
+      ])
+
+      expect(result.errors).toEqual([])
+      expect(result.values.startedAt).toBe(startedAt)
     })
 
-    it('rejects a date that does not exist', () => {
+    it('rejects a string for a date field', () => {
       expect(
-        codes([number('amount', 1), string('startedAt', '2026-02-31')]),
-      ).toEqual([[INVALID_VALUE, 'startedAt']])
-    })
-
-    it('rejects an unpadded date', () => {
-      expect(
-        codes([number('amount', 1), string('startedAt', '2026-2-3')]),
+        codes([number('amount', 1), string('startedAt', '2026-02-28')]),
       ).toEqual([[INVALID_VALUE, 'startedAt']])
     })
   })
 
   describe('numbers', () => {
     it('accepts a fraction where no integer semantic applies', () => {
-      expect(validate([number('amount', 1000.5)]).errors).toEqual([])
+      expect(
+        validate([number('amount', 1), number('taxRate', 11.5)]).errors,
+      ).toEqual([])
     })
 
-    it.each(['year', 'childrenUnder7'])(
+    it.each(['amount', 'year', 'childrenUnder7'])(
       'rejects a fraction for the integer-semantic field %s',
       (key) => {
         expect(
           codes([
-            number('amount', 1),
+            ...(key === 'amount' ? [] : [number('amount', 1)]),
             boolean('splitCustody', true),
             number(key, 2.5),
           ]),
