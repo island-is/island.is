@@ -1,0 +1,17 @@
+query GetVehicleMileageFee($input: VehiclesMileageFeeInput!) {
+  vehicleMileageFee(input: $input) {
+    years
+    periods {
+      year
+      month
+      estimatedFee
+      confirmedFee
+      difference
+      differenceOutcome
+    }
+    estimatedFeeTotal
+    confirmedFeeTotal
+    reversalThreshold
+    downloadServiceUrl
+  }
+}

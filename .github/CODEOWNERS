@@ -320,6 +320,7 @@ codemagic.yaml                                                                  
 /libs/clients/rsk/customs                                                                                                    @island-is/stefna
 /libs/clients/rsk/customs-calculator/                                                                                        @island-is/stefna
 /libs/clients/rsk/calculators/                                                                                               @island-is/hugsmidjan
+/libs/clients/rsk/kilometer-fee/                                                                                             @island-is/hugsmidjan
 
 /libs/api/domains/company-registry                                                                                           @island-is/origo
 /libs/api/domains/financial-statements-inao/                                                                                 @island-is/origo
