@@ -1,7 +1,8 @@
 import { Entry, EntryProps } from 'contentful-management'
+import { Document } from '@contentful/rich-text-types'
 import { EN_LOCALE, LOCALE } from '../../constants'
 
-export type ContentTypeOptions = 'grant' | 'genericListItem'
+export type ContentTypeOptions = 'grant' | 'genericListItem' | 'linkUrl'
 
 export interface EntryUpdateDto {
   cmsEntry: Entry
@@ -16,21 +17,7 @@ export interface Localized<T> {
   [LOCALE]: T
 }
 
-export interface CmsRichTextDocument {
-  data: object
-  nodeType: 'document'
-  content: Array<{
-    data: object
-    nodeType: 'paragraph'
-    content: Array<{
-      marks: Array<{
-        type: string
-      }>
-      value: string
-      nodeType: 'text'
-    }>
-  }>
-}
+export type CmsRichTextDocument = Document
 
 export interface RichTextParagraph {
   values: Array<RichTextValue>
@@ -39,6 +26,9 @@ export interface RichTextParagraph {
 export interface RichTextValue {
   value: string
   isBold?: boolean
+  link?:
+    | { type: 'hyperlink'; uri: string }
+    | { type: 'asset-hyperlink'; assetId: string }
 }
 
 export type EntryInputFields = Array<{ key: string; value: unknown }>
