@@ -584,9 +584,29 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IProjectPageFields>(lang, params, 5)
       .catch(errorHandler('getProjectPage'))
 
-    return result.items.length
-      ? mapProjectPage(result.items[0] as IProjectPage)
-      : null
+    if (!result.items.length) {
+      return null
+    }
+
+    const projectPage = result.items[0] as IProjectPage
+
+    const subpageResult = await this.contentfulRepository
+      .getLocalizedEntries<types.IProjectSubpageFields>(
+        lang,
+        {
+          ['content_type']: 'projectSubpage',
+          'fields.projectPage.sys.id': projectPage.sys.id,
+          order: 'sys.createdAt',
+          limit: 1000,
+        },
+        5,
+      )
+      .catch(errorHandler('getProjectPage'))
+
+    return mapProjectPage(
+      projectPage,
+      subpageResult.items as types.IProjectSubpage[],
+    )
   }
 
   async getArticle(slug: string, lang: string): Promise<Article | null> {
@@ -741,16 +761,14 @@ export class CmsContentfulService {
     id,
   }: GetContentSlugInput): Promise<ContentSlug | null> {
     const result = await this.contentfulRepository
-      .getClient()
-      .getEntry<{
+      .getLocalizedEntry<{
         slug: Record<string, string>
         title: Record<string, string>
         url: Record<string, string>
         question?: Record<string, string>
         activeTranslations?: { 'is-IS': Record<string, boolean> }
         parent?: { 'is-IS': { fields: { slug: Record<string, string> } } }
-      }>(id, {
-        locale: '*',
+      }>(id, '*', {
         include: 1,
       })
       .catch(errorHandler('getContentSlug'))
