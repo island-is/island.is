@@ -927,6 +927,33 @@ describe('CardPaymentController', () => {
         expect(status.body).toEqual({ isVerified: true, isFailed: false })
       })
 
+      it.each(['0', '5'])(
+        'rejects mdStatus %s, which the gateway does not allow to proceed, and marks the attempt as failed',
+        async (mdStatus) => {
+          const correlationId = uuid()
+          await cacheManager.set(correlationId, { paymentFlowId })
+          await cacheManager.set(paymentFlowId, {
+            isVerified: false,
+            correlationId,
+          })
+
+          const response = await server
+            .post('/v1/payments/card/verify-callback')
+            .send({
+              md: mdFor(correlationId),
+              mdStatus,
+              cavv: 'cavv',
+              dsTransId: 'ds-1',
+            })
+
+          expect(response.status).toBe(400)
+          const status = await server.get(
+            `/v1/payments/card/verification-status/${paymentFlowId}`,
+          )
+          expect(status.body).toEqual({ isVerified: false, isFailed: true })
+        },
+      )
+
       it('rejects an mdStatus that cannot be charged and marks the attempt as failed', async () => {
         const correlationId = uuid()
         await cacheManager.set(correlationId, { paymentFlowId })

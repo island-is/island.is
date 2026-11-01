@@ -199,13 +199,14 @@ export const generateVerificationRequestOptions = ({
 }
 
 // The 3DS callback sends mdStatus as a number, the charge takes the gateway's
-// MdStatusType names (see MdStatusType in the gateway API). Values outside
-// this list mean the authentication failed and must not be charged.
+// MdStatusType names (see MdStatusType in the gateway API). The gateway
+// documents that only mdStatus 1, 2 and 4 are OK to proceed to payment
+// (CardVerification, "Post authentication"). Any other value, including 5
+// (MdUReceived), means the authentication failed and must not be charged.
 const GATEWAY_MD_STATUSES: Record<string, string> = {
   '1': 'MdFullyAuthenticated',
   '2': 'MdNotEnrolled',
   '4': 'MdAttempt',
-  '5': 'MdUReceived',
 }
 
 export const toGatewayMdStatus = (mdStatus: string): string | undefined =>

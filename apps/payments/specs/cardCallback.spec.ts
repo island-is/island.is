@@ -208,6 +208,19 @@ describe('card verification callback handler', () => {
     expect(res.redirect).toHaveBeenCalledWith(303, FAILURE_REDIRECT)
   })
 
+  it('reports mdStatus 5 as a failed verification, the gateway only allows 1, 2 and 4 to proceed', async () => {
+    const res = createRes()
+
+    await handler(createReq({ body: { mdStatus: '5', MD: 'md-1' } }), res)
+
+    expect(mockMutate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        mutation: 'VerificationCallbackFailedDocument',
+      }),
+    )
+    expect(res.redirect).toHaveBeenCalledWith(303, FAILURE_REDIRECT)
+  })
+
   it('does not report a failed verification for an MD that is too long to be ours', async () => {
     const res = createRes()
 

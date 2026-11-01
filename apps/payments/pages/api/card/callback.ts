@@ -42,8 +42,9 @@ const MAX_DIAGNOSTIC_LENGTH = 64
 const MAX_MD_LENGTH = 1024
 
 // mdStatus values the payments service charges with (see toGatewayMdStatus in
-// the payments service). Any other mdStatus means the 3DS attempt failed.
-const CHARGEABLE_MD_STATUSES = ['1', '2', '4', '5']
+// the payments service). The gateway documents that only these are OK to
+// proceed to payment, any other mdStatus means the 3DS attempt failed.
+const CHARGEABLE_MD_STATUSES = ['1', '2', '4']
 
 // Only an mdStatus that cannot be charged reports the attempt as failed. A
 // callback that is merely missing fields could be a partial or malformed

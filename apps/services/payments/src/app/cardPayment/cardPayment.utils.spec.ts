@@ -519,7 +519,6 @@ describe('toGatewayMdStatus', () => {
     expect(toGatewayMdStatus('1')).toBe('MdFullyAuthenticated')
     expect(toGatewayMdStatus('2')).toBe('MdNotEnrolled')
     expect(toGatewayMdStatus('4')).toBe('MdAttempt')
-    expect(toGatewayMdStatus('5')).toBe('MdUReceived')
   })
 
   it('keeps a value that is already a gateway name', () => {
@@ -528,6 +527,9 @@ describe('toGatewayMdStatus', () => {
 
   it('returns undefined for statuses that must not be charged', () => {
     expect(toGatewayMdStatus('0')).toBeUndefined()
+    // The gateway only allows 1, 2 and 4 to proceed to payment
+    expect(toGatewayMdStatus('5')).toBeUndefined()
+    expect(toGatewayMdStatus('MdUReceived')).toBeUndefined()
     expect(toGatewayMdStatus('6')).toBeUndefined()
     expect(toGatewayMdStatus('96')).toBeUndefined()
     expect(toGatewayMdStatus('')).toBeUndefined()
