@@ -54,6 +54,7 @@ export const ServiceInterruptionBannerAdmin = () => {
 
   const [form, setForm] = useState<BannerFormState>(emptyForm)
   const [initial, setInitial] = useState<BannerFormState>(emptyForm)
+  const [refetching, setRefetching] = useState(false)
 
   useEffect(() => {
     const banner = data?.serviceInterruptionBanner
@@ -75,12 +76,20 @@ export const ServiceInterruptionBannerAdmin = () => {
 
   const [updateBanner, { loading: updating }] =
     useUpdateServiceInterruptionBannerMutation({
-      onCompleted: () => {
+      onCompleted: async () => {
         toast.success('Stillingar vistaðar.')
-        refetch()
+        setRefetching(true)
+
+        try {
+          await refetch()
+        } finally {
+          setRefetching(false)
+        }
       },
       onError: () => toast.error('Ekki tókst að vista stillingar.'),
     })
+
+  const isBusy = updating || refetching
 
   const isAuthorized =
     user?.role === UserRole.ADMIN ||
@@ -91,7 +100,7 @@ export const ServiceInterruptionBannerAdmin = () => {
   }
 
   const save = () => {
-    if (updating) {
+    if (isBusy) {
       return
     }
 
@@ -137,8 +146,8 @@ export const ServiceInterruptionBannerAdmin = () => {
                   {
                     text: 'Vista',
                     onClick: save,
-                    disabled: updating,
-                    loading: updating,
+                    disabled: isBusy,
+                    loading: isBusy,
                   },
                 ]}
               />
@@ -150,7 +159,7 @@ export const ServiceInterruptionBannerAdmin = () => {
                   label="Titill"
                   value={form.title}
                   maxLength={255}
-                  disabled={updating}
+                  disabled={isBusy}
                   onChange={(event) => setField('title', event.target.value)}
                 />
               </Box>
@@ -161,7 +170,7 @@ export const ServiceInterruptionBannerAdmin = () => {
                   textarea
                   rows={3}
                   value={form.globalMessage}
-                  disabled={updating}
+                  disabled={isBusy}
                   onChange={(event) =>
                     setField('globalMessage', event.target.value)
                   }
@@ -174,7 +183,7 @@ export const ServiceInterruptionBannerAdmin = () => {
                   textarea
                   rows={3}
                   value={form.prosecutorMessage}
-                  disabled={updating}
+                  disabled={isBusy}
                   onChange={(event) =>
                     setField('prosecutorMessage', event.target.value)
                   }
@@ -187,7 +196,7 @@ export const ServiceInterruptionBannerAdmin = () => {
                   textarea
                   rows={3}
                   value={form.courtMessage}
-                  disabled={updating}
+                  disabled={isBusy}
                   onChange={(event) =>
                     setField('courtMessage', event.target.value)
                   }
