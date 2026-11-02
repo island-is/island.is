@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
@@ -50,7 +49,6 @@ type ModalType =
   | 'none'
 
 const Summary: FC = () => {
-  const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
