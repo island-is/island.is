@@ -19,4 +19,3 @@ describe('ServiceInterruptionBannerController - Update rules', () => {
     expect(rules).toContain(serviceInterruptionBannerManagerRule)
   })
 })
-

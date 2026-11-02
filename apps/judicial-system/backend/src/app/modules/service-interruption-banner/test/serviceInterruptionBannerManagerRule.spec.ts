@@ -9,9 +9,7 @@ describe('serviceInterruptionBannerManagerRule', () => {
 
   const rule = serviceInterruptionBannerManagerRule
 
-  const requestFor = (user: {
-    canManageServiceInterruptionBanner?: boolean
-  }) =>
+  const requestFor = (user: { canManageServiceInterruptionBanner?: boolean }) =>
     ({
       user: { currentUser: { role: UserRole.LOCAL_ADMIN, ...user } },
     } as never)

@@ -46,4 +46,3 @@ describe('UserController - Create rules', () => {
     ).toBe(false)
   })
 })
-
