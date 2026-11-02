@@ -124,26 +124,27 @@ export const Users = () => {
         <Box display="flex" columnGap={2}>
           {(user?.role === UserRole.ADMIN ||
             user?.canManageMessageSuspension) && (
-            <>
-              <Button
-                variant="ghost"
-                icon="settings"
-                onClick={() => {
-                  router.push(ADMIN_MESSAGE_SUSPENSION_ROUTE)
-                }}
-              >
-                Biðröð
-              </Button>
-              <Button
-                variant="ghost"
-                icon="warning"
-                onClick={() => {
-                  router.push(ADMIN_SERVICE_INTERRUPTION_BANNER_ROUTE)
-                }}
-              >
-                Gulur borði
-              </Button>
-            </>
+            <Button
+              variant="ghost"
+              icon="settings"
+              onClick={() => {
+                router.push(ADMIN_MESSAGE_SUSPENSION_ROUTE)
+              }}
+            >
+              Biðröð
+            </Button>
+          )}
+          {(user?.role === UserRole.ADMIN ||
+            user?.canManageServiceInterruptionBanner) && (
+            <Button
+              variant="ghost"
+              icon="warning"
+              onClick={() => {
+                router.push(ADMIN_SERVICE_INTERRUPTION_BANNER_ROUTE)
+              }}
+            >
+              Gulur borði
+            </Button>
           )}
           <Button
             variant="ghost"

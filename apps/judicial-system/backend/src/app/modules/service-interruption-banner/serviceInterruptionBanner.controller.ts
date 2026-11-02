@@ -13,9 +13,9 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { adminRule } from '../../guards'
-import { messageSuspensionManagerRule } from '../message-suspension/guards/rolesRules'
 import { ServiceInterruptionBanner } from '../repository'
 import { UpdateServiceInterruptionBannerDto } from './dto/updateServiceInterruptionBanner.dto'
+import { serviceInterruptionBannerManagerRule } from './guards/rolesRules'
 import { ServiceInterruptionBannerService } from './serviceInterruptionBanner.service'
 
 @Controller('api/service-interruption-banner')
@@ -39,7 +39,7 @@ export class ServiceInterruptionBannerController {
   }
 
   @UseGuards(JwtAuthUserGuard, RolesGuard)
-  @RolesRules(adminRule, messageSuspensionManagerRule)
+  @RolesRules(adminRule, serviceInterruptionBannerManagerRule)
   @Patch()
   @ApiOkResponse({
     type: ServiceInterruptionBanner,

@@ -78,6 +78,8 @@ export const NewUser = () => {
             ...(isSuperAdmin
               ? {
                   canManageMessageSuspension: user.canManageMessageSuspension,
+                  canManageServiceInterruptionBanner:
+                    user.canManageServiceInterruptionBanner,
                 }
               : {}),
           } as CreateUserInput,

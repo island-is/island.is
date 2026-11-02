@@ -1,5 +1,5 @@
 import { adminRule } from '../../../guards'
-import { messageSuspensionManagerRule } from '../../message-suspension/guards/rolesRules'
+import { serviceInterruptionBannerManagerRule } from '../guards/rolesRules'
 import { ServiceInterruptionBannerController } from '../serviceInterruptionBanner.controller'
 
 describe('ServiceInterruptionBannerController - Update rules', () => {
@@ -13,9 +13,10 @@ describe('ServiceInterruptionBannerController - Update rules', () => {
     )
   })
 
-  it('should give permission to admins and message suspension managers', () => {
+  it('should give permission to admins and banner managers', () => {
     expect(rules).toHaveLength(2)
     expect(rules).toContain(adminRule)
-    expect(rules).toContain(messageSuspensionManagerRule)
+    expect(rules).toContain(serviceInterruptionBannerManagerRule)
   })
 })
+
