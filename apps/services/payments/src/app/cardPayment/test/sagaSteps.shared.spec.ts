@@ -6,6 +6,8 @@ import {
   ApplePayPaymentStepResults,
   CardPaymentContext,
   CardPaymentStepResults,
+  GooglePayPaymentContext,
+  GooglePayPaymentStepResults,
   PaymentOrchestrator,
 } from '../cardPayment.orchestrator'
 import { CardPaymentService } from '../cardPayment.service'
@@ -14,18 +16,25 @@ import { PaymentFlowService } from '../../paymentFlow/paymentFlow.service'
 import {
   createApplePayPaymentContext,
   createApplePayPaymentSaga,
-} from '../applePayPayment.saga'
+} from '../applePay/applePayPayment.saga'
 import {
   createCardPaymentContext,
   createCardPaymentSaga,
-} from '../cardPayment.saga'
-import type { ApplePayChargeInput, ChargeCardInput } from '../dtos'
+} from '../card/cardPayment.saga'
+import {
+  createGooglePayPaymentContext,
+  createGooglePayPaymentSaga,
+} from '../googlePay/googlePayPayment.saga'
+import type { ApplePayChargeInput } from '../applePay/dtos'
+import type { ChargeCardInput } from '../card/dtos'
+import type { GooglePayChargeInput } from '../googlePay/dtos'
 import {
   createMockCardPaymentService,
   createMockLogger,
   createMockPaymentFlowService,
   getApplePayChargeInput,
   getChargeCardInput,
+  getGooglePayChargeInput,
   mockPaymentFlow,
   mockPaymentResult,
 } from './sagaTestUtils'
@@ -65,6 +74,23 @@ type SagaConfig =
       expectedNotifyMessage: string
       chargeMock: keyof CardPaymentService
     }
+  | {
+      name: 'GooglePay'
+      createContext: (
+        paymentFlowId: string,
+        input: GooglePayChargeInput,
+      ) => GooglePayPaymentContext
+      createSaga: (
+        cardService: CardPaymentService,
+        refundService: RefundService,
+        flowService: PaymentFlowService,
+        logger: Logger,
+      ) => ReturnType<typeof createGooglePayPaymentSaga>
+      chargeStepName: 'CHARGE_GOOGLE_PAY'
+      getInput: () => GooglePayChargeInput
+      expectedNotifyMessage: string
+      chargeMock: keyof CardPaymentService
+    }
 
 const sagaConfigs: SagaConfig[] = [
   {
@@ -86,6 +112,15 @@ const sagaConfigs: SagaConfig[] = [
     expectedNotifyMessage: 'Apple Pay payment completed successfully',
     chargeMock: 'chargeApplePay',
   },
+  {
+    name: 'GooglePay',
+    createContext: createGooglePayPaymentContext,
+    createSaga: createGooglePayPaymentSaga,
+    chargeStepName: 'CHARGE_GOOGLE_PAY',
+    getInput: getGooglePayChargeInput,
+    expectedNotifyMessage: 'Google Pay payment completed successfully',
+    chargeMock: 'chargeGooglePay',
+  },
 ]
 
 const getSagaSteps = (
@@ -93,12 +128,12 @@ const getSagaSteps = (
 ): { name: string }[] => (Array.isArray(saga) ? saga : Object.values(saga))
 
 /**
- * CardPayment Saga and ApplePay Saga share the same steps except for the charge step.
- * These tests verify that the steps are the same in both sagas and should ensure that changes made to the steps are reflected in both sagas.
+ * The Card, Apple Pay and Google Pay sagas share the same steps except for the charge step.
+ * These tests verify that the steps are the same in all three sagas and should ensure that changes made to the steps are reflected in each of them.
  */
 describe('Card Payment Saga - Shared Steps', () => {
   describe('structural parity', () => {
-    it('both sagas have same step structure (VALIDATE, charge, PERSIST, SETTLE_DEBT, NOTIFY)', () => {
+    it('all sagas have the same step structure (VALIDATE, charge, PERSIST, SETTLE_DEBT, NOTIFY)', () => {
       const mockLogger = createMockLogger()
       const mockCard = {} as CardPaymentService
       const mockRefund = {} as RefundService
@@ -112,8 +147,16 @@ describe('Card Payment Saga - Shared Steps', () => {
         mockLogger,
       )
 
+      const googleSaga = createGooglePayPaymentSaga(
+        mockCard,
+        mockRefund,
+        mockFlow,
+        mockLogger,
+      )
+
       const cardSteps = getSagaSteps(cardSaga)
       const appleSteps = getSagaSteps(appleSaga)
+      const googleSteps = getSagaSteps(googleSaga)
 
       expect(cardSteps.map((s) => s.name)).toEqual([
         'VALIDATE',
@@ -125,6 +168,14 @@ describe('Card Payment Saga - Shared Steps', () => {
       expect(appleSteps.map((s) => s.name)).toEqual([
         'VALIDATE',
         'CHARGE_APPLE_PAY',
+        'PERSIST_PAYMENT_CONFIRMATION',
+        'SETTLE_DEBT',
+        'NOTIFY_SUCCESSFUL_PAYMENT',
+      ])
+
+      expect(googleSteps.map((s) => s.name)).toEqual([
+        'VALIDATE',
+        'CHARGE_GOOGLE_PAY',
         'PERSIST_PAYMENT_CONFIRMATION',
         'SETTLE_DEBT',
         'NOTIFY_SUCCESSFUL_PAYMENT',
@@ -170,9 +221,14 @@ describe('Card Payment Saga - Shared Steps', () => {
               mockLogger,
               mockPaymentFlowService,
             )
-          : new PaymentOrchestrator<
+          : config.name === 'ApplePay'
+          ? new PaymentOrchestrator<
               ApplePayPaymentContext,
               ApplePayPaymentStepResults
+            >(mockLogger, mockPaymentFlowService)
+          : new PaymentOrchestrator<
+              GooglePayPaymentContext,
+              GooglePayPaymentStepResults
             >(mockLogger, mockPaymentFlowService)
 
       return { input, context, saga, orchestrator }
@@ -272,7 +328,7 @@ describe('Card Payment Saga - Shared Steps', () => {
       const loggedReasons = () =>
         mockPaymentFlowService.logPaymentFlowUpdate.mock.calls
           .map(([update]) => update.reason)
-          // Apple Pay also announces that the payment started
+          // The wallet sagas also announce that the payment started
           .filter((reason) => reason !== 'payment_started')
 
       const callFor = (reason: string) =>

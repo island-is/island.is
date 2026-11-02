@@ -1,5 +1,4 @@
 import type { FC } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Accordion, AccordionItem, Text } from '@island.is/island-ui/core'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
@@ -25,7 +24,6 @@ export const useIndictmentsLawsBroken = (workingCase: WorkingCase) => {
 
 const IndictmentsLawsBrokenAccordionItem: FC<Props> = (props) => {
   const { workingCase } = props
-  const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
   return (
@@ -33,7 +31,7 @@ const IndictmentsLawsBrokenAccordionItem: FC<Props> = (props) => {
       <AccordionItem
         labelVariant="h3"
         id="lawsBrokenAccordionItem"
-        label={formatMessage(lawsBrokenAccordion.heading)}
+        label={lawsBrokenAccordion.heading}
       >
         {[...lawsBroken.keys()].map((law) => (
           <div key={law}>

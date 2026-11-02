@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator'
-import { CardInformation } from './CardInformation.dto'
+import { CardInformation } from '../../dtos/CardInformation.dto'
 
 class VerificationField {
   @ApiProperty({ description: 'Field name', type: String })

@@ -21,6 +21,9 @@ import {
   CardVerificationErrorSchema,
   CardVerificationSuccessResponse,
   CardVerificationSuccessSchema,
+  GooglePayCardInformation,
+  GooglePayDecryptionErrorSchema,
+  GooglePayDecryptionSuccessSchema,
   MdNormalised,
   PaymentTrackingData,
   RefundErrorSchema,
@@ -36,28 +39,38 @@ import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import { paymentGatewayResponseCodes } from './cardPayment.constants'
-import { verifyApplePaySignature } from './applePaySignature'
+import { verifyApplePaySignature } from './applePay/applePaySignature'
+import {
+  buildCardPayInfo,
+  generateRefundRequestOptions,
+} from './cardPayment.utils'
 import {
   buildVerificationBrowserData,
   buildVerificationCardholderData,
+  generateChargeRequestOptions,
+  generateMd,
+  generateVerificationRequestOptions,
+  getPayloadFromMd,
+} from './card/card.utils'
+import {
   decryptApplePayPaymentToken,
   generateApplePayDecryptedChargeRequestOptions,
   generateApplePayValidationRequestOptions,
-  generateChargeRequestOptions,
-  generateMd,
-  buildCardPayInfo,
-  generateRefundRequestOptions,
-  generateVerificationRequestOptions,
-  getPayloadFromMd,
   validateAndParseApplePayValidationUrl,
-} from './cardPayment.utils'
+} from './applePay/applePay.utils'
+import { ApplePayChargeInput, ApplePaySessionResponse } from './applePay/dtos'
 import {
-  ApplePayChargeInput,
-  ApplePaySessionResponse,
+  describeGatewayResponseForTesting,
+  describeGooglePayTokenForTesting,
+  generateGooglePayDecryptionRequestOptions,
+  generateGooglePaySavedCardChargeRequestOptions,
+} from './googlePay/googlePay.utils'
+import { GooglePayChargeInput } from './googlePay/dtos'
+import {
   ChargeCardInput,
   VerificationCallbackInput,
   VerifyCardInput,
-} from './dtos'
+} from './card/dtos'
 
 @Injectable()
 export class CardPaymentService {
@@ -83,6 +96,7 @@ export class CardPaymentService {
   async verify(
     verifyCardInput: VerifyCardInput,
     totalPrice: number,
+    correlationId = uuid(),
   ): Promise<CardVerificationSuccessResponse> {
     const {
       memCacheExpiryMinutes,
@@ -92,8 +106,6 @@ export class CardPaymentService {
         paymentsGatewayApiUrl,
       },
     } = this.config
-
-    const correlationId = uuid()
 
     const { paymentFlowId } = verifyCardInput
 
@@ -469,32 +481,8 @@ export class CardPaymentService {
     paymentTrackingData: PaymentTrackingData
     amount: number
   }): Promise<CardPaymentSuccessResponse> {
-    const status = await this.getFullVerificationStatus(
-      chargeCardInput.paymentFlowId,
-    )
-
-    if (!status?.isVerified || !status?.correlationId) {
-      throw new BadRequestException(PaymentServiceCode.MissingVerification)
-    }
-
-    const { correlationId } = status
-
-    const verificationData = (await this.cacheManager.get(
-      correlationId,
-    )) as SavedVerificationCompleteData
-
-    if (!verificationData) {
-      throw new BadRequestException(PaymentServiceCode.MissingVerification)
-    }
-
-    if (
-      !verificationData.cavv ||
-      !verificationData.mdStatus ||
-      !verificationData.xid ||
-      !verificationData.dsTransId
-    ) {
-      throw new BadRequestException(PaymentServiceCode.MissingVerification)
-    }
+    const { correlationId, verificationData } =
+      await this.requireCompletedVerification(chargeCardInput.paymentFlowId)
 
     const {
       paymentGateway: { paymentsGatewayApiUrl },
@@ -521,17 +509,54 @@ export class CardPaymentService {
       errorMessage: 'Failed to charge card',
     })
 
+    await this.clearVerification(chargeCardInput.paymentFlowId, correlationId)
+
+    return data as CardPaymentSuccessResponse
+  }
+
+  /** The 3-D Secure result the verification callback saved for the payment flow */
+  private async requireCompletedVerification(paymentFlowId: string) {
+    const status = await this.getFullVerificationStatus(paymentFlowId)
+
+    if (!status?.isVerified || !status?.correlationId) {
+      throw new BadRequestException(PaymentServiceCode.MissingVerification)
+    }
+
+    const { correlationId } = status
+
+    const verificationData = (await this.cacheManager.get(
+      correlationId,
+    )) as SavedVerificationCompleteData
+
+    if (!verificationData) {
+      throw new BadRequestException(PaymentServiceCode.MissingVerification)
+    }
+
+    if (
+      !verificationData.cavv ||
+      !verificationData.mdStatus ||
+      !verificationData.xid ||
+      !verificationData.dsTransId
+    ) {
+      throw new BadRequestException(PaymentServiceCode.MissingVerification)
+    }
+
+    return { correlationId, verificationData }
+  }
+
+  private async clearVerification(
+    paymentFlowId: string,
+    correlationId: string,
+  ) {
     try {
       await this.cacheManager.del(correlationId)
-      await this.cacheManager.del(chargeCardInput.paymentFlowId)
+      await this.cacheManager.del(paymentFlowId)
     } catch (e) {
       this.logger.error(
         'Failed to clear cache after a successful card payment',
         e,
       )
     }
-
-    return data as CardPaymentSuccessResponse
   }
 
   async chargeApplePay(
@@ -704,6 +729,454 @@ export class CardPaymentService {
     // transaction id (which is hex) cannot bypass replay detection by
     // hitting different cache slots.
     return `applepay:tx:${transactionIdentifier.toLowerCase()}`
+  }
+
+  // GOOGLE PAY METHODS ------------------------------------------------------------------------------------------------
+
+  /**
+   * Google signs each token once, so its hash identifies the token across the
+   * charge and the charge after 3-D Secure without keeping the token itself.
+   */
+  private googlePayTokenId(token: string): string {
+    return crypto.createHash('sha256').update(token).digest('hex')
+  }
+
+  /**
+   * Have Valitor decrypt a token that is not claimed for a charge yet, to
+   * start 3-D Secure for its card. The card only lives in memory for this
+   * request: it is decrypted again from the same token when it is charged.
+   */
+  async decryptGooglePayToken({
+    paymentFlowId,
+    token,
+    amount,
+  }: {
+    paymentFlowId: string
+    token: string
+    amount: number
+  }): Promise<GooglePayCardInformation> {
+    const tokenId = this.googlePayTokenId(token)
+
+    // Reject replay of a Google Pay token that is being, or has been, charged.
+    if (await this.isGooglePayTokenCharged(tokenId)) {
+      this.logger.warn(
+        `[${paymentFlowId}] [GOOGLEPAY] Google Pay replay detected`,
+        {
+          paymentFlowId,
+          tokenId,
+        },
+      )
+      throw new BadRequestException(CardErrorCode.GooglePayReplayDetected)
+    }
+
+    return this.decryptGooglePayTokenWithGateway({
+      paymentFlowId,
+      token,
+      amount,
+    })
+  }
+
+  /**
+   * Have Valitor decrypt the token (gateway `valitor`). Only a card saved in
+   * the Google account (PAN_ONLY) is offered, for which Valitor answers Q8
+   * with the card.
+   */
+  private async decryptGooglePayTokenWithGateway({
+    paymentFlowId,
+    token,
+    amount,
+  }: {
+    paymentFlowId: string
+    token: string
+    amount: number
+  }): Promise<GooglePayCardInformation> {
+    const logPrefix = `[${paymentFlowId}] [GOOGLEPAY]`
+    const tokenId = this.googlePayTokenId(token)
+
+    let parsedToken: unknown
+    try {
+      parsedToken = JSON.parse(token)
+    } catch {
+      this.logger.error(`${logPrefix} Google Pay token is not JSON`, {
+        paymentFlowId,
+        tokenId,
+      })
+      throw new BadRequestException(CardErrorCode.GooglePayTokenInvalid)
+    }
+
+    // Valitor charges a device token (CRYPTOGRAM_3DS) outright instead of
+    // answering Q8. Only PAN_ONLY is offered, but should one get through, the
+    // correlationId in this log is what refunds it.
+    const correlationId = uuid()
+    this.logger.info(`${logPrefix} Google Pay token decryption started`, {
+      paymentFlowId,
+      tokenId,
+      correlationId,
+    })
+    // TEMPORARY: verbose logging while Google Pay is tested on production.
+    // Remove once the flow is verified there.
+    this.logger.info(`${logPrefix} [TESTING] Google Pay token received`, {
+      paymentFlowId,
+      tokenId,
+      correlationId,
+      amount,
+      token: describeGooglePayTokenForTesting(parsedToken),
+    })
+
+    const { paymentsGatewayApiUrl } = this.config.paymentGateway
+    const gatewayUrl = `${paymentsGatewayApiUrl}/Payment/CardPayment`
+
+    let response: Response
+    try {
+      response = await fetch(
+        gatewayUrl,
+        generateGooglePayDecryptionRequestOptions({
+          token: parsedToken,
+          paymentApiConfig: this.config.paymentGateway,
+          correlationId,
+          amount,
+        }),
+      )
+    } catch (e) {
+      this.logger.error(`${logPrefix} Google Pay gateway fetch failed`, {
+        paymentFlowId,
+        gatewayUrl,
+        error: (e as Error).message,
+      })
+      throw e
+    }
+
+    // TEMPORARY: verbose logging while Google Pay is tested on production.
+    // Remove once the flow is verified there.
+    await this.logGooglePayGatewayResponseForTesting({
+      stage: 'token decryption',
+      paymentFlowId,
+      correlationId,
+      response,
+    })
+
+    const { googlePayCardInformation } =
+      await this.parsePaymentGatewayResponseAndHandleErrors({
+        paymentFlowId,
+        response,
+        schema: GooglePayDecryptionSuccessSchema,
+        errorSchema: GooglePayDecryptionErrorSchema,
+        errorMessage: 'Failed to decrypt Google Pay token',
+      })
+
+    this.logger.info(`${logPrefix} Google Pay token decrypted`, {
+      paymentFlowId,
+      tokenId,
+      correlationId,
+    })
+
+    return googlePayCardInformation
+  }
+
+  /**
+   * Start 3-D Secure for a card saved in the Google account (PAN_ONLY), as
+   * verify() does for a typed card. The verification is tied to the token so
+   * only this token can be charged with its result.
+   */
+  async verifyGooglePaySavedCard({
+    input,
+    card,
+    totalPrice,
+  }: {
+    input: GooglePayChargeInput
+    card: GooglePayCardInformation
+    totalPrice: number
+  }): Promise<CardVerificationSuccessResponse> {
+    const { tokenExpiryMinutes, memCacheExpiryMinutes } = this.config
+    const correlationId = uuid()
+
+    // Outlives the verification: the callback has tokenExpiryMinutes to
+    // arrive and its result is then kept for memCacheExpiryMinutes.
+    await this.cacheManager.set(
+      this.googlePayVerificationCacheKey(correlationId),
+      this.googlePayTokenId(input.token),
+      (tokenExpiryMinutes + memCacheExpiryMinutes) * 60000,
+    )
+
+    const verification = await this.verify(
+      {
+        paymentFlowId: input.paymentFlowId,
+        cardNumber: card.pan,
+        expiryMonth: card.expirationMonth,
+        // verify() takes the two-digit year of the card form
+        expiryYear: card.expirationYear % 100,
+        cardholderName: input.cardholderName,
+        browserInfo: input.browserInfo,
+      },
+      totalPrice,
+      correlationId,
+    )
+
+    // TEMPORARY: verbose logging while Google Pay is tested on production.
+    // Remove once the flow is verified there.
+    this.logger.info(
+      `[${input.paymentFlowId}] [GOOGLEPAY] [TESTING] 3-D Secure started for the decrypted card`,
+      {
+        paymentFlowId: input.paymentFlowId,
+        tokenId: this.googlePayTokenId(input.token),
+        correlationId,
+        totalPrice,
+        hasBrowserInfo: !!input.browserInfo,
+        responseCode: verification.responseCode,
+        responseDescription: verification.responseDescription,
+        gatewayCorrelationId: verification.correlationID,
+        postUrl: verification.postUrl,
+        threeDSMessageVersion: verification.threeDSMessageVersion,
+        hasScriptPath: !!verification.scriptPath,
+        verificationFieldNames: verification.verificationFields.map(
+          (field) => field.name,
+        ),
+        additionalFields: verification.additionalFields,
+        cardInformation: verification.cardInformation,
+      },
+    )
+
+    return verification
+  }
+
+  /**
+   * Charge a card saved in the Google account through CardPayment with the
+   * 3-D Secure result of verifyGooglePaySavedCard, decrypting the token again.
+   */
+  async chargeGooglePay({
+    paymentFlowId,
+    token,
+    paymentTrackingData,
+    amount,
+  }: {
+    paymentFlowId: string
+    token: string
+    paymentTrackingData: PaymentTrackingData
+    amount: number
+  }): Promise<CardPaymentSuccessResponse> {
+    const logPrefix = `[${paymentFlowId}] [GOOGLEPAY]`
+    const tokenId = this.googlePayTokenId(token)
+
+    this.logger.info(`${logPrefix} Google Pay charge started`, {
+      paymentFlowId,
+      totalPrice: amount,
+      tokenId,
+      correlationId: paymentTrackingData.correlationId,
+      merchantReferenceData: paymentTrackingData.merchantReferenceData,
+    })
+
+    const { correlationId, verificationData } =
+      await this.requireCompletedVerification(paymentFlowId)
+
+    const verifiedTokenId = await this.cacheManager.get(
+      this.googlePayVerificationCacheKey(correlationId),
+    )
+    // TEMPORARY: verbose logging while Google Pay is tested on production.
+    // Remove once the flow is verified there.
+    this.logger.info(`${logPrefix} [TESTING] 3-D Secure result found`, {
+      paymentFlowId,
+      tokenId,
+      verificationCorrelationId: correlationId,
+      verifiedTokenMatches: verifiedTokenId === tokenId,
+      mdStatus: verificationData.mdStatus,
+      hasCavv: !!verificationData.cavv,
+      hasXid: !!verificationData.xid,
+      hasDsTransId: !!verificationData.dsTransId,
+    })
+    if (verifiedTokenId !== tokenId) {
+      this.logger.warn(
+        `${logPrefix} No 3-D Secure verification for this Google Pay token`,
+        { paymentFlowId, tokenId, hasVerification: !!verifiedTokenId },
+      )
+      throw new BadRequestException(PaymentServiceCode.MissingVerification)
+    }
+
+    // Checked and marked BEFORE the gateway is called, as for Apple Pay, so a
+    // retry of a mid-flight failure can not charge the token twice. The check
+    // and the mark are two cache commands, so two requests arriving within
+    // the same Redis round-trip can both pass; the one-active-row-per-flow
+    // index then fails the second saga, which refunds its charge.
+    if (await this.isGooglePayTokenCharged(tokenId)) {
+      this.logger.warn(`${logPrefix} Google Pay replay detected`, {
+        paymentFlowId,
+        tokenId,
+      })
+      throw new BadRequestException(CardErrorCode.GooglePayReplayDetected)
+    }
+    await this.markGooglePayTokenCharged(paymentFlowId, tokenId)
+
+    // The mark is this request's own, so the replay check is skipped
+    const card = await this.decryptGooglePayTokenWithGateway({
+      paymentFlowId,
+      token,
+      amount,
+    })
+
+    const { paymentsGatewayApiUrl } = this.config.paymentGateway
+
+    const data = await this.sendGooglePayCharge({
+      paymentFlowId,
+      gatewayUrl: `${paymentsGatewayApiUrl}/Payment/CardPayment`,
+      requestOptions: generateGooglePaySavedCardChargeRequestOptions({
+        card,
+        verificationData,
+        paymentApiConfig: this.config.paymentGateway,
+        paymentTrackingData,
+        amount,
+      }),
+    })
+
+    await this.clearVerification(paymentFlowId, correlationId)
+    try {
+      await this.cacheManager.del(
+        this.googlePayVerificationCacheKey(correlationId),
+      )
+    } catch (e) {
+      this.logger.error(
+        `${logPrefix} Failed to clear the Google Pay verification`,
+        e,
+      )
+    }
+
+    return data
+  }
+
+  private async sendGooglePayCharge({
+    paymentFlowId,
+    gatewayUrl,
+    requestOptions,
+  }: {
+    paymentFlowId: string
+    gatewayUrl: string
+    requestOptions: RequestInit
+  }): Promise<CardPaymentSuccessResponse> {
+    const logPrefix = `[${paymentFlowId}] [GOOGLEPAY]`
+
+    let response: Response
+    try {
+      response = await fetch(gatewayUrl, requestOptions)
+    } catch (e) {
+      this.logger.error(`${logPrefix} Google Pay gateway fetch failed`, {
+        paymentFlowId,
+        gatewayUrl,
+        error: (e as Error).message,
+      })
+      throw e
+    }
+
+    // TEMPORARY: verbose logging while Google Pay is tested on production.
+    // Remove once the flow is verified there.
+    await this.logGooglePayGatewayResponseForTesting({
+      stage: 'ECommerce charge',
+      paymentFlowId,
+      response,
+    })
+
+    const data = await this.parsePaymentGatewayResponseAndHandleErrors({
+      paymentFlowId,
+      response,
+      schema: CardPaymentSuccessSchema,
+      errorSchema: CardPaymentErrorSchema,
+      errorMessage: 'Failed to charge Google Pay payment',
+    })
+
+    this.logger.info(`${logPrefix} Google Pay charge succeeded`, {
+      paymentFlowId,
+      responseCode: data.responseCode,
+      responseDescription: data.responseDescription,
+      correlationID: data.correlationID,
+      acquirerReferenceNumber: data.acquirerReferenceNumber,
+      transactionID: data.transactionID,
+      authorizationCode: data.authorizationCode,
+    })
+
+    return data
+  }
+
+  /**
+   * TEMPORARY: verbose logging while Google Pay is tested on production.
+   * Remove once the flow is verified there. Logs the gateway's answer as it
+   * came, with the card's number and expiry left out, so Valitor's responses
+   * can be read in the logs without a redeploy. Reads a clone, so the parser
+   * still gets the body; a response that can not be cloned is skipped.
+   */
+  private async logGooglePayGatewayResponseForTesting({
+    stage,
+    paymentFlowId,
+    correlationId,
+    response,
+  }: {
+    stage: string
+    paymentFlowId: string
+    correlationId?: string
+    response: Response
+  }): Promise<void> {
+    const logPrefix = `[${paymentFlowId}] [GOOGLEPAY] [TESTING]`
+    try {
+      if (typeof response.clone !== 'function') {
+        return
+      }
+      const clone = response.clone()
+      const text = await clone.text()
+      let body: unknown
+      try {
+        body = JSON.parse(text)
+      } catch {
+        body = undefined
+      }
+      this.logger.info(`${logPrefix} ${stage} gateway response`, {
+        paymentFlowId,
+        correlationId,
+        status: response.status,
+        ok: response.ok,
+        bodyLength: text.length,
+        ...(body === undefined
+          ? { bodyStart: text.slice(0, 300) }
+          : describeGatewayResponseForTesting(body)),
+      })
+    } catch (e) {
+      this.logger.warn(`${logPrefix} Could not log the ${stage} response`, {
+        paymentFlowId,
+        error: (e as Error).message,
+      })
+    }
+  }
+
+  private googlePayReplayCacheKey(tokenId: string): string {
+    return `googlepay:token:${tokenId}`
+  }
+
+  /** Whether a charge has been started for the token, by this or an earlier request */
+  private async isGooglePayTokenCharged(tokenId: string): Promise<boolean> {
+    return !!(await this.cacheManager.get(
+      this.googlePayReplayCacheKey(tokenId),
+    ))
+  }
+
+  /**
+   * Mark the token as charged for the replay window. Kept when the charge
+   * fails, so a retry can not double charge.
+   */
+  private async markGooglePayTokenCharged(
+    paymentFlowId: string,
+    tokenId: string,
+  ): Promise<void> {
+    try {
+      await this.cacheManager.set(
+        this.googlePayReplayCacheKey(tokenId),
+        true,
+        Math.max(this.config.memCacheExpiryMinutes, 60 * 24) * 60000,
+      )
+    } catch (e) {
+      this.logger.error(
+        `[${paymentFlowId}] [GOOGLEPAY] Failed to record Google Pay token for replay protection (continuing without)`,
+        e,
+      )
+    }
+  }
+
+  private googlePayVerificationCacheKey(correlationId: string): string {
+    return `googlepay:verification:${correlationId}`
   }
 
   // REFUND METHODS ------------------------------------------------------------------------------------------------

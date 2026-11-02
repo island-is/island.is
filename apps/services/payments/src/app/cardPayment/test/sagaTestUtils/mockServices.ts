@@ -33,6 +33,7 @@ export const createMockCardPaymentService = (
     ),
     charge: jest.fn().mockResolvedValue(resolved(mockPaymentResult)),
     chargeApplePay: jest.fn().mockResolvedValue(resolved(mockPaymentResult)),
+    chargeGooglePay: jest.fn().mockResolvedValue(resolved(mockPaymentResult)),
     persistPaymentConfirmation: jest
       .fn()
       .mockResolvedValue(resolved(undefined)),

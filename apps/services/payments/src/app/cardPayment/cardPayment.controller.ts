@@ -31,24 +31,32 @@ import { notifyKeptDebtPayment } from './cardPayment.debt'
 import {
   createApplePayPaymentContext,
   createApplePayPaymentSaga,
-} from './applePayPayment.saga'
+} from './applePay/applePayPayment.saga'
 import {
   ApplePayPaymentContext,
   ApplePayPaymentStepResults,
   CardPaymentContext,
   CardPaymentStepResults,
+  GooglePayPaymentContext,
+  GooglePayPaymentStepResults,
   PaymentOrchestrator,
 } from './cardPayment.orchestrator'
 import {
   createCardPaymentContext,
   createCardPaymentSaga,
-} from './cardPayment.saga'
+} from './card/cardPayment.saga'
+import {
+  createGooglePayPaymentContext,
+  createGooglePayPaymentSaga,
+} from './googlePay/googlePayPayment.saga'
 import { CardPaymentService } from './cardPayment.service'
 import {
   ApplePayChargeInput,
   ApplePayChargeResponse,
   ApplePaySessionResponse,
   ValidateApplePayMerchantInput,
+} from './applePay/dtos'
+import {
   ChargeCardInput,
   ChargeCardResponse,
   GetVerificationStatus,
@@ -57,7 +65,12 @@ import {
   VerificationStatusResponse,
   VerifyCardInput,
   VerifyCardResponse,
-} from './dtos'
+} from './card/dtos'
+import {
+  GooglePayChargeInput,
+  GooglePayChargeResponse,
+  GooglePayChargeVerifiedInput,
+} from './googlePay/dtos'
 import { RefundService } from '../refund/refund.service'
 
 @UseGuards(FeatureFlagGuard)
@@ -421,6 +434,213 @@ export class CardPaymentController {
         } catch (logError) {
           this.logger.warn(
             `[${paymentFlowId}] Failed to log payment flow update and notify upstream after Apple Pay saga failed: ${logError.message}`,
+            { paymentFlowId, logError },
+          )
+        }
+
+        throw new BadRequestException(
+          onlyReturnKnownErrorCode(e.message, CardErrorCode.UnknownCardError),
+        )
+      }
+    }
+  }
+
+  @UseGuards(FeatureFlagGuard)
+  @FeatureFlag(Features.isIslandisGooglePayPaymentEnabled)
+  @Post('/google-pay/charge')
+  @ApiOkResponse({
+    type: GooglePayChargeResponse,
+  })
+  async chargeGooglePay(
+    @Body() chargeInput: GooglePayChargeInput,
+  ): Promise<GooglePayChargeResponse> {
+    const paymentFlowId = chargeInput.paymentFlowId
+    this.logger.info(`[${paymentFlowId}] Google Pay charge endpoint called`)
+
+    // Only cards saved in the Google account are offered: they pass 3-D
+    // Secure first and are then charged through charge-verified.
+    return {
+      status: 'verification_required',
+      verification: await this.verifyGooglePaySavedCard(chargeInput),
+    }
+  }
+
+  @UseGuards(FeatureFlagGuard)
+  @FeatureFlag(Features.isIslandisGooglePayPaymentEnabled)
+  @Post('/google-pay/charge-verified')
+  @ApiOkResponse({
+    type: ChargeCardResponse,
+  })
+  async chargeGooglePayVerified(
+    @Body() chargeInput: GooglePayChargeVerifiedInput,
+  ): Promise<ChargeCardResponse> {
+    const paymentFlowId = chargeInput.paymentFlowId
+    this.logger.info(
+      `[${paymentFlowId}] Google Pay verified charge endpoint called`,
+    )
+
+    return this.runGooglePayPaymentSaga(chargeInput)
+  }
+
+  /** The verify endpoint's steps, with the card Valitor decrypts from the Google Pay token */
+  private async verifyGooglePaySavedCard(
+    chargeInput: GooglePayChargeInput,
+  ): Promise<VerifyCardResponse> {
+    const paymentFlowId = chargeInput.paymentFlowId
+
+    try {
+      const { totalPrice } = await this.cardPaymentService.validatePaymentFlow(
+        paymentFlowId,
+      )
+
+      const card = await this.cardPaymentService.decryptGooglePayToken({
+        paymentFlowId,
+        token: chargeInput.token,
+        amount: totalPrice,
+      })
+
+      const verification =
+        await this.cardPaymentService.verifyGooglePaySavedCard({
+          input: chargeInput,
+          card,
+          totalPrice,
+        })
+
+      await this.paymentFlowService.logPaymentFlowUpdate({
+        paymentFlowId,
+        type: 'update',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'payment_started',
+        message: `Google Pay card verification started`,
+      })
+
+      const { correlationID, ...rest } = verification
+      return {
+        ...rest,
+        correlationId: correlationID,
+      } as VerifyCardResponse
+    } catch (e) {
+      try {
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId,
+          type: 'update',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'payment_failed',
+          message: `Google Pay card verification was not started due to an error: ${e.message}`,
+          metadata: {
+            error: e.message,
+          },
+        })
+      } catch (logError) {
+        this.logger.warn(
+          `[${paymentFlowId}] Failed to log payment flow update and notify upstream after Google Pay verification error: ${logError.message}`,
+          { paymentFlowId, logError },
+        )
+      }
+
+      throw new BadRequestException(
+        onlyReturnKnownErrorCode(e.message, CardErrorCode.VerificationFailed),
+      )
+    }
+  }
+
+  private async runGooglePayPaymentSaga(
+    chargeInput: GooglePayChargeVerifiedInput,
+  ): Promise<ChargeCardResponse> {
+    const paymentFlowId = chargeInput.paymentFlowId
+    const context = createGooglePayPaymentContext(paymentFlowId, chargeInput)
+    const saga = createGooglePayPaymentSaga(
+      this.cardPaymentService,
+      this.refundService,
+      this.paymentFlowService,
+      this.logger,
+    )
+    const orchestrator = new PaymentOrchestrator<
+      GooglePayPaymentContext,
+      GooglePayPaymentStepResults
+    >(this.logger, this.paymentFlowService)
+
+    try {
+      const result = await orchestrator.execute(saga, context)
+
+      const { paymentResult } = requireStepResult(
+        result.context,
+        'CHARGE_GOOGLE_PAY',
+      )
+
+      this.logger.info(
+        `[${paymentFlowId}] Google Pay charge endpoint completed`,
+        {
+          paymentFlowId,
+          isSuccess: paymentResult.isSuccess,
+        },
+      )
+
+      return { ...paymentResult, correlationId: paymentResult.correlationID }
+    } catch (e) {
+      // The rollback left a debt payment that may be registered with FJS as it is, see
+      // keepDebtPayment: the payer paid, like when the webhook fails.
+      if (context.metadata?.debtPaymentKept === true) {
+        const { paymentFlow } = requireStepResult(context, 'VALIDATE')
+        const { paymentResult } = requireStepResult(
+          context,
+          'CHARGE_GOOGLE_PAY',
+        )
+
+        await notifyKeptDebtPayment({
+          paymentFlowService: this.paymentFlowService,
+          logger: this.logger,
+          ctx: context,
+          paymentFlow,
+          paymentResult,
+          message: 'Google Pay payment completed successfully',
+        })
+
+        return { ...paymentResult, correlationId: paymentResult.correlationID }
+      }
+
+      const refundSucceeded = context.metadata?.refundSucceeded === true
+      const refundFailed = context.metadata?.refundSucceeded === false
+
+      if (refundSucceeded) {
+        // FJS rejected the debts, the card is refunded and the flow is closed
+        if (e.message === DebtPaymentErrorCode.DebtPaymentRejected) {
+          throw new BadRequestException(
+            DebtPaymentErrorCode.DebtPaymentRejected,
+          )
+        }
+
+        throw new BadRequestException(
+          CardErrorCode.RefundedBecauseOfSystemError,
+        )
+      } else if (refundFailed) {
+        throw new BadRequestException(
+          CardErrorCode.RefundFailedAfterPaymentError,
+        )
+      } else {
+        // Error happened before a charge completed (e.g. VALIDATE or CHARGE_GOOGLE_PAY itself failed)
+        // let upstream know that the payment failed
+        try {
+          await this.paymentFlowService.logPaymentFlowUpdate({
+            paymentFlowId,
+            type: 'error',
+            occurredAt: new Date(),
+            paymentMethod: PaymentMethod.CARD,
+            reason: 'payment_failed',
+            message: `Google Pay payment saga failed at step ${
+              context.failedStep || 'unknown'
+            }: ${e.message}`,
+            metadata: {
+              error: e.message,
+              failedStep: context.failedStep,
+              completedSteps: context.completedSteps,
+            },
+          })
+        } catch (logError) {
+          this.logger.warn(
+            `[${paymentFlowId}] Failed to log payment flow update and notify upstream after Google Pay saga failed: ${logError.message}`,
             { paymentFlowId, logError },
           )
         }
