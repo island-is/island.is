@@ -61,15 +61,30 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
   // hide the status ball itself.
   const textOrDefault = (key: keyof RegulationPageTexts, fallback: string) =>
     txt(key, fallback) || fallback
+  // Yellow has several causes; pick the text in the same order the status
+  // line below does, so the tooltip never contradicts it.
+  const isCurrentVersion =
+    !timelineDate || timelineDate === (lastAmendDate || publishedDate)
+  const yellowText = !isCurrentVersion
+    ? textOrDefault(
+        'statusBall_yellow_notCurrent',
+        'Ekki núgildandi útgáfa reglugerðarinnar',
+      )
+    : hasPending
+    ? textOrDefault(
+        'statusBall_yellow_pending',
+        'Ekki er búið að færa allar breytingar inn í reglugerðina',
+      )
+    : textOrDefault(
+        'statusBall_yellow_amending',
+        'Breytingareglugerð, sjá uppfærðan texta í stofnreglugerð',
+      )
   const ballText: Record<BallColor, string> = {
     green: textOrDefault(
       'statusBall_green',
       'Gildandi reglugerð, allar breytingar færðar inn',
     ),
-    yellow: textOrDefault(
-      'statusBall_yellow',
-      'Ekki uppfærður heildartexti gildandi reglugerðar',
-    ),
+    yellow: yellowText,
     red: textOrDefault('statusBall_red', 'Reglugerðin er ekki lengur í gildi'),
   }
 
