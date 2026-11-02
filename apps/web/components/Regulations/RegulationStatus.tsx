@@ -1,6 +1,11 @@
 import React from 'react'
 
-import { LinkV2, Text } from '@island.is/island-ui/core'
+import {
+  LinkV2,
+  Text,
+  Tooltip,
+  VisuallyHidden,
+} from '@island.is/island-ui/core'
 import {
   interpolate,
   ISODate,
@@ -50,6 +55,18 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
     : !timelineDate || timelineDate === (lastAmendDate || publishedDate)
     ? 'green'
     : 'yellow'
+
+  const ballText: Record<BallColor, string> = {
+    green: txt(
+      'statusBall_green',
+      'Gildandi reglugerð, allar breytingar færðar inn',
+    ),
+    yellow: txt(
+      'statusBall_yellow',
+      'Ekki uppfærður heildartexti gildandi reglugerðar',
+    ),
+    red: txt('statusBall_red', 'Reglugerðin er ekki lengur í gildi'),
+  }
 
   const onDateText = urlDate && (
     <small className={s.metaDate}>
@@ -102,7 +119,14 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
         </Text>
       </div>
       <div className={s.statusText}>
-        <Ball type={color} />
+        {/* The status text next to the ball already says this in context, so
+            the tooltip is a hover aid only and stays out of the tab order. */}
+        <Tooltip text={ballText[color]}>
+          <span tabIndex={-1} aria-hidden="true">
+            <Ball type={color} />
+          </span>
+        </Tooltip>
+        <VisuallyHidden>{ballText[color]}</VisuallyHidden>
 
         {!timelineDate || timelineDate === (lastAmendDate || publishedDate) ? (
           repealedDate ? (
