@@ -287,7 +287,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     }
 
     if (!valid) {
-      toast.error(formatMessage(errors.invalidDate))
+      toast.error(errors.invalidDate)
       return
     }
 
@@ -298,7 +298,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     const date = dates[type]
 
     if (!date) {
-      toast.error(formatMessage(errors.invalidDate))
+      toast.error(errors.invalidDate)
       return
     }
 

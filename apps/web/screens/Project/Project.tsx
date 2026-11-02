@@ -322,6 +322,7 @@ const ProjectPage: Screen<PageProps> = ({
         withSidebar={projectPage?.sidebar}
         backLink={backLink}
         isSubpage={(subpage && p('smallerSubpageHeader', false)) ?? false}
+        isFrontpage={!subpage}
       >
         {customContent ? customContent : mainContent}
       </ProjectWrapper>

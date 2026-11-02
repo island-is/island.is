@@ -80,7 +80,7 @@ const SendToPrisonAdmin: FC = () => {
     )
 
     if (uploadResult !== 'ALL_SUCCEEDED') {
-      setUploadFileError(formatMessage(errors.uploadFailed))
+      setUploadFileError(errors.uploadFailed)
       return
     }
 

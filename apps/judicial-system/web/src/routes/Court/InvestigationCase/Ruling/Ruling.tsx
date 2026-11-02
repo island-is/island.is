@@ -78,19 +78,28 @@ const Ruling = () => {
           ),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(
-            ruling.sections.courtCaseFacts.prefill,
+            {
+              id: ruling.sections.courtCaseFacts.prefill,
+              defaultMessage: ruling.sections.courtCaseFacts.prefill,
+            },
             {
               caseFacts: workingCase.caseFacts,
             },
           ),
           courtLegalArguments: formatMessage(
-            ruling.sections.courtLegalArguments.prefill,
+            {
+              id: ruling.sections.courtLegalArguments.prefill,
+              defaultMessage: ruling.sections.courtLegalArguments.prefill,
+            },
             { legalArguments: workingCase.legalArguments },
           ),
           ruling: !workingCase.parentCase
-            ? `\n${formatMessage(ruling.autofill, {
-                judgeName: workingCase.judge?.name,
-              })}`
+            ? `\n${formatMessage(
+                { id: ruling.autofill, defaultMessage: ruling.autofill },
+                {
+                  judgeName: workingCase.judge?.name,
+                },
+              )}`
             : isAcceptingCaseDecision(workingCase.decision)
             ? workingCase.parentCase.ruling
             : undefined,
@@ -261,19 +270,28 @@ const Ruling = () => {
             <SectionHeading title={m.sections.decision.title} />
             <Decision
               workingCase={workingCase}
-              acceptedLabelText={formatMessage(
-                ruling.investigationCases.sections.decision.acceptLabel,
-              )}
-              rejectedLabelText={formatMessage(
-                ruling.investigationCases.sections.decision.rejectLabel,
-              )}
-              partiallyAcceptedLabelText={formatMessage(
-                ruling.investigationCases.sections.decision
+              acceptedLabelText={formatMessage({
+                id: ruling.investigationCases.sections.decision.acceptLabel,
+                defaultMessage:
+                  ruling.investigationCases.sections.decision.acceptLabel,
+              })}
+              rejectedLabelText={formatMessage({
+                id: ruling.investigationCases.sections.decision.rejectLabel,
+                defaultMessage:
+                  ruling.investigationCases.sections.decision.rejectLabel,
+              })}
+              partiallyAcceptedLabelText={formatMessage({
+                id: ruling.investigationCases.sections.decision
                   .partiallyAcceptLabel,
-              )}
-              dismissLabelText={formatMessage(
-                ruling.investigationCases.sections.decision.dismissLabel,
-              )}
+                defaultMessage:
+                  ruling.investigationCases.sections.decision
+                    .partiallyAcceptLabel,
+              })}
+              dismissLabelText={formatMessage({
+                id: ruling.investigationCases.sections.decision.dismissLabel,
+                defaultMessage:
+                  ruling.investigationCases.sections.decision.dismissLabel,
+              })}
               onChange={(decision) => {
                 let ruling = undefined
 

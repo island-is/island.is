@@ -523,7 +523,7 @@ describe('CaseTableService', () => {
       appealRulingDecision: null,
       appealCaseNumber,
       appealReceivedByCourtDate: null,
-      appealJudge1: { name: 'Anna Judge' },
+      appealJudges: [{ displayOrder: 0, user: { name: 'Anna Judge' } }],
     })
 
     const buildCase = (

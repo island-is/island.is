@@ -32,6 +32,7 @@ import {
   CaseState,
   CaseType,
   findAppealStatementDeadline,
+  getAppealJudges,
   getStatementDeadline,
   isDefenceUser,
   isIndictmentCase,
@@ -310,26 +311,23 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     userIds?: string[],
   ): Promise<DeliverResponse> {
     const promises: Promise<Recipient>[] = []
-    const recipientRoles = [
-      appealCase.appealAssistant,
-      appealCase.appealJudge1,
-      appealCase.appealJudge2,
-      appealCase.appealJudge3,
-    ]
+    const judges = getAppealJudges(appealCase)
+    const presidingJudge = judges[0]
+    const recipientRoles = [appealCase.appealAssistant, ...judges]
 
     recipientRoles.forEach((recipient) => {
       if (
         appealCase.appealCaseNumber &&
         recipient &&
         userIds?.includes(recipient.id) &&
-        appealCase.appealJudge1?.name
+        presidingJudge?.name
       ) {
         const { subject, body } =
           formatCourtOfAppealJudgeAssignedEmailNotification(
             this.formatMessage,
             appealCase.appealCaseNumber,
-            recipient.id === appealCase.appealJudge1Id,
-            appealCase.appealJudge1.name,
+            recipient.id === presidingJudge.id,
+            presidingJudge.name,
             recipient.role,
             `${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}`,
           )
@@ -902,35 +900,13 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         )
       }
 
-      if (appealCase.appealJudge1) {
+      for (const judge of getAppealJudges(appealCase)) {
         promises.push(
           this.sendEmail({
             subject,
             html: courtOfAppealsHtml,
-            recipientName: appealCase.appealJudge1.name,
-            recipientEmail: appealCase.appealJudge1.email,
-          }),
-        )
-      }
-
-      if (appealCase.appealJudge2) {
-        promises.push(
-          this.sendEmail({
-            subject,
-            html: courtOfAppealsHtml,
-            recipientName: appealCase.appealJudge2.name,
-            recipientEmail: appealCase.appealJudge2.email,
-          }),
-        )
-      }
-
-      if (appealCase.appealJudge3) {
-        promises.push(
-          this.sendEmail({
-            subject,
-            html: courtOfAppealsHtml,
-            recipientName: appealCase.appealJudge3.name,
-            recipientEmail: appealCase.appealJudge3.email,
+            recipientName: judge.name,
+            recipientEmail: judge.email,
           }),
         )
       }
@@ -1081,35 +1057,13 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         )
       }
 
-      if (appealCase.appealJudge1) {
+      for (const judge of getAppealJudges(appealCase)) {
         promises.push(
           this.sendEmail({
             subject,
             html: courtOfAppealsHtml,
-            recipientName: appealCase.appealJudge1.name,
-            recipientEmail: appealCase.appealJudge1.email,
-          }),
-        )
-      }
-
-      if (appealCase.appealJudge2) {
-        promises.push(
-          this.sendEmail({
-            subject,
-            html: courtOfAppealsHtml,
-            recipientName: appealCase.appealJudge2.name,
-            recipientEmail: appealCase.appealJudge2.email,
-          }),
-        )
-      }
-
-      if (appealCase.appealJudge3) {
-        promises.push(
-          this.sendEmail({
-            subject,
-            html: courtOfAppealsHtml,
-            recipientName: appealCase.appealJudge3.name,
-            recipientEmail: appealCase.appealJudge3.email,
+            recipientName: judge.name,
+            recipientEmail: judge.email,
           }),
         )
       }
@@ -1190,9 +1144,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     user: User,
   ): Promise<DeliverResponse> {
     const courtOfAppealUsers = [
-      appealCase.appealJudge1,
-      appealCase.appealJudge2,
-      appealCase.appealJudge3,
+      ...getAppealJudges(appealCase),
       appealCase.appealAssistant,
     ]
 
@@ -1332,9 +1284,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     }
 
     const courtOfAppealUsers = [
-      appealCase.appealJudge1,
-      appealCase.appealJudge2,
-      appealCase.appealJudge3,
+      ...getAppealJudges(appealCase),
       appealCase.appealAssistant,
     ]
 
@@ -1904,35 +1854,13 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         )
       }
 
-      if (appealCase.appealJudge1) {
+      for (const judge of getAppealJudges(appealCase)) {
         promises.push(
           this.sendEmail({
             subject,
             html,
-            recipientName: appealCase.appealJudge1.name,
-            recipientEmail: appealCase.appealJudge1.email,
-          }),
-        )
-      }
-
-      if (appealCase.appealJudge2) {
-        promises.push(
-          this.sendEmail({
-            subject,
-            html,
-            recipientName: appealCase.appealJudge2.name,
-            recipientEmail: appealCase.appealJudge2.email,
-          }),
-        )
-      }
-
-      if (appealCase.appealJudge3) {
-        promises.push(
-          this.sendEmail({
-            subject,
-            html,
-            recipientName: appealCase.appealJudge3.name,
-            recipientEmail: appealCase.appealJudge3.email,
+            recipientName: judge.name,
+            recipientEmail: judge.email,
           }),
         )
       }
@@ -2055,18 +1983,10 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           name: appealCase.appealAssistant?.name,
           email: appealCase.appealAssistant?.email,
         },
-        {
-          name: appealCase.appealJudge1?.name,
-          email: appealCase.appealJudge1?.email,
-        },
-        {
-          name: appealCase.appealJudge2?.name,
-          email: appealCase.appealJudge2?.email,
-        },
-        {
-          name: appealCase.appealJudge3?.name,
-          email: appealCase.appealJudge3?.email,
-        },
+        ...getAppealJudges(appealCase).map((judge) => ({
+          name: judge.name,
+          email: judge.email,
+        })),
       )
     }
 
@@ -2297,9 +2217,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     )
 
     for (const assigned of [
-      appealCase.appealJudge1,
-      appealCase.appealJudge2,
-      appealCase.appealJudge3,
+      ...getAppealJudges(appealCase),
       appealCase.appealAssistant,
     ]) {
       addRecipient(assigned?.name, assigned?.email)

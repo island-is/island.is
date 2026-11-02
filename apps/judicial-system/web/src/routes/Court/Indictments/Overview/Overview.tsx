@@ -77,7 +77,7 @@ const OverviewBody = ({
         <div className={stack({ gap: 5 })}>
           {workingCase.comments && (
             <AlertMessage
-              title={formatMessage(commentsInput.heading)}
+              title={commentsInput.heading}
               message={workingCase.comments}
               type="warning"
             />
