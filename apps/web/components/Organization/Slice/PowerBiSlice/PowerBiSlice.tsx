@@ -23,6 +23,7 @@ import {
   getAspectRatio,
   hasConfiguredSize,
   hasDimensions,
+  restoreStyles,
 } from './utils'
 
 type EventType =
@@ -90,6 +91,10 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
   }, [])
   const embedRef = useRef<Embed | null>(null)
   const pageLayoutRequestRef = useRef(0)
+  const pageStyleKeysRef = useRef<{ element: string[]; iframe: string[] }>({
+    element: [],
+    iframe: [],
+  })
 
   const layoutShouldBeMobilePortrait =
     slice?.powerBiEmbedProps?.displayMobilePortraitLayoutOnSmallScreens &&
@@ -122,6 +127,19 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       // A newer page change has taken over while we were waiting
       if (requestId !== pageLayoutRequestRef.current) return
 
+      // Styles specific to the previous page must not carry over to this one
+      restoreStyles(
+        embed.element,
+        pageStyleKeysRef.current.element,
+        cmsStyle?.element,
+      )
+      restoreStyles(
+        embed.iframe,
+        pageStyleKeysRef.current.iframe,
+        cmsStyle?.iframe,
+      )
+      pageStyleKeysRef.current = { element: [], iframe: [] }
+
       const mobileSizeIsKnown =
         usesMobileLayout && hasDimensions(page.mobileSize)
       const pageStyle = layoutShouldBeMobilePortrait
@@ -133,8 +151,10 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
         embed.element.style.height = '100%'
         embed.element.style.minHeight = cmsStyle?.element?.minHeight ?? ''
         embed.iframe.style.height = cmsStyle?.iframe?.height ?? '100%'
-        applyStyles(embed.element, pageStyle.element)
-        applyStyles(embed.iframe, pageStyle.iframe)
+        pageStyleKeysRef.current = {
+          element: applyStyles(embed.element, pageStyle.element),
+          iframe: applyStyles(embed.iframe, pageStyle.iframe),
+        }
         return
       }
 

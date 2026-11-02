@@ -213,6 +213,43 @@ describe('PowerBiSlice sizing', () => {
       expect(report.iframe.style.height).toBe('1420px')
     })
 
+    it('restores every style a previous page applied', async () => {
+      const { report, fire } = await setup({
+        config: {
+          ...config,
+          style: {
+            element: { maxHeight: '1200px' },
+            pages: {
+              styled: {
+                element: { maxHeight: '900px', maxWidth: '300px' },
+                iframe: { width: '90%' },
+              },
+            },
+          },
+        },
+        width: MOBILE_WIDTH,
+        page: { ...desktopPage, name: 'styled' },
+      })
+
+      await fire('pageChanged')
+      expect(report.element.style.maxHeight).toBe('900px')
+      expect(report.element.style.maxWidth).toBe('300px')
+      expect(report.iframe.style.width).toBe('90%')
+
+      report.getActivePage.mockResolvedValue(mobilePage)
+      await fire('pageChanged')
+
+      expect(report.element.style.maxHeight).toBe('1200px')
+      expect(report.element.style.maxWidth).toBe('')
+      expect(report.iframe.style.width).toBe('')
+
+      // Nothing is left to restore on the next page change
+      report.element.style.maxWidth = '10px'
+      await fire('pageChanged')
+
+      expect(report.element.style.maxWidth).toBe('10px')
+    })
+
     it.each([
       ['100%', undefined],
       ['800px', { height: '800px' }],

@@ -19,13 +19,28 @@ export const getAspectRatio = (size: PageSize | undefined, fallback: string) =>
 export const hasConfiguredSize = (style?: StyleConfig | null) =>
   Boolean(style?.height || style?.aspectRatio)
 
+/** Applies the style to the element and returns the keys it applied */
 export const applyStyles = (
   element: HTMLElement,
   style?: StyleConfig | null,
 ) => {
+  const appliedKeys: string[] = []
   for (const [key, value] of Object.entries(style ?? {})) {
     if (value) {
       Object.assign(element.style, { [key]: value })
+      appliedKeys.push(key)
     }
+  }
+  return appliedKeys
+}
+
+/** Sets the given keys back to their value in the fallback style, or clears them */
+export const restoreStyles = (
+  element: HTMLElement,
+  keys: string[],
+  fallback?: StyleConfig | null,
+) => {
+  for (const key of keys) {
+    Object.assign(element.style, { [key]: fallback?.[key] || '' })
   }
 }
