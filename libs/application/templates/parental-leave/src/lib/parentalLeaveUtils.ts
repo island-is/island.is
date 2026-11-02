@@ -72,6 +72,11 @@ import {
 } from '../lib/directorateOfLabour.utils'
 import { parentalLeaveFormMessages, statesMessages } from '../lib/messages'
 import {
+  findChildBySelection,
+  getChildSelectionValue,
+  isSameChild,
+} from './childIdentity'
+import {
   Attachments,
   ChildApplicationLink,
   ChildInformation,
@@ -549,19 +554,19 @@ export const getSelectedChild = (
   answers: FormValue,
   externalData: ExternalData,
 ): ChildInformation | null => {
-  const { selectedChild: selectedChildIndex } = getApplicationAnswers(answers)
-  const selectedChild = getValueViaPath(
+  const { selectedChild: selection } = getApplicationAnswers(answers)
+  const children = getValueViaPath<ChildInformation[]>(
     externalData,
-    `children.data.children[${selectedChildIndex}]`,
-    null,
-  ) as ChildInformation | null
+    'children.data.children',
+    [],
+  )
 
-  return selectedChild
+  return findChildBySelection(children ?? [], selection)
 }
 
 /**
  * Guards the screen that starts a change application: the child that triggered it
- * still carries `existingApplicationId` in the new application too, so without
+ * still carries `vmstApplicationId` in the new application too, so without
  * this the screen would fire again and create another application, forever.
  */
 export const isFollowUpApplication = (answers: Application['answers']) => {
@@ -746,17 +751,18 @@ export const getPreviousVmstLeave = (
   )
 }
 
-const toDay = (date?: string | null) => (date ?? '').slice(0, 10)
-
 /**
- * Index of the child a follow-up application is for, in its own children list.
+ * The `selectedChild` value of the child a follow-up application is for, in its
+ * own children list.
  *
  * The select-child screen starts a follow-up from the child's
- * `existingApplicationId`, which becomes `initialQuery`. Failing that link, the
- * child is matched on the dates VMST holds for the leave. `-1` when neither
- * finds it.
+ * `vmstApplicationId`, which becomes `initialQuery`. Failing that link, the
+ * child is matched on the dates VMST holds for the leave. `undefined` when
+ * neither finds it.
  */
-export const getFollowUpChildIndex = (application: Application): number => {
+export const getFollowUpChildSelection = (
+  application: Application,
+): string | undefined => {
   const { children, VMSTApplicationInformation } = getApplicationExternalData(
     application.externalData,
   )
@@ -765,28 +771,18 @@ export const getFollowUpChildIndex = (application: Application): number => {
     getVmstApplicationId(application),
   ].filter(Boolean)
 
-  const linked = children.findIndex(
+  let index = children.findIndex(
     (child) =>
-      !!child.existingApplicationId &&
-      linkedIds.includes(child.existingApplicationId),
+      !!child.vmstApplicationId && linkedIds.includes(child.vmstApplicationId),
   )
-  if (linked >= 0) {
-    return linked
+
+  if (index < 0 && VMSTApplicationInformation) {
+    index = children.findIndex((child) =>
+      isSameChild(child, VMSTApplicationInformation),
+    )
   }
 
-  const expectedDateOfBirth = toDay(
-    VMSTApplicationInformation?.expectedDateOfBirth,
-  )
-  const dateOfBirth = toDay(VMSTApplicationInformation?.dateOfBirth)
-  const adoptionDate = toDay(VMSTApplicationInformation?.adoptionDate)
-
-  return children.findIndex(
-    (child) =>
-      (!!expectedDateOfBirth &&
-        toDay(child.expectedDateOfBirth) === expectedDateOfBirth) ||
-      (!!dateOfBirth && toDay(child.dateOfBirth) === dateOfBirth) ||
-      (!!adoptionDate && toDay(child.adoptionDate) === adoptionDate),
-  )
+  return index >= 0 ? getChildSelectionValue(children[index], index) : undefined
 }
 
 const VMST_ACTUAL_DATE_OF_BIRTH = ['date_of_birth', 'date_of_birth_months']
@@ -2801,11 +2797,8 @@ export const employerApprovalStatePendingAction = (
  * another application until that one is approved or closed.
  */
 export const isChildInProgress = (child: {
-  existingApplicationIsChangeInProgress?: boolean
-  existingApplicationIsInProgress?: boolean
-}) =>
-  !!child.existingApplicationIsChangeInProgress ||
-  !!child.existingApplicationIsInProgress
+  inProgressApplicationId?: string
+}) => !!child.inProgressApplicationId
 
 /** How a child is named on the select-child screen, e.g. "Barn væntanlegt 29.10.2027". */
 export const getChildLabel = (child: ChildInformation) => {
@@ -2857,12 +2850,12 @@ export const getChildrenInProgress = (
   const { children } = getApplicationExternalData(externalData)
 
   return children.flatMap((child) =>
-    isChildInProgress(child) && child.existingApplicationId
+    child.inProgressApplicationId
       ? [
           {
             label: getChildLabel(child),
-            applicationId: child.existingApplicationId,
-            isChange: !!child.existingApplicationIsChangeInProgress,
+            applicationId: child.inProgressApplicationId,
+            isChange: !!child.inProgressIsChange,
           },
         ]
       : [],
@@ -2885,11 +2878,11 @@ export const getChildrenOptions = (application: Application) => {
       child.parentalRelation === ParentalRelations.secondary
         ? child.primaryParentNationalRegistryId
         : undefined
-    const subLabel = child.existingApplicationIsChangeInProgress
-      ? parentalLeaveFormMessages.selectChild.existingApplicationInProgress
-      : child.existingApplicationIsInProgress
-      ? parentalLeaveFormMessages.selectChild.applicationInProgress
-      : child.existingApplicationId
+    const subLabel = isChildInProgress(child)
+      ? child.inProgressIsChange
+        ? parentalLeaveFormMessages.selectChild.existingApplicationInProgress
+        : parentalLeaveFormMessages.selectChild.applicationInProgress
+      : child.vmstApplicationId
       ? parentalLeaveFormMessages.selectChild.existingApplication
       : child.parentalRelation === ParentalRelations.secondary
       ? {
@@ -2899,14 +2892,16 @@ export const getChildrenOptions = (application: Application) => {
           },
         }
       : parentalLeaveFormMessages.selectChild.primaryParent
+    const hasExistingApplication =
+      !!child.vmstApplicationId || isChildInProgress(child)
 
     return {
-      isChange: !!child.existingApplicationId,
+      isChange: hasExistingApplication,
       option: {
         disabled: isChildInProgress(child),
+        value: getChildSelectionValue(child, index),
         // Original index, not the sorted position.
-        value: `${index}`,
-        dataTestId: child.existingApplicationId
+        dataTestId: hasExistingApplication
           ? `existing-application-${index}`
           : `child-${index}`,
         label: getChildLabel(child),

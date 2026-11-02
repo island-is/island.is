@@ -58,7 +58,7 @@ import {
   getChangeBaseline,
   getVMSTApplicationAnswers,
   getVMSTTypeOfApplication,
-  getFollowUpChildIndex,
+  getFollowUpChildSelection,
   getMaxMultipleBirthsDays,
   getMultipleBirthRequestDays,
   getOtherParentId,
@@ -1707,10 +1707,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         // reusing the predecessor's `selectedChild` index, which points into a
         // different list.
         if (getValueViaPath(answers, 'selectedChild') === undefined) {
-          const index = getFollowUpChildIndex(application)
+          const selection = getFollowUpChildSelection(application)
 
-          if (index >= 0) {
-            set(answers, 'selectedChild', `${index}`)
+          if (selection !== undefined) {
+            set(answers, 'selectedChild', selection)
           }
         }
 
@@ -1774,6 +1774,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           return context
         }
 
+        // The synthesized list holds exactly one child, and the context may not
+        // carry it yet, so this is the one selection kept as an index.
         set(application.answers, 'selectedChild', '0')
 
         return context

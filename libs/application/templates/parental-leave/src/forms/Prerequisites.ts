@@ -550,7 +550,7 @@ export const SelectChildSubSection = buildSubSection({
 
             return (
               !!answers.selectedChild &&
-              !selectedChild?.existingApplicationId &&
+              !selectedChild?.vmstApplicationId &&
               selectedChild?.parentalRelation === ParentalRelations.primary
             )
           },
@@ -571,7 +571,7 @@ export const SelectChildSubSection = buildSubSection({
 
             return (
               hasMultipleBirths === YES &&
-              !selectedChild?.existingApplicationId &&
+              !selectedChild?.vmstApplicationId &&
               selectedChild?.parentalRelation === ParentalRelations.primary
             )
           },
@@ -585,11 +585,11 @@ export const SelectChildSubSection = buildSubSection({
       id: 'startChangeApplicationScreen',
       title: '',
       // `isFollowUpApplication` is what stops this from looping: the child keeps its
-      // `existingApplicationId` in the change application too, so without the guard
+      // `vmstApplicationId` in the change application too, so without the guard
       // selecting it here would start yet another change application.
       condition: (answers, externalData) =>
         !isFollowUpApplication(answers) &&
-        !!getSelectedChild(answers, externalData)?.existingApplicationId,
+        !!getSelectedChild(answers, externalData)?.vmstApplicationId,
       children: [
         buildCustomField({
           id: 'startChangeApplication',

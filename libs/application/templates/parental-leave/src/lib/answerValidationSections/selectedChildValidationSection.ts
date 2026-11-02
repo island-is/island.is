@@ -1,4 +1,5 @@
 import { Application } from '@island.is/application/types'
+import { findChildBySelection } from '../childIdentity'
 import {
   getApplicationExternalData,
   isChildInProgress,
@@ -20,7 +21,7 @@ export const selectedChildValidationSection = (
   }
 
   const { children } = getApplicationExternalData(application.externalData)
-  const child = children[Number(newAnswer)]
+  const child = findChildBySelection(children, newAnswer)
 
   if (child && isChildInProgress(child)) {
     return buildError(

@@ -703,8 +703,7 @@ describe('when selecting a child', () => {
       {
         expectedDateOfBirth: DEFAULT_DOB,
         parentalRelation: ParentalRelations.primary,
-        existingApplicationId: 'waiting-for-approval-id',
-        existingApplicationIsInProgress: true,
+        inProgressApplicationId: 'waiting-for-approval-id',
       },
     ])
 
@@ -724,9 +723,7 @@ describe('when selecting a child', () => {
       {
         expectedDateOfBirth: DEFAULT_DOB,
         parentalRelation: ParentalRelations.primary,
-        existingApplicationId: 'approved-id',
-        existingApplicationIsInProgress: false,
-        existingApplicationIsChangeInProgress: false,
+        vmstApplicationId: 'approved-id',
       },
     ])
 

@@ -31,6 +31,7 @@ import {
   getAvailableRightsInMonths,
   getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
   getSelectedChild,
+  getFollowUpChildSelection,
   getTransferredDays,
   getOtherParentId,
   calculateEndDateForPeriodWithStartAndLength,
@@ -1203,19 +1204,18 @@ describe('getChildrenInProgress', () => {
             {
               expectedDateOfBirth: '2027-10-29',
               parentalRelation: ParentalRelations.primary,
-              existingApplicationId: 'waiting-for-vmst',
-              existingApplicationIsInProgress: true,
+              inProgressApplicationId: 'waiting-for-vmst',
             },
             {
               expectedDateOfBirth: '2027-05-18',
               parentalRelation: ParentalRelations.primary,
-              existingApplicationId: 'pending-change',
-              existingApplicationIsChangeInProgress: true,
+              inProgressApplicationId: 'pending-change',
+              inProgressIsChange: true,
             },
             {
               expectedDateOfBirth: '2027-04-02',
               parentalRelation: ParentalRelations.primary,
-              existingApplicationId: 'approved',
+              vmstApplicationId: 'approved',
             },
             {
               expectedDateOfBirth: '2028-01-01',
@@ -1258,8 +1258,7 @@ describe('getChildrenInProgress', () => {
               expectedDateOfBirth: '',
               adoptionDate: '2026-11-15',
               parentalRelation: ParentalRelations.primary,
-              existingApplicationId: 'adoption-in-progress',
-              existingApplicationIsInProgress: true,
+              inProgressApplicationId: 'adoption-in-progress',
             },
           ],
         },
@@ -1346,7 +1345,7 @@ describe('getChildrenOptions', () => {
       {
         expectedDateOfBirth: '2027-03-04',
         parentalRelation: ParentalRelations.primary,
-        existingApplicationId: 'previous-application-id',
+        vmstApplicationId: 'previous-application-id',
       },
       {
         expectedDateOfBirth: '2028-01-01',
@@ -1361,14 +1360,14 @@ describe('getChildrenOptions', () => {
     ])
   })
 
-  it('should keep the original child index as the value, not the sorted position', () => {
-    // `selectedChild` is an index into externalData.children.data.children, so
-    // reordering for display must not renumber it.
+  it('should store the child key as the value, not the sorted position', () => {
+    // `selectedChild` identifies a child in externalData.children.data.children,
+    // so reordering for display must not change which child an option means.
     const options = build([
       {
         expectedDateOfBirth: '2027-03-04',
         parentalRelation: ParentalRelations.primary,
-        existingApplicationId: 'previous-application-id',
+        vmstApplicationId: 'previous-application-id',
       },
       {
         expectedDateOfBirth: '2028-01-01',
@@ -1376,8 +1375,32 @@ describe('getChildrenOptions', () => {
       },
     ])
 
-    expect(options[0].value).toBe('1')
-    expect(options[1].value).toBe('0')
+    expect(options[0].value).toBe('edd:2028-01-01')
+    expect(options[1].value).toBe('vmst:previous-application-id')
+  })
+
+  it('should use the key the provider assigned when there is one', () => {
+    const options = build([
+      {
+        key: 'edd:2028-01-01#2',
+        expectedDateOfBirth: '2028-01-01',
+        parentalRelation: ParentalRelations.primary,
+      },
+    ])
+
+    expect(options[0].value).toBe('edd:2028-01-01#2')
+  })
+
+  it('should fall back to the index for a child without a key or dates', () => {
+    const options = build([
+      {
+        expectedDateOfBirth: 'N/A',
+        parentalRelation: ParentalRelations.secondary,
+        primaryParentNationalRegistryId: 'N/A',
+      },
+    ])
+
+    expect(options[0].value).toBe('0')
   })
 
   it('should disable a child with an in-progress change application', () => {
@@ -1385,8 +1408,8 @@ describe('getChildrenOptions', () => {
       {
         expectedDateOfBirth: '2027-03-04',
         parentalRelation: ParentalRelations.primary,
-        existingApplicationId: 'pending-change-id',
-        existingApplicationIsChangeInProgress: true,
+        inProgressApplicationId: 'pending-change-id',
+        inProgressIsChange: true,
       },
       {
         expectedDateOfBirth: '2028-01-01',
@@ -1399,7 +1422,7 @@ describe('getChildrenOptions', () => {
       'existing-application-0',
       'child-not-in-data',
     ])
-    expect(options[1].value).toBe('0')
+    expect(options[1].value).toBe('edd:2027-03-04')
     expect(options[1].disabled).toBe(true)
   })
 
@@ -1408,8 +1431,7 @@ describe('getChildrenOptions', () => {
       {
         expectedDateOfBirth: '2027-03-04',
         parentalRelation: ParentalRelations.primary,
-        existingApplicationId: 'waiting-for-approval-id',
-        existingApplicationIsInProgress: true,
+        inProgressApplicationId: 'waiting-for-approval-id',
       },
     ])
 
@@ -1507,7 +1529,7 @@ describe('multiple births questions on the select-child screen', () => {
   }
   const childBeingChanged = {
     ...freshChild,
-    existingApplicationId: 'previous-application-id',
+    vmstApplicationId: 'previous-application-id',
   }
 
   it('should ask for a child with no application yet', () => {
@@ -1567,7 +1589,7 @@ describe('selected child on the no-children-found path', () => {
           {
             expectedDateOfBirth: '2027-10-29',
             parentalRelation: ParentalRelations.primary,
-            existingApplicationId: 'approved-leave',
+            vmstApplicationId: 'approved-leave',
           },
           {
             expectedDateOfBirth: '2027-11-17',
@@ -1694,7 +1716,7 @@ describe('isFollowUpApplication', () => {
 
   it('should be true for a change or residence grant', () => {
     // This is what stops the change flow looping: the child keeps its
-    // existingApplicationId in the change application, so the screen that starts a
+    // vmstApplicationId in the change application, so the screen that starts a
     // change has to know not to fire again.
     expect(
       isFollowUpApplication({ applicationAction: ApplicationAction.CHANGE }),
@@ -1748,7 +1770,7 @@ describe('isEligibleForParentalLeave', () => {
                 remainingDays: 0,
                 parentalRelation: 'primary',
                 expectedDateOfBirth: '2022-10-31',
-                existingApplicationId: 'previous-application-id',
+                vmstApplicationId: 'previous-application-id',
               },
             ],
             existingApplications: [],
@@ -1805,6 +1827,52 @@ describe('getSelectedChild', () => {
       parentalRelation: ParentalRelations.primary,
       expectedDateOfBirth: '2021-05-17',
     })
+  })
+
+  const twoChildren = {
+    children: {
+      data: {
+        children: [
+          {
+            key: 'vmst:leave-1',
+            vmstApplicationId: 'leave-1',
+            parentalRelation: ParentalRelations.primary,
+            expectedDateOfBirth: '2021-05-17',
+          },
+          {
+            key: 'edd:2027-02-01',
+            parentalRelation: ParentalRelations.primary,
+            expectedDateOfBirth: '2027-02-01',
+          },
+        ],
+      },
+      date: new Date(),
+      status: 'success',
+    },
+  } as ExternalData
+
+  it('should find the selected child by its key wherever it is in the list', () => {
+    expect(
+      getSelectedChild({ selectedChild: 'edd:2027-02-01' }, twoChildren)
+        ?.expectedDateOfBirth,
+    ).toBe('2027-02-01')
+    expect(
+      getSelectedChild({ selectedChild: 'vmst:leave-1' }, twoChildren)
+        ?.expectedDateOfBirth,
+    ).toBe('2021-05-17')
+  })
+
+  it('should still honour an index stored before keys were introduced', () => {
+    expect(
+      getSelectedChild({ selectedChild: '1' }, twoChildren)
+        ?.expectedDateOfBirth,
+    ).toBe('2027-02-01')
+  })
+
+  it('should return null for a key no child has', () => {
+    expect(
+      getSelectedChild({ selectedChild: 'edd:2030-01-01' }, twoChildren),
+    ).toBeNull()
   })
 })
 
@@ -2931,5 +2999,55 @@ describe('hasBeenSubmittedToVMST', () => {
       },
     })
     expect(hasBeenSubmittedToVMST(application)).toBe(false)
+  })
+})
+
+describe('getFollowUpChildSelection', () => {
+  const children = [
+    {
+      key: 'edd:2026-01-01',
+      parentalRelation: ParentalRelations.primary,
+      expectedDateOfBirth: '2026-01-01',
+    },
+    {
+      key: 'edd:2027-03-04',
+      parentalRelation: ParentalRelations.primary,
+      expectedDateOfBirth: '2027-03-04',
+    },
+  ]
+
+  it("should match the child on VMST's dates when no child carries the leave id", () => {
+    const application = buildApplication({
+      answers: { applicationAction: 'change', initialQuery: 'unlinked' },
+      externalData: {
+        children: {
+          data: { children, childApplicationLinks: [] },
+          date: new Date(),
+          status: 'success',
+        },
+        VMSTApplicationInformation: {
+          data: { expectedDateOfBirth: '2027-03-04T00:00:00' },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(getFollowUpChildSelection(application)).toBe('edd:2027-03-04')
+  })
+
+  it('should find nothing when neither the id nor the dates match', () => {
+    const application = buildApplication({
+      answers: { applicationAction: 'change', initialQuery: 'unlinked' },
+      externalData: {
+        children: {
+          data: { children, childApplicationLinks: [] },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(getFollowUpChildSelection(application)).toBeUndefined()
   })
 })

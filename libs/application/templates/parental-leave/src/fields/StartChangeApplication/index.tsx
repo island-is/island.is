@@ -24,7 +24,7 @@ const StartChangeApplication: FC<FieldBaseProps> = ({
     application.answers,
     application.externalData,
   )
-  const previousApplicationId = selectedChild?.existingApplicationId
+  const previousApplicationId = selectedChild?.vmstApplicationId
   useEffect(() => {
     if (!previousApplicationId || hasStarted.current) {
       return

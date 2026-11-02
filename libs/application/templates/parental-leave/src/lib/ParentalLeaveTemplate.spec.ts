@@ -884,7 +884,7 @@ describe('Parental Leave Application Template', () => {
       applicationAction: ApplicationAction.CHANGE,
     }
 
-    it('should resolve the child index from the VMST leave on the way out of prerequisites', () => {
+    it('should resolve the child from the VMST leave on the way out of prerequisites', () => {
       // If this match fails, `selectedChild` stays unset and everything downstream
       // that needs the child throws "Missing selected child".
       const helper = new ApplicationTemplateHelper(
@@ -908,7 +908,7 @@ describe('Parental Leave Application Template', () => {
                     remainingDays: 180,
                     parentalRelation: 'primary',
                     expectedDateOfBirth: '2027-03-04',
-                    existingApplicationId: 'root-application-id',
+                    vmstApplicationId: 'root-application-id',
                   },
                 ],
                 existingApplications: [],
@@ -934,7 +934,9 @@ describe('Parental Leave Application Template', () => {
 
       expect(hasChanged).toBe(true)
       expect(newState).toBe(ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS)
-      expect(newApplication.answers.selectedChild).toBe('1')
+      expect(newApplication.answers.selectedChild).toBe(
+        'vmst:root-application-id',
+      )
       expect(getVmstApplicationId(newApplication)).toBe('root-application-id')
     })
 
@@ -1024,7 +1026,7 @@ describe('Parental Leave Application Template', () => {
                     parentalRelation: 'primary',
                     expectedDateOfBirth: '',
                     adoptionDate: '2027-03-04',
-                    existingApplicationId: 'root-application-id',
+                    vmstApplicationId: 'root-application-id',
                   },
                 ],
                 childApplicationLinks: [
@@ -1055,7 +1057,9 @@ describe('Parental Leave Application Template', () => {
       expect(newApplication.answers.noChildrenFound).toEqual({
         typeOfApplication: ADOPTION,
       })
-      expect(newApplication.answers.selectedChild).toBe('1')
+      expect(newApplication.answers.selectedChild).toBe(
+        'vmst:root-application-id',
+      )
     })
 
     it('should go from prerequisites straight into the change form when the application is a change', () => {

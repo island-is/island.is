@@ -6,8 +6,11 @@ import {
 } from '@island.is/application/types'
 
 import {
+  ApplicationStage,
   applicationsToInProgressChildApplications,
   collectChildren,
+  getApplicationStage,
+  isPrimaryParentApplicationForOtherParent,
   getChildren,
   getChildrenFromMockData,
   applicationsToExistingChildApplication,
@@ -117,7 +120,6 @@ describe('applicationsToExistingChildApplication', () => {
     ).toEqual([
       expect.objectContaining({
         expectedDateOfBirth: '2027-03-04',
-        hasApplicationFundId: true,
       }),
     ])
   })
@@ -216,14 +218,13 @@ describe('collectChildren', () => {
         {
           applicationId: 'app-1',
           expectedDateOfBirth: '2020-10-10',
-          hasApplicationFundId: true,
           isChangeInProgress: false,
         },
       ],
     )
 
     expect(result).toHaveLength(1)
-    expect(result[0].existingApplicationId).toBe('app-1')
+    expect(result[0].vmstApplicationId).toBe('app-1')
   })
 
   it('should leave a child unlinked when no existing application matches', () => {
@@ -236,14 +237,13 @@ describe('collectChildren', () => {
         {
           applicationId: 'app-1',
           expectedDateOfBirth: '2027-03-04',
-          hasApplicationFundId: true,
           isChangeInProgress: false,
         },
       ],
     )
 
     expect(result).toHaveLength(1)
-    expect(result[0].existingApplicationId).toBeUndefined()
+    expect(result[0].vmstApplicationId).toBeUndefined()
   })
 
   it('should let the earliest source win on duplicates', () => {
@@ -279,13 +279,12 @@ describe('collectChildren', () => {
           applicationId: 'app-1',
           expectedDateOfBirth: '',
           adoptionDate: '2021-06-01',
-          hasApplicationFundId: true,
           isChangeInProgress: false,
         },
       ],
     )
 
-    expect(result[0].existingApplicationId).toBe('app-1')
+    expect(result[0].vmstApplicationId).toBe('app-1')
   })
 
   it('should prefer an in-progress change over an approved application for the same child', () => {
@@ -297,20 +296,19 @@ describe('collectChildren', () => {
         {
           applicationId: 'approved-app',
           expectedDateOfBirth: '2020-10-10',
-          hasApplicationFundId: true,
           isChangeInProgress: false,
         },
         {
           applicationId: 'change-app',
           expectedDateOfBirth: '2020-10-10',
-          hasApplicationFundId: true,
           isChangeInProgress: true,
         },
       ],
     )
 
-    expect(result[0].existingApplicationId).toBe('change-app')
-    expect(result[0].existingApplicationIsChangeInProgress).toBe(true)
+    expect(result[0].inProgressApplicationId).toBe('change-app')
+    expect(result[0].inProgressIsChange).toBe(true)
+    expect(result[0].vmstApplicationId).toBe('approved-app')
   })
 })
 
@@ -359,10 +357,8 @@ describe('getChildren', () => {
     const expected: ChildInformationWithoutRights[] = [
       {
         ...children[0],
-        existingApplicationId: existingApplication.id,
-        existingApplicationHasFundId: false,
-        existingApplicationIsChangeInProgress: false,
-        existingApplicationIsInProgress: false,
+        vmstApplicationId: existingApplication.id,
+        key: `vmst:${existingApplication.id}`,
       },
     ]
 
@@ -379,15 +375,15 @@ describe('getChildren', () => {
   // VMST does not know about an application still with the other parent or the
   // employer, and its list never says a change is under way.
   it.each([
-    [States.EMPLOYER_APPROVAL, undefined, 'existingApplicationIsInProgress'],
+    [States.EMPLOYER_APPROVAL, undefined, false],
     [
       States.VINNUMALASTOFNUN_APPROVE_EDITS,
       { applicationAction: 'change' },
-      'existingApplicationIsChangeInProgress',
+      true,
     ],
   ] as const)(
     'should hold a child with an unfinished application in %s even when VMST lists the leave',
-    (state, answers, flag) => {
+    (state, answers, isChange) => {
       const children: ChildInformationWithoutRights[] = [
         {
           expectedDateOfBirth: '2020-10-10',
@@ -406,13 +402,13 @@ describe('getChildren', () => {
         {
           applicationId: 'vmst-app-123',
           expectedDateOfBirth: '2020-10-10',
-          hasApplicationFundId: true,
           isChangeInProgress: false,
         },
       ])
 
-      expect(result[0].existingApplicationId).toBe(unfinished.id)
-      expect(result[0][flag]).toBe(true)
+      expect(result[0].inProgressApplicationId).toBe(unfinished.id)
+      expect(!!result[0].inProgressIsChange).toBe(isChange)
+      expect(result[0].vmstApplicationId).toBe('vmst-app-123')
     },
   )
 
@@ -421,9 +417,9 @@ describe('getChildren', () => {
       {
         expectedDateOfBirth: '2020-10-10',
         parentalRelation: ParentalRelations.primary,
-        existingApplicationId: 'long-gone-mock-application',
-        existingApplicationHasFundId: true,
-        existingApplicationIsChangeInProgress: true,
+        vmstApplicationId: 'long-gone-mock-application',
+        inProgressApplicationId: 'long-gone-mock-application',
+        inProgressIsChange: true,
       },
     ]
     const earlier = createApplicationWithChildren(
@@ -443,6 +439,7 @@ describe('getChildren', () => {
       {
         expectedDateOfBirth: '2020-10-10',
         parentalRelation: ParentalRelations.primary,
+        key: 'edd:2020-10-10',
       },
     ])
   })
@@ -469,14 +466,12 @@ describe('getChildren', () => {
         {
           applicationId: 'vmst-app-123',
           expectedDateOfBirth: '2020-10-10',
-          hasApplicationFundId: true,
           isChangeInProgress: false,
         },
       ],
     )
 
-    expect(result[0].existingApplicationId).toBe('vmst-app-123')
-    expect(result[0].existingApplicationHasFundId).toBe(true)
+    expect(result[0].vmstApplicationId).toBe('vmst-app-123')
   })
 
   it('should pass childApplicationLinks through unchanged in its return', () => {
@@ -523,7 +518,7 @@ describe('getChildren', () => {
     })
 
     expect(result).toHaveLength(1)
-    expect(result[0].existingApplicationId).toBe(approvedApplication.id)
+    expect(result[0].vmstApplicationId).toBe(approvedApplication.id)
   })
 
   it('should keep the child for a secondary parent who already applied, linked to that application', () => {
@@ -566,10 +561,8 @@ describe('getChildren', () => {
     const expected: ChildInformationWithoutRights[] = [
       {
         ...children[0],
-        existingApplicationId: existingApplication.id,
-        existingApplicationHasFundId: false,
-        existingApplicationIsChangeInProgress: false,
-        existingApplicationIsInProgress: false,
+        vmstApplicationId: existingApplication.id,
+        key: `vmst:${existingApplication.id}`,
       },
     ]
 
@@ -604,6 +597,7 @@ describe('getChildren', () => {
         primaryParentNationalRegistryId: PRIMARY_PARENT_ID,
         transferredDays: 0,
         multipleBirthsDays: 0,
+        key: 'edd:2020-10-10',
       },
     ]
 
@@ -631,6 +625,7 @@ describe('getChildren', () => {
       {
         parentalRelation: ParentalRelations.primary,
         expectedDateOfBirth: pregnancyStatus.expectedDateOfBirth,
+        key: 'edd:2021-05-10',
       },
     ]
 
@@ -671,10 +666,8 @@ describe('getChildren', () => {
     const expected: ChildInformationWithoutRights[] = [
       {
         ...childFromPregnancyStatus,
-        existingApplicationId: existingApplication.id,
-        existingApplicationHasFundId: false,
-        existingApplicationIsChangeInProgress: false,
-        existingApplicationIsInProgress: false,
+        vmstApplicationId: existingApplication.id,
+        key: `vmst:${existingApplication.id}`,
       },
     ]
 
@@ -1091,5 +1084,335 @@ describe('vmstParentalLeavesToChildApplicationLinks', () => {
 
     expect(links[0].applicationFundId).toBe('fund-1')
     expect(links[0].dateOfBirth).toBe('2027-04-12')
+  })
+})
+
+describe('child linking consistency', () => {
+  const primaryChild = (
+    expectedDateOfBirth: string,
+  ): ChildInformationWithoutRights => ({
+    expectedDateOfBirth,
+    parentalRelation: ParentalRelations.primary,
+  })
+  const leave = (
+    applicationId: string,
+    dates: { expectedDateOfBirth?: string; dateOfBirth?: string },
+  ) => ({
+    applicationId,
+    expectedDateOfBirth: dates.expectedDateOfBirth ?? '',
+    dateOfBirth: dates.dateOfBirth,
+    isChangeInProgress: false,
+  })
+  const withFundId = (application: Application, fundId = '2025-03076') => {
+    set(application, 'externalData.navId', {
+      data: fundId,
+      date: new Date(),
+      status: 'success',
+    })
+    return application
+  }
+
+  it('should link a VMST leave whose dates carry a time part', () => {
+    const { children } = getChildren(
+      [],
+      [],
+      { hasActivePregnancy: true, expectedDateOfBirth: '2027-03-04' },
+      [leave('vmst-1', { expectedDateOfBirth: '2027-03-04T00:00:00' })],
+    )
+
+    expect(children).toHaveLength(1)
+    expect(children[0].vmstApplicationId).toBe('vmst-1')
+    expect(children[0].key).toBe('vmst:vmst-1')
+  })
+
+  it('should treat a moved due date as the same pregnancy the leave was applied for', () => {
+    const applied = createApplicationWithChildren(
+      PRIMARY_PARENT_ID,
+      [primaryChild('2027-03-04')],
+      0,
+    )
+
+    const { children } = getChildren(
+      [applied],
+      [],
+      { hasActivePregnancy: true, expectedDateOfBirth: '2027-03-20' },
+      [leave(applied.id, { expectedDateOfBirth: '2027-03-04' })],
+    )
+
+    expect(children).toHaveLength(1)
+    expect(children[0].vmstApplicationId).toBe(applied.id)
+  })
+
+  it('should link a registered pregnancy to a leave applied for on paper under an earlier due date', () => {
+    const { children } = getChildren(
+      [],
+      [],
+      { hasActivePregnancy: true, expectedDateOfBirth: '2027-03-20' },
+      [leave('paper-leave', { expectedDateOfBirth: '2027-03-04' })],
+    )
+
+    expect(children).toHaveLength(1)
+    expect(children[0].vmstApplicationId).toBe('paper-leave')
+  })
+
+  it('should keep a pregnancy due well apart from an earlier leave as a new child', () => {
+    const { children } = getChildren(
+      [],
+      [],
+      { hasActivePregnancy: true, expectedDateOfBirth: '2028-06-01' },
+      [leave('older-leave', { expectedDateOfBirth: '2027-03-04' })],
+    )
+
+    expect(children).toHaveLength(1)
+    expect(children[0].vmstApplicationId).toBeUndefined()
+  })
+
+  it('should not match a simulated development pregnancy on a moved due date', () => {
+    const { children } = getChildren(
+      [],
+      [],
+      {
+        hasActivePregnancy: true,
+        expectedDateOfBirth: '2027-03-20',
+        isSimulated: true,
+      },
+      [leave('dev-leave', { expectedDateOfBirth: '2027-03-04' })],
+    )
+
+    expect(children[0].vmstApplicationId).toBeUndefined()
+  })
+
+  it("should link the applicant's own child to its leave by id and take VMST's dates", () => {
+    const applied = createApplicationWithChildren(
+      PRIMARY_PARENT_ID,
+      [primaryChild('2027-03-04')],
+      0,
+    )
+
+    const { children } = getChildren([applied], [], undefined, [
+      leave(applied.id, {
+        expectedDateOfBirth: '2027-03-15',
+        dateOfBirth: '2027-03-12',
+      }),
+    ])
+
+    expect(children).toEqual([
+      expect.objectContaining({
+        vmstApplicationId: applied.id,
+        expectedDateOfBirth: '2027-03-15',
+        dateOfBirth: '2027-03-12',
+      }),
+    ])
+  })
+
+  it('should offer no change when VMST answered and lists no leave for the child', () => {
+    const approved = createApplicationWithChildren(
+      PRIMARY_PARENT_ID,
+      [primaryChild('2027-03-04')],
+      0,
+    )
+
+    const { children } = getChildren([approved], [], undefined, [])
+
+    expect(children).toHaveLength(1)
+    expect(children[0].vmstApplicationId).toBeUndefined()
+  })
+
+  it("should fall back to the leave's root id, not a change application's, when VMST is unavailable", () => {
+    const change = withFundId(
+      createApplicationWithChildren(
+        PRIMARY_PARENT_ID,
+        [primaryChild('2027-03-04')],
+        0,
+        { applicationAction: 'change', initialQuery: 'root-application-id' },
+      ),
+    )
+
+    const { children } = getChildren([change], [], undefined, null)
+
+    expect(children[0].vmstApplicationId).toBe('root-application-id')
+  })
+
+  it('should not offer a change for a closed application when VMST is unavailable', () => {
+    const closed = withFundId(
+      createApplicationWithChildren(
+        PRIMARY_PARENT_ID,
+        [primaryChild('2027-03-04')],
+        0,
+        undefined,
+        States.CLOSED,
+      ),
+    )
+
+    expect(applicationsToExistingChildApplication([closed])).toEqual([])
+  })
+
+  it('should not offer a change for an unfinished application that never reached VMST', () => {
+    const draft = createApplicationWithChildren(
+      PRIMARY_PARENT_ID,
+      [primaryChild('2027-03-04')],
+      0,
+      undefined,
+      States.DRAFT,
+    )
+
+    expect(applicationsToExistingChildApplication([draft])).toEqual([])
+  })
+
+  it("should refresh a secondary parent's earlier snapshot with the primary parent's current transfer", () => {
+    const staleSnapshot: ChildInformationWithoutRights = {
+      expectedDateOfBirth: '2027-03-04',
+      parentalRelation: ParentalRelations.secondary,
+      primaryParentNationalRegistryId: PRIMARY_PARENT_ID,
+      transferredDays: 45,
+    }
+    const ownEarlier = createApplicationWithChildren(
+      SECONDARY_PARENT_ID,
+      [staleSnapshot],
+      0,
+    )
+    const primaryApplication = createApplicationWithChildren(
+      PRIMARY_PARENT_ID,
+      [primaryChild('2027-03-04')],
+      0,
+      { otherParentId: SECONDARY_PARENT_ID },
+    )
+
+    const { children } = getChildren([ownEarlier], [primaryApplication], null)
+
+    expect(children).toHaveLength(1)
+    expect(children[0].transferredDays).toBe(0)
+  })
+
+  it("should take the most recently modified of the primary parent's applications", () => {
+    const older = createApplicationWithChildren(
+      PRIMARY_PARENT_ID,
+      [primaryChild('2027-03-04')],
+      0,
+      {
+        otherParentId: SECONDARY_PARENT_ID,
+        multipleBirths: { hasMultipleBirths: 'yes', multipleBirths: 2 },
+      },
+    )
+    older.modified = new Date('2026-01-01')
+    const newer = createApplicationWithChildren(
+      PRIMARY_PARENT_ID,
+      [primaryChild('2027-03-04')],
+      0,
+      { otherParentId: SECONDARY_PARENT_ID },
+    )
+    newer.modified = new Date('2026-06-01')
+
+    const { children } = getChildren([], [older, newer], null)
+
+    expect(children).toHaveLength(1)
+    expect(children[0].multipleBirthsDays).toBe(0)
+  })
+
+  it('should give every child a unique key', () => {
+    const { children } = getChildren(
+      [
+        createApplicationWithChildren(
+          PRIMARY_PARENT_ID,
+          [primaryChild('2026-01-01')],
+          0,
+        ),
+      ],
+      [],
+      { hasActivePregnancy: true, expectedDateOfBirth: '2027-03-04' },
+      [],
+    )
+
+    expect(children.map((child) => child.key)).toEqual([
+      'edd:2026-01-01',
+      'edd:2027-03-04',
+    ])
+  })
+})
+
+describe('getApplicationStage', () => {
+  const child: ChildInformationWithoutRights = {
+    expectedDateOfBirth: '2027-03-04',
+    parentalRelation: ParentalRelations.primary,
+  }
+
+  it.each([
+    States.OTHER_PARENT_APPROVAL_FOR_EDITS,
+    States.ADDITIONAL_DOCUMENTS_REQUIRED_FOR_EDITS,
+  ])('should treat %s as a change in progress', (state) => {
+    expect(
+      getApplicationStage(
+        createApplicationWithChildren(PRIMARY_PARENT_ID, [child], 0, {}, state),
+      ),
+    ).toBe(ApplicationStage.CHANGE_IN_PROGRESS)
+  })
+
+  it.each([
+    States.RESIDENCE_GRANT_APPLICATION,
+    States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
+  ])('should treat a residence grant in %s as in progress', (state) => {
+    expect(
+      getApplicationStage(
+        createApplicationWithChildren(
+          PRIMARY_PARENT_ID,
+          [child],
+          0,
+          { applicationAction: 'residenceGrant' },
+          state,
+        ),
+      ),
+    ).toBe(ApplicationStage.IN_PROGRESS)
+  })
+})
+
+describe('isPrimaryParentApplicationForOtherParent', () => {
+  const child: ChildInformationWithoutRights = {
+    expectedDateOfBirth: '2027-03-04',
+    parentalRelation: ParentalRelations.primary,
+  }
+  const inState = (state: string, fundId?: string) => {
+    const application = createApplicationWithChildren(
+      PRIMARY_PARENT_ID,
+      [child],
+      0,
+      { otherParentId: SECONDARY_PARENT_ID },
+      state,
+    )
+    if (fundId) {
+      set(application, 'externalData.navId', {
+        data: fundId,
+        date: new Date(),
+        status: 'success',
+      })
+    }
+    return application
+  }
+
+  it('should accept an approved application', () => {
+    expect(
+      isPrimaryParentApplicationForOtherParent(inState(States.APPROVED)),
+    ).toBe(true)
+  })
+
+  it('should refuse a closed application', () => {
+    expect(
+      isPrimaryParentApplicationForOtherParent(
+        inState(States.CLOSED, 'fund-1'),
+      ),
+    ).toBe(false)
+  })
+
+  it('should refuse an application that has not reached VMST', () => {
+    expect(
+      isPrimaryParentApplicationForOtherParent(inState(States.DRAFT)),
+    ).toBe(false)
+  })
+
+  it('should refuse a mock application', () => {
+    expect(
+      isPrimaryParentApplicationForOtherParent(
+        inState(States.APPROVED, 'mock-application-fund-id'),
+      ),
+    ).toBe(false)
   })
 })

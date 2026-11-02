@@ -2836,6 +2836,19 @@ export const otherParentApprovalFormMessages = defineMessages({
 })
 
 export const errorMessages = defineMessages({
+  parentalLeavesUnavailableTitle: {
+    id: 'pl.application:error.parentalLeavesUnavailable.title',
+    defaultMessage: 'Ekki tókst að sækja fæðingarorlof',
+    description:
+      'Title when the applicant’s parental leaves could not be fetched from VMST',
+  },
+  parentalLeavesUnavailableSummary: {
+    id: 'pl.application:error.parentalLeavesUnavailable.summary',
+    defaultMessage:
+      'Ekki tókst að sækja upplýsingar um fæðingarorlof frá Vinnumálastofnun. Vinsamlegast reyndu aftur síðar.',
+    description:
+      'Shown when VMST’s parental-leaves list could not be fetched, so it is not known which children already have a leave',
+  },
   followUpLeaveNotFoundTitle: {
     id: 'pl.application:error.followUpLeaveNotFound.title',
     defaultMessage: 'Fæðingarorlofið fannst ekki',

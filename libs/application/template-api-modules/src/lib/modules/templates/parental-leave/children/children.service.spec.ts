@@ -115,8 +115,8 @@ describe('ChildrenService.getMockData', () => {
     const { byDate } = await getMockChildren()
 
     expect(byDate('2027-06-26')).toMatchObject({
-      existingApplicationId: draftApplication.id,
-      existingApplicationIsInProgress: true,
+      inProgressApplicationId: draftApplication.id,
+      inProgressIsChange: false,
     })
   })
 
@@ -124,9 +124,7 @@ describe('ChildrenService.getMockData', () => {
     const { byDate } = await getMockChildren()
 
     expect(byDate('2027-11-08')).toMatchObject({
-      existingApplicationId: approvedApplication.id,
-      existingApplicationHasFundId: true,
-      existingApplicationIsInProgress: false,
+      vmstApplicationId: approvedApplication.id,
     })
   })
 
@@ -134,6 +132,91 @@ describe('ChildrenService.getMockData', () => {
     const { byDate } = await getMockChildren()
 
     expect(byDate('2027-03-01')).toBeDefined()
-    expect(byDate('2027-03-01').existingApplicationId).toBeUndefined()
+    expect(byDate('2027-03-01').vmstApplicationId).toBeUndefined()
+    expect(byDate('2027-03-01').inProgressApplicationId).toBeUndefined()
+  })
+})
+
+describe('ChildrenService.provideChildren', () => {
+  const failingParentalLeaveApi = {
+    parentalLeaveGetParentalLeaves: jest.fn().mockRejectedValue(new Error()),
+  }
+  const createService = () =>
+    new ChildrenService(
+      {
+        info: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn(),
+      } as unknown as Logger,
+      { customTemplateFindQuery: () => async () => [] } as never,
+      failingParentalLeaveApi as never,
+      {} as never,
+    )
+
+  it("refuses to list children when VMST's parental leaves cannot be fetched", async () => {
+    const service = createService()
+    service.isRunningInDevelopment = false
+
+    await expect(
+      service.provideChildren(
+        createApplication({ state: States.PREREQUISITES }),
+        APPLICANT_ID,
+      ),
+    ).rejects.toThrow()
+  })
+
+  it('falls back to the applicant’s own applications in development', async () => {
+    const service = createService()
+    service.isRunningInDevelopment = true
+
+    await expect(
+      service.provideChildren(
+        createApplication({ state: States.PREREQUISITES }),
+        APPLICANT_ID,
+      ),
+    ).resolves.toEqual(expect.objectContaining({ existingApplications: [] }))
+  })
+})
+
+describe('ChildrenService.childrenAndExistingApplications', () => {
+  const service = new ChildrenService(
+    {
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    } as unknown as Logger,
+    {} as never,
+    {} as never,
+    {} as never,
+  )
+
+  it('collects the primary parent applications stored under every other-parent path', async () => {
+    const primaryApplication = (expectedDateOfBirth: string) => ({
+      ...createApplication({
+        state: States.APPROVED,
+        answers: { selectedChild: '0' },
+        children: [childBornOn(expectedDateOfBirth)],
+      }),
+      applicant: '0101307789',
+    })
+    const underNewPath = primaryApplication('2027-01-01')
+    const underOldPath = primaryApplication('2027-09-09')
+
+    const { children } = await service.childrenAndExistingApplications(
+      createApplication({ state: States.PREREQUISITES }),
+      async (query) =>
+        'answers.otherParentObj.otherParentId' in query
+          ? [underNewPath]
+          : 'answers.otherParentId' in query
+          ? [underOldPath, underNewPath]
+          : [],
+      null,
+      [],
+    )
+
+    expect(children.map((child) => child.expectedDateOfBirth).sort()).toEqual([
+      '2027-01-01',
+      '2027-09-09',
+    ])
   })
 })
