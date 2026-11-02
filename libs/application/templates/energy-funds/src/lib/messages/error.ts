@@ -44,6 +44,11 @@ export const error = defineMessages({
     description:
       'Purchase price is over the price cap when the application is sent',
   },
+  confirmPriceDefinitionRequired: {
+    id: 'ef.application:error.confirmPriceDefinitionRequired',
+    defaultMessage: 'Þú þarft að staðfesta til að geta sent umsóknina',
+    description: 'Applicant has not ticked the confirmation checkbox',
+  },
   requiredValidVehicle: {
     id: 'ef.application:error.requiredValidVehicle',
     defaultMessage: 'Ökutæki þarf að vera gilt',

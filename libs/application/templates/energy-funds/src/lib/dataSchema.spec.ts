@@ -69,3 +69,24 @@ describe('vehicleDetails price validation', () => {
     expect(result.success).toBe(false)
   })
 })
+
+describe('grant confirmation', () => {
+  const grantSchema = EnergyFundsSchema.shape.grant
+  const grant = { bankNumber: '0101-26-123456' }
+
+  it('accepts the grant when the applicant has confirmed', () => {
+    const result = grantSchema.safeParse({
+      ...grant,
+      confirmPriceDefinition: ['yes'],
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects the grant when the applicant has not confirmed', () => {
+    expect(grantSchema.safeParse(grant).success).toBe(false)
+    expect(
+      grantSchema.safeParse({ ...grant, confirmPriceDefinition: [] }).success,
+    ).toBe(false)
+  })
+})
