@@ -69,6 +69,10 @@ export const OrganizationSelect = () => {
       }
 
       const label = data.createFormSystemOrganization
+      if (handleOrganizationChange) {
+        handleOrganizationChange({ value: nationalId })
+        setSearchParams({ organizationNationalId: nationalId })
+      }
       setOrganizations((current) => [...current, { label, value: nationalId }])
       toast.success(
         formatMessage({
