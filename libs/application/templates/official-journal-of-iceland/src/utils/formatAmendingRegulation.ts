@@ -30,6 +30,7 @@ import {
   splitArticleTitle,
   updateAppendixWording,
 } from './formatAmendingUtils'
+import { describeWordChange } from './describeWordChange'
 import { getDeletionOrAddition, getLiPoint } from './getDeletionOrAddition'
 
 // ----------------------------------------------------------------------
@@ -939,6 +940,10 @@ export const formatAmendingRegBody = (
             // Formatting alone changed: the wording did not, so it is not
             // restated.
             const formatOnly = getFormatOnlyChange(element)
+            // A change in one place is named by its words or sentences
+            const wordChange = formatOnly
+              ? undefined
+              : describeWordChange(element)
             amendment = (where) => {
               const at = `${paragraphNumber}. mgr.${where}`
               return (
@@ -948,6 +953,8 @@ export const formatAmendingRegBody = (
                   ? `<p>Snið ${quoteWords(
                       formatOnly,
                     )} í ${at} hefur breyst.</p>`
+                  : wordChange
+                  ? `<p>${wordChange(at)}</p>`
                   : `<p>${at} breytist og orðast svo:</p><p>${newText}</p>`
               ) as HTMLText
             }

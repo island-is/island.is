@@ -53,12 +53,24 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     )
   })
 
-  it('changes a paragraph', () => {
+  it('replaces a word in a paragraph', () => {
     const [first] = body(amend(BASE.replace('Delta echo', 'Delta kilo')))
     expect(first).toBe(
       article(
         1,
-        '<p>2. mgr. 1. gr. reglugerðarinnar breytist og orðast svo:</p><p>Delta kilo foxtrot.</p>',
+        '<p>Í stað orðsins „echo“ í 2. mgr. 1. gr. reglugerðarinnar kemur: kilo.</p>',
+      ),
+    )
+  })
+
+  it('restates a paragraph when most of it changed', () => {
+    const [first] = body(
+      amend(BASE.replace('Delta echo foxtrot', 'Kilo lima foxtrot')),
+    )
+    expect(first).toBe(
+      article(
+        1,
+        '<p>2. mgr. 1. gr. reglugerðarinnar breytist og orðast svo:</p><p>Kilo lima foxtrot.</p>',
       ),
     )
   })
@@ -195,7 +207,7 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
         article(
           1,
           '<p>Eftirfarandi breytingar verða á 1. gr. reglugerðarinnar:</p><ol type="a">' +
-            '<li><p>3. mgr. breytist og orðast svo:</p><p>Golf kilo india.</p></li>' +
+            '<li><p>Í stað orðsins „hotel“ í 3. mgr. kemur: kilo.</p></li>' +
             '<li><p>1. mgr. fellur brott.</p></li></ol>',
         ),
       )
@@ -340,7 +352,7 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
         .replace('Delta echo', 'Delta november')
       const output = body(amend(after, {}, before)).join('')
       expect(output).toContain(
-        '<p>1. mgr. 2. gr. reglugerðarinnar breytist og orðast svo:</p><p>Delta november foxtrot.</p>',
+        '<p>Í stað orðsins „echo“ í 1. mgr. 2. gr. reglugerðarinnar kemur: november.</p>',
       )
       expect(output).not.toContain('Fyrirsögn')
     })
@@ -528,7 +540,7 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
       }),
     )
     expect(output.map((a) => a.match(/<p>(.*?):/)?.[1])).toEqual([
-      '3. mgr. 1. gr. reglugerðarinnar breytist og orðast svo',
+      'Í stað orðsins „hotel“ í 3. mgr. 1. gr. reglugerðarinnar kemur',
       'Eftirfarandi breytingar eru gerðar á Viðauka I',
       undefined, // gildistaka
     ])
@@ -607,9 +619,9 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
       .replace('Delta echo', 'Delta kilo')
     const output = body(amend(after, {}, before))
     expect(output.slice(0, 3).map((a) => a.match(/<p>(.*?):/)?.[1])).toEqual([
-      '1. mgr. 1. gr. reglugerðarinnar breytist og orðast svo',
+      'Í stað orðsins „bravo“ í 1. mgr. 1. gr. reglugerðarinnar kemur',
       'Fyrirsögn II. KAFLI reglugerðarinnar breytist og orðast svo',
-      '1. mgr. 2. gr. reglugerðarinnar breytist og orðast svo',
+      'Í stað orðsins „echo“ í 1. mgr. 2. gr. reglugerðarinnar kemur',
     ])
   })
 
@@ -630,7 +642,7 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     expect(output).toEqual([
       article(
         1,
-        '<p>1. mgr. 2. gr. reglugerðarinnar breytist og orðast svo:</p><p>Reglugerð þessi, sem sett er með heimild í lögum nr. 1/2000, öðlast gildi 1. janúar 2027.</p>',
+        '<p>Í stað orðanna „mars 2010“ í 1. mgr. 2. gr. reglugerðarinnar kemur: janúar 2027.</p>',
       ),
       article(2, CLOSING),
     ])
@@ -700,7 +712,7 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     ).toEqual([
       article(
         1,
-        '<p>1. mgr. 1. gr. reglugerðarinnar breytist og orðast svo:</p><p>Alfa kilo charlie.</p>',
+        '<p>Í stað orðsins „bravo“ í 1. mgr. 1. gr. reglugerðarinnar kemur: kilo.</p>',
       ),
       article(
         2,
@@ -751,9 +763,9 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     )
 
     expect(output.slice(0, 3).map((a) => a.match(/<p>(.*?):/)?.[1])).toEqual([
-      '1. mgr. 1. gr. reglugerðar nr. 1/2020 breytist og orðast svo',
-      '1. mgr. 3. gr. reglugerðar nr. 1/2020 breytist og orðast svo',
-      '1. mgr. 2. gr. reglugerðar nr. 2/2020 breytist og orðast svo',
+      'Á eftir orðinu „Alfa“ í 1. mgr. 1. gr. reglugerðar nr. 1/2020 kemur',
+      'Á eftir orðinu „Charlie“ í 1. mgr. 3. gr. reglugerðar nr. 1/2020 kemur',
+      'Á eftir orðinu „Bravo“ í 1. mgr. 2. gr. reglugerðar nr. 2/2020 kemur',
     ])
     expect(output[3]).toBe(
       article(
@@ -995,7 +1007,7 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
           1,
           lettered(
             'Snið 1. tölul. hefur breyst.',
-            'b-liður 1. tölul. orðast svo: annað atriði þar.',
+            'Í stað orðsins „hér“ í b-lið 1. tölul. kemur: þar.',
           ),
         ),
       )
@@ -1015,8 +1027,8 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
         article(
           1,
           lettered(
-            'a-liður 1. tölul. orðast svo: eitt atriði þar,',
-            'b-liður 1. tölul. orðast svo: annað atriði þar.',
+            'Í stað orðsins „hér“ í a-lið 1. tölul. kemur: þar.',
+            'Í stað orðsins „hér“ í b-lið 1. tölul. kemur: þar.',
           ),
         ),
       )
@@ -1041,8 +1053,8 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
           1,
           lettered(
             'Snið 1. tölul. hefur breyst.',
-            'a-liður 1. tölul. orðast svo: eitt atriði þar,',
-            'b-liður 1. tölul. orðast svo: annað atriði þar.',
+            'Í stað orðsins „hér“ í a-lið 1. tölul. kemur: þar.',
+            'Í stað orðsins „hér“ í b-lið 1. tölul. kemur: þar.',
           ),
         ),
       )
@@ -1065,7 +1077,7 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
       ).toBe(
         article(
           1,
-          '<p>b-liður 1. tölul. 1. gr. reglugerðarinnar orðast svo: annað atriði þar.</p>',
+          '<p>Í stað orðsins „hér“ í b-lið 1. tölul. 1. gr. reglugerðarinnar kemur: þar.</p>',
         ),
       )
     })
@@ -1415,7 +1427,7 @@ describe('formatAmendingBodyWithArticlePrefix: 1020/2026 on 324/2023', () => {
           `<li><p>Á undan 1. mgr. kemur ný málsgrein, svohljóðandi:</p>${p(
             NEW_FIRST,
           )}</li>` +
-          `<li><p>4. mgr. breytist og orðast svo:</p>${p(DASHBOARD)}</li></ol>`,
+          '<li><p>Við 4. mgr. bætist nýr málsliður, svohljóðandi: Leyfisskírteinið skal vera staðsett á mælaborði fyrir miðju.</p></li></ol>',
       ),
     )
   })
@@ -1502,6 +1514,212 @@ describe('formatAmendingBodyWithArticlePrefix: 1020/2026 on 324/2023', () => {
       article(
         1,
         '<p>b-liður 2. mgr. 1. gr. reglugerðarinnar orðast svo: mike.</p>',
+      ),
+    )
+  })
+})
+
+describe('formatAmendingBodyWithArticlePrefix: words and sentences', () => {
+  // Modelled on B 816/2026, 1062/2026 and 1020/2026
+  const twoParagraphs = (first: string, second: string) =>
+    [
+      title('1. gr.'),
+      `<p>${first}</p>`,
+      `<p>${second}</p>`,
+      title('2. gr. Gildistaka'),
+      GILDISTAKA,
+    ].join('')
+  const FIRST =
+    'Verðskrá skal birt á vefsíðu Heilsugæslu höfuðborgarsvæðisins og gildir hún fyrir allar heilsugæslustöðvar.'
+  const SECOND =
+    'Sjúkratryggðir greiða 500 kr. fyrir röntgenmyndatöku vegna krabbameinsleitar. Aldraðir og öryrkjar greiða ekkert gjald.'
+  const BEFORE = twoParagraphs(FIRST, SECOND)
+  const change = (after: string, before = BEFORE) =>
+    body(amend(after, {}, before))[0]
+  const withItem = (item: string) =>
+    [
+      title('1. gr.'),
+      '<p>Sjúkratryggðir greiða sem hér segir:</p>',
+      `<ol><li>${item}</li><li>Börn greiða ekkert gjald.</li></ol>`,
+      title('2. gr. Gildistaka'),
+      GILDISTAKA,
+    ].join('')
+
+  it('cites an amount with its unit', () => {
+    expect(
+      change(
+        withItem('Sjúkratryggðir almennt, 3.500 kr.'),
+        withItem('Sjúkratryggðir almennt, 3.100 kr.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Í stað fjárhæðarinnar „3.100 kr.“ í 1. tölul. 1. gr. reglugerðarinnar kemur: 3.500 kr.</p>',
+      ),
+    )
+  })
+
+  it('keeps the period of an abbreviation in what it replaces', () => {
+    expect(
+      change(
+        twoParagraphs(
+          FIRST,
+          SECOND.replace('500 kr.', 'gjald skv. 1. mgr. 8. gr.'),
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Í stað fjárhæðarinnar „500 kr.“ í 2. mgr. 1. gr. reglugerðarinnar kemur: gjald skv. 1. mgr. 8. gr.</p>',
+      ),
+    )
+  })
+
+  it('adds words after the word they follow', () => {
+    expect(
+      change(
+        twoParagraphs(
+          FIRST.replace(
+            'heilsugæslustöðvar.',
+            'heilsugæslustöðvar og heimilislækna.',
+          ),
+          SECOND,
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Á eftir orðinu „heilsugæslustöðvar“ í 1. mgr. 1. gr. reglugerðarinnar kemur: og heimilislækna.</p>',
+      ),
+    )
+  })
+
+  it('adds words after an abbreviation the diff splits', () => {
+    expect(
+      change(
+        withItem('Greiðslur skv. 1. mgr. 33. gr. vegna sjúkraflutninga.'),
+        withItem('Greiðslur skv. 33. gr. vegna sjúkraflutninga.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Á eftir orðinu „skv.“ í 1. tölul. 1. gr. reglugerðarinnar kemur: 1. mgr.</p>',
+      ),
+    )
+  })
+
+  it('removes words, the next one now starting the sentence', () => {
+    expect(
+      change(
+        twoParagraphs(
+          FIRST,
+          SECOND.replace('Aldraðir og öryrkjar greiða', 'Öryrkjar greiða'),
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Orðin „Aldraðir og“ í 2. mgr. 1. gr. reglugerðarinnar falla brott.</p>',
+      ),
+    )
+  })
+
+  it('adds a sentence at the end of a paragraph', () => {
+    expect(
+      change(
+        twoParagraphs(
+          `${FIRST} Hið sama gildir um heimilislækna utan heilsugæslustöðva.`,
+          SECOND,
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Við 1. mgr. 1. gr. reglugerðarinnar bætist nýr málsliður, svohljóðandi: Hið sama gildir um heimilislækna utan heilsugæslustöðva.</p>',
+      ),
+    )
+  })
+
+  it('adds sentences at the end of a paragraph as one amendment', () => {
+    expect(
+      change(
+        twoParagraphs(
+          `${FIRST} Hið sama gildir um heimilislækna. Verðskráin skal uppfærð árlega.`,
+          SECOND,
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Við 1. mgr. 1. gr. reglugerðarinnar bætast tveir nýir málsliðir, svohljóðandi: Hið sama gildir um heimilislækna. Verðskráin skal uppfærð árlega.</p>',
+      ),
+    )
+  })
+
+  it('adds a sentence after the one it follows', () => {
+    expect(
+      change(
+        twoParagraphs(
+          FIRST,
+          SECOND.replace(
+            'krabbameinsleitar. Aldraðir',
+            'krabbameinsleitar. Gjaldið rennur til heilsugæslunnar. Aldraðir',
+          ),
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Á eftir 1. málsl. 2. mgr. 1. gr. reglugerðarinnar kemur nýr málsliður, svohljóðandi: Gjaldið rennur til heilsugæslunnar.</p>',
+      ),
+    )
+  })
+
+  it('removes a sentence by its number', () => {
+    expect(
+      change(
+        twoParagraphs(
+          FIRST,
+          'Sjúkratryggðir greiða 500 kr. fyrir röntgenmyndatöku vegna krabbameinsleitar.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>2. málsl. 2. mgr. 1. gr. reglugerðarinnar fellur brott.</p>',
+      ),
+    )
+  })
+
+  it('restates an item whose punctuation alone changed', () => {
+    expect(
+      change(
+        withItem('Sjúkratryggðir almennt, 3.100 kr.,'),
+        withItem('Sjúkratryggðir almennt, 3.100 kr.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>1. tölul. 1. gr. reglugerðarinnar orðast svo: Sjúkratryggðir almennt, 3.100 kr.,</p>',
+      ),
+    )
+  })
+
+  it('restates a paragraph changed in two places', () => {
+    expect(
+      change(
+        twoParagraphs(
+          FIRST.replace('Verðskrá', 'Gjaldskrá').replace(
+            'allar heilsugæslustöðvar',
+            'allar heilbrigðisstofnanir',
+          ),
+          SECOND,
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>1. mgr. 1. gr. reglugerðarinnar breytist og orðast svo:</p><p>Gjaldskrá skal birt á vefsíðu Heilsugæslu höfuðborgarsvæðisins og gildir hún fyrir allar heilbrigðisstofnanir.</p>',
       ),
     )
   })

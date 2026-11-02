@@ -6,6 +6,7 @@
  */
 import qq from '@hugsmidjan/qj/qq'
 import { HTMLText } from '@island.is/regulations'
+import { describeWordChange } from './describeWordChange'
 import {
   escapeHtml,
   isLetteredList,
@@ -51,21 +52,32 @@ const baseNumber = (li: Element) => {
   return items.slice(0, items.indexOf(li) + 1).filter(isInBase).length
 }
 
-/** "3. tölul." or "c-liður", in the case the wording needs */
+/**
+ * "3. tölul." or "c-liður", in the case the wording needs. `loc` is the
+ * item as a place: "í 3. tölul.", "í c-lið".
+ */
 const itemLabel = (
   li: Element,
-  form: 'nom' | 'short' | 'dat' | 'gen',
+  form: 'nom' | 'short' | 'dat' | 'gen' | 'loc',
   num = baseNumber(li),
 ) => {
   const isStaflidur = isLetteredList(li.parentElement)
   const point = getLiPoint(num, isStaflidur)
   if (isStaflidur) {
     return `${point}-${
-      { nom: 'liður', short: 'liður', dat: 'lið', gen: 'liðar' }[form]
+      { nom: 'liður', short: 'liður', dat: 'lið', gen: 'liðar', loc: 'lið' }[
+        form
+      ]
     }`
   }
   return `${point}. ${
-    { nom: 'töluliður', short: 'tölul.', dat: 'tölulið', gen: 'tölul.' }[form]
+    {
+      nom: 'töluliður',
+      short: 'tölul.',
+      dat: 'tölulið',
+      gen: 'tölul.',
+      loc: 'tölul.',
+    }[form]
   }`
 }
 
@@ -263,10 +275,16 @@ export const formatListItemDiff = (item: Element): ListItemChange[] => {
             `<p>${position}${above}${at} kemur nýr ${kind}, svohljóðandi, og breytist númer annarra liða til samræmis: ${ownLiText}</p>${nested}` as HTMLText,
         )
       } else {
+        // A change in one place is named by its words or sentences
+        const wordChange = liItem.querySelector('ol, ul')
+          ? undefined
+          : describeWordChange(liItem)
+        const place = `${itemLabel(liItem, 'loc')}${above}`
         const label = `${itemLabel(liItem, 'short')}${above}`
-        returningArray.push(
-          (at) =>
-            `<p>${label}${at} orðast svo: ${ownLiText}</p>${nested}` as HTMLText,
+        returningArray.push((at) =>
+          wordChange
+            ? (`<p>${wordChange(`${place}${at}`)}</p>` as HTMLText)
+            : (`<p>${label}${at} orðast svo: ${ownLiText}</p>${nested}` as HTMLText),
         )
       }
     }
