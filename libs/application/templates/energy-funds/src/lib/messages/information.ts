@@ -108,8 +108,35 @@ export const information = {
       },
       price: {
         id: 'ef.application:information.labels.vehicle.price',
-        defaultMessage: 'Kaupverð án styrksupphæð með vsk.',
+        defaultMessage: 'Kaupverð með vsk.',
         description: 'Vehicle price label',
+      },
+      priceHelpTitle: {
+        id: 'ef.application:information.labels.vehicle.priceHelpTitle',
+        defaultMessage: 'Hvað telst til kaupverðs?',
+        description: 'Title of the purchase price help accordion',
+      },
+      priceHelpText: {
+        id: 'ef.application:information.labels.vehicle.priceHelpText#markdown',
+        defaultMessage:
+          'Gefðu upp kaupverð bílsins.\n\n' +
+          '**Teldu með:**\n\n' +
+          '* allan búnað sem fylgdi bílnum úr framleiðslu, líka búnað sem var valinn við pöntun, til dæmis lit, innréttingu, felgur og dráttarbeisli\n' +
+          '* dekkin sem fylgdu bílnum\n' +
+          '* flutningsgjöld, önnur gjöld seljanda og virðisaukaskatt\n\n' +
+          '**Dragðu frá:**\n\n' +
+          '* afslátt sem seljandi veitti af verði bílsins\n\n' +
+          '**Ekki telja með:**\n\n' +
+          '* aukahluti sem seljandi seldi sérstaklega, til dæmis mottur, hleðslukapal umfram þann sem fylgdi eða aukasett af dekkjum\n' +
+          '* auka dekk, dráttarbeisli eða annan búnað sem seljandi bætti við eftir framleiðslu\n' +
+          '* opinber gjöld vegna nýskráningar\n\n' +
+          '**Ekki draga frá:**\n\n' +
+          '* styrkinn\n' +
+          '* verð bíls sem þú lést upp í kaupin\n\n' +
+          '**Notaður bíll:**\n\n' +
+          '* Ef bíllinn var fyrst skráður erlendis skaltu gefa upp heildarverð með öllu sem fylgdi honum. Ef þú fluttir hann inn bætast við flutningskostnaður og aðflutningsgjöld.',
+        description:
+          'Definition of the purchase price, shown by the price field',
       },
       registrationDate: {
         id: 'ef.application:information.labels.vehicle.registrationDate',
