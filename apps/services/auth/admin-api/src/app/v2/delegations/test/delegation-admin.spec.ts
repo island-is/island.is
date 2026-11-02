@@ -208,6 +208,14 @@ describe('DelegationAdmin - With authentication', () => {
       const companyNationalId = createNationalId('company')
       const wardNationalId = createNationalId('person')
       const lastFullReindex = new Date('2026-10-01T00:00:00.000Z')
+      await factory.createDelegationType({
+        id: AuthDelegationType.ProcurationHolder,
+        providerId: AuthDelegationProvider.CompanyRegistry,
+      })
+      await factory.createDelegationType({
+        id: AuthDelegationType.LegalGuardian,
+        providerId: AuthDelegationProvider.NationalRegistry,
+      })
       await factory.createDelegationIndexRecord({
         fromNationalId: companyNationalId,
         toNationalId: nationalId,

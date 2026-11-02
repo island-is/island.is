@@ -11,6 +11,7 @@ import {
 
 import { DelegationIndexMeta } from '../models/delegation-index-meta.model'
 import { DelegationIndex } from '../models/delegation-index.model'
+import { DelegationTypeModel } from '../models/delegation-type.model'
 
 export interface IndexedDelegation {
   record: DelegationIndex
@@ -31,22 +32,21 @@ export class DelegationIndexLookupService {
     private delegationIndexModel: typeof DelegationIndex,
     @InjectModel(DelegationIndexMeta)
     private delegationIndexMetaModel: typeof DelegationIndexMeta,
+    @InjectModel(DelegationTypeModel)
+    private delegationTypeModel: typeof DelegationTypeModel,
   ) {}
 
   async findByNationalId(
     nationalId: string,
     excludeTypes: AuthDelegationType[],
   ): Promise<IndexedDelegation[]> {
-    const records = await this.delegationIndexModel.findAll({
+    const indexRecords = await this.delegationIndexModel.findAll({
       where: {
         [Op.or]: [{ toNationalId: nationalId }, { fromNationalId: nationalId }],
         type: { [Op.notIn]: excludeTypes },
-        // Personal representatives now come from sýslumenn, talsmannagrunnur is deprecated.
-        provider: {
-          [Op.ne]: AuthDelegationProvider.PersonalRepresentativeRegistry,
-        },
       },
     })
+    const records = await this.withCurrentProvider(indexRecords)
 
     const indexedAt = await this.findLastFullReindex(
       uniq(records.map((r) => r.toNationalId)),
@@ -62,6 +62,23 @@ export class DelegationIndexLookupService {
       id: `${record.type}_${record.provider}_${record.toNationalId}_${record.fromNationalId}`,
       indexedAt: indexedAt.get(record.toNationalId) ?? null,
     }))
+  }
+
+  /** Records from a provider a delegation type has moved away from are stale. */
+  private async withCurrentProvider(
+    records: DelegationIndex[],
+  ): Promise<DelegationIndex[]> {
+    if (records.length === 0) {
+      return []
+    }
+
+    const types = await this.delegationTypeModel.findAll({
+      where: { id: uniq(records.map((r) => r.type)) },
+      attributes: ['id', 'providerId'],
+    })
+    const providerByType = new Map(types.map((t) => [t.id, t.providerId]))
+
+    return records.filter((r) => providerByType.get(r.type) === r.provider)
   }
 
   private async findLastFullReindex(
