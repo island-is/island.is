@@ -570,6 +570,39 @@ export const formatAmendingRegBody = (
     // The new side of a list already written together with its old side
     const handled = new Set<Element>()
 
+    // Each base table's place among the base tables of its paragraph
+    const tablesInParagraph = new Map<
+      Element,
+      { index: number; count: number }
+    >()
+    let paragraphTables: Element[] = []
+    const countTables = () => {
+      paragraphTables.forEach((t, i) =>
+        tablesInParagraph.set(t, {
+          index: i + 1,
+          count: paragraphTables.length,
+        }),
+      )
+      paragraphTables = []
+    }
+    group.forEach((e) => {
+      const tag = e.nodeName.toLowerCase()
+      if (tag === 'p' && !containsAnyTitleClass(e)) {
+        // A new paragraph is not one of the base regulation's
+        if (!isEmptyWithout(e, 'ins')) {
+          countTables()
+        }
+      } else if (
+        tag !== 'ol' &&
+        !containsAnyTitleClass(e) &&
+        getTable(e) &&
+        !isEmptyWithout(e, 'ins')
+      ) {
+        paragraphTables.push(e)
+      }
+    })
+    countTables()
+
     group.forEach((element) => {
       // The closing date line and signatories: never an amendment.
       if (element.hasAttribute('data-diff-signature') || handled.has(element)) {
@@ -736,9 +769,10 @@ export const formatAmendingRegBody = (
           lastKept = paragraph
         }
       }
-      // A list belongs to the paragraph before it, and is removed with it
-      const isListOfDeletedParagraph =
-        (isLetterList || isNumberList) &&
+      // A list or table belongs to the paragraph before it, and is removed
+      // with it
+      const isBlockOfDeletedParagraph =
+        (isLetterList || isNumberList || !!table) &&
         hasDeletion &&
         isDeleted &&
         deletedParagraphs.includes(mgr)
@@ -747,14 +781,18 @@ export const formatAmendingRegBody = (
         !isNewParagraph &&
         !isNewList &&
         !isDeletedParagraph &&
-        !isListOfDeletedParagraph
+        !isBlockOfDeletedParagraph
       ) {
         // A base table or list, not one removed or added
         const isBaseBlock =
           !isEmptyWithout(element, 'del') && !isEmptyWithout(element, 'ins')
+        // "2. töflu" when the paragraph has more than one
+        const tableInParagraph = table && tablesInParagraph.get(element)
         closeNewParagraphs(
           !isBaseBlock
             ? undefined
+            : tableInParagraph && tableInParagraph.count > 1
+            ? `${tableInParagraph.index}. töflu`
             : table
             ? 'töflu'
             : isLetterList
@@ -781,7 +819,7 @@ export const formatAmendingRegBody = (
           }
           if (isParagraph) {
             deletedParagraphs.push(paragraphNumber)
-          } else if (isListOfDeletedParagraph) {
+          } else if (isBlockOfDeletedParagraph) {
             // Covered by its paragraph's removal
           } else if (isSectionTitle) {
             amendment = (where) =>

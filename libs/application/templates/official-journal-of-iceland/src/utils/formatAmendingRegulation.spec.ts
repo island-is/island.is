@@ -200,6 +200,40 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
         ),
       )
     })
+
+    it('removes a table with the paragraph it belongs to', () => {
+      const TABLE =
+        '<table><tbody><tr><td>Flokkur</td><td>Gjald</td></tr><tr><td>Alfa</td><td>100</td></tr></tbody></table>'
+      const P2 = `<p>Gjald skal greitt samkvæmt eftirfarandi töflu:</p>${TABLE}`
+      const before = BASE.replace('<p>Delta echo foxtrot.</p>', P2)
+      expect(body(amend(before.replace(P2, ''), {}, before))[0]).toBe(
+        article(1, '<p>2. mgr. 1. gr. reglugerðarinnar fellur brott.</p>'),
+      )
+    })
+
+    it('keeps new paragraphs on either side of a removed one together', () => {
+      // Written out, so the removed paragraph is between the new ones
+      const diff = [
+        title('1. gr.'),
+        '<p>Alfa bravo charlie.</p>',
+        '<p data-diff="insert"><ins class="diffins">Zulu yankee xray whiskey.</ins></p>',
+        '<p data-diff="delete" data-diff-mgr="2"><del class="diffdel">Delta echo foxtrot.</del></p>',
+        '<p data-diff="insert"><ins class="diffins">Kilo lima mike november.</ins></p>',
+        '<p>Golf hotel india.</p>',
+      ].join('')
+      expect(
+        formatAmendingBodyWithArticlePrefix([
+          { id: '1', type: 'amend', name: '0123/2020', diff },
+        ])[0],
+      ).toBe(
+        article(
+          1,
+          '<p>Eftirfarandi breytingar verða á 1. gr. reglugerðarinnar:</p><ol type="a">' +
+            '<li><p>Á eftir 1. mgr. koma tvær nýjar málsgreinar, svohljóðandi:</p><p>Zulu yankee xray whiskey.</p><p>Kilo lima mike november.</p></li>' +
+            '<li><p>2. mgr. fellur brott.</p></li></ol>',
+        ),
+      )
+    })
   })
 
   it('removes a whole article', () => {
@@ -1185,6 +1219,47 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
         'Á undan stafliðum í 1. mgr. kemur ný málsgrein, svohljóðandi:',
         'Á eftir 1. mgr. kemur ný málsgrein sem orðast svo:',
       ])
+    })
+
+    describe('with more than one table', () => {
+      const SECOND = TABLE.replace('Alfa', 'Beta')
+      const NEW = '<p>Zulu yankee xray whiskey.</p>'
+      const placed = (...blocks: string[]) => {
+        const before = [
+          title('1. gr.'),
+          ...blocks,
+          '<p>Golf hotel india juliett.</p>',
+          title('2. gr. Gildistaka'),
+          GILDISTAKA,
+        ].join('')
+        const after = before.replace(SECOND, NEW + SECOND)
+        return body(amend(after, {}, before))[0]
+      }
+
+      it('numbers the table in a paragraph that has two', () => {
+        expect(
+          placed(
+            '<p>Gjald skal greitt samkvæmt eftirfarandi:</p>',
+            TABLE,
+            SECOND,
+          ),
+        ).toContain(
+          '<p>Á undan 2. töflu í 1. mgr. 1. gr. reglugerðarinnar kemur ný málsgrein, svohljóðandi:</p>',
+        )
+      })
+
+      it('does not number a table alone in its paragraph', () => {
+        expect(
+          placed(
+            '<p>Gjald skal greitt samkvæmt eftirfarandi:</p>',
+            TABLE,
+            '<p>Annað gjald skal greitt samkvæmt eftirfarandi:</p>',
+            SECOND,
+          ),
+        ).toContain(
+          '<p>Á undan töflu í 2. mgr. 1. gr. reglugerðarinnar kemur ný málsgrein, svohljóðandi:</p>',
+        )
+      })
     })
   })
 
