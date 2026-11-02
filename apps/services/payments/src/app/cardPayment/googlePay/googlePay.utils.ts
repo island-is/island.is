@@ -1,4 +1,5 @@
 import {
+  CardPaymentSuccessResponse,
   GooglePayCardInformation,
   SavedVerificationCompleteData,
 } from '../../../types/cardPayment'
@@ -10,20 +11,44 @@ import {
 import { PaymentTrackingData } from '../../../types'
 
 /**
- * Valitor CardPayment WalletTransaction that decrypts a Google Pay token
- * (gateway `valitor`). For a card saved in the Google account it answers Q8
+ * A Google Pay WalletTransaction that may have charged the token without the
+ * saga being able to settle it. Either the request was sent and no answer the
+ * saga can act on came back, so the outcome is unknown (`paymentResult`
+ * absent), or the gateway charged the token under a correlation id that is
+ * not the saga's (`paymentResult` present). Carries the tracking data a
+ * refund goes by. A decline is not this: the gateway then said nothing was
+ * charged.
+ */
+export class GooglePayUnsettledChargeError extends Error {
+  constructor(
+    message: string,
+    public readonly paymentTrackingData: PaymentTrackingData,
+    public readonly paymentResult?: CardPaymentSuccessResponse,
+  ) {
+    super(message)
+    this.name = 'GooglePayUnsettledChargeError'
+    Object.setPrototypeOf(this, GooglePayUnsettledChargeError.prototype)
+  }
+}
+
+/**
+ * Valitor CardPayment WalletTransaction with a Google Pay token (gateway
+ * `valitor`). For a card saved in the Google account (PAN_ONLY) it answers Q8
  * with the card, which then goes through 3-D Secure and an ECommerce payment.
+ * A device token (CRYPTOGRAM_3DS) it charges outright, as a Sale of the
+ * amount; the tracking data then names that payment for the confirmation and
+ * a refund.
  * @see https://valitorpay.github.io/
  */
-export const generateGooglePayDecryptionRequestOptions = ({
+export const generateGooglePayWalletTransactionRequestOptions = ({
   token,
   paymentApiConfig,
-  correlationId,
+  paymentTrackingData,
   amount,
 }: {
   token: unknown
   paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
-  correlationId: string
+  paymentTrackingData: PaymentTrackingData
   amount: number
 }) => {
   const { systemCalling } = paymentApiConfig
@@ -41,7 +66,10 @@ export const generateGooglePayDecryptionRequestOptions = ({
         GooglePay: token,
       },
       systemCalling,
-      correlationId,
+      additionalData: {
+        merchantReferenceData: paymentTrackingData.merchantReferenceData,
+      },
+      correlationId: paymentTrackingData.correlationId,
     }),
   }
 }

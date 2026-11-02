@@ -69,6 +69,7 @@ import { PaymentReceipt } from '../../../components/PaymentReceipt'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import { InvoiceReceipt } from '../../../components/InvoiceReceipt'
 import { usePaymentOrchestration } from '../../../hooks/usePaymentOrchestration'
+import { googlePayAllowedAuthMethods } from '../../../hooks/useGooglePay'
 import {
   BankTransferStatusUpdate,
   useBankTransferStatusPolling,
@@ -88,6 +89,8 @@ interface PaymentPageProps {
   }
   isApplePayPaymentEnabled: boolean
   isGooglePayPaymentEnabled: boolean
+  /** Whether the Google Pay sheet also offers device tokens (CRYPTOGRAM_3DS) */
+  isGooglePayDeviceTokensEnabled: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
@@ -230,6 +233,34 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     console.error('Error getting Google Pay payment enabled', e)
   }
 
+  // Device tokens are charged by the gateway as it decrypts them, a path not
+  // yet seen on production, so they are offered behind a flag of their own
+  let isGooglePayDeviceTokensEnabled = false
+  if (isGooglePayPaymentEnabled) {
+    try {
+      isGooglePayDeviceTokensEnabled = await configCatClient.getValueAsync(
+        Features.isIslandisGooglePayDeviceTokensEnabled,
+        false,
+      )
+    } catch (e) {
+      console.error('Error getting Google Pay device tokens enabled', e)
+    }
+  }
+
+  // TEMPORARY: debug log of the Google Pay auth methods offered while the
+  // flow is tested on production. Remove once the flow is verified there.
+  if (isGooglePayPaymentEnabled) {
+    console.info(
+      `[${paymentFlowId}] [GOOGLEPAY] [TESTING] Google Pay auth methods offered`,
+      {
+        paymentFlowId,
+        allowedAuthMethods: googlePayAllowedAuthMethods(
+          isGooglePayDeviceTokensEnabled,
+        ),
+      },
+    )
+  }
+
   return {
     props: {
       locale,
@@ -240,6 +271,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       productInformation,
       isApplePayPaymentEnabled,
       isGooglePayPaymentEnabled,
+      isGooglePayDeviceTokensEnabled,
     },
   }
 }
@@ -250,6 +282,7 @@ function PaymentPage({
   productInformation,
   isApplePayPaymentEnabled,
   isGooglePayPaymentEnabled,
+  isGooglePayDeviceTokensEnabled,
 }: PaymentPageProps) {
   const methods = useForm({
     mode: 'onBlur',
@@ -302,6 +335,7 @@ function PaymentPage({
     productInformation,
     isApplePayPaymentEnabled,
     isGooglePayPaymentEnabled,
+    isGooglePayDeviceTokensEnabled,
     onInvalidActorNationalId,
   })
   const router = useRouter()
