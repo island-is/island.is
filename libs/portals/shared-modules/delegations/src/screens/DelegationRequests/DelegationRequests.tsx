@@ -80,7 +80,7 @@ const DelegationRequests = () => {
       <IntroHeader
         title={formatMessage(m.delegationRequestsPageTitle)}
         intro={defineMessage(m.delegationRequestsPageIntro)}
-        marginBottom={[2, 2, 4]}
+        marginBottom={[4, 4, 6]}
       >
         <GridColumn span={['8/8', '3/8']}>
           <Box
