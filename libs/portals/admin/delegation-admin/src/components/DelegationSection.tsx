@@ -11,6 +11,8 @@ interface DelegationSectionProps {
   direction: 'incoming' | 'outgoing'
   delegations: DelegationView[]
   renderRowActions?: (delegation: DelegationView) => ReactNode
+  showDomain: boolean
+  clientId?: string
 }
 
 export const DelegationSection = ({
@@ -19,6 +21,8 @@ export const DelegationSection = ({
   direction,
   delegations,
   renderRowActions,
+  showDomain,
+  clientId,
 }: DelegationSectionProps) => {
   const color = direction === 'outgoing' ? 'blue' : 'purple'
 
@@ -53,6 +57,8 @@ export const DelegationSection = ({
           delegations={delegations}
           direction={direction}
           renderRowActions={renderRowActions}
+          showDomain={showDomain}
+          clientId={clientId}
         />
       ) : (
         <Text>{emptyMessage}</Text>

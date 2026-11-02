@@ -584,4 +584,298 @@ describe('MeDelegationOverviewController', () => {
       expect(res.body).toEqual({ clients: [], incoming: [], outgoing: [] })
     })
   })
+
+  describe('delegation types', () => {
+    const organisationUser = createCurrentUser({
+      nationalIdType: 'company',
+      scope: [DelegationAdminScopes.institution],
+    })
+    const postholf = 'PersonalRepresentative:postholf'
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
+    let factory: FixtureFactory
+
+    const lookup = async (nationalId: string) => {
+      const res = await getRequestMethod(
+        server,
+        'GET',
+      )(path).set('X-Query-National-Id', nationalId)
+      expect(res.status).toEqual(200)
+      return res.body as DelegationOverviewDto
+    }
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: organisationUser,
+        dbType: 'postgres',
+      })
+      server = request(app.getHttpServer())
+      factory = new FixtureFactory(app)
+
+      jest
+        .spyOn(app.get(NationalRegistryV3ClientService), 'getAllDataIndividual')
+        .mockImplementation(
+          async (nationalId) =>
+            createNationalRegistryUser({ nationalId }) as never,
+        )
+
+      await factory.createDomain({
+        name: 'types-domain',
+        nationalId: organisationUser.nationalId,
+        apiScopes: [
+          {
+            name: 'types-procuration',
+            supportedDelegationTypes: [
+              AuthDelegationType.ProcurationHolder,
+              AuthDelegationType.GeneralMandate,
+            ],
+          },
+          {
+            name: 'types-protected',
+            isAccessControlled: true,
+            supportedDelegationTypes: [AuthDelegationType.GeneralMandate],
+          },
+          {
+            name: 'types-procuration-also-for-user',
+            alsoForDelegatedUser: true,
+            supportedDelegationTypes: [AuthDelegationType.ProcurationHolder],
+          },
+          {
+            name: 'types-guardian-minor',
+            supportedDelegationTypes: [AuthDelegationType.LegalGuardianMinor],
+          },
+          { name: 'types-postholf', supportedDelegationTypes: [postholf] },
+          {
+            name: 'types-custom',
+            supportedDelegationTypes: [AuthDelegationType.Custom],
+          },
+        ],
+      })
+      const clients = [
+        {
+          clientId: 'types-procuration-client',
+          supportedDelegationTypes: [AuthDelegationType.ProcurationHolder],
+          scopes: ['types-procuration', 'types-procuration-also-for-user'],
+        },
+        {
+          clientId: 'types-general-mandate-client',
+          supportedDelegationTypes: [AuthDelegationType.GeneralMandate],
+          requireApiScopes: true,
+          scopes: ['types-protected', 'types-procuration'],
+        },
+        {
+          clientId: 'types-guardian-client',
+          supportedDelegationTypes: [AuthDelegationType.LegalGuardianMinor],
+          scopes: ['types-guardian-minor'],
+        },
+        {
+          clientId: 'types-postholf-client',
+          supportedDelegationTypes: [postholf],
+          scopes: ['types-postholf'],
+        },
+        {
+          clientId: 'types-custom-client',
+          supportedDelegationTypes: [AuthDelegationType.Custom],
+          scopes: ['types-custom'],
+        },
+      ]
+      for (const client of clients) {
+        await factory.createClient({
+          clientId: client.clientId,
+          clientName: client.clientId,
+          domainName: 'types-domain',
+          supportedDelegationTypes: client.supportedDelegationTypes,
+          requireApiScopes: client.requireApiScopes ?? false,
+          allowedScopes: client.scopes.map((scopeName) => ({
+            clientId: client.clientId,
+            scopeName,
+          })),
+        })
+      }
+    })
+
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+
+    it('should not give scopes that are also for the delegated user to procuration holders', async () => {
+      // Arrange
+      const nationalId = createNationalId('person')
+      await factory.createDelegationIndexRecord({
+        fromNationalId: createNationalId('company'),
+        toNationalId: nationalId,
+        type: AuthDelegationType.ProcurationHolder,
+        provider: AuthDelegationProvider.CompanyRegistry,
+      })
+
+      // Act
+      const { incoming } = await lookup(nationalId)
+
+      // Assert
+      expect(incoming).toHaveLength(1)
+      expect(incoming[0].scopes.map((s) => s.scopeName)).toEqual([
+        'types-procuration',
+      ])
+    })
+
+    it('should apply general mandates from companies to procuration clients', async () => {
+      // Arrange
+      const nationalId = createNationalId('person')
+      await factory.createDelegationType({
+        id: AuthDelegationType.GeneralMandate,
+        providerId: AuthDelegationProvider.Custom,
+      })
+      const generalMandate = await app
+        .get<typeof Delegation>(getModelToken(Delegation))
+        .create({
+          id: faker.datatype.uuid(),
+          fromNationalId: createNationalId('company'),
+          toNationalId: nationalId,
+          fromDisplayName: faker.name.findName(),
+          toName: faker.name.findName(),
+        })
+      await app
+        .get<typeof DelegationDelegationType>(
+          getModelToken(DelegationDelegationType),
+        )
+        .create({
+          delegationId: generalMandate.id,
+          delegationTypeId: AuthDelegationType.GeneralMandate,
+        })
+
+      // Act
+      const { incoming } = await lookup(nationalId)
+
+      // Assert
+      expect(incoming).toEqual([
+        expect.objectContaining({
+          id: generalMandate.id,
+          clientIds: [
+            'types-general-mandate-client',
+            'types-procuration-client',
+          ],
+          loginClientIds: [
+            'types-general-mandate-client',
+            'types-procuration-client',
+          ],
+        }),
+      ])
+    })
+
+    it('should give access controlled scopes to general mandates from companies on the access list', async () => {
+      // Arrange
+      const nationalId = createNationalId('person')
+      const companyWithAccess = createNationalId('company')
+      await factory.createApiScopeUserAccess({
+        nationalId: companyWithAccess,
+        scope: 'types-protected',
+      })
+      const generalMandate = await app
+        .get<typeof Delegation>(getModelToken(Delegation))
+        .create({
+          id: faker.datatype.uuid(),
+          fromNationalId: companyWithAccess,
+          toNationalId: nationalId,
+          fromDisplayName: faker.name.findName(),
+          toName: faker.name.findName(),
+        })
+      await app
+        .get<typeof DelegationDelegationType>(
+          getModelToken(DelegationDelegationType),
+        )
+        .create({
+          delegationId: generalMandate.id,
+          delegationTypeId: AuthDelegationType.GeneralMandate,
+        })
+
+      // Act
+      const { incoming } = await lookup(nationalId)
+
+      // Assert
+      expect(incoming[0].clientIds).toContain('types-general-mandate-client')
+      expect(incoming[0].scopes.map((s) => s.scopeName).sort()).toEqual([
+        'types-procuration',
+        'types-procuration-also-for-user',
+        'types-protected',
+      ])
+    })
+
+    it('should match guardianship of minors and sýslumenn personal representatives by their stored type', async () => {
+      // Arrange
+      const nationalId = createNationalId('person')
+      const representedNationalId = createNationalId('person')
+      await factory.createDelegationIndexRecord({
+        fromNationalId: createNationalId('person'),
+        toNationalId: nationalId,
+        type: AuthDelegationType.LegalGuardianMinor,
+        provider: AuthDelegationProvider.NationalRegistry,
+      })
+      await factory.createDelegationIndexRecord({
+        fromNationalId: representedNationalId,
+        toNationalId: nationalId,
+        type: postholf,
+        provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+      })
+      // The deprecated talsmannagrunnur copy of the same delegation is ignored.
+      await factory.createDelegationIndexRecord({
+        fromNationalId: representedNationalId,
+        toNationalId: nationalId,
+        type: postholf,
+        provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
+      })
+
+      // Act
+      const { incoming } = await lookup(nationalId)
+
+      // Assert
+      expect(incoming).toHaveLength(2)
+      expect(incoming).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: AuthDelegationType.LegalGuardianMinor,
+            clientIds: ['types-guardian-client'],
+          }),
+          expect.objectContaining({
+            id: expect.stringContaining(
+              AuthDelegationProvider.DistrictCommissionersRegistry,
+            ),
+            type: AuthDelegationType.PersonalRepresentative,
+            fromNationalId: representedNationalId,
+            clientIds: ['types-postholf-client'],
+          }),
+        ]),
+      )
+    })
+
+    it('should not treat a delegation that has not started as usable', async () => {
+      // Arrange
+      const nationalId = createNationalId('person')
+      const notStarted = await factory.createCustomDelegation({
+        toNationalId: nationalId,
+        domainName: 'types-domain',
+        scopes: [
+          {
+            scopeName: 'types-custom',
+            validFrom: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+            validTo: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          },
+        ],
+      })
+
+      // Act
+      const { incoming } = await lookup(nationalId)
+
+      // Assert
+      expect(incoming).toEqual([
+        expect.objectContaining({
+          id: notStarted.id,
+          isActive: false,
+          clientIds: ['types-custom-client'],
+          loginClientIds: [],
+        }),
+      ])
+    })
+  })
 })

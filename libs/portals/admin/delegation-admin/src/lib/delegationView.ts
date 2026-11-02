@@ -45,10 +45,46 @@ export interface ClientView {
   clientName?: string | null
 }
 
-export type DelegationStatusFilter = 'all' | 'active' | 'expired'
+export type DelegationStatus = 'active' | 'pending' | 'expired'
+
+export type DelegationStatusFilter = 'all' | DelegationStatus
 
 export const isDateExpired = (date?: string | null) =>
   !!date && new Date(date) < startOfDay(new Date())
+
+const isDateInFuture = (date?: string | null) =>
+  !!date && new Date(date) > startOfDay(new Date())
+
+export const scopeStatus = (scope: DelegationScopeView): DelegationStatus =>
+  isDateExpired(scope.validTo)
+    ? 'expired'
+    : isDateInFuture(scope.validFrom)
+    ? 'pending'
+    : 'active'
+
+export const delegationStatus = (
+  delegation: DelegationView,
+): DelegationStatus =>
+  delegation.isActive
+    ? 'active'
+    : delegation.scopes.some((s) => scopeStatus(s) === 'pending')
+    ? 'pending'
+    : 'expired'
+
+/** A delegation active elsewhere but not on the client has expired there. */
+export const statusOnClient = (
+  delegation: DelegationView,
+  clientId: string,
+): DelegationStatus | undefined => {
+  if (delegation.loginClientIds?.includes(clientId)) {
+    return 'active'
+  }
+  if (!delegation.clientIds?.includes(clientId)) {
+    return undefined
+  }
+  const status = delegationStatus(delegation)
+  return status === 'active' ? 'expired' : status
+}
 
 export const formatDate = (date: string) =>
   format(new Date(date), 'd. MMMM yyyy', { locale: is })
@@ -117,7 +153,7 @@ export const fromCustomDelegation = (
     indexedAt: delegation.indexedAt,
     validTo,
     isActive: scopes.length
-      ? scopes.some((s) => !isDateExpired(s.validTo))
+      ? scopes.some((s) => scopeStatus(s) === 'active')
       : !isDateExpired(validTo),
     scopes,
   }
@@ -127,12 +163,6 @@ export const fromCustomDelegation = (
 export const isIndexOnlyType = (type: AuthDelegationType) =>
   type !== AuthDelegationType.Custom &&
   type !== AuthDelegationType.GeneralMandate
-
-/** Expired delegations are kept so they can still be found with the status filter. */
-const appliesToClient = (delegation: DelegationView, clientId: string) =>
-  delegation.isActive
-    ? !!delegation.loginClientIds?.includes(clientId)
-    : !!delegation.clientIds?.includes(clientId)
 
 /** Guardianship of minors and older children is one type to staff. */
 export const delegationTypeGroup = (type: AuthDelegationType) =>
@@ -154,10 +184,13 @@ export const filterDelegations = (
     type?: AuthDelegationType
   },
 ) =>
-  delegations.filter(
-    (d) =>
+  delegations.filter((d) => {
+    const dStatus = clientId ? statusOnClient(d, clientId) : delegationStatus(d)
+
+    return (
+      !!dStatus &&
+      (status === 'all' || status === dStatus) &&
       (!type || delegationTypeGroup(d.type) === type) &&
-      (status === 'all' || (status === 'active') === d.isActive) &&
-      (!clientId || appliesToClient(d, clientId)) &&
-      (!domainName || d.domain?.name === domainName),
-  )
+      (!domainName || d.domain?.name === domainName)
+    )
+  })

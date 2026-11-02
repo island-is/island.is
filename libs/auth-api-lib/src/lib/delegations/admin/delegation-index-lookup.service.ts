@@ -41,6 +41,10 @@ export class DelegationIndexLookupService {
       where: {
         [Op.or]: [{ toNationalId: nationalId }, { fromNationalId: nationalId }],
         type: { [Op.notIn]: excludeTypes },
+        // Personal representatives now come from sýslumenn, talsmannagrunnur is deprecated.
+        provider: {
+          [Op.ne]: AuthDelegationProvider.PersonalRepresentativeRegistry,
+        },
       },
     })
 
@@ -55,7 +59,7 @@ export class DelegationIndexLookupService {
         ? AuthDelegationType.PersonalRepresentative
         : (record.type as AuthDelegationType),
       provider: record.provider as AuthDelegationProvider,
-      id: `${record.type}_${record.toNationalId}_${record.fromNationalId}`,
+      id: `${record.type}_${record.provider}_${record.toNationalId}_${record.fromNationalId}`,
       indexedAt: indexedAt.get(record.toNationalId) ?? null,
     }))
   }

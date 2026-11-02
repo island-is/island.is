@@ -50,6 +50,7 @@ export const DelegationsResults = ({
   const statusOptions: { label: string; value: DelegationStatusFilter }[] = [
     { label: formatMessage(m.filterStatusAll), value: 'all' },
     { label: formatMessage(m.statusActive), value: 'active' },
+    { label: formatMessage(m.statusPending), value: 'pending' },
     { label: formatMessage(m.statusExpired), value: 'expired' },
   ]
   const clientOptions = [
@@ -79,6 +80,7 @@ export const DelegationsResults = ({
     })),
   ]
   const filter = { status, clientId, domainName, type }
+  const showDomain = [...incoming, ...outgoing].some((d) => d.domain)
 
   return (
     <Stack space={6}>
@@ -145,6 +147,8 @@ export const DelegationsResults = ({
         direction="incoming"
         delegations={filterDelegations(incoming, filter)}
         renderRowActions={renderRowActions}
+        showDomain={showDomain}
+        clientId={clientId}
       />
       <DelegationSection
         title={formatMessage(m.delegationFrom)}
@@ -152,6 +156,8 @@ export const DelegationsResults = ({
         direction="outgoing"
         delegations={filterDelegations(outgoing, filter)}
         renderRowActions={renderRowActions}
+        showDomain={showDomain}
+        clientId={clientId}
       />
     </Stack>
   )

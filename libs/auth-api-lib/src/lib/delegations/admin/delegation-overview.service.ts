@@ -8,7 +8,10 @@ import { Op } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import type { ConfigType } from '@island.is/nest/config'
-import { AuthDelegationType } from '@island.is/shared/types'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 import { ClientAllowedScope } from '../../clients/models/client-allowed-scope.model'
 import { ClientDelegationType } from '../../clients/models/client-delegation-type.model'
@@ -38,7 +41,14 @@ interface ScopeInfo {
   displayName: string
   delegationTypes: Set<string>
   isAccessControlled: boolean
+  alsoForDelegatedUser: boolean
 }
+
+/** Registry delegations never give scopes that are also for the delegated user. */
+const REGISTRY_PROVIDERS: string[] = [
+  AuthDelegationProvider.NationalRegistry,
+  AuthDelegationProvider.CompanyRegistry,
+]
 
 interface OrganisationClient {
   client: Client
@@ -54,6 +64,7 @@ interface TypeDelegation {
   /** The type as stored, e.g. `PersonalRepresentative:postholf`. */
   storedType: string
   type: AuthDelegationType
+  provider: string
   fromNationalId: string
   toNationalId: string
   validTo: Date | null
@@ -102,6 +113,7 @@ export class DelegationOverviewService {
         id,
         storedType,
         type,
+        provider: record.provider,
         fromNationalId: record.fromNationalId,
         toNationalId: record.toNationalId,
         validTo: record.validTo ?? null,
@@ -185,6 +197,7 @@ export class DelegationOverviewService {
       id: d.id,
       storedType: AuthDelegationType.GeneralMandate,
       type: AuthDelegationType.GeneralMandate,
+      provider: AuthDelegationProvider.Custom,
       fromNationalId: d.fromNationalId,
       toNationalId: d.toNationalId,
       validTo: d.delegationDelegationTypes?.[0]?.validTo ?? null,
@@ -215,7 +228,8 @@ export class DelegationOverviewService {
         },
         {
           model: ClientAllowedScope,
-          attributes: ['scopeName'],
+          attributes: ['clientId', 'scopeName'],
+          separate: true,
         },
       ],
       order: [['clientName', 'ASC']],
@@ -227,7 +241,12 @@ export class DelegationOverviewService {
     const apiScopes = scopeNames.length
       ? await this.apiScopeModel.findAll({
           where: { name: scopeNames, enabled: true },
-          attributes: ['name', 'displayName', 'isAccessControlled'],
+          attributes: [
+            'name',
+            'displayName',
+            'isAccessControlled',
+            'alsoForDelegatedUser',
+          ],
           include: [
             {
               model: ApiScopeDelegationType,
@@ -245,6 +264,7 @@ export class DelegationOverviewService {
             (scope.supportedDelegationTypes ?? []).map((t) => t.delegationType),
           ),
           isAccessControlled: !!scope.isAccessControlled,
+          alsoForDelegatedUser: !!scope.alsoForDelegatedUser,
         },
       ]),
     )
@@ -383,43 +403,63 @@ export class DelegationOverviewService {
     ]
   }
 
-  /** General mandates mirror findAllAvailableGeneralMandate. */
-  private grantedScopes(
+  /** `offered` mirrors findAllAvailable*, `granted` the token scopes from findAllScopesTo and IDS. */
+  private clientScopes(
     delegation: TypeDelegation,
     { supportedTypes, scopes }: OrganisationClient,
     accessList: AccessList,
-  ): [string, ScopeInfo][] | null {
-    if (delegation.storedType !== AuthDelegationType.GeneralMandate) {
-      return supportedTypes.has(delegation.storedType)
-        ? [...scopes].filter(([name, scope]) =>
-            this.grantsScopeAtLogin(
-              name,
-              scope,
-              delegation.storedType,
-              delegation.fromNationalId,
-              accessList,
-            ),
-          )
-        : null
+  ): { offered: [string, ScopeInfo][]; granted: [string, ScopeInfo][] } | null {
+    if (delegation.storedType === AuthDelegationType.GeneralMandate) {
+      const types = [
+        AuthDelegationType.GeneralMandate,
+        ...(kennitala.isCompany(delegation.fromNationalId)
+          ? [AuthDelegationType.ProcurationHolder]
+          : []),
+      ].filter((type) => supportedTypes.has(type))
+
+      if (types.length === 0) {
+        return null
+      }
+
+      const granted = [...scopes].filter(
+        ([name, scope]) =>
+          types.some((type) => scope.delegationTypes.has(type)) &&
+          this.isAllowedForGeneralMandate(name) &&
+          this.grantsScopeAtLogin(
+            name,
+            scope,
+            scope.delegationTypes.has(AuthDelegationType.GeneralMandate)
+              ? AuthDelegationType.GeneralMandate
+              : AuthDelegationType.ProcurationHolder,
+            delegation.fromNationalId,
+            accessList,
+          ),
+      )
+      return {
+        offered: granted.filter(([, scope]) => !scope.isAccessControlled),
+        granted,
+      }
     }
 
-    const types = [
-      AuthDelegationType.GeneralMandate,
-      ...(kennitala.isCompany(delegation.fromNationalId)
-        ? [AuthDelegationType.ProcurationHolder]
-        : []),
-    ].filter((type) => supportedTypes.has(type))
-
-    if (types.length === 0) {
+    if (!supportedTypes.has(delegation.storedType)) {
       return null
     }
 
-    return [...scopes].filter(
-      ([name, scope]) =>
-        !scope.isAccessControlled &&
-        this.isAllowedForGeneralMandate(name) &&
-        types.some((type) => scope.delegationTypes.has(type)),
+    const offered = [...scopes].filter(([name, scope]) =>
+      this.grantsScopeAtLogin(
+        name,
+        scope,
+        delegation.storedType,
+        delegation.fromNationalId,
+        accessList,
+      ),
     )
+    return {
+      offered,
+      granted: REGISTRY_PROVIDERS.includes(delegation.provider)
+        ? offered.filter(([, scope]) => !scope.alsoForDelegatedUser)
+        : offered,
+    }
   }
 
   private isAllowedForGeneralMandate(scopeName: string) {
@@ -445,15 +485,14 @@ export class DelegationOverviewService {
     const scopes: DelegationOverviewScopeDto[] = []
 
     for (const orgClient of clients) {
-      const grantedScopes = this.grantedScopes(
-        delegation,
-        orgClient,
-        accessList,
-      )
+      const clientScopes = this.clientScopes(delegation, orgClient, accessList)
 
       if (
-        !grantedScopes ||
-        (orgClient.client.requireApiScopes && grantedScopes.length === 0)
+        !clientScopes ||
+        // Login offers it on offered scopes, but IDS denies it when no scope is granted.
+        (orgClient.client.requireApiScopes &&
+          (clientScopes.offered.length === 0 ||
+            clientScopes.granted.length === 0))
       ) {
         continue
       }
@@ -463,7 +502,7 @@ export class DelegationOverviewService {
         loginClientIds.push(orgClient.client.clientId)
       }
       scopes.push(
-        ...grantedScopes.map(([scopeName, scope]) => ({
+        ...clientScopes.granted.map(([scopeName, scope]) => ({
           scopeName,
           displayName: scope.displayName,
           validFrom: null,

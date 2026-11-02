@@ -232,6 +232,10 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:statusActive',
     defaultMessage: 'Í gildi',
   },
+  statusPending: {
+    id: 'admin.delegationAdmin:statusPending',
+    defaultMessage: 'Tekur gildi síðar',
+  },
   statusExpired: {
     id: 'admin.delegationAdmin:statusExpired',
     defaultMessage: 'Útrunnið',

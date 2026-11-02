@@ -20,8 +20,10 @@ import {
   DelegationView,
   delegationTypeMessage,
   formatDate,
-  isDateExpired,
+  delegationStatus,
   isIndexOnlyType,
+  scopeStatus,
+  statusOnClient,
 } from '../lib/delegationView'
 import { m } from '../lib/messages'
 import { DelegationStatusTag } from './DelegationStatusTag'
@@ -33,6 +35,8 @@ interface DelegationTableProps {
   delegations: DelegationView[]
   direction: 'incoming' | 'outgoing'
   renderRowActions?: (delegation: DelegationView) => ReactNode
+  showDomain: boolean
+  clientId?: string
 }
 
 const otherParty = (
@@ -44,14 +48,14 @@ export const DelegationTable = ({
   delegations,
   direction,
   renderRowActions,
+  showDomain,
+  clientId,
 }: DelegationTableProps) => {
   const { formatMessage } = useLocale()
   const [sort, setSort] = useState<{ key: SortKey; descending: boolean }>({
     key: 'name',
     descending: false,
   })
-
-  const showDomain = delegations.some((d) => d.domain)
 
   const sorted = useMemo(() => {
     const result = sortBy(delegations, (d) =>
@@ -145,7 +149,12 @@ export const DelegationTable = ({
                   },
                   {
                     value: (
-                      <DelegationStatusTag isActive={delegation.isActive} />
+                      <DelegationStatusTag
+                        status={
+                          (clientId && statusOnClient(delegation, clientId)) ||
+                          delegationStatus(delegation)
+                        }
+                      />
                     ),
                   },
                 ]}
@@ -238,7 +247,7 @@ const DelegationScopesTable = ({
                   : formatMessage(m.noValidTo)}
               </T.Data>
               <T.Data>
-                <DelegationStatusTag isActive={!isDateExpired(scope.validTo)} />
+                <DelegationStatusTag status={scopeStatus(scope)} />
               </T.Data>
             </T.Row>
           ))}
