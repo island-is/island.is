@@ -7,8 +7,13 @@ import {
   SummaryComment as SummaryCommentType,
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
-import { DescriptionText, DirectTaxPaymentsModal } from '../index'
+import DescriptionText from '../DescriptionText/DescriptionText'
+import DirectTaxPaymentsModal from '../DirectTaxPaymentsModal/DirectTaxPaymentModal'
 import { formatAddress, spouseFormItems } from '../../lib/formatters'
+import {
+  getVeitaSpouseFilesRoute,
+  isVeitaApplication,
+} from '../../lib/summaryRoutes'
 import {
   FormInfo,
   SummaryComment,
@@ -65,7 +70,7 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       )}
 
       <ContactInfo
-        route={Routes.SPOUSECONTACTINFO}
+        route={Routes.CONTACTINFOMULTIFIELD}
         email={answers?.spouseContactInfo?.email}
         phone={answers?.spouseContactInfo?.phone}
         goToScreen={goToScreen}
@@ -73,7 +78,9 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <Files
         route={
-          answers.spouseIncome === ApproveOptions.Yes
+          isVeitaApplication(application)
+            ? getVeitaSpouseFilesRoute(application)
+            : answers.spouseIncome === ApproveOptions.Yes
             ? Routes.SPOUSEINCOMEFILES
             : Routes.SPOUSETAXRETURNFILES
         }
@@ -82,10 +89,17 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
           externalData?.taxDataSpouse?.data?.municipalitiesPersonalTaxReturn
             ?.personalTaxReturn
         }
-        taxFiles={answers.spouseTaxReturnFiles ?? []}
-        incomeFiles={answers.spouseIncomeFiles ?? []}
+        taxFiles={[
+          ...(answers.spouseTaxReturnFiles ?? []),
+          ...(answers.rvkSpouseTaxReturnFiles ?? []),
+        ]}
+        incomeFiles={[
+          ...(answers.spouseIncomeFiles ?? []),
+          ...(answers.rvkSpouseIncomeFiles ?? []),
+        ]}
         childrenFiles={[]}
         applicationId={id}
+        isVeita={isVeitaApplication(application)}
       />
 
       <SummaryComment

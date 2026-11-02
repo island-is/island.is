@@ -14,7 +14,7 @@ export const spouseContactInfoSection = buildSection({
   title: m.contactInfo.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'contactInfoMultiField',
+      id: Routes.CONTACTINFOMULTIFIELD,
       title: m.contactInfo.general.pageTitle,
       children: [
         buildDescriptionField({
