@@ -10,10 +10,9 @@ import {
   SuccessfulDataProviderResult,
 } from './DataProviderResult'
 
-export type CustomTemplateFindQuery = (
-  where: { [key: string]: string },
-  typeIds?: string[],
-) => Promise<Application[]>
+export type CustomTemplateFindQuery = (where: {
+  [key: string]: string
+}) => Promise<Application[]>
 
 export interface DataProvider {
   readonly type: string
