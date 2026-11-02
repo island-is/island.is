@@ -176,9 +176,24 @@ export const GooglePayDecryptionSuccessSchema =
 
 export const GooglePayDecryptionErrorSchema = PaymentGatewayErrorSchema
 
+/**
+ * What Valitor answers a Google Pay WalletTransaction with: Q8 and the card
+ * for a token of a card saved in the Google account (PAN_ONLY), the payment
+ * itself for a device token (CRYPTOGRAM_3DS), which it charges outright.
+ */
+export const GooglePayWalletTransactionSuccessSchema = z.union([
+  GooglePayDecryptionSuccessSchema,
+  CardPaymentSuccessSchema,
+])
+
 export type GooglePayCardInformation = z.infer<
   typeof GooglePayDecryptionSuccessSchema
 >['googlePayCardInformation']
+
+/** The two outcomes of a Google Pay WalletTransaction, see GooglePayWalletTransactionSuccessSchema */
+export type GooglePayWalletTransactionOutcome =
+  | { outcome: 'card'; card: GooglePayCardInformation }
+  | { outcome: 'charged'; paymentResult: CardPaymentSuccessResponse }
 export type CardVerificationSuccessResponse = z.infer<
   typeof CardVerificationSuccessSchema
 >

@@ -1807,6 +1807,26 @@ describe('CardPaymentController', () => {
       correlationID: uuid(),
     })
 
+    const refundResponse = (): RefundResponse => ({
+      acquirerReferenceNumber: 'string',
+      transactionID: 'string',
+      transactionLifecycleId: 'string',
+      maskedCardNumber: 'string',
+      isSuccess: true,
+      cardInformation: {
+        cardScheme: 'Visa',
+        issuingCountry: 'IS',
+        cardUsage: 'string',
+        cardCategory: 'string',
+        outOfScaScope: false,
+      },
+      authorizationIdentifier: uuid(),
+      responseCode: '00',
+      responseDescription: 'Refund successful',
+      responseTime: '12:00:00',
+      correlationID: uuid(),
+    })
+
     // Valitor's answer for a decrypted card saved in the Google account
     const decryptionResponse = () => ({
       googlePayCardInformation: {
@@ -1869,22 +1889,29 @@ describe('CardPaymentController', () => {
     const mockFetch = ({
       decryption = () => gatewayResponse(decryptionResponse()),
       cardPayment = () => gatewayResponse(chargeResponse()),
+      refund = () => gatewayResponse(refundResponse()),
+      onUpdate = () => gatewayResponse({ isSuccess: true }),
     }: {
       decryption?: () => Response | Promise<Response>
       cardPayment?: () => Response | Promise<Response>
+      refund?: () => Response | Promise<Response>
+      onUpdate?: (event: { type: string }) => Response | Promise<Response>
     } = {}) => {
       fetchSpy = jest
         .spyOn(global, 'fetch')
         .mockImplementation(async (url, init) => {
           if (typeof url === 'string') {
             if (url.includes(ON_UPDATE_URL)) {
-              return gatewayResponse({ isSuccess: true })
+              return onUpdate(JSON.parse(init?.body as string))
             }
             if (url.includes('/Payment/CardPayment')) {
               return JSON.parse(init?.body as string).transactionType ===
                 'WalletTransaction'
                 ? decryption()
                 : cardPayment()
+            }
+            if (url.includes('/Payment/RefundWithCorrelationId')) {
+              return refund()
             }
             if (url.includes('/CardVerification')) {
               return gatewayResponse(mockVerificationSuccessResponse)
@@ -1911,6 +1938,19 @@ describe('CardPaymentController', () => {
     const cardVerificationCalls = () =>
       fetchSpy.mock.calls.filter(
         ([url]) => typeof url === 'string' && url.includes('/CardVerification'),
+      )
+    const refundCalls = () =>
+      fetchSpy.mock.calls.filter(
+        ([url]) =>
+          typeof url === 'string' &&
+          url.includes('/Payment/RefundWithCorrelationId'),
+      )
+    const updateEvents = (type: string) =>
+      fetchSpy.mock.calls.filter(
+        ([url, init]) =>
+          typeof url === 'string' &&
+          url.includes(ON_UPDATE_URL) &&
+          JSON.parse(init?.body as string).type === type,
       )
 
     beforeEach(() => {
@@ -1984,6 +2024,9 @@ describe('CardPaymentController', () => {
           WalletType: 'GooglePay',
           GooglePay: JSON.parse(googlePayToken),
         },
+        // Names the payment, should the gateway charge the token
+        additionalData: { merchantReferenceData: expect.any(String) },
+        correlationId: expect.any(String),
       })
 
       const [[, verificationInit]] = cardVerificationCalls()
@@ -2129,15 +2172,200 @@ describe('CardPaymentController', () => {
 
       expect(response.status).toBe(400)
       expect(cardVerificationCalls()).toHaveLength(0)
+      // The gateway said nothing was charged, so nothing is refunded
+      expect(refundCalls()).toHaveLength(0)
     })
 
-    it('does not start 3-D Secure when the gateway charges the token instead of decrypting it', async () => {
-      mockFetch({ decryption: () => gatewayResponse(chargeResponse()) })
+    describe('a wallet transaction whose outcome is unknown', () => {
+      // A refund by the correlation id the request carried is attempted,
+      // since the request may have charged a device token
+      it.each([
+        [
+          'the gateway answers an error status',
+          () =>
+            ({
+              json: async () => ({}),
+              text: async () => 'gateway exploded',
+              status: 500,
+              statusText: 'Internal Server Error',
+              ok: false,
+            } as Response),
+        ],
+        [
+          'the answer is a success the service can not read',
+          () =>
+            gatewayResponse({
+              isSuccess: true,
+              responseCode: '00',
+              responseTime: '00:00:00',
+              correlationID: uuid(),
+            }),
+        ],
+      ])(
+        'refunds by the correlation id it sent when %s',
+        async (_name, decryption) => {
+          mockFetch({ decryption })
 
-      const response = await charge(token())
+          const response = await charge(token())
+
+          expect(response.status).toBe(400)
+          expect(response.body.detail).toBe(
+            CardErrorCode.RefundedBecauseOfSystemError,
+          )
+          const [[, decryptionInit]] = decryptionCalls()
+          const [[, refundInit]] = refundCalls()
+          expect(JSON.parse(refundInit.body).originalCorrelationId).toBe(
+            JSON.parse(decryptionInit.body).correlationId,
+          )
+          expect(cardVerificationCalls()).toHaveLength(0)
+          expect(updateEvents('error')).toHaveLength(1)
+        },
+      )
+
+      it('tells the payer the original error when the refund finds nothing', async () => {
+        mockFetch({
+          decryption: () =>
+            ({
+              json: async () => ({}),
+              text: async () => 'gateway exploded',
+              status: 500,
+              statusText: 'Internal Server Error',
+              ok: false,
+            } as Response),
+          refund: () =>
+            gatewayResponse({
+              isSuccess: false,
+              responseCode: '99',
+              responseDescription: 'Transaction not found',
+              responseTime: '00:00:00',
+              correlationID: uuid(),
+            }),
+        })
+
+        const response = await charge(token())
+
+        expect(response.status).toBe(400)
+        expect(response.body.detail).toBe(CardErrorCode.VerificationFailed)
+        expect(refundCalls().length).toBeGreaterThanOrEqual(1)
+      })
+    })
+
+    describe('a device token, which the gateway charges when it decrypts it', () => {
+      it('answers paid with the payment, persisted and announced, and spends the token', async () => {
+        mockFetch({ decryption: () => gatewayResponse(chargeResponse()) })
+        const googlePayToken = token()
+
+        const response = await charge(googlePayToken)
+
+        expect(response.status).toBe(201)
+        expect(response.body.status).toBe('paid')
+        expect(response.body.payment).toMatchObject({
+          isSuccess: true,
+          responseCode: '00',
+          correlationId: expect.any(String),
+        })
+        expect(response.body).not.toHaveProperty('verification')
+
+        // The one gateway call is the payment
+        expect(decryptionCalls()).toHaveLength(1)
+        expect(cardVerificationCalls()).toHaveLength(0)
+        expect(chargeCalls()).toHaveLength(0)
+        expect(refundCalls()).toHaveLength(0)
+
+        // Persisted under the reference the gateway was given, and the
+        // organisation told
+        const [[, decryptionInit]] = decryptionCalls()
+        const { additionalData } = JSON.parse(decryptionInit.body)
+        const confirmations = await cardPaymentDetailsModel.findAll({
+          where: { paymentFlowId },
+        })
+        expect(confirmations).toHaveLength(1)
+        expect(confirmations[0].merchantReferenceData).toBe(
+          additionalData.merchantReferenceData,
+        )
+        expect(
+          await paymentFulfillmentModel.count({ where: { paymentFlowId } }),
+        ).toBe(1)
+        expect(updateEvents('success')).toHaveLength(1)
+
+        // The same token can not pay again
+        const replay = await charge(googlePayToken)
+        expect(replay.status).toBe(400)
+        expect(replay.body.detail).toBe(CardErrorCode.GooglePayReplayDetected)
+        expect(decryptionCalls()).toHaveLength(1)
+      })
+
+      it('refunds the payment by its correlation id when it can not be completed', async () => {
+        mockFetch({
+          decryption: () => gatewayResponse(chargeResponse()),
+          onUpdate: (event) =>
+            event.type === 'success'
+              ? ({
+                  json: async () => ({ isSuccess: false }),
+                  text: async () => 'Error response',
+                  status: 501,
+                  ok: false,
+                } as Response)
+              : gatewayResponse({ isSuccess: true }),
+        })
+
+        const response = await charge(token())
+
+        expect(response.status).toBe(400)
+        expect(response.body.detail).toBe(
+          CardErrorCode.RefundedBecauseOfSystemError,
+        )
+
+        const [[, decryptionInit]] = decryptionCalls()
+        const [[, refundInit]] = refundCalls()
+        expect(JSON.parse(refundInit.body).originalCorrelationId).toBe(
+          JSON.parse(decryptionInit.body).correlationId,
+        )
+        // The confirmation is soft deleted by the rollback
+        expect(
+          await cardPaymentDetailsModel.count({
+            where: { paymentFlowId, isDeleted: false },
+          }),
+        ).toBe(0)
+        expect(updateEvents('error')).toHaveLength(1)
+      })
+    })
+
+    it('refunds a saved card the gateway charges on the second decryption instead of charging it again', async () => {
+      // Can not happen for a token that answered Q8 once. The charge is under
+      // the decryption's own correlation id, so it is refunded by that one
+      let decryptions = 0
+      mockFetch({
+        decryption: () => {
+          decryptions += 1
+          return gatewayResponse(
+            decryptions === 1 ? decryptionResponse() : chargeResponse(),
+          )
+        },
+      })
+      const googlePayToken = token()
+
+      expect((await charge(googlePayToken)).status).toBe(201)
+      const [[, verificationInit]] = cardVerificationCalls()
+      expect(
+        (await completeVerification(JSON.parse(verificationInit.body))).status,
+      ).toBe(201)
+
+      const response = await chargeVerified(googlePayToken)
 
       expect(response.status).toBe(400)
-      expect(cardVerificationCalls()).toHaveLength(0)
+      expect(response.body.detail).toBe(
+        CardErrorCode.RefundedBecauseOfSystemError,
+      )
+      expect(chargeCalls()).toHaveLength(0)
+      const [, [, secondDecryptionInit]] = decryptionCalls()
+      const [[, refundInit]] = refundCalls()
+      expect(JSON.parse(refundInit.body).originalCorrelationId).toBe(
+        JSON.parse(secondDecryptionInit.body).correlationId,
+      )
+      expect(
+        await cardPaymentDetailsModel.count({ where: { paymentFlowId } }),
+      ).toBe(0)
     })
 
     it('lets only the first of two concurrent charges of the same token reach the gateway', async () => {

@@ -6,6 +6,8 @@ import {
   ApplePayPaymentStepResults,
   CardPaymentContext,
   CardPaymentStepResults,
+  GooglePayChargeContext,
+  GooglePayChargeStepResults,
   GooglePayPaymentContext,
   GooglePayPaymentStepResults,
   PaymentOrchestrator,
@@ -21,6 +23,10 @@ import {
   createCardPaymentContext,
   createCardPaymentSaga,
 } from '../card/cardPayment.saga'
+import {
+  createGooglePayChargeContext,
+  createGooglePayChargeSaga,
+} from '../googlePay/googlePayCharge.saga'
 import {
   createGooglePayPaymentContext,
   createGooglePayPaymentSaga,
@@ -91,6 +97,25 @@ type SagaConfig =
       expectedNotifyMessage: string
       chargeMock: keyof CardPaymentService
     }
+  | {
+      // The charge endpoint's branching saga, on the branch where the gateway charged the token
+      name: 'GooglePayCharge'
+      createContext: (
+        paymentFlowId: string,
+        input: GooglePayChargeInput,
+      ) => GooglePayChargeContext
+      createSaga: (
+        cardService: CardPaymentService,
+        refundService: RefundService,
+        flowService: PaymentFlowService,
+        logger: Logger,
+      ) => ReturnType<typeof createGooglePayChargeSaga>
+      chargeStepName: 'DECRYPT_GOOGLE_PAY_TOKEN'
+      startStep: 'VALIDATE'
+      getInput: () => GooglePayChargeInput
+      expectedNotifyMessage: string
+      chargeMock: keyof CardPaymentService
+    }
 
 const sagaConfigs: SagaConfig[] = [
   {
@@ -120,6 +145,16 @@ const sagaConfigs: SagaConfig[] = [
     getInput: getGooglePayChargeInput,
     expectedNotifyMessage: 'Google Pay payment completed successfully',
     chargeMock: 'chargeGooglePay',
+  },
+  {
+    name: 'GooglePayCharge',
+    createContext: createGooglePayChargeContext,
+    createSaga: createGooglePayChargeSaga,
+    chargeStepName: 'DECRYPT_GOOGLE_PAY_TOKEN',
+    startStep: 'VALIDATE',
+    getInput: getGooglePayChargeInput,
+    expectedNotifyMessage: 'Google Pay payment completed successfully',
+    chargeMock: 'decryptOrChargeGooglePayToken',
   },
 ]
 
@@ -153,10 +188,17 @@ describe('Card Payment Saga - Shared Steps', () => {
         mockFlow,
         mockLogger,
       )
+      const googleChargeSaga = createGooglePayChargeSaga(
+        mockCard,
+        mockRefund,
+        mockFlow,
+        mockLogger,
+      )
 
       const cardSteps = getSagaSteps(cardSaga)
       const appleSteps = getSagaSteps(appleSaga)
       const googleSteps = getSagaSteps(googleSaga)
+      const googleChargeSteps = getSagaSteps(googleChargeSaga)
 
       expect(cardSteps.map((s) => s.name)).toEqual([
         'VALIDATE',
@@ -176,6 +218,15 @@ describe('Card Payment Saga - Shared Steps', () => {
       expect(googleSteps.map((s) => s.name)).toEqual([
         'VALIDATE',
         'CHARGE_GOOGLE_PAY',
+        'PERSIST_PAYMENT_CONFIRMATION',
+        'SETTLE_DEBT',
+        'NOTIFY_SUCCESSFUL_PAYMENT',
+      ])
+      // Branches after the gateway call, see googlePayCharge.saga
+      expect(googleChargeSteps.map((s) => s.name)).toEqual([
+        'VALIDATE',
+        'DECRYPT_GOOGLE_PAY_TOKEN',
+        'START_VERIFICATION',
         'PERSIST_PAYMENT_CONFIRMATION',
         'SETTLE_DEBT',
         'NOTIFY_SUCCESSFUL_PAYMENT',
@@ -215,7 +266,7 @@ describe('Card Payment Saga - Shared Steps', () => {
         mockPaymentFlowService,
         mockLogger,
       )
-      const orchestrator =
+      const paymentOrchestrator =
         config.name === 'CardPayment'
           ? new PaymentOrchestrator<CardPaymentContext, CardPaymentStepResults>(
               mockLogger,
@@ -226,10 +277,21 @@ describe('Card Payment Saga - Shared Steps', () => {
               ApplePayPaymentContext,
               ApplePayPaymentStepResults
             >(mockLogger, mockPaymentFlowService)
-          : new PaymentOrchestrator<
+          : config.name === 'GooglePay'
+          ? new PaymentOrchestrator<
               GooglePayPaymentContext,
               GooglePayPaymentStepResults
             >(mockLogger, mockPaymentFlowService)
+          : new PaymentOrchestrator<
+              GooglePayChargeContext,
+              GooglePayChargeStepResults
+            >(mockLogger, mockPaymentFlowService)
+      // A branching saga is told where to start
+      const startStep = 'startStep' in config ? config.startStep : undefined
+      const orchestrator = {
+        execute: (sagaToRun: never, contextToRun: never) =>
+          paymentOrchestrator.execute(sagaToRun, contextToRun, startStep),
+      }
 
       return { input, context, saga, orchestrator }
     }

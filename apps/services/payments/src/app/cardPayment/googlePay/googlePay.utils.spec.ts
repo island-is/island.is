@@ -1,7 +1,7 @@
 import { CardPaymentModuleConfigType } from '../cardPayment.config'
 import {
-  generateGooglePayDecryptionRequestOptions,
   generateGooglePaySavedCardChargeRequestOptions,
+  generateGooglePayWalletTransactionRequestOptions,
 } from './googlePay.utils'
 
 const paymentApiConfig = {
@@ -17,8 +17,8 @@ const paymentTrackingData = {
   paymentDate: new Date(),
 }
 
-describe('generateGooglePayDecryptionRequestOptions', () => {
-  it('builds a GooglePay WalletTransaction with the token as Google sent it', () => {
+describe('generateGooglePayWalletTransactionRequestOptions', () => {
+  it('builds a GooglePay WalletTransaction with the token as Google sent it and the tracking data', () => {
     const token = {
       signature: 'signature',
       intermediateSigningKey: { signedKey: 'signedKey', signatures: ['sig'] },
@@ -26,10 +26,10 @@ describe('generateGooglePayDecryptionRequestOptions', () => {
       signedMessage: 'signedMessage',
     }
 
-    const options = generateGooglePayDecryptionRequestOptions({
+    const options = generateGooglePayWalletTransactionRequestOptions({
       token,
       paymentApiConfig,
-      correlationId: 'correlation-1',
+      paymentTrackingData,
       amount: 250,
     })
 
@@ -46,6 +46,7 @@ describe('generateGooglePayDecryptionRequestOptions', () => {
       amount: 25000,
       Wallet: { WalletType: 'GooglePay', GooglePay: token },
       systemCalling: 'island.is',
+      additionalData: { merchantReferenceData: 'rrn-1' },
       correlationId: 'correlation-1',
     })
   })
