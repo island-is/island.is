@@ -142,6 +142,12 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
 
       const mobileSizeIsKnown =
         usesMobileLayout && hasDimensions(page.mobileSize)
+
+      // A max height from the CMS would cap the size of the mobile layout
+      embed.element.style.maxHeight = mobileSizeIsKnown
+        ? ''
+        : cmsStyle?.element?.maxHeight ?? ''
+
       const pageStyle = layoutShouldBeMobilePortrait
         ? cmsStyle?.pages?.[page.name]
         : undefined

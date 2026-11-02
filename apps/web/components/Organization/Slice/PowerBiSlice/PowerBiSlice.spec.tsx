@@ -239,7 +239,8 @@ describe('PowerBiSlice sizing', () => {
       report.getActivePage.mockResolvedValue(mobilePage)
       await fire('pageChanged')
 
-      expect(report.element.style.maxHeight).toBe('1200px')
+      // The mobile layout's own size isn't capped by the CMS max height
+      expect(report.element.style.maxHeight).toBe('')
       expect(report.element.style.maxWidth).toBe('')
       expect(report.iframe.style.width).toBe('')
 
@@ -249,6 +250,34 @@ describe('PowerBiSlice sizing', () => {
 
       expect(report.element.style.maxWidth).toBe('10px')
     })
+
+    it.each([
+      ['a page without a mobile layout', desktopPage],
+      ['a page with its own styles', { name: 'styled', mobileSize: undefined }],
+    ])(
+      'restores the CMS max height when switching to %s',
+      async (_, nextPage) => {
+        const { report, fire } = await setup({
+          config: {
+            ...config,
+            style: {
+              element: { maxHeight: '1200px' },
+              pages: { styled: { iframe: { height: '1400px' } } },
+            },
+          },
+          width: MOBILE_WIDTH,
+          page: mobilePage,
+        })
+
+        await fire('pageChanged')
+        expect(report.element.style.maxHeight).toBe('')
+
+        report.getActivePage.mockResolvedValue({ ...mobilePage, ...nextPage })
+        await fire('pageChanged')
+
+        expect(report.element.style.maxHeight).toBe('1200px')
+      },
+    )
 
     it.each([
       ['100%', undefined],
