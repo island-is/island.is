@@ -1,0 +1,270 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Rsk.Services.Kilometragjald - Reimbursement",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "/ws/Kilometragjald"
+    }
+  ],
+  "paths": {
+    "/reimbursement/{fastnr}": {
+      "get": {
+        "tags": ["Reimbursement"],
+        "operationId": "getReimbursementApplication",
+        "parameters": [
+          {
+            "name": "fastnr",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "requestedBy",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReimbursementApplication"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/reimbursement/submit": {
+      "post": {
+        "tags": ["Reimbursement"],
+        "operationId": "submitReimbursementApplication",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "ArrivalDate",
+                  "ArrivalMileage",
+                  "DepartureDate",
+                  "DepartureMileage",
+                  "Fastnr"
+                ],
+                "type": "object",
+                "properties": {
+                  "Fastnr": {
+                    "type": "string"
+                  },
+                  "DepartureDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "DepartureMileage": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "ArrivalDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "ArrivalMileage": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "Fastnr": {
+                  "style": "form"
+                },
+                "DepartureDate": {
+                  "style": "form"
+                },
+                "DepartureMileage": {
+                  "style": "form"
+                },
+                "ArrivalDate": {
+                  "style": "form"
+                },
+                "ArrivalMileage": {
+                  "style": "form"
+                },
+                "Files": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReimbursementApplication"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReimbursementApplication": {
+        "required": [
+          "departureDate",
+          "departureMileage",
+          "fastnr",
+          "id",
+          "requestedBy",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fastnr": {
+            "type": "string"
+          },
+          "requestedBy": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ReimbursementApplicationStatus"
+          },
+          "departureDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "departureMileage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "arrivalDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "arrivalMileage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReimbursementApplicationFile"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReimbursementApplicationFile": {
+        "required": ["applicationId", "docId", "id"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "applicationId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "docId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReimbursementApplicationStatus": {
+        "enum": ["Open", "InReview", "Cancelled", "Accepted"],
+        "type": "string"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}

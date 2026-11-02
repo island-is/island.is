@@ -191,6 +191,7 @@ export enum Features {
   isPortalAirDiscountPageDisabled = 'isPortalAirDiscountPageDisabled',
 
   isMileCarEnabled = 'isMileCarEnabled',
+  isTemporaryVehicleExportEnabled = 'isTemporaryVehicleExportEnabled',
   isHHCourseApplicationEnabled = 'isHHCourseApplicationEnabled',
 
   // Use new vacancy API client (Financial Management Authority/Elfur) instead of old X-Road client

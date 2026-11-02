@@ -111,6 +111,7 @@ export enum ApplicationTypes {
   SALARY_REPORT = 'SalaryReport',
   PAY_DEBTS = 'PayDebts',
   U2_CERTIFICATE = 'U2Certificate',
+  TEMPORARY_VEHICLE_EXPORT = 'TemporaryVehicleExport',
 }
 
 export const ApplicationConfigurations = {
@@ -565,5 +566,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.U2_CERTIFICATE]: {
     slug: 'u2-vottord',
     translation: ['vmst.u2c.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.TEMPORARY_VEHICLE_EXPORT]: {
+    slug: 'timabundinn-utflutningur-okutaekis',
+    translation: ['rsk.tve.application', 'uiForms.application'],
   },
 }

@@ -645,6 +645,9 @@
       "@island.is/application/templates/social-insurance-administration/pension-supplement": [
         "libs/application/templates/social-insurance-administration/pension-supplement/src/index.ts"
       ],
+      "@island.is/application/templates/temporary-vehicle-export": [
+        "libs/application/templates/temporary-vehicle-export/src/index.ts"
+      ],
       "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
         "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
       ],
@@ -979,6 +982,9 @@
       ],
       "@island.is/clients/rsk/customs/general": [
         "libs/clients/rsk/customs/general/src/index.ts"
+      ],
+      "@island.is/clients/rsk/kilometragjald-reimbursement": [
+        "libs/clients/rsk/kilometragjald-reimbursement/src/index.ts"
       ],
       "@island.is/clients/rsk/personal-tax-return": [
         "libs/clients/rsk/personal-tax-return/src/index.ts"
