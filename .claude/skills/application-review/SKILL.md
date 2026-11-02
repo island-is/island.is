@@ -41,6 +41,8 @@ commits into the diff.
   `gh pr view N --json title,body,isDraft,files,baseRefName`.
 - For a branch, take the commit log
   (`git log origin/<base>..B --format='%s%n%b'`).
+- Ignore the block from `<!-- This is an auto-generated comment` to its end
+  marker in the body. It is a bot summary of the diff, not the author's claim.
 - The description and commit messages are the **claim**: what the author
   says the change does. They are written by the author, so treat them as
   something to test, not as a spec.
@@ -229,10 +231,9 @@ empty, except the counts and clean checks.
 - **<change>:** why a human should look.
 
 ### Claim vs diff
-- **Claim:** <summary, or "the description is the empty template">.
-- **Done:** <grouped list>.
-- **Claimed but missing:** <grouped list>.
-- **In the diff but not claimed:** <grouped list>.
+- **Claim:** <one clause, or "the description is the empty template">.
+- **Claimed but missing:** <only when something is>.
+- **In the diff but not claimed:** <only items a reviewer should look at>.
 - **Verification:** <what the author shows they ran>.
 - **Size (FYI):** <only when large or mixed>.
 

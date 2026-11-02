@@ -56,9 +56,8 @@ Apply this to logic deletions only, not to copy, imports or formatting.
 ## G2. Claim vs diff
 
 Compare the claim (the PR description or commit messages) with the diff.
-Report three lists:
+Report two lists, each only when it has items:
 
-- **Done:** what was claimed and is in the diff.
 - **Claimed but missing:** what was claimed and is not in the diff, or only
   in part.
 - **In the diff but not claimed:** above all shared-library edits (see
