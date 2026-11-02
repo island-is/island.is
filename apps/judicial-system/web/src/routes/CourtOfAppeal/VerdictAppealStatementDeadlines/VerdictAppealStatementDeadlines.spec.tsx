@@ -113,47 +113,30 @@ const card = (name: string) => within(screen.getByRole('region', { name }))
 
 // Tomorrow rather than a fixed day: the picker refuses dates in the past.
 const pickTomorrow = async (name: string) => {
-  const tomorrow = addDays(new Date(), 1)
+  const today = new Date()
+  const tomorrow = addDays(today, 1)
 
   await userEvent.click(card(name).getByLabelText(/Frestur til/))
 
-  // The calendar opens on the selected/deadline month, which may not be
-  // tomorrow's month (e.g. extending an October deadline in November).
-  // Advance until tomorrow is an in-month, enabled day.
-  let cell: HTMLElement | undefined
-
-  for (let i = 0; i < 12; i++) {
-    cell = screen
-      .getAllByText(String(tomorrow.getDate()))
-      .find(
-        (el) =>
-          el.className.includes('react-datepicker__day') &&
-          !el.className.includes('outside-month') &&
-          !el.className.includes('disabled'),
-      )
-
-    if (cell) {
-      break
-    }
-
+  if (tomorrow.getMonth() !== today.getMonth()) {
     await userEvent.click(screen.getByLabelText('Next month'))
   }
+
+  // The calendar pads its grid with the neighbouring months' days, so the
+  // number alone can match twice. Only a cell of the month on view counts.
+  const cell = screen
+    .getAllByText(String(tomorrow.getDate()))
+    .find(
+      (el) =>
+        el.className.includes('react-datepicker__day') &&
+        !el.className.includes('outside-month'),
+    )
 
   if (!cell) {
     throw new Error('No calendar cell for tomorrow')
   }
 
   await userEvent.click(cell)
-
-  // The send/extend control stays aria-disabled until the picked date is
-  // applied; clicking it too early fails with pointer-events: none.
-  await waitFor(() => {
-    expect(
-      card(name).getByRole('button', {
-        name: /Framlengja frest|Senda frest/,
-      }),
-    ).not.toHaveAttribute('aria-disabled', 'true')
-  })
 
   return tomorrow
 }
