@@ -241,6 +241,11 @@ type NewParagraphs = {
   /** The new paragraphs, and any list inserted with them */
   blocks: string[]
   count: number
+  /**
+   * The table or list of that paragraph they come before, "töflu" or
+   * "töluliðum": "Á eftir 1. mgr." would place them after it.
+   */
+  before?: string
 }
 
 /**
@@ -251,11 +256,18 @@ type NewParagraphs = {
  * @param atEnd - they follow the article's last paragraph
  */
 const formatNewParagraphs = (
-  { paragraph, blocks, count }: NewParagraphs,
+  { paragraph, blocks, count, before }: NewParagraphs,
   atEnd = false,
 ): Amendment => {
   const html = blocks.join('')
   return (where) => {
+    if (before) {
+      return `<p>Á undan ${before} í ${paragraph}. mgr.${where} ${
+        count === 1
+          ? 'kemur ný málsgrein'
+          : `koma ${countWord(count)} nýjar málsgreinar`
+      }, svohljóðandi:</p>${html}` as HTMLText
+    }
     if (atEnd && paragraph > 0) {
       const target = where ? `Við${where}` : 'Við greinina'
       return (
@@ -597,12 +609,29 @@ export const formatAmendingRegBody = (
       // The paragraph a list or table follows
       const mgr = paragraph
 
+      // New paragraphs in a row end at this element. A table or list of the
+      // paragraph they follow ends them before it, not after the paragraph.
+      const closeNewParagraphs = (block?: string) => {
+        if (
+          newParagraphs &&
+          block &&
+          newParagraphs.paragraph > 0 &&
+          newParagraphs.paragraph === mgr
+        ) {
+          newParagraphs.before = block
+          testGroup.amendments[newParagraphs.index] =
+            formatNewParagraphs(newParagraphs)
+        }
+        newParagraphs = undefined
+      }
+
       const replacingList =
         isLetterList || isNumberList ? getReplacingList(element) : undefined
       const replacedByLettered = isLetteredList(replacingList)
       if (replacingList) {
         handled.add(replacingList)
-        newParagraphs = undefined
+        // The old list, as the base regulation has it
+        closeNewParagraphs(isLetterList ? 'stafliðum' : 'töluliðum')
         testGroup.isDeletion = false
         testGroup.isAddition = false
         const items = isLetterList ? 'Stafliðir' : 'Töluliðir'
@@ -627,14 +656,16 @@ export const formatAmendingRegBody = (
         isWholeListFormatChange(element) &&
         !isListTypeChange(element)
       ) {
-        newParagraphs = undefined
+        // Which list was which is not known here either
+        closeNewParagraphs()
         testGroup.isDeletion = false
         testGroup.isAddition = false
         return
       }
 
       if ((isLetterList || isNumberList) && isListTypeChange(element)) {
-        newParagraphs = undefined
+        // The diff holds the new list only: the base one was the other type
+        closeNewParagraphs(isLetterList ? 'töluliðum' : 'stafliðum')
         testGroup.isDeletion = false
         testGroup.isAddition = false
         testGroup.amendments.push(
@@ -718,7 +749,20 @@ export const formatAmendingRegBody = (
         !isDeletedParagraph &&
         !isListOfDeletedParagraph
       ) {
-        newParagraphs = undefined
+        // A base table or list, not one removed or added
+        const isBaseBlock =
+          !isEmptyWithout(element, 'del') && !isEmptyWithout(element, 'ins')
+        closeNewParagraphs(
+          !isBaseBlock
+            ? undefined
+            : table
+            ? 'töflu'
+            : isLetterList
+            ? 'stafliðum'
+            : isNumberList
+            ? 'töluliðum'
+            : undefined,
+        )
       }
       const paragraphNumber = paragraph
 

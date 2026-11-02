@@ -1130,10 +1130,62 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
     expect(
       Array.from(output[0].matchAll(/<li><p>(.*?)<\/p>/g), (m) => m[1]),
     ).toEqual([
-      'Á eftir 1. mgr. kemur ný málsgrein sem orðast svo:',
+      'Á undan töluliðum í 1. mgr. kemur ný málsgrein, svohljóðandi:',
       'Töluliðir í 1. mgr. verða stafliðir.',
       'Á eftir 1. mgr. kemur ný málsgrein sem orðast svo:',
     ])
+  })
+
+  describe('new paragraphs before a table or list of the paragraph they follow', () => {
+    const TABLE =
+      '<table><tbody><tr><td>Flokkur</td><td>Gjald</td></tr><tr><td>Alfa</td><td>100</td></tr></tbody></table>'
+    const withBlock = (block: string, around = false) =>
+      [
+        title('1. gr.'),
+        '<p>Gjald skal greitt samkvæmt eftirfarandi:</p>',
+        around ? '<p>Zulu yankee xray whiskey.</p>' : '',
+        block,
+        around ? '<p>Kilo lima mike november.</p>' : '',
+        '<p>Golf hotel india juliett.</p>',
+        title('2. gr. Gildistaka'),
+        GILDISTAKA,
+      ].join('')
+    const changes = (block: string) =>
+      Array.from(
+        formatAmendingBodyWithArticlePrefix([
+          {
+            id: '1',
+            type: 'amend',
+            name: '0123/2020',
+            diff: getStructuredDiff(
+              withBlock(block) as HTMLText,
+              withBlock(block, true) as HTMLText,
+            ).diff,
+          },
+        ])[0].matchAll(/<li><p>(.*?)<\/p>/g),
+        (m) => m[1],
+      )
+
+    it('places them before the table', () => {
+      expect(changes(TABLE)).toEqual([
+        'Á undan töflu í 1. mgr. kemur ný málsgrein, svohljóðandi:',
+        'Á eftir 1. mgr. kemur ný málsgrein sem orðast svo:',
+      ])
+    })
+
+    it('places them before the töluliðir', () => {
+      expect(changes(list('', 'fólksbifreiðar,', 'vörubifreiðar.'))).toEqual([
+        'Á undan töluliðum í 1. mgr. kemur ný málsgrein, svohljóðandi:',
+        'Á eftir 1. mgr. kemur ný málsgrein sem orðast svo:',
+      ])
+    })
+
+    it('places them before the stafliðir', () => {
+      expect(changes(list('a', 'fólksbifreiðar,', 'vörubifreiðar.'))).toEqual([
+        'Á undan stafliðum í 1. mgr. kemur ný málsgrein, svohljóðandi:',
+        'Á eftir 1. mgr. kemur ný málsgrein sem orðast svo:',
+      ])
+    })
   })
 
   it('does not call italic items a change of list type', () => {
