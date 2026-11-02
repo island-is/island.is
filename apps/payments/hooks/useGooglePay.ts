@@ -34,14 +34,17 @@ const BASE_REQUEST = {
  * charge answers paid at once; it is offered behind its own flag until the
  * gateway's handling of it has been seen on production.
  */
+export const googlePayAllowedAuthMethods = (
+  allowDeviceTokens: boolean,
+): google.payments.api.CardAuthMethod[] =>
+  allowDeviceTokens ? ['PAN_ONLY', 'CRYPTOGRAM_3DS'] : ['PAN_ONLY']
+
 const cardPaymentMethod = (
   allowDeviceTokens: boolean,
 ): google.payments.api.IsReadyToPayPaymentMethodSpecification => ({
   type: 'CARD',
   parameters: {
-    allowedAuthMethods: allowDeviceTokens
-      ? ['PAN_ONLY', 'CRYPTOGRAM_3DS']
-      : ['PAN_ONLY'],
+    allowedAuthMethods: googlePayAllowedAuthMethods(allowDeviceTokens),
     allowedCardNetworks: ['VISA', 'MASTERCARD'],
     // The name is the cardholder for 3-D Secure of a saved card
     billingAddressRequired: true,
