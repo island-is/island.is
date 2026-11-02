@@ -43,6 +43,12 @@ const isInBase = (li: Element) => {
   return !!old.textContent?.trim()
 }
 
+const isKept = (li: Element) => {
+  const kept = li.cloneNode(true) as Element
+  kept.querySelectorAll('del').forEach((e) => e.remove())
+  return !!kept.textContent?.trim()
+}
+
 /**
  * An item's number in the base regulation: the base items up to it. For a
  * new item, that of the base item before it, or 0 when it comes first.
@@ -250,7 +256,10 @@ export const formatListItemDiff = (item: Element): ListItemChange[] => {
           parent && item.contains(parent)
             ? ` ${itemLabel(parent, 'dat')}${labelsAbove(parent)}`
             : ''
-        const start = baseNumber(liItem) + 1
+        // Numbered as in the list after the change, which an item removed
+        // before them is no longer part of
+        const start =
+          siblings.slice(0, siblings.indexOf(liItem)).filter(isKept).length + 1
         returningArray.push((at) => {
           const what =
             added.length === 1

@@ -196,6 +196,10 @@ export const describeWordChange = (
   ) {
     return undefined
   }
+  // How much changed, before the unit or period below joins the quote:
+  // „3.100 kr.“ in "fólksbifreiðar, 3.100 kr." is one word changed, not two
+  const changedWords = wordCount(oldPart)
+  const unchanged = wordCount(before) + wordCount(after)
 
   // "kr." or "gr." keeps its period: „500 kr.“, not „500 kr“. A number's
   // may end the sentence: „1. mars 2010“.
@@ -244,7 +248,6 @@ export const describeWordChange = (
   }
 
   const ops = sentenceOps(element)
-  const unchanged = wordCount(before) + wordCount(after)
 
   if (!oldPart.length) {
     if (allOfType(ops, 'insert') && ops.every((op) => op.old === ops[0].old)) {
@@ -280,7 +283,7 @@ export const describeWordChange = (
   }
 
   // Most of the text changed: the caller restates it instead
-  if (wordCount(oldPart) > unchanged) {
+  if (changedWords > unchanged) {
     return undefined
   }
 

@@ -875,10 +875,7 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
         withList('a', 'fólksbifreiðar,', 'vörubifreiðar.'),
       ),
     ).toBe(
-      article(
-        1,
-        '<p>Töluliðir í 1. mgr. 1. gr. reglugerðarinnar verða stafliðir.</p>',
-      ),
+      article(1, '<p>Töluliðir í 1. gr. reglugerðarinnar verða stafliðir.</p>'),
     )
   })
 
@@ -889,10 +886,7 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
         withList('', 'fólksbifreiðar,', 'vörubifreiðar.'),
       ),
     ).toBe(
-      article(
-        1,
-        '<p>Stafliðir í 1. mgr. 1. gr. reglugerðarinnar verða töluliðir.</p>',
-      ),
+      article(1, '<p>Stafliðir í 1. gr. reglugerðarinnar verða töluliðir.</p>'),
     )
   })
 
@@ -905,7 +899,7 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
     ).toBe(
       article(
         1,
-        '<p>Töluliðir í 1. mgr. 1. gr. reglugerðarinnar verða stafliðir og orðast svo:</p>' +
+        '<p>Töluliðir í 1. gr. reglugerðarinnar verða stafliðir og orðast svo:</p>' +
           list('a', 'fólksbifreiðar,', 'vöruflutningabifreiðar.'),
       ),
     )
@@ -920,7 +914,7 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
     ).toBe(
       article(
         1,
-        '<p>Stafliðir í 1. mgr. 1. gr. reglugerðarinnar verða töluliðir og orðast svo:</p>' +
+        '<p>Stafliðir í 1. gr. reglugerðarinnar verða töluliðir og orðast svo:</p>' +
           list('', 'fólksbifreiðar,', 'vöruflutningabifreiðar.'),
       ),
     )
@@ -935,7 +929,7 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
     ).toBe(
       article(
         1,
-        '<p>Töluliðir í 1. mgr. 1. gr. reglugerðarinnar orðast svo:</p>' +
+        '<p>Töluliðir í 1. gr. reglugerðarinnar orðast svo:</p>' +
           list('', 'charlie,', 'delta,', 'echo.'),
       ),
     )
@@ -950,7 +944,7 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
     ).toBe(
       article(
         1,
-        '<p>Stafliðir í 1. mgr. 1. gr. reglugerðarinnar orðast svo:</p>' +
+        '<p>Stafliðir í 1. gr. reglugerðarinnar orðast svo:</p>' +
           list('a', 'charlie,', 'delta,', 'echo.'),
       ),
     )
@@ -2050,6 +2044,54 @@ describe('formatAmendingBodyWithArticlePrefix: items added or removed', () => {
         lettered(
           '<p>2. tölul. orðast svo: vörubifreiðar.</p>',
           '<p>3. töluliður fellur brott.</p>',
+        ),
+      ),
+    )
+  })
+
+  it('numbers items added after a removed one as the list will read', () => {
+    expect(
+      changes(
+        withList(
+          'fólksbifreiðar,',
+          'vörubifreiðar,',
+          'dráttarvélar,',
+          'bifhjól.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        lettered(
+          '<p>3. töluliður fellur brott.</p>',
+          '<p>Við bætast tveir nýir töluliðir, svohljóðandi:</p><ol start="3"><li>dráttarvélar,</li><li>bifhjól.</li></ol>',
+        ),
+      ),
+    )
+  })
+
+  it('removes a list from the one paragraph of an article', () => {
+    const before = withList('fólksbifreiðar,', 'vörubifreiðar.')
+    const after = before.replace(/<ol>.*<\/ol>/, '')
+    expect(body(amend(after, {}, before))[0]).toBe(
+      article(1, '<p>Töluliðir í 1. gr. reglugerðarinnar falla brott.</p>'),
+    )
+  })
+
+  it('cites a list without the paragraph in an article of one', () => {
+    const before = withList(
+      'fólksbifreiðar, 3.100 kr.',
+      'vörubifreiðar, 5.000 kr.',
+    )
+    const after = before
+      .replace('<ol>', '<p>Zulu yankee xray whiskey.</p><ol>')
+      .replace('3.100 kr.', '3.500 kr.')
+    expect(body(amend(after, {}, before))[0]).toBe(
+      article(
+        1,
+        lettered(
+          '<p>Á undan töluliðum kemur ný málsgrein, svohljóðandi:</p><p>Zulu yankee xray whiskey.</p>',
+          '<p>Í stað fjárhæðarinnar „3.100 kr.“ í 1. tölul. kemur: 3.500 kr.</p>',
         ),
       ),
     )
