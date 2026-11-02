@@ -98,7 +98,7 @@ export class ApplicationTranslationService {
     )
     if (readOnly) {
       throw new ServiceUnavailableException(
-        'Lokað hefur verið tímabundið fyrir breytingar á þýðingum',
+        'Lokað er fyrir breytingar á textastrengjum umsókna.',
       )
     }
   }
