@@ -90,6 +90,7 @@ export interface LayoutProps {
   showSearchInHeader?: boolean
   showHeaderNavigation?: boolean
   organizationSearchFilter?: string
+  projectSearchFilter?: string
   wrapContent?: boolean
   showHeader?: boolean
   headerColorScheme?: ColorSchemes
@@ -138,6 +139,7 @@ if (typeof window !== 'undefined') {
 const Layout: Screen<LayoutProps> = ({
   showSearchInHeader = true,
   organizationSearchFilter: organizationSearchFilterOverride,
+  projectSearchFilter: projectSearchFilterOverride,
   wrapContent = true,
   showHeader = true,
   headerColorScheme,
@@ -255,6 +257,7 @@ const Layout: Screen<LayoutProps> = ({
   // hydrated render agree. Explicit search filters and `false` remain one-way
   // overrides that can hide navigation on additional pages.
   const organizationSearchFilter = organizationSearchFilterOverride ?? ''
+  const projectSearchFilter = projectSearchFilterOverride ?? ''
   const showHeaderNavigation =
     showHeaderNavigationOverride !== false && !organizationSearchFilter
 
@@ -400,8 +403,9 @@ const Layout: Screen<LayoutProps> = ({
                 showNavigation={showHeaderNavigation}
                 languageToggleQueryParams={languageToggleQueryParams}
                 organizationSearchFilter={organizationSearchFilter}
+                projectSearchFilter={projectSearchFilter}
                 searchPlaceholder={
-                  organizationSearchFilter
+                  organizationSearchFilter || projectSearchFilter
                     ? n(
                         'organizationPageSearchPlaceholder',
                         activeLocale === 'is' ? 'Leita' : 'Search',

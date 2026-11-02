@@ -51,6 +51,7 @@ interface HeaderProps {
    */
   showNavigation?: boolean
   organizationSearchFilter?: string
+  projectSearchFilter?: string
   searchPlaceholder?: string
   customTopLoginButtonItem?: LayoutProps['customTopLoginButtonItem']
   loginButtonType?: 'dropdown' | 'link'
@@ -66,6 +67,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   showNavigation = true,
   languageToggleQueryParams,
   organizationSearchFilter,
+  projectSearchFilter,
   searchPlaceholder,
   customTopLoginButtonItem,
   loginButtonType = 'dropdown',
@@ -125,7 +127,10 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
       className={`${styles.header} ${isNavOpen ? styles.headerWithShadow : ''}`}
     >
       <Hidden print={true}>
-        <FixedNav organizationSearchFilter={organizationSearchFilter} />
+        <FixedNav
+          organizationSearchFilter={organizationSearchFilter}
+          projectSearchFilter={projectSearchFilter}
+        />
         <GridContainer>
           <GridRow>
             <GridColumn span="12/12">
@@ -177,6 +182,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                               organizationSearchFilter={
                                 organizationSearchFilter
                               }
+                              projectSearchFilter={projectSearchFilter}
                               searchPlaceholder={searchPlaceholder}
                               onOpenChange={handleDesktopSearchOpenChange}
                               // The simplified header (institution sites and
@@ -253,6 +259,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
           data={headerNavData ?? undefined}
           showNavigation={showNavigation}
           organizationSearchFilter={organizationSearchFilter}
+          projectSearchFilter={projectSearchFilter}
           searchPlaceholder={searchPlaceholder}
           onOpenChange={handleMobileNavOpenChange}
           triggerRefs={mobileTriggerRefs}
