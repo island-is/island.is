@@ -1,4 +1,9 @@
-import { ServiceBuilder, json, ref, service } from '../../../../infra/src/dsl/dsl'
+import {
+  ServiceBuilder,
+  json,
+  ref,
+  service,
+} from '../../../../infra/src/dsl/dsl'
 import { BffInfraServices } from '../../../../infra/src/dsl/types/input-types'
 
 const bffName = 'services-bff'
