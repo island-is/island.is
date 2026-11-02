@@ -113,14 +113,26 @@ const card = (name: string) => within(screen.getByRole('region', { name }))
 
 // Tomorrow rather than a fixed day: the picker refuses dates in the past.
 const pickTomorrow = async (name: string) => {
-  const today = new Date()
-  const tomorrow = addDays(today, 1)
+  const tomorrow = addDays(new Date(), 1)
 
   await userEvent.click(card(name).getByLabelText(/Frestur til/))
 
-  if (tomorrow.getMonth() !== today.getMonth()) {
-    await userEvent.click(screen.getByLabelText('Next month'))
+  // The calendar opens on the month of the deadline that stands, not on
+  // today's, so it is steered to tomorrow's month through the header selects.
+  const monthSelect = screen.getByLabelText('Select month')
+  const header = monthSelect.parentElement
+
+  if (!(monthSelect instanceof HTMLSelectElement) || !header) {
+    throw new Error('No month select in the calendar header')
   }
+
+  const yearSelect = within(header).getAllByRole('combobox')[1]
+
+  await userEvent.selectOptions(yearSelect, String(tomorrow.getFullYear()))
+  await userEvent.selectOptions(
+    monthSelect,
+    monthSelect.options[tomorrow.getMonth()],
+  )
 
   // The calendar pads its grid with the neighbouring months' days, so the
   // number alone can match twice. Only a cell of the month on view counts.
