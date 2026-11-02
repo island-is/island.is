@@ -262,6 +262,7 @@ describe('PowerBiSlice sizing', () => {
             ...config,
             style: {
               element: { maxHeight: '1200px' },
+              iframe: { maxHeight: '1100px' },
               pages: { styled: { iframe: { height: '1400px' } } },
             },
           },
@@ -271,11 +272,13 @@ describe('PowerBiSlice sizing', () => {
 
         await fire('pageChanged')
         expect(report.element.style.maxHeight).toBe('')
+        expect(report.iframe.style.maxHeight).toBe('')
 
         report.getActivePage.mockResolvedValue({ ...mobilePage, ...nextPage })
         await fire('pageChanged')
 
         expect(report.element.style.maxHeight).toBe('1200px')
+        expect(report.iframe.style.maxHeight).toBe('1100px')
       },
     )
 

@@ -147,6 +147,9 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       embed.element.style.maxHeight = mobileSizeIsKnown
         ? ''
         : cmsStyle?.element?.maxHeight ?? ''
+      embed.iframe.style.maxHeight = mobileSizeIsKnown
+        ? ''
+        : cmsStyle?.iframe?.maxHeight ?? ''
 
       const pageStyle = layoutShouldBeMobilePortrait
         ? cmsStyle?.pages?.[page.name]
