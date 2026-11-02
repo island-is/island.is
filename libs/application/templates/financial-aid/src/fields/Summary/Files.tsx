@@ -1,6 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 
 import {
   UploadFileDeprecated,
@@ -8,6 +8,7 @@ import {
   Icon,
   Text,
 } from '@island.is/island-ui/core'
+import { GET_ATTACHMENT_PRESIGNED_URL } from '@island.is/application/graphql'
 import { encodeFilenames } from '../../lib/utils'
 import { CreateSignedUrlMutation } from '../../lib/hooks/useFileUpload'
 import * as styles from '../Shared.css'
@@ -23,6 +24,7 @@ interface Props {
   incomeFiles: UploadFileDeprecated[]
   childrenFiles: UploadFileDeprecated[]
   applicationId: string
+  isVeita?: boolean
 }
 
 const Files = ({
@@ -33,9 +35,14 @@ const Files = ({
   incomeFiles,
   childrenFiles,
   applicationId,
+  isVeita = false,
 }: Props) => {
   const { formatMessage } = useIntl()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
+  const [getAttachmentPresignedUrl] = useLazyQuery(
+    GET_ATTACHMENT_PRESIGNED_URL,
+    { fetchPolicy: 'no-cache' },
+  )
 
   const allFiles = [
     ...incomeFiles,
@@ -43,6 +50,35 @@ const Files = ({
     ...childrenFiles,
     ...(personalTaxReturn ? [personalTaxReturn] : []),
   ]
+
+  // On the Veita route files are stored as application system attachments,
+  // not in the financial aid bucket, so they are opened by attachment key.
+  const openFile = async (file: UploadFileDeprecated) => {
+    if (isVeita) {
+      if (!file.key) {
+        return
+      }
+      const { data } = await getAttachmentPresignedUrl({
+        variables: { input: { id: applicationId, attachmentKey: file.key } },
+      })
+      if (data?.attachmentPresignedURL?.url) {
+        window.open(data.attachmentPresignedURL.url)
+      }
+      return
+    }
+
+    const { data } = await createSignedUrlMutation({
+      variables: {
+        input: {
+          fileName: encodeFilenames(file.name),
+          folder: applicationId,
+        },
+      },
+    })
+    if (data?.createMunicipalitiesFinancialAidSignedUrl?.url) {
+      window.open(data.createMunicipalitiesFinancialAidSignedUrl.url)
+    }
+  }
 
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>
@@ -55,19 +91,7 @@ const Files = ({
             return (
               <a
                 onClick={() => {
-                  createSignedUrlMutation({
-                    variables: {
-                      input: {
-                        fileName: encodeFilenames(file.name),
-                        folder: applicationId,
-                      },
-                    },
-                  }).then((response) => {
-                    window.open(
-                      response.data?.createMunicipalitiesFinancialAidSignedUrl
-                        .url,
-                    )
-                  })
+                  void openFile(file)
                 }}
                 key={`file-` + index}
                 target="_blank"
