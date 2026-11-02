@@ -52,16 +52,15 @@ const PoliceReport = () => {
       setAndSendCaseToServer(
         [
           {
-            prosecutorOnlySessionRequest: formatMessage(
+            prosecutorOnlySessionRequest:
               icReportForm.prosecutorOnly.input.defaultValue,
-            ),
           },
         ],
         workingCase,
         setWorkingCase,
       )
     }
-  }, [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase])
+  }, [setAndSendCaseToServer, setWorkingCase, workingCase])
 
   const stepIsValid = isPoliceReportStepValidIC(workingCase)
   const handleNavigationTo = useCallback(
@@ -81,7 +80,7 @@ const PoliceReport = () => {
         title={formatMessage(titles.prosecutor.investigationCases.policeReport)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(icReportForm.heading)}</PageTitle>
+        <PageTitle>{icReportForm.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <BlueBox>
@@ -89,14 +88,14 @@ const PoliceReport = () => {
           </BlueBox>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(icReportForm.caseFacts.heading)}
-              tooltip={formatMessage(icReportForm.caseFacts.tooltip)}
+              title={icReportForm.caseFacts.heading}
+              tooltip={icReportForm.caseFacts.tooltip}
             />
             <Input
               data-testid="caseFacts"
               name="caseFacts"
-              label={formatMessage(icReportForm.caseFacts.label)}
-              placeholder={formatMessage(icReportForm.caseFacts.placeholder)}
+              label={icReportForm.caseFacts.label}
+              placeholder={icReportForm.caseFacts.placeholder}
               errorMessage={caseFactsInput.errorMessage}
               hasError={caseFactsInput.hasError}
               value={caseFactsInput.value}
@@ -109,16 +108,14 @@ const PoliceReport = () => {
           </Box>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(icReportForm.legalArguments.heading)}
-              tooltip={formatMessage(icReportForm.legalArguments.tooltip)}
+              title={icReportForm.legalArguments.heading}
+              tooltip={icReportForm.legalArguments.tooltip}
             />
             <Input
               data-testid="legalArguments"
               name="legalArguments"
-              label={formatMessage(icReportForm.legalArguments.label)}
-              placeholder={formatMessage(
-                icReportForm.legalArguments.placeholder,
-              )}
+              label={icReportForm.legalArguments.label}
+              placeholder={icReportForm.legalArguments.placeholder}
               value={legalArgumentsInput.value}
               errorMessage={legalArgumentsInput.errorMessage}
               hasError={legalArgumentsInput.hasError}
@@ -133,12 +130,8 @@ const PoliceReport = () => {
             <BlueBox className={stack({ gap: 2 })}>
               <Checkbox
                 name="request-prosecutor-only-session"
-                label={formatMessage(
-                  icReportForm.prosecutorOnly.checkbox.label,
-                )}
-                tooltip={formatMessage(
-                  icReportForm.prosecutorOnly.checkbox.tooltip,
-                )}
+                label={icReportForm.prosecutorOnly.checkbox.label}
+                tooltip={icReportForm.prosecutorOnly.checkbox.tooltip}
                 checked={Boolean(workingCase.requestProsecutorOnlySession)}
                 onChange={(evt) => {
                   setWorkingCase((prevWorkingCase) => ({
@@ -154,10 +147,8 @@ const PoliceReport = () => {
               />
               <Input
                 name="prosecutor-only-session-request"
-                label={formatMessage(icReportForm.prosecutorOnly.input.label)}
-                placeholder={formatMessage(
-                  icReportForm.prosecutorOnly.input.placeholder,
-                )}
+                label={icReportForm.prosecutorOnly.input.label}
+                placeholder={icReportForm.prosecutorOnly.input.placeholder}
                 disabled={workingCase.requestProsecutorOnlySession === false}
                 value={prosecutorOnlySessionRequestInput.value}
                 onChange={(evt) =>

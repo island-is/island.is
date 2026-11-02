@@ -1,12 +1,12 @@
 import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
-import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
+  getIndictmentPdfDisplayName,
   getVisibleSubpoenas,
+  shouldHideCaseFilesRecordFromDefender,
   shouldShowPoliceDigitalCaseFilesSection,
-  shouldShowReplaceIndictmentPdf,
 } from './IndictmentCaseFilesList.logic'
 
 const user = (role: UserRole, type?: InstitutionType): User =>
@@ -154,45 +154,63 @@ describe('getVisibleSubpoenas', () => {
   })
 })
 
-describe('shouldShowReplaceIndictmentPdf', () => {
-  const prosecutor = {
-    role: UserRole.PROSECUTOR,
-    institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
-  } as User
-  const submitted = {
-    id: 'case-id',
-    state: CaseState.SUBMITTED,
-    indictmentHash: '{"hash":"frozen"}',
-  } as CaseFilesListCase
+describe('shouldHideCaseFilesRecordFromDefender', () => {
+  const hiddenCaseId = 'hidden-case-id'
+  const otherCaseId = 'other-case-id'
+  const hiddenCaseIds = [hiddenCaseId]
 
-  it('shows the upload when the indictment pdf is already frozen', () => {
-    expect(shouldShowReplaceIndictmentPdf(submitted, prosecutor)).toBe(true)
+  it('hides the case files record from a defender on a listed case', () => {
+    expect(
+      shouldHideCaseFilesRecordFromDefender(
+        hiddenCaseId,
+        user(UserRole.DEFENDER),
+        hiddenCaseIds,
+      ),
+    ).toBe(true)
   })
 
-  it('hides it before the indictment pdf has been frozen to S3', () => {
+  it('keeps the case files record for a defender on an unlisted case', () => {
     expect(
-      shouldShowReplaceIndictmentPdf(
-        { ...submitted, indictmentHash: null },
-        prosecutor,
+      shouldHideCaseFilesRecordFromDefender(
+        otherCaseId,
+        user(UserRole.DEFENDER),
+        hiddenCaseIds,
       ),
     ).toBe(false)
   })
 
-  it('hides it before the indictment is confirmed', () => {
+  it('keeps the case files record for non-defence users on a listed case', () => {
     expect(
-      shouldShowReplaceIndictmentPdf(
-        { ...submitted, state: CaseState.WAITING_FOR_CONFIRMATION },
-        prosecutor,
+      shouldHideCaseFilesRecordFromDefender(
+        hiddenCaseId,
+        user(UserRole.PROSECUTOR, InstitutionType.POLICE_PROSECUTORS_OFFICE),
+        hiddenCaseIds,
       ),
     ).toBe(false)
   })
+})
 
-  it('hides it from court users', () => {
-    const judge = {
-      role: UserRole.DISTRICT_COURT_JUDGE,
-      institution: { type: InstitutionType.DISTRICT_COURT },
-    } as User
+describe('getIndictmentPdfDisplayName', () => {
+  it('keeps the sent-to-court date for a generated indictment', () => {
+    expect(
+      getIndictmentPdfDisplayName({
+        id: 'case-id',
+        caseSentToCourtDate: '2026-10-21T12:00:00.000Z',
+        indictmentHash: JSON.stringify({ hash: 'frozen' }),
+      } as CaseFilesListCase),
+    ).toBe('Ákæra 21.10.2026.pdf')
+  })
 
-    expect(shouldShowReplaceIndictmentPdf(submitted, judge)).toBe(false)
+  it('drops the date after the indictment has been replaced', () => {
+    expect(
+      getIndictmentPdfDisplayName({
+        id: 'case-id',
+        caseSentToCourtDate: '2026-10-21T12:00:00.000Z',
+        indictmentHash: JSON.stringify({
+          hash: 'replaced',
+          replaced: true,
+        }),
+      } as CaseFilesListCase),
+    ).toBe('Ákæra.pdf')
   })
 })

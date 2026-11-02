@@ -80,6 +80,7 @@ export const Select = <
     >
       <CreatableReactSelect<OptionType<Value>, IsMulti, Group>
         instanceId={id}
+        inputId={`${id}-input`}
         aria-labelledby={id}
         ariaError={ariaError}
         noOptionsMessage={() => noOptionsMessage || null}
@@ -148,6 +149,7 @@ export const Select = <
     >
       <ReactSelect<OptionType<Value>, IsMulti, Group>
         instanceId={id}
+        inputId={`${id}-input`}
         aria-labelledby={id}
         ariaError={ariaError}
         noOptionsMessage={() => noOptionsMessage || null}

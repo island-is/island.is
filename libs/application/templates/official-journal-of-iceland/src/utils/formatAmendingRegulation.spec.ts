@@ -144,6 +144,98 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     )
   })
 
+  describe('removed paragraphs', () => {
+    // Paragraphs with a list under them, as in 25. gr. of nr. 1040/2005
+    const WITH_LISTS = [
+      title('1. gr.'),
+      '<p>Alfa bravo charlie.</p>',
+      '<p>Delta echo foxtrot:</p>',
+      '<ol><li>Quebec romeo sierra.</li><li>Tango uniform victor.</li></ol>',
+      '<p>Golf hotel india:</p>',
+      '<ol><li>Juliett papa oscar.</li><li>Mike lima kilo.</li></ol>',
+      '<p>Whiskey xray yankee.</p>',
+      title('2. gr. Gildistaka'),
+      GILDISTAKA,
+    ].join('')
+    const P2 =
+      '<p>Delta echo foxtrot:</p><ol><li>Quebec romeo sierra.</li><li>Tango uniform victor.</li></ol>'
+    const P3 =
+      '<p>Golf hotel india:</p><ol><li>Juliett papa oscar.</li><li>Mike lima kilo.</li></ol>'
+
+    it('removes a list with the paragraph it belongs to', () => {
+      const [first] = body(amend(WITH_LISTS.replace(P2, ''), {}, WITH_LISTS))
+      expect(first).toBe(
+        article(1, '<p>2. mgr. 1. gr. reglugerðarinnar fellur brott.</p>'),
+      )
+    })
+
+    it('adds the new paragraphs after the last one kept, and removes the old ones last', () => {
+      const after = WITH_LISTS.replace(
+        P2 + P3,
+        '<p>Zulu nine eight seven.</p><p>Six five four three.</p>',
+      )
+      const [first] = body(amend(after, {}, WITH_LISTS))
+      expect(first).toBe(
+        article(
+          1,
+          '<p>Eftirfarandi breytingar verða á 1. gr. reglugerðarinnar:</p><ol type="a">' +
+            '<li><p>Á eftir 1. mgr. koma tvær nýjar málsgreinar, svohljóðandi:</p><p>Zulu nine eight seven.</p><p>Six five four three.</p></li>' +
+            '<li><p>2. og 3. mgr. falla brott.</p></li></ol>',
+        ),
+      )
+    })
+
+    it('removes paragraphs after the other changes to the article', () => {
+      const after = BASE.replace('<p>Alfa bravo charlie.</p>', '').replace(
+        'Golf hotel',
+        'Golf kilo',
+      )
+      const [first] = body(amend(after))
+      expect(first).toBe(
+        article(
+          1,
+          '<p>Eftirfarandi breytingar verða á 1. gr. reglugerðarinnar:</p><ol type="a">' +
+            '<li><p>3. mgr. breytist og orðast svo:</p><p>Golf kilo india.</p></li>' +
+            '<li><p>1. mgr. fellur brott.</p></li></ol>',
+        ),
+      )
+    })
+
+    it('removes a table with the paragraph it belongs to', () => {
+      const TABLE =
+        '<table><tbody><tr><td>Flokkur</td><td>Gjald</td></tr><tr><td>Alfa</td><td>100</td></tr></tbody></table>'
+      const P2 = `<p>Gjald skal greitt samkvæmt eftirfarandi töflu:</p>${TABLE}`
+      const before = BASE.replace('<p>Delta echo foxtrot.</p>', P2)
+      expect(body(amend(before.replace(P2, ''), {}, before))[0]).toBe(
+        article(1, '<p>2. mgr. 1. gr. reglugerðarinnar fellur brott.</p>'),
+      )
+    })
+
+    it('keeps new paragraphs on either side of a removed one together', () => {
+      // Written out, so the removed paragraph is between the new ones
+      const diff = [
+        title('1. gr.'),
+        '<p>Alfa bravo charlie.</p>',
+        '<p data-diff="insert"><ins class="diffins">Zulu yankee xray whiskey.</ins></p>',
+        '<p data-diff="delete" data-diff-mgr="2"><del class="diffdel">Delta echo foxtrot.</del></p>',
+        '<p data-diff="insert"><ins class="diffins">Kilo lima mike november.</ins></p>',
+        '<p>Golf hotel india.</p>',
+      ].join('')
+      expect(
+        formatAmendingBodyWithArticlePrefix([
+          { id: '1', type: 'amend', name: '0123/2020', diff },
+        ])[0],
+      ).toBe(
+        article(
+          1,
+          '<p>Eftirfarandi breytingar verða á 1. gr. reglugerðarinnar:</p><ol type="a">' +
+            '<li><p>Á eftir 1. mgr. koma tvær nýjar málsgreinar, svohljóðandi:</p><p>Zulu yankee xray whiskey.</p><p>Kilo lima mike november.</p></li>' +
+            '<li><p>2. mgr. fellur brott.</p></li></ol>',
+        ),
+      )
+    })
+  })
+
   it('removes a whole article', () => {
     const after = BASE.replace(
       /<h3 class="article__title">1\. gr\.<\/h3>.*?(?=<h3)/,
@@ -1072,10 +1164,103 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
     expect(
       Array.from(output[0].matchAll(/<li><p>(.*?)<\/p>/g), (m) => m[1]),
     ).toEqual([
-      'Á eftir 1. mgr. kemur ný málsgrein sem orðast svo:',
+      'Á undan töluliðum í 1. mgr. kemur ný málsgrein, svohljóðandi:',
       'Töluliðir í 1. mgr. verða stafliðir.',
       'Á eftir 1. mgr. kemur ný málsgrein sem orðast svo:',
     ])
+  })
+
+  describe('new paragraphs before a table or list of the paragraph they follow', () => {
+    const TABLE =
+      '<table><tbody><tr><td>Flokkur</td><td>Gjald</td></tr><tr><td>Alfa</td><td>100</td></tr></tbody></table>'
+    const withBlock = (block: string, around = false) =>
+      [
+        title('1. gr.'),
+        '<p>Gjald skal greitt samkvæmt eftirfarandi:</p>',
+        around ? '<p>Zulu yankee xray whiskey.</p>' : '',
+        block,
+        around ? '<p>Kilo lima mike november.</p>' : '',
+        '<p>Golf hotel india juliett.</p>',
+        title('2. gr. Gildistaka'),
+        GILDISTAKA,
+      ].join('')
+    const changes = (block: string) =>
+      Array.from(
+        formatAmendingBodyWithArticlePrefix([
+          {
+            id: '1',
+            type: 'amend',
+            name: '0123/2020',
+            diff: getStructuredDiff(
+              withBlock(block) as HTMLText,
+              withBlock(block, true) as HTMLText,
+            ).diff,
+          },
+        ])[0].matchAll(/<li><p>(.*?)<\/p>/g),
+        (m) => m[1],
+      )
+
+    it('places them before the table', () => {
+      expect(changes(TABLE)).toEqual([
+        'Á undan töflu í 1. mgr. kemur ný málsgrein, svohljóðandi:',
+        'Á eftir 1. mgr. kemur ný málsgrein sem orðast svo:',
+      ])
+    })
+
+    it('places them before the töluliðir', () => {
+      expect(changes(list('', 'fólksbifreiðar,', 'vörubifreiðar.'))).toEqual([
+        'Á undan töluliðum í 1. mgr. kemur ný málsgrein, svohljóðandi:',
+        'Á eftir 1. mgr. kemur ný málsgrein sem orðast svo:',
+      ])
+    })
+
+    it('places them before the stafliðir', () => {
+      expect(changes(list('a', 'fólksbifreiðar,', 'vörubifreiðar.'))).toEqual([
+        'Á undan stafliðum í 1. mgr. kemur ný málsgrein, svohljóðandi:',
+        'Á eftir 1. mgr. kemur ný málsgrein sem orðast svo:',
+      ])
+    })
+
+    describe('with more than one table', () => {
+      const SECOND = TABLE.replace('Alfa', 'Beta')
+      const NEW = '<p>Zulu yankee xray whiskey.</p>'
+      const placed = (...blocks: string[]) => {
+        const before = [
+          title('1. gr.'),
+          ...blocks,
+          '<p>Golf hotel india juliett.</p>',
+          title('2. gr. Gildistaka'),
+          GILDISTAKA,
+        ].join('')
+        const after = before.replace(SECOND, NEW + SECOND)
+        return body(amend(after, {}, before))[0]
+      }
+
+      it('numbers the table in a paragraph that has two', () => {
+        expect(
+          placed(
+            '<p>Gjald skal greitt samkvæmt eftirfarandi:</p>',
+            TABLE,
+            SECOND,
+          ),
+        ).toContain(
+          '<p>Á undan 2. töflu í 1. mgr. 1. gr. reglugerðarinnar kemur ný málsgrein, svohljóðandi:</p>',
+        )
+      })
+
+      it('does not number a table alone in its paragraph', () => {
+        expect(
+          placed(
+            '<p>Gjald skal greitt samkvæmt eftirfarandi:</p>',
+            TABLE,
+            '<p>Annað gjald skal greitt samkvæmt eftirfarandi:</p>',
+            SECOND,
+          ),
+        ).toContain(
+          '<p>Á undan töflu í 2. mgr. 1. gr. reglugerðarinnar kemur ný málsgrein, svohljóðandi:</p>',
+        )
+      })
+    })
   })
 
   it('does not call italic items a change of list type', () => {
@@ -1432,6 +1617,117 @@ describe('formatAmendingRegTitle', () => {
       ]),
     ).toBe(
       'Reglugerð um breytingu á reglugerð um A, nr. 1/2020 og brottfellingu reglugerðar nr. 2/2020 um B.',
+    )
+  })
+})
+
+describe('formatAmendingBodyWithArticlePrefix: items added or removed', () => {
+  const withList = (...items: string[]) =>
+    [
+      title('1. gr.'),
+      '<p>Reglugerð þessi gildir um:</p>',
+      `<ol>${items.map((item) => `<li>${item}</li>`).join('')}</ol>`,
+      title('2. gr. Gildistaka'),
+      GILDISTAKA,
+    ].join('')
+  const changes = (after: string) =>
+    formatAmendingBodyWithArticlePrefix([
+      {
+        id: '1',
+        type: 'amend',
+        name: '0123/2020',
+        diff: getStructuredDiff(
+          withList(
+            'fólksbifreiðar,',
+            'vörubifreiðar,',
+            'hópbifreiðar.',
+          ) as HTMLText,
+          after as HTMLText,
+        ).diff,
+      },
+    ])[0]
+  const intro =
+    '<p>Eftirfarandi breytingar verða á 1. mgr. 1. gr. reglugerðarinnar:</p> '
+
+  it('renumbers the items after one added in the middle', () => {
+    expect(
+      changes(
+        withList(
+          'fólksbifreiðar,',
+          'dráttarvélar,',
+          'vörubifreiðar,',
+          'hópbifreiðar.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        intro +
+          '<p>Á eftir 1. tölulið kemur nýr liður svohljóðandi, og breytist númer annarra liða til samræmis: dráttarvélar,</p>',
+      ),
+    )
+  })
+
+  it('renumbers nothing for an item added last', () => {
+    expect(
+      changes(
+        withList(
+          'fólksbifreiðar,',
+          'vörubifreiðar,',
+          'hópbifreiðar,',
+          'dráttarvélar.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        intro +
+          '<p>3. tölul. orðast svo: hópbifreiðar,</p>' +
+          '<p>Á eftir 3. tölulið kemur nýr liður svohljóðandi: dráttarvélar.</p>',
+      ),
+    )
+  })
+
+  it('renumbers nothing for items added last, one after another', () => {
+    expect(
+      changes(
+        withList(
+          'fólksbifreiðar,',
+          'vörubifreiðar,',
+          'hópbifreiðar,',
+          'dráttarvélar,',
+          'bifhjól.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        intro +
+          '<p>3. tölul. orðast svo: hópbifreiðar,</p>' +
+          '<p>Á eftir 3. tölulið kemur nýr liður svohljóðandi: dráttarvélar,</p>' +
+          '<p>Á eftir 4. tölulið kemur nýr liður svohljóðandi: bifhjól.</p>',
+      ),
+    )
+  })
+
+  it('renumbers the items after one removed in the middle', () => {
+    expect(changes(withList('fólksbifreiðar,', 'hópbifreiðar.'))).toBe(
+      article(
+        1,
+        intro +
+          '<p>2. töluliður fellur brott og breytist númer annarra liða til samræmis.</p>',
+      ),
+    )
+  })
+
+  it('renumbers nothing for the last item removed', () => {
+    expect(changes(withList('fólksbifreiðar,', 'vörubifreiðar.'))).toBe(
+      article(
+        1,
+        intro +
+          '<p>2. tölul. orðast svo: vörubifreiðar.</p>' +
+          '<p>3. töluliður fellur brott.</p>',
+      ),
     )
   })
 })

@@ -76,12 +76,9 @@ interface ServiceAnnouncementProps {
 
 const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   const { defendant, subpoena } = props
-  const { formatMessage } = useIntl()
 
   const getTitle = (defendantName?: string | null): string => {
-    const successMessage = formatMessage(
-      serviceAnnouncementsStrings.serviceStatusSuccess,
-    )
+    const successMessage = serviceAnnouncementsStrings.serviceStatusSuccess
 
     return defendantName
       ? `${successMessage} - ${defendantName}`

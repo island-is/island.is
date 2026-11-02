@@ -1,9 +1,11 @@
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
-  isIndictmentPdfReplaceableState,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import type {
@@ -76,12 +78,48 @@ export const shouldShowPoliceDigitalCaseFilesSection = (
     isCourtOfAppealsUser(user)) &&
   (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
 
-// Shown once the generated Ákæra has been frozen to S3 (indictmentHash set),
-// so a replace cannot race with the first getIndictmentPdf freeze.
-export const shouldShowReplaceIndictmentPdf = (
-  workingCase: CaseFilesListCase,
+// Temporary: for a few indictment cases the court uploaded the real case
+// material as other documents, so defenders should not see the generated
+// case-files-record PDF. Add case ids here (including any on dev used to
+// verify) and remove the list once the exception is no longer needed.
+export const CASE_IDS_HIDING_CASE_FILES_RECORD_FROM_DEFENDERS: string[] = [
+  '6528b088-fdf0-4da5-be87-a01ad83bfa92',
+  '3e72842f-577d-402f-ba42-88801d6f2fb9',
+  'f06635a2-6935-4a65-ae7f-ae8ad0135609',
+]
+
+export const shouldHideCaseFilesRecordFromDefender = (
+  caseId: string,
   user?: User,
-): boolean =>
-  isProsecutionUser(user) &&
-  isIndictmentPdfReplaceableState(workingCase.state) &&
-  Boolean(workingCase.indictmentHash)
+  hiddenCaseIds: readonly string[] = CASE_IDS_HIDING_CASE_FILES_RECORD_FROM_DEFENDERS,
+): boolean => isDefenceUser(user) && hiddenCaseIds.includes(caseId)
+
+// Replacement uploads store `{ replaced: true }` in indictmentHash. Generated
+// freezes do not, so they keep the sent-to-court date in the display name.
+export const isReplacedIndictmentPdf = (
+  indictmentHash?: string | null,
+): boolean => {
+  if (!indictmentHash) {
+    return false
+  }
+
+  try {
+    const parsed = JSON.parse(indictmentHash) as { replaced?: unknown }
+
+    return parsed.replaced === true
+  } catch {
+    return false
+  }
+}
+
+export const getIndictmentPdfDisplayName = (
+  workingCase: CaseFilesListCase,
+): string => {
+  const withDate =
+    !isReplacedIndictmentPdf(workingCase.indictmentHash) &&
+    workingCase.caseSentToCourtDate
+      ? ` ${formatDate(workingCase.caseSentToCourtDate)}`
+      : ''
+
+  return `Ákæra${withDate}.pdf`
+}

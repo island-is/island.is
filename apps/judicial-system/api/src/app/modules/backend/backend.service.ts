@@ -18,13 +18,13 @@ import {
 import {
   AppealCase,
   AppealCourtSession,
+  AppealEventLog,
   AppealStatementDeadline,
   DeleteAppealCourtSessionResponse,
 } from '../appeal-case'
 import { AppealSummons } from '../appeal-summons'
 import {
   Case,
-  ReplaceIndictmentPdfResponse,
   RequestSignatureResponse,
   SendNotificationResponse,
   SignatureConfirmationResponse,
@@ -365,6 +365,17 @@ export class BackendService {
     )
   }
 
+  fileAppealStatement(
+    caseId: string,
+    appealCaseId: string,
+    fileAppealStatement: unknown,
+  ): Promise<AppealEventLog> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/statement`,
+      fileAppealStatement,
+    )
+  }
+
   createAppealCourtSession(
     caseId: string,
     appealCaseId: string,
@@ -576,13 +587,6 @@ export class BackendService {
     return this.post(`case/${caseId}/file/${fileId}/document`, attachDocument)
   }
 
-  replaceIndictmentPdf(
-    caseId: string,
-    replaceIndictmentPdf: { key: string },
-  ): Promise<ReplaceIndictmentPdfResponse> {
-    return this.post(`case/${caseId}/indictment/replace`, replaceIndictmentPdf)
-  }
-
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/file/${fileId}`)
   }
@@ -748,6 +752,16 @@ export class BackendService {
   ): Promise<AppealSummons> {
     return this.patch(
       `case/${caseId}/appealSummons/${appealSummonsId}/confirm`,
+      {},
+    )
+  }
+
+  sendAppealSummonsToCourtOfAppeals(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}/sendToCourtOfAppeals`,
       {},
     )
   }

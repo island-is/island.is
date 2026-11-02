@@ -1,5 +1,11 @@
-import { Field, Float, InputType } from '@nestjs/graphql'
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator'
+import {
+  IsBoolean,
+  IsDate,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator'
+import { Field, Float, GraphQLISODateTime, InputType } from '@nestjs/graphql'
 
 /* GraphQL one-of members must be nullable and have no default. Exclusivity
  * comes from the directive, not nullability. */
@@ -16,8 +22,7 @@ export class InputValue {
 
   @Field({
     nullable: true,
-    description:
-      'Value for a `STRING`, `DATE`, or `SELECT` field. Dates use `yyyy-MM-dd`.',
+    description: 'Value for a `STRING` or `SELECT` field.',
   })
   @IsOptional()
   @IsString()
@@ -27,4 +32,9 @@ export class InputValue {
   @IsOptional()
   @IsBoolean()
   booleanValue?: boolean
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  @IsOptional()
+  @IsDate()
+  dateValue?: Date
 }

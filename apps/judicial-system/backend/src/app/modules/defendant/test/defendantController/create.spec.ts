@@ -106,7 +106,7 @@ describe('DefendantController - Create', () => {
     })
   })
 
-  describe('defendant created on a request case with sharing timing', () => {
+  describe('defendant created on a request case with case-level sharing timing', () => {
     beforeEach(async () => {
       await givenWhenThen({
         type: CaseType.CUSTODY,
@@ -114,13 +114,9 @@ describe('DefendantController - Create', () => {
       })
     })
 
-    it('should seed requestSharedWithDefender from the case', () => {
+    it('should not seed requestSharedWithDefender from the case', () => {
       expect(mockDefendantRepositoryService.create).toHaveBeenCalledWith(
-        {
-          ...defendantToCreate,
-          caseId,
-          requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
-        },
+        { ...defendantToCreate, caseId },
         { transaction },
       )
     })

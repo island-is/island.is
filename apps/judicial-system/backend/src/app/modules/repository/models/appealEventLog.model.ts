@@ -71,6 +71,25 @@ export class AppealEventLog extends Model {
     )
   }
 
+  // The latest event of the type that names no party. In an indictment case
+  // that is the prosecution's: a defence event always names the defendant or
+  // claimant it is for, whoever wrote it.
+  static getLatestDateWithoutParty(
+    eventType: AppealEventType,
+    eventLogs: AppealEventLog[] | undefined,
+  ): Date | undefined {
+    if (!eventLogs) {
+      return undefined
+    }
+
+    return AppealEventLog.getEventLogDateByEventType(
+      eventType,
+      eventLogs.filter(
+        (eventLog) => !eventLog.defendantId && !eventLog.civilClaimantId,
+      ),
+    )
+  }
+
   static groupLatestByDefendant(
     eventType: AppealEventType,
     eventLogs: AppealEventLog[] | undefined,

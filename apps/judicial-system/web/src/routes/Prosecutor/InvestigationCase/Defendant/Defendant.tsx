@@ -194,7 +194,7 @@ const Defendant = () => {
         title={formatMessage(titles.prosecutor.investigationCases.defendant)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.heading)}</PageTitle>
+        <PageTitle>{m.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
           <div className={stack({ gap: 2 })}>
             <Box
@@ -260,7 +260,7 @@ const Defendant = () => {
                     (!defendant.noNationalId && !defendant.nationalId),
                 )}
               >
-                {formatMessage(m.sections.defendantInfo.addDefendantButtonText)}
+                {m.sections.defendantInfo.addDefendantButtonText}
               </Button>
             </Box>
           </Box>

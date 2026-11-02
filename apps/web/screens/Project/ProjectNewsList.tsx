@@ -172,6 +172,7 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
           monthOptions={monthOptions}
           title={newsTitle}
           newsPerPage={10}
+          newsTags={projectPage.secondaryNewsTags ?? undefined}
           variant="digital-iceland"
         />
       </ProjectWrapper>
@@ -230,9 +231,20 @@ ProjectNewsList.getProps = async ({ apolloClient, query, locale }) => {
     )
   }
 
-  const tag = query.tag ?? projectPage?.newsTag?.slug ?? ''
+  const selectedTags = query.tag
+    ? Array.isArray(query.tag)
+      ? query.tag
+      : [query.tag]
+    : []
 
-  const newsTags = tag ? (Array.isArray(tag) ? tag : [tag]) : []
+  // Tags are combined with AND, so the project's news tag keeps the list scoped to the project
+  const newsTags = Array.from(
+    new Set(
+      [projectPage.newsTag?.slug, ...selectedTags].filter(
+        (tag): tag is string => Boolean(tag),
+      ),
+    ),
+  )
 
   const [
     {
@@ -337,7 +349,7 @@ ProjectNewsList.getProps = async ({ apolloClient, query, locale }) => {
     total,
     selectedYear: year,
     selectedMonth: month,
-    selectedTag: newsTags,
+    selectedTag: selectedTags,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,

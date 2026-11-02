@@ -530,27 +530,27 @@ const Conclusion: FC = () => {
     {
       id: 'conclusion-postponing',
       value: IndictmentDecision.POSTPONING,
-      label: formatMessage(strings.postponing),
+      label: strings.postponing,
     },
     {
       id: 'conclusion-scheduling',
       value: IndictmentDecision.SCHEDULING,
-      label: formatMessage(strings.scheduling),
+      label: strings.scheduling,
     },
     {
       id: 'conclusion-postponing-until-verdict',
       value: IndictmentDecision.POSTPONING_UNTIL_VERDICT,
-      label: formatMessage(strings.postponingUntilVerdict),
+      label: strings.postponingUntilVerdict,
     },
     {
       id: 'conclusion-completing',
       value: IndictmentDecision.COMPLETING,
-      label: formatMessage(strings.completing),
+      label: strings.completing,
     },
     {
       id: 'conclusion-redistributing',
       value: IndictmentDecision.REDISTRIBUTING,
-      label: formatMessage(strings.redistributing),
+      label: strings.redistributing,
     },
     ...(activeDefendants && activeDefendants.length > 1
       ? [
@@ -579,7 +579,7 @@ const Conclusion: FC = () => {
             text:
               selectedAction === IndictmentDecision.COMPLETING
                 ? formatMessage(core.continue)
-                : formatMessage(strings.nextButtonTextConfirm),
+                : strings.nextButtonTextConfirm,
             icon: 'arrowForward',
             onClick: () => {
               if (
@@ -619,14 +619,11 @@ const Conclusion: FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.conclusion)} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box className={stack({ gap: 5 })}>
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(strings.decisionTitle)}
-              required
-            />
+            <SectionHeading title={strings.decisionTitle} required />
             <BlueBox className={stack({ gap: 2 })}>
               {radioButtons.map(({ id, value, label }) => (
                 <RadioButton
@@ -645,14 +642,12 @@ const Conclusion: FC = () => {
           </Box>
           {selectedAction === IndictmentDecision.POSTPONING && (
             <Box component="section">
-              <SectionHeading title={formatMessage(strings.postponingTitle)} />
+              <SectionHeading title={strings.postponingTitle} />
               <Input
                 name="reasonForPostponement"
                 rows={10}
-                label={formatMessage(strings.reasonForPostponementTitle)}
-                placeholder={formatMessage(
-                  strings.reasonForPostponementPlaceholder,
-                )}
+                label={strings.reasonForPostponementTitle}
+                placeholder={strings.reasonForPostponementPlaceholder}
                 value={postponementReason}
                 disabled={workingCase.state === CaseState.CORRECTING}
                 onChange={(event) => setPostponementReason(event.target.value)}
@@ -663,13 +658,13 @@ const Conclusion: FC = () => {
           )}
           {selectedAction === IndictmentDecision.SCHEDULING && (
             <Box component="section">
-              <SectionHeading title={formatMessage(strings.schedulingTitle)} />
+              <SectionHeading title={strings.schedulingTitle} />
               <BlueBox>
                 <Box marginBottom={2}>
                   <Select
                     name="court-session-type"
-                    label={formatMessage(strings.courtSessionLabel)}
-                    placeholder={formatMessage(strings.courtSessionPlaceholder)}
+                    label={strings.courtSessionLabel}
+                    placeholder={strings.courtSessionPlaceholder}
                     options={courtSessionOptions}
                     value={
                       selectedCourtSessionType &&
@@ -697,10 +692,7 @@ const Conclusion: FC = () => {
           {selectedAction === IndictmentDecision.COMPLETING && (
             <>
               <Box component="section">
-                <SectionHeading
-                  title={formatMessage(strings.completingTitle)}
-                  required
-                />
+                <SectionHeading title={strings.completingTitle} required />
                 <BlueBox className={stack({ gap: 2 })}>
                   <RadioButton
                     id="decision-ruling"
@@ -714,7 +706,7 @@ const Conclusion: FC = () => {
                     }}
                     large
                     backgroundColor="white"
-                    label={formatMessage(strings.ruling)}
+                    label={strings.ruling}
                   />
                   <RadioButton
                     id="decision-fine"
@@ -728,7 +720,7 @@ const Conclusion: FC = () => {
                     }}
                     large
                     backgroundColor="white"
-                    label={formatMessage(strings.fine)}
+                    label={strings.fine}
                   />
                   <RadioButton
                     id="decision-dismissal"
@@ -745,7 +737,7 @@ const Conclusion: FC = () => {
                     }}
                     large
                     backgroundColor="white"
-                    label={formatMessage(strings.dismissal)}
+                    label={strings.dismissal}
                   />
                   <RadioButton
                     id="decision-merge"
@@ -759,7 +751,7 @@ const Conclusion: FC = () => {
                     }}
                     large
                     backgroundColor="white"
-                    label={formatMessage(strings.merge)}
+                    label={strings.merge}
                   />
                   <RadioButton
                     id="decision-cancellation"
@@ -776,14 +768,14 @@ const Conclusion: FC = () => {
                     }}
                     large
                     backgroundColor="white"
-                    label={formatMessage(strings.cancellation)}
+                    label={strings.cancellation}
                   />
                 </BlueBox>
               </Box>
               {selectedDecision === CaseIndictmentRulingDecision.MERGE && (
                 <Box component="section">
                   <SectionHeading
-                    title={formatMessage(strings.connectedCaseNumbersTitle)}
+                    title={strings.connectedCaseNumbersTitle}
                     required
                   />
                   <BlueBox className={stack({ gap: 2 })}>
@@ -794,12 +786,10 @@ const Conclusion: FC = () => {
                     />
                     <Input
                       name="mergeCaseNumber"
-                      label={formatMessage(strings.mergeCaseNumberLabel)}
+                      label={strings.mergeCaseNumberLabel}
                       autoComplete="off"
                       value={mergeCaseNumber}
-                      placeholder={formatMessage(
-                        strings.mergeCaseNumberPlaceholder,
-                      )}
+                      placeholder={strings.mergeCaseNumberPlaceholder}
                       onChange={(evt) => {
                         setMergeCaseNumberErrorMessage(undefined)
                         setMergeCaseNumber(evt.target.value)
@@ -853,7 +843,7 @@ const Conclusion: FC = () => {
           {selectedAction && !workingCase.withCourtSessions && (
             <Box component="section">
               <SectionHeading
-                title={formatMessage(strings.courtRecordTitle)}
+                title={strings.courtRecordTitle}
                 required={selectedAction === IndictmentDecision.COMPLETING}
               />
               <InputFileUpload
@@ -862,11 +852,11 @@ const Conclusion: FC = () => {
                   (file) => file.category === CaseFileCategory.COURT_RECORD,
                 )}
                 accept="application/pdf"
-                title={formatMessage(strings.inputFieldLabel)}
+                title={strings.inputFieldLabel}
                 description={formatMessage(core.uploadBoxDescription, {
                   fileEndings: '.pdf',
                 })}
-                buttonLabel={formatMessage(strings.uploadButtonText)}
+                buttonLabel={strings.uploadButtonText}
                 onChange={(files) => {
                   handleUpload(
                     addUploadFiles(files, {
@@ -934,12 +924,12 @@ const Conclusion: FC = () => {
               ))) && (
             <Box component="section">
               <SectionHeading
-                title={formatMessage(
+                title={
                   selectedAction === IndictmentDecision.COMPLETING &&
-                    selectedDecision === CaseIndictmentRulingDecision.RULING
+                  selectedDecision === CaseIndictmentRulingDecision.RULING
                     ? strings.verdictUploadTitle
-                    : strings.rulingUploadTitle,
-                )}
+                    : strings.rulingUploadTitle
+                }
                 required={
                   selectedAction !== IndictmentDecision.COMPLETING_FOR_SOME
                 }
@@ -954,11 +944,11 @@ const Conclusion: FC = () => {
                       : CaseFileCategory.RULING),
                 )}
                 accept="application/pdf"
-                title={formatMessage(strings.inputFieldLabel)}
+                title={strings.inputFieldLabel}
                 description={formatMessage(core.uploadBoxDescription, {
                   fileEndings: '.pdf',
                 })}
-                buttonLabel={formatMessage(strings.uploadButtonText)}
+                buttonLabel={strings.uploadButtonText}
                 onChange={(files) => {
                   if (
                     selectedAction === IndictmentDecision.COMPLETING_FOR_SOME

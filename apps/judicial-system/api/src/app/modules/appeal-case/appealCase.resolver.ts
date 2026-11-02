@@ -1,5 +1,5 @@
 import { ForbiddenException, Inject, UseGuards } from '@nestjs/common'
-import { Args, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -15,19 +15,23 @@ import {
 import {
   AppealCaseType,
   Feature,
+  getAppealJudgeInSeat,
   type User,
 } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { FeatureService } from '../feature/feature.service'
+import { User as UserResponse } from '../user'
 import { AppealCase } from './dto/appealCase.response'
 import { AppealCourtSession } from './dto/appealCourtSession.response'
+import { AppealEventLog } from './dto/appealEventLog.response'
 import { AppealStatementDeadline } from './dto/appealStatementDeadline.response'
 import { CreateAppealCaseInput } from './dto/createAppealCase.input'
 import { CreateAppealCourtSessionInput } from './dto/createAppealCourtSession.input'
 import { CreateAppealEventLogInput } from './dto/createAppealEventLog.input'
 import { DeleteAppealCourtSessionInput } from './dto/deleteAppealCourtSession.input'
 import { DeleteAppealCourtSessionResponse } from './dto/deleteAppealCourtSession.response'
+import { FileAppealStatementInput } from './dto/fileAppealStatement.input'
 import { SetAppealStatementDeadlineInput } from './dto/setAppealStatementDeadline.input'
 import { TransitionAppealCaseInput } from './dto/transitionAppealCase.input'
 import { UpdateAppealCaseInput } from './dto/updateAppealCase.input'
@@ -51,6 +55,21 @@ export class AppealCaseResolver {
     if (this.featureService.isHidden(Feature.INDICTMENT_APPEAL)) {
       throw new ForbiddenException('Indictment appeals are not available')
     }
+  }
+
+  @ResolveField('appealJudge1', () => UserResponse, { nullable: true })
+  appealJudge1(@Parent() appealCase: AppealCase): UserResponse | undefined {
+    return getAppealJudgeInSeat(appealCase, 0)
+  }
+
+  @ResolveField('appealJudge2', () => UserResponse, { nullable: true })
+  appealJudge2(@Parent() appealCase: AppealCase): UserResponse | undefined {
+    return getAppealJudgeInSeat(appealCase, 1)
+  }
+
+  @ResolveField('appealJudge3', () => UserResponse, { nullable: true })
+  appealJudge3(@Parent() appealCase: AppealCase): UserResponse | undefined {
+    return getAppealJudgeInSeat(appealCase, 2)
   }
 
   @Mutation(() => AppealCase, { nullable: true })
@@ -194,6 +213,30 @@ export class AppealCaseResolver {
         appealCaseId,
         body,
       ),
+      caseId,
+    )
+  }
+
+  // The court of appeals records a party's statement as filed, having
+  // uploaded it on the party's behalf.
+  @Mutation(() => AppealEventLog, { nullable: true })
+  fileAppealStatement(
+    @Args('input', { type: () => FileAppealStatementInput })
+    input: FileAppealStatementInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealEventLog> {
+    const { caseId, appealCaseId, ...body } = input
+
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Filing a statement on a party's behalf in appeal case ${appealCaseId} of case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.FILE_APPEAL_STATEMENT,
+      this.backendService.fileAppealStatement(caseId, appealCaseId, body),
       caseId,
     )
   }

@@ -310,8 +310,8 @@ export const Users = () => {
       {usersError && (
         <div data-testid="users-error">
           <AlertMessage
-            title={formatMessage(errors.failedToFetchDataFromDbTitle)}
-            message={formatMessage(errors.failedToFetchDataFromDbMessage)}
+            title={errors.failedToFetchDataFromDbTitle}
+            message={errors.failedToFetchDataFromDbMessage}
             type="error"
           />
         </div>

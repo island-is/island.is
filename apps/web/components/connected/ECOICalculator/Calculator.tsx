@@ -496,7 +496,9 @@ export const ECOICalculatorResults = ({
           <Text variant="h3" as="h3">
             {formatMessage(m.results.interpretationHeading)}
           </Text>
-          <Text>{getBracketText(totalAverage, formatMessage)}</Text>
+          <MarkdownText replaceNewLinesWithBreaks={false}>
+            {getBracketText(totalAverage, formatMessage)}
+          </MarkdownText>
         </Stack>
       </Stack>
     </Stack>
@@ -589,9 +591,11 @@ export const ECOICalculator = ({ slice }: ECOICalculatorProps) => {
 
   return (
     <Stack space={8}>
-      <MarkdownText replaceNewLinesWithBreaks={false}>
-        {formatMessage(m.form.topDescription)}
-      </MarkdownText>
+      {safeStepIndex === 0 && (
+        <MarkdownText replaceNewLinesWithBreaks={false}>
+          {formatMessage(m.form.topDescription)}
+        </MarkdownText>
+      )}
       <Stack space={6}>
         <Box ref={formRef}>
           <Stack space={4}>

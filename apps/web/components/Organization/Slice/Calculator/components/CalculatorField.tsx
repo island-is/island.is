@@ -72,7 +72,10 @@ export const CalculatorField = ({
           <SelectController
             {...select}
             options={(contractField.options ?? []).map((option) => ({
-              label: option,
+              label:
+                (field.optionLabelsEnabled
+                  ? localized(field.optionLabels?.[option], locale)
+                  : undefined) ?? option,
               value: option,
             }))}
           />
