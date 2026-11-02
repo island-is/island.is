@@ -708,16 +708,13 @@ export const getApplicationExternalData = (
  * The application id VMST knows this leave by: the island.is uuid of the first
  * application for the child, which VMST keys its records on.
  *
- * Seeded into `answers.vmstApplicationId` by `prefillFromVMST`. Before that
- * (the prerequisites template apis run ahead of it), a follow-up gets it from
- * the VMST leave its `initialQuery` points at, once that leave is confirmed to
- * be the applicant's own (`getPreviousVmstLeave`). A first-time application is
- * its own root.
+ * A follow-up gets it from the VMST leave its `initialQuery` points at, once
+ * that leave is confirmed to be the applicant's own (`getPreviousVmstLeave`).
+ * A first-time application is its own root. Never read from answers: the
+ * applicant can write those, and VMST's lookup by id does not check ownership.
  */
 export const getVmstApplicationId = (application: Application): string =>
-  getValueViaPath<string>(application.answers, 'vmstApplicationId') ||
-  getPreviousVmstLeave(application)?.vmstApplicationId ||
-  application.id
+  getPreviousVmstLeave(application)?.vmstApplicationId || application.id
 
 /**
  * VMST's record of the leave a follow-up application continues, as listed in

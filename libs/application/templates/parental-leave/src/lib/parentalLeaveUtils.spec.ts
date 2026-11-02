@@ -2101,6 +2101,13 @@ describe('getApplicationExternalData', () => {
       expect(getPreviousVmstLeave(application)).toBeUndefined()
       expect(getVmstApplicationId(application)).toBe(application.id)
     })
+
+    it('should ignore a VMST id written into answers', () => {
+      const application = withLinks('root-application-id')
+      application.answers.vmstApplicationId = 'someone-elses-application-id'
+
+      expect(getVmstApplicationId(application)).toBe('root-application-id')
+    })
   })
 
   it('should read adoption and permanent foster care off the rights code', () => {
@@ -2164,12 +2171,12 @@ describe('getApplicationExternalData', () => {
     })
   })
 
-  it('should prefer the seeded VMST id over the provider once prefill has run', () => {
+  it('should ignore a VMST id written into answers of a first-time application', () => {
     const application = buildApplication({
-      answers: { vmstApplicationId: 'root-application-id' },
+      answers: { vmstApplicationId: 'someone-elses-application-id' },
     })
 
-    expect(getVmstApplicationId(application)).toBe('root-application-id')
+    expect(getVmstApplicationId(application)).toBe(application.id)
   })
 
   it('should fall back to its own id for a first-time application', () => {

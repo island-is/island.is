@@ -59,7 +59,6 @@ import {
   getVMSTApplicationAnswers,
   getVMSTTypeOfApplication,
   getFollowUpChildIndex,
-  getVmstApplicationId,
   getMaxMultipleBirthsDays,
   getMultipleBirthRequestDays,
   getOtherParentId,
@@ -1117,11 +1116,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ),
               actions: [
                 {
-                  event: DefaultEvents.ABORT,
-                  name: parentalLeaveFormMessages.confirmation.cancel,
-                  type: 'reject',
-                },
-                {
                   event: DefaultEvents.SUBMIT,
                   name: parentalLeaveFormMessages.confirmation.submitButton,
                   type: 'primary',
@@ -1154,17 +1148,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
-            },
-          ],
-          [DefaultEvents.ABORT]: [
-            {
-              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
-              cond: isInPlaceRewind,
-              actions: ['restoreChangeBaseline', 'clearChangeEmployerFile'],
-            },
-            {
-              target: States.CLOSED,
-              actions: ['discardPendingChanges', 'clearChangeEmployerFile'],
             },
           ],
           CLOSED: { target: States.CLOSED },
@@ -1698,9 +1681,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
        * continues. Nothing is taken from the predecessor's island.is answers.
        *
        * The change form and the request sent to VMST both read answers, so
-       * VMST's data has to be copied into them. `vmstApplicationId` is what
-       * keeps VMST seeing one record per child across the whole sequence of
-       * applications.
+       * VMST's data has to be copied into them. The VMST id that keeps VMST
+       * seeing one record per child is not stored here; `getVmstApplicationId`
+       * derives it from the verified VMST link every time.
        */
       prefillFromVMST: assign((context) => {
         const { application } = context
@@ -1709,7 +1692,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         if (!getValueViaPath(answers, 'initialQuery')) {
           // First-time application: it is its own root as far as VMST is concerned.
           set(answers, 'applicationAction', ApplicationAction.APPLY)
-          set(answers, 'vmstApplicationId', application.id)
           return context
         }
 
@@ -1720,8 +1702,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             set(answers, key, value)
           }
         }
-
-        set(answers, 'vmstApplicationId', getVmstApplicationId(application))
 
         // Resolve the child in this application's own children list rather than
         // reusing the predecessor's `selectedChild` index, which points into a
@@ -1871,7 +1851,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       /**
        * Mark that an approved application is being edited in place so the change
-       * form can snapshot and restore the current application as its baseline.
+       * form can snapshot the current application as its baseline.
        */
       markInPlaceRewind: assign((context) => {
         set(context.application.externalData, 'inPlaceRewind', {
@@ -1880,16 +1860,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           date: new Date(),
         })
 
-        return context
-      }),
-      /**
-       * Discard the pending employer-change flag only when the applicant aborts;
-       * ordinary re-entry into the change form must preserve in-progress edits.
-       */
-      discardPendingChanges: assign((context) => {
-        const { application } = context
-        const { answers } = application
-        unset(answers, 'changeEmployer')
         return context
       }),
       /**
@@ -1922,176 +1892,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         if (selfEmployedChanged || employersChanged) {
           set(answers, 'addEmployer', YES)
         }
-
-        return context
-      }),
-      /**
-       * Restore all editable answers from the change baseline when an in-place
-       * edit is abandoned, then clear transient change flags and attachments.
-       */
-      restoreChangeBaseline: assign((context) => {
-        const { application } = context
-        const baseline = getChangeBaseline(application.externalData)
-
-        if (!baseline) {
-          return context
-        }
-
-        set(
-          application.answers,
-          'employment.isSelfEmployed',
-          baseline.employment.isSelfEmployed,
-        )
-        set(
-          application.answers,
-          'employment.isReceivingUnemploymentBenefits',
-          baseline.employment.isReceivingUnemploymentBenefits,
-        )
-        set(application.answers, 'employers', cloneDeep(baseline.employers))
-        set(application.answers, 'periods', cloneDeep(baseline.periods))
-
-        // Rights
-        set(
-          application.answers,
-          'transferRights',
-          baseline.rights.transferRights,
-        )
-        set(
-          application.answers,
-          'requestRights.requestDays',
-          baseline.rights.requestDays,
-        )
-        set(
-          application.answers,
-          'giveRights.giveDays',
-          baseline.rights.giveDays,
-        )
-        set(
-          application.answers,
-          'multipleBirthsRequestDays',
-          baseline.rights.multipleBirthsRequestDays,
-        )
-
-        // Personal allowance
-        set(
-          application.answers,
-          'personalAllowance.usePersonalAllowance',
-          baseline.personalAllowance.usePersonalAllowance,
-        )
-        set(
-          application.answers,
-          'personalAllowance.useAsMuchAsPossible',
-          baseline.personalAllowance.personalUseAsMuchAsPossible,
-        )
-        set(
-          application.answers,
-          'personalAllowance.usage',
-          baseline.personalAllowance.personalUsage,
-        )
-
-        // Personal allowance from spouse
-        set(
-          application.answers,
-          'personalAllowanceFromSpouse.usePersonalAllowance',
-          baseline.personalAllowanceFromSpouse.usePersonalAllowanceFromSpouse,
-        )
-        set(
-          application.answers,
-          'personalAllowanceFromSpouse.useAsMuchAsPossible',
-          baseline.personalAllowanceFromSpouse.spouseUseAsMuchAsPossible,
-        )
-        set(
-          application.answers,
-          'personalAllowanceFromSpouse.usage',
-          baseline.personalAllowanceFromSpouse.spouseUsage,
-        )
-
-        // Other parent — `getApplicationAnswers` reads from `otherParentObj.*`
-        // with a fallback to the flat legacy paths, so writing back to the
-        // canonical `otherParentObj.*` is what the rest of the code expects.
-        set(
-          application.answers,
-          'otherParentObj.chooseOtherParent',
-          baseline.otherParent.otherParent,
-        )
-        set(
-          application.answers,
-          'otherParentObj.otherParentName',
-          baseline.otherParent.otherParentName,
-        )
-        set(
-          application.answers,
-          'otherParentObj.otherParentId',
-          baseline.otherParent.otherParentId,
-        )
-        set(
-          application.answers,
-          'otherParentEmail',
-          baseline.otherParent.otherParentEmail,
-        )
-        set(
-          application.answers,
-          'otherParentPhoneNumber',
-          baseline.otherParent.otherParentPhoneNumber,
-        )
-        set(
-          application.answers,
-          'otherParentRightOfAccess',
-          baseline.otherParent.otherParentRightOfAccess,
-        )
-        set(
-          application.answers,
-          'shareInformationWithOtherParent',
-          baseline.otherParent.shareInformationWithOtherParent,
-        )
-
-        // Applicant contact + language
-        set(
-          application.answers,
-          'applicant.email',
-          baseline.baseInformation.applicantEmail,
-        )
-        set(
-          application.answers,
-          'applicant.phoneNumber',
-          baseline.baseInformation.applicantPhoneNumber,
-        )
-        set(application.answers, 'applicant.language', baseline.language)
-
-        // Payments
-        set(application.answers, 'payments.bank', baseline.payments.bank)
-        set(
-          application.answers,
-          'payments.pensionFund',
-          baseline.payments.pensionFund,
-        )
-        set(
-          application.answers,
-          'payments.useUnion',
-          baseline.payments.useUnion,
-        )
-        set(application.answers, 'payments.union', baseline.payments.union)
-        set(
-          application.answers,
-          'payments.usePrivatePensionFund',
-          baseline.payments.usePrivatePensionFund,
-        )
-        set(
-          application.answers,
-          'payments.privatePensionFund',
-          baseline.payments.privatePensionFund,
-        )
-        set(
-          application.answers,
-          'payments.privatePensionFundPercentage',
-          baseline.payments.privatePensionFundPercentage,
-        )
-
-        unset(application.answers, 'changeEmployer')
-        unset(application.answers, 'changePeriods')
-        unset(application.answers, 'addPeriods')
-        unset(application.answers, 'addEmployer')
-        unset(application.answers, 'fileUpload.changeEmployerFile')
 
         return context
       }),
@@ -2719,9 +2519,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         return context
       }),
       /**
-       * Clear the employer-change attachment when the applicant aborts the edit.
-       */
-      /**
        * Record who sent the application back. Runs as a transition action, so
        * `application.state` is still the state the rejection came from.
        */
@@ -2737,17 +2534,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       clearRejectedBy: assign((context) => {
         unset(context.application.answers, 'rejectedBy')
-
-        return context
-      }),
-      clearChangeEmployerFile: assign((context) => {
-        const { application } = context
-        const { changeEmployerFile } = getApplicationAnswers(
-          application.answers,
-        )
-        if (changeEmployerFile) {
-          unset(application.answers, 'fileUpload.changeEmployerFile')
-        }
 
         return context
       }),

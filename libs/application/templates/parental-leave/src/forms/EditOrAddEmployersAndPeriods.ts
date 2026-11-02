@@ -103,11 +103,6 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  event: DefaultEvents.ABORT,
-                  name: parentalLeaveFormMessages.confirmation.cancel,
-                  type: 'reject',
-                },
-                {
                   event: DefaultEvents.SUBMIT,
                   name: parentalLeaveFormMessages.confirmation.submitButton,
                   type: 'primary',

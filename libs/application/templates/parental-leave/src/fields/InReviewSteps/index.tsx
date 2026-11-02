@@ -65,7 +65,7 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
 
   // States where EDIT still rewinds *this* application to its own form — i.e. the
   // action it represents is not finished yet. VMST accepts updates to an
-  // application it already has via `vmstApplicationId`, so
+  // application it already has via `getVmstApplicationId`, so
   // `vinnumalastofnunApproval` and `vinnumalastofnunApproveEdits` are still
   // editable until VMST has approved them. Once VMST has approved (`approved`)
   // the action is done and a change is a new application, started from the

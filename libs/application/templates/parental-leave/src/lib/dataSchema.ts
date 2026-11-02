@@ -118,8 +118,6 @@ export const dataSchema = z.object({
       ApplicationAction.RESIDENCE_GRANT,
     ])
     .optional(),
-  // The id VMST knows the whole sequence of applications for a leave by.
-  vmstApplicationId: z.string().optional(),
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),

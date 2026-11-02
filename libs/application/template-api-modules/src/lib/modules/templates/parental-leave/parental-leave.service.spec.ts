@@ -395,7 +395,12 @@ describe('ParentalLeaveService', () => {
       // change application has to identify itself by the id of the application it
       // descends from — otherwise VMST has no record of it.
       const application = asVmstFollowUp(createApplication())
-      set(application, 'answers.vmstApplicationId', 'root-application-id')
+      // Written by the applicant; must not redirect the VMST lookup.
+      set(
+        application,
+        'answers.vmstApplicationId',
+        'someone-elses-application-id',
+      )
       applicationGetApplication.mockResolvedValue({
         application: { applicationFundId: '2025-03076' },
       })
