@@ -49,7 +49,7 @@ export class DelegationAdminController {
   ) {}
 
   @Get()
-  @Scopes(DelegationAdminScopes.read)
+  @Scopes(DelegationAdminScopes.read, DelegationAdminScopes.admin)
   @Documentation({
     response: { status: 200, type: DelegationAdminCustomDto },
     request: {
