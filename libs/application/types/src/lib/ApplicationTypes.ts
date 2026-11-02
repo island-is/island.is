@@ -173,7 +173,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.PARENTAL_LEAVE_V2]: {
     slug: 'faedingarorlof-v2',
-    translation: ['pl.application', 'uiForms.application'],
+    translation: ['plv2.application', 'uiForms.application'],
   },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
     slug: 'skjalaveita',

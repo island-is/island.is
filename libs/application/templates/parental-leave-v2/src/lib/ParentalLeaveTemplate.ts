@@ -89,7 +89,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   name: determineNameFromApplicationAnswers,
   codeOwner: CodeOwners.Deloitte,
   institution: parentalLeaveFormMessages.shared.institution,
-  translationNamespaces: ApplicationConfigurations.ParentalLeave.translation,
+  translationNamespaces: ApplicationConfigurations.ParentalLeaveV2.translation,
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
