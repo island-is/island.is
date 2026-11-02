@@ -72,7 +72,7 @@ const setup = async ({
 
   render(
     <PowerBiSlice
-      slice={({ powerBiEmbedProps: config } as unknown) as PowerBiSliceSchema}
+      slice={{ powerBiEmbedProps: config } as unknown as PowerBiSliceSchema}
     />,
   )
 
