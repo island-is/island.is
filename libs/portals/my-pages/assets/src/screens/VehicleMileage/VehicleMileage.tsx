@@ -313,7 +313,7 @@ const VehicleMileage = () => {
             <Text>
               {formatMessage(messages.vehicleMileageIntro, {
                 href: (str: React.ReactNode) => (
-                  <span>
+                  <span key="mileage-ext-link">
                     <a
                       href={formatMessage(messages.mileageExtLink)}
                       target="_blank"

@@ -6,7 +6,6 @@ import type { ConfigType } from '@island.is/nest/config'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 
 import { GetVehicleMileageFeeInput } from '../dto/getVehicleMileageFeeInput'
-import { getMockKilometerFee } from '../mocks/mileageFee.mock'
 import { MileageFee } from '../models/v3/mileageFee.model'
 import { mapMileageFee } from '../utils/mileageFeeMapper'
 
@@ -26,8 +25,7 @@ export class MileageFeeService {
   ): Promise<MileageFee | null> {
     const permno = input.permno
     const year = input.year ?? new Date().getFullYear()
-    // const fee = await this.kilometerFeeClient.getFee(user, permno, year)
-    const fee = getMockKilometerFee(permno, year)
+    const fee = await this.kilometerFeeClient.getFee(user, permno, year)
     return fee
       ? mapMileageFee(fee, year, this.downloadServiceConfig.baseUrl)
       : null

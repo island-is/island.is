@@ -211,16 +211,22 @@ export const VehicleMileageFee = ({ permno }: Props) => {
   const isInitialLoad = year === undefined
 
   if (isInitialLoad && error) {
-    return <Problem error={error} noBorder={false} />
+    return (
+      <Box marginTop={6}>
+        <Problem error={error} noBorder={false} />
+      </Box>
+    )
   }
 
   if (isInitialLoad && !loading && !fee) {
     return (
-      <Problem
-        type="no_data"
-        noBorder={false}
-        title={formatMessage(messages.mileageFeeNotFound)}
-      />
+      <Box marginTop={6}>
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(messages.mileageFeeNotFound)}
+        />
+      </Box>
     )
   }
 
