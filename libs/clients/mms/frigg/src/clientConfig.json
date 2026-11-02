@@ -4,14 +4,7 @@
     "/forms/registrations": {
       "post": {
         "operationId": "submitForm",
-        "parameters": [
-          {
-            "name": "x-request-id",
-            "required": true,
-            "in": "header",
-            "schema": { "type": "string" }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
