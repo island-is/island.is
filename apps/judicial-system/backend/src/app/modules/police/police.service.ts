@@ -68,7 +68,8 @@ export enum PoliceDocumentType {
   RVUR = 'RVUR', // Úrskurður í R-málum
   RVVI = 'RVVI', // Vistunarseðill í R-málum
   RVUL = 'RVUL', // Úrskurður Landsréttar í R- og S-málum
-  RVDO = 'RVDO', // Dómur og úrskurður í S-málum
+  RVDO = 'RVDO', // Dómur í S-málum
+  RVSUR = 'RVSUR', // Úrskurður í S-málum
   RVAS = 'RVAS', // Ákæra í S-málum
   RVMG = 'RVMG', // Málsgögn/gagnapakki í S-málum - þetta er svolítil ruslakista
   RVMV = 'RVMV', // Viðbótargögn verjanda í S-málum

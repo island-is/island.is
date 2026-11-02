@@ -29,7 +29,7 @@ import {
 } from './tools/applicationAdmin.serializer'
 import type { Locale } from '@island.is/shared/types'
 import { CurrentLocale } from './utils/currentLocale'
-import { Audit } from '@island.is/nest/audit'
+import { AuditService } from '@island.is/nest/audit'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('admin')
@@ -39,14 +39,14 @@ import { Audit } from '@island.is/nest/audit'
 })
 @Controller({ path: 'admin', version: ['1', VERSION_NEUTRAL] })
 export class AdminController {
-  constructor(private readonly applicationsService: ApplicationsService) {}
+  constructor(
+    private readonly applicationsService: ApplicationsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @Get('super-admin/overview/:page/:count')
   @UseInterceptors(ApplicationAdminSerializer)
-  @Audit<ApplicationAdminResponseDto>({
-    resources: (apps) => apps.rows.map((app) => app.id),
-  })
   @Documentation({
     description: 'Get applications for super admin overview',
     response: {
@@ -101,6 +101,7 @@ export class AdminController {
     },
   })
   async getOverviewForSuperAdmin(
+    @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
     @Param('page') page: number,
     @Param('count') count: number,
@@ -111,25 +112,39 @@ export class AdminController {
     @Query('from') from?: string,
     @Query('to') to?: string,
   ): Promise<ApplicationAdminResponseDto> {
-    return this.applicationsService.findAllApplicationsByAdminFilters(
-      page,
-      count,
-      institutionNationalId,
-      formId,
-      applicantNationalId,
-      searchStr,
-      from,
-      to,
-      locale,
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        action: 'getOverviewForSuperAdmin',
+        resources: (apps) => apps.rows.map((app) => app.id),
+        meta: {
+          filters: {
+            institutionNationalId,
+            formId,
+            applicantNationalId,
+            searchStr,
+            from,
+            to,
+          },
+        },
+      },
+      this.applicationsService.findAllApplicationsByAdminFilters(
+        page,
+        count,
+        institutionNationalId,
+        formId,
+        applicantNationalId,
+        searchStr,
+        from,
+        to,
+        locale,
+      ),
     )
   }
 
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   @Get('institution-admin/overview/:page/:count')
   @UseInterceptors(ApplicationAdminSerializer)
-  @Audit<ApplicationAdminResponseDto>({
-    resources: (apps) => apps.rows.map((app) => app.id),
-  })
   @Documentation({
     description: 'Get applications for institution admin overview',
     response: {
@@ -189,16 +204,32 @@ export class AdminController {
     @Query('from') from?: string,
     @Query('to') to?: string,
   ): Promise<ApplicationAdminResponseDto> {
-    return this.applicationsService.findAllApplicationsByAdminFilters(
-      page,
-      count,
-      user.nationalId,
-      formId,
-      applicantNationalId,
-      searchStr,
-      from,
-      to,
-      locale,
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        action: 'getOverviewForInstitutionAdmin',
+        resources: (apps) => apps.rows.map((app) => app.id),
+        meta: {
+          filters: {
+            formId,
+            applicantNationalId,
+            searchStr,
+            from,
+            to,
+          },
+        },
+      },
+      this.applicationsService.findAllApplicationsByAdminFilters(
+        page,
+        count,
+        user.nationalId,
+        formId,
+        applicantNationalId,
+        searchStr,
+        from,
+        to,
+        locale,
+      ),
     )
   }
 

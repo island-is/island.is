@@ -111,7 +111,7 @@ const HearingArrangements = () => {
         )}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.heading)}</PageTitle>
+        <PageTitle>{m.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
           <ProsecutorSectionHeightenedSecurity />
@@ -138,15 +138,13 @@ const HearingArrangements = () => {
             />
           </Box>
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(m.sections.translator.heading)}
-            />
+            <SectionHeading title={m.sections.translator.heading} />
             <Input
               data-testid="translator"
               name="translator"
               autoComplete="off"
-              label={formatMessage(m.sections.translator.label)}
-              placeholder={formatMessage(m.sections.translator.placeholder)}
+              label={m.sections.translator.label}
+              placeholder={m.sections.translator.placeholder}
               value={translatorInput.value}
               onChange={(evt) => translatorInput.onChange(evt.target.value)}
               onBlur={(evt) => translatorInput.onBlur(evt.target.value)}
@@ -174,16 +172,16 @@ const HearingArrangements = () => {
       </FormContentContainer>
       {navigateTo !== undefined && (
         <Modal
-          title={formatMessage(m.modal.heading)}
-          text={formatMessage(m.modal.text)}
+          title={m.modal.heading}
+          text={m.modal.text}
           buttons={[
             {
-              text: formatMessage(m.modal.secondaryButtonText),
+              text: m.modal.secondaryButtonText,
               onClick: () => router.push(`${navigateTo}/${workingCase.id}`),
               variant: 'ghost',
             },
             {
-              text: formatMessage(m.modal.primaryButtonText),
+              text: m.modal.primaryButtonText,
               onClick: async () => {
                 const notificationSent = await sendNotification(
                   workingCase.id,
@@ -199,9 +197,7 @@ const HearingArrangements = () => {
           ]}
           onClose={() => setNavigateTo(undefined)}
           errorMessage={
-            sendNotificationError
-              ? formatMessage(errors.sendNotification)
-              : undefined
+            sendNotificationError ? errors.sendNotification : undefined
           }
         />
       )}

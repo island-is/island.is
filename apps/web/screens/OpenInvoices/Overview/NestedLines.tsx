@@ -73,12 +73,12 @@ export const NestedLines = ({
 
     return payments.map((payment) => {
       const invoiceTotal = payment.invoice.totalAmount
-      const isFullyPaid =
-        invoiceTotal == null || payment.amount === invoiceTotal
+      const isFullyPaid = !payment.isPartialPayment
+      const showInvoiceTotal = !isFullyPaid && invoiceTotal != null
       const itemizationsCount = payment.invoice.itemizations?.length ?? 0
       const invoiceAmountBackground =
         itemizationsCount % 2 === 0 ? 'white' : undefined
-      const paidRowIndex = itemizationsCount + (isFullyPaid ? 0 : 1)
+      const paidRowIndex = itemizationsCount + (showInvoiceTotal ? 1 : 0)
       const paidBackground = paidRowIndex % 2 === 0 ? 'white' : undefined
 
       return (
@@ -132,7 +132,7 @@ export const NestedLines = ({
                   </T.Row>
                 )
               })}
-              {!isFullyPaid && (
+              {showInvoiceTotal && (
                 <T.Row>
                   <T.Data
                     box={{

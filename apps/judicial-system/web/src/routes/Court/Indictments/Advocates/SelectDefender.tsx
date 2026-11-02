@@ -173,9 +173,15 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
           dataTestId={`defendantWaivesRightToCounsel-${defendant.id}`}
           name={`defendantWaivesRightToCounsel-${defendant.id}`}
           label={capitalize(
-            formatMessage(strings.defendantWaivesRightToCounsel, {
-              accused: formatMessage(core.indictmentDefendant, { gender }),
-            }),
+            formatMessage(
+              {
+                id: strings.defendantWaivesRightToCounsel,
+                defaultMessage: strings.defendantWaivesRightToCounsel,
+              },
+              {
+                accused: formatMessage(core.indictmentDefendant, { gender }),
+              },
+            ),
           )}
           checked={Boolean(defendant.defenderChoice === DefenderChoice.WAIVE)}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -240,7 +246,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
         />
         <Checkbox
           name={`shareFilesWithDefender-${defendant.id}`}
-          label={formatMessage(strings.shareFilesWithDefender)}
+          label={strings.shareFilesWithDefender}
           checked={Boolean(defendant.caseFilesSharedWithDefender)}
           disabled={
             defendant.isDefenderChoiceConfirmed ||
@@ -253,7 +259,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
               !defendant.caseFilesSharedWithDefender,
             )
           }}
-          tooltip={formatMessage(strings.shareFilesWithDefenderTooltip)}
+          tooltip={strings.shareFilesWithDefenderTooltip}
           backgroundColor="white"
           large
           filled
@@ -283,36 +289,57 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
                 setDisplayModal(true)
               }}
             >
-              {formatMessage(strings.confirmDefenderChoice)}
+              {strings.confirmDefenderChoice}
             </Button>
           </Box>
         )}
       </BlueBox>
       {displayModal && (
         <Modal
-          title={formatMessage(strings.confirmDefenderChoiceModalTitle, {
-            isDefenderChoiceConfirmed: defendant.isDefenderChoiceConfirmed,
-          })}
+          title={formatMessage(
+            {
+              id: strings.confirmDefenderChoiceModalTitle,
+              defaultMessage: strings.confirmDefenderChoiceModalTitle,
+            },
+            {
+              isDefenderChoiceConfirmed: defendant.isDefenderChoiceConfirmed,
+            },
+          )}
           text={formatMessage(
-            defendant.isDefenderChoiceConfirmed
-              ? strings.changeDefenderChoiceModalText
-              : defendant.defenderChoice === DefenderChoice.WAIVE
-              ? strings.confirmDefenderWaivedModalText
-              : !defendant.defenderName
-              ? strings.confirmDefenderDelayModalText
-              : strings.confirmDefenderChoiceModalText,
+            {
+              id: defendant.isDefenderChoiceConfirmed
+                ? strings.changeDefenderChoiceModalText
+                : defendant.defenderChoice === DefenderChoice.WAIVE
+                ? strings.confirmDefenderWaivedModalText
+                : !defendant.defenderName
+                ? strings.confirmDefenderDelayModalText
+                : strings.confirmDefenderChoiceModalText,
+              defaultMessage: defendant.isDefenderChoiceConfirmed
+                ? strings.changeDefenderChoiceModalText
+                : defendant.defenderChoice === DefenderChoice.WAIVE
+                ? strings.confirmDefenderWaivedModalText
+                : !defendant.defenderName
+                ? strings.confirmDefenderDelayModalText
+                : strings.confirmDefenderChoiceModalText,
+            },
             { defenderName: defendant?.defenderName },
           )}
           buttons={[
             {
-              text: formatMessage(strings.confirmModalSecondaryButtonText),
+              text: strings.confirmModalSecondaryButtonText,
               onClick: () => setDisplayModal(false),
               variant: 'ghost',
             },
             {
-              text: formatMessage(strings.confirmModalPrimaryButtonText, {
-                isConfirming: !defendant.isDefenderChoiceConfirmed,
-              }),
+              text: formatMessage(
+                {
+                  id: strings.confirmModalPrimaryButtonText,
+                  defaultMessage: strings.confirmModalPrimaryButtonText,
+                },
+                {
+                  isConfirming: !defendant.isDefenderChoiceConfirmed,
+                },
+              ),
               onClick: () =>
                 toggleDefenderChoiceConfirmed(
                   defendant,
