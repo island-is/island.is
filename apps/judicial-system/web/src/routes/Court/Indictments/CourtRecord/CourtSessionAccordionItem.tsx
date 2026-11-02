@@ -34,6 +34,7 @@ import {
   getRoleTitleFromCaseFileCategory,
   getWordByGender,
   lowercase,
+  stripPdfExtension,
   Word,
 } from '@island.is/judicial-system/formatters'
 import { appealCorrectionLock } from '@island.is/judicial-system/types'
@@ -904,8 +905,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         enableDrag
         caseFile={{
           id: item.id,
-          displayText: item.name,
+          displayText: stripPdfExtension(item.name),
           name: item.name,
+          userGeneratedFilename: stripPdfExtension(item.name),
           canOpen: item.documentType !== CourtDocumentType.EXTERNAL_DOCUMENT,
           canEdit: ['fileName'],
           supplement: courtDocumentSupplement(item),
@@ -913,7 +915,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         backgroundColor="white"
         onOpen={handleOnOpen}
         onRename={(id: string, name: string) => {
-          handleUpdateFile(courtSession.id, id, { name })
+          handleUpdateFile(courtSession.id, id, {
+            name: stripPdfExtension(name),
+          })
         }}
         onDelete={handleDeleteFile}
         disabled={courtSession.isConfirmed || false}

@@ -26,7 +26,6 @@ const config = (
   inputSections: sections,
   outputTotal: {
     uid: 'hero',
-    kind: 'value',
     key: 'total',
     label: { is: 'Samtals' },
   },
@@ -44,8 +43,20 @@ describe('collectApplicableFields', () => {
         {
           key: 's',
           fields: [
-            { uid: 'u1', key: 'salary', span: 6, label: { is: 'Laun' } },
-            { uid: 'u2', key: 'renamedAway', span: 6, label: { is: 'Horfið' } },
+            {
+              uid: 'u1',
+              key: 'salary',
+              kind: 'field',
+              size: 'medium',
+              label: { is: 'Laun' },
+            },
+            {
+              uid: 'u2',
+              key: 'renamedAway',
+              kind: 'field',
+              size: 'medium',
+              label: { is: 'Horfið' },
+            },
           ],
         },
       ]),
@@ -60,7 +71,12 @@ describe('collectApplicableFields', () => {
 
   it('omits an unlabelled field rather than labelling it with its key', () => {
     const applicable = keys(
-      config([{ key: 's', fields: [{ uid: 'u1', key: 'salary', span: 6 }] }]),
+      config([
+        {
+          key: 's',
+          fields: [{ uid: 'u1', key: 'salary', kind: 'field', size: 'medium' }],
+        },
+      ]),
       contract(field('salary')),
       {},
       {},
@@ -76,8 +92,20 @@ describe('collectApplicableFields', () => {
         {
           key: 's',
           fields: [
-            { uid: 'u1', key: 'isMarried', span: 6, label: { is: 'Gift' } },
-            { uid: 'u2', key: 'spouseName', span: 6, label: { is: 'Maki' } },
+            {
+              uid: 'u1',
+              key: 'isMarried',
+              kind: 'field',
+              size: 'medium',
+              label: { is: 'Gift' },
+            },
+            {
+              uid: 'u2',
+              key: 'spouseName',
+              kind: 'field',
+              size: 'medium',
+              label: { is: 'Maki' },
+            },
           ],
         },
       ]),
@@ -104,11 +132,18 @@ describe('collectApplicableFields', () => {
         {
           key: 's',
           fields: [
-            { uid: 'u1', key: 'incomeYear', span: 6, label: { is: 'Ár' } },
+            {
+              uid: 'u1',
+              key: 'incomeYear',
+              kind: 'field',
+              size: 'medium',
+              label: { is: 'Ár' },
+            },
             {
               uid: 'u2',
               key: 'retroactive',
-              span: 6,
+              kind: 'field',
+              size: 'medium',
               label: { is: 'Afturvirkt' },
             },
           ],
@@ -138,7 +173,13 @@ describe('collectApplicableFields', () => {
         key: 's',
         toggle: { key: 'wantsExtra', label: { is: 'Bæta við' } },
         fields: [
-          { uid: 'u1', key: 'childCount', span: 6, label: { is: 'Börn' } },
+          {
+            uid: 'u1',
+            key: 'childCount',
+            kind: 'field',
+            size: 'medium',
+            label: { is: 'Börn' },
+          },
         ],
       },
     ])
@@ -158,7 +199,15 @@ describe('collectApplicableFields', () => {
         {
           key: 'gated',
           gate: { toggle: 'wantsExtra', disableOnly: true },
-          fields: [{ uid: 'u1', key: 'note', span: 6, label: { is: 'Nóta' } }],
+          fields: [
+            {
+              uid: 'u1',
+              key: 'note',
+              kind: 'field',
+              size: 'medium',
+              label: { is: 'Nóta' },
+            },
+          ],
         },
       ]),
       contract(field('note', { type: TaxCalculatorInputFieldType.String })),
@@ -176,7 +225,15 @@ describe('collectApplicableFields', () => {
         {
           key: 'gated',
           gate: { toggle: 'wantsExtra' },
-          fields: [{ uid: 'u1', key: 'note', span: 6, label: { is: 'Nóta' } }],
+          fields: [
+            {
+              uid: 'u1',
+              key: 'note',
+              kind: 'field',
+              size: 'medium',
+              label: { is: 'Nóta' },
+            },
+          ],
         },
       ]),
       contract(field('note', { type: TaxCalculatorInputFieldType.String })),
@@ -193,7 +250,15 @@ describe('canSubmit', () => {
   const required = config([
     {
       key: 's',
-      fields: [{ uid: 'u1', key: 'salary', span: 6, label: { is: 'Laun' } }],
+      fields: [
+        {
+          uid: 'u1',
+          key: 'salary',
+          kind: 'field',
+          size: 'medium',
+          label: { is: 'Laun' },
+        },
+      ],
     },
   ])
   const fields = contract(field('salary', { required: true }))
@@ -243,7 +308,13 @@ describe('canSubmit', () => {
           key: 'gated',
           gate: { toggle: 'wantsExtra', disableOnly: true },
           fields: [
-            { uid: 'u1', key: 'salary', span: 6, label: { is: 'Laun' } },
+            {
+              uid: 'u1',
+              key: 'salary',
+              kind: 'field',
+              size: 'medium',
+              label: { is: 'Laun' },
+            },
           ],
         },
       ]),

@@ -1,9 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 
-import type {
-  Case,
-  CourtSessionResponse,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { CourtSessionResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CourtSessionRulingType } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   FormContextWrapper,
@@ -38,7 +36,7 @@ describe('CourtSessionRuling', () => {
 
   const advance = (ms: number) => act(() => jest.advanceTimersByTime(ms))
 
-  const workingCase = { id: 'case-1' } as Case
+  const workingCase = { id: 'case-1' } as WorkingCase
 
   const courtSession = (
     overrides: Partial<CourtSessionResponse> = {},

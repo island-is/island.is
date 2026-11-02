@@ -386,8 +386,6 @@ describe('DirectorateOfEqualityService', () => {
     })
   })
 
-  // What matters is which equality-report id reaches submitDraft, not that
-  // submit was called — see resolveEqualityReportId's staleness handling.
   describe('getSalaryReportEligibility', () => {
     const run = async () => {
       const auth = createCurrentUser()
@@ -448,6 +446,9 @@ describe('DirectorateOfEqualityService', () => {
     })
   })
 
+  // What matters is which equality-report id reaches submitDraft — see
+  // resolveEqualityReportId's staleness handling. island.is never refuses on
+  // missing coverage itself: only DMR knows whether the company is exempt.
   describe('submitSalaryReport', () => {
     // Not FormValue: this is externalData, and a legacy row really does carry
     // `id: null` — the provider spreads DMR's answer through as it stands.
@@ -496,13 +497,31 @@ describe('DirectorateOfEqualityService', () => {
       expect(body.equalityReportId).toBe('stale-id')
     })
 
-    it('refuses to submit a known-stale id when DMR has no active report', async () => {
+    // A municipality without a plan: equality/active still 404s, since an
+    // exemption is not a plan, but DMR accepts the submission without an id.
+    // The stored id is known-stale, so it must not go along.
+    it('submits without the known-stale id when DMR has no active report', async () => {
       getActiveEqualityReport.mockRejectedValue(
         await FetchError.buildMock({ status: 404 }),
       )
 
-      await expect(run()).rejects.toThrow(TemplateApiError)
-      expect(submitDraft).not.toHaveBeenCalled()
+      const body = await run()
+
+      expect(submitDraft).toHaveBeenCalled()
+      expect(body.equalityReportId).toBeUndefined()
+    })
+
+    // With no coverage stored either, an outage leaves nothing to name, and
+    // DMR resolves the filing basis on its own.
+    it('submits without an id when DMR cannot answer and nothing was stored', async () => {
+      getActiveEqualityReport.mockRejectedValue(
+        await FetchError.buildMock({ status: 500 }),
+      )
+
+      const body = await run({ hasActiveEqualityReport: false })
+
+      expect(submitDraft).toHaveBeenCalled()
+      expect(body.equalityReportId).toBeUndefined()
     })
 
     // Legacy coverage has no report row to name, so the field goes off the
@@ -542,8 +561,8 @@ describe('DirectorateOfEqualityService', () => {
 
     // DMR says "no such company" with a 400 and a NotFound body, not a 404 —
     // the provider gate above already allows for that, and so must this one, or
-    // a definitive rejection reaches the applicant as a generic error.
-    it('refuses to submit when DMR names the company as not found', async () => {
+    // the stale stored id would be sent as a fallback.
+    it('submits without the stored id when DMR names the company as not found', async () => {
       getActiveEqualityReport.mockRejectedValue(
         await apiError(400, {
           name: 'NotFound',
@@ -551,12 +570,10 @@ describe('DirectorateOfEqualityService', () => {
         }),
       )
 
-      const error = await run().catch((e) => e)
+      const body = await run()
 
-      expect(submitDraft).not.toHaveBeenCalled()
-      expect(error.problem.errorReason.summary).toBe(
-        salaryReportMessages.errors.missingEqualityReport,
-      )
+      expect(submitDraft).toHaveBeenCalled()
+      expect(body.equalityReportId).toBeUndefined()
     })
 
     // Both 409s DMR has left — a report already in review and a providerId
@@ -572,8 +589,8 @@ describe('DirectorateOfEqualityService', () => {
       )
     })
 
-    // Reachable now that coverage can be left for DMR to resolve: the
-    // certificate lapses between the pre-check and the submit itself.
+    // DMR's refusal is now the only one: a company with no plan that is not
+    // exempt, or a certificate that lapses between the read and the submit.
     it('explains a 404 from the submit as missing coverage', async () => {
       submitDraft.mockRejectedValue(await apiError(404))
 
@@ -587,6 +604,24 @@ describe('DirectorateOfEqualityService', () => {
     it('explains the missing equality report instead of the generic error', async () => {
       getActiveEqualityReport.mockRejectedValue(
         await FetchError.buildMock({ status: 404 }),
+      )
+      submitDraft.mockRejectedValue(await apiError(404))
+
+      const error = await run().catch((e) => e)
+
+      expect(submitDraft.mock.calls[0][2].equalityReportId).toBeUndefined()
+      expect(error.problem.errorReason.summary).toBe(
+        salaryReportMessages.errors.missingEqualityReport,
+      )
+    })
+
+    // The same refusal said without the status, as DMR does elsewhere.
+    it('explains a NotFound body from the submit as missing coverage', async () => {
+      submitDraft.mockRejectedValue(
+        await apiError(400, {
+          name: 'NotFound',
+          translatedMessage: 'Fyrirtækið fannst ekki',
+        }),
       )
 
       const error = await run().catch((e) => e)

@@ -240,6 +240,10 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       vehicleDetailsWithGrant.firstRegistrationDate || '',
     )
     setValue(`${field.id}.vin`, vehicleDetailsWithGrant.vin)
+    setValue(
+      `${field.id}.vehicleRegistrationCode`,
+      vehicleDetailsWithGrant.vehicleRegistrationCode,
+    )
     setValue(`${field.id}.grantAmount`, vehicleDetailsWithGrant.vehicleGrant)
     setValue(
       `${field.id}.grantItemCode`,

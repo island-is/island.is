@@ -16,6 +16,130 @@ Direct bank-to-bank payment method (Blikk is the current provider). For the full
 the service, the payer-facing screens, and what happens for each provider payment status, see
 [Bank transfer payment method](./src/app/bankTransferPayment/README.md).
 
+## Debt payments (Greiðsla skulda)
+
+Lets an application (e.g. the Fjármál overview) have a person or company pay debts owed to Fjársýsla ríkisins (FJS). Debt flows use the same `payment_flow` table and pay page as charge flows, with `type = 'debt'`. FJS `validatePayment` decides whether the debts can be paid, and after capture the payment is registered with FJS (`payDebt`).
+
+### Creating a flow
+
+`POST /v1/payments/debts`
+
+| Field                                                    | Rules                                                        |
+| -------------------------------------------------------- | ------------------------------------------------------------ |
+| `payerNationalId`                                        | Individual or company.                                       |
+| `onUpdateUrl`                                            | Webhook receiving the events below.                          |
+| `metadata`                                               | Optional JSON, echoed back in every webhook.                 |
+| `returnUrl`, `cancelUrl`, `redirectToReturnUrlOnSuccess` | Optional, as for charge flows.                               |
+| `debts[]`                                                | At least 1 item, see below.                                  |
+| `debts[].payId`                                          | FJS payId. Required, non-empty, unique within the request.   |
+| `debts[].amount`                                         | Positive integer, whole ISK. May be less than the full debt. |
+| `debts[].label`                                          | Optional, up to 255 characters, display only.                |
+
+`organisationId` (FJS, `5402697509`) is set by the service and `productTitle` is not used, so neither is sent. `GET /v1/payments/:id` returns `type: 'debt'` and the fallback title "Greiðsla skulda"; the pay page shows its own translated title. The debts are validated with FJS when the flow is created.
+
+Payment methods come from the `paymentOptions` FJS returns from `validatePayment` (e.g. `CARD;TRANSFER`), limited by our feature flags and payer rules. `CARD` enables card and Apple Pay, `TRANSFER` enables bank transfer. Invoice payment is never offered.
+
+Response: `{ id, urls: { is, en } }`. Send the payer to `urls`. `id` is also the `payFlowId` used towards FJS.
+
+Errors (`detail` of the problem response, or the error code on the pay page):
+
+| Code                                    | Meaning                                                                                                                                                                                                            |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `DebtPaymentInvalid`                    | FJS says the debts can not be paid (changed, already paid).                                                                                                                                                        |
+| `DebtPaymentMethodNotAllowed`           | FJS does not allow the chosen payment method for these debts.                                                                                                                                                      |
+| `DebtPaymentRejected`                   | FJS rejected the payment after the card was charged. The card is refunded.                                                                                                                                         |
+| `DebtPaymentFlowClosed`                 | The flow was rejected by FJS earlier and can not be used again.                                                                                                                                                    |
+| `DebtPaymentUnavailable`                | FJS could not be reached when the flow was created or the payer paid, so the debts could not be checked. Nothing was charged and the caller can try again.                                                         |
+| `DebtPaymentRegisteredCannotBeRefunded` | Returned by `POST /v1/payments/refund` for a flow registered with FJS, in `needs_reconciliation`, or that may be registered (an earlier `payDebt` had an unknown outcome, or one is running). FJS has no reversal. |
+
+The debts are validated with FJS again right before every capture, so a flow can fail with `DebtPaymentInvalid` long after it was created. Flows do not expire.
+
+### Webhook sequences
+
+Events are POSTed to `onUpdateUrl` (signed JWT in the `Authorization` header) as `{ type, paymentFlowId, paymentFlowMetadata, occurredAt, details: { paymentMethod, reason, message, eventMetadata } }`. `paymentFlowMetadata` is the `metadata` from the request, and the event specific fields below are in `details.eventMetadata`, which is always an object, `{}` for an event without fields. A webhook that does not answer within 10 s counts as failed, and is retried like any other failure.
+
+- **Happy path**: `success/payment_completed` when the money is captured, then `update/payment_finalized` when FJS accepts the registration (202), with `eventMetadata.dateCreated`. If registration could not finish inline, the payment worker retries and `payment_finalized` comes later. FJS answers a payFlowId it already has with 400 and error `type` `6`, so when a retry gets that after a call whose response was lost, the payment counts as registered and `payment_finalized` comes without `dateCreated`.
+- **Card or Apple Pay, rejected inline**: FJS rejects (400) before the registration is accepted. The card is refunded and the application gets `error/payment_failed` (`eventMetadata.fjsProblem`). There is no `payment_completed`. If that refund fails, the payer gets `RefundFailedAfterPaymentError` and a CRITICAL alert asks for a manual refund, as for charge flows: the rollback removes the fulfillment before refunding, so the worker does not retry it.
+- **Card or Apple Pay, saga failed after the attempt**: a step timed out, or the registration failed for a reason other than a rejection, after `payDebt` may have been sent. The rollback refunds the card and removes the fulfillment only when the payment can not be registered: no attempt was sent, or FJS answered the last one without taking it. Otherwise (registered, an attempt with an unknown outcome, one still running, or the state could not be read) the payment is kept as paid, nothing is refunded, the payer gets the payment result and a CRITICAL alert with `debtRefundRefused: true` asks for a manual check. The endpoint sends `payment_completed` unless the notification step recorded it already, and the worker finishes a pending registration, so `payment_finalized` may still follow.
+- **Rejected later by the worker**: `payment_completed` was already sent, then `error/payment_failed`. A card payment is then refunded automatically and the usual refund events follow. A bank transfer is not refunded automatically (Blikk refunds need an SCA approval): the `payment_failed` event has `eventMetadata.needsManualRefund = true` and the money is returned manually.
+- **Bank transfer rejected inline** behaves like the late rejection above: `payment_completed` is sent when the transfer settles, then `error/payment_failed` with `needsManualRefund`.
+- **`needs_reconciliation`**: FJS rejected the payment after an attempt whose outcome was unknown, so it may already be registered, or reported the payFlowId as a duplicate when no earlier attempt explains it. This is internal: no webhook is sent, the payment stays completed, and an error event and alert ask for manual reconciliation. It is never refunded automatically.
+
+`eventMetadata.fjsProblem.type` is FJS's error code: `2` kennitala not found, `3` payId not found, `4` payId does not belong to the kennitala, `5` total does not match the debts, `10` bad payment date, `14` payInfo missing, `15` payInfo amount does not match the total. Code `6` (payFlowId already received) is handled as above, and code `12` (another payment for the debts is in progress) is not a rejection: the payment is left pending and the worker retries it.
+
+FJS registers the payment asynchronously (202 Accepted), so the payer's Fjármál status can lag behind `payment_finalized`. Treat 202 as final: failures after it are for FJS to resolve.
+
+### Settlement flow
+
+From validation to registration with FJS. `payDebt` runs inline once the money is captured: in the `SETTLE_DEBT` step of the card and Apple Pay sagas, and when a bank transfer settles. The payment worker retries what that left pending.
+
+```mermaid
+flowchart TD
+    V["validatePayment, right before capture"] -->|"400"| X1["DebtPaymentInvalid, no money taken"]
+    V -->|"method not in paymentOptions"| X2["DebtPaymentMethodNotAllowed"]
+    V -->|"valid"| C["Money captured: card, Apple Pay, or settled bank transfer"]
+    C --> P["payDebt inline, 15 s timeout"]
+
+    P -->|"202"| R1["registered: payment_completed + payment_finalized"]
+    P -->|"400, card"| RJ1["rejected: saga refunds the card, payment_failed, payer sees DebtPaymentRejected"]
+    P -->|"400, bank transfer"| RJ2["rejected: payment_completed, then payment_failed with needsManualRefund"]
+    P -->|"ambiguous, transient, or attempt claimed"| PE["pending: payment_completed only"]
+
+    PE --> W["Payment worker, fulfillment at least 1 min old"]
+    W --> FC{"Fulfillment still active?"}
+    FC -->|"no, refunded during the run"| SK["Skipped, not registered"]
+    FC -->|"yes"| P2["payDebt retry"]
+    P2 -->|"202, or code 6 after an ambiguous attempt"| R2["registered: payment_finalized"]
+    P2 -->|"400, no earlier ambiguous attempt"| RJ3["rejected: payment_failed, card refunded, bank transfer refunded manually"]
+    P2 -->|"400 after an ambiguous attempt, or unexplained code 6"| NR["needs_reconciliation: alert, no webhook, never refunded"]
+    P2 -->|"ambiguous or transient"| PE
+```
+
+The `debt_settlement` row, one per flow. Only `pending` changes, the other states are final.
+
+```mermaid
+stateDiagram-v2
+    [*] --> pending: money captured, first payDebt attempt
+    pending --> pending: worker retries
+    pending --> registered: 202, or code 6 after an ambiguous attempt
+    pending --> rejected: 400 with no earlier ambiguous attempt
+    pending --> needs_reconciliation: 400 after an ambiguous attempt, or code 6 with none
+    registered --> [*]
+    rejected --> [*]
+    needs_reconciliation --> [*]
+
+    note left of pending
+        Stays pending after an ambiguous call
+        (timeout, 5xx, network), which sets
+        hadAmbiguousAttempt, or a transient
+        one (401/403, code 12), which does not.
+    end note
+
+    note right of rejected
+        Card and Apple Pay are refunded
+        (by the saga inline, or the worker).
+        Bank transfers are refunded manually.
+        The flow is closed (isClosed).
+    end note
+```
+
+`POST /v1/payments/refund` for a debt flow. The worker's own refunds of rejected payments skip the status check. The payment sagas' rollbacks make the same check before refunding a debt payment.
+
+```mermaid
+flowchart TD
+    RQ["POST /v1/payments/refund"] --> S{"debt_settlement status"}
+    S -->|"registered or needs_reconciliation"| NO1["Refused: DebtPaymentRegisteredCannotBeRefunded"]
+    S -->|"pending, with hadAmbiguousAttempt or an attempt in the last 60 s"| NO2["Refused: DebtPaymentRegisteredCannotBeRefunded, warn log with debtRefundRefused"]
+    S -->|"could not be read, saga rollback only"| NO4["Payment kept, error log with debtRefundRefused"]
+    S -->|"no row, other pending, or rejected"| M{"Paid with"}
+    M -->|"card or Apple Pay"| OK["Card refund saga"]
+    M -->|"bank transfer"| NO3["Refused: PaymentFlowNotEligibleToBeRefunded"]
+```
+
+### Rejected and closed flows
+
+A rejected flow is terminal and its id is never reused for a second registration. The pay page shows "Ekki tókst að ljúka greiðslunni" and `GetPaymentFlowDTO.isClosed` is `true`. The application should start a new flow with `POST /v1/payments/debts`. A registered flow still shows its receipt. A rejected flow that still counts as paid, a bank transfer until it is refunded by hand or a card payment while the worker retries its refund, shows no receipt: the pay page tells the payer the amount will be refunded.
+
 ## Payment worker
 
 ### What it does
@@ -28,6 +152,10 @@ The worker finds paid card payment flows that do not yet have an FJS charge, cre
 - **Failure (recorded)** — Any other error while processing the flow, whether FJS returned an error (e.g. `FailedToCreateCharge`, `AlreadyCreatedCharge`) or a local error was raised before the FJS request: one failure event is recorded.
 - **Failure (not recorded)** — No response from FJS (network/transient error): no event is recorded, but the failure is still counted in the worker run summary. The worker will retry on the next run.
 
+### Refunded card payments that still look paid
+
+When a card payment saga rolls back, it refunds the card even if marking the confirmation and fulfillment as deleted fails, which leaves a refunded payment with an active fulfillment. Before creating an FJS charge for a card flow, and before registering or refunding a debt card payment, the worker checks for an event carrying a refund for that payment (matched on its correlation id, since a refunded charge flow can be paid again): the payment saga's `payment_failed`, or a `refund_completed` from a card refund saga, whose rollback restores the fulfillment when a step after the refund fails. When it finds one it finishes the rollback instead: it deletes the confirmation and fulfillment and records a success event with `completedRollback`. It never charges or refunds such a payment. A delete that fails again is recorded as a failure.
+
 ### Retry delay
 
 A flow that has never failed is processed as soon as it is picked up. A flow with **at least one failure event** is **deferred** until the configured delay has passed since its **latest** failure event, so an FJS outage does not exhaust the failure limit within a few runs.
@@ -35,6 +163,7 @@ A flow that has never failed is processed as soon as it is picked up. A flow wit
 - **Config:** `workerRetryDelayMinutesAfterFailure` (default 60). Deferred flows are listed in one info line per run and counted as `deferred (retry delay)` in the run summary.
 - **What starts the delay:** every failure the worker records, i.e. any error thrown while processing the flow except `FJS_NETWORK_ERROR`. This includes FJS error responses, X-Road errors, and local errors raised before the FJS request (e.g. missing card payment details, missing bank transfer row, catalog mismatch).
 - **Not gated:** network/transient errors (`FJS_NETWORK_ERROR`) record no event, so they do not start the delay. Such a flow is retried on every run (every 5 minutes) until FJS responds.
+- **Debt flows:** the debt pass (`pay_fjs_debt`) uses the same delay and failure limit, counted on its own failure events. A `payDebt` call FJS refused (401/403) or an error while settling records a failure; an ambiguous outcome or FJS being unreachable records none and is retried on the next run.
 
 ### Failure limit
 
@@ -49,6 +178,7 @@ The worker **skips** a flow (and requires manual intervention) when that flow ha
 | `PAYMENTS_WORKER_MAX_FAILURE_EVENTS_PER_FLOW`                | 5       | Stop retrying a flow after this many failure events (FJS error responses) for that flow+task.                          |
 | `PAYMENTS_WORKER_MINUTES_TO_WAIT_BEFORE_CREATING_FJS_CHARGE` | 5       | Only consider paid flows whose fulfillment is at least this many minutes old (avoids races with payment confirmation). |
 | `PAYMENTS_WORKER_RETRY_DELAY_MINUTES_AFTER_FAILURE`          | 60      | After a failure event, wait at least this many minutes before trying that flow again (never-failed flows run at once). |
+| `PAYMENTS_WORKER_MINUTES_TO_WAIT_BEFORE_SETTLING_DEBT`       | 1       | Only consider paid debt flows whose fulfillment and last `payDebt` attempt are at least this many minutes old.         |
 
 ### Manual intervention
 
@@ -65,4 +195,7 @@ For **AlreadyCreatedCharge**: reconcile the flow/fulfillment with the existing F
 - The worker logs one info line per run when flows are skipped: `Skipping N payment flow(s) that exceeded the failure limit (5) and require manual intervention: <ids>`.
 - The worker logs one info line per run when flows are deferred: `Deferring N payment flow(s) that failed less than 60 minute(s) ago: <ids>`.
 - Each run ends with `Payment worker run complete — created: X, failed: Y, skipped (manual intervention): Z, deferred (retry delay): W`.
+- A debt bank transfer FJS rejects is logged once, as an error with `needsManualRefund: true` and the payment flow id, and its `payment_failed` event carries the same flag. Nothing refunds it automatically, and nothing records when it has been refunded by hand: alert on the field and track the refund with whoever returns the money.
+- A refund of a debt payment that may already be registered with FJS is refused and logged as a warning with `debtRefundRefused: true`. Monitors count on that field. A payment saga that rolls back and finds the same logs it as an error with the same field, since the payer was told the payment went through while the organisation may not have been: check that `payment_completed` and `payment_finalized` reached the application, and that FJS has the payment.
+- The debt pass logs the same skip and defer lines for debt payment flows, and ends with `Debt payment run complete — settled: X, failed: Y, skipped (manual intervention): Z, deferred (retry delay): W`.
 - Optional: add metrics for flows processed, succeeded, failed, skipped, and deferred.

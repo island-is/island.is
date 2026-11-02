@@ -9,7 +9,6 @@ import { SkeletonLoader } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { UnemploymentBenefitsPaths } from '../../lib/paths'
 import { GET_VMST_APPLICATIONS_OVERVIEW_QUERY } from '@island.is/portals/my-pages/core'
-import { unemploymentBenefitsMessages as um } from '../../lib/messages/unemployment'
 
 export const UnemploymentBenefitsRoot = () => {
   const { formatMessage } = useLocale()
@@ -22,7 +21,7 @@ export const UnemploymentBenefitsRoot = () => {
 
   if (loading) {
     return (
-      <IntroWrapper title={formatMessage(um.unemploymentBenefits)}>
+      <IntroWrapper title={formatMessage(coreMessages.unemploymentBenefits)}>
         <SkeletonLoader height={300} borderRadius="large" />
       </IntroWrapper>
     )
@@ -30,7 +29,7 @@ export const UnemploymentBenefitsRoot = () => {
 
   if (error) {
     return (
-      <IntroWrapper title={formatMessage(um.unemploymentBenefits)}>
+      <IntroWrapper title={formatMessage(coreMessages.unemploymentBenefits)}>
         <Problem
           type="no_data"
           noBorder={false}
@@ -47,7 +46,7 @@ export const UnemploymentBenefitsRoot = () => {
   }
 
   return (
-    <IntroWrapper title={formatMessage(um.unemploymentBenefits)}>
+    <IntroWrapper title={formatMessage(coreMessages.unemploymentBenefits)}>
       <Problem
         type="no_data"
         noBorder={false}

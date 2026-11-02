@@ -2,6 +2,7 @@ import addMinutes from 'date-fns/addMinutes'
 import subMinutes from 'date-fns/subMinutes'
 import {
   DiseaseVaccinationDtoVaccinationStatusEnum,
+  MeAppointmentControllerGetPatientAppointmentsV2V2Data,
   UserVisibleAppointmentStatuses,
 } from '@island.is/clients/health-directorate'
 import {
@@ -14,6 +15,7 @@ import {
   AppointmentLinkTypeEnum,
   AppointmentModalityEnum,
   AppointmentStatusEnum,
+  AppointmentsOrderEnum,
   ReferralStatusEnum,
   VaccinationStatusEnum,
   WaitlistStatusTagColorEnum,
@@ -167,6 +169,19 @@ export const mapAppointmentStatus = (
       return UserVisibleAppointmentStatuses.CHECKED_IN
     default:
       return null
+  }
+}
+
+export const mapAppointmentsOrder = (
+  order: AppointmentsOrderEnum,
+): NonNullable<
+  MeAppointmentControllerGetPatientAppointmentsV2V2Data['query']
+>['order'] => {
+  switch (order) {
+    case AppointmentsOrderEnum.ASC:
+      return 'ASC'
+    case AppointmentsOrderEnum.DESC:
+      return 'DESC'
   }
 }
 

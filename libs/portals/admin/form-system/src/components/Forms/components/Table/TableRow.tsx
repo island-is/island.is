@@ -3,6 +3,7 @@ import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
 import {
   COPY_FORM,
+  EXPORT_FORM,
   GET_APPLICATION_JSON_SAMPLE,
   GET_FORM,
   UPDATE_FORM_STATUS,
@@ -96,6 +97,7 @@ export const TableRow = ({
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
   const [copyForm] = useMutation(COPY_FORM)
   const [getForm] = useLazyQuery(GET_FORM, { fetchPolicy: 'no-cache' })
+  const [exportForm] = useLazyQuery(EXPORT_FORM, { fetchPolicy: 'no-cache' })
   const [getJsonSample] = useLazyQuery(GET_APPLICATION_JSON_SAMPLE, {
     fetchPolicy: 'no-cache',
   })
@@ -157,6 +159,36 @@ export const TableRow = ({
   )
 
   const dropdownItems = useMemo(() => {
+    const exportDefinition = {
+      title: formatMessage(m.exportForm),
+      icon: 'download' as const,
+      iconType: 'outline' as const,
+      onClick: async () => {
+        if (!id) return
+        try {
+          const { data } = await exportForm({ variables: { input: { id } } })
+          if (!data?.exportFormSystemForm)
+            throw new Error('Missing form export')
+          const blob = new Blob([data.exportFormSystemForm], {
+            type: 'application/json;charset=utf-8',
+          })
+          const blobUrl = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = blobUrl
+          link.download = `${(slug?.trim() || 'form').replace(
+            /[\\/:*?"<>|]/g,
+            '-',
+          )}-form.json`
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000)
+        } catch {
+          toast.error(formatMessage(m.exportFormError))
+        }
+      },
+    }
+
     const copy = {
       title: formatMessage(m.copy),
       icon: 'copy' as const,
@@ -553,6 +585,7 @@ export const TableRow = ({
 
     if (status === FormStatus.PUBLISHED) {
       return [
+        exportDefinition,
         getJson,
         copy,
         ...(isAdmin ? [copyToDifferentOrganization] : []),
@@ -560,11 +593,12 @@ export const TableRow = ({
         del,
       ]
     } else if (status === FormStatus.PUBLISHED_BEING_CHANGED) {
-      return [test, getJson, publishChanged, del]
+      return [test, exportDefinition, getJson, publishChanged, del]
     }
 
     return [
       test,
+      exportDefinition,
       getJson,
       copy,
       ...(isAdmin ? [copyToDifferentOrganization] : []),
@@ -577,6 +611,7 @@ export const TableRow = ({
     status,
     isAdmin,
     formatMessage,
+    exportForm,
     updateFormStatus,
     copyFormToOrganization,
     organizationNationalId,

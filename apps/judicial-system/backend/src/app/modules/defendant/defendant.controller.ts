@@ -22,7 +22,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { type User } from '@island.is/judicial-system/types'
+import { indictmentCases, type User } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -32,23 +32,57 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
-import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import { getOrCreateTransaction } from '../../middleware'
+import {
+  CaseExistsForUpdateGuard,
+  CaseTypeGuard,
+  CaseWriteGuard,
+  CurrentCase,
+} from '../case'
 import { Case, Defendant } from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
+import { UpdateDefendantsDto } from './dto/updateDefendants.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import {
   courtOfAppealsAssistantUpdateDefendantRule,
   courtOfAppealsJudgeUpdateDefendantRule,
   courtOfAppealsRegistrarUpdateDefendantRule,
+  publicProsecutionProsecutorUpdateDefendantsRule,
 } from './guards/rolesRules'
 import { DeleteDefendantResponse } from './models/delete.response'
 import { DefendantService } from './defendant.service'
 
+// Every route here changes the case's defendants, and each decides what to
+// change from the case the guard loaded: create and delete branch on whether
+// the case is at court, update on the verdict appeal's state, the case type
+// and the defendant row the guard found on the case. CaseExistsForUpdateGuard
+// reads the case under FOR UPDATE in the request's transaction, so two of
+// these requests on one case serialize on the case row and the second sees
+// the first's commit - and so do the converted case routes, which lock the
+// same row.
+//
+// RolesGuard runs first, ahead of the guard that takes the write lock. It
+// can, because every rule on these routes decides on the user alone - the
+// court of appeals rules are field rules, which read the body, not the case,
+// and the public prosecution prosecutor rule reads only the user's
+// institution: a caller this controller has no rule for is turned away
+// before any case row is locked. defendantRolesRules.spec.ts pins
+// that assumption, so a rule that starts reading the case cannot silently
+// reopen the exposure.
+//
+// The guards after the locking read all decide from request.case and so see
+// the locked row - including DefendantExistsGuard on the routes that name a
+// defendant.
 @Controller('api/case/:caseId/defendant')
 @ApiTags('defendants')
-@UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+@UseGuards(
+  JwtAuthUserGuard,
+  RolesGuard,
+  CaseExistsForUpdateGuard,
+  CaseWriteGuard,
+)
 export class DefendantController {
   constructor(
     private readonly defendantService: DefendantService,
@@ -62,7 +96,7 @@ export class DefendantController {
     type: Defendant,
     description: 'Creates a new defendant',
   })
-  create(
+  async create(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
@@ -70,13 +104,54 @@ export class DefendantController {
   ): Promise<Defendant> {
     this.logger.debug(`Creating a new defendant for case ${caseId}`)
 
-    return this.sequelize.transaction(async (transaction) =>
-      this.defendantService.create(
-        theCase,
-        defendantToCreate,
-        user,
-        transaction,
-      ),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.defendantService.create(
+      theCase,
+      defendantToCreate,
+      user,
+      transaction,
+    )
+  }
+
+  // Many defendants in one request, so the case is locked and read once. A
+  // request per defendant serializes on the case row and reads the whole case
+  // each time, which a case with tens of defendants does not survive.
+  @UseGuards(new CaseTypeGuard(indictmentCases))
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    publicProsecutorStaffRule,
+    publicProsecutionProsecutorUpdateDefendantsRule,
+  )
+  @Patch()
+  @ApiOkResponse({
+    type: Defendant,
+    isArray: true,
+    description: 'Updates many defendants of a case',
+  })
+  async updateMany(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @Body() defendantsToUpdate: UpdateDefendantsDto,
+  ): Promise<Defendant[]> {
+    this.logger.debug(
+      `Updating ${defendantsToUpdate.defendants.length} defendants of case ${caseId}`,
+    )
+
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.defendantService.updateMany(
+      theCase,
+      defendantsToUpdate.defendants,
+      user,
+      transaction,
+      defendantsToUpdate.registerVerdictAppeal,
     )
   }
 
@@ -99,7 +174,7 @@ export class DefendantController {
     type: Defendant,
     description: 'Updates a defendant',
   })
-  update(
+  async update(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @CurrentHttpUser() user: User,
@@ -109,14 +184,14 @@ export class DefendantController {
   ): Promise<Defendant> {
     this.logger.debug(`Updating defendant ${defendantId} of case ${caseId}`)
 
-    return this.sequelize.transaction(async (transaction) =>
-      this.defendantService.update(
-        theCase,
-        defendant,
-        defendantToUpdate,
-        user,
-        transaction,
-      ),
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.defendantService.update(
+      theCase,
+      defendant,
+      defendantToUpdate,
+      user,
+      transaction,
     )
   }
 
@@ -132,8 +207,13 @@ export class DefendantController {
   ): Promise<DeleteDefendantResponse> {
     this.logger.debug(`Deleting defendant ${defendantId} of case ${caseId}`)
 
-    const deleted = await this.sequelize.transaction(async (transaction) =>
-      this.defendantService.delete(theCase, defendantId, user, transaction),
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    const deleted = await this.defendantService.delete(
+      theCase,
+      defendantId,
+      user,
+      transaction,
     )
 
     return { deleted }

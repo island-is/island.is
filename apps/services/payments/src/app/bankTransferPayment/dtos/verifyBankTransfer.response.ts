@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsEnum, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 
 import {
   BankTransferFailureReason,
@@ -7,7 +7,10 @@ import {
   BankTransferPendingStatus,
 } from '../bankTransfer.types'
 
-/** Status snapshot from verify. Server-side settlement is already triggered on SUCCESS. */
+/**
+ * Status snapshot from verify. Server-side settlement is already triggered on SUCCESS, and a debt
+ * flow only reports SUCCESS once FJS answered or the worker took over.
+ */
 export class VerifyBankTransferResponse {
   @IsEnum(BankTransferStatus)
   @ApiProperty({ enum: BankTransferStatus })
@@ -33,4 +36,10 @@ export class VerifyBankTransferResponse {
   @IsEnum(BankTransferFailureReason)
   @ApiPropertyOptional({ enum: BankTransferFailureReason })
   readonly failureReason?: BankTransferFailureReason
+
+  // A debt flow FJS rejected: the transfer settled, but the payment is refunded instead.
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly isClosed?: boolean
 }

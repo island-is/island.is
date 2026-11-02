@@ -1922,6 +1922,17 @@
               "example": "2024-01-15T10:30:00.000Z",
               "type": "string"
             }
+          },
+          {
+            "name": "toStartTime",
+            "required": false,
+            "in": "query",
+            "description": "Filter appointments to only include those starting before this time.",
+            "schema": {
+              "format": "date-time",
+              "example": "2024-01-15T10:30:00.000Z",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -2011,6 +2022,17 @@
             }
           },
           {
+            "name": "toStartTime",
+            "required": false,
+            "in": "query",
+            "description": "Filter appointments to only include those starting before this time.",
+            "schema": {
+              "format": "date-time",
+              "example": "2024-01-15T10:30:00.000Z",
+              "type": "string"
+            }
+          },
+          {
             "name": "limit",
             "required": false,
             "in": "query",
@@ -2036,6 +2058,16 @@
             "in": "query",
             "description": "Opaque cursor from a previous page: fetch the page before it. Not combinable with after.",
             "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "required": false,
+            "in": "query",
+            "description": "Sort direction of startTime, with id as the tie-break.",
+            "schema": {
+              "enum": ["ASC", "DESC"],
               "type": "string"
             }
           }
@@ -6089,6 +6121,11 @@
           }
         }
       },
+      "HcpTargetKind": {
+        "type": "string",
+        "enum": ["PRIMARY_CARE", "SERVICE", "TREATMENT"],
+        "description": "Which source the entry came from: the patient’s primary-care clinic, an organisation they can address, or one of their care teams. `TREATMENT` exactly when `treatmentId` is set. A clinic that is both the primary-care clinic and a listed organisation appears once, as `PRIMARY_CARE`. At most one entry is `PRIMARY_CARE`, and none when the patient has no usable registration."
+      },
       "RenewalTargetDto": {
         "type": "object",
         "properties": {
@@ -6107,9 +6144,17 @@
           "treatmentId": {
             "type": "string",
             "description": "Set when this target is one of the patient care teams, absent when it is a clinic. A care team and a clinic can share one nodeId + groupId and are then two entries here, so key the list on all three fields and send this value back when renewing. It is the same id GET /me/treatments returns."
+          },
+          "kind": {
+            "description": "Which source the entry came from: the patient’s primary-care clinic, an organisation they can address, or one of their care teams. `TREATMENT` exactly when `treatmentId` is set. A clinic that is both the primary-care clinic and a listed organisation appears once, as `PRIMARY_CARE`. At most one entry is `PRIMARY_CARE`, and none when the patient has no usable registration.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HcpTargetKind"
+              }
+            ]
           }
         },
-        "required": ["groupId", "nodeId", "name"]
+        "required": ["groupId", "nodeId", "name", "kind"]
       },
       "DispensationHistoryProductDto": {
         "type": "object",
@@ -9948,6 +9993,14 @@
             "type": "string",
             "description": "Set when this recipient is one of the patient care teams, absent when it is a clinic. A care team and a clinic can share one nodeId + groupId and are then two entries here, so **key the list on all three fields** and send this value back on create to say which was chosen. It is the same id GET /me/treatments returns."
           },
+          "kind": {
+            "description": "Which source the entry came from: the patient’s primary-care clinic, an organisation they can address, or one of their care teams. `TREATMENT` exactly when `treatmentId` is set. A clinic that is both the primary-care clinic and a listed organisation appears once, as `PRIMARY_CARE`. At most one entry is `PRIMARY_CARE`, and none when the patient has no usable registration.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HcpTargetKind"
+              }
+            ]
+          },
           "allowsCustomTitle": {
             "type": "boolean",
             "description": "True when the patient writes the conversation title themselves and sends no patientInitiatedTypeCode. Set for a treatment; false for a clinic or service recipient, which require a type."
@@ -10040,6 +10093,7 @@
           "nodeId",
           "groupId",
           "name",
+          "kind",
           "allowsCustomTitle",
           "allowsMessaging",
           "isCurrentlyWithinWindow",

@@ -2658,6 +2658,12 @@
               "type": "string",
               "format": "guid"
             }
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canDelete": {
+            "type": "boolean"
           }
         }
       },
@@ -2692,6 +2698,12 @@
           "estimatedIncome": {
             "type": "number",
             "format": "decimal"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canDelete": {
+            "type": "boolean"
           }
         }
       },
@@ -2711,6 +2723,9 @@
             "type": "string",
             "format": "guid"
           },
+          "employerName": {
+            "type": "string"
+          },
           "estimatedIncome": {
             "type": "number",
             "format": "decimal"
@@ -2723,6 +2738,15 @@
             "type": "string",
             "format": "",
             "nullable": true
+          },
+          "oneTimePayment": {
+            "type": "boolean"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canDelete": {
+            "type": "boolean"
           }
         }
       },
@@ -2750,6 +2774,15 @@
             "type": "string",
             "format": "",
             "nullable": true
+          },
+          "oneTimePayment": {
+            "type": "boolean"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canDelete": {
+            "type": "boolean"
           }
         }
       },
@@ -2777,6 +2810,15 @@
             "type": "string",
             "format": "",
             "nullable": true
+          },
+          "oneTimePayment": {
+            "type": "boolean"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canDelete": {
+            "type": "boolean"
           }
         }
       },
@@ -2795,6 +2837,12 @@
           "endDate": {
             "type": "string",
             "format": ""
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canDelete": {
+            "type": "boolean"
           }
         }
       },
@@ -2987,6 +3035,9 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "oneTimePayment": {
+            "type": "boolean"
           }
         }
       },
@@ -3022,6 +3073,9 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "oneTimePayment": {
+            "type": "boolean"
           }
         }
       },
@@ -3057,6 +3111,9 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "oneTimePayment": {
+            "type": "boolean"
           }
         }
       },

@@ -1,10 +1,8 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { useCallback, useEffect, useState } from 'react'
 
-import type {
-  Case,
-  CaseFile,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useUploadFileToCourtMutation } from './uploadFileToCourt.generated'
@@ -35,14 +33,18 @@ export interface CaseFileWithStatus extends CaseFile {
 }
 
 export const useCourtUpload = (
-  workingCase: Case,
-  setWorkingCase: Dispatch<SetStateAction<Case>>,
+  workingCase: WorkingCase,
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
 ) => {
   const [uploadState, setUploadState] = useState<UploadState>()
   const [uploadFileToCourtMutation] = useUploadFileToCourtMutation()
 
   const setFileUploadStatus = useCallback(
-    (theCase: Case, file: CaseFileWithStatus, status: CaseFileStatus) => {
+    (
+      theCase: WorkingCase,
+      file: CaseFileWithStatus,
+      status: CaseFileStatus,
+    ) => {
       const files = theCase.caseFiles as CaseFileWithStatus[]
 
       if (files) {

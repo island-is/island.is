@@ -117,9 +117,10 @@ export const m = {
       id: 'web.openinvoices:search.clearFilters',
       defaultMessage: 'Hreinsa allar síur',
     },
-    removeFilter: {
-      id: 'web.openinvoices:search.removeFilter',
-      defaultMessage: 'Fjarlægja {label} úr síu: {category}',
+    selectedCount: {
+      id: 'web.openinvoices:search.selectedCount',
+      defaultMessage:
+        '{category}: {count, plural, =0 {Ekkert atriði valið} one {# atriði valið} other {# atriði valin}}',
     },
     openFilter: {
       id: 'web.openinvoices:search.openFilter',

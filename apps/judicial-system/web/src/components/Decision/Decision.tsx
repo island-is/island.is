@@ -2,9 +2,9 @@ import type { FC } from 'react'
 import { useState } from 'react'
 
 import { RadioButton } from '@island.is/island-ui/core'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseDecision,
   CaseType,
@@ -12,7 +12,7 @@ import {
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
   acceptedLabelText: string
   rejectedLabelText: string
   partiallyAcceptedLabelText: string

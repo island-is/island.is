@@ -7,7 +7,7 @@ export const GET_TAXI_DRIVERS_WITH_OPERATING_LICENCE_QUERY = gql`
         id
         name
         stationName
-        stationId
+        callNumber
         representativeName
       }
     }

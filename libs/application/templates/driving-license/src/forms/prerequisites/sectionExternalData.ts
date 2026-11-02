@@ -16,6 +16,7 @@ import {
   AllPhotosFromThjodskraApi,
 } from '@island.is/application/types'
 import {
+  DrivingLicensePhotoLookupCheckApi,
   GlassesCheckApi,
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
@@ -71,6 +72,9 @@ export const sectionExternalData = buildSubSection({
         }),
         buildDataProviderItem({
           provider: QualityPhotoAndSignatureApi,
+        }),
+        buildDataProviderItem({
+          provider: DrivingLicensePhotoLookupCheckApi,
         }),
       ],
     }),

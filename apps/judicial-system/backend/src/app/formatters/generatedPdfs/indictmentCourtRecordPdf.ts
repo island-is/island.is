@@ -6,6 +6,7 @@ import {
   getRoleTitleFromCaseFileCategory,
   getWordByGender,
   lowercase,
+  stripPdfExtension,
   Word,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -302,7 +303,7 @@ export const createIndictmentCourtRecordPdf = (
         addNormalText(doc, 'Nr.', 'Times-Roman')
         addNumberedList(
           doc,
-          docs.map((d) => d.name.normalize()),
+          docs.map((d) => stripPdfExtension(d.name).normalize()),
           docs[0].documentOrder,
         )
       }

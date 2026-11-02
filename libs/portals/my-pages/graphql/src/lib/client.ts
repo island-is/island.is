@@ -1,6 +1,7 @@
 import {
   ApolloClient,
   ApolloLink,
+  FieldMergeFunction,
   HttpLink,
   InMemoryCache,
   Reference,
@@ -17,6 +18,29 @@ const httpLink = new HttpLink({
 })
 
 const retryLink = new RetryLink()
+
+const mergeCursorPage: FieldMergeFunction = (
+  existing,
+  incoming,
+  { args, readField },
+) => {
+  if (!existing || !args?.input?.after) {
+    return incoming
+  }
+  // Rows can shift between pages when the underlying list changes
+  const existingIds = new Set(
+    existing.data.map((ref: Reference) => readField('id', ref)),
+  )
+  return {
+    ...incoming,
+    data: [
+      ...existing.data,
+      ...incoming.data.filter(
+        (ref: Reference) => !existingIds.has(readField('id', ref)),
+      ),
+    ],
+  }
+}
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors)
@@ -68,24 +92,11 @@ export const client = new ApolloClient({
               'input',
               ['status', 'starred', 'search', 'treatmentId', 'limit'],
             ],
-            merge(existing, incoming, { args, readField }) {
-              if (!existing || !args?.input?.after) {
-                return incoming
-              }
-              // Rows can shift between pages when a new message arrives
-              const existingIds = new Set(
-                existing.data.map((ref: Reference) => readField('id', ref)),
-              )
-              return {
-                ...incoming,
-                data: [
-                  ...existing.data,
-                  ...incoming.data.filter(
-                    (ref: Reference) => !existingIds.has(readField('id', ref)),
-                  ),
-                ],
-              }
-            },
+            merge: mergeCursorPage,
+          },
+          healthDirectoratePaginatedAppointments: {
+            keyArgs: ['input', ['from', 'to', 'status', 'order', 'limit']],
+            merge: mergeCursorPage,
           },
         },
       },

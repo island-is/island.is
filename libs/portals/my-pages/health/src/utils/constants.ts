@@ -28,14 +28,12 @@ export const DATE_FORMAT_SHORT = 'd.M.yyyy'
 
 export const ATC_URL_BASE = 'https://www.serlyfjaskra.is/atc?category='
 
-export const DEFAULT_APPOINTMENTS_STATUS = [
+// Everything but CANCELLED. Both tabs use it, the date alone decides which
+// one an appointment lands in, so today's stay under upcoming whatever their
+// status
+export const VISIBLE_APPOINTMENTS_STATUS = [
   HealthDirectorateAppointmentStatus.BOOKED,
-]
-
-export const PAST_APPOINTMENTS_STATUS = [
-  HealthDirectorateAppointmentStatus.FULFILLED,
   HealthDirectorateAppointmentStatus.ARRIVED,
   HealthDirectorateAppointmentStatus.CHECKED_IN,
-  // Turns out sometimes appointments stay in the status BOOKED even though they have passed
-  HealthDirectorateAppointmentStatus.BOOKED,
+  HealthDirectorateAppointmentStatus.FULFILLED,
 ]

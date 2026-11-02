@@ -24,11 +24,8 @@ import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
 import { HealthPaths } from '../../lib/paths'
 import { messages } from '../../lib/messages'
-import {
-  CONTENT_GAP_LG,
-  DEFAULT_APPOINTMENTS_STATUS,
-  SECTION_GAP,
-} from '../../utils/constants'
+import { nextAppointmentsInput } from '../../utils/appointments'
+import { CONTENT_GAP_LG, SECTION_GAP } from '../../utils/constants'
 import {
   useGetAppointmentsOverviewQuery,
   useGetBloodTypeOverviewQuery,
@@ -162,7 +159,7 @@ export const HealthOverview = () => {
     error: appointmentsError,
   } = useGetAppointmentsOverviewQuery({
     variables: {
-      status: DEFAULT_APPOINTMENTS_STATUS, // Empty will fetch all statuses
+      input: nextAppointmentsInput(2),
     },
     skip: !showAppointments || !hasAppointmentsAccess,
   })
@@ -171,7 +168,7 @@ export const HealthOverview = () => {
     medicinePaymentOverviewData?.rightsPortalDrugPeriods[0] ?? null
 
   const firstTwoAppointments =
-    appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
+    appointmentsData?.healthDirectoratePaginatedAppointments?.data ?? []
 
   const { data: quickLinksData } = useQuery<Query, QueryGetNamespaceArgs>(
     GET_NAMESPACE_QUERY,

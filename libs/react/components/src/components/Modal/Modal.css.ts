@@ -31,10 +31,22 @@ export const modal = recipe({
         maxWidth: 'min(calc(100vw - 64px), 888px)',
 
         paddingTop: theme.spacing[9],
+
+        transition: 'max-width 200ms ease',
       },
     }),
   },
   variants: {
+    size: {
+      default: {},
+      small: {
+        ...themeUtils.responsiveStyle({
+          md: {
+            maxWidth: 'min(calc(100vw - 64px), 440px)',
+          },
+        }),
+      },
+    },
     noPaddingBottom: {
       false: {
         paddingBottom: theme.spacing[3],

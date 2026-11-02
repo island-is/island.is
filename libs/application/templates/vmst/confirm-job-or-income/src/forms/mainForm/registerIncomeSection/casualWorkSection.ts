@@ -5,23 +5,27 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
-  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { hasCasualWorkOverlap, isCasualWork } from '../../../utils/conditions'
 import {
-  getCurrentMonthEndDate,
+  getMaxRegistrationDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
 import { formatIsCurrency, formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
 import {
+  buildCanEditRow,
   buildCanRemoveRow,
   buildEmployerSSNDelete,
 } from '../../../utils/reconcile'
-import { getCasualWorkDefaults } from '../../../utils/persistedRows'
+import {
+  getCasualWorkDefaults,
+  toCasualWorkRow,
+} from '../../../utils/persistedRows'
 import {
   getCompanyNationalId,
   toOptionalString,
@@ -39,6 +43,7 @@ const casualWorkValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerCasualWork',
   incomeTypeKey: 'irregularJobs',
   persistedPath: 'income.data.irregularJobs',
+  toRow: toCasualWorkRow,
   callbackId: 'CasualWorkValidation',
   messages: {
     fallbackErrorMessage: 'casualWorkValidationErrorMessage',
@@ -67,20 +72,7 @@ export const casualWorkSection = buildSubSection({
       title: m.application.casualWorkHeading,
       description: m.application.casualWorkDescription,
       children: [
-        buildDescriptionField({
-          title: () => {
-            const month = new Date().toLocaleDateString('is-IS', {
-              month: 'long',
-            })
-            return {
-              ...m.application.incomeTitle,
-              values: { month },
-            }
-          },
-          description: m.application.incomeDescriptionLink,
-          titleVariant: 'h4',
-          id: 'casualWorkdDescription',
-        }),
+        ...buildIncomeDescriptionFields('casualWorkdDescription'),
         buildTableRepeaterField({
           id: 'registerCasualWork',
           addItemButtonText: m.application.addLine,
@@ -90,7 +82,10 @@ export const casualWorkSection = buildSubSection({
           canRemoveRow: buildCanRemoveRow(
             casualWorkValidationProps.persistedPath,
           ),
-          removeButtonDisabledTooltipText: m.application.removeLineLocked,
+          removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
+          editField: true,
+          canEditRow: buildCanEditRow(casualWorkValidationProps.persistedPath),
+          editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           fields: {
             company: {
               component: 'nationalIdWithName',
@@ -109,14 +104,14 @@ export const casualWorkSection = buildSubSection({
                 `registerCasualWork[${index}].dateTo`,
               ],
               minDate: getCurrentMonthStartDate,
-              maxDate: getCurrentMonthEndDate,
+              maxDate: getMaxRegistrationDate,
             },
             dateTo: {
               component: 'date',
               label: m.application.dateTo,
               width: 'half',
               required: true,
-              maxDate: getCurrentMonthEndDate,
+              maxDate: getMaxRegistrationDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {

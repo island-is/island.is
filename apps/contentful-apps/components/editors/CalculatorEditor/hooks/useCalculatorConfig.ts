@@ -87,7 +87,15 @@ export const useCalculatorConfig = (
       inputSections: Array.isArray(stored.inputSections)
         ? stored.inputSections.map((section: CalculatorInputSection) => ({
             ...withKeys(section),
-            fields: (section.fields ?? []).map(withUid),
+            fields: (section.fields ?? []).map(
+              (field: CalculatorInputSectionField) => ({
+                ...withUid(field),
+                kind: field.kind ?? 'field',
+                ...(field.kind !== 'content'
+                  ? { size: field.size ?? 'medium' }
+                  : {}),
+              }),
+            ),
           }))
         : [],
       outputTotal: stored.outputTotal
@@ -127,7 +135,7 @@ export const useCalculatorConfig = (
     const duplicates = new Set<string>()
     inputSections.forEach((section) =>
       section.fields.forEach((field) => {
-        if (!field.key) return
+        if (field.kind !== 'field' || !field.key) return
         const first = seen.get(field.key)
         if (first) {
           duplicates.add(first)
@@ -149,7 +157,7 @@ export const useCalculatorConfig = (
       const metadataMismatch = validateMetadata(config)
       setMetadataInvalid(metadataMismatch)
 
-      /* Combines all publish-blocking conditions. */
+      /* Combines all invalid conditions. */
       sdk.field.setInvalid(
         schemaInvalid || metadataMismatch || duplicateUids.size > 0,
       )
@@ -271,7 +279,20 @@ export const useCalculatorConfig = (
     remove: () => mapInput((current) => current.filter((_, i) => i !== index)),
     addField: () =>
       mapInputFields(index, (fields) =>
-        fields.concat({ uid: generateKey(), key: '', span: 12 }),
+        fields.concat({
+          uid: generateKey(),
+          kind: 'field',
+          key: '',
+          size: 'medium',
+        }),
+      ),
+    addContentField: () =>
+      mapInputFields(index, (fields) =>
+        fields.concat({
+          uid: generateKey(),
+          kind: 'content',
+          content: { is: '' },
+        }),
       ),
     updateField: (fieldIndex, patch) =>
       mapInputFields(index, (fields) =>

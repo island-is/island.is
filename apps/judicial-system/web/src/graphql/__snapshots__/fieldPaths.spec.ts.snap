@@ -137,11 +137,18 @@ Array [
   "case.childCase.origin",
   "case.childCase.policeCaseNumbers",
   "case.childCase.type",
+  "case.civilClaimants.appealSpokespersonEmail",
+  "case.civilClaimants.appealSpokespersonIsLawyer",
+  "case.civilClaimants.appealSpokespersonName",
+  "case.civilClaimants.appealSpokespersonNationalId",
+  "case.civilClaimants.appealSpokespersonPhoneNumber",
   "case.civilClaimants.caseFilesSharedWithSpokesperson",
   "case.civilClaimants.caseId",
   "case.civilClaimants.defendantIds",
+  "case.civilClaimants.hasAppealSpokesperson",
   "case.civilClaimants.hasSpokesperson",
   "case.civilClaimants.id",
+  "case.civilClaimants.isAppealSpokespersonConfirmed",
   "case.civilClaimants.isSpokespersonConfirmed",
   "case.civilClaimants.name",
   "case.civilClaimants.nationalId",
@@ -249,6 +256,7 @@ Array [
   "case.defendants.indictmentReviewDecision",
   "case.defendants.isAlternativeService",
   "case.defendants.isAppealDefenderConfirmed",
+  "case.defendants.isAppealDefenderWaived",
   "case.defendants.isClosedWithoutEnforcement",
   "case.defendants.isDefenderChoiceConfirmed",
   "case.defendants.isDrivingLicenseSuspended",
@@ -333,6 +341,7 @@ Array [
   "case.indictmentCounts.vehicleRegistrationNumber",
   "case.indictmentDecision",
   "case.indictmentDeniedExplanation",
+  "case.indictmentHash",
   "case.indictmentIntroduction",
   "case.indictmentReviewReturnedExplanation",
   "case.indictmentReviewedDate",
@@ -429,7 +438,10 @@ Array [
   "case.mergedCases.defendants.defenderPhoneNumber",
   "case.mergedCases.defendants.gender",
   "case.mergedCases.defendants.id",
+  "case.mergedCases.defendants.indictmentCancelledOrDismissedState.time",
+  "case.mergedCases.defendants.indictmentCancelledOrDismissedState.type",
   "case.mergedCases.defendants.isDefenderChoiceConfirmed",
+  "case.mergedCases.defendants.isSentToPrisonAdmin",
   "case.mergedCases.defendants.isVerdictAppealDeadlineExpired",
   "case.mergedCases.defendants.name",
   "case.mergedCases.defendants.nationalId",
@@ -439,6 +451,7 @@ Array [
   "case.mergedCases.defendants.requestedDefenderChoice",
   "case.mergedCases.defendants.requestedDefenderName",
   "case.mergedCases.defendants.requestedDefenderNationalId",
+  "case.mergedCases.defendants.sentToPrisonAdminDate",
   "case.mergedCases.defendants.subpoenaType",
   "case.mergedCases.defendants.subpoenas.caseId",
   "case.mergedCases.defendants.subpoenas.comment",
@@ -519,7 +532,6 @@ Array [
   "case.notifications.type",
   "case.openedByDefender",
   "case.origin",
-  "case.originalAncestorId",
   "case.parentCase.caseFiles.civilClaimantId",
   "case.parentCase.caseFiles.created",
   "case.parentCase.caseFiles.defendantId",
@@ -670,8 +682,10 @@ Array [
   "case.unfiledCourtDocuments.name",
   "case.unfiledCourtDocuments.submittedBy",
   "case.validToDate",
+  "case.verdictAppealCase.appealCaseNumber",
   "case.verdictAppealCase.appealConclusion",
   "case.verdictAppealCase.appealEventLogs.appealOrigin",
+  "case.verdictAppealCase.appealEventLogs.civilClaimantId",
   "case.verdictAppealCase.appealEventLogs.created",
   "case.verdictAppealCase.appealEventLogs.defendantId",
   "case.verdictAppealCase.appealEventLogs.eventType",
@@ -687,8 +701,35 @@ Array [
   "case.verdictAppealCase.appealJudge3.id",
   "case.verdictAppealCase.appealJudge3.name",
   "case.verdictAppealCase.appealState",
+  "case.verdictAppealCase.appealSummonses.confirmedDate",
+  "case.verdictAppealCase.appealSummonses.created",
+  "case.verdictAppealCase.appealSummonses.defendants.appellantSide",
+  "case.verdictAppealCase.appealSummonses.defendants.claims",
+  "case.verdictAppealCase.appealSummonses.defendants.defendantId",
+  "case.verdictAppealCase.appealSummonses.defendants.id",
+  "case.verdictAppealCase.appealSummonses.id",
+  "case.verdictAppealCase.appealSummonses.sentToCourtOfAppealsDate",
   "case.verdictAppealCase.appealType",
+  "case.verdictAppealCase.courtSessions.courtRoom",
+  "case.verdictAppealCase.courtSessions.created",
+  "case.verdictAppealCase.courtSessions.id",
+  "case.verdictAppealCase.courtSessions.sessionDate",
+  "case.verdictAppealCase.courtSessions.sessionType",
   "case.verdictAppealCase.id",
+  "case.verdictAppealCase.sentAppealSummonses.confirmedDate",
+  "case.verdictAppealCase.sentAppealSummonses.created",
+  "case.verdictAppealCase.sentAppealSummonses.defendants.appellantSide",
+  "case.verdictAppealCase.sentAppealSummonses.defendants.claims",
+  "case.verdictAppealCase.sentAppealSummonses.defendants.defendantId",
+  "case.verdictAppealCase.sentAppealSummonses.defendants.id",
+  "case.verdictAppealCase.sentAppealSummonses.id",
+  "case.verdictAppealCase.sentAppealSummonses.sentToCourtOfAppealsDate",
+  "case.verdictAppealCase.statementDeadlines.civilClaimantId",
+  "case.verdictAppealCase.statementDeadlines.created",
+  "case.verdictAppealCase.statementDeadlines.deadline",
+  "case.verdictAppealCase.statementDeadlines.defendantId",
+  "case.verdictAppealCase.statementDeadlines.id",
+  "case.verdictAppealCase.statementDeadlines.modified",
   "case.victims.hasLawyer",
   "case.victims.hasNationalId",
   "case.victims.id",
@@ -756,6 +797,13 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths ConfirmAppealSummons 1`] = `
+Array [
+  "confirmAppealSummons.confirmedDate",
+  "confirmAppealSummons.id",
+]
+`;
+
 exports[`GraphQL operations select these field paths ConfirmRulingOrder 1`] = `
 Array [
   "confirmRulingOrder.id",
@@ -778,9 +826,31 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths CreateAppealCourtSession 1`] = `
+Array [
+  "createAppealCourtSession.courtRoom",
+  "createAppealCourtSession.created",
+  "createAppealCourtSession.id",
+  "createAppealCourtSession.sessionDate",
+  "createAppealCourtSession.sessionType",
+]
+`;
+
 exports[`GraphQL operations select these field paths CreateAppealEventLog 1`] = `
 Array [
   "createAppealEventLog.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateAppealSummons 1`] = `
+Array [
+  "createAppealSummons.confirmedDate",
+  "createAppealSummons.defendants.appellantSide",
+  "createAppealSummons.defendants.claims",
+  "createAppealSummons.defendants.defendantId",
+  "createAppealSummons.defendants.id",
+  "createAppealSummons.id",
+  "createAppealSummons.sentToCourtOfAppealsDate",
 ]
 `;
 
@@ -959,6 +1029,18 @@ Array [
   "currentUser.user.nationalId",
   "currentUser.user.role",
   "currentUser.user.title",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteAppealCourtSession 1`] = `
+Array [
+  "deleteAppealCourtSession.deleted",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteAppealSummons 1`] = `
+Array [
+  "deleteAppealSummons.deleted",
 ]
 `;
 
@@ -1165,11 +1247,18 @@ Array [
   "limitedAccessCase.caseResentExplanation",
   "limitedAccessCase.caseSentToCourtDate",
   "limitedAccessCase.childCase.id",
+  "limitedAccessCase.civilClaimants.appealSpokespersonEmail",
+  "limitedAccessCase.civilClaimants.appealSpokespersonIsLawyer",
+  "limitedAccessCase.civilClaimants.appealSpokespersonName",
+  "limitedAccessCase.civilClaimants.appealSpokespersonNationalId",
+  "limitedAccessCase.civilClaimants.appealSpokespersonPhoneNumber",
   "limitedAccessCase.civilClaimants.caseFilesSharedWithSpokesperson",
   "limitedAccessCase.civilClaimants.caseId",
   "limitedAccessCase.civilClaimants.defendantIds",
+  "limitedAccessCase.civilClaimants.hasAppealSpokesperson",
   "limitedAccessCase.civilClaimants.hasSpokesperson",
   "limitedAccessCase.civilClaimants.id",
+  "limitedAccessCase.civilClaimants.isAppealSpokespersonConfirmed",
   "limitedAccessCase.civilClaimants.isSpokespersonConfirmed",
   "limitedAccessCase.civilClaimants.name",
   "limitedAccessCase.civilClaimants.nationalId",
@@ -1242,6 +1331,7 @@ Array [
   "limitedAccessCase.defendants.indictmentReviewDecision",
   "limitedAccessCase.defendants.isAlternativeService",
   "limitedAccessCase.defendants.isAppealDefenderConfirmed",
+  "limitedAccessCase.defendants.isAppealDefenderWaived",
   "limitedAccessCase.defendants.isDefenderChoiceConfirmed",
   "limitedAccessCase.defendants.isRegisteredInPrisonSystem",
   "limitedAccessCase.defendants.isSentToPrisonAdmin",
@@ -1653,11 +1743,18 @@ Array [
 
 exports[`GraphQL operations select these field paths LimitedAccessUpdateCase 1`] = `
 Array [
+  "limitedAccessUpdateCase.civilClaimants.appealSpokespersonEmail",
+  "limitedAccessUpdateCase.civilClaimants.appealSpokespersonIsLawyer",
+  "limitedAccessUpdateCase.civilClaimants.appealSpokespersonName",
+  "limitedAccessUpdateCase.civilClaimants.appealSpokespersonNationalId",
+  "limitedAccessUpdateCase.civilClaimants.appealSpokespersonPhoneNumber",
   "limitedAccessUpdateCase.civilClaimants.caseFilesSharedWithSpokesperson",
   "limitedAccessUpdateCase.civilClaimants.caseId",
   "limitedAccessUpdateCase.civilClaimants.defendantIds",
+  "limitedAccessUpdateCase.civilClaimants.hasAppealSpokesperson",
   "limitedAccessUpdateCase.civilClaimants.hasSpokesperson",
   "limitedAccessUpdateCase.civilClaimants.id",
+  "limitedAccessUpdateCase.civilClaimants.isAppealSpokespersonConfirmed",
   "limitedAccessUpdateCase.civilClaimants.isSpokespersonConfirmed",
   "limitedAccessUpdateCase.civilClaimants.name",
   "limitedAccessUpdateCase.civilClaimants.nationalId",
@@ -1878,9 +1975,27 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths SendAppealSummonsToCourtOfAppeals 1`] = `
+Array [
+  "sendAppealSummonsToCourtOfAppeals.id",
+  "sendAppealSummonsToCourtOfAppeals.sentToCourtOfAppealsDate",
+]
+`;
+
 exports[`GraphQL operations select these field paths SendNotification 1`] = `
 Array [
   "sendNotification.notificationSent",
+]
+`;
+
+exports[`GraphQL operations select these field paths SetAppealStatementDeadline 1`] = `
+Array [
+  "setAppealStatementDeadline.civilClaimantId",
+  "setAppealStatementDeadline.created",
+  "setAppealStatementDeadline.deadline",
+  "setAppealStatementDeadline.defendantId",
+  "setAppealStatementDeadline.id",
+  "setAppealStatementDeadline.modified",
 ]
 `;
 
@@ -1955,13 +2070,42 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths UpdateAppealCourtSession 1`] = `
+Array [
+  "updateAppealCourtSession.courtRoom",
+  "updateAppealCourtSession.created",
+  "updateAppealCourtSession.id",
+  "updateAppealCourtSession.sessionDate",
+  "updateAppealCourtSession.sessionType",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateAppealSummons 1`] = `
+Array [
+  "updateAppealSummons.confirmedDate",
+  "updateAppealSummons.defendants.appellantSide",
+  "updateAppealSummons.defendants.claims",
+  "updateAppealSummons.defendants.defendantId",
+  "updateAppealSummons.defendants.id",
+  "updateAppealSummons.id",
+  "updateAppealSummons.sentToCourtOfAppealsDate",
+]
+`;
+
 exports[`GraphQL operations select these field paths UpdateCase 1`] = `
 Array [
+  "updateCase.civilClaimants.appealSpokespersonEmail",
+  "updateCase.civilClaimants.appealSpokespersonIsLawyer",
+  "updateCase.civilClaimants.appealSpokespersonName",
+  "updateCase.civilClaimants.appealSpokespersonNationalId",
+  "updateCase.civilClaimants.appealSpokespersonPhoneNumber",
   "updateCase.civilClaimants.caseFilesSharedWithSpokesperson",
   "updateCase.civilClaimants.caseId",
   "updateCase.civilClaimants.defendantIds",
+  "updateCase.civilClaimants.hasAppealSpokesperson",
   "updateCase.civilClaimants.hasSpokesperson",
   "updateCase.civilClaimants.id",
+  "updateCase.civilClaimants.isAppealSpokespersonConfirmed",
   "updateCase.civilClaimants.isSpokespersonConfirmed",
   "updateCase.civilClaimants.name",
   "updateCase.civilClaimants.nationalId",
@@ -2045,6 +2189,12 @@ Array [
 exports[`GraphQL operations select these field paths UpdateDefendant 1`] = `
 Array [
   "updateDefendant.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateDefendants 1`] = `
+Array [
+  "updateDefendants.id",
 ]
 `;
 

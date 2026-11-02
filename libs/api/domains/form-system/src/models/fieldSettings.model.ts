@@ -82,6 +82,9 @@ export class FieldSettings {
   @Field(() => String, { nullable: true })
   assetType?: string
 
+  @Field(() => String, { nullable: true })
+  familyType?: string
+
   @Field(() => Boolean, { nullable: true })
   hasDescription?: boolean
 

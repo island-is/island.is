@@ -44,14 +44,34 @@ const filterText = (
     : { is: value!.is }
 }
 
-/* Treats whitespace-only rich text as empty. */
+const filterOptionLabels = (
+  value: Record<string, CalculatorLocalizedText | undefined> | undefined,
+): Record<string, CalculatorLocalizedText> | undefined => {
+  if (!value) return undefined
+  const entries = Object.entries(value).flatMap(
+    ([option, text]): [string, CalculatorLocalizedText][] => {
+      const filtered = filterText(text)
+      return filtered ? [[option, filtered]] : []
+    },
+  )
+  return entries.length > 0 ? Object.fromEntries(entries) : undefined
+}
+
+/* The markdown serializer writes an empty paragraph as a literal `<br>`. */
+export const isBlankMarkdown = (value: string | undefined) =>
+  !value?.replace(/<br>/g, '').trim()
+
+const trimTrailingBreaks = (value: string) =>
+  value.replace(/(\s*<br>)+\s*$/, '').trimEnd()
+
 const filterMarkdown = (
   value: CalculatorLocalizedMarkdown | undefined,
 ): CalculatorLocalizedMarkdown | undefined => {
-  if (!hasText(value?.is)) return undefined
-  return hasText(value?.en)
-    ? { is: value!.is, en: value!.en }
-    : { is: value!.is }
+  if (!value || isBlankMarkdown(value.is)) return undefined
+  const is = trimTrailingBreaks(value.is)
+  return value.en && !isBlankMarkdown(value.en)
+    ? { is, en: trimTrailingBreaks(value.en) }
+    : { is }
 }
 
 const filterInputSections = (
@@ -81,17 +101,26 @@ const filterInputSections = (
         : undefined
 
     const fields = section.fields
-      .filter((field) => hasText(field.key))
+      .filter((field) =>
+        field.kind === 'content'
+          ? !isBlankMarkdown(field.content?.is)
+          : hasText(field.key),
+      )
       .map((field, fieldIndex) => {
         identity.set(`inputSections.${sectionIndex}.fields.${fieldIndex}`, {
           tab: 'input',
           sectionKey: section.key,
           fieldUid: field.uid,
         })
+        if (field.kind === 'content') {
+          return { ...field, content: filterMarkdown(field.content)! }
+        }
         return {
           ...field,
           label: filterText(field.label),
           placeholder: filterText(field.placeholder),
+          optionLabelsEnabled: field.optionLabelsEnabled || undefined,
+          optionLabels: filterOptionLabels(field.optionLabels),
         }
       })
 
@@ -114,7 +143,7 @@ const filterOutputSections = (
     const fields = section.fields
       .filter((field) =>
         field.kind === 'content'
-          ? hasText(field.content?.is)
+          ? !isBlankMarkdown(field.content?.is)
           : hasText(field.key),
       )
       .map((field, fieldIndex) => {

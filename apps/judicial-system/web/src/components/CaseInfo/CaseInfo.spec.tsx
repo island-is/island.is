@@ -1,10 +1,8 @@
 import { IntlProvider } from 'react-intl'
 import { render, screen } from '@testing-library/react'
 
-import type {
-  Case,
-  Defendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseState,
   CaseType,
@@ -62,7 +60,7 @@ describe('getDefendantLabel - RestrictionCase/InvestigationCase', () => {
 })
 
 describe('<CourtCaseInfo /> completed indictment', () => {
-  const renderCourtCaseInfo = (theCase: Case) =>
+  const renderCourtCaseInfo = (theCase: WorkingCase) =>
     render(
       <IntlProvider locale="is" onError={jest.fn}>
         <CourtCaseInfo workingCase={theCase} />
@@ -74,7 +72,7 @@ describe('<CourtCaseInfo /> completed indictment', () => {
       type: CaseType.INDICTMENT,
       state: CaseState.COMPLETED,
       rulingDate: '2026-09-23T12:00:00.000Z',
-    } as Case)
+    } as WorkingCase)
 
     expect(
       screen.getByText('Máli lokið 23. september 2026'),
@@ -86,7 +84,7 @@ describe('<CourtCaseInfo /> completed indictment', () => {
       type: CaseType.INDICTMENT,
       state: CaseState.COMPLETED,
       rulingDate: null,
-    } as Case)
+    } as WorkingCase)
 
     expect(screen.getByText('Máli lokið')).toBeInTheDocument()
     expect(screen.queryByText(/undefined/)).not.toBeInTheDocument()

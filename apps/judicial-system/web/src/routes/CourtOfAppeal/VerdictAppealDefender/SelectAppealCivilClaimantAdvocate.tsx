@@ -20,7 +20,10 @@ import type {
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCivilClaimants } from '@island.is/judicial-system-web/src/utils/hooks'
-import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import {
+  stack,
+  twoColumn,
+} from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
   getAppealSpokesperson,
@@ -60,7 +63,17 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
   const hasSpokesperson = getHasAppealSpokesperson(civilClaimant)
   const isLawyer = getAppealSpokespersonIsLawyer(civilClaimant)
   const advocate = getAppealSpokesperson(civilClaimant)
-  const advocateTitle = isLawyer ? 'Lögmaður' : 'Réttargæslumaður'
+  // Icelandic declines the role noun, and the four places it appears below
+  // need three different cases: "Lögmaður staðfestur", but "Staðfesta
+  // lögmann" and "Breyta lögmanni". Lower-casing one nominative form for all
+  // of them is what produced "Staðfesta lögmaður".
+  const advocateNoun = isLawyer
+    ? { nominative: 'Lögmaður', accusative: 'lögmann', dative: 'lögmanni' }
+    : {
+        nominative: 'Réttargæslumaður',
+        accusative: 'réttargæslumann',
+        dative: 'réttargæslumanni',
+      }
 
   const send = (update: UpdateCivilClaimant) =>
     setAndSendCivilClaimantToServer(
@@ -133,7 +146,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
         </Box>
         {hasSpokesperson ? (
           <>
-            <Box display="flex" columnGap={2}>
+            <div className={twoColumn({ gap: 2 })}>
               <RadioButton
                 name={`appealAdvocateType-${civilClaimant.id}`}
                 id={`appeal-civil-claimant-lawyer-${civilClaimant.id}`}
@@ -154,7 +167,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
                 onChange={() => send({ appealSpokespersonIsLawyer: false })}
                 disabled={isConfirmed}
               />
-            </Box>
+            </div>
             <InputAdvocate
               advocateType={isLawyer ? 'lawyer' : 'legalRightsProtector'}
               name={advocate.name}
@@ -220,7 +233,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
         )}
         {isConfirmed && advocate.name && (
           <AlertMessage
-            title={`${advocateTitle} staðfestur`}
+            title={`${advocateNoun.nominative} staðfestur`}
             message={`${advocate.name} hefur fengið tilkynningu um skráningu í tölvupósti.`}
             type="success"
           />
@@ -234,7 +247,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
               }
               onClick={() => setDisplayModal(true)}
             >
-              {`Staðfesta ${advocateTitle.toLowerCase()}`}
+              Staðfesta val
             </Button>
           </Box>
         )}
@@ -248,19 +261,18 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
       </BlueBox>
       {displayModal && (
         <Modal
-          title={
-            isConfirmed
-              ? `Breyta ${advocateTitle.toLowerCase()}`
-              : `Staðfesta ${advocateTitle.toLowerCase()}`
-          }
+          title={isConfirmed ? `Breyta ${advocateNoun.dative}` : 'Staðfesta'}
           text={
             isConfirmed
               ? 'Ef þú breytir skráningunni þarf að staðfesta hana að nýju.'
-              : `Með því að staðfesta skráir þú ${
+              : // Only a réttargæslumaður is appointed by letter. A lögmaður the
+                // claimant retained is told by mail alone, so the modal must not
+                // promise them a letter.
+                `Valinn ${advocateNoun.nominative.toLowerCase()}, ${
                   advocate.name
-                } sem ${advocateTitle.toLowerCase()} ${
-                  civilClaimant.name
-                } fyrir Landsrétti.`
+                }, mun fá ${
+                  isLawyer ? '' : 'skipunarbréf og '
+                }aðgang að málinu í Réttarvörslugátt`
           }
           buttons={[
             {
@@ -269,7 +281,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
               variant: 'ghost',
             },
             {
-              text: isConfirmed ? 'Breyta' : 'Staðfesta',
+              text: isConfirmed ? 'Breyta' : 'Staðfesta val',
               onClick: toggleConfirmed,
             },
           ]}

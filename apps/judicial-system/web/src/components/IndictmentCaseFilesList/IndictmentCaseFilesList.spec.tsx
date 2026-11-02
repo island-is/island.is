@@ -302,4 +302,68 @@ describe('IndictmentCaseFilesList', () => {
       screen.queryByText(/Fyrirkall Defendant Two/),
     ).not.toBeInTheDocument()
   })
+
+  it('should show a defender the subpoenas of their defendants in split cases', async () => {
+    render(
+      <IntlProviderWrapper>
+        <ApolloProviderWrapper>
+          <UserContext.Provider
+            value={{
+              user: {
+                id: 'defender-user-id',
+                role: UserRole.DEFENDER,
+                nationalId: '1234567890',
+                name: 'Defender',
+              },
+            }}
+          >
+            <IndictmentCaseFilesList
+              workingCase={{
+                ...mockCase(CaseType.INDICTMENT),
+                defendants: [],
+                splitCases: [
+                  {
+                    id: 'split-case-1',
+                    defendants: [
+                      {
+                        id: 'split-defendant-1',
+                        name: 'Split Defendant One',
+                        isDefenderChoiceConfirmed: true,
+                        defenderNationalId: '1234567890',
+                        subpoenas: [
+                          {
+                            id: 'split-subpoena-1',
+                            created: '2026-01-17T12:00:00.000Z',
+                          },
+                        ],
+                      },
+                      {
+                        id: 'split-defendant-2',
+                        name: 'Split Defendant Two',
+                        isDefenderChoiceConfirmed: true,
+                        defenderNationalId: '0987654321',
+                        subpoenas: [
+                          {
+                            id: 'split-subpoena-2',
+                            created: '2026-01-18T12:00:00.000Z',
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              }}
+            />
+          </UserContext.Provider>
+        </ApolloProviderWrapper>
+      </IntlProviderWrapper>,
+    )
+
+    expect(
+      await screen.findByText(/Fyrirkall Split Defendant One/),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByText(/Fyrirkall Split Defendant Two/),
+    ).not.toBeInTheDocument()
+  })
 })

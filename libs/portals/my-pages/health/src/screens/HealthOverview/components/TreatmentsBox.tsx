@@ -1,6 +1,6 @@
 import { Box, Hidden, Icon, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { LinkResolver, m, useIsMobile } from '@island.is/portals/my-pages/core'
+import { LinkResolver, m } from '@island.is/portals/my-pages/core'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { generatePath } from 'react-router-dom'
 import { messages } from '../../../lib/messages'
@@ -11,7 +11,6 @@ import * as styles from './TreatmentsBox.css'
 
 export const TreatmentsBox = () => {
   const { formatMessage } = useLocale()
-  const { isMobile } = useIsMobile()
   const { value: showTreatments } = useFeatureFlag(
     Features.isServicePortalHealthTreatmentsPageEnabled,
     false,
@@ -81,7 +80,7 @@ export const TreatmentsBox = () => {
                     icon="arrowForward"
                     type="outline"
                     color="blue400"
-                    size={isMobile ? 'small' : 'medium'}
+                    size="medium"
                   />
                 </Box>
               </Box>

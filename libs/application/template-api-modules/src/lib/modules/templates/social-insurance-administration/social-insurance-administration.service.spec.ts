@@ -1,6 +1,7 @@
 import { createApplication } from '@island.is/application/testing'
 import {
   SocialInsuranceAdministrationClientService,
+  SocialInsuranceAdministrationGeneralApplicationService,
   SocialInsuranceAdministrationMedicalAndRehabilitationService,
   SocialInsuranceAdministrationOldAgePensionService,
 } from '@island.is/clients/social-insurance-administration'
@@ -25,11 +26,15 @@ const mockConfig = {
 describe('SocialInsuranceAdministrationService', () => {
   let socialInsuranceAdministrationService: SocialInsuranceAdministrationService
   const sendMedicalAndRehabilitationPaymentsApplication = jest.fn()
+  const sendApplication = jest.fn()
+  const sendApplicationV2 = jest.fn()
 
   beforeEach(async () => {
     sendMedicalAndRehabilitationPaymentsApplication
       .mockReset()
       .mockResolvedValue({ applicationLineId: '0' })
+    sendApplication.mockReset().mockResolvedValue({ applicationLineId: '123' })
+    sendApplicationV2.mockReset().mockResolvedValue(undefined)
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -52,12 +57,15 @@ describe('SocialInsuranceAdministrationService', () => {
         },
         {
           provide: SocialInsuranceAdministrationClientService,
-          useClass: jest.fn(() => ({
-            sendApplication: () =>
-              Promise.resolve({
-                applicationLineId: '123',
-              }),
-          })),
+          useValue: {
+            sendApplication,
+          },
+        },
+        {
+          provide: SocialInsuranceAdministrationGeneralApplicationService,
+          useValue: {
+            sendApplicationV2,
+          },
         },
         {
           provide: SocialInsuranceAdministrationOldAgePensionService,
@@ -162,13 +170,46 @@ describe('SocialInsuranceAdministrationService', () => {
       .spyOn(socialInsuranceAdministrationService, 'getPdf')
       .mockImplementation(jest.fn())
 
-    const result = await socialInsuranceAdministrationService.sendApplication({
+    await socialInsuranceAdministrationService.sendApplication({
       application,
       auth,
       currentUserLocale: 'is',
     })
 
-    expect(result).toMatchObject({ applicationLineId: '123' })
+    expect(sendApplicationV2).toHaveBeenCalledWith(
+      auth,
+      expect.objectContaining({ applicationId: application.id }),
+      'householdsupplement',
+    )
+    expect(sendApplication).not.toHaveBeenCalled()
+  })
+
+  it('should send additional support for the elderly application', async () => {
+    const auth = createCurrentUser()
+    const application = createApplication({
+      answers: {
+        paymentInfo: {
+          bank: '222200123456',
+          taxLevel: '2',
+          personalAllowance: 'no',
+        },
+        period: { year: '2026', month: 'January' },
+      },
+      typeId: ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY,
+    })
+
+    await socialInsuranceAdministrationService.sendApplication({
+      application,
+      auth,
+      currentUserLocale: 'is',
+    })
+
+    expect(sendApplicationV2).toHaveBeenCalledWith(
+      auth,
+      expect.objectContaining({ applicationId: application.id }),
+      'additionalsupportfortheelderly',
+    )
+    expect(sendApplication).not.toHaveBeenCalled()
   })
 
   it('should stop an incomplete medical and rehabilitation payments application from being sent', async () => {

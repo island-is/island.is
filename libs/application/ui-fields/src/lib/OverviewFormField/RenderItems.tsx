@@ -9,6 +9,7 @@ import { SpanType } from '@island.is/island-ui/core/types'
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import { evaluateValueText } from './overviewUtils'
+import * as styles from './RenderItems.css'
 
 type Props = {
   item: KeyValueItem
@@ -126,7 +127,11 @@ export const RenderItems = ({
   )
 
   return (
-    <GridColumn key={i} span={span}>
+    <GridColumn
+      key={i}
+      span={span}
+      className={item.muted ? styles.muted : undefined}
+    >
       {item.lineAboveKeyText && (
         <Box paddingBottom={2}>
           <Divider weight="black" thickness="thick" />
@@ -138,6 +143,7 @@ export const RenderItems = ({
           <Tag
             variant={item.tag.variant ?? 'blue'}
             outlined={item.tag.outlined}
+            disabled
           >
             {formatTextWithLocale(
               item.tag.label,

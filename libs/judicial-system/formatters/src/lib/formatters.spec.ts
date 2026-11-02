@@ -8,6 +8,7 @@ import {
 
 import {
   applyDativeCaseToCourtName,
+  applyGenitiveCaseToCourtName,
   capitalize,
   containsHtml,
   displayFirstPlusRemaining,
@@ -24,7 +25,20 @@ import {
   readableIndictmentSubtypes,
   sanitize,
   splitStringByComma,
+  stripPdfExtension,
 } from './formatters'
+
+describe('stripPdfExtension', () => {
+  it('removes a trailing .pdf extension', () => {
+    expect(stripPdfExtension('Greinargerð.pdf')).toBe('Greinargerð')
+    expect(stripPdfExtension('Greinargerð.PDF')).toBe('Greinargerð')
+  })
+
+  it('leaves names without a pdf extension alone', () => {
+    expect(stripPdfExtension('Greinargerð')).toBe('Greinargerð')
+    expect(stripPdfExtension('skyrsla.docx')).toBe('skyrsla.docx')
+  })
+})
 
 describe('formatDate', () => {
   test('should return undefined if date parameter is undefined', () => {
@@ -502,6 +516,18 @@ describe('applyDativeCaseToCourtName', () => {
 
     // Assert
     expect(result).toBe(courtName)
+  })
+})
+
+describe('applyGenitiveCaseToCourtName', () => {
+  test('should return genitive case if court name contains "dómur"', () => {
+    expect(applyGenitiveCaseToCourtName('Héraðsdómur Reykjavíkur')).toBe(
+      'Héraðsdóms Reykjavíkur',
+    )
+  })
+
+  test('should return the same court name if name does not contain "dómur"', () => {
+    expect(applyGenitiveCaseToCourtName('Bull')).toBe('Bull')
   })
 })
 

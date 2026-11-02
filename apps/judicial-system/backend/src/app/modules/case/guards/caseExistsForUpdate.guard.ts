@@ -7,6 +7,7 @@ import { getOrCreateTransaction } from '../../../middleware'
 import { Case } from '../../repository'
 import { CaseService } from '../case.service'
 import { BaseCaseExistsGuard } from './baseCaseExists.guard'
+import { CaseLoadInclude } from './traceCaseLoad'
 
 /**
  * The locking sibling of `CaseExistsGuard`: it opens the request's transaction
@@ -38,6 +39,8 @@ import { BaseCaseExistsGuard } from './baseCaseExists.guard'
  */
 @Injectable()
 export class CaseExistsForUpdateGuard extends BaseCaseExistsGuard {
+  protected readonly include: CaseLoadInclude = 'case'
+
   constructor(
     @Inject(forwardRef(() => CaseService))
     private readonly caseService: CaseService,

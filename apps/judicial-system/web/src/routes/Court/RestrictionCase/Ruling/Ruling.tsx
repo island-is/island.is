@@ -72,24 +72,39 @@ export const Ruling = () => {
     setAndSendCaseToServer(
       [
         {
-          introduction: formatMessage(strings.sections.introduction.autofill, {
-            date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
-          }),
+          introduction: formatMessage(
+            {
+              id: strings.sections.introduction.autofill,
+              defaultMessage: strings.sections.introduction.autofill,
+            },
+            {
+              date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
+            },
+          ),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(
-            ruling.sections.courtCaseFacts.prefill,
+            {
+              id: ruling.sections.courtCaseFacts.prefill,
+              defaultMessage: ruling.sections.courtCaseFacts.prefill,
+            },
             {
               caseFacts: workingCase.caseFacts,
             },
           ),
           courtLegalArguments: formatMessage(
-            ruling.sections.courtLegalArguments.prefill,
+            {
+              id: ruling.sections.courtLegalArguments.prefill,
+              defaultMessage: ruling.sections.courtLegalArguments.prefill,
+            },
             { legalArguments: workingCase.legalArguments },
           ),
           ruling: !workingCase.parentCase
-            ? `\n${formatMessage(ruling.autofill, {
-                judgeName: workingCase.judge?.name,
-              })}`
+            ? `\n${formatMessage(
+                { id: ruling.autofill, defaultMessage: ruling.autofill },
+                {
+                  judgeName: workingCase.judge?.name,
+                },
+              )}`
             : isAcceptingCaseDecision(workingCase.decision)
             ? workingCase.parentCase.ruling
             : undefined,
@@ -268,7 +283,7 @@ export const Ruling = () => {
     >
       <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Accordion>
@@ -284,17 +299,15 @@ export const Ruling = () => {
           <Box component="section" marginBottom={5}></Box>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(strings.sections.introduction.title)}
+              {strings.sections.introduction.title}
             </Text>
           </Box>
           <Input
             data-testid="introduction"
             name="introduction"
-            label={formatMessage(strings.sections.introduction.label)}
+            label={strings.sections.introduction.label}
             value={introductionInput.value || ''}
-            placeholder={formatMessage(
-              strings.sections.introduction.placeholder,
-            )}
+            placeholder={strings.sections.introduction.placeholder}
             onChange={(evt) => introductionInput.onChange(evt.target.value)}
             onBlur={(evt) => introductionInput.onBlur(evt.target.value)}
             errorMessage={introductionInput.errorMessage}
@@ -307,17 +320,15 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(strings.sections.prosecutorDemands.title)}
+              {strings.sections.prosecutorDemands.title}
             </Text>
           </Box>
           <Input
             data-testid="prosecutorDemands"
             name="prosecutorDemands"
-            label={formatMessage(strings.sections.prosecutorDemands.label)}
+            label={strings.sections.prosecutorDemands.label}
             value={prosecutorDemandsInput.value || ''}
-            placeholder={formatMessage(
-              strings.sections.prosecutorDemands.placeholder,
-            )}
+            placeholder={strings.sections.prosecutorDemands.placeholder}
             onChange={(evt) =>
               prosecutorDemandsInput.onChange(evt.target.value)
             }
@@ -332,21 +343,17 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(strings.sections.courtCaseFacts.title)} `}
-              <Tooltip
-                text={formatMessage(strings.sections.courtCaseFacts.tooltip)}
-              />
+              {`${strings.sections.courtCaseFacts.title} `}
+              <Tooltip text={strings.sections.courtCaseFacts.tooltip} />
             </Text>
           </Box>
           <Box marginBottom={5}>
             <Input
               data-testid="courtCaseFacts"
               name="courtCaseFacts"
-              label={formatMessage(strings.sections.courtCaseFacts.label)}
+              label={strings.sections.courtCaseFacts.label}
               value={courtCaseFactsInput.value || ''}
-              placeholder={formatMessage(
-                strings.sections.courtCaseFacts.placeholder,
-              )}
+              placeholder={strings.sections.courtCaseFacts.placeholder}
               onChange={(evt) => courtCaseFactsInput.onChange(evt.target.value)}
               onBlur={(evt) => courtCaseFactsInput.onBlur(evt.target.value)}
               errorMessage={courtCaseFactsInput.errorMessage}
@@ -360,23 +367,17 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(strings.sections.courtLegalArguments.title)} `}
-              <Tooltip
-                text={formatMessage(
-                  strings.sections.courtLegalArguments.tooltip,
-                )}
-              />
+              {`${strings.sections.courtLegalArguments.title} `}
+              <Tooltip text={strings.sections.courtLegalArguments.tooltip} />
             </Text>
           </Box>
           <Box marginBottom={5}>
             <Input
               data-testid="courtLegalArguments"
               name="courtLegalArguments"
-              label={formatMessage(strings.sections.courtLegalArguments.label)}
+              label={strings.sections.courtLegalArguments.label}
               value={courtLegalArgumentsInput.value || ''}
-              placeholder={formatMessage(
-                strings.sections.courtLegalArguments.placeholder,
-              )}
+              placeholder={strings.sections.courtLegalArguments.placeholder}
               onChange={(evt) =>
                 courtLegalArgumentsInput.onChange(evt.target.value)
               }
@@ -394,7 +395,7 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(strings.sections.ruling.title)}
+              {strings.sections.ruling.title}
             </Text>
           </Box>
           <RulingInput />
@@ -402,17 +403,25 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(strings.sections.decision.title)}
+              {strings.sections.decision.title}
             </Text>
           </Box>
           <Box marginBottom={5}>
             <Decision
               workingCase={workingCase}
               acceptedLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision.acceptLabel,
+                {
+                  id: ruling.restrictionCases.sections.decision.acceptLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision.acceptLabel,
+                },
                 {
                   caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
                     {
                       caseType: workingCase.type,
                     },
@@ -420,10 +429,18 @@ export const Ruling = () => {
                 },
               )}
               rejectedLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision.rejectLabel,
+                {
+                  id: ruling.restrictionCases.sections.decision.rejectLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision.rejectLabel,
+                },
                 {
                   caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
                     {
                       caseType: workingCase.type,
                     },
@@ -431,10 +448,20 @@ export const Ruling = () => {
                 },
               )}
               partiallyAcceptedLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision.partiallyAcceptLabel,
+                {
+                  id: ruling.restrictionCases.sections.decision
+                    .partiallyAcceptLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision
+                      .partiallyAcceptLabel,
+                },
                 {
                   caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
                     {
                       caseType: workingCase.type,
                     },
@@ -442,10 +469,18 @@ export const Ruling = () => {
                 },
               )}
               dismissLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision.dismissLabel,
+                {
+                  id: ruling.restrictionCases.sections.decision.dismissLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision.dismissLabel,
+                },
                 {
                   caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
                     {
                       caseType: workingCase.type,
                     },
@@ -453,11 +488,20 @@ export const Ruling = () => {
                 },
               )}
               acceptingAlternativeTravelBanLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision
-                  .acceptingAlternativeTravelBanLabel,
+                {
+                  id: ruling.restrictionCases.sections.decision
+                    .acceptingAlternativeTravelBanLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision
+                      .acceptingAlternativeTravelBanLabel,
+                },
                 {
                   caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
                     {
                       caseType: workingCase.type,
                     },
@@ -514,15 +558,15 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {formatMessage(strings.sections.conclusion.title)}
+              {strings.sections.conclusion.title}
             </Text>
           </Box>
           <Input
             name="conclusion"
             data-testid="conclusion"
-            label={formatMessage(strings.sections.conclusion.label)}
+            label={strings.sections.conclusion.label}
             value={conclusionInput.value || ''}
-            placeholder={formatMessage(strings.sections.conclusion.placeholder)}
+            placeholder={strings.sections.conclusion.placeholder}
             onChange={(evt) => conclusionInput.onChange(evt.target.value)}
             textarea
             rows={7}

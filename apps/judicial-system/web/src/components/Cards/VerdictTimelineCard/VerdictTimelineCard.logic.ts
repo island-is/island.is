@@ -3,8 +3,8 @@ import {
   isCompletedCase,
   isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   Defendant,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -18,7 +18,7 @@ import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src
 // late appeal is allowed and confirmed on the page instead. The backend enforces
 // what it can again.
 export const canRegisterVerdictAppeal = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   defendant: Defendant,
   user: User | undefined,
 ): boolean =>

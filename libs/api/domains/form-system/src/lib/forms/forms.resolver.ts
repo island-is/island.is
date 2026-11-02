@@ -22,6 +22,7 @@ import {
   CreateFormInput,
   GetFormInput,
   GetFormsInput,
+  ImportFormInput,
   UpdateFormInput,
 } from '../../dto/form.input'
 import {
@@ -45,6 +46,22 @@ import { GetOrganizationAdminInput } from '../../dto/organization.input'
 @CodeOwner(CodeOwners.Advania)
 export class FormsResolver {
   constructor(private readonly formsService: FormsService) {}
+
+  @Query(() => String, { name: 'exportFormSystemForm' })
+  async exportForm(
+    @Args('input', { type: () => GetFormInput }) input: GetFormInput,
+    @CurrentUser() user: User,
+  ): Promise<string> {
+    return this.formsService.exportForm(user, input)
+  }
+
+  @Mutation(() => FormResponse, { name: 'importFormSystemForm' })
+  async importForm(
+    @Args('input', { type: () => ImportFormInput }) input: ImportFormInput,
+    @CurrentUser() user: User,
+  ): Promise<FormResponse> {
+    return this.formsService.importForm(user, input)
+  }
 
   @Mutation(() => FormResponse, {
     name: 'createFormSystemForm',

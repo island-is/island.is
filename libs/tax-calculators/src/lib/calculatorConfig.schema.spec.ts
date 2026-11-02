@@ -8,8 +8,16 @@ import {
 
 const field = (overrides = {}) => ({
   uid: 'f1',
+  kind: 'field' as const,
   key: 'income',
-  span: 12,
+  size: 'large' as const,
+  ...overrides,
+})
+
+const inputContent = (overrides = {}) => ({
+  uid: 'c1',
+  kind: 'content' as const,
+  content: { is: 'Leiðbeiningar um tekjur.' },
   ...overrides,
 })
 
@@ -549,10 +557,88 @@ describe('calculatorConfigSchema', () => {
     })
   })
 
-  describe('span', () => {
-    it.each([0, 13, 1.5])('rejects %p', (span) => {
+  describe('size', () => {
+    it.each(['small', 'medium', 'large'])('accepts %p', (size) => {
       const result = calculatorConfigSchema.safeParse(
-        config({ inputSections: [section({ fields: [field({ span })] })] }),
+        config({ inputSections: [section({ fields: [field({ size })] })] }),
+      )
+      expect(result.success).toBe(true)
+    })
+
+    it('rejects a size outside small, medium and large', () => {
+      const result = calculatorConfigSchema.safeParse(
+        config({
+          inputSections: [section({ fields: [field({ size: 'huge' })] })],
+        }),
+      )
+      expect(result.success).toBe(false)
+    })
+
+    it('rejects a value field with no size', () => {
+      const { size, ...withoutSize } = field()
+      const result = calculatorConfigSchema.safeParse(
+        config({ inputSections: [section({ fields: [withoutSize] })] }),
+      )
+      expect(result.success).toBe(false)
+    })
+
+    it('rejects the retired span property in place of size', () => {
+      const { size, ...withoutSize } = field()
+      const result = calculatorConfigSchema.safeParse(
+        config({
+          inputSections: [section({ fields: [{ ...withoutSize, span: 12 }] })],
+        }),
+      )
+      expect(result.success).toBe(false)
+    })
+  })
+
+  describe('input content rows', () => {
+    it('accepts a content row with no key or size', () => {
+      const result = calculatorConfigSchema.safeParse(
+        config({ inputSections: [section({ fields: [inputContent()] })] }),
+      )
+      expect(result.success).toBe(true)
+    })
+
+    it('rejects a content row with empty is markdown', () => {
+      const result = calculatorConfigSchema.safeParse(
+        config({
+          inputSections: [
+            section({
+              fields: [inputContent({ content: { is: '' } })],
+            }),
+          ],
+        }),
+      )
+      expect(result.success).toBe(false)
+    })
+
+    it('does not treat two content rows as duplicate keys', () => {
+      const result = calculatorConfigSchema.safeParse(
+        config({
+          inputSections: [
+            section({
+              fields: [
+                inputContent({ uid: 'c1' }),
+                inputContent({ uid: 'c2' }),
+              ],
+            }),
+          ],
+        }),
+      )
+      expect(result.success).toBe(true)
+    })
+
+    it('still rejects a duplicate uid on a content row', () => {
+      const result = calculatorConfigSchema.safeParse(
+        config({
+          inputSections: [
+            section({
+              fields: [field({ uid: 'x' }), inputContent({ uid: 'x' })],
+            }),
+          ],
+        }),
       )
       expect(result.success).toBe(false)
     })
@@ -594,6 +680,22 @@ describe('collectInputFieldKeys', () => {
       }),
     )
     expect(keys).toEqual(['income', 'pension', 'year'])
+  })
+
+  it('skips content rows', () => {
+    const keys = collectInputFieldKeys(
+      config({
+        inputSections: [
+          section({
+            fields: [
+              inputContent({ uid: 'c1' }),
+              field({ uid: 'f1', key: 'income' }),
+            ],
+          }),
+        ],
+      }),
+    )
+    expect(keys).toEqual(['income'])
   })
 })
 

@@ -30,6 +30,7 @@ import {
   CaseType,
   courtSubtypes,
   EventType,
+  getAppealJudges,
   getIndictmentAppealDeadline,
   getIndictmentCasePoliceState,
   isIndictmentCase,
@@ -53,7 +54,7 @@ import {
   getRequestPdfAsString,
   stripHtmlTags,
 } from '../../formatters'
-import { courtUpload, notifications } from '../../messages'
+import { courtUpload, formatIcuMessage, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import {
   CourtDocumentFolder,
@@ -231,7 +232,7 @@ export class InternalCaseService {
     buffer: Buffer,
     user: TUser,
   ): Promise<boolean> {
-    const fileName = this.formatMessage(courtUpload.ruling, {
+    const fileName = formatIcuMessage(courtUpload.ruling, {
       courtCaseNumber: theCase.courtCaseNumber,
       date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
     })
@@ -282,7 +283,7 @@ export class InternalCaseService {
         }
       }
 
-      const fileName = this.formatMessage(courtUpload.courtRecord, {
+      const fileName = formatIcuMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
         date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
       })
@@ -317,7 +318,7 @@ export class InternalCaseService {
   ): Promise<boolean> {
     return getRequestPdfAsBuffer(theCase, this.formatMessage)
       .then((pdf) => {
-        const fileName = this.formatMessage(courtUpload.request, {
+        const fileName = formatIcuMessage(courtUpload.request, {
           caseType: formatCaseType(theCase.type),
           date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
         })
@@ -370,7 +371,7 @@ export class InternalCaseService {
         }
       }
 
-      const fileName = this.formatMessage(courtUpload.courtRecord, {
+      const fileName = formatIcuMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
         date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
       })
@@ -818,7 +819,7 @@ export class InternalCaseService {
       .then(async (pdf) => {
         await this.refreshFormatMessage()
 
-        const fileName = this.formatMessage(courtUpload.indictment, {
+        const fileName = formatIcuMessage(courtUpload.indictment, {
           courtCaseNumber: theCase.courtCaseNumber,
         })
 
@@ -972,17 +973,14 @@ export class InternalCaseService {
         theCase.id,
         theCase.court?.name,
         theCase.courtCaseNumber,
-        this.formatMessage(notifications.courtRevokedIndictmentEmail.subject, {
+        formatIcuMessage(notifications.courtRevokedIndictmentEmail.subject, {
           courtCaseNumber: courtCaseNumber || 'NONE',
         }),
         stripHtmlTags(
-          `${this.formatMessage(
-            notifications.courtRevokedIndictmentEmail.body,
-            {
-              prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
-              caseNumber,
-            },
-          )} ${this.formatMessage(notifications.emailTail, {
+          `${formatIcuMessage(notifications.courtRevokedIndictmentEmail.body, {
+            prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
+            caseNumber,
+          })} ${formatIcuMessage(notifications.emailTail, {
             linkStart: `<a href="${this.config.clientUrl}">`,
             linkEnd: '</a>',
           })}`,
@@ -1156,7 +1154,7 @@ export class InternalCaseService {
       .then(async (pdf) => {
         await this.refreshFormatMessage()
 
-        const fileName = this.formatMessage(courtUpload.caseFilesRecord, {
+        const fileName = formatIcuMessage(courtUpload.caseFilesRecord, {
           policeCaseNumber,
         })
 
@@ -1304,6 +1302,9 @@ export class InternalCaseService {
     appealCase: AppealCase,
     user: TUser,
   ): Promise<DeliverResponse> {
+    // The court's robot takes three judges, presiding judge first.
+    const [judge1, judge2, judge3] = getAppealJudges(appealCase)
+
     return this.courtService
       .updateAppealCaseWithAssignedRoles(
         user,
@@ -1311,12 +1312,12 @@ export class InternalCaseService {
         appealCase.appealCaseNumber,
         appealCase.appealAssistant?.nationalId,
         appealCase.appealAssistant?.name,
-        appealCase.appealJudge1?.nationalId,
-        appealCase.appealJudge1?.name,
-        appealCase.appealJudge2?.nationalId,
-        appealCase.appealJudge2?.name,
-        appealCase.appealJudge3?.nationalId,
-        appealCase.appealJudge3?.name,
+        judge1?.nationalId,
+        judge1?.name,
+        judge2?.nationalId,
+        judge2?.name,
+        judge3?.nationalId,
+        judge3?.name,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
@@ -1678,26 +1679,6 @@ export class InternalCaseService {
       })
 
     return { delivered }
-  }
-
-  async findOriginalAncestor(theCase: Case): Promise<Case> {
-    let originalAncestor: Case = theCase
-
-    while (originalAncestor.parentCaseId) {
-      const parentCase = await this.caseRepositoryService.findById(
-        originalAncestor.parentCaseId,
-      )
-
-      if (!parentCase) {
-        throw new InternalServerErrorException(
-          `Original ancestor of case ${theCase.id} not found`,
-        )
-      }
-
-      originalAncestor = parentCase
-    }
-
-    return originalAncestor
   }
 
   // As this is only currently used by the digital mailbox API

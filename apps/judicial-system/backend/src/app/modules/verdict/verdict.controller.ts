@@ -39,8 +39,10 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
+import { getOrCreateTransaction } from '../../middleware'
 import {
   CaseCompletedGuard,
+  CaseExistsForUpdateGuard,
   CaseExistsGuard,
   CaseReadGuard,
   CaseTypeGuard,
@@ -58,14 +60,30 @@ import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { VerdictService } from './verdict.service'
 
+// The three mutating routes decide against the case row they read, and the
+// verdicts on it: createVerdicts upserts from the defendants' latest verdicts,
+// update from the verdict the guards found there, deliverCaseVerdict from every
+// defendant's service requirement. Each of them reads the case under FOR UPDATE
+// through CaseExistsForUpdateGuard, so the decision is made against a row no
+// one else can change until the request's transaction commits.
+//
+// That guard cannot sit at class level: getVerdict calls the police inside a
+// transaction of its own, and the service certificate route only reads, so
+// both keep the plain CaseExistsGuard - a lock held across an external call,
+// or taken for a read, is exactly what the locking guard must not do. Every
+// route therefore lists its own exists guard first, and CaseTypeGuard moves
+// with it: it decides from request.case, so it has to follow whichever guard
+// put the case there.
+//
+// RolesGuard stays at class level, ahead of the locking read. It can, because
+// every rule on this controller is a bare user role with no canActivate: none
+// of them reads request.case, so a caller a route has no rule for is turned
+// away before any case row is locked. verdictRolesRules.spec.ts pins the
+// assumption, so a rule that starts reading the case cannot silently reopen
+// the exposure.
 @Controller('api/case/:caseId')
 @ApiTags('verdicts')
-@UseGuards(
-  JwtAuthUserGuard,
-  RolesGuard,
-  CaseExistsGuard,
-  new CaseTypeGuard(indictmentCases),
-)
+@UseGuards(JwtAuthUserGuard, RolesGuard)
 export class VerdictController {
   constructor(
     private readonly verdictService: VerdictService,
@@ -76,7 +94,11 @@ export class VerdictController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseWriteGuard)
+  @UseGuards(
+    CaseExistsForUpdateGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+  )
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -94,17 +116,22 @@ export class VerdictController {
   ): Promise<Verdict[]> {
     this.logger.debug(`Creating verdicts for defendants in ${caseId}`)
 
-    return this.sequelize.transaction((transaction) =>
-      this.verdictService.createVerdicts(
-        caseId,
-        verdictsToCreate,
-        theCase.defendants ?? [],
-        transaction,
-      ),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.verdictService.createVerdicts(
+      caseId,
+      verdictsToCreate,
+      theCase.defendants ?? [],
+      transaction,
     )
   }
 
   @UseGuards(
+    CaseExistsForUpdateGuard,
+    new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
     DefendantExistsGuard,
     VerdictExistsGuard,
@@ -132,18 +159,21 @@ export class VerdictController {
       `Updating verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
-      this.verdictService.update(
-        verdict,
-        verdictToUpdate,
-        transaction,
-        theCase,
-        defendantId,
-      ),
+    // The transaction CaseExistsForUpdateGuard opened - see createVerdicts.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.verdictService.update(
+      verdict,
+      verdictToUpdate,
+      transaction,
+      theCase,
+      defendantId,
     )
   }
 
   @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
     DefendantExistsGuard,
     VerdictExistsGuard,
@@ -185,7 +215,13 @@ export class VerdictController {
     res.end(pdf)
   }
 
+  // Not a candidate for the guard-owned transaction: the sync below asks the
+  // police for the document's status inside the transaction, and a FOR UPDATE
+  // lock on the case row must not be held across an external call. The plain
+  // CaseExistsGuard and a transaction of the handler's own stay.
   @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
     DefendantExistsGuard,
     VerdictExistsGuard,
@@ -231,7 +267,12 @@ export class VerdictController {
     return currentVerdict
   }
 
-  @UseGuards(CaseWriteGuard, CaseCompletedGuard)
+  @UseGuards(
+    CaseExistsForUpdateGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    CaseCompletedGuard,
+  )
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -250,12 +291,13 @@ export class VerdictController {
       `Deliver case ${caseId} verdict to all affected defendants`,
     )
 
-    return await this.sequelize.transaction((transaction) =>
-      this.verdictService.addMessagesForCaseVerdictDeliveryToQueue(
-        theCase,
-        user,
-        transaction,
-      ),
+    // The transaction CaseExistsForUpdateGuard opened - see createVerdicts.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.verdictService.addMessagesForCaseVerdictDeliveryToQueue(
+      theCase,
+      user,
+      transaction,
     )
   }
 }

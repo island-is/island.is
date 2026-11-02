@@ -285,6 +285,27 @@ export class CaseRepositoryService {
     return originalAncestorId
   }
 
+  // The case the police files of a case family live under: the split origin of
+  // a split indictment, otherwise the root of the parentCaseId chain. Returns
+  // the given case itself when it is its own original ancestor.
+  async findOriginalAncestor(theCase: Case): Promise<Case> {
+    const originalAncestorId = await this.findOriginalAncestorId(theCase)
+
+    if (originalAncestorId === theCase.id) {
+      return theCase
+    }
+
+    const originalAncestor = await this.findById(originalAncestorId)
+
+    if (!originalAncestor) {
+      throw new InternalServerErrorException(
+        `Original ancestor of case ${theCase.id} not found`,
+      )
+    }
+
+    return originalAncestor
+  }
+
   // Walks the parentCaseId duplicate chain to the newest non-deleted leaf.
   // Split cases are out of scope for case police state.
   // Only id and state are loaded for children; callers must not rely on other fields.
@@ -604,18 +625,26 @@ export class CaseRepositoryService {
   // The case row on its own, with none of its associations read - what
   // MinimalCase describes. The routes that only decide against the case's own
   // columns take this read rather than the whole graph.
-  async findLiveMinimalById(id: string): Promise<Case | null> {
+  //
+  // findLiveMinimalByIdForUpdate is this read with the case row locked first.
+  async findLiveMinimalById(
+    id: string,
+    options?: { transaction?: Transaction },
+  ): Promise<Case | null> {
     try {
       this.logger.debug(`Finding minimal case ${id}`)
 
       const result = await this.caseModel.findOne({
         where: this.liveCaseWhere(id),
+        transaction: options?.transaction,
       })
 
       this.logger.debug(`Minimal case ${id} ${result ? 'found' : 'not found'}`)
 
       if (result) {
-        await this.resolvePoliceCaseNumbersForCaseGraph([result])
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction: options?.transaction,
+        })
       }
 
       return result
@@ -632,6 +661,8 @@ export class CaseRepositoryService {
    * for on the cases linked to this one, so their national id narrows those
    * joins - the caller decides who counts as a defence user, this decides what
    * such a user gets to read.
+   *
+   * findLimitedAccessByIdForUpdate is this read with the case row locked first.
    */
   async findLimitedAccessById(
     id: string,
@@ -838,6 +869,58 @@ export class CaseRepositoryService {
     }
 
     return this.findLiveById(id, { transaction })
+  }
+
+  /**
+   * findLiveMinimalById with the case row locked first: the read for a route
+   * that decides against the case's own columns and needs no one else to
+   * change them until it commits. The lock is a query of its own for the
+   * reason findLiveByIdForUpdate gives, and so that the two for-update reads
+   * stay the same shape - the minimal read has no joins to lock through, but
+   * a lock folded into it would silently stop covering the row the day it
+   * gains one.
+   */
+  async findLiveMinimalByIdForUpdate(
+    id: string,
+    transaction: Transaction,
+  ): Promise<Case | null> {
+    const locked = await this.lockByIdForUpdate(
+      id,
+      transaction,
+      this.liveCaseWhere(id),
+    )
+
+    if (!locked) {
+      return null
+    }
+
+    return this.findLiveMinimalById(id, { transaction })
+  }
+
+  /**
+   * findLimitedAccessById with the case row locked first: the read for a
+   * limited access route that changes the case, or something on it, and needs
+   * no one else to change the case until it commits. The lock is a query of
+   * its own for the reason findLiveByIdForUpdate gives - the limited access
+   * include is a tree of outer joins too - and the defender-narrowed read
+   * that follows runs in the same transaction, so it sees the row it just
+   * locked.
+   */
+  async findLimitedAccessByIdForUpdate(
+    id: string,
+    options: { defenceUserNationalId?: string; transaction: Transaction },
+  ): Promise<Case | null> {
+    const locked = await this.lockByIdForUpdate(
+      id,
+      options.transaction,
+      this.liveCaseWhere(id),
+    )
+
+    if (!locked) {
+      return null
+    }
+
+    return this.findLimitedAccessById(id, options)
   }
 
   /**

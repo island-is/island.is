@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 
 import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CaseType,
   UserRole,
@@ -29,7 +29,7 @@ jest.mock('next/router', () => ({
 }))
 
 const renderClosedIndictment = (
-  theCase: Case,
+  theCase: WorkingCase,
   userRole: UserRole = UserRole.PROSECUTOR,
   nationalId?: string,
 ) =>
@@ -70,7 +70,7 @@ describe('InfoCardClosedIndictment', () => {
             ],
           },
         ],
-      } as unknown as Case)
+      } as unknown as WorkingCase)
 
     it('shows the cases this one was merged with', async () => {
       renderClosedIndictment({
@@ -86,7 +86,7 @@ describe('InfoCardClosedIndictment', () => {
             prosecutorsOffice: { name: 'Merged Office' },
           },
         ],
-      } as unknown as Case)
+      } as unknown as WorkingCase)
 
       await screen.findByText('S-77/2026')
       await screen.findByText('007-2026-777')
@@ -104,7 +104,7 @@ describe('InfoCardClosedIndictment', () => {
             defendants: [{ id: 'split-defendant', name: 'Split Defendant' }],
           },
         ],
-      } as unknown as Case)
+      } as unknown as WorkingCase)
 
       await screen.findByText('Split Defendant')
       await screen.findByText('S-88/2026')
@@ -114,7 +114,7 @@ describe('InfoCardClosedIndictment', () => {
       renderClosedIndictment({
         ...mockCase(CaseType.INDICTMENT),
         splitCase: { id: 'parent-case-id', courtCaseNumber: 'S-99/2026' },
-      } as unknown as Case)
+      } as unknown as WorkingCase)
 
       await screen.findByText('S-99/2026')
     })
@@ -167,7 +167,7 @@ describe('InfoCardClosedIndictment', () => {
               ],
             },
           ],
-        } as unknown as Case,
+        } as unknown as WorkingCase,
         UserRole.DEFENDER,
         DEFENDER_NATIONAL_ID,
       )
@@ -222,7 +222,7 @@ describe('InfoCardClosedIndictment', () => {
         ...mockCase(CaseType.INDICTMENT),
         appealCase: caseLevelAppeal,
         rulingOrderAppealCases: [rulingOrderAppeal],
-      } as unknown as Case)
+      } as unknown as WorkingCase)
 
     it('shows the appeal named in the query string, not the case level one', async () => {
       mockAppealCaseIdQuery = 'ruling-order-appeal'
@@ -253,7 +253,7 @@ describe('InfoCardClosedIndictment', () => {
           appealJudge2: { id: 'judge-2', name: 'Verdict Judge Two' },
           appealJudge3: { id: 'judge-3', name: 'Verdict Judge Three' },
         },
-      } as unknown as Case)
+      } as unknown as WorkingCase)
 
       await screen.findByText('L-300/2026')
       expect(screen.queryByText('L-100/2026')).toBeNull()
@@ -269,7 +269,7 @@ describe('InfoCardClosedIndictment', () => {
       renderClosedIndictment({
         ...caseWithBothAppeals(),
         verdictAppealCase: { id: 'verdict-appeal' },
-      } as unknown as Case)
+      } as unknown as WorkingCase)
 
       // The card rendered - the police case number is on it - but the Court
       // of Appeals section is not.
@@ -295,7 +295,7 @@ describe('InfoCardClosedIndictment', () => {
         ...mockCase(CaseType.INDICTMENT),
         appealCase: null,
         rulingOrderAppealCases: [rulingOrderAppeal],
-      } as unknown as Case)
+      } as unknown as WorkingCase)
 
       await screen.findByText('L-200/2026')
     })
@@ -382,7 +382,7 @@ describe('InfoCardClosedIndictment', () => {
   test('does not link an internal merged case number when the merge target has no id', async () => {
     const theCase = {
       ...mockCase(CaseType.INDICTMENT),
-      mergeCase: { courtCaseNumber: 'S-64/2026' } as Case,
+      mergeCase: { courtCaseNumber: 'S-64/2026' } as WorkingCase,
     }
 
     renderClosedIndictment(theCase)

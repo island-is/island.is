@@ -1,15 +1,17 @@
-import { useEffect, useState } from 'react'
 import {
+  Checkbox,
   FormControl,
   IconButton,
   Select,
   Stack,
   Text,
-  TextInput,
 } from '@contentful/f36-components'
 import { DeleteIcon } from '@contentful/f36-icons'
 
-import type { CalculatorInputSectionField } from '@island.is/tax-calculators'
+import {
+  calculatorInputFieldSizes,
+  type CalculatorInputValueField,
+} from '@island.is/tax-calculators'
 
 import type { InputFieldContract } from '../contract'
 import {
@@ -21,14 +23,14 @@ import { LocalizedTextFields } from './LocalizedTextFields'
 import * as styles from './CalculatorEditor.css'
 
 interface Props {
-  field: CalculatorInputSectionField
+  field: CalculatorInputValueField
   contract: InputFieldContract
   usedKeys: Set<string>
   isLoading: boolean
   isDisabled?: boolean
   issues?: string[]
   isDuplicate?: boolean
-  onChange: (patch: Partial<CalculatorInputSectionField>) => void
+  onChange: (patch: Partial<CalculatorInputValueField>) => void
   onRemove: () => void
 }
 
@@ -49,11 +51,7 @@ export const InputFieldRow = ({
   const isStaleKey = isMissingFromContract && !isLoading
   const isDraft = !field.key
   const hasError = isStaleKey || isDuplicate || Boolean(issues?.length)
-
-  const [spanDraft, setSpanDraft] = useState(String(field.span))
-  useEffect(() => {
-    setSpanDraft(String(field.span))
-  }, [field.span])
+  const hasOptionLabels = Boolean(field.optionLabelsEnabled)
 
   return (
     <Stack
@@ -75,7 +73,11 @@ export const InputFieldRow = ({
             isDisabled={isLoading || isDisabled}
             onChange={(ev) => {
               const key = ev.target.value
-              const patch: Partial<CalculatorInputSectionField> = { key }
+              const patch: Partial<CalculatorInputValueField> = {
+                key,
+                optionLabels: undefined,
+                optionLabelsEnabled: undefined,
+              }
               /* Refreshes untouched placeholders from the selected field. */
               if (
                 controlForField(contract.get(key))?.kind === 'choice' ||
@@ -128,22 +130,22 @@ export const InputFieldRow = ({
             </FormControl.ValidationMessage>
           ))}
         </FormControl>
-        <FormControl marginBottom="none" className={styles.spanControl}>
-          <FormControl.Label>Span</FormControl.Label>
-          <TextInput
-            type="number"
-            inputMode="numeric"
-            value={spanDraft}
+        <FormControl marginBottom="none" className={styles.sizeControl}>
+          <FormControl.Label>Size</FormControl.Label>
+          <Select
+            value={field.size}
             isDisabled={isDisabled}
             onChange={(ev) => {
-              const raw = ev.target.value
-              setSpanDraft(raw)
-              const span = Number(raw)
-              if (raw === '' || !Number.isFinite(span)) return
-              onChange({ span: Math.min(12, Math.max(1, Math.round(span))) })
+              const size = calculatorInputFieldSizes.find(
+                (option) => option === ev.target.value,
+              )
+              if (size) onChange({ size })
             }}
-            onBlur={() => setSpanDraft(String(field.span))}
-          />
+          >
+            <Select.Option value="small">Small</Select.Option>
+            <Select.Option value="medium">Medium</Select.Option>
+            <Select.Option value="large">Large</Select.Option>
+          </Select>
         </FormControl>
         <IconButton
           aria-label="Remove field"
@@ -155,16 +157,38 @@ export const InputFieldRow = ({
 
       {isDraft && (
         <Text fontColor="gray600" fontSize="fontSizeS">
-          Not saved yet — pick a field.
+          This row isn&apos;t saved until a field is picked.
         </Text>
       )}
 
       {contractField?.options && contractField.options.length > 0 && (
-        <Text fontColor="gray600" fontSize="fontSizeS">
-          Options: {contractField.options.join(', ')} — set by the calculator,
-          not editable here.
-        </Text>
+        <Checkbox
+          isChecked={hasOptionLabels}
+          isDisabled={isDisabled}
+          helpText={`Options: ${contractField.options.join(', ')}`}
+          onChange={() => onChange({ optionLabelsEnabled: !hasOptionLabels })}
+        >
+          Translate the options
+        </Checkbox>
       )}
+
+      {hasOptionLabels &&
+        contractField?.options?.map((option) => (
+          <LocalizedTextFields
+            key={option}
+            label={`${field.key}: option "${option}"`}
+            value={field.optionLabels?.[option]}
+            isDisabled={isDisabled}
+            isInvalid={!isLoading && !field.optionLabels?.[option]?.is?.trim()}
+            isRequired
+            onChange={(next) =>
+              onChange({
+                optionLabels: { ...field.optionLabels, [option]: next },
+              })
+            }
+            clearWhenEmpty
+          />
+        ))}
 
       {contractField?.dependsOn && (
         <Text fontColor="gray600" fontSize="fontSizeS">

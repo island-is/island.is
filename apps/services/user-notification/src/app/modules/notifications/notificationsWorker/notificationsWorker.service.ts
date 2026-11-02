@@ -30,12 +30,22 @@ import {
   CreateHnippNotificationDto,
   InternalCreateHnippNotificationDto,
 } from '../dto/createHnippNotification.dto'
-import { HnippTemplate } from '../dto/hnippTemplate.response'
+import {
+  HnippTemplate,
+  HnippTemplatePriorityType,
+} from '../dto/hnippTemplate.response'
 import { MessageProcessorService } from '../messageProcessor.service'
 import { Notification } from '../notification.model'
 import { NotificationsService } from '../notifications.service'
 import { ActorNotification } from '../actor-notification.model'
-import { mapToLocale, SmsDelivery } from '../utils'
+import { UserNotificationSender } from '../user-notification-sender.model'
+import {
+  isValidSenderId,
+  mapToLocale,
+  normalizeKennitala,
+  SmsDelivery,
+  toTemplateCategory,
+} from '../utils'
 import { EmailQueueMessage } from './emailWorker.service'
 import { SmsQueueMessage } from './smsWorker.service'
 import { PushQueueMessage } from './pushWorker.service'
@@ -121,7 +131,41 @@ export class NotificationsWorkerService {
 
     @InjectModel(ActorNotification)
     private readonly actorNotificationModel: typeof ActorNotification,
+
+    @InjectModel(UserNotificationSender)
+    private readonly userNotificationSenderModel: typeof UserNotificationSender,
   ) {}
+
+  // Stopgap: lets users ignore notifications that are neither urgent nor
+  // actionable. Only the receiving user's own profile is consulted.
+  private shouldDeliverByPriority({
+    profile,
+    priorityType,
+    urgent,
+    messageId,
+  }: {
+    profile?: Pick<UserProfileDto, 'onlyActionablePriorityNotifications'>
+    priorityType: HnippTemplatePriorityType
+    urgent?: boolean
+    messageId: string
+  }): boolean {
+    const shouldDeliver =
+      !!urgent ||
+      !(
+        profile?.onlyActionablePriorityNotifications &&
+        priorityType !== 'Actionable'
+      )
+
+    if (!shouldDeliver) {
+      this.logger.info('Notification not sent because of user request', {
+        messageId,
+        urgent,
+        priorityType,
+      })
+    }
+
+    return shouldDeliver
+  }
 
   private async handleActorNotification(
     args: InternalCreateHnippNotificationDto & { messageId: string },
@@ -382,8 +426,35 @@ export class NotificationsWorkerService {
       message.templateId,
       locale,
     )
+
+    // This is a stopgap solution while we ensure better usage of notification templates.
+    // This allows users to quickly ignore notifications that are not urgent or actionable.
+    // Templates with smsDelivery ALWAYS bypass this filter for SMS only (see
+    // buildSmsPayload), so wasSent describes push/email delivery.
+    const shouldSendNotification = this.shouldDeliverByPriority({
+      profile: userProfile,
+      priorityType: template.priorityType,
+      urgent: args.urgent,
+      messageId,
+    })
+
     const scope = template.scope || DocumentsScope.main
-    const dbRecord = await this.createUserNotificationDbRecord(args, scope)
+    const dbRecord = await this.createUserNotificationDbRecord(
+      args,
+      scope,
+      shouldSendNotification,
+      template.priorityType,
+    )
+    if (dbRecord) {
+      await this.recordNotificationSender(
+        message.recipient,
+        message.senderId,
+        message.templateId,
+        toTemplateCategory(template.hnippCategoryIs),
+        template.priorityType,
+        messageId,
+      )
+    }
 
     // Phase 1: collect all payloads (data fetching only, no queue side effects)
     let pushPayload: PushQueueMessage | null = null
@@ -409,7 +480,8 @@ export class NotificationsWorkerService {
         this.buildPushPayload({
           messageId,
           nationalId,
-          documentNotifications: userProfile.documentNotifications,
+          documentNotifications:
+            userProfile.documentNotifications && shouldSendNotification,
           message,
           locale,
         }),
@@ -417,7 +489,8 @@ export class NotificationsWorkerService {
           messageId,
           nationalId,
           email: userProfile.email,
-          emailNotifications: userProfile.emailNotifications,
+          emailNotifications:
+            userProfile.emailNotifications && shouldSendNotification,
           fullName:
             message.onBehalfOf?.name ||
             onBehalfOfNames?.fullName ||
@@ -430,7 +503,8 @@ export class NotificationsWorkerService {
           messageId,
           nationalId,
           mobilePhoneNumber: userProfile.mobilePhoneNumber,
-          smsNotifications: userProfile.smsNotifications,
+          smsNotifications:
+            userProfile.smsNotifications && shouldSendNotification,
           formattedTemplate,
           fullName: recipientNames.shortName,
           onBehalfOf: onBehalfOfNames?.shortName,
@@ -721,6 +795,8 @@ export class NotificationsWorkerService {
   private async createUserNotificationDbRecord(
     args: CreateHnippNotificationDto & { messageId: string },
     scope: string,
+    wasSent: boolean,
+    priorityType: HnippTemplatePriorityType,
   ) {
     const { messageId, ...message } = args
     const existing = await this.notificationModel.findOne({
@@ -743,6 +819,8 @@ export class NotificationsWorkerService {
         templateId: message.templateId,
         args: message.args,
         scope,
+        wasSent,
+        priorityType,
       })
       this.logger.info('notification written to db', {
         messageId,
@@ -781,6 +859,45 @@ export class NotificationsWorkerService {
         { messageId },
       )
       return false
+    }
+  }
+
+  private async recordNotificationSender(
+    recipient: string,
+    senderId: string | undefined,
+    templateId: string,
+    category: string | null,
+    priorityType: HnippTemplatePriorityType,
+    messageId: string,
+  ): Promise<void> {
+    const normalizedSenderId = senderId ? normalizeKennitala(senderId) : ''
+    if (!isValidSenderId(normalizedSenderId)) {
+      return
+    }
+
+    try {
+      // Keep the latest category and priority type, since a template can
+      // change them
+      await this.userNotificationSenderModel.bulkCreate(
+        [
+          {
+            recipient,
+            senderId: normalizedSenderId,
+            templateId,
+            category,
+            priorityType: priorityType ?? null,
+          },
+        ],
+        {
+          conflictAttributes: ['recipient', 'senderId', 'templateId'],
+          updateOnDuplicate: ['category', 'priorityType'],
+        },
+      )
+    } catch (error) {
+      this.logger.warn(
+        'Failed to record notification sender, proceeding with notification',
+        { messageId, error },
+      )
     }
   }
 
@@ -876,6 +993,7 @@ export class NotificationsWorkerService {
               args: message.args,
               senderId: message.senderId,
               messageId: messageId,
+              urgent: message.urgent,
             },
             message.recipient,
           )

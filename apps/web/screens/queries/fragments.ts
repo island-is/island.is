@@ -926,6 +926,7 @@ export const slices = gql`
 
   fragment LatestEventsSliceFields on LatestEventsSlice {
     title
+    organizationSlug
     events {
       title
       slug

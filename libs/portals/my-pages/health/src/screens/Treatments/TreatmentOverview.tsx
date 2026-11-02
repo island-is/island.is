@@ -21,7 +21,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { generatePath, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
+import { nextAppointmentsInput } from '../../utils/appointments'
 import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 import { useGetAppointmentsOverviewQuery } from '../HealthOverview/HealthOverview.generated'
 import Appointments from '../HealthOverview/components/Appointments'
@@ -53,14 +53,14 @@ const TreatmentOverview = () => {
     error: appointmentsError,
   } = useGetAppointmentsOverviewQuery({
     variables: {
-      status: DEFAULT_APPOINTMENTS_STATUS,
+      input: nextAppointmentsInput(2),
     },
   })
 
   const treatment = data?.healthDirectorateTreatment
 
   const firstTwoAppointments =
-    appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
+    appointmentsData?.healthDirectoratePaginatedAppointments?.data ?? []
 
   const paths = useTreatmentScopedPaths()
   const educationalContentPath = generatePath(

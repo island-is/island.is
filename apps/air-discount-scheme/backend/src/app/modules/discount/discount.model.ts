@@ -1,11 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
-
-import {
-  ConnectionDiscountCode,
-  Discount as TDiscount,
-  ExplicitCode as TExplicitCode,
-} from '@island.is/air-discount-scheme/types'
-import { User } from '../user/user.model'
+import { Optional } from 'sequelize/types'
 import {
   BelongsTo,
   Column,
@@ -16,20 +9,27 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Optional } from 'sequelize/types'
-import { Flight } from '../flight/flight.model'
+import { ApiProperty } from '@nestjs/swagger'
 
+import {
+  ConnectionDiscountCode,
+  Discount as TDiscount,
+  ExplicitCode as TExplicitCode,
+} from '@island.is/air-discount-scheme/types'
+
+import { Flight } from '../flight/flight.model'
+import { CachedUser, restoreCachedUser, User } from '../user/user.model'
 import { ConnectionDiscountCode as GQLConnectionDiscountCode } from './connectionDiscountCode.model'
 
 export class Discount implements TDiscount {
   constructor(
-    user: User,
+    user: CachedUser,
     discountCode: string,
     connectionDiscountCodes: ConnectionDiscountCode[],
     nationalId: string,
     ttl: number,
   ) {
-    this.user = user
+    this.user = user && new User(restoreCachedUser(user), user.fund)
     this.discountCode = discountCode
     this.connectionDiscountCodes = connectionDiscountCodes
     this.nationalId = nationalId

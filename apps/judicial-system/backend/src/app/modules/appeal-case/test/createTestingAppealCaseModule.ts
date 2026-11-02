@@ -14,15 +14,19 @@ import { CaseService } from '../../case'
 import { LimitedAccessCaseService } from '../../case/limitedAccessCase.service'
 import { EventService } from '../../event'
 import { FileService } from '../../file'
+import { LawyerRegistryService } from '../../lawyer-registry/lawyerRegistry.service'
 import {
+  AppealCaseJudgeRepositoryService,
   AppealCaseRepositoryService,
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
+  AppealSummonsRepositoryService,
   CaseRepositoryService,
   DefendantRepositoryService,
   VerdictRepositoryService,
 } from '../../repository'
 import { UserService } from '../../user'
+import { AppealAppointmentLetterService } from '../appealAppointmentLetter.service'
 import { appealCaseModuleConfig } from '../appealCase.config'
 import { AppealCaseController } from '../appealCase.controller'
 import { AppealCaseService } from '../appealCase.service'
@@ -33,11 +37,14 @@ jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../case/case.service')
 jest.mock('../../case/limitedAccessCase.service')
 jest.mock('../../event/event.service')
+jest.mock('../../lawyer-registry/lawyerRegistry.service')
 jest.mock('../../file/file.service')
 jest.mock('../../user/user.service')
 jest.mock('../../repository/services/appealCaseRepository.service')
+jest.mock('../../repository/services/appealCaseJudgeRepository.service')
 jest.mock('../../repository/services/appealDecisionRepository.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
+jest.mock('../../repository/services/appealSummonsRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/verdictRepository.service')
@@ -55,11 +62,14 @@ export const createTestingAppealCaseModule = async () => {
       CaseService,
       LimitedAccessCaseService,
       EventService,
+      LawyerRegistryService,
       FileService,
       UserService,
       AppealCaseRepositoryService,
+      AppealCaseJudgeRepositoryService,
       AppealDecisionRepositoryService,
       AppealEventLogRepositoryService,
+      AppealSummonsRepositoryService,
       CaseRepositoryService,
       DefendantRepositoryService,
       VerdictRepositoryService,
@@ -74,12 +84,18 @@ export const createTestingAppealCaseModule = async () => {
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       AppealCaseService,
+      AppealAppointmentLetterService,
     ],
   }).compile()
 
   const appealCaseRepositoryService =
     appealCaseModule.get<AppealCaseRepositoryService>(
       AppealCaseRepositoryService,
+    )
+
+  const appealCaseJudgeRepositoryService =
+    appealCaseModule.get<AppealCaseJudgeRepositoryService>(
+      AppealCaseJudgeRepositoryService,
     )
 
   const appealDecisionRepositoryService =
@@ -92,6 +108,11 @@ export const createTestingAppealCaseModule = async () => {
       AppealEventLogRepositoryService,
     )
 
+  const appealSummonsRepositoryService =
+    appealCaseModule.get<AppealSummonsRepositoryService>(
+      AppealSummonsRepositoryService,
+    )
+
   const caseRepositoryService = appealCaseModule.get<CaseRepositoryService>(
     CaseRepositoryService,
   )
@@ -101,6 +122,10 @@ export const createTestingAppealCaseModule = async () => {
 
   const defendantRepositoryService =
     appealCaseModule.get<DefendantRepositoryService>(DefendantRepositoryService)
+
+  const lawyerRegistryService = appealCaseModule.get<LawyerRegistryService>(
+    LawyerRegistryService,
+  )
 
   const userService = appealCaseModule.get<UserService>(UserService)
 
@@ -125,11 +150,14 @@ export const createTestingAppealCaseModule = async () => {
 
   return {
     appealCaseRepositoryService,
+    appealCaseJudgeRepositoryService,
     appealDecisionRepositoryService,
     appealEventLogRepositoryService,
+    appealSummonsRepositoryService,
     caseRepositoryService,
     defendantRepositoryService,
     verdictRepositoryService,
+    lawyerRegistryService,
     userService,
     eventService,
     fileService,

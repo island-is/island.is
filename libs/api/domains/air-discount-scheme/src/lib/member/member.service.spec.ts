@@ -41,9 +41,8 @@ describe('ApiDomains: MemberService', () => {
   const fabUser = (nationalId: string): GeneratedUser => ({
     address: '123 Elm Street',
     city: 'Reykjavík',
-    firstName: 'John',
-    lastName: 'Doe',
-    middleName: 'Middle',
+    givenName: 'John Middle',
+    fullName: 'John Middle Doe',
     gender: UserGenderEnum.kk,
     nationalId,
     postalcode: 101,
@@ -157,7 +156,7 @@ describe('ApiDomains: MemberService', () => {
       const members = await service.getMembers(user)
 
       expect(members).toHaveLength(1)
-      expect(members[0].name).toBe('John Doe')
+      expect(members[0].name).toBe('John Middle Doe')
       expect(members[0].nationalId).toBe(nationalId)
     })
 

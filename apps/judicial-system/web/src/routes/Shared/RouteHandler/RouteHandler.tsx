@@ -3,11 +3,11 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { getRoute } from './RouteHandler.logic'
 import * as styles from './RouteHandler.css'
@@ -41,7 +41,7 @@ const RouteHandler: FC<Props> = ({ resolve }) => {
   const router = useRouter()
   const { user } = useContext(UserContext)
   const { getCase } = useContext(FormContext)
-  const [caseToOpen, setCaseToOpen] = useState<Case>()
+  const [caseToOpen, setCaseToOpen] = useState<WorkingCase>()
   const [resolveView, setResolveView] = useState<'loading' | 'notPublished'>(
     'loading',
   )

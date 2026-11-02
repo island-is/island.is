@@ -202,6 +202,8 @@ export const createTestingCaseModule = async () => {
 
   const fileService = caseModule.get<FileService>(FileService)
 
+  const pdfService = caseModule.get<PdfService>(PdfService)
+
   const awsS3Service = caseModule.get<AwsS3Service>(AwsS3Service)
 
   const defendantService = caseModule.get<DefendantService>(DefendantService)
@@ -360,6 +362,7 @@ export const createTestingCaseModule = async () => {
     policeService,
     userService,
     fileService,
+    pdfService,
     awsS3Service,
     defendantService,
     subpoenaService,

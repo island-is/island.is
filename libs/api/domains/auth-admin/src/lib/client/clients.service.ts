@@ -311,14 +311,17 @@ export class ClientsService extends MultiEnvironmentService {
   }
 
   /**
-   * Run a void API call across all environments. Returns true only if
-   * all environments succeeded.
+   * Run a void API call across the given environments, defaulting to all.
+   * Returns true only if every targeted environment succeeded.
    */
-  private async runOnAllEnvironments(
+  private async runOnEnvironments(
     user: User,
     request: (api: AdminApi) => Promise<ApiResponse<void>>,
+    targetEnvironments?: Environment[],
   ): Promise<boolean> {
-    const targets = environments.map((env) => ({
+    const targets = (
+      targetEnvironments?.length ? targetEnvironments : environments
+    ).map((env) => ({
       environment: env,
       success: false,
     }))
@@ -405,20 +408,26 @@ export class ClientsService extends MultiEnvironmentService {
   }
 
   async deleteClient(user: User, input: DeleteClientInput): Promise<boolean> {
-    return this.runOnAllEnvironments(user, (api) =>
-      api.meClientsControllerDeleteRaw({
-        tenantId: input.tenantId,
-        clientId: input.clientId,
-      }),
+    return this.runOnEnvironments(
+      user,
+      (api) =>
+        api.meClientsControllerDeleteRaw({
+          tenantId: input.tenantId,
+          clientId: input.clientId,
+        }),
+      input.environments,
     )
   }
 
   async restoreClient(user: User, input: RestoreClientInput): Promise<boolean> {
-    return this.runOnAllEnvironments(user, (api) =>
-      api.meClientsControllerRestoreRaw({
-        tenantId: input.tenantId,
-        clientId: input.clientId,
-      }),
+    return this.runOnEnvironments(
+      user,
+      (api) =>
+        api.meClientsControllerRestoreRaw({
+          tenantId: input.tenantId,
+          clientId: input.clientId,
+        }),
+      input.environments,
     )
   }
 

@@ -1,13 +1,13 @@
 import { IntlProvider } from 'react-intl'
 import { render, screen } from '@testing-library/react'
 
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import type { Props } from './CaseDates'
 import CaseDates from './CaseDates'
 
-const renderCaseDates = (theCase: Case, button?: Props['button']) =>
+const renderCaseDates = (theCase: WorkingCase, button?: Props['button']) =>
   render(
     <IntlProvider locale="is" onError={jest.fn}>
       <CaseDates workingCase={theCase} button={button} />
@@ -20,7 +20,7 @@ describe('<CaseDates /> expired', () => {
       isValidToDateInThePast: true,
       type: CaseType.CUSTODY,
       validToDate: '2022-06-15T19:50:08.033Z',
-    } as Case
+    } as WorkingCase
 
     renderCaseDates(theCase)
     expect(
@@ -33,7 +33,7 @@ describe('<CaseDates /> expired', () => {
       isValidToDateInThePast: true,
       type: CaseType.ADMISSION_TO_FACILITY,
       validToDate: '2022-06-15T19:50:08.033Z',
-    } as Case
+    } as WorkingCase
 
     renderCaseDates(theCase)
     expect(
@@ -46,7 +46,7 @@ describe('<CaseDates /> expired', () => {
       isValidToDateInThePast: true,
       type: CaseType.TRAVEL_BAN,
       validToDate: '2022-06-15T19:50:08.033Z',
-    } as Case
+    } as WorkingCase
 
     renderCaseDates(theCase)
     expect(
@@ -60,7 +60,7 @@ describe('<CaseDates /> still valid', () => {
     const theCase = {
       type: CaseType.CUSTODY,
       validToDate: '2022-06-15T19:50:08.033Z',
-    } as Case
+    } as WorkingCase
 
     renderCaseDates(theCase)
     expect(
@@ -72,7 +72,7 @@ describe('<CaseDates /> still valid', () => {
     const theCase = {
       type: CaseType.TRAVEL_BAN,
       validToDate: '2022-06-15T19:50:08.033Z',
-    } as Case
+    } as WorkingCase
 
     renderCaseDates(theCase)
     expect(
@@ -84,7 +84,7 @@ describe('<CaseDates /> still valid', () => {
     const theCase = {
       type: CaseType.ADMISSION_TO_FACILITY,
       validToDate: '2022-06-15T19:50:08.033Z',
-    } as Case
+    } as WorkingCase
 
     renderCaseDates(theCase)
     expect(
@@ -98,7 +98,7 @@ describe('<CaseDates /> still valid', () => {
       isCustodyIsolation: true,
       validToDate: '2022-06-15T19:50:08.033Z',
       isolationToDate: '2022-06-15T19:50:08.033Z',
-    } as Case
+    } as WorkingCase
 
     renderCaseDates(theCase)
     expect(

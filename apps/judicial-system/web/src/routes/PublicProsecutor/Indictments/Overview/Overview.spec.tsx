@@ -2,8 +2,8 @@ import { MockedProvider } from '@apollo/client/testing'
 import { render, screen, within } from '@testing-library/react'
 
 import { Feature } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -91,7 +91,7 @@ describe('PublicProsecutor Overview', () => {
   })
 
   describe('the appeal-process section', () => {
-    const appealedCase: Case = {
+    const appealedCase: WorkingCase = {
       ...mockCase(CaseType.INDICTMENT),
       state: CaseState.COMPLETED,
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,

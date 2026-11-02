@@ -191,15 +191,15 @@ const PdfView = ({ item }: VerdictDetailsProps) => {
                 <PdfViewer
                   file={`data:application/pdf;base64,${item.pdfString}`}
                   showAllPages={true}
+                  lazyPages={true}
                   scale={calculatePdfScale(width)}
                 />
               </Box>
+              {/* Only the pages near the viewport are drawn, so printing the
+                  page itself would leave the rest blank. The print button
+                  prints the original PDF instead. */}
               <Box className={styles.hiddenOnScreen}>
-                <PdfViewer
-                  file={`data:application/pdf;base64,${item.pdfString}`}
-                  showAllPages={true}
-                  scale={1}
-                />
+                <Text>{formatMessage(m.verdictPage.printFromButton)}</Text>
               </Box>
             </Box>
           </GridContainer>

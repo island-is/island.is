@@ -9,7 +9,9 @@ import {
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
+import { runInRequestContext } from '../../../../test'
 import {
+  AppealStatementDeadlineRepositoryService,
   Case,
   CaseFileRepositoryService,
   DefendantRepositoryService,
@@ -31,6 +33,7 @@ describe('DefendantController - Delete', () => {
   let mockQueuedMessages: Message[]
   let mockDefendantRepositoryService: DefendantRepositoryService
   let mockCaseFileRepositoryService: CaseFileRepositoryService
+  let mockAppealStatementDeadlineRepositoryService: AppealStatementDeadlineRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -40,18 +43,19 @@ describe('DefendantController - Delete', () => {
       sequelize,
       defendantRepositoryService,
       caseFileRepositoryService,
+      appealStatementDeadlineRepositoryService,
       defendantController,
     } = await createTestingDefendantModule()
 
     mockQueuedMessages = queuedMessagesAfterCommit
     mockDefendantRepositoryService = defendantRepositoryService
     mockCaseFileRepositoryService = caseFileRepositoryService
+    mockAppealStatementDeadlineRepositoryService =
+      appealStatementDeadlineRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     const mockDelete = mockDefendantRepositoryService.delete as jest.Mock
     mockDelete.mockRejectedValue(new Error('Some error'))
@@ -59,13 +63,17 @@ describe('DefendantController - Delete', () => {
     givenWhenThen = async (courtCaseNumber?: string) => {
       const then = {} as Then
 
+      // Guards do not execute in controller unit tests, so the request
+      // context the handler takes its transaction from is set up here.
       try {
-        then.result = await defendantController.delete(
-          caseId,
-          defendantId,
-          user,
-          { id: caseId, courtCaseNumber } as Case,
-        )
+        await runInRequestContext(async () => {
+          then.result = await defendantController.delete(
+            caseId,
+            defendantId,
+            user,
+            { id: caseId, courtCaseNumber } as Case,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -108,6 +116,38 @@ describe('DefendantController - Delete', () => {
       expect(mockDeleteFiles.mock.invocationCallOrder[0]).toBeLessThan(
         mockDelete.mock.invocationCallOrder[0],
       )
+    })
+
+    // The deadline rows reference the defendant without a cascade, so a
+    // delete that left them behind would fail on the foreign key.
+    it("should delete the defendant's statement deadlines before the defendant", () => {
+      const mockDeleteDeadlines =
+        mockAppealStatementDeadlineRepositoryService.deleteAllForDefendant as jest.Mock
+      const mockDelete = mockDefendantRepositoryService.delete as jest.Mock
+
+      expect(mockDeleteDeadlines).toHaveBeenCalledWith(caseId, defendantId, {
+        transaction,
+      })
+      expect(mockDeleteDeadlines.mock.invocationCallOrder[0]).toBeLessThan(
+        mockDelete.mock.invocationCallOrder[0],
+      )
+    })
+  })
+
+  describe('statement deadline deletion fails', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockDeleteDeadlines =
+        mockAppealStatementDeadlineRepositoryService.deleteAllForDefendant as jest.Mock
+      mockDeleteDeadlines.mockRejectedValue(new Error('Deadline error'))
+
+      then = await givenWhenThen()
+    })
+
+    it('should not delete the defendant', () => {
+      expect(mockDefendantRepositoryService.delete).not.toHaveBeenCalled()
+      expect(then.error.message).toBe('Deadline error')
     })
   })
 

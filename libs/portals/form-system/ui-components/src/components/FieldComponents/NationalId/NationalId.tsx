@@ -6,13 +6,15 @@ import {
   removeTypename,
 } from '@island.is/form-system/graphql'
 import {
+  Box,
   GridColumn as Column,
   Input,
+  LoadingDots,
   GridRow as Row,
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Dispatch, useEffect, useRef } from 'react'
+import { Dispatch, useEffect, useRef, useState } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { Action } from '../../../lib'
@@ -50,11 +52,16 @@ export const NationalId = ({
 }: Props) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
-  const { control, setValue } = useFormContext()
+  const { control, setValue, clearErrors, setError, trigger } = useFormContext()
+  const [lookupError, setLookupError] = useState<{
+    nationalId: string
+    message: string
+  } | null>(null)
+  const nationalIdField = `${item.id}.${valueIndex}`
 
   const watchedValue = useWatch({
     control,
-    name: `${item.id}.${valueIndex}`,
+    name: nationalIdField,
     defaultValue: getValue(item, 'nationalId', valueIndex) ?? '',
   }) as string
 
@@ -63,12 +70,19 @@ export const NationalId = ({
   const nationalId = (watchedValue ?? '').trim()
   const normalizedId = nationalId.replace(/\D/g, '')
   const queryId = normalizedId ? normalizedId : undefined
+  const isCompleteNationalId = normalizedId.length === 10
   const isValidFormat = nationalIdRegex.test(nationalId)
+  const isValidNationalId =
+    isValidFormat &&
+    (isIndividualNationalId(normalizedId) || isCompanyNationalId(normalizedId))
 
   const lastQueriedRef = useRef<string | undefined>(undefined)
 
   const shouldQueryBase =
-    isValidFormat && queryId !== undefined && lastQueriedRef.current !== queryId
+    isCompleteNationalId &&
+    isValidFormat &&
+    queryId !== undefined &&
+    lastQueriedRef.current !== queryId
 
   const shouldQueryIndividual =
     shouldQueryBase && isIndividualNationalId(queryId || '')
@@ -100,26 +114,31 @@ export const NationalId = ({
     valueIndex,
   ])
 
-  const { data: _nameData } = useQuery(IDENTITY_QUERY, {
+  const handleLookupResult = (name: string) => {
+    setValue(nameField, name, { shouldDirty: true, shouldValidate: !!name })
+    if (!name) {
+      const message = formatMessage(m.nationalIdLookupFailed)
+      setLookupError({ nationalId, message })
+      setError(nationalIdField, { type: 'validate', message })
+    } else {
+      setLookupError(null)
+      clearErrors(nationalIdField)
+      lastQueriedRef.current = queryId
+    }
+    dispatch?.({
+      type: 'SET_NAME',
+      payload: { id: item.id, value: name, valueIndex },
+    })
+  }
+
+  const { loading: individualLoading } = useQuery(IDENTITY_QUERY, {
     variables: { input: { nationalId: queryId } },
     fetchPolicy: 'cache-first',
     skip: !shouldQueryIndividual,
     onCompleted: (nameData) => {
-      const newName = removeTypename(nameData?.identity?.name)
+      if (!shouldQueryIndividual) return
 
-      if (newName) {
-        setValue(nameField, newName, {
-          shouldDirty: true,
-          shouldValidate: true,
-        })
-        if (dispatch) {
-          dispatch({
-            type: 'SET_NAME',
-            payload: { id: item.id, value: newName, valueIndex },
-          })
-        }
-        lastQueriedRef.current = queryId
-      }
+      handleLookupResult(removeTypename(nameData?.identity?.name) ?? '')
 
       if (showAddress && nameData?.identity?.address) {
         const address = nameData.identity.address.streetAddress ?? ''
@@ -128,7 +147,7 @@ export const NationalId = ({
 
         setValue(addressField, address, {
           shouldDirty: true,
-          shouldValidate: true,
+          shouldValidate: !!address,
         })
         setValue(postalCodeField, postalCode, {
           shouldDirty: true,
@@ -153,33 +172,39 @@ export const NationalId = ({
         }
       }
     },
+    onError: () => {
+      if (!shouldQueryIndividual) return
+
+      handleLookupResult('')
+    },
   })
 
-  const { data: _companyData } = useQuery(GET_COMPANY, {
+  const { loading: companyLoading } = useQuery(GET_COMPANY, {
     variables: { input: { nationalId: queryId } },
     fetchPolicy: 'cache-first',
     skip: !shouldQueryCompany,
     onCompleted: (companyData) => {
-      const fetched = companyData?.companyRegistryCompany?.name
-      if (fetched) {
-        setValue(nameField, fetched, {
-          shouldDirty: true,
-          shouldValidate: true,
-        })
-        if (dispatch) {
-          dispatch({
-            type: 'SET_NAME',
-            payload: { id: item.id, value: fetched, valueIndex },
-          })
-        }
-        lastQueriedRef.current = queryId
-      }
+      if (!shouldQueryCompany) return
+
+      handleLookupResult(companyData?.companyRegistryCompany?.name ?? '')
+    },
+    onError: () => {
+      if (!shouldQueryCompany) return
+
+      handleLookupResult('')
     },
   })
 
   useEffect(() => {
-    if (!isValidFormat) {
+    if (!isValidNationalId) {
       lastQueriedRef.current = undefined
+
+      if (isValidFormat) {
+        setError(nationalIdField, {
+          type: 'validate',
+          message: formatMessage(m.nationalIdLookupFailed),
+        })
+      }
 
       setValue(nameField, '')
       setValue(addressField, '')
@@ -205,6 +230,10 @@ export const NationalId = ({
     }
   }, [
     isValidFormat,
+    isValidNationalId,
+    nationalIdField,
+    setError,
+    formatMessage,
     dispatch,
     item.id,
     valueIndex,
@@ -221,7 +250,7 @@ export const NationalId = ({
         <Column span={['1/1', '1/1', '5/10']}>
           <Controller
             key={`${item.id}-${valueIndex}`}
-            name={`${item.id}.${valueIndex}`}
+            name={nationalIdField}
             control={control}
             defaultValue={getValue(item, 'nationalId', valueIndex) ?? ''}
             rules={{
@@ -229,9 +258,25 @@ export const NationalId = ({
                 value: item?.isRequired ?? false,
                 message: formatMessage(m.required),
               },
-              pattern: {
-                value: nationalIdRegex,
-                message: formatMessage(m.InvalidNationalId),
+              validate: (value) => {
+                if (!value) {
+                  return true
+                }
+                if (value.replace(/\D/g, '').length < 10) {
+                  return formatMessage(m.InvalidNationalId)
+                }
+                if (
+                  !nationalIdRegex.test(value) ||
+                  (!isIndividualNationalId(value) &&
+                    !isCompanyNationalId(value))
+                ) {
+                  return formatMessage(m.nationalIdLookupFailed)
+                }
+                return (
+                  !lookupError ||
+                  value !== lookupError.nationalId ||
+                  lookupError.message
+                )
               },
             }}
             render={({ field, fieldState }) => (
@@ -249,7 +294,36 @@ export const NationalId = ({
                     digits.length > 6
                       ? digits.slice(0, 6) + '-' + digits.slice(6)
                       : digits
-                  field.onChange(value)
+                  if (value !== field.value) {
+                    setLookupError(null)
+                    lastQueriedRef.current = undefined
+                    setValue(nameField, '')
+                    setValue(addressField, '')
+                    setValue(postalCodeField, '')
+                    setValue(municipalityField, '')
+                    clearErrors([
+                      field.name,
+                      nameField,
+                      addressField,
+                      postalCodeField,
+                      municipalityField,
+                    ])
+                    dispatch?.({
+                      type: 'SET_NAME',
+                      payload: { id: item.id, value: '', valueIndex },
+                    })
+                    dispatch?.({
+                      type: 'SET_ADDRESS',
+                      payload: {
+                        id: item.id,
+                        valueIndex,
+                        address: '',
+                        postalCode: '',
+                        municipality: '',
+                      },
+                    })
+                  }
+                  setValue(field.name, value, { shouldDirty: true })
                   if (dispatch) {
                     dispatch({
                       type: 'SET_NATIONAL_ID',
@@ -257,12 +331,24 @@ export const NationalId = ({
                     })
                   }
                 }}
-                onBlur={field.onBlur}
+                onBlur={() => {
+                  field.onBlur()
+                  void trigger(field.name)
+                }}
                 hasError={!!fieldState.error || !!hasError}
                 errorMessage={fieldState.error?.message}
               />
             )}
           />
+          {(individualLoading || companyLoading) && (
+            <Box
+              paddingTop={1}
+              role="status"
+              aria-label={item.name[lang] ?? formatMessage(m.nationalId)}
+            >
+              <LoadingDots size="medium" />
+            </Box>
+          )}
         </Column>
       </Row>
 

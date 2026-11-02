@@ -28,6 +28,7 @@ import {
 } from './getApplicationFeatureFlags'
 import {
   DuplicateEligibilityApi,
+  DuplicatePhotoLookupCheckApi,
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
@@ -147,6 +148,11 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                   name: m.proceedToPayment,
                   type: 'primary',
                 },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
               ],
               api: [
                 CurrentLicenseApi,
@@ -162,6 +168,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                 QualityPhotoApi,
                 UserProfileApi,
                 DuplicateEligibilityApi,
+                DuplicatePhotoLookupCheckApi,
               ],
               write: 'all',
               delete: true,

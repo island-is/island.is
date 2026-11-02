@@ -54,11 +54,14 @@ export const createTestingVictimModule = async () => {
     VictimRepositoryService,
   )
 
+  const sequelize = victimModule.get<Sequelize>(Sequelize)
+
   const victimController = victimModule.get<VictimController>(VictimController)
 
   victimModule.close()
 
   return {
+    sequelize,
     victimController,
     victimRepositoryService,
   }

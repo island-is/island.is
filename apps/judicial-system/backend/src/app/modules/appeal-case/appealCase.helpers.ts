@@ -2,6 +2,7 @@ import {
   AppealDecisionPartyRole,
   AppealEventType,
   AppealOrigin,
+  type AppealStatementParty,
   CaseAppealDecision,
   isDefenceUser,
   isProsecutionUser,
@@ -9,7 +10,7 @@ import {
   prosecutionRoles,
   type User,
   UserRole,
-  verdictAppealDeclarationFileCategories,
+  verdictAppealFileCategories,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -23,11 +24,13 @@ import {
 } from '../repository'
 
 // The appeal case a case file belongs to: the ruling-order appeal the file
-// carries in its rulingFileId, the verdict appeal for an appeal declaration and what
-// is filed with it, or the case-level ruling appeal for everything else.
+// carries in its rulingFileId, the verdict appeal for an appeal declaration or
+// statement and what is filed with either, or the case-level ruling appeal for
+// everything else.
 //
-// The appeal declaration needs its own arm because it is case level too - the verdict appeal
-// and the ruling appeal are told apart by appeal type, not by a ruling file.
+// The verdict appeal files need their own arm because they are case level too -
+// the verdict appeal and the ruling appeal are told apart by appeal type, not
+// by a ruling file.
 export const findAppealCaseOfCaseFile = (
   theCase: Case,
   file: Pick<CaseFile, 'rulingFileId' | 'category'>,
@@ -38,10 +41,7 @@ export const findAppealCaseOfCaseFile = (
     )
   }
 
-  if (
-    file.category &&
-    verdictAppealDeclarationFileCategories.includes(file.category)
-  ) {
+  if (file.category && verdictAppealFileCategories.includes(file.category)) {
     return theCase.verdictAppealCase
   }
 
@@ -358,6 +358,126 @@ export const buildAdvocateConfirmedEvent = (params: {
     institutionName: actor.institution?.name,
   }
 }
+
+/**
+ * The record of the court of appeals giving a party a deadline to file its
+ * statement, or moving the deadline it had.
+ *
+ * The date itself lives on the appeal_statement_deadline row, which an
+ * extension overwrites; the event keeps who did it and when, which the row
+ * does not, and tells a first deadline from an extension, which the mails
+ * word differently. As with the advocate confirmation, userRole is the
+ * actor's own role: the deadline is an act of the court.
+ */
+export const buildStatementDeadlineEvent = (params: {
+  theCase: Case
+  appealCase: AppealCase
+  party: AppealStatementParty
+  actor: User
+  extended: boolean
+}): Partial<AppealEventLog> =>
+  buildCourtPartyEvent({
+    ...params,
+    eventType: params.extended
+      ? AppealEventType.STATEMENT_DEADLINE_EXTENDED
+      : AppealEventType.STATEMENT_DEADLINE_SET,
+  })
+
+/**
+ * The record of the court of appeals filing a party's statement on its
+ * behalf, when the statement arrived outside the system.
+ *
+ * The same APPEAL_STATEMENT_SENT event the party itself would have written,
+ * naming the party the same way, so everything that reads the event - the
+ * deadline lock, the "skilað" line, the statement dates - sees no difference.
+ * The actor snapshot is the court user's: the row says who filed it, the
+ * party ids say for whom.
+ */
+export const buildStatementFiledEvent = (params: {
+  theCase: Case
+  appealCase: AppealCase
+  party: AppealStatementParty
+  actor: User
+}): Partial<AppealEventLog> =>
+  buildCourtPartyEvent({
+    ...params,
+    eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+  })
+
+// An event of the court about one party: the party ids as given, the actor
+// snapshot the court user's own.
+const buildCourtPartyEvent = (params: {
+  theCase: Case
+  appealCase: AppealCase
+  party: AppealStatementParty
+  actor: User
+  eventType: AppealEventType
+}): Partial<AppealEventLog> => {
+  const { theCase, appealCase, party, actor, eventType } = params
+
+  return {
+    caseId: theCase.id,
+    appealCaseId: appealCase.id,
+    eventType,
+    defendantId: party.defendantId ?? undefined,
+    civilClaimantId: party.civilClaimantId ?? undefined,
+    userRole: actor.role,
+    userId: actor.id,
+    nationalId: actor.nationalId,
+    userName: actor.name,
+    userTitle: actor.title,
+    institutionName: actor.institution?.name,
+  }
+}
+
+/**
+ * Whether an update puts a different advocate on a party than the one already
+ * there.
+ *
+ * Only a field the update actually carries counts: a PATCH that leaves the
+ * name out is not changing it, and one that repeats the same name is not
+ * either.
+ *
+ * Used to take a confirmation back when the advocate under it changes. A
+ * confirmation names a person, and the letter of appointment is signed and
+ * dated from the event that confirmation wrote - so a row left confirmed under
+ * a new name would print the new advocate over the old signatory and date.
+ * The screen already makes the court confirm again; this is the same rule
+ * where the screen cannot reach.
+ */
+export const namesADifferentAdvocate = (
+  current: { name?: string | null; nationalId?: string | null },
+  update: { name?: string | null; nationalId?: string | null },
+): boolean =>
+  (update.name !== undefined && update.name !== current.name) ||
+  (update.nationalId !== undefined && update.nationalId !== current.nationalId)
+
+/**
+ * The confirmation that currently stands for one party, which is what the
+ * letter of appointment is written from: its signatory and its date.
+ *
+ * Only the latest matters. An advocate replaced later is simply superseded -
+ * nothing tracks the ones before, by design - so the letter always reproduces
+ * the appointment in force.
+ */
+export const latestAdvocateConfirmedEvent = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+  party: { defendantId?: string; civilClaimantId?: string },
+): AppealEventLog | undefined =>
+  (appealCase.appealEventLogs ?? [])
+    .filter(
+      (eventLog) =>
+        eventLog.eventType === AppealEventType.ADVOCATE_CONFIRMED &&
+        (party.defendantId
+          ? eventLog.defendantId === party.defendantId
+          : Boolean(party.civilClaimantId) &&
+            eventLog.civilClaimantId === party.civilClaimantId),
+    )
+    .reduce<AppealEventLog | undefined>(
+      (latest, eventLog) =>
+        !latest || eventLog.created > latest.created ? eventLog : latest,
+      undefined,
+    )
 
 // An APPEALED event for an appeal the party filed itself, outside the court
 // record. Such an appellant has no decision = APPEAL row - they appealed because

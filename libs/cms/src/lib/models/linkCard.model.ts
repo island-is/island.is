@@ -28,6 +28,6 @@ export const mapLinkCard = ({
   id: sys.id,
   title: fields?.title ?? '',
   body: fields?.body ?? '',
-  linkUrl: fields?.linkUrl,
+  linkUrl: fields?.linkUrl ?? '',
   linkText: fields?.linkText ?? '',
 })

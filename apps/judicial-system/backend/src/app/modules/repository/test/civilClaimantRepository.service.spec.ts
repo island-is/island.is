@@ -76,11 +76,13 @@ describe('CivilClaimantRepositoryService', () => {
         civilClaimantId,
         caseId,
         update,
+        { transaction },
       )
 
       expect(model.update).toHaveBeenCalledWith(update, {
         where: { id: civilClaimantId, caseId },
         returning: true,
+        transaction,
       })
       expect(result).toEqual({
         numberOfAffectedRows: 1,
@@ -91,9 +93,14 @@ describe('CivilClaimantRepositoryService', () => {
     it('names both halves of the tuple, including when nothing matched', async () => {
       model.update.mockResolvedValueOnce([0, []])
 
-      const result = await service.updateByIdAndCase(civilClaimantId, caseId, {
-        defendantIds: ['some-defendant-id'],
-      })
+      const result = await service.updateByIdAndCase(
+        civilClaimantId,
+        caseId,
+        {
+          defendantIds: ['some-defendant-id'],
+        },
+        { transaction },
+      )
 
       expect(result).toEqual({ numberOfAffectedRows: 0, civilClaimants: [] })
     })
@@ -103,9 +110,14 @@ describe('CivilClaimantRepositoryService', () => {
       model.update.mockRejectedValueOnce(error)
 
       await expect(
-        service.updateByIdAndCase(civilClaimantId, caseId, {
-          name: 'Jane Doe',
-        }),
+        service.updateByIdAndCase(
+          civilClaimantId,
+          caseId,
+          {
+            name: 'Jane Doe',
+          },
+          { transaction },
+        ),
       ).rejects.toThrow(error)
     })
   })

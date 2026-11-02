@@ -22,6 +22,7 @@ import {
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 
 import type { CalculatorConfig } from '@island.is/tax-calculators'
+import { isInputValueField } from '@island.is/tax-calculators'
 
 import type {
   GetTaxCalculatorFieldsForContentfulAppQuery,
@@ -104,7 +105,7 @@ export const CalculatorConfigEditor = () => {
   const metadataChecked = Boolean(data) && !loading && !error
   const metadataPending = !metadataChecked
 
-  /* Unverified metadata blocks publishing but not saving. */
+  /* Unverified metadata marks the field invalid but still saves. */
   const metadataUnverified =
     Boolean(calculatorTypeValue) &&
     (!apiCalculatorType || !data || loading || Boolean(error))
@@ -135,7 +136,10 @@ export const CalculatorConfigEditor = () => {
     () =>
       new Set(
         state.inputSections.flatMap((section) =>
-          section.fields.map((field) => field.key).filter(Boolean),
+          section.fields
+            .filter(isInputValueField)
+            .map((field) => field.key)
+            .filter(Boolean),
         ),
       ),
     [state.inputSections],
@@ -238,9 +242,9 @@ export const CalculatorConfigEditor = () => {
       {error && (
         <Note variant="warning">
           Could not load the field list for this calculator type:{' '}
-          {error.message} Your work is still saved, but publishing stays blocked
-          until the field metadata loads and the configuration can be checked
-          against it.{' '}
+          {error.message} Your work is saved, but the configuration can&apos;t
+          be checked until the field list loads — don&apos;t publish before
+          then.{' '}
           <Button size="small" variant="secondary" onClick={() => refetch()}>
             Try again
           </Button>
@@ -249,17 +253,16 @@ export const CalculatorConfigEditor = () => {
 
       {!error && loading && (
         <Note variant="neutral">
-          Checking the configuration against this calculator&apos;s fields.
-          Publishing stays blocked until that finishes; your work is saved
-          meanwhile.
+          Checking the configuration against this calculator&apos;s fields. Your
+          work is saved meanwhile — wait for the check before publishing.
         </Note>
       )}
 
       {!apiCalculatorType && (
         <Note variant="warning">
-          Unknown calculator type &quot;{calculatorTypeValue}&quot; -- no field
-          list exists for it, so the configuration cannot be checked and
-          publishing stays blocked.
+          Unknown calculator type &quot;{calculatorTypeValue}&quot; — no field
+          list exists for it, so the configuration can&apos;t be checked.
+          Don&apos;t publish this entry.
         </Note>
       )}
 
@@ -278,8 +281,8 @@ export const CalculatorConfigEditor = () => {
 
       {schemaErrors.length > 0 && (
         <Note variant="negative">
-          Contentful rejects this field&apos;s value. Publishing stays blocked
-          until it is resolved.
+          Contentful rejects this field&apos;s value. Resolve it before
+          publishing.
         </Note>
       )}
 
@@ -294,8 +297,9 @@ export const CalculatorConfigEditor = () => {
 
       {metadataChecked && state.metadataInvalid && (
         <Note variant="warning">
-          Some fields do not match this calculator. Your work is saved, but
-          publishing stays blocked until they are resolved.
+          Some fields do not match this calculator. Your work is saved, but the
+          calculator won&apos;t work on the website until they&apos;re resolved
+          — don&apos;t publish before then.
         </Note>
       )}
 
@@ -338,6 +342,7 @@ export const CalculatorConfigEditor = () => {
                   rowIssues={state.rowIssues}
                   duplicateUids={state.duplicateUids}
                   otherToggles={state.otherToggles(sectionIndex)}
+                  dialogs={sdk.dialogs}
                   actions={state.inputSectionActions(sectionIndex)}
                 />
               ))}

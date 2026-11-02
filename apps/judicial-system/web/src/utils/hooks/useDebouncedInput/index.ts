@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -11,13 +11,13 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import useDebouncedField from '@island.is/judicial-system-web/src/utils/hooks/useDebouncedField'
 import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 
-type SharedField = keyof UpdateCase & keyof Case
+type SharedField = keyof UpdateCase & keyof WorkingCase
 
 /**
- * Case fields this hook can drive: present on both `UpdateCase` and `Case`, and
- * string valued. `UpdateCase` also holds non-string fields and id fields such
- * as `courtId` that are not columns on `workingCase`, and reading those through
- * here would need a cast that hides the mismatch.
+ * Case fields this hook can drive: present on both `UpdateCase` and
+ * `WorkingCase`, and string valued. `UpdateCase` also holds non-string fields
+ * and id fields such as `courtId` that are not columns on `workingCase`, and
+ * reading those through here would need a cast that hides the mismatch.
  */
 type StringCaseField = {
   [K in SharedField]-?: NonNullable<UpdateCase[K]> extends string ? K : never

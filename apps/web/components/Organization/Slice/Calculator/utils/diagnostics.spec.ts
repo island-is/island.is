@@ -23,7 +23,6 @@ const config = (patch: Partial<CalculatorConfig> = {}): CalculatorConfig => ({
   inputSections: [],
   outputTotal: {
     uid: 'hero',
-    kind: 'value',
     key: 'total',
     label: label('Samtals'),
   },
@@ -74,7 +73,13 @@ describe('collectUnplacedRequiredKeys', () => {
             {
               key: 'main',
               fields: [
-                { uid: 'u1', key: 'salary', span: 6, label: label('Laun') },
+                {
+                  uid: 'u1',
+                  key: 'salary',
+                  kind: 'field',
+                  size: 'medium',
+                  label: label('Laun'),
+                },
               ],
             },
           ],
@@ -95,8 +100,23 @@ describe('collectStaleInputKeys', () => {
       collectStaleInputKeys(
         config({
           inputSections: [
-            { key: 'a', fields: [{ uid: 'u1', key: 'renamedAway', span: 6 }] },
-            { key: 'b', fields: [{ uid: 'u2', key: 'salary', span: 6 }] },
+            {
+              key: 'a',
+              fields: [
+                {
+                  uid: 'u1',
+                  key: 'renamedAway',
+                  kind: 'field',
+                  size: 'medium',
+                },
+              ],
+            },
+            {
+              key: 'b',
+              fields: [
+                { uid: 'u2', key: 'salary', kind: 'field', size: 'medium' },
+              ],
+            },
           ],
         }),
         inputContract([{ key: 'salary' }]),
@@ -111,8 +131,14 @@ describe('collectUnlabelledKeys', () => {
       {
         key: 'main',
         fields: [
-          { uid: 'u1', key: 'salary', span: 6, label: label('Laun') },
-          { uid: 'u2', key: 'bonus', span: 6 },
+          {
+            uid: 'u1',
+            key: 'salary',
+            kind: 'field',
+            size: 'medium',
+            label: label('Laun'),
+          },
+          { uid: 'u2', key: 'bonus', kind: 'field', size: 'medium' },
         ],
       },
     ],
@@ -152,11 +178,18 @@ describe('collectUnlabelledKeys', () => {
             {
               uid: 'u1',
               key: 'both',
-              span: 6,
+              kind: 'field',
+              size: 'medium',
               label: { is: 'Laun', en: 'Wages' },
             },
-            { uid: 'u2', key: 'isOnly', span: 6, label: { is: 'Laun' } },
-            { uid: 'u3', key: 'none', span: 6 },
+            {
+              uid: 'u2',
+              key: 'isOnly',
+              kind: 'field',
+              size: 'medium',
+              label: { is: 'Laun' },
+            },
+            { uid: 'u3', key: 'none', kind: 'field', size: 'medium' },
           ],
         },
       ],
@@ -268,7 +301,12 @@ describe('warnings', () => {
       calculatorType: TaxCalculatorType.ChildBenefit,
       config: config({
         inputSections: [
-          { key: 'main', fields: [{ uid: 'u1', key: 'renamedAway', span: 6 }] },
+          {
+            key: 'main',
+            fields: [
+              { uid: 'u1', key: 'renamedAway', kind: 'field', size: 'medium' },
+            ],
+          },
         ],
       }),
       inputContract: inputContract([{ key: 'salary', required: true }]),
@@ -284,7 +322,12 @@ describe('warnings', () => {
       calculatorType: TaxCalculatorType.ChildBenefit,
       config: config({
         inputSections: [
-          { key: 'main', fields: [{ uid: 'u1', key: 'renamedAway', span: 6 }] },
+          {
+            key: 'main',
+            fields: [
+              { uid: 'u1', key: 'renamedAway', kind: 'field', size: 'medium' },
+            ],
+          },
         ],
       }),
       inputContract: inputContract([{ key: 'salary', required: true }]),

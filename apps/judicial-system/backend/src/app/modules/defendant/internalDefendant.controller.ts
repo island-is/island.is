@@ -26,7 +26,13 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
+import { getOrCreateTransaction } from '../../middleware'
+import {
+  CaseExistsForUpdateGuard,
+  CaseExistsGuard,
+  CaseTypeGuard,
+  CurrentCase,
+} from '../case'
 import { Case, Defendant } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
@@ -36,9 +42,19 @@ import { DefendantNationalIdExistsGuard } from './guards/defendantNationalIdExis
 import { DeliverResponse } from './models/deliver.response'
 import { DefendantService } from './defendant.service'
 
+// Only the token guard is shared by every route here. The exists guard is
+// per route, because the routes read the case for different reasons: the
+// three deliver routes call the court system with no transaction, and must
+// read the case with the plain CaseExistsGuard - a FOR UPDATE read there
+// would hold the case lock across external I/O. The update route changes a
+// defendant from the case the guard loaded, so it reads the case under FOR
+// UPDATE with CaseExistsForUpdateGuard and serializes on the case row with
+// every other converted route on the case. CaseTypeGuard and
+// the defendant guards decide from request.case, so they follow whichever
+// exists guard a route has.
 @Controller('api/internal/case/:caseId')
 @ApiTags('internal defendants')
-@UseGuards(TokenGuard, CaseExistsGuard)
+@UseGuards(TokenGuard)
 export class InternalDefendantController {
   constructor(
     private readonly defendantService: DefendantService,
@@ -47,6 +63,7 @@ export class InternalDefendantController {
   ) {}
 
   @UseGuards(
+    CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     DefendantExistsGuard,
   )
@@ -76,6 +93,7 @@ export class InternalDefendantController {
   }
 
   @UseGuards(
+    CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     DefendantExistsGuard,
   )
@@ -106,13 +124,19 @@ export class InternalDefendantController {
     )
   }
 
-  @UseGuards(new CaseTypeGuard(indictmentCases), DefendantNationalIdExistsGuard)
+  // DefendantNationalIdExistsGuard finds the defendant on request.case, so
+  // the handler changes the defendant row as the locked case carries it.
+  @UseGuards(
+    CaseExistsForUpdateGuard,
+    new CaseTypeGuard(indictmentCases),
+    DefendantNationalIdExistsGuard,
+  )
   @Patch('defense/:defendantNationalId')
   @ApiOkResponse({
     type: Defendant,
     description: 'Updates defendant information by case and national id',
   })
-  updateDefendant(
+  async updateDefendant(
     @Param('caseId') caseId: string,
     @Param('defendantNationalId') _: string,
     @CurrentCase() theCase: Case,
@@ -121,17 +145,24 @@ export class InternalDefendantController {
   ): Promise<Defendant> {
     this.logger.debug(`Updating defendant info for ${caseId}`)
 
-    return this.sequelize.transaction(async (transaction) =>
-      this.defendantService.updateRestricted(
-        theCase,
-        defendant,
-        updatedDefendantChoice,
-        transaction,
-      ),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.defendantService.updateRestricted(
+      theCase,
+      defendant,
+      updatedDefendantChoice,
+      transaction,
     )
   }
 
-  @UseGuards(new CaseTypeGuard(indictmentCases), DefendantExistsGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    DefendantExistsGuard,
+  )
   @Post(
     `${
       messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDANT]

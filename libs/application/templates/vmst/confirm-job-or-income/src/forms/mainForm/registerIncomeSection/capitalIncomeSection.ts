@@ -4,7 +4,6 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
-  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
@@ -12,18 +11,23 @@ import * as m from '../../../lib/messages'
 import { isCapitalIncome } from '../../../utils/conditions'
 import { PaymentFrequency } from '../../../utils/constants'
 import {
-  getCurrentMonthEndDate,
+  getMaxRegistrationDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
 import {
   formatIsCurrency,
   formatIsDate,
-  formatIsDateOrDash,
+  formatIsDateOrIndefinite,
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
-import { buildCanRemoveRow } from '../../../utils/reconcile'
-import { getCapitalIncomeDefaults } from '../../../utils/persistedRows'
+import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
+import { buildCanEditRow, buildCanRemoveRow } from '../../../utils/reconcile'
 import {
+  getCapitalIncomeDefaults,
+  toCapitalIncomeRow,
+} from '../../../utils/persistedRows'
+import {
+  isOneTimePayment,
   periodToByFrequency,
   toRequiredNumber,
   toRequiredString,
@@ -33,6 +37,7 @@ const capitalIncomeValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerCapitalIncome',
   incomeTypeKey: 'capitalIncomePayments',
   persistedPath: 'income.data.capitalIncomePayments',
+  toRow: toCapitalIncomeRow,
   callbackId: 'CapitalIncomeValidation',
   messages: {
     fallbackErrorMessage: 'capitalIncomeValidationErrorMessage',
@@ -43,6 +48,7 @@ const capitalIncomeValidationProps: IncomeValidationFieldProps = {
     estimatedIncome: toRequiredNumber(row.amountPerMonth),
     periodFrom: toRequiredString(row.dateFrom),
     periodTo: periodToByFrequency(row),
+    oneTimePayment: isOneTimePayment(row),
   }),
 }
 
@@ -56,20 +62,7 @@ export const capitalIncomeSection = buildSubSection({
       title: m.application.capitalIncomeHeading,
       description: m.application.capitalIncomeDescription,
       children: [
-        buildDescriptionField({
-          title: () => {
-            const month = new Date().toLocaleDateString('is-IS', {
-              month: 'long',
-            })
-            return {
-              ...m.application.incomeTitle,
-              values: { month },
-            }
-          },
-          description: m.application.incomeDescriptionLink,
-          titleVariant: 'h4',
-          id: 'capitalIncomeDescription',
-        }),
+        ...buildIncomeDescriptionFields('capitalIncomeDescription'),
         buildTableRepeaterField({
           id: 'registerCapitalIncome',
           addItemButtonText: m.application.addLine,
@@ -78,7 +71,12 @@ export const capitalIncomeSection = buildSubSection({
           canRemoveRow: buildCanRemoveRow(
             capitalIncomeValidationProps.persistedPath,
           ),
-          removeButtonDisabledTooltipText: m.application.removeLineLocked,
+          removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
+          editField: true,
+          canEditRow: buildCanEditRow(
+            capitalIncomeValidationProps.persistedPath,
+          ),
+          editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
             paymentType: {
@@ -137,15 +135,19 @@ export const capitalIncomeSection = buildSubSection({
                 `registerCapitalIncome[${index}].dateTo`,
               ],
               minDate: getCurrentMonthStartDate,
-              maxDate: getCurrentMonthEndDate,
+              maxDate: getMaxRegistrationDate,
             },
             dateTo: {
               component: 'date',
               label: m.application.dateTo,
               width: 'half',
-              required: (_application, activeField) =>
+              disabled: (_application, activeField) =>
                 activeField?.paymentFrequency === PaymentFrequency.ONE_TIME,
-              maxDate: getCurrentMonthEndDate,
+              placeholder: (_application, activeField) =>
+                activeField?.paymentFrequency === PaymentFrequency.MONTHLY
+                  ? m.application.indefinitePeriod
+                  : '',
+              maxDate: getMaxRegistrationDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {
@@ -185,7 +187,8 @@ export const capitalIncomeSection = buildSubSection({
                 return type?.name ?? value
               },
               dateFrom: formatIsDate,
-              dateTo: formatIsDateOrDash,
+              dateTo: (value, _displayIndex, _application, row) =>
+                formatIsDateOrIndefinite(value, row?.paymentFrequency),
               amountPerMonth: formatIsCurrency,
             },
           },

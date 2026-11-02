@@ -13,6 +13,7 @@ export interface InputSectionActions {
   update: (patch: Partial<CalculatorInputSection>) => void
   remove: () => void
   addField: () => void
+  addContentField: () => void
   updateField: (
     fieldIndex: number,
     patch: Partial<CalculatorInputSectionField>,

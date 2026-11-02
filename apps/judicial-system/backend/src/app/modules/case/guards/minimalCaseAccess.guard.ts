@@ -25,7 +25,7 @@ export class MinimalCaseAccessGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case')
     }
 
-    if (!canUserAccessMinimalCase(theCase, user)) {
+    if (!canUserAccessMinimalCase(theCase, user, false)) {
       throw new ForbiddenException(
         `User ${user.id} does not have access to minimal case ${theCase.id}`,
       )

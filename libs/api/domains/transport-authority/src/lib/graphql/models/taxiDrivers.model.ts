@@ -16,6 +16,9 @@ export class TaxiDriver {
   stationId!: number
 
   @Field(() => String, { nullable: true })
+  callNumber?: string | null
+
+  @Field(() => String, { nullable: true })
   representativeName?: string | null
 }
 

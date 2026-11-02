@@ -15,10 +15,8 @@ import {
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
-import type {
-  Case,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseState,
   CaseType,
@@ -69,7 +67,7 @@ const getCaseStatus = (
       : 'completed'
     : 'ongoing'
 
-export const getRoute = (caseToOpen: Case, user: User): string => {
+export const getRoute = (caseToOpen: WorkingCase, user: User): string => {
   if (!caseToOpen || !user) {
     return '/'
   }

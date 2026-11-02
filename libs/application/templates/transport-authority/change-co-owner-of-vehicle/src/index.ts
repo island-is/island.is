@@ -3,10 +3,10 @@ import { ChangeCoOwnerOfVehicle } from './lib/dataSchema'
 
 export const getFields = () => import('./fields/')
 
+export * from './lib/messages'
+
 export type ChangeCoOwnerOfVehicleAnswers = ChangeCoOwnerOfVehicle
 
 export * from './utils'
-export * from './lib/messages/externalData'
-export * from './lib/messages/applicationCheck'
 
 export default template

@@ -302,6 +302,10 @@ export class Case {
   @Field(() => String, { nullable: true })
   readonly indictmentIntroduction?: string
 
+  // Set once the generated Ákæra has been frozen to S3; gates replacing it
+  @Field(() => String, { nullable: true })
+  readonly indictmentHash?: string
+
   @Field(() => [IndictmentCount], { nullable: true })
   readonly indictmentCounts?: IndictmentCount[]
 

@@ -1972,6 +1972,26 @@ export const m = defineMessages({
     id: 'service.portal:payments-reasoning',
     defaultMessage: 'Forsenda greiðslna',
   },
+  unemploymentBenefits: {
+    id: 'service.portal:unemployment-benefits',
+    defaultMessage: 'Atvinnuleysisbætur',
+  },
+  activationAllowance: {
+    id: 'service.portal:activation-allowance',
+    defaultMessage: 'Virknistyrkur',
+  },
+  myStatus: {
+    id: 'service.portal:my-status',
+    defaultMessage: 'Staðan þín',
+  },
+  myIncome: {
+    id: 'service.portal:my-income',
+    defaultMessage: 'Tekjur',
+  },
+  myData: {
+    id: 'service.portal:my-data',
+    defaultMessage: 'Mín gögn',
+  },
   january: {
     id: 'service.portal:january',
     defaultMessage: 'Janúar',
@@ -2423,6 +2443,14 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:health-shorter',
     defaultMessage: 'Sjúkra',
   },
+  healthTreatment: {
+    id: 'sp.search.tags:health-treatment',
+    defaultMessage: 'Meðferð',
+  },
+  healthPregnancy: {
+    id: 'sp.search.tags:health-pregnancy',
+    defaultMessage: 'Meðganga',
+  },
   healthReferrals: {
     id: 'sp.search.tags:health-referrals',
     defaultMessage: 'Vísanir',
@@ -2478,6 +2506,14 @@ export const searchTagsMessages = defineMessages({
   medicineDelegationOtherNew: {
     id: 'sp.search.tags:medicine-delegation-other-new',
     defaultMessage: 'Nýtt lyfjaumboð',
+  },
+  medicinePrescriptions: {
+    id: 'sp.search.tags:medicine-prescriptions',
+    defaultMessage: 'Lyfseðlar',
+  },
+  medicinePrescription: {
+    id: 'sp.search.tags:medicine-prescription',
+    defaultMessage: 'Lyfseðill',
   },
   appointment: {
     id: 'sp.search.tags:appointment',

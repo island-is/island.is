@@ -3,6 +3,10 @@ import { Platform } from 'react-native'
 import { create } from 'zustand'
 import { useStore } from 'zustand/react'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import {
+  clearBiometricBaseline,
+  enrollBiometricBaseline,
+} from '../../modules/biometric-integrity'
 
 export type Locale = 'en-US' | 'is-IS' | 'en-IS' | 'is-US'
 export type ThemeMode = 'dark' | 'light'
@@ -17,6 +21,10 @@ export interface PreferencesStore {
   hasOnboardedNotifications: boolean
   hasOnboardedPrivacy: boolean
   hasAcceptedNotifications: boolean
+  /** Android cannot tell "never asked" from "declined", so remember that we asked. */
+  hasRequestedNotificationsPermission: boolean
+  /** Set by "decide later" at onboarding, so the home screen leaves them alone. */
+  hasDeferredNotificationsOnboarding: boolean
   hasAcceptedBiometrics: boolean
   hasOnboardedPasskeys: boolean
   hasCreatedPasskey: boolean
@@ -60,6 +68,8 @@ const defaultPreferences = {
   hasOnboardedNotifications: false,
   hasOnboardedPrivacy: false,
   hasAcceptedNotifications: false,
+  hasRequestedNotificationsPermission: false,
+  hasDeferredNotificationsOnboarding: false,
   hasAcceptedBiometrics: false,
   hasOnboardedPasskeys: false,
   hasCreatedPasskey: false,
@@ -97,6 +107,12 @@ export const preferencesStore = create<PreferencesStore>()(
         set({ appearanceMode })
       },
       setUseBiometrics(useBiometrics: boolean) {
+        // Snapshot the enrolled biometrics so later changes can be detected.
+        if (useBiometrics) {
+          enrollBiometricBaseline()
+        } else {
+          clearBiometricBaseline()
+        }
         set({ useBiometrics })
       },
       dismiss(key: string, value = true) {
@@ -117,6 +133,7 @@ export const preferencesStore = create<PreferencesStore>()(
         set({ walletPassDismissedInfoAlerts: current })
       },
       reset() {
+        clearBiometricBaseline()
         set(defaultPreferences as PreferencesStore)
       },
     }),

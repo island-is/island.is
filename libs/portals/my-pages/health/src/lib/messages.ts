@@ -3405,4 +3405,22 @@ export const messages = defineMessages({
     id: 'sp.health:appointment-location-department',
     defaultMessage: 'Deild',
   },
+  pregnancySearchDescription: {
+    id: 'sp.health:pregnancy-search-description',
+    defaultMessage: 'Hér finnur þú upplýsingar sem tengjast meðgöngu þinni.',
+  },
+  healthConversationsSearchDescription: {
+    id: 'sp.health:health-conversations-search-description',
+    defaultMessage:
+      'Hér getur þú séð skilaboð milli þín og heilbrigðisstofnana.',
+  },
+  therapiesAndAidsSearchDescription: {
+    id: 'sp.health:therapies-and-aids-search-description',
+    defaultMessage:
+      'Hér finnur þú upplýsingar um þjálfun, hjálpartæki og næringu.',
+  },
+  patientDataSearchDescription: {
+    id: 'sp.health:patient-data-search-description',
+    defaultMessage: 'Hér finnur þú biðlista og bólusetningar.',
+  },
 })

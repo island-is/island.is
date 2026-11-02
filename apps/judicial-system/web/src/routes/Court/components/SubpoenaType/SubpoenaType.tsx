@@ -7,12 +7,12 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -32,7 +32,7 @@ interface SubpoenaTypeProps {
     children?: ReactNode
     toggleNewAlternativeService?: () => void
   }[]
-  workingCase: Case
+  workingCase: WorkingCase
   required?: boolean
 }
 

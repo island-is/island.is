@@ -61,7 +61,7 @@ export class ScreensService {
     const newScreen: Screen = new this.screenModel(screen)
     await newScreen.save()
 
-    const keys = ['id', 'sectionId']
+    const keys = ['id', 'identifier', 'sectionId']
     const screenDto: ScreenDto = defaults(
       pick(newScreen, keys),
       zipObject(keys, Array(keys.length).fill(null)),
@@ -102,7 +102,11 @@ export class ScreensService {
       )
     }
 
-    Object.assign(screen, updateScreenDto)
+    const { identifier, ...updates } = updateScreenDto
+    Object.assign(screen, updates)
+    if (identifier != null) {
+      screen.identifier = identifier
+    }
 
     await screen.save()
   }

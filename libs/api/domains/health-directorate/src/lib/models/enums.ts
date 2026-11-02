@@ -123,6 +123,15 @@ registerEnumType(AppointmentLinkTypeEnum, {
   name: 'HealthDirectorateAppointmentLinkType',
 })
 
+export enum AppointmentsOrderEnum {
+  ASC = 'asc',
+  DESC = 'desc',
+}
+
+registerEnumType(AppointmentsOrderEnum, {
+  name: 'HealthDirectorateAppointmentsOrder',
+})
+
 export enum WaitlistStatusTagColorEnum {
   blue = 'blue',
   purple = 'purple',
@@ -285,4 +294,21 @@ export enum AppointmentCancelOutcomeEnum {
 }
 registerEnumType(AppointmentCancelOutcomeEnum, {
   name: 'HealthDirectorateAppointmentCancelOutcome',
+})
+
+export enum PregnancyCommunicationKindEnum {
+  examination = 'examination',
+  phoneCall = 'phoneCall',
+}
+registerEnumType(PregnancyCommunicationKindEnum, {
+  name: 'HealthDirectoratePregnancyCommunicationKind',
+})
+
+export enum PregnancyDocumentKindEnum {
+  certificate = 'certificate',
+  attachment = 'attachment',
+  unknown = 'unknown',
+}
+registerEnumType(PregnancyDocumentKindEnum, {
+  name: 'HealthDirectoratePregnancyDocumentKind',
 })

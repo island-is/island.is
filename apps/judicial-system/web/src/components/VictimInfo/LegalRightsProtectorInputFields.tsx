@@ -3,14 +3,12 @@ import React, { useContext } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   InputAdvocate,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  Case,
-  Victim,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Victim } from '@island.is/judicial-system-web/src/graphql/schema'
 import { RequestSharedWhen } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useVictim } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -21,8 +19,8 @@ export const LegalRightsProtectorInputFields = ({
   useVictimNameAsTitle,
 }: {
   victim: Victim
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   useVictimNameAsTitle?: boolean
 }) => {
   const { updateVictimAndSetState, updateVictimState, updateVictim } =

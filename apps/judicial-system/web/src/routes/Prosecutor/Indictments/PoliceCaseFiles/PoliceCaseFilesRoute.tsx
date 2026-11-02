@@ -188,9 +188,15 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
           return (
             <Box key={index}>
               <SectionHeading
-                title={formatMessage(strings.policeCaseNumberSectionHeading, {
-                  policeCaseNumber,
-                })}
+                title={formatMessage(
+                  {
+                    id: strings.policeCaseNumberSectionHeading,
+                    defaultMessage: strings.policeCaseNumberSectionHeading,
+                  },
+                  {
+                    policeCaseNumber,
+                  },
+                )}
                 marginBottom={2}
               />
               <Box marginBottom={3}>
@@ -296,10 +302,10 @@ const PoliceCaseFilesRoute = () => {
         title={formatMessage(titles.prosecutor.indictments.policeCaseFiles)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <PageTitle>{strings.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
-          <InfoBox text={formatMessage(strings.infoBox)} />
+          <InfoBox text={strings.infoBox} />
           <PoliceUploadListMemo
             caseId={workingCase.id}
             caseFiles={workingCase.caseFiles}

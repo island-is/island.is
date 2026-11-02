@@ -1,6 +1,7 @@
 import type { FC } from 'react'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
+import { stripPdfExtension } from '@island.is/judicial-system/formatters'
 import type { CourtDocumentResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as styles from './UnfiledCourtDocumentList.css'
@@ -40,7 +41,7 @@ export const UnfiledCourtDocumentList: FC<Props> = ({
             paddingY={2}
           >
             <Text variant="h5" as="span" className={styles.documentName}>
-              {courtDocument.name}
+              {stripPdfExtension(courtDocument.name)}
             </Text>
             <Box marginLeft={1} flexShrink={0}>
               <Icon icon="open" type="outline" size="small" />
