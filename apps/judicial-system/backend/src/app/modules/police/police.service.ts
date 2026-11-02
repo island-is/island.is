@@ -9,6 +9,7 @@ import {
   BadGatewayException,
   forwardRef,
   HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -63,6 +64,7 @@ import { PoliceDefendant } from './models/policeDefendant.model'
 import { PoliceSystemDigitalCaseFile } from './models/PoliceSystemDigitalCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
+import { isFileTooLargeForPolice } from './police.helpers'
 
 export enum PoliceDocumentType {
   RVKR = 'RVKR', // Krafa í R-málum
@@ -1329,7 +1331,10 @@ export class PoliceService {
             ? responseBody
             : `Police case update failed with empty response body (HTTP ${res.status})`
 
-        if (res.status === 413 && courtDocuments.length > 0) {
+        if (
+          res.status === HttpStatus.PAYLOAD_TOO_LARGE &&
+          courtDocuments.length > 0
+        ) {
           // Size limits are expected; email the prosecutor instead of Slack.
           // Only terminal (no retry) when the prosecutor was actually notified.
           const notified = await this.notifyProsecutorOfFileTooLarge(
@@ -1359,7 +1364,7 @@ export class PoliceService {
 
         // Propagate so callers can complete the delivery without retrying
         // (only thrown after a successful prosecutor notification).
-        if (reason instanceof PayloadTooLargeException) {
+        if (isFileTooLargeForPolice(reason)) {
           throw reason
         }
 
@@ -1426,7 +1431,7 @@ export class PoliceService {
 
       const responseBody = await res.text()
 
-      if (res.status === 413) {
+      if (res.status === HttpStatus.PAYLOAD_TOO_LARGE) {
         // Only terminal (no retry) when the prosecutor was actually notified.
         const notified = await this.notifyProsecutorOfFileTooLarge(caseId)
 
@@ -1438,7 +1443,7 @@ export class PoliceService {
       throw responseBody
     } catch (error) {
       // Prosecutor emailed; callers complete delivery without retry.
-      if (error instanceof PayloadTooLargeException) {
+      if (isFileTooLargeForPolice(error)) {
         throw error
       }
 
@@ -1610,7 +1615,7 @@ export class PoliceService {
 
       const responseBody = await res.text()
 
-      if (res.status === 413) {
+      if (res.status === HttpStatus.PAYLOAD_TOO_LARGE) {
         // Only terminal (no retry) when the prosecutor was actually notified.
         const notified = await this.notifyProsecutorOfFileTooLarge(theCase.id)
 
@@ -1622,7 +1627,7 @@ export class PoliceService {
       throw responseBody
     } catch (error) {
       // Prosecutor emailed; callers complete delivery without retry.
-      if (error instanceof PayloadTooLargeException) {
+      if (isFileTooLargeForPolice(error)) {
         throw error
       }
 
