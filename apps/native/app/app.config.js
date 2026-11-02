@@ -12,6 +12,10 @@ const getGoogleServicesFile = () =>
 export default ({ config }) => {
   return {
     ...config,
+    // Auto-release builds set the marketing version (yy.mm.dd) during prebuild.
+    ...(process.env.MOBILE_RELEASE_VERSION && {
+      version: process.env.MOBILE_RELEASE_VERSION,
+    }),
     displayName: getAppName(),
     icon: `${getIconFolder()}/icon.png`,
     scheme: getUniqueIdentifier(),

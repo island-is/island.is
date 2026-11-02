@@ -168,6 +168,11 @@ definitions:
           echo "MOBILE_TARGET_SHA must be a full lowercase 40-character SHA" >&2
           exit 1
         fi
+        # app.config.js uses this as the marketing version (yy.mm.dd).
+        if [[ ! "$MOBILE_RELEASE_VERSION" =~ ^[0-9]{2}\.(0[1-9]|1[0-2])\.(0[1-9]|[12][0-9]|3[01])$ ]]; then
+          echo "MOBILE_RELEASE_VERSION must be yy.mm.dd, got '$MOBILE_RELEASE_VERSION'" >&2
+          exit 1
+        fi
         printf 'MOBILE_REQUEST_ID=%s\nMOBILE_TARGET_SHA=%s\nMOBILE_RELEASE_VERSION=%s\n' \
           "$MOBILE_REQUEST_ID" "$MOBILE_TARGET_SHA" "$MOBILE_RELEASE_VERSION"
         # Codemagic clones the branch tip; build the exact commit auto-release sent.
@@ -429,9 +434,10 @@ workflows:
   #   CODEMAGIC_WORKFLOW_ID_ANDROID_DEV  -> mobile-release-android-dev
   #   CODEMAGIC_WORKFLOW_ID_ANDROID_PROD -> mobile-release-android-prod
   # Based on dev-app-* / prod-app-*, but every request builds: no `when:
-  # changeset`, no check_changes, and the build number comes from auto-release
-  # instead of the stores. iOS variants upload the signed .ipa to TestFlight
-  # (dev and prod app records) but never submit for App Store review. Android
+  # changeset`, no check_changes, and the build number and yy.mm.dd version
+  # come from auto-release instead of the stores and app.json. iOS variants
+  # upload the signed .ipa to TestFlight (dev and prod app records) but never
+  # submit for App Store review. Android
   # variants sign only and publish to no store; the signed .aab is an artifact.
   mobile-release-ios-dev:
     name: Island.is Mobile Release iOS Dev (auto-release)
