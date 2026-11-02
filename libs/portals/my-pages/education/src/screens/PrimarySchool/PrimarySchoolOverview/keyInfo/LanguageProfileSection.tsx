@@ -2,6 +2,7 @@ import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import { Box, Button, Divider, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
+import { getLanguageByCode } from '@island.is/shared/utils'
 import {
   CardLoader,
   EmptyCard,
@@ -13,6 +14,10 @@ import { KeyInfoSection } from './KeyInfoSection'
 import { SectionError } from './SectionError'
 import * as styles from './keyInfoEmpty.css'
 import type { LanguageProfile, MmsError } from './types'
+
+/** MMS stores languages as ISO 639-1 codes; show the name, falling back to the
+ * raw code for anything the shared list does not know. */
+const languageName = (code: string) => getLanguageByCode(code)?.name ?? code
 
 interface Props {
   profile: LanguageProfile | undefined
@@ -77,15 +82,20 @@ export const LanguageProfileSection = ({ profile, loading, error }: Props) => {
           <Divider />
           <InfoLine
             label={kim.childLanguages}
-            // TODO(MMS v0.2): map ISO 639-1 codes to display names
-            content={profile?.languages?.join(', ') || undefined}
+            content={
+              profile?.languages?.map(languageName).join(', ') || undefined
+            }
             paddingY={3}
           />
           <Divider />
 
           <InfoLine
             label={kim.preferredLanguage}
-            content={profile?.preferredLanguage ?? undefined}
+            content={
+              profile?.preferredLanguage
+                ? languageName(profile.preferredLanguage)
+                : undefined
+            }
             paddingY={3}
           />
           <Divider />

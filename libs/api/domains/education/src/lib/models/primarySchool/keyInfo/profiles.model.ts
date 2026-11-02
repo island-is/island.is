@@ -31,15 +31,6 @@ export class HealthProfile {
 
   @Field(() => UpdatedBy, { nullable: true })
   updatedBy?: UpdatedBy
-
-  /**
-   * Whether the guardian may PATCH this profile. §8 keeps the health PATCH
-   * closed until MMS enables it (a real PATCH answers 403 FEATURE_DISABLED
-   * until then). Surfaced on the read model so the UI can disable Save without
-   * a failed write.
-   */
-  @Field()
-  canEdit!: boolean
 }
 
 /** GET/PATCH /me/children/{childId}/language-profile (contract §4.6). */

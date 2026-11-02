@@ -202,7 +202,6 @@ export const HealthProfileEdit = () => {
       toast.success(formatMessage(kim.saveSuccess))
       navigate(overviewPath)
     } catch {
-      // Expect 403 FEATURE_DISABLED until MMS enables the health PATCH (§8).
       toast.error(formatMessage(kim.saveError))
     }
   }
@@ -409,7 +408,7 @@ export const HealthProfileEdit = () => {
                 disabled={
                   !isValid ||
                   !isDirty ||
-                  !profile?.canEdit ||
+                  !profile ||
                   allergyOptionsLoading ||
                   Boolean(allergyOptionsError)
                 }

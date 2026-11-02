@@ -134,8 +134,6 @@ export interface HealthProfile {
   epipen: boolean
   medicalDiagnoses: boolean
   medicationAssistance?: boolean
-  /** whether MMS accepts a write; the api owns this, the UI only obeys it */
-  canEdit: boolean
 }
 
 /** PATCH body — a whole document (per ticket). */

@@ -136,9 +136,6 @@ export const mapHealthProfile = (dto: HealthProfileOutput): HealthProfile => ({
         displayName: dto.updatedBy.displayName ?? undefined,
       }
     : undefined,
-  // The health PATCH endpoint is live, so the profile is editable. (Previously
-  // gated behind a mock flag while §8 kept the endpoint closed.)
-  canEdit: true,
 })
 
 export const mapLanguageProfile = (

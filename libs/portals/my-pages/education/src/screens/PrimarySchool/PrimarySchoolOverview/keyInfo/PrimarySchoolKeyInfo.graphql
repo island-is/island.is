@@ -57,7 +57,6 @@ fragment PrimarySchoolHealthProfileFields on EducationPrimarySchoolHealthProfile
     kind
     displayName
   }
-  canEdit
 }
 
 query PrimarySchoolAgents($childId: String!) {
