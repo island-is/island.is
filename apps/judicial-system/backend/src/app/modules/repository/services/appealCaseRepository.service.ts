@@ -13,6 +13,7 @@ import { AppealCaseType } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../models/appealCase.model'
 import {
+  appealJudgesInclude,
   CreateAppealCase,
   UpdateAppealCase,
 } from '../types/caseRepository.types'
@@ -25,6 +26,8 @@ export class AppealCaseRepositoryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  // The bench is part of the appeal case: callers that reload the appeal case
+  // after replacing its judges read the stored bench, in order, from here.
   async findById(
     id: string,
     options?: { transaction?: Transaction },
@@ -34,6 +37,7 @@ export class AppealCaseRepositoryService {
 
       const result = await this.appealCaseModel.findOne({
         where: { id },
+        include: [appealJudgesInclude],
         transaction: options?.transaction,
       })
 

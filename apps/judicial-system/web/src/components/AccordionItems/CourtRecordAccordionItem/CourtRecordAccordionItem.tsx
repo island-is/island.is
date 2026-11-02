@@ -131,7 +131,7 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
         </Text>
         {!workingCase.isClosedCourtHidden && (
           <Box marginBottom={3}>
-            <Text>{formatMessage(closedCourt.text)}</Text>
+            <Text>{closedCourt.text}</Text>
           </Box>
         )}
       </AccordionListItem>

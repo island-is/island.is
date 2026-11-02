@@ -57,24 +57,16 @@ describe('InternalNotificationController - Send appeal case files updated notifi
           email: assistant.email,
           role: UserRole.COURT_OF_APPEALS_ASSISTANT,
         },
-        appealJudge1: {
-          name: judge1.name,
-          email: judge1.email,
-          id: judge1.id,
-          role: UserRole.COURT_OF_APPEALS_JUDGE,
-        },
-        appealJudge2: {
-          name: judge2.name,
-          email: judge2.email,
-          id: judge2.id,
-          role: UserRole.COURT_OF_APPEALS_JUDGE,
-        },
-        appealJudge3: {
-          name: judge3.name,
-          email: judge3.email,
-          id: judge3.id,
-          role: UserRole.COURT_OF_APPEALS_JUDGE,
-        },
+        appealJudges: [judge1, judge2, judge3].map((judge, displayOrder) => ({
+          displayOrder,
+          userId: judge.id,
+          user: {
+            name: judge.name,
+            email: judge.email,
+            id: judge.id,
+            role: UserRole.COURT_OF_APPEALS_JUDGE,
+          },
+        })),
       } as AppealCase
 
       await internalNotificationController

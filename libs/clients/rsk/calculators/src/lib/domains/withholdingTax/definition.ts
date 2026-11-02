@@ -1,117 +1,82 @@
+import type { GetWithholdingTaxData } from '../../../../gen/fetch'
+import { HjuskaparstadaStadgreidsla, LaunGreidast } from '../../../../gen/fetch'
 import {
   defineCalculator,
   defineInputFields,
   defineOutputFields,
+  enumOptions,
 } from '../../types/define'
-
-export const PAYMENT_FREQUENCIES = ['weekly', 'monthly'] as const
-export type PaymentFrequency = typeof PAYMENT_FREQUENCIES[number]
-
-export const MARITAL_STATUSES = [
-  'single',
-  'singleParent',
-  'marriedOrCohabiting',
-] as const
-export type MaritalStatus = typeof MARITAL_STATUSES[number]
-
-export const PENSION_FUND_RATIOS = ['0%', '4%'] as const
-export type PensionFundRatio = typeof PENSION_FUND_RATIOS[number]
-
-export const PRIVATE_PENSION_RATIOS = ['0%', '1%', '2%', '3%', '4%'] as const
-export type PrivatePensionRatio = typeof PRIVATE_PENSION_RATIOS[number]
-
-// Deliberately excludes 11%; these rates are negotiated.
-export const EMPLOYER_PENSION_MATCH_RATIOS = [
-  '0%',
-  '8%',
-  '8.5%',
-  '10%',
-  '10.5%',
-  '11.5%',
-  '12%',
-  '13.5%',
-] as const
-export type EmployerPensionMatchRatio =
-  typeof EMPLOYER_PENSION_MATCH_RATIOS[number]
-
-const toOptions = (values: readonly string[]) =>
-  values.map((value) => ({ value }))
 
 const withholdingTaxInputFields = defineInputFields([
   {
-    name: 'paymentFrequency',
+    name: 'launGreidast',
     type: 'select',
-    required: false,
-    options: toOptions(PAYMENT_FREQUENCIES),
+    required: true,
+    options: enumOptions(LaunGreidast),
   },
   {
-    name: 'maritalStatus',
+    name: 'hjuskaparstada',
     type: 'select',
-    required: false,
-    options: toOptions(MARITAL_STATUSES),
+    required: true,
+    options: enumOptions(HjuskaparstadaStadgreidsla),
   },
-  { name: 'incomeYear', type: 'number', required: false, semantic: 'year' },
-  { name: 'payMonth', type: 'number', required: false, semantic: 'month' },
-  { name: 'salary', type: 'number', required: false, semantic: 'currency' },
+  { name: 'tekjuar', type: 'number', required: true, semantic: 'year' },
+  { name: 'launamanudur', type: 'number', required: true, semantic: 'month' },
+  { name: 'laun', type: 'number', required: true, semantic: 'currency' },
   {
-    name: 'pensionFundRatio',
-    type: 'select',
-    required: false,
-    options: toOptions(PENSION_FUND_RATIOS),
-  },
-  {
-    name: 'privatePensionRatio',
-    type: 'select',
-    required: false,
-    options: toOptions(PRIVATE_PENSION_RATIOS),
-  },
-  {
-    name: 'taxCardUtilization',
+    name: 'lifeyrissjodurHlutfall',
     type: 'number',
-    required: false,
+    required: true,
     semantic: 'percentage',
   },
   {
-    name: 'spouseTaxCardUtilization',
+    name: 'sereignHlutfall',
     type: 'number',
-    required: false,
+    required: true,
     semantic: 'percentage',
   },
   {
-    name: 'accumulatedPersonalTaxCredit',
+    name: 'nytingSkattkorts',
     type: 'number',
-    required: false,
+    required: true,
+    semantic: 'percentage',
+  },
+  {
+    name: 'nytingSkattkortsMaka',
+    type: 'number',
+    required: true,
+    semantic: 'percentage',
+  },
+  {
+    name: 'uppsafnadurPersonuafslattur',
+    type: 'number',
+    required: true,
+    semantic: 'currency',
+  },
+  { name: 'orlof', type: 'number', required: true, semantic: 'currency' },
+  {
+    name: 'stettarfelag',
+    type: 'number',
+    required: true,
+    semantic: 'currency',
+  },
+  { name: 'annad', type: 'number', required: true, semantic: 'currency' },
+  {
+    name: 'motframlagLifeyrissjodur',
+    type: 'number',
+    required: true,
+    semantic: 'percentage',
+  },
+  {
+    name: 'okutaekjastyrkurUtan',
+    type: 'number',
+    required: true,
     semantic: 'currency',
   },
   {
-    name: 'vacationPay',
+    name: 'idgjaldSlysatryggingSjomanna',
     type: 'number',
-    required: false,
-    semantic: 'currency',
-  },
-  { name: 'unionDues', type: 'number', required: false, semantic: 'currency' },
-  {
-    name: 'otherDeduction',
-    type: 'number',
-    required: false,
-    semantic: 'currency',
-  },
-  {
-    name: 'employerPensionMatchRatio',
-    type: 'select',
-    required: false,
-    options: toOptions(EMPLOYER_PENSION_MATCH_RATIOS),
-  },
-  {
-    name: 'vehicleAllowance',
-    type: 'number',
-    required: false,
-    semantic: 'currency',
-  },
-  {
-    name: 'seamenAccidentInsurancePremium',
-    type: 'number',
-    required: false,
+    required: true,
     semantic: 'currency',
   },
 ] as const)
@@ -259,24 +224,7 @@ export const withholdingTaxCalculator = defineCalculator({
   outputFields: withholdingTaxOutputFields,
 } as const)
 
-export interface WithholdingTaxInput {
-  paymentFrequency?: PaymentFrequency
-  maritalStatus?: MaritalStatus
-  incomeYear?: number
-  payMonth?: number
-  salary?: number
-  pensionFundRatio?: PensionFundRatio
-  privatePensionRatio?: PrivatePensionRatio
-  taxCardUtilization?: number
-  spouseTaxCardUtilization?: number
-  accumulatedPersonalTaxCredit?: number
-  vacationPay?: number
-  unionDues?: number
-  otherDeduction?: number
-  employerPensionMatchRatio?: EmployerPensionMatchRatio
-  vehicleAllowance?: number
-  seamenAccidentInsurancePremium?: number
-}
+export type WithholdingTaxInput = GetWithholdingTaxData['query']
 
 export interface WithholdingTaxBracketOutput {
   lowerBound?: number
