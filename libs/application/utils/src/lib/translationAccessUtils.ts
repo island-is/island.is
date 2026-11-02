@@ -92,6 +92,23 @@ export const isTranslationNamespaceAllowed = (
   return owningTypeIds.some((typeId) => allowed.includes(typeId))
 }
 
+export const canManageSharedTranslationNamespace = (
+  user: TranslationAccessContext,
+  namespace: string,
+): boolean => {
+  const allowed = getAllowedTranslationTypeIds(user)
+
+  if (allowed === null) {
+    return true
+  }
+
+  const usedByTypeIds = getTypeIdsForNamespace(namespace)
+  return (
+    usedByTypeIds.length > 0 &&
+    usedByTypeIds.every((typeId) => allowed.includes(typeId))
+  )
+}
+
 const getAllConfiguredTranslationNamespaces = (): string[] => {
   const namespaces = new Set<string>()
 

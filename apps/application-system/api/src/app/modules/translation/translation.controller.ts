@@ -27,7 +27,10 @@ import {
   TranslationAccessService,
   type ContentfulTranslationRow,
 } from '@island.is/application/api/core'
-import { getAllowedTranslationTypeIds } from '@island.is/application/utils'
+import {
+  canManageSharedTranslationNamespace,
+  getAllowedTranslationTypeIds,
+} from '@island.is/application/utils'
 import { CmsTranslationCacheService } from '@island.is/cms-translations'
 import { ApplicationTypes } from '@island.is/application/types'
 import { Audit } from '@island.is/nest/audit'
@@ -103,8 +106,11 @@ export class TranslationController {
   @Scopes(...TRANSLATION_SCOPES)
   @Get('shared/list')
   async listSharedNamespaces(@CurrentUser() user: User) {
-    this.translationAccessService.assertGlobalTranslationAccess(user)
-    return this.sharedNamespaceIntrospectionService.listSharedNamespaces()
+    return this.sharedNamespaceIntrospectionService
+      .listSharedNamespaces()
+      .filter((entry) =>
+        canManageSharedTranslationNamespace(user, entry.namespace),
+      )
   }
 
   @Scopes(...TRANSLATION_SCOPES)
@@ -117,7 +123,7 @@ export class TranslationController {
       throw new BadRequestException('Query parameter namespace is required')
     }
 
-    this.translationAccessService.assertGlobalTranslationAccess(user)
+    this.translationAccessService.assertSharedNamespaceAccess(user, namespace)
     return this.sharedNamespaceIntrospectionService.introspectSharedNamespace(
       namespace,
     )
