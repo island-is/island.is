@@ -44,6 +44,7 @@ import {
   Course,
   GetNamespaceQuery,
   GetSearchCountTagsQuery,
+  GetProjectPageTitleQuery,
   GetSearchResultsDetailedQuery,
   GetSearchResultsNewsQuery,
   GetSearchResultsTotalQuery,
@@ -56,7 +57,9 @@ import {
   OrganizationParentSubpage,
   OrganizationSubpage,
   ProjectPage,
+  ProjectSubpage,
   QueryGetNamespaceArgs,
+  QueryGetProjectPageArgs,
   QuerySearchResultsArgs,
   SearchableContentTypes,
   SearchableTags,
@@ -82,6 +85,7 @@ import {
   GET_SEARCH_RESULTS_TOTAL,
   GET_SINGLE_ENTRY_TITLE_BY_ID_QUERY,
 } from '../queries'
+import { GET_PROJECT_PAGE_TITLE_QUERY } from '../queries/Project'
 import { CategoriesProps, FilterLabels, FilterMenu } from './FilterMenu'
 import { ActionType, initialState, reducer } from './Search.state'
 
@@ -116,6 +120,7 @@ interface CategoryProps {
   countResults: GetSearchCountTagsQuery['searchResults']
   namespace: Record<string, string>
   referencedByTitle?: string
+  projectTitle?: string
 }
 
 type TagsList = {
@@ -152,6 +157,7 @@ const connectedTypes: Partial<
     'WebOrganizationSubpage',
     'webOrganizationPage',
     'WebProjectPage',
+    'WebProjectSubpage',
     'WebOrganizationParentSubpage',
   ],
   webNews: ['WebNews'],
@@ -171,6 +177,7 @@ const Search: Screen<CategoryProps> = ({
   countResults,
   namespace,
   referencedByTitle,
+  projectTitle,
 }) => {
   const { query } = useRouter()
   const [state, dispatch] = useReducer(reducer, {
@@ -180,6 +187,7 @@ const Search: Screen<CategoryProps> = ({
       type: stringToArray(query.type) as SearchableContentTypes[],
       category: stringToArray(query.category),
       organization: stringToArray(query.organization),
+      project: stringToArray(query.project),
     },
   })
   usePlausible('Search Query', {
@@ -231,6 +239,11 @@ const Search: Screen<CategoryProps> = ({
       total +=
         (countResults?.typesCount ?? []).find((x) => x.key === 'webProjectPage')
           ?.count ?? 0
+
+      total +=
+        (countResults?.typesCount ?? []).find(
+          (x) => x.key === 'webProjectSubpage',
+        )?.count ?? 0
 
       if (query.processentry) {
         return total + (countResults?.processEntryCount ?? 0)
@@ -368,6 +381,14 @@ const Search: Screen<CategoryProps> = ({
       return (item.href as string) ?? ''
     }
 
+    const projectSubpage = item as unknown as ProjectSubpage
+    if (projectSubpage.__typename === 'ProjectSubpage') {
+      return linkResolver('projectsubpage', [
+        projectSubpage.projectSlug ?? '',
+        projectSubpage.slug,
+      ]).href
+    }
+
     if (item.__typename === 'Course') {
       if (item.courseHref) return item.courseHref
       return ''
@@ -436,7 +457,12 @@ const Search: Screen<CategoryProps> = ({
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
-  const matomoSearchCategory = [query.type, query.category, query.organization]
+  const matomoSearchCategory = [
+    query.type,
+    query.category,
+    query.organization,
+    query.project,
+  ]
     .flat()
     .filter(Boolean)
     .join(',')
@@ -473,15 +499,18 @@ const Search: Screen<CategoryProps> = ({
     const queryType = stringToArray(query.type) as SearchableContentTypes[]
     const queryCategory = stringToArray(query.category)
     const queryOrganization = stringToArray(query.organization)
+    const queryProject = stringToArray(query.project)
 
     const stateType = state.query.type ?? []
     const stateCategory = state.query.category ?? []
     const stateOrganization = state.query.organization ?? []
+    const stateProject = state.query.project ?? []
 
     const hasChanged =
       JSON.stringify(queryType) !== JSON.stringify(stateType) ||
       JSON.stringify(queryCategory) !== JSON.stringify(stateCategory) ||
-      JSON.stringify(queryOrganization) !== JSON.stringify(stateOrganization)
+      JSON.stringify(queryOrganization) !== JSON.stringify(stateOrganization) ||
+      JSON.stringify(queryProject) !== JSON.stringify(stateProject)
 
     if (hasChanged) {
       dispatch({
@@ -491,13 +520,14 @@ const Search: Screen<CategoryProps> = ({
             type: queryType,
             category: queryCategory,
             organization: queryOrganization,
+            project: queryProject,
           },
           searchLocked: true,
         },
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query.type, query.category, query.organization])
+  }, [query.type, query.category, query.organization, query.project])
 
   const getSearchParams = (contentType: string) => {
     return {
@@ -513,6 +543,7 @@ const Search: Screen<CategoryProps> = ({
       ...(query.organization?.length && {
         organization: query.organization,
       }),
+      ...(query.project?.length && { project: query.project }),
     }
   }
 
@@ -576,6 +607,18 @@ const Search: Screen<CategoryProps> = ({
       })
     }
 
+    for (const project of state.query.project ?? []) {
+      filterTags.push({
+        label: projectTitle ?? project,
+        onClick: () => {
+          dispatch({
+            type: ActionType.SET_PARAMS,
+            payload: { query: { project: [] } },
+          })
+        },
+      })
+    }
+
     for (const category of categories) {
       for (const selectedCategory of category.selected) {
         const label = category.filters.find(
@@ -600,7 +643,13 @@ const Search: Screen<CategoryProps> = ({
     }
 
     return filterTags
-  }, [categories, referencedBy, referencedByTitle])
+  }, [
+    categories,
+    referencedBy,
+    referencedByTitle,
+    state.query.project,
+    projectTitle,
+  ])
 
   return (
     <>
@@ -645,6 +694,7 @@ const Search: Screen<CategoryProps> = ({
                 activeLocale={activeLocale}
                 initialInputValue={q}
                 organization={state.query.organization?.[0]}
+                project={state.query.project?.[0]}
               />
               <Box width="full">
                 <Inline
@@ -788,11 +838,13 @@ const Search: Screen<CategoryProps> = ({
                     <strong>{q}</strong>
                     {!!(
                       state.query.organization?.length ||
+                      state.query.project?.length ||
                       state.query.category?.length
                     ) && ` ${n('withChosenFilters', 'með völdum síum')}. `}
                   </Text>
                   {!!(
                     state.query.organization?.length ||
+                    state.query.project?.length ||
                     state.query.category?.length
                   ) && (
                     <Button
@@ -902,6 +954,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
   const category = query.category ?? ''
   const type = query.type ?? ''
   const organization = query.organization ?? ''
+  const project = single(query.project) ?? ''
   const processentry = query.processentry ?? ''
   const referencedBy = query.referencedBy ?? ''
   const countTag = {}
@@ -920,6 +973,12 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
         key,
       }),
     ),
+    ...stringToArray(project).map(
+      (key: string): TagType => ({
+        type: 'project' as SearchableTags,
+        key,
+      }),
+    ),
     ...(processentry && [
       {
         type: 'processentry' as SearchableTags,
@@ -934,16 +993,25 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     ),
   ]
 
-  const types: SearchableContentTypes[] = stringToArray(type).map(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
-    (x: SearchableContentTypes) => x,
-  )
+  // Subpages of project pages are only searchable from within their project
+  const isSearchableType = (x: string) => !!project || x !== 'webProjectSubpage'
+
+  const types: SearchableContentTypes[] = stringToArray(type)
+    .filter(isSearchableType)
+    .map(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      (x: SearchableContentTypes) => x,
+    )
+
+  const allTypes: typeof ALL_TYPES = project
+    ? [...ALL_TYPES, 'webProjectSubpage']
+    : ALL_TYPES
 
   const ensureContentTypeExists = (
     types: string[],
   ): types is SearchableContentTypes[] =>
-    !!types.length && ALL_TYPES.every((type) => ALL_TYPES.includes(type))
+    !!types.length && allTypes.every((type) => allTypes.includes(type))
 
   const [
     {
@@ -954,6 +1022,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
     referencedByTitleResponse,
+    projectTitleResponse,
   ] = await Promise.all([
     apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
       fetchPolicy: 'no-cache', // overriding because at least local caching is broken
@@ -964,8 +1033,8 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
           queryString,
           types: types.length
             ? types
-            : ensureContentTypeExists(ALL_TYPES)
-            ? ALL_TYPES
+            : ensureContentTypeExists(allTypes)
+            ? allTypes
             : [],
           ...(tags.length && { tags }),
           ...countTag,
@@ -988,7 +1057,11 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
             'organization' as SearchableTags,
             'processentry' as SearchableTags,
           ],
-          types: ensureContentTypeExists(ALL_TYPES) ? ALL_TYPES : [],
+          types: ensureContentTypeExists(allTypes) ? allTypes : [],
+          // Keep the type tabs and filters in line with the scoped results
+          ...(project && {
+            tags: [{ type: 'project' as SearchableTags, key: project }],
+          }),
           countTypes: true,
           countProcessEntry: true,
         },
@@ -1021,6 +1094,20 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
           },
         })
       : null,
+    project
+      ? apolloClient
+          .query<GetProjectPageTitleQuery, QueryGetProjectPageArgs>({
+            query: GET_PROJECT_PAGE_TITLE_QUERY,
+            variables: {
+              input: {
+                slug: project,
+                lang: locale as ContentLanguage,
+              },
+            },
+          })
+          // The filter still works without its title, it falls back to the slug
+          .catch(() => null)
+      : null,
   ])
 
   if (searchResults.items.length === 0 && page > 1) {
@@ -1036,6 +1123,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     page,
     referencedByTitle:
       referencedByTitleResponse?.data?.getSingleEntryTitleById?.title,
+    projectTitle: projectTitleResponse?.data?.getProjectPage?.title,
   }
 }
 

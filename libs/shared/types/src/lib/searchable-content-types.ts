@@ -10,6 +10,7 @@ export enum SearchableContentTypes {
   webQNA = 'webQNA',
   webLink = 'webLink',
   webProjectPage = 'webProjectPage',
+  webProjectSubpage = 'webProjectSubpage',
   webManual = 'webManual',
   webManualChapterItem = 'webManualChapterItem',
   webOrganizationParentSubpage = 'webOrganizationParentSubpage',

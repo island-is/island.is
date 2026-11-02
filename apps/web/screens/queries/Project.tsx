@@ -2,6 +2,15 @@ import gql from 'graphql-tag'
 
 import { nestedFields, nestedOneColumnTextFields, slices } from './fragments'
 
+export const GET_PROJECT_PAGE_TITLE_QUERY = gql`
+  query GetProjectPageTitle($input: GetProjectPageInput!) {
+    getProjectPage(input: $input) {
+      id
+      title
+    }
+  }
+`
+
 export const GET_PROJECT_PAGE_QUERY = gql`
   query GetProjectPage($input: GetProjectPageInput!) {
     getProjectPage(input: $input) {
