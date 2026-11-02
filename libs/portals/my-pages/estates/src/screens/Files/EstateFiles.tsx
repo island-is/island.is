@@ -15,10 +15,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDateOnly,
-  formSubmit,
   IntroWrapper,
   LinkButton,
   m,
+  PdfModal,
   SYSLUMENN_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -32,6 +32,10 @@ export const EstateFiles = () => {
   const { id } = useParams<{ id: string }>()
   const [search, setSearch] = useState('')
   const [announcement, setAnnouncement] = useState('')
+  const [activePdf, setActivePdf] = useState<{
+    url: string
+    title: string
+  } | null>(null)
   const searchTouched = useRef(false)
 
   const { data, loading, error } = useEstateFilesQuery({
@@ -155,7 +159,11 @@ export const EstateFiles = () => {
                         variant: 'text',
                         icon: 'open',
                         iconType: 'outline',
-                        onClick: () => formSubmit(downloadUrl),
+                        onClick: () =>
+                          setActivePdf({
+                            url: downloadUrl,
+                            title: doc.name ?? '',
+                          }),
                       }
                     : url
                     ? {
@@ -173,6 +181,13 @@ export const EstateFiles = () => {
           })}
         </Stack>
       )}
+
+      <PdfModal
+        url={activePdf?.url}
+        onClose={() => setActivePdf(null)}
+        aria-label={activePdf?.title || formatMessage(m.view)}
+        title={activePdf?.title}
+      />
     </IntroWrapper>
   )
 }

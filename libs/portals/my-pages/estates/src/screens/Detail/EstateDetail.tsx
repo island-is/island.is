@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import {
@@ -20,10 +20,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDateOnly,
-  formSubmit,
   IntroWrapper,
   LinkButton,
   m,
+  PdfModal,
   SYSLUMENN_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -56,6 +56,10 @@ export const EstateDetail = () => {
   useNamespaces('sp.estates')
   const { formatMessage } = useLocale()
   const { id } = useParams<{ id: string }>()
+  const [activePdf, setActivePdf] = useState<{
+    url: string
+    title: string
+  } | null>(null)
 
   const { data, loading, error } = useEstateDetailQuery({
     variables: { input: { caseId: id ?? '' } },
@@ -414,7 +418,11 @@ export const EstateDetail = () => {
                                 variant: 'text',
                                 icon: 'open',
                                 iconType: 'outline',
-                                onClick: () => formSubmit(downloadUrl),
+                                onClick: () =>
+                                  setActivePdf({
+                                    url: downloadUrl,
+                                    title: doc.name ?? '',
+                                  }),
                               }
                             : url
                             ? {
@@ -448,6 +456,13 @@ export const EstateDetail = () => {
           )}
         </>
       )}
+
+      <PdfModal
+        url={activePdf?.url}
+        onClose={() => setActivePdf(null)}
+        aria-label={activePdf?.title || formatMessage(m.view)}
+        title={activePdf?.title}
+      />
     </IntroWrapper>
   )
 }
