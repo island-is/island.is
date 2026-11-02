@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { VMSTModule } from '@island.is/clients/vmst'
 import { SharedTemplateAPIModule } from '../../shared'
-import { ParentalLeaveService } from './parental-leave.service'
+import { ParentalLeaveV2Service } from './parental-leave.service'
 import { SmsModule } from '@island.is/nova-sms'
 import { ChildrenService } from './children/children.service'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
@@ -17,7 +17,7 @@ import { NationalRegistryV3Module } from '../../shared/api/national-registry-v3/
     NationalRegistryV3Module,
     AwsModule,
   ],
-  providers: [ChildrenService, ParentalLeaveService],
-  exports: [ParentalLeaveService],
+  providers: [ChildrenService, ParentalLeaveV2Service],
+  exports: [ParentalLeaveV2Service],
 })
-export class ParentalLeaveModule {}
+export class ParentalLeaveV2Module {}

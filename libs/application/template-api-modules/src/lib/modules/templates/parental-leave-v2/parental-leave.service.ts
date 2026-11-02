@@ -100,7 +100,7 @@ interface VMSTError {
 }
 
 @Injectable()
-export class ParentalLeaveService extends BaseTemplateApiService {
+export class ParentalLeaveV2Service extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private parentalLeaveApi: ParentalLeaveApi,
@@ -113,7 +113,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private readonly nationalRegistryV3Service: NationalRegistryV3Service,
     private readonly s3Service: S3Service,
   ) {
-    super(ApplicationTypes.PARENTAL_LEAVE)
+    super(ApplicationTypes.PARENTAL_LEAVE_V2)
   }
 
   private parseErrors(e: Error | VMSTError) {

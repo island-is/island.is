@@ -29,7 +29,7 @@ import { EmailService } from '@island.is/email-service'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { ParentalLeaveService } from './parental-leave.service'
+import { ParentalLeaveV2Service } from './parental-leave.service'
 import { SmsService } from '@island.is/nova-sms'
 import { ChildrenService } from './children/children.service'
 import { PaymentService } from '@island.is/application/api/payment'
@@ -127,8 +127,8 @@ const createApplication = (): Application => ({
   status: ApplicationStatus.IN_PROGRESS,
 })
 
-describe('ParentalLeaveService', () => {
-  let parentalLeaveService: ParentalLeaveService
+describe('ParentalLeaveV2Service', () => {
+  let parentalLeaveService: ParentalLeaveV2Service
   let sharedService: SharedTemplateApiService
   let applicationGetApplicationInformation: jest.Mock
 
@@ -137,7 +137,7 @@ describe('ParentalLeaveService', () => {
 
     const module = await Test.createTestingModule({
       providers: [
-        ParentalLeaveService,
+        ParentalLeaveV2Service,
         {
           provide: PaymentService,
           useValue: {}, //not used
@@ -245,8 +245,17 @@ describe('ParentalLeaveService', () => {
       ],
     }).compile()
 
-    parentalLeaveService = module.get(ParentalLeaveService)
+    parentalLeaveService = module.get(ParentalLeaveV2Service)
     sharedService = module.get(SharedTemplateApiService)
+  })
+
+  it('should register under the V2 application type', () => {
+    expect(parentalLeaveService.serviceId).toBe(
+      ApplicationTypes.PARENTAL_LEAVE_V2,
+    )
+    expect(parentalLeaveService.serviceId).not.toBe(
+      ApplicationTypes.PARENTAL_LEAVE,
+    )
   })
 
   describe('setApplicationFundId', () => {
