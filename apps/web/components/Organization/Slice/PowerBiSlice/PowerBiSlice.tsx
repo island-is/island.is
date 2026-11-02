@@ -132,6 +132,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
         embed.element.style.aspectRatio = ''
         embed.element.style.height = '100%'
         embed.element.style.minHeight = cmsStyle?.element?.minHeight ?? ''
+        embed.iframe.style.height = cmsStyle?.iframe?.height ?? '100%'
         applyStyles(embed.element, pageStyle.element)
         applyStyles(embed.iframe, pageStyle.iframe)
         return

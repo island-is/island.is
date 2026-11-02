@@ -223,6 +223,40 @@ describe('PowerBiSlice sizing', () => {
       expect(report.element.style.aspectRatio).toBe('')
       expect(report.iframe.style.height).toBe('1420px')
     })
+
+    it.each([
+      ['100%', undefined],
+      ['800px', { height: '800px' }],
+    ])(
+      'resets the iframe height to %s for a page without its own',
+      async (expected, iframe) => {
+        const { report, fire } = await setup({
+          config: {
+            ...config,
+            style: {
+              iframe,
+              pages: {
+                tall: { iframe: { height: '1420px' } },
+                elementOnly: { element: { height: '900px' } },
+              },
+            },
+          },
+          width: MOBILE_WIDTH,
+          page: { ...desktopPage, name: 'tall' },
+        })
+
+        await fire('pageChanged')
+        expect(report.iframe.style.height).toBe('1420px')
+
+        report.getActivePage.mockResolvedValue({
+          ...desktopPage,
+          name: 'elementOnly',
+        })
+        await fire('pageChanged')
+
+        expect(report.iframe.style.height).toBe(expected)
+      },
+    )
   })
 
   it('lets a height from the CMS win over the page size', async () => {
