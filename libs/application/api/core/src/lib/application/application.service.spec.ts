@@ -150,6 +150,30 @@ describe('ApplicationService', () => {
       expect(order).toEqual([['modified', 'DESC']])
     })
   })
+
+  describe('customTemplateFindQuery', () => {
+    it('can query applications from multiple template types', async () => {
+      const findApplications = service.customTemplateFindQuery(
+        'ParentalLeaveV2',
+      )
+
+      await findApplications(
+        { applicant: '0101302989' },
+        ['ParentalLeave', 'ParentalLeaveV2'],
+      )
+
+      expect(findAllSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            applicant: '0101302989',
+            typeId: { [Op.in]: ['ParentalLeave', 'ParentalLeaveV2'] },
+          }),
+          raw: true,
+        }),
+      )
+    })
+  })
+
   describe('findAllDueToBePruned', () => {
     it('should only fetch applications where userDeleted is false', async () => {
       await service.findAllDueToBePruned()

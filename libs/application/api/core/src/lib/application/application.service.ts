@@ -462,14 +462,20 @@ export class ApplicationService {
    */
   customTemplateFindQuery(
     templateTypeId: string,
-  ): (whereQueryOptions: WhereOptions) => Promise<Application[]> {
-    return (whereQueryOptions: WhereOptions) => {
+  ): (
+    whereQueryOptions: WhereOptions,
+    typeIds?: string[],
+  ) => Promise<Application[]> {
+    return (whereQueryOptions: WhereOptions, typeIds?: string[]) => {
+      const applicationTypeIds = typeIds?.length ? typeIds : [templateTypeId]
+
       return this.applicationModel.findAll({
         where: {
           ...whereQueryOptions,
-          typeId: {
-            [Op.eq]: templateTypeId,
-          },
+          typeId:
+            applicationTypeIds.length === 1
+              ? { [Op.eq]: applicationTypeIds[0] }
+              : { [Op.in]: applicationTypeIds },
           ...applicationIsNotSetToBePruned(),
         },
         order: [['modified', 'DESC']],

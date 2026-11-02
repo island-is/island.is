@@ -13,6 +13,7 @@ export enum ApplicationTypes {
   DISTRICT_COMMISSIONER_DRIVING_LICENSE = 'DistrictCommissionerDrivingLicense',
   DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
   PARENTAL_LEAVE = 'ParentalLeave',
+  PARENTAL_LEAVE_V2 = 'ParentalLeaveV2',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
   HEALTH_INSURANCE = 'HealthInsurance',
   CHILDREN_RESIDENCE_CHANGE_V2 = 'ChildrenResidenceChangeV2',
@@ -168,6 +169,10 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.PARENTAL_LEAVE]: {
     slug: 'faedingarorlof',
+    translation: ['pl.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.PARENTAL_LEAVE_V2]: {
+    slug: 'faedingarorlof-v2',
     translation: ['pl.application', 'uiForms.application'],
   },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
