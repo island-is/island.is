@@ -5,6 +5,7 @@ import {
   formatText,
   getValueViaPath,
   buildFieldOptions,
+  buildFieldRequired,
   formatTextWithLocale,
   resolveFieldId,
   resolveFieldClearOnChange,
@@ -96,6 +97,7 @@ export const CheckboxFormField = ({
         <CheckboxController
           id={resolvedId}
           disabled={disabled}
+          required={buildFieldRequired(application, required)}
           large={large}
           name={`${id}`}
           split={width === 'half' ? '1/2' : '1/1'}

@@ -16,6 +16,8 @@ export interface CheckboxProps {
   checked?: boolean
   indeterminate?: boolean
   disabled?: boolean
+  /** Marks the input as required for assistive technology (sets aria-required) */
+  required?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
   tooltip?: React.ReactNode
   hasError?: boolean
@@ -47,6 +49,7 @@ export const Checkbox = ({
   name,
   id = name,
   disabled,
+  required,
   indeterminate = false,
   onChange,
   tooltip,
@@ -119,6 +122,7 @@ export const Checkbox = ({
         value={value}
         checked={checked}
         aria-label={ariaLabel}
+        aria-required={required || undefined}
         {...(ariaError as AriaError)}
       />
       <label

@@ -23,6 +23,7 @@ interface Option {
 interface CheckboxControllerProps {
   defaultValue?: string[]
   disabled?: boolean
+  required?: boolean
   error?: string
   id: string
   labelVariant?: CheckboxProps['labelVariant']
@@ -53,6 +54,7 @@ export const CheckboxController: FC<
 > = ({
   defaultValue = [],
   disabled = false,
+  required,
   labelVariant,
   spacing = 2,
   error,
@@ -110,6 +112,7 @@ export const CheckboxController: FC<
             >
               <Checkbox
                 disabled={disabled || option.disabled}
+                required={required}
                 large={large}
                 onChange={async () => {
                   clearErrors(id)

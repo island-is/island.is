@@ -23,6 +23,31 @@ describe('CheckboxController', () => {
     expect(screen.getAllByText('another checkbox')[0]).toBeInTheDocument()
   })
 
+  it('should mark every option as aria-required when required', () => {
+    const options = [
+      { label: 'some checkbox', value: 'off' },
+      { label: 'another checkbox', value: 'on' },
+    ]
+    render(
+      <Wrapper>
+        <CheckboxController id="values" required options={options} />
+      </Wrapper>,
+    )
+    screen.getAllByRole('checkbox').forEach((checkbox) => {
+      expect(checkbox).toHaveAttribute('aria-required', 'true')
+    })
+  })
+
+  it('should not set aria-required when not required', () => {
+    const options = [{ label: 'some checkbox', value: 'off' }]
+    render(
+      <Wrapper>
+        <CheckboxController id="values" options={options} />
+      </Wrapper>,
+    )
+    expect(screen.getByRole('checkbox')).not.toHaveAttribute('aria-required')
+  })
+
   it('should render an error message', () => {
     const options = [
       { label: 'some checkbox', value: 'off' },
