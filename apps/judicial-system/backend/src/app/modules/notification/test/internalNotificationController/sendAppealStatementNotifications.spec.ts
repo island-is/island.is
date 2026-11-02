@@ -70,7 +70,11 @@ describe('InternalNotificationController - Send appeal statement notifications',
         appealReceivedByCourtDate: receivedDate,
         appealCaseNumber,
         appealAssistant: { name: assistant.name, email: assistant.email },
-        appealJudge1: { name: judge1.name, email: judge1.email },
+        appealJudges: [judge1, judge2, judge3].map((judge, displayOrder) => ({
+          displayOrder,
+          userId: judge.id,
+          user: { name: judge.name, email: judge.email },
+        })),
       } as AppealCase
 
       await internalNotificationController
@@ -109,11 +113,13 @@ describe('InternalNotificationController - Send appeal statement notifications',
   })
 
   const expectCourtEmail = (name: string, address: string) => {
-    expect.objectContaining({
-      to: [{ name, address }],
-      subject: `Ný greinargerð í máli ${courtCaseNumber} (${appealCaseNumber})`,
-      html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
-    })
+    expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: [{ name, address }],
+        subject: `Ný greinargerð í máli ${courtCaseNumber} (${appealCaseNumber})`,
+        html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+      }),
+    )
   }
 
   describe('notification sent by prosecutor', () => {
@@ -271,12 +277,11 @@ describe('InternalNotificationController - Send appeal statement notifications',
           to: [{ name: assistant.name, address: assistant.email }],
         }),
       )
-      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
-        expect.objectContaining({
-          to: [{ name: judge1.name, address: judge1.email }],
-        }),
-      )
-      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
+      expectCourtEmail(judge1.name, judge1.email)
+      expectCourtEmail(judge2.name, judge2.email)
+      expectCourtEmail(judge3.name, judge3.email)
+      // The assistant and the three judges, nobody else.
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(4)
       expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
         expect.objectContaining({ to: [{ name: '', address: '' }] }),
       )

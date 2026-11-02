@@ -306,9 +306,11 @@ const Processing: FC = () => {
     }
 
     // Turning civil claims off deletes every claimant along with their files
+    // and the civil demands case string on the backend.
     setWorkingCase((prev) => ({
       ...prev,
       hasCivilClaims,
+      civilDemands: hasCivilClaims ? prev.civilDemands : undefined,
       civilClaimants: res.civilClaimants,
       caseFiles: hasCivilClaims
         ? prev.caseFiles

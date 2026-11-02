@@ -129,7 +129,10 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
       {isRestrictionCase(workingCase.type) && (
         <AccordionListItem
           title={formatMessage(
-            { id: restrictionsV2.title, defaultMessage: restrictionsV2.title },
+            {
+              id: restrictionsV2.title,
+              defaultMessage: restrictionsV2.title,
+            },
             {
               caseType: workingCase.type,
             },

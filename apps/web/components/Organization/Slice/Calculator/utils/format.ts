@@ -13,6 +13,7 @@ export interface FormattableValue {
   numberValue?: number | null
   stringValue?: string | null
   booleanValue?: boolean | null
+  dateValue?: Date | null
 }
 
 export const formatOutputValue = (
@@ -37,9 +38,7 @@ export const formatOutputValue = (
           )
 
     case TaxCalculatorOutputFieldType.Date:
-      return value.stringValue
-        ? formatDate(value.stringValue, locale)
-        : undefined
+      return value.dateValue ? formatDate(value.dateValue, locale) : undefined
 
     case TaxCalculatorOutputFieldType.String:
       return value.stringValue ?? undefined
@@ -83,13 +82,11 @@ const formatPlainNumber = (value: number, locale: Locale): string =>
     maximumFractionDigits: 2,
   }).format(value)
 
-/* Split rather than handed to `new Date(...)`, which reads `yyyy-MM-dd` as UTC
- * midnight and shifts the day back west of Greenwich. */
-const formatDate = (value: string, locale: Locale): string => {
-  const [year, month, day] = value.split('-').map(Number)
-  if (!year || !month || !day) return value
-
-  return new Intl.DateTimeFormat(LOCALE_TAG[locale], {
+/* Apollo delivers `DateTime` as an ISO string despite the generated `Date`
+ * type. Dates travel as UTC midnight, so formatting in local time would shift
+ * the day back west of Greenwich. */
+const formatDate = (value: Date, locale: Locale): string =>
+  new Intl.DateTimeFormat(LOCALE_TAG[locale], {
     dateStyle: 'medium',
-  }).format(new Date(year, month - 1, day))
-}
+    timeZone: 'UTC',
+  }).format(new Date(value))

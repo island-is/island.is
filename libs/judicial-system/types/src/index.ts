@@ -92,8 +92,19 @@ export {
   AppealDecisionPartyRole,
   getStatementDeadline,
   CaseAppealDecision,
+  APPEAL_JUDGE_COUNT,
+  getOrderedAppealJudges,
+  getAppealJudges,
+  getPresidingAppealJudge,
+  getAppealJudgeInSeat,
+  getAppealJudgeUserIds,
+  hasAllAppealJudges,
 } from './lib/appealCase'
-export type { AppealCorrectionLock } from './lib/appealCase'
+export type {
+  AppealCorrectionLock,
+  AppealJudgeFields,
+  AppealJudgesFields,
+} from './lib/appealCase'
 export {
   AppealCourtSessionType,
   appealCourtSessionTypeNames,
