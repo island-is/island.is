@@ -42,7 +42,8 @@ git blame --line-porcelain -L <start>,<end> <base> -- <file> | grep '^summary '
 ```
 
 Use the removed hunk's old line range. `<base>` is
-`$(git merge-base origin/main <ref>)`.
+`$(git merge-base origin/<base> <ref>)`, with `<base>` the selected base
+branch (see SKILL.md step 1).
 
 - **If a `fix(...)` commit added the deleted line,** the PR may undo that
   fix. Report it at the severity of the original bug, and cite the fix PR.

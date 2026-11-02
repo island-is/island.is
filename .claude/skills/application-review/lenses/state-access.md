@@ -137,7 +137,9 @@ Read the gaps from the matrix.
 ## S5. Readiness and delegation config
 
 - **Flag:**
-  - A new template without `featureFlag`.
+  - A new template without `featureFlag` or another readiness gate; an
+    absent flag alone is not a finding, as production then honours
+    `readyForProduction ?? true`.
   - `readyForProduction` or an environment check used as the template's
     readiness gate.
   - A new resolver or endpoint shipped ungated.
@@ -222,7 +224,8 @@ Read the gaps from the matrix.
     messages.
   - Pending-action copy that addresses "your application" to a
     non-applicant.
-- **Severity:** low.
+- **Severity:** rate each finding by its consequence and frequency. A throw
+  that breaks the whole my-pages list is high; the rest is low.
 - **Precedent:** #20523, #20803, #22865, #20954.
 
 ## S9. Transition semantics

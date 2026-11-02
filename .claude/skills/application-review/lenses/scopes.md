@@ -21,9 +21,10 @@ Precedents: #15179, #14702, #17267, #19151, #23006, #19030, #23248, #20529.
   | `libs/api/domains/**`, reached by the form's GraphQL queries, async selects and custom fields | apps/api                              | `@island.is/clients/api`                |
   | `apps/download-service`                                                                       | download-service                      | `@island.is/clients/download-service`   |
 
-  application-system-api also calls apps/api over GraphQL
-  (`GRAPHQL_API_URL`), forwarding the user's token. A library reached that
-  way exchanges as `clients/api`, so the grant belongs there.
+  application-system-api forwards the user's authorization to apps/api over
+  GraphQL (`GRAPHQL_API_URL`); that hop does not select `clients/api`. A
+  library reached through apps/api exchanges as `clients/api`, so the grant
+  belongs there.
 
 - **Test with more than one user.** A flow can pass for one test user and
   fail for another.
@@ -175,8 +176,10 @@ The step is done when every newly reachable scoped call has a row.
 
 - **Flag:** a form-side GraphQL query (`graphql/**`, `loadOptions`, an
   async select, a custom field) that the diff adds or newly calls, whose
-  resolver's `@Scopes(...)` holds no scope in `applicationSystemScopes`.
-  Grep the resolver at the reviewed ref, then the scope list.
+  resolver's `@Scopes(...)` holds no scope in the union that the minarsidur
+  BFF requests: `servicePortalScopes`, `applicationSystemScopes` and
+  `formSystemScopes` (`getScopes` in `infra/src/dsl/bff.ts`). Grep the
+  resolver at the reviewed ref, then the three scope lists.
 - **Severity:** high when the field is required or the screen depends on
   it; medium otherwise.
 - **Fix:** add the scope to `applicationSystemScopes` (and the BFF client

@@ -20,9 +20,9 @@ a broken condition: the general lens inverts one added condition, runs that
 project's spec, and restores the file. A mutation that stays green points to
 a missing test.
 
-It needs `git` with an `origin` remote and an authenticated `gh`. For a PR it
-fetches the head into a temporary local branch, `review-<number>`, and deletes
-it at the end.
+It needs `git` with an `origin` remote. A PR review also needs an
+authenticated `gh`; it fetches the head into a temporary local branch,
+`review-<number>`, and deletes it at the end.
 
 ### Tell it what is already decided
 
@@ -108,10 +108,14 @@ Ideas were taken from these sources. No text was copied.
   `--mutate`.
 - A finding is a lead for a person to confirm. The verify step reduces noise
   and does not remove it.
+- `consumers.sh` finds direct importers of a library's aliases. A consumer that
+  reaches the changed code only through another exported API (a builder, say)
+  is not listed; trace those by hand.
 - It knows nothing that the repo does not record, which is why `## Decisions`
   matters.
 - Accessibility checks (`ui-shared`, U8) run only when a `.tsx` file, a
   `forms/` or `fields/` file, or a shared file changes. A change confined to
   a template's `.css.ts` file does not trigger them. Form-system code gets
-  the general lens only, so U8 does not apply there. Contrast, screen-reader
+  the general lens plus the applicable scopes and security checks; U8 does
+  not apply there. Contrast, screen-reader
   and focus behaviour need a browser; the reviewer can only point them out.

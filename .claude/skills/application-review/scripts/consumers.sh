@@ -26,8 +26,15 @@ fi
 echo "library: $d  aliases: ${aliases//$'\n'/ }"
 pats=(); while read -r a; do pats+=(-e "from '$a'"); done <<<"$aliases"
 consumers=$(search -F "${pats[@]}" | grep -v "^$d/")
-[ -n "$sym" ] && consumers=$(for x in $consumers; do show "$x" | grep -qw "$sym" && echo "$x"; done)
 [ -z "$consumers" ] && { echo "no consumers outside $d"; exit 0; }
-echo "$consumers" | grep -v '^$' \
- | awk 'NR==FNR { root[$0]; next } { p=$0; while (p ~ /\// && !(p in root)) sub(/\/[^\/]*$/, "", p); print p }' <(echo "$roots") - \
- | sort | uniq -c | sort -rn
+group() {
+  grep -v '^$' \
+   | awk 'NR==FNR { root[$0]; next } { p=$0; while (p ~ /\// && !(p in root)) sub(/\/[^\/]*$/, "", p); print p }' <(echo "$roots") - \
+   | sort | uniq -c | sort -rn
+}
+if [ -z "$sym" ]; then echo "$consumers" | group; exit 0; fi
+hit=$(for x in $consumers; do show "$x" | grep -qw "$sym" && echo "$x"; done)
+miss=$(comm -23 <(sort <<<"$consumers") <(sort <<<"$hit"))
+echo "importers naming '$sym':"; echo "$hit" | group
+[ -n "$miss" ] && { echo "importers not naming '$sym' (check for a renamed import or indirect use):"; echo "$miss" | group; }
+exit 0

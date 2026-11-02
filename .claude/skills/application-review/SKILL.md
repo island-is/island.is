@@ -33,9 +33,10 @@ commits into the diff.
 | branch `B` | `git diff origin/<base>...B`                                                      | `git show B:<path>`        |
 | nothing    | `git diff $(git merge-base origin/<base> HEAD)` (committed and uncommitted)       | the working tree           |
 
-- For the working tree, `git diff` omits new files. Add those from
-  `git ls-files --others --exclude-standard` to the changed files, and read
-  them whole.
+- For the working tree, `git diff` omits new files. For each path from
+  `git ls-files --others --exclude-standard`, add
+  `git diff --no-index -- /dev/null <path>` (exit status 1 is normal) to the
+  diff, so routing, the content triggers and the lens prompts see its lines.
 - For a PR, also take
   `gh pr view N --json title,body,isDraft,files,baseRefName`.
 - For a branch, take the commit log
@@ -194,9 +195,9 @@ Print to the terminal in this layout. Leave out a section that would be
 empty, except the counts and clean checks.
 
 ```
-## Application review: #<N>, <title>
+## Application review: <PR #N and title | branch | working tree>
 
-<draft or ready>; <n> files, +<added>/−<removed>; lenses: <list>
+<PR only: draft or ready; ><n> files, +<added>/−<removed>; lenses: <list>
 
 ### Must fix (high)
 1. **<one-line headline in plain words>** (`<path:line>`[, `<path:line>`]; <check names>)
@@ -229,6 +230,8 @@ empty, except the counts and clean checks.
 
 ### Claim vs diff
 - **Claim:** <summary, or "the description is the empty template">.
+- **Done:** <grouped list>.
+- **Claimed but missing:** <grouped list>.
 - **In the diff but not claimed:** <grouped list>.
 - **Verification:** <what the author shows they ran>.
 - **Size (FYI):** <only when large or mixed>.
