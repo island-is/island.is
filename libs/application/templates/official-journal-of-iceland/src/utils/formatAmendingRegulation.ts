@@ -282,7 +282,7 @@ const formatNewParagraphs = (
       return (
         paragraph > 0
           ? `<p>Á eftir ${paragraph}. mgr.${where} kemur ný málsgrein sem orðast svo:</p>${html}`
-          : `<p>Á undan 1. mgr.${where} kemur ný málsgrein svohljóðandi: </p>${html}`
+          : `<p>Á undan 1. mgr.${where} kemur ný málsgrein, svohljóðandi:</p>${html}`
       ) as HTMLText
     }
     const position =
@@ -567,6 +567,14 @@ export const formatAmendingRegBody = (
     // The last base paragraph kept, which new paragraphs are placed after
     let lastKept = 0
 
+    const isSingleParagraph =
+      group.filter(
+        (e) =>
+          e.nodeName.toLowerCase() === 'p' &&
+          !e.hasAttribute('data-diff-signature') &&
+          !isEmptyWithout(e, 'ins'),
+      ).length === 1
+
     // The new side of a list already written together with its old side
     const handled = new Set<Element>()
 
@@ -749,7 +757,7 @@ export const formatAmendingRegBody = (
         oldText,
         isDeleted,
         isAddition,
-        liHtml,
+        liChanges,
         newTextElement,
       } = getDeletionOrAddition(element, elementType)
 
@@ -944,12 +952,18 @@ export const formatAmendingRegBody = (
               ) as HTMLText
             }
           } else if (isLetterList || isNumberList) {
-            // A list whose items changed formatting only can leave nothing
-            // to say
-            if (liHtml) {
-              amendment = (where) =>
-                `<p>Eftirfarandi breytingar verða á ${mgr}. mgr.${where}:</p> ${liHtml}` as HTMLText
-            }
+            // Each item changed is an amendment of its own. An article of one
+            // paragraph is named without it: "1. tölul. 5. gr.". A list whose
+            // items changed formatting only can leave nothing to say.
+            liChanges.forEach((change) =>
+              testGroup.amendments.push((where) =>
+                change(
+                  mgr > 0 && !isSingleParagraph
+                    ? ` ${mgr}. mgr.${where}`
+                    : where,
+                ),
+              ),
+            )
           } else if (table) {
             amendment = (where) =>
               formatTableChange(

@@ -140,7 +140,7 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
       ),
     )
     expect(first).toContain(
-      'Á undan 1. mgr. 1. gr. reglugerðarinnar kemur ný málsgrein svohljóðandi:',
+      'Á undan 1. mgr. 1. gr. reglugerðarinnar kemur ný málsgrein, svohljóðandi:',
     )
   })
 
@@ -951,10 +951,7 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
         withList('', 'fólksbifreiðar,', '<em>vörubifreiðar</em>,', 'bifhjól.'),
       ),
     ).toBe(
-      article(
-        1,
-        '<p>Eftirfarandi breytingar verða á 1. mgr. 1. gr. reglugerðarinnar:</p> <p>Snið 2. tölul. hefur breyst.</p>',
-      ),
+      article(1, '<p>Snið 2. tölul. 1. gr. reglugerðarinnar hefur breyst.</p>'),
     )
   })
 
@@ -965,10 +962,7 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
         withList('a', 'fólksbifreiðar,', '<em>vörubifreiðar</em>,', 'bifhjól.'),
       ),
     ).toBe(
-      article(
-        1,
-        '<p>Eftirfarandi breytingar verða á 1. mgr. 1. gr. reglugerðarinnar:</p> <p>Snið b-liðar hefur breyst.</p>',
-      ),
+      article(1, '<p>Snið b-liðar 1. gr. reglugerðarinnar hefur breyst.</p>'),
     )
   })
 
@@ -976,8 +970,11 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
     const nested = (second: string) =>
       `alfa:${list('a', 'eitt atriði hér,', second)}`
     const BEFORE = withList('', nested('annað atriði hér.'), 'bravo.')
-    const LEAD =
-      '<p>Eftirfarandi breytingar verða á 1. mgr. 1. gr. reglugerðarinnar:</p> '
+    // Several changes in the article's one paragraph, lettered under it
+    const lettered = (...changes: string[]) =>
+      '<p>Eftirfarandi breytingar verða á 1. gr. reglugerðarinnar:</p><ol type="a">' +
+      changes.map((change) => `<li><p>${change}</p></li>`).join('') +
+      '</ol>'
 
     it('keeps the tölul. prefix for a nested change when the tölul. was reformatted too', () => {
       expect(
@@ -996,8 +993,10 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
       ).toBe(
         article(
           1,
-          LEAD +
-            '<p>Snið 1. tölul. hefur breyst.</p><p>Töluliður 1, b-liður orðast svo: annað atriði þar.</p>',
+          lettered(
+            'Snið 1. tölul. hefur breyst.',
+            'b-liður 1. tölul. orðast svo: annað atriði þar.',
+          ),
         ),
       )
     })
@@ -1015,8 +1014,10 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
       ).toBe(
         article(
           1,
-          LEAD +
-            '<p>Töluliður 1, a-liður orðast svo: eitt atriði þar,</p><p>Töluliður 1, b-liður orðast svo: annað atriði þar.</p>',
+          lettered(
+            'a-liður 1. tölul. orðast svo: eitt atriði þar,',
+            'b-liður 1. tölul. orðast svo: annað atriði þar.',
+          ),
         ),
       )
     })
@@ -1038,8 +1039,11 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
       ).toBe(
         article(
           1,
-          LEAD +
-            '<p>Snið 1. tölul. hefur breyst.</p><p>Töluliður 1, a-liður orðast svo: eitt atriði þar,</p><p>Töluliður 1, b-liður orðast svo: annað atriði þar.</p>',
+          lettered(
+            'Snið 1. tölul. hefur breyst.',
+            'a-liður 1. tölul. orðast svo: eitt atriði þar,',
+            'b-liður 1. tölul. orðast svo: annað atriði þar.',
+          ),
         ),
       )
     })
@@ -1061,7 +1065,7 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
       ).toBe(
         article(
           1,
-          LEAD + '<p>Töluliður 1, b-liður orðast svo: annað atriði þar.</p>',
+          '<p>b-liður 1. tölul. 1. gr. reglugerðarinnar orðast svo: annað atriði þar.</p>',
         ),
       )
     })
@@ -1073,7 +1077,10 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
           withList('', nested('<em>annað atriði hér.</em>'), 'bravo.'),
         ),
       ).toBe(
-        article(1, LEAD + '<p>Töluliður 1, snið b-liðar hefur breyst.</p>'),
+        article(
+          1,
+          '<p>Snið b-liðar 1. tölul. 1. gr. reglugerðarinnar hefur breyst.</p>',
+        ),
       )
     })
 
@@ -1099,8 +1106,7 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
         ).toBe(
           article(
             1,
-            LEAD +
-              '<p>1. tölul. orðast svo: alfa samantekt atriða:</p><ol type="a"><li>eitt atriði þar,</li><li>annað atriði þar.</li></ol>',
+            '<p>1. tölul. 1. gr. reglugerðarinnar orðast svo: alfa samantekt atriða:</p><ol type="a"><li>eitt atriði þar,</li><li>annað atriði þar.</li></ol>',
           ),
         )
       })
@@ -1114,8 +1120,7 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
         ).toBe(
           article(
             1,
-            LEAD +
-              '<p>1. tölul. orðast svo: alfa samantekt atriða:</p><ol type="a"><li>eitt atriði hér,</li></ol>',
+            '<p>1. tölul. 1. gr. reglugerðarinnar orðast svo: alfa samantekt atriða:</p><ol type="a"><li>eitt atriði hér,</li></ol>',
           ),
         )
       })
@@ -1124,13 +1129,23 @@ describe('formatAmendingBodyWithArticlePrefix: list type changes', () => {
     it('numbers a tölul. after a nested list by its place in its own list', () => {
       expect(
         first(BEFORE, withList('', nested('annað atriði hér.'), 'charlie.')),
-      ).toBe(article(1, LEAD + '<p>2. tölul. orðast svo: charlie.</p>'))
+      ).toBe(
+        article(
+          1,
+          '<p>2. tölul. 1. gr. reglugerðarinnar orðast svo: charlie.</p>',
+        ),
+      )
       expect(
         first(
           BEFORE,
           withList('', nested('annað atriði hér.'), '<em>bravo.</em>'),
         ),
-      ).toBe(article(1, LEAD + '<p>Snið 2. tölul. hefur breyst.</p>'))
+      ).toBe(
+        article(
+          1,
+          '<p>Snið 2. tölul. 1. gr. reglugerðarinnar hefur breyst.</p>',
+        ),
+      )
     })
   })
 
@@ -1397,7 +1412,7 @@ describe('formatAmendingBodyWithArticlePrefix: 1020/2026 on 324/2023', () => {
       article(
         1,
         '<p>Eftirfarandi breytingar verða á 2. gr. reglugerðarinnar:</p><ol type="a">' +
-          `<li><p>Á undan 1. mgr. kemur ný málsgrein svohljóðandi: </p>${p(
+          `<li><p>Á undan 1. mgr. kemur ný málsgrein, svohljóðandi:</p>${p(
             NEW_FIRST,
           )}</li>` +
           `<li><p>4. mgr. breytist og orðast svo:</p>${p(DASHBOARD)}</li></ol>`,
@@ -1486,7 +1501,7 @@ describe('formatAmendingBodyWithArticlePrefix: 1020/2026 on 324/2023', () => {
     expect(body(amend(after, {}, before))[0]).toBe(
       article(
         1,
-        '<p>Eftirfarandi breytingar verða á 2. mgr. 1. gr. reglugerðarinnar:</p> <p>b-liður orðast svo: mike.</p>',
+        '<p>b-liður 2. mgr. 1. gr. reglugerðarinnar orðast svo: mike.</p>',
       ),
     )
   })
@@ -1646,8 +1661,11 @@ describe('formatAmendingBodyWithArticlePrefix: items added or removed', () => {
         ).diff,
       },
     ])[0]
-  const intro =
-    '<p>Eftirfarandi breytingar verða á 1. mgr. 1. gr. reglugerðarinnar:</p> '
+  // Several changes in the article's one paragraph, lettered under it
+  const lettered = (...changes: string[]) =>
+    '<p>Eftirfarandi breytingar verða á 1. gr. reglugerðarinnar:</p><ol type="a">' +
+    changes.map((change) => `<li>${change}</li>`).join('') +
+    '</ol>'
 
   it('renumbers the items after one added in the middle', () => {
     expect(
@@ -1662,13 +1680,51 @@ describe('formatAmendingBodyWithArticlePrefix: items added or removed', () => {
     ).toBe(
       article(
         1,
-        intro +
-          '<p>Á eftir 1. tölulið kemur nýr liður svohljóðandi, og breytist númer annarra liða til samræmis: dráttarvélar,</p>',
+        '<p>Á eftir 1. tölulið 1. gr. reglugerðarinnar kemur nýr töluliður, svohljóðandi, og breytist númer annarra liða til samræmis: dráttarvélar,</p>',
       ),
     )
   })
 
-  it('renumbers nothing for an item added last', () => {
+  it('places an item added first before the first one', () => {
+    expect(
+      changes(
+        withList(
+          'dráttarvélar,',
+          'fólksbifreiðar,',
+          'vörubifreiðar,',
+          'hópbifreiðar.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Á undan 1. tölulið 1. gr. reglugerðarinnar kemur nýr töluliður, svohljóðandi, og breytist númer annarra liða til samræmis: dráttarvélar,</p>',
+      ),
+    )
+  })
+
+  it('numbers the items after an added one as in the base regulation', () => {
+    expect(
+      changes(
+        withList(
+          'fólksbifreiðar,',
+          'dráttarvélar,',
+          'vörubifreiðar,',
+          'langferðabifreiðar.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        lettered(
+          '<p>Á eftir 1. tölulið kemur nýr töluliður, svohljóðandi, og breytist númer annarra liða til samræmis: dráttarvélar,</p>',
+          '<p>3. tölul. orðast svo: langferðabifreiðar.</p>',
+        ),
+      ),
+    )
+  })
+
+  it('adds an item after the last one to the list', () => {
     expect(
       changes(
         withList(
@@ -1681,14 +1737,15 @@ describe('formatAmendingBodyWithArticlePrefix: items added or removed', () => {
     ).toBe(
       article(
         1,
-        intro +
-          '<p>3. tölul. orðast svo: hópbifreiðar,</p>' +
-          '<p>Á eftir 3. tölulið kemur nýr liður svohljóðandi: dráttarvélar.</p>',
+        lettered(
+          '<p>3. tölul. orðast svo: hópbifreiðar,</p>',
+          '<p>Við bætist nýr töluliður, svohljóðandi:</p><ol start="4"><li>dráttarvélar.</li></ol>',
+        ),
       ),
     )
   })
 
-  it('renumbers nothing for items added last, one after another', () => {
+  it('adds items after the last one as one amendment', () => {
     expect(
       changes(
         withList(
@@ -1702,10 +1759,59 @@ describe('formatAmendingBodyWithArticlePrefix: items added or removed', () => {
     ).toBe(
       article(
         1,
-        intro +
-          '<p>3. tölul. orðast svo: hópbifreiðar,</p>' +
-          '<p>Á eftir 3. tölulið kemur nýr liður svohljóðandi: dráttarvélar,</p>' +
-          '<p>Á eftir 4. tölulið kemur nýr liður svohljóðandi: bifhjól.</p>',
+        lettered(
+          '<p>3. tölul. orðast svo: hópbifreiðar,</p>',
+          '<p>Við bætast tveir nýir töluliðir, svohljóðandi:</p><ol start="4"><li>dráttarvélar,</li><li>bifhjól.</li></ol>',
+        ),
+      ),
+    )
+  })
+
+  it('names the paragraph of a list in an article of several', () => {
+    const before = [
+      title('1. gr.'),
+      '<p>Alfa bravo charlie.</p>',
+      '<p>Reglugerð þessi gildir um:</p>',
+      '<ol><li>fólksbifreiðar,</li><li>vörubifreiðar,</li></ol>',
+      title('2. gr. Gildistaka'),
+      GILDISTAKA,
+    ].join('')
+    const after = before.replace(
+      '<li>vörubifreiðar,</li>',
+      '<li>vörubifreiðar,</li><li>dráttarvélar.</li>',
+    )
+    expect(body(amend(after, {}, before))[0]).toBe(
+      article(
+        1,
+        '<p>Við 2. mgr. 1. gr. reglugerðarinnar bætist nýr töluliður, svohljóðandi:</p><ol start="3"><li>dráttarvélar.</li></ol>',
+      ),
+    )
+  })
+
+  it('adds an item to a list nested in another item', () => {
+    const nestedList = (...items: string[]) =>
+      withList(
+        `alfa:<ol type="a">${items
+          .map((item) => `<li>${item}</li>`)
+          .join('')}</ol>`,
+        'bravo.',
+      )
+    expect(
+      body(
+        amend(
+          nestedList(
+            'eitt atriði hér,',
+            'annað atriði hér,',
+            'þriðja atriðið.',
+          ),
+          {},
+          nestedList('eitt atriði hér,', 'annað atriði hér,'),
+        ),
+      )[0],
+    ).toBe(
+      article(
+        1,
+        '<p>Við 1. tölulið 1. gr. reglugerðarinnar bætist nýr stafliður, svohljóðandi:</p><ol type="a" start="3"><li>þriðja atriðið.</li></ol>',
       ),
     )
   })
@@ -1714,8 +1820,7 @@ describe('formatAmendingBodyWithArticlePrefix: items added or removed', () => {
     expect(changes(withList('fólksbifreiðar,', 'hópbifreiðar.'))).toBe(
       article(
         1,
-        intro +
-          '<p>2. töluliður fellur brott og breytist númer annarra liða til samræmis.</p>',
+        '<p>2. töluliður 1. gr. reglugerðarinnar fellur brott og breytist númer annarra liða til samræmis.</p>',
       ),
     )
   })
@@ -1724,9 +1829,10 @@ describe('formatAmendingBodyWithArticlePrefix: items added or removed', () => {
     expect(changes(withList('fólksbifreiðar,', 'vörubifreiðar.'))).toBe(
       article(
         1,
-        intro +
-          '<p>2. tölul. orðast svo: vörubifreiðar.</p>' +
+        lettered(
+          '<p>2. tölul. orðast svo: vörubifreiðar.</p>',
           '<p>3. töluliður fellur brott.</p>',
+        ),
       ),
     )
   })
