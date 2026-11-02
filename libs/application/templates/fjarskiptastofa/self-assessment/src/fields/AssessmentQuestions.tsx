@@ -124,8 +124,9 @@ export const AssessmentQuestions: FC<FieldBaseProps> = ({
         },
       })
     } catch {
-      // Let navigation continue even if the save failed; the final screen
-      // submit still persists everything.
+      // Block the step so the applicant doesn't move on believing answers
+      // were stored; they can retry once the save succeeds.
+      return [false, formatMessage(m.assessment.saveError)]
     }
 
     if (currentIndex >= groups.length - 1) {

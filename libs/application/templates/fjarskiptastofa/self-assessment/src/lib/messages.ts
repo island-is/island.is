@@ -198,6 +198,12 @@ export const m = {
         'Ekki tókst að sækja spurningar frá Fjarskiptastofu. Reyndu aftur síðar.',
       description: 'Assessment load error text',
     },
+    saveError: {
+      id: 'fjs.sa.application:assessment.saveError',
+      defaultMessage:
+        'Ekki tókst að vista svörin þín. Reyndu aftur eða endurhladdu síðuna.',
+      description: 'Assessment save error text',
+    },
     requiredError: {
       id: 'fjs.sa.application:assessment.requiredError',
       defaultMessage: 'Svaraðu öllum spurningum áður en þú heldur áfram.',
