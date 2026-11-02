@@ -20,5 +20,3 @@ export {
 export * as messages from './lib/messages'
 
 export default FinancialAidTemplate
-
-// Trigger deploy

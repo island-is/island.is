@@ -321,10 +321,6 @@
             "type": "string",
             "nullable": true
           },
-          "spouseEmployment": {
-            "type": "string",
-            "nullable": true
-          },
           "spouseFormComment": {
             "type": "string",
             "nullable": true
@@ -419,10 +415,6 @@
             "nullable": true
           },
           "logoUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "themeColor": {
             "type": "string",
             "nullable": true
           },
@@ -544,10 +536,6 @@
             "nullable": true
           },
           "logoUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "themeColor": {
             "type": "string",
             "nullable": true
           },
