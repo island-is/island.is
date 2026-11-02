@@ -23,7 +23,7 @@ if [ "$d" = "." ] || [ -z "$aliases" ]; then
   search -E "[/'\"]${b}['\"./]" | grep -v "^$f$" | sort -u | head -40
   exit 0
 fi
-echo "library: $d  aliases:" $aliases
+echo "library: $d  aliases: ${aliases//$'\n'/ }"
 pats=(); while read -r a; do pats+=(-e "from '$a'"); done <<<"$aliases"
 consumers=$(search -F "${pats[@]}" | grep -v "^$d/")
 [ -n "$sym" ] && consumers=$(for x in $consumers; do show "$x" | grep -qw "$sym" && echo "$x"; done)
