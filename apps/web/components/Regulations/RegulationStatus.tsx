@@ -56,16 +56,21 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
     ? 'green'
     : 'yellow'
 
+  // Falls back on missing keys (`txt` fallback) and on empty Contentful
+  // values (`||`): an empty string would make Tooltip render nothing and
+  // hide the status ball itself.
+  const textOrDefault = (key: keyof RegulationPageTexts, fallback: string) =>
+    txt(key, fallback) || fallback
   const ballText: Record<BallColor, string> = {
-    green: txt(
+    green: textOrDefault(
       'statusBall_green',
       'Gildandi reglugerð, allar breytingar færðar inn',
     ),
-    yellow: txt(
+    yellow: textOrDefault(
       'statusBall_yellow',
       'Ekki uppfærður heildartexti gildandi reglugerðar',
     ),
-    red: txt('statusBall_red', 'Reglugerðin er ekki lengur í gildi'),
+    red: textOrDefault('statusBall_red', 'Reglugerðin er ekki lengur í gildi'),
   }
 
   const onDateText = urlDate && (

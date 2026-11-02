@@ -32,10 +32,13 @@ export const useRegulationEffectPrepper = (
   const { formatDate } = useDateUtils()
   const { linkToRegulation } = useRegulationLinkResolver()
   const today = new Date().toISOString().substr(0, 10) as ISODate
-  const pendingWarning = txt(
-    'historyPendingWarning',
-    'Þessi breyting hefur ekki verið færð í stofnreglugerðina',
-  )
+  // Falls back on missing keys (`txt` fallback) and on empty Contentful
+  // values (`||`): an empty string would make Tooltip render nothing and
+  // hide the warning icon itself.
+  const pendingWarningDefault =
+    'Þessi breyting hefur ekki verið færð í stofnreglugerðina'
+  const pendingWarning =
+    txt('historyPendingWarning', pendingWarningDefault) || pendingWarningDefault
 
   const { effects, isViewingCurrentVersion } = useMemo(() => {
     const effects = regulation.history.reduce<
