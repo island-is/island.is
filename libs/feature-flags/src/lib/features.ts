@@ -145,6 +145,7 @@ export enum Features {
   // Notifications
   isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
   isServicePortalOnlyActionablePriorityNotificationsEnabled = 'isServicePortalOnlyActionablePriorityNotificationsEnabled',
+  isServicePortalNotificationsV2PageEnabled = 'isServicePortalNotificationsV2PageEnabled',
 
   // New/updated delegation notification
   isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',

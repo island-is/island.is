@@ -1,0 +1,5 @@
+mutation UpdateNotificationCategorySettings(
+  $input: UpdateNotificationCategoriesInput!
+) {
+  updateNotificationCategorySettings(input: $input)
+}
