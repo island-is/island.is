@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
-import { Box, Select } from '@island.is/island-ui/core'
+import { Box, Select, Stack } from '@island.is/island-ui/core'
 import {
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_RULING_ROUTE,
@@ -188,73 +188,75 @@ const AppealCase: FC = () => {
         <PageHeader title={strings.title} />
         <FormContentContainer>
           <PageTitle>{strings.title}</PageTitle>
-          <Box component="section" marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(core.appealCaseNumberHeading)}
-            />
-            <CaseNumberInput />
-          </Box>
-
-          <Box component="section" marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(core.appealAssistantHeading)}
-            />
-            <Select
-              name="assistant"
-              label={strings.assistantLabel}
-              placeholder={strings.assistantPlaceholder}
-              value={
-                appealAssistant
-                  ? {
-                      label: appealAssistant.name ?? '',
-                      value: appealAssistant.id,
-                    }
-                  : null
-              }
-              options={assistants}
-              onChange={(selectedOption) => {
-                setAppealAssistant(
-                  (selectedOption as AssistantSelectOption).assistant,
-                )
-              }}
-              required
-            />
-          </Box>
-          <Box component="section" marginBottom={8}>
-            <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
-            <BlueBox>
-              {judges.map((judge, seat) => (
-                <Box marginBottom={2} key={seat}>
-                  <Select
-                    name="judge"
-                    label={
-                      seat === 0
-                        ? strings.judgeForepersonLabel
-                        : strings.judgeLabel
-                    }
-                    placeholder={
-                      seat === 0
-                        ? strings.judgeForepersonPlaceholder
-                        : strings.judgePlaceholder
-                    }
-                    value={
-                      judge
-                        ? { label: judge.name ?? '', value: judge.id }
-                        : undefined
-                    }
-                    options={judgeOptions}
-                    onChange={(selectedOption) => {
-                      handleChangedJudge(
-                        seat,
-                        (selectedOption as JudgeSelectOption).judge,
-                      )
-                    }}
-                    required
-                  />
-                </Box>
-              ))}
-            </BlueBox>
-          </Box>
+          <Stack space={5}>
+            <Box component="section">
+              <SectionHeading
+                title={formatMessage(core.appealCaseNumberHeading)}
+              />
+              <CaseNumberInput />
+            </Box>
+            <Box component="section">
+              <SectionHeading
+                title={formatMessage(core.appealAssistantHeading)}
+              />
+              <Select
+                name="assistant"
+                label={strings.assistantLabel}
+                placeholder={strings.assistantPlaceholder}
+                value={
+                  appealAssistant
+                    ? {
+                        label: appealAssistant.name ?? '',
+                        value: appealAssistant.id,
+                      }
+                    : null
+                }
+                options={assistants}
+                onChange={(selectedOption) => {
+                  setAppealAssistant(
+                    (selectedOption as AssistantSelectOption).assistant,
+                  )
+                }}
+                required
+              />
+            </Box>
+            <Box component="section">
+              <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
+              <BlueBox>
+                <Stack space={2}>
+                  {judges.map((judge, seat) => (
+                    <Select
+                      key={seat}
+                      name="judge"
+                      label={
+                        seat === 0
+                          ? strings.judgeForepersonLabel
+                          : strings.judgeLabel
+                      }
+                      placeholder={
+                        seat === 0
+                          ? strings.judgeForepersonPlaceholder
+                          : strings.judgePlaceholder
+                      }
+                      value={
+                        judge
+                          ? { label: judge.name ?? '', value: judge.id }
+                          : undefined
+                      }
+                      options={judgeOptions}
+                      onChange={(selectedOption) => {
+                        handleChangedJudge(
+                          seat,
+                          (selectedOption as JudgeSelectOption).judge,
+                        )
+                      }}
+                      required
+                    />
+                  ))}
+                </Stack>
+              </BlueBox>
+            </Box>
+          </Stack>
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
