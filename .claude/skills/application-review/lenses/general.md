@@ -214,13 +214,14 @@ README of each template the diff touches, under
    - the institution and contact;
    - the state flow;
    - the test users (gervimenn) and what each exercises;
-   - the feature flag;
-   - a `## Decisions` section. It lists each settled product decision as
-     one bullet: the decision, the reason, who decided, and the date
-     (`DD.MM.ÁÁÁÁ`). The reviewer reads this section as settled
-     (Suppressions M).
+   - the feature flag.
 
-   A decision recorded only in a ticket or a PR thread is missing.
+   A `## Decisions` section is optional and its absence is not a finding.
+   When the diff implements a product choice that the README does not
+   record, add one **FYI** bullet recommending that the author record it
+   there: the decision, the reason, who decided, and the date
+   (`DD.MM.ÁÁÁÁ`). The reviewer reads that section as settled
+   (Suppressions M).
 
    Text that the diff makes false counts as stale: a state that no longer
    exists, an old limit, or old infrastructure.

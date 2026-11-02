@@ -28,8 +28,8 @@ it at the end.
 
 The reviewer treats the PR description as the author's claim to test, not as a
 specification. It cannot know a product decision that is written nowhere in
-the repo, so it may question one. Record settled decisions in the template's
-README under `## Decisions`, one bullet each: the decision, the reason, who
+the repo, so it may question one. Optionally, record settled decisions in the
+template's README under `## Decisions`, one bullet each: the decision, the reason, who
 decided, and the date (`DD.MM.ÁÁÁÁ`). The reviewer reads that section and
 does not re-argue what it lists. You can also state a decision in the request.
 

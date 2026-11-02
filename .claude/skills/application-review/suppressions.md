@@ -63,9 +63,7 @@ reporting; a finding that fits one is dropped.
   template README's `## Decisions` section, or from the user's request.
   Do flag these:
   - code that implements the decision wrongly;
-  - code that contradicts it;
-  - a decision missing from the README, or recorded without its reason
-    (check G6).
+  - code that contradicts it.
 - **N. A `#markdown` id may exist for line breaks.** The suffix gives
   translators a multi-line editor in Contentful. When the text renders as
   plain `preLine`, do not propose dropping it; at most, note that other

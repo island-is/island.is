@@ -49,8 +49,8 @@ commits into the diff.
   git show <ref>:<template-dir>/README.md | awk '/^## Decisions/{f=1;next} /^## /{f=0} f'
   ```
 
-  Add any decisions the user states in the request. If a README has no
-  `## Decisions` section, note it; check G6 reports it.
+  Add any decisions the user states in the request. The section is
+  optional and most READMEs lack it, so do not flag its absence.
 
 The step is done when:
 
