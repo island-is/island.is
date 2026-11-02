@@ -38,12 +38,29 @@ import type {
  * The backend currently answers from mocked MMS payloads — see
  * libs/clients/mms/primary-school. Connecting the X-Road client there is the
  * only remaining step; nothing in this hook or the section components changes.
+ *
+ * Each section is its own query, so a caller passes the sections it actually
+ * reads and the rest are skipped — an edit screen needs one of the three. The
+ * mutations are always available; their refetches run whether or not the
+ * matching read is active.
  */
 
 interface LocalizedTitle {
   is: string
   en: string
 }
+
+/** The three key-info sections, as named on {@link PrimarySchoolKeyInfo}. */
+export type KeyInfoSectionName =
+  | 'emergencyContacts'
+  | 'languageProfile'
+  | 'healthProfile'
+
+const ALL_SECTIONS: KeyInfoSectionName[] = [
+  'emergencyContacts',
+  'languageProfile',
+  'healthProfile',
+]
 
 export interface PrimarySchoolKeyInfo {
   emergencyContacts: SectionState<EmergencyContact[]>
@@ -77,24 +94,26 @@ const toMmsError = (error: ApolloError | undefined): MmsError | undefined => {
 
 export const usePrimarySchoolKeyInfo = (
   studentId = '',
+  sections: KeyInfoSectionName[] = ALL_SECTIONS,
 ): PrimarySchoolKeyInfo => {
   const { lang } = useLocale()
-  const skip = !studentId
+  const skipSection = (section: KeyInfoSectionName) =>
+    !studentId || !sections.includes(section)
 
   const localize = (title: LocalizedTitle | undefined | null) =>
     title ? (lang === 'en' ? title.en : title.is) : undefined
 
   const agentsQuery = usePrimarySchoolAgentsQuery({
     variables: { studentId },
-    skip,
+    skip: skipSection('emergencyContacts'),
   })
   const languageQuery = usePrimarySchoolLanguageProfileQuery({
     variables: { studentId },
-    skip,
+    skip: skipSection('languageProfile'),
   })
   const healthQuery = usePrimarySchoolHealthProfileQuery({
     variables: { studentId },
-    skip,
+    skip: skipSection('healthProfile'),
   })
 
   const refetchQueries = [

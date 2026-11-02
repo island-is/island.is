@@ -34,8 +34,10 @@ export const EmergencyContactEdit = () => {
     studentId: string
     agentId: string
   }>()
-  const { emergencyContacts, updateAgent, saving } =
-    usePrimarySchoolKeyInfo(studentId)
+  const { emergencyContacts, updateAgent, saving } = usePrimarySchoolKeyInfo(
+    studentId,
+    ['emergencyContacts'],
+  )
   const { data: contacts, loading, error } = emergencyContacts
 
   const {

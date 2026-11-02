@@ -44,7 +44,7 @@ export const HealthProfileEdit = () => {
   const navigate = useNavigate()
   const { studentId } = useParams<{ studentId: string }>()
   const { healthProfile, saveHealthProfile, saving } =
-    usePrimarySchoolKeyInfo(studentId)
+    usePrimarySchoolKeyInfo(studentId, ['healthProfile'])
   const { data: profile, loading, error } = healthProfile
 
   // Allergy options come from MMS `GET /key-options`; `type` splits them into

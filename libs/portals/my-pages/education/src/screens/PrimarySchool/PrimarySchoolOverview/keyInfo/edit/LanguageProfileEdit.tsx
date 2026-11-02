@@ -38,7 +38,7 @@ export const LanguageProfileEdit = () => {
   const navigate = useNavigate()
   const { studentId } = useParams<{ studentId: string }>()
   const { languageProfile, saveLanguageProfile, saving } =
-    usePrimarySchoolKeyInfo(studentId)
+    usePrimarySchoolKeyInfo(studentId, ['languageProfile'])
   const { data: profile, loading, error } = languageProfile
 
   const {

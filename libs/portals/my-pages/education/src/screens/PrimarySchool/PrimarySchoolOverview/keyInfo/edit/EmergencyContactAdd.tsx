@@ -32,7 +32,8 @@ export const EmergencyContactAdd = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { studentId } = useParams<{ studentId: string }>()
-  const { addAgent, saving } = usePrimarySchoolKeyInfo(studentId)
+  // Reads no section, only writes — so no key-info queries are needed here.
+  const { addAgent, saving } = usePrimarySchoolKeyInfo(studentId, [])
 
   const {
     options: relationOptions,
