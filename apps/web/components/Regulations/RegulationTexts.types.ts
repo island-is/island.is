@@ -73,7 +73,7 @@ export type RegulationPageTexts = Partial<
     | 'statusBall_green' // 'Gildandi reglugerð, allar breytingar færðar inn'
     | 'statusBall_yellow_notCurrent' // 'Ekki núgildandi útgáfa reglugerðarinnar'
     | 'statusBall_yellow_pending' // 'Ekki er búið að færa allar breytingar inn í reglugerðina'
-    | 'statusBall_yellow_amending' // 'Breytingareglugerð, sjá uppfærðan texta í stofnreglugerð'
+    | 'statusBall_yellow_amending' // 'Breytingareglugerð, breytir annarri reglugerð'
     | 'statusBall_red' // 'Reglugerðin er ekki lengur í gildi'
     | 'statusUpcoming' // 'Væntanleg útgáfa reglugerðar'
     | 'statusUpcoming_on' // 'mun taka gildi ${date}'

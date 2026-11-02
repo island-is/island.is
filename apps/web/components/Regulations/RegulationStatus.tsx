@@ -77,7 +77,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
       )
     : textOrDefault(
         'statusBall_yellow_amending',
-        'Breytingareglugerð, sjá uppfærðan texta í stofnreglugerð',
+        'Breytingareglugerð, breytir annarri reglugerð',
       )
   const ballText: Record<BallColor, string> = {
     green: textOrDefault(
