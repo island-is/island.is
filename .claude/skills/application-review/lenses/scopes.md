@@ -22,7 +22,8 @@ Precedents: #15179, #14702, #17267, #19151, #23006, #19030, #23248, #20529.
   | `apps/download-service`                                                                       | download-service                      | `@island.is/clients/download-service`   |
 
   application-system-api also calls apps/api over GraphQL
-  (`GRAPHQL_API_URL`), so that leg needs `clients/api`.
+  (`GRAPHQL_API_URL`), forwarding the user's token. A library reached that
+  way exchanges as `clients/api`, so the grant belongs there.
 
 - **Test with more than one user.** A flow can pass for one test user and
   fail for another.

@@ -32,7 +32,8 @@ lost, or a file reaches an institution unchecked. It is medium otherwise.
     .claude/skills/application-review/scripts/consumers.sh <file> <symbol> <ref>
     ```
 
-    `<ref>` is the reviewed ref. It prints the library, its import alias,
+    `<ref>` is the reviewed ref; leave it out in a working-tree review.
+    It prints the library, its import aliases,
     and the number of consuming files per template or app, across the whole
     repo, portals and apps/web included.
 
