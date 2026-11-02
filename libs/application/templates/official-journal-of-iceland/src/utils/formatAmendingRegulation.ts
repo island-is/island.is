@@ -281,6 +281,17 @@ const formatNewParagraphs = (
   }
 }
 
+/**
+ * Paragraphs removed from an article, as one amendment: "6., 7. og 8. mgr.
+ * falla brott." It comes after the article's other amendments, so the
+ * paragraph numbers they cite are not yet changed by the removal.
+ */
+const formatDeletedParagraphs = (numbers: number[]): Amendment => {
+  const at = `${joinWithOg(numbers.map((n) => `${n}.`))} mgr.`
+  const verb = numbers.length > 1 ? 'falla' : 'fellur'
+  return (where) => `<p>${at}${where} ${verb} brott.</p>` as HTMLText
+}
+
 type ArticleGroup = {
   /** "3. gr. a", as amending text cites it */
   title: string
@@ -539,6 +550,11 @@ export const formatAmendingRegBody = (
     // New paragraphs in a row, merged into one amendment
     let newParagraphs: NewParagraphs | undefined
 
+    // Base paragraphs removed, written as one amendment after the others
+    const deletedParagraphs: number[] = []
+    // The last base paragraph kept, which new paragraphs are placed after
+    let lastKept = 0
+
     // The new side of a list already written together with its old side
     const handled = new Set<Element>()
 
@@ -682,10 +698,26 @@ export const formatAmendingRegBody = (
         hasInsert &&
         isAddition &&
         isEmptyWithout(element, 'ins')
+      const isDeletedParagraph = isParagraph && hasDeletion && isDeleted
       if (isParagraph && !isNewParagraph) {
         paragraph++
+        if (!isDeletedParagraph) {
+          lastKept = paragraph
+        }
       }
-      if (!isNewParagraph && !isNewList) {
+      // A list belongs to the paragraph before it, and is removed with it
+      const isListOfDeletedParagraph =
+        (isLetterList || isNumberList) &&
+        hasDeletion &&
+        isDeleted &&
+        deletedParagraphs.includes(mgr)
+      // A removed paragraph leaves new paragraphs on either side of it in a row
+      if (
+        !isNewParagraph &&
+        !isNewList &&
+        !isDeletedParagraph &&
+        !isListOfDeletedParagraph
+      ) {
         newParagraphs = undefined
       }
       const paragraphNumber = paragraph
@@ -704,8 +736,9 @@ export const formatAmendingRegBody = (
             testGroup.isDeletion = true
           }
           if (isParagraph) {
-            amendment = (where) =>
-              `<p>${paragraphNumber}. mgr.${where} fellur brott.</p>` as HTMLText
+            deletedParagraphs.push(paragraphNumber)
+          } else if (isListOfDeletedParagraph) {
+            // Covered by its paragraph's removal
           } else if (isSectionTitle) {
             amendment = (where) =>
               `<p>Fyrirsögn${
@@ -744,7 +777,7 @@ export const formatAmendingRegBody = (
             }
             newParagraphs = {
               index: testGroup.amendments.length,
-              paragraph: paragraphNumber,
+              paragraph: lastKept,
               blocks: [html],
               count: 1,
             }
@@ -866,6 +899,9 @@ export const formatAmendingRegBody = (
         newParagraphs,
         true,
       )
+    }
+    if (deletedParagraphs.length > 0) {
+      testGroup.amendments.push(formatDeletedParagraphs(deletedParagraphs))
     }
     return testGroup
   })

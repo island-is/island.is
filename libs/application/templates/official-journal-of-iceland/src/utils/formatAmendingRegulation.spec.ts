@@ -144,6 +144,64 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     )
   })
 
+  describe('removed paragraphs', () => {
+    // Paragraphs with a list under them, as in 25. gr. of nr. 1040/2005
+    const WITH_LISTS = [
+      title('1. gr.'),
+      '<p>Alfa bravo charlie.</p>',
+      '<p>Delta echo foxtrot:</p>',
+      '<ol><li>Quebec romeo sierra.</li><li>Tango uniform victor.</li></ol>',
+      '<p>Golf hotel india:</p>',
+      '<ol><li>Juliett papa oscar.</li><li>Mike lima kilo.</li></ol>',
+      '<p>Whiskey xray yankee.</p>',
+      title('2. gr. Gildistaka'),
+      GILDISTAKA,
+    ].join('')
+    const P2 =
+      '<p>Delta echo foxtrot:</p><ol><li>Quebec romeo sierra.</li><li>Tango uniform victor.</li></ol>'
+    const P3 =
+      '<p>Golf hotel india:</p><ol><li>Juliett papa oscar.</li><li>Mike lima kilo.</li></ol>'
+
+    it('removes a list with the paragraph it belongs to', () => {
+      const [first] = body(amend(WITH_LISTS.replace(P2, ''), {}, WITH_LISTS))
+      expect(first).toBe(
+        article(1, '<p>2. mgr. 1. gr. reglugerðarinnar fellur brott.</p>'),
+      )
+    })
+
+    it('adds the new paragraphs after the last one kept, and removes the old ones last', () => {
+      const after = WITH_LISTS.replace(
+        P2 + P3,
+        '<p>Zulu nine eight seven.</p><p>Six five four three.</p>',
+      )
+      const [first] = body(amend(after, {}, WITH_LISTS))
+      expect(first).toBe(
+        article(
+          1,
+          '<p>Eftirfarandi breytingar verða á 1. gr. reglugerðarinnar:</p><ol type="a">' +
+            '<li><p>Á eftir 1. mgr. koma tvær nýjar málsgreinar, svohljóðandi:</p><p>Zulu nine eight seven.</p><p>Six five four three.</p></li>' +
+            '<li><p>2. og 3. mgr. falla brott.</p></li></ol>',
+        ),
+      )
+    })
+
+    it('removes paragraphs after the other changes to the article', () => {
+      const after = BASE.replace('<p>Alfa bravo charlie.</p>', '').replace(
+        'Golf hotel',
+        'Golf kilo',
+      )
+      const [first] = body(amend(after))
+      expect(first).toBe(
+        article(
+          1,
+          '<p>Eftirfarandi breytingar verða á 1. gr. reglugerðarinnar:</p><ol type="a">' +
+            '<li><p>3. mgr. breytist og orðast svo:</p><p>Golf kilo india.</p></li>' +
+            '<li><p>1. mgr. fellur brott.</p></li></ol>',
+        ),
+      )
+    })
+  })
+
   it('removes a whole article', () => {
     const after = BASE.replace(
       /<h3 class="article__title">1\. gr\.<\/h3>.*?(?=<h3)/,
