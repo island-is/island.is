@@ -973,17 +973,14 @@ export class InternalCaseService {
         theCase.id,
         theCase.court?.name,
         theCase.courtCaseNumber,
-        this.formatMessage(notifications.courtRevokedIndictmentEmail.subject, {
+        formatIcuMessage(notifications.courtRevokedIndictmentEmail.subject, {
           courtCaseNumber: courtCaseNumber || 'NONE',
         }),
         stripHtmlTags(
-          `${this.formatMessage(
-            notifications.courtRevokedIndictmentEmail.body,
-            {
-              prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
-              caseNumber,
-            },
-          )} ${this.formatMessage(notifications.emailTail, {
+          `${formatIcuMessage(notifications.courtRevokedIndictmentEmail.body, {
+            prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
+            caseNumber,
+          })} ${formatIcuMessage(notifications.emailTail, {
             linkStart: `<a href="${this.config.clientUrl}">`,
             linkEnd: '</a>',
           })}`,

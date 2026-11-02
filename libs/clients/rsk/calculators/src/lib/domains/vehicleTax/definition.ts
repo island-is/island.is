@@ -1,22 +1,22 @@
+import type { GetVehicleTaxData } from '../../../../gen/fetch'
+import { Gjaldtimabil } from '../../../../gen/fetch'
 import {
   defineCalculator,
   defineInputFields,
   defineOutputFields,
+  enumOptions,
 } from '../../types/define'
 
-export const VEHICLE_TAX_PERIODS = ['firstHalf', 'secondHalf'] as const
-export type VehicleTaxPeriod = typeof VEHICLE_TAX_PERIODS[number]
-
 const vehicleTaxInputFields = defineInputFields([
-  { name: 'year', type: 'number', required: true, semantic: 'year' },
-  { name: 'licensePlate', type: 'string', required: true },
+  { name: 'ar', type: 'number', required: true, semantic: 'year' },
+  { name: 'bilnumer', type: 'string', required: true },
   {
-    name: 'period',
+    name: 'gjaldtimabil',
     type: 'select',
     required: true,
-    options: VEHICLE_TAX_PERIODS.map((value) => ({ value })),
+    options: enumOptions(Gjaldtimabil),
   },
-  { name: 'periodSplitDate', type: 'date', required: false },
+  { name: 'gjaldskipting', type: 'date', required: false },
 ] as const)
 
 const vehicleTaxOutputFields = defineOutputFields([
@@ -47,12 +47,7 @@ export const vehicleTaxCalculator = defineCalculator({
   outputFields: vehicleTaxOutputFields,
 } as const)
 
-export interface VehicleTaxInput {
-  year: number
-  licensePlate: string
-  period: VehicleTaxPeriod
-  periodSplitDate?: string
-}
+export type VehicleTaxInput = GetVehicleTaxData['query']
 
 export interface VehicleTaxOutput {
   periodLabel?: string

@@ -1,39 +1,39 @@
+import type { GetChildBenefitData } from '../../../../gen/fetch'
+import { Hjuskaparstada } from '../../../../gen/fetch'
 import {
   defineCalculator,
   defineInputFields,
   defineOutputFields,
+  enumOptions,
 } from '../../types/define'
 
 const childBenefitInputFields = defineInputFields([
-  { name: 'marriedOrCohabiting', type: 'boolean', required: true },
-  { name: 'incomeYear', type: 'number', required: true, semantic: 'year' },
-  { name: 'incomeBase', type: 'number', required: true, semantic: 'currency' },
   {
-    name: 'numberOfChildren',
-    type: 'number',
+    name: 'hjuskaparstada',
+    type: 'select',
     required: true,
-    semantic: 'count',
+    options: enumOptions(Hjuskaparstada),
   },
+  { name: 'tekjuar', type: 'number', required: true, semantic: 'year' },
+  { name: 'tekjustofn', type: 'number', required: true, semantic: 'currency' },
+  { name: 'fjoldiBarna', type: 'number', required: true, semantic: 'count' },
   {
-    name: 'numberOfChildrenUnder7',
-    type: 'number',
-    required: true,
-    semantic: 'count',
-  },
-  { name: 'splitCustody', type: 'boolean', required: true },
-  {
-    name: 'splitCustodyChildrenOver7',
+    name: 'fjoldiBarnaUndir7ara',
     type: 'number',
     required: false,
     semantic: 'count',
-    dependsOn: { field: 'splitCustody', equals: true },
   },
   {
-    name: 'splitCustodyChildrenUnder7',
+    name: 'skiptBornYfir7ara',
     type: 'number',
     required: false,
     semantic: 'count',
-    dependsOn: { field: 'splitCustody', equals: true },
+  },
+  {
+    name: 'skiptBornUndir7ara',
+    type: 'number',
+    required: false,
+    semantic: 'count',
   },
 ] as const)
 
@@ -190,16 +190,7 @@ export const childBenefitCalculator = defineCalculator({
   outputFields: childBenefitOutputFields,
 } as const)
 
-export interface ChildBenefitInput {
-  marriedOrCohabiting: boolean
-  incomeYear: number
-  incomeBase: number
-  numberOfChildren: number
-  numberOfChildrenUnder7: number
-  splitCustody: boolean
-  splitCustodyChildrenOver7?: number
-  splitCustodyChildrenUnder7?: number
-}
+export type ChildBenefitInput = GetChildBenefitData['query']
 
 export interface ChildBenefitOutput {
   maritalStatusLabel?: string
