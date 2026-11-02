@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
-import { Box, Select, Stack } from '@island.is/island-ui/core'
+import { Box, Select } from '@island.is/island-ui/core'
 import {
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_RULING_ROUTE,
@@ -30,6 +30,7 @@ import {
   useAppealCase,
   useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   appendAppealCaseIdQuery,
   applyAppealCaseUpdate,
@@ -188,7 +189,7 @@ const AppealCase: FC = () => {
         <PageHeader title={strings.title} />
         <FormContentContainer>
           <PageTitle>{strings.title}</PageTitle>
-          <Stack space={5}>
+          <div className={stack({ gap: 5 })}>
             <Box component="section">
               <SectionHeading
                 title={formatMessage(core.appealCaseNumberHeading)}
@@ -223,7 +224,7 @@ const AppealCase: FC = () => {
             <Box component="section">
               <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
               <BlueBox>
-                <Stack space={2}>
+                <div className={stack({ gap: 2 })}>
                   {judges.map((judge, seat) => (
                     <Select
                       key={seat}
@@ -253,10 +254,10 @@ const AppealCase: FC = () => {
                       required
                     />
                   ))}
-                </Stack>
+                </div>
               </BlueBox>
             </Box>
-          </Stack>
+          </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
