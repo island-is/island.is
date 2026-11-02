@@ -14,6 +14,7 @@ export default {
     'organizationPage',
     'organizationSubpage',
     'projectPage',
+    'projectSubpage',
     'supportQNA',
     'link',
     'frontpage',
@@ -31,7 +32,7 @@ export default {
     'course',
   ],
   nestedContentTypes: [
-    'projectSubpage',
+    'projectPage',
     'alertBanner',
     'anchorPageList',
     'organizationPage',

@@ -14,6 +14,7 @@ import { FrontpageSyncService } from './importers/frontpage.service'
 import { SupportQNASyncService } from './importers/supportQNA.service'
 import { LinkSyncService } from './importers/link.service'
 import { ProjectPageSyncService } from './importers/projectPage.service'
+import { ProjectSubpageSyncService } from './importers/projectSubpage.service'
 import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
 import { VacancySyncService } from './importers/vacancy.service'
 import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
@@ -45,6 +46,7 @@ export class MappingService {
     private readonly organizationPageSyncService: OrganizationPageSyncService,
     private readonly organizationSubpageSyncService: OrganizationSubpageSyncService,
     private readonly projectPageSyncService: ProjectPageSyncService,
+    private readonly projectSubpageSyncService: ProjectSubpageSyncService,
     private readonly frontpageSyncService: FrontpageSyncService,
     private readonly supportQNASyncService: SupportQNASyncService,
     private readonly linkSyncService: LinkSyncService,
@@ -74,6 +76,7 @@ export class MappingService {
       this.organizationPageSyncService,
       this.organizationSubpageSyncService,
       this.projectPageSyncService,
+      this.projectSubpageSyncService,
       this.frontpageSyncService,
       this.supportQNASyncService,
       this.linkSyncService,

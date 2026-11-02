@@ -8,7 +8,10 @@ import {
   IsString,
 } from 'class-validator'
 import { ContentLanguage } from '../enums/contentLanguage.enum'
-import { SearchableContentTypes } from '../enums/searchableContentTypes'
+import {
+  defaultSearchableContentTypes,
+  SearchableContentTypes,
+} from '../enums/searchableContentTypes'
 import { SearchableTags } from '../enums/searchableTags'
 import { SortField, SortDirection } from '@island.is/content-search-toolkit'
 
@@ -30,7 +33,7 @@ export class SearcherInput {
   @Field(() => [SearchableContentTypes], { nullable: true })
   @IsArray()
   @IsOptional()
-  types?: SearchableContentTypes[] = Object.values(SearchableContentTypes)
+  types?: SearchableContentTypes[] = defaultSearchableContentTypes
 
   @Field(() => ContentLanguage, { nullable: true })
   @IsEnum(ContentLanguage)

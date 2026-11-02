@@ -247,6 +247,15 @@ export const pruneNonSearchableSliceUnionFields = (
   return slice
 }
 
+export const extractContentFromSlices = (
+  slices: (typeof SliceUnion | null | undefined)[],
+) =>
+  extractStringsFromObject(
+    slices
+      .filter((slice): slice is typeof SliceUnion => Boolean(slice))
+      .map(pruneNonSearchableSliceUnionFields),
+  )
+
 export const extractChildEntryIds = <T>(rootNode: {
   fields: T
   sys: { id: string }
