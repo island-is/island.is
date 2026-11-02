@@ -71,6 +71,8 @@ import { OpenDataSubpage } from './models/openDataSubpage.model'
 import { GetOpenDataSubpageInput } from './dto/getOpenDataSubpage.input'
 import { ProjectPage } from './models/projectPage.model'
 import { GetProjectPageInput } from './dto/getProjectPage.input'
+import { ProjectSubpage } from './models/projectSubpage.model'
+import { GetProjectSubpageInput } from './dto/getProjectSubpage.input'
 import { SupportQNA } from './models/supportQNA.model'
 import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
 import { SupportCategory } from './models/supportCategory.model'
@@ -392,6 +394,18 @@ export class CmsResolver {
     @Args('input') input: GetProjectPageInput,
   ): Promise<ProjectPage | null> {
     return this.cmsContentfulService.getProjectPage(input.slug, input.lang)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => ProjectSubpage, { nullable: true })
+  getProjectSubpage(
+    @Args('input') input: GetProjectSubpageInput,
+  ): Promise<ProjectSubpage | null> {
+    return this.cmsContentfulService.getProjectSubpage(
+      input.projectPageSlug,
+      input.slug,
+      input.lang,
+    )
   }
 
   // TODO: Add filtering support for hasALandingPage
