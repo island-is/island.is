@@ -28,8 +28,9 @@ const toScalarPayload = (
         ? { type, numberValue: raw }
         : undefined
     case 'string':
-    case 'date':
       return typeof raw === 'string' ? { type, stringValue: raw } : undefined
+    case 'date':
+      return raw instanceof Date ? { type, dateValue: raw } : undefined
     case 'boolean':
       return typeof raw === 'boolean' ? { type, booleanValue: raw } : undefined
     default: {

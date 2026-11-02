@@ -27,6 +27,8 @@ const inputValueFieldSchema = z.object({
   key: z.string().min(1),
   label: localizedTextSchema.optional(),
   placeholder: localizedTextSchema.optional(),
+  optionLabelsEnabled: z.boolean().optional(),
+  optionLabels: z.record(z.string(), localizedTextSchema).optional(),
   size: z.enum(calculatorInputFieldSizes),
 })
 

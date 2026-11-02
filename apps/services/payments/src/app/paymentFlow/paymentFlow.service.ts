@@ -484,6 +484,26 @@ export class PaymentFlowService {
   }
 
   /**
+   * The payment page only offers the methods of a charge flow, but its endpoints are public, so the
+   * service has the final say: only the methods stored on the flow when it was created are allowed.
+   */
+  validateChargePaymentMethod(
+    paymentFlow: Pick<PaymentFlowAttributes, 'id' | 'availablePaymentMethods'>,
+    paymentMethod: PaymentMethod,
+  ): void {
+    if (paymentFlow.availablePaymentMethods.includes(paymentMethod)) {
+      return
+    }
+
+    this.logger.warn(
+      `[${paymentFlow.id}] Payment method not available for the payment flow`,
+      { paymentMethod },
+    )
+
+    throw new BadRequestException(PaymentServiceCode.InvalidPaymentMethods)
+  }
+
+  /**
    * What the payer is paying for, whatever kind of flow it is: catalog charges priced by FJS, or
    * debts with amounts chosen by the payer.
    */
@@ -907,11 +927,17 @@ export class PaymentFlowService {
       where: { paymentFlowId, reason: 'payment_completed' },
     })
 
-    return events.some(
-      (event) =>
-        (event.metadata as { payment?: { correlationID?: string } } | undefined)
-          ?.payment?.correlationID === correlationId,
-    )
+    return events.some((event) => {
+      const metadata = event.metadata as
+        | { correlationId?: string; payment?: { correlationID?: string } }
+        | undefined
+
+      // Card payments carry the id the gateway echoed, bank transfers their own
+      return (
+        (metadata?.correlationId ?? metadata?.payment?.correlationID) ===
+        correlationId
+      )
+    })
   }
 
   async logPaymentFlowUpdate(

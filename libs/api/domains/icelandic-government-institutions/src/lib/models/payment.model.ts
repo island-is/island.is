@@ -18,6 +18,9 @@ export class Payment {
   @Field(() => Float)
   amount!: number
 
+  @Field()
+  isPartialPayment!: boolean
+
   @Field(() => Invoice)
   invoice!: Invoice
 }

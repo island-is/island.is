@@ -1,10 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const unemploymentBenefitsMessages = defineMessages({
-  unemploymentBenefits: {
-    id: 'sp.social-benefits-unemployment:unemploymentBenefits',
-    defaultMessage: 'Atvinnuleysisbætur',
-  },
   title: {
     id: 'sp.social-benefits-unemployment:title',
     defaultMessage: 'Staðan þín',

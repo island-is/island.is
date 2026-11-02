@@ -1,29 +1,13 @@
-import { Allow, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { Allow, IsNotEmpty, IsString } from 'class-validator'
 
-import { Field, ID, InputType } from '@nestjs/graphql'
+import { Field, InputType } from '@nestjs/graphql'
 
+import { FileAppealStatementInput } from './fileAppealStatement.input'
+
+// A deadline is a party and a date: the party the way every statement
+// request names it, and the day it has to file by.
 @InputType()
-export class SetAppealStatementDeadlineInput {
-  @Allow()
-  @Field(() => ID)
-  readonly caseId!: string
-
-  @Allow()
-  @Field(() => ID)
-  readonly appealCaseId!: string
-
-  // Which party gets the deadline: a defendant, a civil claimant, or the
-  // prosecution when neither is named.
-  @Allow()
-  @IsOptional()
-  @Field(() => ID, { nullable: true })
-  readonly defendantId?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => ID, { nullable: true })
-  readonly civilClaimantId?: string
-
+export class SetAppealStatementDeadlineInput extends FileAppealStatementInput {
   @Allow()
   @IsString()
   @IsNotEmpty()

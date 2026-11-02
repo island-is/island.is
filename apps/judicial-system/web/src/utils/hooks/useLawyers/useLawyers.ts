@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import Cookie from 'js-cookie'
 
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
@@ -8,7 +7,6 @@ import { errors as errorMessages } from '@island.is/judicial-system-web/messages
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 export const useGetLawyers = (shouldFetch?: boolean): Lawyer[] => {
-  const { formatMessage } = useIntl()
   const [lawyers, setLawyers] = useState<Lawyer[]>([])
 
   useEffect(() => {
@@ -36,13 +34,13 @@ export const useGetLawyers = (shouldFetch?: boolean): Lawyer[] => {
       .then(setLawyers)
       .catch((e) => {
         if (e.name !== 'AbortError') {
-          toast.error(formatMessage(errorMessages.fetchLawyers))
+          toast.error(errorMessages.fetchLawyers)
           setLawyers([])
         }
       })
 
     return () => controller.abort()
-  }, [shouldFetch, formatMessage])
+  }, [shouldFetch])
 
   return lawyers
 }

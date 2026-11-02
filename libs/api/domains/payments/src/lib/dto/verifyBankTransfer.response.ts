@@ -38,4 +38,11 @@ export class VerifyBankTransferResponse {
       'Expiry-aware reason for a terminal failure (an ERROR past the attempt TTL is reported as "expired"); absent for non-failure statuses.',
   })
   failureReason?: GetPaymentFlowDTOLastBankTransferFailureEnum
+
+  @Field(() => Boolean, {
+    nullable: true,
+    description:
+      'True for a debt flow FJS rejected after the transfer settled: the payment is refunded, not completed.',
+  })
+  isClosed?: boolean
 }

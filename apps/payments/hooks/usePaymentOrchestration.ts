@@ -24,7 +24,7 @@ interface UsePaymentOrchestrationProps {
     amount: number
     title: string
   }
-  isApplePayPaymentEnabledForUser: boolean
+  isApplePayPaymentEnabled: boolean
   // The server refused the individual authorising a company's transfer. Shown on its input, so the
   // payer stays on the form to correct it rather than landing on the error screen.
   onInvalidActorNationalId: () => void
@@ -54,7 +54,7 @@ const deriveInitialBankTransferError = (
 export const usePaymentOrchestration = ({
   paymentFlow,
   productInformation,
-  isApplePayPaymentEnabledForUser,
+  isApplePayPaymentEnabled,
   onInvalidActorNationalId,
 }: UsePaymentOrchestrationProps) => {
   const router = useRouter()
@@ -112,7 +112,7 @@ export const usePaymentOrchestration = ({
   })
 
   const applePayPayment = useApplePay({
-    isEnabledForUser: isApplePayPaymentEnabledForUser,
+    isEnabled: isApplePayPaymentEnabled,
     paymentFlow,
     productInformation,
     onPaymentSuccess: commonOnPaymentSuccess,
@@ -222,6 +222,8 @@ export const usePaymentOrchestration = ({
     overallIsSubmitting,
     paymentError,
     setPaymentError, // Expose to allow clearing error from page if needed (e.g. error display component has a dismiss)
+    // The page drives bank-transfer settlement through polling, and finishes it the same way
+    onPaymentSuccess: commonOnPaymentSuccess,
     handleFormSubmit,
     isThreeDSecureModalActive,
     threeDSecureDataForModal: cardPayment.threeDSecureDataForModal,

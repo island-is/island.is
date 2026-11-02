@@ -183,14 +183,32 @@ describe('useCase', () => {
       expect(input).not.toHaveProperty('defendants')
     })
 
-    test('sends no defendants for a request case', () => {
+    test('sends the first defendant of a request case including defender fields', () => {
       const input = createCaseInput({
         type: CaseType.CUSTODY,
         policeCaseNumbers: ['012-3456-7890'],
-        defendants: [defendant],
+        defendants: [
+          {
+            ...defendant,
+            defenderName: 'Verjandi',
+            defenderEmail: 'verjandi@example.is',
+          },
+          { ...defendant, id: 'local-2', name: 'Anna' },
+        ],
       } as WorkingCase)
 
-      expect(input).not.toHaveProperty('defendants')
+      expect(input?.defendants).toEqual([
+        {
+          noNationalId: false,
+          nationalId: '010101-0101',
+          name: 'Jón Jónsson',
+          gender: Gender.MALE,
+          address: 'Gata 1',
+          citizenship: 'Ísland',
+          defenderName: 'Verjandi',
+          defenderEmail: 'verjandi@example.is',
+        },
+      ])
     })
 
     test('maps the case fields and the prosecutor id', () => {

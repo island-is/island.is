@@ -1,5 +1,3 @@
-import type { IntlShape } from 'react-intl'
-
 import { laws as lawTitles } from '@island.is/judicial-system/formatters'
 import { laws } from '@island.is/judicial-system-web/messages'
 import type { CheckboxInfo } from '@island.is/judicial-system-web/src/components'
@@ -29,11 +27,10 @@ const legalProvisionTooltips: Partial<Record<CaseLegalProvisions, string>> = {
 }
 
 export const getLegalProvisionTitle = (
-  formatMessage: IntlShape['formatMessage'],
   legalProvision: CaseLegalProvisions,
 ): string =>
   legalProvision in laws
-    ? formatMessage(laws[legalProvision as keyof typeof laws].title)
+    ? laws[legalProvision as keyof typeof laws].title
     : lawTitles[legalProvision]
 
 const makeCheckboxInfo = (legalProvision: CaseLegalProvisions): CheckboxInfo =>

@@ -51,6 +51,7 @@ export const Input = forwardRef(
       required,
       rightAlign,
       placeholder,
+      ariaLabel,
       tooltip,
       backgroundColor = 'white',
       onFocus,
@@ -236,6 +237,7 @@ export const Input = forwardRef(
               min={min}
               {...(ariaError as AriaError)}
               {...inputProps}
+              {...(ariaLabel && { 'aria-label': ariaLabel })}
               {...(required && { 'aria-required': true })}
             />
           </Box>

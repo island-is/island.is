@@ -10,6 +10,8 @@ function SvgComponent(
       viewBox="0 0 1116 289"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
       {...props}
     >
       <path

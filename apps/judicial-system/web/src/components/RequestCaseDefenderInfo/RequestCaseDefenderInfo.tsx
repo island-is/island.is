@@ -14,15 +14,9 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  useCase,
-  useDefendants,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import {
-  buildCaseDefenderMirrorUpdate,
-  getDefendantRequestSharingUpdate,
-} from './RequestCaseDefenderInfo.logic'
+import { getDefendantRequestSharingUpdate } from './RequestCaseDefenderInfo.logic'
 import RequestCaseDefenderSharing from './RequestCaseDefenderSharing'
 
 interface Props {
@@ -40,20 +34,9 @@ const RequestCaseDefenderInfo: FC<Props> = ({
   defendant,
   showDefendantName,
 }) => {
-  const { setAndSendCaseToServer } = useCase()
   const { setAndSendDefendantToServer, updateDefendantState, updateDefendant } =
     useDefendants()
   const { user } = useContext(UserContext)
-
-  const mirrorToCase = (
-    contact: Parameters<typeof buildCaseDefenderMirrorUpdate>[0],
-  ) => {
-    setAndSendCaseToServer(
-      [buildCaseDefenderMirrorUpdate(contact)],
-      workingCase,
-      setWorkingCase,
-    )
-  }
 
   const handleAdvocateChange = async (
     defenderName: string | null,
@@ -61,7 +44,7 @@ const RequestCaseDefenderInfo: FC<Props> = ({
     defenderEmail: string | null,
     defenderPhoneNumber: string | null,
   ) => {
-    const updated = await setAndSendDefendantToServer(
+    await setAndSendDefendantToServer(
       {
         caseId: workingCase.id,
         defendantId: defendant.id,
@@ -76,45 +59,22 @@ const RequestCaseDefenderInfo: FC<Props> = ({
       },
       setWorkingCase,
     )
-
-    if (!updated) {
-      return
-    }
-
-    mirrorToCase({
-      defenderName,
-      defenderNationalId,
-      defenderEmail,
-      defenderPhoneNumber,
-    })
   }
 
   const handleEmailSave = async (defenderEmail: string | null) => {
-    const updated = await updateDefendant({
+    await updateDefendant({
       caseId: workingCase.id,
       defendantId: defendant.id,
       defenderEmail,
     })
-
-    if (!updated) {
-      return
-    }
-
-    mirrorToCase({ defenderEmail })
   }
 
   const handlePhoneNumberSave = async (defenderPhoneNumber: string | null) => {
-    const updated = await updateDefendant({
+    await updateDefendant({
       caseId: workingCase.id,
       defendantId: defendant.id,
       defenderPhoneNumber,
     })
-
-    if (!updated) {
-      return
-    }
-
-    mirrorToCase({ defenderPhoneNumber })
   }
 
   return (

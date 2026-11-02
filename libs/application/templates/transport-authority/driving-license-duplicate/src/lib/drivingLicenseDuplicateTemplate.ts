@@ -28,6 +28,7 @@ import {
 } from './getApplicationFeatureFlags'
 import {
   DuplicateEligibilityApi,
+  DuplicatePhotoLookupCheckApi,
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
@@ -167,6 +168,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                 QualityPhotoApi,
                 UserProfileApi,
                 DuplicateEligibilityApi,
+                DuplicatePhotoLookupCheckApi,
               ],
               write: 'all',
               delete: true,

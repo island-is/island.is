@@ -22,17 +22,19 @@ const { NUMBER, STRING, BOOLEAN, DATE, ARRAY } = TaxCalculatorOutputFieldType
 
 describe('toOutputValues', () => {
   it('maps each scalar kind onto its own payload field', () => {
+    const dueDate = new Date('2026-06-01T00:00:00.000Z')
+
     expect(
       toOutputValues(fields, {
         total: 1234,
         label: 'First half',
-        dueDate: '2026-06-01',
+        dueDate,
         applied: true,
       }),
     ).toEqual([
       { key: 'total', type: NUMBER, numberValue: 1234 },
       { key: 'label', type: STRING, stringValue: 'First half' },
-      { key: 'dueDate', type: DATE, stringValue: '2026-06-01' },
+      { key: 'dueDate', type: DATE, dateValue: dueDate },
       { key: 'applied', type: BOOLEAN, booleanValue: true },
     ])
   })
@@ -57,9 +59,15 @@ describe('toOutputValues', () => {
   })
 
   /* Contract mismatches are omitted, never coerced. */
-  it('omits a value whose runtime kind contradicts the contract', () => {
-    expect(toOutputValues(fields, { total: '1234' })).toEqual([])
-  })
+  it.each([
+    ['a string number', { total: '1234' }],
+    ['a date string', { dueDate: '2026-06-01' }],
+  ])(
+    'omits a value whose runtime kind contradicts the contract (%s)',
+    (_label, result) => {
+      expect(toOutputValues(fields, result)).toEqual([])
+    },
+  )
 
   describe('array fields', () => {
     it('maps rows keyed by item field', () => {

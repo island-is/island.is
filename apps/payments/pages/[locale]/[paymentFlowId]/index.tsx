@@ -2,7 +2,7 @@ import type { ApolloError } from '@apollo/client'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { isCompany } from 'kennitala'
 
 import {
@@ -86,9 +86,7 @@ interface PaymentPageProps {
     amount: number
     title: string
   }
-  isInvoicePaymentEnabledForUser: boolean
-  isApplePayPaymentEnabledForUser: boolean
-  isBankTransferPaymentEnabledForUser: boolean
+  isApplePayPaymentEnabled: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
@@ -125,9 +123,6 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   let paymentFlow: PaymentPageProps['paymentFlow'] = null
   let paymentFlowErrorCode: PaymentPageProps['paymentFlowErrorCode'] = null
   let organization: PaymentPageProps['organization'] = null
-  let isInvoicePaymentEnabledForUser = false
-  let isApplePayPaymentEnabledForUser = false
-  let isBankTransferPaymentEnabledForUser = false
 
   try {
     const { data } = await client.query<
@@ -192,48 +187,20 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     }
   }
 
-  if (paymentFlow) {
-    const userObj = {
-      identifier: paymentFlow.payerNationalId,
-      custom: {
-        nationalId: paymentFlow.payerNationalId,
-      },
-    }
-
-    try {
-      isInvoicePaymentEnabledForUser = await configCatClient.getValueAsync(
-        Features.isIslandisInvoicePaymentAllowedForUser,
-        false,
-        userObj,
-      )
-    } catch (e) {
-      console.error('Error getting invoice payment enabled for user', e)
-    }
-
-    try {
-      isApplePayPaymentEnabledForUser = await configCatClient.getValueAsync(
-        Features.isIslandisApplePayPaymentAllowedForUser,
-        false,
-        userObj,
-      )
-    } catch (e) {
-      console.error('Error getting Apple Pay payment enabled for user', e)
-    }
-
-    try {
-      isBankTransferPaymentEnabledForUser = await configCatClient.getValueAsync(
-        Features.isIslandisBankTransferPaymentAllowedForUser,
-        false,
-        userObj,
-      )
-    } catch (e) {
-      console.error('Error getting bank transfer payment enabled for user', e)
-    }
-  }
-
   const productInformation = {
     amount: paymentFlow?.productPrice ?? 0,
     title: paymentFlow?.productTitle ?? '',
+  }
+
+  // The same flag guards the service's Apple Pay endpoints, so the button only shows when they're open
+  let isApplePayPaymentEnabled = false
+  try {
+    isApplePayPaymentEnabled = await configCatClient.getValueAsync(
+      Features.isIslandisApplePayPaymentEnabled,
+      false,
+    )
+  } catch (e) {
+    console.error('Error getting Apple Pay payment enabled', e)
   }
 
   return {
@@ -244,9 +211,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       paymentFlowErrorCode,
       organization,
       productInformation,
-      isInvoicePaymentEnabledForUser,
-      isApplePayPaymentEnabledForUser,
-      isBankTransferPaymentEnabledForUser,
+      isApplePayPaymentEnabled,
     },
   }
 }
@@ -255,9 +220,7 @@ function PaymentPage({
   paymentFlow,
   organization,
   productInformation,
-  isInvoicePaymentEnabledForUser,
-  isApplePayPaymentEnabledForUser,
-  isBankTransferPaymentEnabledForUser,
+  isApplePayPaymentEnabled,
 }: PaymentPageProps) {
   const methods = useForm({
     mode: 'onBlur',
@@ -302,10 +265,11 @@ function PaymentPage({
     handleVerificationCancelledByModal,
     supportsApplePay,
     initiateApplePay,
+    onPaymentSuccess,
   } = usePaymentOrchestration({
     paymentFlow,
     productInformation,
-    isApplePayPaymentEnabledForUser,
+    isApplePayPaymentEnabled,
     onInvalidActorNationalId,
   })
   const router = useRouter()
@@ -321,8 +285,8 @@ function PaymentPage({
       paymentFlow?.paymentStatus ===
       PaymentsGetFlowPaymentStatus.bank_transfer_pending,
     expiresAt: paymentFlow?.bankTransferExpiresAt ?? undefined,
-    // Success needs a reload to land on the receipt screen
-    onSuccess: () => router.reload(),
+    // Same as a card payment: back to the caller when the flow asks for it, else the receipt
+    onSuccess: () => onPaymentSuccess('bank_transfer'),
     onFailure: (error) => setPaymentError(error),
     onStatusUpdate: setLiveBankTransfer,
   })
@@ -376,35 +340,9 @@ function PaymentPage({
       : undefined
   const isCompanyPayer = companyPayer !== undefined
 
-  const availablePaymentMethods = useMemo(() => {
-    const methods = [...(paymentFlow?.availablePaymentMethods ?? [])]
-
-    // FJS decides the methods of a debt flow, the service would refuse any other
-    if (paymentFlow?.type === PaymentsFlowType.debt) {
-      return methods as PaymentMethod[]
-    }
-
-    if (isInvoicePaymentEnabledForUser) {
-      methods.push('invoice')
-    }
-
-    // TEMPORARY (testing): force-surface bank transfer via the rollout flag.
-    // Once testing is done this flag is removed and the backend controls
-    // availability via availablePaymentMethods. Never for a company: company bank
-    // transfers are controlled by the per-company flag in the payments service,
-    // which would refuse the transfer anyway.
-    if (isBankTransferPaymentEnabledForUser && !isCompanyPayer) {
-      methods.push('bank_transfer')
-    }
-
-    return Array.from(new Set(methods)) as PaymentMethod[]
-  }, [
-    paymentFlow?.availablePaymentMethods,
-    paymentFlow?.type,
-    isInvoicePaymentEnabledForUser,
-    isBankTransferPaymentEnabledForUser,
-    isCompanyPayer,
-  ])
+  // The service decides the methods when the flow is created and refuses any other
+  const availablePaymentMethods = (paymentFlow?.availablePaymentMethods ??
+    []) as PaymentMethod[]
 
   // Card and bank transfer have input fields that must be valid before submitting; invoice has none.
   const isCardPaymentInvalid =
@@ -560,9 +498,7 @@ function PaymentPage({
               <form onSubmit={methods.handleSubmit(handleFormSubmit)}>
                 <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
                   <PaymentSelector
-                    availablePaymentMethods={
-                      availablePaymentMethods as PaymentMethod[]
-                    }
+                    availablePaymentMethods={availablePaymentMethods}
                     selectedPayment={selectedPaymentMethod as any}
                     onSelectPayment={changePaymentMethod}
                   />

@@ -31,6 +31,8 @@ export type RegulationSearchOption = {
   /** The regulation title without the name prefix */
   title: string
   disabled?: boolean
+  /** Whether the regulation's text has been moved to island.is */
+  migrated?: boolean
 }
 
 export const useRegulationSearch = () => {
@@ -67,6 +69,7 @@ export const useRegulationSearch = () => {
         value: String(item.name),
         label: `${name} — ${item.title}`,
         title: String(item.title),
+        migrated: item.migrated,
       }
     })
 

@@ -86,6 +86,7 @@ export const VerifyBankTransferMutation = gql`
       pendingStatus
       scaRedirectUrl
       failureReason
+      isClosed
     }
   }
 `

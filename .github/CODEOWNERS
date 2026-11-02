@@ -444,6 +444,9 @@ codemagic.yaml                                                                  
 /libs/application/templates/no-debt-certificate/                                                                             @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/no-debt-certificate/                                        @island-is/origo
 
+/libs/application/templates/pay-debts/                                                                                       @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/pay-debts/                                                  @island-is/origo
+
 /libs/application/templates/aosh/seminars/                                                                                   @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/aosh/seminars/                                              @island-is/origo
 /libs/api/domains/seminars-ver/                                                                                              @island-is/origo

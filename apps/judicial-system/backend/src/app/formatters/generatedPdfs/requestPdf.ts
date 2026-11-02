@@ -16,7 +16,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
-import { core, request as m } from '../../messages'
+import { core, formatIcuMessage, request as m } from '../../messages'
 import { Case, Defendant, EventLog } from '../../modules/repository'
 import { formatLegalProvisions } from '../formatters'
 import {
@@ -79,7 +79,7 @@ const constructRestrictionRequestPdf = (
     caseTypeText = formatMessage(core.caseType.custody)
   }
 
-  const title = formatMessage(m.heading, {
+  const title = formatIcuMessage(m.heading, {
     caseType: caseTypeText,
   })
 
@@ -126,7 +126,7 @@ const constructRestrictionRequestPdf = (
   addMediumText(
     doc,
     capitalize(
-      formatMessage(core.defendant, {
+      formatIcuMessage(core.defendant, {
         suffix:
           theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
       }),
@@ -165,7 +165,7 @@ const constructRestrictionRequestPdf = (
     )
     addNormalText(
       doc,
-      formatMessage(m.baseInfo.defender, {
+      formatIcuMessage(m.baseInfo.defender, {
         defenderName: formatRequestPdfDefenderName(
           defendant,
           theCase.sessionArrangements,
@@ -249,7 +249,7 @@ const constructInvestigationRequestPdf = (
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
-  const title = formatMessage(m.heading, {
+  const title = formatIcuMessage(m.heading, {
     caseType: formatMessage(core.caseType.investigate),
   })
 
@@ -297,7 +297,7 @@ const constructInvestigationRequestPdf = (
   addMediumText(
     doc,
     capitalize(
-      formatMessage(core.defendant, {
+      formatIcuMessage(core.defendant, {
         suffix:
           theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
       }),
@@ -342,7 +342,7 @@ const constructInvestigationRequestPdf = (
     ) {
       addNormalText(
         doc,
-        formatMessage(m.baseInfo.defender, {
+        formatIcuMessage(m.baseInfo.defender, {
           defenderName: defendant.defenderName,
         }),
         'Times-Roman',

@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
@@ -116,8 +115,6 @@ const AppealCaseFilesOverview = () => {
     caseId: workingCase.id,
   })
   const { handleRemove } = useS3Upload(workingCase.id)
-
-  const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
   const [allFiles, setAllFiles] = useState<CaseFile[]>([])
   // Resolves to the case-level appeal by default, or to the ruling-order
@@ -257,7 +254,7 @@ const AppealCaseFilesOverview = () => {
                   targetAppealCase.appealState === AppealCaseState.WITHDRAWN
                 }
               >
-                {formatMessage(strings.addFiles)}
+                {strings.addFiles}
               </Button>
             </Box>
           )}
