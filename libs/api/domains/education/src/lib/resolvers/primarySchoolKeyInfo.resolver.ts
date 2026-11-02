@@ -1,5 +1,5 @@
-import { NotFoundException, UseGuards } from '@nestjs/common'
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { UseGuards } from '@nestjs/common'
+import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -15,260 +15,91 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { FriggKeyInfoClientService } from '@island.is/clients/mms/frigg'
-import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
 
+import { PrimarySchoolStudent } from '../models/primarySchool/primarySchoolStudent.model'
 import { PrimarySchoolAgent } from '../models/primarySchool/keyInfo/agent.model'
-import { PrimarySchoolChild } from '../models/primarySchool/keyInfo/child.model'
-import {
-  Allergy,
-  LanguageEnvironment,
-  RelationType,
-} from '../models/primarySchool/keyInfo/lookups.model'
 import {
   HealthProfile,
   LanguageProfile,
 } from '../models/primarySchool/keyInfo/profiles.model'
 import {
   mapAgent,
-  mapAllergyOption,
-  mapChild,
   mapHealthProfile,
-  mapLanguageEnvironment,
   mapLanguageProfile,
-  mapRelationType,
 } from '../models/primarySchool/keyInfo/keyInfo.mapper'
-import {
-  AddAgentInput,
-  DeleteAgentInput,
-  UpdateAgentInput,
-  UpdateHealthProfileInput,
-  UpdateLanguageProfileInput,
-} from '../dto/primarySchoolKeyInfo.input'
+import { PrimarySchoolKeyInfoService } from '../services/primarySchoolKeyInfo.service'
 
 /**
  * "Lykilupplýsingar" (key information) for a primary-school child: emergency
- * contacts, language profile and health profile, plus their lookup lists.
- * Backed by the MMS nemendagrunnur form-api (contract v0.2, §4).
+ * contacts, language profile and health profile. Backed by the MMS
+ * nemendagrunnur form-api (contract v0.2, §4).
  *
- * The client service currently returns mocked contract payloads — this resolver
- * and its mappers are the real thing, so connecting the X-Road client is the
- * only remaining step.
+ * They hang off {@link PrimarySchoolStudent} rather than sitting at the root,
+ * so the hierarchy is explicit and each read gets the child's national id from
+ * the parent instead of looking the student up again. A child with no
+ * counterpart in frigg reads as "no information" (an empty list / null) so the
+ * overview still renders; the mutations in
+ * {@link PrimarySchoolKeyInfoMutationsResolver} fail instead.
+ *
+ * The lookup lists these sections pick from live in
+ * {@link PrimarySchoolKeyInfoOptionsResolver} — they are per-user, not
+ * per-student.
  */
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.isServicePortalPrimarySchoolPageEnabled)
 @Scopes(ApiScope.education)
-@Resolver()
+@Resolver(() => PrimarySchoolStudent)
 export class PrimarySchoolKeyInfoResolver {
   constructor(
-    private readonly keyInfoService: FriggKeyInfoClientService,
-    private readonly primarySchoolService: PrimarySchoolClientService,
+    private readonly keyInfoClient: FriggKeyInfoClientService,
+    private readonly keyInfo: PrimarySchoolKeyInfoService,
   ) {}
 
-  /**
-   * The frontend routes on the nemendagrunnur student id (the id behind the
-   * student list, overview and assessments). Frigg, which backs key info, keys
-   * children on a different id (base.users.id from the data gateway), so the
-   * routed id is never found there. The only field both backends share is the
-   * national id, so we translate: routed student id -> national id (via the
-   * nemendagrunnur student list) -> frigg child id.
-   *
-   * Returns null when the child has no counterpart in frigg (e.g. not yet
-   * registered in MMS). Read queries treat that as "no information" and fall
-   * back to an empty result so the overview still renders; mutations use
-   * {@link requireFriggChildId} and fail instead.
-   */
-  private async resolveFriggChildId(
-    user: User,
-    studentId: string,
-  ): Promise<string | null> {
-    const students = await this.primarySchoolService.getStudents(user)
-    const nationalId = students?.find((s) => s.id === studentId)?.nationalId
-    const children = await this.keyInfoService.getChildren(user)
-    return (
-      (nationalId && children.find((c) => c.nationalId === nationalId)?.id) ||
-      null
-    )
-  }
-
-  /** As {@link resolveFriggChildId}, but throws when the child is missing — for
-   * mutations, which cannot act on a child that does not exist in frigg. */
-  private async requireFriggChildId(
-    user: User,
-    studentId: string,
-  ): Promise<string> {
-    const childId = await this.resolveFriggChildId(user, studentId)
-    if (!childId) {
-      throw new NotFoundException(
-        `No key-information child found for student ${studentId}`,
-      )
-    }
-    return childId
-  }
-
-  /* -- Children ------------------------------------------------------------ */
-
-  @Query(() => [PrimarySchoolChild], { nullable: true })
-  async primarySchoolChildren(
+  @ResolveField(() => Boolean, {
+    description:
+      'Whether the student exists in the MMS key-information database, i.e. whether the key-information sections have anything to show.',
+  })
+  async hasKeyInfo(
     @CurrentUser() user: User,
-  ): Promise<PrimarySchoolChild[]> {
-    const children = await this.keyInfoService.getChildren(user)
-    return children.map(mapChild)
+    @Parent() student: PrimarySchoolStudent,
+  ): Promise<boolean> {
+    const childId = await this.keyInfo.findChildId(user, student.nationalId)
+    return childId !== null
   }
 
-  /* -- Lookup lists -------------------------------------------------------- */
-
-  @Query(() => [RelationType], { nullable: true })
-  async primarySchoolAgentRelationTypes(
+  @ResolveField(() => [PrimarySchoolAgent], { nullable: true })
+  async emergencyContacts(
     @CurrentUser() user: User,
-  ): Promise<RelationType[]> {
-    const options = await this.keyInfoService.getRelationTypeOptions(user)
-    return options.map(mapRelationType)
-  }
-
-  @Query(() => [Allergy], { nullable: true })
-  async primarySchoolAllergies(@CurrentUser() user: User): Promise<Allergy[]> {
-    const options = await this.keyInfoService.getAllergyOptions(user)
-    return options.map(mapAllergyOption)
-  }
-
-  @Query(() => [LanguageEnvironment], { nullable: true })
-  async primarySchoolLanguageEnvironments(
-    @CurrentUser() user: User,
-  ): Promise<LanguageEnvironment[]> {
-    const options = await this.keyInfoService.getLanguageEnvironmentOptions(
-      user,
-    )
-    return options.map(mapLanguageEnvironment)
-  }
-
-  /* -- Emergency contacts (agents) ----------------------------------------- */
-
-  @Query(() => [PrimarySchoolAgent], { nullable: true })
-  async primarySchoolAgents(
-    @CurrentUser() user: User,
-    @Args('childId') childId: string,
+    @Parent() student: PrimarySchoolStudent,
   ): Promise<PrimarySchoolAgent[]> {
-    const friggChildId = await this.resolveFriggChildId(user, childId)
-    if (!friggChildId) return []
-    const contacts = await this.keyInfoService.getEmergencyContacts(
+    const childId = await this.keyInfo.findChildId(user, student.nationalId)
+    if (!childId) return []
+    const contacts = await this.keyInfoClient.getEmergencyContacts(
       user,
-      friggChildId,
+      childId,
     )
     return contacts.map(mapAgent)
   }
 
-  @Mutation(() => PrimarySchoolAgent)
-  async primarySchoolAddAgent(
+  @ResolveField(() => LanguageProfile, { nullable: true })
+  async languageProfile(
     @CurrentUser() user: User,
-    @Args('input') input: AddAgentInput,
-  ): Promise<PrimarySchoolAgent> {
-    const contact = await this.keyInfoService.addEmergencyContact(
-      user,
-      await this.requireFriggChildId(user, input.childId),
-      {
-        nationalId: input.nationalId,
-        relationTypeId: input.relationTypeId,
-      },
-    )
-    return mapAgent(contact)
-  }
-
-  @Mutation(() => PrimarySchoolAgent)
-  async primarySchoolUpdateAgent(
-    @CurrentUser() user: User,
-    @Args('input') input: UpdateAgentInput,
-  ): Promise<PrimarySchoolAgent> {
-    const contact = await this.keyInfoService.updateEmergencyContact(
-      user,
-      await this.requireFriggChildId(user, input.childId),
-      input.agentId,
-      { relationTypeId: input.relationTypeId },
-    )
-    return mapAgent(contact)
-  }
-
-  @Mutation(() => Boolean)
-  async primarySchoolDeleteAgent(
-    @CurrentUser() user: User,
-    @Args('input') input: DeleteAgentInput,
-  ): Promise<boolean> {
-    await this.keyInfoService.deleteEmergencyContact(
-      user,
-      await this.requireFriggChildId(user, input.childId),
-      input.agentId,
-    )
-    return true
-  }
-
-  /* -- Language profile ---------------------------------------------------- */
-
-  @Query(() => LanguageProfile, { nullable: true })
-  async primarySchoolLanguageProfile(
-    @CurrentUser() user: User,
-    @Args('childId') childId: string,
+    @Parent() student: PrimarySchoolStudent,
   ): Promise<LanguageProfile | null> {
-    const friggChildId = await this.resolveFriggChildId(user, childId)
-    if (!friggChildId) return null
-    const profile = await this.keyInfoService.getLanguageProfile(
-      user,
-      friggChildId,
-    )
+    const childId = await this.keyInfo.findChildId(user, student.nationalId)
+    if (!childId) return null
+    const profile = await this.keyInfoClient.getLanguageProfile(user, childId)
     return mapLanguageProfile(profile)
   }
 
-  @Mutation(() => LanguageProfile)
-  async primarySchoolUpdateLanguageProfile(
+  @ResolveField(() => HealthProfile, { nullable: true })
+  async healthProfile(
     @CurrentUser() user: User,
-    @Args('input') input: UpdateLanguageProfileInput,
-  ): Promise<LanguageProfile> {
-    const profile = await this.keyInfoService.updateLanguageProfile(
-      user,
-      await this.requireFriggChildId(user, input.childId),
-      {
-        languageEnvironmentId: input.languageEnvironmentId,
-        preferredLanguage: input.preferredLanguage ?? null,
-        languages: input.languages,
-        interpreter: input.interpreter,
-        signLanguage: input.signLanguage,
-      },
-    )
-    return mapLanguageProfile(profile)
-  }
-
-  /* -- Health profile ------------------------------------------------------ */
-
-  @Query(() => HealthProfile, { nullable: true })
-  async primarySchoolHealthProfile(
-    @CurrentUser() user: User,
-    @Args('childId') childId: string,
+    @Parent() student: PrimarySchoolStudent,
   ): Promise<HealthProfile | null> {
-    const friggChildId = await this.resolveFriggChildId(user, childId)
-    if (!friggChildId) return null
-
-    const profile = await this.keyInfoService.getHealthProfile(
-      user,
-      friggChildId,
-    )
-    return mapHealthProfile(profile)
-  }
-
-  @Mutation(() => HealthProfile)
-  async primarySchoolUpdateHealthProfile(
-    @CurrentUser() user: User,
-    @Args('input') input: UpdateHealthProfileInput,
-  ): Promise<HealthProfile> {
-    const friggChildId = await this.requireFriggChildId(user, input.childId)
-
-    const profile = await this.keyInfoService.updateHealthProfile(
-      user,
-      friggChildId,
-      {
-        epipen: input.epipen,
-        medicalDiagnoses: input.medicalDiagnoses,
-        medicationAssistance: input.medicationAssistance,
-        allergies: input.allergies,
-      },
-    )
+    const childId = await this.keyInfo.findChildId(user, student.nationalId)
+    if (!childId) return null
+    const profile = await this.keyInfoClient.getHealthProfile(user, childId)
     return mapHealthProfile(profile)
   }
 }

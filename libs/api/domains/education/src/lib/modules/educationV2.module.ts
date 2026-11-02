@@ -7,6 +7,9 @@ import { EducationServiceV2 } from '../services/educationV2.service'
 import { PrimarySchoolAssessmentResolver } from '../resolvers/primarySchoolAssessment.resolver'
 import { PrimarySchoolResolver } from '../resolvers/primarySchool.resolver'
 import { PrimarySchoolKeyInfoResolver } from '../resolvers/primarySchoolKeyInfo.resolver'
+import { PrimarySchoolKeyInfoOptionsResolver } from '../resolvers/primarySchoolKeyInfoOptions.resolver'
+import { PrimarySchoolKeyInfoMutationsResolver } from '../resolvers/primarySchoolKeyInfoMutations.resolver'
+import { PrimarySchoolKeyInfoService } from '../services/primarySchoolKeyInfo.service'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
@@ -22,6 +25,9 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
     PrimarySchoolAssessmentResolver,
     PrimarySchoolResolver,
     PrimarySchoolKeyInfoResolver,
+    PrimarySchoolKeyInfoOptionsResolver,
+    PrimarySchoolKeyInfoMutationsResolver,
+    PrimarySchoolKeyInfoService,
   ],
 })
 export class EducationV2Module {}

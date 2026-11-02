@@ -2,14 +2,12 @@ import {
   FOOD_ALLERGY_TYPE,
   type AllergyOption,
   type AllergyOutput,
-  type ChildOutput,
   type EmergencyContactOutput,
   type HealthProfileOutput,
   type LanguageProfileOutput,
   type Option,
 } from '@island.is/clients/mms/frigg'
 import { PrimarySchoolAgent } from './agent.model'
-import { PrimarySchoolChild } from './child.model'
 import { Allergy, LanguageEnvironment, RelationType } from './lookups.model'
 import { LocalizedText } from './localizedText.model'
 import { HealthProfile, LanguageProfile } from './profiles.model'
@@ -43,14 +41,6 @@ const localize = (
     value?.find((v) => v.language === 'en')?.content ??
     value?.[0]?.content ??
     '',
-})
-
-export const mapChild = (dto: ChildOutput): PrimarySchoolChild => ({
-  id: dto.id,
-  nationalId: dto.nationalId,
-  name: dto.name,
-  preferredName: dto.preferredName ?? undefined,
-  gradeLevel: dto.gradeLevel ?? undefined,
 })
 
 export const mapRelationType = (option: Option): RelationType => ({

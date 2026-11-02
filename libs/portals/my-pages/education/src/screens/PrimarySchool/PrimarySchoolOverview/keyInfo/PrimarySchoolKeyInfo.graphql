@@ -59,21 +59,33 @@ fragment PrimarySchoolHealthProfileFields on EducationPrimarySchoolHealthProfile
   }
 }
 
-query PrimarySchoolAgents($childId: String!) {
-  primarySchoolAgents(childId: $childId) {
-    ...PrimarySchoolAgentFields
+# The key-information reads hang off the student, so they are addressed by the
+# routed studentId and the api resolves the MMS child behind it. One query per
+# section, so a section that fails shows its own error without blanking the rest.
+query PrimarySchoolAgents($studentId: String!) {
+  primarySchoolStudent(studentId: $studentId) {
+    id
+    emergencyContacts {
+      ...PrimarySchoolAgentFields
+    }
   }
 }
 
-query PrimarySchoolLanguageProfile($childId: String!) {
-  primarySchoolLanguageProfile(childId: $childId) {
-    ...PrimarySchoolLanguageProfileFields
+query PrimarySchoolLanguageProfile($studentId: String!) {
+  primarySchoolStudent(studentId: $studentId) {
+    id
+    languageProfile {
+      ...PrimarySchoolLanguageProfileFields
+    }
   }
 }
 
-query PrimarySchoolHealthProfile($childId: String!) {
-  primarySchoolHealthProfile(childId: $childId) {
-    ...PrimarySchoolHealthProfileFields
+query PrimarySchoolHealthProfile($studentId: String!) {
+  primarySchoolStudent(studentId: $studentId) {
+    id
+    healthProfile {
+      ...PrimarySchoolHealthProfileFields
+    }
   }
 }
 
@@ -154,16 +166,11 @@ mutation PrimarySchoolUpdateHealthProfile(
   }
 }
 
-# frigg /me/children. Frigg keys children on its own id, not the data-gateway
-# studentId the route uses, so the student hub matches the two by national id
-# to decide whether the child has key information at all.
-# See hasKeyInfoChild in PrimarySchoolStudentWrapper.
-query PrimarySchoolChildren {
-  primarySchoolChildren {
+# Whether the child exists in the frigg key-info database at all — the student
+# hub uses it to decide whether the overview tab has anything to show.
+query PrimarySchoolStudentHasKeyInfo($studentId: String!) {
+  primarySchoolStudent(studentId: $studentId) {
     id
-    nationalId
-    name
-    preferredName
-    gradeLevel
+    hasKeyInfo
   }
 }

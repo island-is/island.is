@@ -76,36 +76,35 @@ const toMmsError = (error: ApolloError | undefined): MmsError | undefined => {
 }
 
 export const usePrimarySchoolKeyInfo = (
-  studentId?: string,
+  studentId = '',
 ): PrimarySchoolKeyInfo => {
   const { lang } = useLocale()
-  const childId = studentId ?? ''
-  const skip = !childId
+  const skip = !studentId
 
   const localize = (title: LocalizedTitle | undefined | null) =>
     title ? (lang === 'en' ? title.en : title.is) : undefined
 
   const agentsQuery = usePrimarySchoolAgentsQuery({
-    variables: { childId },
+    variables: { studentId },
     skip,
   })
   const languageQuery = usePrimarySchoolLanguageProfileQuery({
-    variables: { childId },
+    variables: { studentId },
     skip,
   })
   const healthQuery = usePrimarySchoolHealthProfileQuery({
-    variables: { childId },
+    variables: { studentId },
     skip,
   })
 
   const refetchQueries = [
-    { query: PrimarySchoolAgentsDocument, variables: { childId } },
+    { query: PrimarySchoolAgentsDocument, variables: { studentId } },
   ]
   const refetchLanguage = [
-    { query: PrimarySchoolLanguageProfileDocument, variables: { childId } },
+    { query: PrimarySchoolLanguageProfileDocument, variables: { studentId } },
   ]
   const refetchHealth = [
-    { query: PrimarySchoolHealthProfileDocument, variables: { childId } },
+    { query: PrimarySchoolHealthProfileDocument, variables: { studentId } },
   ]
 
   const [addAgentMutation, addAgentState] = usePrimarySchoolAddAgentMutation({
@@ -167,41 +166,49 @@ export const usePrimarySchoolKeyInfo = (
     medicationAssistance: profile.medicationAssistance,
   })
 
-  const agents = agentsQuery.data?.primarySchoolAgents
-  const languageProfileData = languageQuery.data?.primarySchoolLanguageProfile
-  const healthProfileData = healthQuery.data?.primarySchoolHealthProfile
+  const agents = agentsQuery.data?.primarySchoolStudent?.emergencyContacts
+  const languageProfileData =
+    languageQuery.data?.primarySchoolStudent?.languageProfile
+  const healthProfileData =
+    healthQuery.data?.primarySchoolStudent?.healthProfile
 
   const addAgent = useCallback(
     async (input: EmergencyContactCreateInput) => {
       await addAgentMutation({
         variables: {
           input: {
-            childId,
+            studentId,
             nationalId: input.nationalId,
             relationTypeId: input.relationTypeId,
           },
         },
       })
     },
-    [addAgentMutation, childId],
+    [addAgentMutation, studentId],
   )
 
   const updateAgent = useCallback(
     async (agentId: string, input: EmergencyContactUpdateInput) => {
       await updateAgentMutation({
         variables: {
-          input: { childId, agentId, relationTypeId: input.relationTypeId },
+          input: {
+            studentId,
+            agentId,
+            relationTypeId: input.relationTypeId,
+          },
         },
       })
     },
-    [updateAgentMutation, childId],
+    [updateAgentMutation, studentId],
   )
 
   const removeAgent = useCallback(
     async (agentId: string) => {
-      await deleteAgentMutation({ variables: { input: { childId, agentId } } })
+      await deleteAgentMutation({
+        variables: { input: { studentId, agentId } },
+      })
     },
-    [deleteAgentMutation, childId],
+    [deleteAgentMutation, studentId],
   )
 
   const saveLanguageProfile = useCallback(
@@ -209,7 +216,7 @@ export const usePrimarySchoolKeyInfo = (
       await updateLanguageMutation({
         variables: {
           input: {
-            childId,
+            studentId,
             languageEnvironmentId: input.languageEnvironmentId,
             preferredLanguage: input.preferredLanguage,
             languages: input.languages,
@@ -222,7 +229,7 @@ export const usePrimarySchoolKeyInfo = (
       })
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [updateLanguageMutation, childId],
+    [updateLanguageMutation, studentId],
   )
 
   const saveHealthProfile = useCallback(
@@ -230,7 +237,7 @@ export const usePrimarySchoolKeyInfo = (
       await updateHealthMutation({
         variables: {
           input: {
-            childId,
+            studentId,
             epipen: input.epipen,
             medicalDiagnoses: input.medicalDiagnoses,
             medicationAssistance: input.medicationAssistance ?? false,
@@ -243,7 +250,7 @@ export const usePrimarySchoolKeyInfo = (
       })
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [updateHealthMutation, childId],
+    [updateHealthMutation, studentId],
   )
 
   return {

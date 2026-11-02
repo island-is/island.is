@@ -1,10 +1,15 @@
 import { Field, ID, InputType } from '@nestjs/graphql'
 
+/** Every key-info write is addressed by the routed nemendagrunnur student id;
+ * the resolver translates it to the frigg child id the endpoints take. */
+const STUDENT_ID_DESCRIPTION =
+  'The nemendagrunnur student id the primary-school screens route on (not the MMS key-information child id).'
+
 /** POST /me/children/{childId}/agents — name is resolved from Þjóðskrá by MMS. */
 @InputType('EducationPrimarySchoolAddAgentInput')
 export class AddAgentInput {
-  @Field(() => ID)
-  childId!: string
+  @Field(() => ID, { description: STUDENT_ID_DESCRIPTION })
+  studentId!: string
 
   @Field()
   nationalId!: string
@@ -16,8 +21,8 @@ export class AddAgentInput {
 /** PATCH /me/children/{childId}/agents/{agentId} — only the relation type. */
 @InputType('EducationPrimarySchoolUpdateAgentInput')
 export class UpdateAgentInput {
-  @Field(() => ID)
-  childId!: string
+  @Field(() => ID, { description: STUDENT_ID_DESCRIPTION })
+  studentId!: string
 
   @Field(() => ID)
   agentId!: string
@@ -29,8 +34,8 @@ export class UpdateAgentInput {
 /** DELETE /me/children/{childId}/agents/{agentId}. */
 @InputType('EducationPrimarySchoolDeleteAgentInput')
 export class DeleteAgentInput {
-  @Field(() => ID)
-  childId!: string
+  @Field(() => ID, { description: STUDENT_ID_DESCRIPTION })
+  studentId!: string
 
   @Field(() => ID)
   agentId!: string
@@ -40,8 +45,8 @@ export class DeleteAgentInput {
  * is a list of allergy ids (contract §4.5). */
 @InputType('EducationPrimarySchoolUpdateHealthProfileInput')
 export class UpdateHealthProfileInput {
-  @Field(() => ID)
-  childId!: string
+  @Field(() => ID, { description: STUDENT_ID_DESCRIPTION })
+  studentId!: string
 
   @Field()
   epipen!: boolean
@@ -59,8 +64,8 @@ export class UpdateHealthProfileInput {
 /** PATCH /me/children/{childId}/language-profile — whole document (§4.6). */
 @InputType('EducationPrimarySchoolUpdateLanguageProfileInput')
 export class UpdateLanguageProfileInput {
-  @Field(() => ID)
-  childId!: string
+  @Field(() => ID, { description: STUDENT_ID_DESCRIPTION })
+  studentId!: string
 
   @Field(() => ID)
   languageEnvironmentId!: string
