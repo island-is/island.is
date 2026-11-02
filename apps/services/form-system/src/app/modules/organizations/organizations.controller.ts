@@ -39,6 +39,19 @@ import { OrganizationDelegationDto } from './models/dto/organizationDelegation.d
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
+  @ApiOperation({ summary: 'Create organization in development' })
+  @ApiNoContentResponse({ description: 'Organization created' })
+  @ApiParam({ name: 'nationalId', type: String })
+  @Scopes(AdminPortalScope.formSystemAdmin)
+  @Post('national-id/:nationalId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async create(
+    @CurrentUser() user: User,
+    @Param('nationalId') nationalId: string,
+  ): Promise<void> {
+    return this.organizationsService.create(user, nationalId)
+  }
+
   @ApiOperation({ summary: 'Get organization admin' })
   @ApiOkResponse({
     description: 'Get organization admin',
