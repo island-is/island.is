@@ -22,6 +22,7 @@ import { ApiModule } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { ApiScope } from '@island.is/auth/scopes'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { isEligibleForApplication } from '../healthInsuranceUtils'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
@@ -31,6 +32,7 @@ enum Roles {
 
 enum ApplicationStates {
   PREREQUESITES = 'prerequisites',
+  NOT_ELIGIBLE = 'notEligible',
   DRAFT = 'draft',
   IN_REVIEW = 'inReview',
 }
@@ -108,7 +110,38 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: { target: ApplicationStates.DRAFT },
+          SUBMIT: [
+            {
+              target: ApplicationStates.DRAFT,
+              cond: isEligibleForApplication,
+            },
+            {
+              target: ApplicationStates.NOT_ELIGIBLE,
+            },
+          ],
+        },
+      },
+      [ApplicationStates.NOT_ELIGIBLE]: {
+        meta: {
+          name: applicationName,
+          status: 'rejected',
+          progress: 0,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 24 * 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/NotEligibleForm/NotEligibleForm').then(
+                  (module) => Promise.resolve(module.NotEligibleForm),
+                ),
+              delete: true,
+              read: 'all',
+            },
+          ],
         },
       },
       [ApplicationStates.DRAFT]: {
