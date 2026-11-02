@@ -1,14 +1,13 @@
 import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import {
-  ChildApplicationLink,
   ChildInformation,
   ChildInformationWithoutRights,
-  ExistingChildApplication,
   ParentalRelations,
   PregnancyStatus,
   States,
   calculateRemainingNumberOfDays,
-  errorMessages,
+  getApplicationExternalData,
+  getSelectedChild,
   parentalLeaveFormMessages,
 } from '@island.is/application/templates/parental-leave'
 import {
@@ -29,15 +28,8 @@ import format from 'date-fns/format'
 import formatISO from 'date-fns/formatISO'
 import {
   applicationsToChildInformation,
-  applicationsToExistingChildApplication,
-  applicationsToInProgressChildApplications,
-  childApplicationLinksToExistingChildApplications,
-  collectChildren,
   getChildren,
   getChildrenFromMockData,
-  isPrimaryParentApplicationForOtherParent,
-  sortApplicationsByRelevance,
-  vmstParentalLeavesToChildApplicationLinks,
 } from './children-utils'
 
 import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
@@ -60,52 +52,28 @@ export class ChildrenService {
   async provideChildren(
     application: Application,
     nationalId: string,
-  ): Promise<{
-    children: ChildInformation[]
-    existingApplications: ExistingChildApplication[]
-    childApplicationLinks: ChildApplicationLink[]
-  }> {
+  ): Promise<{ children: ChildInformation[] }> {
     const customTemplateFindQuery =
       this.applicationApiService.customTemplateFindQuery(
         application.typeId,
       ) as CustomTemplateFindQuery
-    const shouldUseMockData =
+    const useMockData =
       getValueViaPath<string>(application.answers, 'mock.useMockData', NO) ===
-        YES && !this.isRunningOnProduction
+      YES
+    const shouldUseMockData = useMockData && !this.isRunningOnProduction
 
     if (shouldUseMockData) {
       return await this.getMockData(application, customTemplateFindQuery)
     }
 
     const parentalLeavesAndPregnancyStatus =
-      await this.queryParentalLeavesAndPregnancyStatus(
-        nationalId,
-        application.id,
-      )
+      await this.queryParentalLeavesAndPregnancyStatus(nationalId)
 
-    // Without VMST's list it is not known which children already have a leave,
-    // so a child could be offered as new and applied for twice. Development
-    // falls back to the applicant's own applications instead.
-    if (
-      parentalLeavesAndPregnancyStatus.getParentalLeaves === null &&
-      !this.isRunningInDevelopment
-    ) {
-      throw new TemplateApiError(
-        {
-          title: errorMessages.parentalLeavesUnavailableTitle,
-          summary: errorMessages.parentalLeavesUnavailableSummary,
-        },
-        500,
-      )
-    }
-
-    const { children, existingApplications, childApplicationLinks } =
-      await this.childrenAndExistingApplications(
-        application,
-        customTemplateFindQuery,
-        parentalLeavesAndPregnancyStatus.getPregnancyStatus,
-        parentalLeavesAndPregnancyStatus.getParentalLeaves,
-      )
+    const children = await this.childrenAndExistingApplications(
+      application,
+      customTemplateFindQuery,
+      parentalLeavesAndPregnancyStatus.getPregnancyStatus,
+    )
 
     const childrenResult: ChildInformation[] = []
 
@@ -164,39 +132,13 @@ export class ChildrenService {
 
     return {
       children: childrenResult,
-      existingApplications,
-      childApplicationLinks,
     }
   }
 
   async getMockData(
     application: Application,
     customTemplateFindQuery: CustomTemplateFindQuery,
-  ): Promise<{
-    children: ChildInformation[]
-    existingApplications: ExistingChildApplication[]
-    childApplicationLinks: ChildApplicationLink[]
-  }> {
-    // Children from earlier applications are listed so a mocked child does not
-    // have to be retyped. A mock application never reached VMST, so its child is
-    // never offered as a change: `applicationsToExistingChildApplication` leaves
-    // mock applications out. Unfinished applications come first, same as in
-    // `getChildren`, so a child whose application has not reached VMST yet is
-    // held as in progress instead of being offered as a change VMST would refuse.
-    const applicationsWhereApplicant = sortApplicationsByRelevance(
-      await this.applicationsWhereApplicant(
-        application,
-        customTemplateFindQuery,
-      ),
-    )
-    const existingApplications = [
-      ...applicationsToInProgressChildApplications(applicationsWhereApplicant),
-      ...applicationsToExistingChildApplication(applicationsWhereApplicant),
-    ]
-    const childrenFromEarlierApplications = applicationsToChildInformation(
-      applicationsWhereApplicant,
-    ) as ChildInformation[]
-
+  ) {
     const useApplication = getValueViaPath(
       application.answers,
       'mock.useMockedApplication',
@@ -212,12 +154,8 @@ export class ChildrenService {
 
       if (useNoPrimaryParent === YES) {
         return {
-          children: collectChildren(
-            [childrenFromEarlierApplications],
-            existingApplications,
-          ) as ChildInformation[],
-          existingApplications,
-          childApplicationLinks: [],
+          children: [],
+          existingApplications: [],
         }
       }
 
@@ -242,12 +180,8 @@ export class ChildrenService {
       }
 
       return {
-        children: collectChildren(
-          [childrenFromEarlierApplications, [children]],
-          existingApplications,
-        ) as ChildInformation[],
-        existingApplications,
-        childApplicationLinks: [],
+        children: [children],
+        existingApplications: [],
       }
     }
 
@@ -297,7 +231,6 @@ export class ChildrenService {
         transferredDays +
         multipleBirthsDays
 
-      // Linking to an existing application is `collectChildren`'s job below.
       children.push({
         ...child,
         remainingDays,
@@ -308,119 +241,92 @@ export class ChildrenService {
     }
 
     return {
-      children: collectChildren(
-        [childrenFromEarlierApplications, children],
-        existingApplications,
-      ) as ChildInformation[],
-      existingApplications,
-      childApplicationLinks: [],
+      children,
     }
-  }
-
-  /**
-   * The applicant's own parental leave applications. Excludes prerequisites-state
-   * applications: those are throwaway shells created just to reach the
-   * select-child screen, including the one this provider is running for.
-   */
-  private async applicationsWhereApplicant(
-    application: Application,
-    customTemplateFindQuery: CustomTemplateFindQuery,
-  ): Promise<Application[]> {
-    return (
-      await customTemplateFindQuery({ applicant: application.applicant })
-    ).filter(
-      ({ id, state }) =>
-        state !== States.PREREQUISITES && id !== application.id,
-    )
   }
 
   async childrenAndExistingApplications(
     application: Application,
     customTemplateFindQuery: CustomTemplateFindQuery,
     pregnancyStatus?: PregnancyStatus | null,
-    vmstParentalLeaves?: ParentalLeave[] | null,
-  ): Promise<{
-    children: ChildInformationWithoutRights[]
-    existingApplications: ExistingChildApplication[]
-    childApplicationLinks: ChildApplicationLink[]
-  }> {
-    const applicationsWhereApplicant = await this.applicationsWhereApplicant(
-      application,
-      customTemplateFindQuery,
-    )
+  ): Promise<ChildInformationWithoutRights[]> {
+    // Applications where this parent is applicant
+    const applicationsWhereApplicant = (
+      await customTemplateFindQuery({
+        applicant: application.applicant,
+      })
+    ).filter(({ state }) => state !== States.PREREQUISITES)
 
-    const applicationsWhereOtherParentHasApplied = (
-      await this.applicationsWhereOtherParent(
-        application,
-        customTemplateFindQuery,
-      )
-    ).filter(isPrimaryParentApplicationForOtherParent)
+    // Applications where this parent is other parent
+    // otherParentId are in two difference places (answers.otheParentId and answers.otherParentObj.otherParentId)
+    // TODO: remove answers.otherParentId
 
-    // Preserve prior links so a transient VMST omission cannot forget a link
-    // the applicant already relies on.
-    const previousChildApplicationLinks = getValueViaPath<
-      ChildApplicationLink[]
-    >(application.externalData, 'children.data.childApplicationLinks', [])
+    let getAppsWhereOtherParentHasApplied = await customTemplateFindQuery({
+      'answers.otherParentObj.otherParentId': application.applicant,
+    })
+    if (getAppsWhereOtherParentHasApplied.length <= 0) {
+      getAppsWhereOtherParentHasApplied = await customTemplateFindQuery({
+        'answers.otherParentId': application.applicant,
+      })
+    }
+    if (getAppsWhereOtherParentHasApplied.length <= 0) {
+      getAppsWhereOtherParentHasApplied = await customTemplateFindQuery({
+        'externalData.VMSTOtherParent.data.otherParentId':
+          application.applicant,
+      })
+    }
+    const applicationsWhereOtherParentHasApplied =
+      getAppsWhereOtherParentHasApplied.filter((application) => {
+        const { state } = application
+        const { applicationFundId } = getApplicationExternalData(
+          application.externalData,
+        )
 
-    const childApplicationLinks = vmstParentalLeavesToChildApplicationLinks(
-      vmstParentalLeaves ?? [],
-      previousChildApplicationLinks,
-    )
+        const isInProgress =
+          state === States.PREREQUISITES ||
+          state === States.DRAFT ||
+          state === States.OTHER_PARENT_APPROVAL ||
+          state === States.OTHER_PARENT_ACTION ||
+          state === States.EMPLOYER_WAITING_TO_ASSIGN ||
+          state === States.EMPLOYER_APPROVAL ||
+          state === States.EMPLOYER_ACTION
 
-    // The links are the leaves `verifyFollowUpLeave` accepts a change for, so
-    // they are the only change options while VMST's list is available.
-    const vmstLeaves = vmstParentalLeaves
-      ? childApplicationLinksToExistingChildApplications(childApplicationLinks)
-      : null
+        if (isInProgress && applicationFundId === '') {
+          // The application of the primary parent has to be completed
+          return false
+        }
+
+        const selectedChild = getSelectedChild(
+          application.answers,
+          application.externalData,
+        )
+
+        if (!selectedChild) {
+          return false
+        }
+
+        // We only use applications from primary parents to allow
+        // secondary parents to apply, not the other way around
+        if (selectedChild.parentalRelation !== ParentalRelations.primary) {
+          return false
+        }
+
+        return true
+      })
 
     return getChildren(
       applicationsWhereApplicant,
       applicationsWhereOtherParentHasApplied,
       pregnancyStatus,
-      vmstLeaves,
-      childApplicationLinks,
     )
   }
 
-  /**
-   * Applications that name the applicant as other parent. The other parent's id
-   * has been stored in three places over time, so all three are searched.
-   */
-  private async applicationsWhereOtherParent(
-    application: Application,
-    customTemplateFindQuery: CustomTemplateFindQuery,
-  ): Promise<Application[]> {
-    // TODO: remove answers.otherParentId
-    const results = await Promise.all(
-      [
-        'answers.otherParentObj.otherParentId',
-        'answers.otherParentId',
-        'externalData.VMSTOtherParent.data.otherParentId',
-      ].map((path) =>
-        customTemplateFindQuery({ [path]: application.applicant }),
-      ),
-    )
-
-    const byId = new Map<string, Application>()
-    for (const found of results.flat()) {
-      byId.set(found.id, found)
-    }
-
-    return Array.from(byId.values())
-  }
-
-  async queryParentalLeavesAndPregnancyStatus(
-    nationalId: string,
-    applicationId: string,
-  ): Promise<{
+  async queryParentalLeavesAndPregnancyStatus(nationalId: string): Promise<{
     getParentalLeaves: ParentalLeave[] | null
     getPregnancyStatus: PregnancyStatus | null
   }> {
     const parentalLeaves = await this.getParentalLeaves(nationalId)
-    const pregnancyStatus = await this.getPregnancyStatus(
-      nationalId,
-      applicationId,
-    )
+    const pregnancyStatus = await this.getPregnancyStatus(nationalId)
 
     return {
       getParentalLeaves: parentalLeaves,
@@ -429,8 +335,10 @@ export class ChildrenService {
   }
 
   async getParentalLeaves(nationalId: string): Promise<ParentalLeave[] | null> {
-    // Called in every environment, development included: a follow-up can only
-    // continue a leave this list contains (`getPreviousVmstLeave`).
+    if (this.isRunningInDevelopment) {
+      return []
+    }
+
     try {
       const results =
         await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
@@ -447,7 +355,6 @@ export class ChildrenService {
 
   async getPregnancyStatus(
     nationalId: string,
-    applicationId: string,
   ): Promise<PregnancyStatus | null> {
     if (this.isRunningInDevelopment) {
       /**
@@ -455,20 +362,10 @@ export class ChildrenService {
        * we got to relax a limitation on Dev which allows us to have more applications then we would ordinarily be able to create.
        * The limitation in question is that VMST allows only one application at a time for a given parent(or something like that).
        * On Dev however we can create as many as we want as long as the baby birth date is not on the same day.
-       *
-       * Derived from the application id, so each new application gets its own
-       * child while fetching again for the same application keeps it.
        */
-      const babyBDayRandomFactor =
-        (Array.from(applicationId).reduce(
-          (hash, char) => (hash * 31 + char.charCodeAt(0)) % 100003,
-          7,
-        ) %
-          85) +
-        1
+      const babyBDayRandomFactor = Math.ceil(Math.random() * 85)
       return {
         hasActivePregnancy: true,
-        isSimulated: true,
         expectedDateOfBirth: formatISO(
           addDays(addMonths(new Date(), 6), babyBDayRandomFactor),
           {

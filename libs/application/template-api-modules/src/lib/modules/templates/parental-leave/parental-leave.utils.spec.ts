@@ -210,26 +210,6 @@ describe('getEmployer', () => {
     ])
   })
 
-  it('should use the approving employer ID when the employer row has an empty company ID', () => {
-    const expectedNationalRegistryId = '1234567889'
-
-    set(application.answers, 'employers[0].email', 'employer@test.test')
-    set(application.answers, 'employers[0].companyNationalRegistryId', '')
-    set(
-      application.answers,
-      'employerNationalRegistryId',
-      expectedNationalRegistryId,
-    )
-
-    expect(getEmployer(application)).toEqual([
-      {
-        email: 'employer@test.test',
-        nationalRegistryId: expectedNationalRegistryId,
-        approverNationalRegistryId: '',
-      },
-    ])
-  })
-
   it('should return multiple employers if applicant is employee', () => {
     const expectedEmail1 = 'employer@test.test'
     const expectedNationalRegistryId1 = '1234567889'

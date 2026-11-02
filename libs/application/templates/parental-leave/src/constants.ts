@@ -12,13 +12,6 @@ export const PERMANENT_FOSTER_CARE = 'foster_care'
 export const ADOPTION = 'primary_adoption'
 export const OTHER_NO_CHILDREN_FOUND = 'other'
 
-/**
- * `selectedChild` sentinel for "my child is not in this list" — foster care,
- * adoption, or no registered primary parent. Routes to the no-children-found
- * questions, which synthesize the child instead of reading it from the registry.
- */
-export const CHILD_NOT_IN_DATA = 'new'
-
 export const FILE_SIZE_LIMIT = 2000000 // 2MB
 
 export const NO_UNION = 'F000'
@@ -65,8 +58,9 @@ export enum ApiModuleActions {
   assignEmployers = 'assignEmployers',
   assignEmployer = 'assignEmployer',
   sendApplication = 'sendApplication',
-  notifyApplicantOfRejection = 'notifyApplicantOfRejection',
+  notifyApplicantOfRejectionFromOtherParent = 'notifyApplicantOfRejectionFromOtherParent',
   validateApplication = 'validateApplication',
+  notifyApplicantOfRejectionFromEmployer = 'notifyApplicantOfRejectionFromEmployer',
   setChildrenInformation = 'setChildrenInformation',
   setBirthDateForNoPrimaryParent = 'setBirthDateForNoPrimaryParent',
   setBirthDate = 'setBirthDate',
@@ -76,21 +70,9 @@ export enum ApiModuleActions {
    * except states that are still pending employer approval.
    */
   setVMSTPeriods = 'setVMSTPeriods',
-  setApplicationInformation = 'setApplicationInformation',
   setApplicationFundId = 'setApplicationFundId',
   setApplicationRights = 'setApplicationRights',
   setOtherParent = 'setOtherParent',
-  /**
-   * Refuses a follow-up whose leave (`answers.initialQuery`) VMST does not list
-   * for the applicant.
-   */
-  verifyFollowUpLeave = 'verifyFollowUpLeave',
-}
-
-export enum ApplicationAction {
-  APPLY = 'apply',
-  CHANGE = 'change',
-  RESIDENCE_GRANT = 'residenceGrant',
 }
 
 export enum StartDateOptions {
@@ -113,14 +95,16 @@ export enum States {
   DRAFT = 'draft',
 
   OTHER_PARENT_APPROVAL = 'otherParentApproval',
+  OTHER_PARENT_ACTION = 'otherParentRequiresAction',
 
   EMPLOYER_WAITING_TO_ASSIGN = 'employerWaitingToAssign',
   EMPLOYER_APPROVAL = 'employerApproval',
+  EMPLOYER_ACTION = 'employerRequiresAction',
 
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
+  VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
-  ADDITIONAL_DOCUMENTS_REQUIRED_FOR_EDITS = 'additionalDocumentsRequiredForEdits',
 
   APPROVED = 'approved',
   CLOSED = 'closed',
@@ -128,43 +112,21 @@ export enum States {
   // Edit Flow
   EDIT_OR_ADD_EMPLOYERS_AND_PERIODS = 'editOrAddEmployersAndPeriods',
 
-  OTHER_PARENT_APPROVAL_FOR_EDITS = 'otherParentApprovalForEdits',
-
   EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS = 'employerWaitingToAssignForEdits',
   EMPLOYER_APPROVE_EDITS = 'employerApproveEdits',
+  EMPLOYER_EDITS_ACTION = 'employerRequiresActionOnEdits',
 
   VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
+  VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 
   RESIDENCE_GRANT_APPLICATION = 'residenceGrantApplication',
   RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE = 'residenceGrantApplicationNoBirthDate',
 }
 
-/**
- * Who sent the application back to the applicant. Stored in
- * `answers.rejectedBy` until the applicant resubmits.
- */
-export enum RejectedBy {
-  OTHER_PARENT = 'otherParent',
-  EMPLOYER = 'employer',
-  VMST = 'vmst',
-}
-
-/**
- * Fund id handed out instead of calling VMST when an application runs on mock
- * data. Its presence means there is no real VMST record behind the application,
- * so nothing may be sent to or validated against VMST for it.
- */
-export const MOCK_APPLICATION_FUND_ID = 'mock-application-fund-id'
-
 export enum AnswerValidationConstants {
-  // Server-side check that the chosen child is not held by another application
-  SELECTED_CHILD = 'selectedChild',
   EMPLOYER = 'employer',
-  // At least one employer for applicants that are asked to list them
-  EMPLOYERS = 'employers',
   REQUEST_RIGHTS = 'requestRights',
   GIVE_RIGHTS = 'giveRights',
-  MULTIPLE_BIRTHS_REQUEST_DAYS = 'multipleBirthsRequestDays',
   // When attempting to continue from the periods repeater main screen
   // this validator will get called to validate all of the periods
   VALIDATE_PERIODS = 'validatedPeriods',
@@ -184,7 +146,6 @@ export enum FileType {
   EMPLOYER = 'employer',
   EMPDOC = 'empdoc',
   EMPDOCPER = 'empdocper',
-  OTHER = 'other',
 }
 
 export enum Languages {

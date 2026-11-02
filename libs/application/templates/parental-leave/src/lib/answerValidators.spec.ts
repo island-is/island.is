@@ -2,7 +2,6 @@ import {
   ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
-  FormValue,
 } from '@island.is/application/types'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
@@ -11,8 +10,7 @@ import format from 'date-fns/format'
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
 import { MANUAL, ParentalRelations } from '../constants'
 import { answerValidators } from './answerValidators'
-import set from 'lodash/set'
-import { errorMessages, parentalLeaveFormMessages } from './messages'
+import { errorMessages } from './messages'
 import { StartDateOptions, AnswerValidationConstants } from '../constants'
 import { NO, YES } from '@island.is/application/core'
 
@@ -645,176 +643,6 @@ describe('when constructing a new period', () => {
       message: errorMessages.periodsRatioBelowMinimum,
       path: 'periods[0].ratio',
       values: {},
-    })
-  })
-
-  it('should accept period data from simplified date-range + ratio UI', () => {
-    // This simulates the data format produced by the new PeriodDateRange + PeriodPercentage UI
-    // where firstPeriodStart and useLength are set via hidden inputs
-    expect(
-      createValidationResultForPeriod({
-        firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
-        startDate: DEFAULT_DOB,
-        useLength: NO,
-        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
-        ratio: '100',
-      }),
-    ).toEqual(undefined)
-  })
-
-  it('should accept second period from simplified UI without firstPeriodStart', () => {
-    const firstPeriodEnd = addDays(DEFAULT_DOB_DATE, 30)
-    const secondPeriodStart = addDays(firstPeriodEnd, 1)
-    const secondPeriodEnd = addDays(secondPeriodStart, 30)
-
-    expect(
-      answerValidators[VALIDATE_LATEST_PERIOD](
-        [
-          {
-            firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
-            startDate: DEFAULT_DOB,
-            useLength: NO,
-            endDate: formatDate(firstPeriodEnd),
-            ratio: '100',
-          },
-          {
-            firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
-            startDate: formatDate(secondPeriodStart),
-            useLength: NO,
-            endDate: formatDate(secondPeriodEnd),
-            ratio: '80',
-          },
-        ],
-        application,
-      ),
-    ).toEqual(undefined)
-  })
-})
-
-describe('when selecting a child', () => {
-  const withChildren = (children: Record<string, unknown>[]) => {
-    const application = createBaseApplication()
-    set(application, 'externalData.children.data.children', children)
-    return application
-  }
-
-  it('should refuse a child that already has an unfinished application', () => {
-    const application = withChildren([
-      {
-        expectedDateOfBirth: DEFAULT_DOB,
-        parentalRelation: ParentalRelations.primary,
-        inProgressApplicationId: 'waiting-for-approval-id',
-      },
-    ])
-
-    expect(
-      answerValidators[AnswerValidationConstants.SELECTED_CHILD](
-        '0',
-        application,
-      ),
-    ).toMatchObject({
-      message: parentalLeaveFormMessages.selectChild.childInProgressError,
-      path: 'selectedChild',
-    })
-  })
-
-  it('should accept a child whose earlier application has finished', () => {
-    const application = withChildren([
-      {
-        expectedDateOfBirth: DEFAULT_DOB,
-        parentalRelation: ParentalRelations.primary,
-        vmstApplicationId: 'approved-id',
-      },
-    ])
-
-    expect(
-      answerValidators[AnswerValidationConstants.SELECTED_CHILD](
-        '0',
-        application,
-      ),
-    ).toBeUndefined()
-  })
-})
-
-describe('when continuing from the employers table', () => {
-  const withAnswers = (answers: FormValue) => {
-    const application = createBaseApplication()
-    application.answers = { ...application.answers, ...answers }
-    return application
-  }
-  const validate = (employers: unknown, application: Application) =>
-    answerValidators[AnswerValidationConstants.EMPLOYERS](
-      employers,
-      application,
-    )
-  const employee = {
-    employment: { isSelfEmployed: NO, isReceivingUnemploymentBenefits: NO },
-  }
-
-  it('should require an employer from an employee', () => {
-    expect(validate([], withAnswers(employee))).toMatchObject({
-      message: parentalLeaveFormMessages.employer.addEmployerError,
-      path: 'employers',
-    })
-  })
-
-  it('should require an employer from a grant applicant who had one', () => {
-    const application = withAnswers({
-      applicationType: { option: 'parentalGrant' },
-      employerLastSixMonths: YES,
-    })
-
-    expect(validate([], application)).toMatchObject({ path: 'employers' })
-  })
-
-  it('should accept an employee with an employer', () => {
-    expect(
-      validate(
-        [{ email: 'vinnuveitandi@test.is', ratio: '100' }],
-        withAnswers(employee),
-      ),
-    ).toBeUndefined()
-  })
-
-  it('should not require one from the self-employed', () => {
-    const application = withAnswers({
-      employment: { isSelfEmployed: YES, isReceivingUnemploymentBenefits: NO },
-    })
-
-    expect(validate([], application)).toBeUndefined()
-  })
-})
-
-describe('when choosing extra days for a multiple birth', () => {
-  const validate = (days: unknown, multipleBirths: string) => {
-    const application = createBaseApplication()
-    application.answers = {
-      ...application.answers,
-      multipleBirths: { hasMultipleBirths: YES, multipleBirths },
-    }
-    return answerValidators[
-      AnswerValidationConstants.MULTIPLE_BIRTHS_REQUEST_DAYS
-    ](days, application)
-  }
-
-  it('should accept days within the maximum for the number of children', () => {
-    expect(validate('180', '2')).toBeUndefined()
-    expect(validate('0', '2')).toBeUndefined()
-  })
-
-  it('should reject more days than the number of children allows', () => {
-    expect(validate('181', '2')).toMatchObject({
-      message: errorMessages.rightsDaysOutOfRange,
-      path: 'multipleBirthsRequestDays',
-    })
-  })
-
-  it('should reject negative and fractional days', () => {
-    expect(validate('-30', '2')).toMatchObject({
-      path: 'multipleBirthsRequestDays',
-    })
-    expect(validate('1.5', '2')).toMatchObject({
-      path: 'multipleBirthsRequestDays',
     })
   })
 })

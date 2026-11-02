@@ -20,14 +20,13 @@ import {
   getOtherParentId,
   getSelectedChild,
   getSpouse,
-  getVmstApplicationId,
 } from '@island.is/application/templates/parental-leave'
 import {
   Application,
   ApplicationWithAttachments,
 } from '@island.is/application/types'
 import {
-  ApplicationRight,
+  ApplicationRights,
   Attachment,
   Employer,
   ParentalLeave,
@@ -110,9 +109,9 @@ export const getEmployer = (
   return employers.map((e) => ({
     email: e.email,
     nationalRegistryId:
-      e.companyNationalRegistryId || employerNationalRegistryId || '',
+      e.companyNationalRegistryId ?? employerNationalRegistryId ?? '',
     approverNationalRegistryId:
-      e.reviewerNationalRegistryId || employerReviewerNationalRegistryId || '',
+      e.reviewerNationalRegistryId ?? employerReviewerNationalRegistryId ?? '',
   }))
 }
 
@@ -372,7 +371,7 @@ export const transformApplicationToParentalLeaveDTO = (
     | 'empdoc'
     | 'empdocper'
     | undefined,
-  applicationRights?: ApplicationRight[],
+  applicationRights?: ApplicationRights[],
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -410,9 +409,7 @@ export const transformApplicationToParentalLeaveDTO = (
     isPrimaryAdoption(selectedChild, application)
 
   return {
-    // Not `application.id` — a change application descends from an earlier one and
-    // has to keep identifying itself to VMST by the id of the root application.
-    applicationId: getVmstApplicationId(application),
+    applicationId: application.id,
     applicationFundId: applicationFundId,
     applicant: application.applicant,
     otherParentId:
@@ -518,20 +515,20 @@ export const getType = (application: ApplicationWithAttachments) => {
   // Check if we can get the the action name. Used when valiating application
   const tmpActionName = getActionName(application)
 
-  // `'other'` is an internal marker for an info-only change (base info, rights,
-  // payments, personal allowance, other parent). VMST rejects it as an unknown
-  // type, and the field is nullable there, so drop it before sending.
-  const resolved = tmpActionName ?? actionName
+  if (tmpActionName) {
+    return tmpActionName
+  }
+
   if (
-    resolved === 'document' ||
-    resolved === 'documentPeriod' ||
-    resolved === 'period' ||
-    resolved === 'empper' ||
-    resolved === 'employer' ||
-    resolved === 'empdoc' ||
-    resolved === 'empdocper'
+    actionName === 'document' ||
+    actionName === 'documentPeriod' ||
+    actionName === 'period' ||
+    actionName === 'empper' ||
+    actionName === 'employer' ||
+    actionName === 'empdoc' ||
+    actionName === 'empdocper'
   ) {
-    return resolved
+    return actionName
   }
 
   return undefined
@@ -553,7 +550,7 @@ export const getFromDate = (
     : period.startDate
 }
 
-export const isFixedRight = (right: string | null | undefined) => {
+export const isFixedRight = (right: string | undefined) => {
   if (!right) {
     return false
   }

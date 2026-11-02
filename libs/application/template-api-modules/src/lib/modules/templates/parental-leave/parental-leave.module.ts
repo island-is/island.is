@@ -7,7 +7,6 @@ import { ChildrenService } from './children/children.service'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { AwsModule } from '@island.is/nest/aws'
 import { NationalRegistryV3Module } from '../../shared/api/national-registry-v3/national-registry-v3.module'
-import { ApplicationsNotificationsModule } from '../../../notification/notifications.module'
 
 @Module({
   imports: [
@@ -17,7 +16,6 @@ import { ApplicationsNotificationsModule } from '../../../notification/notificat
     ApplicationApiCoreModule,
     NationalRegistryV3Module,
     AwsModule,
-    ApplicationsNotificationsModule,
   ],
   providers: [ChildrenService, ParentalLeaveService],
   exports: [ParentalLeaveService],

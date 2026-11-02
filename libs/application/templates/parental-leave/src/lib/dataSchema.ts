@@ -3,7 +3,6 @@ import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import {
-  ApplicationAction,
   MANUAL,
   SPOUSE,
   TransferRightsOption,
@@ -23,51 +22,28 @@ import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
 import { yearFosterCareOrAdoption, yearInMonths } from '../config'
 import { coreErrorMessages, NO, YES } from '@island.is/application/core'
-import {
-  defaultMultipleBirthsMonths,
-  maxDaysToGiveOrReceive,
-  multipleBirthsDefaultDays,
-} from '../config'
+import { defaultMultipleBirthsMonths } from '../config'
 
 const PersonalAllowance = z
   .object({
-    usePersonalAllowance: z.enum([YES, NO]).optional(),
+    usePersonalAllowance: z.enum([YES, NO]),
     usage: z.string().optional(),
     useAsMuchAsPossible: z.enum([YES, NO]).optional(),
-    doNotUsePersonalAllowance: z.array(z.string()).optional(),
   })
   .refine(
-    ({
-      usePersonalAllowance,
-      useAsMuchAsPossible,
-      doNotUsePersonalAllowance,
-    }) => {
-      if (doNotUsePersonalAllowance !== undefined) return true
-      return usePersonalAllowance === YES ? !!useAsMuchAsPossible : true
-    },
+    ({ usePersonalAllowance, useAsMuchAsPossible }) =>
+      usePersonalAllowance === YES ? !!useAsMuchAsPossible : true,
     {
       path: ['useAsMuchAsPossible'],
     },
   )
   .refine(
-    ({
-      usePersonalAllowance,
-      usage,
-      useAsMuchAsPossible,
-      doNotUsePersonalAllowance,
-    }) => {
-      if (doNotUsePersonalAllowance?.includes(YES)) return true
-      if (doNotUsePersonalAllowance !== undefined) {
-        return usage
-          ? parseFloat(usage) >= 1 && parseFloat(usage) <= 100
-          : false
-      }
-      return usePersonalAllowance === YES && useAsMuchAsPossible === NO
+    ({ usePersonalAllowance, usage, useAsMuchAsPossible }) =>
+      usePersonalAllowance === YES && useAsMuchAsPossible === NO
         ? usage
           ? parseFloat(usage) >= 1 && parseFloat(usage) <= 100
           : false
-        : true
-    },
+        : true,
     {
       path: ['usage'],
     },
@@ -84,40 +60,9 @@ const FileSchema = z.object({
  * been moved to the answerValidators because it needs to be more advanced than
  * what zod can handle.
  */
-const isNumberInRange = (value: unknown, min: number, max: number) => {
-  if (value === '' || value === null || value === undefined) {
-    return false
-  }
-  const n = Number(value)
-  return !isNaN(n) && n >= min && n <= max
-}
-
-const isWholeNumberInRange = (value: unknown, min: number, max: number) =>
-  isNumberInRange(value, min, max) && Number.isInteger(Number(value))
-
-const rightsDays = z
-  .string()
-  .refine((v) => isWholeNumberInRange(v, 0, maxDaysToGiveOrReceive), {
-    params: errorMessages.rightsDaysOutOfRange,
-  })
-
-// Upper bound for the largest supported multiple birth; the per-application
-// maximum is checked by the `multipleBirthsRequestDays` answer validator.
-const maxMultipleBirthsRequestDays =
-  defaultMultipleBirthsMonths * multipleBirthsDefaultDays
-
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   selectedChild: z.string().min(1),
-  // What this application is for. Optional so applications created before
-  // one-application-per-action still validate; readers default to APPLY.
-  applicationAction: z
-    .enum([
-      ApplicationAction.APPLY,
-      ApplicationAction.CHANGE,
-      ApplicationAction.RESIDENCE_GRANT,
-    ])
-    .optional(),
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),
@@ -282,12 +227,18 @@ export const dataSchema = z.object({
   employerLastSixMonths: z.enum([YES, NO]),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
-    requestDays: rightsDays.optional(),
+    requestDays: z
+      .string()
+      .refine((v) => !isNaN(Number(v)))
+      .optional(),
   }),
   giveRights: z
     .object({
       isGivingRights: z.enum([YES, NO]),
-      giveDays: rightsDays.optional(),
+      giveDays: z
+        .string()
+        .refine((v) => !isNaN(Number(v)))
+        .optional(),
     })
     .optional(),
   transferRights: z.enum([
@@ -345,10 +296,7 @@ export const dataSchema = z.object({
     .optional(),
   multipleBirths: z
     .object({
-      hasMultipleBirths: z.preprocess(
-        (value) => (value === '' ? undefined : value),
-        z.enum([YES, NO]).optional(),
-      ),
+      hasMultipleBirths: z.enum([YES, NO]),
       multipleBirths: z.string().optional(),
     })
     .refine(
@@ -378,25 +326,11 @@ export const dataSchema = z.object({
         path: ['multipleBirths'],
         params: errorMessages.tooManyMultipleBirthsAnswer,
       },
-    )
-    .optional(),
-  // Seeded from VMST as a number, entered in the form as a string.
-  multipleBirthsRequestDays: z
-    .union([z.string(), z.number()])
-    .refine((v) => isWholeNumberInRange(v, 0, maxMultipleBirthsRequestDays), {
-      params: errorMessages.rightsDaysOutOfRange,
-    })
-    .optional(),
+    ),
   addEmployer: z.enum([YES, NO]),
   addPeriods: z.enum([YES, NO]),
   fileUpload: z.object({
     studentFile: z
-      .array(FileSchema)
-      .optional()
-      .refine((a) => a === undefined || a.length > 0, {
-        params: errorMessages.requiredAttachment,
-      }),
-    selfEmployedFile: z
       .array(FileSchema)
       .optional()
       .refine((a) => a === undefined || a.length > 0, {
@@ -473,16 +407,16 @@ export const dataSchema = z.object({
               { params: errorMessages.phoneNumber },
             )
             .optional(),
-          ratio: z.string().refine((v) => isNumberInRange(v, 1, 100), {
-            params: errorMessages.employersRatioInvalid,
-          }),
+          ratio: z.string(),
           stillEmployed: z.enum([YES, NO]).optional(),
         })
         .refine((e) => ('stillEmployed' in e ? !!e.stillEmployed : true), {
           path: ['stillEmployed'],
         }),
     )
-    .optional(),
+    .refine((e) => e === undefined || e.length > 0, {
+      params: errorMessages.employersRequired,
+    }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

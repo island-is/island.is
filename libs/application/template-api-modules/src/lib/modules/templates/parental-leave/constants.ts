@@ -1,5 +1,3 @@
-export { MOCK_APPLICATION_FUND_ID } from '@island.is/application/templates/parental-leave'
-
 export const apiConstants = {
   actualDateOfBirth: 'date_of_birth',
   actualDateOfBirthMonths: 'date_of_birth_months',

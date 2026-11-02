@@ -1,13 +1,24 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import { FieldValues } from 'react-hook-form/dist/types/fields'
 import { FieldErrors } from 'react-hook-form/dist/types/errors'
 import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
 
-import { getErrorViaPath } from '@island.is/application/core'
-import { FieldBaseProps, CustomField } from '@island.is/application/types'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  extractRepeaterIndexFromField,
+  getErrorViaPath,
+} from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  CustomField,
+  FieldTypes,
+  SelectOption,
+  StaticTextObject,
+} from '@island.is/application/types'
+import { SelectFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
+import { FieldDescription } from '@island.is/shared/form-fields'
 import { Box } from '@island.is/island-ui/core'
 
 import {
@@ -18,10 +29,10 @@ import {
 import { parentalLeaveFormMessages, errorMessages } from '../../lib/messages'
 import {
   getApplicationAnswers,
-  getPeriodIndex,
   isParentalGrant,
 } from '../../lib/parentalLeaveUtils'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { StartDateOptions } from '../../constants'
 
 type FieldBaseAndCustomField = FieldBaseProps & CustomField
 
@@ -33,18 +44,12 @@ export const PeriodPercentage: FC<
   React.PropsWithChildren<PeriodPercentageField>
 > = ({ field, application, errors }) => {
   const { formatMessage } = useLocale()
-  const { setError, setValue, register, watch } = useFormContext()
+  const { setError, register } = useFormContext()
+  const { description } = field
   const { rawPeriods } = getApplicationAnswers(application.answers)
-  const currentIndex = getPeriodIndex(field)
+  const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
-
-  // Watch form state for dates (setValue from PeriodDateRange may not be in application.answers yet)
-  const watchedStartDate = watch(`periods[${currentIndex}].startDate`)
-  const watchedEndDate = watch(`periods[${currentIndex}].endDate`)
-  const startDate = watchedStartDate || currentPeriod?.startDate
-  const endDate = watchedEndDate || currentPeriod?.endDate
-
-  const [selectedValue, setSelectedValue] = useState(currentPeriod?.ratio)
+  const [selectedValue, setSelectedValue] = useState(currentPeriod.ratio)
   const [canChooseRemainingDays, setCanChooseRemainingDays] = useState(false)
   const [maxPercentageValue, setMaxPercentageValue] = useState<string>()
 
@@ -52,26 +57,13 @@ export const PeriodPercentage: FC<
 
   const fieldId = `periods[${currentIndex}].ratio`
 
-  // Ensure ratio is present in submitted answers even when the user
-  // never touches the input, so the server-side answer validator can
-  // flag it as missing instead of silently allowing the step to proceed.
-  useEffect(() => {
-    if (currentIndex >= 0 && !currentPeriod?.ratio) {
-      setValue(fieldId, '')
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
   const error =
     getErrorViaPath(errors, `periods.[${currentIndex}].ratio?.message`) ??
     getErrorViaPath(errors, fieldId)
 
-  const { minPercentage, maxPercentage } = useMemo(() => {
-    if (!startDate || !endDate) {
-      return { minPercentage: 1, maxPercentage: 100 }
-    }
-
-    const start = parseISO(startDate)
-    const end = parseISO(endDate)
+  const options: SelectOption<string>[] = useMemo(() => {
+    const start = parseISO(currentPeriod.startDate)
+    const end = parseISO(currentPeriod.endDate)
 
     const rawMinPercentage = calculateMinPercentageForPeriod(start, end)
     const rawMaxPercentage = calculateMaxPercentageForPeriod(
@@ -85,34 +77,58 @@ export const PeriodPercentage: FC<
         type: 'error',
         message: formatMessage(errorMessages.periodsRatioImpossible),
       })
-      return { minPercentage: 1, maxPercentage: 100 }
+      return []
     }
 
-    const min = Math.round(rawMinPercentage * 100)
-    const max = Math.round(rawMaxPercentage * 100)
+    const minPercentage = Math.round(rawMinPercentage * 100)
+    const maxPercentage = Math.round(rawMaxPercentage * 100)
 
-    if (max < min) {
+    if (maxPercentage < minPercentage) {
       setError(fieldId, {
         type: 'error',
         message: formatMessage(errorMessages.periodsRatioCalculationImpossible),
       })
-      return { minPercentage: min, maxPercentage: min }
+      return []
     }
+
+    const options = new Array(maxPercentage - minPercentage + 1)
+      .fill(0)
+      .map((_, index) => ({
+        value: `${maxPercentage - index}`,
+        label: `${maxPercentage - index}%`,
+      }))
 
     const periodLengthWithMaxPercentage = calculatePeriodLength(
       start,
       end,
-      max / 100,
+      maxPercentage / 100,
     )
 
-    if (periodLengthWithMaxPercentage < remainingRights && max < 100) {
+    if (
+      periodLengthWithMaxPercentage < remainingRights &&
+      maxPercentage < 100
+    ) {
       setCanChooseRemainingDays(true)
-      setMaxPercentageValue(`${max + 1}`)
-      return { minPercentage: min, maxPercentage: max + 1 }
+      const max = `${maxPercentage + 1}`
+      setMaxPercentageValue(max)
+
+      options.splice(0, 0, {
+        value: max,
+        label: formatMessage(
+          parentalLeaveFormMessages.duration.fullyUsedRatio,
+          { maxPercentage: max },
+        ),
+      })
     }
 
-    return { minPercentage: min, maxPercentage: max }
-  }, [startDate, endDate]) // eslint-disable-line react-hooks/exhaustive-deps
+    return options
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const onSelect = (option: SelectOption) => {
+    const value = option.value as string
+
+    setSelectedValue(value)
+  }
 
   if (currentIndex < 0) {
     return null
@@ -130,25 +146,39 @@ export const PeriodPercentage: FC<
 
   return (
     <>
-      <Box marginTop={2}>
-        <InputController
-          id={fieldId}
-          dataTestId="select-percentage-use"
-          label={formatMessage(getRatioTitle())}
-          placeholder={formatMessage(
-            parentalLeaveFormMessages.ratio.placeholder,
-          )}
-          error={error}
-          type="number"
-          suffix="%"
-          backgroundColor="blue"
-          min={minPercentage}
-          max={maxPercentage}
-          onChange={(e) => {
-            setSelectedValue(e.target.value)
-          }}
+      {!!description && (
+        <Box>
+          <FieldDescription
+            description={formatMessage(description as StaticTextObject)}
+          />
+        </Box>
+      )}
+      <SelectFormField
+        application={application}
+        error={error}
+        field={{
+          type: FieldTypes.SELECT,
+          component: FieldComponents.SELECT,
+          title: getRatioTitle,
+          dataTestId: 'select-percentage-use',
+          placeholder: parentalLeaveFormMessages.ratio.placeholder,
+          id: fieldId,
+          children: undefined,
+          options,
+          backgroundColor: 'blue',
+          onSelect,
+        }}
+      />
+
+      <input type="hidden" {...register(`periods[${currentIndex}].ratio`)} />
+
+      {currentPeriod.firstPeriodStart === undefined && (
+        <input
+          type="hidden"
+          {...register(`periods[${currentIndex}].firstPeriodStart`)}
+          value={StartDateOptions.SPECIFIC_DATE}
         />
-      </Box>
+      )}
 
       {isUsingAllRemainingDays && (
         <input

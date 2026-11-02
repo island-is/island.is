@@ -1,11 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { S3Service } from '@island.is/nest/aws'
-import {
-  coreErrorMessages,
-  getValueViaPath,
-  NO,
-  YES,
-} from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   ADOPTION,
   ChildInformation,
@@ -16,7 +11,6 @@ import {
   PARENTAL_LEAVE,
   PERMANENT_FOSTER_CARE,
   ParentalRelations,
-  RejectedBy,
   SINGLE,
   States,
   UnEmployedBenefitTypes,
@@ -29,14 +23,9 @@ import {
   getMultipleBirthsDays,
   getSelectedChild,
   getTransferredDays,
-  getVmstApplicationId,
-  getPreviousVmstLeave,
-  getRejectedBy,
   getTransferredDaysInMonths,
   getUnApprovedEmployers,
   isParentWithoutBirthParent,
-  isNoChildrenFoundPath,
-  errorMessages,
   Period as AnswerPeriod,
   getPersonalDays,
   getPersonalDaysInMonths,
@@ -51,16 +40,16 @@ import {
   ApplicationConfigurations,
   ApplicationTypes,
   NationalRegistrySpouseV3,
-  NotificationType,
 } from '@island.is/application/types'
 import type {
-  ApplicationRight,
+  ApplicationRights,
   Attachment,
-  NewApplication,
-  ParentalLeave,
   Period,
 } from '@island.is/clients/vmst'
-import { ApplicationApi, ParentalLeaveApi } from '@island.is/clients/vmst'
+import {
+  ApplicationInformationApi,
+  ParentalLeaveApi,
+} from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigService, ConfigType } from '@nestjs/config'
@@ -73,10 +62,8 @@ import { SharedTemplateApiService, sharedModuleConfig } from '../../shared'
 import { getConfigValue } from '../../shared/shared.utils'
 import { ChildrenService } from './children/children.service'
 import {
-  MOCK_APPLICATION_FUND_ID,
   SIX_MONTHS_IN_SECONDS_EXPIRES,
   apiConstants,
-  isRunningInProduction,
   rightsDescriptions,
 } from './constants'
 import {
@@ -84,6 +71,8 @@ import {
   generateApplicationApprovedByEmployerToEmployerEmail,
   generateAssignEmployerApplicationEmail,
   generateAssignOtherParentApplicationEmail,
+  generateEmployerRejected,
+  generateOtherParentRejected,
 } from './emailGenerators'
 import {
   getType,
@@ -96,11 +85,11 @@ import {
 import {
   generateAssignEmployerApplicationSms,
   generateAssignOtherParentApplicationSms,
+  generateEmployerRejectedApplicationSms,
+  generateOtherParentRejectedApplicationSms,
 } from './smsGenerators'
 import parseISO from 'date-fns/parseISO'
 import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
-import { TemplateApiError } from '@island.is/nest/problem'
-import { NotificationsService } from '../../../notification/notifications.service'
 
 interface VMSTError {
   type: string
@@ -110,31 +99,12 @@ interface VMSTError {
   errors: Record<string, string[]>
 }
 
-// Only on VMST's per-applicant parental-leaves list, not on
-// `GET /applications/{id}`.
-type VmstFollowUpFields = Pick<
-  ParentalLeave,
-  'language' | 'otherParentBlocked' | 'noOfChildren' | 'adoptionDate'
->
-
-// Inserted into the `HNIPP.AS.PL.REJECTED` template as its subject.
-const rejectedByNames: Record<RejectedBy, string> = {
-  [RejectedBy.OTHER_PARENT]: 'Hitt foreldrið',
-  [RejectedBy.EMPLOYER]: 'Vinnuveitandi',
-  [RejectedBy.VMST]: 'Vinnumálastofnun',
-}
-
-// True when the application continues a leave VMST lists for this applicant,
-// so there is a VMST record to look up.
-const hasPreviousApplication = (application: Application): boolean =>
-  !!getPreviousVmstLeave(application)
-
 @Injectable()
 export class ParentalLeaveService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private parentalLeaveApi: ParentalLeaveApi,
-    private applicationApi: ApplicationApi,
+    private applicationInformationAPI: ApplicationInformationApi,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(sharedModuleConfig.KEY)
     private config: ConfigType<typeof sharedModuleConfig>,
@@ -142,55 +112,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private readonly childrenService: ChildrenService,
     private readonly nationalRegistryV3Service: NationalRegistryV3Service,
     private readonly s3Service: S3Service,
-    private readonly notificationsService: NotificationsService,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)
-  }
-
-  private shouldUseMockData(application: Application): boolean {
-    if (isRunningInProduction) {
-      return false
-    }
-
-    if (
-      getValueViaPath<string>(application.answers, 'mock.useMockData', NO) ===
-      YES
-    ) {
-      return true
-    }
-
-    // A mock application that has been "sent" holds the mock fund id. It was
-    // never really sent to VMST, so there is no record there to send to or
-    // validate against, whatever its mock answer says now.
-    const { applicationFundId } = getApplicationExternalData(
-      application.externalData,
-    )
-
-    return applicationFundId === MOCK_APPLICATION_FUND_ID
-  }
-
-  /**
-   * Wraps an internal failure so the reason survives to the client.
-   *
-   * A plain `throw new Error(...)` — or throwing the string that `parseErrors`
-   * returns — leaves the template api runner with no structured `errorReason`, so
-   * it falls back to `coreErrorMessages.defaultTemplateApiError` ("Villa kom upp")
-   * and the actual cause is only visible in the server log. These are internal
-   * invariants that should not fire in production, so when they do the detail is
-   * worth more than a tidy message.
-   */
-  private internalError(context: string, detail: unknown): TemplateApiError {
-    const message = detail instanceof Error ? detail.message : String(detail)
-
-    this.logger.error(`Parental leave: ${context}: ${message}`, detail)
-
-    return new TemplateApiError(
-      {
-        title: coreErrorMessages.defaultTemplateApiError,
-        summary: `${context}: ${message}`,
-      },
-      500,
-    )
   }
 
   private parseErrors(e: Error | VMSTError) {
@@ -210,7 +133,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
       States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
       States.EMPLOYER_APPROVE_EDITS,
+      States.EMPLOYER_EDITS_ACTION,
       States.VINNUMALASTOFNUN_APPROVE_EDITS,
+      States.VINNUMALASTOFNUN_EDITS_ACTION,
       States.RESIDENCE_GRANT_APPLICATION,
       States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
     ]
@@ -224,92 +149,14 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
 
     if (!applicationFundId) {
-      throw this.internalError(
-        'Missing applicationFundId',
-        `application ${application.id} is in ${application.state} but has no fund id from navId or sendApplication`,
+      throw new Error(
+        `Missing applicationFundId for existing parental leave application ${application.id}`,
       )
     }
   }
 
   async getChildren({ application, auth }: TemplateApiModuleActionProps) {
     return this.childrenService.provideChildren(application, auth.nationalId)
-  }
-
-  private async getVmstApplication(
-    application: Application,
-  ): Promise<NewApplication | null> {
-    const { application: vmstApplication } =
-      await this.applicationApi.applicationGetApplication({
-        applicationId: getVmstApplicationId(application),
-      })
-
-    return vmstApplication ?? null
-  }
-
-  // VMST only returns these on the per-applicant list, not on the application
-  // itself. Best effort: a failed lookup must not lose the application data.
-  private async getVmstFollowUpFields(
-    application: Application,
-  ): Promise<VmstFollowUpFields> {
-    try {
-      const { parentalLeaves } =
-        await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
-          nationalRegistryId: application.applicant,
-        })
-      const vmstApplicationId = getVmstApplicationId(application)
-      const match = parentalLeaves?.find(
-        ({ applicationId }) => applicationId === vmstApplicationId,
-      )
-
-      if (!match) {
-        return {}
-      }
-
-      const { language, otherParentBlocked, noOfChildren, adoptionDate } = match
-
-      return { language, otherParentBlocked, noOfChildren, adoptionDate }
-    } catch (e) {
-      this.logger.warn(
-        `Could not fetch parental leaves for applicationId: ${application.id} with error: ${e}`,
-      )
-    }
-
-    return {}
-  }
-
-  /**
-   * Refuses a follow-up application whose leave VMST does not list for the
-   * applicant.
-   *
-   * `answers.initialQuery` comes from the browser (see `initialQueryParameter`
-   * on the template) and is the VMST id of the leave being continued. VMST's
-   * `GET /applications/{id}` does not check ownership, so the id is only
-   * trusted when the applicant's own VMST parental-leaves list contains it
-   * (`getPreviousVmstLeave`). Runs on exit from prerequisites, after
-   * `setChildrenInformation` has stored that list's links.
-   */
-  async verifyFollowUpLeave({ application }: TemplateApiModuleActionProps) {
-    const initialQuery = getValueViaPath<string>(
-      application.answers,
-      'initialQuery',
-    )
-
-    if (!initialQuery || getPreviousVmstLeave(application)) {
-      return
-    }
-
-    // The ids stay in the log; the applicant gets a translated explanation.
-    this.logger.warn(
-      `Parental leave: VMST does not list ${initialQuery} for application ${application.id}`,
-    )
-
-    throw new TemplateApiError(
-      {
-        title: errorMessages.followUpLeaveNotFoundTitle,
-        summary: errorMessages.followUpLeaveNotFoundSummary,
-      },
-      400,
-    )
   }
 
   async getPerson({ auth }: TemplateApiModuleActionProps) {
@@ -346,17 +193,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       fosterCareOrAdoptionBirthDate,
     } = getApplicationAnswers(application.answers)
 
-    // This replaces the whole `children` external data, so the VMST links the
-    // children provider stored are passed on: they are how a follow-up proves
-    // which leave it continues (`getPreviousVmstLeave`).
-    const { applicantGenderCode, children, childApplicationLinks } =
-      getApplicationExternalData(application.externalData)
-
-    // The applicant picked a registry child after answering the
-    // no-children-found screens: keep that child, not one built from them.
-    if (!isNoChildrenFoundPath(application.answers)) {
-      return { children, childApplicationLinks }
-    }
+    const { applicantGenderCode, children } = getApplicationExternalData(
+      application.externalData,
+    )
 
     if (noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND) {
       const child: ChildInformation = {
@@ -369,7 +208,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         primaryParentTypeOfApplication: noChildrenFoundTypeOfApplication,
       }
 
-      return { children: [child], childApplicationLinks }
+      const children: ChildInformation[] = [child]
+
+      return { children }
     } else if (
       noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
       noChildrenFoundTypeOfApplication === ADOPTION
@@ -383,10 +224,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         parentalRelation: ParentalRelations.primary,
       }
 
-      return { children: [child], childApplicationLinks }
+      const children: ChildInformation[] = [child]
+
+      return { children }
     } else {
       // "normal application" - children found just return them
-      return { children, childApplicationLinks }
+      return { children }
     }
   }
 
@@ -409,9 +252,14 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
     */
     try {
-      const vmstApplication = await this.getVmstApplication(application)
+      const applicationInformation =
+        await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
       return {
-        dateOfBirth: vmstApplication?.dateOfBirth ?? '',
+        dateOfBirth: applicationInformation.dateOfBirth,
       }
     } catch (e) {
       this.logger.error('Failed to fetch application information', e)
@@ -423,10 +271,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   }
 
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {
-    if (this.shouldUseMockData(application)) {
-      return
-    }
-
     const { otherParentPhoneNumber } = getApplicationAnswers(
       application.answers,
     )
@@ -460,41 +304,77 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
-  async notifyApplicantOfRejection({
+  async notifyApplicantOfRejectionFromOtherParent({
     application,
   }: TemplateApiModuleActionProps) {
-    if (this.shouldUseMockData(application)) {
-      return
+    const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
+
+    await this.sharedTemplateAPIService.sendEmail(
+      generateOtherParentRejected,
+      application,
+    )
+
+    try {
+      if (
+        applicantPhoneNumber &&
+        checkIfPhoneNumberIsGSM(applicantPhoneNumber)
+      ) {
+        const clientLocationOrigin = getConfigValue(
+          this.configService,
+          'clientLocationOrigin',
+        ) as string
+
+        const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateOtherParentRejectedApplicationSms(application, link),
+          application,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send SMS notification about otherParent rejection in parental leave application',
+        e,
+      )
     }
+  }
 
-    const rejectedBy = getRejectedBy(application.answers)
-    if (!rejectedBy) {
-      return
+  async notifyApplicantOfRejectionFromEmployer({
+    application,
+  }: TemplateApiModuleActionProps) {
+    const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
+
+    await this.sharedTemplateAPIService.sendEmail(
+      generateEmployerRejected,
+      application,
+    )
+
+    try {
+      if (
+        applicantPhoneNumber &&
+        checkIfPhoneNumberIsGSM(applicantPhoneNumber)
+      ) {
+        const clientLocationOrigin = getConfigValue(
+          this.configService,
+          'clientLocationOrigin',
+        ) as string
+
+        const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateEmployerRejectedApplicationSms(application, link),
+          application,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send SMS notification about Employer rejection in parental leave application',
+        e,
+      )
     }
-
-    const clientLocationOrigin = getConfigValue(
-      this.configService,
-      'clientLocationOrigin',
-    ) as string
-
-    await this.notificationsService.sendNotification({
-      type: NotificationType.ParentalLeaveRejected,
-      messageParties: {
-        recipient: application.applicant,
-      },
-      applicationId: application.id,
-      args: {
-        rejectedBy: rejectedByNames[rejectedBy],
-        applicationLink: `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`,
-      },
-    })
   }
 
   async assignEmployer({ application }: TemplateApiModuleActionProps) {
-    if (this.shouldUseMockData(application)) {
-      return
-    }
-
     const employers = getUnApprovedEmployers(application.answers)
 
     const token = await this.sharedTemplateAPIService.createAssignToken(
@@ -833,7 +713,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return attachments
   }
 
-  async createRightsDTO(application: Application): Promise<ApplicationRight[]> {
+  async createRightsDTO(
+    application: Application,
+  ): Promise<ApplicationRights[]> {
     const { applicationType, otherParent, isRequestingRights, periods } =
       getApplicationAnswers(application.answers)
 
@@ -889,7 +771,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     ]
 
     const addMultipleBirthsRights = (
-      rightsArray: ApplicationRight[],
+      rightsArray: ApplicationRights[],
       totalDays: number,
       usedDays: number,
     ) => {
@@ -1024,7 +906,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     application: Application,
     periods: AnswerPeriod[],
     firstPeriodStart: string | undefined,
-  ): Promise<{ rightsDTO: ApplicationRight[]; periodsDTO: Period[] }> {
+  ): Promise<{ rightsDTO: ApplicationRights[]; periodsDTO: Period[] }> {
     const rightsDTO = await this.createRightsDTO(application)
     const rightUnits = rightsDTO.map(({ rightsUnit }) => rightsUnit)
     const rights = rightUnits
@@ -1040,11 +922,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return { rightsDTO, periodsDTO }
   }
 
-  async sendApplication({ application }: TemplateApiModuleActionProps) {
-    if (this.shouldUseMockData(application)) {
-      return { id: MOCK_APPLICATION_FUND_ID }
-    }
-
+  async sendApplication({
+    application,
+    params = undefined,
+  }: TemplateApiModuleActionProps) {
     const {
       isSelfEmployed,
       isReceivingUnemploymentBenefits,
@@ -1146,27 +1027,21 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       return response
     } catch (e) {
-      throw this.internalError(
-        'Failed to send the parental leave application',
-        e,
-      )
+      this.logger.error('Failed to send the parental leave application', e)
+      throw this.parseErrors(e)
     }
   }
 
   async validateApplication({ application }: TemplateApiModuleActionProps) {
-    if (this.shouldUseMockData(application)) {
-      return
-    }
-
     const nationalRegistryId = application.applicant
-    const { periods, firstPeriodStart } = getApplicationAnswers(
+    const { previousState, periods, firstPeriodStart } = getApplicationAnswers(
       application.answers,
     )
-    // The `previousState === RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE` guard that
-    // used to sit here is gone along with the `previousState` history stack. It was
-    // already unreachable: the no-birth-date state has no `validateApplication` on
-    // exit, and `setPreviousState` deliberately preserved the pre-residence-grant
-    // origin, so the value it tested for never reached this call.
+    /* This is to avoid calling the api every time the user leaves the residenceGrantApplicationNoBirthDate state or residenceGrantApplication state */
+    // Reject from
+    if (previousState === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE) {
+      return
+    }
     this.assertExistingApplicationHasFundId(application)
     const attachments = await this.getAttachments(application)
 
@@ -1195,64 +1070,21 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       return
     } catch (e) {
-      throw this.internalError(
-        'Failed to validate the parental leave application',
-        e,
-      )
+      this.logger.warn('Failed to validate the parental leave application', e)
+      throw this.parseErrors(e as VMSTError)
     }
   }
 
   async setVMSTPeriods({ application }: TemplateApiModuleActionProps) {
-    if (this.shouldUseMockData(application)) {
-      const periods = getApplicationAnswers(application.answers).periods
-
-      return periods.map((period) => ({
-        from: period.startDate,
-        to: period.endDate,
-        ratio: period.ratio ?? '100',
-        approved: true,
-        paid: period.paid ?? false,
-        rightsCodePeriod: period.rightCodePeriod ?? 'M-L-GR',
-        days: period.daysToUse ?? '0',
-      }))
-    }
-
-    // First-time application: no VMST record yet, so the lookup would only
-    // waste a round-trip.
-    if (!hasPreviousApplication(application)) {
-      return null
-    }
-
     try {
-      const vmstApplication = await this.getVmstApplication(application)
+      const applicationInformation =
+        await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
 
-      return vmstApplication?.periods ?? null
-    } catch (e) {
-      this.logger.warn(
-        `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
-      )
-    }
-
-    return null
-  }
-
-  async setApplicationInformation({
-    application,
-  }: TemplateApiModuleActionProps) {
-    if (
-      this.shouldUseMockData(application) ||
-      !hasPreviousApplication(application)
-    ) {
-      return null
-    }
-
-    try {
-      const [vmstApplication, followUpFields] = await Promise.all([
-        this.getVmstApplication(application),
-        this.getVmstFollowUpFields(application),
-      ])
-
-      return vmstApplication ? { ...vmstApplication, ...followUpFields } : null
+      return applicationInformation.periods
     } catch (e) {
       this.logger.warn(
         `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
@@ -1263,10 +1095,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   }
 
   async setApplicationFundId({ application }: TemplateApiModuleActionProps) {
-    if (this.shouldUseMockData(application)) {
-      return MOCK_APPLICATION_FUND_ID
-    }
-
     const { applicationFundId } = getApplicationExternalData(
       application.externalData,
     )
@@ -1275,14 +1103,15 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return applicationFundId
     }
 
-    if (!hasPreviousApplication(application)) {
-      return null
-    }
-
     try {
-      const vmstApplication = await this.getVmstApplication(application)
+      const applicationInformation =
+        await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
 
-      return vmstApplication?.applicationFundId || null
+      return applicationInformation.applicationFundId || null
     } catch (e) {
       this.logger.warn(
         `Could not fetch applicationFundId on applicationId: ${application.id} with error: ${e}`,
@@ -1293,18 +1122,15 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   }
 
   async setApplicationRights({ application }: TemplateApiModuleActionProps) {
-    if (this.shouldUseMockData(application)) {
-      return null
-    }
-
-    if (!hasPreviousApplication(application)) {
-      return null
-    }
-
     try {
-      const vmstApplication = await this.getVmstApplication(application)
+      const { applicationRights } =
+        await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
 
-      return vmstApplication?.applicationRights ?? null
+      return applicationRights
     } catch (e) {
       this.logger.warn(
         `Could not fetch applicationRights on nationalId with error: ${e}`,
@@ -1315,28 +1141,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   }
 
   async setOtherParent({ application }: TemplateApiModuleActionProps) {
-    if (this.shouldUseMockData(application)) {
-      const { otherParentId, otherParentName } = getApplicationAnswers(
-        application.answers,
-      )
-      return {
-        otherParentId: otherParentId ?? '',
-        otherParentName: otherParentName ?? '',
-      }
-    }
-
-    if (!hasPreviousApplication(application)) {
-      return null
-    }
-
     try {
-      const vmstApplication = await this.getVmstApplication(application)
-
-      if (!vmstApplication) {
-        return null
-      }
-
-      const { otherParentId, otherParentName } = vmstApplication
+      const { otherParentId, otherParentName } =
+        await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
 
       return { otherParentId, otherParentName }
     } catch (e) {

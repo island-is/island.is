@@ -54,9 +54,8 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   errors,
 }) => {
   const editable = field.props?.editable ?? false
-  const { applicationType, otherParent, language } = getApplicationAnswers(
-    application.answers,
-  )
+  const { applicationType, otherParent, employerLastSixMonths, language } =
+    getApplicationAnswers(application.answers)
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
@@ -120,10 +119,9 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
         <SpousePersonalAllowance {...childProps} />
       )}
       {(applicationType === PARENTAL_LEAVE ||
-        applicationType === PARENTAL_GRANT ||
-        applicationType === PARENTAL_GRANT_STUDENTS) && (
-        <Employment {...childProps} />
-      )}
+        ((applicationType === PARENTAL_GRANT ||
+          applicationType === PARENTAL_GRANT_STUDENTS) &&
+          employerLastSixMonths === YES)) && <Employment {...childProps} />}
       <ReviewGroup>
         <SummaryRights application={application} />
       </ReviewGroup>
