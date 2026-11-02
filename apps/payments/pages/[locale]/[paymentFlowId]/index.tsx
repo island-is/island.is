@@ -87,6 +87,7 @@ interface PaymentPageProps {
     title: string
   }
   isApplePayPaymentEnabled: boolean
+  isGooglePayPaymentEnabled: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
@@ -203,6 +204,32 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     console.error('Error getting Apple Pay payment enabled', e)
   }
 
+  // Likewise for the service's Google Pay endpoints. The button is then rolled
+  // out per payer, with the payer as the flag user and subjectType as the
+  // service's flag user mapping sets it.
+  let isGooglePayPaymentEnabled = false
+  try {
+    const payerNationalId = paymentFlow?.payerNationalId
+    isGooglePayPaymentEnabled =
+      !!payerNationalId &&
+      (await configCatClient.getValueAsync(
+        Features.isIslandisGooglePayPaymentEnabled,
+        false,
+      )) &&
+      (await configCatClient.getValueAsync(
+        Features.isIslandisGooglePayPaymentAllowedForUser,
+        false,
+        {
+          identifier: payerNationalId,
+          custom: {
+            subjectType: isCompany(payerNationalId) ? 'legalEntity' : 'person',
+          },
+        },
+      ))
+  } catch (e) {
+    console.error('Error getting Google Pay payment enabled', e)
+  }
+
   return {
     props: {
       locale,
@@ -212,6 +239,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       organization,
       productInformation,
       isApplePayPaymentEnabled,
+      isGooglePayPaymentEnabled,
     },
   }
 }
@@ -221,6 +249,7 @@ function PaymentPage({
   organization,
   productInformation,
   isApplePayPaymentEnabled,
+  isGooglePayPaymentEnabled,
 }: PaymentPageProps) {
   const methods = useForm({
     mode: 'onBlur',
@@ -265,11 +294,14 @@ function PaymentPage({
     handleVerificationCancelledByModal,
     supportsApplePay,
     initiateApplePay,
+    supportsGooglePay,
+    createGooglePayButton,
     onPaymentSuccess,
   } = usePaymentOrchestration({
     paymentFlow,
     productInformation,
     isApplePayPaymentEnabled,
+    isGooglePayPaymentEnabled,
     onInvalidActorNationalId,
   })
   const router = useRouter()
@@ -506,6 +538,8 @@ function PaymentPage({
                     <CardPayment
                       supportsApplePay={supportsApplePay}
                       initiateApplePay={initiateApplePay}
+                      supportsGooglePay={supportsGooglePay}
+                      createGooglePayButton={createGooglePayButton}
                     />
                   )}
                   {selectedPaymentMethod === 'invoice' && (

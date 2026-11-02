@@ -2,26 +2,26 @@ import { uuid } from 'uuidv4'
 
 import { Logger } from '@island.is/logging'
 import { retry } from '@island.is/shared/utils/server'
-import { PaymentMethod, RefundType } from '../../types'
-import { requireStepResult } from '../../utils/orchestrator'
-import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { RefundService } from '../refund/refund.service'
+import { PaymentMethod, RefundType } from '../../../types'
+import { requireStepResult } from '../../../utils/orchestrator'
+import { PaymentFlowService } from '../../paymentFlow/paymentFlow.service'
+import { RefundService } from '../../refund/refund.service'
 import {
-  ApplePayPaymentContext,
-  ApplePayPaymentSagaDefinition,
-} from './cardPayment.orchestrator'
-import { CardPaymentService } from './cardPayment.service'
+  GooglePayPaymentContext,
+  GooglePayPaymentSagaDefinition,
+} from '../cardPayment.orchestrator'
+import { CardPaymentService } from '../cardPayment.service'
 import {
   keepDebtPayment,
   notifyPaymentCompleted,
   settleDebtStep,
-} from './cardPayment.debt'
-import { ApplePayChargeInput } from './dtos'
+} from '../cardPayment.debt'
+import { GooglePayChargeVerifiedInput } from './dtos'
 
-export const createApplePayPaymentContext = (
+export const createGooglePayPaymentContext = (
   paymentFlowId: string,
-  input: ApplePayChargeInput,
-): ApplePayPaymentContext => {
+  input: GooglePayChargeVerifiedInput,
+): GooglePayPaymentContext => {
   const trackingData = {
     merchantReferenceData: uuid(),
     correlationId: uuid(),
@@ -40,12 +40,12 @@ export const createApplePayPaymentContext = (
   }
 }
 
-export const createApplePayPaymentSaga = (
+export const createGooglePayPaymentSaga = (
   cardPaymentService: CardPaymentService,
   refundService: RefundService,
   paymentFlowService: PaymentFlowService,
   logger: Logger,
-): ApplePayPaymentSagaDefinition => [
+): GooglePayPaymentSagaDefinition => [
   {
     name: 'VALIDATE',
     description: 'Validate the payment flow exists and is eligible to be paid',
@@ -54,8 +54,8 @@ export const createApplePayPaymentSaga = (
     },
   },
   {
-    name: 'CHARGE_APPLE_PAY',
-    description: 'Charge via Apple Pay',
+    name: 'CHARGE_GOOGLE_PAY',
+    description: 'Charge via Google Pay',
     execute: async (ctx) => {
       await paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId: ctx.paymentFlowId,
@@ -63,7 +63,7 @@ export const createApplePayPaymentSaga = (
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'payment_started',
-        message: `Apple Pay payment started`,
+        message: `Google Pay payment started`,
         metadata: {
           correlationId: ctx.trackingData.correlationId,
         },
@@ -72,14 +72,15 @@ export const createApplePayPaymentSaga = (
       const { totalPrice } = requireStepResult(ctx, 'VALIDATE')
 
       logger.info(
-        `[${ctx.paymentFlowId}][correlationId: ${ctx.trackingData.correlationId}][rrn: ${ctx.trackingData.merchantReferenceData}] Charging Apple Pay`,
+        `[${ctx.paymentFlowId}][correlationId: ${ctx.trackingData.correlationId}][rrn: ${ctx.trackingData.merchantReferenceData}] Charging Google Pay`,
       )
 
-      const paymentResult = await cardPaymentService.chargeApplePay(
-        ctx.input,
-        ctx.trackingData,
-        totalPrice,
-      )
+      const paymentResult = await cardPaymentService.chargeGooglePay({
+        paymentFlowId: ctx.paymentFlowId,
+        token: ctx.input.token,
+        paymentTrackingData: ctx.trackingData,
+        amount: totalPrice,
+      })
 
       return { paymentResult }
     },
@@ -88,7 +89,7 @@ export const createApplePayPaymentSaga = (
         return
       }
 
-      const { paymentResult } = requireStepResult(ctx, 'CHARGE_APPLE_PAY')
+      const { paymentResult } = requireStepResult(ctx, 'CHARGE_GOOGLE_PAY')
 
       logger.info(
         `[${ctx.paymentFlowId}] Refunding payment (correlationId: ${ctx.trackingData.correlationId})`,
@@ -142,13 +143,13 @@ export const createApplePayPaymentSaga = (
       }
     },
     rollbackFailureMessage:
-      'CRITICAL: Accepted Apple Pay payment but failed to refund. Manual intervention required.',
+      'CRITICAL: Accepted Google Pay payment but failed to refund. Manual intervention required.',
   },
   {
     name: 'PERSIST_PAYMENT_CONFIRMATION',
     description: 'Persist the payment confirmation',
     execute: async (ctx) => {
-      const { paymentResult } = requireStepResult(ctx, 'CHARGE_APPLE_PAY')
+      const { paymentResult } = requireStepResult(ctx, 'CHARGE_GOOGLE_PAY')
       const { totalPrice } = requireStepResult(ctx, 'VALIDATE')
 
       await cardPaymentService.persistPaymentConfirmation({
@@ -177,7 +178,7 @@ export const createApplePayPaymentSaga = (
       'Register the payment with FJS for debt payments, no-op for charges',
     execute: async (ctx) => {
       const { paymentFlow, totalPrice } = requireStepResult(ctx, 'VALIDATE')
-      const { paymentResult } = requireStepResult(ctx, 'CHARGE_APPLE_PAY')
+      const { paymentResult } = requireStepResult(ctx, 'CHARGE_GOOGLE_PAY')
 
       return await settleDebtStep({
         cardPaymentService,
@@ -196,7 +197,7 @@ export const createApplePayPaymentSaga = (
     description: 'Notify the successful payment',
     execute: async (ctx) => {
       const { paymentFlow } = requireStepResult(ctx, 'VALIDATE')
-      const { paymentResult } = requireStepResult(ctx, 'CHARGE_APPLE_PAY')
+      const { paymentResult } = requireStepResult(ctx, 'CHARGE_GOOGLE_PAY')
 
       await notifyPaymentCompleted({
         paymentFlowService,
@@ -204,7 +205,7 @@ export const createApplePayPaymentSaga = (
         paymentFlowId: ctx.paymentFlowId,
         paymentFlow,
         settlement: ctx.stepResults.SETTLE_DEBT,
-        message: `Apple Pay payment completed successfully`,
+        message: `Google Pay payment completed successfully`,
         paymentResult,
       })
     },

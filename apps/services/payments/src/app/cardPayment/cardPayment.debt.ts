@@ -13,6 +13,7 @@ import type { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import type {
   ApplePayPaymentContext,
   CardPaymentContext,
+  GooglePayPaymentContext,
 } from './cardPayment.orchestrator'
 import type { CardPaymentService } from './cardPayment.service'
 
@@ -36,7 +37,7 @@ export const keepDebtPayment = async ({
 }: {
   cardPaymentService: CardPaymentService
   logger: Logger
-  ctx: CardPaymentContext | ApplePayPaymentContext
+  ctx: CardPaymentContext | ApplePayPaymentContext | GooglePayPaymentContext
 }): Promise<boolean> => {
   if (ctx.stepResults.VALIDATE?.paymentFlow.type !== 'debt') {
     return false
@@ -100,7 +101,7 @@ export const notifyKeptDebtPayment = async ({
 }: {
   paymentFlowService: PaymentFlowService
   logger: Logger
-  ctx: CardPaymentContext | ApplePayPaymentContext
+  ctx: CardPaymentContext | ApplePayPaymentContext | GooglePayPaymentContext
   paymentFlow: PaymentFlowAttributes
   paymentResult: CardPaymentSuccessResponse
   message: string
