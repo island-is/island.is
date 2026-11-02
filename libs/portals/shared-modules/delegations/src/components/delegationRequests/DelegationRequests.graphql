@@ -89,3 +89,10 @@ mutation ApproveAuthDelegationRequest(
     }
   }
 }
+
+query AuthDelegationRequestEligibility($toGranterNationalId: String) {
+  authDelegationRequestEligibility(toGranterNationalId: $toGranterNationalId) {
+    canRequest
+    reason
+  }
+}

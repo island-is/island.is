@@ -15,6 +15,7 @@ import {
   ValidateNested,
 } from 'class-validator'
 
+import { DelegationRequestError } from '../constants/delegation-request-errors'
 import { DelegationRequestStatus } from '../types/delegationRequestStatus'
 import { UpdateDelegationScopeDTO } from './delegation-scope.dto'
 import { PendingConfirmationDTO } from '../../delegation-confirmation/dto/delegation-confirmation.dto'
@@ -80,6 +81,7 @@ export class RequestDelegationScopeDTO {
 
 export class CreateDelegationRequestDTO {
   @IsString()
+  @Matches(/^\d{10}$/)
   @ApiProperty({
     description:
       'National id of the prospective grantor (an individual, or a company whose procuration holders decide).',
@@ -121,6 +123,21 @@ export class ApproveDelegationRequestDTO {
   @ArrayNotEmpty()
   @ArrayMaxSize(100)
   scopes!: UpdateDelegationScopeDTO[]
+}
+
+export class DelegationRequestEligibilityDTO {
+  @IsBoolean()
+  @ApiProperty()
+  canRequest!: boolean
+
+  @IsOptional()
+  @IsEnum(DelegationRequestError)
+  @ApiPropertyOptional({
+    enum: DelegationRequestError,
+    enumName: 'DelegationRequestError',
+    description: 'The first limit that stops a new request.',
+  })
+  reason?: DelegationRequestError
 }
 
 export class DelegationRequestDTO {

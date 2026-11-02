@@ -56,15 +56,18 @@ const DelegationRequests = () => {
       fetchPolicy: 'cache-and-network',
       errorPolicy: 'all',
     })
+  // Requests are only sent and managed when acting as yourself.
+  const canRequest = !userInfo?.profile.actor
   const { data: outgoingData, loading: outgoingLoading } =
     useAuthDelegationRequestsOutgoingQuery({
       fetchPolicy: 'cache-and-network',
       errorPolicy: 'all',
+      skip: !canRequest,
     })
 
-  const canRequest = !isCompany(userInfo)
   const loading = incomingLoading || outgoingLoading
-  const hasAllData = Boolean(incomingData) && Boolean(outgoingData)
+  const hasAllData =
+    Boolean(incomingData) && (!canRequest || Boolean(outgoingData))
   const visibleIncoming = (
     incomingData?.authDelegationRequestsIncoming ?? []
   ).filter((r) => r.status !== AuthDelegationRequestStatus.cancelled)
@@ -146,7 +149,7 @@ const DelegationRequests = () => {
       ) : (
         <Box display="flex" flexDirection="column">
           <IncomingRequests search={search} />
-          <OutgoingRequests search={search} />
+          {canRequest && <OutgoingRequests search={search} />}
         </Box>
       )}
 

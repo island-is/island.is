@@ -11,7 +11,10 @@ import {
 import { Identity } from '@island.is/api/domains/identity'
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import type { DelegationRequestDTO } from '@island.is/clients/auth/delegation-api'
+import type {
+  DelegationRequestDTO,
+  DelegationRequestEligibilityDTO,
+} from '@island.is/clients/auth/delegation-api'
 import { IdentityClientService } from '@island.is/clients/identity'
 import { OrganizationLogoByNationalIdLoader } from '@island.is/cms'
 import type {
@@ -34,6 +37,7 @@ import {
   DelegationRequest,
   DelegationRequestScope,
 } from '../models/delegationRequest.model'
+import { DelegationRequestEligibility } from '../models/delegationRequestEligibility.model'
 import { DelegationRequestsService } from '../services/delegationRequests.service'
 
 @UseGuards(IdsUserGuard, FeatureFlagGuard)
@@ -57,6 +61,22 @@ export class DelegationRequestResolver {
   })
   getIncoming(@CurrentUser() user: User): Promise<DelegationRequestDTO[]> {
     return this.delegationRequestsService.getIncoming(user)
+  }
+
+  @Query(() => DelegationRequestEligibility, {
+    name: 'authDelegationRequestEligibility',
+    description:
+      'Whether the user can send a new request now; grantor-specific limits are checked when a grantor is given.',
+  })
+  getEligibility(
+    @CurrentUser() user: User,
+    @Args('toGranterNationalId', { type: () => String, nullable: true })
+    toGranterNationalId?: string,
+  ): Promise<DelegationRequestEligibilityDTO> {
+    return this.delegationRequestsService.getEligibility(
+      user,
+      toGranterNationalId ?? undefined,
+    )
   }
 
   @Query(() => DelegationRequest, { name: 'authDelegationRequest' })

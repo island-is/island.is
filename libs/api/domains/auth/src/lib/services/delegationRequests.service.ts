@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   DelegationRequestDTO,
+  DelegationRequestEligibilityDTO,
   MeDelegationRequestsApi,
   DelegationRequestsControllerFindAllDirectionEnum,
 } from '@island.is/clients/auth/delegation-api'
@@ -27,6 +28,15 @@ export class DelegationRequestsService {
   getIncoming(user: User): Promise<DelegationRequestDTO[]> {
     return this.withAuth(user).delegationRequestsControllerFindAll({
       direction: DelegationRequestsControllerFindAllDirectionEnum.incoming,
+    })
+  }
+
+  getEligibility(
+    user: User,
+    toGranterNationalId?: string,
+  ): Promise<DelegationRequestEligibilityDTO> {
+    return this.withAuth(user).delegationRequestsControllerEligibility({
+      toGranterNationalId,
     })
   }
 

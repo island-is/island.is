@@ -24,6 +24,7 @@ import {
 } from '@island.is/api/schema'
 
 import { findProblemInApolloError } from '@island.is/shared/problem'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 import { m } from '../../lib/messages'
 import {
@@ -84,6 +85,7 @@ export const ReviewRequestModal = ({
   direction?: 'incoming' | 'outgoing'
 }) => {
   const { formatMessage, lang } = useLocale()
+  const userInfo = useUserInfo()
   const isOutgoing = direction === 'outgoing'
   const isGrantorReview = !readOnly && !isOutgoing
 
@@ -129,7 +131,7 @@ export const ReviewRequestModal = ({
 
   const onApprove = async (request: IncomingRequest) => {
     const scopes = request.scopes
-      .filter((scope) => selected[scope.scopeName])
+      .filter((scope) => isSelected(scope.scopeName))
       .map((scope) => ({ name: scope.scopeName, validTo }))
     if (scopes.length === 0 || !validTo) {
       toast.error(formatMessage(m.requestApproveError))
@@ -170,8 +172,6 @@ export const ReviewRequestModal = ({
     onClose()
   }
 
-  const hasSelection = request?.scopes.some((s) => selected[s.scopeName])
-
   const { data: categoriesData, loading: categoriesLoading } =
     useQuery<AuthScopeCategoriesQuery>(AuthScopeCategoriesDocument, {
       variables: { lang, direction: AuthDelegationDirection.outgoing },
@@ -206,6 +206,13 @@ export const ReviewRequestModal = ({
       ? request.scopes.filter((s) => !grantableScopeNames.has(s.scopeName))
       : []
   const cannotGrant = ungrantableScopes.length > 0
+  const isUngrantable = (scopeName: string) =>
+    ungrantableScopes.some((s) => s.scopeName === scopeName)
+  const isSelected = (scopeName: string) =>
+    !!selected[scopeName] && !isUngrantable(scopeName)
+  const hasSelection = request?.scopes.some((s) => isSelected(s.scopeName))
+  // Same rule as the server: someone acting for the grantor can only decline what they could grant.
+  const cannotReject = cannotGrant && Boolean(userInfo?.profile.actor)
   const { data: outgoingData } =
     useAuthDelegationsGroupedByIdentityOutgoingQuery({
       variables: { lang },
@@ -222,7 +229,7 @@ export const ReviewRequestModal = ({
     !!request?.scopes.some(
       (s) =>
         s.requiresConfirmation &&
-        selected[s.scopeName] &&
+        isSelected(s.scopeName) &&
         !alreadyGranted.some(
           (granted) =>
             granted.name === s.scopeName &&
@@ -372,77 +379,85 @@ export const ReviewRequestModal = ({
                     </T.Row>
                   </T.Head>
                   <T.Body>
-                    {request.scopes.map((scope) => (
-                      <T.Row key={scope.scopeName}>
-                        {!readOnly && (
-                          <T.Data>
-                            <Checkbox
-                              name={`select-${scope.scopeName}`}
-                              disabled={
-                                !canSelectScope(scope, canGrantSensitiveScopes)
-                              }
-                              checked={!!selected[scope.scopeName]}
-                              onChange={() =>
-                                setSelected((prev) => ({
-                                  ...prev,
-                                  [scope.scopeName]: !prev[scope.scopeName],
-                                }))
-                              }
-                            />
+                    {request.scopes.map((scope) => {
+                      const rowBox = isUngrantable(scope.scopeName)
+                        ? ({ background: 'yellow200' } as const)
+                        : undefined
+                      return (
+                        <T.Row key={scope.scopeName}>
+                          {!readOnly && (
+                            <T.Data box={rowBox}>
+                              <Checkbox
+                                name={`select-${scope.scopeName}`}
+                                disabled={
+                                  !canSelectScope(
+                                    scope,
+                                    canGrantSensitiveScopes,
+                                  ) || isUngrantable(scope.scopeName)
+                                }
+                                checked={isSelected(scope.scopeName)}
+                                onChange={() =>
+                                  setSelected((prev) => ({
+                                    ...prev,
+                                    [scope.scopeName]: !prev[scope.scopeName],
+                                  }))
+                                }
+                              />
+                            </T.Data>
+                          )}
+                          <T.Data box={rowBox}>
+                            <Box display="flex" flexDirection="column">
+                              <Box
+                                display="flex"
+                                alignItems="center"
+                                columnGap={1}
+                              >
+                                {scope.organisationLogoUrl && (
+                                  <img
+                                    src={scope.organisationLogoUrl}
+                                    alt=""
+                                    width={16}
+                                    height={16}
+                                  />
+                                )}
+                                <Text variant="small" color="dark400">
+                                  {scope.domainDisplayName}
+                                </Text>
+                              </Box>
+                              <Text variant="medium">
+                                {scope.displayName ?? scope.scopeName}
+                              </Text>
+                            </Box>
                           </T.Data>
-                        )}
-                        <T.Data>
-                          <Box display="flex" flexDirection="column">
+                          <T.Data box={rowBox}>
+                            <Text variant="small" color="dark400">
+                              {scope.description}
+                            </Text>
+                          </T.Data>
+                          <T.Data box={rowBox}>
                             <Box
                               display="flex"
                               alignItems="center"
-                              columnGap={1}
+                              justifyContent="spaceBetween"
+                              columnGap={2}
                             >
-                              {scope.organisationLogoUrl && (
-                                <img
-                                  src={scope.organisationLogoUrl}
-                                  alt=""
-                                  width={16}
-                                  height={16}
-                                />
-                              )}
-                              <Text variant="small" color="dark400">
-                                {scope.domainDisplayName}
+                              <Text variant="medium">
+                                {formatMessage(
+                                  scope.allowsWrite
+                                    ? m.accessTypeReadWrite
+                                    : m.accessTypeRead,
+                                )}
                               </Text>
-                            </Box>
-                            <Text variant="medium">
-                              {scope.displayName ?? scope.scopeName}
-                            </Text>
-                          </Box>
-                        </T.Data>
-                        <T.Data>
-                          <Text variant="small" color="dark400">
-                            {scope.description}
-                          </Text>
-                        </T.Data>
-                        <T.Data>
-                          <Box
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="spaceBetween"
-                            columnGap={2}
-                          >
-                            <Text variant="medium">
-                              {formatMessage(
-                                scope.allowsWrite
-                                  ? m.accessTypeReadWrite
-                                  : m.accessTypeRead,
+                              {scope.requiresConfirmation && (
+                                <Tag variant="red" disabled>
+                                  {formatMessage(m.sensitiveScopeTag)}
+                                </Tag>
                               )}
-                            </Text>
-                            {scope.requiresConfirmation && (
-                              <Tag variant="red" disabled>
-                                {formatMessage(m.sensitiveScopeTag)}
-                              </Tag>
-                            )}
-                          </Box>
-                        </T.Data>
-                      </T.Row>
-                    ))}
+                            </Box>
+                          </T.Data>
+                        </T.Row>
+                      )
+                    })}
                   </T.Body>
                 </T.Table>
               </div>
@@ -562,6 +577,7 @@ export const ReviewRequestModal = ({
                     size="small"
                     variant="primary"
                     colorScheme="destructive"
+                    disabled={cannotReject || catalogLoading}
                     onClick={() => onReject?.(request)}
                   >
                     {formatMessage(m.requestRejectReviewButton)}
@@ -571,7 +587,7 @@ export const ReviewRequestModal = ({
                     variant="primary"
                     icon="checkmark"
                     loading={approveLoading}
-                    disabled={!hasSelection || !validTo || cannotGrant}
+                    disabled={!hasSelection || !validTo || catalogLoading}
                     onClick={() => onApprove(request)}
                   >
                     {formatMessage(m.requestConfirmReviewButton)}

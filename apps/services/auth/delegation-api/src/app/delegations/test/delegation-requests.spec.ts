@@ -209,9 +209,7 @@ describe('DelegationRequestsController', () => {
     const second = await server.post(path).send(validBody())
 
     expect(second.status).toEqual(400)
-    expect(second.body.detail).toEqual(
-      'A pending delegation request to this party already exists.',
-    )
+    expect(second.body.detail).toEqual(DelegationRequestError.DuplicatePending)
   })
 
   it('caps the number of simultaneously pending requests', async () => {
@@ -282,7 +280,7 @@ describe('DelegationRequestsController', () => {
     const res = await server.post(path).send(validBody())
 
     expect(res.status).toEqual(400)
-    expect(res.body.detail).toEqual(DelegationRequestError.RateLimited)
+    expect(res.body.detail).toEqual(DelegationRequestError.GrantorRateLimited)
   })
 
   it('lets a cancelled request be resent to the same grantor the same day', async () => {
@@ -480,7 +478,7 @@ describe('DelegationRequestsController', () => {
       scope: [AuthScope.delegations],
     })
 
-    const createCompanyRequest = async (scopeName: string) => {
+    const createCompanyRequest = async (...scopeNames: string[]) => {
       const created = await app.get(getModelToken(DelegationRequest)).create({
         id: faker.datatype.uuid(),
         fromNationalId: companyNationalId,
@@ -491,11 +489,13 @@ describe('DelegationRequestsController', () => {
         createdByNationalId: requester.nationalId,
         expiresAt: inOneYear(),
       })
-      await app.get(getModelToken(DelegationRequestScope)).create({
-        id: faker.datatype.uuid(),
-        delegationRequestId: created.id,
-        scopeName,
-      })
+      await app.get(getModelToken(DelegationRequestScope)).bulkCreate(
+        scopeNames.map((scopeName) => ({
+          id: faker.datatype.uuid(),
+          delegationRequestId: created.id,
+          scopeName,
+        })),
+      )
       return created.id as string
     }
 
@@ -523,6 +523,204 @@ describe('DelegationRequestsController', () => {
       await expect(svc.reject(procurationHolder, id)).rejects.toMatchObject({
         status: 403,
       })
+    })
+
+    it('lets an actor approve the part of a request they can grant', async () => {
+      const [companyScope, personalScope] = await Promise.all([
+        factory.createApiScope({
+          domainName: domain.name,
+          allowExplicitDelegationGrant: true,
+          grantToProcuringHolders: true,
+        }),
+        factory.createApiScope({
+          domainName: domain.name,
+          allowExplicitDelegationGrant: true,
+          grantToProcuringHolders: false,
+        }),
+      ])
+      const id = await createCompanyRequest(
+        companyScope.name,
+        personalScope.name,
+      )
+
+      await expect(
+        svc.approve(procurationHolder, id, {
+          scopes: [{ name: personalScope.name, validTo: inOneYear() }],
+        }),
+      ).rejects.toMatchObject({ status: 400 })
+
+      const result = await svc.approve(procurationHolder, id, {
+        scopes: [{ name: companyScope.name, validTo: inOneYear() }],
+      })
+
+      expect(result.status).toEqual(DelegationRequestStatus.Approved)
+      const granted = await app
+        .get(getModelToken(DelegationScope))
+        .findAll({ where: { delegationId: result.resolvedDelegationId } })
+      expect(granted.map((s: DelegationScope) => s.scopeName)).toEqual([
+        companyScope.name,
+      ])
+    })
+  })
+
+  describe('eligibility', () => {
+    const eligibility = (granter?: string) =>
+      server.get(
+        `${path}/eligibility${
+          granter ? `?toGranterNationalId=${granter}` : ''
+        }`,
+      )
+
+    it('lets a requester without limits send a request', async () => {
+      const res = await eligibility(granterNationalId)
+
+      expect(res.status).toEqual(200)
+      expect(res.body).toEqual({ canRequest: true })
+    })
+
+    it('reports the open request cap before a grantor is chosen', async () => {
+      for (let i = 0; i < 2; i++) {
+        await server.post(path).send({
+          ...validBody(),
+          toGranterNationalId: createNationalId('person'),
+        })
+      }
+
+      const res = await eligibility()
+
+      expect(res.body).toEqual({
+        canRequest: false,
+        reason: DelegationRequestError.TooManyPending,
+      })
+    })
+
+    it('reports an open request to the same grantor', async () => {
+      await server.post(path).send(validBody())
+
+      const res = await eligibility(granterNationalId)
+
+      expect(res.body).toEqual({
+        canRequest: false,
+        reason: DelegationRequestError.DuplicatePending,
+      })
+    })
+
+    it('reports a request already sent to the grantor today', async () => {
+      const created = await server.post(path).send(validBody())
+      await app
+        .get(getModelToken(DelegationRequest))
+        .update(
+          { status: DelegationRequestStatus.Approved },
+          { where: { id: created.body.id } },
+        )
+
+      const [toGranter, toSomeoneElse] = await Promise.all([
+        eligibility(granterNationalId),
+        eligibility(createNationalId('person')),
+      ])
+
+      expect(toGranter.body).toEqual({
+        canRequest: false,
+        reason: DelegationRequestError.GrantorRateLimited,
+      })
+      expect(toSomeoneElse.body).toEqual({ canRequest: true })
+    })
+
+    it('treats a formatted grantor national id as the same grantor', async () => {
+      await server.post(path).send(validBody())
+
+      const res = await eligibility(
+        `${granterNationalId.slice(0, 6)}-${granterNationalId.slice(6)}`,
+      )
+
+      expect(res.body).toEqual({
+        canRequest: false,
+        reason: DelegationRequestError.DuplicatePending,
+      })
+    })
+
+    it('rejects an invalid grantor national id', async () => {
+      const res = await eligibility('123')
+
+      expect(res.status).toEqual(400)
+    })
+  })
+
+  it('only accepts an unformatted grantor national id', async () => {
+    const res = await server.post(path).send({
+      ...validBody(),
+      toGranterNationalId: `${granterNationalId.slice(
+        0,
+        6,
+      )}-${granterNationalId.slice(6)}`,
+    })
+
+    expect(res.status).toEqual(400)
+  })
+
+  describe('acting on behalf of the requester', () => {
+    const actingForRequester = createCurrentUser({
+      nationalId: requester.nationalId,
+      actor: { nationalId: createNationalId('person') },
+      delegationType: [AuthDelegationType.Custom],
+      scope: [AuthScope.delegations],
+    })
+
+    it("cannot see, cancel or check the requester's requests", async () => {
+      const created = await server.post(path).send(validBody())
+      const { id } = created.body
+
+      expect(await svc.findAllOutgoing(actingForRequester)).toEqual([])
+      await expect(svc.findById(actingForRequester, id)).rejects.toMatchObject({
+        status: 404,
+      })
+      await expect(svc.cancel(actingForRequester, id)).rejects.toMatchObject({
+        status: 403,
+      })
+      await expect(
+        svc.checkEligibility(actingForRequester),
+      ).rejects.toMatchObject({ status: 403 })
+      expect((await svc.findById(requester, id)).status).toEqual(
+        DelegationRequestStatus.Pending,
+      )
+    })
+  })
+
+  describe('acting on behalf of a person who was asked', () => {
+    const actingForGrantor = (delegationType: AuthDelegationType) =>
+      createCurrentUser({
+        nationalId: granterNationalId,
+        actor: { nationalId: createNationalId('person') },
+        delegationType: [delegationType],
+        scope: [AuthScope.delegations],
+      })
+
+    it('hides and blocks the request for a custom delegation holder', async () => {
+      const created = await server.post(path).send(validBody())
+      const { id } = created.body
+      const actor = actingForGrantor(AuthDelegationType.Custom)
+
+      expect(await svc.findAllIncoming(actor)).toEqual([])
+      for (const call of [
+        () => svc.findById(actor, id),
+        () => svc.reject(actor, id),
+        () =>
+          svc.approve(actor, id, {
+            scopes: [{ name: scope.name, validTo: inOneYear() }],
+          }),
+      ]) {
+        await expect(call()).rejects.toMatchObject({ status: 404 })
+      }
+    })
+
+    it('shows the request to a legal representative', async () => {
+      const created = await server.post(path).send(validBody())
+
+      const incoming = await svc.findAllIncoming(
+        actingForGrantor(AuthDelegationType.LegalRepresentative),
+      )
+
+      expect(incoming.map((r) => r.id)).toEqual([created.body.id])
     })
   })
 

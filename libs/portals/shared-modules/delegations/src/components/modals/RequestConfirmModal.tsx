@@ -32,57 +32,34 @@ export const RequestConfirmModal = ({
 
   const [createRequest, { loading }] = useCreateAuthDelegationRequestMutation()
 
-  const granters = identities.filter((identity) => identity.nationalId)
+  const granter = identities.find((identity) => identity.nationalId)
 
   const handleConfirm = async () => {
-    if (granters.length === 0) {
+    if (!granter) {
       setErrorMessage(formatMessage(m.requestError))
       return
     }
 
     setErrorMessage(null)
 
-    const results = await Promise.allSettled(
-      granters.map((granter) =>
-        createRequest({
-          variables: {
-            input: {
-              toGranterNationalId: granter.nationalId,
-              relationship,
-              reason,
-              scopes: selectedScopes.map((scope) => ({
-                scopeName: scope.name,
-                validTo: scope.validTo,
-              })),
-            },
+    try {
+      await createRequest({
+        variables: {
+          input: {
+            toGranterNationalId: granter.nationalId,
+            relationship,
+            reason,
+            scopes: selectedScopes.map((scope) => ({
+              scopeName: scope.name,
+              validTo: scope.validTo,
+            })),
           },
-        }),
-      ),
-    )
-
-    const failures = results
-      .map((result, index) => ({ result, granter: granters[index] }))
-      .filter(({ result }) => result.status === 'rejected')
-
-    if (failures.length === 0) {
+        },
+      })
       onSuccess()
-      return
+    } catch (error) {
+      setErrorMessage(formatMessage(getCreateRequestErrorMessage(error)))
     }
-
-    setErrorMessage(
-      failures
-        .map(({ result, granter }) => {
-          const reasonText = formatMessage(
-            getCreateRequestErrorMessage(
-              (result as PromiseRejectedResult).reason,
-            ),
-          )
-          return granters.length > 1
-            ? `${granter.name || granter.nationalId}: ${reasonText}`
-            : reasonText
-        })
-        .join('\n'),
-    )
   }
 
   return (
@@ -96,15 +73,15 @@ export const RequestConfirmModal = ({
       eyebrow={formatMessage(coreMessages.digitalDelegations)}
     >
       <Box display="flex" flexDirection="column" rowGap={[3, 3, 4]}>
-        {granters.map((granter) => (
-          <div key={granter.nationalId} className={styles.idCard}>
+        {granter && (
+          <div className={styles.idCard}>
             <Text variant="eyebrow">{formatMessage(m.requestTo)}</Text>
             <Box>
               <Text variant="h5">{granter.name}</Text>
               <Text variant="default">{`kt. ${granter.nationalId}`}</Text>
             </Box>
           </div>
-        ))}
+        )}
         <Box display="flex" flexDirection="column" rowGap={1}>
           <Text variant="h5">{formatMessage(m.requestRelationshipHeader)}</Text>
           <Text variant="default">{relationship}</Text>

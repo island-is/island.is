@@ -900,15 +900,6 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:request-same-ssn-error',
     defaultMessage: 'Ekki er hægt að biðja sjálfan sig um umboð',
   },
-  requestMixedGranterTypesTitle: {
-    id: 'sp.access-control-delegations:request-mixed-granter-types-title',
-    defaultMessage: 'Ekki hægt að blanda saman einstaklingum og fyrirtækjum',
-  },
-  requestMixedGranterTypesMessage: {
-    id: 'sp.access-control-delegations:request-mixed-granter-types-message',
-    defaultMessage:
-      'Umboðsveitendur í sömu beiðni þurfa allir að vera annaðhvort einstaklingar eða fyrirtæki, því réttindin sem hægt er að biðja um eru ekki þau sömu.',
-  },
   requestChangeGranterTypeClearScopes: {
     id: 'sp.access-control-delegations:request-change-granter-type-clear-scopes',
     defaultMessage:
@@ -1029,6 +1020,20 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:request-rate-limited-error',
     defaultMessage:
       'Þú hefur sent of margar beiðnir um umboð í dag. Reyndu aftur á morgun.',
+  },
+  requestGrantorRateLimitedError: {
+    id: 'sp.access-control-delegations:request-grantor-rate-limited-error',
+    defaultMessage:
+      'Þú hefur þegar sent þessum aðila beiðni í dag. Reyndu aftur á morgun.',
+  },
+  requestDuplicatePendingError: {
+    id: 'sp.access-control-delegations:request-duplicate-pending-error',
+    defaultMessage:
+      'Þú ert þegar með opna beiðni til þessa aðila. Afturkallaðu hana eða bíddu eftir svari áður en þú sendir nýja.',
+  },
+  requestLimitTitle: {
+    id: 'sp.access-control-delegations:request-limit-title',
+    defaultMessage: 'Ekki er hægt að senda beiðni núna',
   },
   requestRelationshipHeader: {
     id: 'sp.access-control-delegations:request-relationship-header',
@@ -1152,12 +1157,12 @@ export const m = defineMessages({
   },
   requestCannotGrantTitle: {
     id: 'sp.access-control-delegations:request-cannot-grant-title',
-    defaultMessage: 'Þú getur ekki samþykkt þessa beiðni',
+    defaultMessage: 'Þú getur ekki veitt öll umbeðin réttindi',
   },
   requestCannotGrantMessage: {
     id: 'sp.access-control-delegations:request-cannot-grant-message',
     defaultMessage:
-      'Þú hefur ekki réttindi til að veita eftirfarandi umboð: {scopes}. Aðili með viðeigandi réttindi þarf að afgreiða beiðnina.',
+      'Þú hefur ekki réttindi til að veita eftirfarandi umboð: {scopes}. Þú getur samþykkt hin réttindin, eða aðili með viðeigandi réttindi getur afgreitt beiðnina í heild.',
   },
   requestExpiresAt: {
     id: 'sp.access-control-delegations:request-expires-at',

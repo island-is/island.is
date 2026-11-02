@@ -32,6 +32,8 @@ import { AccessScopes } from '../../components/GrantAccessSteps/AccessScopes'
 import { AccessRecipients } from '../../components/GrantAccessSteps/AccessRecipients'
 import { AccessPeriod } from '../../components/GrantAccessSteps/AccessPeriod'
 import { RequestConfirmModal } from '../../components/modals/RequestConfirmModal'
+import { useAuthDelegationRequestEligibilityQuery } from '../../components/delegationRequests/DelegationRequests.generated'
+import { getRequestLimitMessage } from '../../lib/delegationRequestErrors'
 
 interface RequestDetailsFormData {
   relationship: string
@@ -223,20 +225,27 @@ const RequestDelegation = () => {
   })
 
   const watchIdentities = recipientMethods.watch('identities')
-
-  // Not memoised: RHF watch() returns a mutated, referentially stable array.
-  const grantorTypes = new Set(
-    watchIdentities
-      .filter((identity) => identity.nationalId.length >= 10)
-      .map((identity) =>
-        isCompany(identity.nationalId) ? 'company' : 'individual',
-      ),
-  )
-  const requestGrantorType =
-    grantorTypes.size === 1
-      ? (Array.from(grantorTypes)[0] as 'company' | 'individual')
+  const grantor = watchIdentities[0]
+  const grantorNationalId =
+    grantor?.nationalId.length === 10 && grantor.name
+      ? grantor.nationalId
       : undefined
-  const hasMixedGrantorTypes = grantorTypes.size > 1
+  const requestGrantorType: GrantorType | undefined = grantorNationalId
+    ? isCompany(grantorNationalId)
+      ? 'company'
+      : 'individual'
+    : undefined
+
+  const {
+    data: eligibilityData,
+    loading: eligibilityLoading,
+    error: eligibilityError,
+  } = useAuthDelegationRequestEligibilityQuery({
+    variables: { toGranterNationalId: grantorNationalId },
+    fetchPolicy: 'network-only',
+  })
+  const limitReason =
+    eligibilityData?.authDelegationRequestEligibility.reason ?? undefined
 
   const prevGrantorTypeRef = useRef<'company' | 'individual' | undefined>(
     requestGrantorType,
@@ -264,9 +273,9 @@ const RequestDelegation = () => {
   ])
 
   useEffect(() => {
-    const grantor = takeDelegationRequestGrantor(userInfo)
-    if (grantor) {
-      recipientMethods.setValue('identities', [grantor], {
+    const stored = takeDelegationRequestGrantor(userInfo)
+    if (stored) {
+      recipientMethods.setValue('identities', [stored], {
         shouldValidate: true,
       })
     }
@@ -278,20 +287,21 @@ const RequestDelegation = () => {
       name: formatMessage(m.requestChooseGranterLabel),
       content: (
         <Box display="flex" flexDirection="column" rowGap={3}>
+          {limitReason && (
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.requestLimitTitle)}
+              message={formatMessage(getRequestLimitMessage(limitReason))}
+            />
+          )}
           <AccessRecipients
             methods={recipientMethods}
             allowCompany
+            singleRecipient
             title={m.requestChooseGranterTitle}
             nationalIdLabel={m.requestGranterNationalIdLabel}
             sameSsnMessage={m.requestSameSsnError}
           />
-          {hasMixedGrantorTypes && (
-            <AlertMessage
-              type="warning"
-              title={formatMessage(m.requestMixedGranterTypesTitle)}
-              message={formatMessage(m.requestMixedGranterTypesMessage)}
-            />
-          )}
           <RequestDetails
             methods={detailsMethods}
             grantorType={requestGrantorType}
@@ -304,10 +314,10 @@ const RequestDelegation = () => {
       continueButtonDisabled:
         !recipientMethods.formState.isValid ||
         !detailsMethods.formState.isValid ||
-        hasMixedGrantorTypes ||
-        watchIdentities.some(
-          (identity) => identity.nationalId.length < 10 || !identity.name,
-        ),
+        !grantorNationalId ||
+        Boolean(limitReason) ||
+        eligibilityLoading ||
+        Boolean(eligibilityError),
       continueButtonLabel: formatMessage(m.requestChooseGranterButtonLabel),
       continueButtonIcon: 'arrowForward',
     },

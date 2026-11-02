@@ -23,6 +23,7 @@ import { Features } from '@island.is/feature-flags'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 import { ApiScope } from '../resources/models/api-scope.model'
 import { Domain } from '../resources/models/domain.model'
@@ -40,6 +41,7 @@ import {
   ApproveDelegationRequestDTO,
   CreateDelegationRequestDTO,
   DelegationRequestDTO,
+  DelegationRequestEligibilityDTO,
 } from './dto/delegation-request.dto'
 import { DelegationRequestDelegation } from './models/delegation-request-delegation.model'
 import { DelegationRequestScope } from './models/delegation-request-scope.model'
@@ -53,9 +55,6 @@ import { DelegationRequestStatus } from './types/delegationRequestStatus'
 
 const REQUEST_TTL_DAYS = 30
 const RATE_LIMIT_WINDOW_MS = 24 * 60 * 60 * 1000
-
-const DUPLICATE_PENDING_MESSAGE =
-  'A pending delegation request to this party already exists.'
 
 @Injectable()
 export class DelegationRequestService {
@@ -108,18 +107,11 @@ export class DelegationRequestService {
     user: User,
     dto: CreateDelegationRequestDTO,
   ): Promise<DelegationRequestDTO> {
-    if (user.actor) {
-      throw new ForbiddenException(
-        'Delegation requests can only be made when acting as yourself.',
-      )
-    }
+    this.assertActingAsSelf(user)
 
     const requesterNationalId = user.nationalId
-    const granterNationalId = dto.toGranterNationalId
+    const granterNationalId = this.toGranterNationalId(dto.toGranterNationalId)
 
-    if (!kennitala.isValid(granterNationalId)) {
-      throw new BadRequestException('Invalid national id for the grantor.')
-    }
     if (granterNationalId === requesterNationalId) {
       throw new BadRequestException(
         'Cannot request a delegation from yourself.',
@@ -167,28 +159,20 @@ export class DelegationRequestService {
         )
 
         await this.refreshStatuses(
-          await this.delegationRequestModel.findAll({
-            where: {
-              toNationalId: requesterNationalId,
-              status: DelegationRequestStatus.Pending,
-            },
-            include: [this.confirmationsInclude],
-            transaction,
-          }),
+          await this.findPendingSent(requesterNationalId, transaction),
           transaction,
         )
-        await this.assertNotRejectionBlocked(requesterNationalId, transaction)
-        await this.assertUnderRateLimits(
+        const limit = await this.findLimitReached(
           requesterNationalId,
           granterNationalId,
           transaction,
         )
-        await this.assertNoDuplicatePending(
-          granterNationalId,
-          requesterNationalId,
-          transaction,
-        )
-        await this.assertUnderPendingCap(requesterNationalId, transaction)
+        if (limit === DelegationRequestError.Blocked) {
+          throw new ForbiddenException(limit)
+        }
+        if (limit) {
+          throw new BadRequestException(limit)
+        }
 
         const created = await this.delegationRequestModel.create(
           {
@@ -218,7 +202,7 @@ export class DelegationRequestService {
       })
       .catch((error) => {
         if (error instanceof UniqueConstraintError) {
-          throw new BadRequestException(DUPLICATE_PENDING_MESSAGE)
+          throw new BadRequestException(DelegationRequestError.DuplicatePending)
         }
         throw error
       })
@@ -233,11 +217,33 @@ export class DelegationRequestService {
     return this.findById(user, request.id)
   }
 
+  async checkEligibility(
+    user: User,
+    granterNationalId?: string,
+  ): Promise<DelegationRequestEligibilityDTO> {
+    this.assertActingAsSelf(user)
+    await this.refreshStatuses(await this.findPendingSent(user.nationalId))
+    const reason = await this.findLimitReached(
+      user.nationalId,
+      granterNationalId
+        ? this.toGranterNationalId(granterNationalId)
+        : undefined,
+    )
+    return { canRequest: !reason, reason }
+  }
+
+  // Requests are sent and managed by the requester themselves, never by someone acting for them.
   async findAllOutgoing(user: User): Promise<DelegationRequestDTO[]> {
+    if (user.actor) {
+      return []
+    }
     return this.findAllWhere({ toNationalId: user.nationalId })
   }
 
   async findAllIncoming(user: User): Promise<DelegationRequestDTO[]> {
+    if (!this.canHandleAsGrantor(user)) {
+      return []
+    }
     return this.findAllWhere({ fromNationalId: user.nationalId })
   }
 
@@ -245,8 +251,8 @@ export class DelegationRequestService {
     const request = await this.findRequest(
       id,
       (r) =>
-        r.fromNationalId === user.nationalId ||
-        r.toNationalId === user.nationalId,
+        this.isGrantorOf(user, r) ||
+        (!user.actor && r.toNationalId === user.nationalId),
     )
     return request.toDTO()
   }
@@ -258,7 +264,7 @@ export class DelegationRequestService {
 
     await this.resolvePending(
       id,
-      (r) => r.fromNationalId === user.nationalId,
+      (r) => this.isGrantorOf(user, r),
       (locked, transaction) =>
         locked.update(
           {
@@ -280,6 +286,7 @@ export class DelegationRequestService {
   }
 
   async cancel(user: User, id: string): Promise<DelegationRequestDTO> {
+    this.assertActingAsSelf(user)
     await this.resolvePending(
       id,
       (r) => r.toNationalId === user.nationalId,
@@ -332,7 +339,7 @@ export class DelegationRequestService {
 
     const pendingConfirmations = await this.resolvePending(
       id,
-      (r) => r.fromNationalId === user.nationalId,
+      (r) => this.isGrantorOf(user, r),
       async (locked, transaction) => {
         const { delegationIds, pendingConfirmations } =
           await this.delegationsOutgoingService.createBatchInTransaction(
@@ -409,7 +416,25 @@ export class DelegationRequestService {
     user: User,
     id: string,
   ): Promise<DelegationRequest> {
-    return this.findRequest(id, (r) => r.fromNationalId === user.nationalId)
+    return this.findRequest(id, (r) => this.isGrantorOf(user, r))
+  }
+
+  private isGrantorOf(user: User, request: DelegationRequest): boolean {
+    return (
+      request.fromNationalId === user.nationalId &&
+      this.canHandleAsGrantor(user)
+    )
+  }
+
+  // Same rule as managing delegations: someone acting for a person may only do so as their legal representative.
+  private canHandleAsGrantor(user: User): boolean {
+    return (
+      !user.actor ||
+      kennitala.isCompany(user.nationalId) ||
+      Boolean(
+        user.delegationType?.includes(AuthDelegationType.LegalRepresentative),
+      )
+    )
   }
 
   /**
@@ -477,6 +502,22 @@ export class DelegationRequestService {
     return outcome.result
   }
 
+  private toGranterNationalId(value: string): string {
+    const nationalId = kennitala.sanitize(value)
+    if (!nationalId || !kennitala.isValid(nationalId)) {
+      throw new BadRequestException('Invalid national id for the grantor.')
+    }
+    return nationalId
+  }
+
+  private assertActingAsSelf(user: User): void {
+    if (user.actor) {
+      throw new ForbiddenException(
+        'Delegation requests can only be made when acting as yourself.',
+      )
+    }
+  }
+
   private assertPending(request: DelegationRequest): void {
     if (request.status !== DelegationRequestStatus.Pending) {
       throw new BadRequestException(
@@ -492,6 +533,7 @@ export class DelegationRequestService {
     user: User,
     request: DelegationRequest,
   ): Promise<void> {
+    // Someone acting for the grantor can only decline what they could have granted.
     if (!user.actor) {
       return
     }
@@ -520,98 +562,94 @@ export class DelegationRequestService {
     }
   }
 
-  private async assertUnderRateLimits(
+  private findPendingSent(
     requesterNationalId: string,
-    granterNationalId: string,
-    transaction: Transaction,
-  ): Promise<void> {
+    transaction?: Transaction,
+  ): Promise<DelegationRequest[]> {
+    return this.delegationRequestModel.findAll({
+      where: {
+        toNationalId: requesterNationalId,
+        status: DelegationRequestStatus.Pending,
+      },
+      include: [this.confirmationsInclude],
+      transaction,
+    })
+  }
+
+  /** The first limit that stops a new request, checking the grantor-specific ones only when a grantor is given. */
+  private async findLimitReached(
+    requesterNationalId: string,
+    granterNationalId: string | undefined,
+    transaction?: Transaction,
+  ): Promise<DelegationRequestError | undefined> {
+    const {
+      delegationRequestRejectionLockThreshold,
+      delegationRequestRejectionLockDays,
+      delegationRequestMaxPerDay,
+      delegationRequestMaxPerGrantorPerDay,
+      delegationRequestMaxPending,
+    } = this.delegationConfig
+    const sentBy = { toNationalId: requesterNationalId }
     const since = new Date(Date.now() - RATE_LIMIT_WINDOW_MS)
-    const [total, toGranter] = await Promise.all([
-      this.delegationRequestModel.count({
-        where: {
-          toNationalId: requesterNationalId,
-          created: { [Op.gte]: since },
-        },
+
+    const lockWindowStart = new Date()
+    lockWindowStart.setDate(
+      lockWindowStart.getDate() - delegationRequestRejectionLockDays,
+    )
+    // A rejection is the terminal write on its row, so `modified` is when it happened.
+    const rejections = await this.delegationRequestModel.count({
+      where: {
+        ...sentBy,
+        status: DelegationRequestStatus.Rejected,
+        modified: { [Op.gte]: lockWindowStart },
+      },
+      transaction,
+    })
+    if (rejections >= delegationRequestRejectionLockThreshold) {
+      return DelegationRequestError.Blocked
+    }
+
+    if (granterNationalId) {
+      const toGranter = { ...sentBy, fromNationalId: granterNationalId }
+      const pendingToGranter = await this.delegationRequestModel.findOne({
+        attributes: ['id'],
+        where: { ...toGranter, status: DelegationRequestStatus.Pending },
         transaction,
-      }),
-      this.delegationRequestModel.count({
+      })
+      if (pendingToGranter) {
+        return DelegationRequestError.DuplicatePending
+      }
+      // A cancelled request may be corrected and resent; the daily total still counts it.
+      const sentToGranter = await this.delegationRequestModel.count({
         where: {
-          toNationalId: requesterNationalId,
-          fromNationalId: granterNationalId,
+          ...toGranter,
           created: { [Op.gte]: since },
-          // A cancelled request may be corrected and resent; the daily total still counts it.
           status: { [Op.ne]: DelegationRequestStatus.Cancelled },
         },
         transaction,
+      })
+      if (sentToGranter >= delegationRequestMaxPerGrantorPerDay) {
+        return DelegationRequestError.GrantorRateLimited
+      }
+    }
+
+    const [sentToday, pending] = await Promise.all([
+      this.delegationRequestModel.count({
+        where: { ...sentBy, created: { [Op.gte]: since } },
+        transaction,
+      }),
+      this.delegationRequestModel.count({
+        where: { ...sentBy, status: DelegationRequestStatus.Pending },
+        transaction,
       }),
     ])
-    if (
-      total >= this.delegationConfig.delegationRequestMaxPerDay ||
-      toGranter >= this.delegationConfig.delegationRequestMaxPerGrantorPerDay
-    ) {
-      throw new BadRequestException(DelegationRequestError.RateLimited)
+    if (sentToday >= delegationRequestMaxPerDay) {
+      return DelegationRequestError.RateLimited
     }
-  }
-
-  private async assertNoDuplicatePending(
-    fromNationalId: string,
-    toNationalId: string,
-    transaction: Transaction,
-  ): Promise<void> {
-    const existing = await this.delegationRequestModel.findOne({
-      attributes: ['id'],
-      where: {
-        fromNationalId,
-        toNationalId,
-        status: DelegationRequestStatus.Pending,
-      },
-      transaction,
-    })
-    if (existing) {
-      throw new BadRequestException(DUPLICATE_PENDING_MESSAGE)
+    if (pending >= delegationRequestMaxPending) {
+      return DelegationRequestError.TooManyPending
     }
-  }
-
-  private async assertUnderPendingCap(
-    requesterNationalId: string,
-    transaction: Transaction,
-  ): Promise<void> {
-    const pendingCount = await this.delegationRequestModel.count({
-      where: {
-        toNationalId: requesterNationalId,
-        status: DelegationRequestStatus.Pending,
-      },
-      transaction,
-    })
-    if (pendingCount >= this.delegationConfig.delegationRequestMaxPending) {
-      throw new BadRequestException(DelegationRequestError.TooManyPending)
-    }
-  }
-
-  // A rejection is the terminal write on its row, so `modified` is when it happened.
-  private async assertNotRejectionBlocked(
-    requesterNationalId: string,
-    transaction: Transaction,
-  ): Promise<void> {
-    const {
-      delegationRequestRejectionLockThreshold: threshold,
-      delegationRequestRejectionLockDays: lockDays,
-    } = this.delegationConfig
-
-    const windowStart = new Date()
-    windowStart.setDate(windowStart.getDate() - lockDays)
-
-    const rejectionCount = await this.delegationRequestModel.count({
-      where: {
-        toNationalId: requesterNationalId,
-        status: DelegationRequestStatus.Rejected,
-        modified: { [Op.gte]: windowStart },
-      },
-      transaction,
-    })
-    if (rejectionCount >= threshold) {
-      throw new ForbiddenException(DelegationRequestError.Blocked)
-    }
+    return undefined
   }
 
   /**

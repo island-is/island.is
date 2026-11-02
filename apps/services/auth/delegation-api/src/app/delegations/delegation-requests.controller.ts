@@ -15,6 +15,7 @@ import {
   CreateDelegationRequestDTO,
   DelegationDirection,
   DelegationRequestDTO,
+  DelegationRequestEligibilityDTO,
   DelegationRequestService,
 } from '@island.is/auth-api-lib'
 import {
@@ -94,6 +95,31 @@ export class DelegationRequestsController {
           `direction must be either 'incoming' or 'outgoing'.`,
         )
     }
+  }
+
+  @Get('eligibility')
+  @Documentation({
+    description:
+      'Whether the user can send a new request now, and if not, the first limit in the way. Grantor-specific limits are checked when a grantor is given.',
+    response: { status: 200, type: DelegationRequestEligibilityDTO },
+    request: {
+      query: {
+        toGranterNationalId: {
+          description: 'National id of the prospective grantor.',
+          required: false,
+          type: 'string',
+        },
+      },
+    },
+  })
+  eligibility(
+    @CurrentUser() user: User,
+    @Query('toGranterNationalId') toGranterNationalId?: string,
+  ): Promise<DelegationRequestEligibilityDTO> {
+    return this.delegationRequestService.checkEligibility(
+      user,
+      toGranterNationalId,
+    )
   }
 
   @Get(':requestId')

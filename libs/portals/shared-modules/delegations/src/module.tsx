@@ -9,7 +9,6 @@ import {
 import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { Features } from '@island.is/react/feature-flags'
-import { isCompany } from '@island.is/shared/utils'
 import EditAccess from './screens/EditAccess.tsx/EditAccess'
 import { CategoryDetails } from './screens/CategoryDetails/CategoryDetails'
 import { Navigate } from 'react-router-dom'
@@ -72,7 +71,7 @@ export const createDelegationsModule = (
     const hasAccess = delegationScopes.some((scope) =>
       userInfo.scopes.includes(scope),
     )
-    const canRequestDelegation = !isCompany(userInfo)
+    const canRequestDelegation = !userInfo.profile.actor
     const commonProps = {
       name: coreMessages.accessControlDelegations,
       navHide: !hasAccess || useNewRoutes,
