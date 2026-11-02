@@ -65,7 +65,7 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
 
   if (loading || (isSuperAdmin && sharedLoading)) {
     return (
-      <Box>
+      <Box marginTop={3}>
         <SkeletonLoader height={48} repeat={6} space={2} />
       </Box>
     )
