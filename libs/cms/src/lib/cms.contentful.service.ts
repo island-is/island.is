@@ -52,6 +52,10 @@ import {
 } from './models/openDataSubpage.model'
 import { GetOpenDataSubpageInput } from './dto/getOpenDataSubpage.input'
 import { mapProjectPage, ProjectPage } from './models/projectPage.model'
+import {
+  mapProjectSubpage,
+  ProjectSubpage,
+} from './models/projectSubpage.model'
 import { ICourseListPage, IProjectPage } from './generated/contentfulTypes'
 import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
 import { mapSupportQNA, SupportQNA } from './models/supportQNA.model'
@@ -607,6 +611,28 @@ export class CmsContentfulService {
       projectPage,
       subpageResult.items as types.IProjectSubpage[],
     )
+  }
+
+  async getProjectSubpage(
+    projectPageSlug: string,
+    slug: string,
+    lang: string,
+  ): Promise<ProjectSubpage | null> {
+    const params = {
+      ['content_type']: 'projectSubpage',
+      include: 5,
+      'fields.slug': slug,
+      'fields.projectPage.sys.contentType.sys.id': 'projectPage',
+      'fields.projectPage.fields.slug': projectPageSlug,
+      limit: 1,
+    }
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IProjectSubpageFields>(lang, params)
+      .catch(errorHandler('getProjectSubpage'))
+
+    const subpage = result.items[0] as types.IProjectSubpage | undefined
+
+    return subpage ? mapProjectSubpage(subpage) : null
   }
 
   async getArticle(slug: string, lang: string): Promise<Article | null> {
