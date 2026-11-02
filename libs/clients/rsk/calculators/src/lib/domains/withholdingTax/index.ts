@@ -4,4 +4,3 @@ export type {
   WithholdingTaxInput,
   WithholdingTaxOutput,
 } from './definition'
-export { toWithholdingTaxOutput } from './output'
