@@ -252,7 +252,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const requestedCourtDate: Item = {
     id: 'requested-court-date-item',
-    title: formatMessage(requestCourtDate.heading),
+    title: requestCourtDate.heading,
     values: [
       `${capitalize(
         formatDate(workingCase.requestedCourtDate, 'PPPP', true) ?? '',

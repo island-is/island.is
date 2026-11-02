@@ -30,6 +30,7 @@ import {
   CaseType,
   courtSubtypes,
   EventType,
+  getAppealJudges,
   getIndictmentAppealDeadline,
   getIndictmentCasePoliceState,
   isIndictmentCase,
@@ -1301,6 +1302,9 @@ export class InternalCaseService {
     appealCase: AppealCase,
     user: TUser,
   ): Promise<DeliverResponse> {
+    // The court's robot takes three judges, presiding judge first.
+    const [judge1, judge2, judge3] = getAppealJudges(appealCase)
+
     return this.courtService
       .updateAppealCaseWithAssignedRoles(
         user,
@@ -1308,12 +1312,12 @@ export class InternalCaseService {
         appealCase.appealCaseNumber,
         appealCase.appealAssistant?.nationalId,
         appealCase.appealAssistant?.name,
-        appealCase.appealJudge1?.nationalId,
-        appealCase.appealJudge1?.name,
-        appealCase.appealJudge2?.nationalId,
-        appealCase.appealJudge2?.name,
-        appealCase.appealJudge3?.nationalId,
-        appealCase.appealJudge3?.name,
+        judge1?.nationalId,
+        judge1?.name,
+        judge2?.nationalId,
+        judge2?.name,
+        judge3?.nationalId,
+        judge3?.name,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
