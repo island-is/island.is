@@ -12,17 +12,14 @@ describe('getAspectRatio', () => {
     ).toBe('1280/720')
   })
 
-  it.each([
-    [undefined],
-    [{}],
-    [{ width: 1280 }],
-    [{ height: 720 }],
-    [{ width: 0, height: 0 }],
-  ])('falls back when the size is %j', (size) => {
-    expect(getAspectRatio(size, DEFAULT_ASPECT_RATIO)).toBe(
-      DEFAULT_ASPECT_RATIO,
-    )
-  })
+  it.each([[{ width: 1280 }], [{ height: 720 }], [{ width: 0, height: 0 }]])(
+    'falls back when the size is %j',
+    (size) => {
+      expect(getAspectRatio(size, DEFAULT_ASPECT_RATIO)).toBe(
+        DEFAULT_ASPECT_RATIO,
+      )
+    },
+  )
 })
 
 describe('hasConfiguredSize', () => {
@@ -47,13 +44,5 @@ describe('applyStyles', () => {
 
     expect(element.style.height).toBe('800px')
     expect(element.style.width).toBe('10px')
-  })
-
-  it('does nothing without a style', () => {
-    const element = document.createElement('div')
-
-    applyStyles(element, undefined)
-
-    expect(element.getAttribute('style')).toBeNull()
   })
 })

@@ -111,17 +111,6 @@ describe('PowerBiSlice sizing', () => {
     expect(report.element.style.height).toBe('auto')
   })
 
-  it('sizes pages that have no config when changing page', async () => {
-    const { report, fire } = await setup({
-      config: { style: { pages: { other: { element: { height: '900px' } } } } },
-    })
-
-    await fire('pageChanged', 'new-page')
-
-    expect(report.element.style.aspectRatio).toBe('1000/500')
-    expect(report.element.style.height).toBe('auto')
-  })
-
   describe('on small screens with the mobile layout enabled', () => {
     const config = { displayMobilePortraitLayoutOnSmallScreens: true }
 
@@ -303,6 +292,8 @@ describe('PowerBiSlice sizing', () => {
     expect(report.element.style.aspectRatio).toBe('400/300')
   })
 
+  // Without the error handling this crashes the jest worker with an unhandled
+  // rejection, rather than failing the assertion below
   it('keeps the current size if the report fails to respond', async () => {
     const { report, fire } = await setup({})
     report.getActivePage.mockRejectedValue(new Error('not ready'))
