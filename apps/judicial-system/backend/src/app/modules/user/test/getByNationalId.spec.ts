@@ -65,6 +65,7 @@ describe('UserController - Get by national id', () => {
           active: true,
           canConfirmIndictment: false,
           canManageMessageSuspension: false,
+          canManageServiceInterruptionBanner: false,
         },
       ])
     })
