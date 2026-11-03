@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
@@ -55,7 +54,6 @@ type VisibleModal =
 
 const Confirmation: FC = () => {
   const router = useRouter()
-  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -142,9 +140,7 @@ const Confirmation: FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader
-        title={formatMessage(titles.court.investigationCases.conclusion)}
-      />
+      <PageHeader title={titles.court.investigationCases.conclusion} />
       <FormContentContainer>
         <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
@@ -167,18 +163,18 @@ const Confirmation: FC = () => {
             <Box>
               <PdfButton
                 caseId={workingCase.id}
-                title={formatMessage(core.pdfButtonRuling)}
+                title={core.pdfButtonRuling}
                 pdfType="ruling"
-                elementId={formatMessage(core.pdfButtonRuling)}
+                elementId={core.pdfButtonRuling}
                 disabled={isCompletedWithoutRuling}
               />
             </Box>
             <Box>
               <PdfButton
                 caseId={workingCase.id}
-                title={formatMessage(core.pdfButtonRulingShortVersion)}
+                title={core.pdfButtonRulingShortVersion}
                 pdfType="courtRecord"
-                elementId={formatMessage(core.pdfButtonRulingShortVersion)}
+                elementId={core.pdfButtonRulingShortVersion}
               />
             </Box>
           </div>

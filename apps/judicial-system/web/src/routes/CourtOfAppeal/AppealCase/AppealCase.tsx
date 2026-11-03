@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
@@ -57,8 +56,6 @@ const AppealCase: FC = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { updateAppealCase, isUpdatingAppealCase } = useAppealCase()
-
-  const { formatMessage } = useIntl()
   const router = useRouter()
 
   const [modalVisible, setModalVisible] = useState<boolean>(false)
@@ -191,15 +188,11 @@ const AppealCase: FC = () => {
           <PageTitle>{strings.title}</PageTitle>
           <div className={stack({ gap: 5 })}>
             <Box component="section">
-              <SectionHeading
-                title={formatMessage(core.appealCaseNumberHeading)}
-              />
+              <SectionHeading title={core.appealCaseNumberHeading} />
               <CaseNumberInput />
             </Box>
             <Box component="section">
-              <SectionHeading
-                title={formatMessage(core.appealAssistantHeading)}
-              />
+              <SectionHeading title={core.appealAssistantHeading} />
               <Select
                 name="assistant"
                 label={strings.assistantLabel}
@@ -222,7 +215,7 @@ const AppealCase: FC = () => {
               />
             </Box>
             <Box component="section">
-              <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
+              <SectionHeading title={core.appealJudgesHeading} />
               <BlueBox>
                 <div className={stack({ gap: 2 })}>
                   {judges.map((judge, seat) => (

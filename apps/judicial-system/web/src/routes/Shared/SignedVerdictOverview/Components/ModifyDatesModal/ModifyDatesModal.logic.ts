@@ -19,12 +19,18 @@ export const createCaseModifiedExplanation = (
   const now = new Date()
   const history = previousExplanation ? `${previousExplanation}<br/><br/>` : ''
 
-  return `${history}${formatMessage(m.sections.modifyDatesInfo.explanation, {
-    date: capitalize(formatDate(now, 'PPPP', true) || ''),
-    time: formatDate(now, TIME_FORMAT),
-    userName: userName ?? '',
-    userTitle: lowercase(userTitle),
-    institutionName: institutionName ?? '',
-    explanation: nextExplanation,
-  })}`
+  return `${history}${formatMessage(
+    {
+      id: m.sections.modifyDatesInfo.explanation,
+      defaultMessage: m.sections.modifyDatesInfo.explanation,
+    },
+    {
+      date: capitalize(formatDate(now, 'PPPP', true) || ''),
+      time: formatDate(now, TIME_FORMAT),
+      userName: userName ?? '',
+      userTitle: lowercase(userTitle),
+      institutionName: institutionName ?? '',
+      explanation: nextExplanation,
+    },
+  )}`
 }
