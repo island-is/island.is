@@ -12,6 +12,8 @@ export * from './types/RouterActionResponse'
 // screens
 export * from './screens/AccessDenied'
 export * from './screens/NotFound'
+export * from './components/RequestDelegationButton/RequestDelegationButton'
+export * from './utils/delegationRequest'
 export * from './screens/ModuleRoute'
 export * from './screens/ModuleErrorScreen'
 
