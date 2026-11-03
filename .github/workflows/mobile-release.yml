@@ -1,8 +1,9 @@
 name: Mobile release (auto-release)
 
 # Manually queues one commit on main for the auto-release mobile pipeline.
-# The release worker then starts the Codemagic mobile-release-ios and
-# mobile-release-android builds for that commit.
+# The release worker then starts the selected Codemagic builds for that commit:
+# the selected platforms (iOS, Android) times the selected variants (dev, prod),
+# up to four builds.
 #
 # Dispatch only on purpose: nothing runs on push while the pipeline is tested.
 # Standalone: never a required check or a dependency of any other workflow.
@@ -14,6 +15,26 @@ on:
         description: Full commit SHA on main (blank uses the main commit this run starts from)
         required: false
         type: string
+      ios:
+        description: Build iOS
+        required: false
+        type: boolean
+        default: true
+      android:
+        description: Build Android
+        required: false
+        type: boolean
+        default: true
+      dev:
+        description: Build the dev app variant
+        required: false
+        type: boolean
+        default: true
+      prod:
+        description: Build the prod app variant
+        required: false
+        type: boolean
+        default: true
 
 concurrency:
   group: mobile-release
@@ -30,8 +51,9 @@ jobs:
     timeout-minutes: 5
     outputs:
       sha: ${{ steps.target.outputs.sha }}
+      body: ${{ steps.target.outputs.body }}
     steps:
-      - name: Validate dispatch branch and target commit
+      - name: Validate dispatch branch, target commit and build selection
         id: target
         shell: bash
         env:
@@ -40,6 +62,10 @@ jobs:
           DISPATCH_REF: ${{ github.ref }}
           INPUT_SHA: ${{ inputs.sha }}
           DISPATCH_SHA: ${{ github.sha }}
+          BUILD_IOS: ${{ inputs.ios }}
+          BUILD_ANDROID: ${{ inputs.android }}
+          BUILD_DEV: ${{ inputs.dev }}
+          BUILD_PROD: ${{ inputs.prod }}
         run: |
           set -euo pipefail
           if [[ "$DISPATCH_REF" != 'refs/heads/main' ]]; then
@@ -52,14 +78,30 @@ jobs:
             exit 1
           fi
           target=$(printf '%s' "$target" | tr 'A-F' 'a-f')
+          # The flags become JSON booleans in the message, so accept only true/false.
+          for flag in "$BUILD_IOS" "$BUILD_ANDROID" "$BUILD_DEV" "$BUILD_PROD"; do
+            if [[ "$flag" != 'true' && "$flag" != 'false' ]]; then
+              echo "Build flags must be true or false (got: '$flag')." >&2
+              exit 1
+            fi
+          done
+          if [[ "$BUILD_IOS" == 'false' && "$BUILD_ANDROID" == 'false' ]] ||
+            [[ "$BUILD_DEV" == 'false' && "$BUILD_PROD" == 'false' ]]; then
+            echo 'Select at least one platform (ios/android) and one variant (dev/prod).' >&2
+            exit 1
+          fi
           # identical/behind means the target is main or an ancestor of main.
           status=$(gh api "repos/$REPO/compare/main...$target" --jq '.status')
           if [[ "$status" != 'identical' && "$status" != 'behind' ]]; then
             echo "The target commit must belong to main (compare status: $status)." >&2
             exit 1
           fi
+          body=$(printf '{"commitSha":"%s","ios":%s,"android":%s,"dev":%s,"prod":%s}' \
+            "$target" "$BUILD_IOS" "$BUILD_ANDROID" "$BUILD_DEV" "$BUILD_PROD")
           printf 'sha=%s\n' "$target" >> "$GITHUB_OUTPUT"
-          printf 'Queued target: %s\n\nA successful run only means the target was queued; the Codemagic builds run afterwards.\n' "$target" >> "$GITHUB_STEP_SUMMARY"
+          printf 'body=%s\n' "$body" >> "$GITHUB_OUTPUT"
+          printf 'Queued target: %s\n\nSelection: ios=%s android=%s dev=%s prod=%s\n\nA successful run only means the target was queued; the Codemagic builds run afterwards.\n' \
+            "$target" "$BUILD_IOS" "$BUILD_ANDROID" "$BUILD_DEV" "$BUILD_PROD" >> "$GITHUB_STEP_SUMMARY"
 
   # Inlined from island-is/release-actions notify-mobile-release.yml: this repo
   # is public, and GitHub does not let public repos call reusable workflows
@@ -82,9 +124,9 @@ jobs:
       - name: Send target message
         shell: bash
         env:
-          TARGET_SHA: ${{ needs.validate.outputs.sha }}
+          MESSAGE_BODY: ${{ needs.validate.outputs.body }}
         run: |
           set -euo pipefail
           aws sqs send-message \
             --queue-url "https://sqs.eu-west-1.amazonaws.com/821090935708/islandis-release-mobile" \
-            --message-body "{\"commitSha\":\"$TARGET_SHA\"}"
+            --message-body "$MESSAGE_BODY"
