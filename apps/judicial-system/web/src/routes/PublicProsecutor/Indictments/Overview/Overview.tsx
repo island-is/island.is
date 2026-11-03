@@ -32,8 +32,8 @@ import {
   VerdictAppealFiles,
   VerdictTimelineCard,
 } from '@island.is/judicial-system-web/src/components'
-import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import { getAppealSummonsWaitingServiceBanners } from '@island.is/judicial-system-web/src/components/VerdictAppealFiles/VerdictAppealFiles.logic'
+import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   AppealCaseState,
   CaseIndictmentRulingDecision,
@@ -157,9 +157,8 @@ export const Overview = () => {
     )
   }, [workingCase.defendants])
 
-  const appealSummonsServiceBanners = getAppealSummonsWaitingServiceBanners(
-    workingCase,
-  )
+  const appealSummonsServiceBanners =
+    getAppealSummonsWaitingServiceBanners(workingCase)
 
   return (
     <PageLayout

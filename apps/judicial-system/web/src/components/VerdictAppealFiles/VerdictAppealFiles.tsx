@@ -220,7 +220,9 @@ const VerdictAppealFiles: FC = () => {
     )
 
     setSelectedServiceRecipientKeys(
-      options.filter((option) => !option.alreadySent).map((option) => option.key),
+      options
+        .filter((option) => !option.alreadySent)
+        .map((option) => option.key),
     )
     setSummonsIdToSendToService(summonsId)
   }
@@ -551,7 +553,9 @@ const VerdictAppealFiles: FC = () => {
                     option.alreadySent ||
                     selectedServiceRecipientKeys.includes(option.key)
                   }
-                  disabled={option.alreadySent || isSendingAppealSummonsToService}
+                  disabled={
+                    option.alreadySent || isSendingAppealSummonsToService
+                  }
                   onChange={(event) => {
                     const { checked } = event.target
 
