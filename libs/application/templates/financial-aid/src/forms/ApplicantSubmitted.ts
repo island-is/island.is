@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import { Application, DefaultEvents, Form } from '@island.is/application/types'
 import { Routes } from '../lib/constants'
+import { isVeitaMunicipality } from '../utils/conditions'
 
 import * as m from '../lib/messages'
 import { createElement } from 'react'
@@ -22,6 +23,8 @@ export const ApplicantSubmitted: Form = buildForm({
     buildMultiField({
       id: Routes.APPLICANTSTATUS,
       title: m.status.pageTitle,
+      condition: (answers, externalData) =>
+        !isVeitaMunicipality(answers, externalData),
       children: [
         buildCustomField({
           id: Routes.APPLICANTSTATUS,
@@ -36,8 +39,30 @@ export const ApplicantSubmitted: Form = buildForm({
       ],
     }),
     buildMultiField({
+      id: Routes.RVKAPPLICANTSTATUS,
+      title: m.status.pageTitle,
+      condition: isVeitaMunicipality,
+      children: [
+        buildCustomField(
+          {
+            id: Routes.RVKAPPLICANTSTATUS,
+            title: m.status.pageTitle,
+            component: 'RvkStatus',
+          },
+          { isSpouse: false },
+        ),
+        // Empty submit field to hide all buttons in the footer
+        buildSubmitField({
+          id: '',
+          actions: [],
+        }),
+      ],
+    }),
+    buildMultiField({
       id: Routes.MISSINGFILES,
       title: m.missingFiles.general.pageTitle,
+      condition: (answers, externalData) =>
+        !isVeitaMunicipality(answers, externalData),
       children: [
         buildCustomField(
           {
@@ -63,6 +88,8 @@ export const ApplicantSubmitted: Form = buildForm({
       id: Routes.MISSINGFILESCONFIRMATION,
       title: m.missingFiles.confirmation.title,
       component: 'MissingFilesConfirmation',
+      condition: (answers, externalData) =>
+        !isVeitaMunicipality(answers, externalData),
     }),
   ],
 })

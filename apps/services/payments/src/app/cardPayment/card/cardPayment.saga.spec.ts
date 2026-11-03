@@ -10,14 +10,14 @@ import { PaymentFlowService } from '../../paymentFlow/paymentFlow.service'
 import {
   createCardPaymentContext,
   createCardPaymentSaga,
-} from '../cardPayment.saga'
+} from './cardPayment.saga'
 import {
   createMockLogger,
   createMockCardPaymentService,
   createMockPaymentFlowService,
   getChargeCardInput,
   mockPaymentResult,
-} from './sagaTestUtils'
+} from '../test/sagaTestUtils'
 
 describe('Card Payment Saga - CHARGE_CARD step specific', () => {
   let mockLogger: Logger
