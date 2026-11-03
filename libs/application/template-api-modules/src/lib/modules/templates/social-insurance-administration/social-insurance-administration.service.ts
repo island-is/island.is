@@ -61,8 +61,6 @@ import {
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
-const MARP_SCHOOL_CONFIRMATION_FILE_NAME = 'staðfesting-á-skólavist.pdf'
-
 @Injectable()
 export class SocialInsuranceAdministrationService extends BaseTemplateApiService {
   constructor(
@@ -589,7 +587,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
     for (const document of studyDocuments) {
       attachments.push({
-        name: MARP_SCHOOL_CONFIRMATION_FILE_NAME,
+        name: document.name,
         type: DocumentTypeEnum.MARP_SCHOOL_CONFIRMATION,
         file: await this.getPdf(`${application.id}/${document.key}`),
       })
