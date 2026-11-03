@@ -16,4 +16,3 @@ bootstrap({
   stripNonClassValidatorInputs: false,
   jsonBodyLimit: '350kb',
 })
-// TEMPORARY: touch to trigger the deploy-feature pipeline, revert before merging
