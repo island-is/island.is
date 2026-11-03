@@ -25,6 +25,7 @@ import {
   hasDimensions,
   restoreStyles,
 } from './utils'
+import * as styles from './PowerBiSlice.css'
 
 type EventType =
   | 'loaded'
@@ -448,6 +449,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
 
   return (
     <PowerBIEmbed
+      cssClassName={styles.embed}
       embedConfig={{
         type: 'report',
         ...embedProps,

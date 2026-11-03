@@ -7,6 +7,7 @@ import { PowerBiSlice } from './PowerBiSlice'
 type Handler = (event: unknown) => Promise<void>
 
 let embedProps: {
+  cssClassName?: string
   getEmbeddedComponent: (embed: unknown) => void
   eventHandlers: Map<string, Handler>
 }
@@ -96,6 +97,12 @@ const setup = async ({
 }
 
 describe('PowerBiSlice sizing', () => {
+  it('keeps the report within its container', async () => {
+    await setup({ config: { style: { element: { minHeight: '600px' } } } })
+
+    expect(embedProps.cssClassName).toBeTruthy()
+  })
+
   it('shows a placeholder until the report has loaded', async () => {
     const { report } = await setup({})
 
