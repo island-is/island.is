@@ -551,22 +551,38 @@ export class AppealSummonsService {
     user: User
     transaction: Transaction
   }): Promise<DeliverResponse> {
-    if (service.externalPoliceDocumentId) {
+    // Lock before the idempotency check so concurrent deliveries for the same
+    // service row serialize and only one CreateDocument runs.
+    const lockedService =
+      await this.appealSummonsRepositoryService.findServiceRecipientById(
+        service.id,
+        summons.id,
+        { transaction, lock: true },
+      )
+
+    if (!lockedService) {
+      throw new NotFoundException(
+        `Appeal summons service ${service.id} not found for summons ${summons.id}`,
+      )
+    }
+
+    if (lockedService.externalPoliceDocumentId) {
       return { delivered: true }
     }
 
     const receiver =
-      service.defendantId !== undefined && service.defendantId !== null
+      lockedService.defendantId !== undefined &&
+      lockedService.defendantId !== null
         ? theCase.defendants?.find(
-            (defendant) => defendant.id === service.defendantId,
+            (defendant) => defendant.id === lockedService.defendantId,
           )
         : theCase.civilClaimants?.find(
-            (claimant) => claimant.id === service.civilClaimantId,
+            (claimant) => claimant.id === lockedService.civilClaimantId,
           )
 
     if (!receiver) {
       throw new NotFoundException(
-        `Recipient for appeal summons service ${service.id} not found on case ${theCase.id}`,
+        `Recipient for appeal summons service ${lockedService.id} not found on case ${theCase.id}`,
       )
     }
 
@@ -583,13 +599,13 @@ export class AppealSummonsService {
     )
 
     const documentName = `Áfrýjunarstefna í máli ${theCase.courtCaseNumber}`
-    const orderByDate = new Date(service.sentToServiceDate)
+    const orderByDate = new Date(lockedService.sentToServiceDate)
     orderByDate.setMonth(orderByDate.getMonth() + 2)
 
     const originalAncestorCaseId =
       await this.caseRepositoryService.findOriginalAncestorId(theCase)
 
-    const receiverType = service.defendantId
+    const receiverType = lockedService.defendantId
       ? DocumentDeliveryReceiverType.DEFENDANT
       : DocumentDeliveryReceiverType.CIVIL_CLAIMANT
 
@@ -615,7 +631,7 @@ export class AppealSummonsService {
       fileTypeCode: PoliceFileTypeCode.APPEAL_SUMMONS,
       caseSupplements: [
         { code: 'RVG_CASE_ID', value: originalAncestorCaseId },
-        { code: 'RVG_DOCUMENT_ID', value: service.id },
+        { code: 'RVG_DOCUMENT_ID', value: lockedService.id },
         { code: 'RECEIVER_SSN', value: receiver.nationalId },
         {
           code: DocumentDeliverySupplementCode.RECEIVER_TYPE,
@@ -649,7 +665,7 @@ export class AppealSummonsService {
     })
 
     await this.appealSummonsRepositoryService.updateServiceRecipient(
-      service.id,
+      lockedService.id,
       summons.id,
       { externalPoliceDocumentId: createdDocument.externalPoliceDocumentId },
       { transaction },

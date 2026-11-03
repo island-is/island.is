@@ -221,7 +221,7 @@ const VerdictAppealFiles: FC = () => {
 
     setSelectedServiceRecipientKeys(
       options
-        .filter((option) => !option.alreadySent)
+        .filter((option) => !option.alreadySent && !option.missingNationalId)
         .map((option) => option.key),
     )
     setSummonsIdToSendToService(summonsId)
@@ -236,6 +236,7 @@ const VerdictAppealFiles: FC = () => {
       .filter(
         (option) =>
           !option.alreadySent &&
+          !option.missingNationalId &&
           selectedServiceRecipientKeys.includes(option.key),
       )
       .map((option) => ({
@@ -536,7 +537,10 @@ const VerdictAppealFiles: FC = () => {
               isDisabled:
                 selectedServiceRecipientKeys.filter((key) =>
                   serviceRecipientOptions.some(
-                    (option) => option.key === key && !option.alreadySent,
+                    (option) =>
+                      option.key === key &&
+                      !option.alreadySent &&
+                      !option.missingNationalId,
                   ),
                 ).length === 0,
             },
@@ -554,7 +558,9 @@ const VerdictAppealFiles: FC = () => {
                     selectedServiceRecipientKeys.includes(option.key)
                   }
                   disabled={
-                    option.alreadySent || isSendingAppealSummonsToService
+                    option.alreadySent ||
+                    option.missingNationalId ||
+                    isSendingAppealSummonsToService
                   }
                   onChange={(event) => {
                     const { checked } = event.target

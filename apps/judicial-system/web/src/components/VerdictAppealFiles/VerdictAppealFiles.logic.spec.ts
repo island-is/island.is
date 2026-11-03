@@ -560,10 +560,14 @@ describe('getAppealSummonsServiceRecipientOptions', () => {
           defendants: [{ defendantId: 'd1' } as never],
           services: [{ civilClaimantId: 'c1' } as never],
         },
-        [{ id: 'd1', name: 'Jón Jónsson' } as never],
+        [{ id: 'd1', name: 'Jón Jónsson', nationalId: '0000000000' } as never],
         [
-          { id: 'c1', name: 'Binni' } as never,
-          { id: 'c2', name: 'Bína' } as never,
+          {
+            id: 'c1',
+            name: 'Binni',
+            nationalId: '1111111111',
+          } as never,
+          { id: 'c2', name: 'Bína', nationalId: '2222222222' } as never,
         ],
       ),
     ).toEqual([
@@ -572,18 +576,62 @@ describe('getAppealSummonsServiceRecipientOptions', () => {
         label: 'Dómfelldi Jón Jónsson',
         defendantId: 'd1',
         alreadySent: false,
+        missingNationalId: false,
       },
       {
         key: 'civilClaimant-c1',
         label: 'Binni',
         civilClaimantId: 'c1',
         alreadySent: true,
+        missingNationalId: false,
       },
       {
         key: 'civilClaimant-c2',
         label: 'Bína',
         civilClaimantId: 'c2',
         alreadySent: false,
+        missingNationalId: false,
+      },
+    ])
+  })
+
+  it('marks recipients without a national id as ineligible', () => {
+    expect(
+      getAppealSummonsServiceRecipientOptions(
+        {
+          defendants: [
+            { defendantId: 'd1' } as never,
+            { defendantId: 'd2' } as never,
+          ],
+          services: [],
+        },
+        [
+          { id: 'd1', name: 'Jón', nationalId: '0000000000' } as never,
+          { id: 'd2', name: 'Gunna', noNationalId: true } as never,
+        ],
+        [{ id: 'c1', name: 'Binni' } as never],
+      ),
+    ).toEqual([
+      {
+        key: 'defendant-d1',
+        label: 'Dómfelldi Jón',
+        defendantId: 'd1',
+        alreadySent: false,
+        missingNationalId: false,
+      },
+      {
+        key: 'defendant-d2',
+        label: 'Dómfelldi Gunna (vantar kennitölu)',
+        defendantId: 'd2',
+        alreadySent: false,
+        missingNationalId: true,
+      },
+      {
+        key: 'civilClaimant-c1',
+        label: 'Binni (vantar kennitölu)',
+        civilClaimantId: 'c1',
+        alreadySent: false,
+        missingNationalId: true,
       },
     ])
   })

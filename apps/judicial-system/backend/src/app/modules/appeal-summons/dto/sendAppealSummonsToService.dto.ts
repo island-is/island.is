@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsUUID,
   Validate,
+  ValidateIf,
   ValidateNested,
   ValidationArguments,
   ValidatorConstraint,
@@ -35,8 +36,15 @@ class ExactlyOneAppealSummonsServiceRecipientConstraint
 }
 
 export class AppealSummonsServiceRecipientDto {
+  // @IsOptional() would skip the XOR constraint when defendantId is absent.
   @Validate(ExactlyOneAppealSummonsServiceRecipientConstraint)
-  @IsOptional()
+  @ValidateIf(
+    (recipient: AppealSummonsServiceRecipientDto) =>
+      (recipient.defendantId !== null &&
+        recipient.defendantId !== undefined) ||
+      recipient.civilClaimantId === null ||
+      recipient.civilClaimantId === undefined,
+  )
   @IsUUID()
   @ApiPropertyOptional({ type: String })
   readonly defendantId?: string

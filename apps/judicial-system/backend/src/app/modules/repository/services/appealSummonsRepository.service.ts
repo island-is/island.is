@@ -311,12 +311,13 @@ export class AppealSummonsRepositoryService {
   async findServiceRecipientById(
     id: string,
     appealSummonsId: string,
-    options?: { transaction?: Transaction },
+    options?: { transaction?: Transaction; lock?: boolean },
   ): Promise<AppealSummonsServiceRecipient | null> {
     try {
       return await this.appealSummonsServiceRecipientModel.findOne({
         where: { id, appealSummonsId },
         transaction: options?.transaction,
+        ...(options?.lock ? { lock: Transaction.LOCK.UPDATE } : {}),
       })
     } catch (error) {
       this.logger.error(

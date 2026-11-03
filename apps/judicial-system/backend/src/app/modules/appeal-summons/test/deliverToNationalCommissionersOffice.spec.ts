@@ -78,6 +78,9 @@ describe('AppealSummonsService - Deliver to national commissioners office', () =
     mockPdfService = module.pdfService
     mockCaseRepositoryService = module.caseRepositoryService
     transaction = {} as Transaction
+    ;(
+      mockAppealSummonsRepositoryService.findServiceRecipientById as jest.Mock
+    ).mockResolvedValue(service)
   })
 
   it('calls CreateDocument with BRTNG_AFRYJUN and RECEIVER_TYPE', async () => {
@@ -105,6 +108,12 @@ describe('AppealSummonsService - Deliver to national commissioners office', () =
         },
       )
 
+    expect(
+      mockAppealSummonsRepositoryService.findServiceRecipientById,
+    ).toHaveBeenCalledWith(serviceId, summonsId, {
+      transaction,
+      lock: true,
+    })
     expect(mockPoliceService.createDocument).toHaveBeenCalledWith(
       expect.objectContaining({
         caseId,
@@ -132,15 +141,20 @@ describe('AppealSummonsService - Deliver to national commissioners office', () =
   })
 
   it('skips CreateDocument when the police document id is already set', async () => {
+    const alreadyDelivered = {
+      ...service,
+      externalPoliceDocumentId: uuid(),
+    } as AppealSummonsServiceRecipient
+    ;(
+      mockAppealSummonsRepositoryService.findServiceRecipientById as jest.Mock
+    ).mockResolvedValueOnce(alreadyDelivered)
+
     const result =
       await appealSummonsService.deliverAppealSummonsToNationalCommissionersOffice(
         {
           theCase,
           summons,
-          service: {
-            ...service,
-            externalPoliceDocumentId: uuid(),
-          } as AppealSummonsServiceRecipient,
+          service: alreadyDelivered,
           user,
           transaction,
         },

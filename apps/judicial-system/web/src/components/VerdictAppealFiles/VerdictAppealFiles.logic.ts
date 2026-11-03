@@ -239,7 +239,19 @@ export type AppealSummonsServiceRecipientOption = {
   defendantId?: string
   civilClaimantId?: string
   alreadySent: boolean
+  missingNationalId: boolean
 }
+
+const recipientHasNationalId = (
+  recipient:
+    | Pick<Defendant, 'nationalId' | 'noNationalId'>
+    | Pick<CivilClaimant, 'nationalId' | 'noNationalId'>
+    | null
+    | undefined,
+): boolean =>
+  Boolean(recipient) &&
+  !recipient?.noNationalId &&
+  Boolean(recipient?.nationalId)
 
 export const getAppealSummonsServiceRecipientOptions = (
   summons: Pick<AppealSummons, 'defendants' | 'services'>,
@@ -251,25 +263,32 @@ export const getAppealSummonsServiceRecipientOptions = (
 
   for (const row of summons.defendants ?? []) {
     const defendant = defendants?.find((item) => item.id === row.defendantId)
+    const missingNationalId = !recipientHasNationalId(defendant)
+    const name = `Dómfelldi ${defendant?.name ?? ''}`.trim()
 
     options.push({
       key: `defendant-${row.defendantId}`,
-      label: `Dómfelldi ${defendant?.name ?? ''}`.trim(),
+      label: missingNationalId ? `${name} (vantar kennitölu)` : name,
       defendantId: row.defendantId,
       alreadySent: services.some(
         (service) => service.defendantId === row.defendantId,
       ),
+      missingNationalId,
     })
   }
 
   for (const claimant of civilClaimants ?? []) {
+    const missingNationalId = !recipientHasNationalId(claimant)
+    const name = claimant.name ?? ''
+
     options.push({
       key: `civilClaimant-${claimant.id}`,
-      label: claimant.name ?? '',
+      label: missingNationalId ? `${name} (vantar kennitölu)`.trim() : name,
       civilClaimantId: claimant.id,
       alreadySent: services.some(
         (service) => service.civilClaimantId === claimant.id,
       ),
+      missingNationalId,
     })
   }
 

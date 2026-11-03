@@ -8,6 +8,7 @@ import {
   IsString,
   IsUUID,
   Validate,
+  ValidateIf,
   ValidateNested,
   ValidationArguments,
   ValidatorConstraint,
@@ -109,9 +110,16 @@ export class SendAppealSummonsToCourtOfAppealsInput {
 
 @InputType()
 export class AppealSummonsServiceRecipientInput {
+  // @IsOptional() would skip the XOR constraint when defendantId is absent.
   @Allow()
   @Validate(ExactlyOneAppealSummonsServiceRecipientConstraint)
-  @IsOptional()
+  @ValidateIf(
+    (recipient: AppealSummonsServiceRecipientInput) =>
+      (recipient.defendantId !== null &&
+        recipient.defendantId !== undefined) ||
+      recipient.civilClaimantId === null ||
+      recipient.civilClaimantId === undefined,
+  )
   @IsUUID()
   @Field(() => ID, { nullable: true })
   readonly defendantId?: string
