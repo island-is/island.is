@@ -792,7 +792,6 @@ function rewriteIdsFeatureServiceUrls(
     })
   }
 
-  //test
   if (s.env.AUTH_ADMIN_API_PATHS !== undefined) {
     s.env.AUTH_ADMIN_API_PATHS = rewriteDevEnv(
       s.env.AUTH_ADMIN_API_PATHS,

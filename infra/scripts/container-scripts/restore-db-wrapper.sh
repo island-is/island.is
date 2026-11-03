@@ -70,7 +70,8 @@ if [[ -n "${RESTORE_BUCKET:-}" ]] && [[ -n "${RESTORE_KEY:-}" ]]; then
       'https://${FEATURE_NAME}.identity-server.dev01.devland.is/admin/api/auth/callback/identity-server',
       NOW(),
       NOW()
-    );
+    )
+    ON CONFLICT DO NOTHING;
   "
 else
   echo "Step 2: No restore configuration found (RESTORE_BUCKET not set)"

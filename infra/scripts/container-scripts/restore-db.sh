@@ -1,12 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-#DB_NAME=feature_featgenerate_ids_feature_values_servicesauth
-#DB_USER=feature_featgenerate_ids_feature_values_servicesauth
-#PGUSER=root
-#PGPASSWORD_KEY=/rds/vidspyrna/masterpassword
-
-
 # Get DB password from SSM
 DB_MASTER_PASSWORD=$(node secrets get "$PGPASSWORD_KEY")
 export PGPASSWORD="$DB_MASTER_PASSWORD"
@@ -34,7 +28,7 @@ aws s3 cp \
 
 # Restore dump
 echo "Restoring database from dump..."
-gunzip -c "$DUMP_FILE" | psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -v ON_ERROR_STOP=0
+gunzip -c "$DUMP_FILE" | psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -v ON_ERROR_STOP=1
 
 # The dump is restored as the master user ($PGUSER), which leaves restored
 # objects owned by that user and prevents the feature DB owner ($DB_USER)
