@@ -115,8 +115,7 @@ export class AppealSummonsServiceRecipientInput {
   @Validate(ExactlyOneAppealSummonsServiceRecipientConstraint)
   @ValidateIf(
     (recipient: AppealSummonsServiceRecipientInput) =>
-      (recipient.defendantId !== null &&
-        recipient.defendantId !== undefined) ||
+      (recipient.defendantId !== null && recipient.defendantId !== undefined) ||
       recipient.civilClaimantId === null ||
       recipient.civilClaimantId === undefined,
   )

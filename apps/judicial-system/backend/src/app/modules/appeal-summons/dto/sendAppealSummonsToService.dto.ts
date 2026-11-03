@@ -40,8 +40,7 @@ export class AppealSummonsServiceRecipientDto {
   @Validate(ExactlyOneAppealSummonsServiceRecipientConstraint)
   @ValidateIf(
     (recipient: AppealSummonsServiceRecipientDto) =>
-      (recipient.defendantId !== null &&
-        recipient.defendantId !== undefined) ||
+      (recipient.defendantId !== null && recipient.defendantId !== undefined) ||
       recipient.civilClaimantId === null ||
       recipient.civilClaimantId === undefined,
   )
