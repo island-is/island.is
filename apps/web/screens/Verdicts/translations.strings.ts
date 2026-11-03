@@ -186,6 +186,12 @@ export const m = {
       description:
         'Skýringartexti í upplýsingabólu við Hæstarétt í "Málategundir" síu',
     },
+    supremeCourtCaseTypeTooltipLabel: {
+      id: 'web.verdicts:listPage.supremeCourtCaseTypeTooltipLabel',
+      defaultMessage: 'Nánari upplýsingar um málategundir hjá Hæstarétti',
+      description:
+        'Aðgengisheiti á upplýsingabólu við Hæstarétt í "Málategundir" síu',
+    },
     caseCategoryAccordionLabel: {
       id: 'web.verdicts:listPage.caseCategoryAccordionLabel',
       defaultMessage: 'Málaflokkur',
