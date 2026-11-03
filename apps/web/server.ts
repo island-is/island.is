@@ -1,3 +1,4 @@
+// TEMP: sandbox contentful test
 import {
   bootstrap,
   buildContentSecurityPolicy,
