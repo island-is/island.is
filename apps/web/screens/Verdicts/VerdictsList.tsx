@@ -884,25 +884,22 @@ const Filters = ({
               <Stack space={3} key={renderKey}>
                 {caseFilterOptionsByCourt.map((courtGroup) => (
                   <Stack key={courtGroup.id} space={2}>
-                    {(selectedCourtLevel === 'all' ||
-                      showSupremeCourtCaseTypeTooltip(courtGroup.id)) && (
-                      <Inline space={1} alignY="center">
-                        <Text variant="eyebrow">{courtGroup.label}</Text>
-                        {showSupremeCourtCaseTypeTooltip(courtGroup.id) && (
-                          <Tooltip
-                            text={
-                              <MarkdownText
-                                variant="small"
-                                fontWeight="regular"
-                                replaceNewLinesWithBreaks={false}
-                              >
-                                {supremeCourtCaseTypeTooltip}
-                              </MarkdownText>
-                            }
-                          />
-                        )}
-                      </Inline>
-                    )}
+                    <Inline space={1} alignY="center">
+                      <Text variant="eyebrow">{courtGroup.label}</Text>
+                      {showSupremeCourtCaseTypeTooltip(courtGroup.id) && (
+                        <Tooltip
+                          text={
+                            <MarkdownText
+                              variant="small"
+                              fontWeight="regular"
+                              replaceNewLinesWithBreaks={false}
+                            >
+                              {supremeCourtCaseTypeTooltip}
+                            </MarkdownText>
+                          }
+                        />
+                      )}
+                    </Inline>
                     <Stack space={2}>
                       {courtGroup.options.map(({ label, typeOfOption }) => {
                         const queryParamKey =
