@@ -188,6 +188,40 @@ export class CaseRepositoryService {
   }
 
   /**
+   * A case with its assigned prosecutor - so the prosecutor can be notified
+   * about a delivery that the police system rejected.
+   */
+  async findByIdWithProsecutor(
+    id: string,
+    options?: { transaction?: Transaction },
+  ): Promise<Case | null> {
+    try {
+      this.logger.debug(`Finding case ${id} with its prosecutor`)
+
+      const result = await this.caseModel.findByPk(id, {
+        include: [{ model: User, as: 'prosecutor' }],
+        transaction: options?.transaction,
+      })
+
+      this.logger.debug(`Case ${id} ${result ? 'found' : 'not found'}`)
+
+      if (result) {
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction: options?.transaction,
+        })
+      }
+
+      return result
+    } catch (error) {
+      this.logger.error(`Error finding case ${id} with its prosecutor:`, {
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  /**
    * The case an indictment was split from, with the full case graph - what a
    * document about the split case renders the original case from. Unlike
    * findLiveById this applies no state filter: the source case is read on
@@ -661,6 +695,8 @@ export class CaseRepositoryService {
    * for on the cases linked to this one, so their national id narrows those
    * joins - the caller decides who counts as a defence user, this decides what
    * such a user gets to read.
+   *
+   * findLimitedAccessByIdForUpdate is this read with the case row locked first.
    */
   async findLimitedAccessById(
     id: string,
@@ -893,6 +929,32 @@ export class CaseRepositoryService {
     }
 
     return this.findLiveMinimalById(id, { transaction })
+  }
+
+  /**
+   * findLimitedAccessById with the case row locked first: the read for a
+   * limited access route that changes the case, or something on it, and needs
+   * no one else to change the case until it commits. The lock is a query of
+   * its own for the reason findLiveByIdForUpdate gives - the limited access
+   * include is a tree of outer joins too - and the defender-narrowed read
+   * that follows runs in the same transaction, so it sees the row it just
+   * locked.
+   */
+  async findLimitedAccessByIdForUpdate(
+    id: string,
+    options: { defenceUserNationalId?: string; transaction: Transaction },
+  ): Promise<Case | null> {
+    const locked = await this.lockByIdForUpdate(
+      id,
+      options.transaction,
+      this.liveCaseWhere(id),
+    )
+
+    if (!locked) {
+      return null
+    }
+
+    return this.findLimitedAccessById(id, options)
   }
 
   /**

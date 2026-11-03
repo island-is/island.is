@@ -10,14 +10,26 @@ const useLawTag = () => {
     const paragraph = law[1]
 
     if (paragraph === 0) {
-      return formatMessage(strings.lawsBrokenTagArticleOnly, {
-        article,
-      })
+      return formatMessage(
+        {
+          id: strings.lawsBrokenTagArticleOnly,
+          defaultMessage: strings.lawsBrokenTagArticleOnly,
+        },
+        {
+          article,
+        },
+      )
     } else {
-      return formatMessage(strings.lawsBrokenTag, {
-        article,
-        paragraph,
-      })
+      return formatMessage(
+        {
+          id: strings.lawsBrokenTag,
+          defaultMessage: strings.lawsBrokenTag,
+        },
+        {
+          article,
+          paragraph,
+        },
+      )
     }
   }
 

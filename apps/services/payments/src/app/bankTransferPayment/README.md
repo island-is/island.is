@@ -463,11 +463,15 @@ Bank-transfer log lines carry the context from
 | `correlationId` | The attempt's row id.                                                                   |
 | `rrn`           | Blikk's payment id.                                                                     |
 | `payerType`     | `company` or `person`. Read from the flow's payer, or from the row's `actorNationalId`. |
+| `bankCode`      | The 4-digit bank part of the payer's account, stored on the row at create.              |
+| `bank`          | The bank that `bankCode` names, or the code itself for a bank not in the map.           |
 
 A field the call site does not know is left out rather than filled with a placeholder. Filter
 company payers in Datadog with `service:services-payments @payerType:company`. For person payers,
 search for `@payerType:person` rather than negating `company`, which also matches lines without
-the field. The national ids themselves are never logged.
+the field. The national ids themselves are never logged, nor is the payer's account number.
+`@bank` and `@bankCode` are on lines from this release onward; older rows have no bank code and
+their lines carry neither field.
 
 Lines that do not carry `payerType`, so a `payerType` filter leaves them out:
 

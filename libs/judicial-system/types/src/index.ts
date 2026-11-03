@@ -92,8 +92,18 @@ export {
   AppealDecisionPartyRole,
   getStatementDeadline,
   CaseAppealDecision,
+  APPEAL_JUDGE_COUNT,
+  getOrderedAppealJudges,
+  getAppealJudges,
+  getPresidingAppealJudge,
+  getAppealJudgeUserIds,
+  hasAllAppealJudges,
 } from './lib/appealCase'
-export type { AppealCorrectionLock } from './lib/appealCase'
+export type {
+  AppealCorrectionLock,
+  AppealJudgeFields,
+  AppealJudgesFields,
+} from './lib/appealCase'
 export {
   AppealCourtSessionType,
   appealCourtSessionTypeNames,
@@ -117,6 +127,8 @@ export {
   HashAlgorithm,
   partyAppealFileCategories,
   verdictAppealDeclarationFileCategories,
+  verdictAppealStatementFileCategories,
+  verdictAppealFileCategories,
   isAppealFileDeletionLocked,
   isRulingOrderWithoutDocument,
   PoliceFileTypeCode,
@@ -192,7 +204,6 @@ export {
   isRulingOrDismissalCase,
   CasePoliceState,
   hasIndictmentCaseBeenSubmittedToCourt,
-  isIndictmentPdfReplaceableState,
   getIndictmentCasePoliceState,
   isIndictmentCaseState,
   isRequestCaseState,

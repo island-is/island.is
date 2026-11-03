@@ -25,6 +25,7 @@ import {
   getIndictmentAppealDeadline,
   getIndictmentVerdictAppealDeadlineStatus,
   getMillisecondsFromDays,
+  getPresidingAppealJudge,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
   IndictmentSubtypeMap,
@@ -706,15 +707,25 @@ const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
   includes: {
     appealCase: {
       attributes: [],
-      includes: { appealJudge1: { attributes: ['name'] } },
+      includes: {
+        appealJudges: {
+          attributes: ['displayOrder'],
+          includes: { user: { attributes: ['name'] } },
+        },
+      },
     },
     rulingOrderAppealCases: {
       attributes: [],
-      includes: { appealJudge1: { attributes: ['name'] } },
+      includes: {
+        appealJudges: {
+          attributes: ['displayOrder'],
+          includes: { user: { attributes: ['name'] } },
+        },
+      },
     },
   },
   generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
-    const initials = getInitials(c.appeal?.appealJudge1?.name)
+    const initials = getInitials(getPresidingAppealJudge(c.appeal)?.name)
 
     if (!initials) {
       return generateCell()
@@ -786,11 +797,16 @@ const verdictAppealHead: CaseTableCellGenerator<StringValue> = {
   includes: {
     verdictAppealCase: {
       attributes: [],
-      includes: { appealJudge1: { attributes: ['name'] } },
+      includes: {
+        appealJudges: {
+          attributes: ['displayOrder'],
+          includes: { user: { attributes: ['name'] } },
+        },
+      },
     },
   },
   generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
-    const initials = getInitials(c.appeal?.appealJudge1?.name)
+    const initials = getInitials(getPresidingAppealJudge(c.appeal)?.name)
 
     if (!initials) {
       return generateCell()

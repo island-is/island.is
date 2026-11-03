@@ -1,5 +1,6 @@
 import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import {
+  hasAllAppealJudges,
   isIndictmentCase,
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
@@ -174,14 +175,12 @@ const firstDefendantIsInvalid = (workingCase: WorkingCase): boolean => {
 }
 
 const areDefenderContactsValid = (workingCase: WorkingCase): boolean =>
-  validate([
-    [workingCase.defenderEmail, ['email-format']],
-    [workingCase.defenderPhoneNumber, ['phonenumber']],
-    ...(workingCase.defendants ?? []).flatMap((defendant): ValidateItem[] => [
+  validate(
+    (workingCase.defendants ?? []).flatMap((defendant): ValidateItem[] => [
       [defendant.defenderEmail, ['email-format']],
       [defendant.defenderPhoneNumber, ['phonenumber']],
     ]),
-  ]).isValid
+  ).isValid
 
 const someDefendantIsInvalid = (workingCase: WorkingCase): boolean => {
   return Boolean(
@@ -890,10 +889,7 @@ export const isCourtOfAppealCaseStepValid = (
 ): boolean => {
   return Boolean(
     (appealCase?.appealState === AppealCaseState.WITHDRAWN ||
-      (appealCase?.appealJudge1 &&
-        appealCase?.appealJudge2 &&
-        appealCase?.appealJudge3 &&
-        appealCase?.appealAssistant)) &&
+      (hasAllAppealJudges(appealCase) && appealCase?.appealAssistant)) &&
       validate([
         [appealCase?.appealCaseNumber, ['empty', 'appeal-case-number-format']],
       ]).isValid,

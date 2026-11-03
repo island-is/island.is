@@ -301,6 +301,11 @@ export const en: TranslatedMessages = {
   'documentDetail.bookmarkError': 'Could not star document',
   'documentDetail.unbookmarkError': 'Could not unstar document',
   'documentDetail.pleaseTryAgain': 'Please try again later',
+  'documentDetail.downloadButton': 'Download',
+  'documentDetail.archiveButton': 'Archive',
+  'documentDetail.bookmarkButton': 'Star',
+  'documentDetail.unarchiveButton': 'Unarchive',
+  'documentDetail.unbookmarkButton': 'Remove star',
 
   // document reply
   'documentReply.to': 'To',

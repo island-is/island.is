@@ -14,7 +14,7 @@ import {
 import { SubpoenaType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories/date.factory'
-import { subpoena as strings } from '../../messages'
+import { formatIcuMessage, subpoena as strings } from '../../messages'
 import { Case, Defendant, Subpoena } from '../../modules/repository'
 import {
   addEmptyLines,
@@ -127,7 +127,7 @@ export const createSubpoena = (
   if (arraignmentDate) {
     addNormalText(
       doc,
-      formatMessage(strings.arraignmentDate, {
+      formatIcuMessage(strings.arraignmentDate, {
         arraignmentDate: formatDate(new Date(arraignmentDate), 'PPPp'),
       }),
       'Times-Bold',
@@ -137,7 +137,7 @@ export const createSubpoena = (
   if (location) {
     addNormalText(
       doc,
-      formatMessage(strings.courtRoom, {
+      formatIcuMessage(strings.courtRoom, {
         courtRoom: location,
       }),
       'Times-Roman',

@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { Fragment, useCallback, useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
@@ -109,7 +108,6 @@ const Subpoena: FC = () => {
   const { updateDefendants } = useDefendants()
   const { setAndSendCaseToServer } = useCase()
   const { createSubpoenas } = useCreateSubpoenas()
-  const { formatMessage } = useIntl()
 
   const isIssuingSubpoenaForDefendant = (defendant: Defendant) =>
     !defendant.isAlternativeService &&
@@ -390,9 +388,9 @@ const Subpoena: FC = () => {
       })
     } else if (isIssuingSubpoenas) {
       setModalContent({
-        title: formatMessage(strings.modalTitle),
+        title: strings.modalTitle,
         text: subpoenaText,
-        primaryButtonText: formatMessage(strings.modalPrimaryButtonText),
+        primaryButtonText: strings.modalPrimaryButtonText,
       })
     } else if (isSchedulingArraignmentDate) {
       setModalContent({
@@ -407,7 +405,6 @@ const Subpoena: FC = () => {
     isIssuingAlternativeServices,
     isIssuingSubpoenas,
     isSchedulingArraignmentDate,
-    formatMessage,
     modalContent,
     workingCase.civilClaimants,
   ])
@@ -427,9 +424,9 @@ const Subpoena: FC = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(titles.court.indictments.subpoena)} />
+      <PageHeader title={titles.court.indictments.subpoena} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={stack({ gap: 5 })}>
           {updates?.defendants && (
@@ -495,7 +492,7 @@ const Subpoena: FC = () => {
                       })
                     }}
                   >
-                    {formatMessage(strings.newSubpoenaButtonText)}
+                    {strings.newSubpoenaButtonText}
                   </Button>
                 ) : null,
               }))}
@@ -503,9 +500,7 @@ const Subpoena: FC = () => {
             />
           )}
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(strings.courtArrangementsHeading)}
-            />
+            <SectionHeading title={strings.courtArrangementsHeading} />
             <BlueBox>
               {canSkipArraignmentSummons && (
                 <Box marginBottom={2}>
@@ -602,8 +597,8 @@ const Subpoena: FC = () => {
           actions={[
             {
               text: !isSchedulingArraignmentDate
-                ? formatMessage(core.continue)
-                : formatMessage(strings.nextButtonText),
+                ? core.continue
+                : strings.nextButtonText,
               icon: 'arrowForward',
               onClick: () => {
                 if (!isSchedulingArraignmentDate) {
@@ -628,7 +623,7 @@ const Subpoena: FC = () => {
             text={modalContent.text}
             buttons={[
               {
-                text: formatMessage(strings.modalSecondaryButtonText),
+                text: strings.modalSecondaryButtonText,
                 onClick: () => setNavigateTo(undefined),
                 variant: 'ghost',
               },

@@ -10,6 +10,10 @@ import { UserDeviceTokens } from '../src/app/user-profile/models/userDeviceToken
 import { DataStatus } from '../src/app/user-profile/types/dataStatusTypes'
 import { ActorProfile } from '../src/app/user-profile/models/actor-profile.model'
 import { Emails } from '../src/app/user-profile/models/emails.model'
+import {
+  BlockedNotification,
+  CategoryLabel,
+} from '../src/app/user-profile/models/blockedNotification.model'
 import { uuid } from 'uuidv4'
 
 export class FixtureFactory {
@@ -162,6 +166,30 @@ export class FixtureFactory {
     return userDeviceTokenModel.create<UserDeviceTokens>({
       nationalId,
       deviceToken,
+    })
+  }
+
+  async createBlockedNotification({
+    nationalId,
+    senderId,
+    category = 'almennt',
+    categoryLabel = { is: 'Almennt', en: 'General' },
+    created,
+  }: {
+    nationalId: string
+    senderId: string
+    category?: string
+    categoryLabel?: CategoryLabel
+    created?: Date
+  }) {
+    const blockedNotificationModel = this.get(BlockedNotification)
+
+    return blockedNotificationModel.create<BlockedNotification>({
+      nationalId,
+      senderId,
+      category,
+      categoryLabel,
+      created,
     })
   }
 

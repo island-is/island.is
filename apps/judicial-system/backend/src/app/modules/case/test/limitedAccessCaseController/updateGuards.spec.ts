@@ -8,7 +8,7 @@ import {
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { CaseWriteGuard } from '../../guards/caseWrite.guard'
-import { LimitedAccessCaseExistsGuard } from '../../guards/limitedAccessCaseExists.guard'
+import { LimitedAccessCaseExistsForUpdateGuard } from '../../guards/limitedAccessCaseExistsForUpdate.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
 describe('LimitedAccessCaseController - Update guards', () => {
@@ -26,7 +26,9 @@ describe('LimitedAccessCaseController - Update guards', () => {
     expect(guards).toHaveLength(6)
     expect(new guards[0]()).toBeInstanceOf(JwtAuthUserGuard)
     expect(new guards[1]()).toBeInstanceOf(RolesGuard)
-    expect(new guards[2]()).toBeInstanceOf(LimitedAccessCaseExistsGuard)
+    expect(new guards[2]()).toBeInstanceOf(
+      LimitedAccessCaseExistsForUpdateGuard,
+    )
     expect(guards[3]).toBeInstanceOf(CaseTypeGuard)
     expect(guards[3]).toEqual({
       allowedCaseTypes: [

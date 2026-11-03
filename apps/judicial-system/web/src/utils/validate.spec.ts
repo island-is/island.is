@@ -1100,28 +1100,6 @@ describe('isDefendantStepValidRC', () => {
     expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(true)
   })
 
-  test('is false when the defender email is malformed', () => {
-    const workingCase = {
-      ...validCase,
-      defenderEmail: 'not-an-email',
-    } as WorkingCase
-
-    expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(
-      false,
-    )
-  })
-
-  test('is false when the defender phone number is malformed', () => {
-    const workingCase = {
-      ...validCase,
-      defenderPhoneNumber: '12345',
-    } as WorkingCase
-
-    expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(
-      false,
-    )
-  })
-
   test.each([
     ['defenderEmail', 'not-an-email'],
     ['defenderPhoneNumber', '12345'],
@@ -1340,21 +1318,6 @@ describe('isDefendantStepValidIC', () => {
     } as WorkingCase
 
     expect(isDefendantStepValidIC(workingCase)).toBe(false)
-  })
-
-  test('is false when the defender contact details are malformed', () => {
-    expect(
-      isDefendantStepValidIC({
-        ...validCase,
-        defenderEmail: 'nope',
-      } as WorkingCase),
-    ).toBe(false)
-    expect(
-      isDefendantStepValidIC({
-        ...validCase,
-        defenderPhoneNumber: '1',
-      } as WorkingCase),
-    ).toBe(false)
   })
 })
 
@@ -1943,21 +1906,6 @@ describe('isCourtHearingArrangemenstStepValidRC', () => {
     ).toBe(false)
   })
 
-  test('is false when the defender contact details are malformed', () => {
-    expect(
-      isCourtHearingArrangemenstStepValidRC({
-        arraignmentDate,
-        defenderEmail: 'nope',
-      } as WorkingCase),
-    ).toBe(false)
-    expect(
-      isCourtHearingArrangemenstStepValidRC({
-        arraignmentDate,
-        defenderPhoneNumber: '1',
-      } as WorkingCase),
-    ).toBe(false)
-  })
-
   test.each([
     ['defenderEmail', 'nope'],
     ['defenderPhoneNumber', '1'],
@@ -2027,15 +1975,6 @@ describe('isCourtHearingArrangementsStepValidIC', () => {
       isCourtHearingArrangementsStepValidIC(validCase, {
         date: undefined,
       } as DateLog),
-    ).toBe(false)
-  })
-
-  test('is false when the defender email is malformed', () => {
-    expect(
-      isCourtHearingArrangementsStepValidIC({
-        ...validCase,
-        defenderEmail: 'nope',
-      } as WorkingCase),
     ).toBe(false)
   })
 
@@ -2797,9 +2736,11 @@ describe('isCourtOfAppealCaseStepValid', () => {
   const validAppealCase = {
     appealState: AppealCaseState.RECEIVED,
     appealCaseNumber: '1/2024',
-    appealJudge1: { id: 'j1' },
-    appealJudge2: { id: 'j2' },
-    appealJudge3: { id: 'j3' },
+    appealJudges: [
+      { displayOrder: 0, userId: 'j1', user: { id: 'j1' } },
+      { displayOrder: 1, userId: 'j2', user: { id: 'j2' } },
+      { displayOrder: 2, userId: 'j3', user: { id: 'j3' } },
+    ],
     appealAssistant: { id: 'a1' },
   } as AppealCase
 
@@ -2807,18 +2748,40 @@ describe('isCourtOfAppealCaseStepValid', () => {
     expect(isCourtOfAppealCaseStepValid(validAppealCase)).toBe(true)
   })
 
-  test.each([
-    'appealJudge1',
-    'appealJudge2',
-    'appealJudge3',
-    'appealAssistant',
-  ] as const)('is false when %s is missing', (field) => {
+  test('is false when the assistant is missing', () => {
     expect(
       isCourtOfAppealCaseStepValid({
         ...validAppealCase,
-        [field]: undefined,
+        appealAssistant: undefined,
       } as AppealCase),
     ).toBe(false)
+  })
+
+  test('is false when the bench has fewer than three judges', () => {
+    expect(
+      isCourtOfAppealCaseStepValid({
+        ...validAppealCase,
+        appealJudges: validAppealCase.appealJudges?.slice(0, 2),
+      } as AppealCase),
+    ).toBe(false)
+    expect(
+      isCourtOfAppealCaseStepValid({
+        ...validAppealCase,
+        appealJudges: [],
+      } as AppealCase),
+    ).toBe(false)
+  })
+
+  test('is true for a bench of more than three judges', () => {
+    expect(
+      isCourtOfAppealCaseStepValid({
+        ...validAppealCase,
+        appealJudges: [
+          ...(validAppealCase.appealJudges ?? []),
+          { displayOrder: 3, userId: 'j4', user: { id: 'j4' } },
+        ],
+      } as AppealCase),
+    ).toBe(true)
   })
 
   test('does not require judges or an assistant when the appeal is withdrawn', () => {

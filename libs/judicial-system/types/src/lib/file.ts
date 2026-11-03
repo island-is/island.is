@@ -27,6 +27,10 @@ export enum CaseFileCategory {
   DEFENDANT_APPEAL_CASE_FILE = 'DEFENDANT_APPEAL_CASE_FILE', // Verjandi: Viðbótargögn við kæru til Landsréttar
   DEFENDANT_APPEAL_DECLARATION = 'DEFENDANT_APPEAL_DECLARATION', // Verjandi: Áfrýjunaryfirlýsing til Landsréttar
   DEFENDANT_APPEAL_DECLARATION_CASE_FILE = 'DEFENDANT_APPEAL_DECLARATION_CASE_FILE', // Verjandi: Fylgigögn áfrýjunaryfirlýsingar
+  PROSECUTOR_VERDICT_APPEAL_STATEMENT = 'PROSECUTOR_VERDICT_APPEAL_STATEMENT', // Ákærandi: Greinargerð í áfrýjun til Landsréttar
+  DEFENDANT_VERDICT_APPEAL_STATEMENT = 'DEFENDANT_VERDICT_APPEAL_STATEMENT', // Verjandi / réttargæslumaður: Greinargerð í áfrýjun til Landsréttar
+  PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE = 'PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE', // Ákærandi: Fylgigögn greinargerðar í áfrýjun
+  DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE = 'DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE', // Verjandi / réttargæslumaður: Fylgigögn greinargerðar í áfrýjun
   INDEPENDENT_DEFENDANT_CASE_FILE = 'INDEPENDENT_DEFENDANT_CASE_FILE', // Varnaraðili: Innsend gögn í dómssal
   CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE = 'CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE', // Lögmaður: Innsend gögn í dómssal
   CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE = 'CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE', // Réttargæslumaður: Innsend gögn í dómssal
@@ -71,8 +75,32 @@ const isVerdictAppealDeclarationCategory = (
   Boolean(category) &&
   verdictAppealDeclarationFileCategories.includes(category as CaseFileCategory)
 
+// The greinargerð of a party to a verdict appeal and whatever is filed with
+// it. Its own categories rather than the kæra statement ones, so a verdict
+// appeal and a ruling appeal of the same case never share a category - the
+// two are otherwise told apart only by whether a file names a ruling order.
+// The DEFENDANT_ pair serves the civil claimants too; the file's party ids
+// say which.
+export const verdictAppealStatementFileCategories = [
+  CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT,
+  CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+  CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+  CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+]
+
+const isVerdictAppealStatementCategory = (category?: string | null): boolean =>
+  Boolean(category) &&
+  verdictAppealStatementFileCategories.includes(category as CaseFileCategory)
+
+// Everything a party files in a verdict appeal.
+export const verdictAppealFileCategories = [
+  ...verdictAppealDeclarationFileCategories,
+  ...verdictAppealStatementFileCategories,
+]
+
 // Kæra files are delivered to the court of appeals as soon as it registers its
-// case number, so from that point on they can no longer be deleted.
+// case number, so from that point on they can no longer be deleted. A verdict
+// appeal statement follows the same rule.
 //
 // An áfrýjunaryfirlýsing locks earlier, and for a different reason: the
 // declaration is the appeal itself, not a document filed in support of one, and
@@ -91,7 +119,9 @@ export const isAppealFileDeletionLocked = (
   }
 
   return (
-    isPartyAppealFileCategory(category) && Boolean(appealCase.appealCaseNumber)
+    (isPartyAppealFileCategory(category) ||
+      isVerdictAppealStatementCategory(category)) &&
+    Boolean(appealCase.appealCaseNumber)
   )
 }
 

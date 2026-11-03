@@ -18,7 +18,7 @@ export class InternalCaseResponse {
   courtCaseNumber!: string
   defendants!: Defendant[]
   court!: Institution
-  judge!: User
+  judge?: User | null
   prosecutorsOffice!: Institution
   prosecutor!: User
   dateLogs?: DateLog[]

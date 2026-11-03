@@ -1,11 +1,13 @@
 import {
   buildAlertMessageField,
+  buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
   buildTextField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages/information'
 import { Application } from '@island.is/api/schema'
@@ -59,6 +61,17 @@ export const GrantSection = buildSection({
           title: information.labels.bankInformation.informationTitle,
           message: information.labels.bankInformation.informationDescription,
           alertType: 'info',
+        }),
+        buildCheckboxField({
+          id: 'grant.confirmPriceDefinition',
+          required: true,
+          spacing: 2,
+          options: [
+            {
+              value: YES,
+              label: grant.general.confirmPriceDefinition,
+            },
+          ],
         }),
         buildSubmitField({
           id: 'submit',

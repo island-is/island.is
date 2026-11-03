@@ -40,6 +40,7 @@ import {
   InstitutionModule,
   MessageSuspensionModule,
   PoliceModule,
+  ServiceInterruptionBannerModule,
   StatisticsModule,
   SubpoenaModule,
   UserModule,
@@ -90,6 +91,7 @@ const autoSchemaFile = production
     VerdictModule,
     CaseTableModule,
     MessageSuspensionModule,
+    ServiceInterruptionBannerModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,

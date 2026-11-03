@@ -61,6 +61,7 @@ import {
 import { BankTransferPayment } from './models'
 import {
   bankTransferLogContext,
+  bankName,
   buildBankTransferPayInfo,
   deriveBankTransferFailureReason,
   generateBankTransferChargeFJSPayload,
@@ -110,6 +111,8 @@ export class BankTransferService {
       input.paymentFlowId,
     )
     const payerType = getBankTransferPayerType(paymentFlow.payerNationalId)
+    // Only the bank part of the account number is kept, on the row and in the logs.
+    const bankCode = input.bankAccountNumber.slice(0, 4)
 
     const [isEligible, existing] = await Promise.all([
       this.paymentFlowService.isEligibleToBePaid(input.paymentFlowId),
@@ -132,7 +135,12 @@ export class BankTransferService {
     ) {
       this.logger.warn(
         `[${input.paymentFlowId}] Bank transfer requested for a payer it is not enabled for`,
-        { paymentFlowId: input.paymentFlowId, payerType },
+        {
+          paymentFlowId: input.paymentFlowId,
+          payerType,
+          bankCode,
+          bank: bankName(bankCode),
+        },
       )
       throw new BadRequestException(
         BankTransferErrorCode.FailedToCreateBankTransfer,
@@ -147,7 +155,12 @@ export class BankTransferService {
       // The payment screen validates this; reaching here means a missing or non-person actor.
       this.logger.warn(
         `[${input.paymentFlowId}] Company bank transfer requested without a valid individual to authorise it`,
-        { paymentFlowId: input.paymentFlowId, payerType },
+        {
+          paymentFlowId: input.paymentFlowId,
+          payerType,
+          bankCode,
+          bank: bankName(bankCode),
+        },
       )
       throw new BadRequestException(
         BankTransferErrorCode.InvalidActorNationalId,
@@ -231,6 +244,8 @@ export class BankTransferService {
             paymentFlowId: input.paymentFlowId,
             correlationId,
             payerType,
+            bankCode,
+            bank: bankName(bankCode),
           },
         },
         { useRetry: true, throwOnError: false },
@@ -247,6 +262,7 @@ export class BankTransferService {
         providerPaymentId: providerResult.providerPaymentId,
         scaRedirectUrl: providerResult.scaRedirectUrl,
         actorNationalId,
+        bankCode,
         amount: totalPrice,
         lastKnownStatus: providerResult.rawStatus,
         expiresAt,
@@ -258,6 +274,7 @@ export class BankTransferService {
         correlationId,
         providerResult.providerPaymentId,
         payerType,
+        bankCode,
       )
 
       // Best effort to cancel the Blikk payment if persisting the row fails
@@ -315,6 +332,7 @@ export class BankTransferService {
           correlationId,
           providerResult.providerPaymentId,
           payerType,
+          bankCode,
         ),
       },
       { useRetry: true, throwOnError: false },
@@ -329,6 +347,7 @@ export class BankTransferService {
           paymentFlowId: input.paymentFlowId,
           providerPaymentId: providerResult.providerPaymentId,
           actorNationalId,
+          bankCode,
         },
         providerResult,
       )
@@ -586,6 +605,7 @@ export class BankTransferService {
         correlationId: row.id,
         paymentFlowId: row.paymentFlowId,
         providerPaymentId: row.providerPaymentId,
+        bankCode: row.bankCode,
         rawStatus: row.lastKnownStatus,
       }).catch((error) => {
         this.logger.warn(
@@ -644,11 +664,14 @@ export class BankTransferService {
     correlationId,
     paymentFlowId,
     providerPaymentId,
+    bankCode,
     rawStatus,
   }: {
     correlationId: string
     paymentFlowId: string
     providerPaymentId: string
+    // Logging only.
+    bankCode?: string | null
     rawStatus: string
   }): Promise<void> {
     const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
@@ -661,6 +684,7 @@ export class BankTransferService {
       correlationId,
       providerPaymentId,
       payerType,
+      bankCode,
     )
 
     // Debt flows are registered with FJS as a debt payment (`payDebt`) instead of a charge.
@@ -683,6 +707,7 @@ export class BankTransferService {
       confirmationRefId: correlationId,
       providerPaymentId,
       payerType,
+      bankCode,
       chargePayload,
     })
 
@@ -703,7 +728,11 @@ export class BankTransferService {
     // Also on repair runs, where SUCCESS was recorded earlier: settling is idempotent, and picks
     // up a registration that never happened.
     const settlement = isDebtFlow
-      ? await this.settleDebt(paymentFlow, { correlationId, providerPaymentId })
+      ? await this.settleDebt(
+          paymentFlow,
+          { correlationId, providerPaymentId },
+          logContext,
+        )
       : null
 
     // A charge flow is completed by the caller that flipped the row. A debt flow, as in the card
@@ -769,6 +798,7 @@ export class BankTransferService {
       correlationId,
       providerPaymentId,
     }: { correlationId: string; providerPaymentId: string },
+    logContext: BankTransferLogContext,
   ): Promise<DebtSettlementOutcome | null> {
     try {
       return await this.debtSettlementService.attempt(
@@ -785,15 +815,7 @@ export class BankTransferService {
     } catch (error) {
       this.logger.warn(
         `[${paymentFlow.id}] Bank transfer settled but the debt payment could not be registered — the payment worker will retry`,
-        {
-          ...bankTransferLogContext(
-            paymentFlow.id,
-            correlationId,
-            providerPaymentId,
-            getBankTransferPayerType(paymentFlow.payerNationalId),
-          ),
-          error: (error as Error)?.message,
-        },
+        { ...logContext, error: (error as Error)?.message },
       )
       return null
     }
@@ -837,12 +859,14 @@ export class BankTransferService {
     providerPaymentId,
     // Logging only.
     payerType,
+    bankCode,
     chargePayload,
   }: {
     paymentFlowId: string
     confirmationRefId: string
     providerPaymentId: string
     payerType: BankTransferPayerType | undefined
+    bankCode?: string | null
     chargePayload?: Charge
   }): Promise<void> {
     const logContext = bankTransferLogContext(
@@ -850,6 +874,7 @@ export class BankTransferService {
       confirmationRefId,
       providerPaymentId,
       payerType,
+      bankCode,
     )
     const existing = await this.paymentFulfillmentModel.findOne({
       where: { paymentFlowId, isDeleted: false },
@@ -916,6 +941,7 @@ export class BankTransferService {
   async createBankTransferPayment(
     input: CreateBankTransferPaymentInput,
   ): Promise<BankTransferPaymentResult> {
+    const bankCode = input.bankAccountNumber?.slice(0, 4)
     const body: CreateBlikkPaymentRequest = {
       amount: input.amount,
       currency: input.currency,
@@ -947,6 +973,8 @@ export class BankTransferService {
             payerType: input.debtorCorpExternalId
               ? BankTransferPayerType.COMPANY
               : BankTransferPayerType.PERSON,
+            bankCode,
+            bank: bankCode ? bankName(bankCode) : undefined,
             status: e.status,
             error: e.message,
           },
@@ -1067,6 +1095,7 @@ export class BankTransferService {
         correlationId: existing.id,
         paymentFlowId: existing.paymentFlowId,
         providerPaymentId: existing.providerPaymentId,
+        bankCode: existing.bankCode,
         rawStatus: existing.lastKnownStatus,
       })
       throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
@@ -1086,6 +1115,7 @@ export class BankTransferService {
           correlationId: existing.id,
           paymentFlowId: existing.paymentFlowId,
           providerPaymentId: existing.providerPaymentId,
+          bankCode: existing.bankCode,
           rawStatus: refreshed.rawStatus,
         })
         throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
@@ -1097,10 +1127,15 @@ export class BankTransferService {
 
   /** Best-effort Blikk GET; logs and returns null on failure. Not for verify (which must throw). */
   private async refreshFromBlikkOrWarn(
-    // `id` and `actorNationalId` are here only for the log context; both callers pass a full row.
+    // `id`, `actorNationalId` and `bankCode` are here only for the log context; both callers pass a
+    // full row.
     row: Pick<
       BankTransferPayment,
-      'providerPaymentId' | 'paymentFlowId' | 'id' | 'actorNationalId'
+      | 'providerPaymentId'
+      | 'paymentFlowId'
+      | 'id'
+      | 'actorNationalId'
+      | 'bankCode'
     >,
   ): Promise<BankTransferPaymentResult | null> {
     try {
@@ -1156,6 +1191,7 @@ export class BankTransferService {
         correlationId: row.id,
         paymentFlowId: row.paymentFlowId,
         providerPaymentId: row.providerPaymentId,
+        bankCode: row.bankCode,
         rawStatus: refreshed.rawStatus,
       })
       // On failure, finalize the bank transfer failure.
@@ -1227,7 +1263,11 @@ export class BankTransferService {
   private async logBankTransferFailed(
     row: Pick<
       BankTransferPayment,
-      'id' | 'paymentFlowId' | 'providerPaymentId' | 'actorNationalId'
+      | 'id'
+      | 'paymentFlowId'
+      | 'providerPaymentId'
+      | 'actorNationalId'
+      | 'bankCode'
     >,
     result: BankTransferPaymentResult,
   ): Promise<void> {
