@@ -1,8 +1,6 @@
 import isSameDay from 'date-fns/isSameDay'
 import PDFDocument from 'pdfkit'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import {
   capitalize,
   formatDate,
@@ -16,7 +14,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
-import { courtRecord, formatIcuMessage } from '../../messages'
+import {
+  courtRecord,
+  formatIcuMessage,
+  type FormatMessage,
+} from '../../messages'
 import { Case } from '../../modules/repository'
 import {
   addCoatOfArms,

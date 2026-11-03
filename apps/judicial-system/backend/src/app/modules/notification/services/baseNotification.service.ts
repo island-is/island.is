@@ -1,8 +1,7 @@
 import { ICalendar } from 'datebook'
 
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
@@ -20,7 +19,7 @@ import {
   formatPostponedCourtDateEmailNotification,
   stripHtmlTags,
 } from '../../../formatters'
-import { formatIcuMessage, notifications } from '../../../messages'
+import { formatIcuMessage, formatMessage, notifications } from '../../../messages'
 import { CourtService } from '../../court'
 import { EventService } from '../../event'
 import {
@@ -41,30 +40,16 @@ interface Attachment {
 
 @Injectable()
 export abstract class BaseNotificationService {
+  protected readonly formatMessage = formatMessage
+
   constructor(
     private readonly notificationRepositoryService: NotificationRepositoryService,
     private readonly emailService: EmailService,
-    private readonly intlService: IntlService,
     private readonly courtService: CourtService,
     protected readonly config: ConfigType<typeof notificationModuleConfig>,
     protected readonly eventService: EventService,
     protected readonly logger: Logger,
   ) {}
-
-  protected formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  protected async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
-  }
 
   private async handleWhitelist(recipients: string[]): Promise<string[]> {
     const whitelist = this.formatMessage(notifications.emailWhitelist)

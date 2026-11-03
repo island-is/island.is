@@ -6,7 +6,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
@@ -56,7 +55,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
-    intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
     courtService: CourtService,
@@ -65,7 +63,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     super(
       notificationRepositoryService,
       emailService,
-      intlService,
       courtService,
       config,
       eventService,
@@ -539,7 +536,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     theCase: Case,
     user?: UserDescriptor,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
     try {
       return await this.sendNotification(type, theCase, user)
     } catch (error) {

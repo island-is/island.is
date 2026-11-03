@@ -3,10 +3,9 @@ import os from 'os'
 import path from 'path'
 import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRef } from 'pdf-lib'
 
-import { createTestIntl } from '@island.is/cms-translations/test'
-
 import { IndictmentSubtype } from '@island.is/judicial-system/types'
 
+import { formatMessage } from '../../messages'
 import {
   Case,
   Defendant,
@@ -48,10 +47,6 @@ describe('FormatDefendant', () => {
 })
 
 describe('createCaseFilesRecord - table of contents', () => {
-  const formatMessage = createTestIntl({
-    locale: 'is-IS',
-    onError: jest.fn,
-  }).formatMessage
 
   const policeCaseNumber = '007-2024-000001'
 
@@ -168,10 +163,6 @@ describe('createCaseFilesRecord - table of contents', () => {
 })
 
 describe('createCaseFilesRecord - unreadable files', () => {
-  const formatMessage = createTestIntl({
-    locale: 'is-IS',
-    onError: jest.fn,
-  }).formatMessage
 
   const policeCaseNumber = '007-2024-000001'
 

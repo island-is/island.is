@@ -3,8 +3,6 @@ import { v4 as uuid } from 'uuid'
 
 import { Test } from '@nestjs/testing'
 
-import { IntlService } from '@island.is/cms-translations'
-import { createTestIntl } from '@island.is/cms-translations/test'
 import { EmailService } from '@island.is/email-service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
@@ -67,10 +65,6 @@ export const createTestUsers = (
     return acc
   }, {} as Record<string, { id: string; name: string; email: string; mobile: string; nationalId: string }>)
 
-const formatMessage = createTestIntl({
-  onError: jest.fn(),
-  locale: 'is-IS',
-}).formatMessage
 
 export const createTestingNotificationModule = async () => {
   const notificationModule = await Test.createTestingModule({
@@ -97,10 +91,6 @@ export const createTestingNotificationModule = async () => {
       {
         provide: EmailService,
         useValue: { sendEmail: jest.fn(async () => uuid()) },
-      },
-      {
-        provide: IntlService,
-        useValue: { useIntl: async () => ({ formatMessage }) },
       },
       {
         provide: InternalCaseService,

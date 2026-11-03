@@ -1,6 +1,3 @@
-import { FormatMessage } from '@island.is/cms-translations'
-import { createTestIntl } from '@island.is/cms-translations/test'
-
 import { formatCaseType } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
@@ -15,6 +12,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { formatMessage } from '../messages'
 import { DateLog } from '../modules/repository'
 import {
   filterWhitelistEmails,
@@ -176,13 +174,6 @@ describe('formatLegalProvisions', () => {
 })
 
 describe('formatHeadsUpSmsNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({
-      locale: 'is',
-      onError: jest.fn(),
-    }).formatMessage
-  })
 
   test('should format heads up notification', () => {
     // Arrange
@@ -311,13 +302,6 @@ describe('formatHeadsUpSmsNotification', () => {
 })
 
 describe('formatReadyForCourtSmsNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({
-      locale: 'is',
-      onError: jest.fn(),
-    }).formatMessage
-  })
 
   test('should format ready for court SMS notification', () => {
     // Arrange
@@ -438,13 +422,6 @@ describe('formatReadyForCourtSmsNotification', () => {
 })
 
 describe('formatReadyForCourtSmsNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({
-      locale: 'is',
-      onError: jest.fn(),
-    }).formatMessage
-  })
 
   test('should format ready for court SMS notification', () => {
     // Arrange
@@ -464,13 +441,6 @@ describe('formatReadyForCourtSmsNotification', () => {
 })
 
 describe('formatProsecutorReadyForCourtEmailNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({
-      locale: 'is',
-      onError: jest.fn(),
-    }).formatMessage
-  })
 
   const fn = (
     policeCaseNumbers: string[],
@@ -541,13 +511,6 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 })
 
 describe('formatProsecutorReceivedByCourtSmsNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({
-      locale: 'is',
-      onError: jest.fn(),
-    }).formatMessage
-  })
 
   test('should format received by court notification for custody', () => {
     // Arranged
@@ -671,13 +634,6 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 })
 
 describe('formatProsecutorCourtDateEmailNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({
-      locale: 'is',
-      onError: jest.fn(),
-    }).formatMessage
-  })
 
   const fn = (
     type: CaseType,
@@ -949,13 +905,6 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 })
 
 describe('formatArraignmentDateEmailNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({
-      locale: 'is',
-      onError: jest.fn(),
-    }).formatMessage
-  })
 
   const fn = (
     arraignmentDateLog: DateLog,
@@ -1028,13 +977,6 @@ describe('formatArraignmentDateEmailNotification', () => {
 })
 
 describe('formatPrisonCourtDateEmailNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({
-      locale: 'is',
-      onError: jest.fn(),
-    }).formatMessage
-  })
 
   test('should format court date notification', () => {
     // Arrange
@@ -1290,13 +1232,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 })
 
 describe('formatDefenderCourtDateEmailNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({
-      locale: 'is',
-      onError: jest.fn(),
-    }).formatMessage
-  })
 
   test('should format defender court date notification', () => {
     // Arrange
@@ -1459,13 +1394,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 })
 
 describe('formatDefenderCourtDateLinkEmailNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({
-      locale: 'is',
-      onError: jest.fn(),
-    }).formatMessage
-  })
 
   test('should format defender court date link notification with RVG link', () => {
     // Arrange
@@ -1514,13 +1442,6 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
 })
 
 describe('formatCourtRevokedSmsNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({
-      locale: 'is',
-      onError: jest.fn(),
-    }).formatMessage
-  })
 
   test('should format revoked sms with court date', () => {
     // Arrange
@@ -1650,13 +1571,6 @@ describe('formatCourtRevokedSmsNotification', () => {
 })
 
 describe('formatPrisonRevokedEmailNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({
-      locale: 'is',
-      onError: jest.fn(),
-    }).formatMessage
-  })
 
   test('should format revoked notification for custody', () => {
     // Arrange
@@ -1742,10 +1656,6 @@ describe('stripHtmlTags', () => {
 })
 
 describe('formatCustodyRestrictions', () => {
-  const formatMessage = createTestIntl({
-    locale: 'is',
-    onError: jest.fn(),
-  }).formatMessage
 
   const format = (
     caseType: CaseType,
@@ -1856,10 +1766,6 @@ describe('formatCustodyRestrictions', () => {
 })
 
 describe('formatPrisonAdministrationRulingNotification', () => {
-  const formatMessage = createTestIntl({
-    locale: 'is',
-    onError: jest.fn(),
-  }).formatMessage
   const fn = (
     isModifyingRuling: boolean,
     overviewUrl: string,
@@ -1895,15 +1801,6 @@ describe('formatPrisonAdministrationRulingNotification', () => {
 })
 
 describe('formatDefenderResubmittedToCourtEmailNotification', () => {
-  let formatMessage: FormatMessage
-
-  beforeAll(() => {
-    formatMessage = createTestIntl({
-      locale: 'is',
-      onError: jest.fn(),
-    }).formatMessage
-  })
-
   it('should format email', () => {
     const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
     const court = 'Héraðsdómur Reykjavíkur'

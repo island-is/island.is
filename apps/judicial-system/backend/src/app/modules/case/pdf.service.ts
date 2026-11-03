@@ -8,7 +8,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -43,6 +42,7 @@ import {
   getRequestPdfAsBuffer,
   getRulingPdfAsBuffer,
 } from '../../formatters'
+import { formatMessage } from '../../messages'
 import { verdictAppellantSide } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import {
@@ -63,7 +63,6 @@ export class PdfService {
 
   constructor(
     private readonly awsS3Service: AwsS3Service,
-    private readonly intlService: IntlService,
     private readonly policeDigitalCaseFileRepositoryService: PoliceDigitalCaseFileRepositoryService,
     @Inject(forwardRef(() => SubpoenaService))
     private readonly subpoenaService: SubpoenaService,
@@ -71,20 +70,7 @@ export class PdfService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  private async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
-  }
+  private readonly formatMessage = formatMessage
 
   private async throttleGetCaseFilesRecordPdf(
     theCase: Case,
@@ -95,8 +81,6 @@ export class PdfService {
     await this.throttle.catch((reason) => {
       this.logger.info('Previous case files pdf generation failed', { reason })
     })
-
-    await this.refreshFormatMessage()
 
     const caseFiles = theCase.caseFiles
       ?.filter(
@@ -180,7 +164,6 @@ export class PdfService {
       }
     }
 
-    await this.refreshFormatMessage()
 
     return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
   }
@@ -251,7 +234,6 @@ export class PdfService {
   }
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
 
     return getRequestPdfAsBuffer(theCase, this.formatMessage)
   }
@@ -271,13 +253,11 @@ export class PdfService {
       }
     }
 
-    await this.refreshFormatMessage()
 
     return getRulingPdfAsBuffer(theCase, this.formatMessage)
   }
 
   async getCustodyNoticePdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
 
     return getCustodyNoticePdfAsBuffer(theCase, this.formatMessage)
   }
@@ -384,7 +364,6 @@ export class PdfService {
       }
     }
 
-    await this.refreshFormatMessage()
 
     const fullOriginalCase = await this.getFullOriginalCase(
       theCase,
@@ -500,7 +479,6 @@ export class PdfService {
       }
     }
 
-    await this.refreshFormatMessage()
 
     // For subpoenas created before the split, use the reconstructed full parent
     // case. For subpoenas created after the split, use the current case directly
@@ -542,7 +520,6 @@ export class PdfService {
     defendant: Defendant,
     subpoena: Subpoena,
   ): Promise<Buffer> {
-    await this.refreshFormatMessage()
 
     const isSplitSubpoena =
       theCase.splitCaseId && subpoena.created < theCase.created
@@ -570,7 +547,6 @@ export class PdfService {
     verdict: Verdict,
     deliveredToDefenderName?: string,
   ): Promise<Buffer> {
-    await this.refreshFormatMessage()
 
     const generatedPdf = await createVerdictServiceCertificate({
       theCase,

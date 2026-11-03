@@ -1,7 +1,5 @@
 import PDFDocument from 'pdfkit'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import {
   capitalize,
   formatCaseType,
@@ -16,7 +14,12 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
-import { core, formatIcuMessage, request as m } from '../../messages'
+import {
+  core,
+  formatIcuMessage,
+  type FormatMessage,
+  request as m,
+} from '../../messages'
 import { Case, Defendant, EventLog } from '../../modules/repository'
 import { formatLegalProvisions } from '../formatters'
 import {

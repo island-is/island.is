@@ -1,7 +1,5 @@
 import PDFDocument from 'pdfkit'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import { getIntro } from '@island.is/judicial-system/consts'
 import {
   capitalize,
@@ -14,7 +12,11 @@ import {
 import { SubpoenaType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories/date.factory'
-import { formatIcuMessage, subpoena as strings } from '../../messages'
+import {
+  formatIcuMessage,
+  type FormatMessage,
+  subpoena as strings,
+} from '../../messages'
 import { Case, Defendant, Subpoena } from '../../modules/repository'
 import {
   addEmptyLines,

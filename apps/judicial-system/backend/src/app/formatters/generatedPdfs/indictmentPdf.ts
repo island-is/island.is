@@ -1,8 +1,6 @@
 import { setLineCap } from 'pdf-lib'
 import PDFDocument from 'pdfkit'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import {
   containsHtml,
   formatDate,
@@ -11,7 +9,11 @@ import {
 import { sortIndictmentCounts } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
-import { formatIcuMessage, indictment } from '../../messages'
+import {
+  formatIcuMessage,
+  type FormatMessage,
+  indictment,
+} from '../../messages'
 import { Case, CaseString } from '../../modules/repository'
 import {
   addEmptyLines,

@@ -1,7 +1,5 @@
 import PDFDocument from 'pdfkit'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import {
   formatDate,
   formatDOB,
@@ -13,7 +11,10 @@ import {
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { serviceCertificate as strings } from '../../messages'
+import {
+  type FormatMessage,
+  serviceCertificate as strings,
+} from '../../messages'
 import { Case, Defendant, Verdict } from '../../modules/repository'
 import {
   addEmptyLines,

@@ -13,7 +13,6 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
   DokobitError,
   SigningService,
@@ -70,6 +69,7 @@ import {
   getCourtRecordPdfAsString,
   getRulingPdfAsString,
 } from '../../formatters'
+import { formatMessage } from '../../messages'
 import { queueMessagesAfterCommit, registerAfterCommit } from '../../middleware'
 import {
   buildInCourtAppealedEvent,
@@ -171,7 +171,6 @@ export class CaseService {
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
-    private readonly intlService: IntlService,
     private readonly eventService: EventService,
     private readonly eventLogService: EventLogService,
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
@@ -186,20 +185,7 @@ export class CaseService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  private async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
-  }
+  private readonly formatMessage = formatMessage
 
   private async uploadSignedRulingPdfToS3(
     theCase: Case,
@@ -2598,7 +2584,6 @@ export class CaseService {
     user: TUser,
     method: 'audkenni' | 'mobile',
   ): Promise<SigningServiceResponse> {
-    await this.refreshFormatMessage()
 
     const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
 
@@ -2729,7 +2714,6 @@ export class CaseService {
       )
     }
 
-    await this.refreshFormatMessage()
     const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
     if (method === 'audkenni') {
       return this.signingService

@@ -1,11 +1,13 @@
 import PDFDocument from 'pdfkit'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 
 import { nowFactory } from '../../factories'
-import { formatIcuMessage, ruling } from '../../messages'
+import {
+  formatIcuMessage,
+  type FormatMessage,
+  ruling,
+} from '../../messages'
 import { Case } from '../../modules/repository'
 import {
   addCoatOfArms,

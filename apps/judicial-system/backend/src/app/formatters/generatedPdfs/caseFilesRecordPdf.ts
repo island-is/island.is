@@ -1,5 +1,3 @@
-import { FormatMessage } from '@island.is/cms-translations'
-
 import {
   capitalize,
   formatDate,
@@ -7,7 +5,11 @@ import {
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 
-import { caseFilesRecord, formatIcuMessage } from '../../messages'
+import {
+  caseFilesRecord,
+  formatIcuMessage,
+  type FormatMessage,
+} from '../../messages'
 import {
   Case,
   Defendant,

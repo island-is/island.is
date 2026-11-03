@@ -1,5 +1,3 @@
-import type { FormatMessage } from '@island.is/cms-translations'
-
 import {
   DEFENDER_INDICTMENT_CASE_ROUTE,
   DEFENDER_REQUEST_CASE_ROUTE,
@@ -32,6 +30,7 @@ import {
   core,
   custodyNotice,
   formatIcuMessage,
+  type FormatMessage,
   notifications,
 } from '../messages'
 import { Case, DateLog } from '../modules/repository'
@@ -510,7 +509,6 @@ export const formatDefenderCourtDateEmailNotification = (
   sessionArrangements?: SessionArrangements,
   defenderSubRole?: DefenderSubRole,
 ): string => {
-  /** contentful strings */
   const defenderResponsibility = formatDefenderResponsibility({
     defenderSubRole,
     getCustomDefendantDefenderLabel: () =>

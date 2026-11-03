@@ -6,7 +6,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
@@ -37,7 +36,6 @@ export class InstitutionNotificationService extends BaseNotificationService {
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
-    intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
     courtService: CourtService,
@@ -47,7 +45,6 @@ export class InstitutionNotificationService extends BaseNotificationService {
     super(
       notificationRepositoryService,
       emailService,
-      intlService,
       courtService,
       config,
       eventService,
@@ -75,7 +72,6 @@ export class InstitutionNotificationService extends BaseNotificationService {
       return
     }
 
-    await this.refreshFormatMessage()
 
     const subject = this.formatMessage(strings.waitingForConfirmation.subject)
     const body = formatIcuMessage(strings.waitingForConfirmation.body, {
@@ -101,7 +97,6 @@ export class InstitutionNotificationService extends BaseNotificationService {
   private async sendPublicProsecutorVerdictAppealDeadlineReminderNotification(
     prosecutorsOfficeId: string,
   ) {
-    await this.refreshFormatMessage()
 
     const users = await this.userService.getProsecutorUsers(prosecutorsOfficeId)
     const targetDate = addDays(nowFactory(), 7)
