@@ -123,10 +123,6 @@ describe('CaseController - Extend', () => {
       type,
       description,
       policeCaseNumbers,
-      defenderName,
-      defenderNationalId,
-      defenderEmail,
-      defenderPhoneNumber,
       leadInvestigator,
       courtId,
       translator,
@@ -262,10 +258,6 @@ describe('CaseController - Extend', () => {
     const type = CaseType.CUSTODY
     const description = 'Some details'
     const policeCaseNumbers = ['007-2021-777']
-    const defenderName = 'John Doe'
-    const defenderNationalId = '0000000009'
-    const defenderEmail = 'john@dummy.is'
-    const defenderPhoneNumber = '1234567'
     const leadInvestigator = 'The Boss'
     const courtId = uuid()
     const translator = 'Bob Smith'
@@ -285,10 +277,6 @@ describe('CaseController - Extend', () => {
       state: CaseState.NEW,
       description,
       policeCaseNumbers,
-      defenderName,
-      defenderNationalId,
-      defenderEmail,
-      defenderPhoneNumber,
       leadInvestigator,
       courtId,
       translator,
