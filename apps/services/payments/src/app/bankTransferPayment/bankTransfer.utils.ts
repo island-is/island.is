@@ -257,6 +257,17 @@ export const deriveBankTransferFailureReason = (
     ? BankTransferFailureReason.EXPIRED
     : toBankTransferFailureReason(status)
 
+/** True while the transfer may still move money, or already has: pending within its TTL, or settled. */
+export const isBankTransferLive = (
+  row: Pick<BankTransferPayment, 'lastKnownStatus' | 'expiresAt'>,
+): boolean => {
+  const status = mapBlikkStatusToBankTransferStatus(row.lastKnownStatus)
+  return (
+    status === BankTransferStatus.SUCCESS ||
+    (status === BankTransferStatus.PENDING && !isRowExpired(row))
+  )
+}
+
 /** The neutral payInfo of a settled bank transfer; carries the provider id in `RRN`. */
 export const buildBankTransferPayInfo = ({
   providerPaymentId,

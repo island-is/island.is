@@ -77,6 +77,7 @@ import { ChargeItem } from '../../utils/chargeUtils'
 import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
 import { BankTransferPayment } from '../bankTransferPayment/models'
+import { isBankTransferLive } from '../bankTransferPayment/bankTransfer.utils'
 import { determinePaymentMethods } from './paymentFlow.utils'
 import { DebtSettlementService } from '../debtPayment/debtSettlement.service'
 import {
@@ -455,6 +456,11 @@ export class PaymentFlowService {
               required: false,
               where: { isDeleted: false },
             },
+            {
+              model: BankTransferPayment,
+              required: false,
+              where: { isDeleted: false },
+            },
           ],
         },
       ],
@@ -463,7 +469,8 @@ export class PaymentFlowService {
     const held = others.find(({ paymentFlow }) =>
       paymentFlow?.debtSettlement
         ? paymentFlow.debtSettlement.status !== 'rejected'
-        : (paymentFlow?.paymentFulfillments?.length ?? 0) > 0,
+        : (paymentFlow?.paymentFulfillments?.length ?? 0) > 0 ||
+          (paymentFlow?.bankTransferPayments ?? []).some(isBankTransferLive),
     )
 
     if (held) {

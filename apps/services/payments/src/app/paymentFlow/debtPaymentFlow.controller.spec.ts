@@ -26,6 +26,7 @@ import {
   PaymentFulfillment,
 } from './models'
 import { PaymentFlowService } from './paymentFlow.service'
+import { BankTransferPayment } from '../bankTransferPayment/models'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SpiedService = any
@@ -283,6 +284,70 @@ describe('DebtPaymentFlowController', () => {
           const response = await server
             .post('/v1/payments/debts')
             .send(payloadFor('held-refunded'))
+
+          expect(response.status).toBe(200)
+        })
+      })
+
+      describe('when the other flow has a bank transfer underway', () => {
+        const startTransferFor = async (
+          payId: string,
+          transfer: { expiresAt: Date; isDeleted?: boolean },
+        ) => {
+          const create = await server
+            .post('/v1/payments/debts')
+            .send(payloadFor(payId))
+          expect(create.status).toBe(200)
+
+          const id = uuid()
+          await app.get(getModelToken(BankTransferPayment)).create({
+            id,
+            paymentFlowId: getFlowId(create.body.urls),
+            provider: 'blikk',
+            providerPaymentId: uuid(),
+            sourceReferenceId: id,
+            amount: 10000,
+            lastKnownStatus: 'PENDING',
+            ...transfer,
+          })
+        }
+
+        it('refuses a new flow', async () => {
+          await startTransferFor('held-transfer', {
+            expiresAt: new Date(Date.now() + 60_000),
+          })
+
+          const response = await server
+            .post('/v1/payments/debts')
+            .send(payloadFor('held-transfer'))
+
+          expect(response.status).toBe(400)
+          expect(response.body.detail).toBe(
+            DebtPaymentErrorCode.DebtPaymentInvalid,
+          )
+        })
+
+        it('allows a new flow once the transfer expired', async () => {
+          await startTransferFor('expired-transfer', {
+            expiresAt: new Date(Date.now() - 60_000),
+          })
+
+          const response = await server
+            .post('/v1/payments/debts')
+            .send(payloadFor('expired-transfer'))
+
+          expect(response.status).toBe(200)
+        })
+
+        it('allows a new flow once the transfer was discarded', async () => {
+          await startTransferFor('discarded-transfer', {
+            expiresAt: new Date(Date.now() + 60_000),
+            isDeleted: true,
+          })
+
+          const response = await server
+            .post('/v1/payments/debts')
+            .send(payloadFor('discarded-transfer'))
 
           expect(response.status).toBe(200)
         })
