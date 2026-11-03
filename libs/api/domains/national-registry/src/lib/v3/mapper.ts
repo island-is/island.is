@@ -125,15 +125,13 @@ export const formatHousing = (
   const addressData = housing?.heimilisfang ?? address
 
   const domicileId = domicileData?.logheimilistengsl ?? housing?.logheimiliskodi
-  const formattedAddress = addressData ? formatAddress(addressData) : null
 
-  // People registered abroad have an address but no domicile id
-  if (!domicileId && !formattedAddress) {
+  if (!domicileId) {
     return null
   }
 
   return {
-    domicileId: domicileId ?? null,
+    domicileId,
     domicileIdLast1stOfDecember: housing?.logheimiliskodi112 ?? null,
     domicileIdPreviousIcelandResidence: housing?.logheimiliskodiSIsl ?? null,
     domicileInhabitants: domicileData?.logheimilismedlimir
@@ -149,7 +147,7 @@ export const formatHousing = (
       })
       .filter(isDefined),
     residence: housing?.adsetur ? formatAddress(housing?.adsetur) : null,
-    address: formattedAddress,
+    address: addressData ? formatAddress(addressData) : null,
   }
 }
 

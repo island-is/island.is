@@ -4,9 +4,8 @@ import { Address } from './address.model'
 
 @ObjectType('NationalRegistryHousing')
 export class Housing {
-  // Null for people registered abroad ("Útlönd")
-  @Field(() => ID, { nullable: true })
-  domicileId?: string | null
+  @Field(() => ID)
+  domicileId!: string
 
   @Field(() => String, { nullable: true })
   domicileIdLast1stOfDecember?: string | null
