@@ -4,6 +4,7 @@ import * as workspaceStyles from './TranslationWorkspace.css'
 
 type TranslationWorkspaceLayoutProps = {
   preview: ReactNode
+  notice?: ReactNode
   navPanel: ReactNode
   isCompactNav: boolean
   navDrawerOpen: boolean
@@ -16,6 +17,7 @@ type TranslationWorkspaceLayoutProps = {
 
 export const TranslationWorkspaceLayout = ({
   preview,
+  notice,
   navPanel,
   isCompactNav,
   navDrawerOpen,
@@ -27,7 +29,10 @@ export const TranslationWorkspaceLayout = ({
 }: TranslationWorkspaceLayoutProps) => (
   <Box className={workspaceStyles.workspaceShell}>
     <div className={workspaceStyles.workspaceMainRow}>
-      <div className={workspaceStyles.workspacePreviewAside}>{preview}</div>
+      <div className={workspaceStyles.workspacePreviewAside}>
+        {notice && <Box padding={3}>{notice}</Box>}
+        {preview}
+      </div>
       {isCompactNav ? (
         <>
           {!navDrawerOpen && (

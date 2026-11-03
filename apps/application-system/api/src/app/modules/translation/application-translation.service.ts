@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpException,
   Inject,
   Injectable,
   ServiceUnavailableException,
@@ -7,7 +8,11 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import type { User } from '@island.is/auth-nest-tools'
-import { isOwnedTranslationMessageId } from '@island.is/application/utils'
+import {
+  CONTENTFUL_TOKEN_REJECTED_ERROR,
+  CONTENTFUL_UNAVAILABLE_ERROR,
+  isOwnedTranslationMessageId,
+} from '@island.is/application/utils'
 import { logger } from '@island.is/logging'
 import { retry } from '@island.is/shared/utils/server'
 import { Features } from '@island.is/feature-flags'
@@ -25,6 +30,18 @@ import {
   ApplicationTranslationPublish,
   TranslationPublishAction,
 } from './application-translation-publish.model'
+
+const getContentfulErrorStatus = (error: unknown): number | undefined => {
+  try {
+    const status = JSON.parse((error as Error).message)?.status
+    return typeof status === 'number' ? status : undefined
+  } catch {
+    return undefined
+  }
+}
+
+const isNetworkError = (error: unknown): boolean =>
+  typeof (error as { code?: unknown })?.code === 'string'
 
 const WRITE_COALESCE_MS = 3000
 const PUBLISH_HISTORY_PAGE_SIZE = 25
@@ -319,8 +336,28 @@ export class ApplicationTranslationService {
   async getTranslationsByNamespace(
     namespace: string,
   ): Promise<ContentfulTranslationRow[]> {
-    const draftEntry = await this.getVerifiedNamespaceEntry(namespace)
-    return this.buildRowsForEntry(namespace, draftEntry)
+    try {
+      const draftEntry = await this.getVerifiedNamespaceEntry(namespace)
+      return await this.buildRowsForEntry(namespace, draftEntry)
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error
+      }
+      const status = getContentfulErrorStatus(error)
+      if (status === undefined && !isNetworkError(error)) {
+        throw error
+      }
+      logger.error(
+        `Unable to read namespace "${namespace}" from Contentful: ${
+          (error as Error)?.message
+        }`,
+      )
+      throw new ServiceUnavailableException(
+        status === 401 || status === 403
+          ? CONTENTFUL_TOKEN_REJECTED_ERROR
+          : CONTENTFUL_UNAVAILABLE_ERROR,
+      )
+    }
   }
 
   private async buildRowsForEntry(

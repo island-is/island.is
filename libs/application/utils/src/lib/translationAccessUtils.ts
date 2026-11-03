@@ -9,6 +9,11 @@ export const TRANSLATION_NAMESPACE_MAX_LENGTH = 255
 export const TRANSLATION_MESSAGE_KEY_MAX_LENGTH = 512
 export const TRANSLATION_BULK_MAX_ITEMS = 500
 
+export const CONTENTFUL_TOKEN_REJECTED_ERROR =
+  'Contentful rejected the management access token'
+export const CONTENTFUL_UNAVAILABLE_ERROR =
+  'Unable to read translations from Contentful'
+
 export interface SharedTranslationNamespaceInfo {
   namespace: string
   usedByCount: number

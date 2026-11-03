@@ -2,6 +2,7 @@ import { useMemo, useState, type ReactNode } from 'react'
 import { Navigate, useLocation, useParams } from 'react-router-dom'
 import {
   Box,
+  GridContainer,
   Input,
   AlertMessage,
   Text,
@@ -27,6 +28,7 @@ import {
   TranslationWorkspaceError,
   TranslationWorkspaceLoading,
   TranslationWorkspaceNotFound,
+  TranslationWorkspaceTranslationsWarning,
 } from '../../components/TranslationWorkspaceLoadStates/TranslationWorkspaceLoadStates'
 import { TranslationPublishHistory } from '../../components/TranslationPublishHistory/TranslationPublishHistory'
 import { TranslationPublishConfirmModal } from '../../components/TranslationPublishConfirmModal/TranslationPublishConfirmModal'
@@ -122,10 +124,19 @@ export const SharedNamespaceTranslationWorkspace = () => {
     [messageDescriptors, searchValue],
   )
 
+  const translationsForbidden = Boolean(
+    translationsError && isTranslationAccessForbiddenError(translationsError),
+  )
+  const loadError =
+    error ?? (translationsForbidden ? translationsError : undefined)
+  const translationsLoadError = translationsForbidden
+    ? undefined
+    : translationsError
+
   const isWorkspaceReady =
     Boolean(introspection) &&
     !(loading || Boolean(introspection && translationsLoading)) &&
-    !(error ?? translationsError)
+    !loadError
 
   const headerChrome = isWorkspaceReady
     ? {
@@ -149,7 +160,6 @@ export const SharedNamespaceTranslationWorkspace = () => {
     )
   }
 
-  const loadError = error ?? translationsError
   let workspace: ReactNode
 
   if (!namespace) {
@@ -257,6 +267,15 @@ export const SharedNamespaceTranslationWorkspace = () => {
         onSave={handleSaveAll}
         onDiscard={clearEditedValues}
       />
+      {isWorkspaceReady && translationsLoadError && (
+        <GridContainer>
+          <Box marginTop={4}>
+            <TranslationWorkspaceTranslationsWarning
+              error={translationsLoadError}
+            />
+          </Box>
+        </GridContainer>
+      )}
       {workspace}
     </>
   )
