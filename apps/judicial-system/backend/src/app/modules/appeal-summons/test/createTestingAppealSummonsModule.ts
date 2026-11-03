@@ -76,8 +76,9 @@ export const createTestingAppealSummonsModule = async () => {
 
   const policeService = appealSummonsModule.get<PoliceService>(PoliceService)
 
-  const caseRepositoryService =
-    appealSummonsModule.get<CaseRepositoryService>(CaseRepositoryService)
+  const caseRepositoryService = appealSummonsModule.get<CaseRepositoryService>(
+    CaseRepositoryService,
+  )
 
   const sequelize = appealSummonsModule.get<Sequelize>(Sequelize)
 

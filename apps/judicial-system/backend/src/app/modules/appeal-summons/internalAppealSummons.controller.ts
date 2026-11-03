@@ -27,11 +27,7 @@ import {
 } from '@island.is/judicial-system/message'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
-import {
-  CaseExistsGuard,
-  CaseTypeGuard,
-  CurrentCase,
-} from '../case'
+import { CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
 import {
   AppealSummons,
   AppealSummonsRepositoryService,

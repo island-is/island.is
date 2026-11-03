@@ -157,9 +157,8 @@ export const Overview = () => {
     )
   }, [workingCase.defendants])
 
-  const appealSummonsServiceBanners = getAppealSummonsWaitingServiceBanners(
-    workingCase,
-  )
+  const appealSummonsServiceBanners =
+    getAppealSummonsWaitingServiceBanners(workingCase)
 
   return (
     <PageLayout

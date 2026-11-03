@@ -89,9 +89,7 @@ export const canPerformAppealSummonsAction = (
     const status = getAppealSummonsStatus(summons)
 
     // Service and sending to Landsréttur are independent once confirmed.
-    return (
-      status === 'confirmed' || status === 'inService' || status === 'sent'
-    )
+    return status === 'confirmed' || status === 'inService' || status === 'sent'
   }
 
   if (action === AppealSummonsAction.SEND_TO_COURT_OF_APPEALS) {

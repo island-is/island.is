@@ -114,9 +114,7 @@ describe('AppealSummonsController - Send to service', () => {
       services: [defendantService, civilClaimantService],
     } as AppealSummons
 
-    ;(
-      mockAppealSummonsRepositoryService.createServiceRecipient as jest.Mock
-    )
+    ;(mockAppealSummonsRepositoryService.createServiceRecipient as jest.Mock)
       .mockResolvedValueOnce(defendantService)
       .mockResolvedValueOnce(civilClaimantService)
     ;(
@@ -172,10 +170,9 @@ describe('AppealSummonsController - Send to service', () => {
     ).toHaveBeenCalledTimes(1)
     expect(
       mockAppealSummonsRepositoryService.createServiceRecipient,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({ civilClaimantId }),
-      { transaction },
-    )
+    ).toHaveBeenCalledWith(expect.objectContaining({ civilClaimantId }), {
+      transaction,
+    })
   })
 
   it('rejects when no new recipients remain', async () => {

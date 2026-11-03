@@ -6,12 +6,7 @@ import {
   auditTrailModuleConfig,
 } from '@island.is/judicial-system/audit-trail'
 
-import {
-  AwsS3Module,
-  CaseModule,
-  PoliceModule,
-  RepositoryModule,
-} from '..'
+import { AwsS3Module, CaseModule, PoliceModule, RepositoryModule } from '..'
 import { AppealSummonsController } from './appealSummons.controller'
 import { AppealSummonsService } from './appealSummons.service'
 import { InternalAppealSummonsController } from './internalAppealSummons.controller'
