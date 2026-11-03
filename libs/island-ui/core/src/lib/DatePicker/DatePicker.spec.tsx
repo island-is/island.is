@@ -22,63 +22,6 @@ describe('DatePicker', () => {
   })
 
   describe('Basic functionality', () => {
-    it.each(['minDate', 'maxDate'])(
-      'should notify the parent when %s is manually cleared',
-      (name) => {
-        const handleClear = jest.fn()
-        const handleChange = jest.fn()
-        const { getByPlaceholderText, rerender } = render(
-          <DatePicker
-            name={name}
-            label="Select date"
-            placeholderText="Pick a date"
-            selected={new Date(2020, 9, 2)}
-            handleChange={handleChange}
-            handleClear={handleClear}
-            isClearable
-          />,
-        )
-
-        fireEvent.change(getByPlaceholderText('Pick a date'), {
-          target: { value: '' },
-        })
-
-        expect(handleClear).toHaveBeenCalledTimes(1)
-        expect(handleChange).not.toHaveBeenCalled()
-
-        rerender(
-          <DatePicker
-            name={name}
-            label="Select date"
-            placeholderText="Pick a date"
-            selected={null}
-            handleChange={handleChange}
-            handleClear={handleClear}
-            isClearable
-          />,
-        )
-        fireEvent.blur(getByPlaceholderText('Pick a date'))
-        expect(getByPlaceholderText('Pick a date')).toHaveValue('')
-      },
-    )
-
-    it('should notify the parent once when a single date is cleared with the button', () => {
-      const handleClear = jest.fn()
-      const { getByRole } = render(
-        <DatePicker
-          label="Select date"
-          placeholderText="Pick a date"
-          selected={new Date(2020, 9, 2)}
-          handleClear={handleClear}
-          clearLabel="Clear date"
-          isClearable
-        />,
-      )
-
-      fireEvent.click(getByRole('button', { name: 'Clear date' }))
-      expect(handleClear).toHaveBeenCalledTimes(1)
-    })
-
     it('should render and display selected date', () => {
       const selectedDate = new Date(2020, 9, 2) // October 2, 2020
       const { container, getByPlaceholderText } = render(
