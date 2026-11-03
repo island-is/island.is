@@ -102,27 +102,18 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         title
         slug
       }
+      # Only what's needed to find the organization of the project's events.
+      # The ids are left out so that this doesn't overwrite a full subpage in the Apollo cache.
       projectSubpages {
-        id
-        title
-        slug
-        content {
-          ...AllSlices
-          ${nestedFields}
-        }
-        renderSlicesAsTabs
         slices {
-          ...AllSlices
-          ...NestedOneColumnTextFields
-          ${nestedFields}
+          ... on LatestEventsSlice {
+            organizationSlug
+          }
         }
-        showTableOfContents
-        contentLastReviewed
-        showDateOfTheMostRecentReview
         bottomSlices {
-          ...AllSlices
-          ...NestedOneColumnTextFields
-          ${nestedFields}
+          ... on LatestEventsSlice {
+            organizationSlug
+          }
         }
       }
       featuredImage {
@@ -151,6 +142,35 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         imageObjectPosition
         titleSectionPaddingLeft
         mobileBackgroundColor
+      }
+    }
+  }
+  ${slices}
+`
+
+export const GET_PROJECT_SUBPAGE_QUERY = gql`
+  query GetProjectSubpage($input: GetProjectSubpageInput!) {
+    getProjectSubpage(input: $input) {
+      id
+      title
+      slug
+      content {
+        ...AllSlices
+        ${nestedFields}
+      }
+      renderSlicesAsTabs
+      slices {
+        ...AllSlices
+        ...NestedOneColumnTextFields
+        ${nestedFields}
+      }
+      showTableOfContents
+      contentLastReviewed
+      showDateOfTheMostRecentReview
+      bottomSlices {
+        ...AllSlices
+        ...NestedOneColumnTextFields
+        ${nestedFields}
       }
     }
   }

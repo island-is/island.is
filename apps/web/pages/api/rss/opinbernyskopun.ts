@@ -3,27 +3,34 @@ import { documentToHtmlString } from '@contentful/rich-text-html-renderer'
 import initApollo from '@island.is/web/graphql/client'
 import {
   FaqList,
-  GetProjectPageQuery,
-  QueryGetProjectPageArgs,
+  GetProjectSubpageQuery,
+  QueryGetProjectSubpageArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
+import { GET_PROJECT_SUBPAGE_QUERY } from '@island.is/web/screens/queries/Project'
+
+const PROJECT_PAGE_SLUG = 'opinbernyskopun'
+const PROJECT_SUBPAGE_SLUG = 'askoranir-opinberra-adila'
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 export default async function handler(req, res) {
   const apolloClient = initApollo({})
 
-  const projectPage = await apolloClient.query<
-    GetProjectPageQuery,
-    QueryGetProjectPageArgs
+  const response = await apolloClient.query<
+    GetProjectSubpageQuery,
+    QueryGetProjectSubpageArgs
   >({
-    query: GET_PROJECT_PAGE_QUERY,
-    variables: { input: { slug: 'opinbernyskopun', lang: 'is' } },
+    query: GET_PROJECT_SUBPAGE_QUERY,
+    variables: {
+      input: {
+        projectPageSlug: PROJECT_PAGE_SLUG,
+        slug: PROJECT_SUBPAGE_SLUG,
+        lang: 'is',
+      },
+    },
   })
 
-  const projectSubpage =
-    projectPage.data?.getProjectPage?.projectSubpages?.find(
-      (page) => page?.slug === 'askoranir-opinberra-adila',
-    )
+  const projectSubpage = response.data?.getProjectSubpage
 
   const faqListItems =
     (
@@ -36,9 +43,7 @@ export default async function handler(req, res) {
   const protocol = `http${host.startsWith('localhost') ? '' : 's'}://`
   const baseUrl = `${protocol}${host}`
 
-  const link = `${baseUrl}/v/${
-    projectPage.data?.getProjectPage?.slug ?? 'opinbernyskopun'
-  }/${projectSubpage?.slug ?? 'askoranir-opinberra-adila'}`
+  const link = `${baseUrl}/v/${PROJECT_PAGE_SLUG}/${PROJECT_SUBPAGE_SLUG}`
 
   const getItem = (item: FaqList['questions'][number]) => {
     return `<item>

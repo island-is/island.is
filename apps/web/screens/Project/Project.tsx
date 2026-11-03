@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
 
@@ -29,6 +29,7 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetProjectPageArgs,
+  QueryGetProjectSubpageArgs,
   Slice,
   Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
@@ -37,7 +38,10 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
+import {
+  GET_PROJECT_PAGE_QUERY,
+  GET_PROJECT_SUBPAGE_QUERY,
+} from '@island.is/web/screens/queries/Project'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -53,6 +57,7 @@ import {
 
 export interface PageProps {
   projectPage: Query['getProjectPage']
+  projectSubpage?: Query['getProjectSubpage']
   namespace: Record<string, string>
   projectNamespace: Record<string, string>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -66,6 +71,7 @@ export interface PageProps {
 }
 const ProjectPage: Screen<PageProps> = ({
   projectPage,
+  projectSubpage: subpage,
   namespace,
   projectNamespace,
   stepperNamespace,
@@ -82,14 +88,6 @@ const ProjectPage: Screen<PageProps> = ({
   const { format } = useDateUtils()
 
   const router = useRouter()
-
-  const subpage = useMemo(
-    () =>
-      projectPage?.projectSubpages.find((x) => {
-        return x.slug === router.query.subSlug
-      }),
-    [router.query.subSlug, projectPage?.projectSubpages],
-  )
 
   const contentfulIds = customContentfulIds
     ? customContentfulIds
@@ -396,6 +394,7 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
     stepperNamespace,
+    projectSubpage,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetProjectPageArgs>({
       query: GET_PROJECT_PAGE_QUERY,
@@ -436,13 +435,23 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
+    query.subSlug
+      ? apolloClient
+          .query<Query, QueryGetProjectSubpageArgs>({
+            query: GET_PROJECT_SUBPAGE_QUERY,
+            variables: {
+              input: {
+                projectPageSlug: query.slug as string,
+                slug: query.subSlug as string,
+                lang: locale as ContentLanguage,
+              },
+            },
+          })
+          .then((response) => response.data.getProjectSubpage)
+      : null,
   ])
 
-  const subpage = getProjectPage?.projectSubpages.find(
-    (x) => x.slug === query.subSlug,
-  )
-
-  if (!getProjectPage || (query.subSlug && !subpage)) {
+  if (!getProjectPage || (query.subSlug && !projectSubpage)) {
     throw new CustomNextError(404, 'Project page not found')
   }
 
@@ -460,6 +469,7 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
 
   return {
     projectPage: getProjectPage,
+    projectSubpage,
     stepOptionsFromNamespace,
     namespace,
     projectNamespace,

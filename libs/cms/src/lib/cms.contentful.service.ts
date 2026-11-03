@@ -632,7 +632,7 @@ export class CmsContentfulService {
 
     const subpage = result.items[0] as types.IProjectSubpage | undefined
 
-    return subpage ? mapProjectSubpage(subpage) : null
+    return subpage?.fields?.title ? mapProjectSubpage(subpage) : null
   }
 
   async getArticle(slug: string, lang: string): Promise<Article | null> {

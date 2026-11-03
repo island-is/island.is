@@ -36,9 +36,7 @@ export const Component: ScreenType<ComponentProps> = ({
   }, [router.asPath])
 
   const projectPage = parentProps.componentProps.projectPage as ProjectPage
-  const subpage = projectPage.projectSubpages.find(
-    (subpage) => subpage.slug === router.query.subSlug,
-  )
+  const subpage = parentProps.componentProps.projectSubpage
 
   return (
     <SubPageLayout
