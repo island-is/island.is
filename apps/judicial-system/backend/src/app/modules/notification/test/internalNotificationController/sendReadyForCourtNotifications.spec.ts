@@ -72,9 +72,6 @@ describe('InternalNotificationController - Send ready for court notifications fo
     courtId: testCourt.id,
     court: { name: 'Héraðsdómur Reykjavíkur' },
     courtCaseNumber,
-    defenderNationalId: defender.nationalId,
-    defenderName: defender.name,
-    defenderEmail: defender.email,
     defendants: [
       {
         defenderNationalId: defender.nationalId,
@@ -83,7 +80,6 @@ describe('InternalNotificationController - Send ready for court notifications fo
         requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
       },
     ],
-    requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
     prosecutorsOffice: { name: 'Héraðsdómur Derricks' },
     dateLogs: [{ date: randomDate(), dateType: DateType.ARRAIGNMENT_DATE }],
   } as Case
@@ -222,8 +218,6 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
   describe('defender receives notification if request is shared when case is ready for court', () => {
     beforeEach(async () => {
-      theCase.requestSharedWithDefender =
-        RequestSharedWithDefender.READY_FOR_COURT
       theCase.defendants = [
         {
           ...(theCase.defendants?.[0] ?? {}),
@@ -289,7 +283,6 @@ describe('InternalNotificationController - Send ready for court notifications fo
         caseId,
         {
           ...theCase,
-          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
           defendants: [
             {
               defenderNationalId: defender.nationalId,
@@ -333,7 +326,6 @@ describe('InternalNotificationController - Send ready for court notifications fo
         caseId,
         {
           ...theCase,
-          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
           defendants: [
             {
               defenderNationalId: defender.nationalId,
@@ -372,7 +364,6 @@ describe('InternalNotificationController - Send ready for court notifications fo
         caseId,
         {
           ...theCase,
-          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
           defendants: [
             {
               defenderNationalId: defender.nationalId,
