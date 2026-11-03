@@ -110,9 +110,15 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
         <>
           <Box marginBottom={1}>
             <Text variant="h4">
-              {formatMessage(core.requestCaseType, {
-                caseType: formatRequestCaseType(workingCase.type),
-              })}
+              {formatMessage(
+                {
+                  id: core.requestCaseType,
+                  defaultMessage: core.requestCaseType,
+                },
+                {
+                  caseType: formatRequestCaseType(workingCase.type),
+                },
+              )}
             </Text>
           </Box>
           <div className={styles.firstCourtDocument}>
