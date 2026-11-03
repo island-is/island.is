@@ -1,8 +1,10 @@
 import type { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import { getConnectionToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
+import { EmailService } from '@island.is/email-service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
 
@@ -51,6 +53,10 @@ export const createTestingPoliceModule = async () => {
       PoliceService,
       SubpoenaService,
       {
+        provide: EmailService,
+        useValue: { sendEmail: jest.fn(async () => uuid()) },
+      },
+      {
         provide: LOGGER_PROVIDER,
         useValue: {
           debug: jest.fn(),
@@ -94,6 +100,7 @@ export const createTestingPoliceModule = async () => {
         provide: CaseRepositoryService,
         useValue: {
           findById: jest.fn().mockResolvedValue({}),
+          findByIdWithProsecutor: jest.fn().mockResolvedValue(null),
           update: jest.fn().mockResolvedValue({}),
         },
       },
@@ -109,6 +116,10 @@ export const createTestingPoliceModule = async () => {
   const policeService = policeModule.get<PoliceService>(PoliceService)
 
   const policeController = policeModule.get<PoliceController>(PoliceController)
+
+  const emailService = policeModule.get<EmailService>(EmailService)
+
+  const eventService = policeModule.get<EventService>(EventService)
 
   const logger = policeModule.get<{
     debug: jest.Mock
@@ -139,6 +150,8 @@ export const createTestingPoliceModule = async () => {
     awsS3Service,
     policeService,
     policeController,
+    emailService,
+    eventService,
     logger,
     caseDefendantPoliceCaseNumberRepositoryService,
     indictmentCountService,

@@ -142,6 +142,7 @@ describe('InternalCaseController - Deliver court record to police', () => {
             courtDocument: Base64.btoa(courtRecordPdf),
           },
         ],
+        caseId,
       )
       expect(then.result.delivered).toEqual(true)
     })
@@ -198,6 +199,7 @@ describe('InternalCaseController - Deliver court record to police', () => {
             courtDocument: Base64.btoa(courtRecordPdf.toString('binary')),
           },
         ],
+        caseId,
       )
       expect(then.result.delivered).toEqual(true)
     })

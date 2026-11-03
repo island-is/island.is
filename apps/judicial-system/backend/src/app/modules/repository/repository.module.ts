@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { ConfigModule } from '@island.is/nest/config'
 
+import { AppealCaseJudgeRepositoryService } from './services/appealCaseJudgeRepository.service'
 import { AppealCaseRepositoryService } from './services/appealCaseRepository.service'
 import { AppealCourtSessionRepositoryService } from './services/appealCourtSessionRepository.service'
 import { AppealDecisionRepositoryService } from './services/appealDecisionRepository.service'
@@ -47,6 +48,7 @@ import { repositoryModels } from './repositoryModels'
   ],
   providers: [
     AppealCaseRepositoryService,
+    AppealCaseJudgeRepositoryService,
     AppealDecisionRepositoryService,
     AppealEventLogRepositoryService,
     AppealCourtSessionRepositoryService,
@@ -83,6 +85,7 @@ import { repositoryModels } from './repositoryModels'
   ],
   exports: [
     AppealCaseRepositoryService,
+    AppealCaseJudgeRepositoryService,
     AppealDecisionRepositoryService,
     AppealEventLogRepositoryService,
     AppealCourtSessionRepositoryService,
