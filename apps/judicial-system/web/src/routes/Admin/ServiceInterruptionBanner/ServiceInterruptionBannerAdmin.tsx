@@ -10,6 +10,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import {
@@ -32,17 +33,24 @@ const emptyForm: BannerFormState = {
   courtMessage: '',
 }
 
+const bannerFormFields = [
+  'title',
+  'globalMessage',
+  'prosecutorMessage',
+  'courtMessage',
+] as const
+
 const buildChangedInput = (
   form: BannerFormState,
   initial: BannerFormState,
 ): Partial<BannerFormState> => {
   const input: Partial<BannerFormState> = {}
 
-  ;(Object.keys(form) as Array<keyof BannerFormState>).forEach((field) => {
+  for (const field of bannerFormFields) {
     if (form[field] !== initial[field]) {
       input[field] = form[field]
     }
-  })
+  }
 
   return input
 }
@@ -140,28 +148,31 @@ export const ServiceInterruptionBannerAdmin = () => {
 
   return (
     <Box background="purple100">
-      <PageHeader title="Gulur borði - Réttarvörslugátt" />
+      <PageHeader title="Viðvörunar borði - Réttarvörslugátt" />
       <FormContentContainer>
-        <Text variant="h1" as="h1" marginBottom={2}>
-          Gulur borði
-        </Text>
-        <Text marginBottom={5}>
-          Skrifið skilaboð í viðeigandi reit og vistið til að birta gulan borða.
-        </Text>
-        {loading ? (
-          <Skeleton />
-        ) : !isAuthorized || error || !data?.serviceInterruptionBanner ? (
-          <AlertBanner
-            title="Ekki tókst að sækja stillingar."
-            variant="error"
-            link={{
-              href: ADMIN_USERS_ROUTE,
-              title: 'Fara á yfirlitssíðu',
-            }}
-          />
-        ) : (
-          <>
-            <Box marginBottom={5}>
+        <div className={stack({ gap: 5 })}>
+          <div className={stack({ gap: 2 })}>
+            <Text variant="h1" as="h1">
+              Viðvörunar borði
+            </Text>
+            <Text>
+              Skrifið skilaboð í viðeigandi reit og vistið til að birta
+              viðvörunar borða.
+            </Text>
+          </div>
+          {loading ? (
+            <Skeleton />
+          ) : !isAuthorized || error || !data?.serviceInterruptionBanner ? (
+            <AlertBanner
+              title="Ekki tókst að sækja stillingar."
+              variant="error"
+              link={{
+                href: ADMIN_USERS_ROUTE,
+                title: 'Fara á yfirlitssíðu',
+              }}
+            />
+          ) : (
+            <>
               <FormFooter
                 previousUrl={ADMIN_USERS_ROUTE}
                 previousButtonText="Hætta við"
@@ -174,60 +185,54 @@ export const ServiceInterruptionBannerAdmin = () => {
                   },
                 ]}
               />
-            </Box>
-            <Box background="white" borderRadius="large" padding={4}>
-              <Box marginBottom={3}>
-                <Input
-                  name="title"
-                  label="Titill"
-                  value={form.title}
-                  maxLength={255}
-                  disabled={updating}
-                  onChange={(event) => setField('title', event.target.value)}
-                />
+              <Box background="white" borderRadius="large" padding={4}>
+                <div className={stack({ gap: 3 })}>
+                  <Input
+                    name="title"
+                    label="Titill"
+                    value={form.title}
+                    maxLength={255}
+                    disabled={updating}
+                    onChange={(event) => setField('title', event.target.value)}
+                  />
+                  <Input
+                    name="globalMessage"
+                    label="Almenn skilaboð (allir notendur)"
+                    textarea
+                    rows={3}
+                    value={form.globalMessage}
+                    disabled={updating}
+                    onChange={(event) =>
+                      setField('globalMessage', event.target.value)
+                    }
+                  />
+                  <Input
+                    name="prosecutorMessage"
+                    label="Skilaboð fyrir ákæruvald"
+                    textarea
+                    rows={3}
+                    value={form.prosecutorMessage}
+                    disabled={updating}
+                    onChange={(event) =>
+                      setField('prosecutorMessage', event.target.value)
+                    }
+                  />
+                  <Input
+                    name="courtMessage"
+                    label="Skilaboð fyrir dómstóla"
+                    textarea
+                    rows={3}
+                    value={form.courtMessage}
+                    disabled={updating}
+                    onChange={(event) =>
+                      setField('courtMessage', event.target.value)
+                    }
+                  />
+                </div>
               </Box>
-              <Box marginBottom={3}>
-                <Input
-                  name="globalMessage"
-                  label="Almenn skilaboð (allir notendur)"
-                  textarea
-                  rows={3}
-                  value={form.globalMessage}
-                  disabled={updating}
-                  onChange={(event) =>
-                    setField('globalMessage', event.target.value)
-                  }
-                />
-              </Box>
-              <Box marginBottom={3}>
-                <Input
-                  name="prosecutorMessage"
-                  label="Skilaboð fyrir ákæruvald"
-                  textarea
-                  rows={3}
-                  value={form.prosecutorMessage}
-                  disabled={updating}
-                  onChange={(event) =>
-                    setField('prosecutorMessage', event.target.value)
-                  }
-                />
-              </Box>
-              <Box>
-                <Input
-                  name="courtMessage"
-                  label="Skilaboð fyrir dómstóla"
-                  textarea
-                  rows={3}
-                  value={form.courtMessage}
-                  disabled={updating}
-                  onChange={(event) =>
-                    setField('courtMessage', event.target.value)
-                  }
-                />
-              </Box>
-            </Box>
-          </>
-        )}
+            </>
+          )}
+        </div>
       </FormContentContainer>
     </Box>
   )

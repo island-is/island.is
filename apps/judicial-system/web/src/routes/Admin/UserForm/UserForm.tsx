@@ -384,7 +384,7 @@ export const UserForm: FC<Props> = ({
             <Box marginBottom={2}>
               <Checkbox
                 name="canManageServiceInterruptionBanner"
-                label="Notandi getur stjórnað gula borðanum"
+                label="Notandi getur stjórnað viðvörunar borðanum"
                 checked={Boolean(user.canManageServiceInterruptionBanner)}
                 onChange={({ target }) =>
                   setUser((prevUser) => ({

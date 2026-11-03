@@ -143,7 +143,7 @@ export const Users = () => {
                 router.push(ADMIN_SERVICE_INTERRUPTION_BANNER_ROUTE)
               }}
             >
-              Gulur borði
+              Viðvörunar borði
             </Button>
           )}
           <Button

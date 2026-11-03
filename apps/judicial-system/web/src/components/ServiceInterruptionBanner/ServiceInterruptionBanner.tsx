@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 
 import { AlertBanner } from '@island.is/island-ui/core'
+import { isNonBlank } from '@island.is/judicial-system/formatters'
 import {
   isDistrictCourtUser,
   isProsecutionUser,
@@ -9,9 +10,6 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { useServiceInterruptionBannerQuery } from '@island.is/judicial-system-web/src/routes/Admin/ServiceInterruptionBanner/serviceInterruptionBanner.generated'
 
 const DEFAULT_TITLE = 'Mikilvæg skilaboð'
-
-const hasMessage = (value: string | null | undefined): value is string =>
-  Boolean(value?.trim())
 
 const ServiceInterruptionBanner = () => {
   const { user } = useContext(UserContext)
@@ -28,17 +26,17 @@ const ServiceInterruptionBanner = () => {
 
   let displayMessage = ''
 
-  if (hasMessage(banner.globalMessage)) {
+  if (isNonBlank(banner.globalMessage)) {
     displayMessage = banner.globalMessage.trim()
-  } else if (isProsecutionUser(user) && hasMessage(banner.prosecutorMessage)) {
+  } else if (isProsecutionUser(user) && isNonBlank(banner.prosecutorMessage)) {
     displayMessage = banner.prosecutorMessage.trim()
-  } else if (isDistrictCourtUser(user) && hasMessage(banner.courtMessage)) {
+  } else if (isDistrictCourtUser(user) && isNonBlank(banner.courtMessage)) {
     displayMessage = banner.courtMessage.trim()
   } else {
     return null
   }
 
-  const title = hasMessage(banner.title) ? banner.title.trim() : DEFAULT_TITLE
+  const title = isNonBlank(banner.title) ? banner.title.trim() : DEFAULT_TITLE
 
   return (
     <AlertBanner
