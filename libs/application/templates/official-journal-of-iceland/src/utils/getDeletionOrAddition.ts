@@ -10,6 +10,7 @@ import { describeWordChange } from './describeWordChange'
 import {
   escapeHtml,
   isLetteredList,
+  masculineCountWord as countWord,
   removeDiffAttributes,
   removeInsertions,
 } from './formatAmendingUtils'
@@ -27,10 +28,6 @@ export const getLiPoint = (num: number, isStaflidur: boolean) => {
  * lettered item under the article.
  */
 export type ListItemChange = (at: string) => HTMLText
-
-/** Masculine, as liður is */
-const COUNT_WORDS = ['', 'einn', 'tveir', 'þrír', 'fjórir']
-const countWord = (count: number) => COUNT_WORDS[count] ?? `${count}`
 
 const listItems = (li: Element) =>
   Array.from(li.parentElement?.children ?? []).filter(
@@ -105,6 +102,10 @@ export const formatListItemDiff = (item: Element): ListItemChange[] => {
   }
   // Items added after a list's last base item, one amendment per list
   const appended = new Map<Element, string[]>()
+  // Items added next to each other before or between base items, one
+  // amendment per place: cited each at the same place, they would read in
+  // reverse once applied one after the other
+  const inserted = new Map<Element, Map<number, string[]>>()
   // Items restated, added or removed as a whole, with any list nested in them
   const wholeItems = new Set<Element>()
   const isInWholeItem = (liItem: Element) => {
@@ -275,13 +276,34 @@ export const formatListItemDiff = (item: Element): ListItemChange[] => {
         })
       } else if (isLiAddition) {
         const number = baseNumber(liItem)
+        const list = liItem.parentElement as Element
+        const places = inserted.get(list) ?? new Map<number, string[]>()
+        inserted.set(list, places)
+        const items = places.get(number)
+        if (items) {
+          items.push(`<li>${ownLiText}${nested}</li>`)
+          return
+        }
+        const added = [`<li>${ownLiText}${nested}</li>`]
+        places.set(number, added)
         const position =
           number > 0
             ? `Á eftir ${itemLabel(liItem, 'dat', number)}`
             : `Á undan ${itemLabel(liItem, 'dat', 1)}`
-        returningArray.push(
-          (at) =>
-            `<p>${position}${above}${at} kemur nýr ${kind}, svohljóðandi, og breytist númer annarra liða til samræmis: ${ownLiText}</p>${nested}` as HTMLText,
+        const start =
+          siblings.slice(0, siblings.indexOf(liItem)).filter(isKept).length + 1
+        returningArray.push((at) =>
+          added.length === 1
+            ? (`<p>${position}${above}${at} kemur nýr ${kind}, svohljóðandi, og breytist númer annarra liða til samræmis: ${ownLiText}</p>${nested}` as HTMLText)
+            : (`<p>${position}${above}${at} koma ${countWord(
+                added.length,
+              )} nýir ${
+                isStaflidur ? 'stafliðir' : 'töluliðir'
+              }, svohljóðandi, og breytist númer annarra liða til samræmis:</p><ol${
+                isStaflidur ? ' type="a"' : ''
+              }${start > 1 ? ` start="${start}"` : ''}>${added.join(
+                '',
+              )}</ol>` as HTMLText),
         )
       } else {
         // A change in one place is named by its words or sentences

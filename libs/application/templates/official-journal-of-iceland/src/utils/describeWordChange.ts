@@ -14,7 +14,11 @@
  * change in one place is worded this way; the caller restates the paragraph
  * or item otherwise.
  */
-import { endsWithAbbreviation, escapeHtml } from './formatAmendingUtils'
+import {
+  endsWithAbbreviation,
+  escapeHtml,
+  masculineCountWord as countWord,
+} from './formatAmendingUtils'
 
 /** The change, given where it is: "2. mgr. 3. gr. reglugerðarinnar" */
 export type WordChange = (place: string) => string
@@ -26,10 +30,6 @@ type Segment = { kind: Kind; text: string }
 type Token = { text: string; glued: boolean }
 
 const INLINE_TAGS = new Set(['em', 'strong', 'b', 'i', 'u', 'span', 'a'])
-
-/** Masculine, as málsliður is */
-const COUNT_WORDS = ['', 'einn', 'tveir', 'þrír', 'fjórir']
-const countWord = (count: number) => COUNT_WORDS[count] ?? `${count}`
 
 const joinWithOg = (items: string[]) =>
   items.length < 2
@@ -128,6 +128,10 @@ const asEnd = (tokens: Token[]) => {
   const text = escapeHtml(detokenize(tokens))
   return text.endsWith('.') ? text : `${text}.`
 }
+
+/** A comma or semicolon against the word before it */
+const isMidPunctuation = (token: Token | undefined) =>
+  !!token?.glued && /^[,;]$/.test(token.text)
 
 const isNumber = (token: Token | undefined) =>
   !!token && !token.glued && /^\d[\d.,]*$/.test(token.text)
@@ -271,9 +275,24 @@ export const describeWordChange = (
     if (!before.length) {
       return undefined
     }
-    const word = quote(tokenize(lastWord(before)))
-    return (place) =>
-      `Á eftir orðinu ${word} í ${place} kemur: ${asEnd(newPart)}`
+    // A clause added between commas is cited with the comma before it, as
+    // amending regulations do: Á eftir orðinu „félags“ kemur: , sbr. 8. gr.
+    // The diff reads it as ending on the comma: „félags,“ … sbr. 8. gr.,
+    let lead = before
+    let text = newPart
+    if (
+      isMidPunctuation(before[before.length - 1]) &&
+      sameToken(before[before.length - 1], newPart[newPart.length - 1])
+    ) {
+      lead = before.slice(0, -1)
+      text = [before[before.length - 1], ...newPart.slice(0, -1)]
+    }
+    // Ending on a comma, the amendment's sentence can't end with it
+    if (isMidPunctuation(text[text.length - 1])) {
+      return undefined
+    }
+    const word = quote(tokenize(lastWord(lead)))
+    return (place) => `Á eftir orðinu ${word} í ${place} kemur: ${asEnd(text)}`
   }
 
   if (!newPart.length && allOfType(ops, 'delete')) {
@@ -282,8 +301,12 @@ export const describeWordChange = (
       `${numbers} málsl. ${place} ${ops.length > 1 ? 'falla' : 'fellur'} brott.`
   }
 
-  // Most of the text changed: the caller restates it instead
-  if (changedWords > unchanged) {
+  // Most of the text changed, or what replaces it ends on a comma the
+  // amendment's sentence can't end with: the caller restates it instead
+  if (
+    changedWords > unchanged ||
+    isMidPunctuation(newPart[newPart.length - 1])
+  ) {
     return undefined
   }
 

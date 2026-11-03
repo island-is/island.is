@@ -1588,6 +1588,37 @@ describe('formatAmendingBodyWithArticlePrefix: words and sentences', () => {
     )
   })
 
+  it('adds a clause after a comma with the comma, not in the quote', () => {
+    const before = withItem(
+      'Gjaldið greiðist fyrirfram, nema annað sé ákveðið.',
+    )
+    expect(
+      change(
+        withItem(
+          'Gjaldið greiðist fyrirfram, þó eigi síðar en mánuði fyrir skoðun, nema annað sé ákveðið.',
+        ),
+        before,
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Á eftir orðinu „fyrirfram“ í 1. tölul. 1. gr. reglugerðarinnar kemur: , þó eigi síðar en mánuði fyrir skoðun.</p>',
+      ),
+    )
+  })
+
+  it('restates the text when what is added ends on a comma', () => {
+    const before = withItem('Gjaldið greiðist fyrirfram nema annað sé ákveðið.')
+    const result = change(
+      withItem(
+        'Gjaldið greiðist fyrirfram, þó eigi síðar en mánuði fyrir skoðun, nema annað sé ákveðið.',
+      ),
+      before,
+    )
+    expect(result).not.toContain(',.')
+    expect(result).toContain('1. tölul. 1. gr. reglugerðarinnar orðast svo:')
+  })
+
   it('adds words after an abbreviation the diff splits', () => {
     expect(
       change(
@@ -1913,6 +1944,59 @@ describe('formatAmendingBodyWithArticlePrefix: items added or removed', () => {
         '<p>Á undan 1. tölulið 1. gr. reglugerðarinnar kemur nýr töluliður, svohljóðandi, og breytist númer annarra liða til samræmis: dráttarvélar,</p>',
       ),
     )
+  })
+
+  it('adds items next to each other in the middle as one amendment', () => {
+    expect(
+      changes(
+        withList(
+          'fólksbifreiðar,',
+          'vörubifreiðar,',
+          'dráttarvélar,',
+          'bifhjól,',
+          'hópbifreiðar.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Á eftir 2. tölulið 1. gr. reglugerðarinnar koma tveir nýir töluliðir, svohljóðandi, og breytist númer annarra liða til samræmis:</p><ol start="3"><li>dráttarvélar,</li><li>bifhjól,</li></ol>',
+      ),
+    )
+  })
+
+  it('adds items next to each other first as one amendment', () => {
+    expect(
+      changes(
+        withList(
+          'dráttarvélar,',
+          'bifhjól,',
+          'fólksbifreiðar,',
+          'vörubifreiðar,',
+          'hópbifreiðar.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Á undan 1. tölulið 1. gr. reglugerðarinnar koma tveir nýir töluliðir, svohljóðandi, og breytist númer annarra liða til samræmis:</p><ol><li>dráttarvélar,</li><li>bifhjól,</li></ol>',
+      ),
+    )
+  })
+
+  it('names up to ten new items in words', () => {
+    const added = ['a', 'b', 'c', 'd', 'e'].map((x) => `${x}bifreiðar,`)
+    expect(
+      changes(
+        withList(
+          'fólksbifreiðar,',
+          'vörubifreiðar,',
+          'hópbifreiðar,',
+          ...added.slice(0, -1),
+          'ebifreiðar.',
+        ),
+      ),
+    ).toContain('Við bætast fimm nýir töluliðir, svohljóðandi:')
   })
 
   it('numbers the items after an added one as in the base regulation', () => {
