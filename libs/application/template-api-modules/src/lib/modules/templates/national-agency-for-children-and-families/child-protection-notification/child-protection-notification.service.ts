@@ -1,6 +1,9 @@
 import { getApplicationAnswers } from '@island.is/application/templates/national-agency-for-children-and-families/child-protection-notification'
 import { ApplicationTypes } from '@island.is/application/types'
-import { NationalAgencyForChildrenAndFamiliesClientService } from '@island.is/clients/national-agency-for-children-and-families'
+import {
+  NationalAgencyForChildrenAndFamiliesClientService,
+  NotificationGeneralPublicRequest,
+} from '@island.is/clients/national-agency-for-children-and-families'
 import { Injectable } from '@nestjs/common'
 
 import { NotificationsService } from '../../../../notification/notifications.service'
@@ -60,13 +63,21 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     return this.nationalAgencyForChildrenAndFamiliesClientService.getDisabilityStatuses()
   }
 
-  // TODO: Submit the notification to the National Agency for Children and Families
-  async createNotification() {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+  // TODO: Map application answers to the request body.
+  async createNotification({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const answers = getApplicationAnswers(application.answers)
 
-    return {
-      id: 1337,
-    }
+    const body = {
+      // TODO: Map answers fields here
+    } as NotificationGeneralPublicRequest
+
+    return await this.nationalAgencyForChildrenAndFamiliesClientService.createNotification(
+      auth,
+      body,
+    )
   }
 
   // TODO: Mark the notification as complete after submission

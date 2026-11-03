@@ -1,16 +1,28 @@
+import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   DetailedDropDownDto,
   DropDownDto,
   ExternalCategoryResponse,
   ExternalDropdownApi,
+  ExternalNotificationApi,
   ExternalNotifierRoleSubTypeResponse,
+  NotificationCreateResponse,
+  NotificationGeneralPublicRequest,
   ProtectiveFactorSectionDto,
 } from '../../gen/fetch'
 
 @Injectable()
 export class NationalAgencyForChildrenAndFamiliesClientService {
-  constructor(private readonly externalDropdownApi: ExternalDropdownApi) {}
+  constructor(
+    private readonly externalDropdownApi: ExternalDropdownApi,
+    private readonly externalNotificationApi: ExternalNotificationApi,
+  ) {}
+
+  private externalNotificationApiWithAuth = (user: User) =>
+    this.externalNotificationApi.withMiddleware(
+      new AuthMiddleware(user as Auth),
+    )
 
   async getCategories(): Promise<ExternalCategoryResponse[]> {
     return this.externalDropdownApi.externalCategories()
@@ -60,5 +72,16 @@ export class NationalAgencyForChildrenAndFamiliesClientService {
     ExternalNotifierRoleSubTypeResponse[]
   > {
     return this.externalDropdownApi.externalNotifierRoleSubTypes()
+  }
+
+  async createNotification(
+    user: User,
+    body: NotificationGeneralPublicRequest,
+  ): Promise<NotificationCreateResponse> {
+    return await this.externalNotificationApiWithAuth(
+      user,
+    ).externalCreateNotificationGeneralPublic({
+      notificationGeneralPublicRequest: body,
+    })
   }
 }
