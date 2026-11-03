@@ -48,6 +48,21 @@ export const payment = {
         'Message shown when none of the selected debts are in the current list',
     },
   }),
+  inProgress: defineMessages({
+    title: {
+      id: 'pd.application:payment.inProgress.title',
+      defaultMessage: 'Greiðsla er þegar í vinnslu',
+      description:
+        'Title shown when another payment for the selected debts is in progress or already received',
+    },
+    message: {
+      id: 'pd.application:payment.inProgress.message',
+      defaultMessage:
+        'Önnur greiðsla vegna sömu skulda er í vinnslu eða hefur þegar borist. Skuldastaðan uppfærist þegar greiðslan hefur verið skráð.',
+      description:
+        'Message shown when another payment for the selected debts is in progress or already received',
+    },
+  }),
   unavailable: defineMessages({
     title: {
       id: 'pd.application:payment.unavailable.title',

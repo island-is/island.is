@@ -188,6 +188,11 @@ export const paymentErrorToTitleAndMessage = (
         title: debtError.invalidTitle,
         message: debtError.invalid,
       }
+    case DebtPaymentErrorCode.DebtPaymentInProgress:
+      return {
+        title: debtError.inProgressTitle,
+        message: debtError.inProgress,
+      }
     case DebtPaymentErrorCode.DebtPaymentMethodNotAllowed:
       return {
         title: debtError.methodNotAllowedTitle,
@@ -263,6 +268,7 @@ export const isTerminalDebtError = (code?: string | null): boolean =>
   code === DebtPaymentErrorCode.DebtPaymentFlowClosed ||
   code === DebtPaymentErrorCode.DebtPaymentRejectedRefundPending ||
   code === DebtPaymentErrorCode.DebtPaymentInvalid ||
+  code === DebtPaymentErrorCode.DebtPaymentInProgress ||
   code === DebtPaymentErrorCode.DebtPaymentRejected
 
 export const getErrorTitleAndMessage = (

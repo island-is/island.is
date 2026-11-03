@@ -478,7 +478,7 @@ export class PaymentFlowService {
         `[${paymentFlowId}] A debt is already being paid in another flow`,
         { otherPaymentFlowId: held.paymentFlowId },
       )
-      throw new BadRequestException(DebtPaymentErrorCode.DebtPaymentInvalid)
+      throw new BadRequestException(DebtPaymentErrorCode.DebtPaymentInProgress)
     }
   }
 

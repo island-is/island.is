@@ -245,7 +245,7 @@ describe('DebtPaymentFlowController', () => {
 
         expect(response.status).toBe(400)
         expect(response.body.detail).toBe(
-          DebtPaymentErrorCode.DebtPaymentInvalid,
+          DebtPaymentErrorCode.DebtPaymentInProgress,
         )
         expect(validatePayment).not.toHaveBeenCalled()
       })
@@ -274,7 +274,7 @@ describe('DebtPaymentFlowController', () => {
 
           expect(response.status).toBe(400)
           expect(response.body.detail).toBe(
-            DebtPaymentErrorCode.DebtPaymentInvalid,
+            DebtPaymentErrorCode.DebtPaymentInProgress,
           )
         })
 
@@ -323,7 +323,7 @@ describe('DebtPaymentFlowController', () => {
 
           expect(response.status).toBe(400)
           expect(response.body.detail).toBe(
-            DebtPaymentErrorCode.DebtPaymentInvalid,
+            DebtPaymentErrorCode.DebtPaymentInProgress,
           )
         })
 

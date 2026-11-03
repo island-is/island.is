@@ -20,7 +20,7 @@ import { FetchError } from '@island.is/clients/middlewares'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
-const { noSelection, alreadyPaid, unavailable } = paymentMessages
+const { noSelection, alreadyPaid, unavailable, inProgress } = paymentMessages
 
 @Injectable()
 export class PayDebtsService extends BaseTemplateApiService {
@@ -69,6 +69,12 @@ export class PayDebtsService extends BaseTemplateApiService {
       if (code === DebtPaymentErrorCode.DebtPaymentInvalid) {
         throw new TemplateApiError(
           { title: noSelection.title, summary: noSelection.message },
+          400,
+        )
+      }
+      if (code === DebtPaymentErrorCode.DebtPaymentInProgress) {
+        throw new TemplateApiError(
+          { title: inProgress.title, summary: inProgress.message },
           400,
         )
       }

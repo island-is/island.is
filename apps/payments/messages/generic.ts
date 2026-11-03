@@ -161,6 +161,18 @@ export const debtError = defineMessages({
     description:
       'The status of your debts may have changed. No payment was taken.',
   },
+  inProgressTitle: {
+    id: 'payments:debtError.inProgressTitle',
+    defaultMessage: 'Greiðsla er þegar í vinnslu',
+    description: 'A payment is already in progress',
+  },
+  inProgress: {
+    id: 'payments:debtError.inProgress',
+    defaultMessage:
+      'Önnur greiðsla vegna sömu skulda er í vinnslu eða hefur þegar borist. Engin greiðsla var tekin.',
+    description:
+      'Another payment for the same debts is in progress or has already been received. No payment was taken.',
+  },
   methodNotAllowedTitle: {
     id: 'payments:debtError.methodNotAllowedTitle',
     defaultMessage: 'Greiðsluleið ekki í boði',

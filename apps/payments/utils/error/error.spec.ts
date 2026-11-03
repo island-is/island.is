@@ -20,6 +20,7 @@ describe('debt payment errors', () => {
     DebtPaymentErrorCode.DebtPaymentRejected,
     DebtPaymentErrorCode.DebtPaymentRejectedRefundPending,
     DebtPaymentErrorCode.DebtPaymentInvalid,
+    DebtPaymentErrorCode.DebtPaymentInProgress,
   ])('%s ends the flow', (code) => {
     expect(isTerminalDebtError(code)).toBe(true)
   })

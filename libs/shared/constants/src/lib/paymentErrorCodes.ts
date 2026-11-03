@@ -91,6 +91,7 @@ export enum BankTransferErrorCode {
 
 export enum DebtPaymentErrorCode {
   DebtPaymentInvalid = 'DebtPaymentInvalid',
+  DebtPaymentInProgress = 'DebtPaymentInProgress',
   DebtPaymentMethodNotAllowed = 'DebtPaymentMethodNotAllowed',
   DebtPaymentRejected = 'DebtPaymentRejected',
   DebtPaymentFlowClosed = 'DebtPaymentFlowClosed',
