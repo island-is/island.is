@@ -7,8 +7,6 @@ import {
 } from '@island.is/application/templates/parental-leave-v2'
 import { getValueViaPath } from '@island.is/application/core'
 
-export let assignLinkEmployerSMS = ''
-
 export type AssignEmployerEmail = (
   props: EmailTemplateGeneratorProps,
   assignLink: string,
@@ -25,8 +23,6 @@ export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
     application,
     options: { email },
   } = props
-
-  assignLinkEmployerSMS = assignLink
 
   const employers = getUnApprovedEmployers(application.answers)
   const employerEmailOld = getValueViaPath(

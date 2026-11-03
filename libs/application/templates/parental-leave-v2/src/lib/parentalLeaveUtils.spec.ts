@@ -5,9 +5,6 @@ import {
   ApplicationStatus,
   ApplicationTypes,
   ExternalData,
-  Field,
-  FieldComponents,
-  FieldTypes,
   FormValue,
 } from '@island.is/application/types'
 
@@ -34,7 +31,6 @@ import {
   getOtherParentName,
   getSpouse,
   isEligibleForParentalLeave,
-  getPeriodIndex,
   getApplicationExternalData,
   requiresOtherParentApproval,
   getMaxMultipleBirthsDays,
@@ -78,16 +74,6 @@ const buildApplication = (data?: {
     state,
     externalData,
     status: ApplicationStatus.IN_PROGRESS,
-  }
-}
-
-const buildField = (): Field => {
-  return {
-    type: FieldTypes.TEXT,
-    component: FieldComponents.TEXT,
-    id: 'periods',
-    title: 'fieldTitle',
-    children: undefined,
   }
 }
 
@@ -1212,16 +1198,6 @@ describe('getSelectedChild', () => {
       parentalRelation: ParentalRelations.primary,
       expectedDateOfBirth: '2021-05-17',
     })
-  })
-})
-
-describe('getPeriodIndex', () => {
-  it('should return -1 if field id is missing', () => {
-    expect(getPeriodIndex()).toEqual(-1)
-  })
-  it('should return 0 if field id === periods', () => {
-    const field = buildField()
-    expect(getPeriodIndex(field)).toEqual(0)
   })
 })
 

@@ -8,8 +8,6 @@ import {
   getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave-v2'
 
-export let linkOtherParentSMS = ''
-
 export type AssignOtherParentEmail = (
   props: EmailTemplateGeneratorProps,
   senderName?: string,
@@ -35,8 +33,6 @@ export const generateAssignOtherParentApplicationEmail: AssignOtherParentEmail =
 
     const subject = 'Yfirferð á umsókn um fæðingarorlof'
     const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeaveV2.slug}/${application.id}`
-
-    linkOtherParentSMS = link
 
     return {
       from: {

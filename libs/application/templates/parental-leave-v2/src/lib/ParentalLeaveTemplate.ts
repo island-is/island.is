@@ -20,7 +20,6 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  StateLifeCycle,
   UserProfileApi,
   defineTemplateApi,
   InstitutionNationalIds,
@@ -45,7 +44,6 @@ import {
 } from '../constants'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import {
-  calculatePruneDate,
   determineNameFromApplicationAnswers,
   employerApprovalStatePendingAction,
   getActionName,
@@ -71,14 +69,6 @@ import {
   restructureVMSTPeriods,
 } from './parentalLeaveTemplateUtils'
 import { CodeOwners } from '@island.is/shared/constants'
-
-export const birthDayLifeCycle: StateLifeCycle = {
-  shouldBeListed: true,
-  shouldBePruned: true,
-  whenToPrune: (application: Application) => {
-    return calculatePruneDate(application)
-  },
-} as const
 
 const ParentalLeaveTemplate: ApplicationTemplate<
   ApplicationContext,

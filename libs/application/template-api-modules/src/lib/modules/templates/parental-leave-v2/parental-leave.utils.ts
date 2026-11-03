@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken'
 import get from 'lodash/get'
 import { join } from 'path'
 
@@ -340,23 +339,6 @@ export const isPrimaryAdoption = (
     : selectedChild.primaryParentTypeOfApplication === ADOPTION
 }
 
-export const answerToPeriodsDTO = (answers: AnswerPeriod[]) => {
-  let periods: Period[] = []
-
-  if (answers) {
-    periods = answers.map((period) => ({
-      from: period.startDate,
-      to: period.endDate,
-      ratio: period.ratio,
-      approved: false,
-      paid: false,
-      rightsCodePeriod: null,
-    }))
-  }
-
-  return periods
-}
-
 export const transformApplicationToParentalLeaveDTO = (
   application: Application,
   periods: Period[],
@@ -478,29 +460,6 @@ export const pathToAsset = (file: string) => {
   }
 
   return join(__dirname, `./parental-leave-assets/${file}`)
-}
-
-export const getRatio = (
-  ratio: string,
-  length: string,
-  shouldUseLength: boolean,
-) => (shouldUseLength ? `D${length}` : `${ratio}`)
-
-export const createAssignTokenWithoutNonce = (
-  application: Application,
-  secret: string,
-  expiresIn: number,
-) => {
-  const token = jwt.sign(
-    {
-      applicationId: application.id,
-      state: application.state,
-    },
-    secret,
-    { expiresIn },
-  )
-
-  return token
 }
 
 export const isDateInTheFuture = (date: string) => {

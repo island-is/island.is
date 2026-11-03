@@ -1,7 +1,4 @@
-import differenceInMonths from 'date-fns/differenceInMonths'
-import differenceInCalendarMonths from 'date-fns/differenceInCalendarMonths'
 import differenceInDays from 'date-fns/differenceInDays'
-import isSameMonth from 'date-fns/isSameMonth'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
 import addDays from 'date-fns/addDays'
 import isSameDay from 'date-fns/isSameDay'
@@ -31,59 +28,6 @@ export const daysToMonths = (days: number) => {
  */
 export const monthsToDays = (months: number) => {
   return Math.floor(months * DAYS_IN_MONTH)
-}
-
-/**
- * Return true if the dates are the first day and the last day of the same month
- */
-const isFullMonth = (start: Date, end: Date) => {
-  if (!isSameMonth(start, end)) {
-    return false
-  }
-
-  return start.getDate() === 1 && end.getDate() === getDaysInMonth(end)
-}
-
-/**
- * Calculates the number of days between two dates according to VMST's rules
- */
-export const calculateNumberOfDaysForOnePeriod = (start: Date, end: Date) => {
-  if (end < start) {
-    throw new Error('The end date cannot be before the start date.')
-  }
-
-  if (isSameMonth(start, end)) {
-    const fullMonth = isFullMonth(start, end)
-    const ratioOfDaysUsed =
-      (end.getDate() - start.getDate()) / getDaysInMonth(start)
-    const daysUsed = Math.round(ratioOfDaysUsed * DAYS_IN_MONTH)
-
-    return fullMonth ? DAYS_IN_MONTH : daysUsed
-  }
-
-  const ratioLeftOfStartMonth = 1 - start.getDate() / getDaysInMonth(start)
-  const ratioUsedOfEndMonth = end.getDate() / getDaysInMonth(end)
-
-  const daysSpentInStartMonth = Math.round(
-    ratioLeftOfStartMonth * DAYS_IN_MONTH,
-  )
-  const daysSpentInEndMonth = Math.round(ratioUsedOfEndMonth * DAYS_IN_MONTH)
-
-  const differenceInFullMonths = differenceInMonths(end, start)
-  const monthsApart = differenceInCalendarMonths(end, start)
-
-  const isOneMonthBetweenStartAndEnd =
-    daysSpentInStartMonth + daysSpentInEndMonth >= DAYS_IN_MONTH
-  const diff = differenceInFullMonths - (isOneMonthBetweenStartAndEnd ? 1 : 0)
-
-  const extraDaysFromGoingOverFullMonths =
-    monthsApart < 2 ? 0 : diff * DAYS_IN_MONTH
-
-  return (
-    daysSpentInStartMonth +
-    daysSpentInEndMonth +
-    extraDaysFromGoingOverFullMonths
-  )
 }
 
 /**

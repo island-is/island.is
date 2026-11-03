@@ -1,9 +1,7 @@
 import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import {
   Application,
-  ApplicationLifecycle,
   ExternalData,
-  Field,
   FormValue,
   Option,
   PendingAction,
@@ -560,20 +558,6 @@ export const isEligibleForParentalLeave = (
     children.length > 0 &&
     dataProvider?.remainingDays > 0
   )
-}
-
-export const getPeriodIndex = (field?: Field) => {
-  const id = field?.id as string
-
-  if (!id) {
-    return -1
-  }
-
-  if (id === 'periods') {
-    return 0
-  }
-
-  return parseInt(id.substring(id.indexOf('[') + 1, id.indexOf(']')), 10)
 }
 
 const getOrFallback = (condition: YesOrNo, value: number | undefined = 0) => {
@@ -2154,29 +2138,6 @@ export const getAttachments = (application: Application) => {
   }
 
   return attachments
-}
-
-export const calculatePruneDate = (application: Application) => {
-  const { pruneAt } = application as unknown as ApplicationLifecycle
-  const { dateOfBirth } = getApplicationExternalData(application.externalData)
-
-  // If date of birth is set then we use that date + 2 years as prune date
-  if (dateOfBirth?.data?.dateOfBirth) {
-    const pruneDate = new Date(dateOfBirth.data.dateOfBirth)
-    pruneDate.setFullYear(pruneDate.getFullYear() + 2)
-
-    return pruneDate
-  }
-
-  // Just to be sure that we have some date set for prune date
-  if (!pruneAt) {
-    const pruneDate = new Date()
-    pruneDate.setMonth(pruneDate.getMonth() + 24)
-
-    return pruneDate
-  }
-
-  return pruneAt
 }
 
 export const getSelectOptionLabel = (options: SelectOption[], id?: string) => {

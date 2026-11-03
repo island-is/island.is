@@ -3,11 +3,6 @@ import { MessageDescriptor } from 'react-intl'
 import { ParentalRelations } from './constants'
 import { YesOrNo } from '@island.is/application/core'
 
-export interface MultipleBirths {
-  hasMultipleBirths: YesOrNo
-  multipleBirths?: number
-}
-
 export interface RequestRightsObj {
   isRequestingRights: YesOrNo
   requestDays: number
