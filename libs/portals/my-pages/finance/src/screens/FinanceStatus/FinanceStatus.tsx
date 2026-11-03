@@ -83,20 +83,14 @@ const FinanceStatus = () => {
   const financeStatusData: FinanceStatusDataType =
     statusQuery.data?.getFinanceStatus || {}
 
-  const getChargeTypeTotalAmount = () => {
-    const organizationChargeTypes = financeStatusData?.organizations?.map(
-      (org) => org.chargeTypes,
-    )
-    const allChargeTypes = flatten(organizationChargeTypes)
+  const allChargeTypes = flatten(
+    financeStatusData?.organizations?.map((org) => org.chargeTypes),
+  )
 
-    return allChargeTypes.length > 0
-      ? allChargeTypes.reduce((a, b) => a + b.totals, 0)
-      : 0
-  }
+  const getChargeTypeTotal = () =>
+    amountFormat(allChargeTypes.reduce((a, b) => a + b.totals, 0))
 
-  const getChargeTypeTotal = () => amountFormat(getChargeTypeTotalAmount())
-
-  const hasDebt = getChargeTypeTotalAmount() > 0
+  const hasDebt = allChargeTypes.some((chargeType) => chargeType.totals > 0)
 
   const endOfYearMessage = defineMessage({
     id: 'sp.finance-status:end-of-year',
