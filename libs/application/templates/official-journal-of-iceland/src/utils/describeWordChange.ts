@@ -133,6 +133,17 @@ const asEnd = (tokens: Token[]) => {
 const isMidPunctuation = (token: Token | undefined) =>
   !!token?.glued && /^[,;]$/.test(token.text)
 
+/** How many times `part` appears in `tokens`, word for word */
+const occurrences = (tokens: Token[], part: Token[]) => {
+  let count = 0
+  for (let i = 0; i + part.length <= tokens.length; i++) {
+    if (part.every((token, j) => sameToken(token, tokens[i + j]))) {
+      count++
+    }
+  }
+  return count
+}
+
 const isNumber = (token: Token | undefined) =>
   !!token && !token.glued && /^\d[\d.,]*$/.test(token.text)
 
@@ -258,7 +269,26 @@ export const describeWordChange = (
       const count = ops.length
       const what =
         count === 1 ? 'nýr málsliður' : `${countWord(count)} nýir málsliðir`
-      const text = escapeHtml(detokenize(newPart))
+      // A sentence that starts as the next one does is matched from the
+      // wrong end: „getur veitt undanþágu. Ráðherra“ for „Ráðherra getur
+      // veitt undanþágu.“ It is moved back to start where the sentence does.
+      let lead = before
+      let sentences = newPart
+      const endsSentence = (tokens: Token[]) =>
+        tokens[tokens.length - 1]?.glued &&
+        tokens[tokens.length - 1].text === '.'
+      while (
+        !endsSentence(sentences) &&
+        lead.length &&
+        sameToken(lead[lead.length - 1], sentences[sentences.length - 1])
+      ) {
+        sentences = [lead[lead.length - 1], ...sentences.slice(0, -1)]
+        lead = lead.slice(0, -1)
+      }
+      if (!endsSentence(sentences)) {
+        return undefined
+      }
+      const text = escapeHtml(detokenize(sentences))
       if (!after.length) {
         return (place) =>
           `Við ${place} ${
@@ -291,7 +321,12 @@ export const describeWordChange = (
     if (isMidPunctuation(text[text.length - 1])) {
       return undefined
     }
-    const word = quote(tokenize(lastWord(lead)))
+    // A word that appears more than once doesn't say where: restated
+    const anchor = tokenize(lastWord(lead))
+    if (occurrences(oldTokens, anchor) > 1) {
+      return undefined
+    }
+    const word = quote(anchor)
     return (place) => `Á eftir orðinu ${word} í ${place} kemur: ${asEnd(text)}`
   }
 
@@ -307,6 +342,10 @@ export const describeWordChange = (
     changedWords > unchanged ||
     isMidPunctuation(newPart[newPart.length - 1])
   ) {
+    return undefined
+  }
+  // Words that appear more than once don't say which: restated
+  if (occurrences(oldTokens, oldPart) > 1) {
     return undefined
   }
 

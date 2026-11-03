@@ -1730,6 +1730,79 @@ describe('formatAmendingBodyWithArticlePrefix: words and sentences', () => {
     )
   })
 
+  describe('a sentence added that starts as the next one does', () => {
+    const RULES = 'Ráðherra setur reglur um gjaldið.'
+    const BOARD = 'Ráðherra skipar nefnd til þriggja ára.'
+    const NEW = 'Ráðherra getur veitt undanþágu frá gjaldinu.'
+
+    it('cites the whole sentence after the one it follows', () => {
+      expect(
+        change(
+          twoParagraphs(FIRST, `${RULES} ${NEW} ${BOARD}`),
+          twoParagraphs(FIRST, `${RULES} ${BOARD}`),
+        ),
+      ).toBe(
+        article(
+          1,
+          `<p>Á eftir 1. málsl. 2. mgr. 1. gr. reglugerðarinnar kemur nýr málsliður, svohljóðandi: ${NEW}</p>`,
+        ),
+      )
+    })
+
+    it('cites the whole sentence before the first one', () => {
+      expect(
+        change(
+          twoParagraphs(FIRST, `${NEW} ${BOARD}`),
+          twoParagraphs(FIRST, BOARD),
+        ),
+      ).toBe(
+        article(
+          1,
+          `<p>Á undan 1. málsl. 2. mgr. 1. gr. reglugerðarinnar kemur nýr málsliður, svohljóðandi: ${NEW}</p>`,
+        ),
+      )
+    })
+  })
+
+  describe('words that appear more than once', () => {
+    const paragraph = (text: string) =>
+      body(amend(twoParagraphs(FIRST, text), {}, BEFORE))[0]
+    const restated = (text: string) =>
+      article(
+        1,
+        `<p>2. mgr. 1. gr. reglugerðarinnar breytist og orðast svo:</p><p>${text}</p>`,
+      )
+
+    it('restates the text when the amount replaced appears twice', () => {
+      const before = twoParagraphs(
+        FIRST,
+        'Gjald fyrir skoðun er 500 kr. og gjald fyrir endurskoðun er 500 kr. á hvert ökutæki.',
+      )
+      const after =
+        'Gjald fyrir skoðun er 500 kr. og gjald fyrir endurskoðun er 700 kr. á hvert ökutæki.'
+      expect(change(twoParagraphs(FIRST, after), before)).toBe(restated(after))
+    })
+
+    it('restates the text when the word added after appears twice', () => {
+      const before = twoParagraphs(
+        FIRST,
+        'Umsókn skal send ráðuneytinu og skal henni fylgja vottorð og staðfesting á greiðslu.',
+      )
+      const after =
+        'Umsókn skal send ráðuneytinu og skal henni fylgja vottorð og afrit af skilríkjum og staðfesting á greiðslu.'
+      expect(change(twoParagraphs(FIRST, after), before)).toBe(restated(after))
+    })
+
+    it('still cites a word that appears once, others repeated', () => {
+      expect(paragraph(SECOND.replace('500 kr.', '700 kr.'))).toBe(
+        article(
+          1,
+          '<p>Í stað fjárhæðarinnar „500 kr.“ í 2. mgr. 1. gr. reglugerðarinnar kemur: 700 kr.</p>',
+        ),
+      )
+    })
+  })
+
   it('restates a paragraph changed in two places', () => {
     expect(
       change(
