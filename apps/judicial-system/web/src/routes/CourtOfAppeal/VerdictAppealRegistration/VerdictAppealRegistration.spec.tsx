@@ -276,6 +276,19 @@ describe('VerdictAppealRegistration', () => {
     expect(mockPush).not.toHaveBeenCalled()
   })
 
+  it('waits for a gap in the bench to be filled before confirming', async () => {
+    renderPage()
+
+    await pick('Velja aðstoðarmann', 'Aðstoð Aðstoðardóttir')
+    await pick('Velja dómara', 'Anna Dómaradóttir', 1)
+
+    expect(isDisabled(confirmButton())).toBe(true)
+
+    await pick('Velja dómara', 'Björn Dómarason')
+
+    expect(isDisabled(confirmButton())).toBe(false)
+  })
+
   it('does not offer a judge already on the bench for another seat', async () => {
     renderPage({
       ...theCase,

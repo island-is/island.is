@@ -13,6 +13,7 @@ import {
   getBenchSlots,
   getJudgeOptions,
   getNewlyAssignedUserIds,
+  hasBenchSeatGap,
   hasUnsavedRoleChanges,
   isAnyRoleUnfilled,
   removeBenchSeat,
@@ -91,6 +92,13 @@ describe('bench seats', () => {
     expect(canRemoveBenchSeat(four, 1)).toBe(true)
     expect(removeBenchSeat(four, 1)).toEqual([anna, dora, einar])
     expect(removeBenchSeat(four, 3)).toEqual([anna, bjorn, dora])
+  })
+
+  it('reports a filled seat after an empty one as a gap', () => {
+    expect(hasBenchSeatGap([anna, bjorn, null])).toBe(false)
+    expect(hasBenchSeatGap([null, null, null])).toBe(false)
+    expect(hasBenchSeatGap([null, anna, null])).toBe(true)
+    expect(hasBenchSeatGap([anna, null, bjorn])).toBe(true)
   })
 })
 

@@ -35,6 +35,7 @@ import {
   getBenchSlots,
   getJudgeOptions,
   getNewlyAssignedUserIds,
+  hasBenchSeatGap,
   hasUnsavedRoleChanges,
   type JudgeSelectOption,
   removeBenchSeat,
@@ -100,9 +101,12 @@ const VerdictAppealRegistration = () => {
   const roles = { appealAssistant, judges }
   const stepIsValid = isVerdictAppealRegistrationStepValid(verdictAppealCase)
   // A judge is told of the assignment by the case number, so the bench waits
-  // for the number.
+  // for the number. A bench with a gap would be saved with the later judge
+  // moved up, so it waits for the gap to be filled.
   const canConfirmRoles =
-    stepIsValid && hasUnsavedRoleChanges(verdictAppealCase, roles)
+    stepIsValid &&
+    !hasBenchSeatGap(judges) &&
+    hasUnsavedRoleChanges(verdictAppealCase, roles)
 
   const previousUrl = appendAppealCaseIdQuery(
     `${COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,

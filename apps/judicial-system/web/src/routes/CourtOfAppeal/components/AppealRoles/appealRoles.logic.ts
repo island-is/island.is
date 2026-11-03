@@ -70,6 +70,15 @@ export const removeBenchSeat = (
 export const getSelectedJudgeIds = (judges: BenchSlot[]): string[] =>
   judges.map((judge) => judge?.id).filter((id): id is string => Boolean(id))
 
+// Whether a filled seat follows an empty one. The bench is saved without its
+// empty seats, so a gap would move a later judge up, possibly into the
+// presiding seat, without the court having chosen that.
+export const hasBenchSeatGap = (judges: BenchSlot[]): boolean =>
+  judges.some(
+    (judge, seat) =>
+      !judge?.id && judges.slice(seat + 1).some((later) => Boolean(later?.id)),
+  )
+
 export const getAssistantOptions = (
   users: User[] | null | undefined,
 ): AssistantSelectOption[] =>

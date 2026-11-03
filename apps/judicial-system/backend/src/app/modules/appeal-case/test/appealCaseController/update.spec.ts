@@ -475,6 +475,31 @@ describe('AppealCaseController - Update', () => {
     })
   })
 
+  describe('the bench is sent as null', () => {
+    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
+    const appealCase = {
+      id: appealCaseId,
+      caseId,
+      appealCaseNumber: 'LANDSRÉTTUR 1/2024',
+      appealAssistantId: uuid(),
+      appealJudges: bench([uuid(), uuid(), uuid()]),
+    } as AppealCase
+    const update = { appealJudgeIds: null } as unknown as UpdateAppealCaseDto
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(theCase, appealCase, update)
+    })
+
+    it('should keep the bench and queue nothing', () => {
+      expect(
+        mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
+      ).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      expect(then.result).toBe(appealCase)
+    })
+  })
+
   describe('the bench is cleared', () => {
     const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
     const assistantId = uuid()

@@ -1115,9 +1115,11 @@ export class AppealCaseService {
       )
     }
 
+    // The api's list is nullable, so a null bench arrives as well as an
+    // omitted one; neither is a change. An empty list clears the bench.
     const previousJudgeIds = getAppealJudgeUserIds(appealCase)
     const judgesChanged =
-      appealJudgeIds !== undefined &&
+      Array.isArray(appealJudgeIds) &&
       !this.isSameBench(appealJudgeIds, previousJudgeIds)
     const nextJudgeIds = judgesChanged ? appealJudgeIds : previousJudgeIds
 
