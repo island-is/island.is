@@ -246,6 +246,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
         onChange: (date: any) => {
           if (date === null) {
             setStartDate(null)
+            handleClear && handleClear()
             setIsOpen(false)
             return
           }

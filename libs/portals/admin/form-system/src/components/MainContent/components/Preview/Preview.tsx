@@ -21,7 +21,11 @@ import {
 } from '@island.is/form-system/ui'
 import { Box, DatePicker, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import addDays from 'date-fns/addDays'
+import max from 'date-fns/max'
+import min from 'date-fns/min'
 import parseISO from 'date-fns/parseISO'
+import startOfDay from 'date-fns/startOfDay'
 import { FormProvider, useForm } from 'react-hook-form'
 
 interface Props {
@@ -33,6 +37,22 @@ export const Preview = ({ data, screenOrSection }: Props) => {
   const type = data.fieldType
   const methods = useForm()
   const { formatMessage } = useLocale()
+  const today = startOfDay(new Date())
+  const settings = data.fieldSettings
+  const fixedMinDate = settings?.minDate
+    ? parseISO(settings.minDate)
+    : undefined
+  const fixedMaxDate = settings?.maxDate
+    ? parseISO(settings.maxDate)
+    : undefined
+  const minDate =
+    settings?.minDateDaysFromToday != null
+      ? addDays(today, settings.minDateDaysFromToday)
+      : fixedMinDate ?? new Date(1970, 0)
+  const maxDate =
+    settings?.maxDateDaysFromToday != null
+      ? addDays(today, settings.maxDateDaysFromToday)
+      : fixedMaxDate
 
   const fieldContent = (
     <>
@@ -48,15 +68,9 @@ export const Preview = ({ data, screenOrSection }: Props) => {
                 : data?.name?.is
             }
             placeholderText={formatMessage(m.chooseDate)}
-            minDate={
-              data.fieldSettings?.minDate
-                ? parseISO(data.fieldSettings.minDate)
-                : new Date(1970, 0)
-            }
+            minDate={fixedMinDate ? max([fixedMinDate, minDate]) : minDate}
             maxDate={
-              data.fieldSettings?.maxDate
-                ? parseISO(data.fieldSettings.maxDate)
-                : undefined
+              fixedMaxDate && maxDate ? min([fixedMaxDate, maxDate]) : maxDate
             }
           />
         </Box>

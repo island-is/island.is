@@ -4,8 +4,12 @@ import { Action } from '../../../lib'
 import { m } from '../../../lib/messages'
 import { useIntl } from 'react-intl'
 import { getValue } from '../../../lib/getValue'
+import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
+import max from 'date-fns/max'
+import min from 'date-fns/min'
 import parseISO from 'date-fns/parseISO'
+import startOfDay from 'date-fns/startOfDay'
 import { DatePicker } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
 
@@ -26,6 +30,22 @@ export const DatePickerField = ({
   const { formatMessage } = useIntl()
   const { control, trigger } = useFormContext()
   const fieldName = `${item.id}.${valueIndex}`
+  const today = startOfDay(new Date())
+  const settings = item.fieldSettings
+  const fixedMinDate = settings?.minDate
+    ? parseISO(settings.minDate)
+    : undefined
+  const fixedMaxDate = settings?.maxDate
+    ? parseISO(settings.maxDate)
+    : undefined
+  const minDate =
+    settings?.minDateDaysFromToday != null
+      ? addDays(today, settings.minDateDaysFromToday)
+      : fixedMinDate ?? new Date(1970, 0)
+  const maxDate =
+    settings?.maxDateDaysFromToday != null
+      ? addDays(today, settings.maxDateDaysFromToday)
+      : fixedMaxDate
 
   const handleDateChange = (dateString: string) => {
     if (dispatch) {
@@ -79,15 +99,9 @@ export const DatePickerField = ({
             handleDateChange(newVal)
             trigger(fieldName)
           }}
-          minDate={
-            item.fieldSettings?.minDate
-              ? parseISO(item.fieldSettings.minDate)
-              : new Date(1970, 0)
-          }
+          minDate={fixedMinDate ? max([fixedMinDate, minDate]) : minDate}
           maxDate={
-            item.fieldSettings?.maxDate
-              ? parseISO(item.fieldSettings.maxDate)
-              : undefined
+            fixedMaxDate && maxDate ? min([fixedMaxDate, maxDate]) : maxDate
           }
           required={item.isRequired ?? false}
           errorMessage={fieldState.error ? fieldState.error.message : undefined}
