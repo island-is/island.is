@@ -30,7 +30,15 @@ export const TranslationWorkspaceLayout = ({
   <Box className={workspaceStyles.workspaceShell}>
     <div className={workspaceStyles.workspaceMainRow}>
       <div className={workspaceStyles.workspacePreviewAside}>
-        {notice && <Box padding={3}>{notice}</Box>}
+        {notice && (
+          <Box
+            paddingY={3}
+            paddingLeft={3}
+            paddingRight={isCompactNav ? 10 : 3}
+          >
+            {notice}
+          </Box>
+        )}
         {preview}
       </div>
       {isCompactNav ? (
