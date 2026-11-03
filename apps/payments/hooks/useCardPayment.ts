@@ -166,6 +166,32 @@ export const useCardPayment = ({
     [chargeCardMutationHook],
   )
 
+  // Shows the 3-D Secure challenge and waits until the payer has passed it.
+  // Google Pay saved cards pass the same verification before they are charged.
+  const completeVerification = useCallback(
+    async (verification: VerifyCardMutation['paymentsVerifyCard']) => {
+      if (!verification.isSuccess) {
+        throw new Error(
+          (verification.responseCode as CardErrorCode) ||
+            CardErrorCode.GenericDecline,
+        )
+      }
+
+      setThreeDSecureDataForModal(verification)
+      setThreeDSecureModalActive(true)
+      isVerifyingRef.current = true
+
+      const isCardVerified = await waitForCardVerification()
+
+      if (!isCardVerified) {
+        isVerifyingRef.current = false
+        setThreeDSecureModalActive(false)
+        throw new Error(CardErrorCode.VerificationDeadlineExceeded)
+      }
+    },
+    [waitForCardVerification, setThreeDSecureModalActive],
+  )
+
   const processCardPayment = useCallback(
     async (cardData: CardPaymentData) => {
       if (!paymentFlow?.id) {
@@ -188,24 +214,7 @@ export const useCardPayment = ({
           browserInfo: getBrowserInfo(),
         })
 
-        if (!verifyCardResponse.isSuccess) {
-          throw new Error(
-            (verifyCardResponse.responseCode as CardErrorCode) ||
-              CardErrorCode.GenericDecline,
-          )
-        }
-
-        setThreeDSecureDataForModal(verifyCardResponse)
-        setThreeDSecureModalActive(true)
-        isVerifyingRef.current = true
-
-        const isCardVerified = await waitForCardVerification()
-
-        if (!isCardVerified) {
-          isVerifyingRef.current = false
-          setThreeDSecureModalActive(false)
-          throw new Error(CardErrorCode.VerificationDeadlineExceeded)
-        }
+        await completeVerification(verifyCardResponse)
 
         const chargeCardResponse = await chargeCardApi({
           cardNumber: cardData.number,
@@ -240,7 +249,7 @@ export const useCardPayment = ({
       paymentFlow,
       verifyCardApi,
       chargeCardApi,
-      waitForCardVerification,
+      completeVerification,
       onPaymentSuccess,
       onPaymentError,
       setThreeDSecureModalActive,
@@ -259,6 +268,7 @@ export const useCardPayment = ({
 
   return {
     processCardPayment,
+    completeVerification,
     isCardPaymentProcessing: isProcessing,
     threeDSecureDataForModal,
     verificationStatusLoading,

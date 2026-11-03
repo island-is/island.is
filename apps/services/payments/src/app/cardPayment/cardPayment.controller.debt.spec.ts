@@ -11,6 +11,7 @@ import {
   createMockPaymentFlowService,
   getApplePayChargeInput,
   getChargeCardInput,
+  getGooglePayChargeInput,
   mockPaymentFlow,
 } from './test/sagaTestUtils'
 
@@ -81,12 +82,20 @@ describe('CardPaymentController — debt payments', () => {
     )
   })
 
-  it('answers DebtPaymentRejected for Apple Pay too', async () => {
+  it.each([
+    [
+      'Apple Pay',
+      (c: CardPaymentController) => c.chargeApplePay(getApplePayChargeInput()),
+    ],
+    [
+      'Google Pay',
+      (c: CardPaymentController) =>
+        c.chargeGooglePayVerified(getGooglePayChargeInput()),
+    ],
+  ])('answers DebtPaymentRejected for %s too', async (_name, charge) => {
     const controller = createController(rejected)
 
-    await expect(
-      controller.chargeApplePay(getApplePayChargeInput()),
-    ).rejects.toEqual(
+    await expect(charge(controller)).rejects.toEqual(
       new BadRequestException(DebtPaymentErrorCode.DebtPaymentRejected),
     )
   })
@@ -104,6 +113,11 @@ describe('CardPaymentController — debt payments', () => {
     [
       'Apple Pay',
       (c: CardPaymentController) => c.chargeApplePay(getApplePayChargeInput()),
+    ],
+    [
+      'Google Pay',
+      (c: CardPaymentController) =>
+        c.chargeGooglePayVerified(getGooglePayChargeInput()),
     ],
   ])(
     'answers the %s payment when the saga failed but the payment may be registered, and tells the organisation',
