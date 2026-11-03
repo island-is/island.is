@@ -1,8 +1,22 @@
 // @ts-check
+import { createHash } from 'crypto'
 import { execSync } from 'child_process'
 import fs from 'fs/promises'
 import { globSync } from 'glob'
 import yaml from 'js-yaml'
+
+/**
+ * Backend sources used to generate `apps/api/src/api.graphql`:
+ * the API app module plus the GraphQL domain modules it imports.
+ * These must be part of the cache key so a schema change busts the
+ * generated-files cache instead of reusing a stale `api.graphql`.
+ */
+const apiGraphqlSourcePatterns = [
+  'apps/api/src/**/*.ts',
+  'libs/api/domains/**/*.ts',
+  'libs/cms/**/*.ts',
+  'scripts/build-graphql-schema.ts',
+]
 
 const additionalPatterns = [
   '**/openapi.yaml',
@@ -53,11 +67,13 @@ const generatedList = getOpt(
   `${listDir}/generated_files_list.txt`,
 )
 const inputsList = getOpt('--inputsFile', `${listDir}/codegen_inputs_list.txt`)
+const hashFile = getOpt('--hashFile', `${listDir}/codegen_inputs_hash.txt`)
 const skipCodegen = getFlag('--skip-codegen')
 const outputFileName = getArg(1)
 
 console.log('Parsed', {
   inputsList,
+  hashFile,
   skipCodegen,
   generatedList,
   outputFileName,
@@ -164,6 +180,37 @@ const extractCodegenInputs = async () => {
   return Array.from(resolvedFiles).sort()
 }
 
+/**
+ * Resolves the backend source files that define the `apps/api/src/api.graphql` schema.
+ * @returns {string[]}
+ */
+const getApiGraphqlSources = () => {
+  const /** @type {Set<string>} */ sources = new Set()
+  apiGraphqlSourcePatterns.forEach((pattern) => {
+    globSync(pattern, { nodir: true, ignore: ignorePatterns }).forEach((f) =>
+      sources.add(f),
+    )
+  })
+  return Array.from(sources).sort()
+}
+
+/**
+ * Content-based hash of the given files. Changes whenever any file's content
+ * (or path) changes, unlike hashing a list of paths.
+ * @param {string[]} files
+ * @returns {Promise<string>}
+ */
+const computeContentHash = async (files) => {
+  const hash = createHash('sha256')
+  for (const file of files) {
+    hash.update(file)
+    hash.update('\0')
+    hash.update(await fs.readFile(file))
+    hash.update('\0')
+  }
+  return hash.digest('hex')
+}
+
 async function main() {
   console.log('Starting codegen process...')
 
@@ -178,6 +225,11 @@ async function main() {
   console.log('::group::Input files')
   inputs.forEach((file) => console.log(file))
   console.log('::endgroup::')
+
+  const apiGraphqlSources = getApiGraphqlSources()
+  console.log(
+    `Resolved ${apiGraphqlSources.length} backend sources for api.graphql`,
+  )
 
   if (skipCodegen) {
     console.log('Skipping codegen command...')
@@ -218,6 +270,13 @@ async function main() {
   await fs.mkdir(listDir, { recursive: true })
   await fs.writeFile(generatedList, existingFiles.join('\n'))
   await fs.writeFile(inputsList, inputs.join('\n'))
+
+  const hashSources = Array.from(
+    new Set([...inputs, ...apiGraphqlSources]),
+  ).sort()
+  const contentHash = await computeContentHash(hashSources)
+  await fs.writeFile(hashFile, `${contentHash}\n`)
+  console.log(`Codegen content hash: ${contentHash}`)
 
   console.log(`::group::Creating archive (${outputFileName})`)
   execSync(`tar zcvf "${outputFileName}" -T ${generatedList}`, {

@@ -21,6 +21,7 @@ runs:
         export GENERATED_FILES_PATH=${{ inputs.cache-path }}/${{ env.GENERATED_FILES }}
         echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" >> "$GITHUB_OUTPUT"
         echo "INPUTS_LIST_FILE=dist/codegen_inputs_list.txt" >> "$GITHUB_OUTPUT"
+        echo "INPUTS_HASH_FILE=dist/codegen_inputs_hash.txt" >> "$GITHUB_OUTPUT"
 
     - name: INFO
       working-directory: ${{ inputs.working-directory }}
@@ -36,7 +37,15 @@ runs:
         node ./scripts/ci/generate-files.mjs /dev/null \
           --skip-codegen \
           --inputsFile=${{ steps.prepare.outputs.INPUTS_LIST_FILE }} \
-          --outputsFile=/dev/null
+          --outputsFile=/dev/null \
+          --hashFile=${{ steps.prepare.outputs.INPUTS_HASH_FILE }}
+
+    - name: Read codegen input hash
+      id: codegen-input-hash
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "value=$(cat ${{ steps.prepare.outputs.INPUTS_HASH_FILE }})" >> "$GITHUB_OUTPUT"
 
     - name: Cache generated files
       uses: runs-on/cache@v5
@@ -44,7 +53,7 @@ runs:
       with:
         path: |
           ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}
-        key: generated-files-${{ hashFiles(steps.prepare.outputs.INPUTS_LIST_FILE) }}
+        key: generated-files-${{ steps.codegen-input-hash.outputs.value }}
       env:
         RUNS_ON_S3_BUCKET_CACHE: shared-islandis-github-actions-cache
 
