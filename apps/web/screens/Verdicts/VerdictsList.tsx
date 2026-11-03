@@ -897,21 +897,7 @@ const Filters = ({
                               {supremeCourtCaseTypeTooltip}
                             </MarkdownText>
                           }
-                        >
-                          <button
-                            type="button"
-                            aria-label={formatMessage(
-                              m.listPage.supremeCourtCaseTypeTooltipLabel,
-                            )}
-                            className={styles.tooltipButton}
-                          >
-                            <Icon
-                              icon="informationCircle"
-                              color="dark200"
-                              size="small"
-                            />
-                          </button>
-                        </Tooltip>
+                        />
                       )}
                     </Inline>
                     <Stack space={2}>
