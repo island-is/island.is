@@ -30,10 +30,12 @@ import {
   Stack,
   Tag,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import {
   FilterTag,
   HeadWithSocialSharing,
+  MarkdownText,
   Webreader,
 } from '@island.is/web/components'
 import {
@@ -645,6 +647,11 @@ const Filters = ({
     startExpanded ? FILTER_ACCORDION_ITEM_IDS : [],
   )
   const [openFiltersToggle, setOpenFiltersToggle] = useState(!startExpanded)
+  const supremeCourtCaseTypeTooltip = formatMessage(
+    m.listPage.supremeCourtCaseTypeTooltip,
+  ).trim()
+  const showSupremeCourtCaseTypeTooltip = (courtId: string) =>
+    courtId === 'supremeCourt' && Boolean(supremeCourtCaseTypeTooltip)
 
   const keywordOptions = useMemo(() => {
     return keywords.map((keyword) => ({
@@ -877,8 +884,24 @@ const Filters = ({
               <Stack space={3} key={renderKey}>
                 {caseFilterOptionsByCourt.map((courtGroup) => (
                   <Stack key={courtGroup.id} space={2}>
-                    {selectedCourtLevel === 'all' && (
-                      <Text variant="eyebrow">{courtGroup.label}</Text>
+                    {(selectedCourtLevel === 'all' ||
+                      showSupremeCourtCaseTypeTooltip(courtGroup.id)) && (
+                      <Inline space={1} alignY="center">
+                        <Text variant="eyebrow">{courtGroup.label}</Text>
+                        {showSupremeCourtCaseTypeTooltip(courtGroup.id) && (
+                          <Tooltip
+                            text={
+                              <MarkdownText
+                                variant="small"
+                                fontWeight="regular"
+                                replaceNewLinesWithBreaks={false}
+                              >
+                                {supremeCourtCaseTypeTooltip}
+                              </MarkdownText>
+                            }
+                          />
+                        )}
+                      </Inline>
                     )}
                     <Stack space={2}>
                       {courtGroup.options.map(({ label, typeOfOption }) => {
