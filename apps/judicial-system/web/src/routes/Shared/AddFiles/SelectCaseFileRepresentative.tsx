@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useContext, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
 import type { MultiValue, SingleValue } from 'react-select'
 import isEmpty from 'lodash/isEmpty'
 
@@ -37,7 +36,6 @@ interface SelectRepresentativeProps {
 }
 
 export const SelectRepresentative: FC<SelectRepresentativeProps> = (props) => {
-  const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
   const {
@@ -103,17 +101,15 @@ export const SelectRepresentative: FC<SelectRepresentativeProps> = (props) => {
     <BaseSelect
       options={options}
       isLoading={false}
-      placeholder={
-        placeholder ?? formatMessage(strings.caseRepresentativePlaceholder)
-      }
+      placeholder={placeholder ?? strings.caseRepresentativePlaceholder}
       value={representative}
       onChange={handleChange}
     />
   ) : (
     <Select
       name="caseRepresentative"
-      label={formatMessage(strings.caseRepresentativeLabel)}
-      placeholder={formatMessage(strings.caseRepresentativePlaceholder)}
+      label={strings.caseRepresentativeLabel}
+      placeholder={strings.caseRepresentativePlaceholder}
       value={!isEmpty(representative) ? representative : undefined}
       options={options.slice(1)} // Remove 'clear selection' option for default Select
       onChange={(selectedOption) => {
@@ -142,8 +138,6 @@ interface SelectCaseFileRepresentativeProps {
 export const SelectCaseFileRepresentative: FC<
   SelectCaseFileRepresentativeProps
 > = (props) => {
-  const { formatMessage } = useIntl()
-
   const {
     submitterName,
     caseFileCategory,
@@ -156,9 +150,7 @@ export const SelectCaseFileRepresentative: FC<
 
   return (
     <>
-      <SectionHeading
-        title={formatMessage(strings.uploadFilesRepresentativeSelectionTitle)}
-      />
+      <SectionHeading title={strings.uploadFilesRepresentativeSelectionTitle} />
       <BlueBox>
         <Box display="flex" flexDirection="column" rowGap={2}>
           <SelectRepresentative

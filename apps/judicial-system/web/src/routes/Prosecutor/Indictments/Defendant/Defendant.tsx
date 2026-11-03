@@ -73,7 +73,7 @@ const Defendant = () => {
         title={formatMessage(titles.prosecutor.indictments.defendant)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <PageTitle>{strings.heading}</PageTitle>
         <Box component="section" marginBottom={5}>
           <ProsecutorSection />
         </Box>

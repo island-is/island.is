@@ -41,7 +41,7 @@ export const ChangeUser = () => {
     {
       onCompleted: () => router.push(ADMIN_USERS_ROUTE),
       onError: () => {
-        toast.error(formatMessage(strings.updateError))
+        toast.error(strings.updateError)
       },
     },
   )
@@ -77,8 +77,8 @@ export const ChangeUser = () => {
     <Skeleton />
   ) : !userData?.user || !institutionsLoaded ? (
     <AlertBanner
-      title={formatMessage(strings.alertTitle)}
-      description={formatMessage(strings.alertMessage)}
+      title={strings.alertTitle}
+      description={strings.alertMessage}
       variant="error"
       link={{ href: ADMIN_USERS_ROUTE, title: 'Fara á yfirlitssíðu' }}
     />

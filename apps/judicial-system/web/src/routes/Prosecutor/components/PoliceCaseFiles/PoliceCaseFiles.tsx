@@ -61,7 +61,7 @@ const PoliceCaseFiles: FC<Props> = ({
 
     return {
       invalid,
-      tooltipText: formatMessage(strings.invalidPoliceCaseFileFromLOKE),
+      tooltipText: strings.invalidPoliceCaseFileFromLOKE,
     }
   }
 
@@ -74,11 +74,11 @@ const PoliceCaseFiles: FC<Props> = ({
       }))}
       CTAButton={{
         onClick: onUpload,
-        label: formatMessage(strings.uploadButtonLabel),
+        label: strings.uploadButtonLabel,
       }}
       errorMessage={
         policeCaseFiles?.hasError
-          ? formatMessage(strings.couldNotGetFromLOKEMessage)
+          ? strings.couldNotGetFromLOKEMessage
           : undefined
       }
       isLoading={
@@ -91,26 +91,44 @@ const PoliceCaseFiles: FC<Props> = ({
         policeCaseFiles &&
         policeCaseFiles.files.length > 0 &&
         policeCaseFileList?.length === 0
-          ? formatMessage(strings.allFilesUploadedMessage)
+          ? strings.allFilesUploadedMessage
           : undefined
       }
       warningMessage={
         !policeCaseFiles?.isLoading && policeCaseFiles?.files.length === 0
-          ? formatMessage(strings.noFilesFoundInLOKEMessage, {
-              isIndictmentCase: isIndictmentCase(workingCase.type),
-            })
+          ? formatMessage(
+              {
+                id: strings.noFilesFoundInLOKEMessage,
+                defaultMessage: strings.noFilesFoundInLOKEMessage,
+              },
+              {
+                isIndictmentCase: isIndictmentCase(workingCase.type),
+              },
+            )
           : undefined
       }
     />
   ) : (
     <AlertMessage
       type="info"
-      title={formatMessage(strings.originNotLokeTitle, {
-        isIndictmentCase: isIndictmentCase(workingCase.type),
-      })}
-      message={formatMessage(strings.originNotLokeMessage, {
-        isIndictmentCase: isIndictmentCase(workingCase.type),
-      })}
+      title={formatMessage(
+        {
+          id: strings.originNotLokeTitle,
+          defaultMessage: strings.originNotLokeTitle,
+        },
+        {
+          isIndictmentCase: isIndictmentCase(workingCase.type),
+        },
+      )}
+      message={formatMessage(
+        {
+          id: strings.originNotLokeMessage,
+          defaultMessage: strings.originNotLokeMessage,
+        },
+        {
+          isIndictmentCase: isIndictmentCase(workingCase.type),
+        },
+      )}
     />
   )
 }

@@ -1,6 +1,5 @@
 import type { FC, SetStateAction } from 'react'
 import { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -129,8 +128,6 @@ export const CourtArrangements: FC<Props> = (props) => {
     courtRoomDisabled,
     courtRoomRequired = false,
   } = props
-  const { formatMessage } = useIntl()
-
   const [courtRoom, setCourtRoom] = useState<string>(courtDate?.location ?? '')
 
   useEffect(() => {
@@ -153,7 +150,7 @@ export const CourtArrangements: FC<Props> = (props) => {
       <Input
         data-testid="courtroom"
         name="courtroom"
-        label={formatMessage(strings.courtRoomLabel)}
+        label={strings.courtRoomLabel}
         autoComplete="off"
         value={courtRoom}
         placeholder="Skráðu inn dómsal"

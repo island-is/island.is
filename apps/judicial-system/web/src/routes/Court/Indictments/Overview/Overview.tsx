@@ -71,13 +71,13 @@ const OverviewBody = ({
     <>
       <PageHeader title={formatMessage(titles.court.indictments.overview)} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
+        <PageTitle>{strings.inProgressTitle}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
         <div className={stack({ gap: 5 })}>
           {workingCase.comments && (
             <AlertMessage
-              title={formatMessage(commentsInput.heading)}
+              title={commentsInput.heading}
               message={workingCase.comments}
               type="warning"
             />
@@ -159,7 +159,7 @@ const OverviewBody = ({
               }}
               disabled={workingCase.state === CaseState.CORRECTING}
             >
-              {formatMessage(strings.addFilesButtonText)}
+              {strings.addFilesButtonText}
             </Button>
             {isDistrictCourtUser(user) && (
               <Button

@@ -49,10 +49,16 @@ const AppealResultAccessed = () => {
     date: string
   }) => (
     <AlertMessage
-      message={formatMessage(strings.appealResultOpenedBy, {
-        userRole: role,
-        when: formatDate(date, 'PPPp'),
-      })}
+      message={formatMessage(
+        {
+          id: strings.appealResultOpenedBy,
+          defaultMessage: strings.appealResultOpenedBy,
+        },
+        {
+          userRole: role,
+          when: formatDate(date, 'PPPp'),
+        },
+      )}
       type="info"
     />
   )
@@ -103,7 +109,7 @@ const CaseOverviewHeader: FC<Props> = (props) => {
         {!targetAppealCase?.appealRulingDecision &&
           wasAppealedAfterDeadline && (
             <AlertMessage
-              message={formatMessage(strings.appealSentAfterDeadline)}
+              message={strings.appealSentAfterDeadline}
               type="warning"
             />
           )}

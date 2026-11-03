@@ -12,11 +12,17 @@ lib instead.
 
 ## Localization strings
 
-We are moving away from Contentful. **Do not add new Contentful-backed
-localization strings** — whether in `.strings.ts` files, `messages/` modules,
-`notifications.ts`, or anywhere else using `defineMessage` / `defineMessages`.
-New user-facing text should be hardcoded directly where it is used (e.g. template
-literals in the calling code). Existing strings may stay as-is until migrated.
+Contentful is being removed from judicial-system. **Do not add
+`defineMessage` / `defineMessages` or Contentful message `id`s** in
+`.strings.ts` files, `messages/` modules, `notifications.ts`, or elsewhere.
+
+New user-facing text should be plain strings in code (string modules or
+template literals at the call site). For ICU / placeholders, keep the template
+as a plain string and format with `formatMessage({ id, defaultMessage }, values)`
+using that string for both `id` and `defaultMessage` (so a Contentful map cannot
+override it while fetch still runs). Migrate remaining descriptors in the
+persona/case-type PRs; leave the four service-interruption banner keys until
+their admin replacement ships.
 
 ## Async style
 

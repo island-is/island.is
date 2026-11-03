@@ -1,6 +1,5 @@
 import type { ChangeEvent, FC } from 'react'
 import { useCallback, useContext, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
 import type { SingleValue } from 'react-select'
 import { InputMask } from '@react-input/mask'
 
@@ -81,7 +80,6 @@ const InputAdvocate: FC<Props> = ({
 
   disabled,
 }) => {
-  const { formatMessage } = useIntl()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
     useState<string>('')
@@ -191,8 +189,8 @@ const InputAdvocate: FC<Props> = ({
         name="advocateName"
         icon="search"
         options={options}
-        label={formatMessage(nameLabelStrings[advocateType])}
-        placeholder={formatMessage(placeholderStrings.namePlaceholder)}
+        label={nameLabelStrings[advocateType]}
+        placeholder={placeholderStrings.namePlaceholder}
         value={lawyerName ? { label: lawyerName, value: '' } : null}
         onChange={handleAdvocateChange}
         noOptionsMessage="Lögmaður fannst ekki í lögmannaskrá LMFÍ."
@@ -203,8 +201,8 @@ const InputAdvocate: FC<Props> = ({
         data-testid="defenderEmail"
         name="defenderEmail"
         autoComplete="off"
-        label={formatMessage(emailLabelStrings[advocateType])}
-        placeholder={formatMessage(placeholderStrings.emailPlaceholder)}
+        label={emailLabelStrings[advocateType]}
+        placeholder={placeholderStrings.emailPlaceholder}
         value={lawyerEmail ?? ''}
         errorMessage={emailErrorMessage}
         hasError={emailErrorMessage !== ''}
@@ -223,8 +221,8 @@ const InputAdvocate: FC<Props> = ({
         data-testid="defenderPhoneNumber"
         name="defenderPhoneNumber"
         autoComplete="off"
-        label={formatMessage(phoneNumberLabelStrings[advocateType])}
-        placeholder={formatMessage(placeholderStrings.phoneNumberPlaceholder)}
+        label={phoneNumberLabelStrings[advocateType]}
+        placeholder={placeholderStrings.phoneNumberPlaceholder}
         errorMessage={phoneNumberErrorMessage}
         hasError={phoneNumberErrorMessage !== ''}
       />

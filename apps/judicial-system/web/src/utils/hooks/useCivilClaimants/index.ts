@@ -1,6 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { useCallback } from 'react'
-import { useIntl } from 'react-intl'
 
 import { errors } from '@island.is/judicial-system-web/messages'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -17,8 +16,6 @@ import { useDeleteCivilClaimantMutation } from './deleteCivilClaimant.generated'
 import { useUpdateCivilClaimantMutation } from './updateCivilClaimant.generated'
 
 const useCivilClaimants = () => {
-  const { formatMessage } = useIntl()
-
   const [createCivilClaimantMutation, { loading: isCreatingCivilClaimant }] =
     useCreateCivilClaimantMutation()
   const [deleteCivilClaimantMutation] = useDeleteCivilClaimantMutation()
@@ -40,11 +37,11 @@ const useCivilClaimants = () => {
         }
         return null
       } catch {
-        toast.error(formatMessage(errors.createCivilClaimant))
+        toast.error(errors.createCivilClaimant)
         return null
       }
     },
-    [createCivilClaimantMutation, formatMessage, isCreatingCivilClaimant],
+    [createCivilClaimantMutation, isCreatingCivilClaimant],
   )
 
   const deleteCivilClaimant = useCallback(
@@ -56,11 +53,11 @@ const useCivilClaimants = () => {
 
         return Boolean(data?.deleteCivilClaimant.deleted)
       } catch {
-        toast.error(formatMessage(errors.deleteCivilClaimant))
+        toast.error(errors.deleteCivilClaimant)
         return false
       }
     },
-    [deleteCivilClaimantMutation, formatMessage],
+    [deleteCivilClaimantMutation],
   )
 
   const updateCivilClaimant = useCallback(
@@ -74,11 +71,11 @@ const useCivilClaimants = () => {
 
         return Boolean(data)
       } catch {
-        toast.error(formatMessage(errors.updateCivilClaimant))
+        toast.error(errors.updateCivilClaimant)
         return false
       }
     },
-    [formatMessage, updateCivilClaimantMutation],
+    [updateCivilClaimantMutation],
   )
 
   const updateCivilClaimantState = useCallback(

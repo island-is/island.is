@@ -82,6 +82,20 @@ export const isAppealCourtSessionEmpty = (
   !session.sessionType && !session.sessionDate && !session.courtRoom?.trim()
 
 /**
+ * A booked session as the form holds it, so the court can change it in place.
+ * The saved date is an ISO string; the picker wants a Date.
+ */
+export const toAppealCourtSessionDraft = (session: {
+  sessionType?: AppealCourtSessionType | null
+  sessionDate?: string | null
+  courtRoom?: string | null
+}): AppealCourtSessionDraft => ({
+  sessionType: session.sessionType ?? undefined,
+  sessionDate: session.sessionDate ? new Date(session.sessionDate) : undefined,
+  courtRoom: session.courtRoom ?? undefined,
+})
+
+/**
  * The line under a booked session's type: `12.12.2026 kl. 14:00 · Dómsalur 1`.
  */
 export const formatAppealCourtSessionDetails = (session: {

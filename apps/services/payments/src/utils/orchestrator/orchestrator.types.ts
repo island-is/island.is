@@ -36,8 +36,8 @@ export type Step<
   // Execute can return the result (auto-stored) or void (side effects only)
   execute: (context: TContext) => Promise<TStepResults[K] | void>
   compensate?: (context: TContext) => Promise<void>
-  // Flow control for branching
-  nextStep?: string | ((context: TContext) => string | null)
+  // Flow control for branching: the next step's name, null to end the saga
+  nextStep?: string | null | ((context: TContext) => string | null)
   // Rollback failure metadata
   rollbackFailureMessage?: string
 }

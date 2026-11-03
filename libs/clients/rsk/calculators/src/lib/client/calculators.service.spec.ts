@@ -12,8 +12,8 @@ describe('CalculatorsClientService.getCalculator', () => {
       .getCalculator('withholdingTax')
       .inputFields.map((field) => field.name)
 
-    expect(names.indexOf('payMonth')).toBeLessThan(
-      names.indexOf('paymentFrequency'),
+    expect(names.indexOf('launGreidast')).toBeLessThan(
+      names.indexOf('launamanudur'),
     )
     expect(names).toEqual(codeUnitSorted(names))
   })
