@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { AlertBanner, Box } from '@island.is/island-ui/core'
@@ -24,7 +23,6 @@ import { strings } from './ChangeUser.strings'
 export const ChangeUser = () => {
   const router = useRouter()
   const id = router.query.id as string // We know it is a string
-  const { formatMessage } = useIntl()
   const { user: currentUser } = useContext(UserContext)
   const {
     allInstitutions,
@@ -85,7 +83,7 @@ export const ChangeUser = () => {
   ) : (
     <Box background="purple100">
       <div className={styles.userManagementContainer}>
-        <PageHeader title={formatMessage(titles.admin.changeUser)} />
+        <PageHeader title={titles.admin.changeUser} />
         <UserForm
           user={userData?.user}
           institutions={allInstitutions}
