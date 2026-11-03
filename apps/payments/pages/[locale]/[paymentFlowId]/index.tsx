@@ -69,6 +69,7 @@ import { PaymentReceipt } from '../../../components/PaymentReceipt'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import { InvoiceReceipt } from '../../../components/InvoiceReceipt'
 import { usePaymentOrchestration } from '../../../hooks/usePaymentOrchestration'
+import { googlePayAllowedAuthMethods } from '../../../hooks/useGooglePay'
 import {
   BankTransferStatusUpdate,
   useBankTransferStatusPolling,
@@ -87,6 +88,9 @@ interface PaymentPageProps {
     title: string
   }
   isApplePayPaymentEnabled: boolean
+  isGooglePayPaymentEnabled: boolean
+  /** Whether the Google Pay sheet also offers device tokens (CRYPTOGRAM_3DS) */
+  isGooglePayDeviceTokensEnabled: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
@@ -203,6 +207,60 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     console.error('Error getting Apple Pay payment enabled', e)
   }
 
+  // Likewise for the service's Google Pay endpoints. The button is then rolled
+  // out per payer, with the payer as the flag user and subjectType as the
+  // service's flag user mapping sets it.
+  let isGooglePayPaymentEnabled = false
+  try {
+    const payerNationalId = paymentFlow?.payerNationalId
+    isGooglePayPaymentEnabled =
+      !!payerNationalId &&
+      (await configCatClient.getValueAsync(
+        Features.isIslandisGooglePayPaymentEnabled,
+        false,
+      )) &&
+      (await configCatClient.getValueAsync(
+        Features.isIslandisGooglePayPaymentAllowedForUser,
+        false,
+        {
+          identifier: payerNationalId,
+          custom: {
+            subjectType: isCompany(payerNationalId) ? 'legalEntity' : 'person',
+          },
+        },
+      ))
+  } catch (e) {
+    console.error('Error getting Google Pay payment enabled', e)
+  }
+
+  // Device tokens are charged by the gateway as it decrypts them, a path not
+  // yet seen on production, so they are offered behind a flag of their own
+  let isGooglePayDeviceTokensEnabled = false
+  if (isGooglePayPaymentEnabled) {
+    try {
+      isGooglePayDeviceTokensEnabled = await configCatClient.getValueAsync(
+        Features.isIslandisGooglePayDeviceTokensEnabled,
+        false,
+      )
+    } catch (e) {
+      console.error('Error getting Google Pay device tokens enabled', e)
+    }
+  }
+
+  // TEMPORARY: debug log of the Google Pay auth methods offered while the
+  // flow is tested on production. Remove once the flow is verified there.
+  if (isGooglePayPaymentEnabled) {
+    console.info(
+      `[${paymentFlowId}] [GOOGLEPAY] [TESTING] Google Pay auth methods offered`,
+      {
+        paymentFlowId,
+        allowedAuthMethods: googlePayAllowedAuthMethods(
+          isGooglePayDeviceTokensEnabled,
+        ),
+      },
+    )
+  }
+
   return {
     props: {
       locale,
@@ -212,6 +270,8 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       organization,
       productInformation,
       isApplePayPaymentEnabled,
+      isGooglePayPaymentEnabled,
+      isGooglePayDeviceTokensEnabled,
     },
   }
 }
@@ -221,6 +281,8 @@ function PaymentPage({
   organization,
   productInformation,
   isApplePayPaymentEnabled,
+  isGooglePayPaymentEnabled,
+  isGooglePayDeviceTokensEnabled,
 }: PaymentPageProps) {
   const methods = useForm({
     mode: 'onBlur',
@@ -265,11 +327,15 @@ function PaymentPage({
     handleVerificationCancelledByModal,
     supportsApplePay,
     initiateApplePay,
+    supportsGooglePay,
+    createGooglePayButton,
     onPaymentSuccess,
   } = usePaymentOrchestration({
     paymentFlow,
     productInformation,
     isApplePayPaymentEnabled,
+    isGooglePayPaymentEnabled,
+    isGooglePayDeviceTokensEnabled,
     onInvalidActorNationalId,
   })
   const router = useRouter()
@@ -506,6 +572,8 @@ function PaymentPage({
                     <CardPayment
                       supportsApplePay={supportsApplePay}
                       initiateApplePay={initiateApplePay}
+                      supportsGooglePay={supportsGooglePay}
+                      createGooglePayButton={createGooglePayButton}
                     />
                   )}
                   {selectedPaymentMethod === 'invoice' && (

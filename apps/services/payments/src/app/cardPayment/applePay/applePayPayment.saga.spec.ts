@@ -11,13 +11,13 @@ import { PaymentFlowService } from '../../paymentFlow/paymentFlow.service'
 import {
   createApplePayPaymentContext,
   createApplePayPaymentSaga,
-} from '../applePayPayment.saga'
+} from './applePayPayment.saga'
 import {
   createMockLogger,
   createMockCardPaymentService,
   createMockPaymentFlowService,
   getApplePayChargeInput,
-} from './sagaTestUtils'
+} from '../test/sagaTestUtils'
 
 const resolved = <T>(v: T): never => v as never
 
