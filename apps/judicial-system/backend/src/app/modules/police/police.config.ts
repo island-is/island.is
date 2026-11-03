@@ -14,5 +14,9 @@ export const policeModuleConfig = defineConfig({
       .split(',')
       .includes('POLICE_CASE'),
     policeApiKey: env.required('XROAD_POLICE_API_KEY', ''),
+    fromEmail: env.required('EMAIL_FROM', 'ben10@omnitrix.is'),
+    fromName: env.required('EMAIL_FROM_NAME', 'Réttarvörslugátt'),
+    replyToEmail: env.required('EMAIL_REPLY_TO', 'ben10@omnitrix.is'),
+    replyToName: env.required('EMAIL_REPLY_TO_NAME', 'Réttarvörslugátt'),
   }),
 })
