@@ -4,12 +4,15 @@ import { m } from '@island.is/form-system/ui'
 import {
   Checkbox,
   GridColumn as Column,
+  DatePicker,
   Input,
   Option,
   GridRow as Row,
   Select,
   Stack,
 } from '@island.is/island-ui/core'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
@@ -203,6 +206,52 @@ export const BaseInput = () => {
           />
         </Column>
       </Row>
+      {currentItem.fieldType === FieldTypesEnum.DATE_PICKER && (
+        <Row>
+          {(['minDate', 'maxDate'] as const).map((property) => (
+            <Column key={property} span={['10/10', '5/10']}>
+              <DatePicker
+                name={property}
+                label={
+                  property === 'minDate'
+                    ? 'Fyrsta leyfilega dagsetning'
+                    : 'Síðasta leyfilega dagsetning'
+                }
+                placeholderText={formatMessage(m.chooseDate)}
+                locale="is"
+                backgroundColor="blue"
+                disabled={isReadOnly}
+                selected={
+                  currentItem.fieldSettings?.[property]
+                    ? parseISO(currentItem.fieldSettings[property])
+                    : null
+                }
+                handleChange={(date) =>
+                  controlDispatch({
+                    type: 'SET_ANY_FIELD_SETTING',
+                    payload: {
+                      property,
+                      value: date ? format(date, 'yyyy-MM-dd') : null,
+                      update: updateActiveItem,
+                    },
+                  })
+                }
+                handleClear={() =>
+                  controlDispatch({
+                    type: 'SET_ANY_FIELD_SETTING',
+                    payload: {
+                      property,
+                      value: null,
+                      update: updateActiveItem,
+                    },
+                  })
+                }
+                isClearable
+              />
+            </Column>
+          ))}
+        </Row>
+      )}
       {/* Description  */}
       {renderDescription() && (
         <>

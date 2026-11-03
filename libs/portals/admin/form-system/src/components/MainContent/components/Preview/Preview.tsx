@@ -21,6 +21,7 @@ import {
 } from '@island.is/form-system/ui'
 import { Box, DatePicker, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import parseISO from 'date-fns/parseISO'
 import { FormProvider, useForm } from 'react-hook-form'
 
 interface Props {
@@ -47,6 +48,16 @@ export const Preview = ({ data, screenOrSection }: Props) => {
                 : data?.name?.is
             }
             placeholderText={formatMessage(m.chooseDate)}
+            minDate={
+              data.fieldSettings?.minDate
+                ? parseISO(data.fieldSettings.minDate)
+                : new Date(1970, 0)
+            }
+            maxDate={
+              data.fieldSettings?.maxDate
+                ? parseISO(data.fieldSettings.maxDate)
+                : undefined
+            }
           />
         </Box>
       )}

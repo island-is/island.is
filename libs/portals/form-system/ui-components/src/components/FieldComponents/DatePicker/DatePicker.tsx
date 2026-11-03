@@ -79,7 +79,16 @@ export const DatePickerField = ({
             handleDateChange(newVal)
             trigger(fieldName)
           }}
-          minDate={new Date(1970, 0)}
+          minDate={
+            item.fieldSettings?.minDate
+              ? parseISO(item.fieldSettings.minDate)
+              : new Date(1970, 0)
+          }
+          maxDate={
+            item.fieldSettings?.maxDate
+              ? parseISO(item.fieldSettings.maxDate)
+              : undefined
+          }
           required={item.isRequired ?? false}
           errorMessage={fieldState.error ? fieldState.error.message : undefined}
           hasError={!!fieldState.error}
