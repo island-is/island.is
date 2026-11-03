@@ -137,6 +137,11 @@ export class CardPaymentService {
       paymentsTokenSigningAlgorithm,
     })
 
+    // A previous attempt whose charge failed leaves the flow marked as
+    // verified. Clear it so the client waits for this verification's callback
+    // instead of charging with the previous attempt's 3-D Secure result.
+    await this.cacheManager.del(paymentFlowId)
+
     const savedVerificationPendingData: SavedVerificationPendingData = {
       paymentFlowId,
     }

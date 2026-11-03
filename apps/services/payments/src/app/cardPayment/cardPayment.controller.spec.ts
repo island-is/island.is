@@ -407,6 +407,51 @@ describe('CardPaymentController', () => {
       fetchSpy.mockRestore()
     })
 
+    it('clears the verified status a previous attempt left on the payment flow', async () => {
+      const fetchSpy = jest
+        .spyOn(global, 'fetch')
+        .mockImplementation(async (url) => {
+          if (typeof url === 'string' && url.includes('/CardVerification')) {
+            return {
+              json: async () => mockVerificationSuccessResponse,
+              status: 200,
+              ok: true,
+            } as Response
+          }
+          return {
+            json: async () => ({ error: 'Missing handler' }),
+            status: 500,
+            ok: false,
+          } as Response
+        })
+
+      // The callback of an attempt whose charge then failed
+      await cacheManager.set(paymentFlowId, {
+        isVerified: true,
+        correlationId: uuid(),
+      })
+
+      const verifyPayload: VerifyCardInput = {
+        cardNumber: '4242424242424242',
+        expiryMonth: 12,
+        expiryYear: new Date().getFullYear() - 2000,
+        paymentFlowId,
+      }
+
+      const verifyResponse = await server
+        .post('/v1/payments/card/verify')
+        .send(verifyPayload)
+      expect(verifyResponse.status).toBe(201)
+
+      const statusResponse = await server.get(
+        `/v1/payments/card/verification-status/${paymentFlowId}`,
+      )
+      expect(statusResponse.status).toBe(200)
+      expect(statusResponse.body.isVerified).toBe(false)
+
+      fetchSpy.mockRestore()
+    })
+
     it('should throw an error in verification callback if correlation id is not found in cache', async () => {
       const cacheGetSpy = jest.spyOn(cacheManager, 'get') // not mocking return value ("nothing in cache")
 
