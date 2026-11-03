@@ -37,10 +37,11 @@ export const getBenchSlots = (
   return slots
 }
 
+// Seats a judge, or empties the seat when the selection is cleared.
 export const setBenchSeat = (
   judges: BenchSlot[],
   seat: number,
-  judge: User,
+  judge: BenchSlot,
 ): BenchSlot[] => judges.map((slot, index) => (index === seat ? judge : slot))
 
 export const canAddBenchSeat = (judges: BenchSlot[]): boolean =>

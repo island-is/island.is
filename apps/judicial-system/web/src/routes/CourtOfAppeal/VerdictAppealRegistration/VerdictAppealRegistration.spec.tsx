@@ -1,4 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {
@@ -287,6 +293,28 @@ describe('VerdictAppealRegistration', () => {
     await pick('Velja dómara', 'Björn Dómarason')
 
     expect(isDisabled(confirmButton())).toBe(false)
+  })
+
+  it('lets an out-of-order judge be cleared and seated again', async () => {
+    renderPage()
+
+    await pick('Velja aðstoðarmann', 'Aðstoð Aðstoðardóttir')
+    await pick('Velja dómara', 'Anna Dómaradóttir', 1)
+
+    expect(isDisabled(confirmButton())).toBe(true)
+
+    // Backspace clears a clearable select; this is the second seat's.
+    fireEvent.keyDown(
+      within(screen.getByTestId('select-judge-1')).getByRole('combobox'),
+      { key: 'Backspace' },
+    )
+
+    expect(isDisabled(confirmButton())).toBe(false)
+
+    await pick('Velja dómara', 'Anna Dómaradóttir')
+
+    expect(isDisabled(confirmButton())).toBe(false)
+    expect(screen.getAllByText('Anna Dómaradóttir')).toHaveLength(1)
   })
 
   it('does not offer a judge already on the bench for another seat', async () => {

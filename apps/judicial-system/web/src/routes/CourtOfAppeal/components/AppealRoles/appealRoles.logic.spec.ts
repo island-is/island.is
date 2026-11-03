@@ -70,6 +70,14 @@ describe('bench seats', () => {
     ])
   })
 
+  it('empties a seat when the selection is cleared', () => {
+    expect(setBenchSeat([anna, bjorn, null], 0, null)).toEqual([
+      null,
+      bjorn,
+      null,
+    ])
+  })
+
   it('adds empty seats up to five', () => {
     const four = addBenchSeat([anna, bjorn, dora])
     const five = addBenchSeat(four)

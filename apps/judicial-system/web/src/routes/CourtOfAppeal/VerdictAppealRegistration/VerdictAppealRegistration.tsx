@@ -228,10 +228,11 @@ const VerdictAppealRegistration = () => {
                           setBenchSeat(
                             prev,
                             seat,
-                            (selectedOption as JudgeSelectOption).judge,
+                            (selectedOption as JudgeSelectOption | null)?.judge,
                           ),
                         )
                       }}
+                      isClearable
                     />
                   </Box>
                   {canRemoveBenchSeat(judges, seat) && (
