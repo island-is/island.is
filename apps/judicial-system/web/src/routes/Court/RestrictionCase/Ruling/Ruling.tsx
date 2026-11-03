@@ -83,19 +83,28 @@ export const Ruling = () => {
           ),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(
-            ruling.sections.courtCaseFacts.prefill,
+            {
+              id: ruling.sections.courtCaseFacts.prefill,
+              defaultMessage: ruling.sections.courtCaseFacts.prefill,
+            },
             {
               caseFacts: workingCase.caseFacts,
             },
           ),
           courtLegalArguments: formatMessage(
-            ruling.sections.courtLegalArguments.prefill,
+            {
+              id: ruling.sections.courtLegalArguments.prefill,
+              defaultMessage: ruling.sections.courtLegalArguments.prefill,
+            },
             { legalArguments: workingCase.legalArguments },
           ),
           ruling: !workingCase.parentCase
-            ? `\n${formatMessage(ruling.autofill, {
-                judgeName: workingCase.judge?.name,
-              })}`
+            ? `\n${formatMessage(
+                { id: ruling.autofill, defaultMessage: ruling.autofill },
+                {
+                  judgeName: workingCase.judge?.name,
+                },
+              )}`
             : isAcceptingCaseDecision(workingCase.decision)
             ? workingCase.parentCase.ruling
             : undefined,
@@ -401,10 +410,18 @@ export const Ruling = () => {
             <Decision
               workingCase={workingCase}
               acceptedLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision.acceptLabel,
+                {
+                  id: ruling.restrictionCases.sections.decision.acceptLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision.acceptLabel,
+                },
                 {
                   caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
                     {
                       caseType: workingCase.type,
                     },
@@ -412,10 +429,18 @@ export const Ruling = () => {
                 },
               )}
               rejectedLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision.rejectLabel,
+                {
+                  id: ruling.restrictionCases.sections.decision.rejectLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision.rejectLabel,
+                },
                 {
                   caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
                     {
                       caseType: workingCase.type,
                     },
@@ -423,10 +448,20 @@ export const Ruling = () => {
                 },
               )}
               partiallyAcceptedLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision.partiallyAcceptLabel,
+                {
+                  id: ruling.restrictionCases.sections.decision
+                    .partiallyAcceptLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision
+                      .partiallyAcceptLabel,
+                },
                 {
                   caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
                     {
                       caseType: workingCase.type,
                     },
@@ -434,10 +469,18 @@ export const Ruling = () => {
                 },
               )}
               dismissLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision.dismissLabel,
+                {
+                  id: ruling.restrictionCases.sections.decision.dismissLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision.dismissLabel,
+                },
                 {
                   caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
                     {
                       caseType: workingCase.type,
                     },
@@ -445,11 +488,20 @@ export const Ruling = () => {
                 },
               )}
               acceptingAlternativeTravelBanLabelText={formatMessage(
-                ruling.restrictionCases.sections.decision
-                  .acceptingAlternativeTravelBanLabel,
+                {
+                  id: ruling.restrictionCases.sections.decision
+                    .acceptingAlternativeTravelBanLabel,
+                  defaultMessage:
+                    ruling.restrictionCases.sections.decision
+                      .acceptingAlternativeTravelBanLabel,
+                },
                 {
                   caseType: formatMessage(
-                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      id: ruling.restrictionCases.sections.decision.caseType,
+                      defaultMessage:
+                        ruling.restrictionCases.sections.decision.caseType,
+                    },
                     {
                       caseType: workingCase.type,
                     },

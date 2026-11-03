@@ -154,6 +154,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
             courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ],
+        caseId,
       )
       expect(then.result).toEqual({ delivered: true })
     })
@@ -184,6 +185,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
             courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ],
+        caseId,
       )
     })
   })

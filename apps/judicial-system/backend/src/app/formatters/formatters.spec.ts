@@ -1917,7 +1917,7 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
     )
 
     expect(result.body).toEqual(
-      'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="https://rettarvorslugatt.island.is/overviewUrl">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
+      'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur endursent kröfuna á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="https://rettarvorslugatt.island.is/overviewUrl">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
     expect(result.subject).toEqual('Krafa í máli R-2022/999')
   })

@@ -147,3 +147,11 @@ export const stateDescriptions = defineMessages({
     description: 'Description for the submitted state',
   },
 })
+
+export const stateTags = defineMessages({
+  submitted: {
+    id: 'fa.application:stateTags.submitted',
+    defaultMessage: 'Móttekin',
+    description: 'Action card tag for the submitted state',
+  },
+})
