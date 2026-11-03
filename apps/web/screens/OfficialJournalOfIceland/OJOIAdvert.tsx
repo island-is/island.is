@@ -89,7 +89,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
   return (
     <OJOIWrapper
       pageTitle={citationTitle}
-      hideTitle={!!advert.document.html}
+      hideTitle
       organization={organization ?? undefined}
       pageDescription={formatMessage(advertPdfDisclaimer)}
       metaDescription={getAdvertMetaDescription({
