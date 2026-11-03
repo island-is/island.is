@@ -50,14 +50,14 @@ if [[ -n "${RESTORE_BUCKET:-}" ]] && [[ -n "${RESTORE_KEY:-}" ]]; then
   /app/restore-db.sh
 
   #insert redirect uri for the feature so ids admin web will work
-  export PGPASSWORD="$(node secrets get "$PGPASSWORD_KEY")"
+  PGPASSWORD="$(node secrets get "$PGPASSWORD_KEY")"
+  export PGPASSWORD
 
   FEATURE_NAME="${DB_NAME#feature_}"
   FEATURE_NAME="${FEATURE_NAME%_servicesauth}"
   FEATURE_NAME="${FEATURE_NAME//_/-}"
 
   echo "Inserting client redirect URI for feature: ${FEATURE_NAME}..."
-  export PGPASSWORD="$(node secrets get "$PGPASSWORD_KEY")"
 
   psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "
     INSERT INTO client_redirect_uri (
