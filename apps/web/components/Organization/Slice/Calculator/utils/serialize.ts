@@ -22,8 +22,13 @@ const toInputValue = (
         : undefined
     case TaxCalculatorInputFieldType.Boolean:
       return typeof value === 'boolean' ? { booleanValue: value } : undefined
+    case TaxCalculatorInputFieldType.Date: {
+      const date = typeof value === 'string' ? new Date(value) : undefined
+      return date && !Number.isNaN(date.getTime())
+        ? { dateValue: date }
+        : undefined
+    }
     case TaxCalculatorInputFieldType.String:
-    case TaxCalculatorInputFieldType.Date:
     case TaxCalculatorInputFieldType.Select:
       return typeof value === 'string' ? { stringValue: value } : undefined
     default: {

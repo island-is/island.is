@@ -1027,6 +1027,12 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths DeleteAppealCourtSession 1`] = `
+Array [
+  "deleteAppealCourtSession.deleted",
+]
+`;
+
 exports[`GraphQL operations select these field paths DeleteAppealSummons 1`] = `
 Array [
   "deleteAppealSummons.deleted",
@@ -1891,12 +1897,6 @@ Array [
 ]
 `;
 
-exports[`GraphQL operations select these field paths ReplaceIndictmentPdf 1`] = `
-Array [
-  "replaceIndictmentPdf.success",
-]
-`;
-
 exports[`GraphQL operations select these field paths RequestCourtRecordSignature 1`] = `
 Array [
   "requestCourtRecordSignature.controlCode",
@@ -2057,6 +2057,16 @@ Array [
   "updateAppealCase.isAppealCustodyIsolation",
   "updateAppealCase.prosecutorStatementDate",
   "updateAppealCase.requestAppealRulingNotToBePublished",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateAppealCourtSession 1`] = `
+Array [
+  "updateAppealCourtSession.courtRoom",
+  "updateAppealCourtSession.created",
+  "updateAppealCourtSession.id",
+  "updateAppealCourtSession.sessionDate",
+  "updateAppealCourtSession.sessionType",
 ]
 `;
 

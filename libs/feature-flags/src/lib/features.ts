@@ -137,6 +137,7 @@ export enum Features {
 
   // Userprofile Collection
   isIASSpaPagesEnabled = 'isiasspapagesenabled',
+  notificationSettingsMetricsEnabled = 'notificationSettingsMetricsEnabled',
 
   // Disable new login restrictions
   disableNewDeviceLogins = 'disableNewDeviceLogins',
@@ -164,9 +165,14 @@ export enum Features {
   isIslandisInvoicePaymentEnabled = 'isIslandisInvoicePaymentEnabled',
   isIslandisApplePayPaymentEnabled = 'isIslandisApplePayPaymentEnabled',
   isIslandisApplePayStrictSignatureVerificationEnabled = 'isIslandisApplePayStrictSignatureVerificationEnabled',
+  isIslandisGooglePayPaymentEnabled = 'isIslandisGooglePayPaymentEnabled',
+  isIslandisGooglePayPaymentAllowedForUser = 'isIslandisGooglePayPaymentAllowedForUser',
+  isIslandisGooglePayDeviceTokensEnabled = 'isIslandisGooglePayDeviceTokensEnabled',
   isIslandisBankTransferPaymentEnabled = 'isIslandisBankTransferPaymentEnabled',
   isIslandisBankTransferPaymentAllowedForCompany = 'isIslandisBankTransferPaymentAllowedForCompany',
   isIslandisDebtPaymentEnabled = 'isIslandisDebtPaymentEnabled',
+
+  isPayDebtsApplicationEnabled = 'isPayDebtsApplicationEnabled',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',

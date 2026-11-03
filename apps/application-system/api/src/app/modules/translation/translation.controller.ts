@@ -2,9 +2,11 @@ import {
   BadRequestException,
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
   Query,
   UseGuards,
@@ -29,7 +31,10 @@ import { getAllowedTranslationTypeIds } from '@island.is/application/utils'
 import { CmsTranslationCacheService } from '@island.is/cms-translations'
 import { ApplicationTypes } from '@island.is/application/types'
 import { Audit } from '@island.is/nest/audit'
-import { BulkUpdateTranslationsDto } from './dto/translation.dto'
+import {
+  BulkUpdateTranslationsDto,
+  PublishActorDto,
+} from './dto/translation.dto'
 import {
   ApplicationTranslationService,
   type PublishHistoryItem,
@@ -156,9 +161,17 @@ export class TranslationController {
   async getPublishHistory(
     @CurrentUser() user: User,
     @Param('namespace') namespace: string,
+    @Query('limit', new DefaultValuePipe(25), ParseIntPipe) limit: number,
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
   ) {
+    if (limit < 1 || limit > 100 || skip < 0) {
+      throw new BadRequestException(
+        'limit must be 1-100 and skip must not be negative',
+      )
+    }
+
     this.translationAccessService.assertNamespaceAccess(user, namespace)
-    return this.translationService.getPublishHistory(namespace)
+    return this.translationService.getPublishHistory(namespace, limit, skip)
   }
 
   @Scopes(...TRANSLATION_SCOPES)
@@ -169,6 +182,7 @@ export class TranslationController {
   @Post(':namespace/publish')
   async publishTranslations(
     @Param('namespace') namespace: string,
+    @Body() body: PublishActorDto,
     @CurrentUser() user: User,
   ) {
     this.translationAccessService.assertNamespaceWriteAccess(user, namespace)
@@ -176,6 +190,7 @@ export class TranslationController {
     const publish = await this.translationService.publishTranslations(
       namespace,
       user,
+      body,
     )
 
     await this.translationCacheService.invalidate(namespace)
@@ -192,6 +207,7 @@ export class TranslationController {
   async rollbackTranslations(
     @Param('namespace') namespace: string,
     @Param('publishId') publishId: string,
+    @Body() body: PublishActorDto,
     @CurrentUser() user: User,
   ) {
     this.translationAccessService.assertNamespaceWriteAccess(user, namespace)
@@ -200,6 +216,7 @@ export class TranslationController {
       publishId,
       namespace,
       user,
+      body,
     )
 
     if (!rollback) {

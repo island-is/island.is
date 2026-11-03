@@ -265,7 +265,15 @@ export default function DocumentScreen() {
         options={{
           headerRight: () => (
             <>
-              <Pressable onPress={onShare} disabled={!ready}>
+              <Pressable
+                onPress={onShare}
+                disabled={!ready}
+                accessibilityRole="button"
+                accessibilityLabel={intl.formatMessage({
+                  id: 'documentDetail.downloadButton',
+                })}
+                accessibilityState={{ disabled: !ready }}
+              >
                 <Image
                   source={require('@/assets/icons/navbar-share.png')}
                   style={{
@@ -276,7 +284,15 @@ export default function DocumentScreen() {
                   }}
                 />
               </Pressable>
-              <Pressable onPress={onToggleArchive}>
+              <Pressable
+                onPress={onToggleArchive}
+                accessibilityRole="button"
+                accessibilityLabel={intl.formatMessage({
+                  id: document.archived
+                    ? 'documentDetail.unarchiveButton'
+                    : 'documentDetail.archiveButton',
+                })}
+              >
                 <Image
                   source={
                     document.archived
@@ -291,7 +307,15 @@ export default function DocumentScreen() {
                   }}
                 />
               </Pressable>
-              <Pressable onPress={onToggleBookmark}>
+              <Pressable
+                onPress={onToggleBookmark}
+                accessibilityRole="button"
+                accessibilityLabel={intl.formatMessage({
+                  id: document.bookmarked
+                    ? 'documentDetail.unbookmarkButton'
+                    : 'documentDetail.bookmarkButton',
+                })}
+              >
                 <Image
                   source={
                     document.bookmarked

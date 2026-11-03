@@ -35,13 +35,20 @@ export const populateEndOfCourtSessionForRestrictions = (
       }
 
       endOfSessionBookings.push(
-        formatMessage(rcCourtRecord.sections.custodyRestrictions.disclaimerV2, {
-          caseType:
-            workingCase.decision ===
-            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-              ? CaseType.TRAVEL_BAN
-              : workingCase.type,
-        }),
+        formatMessage(
+          {
+            id: rcCourtRecord.sections.custodyRestrictions.disclaimerV2,
+            defaultMessage:
+              rcCourtRecord.sections.custodyRestrictions.disclaimerV2,
+          },
+          {
+            caseType:
+              workingCase.decision ===
+              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                ? CaseType.TRAVEL_BAN
+                : workingCase.type,
+          },
+        ),
       )
     }
   } else if (workingCase.type === CaseType.TRAVEL_BAN) {
@@ -54,10 +61,12 @@ export const populateEndOfCourtSessionForRestrictions = (
           workingCase.requestedOtherRestrictions &&
           `${workingCase.requestedOtherRestrictions}\n\n`
         }${formatMessage(
-          rcCourtRecord.sections.custodyRestrictions.disclaimerV2,
           {
-            caseType: workingCase.type,
+            id: rcCourtRecord.sections.custodyRestrictions.disclaimerV2,
+            defaultMessage:
+              rcCourtRecord.sections.custodyRestrictions.disclaimerV2,
           },
+          { caseType: workingCase.type },
         )}`,
       )
     }

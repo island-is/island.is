@@ -93,6 +93,21 @@ describe('FormFooter', () => {
     expect(router.push).not.toHaveBeenCalled()
   })
 
+  it('should let the back button be renamed and handled', async () => {
+    const onPreviousClick = jest.fn()
+
+    renderFooter({
+      previousUrl: '/prev',
+      previousButtonText: 'Hætta við',
+      onPreviousClick,
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Hætta við' }))
+
+    expect(onPreviousClick).toHaveBeenCalled()
+    expect(router.push).not.toHaveBeenCalled()
+  })
+
   it('should hide the back button when hidePreviousButton is set', () => {
     renderFooter({ previousUrl: '/prev', hidePreviousButton: true })
 

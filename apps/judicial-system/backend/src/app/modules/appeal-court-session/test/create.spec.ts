@@ -3,14 +3,18 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
+import { MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseNotificationType,
   AppealCaseType,
   AppealCourtSessionType,
+  type User,
 } from '@island.is/judicial-system/types'
 
 import { createTestingAppealCourtSessionModule } from './createTestingAppealCourtSessionModule'
 
 import { getOrCreateTransaction } from '../../../middleware'
+import { queueMessagesAfterCommit } from '../../../middleware/queueMessagesAfterCommit'
 import { runInRequestContext } from '../../../test'
 import {
   AppealCase,
@@ -31,6 +35,7 @@ describe('AppealCourtSessionController - Create', () => {
   const caseId = uuid()
   const appealCaseId = uuid()
   const theCase = { id: caseId } as Case
+  const user = { id: uuid() } as User
   const verdictAppeal = {
     id: appealCaseId,
     appealType: AppealCaseType.VERDICT,
@@ -53,6 +58,9 @@ describe('AppealCourtSessionController - Create', () => {
       sequelize,
       appealCourtSessionController,
     } = await createTestingAppealCourtSessionModule()
+
+    const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+    mockQueueMessagesAfterCommit.mockClear()
 
     mockAppealCourtSessionRepositoryService =
       appealCourtSessionRepositoryService
@@ -79,6 +87,7 @@ describe('AppealCourtSessionController - Create', () => {
           then.result = await appealCourtSessionController.create(
             caseId,
             appealCase.id,
+            user,
             theCase,
             appealCase,
             dto,
@@ -108,6 +117,21 @@ describe('AppealCourtSessionController - Create', () => {
     expect(then.result).toBe(created)
   })
 
+  it('tells the parties once the booking has committed', async () => {
+    await givenWhenThen(verdictAppeal)
+
+    expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId,
+      elementId: appealCaseId,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_COURT_SESSION_BOOKED,
+        appealCourtSessionId: created.id,
+      },
+    })
+  })
+
   // One call to sequelize.transaction: the guard's. A handler that opened a
   // transaction of its own, the deadlock the controller warns about, would
   // make it two.
@@ -129,5 +153,6 @@ describe('AppealCourtSessionController - Create', () => {
     expect(
       mockAppealCourtSessionRepositoryService.create,
     ).not.toHaveBeenCalled()
+    expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
   })
 })

@@ -22,10 +22,7 @@ const CaseFilesOverview = () => {
     <>
       <AppealCaseFilesOverview />
       <section>
-        <SectionHeading
-          title={formatMessage(strings.courtCaseFilesTitle)}
-          marginBottom={1}
-        />
+        <SectionHeading title={strings.courtCaseFilesTitle} marginBottom={1} />
         <PdfButton
           renderAs="row"
           caseId={workingCase.id}
@@ -53,7 +50,7 @@ const CaseFilesOverview = () => {
               signingDate={workingCase.rulingSignatureDate}
             />
           ) : (
-            <Text>{formatMessage(strings.unsignedDocument)}</Text>
+            <Text>{strings.unsignedDocument}</Text>
           )}
         </PdfButton>
       </section>

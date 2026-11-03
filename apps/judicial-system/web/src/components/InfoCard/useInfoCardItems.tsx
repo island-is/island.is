@@ -159,7 +159,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const indictmentCreated: Item = {
     id: 'indictment-created-item',
-    title: formatMessage(strings.indictmentSentToCourt),
+    title: strings.indictmentSentToCourt,
     values: [formatDate(workingCase.caseSentToCourtDate, 'PP')],
   }
 
@@ -168,9 +168,9 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     onClick?: () => void,
   ): Item => ({
     id: 'prosecutor-item',
-    title: formatMessage(
-      isRequestCase(caseType) ? core.prosecutorPerson : strings.prosecutor,
-    ),
+    title: isRequestCase(caseType)
+      ? formatMessage(core.prosecutorPerson)
+      : strings.prosecutor,
     values: [
       RenderPersonalData({
         name: workingCase.prosecutor?.name,
@@ -207,7 +207,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const offenses: Item = {
     id: 'offenses-item',
-    title: formatMessage(strings.offense),
+    title: strings.offense,
     values: [
       <>
         {readableIndictmentSubtypes(
@@ -250,7 +250,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const requestedCourtDate: Item = {
     id: 'requested-court-date-item',
-    title: formatMessage(requestCourtDate.heading),
+    title: requestCourtDate.heading,
     values: [
       `${capitalize(
         formatDate(workingCase.requestedCourtDate, 'PPPP', true) ?? '',
@@ -280,9 +280,15 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
     const externalCourtCaseNumber = workingCase.mergeCaseNumber
     if (externalCourtCaseNumber) {
-      return formatMessage(strings.externalMergeCase, {
-        mergeCaseNumber: externalCourtCaseNumber,
-      })
+      return formatMessage(
+        {
+          id: strings.externalMergeCase,
+          defaultMessage: strings.externalMergeCase,
+        },
+        {
+          mergeCaseNumber: externalCourtCaseNumber,
+        },
+      )
     }
 
     return undefined
@@ -290,7 +296,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const mergeCase: Item = {
     id: 'merge-case-item',
-    title: formatMessage(strings.indictmentMergedTitle),
+    title: strings.indictmentMergedTitle,
     values: [getMergeCaseValue()],
   }
 
@@ -303,7 +309,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const mergedCaseCourtCaseNumber = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-court-case-number-item',
-    title: formatMessage(strings.mergedFromTitle),
+    title: strings.mergedFromTitle,
     values: mergedCase.courtCaseNumber
       ? [
           canDefenceUserOpenLinkedCase(user, mergedCase) ? (
@@ -421,23 +427,31 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const indictmentReviewer: Item = {
     id: 'indictment-reviewer-item',
-    title: formatMessage(strings.indictmentReviewer),
+    title: strings.indictmentReviewer,
     values: [workingCase.indictmentReviewer?.name],
   }
 
   const indictmentReviewDecision: Item = {
     id: 'indictment-review-decision-item',
-    title: formatMessage(strings.indictmentReviewDecision),
+    title: strings.indictmentReviewDecision,
     values: isNonEmptyArray(workingCase.defendants)
       ? workingCase.defendants
           .filter((defendant) => defendant.indictmentReviewDecision)
           .map((defendant) => (
             <Text key={`${defendant.id}-${defendant.indictmentReviewDecision}`}>
               {`${defendant.name} - ${formatMessage(
-                defendant.indictmentReviewDecision ===
-                  IndictmentCaseReviewDecision.ACCEPT
-                  ? strings.reviewTagAccepted
-                  : strings.reviewTagAppealed,
+                {
+                  id:
+                    defendant.indictmentReviewDecision ===
+                    IndictmentCaseReviewDecision.ACCEPT
+                      ? strings.reviewTagAccepted
+                      : strings.reviewTagAppealed,
+                  defaultMessage:
+                    defendant.indictmentReviewDecision ===
+                    IndictmentCaseReviewDecision.ACCEPT
+                      ? strings.reviewTagAccepted
+                      : strings.reviewTagAppealed,
+                },
                 {
                   isFine:
                     workingCase.indictmentRulingDecision ===
@@ -451,7 +465,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const indictmentReviewedDate = (date: string): Item => ({
     id: 'indictment-reviewed-date-item',
-    title: formatMessage(strings.indictmentReviewedDateTitle),
+    title: strings.indictmentReviewedDateTitle,
     values: [formatDate(date, 'PP')],
   })
 
@@ -482,8 +496,8 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
         {capitalize(
           isNonEmptyArray(workingCase.civilClaimants) &&
             workingCase.civilClaimants.length > 1
-            ? formatMessage(strings.civilClaimants)
-            : formatMessage(strings.civilClaimant),
+            ? strings.civilClaimants
+            : strings.civilClaimant,
         )}
       </Text>
     ),
