@@ -1,4 +1,5 @@
 import request from 'supertest'
+import { v4 as uuid } from 'uuid'
 import { getModelToken } from '@nestjs/sequelize'
 
 import { FinanceClientV3Service } from '@island.is/clients/finance-v3'
@@ -18,7 +19,12 @@ import {
   FJS_DEBT_ORGANISATION_ID,
 } from '../../utils/fjsDebtPayment'
 import { CreateDebtPaymentFlowInput } from './dtos'
-import { PaymentFlow, DebtSettlement, PaymentFlowDebt } from './models'
+import {
+  PaymentFlow,
+  DebtSettlement,
+  PaymentFlowDebt,
+  PaymentFulfillment,
+} from './models'
 import { PaymentFlowService } from './paymentFlow.service'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -204,6 +210,93 @@ describe('DebtPaymentFlowController', () => {
 
       expect(response.status).toBe(400)
       expect(response.body.detail).toBe(DebtPaymentErrorCode.DebtPaymentInvalid)
+    })
+
+    describe('a debt already held by another flow', () => {
+      const payloadFor = (payId: string) => ({
+        ...payload,
+        debts: [{ payId, amount: 10000 }],
+      })
+
+      const settleFlowFor = async (
+        payId: string,
+        status: 'registered' | 'rejected',
+      ) => {
+        const create = await server
+          .post('/v1/payments/debts')
+          .send(payloadFor(payId))
+        expect(create.status).toBe(200)
+
+        await app.get(getModelToken(DebtSettlement)).create({
+          paymentFlowId: getFlowId(create.body.urls),
+          amount: 10000,
+          status,
+        })
+      }
+
+      it('refuses a new flow while the other flow is settled', async () => {
+        await settleFlowFor('held-registered', 'registered')
+        validatePayment.mockClear()
+
+        const response = await server
+          .post('/v1/payments/debts')
+          .send(payloadFor('held-registered'))
+
+        expect(response.status).toBe(400)
+        expect(response.body.detail).toBe(
+          DebtPaymentErrorCode.DebtPaymentInvalid,
+        )
+        expect(validatePayment).not.toHaveBeenCalled()
+      })
+
+      describe('when the other flow is paid but not yet settled', () => {
+        const fulfillFlowFor = async (payId: string, isDeleted: boolean) => {
+          const create = await server
+            .post('/v1/payments/debts')
+            .send(payloadFor(payId))
+          expect(create.status).toBe(200)
+
+          await app.get(getModelToken(PaymentFulfillment)).create({
+            paymentFlowId: getFlowId(create.body.urls),
+            paymentMethod: 'card',
+            confirmationRefId: uuid(),
+            isDeleted,
+          })
+        }
+
+        it('refuses a new flow', async () => {
+          await fulfillFlowFor('held-paid', false)
+
+          const response = await server
+            .post('/v1/payments/debts')
+            .send(payloadFor('held-paid'))
+
+          expect(response.status).toBe(400)
+          expect(response.body.detail).toBe(
+            DebtPaymentErrorCode.DebtPaymentInvalid,
+          )
+        })
+
+        it('allows a new flow once the payment was undone', async () => {
+          await fulfillFlowFor('held-refunded', true)
+
+          const response = await server
+            .post('/v1/payments/debts')
+            .send(payloadFor('held-refunded'))
+
+          expect(response.status).toBe(200)
+        })
+      })
+
+      it('allows a new flow once the other settlement was rejected', async () => {
+        await settleFlowFor('held-rejected', 'rejected')
+
+        const response = await server
+          .post('/v1/payments/debts')
+          .send(payloadFor('held-rejected'))
+
+        expect(response.status).toBe(200)
+      })
     })
 
     it('answers 503 when FJS cannot be reached, and creates nothing', async () => {

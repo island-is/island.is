@@ -319,6 +319,8 @@ export class PaymentFlowService {
     const paymentFlowId = uuid()
 
     try {
+      await this.assertDebtsNotPaidElsewhere(paymentFlowId, debts)
+
       const validation = await this.debtSettlementService.validate({
         flowId: paymentFlowId,
         payerNationalId: input.payerNationalId,
@@ -429,6 +431,50 @@ export class PaymentFlowService {
     }
   }
 
+  private async assertDebtsNotPaidElsewhere(
+    paymentFlowId: string,
+    debts: Pick<PaymentFlowDebt, 'payId'>[],
+  ): Promise<void> {
+    if (debts.length === 0) {
+      return
+    }
+
+    const others = await this.paymentFlowDebtModel.findAll({
+      where: {
+        payId: { [Op.in]: debts.map((debt) => debt.payId) },
+        paymentFlowId: { [Op.ne]: paymentFlowId },
+      },
+      include: [
+        {
+          model: PaymentFlow,
+          required: true,
+          include: [
+            { model: DebtSettlement, required: false },
+            {
+              model: PaymentFulfillment,
+              required: false,
+              where: { isDeleted: false },
+            },
+          ],
+        },
+      ],
+    })
+
+    const held = others.find(({ paymentFlow }) =>
+      paymentFlow?.debtSettlement
+        ? paymentFlow.debtSettlement.status !== 'rejected'
+        : (paymentFlow?.paymentFulfillments?.length ?? 0) > 0,
+    )
+
+    if (held) {
+      this.logger.warn(
+        `[${paymentFlowId}] A debt is already being paid in another flow`,
+        { otherPaymentFlowId: held.paymentFlowId },
+      )
+      throw new BadRequestException(DebtPaymentErrorCode.DebtPaymentInvalid)
+    }
+  }
+
   /**
    * Checks that a debt flow can still be paid with `paymentMethod`. Run right before a payment is
    * taken, since the debts can change after the flow was created: FJS has the final say.
@@ -444,6 +490,11 @@ export class PaymentFlowService {
     if (paymentFlow.debtSettlement?.status === 'rejected') {
       throw new BadRequestException(DebtPaymentErrorCode.DebtPaymentFlowClosed)
     }
+
+    await this.assertDebtsNotPaidElsewhere(
+      paymentFlow.id,
+      paymentFlow.debts ?? [],
+    )
 
     const validation = await this.debtSettlementService.validate({
       flowId: paymentFlow.id,
