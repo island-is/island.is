@@ -99,12 +99,6 @@ export class AppealCase {
   @Field(() => [AppealCaseJudge], { nullable: true })
   readonly appealJudges?: AppealCaseJudge[]
 
-  // The bench as three fixed slots, for clients that have not moved to
-  // appealJudges. Resolved from the bench in AppealCaseResolver.
-  readonly appealJudge1?: User
-  readonly appealJudge2?: User
-  readonly appealJudge3?: User
-
   @Field(() => AppealCaseRulingDecision, { nullable: true })
   readonly appealRulingDecision?: AppealCaseRulingDecision
 
