@@ -134,9 +134,15 @@ const CaseOverviewHeader: FC<Props> = (props) => {
       {workingCase.caseModifiedExplanation && (
         <AlertMessage
           type="info"
-          title={formatMessage(m.sections.modifyDatesInfo.title, {
-            caseType: workingCase.type,
-          })}
+          title={formatMessage(
+            {
+              id: m.sections.modifyDatesInfo.title,
+              defaultMessage: m.sections.modifyDatesInfo.title,
+            },
+            {
+              caseType: workingCase.type,
+            },
+          )}
           message={
             <MarkdownWrapper
               markdown={workingCase.caseModifiedExplanation}

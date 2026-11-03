@@ -1,5 +1,4 @@
 import { useContext, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 
@@ -44,8 +43,6 @@ export const Users = () => {
   const router = useRouter()
   const { user } = useContext(UserContext)
   const [selectedInstitutions, setSelectedInstitutions] = useState<string[]>([])
-
-  const { formatMessage } = useIntl()
   const {
     allInstitutions,
     loading: institutionsLoading,
@@ -110,7 +107,7 @@ export const Users = () => {
 
   return (
     <div className={styles.userControlContainer}>
-      <PageHeader title={formatMessage(titles.admin.users)} />
+      <PageHeader title={titles.admin.users} />
       <Box display="flex" marginBottom={9} justifyContent="spaceBetween">
         <Button
           icon="add"

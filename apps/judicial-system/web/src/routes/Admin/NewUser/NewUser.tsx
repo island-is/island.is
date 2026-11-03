@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
@@ -38,7 +37,6 @@ export const NewUser = () => {
     loading: institutionsLoading,
     loaded: institutionsLoaded,
   } = useInstitution()
-  const { formatMessage } = useIntl()
 
   const [createUserMutation, { loading: userCreating }] = useCreateUserMutation(
     {
@@ -91,7 +89,7 @@ export const NewUser = () => {
   ) : institutionsLoaded ? (
     <Box background="purple100">
       <div className={styles.userManagementContainer}>
-        <PageHeader title={formatMessage(titles.admin.newUser)} />
+        <PageHeader title={titles.admin.newUser} />
         <UserForm
           user={user}
           institutions={allInstitutions}

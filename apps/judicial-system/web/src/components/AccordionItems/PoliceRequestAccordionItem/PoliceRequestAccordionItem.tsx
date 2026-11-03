@@ -34,17 +34,23 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
   return (
     <AccordionItem
       id="policeRequestAccordionItem"
-      label={formatMessage(core.requestCaseType, {
-        caseType: formatRequestCaseType(workingCase.type),
-      })}
+      label={formatMessage(
+        { id: core.requestCaseType, defaultMessage: core.requestCaseType },
+        {
+          caseType: formatRequestCaseType(workingCase.type),
+        },
+      )}
       labelVariant="h3"
       labelUse="h3"
     >
       <AccordionListItem
         title={capitalize(
-          formatMessage(core.defendant, {
-            suffix: (workingCase.defendants ?? []).length > 1 ? 'ar' : 'i',
-          }),
+          formatMessage(
+            { id: core.defendant, defaultMessage: core.defendant },
+            {
+              suffix: (workingCase.defendants ?? []).length > 1 ? 'ar' : 'i',
+            },
+          ),
         )}
       >
         {workingCase.defendants &&
@@ -53,11 +59,11 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
               {(!defendant.noNationalId || defendant.nationalId) && (
                 <Box marginBottom={1}>
                   <Text>
-                    {`${formatMessage(
+                    {`${
                       defendant.noNationalId
                         ? core.dateOfBirth
-                        : core.nationalId,
-                    )}: ${
+                        : core.nationalId
+                    }: ${
                       defendant.noNationalId
                         ? defendant.nationalId
                         : formatNationalId(defendant.nationalId ?? '')
@@ -66,9 +72,7 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
                 </Box>
               )}
               <Box marginBottom={1}>
-                <Text>{`${formatMessage(core.fullName)}: ${
-                  defendant.name
-                }`}</Text>
+                <Text>{`${core.fullName}: ${defendant.name}`}</Text>
               </Box>
               <Box marginBottom={3}>
                 <Text>Lögheimili: {defendant.address}</Text>
