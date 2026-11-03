@@ -33,6 +33,7 @@ import {
   CreateAppealSummonsInput,
   DeleteAppealSummonsInput,
   SendAppealSummonsToCourtOfAppealsInput,
+  SendAppealSummonsToServiceInput,
   UpdateAppealSummonsInput,
 } from './dto/appealSummons.input'
 import { AppealSummons } from './models/appealSummons.model'
@@ -162,6 +163,31 @@ export class AppealSummonsResolver {
       this.backendService.sendAppealSummonsToCourtOfAppeals(
         caseId,
         input.appealSummonsId,
+      ),
+      caseId,
+    )
+  }
+
+  @Mutation(() => AppealSummons)
+  sendAppealSummonsToService(
+    @Args('caseId', new ParseUUIDPipe()) caseId: string,
+    @Args('input', { type: () => SendAppealSummonsToServiceInput })
+    input: SendAppealSummonsToServiceInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealSummons> {
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Sending appeal summons ${input.appealSummonsId} of case ${caseId} to service`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.SEND_APPEAL_SUMMONS_TO_SERVICE,
+      this.backendService.sendAppealSummonsToService(
+        caseId,
+        input.appealSummonsId,
+        { recipients: input.recipients },
       ),
       caseId,
     )

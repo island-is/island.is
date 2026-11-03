@@ -22,6 +22,8 @@ import {
   getAppealAppointmentLetters,
   getAppealSummonsMenuItems,
   getAppealSummonsRows,
+  getAppealSummonsServiceRecipientOptions,
+  getAppealSummonsWaitingServiceBanners,
   getVerdictAppealFileGroups,
   hasStandingVerdictAppeal,
   showsAppealSummonses,
@@ -489,7 +491,7 @@ describe('getAppealSummonsMenuItems', () => {
     ).toEqual(['Breyta', 'Opna í nýjum flipa', 'Eyða'])
   })
 
-  it('offers send, edit, open and delete on a confirmed summons for staff', () => {
+  it('offers send to service, send to CoA, edit, open and delete on a confirmed summons for staff', () => {
     expect(
       getAppealSummonsMenuItems(
         { confirmedDate: '2026-06-05T09:15:00.000Z' },
@@ -498,8 +500,15 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
         jest.fn(),
         jest.fn(),
+        jest.fn(),
       ).map((item) => item.title),
-    ).toEqual(['Senda til Landsréttar', 'Breyta', 'Opna í nýjum flipa', 'Eyða'])
+    ).toEqual([
+      'Senda í birtingu',
+      'Senda til Landsréttar',
+      'Breyta',
+      'Opna í nýjum flipa',
+      'Eyða',
+    ])
   })
 
   it('hides edit and delete once the summons has been sent to the court of appeals', () => {
@@ -511,8 +520,9 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
         jest.fn(),
         jest.fn(),
+        jest.fn(),
       ).map((item) => item.title),
-    ).toEqual(['Opna í nýjum flipa'])
+    ).toEqual(['Senda í birtingu', 'Opna í nýjum flipa'])
   })
 
   it('offers only open to a public prosecution prosecutor', () => {
@@ -539,6 +549,80 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
       ).map((item) => item.title),
     ).toEqual(['Opna í nýjum flipa'])
+  })
+})
+
+describe('getAppealSummonsServiceRecipientOptions', () => {
+  it('lists defendants on the summons and civil claimants on the case', () => {
+    expect(
+      getAppealSummonsServiceRecipientOptions(
+        {
+          defendants: [{ defendantId: 'd1' } as never],
+          services: [{ civilClaimantId: 'c1' } as never],
+        },
+        [{ id: 'd1', name: 'Jón Jónsson' } as never],
+        [
+          { id: 'c1', name: 'Binni' } as never,
+          { id: 'c2', name: 'Bína' } as never,
+        ],
+      ),
+    ).toEqual([
+      {
+        key: 'defendant-d1',
+        label: 'Dómfelldi Jón Jónsson',
+        defendantId: 'd1',
+        alreadySent: false,
+      },
+      {
+        key: 'civilClaimant-c1',
+        label: 'Binni',
+        civilClaimantId: 'c1',
+        alreadySent: true,
+      },
+      {
+        key: 'civilClaimant-c2',
+        label: 'Bína',
+        civilClaimantId: 'c2',
+        alreadySent: false,
+      },
+    ])
+  })
+})
+
+describe('getAppealSummonsWaitingServiceBanners', () => {
+  it('returns an info banner per service row that is still waiting', () => {
+    expect(
+      getAppealSummonsWaitingServiceBanners({
+        defendants: [{ id: 'd1', name: 'Jón Jónsson' }],
+        civilClaimants: [{ id: 'c1', name: 'Binni' }],
+        verdictAppealCase: {
+          appealSummonses: [
+            {
+              id: 'summons',
+              services: [
+                {
+                  id: 's1',
+                  defendantId: 'd1',
+                  sentToServiceDate: '2026-06-05T09:20:00.000Z',
+                },
+                {
+                  id: 's2',
+                  civilClaimantId: 'c1',
+                  sentToServiceDate: '2026-06-05T09:20:00.000Z',
+                  serviceDate: '2026-06-06T10:00:00.000Z',
+                },
+              ],
+            },
+          ],
+        },
+      } as WorkingCase),
+    ).toEqual([
+      {
+        key: 's1',
+        title: 'Áfrýjunarstefna bíður birtingar – Jón Jónsson',
+        message: expect.stringContaining('Send í birtingu'),
+      },
+    ])
   })
 })
 

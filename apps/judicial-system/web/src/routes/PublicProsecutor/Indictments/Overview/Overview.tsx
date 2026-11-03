@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import type { Option } from '@island.is/island-ui/core'
-import { Box } from '@island.is/island-ui/core'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   canDefendantAppealVerdict,
@@ -33,6 +33,7 @@ import {
   VerdictTimelineCard,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
+import { getAppealSummonsWaitingServiceBanners } from '@island.is/judicial-system-web/src/components/VerdictAppealFiles/VerdictAppealFiles.logic'
 import {
   AppealCaseState,
   CaseIndictmentRulingDecision,
@@ -156,6 +157,10 @@ export const Overview = () => {
     )
   }, [workingCase.defendants])
 
+  const appealSummonsServiceBanners = getAppealSummonsWaitingServiceBanners(
+    workingCase,
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -173,7 +178,17 @@ export const Overview = () => {
         <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={stack({ gap: 5 })}>
-          <div className={stack({ gap: 2 })}>{verdictStatusAlerts}</div>
+          <div className={stack({ gap: 2 })}>
+            {appealSummonsServiceBanners.map((banner) => (
+              <AlertMessage
+                key={banner.key}
+                type="info"
+                title={banner.title}
+                message={banner.message}
+              />
+            ))}
+            {verdictStatusAlerts}
+          </div>
           {verdictTimelineCards}
           <AppealRulingModifiedAlert />
           <RulingModifiedAlert />

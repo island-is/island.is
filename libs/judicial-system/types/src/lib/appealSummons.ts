@@ -16,6 +16,7 @@ export enum AppealSummonsAction {
   DELETE = 'DELETE',
   OPEN = 'OPEN',
   CONFIRM = 'CONFIRM',
+  SEND_TO_SERVICE = 'SEND_TO_SERVICE',
   SEND_TO_COURT_OF_APPEALS = 'SEND_TO_COURT_OF_APPEALS',
 }
 
@@ -82,6 +83,15 @@ export const canPerformAppealSummonsAction = (
 
   if (!isPublicProsecutionOfficeUser(user)) {
     return false
+  }
+
+  if (action === AppealSummonsAction.SEND_TO_SERVICE) {
+    const status = getAppealSummonsStatus(summons)
+
+    // Service and sending to Landsréttur are independent once confirmed.
+    return (
+      status === 'confirmed' || status === 'inService' || status === 'sent'
+    )
   }
 
   if (action === AppealSummonsAction.SEND_TO_COURT_OF_APPEALS) {

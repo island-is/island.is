@@ -53,6 +53,7 @@ import {
 import { AppealSummons, Case } from '../repository'
 import { CreateAppealSummonsDto } from './dto/createAppealSummons.dto'
 import { PreviewAppealSummonsDto } from './dto/previewAppealSummons.dto'
+import { SendAppealSummonsToServiceDto } from './dto/sendAppealSummonsToService.dto'
 import { CurrentAppealSummons } from './guards/appealSummons.decorator'
 import { AppealSummonsExistsGuard } from './guards/appealSummonsExists.guard'
 import { DeleteAppealSummonsResponse } from './models/deleteAppealSummons.response'
@@ -235,6 +236,41 @@ export class AppealSummonsController {
 
     return this.sequelize.transaction((transaction) =>
       this.appealSummonsService.confirm(theCase, summons, user, transaction),
+    )
+  }
+
+  @UseGuards(
+    CaseExistsForUpdateGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    AppealSummonsExistsGuard,
+  )
+  @RolesRules(publicProsecutorStaffRule)
+  @Patch(':appealSummonsId/sendToService')
+  @ApiOkResponse({
+    type: AppealSummons,
+    description: 'Sends an appeal summons to service for selected recipients',
+  })
+  async sendToService(
+    @Param('caseId') caseId: string,
+    @Param('appealSummonsId') appealSummonsId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentAppealSummons() summons: AppealSummons,
+    @Body() dto: SendAppealSummonsToServiceDto,
+    @CurrentHttpUser() user: User,
+  ): Promise<AppealSummons> {
+    this.logger.debug(
+      `Sending appeal summons ${appealSummonsId} of case ${caseId} to service`,
+    )
+
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.appealSummonsService.sendToService(
+      theCase,
+      summons,
+      dto,
+      user,
+      transaction,
     )
   }
 

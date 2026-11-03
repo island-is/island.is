@@ -312,6 +312,17 @@ query Case($input: CaseQueryInput!) {
           appellantSide
           claims
         }
+        services {
+          id
+          defendantId
+          civilClaimantId
+          sentToServiceDate
+          externalPoliceDocumentId
+          serviceStatus
+          serviceDate
+          servedBy
+          comment
+        }
       }
       sentAppealSummonses {
         id
@@ -323,6 +334,17 @@ query Case($input: CaseQueryInput!) {
           defendantId
           appellantSide
           claims
+        }
+        services {
+          id
+          defendantId
+          civilClaimantId
+          sentToServiceDate
+          externalPoliceDocumentId
+          serviceStatus
+          serviceDate
+          servedBy
+          comment
         }
       }
     }

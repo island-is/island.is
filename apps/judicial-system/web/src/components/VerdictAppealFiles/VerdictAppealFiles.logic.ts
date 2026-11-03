@@ -15,6 +15,7 @@ import type {
   AppealSummons,
   CaseFile,
   CaseFileCategory,
+  CivilClaimant,
   Defendant,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -172,14 +173,33 @@ export const formatAppealSummonsFileName = (
 }
 
 export const getAppealSummonsMenuItems = (
-  summons: Pick<AppealSummons, 'confirmedDate' | 'sentToCourtOfAppealsDate'>,
+  summons: Pick<
+    AppealSummons,
+    'confirmedDate' | 'sentToCourtOfAppealsDate' | 'services'
+  >,
   user: User | undefined,
   onEdit: () => void,
   onOpen: () => void,
   onDelete: () => void,
+  onSendToService?: () => void,
   onSendToCourtOfAppeals?: () => void,
 ): ContextMenuItem[] => {
   const items: ContextMenuItem[] = []
+
+  if (
+    onSendToService &&
+    canPerformAppealSummonsAction(
+      AppealSummonsAction.SEND_TO_SERVICE,
+      summons,
+      user,
+    )
+  ) {
+    items.push({
+      title: 'Senda í birtingu',
+      onClick: onSendToService,
+      icon: 'mail',
+    })
+  }
 
   if (
     onSendToCourtOfAppeals &&
@@ -211,4 +231,91 @@ export const getAppealSummonsMenuItems = (
   }
 
   return items
+}
+
+export type AppealSummonsServiceRecipientOption = {
+  key: string
+  label: string
+  defendantId?: string
+  civilClaimantId?: string
+  alreadySent: boolean
+}
+
+export const getAppealSummonsServiceRecipientOptions = (
+  summons: Pick<AppealSummons, 'defendants' | 'services'>,
+  defendants: Defendant[] | null | undefined,
+  civilClaimants: CivilClaimant[] | null | undefined,
+): AppealSummonsServiceRecipientOption[] => {
+  const services = summons.services ?? []
+  const options: AppealSummonsServiceRecipientOption[] = []
+
+  for (const row of summons.defendants ?? []) {
+    const defendant = defendants?.find((item) => item.id === row.defendantId)
+
+    options.push({
+      key: `defendant-${row.defendantId}`,
+      label: `Dómfelldi ${defendant?.name ?? ''}`.trim(),
+      defendantId: row.defendantId,
+      alreadySent: services.some(
+        (service) => service.defendantId === row.defendantId,
+      ),
+    })
+  }
+
+  for (const claimant of civilClaimants ?? []) {
+    options.push({
+      key: `civilClaimant-${claimant.id}`,
+      label: claimant.name ?? '',
+      civilClaimantId: claimant.id,
+      alreadySent: services.some(
+        (service) => service.civilClaimantId === claimant.id,
+      ),
+    })
+  }
+
+  return options
+}
+
+export type AppealSummonsServiceBanner = {
+  key: string
+  title: string
+  message: string
+}
+
+export const getAppealSummonsWaitingServiceBanners = (
+  workingCase: WorkingCase,
+): AppealSummonsServiceBanner[] => {
+  const summonses = workingCase.verdictAppealCase?.appealSummonses ?? []
+  const banners: AppealSummonsServiceBanner[] = []
+
+  for (const summons of summonses) {
+    for (const service of summons.services ?? []) {
+      if (service.serviceDate) {
+        continue
+      }
+
+      const name = service.defendantId
+        ? workingCase.defendants?.find(
+            (defendant) => defendant.id === service.defendantId,
+          )?.name
+        : workingCase.civilClaimants?.find(
+            (claimant) => claimant.id === service.civilClaimantId,
+          )?.name
+
+      const sentAt = service.sentToServiceDate
+        ? `${formatDate(service.sentToServiceDate)} kl. ${formatDate(
+            service.sentToServiceDate,
+            TIME_FORMAT,
+          )}`
+        : ''
+
+      banners.push({
+        key: service.id,
+        title: `Áfrýjunarstefna bíður birtingar${name ? ` – ${name}` : ''}`,
+        message: `Send í birtingu ${sentAt}`.trim(),
+      })
+    }
+  }
+
+  return banners
 }

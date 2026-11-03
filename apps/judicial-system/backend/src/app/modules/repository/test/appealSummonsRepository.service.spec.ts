@@ -9,6 +9,7 @@ import { AppealSummonsAppellantSide } from '@island.is/judicial-system/types'
 
 import { AppealSummons } from '../models/appealSummons.model'
 import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
+import { AppealSummonsServiceRecipient } from '../models/appealSummonsServiceRecipient.model'
 import { Institution } from '../models/institution.model'
 import { User } from '../models/user.model'
 import { AppealSummonsRepositoryService } from '../services/appealSummonsRepository.service'
@@ -23,6 +24,11 @@ describe('AppealSummonsRepositoryService', () => {
     update: jest.Mock
   }
   let defendantModel: { create: jest.Mock; destroy: jest.Mock }
+  let serviceRecipientModel: {
+    create: jest.Mock
+    findOne: jest.Mock
+    update: jest.Mock
+  }
 
   beforeEach(async () => {
     summonsModel = {
@@ -35,6 +41,11 @@ describe('AppealSummonsRepositoryService', () => {
       create: jest.fn(),
       destroy: jest.fn(),
     }
+    serviceRecipientModel = {
+      create: jest.fn(),
+      findOne: jest.fn(),
+      update: jest.fn(),
+    }
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -46,6 +57,10 @@ describe('AppealSummonsRepositoryService', () => {
         {
           provide: getModelToken(AppealSummonsDefendant),
           useValue: defendantModel,
+        },
+        {
+          provide: getModelToken(AppealSummonsServiceRecipient),
+          useValue: serviceRecipientModel,
         },
         AppealSummonsRepositoryService,
       ],
@@ -92,6 +107,13 @@ describe('AppealSummonsRepositoryService', () => {
           {
             model: AppealSummonsDefendant,
             as: 'defendants',
+            required: false,
+            separate: true,
+            order: [['created', 'ASC']],
+          },
+          {
+            model: AppealSummonsServiceRecipient,
+            as: 'services',
             required: false,
             separate: true,
             order: [['created', 'ASC']],

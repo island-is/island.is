@@ -1,3 +1,4 @@
+import { Base64 } from 'js-base64'
 import { Transaction } from 'sequelize'
 
 import {
@@ -5,6 +6,7 @@ import {
   ForbiddenException,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -16,6 +18,9 @@ import {
   AppealSummonsAction,
   AppealSummonsAppellantSide,
   canPerformAppealSummonsAction,
+  DocumentDeliveryReceiverType,
+  DocumentDeliverySupplementCode,
+  PoliceFileTypeCode,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -24,22 +29,29 @@ import { queueMessagesAfterCommit } from '../../middleware'
 import { standingVerdictAppellants } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { PdfService } from '../case'
+import { PoliceService } from '../police'
 import {
   AppealEventLogRepositoryService,
   AppealSummons,
   AppealSummonsRepositoryService,
+  AppealSummonsServiceRecipient,
   Case,
+  CaseRepositoryService,
 } from '../repository'
 import { CreateAppealSummonsDto } from './dto/createAppealSummons.dto'
 import { PreviewAppealSummonsDto } from './dto/previewAppealSummons.dto'
+import { SendAppealSummonsToServiceDto } from './dto/sendAppealSummonsToService.dto'
+import { DeliverResponse } from './models/deliver.response'
 
 @Injectable()
 export class AppealSummonsService {
   constructor(
     private readonly appealSummonsRepositoryService: AppealSummonsRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
+    private readonly caseRepositoryService: CaseRepositoryService,
     private readonly pdfService: PdfService,
     private readonly awsS3Service: AwsS3Service,
+    private readonly policeService: PoliceService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -357,6 +369,293 @@ export class AppealSummonsService {
     })
 
     return result
+  }
+
+  async sendToService(
+    theCase: Case,
+    summons: AppealSummons,
+    dto: SendAppealSummonsToServiceDto,
+    user: User,
+    transaction: Transaction,
+  ): Promise<AppealSummons> {
+    if (
+      !canPerformAppealSummonsAction(
+        AppealSummonsAction.SEND_TO_SERVICE,
+        summons,
+        user,
+      )
+    ) {
+      throw new ForbiddenException(
+        `User ${user.id} cannot send appeal summons ${summons.id} to service`,
+      )
+    }
+
+    const appealCase = theCase.verdictAppealCase
+
+    if (!appealCase) {
+      throw new BadRequestException(`Case ${theCase.id} has no verdict appeal`)
+    }
+
+    const existingServices = summons.services ?? []
+    const sentToServiceDate = new Date()
+    const createdServices: AppealSummonsServiceRecipient[] = []
+
+    for (const recipient of dto.recipients) {
+      const hasDefendant = Boolean(recipient.defendantId)
+      const hasCivilClaimant = Boolean(recipient.civilClaimantId)
+
+      if (hasDefendant === hasCivilClaimant) {
+        throw new BadRequestException(
+          'Exactly one of defendantId and civilClaimantId must be set per recipient',
+        )
+      }
+
+      if (recipient.defendantId) {
+        const onSummons = summons.defendants?.some(
+          (defendant) => defendant.defendantId === recipient.defendantId,
+        )
+
+        if (!onSummons) {
+          throw new BadRequestException(
+            `Defendant ${recipient.defendantId} is not on appeal summons ${summons.id}`,
+          )
+        }
+
+        const alreadySent = existingServices.some(
+          (service) => service.defendantId === recipient.defendantId,
+        )
+
+        if (alreadySent) {
+          continue
+        }
+
+        const defendant = theCase.defendants?.find(
+          (item) => item.id === recipient.defendantId,
+        )
+
+        if (!defendant) {
+          throw new BadRequestException(
+            `Defendant ${recipient.defendantId} is not on case ${theCase.id}`,
+          )
+        }
+
+        if (defendant.noNationalId || !defendant.nationalId) {
+          throw new BadRequestException(
+            `National id is required for defendant ${recipient.defendantId} when sending appeal summons ${summons.id} to service`,
+          )
+        }
+
+        createdServices.push(
+          await this.appealSummonsRepositoryService.createServiceRecipient(
+            {
+              appealSummonsId: summons.id,
+              defendantId: recipient.defendantId,
+              sentToServiceDate,
+            },
+            { transaction },
+          ),
+        )
+      } else if (recipient.civilClaimantId) {
+        const civilClaimant = theCase.civilClaimants?.find(
+          (claimant) => claimant.id === recipient.civilClaimantId,
+        )
+
+        if (!civilClaimant) {
+          throw new BadRequestException(
+            `Civil claimant ${recipient.civilClaimantId} is not on case ${theCase.id}`,
+          )
+        }
+
+        const alreadySent = existingServices.some(
+          (service) => service.civilClaimantId === recipient.civilClaimantId,
+        )
+
+        if (alreadySent) {
+          continue
+        }
+
+        if (civilClaimant.noNationalId || !civilClaimant.nationalId) {
+          throw new BadRequestException(
+            `National id is required for civil claimant ${recipient.civilClaimantId} when sending appeal summons ${summons.id} to service`,
+          )
+        }
+
+        createdServices.push(
+          await this.appealSummonsRepositoryService.createServiceRecipient(
+            {
+              appealSummonsId: summons.id,
+              civilClaimantId: recipient.civilClaimantId,
+              sentToServiceDate,
+            },
+            { transaction },
+          ),
+        )
+      }
+    }
+
+    if (createdServices.length === 0) {
+      throw new BadRequestException(
+        `No new recipients to send for appeal summons ${summons.id}`,
+      )
+    }
+
+    await this.appealEventLogRepositoryService.create(
+      {
+        caseId: theCase.id,
+        appealCaseId: appealCase.id,
+        eventType: AppealEventType.APPEAL_SUMMONS_SENT_TO_SERVICE,
+        userRole: user.role,
+        userId: user.id,
+        nationalId: user.nationalId,
+        userName: user.name,
+        userTitle: user.title,
+        institutionName: user.institution?.name,
+      },
+      { transaction },
+    )
+
+    for (const service of createdServices) {
+      queueMessagesAfterCommit({
+        type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_APPEAL_SUMMONS,
+        user,
+        caseId: theCase.id,
+        elementId: [summons.id, service.id],
+      })
+    }
+
+    const result = await this.appealSummonsRepositoryService.findByIdAndCaseId(
+      summons.id,
+      theCase.id,
+      { transaction },
+    )
+
+    if (!result) {
+      throw new BadRequestException(
+        `Appeal summons ${summons.id} was not found after send to service`,
+      )
+    }
+
+    return result
+  }
+
+  async deliverAppealSummonsToNationalCommissionersOffice({
+    theCase,
+    summons,
+    service,
+    user,
+    transaction,
+  }: {
+    theCase: Case
+    summons: AppealSummons
+    service: AppealSummonsServiceRecipient
+    user: User
+    transaction: Transaction
+  }): Promise<DeliverResponse> {
+    if (service.externalPoliceDocumentId) {
+      return { delivered: true }
+    }
+
+    const receiver =
+      service.defendantId !== undefined && service.defendantId !== null
+        ? theCase.defendants?.find(
+            (defendant) => defendant.id === service.defendantId,
+          )
+        : theCase.civilClaimants?.find(
+            (claimant) => claimant.id === service.civilClaimantId,
+          )
+
+    if (!receiver) {
+      throw new NotFoundException(
+        `Recipient for appeal summons service ${service.id} not found on case ${theCase.id}`,
+      )
+    }
+
+    if (receiver.noNationalId || !receiver.nationalId) {
+      throw new BadRequestException(
+        `National id is required for recipient when delivering appeal summons ${summons.id} to national commissioners office`,
+      )
+    }
+
+    const pdf = await this.pdfService.getAppealSummonsPdf(
+      theCase,
+      user,
+      summons,
+    )
+
+    const documentName = `Áfrýjunarstefna í máli ${theCase.courtCaseNumber}`
+    const orderByDate = new Date(service.sentToServiceDate)
+    orderByDate.setMonth(orderByDate.getMonth() + 2)
+
+    const originalAncestorCaseId =
+      await this.caseRepositoryService.findOriginalAncestorId(theCase)
+
+    const receiverType = service.defendantId
+      ? DocumentDeliveryReceiverType.DEFENDANT
+      : DocumentDeliveryReceiverType.CIVIL_CLAIMANT
+
+    const policeCaseNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
+
+    const createdDocument = await this.policeService.createDocument({
+      caseId: theCase.id,
+      defendantId: receiver.id,
+      user,
+      documentName,
+      documentFiles: [
+        {
+          name: `${documentName}.pdf`,
+          documentBase64: Base64.btoa(pdf.toString('binary')),
+        },
+      ],
+      documentDates: [
+        { code: 'ORDER_BY_DATE', value: orderByDate },
+        ...(theCase.rulingDate
+          ? [{ code: 'RULING_DATE', value: theCase.rulingDate }]
+          : []),
+      ],
+      fileTypeCode: PoliceFileTypeCode.APPEAL_SUMMONS,
+      caseSupplements: [
+        { code: 'RVG_CASE_ID', value: originalAncestorCaseId },
+        { code: 'RVG_DOCUMENT_ID', value: service.id },
+        { code: 'RECEIVER_SSN', value: receiver.nationalId },
+        {
+          code: DocumentDeliverySupplementCode.RECEIVER_TYPE,
+          value: receiverType,
+        },
+        ...(theCase.courtCaseNumber
+          ? [
+              {
+                code: 'VERDICT_COURT_CASE_NUMBER',
+                value: theCase.courtCaseNumber,
+              },
+            ]
+          : []),
+        ...(policeCaseNumbers.length
+          ? [
+              {
+                code: 'POLICE_CASE_NUMBERS',
+                value: policeCaseNumbers.join(','),
+              },
+            ]
+          : []),
+        ...(theCase.prosecutorsOffice?.name
+          ? [
+              {
+                code: 'PROSECUTOR_OFFICE',
+                value: theCase.prosecutorsOffice.name,
+              },
+            ]
+          : []),
+      ],
+    })
+
+    await this.appealSummonsRepositoryService.updateServiceRecipient(
+      service.id,
+      summons.id,
+      { externalPoliceDocumentId: createdDocument.externalPoliceDocumentId },
+      { transaction },
+    )
+
+    return { delivered: true }
   }
 
   async sendToCourtOfAppeals(
