@@ -27,6 +27,7 @@ import { syncLicenseWidgetData } from '@/lib/widget-sync'
 import { INCLUDED_LICENSE_TYPES } from '@/constants/wallet.constants'
 import { WalletItem } from '../../../../components/wallet-item'
 import {
+  Alert as InfoAlert,
   blue100,
   blue200,
   blue400,
@@ -40,6 +41,11 @@ import { isIos } from '@/utils/devices'
 import { testIDs } from '@/utils/test-ids'
 import { router, Stack } from 'expo-router'
 import { StackScreen } from '../../../../components/stack-screen'
+
+const ScanPrompt = styled.View`
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[3]}px;
+`
 
 const Tabs = styled.View`
   margin-top: ${({ theme }) => theme.spacing[1]}px;
@@ -244,28 +250,55 @@ export default function WalletScreen() {
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}
         ListHeaderComponent={
-          hasChildLicenses ? (
-            <View style={{ marginBottom: 16 }}>
-              <Tabs>
-                <TabButtons
-                  buttons={[
-                    {
-                      title: intl.formatMessage({
-                        id: 'wallet.yourLicenses',
-                      }),
-                    },
-                    {
-                      title: intl.formatMessage({
-                        id: 'wallet.childLicenses',
-                      }),
-                    },
-                  ]}
-                  selectedTab={selectedTab}
-                  setSelectedTab={setSelectedTab}
+          <>
+            {/*
+              The scanner is the only thing here that proves anything, so it
+              leads rather than hiding behind an icon in the header.
+            */}
+            <ScanPrompt>
+              <InfoAlert
+                type="info"
+                hasBorder
+                title={intl.formatMessage({ id: 'wallet.scanReminderTitle' })}
+                message={intl.formatMessage({
+                  id: 'wallet.scanReminderDescription',
+                })}
+              />
+              <View style={{ marginTop: theme.spacing[2] }}>
+                <Button
+                  title={intl.formatMessage({ id: 'wallet.scanCta' })}
+                  icon={require('@/assets/icons/barcode-scan.png')}
+                  // A filled button only tints its icon for utility buttons,
+                  // so the dark barcode would be lost against the blue.
+                  iconStyle={{ tintColor: theme.color.white }}
+                  iconPosition="start"
+                  onPress={() => router.navigate('/wallet/scanner')}
                 />
-              </Tabs>
-            </View>
-          ) : null
+              </View>
+            </ScanPrompt>
+            {hasChildLicenses ? (
+              <View style={{ marginBottom: 16 }}>
+                <Tabs>
+                  <TabButtons
+                    buttons={[
+                      {
+                        title: intl.formatMessage({
+                          id: 'wallet.yourLicenses',
+                        }),
+                      },
+                      {
+                        title: intl.formatMessage({
+                          id: 'wallet.childLicenses',
+                        }),
+                      },
+                    ]}
+                    selectedTab={selectedTab}
+                    setSelectedTab={setSelectedTab}
+                  />
+                </Tabs>
+              </View>
+            ) : null}
+          </>
         }
         ListEmptyComponent={
           <View style={{ marginTop: 80, paddingHorizontal: 16 }}>

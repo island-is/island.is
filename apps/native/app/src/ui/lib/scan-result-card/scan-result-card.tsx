@@ -80,12 +80,6 @@ const Logo = styled.Image`
   margin-top: -8px;
 `
 
-const Content = styled.View`
-  flex-direction: row;
-  padding: 16px 24px;
-  padding-top: 0px;
-`
-
 const ErrorContent = styled.View`
   flex-direction: row;
   padding: 16px 24px;
@@ -122,12 +116,50 @@ const LabelGroup = styled.View`
   margin-bottom: 16px;
 `
 
+/**
+ * The photo is the only part of a check that cannot be faked by showing a
+ * convincing screen, so it leads: big enough to compare against the face in
+ * front of you at arm's length.
+ */
 const Photo = styled.Image`
-  width: 79px;
-  height: 109px;
+  width: 200px;
+  height: 260px;
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: ${({ theme: { border } }) => border.radius.large};
-  margin-right: 32px;
+`
+
+const PhotoBlock = styled.View`
+  align-items: center;
+  padding: 0 24px 20px 24px;
+`
+
+const PhotoHint = styled.Text`
+  ${font({
+    fontSize: 12,
+    color: '#8D6679',
+  })}
+  margin-top: 12px;
+  text-align: center;
+`
+
+const HolderName = styled.Text`
+  ${font({
+    fontWeight: '600',
+    fontSize: 22,
+    lineHeight: 28,
+    color: '#000',
+  })}
+  margin-top: 4px;
+  text-align: center;
+`
+
+const HolderNationalId = styled.Text`
+  ${font({
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#8D6679',
+  })}
+  text-align: center;
 `
 
 const Left = styled.View`
@@ -176,7 +208,6 @@ interface ScanResultCardProps {
   nationalId?: string
   name?: string
   picture?: string | null
-  data?: Array<{ key: string; value: string }>
   hasNoData?: boolean
   type: ScanResultCardType
 }
@@ -252,7 +283,6 @@ export function ScanResultCard({
   nationalId,
   name,
   picture,
-  data,
   hasNoData = false,
   type,
 }: ScanResultCardProps) {
@@ -333,49 +363,31 @@ export function ScanResultCard({
         <>
           <Splitter />
 
-          <Content>
+          <PhotoBlock>
             {loading ? (
-              <Placeholder
-                style={{ width: 79, height: 109, marginRight: 32 }}
+              <Placeholder style={{ width: 200, height: 260 }} />
+            ) : picture ? (
+              <Photo
+                source={{ uri: prefixBase64(picture) }}
+                resizeMode="cover"
               />
+            ) : null}
+            {!loading && picture ? (
+              <PhotoHint>
+                {intl.formatMessage({ id: 'licenseScannerResult.photoHint' })}
+              </PhotoHint>
+            ) : null}
+            {loading ? (
+              <Placeholder style={{ width: 180, marginTop: 16 }} />
             ) : (
-              picture && <Photo source={{ uri: prefixBase64(picture) }} />
+              <>
+                <HolderName>{name}</HolderName>
+                <HolderNationalId>
+                  {formatNationalId(nationalId)}
+                </HolderNationalId>
+              </>
             )}
-            <Left>
-              <LabelGroup>
-                <Label>
-                  {intl.formatMessage({ id: 'licenseScannerResult.name' })}
-                </Label>
-                {loading ? (
-                  <Placeholder style={{ width: 120 }} />
-                ) : (
-                  <Value>{name}</Value>
-                )}
-              </LabelGroup>
-              <LabelGroup>
-                <Label>
-                  {intl.formatMessage({
-                    id: 'licenseScannerResult.nationalId',
-                  })}
-                </Label>
-                {loading ? (
-                  <Placeholder style={{ width: 120 }} />
-                ) : (
-                  <Value>{formatNationalId(nationalId)}</Value>
-                )}
-              </LabelGroup>
-              {data?.map(({ key, value }) => (
-                <LabelGroup key={key}>
-                  <Label>{key}</Label>
-                  {loading ? (
-                    <Placeholder style={{ width: 120 }} />
-                  ) : (
-                    <Value>{value}</Value>
-                  )}
-                </LabelGroup>
-              ))}
-            </Left>
-          </Content>
+          </PhotoBlock>
         </>
       ) : null}
     </Host>

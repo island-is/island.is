@@ -102,11 +102,21 @@ export const WalletItem = React.memo(
             }}
           >
             <SafeAreaView>
+              {/*
+                A scannable licence gets no subtitle: it carries the license
+                number, which is the holder's to hand over by being scanned,
+                not to be read off a list. One that cannot be scanned keeps
+                it, since there is no scan to hand it over by.
+              */}
               <LicenseListCard
                 nativeID={`license-${item?.license?.type}_source`}
                 title={item?.payload?.metadata?.name}
                 type={item?.license?.type}
-                subtitle={item?.payload?.metadata?.subtitle}
+                subtitle={
+                  item?.license?.pkpass
+                    ? undefined
+                    : item?.payload?.metadata?.subtitle
+                }
               />
             </SafeAreaView>
           </Pressable>

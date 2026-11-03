@@ -6,7 +6,7 @@ import { ScanResultCard, SupportedGenericLicenseTypes } from '@/ui'
 import { VerifyLicenseBarcodeError } from '@/graphql/types/schema'
 import { getScanResult } from '../../../../../stores/scan-result-store'
 
-const Host = styled.View`
+const Host = styled.ScrollView`
   flex: 1;
   padding: ${({ theme }) => theme.spacing[2]}px;
 `
@@ -20,7 +20,7 @@ export default function LicenseScanDetailScreen() {
   }
 
   const { licenseType, data, error } = scanResult
-  const type = licenseType as unknown as SupportedGenericLicenseTypes
+  const type = (licenseType as unknown) as SupportedGenericLicenseTypes
   const isExpired = error === VerifyLicenseBarcodeError.Expired
 
   return (
@@ -40,6 +40,10 @@ export default function LicenseScanDetailScreen() {
               : 'licenseScanner.errorUnknown',
           })}
           {...data}
+          // No `details`: `verifyLicenseBarcode` returns identity only, so
+          // there are no entitlements to show. ScanResultCard draws the
+          // section only when they are supplied, which is what the API change
+          // on feat/scan-first-licences adds.
           hasNoData={!data?.nationalId}
           type={type ?? 'Unknown'}
         />
