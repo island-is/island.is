@@ -5,3 +5,6 @@ export class GetOrganizationAdminInput {
   @Field(() => String)
   nationalId!: string
 }
+
+@InputType('FormSystemCreateOrganizationInput')
+export class CreateOrganizationInput extends GetOrganizationAdminInput {}

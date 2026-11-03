@@ -2,12 +2,7 @@ import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
-import {
-  CaseType,
-  Gender,
-  RequestSharedWithDefender,
-  User,
-} from '@island.is/judicial-system/types'
+import { CaseType, Gender, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
@@ -106,21 +101,14 @@ describe('DefendantController - Create', () => {
     })
   })
 
-  describe('defendant created on a request case with sharing timing', () => {
+  describe('defendant created on a request case', () => {
     beforeEach(async () => {
-      await givenWhenThen({
-        type: CaseType.CUSTODY,
-        requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
-      })
+      await givenWhenThen({ type: CaseType.CUSTODY })
     })
 
-    it('should seed requestSharedWithDefender from the case', () => {
+    it('should not seed requestSharedWithDefender on the defendant', () => {
       expect(mockDefendantRepositoryService.create).toHaveBeenCalledWith(
-        {
-          ...defendantToCreate,
-          caseId,
-          requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
-        },
+        { ...defendantToCreate, caseId },
         { transaction },
       )
     })

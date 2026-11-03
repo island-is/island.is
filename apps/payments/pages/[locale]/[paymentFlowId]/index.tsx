@@ -2,10 +2,13 @@ import type { ApolloError } from '@apollo/client'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { isCompany } from 'kennitala'
 
-import { PaymentsGetFlowPaymentStatus } from '@island.is/api/schema'
+import {
+  PaymentsFlowType,
+  PaymentsGetFlowPaymentStatus,
+} from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -20,6 +23,7 @@ import {
   BankTransferErrorCode,
   CardErrorCode,
   PaymentServiceCode,
+  DebtPaymentErrorCode,
 } from '@island.is/shared/constants'
 
 import { PageCard } from '../../../components/PageCard/PageCard'
@@ -42,12 +46,14 @@ import {
   bankTransfer,
   card,
   cardSuccess,
+  debtPayment,
   generic,
   invoice,
   invoiceSuccess,
 } from '../../../messages'
 import {
   getErrorTitleAndMessage,
+  isTerminalDebtError,
   PaymentError,
 } from '../../../utils/error/error'
 
@@ -63,6 +69,7 @@ import { PaymentReceipt } from '../../../components/PaymentReceipt'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import { InvoiceReceipt } from '../../../components/InvoiceReceipt'
 import { usePaymentOrchestration } from '../../../hooks/usePaymentOrchestration'
+import { googlePayAllowedAuthMethods } from '../../../hooks/useGooglePay'
 import {
   BankTransferStatusUpdate,
   useBankTransferStatusPolling,
@@ -80,9 +87,10 @@ interface PaymentPageProps {
     amount: number
     title: string
   }
-  isInvoicePaymentEnabledForUser: boolean
-  isApplePayPaymentEnabledForUser: boolean
-  isBankTransferPaymentEnabledForUser: boolean
+  isApplePayPaymentEnabled: boolean
+  isGooglePayPaymentEnabled: boolean
+  /** Whether the Google Pay sheet also offers device tokens (CRYPTOGRAM_3DS) */
+  isGooglePayDeviceTokensEnabled: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
@@ -119,9 +127,6 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   let paymentFlow: PaymentPageProps['paymentFlow'] = null
   let paymentFlowErrorCode: PaymentPageProps['paymentFlowErrorCode'] = null
   let organization: PaymentPageProps['organization'] = null
-  let isInvoicePaymentEnabledForUser = false
-  let isApplePayPaymentEnabledForUser = false
-  let isBankTransferPaymentEnabledForUser = false
 
   try {
     const { data } = await client.query<
@@ -186,48 +191,74 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     }
   }
 
-  if (paymentFlow) {
-    const userObj = {
-      identifier: paymentFlow.payerNationalId,
-      custom: {
-        nationalId: paymentFlow.payerNationalId,
-      },
-    }
-
-    try {
-      isInvoicePaymentEnabledForUser = await configCatClient.getValueAsync(
-        Features.isIslandisInvoicePaymentAllowedForUser,
-        false,
-        userObj,
-      )
-    } catch (e) {
-      console.error('Error getting invoice payment enabled for user', e)
-    }
-
-    try {
-      isApplePayPaymentEnabledForUser = await configCatClient.getValueAsync(
-        Features.isIslandisApplePayPaymentAllowedForUser,
-        false,
-        userObj,
-      )
-    } catch (e) {
-      console.error('Error getting Apple Pay payment enabled for user', e)
-    }
-
-    try {
-      isBankTransferPaymentEnabledForUser = await configCatClient.getValueAsync(
-        Features.isIslandisBankTransferPaymentAllowedForUser,
-        false,
-        userObj,
-      )
-    } catch (e) {
-      console.error('Error getting bank transfer payment enabled for user', e)
-    }
-  }
-
   const productInformation = {
     amount: paymentFlow?.productPrice ?? 0,
     title: paymentFlow?.productTitle ?? '',
+  }
+
+  // The same flag guards the service's Apple Pay endpoints, so the button only shows when they're open
+  let isApplePayPaymentEnabled = false
+  try {
+    isApplePayPaymentEnabled = await configCatClient.getValueAsync(
+      Features.isIslandisApplePayPaymentEnabled,
+      false,
+    )
+  } catch (e) {
+    console.error('Error getting Apple Pay payment enabled', e)
+  }
+
+  // Likewise for the service's Google Pay endpoints. The button is then rolled
+  // out per payer, with the payer as the flag user and subjectType as the
+  // service's flag user mapping sets it.
+  let isGooglePayPaymentEnabled = false
+  try {
+    const payerNationalId = paymentFlow?.payerNationalId
+    isGooglePayPaymentEnabled =
+      !!payerNationalId &&
+      (await configCatClient.getValueAsync(
+        Features.isIslandisGooglePayPaymentEnabled,
+        false,
+      )) &&
+      (await configCatClient.getValueAsync(
+        Features.isIslandisGooglePayPaymentAllowedForUser,
+        false,
+        {
+          identifier: payerNationalId,
+          custom: {
+            subjectType: isCompany(payerNationalId) ? 'legalEntity' : 'person',
+          },
+        },
+      ))
+  } catch (e) {
+    console.error('Error getting Google Pay payment enabled', e)
+  }
+
+  // Device tokens are charged by the gateway as it decrypts them, a path not
+  // yet seen on production, so they are offered behind a flag of their own
+  let isGooglePayDeviceTokensEnabled = false
+  if (isGooglePayPaymentEnabled) {
+    try {
+      isGooglePayDeviceTokensEnabled = await configCatClient.getValueAsync(
+        Features.isIslandisGooglePayDeviceTokensEnabled,
+        false,
+      )
+    } catch (e) {
+      console.error('Error getting Google Pay device tokens enabled', e)
+    }
+  }
+
+  // TEMPORARY: debug log of the Google Pay auth methods offered while the
+  // flow is tested on production. Remove once the flow is verified there.
+  if (isGooglePayPaymentEnabled) {
+    console.info(
+      `[${paymentFlowId}] [GOOGLEPAY] [TESTING] Google Pay auth methods offered`,
+      {
+        paymentFlowId,
+        allowedAuthMethods: googlePayAllowedAuthMethods(
+          isGooglePayDeviceTokensEnabled,
+        ),
+      },
+    )
   }
 
   return {
@@ -238,9 +269,9 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       paymentFlowErrorCode,
       organization,
       productInformation,
-      isInvoicePaymentEnabledForUser,
-      isApplePayPaymentEnabledForUser,
-      isBankTransferPaymentEnabledForUser,
+      isApplePayPaymentEnabled,
+      isGooglePayPaymentEnabled,
+      isGooglePayDeviceTokensEnabled,
     },
   }
 }
@@ -249,9 +280,9 @@ function PaymentPage({
   paymentFlow,
   organization,
   productInformation,
-  isInvoicePaymentEnabledForUser,
-  isApplePayPaymentEnabledForUser,
-  isBankTransferPaymentEnabledForUser,
+  isApplePayPaymentEnabled,
+  isGooglePayPaymentEnabled,
+  isGooglePayDeviceTokensEnabled,
 }: PaymentPageProps) {
   const methods = useForm({
     mode: 'onBlur',
@@ -296,10 +327,15 @@ function PaymentPage({
     handleVerificationCancelledByModal,
     supportsApplePay,
     initiateApplePay,
+    supportsGooglePay,
+    createGooglePayButton,
+    onPaymentSuccess,
   } = usePaymentOrchestration({
     paymentFlow,
     productInformation,
-    isApplePayPaymentEnabledForUser,
+    isApplePayPaymentEnabled,
+    isGooglePayPaymentEnabled,
+    isGooglePayDeviceTokensEnabled,
     onInvalidActorNationalId,
   })
   const router = useRouter()
@@ -315,8 +351,8 @@ function PaymentPage({
       paymentFlow?.paymentStatus ===
       PaymentsGetFlowPaymentStatus.bank_transfer_pending,
     expiresAt: paymentFlow?.bankTransferExpiresAt ?? undefined,
-    // Success needs a reload to land on the receipt screen
-    onSuccess: () => router.reload(),
+    // Same as a card payment: back to the caller when the flow asks for it, else the receipt
+    onSuccess: () => onPaymentSuccess('bank_transfer'),
     onFailure: (error) => setPaymentError(error),
     onStatusUpdate: setLiveBankTransfer,
   })
@@ -370,29 +406,9 @@ function PaymentPage({
       : undefined
   const isCompanyPayer = companyPayer !== undefined
 
-  const availablePaymentMethods = useMemo(() => {
-    const methods = [...(paymentFlow?.availablePaymentMethods ?? [])]
-
-    if (isInvoicePaymentEnabledForUser) {
-      methods.push('invoice')
-    }
-
-    // TEMPORARY (testing): force-surface bank transfer via the rollout flag.
-    // Once testing is done this flag is removed and the backend controls
-    // availability via availablePaymentMethods. Never for a company: company bank
-    // transfers are controlled by the per-company flag in the payments service,
-    // which would refuse the transfer anyway.
-    if (isBankTransferPaymentEnabledForUser && !isCompanyPayer) {
-      methods.push('bank_transfer')
-    }
-
-    return Array.from(new Set(methods)) as PaymentMethod[]
-  }, [
-    paymentFlow?.availablePaymentMethods,
-    isInvoicePaymentEnabledForUser,
-    isBankTransferPaymentEnabledForUser,
-    isCompanyPayer,
-  ])
+  // The service decides the methods when the flow is created and refuses any other
+  const availablePaymentMethods = (paymentFlow?.availablePaymentMethods ??
+    []) as PaymentMethod[]
 
   // Card and bank transfer have input fields that must be valid before submitting; invoice has none.
   const isCardPaymentInvalid =
@@ -411,15 +427,31 @@ function PaymentPage({
     !paymentFlow ||
     !paymentFlow.availablePaymentMethods
 
-  const hasPaymentError = paymentError !== null
+  const paymentStatus = paymentFlow?.paymentStatus
+
+  // Debt flows have no product title of their own, the page translates it
+  const productTitle =
+    paymentFlow?.type === PaymentsFlowType.debt
+      ? formatMessage(debtPayment.productTitle)
+      : productInformation?.title ?? ''
+
+  // A closed (rejected) debt flow can no longer be paid. One that still counts as paid is waiting
+  // for its refund: a bank transfer by hand, a card by the worker. No receipt either way.
+  const closedErrorCode = !paymentFlow?.isClosed
+    ? null
+    : paymentStatus === PaymentsGetFlowPaymentStatus.paid
+    ? DebtPaymentErrorCode.DebtPaymentRejectedRefundPending
+    : DebtPaymentErrorCode.DebtPaymentFlowClosed
+  const displayedError: PaymentError | null =
+    paymentError ?? (closedErrorCode ? { code: closedErrorCode } : null)
+
+  const hasPaymentError = displayedError !== null
   const canRenderMainFlow = !invalidFlowSetup && !hasPaymentError
 
   const { errorTitle, errorMessage } = getErrorTitleAndMessage(
     invalidFlowSetup,
-    paymentError,
+    displayedError,
   )
-
-  const paymentStatus = paymentFlow?.paymentStatus
   // Once a poll has reported, it replaces the SSR snapshot
   const rawScaRedirectUrl = liveBankTransfer
     ? liveBankTransfer.scaRedirectUrl
@@ -447,7 +479,7 @@ function PaymentPage({
             imageSrc={organization?.logo?.url}
             imageAlt={organization?.logo?.title}
             amount={productInformation.amount}
-            subTitle={productInformation.title}
+            subTitle={productTitle}
             type="primary"
           />
         }
@@ -480,7 +512,7 @@ function PaymentPage({
           bodySlot={
             <>
               <ReceiptComponent
-                productTitle={productInformation.title}
+                productTitle={productTitle}
                 amount={productInformation.amount}
                 paidAt={paymentFlow.updatedAt}
                 payerNationalId={paymentFlow.payerNationalId}
@@ -519,7 +551,7 @@ function PaymentPage({
               imageSrc={organization?.logo?.url}
               imageAlt={organization?.logo?.title}
               amount={productInformation.amount}
-              subTitle={productInformation.title}
+              subTitle={productTitle}
               type="primary"
             />
           ) : (
@@ -532,9 +564,7 @@ function PaymentPage({
               <form onSubmit={methods.handleSubmit(handleFormSubmit)}>
                 <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
                   <PaymentSelector
-                    availablePaymentMethods={
-                      availablePaymentMethods as PaymentMethod[]
-                    }
+                    availablePaymentMethods={availablePaymentMethods}
                     selectedPayment={selectedPaymentMethod as any}
                     onSelectPayment={changePaymentMethod}
                   />
@@ -542,6 +572,8 @@ function PaymentPage({
                     <CardPayment
                       supportsApplePay={supportsApplePay}
                       initiateApplePay={initiateApplePay}
+                      supportsGooglePay={supportsGooglePay}
+                      createGooglePayButton={createGooglePayButton}
                     />
                   )}
                   {selectedPaymentMethod === 'invoice' && (
@@ -590,7 +622,20 @@ function PaymentPage({
               <Box display="flex" flexDirection="column" textAlign="center">
                 <p>{formatMessage(errorMessage)}</p>
               </Box>
-              {!invalidFlowSetup && (
+              {!invalidFlowSetup && isTerminalDebtError(displayedError?.code) && (
+                <LinkV2
+                  href={
+                    paymentFlow?.cancelUrl ??
+                    paymentFlow?.returnUrl ??
+                    'https://island.is'
+                  }
+                >
+                  <Button variant="ghost" fluid unfocusable>
+                    {formatMessage(generic.back)}
+                  </Button>
+                </LinkV2>
+              )}
+              {!invalidFlowSetup && !isTerminalDebtError(displayedError?.code) && (
                 <Button
                   variant="ghost"
                   fluid

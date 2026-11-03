@@ -22,7 +22,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { type User } from '@island.is/judicial-system/types'
+import { indictmentCases, type User } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -33,16 +33,23 @@ import {
   publicProsecutorStaffRule,
 } from '../../guards'
 import { getOrCreateTransaction } from '../../middleware'
-import { CaseExistsForUpdateGuard, CaseWriteGuard, CurrentCase } from '../case'
+import {
+  CaseExistsForUpdateGuard,
+  CaseTypeGuard,
+  CaseWriteGuard,
+  CurrentCase,
+} from '../case'
 import { Case, Defendant } from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
+import { UpdateDefendantsDto } from './dto/updateDefendants.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import {
   courtOfAppealsAssistantUpdateDefendantRule,
   courtOfAppealsJudgeUpdateDefendantRule,
   courtOfAppealsRegistrarUpdateDefendantRule,
+  publicProsecutionProsecutorUpdateDefendantsRule,
 } from './guards/rolesRules'
 import { DeleteDefendantResponse } from './models/delete.response'
 import { DefendantService } from './defendant.service'
@@ -58,9 +65,10 @@ import { DefendantService } from './defendant.service'
 //
 // RolesGuard runs first, ahead of the guard that takes the write lock. It
 // can, because every rule on these routes decides on the user alone - the
-// court of appeals rules are field rules, which read the body, not the case -
-// and none has a canActivate: a caller this controller has no rule for is
-// turned away before any case row is locked. defendantRolesRules.spec.ts pins
+// court of appeals rules are field rules, which read the body, not the case,
+// and the public prosecution prosecutor rule reads only the user's
+// institution: a caller this controller has no rule for is turned away
+// before any case row is locked. defendantRolesRules.spec.ts pins
 // that assumption, so a rule that starts reading the case cannot silently
 // reopen the exposure.
 //
@@ -106,6 +114,44 @@ export class DefendantController {
       defendantToCreate,
       user,
       transaction,
+    )
+  }
+
+  // Many defendants in one request, so the case is locked and read once. A
+  // request per defendant serializes on the case row and reads the whole case
+  // each time, which a case with tens of defendants does not survive.
+  @UseGuards(new CaseTypeGuard(indictmentCases))
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    publicProsecutorStaffRule,
+    publicProsecutionProsecutorUpdateDefendantsRule,
+  )
+  @Patch()
+  @ApiOkResponse({
+    type: Defendant,
+    isArray: true,
+    description: 'Updates many defendants of a case',
+  })
+  async updateMany(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @Body() defendantsToUpdate: UpdateDefendantsDto,
+  ): Promise<Defendant[]> {
+    this.logger.debug(
+      `Updating ${defendantsToUpdate.defendants.length} defendants of case ${caseId}`,
+    )
+
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.defendantService.updateMany(
+      theCase,
+      defendantsToUpdate.defendants,
+      user,
+      transaction,
+      defendantsToUpdate.registerVerdictAppeal,
     )
   }
 

@@ -294,6 +294,40 @@ export const regulation = {
         defaultMessage: 'Fella hana brott',
         description: 'Button label for revoking a regulation',
       },
+      notMigrated: {
+        id: 'ojoi.application:regulation.impacts.alerts.notMigrated',
+        defaultMessage:
+          'Reglugerð {name} hefur ekki verið flutt á island.is og því er ekki hægt að skrá breytingar eða brottfellingu á henni hér.',
+        description:
+          'Shown instead of the impact buttons when the selected regulation has not been moved to island.is',
+      },
+      notMigratedAmending: {
+        id: 'ojoi.application:regulation.impacts.alerts.notMigratedAmending',
+        defaultMessage:
+          'Hægt er að halda áfram án áhrifaskráningar og skrifa texta breytingareglugerðarinnar handvirkt.',
+        description:
+          'Explains the option to continue without impacts when amending a regulation not moved to island.is',
+      },
+      continueWithoutImpacts: {
+        id: 'ojoi.application:regulation.impacts.alerts.continueWithoutImpacts',
+        defaultMessage: 'Halda áfram án áhrifaskráningar',
+        description:
+          'Button for amending a regulation not moved to island.is without recording impacts',
+      },
+      withoutImpactsNote: {
+        id: 'ojoi.application:regulation.impacts.alerts.withoutImpactsNote',
+        defaultMessage:
+          'Haldið verður áfram án áhrifaskráningar. Texta breytingareglugerðarinnar þarf þá að skrifa handvirkt.',
+        description:
+          'Shown when the user has chosen to continue without recording impacts',
+      },
+      hasRepeal: {
+        id: 'ojoi.application:regulation.impacts.alerts.hasRepeal',
+        defaultMessage:
+          'Reglugerð er með virka brottfellingu og því ekki hægt að skrá frekari áhrifafærslur.',
+        description:
+          'Shown instead of the impact buttons when this draft already repeals the selected regulation',
+      },
       requireImpact: {
         id: 'ojoi.application:regulation.impacts.alerts.requireImpact',
         defaultMessage:

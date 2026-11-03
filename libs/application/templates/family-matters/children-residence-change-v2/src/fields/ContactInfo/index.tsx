@@ -9,23 +9,14 @@ import {
 } from '@island.is/application/templates/family-matters-core/components'
 import { contactInfo } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-
-const emailId = 'parentA.email'
-const phoneNumberId = 'parentA.phoneNumber'
-const phoneNumberPres = 'parentA.presentationPhone'
-
-const counterPartyEmail = 'counterParty.email'
-const counterPartyPhoneNumber = 'counterParty.phoneNumber'
-const counterPartyPhoneNumberPres = 'counterParty.presentationPhone'
-
-export const contactInfoIds = [
+import {
   emailId,
   phoneNumberId,
+  phoneNumberPres,
   counterPartyEmail,
   counterPartyPhoneNumber,
-  phoneNumberPres,
   counterPartyPhoneNumberPres,
-]
+} from './constants'
 
 const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
   const { answers, externalData } = application

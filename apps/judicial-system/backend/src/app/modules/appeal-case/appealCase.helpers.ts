@@ -10,7 +10,7 @@ import {
   prosecutionRoles,
   type User,
   UserRole,
-  verdictAppealDeclarationFileCategories,
+  verdictAppealFileCategories,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -24,11 +24,13 @@ import {
 } from '../repository'
 
 // The appeal case a case file belongs to: the ruling-order appeal the file
-// carries in its rulingFileId, the verdict appeal for an appeal declaration and what
-// is filed with it, or the case-level ruling appeal for everything else.
+// carries in its rulingFileId, the verdict appeal for an appeal declaration or
+// statement and what is filed with either, or the case-level ruling appeal for
+// everything else.
 //
-// The appeal declaration needs its own arm because it is case level too - the verdict appeal
-// and the ruling appeal are told apart by appeal type, not by a ruling file.
+// The verdict appeal files need their own arm because they are case level too -
+// the verdict appeal and the ruling appeal are told apart by appeal type, not
+// by a ruling file.
 export const findAppealCaseOfCaseFile = (
   theCase: Case,
   file: Pick<CaseFile, 'rulingFileId' | 'category'>,
@@ -39,10 +41,7 @@ export const findAppealCaseOfCaseFile = (
     )
   }
 
-  if (
-    file.category &&
-    verdictAppealDeclarationFileCategories.includes(file.category)
-  ) {
+  if (file.category && verdictAppealFileCategories.includes(file.category)) {
     return theCase.verdictAppealCase
   }
 
@@ -376,15 +375,50 @@ export const buildStatementDeadlineEvent = (params: {
   party: AppealStatementParty
   actor: User
   extended: boolean
+}): Partial<AppealEventLog> =>
+  buildCourtPartyEvent({
+    ...params,
+    eventType: params.extended
+      ? AppealEventType.STATEMENT_DEADLINE_EXTENDED
+      : AppealEventType.STATEMENT_DEADLINE_SET,
+  })
+
+/**
+ * The record of the court of appeals filing a party's statement on its
+ * behalf, when the statement arrived outside the system.
+ *
+ * The same APPEAL_STATEMENT_SENT event the party itself would have written,
+ * naming the party the same way, so everything that reads the event - the
+ * deadline lock, the "skilað" line, the statement dates - sees no difference.
+ * The actor snapshot is the court user's: the row says who filed it, the
+ * party ids say for whom.
+ */
+export const buildStatementFiledEvent = (params: {
+  theCase: Case
+  appealCase: AppealCase
+  party: AppealStatementParty
+  actor: User
+}): Partial<AppealEventLog> =>
+  buildCourtPartyEvent({
+    ...params,
+    eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+  })
+
+// An event of the court about one party: the party ids as given, the actor
+// snapshot the court user's own.
+const buildCourtPartyEvent = (params: {
+  theCase: Case
+  appealCase: AppealCase
+  party: AppealStatementParty
+  actor: User
+  eventType: AppealEventType
 }): Partial<AppealEventLog> => {
-  const { theCase, appealCase, party, actor, extended } = params
+  const { theCase, appealCase, party, actor, eventType } = params
 
   return {
     caseId: theCase.id,
     appealCaseId: appealCase.id,
-    eventType: extended
-      ? AppealEventType.STATEMENT_DEADLINE_EXTENDED
-      : AppealEventType.STATEMENT_DEADLINE_SET,
+    eventType,
     defendantId: party.defendantId ?? undefined,
     civilClaimantId: party.civilClaimantId ?? undefined,
     userRole: actor.role,

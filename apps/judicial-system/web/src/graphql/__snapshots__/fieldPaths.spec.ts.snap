@@ -305,10 +305,6 @@ Array [
   "case.defendants.verdict.serviceStatus",
   "case.defendants.verdict.verdictDeliveredToNationalCommissionersOffice",
   "case.defendants.verdictAppealDeadline",
-  "case.defenderEmail",
-  "case.defenderName",
-  "case.defenderNationalId",
-  "case.defenderPhoneNumber",
   "case.demands",
   "case.description",
   "case.endOfSessionBookings",
@@ -340,6 +336,7 @@ Array [
   "case.indictmentCounts.vehicleRegistrationNumber",
   "case.indictmentDecision",
   "case.indictmentDeniedExplanation",
+  "case.indictmentHash",
   "case.indictmentIntroduction",
   "case.indictmentReviewReturnedExplanation",
   "case.indictmentReviewedDate",
@@ -571,7 +568,6 @@ Array [
   "case.requestCompletedDate",
   "case.requestDriversLicenseSuspension",
   "case.requestProsecutorOnlySession",
-  "case.requestSharedWithDefender",
   "case.requestedCourtDate",
   "case.requestedCustodyRestrictions",
   "case.requestedOtherRestrictions",
@@ -713,6 +709,14 @@ Array [
   "case.verdictAppealCase.courtSessions.sessionDate",
   "case.verdictAppealCase.courtSessions.sessionType",
   "case.verdictAppealCase.id",
+  "case.verdictAppealCase.sentAppealSummonses.confirmedDate",
+  "case.verdictAppealCase.sentAppealSummonses.created",
+  "case.verdictAppealCase.sentAppealSummonses.defendants.appellantSide",
+  "case.verdictAppealCase.sentAppealSummonses.defendants.claims",
+  "case.verdictAppealCase.sentAppealSummonses.defendants.defendantId",
+  "case.verdictAppealCase.sentAppealSummonses.defendants.id",
+  "case.verdictAppealCase.sentAppealSummonses.id",
+  "case.verdictAppealCase.sentAppealSummonses.sentToCourtOfAppealsDate",
   "case.verdictAppealCase.statementDeadlines.civilClaimantId",
   "case.verdictAppealCase.statementDeadlines.created",
   "case.verdictAppealCase.statementDeadlines.deadline",
@@ -1018,6 +1022,12 @@ Array [
   "currentUser.user.nationalId",
   "currentUser.user.role",
   "currentUser.user.title",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteAppealCourtSession 1`] = `
+Array [
+  "deleteAppealCourtSession.deleted",
 ]
 `;
 
@@ -1353,10 +1363,6 @@ Array [
   "limitedAccessCase.defendants.verdict.serviceRequirement",
   "limitedAccessCase.defendants.verdict.serviceStatus",
   "limitedAccessCase.defendants.verdictAppealDeadline",
-  "limitedAccessCase.defenderEmail",
-  "limitedAccessCase.defenderName",
-  "limitedAccessCase.defenderNationalId",
-  "limitedAccessCase.defenderPhoneNumber",
   "limitedAccessCase.hasBeenAppealed",
   "limitedAccessCase.hasCivilClaims",
   "limitedAccessCase.id",
@@ -1542,7 +1548,6 @@ Array [
   "limitedAccessCase.registrar.name",
   "limitedAccessCase.registrar.title",
   "limitedAccessCase.reopenReason",
-  "limitedAccessCase.requestSharedWithDefender",
   "limitedAccessCase.requestedCustodyRestrictions",
   "limitedAccessCase.rulingDate",
   "limitedAccessCase.rulingModifiedHistory",
@@ -1955,6 +1960,13 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths SendAppealSummonsToCourtOfAppeals 1`] = `
+Array [
+  "sendAppealSummonsToCourtOfAppeals.id",
+  "sendAppealSummonsToCourtOfAppeals.sentToCourtOfAppealsDate",
+]
+`;
+
 exports[`GraphQL operations select these field paths SendNotification 1`] = `
 Array [
   "sendNotification.notificationSent",
@@ -2039,6 +2051,16 @@ Array [
   "updateAppealCase.isAppealCustodyIsolation",
   "updateAppealCase.prosecutorStatementDate",
   "updateAppealCase.requestAppealRulingNotToBePublished",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateAppealCourtSession 1`] = `
+Array [
+  "updateAppealCourtSession.courtRoom",
+  "updateAppealCourtSession.created",
+  "updateAppealCourtSession.id",
+  "updateAppealCourtSession.sessionDate",
+  "updateAppealCourtSession.sessionType",
 ]
 `;
 
@@ -2151,6 +2173,12 @@ Array [
 exports[`GraphQL operations select these field paths UpdateDefendant 1`] = `
 Array [
   "updateDefendant.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateDefendants 1`] = `
+Array [
+  "updateDefendants.id",
 ]
 `;
 

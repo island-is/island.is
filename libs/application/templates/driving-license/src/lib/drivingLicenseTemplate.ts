@@ -42,6 +42,7 @@ import {
 import { m } from './messages'
 import { getCodes, hasCompletedPrerequisitesStep } from './utils/formUtils'
 import {
+  DrivingLicensePhotoLookupCheckApi,
   GlassesCheckApi,
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
@@ -124,6 +125,13 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                     ],
                 })
               },
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.continue,
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
               api: [
@@ -143,6 +151,7 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                 QualityPhotoApi,
                 QualityPhotoAndSignatureApi,
                 AllPhotosFromThjodskraApi,
+                DrivingLicensePhotoLookupCheckApi,
               ],
             },
           ],
@@ -193,6 +202,11 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                   event: DefaultEvents.PAYMENT,
                   name: m.continue,
                   type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: m.continue,
+                  type: 'reject',
                 },
               ],
               write: 'all',

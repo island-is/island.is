@@ -180,6 +180,8 @@ export class VMSTApplicationsService {
           job.deleted
             ? { id: job.id, deleted: true, employerSSN: job.employerSSN }
             : {
+                // `id` is set for edited persisted rows (Galdur update).
+                id: job.id,
                 referenceId: job.validationId,
                 employerSSN: job.employerSSN,
                 periodFrom: job.periodFrom
@@ -194,6 +196,7 @@ export class VMSTApplicationsService {
           job.deleted
             ? { id: job.id, deleted: true }
             : {
+                id: job.id,
                 referenceId: job.validationId,
                 periodFrom: job.periodFrom
                   ? new Date(job.periodFrom)
@@ -205,6 +208,7 @@ export class VMSTApplicationsService {
           payment.deleted
             ? { id: payment.id, deleted: true }
             : {
+                id: payment.id,
                 referenceId: payment.validationId,
                 incomeTypeId: payment.incomeTypeId,
                 estimatedIncome: payment.estimatedIncome,
@@ -212,12 +216,14 @@ export class VMSTApplicationsService {
                   ? new Date(payment.periodFrom)
                   : undefined,
                 periodTo: payment.periodTo ? new Date(payment.periodTo) : null,
+                oneTimePayment: payment.oneTimePayment,
               },
         ),
         trPayments: input.trPayments?.map((payment) =>
           payment.deleted
             ? { id: payment.id, deleted: true }
             : {
+                id: payment.id,
                 referenceId: payment.validationId,
                 incomeTypeId: payment.incomeTypeId,
                 estimatedIncome: payment.estimatedIncome,
@@ -225,12 +231,14 @@ export class VMSTApplicationsService {
                   ? new Date(payment.periodFrom)
                   : undefined,
                 periodTo: payment.periodTo ? new Date(payment.periodTo) : null,
+                oneTimePayment: payment.oneTimePayment,
               },
         ),
         pensionPayments: input.pensionPayments?.map((payment) =>
           payment.deleted
             ? { id: payment.id, deleted: true }
             : {
+                id: payment.id,
                 referenceId: payment.validationId,
                 incomeTypeId: payment.incomeTypeId,
                 pensionFundId: payment.pensionFundId,
@@ -239,12 +247,14 @@ export class VMSTApplicationsService {
                   ? new Date(payment.periodFrom)
                   : undefined,
                 periodTo: payment.periodTo ? new Date(payment.periodTo) : null,
+                oneTimePayment: payment.oneTimePayment,
               },
         ),
         partTimeJobs: input.partTimeJobs?.map((job) =>
           job.deleted
             ? { id: job.id, deleted: true, employerSSN: job.employerSSN }
             : {
+                id: job.id,
                 referenceId: job.validationId,
                 employerSSN: job.employerSSN,
                 periodFrom: job.periodFrom

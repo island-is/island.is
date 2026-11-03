@@ -126,12 +126,18 @@ export enum Features {
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',
+  isApplicationSystemTranslationsEnabled = 'isApplicationSystemTranslationsEnabled',
+  isApplicationTranslationWorkspaceReadOnlyEnabled = 'isApplicationTranslationWorkspaceReadOnlyEnabled',
+
+  // When on, events missing from the role's actions are only logged, not rejected
+  applicationSystemDisableEventPermissionCheck = 'applicationSystemDisableEventPermissionCheck',
 
   // Search indexer
   shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
 
   // Userprofile Collection
   isIASSpaPagesEnabled = 'isiasspapagesenabled',
+  notificationSettingsMetricsEnabled = 'notificationSettingsMetricsEnabled',
 
   // Disable new login restrictions
   disableNewDeviceLogins = 'disableNewDeviceLogins',
@@ -157,13 +163,16 @@ export enum Features {
   isIslandisPaymentEnabled = 'islandisPayment',
   useIslandisPaymentForApplicationSystem = 'useIslandisPaymentForApplicationSystem',
   isIslandisInvoicePaymentEnabled = 'isIslandisInvoicePaymentEnabled',
-  isIslandisInvoicePaymentAllowedForUser = 'isislandisinvoicepaymentsallowedforuser',
   isIslandisApplePayPaymentEnabled = 'isIslandisApplePayPaymentEnabled',
-  isIslandisApplePayPaymentAllowedForUser = 'isIslandisApplePayPaymentAllowedForUser',
   isIslandisApplePayStrictSignatureVerificationEnabled = 'isIslandisApplePayStrictSignatureVerificationEnabled',
+  isIslandisGooglePayPaymentEnabled = 'isIslandisGooglePayPaymentEnabled',
+  isIslandisGooglePayPaymentAllowedForUser = 'isIslandisGooglePayPaymentAllowedForUser',
+  isIslandisGooglePayDeviceTokensEnabled = 'isIslandisGooglePayDeviceTokensEnabled',
   isIslandisBankTransferPaymentEnabled = 'isIslandisBankTransferPaymentEnabled',
-  isIslandisBankTransferPaymentAllowedForUser = 'isIslandisBankTransferPaymentAllowedForUser',
   isIslandisBankTransferPaymentAllowedForCompany = 'isIslandisBankTransferPaymentAllowedForCompany',
+  isIslandisDebtPaymentEnabled = 'isIslandisDebtPaymentEnabled',
+
+  isPayDebtsApplicationEnabled = 'isPayDebtsApplicationEnabled',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
@@ -195,6 +204,9 @@ export enum Features {
 
   // Use new delegation system
   useNewDelegationSystem = 'useNewDelegationSystem',
+
+  isDelegationRequestsEnabled = 'isDelegationRequestsEnabled',
+  isDelegationRequestNotificationEnabled = 'isDelegationRequestNotificationEnabled',
 
   // Validate Personal representative delegations at syslumenn
   usePersonalRepresentativesFromSyslumenn = 'usePersonalRepresentativesFromSyslumenn',

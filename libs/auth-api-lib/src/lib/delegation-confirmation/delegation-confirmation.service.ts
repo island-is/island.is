@@ -41,6 +41,9 @@ import {
   hashConfirmationGroup,
 } from './utils/content-hash'
 
+/** The acr the IDS gives a step-up completed by a fake login. */
+const FAKE_LOGIN_ACR = '0'
+
 export interface RequestConfirmationOptions {
   user: User
   delegation: Delegation
@@ -259,6 +262,40 @@ export class DelegationConfirmationService {
         transaction,
       )
     })
+  }
+
+  async supersede(
+    confirmationIds: string[],
+    transaction: Transaction,
+  ): Promise<void> {
+    if (confirmationIds.length === 0) {
+      return
+    }
+    const superseded = await this.delegationConfirmationModel.findAll({
+      attributes: ['id', 'delegationId'],
+      where: {
+        id: confirmationIds,
+        status: DelegationConfirmationStatus.Pending,
+      },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    })
+    if (superseded.length === 0) {
+      return
+    }
+
+    await this.delegationConfirmationModel.update(
+      { status: DelegationConfirmationStatus.Superseded },
+      {
+        where: { id: superseded.map((confirmation) => confirmation.id) },
+        transaction,
+      },
+    )
+
+    await this.removeEmptyDelegations(
+      superseded.map((confirmation) => confirmation.delegationId),
+      transaction,
+    )
   }
 
   private async removeEmptyDelegations(
@@ -569,10 +606,10 @@ export class DelegationConfirmationService {
       )
     }
 
-    // Fake login can't assert a real acr; only allowed when NODE_ENV is development.
     const acrSatisfied =
       claims.acr === confirmation.requestedAcr ||
-      this.delegationConfig.confirmationAllowAnyAcrInDev
+      (this.delegationConfig.confirmationAllowFakeLogin &&
+        claims.acr === FAKE_LOGIN_ACR)
 
     if (!acrSatisfied) {
       throw new ForbiddenException(

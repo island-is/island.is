@@ -137,16 +137,30 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       GET_CUSTOMS_CALCULATOR_PRODUCT_CATEGORIES,
     )
 
-  const shortcuts = useMemo<{ label: string; value: string }[]>(() => {
-    const labels = slice.configJson?.productCategoryShortcutLabels ?? []
-    const shortcuts: { label: string; value: string }[] = []
-    for (const label of labels) {
+  const shortcuts = useMemo<
+    { label: string; displayLabel: string; value: string }[]
+  >(() => {
+    // Each entry is either the exact label of a product category, or an object
+    // with that label and a different label to show in the tag
+    const entries: (string | { label?: string; displayLabel?: string })[] =
+      slice.configJson?.productCategoryShortcutLabels ?? []
+    const shortcuts: { label: string; displayLabel: string; value: string }[] =
+      []
+    for (const entry of entries) {
+      const label = typeof entry === 'string' ? entry : entry?.label
+      if (!label) continue
       const category =
         productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
           (category) => category.label === label,
         )
       if (category)
-        shortcuts.push({ label: category.label, value: category.id })
+        shortcuts.push({
+          label: category.label,
+          displayLabel:
+            (typeof entry === 'string' ? undefined : entry.displayLabel) ||
+            category.label,
+          value: category.id,
+        })
     }
     return shortcuts
   }, [
@@ -370,7 +384,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
                       )
                     }}
                   >
-                    {shortcut.label}
+                    {shortcut.displayLabel}
                   </Tag>
                 ))}
               </Inline>

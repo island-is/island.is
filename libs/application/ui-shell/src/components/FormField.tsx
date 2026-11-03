@@ -7,6 +7,7 @@ import {
 } from '@island.is/application/core'
 import {
   Application,
+  ExternalData,
   Field,
   FieldBaseProps,
   RecordObject,
@@ -33,6 +34,7 @@ const FormField: FC<
     errors: RecordObject
     goToScreen: (id: string) => void
     refetch: () => void
+    addExternalData?: (data: ExternalData) => void
     user?: BffUser
   }>
 > = ({
@@ -47,6 +49,7 @@ const FormField: FC<
   goToScreen,
   showFieldName,
   refetch,
+  addExternalData,
   user,
 }) => {
   const [allFields] = useFields()
@@ -77,6 +80,7 @@ const FormField: FC<
           errors={errors}
           goToScreen={goToScreen}
           refetch={refetch}
+          addExternalData={addExternalData}
           setBeforeSubmitCallback={setBeforeSubmitCallback}
           setFieldLoadingState={setFieldLoadingState}
           setSubmitButtonDisabled={setSubmitButtonDisabled}
@@ -91,6 +95,7 @@ const FormField: FC<
       field.subSectionIndex,
       goToScreen,
       refetch,
+      addExternalData,
       setBeforeSubmitCallback,
       setFieldLoadingState,
       setSubmitButtonDisabled,
@@ -132,6 +137,7 @@ const FormField: FC<
     goToScreen,
     showFieldName,
     refetch,
+    addExternalData,
     renderField,
   }
 

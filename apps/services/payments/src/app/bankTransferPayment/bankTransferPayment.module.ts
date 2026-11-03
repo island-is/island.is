@@ -5,12 +5,13 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { BlikkClientModule } from '@island.is/clients/blikk'
 
+import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowModule } from '../paymentFlow/paymentFlow.module'
 import { BankTransferModuleConfig } from './bankTransfer.config'
 import { BankTransferController } from './bankTransfer.controller'
 import { BankTransferService } from './bankTransfer.service'
-import { BankTransferPayment } from './models/bankTransferPayment.model'
+import { BankTransferPayment } from './models'
 
 /** Bank-transfer module (Blikk v1). Uses forwardRef both ways to resolve the cycle with PaymentFlowModule. */
 @Module({
@@ -20,6 +21,7 @@ import { BankTransferPayment } from './models/bankTransferPayment.model'
       load: [BankTransferModuleConfig, PaymentFlowModuleConfig],
     }),
     BlikkClientModule,
+    DebtPaymentModule,
     FeatureFlagModule,
     forwardRef(() => PaymentFlowModule),
   ],

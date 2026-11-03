@@ -12,6 +12,8 @@ export * from './types/RouterActionResponse'
 // screens
 export * from './screens/AccessDenied'
 export * from './screens/NotFound'
+export * from './components/RequestDelegationButton/RequestDelegationButton'
+export * from './utils/delegationRequest'
 export * from './screens/ModuleRoute'
 export * from './screens/ModuleErrorScreen'
 
@@ -21,6 +23,7 @@ export * from './hooks/useNavigation'
 export * from './hooks/useQueryParam'
 export * from './hooks/useSingleNavigationItem'
 export * from './hooks/useIsMobile/useIsMobile'
+export * from './hooks/useRouteLayout'
 
 // utils
 export * from './utils/formatNationalId'
@@ -39,6 +42,7 @@ export * from './components/PortalProvider'
 export * from './components/IntroHeader'
 export * from './components/PortalRouter'
 export * from './components/PortalPageLoader'
+export * from './components/PortalHeaderSlot'
 export * from './components/Table/Table'
 
 // queries

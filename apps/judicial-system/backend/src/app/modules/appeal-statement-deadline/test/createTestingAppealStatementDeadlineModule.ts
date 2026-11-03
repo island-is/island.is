@@ -9,15 +9,19 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
+import type { Message } from '@island.is/judicial-system/message'
 
+import { queueMessagesAfterCommit } from '../../../middleware/queueMessagesAfterCommit'
 import { CaseService } from '../../case'
 import {
   AppealEventLogRepositoryService,
   AppealStatementDeadlineRepositoryService,
 } from '../../repository'
+import { AppealStatementController } from '../appealStatement.controller'
 import { AppealStatementDeadlineController } from '../appealStatementDeadline.controller'
 import { AppealStatementDeadlineService } from '../appealStatementDeadline.service'
 
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../case/case.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
 jest.mock('../../repository/services/appealStatementDeadlineRepository.service')
@@ -29,7 +33,7 @@ export const createTestingAppealStatementDeadlineModule = async () => {
         load: [sharedAuthModuleConfig],
       }),
     ],
-    controllers: [AppealStatementDeadlineController],
+    controllers: [AppealStatementDeadlineController, AppealStatementController],
     providers: [
       SharedAuthModule,
       CaseService,
@@ -66,12 +70,27 @@ export const createTestingAppealStatementDeadlineModule = async () => {
       AppealStatementDeadlineController,
     )
 
+  const appealStatementController =
+    appealStatementDeadlineModule.get<AppealStatementController>(
+      AppealStatementController,
+    )
+
+  // Every message the module queues goes through the helper, so this is the
+  // whole of what a request would send.
+  const queuedMessagesAfterCommit: Message[] = []
+  const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+  mockQueueMessagesAfterCommit.mockImplementation((...msgs: Message[]) => {
+    queuedMessagesAfterCommit.push(...msgs)
+  })
+
   appealStatementDeadlineModule.close()
 
   return {
+    queuedMessagesAfterCommit,
     appealEventLogRepositoryService,
     appealStatementDeadlineRepositoryService,
     sequelize,
     appealStatementDeadlineController,
+    appealStatementController,
   }
 }

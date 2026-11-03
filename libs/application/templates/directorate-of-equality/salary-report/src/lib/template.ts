@@ -77,15 +77,7 @@ const template: ApplicationTemplate<
       type: AuthDelegationType.Custom,
     },
   ],
-  // Temporary: also accept the generic scope so existing custom delegates keep
-  // salary report access until their grants are copied to the salary scope with
-  // a DB write after release. Limitation: until then, anyone granted only the
-  // generic (equality report) scope can also open the salary report. Remove
-  // directorateOfEquality from this list in a follow-up PR once the copy has run.
-  requiredScopes: [
-    ApiScope.directorateOfEqualitySalary,
-    ApiScope.directorateOfEquality,
-  ],
+  requiredScopes: [ApiScope.directorateOfEqualitySalary],
   allowMultipleApplicationsInDraft: false,
   newApplicationButtonLabel: messages.general.newApplicationButtonLabel,
   stateMachineOptions: {
@@ -303,6 +295,9 @@ const template: ApplicationTemplate<
                 import('../forms/postponeReceivedForm').then((module) =>
                   Promise.resolve(module.postponeReceivedForm),
                 ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
               read: 'all',
               // Nothing on this screen writes an answer — the closer dispatches
               // an event. An empty array rather than an absent `write` all the
@@ -316,6 +311,13 @@ const template: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
               delete: false,
             },
           ],
@@ -419,6 +421,18 @@ const template: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.EDIT,
+                  name: 'Breyta',
+                  type: 'primary',
+                },
+              ],
               delete: false,
             },
           ],
@@ -509,6 +523,18 @@ const template: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
               delete: false,
             },
           ],
@@ -576,6 +602,23 @@ const template: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.EDIT,
+                  name: 'Breyta',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+              ],
               delete: false,
             },
           ],

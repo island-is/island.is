@@ -68,7 +68,7 @@ describe('getDemandsAutofill', () => {
     const result = f(props)
 
     expect(result).toEqual(
-      'Þess er krafist að Blær, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms, til miðvikudagsins 1. janúar 2020, kl. 00:00, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+      'Þess er krafist að Blær, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms, til miðvikudagsins 1. janúar 2020, kl. 00:00, og verði gert að sæta einangrun á meðan á gæsluvarðhaldi stendur.',
     )
   })
 

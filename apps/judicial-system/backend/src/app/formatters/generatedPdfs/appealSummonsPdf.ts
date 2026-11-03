@@ -113,9 +113,10 @@ export const createAppealSummons = (
     )
     addEmptyLines(doc)
 
-    for (const paragraph of row.claims.split('\n')) {
-      addNormalText(doc, paragraph, 'Times-Roman')
-    }
+    // One text() call so blank lines in the claims field survive. Splitting on
+    // newlines and calling text('') for empty paragraphs does not move the
+    // cursor in PDFKit, which collapsed paragraph gaps in the PDF.
+    addNormalText(doc, row.claims, 'Times-Roman')
 
     addEmptyLines(doc)
   }

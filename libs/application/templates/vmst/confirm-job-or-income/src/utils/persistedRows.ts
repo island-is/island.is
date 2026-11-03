@@ -8,10 +8,30 @@ import {
   GaldurExternalDomainModelsIncomePensionPaymentDTO,
   GaldurExternalDomainModelsIncomeTRPaymentDTO,
 } from '@island.is/clients/vmst-unemployment'
-import { INCOME_TYPE_ANSWER_KEYS } from './constants'
+import { INCOME_TYPE_ANSWER_KEYS, PaymentFrequency } from './constants'
 
 // Maps the persisted Galdur records into the answer row shape. Used both to seed
 // the table repeaters and to render rows the user deleted in the overview.
+
+type PaymentPeriod = {
+  periodFrom?: string
+  periodTo?: string | null
+  oneTimePayment?: boolean
+}
+
+// One-time payments have no end date in the form, so any periodTo Galdur
+// returns for them is dropped.
+const toPaymentPeriodRow = ({
+  periodFrom,
+  periodTo,
+  oneTimePayment,
+}: PaymentPeriod) => ({
+  paymentFrequency: oneTimePayment
+    ? PaymentFrequency.ONE_TIME
+    : PaymentFrequency.MONTHLY,
+  dateFrom: periodFrom ?? '',
+  dateTo: oneTimePayment ? '' : periodTo ?? '',
+})
 
 export const toCasualWorkRow = (
   job: GaldurExternalDomainModelsIncomeIrregularJobDTO,
@@ -59,8 +79,7 @@ export const toPensionRow = (
   pensionFund: payment.pensionFundId ?? '',
   amountPerMonth:
     payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
-  dateFrom: payment.periodFrom ?? '',
-  dateTo: payment.periodTo ?? '',
+  ...toPaymentPeriodRow(payment),
 })
 
 export const toCapitalIncomeRow = (
@@ -70,8 +89,7 @@ export const toCapitalIncomeRow = (
   paymentType: payment.incomeTypeId ?? '',
   amountPerMonth:
     payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
-  dateFrom: payment.periodFrom ?? '',
-  dateTo: payment.periodTo ?? '',
+  ...toPaymentPeriodRow(payment),
 })
 
 export const toSocialInsuranceRow = (
@@ -81,8 +99,7 @@ export const toSocialInsuranceRow = (
   socialPaymentType: payment.incomeTypeId ?? '',
   amountPerMonth:
     payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
-  dateFrom: payment.periodFrom ?? '',
-  dateTo: payment.periodTo ?? '',
+  ...toPaymentPeriodRow(payment),
 })
 
 export const getPersistedRecords = <TPersisted>(

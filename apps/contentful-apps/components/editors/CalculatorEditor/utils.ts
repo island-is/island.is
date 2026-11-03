@@ -44,6 +44,19 @@ const filterText = (
     : { is: value!.is }
 }
 
+const filterOptionLabels = (
+  value: Record<string, CalculatorLocalizedText | undefined> | undefined,
+): Record<string, CalculatorLocalizedText> | undefined => {
+  if (!value) return undefined
+  const entries = Object.entries(value).flatMap(
+    ([option, text]): [string, CalculatorLocalizedText][] => {
+      const filtered = filterText(text)
+      return filtered ? [[option, filtered]] : []
+    },
+  )
+  return entries.length > 0 ? Object.fromEntries(entries) : undefined
+}
+
 /* The markdown serializer writes an empty paragraph as a literal `<br>`. */
 export const isBlankMarkdown = (value: string | undefined) =>
   !value?.replace(/<br>/g, '').trim()
@@ -106,6 +119,8 @@ const filterInputSections = (
           ...field,
           label: filterText(field.label),
           placeholder: filterText(field.placeholder),
+          optionLabelsEnabled: field.optionLabelsEnabled || undefined,
+          optionLabels: filterOptionLabels(field.optionLabels),
         }
       })
 

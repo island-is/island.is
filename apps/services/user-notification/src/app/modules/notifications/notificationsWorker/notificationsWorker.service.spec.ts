@@ -33,6 +33,7 @@ import { AppModule } from '../../../app.module'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { Notification } from '../notification.model'
 import { ActorNotification } from '../actor-notification.model'
+import { UserNotificationSender } from '../user-notification-sender.model'
 import {
   NotificationDelivery,
   NotificationChannel,
@@ -120,6 +121,7 @@ describe('NotificationsWorkerService', () => {
   let companyRegistryService: CompanyRegistryClientService
   let smsService: SmsService
   let notificationDeliveryModel: typeof NotificationDelivery
+  let userNotificationSenderModel: typeof UserNotificationSender
 
   beforeAll(async () => {
     app = await testServer({
@@ -152,6 +154,7 @@ describe('NotificationsWorkerService', () => {
     notificationModel = app.get(getModelToken(Notification))
     actorNotificationModel = app.get(getModelToken(ActorNotification))
     notificationDeliveryModel = app.get(getModelToken(NotificationDelivery))
+    userNotificationSenderModel = app.get(getModelToken(UserNotificationSender))
     notificationsService = app.get(NotificationsService)
     userProfileApi = app.get(V2UsersApi)
     nationalRegistryService = app.get(NationalRegistryV3ClientService)
@@ -1130,6 +1133,247 @@ describe('NotificationsWorkerService', () => {
         (call) => call[0].nationalId === userWithNoDelegations.nationalId,
       )
       expect(actorPushNotificationCall).toBeUndefined()
+    })
+  })
+
+  describe('Notification senders', () => {
+    const senderId = createNationalId('company')
+    const otherSenderId = createNationalId('company')
+    const dashedSenderId = `${senderId.slice(0, 6)}-${senderId.slice(6)}`
+
+    const mockTemplateCategory = (
+      labels: { is?: string; en?: string },
+      priorityType?: HnippTemplatePriorityType,
+    ) =>
+      jest
+        .spyOn(notificationsService, 'getTemplate')
+        .mockImplementation(async (_templateId, locale) =>
+          getMockHnippTemplate({
+            hnippCategory: locale === 'en' ? labels.en : labels.is,
+            hnippCategoryIs: labels.is,
+            priorityType,
+          }),
+        )
+
+    const addToQueueWithSender = async (
+      recipient: string,
+      senderId?: string,
+      templateId = mockTemplateId,
+    ) => {
+      await queue.add({
+        recipient,
+        senderId,
+        templateId,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+      })
+
+      // give the worker some time to process the message
+      await wait(2)
+    }
+
+    it('should record the sender when a notification with a senderId is created', async () => {
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0]).toMatchObject({
+        recipient: userWithNoDelegations.nationalId,
+        senderId,
+        templateId: mockTemplateId,
+        category: null,
+        priorityType: null,
+      })
+    })
+
+    it('should record the same sender only once, also when its id is dashed', async () => {
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+      await addToQueueWithSender(
+        userWithNoDelegations.nationalId,
+        dashedSenderId,
+      )
+
+      const notifications = await notificationModel.findAll({
+        where: { recipient: userWithNoDelegations.nationalId },
+      })
+      expect(notifications).toHaveLength(3)
+
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0].senderId).toBe(senderId)
+    })
+
+    it('should record each sender the recipient receives notifications from', async () => {
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+      await addToQueueWithSender(
+        userWithNoDelegations.nationalId,
+        otherSenderId,
+      )
+
+      const senders = await userNotificationSenderModel.findAll({
+        where: { recipient: userWithNoDelegations.nationalId },
+      })
+      expect(senders.map((sender) => sender.senderId).sort()).toEqual(
+        [senderId, otherSenderId].sort(),
+      )
+    })
+
+    it('should not record a sender when the notification has no senderId', async () => {
+      await addToQueueWithSender(userWithNoDelegations.nationalId)
+
+      const notifications = await notificationModel.findAll({
+        where: { recipient: userWithNoDelegations.nationalId },
+      })
+      expect(notifications).toHaveLength(1)
+      expect(await userNotificationSenderModel.count()).toBe(0)
+    })
+
+    it('should not record the sender for delegation holders receiving actor notifications', async () => {
+      await addToQueueWithSender(userWithDelegations.nationalId, senderId)
+
+      // Wait for the queued actor notifications to be processed
+      await wait(2)
+
+      const actorNotifications = await actorNotificationModel.findAll()
+      expect(actorNotifications.length).toBeGreaterThan(0)
+
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0]).toMatchObject({
+        recipient: userWithDelegations.nationalId,
+        senderId,
+      })
+    })
+
+    it('should record the sender for the represented user, not the actor, when onBehalfOf is provided without rootMessageId', async () => {
+      await queue.add({
+        recipient: userWithNoDelegations.nationalId, // The actor
+        senderId,
+        templateId: mockTemplateId,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+        onBehalfOf: {
+          nationalId: userWithDelegations.nationalId,
+          name: userWithDelegations.name,
+        },
+      })
+      await wait(3)
+
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0]).toMatchObject({
+        recipient: userWithDelegations.nationalId,
+        senderId,
+      })
+    })
+
+    it('should record the slugified Icelandic category', async () => {
+      mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Health' })
+
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0]).toMatchObject({
+        recipient: userWithNoDelegations.nationalId,
+        senderId,
+        category: 'heilbrigdismal',
+      })
+    })
+
+    it('should record the priority type of the template', async () => {
+      mockTemplateCategory({ is: 'Heilbrigðismál' }, 'Actionable')
+
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0].priorityType).toBe('Actionable')
+    })
+
+    it('should record each template of a sender separately', async () => {
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+      mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Health' })
+      await addToQueueWithSender(
+        userWithNoDelegations.nationalId,
+        senderId,
+        'HNIPP.DEMO.OTHER_ID',
+      )
+      await addToQueueWithSender(
+        userWithNoDelegations.nationalId,
+        senderId,
+        'HNIPP.DEMO.OTHER_ID',
+      )
+
+      const senders = await userNotificationSenderModel.findAll({
+        where: { recipient: userWithNoDelegations.nationalId },
+        order: [['templateId', 'ASC']],
+      })
+      expect(
+        senders.map(({ templateId, category }) => ({ templateId, category })),
+      ).toEqual([
+        { templateId: mockTemplateId, category: null },
+        { templateId: 'HNIPP.DEMO.OTHER_ID', category: 'heilbrigdismal' },
+      ])
+    })
+
+    it('should keep the latest category and priority type of a template', async () => {
+      mockTemplateCategory({ is: 'Heilbrigðismál' }, 'Informative')
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      mockTemplateCategory({ is: 'Skattar' }, 'Actionable')
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0]).toMatchObject({
+        templateId: mockTemplateId,
+        category: 'skattar',
+        priorityType: 'Actionable',
+      })
+    })
+
+    it("should record an explicit 'Almennt' category as uncategorized", async () => {
+      mockTemplateCategory({ is: 'Almennt', en: 'General' })
+
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+      mockTemplateCategory({})
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0].category).toBeNull()
+    })
+
+    it('should still write and deliver the notification when recording the sender fails', async () => {
+      const bulkCreateSpy = jest
+        .spyOn(userNotificationSenderModel, 'bulkCreate')
+        .mockRejectedValueOnce(new Error('DB write error'))
+
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      expect(bulkCreateSpy).toHaveBeenCalled()
+
+      const notifications = await notificationModel.findAll({
+        where: { recipient: userWithNoDelegations.nationalId },
+      })
+      expect(notifications).toHaveLength(1)
+      expect(await userNotificationSenderModel.count()).toBe(0)
+
+      expect(emailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: expect.objectContaining({
+            address: userWithNoDelegations.email,
+          }),
+        }),
+      )
+      expect(notificationDispatch.sendPushNotification).toHaveBeenCalledWith(
+        expect.objectContaining({
+          nationalId: userWithNoDelegations.nationalId,
+          userNotificationId: notifications[0].id,
+        }),
+      )
+
+      bulkCreateSpy.mockRestore()
     })
   })
 

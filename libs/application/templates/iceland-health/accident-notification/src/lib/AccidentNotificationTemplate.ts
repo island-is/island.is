@@ -22,7 +22,7 @@ import set from 'lodash/set'
 import { assign } from 'xstate'
 import { ApiActions } from '../shared'
 import { AccidentNotificationSchema } from './dataSchema'
-import { application } from './messages'
+import { addDocuments, application, thirdPartyComment } from './messages'
 import { IdentityApi, NationalRegistryV3UserApi } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
 import {
@@ -224,6 +224,11 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               write: 'all',
               actions: [
                 { event: 'APPROVE', name: 'Samþykki', type: 'primary' },
+                {
+                  event: 'SUBMIT',
+                  name: addDocuments.general.submitButtonLabel,
+                  type: 'primary',
+                },
               ],
             },
             {
@@ -234,6 +239,23 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: addDocuments.general.submitButtonLabel,
+                  type: 'primary',
+                },
+                {
+                  event: 'APPROVE',
+                  name: thirdPartyComment.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: 'REJECT',
+                  name: thirdPartyComment.buttons.reject,
+                  type: 'reject',
+                },
+              ],
             },
             {
               id: Roles.DELEGATE,
@@ -243,6 +265,13 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: addDocuments.general.submitButtonLabel,
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -305,6 +334,13 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: addDocuments.general.submitButtonLabel,
+                  type: 'primary',
+                },
+              ],
             },
             {
               id: Roles.ASSIGNEE,
@@ -314,6 +350,23 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: addDocuments.general.submitButtonLabel,
+                  type: 'primary',
+                },
+                {
+                  event: 'APPROVE',
+                  name: thirdPartyComment.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: 'REJECT',
+                  name: thirdPartyComment.buttons.reject,
+                  type: 'reject',
+                },
+              ],
             },
             {
               id: Roles.DELEGATE,
@@ -323,6 +376,13 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: addDocuments.general.submitButtonLabel,
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -373,6 +433,13 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                   Promise.resolve(val.ApplicantReview),
                 ),
               read: 'all',
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: addDocuments.general.submitButtonLabel,
+                  type: 'primary',
+                },
+              ],
             },
             {
               id: Roles.ASSIGNEE,
@@ -382,6 +449,13 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: addDocuments.general.submitButtonLabel,
+                  type: 'primary',
+                },
+              ],
               shouldBeListedForRole: false,
             },
             {
@@ -391,6 +465,13 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                   Promise.resolve(val.ApplicantReview),
                 ),
               read: 'all',
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: addDocuments.general.submitButtonLabel,
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },

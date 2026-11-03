@@ -3,6 +3,7 @@ import {
   InstitutionNationalIds,
   MockablePaymentCatalogApi,
   PaymentCatalogApi,
+  PhotoLookupCheckApi,
 } from '@island.is/application/types'
 export {
   NationalRegistryV3UserApi,
@@ -31,4 +32,10 @@ export const MockableSyslumadurPaymentCatalogApi =
 
 export const GlassesCheckApi = defineTemplateApi({
   action: 'glassesCheck',
+})
+
+export const DrivingLicensePhotoLookupCheckApi = PhotoLookupCheckApi.configure({
+  params: {
+    rlsPhotoSource: 'qualityPhotoAndSignature',
+  },
 })

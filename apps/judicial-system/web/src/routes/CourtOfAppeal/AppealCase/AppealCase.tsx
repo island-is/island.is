@@ -43,6 +43,7 @@ import {
   useAppealCase,
   useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   appendAppealCaseIdQuery,
   applyAppealCaseUpdate,
@@ -167,76 +168,78 @@ const AppealCase: FC = () => {
         notFound={false}
         onNavigationTo={handleNavigationTo}
       >
-        <PageHeader title={formatMessage(strings.title)} />
+        <PageHeader title={strings.title} />
         <FormContentContainer>
-          <PageTitle>{formatMessage(strings.title)}</PageTitle>
-          <Box component="section" marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(core.appealCaseNumberHeading)}
-            />
-            <CaseNumberInput appealCase={targetAppealCase} />
-          </Box>
-
-          <Box component="section" marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(core.appealAssistantHeading)}
-            />
-            <Select
-              name="assistant"
-              label={formatMessage(strings.assistantLabel)}
-              placeholder={formatMessage(strings.assistantPlaceholder)}
-              value={
-                appealAssistant
-                  ? {
-                      label: appealAssistant.name ?? '',
-                      value: appealAssistant.id,
-                    }
-                  : null
-              }
-              options={assistants}
-              onChange={(selectedOption) => {
-                setAppealAssistant(
-                  (selectedOption as AssistantSelectOption).assistant,
-                )
-              }}
-              required
-            />
-          </Box>
-          <Box component="section" marginBottom={8}>
-            <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
-            <BlueBox>
-              {judges.map((judge, seat) => (
-                <Box marginBottom={2} key={`${seat}`}>
-                  <Select
-                    name="judge"
-                    label={formatMessage(
-                      seat === 0
-                        ? strings.judgeForepersonLabel
-                        : strings.judgeLabel,
-                    )}
-                    placeholder={formatMessage(
-                      seat === 0
-                        ? strings.judgeForepersonPlaceholder
-                        : strings.judgePlaceholder,
-                    )}
-                    value={
-                      judge
-                        ? { label: judge.name ?? '', value: judge.id }
-                        : undefined
-                    }
-                    options={judgeOptions}
-                    onChange={(selectedOption) => {
-                      handleChangedJudge(
-                        seat,
-                        (selectedOption as JudgeSelectOption).judge,
-                      )
-                    }}
-                    required
-                  />
-                </Box>
-              ))}
-            </BlueBox>
-          </Box>
+          <PageTitle>{strings.title}</PageTitle>
+          <div className={stack({ gap: 5 })}>
+            <Box component="section">
+              <SectionHeading
+                title={formatMessage(core.appealCaseNumberHeading)}
+              />
+              <CaseNumberInput appealCase={targetAppealCase} />
+            </Box>
+            <Box component="section">
+              <SectionHeading
+                title={formatMessage(core.appealAssistantHeading)}
+              />
+              <Select
+                name="assistant"
+                label={strings.assistantLabel}
+                placeholder={strings.assistantPlaceholder}
+                value={
+                  appealAssistant
+                    ? {
+                        label: appealAssistant.name ?? '',
+                        value: appealAssistant.id,
+                      }
+                    : null
+                }
+                options={assistants}
+                onChange={(selectedOption) => {
+                  setAppealAssistant(
+                    (selectedOption as AssistantSelectOption).assistant,
+                  )
+                }}
+                required
+              />
+            </Box>
+            <Box component="section">
+              <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
+              <BlueBox>
+                <div className={stack({ gap: 2 })}>
+                  {judges.map((judge, seat) => (
+                    <Select
+                      key={seat}
+                      name="judge"
+                      label={
+                        seat === 0
+                          ? strings.judgeForepersonLabel
+                          : strings.judgeLabel
+                      }
+                      placeholder={
+                        seat === 0
+                          ? strings.judgeForepersonPlaceholder
+                          : strings.judgePlaceholder
+                      }
+                      value={
+                        judge
+                          ? { label: judge.name ?? '', value: judge.id }
+                          : undefined
+                      }
+                      options={judgeOptions}
+                      onChange={(selectedOption) => {
+                        handleChangedJudge(
+                          seat,
+                          (selectedOption as JudgeSelectOption).judge,
+                        )
+                      }}
+                      required
+                    />
+                  ))}
+                </div>
+              </BlueBox>
+            </Box>
+          </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
@@ -259,11 +262,11 @@ const AppealCase: FC = () => {
       <AnimatePresence>
         {modalVisible && (
           <Modal
-            title={formatMessage(strings.modalHeading)}
-            text={formatMessage(strings.modalMessage)}
+            title={strings.modalHeading}
+            text={strings.modalMessage}
             buttons={[
               {
-                text: formatMessage(strings.modalPrimaryButton),
+                text: strings.modalPrimaryButton,
                 onClick: () =>
                   router.push(
                     appendAppealCaseIdQuery(

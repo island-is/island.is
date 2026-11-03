@@ -105,6 +105,7 @@ export const caseInclude: Includeable[] = [
     as: 'verdictAppealCase',
     required: false,
     include: [
+      appealJudgesInclude,
       {
         model: User,
         as: 'appealAssistant',
@@ -121,6 +122,27 @@ export const caseInclude: Includeable[] = [
       {
         model: AppealSummons,
         as: 'appealSummonses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+        include: [
+          {
+            model: User,
+            as: 'confirmedBy',
+            include: [{ model: Institution, as: 'institution' }],
+          },
+          {
+            model: AppealSummonsDefendant,
+            as: 'defendants',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
+        ],
+      },
+      {
+        model: AppealSummons,
+        as: 'sentAppealSummonses',
         required: false,
         order: [['created', 'ASC']],
         separate: true,
@@ -961,11 +983,6 @@ export const limitedAccessCaseAttributes: (keyof Case)[] = [
   'indictmentSubtypes',
   'state',
   'policeCaseNumbers',
-  'defenderName',
-  'defenderNationalId',
-  'defenderEmail',
-  'defenderPhoneNumber',
-  'requestSharedWithDefender',
   'courtId',
   'leadInvestigator',
   'requestedCustodyRestrictions',
@@ -1175,6 +1192,7 @@ export const getLimitedAccessCaseInclude = (
       as: 'verdictAppealCase',
       required: false,
       include: [
+        appealJudgesInclude,
         {
           model: User,
           as: 'appealAssistant',
@@ -1186,6 +1204,13 @@ export const getLimitedAccessCaseInclude = (
           as: 'appealEventLogs',
           required: false,
           where: { eventType: appealEventTypes },
+          separate: true,
+        },
+        {
+          model: AppealCourtSession,
+          as: 'courtSessions',
+          required: false,
+          order: [['sessionDate', 'ASC']],
           separate: true,
         },
       ],
@@ -1335,6 +1360,10 @@ export const getLimitedAccessCaseInclude = (
           CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
           CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
           CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
+          CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT,
+          CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE,
           CaseFileCategory.APPEAL_RULING,
           CaseFileCategory.APPEAL_COURT_RECORD,
           CaseFileCategory.COURT_RECORD,
@@ -1553,10 +1582,6 @@ export interface UpdateCase
     Case,
     | 'indictmentSubtypes'
     | 'description'
-    | 'defenderName'
-    | 'defenderNationalId'
-    | 'defenderEmail'
-    | 'defenderPhoneNumber'
     | 'isHeightenedSecurityLevel'
     | 'courtId'
     | 'leadInvestigator'
@@ -1616,7 +1641,6 @@ export interface UpdateCase
   type?: Case['type']
   state?: Case['state']
   policeCaseNumbers?: Case['policeCaseNumbers']
-  requestSharedWithDefender?: Case['requestSharedWithDefender'] | null
   defendantWaivesRightToCounsel?: Case['defendantWaivesRightToCounsel'] | null
   courtEndTime?: Case['courtEndTime'] | null
   rulingDate?: Case['rulingDate'] | null

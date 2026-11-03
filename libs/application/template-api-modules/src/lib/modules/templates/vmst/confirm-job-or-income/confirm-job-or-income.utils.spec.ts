@@ -70,6 +70,7 @@ describe('buildCreateIncomesRequest', () => {
           amountPerMonth: '2000',
           paymentFrequency: 'oneTime',
           dateFrom: '2026-09-05',
+          // Stale value from the disabled field; ignored for one-time payments.
           dateTo: '2026-09-06',
         },
       ],
@@ -88,6 +89,7 @@ describe('buildCreateIncomesRequest', () => {
           amountPerMonth: '4000',
           paymentFrequency: 'monthly',
           dateFrom: '2026-09-08',
+          dateTo: '2026-12-31',
         },
       ],
     }
@@ -114,7 +116,8 @@ describe('buildCreateIncomesRequest', () => {
           incomeTypeId: 'rent',
           estimatedIncome: 2000,
           periodFrom: new Date('2026-09-05'),
-          periodTo: new Date('2026-09-06'),
+          periodTo: null,
+          oneTimePayment: true,
         },
       ],
       trPayments: [
@@ -123,6 +126,7 @@ describe('buildCreateIncomesRequest', () => {
           estimatedIncome: 3000,
           periodFrom: new Date('2026-09-07'),
           periodTo: null,
+          oneTimePayment: false,
         },
       ],
       pensionPayments: [
@@ -131,7 +135,8 @@ describe('buildCreateIncomesRequest', () => {
           pensionFundId: 'fund-id',
           estimatedIncome: 4000,
           periodFrom: new Date('2026-09-08'),
-          periodTo: null,
+          periodTo: new Date('2026-12-31'),
+          oneTimePayment: false,
         },
       ],
     })
@@ -165,7 +170,11 @@ describe('buildCreateIncomesRequest', () => {
         status: 'success',
         date: new Date(),
         data: {
-          partTimeJobs: [{ id: retainedId }, { id: removedId }, {}],
+          partTimeJobs: [
+            { id: retainedId },
+            { id: removedId, canDelete: true },
+            {},
+          ],
         },
       },
     }
@@ -194,7 +203,7 @@ describe('buildCreateIncomesRequest', () => {
       income: {
         status: 'success',
         date: new Date(),
-        data: { partTimeJobs: [{ id: persistedId }] },
+        data: { partTimeJobs: [{ id: persistedId, canDelete: true }] },
       },
     }
 
@@ -214,7 +223,9 @@ describe('buildCreateIncomesRequest', () => {
         status: 'success',
         date: new Date(),
         data: {
-          partTimeJobs: [{ id: persistedId, employerSSN: '5005101370' }],
+          partTimeJobs: [
+            { id: persistedId, employerSSN: '5005101370', canDelete: true },
+          ],
         },
       },
     }
@@ -269,7 +280,11 @@ describe('buildCreateIncomesRequest', () => {
           status: 'success',
           date: new Date(),
           data: {
-            irregularJobs: [{ id: retainedId }, { id: removedId }, {}],
+            irregularJobs: [
+              { id: retainedId },
+              { id: removedId, canDelete: true },
+              {},
+            ],
           },
         },
       }
@@ -298,7 +313,7 @@ describe('buildCreateIncomesRequest', () => {
         income: {
           status: 'success',
           date: new Date(),
-          data: { irregularJobs: [{ id: persistedId }] },
+          data: { irregularJobs: [{ id: persistedId, canDelete: true }] },
         },
       }
 
@@ -318,7 +333,9 @@ describe('buildCreateIncomesRequest', () => {
           status: 'success',
           date: new Date(),
           data: {
-            irregularJobs: [{ id: persistedId, employerSSN: '0101302399' }],
+            irregularJobs: [
+              { id: persistedId, employerSSN: '0101302399', canDelete: true },
+            ],
           },
         },
       }
@@ -367,7 +384,11 @@ describe('buildCreateIncomesRequest', () => {
           status: 'success',
           date: new Date(),
           data: {
-            contractorJobs: [{ id: retainedId }, { id: removedId }, {}],
+            contractorJobs: [
+              { id: retainedId },
+              { id: removedId, canDelete: true },
+              {},
+            ],
           },
         },
       }
@@ -393,7 +414,7 @@ describe('buildCreateIncomesRequest', () => {
         income: {
           status: 'success',
           date: new Date(),
-          data: { contractorJobs: [{ id: persistedId }] },
+          data: { contractorJobs: [{ id: persistedId, canDelete: true }] },
         },
       }
 
@@ -446,7 +467,11 @@ describe('buildCreateIncomesRequest', () => {
           status: 'success',
           date: new Date(),
           data: {
-            capitalIncomePayments: [{ id: retainedId }, { id: removedId }, {}],
+            capitalIncomePayments: [
+              { id: retainedId },
+              { id: removedId, canDelete: true },
+              {},
+            ],
           },
         },
       }
@@ -459,6 +484,7 @@ describe('buildCreateIncomesRequest', () => {
           estimatedIncome: 2000,
           periodFrom: new Date('2026-09-05'),
           periodTo: null,
+          oneTimePayment: false,
         },
         { id: removedId, deleted: true },
       ])
@@ -474,7 +500,9 @@ describe('buildCreateIncomesRequest', () => {
         income: {
           status: 'success',
           date: new Date(),
-          data: { capitalIncomePayments: [{ id: persistedId }] },
+          data: {
+            capitalIncomePayments: [{ id: persistedId, canDelete: true }],
+          },
         },
       }
 
@@ -520,7 +548,6 @@ describe('buildCreateIncomesRequest', () => {
             amountPerMonth: '3000',
             paymentFrequency: 'oneTime',
             dateFrom: '2026-09-05',
-            dateTo: '2026-09-06',
           },
         ],
       }
@@ -529,7 +556,11 @@ describe('buildCreateIncomesRequest', () => {
           status: 'success',
           date: new Date(),
           data: {
-            trPayments: [{ id: retainedId }, { id: removedId }, {}],
+            trPayments: [
+              { id: retainedId },
+              { id: removedId, canDelete: true },
+              {},
+            ],
           },
         },
       }
@@ -541,7 +572,8 @@ describe('buildCreateIncomesRequest', () => {
           incomeTypeId: 'disability',
           estimatedIncome: 3000,
           periodFrom: new Date('2026-09-05'),
-          periodTo: new Date('2026-09-06'),
+          periodTo: null,
+          oneTimePayment: true,
         },
         { id: removedId, deleted: true },
       ])
@@ -559,7 +591,7 @@ describe('buildCreateIncomesRequest', () => {
         income: {
           status: 'success',
           date: new Date(),
-          data: { trPayments: [{ id: persistedId }] },
+          data: { trPayments: [{ id: persistedId, canDelete: true }] },
         },
       }
 
@@ -613,7 +645,11 @@ describe('buildCreateIncomesRequest', () => {
           status: 'success',
           date: new Date(),
           data: {
-            pensionPayments: [{ id: retainedId }, { id: removedId }, {}],
+            pensionPayments: [
+              { id: retainedId },
+              { id: removedId, canDelete: true },
+              {},
+            ],
           },
         },
       }
@@ -627,6 +663,7 @@ describe('buildCreateIncomesRequest', () => {
           estimatedIncome: 4000,
           periodFrom: new Date('2026-09-08'),
           periodTo: null,
+          oneTimePayment: false,
         },
         { id: removedId, deleted: true },
       ])
@@ -642,7 +679,7 @@ describe('buildCreateIncomesRequest', () => {
         income: {
           status: 'success',
           date: new Date(),
-          data: { pensionPayments: [{ id: persistedId }] },
+          data: { pensionPayments: [{ id: persistedId, canDelete: true }] },
         },
       }
 
@@ -664,6 +701,134 @@ describe('buildCreateIncomesRequest', () => {
         buildCreateIncomesRequest({ typeOfIncome: [] }, externalData)
           .pensionPayments,
       ).toBeUndefined()
+    })
+  })
+
+  describe('canEdit / canDelete flags', () => {
+    const persistedId = 'persisted-irregular-id'
+    const persistedJob = {
+      id: persistedId,
+      employerSSN: '0101302399',
+      employerName: 'Fyrirtæki ehf',
+      periodFrom: '2026-09-01T00:00:00',
+      periodTo: '2026-09-10T00:00:00',
+      estimatedIncome: 1000,
+      workShiftPeriodIds: ['day-shift'],
+    }
+    const unchangedRow = {
+      validationId: persistedId,
+      company: { nationalId: '010130-2399', name: 'Fyrirtæki ehf' },
+      dateFrom: '2026-09-01',
+      dateTo: '2026-09-10',
+      estimatedIncome: '1000',
+      workshiftPeriod: 'day-shift',
+    }
+    const buildExternalData = (
+      flags: { canEdit?: boolean; canDelete?: boolean } = {},
+    ): ExternalData => ({
+      income: {
+        status: 'success',
+        date: new Date(),
+        data: { irregularJobs: [{ ...persistedJob, ...flags }] },
+      },
+    })
+    const buildAnswers = (rows: FormValue[]): FormValue => ({
+      typeOfIncome: [IncomeType.CASUAL_WORK],
+      registerCasualWork: rows,
+    })
+
+    it('does not delete a removed persisted record when canDelete is false', () => {
+      expect(
+        buildCreateIncomesRequest(
+          buildAnswers([]),
+          buildExternalData({ canDelete: false }),
+        ).irregularJobs,
+      ).toEqual([])
+    })
+
+    it('treats a missing canDelete flag as locked', () => {
+      expect(
+        buildCreateIncomesRequest(buildAnswers([]), buildExternalData())
+          .irregularJobs,
+      ).toEqual([])
+    })
+
+    it('sends an edited persisted row as a create carrying the persisted id when canEdit is true', () => {
+      expect(
+        buildCreateIncomesRequest(
+          buildAnswers([{ ...unchangedRow, estimatedIncome: '2500' }]),
+          buildExternalData({ canEdit: true }),
+        ).irregularJobs,
+      ).toEqual([
+        {
+          id: persistedId,
+          employerSSN: '0101302399',
+          periodFrom: new Date('2026-09-01'),
+          periodTo: new Date('2026-09-10'),
+          estimatedIncome: 2500,
+          workShiftPeriodIds: ['day-shift'],
+        },
+      ])
+    })
+
+    it('omits an unchanged persisted row even when canEdit is true', () => {
+      expect(
+        buildCreateIncomesRequest(
+          buildAnswers([unchangedRow]),
+          buildExternalData({ canEdit: true }),
+        ).irregularJobs,
+      ).toEqual([])
+    })
+
+    it('drops edits to a persisted row when canEdit is false', () => {
+      expect(
+        buildCreateIncomesRequest(
+          buildAnswers([{ ...unchangedRow, estimatedIncome: '2500' }]),
+          buildExternalData({ canEdit: false }),
+        ).irregularJobs,
+      ).toEqual([])
+    })
+  })
+
+  describe('one-time payments', () => {
+    it('does not resend an unchanged persisted one-time payment', () => {
+      const persistedId = 'persisted-capital-id'
+      const answers: FormValue = {
+        typeOfIncome: [IncomeType.CAPITAL_INCOME],
+        registerCapitalIncome: [
+          {
+            validationId: persistedId,
+            paymentType: 'rent',
+            amountPerMonth: '1000',
+            paymentFrequency: 'oneTime',
+            dateFrom: '2026-09-05T00:00:00',
+            dateTo: '',
+          },
+        ],
+      }
+      const externalData: ExternalData = {
+        income: {
+          status: 'success',
+          date: new Date(),
+          data: {
+            capitalIncomePayments: [
+              {
+                id: persistedId,
+                incomeTypeId: 'rent',
+                estimatedIncome: 1000,
+                periodFrom: '2026-09-05T00:00:00',
+                periodTo: null,
+                oneTimePayment: true,
+                canEdit: true,
+              },
+            ],
+          },
+        },
+      }
+
+      expect(
+        buildCreateIncomesRequest(answers, externalData).capitalIncomePayments,
+      ).toEqual([])
     })
   })
 })

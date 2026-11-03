@@ -53,7 +53,6 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { parseCommaSeparatedListFromQuery } from '@island.is/web/units/parseCourtQueryParam'
-import { getLanguageToggleDialogConfig } from '@island.is/web/utils/languageToggleDialog'
 
 import {
   type CustomScreen,
@@ -1728,9 +1727,6 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
       is: '/dagskra-domstola',
       en: customPageData?.configJson?.englishFallbackUrl ?? '',
     },
-    languageToggleDialog: getLanguageToggleDialogConfig(
-      customPageData?.configJson,
-    ),
   }
 }
 

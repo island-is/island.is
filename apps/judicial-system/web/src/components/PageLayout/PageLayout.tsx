@@ -228,7 +228,6 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
 }) => {
   const { isCreating } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { formatMessage } = useIntl()
   const hideBreadcrumbs = isCreating
 
   return (
@@ -239,13 +238,13 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
         <AlertBanner
           title={
             isDefenceUser(user)
-              ? formatMessage(pageLayout.defenderRole.alertTitle)
-              : formatMessage(pageLayout.otherRoles.alertTitle)
+              ? pageLayout.defenderRole.alertTitle
+              : pageLayout.otherRoles.alertTitle
           }
           description={
             isDefenceUser(user)
-              ? formatMessage(pageLayout.defenderRole.alertMessage)
-              : formatMessage(pageLayout.otherRoles.alertMessage)
+              ? pageLayout.defenderRole.alertMessage
+              : pageLayout.otherRoles.alertMessage
           }
           variant="error"
           link={{

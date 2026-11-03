@@ -28,11 +28,17 @@ const CaseNumberInput: FC<Props> = ({ appealCase }) => {
   return (
     <Input
       name="appealCaseNumber"
-      label={formatMessage(strings.caseNumberLabel)}
+      label={strings.caseNumberLabel}
       value={appealCase?.appealCaseNumber ?? ''}
-      placeholder={formatMessage(strings.caseNumberPlaceholder, {
-        year: new Date().getFullYear(),
-      })}
+      placeholder={formatMessage(
+        {
+          id: strings.caseNumberPlaceholder,
+          defaultMessage: strings.caseNumberPlaceholder,
+        },
+        {
+          year: new Date().getFullYear(),
+        },
+      )}
       errorMessage={appealCaseNumberErrorMessage}
       onChange={(event) => {
         const value = replaceTabs(event.target.value)

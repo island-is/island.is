@@ -19,6 +19,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { InstitutionNotificationType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../../../factories'
+import { formatIcuMessage } from '../../../../messages'
 import { InternalCaseService } from '../../../case'
 import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
@@ -77,10 +78,10 @@ export class InstitutionNotificationService extends BaseNotificationService {
     await this.refreshFormatMessage()
 
     const subject = this.formatMessage(strings.waitingForConfirmation.subject)
-    const body = this.formatMessage(strings.waitingForConfirmation.body, {
+    const body = formatIcuMessage(strings.waitingForConfirmation.body, {
       count,
     })
-    const tail = this.formatMessage(strings.tail, {
+    const tail = formatIcuMessage(strings.tail, {
       linkStart: `<a href="${this.config.clientUrl}">`,
       linkEnd: '</a>',
     })

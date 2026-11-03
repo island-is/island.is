@@ -111,16 +111,7 @@ export const Defendant = () => {
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!workingCase.id) {
-        // Case creation copies these onto the created defendant
-        const defendant = workingCase.defendants?.[0]
-        const createdCase = await createCase({
-          ...workingCase,
-          defenderName: defendant?.defenderName,
-          defenderNationalId: defendant?.defenderNationalId,
-          defenderEmail: defendant?.defenderEmail,
-          defenderPhoneNumber: defendant?.defenderPhoneNumber,
-          requestSharedWithDefender: defendant?.requestSharedWithDefender,
-        })
+        const createdCase = await createCase(workingCase)
 
         if (
           createdCase &&
@@ -166,7 +157,7 @@ export const Defendant = () => {
       {!institutionLoading && (
         <>
           <FormContentContainer>
-            <PageTitle>{formatMessage(m.heading)}</PageTitle>
+            <PageTitle>{m.heading}</PageTitle>
             <div className={stack({ gap: 5 })}>
               <Box component="section">
                 <PoliceCaseNumbers
@@ -184,9 +175,7 @@ export const Defendant = () => {
                     justifyContent="spaceBetween"
                     marginBottom={2}
                   >
-                    <SectionHeading
-                      title={formatMessage(m.sections.accusedInfo.heading)}
-                    />
+                    <SectionHeading title={m.sections.accusedInfo.heading} />
                     {showPoliceDefendantsUI && policeDefendantsLoading && (
                       <LoadingDots size="small" />
                     )}
@@ -209,17 +198,15 @@ export const Defendant = () => {
               {workingCase.type !== CaseType.TRAVEL_BAN && (
                 <Box component="section">
                   <SectionHeading
-                    title={formatMessage(m.sections.leadInvestigator.heading)}
-                    tooltip={formatMessage(m.sections.leadInvestigator.tooltip)}
+                    title={m.sections.leadInvestigator.heading}
+                    tooltip={m.sections.leadInvestigator.tooltip}
                   />
                   <Input
                     data-testid="leadInvestigator"
                     name="leadInvestigator"
                     autoComplete="off"
-                    label={formatMessage(m.sections.leadInvestigator.label)}
-                    placeholder={formatMessage(
-                      m.sections.leadInvestigator.placeholder,
-                    )}
+                    label={m.sections.leadInvestigator.label}
+                    placeholder={m.sections.leadInvestigator.placeholder}
                     value={leadInvestigator.value}
                     errorMessage={leadInvestigator.errorMessage}
                     hasError={leadInvestigator.hasError}

@@ -269,6 +269,23 @@ const template: ApplicationTemplate<
                 import('../forms/inReviewForm').then((module) =>
                   Promise.resolve(module.InReviewForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+                {
+                  event: OAPEvents.DISMISS,
+                  name: 'Vísa frá',
+                  type: 'reject',
+                },
+              ],
               write: 'all',
             },
           ],

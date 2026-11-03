@@ -128,7 +128,7 @@ export const application = defineMessages({
   partTimeDescription: {
     id: 'vmst.cjoi.application:partTimeDescription',
     defaultMessage:
-      'Hlutastarf er starf í minna en 100% starfshlutfalli sem varir lengur en einn mánuð. Þú getur verið áfram skráður í atvinnuleit samhliða hlutastarfi og átt rétt á atvinnuleysisbótum. En það fer eftir einstaklingsbunum bótarétti. Ekki þarf að skila launaseðli vegna hlutastarfa.',
+      'Hlutastarf er starf í minna en 100% starfshlutfalli sem varir lengur en einn mánuð. Þú getur verið áfram skráður í atvinnuleit samhliða hlutastarfi og átt rétt á atvinnuleysisbótum. En það fer eftir einstaklingsbundnum bótarétti. Ekki þarf að skila launaseðli vegna hlutastarfa.',
     description: 'Description for part-time work type',
   },
   partTimeAlert: {
@@ -215,11 +215,17 @@ export const application = defineMessages({
     defaultMessage: 'Bæta við línu',
     description: 'Add line button text for repeater',
   },
-  removeLineLocked: {
-    id: 'vmst.cjoi.application:removeLineLocked',
-    defaultMessage: 'Ekki hægt að eyða eftir 26. hvers mánaðar',
+  removeLineNotAllowed: {
+    id: 'vmst.cjoi.application:removeLineNotAllowed',
+    defaultMessage: 'Ekki hægt að eyða þessari færslu',
     description:
-      'Tooltip shown on the disabled delete button during the lock period',
+      'Tooltip shown on the disabled delete button when the persisted entry cannot be deleted',
+  },
+  editLineNotAllowed: {
+    id: 'vmst.cjoi.application:editLineNotAllowed',
+    defaultMessage: 'Ekki hægt að breyta þessari færslu',
+    description:
+      'Tooltip shown on the disabled edit button when the persisted entry cannot be edited',
   },
   entryTitle: {
     id: 'vmst.cjoi.application:entryTitle',
@@ -240,6 +246,12 @@ export const application = defineMessages({
     id: 'vmst.cjoi.application:dateTo',
     defaultMessage: 'Dagsetning til',
     description: 'Date to label',
+  },
+  indefinitePeriod: {
+    id: 'vmst.cjoi.application:indefinitePeriod',
+    defaultMessage: 'Ótímabundið',
+    description:
+      'Shown for an empty optional end date (placeholder and overview), declaring an indefinite period',
   },
   jobStart: {
     id: 'vmst.cjoi.application:jobStart',
@@ -445,8 +457,14 @@ export const application = defineMessages({
   },
   overviewTagDeleted: {
     id: 'vmst.cjoi.application:overviewTagDeleted',
-    defaultMessage: 'Eytt',
+    defaultMessage: 'Skráningu eytt',
     description: 'Tag marking a deleted entry in the overview',
+  },
+  overviewTagEdited: {
+    id: 'vmst.cjoi.application:overviewTagEdited',
+    defaultMessage: 'Skráningu breytt',
+    description:
+      'Tag marking an edited previously registered entry in the overview',
   },
   overviewEditButton: {
     id: 'vmst.cjoi.application:overviewEditButton',
@@ -566,10 +584,11 @@ export const errorMessages = defineMessages({
       'Villa við að skila inn umsókn. Reyndu aftur eða hafðu samband við Ísland.is',
     description: 'Error message when submit fails',
   },
-  dateToRequiredForOneTime: {
-    id: 'vmst.cjoi.application:errorMessages.dateToRequiredForOneTime',
-    defaultMessage: 'Dagsetning til er skylda þegar valin er eingreiðsla',
-    description: 'Error shown when dateTo is missing for a one-time payment',
+  dateToBeforeDateFrom: {
+    id: 'vmst.cjoi.application:errorMessages.dateToBeforeDateFrom',
+    defaultMessage: 'Dagsetning til má ekki vera á undan dagsetningu frá',
+    description:
+      'Error shown when the end date of a period is before its start date',
   },
   casualWorkOverlappingPeriods: {
     id: 'vmst.cjoi.application:errorMessages.casualWorkOverlappingPeriods',

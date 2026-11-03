@@ -1,4 +1,6 @@
 import type { FC } from 'react'
+import { lazy, Suspense } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 import {
   Box,
@@ -10,7 +12,13 @@ import {
 } from '@island.is/island-ui/core'
 import Overview from '../../screens/Overview/Overview'
 import { useLocale } from '@island.is/localization'
-import { ApplicationSystemPaths } from '../../lib/paths'
+import { Features } from '@island.is/feature-flags'
+import { useFeatureFlag } from '@island.is/react/feature-flags'
+import {
+  APPLICATION_SYSTEM_TAB_QUERY_PARAM,
+  APPLICATION_SYSTEM_TRANSLATIONS_TAB_ID,
+  ApplicationSystemPaths,
+} from '../../lib/paths'
 import { m } from '../../lib/messages'
 import Statistics from '../../screens/Statistics/Statistics'
 import {
@@ -20,6 +28,10 @@ import {
 import { useMemo } from 'react'
 import { Organization } from '@island.is/shared/types'
 
+const Translations = lazy(() =>
+  import('../../screens/Translations/Translations'),
+)
+
 interface LayoutProps {
   isSuperAdmin: boolean
 }
@@ -28,6 +40,18 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
   isSuperAdmin,
 }) => {
   const { formatMessage } = useLocale()
+  const { value: showTranslations, loading: isLoadingFlag } = useFeatureFlag(
+    Features.isApplicationSystemTranslationsEnabled,
+    false,
+  )
+  const [searchParams, setSearchParams] = useSearchParams()
+  const requestedTab = searchParams.get(APPLICATION_SYSTEM_TAB_QUERY_PARAM)
+  const selectedTab =
+    !requestedTab ||
+    (requestedTab === APPLICATION_SYSTEM_TRANSLATIONS_TAB_ID &&
+      !showTranslations)
+      ? 'overview'
+      : requestedTab
 
   //These are all organizations in contentful
   const { data: contentfulOrgData, loading: contentfulOrgLoading } =
@@ -80,6 +104,10 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
 
   const isLoadingOrganizations = contentfulOrgLoading || institutionsLoading
 
+  if (isLoadingFlag) {
+    return null
+  }
+
   return (
     <GridContainer>
       <Breadcrumbs
@@ -100,7 +128,17 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
             <Tabs
               label={formatMessage(m.applicationSystem)}
               contentBackground="white"
-              selected="overview"
+              selected={selectedTab}
+              onChange={(id) =>
+                setSearchParams(
+                  (prev) => {
+                    const next = new URLSearchParams(prev)
+                    next.set(APPLICATION_SYSTEM_TAB_QUERY_PARAM, id)
+                    return next
+                  },
+                  { replace: true },
+                )
+              }
               tabs={[
                 {
                   id: 'overview',
@@ -124,6 +162,19 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
                     />
                   ),
                 },
+                ...(showTranslations
+                  ? [
+                      {
+                        id: APPLICATION_SYSTEM_TRANSLATIONS_TAB_ID,
+                        label: formatMessage(m.translations),
+                        content: (
+                          <Suspense fallback={null}>
+                            <Translations isSuperAdmin={isSuperAdmin} />
+                          </Suspense>
+                        ),
+                      },
+                    ]
+                  : []),
               ]}
             />
           </Box>
