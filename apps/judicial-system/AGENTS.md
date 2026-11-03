@@ -21,8 +21,8 @@ template literals at the call site). For ICU / placeholders, keep the template
 as a plain string and format with `formatMessage({ id, defaultMessage }, values)`
 using that string for both `id` and `defaultMessage` (so a Contentful map cannot
 override it while fetch still runs). Migrate remaining descriptors in the
-persona/case-type PRs; leave the four service-interruption banner keys until
-their admin replacement ships.
+persona/case-type PRs. Service-interruption banners are admin-backed (not
+Contentful).
 
 ## Async style
 

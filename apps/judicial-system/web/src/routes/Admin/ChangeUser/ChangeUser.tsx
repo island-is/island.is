@@ -63,6 +63,8 @@ export const ChangeUser = () => {
             ...(isSuperAdmin
               ? {
                   canManageMessageSuspension: user.canManageMessageSuspension,
+                  canManageServiceInterruptionBanner:
+                    user.canManageServiceInterruptionBanner,
                 }
               : {}),
           },

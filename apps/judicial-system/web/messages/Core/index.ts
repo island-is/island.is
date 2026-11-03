@@ -41,30 +41,6 @@ export const core = {
   continue: 'Halda áfram',
   cancel: 'Hætta við',
   createCase: 'Stofna mál',
-  serviceInterruptionTitle: {
-    id: 'judicial.system.core:service_interruption_title',
-    defaultMessage: 'Mikilvæg skilaboð',
-    description:
-      'Notaður sem titil á skilboðum í borða sem er sýndur við þjónusturof',
-  },
-  serviceInterruptionText: {
-    id: 'judicial.system.core:service_interruption_text',
-    defaultMessage: 'NONE',
-    description:
-      'Notaður sem texti á skilboðum í borða sem er sýndur við þjónusturof. Stjórnar hvort skilboð eru sýnd eða ekki.',
-  },
-  serviceInterruptionTextProsecutor: {
-    id: 'judicial.system.core:service_interruption_text_prosecutor',
-    defaultMessage: 'NONE',
-    description:
-      '(Saksóknaraflæði): Notaður sem texti á skilboðum í borða sem er sýndur við þjónusturof. Stjórnar hvort skilboð eru sýnd eða ekki.',
-  },
-  serviceInterruptionTextCourt: {
-    id: 'judicial.system.core:service_interruption_text_court',
-    defaultMessage: 'NONE',
-    description:
-      '(Dómstólaflæði): Notaður sem texti á skilboðum í borða sem er sýndur við þjónusturof. Stjórnar hvort skilboð eru sýnd eða ekki.',
-  },
   restrictionCase: 'gæsluvarðhald',
   travelBan: 'farbann',
   investigationCase: 'rannsóknarheimild',
