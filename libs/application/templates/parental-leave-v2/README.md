@@ -1,4 +1,4 @@
-# Parental Leave Application Template
+# Parental Leave V2 Application Template
 
 ## Description
 
@@ -7,9 +7,11 @@ This application template allows applicants to apply for parental leave. For fur
 - It contains all the steps for parents and employers required to collect and confirm all information
 - It handles communications with external APIs to filter out valid applicants as well as sending complete applications to Vinnumálastofnun
 
-Below you'll find a flow chart for the application:
+### Legacy coexistence
 
-![](./assets/parental-leave-flow-chart.png)
+V2 uses application type `ParentalLeaveV2` and slug `faedingarorlof-v2`. The existing [parental leave application](../parental-leave/README.md) remains separate so its applications can complete their lifecycle.
+
+Application lookups remain scoped to the current application's type. V2 does not query legacy application records through the core application service; the unused cross-template query extension was removed.
 
 ### Glossary
 
@@ -113,7 +115,7 @@ Applicants finished all his/her rights or parental-leave time is expired.
 
 For async actions that require server side logic we have the template api modules. The module for this application contains email templates as well as external actions like `sendApplication`.
 
-Have a look at [the parental leave template API module](../../template-api-modules/src/lib/modules/templates/parental-leave/parental-leave.module.ts) for further information on these actions, and [template API module README](../../template-api-modules/README.md) to get up to speed on template api modules.
+Have a look at [the parental leave V2 template API module](../../template-api-modules/src/lib/modules/templates/parental-leave-v2/parental-leave.module.ts) for further information on these actions, and [template API module README](../../template-api-modules/README.md) to get up to speed on template api modules.
 
 ### API and X-Road
 
@@ -129,8 +131,10 @@ See [directorate of labour graphql API module](../../../api/domains/directorate-
 
 All localisation can be found on Contentful.
 
-- [Parental leave application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/pl.application)
+- [Parental leave V2 application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/plv2.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
+
+V2 uses the independent `plv2.application` namespace. Before launch, copy the existing `pl.application` Contentful namespace, preserve its localized values, change the namespace and message keys to `plv2.application`, and publish the new entry. The legacy namespace must remain unchanged. The message extraction command does not copy existing localized translations.
 
 {% hint style="warning" %}
 When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../localization/README.md#message-extraction).
