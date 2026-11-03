@@ -989,6 +989,7 @@ Array [
   "currentUser.eligibleUsers.active",
   "currentUser.eligibleUsers.canConfirmIndictment",
   "currentUser.eligibleUsers.canManageMessageSuspension",
+  "currentUser.eligibleUsers.canManageServiceInterruptionBanner",
   "currentUser.eligibleUsers.created",
   "currentUser.eligibleUsers.email",
   "currentUser.eligibleUsers.id",
@@ -1006,6 +1007,7 @@ Array [
   "currentUser.user.active",
   "currentUser.user.canConfirmIndictment",
   "currentUser.user.canManageMessageSuspension",
+  "currentUser.user.canManageServiceInterruptionBanner",
   "currentUser.user.created",
   "currentUser.user.email",
   "currentUser.user.id",
@@ -1971,6 +1973,15 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths ServiceInterruptionBanner 1`] = `
+Array [
+  "serviceInterruptionBanner.courtMessage",
+  "serviceInterruptionBanner.globalMessage",
+  "serviceInterruptionBanner.prosecutorMessage",
+  "serviceInterruptionBanner.title",
+]
+`;
+
 exports[`GraphQL operations select these field paths SetAppealStatementDeadline 1`] = `
 Array [
   "setAppealStatementDeadline.civilClaimantId",
@@ -2243,6 +2254,15 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths UpdateServiceInterruptionBanner 1`] = `
+Array [
+  "updateServiceInterruptionBanner.courtMessage",
+  "updateServiceInterruptionBanner.globalMessage",
+  "updateServiceInterruptionBanner.prosecutorMessage",
+  "updateServiceInterruptionBanner.title",
+]
+`;
+
 exports[`GraphQL operations select these field paths UpdateUser 1`] = `
 Array [
   "updateUser.id",
@@ -2288,6 +2308,7 @@ Array [
   "user.active",
   "user.canConfirmIndictment",
   "user.canManageMessageSuspension",
+  "user.canManageServiceInterruptionBanner",
   "user.created",
   "user.email",
   "user.id",

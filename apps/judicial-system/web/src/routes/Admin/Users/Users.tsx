@@ -13,6 +13,7 @@ import {
   ADMIN_CHANGE_USER_ROUTE,
   ADMIN_CREATE_USER_ROUTE,
   ADMIN_MESSAGE_SUSPENSION_ROUTE,
+  ADMIN_SERVICE_INTERRUPTION_BANNER_ROUTE,
   ADMIN_STATISTICS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
@@ -128,6 +129,18 @@ export const Users = () => {
               }}
             >
               Biðröð
+            </Button>
+          )}
+          {(user?.role === UserRole.ADMIN ||
+            user?.canManageServiceInterruptionBanner) && (
+            <Button
+              variant="ghost"
+              icon="warning"
+              onClick={() => {
+                router.push(ADMIN_SERVICE_INTERRUPTION_BANNER_ROUTE)
+              }}
+            >
+              Viðvörunar borði
             </Button>
           )}
           <Button
