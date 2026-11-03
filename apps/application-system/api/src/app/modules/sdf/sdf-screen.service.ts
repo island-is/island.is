@@ -82,6 +82,10 @@ try {
 interface AdapterOptions {
   ephemeral?: boolean
   application?: ApplicationWithAttachments
+  // The saved application, when `application` is an unsaved working copy.
+  // Whether the screen is the last one, and so shows submit buttons, is then
+  // decided from the saved one.
+  storedApplication?: ApplicationWithAttachments
 }
 
 type ApplicationTemplate = Awaited<
@@ -138,6 +142,9 @@ const isExternalDataProviderScreen = (
   !!screen &&
   'type' in screen &&
   screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
+
+const isLastNavigableScreen = (screens: FormScreen[], index: number) =>
+  !screens.slice(index + 1).some((screen) => screen.isNavigable)
 
 interface ScreenRenderContext {
   application: ApplicationWithAttachments
@@ -252,10 +259,19 @@ export class SdfScreenService {
     this.logTiming('Step 7: Build Page', step7Start)
 
     const step8Start = Date.now()
+    const storedScreens = options.storedApplication
+      ? this.compileScreens(
+          form,
+          options.storedApplication,
+          context.roleInState,
+          bffUser,
+        )
+      : screens
     const footer = this.buildFooter(
       context,
       currentScreen,
       resolvedIndex,
+      isLastNavigableScreen(storedScreens, resolvedIndex),
       resolver,
     )
     this.logTiming('Step 8: Build Footer', step8Start)
@@ -416,12 +432,9 @@ export class SdfScreenService {
     context: ScreenRenderContext,
     currentScreen: FormScreen,
     resolvedIndex: number,
+    isLastScreen: boolean,
     resolver: FormTextResolver,
   ): ScreenDto['footer'] {
-    const isLastScreen = !context.screens
-      .slice(resolvedIndex + 1)
-      .some((screen) => screen.isNavigable)
-
     const buttons = isLastScreen
       ? buildFooterButtons(
           context.roleInState.actions,
@@ -616,6 +629,7 @@ export class SdfScreenService {
     return this.getScreen(applicationId, undefined, locale, user, {
       ephemeral: true,
       application: workingApplication,
+      storedApplication: application,
     })
   }
 
@@ -864,7 +878,11 @@ export class SdfScreenService {
         currentPageIndex,
         locale,
         user,
-        { ephemeral: true, application: workingApplication },
+        {
+          ephemeral: true,
+          application: workingApplication,
+          storedApplication: application,
+        },
       )
       screen.page.errors = validationErrors
       return screen
@@ -942,16 +960,26 @@ export class SdfScreenService {
       featureFlagClient: this.featureFlagService,
     } as any)
 
-    const bffUser = this.buildBffUser(user, locale)
-    const { answers: filteredAnswers, externalData: filteredExternalData } =
-      this.filterDataByRole(application as Application, roleInState)
-
-    return convertFormToScreens(
+    return this.compileScreens(
       form,
-      filteredAnswers,
-      filteredExternalData,
-      bffUser,
+      application,
+      roleInState,
+      this.buildBffUser(user, locale),
     )
+  }
+
+  // Compiles the form against the application's data as the role may read it.
+  private compileScreens(
+    form: Form,
+    application: ApplicationWithAttachments,
+    roleInState: RoleInState,
+    bffUser: BffUser,
+  ): FormScreen[] {
+    const { answers, externalData } = this.filterDataByRole(
+      application as Application,
+      roleInState,
+    )
+    return convertFormToScreens(form, answers, externalData, bffUser)
   }
 
   private async getCurrentScreen(
@@ -1167,6 +1195,7 @@ export class SdfScreenService {
     user: User,
   ): Promise<ScreenDto> {
     let application = await this.requireApplicationForUser(applicationId, user)
+    const checkedState = application.state
 
     // Checked against the stored application, so answers in this request
     // cannot change the role
@@ -1195,13 +1224,24 @@ export class SdfScreenService {
       application.answers,
       writableAnswers,
     )
-    const currentScreen = await this.getCurrentScreen(
-      application,
-      template,
-      currentPageIndex,
-      locale,
-      user,
-    )
+    const screens = await this.buildScreens(application, template, locale, user)
+    const screenIndex = screens
+      ? moveToScreen(screens, currentPageIndex, true)
+      : currentPageIndex
+    const currentScreen = screens?.[screenIndex]
+    // Rejects a SUBMIT unless the saved page is the last navigable screen,
+    // judged from the saved answers.
+    if (screens && !isLastNavigableScreen(screens, screenIndex)) {
+      throw new ConflictException(
+        createSdfProblem({
+          type: 'https://island.is/problems/application-system/sdf/submit-not-on-last-screen',
+          title: 'Submit not on last screen',
+          status: 409,
+          detail: `Page ${screenIndex} is not the last screen`,
+          instance: `/sdf/${applicationId}/action`,
+        }),
+      )
+    }
     const validationErrors = await this.validateScreenAnswers(
       currentScreen,
       template,
@@ -1220,7 +1260,11 @@ export class SdfScreenService {
         currentPageIndex,
         locale,
         user,
-        { ephemeral: true, application: workingApplication },
+        {
+          ephemeral: true,
+          application: workingApplication,
+          storedApplication: application,
+        },
       )
       screen.page.errors = validationErrors
       return screen
@@ -1255,6 +1299,20 @@ export class SdfScreenService {
     }
     if (hasAnswers || actorToRecord || ranDataProviders) {
       application = await this.requireApplicationForUser(applicationId, user)
+      // The event was checked against the state loaded first, so the re-read
+      // copy must still be in that state. This only compares the two loads;
+      // the state can still change before or during changeState.
+      if (application.state !== checkedState) {
+        throw new ConflictException(
+          createSdfProblem({
+            type: 'https://island.is/problems/application-system/sdf/state-changed',
+            title: 'State changed',
+            status: 409,
+            detail: `State changed from "${checkedState}" to "${application.state}" during the request`,
+            instance: `/sdf/${applicationId}/action`,
+          }),
+        )
+      }
     }
 
     const applicationSnapshot = toApplicationSnapshot(

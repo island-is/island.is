@@ -57,6 +57,8 @@ export const Prerequisites = new FormBuilder<typeof dataSchema>(
           })
         }
         // TODO: put this back in when properties can be fetched without national id
+        // Re-enabling it also needs a step that saves the `fetchPropertiesByCode`
+        // result: REFETCH runs it without saving, and no other step saves it.
         // .addCheckboxField('otherPropertiesThanIOwnCheckbox', '', {
         //   options: [
         //     {

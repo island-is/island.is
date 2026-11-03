@@ -150,6 +150,76 @@ const dataProviderThenPageForm = () =>
     ],
   })
 
+// SUBMIT is only accepted on the last screen, so its rows use these.
+const onePageForm = () =>
+  buildForm({
+    id: 'form',
+    title: 'Form',
+    children: [
+      buildSection({
+        id: 'section',
+        title: 'Section',
+        children: [
+          buildMultiField({
+            id: 'page0',
+            title: 'Page 0',
+            children: [buildTextField({ id: 'field0', title: 'Field 0' })],
+          }),
+        ],
+      }),
+    ],
+  })
+
+// Page 1 is shown unless field0 is 'hide', so page 0 is then the last screen.
+const hideablePageForm = () =>
+  buildForm({
+    id: 'form',
+    title: 'Form',
+    children: [
+      buildSection({
+        id: 'section',
+        title: 'Section',
+        children: [
+          buildMultiField({
+            id: 'page0',
+            title: 'Page 0',
+            children: [buildTextField({ id: 'field0', title: 'Field 0' })],
+          }),
+          buildMultiField({
+            id: 'page1',
+            title: 'Page 1',
+            condition: (answers) => answers.field0 !== 'hide',
+            children: [buildTextField({ id: 'field1', title: 'Field 1' })],
+          }),
+        ],
+      }),
+    ],
+  })
+
+const dataProviderOnlyForm = () =>
+  buildForm({
+    id: 'form',
+    title: 'Form',
+    children: [
+      buildSection({
+        id: 'section',
+        title: 'Section',
+        children: [
+          buildExternalDataProvider({
+            id: 'edp',
+            title: 'External data',
+            dataProviders: [
+              buildDataProviderItem({
+                provider: providerApi,
+                title: 'Provider',
+              }),
+            ],
+          }),
+        ],
+      }),
+    ],
+  })
+
 // Permissive, so validation never blocks the action under test.
 const permissiveSchema = z.object({}).passthrough()
 // Used by the rows that check what happens when validation fails.
@@ -253,12 +323,19 @@ const buildController = (
     ephemeralAction: ActionResult
     changeState: Record<string, unknown>
   },
+  // When set, every write (`update` or a persisting action) also moves the row
+  // to this state, as if another request had changed it in the meantime.
+  concurrentState?: string,
 ) => {
+  const applyConcurrentState = () => {
+    if (concurrentState) row.state = concurrentState
+  }
   // Stands in for the database row: `update` merges into it and every fetch
   // returns a copy, so the service sees its own earlier writes.
   const applicationService = {
     update: jest.fn(async (_id: string, data: Partial<ApplicationRow>) => {
       Object.assign(row, data)
+      applyConcurrentState()
     }),
     // SDF must not call these directly; a direct call would bypass the mocked
     // action service. Its indirect writes are covered by the action calls and
@@ -273,8 +350,28 @@ const buildController = (
       ...result,
       updatedApplication: app,
     }))
+  // Like the real one, a successful persisting action stores each action's
+  // result in the row's externalData.
+  const performActionOnApplication = jest.fn(
+    async (app: ApplicationWithAttachments, ...rest: unknown[]) => {
+      const apis = [rest[2] as TemplateApi | TemplateApi[]].flat()
+      if (!results.persistingAction.hasError) {
+        row.externalData = {
+          ...row.externalData,
+          ...Object.fromEntries(
+            apis.map((api) => [
+              api.action,
+              { status: 'success', data: {}, date: new Date() },
+            ]),
+          ),
+        }
+        applyConcurrentState()
+      }
+      return { ...results.persistingAction, updatedApplication: app }
+    },
+  )
   const applicationActionService = {
-    performActionOnApplication: echoApplication(results.persistingAction),
+    performActionOnApplication,
     performEphemeralActionOnApplication: echoApplication(
       results.ephemeralAction,
     ),
@@ -325,6 +422,9 @@ interface ActionCall {
 interface StateChangeCall {
   answers: Record<string, unknown>
   event: string
+  // The externalData keys on the application changeState receives, when it
+  // has any.
+  externalData?: string[]
 }
 
 interface PersistenceCase {
@@ -373,6 +473,11 @@ interface PersistenceCase {
   // When set, the event the event permission check must log a warning for.
   // Defaults to no warning.
   eventWarning?: string
+  // When set, saving the application or running a persisting action also
+  // moves it to this state.
+  concurrentState?: string
+  // When set, the action types of the returned Screen's footer buttons.
+  footerActionTypes?: string[]
 }
 
 const SUBMIT_EVENT = DefaultEvents.APPROVE
@@ -401,9 +506,9 @@ const writesField0: ReadWriteValues = {
 // the action saves, which template API actions it runs with which event, and
 // what it passes to changeState. Some rows cover failures: NEXT_PAGE with a
 // stale page index, NEXT_PAGE and REFETCH with a failing action, NEXT_PAGE and
-// SUBMIT blocked by validation, and SUBMIT with a failed or unmatched state
-// change. A new action type fails the coverage test until it has an entry
-// with a row.
+// SUBMIT blocked by validation, SUBMIT from a screen that is not the last,
+// and SUBMIT with a failed, unmatched or concurrent state change. A new action
+// type fails the coverage test until it has an entry with a row.
 const cases: Record<SdfActionType, PersistenceCase[]> = {
   [SdfActionType.NEXT_PAGE]: [
     {
@@ -808,10 +913,9 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
   [SdfActionType.SUBMIT]: [
     {
       // changeState must get the answers that were just saved. The last save
-      // is getScreen resuming at the first unanswered page, because pageIndex
-      // is 0 and the application now has answers.
+      // is getScreen resuming the page cursor, on the form's only page.
       label: 'with answers',
-      form: twoPageForm,
+      form: onePageForm,
       dto: {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
@@ -820,7 +924,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       saves: [
         { answers: { field0: 'value' } },
         { pageIndex: 0 },
-        { pageIndex: 1 },
+        { pageIndex: 0 },
       ],
       persistingActions: [],
       ephemeralActions: [],
@@ -828,23 +932,22 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'merging with saved answers',
-      form: twoPageForm,
+      form: onePageForm,
       application: { answers: savedAnswers() },
       dto: {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: newAnswers,
       },
-      saves: [{ answers: mergedAnswers }, { pageIndex: 0 }, { pageIndex: 1 }],
+      saves: [{ answers: mergedAnswers }, { pageIndex: 0 }, { pageIndex: 0 }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: mergedAnswers, event: SUBMIT_EVENT }],
     },
     {
-      // The request's object must be copied, not written into. The resume
-      // save lands on page 0 because field0 on that page is still unanswered.
+      // The request's object must be copied, not written into.
       label: 'with an object value and a dotted key under it',
-      form: twoPageForm,
+      form: onePageForm,
       dto: {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
@@ -866,7 +969,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'by a delegated actor',
-      form: twoPageForm,
+      form: onePageForm,
       user: { actor: { nationalId: ACTOR } } as Partial<User>,
       dto: {
         actionType: SdfActionType.SUBMIT,
@@ -876,7 +979,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       saves: [
         { answers: { field0: 'value' }, applicantActors: [ACTOR] },
         { pageIndex: 0 },
-        { pageIndex: 1 },
+        { pageIndex: 0 },
       ],
       persistingActions: [],
       ephemeralActions: [],
@@ -884,7 +987,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'by a delegated actor, without answers',
-      form: twoPageForm,
+      form: onePageForm,
       user: { actor: { nationalId: ACTOR } } as Partial<User>,
       dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
       saves: [{ applicantActors: [ACTOR] }, { pageIndex: 0 }],
@@ -894,7 +997,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'without answers',
-      form: twoPageForm,
+      form: onePageForm,
       dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
       saves: [{ pageIndex: 0 }],
       persistingActions: [],
@@ -905,7 +1008,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       // A data-provider screen can be the last one, so SUBMIT runs its
       // providers before the state change. Only those the screen declares.
       label: 'from a data-provider screen',
-      form: dataProviderThenPageForm,
+      form: dataProviderOnlyForm,
       dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
       saves: [{ pageIndex: 0 }],
       persistingActions: [
@@ -916,11 +1019,144 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         },
       ],
       ephemeralActions: [],
-      stateChanges: [{ answers: {}, event: SUBMIT_EVENT }],
+      // changeState must get the provider's result, which was just saved.
+      stateChanges: [
+        {
+          answers: {},
+          event: SUBMIT_EVENT,
+          externalData: [providerApi.action],
+        },
+      ],
+    },
+    {
+      label: 'from a data-provider screen the role may not write',
+      form: dataProviderOnlyForm,
+      write: { answers: ['field0'] },
+      dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
+      rejects: { type: ForbiddenException, message: /providerAction/ },
+      saves: [],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      label: 'from a screen that is not the last',
+      form: twoPageForm,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { field0: 'value' },
+      },
+      rejects: {
+        type: ConflictException,
+        problemType:
+          'https://island.is/problems/application-system/sdf/submit-not-on-last-screen',
+      },
+      saves: [],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      // The answers are already saved when the change is noticed.
+      label: 'when the state changes during the request',
+      form: onePageForm,
+      concurrentState: 'completed',
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { field0: 'value' },
+      },
+      rejects: {
+        type: ConflictException,
+        problemType:
+          'https://island.is/problems/application-system/sdf/state-changed',
+      },
+      saves: [{ answers: { field0: 'value' } }],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      label: 'from a data-provider screen when the state changes meanwhile',
+      form: dataProviderOnlyForm,
+      concurrentState: 'completed',
+      dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
+      rejects: {
+        type: ConflictException,
+        problemType:
+          'https://island.is/problems/application-system/sdf/state-changed',
+      },
+      saves: [],
+      persistingActions: [
+        {
+          actions: [providerApi.action],
+          event: DefaultEvents.SUBMIT,
+          answers: {},
+        },
+      ],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      label: 'from the last of two pages',
+      form: twoPageForm,
+      application: { pageIndex: 1 },
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { field1: 'value' },
+      },
+      saves: [
+        { answers: { field1: 'value' } },
+        { pageIndex: 0 },
+        { pageIndex: 0 },
+      ],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [{ answers: { field1: 'value' }, event: SUBMIT_EVENT }],
+    },
+    {
+      // The saved answers hide page 1; the submitted ones would show it.
+      label: 'from a page the saved answers make the last',
+      form: hideablePageForm,
+      application: { answers: { field0: 'hide' } },
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { field0: 'show' },
+      },
+      saves: [
+        { answers: { field0: 'show' } },
+        { pageIndex: 0 },
+        { pageIndex: 1 },
+      ],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [{ answers: { field0: 'show' }, event: SUBMIT_EVENT }],
+    },
+    {
+      // The saved answers show page 1; the submitted ones would hide it.
+      label: 'from a page only the submitted answers make the last',
+      form: hideablePageForm,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { field0: 'hide' },
+      },
+      rejects: {
+        type: ConflictException,
+        problemType:
+          'https://island.is/problems/application-system/sdf/submit-not-on-last-screen',
+      },
+      saves: [],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
     },
     {
       label: 'from a data-provider screen when the provider fails',
-      form: dataProviderThenPageForm,
+      form: dataProviderOnlyForm,
       persistingActionResult: providerFailed,
       dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
       rejects: { message: /Provider failed/ },
@@ -937,7 +1173,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'that fails validation',
-      form: twoPageForm,
+      form: onePageForm,
       dataSchema: strictSchema,
       dto: {
         actionType: SdfActionType.SUBMIT,
@@ -952,7 +1188,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'with a cleared required field',
-      form: twoPageForm,
+      form: onePageForm,
       dataSchema: templateRequiredSchema,
       dto: {
         actionType: SdfActionType.SUBMIT,
@@ -968,7 +1204,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'with an answer the role may not write',
-      form: twoPageForm,
+      form: onePageForm,
       write: writesField0,
       application: { answers: { other: 'stored' } },
       dto: {
@@ -979,7 +1215,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       saves: [
         { answers: { field0: 'value', other: 'stored' } },
         { pageIndex: 0 },
-        { pageIndex: 1 },
+        { pageIndex: 0 },
       ],
       persistingActions: [],
       ephemeralActions: [],
@@ -991,7 +1227,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     {
       // Nothing is left to save, but the state change still runs.
       label: 'with only answers the role may not write',
-      form: twoPageForm,
+      form: onePageForm,
       write: writesField0,
       dto: {
         actionType: SdfActionType.SUBMIT,
@@ -1009,7 +1245,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     // skipped when it fails.
     {
       label: 'when the state change fails',
-      form: twoPageForm,
+      form: onePageForm,
       dto: {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
@@ -1028,7 +1264,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'when no transition handles the event',
-      form: twoPageForm,
+      form: onePageForm,
       dto: {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
@@ -1047,7 +1283,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'with an event the role may not send',
-      form: twoPageForm,
+      form: onePageForm,
       dto: {
         actionType: SdfActionType.SUBMIT,
         event: UNPERMITTED_EVENT,
@@ -1062,7 +1298,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'by a user with no role',
-      form: twoPageForm,
+      form: onePageForm,
       noRole: true,
       dto: {
         actionType: SdfActionType.SUBMIT,
@@ -1119,6 +1355,22 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         },
       ],
       stateChanges: [],
+    },
+    {
+      // An unsaved answer that hides page 1 must not bring up submit buttons,
+      // which SUBMIT would reject while page 1 is still saved as shown.
+      label: 'with an answer that would make the page the last',
+      form: hideablePageForm,
+      dto: {
+        actionType: SdfActionType.REFETCH,
+        answers: { field0: 'hide' },
+        refetchTemplateApiActions: [],
+      },
+      saves: [],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+      footerActionTypes: ['NEXT_PAGE'],
     },
     {
       label: 'requesting an action the role does not have',
@@ -1266,11 +1518,15 @@ describe('SDF action persistence', () => {
         : template,
     )
     const { controller, applicationService, applicationActionService, logger } =
-      buildController(row, {
-        persistingAction: c.persistingActionResult ?? succeeded,
-        ephemeralAction: c.ephemeralActionResult ?? succeeded,
-        changeState: c.changeStateResult ?? transitioned,
-      })
+      buildController(
+        row,
+        {
+          persistingAction: c.persistingActionResult ?? succeeded,
+          ephemeralAction: c.ephemeralActionResult ?? succeeded,
+          changeState: c.changeStateResult ?? transitioned,
+        },
+        c.concurrentState,
+      )
     const requestAnswersBefore = cloneDeep(c.dto.answers)
 
     const request = controller.executeAction(
@@ -1306,6 +1562,11 @@ describe('SDF action persistence', () => {
       if (c.validationMessages) {
         expect(errors.map((e) => e.message)).toEqual(c.validationMessages)
       }
+      if (c.footerActionTypes) {
+        expect(
+          (response as ScreenDto).footer.buttons.map((b) => b.actionType),
+        ).toEqual(c.footerActionTypes)
+      }
     }
 
     expect(
@@ -1323,10 +1584,17 @@ describe('SDF action persistence', () => {
       actionCalls(applicationActionService.performEphemeralActionOnApplication),
     ).toEqual(c.ephemeralActions)
     expect(
-      applicationActionService.changeState.mock.calls.map(([app, , event]) => ({
-        answers: (app as ApplicationWithAttachments).answers,
-        event,
-      })),
+      applicationActionService.changeState.mock.calls.map(([app, , event]) => {
+        const { answers, externalData } = app as ApplicationWithAttachments
+        const externalDataKeys = Object.keys(externalData ?? {})
+        return {
+          answers,
+          event,
+          ...(externalDataKeys.length > 0 && {
+            externalData: externalDataKeys,
+          }),
+        }
+      }),
     ).toEqual(c.stateChanges)
     const droppedChangedKeys = c.droppedChangedKeys ?? []
     const droppedWarnings = logger.warn.mock.calls
