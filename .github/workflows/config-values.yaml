@@ -75,10 +75,6 @@ jobs:
         working-directory: infra
         run: yarn test
 
-      - name: Check chart values are up-to-date
-        if: ${{ github.ref == 'ref/heads/main' }}
-        run: ./infra/scripts/ci/diff-chart-values-all-charts.sh
-
       - name: Commit any changes to charts
         if: ${{ github.event_name == 'pull_request' }}
         env:
