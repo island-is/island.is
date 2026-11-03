@@ -9,6 +9,7 @@ import {
   CaseState,
   CaseType,
   ServiceRequirement,
+  ServiceStatus,
   UserRole,
   VerdictAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -234,5 +235,33 @@ describe('Defender IndictmentOverview', () => {
     expect(screen.queryAllByTestId('defenderVerdictTimelineCard')).toHaveLength(
       0,
     )
+  })
+
+  it('hides Ákæra birt once the case is completed', async () => {
+    const closedCase = completedCase(CaseIndictmentRulingDecision.RULING)
+    const [defendant] = closedCase.defendants ?? []
+
+    renderOverview({
+      ...closedCase,
+      defendants: defendant
+        ? [
+            {
+              ...defendant,
+              subpoenas: [
+                {
+                  id: 'subpoena_id',
+                  serviceStatus: ServiceStatus.ELECTRONICALLY,
+                  serviceDate: '2026-09-01T23:03:00.000Z',
+                },
+              ],
+            },
+          ]
+        : [],
+    })
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Máli lokið' }),
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/Ákæra birt/)).not.toBeInTheDocument()
   })
 })

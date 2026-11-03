@@ -72,6 +72,7 @@ export const GET_TAX_CALCULATOR_CALCULATION = gql`
           numberValue
           stringValue
           booleanValue
+          dateValue
           arrayValue {
             values {
               key
@@ -79,6 +80,7 @@ export const GET_TAX_CALCULATOR_CALCULATION = gql`
               numberValue
               stringValue
               booleanValue
+              dateValue
             }
           }
         }

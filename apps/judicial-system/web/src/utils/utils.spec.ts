@@ -544,7 +544,7 @@ describe('Utils', () => {
         )
       })
 
-      test('returns "Verjandi {name} kærði úrskurðinn {date}" for the case defender', () => {
+      test('returns "Verjandi {name} kærði úrskurðinn {date}" when defendants share one defender name', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
           appealDecisions: [
@@ -554,7 +554,10 @@ describe('Utils', () => {
               decision: CaseAppealDecision.POSTPONE,
             },
           ],
-          defenderName: 'Jón Jónsson',
+          defendants: [
+            { id: 'd1', defenderName: 'Jón Jónsson' },
+            { id: 'd2', defenderName: 'Jón Jónsson' },
+          ],
           appealCase: {
             appealedByRole: UserRole.DEFENDER,
             appealedDate,
@@ -563,6 +566,31 @@ describe('Utils', () => {
 
         expect(getAppealActorText(workingCase)).toBe(
           `Verjandi Jón Jónsson kærði úrskurðinn ${dateStr}`,
+        )
+      })
+
+      test('falls back to "Kært af verjanda {date}" when defendants have different defenders', () => {
+        const workingCase = {
+          type: CaseType.CUSTODY,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.DEFENDANT,
+              decision: CaseAppealDecision.POSTPONE,
+            },
+          ],
+          defendants: [
+            { id: 'd1', defenderName: 'Jón Jónsson' },
+            { id: 'd2', defenderName: 'Guðrún Guðmundsdóttir' },
+          ],
+          appealCase: {
+            appealedByRole: UserRole.DEFENDER,
+            appealedDate,
+          } as AppealCase,
+        } as unknown as WorkingCase
+
+        expect(getAppealActorText(workingCase)).toBe(
+          `Kært af verjanda ${dateStr}`,
         )
       })
 

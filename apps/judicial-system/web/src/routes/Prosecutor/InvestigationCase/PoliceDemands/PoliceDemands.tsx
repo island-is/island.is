@@ -1,5 +1,4 @@
 import { useCallback, useContext } from 'react'
-import type { MessageDescriptor } from 'react-intl'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -66,7 +65,7 @@ const PoliceDemands = () => {
       Record<
         CaseType,
         {
-          text: MessageDescriptor
+          text: string
           format?: {
             court?: boolean
             accused?: boolean
@@ -124,38 +123,41 @@ const PoliceDemands = () => {
     if (workingCase.defendants && workingCase.defendants.length > 0) {
       const courtClaim = workingCase.type && courtClaimPrefill[workingCase.type]
       const courtClaimText = courtClaim
-        ? formatMessage(courtClaim.text, {
-            ...(courtClaim.format?.accused && {
-              accused: enumerate(
-                workingCase.defendants.map(
-                  (defendant) =>
-                    `${defendant.name} ${`${formatDOB(
-                      defendant.nationalId,
-                      defendant.noNationalId,
-                      '',
-                    )}`.trim()}`,
+        ? formatMessage(
+            { id: courtClaim.text, defaultMessage: courtClaim.text },
+            {
+              ...(courtClaim.format?.accused && {
+                accused: enumerate(
+                  workingCase.defendants.map(
+                    (defendant) =>
+                      `${defendant.name} ${`${formatDOB(
+                        defendant.nationalId,
+                        defendant.noNationalId,
+                        '',
+                      )}`.trim()}`,
+                  ),
+                  formatMessage(core.and),
                 ),
-                formatMessage(core.and),
-              ),
-            }),
-            ...(courtClaim.format?.address && {
-              address: workingCase.defendants.find((x) => x.address)?.address,
-            }),
-            ...(courtClaim.format?.court && {
-              court: workingCase.court?.name,
-            }),
-            ...(courtClaim.format?.institution && {
-              institution: formatInstitutionName(
-                workingCase.prosecutorsOffice?.name,
-              ),
-            }),
-            ...(courtClaim.format?.live && {
-              live: workingCase.defendants.length,
-            }),
-            ...(courtClaim.format?.year && {
-              year: new Date().getFullYear(),
-            }),
-          })
+              }),
+              ...(courtClaim.format?.address && {
+                address: workingCase.defendants.find((x) => x.address)?.address,
+              }),
+              ...(courtClaim.format?.court && {
+                court: workingCase.court?.name,
+              }),
+              ...(courtClaim.format?.institution && {
+                institution: formatInstitutionName(
+                  workingCase.prosecutorsOffice?.name,
+                ),
+              }),
+              ...(courtClaim.format?.live && {
+                live: workingCase.defendants.length,
+              }),
+              ...(courtClaim.format?.year && {
+                year: new Date().getFullYear(),
+              }),
+            },
+          )
         : undefined
 
       setAndSendCaseToServer(
@@ -190,20 +192,16 @@ const PoliceDemands = () => {
         )}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(icDemands.heading)}</PageTitle>
+        <PageTitle>{icDemands.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(icDemands.sections.demands.heading)}
-            />
+            <SectionHeading title={icDemands.sections.demands.heading} />
             <Input
               data-testid="demands"
               name="demands"
-              label={formatMessage(icDemands.sections.demands.label)}
-              placeholder={formatMessage(
-                icDemands.sections.demands.placeholder,
-              )}
+              label={icDemands.sections.demands.label}
+              placeholder={icDemands.sections.demands.placeholder}
               value={demandsInput.value}
               errorMessage={demandsInput.errorMessage}
               hasError={demandsInput.hasError}
@@ -215,18 +213,20 @@ const PoliceDemands = () => {
             />
           </Box>
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(icDemands.sections.lawsBroken.heading)}
-            />
+            <SectionHeading title={icDemands.sections.lawsBroken.heading} />
             <Input
               data-testid="lawsBroken"
               name="lawsBroken"
-              label={formatMessage(icDemands.sections.lawsBroken.label, {
-                defendant: 'varnaraðila',
-              })}
-              placeholder={formatMessage(
-                icDemands.sections.lawsBroken.placeholder,
+              label={formatMessage(
+                {
+                  id: icDemands.sections.lawsBroken.label,
+                  defaultMessage: icDemands.sections.lawsBroken.label,
+                },
+                {
+                  defendant: 'varnaraðila',
+                },
               )}
+              placeholder={icDemands.sections.lawsBroken.placeholder}
               value={lawsBrokenInput.value}
               errorMessage={lawsBrokenInput.errorMessage}
               hasError={lawsBrokenInput.hasError}
@@ -238,16 +238,12 @@ const PoliceDemands = () => {
             />
           </Box>
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(icDemands.sections.legalBasis.heading)}
-            />
+            <SectionHeading title={icDemands.sections.legalBasis.heading} />
             <Input
               data-testid="legalBasis"
               name="legalBasis"
-              label={formatMessage(icDemands.sections.legalBasis.label)}
-              placeholder={formatMessage(
-                icDemands.sections.legalBasis.placeholder,
-              )}
+              label={icDemands.sections.legalBasis.label}
+              placeholder={icDemands.sections.legalBasis.placeholder}
               value={legalBasisInput.value}
               errorMessage={legalBasisInput.errorMessage}
               hasError={legalBasisInput.hasError}

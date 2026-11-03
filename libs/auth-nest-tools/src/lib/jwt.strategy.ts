@@ -75,6 +75,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       userAgent: request.headers['user-agent'],
       audkenniSimNumber: payload.audkenni_sim_number,
       delegationProvider: payload.client_delegation_provider,
+      acr: payload.acr,
+      idp: payload.idp,
+      authTime: payload.auth_time
+        ? new Date(payload.auth_time * 1000)
+        : undefined,
     }
   }
 }

@@ -10,6 +10,7 @@ import {
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
 
+import { AwsS3Service } from '../../aws-s3'
 import { CaseService, PdfService } from '../../case'
 import {
   AppealEventLogRepositoryService,
@@ -20,6 +21,7 @@ import { AppealSummonsService } from '../appealSummons.service'
 
 jest.mock('../../case/pdf.service')
 jest.mock('../../case/case.service')
+jest.mock('../../aws-s3/awsS3.service')
 jest.mock('../../repository/services/appealSummonsRepository.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
 
@@ -35,6 +37,7 @@ export const createTestingAppealSummonsModule = async () => {
       SharedAuthModule,
       CaseService,
       PdfService,
+      AwsS3Service,
       AppealSummonsRepositoryService,
       AppealEventLogRepositoryService,
       {
@@ -63,6 +66,8 @@ export const createTestingAppealSummonsModule = async () => {
 
   const pdfService = appealSummonsModule.get<PdfService>(PdfService)
 
+  const awsS3Service = appealSummonsModule.get<AwsS3Service>(AwsS3Service)
+
   const sequelize = appealSummonsModule.get<Sequelize>(Sequelize)
 
   const appealSummonsController =
@@ -77,6 +82,7 @@ export const createTestingAppealSummonsModule = async () => {
     appealSummonsRepositoryService,
     appealEventLogRepositoryService,
     pdfService,
+    awsS3Service,
     sequelize,
     appealSummonsController,
     appealSummonsService,

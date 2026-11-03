@@ -37,6 +37,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { FormDelegationDto } from './models/dto/formDelegation.dto'
+import { ImportFormDto } from './models/dto/importForm.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)
@@ -44,6 +45,26 @@ import { FormDelegationDto } from './models/dto/formDelegation.dto'
 @Controller({ path: 'forms', version: ['1', VERSION_NEUTRAL] })
 export class FormsController {
   constructor(private readonly formsService: FormsService) {}
+
+  @ApiOperation({ summary: 'Export the complete form definition' })
+  @ApiOkResponse({ type: String })
+  @Get('export/:id')
+  async exportForm(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<string> {
+    return this.formsService.exportForm(user, id)
+  }
+
+  @ApiOperation({ summary: 'Import a form as a new unpublished draft' })
+  @ApiCreatedResponse({ type: FormResponseDto })
+  @Post('import')
+  async importForm(
+    @CurrentUser() user: User,
+    @Body() input: ImportFormDto,
+  ): Promise<FormResponseDto> {
+    return this.formsService.importForm(user, input)
+  }
 
   @ApiOperation({ summary: 'Add form delegation' })
   @ApiNoContentResponse({

@@ -1,4 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
+import { ArrayMinSize, ArrayUnique, IsOptional } from 'class-validator'
+
+import { Environment } from '@island.is/shared/types'
 
 @InputType('AuthAdminDeleteClientInput')
 export class DeleteClientInput {
@@ -7,4 +10,13 @@ export class DeleteClientInput {
 
   @Field(() => String)
   clientId!: string
+
+  @Field(() => [Environment], {
+    nullable: true,
+    description: 'Environments to archive from. Defaults to all environments.',
+  })
+  @IsOptional()
+  @ArrayMinSize(1)
+  @ArrayUnique()
+  environments?: Environment[]
 }

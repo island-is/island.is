@@ -155,7 +155,7 @@ const RegisterVerdictAppeal = () => {
     }
 
     if (!valid) {
-      toast.error(formatMessage(errors.invalidDate))
+      toast.error(errors.invalidDate)
       return
     }
 

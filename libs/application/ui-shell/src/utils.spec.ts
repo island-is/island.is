@@ -11,6 +11,7 @@ import {
 } from './types'
 import {
   buildExternalDataProvider,
+  buildInteractiveTableField,
   buildMultiField,
   buildRepeater,
   buildTextField,
@@ -155,6 +156,40 @@ describe('ui-shell-utils', () => {
             yetMore: 'finally',
           },
         })
+      })
+
+      it('submits the row ids of an interactive table with its selection', () => {
+        const table = buildInteractiveTableField({
+          id: 'selected',
+          selectable: true,
+          header: ['Name'],
+          rows: [['a'], ['b']],
+          rowIds: { id: 'selectedIds', getIds: () => ['A', 'B'] },
+        })
+
+        const multiField = buildMultiField({
+          id: 'tableScreen',
+          title: '',
+          children: [table],
+        })
+
+        const screen: MultiFieldScreen = {
+          sectionIndex: 0,
+          subSectionIndex: 0,
+          ...multiField,
+          children: [buildFieldDef(table)],
+        }
+
+        expect(
+          extractAnswersToSubmitFromScreen(
+            {
+              selected: [false, true],
+              selectedIds: ['A', 'B'],
+              other: 'x',
+            },
+            screen,
+          ),
+        ).toEqual({ selected: [false, true], selectedIds: ['A', 'B'] })
       })
     })
 

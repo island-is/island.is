@@ -46,4 +46,9 @@ export const APPEAL_APPOINTMENT_LETTER_ENDPOINTS = [
   'appealAppointmentLetter/civilClaimant/:civilClaimantId',
   'appealAppointmentLetter/civilClaimant/:civilClaimantId/:fileName',
 ]
+export const APPEAL_SUMMONS_ENDPOINTS = [
+  'appealSummons/:appealSummonsId',
+  'appealSummons/:appealSummonsId/:fileName',
+]
+export const APPEAL_SUMMONS_PREVIEW_ENDPOINT = 'appealSummons/preview'
 export const ALL_FILES_ENDPOINTS = 'allFiles'

@@ -3,5 +3,7 @@ import { WorkAccidentNotificationAnswers } from './lib/dataSchema'
 
 export const getFields = () => import('./fields')
 
+export * from './lib/messages'
+
 export type WorkAccidentNotification = WorkAccidentNotificationAnswers
 export default template

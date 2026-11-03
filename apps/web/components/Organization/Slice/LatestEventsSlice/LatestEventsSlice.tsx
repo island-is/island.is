@@ -17,19 +17,21 @@ interface LatestEventsSliceProps {
   slice: LatestEventsSliceSchema
   slug: string
   namespace: Record<string, string>
-  linkType?: LinkType
-  overview?: LinkType
+  eventLinkType?: LinkType
+  eventOverviewLinkType?: LinkType
 }
 
 export const LatestEventsSlice = ({
   slice,
   slug,
   namespace,
+  eventLinkType = 'event',
+  eventOverviewLinkType = 'organizationeventoverview',
 }: LatestEventsSliceProps) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
-  const overviewHref = linkResolver('organizationeventoverview', [slug]).href
+  const overviewHref = linkResolver(eventOverviewLinkType, [slug]).href
 
   const seeMoreEventsText = n(
     'seeMoreEvents',
@@ -88,7 +90,7 @@ export const LatestEventsSlice = ({
                   startTime={time.startTime ?? ''}
                   endTime={time.endTime ?? ''}
                   endDate={time.endDate ?? ''}
-                  href={linkResolver('event', [slug, eventSlug]).href}
+                  href={linkResolver(eventLinkType, [slug, eventSlug]).href}
                   date={startDate}
                   location={location}
                   namespace={namespace}

@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import {
   BelongsTo,
   Column,
@@ -19,7 +20,10 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { AppealCaseJudge } from './appealCaseJudge.model'
+import { AppealCourtSession } from './appealCourtSession.model'
 import { AppealEventLog } from './appealEventLog.model'
+import { AppealStatementDeadline } from './appealStatementDeadline.model'
 import { AppealSummons } from './appealSummons.model'
 import { Case } from './case.model'
 import { CaseFile } from './caseFile.model'
@@ -141,49 +145,12 @@ export class AppealCase extends Model {
   appealAssistant?: User
 
   /**********
-   * The surrogate key of the first judge assigned to the appeal case
+   * The judges assigned to the appeal case, in bench order; the first is the
+   * presiding judge
    **********/
-  @ForeignKey(() => User)
-  @Column({ type: DataType.UUID, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  appealJudge1Id?: string
-
-  /**********
-   * The first judge assigned to the appeal case
-   **********/
-  @BelongsTo(() => User, 'appealJudge1Id')
-  @ApiPropertyOptional({ type: User })
-  appealJudge1?: User
-
-  /**********
-   * The surrogate key of the second judge assigned to the appeal case
-   **********/
-  @ForeignKey(() => User)
-  @Column({ type: DataType.UUID, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  appealJudge2Id?: string
-
-  /**********
-   * The second judge assigned to the appeal case
-   **********/
-  @BelongsTo(() => User, 'appealJudge2Id')
-  @ApiPropertyOptional({ type: User })
-  appealJudge2?: User
-
-  /**********
-   * The surrogate key of the third judge assigned to the appeal case
-   **********/
-  @ForeignKey(() => User)
-  @Column({ type: DataType.UUID, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  appealJudge3Id?: string
-
-  /**********
-   * The third judge assigned to the appeal case
-   **********/
-  @BelongsTo(() => User, 'appealJudge3Id')
-  @ApiPropertyOptional({ type: User })
-  appealJudge3?: User
+  @HasMany(() => AppealCaseJudge, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealCaseJudge, isArray: true })
+  appealJudges?: AppealCaseJudge[]
 
   /**********
    * The case appeal ruling decision
@@ -269,4 +236,31 @@ export class AppealCase extends Model {
   @HasMany(() => AppealSummons, 'appealCaseId')
   @ApiPropertyOptional({ type: () => AppealSummons, isArray: true })
   appealSummonses?: AppealSummons[]
+
+  /**********
+   * Summonses that have been sent to the court of appeals. Staff keep the
+   * unscoped association above; Landsréttur only ever joins this one.
+   **********/
+  @HasMany(() => AppealSummons, {
+    foreignKey: 'appealCaseId',
+    as: 'sentAppealSummonses',
+    scope: { sentToCourtOfAppealsDate: { [Op.ne]: null } },
+  })
+  @ApiPropertyOptional({ type: () => AppealSummons, isArray: true })
+  sentAppealSummonses?: AppealSummons[]
+
+  /**********
+   * Court sessions (þinghöld) the court of appeals has called in this verdict appeal
+   **********/
+  @HasMany(() => AppealCourtSession, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealCourtSession, isArray: true })
+  courtSessions?: AppealCourtSession[]
+
+  /**********
+   * The deadlines (greinargerðarfrestir) the court of appeals has given the
+   * parties of this verdict appeal to file their statements, one per party
+   **********/
+  @HasMany(() => AppealStatementDeadline, 'appealCaseId')
+  @ApiPropertyOptional({ type: () => AppealStatementDeadline, isArray: true })
+  statementDeadlines?: AppealStatementDeadline[]
 }

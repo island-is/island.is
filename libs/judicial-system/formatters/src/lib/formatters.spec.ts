@@ -25,7 +25,20 @@ import {
   readableIndictmentSubtypes,
   sanitize,
   splitStringByComma,
+  stripPdfExtension,
 } from './formatters'
+
+describe('stripPdfExtension', () => {
+  it('removes a trailing .pdf extension', () => {
+    expect(stripPdfExtension('Greinargerð.pdf')).toBe('Greinargerð')
+    expect(stripPdfExtension('Greinargerð.PDF')).toBe('Greinargerð')
+  })
+
+  it('leaves names without a pdf extension alone', () => {
+    expect(stripPdfExtension('Greinargerð')).toBe('Greinargerð')
+    expect(stripPdfExtension('skyrsla.docx')).toBe('skyrsla.docx')
+  })
+})
 
 describe('formatDate', () => {
   test('should return undefined if date parameter is undefined', () => {

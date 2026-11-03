@@ -108,6 +108,16 @@ export class BankTransferPayment extends Model<
   })
   actorNationalId?: string | null
 
+  // The 4-digit bank part of the payer's account number, for per-bank monitoring. The account
+  // number itself is sent to Blikk only. Empty on rows created before it was recorded.
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING(4),
+    allowNull: true,
+    field: 'bank_code',
+  })
+  bankCode?: string | null
+
   // TTL set on creation; mirrors the value sent to Blikk. Past this, the row is silent-stale.
   @ApiProperty()
   @Column({

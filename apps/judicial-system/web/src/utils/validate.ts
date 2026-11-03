@@ -1,9 +1,11 @@
 import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import {
+  hasAllAppealJudges,
   isIndictmentCase,
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { isRequestSharingDecidedForAllDefenders } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import type {
   AppealCase,
   CourtSessionResponse,
@@ -172,6 +174,14 @@ const firstDefendantIsInvalid = (workingCase: WorkingCase): boolean => {
   return Boolean(first && isDefendantInvalid(first))
 }
 
+const areDefenderContactsValid = (workingCase: WorkingCase): boolean =>
+  validate(
+    (workingCase.defendants ?? []).flatMap((defendant): ValidateItem[] => [
+      [defendant.defenderEmail, ['email-format']],
+      [defendant.defenderPhoneNumber, ['phonenumber']],
+    ]),
+  ).isValid
+
 const someDefendantIsInvalid = (workingCase: WorkingCase): boolean => {
   return Boolean(
     workingCase.defendants &&
@@ -226,15 +236,14 @@ export const isDefendantStepValidRC = (
       policeCaseNumbers.length > 0 &&
       (workingCase.defendants?.length ?? 0) > 0 &&
       !firstDefendantIsInvalid(workingCase) &&
-      (workingCase.defenderName
-        ? Boolean(workingCase.requestSharedWithDefender)
-        : true) &&
+      isRequestSharingDecidedForAllDefenders(
+        workingCase.defendants?.slice(0, 1),
+      ) &&
+      areDefenderContactsValid(workingCase) &&
       validate([
         ...policeCaseNumbers.map(
           (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
         ),
-        [workingCase.defenderEmail, ['email-format']],
-        [workingCase.defenderPhoneNumber, ['phonenumber']],
         workingCase.type === CaseType.TRAVEL_BAN
           ? 'valid'
           : [workingCase.leadInvestigator, ['empty']],
@@ -247,13 +256,8 @@ export const isDefendantStepValidIC = (workingCase: WorkingCase): boolean => {
     (workingCase.defendants?.length ?? 0) > 0 &&
       !someDefendantIsInvalid(workingCase) &&
       areVictimsValid(workingCase.victims) &&
-      (workingCase.defenderName
-        ? Boolean(workingCase.requestSharedWithDefender)
-        : true) &&
-      validate([
-        [workingCase.defenderEmail, ['email-format']],
-        [workingCase.defenderPhoneNumber, ['phonenumber']],
-      ]).isValid,
+      isRequestSharingDecidedForAllDefenders(workingCase.defendants) &&
+      areDefenderContactsValid(workingCase),
   )
 }
 
@@ -521,16 +525,17 @@ export const isCourtHearingArrangemenstStepValidRC = (
   workingCase: WorkingCase,
   arraignmentDate?: DateLog,
 ): boolean => {
-  return validate([
-    [workingCase.defenderEmail, ['email-format']],
-    [workingCase.defenderPhoneNumber, ['phonenumber']],
-    [
-      arraignmentDate
-        ? arraignmentDate.date
-        : workingCase.arraignmentDate?.date,
-      ['empty', 'date-format'],
-    ],
-  ]).isValid
+  return (
+    areDefenderContactsValid(workingCase) &&
+    validate([
+      [
+        arraignmentDate
+          ? arraignmentDate.date
+          : workingCase.arraignmentDate?.date,
+        ['empty', 'date-format'],
+      ],
+    ]).isValid
+  )
 }
 
 export const isCourtHearingArrangementsStepValidIC = (
@@ -539,9 +544,8 @@ export const isCourtHearingArrangementsStepValidIC = (
 ): boolean => {
   return Boolean(
     workingCase.sessionArrangements &&
+      areDefenderContactsValid(workingCase) &&
       validate([
-        [workingCase.defenderEmail, ['email-format']],
-        [workingCase.defenderPhoneNumber, ['phonenumber']],
         [
           arraignmentDate
             ? arraignmentDate.date
@@ -885,10 +889,7 @@ export const isCourtOfAppealCaseStepValid = (
 ): boolean => {
   return Boolean(
     (appealCase?.appealState === AppealCaseState.WITHDRAWN ||
-      (appealCase?.appealJudge1 &&
-        appealCase?.appealJudge2 &&
-        appealCase?.appealJudge3 &&
-        appealCase?.appealAssistant)) &&
+      (hasAllAppealJudges(appealCase) && appealCase?.appealAssistant)) &&
       validate([
         [appealCase?.appealCaseNumber, ['empty', 'appeal-case-number-format']],
       ]).isValid,

@@ -27,8 +27,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../models/appealCase.model'
+import { AppealCaseJudge } from '../models/appealCaseJudge.model'
+import { AppealCourtSession } from '../models/appealCourtSession.model'
 import { AppealDecision } from '../models/appealDecision.model'
 import { AppealEventLog } from '../models/appealEventLog.model'
+import { AppealStatementDeadline } from '../models/appealStatementDeadline.model'
 import { AppealSummons } from '../models/appealSummons.model'
 import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
 import { Case } from '../models/case.model'
@@ -53,6 +56,26 @@ import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
 import { UpdateDateLog } from '../services/dateLogRepository.service'
 
+// The bench of an appeal case, presiding judge first. Every appeal case include
+// loads it, whatever kind of appeal the case is.
+export const appealJudgesInclude: Includeable = {
+  model: AppealCaseJudge,
+  as: 'appealJudges',
+  required: false,
+  separate: true,
+  order: [
+    ['displayOrder', 'ASC'],
+    ['created', 'ASC'],
+  ],
+  include: [
+    {
+      model: User,
+      as: 'user',
+      include: [{ model: Institution, as: 'institution' }],
+    },
+  ],
+}
+
 export const caseInclude: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
@@ -67,21 +90,7 @@ export const caseInclude: Includeable[] = [
         as: 'appealAssistant',
         include: [{ model: Institution, as: 'institution' }],
       },
-      {
-        model: User,
-        as: 'appealJudge1',
-        include: [{ model: Institution, as: 'institution' }],
-      },
-      {
-        model: User,
-        as: 'appealJudge2',
-        include: [{ model: Institution, as: 'institution' }],
-      },
-      {
-        model: User,
-        as: 'appealJudge3',
-        include: [{ model: Institution, as: 'institution' }],
-      },
+      appealJudgesInclude,
       {
         model: AppealEventLog,
         as: 'appealEventLogs',
@@ -96,6 +105,7 @@ export const caseInclude: Includeable[] = [
     as: 'verdictAppealCase',
     required: false,
     include: [
+      appealJudgesInclude,
       {
         model: AppealEventLog,
         as: 'appealEventLogs',
@@ -124,6 +134,44 @@ export const caseInclude: Includeable[] = [
           },
         ],
       },
+      {
+        model: AppealSummons,
+        as: 'sentAppealSummonses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+        include: [
+          {
+            model: User,
+            as: 'confirmedBy',
+            include: [{ model: Institution, as: 'institution' }],
+          },
+          {
+            model: AppealSummonsDefendant,
+            as: 'defendants',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
+        ],
+      },
+      {
+        model: AppealCourtSession,
+        as: 'courtSessions',
+        required: false,
+        // Most recently booked first, so the session the court has just
+        // called is at the top of the list rather than wherever its date
+        // falls.
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+      {
+        model: AppealStatementDeadline,
+        as: 'statementDeadlines',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
     ],
   },
   {
@@ -137,21 +185,7 @@ export const caseInclude: Includeable[] = [
         as: 'appealAssistant',
         include: [{ model: Institution, as: 'institution' }],
       },
-      {
-        model: User,
-        as: 'appealJudge1',
-        include: [{ model: Institution, as: 'institution' }],
-      },
-      {
-        model: User,
-        as: 'appealJudge2',
-        include: [{ model: Institution, as: 'institution' }],
-      },
-      {
-        model: User,
-        as: 'appealJudge3',
-        include: [{ model: Institution, as: 'institution' }],
-      },
+      appealJudgesInclude,
       {
         model: AppealEventLog,
         as: 'appealEventLogs',
@@ -943,11 +977,6 @@ export const limitedAccessCaseAttributes: (keyof Case)[] = [
   'indictmentSubtypes',
   'state',
   'policeCaseNumbers',
-  'defenderName',
-  'defenderNationalId',
-  'defenderEmail',
-  'defenderPhoneNumber',
-  'requestSharedWithDefender',
   'courtId',
   'leadInvestigator',
   'requestedCustodyRestrictions',
@@ -1142,21 +1171,7 @@ export const getLimitedAccessCaseInclude = (
           as: 'appealAssistant',
           include: [{ model: Institution, as: 'institution' }],
         },
-        {
-          model: User,
-          as: 'appealJudge1',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'appealJudge2',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'appealJudge3',
-          include: [{ model: Institution, as: 'institution' }],
-        },
+        appealJudgesInclude,
         {
           model: AppealEventLog,
           as: 'appealEventLogs',
@@ -1171,11 +1186,19 @@ export const getLimitedAccessCaseInclude = (
       as: 'verdictAppealCase',
       required: false,
       include: [
+        appealJudgesInclude,
         {
           model: AppealEventLog,
           as: 'appealEventLogs',
           required: false,
           where: { eventType: appealEventTypes },
+          separate: true,
+        },
+        {
+          model: AppealCourtSession,
+          as: 'courtSessions',
+          required: false,
+          order: [['sessionDate', 'ASC']],
           separate: true,
         },
       ],
@@ -1191,21 +1214,7 @@ export const getLimitedAccessCaseInclude = (
           as: 'appealAssistant',
           include: [{ model: Institution, as: 'institution' }],
         },
-        {
-          model: User,
-          as: 'appealJudge1',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'appealJudge2',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'appealJudge3',
-          include: [{ model: Institution, as: 'institution' }],
-        },
+        appealJudgesInclude,
         {
           model: AppealEventLog,
           as: 'appealEventLogs',
@@ -1339,6 +1348,10 @@ export const getLimitedAccessCaseInclude = (
           CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
           CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
           CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
+          CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT,
+          CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE,
           CaseFileCategory.APPEAL_RULING,
           CaseFileCategory.APPEAL_COURT_RECORD,
           CaseFileCategory.COURT_RECORD,
@@ -1557,10 +1570,6 @@ export interface UpdateCase
     Case,
     | 'indictmentSubtypes'
     | 'description'
-    | 'defenderName'
-    | 'defenderNationalId'
-    | 'defenderEmail'
-    | 'defenderPhoneNumber'
     | 'isHeightenedSecurityLevel'
     | 'courtId'
     | 'leadInvestigator'
@@ -1620,7 +1629,6 @@ export interface UpdateCase
   type?: Case['type']
   state?: Case['state']
   policeCaseNumbers?: Case['policeCaseNumbers']
-  requestSharedWithDefender?: Case['requestSharedWithDefender'] | null
   defendantWaivesRightToCounsel?: Case['defendantWaivesRightToCounsel'] | null
   courtEndTime?: Case['courtEndTime'] | null
   rulingDate?: Case['rulingDate'] | null
@@ -1655,9 +1663,6 @@ export interface UpdateAppealCase
     | 'appealReceivedByCourtDate'
     | 'appealRulingDate'
     | 'appealAssistantId'
-    | 'appealJudge1Id'
-    | 'appealJudge2Id'
-    | 'appealJudge3Id'
     | 'appealRulingDecision'
     | 'appealConclusion'
     | 'appealRulingModifiedHistory'

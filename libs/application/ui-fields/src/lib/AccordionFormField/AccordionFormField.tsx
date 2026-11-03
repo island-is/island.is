@@ -4,6 +4,7 @@ import {
   FieldBaseProps,
   FieldTypes,
   FormValue,
+  RecordObject,
 } from '@island.is/application/types'
 import {
   Accordion,
@@ -23,19 +24,52 @@ import {
 } from '@island.is/application/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Markdown } from '@island.is/shared/components'
-import { useEffect, useRef, useState } from 'react'
-import { useWatch } from 'react-hook-form'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useFormState, useWatch } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
   field: AccordionField
 }
+
+const getErrorPaths = (errors: unknown, prefix = ''): string[] => {
+  if (!errors) return []
+  if (typeof errors === 'string') return prefix ? [prefix] : []
+  if (typeof errors !== 'object') return []
+  if (typeof (errors as { message?: unknown }).message === 'string') {
+    return prefix ? [prefix] : []
+  }
+  return Object.entries(errors as RecordObject).flatMap(([key, value]) =>
+    getErrorPaths(value, prefix ? `${prefix}.${key}` : key),
+  )
+}
+
+const normalizePath = (path: string) => path.replace(/\[(\d+)\]/g, '.$1')
+
+const pathsOverlap = (fieldId: string, errorPath: string) =>
+  fieldId === errorPath ||
+  errorPath.startsWith(`${fieldId}.`) ||
+  fieldId.startsWith(`${errorPath}.`)
+
+const getInitialExpanded = (
+  items: Array<AccordionItemType>,
+  isSingleExpand: boolean,
+) => {
+  if (!isSingleExpand) return items.map((item) => !!item.startExpanded)
+  const lastStartExpanded = items
+    .map((item) => !!item.startExpanded)
+    .lastIndexOf(true)
+  return items.map((_, index) => index === lastStartExpanded)
+}
+
 export const AccordionFormField = ({
   field,
   application,
   answerQuestions,
   renderField,
+  errors,
 }: Props) => {
   const [items, setItems] = useState<Array<AccordionItemType>>()
+  const [expandedItems, setExpandedItems] = useState<boolean[]>([])
   const { formatMessage, lang: locale } = useLocale()
   const user = useUserInfo()
   const {
@@ -46,16 +80,78 @@ export const AccordionFormField = ({
     titleVariant,
     singleExpand,
   } = field
+  const isSingleExpand = singleExpand ?? true
   const formValues = useWatch({ defaultValue: application.answers })
+  const { submitCount } = useFormState()
   const prevVisibilityRef = useRef<Record<string, boolean>>({})
+  const handledSubmitCountRef = useRef(submitCount)
 
   useEffect(() => {
-    if (typeof accordionItems === 'function') {
-      setItems(accordionItems(application))
-    } else {
-      setItems(accordionItems)
-    }
+    const resolvedItems =
+      typeof accordionItems === 'function'
+        ? accordionItems(application)
+        : accordionItems
+    setItems(resolvedItems)
+    setExpandedItems(getInitialExpanded(resolvedItems, isSingleExpand))
   }, [accordionItems])
+
+  const erroredItemIndices = useMemo(() => {
+    if (!items) return []
+    const errorPaths = getErrorPaths(errors)
+    if (errorPaths.length === 0) return []
+
+    const mergedValues = {
+      ...application.answers,
+      ...formValues,
+    } as FormValue
+
+    return items.flatMap((item, index) => {
+      const hasError = (item.children ?? []).some((child) => {
+        if (
+          !shouldShowFormItem(
+            child,
+            mergedValues,
+            application.externalData,
+            null,
+          )
+        ) {
+          return false
+        }
+        const childId = normalizePath(
+          resolveFieldId(child, application, undefined),
+        )
+        return errorPaths.some((errorPath) =>
+          pathsOverlap(childId, normalizePath(errorPath)),
+        )
+      })
+      return hasError ? [index] : []
+    })
+  }, [items, errors, formValues, application])
+
+  // Expand all items containing invalid fields each time the user tries to submit.
+  // In single-expand mode this temporarily allows multiple open items; the
+  // single-expand rule is restored on the next manual toggle.
+  useEffect(() => {
+    if (submitCount === handledSubmitCountRef.current) return
+    handledSubmitCountRef.current = submitCount
+    if (erroredItemIndices.length === 0) return
+
+    setExpandedItems((prev) =>
+      prev.map(
+        (expanded, index) =>
+          erroredItemIndices.includes(index) || (!isSingleExpand && expanded),
+      ),
+    )
+  }, [submitCount, erroredItemIndices, isSingleExpand])
+
+  const handleToggle = (index: number, expanded: boolean) => {
+    setExpandedItems((prev) =>
+      prev.map((value, i) => {
+        if (i === index) return expanded
+        return isSingleExpand && expanded ? false : value
+      }),
+    )
+  }
 
   useEffect(() => {
     if (!items) return
@@ -108,7 +204,8 @@ export const AccordionFormField = ({
           </Text>
         </Box>
       )}
-      <Accordion singleExpand={singleExpand}>
+      {/* Single-expand is handled here so items can be expanded programmatically */}
+      <Accordion singleExpand={false}>
         {items.map((item, index) => {
           const hasContent = !!item.itemContent
           const hasChildren = item.children && item.children.length > 0
@@ -155,7 +252,8 @@ export const AccordionFormField = ({
               key={`accordion-item-${index}`}
               id={`accordion-item-${index}`}
               label={label}
-              startExpanded={item.startExpanded}
+              expanded={!!expandedItems[index]}
+              onToggle={(expanded) => handleToggle(index, expanded)}
             >
               {hasContent && (
                 <Markdown>

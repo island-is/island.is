@@ -37,19 +37,41 @@ describe('getAppealAppointmentSubject', () => {
 })
 
 describe('getAppealAppointmentSentence', () => {
-  // The sentence that does the appointing. A defender is appointed to the
-  // accused, a spokesperson to the injured party. The notice about the
-  // deadline runs on from it as one paragraph, as it does on the letters.
+  // The sentence that does the appointing. A defender is appointed to one of
+  // the accused and the sentence names them; a spokesperson to the injured
+  // party, who is not named on the letters this reproduces. The notice about
+  // the deadline runs on from it as one paragraph.
   it('appoints the right advocate to the right party', () => {
-    expect(getAppealAppointmentSentence(AppealAppointmentKind.DEFENDER)).toBe(
-      'Þér eruð hér með skipaðir verjandi ákærða fyrir Landsrétti. Tilkynnt ' +
-        'verður síðar um frest til greinargerðar í málinu.',
+    expect(
+      getAppealAppointmentSentence(
+        AppealAppointmentKind.DEFENDER,
+        'Gervimanni Jónssyni',
+      ),
+    ).toBe(
+      'Landsréttur hefur skipað þig verjanda ákærða Gervimanni Jónssyni í ' +
+        'ofangreindu máli. Tilkynnt verður síðar um frest til greinargerðar í málinu.',
     )
 
     expect(
       getAppealAppointmentSentence(AppealAppointmentKind.SPOKESPERSON),
     ).toBe(
-      'Þér eruð hér með skipaðir réttargæslumaður brotaþola fyrir Landsrétti. ' +
+      'Landsréttur hefur skipað þig réttargæslumann brotaþola í ofangreindu ' +
+        'máli. Tilkynnt verður síðar um frest til greinargerðar í málinu.',
+    )
+  })
+
+  // The court speaks in its own name now. The old wording addressed the
+  // advocate in the formal plural, which forced a gender on whoever it was
+  // sent to; the registry settled on this instead.
+  it('does not address the advocate in the formal plural', () => {
+    expect(
+      getAppealAppointmentSentence(AppealAppointmentKind.DEFENDER, 'Jón'),
+    ).not.toContain('Þér')
+  })
+
+  it('leaves the accused out when the caller names nobody', () => {
+    expect(getAppealAppointmentSentence(AppealAppointmentKind.DEFENDER)).toBe(
+      'Landsréttur hefur skipað þig verjanda ákærða í ofangreindu máli. ' +
         'Tilkynnt verður síðar um frest til greinargerðar í málinu.',
     )
   })
@@ -122,7 +144,7 @@ describe('getAppealAppointmentBody', () => {
   it('marks the appeal summons as not yet built', () => {
     expect(
       getAppealAppointmentBody({ ...letter, appealSummonsDate: null }),
-    ).toContain('með áfrýjunarstefnu útgefinni Ekki útfært.')
+    ).toContain('með áfrýjunarstefnu útgefinni Ekki skráð.')
   })
 
   it('keeps the district court number out of the placeholder', () => {
@@ -142,7 +164,7 @@ describe('createAppealAppointmentLetter', () => {
     appealCaseNumber: '593/2026',
     appealSummonsDate: '2026-06-22T00:00:00.000Z',
     appointedBy: {
-      name: 'Áslaug Björk Ingólfsdóttir',
+      name: 'Some Person',
       title: 'aðstoðarmaður dómara',
     },
     appointedDate: '2026-08-13T00:00:00.000Z',
@@ -196,7 +218,7 @@ describe('createAppealAppointmentLetter', () => {
         copyTo: [
           'Hrafnhildur M. Gunnarsdóttir saksóknari',
           'Þórður Már Jónsson lögmaður',
-          'Áslaug Björk Ingólfsdóttir lögmaður',
+          'Some Person lögmaður',
         ],
       })
 

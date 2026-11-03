@@ -121,6 +121,8 @@ export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE 
   '/rikissaksoknari/akaera/senda-til-fmst'
 export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE =
   '/rikissaksoknari/akaera/afryjun'
+export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE =
+  '/rikissaksoknari/akaera/afryjunarstefna'
 //#endregion Public prosecutor user routes
 
 //#region Prison user routes
@@ -144,6 +146,12 @@ export const COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE =
   '/landsrettur/afryjun/yfirlit'
 export const COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE =
   '/landsrettur/afryjun/verjandi'
+export const COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE =
+  '/landsrettur/afryjun/greinargerdarfrestir'
+export const COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE =
+  '/landsrettur/afryjun/stada-og-lyktir'
+export const COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE =
+  '/landsrettur/afryjun/samantekt'
 //#endregion Court of appeals user routes
 
 //#region District court user routes

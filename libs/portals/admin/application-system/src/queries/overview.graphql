@@ -154,6 +154,7 @@ query getApplicationV2ApplicationStatisticsSuperAdmin(
     institutionName
     institutionNationalId
     institutionContentfulSlug
+    isFormSystem
   }
 }
 
@@ -172,6 +173,7 @@ query getApplicationV2ApplicationStatisticsInstitutionAdmin(
     institutionName
     institutionNationalId
     institutionContentfulSlug
+    isFormSystem
   }
 }
 

@@ -51,6 +51,9 @@ export class ApplicationDto {
   status?: string
 
   @ApiPropertyOptional()
+  pruned?: boolean
+
+  @ApiPropertyOptional()
   draftFinishedSteps?: number
 
   @ApiPropertyOptional()

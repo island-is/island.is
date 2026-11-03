@@ -1,3 +1,7 @@
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
+import type { GraphQLSchema } from 'graphql'
+import { graphql, printSchema } from 'graphql'
 import { NestFactory } from '@nestjs/core'
 import {
   Args,
@@ -6,8 +10,6 @@ import {
   Query,
   Resolver,
 } from '@nestjs/graphql'
-import type { GraphQLSchema } from 'graphql'
-import { graphql, printSchema } from 'graphql'
 
 import { InputValue } from './inputValue.model'
 
@@ -56,6 +58,24 @@ describe('TaxCalculatorInputValue', () => {
 
   it('accepts exactly one member', async () => {
     expect((await probe({ numberValue: 1 })).errors).toBeUndefined()
+  })
+
+  it('declares dateValue as a DateTime', () => {
+    expect(printSchema(schema)).toContain('dateValue: DateTime')
+  })
+
+  it('accepts an ISO date-time dateValue', async () => {
+    expect(
+      (await probe({ dateValue: '2026-03-01T00:00:00.000Z' })).errors,
+    ).toBeUndefined()
+  })
+
+  it('rejects an Invalid Date in class validation', async () => {
+    const errors = await validate(
+      plainToInstance(InputValue, { dateValue: new Date('not a date') }),
+    )
+
+    expect(errors.map((error) => error.property)).toEqual(['dateValue'])
   })
 
   it.each([

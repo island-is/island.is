@@ -82,7 +82,12 @@ export const judgeAmendsCase = async (page: Page, caseId: string) => {
     ])
   } else {
     // SigningMethodSelectionModal: close without signing, then go to overview (case already transitioned).
-    await page.getByTestId('modal').getByRole('button').first().click()
+    // The backdrop and the X share the name; either closes.
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: 'Loka glugga' })
+      .first()
+      .click()
     await Promise.all([
       page.goto(`/krafa/yfirlit/${caseId}`),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),

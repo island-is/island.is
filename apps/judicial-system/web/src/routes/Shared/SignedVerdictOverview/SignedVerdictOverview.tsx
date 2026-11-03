@@ -12,6 +12,7 @@ import {
   PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  hasAllAppealJudges,
   isDistrictCourtUser,
   isInvestigationCase,
   isPrisonAdminUser,
@@ -472,9 +473,7 @@ export const SignedVerdictOverview: FC = () => {
                         items: [
                           appealCaseNumber,
                           ...(appealAssistant ? [appealAssistant] : []),
-                          ...(workingCase.appealCase?.appealJudge1 &&
-                          workingCase.appealCase?.appealJudge2 &&
-                          workingCase.appealCase?.appealJudge3
+                          ...(hasAllAppealJudges(workingCase.appealCase)
                             ? [appealJudges]
                             : []),
                         ],
@@ -511,7 +510,7 @@ export const SignedVerdictOverview: FC = () => {
               </Accordion>
             )}
             <Conclusion
-              title={formatMessage(conclusion.title)}
+              title={conclusion.title}
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
@@ -519,7 +518,7 @@ export const SignedVerdictOverview: FC = () => {
               AppealCaseState.COMPLETED &&
               workingCase.appealCase?.appealConclusion && (
                 <Conclusion
-                  title={formatMessage(conclusion.appealTitle)}
+                  title={conclusion.appealTitle}
                   conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}

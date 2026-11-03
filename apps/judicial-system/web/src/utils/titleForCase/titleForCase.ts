@@ -23,17 +23,17 @@ export const titleForCase = (
 
   if (theCase.state === CaseState.REJECTED) {
     return isInvestigationCase(theCase.type)
-      ? formatMessage(strings.investigationCaseRejectedTitle)
-      : formatMessage(strings.restrictionCaseRejectedTitle)
+      ? strings.investigationCaseRejectedTitle
+      : strings.restrictionCaseRejectedTitle
   }
 
   if (theCase.state === CaseState.DISMISSED) {
-    return formatMessage(strings.caseDismissedTitle)
+    return strings.caseDismissedTitle
   }
 
   if (theCase.state === CaseState.ACCEPTED) {
     if (isInvestigationCase(theCase.type)) {
-      return formatMessage(strings.investigationCaseAcceptedTitle)
+      return strings.investigationCaseAcceptedTitle
     }
 
     const caseType =
@@ -42,18 +42,42 @@ export const titleForCase = (
         : theCase.type
 
     return theCase.isValidToDateInThePast
-      ? formatMessage(strings.restrictionCaseExpiredTitle, { caseType })
-      : formatMessage(strings.restrictionCaseActiveTitle, {
-          caseType,
-        })
+      ? formatMessage(
+          {
+            id: strings.restrictionCaseExpiredTitle,
+            defaultMessage: strings.restrictionCaseExpiredTitle,
+          },
+          { caseType },
+        )
+      : formatMessage(
+          {
+            id: strings.restrictionCaseActiveTitle,
+            defaultMessage: strings.restrictionCaseActiveTitle,
+          },
+          {
+            caseType,
+          },
+        )
   }
 
   return isInvestigationCase(theCase.type)
-    ? formatMessage(strings.investigationCaseInProgressTitle, {
-        isExtended: Boolean(theCase.parentCase),
-      })
-    : formatMessage(strings.restrictionCaseInProgressTitle, {
-        caseType: theCase.type,
-        isExtended: Boolean(theCase.parentCase),
-      })
+    ? formatMessage(
+        {
+          id: strings.investigationCaseInProgressTitle,
+          defaultMessage: strings.investigationCaseInProgressTitle,
+        },
+        {
+          isExtended: Boolean(theCase.parentCase),
+        },
+      )
+    : formatMessage(
+        {
+          id: strings.restrictionCaseInProgressTitle,
+          defaultMessage: strings.restrictionCaseInProgressTitle,
+        },
+        {
+          caseType: theCase.type,
+          isExtended: Boolean(theCase.parentCase),
+        },
+      )
 }

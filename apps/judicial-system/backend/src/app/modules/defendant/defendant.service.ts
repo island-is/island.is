@@ -5,6 +5,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
@@ -22,7 +23,6 @@ import {
   IndictmentCaseReviewDecision,
   isIndictmentCase,
   isPrisonAdminUser,
-  isRequestCase,
   RequestCaseNotificationType,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
@@ -38,9 +38,9 @@ import { CourtService } from '../court'
 import {
   AppealCase,
   AppealEventLogRepositoryService,
+  AppealStatementDeadlineRepositoryService,
   Case,
   CaseFileRepositoryService,
-  CaseRepositoryService,
   Defendant,
   DefendantEventLog,
   DefendantEventLogRepositoryService,
@@ -50,8 +50,8 @@ import {
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
+import { UpdateDefendantsItemDto } from './dto/updateDefendants.dto'
 import { DeliverResponse } from './models/deliver.response'
-import { getMostPermissiveRequestSharedWithDefender } from './requestSharedWithDefender.logic'
 
 @Injectable()
 export class DefendantService {
@@ -59,7 +59,7 @@ export class DefendantService {
     private readonly defendantRepositoryService: DefendantRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
-    private readonly caseRepositoryService: CaseRepositoryService,
+    private readonly appealStatementDeadlineRepositoryService: AppealStatementDeadlineRepositoryService,
     private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly courtService: CourtService,
     @Inject(forwardRef(() => AppealCaseService))
@@ -160,8 +160,7 @@ export class DefendantService {
       updatedDefendant.defenderEmail !== oldDefendant.defenderEmail ||
       updatedDefendant.defenderName !== oldDefendant.defenderName
     ) {
-      // Defender email or name changed on this defendant — re-deliver defender info to court.
-      // Case-level defender field changes still trigger via case.service (dual-write era).
+      // Defender email or name changed — re-deliver defender info to court.
       this.addMessagesForDeliverDefendantToCourtToQueue(updatedDefendant, user)
     }
   }
@@ -226,7 +225,9 @@ export class DefendantService {
 
   async createForNewCase(
     caseId: string,
-    defendantToCreate: CreateDefendantDto,
+    defendantToCreate: CreateDefendantDto & {
+      requestSharedWithDefender?: RequestSharedWithDefender
+    },
     transaction: Transaction,
   ): Promise<Defendant> {
     return this.defendantRepositoryService.create(
@@ -241,18 +242,10 @@ export class DefendantService {
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
-    // Seed sharing timing from the case for request cases so a defendant
-    // added mid-lifecycle starts aligned. Does not touch other defendants —
-    // case→all sync still only writes this field when the case update sets it.
     const defendant = await this.defendantRepositoryService.create(
       {
         ...defendantToCreate,
         caseId: theCase.id,
-        ...(isRequestCase(theCase.type)
-          ? {
-              requestSharedWithDefender: theCase.requestSharedWithDefender,
-            }
-          : {}),
       },
       { transaction },
     )
@@ -292,14 +285,6 @@ export class DefendantService {
       transaction,
     )
 
-    if (update.requestSharedWithDefender !== undefined) {
-      await this.mirrorMostPermissiveRequestSharedWithDefenderToCase(
-        theCase,
-        updatedDefendant,
-        transaction,
-      )
-    }
-
     this.addMessagesForRequestCaseUpdateDefendantToQueue(
       theCase,
       updatedDefendant,
@@ -308,37 +293,6 @@ export class DefendantService {
     )
 
     return updatedDefendant
-  }
-
-  /**
-   * Dual-write: when a defendant's sharing timing changes, keep the case
-   * column as the most permissive value across defendants so existing case
-   * readers stay correct until they flip to the defendant column. Uses the
-   * case repository directly so we do not re-enter case.service.update and
-   * sync the mirror back onto every defendant.
-   */
-  private async mirrorMostPermissiveRequestSharedWithDefenderToCase(
-    theCase: Case,
-    updatedDefendant: Defendant,
-    transaction: Transaction,
-  ): Promise<void> {
-    const defendants = (theCase.defendants ?? []).map((d) =>
-      d.id === updatedDefendant.id ? updatedDefendant : d,
-    )
-
-    const mostPermissive = getMostPermissiveRequestSharedWithDefender(
-      defendants.map((d) => d.requestSharedWithDefender),
-    )
-
-    if (mostPermissive === (theCase.requestSharedWithDefender ?? null)) {
-      return
-    }
-
-    await this.caseRepositoryService.update(
-      theCase.id,
-      { requestSharedWithDefender: mostPermissive },
-      { transaction },
-    )
   }
 
   async createDefendantEvent(
@@ -415,6 +369,15 @@ export class DefendantService {
         }),
         { transaction },
       )
+
+      // Telling the defender the court of appeals has recorded them. Queued
+      // after commit, so a confirmation that rolls back sends nothing.
+      queueMessagesAfterCommit({
+        type: MessageType.DEFENDANT_NOTIFICATION,
+        caseId: theCase.id,
+        elementId: defendant.id,
+        body: { type: DefendantNotificationType.APPEAL_DEFENDER_ASSIGNED },
+      })
     }
   }
 
@@ -686,6 +649,52 @@ export class DefendantService {
     }
   }
 
+  async updateMany(
+    theCase: Case,
+    updates: UpdateDefendantsItemDto[],
+    user: User,
+    transaction: Transaction,
+    registerVerdictAppeal?: boolean,
+  ): Promise<Defendant[]> {
+    const defendantIds = updates.map((update) => update.defendantId)
+
+    if (new Set(defendantIds).size !== defendantIds.length) {
+      throw new BadRequestException(
+        `A defendant of case ${theCase.id} is named more than once`,
+      )
+    }
+
+    const defendants = defendantIds.map((defendantId) => {
+      const defendant = theCase.defendants?.find((d) => d.id === defendantId)
+
+      if (!defendant) {
+        throw new NotFoundException(
+          `Defendant ${defendantId} of case ${theCase.id} does not exist`,
+        )
+      }
+
+      return defendant
+    })
+
+    const updatedDefendants: Defendant[] = []
+
+    // One at a time: the updates share the request's transaction, which runs
+    // one query at a time.
+    for (const [index, { defendantId: _, ...update }] of updates.entries()) {
+      updatedDefendants.push(
+        await this.update(
+          theCase,
+          defendants[index],
+          registerVerdictAppeal ? { ...update, registerVerdictAppeal } : update,
+          user,
+          transaction,
+        ),
+      )
+    }
+
+    return updatedDefendants
+  }
+
   async updateRestricted(
     theCase: Case,
     defendant: Defendant,
@@ -771,6 +780,14 @@ export class DefendantService {
       { transaction },
     )
 
+    // The deadlines reference the defendant without a cascade, so they go
+    // before the row they point at.
+    await this.appealStatementDeadlineRepositoryService.deleteAllForDefendant(
+      theCase.id,
+      defendantId,
+      { transaction },
+    )
+
     await this.defendantRepositoryService.delete(theCase.id, defendantId, {
       transaction,
     })
@@ -786,49 +803,6 @@ export class DefendantService {
     }
 
     return true
-  }
-
-  async syncDefenderToAllDefendants(
-    caseId: string,
-    defenderFields: {
-      defenderName?: string | null
-      defenderNationalId?: string | null
-      defenderEmail?: string | null
-      defenderPhoneNumber?: string | null
-      defenderChoice?: DefenderChoice | null
-      requestSharedWithDefender?: RequestSharedWithDefender | null
-    },
-    transaction: Transaction,
-  ): Promise<void> {
-    const update: UpdateDefendant = {}
-
-    if (defenderFields.defenderName !== undefined) {
-      update.defenderName = defenderFields.defenderName
-    }
-    if (defenderFields.defenderNationalId !== undefined) {
-      update.defenderNationalId = defenderFields.defenderNationalId
-    }
-    if (defenderFields.defenderEmail !== undefined) {
-      update.defenderEmail = defenderFields.defenderEmail
-    }
-    if (defenderFields.defenderPhoneNumber !== undefined) {
-      update.defenderPhoneNumber = defenderFields.defenderPhoneNumber
-    }
-    if (defenderFields.defenderChoice !== undefined) {
-      update.defenderChoice = defenderFields.defenderChoice
-    }
-    if (defenderFields.requestSharedWithDefender !== undefined) {
-      update.requestSharedWithDefender =
-        defenderFields.requestSharedWithDefender
-    }
-
-    if (Object.keys(update).length === 0) {
-      return
-    }
-
-    await this.defendantRepositoryService.updateAllForCase(caseId, update, {
-      transaction,
-    })
   }
 
   async isDefendantInActiveCustody(defendants?: Defendant[]): Promise<boolean> {

@@ -127,6 +127,47 @@ export class ApplicationValidationService {
     }
   }
 
+  async validateIncomingEvent(
+    application: Application,
+    event: string,
+    user: User,
+  ): Promise<void> {
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+    const role = template.mapUserToRole(user.nationalId, application)
+    const permittedEvents = role
+      ? new ApplicationTemplateHelper(
+          application,
+          template,
+        ).getPermittedEventsForRole(role)
+      : []
+
+    if (permittedEvents.includes(event)) {
+      return
+    }
+
+    const isCheckDisabled = await this.featureFlagService.getValue(
+      Features.applicationSystemDisableEventPermissionCheck,
+      false,
+      user,
+    )
+
+    this.logger.warn(
+      'Event is not in the actions of the user role in this state',
+      {
+        event,
+        role,
+        state: application.state,
+        enforced: !isCheckDisabled,
+      },
+    )
+
+    if (!isCheckDisabled) {
+      throw new ForbiddenException(
+        `Current user is not permitted to send event ${event} in state: ${application.state}`,
+      )
+    }
+  }
+
   async validateIncomingAnswers(
     application: Application,
     newAnswers: FormValue | undefined,

@@ -1,3 +1,4 @@
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
   CivilClaimant,
   Defendant,
@@ -146,3 +147,49 @@ export const areAllAppealAdvocatesConfirmed = (theCase: {
       !getHasAppealSpokesperson(civilClaimant) ||
       civilClaimant.isAppealSpokespersonConfirmed,
   )
+
+/**
+ * The page's own title line: the appeal's number at this court (design, parent
+ * ticket).
+ *
+ * Nothing records that number yet, so the line is left out rather than shown
+ * as "Mál nr." with nothing after it, which reads as a value that failed to
+ * load.
+ */
+export const getVerdictAppealDefenderCaseNumber = (
+  theCase: Pick<WorkingCase, 'verdictAppealCase'>,
+): string | undefined => {
+  const appealCaseNumber = theCase.verdictAppealCase?.appealCaseNumber
+
+  return appealCaseNumber ? `Mál nr. ${appealCaseNumber}` : undefined
+}
+
+/**
+ * The lines under it: which district court case the appeal came from.
+ *
+ * Deliberately not the overview's header. That one leads with the district
+ * court and says when the appeal reached this court; here the appeal is the
+ * case being worked on, so it leads and the district court follows.
+ *
+ * The design carries a third line naming who appealed and when. Left out until
+ * the product owner settles what it should say when several parties appealed:
+ * a case carries one appeal per appealing party, and one line cannot name them
+ * all.
+ */
+export const getVerdictAppealDefenderHeaderLines = (
+  theCase: Pick<WorkingCase, 'courtCaseNumber'>,
+): string[] =>
+  theCase.courtCaseNumber
+    ? [`Málsnr. héraðsdóms ${theCase.courtCaseNumber}`]
+    : []
+
+/**
+ * How the two sections are headed: for the party, and in the plural once a
+ * case has more than one of them. A réttargæslumaður is a lawyer too, so the
+ * claimants' heading does not name the role the court settled on.
+ */
+export const getDefendantSectionTitle = (count: number): string =>
+  count === 1 ? 'Verjandi' : 'Verjendur'
+
+export const getCivilClaimantSectionTitle = (count: number): string =>
+  count === 1 ? 'Lögmaður einkaréttarkröfuhafa' : 'Lögmenn einkaréttarkröfuhafa'

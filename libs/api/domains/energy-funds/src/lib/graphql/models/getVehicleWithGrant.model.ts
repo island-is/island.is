@@ -31,4 +31,7 @@ export class VehicleDetailsWithGrant {
 
   @Field(() => String, { nullable: true })
   vin?: string
+
+  @Field(() => String, { nullable: true })
+  vehicleRegistrationCode?: string
 }

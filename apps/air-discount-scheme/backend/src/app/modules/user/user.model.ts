@@ -22,22 +22,10 @@ class Fund implements TFund {
 
 class BaseUser implements TBaseUser {
   constructor(user: NationalRegistryUser, fund: Fund) {
-    this.firstName = user.firstName
-    this.middleName = user.middleName
-    this.lastName = user.lastName
     this.gender = user.gender
     this.nationalId = user.nationalId
     this.fund = fund
   }
-
-  @ApiProperty()
-  firstName: string
-
-  @ApiProperty()
-  middleName: string
-
-  @ApiProperty()
-  lastName: string
 
   // https://docs.nestjs.com/openapi/types-and-parameters#enums
   // We must manually set the enum property
@@ -56,8 +44,21 @@ class BaseUser implements TBaseUser {
 export class AirlineUser extends BaseUser implements BaseUser {
   constructor(user: NationalRegistryUser, fund: Fund) {
     super(user, fund)
+    const nameParts = user.fullName.split(' ')
     this.nationalId = AirlineUser.maskNationalId(this.nationalId)
+    this.firstName = nameParts[0] ?? ''
+    this.middleName = nameParts.slice(1, -1).join(' ')
+    this.lastName = nameParts.slice(-1).pop() ?? ''
   }
+
+  @ApiProperty()
+  firstName: string
+
+  @ApiProperty()
+  middleName: string
+
+  @ApiProperty()
+  lastName: string
 
   private static maskNationalId(nationalId: string): string {
     return `${nationalId.slice(0, 6)}xxx${nationalId.slice(-1)}`
@@ -67,10 +68,18 @@ export class AirlineUser extends BaseUser implements BaseUser {
 export class User extends BaseUser implements TUser {
   constructor(user: NationalRegistryUser, fund: Fund) {
     super(user, fund)
+    this.givenName = user.givenName
+    this.fullName = user.fullName
     this.address = user.address
     this.postalcode = user.postalcode
     this.city = user.city
   }
+
+  @ApiProperty({ description: 'All given names (eiginnafn)' })
+  givenName: string
+
+  @ApiProperty()
+  fullName: string
 
   @ApiProperty()
   address: string
@@ -81,3 +90,22 @@ export class User extends BaseUser implements TUser {
   @ApiProperty()
   city: string
 }
+
+export type CachedUser = Omit<TUser, 'givenName' | 'fullName'> &
+  Partial<Pick<TUser, 'givenName' | 'fullName'>> &
+  Partial<Record<'firstName' | 'middleName' | 'lastName', string>>
+
+export const restoreCachedUser = ({
+  fund: _fund,
+  firstName,
+  middleName,
+  lastName,
+  givenName,
+  fullName,
+  ...user
+}: CachedUser): NationalRegistryUser => ({
+  ...user,
+  givenName: givenName ?? [firstName, middleName].filter(Boolean).join(' '),
+  fullName:
+    fullName ?? [firstName, middleName, lastName].filter(Boolean).join(' '),
+})

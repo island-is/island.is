@@ -1,5 +1,13 @@
-query AuthScopeCategories($lang: String!, $direction: AuthDelegationDirection) {
-  authScopeCategories(lang: $lang, direction: $direction) {
+query AuthScopeCategories(
+  $lang: String!
+  $direction: AuthDelegationDirection
+  $requestGrantorType: AuthDelegationRequestGrantorType
+) {
+  authScopeCategories(
+    lang: $lang
+    direction: $direction
+    requestGrantorType: $requestGrantorType
+  ) {
     id
     title
     description
@@ -9,6 +17,7 @@ query AuthScopeCategories($lang: String!, $direction: AuthDelegationDirection) {
       displayName
       description
       allowsWrite
+      requiresConfirmation
       domain {
         name
         displayName
@@ -18,8 +27,16 @@ query AuthScopeCategories($lang: String!, $direction: AuthDelegationDirection) {
   }
 }
 
-query AuthScopeTags($lang: String!, $direction: AuthDelegationDirection) {
-  authScopeTags(lang: $lang, direction: $direction) {
+query AuthScopeTags(
+  $lang: String!
+  $direction: AuthDelegationDirection
+  $requestGrantorType: AuthDelegationRequestGrantorType
+) {
+  authScopeTags(
+    lang: $lang
+    direction: $direction
+    requestGrantorType: $requestGrantorType
+  ) {
     id
     title
     description
@@ -30,6 +47,7 @@ query AuthScopeTags($lang: String!, $direction: AuthDelegationDirection) {
       displayName
       description
       allowsWrite
+      requiresConfirmation
       domain {
         name
         displayName
@@ -54,6 +72,7 @@ query AuthScopeCategoryBySlug(
       displayName
       description
       allowsWrite
+      requiresConfirmation
       domain {
         name
         displayName
@@ -78,6 +97,7 @@ query AuthScopeTagBySlug(
       displayName
       description
       allowsWrite
+      requiresConfirmation
       domain {
         name
         displayName

@@ -1,0 +1,9 @@
+mutation SendAppealSummonsToCourtOfAppeals(
+  $caseId: String!
+  $input: SendAppealSummonsToCourtOfAppealsInput!
+) {
+  sendAppealSummonsToCourtOfAppeals(caseId: $caseId, input: $input) {
+    id
+    sentToCourtOfAppealsDate
+  }
+}

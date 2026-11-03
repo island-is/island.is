@@ -3,6 +3,10 @@ import { Platform } from 'react-native'
 import { create } from 'zustand'
 import { useStore } from 'zustand/react'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import {
+  clearBiometricBaseline,
+  enrollBiometricBaseline,
+} from '../../modules/biometric-integrity'
 
 export type Locale = 'en-US' | 'is-IS' | 'en-IS' | 'is-US'
 export type ThemeMode = 'dark' | 'light'
@@ -103,6 +107,12 @@ export const preferencesStore = create<PreferencesStore>()(
         set({ appearanceMode })
       },
       setUseBiometrics(useBiometrics: boolean) {
+        // Snapshot the enrolled biometrics so later changes can be detected.
+        if (useBiometrics) {
+          enrollBiometricBaseline()
+        } else {
+          clearBiometricBaseline()
+        }
         set({ useBiometrics })
       },
       dismiss(key: string, value = true) {
@@ -123,6 +133,7 @@ export const preferencesStore = create<PreferencesStore>()(
         set({ walletPassDismissedInfoAlerts: current })
       },
       reset() {
+        clearBiometricBaseline()
         set(defaultPreferences as PreferencesStore)
       },
     }),

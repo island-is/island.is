@@ -47,6 +47,12 @@ export const formatRulingOrderPronouncedOrallyName = (
 ): string =>
   `${courtCaseNumber ?? ''} Úrskurður ${formatDate(pronouncedDate)}`.trim()
 
+// Court record entries name the document, not the file type — clerks were
+// always stripping ".pdf" by hand in the filing UI.
+export const stripPdfExtension = (
+  fileName: string | null | undefined,
+): string => (fileName ?? '').replace(/\.pdf$/i, '')
+
 export const formatDate = (
   date: Date | string | undefined | null,
   formatPattern = 'dd.MM.yyyy',
