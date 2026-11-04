@@ -1,17 +1,25 @@
 import { FormSystemField, FormSystemScreen } from '@island.is/api/schema'
-import { Action, FieldTypesEnum, m } from '@island.is/form-system/ui'
+import {
+  Action,
+  ApplicationState,
+  FieldTypesEnum,
+  m,
+} from '@island.is/form-system/ui'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { Preview } from '../../Preview/Preview'
 
 interface Props {
   screen: FormSystemScreen
   dispatch?: Dispatch<Action>
+  state?: Pick<ApplicationState, 'currentScreen'>
 }
 
-export const MultiSet = ({ screen, dispatch }: Props) => {
+export const MultiSet = ({ screen, dispatch, state }: Props) => {
   const { formatMessage } = useLocale()
+  const { unregister } = useFormContext()
   const [numberOfItems, setNumberOfItems] = useState(() =>
     Math.max(
       1,
@@ -82,6 +90,7 @@ export const MultiSet = ({ screen, dispatch }: Props) => {
                       <Preview
                         data={field}
                         dispatch={dispatch}
+                        state={state}
                         valueIndex={isRepeatingField ? itemIndex : 0}
                         screenOrSection
                       />
@@ -97,6 +106,7 @@ export const MultiSet = ({ screen, dispatch }: Props) => {
           <Preview
             data={currencySumField}
             dispatch={dispatch}
+            state={state}
             screenOrSection
           />
         </Box>
@@ -109,7 +119,20 @@ export const MultiSet = ({ screen, dispatch }: Props) => {
                 variant="ghost"
                 colorScheme="destructive"
                 type="button"
-                onClick={() => setNumberOfItems(numberOfItems - 1)}
+                onClick={() => {
+                  if (numberOfItems <= 1) return
+                  const valueIndex = numberOfItems - 1
+                  screen.fields?.forEach((field) => {
+                    if (field && field.isPartOfMultiset !== false) {
+                      unregister(`${field.id}.${valueIndex}`)
+                      dispatch?.({
+                        type: 'REMOVE_MULTISET_ITEM',
+                        payload: { id: field.id, valueIndex },
+                      })
+                    }
+                  })
+                  setNumberOfItems(valueIndex)
+                }}
               >
                 {formatMessage(m.removeMulti)}
               </Button>

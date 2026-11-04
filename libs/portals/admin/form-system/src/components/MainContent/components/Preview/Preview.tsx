@@ -2,6 +2,7 @@ import { FormSystemField } from '@island.is/api/schema'
 import { FieldTypesEnum } from '@island.is/form-system/enums'
 import {
   Action,
+  ApplicationState,
   Asset,
   Banknumber,
   Checkbox,
@@ -24,15 +25,17 @@ import {
 } from '@island.is/form-system/ui'
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Dispatch, ElementType } from 'react'
+import { Dispatch, ElementType, useReducer } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { PreviewApplicant } from '../PreviewStepOrGroup/components/PreviewSections'
+import { updatePreviewFields } from '../PreviewStepOrGroup/previewState'
 
 interface Props {
   data: FormSystemField
   screenOrSection?: boolean
   valueIndex?: number
   dispatch?: Dispatch<Action>
+  state?: Pick<ApplicationState, 'currentScreen'>
 }
 
 const fieldComponents = {
@@ -63,9 +66,14 @@ export const Preview = ({
   screenOrSection,
   valueIndex = 0,
   dispatch,
+  state,
 }: Props) => {
   const methods = useForm()
   const { lang } = useLocale()
+  const [previewFields, previewDispatch] = useReducer(updatePreviewFields, [
+    data,
+  ])
+  const previewItem = dispatch ? data : previewFields[0]
   const FieldComponent = data.fieldType
     ? (fieldComponents[
         data.fieldType as keyof typeof fieldComponents
@@ -73,10 +81,11 @@ export const Preview = ({
     : undefined
   const fieldContent = FieldComponent ? (
     <FieldComponent
-      item={data}
+      item={previewItem}
       valueIndex={valueIndex}
       lang={lang}
-      dispatch={dispatch}
+      dispatch={dispatch ?? previewDispatch}
+      state={state}
     />
   ) : null
 

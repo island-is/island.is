@@ -6,7 +6,6 @@ import {
   Divider,
   Input,
   Stack,
-  Text,
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
 import { useContext } from 'react'
@@ -58,13 +57,14 @@ export const FieldContent = ({
         <Box display="flex" alignItems="center">
           <Checkbox
             name="enableFieldPreview"
-            ariaLabel="Sjá sýnishorn"
+            label="Sjá sýnishorn"
             checked={fieldPreviewEnabled}
             onChange={(event) => setFieldPreviewEnabled(event.target.checked)}
           />
-          <Text as="span">Sjá sýnishorn</Text>
         </Box>
-        {fieldPreviewEnabled && <Preview data={currentItem} />}
+        {fieldPreviewEnabled && (
+          <Preview key={currentItem.id} data={currentItem} />
+        )}
         {hasZendeskSettings && currentItem.fieldSettings && (
           <ZendeskSettings fieldSettings={currentItem.fieldSettings} />
         )}

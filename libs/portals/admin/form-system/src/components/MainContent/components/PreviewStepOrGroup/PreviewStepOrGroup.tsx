@@ -131,6 +131,9 @@ const PreviewStepOrGroupContent = ({ setOpenPreview }: Props) => {
   })
   const currentStep = previewSteps[screenIndex]
   const currentScreen = currentStep?.screen
+  const previewState = {
+    currentScreen: { index: screenIndex, data: currentScreen },
+  }
   const currentSection = currentStep?.section
   const sectionIndex = currentStep?.sectionIndex ?? 0
   const sectionType = currentSection?.sectionType
@@ -184,7 +187,7 @@ const PreviewStepOrGroupContent = ({ setOpenPreview }: Props) => {
                       icon="close"
                       onClick={closeModal}
                     >
-                      Loka
+                      Loka sýnishorni
                     </Button>
                   </Box>
                 }
@@ -257,6 +260,7 @@ const PreviewStepOrGroupContent = ({ setOpenPreview }: Props) => {
                                 key={currentScreen.id}
                                 screen={currentScreen}
                                 dispatch={previewDispatch}
+                                state={previewState}
                               />
                             ) : (
                               currentScreen.fields
@@ -269,6 +273,7 @@ const PreviewStepOrGroupContent = ({ setOpenPreview }: Props) => {
                                     key={field.id}
                                     data={field}
                                     dispatch={previewDispatch}
+                                    state={previewState}
                                     screenOrSection
                                   />
                                 ))
@@ -301,7 +306,9 @@ const PreviewStepOrGroupContent = ({ setOpenPreview }: Props) => {
                                     {formatMessage(m.continue)}
                                   </Button>
                                 ) : (
-                                  <Button onClick={closeModal}>Loka</Button>
+                                  <Button onClick={closeModal}>
+                                    Loka sýnishorni
+                                  </Button>
                                 )}
                               </Box>
                               <Box
