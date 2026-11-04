@@ -48,6 +48,7 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
   const { formatMessage } = useIntl()
   const [identifierEditingEnabled, setIdentifierEditingEnabled] =
     useState(false)
+  const [fieldPreviewEnabled, setFieldPreviewEnabled] = useState(false)
 
   const showIdentifier =
     form.submissionServiceUrl !== 'zendesk' && activeItem.type === 'Screen'
@@ -83,6 +84,8 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
         <FieldContent
           identifierEditingEnabled={identifierEditingEnabled}
           setIdentifierEditingEnabled={setIdentifierEditingEnabled}
+          fieldPreviewEnabled={fieldPreviewEnabled}
+          setFieldPreviewEnabled={setFieldPreviewEnabled}
         />
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === 'BaseSettings' ? (

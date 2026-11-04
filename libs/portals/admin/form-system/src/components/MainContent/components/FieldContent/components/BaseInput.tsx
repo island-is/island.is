@@ -327,21 +327,13 @@ export const BaseInput = () => {
         </Row>
       )}
       {currentItem.fieldType === FieldTypesEnum.DATE_PICKER && (
-        <Accordion>
-          <AccordionItem
-            key={currentItem.id}
-            id={`date-settings-${currentItem.id}`}
-            label="Ítarlegar stillingar"
-            startExpanded={[
-              currentItem.fieldSettings?.minDate,
-              currentItem.fieldSettings?.maxDate,
-              currentItem.fieldSettings?.minDateDaysFromToday,
-              currentItem.fieldSettings?.maxDateDaysFromToday,
-            ].some(
-              (value) => value !== null && value !== undefined && value !== '',
-            )}
-          >
-            <Stack space={2}>
+        <Stack space={2}>
+          <Accordion dividerOnBottom={false}>
+            <AccordionItem
+              key={currentItem.id}
+              id={`date-settings-${currentItem.id}`}
+              label="Ítarlegar stillingar"
+            >
               <Row>
                 <Column span="10/10">
                   <Stack space={2}>
@@ -389,90 +381,90 @@ export const BaseInput = () => {
                   </Stack>
                 </Column>
               </Row>
-              <Row>
-                {(['minDate', 'maxDate'] as const).map((property) => (
-                  <Column key={property} span={['10/10', '5/10']}>
-                    <DatePicker
-                      name={property}
-                      label={
-                        property === 'minDate'
-                          ? 'Fyrsta leyfilega dagsetning'
-                          : 'Síðasta leyfilega dagsetning'
-                      }
-                      placeholderText={formatMessage(m.chooseDate)}
-                      locale="is"
-                      backgroundColor="blue"
-                      disabled={isReadOnly}
-                      selected={
-                        currentItem.fieldSettings?.[property]
-                          ? parseISO(currentItem.fieldSettings[property])
-                          : null
-                      }
-                      handleChange={(date) =>
-                        controlDispatch({
-                          type: 'SET_ANY_FIELD_SETTING',
-                          payload: {
-                            property,
-                            value: date ? format(date, 'yyyy-MM-dd') : null,
-                            update: updateActiveItem,
-                          },
-                        })
-                      }
-                      handleClear={() =>
-                        controlDispatch({
-                          type: 'SET_ANY_FIELD_SETTING',
-                          payload: {
-                            property,
-                            value: null,
-                            update: updateActiveItem,
-                          },
-                        })
-                      }
-                      isClearable
-                    />
-                  </Column>
-                ))}
-              </Row>
-              <Row>
-                {(
-                  ['minDateDaysFromToday', 'maxDateDaysFromToday'] as const
-                ).map((property) => (
-                  <Column key={property} span={['10/10', '5/10']}>
-                    <Input
-                      name={property}
-                      label={
-                        property === 'minDateDaysFromToday'
-                          ? 'Fyrsta leyfilega dagsetning: dagar frá deginum í dag'
-                          : 'Síðasta leyfilega dagsetning: dagar frá deginum í dag'
-                      }
-                      type="number"
-                      step="1"
-                      backgroundColor="blue"
-                      readOnly={isReadOnly}
-                      value={currentItem.fieldSettings?.[property] ?? ''}
-                      onChange={(e) =>
-                        controlDispatch({
-                          type: 'SET_ANY_FIELD_SETTING',
-                          payload: {
-                            property,
-                            value:
-                              e.target.value === ''
-                                ? null
-                                : Number(e.target.value),
-                          },
-                        })
-                      }
-                      onFocus={(e) => setFocus(e.target.value)}
-                      onBlur={(e) =>
-                        e.target.value !== focus && updateActiveItem()
-                      }
-                    />
-                  </Column>
-                ))}
-              </Row>
-            </Stack>
-          </AccordionItem>
-        </Accordion>
+            </AccordionItem>
+          </Accordion>
+          <Row>
+            {(['minDate', 'maxDate'] as const).map((property) => (
+              <Column key={property} span={['10/10', '5/10']}>
+                <DatePicker
+                  name={property}
+                  label={
+                    property === 'minDate'
+                      ? 'Fyrsta leyfilega dagsetning'
+                      : 'Síðasta leyfilega dagsetning'
+                  }
+                  placeholderText={formatMessage(m.chooseDate)}
+                  locale="is"
+                  backgroundColor="blue"
+                  disabled={isReadOnly}
+                  selected={
+                    currentItem.fieldSettings?.[property]
+                      ? parseISO(currentItem.fieldSettings[property])
+                      : null
+                  }
+                  handleChange={(date) =>
+                    controlDispatch({
+                      type: 'SET_ANY_FIELD_SETTING',
+                      payload: {
+                        property,
+                        value: date ? format(date, 'yyyy-MM-dd') : null,
+                        update: updateActiveItem,
+                      },
+                    })
+                  }
+                  handleClear={() =>
+                    controlDispatch({
+                      type: 'SET_ANY_FIELD_SETTING',
+                      payload: {
+                        property,
+                        value: null,
+                        update: updateActiveItem,
+                      },
+                    })
+                  }
+                  isClearable
+                />
+              </Column>
+            ))}
+          </Row>
+          <Row>
+            {(['minDateDaysFromToday', 'maxDateDaysFromToday'] as const).map(
+              (property) => (
+                <Column key={property} span={['10/10', '5/10']}>
+                  <Input
+                    name={property}
+                    label={
+                      property === 'minDateDaysFromToday'
+                        ? 'Fyrsta leyfilega dagsetning: dagar frá deginum í dag'
+                        : 'Síðasta leyfilega dagsetning: dagar frá deginum í dag'
+                    }
+                    type="number"
+                    step="1"
+                    backgroundColor="blue"
+                    readOnly={isReadOnly}
+                    value={currentItem.fieldSettings?.[property] ?? ''}
+                    onChange={(e) =>
+                      controlDispatch({
+                        type: 'SET_ANY_FIELD_SETTING',
+                        payload: {
+                          property,
+                          value:
+                            e.target.value === ''
+                              ? null
+                              : Number(e.target.value),
+                        },
+                      })
+                    }
+                    onFocus={(e) => setFocus(e.target.value)}
+                    onBlur={(e) =>
+                      e.target.value !== focus && updateActiveItem()
+                    }
+                  />
+                </Column>
+              ),
+            )}
+          </Row>
+        </Stack>
       )}
     </Stack>
   )

@@ -12,7 +12,6 @@ import {
   Family,
   FileUpload,
   List,
-  m,
   MessageWithLink,
   NationalId,
   NumberInput,
@@ -23,7 +22,7 @@ import {
   TextInput,
   TimeInput,
 } from '@island.is/form-system/ui'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch, ElementType } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -66,7 +65,7 @@ export const Preview = ({
   dispatch,
 }: Props) => {
   const methods = useForm()
-  const { formatMessage, lang } = useLocale()
+  const { lang } = useLocale()
   const FieldComponent = data.fieldType
     ? (fieldComponents[
         data.fieldType as keyof typeof fieldComponents
@@ -89,9 +88,6 @@ export const Preview = ({
   return (
     <FormProvider {...methods}>
       <Box padding={2} border="standard" borderRadius="large">
-        <Text variant="h5" marginBottom={4}>
-          {formatMessage(m.previewField)}
-        </Text>
         {fieldContent}
       </Box>
     </FormProvider>
