@@ -1,3 +1,5 @@
+import { AppealCaseState } from './appealCase'
+
 // The sessions the court of appeals calls in a verdict appeal. Its own list
 // rather than the district court's CourtSessionType: the court of appeals holds
 // three kinds of session and names the last one differently (dómsuppkvaðning,
@@ -50,4 +52,32 @@ export const getUpcomingAppealCourtSessions = <
     })
     .sort((a, b) => a.time - b.time)
     .map(({ session }) => session)
+}
+
+/**
+ * The sessions the parties have on their agenda in a verdict appeal: every
+ * booked session still ahead, as long as the appeal is open. Once the court of
+ * appeals has ruled, or the appeal was withdrawn, nothing is on the agenda
+ * whatever the court left in its list.
+ *
+ * The state is read as a string so the web can pass its generated enum.
+ */
+export const getScheduledAppealCourtSessions = <
+  T extends { sessionDate?: Date | string | null },
+>(
+  appeal:
+    | { appealState?: string | null; courtSessions?: T[] | null }
+    | undefined
+    | null,
+  now: Date = new Date(),
+): T[] => {
+  if (
+    !appeal ||
+    appeal.appealState === AppealCaseState.COMPLETED ||
+    appeal.appealState === AppealCaseState.WITHDRAWN
+  ) {
+    return []
+  }
+
+  return getUpcomingAppealCourtSessions(appeal.courtSessions, now)
 }

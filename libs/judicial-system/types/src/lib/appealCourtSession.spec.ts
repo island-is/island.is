@@ -1,4 +1,8 @@
-import { getUpcomingAppealCourtSessions } from './appealCourtSession'
+import { AppealCaseState } from './appealCase'
+import {
+  getScheduledAppealCourtSessions,
+  getUpcomingAppealCourtSessions,
+} from './appealCourtSession'
 
 describe('getUpcomingAppealCourtSessions', () => {
   // A fixed clock, so the fixtures mean the same whenever this runs.
@@ -61,5 +65,37 @@ describe('getUpcomingAppealCourtSessions', () => {
   it('reads nothing from no sessions', () => {
     expect(getUpcomingAppealCourtSessions(undefined, now)).toEqual([])
     expect(getUpcomingAppealCourtSessions(null, now)).toEqual([])
+  })
+})
+
+describe('getScheduledAppealCourtSessions', () => {
+  const now = new Date(2026, 2, 10, 14, 0)
+  const ahead = { id: 'ahead', sessionDate: new Date(2026, 3, 2, 13, 0) }
+  const held = { id: 'held', sessionDate: new Date(2026, 2, 9, 13, 0) }
+
+  it('has the sessions ahead on the agenda while the appeal is open', () => {
+    expect(
+      getScheduledAppealCourtSessions(
+        { appealState: AppealCaseState.RECEIVED, courtSessions: [held, ahead] },
+        now,
+      ),
+    ).toEqual([ahead])
+  })
+
+  it.each([AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN])(
+    'has nothing on the agenda once the appeal is %s',
+    (appealState) => {
+      expect(
+        getScheduledAppealCourtSessions(
+          { appealState, courtSessions: [ahead] },
+          now,
+        ),
+      ).toEqual([])
+    },
+  )
+
+  it('has nothing on the agenda without an appeal', () => {
+    expect(getScheduledAppealCourtSessions(undefined, now)).toEqual([])
+    expect(getScheduledAppealCourtSessions(null, now)).toEqual([])
   })
 })

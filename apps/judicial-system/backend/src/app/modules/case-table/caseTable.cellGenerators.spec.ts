@@ -234,8 +234,9 @@ describe('the next session of a verdict appeal', () => {
 
   const rowWithSessions = (
     courtSessions: { sessionType: AppealCourtSessionType; sessionDate: Date }[],
+    appealState = AppealCaseState.RECEIVED,
   ): CaseTableRowCase =>
-    ({ appeal: { courtSessions } } as unknown as CaseTableRowCase)
+    ({ appeal: { appealState, courtSessions } } as unknown as CaseTableRowCase)
 
   // From the clock, so the sessions stay ahead of today whenever this runs.
   const daysFromNow = (days: number, hours = 10, minutes = 0): Date => {
@@ -319,6 +320,27 @@ describe('the next session of a verdict appeal', () => {
 
     expect(cell).toEqual({ value: undefined, sortValue: undefined })
   })
+
+  // The public prosecution's list keeps appeals the court has disposed of.
+  it.each([AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN])(
+    'shows nothing once the appeal is %s, whatever the court left booked',
+    (appealState) => {
+      const cell = verdictAppealNextSessionDate.generate(
+        rowWithSessions(
+          [
+            {
+              sessionType: AppealCourtSessionType.MAIN_HEARING,
+              sessionDate: daysFromNow(30),
+            },
+          ],
+          appealState,
+        ),
+        user,
+      )
+
+      expect(cell).toEqual({ value: undefined, sortValue: undefined })
+    },
+  )
 
   it('shows nothing on a row without an appeal or without sessions', () => {
     expect(

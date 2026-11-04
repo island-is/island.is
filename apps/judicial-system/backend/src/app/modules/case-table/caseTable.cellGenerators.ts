@@ -27,7 +27,7 @@ import {
   getIndictmentVerdictAppealDeadlineStatus,
   getMillisecondsFromDays,
   getPresidingAppealJudge,
-  getUpcomingAppealCourtSessions,
+  getScheduledAppealCourtSessions,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
   IndictmentSubtypeMap,
@@ -886,21 +886,21 @@ const verdictAppealResult: CaseTableCellGenerator<TagValue> = {
 
 // The next session the court of appeals has called in the verdict appeal: its
 // type over its date, the way the district court's arraignment column reads.
-// Nothing once every booked session is behind us - the case is then no longer
-// on anyone's agenda, whatever the court has left in the list.
+// Nothing once every booked session is behind us, or once the appeal is
+// completed or withdrawn - the case is then no longer on anyone's agenda,
+// whatever the court has left in the list. The public prosecution's list
+// keeps closed appeals, so the state cannot be left to the list.
 const verdictAppealNextSessionDate: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     verdictAppealCase: {
-      attributes: [],
+      attributes: ['appealState'],
       includes: {
         courtSessions: { attributes: ['sessionType', 'sessionDate'] },
       },
     },
   },
   generate: (c: CaseTableRowCase): CaseTableCell<StringGroupValue> => {
-    const [nextSession] = getUpcomingAppealCourtSessions(
-      c.appeal?.courtSessions,
-    )
+    const [nextSession] = getScheduledAppealCourtSessions(c.appeal)
 
     if (!nextSession) {
       return generateCell()

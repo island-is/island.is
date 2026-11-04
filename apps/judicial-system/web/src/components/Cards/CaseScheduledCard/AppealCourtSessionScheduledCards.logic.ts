@@ -1,10 +1,9 @@
-import { getUpcomingAppealCourtSessions } from '@island.is/judicial-system/types'
+import { getScheduledAppealCourtSessions as getSharedScheduledAppealCourtSessions } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type {
   AppealCourtSession,
   AppealCourtSessionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { AppealCaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 // The only court of appeals there is. A verdict appeal carries no court of its
 // own the way a district court case does.
@@ -19,19 +18,14 @@ export type ScheduledAppealCourtSession = AppealCourtSession & {
 
 /**
  * The sessions the parties have on their agenda in the verdict appeal, earliest
- * first: every booked session still ahead, as long as the appeal is open. Once
- * the court of appeals has ruled, or the appeal was withdrawn, nothing is on
- * the agenda whatever the court left in its list.
+ * first - the shared rule, over the sessions the generated type lets through
+ * with their type and date missing.
  */
 export const getScheduledAppealCourtSessions = (
   verdictAppealCase: WorkingCase['verdictAppealCase'],
   now: Date = new Date(),
 ): ScheduledAppealCourtSession[] => {
-  if (
-    !verdictAppealCase ||
-    verdictAppealCase.appealState === AppealCaseState.COMPLETED ||
-    verdictAppealCase.appealState === AppealCaseState.WITHDRAWN
-  ) {
+  if (!verdictAppealCase) {
     return []
   }
 
@@ -40,5 +34,8 @@ export const getScheduledAppealCourtSessions = (
       Boolean(session.sessionType && session.sessionDate),
   )
 
-  return getUpcomingAppealCourtSessions(booked, now)
+  return getSharedScheduledAppealCourtSessions(
+    { appealState: verdictAppealCase.appealState, courtSessions: booked },
+    now,
+  )
 }
