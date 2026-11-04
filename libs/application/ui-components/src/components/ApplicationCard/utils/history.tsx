@@ -5,7 +5,6 @@ import { FormatMessage } from '@island.is/localization'
 import format from 'date-fns/format'
 import { ApplicationCardFields, ApplicationCardHistoryItem } from '../types'
 import { coreMessages } from '@island.is/application/core'
-import { toIcelandTime } from '@island.is/shared/utils'
 
 type HistoryDateFormats = {
   dateTimeFormat: string
@@ -32,8 +31,8 @@ export const buildHistoryItems = (
       // Without a history entry there is no real timestamp for this row, so we
       // fall back to today's date only rather than showing a made up time.
       date: lastHistoryDate
-        ? format(toIcelandTime(lastHistoryDate), dateFormats.dateTimeFormat)
-        : format(toIcelandTime(new Date()), dateFormats.dateOnlyFormat),
+        ? format(new Date(lastHistoryDate), dateFormats.dateTimeFormat)
+        : format(new Date(), dateFormats.dateOnlyFormat),
       title: formatMessage(application.actionCard.pendingAction.title ?? ''),
       isComplete: pendingRowComplete,
       content: application.actionCard.pendingAction.content ? (
@@ -67,7 +66,7 @@ export const buildHistoryItems = (
   if (actionCardHistory) {
     historyItems = historyItems.concat(
       actionCardHistory.map((x) => ({
-        date: format(toIcelandTime(x.date), dateFormats.dateTimeFormat),
+        date: format(new Date(x.date), dateFormats.dateTimeFormat),
         title: formatMessage(x.log),
         subjectAndActor: x.subLog,
         isComplete: true,

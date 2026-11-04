@@ -13,7 +13,6 @@ import { ApplicationCardFields } from './types'
 import { buildHistoryItems } from './utils/history'
 import { ApplicationStatus } from '@island.is/application/types'
 import { coreMessages } from '@island.is/application/core'
-import { toIcelandTime } from '@island.is/shared/utils'
 import { useOpenApplication } from '../../hooks/useOpenApplication'
 
 export type ApplicationCardProps = {
@@ -129,7 +128,7 @@ export const ApplicationCard = ({
           </Box>
           <Box display="flex" justifyContent="center">
             <Text variant="small">
-              {format(toIcelandTime(modified), dateTimeFormat)}
+              {format(new Date(modified), dateTimeFormat)}
               {daysRemaining !== undefined && daysRemaining > 0 && (
                 <>
                   {' · '}
