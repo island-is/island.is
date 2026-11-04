@@ -11,6 +11,8 @@ export const FieldSettingsFragment = gql`
     maxLength
     minDate
     maxDate
+    minDateDaysFromToday
+    maxDateDaysFromToday
     minAmount
     maxAmount
     year

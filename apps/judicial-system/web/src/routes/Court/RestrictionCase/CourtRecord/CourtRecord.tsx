@@ -109,9 +109,12 @@ export const CourtRecord: FC = () => {
 
       defenderNames.forEach((defenderName) => {
         autofillAttendees.push(
-          `\n${defenderName} skipaður verjandi ${formatMessage(core.defendant, {
-            suffix: 'a',
-          })}`,
+          `\n${defenderName} skipaður verjandi ${formatMessage(
+            { id: core.defendant, defaultMessage: core.defendant },
+            {
+              suffix: 'a',
+            },
+          )}`,
         )
       })
 
@@ -121,9 +124,12 @@ export const CourtRecord: FC = () => {
 
       if (workingCase.defendants && workingCase.defendants.length > 0) {
         autofillAttendees.push(
-          `\n${workingCase.defendants[0].name} ${formatMessage(core.defendant, {
-            suffix: 'i',
-          })}`,
+          `\n${workingCase.defendants[0].name} ${formatMessage(
+            { id: core.defendant, defaultMessage: core.defendant },
+            {
+              suffix: 'i',
+            },
+          )}`,
         )
       }
     }
@@ -297,9 +303,7 @@ export const CourtRecord: FC = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.court.restrictionCases.courtRecord)}
-      />
+      <PageHeader title={titles.court.restrictionCases.courtRecord} />
       <FormContentContainer>
         <PageTitle>{m.sections.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
@@ -532,9 +536,9 @@ export const CourtRecord: FC = () => {
         </Box>
         <PdfButton
           caseId={workingCase.id}
-          title={formatMessage(core.pdfButtonRulingShortVersion)}
+          title={core.pdfButtonRulingShortVersion}
           pdfType="courtRecord"
-          elementId={formatMessage(core.pdfButtonRulingShortVersion)}
+          elementId={core.pdfButtonRulingShortVersion}
         />
       </FormContentContainer>
       <FormContentContainer isFooter>
@@ -547,7 +551,7 @@ export const CourtRecord: FC = () => {
               ? []
               : [
                   {
-                    text: formatMessage(core.continue),
+                    text: core.continue,
                     icon: 'arrowForward',
                     onClick: () =>
                       handleNavigationTo(

@@ -169,16 +169,14 @@ const VerdictAppealRegistration = () => {
         <FormContentContainer>
           <PageTitle>Skráning og úthlutun</PageTitle>
           <Box component="section" marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(core.appealCaseNumberHeading)}
-            />
+            <SectionHeading title={core.appealCaseNumberHeading} />
             <CaseNumberInput appealCase={verdictAppealCase} />
           </Box>
           <Box component="section" marginBottom={8}>
             <SectionHeading title="Úthlutun" />
             <BlueBox>
               <Text as="h4" variant="h4" marginBottom={2}>
-                {formatMessage(core.appealAssistantHeading)}
+                {core.appealAssistantHeading}
               </Text>
               <Box marginBottom={3}>
                 <Select
@@ -202,7 +200,7 @@ const VerdictAppealRegistration = () => {
                 />
               </Box>
               <Text as="h4" variant="h4" marginBottom={2}>
-                {formatMessage(core.appealJudgesHeading)}
+                {core.appealJudgesHeading}
               </Text>
               {judges.map((judge, seat) => (
                 <Box
@@ -274,7 +272,7 @@ const VerdictAppealRegistration = () => {
             previousUrl={previousUrl}
             actions={[
               {
-                text: formatMessage(core.continue),
+                text: core.continue,
                 icon: 'arrowForward',
                 disabled: !stepIsValid,
                 onClick: () =>

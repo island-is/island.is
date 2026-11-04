@@ -2041,7 +2041,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     const html = (url?: string) =>
       url
-        ? `${details}<br/><br/>Hægt er að nálgast gögn málsins á <a href="${url}">${url}</a>.`
+        ? `${details}<br/><br/>Hægt er að nálgast gögn málsins á <a href="${url}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`
         : details
 
     const promises = [

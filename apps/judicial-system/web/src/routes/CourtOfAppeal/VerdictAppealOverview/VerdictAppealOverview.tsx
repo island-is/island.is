@@ -116,7 +116,7 @@ const VerdictAppealOverview = () => {
           previousUrl={getStandardUserDashboardRoute(user)}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(
