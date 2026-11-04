@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  ActivityIndicator,
   ImageSourcePropType,
   ImageStyle,
   Pressable,
@@ -59,7 +60,7 @@ type VariantColours = {
 }
 
 // Colours per variant and state, from the Figma Button component. Loading
-// uses the disabled colours.
+// uses the disabled colours, with the spinner in the default text colour.
 const colours: Record<Variant, Record<State, VariantColours>> = {
   primary: {
     default: {
@@ -164,11 +165,13 @@ const getVariant = ({
   if (isUtilityButton) {
     return 'utility'
   }
-  if (isTransparent) {
-    return 'transparent'
-  }
+  // Outlined wins over transparent: some screens pass both and expect a
+  // bordered button.
   if (isOutlined) {
     return 'outlined'
+  }
+  if (isTransparent) {
+    return 'transparent'
   }
   return 'primary'
 }
@@ -292,7 +295,7 @@ export function Button({
                 // than overflowing it before it is truncated.
                 ...(ellipsis ? { flexShrink: 1 } : {}),
                 // Stays mounted while loading so the button keeps its size;
-                // the dots are laid over it rather than replacing it.
+                // the spinner is laid over it rather than replacing it.
                 opacity: loading ? 0 : 1,
               }}
             >
@@ -323,12 +326,9 @@ export function Button({
                   { justifyContent: 'center', alignItems: 'center' },
                 ]}
               >
-                <Text
-                  isUtility={false}
-                  style={[textStyles[variant], { color: textColor }]}
-                >
-                  • • •
-                </Text>
+                <ActivityIndicator
+                  color={tokenColor(colours[variant].default.text)}
+                />
               </View>
             )}
           </>
