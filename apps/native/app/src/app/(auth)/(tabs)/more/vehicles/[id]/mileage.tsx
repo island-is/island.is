@@ -2,12 +2,10 @@ import { useCallback, useMemo, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Alert, FlatList, Keyboard, View } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
-import { router } from 'expo-router'
 
 import {
   Button,
   Divider,
-  NavigationBarSheet,
   Problem,
   TextField,
   Typography,
@@ -299,26 +297,12 @@ export default function VehicleMileageScreen() {
             >
               {intl.formatMessage({ id: 'vehicles.registerMileage' })}
             </Typography>
-            <NavigationBarSheet
-              componentId="vehicle-mileage"
-              title={
-                <View
-                  style={{
-                    flexDirection: 'column',
-                    marginTop: 8,
-                    marginBottom: 16,
-                  }}
-                >
-                  <Typography variant="heading4">{vehicle.type}</Typography>
-                  <Typography variant="body">
-                    {vehicle.color} - {id}
-                  </Typography>
-                </View>
-              }
-              onClosePress={() => router.back()}
-              style={{ marginHorizontal: 16 }}
-              showLoading={res.loading && !!res.data}
-            />
+            <View style={{ marginBottom: 16 }}>
+              <Typography variant="heading4">{vehicle.type}</Typography>
+              <Typography variant="body">
+                {vehicle.color} - {id}
+              </Typography>
+            </View>
             <View style={{ flexDirection: 'column', gap: 16 }}>
               <TextField
                 editable={!shouldDisableMileageForm}
