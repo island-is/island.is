@@ -303,6 +303,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         '* An unexpected error occurred while fetching data or confirming that you fulfil all conditions to be eligible for medical and rehabilitation payments.\n\nPlease try again later as an external connection could be temporarily unavailable.\n\nIf this error occurs again, please copy this text, sign into minarsidur.tr.is and navigate to “Hafa samband”, press the "Sjúkra- og endurhæfingargreiðslur" box and paste the error text into your message and send it.',
     },
+    noApplicationTypeDescription: {
+      id: 'marp.application:not.eligible.no.application.type.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* TR fann hvorki vottorð né undanþágu sem gerir þér kleift að sækja um sjúkra- og endurhæfingargreiðslur rafrænt.\n\nÞetta er ekki tengingarvilla. Vinsamlegast hafðu samband við TR í gegnum Mínar síður TR undir Hafa samband eða í síma 560 4400 og fáðu frekari leiðbeiningar.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        'The reason for this is the following:\n* TR found neither a certificate nor an exemption that allows you to apply for medical and rehabilitation payments electronically.\n\nThis is not a connection error. Please contact TR through My Pages under Contact Us or by phone at 560 4400 for further instructions.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
   }),
 
   generalInformation: defineMessages({

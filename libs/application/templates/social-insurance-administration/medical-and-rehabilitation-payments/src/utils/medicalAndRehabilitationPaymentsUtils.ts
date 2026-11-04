@@ -545,6 +545,13 @@ export const canStartApplication = (externalData: ExternalData): boolean => {
 export const eligibleText = (externalData: ExternalData) => {
   const { isEligible } = getApplicationExternalData(externalData)
 
+  // Eligible applicants only end up here when TR returned neither an
+  // application type nor an active exemption (see canStartApplication)
+  if (isEligible?.isEligible) {
+    return medicalAndRehabilitationPaymentsFormMessage.notEligible
+      .noApplicationTypeDescription
+  }
+
   switch (isEligible?.reasonCode) {
     case EligibleReasonCodes.APPLICANT_ALREADY_HAS_PENDING_APPLICATION:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
