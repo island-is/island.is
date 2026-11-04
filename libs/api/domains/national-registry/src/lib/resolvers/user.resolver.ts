@@ -41,10 +41,13 @@ export class UserResolver {
 
   @ResolveField('legalResidence', () => String, { nullable: true })
   resolveLegalResidence(@Parent() { address }: User): string | null {
-    if (address && address.streetAddress && address.postalCode) {
-      return `${address.streetAddress}, ${address.postalCode} ${address.city}`
+    if (!address?.streetAddress) {
+      return null
     }
-    return null
+    if (!address.postalCode) {
+      return address.streetAddress
+    }
+    return `${address.streetAddress}, ${address.postalCode} ${address.city}`
   }
 
   @ResolveField('birthPlace', () => String, { nullable: true })

@@ -158,7 +158,9 @@ export default function FamilyDetailScreen() {
             })}
             value={
               'postalCode' in person.housing.address &&
-              'city' in person.housing.address
+              person.housing.address.postalCode &&
+              'city' in person.housing.address &&
+              person.housing.address.city
                 ? `${person?.housing.address?.streetAddress}, ${person?.housing.address?.postalCode} ${person?.housing.address?.city}`
                 : person?.housing.address?.streetAddress
             }
