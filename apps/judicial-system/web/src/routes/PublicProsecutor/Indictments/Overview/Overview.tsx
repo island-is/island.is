@@ -244,9 +244,15 @@ export const Overview = () => {
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader
-        title={fm(titles.shared.closedCaseOverview, {
-          courtCaseNumber: workingCase.courtCaseNumber,
-        })}
+        title={fm(
+          {
+            id: titles.shared.closedCaseOverview,
+            defaultMessage: titles.shared.closedCaseOverview,
+          },
+          {
+            courtCaseNumber: workingCase.courtCaseNumber,
+          },
+        )}
       />
       <FormContentContainer>
         <PageTitle>{strings.title}</PageTitle>
@@ -321,7 +327,10 @@ export const Overview = () => {
               ? []
               : [
                   {
-                    text: fm(core.continue),
+                    text: fm({
+                      id: core.continue,
+                      defaultMessage: core.continue,
+                    }),
                     icon: 'arrowForward',
                     onClick:
                       assignMode === 'appealProsecutor'
@@ -358,7 +367,7 @@ export const Overview = () => {
           )}
           buttons={[
             {
-              text: fm(core.back),
+              text: fm({ id: core.back, defaultMessage: core.back }),
               onClick: () => router.push(getStandardUserDashboardRoute(user)),
               variant: 'ghost',
             },
@@ -371,7 +380,7 @@ export const Overview = () => {
           text="Áfrýjunarmáli hefur verið úthlutað á saksóknara."
           buttons={[
             {
-              text: fm(core.back),
+              text: fm({ id: core.back, defaultMessage: core.back }),
               onClick: () => router.push(getStandardUserDashboardRoute(user)),
               variant: 'ghost',
             },

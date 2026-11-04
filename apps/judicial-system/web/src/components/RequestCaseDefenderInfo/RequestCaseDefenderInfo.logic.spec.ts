@@ -221,7 +221,7 @@ describe('RequestCaseDefenderInfo.logic', () => {
       ).toBe(true)
     })
 
-    test('requires an arraignment date for COURT_DATE sharing', () => {
+    test('requires an arraignment date for COURT_DATE sharing only while RECEIVED', () => {
       expect(
         canDefenderViewRequest({
           defendants,
@@ -237,6 +237,15 @@ describe('RequestCaseDefenderInfo.logic', () => {
           nationalId: '111',
           state: CaseState.RECEIVED,
           hasArraignmentDate: true,
+        }),
+      ).toBe(true)
+
+      expect(
+        canDefenderViewRequest({
+          defendants,
+          nationalId: '111',
+          state: CaseState.ACCEPTED,
+          hasArraignmentDate: false,
         }),
       ).toBe(true)
     })

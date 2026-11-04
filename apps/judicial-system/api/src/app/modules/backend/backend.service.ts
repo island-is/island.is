@@ -67,6 +67,7 @@ import {
   PoliceDefendant,
   UploadPoliceCaseFileResponse,
 } from '../police'
+import { ServiceInterruptionBanner } from '../service-interruption-banner'
 import { CaseDataExportInput, CaseStatistics } from '../statistics'
 import { Subpoena } from '../subpoena'
 import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
@@ -240,6 +241,19 @@ export class BackendService {
     updateMessageSuspension: unknown,
   ): Promise<MessageSuspension> {
     return this.patch(`message-suspension/${category}`, updateMessageSuspension)
+  }
+
+  getServiceInterruptionBanner(): Promise<ServiceInterruptionBanner> {
+    return this.get('service-interruption-banner')
+  }
+
+  updateServiceInterruptionBanner(
+    updateServiceInterruptionBanner: unknown,
+  ): Promise<ServiceInterruptionBanner> {
+    return this.patch(
+      'service-interruption-banner',
+      updateServiceInterruptionBanner,
+    )
   }
 
   getCase(caseId: string): Promise<Case> {

@@ -97,7 +97,6 @@ export {
   getOrderedAppealJudges,
   getAppealJudges,
   getPresidingAppealJudge,
-  getAppealJudgeInSeat,
   getAppealJudgeUserIds,
   hasAllAppealJudges,
 } from './lib/appealCase'

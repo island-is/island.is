@@ -137,10 +137,10 @@ const SidePanel: FC<SidePanelProps> = ({
   onNavigationTo,
   workingCase,
 }) => {
+  const { formatMessage } = useIntl()
   const { getSections } = useSections(isValid, onNavigationTo)
   const sections = getSections(workingCase, user)
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
-  const { formatMessage } = useIntl()
 
   const activeSection = sections.findIndex((s) => s.isActive)
   const activeSubSection = sections[activeSection]?.children.findIndex(
@@ -176,11 +176,22 @@ const SidePanel: FC<SidePanelProps> = ({
               targetAppealCase?.appealType === AppealCaseType.VERDICT
                 ? 'Áfrýjun'
                 : formatMessage(
-                    user?.institution?.type === InstitutionType.COURT_OF_APPEALS
-                      ? formStepperSections.appealedCaseTitle
-                      : isIndictmentCase(workingCase.type)
-                      ? formStepperSections.indictmentTitle
-                      : formStepperSections.title,
+                    {
+                      id:
+                        user?.institution?.type ===
+                        InstitutionType.COURT_OF_APPEALS
+                          ? formStepperSections.appealedCaseTitle
+                          : isIndictmentCase(workingCase.type)
+                          ? formStepperSections.indictmentTitle
+                          : formStepperSections.title,
+                      defaultMessage:
+                        user?.institution?.type ===
+                        InstitutionType.COURT_OF_APPEALS
+                          ? formStepperSections.appealedCaseTitle
+                          : isIndictmentCase(workingCase.type)
+                          ? formStepperSections.indictmentTitle
+                          : formStepperSections.title,
+                    },
                     { caseType: workingCase.type },
                   )}
             </Text>

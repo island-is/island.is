@@ -13,6 +13,9 @@ export {
 
 export const NationalRegistryApi = NationalRegistryV3UserApi.configure({
   order: 1,
+  params: {
+    ageToValidate: 18,
+  },
 })
 
 export const RentalAgreementsApi = defineTemplateApi({
