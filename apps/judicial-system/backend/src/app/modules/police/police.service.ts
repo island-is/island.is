@@ -1387,7 +1387,7 @@ export class PoliceService {
 
           return {
             serviceStatus: serviceStatus,
-            deliveredToDefenderNationalId:
+            defenderNationalId:
               nationalIdTransformer({ value: response.defenderNationalId }) ??
               undefined,
             comment: response.comment ?? undefined,
