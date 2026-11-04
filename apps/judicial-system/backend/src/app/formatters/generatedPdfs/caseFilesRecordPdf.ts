@@ -1,5 +1,3 @@
-import { FormatMessage } from '@island.is/cms-translations'
-
 import {
   capitalize,
   formatDate,
@@ -31,7 +29,6 @@ export const formatDefendant = (defendant: Defendant) => {
 const addPoliceDigitalCaseFilesPage = (
   pdfDocument: PdfDocument,
   files: PoliceDigitalCaseFile[],
-  formatMessage: FormatMessage,
   pageMargin: number,
   textFontSize: number,
   subtitleFontSize: number,
@@ -109,7 +106,6 @@ export const createCaseFilesRecord = async (
     buffer?: Buffer
   }>)[],
   policeDigitalCaseFiles: PoliceDigitalCaseFile[],
-  formatMessage: FormatMessage,
   onUnreadableFile?: (
     file: { id?: string; name: string },
     reason: unknown,
@@ -163,7 +159,7 @@ export const createCaseFilesRecord = async (
     const pageNumber = pdfDocument.getPageCount()
 
     if (!buffer) {
-      addPlaceholderPage(formatMessage(caseFilesRecord.missingFile), name)
+      addPlaceholderPage(caseFilesRecord.missingFile, name)
     } else {
       try {
         await pdfDocument.mergeDocument(buffer)
@@ -196,7 +192,6 @@ export const createCaseFilesRecord = async (
     const digitalCaseFilePages = addPoliceDigitalCaseFilesPage(
       pdfDocument,
       sortedFiles,
-      formatMessage,
       pageMargin,
       textFontSize,
       subtitleFontSize,
@@ -221,7 +216,7 @@ export const createCaseFilesRecord = async (
       headerFontSize,
       { bold: true, position: { y: headerMargin } },
     )
-    .addText(formatMessage(caseFilesRecord.heading), titleFontSize, {
+    .addText(caseFilesRecord.heading, titleFontSize, {
       alignment: Alignment.Center,
       bold: true,
       position: { y: headerMargin + pageMargin },
@@ -262,7 +257,7 @@ export const createCaseFilesRecord = async (
 
   // Add charge description
   pdfDocument
-    .addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
+    .addText(caseFilesRecord.accusedOf, textFontSize, {
       bold: true,
       marginTop: 4,
       newLine: false,
@@ -278,7 +273,7 @@ export const createCaseFilesRecord = async (
   // Add crime scene
   if (theCase.crimeScenes && theCase.crimeScenes[policeCaseNumber]) {
     pdfDocument
-      .addText(formatMessage(caseFilesRecord.crimeScene), textFontSize, {
+      .addText(caseFilesRecord.crimeScene, textFontSize, {
         bold: true,
         marginTop: 4,
         newLine: false,
@@ -301,7 +296,7 @@ export const createCaseFilesRecord = async (
 
   // Add table of contents heading
   pdfDocument.addText(
-    formatMessage(caseFilesRecord.tableOfContentsHeading),
+    caseFilesRecord.tableOfContentsHeading,
     subtitleFontSize,
     { alignment: Alignment.Center, bold: true, marginTop: 9, marginBottom: 45 },
   )
@@ -317,16 +312,12 @@ export const createCaseFilesRecord = async (
   for (const chapter of chapters) {
     if (chapter === 0) {
       pdfDocument
-        .addText(
-          formatMessage(caseFilesRecord.pageNumberHeading),
-          textFontSize,
-          {
-            bold: true,
-            newLine: false,
-            alignment: Alignment.Right,
-          },
-        )
-        .addText(formatMessage(caseFilesRecord.date), textFontSize, {
+        .addText(caseFilesRecord.pageNumberHeading, textFontSize, {
+          bold: true,
+          newLine: false,
+          alignment: Alignment.Right,
+        })
+        .addText(caseFilesRecord.date, textFontSize, {
           bold: true,
           newLine: false,
           alignment: Alignment.Left,
