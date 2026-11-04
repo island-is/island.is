@@ -166,6 +166,16 @@ const light = {
       neutral: dark200,
       // code-only: navigation theme hairline
       subtle: '#ebebeb',
+      // code-only: default Label border
+      muted: '#e4e3e2',
+    },
+    // code-only: Badge schemes outside the Brand Guide tag set, same shape as
+    // `feedback.tags.*`
+    tags: {
+      white: { background: white, accent: blue400, border: blue100 },
+      dark: { background: dark200, accent: dark400, border: dark300 },
+      disabled: { background: dark100, accent: dark200, border: dark200 },
+      warn: { background: yellow200, accent: dark400, border: yellow300 },
     },
     // code-only
     overlay: {
