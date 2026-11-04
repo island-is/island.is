@@ -16,12 +16,6 @@ const Host = styled.View`
   flex: 1;
 `
 
-const Title = styled(Typography)`
-  margin-top: ${({ theme }) => theme.spacing[1]}px;
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
-`
-
 const DispensationRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
@@ -118,11 +112,10 @@ export default function MedicineHistoryScreen() {
       <StackScreen
         closeable
         networkStatus={atcNetworkStatus}
-        options={{ title: '' }}
+        options={{
+          title: intl.formatMessage({ id: 'health.prescriptions.dispensations' }),
+        }}
       />
-      <Title variant="heading3">
-        {intl.formatMessage({ id: 'health.prescriptions.dispensations' })}
-      </Title>
       {atcError && !atcData ? (
         <ProblemContainer>
           <Problem error={atcError} />

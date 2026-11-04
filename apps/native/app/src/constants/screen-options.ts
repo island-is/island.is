@@ -1,7 +1,7 @@
 import { router, StackScreenProps } from 'expo-router'
 import { NativeStackHeaderItem } from '@react-navigation/native-stack'
 import { Platform } from 'react-native'
-import { navbarCloseItem, spacingItem } from '../components/navbar/navbar-items'
+import { navbarCloseItem } from '../components/navbar/navbar-items'
 import { theme } from '../ui'
 
 export const blueBackItem = ({
@@ -38,6 +38,15 @@ export const tabScreenOptions: StackScreenProps['options'] = {
   }),
 }
 
+// Sheet titles are centered and use the heading5 typography variant.
+export const sheetHeaderTitleOptions: StackScreenProps['options'] = {
+  headerTitleAlign: 'center',
+  headerTitleStyle: {
+    fontFamily: 'IBMPlexSans_600SemiBold',
+    fontSize: 16,
+  },
+}
+
 export const modalScreenOptions: StackScreenProps['options'] = {
   headerShown: true,
   headerTransparent: false,
@@ -58,13 +67,9 @@ export const modalScreenOptions: StackScreenProps['options'] = {
   contentStyle: {
     backgroundColor: theme.color.white,
   },
-  headerTitleAlign: 'left',
-  headerTitleStyle: {
-    fontFamily: 'IBMPlexSans_600SemiBold',
-    fontSize: 20,
-  },
+  ...sheetHeaderTitleOptions,
   sheetGrabberVisible: true,
   sheetCornerRadius: 16,
   presentation: Platform.OS === 'android' ? 'modal' : 'formSheet',
-  unstable_headerRightItems: () => [spacingItem(), navbarCloseItem()],
+  unstable_headerRightItems: () => [navbarCloseItem()],
 }

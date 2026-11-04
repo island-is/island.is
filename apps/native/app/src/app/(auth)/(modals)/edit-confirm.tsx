@@ -70,7 +70,7 @@ export default function EditConfirmScreen() {
         style={{ marginHorizontal: 16 }}
       /> */}
       <View style={{ paddingHorizontal: 16 }}>
-        <View style={{ marginBottom: 32, marginTop: 8 }}>
+        <View style={{ marginBottom: 32 }}>
           <Typography>
             {intl.formatMessage({ id: 'edit.confirm.description' }, { type })}
           </Typography>
