@@ -183,14 +183,14 @@ export class Application extends Model {
   @ApiProperty()
   draftTotalSteps!: number
 
+  // Null until a page has been saved.
   @Column({
     type: DataType.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
+    allowNull: true,
     field: 'page_index',
   })
-  @ApiProperty()
-  pageIndex!: number
+  @ApiProperty({ type: Number, nullable: true })
+  pageIndex!: number | null
 }
 
 export class ApplicationPaginatedResponse {

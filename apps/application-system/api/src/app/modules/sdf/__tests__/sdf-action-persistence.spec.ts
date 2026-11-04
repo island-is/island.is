@@ -478,6 +478,8 @@ interface PersistenceCase {
   concurrentState?: string
   // When set, the action types of the returned Screen's footer buttons.
   footerActionTypes?: string[]
+  // When set, the page index of the returned Screen.
+  screenIndex?: number
 }
 
 const SUBMIT_EVENT = DefaultEvents.APPROVE
@@ -888,6 +890,19 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       stateChanges: [],
     },
     {
+      // With answers saved, the first page must not be taken as "no page
+      // saved yet" and resumed at the first unanswered page.
+      label: 'to the first page of an application with answers',
+      form: twoPageForm,
+      application: { pageIndex: 1, answers: { field0: 'value' } },
+      dto: { actionType: SdfActionType.GO_TO_PAGE, event: 'page0' },
+      saves: [{ pageIndex: 0 }],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+      screenIndex: 0,
+    },
+    {
       label: 'to the current page',
       form: twoPageForm,
       application: { pageIndex: 1 },
@@ -923,7 +938,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       },
       saves: [
         { answers: { field0: 'value' } },
-        { pageIndex: 0 },
+        { pageIndex: null },
         { pageIndex: 0 },
       ],
       persistingActions: [],
@@ -939,7 +954,11 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         event: SUBMIT_EVENT,
         answers: newAnswers,
       },
-      saves: [{ answers: mergedAnswers }, { pageIndex: 0 }, { pageIndex: 0 }],
+      saves: [
+        { answers: mergedAnswers },
+        { pageIndex: null },
+        { pageIndex: 0 },
+      ],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: mergedAnswers, event: SUBMIT_EVENT }],
@@ -955,7 +974,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       },
       saves: [
         { answers: { applicant: { name: 'B', phone: '1' } } },
-        { pageIndex: 0 },
+        { pageIndex: null },
         { pageIndex: 0 },
       ],
       persistingActions: [],
@@ -978,7 +997,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       },
       saves: [
         { answers: { field0: 'value' }, applicantActors: [ACTOR] },
-        { pageIndex: 0 },
+        { pageIndex: null },
         { pageIndex: 0 },
       ],
       persistingActions: [],
@@ -990,7 +1009,11 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       form: onePageForm,
       user: { actor: { nationalId: ACTOR } } as Partial<User>,
       dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
-      saves: [{ applicantActors: [ACTOR] }, { pageIndex: 0 }],
+      saves: [
+        { applicantActors: [ACTOR] },
+        { pageIndex: null },
+        { pageIndex: 0 },
+      ],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: {}, event: SUBMIT_EVENT }],
@@ -999,7 +1022,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       label: 'without answers',
       form: onePageForm,
       dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
-      saves: [{ pageIndex: 0 }],
+      saves: [{ pageIndex: null }, { pageIndex: 0 }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: {}, event: SUBMIT_EVENT }],
@@ -1010,7 +1033,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       label: 'from a data-provider screen',
       form: dataProviderOnlyForm,
       dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
-      saves: [{ pageIndex: 0 }],
+      saves: [{ pageIndex: null }, { pageIndex: 0 }],
       persistingActions: [
         {
           actions: [providerApi.action],
@@ -1109,7 +1132,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       },
       saves: [
         { answers: { field1: 'value' } },
-        { pageIndex: 0 },
+        { pageIndex: null },
         { pageIndex: 0 },
       ],
       persistingActions: [],
@@ -1128,7 +1151,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       },
       saves: [
         { answers: { field0: 'show' } },
-        { pageIndex: 0 },
+        { pageIndex: null },
         { pageIndex: 1 },
       ],
       persistingActions: [],
@@ -1214,7 +1237,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       },
       saves: [
         { answers: { field0: 'value', other: 'stored' } },
-        { pageIndex: 0 },
+        { pageIndex: null },
         { pageIndex: 0 },
       ],
       persistingActions: [],
@@ -1234,7 +1257,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         event: SUBMIT_EVENT,
         answers: { other: 'changed' },
       },
-      saves: [{ pageIndex: 0 }],
+      saves: [{ pageIndex: null }, { pageIndex: 0 }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: {}, event: SUBMIT_EVENT }],
@@ -1562,6 +1585,9 @@ describe('SDF action persistence', () => {
       if (c.validationMessages) {
         expect(errors.map((e) => e.message)).toEqual(c.validationMessages)
       }
+      if (c.screenIndex !== undefined) {
+        expect((response as ScreenDto).page.index).toBe(c.screenIndex)
+      }
       if (c.footerActionTypes) {
         expect(
           (response as ScreenDto).footer.buttons.map((b) => b.actionType),
@@ -1616,5 +1642,48 @@ describe('SDF action persistence', () => {
       .filter(([message]) => String(message).startsWith('Event is not'))
       .map(([, meta]) => (meta as { event: string }).event)
     expect(eventWarnings).toEqual(c.eventWarning ? [c.eventWarning] : [])
+  })
+})
+
+// Loading a screen without a step, as on a page reload, uses the saved page.
+// Only an application with no saved page resumes at the first unanswered one.
+describe('SDF screen load without a step', () => {
+  beforeEach(() => jest.clearAllMocks())
+
+  it.each([
+    {
+      label: 'stays on the first page when it is the saved one',
+      pageIndex: 0,
+      saves: [],
+      screenIndex: 0,
+    },
+    {
+      label: 'resumes at the first unanswered page when none is saved',
+      pageIndex: null,
+      saves: [{ pageIndex: 1 }],
+      screenIndex: 1,
+    },
+  ])('$label', async ({ pageIndex, saves, screenIndex }) => {
+    const row = createApplicationRow({
+      pageIndex: pageIndex as number,
+      answers: { field0: 'value' },
+    })
+    getApplicationTemplateByTypeIdMock.mockResolvedValue(
+      createTemplate(twoPageForm, permissiveSchema, 'all'),
+    )
+    const { controller, applicationService } = buildController(row, {
+      persistingAction: succeeded,
+      ephemeralAction: succeeded,
+      changeState: transitioned,
+    })
+
+    const screen = await controller.getScreen(row.id, undefined, 'is', {
+      nationalId: APPLICANT,
+    } as User)
+
+    expect(screen.page.index).toBe(screenIndex)
+    expect(
+      applicationService.update.mock.calls.map(([, data]) => data),
+    ).toEqual(saves)
   })
 })

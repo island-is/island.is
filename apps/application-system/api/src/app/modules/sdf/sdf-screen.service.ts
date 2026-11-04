@@ -93,7 +93,7 @@ type ApplicationTemplate = Awaited<
 >
 
 type ApplicationWithPageIndex = ApplicationWithAttachments & {
-  pageIndex?: number
+  pageIndex?: number | null
 }
 
 type ScreenWithDescription = FormScreen & {
@@ -414,9 +414,9 @@ export class SdfScreenService {
       return resolvedIndex
     }
 
-    const persistedPageIndex = application.pageIndex ?? 0
-    const hasAnswers = Object.keys(application.answers ?? {}).length > 0
-    if (!ephemeral && persistedPageIndex === 0 && hasAnswers) {
+    // No saved page: resume at the first page that isn't fully answered, and
+    // save it so later loads stay there.
+    if (!ephemeral && application.pageIndex == null) {
       const resolvedIndex = findCurrentScreen(screens, filteredAnswers)
       await this.applicationService.update(applicationId, {
         pageIndex: resolvedIndex,
@@ -425,7 +425,7 @@ export class SdfScreenService {
       return resolvedIndex
     }
 
-    return moveToScreen(screens, persistedPageIndex, true)
+    return moveToScreen(screens, application.pageIndex ?? 0, true)
   }
 
   private buildFooter(
@@ -1358,8 +1358,9 @@ export class SdfScreenService {
       )
     }
 
+    // The new state may have a different form, so no page is saved for it.
     await this.applicationService.update(applicationId, {
-      pageIndex: 0,
+      pageIndex: null,
     })
 
     return this.getScreen(applicationId, undefined, locale, user)

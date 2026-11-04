@@ -73,7 +73,8 @@ export interface Application<TAnswers = FormValue> {
   status: ApplicationStatus
   draftTotalSteps?: number
   draftFinishedSteps?: number
-  pageIndex?: number
+  // Null or missing until a page has been saved.
+  pageIndex?: number | null
 }
 
 export interface ApplicationCard {
