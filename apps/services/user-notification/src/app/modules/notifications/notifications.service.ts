@@ -86,10 +86,10 @@ export class NotificationsService {
   ): Promise<SenderOrganization | undefined> {
     locale = mapToLocale(locale as Locale)
 
-    let res = (await this.cmsService.fetchData(GetOrganizationByNationalId, {
+    let res = ((await this.cmsService.fetchData(GetOrganizationByNationalId, {
       nationalId: senderId,
       locale: mapToContentfulLocale(locale),
-    })) as unknown as {
+    })) as unknown) as {
       organizationCollection: { items: Array<{ title: string }> }
     }
 
@@ -107,10 +107,10 @@ export class NotificationsService {
           ? sanitizedNationalId
           : `${sanitizedNationalId.slice(0, 6)}-${sanitizedNationalId.slice(6)}`
 
-        res = (await this.cmsService.fetchData(GetOrganizationByNationalId, {
+        res = ((await this.cmsService.fetchData(GetOrganizationByNationalId, {
           nationalId: alternativeFormat,
           locale: mapToContentfulLocale(locale),
-        })) as unknown as {
+        })) as unknown) as {
           organizationCollection: { items: Array<{ title: string }> }
         }
 
@@ -162,6 +162,12 @@ export class NotificationsService {
         updated: notification.updated,
         read: notification.read,
         seen: notification.seen,
+        wasSent: notification.wasSent,
+        // Notifications created before priorityType was stored fall back to the template
+        priorityType: notification.priorityType ?? template.priorityType,
+        category: toTemplateCategory(template.hnippCategoryIs),
+        categoryLabel:
+          template.hnippCategory?.trim() || DEFAULT_CATEGORY_LABEL[locale],
       }
     } catch (error) {
       this.logger.error('Error formatting notification:', error)
@@ -172,10 +178,10 @@ export class NotificationsService {
   async getTemplates(locale?: Locale): Promise<HnippTemplate[]> {
     locale = mapToLocale(locale as Locale)
     const queryVariables = { locale: mapToContentfulLocale(locale) }
-    const res = (await this.cmsService.fetchData(
+    const res = ((await this.cmsService.fetchData(
       GetTemplates,
       queryVariables,
-    )) as unknown as {
+    )) as unknown) as {
       hnippTemplateCollection: { items: HnippTemplate[] }
     }
 
@@ -194,10 +200,10 @@ export class NotificationsService {
       templateId,
       locale: mapToContentfulLocale(locale),
     }
-    const res = (await this.cmsService.fetchData(
+    const res = ((await this.cmsService.fetchData(
       GetTemplateByTemplateId,
       queryVariables,
-    )) as unknown as {
+    )) as unknown) as {
       hnippTemplateCollection: { items: HnippTemplate[] }
     }
 
@@ -421,14 +427,16 @@ export class NotificationsService {
     locale?: Locale,
   ): Promise<RenderedNotificationDto> {
     locale = mapToLocale(locale as Locale)
-    const [numberOfAffectedRows, [updatedNotification]] =
-      await this.notificationModel.update(updateNotificationDto, {
-        where: {
-          id: id,
-          recipient: user.nationalId,
-        },
-        returning: true,
-      })
+    const [
+      numberOfAffectedRows,
+      [updatedNotification],
+    ] = await this.notificationModel.update(updateNotificationDto, {
+      where: {
+        id: id,
+        recipient: user.nationalId,
+      },
+      returning: true,
+    })
 
     if (numberOfAffectedRows === 0) {
       throw new NoContentException()
@@ -506,9 +514,9 @@ export class NotificationsService {
     templateIds: string[],
   ): Promise<Map<string, NotificationCategoryLabelDto>> {
     try {
-      const res = (await this.cmsService.fetchData(GetTemplateCategories, {
+      const res = ((await this.cmsService.fetchData(GetTemplateCategories, {
         templateIds,
-      })) as unknown as {
+      })) as unknown) as {
         hnippTemplateCollection: {
           items: { categoryIs?: string | null; categoryEn?: string | null }[]
         }

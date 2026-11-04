@@ -42,12 +42,16 @@ export function generateMockNotification(user: User | null): Notification {
     metadata: {
       sent,
       read: isRead,
+      wasSent: true,
       // status: isRead
       //   ? RenderedNotificationDtoStatusEnum.Read
       //   : RenderedNotificationDtoStatusEnum.Unread,
     },
     sender: {
       id: senderId,
+    },
+    category: {
+      label: 'Almennt',
     },
     recipient: {
       nationalId: user?.nationalId ?? '0000000000',

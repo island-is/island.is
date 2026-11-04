@@ -174,6 +174,79 @@ describe('NotificationsService', () => {
     expect(template.clickActionUrl).toEqual('Demo click action world')
   })
 
+  describe('formatAndMapNotification', () => {
+    const baseNotification = ({
+      id: 1,
+      messageId: 'message-uuid',
+      senderId: '5555555555',
+      scope: '@island.is/documents',
+      created: new Date(),
+      updated: new Date(),
+      read: false,
+      seen: false,
+      wasSent: true,
+      priorityType: 'Actionable',
+      args: [
+        { key: 'arg1', value: 'hello' },
+        { key: 'arg2', value: 'world' },
+      ],
+    } as unknown) as Notification
+
+    const format = (
+      notification: Notification,
+      template: Partial<HnippTemplate> = {},
+      locale: 'is' | 'en' = 'is',
+    ) =>
+      service.formatAndMapNotification(
+        notification,
+        mockHnippTemplate.templateId,
+        locale,
+        { ...mockHnippTemplate, ...template },
+      )
+
+    it('returns the stored priorityType and wasSent', async () => {
+      const result = await format(
+        {
+          ...baseNotification,
+          wasSent: false,
+          priorityType: 'Informative',
+        } as Notification,
+        { priorityType: 'Actionable' },
+      )
+      expect(result.wasSent).toBe(false)
+      expect(result.priorityType).toBe('Informative')
+    })
+
+    it('falls back to the template priorityType when none is stored', async () => {
+      const result = await format(
+        ({
+          ...baseNotification,
+          priorityType: null,
+        } as unknown) as Notification,
+        { priorityType: 'Informative' },
+      )
+      expect(result.priorityType).toBe('Informative')
+    })
+
+    it('returns the localized category label and the category key', async () => {
+      const result = await format(
+        baseNotification,
+        { hnippCategory: 'Health', hnippCategoryIs: 'Heilbrigðismál' },
+        'en',
+      )
+      expect(result.categoryLabel).toBe('Health')
+      expect(result.category).toBe('heilbrigdismal')
+    })
+
+    it('uses the default category when the template has none', async () => {
+      const is = await format(baseNotification)
+      const en = await format(baseNotification, {}, 'en')
+      expect(is.category).toBeNull()
+      expect(is.categoryLabel).toBe('Almennt')
+      expect(en.categoryLabel).toBe('General')
+    })
+  })
+
   describe('findMany', () => {
     it('should return a paginated list of notifications', async () => {
       const query = new ExtendedPaginationDto()
