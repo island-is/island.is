@@ -12,7 +12,7 @@ import {
   GridColumn,
   GridRow,
 } from '@island.is/island-ui/core'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import parseISO from 'date-fns/parseISO'
 import { formatDate } from '../../utils/formatAmendingUtils'
 
@@ -51,7 +51,13 @@ export const ImpactDate = (props: ImpactDateProps) => {
     date ? new Date(date) : undefined,
   )
 
+  // The default date can change while the modal is open, e.g. when the
+  // regulation's scheduled changes load. Follow it until the user picks an
+  // option, then keep their choice, which is what the modal saves.
+  const userChoseRef = useRef(false)
+
   useEffect(() => {
+    if (userChoseRef.current) return
     setHasCustomDate(isCustomDate(date, defaultDate))
     setSelectedDate(date ? new Date(date) : undefined)
   }, [date, defaultDate])
@@ -86,6 +92,7 @@ export const ImpactDate = (props: ImpactDateProps) => {
               checked={!hasCustomDate}
               disabled={readOnly}
               onChange={() => {
+                userChoseRef.current = true
                 onChange(undefined)
                 setHasCustomDate(false)
                 setSelectedDate(undefined)
@@ -100,6 +107,7 @@ export const ImpactDate = (props: ImpactDateProps) => {
               checked={hasCustomDate}
               disabled={readOnly}
               onChange={() => {
+                userChoseRef.current = true
                 setHasCustomDate(true)
               }}
               backgroundColor="white"
@@ -117,6 +125,7 @@ export const ImpactDate = (props: ImpactDateProps) => {
           minDate={minDate}
           selected={selectedDate}
           handleChange={(newDate) => {
+            userChoseRef.current = true
             setSelectedDate(newDate)
             onChange(newDate)
           }}
