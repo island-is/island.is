@@ -22,6 +22,10 @@ type Override<T1, T2> = Omit<T1, keyof T2> & T2
 
 export type ErrorSchema = NestedType<answersSchema>
 
+export type FinancialAidRouting =
+  | { backend: 'municipalities' }
+  | { backend: 'veita'; veitaTenant: string }
+
 export interface ExternalData {
   nationalRegistry: {
     data: NationalRegistryIndividual
@@ -38,7 +42,7 @@ export interface ExternalData {
     date: string
   }
   municipality: {
-    data?: Municipality
+    data?: Municipality & (FinancialAidRouting | { backend?: undefined })
     date: string
     status: StatusProvider
   }
@@ -75,6 +79,11 @@ export type NestedType<T> = {
 export interface OverrideAnswerSchema extends answersSchema {
   incomeFiles: ApplicationAnswerFile[]
   taxReturnFiles: ApplicationAnswerFile[]
+  rvkTaxReturnFiles: ApplicationAnswerFile[]
+  rvkIncomeFiles: ApplicationAnswerFile[]
+  rvkSpouseIncomeFiles: ApplicationAnswerFile[]
+  rvkSpouseTaxReturnFiles: ApplicationAnswerFile[]
+  rvkChildrenFiles: ApplicationAnswerFile[]
   spouseIncomeFiles: ApplicationAnswerFile[]
   spouseTaxReturnFiles: ApplicationAnswerFile[]
   childrenFiles: ApplicationAnswerFile[]
@@ -117,9 +126,13 @@ export type StatusProvider = 'failure' | 'success'
 export type UploadFileType =
   | 'otherFiles'
   | 'incomeFiles'
+  | 'rvkIncomeFiles'
   | 'taxReturnFiles'
+  | 'rvkTaxReturnFiles'
   | 'spouseIncomeFiles'
+  | 'rvkSpouseIncomeFiles'
   | 'spouseTaxReturnFiles'
+  | 'rvkSpouseTaxReturnFiles'
 
 export enum SummaryComment {
   FORMCOMMENT = 'formComment',

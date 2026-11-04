@@ -18,7 +18,10 @@ import { ApiScopeTag } from './models/api-scope-tag.model'
 import { IdentityResource } from './models/identity-resource.model'
 import { Domain } from './models/domain.model'
 import { ResourceTranslationService } from './resource-translation.service'
-import { DelegationResourcesService } from './delegation-resources.service'
+import {
+  DelegationResourcesService,
+  RequestGrantorType,
+} from './delegation-resources.service'
 import { mapToScopeTree } from './utils/scope-tree.mapper'
 
 const VIRTUAL_MUNICIPALITY_TAG_ID = 'virtual-mitt-sveitarfelag'
@@ -170,6 +173,7 @@ export class ScopeService {
     user: User,
     lang: string,
     direction?: DelegationDirection,
+    requestGrantorType?: RequestGrantorType,
   ): Promise<ScopeCategoryDTO[]> {
     // Fetch categories from CMS
     const cmsCategories = await this.cmsContentfulService.getArticleCategories(
@@ -186,6 +190,7 @@ export class ScopeService {
       user,
       language: lang,
       direction: resolvedDirection,
+      requestGrantorType,
       attributes: [
         'name',
         'displayName',
@@ -303,6 +308,7 @@ export class ScopeService {
     user: User,
     lang: string,
     direction?: DelegationDirection,
+    requestGrantorType?: RequestGrantorType,
   ): Promise<ScopeTagDTO[]> {
     // default to OUTGOING so access-control filters
     // run when the caller doesn't specify a direction.
@@ -315,6 +321,7 @@ export class ScopeService {
         user,
         language: lang,
         direction: resolvedDirection,
+        requestGrantorType,
         attributes: [
           'name',
           'displayName',

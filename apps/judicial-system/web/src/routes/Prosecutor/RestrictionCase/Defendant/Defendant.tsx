@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Input, LoadingDots } from '@island.is/island-ui/core'
@@ -50,7 +49,6 @@ const isLokeCaseWithId = (origin: CaseOrigin | null | undefined, id: string) =>
 
 export const Defendant = () => {
   const router = useRouter()
-  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -111,16 +109,7 @@ export const Defendant = () => {
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!workingCase.id) {
-        // Case creation copies these onto the created defendant
-        const defendant = workingCase.defendants?.[0]
-        const createdCase = await createCase({
-          ...workingCase,
-          defenderName: defendant?.defenderName,
-          defenderNationalId: defendant?.defenderNationalId,
-          defenderEmail: defendant?.defenderEmail,
-          defenderPhoneNumber: defendant?.defenderPhoneNumber,
-          requestSharedWithDefender: defendant?.requestSharedWithDefender,
-        })
+        const createdCase = await createCase(workingCase)
 
         if (
           createdCase &&
@@ -160,9 +149,7 @@ export const Defendant = () => {
       onNavigationTo={handleNavigationTo}
       isValid={stepIsValid}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.restrictionCases.defendant)}
-      />
+      <PageHeader title={titles.prosecutor.restrictionCases.defendant} />
       {!institutionLoading && (
         <>
           <FormContentContainer>
@@ -234,9 +221,7 @@ export const Defendant = () => {
               previousUrl={getStandardUserDashboardRoute(user)}
               actions={[
                 {
-                  text: formatMessage(
-                    workingCase.id === '' ? core.createCase : core.continue,
-                  ),
+                  text: workingCase.id === '' ? core.createCase : core.continue,
                   icon: 'arrowForward',
                   onClick: () =>
                     handleNavigationTo(

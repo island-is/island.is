@@ -110,7 +110,6 @@ describe('CaseController - Get case files record pdf', () => {
         expect.any(Array),
         expect.any(Array),
         expect.any(Function),
-        expect.any(Function),
       )
       expect(mockawsS3Service.putObject).toHaveBeenCalledWith(
         theCase.type,
