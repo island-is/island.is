@@ -6,7 +6,6 @@ import { OpsEnv } from '../dsl/types/input-types'
 import path from 'path'
 import yaml from 'yaml'
 import type { ToStringOptions } from 'yaml'
-import { REMOVE_APP_FROM_UBERCHART } from './const'
 import { ScheduledJobBuilder } from '../dsl/dsl'
 
 const yamlOptions: ToStringOptions = {
@@ -53,37 +52,6 @@ const generateChartValues = async () => {
       const renderedValues = yaml
         .parseDocument(renderedYaml, { schema: 'json' })
         .toJSON()
-      console.log(`Writing values.${Envs[envName].type}.yaml`)
-
-      const umbrellaChartValues = (() => {
-        // Copy the value
-        const _copy = JSON.parse(JSON.stringify(renderedValues))
-        const removeApp = [
-          ...REMOVE_APP_FROM_UBERCHART.all,
-          ...(envType in REMOVE_APP_FROM_UBERCHART
-            ? REMOVE_APP_FROM_UBERCHART[envType]
-            : []),
-        ]
-        for (const app of removeApp) {
-          if (_copy[app]) {
-            console.log(`Removing ${app} from umbrella chart for ${envName}`)
-            delete _copy[app]
-          }
-        }
-        return _copy
-      })()
-
-      // Write umbrella chart values
-      writeYamlFile(
-        path.join(
-          __dirname,
-          relativeChartDir,
-          name,
-          `values.${Envs[envName].type}.yaml`,
-        ),
-        umbrellaChartValues,
-      )
-
       // Write individual service values
       const services = Charts[name as ChartName][envType as OpsEnv]
       for (const service of services) {
