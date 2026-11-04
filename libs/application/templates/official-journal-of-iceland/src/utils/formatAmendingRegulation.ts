@@ -30,6 +30,7 @@ import {
   splitArticleTitle,
   updateAppendixWording,
 } from './formatAmendingUtils'
+import { describeWordChange } from './describeWordChange'
 import { getDeletionOrAddition, getLiPoint } from './getDeletionOrAddition'
 
 // ----------------------------------------------------------------------
@@ -246,7 +247,23 @@ type NewParagraphs = {
    * "töluliðum": "Á eftir 1. mgr." would place them after it.
    */
   before?: string
+  /** The article has one paragraph, which the table or list is cited without */
+  single?: boolean
 }
+
+/**
+ * Where the list or table of paragraph `mgr` is: " í 1. mgr. 5. gr.
+ * reglugerðarinnar". An article of one paragraph is cited without it, as
+ * amending regulations do: " í 5. gr. reglugerðarinnar", or nothing under
+ * "Eftirfarandi breytingar verða á 5. gr.". `word` is "eftir" for the
+ * phrases that place a list after its paragraph: "Töluliðir eftir 1. mgr.".
+ */
+const inParagraph = (mgr: number, where: string, single: boolean, word = 'í') =>
+  mgr > 0 && !single
+    ? ` ${word} ${mgr}. mgr.${where}`
+    : where
+    ? ` í${where}`
+    : ''
 
 /**
  * One or more new paragraphs added at the same place. They are written as
@@ -256,13 +273,13 @@ type NewParagraphs = {
  * @param atEnd - they follow the article's last paragraph
  */
 const formatNewParagraphs = (
-  { paragraph, blocks, count, before }: NewParagraphs,
+  { paragraph, blocks, count, before, single }: NewParagraphs,
   atEnd = false,
 ): Amendment => {
   const html = blocks.join('')
   return (where) => {
     if (before) {
-      return `<p>Á undan ${before} í ${paragraph}. mgr.${where} ${
+      return `<p>Á undan ${before}${inParagraph(paragraph, where, !!single)} ${
         count === 1
           ? 'kemur ný málsgrein'
           : `koma ${countWord(count)} nýjar málsgreinar`
@@ -282,7 +299,7 @@ const formatNewParagraphs = (
       return (
         paragraph > 0
           ? `<p>Á eftir ${paragraph}. mgr.${where} kemur ný málsgrein sem orðast svo:</p>${html}`
-          : `<p>Á undan 1. mgr.${where} kemur ný málsgrein svohljóðandi: </p>${html}`
+          : `<p>Á undan 1. mgr.${where} kemur ný málsgrein, svohljóðandi:</p>${html}`
       ) as HTMLText
     }
     const position =
@@ -567,6 +584,14 @@ export const formatAmendingRegBody = (
     // The last base paragraph kept, which new paragraphs are placed after
     let lastKept = 0
 
+    const isSingleParagraph =
+      group.filter(
+        (e) =>
+          e.nodeName.toLowerCase() === 'p' &&
+          !e.hasAttribute('data-diff-signature') &&
+          !isEmptyWithout(e, 'ins'),
+      ).length === 1
+
     // The new side of a list already written together with its old side
     const handled = new Set<Element>()
 
@@ -652,6 +677,7 @@ export const formatAmendingRegBody = (
           newParagraphs.paragraph === mgr
         ) {
           newParagraphs.before = block
+          newParagraphs.single = isSingleParagraph
           testGroup.amendments[newParagraphs.index] =
             formatNewParagraphs(newParagraphs)
         }
@@ -672,11 +698,18 @@ export const formatAmendingRegBody = (
         testGroup.amendments.push(
           (where) =>
             ((replacedByLettered !== isLetterList
-              ? `<p>${items} í ${mgr}. mgr.${where} verða ${
+              ? `<p>${items}${inParagraph(
+                  mgr,
+                  where,
+                  isSingleParagraph,
+                )} verða ${
                   isLetterList ? 'töluliðir' : 'stafliðir'
                 } og orðast svo:</p>`
-              : `<p>${items} í ${mgr}. mgr.${where} orðast svo:</p>`) +
-              newList) as HTMLText,
+              : `<p>${items}${inParagraph(
+                  mgr,
+                  where,
+                  isSingleParagraph,
+                )} orðast svo:</p>`) + newList) as HTMLText,
         )
         return
       }
@@ -703,9 +736,11 @@ export const formatAmendingRegBody = (
         testGroup.isAddition = false
         testGroup.amendments.push(
           (where) =>
-            `<p>${
-              isLetterList ? 'Töluliðir' : 'Stafliðir'
-            } í ${mgr}. mgr.${where} verða ${
+            `<p>${isLetterList ? 'Töluliðir' : 'Stafliðir'}${inParagraph(
+              mgr,
+              where,
+              isSingleParagraph,
+            )} verða ${
               isLetterList ? 'stafliðir' : 'töluliðir'
             }.</p>` as HTMLText,
         )
@@ -749,7 +784,7 @@ export const formatAmendingRegBody = (
         oldText,
         isDeleted,
         isAddition,
-        liHtml,
+        liChanges,
         newTextElement,
       } = getDeletionOrAddition(element, elementType)
 
@@ -828,9 +863,12 @@ export const formatAmendingRegBody = (
               } fellur brott.</p>` as HTMLText
           } else if (isLetterList || isNumberList) {
             amendment = (where) =>
-              `<p>${
-                isLetterList ? 'Stafliðir' : 'Töluliðir'
-              } eftir ${mgr}. mgr.${where} falla brott.</p>` as HTMLText
+              `<p>${isLetterList ? 'Stafliðir' : 'Töluliðir'}${inParagraph(
+                mgr,
+                where,
+                isSingleParagraph,
+                'eftir',
+              )} falla brott.</p>` as HTMLText
           } else if (table) {
             amendment = (where) =>
               `<p>${tableName}${
@@ -894,9 +932,12 @@ export const formatAmendingRegBody = (
               return
             }
             amendment = (where) =>
-              `<p>${
-                isLetterList ? 'Stafliðum' : 'Töluliðum'
-              } eftir ${mgr}. mgr.${where} er bætt við:</p>${newList}` as HTMLText
+              `<p>${isLetterList ? 'Stafliðum' : 'Töluliðum'}${inParagraph(
+                mgr,
+                where,
+                isSingleParagraph,
+                'eftir',
+              )} er bætt við:</p>${newList}` as HTMLText
           } else if (table) {
             const newTable = afterChange(table)
             testGroup.body.push(newTable as HTMLText)
@@ -931,6 +972,10 @@ export const formatAmendingRegBody = (
             // Formatting alone changed: the wording did not, so it is not
             // restated.
             const formatOnly = getFormatOnlyChange(element)
+            // A change in one place is named by its words or sentences
+            const wordChange = formatOnly
+              ? undefined
+              : describeWordChange(element)
             amendment = (where) => {
               const at = `${paragraphNumber}. mgr.${where}`
               return (
@@ -940,16 +985,24 @@ export const formatAmendingRegBody = (
                   ? `<p>Snið ${quoteWords(
                       formatOnly,
                     )} í ${at} hefur breyst.</p>`
+                  : wordChange
+                  ? `<p>${wordChange(at)}</p>`
                   : `<p>${at} breytist og orðast svo:</p><p>${newText}</p>`
               ) as HTMLText
             }
           } else if (isLetterList || isNumberList) {
-            // A list whose items changed formatting only can leave nothing
-            // to say
-            if (liHtml) {
-              amendment = (where) =>
-                `<p>Eftirfarandi breytingar verða á ${mgr}. mgr.${where}:</p> ${liHtml}` as HTMLText
-            }
+            // Each item changed is an amendment of its own. An article of one
+            // paragraph is named without it: "1. tölul. 5. gr.". A list whose
+            // items changed formatting only can leave nothing to say.
+            liChanges.forEach((change) =>
+              testGroup.amendments.push((where) =>
+                change(
+                  mgr > 0 && !isSingleParagraph
+                    ? ` ${mgr}. mgr.${where}`
+                    : where,
+                ),
+              ),
+            )
           } else if (table) {
             amendment = (where) =>
               formatTableChange(
