@@ -5,10 +5,6 @@ import type {
   AppealCourtSessionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-// The only court of appeals there is. A verdict appeal carries no court of its
-// own the way a district court case does.
-export const COURT_OF_APPEALS_NAME = 'Landsréttur'
-
 // A booked session with everything the card needs, which the generated type
 // cannot promise.
 export type BookedAppealCourtSession = AppealCourtSession & {

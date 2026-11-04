@@ -6,11 +6,7 @@ import { appealCourtSessionTypeNames } from '@island.is/judicial-system/types'
 import IconCard from '@island.is/judicial-system-web/src/components/Cards/IconCard/IconCard'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
-import {
-  COURT_OF_APPEALS_NAME,
-  getBookedAppealCourtSessions,
-} from './AppealCourtSessionScheduledCard.logic'
-import { strings } from './AppealCourtSessionScheduledCard.strings'
+import { getBookedAppealCourtSessions } from './AppealCourtSessionScheduledCard.logic'
 
 interface Props {
   verdictAppealCase: WorkingCase['verdictAppealCase']
@@ -31,16 +27,14 @@ const AppealCourtSessionScheduledCard: FC<Props> = ({ verdictAppealCase }) => {
     <IconCard
       data={[
         {
-          title: strings.scheduled,
+          title: 'Á dagskrá',
           value: sessions.map((session) => (
             <div key={session.id}>
               <Text variant="eyebrow" marginBottom={1} marginTop={2}>
                 {formatDate(session.sessionDate, 'PPPp')}
               </Text>
               <Text>{appealCourtSessionTypeNames[session.sessionType]}</Text>
-              <Text>
-                {COURT_OF_APPEALS_NAME}, {strings.courtRoom} {session.courtRoom}
-              </Text>
+              <Text>{`Dómsalur ${session.courtRoom}`}</Text>
             </div>
           )),
         },

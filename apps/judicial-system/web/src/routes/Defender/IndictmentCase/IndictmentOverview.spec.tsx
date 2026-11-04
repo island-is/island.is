@@ -313,12 +313,12 @@ describe('Defender IndictmentOverview', () => {
       expect(
         screen.getByText(formatDate(mainHearing, 'PPPp') ?? ''),
       ).toBeInTheDocument()
-      expect(screen.getByText('Landsréttur, dómsalur 101')).toBeInTheDocument()
+      expect(screen.getByText('Dómsalur 101')).toBeInTheDocument()
       expect(screen.getByText('Undirbúningsþinghald')).toBeInTheDocument()
       expect(
         screen.getByText(formatDate(preparatoryHearing, 'PPPp') ?? ''),
       ).toBeInTheDocument()
-      expect(screen.getByText('Landsréttur, dómsalur 102')).toBeInTheDocument()
+      expect(screen.getByText('Dómsalur 102')).toBeInTheDocument()
     })
 
     // A log of what the court called, so the entries stay once it has ruled.
