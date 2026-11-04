@@ -175,6 +175,28 @@ describe('AppealSummonsController - Send to service', () => {
     })
   })
 
+  it('skips duplicate recipient ids in the same request', async () => {
+    const defendantService = { id: uuid(), defendantId }
+    const afterSend = {
+      ...confirmed,
+      services: [defendantService],
+    } as AppealSummons
+
+    ;(
+      mockAppealSummonsRepositoryService.createServiceRecipient as jest.Mock
+    ).mockResolvedValueOnce(defendantService)
+    ;(
+      mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
+    ).mockResolvedValueOnce(afterSend)
+
+    await sendToService(confirmed, [{ defendantId }, { defendantId }])
+
+    expect(
+      mockAppealSummonsRepositoryService.createServiceRecipient,
+    ).toHaveBeenCalledTimes(1)
+    expect(queueMessagesAfterCommit).toHaveBeenCalledTimes(1)
+  })
+
   it('rejects when no new recipients remain', async () => {
     const summons = {
       ...confirmed,

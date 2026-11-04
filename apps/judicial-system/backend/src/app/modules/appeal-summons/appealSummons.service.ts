@@ -427,7 +427,7 @@ export class AppealSummonsService {
           )
         }
 
-        const alreadySent = existingServices.some(
+        const alreadySent = [...existingServices, ...createdServices].some(
           (service) => service.defendantId === recipient.defendantId,
         )
 
@@ -472,7 +472,7 @@ export class AppealSummonsService {
           )
         }
 
-        const alreadySent = existingServices.some(
+        const alreadySent = [...existingServices, ...createdServices].some(
           (service) => service.civilClaimantId === recipient.civilClaimantId,
         )
 
