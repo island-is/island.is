@@ -4,12 +4,9 @@ import {
   AppealCourtSessionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { getScheduledAppealCourtSessions } from './AppealCourtSessionScheduledCard.logic'
+import { getBookedAppealCourtSessions } from './AppealCourtSessionScheduledCard.logic'
 
-describe('getScheduledAppealCourtSessions', () => {
-  // A fixed clock, so the fixtures mean the same whenever this runs.
-  const now = new Date(2026, 2, 10, 14, 0)
-
+describe('getBookedAppealCourtSessions', () => {
   const mainHearing = {
     id: 'main_hearing_id',
     sessionType: AppealCourtSessionType.MAIN_HEARING,
@@ -22,62 +19,57 @@ describe('getScheduledAppealCourtSessions', () => {
     sessionDate: new Date(2026, 3, 2, 13, 0).toISOString(),
     courtRoom: '2',
   }
+  // Long since held.
+  const held = {
+    id: 'held_id',
+    sessionType: AppealCourtSessionType.PREPARATORY_HEARING,
+    sessionDate: new Date(2020, 0, 9, 13, 0).toISOString(),
+    courtRoom: '3',
+  }
 
   const appeal = (
     overrides: Partial<NonNullable<WorkingCase['verdictAppealCase']>> = {},
   ): WorkingCase['verdictAppealCase'] => ({
     id: 'verdict_appeal_id',
     appealState: AppealCaseState.RECEIVED,
-    courtSessions: [mainHearing, preparatoryHearing],
+    courtSessions: [mainHearing, held, preparatoryHearing],
     ...overrides,
   })
 
-  it('lists every booked session ahead, earliest first', () => {
-    expect(getScheduledAppealCourtSessions(appeal(), now)).toEqual([
+  it('lists every booked session, earliest first, held ones included', () => {
+    expect(getBookedAppealCourtSessions(appeal())).toEqual([
+      held,
       preparatoryHearing,
       mainHearing,
     ])
   })
 
-  it('leaves out a session whose day has passed', () => {
-    const held = {
-      ...preparatoryHearing,
-      sessionDate: new Date(2026, 2, 9, 13, 0).toISOString(),
-    }
-
-    expect(
-      getScheduledAppealCourtSessions(
-        appeal({ courtSessions: [mainHearing, held] }),
-        now,
-      ),
-    ).toEqual([mainHearing])
-  })
+  it.each([AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN])(
+    'keeps the log once the appeal is %s',
+    (appealState) => {
+      expect(getBookedAppealCourtSessions(appeal({ appealState }))).toEqual([
+        held,
+        preparatoryHearing,
+        mainHearing,
+      ])
+    },
+  )
 
   it('leaves out a session the court has not finished booking', () => {
     expect(
-      getScheduledAppealCourtSessions(
+      getBookedAppealCourtSessions(
         appeal({
           courtSessions: [
             { ...mainHearing, sessionType: null },
             { ...preparatoryHearing, sessionDate: null },
           ],
         }),
-        now,
       ),
     ).toEqual([])
   })
 
-  it.each([AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN])(
-    'has nothing on the agenda once the appeal is %s',
-    (appealState) => {
-      expect(
-        getScheduledAppealCourtSessions(appeal({ appealState }), now),
-      ).toEqual([])
-    },
-  )
-
-  it('has nothing on the agenda without an appeal', () => {
-    expect(getScheduledAppealCourtSessions(undefined, now)).toEqual([])
-    expect(getScheduledAppealCourtSessions(null, now)).toEqual([])
+  it('lists nothing without an appeal', () => {
+    expect(getBookedAppealCourtSessions(undefined)).toEqual([])
+    expect(getBookedAppealCourtSessions(null)).toEqual([])
   })
 })

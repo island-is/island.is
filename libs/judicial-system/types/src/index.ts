@@ -109,6 +109,7 @@ export {
   appealCourtSessionTypeNames,
   getScheduledAppealCourtSessions,
   getUpcomingAppealCourtSessions,
+  sortAppealCourtSessionsByDate,
 } from './lib/appealCourtSession'
 export {
   findAppealStatementDeadline,

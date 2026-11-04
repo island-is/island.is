@@ -1,4 +1,4 @@
-import { getScheduledAppealCourtSessions as getSharedScheduledAppealCourtSessions } from '@island.is/judicial-system/types'
+import { sortAppealCourtSessionsByDate } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type {
   AppealCourtSession,
@@ -9,33 +9,25 @@ import type {
 // own the way a district court case does.
 export const COURT_OF_APPEALS_NAME = 'Landsréttur'
 
-// A booked session with everything a card needs, which the generated type
+// A booked session with everything the card needs, which the generated type
 // cannot promise.
-export type ScheduledAppealCourtSession = AppealCourtSession & {
+export type BookedAppealCourtSession = AppealCourtSession & {
   sessionType: AppealCourtSessionType
   sessionDate: string
 }
 
 /**
- * The sessions the parties have on their agenda in the verdict appeal, earliest
- * first - the shared rule, over the sessions the generated type lets through
- * with their type and date missing.
+ * Every session the court of appeals has called in the verdict appeal, earliest
+ * first. The card is a log of what was called: a session that has been held
+ * stays on it, and so does one booked in an appeal since completed or
+ * withdrawn.
  */
-export const getScheduledAppealCourtSessions = (
+export const getBookedAppealCourtSessions = (
   verdictAppealCase: WorkingCase['verdictAppealCase'],
-  now: Date = new Date(),
-): ScheduledAppealCourtSession[] => {
-  if (!verdictAppealCase) {
-    return []
-  }
-
-  const booked = (verdictAppealCase.courtSessions ?? []).filter(
-    (session): session is ScheduledAppealCourtSession =>
-      Boolean(session.sessionType && session.sessionDate),
+): BookedAppealCourtSession[] =>
+  sortAppealCourtSessionsByDate(
+    (verdictAppealCase?.courtSessions ?? []).filter(
+      (session): session is BookedAppealCourtSession =>
+        Boolean(session.sessionType && session.sessionDate),
+    ),
   )
-
-  return getSharedScheduledAppealCourtSessions(
-    { appealState: verdictAppealCase.appealState, courtSessions: booked },
-    now,
-  )
-}

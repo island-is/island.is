@@ -8,7 +8,7 @@ import type { WorkingCase } from '@island.is/judicial-system-web/src/components/
 
 import {
   COURT_OF_APPEALS_NAME,
-  getScheduledAppealCourtSessions,
+  getBookedAppealCourtSessions,
 } from './AppealCourtSessionScheduledCard.logic'
 import { strings } from './AppealCourtSessionScheduledCard.strings'
 
@@ -18,10 +18,10 @@ interface Props {
 
 // The sessions the court of appeals has called in the verdict appeal, on one
 // card: an entry per session with its type, date, time and courtroom, the way
-// the district court's scheduled card reads. Renders nothing when the parties
-// have nothing on their agenda.
+// the district court's scheduled card reads. A log, so an entry never leaves
+// the card once the session is held. Renders nothing while nothing is booked.
 const AppealCourtSessionScheduledCard: FC<Props> = ({ verdictAppealCase }) => {
-  const sessions = getScheduledAppealCourtSessions(verdictAppealCase)
+  const sessions = getBookedAppealCourtSessions(verdictAppealCase)
 
   if (sessions.length === 0) {
     return null

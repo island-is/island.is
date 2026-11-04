@@ -18,13 +18,39 @@ export const appealCourtSessionTypeNames = {
   VERDICT: 'Dómsuppkvaðning',
 }
 
+// Each session with a usable date, earliest first. Sessions without a date
+// are left out - the backend requires one, but the web's generated type does
+// not.
+const byDate = <T extends { sessionDate?: Date | string | null }>(
+  sessions: T[] | undefined | null,
+): { session: T; time: number }[] =>
+  (sessions ?? [])
+    .flatMap((session) => {
+      if (!session.sessionDate) {
+        return []
+      }
+
+      const time = new Date(session.sessionDate).getTime()
+
+      return Number.isNaN(time) ? [] : [{ session, time }]
+    })
+    .sort((a, b) => a.time - b.time)
+
+/**
+ * Every booked session with a date, earliest first. The parties' card is a
+ * log of what the court has called, so nothing is dropped for being over.
+ */
+export const sortAppealCourtSessionsByDate = <
+  T extends { sessionDate?: Date | string | null },
+>(
+  sessions: T[] | undefined | null,
+): T[] => byDate(sessions).map(({ session }) => session)
+
 /**
  * The booked sessions still ahead, earliest first.
  *
- * A session stays on the agenda through its day rather than falling off at
- * its minute: the parties look the case up on the morning of the hearing.
- * Sessions without a date are left out - the backend requires one, but the
- * web's generated type does not.
+ * A session stays ahead through its day rather than falling off at its
+ * minute: the parties look the case up on the morning of the hearing.
  */
 export const getUpcomingAppealCourtSessions = <
   T extends { sessionDate?: Date | string | null },
@@ -38,29 +64,17 @@ export const getUpcomingAppealCourtSessions = <
     now.getDate(),
   ).getTime()
 
-  return (sessions ?? [])
-    .flatMap((session) => {
-      if (!session.sessionDate) {
-        return []
-      }
-
-      const time = new Date(session.sessionDate).getTime()
-
-      return Number.isNaN(time) || time < startOfToday
-        ? []
-        : [{ session, time }]
-    })
-    .sort((a, b) => a.time - b.time)
+  return byDate(sessions)
+    .filter(({ time }) => time >= startOfToday)
     .map(({ session }) => session)
 }
 
 /**
- * The sessions the parties have on their agenda in a verdict appeal: every
- * booked session still ahead, as long as the appeal is open. Once the court of
- * appeals has ruled, or the appeal was withdrawn, nothing is on the agenda
- * whatever the court left in its list.
+ * The sessions still to come in a verdict appeal: every booked session ahead,
+ * as long as the appeal is open. Once the court of appeals has ruled, or the
+ * appeal was withdrawn, nothing is next whatever the court left in its list.
  *
- * The state is read as a string so the web can pass its generated enum.
+ * The state is read as a string so the web could pass its generated enum.
  */
 export const getScheduledAppealCourtSessions = <
   T extends { sessionDate?: Date | string | null },

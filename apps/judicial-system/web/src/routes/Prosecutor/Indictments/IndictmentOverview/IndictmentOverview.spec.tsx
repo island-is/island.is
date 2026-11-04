@@ -615,18 +615,15 @@ describe('Prosecutor IndictmentOverview', () => {
         ).toBeInTheDocument()
       })
 
-      it('clears the agenda once the court of appeals has ruled', async () => {
+      // A log of what the court called, so the entries stay once it has ruled.
+      it('keeps the entries once the court of appeals has ruled', async () => {
         renderCase(withSessions(AppealCaseState.COMPLETED), [
           Feature.INDICTMENT_APPEAL,
         ])
 
-        expect(
-          await screen.findByRole('heading', { level: 1, name: 'Máli lokið' }),
-        ).toBeInTheDocument()
-        expect(screen.queryByText('Aðalmeðferð')).not.toBeInTheDocument()
-        expect(
-          screen.queryByText('Landsréttur, dómsalur 101'),
-        ).not.toBeInTheDocument()
+        expect(await screen.findByText('Á dagskrá')).toBeInTheDocument()
+        expect(screen.getByText('Aðalmeðferð')).toBeInTheDocument()
+        expect(screen.getByText('Undirbúningsþinghald')).toBeInTheDocument()
       })
     })
   })
