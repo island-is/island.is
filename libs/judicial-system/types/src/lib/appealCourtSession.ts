@@ -16,12 +16,17 @@ export const appealCourtSessionTypeNames = {
   VERDICT: 'Dómsuppkvaðning',
 }
 
-// Each session with a usable date, earliest first. Sessions without a date
-// are left out - the backend requires one, but the web's generated type does
-// not.
-const byDate = <T extends { sessionDate?: Date | string | null }>(
+/**
+ * Every booked session with a date, newest first, the way a log reads. The
+ * parties' card is a log of what the court has called, so nothing is dropped
+ * for being over. Sessions without a usable date are left out - the backend
+ * requires one, but the web's generated type does not.
+ */
+export const sortAppealCourtSessionsByDate = <
+  T extends { sessionDate?: Date | string | null },
+>(
   sessions: T[] | undefined | null,
-): { session: T; time: number }[] =>
+): T[] =>
   (sessions ?? [])
     .flatMap((session) => {
       if (!session.sessionDate) {
@@ -32,14 +37,5 @@ const byDate = <T extends { sessionDate?: Date | string | null }>(
 
       return Number.isNaN(time) ? [] : [{ session, time }]
     })
-    .sort((a, b) => a.time - b.time)
-
-/**
- * Every booked session with a date, earliest first. The parties' card is a
- * log of what the court has called, so nothing is dropped for being over.
- */
-export const sortAppealCourtSessionsByDate = <
-  T extends { sessionDate?: Date | string | null },
->(
-  sessions: T[] | undefined | null,
-): T[] => byDate(sessions).map(({ session }) => session)
+    .sort((a, b) => b.time - a.time)
+    .map(({ session }) => session)

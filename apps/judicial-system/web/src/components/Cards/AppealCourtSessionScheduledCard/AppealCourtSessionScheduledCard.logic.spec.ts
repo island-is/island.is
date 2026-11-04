@@ -36,11 +36,11 @@ describe('getBookedAppealCourtSessions', () => {
     ...overrides,
   })
 
-  it('lists every booked session, earliest first, held ones included', () => {
+  it('lists every booked session, newest first, held ones included', () => {
     expect(getBookedAppealCourtSessions(appeal())).toEqual([
-      held,
-      preparatoryHearing,
       mainHearing,
+      preparatoryHearing,
+      held,
     ])
   })
 
@@ -48,9 +48,9 @@ describe('getBookedAppealCourtSessions', () => {
     'keeps the log once the appeal is %s',
     (appealState) => {
       expect(getBookedAppealCourtSessions(appeal({ appealState }))).toEqual([
-        held,
-        preparatoryHearing,
         mainHearing,
+        preparatoryHearing,
+        held,
       ])
     },
   )

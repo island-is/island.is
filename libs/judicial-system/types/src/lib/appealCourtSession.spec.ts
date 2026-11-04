@@ -1,15 +1,15 @@
 import { sortAppealCourtSessionsByDate } from './appealCourtSession'
 
 describe('sortAppealCourtSessionsByDate', () => {
-  it('orders every dated session, earliest first, past ones included', () => {
+  it('orders every dated session, newest first, past ones included', () => {
     const later = { id: 'later', sessionDate: new Date(2026, 3, 20) }
     const held = { id: 'held', sessionDate: '2025-01-05T10:00:00.000Z' }
     const sooner = { id: 'sooner', sessionDate: new Date(2026, 2, 25) }
 
-    expect(sortAppealCourtSessionsByDate([later, held, sooner])).toEqual([
-      held,
-      sooner,
+    expect(sortAppealCourtSessionsByDate([held, sooner, later])).toEqual([
       later,
+      sooner,
+      held,
     ])
   })
 
