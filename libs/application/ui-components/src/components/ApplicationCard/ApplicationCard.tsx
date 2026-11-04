@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Box, Icon, Inline, Text } from '@island.is/island-ui/core'
 import * as styles from './ApplicationCard.css'
 import { ApplicationCardDelete } from './components/ApplicationCardDelete'
-import { dateFormat, dateFormatWithTime } from '@island.is/shared/constants'
+import { dateFormat } from '@island.is/shared/constants'
 import format from 'date-fns/format'
 import { ApplicationCardHistory } from './components/ApplicationCardHistory'
 import { ApplicationCardProgress } from './components/ApplicationCardProgress'
@@ -65,9 +65,11 @@ export const ApplicationCard = ({
   const { status, actionCard, modified, pruneAt } = application
   const { lang: locale, formatMessage } = useLocale()
   const { openApplication: defaultOpen, slug } = useOpenApplication(application)
-  const dateTimeFormat =
-    locale === 'is' ? dateFormatWithTime.is : dateFormatWithTime.en
   const dateOnlyFormat = locale === 'is' ? dateFormat.is : dateFormat.en
+  const dateTimeFormat =
+    locale === 'is'
+      ? `${dateFormat.is} 'kl.' HH:mm`
+      : `${dateFormat.en} 'at' hh:mm aaa`
   const defaultData = defaultCardDataByStatus[status]
   const heading = actionCard?.title ?? application.name
   const openApplication = onClick
