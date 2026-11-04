@@ -195,11 +195,6 @@ export const useFormActions = (
 
   const refetch = useCallback(() => dispatch('REFETCH'), [dispatch])
 
-  const validate = useCallback(
-    (fieldIds: string[]) => dispatch('VALIDATE', undefined, fieldIds),
-    [dispatch],
-  )
-
   return {
     screen,
     isPending,
@@ -213,7 +208,6 @@ export const useFormActions = (
     prevPage,
     submit,
     refetch,
-    validate,
     dispatch,
   }
 }
