@@ -712,6 +712,37 @@ describe('getAppealSummonsServiceBanners', () => {
       },
     ])
   })
+
+  it('shows an error banner when service failed', () => {
+    expect(
+      getAppealSummonsServiceBanners({
+        defendants: [{ id: 'd1', name: 'Jón Jónsson' }],
+        verdictAppealCase: {
+          appealSummonses: [
+            {
+              id: 'summons',
+              services: [
+                {
+                  id: 's1',
+                  defendantId: 'd1',
+                  sentToServiceDate: '2026-06-05T09:20:00.000Z',
+                  serviceStatus: VerdictServiceStatus.FAILED,
+                  comment: 'Fannst ekki',
+                },
+              ],
+            },
+          ],
+        },
+      } as WorkingCase),
+    ).toEqual([
+      {
+        key: 's1',
+        type: 'error',
+        title: 'Birting áfrýjunarstefnu mistókst – Jón Jónsson',
+        message: 'Fannst ekki',
+      },
+    ])
+  })
 })
 
 describe('getAppealAppointmentLetters', () => {

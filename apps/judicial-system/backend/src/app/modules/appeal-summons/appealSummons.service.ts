@@ -923,10 +923,21 @@ export class AppealSummonsService {
           continue
         }
 
-        const policeInfo = await this.policeService.getVerdictDocumentStatus(
-          service.externalPoliceDocumentId,
-          user,
-        )
+        let policeInfo
+        try {
+          policeInfo = await this.policeService.getVerdictDocumentStatus(
+            service.externalPoliceDocumentId,
+            user,
+          )
+        } catch (reason) {
+          // One LOKE failure must not abort the other waiting rows or spam
+          // the Overview with a toast on every load.
+          this.logger.warn(
+            `Failed to sync status of appeal summons service ${service.id}`,
+            { reason },
+          )
+          continue
+        }
 
         if (!isVerdictInfoChanged(policeInfo, service)) {
           continue

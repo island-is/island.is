@@ -185,4 +185,65 @@ describe('AppealSummonsController - Sync service statuses', () => {
     expect(mockUpdate).not.toHaveBeenCalled()
     expect(result).toEqual([])
   })
+
+  it('continues syncing other rows when one LOKE lookup fails', async () => {
+    const otherServiceId = uuid()
+    const otherPoliceDocumentId = 'other-police-document-id'
+    const otherService = {
+      id: otherServiceId,
+      appealSummonsId: summonsId,
+      defendantId: uuid(),
+      sentToServiceDate: new Date('2026-06-05T09:20:00.000Z'),
+      externalPoliceDocumentId: otherPoliceDocumentId,
+    } as AppealSummonsServiceRecipient
+    const multiServiceCase = {
+      ...theCase,
+      verdictAppealCase: {
+        ...theCase.verdictAppealCase,
+        appealSummonses: [
+          {
+            ...summons,
+            services: [waitingService, otherService],
+          },
+        ],
+      },
+    } as Case
+
+    const serviceDate = new Date('2026-06-06T10:00:00.000Z')
+    const updatedService = {
+      ...otherService,
+      serviceStatus: VerdictServiceStatus.IN_PERSON,
+      serviceDate,
+      servedBy: 'Lögreglumaður',
+    } as AppealSummonsServiceRecipient
+
+    const mockGetStatus =
+      mockPoliceService.getVerdictDocumentStatus as jest.Mock
+    mockGetStatus
+      .mockRejectedValueOnce(new Error('LOKE unavailable'))
+      .mockResolvedValueOnce({
+        serviceStatus: VerdictServiceStatus.IN_PERSON,
+        serviceDate,
+        servedBy: 'Lögreglumaður',
+      })
+
+    const mockUpdate =
+      mockAppealSummonsRepositoryService.updateServiceRecipient as jest.Mock
+    mockUpdate.mockResolvedValue(updatedService)
+
+    const result = await appealSummonsController.syncServiceStatuses(
+      caseId,
+      multiServiceCase,
+      user,
+    )
+
+    expect(mockGetStatus).toHaveBeenCalledTimes(2)
+    expect(mockUpdate).toHaveBeenCalledTimes(1)
+    expect(result).toEqual([
+      {
+        ...summons,
+        services: [waitingService, updatedService],
+      },
+    ])
+  })
 })

@@ -7,6 +7,7 @@ import {
   isCourtOfAppealsUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
+  isSuccessfulVerdictServiceStatus,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -300,7 +301,7 @@ export type AppealSummonsServiceBanner = {
   key: string
   title: string
   message: string
-  type: 'info' | 'success'
+  type: 'info' | 'success' | 'error'
 }
 
 export const getAppealSummonsServiceBanners = (
@@ -319,10 +320,24 @@ export const getAppealSummonsServiceBanners = (
             (claimant) => claimant.id === service.civilClaimantId,
           )?.name
 
-      if (service.serviceDate && service.serviceStatus) {
+      if (service.serviceStatus === VerdictServiceStatus.FAILED) {
+        banners.push({
+          key: service.id,
+          type: 'error',
+          title: `Birting áfrýjunarstefnu mistókst${name ? ` – ${name}` : ''}`,
+          message: service.comment?.trim()
+            ? service.comment
+            : 'Ekki tókst að birta áfrýjunarstefnuna',
+        })
+        continue
+      }
+
+      if (isSuccessfulVerdictServiceStatus(service.serviceStatus)) {
         const isLegalPaper =
           service.serviceStatus === VerdictServiceStatus.LEGAL_PAPER
-        const servedAt = isLegalPaper
+        const servedAt = !service.serviceDate
+          ? undefined
+          : isLegalPaper
           ? formatDate(service.serviceDate)
           : `${formatDate(service.serviceDate)} kl. ${formatDate(
               service.serviceDate,
@@ -338,8 +353,12 @@ export const getAppealSummonsServiceBanners = (
               }`
             : `Áfrýjunarstefna birt${name ? ` – ${name}` : ''}`,
           message: isLegalPaper
-            ? `Birt í Lögbirtingablaðinu ${servedAt}`
-            : `Birt ${servedAt}`,
+            ? servedAt
+              ? `Birt í Lögbirtingablaðinu ${servedAt}`
+              : 'Birt í Lögbirtingablaðinu'
+            : servedAt
+            ? `Birt ${servedAt}`
+            : 'Birt',
         })
         continue
       }
