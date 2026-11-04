@@ -559,7 +559,7 @@ export const ApplicationConfigurations = {
     translation: ['doe.sr.application', 'uiForms.application'],
   },
   [ApplicationTypes.PAY_DEBTS]: {
-    slug: 'greidum-rikinu',
+    slug: 'greida-skuld',
     translation: ['pd.application', 'uiForms.application'],
   },
   [ApplicationTypes.U2_CERTIFICATE]: {
