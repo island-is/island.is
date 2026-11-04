@@ -486,13 +486,6 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
   )
 }
 
-// The prosecutor may replace the generated indictment with their own document
-// once it has been confirmed and sent to court, but not after the case has
-// been completed.
-export const isIndictmentPdfReplaceableState = (
-  state?: CaseState | null,
-): boolean => state === CaseState.SUBMITTED || state === CaseState.RECEIVED
-
 export const getIndictmentCasePoliceState = (
   state?: CaseState | null,
 ): CasePoliceState => {

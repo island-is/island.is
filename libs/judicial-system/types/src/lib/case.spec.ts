@@ -6,7 +6,6 @@ import {
   CaseType,
   getIndictmentCasePoliceState,
   hasIndictmentCaseBeenSubmittedToCourt,
-  isIndictmentPdfReplaceableState,
   isInvestigationCase,
   isRestrictionCase,
 } from './case'
@@ -68,26 +67,6 @@ describe('hasIndictmentCaseBeenSubmittedToCourt', () => {
     ${null}
   `.it('should return false for $state', ({ state }) => {
     expect(hasIndictmentCaseBeenSubmittedToCourt(state)).toBe(false)
-  })
-})
-
-describe('isIndictmentPdfReplaceableState', () => {
-  it.each([CaseState.SUBMITTED, CaseState.RECEIVED])(
-    'allows replacing the indictment pdf in %s',
-    (state) => {
-      expect(isIndictmentPdfReplaceableState(state)).toBe(true)
-    },
-  )
-
-  it.each([
-    CaseState.DRAFT,
-    CaseState.WAITING_FOR_REVIEW,
-    CaseState.WAITING_FOR_CONFIRMATION,
-    CaseState.COMPLETED,
-    undefined,
-    null,
-  ])('does not allow replacing the indictment pdf in %s', (state) => {
-    expect(isIndictmentPdfReplaceableState(state)).toBe(false)
   })
 })
 

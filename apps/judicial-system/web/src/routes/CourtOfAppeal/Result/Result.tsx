@@ -134,7 +134,7 @@ const Result = () => {
             {isIndictment ? (
               <>
                 <Conclusion
-                  title={formatMessage(conclusion.appealTitle)}
+                  title={conclusion.appealTitle}
                   conclusionText={targetAppealCase?.appealConclusion}
                 />
                 <AllIndictmentCaseFiles />
@@ -169,12 +169,12 @@ const Result = () => {
                   )}
                 </Accordion>
                 <Conclusion
-                  title={formatMessage(conclusion.title)}
+                  title={conclusion.title}
                   conclusionText={workingCase.conclusion}
                   judgeName={workingCase.judge?.name}
                 />
                 <Conclusion
-                  title={formatMessage(conclusion.appealTitle)}
+                  title={conclusion.appealTitle}
                   conclusionText={targetAppealCase?.appealConclusion}
                 />
                 <CaseFilesOverview />

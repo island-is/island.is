@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
@@ -50,7 +49,6 @@ type ModalType =
   | 'none'
 
 const Summary: FC = () => {
-  const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
@@ -99,10 +97,7 @@ const Summary: FC = () => {
       <AlertBanner
         variant="warning"
         title={strings.alertBannerTitle}
-        description={getAppealDecision(
-          formatMessage,
-          targetAppealCase?.appealRulingDecision,
-        )}
+        description={getAppealDecision(targetAppealCase?.appealRulingDecision)}
       />
       <PageLayout
         workingCase={workingCase}
@@ -118,14 +113,14 @@ const Summary: FC = () => {
 
           <Box marginBottom={6}>
             <Conclusion
-              title={formatMessage(conclusion.title)}
+              title={conclusion.title}
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
           </Box>
           <Box marginBottom={6}>
             <Conclusion
-              title={formatMessage(conclusion.appealTitle)}
+              title={conclusion.appealTitle}
               conclusionText={targetAppealCase?.appealConclusion}
             />
           </Box>
@@ -158,7 +153,7 @@ const Summary: FC = () => {
             text={strings.appealCompletedModalText}
             buttons={[
               {
-                text: formatMessage(core.closeModal),
+                text: core.closeModal,
                 onClick: () => {
                   router.push(
                     appendAppealCaseIdQuery(
@@ -184,7 +179,7 @@ const Summary: FC = () => {
             text={strings.appealDiscontinuedModalText}
             buttons={[
               {
-                text: formatMessage(core.closeModal),
+                text: core.closeModal,
                 onClick: () => {
                   router.push(
                     appendAppealCaseIdQuery(

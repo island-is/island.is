@@ -171,7 +171,7 @@ const Overview = () => {
                   )}
                 </Accordion>
                 <Conclusion
-                  title={formatMessage(conclusion.title)}
+                  title={conclusion.title}
                   conclusionText={workingCase.conclusion}
                   judgeName={workingCase.judge?.name}
                 />
@@ -185,7 +185,7 @@ const Overview = () => {
             previousUrl={getStandardUserDashboardRoute(user)}
             actions={[
               {
-                text: formatMessage(core.continue),
+                text: core.continue,
                 icon: 'arrowForward',
                 onClick: () =>
                   handleNavigationTo(

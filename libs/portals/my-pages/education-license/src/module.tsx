@@ -16,6 +16,7 @@ export const educationLicenseModule: PortalModule = {
       name: m.educationLicense,
       path: EducationLicensePaths.EducationLicense,
       enabled: userInfo.scopes.includes(ApiScope.educationLicense),
+      requiredScopes: [ApiScope.educationLicense],
       element: <EducationLicense />,
     },
   ],

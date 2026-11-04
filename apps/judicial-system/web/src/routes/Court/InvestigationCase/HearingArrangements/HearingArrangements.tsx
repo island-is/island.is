@@ -155,11 +155,7 @@ const HearingArrangements = () => {
       onNavigationTo={handleNavigationTo}
       isValid={stepIsValid}
     >
-      <PageHeader
-        title={formatMessage(
-          titles.court.investigationCases.hearingArrangements,
-        )}
-      />
+      <PageHeader title={titles.court.investigationCases.hearingArrangements} />
       <FormContentContainer>
         {workingCase.requestProsecutorOnlySession &&
           workingCase.prosecutorOnlySessionRequest && (
@@ -309,7 +305,11 @@ const HearingArrangements = () => {
             <section className={stack({ gap: 3 })}>
               <SectionHeading
                 title={formatMessage(
-                  defenderInfo.investigationCases.sections.defender.title,
+                  {
+                    id: defenderInfo.investigationCases.sections.defender.title,
+                    defaultMessage:
+                      defenderInfo.investigationCases.sections.defender.title,
+                  },
                   {
                     defenderType:
                       workingCase.sessionArrangements ===
@@ -321,7 +321,13 @@ const HearingArrangements = () => {
                 tooltip={
                   <Tooltip
                     text={formatMessage(
-                      defenderInfo.investigationCases.sections.defender.tooltip,
+                      {
+                        id: defenderInfo.investigationCases.sections.defender
+                          .tooltip,
+                        defaultMessage:
+                          defenderInfo.investigationCases.sections.defender
+                            .tooltip,
+                      },
                       { sessionArrangement: workingCase.sessionArrangements },
                     )}
                     placement="right"
@@ -458,7 +464,7 @@ const HearingArrangements = () => {
           ]}
           errorMessage={
             isModalDeferring && sendNotificationError
-              ? formatMessage(errors.sendNotification)
+              ? errors.sendNotification
               : undefined
           }
         />
