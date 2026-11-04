@@ -44,7 +44,7 @@ export class UserResolver {
     if (!address?.streetAddress) {
       return null
     }
-    if (!address.postalCode) {
+    if (!address.postalCode || !address.city) {
       return address.streetAddress
     }
     return `${address.streetAddress}, ${address.postalCode} ${address.city}`
