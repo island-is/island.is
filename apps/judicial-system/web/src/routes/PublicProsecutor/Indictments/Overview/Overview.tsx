@@ -1,4 +1,11 @@
-import { type JSX, useCallback, useContext, useMemo, useState } from 'react'
+import {
+  type JSX,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -32,7 +39,7 @@ import {
   VerdictAppealFiles,
   VerdictTimelineCard,
 } from '@island.is/judicial-system-web/src/components'
-import { getAppealSummonsWaitingServiceBanners } from '@island.is/judicial-system-web/src/components/VerdictAppealFiles/VerdictAppealFiles.logic'
+import { getAppealSummonsServiceBanners } from '@island.is/judicial-system-web/src/components/VerdictAppealFiles/VerdictAppealFiles.logic'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   AppealCaseState,
@@ -45,7 +52,10 @@ import {
   isReviewerAssignedModal,
   REVIEWER_ASSIGNED,
 } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useAppealSummons,
+  useCase,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { AppealProsecutorSelector } from './AppealProsecutorSelector'
@@ -59,8 +69,13 @@ export const Overview = () => {
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
   const { updateCase } = useCase()
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const { syncAppealSummonsServiceStatuses } = useAppealSummons()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
@@ -74,6 +89,72 @@ export const Overview = () => {
   const assignMode = isPublicProsecutionOfficeUser(user)
     ? getPublicProsecutorOverviewAssignMode(workingCase)
     : 'none'
+
+  useEffect(() => {
+    if (isLoadingWorkingCase) {
+      return
+    }
+
+    const waitingServices = (
+      workingCase.verdictAppealCase?.appealSummonses ?? []
+    ).flatMap((summons) =>
+      (summons.services ?? []).filter(
+        (service) =>
+          service.externalPoliceDocumentId && !service.serviceStatus,
+      ),
+    )
+
+    if (waitingServices.length === 0) {
+      return
+    }
+
+    let cancelled = false
+
+    const sync = async () => {
+      const updatedSummonses = await syncAppealSummonsServiceStatuses(
+        workingCase.id,
+      )
+
+      if (cancelled || !updatedSummonses?.length) {
+        return
+      }
+
+      setWorkingCase((previous) => {
+        if (!previous.verdictAppealCase?.appealSummonses) {
+          return previous
+        }
+
+        const byId = new Map(
+          updatedSummonses.map((summons) => [summons.id, summons]),
+        )
+
+        return {
+          ...previous,
+          verdictAppealCase: {
+            ...previous.verdictAppealCase,
+            appealSummonses: previous.verdictAppealCase.appealSummonses.map(
+              (summons) => {
+                const updated = byId.get(summons.id)
+
+                return updated
+                  ? { ...summons, services: updated.services }
+                  : summons
+              },
+            ),
+          },
+        }
+      })
+    }
+
+    void sync()
+
+    return () => {
+      cancelled = true
+    }
+    // Sync once after the case query settles; later merges must not re-trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workingCase.id, isLoadingWorkingCase])
+
 
   const assignReviewer = async () => {
     if (!selectedIndictmentReviewer) {
@@ -158,7 +239,7 @@ export const Overview = () => {
   }, [workingCase.defendants])
 
   const appealSummonsServiceBanners =
-    getAppealSummonsWaitingServiceBanners(workingCase)
+    getAppealSummonsServiceBanners(workingCase)
 
   return (
     <PageLayout
@@ -181,7 +262,7 @@ export const Overview = () => {
             {appealSummonsServiceBanners.map((banner) => (
               <AlertMessage
                 key={banner.key}
-                type="info"
+                type={banner.type}
                 title={banner.title}
                 message={banner.message}
               />

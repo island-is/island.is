@@ -192,6 +192,25 @@ export class AppealSummonsResolver {
       caseId,
     )
   }
+
+  @Mutation(() => [AppealSummons])
+  syncAppealSummonsServiceStatuses(
+    @Args('caseId', new ParseUUIDPipe()) caseId: string,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealSummons[]> {
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Syncing appeal summons service statuses for case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.SYNC_APPEAL_SUMMONS_SERVICE_STATUSES,
+      this.backendService.syncAppealSummonsServiceStatuses(caseId),
+      caseId,
+    )
+  }
 }
 
 @UseGuards(JwtGraphQlAuthUserGuard)

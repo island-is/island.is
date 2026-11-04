@@ -10,6 +10,7 @@ import {
   CaseType,
   InstitutionType,
   UserRole,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockUser } from '@island.is/judicial-system-web/src/utils/mocks'
 
@@ -23,7 +24,7 @@ import {
   getAppealSummonsMenuItems,
   getAppealSummonsRows,
   getAppealSummonsServiceRecipientOptions,
-  getAppealSummonsWaitingServiceBanners,
+  getAppealSummonsServiceBanners,
   getVerdictAppealFileGroups,
   hasStandingVerdictAppeal,
   showsAppealSummonses,
@@ -637,10 +638,10 @@ describe('getAppealSummonsServiceRecipientOptions', () => {
   })
 })
 
-describe('getAppealSummonsWaitingServiceBanners', () => {
+describe('getAppealSummonsServiceBanners', () => {
   it('returns an info banner per service row that is still waiting', () => {
     expect(
-      getAppealSummonsWaitingServiceBanners({
+      getAppealSummonsServiceBanners({
         defendants: [{ id: 'd1', name: 'Jón Jónsson' }],
         civilClaimants: [{ id: 'c1', name: 'Binni' }],
         verdictAppealCase: {
@@ -658,6 +659,7 @@ describe('getAppealSummonsWaitingServiceBanners', () => {
                   civilClaimantId: 'c1',
                   sentToServiceDate: '2026-06-05T09:20:00.000Z',
                   serviceDate: '2026-06-06T10:00:00.000Z',
+                  serviceStatus: VerdictServiceStatus.IN_PERSON,
                 },
               ],
             },
@@ -667,8 +669,46 @@ describe('getAppealSummonsWaitingServiceBanners', () => {
     ).toEqual([
       {
         key: 's1',
+        type: 'info',
         title: 'Áfrýjunarstefna bíður birtingar – Jón Jónsson',
         message: expect.stringContaining('Send í birtingu'),
+      },
+      {
+        key: 's2',
+        type: 'success',
+        title: 'Áfrýjunarstefna birt – Binni',
+        message: expect.stringContaining('Birt'),
+      },
+    ])
+  })
+
+  it('uses legal-paper wording when served via Lögbirtingablaðið', () => {
+    expect(
+      getAppealSummonsServiceBanners({
+        defendants: [{ id: 'd1', name: 'Jón Jónsson' }],
+        verdictAppealCase: {
+          appealSummonses: [
+            {
+              id: 'summons',
+              services: [
+                {
+                  id: 's1',
+                  defendantId: 'd1',
+                  sentToServiceDate: '2026-06-05T09:20:00.000Z',
+                  serviceDate: '2026-06-10T00:00:00.000Z',
+                  serviceStatus: VerdictServiceStatus.LEGAL_PAPER,
+                },
+              ],
+            },
+          ],
+        },
+      } as WorkingCase),
+    ).toEqual([
+      {
+        key: 's1',
+        type: 'success',
+        title: 'Áfrýjunarstefna birt í Lögbirtingablaðinu – Jón Jónsson',
+        message: expect.stringContaining('Birt í Lögbirtingablaðinu'),
       },
     ])
   })

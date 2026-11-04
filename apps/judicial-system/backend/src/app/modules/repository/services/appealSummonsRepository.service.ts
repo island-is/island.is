@@ -13,6 +13,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   AppealSummonsAppellantSide,
   HashAlgorithm,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { AppealSummons } from '../models/appealSummons.model'
@@ -50,6 +51,10 @@ export type CreateAppealSummonsServiceRecipient = {
 
 export type UpdateAppealSummonsServiceRecipient = {
   externalPoliceDocumentId?: string
+  serviceStatus?: VerdictServiceStatus | null
+  serviceDate?: Date | null
+  servedBy?: string | null
+  comment?: string | null
 }
 
 @Injectable()
@@ -322,6 +327,28 @@ export class AppealSummonsRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error finding appeal summons service recipient ${id} for summons ${appealSummonsId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async findServiceRecipientByExternalPoliceDocumentId(
+    externalPoliceDocumentId: string,
+  ): Promise<AppealSummonsServiceRecipient | null> {
+    try {
+      this.logger.debug(
+        `Finding appeal summons service recipient with police document id ${externalPoliceDocumentId}`,
+      )
+
+      return await this.appealSummonsServiceRecipientModel.findOne({
+        where: { externalPoliceDocumentId },
+        include: [{ model: AppealSummons, as: 'appealSummons' }],
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error finding appeal summons service recipient with police document id ${externalPoliceDocumentId}:`,
         { error },
       )
 

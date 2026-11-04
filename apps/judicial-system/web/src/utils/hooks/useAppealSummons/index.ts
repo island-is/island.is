@@ -10,6 +10,7 @@ import { useCreateAppealSummonsMutation } from './createAppealSummons.generated'
 import { useDeleteAppealSummonsMutation } from './deleteAppealSummons.generated'
 import { useSendAppealSummonsToCourtOfAppealsMutation } from './sendAppealSummonsToCourtOfAppeals.generated'
 import { useSendAppealSummonsToServiceMutation } from './sendAppealSummonsToService.generated'
+import { useSyncAppealSummonsServiceStatusesMutation } from './syncAppealSummonsServiceStatuses.generated'
 import { useUpdateAppealSummonsMutation } from './updateAppealSummons.generated'
 
 export type AppealSummonsDefendantInput = {
@@ -39,6 +40,10 @@ const useAppealSummons = () => {
     sendAppealSummonsToServiceMutation,
     { loading: isSendingAppealSummonsToService },
   ] = useSendAppealSummonsToServiceMutation()
+  const [
+    syncAppealSummonsServiceStatusesMutation,
+    { loading: isSyncingAppealSummonsServiceStatuses },
+  ] = useSyncAppealSummonsServiceStatusesMutation()
 
   const createAppealSummons = useCallback(
     async (caseId: string, defendants: AppealSummonsDefendantInput[]) => {
@@ -211,6 +216,35 @@ const useAppealSummons = () => {
     [isSendingAppealSummonsToService, sendAppealSummonsToServiceMutation],
   )
 
+  const syncAppealSummonsServiceStatuses = useCallback(
+    async (caseId: string) => {
+      try {
+        if (isSyncingAppealSummonsServiceStatuses) {
+          return undefined
+        }
+
+        const { data, errors } = await syncAppealSummonsServiceStatusesMutation({
+          variables: { caseId },
+        })
+
+        if (data?.syncAppealSummonsServiceStatuses && !errors) {
+          return data.syncAppealSummonsServiceStatuses
+        }
+
+        return undefined
+      } catch {
+        toast.error(
+          'Upp kom villa við að sækja stöðu birtingar á áfrýjunarstefnu',
+        )
+        return undefined
+      }
+    },
+    [
+      isSyncingAppealSummonsServiceStatuses,
+      syncAppealSummonsServiceStatusesMutation,
+    ],
+  )
+
   const previewAppealSummons = useCallback(
     async (
       caseId: string,
@@ -268,6 +302,7 @@ const useAppealSummons = () => {
     confirmAppealSummons,
     sendAppealSummonsToCourtOfAppeals,
     sendAppealSummonsToService,
+    syncAppealSummonsServiceStatuses,
     previewAppealSummons,
     isCreatingAppealSummons,
     isUpdatingAppealSummons,
@@ -275,6 +310,7 @@ const useAppealSummons = () => {
     isConfirmingAppealSummons,
     isSendingAppealSummonsToCourtOfAppeals,
     isSendingAppealSummonsToService,
+    isSyncingAppealSummonsServiceStatuses,
   }
 }
 

@@ -2054,6 +2054,21 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths SyncAppealSummonsServiceStatuses 1`] = `
+Array [
+  "syncAppealSummonsServiceStatuses.id",
+  "syncAppealSummonsServiceStatuses.services.civilClaimantId",
+  "syncAppealSummonsServiceStatuses.services.comment",
+  "syncAppealSummonsServiceStatuses.services.defendantId",
+  "syncAppealSummonsServiceStatuses.services.externalPoliceDocumentId",
+  "syncAppealSummonsServiceStatuses.services.id",
+  "syncAppealSummonsServiceStatuses.services.sentToServiceDate",
+  "syncAppealSummonsServiceStatuses.services.servedBy",
+  "syncAppealSummonsServiceStatuses.services.serviceDate",
+  "syncAppealSummonsServiceStatuses.services.serviceStatus",
+]
+`;
+
 exports[`GraphQL operations select these field paths TransitionAppealCase 1`] = `
 Array [
   "transitionAppealCase.appealReceivedByCourtDate",

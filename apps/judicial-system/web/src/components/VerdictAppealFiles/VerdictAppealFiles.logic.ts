@@ -11,13 +11,14 @@ import {
 } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
-import type {
-  AppealSummons,
-  CaseFile,
-  CaseFileCategory,
-  CivilClaimant,
-  Defendant,
-  User,
+import {
+  type AppealSummons,
+  type CaseFile,
+  type CaseFileCategory,
+  type CivilClaimant,
+  type Defendant,
+  type User,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isMatchingAppealCaseFile } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -299,9 +300,10 @@ export type AppealSummonsServiceBanner = {
   key: string
   title: string
   message: string
+  type: 'info' | 'success'
 }
 
-export const getAppealSummonsWaitingServiceBanners = (
+export const getAppealSummonsServiceBanners = (
   workingCase: WorkingCase,
 ): AppealSummonsServiceBanner[] => {
   const summonses = workingCase.verdictAppealCase?.appealSummonses ?? []
@@ -309,10 +311,6 @@ export const getAppealSummonsWaitingServiceBanners = (
 
   for (const summons of summonses) {
     for (const service of summons.services ?? []) {
-      if (service.serviceDate) {
-        continue
-      }
-
       const name = service.defendantId
         ? workingCase.defendants?.find(
             (defendant) => defendant.id === service.defendantId,
@@ -321,17 +319,45 @@ export const getAppealSummonsWaitingServiceBanners = (
             (claimant) => claimant.id === service.civilClaimantId,
           )?.name
 
-      const sentAt = service.sentToServiceDate
-        ? `${formatDate(service.sentToServiceDate)} kl. ${formatDate(
-            service.sentToServiceDate,
-            TIME_FORMAT,
-          )}`
-        : ''
+      if (service.serviceDate && service.serviceStatus) {
+        const isLegalPaper =
+          service.serviceStatus === VerdictServiceStatus.LEGAL_PAPER
+        const servedAt = isLegalPaper
+          ? formatDate(service.serviceDate)
+          : `${formatDate(service.serviceDate)} kl. ${formatDate(
+              service.serviceDate,
+              TIME_FORMAT,
+            )}`
+
+        banners.push({
+          key: service.id,
+          type: 'success',
+          title: isLegalPaper
+            ? `Áfrýjunarstefna birt í Lögbirtingablaðinu${
+                name ? ` – ${name}` : ''
+              }`
+            : `Áfrýjunarstefna birt${name ? ` – ${name}` : ''}`,
+          message: isLegalPaper
+            ? `Birt í Lögbirtingablaðinu ${servedAt}`
+            : `Birt ${servedAt}`,
+        })
+        continue
+      }
+
+      if (!service.sentToServiceDate) {
+        continue
+      }
+
+      const sentAt = `${formatDate(service.sentToServiceDate)} kl. ${formatDate(
+        service.sentToServiceDate,
+        TIME_FORMAT,
+      )}`
 
       banners.push({
         key: service.id,
+        type: 'info',
         title: `Áfrýjunarstefna bíður birtingar${name ? ` – ${name}` : ''}`,
-        message: `Send í birtingu ${sentAt}`.trim(),
+        message: `Send í birtingu ${sentAt}`,
       })
     }
   }

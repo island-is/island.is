@@ -7,6 +7,7 @@ import {
   Inject,
   NotFoundException,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common'
@@ -27,7 +28,13 @@ import {
 } from '@island.is/judicial-system/message'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
+import { getOrCreateTransaction } from '../../middleware'
+import {
+  CaseExistsForUpdateGuard,
+  CaseExistsGuard,
+  CaseTypeGuard,
+  CurrentCase,
+} from '../case'
 import {
   AppealSummons,
   AppealSummonsRepositoryService,
@@ -35,8 +42,14 @@ import {
   Case,
 } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
-import { CurrentAppealSummons } from './guards/appealSummons.decorator'
+import { PoliceUpdateAppealSummonsServiceDto } from './dto/policeUpdateAppealSummonsService.dto'
+import {
+  CurrentAppealSummons,
+  CurrentAppealSummonsService,
+} from './guards/appealSummons.decorator'
 import { AppealSummonsExistsGuard } from './guards/appealSummonsExists.guard'
+import { AppealSummonsServiceOnCaseGuard } from './guards/appealSummonsServiceOnCase.guard'
+import { ExternalPoliceAppealSummonsServiceExistsGuard } from './guards/externalPoliceAppealSummonsServiceExists.guard'
 import { DeliverResponse } from './models/deliver.response'
 import { AppealSummonsService } from './appealSummons.service'
 
@@ -129,5 +142,38 @@ export class InternalAppealSummonsController {
 
       throw error
     }
+  }
+
+  // Police name the service row, not the case: the external-police guard
+  // supplies caseId, then the case is locked and the service is re-taken from
+  // that locked include before the status write.
+  @UseGuards(
+    ExternalPoliceAppealSummonsServiceExistsGuard,
+    CaseExistsForUpdateGuard,
+    AppealSummonsServiceOnCaseGuard,
+  )
+  @Patch('appeal-summons-service/:policeDocumentId')
+  @ApiOkResponse({
+    type: AppealSummonsServiceRecipient,
+    description:
+      'Updates appeal summons service delivery status from the police',
+  })
+  async updateAppealSummonsService(
+    @Param('policeDocumentId') policeDocumentId: string,
+    @CurrentAppealSummonsService() service: AppealSummonsServiceRecipient,
+    @CurrentCase() theCase: Case,
+    @Body() update: PoliceUpdateAppealSummonsServiceDto,
+  ): Promise<AppealSummonsServiceRecipient> {
+    this.logger.info(
+      `Updating appeal summons service by external police document id ${policeDocumentId} of ${theCase.id}`,
+    )
+
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.appealSummonsService.updatePoliceDelivery(
+      service,
+      update,
+      transaction,
+    )
   }
 }

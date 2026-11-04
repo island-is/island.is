@@ -1,5 +1,6 @@
 import { Base64 } from 'js-base64'
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
@@ -8,6 +9,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -20,8 +22,10 @@ import {
   canPerformAppealSummonsAction,
   DocumentDeliveryReceiverType,
   DocumentDeliverySupplementCode,
+  isVerdictInfoChanged,
   PoliceFileTypeCode,
   type User,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { getCaseFileHash } from '../../formatters'
@@ -39,6 +43,7 @@ import {
   CaseRepositoryService,
 } from '../repository'
 import { CreateAppealSummonsDto } from './dto/createAppealSummons.dto'
+import { PoliceUpdateAppealSummonsServiceDto } from './dto/policeUpdateAppealSummonsService.dto'
 import { PreviewAppealSummonsDto } from './dto/previewAppealSummons.dto'
 import { SendAppealSummonsToServiceDto } from './dto/sendAppealSummonsToService.dto'
 import { DeliverResponse } from './models/deliver.response'
@@ -52,6 +57,7 @@ export class AppealSummonsService {
     private readonly pdfService: PdfService,
     private readonly awsS3Service: AwsS3Service,
     private readonly policeService: PoliceService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -858,6 +864,125 @@ export class AppealSummonsService {
         appellantSide,
         claims: defendant.claims,
       }
+    })
+  }
+
+  async findServiceRecipientByExternalPoliceDocumentId(
+    externalPoliceDocumentId: string,
+  ): Promise<AppealSummonsServiceRecipient> {
+    const service =
+      await this.appealSummonsRepositoryService.findServiceRecipientByExternalPoliceDocumentId(
+        externalPoliceDocumentId,
+      )
+
+    if (!service) {
+      throw new NotFoundException(
+        `Appeal summons service with police document id ${externalPoliceDocumentId} does not exist`,
+      )
+    }
+
+    return service
+  }
+
+  async updatePoliceDelivery(
+    service: AppealSummonsServiceRecipient,
+    update: PoliceUpdateAppealSummonsServiceDto,
+    transaction: Transaction,
+  ): Promise<AppealSummonsServiceRecipient> {
+    return this.appealSummonsRepositoryService.updateServiceRecipient(
+      service.id,
+      service.appealSummonsId,
+      {
+        serviceStatus: update.serviceStatus,
+        serviceDate: update.serviceDate,
+        servedBy: update.servedBy,
+        comment: update.comment,
+      },
+      { transaction },
+    )
+  }
+
+  async syncServiceStatusesForCase(
+    theCase: Case,
+    user: User,
+  ): Promise<AppealSummons[]> {
+    const pulls: Array<{
+      summons: AppealSummons
+      service: AppealSummonsServiceRecipient
+      update: {
+        serviceStatus?: VerdictServiceStatus
+        serviceDate?: Date
+        servedBy?: string
+        comment?: string
+      }
+    }> = []
+
+    for (const summons of theCase.verdictAppealCase?.appealSummonses ?? []) {
+      for (const service of summons.services ?? []) {
+        if (!service.externalPoliceDocumentId || service.serviceStatus) {
+          continue
+        }
+
+        const policeInfo = await this.policeService.getVerdictDocumentStatus(
+          service.externalPoliceDocumentId,
+          user,
+        )
+
+        if (!isVerdictInfoChanged(policeInfo, service)) {
+          continue
+        }
+
+        pulls.push({
+          summons,
+          service,
+          update: {
+            serviceStatus: policeInfo.serviceStatus,
+            serviceDate: policeInfo.serviceDate,
+            servedBy: policeInfo.servedBy,
+            comment: policeInfo.comment,
+          },
+        })
+      }
+    }
+
+    if (pulls.length === 0) {
+      return []
+    }
+
+    return this.sequelize.transaction(async (transaction) => {
+      const bySummonsId = new Map<
+        string,
+        { summons: AppealSummons; services: AppealSummonsServiceRecipient[] }
+      >()
+
+      for (const pull of pulls) {
+        const existing = bySummonsId.get(pull.summons.id) ?? {
+          summons: pull.summons,
+          services: [...(pull.summons.services ?? [])],
+        }
+
+        const index = existing.services.findIndex(
+          (service) => service.id === pull.service.id,
+        )
+
+        if (index < 0) {
+          continue
+        }
+
+        existing.services[index] =
+          await this.appealSummonsRepositoryService.updateServiceRecipient(
+            pull.service.id,
+            pull.summons.id,
+            pull.update,
+            { transaction },
+          )
+        bySummonsId.set(pull.summons.id, existing)
+      }
+
+      return [...bySummonsId.values()].map(
+        ({ summons, services }) =>
+          ({ ...summons, services }) as AppealSummons,
+      )
     })
   }
 }

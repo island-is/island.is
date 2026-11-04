@@ -779,6 +779,10 @@ export class BackendService {
     )
   }
 
+  syncAppealSummonsServiceStatuses(caseId: string): Promise<AppealSummons[]> {
+    return this.post(`case/${caseId}/appealSummons/syncServiceStatuses`, {})
+  }
+
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
     return this.post(`case/${caseId}/verdicts`, createVerdicts)
   }
