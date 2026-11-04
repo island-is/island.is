@@ -1649,6 +1649,40 @@ describe('formatAmendingBodyWithArticlePrefix: words and sentences', () => {
     )
   })
 
+  it('replaces words mid-sentence, the next one now lowercase', () => {
+    expect(
+      change(
+        twoParagraphs(
+          FIRST,
+          'Umsókn skal send til ríkislögreglustjóra innan mánaðar.',
+        ),
+        twoParagraphs(
+          FIRST,
+          'Umsókn skal send til embættis Ríkislögreglustjóra innan mánaðar.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Í stað orðanna „embættis Ríkislögreglustjóra“ í 2. mgr. 1. gr. reglugerðarinnar kemur: ríkislögreglustjóra.</p>',
+      ),
+    )
+  })
+
+  it('adds no period after a question mark', () => {
+    expect(
+      change(
+        withItem('Hver greiðir hvaða gjald?'),
+        withItem('Hver greiðir gjaldið.'),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Í stað orðsins „gjaldið.“ í 1. tölul. 1. gr. reglugerðarinnar kemur: hvaða gjald?</p>',
+      ),
+    )
+  })
+
   it('adds a sentence at the end of a paragraph', () => {
     expect(
       change(

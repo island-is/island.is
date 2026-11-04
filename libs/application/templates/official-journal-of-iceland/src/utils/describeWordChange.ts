@@ -126,7 +126,7 @@ const quote = (tokens: Token[]) => `„${escapeHtml(detokenize(tokens))}“`
 /** What replaces or follows, as the amendment's sentence ends with it */
 const asEnd = (tokens: Token[]) => {
   const text = escapeHtml(detokenize(tokens))
-  return text.endsWith('.') ? text : `${text}.`
+  return /[.?!]$/.test(text) ? text : `${text}.`
 }
 
 /** A comma or semicolon against the word before it */
@@ -251,8 +251,11 @@ export const describeWordChange = (
   }
   // Words removed from the start of a sentence, the next one now
   // capitalised: „Rekstrarleyfishafi eða eftir atvikum“ falla brott.
+  // Mid-sentence, the next word's new case is part of the change.
   const lastOld = oldPart[oldPart.length - 1]
+  const lastBefore = before[before.length - 1]
   if (
+    (!lastBefore || (lastBefore.glued && lastBefore.text === '.')) &&
     newPart.length === 1 &&
     oldPart.length > 1 &&
     lastOld.text.toLowerCase() === newPart[0].text.toLowerCase() &&
