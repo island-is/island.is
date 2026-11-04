@@ -36,6 +36,7 @@ const DatePickers = ({
         minDate={minDate}
         maxDate={new Date()}
         handleChange={(date: Date | null) => setFromDate(date ?? undefined)}
+        preventFlip
       />
       <DatePicker
         name={`${name}StatisticsDateTo`}
@@ -46,6 +47,7 @@ const DatePickers = ({
         minDate={selectedDateFilter.fromDate ?? minDate}
         selected={selectedDateFilter.toDate}
         handleChange={(date: Date | null) => setToDate(date ?? undefined)}
+        preventFlip
       />
     </Box>
   )

@@ -197,6 +197,7 @@ const DateTime: FC<Props> = ({
             required={required}
             backgroundColor={backgroundColor}
             size={size}
+            preventFlip
           />
         )}
         {(!dateOnly || timeOnly) && (
