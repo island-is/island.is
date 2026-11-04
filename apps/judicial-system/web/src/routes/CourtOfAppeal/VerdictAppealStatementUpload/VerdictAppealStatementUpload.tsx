@@ -136,11 +136,15 @@ const VerdictAppealStatementUpload = () => {
   const caseNumber = getVerdictAppealDefenderCaseNumber(workingCase)
   const uploadBox = {
     accept: 'application/pdf',
-    title: formatMessage(core.uploadBoxTitle),
-    description: formatMessage(core.uploadBoxDescription, {
-      fileEndings: '.pdf',
-    }),
-    buttonLabel: formatMessage(core.uploadBoxButtonLabel),
+    title: core.uploadBoxTitle,
+    description: formatMessage(
+      {
+        id: core.uploadBoxDescription,
+        defaultMessage: core.uploadBoxDescription,
+      },
+      { fileEndings: '.pdf' },
+    ),
+    buttonLabel: core.uploadBoxButtonLabel,
     hideIcons: !allFilesDoneOrError,
     disabled: !allFilesDoneOrError,
   }
