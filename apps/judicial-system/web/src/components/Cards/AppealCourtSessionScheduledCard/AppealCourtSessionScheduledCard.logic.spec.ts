@@ -4,7 +4,7 @@ import {
   AppealCourtSessionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { getScheduledAppealCourtSessions } from './AppealCourtSessionScheduledCards.logic'
+import { getScheduledAppealCourtSessions } from './AppealCourtSessionScheduledCard.logic'
 
 describe('getScheduledAppealCourtSessions', () => {
   // A fixed clock, so the fixtures mean the same whenever this runs.

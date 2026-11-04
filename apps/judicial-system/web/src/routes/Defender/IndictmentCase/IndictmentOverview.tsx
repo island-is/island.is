@@ -21,7 +21,7 @@ import type { ContextMenuItem } from '@island.is/judicial-system-web/src/compone
 import {
   AllIndictmentCaseFiles,
   AlternativeServiceAnnouncement,
-  AppealCourtSessionScheduledCards,
+  AppealCourtSessionScheduledCard,
   AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
@@ -335,7 +335,7 @@ const IndictmentOverview: FC = () => {
               caseIsClosed === false && (
                 <Box component="section">
                   <IndictmentCaseScheduledCard
-                    courtName={workingCase.court.name}
+                    court={workingCase.court}
                     indictmentDecision={workingCase.indictmentDecision}
                     courtDate={latestDate.date}
                     courtRoom={latestDate.location}
@@ -346,7 +346,7 @@ const IndictmentOverview: FC = () => {
                   />
                 </Box>
               )}
-            <AppealCourtSessionScheduledCards
+            <AppealCourtSessionScheduledCard
               verdictAppealCase={workingCase.verdictAppealCase}
             />
             <Box component="section">

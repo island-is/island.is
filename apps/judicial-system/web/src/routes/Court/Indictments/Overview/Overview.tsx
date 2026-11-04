@@ -98,7 +98,7 @@ const OverviewBody = ({
               IndictmentDecision.REDISTRIBUTING && (
               <Box component="section">
                 <IndictmentCaseScheduledCard
-                  courtName={workingCase.court.name}
+                  court={workingCase.court}
                   indictmentDecision={workingCase.indictmentDecision}
                   courtDate={latestDate.date}
                   courtRoom={latestDate.location}

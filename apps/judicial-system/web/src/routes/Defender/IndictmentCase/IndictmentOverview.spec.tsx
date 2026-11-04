@@ -304,19 +304,21 @@ describe('Defender IndictmentOverview', () => {
         },
       })
 
-    it('puts every booked session on the agenda', async () => {
+    it('puts every booked session on the one agenda card', async () => {
       renderOverview(withSessions(AppealCaseState.RECEIVED))
 
-      expect(await screen.findByText('Aðalmeðferð')).toBeInTheDocument()
+      expect(await screen.findByText('Á dagskrá')).toBeInTheDocument()
+      expect(screen.getAllByText('Á dagskrá')).toHaveLength(1)
+      expect(screen.getByText('Aðalmeðferð')).toBeInTheDocument()
       expect(
         screen.getByText(formatDate(mainHearing, 'PPPp') ?? ''),
       ).toBeInTheDocument()
-      expect(screen.getByText('Dómsalur 101')).toBeInTheDocument()
+      expect(screen.getByText('Landsréttur, dómsalur 101')).toBeInTheDocument()
       expect(screen.getByText('Undirbúningsþinghald')).toBeInTheDocument()
       expect(
         screen.getByText(formatDate(preparatoryHearing, 'PPPp') ?? ''),
       ).toBeInTheDocument()
-      expect(screen.getByText('Dómsalur 102')).toBeInTheDocument()
+      expect(screen.getByText('Landsréttur, dómsalur 102')).toBeInTheDocument()
     })
 
     it('clears the agenda once the court of appeals has ruled', async () => {
@@ -326,7 +328,9 @@ describe('Defender IndictmentOverview', () => {
         await screen.findByRole('heading', { level: 1, name: 'Máli lokið' }),
       ).toBeInTheDocument()
       expect(screen.queryByText('Aðalmeðferð')).not.toBeInTheDocument()
-      expect(screen.queryByText('Dómsalur 101')).not.toBeInTheDocument()
+      expect(
+        screen.queryByText('Landsréttur, dómsalur 101'),
+      ).not.toBeInTheDocument()
     })
   })
 })

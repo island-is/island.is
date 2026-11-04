@@ -4,13 +4,16 @@ import { Text } from '@island.is/island-ui/core'
 import { courtSessionTypeNames } from '@island.is/judicial-system/types'
 import CaseScheduledCard from '@island.is/judicial-system-web/src/components/Cards/CaseScheduledCard/CaseScheduledCard'
 import IconCard from '@island.is/judicial-system-web/src/components/Cards/IconCard/IconCard'
-import type { CourtSessionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import type {
+  CourtSessionType,
+  Institution,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './IndictmentCaseScheduledCard.strings'
 
 interface Props {
-  courtName?: string | null
+  court: Institution
   indictmentDecision?: IndictmentDecision | null
   courtDate: string
   courtRoom?: string | null
@@ -20,7 +23,7 @@ interface Props {
 
 const IndictmentCaseScheduledCard: FC<Props> = (props) => {
   const {
-    courtName,
+    court,
     indictmentDecision,
     courtDate,
     courtRoom,
@@ -55,7 +58,7 @@ const IndictmentCaseScheduledCard: FC<Props> = (props) => {
     ) : (
       // indictmentDecision === IndictmentDecision.SCHEDULING
       <CaseScheduledCard
-        courtName={courtName}
+        court={court}
         courtDate={courtDate}
         courtRoom={courtRoom}
         title={courtSessionType && courtSessionTypeNames[courtSessionType]}
@@ -63,7 +66,7 @@ const IndictmentCaseScheduledCard: FC<Props> = (props) => {
     )
   ) : (
     <CaseScheduledCard
-      courtName={courtName}
+      court={court}
       courtDate={courtDate}
       courtRoom={courtRoom}
     />

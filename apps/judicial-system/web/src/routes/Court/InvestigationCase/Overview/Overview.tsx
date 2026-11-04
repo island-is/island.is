@@ -121,7 +121,7 @@ const Overview = () => {
           workingCase.court && (
             <Box component="section" marginBottom={5}>
               <CaseScheduledCard
-                courtName={workingCase.court.name}
+                court={workingCase.court}
                 courtDate={workingCase.arraignmentDate.date}
                 courtRoom={workingCase.arraignmentDate.location}
               />

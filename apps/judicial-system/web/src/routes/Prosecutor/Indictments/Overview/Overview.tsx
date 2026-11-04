@@ -381,7 +381,7 @@ const Overview: FC = () => {
             IndictmentDecision.REDISTRIBUTING && (
             <Box component="section" marginBottom={5}>
               <IndictmentCaseScheduledCard
-                courtName={workingCase.court.name}
+                court={workingCase.court}
                 indictmentDecision={workingCase.indictmentDecision}
                 courtDate={latestDate.date}
                 courtRoom={latestDate.location}
