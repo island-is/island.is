@@ -120,7 +120,7 @@ const FinanceStatus = () => {
                   {canPayDebts && hasDebt && payDebtsEnabled && (
                     <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                       <a
-                        href="/umsoknir/greidum-rikinu/"
+                        href="/umsoknir/greida-skuld/"
                         target="_blank"
                         rel="noreferrer"
                       >
