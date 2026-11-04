@@ -27,7 +27,6 @@ interface UsePaymentOrchestrationProps {
   }
   isApplePayPaymentEnabled: boolean
   isGooglePayPaymentEnabled: boolean
-  isGooglePayDeviceTokensEnabled: boolean
   // The server refused the individual authorising a company's transfer. Shown on its input, so the
   // payer stays on the form to correct it rather than landing on the error screen.
   onInvalidActorNationalId: () => void
@@ -59,7 +58,6 @@ export const usePaymentOrchestration = ({
   productInformation,
   isApplePayPaymentEnabled,
   isGooglePayPaymentEnabled,
-  isGooglePayDeviceTokensEnabled,
   onInvalidActorNationalId,
 }: UsePaymentOrchestrationProps) => {
   const router = useRouter()
@@ -126,7 +124,6 @@ export const usePaymentOrchestration = ({
 
   const googlePayPayment = useGooglePay({
     isEnabled: isGooglePayPaymentEnabled,
-    allowDeviceTokens: isGooglePayDeviceTokensEnabled,
     paymentFlow,
     productInformation,
     onPaymentSuccess: commonOnPaymentSuccess,
