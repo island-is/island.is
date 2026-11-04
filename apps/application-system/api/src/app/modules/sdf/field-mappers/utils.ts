@@ -1,3 +1,4 @@
+import format from 'date-fns/format'
 import { FieldTypes } from '@island.is/application/types'
 import { resolveFormItemId } from '@island.is/application/core'
 import { FieldDef } from '@island.is/application/screen-compiler'
@@ -39,12 +40,14 @@ export const resolveFieldProp = <T>(
   return prop
 }
 
+// A Date limit becomes its local calendar day, 'yyyy-MM-dd'. Strings pass
+// through unchanged.
 export const formatDateFieldBoundary = (
   value: Date | string | undefined,
 ): string | undefined => {
   if (value === undefined) return undefined
   if (typeof value === 'string') return value
-  if (value instanceof Date) return value.toISOString().split('T')[0]
+  if (value instanceof Date) return format(value, 'yyyy-MM-dd')
   return String(value)
 }
 
