@@ -50,4 +50,5 @@ export const servicePortalScopes = [
   ApiScope.healthAppointments,
   ApiScope.healthLists,
   ApiScope.signatureCollection,
+  ApiScope.directorateOfEqualityApiKeys,
 ]

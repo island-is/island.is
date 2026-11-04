@@ -45,5 +45,6 @@ export enum ApiScope {
   hms = '@island.is/applications/hms',
   directorateOfEquality = '@island.is/applications/directorate-of-equality',
   directorateOfEqualitySalary = '@island.is/applications/directorate-of-equality-salary',
+  directorateOfEqualityApiKeys = '@island.is/directorate-of-equality/api-keys',
   fjsDebts = '@island.is/applications/fjs:debts',
 }
