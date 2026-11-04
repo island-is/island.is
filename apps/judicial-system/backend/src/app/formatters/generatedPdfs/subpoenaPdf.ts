@@ -12,10 +12,7 @@ import {
 import { SubpoenaType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories/date.factory'
-import {
-  formatIcuMessage,
-  subpoena as strings,
-} from '../../messages'
+import { formatIcuMessage, subpoena as strings } from '../../messages'
 import { Case, Defendant, Subpoena } from '../../modules/repository'
 import {
   addEmptyLines,

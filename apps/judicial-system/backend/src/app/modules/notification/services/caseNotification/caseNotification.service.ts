@@ -2705,7 +2705,6 @@ export class CaseNotificationService extends BaseNotificationService {
     user?: User,
     userDescriptor?: UserDescriptor,
   ): Promise<DeliverResponse> {
-
     try {
       return await this.sendNotification(type, theCase, user, userDescriptor)
     } catch (error) {

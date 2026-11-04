@@ -40,7 +40,6 @@ interface Attachment {
 
 @Injectable()
 export abstract class BaseNotificationService {
-
   constructor(
     private readonly notificationRepositoryService: NotificationRepositoryService,
     private readonly emailService: EmailService,

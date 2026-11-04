@@ -157,7 +157,6 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     type: SubpoenaNotificationType,
     theCase: Case,
   ): Promise<DeliverResponse> {
-
     try {
       return await this.sendNotification(type, theCase)
     } catch (error) {

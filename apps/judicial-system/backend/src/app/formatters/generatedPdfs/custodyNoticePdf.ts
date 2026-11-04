@@ -9,10 +9,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { SessionArrangements } from '@island.is/judicial-system/types'
 
-import {
-  custodyNotice,
-  formatIcuMessage,
-} from '../../messages'
+import { custodyNotice, formatIcuMessage } from '../../messages'
 import { Case } from '../../modules/repository'
 import { formatCustodyRestrictions } from '../formatters'
 import {
@@ -50,9 +47,7 @@ export const formatCustodyNoticeDefender = (
   }${defendant.defenderEmail ? `, ${defendant.defenderEmail}` : ''}`
 }
 
-const constructCustodyNoticePdf = (
-  theCase: Case,
-): Promise<Buffer> => {
+const constructCustodyNoticePdf = (theCase: Case): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -214,16 +209,12 @@ const constructCustodyNoticePdf = (
   )
 }
 
-export const getCustodyNoticePdfAsString = (
-  theCase: Case,
-): Promise<string> => {
+export const getCustodyNoticePdfAsString = (theCase: Case): Promise<string> => {
   return constructCustodyNoticePdf(theCase).then((buffer) =>
     buffer.toString('binary'),
   )
 }
 
-export const getCustodyNoticePdfAsBuffer = (
-  theCase: Case,
-): Promise<Buffer> => {
+export const getCustodyNoticePdfAsBuffer = (theCase: Case): Promise<Buffer> => {
   return constructCustodyNoticePdf(theCase)
 }

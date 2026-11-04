@@ -5,10 +5,7 @@ import {
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 
-import {
-  caseFilesRecord,
-  formatIcuMessage,
-} from '../../messages'
+import { caseFilesRecord, formatIcuMessage } from '../../messages'
 import {
   Case,
   Defendant,
@@ -315,15 +312,11 @@ export const createCaseFilesRecord = async (
   for (const chapter of chapters) {
     if (chapter === 0) {
       pdfDocument
-        .addText(
-          caseFilesRecord.pageNumberHeading,
-          textFontSize,
-          {
-            bold: true,
-            newLine: false,
-            alignment: Alignment.Right,
-          },
-        )
+        .addText(caseFilesRecord.pageNumberHeading, textFontSize, {
+          bold: true,
+          newLine: false,
+          alignment: Alignment.Right,
+        })
         .addText(caseFilesRecord.date, textFontSize, {
           bold: true,
           newLine: false,

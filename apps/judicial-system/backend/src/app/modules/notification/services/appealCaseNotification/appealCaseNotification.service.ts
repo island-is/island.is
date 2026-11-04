@@ -2405,7 +2405,6 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     appealCourtSessionId?: string,
     appealCourtSession?: AppealCourtSessionNotificationDto,
   ): Promise<DeliverResponse> {
-
     try {
       return await this.sendNotification(
         type,

@@ -160,7 +160,6 @@ export class PdfService {
       }
     }
 
-
     return getCourtRecordPdfAsBuffer(theCase, user)
   }
 
@@ -230,7 +229,6 @@ export class PdfService {
   }
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {
-
     return getRequestPdfAsBuffer(theCase)
   }
 
@@ -249,12 +247,10 @@ export class PdfService {
       }
     }
 
-
     return getRulingPdfAsBuffer(theCase)
   }
 
   async getCustodyNoticePdf(theCase: Case): Promise<Buffer> {
-
     return getCustodyNoticePdfAsBuffer(theCase)
   }
 
@@ -360,7 +356,6 @@ export class PdfService {
       }
     }
 
-
     const fullOriginalCase = await this.getFullOriginalCase(
       theCase,
       transaction,
@@ -376,10 +371,7 @@ export class PdfService {
     }
 
     // In case of splits, we use the reconstructed full parent case for generation
-    const generatedPdf = await createIndictment(
-      fullOriginalCase,
-      confirmation,
-    )
+    const generatedPdf = await createIndictment(fullOriginalCase, confirmation)
 
     if (
       hasIndictmentCaseBeenSubmittedToCourt(fullOriginalCase.state) &&
@@ -474,7 +466,6 @@ export class PdfService {
       }
     }
 
-
     // For subpoenas created before the split, use the reconstructed full parent
     // case. For subpoenas created after the split, use the current case directly
     // so the correct court case number appears in the PDF.
@@ -514,7 +505,6 @@ export class PdfService {
     defendant: Defendant,
     subpoena: Subpoena,
   ): Promise<Buffer> {
-
     const isSplitSubpoena =
       theCase.splitCaseId && subpoena.created < theCase.created
 
@@ -540,7 +530,6 @@ export class PdfService {
     verdict: Verdict,
     deliveredToDefenderName?: string,
   ): Promise<Buffer> {
-
     const generatedPdf = await createVerdictServiceCertificate({
       theCase,
       defendant,

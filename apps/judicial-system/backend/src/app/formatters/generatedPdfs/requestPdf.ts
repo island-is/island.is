@@ -14,11 +14,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
-import {
-  core,
-  formatIcuMessage,
-  request as m,
-} from '../../messages'
+import { core, formatIcuMessage, request as m } from '../../messages'
 import { Case, Defendant, EventLog } from '../../modules/repository'
 import { formatLegalProvisions } from '../formatters'
 import {
@@ -53,9 +49,7 @@ export const formatRequestPdfDefenderName = (
   return noDefenderLabel
 }
 
-const constructRestrictionRequestPdf = (
-  theCase: Case,
-): Promise<Buffer> => {
+const constructRestrictionRequestPdf = (theCase: Case): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -114,10 +108,7 @@ const constructRestrictionRequestPdf = (
     ) ?? '',
   )
   setLineGap(doc, 40)
-  addMediumPlusHeading(
-    doc,
-    `${m.baseInfo.court} ${theCase.court?.name}`,
-  )
+  addMediumPlusHeading(doc, `${m.baseInfo.court} ${theCase.court?.name}`)
   setLineGap(doc, 4)
   addMediumText(doc, m.policeCaseNumbers, 'Times-Bold')
   theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
@@ -156,14 +147,8 @@ const constructRestrictionRequestPdf = (
       )
     }
 
-    addNormalText(
-      doc,
-      `${m.baseInfo.fullName} ${defendant.name ?? ''}`,
-    )
-    addNormalText(
-      doc,
-      `${m.baseInfo.address} ${defendant.address ?? ''}`,
-    )
+    addNormalText(doc, `${m.baseInfo.fullName} ${defendant.name ?? ''}`)
+    addNormalText(doc, `${m.baseInfo.address} ${defendant.address ?? ''}`)
     addNormalText(
       doc,
       formatIcuMessage(m.baseInfo.defender, {
@@ -217,9 +202,9 @@ const constructRestrictionRequestPdf = (
   addEmptyLines(doc)
   addNormalText(
     doc,
-    `${
-      theCase.prosecutor?.name ?? m.prosecutor.noProsecutor
-    } ${lowercase(theCase.prosecutor?.title)}`,
+    `${theCase.prosecutor?.name ?? m.prosecutor.noProsecutor} ${lowercase(
+      theCase.prosecutor?.title,
+    )}`,
     'Times-Bold',
   )
   addFooter(doc)
@@ -231,9 +216,7 @@ const constructRestrictionRequestPdf = (
   )
 }
 
-const constructInvestigationRequestPdf = (
-  theCase: Case,
-): Promise<Buffer> => {
+const constructInvestigationRequestPdf = (theCase: Case): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -284,10 +267,7 @@ const constructInvestigationRequestPdf = (
     ) ?? '',
   )
   setLineGap(doc, 40)
-  addMediumPlusHeading(
-    doc,
-    `${m.baseInfo.court} ${theCase.court?.name}`,
-  )
+  addMediumPlusHeading(doc, `${m.baseInfo.court} ${theCase.court?.name}`)
   setLineGap(doc, 4)
   addMediumText(doc, m.policeCaseNumbers, 'Times-Bold')
   theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
@@ -326,14 +306,8 @@ const constructInvestigationRequestPdf = (
       )
     }
 
-    addNormalText(
-      doc,
-      `${m.baseInfo.fullName} ${defendant.name ?? ''}`,
-    )
-    addNormalText(
-      doc,
-      `${m.baseInfo.address} ${defendant.address ?? ''}`,
-    )
+    addNormalText(doc, `${m.baseInfo.fullName} ${defendant.name ?? ''}`)
+    addNormalText(doc, `${m.baseInfo.address} ${defendant.address ?? ''}`)
 
     if (
       defendant.defenderName &&
@@ -406,11 +380,7 @@ const constructInvestigationRequestPdf = (
   addEmptyLines(doc)
 
   if (theCase.requestProsecutorOnlySession) {
-    addMediumText(
-      doc,
-      m.requestProsecutorOnlySession,
-      'Times-Bold',
-    )
+    addMediumText(doc, m.requestProsecutorOnlySession, 'Times-Bold')
     addNormalJustifiedText(
       doc,
       theCase.prosecutorOnlySessionRequest ?? '',
@@ -421,9 +391,9 @@ const constructInvestigationRequestPdf = (
 
   addNormalText(
     doc,
-    `${
-      theCase.prosecutor?.name ?? m.prosecutor.noProsecutor
-    } ${lowercase(theCase.prosecutor?.title)}`,
+    `${theCase.prosecutor?.name ?? m.prosecutor.noProsecutor} ${lowercase(
+      theCase.prosecutor?.title,
+    )}`,
     'Times-Bold',
   )
   addFooter(doc)
@@ -435,24 +405,18 @@ const constructInvestigationRequestPdf = (
   )
 }
 
-const constructRequestPdf = (
-  theCase: Case,
-): Promise<Buffer> => {
+const constructRequestPdf = (theCase: Case): Promise<Buffer> => {
   return isRestrictionCase(theCase.type)
     ? constructRestrictionRequestPdf(theCase)
     : constructInvestigationRequestPdf(theCase)
 }
 
-export const getRequestPdfAsString = (
-  theCase: Case,
-): Promise<string> => {
+export const getRequestPdfAsString = (theCase: Case): Promise<string> => {
   return constructRequestPdf(theCase).then((buffer) =>
     buffer.toString('binary'),
   )
 }
 
-export const getRequestPdfAsBuffer = (
-  theCase: Case,
-): Promise<Buffer> => {
+export const getRequestPdfAsBuffer = (theCase: Case): Promise<Buffer> => {
   return constructRequestPdf(theCase)
 }

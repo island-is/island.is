@@ -2581,7 +2581,6 @@ export class CaseService {
     user: TUser,
     method: 'audkenni' | 'mobile',
   ): Promise<SigningServiceResponse> {
-
     const pdf = await getCourtRecordPdfAsString(theCase)
 
     if (method === 'audkenni') {

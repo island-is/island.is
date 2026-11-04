@@ -9,10 +9,7 @@ import {
 import { sortIndictmentCounts } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
-import {
-  formatIcuMessage,
-  indictment,
-} from '../../messages'
+import { formatIcuMessage, indictment } from '../../messages'
 import { Case, CaseString } from '../../modules/repository'
 import {
   addEmptyLines,

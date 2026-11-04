@@ -173,7 +173,6 @@ describe('formatLegalProvisions', () => {
 })
 
 describe('formatHeadsUpSmsNotification', () => {
-
   test('should format heads up notification', () => {
     // Arrange
     const type = CaseType.CUSTODY
@@ -295,7 +294,6 @@ describe('formatHeadsUpSmsNotification', () => {
 })
 
 describe('formatReadyForCourtSmsNotification', () => {
-
   test('should format ready for court SMS notification', () => {
     // Arrange
     const type = CaseType.CUSTODY
@@ -409,15 +407,12 @@ describe('formatReadyForCourtSmsNotification', () => {
 })
 
 describe('formatReadyForCourtSmsNotification', () => {
-
   test('should format ready for court SMS notification', () => {
     // Arrange
     const courtCaseNumber = 'R-123/2021'
 
     // Act
-    const res = formatCourtResubmittedToCourtSmsNotification(
-      courtCaseNumber,
-    )
+    const res = formatCourtResubmittedToCourtSmsNotification(courtCaseNumber)
 
     // Assert
     expect(res).toBe(
@@ -427,7 +422,6 @@ describe('formatReadyForCourtSmsNotification', () => {
 })
 
 describe('formatProsecutorReadyForCourtEmailNotification', () => {
-
   const fn = (
     policeCaseNumbers: string[],
     caseType: CaseType,
@@ -496,7 +490,6 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 })
 
 describe('formatProsecutorReceivedByCourtSmsNotification', () => {
-
   test('should format received by court notification for custody', () => {
     // Arranged
     const type = CaseType.CUSTODY
@@ -613,7 +606,6 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 })
 
 describe('formatProsecutorCourtDateEmailNotification', () => {
-
   const fn = (
     type: CaseType,
     courtCaseNumber: string,
@@ -883,7 +875,6 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 })
 
 describe('formatArraignmentDateEmailNotification', () => {
-
   const fn = (
     arraignmentDateLog: DateLog,
     courtName?: string,
@@ -954,7 +945,6 @@ describe('formatArraignmentDateEmailNotification', () => {
 })
 
 describe('formatPrisonCourtDateEmailNotification', () => {
-
   test('should format court date notification', () => {
     // Arrange
     const caseType = CaseType.CUSTODY
@@ -1202,7 +1192,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 })
 
 describe('formatDefenderCourtDateEmailNotification', () => {
-
   test('should format defender court date notification', () => {
     // Arrange
     const court = 'Héraðsdómur Norðurlands'
@@ -1359,7 +1348,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 })
 
 describe('formatDefenderCourtDateLinkEmailNotification', () => {
-
   test('should format defender court date link notification with RVG link', () => {
     // Arrange
     const court = 'Héraðsdómur Norðurlands'
@@ -1405,7 +1393,6 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
 })
 
 describe('formatCourtRevokedSmsNotification', () => {
-
   test('should format revoked sms with court date', () => {
     // Arrange
     const type = CaseType.CUSTODY
@@ -1528,7 +1515,6 @@ describe('formatCourtRevokedSmsNotification', () => {
 })
 
 describe('formatPrisonRevokedEmailNotification', () => {
-
   test('should format revoked notification for custody', () => {
     // Arrange
     const caseType = CaseType.CUSTODY
@@ -1611,7 +1597,6 @@ describe('stripHtmlTags', () => {
 })
 
 describe('formatCustodyRestrictions', () => {
-
   const format = (
     caseType: CaseType,
     requestedRestrictions?: CaseCustodyRestrictions[],

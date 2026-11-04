@@ -65,7 +65,6 @@ export const createTestUsers = (
     return acc
   }, {} as Record<string, { id: string; name: string; email: string; mobile: string; nationalId: string }>)
 
-
 export const createTestingNotificationModule = async () => {
   const notificationModule = await Test.createTestingModule({
     imports: [

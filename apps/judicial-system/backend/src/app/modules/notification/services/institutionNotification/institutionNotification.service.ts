@@ -72,7 +72,6 @@ export class InstitutionNotificationService extends BaseNotificationService {
       return
     }
 
-
     const subject = strings.waitingForConfirmation.subject
     const body = formatIcuMessage(strings.waitingForConfirmation.body, {
       count,
@@ -97,7 +96,6 @@ export class InstitutionNotificationService extends BaseNotificationService {
   private async sendPublicProsecutorVerdictAppealDeadlineReminderNotification(
     prosecutorsOfficeId: string,
   ) {
-
     const users = await this.userService.getProsecutorUsers(prosecutorsOfficeId)
     const targetDate = addDays(nowFactory(), 7)
 

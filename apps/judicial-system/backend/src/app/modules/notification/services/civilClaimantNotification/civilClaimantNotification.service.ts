@@ -266,7 +266,6 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     theCase: Case,
     user?: User,
   ): Promise<DeliverResponse> {
-
     try {
       return await this.sendNotification(type, civilClaimant, theCase, user)
     } catch (error) {

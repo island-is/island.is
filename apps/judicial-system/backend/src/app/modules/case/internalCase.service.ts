@@ -52,11 +52,7 @@ import {
   getRequestPdfAsString,
   stripHtmlTags,
 } from '../../formatters'
-import {
-  courtUpload,
-  formatIcuMessage,
-  notifications,
-} from '../../messages'
+import { courtUpload, formatIcuMessage, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import {
   CourtDocumentFolder,
@@ -807,7 +803,6 @@ export class InternalCaseService {
     return this.pdfService
       .getIndictmentPdf(theCase, transaction)
       .then(async (pdf) => {
-
         const fileName = formatIcuMessage(courtUpload.indictment, {
           courtCaseNumber: theCase.courtCaseNumber,
         })
@@ -951,7 +946,6 @@ export class InternalCaseService {
     withCourtCaseNumber: boolean,
     user: TUser,
   ): Promise<DeliverResponse> {
-
     const courtCaseNumber = withCourtCaseNumber && theCase.courtCaseNumber
     const caseNumber = courtCaseNumber || theCase.policeCaseNumbers.join(', ')
 
@@ -1140,7 +1134,6 @@ export class InternalCaseService {
     return this.pdfService
       .getCaseFilesRecordPdf(theCase, policeCaseNumber)
       .then(async (pdf) => {
-
         const fileName = formatIcuMessage(courtUpload.caseFilesRecord, {
           policeCaseNumber,
         })
@@ -1174,7 +1167,6 @@ export class InternalCaseService {
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
-
     return this.uploadRequestPdfToCourt(theCase, user).then((delivered) => ({
       delivered,
     }))
@@ -1185,7 +1177,6 @@ export class InternalCaseService {
     user: TUser,
     transaction: Transaction,
   ): Promise<DeliverResponse> {
-
     return this.uploadCourtRecordPdfToCourt(theCase, user, transaction).then(
       (delivered) => ({ delivered }),
     )
@@ -1196,7 +1187,6 @@ export class InternalCaseService {
     user: TUser,
     transaction: Transaction,
   ): Promise<DeliverResponse> {
-
     return this.uploadCourtRecordWorkingDocumentToCourt(
       theCase,
       user,
@@ -1208,7 +1198,6 @@ export class InternalCaseService {
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
-
     return this.deliverSignedRulingPdfToCourt(theCase, user).then(
       (delivered) => ({ delivered }),
     )
@@ -1219,7 +1208,6 @@ export class InternalCaseService {
     user: TUser,
     transaction: Transaction,
   ): Promise<DeliverResponse> {
-
     return this.deliverSignedCourtRecordPdfToCourt(
       theCase,
       user,
@@ -1420,7 +1408,6 @@ export class InternalCaseService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
-
       const request = await getRequestPdfAsString(theCase)
 
       const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
@@ -1459,10 +1446,7 @@ export class InternalCaseService {
 
         courtRecord = pdf.toString('binary')
       } else {
-
-        courtRecord = await getCourtRecordPdfAsString(
-          theCase,
-        )
+        courtRecord = await getCourtRecordPdfAsString(theCase)
       }
 
       const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
@@ -1489,10 +1473,7 @@ export class InternalCaseService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
-
-      const custodyNotice = await getCustodyNoticePdfAsString(
-        theCase,
-      )
+      const custodyNotice = await getCustodyNoticePdfAsString(theCase)
 
       const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
         {

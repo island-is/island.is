@@ -46,7 +46,6 @@ describe('FormatDefendant', () => {
 })
 
 describe('createCaseFilesRecord - table of contents', () => {
-
   const policeCaseNumber = '007-2024-000001'
 
   const theCase = {
@@ -160,7 +159,6 @@ describe('createCaseFilesRecord - table of contents', () => {
 })
 
 describe('createCaseFilesRecord - unreadable files', () => {
-
   const policeCaseNumber = '007-2024-000001'
 
   const theCase = {

@@ -707,9 +707,7 @@ export const formatCustodyRestrictions = (
   }
 
   const formatedRestrictions = enumerate(
-    restrictions.map((x) =>
-      custodyNotice.rulingRestrictions[x.type],
-    ),
+    restrictions.map((x) => custodyNotice.rulingRestrictions[x.type]),
     'og',
   )
 
