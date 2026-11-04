@@ -40,7 +40,6 @@ import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 import { AuthDelegationType } from '@island.is/shared/types'
 import cloneDeep from 'lodash/cloneDeep'
-import isEmpty from 'lodash/isEmpty'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
@@ -367,30 +366,23 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
           application.externalData,
         )
 
-        if (isEmpty(latestIncomePlan)) {
+        if (
+          latestIncomePlan?.status === 'Accepted' &&
+          latestIncomePlan.incomeTypeLines?.length
+        ) {
+          set(
+            answers,
+            'incomePlanTable',
+            latestIncomePlan.incomeTypeLines.map((income) => ({
+              incomeType: income.incomeTypeName,
+              incomePerYear: String(income.totalSum),
+              currency: income.currency,
+              income: RatioType.YEARLY,
+              incomeCategory: income.incomeCategoryName,
+            })),
+          )
+        } else {
           set(answers, 'incomePlanTable', cloneDeep(defaultIncomeTypes))
-        }
-
-        if (latestIncomePlan && latestIncomePlan.status === 'Accepted') {
-          latestIncomePlan.incomeTypeLines.forEach((income, i) => {
-            set(
-              answers,
-              `incomePlanTable[${i}].incomeType`,
-              income.incomeTypeName,
-            )
-            set(
-              answers,
-              `incomePlanTable[${i}].incomePerYear`,
-              String(income.totalSum),
-            )
-            set(answers, `incomePlanTable[${i}].currency`, income.currency)
-            set(answers, `incomePlanTable[${i}].income`, RatioType.YEARLY)
-            set(
-              answers,
-              `incomePlanTable[${i}].incomeCategory`,
-              income.incomeCategoryName,
-            )
-          })
         }
 
         return context
