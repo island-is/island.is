@@ -104,9 +104,18 @@ describe('AppealSummonsController - Sync service statuses', () => {
       servedBy: 'Lögreglumaður',
     })
 
+    const reloadedSummons = {
+      ...summons,
+      services: [updatedService],
+    } as AppealSummons
+
     const mockUpdate =
       mockAppealSummonsRepositoryService.updateServiceRecipient as jest.Mock
     mockUpdate.mockResolvedValue(updatedService)
+
+    const mockFind =
+      mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
+    mockFind.mockResolvedValue(reloadedSummons)
 
     const result = await appealSummonsController.syncServiceStatuses(
       caseId,
@@ -126,12 +135,8 @@ describe('AppealSummonsController - Sync service statuses', () => {
       },
       { transaction },
     )
-    expect(result).toEqual([
-      {
-        ...summons,
-        services: [updatedService],
-      },
-    ])
+    expect(mockFind).toHaveBeenCalledWith(summonsId, caseId, { transaction })
+    expect(result).toEqual([reloadedSummons])
   })
 
   it('skips rows that already have a service status', async () => {
@@ -227,9 +232,18 @@ describe('AppealSummonsController - Sync service statuses', () => {
         servedBy: 'Lögreglumaður',
       })
 
+    const reloadedSummons = {
+      ...summons,
+      services: [waitingService, updatedService],
+    } as AppealSummons
+
     const mockUpdate =
       mockAppealSummonsRepositoryService.updateServiceRecipient as jest.Mock
     mockUpdate.mockResolvedValue(updatedService)
+
+    const mockFind =
+      mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
+    mockFind.mockResolvedValue(reloadedSummons)
 
     const result = await appealSummonsController.syncServiceStatuses(
       caseId,
@@ -239,11 +253,7 @@ describe('AppealSummonsController - Sync service statuses', () => {
 
     expect(mockGetStatus).toHaveBeenCalledTimes(2)
     expect(mockUpdate).toHaveBeenCalledTimes(1)
-    expect(result).toEqual([
-      {
-        ...summons,
-        services: [waitingService, updatedService],
-      },
-    ])
+    expect(mockFind).toHaveBeenCalledWith(summonsId, caseId, { transaction })
+    expect(result).toEqual([reloadedSummons])
   })
 })

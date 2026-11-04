@@ -961,38 +961,34 @@ export class AppealSummonsService {
     }
 
     return this.sequelize.transaction(async (transaction) => {
-      const bySummonsId = new Map<
-        string,
-        { summons: AppealSummons; services: AppealSummonsServiceRecipient[] }
-      >()
+      const updatedSummonsIds = new Set<string>()
 
       for (const pull of pulls) {
-        const existing = bySummonsId.get(pull.summons.id) ?? {
-          summons: pull.summons,
-          services: [...(pull.summons.services ?? [])],
-        }
-
-        const index = existing.services.findIndex(
-          (service) => service.id === pull.service.id,
+        await this.appealSummonsRepositoryService.updateServiceRecipient(
+          pull.service.id,
+          pull.summons.id,
+          pull.update,
+          { transaction },
         )
-
-        if (index < 0) {
-          continue
-        }
-
-        existing.services[index] =
-          await this.appealSummonsRepositoryService.updateServiceRecipient(
-            pull.service.id,
-            pull.summons.id,
-            pull.update,
-            { transaction },
-          )
-        bySummonsId.set(pull.summons.id, existing)
+        updatedSummonsIds.add(pull.summons.id)
       }
 
-      return [...bySummonsId.values()].map(
-        ({ summons, services }) => ({ ...summons, services } as AppealSummons),
-      )
+      const results: AppealSummons[] = []
+
+      for (const summonsId of updatedSummonsIds) {
+        const reloaded =
+          await this.appealSummonsRepositoryService.findByIdAndCaseId(
+            summonsId,
+            theCase.id,
+            { transaction },
+          )
+
+        if (reloaded) {
+          results.push(reloaded)
+        }
+      }
+
+      return results
     })
   }
 }
