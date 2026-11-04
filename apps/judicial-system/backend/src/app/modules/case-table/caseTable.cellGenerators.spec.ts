@@ -1,8 +1,6 @@
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
-  AppealCourtSessionType,
   AppealEventType,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -225,130 +223,6 @@ describe('verdict appeal cell generators', () => {
 
       expect(cell.value).toEqual({ str: '14.10.2026' })
     })
-  })
-})
-
-describe('the next session of a verdict appeal', () => {
-  const user = { role: UserRole.PROSECUTOR } as User
-  const { verdictAppealNextSessionDate } = caseTableCellGenerators
-
-  const rowWithSessions = (
-    courtSessions: { sessionType: AppealCourtSessionType; sessionDate: Date }[],
-    appealState = AppealCaseState.RECEIVED,
-  ): CaseTableRowCase =>
-    ({ appeal: { appealState, courtSessions } } as unknown as CaseTableRowCase)
-
-  // From the clock, so the sessions stay ahead of today whenever this runs.
-  const daysFromNow = (days: number, hours = 10, minutes = 0): Date => {
-    const date = new Date()
-    date.setDate(date.getDate() + days)
-    date.setHours(hours, minutes, 0, 0)
-
-    return date
-  }
-
-  it('reads the earliest session still ahead, with its type over its date', () => {
-    const mainHearing = daysFromNow(30, 9, 15)
-
-    const cell = verdictAppealNextSessionDate.generate(
-      rowWithSessions([
-        {
-          sessionType: AppealCourtSessionType.MAIN_HEARING,
-          sessionDate: mainHearing,
-        },
-        {
-          sessionType: AppealCourtSessionType.PREPARATORY_HEARING,
-          sessionDate: daysFromNow(40),
-        },
-      ]),
-      user,
-    )
-
-    expect(cell.value?.strList).toEqual([
-      'Aðalmeðferð',
-      `${capitalize(
-        formatDate(mainHearing, 'EEE d. MMMM yyyy') ?? '',
-      )} kl. 09:15`,
-    ])
-    expect(cell.sortValue).toBe(formatDate(mainHearing, 'yyyyMMddHHmm'))
-  })
-
-  it('skips a session that has passed, whatever order the court booked them in', () => {
-    const mainHearing = daysFromNow(30)
-
-    const cell = verdictAppealNextSessionDate.generate(
-      rowWithSessions([
-        {
-          sessionType: AppealCourtSessionType.MAIN_HEARING,
-          sessionDate: mainHearing,
-        },
-        {
-          sessionType: AppealCourtSessionType.PREPARATORY_HEARING,
-          sessionDate: daysFromNow(-1),
-        },
-      ]),
-      user,
-    )
-
-    expect(cell.value?.strList?.[0]).toBe('Aðalmeðferð')
-  })
-
-  it('keeps a session on the agenda through its day', () => {
-    const cell = verdictAppealNextSessionDate.generate(
-      rowWithSessions([
-        {
-          sessionType: AppealCourtSessionType.VERDICT,
-          sessionDate: daysFromNow(0, 0, 1),
-        },
-      ]),
-      user,
-    )
-
-    expect(cell.value?.strList?.[0]).toBe('Dómsuppkvaðning')
-  })
-
-  it('shows nothing once every session is behind us', () => {
-    const cell = verdictAppealNextSessionDate.generate(
-      rowWithSessions([
-        {
-          sessionType: AppealCourtSessionType.MAIN_HEARING,
-          sessionDate: daysFromNow(-2),
-        },
-      ]),
-      user,
-    )
-
-    expect(cell).toEqual({ value: undefined, sortValue: undefined })
-  })
-
-  // The public prosecution's list keeps appeals the court has disposed of.
-  it.each([AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN])(
-    'shows nothing once the appeal is %s, whatever the court left booked',
-    (appealState) => {
-      const cell = verdictAppealNextSessionDate.generate(
-        rowWithSessions(
-          [
-            {
-              sessionType: AppealCourtSessionType.MAIN_HEARING,
-              sessionDate: daysFromNow(30),
-            },
-          ],
-          appealState,
-        ),
-        user,
-      )
-
-      expect(cell).toEqual({ value: undefined, sortValue: undefined })
-    },
-  )
-
-  it('shows nothing on a row without an appeal or without sessions', () => {
-    expect(
-      verdictAppealNextSessionDate.generate({} as CaseTableRowCase, user),
-    ).toEqual({ value: undefined, sortValue: undefined })
-    expect(
-      verdictAppealNextSessionDate.generate(rowWithSessions([]), user),
-    ).toEqual({ value: undefined, sortValue: undefined })
   })
 })
 

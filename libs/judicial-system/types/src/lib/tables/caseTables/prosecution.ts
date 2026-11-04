@@ -103,15 +103,13 @@ export const publicProsecutionIndictmentsReviewed: CaseTable = {
 // Verdict appeals only - the columns are the public prosecution office's for
 // now, and the ticket leaves tidying them to a later one. A fine is appealed by
 // ruling appeal rather than verdict appeal, so the where options keep those out
-// even though the office's own appealed list carries both. The next session
-// reads the verdict appeal, which the list presents as the appeal of its rows.
+// even though the office's own appealed list carries both.
 const publicProsecutionIndictmentsAppealedColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'rulingType',
   'indictmentReviewDecision',
   'subpoenaServiceState',
-  'verdictAppealNextSessionDate',
 ]
 
 export const publicProsecutionIndictmentsAppealed: CaseTable = {

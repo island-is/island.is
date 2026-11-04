@@ -42,7 +42,6 @@ const courtOfAppealsVerdictAppealsInProgressColumnKeys: CaseTableColumnKey[] = [
   'verdictAppealAppellant',
   'verdictAppealState',
   'verdictAppealHead',
-  'verdictAppealNextSessionDate',
 ]
 
 export const courtOfAppealsVerdictAppealsInProgress: CaseTable = {

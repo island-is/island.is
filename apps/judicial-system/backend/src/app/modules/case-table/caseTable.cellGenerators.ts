@@ -11,7 +11,6 @@ import {
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
-  appealCourtSessionTypeNames,
   AppealEventType,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -27,7 +26,6 @@ import {
   getIndictmentVerdictAppealDeadlineStatus,
   getMillisecondsFromDays,
   getPresidingAppealJudge,
-  getScheduledAppealCourtSessions,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
   IndictmentSubtypeMap,
@@ -884,48 +882,6 @@ const verdictAppealResult: CaseTableCellGenerator<TagValue> = {
   },
 }
 
-// The next session the court of appeals has called in the verdict appeal: its
-// type over its date, the way the district court's arraignment column reads.
-// Nothing once every booked session is behind us, or once the appeal is
-// completed or withdrawn - the case is then no longer on anyone's agenda,
-// whatever the court has left in the list. The public prosecution's list
-// keeps closed appeals, so the state cannot be left to the list.
-const verdictAppealNextSessionDate: CaseTableCellGenerator<StringGroupValue> = {
-  includes: {
-    verdictAppealCase: {
-      attributes: ['appealState'],
-      includes: {
-        courtSessions: { attributes: ['sessionType', 'sessionDate'] },
-      },
-    },
-  },
-  generate: (c: CaseTableRowCase): CaseTableCell<StringGroupValue> => {
-    const [nextSession] = getScheduledAppealCourtSessions(c.appeal)
-
-    if (!nextSession) {
-      return generateCell()
-    }
-
-    const datePart = formatDate(nextSession.sessionDate, 'EEE d. MMMM yyyy')
-    const timePart = formatDate(nextSession.sessionDate, 'HH:mm')
-    const sortValue = formatDate(nextSession.sessionDate, 'yyyyMMddHHmm')
-
-    if (!datePart || !timePart || !sortValue) {
-      return generateCell()
-    }
-
-    return generateCell(
-      {
-        strList: [
-          appealCourtSessionTypeNames[nextSession.sessionType],
-          `${capitalize(datePart)} kl. ${timePart}`,
-        ],
-      },
-      sortValue,
-    )
-  },
-}
-
 const created: CaseTableCellGenerator<StringValue> = {
   attributes: ['created'],
   generate: (c: CaseTableRowCase): CaseTableCell<StringValue> =>
@@ -1497,5 +1453,4 @@ export const caseTableCellGenerators: Record<
   verdictAppealHead,
   verdictAppealCompletedDate,
   verdictAppealResult,
-  verdictAppealNextSessionDate,
 }

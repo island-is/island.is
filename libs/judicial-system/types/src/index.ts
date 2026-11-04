@@ -107,8 +107,6 @@ export type {
 export {
   AppealCourtSessionType,
   appealCourtSessionTypeNames,
-  getScheduledAppealCourtSessions,
-  getUpcomingAppealCourtSessions,
   sortAppealCourtSessionsByDate,
 } from './lib/appealCourtSession'
 export {

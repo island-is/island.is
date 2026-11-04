@@ -48,9 +48,6 @@ const verdictAppealState: CaseTableColumn = { title: 'Staða' }
 const verdictAppealHead: CaseTableColumn = { title: 'Dómsformaður' }
 const verdictAppealCompletedDate: CaseTableColumn = { title: 'Máli lokið' }
 const verdictAppealResult: CaseTableColumn = { title: 'Niðurstaða' }
-const verdictAppealNextSessionDate: CaseTableColumn = {
-  title: 'Næsta þinghald',
-}
 
 export const caseTableColumns = {
   caseNumber,
@@ -89,7 +86,6 @@ export const caseTableColumns = {
   verdictAppealHead,
   verdictAppealCompletedDate,
   verdictAppealResult,
-  verdictAppealNextSessionDate,
 }
 
 export type CaseTableColumnMap = typeof caseTableColumns
