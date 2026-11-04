@@ -1,3 +1,5 @@
+import { Transaction } from 'sequelize'
+
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -31,6 +33,10 @@ export type UpdatedVictims = {
   victims: Victim[]
 }
 
+// Every caller runs under the request's transaction - the victim routes lock
+// the case row before they read or change its victims - so the transaction is
+// required rather than optional: a caller that forgets it is a type error,
+// not a silent autocommit on a second pooled connection.
 @Injectable()
 export class VictimRepositoryService {
   constructor(
@@ -38,11 +44,14 @@ export class VictimRepositoryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async findById(victimId: string): Promise<Victim | null> {
+  async findById(
+    victimId: string,
+    options: { transaction: Transaction },
+  ): Promise<Victim | null> {
     try {
       this.logger.debug(`Finding victim ${victimId}`)
 
-      return await this.victimModel.findByPk(victimId)
+      return await this.victimModel.findByPk(victimId, options)
     } catch (error) {
       this.logger.error(`Error finding victim ${victimId}:`, { error })
 
@@ -50,11 +59,15 @@ export class VictimRepositoryService {
     }
   }
 
-  async create(caseId: string, victim: CreateVictim): Promise<Victim> {
+  async create(
+    caseId: string,
+    victim: CreateVictim,
+    options: { transaction: Transaction },
+  ): Promise<Victim> {
     try {
       this.logger.debug(`Creating a victim for case ${caseId}`)
 
-      return await this.victimModel.create({ ...victim, caseId })
+      return await this.victimModel.create({ ...victim, caseId }, options)
     } catch (error) {
       this.logger.error(`Error creating a victim for case ${caseId}:`, {
         error,
@@ -70,13 +83,14 @@ export class VictimRepositoryService {
     victimId: string,
     caseId: string,
     update: UpdateVictim,
+    options: { transaction: Transaction },
   ): Promise<UpdatedVictims> {
     try {
       this.logger.debug(`Updating victim ${victimId} of case ${caseId}`)
 
       const [numberOfAffectedRows, victims] = await this.victimModel.update(
         update,
-        { where: { id: victimId, caseId }, returning: true },
+        { where: { id: victimId, caseId }, returning: true, ...options },
       )
 
       return { numberOfAffectedRows, victims }
@@ -92,12 +106,17 @@ export class VictimRepositoryService {
     }
   }
 
-  async deleteByIdAndCase(victimId: string, caseId: string): Promise<number> {
+  async deleteByIdAndCase(
+    victimId: string,
+    caseId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
     try {
       this.logger.debug(`Deleting victim ${victimId} of case ${caseId}`)
 
       return await this.victimModel.destroy({
         where: { id: victimId, caseId },
+        ...options,
       })
     } catch (error) {
       this.logger.error(

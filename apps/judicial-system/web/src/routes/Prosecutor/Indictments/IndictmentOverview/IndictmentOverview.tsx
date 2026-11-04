@@ -355,20 +355,6 @@ const IndictmentOverview: FC = () => {
             isFine={isFine}
             indictmentAppealDeadline={workingCase.indictmentAppealDeadline}
             onClose={() => setModalVisible(undefined)}
-            // A saved decision is the new original: it no longer counts as
-            // changed, so a retry after a partial failure sends only the rest.
-            onSaved={(savedDefendantIds) =>
-              setOriginalReviewDecisions((previous) => ({
-                ...previous,
-                ...Object.fromEntries(
-                  savedDefendantIds.map((id) => [
-                    id,
-                    workingCase.defendants?.find((d) => d.id === id)
-                      ?.indictmentReviewDecision,
-                  ]),
-                ),
-              }))
-            }
             onConfirmed={() => router.push(getStandardUserDashboardRoute(user))}
           />
         )}

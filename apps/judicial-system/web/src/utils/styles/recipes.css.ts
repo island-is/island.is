@@ -44,3 +44,33 @@ export const stack = recipe({
     marginTop: theme.spacing[0],
   },
 })
+
+/**
+ * Two equal columns that fill the row, falling back to one on narrow screens.
+ *
+ * What a pair of radio buttons needs to reach both edges of the box it sits
+ * in: a flex row sizes each to its own label and leaves the right-hand side
+ * short. The district court's advocate screen has carried its own copy of this
+ * since before there was anywhere shared to put it.
+ */
+export const twoColumn = recipe({
+  base: {
+    display: 'grid',
+    alignItems: 'flex-end',
+    '@media': {
+      [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+        gridTemplateColumns: '1fr 1fr',
+      },
+    },
+  },
+  variants: {
+    gap: {
+      1: { gap: theme.spacing[1] },
+      2: { gap: theme.spacing[2] },
+      3: { gap: theme.spacing[3] },
+    },
+  },
+  defaultVariants: {
+    gap: 2,
+  },
+})

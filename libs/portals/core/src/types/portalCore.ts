@@ -186,6 +186,11 @@ export type PortalRoute = Omit<RouteObject, 'children'> & {
   key?: Features | string
 
   /**
+   * Overrides the module layout for this route
+   */
+  layout?: PortalModule['layout']
+
+  /**
    * Child routes of this route
    */
   children?: PortalRoute[]
@@ -236,4 +241,5 @@ export interface PortalModule {
     | 'none' // Full screen
     | 'full' // Full grid, i.e 12 cols
     | 'default' // Narrow grid, i.e. 8 cols
+    | 'workspace' // Fills the viewport below a compact header; inner panes scroll
 }

@@ -9,3 +9,4 @@ export { applicantInformation as applicantInformationMessages } from './lib/appl
 export { buildFormConclusionSection } from './lib/formConclusionSection/formConclusionSection'
 export { conclusion as conclusionMessages } from './lib/formConclusionSection/messages'
 export { buildFormPaymentChargeOverviewSection } from './lib/formPaymentChargeOverview/formPaymentChargeOverview'
+export { paymentChargeOverview as paymentChargeOverviewMessages } from './lib/formPaymentChargeOverview/messages'

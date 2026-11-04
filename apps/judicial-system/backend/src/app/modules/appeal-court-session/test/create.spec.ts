@@ -10,6 +10,8 @@ import {
 
 import { createTestingAppealCourtSessionModule } from './createTestingAppealCourtSessionModule'
 
+import { getOrCreateTransaction } from '../../../middleware'
+import { runInRequestContext } from '../../../test'
 import {
   AppealCase,
   AppealCourtSession,
@@ -41,6 +43,7 @@ describe('AppealCourtSessionController - Create', () => {
   const created = { id: uuid(), ...dto } as AppealCourtSession
   const transaction = {} as Transaction
 
+  let mockTransaction: jest.Mock
   let mockAppealCourtSessionRepositoryService: AppealCourtSessionRepositoryService
   let givenWhenThen: GivenWhenThen
 
@@ -57,16 +60,33 @@ describe('AppealCourtSessionController - Create', () => {
       mockAppealCourtSessionRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(created)
 
-    const mockTransaction = sequelize.transaction as jest.Mock
-    mockTransaction.mockImplementation((fn) => fn(transaction))
+    mockTransaction = sequelize.transaction as jest.Mock
+    mockTransaction.mockResolvedValue(transaction)
 
     givenWhenThen = async (appealCase: AppealCase) => {
       const then = {} as Then
 
-      await appealCourtSessionController
-        .create(caseId, appealCase.id, theCase, appealCase, dto)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      try {
+        // The routes are guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open by the time the handler runs. Guards do
+        // not execute in controller unit tests, so the request context is set
+        // up here instead.
+        await runInRequestContext(async () => {
+          // Stand in for CaseExistsForUpdateGuard, which opens the request
+          // transaction before the handler runs.
+          await getOrCreateTransaction(sequelize)
+
+          then.result = await appealCourtSessionController.create(
+            caseId,
+            appealCase.id,
+            theCase,
+            appealCase,
+            dto,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -86,6 +106,15 @@ describe('AppealCourtSessionController - Create', () => {
       { transaction },
     )
     expect(then.result).toBe(created)
+  })
+
+  // One call to sequelize.transaction: the guard's. A handler that opened a
+  // transaction of its own, the deadlock the controller warns about, would
+  // make it two.
+  it('joins the transaction the guard opened rather than open one', async () => {
+    await givenWhenThen(verdictAppeal)
+
+    expect(mockTransaction).toHaveBeenCalledTimes(1)
   })
 
   // The guard matches any of the case's appeals to the id in the URL. A ruling

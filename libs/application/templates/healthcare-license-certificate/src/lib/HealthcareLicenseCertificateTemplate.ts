@@ -120,6 +120,13 @@ const template: ApplicationTemplate<
                   (module) =>
                     Promise.resolve(module.HealthcareLicenseCertificateForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Áfram',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
             },

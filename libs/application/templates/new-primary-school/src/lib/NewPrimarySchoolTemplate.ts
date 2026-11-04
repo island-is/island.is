@@ -544,6 +544,18 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.REJECT,
+                  name: assigneeMessages.shared.reject,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: assigneeMessages.shared.approve,
+                  type: 'primary',
+                },
+              ],
               write: 'all',
             },
           ],

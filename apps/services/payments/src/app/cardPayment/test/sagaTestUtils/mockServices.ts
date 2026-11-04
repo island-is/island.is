@@ -36,6 +36,14 @@ export const createMockCardPaymentService = (
     persistPaymentConfirmation: jest
       .fn()
       .mockResolvedValue(resolved(undefined)),
+    findPossibleDebtRegistration: jest.fn().mockResolvedValue(resolved(null)),
+    settleDebt: jest.fn().mockResolvedValue(
+      resolved({
+        type: 'registered',
+        dateCreated: '2026-10-12T10:00:00',
+        alreadySettled: false,
+      }),
+    ),
     refund: jest.fn().mockResolvedValue(
       resolved({
         isSuccess: true,
@@ -56,6 +64,7 @@ export const createMockPaymentFlowService = (
 ): jest.Mocked<PaymentFlowService> => {
   const mock: Record<string, jest.Mock> = {
     logPaymentFlowUpdate: jest.fn().mockResolvedValue(resolved(undefined)),
+    hasPaymentCompletedEvent: jest.fn().mockResolvedValue(resolved(false)),
     validateCharge: jest.fn().mockResolvedValue(resolved(undefined)),
     deleteCardPaymentConfirmation: jest.fn().mockResolvedValue(
       resolved({
@@ -64,6 +73,9 @@ export const createMockPaymentFlowService = (
       }),
     ),
     deletePaymentFulfillment: jest.fn().mockResolvedValue(resolved({})),
+    deleteCardPaymentConfirmationAndFulfillment: jest
+      .fn()
+      .mockResolvedValue(resolved(undefined)),
     restoreCardPaymentConfirmation: jest.fn().mockResolvedValue(resolved({})),
     restorePaymentFulfillment: jest.fn().mockResolvedValue(resolved({})),
     findPaymentFulfillmentForPaymentFlow: jest

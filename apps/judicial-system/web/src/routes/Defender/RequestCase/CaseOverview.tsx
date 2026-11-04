@@ -25,14 +25,13 @@ import {
   PdfButton,
   RulingModifiedAlert,
   SignedDocument,
+  UserContext,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
 import InfoCard from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
-import {
-  CaseState,
-  RequestSharedWithDefender,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { canDefenderViewRequest } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
@@ -41,6 +40,7 @@ import { strings } from './CaseOverview.strings'
 export const CaseOverview = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { user } = useContext(UserContext)
 
   const { formatMessage } = useIntl()
   const { appealBanner, appealModals } = useAppealCaseBanner()
@@ -63,6 +63,13 @@ export const CaseOverview = () => {
   const shouldDisplayAppealBanner =
     isCompletedCase(workingCase.state) &&
     (workingCase.canDefenderAppeal || workingCase.hasBeenAppealed)
+
+  const shouldDisplayDocuments = canDefenderViewRequest({
+    defendants: workingCase.defendants,
+    nationalId: user?.nationalId,
+    state: workingCase.state,
+    hasArraignmentDate: Boolean(workingCase.arraignmentDate?.date),
+  })
 
   return (
     <>
@@ -189,11 +196,7 @@ export const CaseOverview = () => {
           <Box marginBottom={6}>
             <AppealCaseFilesOverview />
           </Box>
-          {(workingCase.requestSharedWithDefender ===
-            RequestSharedWithDefender.READY_FOR_COURT ||
-            workingCase.requestSharedWithDefender ===
-              RequestSharedWithDefender.COURT_DATE ||
-            isCompletedCase(workingCase.state)) && (
+          {shouldDisplayDocuments && (
             <Box marginBottom={10}>
               <Text as="h3" variant="h3" marginBottom={1}>
                 {formatMessage(strings.documentHeading)}

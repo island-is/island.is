@@ -15,7 +15,13 @@ import { assign } from 'xstate'
 
 import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 
-import { application, stateDescriptions } from './messages'
+import {
+  aboutForm,
+  application,
+  missingFiles,
+  stateDescriptions,
+  summaryForm,
+} from './messages'
 import { dataSchema } from './dataSchema'
 import {
   isMuncipalityNotRegistered,
@@ -77,6 +83,13 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/Prerequisites').then((module) =>
                   Promise.resolve(module.Prerequisites),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: aboutForm.goToApplication.button,
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
               api: [
@@ -121,6 +134,13 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/ApplicationForm').then((module) =>
                   Promise.resolve(module.ApplicationForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: summaryForm.general.submit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
               delete: true,
@@ -154,6 +174,13 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/prerequisitesSpouseForm').then((module) =>
                   Promise.resolve(module.PrerequisitesSpouse),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: aboutForm.goToApplication.button,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
               api: [CurrentApplicationApi, TaxDataSpouseApi],
@@ -220,6 +247,13 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/spouseForm').then((module) =>
                   Promise.resolve(module.Spouse),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: summaryForm.general.submit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
@@ -254,6 +288,13 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/ApplicantSubmitted').then((module) =>
                   Promise.resolve(module.ApplicantSubmitted),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: missingFiles.general.submit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
@@ -263,6 +304,13 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/SpouseSubmitted').then((module) =>
                   Promise.resolve(module.SpouseSubmitted),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: missingFiles.general.submit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },

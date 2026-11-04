@@ -45,7 +45,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useFinanceSwapHook } from '../../utils/financeSwapHook'
 
 const FinanceStatus = () => {
-  useNamespaces('sp.finance-status')
+  useNamespaces(['sp.finance-status', 'sp.finance'])
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   useFinanceSwapHook()

@@ -3,6 +3,7 @@ import {
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
+  isIndictmentPdfReplaceableState,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import type {
@@ -19,7 +20,9 @@ import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayH
 // split cases of its own in the payload, and its indictment row is named
 // without a date.
 export type CaseFilesListCase = MergedCase &
-  Partial<Pick<WorkingCase, 'caseSentToCourtDate' | 'splitCases'>>
+  Partial<
+    Pick<WorkingCase, 'caseSentToCourtDate' | 'splitCases' | 'indictmentHash'>
+  >
 
 // Every subpoena on the case and on the cases split from it, each with the
 // defendant it was issued to. A defence user only gets the ones for
@@ -72,3 +75,13 @@ export const shouldShowPoliceDigitalCaseFilesSection = (
     isDistrictCourtUser(user) ||
     isCourtOfAppealsUser(user)) &&
   (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
+
+// Shown once the generated Ákæra has been frozen to S3 (indictmentHash set),
+// so a replace cannot race with the first getIndictmentPdf freeze.
+export const shouldShowReplaceIndictmentPdf = (
+  workingCase: CaseFilesListCase,
+  user?: User,
+): boolean =>
+  isProsecutionUser(user) &&
+  isIndictmentPdfReplaceableState(workingCase.state) &&
+  Boolean(workingCase.indictmentHash)

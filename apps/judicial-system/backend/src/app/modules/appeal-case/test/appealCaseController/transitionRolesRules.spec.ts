@@ -18,8 +18,8 @@ import {
   publicProsecutorStaffTransitionRule,
 } from '../../guards/rolesRules'
 
-// Builds a minimal request as seen by RolesGuard after CaseExistsGuard and
-// AppealCaseExistsGuard have populated request.case and request.appealCase.
+// Builds a minimal request as seen by RolesGuard after CaseExistsForUpdateGuard
+// and AppealCaseExistsGuard have populated request.case and request.appealCase.
 const buildRequest = (
   theCase: Partial<Case>,
   appealCase: Partial<AppealCase>,

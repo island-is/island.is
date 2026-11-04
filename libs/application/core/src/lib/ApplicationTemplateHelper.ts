@@ -233,6 +233,14 @@ export class ApplicationTemplateHelper<
     return stateInformation.roles?.find(({ id }) => id === role)
   }
 
+  getPermittedEventsForRole(role: ApplicationRole): string[] {
+    const actions = this.getRoleInState(role)?.actions ?? []
+    // An action's event is either the event type string or an event object
+    return actions.map(({ event }) =>
+      typeof event === 'string' ? event : event.type,
+    )
+  }
+
   async applyAnswerValidators(
     newAnswers: FormValue,
     formatMessage: FormatMessage,

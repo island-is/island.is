@@ -13,12 +13,15 @@ import {
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  coreMessages,
+} from '@island.is/application/core'
 import {
   DRAFT_ENTERED_AT_KEY,
   housingBenefitsPruneLifecycle,
 } from '../utils/lifecycle'
-import { getDraftPruneReminderScheduledNotifications } from '../utils/notifications'
+import { getApplicantReminderScheduledNotifications } from '../utils/notifications'
 import * as m from './messages'
 import {
   AssigneeUserProfileApi,
@@ -159,7 +162,7 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: housingBenefitsPruneLifecycle,
-          scheduledNotifications: getDraftPruneReminderScheduledNotifications,
+          scheduledNotifications: getApplicantReminderScheduledNotifications,
           actionCard: housingBenefitsActionCards.draft,
           onExit: NotifyAssigneesApi,
           roles: [
@@ -198,6 +201,7 @@ const template: ApplicationTemplate<
           progress: 0.6,
           status: FormModes.IN_PROGRESS,
           lifecycle: housingBenefitsPruneLifecycle,
+          scheduledNotifications: getApplicantReminderScheduledNotifications,
           actionCard: housingBenefitsActionCards.assigneeApproval,
           onExit: [
             NotifyApplicantOnAssigneeSubmitApi,
@@ -210,6 +214,18 @@ const template: ApplicationTemplate<
                 import(
                   '../forms/assigneeApprovalState/assigneePrereqForm'
                 ).then((module) => Promise.resolve(module.AssigneePrereqForm)),
+              actions: [
+                {
+                  event: 'EDIT',
+                  name: coreMessages.buttonNext,
+                  type: 'primary',
+                },
+                {
+                  event: 'REJECT',
+                  name: m.assigneeApproval.householdMemberRejectButton,
+                  type: 'reject',
+                },
+              ],
               write: 'all',
               read: 'all',
               api: [
@@ -228,6 +244,18 @@ const template: ApplicationTemplate<
                 import('../forms/assigneeApprovalState/assigneeDraftForm').then(
                   (module) => Promise.resolve(module.AssigneeDraftForm),
                 ),
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: m.assigneeDraftOverview.submitButton,
+                  type: 'primary',
+                },
+                {
+                  event: 'EDIT',
+                  name: coreMessages.buttonNext,
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               read: 'all',
               api: [
@@ -296,6 +324,7 @@ const template: ApplicationTemplate<
           progress: 0.8,
           status: FormModes.IN_PROGRESS,
           lifecycle: housingBenefitsPruneLifecycle,
+          scheduledNotifications: getApplicantReminderScheduledNotifications,
           actionCard: housingBenefitsActionCards.applicantSubmit,
           roles: [
             {
@@ -304,6 +333,18 @@ const template: ApplicationTemplate<
                 import(
                   '../forms/applicantSubmitState/applicantSubmitForm'
                 ).then((module) => Promise.resolve(module.ApplicantSubmitForm)),
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: m.applicantSubmitMessages.submitButton,
+                  type: 'primary',
+                },
+                {
+                  event: 'EDIT',
+                  name: 'Bæta við heimilismanni',
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
               delete: true,
@@ -349,6 +390,7 @@ const template: ApplicationTemplate<
           progress: 0.8,
           status: FormModes.IN_PROGRESS,
           lifecycle: housingBenefitsPruneLifecycle,
+          scheduledNotifications: getApplicantReminderScheduledNotifications,
           onExit: NotifyAssigneesApi,
           roles: [
             {

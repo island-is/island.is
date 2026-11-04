@@ -113,7 +113,9 @@ describe('AppealAppointmentLetterButtons', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('should render nothing for anyone but the court of appeals', () => {
+  // Who sees which letter is the logic's business; the buttons only have to
+  // stay away when it offers nothing.
+  it('should render nothing for a user the logic offers no letter', () => {
     renderButtons(appealedCase(), UserRole.PROSECUTOR)
 
     expect(

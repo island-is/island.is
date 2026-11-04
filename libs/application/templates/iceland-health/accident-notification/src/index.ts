@@ -6,6 +6,8 @@ import * as appUtils from './utils/miscUtils'
 
 export const getFields = () => import('./fields')
 
+export * from './lib/messages'
+
 export * from './utils/types'
 export * from './shared'
 export * from './utils/enums'

@@ -5,6 +5,7 @@ import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
+import { useConfirmAppealSummonsMutation } from './confirmAppealSummons.generated'
 import { useCreateAppealSummonsMutation } from './createAppealSummons.generated'
 import { useDeleteAppealSummonsMutation } from './deleteAppealSummons.generated'
 import { useUpdateAppealSummonsMutation } from './updateAppealSummons.generated'
@@ -21,6 +22,8 @@ const useAppealSummons = () => {
     useUpdateAppealSummonsMutation()
   const [deleteAppealSummonsMutation, { loading: isDeletingAppealSummons }] =
     useDeleteAppealSummonsMutation()
+  const [confirmAppealSummonsMutation, { loading: isConfirmingAppealSummons }] =
+    useConfirmAppealSummonsMutation()
 
   const createAppealSummons = useCallback(
     async (caseId: string, defendants: AppealSummonsDefendantInput[]) => {
@@ -102,8 +105,39 @@ const useAppealSummons = () => {
     [deleteAppealSummonsMutation, isDeletingAppealSummons],
   )
 
+  const confirmAppealSummons = useCallback(
+    async (caseId: string, appealSummonsId: string) => {
+      try {
+        if (isConfirmingAppealSummons) {
+          return undefined
+        }
+
+        const { data, errors } = await confirmAppealSummonsMutation({
+          variables: {
+            caseId,
+            input: { appealSummonsId },
+          },
+        })
+
+        if (data?.confirmAppealSummons && !errors) {
+          return data.confirmAppealSummons
+        }
+
+        return undefined
+      } catch {
+        toast.error('Upp kom villa við að staðfesta áfrýjunarstefnu')
+        return undefined
+      }
+    },
+    [confirmAppealSummonsMutation, isConfirmingAppealSummons],
+  )
+
   const previewAppealSummons = useCallback(
-    async (caseId: string, defendants: AppealSummonsDefendantInput[]) => {
+    async (
+      caseId: string,
+      defendants: AppealSummonsDefendantInput[],
+      appealSummonsId?: string,
+    ) => {
       // Open synchronously so the browser still treats this as a user gesture
       // after the fetch/blob awaits below.
       const previewWindow = window.open('', '_blank')
@@ -119,7 +153,10 @@ const useAppealSummons = () => {
               Accept: 'application/pdf',
               ...(token ? { authorization: `Bearer ${token}` } : {}),
             },
-            body: JSON.stringify({ defendants }),
+            body: JSON.stringify({
+              defendants,
+              ...(appealSummonsId ? { appealSummonsId } : {}),
+            }),
           },
         )
 
@@ -149,10 +186,12 @@ const useAppealSummons = () => {
     createAppealSummons,
     updateAppealSummons,
     deleteAppealSummons,
+    confirmAppealSummons,
     previewAppealSummons,
     isCreatingAppealSummons,
     isUpdatingAppealSummons,
     isDeletingAppealSummons,
+    isConfirmingAppealSummons,
   }
 }
 

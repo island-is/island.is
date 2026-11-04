@@ -98,6 +98,12 @@ export {
   AppealCourtSessionType,
   appealCourtSessionTypeNames,
 } from './lib/appealCourtSession'
+export {
+  findAppealStatementDeadline,
+  hasFiledAppealStatement,
+  isSameAppealStatementParty,
+} from './lib/appealStatementDeadline'
+export type { AppealStatementParty } from './lib/appealStatementDeadline'
 
 export { DateType, dateTypes } from './lib/dateLog'
 
@@ -186,6 +192,7 @@ export {
   isRulingOrDismissalCase,
   CasePoliceState,
   hasIndictmentCaseBeenSubmittedToCourt,
+  isIndictmentPdfReplaceableState,
   getIndictmentCasePoliceState,
   isIndictmentCaseState,
   isRequestCaseState,

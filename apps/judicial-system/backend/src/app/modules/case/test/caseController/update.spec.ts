@@ -23,7 +23,6 @@ import {
   DateType,
   DefendantEventType,
   DefendantNotificationType,
-  DefenderChoice,
   EventType,
   IndictmentCaseNotificationType,
   indictmentCases,
@@ -2071,7 +2070,10 @@ describe('CaseController - Update', () => {
       expect(mockEventService.postEvent).toHaveBeenCalledWith(
         CaseTransition.MOVE,
         movedCase,
-        { from: 'Héraðsdómur Reykjavíkur', to: 'Héraðsdómur Reykjaness' },
+        {
+          from: 'Héraðsdómur Reykjavíkur',
+          to: 'Héraðsdómur Reykjaness',
+        },
       )
     })
   })
@@ -2299,11 +2301,7 @@ describe('CaseController - Update', () => {
     })
   })
 
-  describe('dual-write defender to defendants for request cases', () => {
-    const defenderName = 'Jane Doe'
-    const defenderNationalId = '1234567890'
-    const defenderEmail = 'jane@example.is'
-    const defenderPhoneNumber = '5551234'
+  describe('defender fields on request cases', () => {
     const requestCase = {
       ...theCase,
       type: CaseType.CUSTODY,
@@ -2314,81 +2312,35 @@ describe('CaseController - Update', () => {
       defendantWaivesRightToCounsel: false,
     } as Case
 
-    describe('syncs defender fields when defenderName changes on a request case', () => {
+    describe.each([
+      [
+        'defender contact fields',
+        {
+          defenderName: 'Jane Doe',
+          defenderNationalId: '1234567890',
+          defenderEmail: 'jane@example.is',
+          defenderPhoneNumber: '5551234',
+        },
+      ],
+      ['a cleared defender name', { defenderName: null }],
+      [
+        'defendantWaivesRightToCounsel',
+        { defendantWaivesRightToCounsel: true },
+      ],
+    ])('when %s change', (_, update) => {
       beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          defenderName,
-          defenderNationalId,
-          defenderEmail,
-          defenderPhoneNumber,
-        } as UpdateCaseDto)
-      })
-
-      it('should call syncDefenderToAllDefendants with merged contact fields', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).toHaveBeenCalledWith(
+        await givenWhenThen(
           caseId,
-          {
-            defenderName,
-            defenderNationalId,
-            defenderEmail,
-            defenderPhoneNumber,
-            defenderChoice: null,
-            requestSharedWithDefender: undefined,
-          },
-          transaction,
+          user,
+          requestCase,
+          update as unknown as UpdateCaseDto,
         )
       })
-    })
 
-    describe('clears defender fields when defenderName is set to null', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          defenderName: null,
-        } as unknown as UpdateCaseDto)
-      })
-
-      it('should call syncDefenderToAllDefendants with null name and remaining contacts', () => {
+      it('should not fan out to the defendants', () => {
         expect(
           mockDefendantService.syncDefenderToAllDefendants,
-        ).toHaveBeenCalledWith(
-          caseId,
-          {
-            defenderName: null,
-            defenderNationalId: '0000000000',
-            defenderEmail: 'old@example.is',
-            defenderPhoneNumber: '0000000',
-            defenderChoice: null,
-            requestSharedWithDefender: undefined,
-          },
-          transaction,
-        )
-      })
-    })
-
-    describe('sets WAIVE when defendantWaivesRightToCounsel is true', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, requestCase, {
-          defendantWaivesRightToCounsel: true,
-        } as UpdateCaseDto)
-      })
-
-      it('should sync contact fields with defenderChoice WAIVE', () => {
-        expect(
-          mockDefendantService.syncDefenderToAllDefendants,
-        ).toHaveBeenCalledWith(
-          caseId,
-          {
-            defenderName: 'Old Name',
-            defenderNationalId: '0000000000',
-            defenderEmail: 'old@example.is',
-            defenderPhoneNumber: '0000000',
-            defenderChoice: DefenderChoice.WAIVE,
-            requestSharedWithDefender: undefined,
-          },
-          transaction,
-        )
+        ).not.toHaveBeenCalled()
       })
     })
 
@@ -2432,17 +2384,12 @@ describe('CaseController - Update', () => {
         } as UpdateCaseDto)
       })
 
-      it('should call syncDefenderToAllDefendants with sharing and contact fields', () => {
+      it('should sync only the sharing timing onto the defendants', () => {
         expect(
           mockDefendantService.syncDefenderToAllDefendants,
         ).toHaveBeenCalledWith(
           caseId,
           {
-            defenderName: 'Old Name',
-            defenderNationalId: '0000000000',
-            defenderEmail: 'old@example.is',
-            defenderPhoneNumber: '0000000',
-            defenderChoice: null,
             requestSharedWithDefender:
               RequestSharedWithDefender.READY_FOR_COURT,
           },

@@ -14,6 +14,7 @@ import {
   isRulingOrderWithoutDocument,
 } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { getRequestCaseDefenderNames } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import type {
   AppealCase,
   CaseFile,
@@ -525,9 +526,13 @@ export const getAppealActorText = (
       return `Kært af sækjanda ${dateStr}`
     }
 
-    // Request-case defence is collective - name the case's current defender.
-    return workingCase.defenderName
-      ? `Verjandi ${workingCase.defenderName} kærði úrskurðinn ${dateStr}`
+    // Request-case defence is collective. Name the defender only when every
+    // registered defender on the case shares that name; otherwise stay generic
+    // so we do not attribute the appeal to the wrong person.
+    const defenderNames = getRequestCaseDefenderNames(workingCase.defendants)
+
+    return defenderNames.length === 1
+      ? `Verjandi ${defenderNames[0]} kærði úrskurðinn ${dateStr}`
       : `Kært af verjanda ${dateStr}`
   }
 

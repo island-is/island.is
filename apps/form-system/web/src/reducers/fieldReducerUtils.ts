@@ -6,6 +6,7 @@ import {
 } from '@island.is/api/schema'
 import { SectionTypes } from '@island.is/form-system/enums'
 import { ApplicationState, FieldTypesEnum } from '@island.is/form-system/ui'
+import { updatePaymentSectionVisibility } from '../utils/payment'
 
 const normalizeDependencies = (
   dependencies: Maybe<Maybe<Dependency>[]> | undefined,
@@ -148,7 +149,10 @@ const applyVisibilityToSections = (
   dependencies: Dependency[],
 ): FormSystemSection[] => {
   return sections.map((section) => {
-    if (section.sectionType === SectionTypes.PARTIES) {
+    if (
+      section.sectionType === SectionTypes.PARTIES ||
+      section.sectionType === SectionTypes.SUMMARY
+    ) {
       return section
     }
     const sectionHidden = isHiddenByDependencies(section.id, dependencies)
@@ -367,9 +371,9 @@ export const setFieldValue = (
     })
   }
 
-  const updatedSections = applyVisibilityToSections(
-    updatedSectionsBeforeDeps,
-    depsArray,
+  const updatedSections = updatePaymentSectionVisibility(
+    applyVisibilityToSections(updatedSectionsBeforeDeps, depsArray),
+    state.application.hasPayment,
   )
 
   const updatedState = {

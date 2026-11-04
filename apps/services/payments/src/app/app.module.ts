@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
+import { FinanceClientV3Config } from '@island.is/clients/finance-v3'
 import { BlikkClientConfig } from '@island.is/clients/blikk'
 import { XRoadConfig } from '@island.is/nest/config'
 import { ProblemModule } from '@island.is/nest/problem'
@@ -36,6 +37,7 @@ import { RefundModule } from './refund/refund.module'
         XRoadConfig,
         FeatureFlagConfig,
         ChargeFjsV2ClientConfig,
+        FinanceClientV3Config,
         BlikkClientConfig,
       ],
     }),

@@ -213,3 +213,10 @@ describe('CaseController - Create court case rules', () => {
     districtCourtAssistantRule,
   ])
 })
+
+describe('CaseController - Replace indictment pdf rules', () => {
+  verifyRolesRules(CaseController, 'replaceIndictmentPdf', [
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+  ])
+})

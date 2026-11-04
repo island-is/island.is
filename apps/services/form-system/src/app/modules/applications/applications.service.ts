@@ -419,7 +419,13 @@ export class ApplicationsService {
         !!paymentSection &&
         paymentSection.isHidden === false &&
         (paymentSection.screens ?? []).some(
-          (screen) => screen.isHidden === false,
+          (screen) =>
+            screen.isHidden === false &&
+            (screen.fields ?? []).some(
+              (field) =>
+                field.fieldType === FieldTypesEnum.PAYMENT &&
+                field.isHidden === false,
+            ),
         )
 
       if (hasVisiblePayment) {
@@ -1146,13 +1152,22 @@ export class ApplicationsService {
         if (this.isLastScreenInSection(currentSection, currentScreenId)) {
           if (!completedArray.includes(currentSectionId)) {
             completedArray = [...completedArray, currentSectionId]
-            draftFinishedSteps = draftFinishedSteps + 1
+            if (
+              currentSection.sectionType !== SectionTypes.PAYMENT ||
+              !form.hasSummaryScreen
+            ) {
+              draftFinishedSteps = draftFinishedSteps + 1
+            }
           }
         }
       } else {
         if (!completedArray.includes(currentSectionId)) {
           completedArray = [...completedArray, currentSectionId]
-          if (currentSection.sectionType !== SectionTypes.PREMISES) {
+          if (
+            currentSection.sectionType !== SectionTypes.PREMISES &&
+            (currentSection.sectionType !== SectionTypes.PAYMENT ||
+              !form.hasSummaryScreen)
+          ) {
             draftFinishedSteps = draftFinishedSteps + 1
           }
         }
@@ -1185,7 +1200,12 @@ export class ApplicationsService {
             completedArray = completedArray.filter(
               (id) => id !== previousSection.id,
             )
-            draftFinishedSteps = Math.max(0, draftFinishedSteps - 1)
+            if (
+              previousSection.sectionType !== SectionTypes.PAYMENT ||
+              !form.hasSummaryScreen
+            ) {
+              draftFinishedSteps = Math.max(0, draftFinishedSteps - 1)
+            }
           }
           if (this.doesSectionHaveScreen(previousSection)) {
             const lastScreenOfPreviousSection =
@@ -1208,6 +1228,7 @@ export class ApplicationsService {
       application.draftFinishedSteps = draftFinishedSteps
       application.draftTotalSteps = await this.calculateDraftTotalSteps(
         sections,
+        form.hasSummaryScreen,
       )
       await application.save({ transaction })
 
@@ -1724,12 +1745,14 @@ export class ApplicationsService {
 
   private async calculateDraftTotalSteps(
     sections: SectionDto[] | undefined,
+    hasSummaryScreen: boolean,
   ): Promise<number> {
     sections = sections?.filter(
       (section) =>
         section.isHidden === false &&
         section.sectionType !== SectionTypes.PREMISES &&
-        section.sectionType !== SectionTypes.COMPLETED,
+        section.sectionType !== SectionTypes.COMPLETED &&
+        (section.sectionType !== SectionTypes.PAYMENT || !hasSummaryScreen),
     )
     const draftTotalSteps = sections?.length || 0
 

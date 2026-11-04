@@ -17,12 +17,17 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
-import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import {
+  CardErrorCode,
+  PaymentServiceCode,
+  DebtPaymentErrorCode,
+} from '@island.is/shared/constants'
 
 import { PaymentMethod } from '../../types'
 import { requireStepResult } from '../../utils/orchestrator'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
+import { notifyKeptDebtPayment } from './cardPayment.debt'
 import {
   createApplePayPaymentContext,
   createApplePayPaymentSaga,
@@ -247,10 +252,35 @@ export class CardPaymentController {
 
       return { ...paymentResult, correlationId: paymentResult.correlationID }
     } catch (e) {
+      // The rollback left a debt payment that may be registered with FJS as it is, see
+      // keepDebtPayment: the payer paid, like when the webhook fails.
+      if (context.metadata?.debtPaymentKept === true) {
+        const { paymentFlow } = requireStepResult(context, 'VALIDATE')
+        const { paymentResult } = requireStepResult(context, 'CHARGE_CARD')
+
+        await notifyKeptDebtPayment({
+          paymentFlowService: this.paymentFlowService,
+          logger: this.logger,
+          ctx: context,
+          paymentFlow,
+          paymentResult,
+          message: 'Card payment completed successfully',
+        })
+
+        return { ...paymentResult, correlationId: paymentResult.correlationID }
+      }
+
       const refundSucceeded = context.metadata?.refundSucceeded === true
       const refundFailed = context.metadata?.refundSucceeded === false
 
       if (refundSucceeded) {
+        // FJS rejected the debts, the card is refunded and the flow is closed
+        if (e.message === DebtPaymentErrorCode.DebtPaymentRejected) {
+          throw new BadRequestException(
+            DebtPaymentErrorCode.DebtPaymentRejected,
+          )
+        }
+
         throw new BadRequestException(
           CardErrorCode.RefundedBecauseOfSystemError,
         )
@@ -333,10 +363,35 @@ export class CardPaymentController {
 
       return { ...paymentResult, correlationId: paymentResult.correlationID }
     } catch (e) {
+      // The rollback left a debt payment that may be registered with FJS as it is, see
+      // keepDebtPayment: the payer paid, like when the webhook fails.
+      if (context.metadata?.debtPaymentKept === true) {
+        const { paymentFlow } = requireStepResult(context, 'VALIDATE')
+        const { paymentResult } = requireStepResult(context, 'CHARGE_APPLE_PAY')
+
+        await notifyKeptDebtPayment({
+          paymentFlowService: this.paymentFlowService,
+          logger: this.logger,
+          ctx: context,
+          paymentFlow,
+          paymentResult,
+          message: 'Apple Pay payment completed successfully',
+        })
+
+        return { ...paymentResult, correlationId: paymentResult.correlationID }
+      }
+
       const refundSucceeded = context.metadata?.refundSucceeded === true
       const refundFailed = context.metadata?.refundSucceeded === false
 
       if (refundSucceeded) {
+        // FJS rejected the debts, the card is refunded and the flow is closed
+        if (e.message === DebtPaymentErrorCode.DebtPaymentRejected) {
+          throw new BadRequestException(
+            DebtPaymentErrorCode.DebtPaymentRejected,
+          )
+        }
+
         throw new BadRequestException(
           CardErrorCode.RefundedBecauseOfSystemError,
         )

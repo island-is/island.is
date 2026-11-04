@@ -12,7 +12,6 @@ import {
 
 import { CaseService } from '../../case'
 import { LimitedAccessCaseService } from '../../case/limitedAccessCase.service'
-import { PdfService } from '../../case/pdf.service'
 import { EventService } from '../../event'
 import { FileService } from '../../file'
 import { LawyerRegistryService } from '../../lawyer-registry/lawyerRegistry.service'
@@ -20,11 +19,13 @@ import {
   AppealCaseRepositoryService,
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
+  AppealSummonsRepositoryService,
   CaseRepositoryService,
   DefendantRepositoryService,
   VerdictRepositoryService,
 } from '../../repository'
 import { UserService } from '../../user'
+import { AppealAppointmentLetterService } from '../appealAppointmentLetter.service'
 import { appealCaseModuleConfig } from '../appealCase.config'
 import { AppealCaseController } from '../appealCase.controller'
 import { AppealCaseService } from '../appealCase.service'
@@ -34,7 +35,6 @@ jest.mock('@island.is/judicial-system/message')
 jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../case/case.service')
 jest.mock('../../case/limitedAccessCase.service')
-jest.mock('../../case/pdf.service')
 jest.mock('../../event/event.service')
 jest.mock('../../lawyer-registry/lawyerRegistry.service')
 jest.mock('../../file/file.service')
@@ -42,6 +42,7 @@ jest.mock('../../user/user.service')
 jest.mock('../../repository/services/appealCaseRepository.service')
 jest.mock('../../repository/services/appealDecisionRepository.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
+jest.mock('../../repository/services/appealSummonsRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/verdictRepository.service')
@@ -58,7 +59,6 @@ export const createTestingAppealCaseModule = async () => {
       SharedAuthModule,
       CaseService,
       LimitedAccessCaseService,
-      PdfService,
       EventService,
       LawyerRegistryService,
       FileService,
@@ -66,6 +66,7 @@ export const createTestingAppealCaseModule = async () => {
       AppealCaseRepositoryService,
       AppealDecisionRepositoryService,
       AppealEventLogRepositoryService,
+      AppealSummonsRepositoryService,
       CaseRepositoryService,
       DefendantRepositoryService,
       VerdictRepositoryService,
@@ -80,6 +81,7 @@ export const createTestingAppealCaseModule = async () => {
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       AppealCaseService,
+      AppealAppointmentLetterService,
     ],
   }).compile()
 
@@ -98,6 +100,11 @@ export const createTestingAppealCaseModule = async () => {
       AppealEventLogRepositoryService,
     )
 
+  const appealSummonsRepositoryService =
+    appealCaseModule.get<AppealSummonsRepositoryService>(
+      AppealSummonsRepositoryService,
+    )
+
   const caseRepositoryService = appealCaseModule.get<CaseRepositoryService>(
     CaseRepositoryService,
   )
@@ -107,8 +114,6 @@ export const createTestingAppealCaseModule = async () => {
 
   const defendantRepositoryService =
     appealCaseModule.get<DefendantRepositoryService>(DefendantRepositoryService)
-
-  const pdfService = appealCaseModule.get<PdfService>(PdfService)
 
   const lawyerRegistryService = appealCaseModule.get<LawyerRegistryService>(
     LawyerRegistryService,
@@ -139,10 +144,10 @@ export const createTestingAppealCaseModule = async () => {
     appealCaseRepositoryService,
     appealDecisionRepositoryService,
     appealEventLogRepositoryService,
+    appealSummonsRepositoryService,
     caseRepositoryService,
     defendantRepositoryService,
     verdictRepositoryService,
-    pdfService,
     lawyerRegistryService,
     userService,
     eventService,

@@ -29,6 +29,7 @@ import {
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { getLanguageToggleDialogConfig } from '@island.is/web/utils/languageToggleDialog'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import {
@@ -415,6 +416,9 @@ VerdictDetails.getProps = async ({ apolloClient, query, customPageData }) => {
       is: `/domar/${query.id}`,
       en: customPageData?.configJson?.englishFallbackUrl ?? '',
     },
+    languageToggleDialog: getLanguageToggleDialogConfig(
+      customPageData?.configJson,
+    ),
   }
 }
 

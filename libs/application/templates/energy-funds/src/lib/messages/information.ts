@@ -93,7 +93,7 @@ export const information = {
       description: {
         id: 'ef.application:information.labels.vehicle.description',
         defaultMessage:
-          'Athugaðu að ekki er veittur styrkur fyrir kaup á bifreiðum sem kosta meira en 10.000.000,-',
+          'Athugaðu að ekki er veittur styrkur fyrir kaup á bifreiðum sem kosta meira en 10.000.000 kr. Frá og með 1. nóvember 2026 er hámarkið fyrir fólksbíla (M1) 8.000.000 kr.',
         description: 'Vehicle description',
       },
       plate: {

@@ -9,8 +9,7 @@ import {
   PayInfoPaymentMeansEnum,
 } from '@island.is/clients/charge-fjs-v2'
 
-import { ChargeCardInput } from './dtos/chargeCard.input'
-import { VerifyCardBrowserInfo, VerifyCardInput } from './dtos/verifyCard.input'
+import { ChargeCardInput, VerifyCardBrowserInfo, VerifyCardInput } from './dtos'
 import {
   MdNormalised,
   MdSerialized,
@@ -18,9 +17,10 @@ import {
   ApplePayDecryptedWalletPaymentPayload,
 } from '../../types/cardPayment'
 
-import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import { PaymentFlowAttributes } from '../paymentFlow/models'
 import { CardPaymentModuleConfigType } from './cardPayment.config'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
+import type { FjsPayInfo } from '../../utils/fjsDebtPayment'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import { PaymentTrackingData } from '../../types'
 import { APPLE_PAY_ALLOWED_VALIDATION_HOSTS } from './applePay.constants'
@@ -312,6 +312,29 @@ export type CardChargeInfo = {
   cardUsage?: string
 }
 
+/** The neutral payInfo of a card payment, shared by the FJS charge and debt payment clients. */
+export const buildCardPayInfo = ({
+  cardChargeInfo,
+  totalPrice,
+  merchantReferenceData,
+  correlationId,
+}: {
+  cardChargeInfo: CardChargeInfo
+  totalPrice: number
+  merchantReferenceData: string
+  correlationId: string
+}): FjsPayInfo & { PAN: string; authCode: string; cardType: string } => ({
+  kind: cardChargeInfo.cardUsage?.toLowerCase()?.startsWith('d')
+    ? 'debit'
+    : 'credit',
+  PAN: cardChargeInfo.maskedCardNumber,
+  RRN: merchantReferenceData,
+  authCode: cardChargeInfo.authorizationCode,
+  cardType: cardChargeInfo.cardScheme,
+  payableAmount: totalPrice,
+  correlationId,
+})
+
 export const generateCardChargeFJSPayload = ({
   paymentFlow,
   charges,
@@ -331,21 +354,24 @@ export const generateCardChargeFJSPayload = ({
   correlationId: string
   effectiveDate?: Date
 }): Charge => {
+  const { kind, ...payInfo } = buildCardPayInfo({
+    cardChargeInfo,
+    totalPrice,
+    merchantReferenceData,
+    correlationId,
+  })
+
   return generateChargeFJSPayload({
     paymentFlow,
     charges,
     systemId,
     effectiveDate,
     payInfo: {
-      PAN: cardChargeInfo.maskedCardNumber,
-      RRN: merchantReferenceData,
-      authCode: cardChargeInfo.authorizationCode,
-      cardType: cardChargeInfo.cardScheme,
-      payableAmount: totalPrice,
-      paymentMeans: cardChargeInfo.cardUsage?.toLowerCase()?.startsWith('d')
-        ? PayInfoPaymentMeansEnum.Debetkort
-        : PayInfoPaymentMeansEnum.Kreditkort,
-      correlationId,
+      ...payInfo,
+      paymentMeans:
+        kind === 'debit'
+          ? PayInfoPaymentMeansEnum.Debetkort
+          : PayInfoPaymentMeansEnum.Kreditkort,
     },
   })
 }

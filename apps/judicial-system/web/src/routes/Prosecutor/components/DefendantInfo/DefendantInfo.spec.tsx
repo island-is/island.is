@@ -1,8 +1,10 @@
+import type { ReactNode } from 'react'
 import { MockedProvider } from '@apollo/client/testing'
 import { fireEvent, render, screen } from '@testing-library/react'
 
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { LocaleProvider } from '@island.is/localization'
 
 import DefendantInfo from './DefendantInfo'
@@ -16,8 +18,14 @@ jest.mock('@island.is/judicial-system-web/src/utils/hooks', () => ({
   useNationalRegistry: (...args: unknown[]) => mockUseNationalRegistry(...args),
 }))
 
-const renderDefendantInfo = (defendant: Partial<Defendant>) => {
-  const workingCase = { id: 'case_id', type: 'CUSTODY' } as WorkingCase
+const renderDefendantInfo = (
+  defendant: Partial<Defendant>,
+  {
+    type = CaseType.CUSTODY,
+    children,
+  }: { type?: CaseType; children?: ReactNode } = {},
+) => {
+  const workingCase = { id: 'case_id', type } as WorkingCase
   const onChange = jest.fn()
 
   render(
@@ -29,7 +37,9 @@ const renderDefendantInfo = (defendant: Partial<Defendant>) => {
           setWorkingCase={jest.fn()}
           onChange={onChange}
           updateDefendantState={jest.fn()}
-        />
+        >
+          {children}
+        </DefendantInfo>
       </LocaleProvider>
     </MockedProvider>,
   )
@@ -129,5 +139,47 @@ describe('DefendantInfo address persistence', () => {
       defendantId: 'def_id',
       address: 'Gata 2',
     })
+  })
+})
+
+describe('DefendantInfo box layout', () => {
+  beforeEach(() => {
+    mockUseNationalRegistry.mockReturnValue({
+      personData: undefined,
+      businessData: undefined,
+      error: undefined,
+      isLoading: false,
+      notFound: false,
+    })
+  })
+
+  test('titles a restriction case defendant as Sakborningur', async () => {
+    renderDefendantInfo({}, { type: CaseType.CUSTODY })
+
+    expect(
+      await screen.findByRole('heading', { name: 'Sakborningur' }),
+    ).toBeTruthy()
+  })
+
+  test('titles an investigation case defendant as Varnaraðili', async () => {
+    renderDefendantInfo({}, { type: CaseType.SEARCH_WARRANT })
+
+    expect(
+      await screen.findByRole('heading', { name: 'Varnaraðili' }),
+    ).toBeTruthy()
+  })
+
+  test('shows no title for an indictment defendant', async () => {
+    renderDefendantInfo({}, { type: CaseType.INDICTMENT })
+
+    await screen.findByTestId('inputNationalId')
+
+    expect(screen.queryByRole('heading')).toBeNull()
+  })
+
+  test('renders children inside the defendant box', async () => {
+    renderDefendantInfo({}, { children: <p>Defender fields</p> })
+
+    expect(await screen.findByText('Defender fields')).toBeTruthy()
   })
 })

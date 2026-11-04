@@ -1,8 +1,8 @@
 import type { FC, PropsWithChildren } from 'react'
-import { useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 
-import { enterExitTransition } from './transitions'
+import { enterExitTransition, instantTransition } from './transitions'
 
 interface Props {
   // Whether the block is on the page. Flipping it slides the block open or
@@ -27,25 +27,57 @@ interface Props {
  * menu or a calendar inside it renders inline, and a clipping ancestor is
  * also the boundary a popper measures against, which flips a calendar
  * upwards.
+ *
+ * For users who ask for reduced motion the block changes state at once.
+ * Motion's own reduced-motion setting leaves a height tween running, so the
+ * choice is made here.
  */
 const ExpandingSection: FC<PropsWithChildren<Props>> = ({
   show,
   animateOnMount = false,
   className,
   children,
-}) => (
-  <AnimatePresence initial={animateOnMount}>
-    {show && <ExpandingBlock className={className}>{children}</ExpandingBlock>}
-  </AnimatePresence>
-)
+}) => {
+  // Whether a block appearing now will animate open, and so should start
+  // clipped. A block present on the first render only animates when
+  // animateOnMount asks for it: AnimatePresence skips entrances on its first
+  // render, and a block that never animates would never have its clipping
+  // lifted. A block appearing on a later render is a real opening and always
+  // animates.
+  const isFirstRender = useRef(true)
+
+  useEffect(() => {
+    isFirstRender.current = false
+  }, [])
+
+  return (
+    <AnimatePresence initial={animateOnMount}>
+      {show && (
+        <ExpandingBlock
+          className={className}
+          animatesIn={animateOnMount || !isFirstRender.current}
+        >
+          {children}
+        </ExpandingBlock>
+      )}
+    </AnimatePresence>
+  )
+}
+
+interface BlockProps extends Pick<Props, 'className'> {
+  // Whether the block animates open on mount, and so starts out clipped.
+  animatesIn: boolean
+}
 
 // Its own component so each opening starts clipped: the state has to belong
 // to the mounted block, not to whatever renders it.
-const ExpandingBlock: FC<PropsWithChildren<Pick<Props, 'className'>>> = ({
+const ExpandingBlock: FC<PropsWithChildren<BlockProps>> = ({
   className,
+  animatesIn,
   children,
 }) => {
-  const [isAnimating, setIsAnimating] = useState(true)
+  const [isAnimating, setIsAnimating] = useState(animatesIn)
+  const reduceMotion = useReducedMotion()
 
   return (
     <motion.div
@@ -54,7 +86,7 @@ const ExpandingBlock: FC<PropsWithChildren<Pick<Props, 'className'>>> = ({
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: 'auto' }}
       exit={{ opacity: 0, height: 0 }}
-      transition={enterExitTransition}
+      transition={reduceMotion ? instantTransition : enterExitTransition}
       onAnimationStart={() => setIsAnimating(true)}
       onAnimationComplete={() => setIsAnimating(false)}
     >

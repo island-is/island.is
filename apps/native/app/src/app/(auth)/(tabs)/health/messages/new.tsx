@@ -177,7 +177,10 @@ export default function HealthMessageComposeScreen() {
   }, [isReply, usesCustomTitle, serviceOptions, typeCode])
 
   const onError = () => {
-    toast.error(intl.formatMessage({ id: 'health.messages.compose.sendError' }))
+    toast.error(
+      intl.formatMessage({ id: 'health.messages.compose.sendError' }),
+      { duration: 5000 },
+    )
   }
 
   const [replyToConversation, { loading: replying }] =

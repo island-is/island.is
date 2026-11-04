@@ -5,6 +5,8 @@ import { NotFoundException } from '@nestjs/common'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
+import { getOrCreateTransaction } from '../../../middleware'
+import { runInRequestContext } from '../../../test'
 import {
   IndictmentCount,
   IndictmentCountRepositoryService,
@@ -25,6 +27,7 @@ describe('IndictmentCountController - Reorder', () => {
   let mockIndictmentCountRepositoryService: IndictmentCountRepositoryService
   let givenWhenThen: GivenWhenThen
   let transaction: Transaction
+  let mockTransaction: jest.Mock
 
   beforeEach(async () => {
     const {
@@ -34,11 +37,9 @@ describe('IndictmentCountController - Reorder', () => {
     } = await createTestingIndictmentCountModule()
 
     mockIndictmentCountRepositoryService = indictmentCountRepositoryService
-    const mockTransaction = sequelize.transaction as jest.Mock
+    mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     givenWhenThen = async (
       caseId: string,
@@ -47,7 +48,17 @@ describe('IndictmentCountController - Reorder', () => {
       const then = {} as Then
 
       try {
-        then.result = await indictmentCountController.reorder(caseId, body)
+        // The routes are guarded by MinimalCaseExistsForUpdateGuard, so the
+        // request transaction is already open by the time the handler runs.
+        // Guards do not execute in controller unit tests, so the request
+        // context is set up here instead.
+        await runInRequestContext(async () => {
+          // Stand in for the guard, which opens the request transaction
+          // before the handler runs.
+          await getOrCreateTransaction(sequelize)
+
+          then.result = await indictmentCountController.reorder(caseId, body)
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -88,6 +99,13 @@ describe('IndictmentCountController - Reorder', () => {
         indictmentCounts: [{}] as IndictmentCount[],
       })
       then = await givenWhenThen(caseId, body)
+    })
+
+    // One call to sequelize.transaction: the guard's. A handler that opened a
+    // transaction of its own - the deadlock the controller warns about - would
+    // make it two, and the mock would resolve the same stub for both.
+    it('should join the transaction the guard opened rather than open one', () => {
+      expect(mockTransaction).toHaveBeenCalledTimes(1)
     })
 
     it('should return all indictment counts', () => {

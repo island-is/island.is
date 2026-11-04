@@ -3,7 +3,7 @@ import { isValidElement, useEffect, useId } from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
 import cn from 'classnames'
-import { motion } from 'motion/react'
+import { motion, useIsPresent } from 'motion/react'
 
 import type { BoxProps, IconMapIcon } from '@island.is/island-ui/core'
 import { Box, Button, Checkbox, Icon, Text } from '@island.is/island-ui/core'
@@ -71,6 +71,7 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
   const footerCheckboxId = useId()
   const titleId = useId()
   const lastButtonIndex = buttons ? buttons.length - 1 : -1
+  const isPresent = useIsPresent()
 
   useKeyboardCombo('Escape', () => {
     if (onClose && !loading) {
@@ -88,17 +89,33 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
 
   return (
     <FocusLock autoFocus={false}>
-      <motion.div
-        key="modal"
-        className={styles.container}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      {/* The backdrop fades through CSS rather than motion. Motion runs an
+          opacity exit through the Web Animations API and cancels it the
+          moment it finishes, writing the final value a frame later - so the
+          backdrop painted at full opacity for one frame before the dialog
+          unmounted, which read as a flash. A class toggled on leaving is
+          already in the DOM when the node goes. */}
+      <div
+        className={cn(styles.container, { [styles.leaving]: !isPresent })}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         data-testid="modal"
       >
+        {/* Clicking outside the panel closes. The click target is a real
+            button under the panel rather than a handler on the dialog, so
+            assistive technology finds a named close control. It is kept out
+            of the tab order; Escape, handled above, is the keyboard's way. */}
+        {onClose && (
+          <button
+            type="button"
+            className={styles.backdropButton}
+            onClick={onClose}
+            disabled={loading}
+            tabIndex={-1}
+            aria-label="Loka glugga"
+          />
+        )}
         <motion.div
           className={styles.modalContainer}
           initial="closed"
@@ -212,7 +229,7 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
             </Box>
           )}
         </motion.div>
-      </motion.div>
+      </div>
     </FocusLock>
   )
 }
@@ -234,6 +251,8 @@ export const ModalContainer = ({
     },
   }
 
+  const isPresent = useIsPresent()
+
   useKeyboardCombo('Escape', () => {
     onClose && onClose()
   })
@@ -250,35 +269,36 @@ export const ModalContainer = ({
 
   return (
     <FocusLock autoFocus={false}>
-      <motion.div
-        key="modal"
+      {/* CSS fade for the same reason as in Modal above. */}
+      <div
         className={cn(styles.container, {
           [styles.alignItems[position]]: position,
+          [styles.leaving]: !isPresent,
         })}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
         role="dialog"
         aria-modal="true"
         data-testid="modal"
-        onClick={() => {
-          onClose && onClose()
-        }}
       >
+        {/* Backdrop close button, as in Modal above. */}
+        {onClose && (
+          <button
+            type="button"
+            className={styles.backdropButton}
+            onClick={onClose}
+            tabIndex={-1}
+            aria-label="Loka glugga"
+          />
+        )}
         <motion.div
           className={styles.modalContainerBare}
           initial="closed"
           animate="open"
           exit="closed"
           variants={modalVariants}
-          onClick={(e) => {
-            // Prevent click events from bubbling up to the container
-            e.stopPropagation()
-          }}
         >
           {children}
         </motion.div>
-      </motion.div>
+      </div>
     </FocusLock>
   )
 }

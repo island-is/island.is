@@ -38,9 +38,8 @@ describe('create', () => {
   }
   const user: NationalRegistryUser = {
     nationalId: 'string',
-    firstName: 'string',
-    middleName: 'string',
-    lastName: 'string',
+    givenName: 'string',
+    fullName: 'string',
     gender: 'kk',
     address: 'string',
     postalcode: 200,

@@ -11,3 +11,9 @@ export const enterExitTransition: Transition = {
   duration: 0.25,
   ease: 'easeOut',
 }
+
+// The same change of state for users who have asked for reduced motion:
+// made at once, so what opens still opens.
+export const instantTransition: Transition = {
+  duration: 0,
+}

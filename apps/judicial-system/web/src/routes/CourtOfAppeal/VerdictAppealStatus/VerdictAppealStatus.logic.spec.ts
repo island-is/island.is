@@ -1,14 +1,16 @@
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCourtSessionType,
   AppealEventType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import type { AppealCourtSession } from './VerdictAppealStatus.logic'
+import type { AppealCourtSessionDraft } from './VerdictAppealStatus.logic'
 import {
-  AppealCourtSessionType,
+  formatAppealCourtSessionDetails,
   getVerdictAppealStatusHeaderLines,
   isAppealCourtSessionComplete,
+  isAppealCourtSessionEmpty,
 } from './VerdictAppealStatus.logic'
 
 describe('getVerdictAppealStatusHeaderLines', () => {
@@ -66,23 +68,47 @@ describe('getVerdictAppealStatusHeaderLines', () => {
   })
 })
 
-describe('isAppealCourtSessionComplete', () => {
-  const session: AppealCourtSession = {
-    type: AppealCourtSessionType.MAIN_HEARING,
-    date: new Date(2026, 11, 12, 14, 0),
+describe('court session draft', () => {
+  const session: AppealCourtSessionDraft = {
+    sessionType: AppealCourtSessionType.MAIN_HEARING,
+    sessionDate: new Date(2026, 11, 12, 14, 0),
     courtRoom: '1',
   }
 
   it('is complete only with a type, a date and a court room', () => {
     expect(isAppealCourtSessionComplete(session)).toBe(true)
-    expect(isAppealCourtSessionComplete({ ...session, type: undefined })).toBe(
-      false,
-    )
-    expect(isAppealCourtSessionComplete({ ...session, date: undefined })).toBe(
-      false,
-    )
+    expect(
+      isAppealCourtSessionComplete({ ...session, sessionType: undefined }),
+    ).toBe(false)
+    expect(
+      isAppealCourtSessionComplete({ ...session, sessionDate: undefined }),
+    ).toBe(false)
     expect(isAppealCourtSessionComplete({ ...session, courtRoom: ' ' })).toBe(
       false,
     )
+    // The date is kept while the time field is being corrected or cleared;
+    // the flag is what says the field is not filled in.
+    expect(
+      isAppealCourtSessionComplete({ ...session, isSessionDateValid: false }),
+    ).toBe(false)
+  })
+
+  it('is empty only when nothing has been entered', () => {
+    expect(isAppealCourtSessionEmpty({})).toBe(true)
+    expect(isAppealCourtSessionEmpty({ courtRoom: ' ' })).toBe(true)
+    expect(isAppealCourtSessionEmpty({ courtRoom: '1' })).toBe(false)
+    expect(isAppealCourtSessionEmpty(session)).toBe(false)
+  })
+
+  it('formats the details line the way the design reads it', () => {
+    expect(formatAppealCourtSessionDetails(session)).toBe(
+      '12.12.2026 kl. 14:00 · Dómsalur 1',
+    )
+    expect(
+      formatAppealCourtSessionDetails({
+        sessionDate: '2026-12-12T14:00:00.000Z',
+        courtRoom: '1',
+      }),
+    ).toMatch(/^12\.12\.2026 kl\. \d\d:\d\d · Dómsalur 1$/)
   })
 })

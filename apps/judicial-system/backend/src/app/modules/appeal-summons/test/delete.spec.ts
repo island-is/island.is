@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
@@ -11,6 +12,9 @@ import {
 
 import { createTestingAppealSummonsModule } from './createTestingAppealSummonsModule'
 
+import { getOrCreateTransaction } from '../../../middleware'
+import { runInRequestContext } from '../../../test'
+import { AwsS3Service } from '../../aws-s3'
 import {
   AppealSummons,
   AppealSummonsRepositoryService,
@@ -37,46 +41,94 @@ describe('AppealSummonsController - Delete', () => {
   } as AppealSummons
 
   let mockAppealSummonsRepositoryService: AppealSummonsRepositoryService
+  let mockAwsS3Service: AwsS3Service
+  let mockSequelize: Sequelize
   let transaction: Transaction
   let appealSummonsController: AppealSummonsController
+
+  // The route is guarded by CaseExistsForUpdateGuard, so the request
+  // transaction is already open - and holding a lock on this case row - by
+  // the time the handler runs. Guards do not execute in controller unit
+  // tests, so the request context and that transaction are set up here
+  // instead.
+  const remove = (summons: AppealSummons) =>
+    runInRequestContext(async () => {
+      await getOrCreateTransaction(mockSequelize)
+
+      return appealSummonsController.delete(
+        caseId,
+        summonsId,
+        theCase,
+        summons,
+        user,
+      )
+    })
 
   beforeEach(async () => {
     const testingModule = await createTestingAppealSummonsModule()
 
     mockAppealSummonsRepositoryService =
       testingModule.appealSummonsRepositoryService
-    transaction = {} as Transaction
+    mockAwsS3Service = testingModule.awsS3Service
+    mockSequelize = testingModule.sequelize
+    transaction = {
+      afterCommit: jest.fn((callback: () => void) => {
+        void callback()
+      }),
+    } as unknown as Transaction
     appealSummonsController = testingModule.appealSummonsController
-    ;(testingModule.sequelize.transaction as jest.Mock).mockImplementation(
-      (callback) => callback(transaction),
+    ;(testingModule.sequelize.transaction as jest.Mock).mockResolvedValue(
+      transaction,
     )
     ;(mockAppealSummonsRepositoryService.delete as jest.Mock).mockResolvedValue(
       true,
     )
+    ;(mockAwsS3Service.deleteObject as jest.Mock).mockResolvedValue(true)
   })
 
-  it('deletes a draft summons', async () => {
-    const result = await appealSummonsController.delete(
-      caseId,
+  it('deletes a draft summons in the transaction the guard opened, and its cached PDF', async () => {
+    const result = await remove(draft)
+
+    // Once, by the stand-in for CaseExistsForUpdateGuard above. A second call
+    // would be the handler opening a transaction of its own, which would
+    // block on the guard's row lock and deadlock the request.
+    expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
+    expect(mockAppealSummonsRepositoryService.delete).toHaveBeenCalledWith(
       summonsId,
-      theCase,
-      draft,
-      user,
+      caseId,
+      { transaction },
     )
+    expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(
+      theCase.type,
+      `${caseId}/appealSummons/${summonsId}.pdf`,
+    )
+    expect(result).toEqual({ deleted: true })
+  })
+
+  it('deletes a confirmed summons and its cached PDF', async () => {
+    const confirmed = {
+      id: summonsId,
+      confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
+    } as AppealSummons
+
+    const result = await remove(confirmed)
 
     expect(mockAppealSummonsRepositoryService.delete).toHaveBeenCalledWith(
       summonsId,
       caseId,
       { transaction },
     )
+    expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(
+      theCase.type,
+      `${caseId}/appealSummons/${summonsId}.pdf`,
+    )
     expect(result).toEqual({ deleted: true })
   })
 
   it('rejects delete once the summons has been sent to the court of appeals', async () => {
-    await expect(
-      appealSummonsController.delete(caseId, summonsId, theCase, sent, user),
-    ).rejects.toThrow(ForbiddenException)
+    await expect(remove(sent)).rejects.toThrow(ForbiddenException)
 
     expect(mockAppealSummonsRepositoryService.delete).not.toHaveBeenCalled()
+    expect(mockAwsS3Service.deleteObject).not.toHaveBeenCalled()
   })
 })

@@ -23,6 +23,7 @@ import type { User } from '@island.is/judicial-system/types'
 
 import {
   ALL_FILES_ENDPOINTS,
+  APPEAL_APPOINTMENT_LETTER_ENDPOINTS,
   CASE_FILES_RECORD_ENDPOINTS,
   COURT_RECORD_ENDPOINTS,
   CUSTODY_NOTICE_ENDPOINTS,
@@ -276,6 +277,41 @@ export class LimitedAccessFileController {
       AuditedAction.GET_VERDICT_SERVICE_CERTIFICATE_PDF,
       id,
       `defendant/${defendantId}/verdict/serviceCertificate`,
+      req,
+      res,
+      'pdf',
+    )
+  }
+
+  // The same button serves both parties, so the party kind is in the path
+  // rather than in the pdf type - as on the ordinary case route.
+  @Get(APPEAL_APPOINTMENT_LETTER_ENDPOINTS)
+  @Header('Content-Type', 'application/pdf')
+  getAppealAppointmentLetterPdf(
+    @Param('id') id: string,
+    @Param('defendantId') defendantId: string,
+    @Param('civilClaimantId') civilClaimantId: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting the appeal appointment letter for ${
+        defendantId
+          ? `defendant ${defendantId}`
+          : `civil claimant ${civilClaimantId}`
+      } of case ${id} as a pdf document`,
+    )
+
+    const party = defendantId
+      ? `defendant/${defendantId}`
+      : `civilClaimant/${civilClaimantId}`
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_APPEAL_APPOINTMENT_LETTER_PDF,
+      id,
+      `limitedAccess/${party}/appealAppointmentLetter`,
       req,
       res,
       'pdf',

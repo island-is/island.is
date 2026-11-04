@@ -19,7 +19,6 @@ import {
   BlueBox,
   CourtArrangements,
   CourtCaseInfo,
-  DefenderInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -27,10 +26,13 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RequestCaseDefenderInfo,
   SectionHeading,
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { defenderInfo } from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo.strings'
+import { anyDefendantHasDefender } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import { LegalRightsProtectorInputFields } from '@island.is/judicial-system-web/src/components/VictimInfo/LegalRightsProtectorInputFields'
 import {
   SessionArrangements,
@@ -100,7 +102,7 @@ const HearingArrangements = () => {
     setAndSendCaseToServer(
       [
         {
-          sessionArrangements: workingCase.defenderName
+          sessionArrangements: anyDefendantHasDefender(workingCase.defendants)
             ? SessionArrangements.ALL_PRESENT
             : undefined,
         },
@@ -312,12 +314,40 @@ const HearingArrangements = () => {
             SessionArrangements.ALL_PRESENT ||
             workingCase.sessionArrangements ===
               SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
-            <Box component="section">
-              <DefenderInfo
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
+            <section className={stack({ gap: 3 })}>
+              <SectionHeading
+                title={formatMessage(
+                  defenderInfo.investigationCases.sections.defender.title,
+                  {
+                    defenderType:
+                      workingCase.sessionArrangements ===
+                      SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                        ? 'Talsmaður'
+                        : 'Verjandi',
+                  },
+                )}
+                tooltip={
+                  <Tooltip
+                    text={formatMessage(
+                      defenderInfo.investigationCases.sections.defender.tooltip,
+                      { sessionArrangement: workingCase.sessionArrangements },
+                    )}
+                    placement="right"
+                  />
+                }
+                marginBottom={0}
               />
-            </Box>
+              {workingCase.defendants?.map((defendant, _index, defendants) => (
+                <BlueBox key={defendant.id}>
+                  <RequestCaseDefenderInfo
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    defendant={defendant}
+                    showDefendantName={defendants.length > 1}
+                  />
+                </BlueBox>
+              ))}
+            </section>
           )}
           {workingCase.sessionArrangements ===
             SessionArrangements.ALL_PRESENT &&
