@@ -121,11 +121,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
     })
 
     it('should update the police case', async () => {
-      expect(createIndictment).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-        undefined,
-      )
+      expect(createIndictment).toHaveBeenCalledWith(theCase, undefined)
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,
