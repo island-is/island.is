@@ -298,7 +298,7 @@ export default function VehicleMileageScreen() {
               {intl.formatMessage({ id: 'vehicles.registerMileage' })}
             </Typography>
             <View style={{ marginBottom: 16 }}>
-              <Typography variant="heading4">{vehicle.type}</Typography>
+              <Typography variant="heading5">{vehicle.type}</Typography>
               <Typography variant="body">
                 {vehicle.color} - {id}
               </Typography>
