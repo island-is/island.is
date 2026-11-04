@@ -531,6 +531,17 @@ export const isEligible = (externalData: ExternalData): boolean => {
   return !!isEligible && isEligible.isEligible
 }
 
+// Applicants without an application type from TR are only let through when
+// they have an active exemption (ísl. jaðartilvik)
+export const canStartApplication = (externalData: ExternalData): boolean => {
+  const { marpApplicationType, hasActiveExemption } =
+    getApplicationExternalData(externalData)
+
+  return (
+    isEligible(externalData) && (!!marpApplicationType || hasActiveExemption)
+  )
+}
+
 export const eligibleText = (externalData: ExternalData) => {
   const { isEligible } = getApplicationExternalData(externalData)
 

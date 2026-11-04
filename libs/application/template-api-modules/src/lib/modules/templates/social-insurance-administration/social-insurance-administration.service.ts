@@ -10,6 +10,7 @@ import {
   errorMessages as marpErrorMessages,
   getApplicationExternalData as getMARPApplicationExternalData,
   getIncompleteAnswerSections,
+  MedicalAndRehabilitationPaymentsApplicationType,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,

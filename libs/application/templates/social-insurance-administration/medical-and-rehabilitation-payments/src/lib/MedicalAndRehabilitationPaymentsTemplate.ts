@@ -59,8 +59,8 @@ import {
   SocialInsuranceAdministrationResidenceInformationApi,
 } from '../dataProviders'
 import {
+  canStartApplication,
   getApplicationAnswers,
-  isEligible,
 } from '../utils/medicalAndRehabilitationPaymentsUtils'
 import { dataSchema } from './dataSchema'
 import {
@@ -153,7 +153,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
             {
               target: States.DRAFT,
               cond: (application) =>
-                isEligible(application?.application?.externalData),
+                canStartApplication(application?.application?.externalData),
             },
             {
               target: States.NOT_ELIGIBLE,
