@@ -44,7 +44,7 @@ describe('CmsContentfulService.getProjectPage', () => {
         'fields.slug': 'subpage',
         limit: 1,
       },
-      5,
+      6,
     )
     expect(mapProjectPage).toHaveBeenCalledWith(projectPage, [subpage])
   })

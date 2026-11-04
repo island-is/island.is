@@ -604,7 +604,9 @@ export class CmsContentfulService {
           'fields.slug': subpageSlug,
           limit: 1,
         },
-        5,
+        // Deep enough for the questions of a FaqList nested in a FaqList answer inside a TabSection.
+        // Affordable since only a single subpage is fetched
+        6,
       )
       .catch(errorHandler('getProjectPage'))
 
