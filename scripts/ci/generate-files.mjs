@@ -6,15 +6,16 @@ import { globSync } from 'glob'
 import yaml from 'js-yaml'
 
 /**
- * Backend sources used to generate `apps/api/src/api.graphql`:
- * the API app module plus the GraphQL domain modules it imports.
+ * Backend sources used to generate `apps/api/src/api.graphql`.
  * These must be part of the cache key so a schema change busts the
  * generated-files cache instead of reusing a stale `api.graphql`.
+ * All of `libs` is included since the schema's types and enums are spread
+ * across many of them, including client libraries, and a list of specific
+ * libraries would silently go out of date.
  */
 const apiGraphqlSourcePatterns = [
   'apps/api/src/**/*.ts',
-  'libs/api/domains/**/*.ts',
-  'libs/cms/**/*.ts',
+  'libs/**/*.ts',
   'scripts/build-graphql-schema.ts',
 ]
 
@@ -187,9 +188,10 @@ const extractCodegenInputs = async () => {
 const getApiGraphqlSources = () => {
   const /** @type {Set<string>} */ sources = new Set()
   apiGraphqlSourcePatterns.forEach((pattern) => {
-    globSync(pattern, { nodir: true, ignore: ignorePatterns }).forEach((f) =>
-      sources.add(f),
-    )
+    globSync(pattern, {
+      nodir: true,
+      ignore: [...ignorePatterns, '**/*.spec.ts'],
+    }).forEach((f) => sources.add(f))
   })
   return Array.from(sources).sort()
 }
@@ -272,7 +274,7 @@ async function main() {
   await fs.writeFile(inputsList, inputs.join('\n'))
 
   const hashSources = Array.from(
-    new Set([...inputs, ...apiGraphqlSources]),
+    new Set([...findCodegenFiles(), ...inputs, ...apiGraphqlSources]),
   ).sort()
   const contentHash = await computeContentHash(hashSources)
   await fs.writeFile(hashFile, `${contentHash}\n`)
