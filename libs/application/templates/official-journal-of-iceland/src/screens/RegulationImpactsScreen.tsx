@@ -49,10 +49,19 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
   const applicationType = application.answers?.applicationType
   const isAmending = applicationType === 'amending_regulation'
 
-  const { draftId, ensureDraft } = useRegulationDraft({
-    applicationId: application.id,
-    answers: application.answers as unknown as Record<string, unknown>,
-  })
+  const { draftId, ensureDraft, draftData, draftLoaded, loadDraft } =
+    useRegulationDraft({
+      applicationId: application.id,
+      answers: application.answers as unknown as Record<string, unknown>,
+    })
+
+  // The effective date is set on a later step. Once it is, impacts take it
+  // by default.
+  useEffect(() => {
+    if (draftId && !draftLoaded) {
+      loadDraft()
+    }
+  }, [draftId, draftLoaded, loadDraft])
 
   // Impacts are loaded from DB (single source of truth)
   const {
@@ -527,6 +536,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
                       : '',
                 }}
                 impacts={groupedImpacts[selRegOption.value as string]}
+                regulationEffectiveDate={draftData.effectiveDate}
                 onSave={handleSaveNewImpact}
                 onClose={closeModal}
               />
@@ -547,6 +557,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
                 draftTitle={application.answers?.advert?.title}
                 draftHtml={application.answers?.advert?.html as string}
                 isBase={applicationType === 'base_regulation'}
+                regulationEffectiveDate={draftData.effectiveDate}
                 applicationId={application.id}
                 onSave={handleSaveNewImpact}
                 onClose={closeModal}
@@ -564,6 +575,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
             draftTitle={application.answers?.advert?.title}
             draftHtml={application.answers?.advert?.html as string}
             isBase={applicationType === 'base_regulation'}
+            regulationEffectiveDate={draftData.effectiveDate}
             applicationId={application.id}
             onSaveImpact={handleSaveExistingImpact}
             onDeleteImpact={handleDeleteImpact}

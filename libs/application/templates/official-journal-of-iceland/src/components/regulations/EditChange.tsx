@@ -25,6 +25,7 @@ import {
   LoadingDots,
 } from '@island.is/island-ui/core'
 import { useState, useEffect, useMemo } from 'react'
+import parseISO from 'date-fns/parseISO'
 import {
   HTMLText,
   toISODate,
@@ -42,7 +43,10 @@ import { HTMLEditor } from '../htmlEditor/HTMLEditor'
 import { useApplicationAssetUploader } from '../../hooks/useAssetUpload'
 import { ReferenceText } from './ReferenceText'
 import { getDefaultDate } from '../../lib/utils'
-import { getImpactChain } from '../../utils/getImpactChain'
+import {
+  getDefaultImpactDate,
+  getImpactChain,
+} from '../../utils/getImpactChain'
 import { formatDate } from '../../utils/formatAmendingUtils'
 import { ImpactHistory } from './ImpactHistory'
 
@@ -59,6 +63,8 @@ type EditChangeProps = {
   draftHtml?: string
   /** Whether the base regulation type is 'base' */
   isBase?: boolean
+  /** The regulation's effective date, which the change takes by default */
+  regulationEffectiveDate?: string
   /** Read-only mode (for viewing historical impacts) */
   readOnly?: boolean
   /** Application ID needed for file uploads in the editor */
@@ -76,6 +82,7 @@ export const EditChange = (props: EditChangeProps) => {
     draftTitle,
     draftHtml,
     isBase,
+    regulationEffectiveDate,
     readOnly,
     applicationId,
     onSave,
@@ -119,7 +126,11 @@ export const EditChange = (props: EditChangeProps) => {
         impacts,
         history: currentRegulation?.history,
         defaultMinDate,
-        selectedDate: activeDate ? toISODate(activeDate) : undefined,
+        // Without a picked date the change takes the regulation's effective
+        // date, so that is the date the chain is checked against
+        selectedDate: activeDate
+          ? toISODate(activeDate)
+          : regulationEffectiveDate?.slice(0, 10),
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
@@ -129,6 +140,7 @@ export const EditChange = (props: EditChangeProps) => {
       currentRegulation,
       defaultMinDate,
       activeDate,
+      regulationEffectiveDate,
     ],
   )
   const needsDatedText = !!currentRegulation && !previous && hasFutureEffects
@@ -168,9 +180,16 @@ export const EditChange = (props: EditChangeProps) => {
   const [activeComments, setActiveComments] = useState(change.comments || '')
   const [saving, setSaving] = useState(false)
 
-  // A new change after a later one can't take effect "immediately"
+  // The regulation's effective date, if the change can take effect then
+  const defaultDate = getDefaultImpactDate(regulationEffectiveDate, minDate)
+
+  // A new change that can't take the default date gets the earliest one
+  // it can, shown as a specific date
   const shownDate =
-    change.date ?? (minDate > defaultMinDate ? toISODate(minDate) : undefined)
+    change.date ??
+    (!defaultDate && (regulationEffectiveDate || minDate > defaultMinDate)
+      ? toISODate(minDate)
+      : undefined)
 
   // Track whether form fields have been initialized from the fetched data.
   // The HTMLEditor captures its value at mount time via a ref, so we must
@@ -204,8 +223,13 @@ export const EditChange = (props: EditChangeProps) => {
   }, [baseRegulation, regulationLoading])
 
   // Not before the impacts this one follows
-  const effectiveDate =
-    activeDate && activeDate > minDate ? activeDate : minDate
+  const effectiveDate = activeDate
+    ? activeDate > minDate
+      ? activeDate
+      : minDate
+    : defaultDate
+    ? parseISO(defaultDate)
+    : minDate
 
   const changeDate = (newDate: Date | undefined) => {
     setActiveDate(newDate)
@@ -322,6 +346,7 @@ export const EditChange = (props: EditChangeProps) => {
               }
               name={change.name}
               date={shownDate}
+              defaultDate={defaultDate}
               minDate={
                 readOnly
                   ? change.date
