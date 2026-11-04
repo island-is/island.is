@@ -164,6 +164,10 @@ const ABBREVIATIONS = [
   'o.fl',
   'þ.e',
   'þ.m.t',
+  // Mid-sentence in regulations; "o.s.frv." often ends one, so it's left out
+  't.d',
+  'm.a',
+  'a.m.k',
 ]
 
 /** Whether a period after this text ends an abbreviation or an ordinal. */
@@ -213,6 +217,24 @@ export const extractAuthority = (str: string): string | undefined => {
   }
   return rest || undefined
 }
+
+const MASCULINE_COUNT_WORDS = [
+  '',
+  'einn',
+  'tveir',
+  'þrír',
+  'fjórir',
+  'fimm',
+  'sex',
+  'sjö',
+  'átta',
+  'níu',
+  'tíu',
+]
+
+/** A count in words, masculine as liður and málsliður are: "fimm nýir" */
+export const masculineCountWord = (count: number) =>
+  MASCULINE_COUNT_WORDS[count] ?? `${count}`
 
 export const escapeHtml = (text: string) =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
