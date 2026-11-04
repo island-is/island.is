@@ -43,43 +43,66 @@ import { CreateDelegationResult } from './CreateDelegation.action'
 import * as styles from './CreateDelegation.css'
 import { useIdentityLazyQuery } from './CreateDelegation.generated'
 
-const validateNationalId = (nationalId: string) => {
-  const value = nationalId.replace('-', '').trim()
-  return value.length === 10 && kennitala.isValid(value)
-}
+const validateNationalId = (nationalId: string) =>
+  nationalId.length === 10 && kennitala.isValid(nationalId)
 
-const useIdentityLookup = (onNotFound: () => void) => {
+const useIdentityLookup = ({
+  onNotFound,
+  onError,
+}: {
+  onNotFound: () => void
+  onError: () => void
+}) => {
   const [nationalId, setNationalId] = useState('')
   const nationalIdRef = useRef('')
-  const [getIdentity, { data, loading }] = useIdentityLazyQuery({
-    onError: (error) => {
-      console.error(error)
-    },
-    onCompleted: ({ identity }) => {
-      if (!identity && validateNationalId(nationalIdRef.current)) {
-        onNotFound()
-      }
-    },
-  })
+  const callbacksRef = useRef({ onNotFound, onError })
+  callbacksRef.current = { onNotFound, onError }
+
+  const [getIdentity, { data, error, loading, variables }] =
+    useIdentityLazyQuery()
+
+  const isCurrent =
+    !loading &&
+    validateNationalId(nationalId) &&
+    variables?.input.nationalId === nationalId
+  const identity = isCurrent ? data?.identity ?? null : null
+  const notFound = isCurrent && !error && !!data && !data.identity
+  const failed = isCurrent && !!error
+
+  useEffect(() => {
+    if (notFound) {
+      callbacksRef.current.onNotFound()
+    }
+  }, [notFound, nationalId])
+
+  useEffect(() => {
+    if (failed) {
+      callbacksRef.current.onError()
+    }
+  }, [failed, nationalId])
 
   const lookup = (value: string) => {
-    nationalIdRef.current = value
-    setNationalId(value)
-    if (validateNationalId(value)) {
-      getIdentity({ variables: { input: { nationalId: value } } })
+    const sanitized = value.replace(/\D/g, '')
+    if (sanitized === nationalIdRef.current) {
+      return
+    }
+    nationalIdRef.current = sanitized
+    setNationalId(sanitized)
+    if (validateNationalId(sanitized)) {
+      getIdentity({ variables: { input: { nationalId: sanitized } } })
     }
   }
-
-  const identity =
-    data?.identity && data.identity.nationalId === nationalId
-      ? data.identity
-      : null
 
   return {
     nationalId,
     identity,
     loading: loading && validateNationalId(nationalId),
     lookup,
+    prefill: (value: string) => {
+      if (!nationalIdRef.current) {
+        lookup(value)
+      }
+    },
     clear: () => lookup(''),
   }
 }
@@ -156,8 +179,18 @@ const CreateDelegationScreen = () => {
     toast.success(formatMessage(m.createDelegationSuccessToast))
   }
 
-  const from = useIdentityLookup(noUserFoundToast)
-  const to = useIdentityLookup(noUserFoundToast)
+  const lookupErrorToast = () => {
+    toast.error(formatMessage(m.errorDefault))
+  }
+
+  const from = useIdentityLookup({
+    onNotFound: noUserFoundToast,
+    onError: lookupErrorToast,
+  })
+  const to = useIdentityLookup({
+    onNotFound: noUserFoundToast,
+    onError: lookupErrorToast,
+  })
   const fromIdentity = from.identity
   const toIdentity = to.identity
 
@@ -168,7 +201,7 @@ const CreateDelegationScreen = () => {
         userInfo?.profile.nationalId ?? '',
       )
       if (unmaskedNationalId && validateNationalId(unmaskedNationalId)) {
-        from.lookup(unmaskedNationalId)
+        from.prefill(unmaskedNationalId)
       }
     }
 
