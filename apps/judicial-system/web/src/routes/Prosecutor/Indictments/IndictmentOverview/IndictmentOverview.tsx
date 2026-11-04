@@ -14,6 +14,7 @@ import {
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealCourtSessionScheduledCards,
   AppealRulingModifiedAlert,
   BlueBox,
   Conclusion,
@@ -216,7 +217,7 @@ const IndictmentOverview: FC = () => {
                 IndictmentDecision.REDISTRIBUTING && (
                 <Box component="section">
                   <IndictmentCaseScheduledCard
-                    court={workingCase.court}
+                    courtName={workingCase.court.name}
                     indictmentDecision={workingCase.indictmentDecision}
                     courtDate={latestDate.date}
                     courtRoom={latestDate.location}
@@ -227,6 +228,9 @@ const IndictmentOverview: FC = () => {
                   />
                 </Box>
               )}
+            <AppealCourtSessionScheduledCards
+              verdictAppealCase={workingCase.verdictAppealCase}
+            />
             {shouldDisplayReviewDecision &&
               isRuling &&
               defendantsRequiringReview && (

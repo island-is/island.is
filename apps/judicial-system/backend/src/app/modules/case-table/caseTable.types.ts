@@ -5,6 +5,7 @@ import { DefendantEventType } from '@island.is/judicial-system/types'
 import {
   AppealCase,
   AppealCaseJudge,
+  AppealCourtSession,
   AppealEventLog,
   Case,
   CaseFile,
@@ -117,6 +118,7 @@ export const modelMap: {
 export const subModelMap: {
   appealJudges: ModelDef<typeof AppealCaseJudge>
   appealEventLogs: ModelDef<typeof AppealEventLog>
+  courtSessions: ModelDef<typeof AppealCourtSession>
   eventLogs: ModelDef<typeof DefendantEventLog>
   rulingFile: ModelDef<typeof CaseFile>
   subpoenas: ModelDef<typeof Subpoena>
@@ -128,6 +130,13 @@ export const subModelMap: {
     order: [['displayOrder', 'ASC']],
   },
   appealEventLogs: { model: AppealEventLog, separate: true },
+  // The sessions of a verdict appeal. Earliest first, so a column reading
+  // them finds the next one at the front once the past ones are skipped.
+  courtSessions: {
+    model: AppealCourtSession,
+    separate: true,
+    order: [['sessionDate', 'ASC']],
+  },
   eventLogs: { model: DefendantEventLog, separate: true },
   rulingFile: { model: CaseFile, separate: false },
   subpoenas: { model: Subpoena, separate: false, order: [['created', 'DESC']] },

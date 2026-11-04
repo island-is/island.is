@@ -188,7 +188,7 @@ export const Overview = () => {
             workingCase.court && (
               <Box component="section">
                 <CaseScheduledCard
-                  court={workingCase.court}
+                  courtName={workingCase.court.name}
                   courtDate={workingCase.arraignmentDate.date}
                   courtRoom={workingCase.arraignmentDate.location}
                 />

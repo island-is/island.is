@@ -15,6 +15,7 @@ import { FeatureContext } from '@island.is/judicial-system-web/src/components/Fe
 import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
+  AppealCourtSessionType,
   AppealEventType,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -553,5 +554,72 @@ describe('Prosecutor IndictmentOverview', () => {
         ).toBeInTheDocument()
       },
     )
+
+    // Once the court of appeals has called its sessions, they are on the
+    // prosecutor's agenda the way a district court session is: every one of
+    // them, with its type, date, time and courtroom.
+    describe('the sessions the court of appeals has called', () => {
+      const daysFromNow = (days: number, hours: number): Date => {
+        const date = new Date()
+        date.setDate(date.getDate() + days)
+        date.setHours(hours, 15, 0, 0)
+
+        return date
+      }
+      const mainHearing = daysFromNow(30, 9)
+      const preparatoryHearing = daysFromNow(10, 13)
+
+      const withSessions = (appealState: AppealCaseState) =>
+        appealCase({
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState,
+            appealEventLogs: [],
+            courtSessions: [
+              {
+                id: 'main_hearing_id',
+                sessionType: AppealCourtSessionType.MAIN_HEARING,
+                sessionDate: mainHearing.toISOString(),
+                courtRoom: '101',
+              },
+              {
+                id: 'preparatory_hearing_id',
+                sessionType: AppealCourtSessionType.PREPARATORY_HEARING,
+                sessionDate: preparatoryHearing.toISOString(),
+                courtRoom: '102',
+              },
+            ],
+          },
+        })
+
+      it('puts every booked session on the agenda', async () => {
+        renderCase(withSessions(AppealCaseState.RECEIVED), [
+          Feature.INDICTMENT_APPEAL,
+        ])
+
+        expect(await screen.findByText('Aðalmeðferð')).toBeInTheDocument()
+        expect(
+          screen.getByText(formatDate(mainHearing, 'PPPp') ?? ''),
+        ).toBeInTheDocument()
+        expect(screen.getByText('Dómsalur 101')).toBeInTheDocument()
+        expect(screen.getByText('Undirbúningsþinghald')).toBeInTheDocument()
+        expect(
+          screen.getByText(formatDate(preparatoryHearing, 'PPPp') ?? ''),
+        ).toBeInTheDocument()
+        expect(screen.getByText('Dómsalur 102')).toBeInTheDocument()
+      })
+
+      it('clears the agenda once the court of appeals has ruled', async () => {
+        renderCase(withSessions(AppealCaseState.COMPLETED), [
+          Feature.INDICTMENT_APPEAL,
+        ])
+
+        expect(
+          await screen.findByRole('heading', { level: 1, name: 'Máli lokið' }),
+        ).toBeInTheDocument()
+        expect(screen.queryByText('Aðalmeðferð')).not.toBeInTheDocument()
+        expect(screen.queryByText('Dómsalur 101')).not.toBeInTheDocument()
+      })
+    })
   })
 })

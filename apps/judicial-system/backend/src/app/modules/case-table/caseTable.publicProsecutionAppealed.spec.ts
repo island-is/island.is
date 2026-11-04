@@ -237,18 +237,28 @@ describe('public prosecution appealed case list', () => {
     })
   })
 
-  // One row per case, unlike the office's list of the same name.
+  // One row per case, unlike the office's list of the same name. Which appeal
+  // that row is about is pinned in caseTable.verdictAppealRows.spec.ts.
   it('gives each case a single row', () => {
-    expect(
-      caseTableWhereOptions[
-        CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED
-      ](publicProsecutionUser).displayCases,
-    ).toBeUndefined()
+    const twoDefendants = {
+      id: 'case-id',
+      defendants: [{ id: 'd1' }, { id: 'd2' }],
+      toJSON() {
+        return { id: 'case-id', defendants: [{ id: 'd1' }, { id: 'd2' }] }
+      },
+    } as unknown as repository.Case
+
+    const { displayCases } = caseTableWhereOptions[
+      CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED
+    ](publicProsecutionUser)
+
+    expect(displayCases).toBeDefined()
+    expect(displayCases?.([twoDefendants])).toHaveLength(1)
     expect(
       caseTableWhereOptions[
         CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED
-      ](publicProsecutionUser).displayCases,
-    ).toBeDefined()
+      ](publicProsecutionUser).displayCases?.([twoDefendants]),
+    ).toHaveLength(2)
   })
 
   // Search runs off the access options rather than the table's, so without

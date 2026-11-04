@@ -11,6 +11,7 @@ import {
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  appealCourtSessionTypeNames,
   AppealEventType,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -26,6 +27,7 @@ import {
   getIndictmentVerdictAppealDeadlineStatus,
   getMillisecondsFromDays,
   getPresidingAppealJudge,
+  getUpcomingAppealCourtSessions,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
   IndictmentSubtypeMap,
@@ -882,6 +884,48 @@ const verdictAppealResult: CaseTableCellGenerator<TagValue> = {
   },
 }
 
+// The next session the court of appeals has called in the verdict appeal: its
+// type over its date, the way the district court's arraignment column reads.
+// Nothing once every booked session is behind us - the case is then no longer
+// on anyone's agenda, whatever the court has left in the list.
+const verdictAppealNextSessionDate: CaseTableCellGenerator<StringGroupValue> = {
+  includes: {
+    verdictAppealCase: {
+      attributes: [],
+      includes: {
+        courtSessions: { attributes: ['sessionType', 'sessionDate'] },
+      },
+    },
+  },
+  generate: (c: CaseTableRowCase): CaseTableCell<StringGroupValue> => {
+    const [nextSession] = getUpcomingAppealCourtSessions(
+      c.appeal?.courtSessions,
+    )
+
+    if (!nextSession) {
+      return generateCell()
+    }
+
+    const datePart = formatDate(nextSession.sessionDate, 'EEE d. MMMM yyyy')
+    const timePart = formatDate(nextSession.sessionDate, 'HH:mm')
+    const sortValue = formatDate(nextSession.sessionDate, 'yyyyMMddHHmm')
+
+    if (!datePart || !timePart || !sortValue) {
+      return generateCell()
+    }
+
+    return generateCell(
+      {
+        strList: [
+          appealCourtSessionTypeNames[nextSession.sessionType],
+          `${capitalize(datePart)} kl. ${timePart}`,
+        ],
+      },
+      sortValue,
+    )
+  },
+}
+
 const created: CaseTableCellGenerator<StringValue> = {
   attributes: ['created'],
   generate: (c: CaseTableRowCase): CaseTableCell<StringValue> =>
@@ -1453,4 +1497,5 @@ export const caseTableCellGenerators: Record<
   verdictAppealHead,
   verdictAppealCompletedDate,
   verdictAppealResult,
+  verdictAppealNextSessionDate,
 }

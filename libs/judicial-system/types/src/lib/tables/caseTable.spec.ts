@@ -110,6 +110,7 @@ describe('court of appeals verdict appeal tables', () => {
       'verdictAppealAppellant',
       'verdictAppealState',
       'verdictAppealHead',
+      'verdictAppealNextSessionDate',
     ])
     expect(completed.columnKeys).toEqual([
       'verdictAppealCaseNumber',
@@ -157,6 +158,7 @@ describe('court of appeals verdict appeal tables', () => {
       'Áfrýjað af',
       'Staða',
       'Dómsformaður',
+      'Næsta þinghald',
     ])
     expect(
       caseTables[
@@ -248,15 +250,19 @@ describe('public prosecution case tables', () => {
   })
 
   // The office's list of the same name is the one the columns were borrowed
-  // from, and the ticket leaves tidying them to a later one.
+  // from, and the ticket leaves tidying them to a later one. The next session
+  // is this list's own: the office's list carries ruling appeals too, which
+  // have no sessions.
   it('borrows the columns of the office list of the same name', () => {
     expect(
       caseTables[CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED]
         .columnKeys,
-    ).toEqual(
-      caseTables[CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED]
-        .columnKeys,
-    )
+    ).toEqual([
+      ...caseTables[
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED
+      ].columnKeys,
+      'verdictAppealNextSessionDate',
+    ])
   })
 
   // The ordinary prosecutor's groups are spread into this user's, so adding a

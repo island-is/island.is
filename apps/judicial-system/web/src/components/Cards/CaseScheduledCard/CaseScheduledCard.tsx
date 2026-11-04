@@ -4,19 +4,18 @@ import { useIntl } from 'react-intl'
 import { Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import IconCard from '@island.is/judicial-system-web/src/components/Cards/IconCard/IconCard'
-import type { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './CaseScheduledCard.strings'
 
 interface Props {
-  court: Institution
+  courtName?: string | null
   courtDate: string
   courtRoom?: string | null
   title?: string | null
 }
 
 const CaseScheduledCard: FC<Props> = (props) => {
-  const { court, courtDate, courtRoom, title } = props
+  const { courtName, courtDate, courtRoom, title } = props
   const { formatMessage } = useIntl()
 
   return (
@@ -29,7 +28,7 @@ const CaseScheduledCard: FC<Props> = (props) => {
               <Text variant="eyebrow" marginBottom={1} marginTop={2}>
                 {formatDate(courtDate, 'PPPp')}
               </Text>
-              {<Text>{court.name}</Text>}
+              <Text>{courtName}</Text>
               <Text>
                 {formatMessage(
                   { id: strings.courtRoom, defaultMessage: strings.courtRoom },

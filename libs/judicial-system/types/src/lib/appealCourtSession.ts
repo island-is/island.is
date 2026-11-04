@@ -15,3 +15,39 @@ export const appealCourtSessionTypeNames = {
   PREPARATORY_HEARING: 'Undirbúningsþinghald',
   VERDICT: 'Dómsuppkvaðning',
 }
+
+/**
+ * The booked sessions still ahead, earliest first.
+ *
+ * A session stays on the agenda through its day rather than falling off at
+ * its minute: the parties look the case up on the morning of the hearing.
+ * Sessions without a date are left out - the backend requires one, but the
+ * web's generated type does not.
+ */
+export const getUpcomingAppealCourtSessions = <
+  T extends { sessionDate?: Date | string | null },
+>(
+  sessions: T[] | undefined | null,
+  now: Date = new Date(),
+): T[] => {
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+  ).getTime()
+
+  return (sessions ?? [])
+    .flatMap((session) => {
+      if (!session.sessionDate) {
+        return []
+      }
+
+      const time = new Date(session.sessionDate).getTime()
+
+      return Number.isNaN(time) || time < startOfToday
+        ? []
+        : [{ session, time }]
+    })
+    .sort((a, b) => a.time - b.time)
+    .map(({ session }) => session)
+}
