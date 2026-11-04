@@ -147,6 +147,21 @@ export class CardPaymentService {
       memCacheExpiryMinutes * 60000,
     )
 
+    // This attempt replaces any earlier one on the flow: a verified status
+    // left by an attempt whose charge failed, or the callback of an attempt
+    // still to arrive, so the client waits for this verification's callback
+    // and the charge uses its 3-D Secure result.
+    const paymentFlowStatus: CachePaymentFlowStatus = {
+      isVerified: false,
+      correlationId,
+    }
+
+    await this.cacheManager.set(
+      paymentFlowId,
+      paymentFlowStatus,
+      memCacheExpiryMinutes * 60000,
+    )
+
     const requestOptions = generateVerificationRequestOptions({
       verifyCardInput,
       paymentApiConfig: this.config.paymentGateway,
@@ -231,6 +246,22 @@ export class CardPaymentService {
     }
 
     const { paymentFlowId } = savedVerificationPendingData
+
+    // The callback of an earlier attempt must not mark the flow verified with
+    // its result once a later attempt has started. A flow without a status
+    // (an attempt started before verify() recorded it, during a deploy) is
+    // accepted as before.
+    const currentStatus = await this.getFullVerificationStatus(paymentFlowId)
+    if (
+      currentStatus?.correlationId &&
+      currentStatus.correlationId !== correlationId
+    ) {
+      this.logger.warn(
+        `[${paymentFlowId}] Card verification callback of an earlier attempt ignored`,
+        { paymentFlowId, correlationId },
+      )
+      throw new BadRequestException(PaymentServiceCode.InvalidVerificationToken)
+    }
 
     await this.cacheManager.del(correlationId)
 
