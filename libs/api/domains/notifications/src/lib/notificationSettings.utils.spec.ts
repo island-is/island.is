@@ -1,4 +1,7 @@
-import { filterAndSortSenders } from './notificationSettings.utils'
+import {
+  filterAndSortSenders,
+  getErrorMessage,
+} from './notificationSettings.utils'
 
 describe('filterAndSortSenders', () => {
   const sender = (id: string) => ({ sender: { id }, categories: [] })
@@ -22,5 +25,30 @@ describe('filterAndSortSenders', () => {
       'Zeta',
       'Þjóðskrá',
     ])
+  })
+})
+
+describe('getErrorMessage', () => {
+  it('returns the message of an Error', () => {
+    expect(getErrorMessage(new Error('boom'))).toBe('boom')
+  })
+
+  it('returns strings as is', () => {
+    expect(getErrorMessage('boom')).toBe('boom')
+  })
+
+  it('stringifies plain objects', () => {
+    expect(getErrorMessage({ code: 1 })).toBe('{"code":1}')
+  })
+
+  it('falls back for values JSON.stringify cannot represent', () => {
+    expect(getErrorMessage(undefined)).toBe('An unknown error occurred')
+    expect(getErrorMessage(() => 1)).toBe('An unknown error occurred')
+  })
+
+  it('falls back for circular structures', () => {
+    const circular: Record<string, unknown> = {}
+    circular.self = circular
+    expect(getErrorMessage(circular)).toBe('An unknown error occurred')
   })
 })

@@ -6,7 +6,7 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 import { Inject, InternalServerErrorException, UseGuards } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { NotificationSettingsService } from './notificationSettings.service'
-import { toCategoryKey } from './notificationSettings.utils'
+import { getErrorMessage, toCategoryKey } from './notificationSettings.utils'
 import {
   NotificationCategoryInput,
   NotificationSettings,
@@ -49,7 +49,7 @@ export class NotificationSettingsResolver {
     } catch (e) {
       this.logger.info('failed to get notification settings', {
         category: LOG_CATEGORY,
-        error: e,
+        error: getErrorMessage(e),
       })
       throw e
     }
@@ -93,7 +93,7 @@ export class NotificationSettingsResolver {
     } catch (e) {
       this.logger.info('failed to update notification category settings', {
         category: LOG_CATEGORY,
-        error: e,
+        error: getErrorMessage(e),
       })
       throw e
     }
@@ -110,7 +110,7 @@ export class NotificationSettingsResolver {
         'failed to read notification settings after successful update',
         {
           category: LOG_CATEGORY,
-          error: e,
+          error: getErrorMessage(e),
         },
       )
       return {
@@ -138,7 +138,7 @@ export class NotificationSettingsResolver {
         // make it explicit that the category changes were already applied.
         this.logger.error('partial notification settings update', {
           category: LOG_CATEGORY,
-          error: e,
+          error: getErrorMessage(e),
         })
         throw new InternalServerErrorException(
           categories.length > 0
