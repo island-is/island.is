@@ -46,6 +46,9 @@ export const proxy = (request: NextRequest) => {
 
 export const config = {
   // Relative to basePath (Next prefixes it with `/umsoknir/sdf`). Skip Next
-  // internals and any file request (has a dot).
+  // internals and any file request (has a dot). `/auth/*` must stay matched
+  // so the sign-in page gets the CSP. proxy.spec.ts calls `proxy` directly
+  // and doesn't cover this matcher; Next's only way to test one,
+  // `unstable_doesMiddlewareMatch`, is an unstable API.
   matcher: '/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)',
 }
