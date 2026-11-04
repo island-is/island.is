@@ -7,7 +7,6 @@ import { SectionTypes } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
-  Button,
   Checkbox,
   GridColumn as Column,
   Input,
@@ -96,8 +95,6 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
         (activeItem.data as FormSystemSection).sectionType ===
           SectionTypes.PARTIES ? (
         <RelevantParties />
-      ) : openPreview ? (
-        <PreviewStepOrGroup setOpenPreview={setOpenPreview} />
       ) : (activeItem.data as FormSystemSection).sectionType ===
         SectionTypes.COMPLETED ? (
         <Completed />
@@ -314,17 +311,9 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
               </Row>
             </>
           )}
-          <Row>
-            <Column>
-              <Box marginTop={4}>
-                <Button variant="ghost" onClick={() => setOpenPreview(true)}>
-                  {formatMessage(m.preview)}
-                </Button>
-              </Box>
-            </Column>
-          </Row>
         </Stack>
       )}
+      {openPreview && <PreviewStepOrGroup setOpenPreview={setOpenPreview} />}
     </Box>
   )
 }
