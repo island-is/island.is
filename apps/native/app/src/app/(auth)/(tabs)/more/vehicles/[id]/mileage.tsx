@@ -119,6 +119,7 @@ export default function VehicleMileageScreen() {
       color:
         params.vehicleColor ??
         info.data?.vehiclesDetail?.registrationInfo?.color,
+      regno: info.data?.vehiclesDetail?.mainInfo?.regno,
     }
   }, [info.data, params])
 
@@ -300,7 +301,7 @@ export default function VehicleMileageScreen() {
             <View style={{ marginBottom: 16 }}>
               <Typography variant="heading5">{vehicle.type}</Typography>
               <Typography variant="body">
-                {vehicle.color} - {id}
+                {[vehicle.color, vehicle.regno].filter(Boolean).join(' - ')}
               </Typography>
             </View>
             <View style={{ flexDirection: 'column', gap: 16 }}>
