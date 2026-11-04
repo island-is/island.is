@@ -48,11 +48,6 @@ const validateNationalId = (nationalId: string) => {
   return value.length === 10 && kennitala.isValid(value)
 }
 
-/**
- * Looks up the identity of a national id once it is complete and valid. The
- * identity is only returned while it matches the current national id, so a
- * lookup that answers after the value changed is ignored.
- */
 const useIdentityLookup = (onNotFound: () => void) => {
   const [nationalId, setNationalId] = useState('')
   const nationalIdRef = useRef('')
