@@ -138,6 +138,10 @@ const layout: Record<Variant, ViewStyle> = {
   utilityFilled: { paddingVertical: 11, paddingHorizontal: 15 },
 }
 
+// Transparent buttons are only 28 high, so stretch the touch area to the 44 pt
+// minimum without changing how they look.
+const transparentHitSlop = { top: 8, bottom: 8, left: 8, right: 8 }
+
 const smallPaddingVertical: Partial<Record<Variant, number>> = {
   primary: 8,
   outlined: 8,
@@ -227,6 +231,7 @@ export function Button({
     <Pressable
       disabled={disabled || loading}
       accessibilityState={{ disabled: !!(disabled || loading), busy: loading }}
+      hitSlop={variant === 'transparent' ? transparentHitSlop : undefined}
       style={({ pressed }) => {
         const { background, border } = getColours(pressed)
         return [
