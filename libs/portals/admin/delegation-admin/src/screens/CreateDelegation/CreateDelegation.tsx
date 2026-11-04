@@ -13,7 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { BackButton } from '@island.is/portals/admin/core'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import { Identity } from '@island.is/api/schema'
 import { IntroHeader, m as coreMessages } from '@island.is/portals/core'
@@ -44,6 +44,11 @@ import { DelegationAdminPaths } from '../../lib/paths'
 import { CreateDelegationResult } from './CreateDelegation.action'
 import * as styles from './CreateDelegation.css'
 import { useIdentityLazyQuery } from './CreateDelegation.generated'
+
+const validateNationalId = (nationalId: string) => {
+  const value = nationalId.replace('-', '').trim()
+  return value.length === 10 && kennitala.isValid(value)
+}
 
 const CreateDelegationScreen = () => {
   const { formatMessage } = useLocale()
@@ -166,33 +171,45 @@ const CreateDelegationScreen = () => {
       },
     })
 
-  const validateNationalId = (nationalId: string) => {
-    const value = nationalId.replace('-', '').trim()
-    return value.length === 10 && kennitala.isValid(value)
+  // The inputs are controlled, so their value must be set on every keystroke;
+  // only the identity lookup is debounced.
+  const lookupFromIdentity = useMemo(
+    () =>
+      debounce((nationalId: string) => {
+        if (validateNationalId(nationalId)) {
+          getFromIdentity({ variables: { input: { nationalId } } })
+        }
+      }, 300),
+    [getFromIdentity],
+  )
+
+  const lookupToIdentity = useMemo(
+    () =>
+      debounce((nationalId: string) => {
+        if (validateNationalId(nationalId)) {
+          getToIdentity({ variables: { input: { nationalId } } })
+        }
+      }, 300),
+    [getToIdentity],
+  )
+
+  useEffect(
+    () => () => {
+      lookupFromIdentity.cancel()
+      lookupToIdentity.cancel()
+    },
+    [lookupFromIdentity, lookupToIdentity],
+  )
+
+  const handleNationalIdFromChange = ({ value }: { value: string }) => {
+    setFromNationalId(value)
+    lookupFromIdentity(value)
   }
 
-  const handleNationalIdFromChange = debounce(async ({ value }) => {
-    setFromNationalId(value)
-
-    const isValid = validateNationalId(value)
-    if (!isValid) {
-      return
-    }
-    return getFromIdentity({
-      variables: { input: { nationalId: value } },
-    })
-  }, 300)
-
-  const handleNationalIdToChange = debounce(({ value }) => {
+  const handleNationalIdToChange = ({ value }: { value: string }) => {
     setToNationalId(value)
-    const isValid = validateNationalId(value)
-    if (!isValid) {
-      return
-    }
-    return getToIdentity({
-      variables: { input: { nationalId: value } },
-    })
-  }, 300)
+    lookupToIdentity(value)
+  }
 
   const Loading = () => (
     <span className={cn(styles.icon, styles.loadingIcon)} aria-label="Loading">
