@@ -1,17 +1,20 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
+
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { FieldBaseProps } from '@island.is/application/types'
+import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
 import {
   AlertMessage,
   Box,
   Button,
   LoadingDots,
+  StatisticCard,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
+
 import { messages } from '../../lib/messages'
 import {
   ApiActions,
@@ -19,23 +22,22 @@ import {
   ScreenIds,
   States,
 } from '../../utils/constants'
-import { formatHourlyWage } from '../EmployeesEditor/utils'
-import { deriveWageGapState, formatPercentMagnitude } from '../../utils/wageGap'
+import { buildPayComponentsBreakdown } from '../../utils/payComponents'
 import { getProviderErrorMessage } from '../../utils/providerError'
-import type { ReportEmployeeDto } from '../../utils/types'
 import {
   getProviderSuccessData,
   type ProviderExternalData,
 } from '../../utils/providerResult'
-import { buildPayComponentsBreakdown } from '../../utils/payComponents'
 import {
+  type AnalysisExternalData,
   getSalaryAnalysisResult,
   navigationAnswersForAnalysisResult,
-  type AnalysisExternalData,
 } from '../../utils/salaryAnalysisNavigation'
+import type { ReportEmployeeDto } from '../../utils/types'
+import { deriveWageGapState, formatPercentMagnitude } from '../../utils/wageGap'
+import { formatHourlyWage } from '../EmployeesEditor/utils'
 import { PayComponentsTable } from './PayComponentsTable'
 import { PayDispersionTable } from './PayDispersionTable'
-import { StatisticCard } from './StatisticsCard'
 import { SalaryDistributionChart } from './SalaryDistributionChart'
 
 type Props = FieldBaseProps
@@ -461,7 +463,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
           beneath: it is the figure the regulation sets the benchmark for. */}
       {result && (
         <Box marginBottom={5}>
-          <Text variant="h4" marginBottom={1}>
+          <Text variant="h4" as="h3" marginBottom={1}>
             {formatMessage(r.adjustedGapGroupTitle)}
           </Text>
           <Text marginBottom={3}>{formatMessage(r.adjustedGapGroupIntro)}</Text>
@@ -560,7 +562,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
           averages it is computed from rather than beside the gated figure. */}
       {(totals || rawGapSubtext) && (
         <Box marginBottom={5}>
-          <Text variant="h4" marginBottom={1}>
+          <Text variant="h4" as="h3" marginBottom={1}>
             {formatMessage(r.meanHourlyWageGroupTitle)}
           </Text>
           <Text marginBottom={3}>
