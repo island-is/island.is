@@ -980,8 +980,7 @@ export class AppealSummonsService {
       }
 
       return [...bySummonsId.values()].map(
-        ({ summons, services }) =>
-          ({ ...summons, services }) as AppealSummons,
+        ({ summons, services }) => ({ ...summons, services } as AppealSummons),
       )
     })
   }

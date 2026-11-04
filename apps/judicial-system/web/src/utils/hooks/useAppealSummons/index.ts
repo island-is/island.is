@@ -223,9 +223,11 @@ const useAppealSummons = () => {
           return undefined
         }
 
-        const { data, errors } = await syncAppealSummonsServiceStatusesMutation({
-          variables: { caseId },
-        })
+        const { data, errors } = await syncAppealSummonsServiceStatusesMutation(
+          {
+            variables: { caseId },
+          },
+        )
 
         if (data?.syncAppealSummonsServiceStatuses && !errors) {
           return data.syncAppealSummonsServiceStatuses

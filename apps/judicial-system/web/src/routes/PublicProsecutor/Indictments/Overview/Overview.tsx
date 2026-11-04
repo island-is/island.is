@@ -70,12 +70,8 @@ export const Overview = () => {
   const { formatMessage: fm } = useIntl()
   const { updateCase } = useCase()
   const { syncAppealSummonsServiceStatuses } = useAppealSummons()
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
@@ -99,8 +95,7 @@ export const Overview = () => {
       workingCase.verdictAppealCase?.appealSummonses ?? []
     ).flatMap((summons) =>
       (summons.services ?? []).filter(
-        (service) =>
-          service.externalPoliceDocumentId && !service.serviceStatus,
+        (service) => service.externalPoliceDocumentId && !service.serviceStatus,
       ),
     )
 
@@ -154,7 +149,6 @@ export const Overview = () => {
     // Sync once after the case query settles; later merges must not re-trigger.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workingCase.id, isLoadingWorkingCase])
-
 
   const assignReviewer = async () => {
     if (!selectedIndictmentReviewer) {
