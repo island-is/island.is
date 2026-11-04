@@ -1598,17 +1598,20 @@ const useSections = (
           ),
           // Going forward to it runs through the defender step's validation:
           // a deadline is given to a party's advocate, so the court settles
-          // who that is first.
+          // who that is first. From the upload page it is a step back, and
+          // the href does not carry it (the panel links only to earlier
+          // steps), so the way back is offered as a click with nothing asked.
           onClick:
-            !isActive(
-              COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
-            ) &&
-            validateFormStepper(
-              isValid,
-              [COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE],
-              workingCase,
-            ) &&
-            onNavigationTo
+            onNavigationTo &&
+            (isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE) ||
+              (!isActive(
+                COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+              ) &&
+                validateFormStepper(
+                  isValid,
+                  [COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE],
+                  workingCase,
+                )))
               ? async () =>
                   await onNavigationTo(
                     COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,

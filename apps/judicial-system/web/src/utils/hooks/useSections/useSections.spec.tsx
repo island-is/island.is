@@ -287,6 +287,25 @@ describe('useSections getSections', () => {
       )
     })
 
+    // The panel renders the active step's href for nothing, so going back
+    // to the list is offered as a click, and asks nothing of the case.
+    it('offers the way back to the deadlines from the statement upload page', async () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE
+      onNavigationTo.mockClear()
+
+      const { onClick } = appealSections(caseWithBothAppeals, coaUser)[0]
+        .children[2]
+
+      expect(onClick).toBeDefined()
+
+      await onClick?.()
+
+      expect(onNavigationTo).toHaveBeenCalledWith(
+        COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+      )
+    })
+
     it('marks the section active on the status step', () => {
       mockAppealCaseId = 'verdict-appeal'
       mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE

@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -57,8 +57,10 @@ const VerdictAppealStatementUpload = () => {
     useContext(FormContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { fileAppealStatement, isFilingAppealStatement } =
-    useAppealStatementDeadline()
+  const { fileAppealStatement } = useAppealStatementDeadline()
+  // Covers the upload and the filing together: the staged rows read as done
+  // throughout, so the box's own state cannot tell the button to wait.
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Read directly rather than through the shared resolver, as the deadlines
   // page does: this page is never about the case-level ruling appeal.
@@ -85,6 +87,13 @@ const VerdictAppealStatementUpload = () => {
     `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE}/${workingCase.id}`,
     verdictAppealCase?.id,
   )
+  const handleNavigationTo = (destination: string) =>
+    router.push(
+      appendAppealCaseIdQuery(
+        `${destination}/${workingCase.id}`,
+        verdictAppealCase?.id,
+      ),
+    )
 
   const filesIn = (category: CaseFileCategory | undefined) =>
     party && category
@@ -107,29 +116,35 @@ const VerdictAppealStatementUpload = () => {
     })
 
   const submit = async () => {
-    if (!party || !verdictAppealCase) {
+    if (!party || !verdictAppealCase || isSubmitting) {
       return
     }
 
-    const result = await handleUpload(
-      uploadFiles.filter((file) => file.percent === 0),
-      updateUploadFile,
-    )
+    setIsSubmitting(true)
 
-    if (result !== 'ALL_SUCCEEDED') {
-      return
-    }
+    try {
+      const result = await handleUpload(
+        uploadFiles.filter((file) => file.percent === 0),
+        updateUploadFile,
+      )
 
-    const filed = await fileAppealStatement({
-      caseId: workingCase.id,
-      appealCaseId: verdictAppealCase.id,
-      defendantId: party.ids.defendantId ?? undefined,
-      civilClaimantId: party.ids.civilClaimantId ?? undefined,
-    })
+      if (result !== 'ALL_SUCCEEDED') {
+        return
+      }
 
-    if (filed) {
-      refreshCase()
-      router.push(deadlinesUrl)
+      const filed = await fileAppealStatement({
+        caseId: workingCase.id,
+        appealCaseId: verdictAppealCase.id,
+        defendantId: party.ids.defendantId ?? undefined,
+        civilClaimantId: party.ids.civilClaimantId ?? undefined,
+      })
+
+      if (filed) {
+        refreshCase()
+        router.push(deadlinesUrl)
+      }
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -153,7 +168,12 @@ const VerdictAppealStatementUpload = () => {
     <PageLayout
       workingCase={workingCase}
       isLoading={isLoadingWorkingCase}
-      notFound={caseNotFound || (!isLoadingWorkingCase && !party)}
+      notFound={
+        caseNotFound ||
+        (!isLoadingWorkingCase && (!verdictAppealCase || !party))
+      }
+      isValid
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={titleForCase(formatMessage, workingCase)} />
       {party && categories && (
@@ -211,9 +231,8 @@ const VerdictAppealStatementUpload = () => {
                     : 'Hlaða upp greinargerð',
                   colorScheme: someFilesError ? 'destructive' : 'default',
                   onClick: submit,
-                  disabled:
-                    statementFiles.length === 0 || isFilingAppealStatement,
-                  loading: !allFilesDoneOrError || isFilingAppealStatement,
+                  disabled: statementFiles.length === 0 || isSubmitting,
+                  loading: !allFilesDoneOrError || isSubmitting,
                   testId: 'continueButton',
                 },
               ]}

@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE } from '@island.is/judicial-system/consts'
@@ -34,7 +34,6 @@ jest.mock(
     __esModule: true,
     default: () => ({
       fileAppealStatement: mockFileAppealStatement,
-      isFilingAppealStatement: false,
     }),
   }),
 )
@@ -69,7 +68,8 @@ jest.mock('next/router', () => ({
   default: { push: (url: string) => mockPush(url) },
   useRouter() {
     return {
-      pathname: '',
+      // The side panel tells the step from the route, so the page's own.
+      pathname: '/landsrettur/afryjun/greinargerd/[id]',
       query: { appealCaseId: 'verdict-appeal', ...mockQuery },
       push: mockPush,
     }
@@ -207,6 +207,30 @@ describe('VerdictAppealStatementUpload', () => {
     expect(mockRefreshCase).toHaveBeenCalledTimes(1)
   })
 
+  it('takes one submit while the upload is in flight', async () => {
+    let finishUpload: (result: string) => void = () => undefined
+    mockHandleUpload.mockImplementation(
+      () => new Promise((resolve) => (finishUpload = resolve)),
+    )
+    const { container } = renderPage()
+
+    await chooseStatement(container)
+    await userEvent.click(screen.getByTestId('continueButton'))
+
+    expect(screen.getByTestId('continueButton')).toBeDisabled()
+    // Past the disabled button, straight at the handler.
+    fireEvent.click(screen.getByTestId('continueButton'))
+
+    expect(mockHandleUpload).toHaveBeenCalledTimes(1)
+
+    finishUpload('SOME_SUCCEEDED')
+
+    await waitFor(() =>
+      expect(screen.getByTestId('continueButton')).toBeEnabled(),
+    )
+    expect(mockFileAppealStatement).not.toHaveBeenCalled()
+  })
+
   it('files nothing when an upload fails', async () => {
     mockHandleUpload.mockResolvedValue('SOME_SUCCEEDED')
     const { container } = renderPage()
@@ -238,6 +262,27 @@ describe('VerdictAppealStatementUpload', () => {
     await userEvent.click(screen.getByTestId('previousButton'))
 
     expect(mockPush).toHaveBeenCalledWith(deadlinesUrl)
+  })
+
+  // The panel lights the deadlines step on this page and links only to the
+  // steps before it, so the way back is the step's own click.
+  it('offers the deadlines step in the side panel', async () => {
+    renderPage()
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Greinargerðarfrestir' }),
+    )
+
+    expect(mockPush).toHaveBeenCalledWith(deadlinesUrl)
+  })
+
+  it('has nothing to offer for a case without a verdict appeal', () => {
+    renderPage({ ...theCase, verdictAppealCase: undefined } as WorkingCase)
+
+    expect(
+      screen.queryByRole('heading', { name: 'Hlaða upp greinargerð' }),
+    ).not.toBeInTheDocument()
+    expect(screen.getByRole('alert')).toHaveTextContent('Mál fannst ekki')
   })
 
   it.each([
