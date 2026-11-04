@@ -164,6 +164,10 @@ const ABBREVIATIONS = [
   'o.fl',
   'þ.e',
   'þ.m.t',
+  // Mid-sentence in regulations; "o.s.frv." often ends one, so it's left out
+  't.d',
+  'm.a',
+  'a.m.k',
 ]
 
 /** Whether a period after this text ends an abbreviation or an ordinal. */

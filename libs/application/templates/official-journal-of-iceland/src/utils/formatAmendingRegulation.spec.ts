@@ -1689,6 +1689,29 @@ describe('formatAmendingBodyWithArticlePrefix: words and sentences', () => {
     )
   })
 
+  it.each(['t.d.', 'm.a.', 'a.m.k.'])(
+    'replaces words after %s, the next one now lowercase',
+    (abbreviation) => {
+      expect(
+        change(
+          twoParagraphs(
+            FIRST,
+            `Umsókn skal send ${abbreviation} ríkislögreglustjóra innan mánaðar.`,
+          ),
+          twoParagraphs(
+            FIRST,
+            `Umsókn skal send ${abbreviation} til Ríkislögreglustjóra innan mánaðar.`,
+          ),
+        ),
+      ).toBe(
+        article(
+          1,
+          '<p>Í stað orðanna „til Ríkislögreglustjóra“ í 2. mgr. 1. gr. reglugerðarinnar kemur: ríkislögreglustjóra.</p>',
+        ),
+      )
+    },
+  )
+
   it('adds no period after a question mark', () => {
     expect(
       change(
