@@ -225,6 +225,7 @@ const CreateDelegationScreen = () => {
     loading: boolean
   }) => (
     <button
+      type="button"
       disabled={loading}
       onClick={onClick}
       className={styles.icon}
