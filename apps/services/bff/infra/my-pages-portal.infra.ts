@@ -1,4 +1,9 @@
-import { ServiceBuilder, json, service } from '../../../../infra/src/dsl/dsl'
+import {
+  ServiceBuilder,
+  json,
+  ref,
+  service,
+} from '../../../../infra/src/dsl/dsl'
 import { BffInfraServices } from '../../../../infra/src/dsl/types/input-types'
 
 const bffName = 'services-bff'
@@ -17,7 +22,16 @@ export const serviceSetup = (
     .env({
       BFF_ALLOWED_EXTERNAL_API_URLS: {
         local: json(['http://localhost:3377/download/v1']),
-        dev: json(['https://api.dev01.devland.is']),
+        /* TODO: WIP — REVERT BEFORE MERGE (feat/add-estates)
+         * Temporary feature-deploy override so the BFF allows the feature's
+         * own download-service. Restore to json(['https://api.dev01.devland.is']). */
+        dev: ref((ctx) =>
+          json([
+            `https://${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }api.dev01.devland.is`,
+          ]),
+        ),
         staging: json(['https://api.staging01.devland.is']),
         prod: json(['https://api.island.is']),
       },

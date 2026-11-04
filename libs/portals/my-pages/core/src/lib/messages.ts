@@ -1809,6 +1809,31 @@ export const m = defineMessages({
     defaultMessage:
       'Atvinnuvegaráðuneytið hefur umsjón með gögnum um jarðabók.',
   },
+  estates: {
+    id: 'service.portal:estates',
+    defaultMessage: 'Dánarbú',
+  },
+  myEstates: {
+    id: 'service.portal:my-estates',
+    defaultMessage: 'Mín dánarbú',
+  },
+  myEstatesIntro: {
+    id: 'service.portal:my-estates-intro',
+    defaultMessage:
+      'Hér getur þú skoðað upplýsingar um dánarbú sem þú hefur aðgengi að hjá Sýslumanni.',
+  },
+  estatesDetail: {
+    id: 'service.portal:estates-detail',
+    defaultMessage: 'Dánarbú',
+  },
+  estatesFiles: {
+    id: 'service.portal:estates-files',
+    defaultMessage: 'Skjöl',
+  },
+  estatesTooltip: {
+    id: 'service.portal:estates-tooltip',
+    defaultMessage: 'Sýslumaður hefur umsjón með gögnum um dánarbú.',
+  },
   financeTooltip: {
     id: 'service.portal:finance-tooltip',
     defaultMessage: 'Fjársýslan hefur umsjón með gögnum um fjármál.',

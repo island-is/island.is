@@ -16,6 +16,7 @@ import {
   DrivingLicenseBook,
   Education,
   EnergyFunds,
+  Estates,
   Farmers,
   Finance,
   Firearm,
@@ -163,7 +164,15 @@ export const serviceSetup = (services: {
       ),
       DOWNLOAD_SERVICE_BASE_PATH: {
         prod: 'https://api.island.is',
-        dev: 'https://api.dev01.devland.is',
+        /* TODO: WIP — REVERT BEFORE MERGE (feat/add-estates)
+         * Temporary feature-deploy override so estates PDFs hit the feature's
+         * own download-service. Restore to 'https://api.dev01.devland.is'. */
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }api.dev01.devland.is`,
+        ),
         staging: 'https://api.staging01.devland.is',
       },
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
@@ -574,6 +583,7 @@ export const serviceSetup = (services: {
       NVSPermits,
       DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
+      Estates,
       Farmers,
       Finance,
       FireCompensation,

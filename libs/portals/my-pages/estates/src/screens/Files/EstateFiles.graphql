@@ -1,0 +1,19 @@
+query EstateFiles($input: EstatesCaseInput!) {
+  estate(input: $input) {
+    id
+    documents {
+      name
+      documentTypeDescription
+      documentDate
+      availability
+      islandIsDocumentId
+      downloadServiceUrl
+      requestAction {
+        type
+        label
+        url
+        method
+      }
+    }
+  }
+}
