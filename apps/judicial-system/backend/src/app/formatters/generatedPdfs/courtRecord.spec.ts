@@ -1,9 +1,9 @@
-import { courtRecord, formatMessage } from '../../messages'
+import { courtRecord } from '../../messages'
 import { formatCourtEndDate } from './courtRecordPdf'
 
 describe('formatCourtEndDate', () => {
   const fn = (startDate?: Date, endDate?: Date) =>
-    formatCourtEndDate(formatMessage, startDate, endDate)
+    formatCourtEndDate(startDate, endDate)
 
   test('should return court still in progress', () => {
     const startDate = undefined

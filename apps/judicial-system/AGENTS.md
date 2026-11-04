@@ -17,9 +17,8 @@ literals at the call site). Do not add `defineMessage` / `defineMessages`.
 
 For ICU / placeholders on the web, format with
 `formatMessage({ id, defaultMessage }, values)` using the same plain string for
-both `id` and `defaultMessage`. On the backend, use `formatIcuMessage` /
-`formatMessage` from `backend/src/app/messages`. Service-interruption banners
-are admin-backed.
+both `id` and `defaultMessage`. On the backend, use `formatIcuMessage` from
+`backend/src/app/messages`. Service-interruption banners are admin-backed.
 
 ## Async style
 

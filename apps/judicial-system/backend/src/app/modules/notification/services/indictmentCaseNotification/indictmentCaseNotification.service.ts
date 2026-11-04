@@ -260,7 +260,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     name?: string,
   ): Promise<Recipient> {
     const { subject, body } = formatPostponedCourtDateEmailNotification(
-      this.formatMessage,
       theCase,
       courtDate,
       overviewUrl,

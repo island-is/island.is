@@ -12,7 +12,6 @@ import { SessionArrangements } from '@island.is/judicial-system/types'
 import {
   custodyNotice,
   formatIcuMessage,
-  type FormatMessage,
 } from '../../messages'
 import { Case } from '../../modules/repository'
 import { formatCustodyRestrictions } from '../formatters'
@@ -53,7 +52,6 @@ export const formatCustodyNoticeDefender = (
 
 const constructCustodyNoticePdf = (
   theCase: Case,
-  formatMessage: FormatMessage,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -170,7 +168,6 @@ const constructCustodyNoticePdf = (
   addNormalText(doc, formatCustodyNoticeDefender(theCase), 'Helvetica')
 
   const custodyRestrictions = formatCustodyRestrictions(
-    formatMessage,
     theCase.type,
     theCase.requestedCustodyRestrictions,
     theCase.isCustodyIsolation,
@@ -219,16 +216,14 @@ const constructCustodyNoticePdf = (
 
 export const getCustodyNoticePdfAsString = (
   theCase: Case,
-  formatMessage: FormatMessage,
 ): Promise<string> => {
-  return constructCustodyNoticePdf(theCase, formatMessage).then((buffer) =>
+  return constructCustodyNoticePdf(theCase).then((buffer) =>
     buffer.toString('binary'),
   )
 }
 
 export const getCustodyNoticePdfAsBuffer = (
   theCase: Case,
-  formatMessage: FormatMessage,
 ): Promise<Buffer> => {
-  return constructCustodyNoticePdf(theCase, formatMessage)
+  return constructCustodyNoticePdf(theCase)
 }

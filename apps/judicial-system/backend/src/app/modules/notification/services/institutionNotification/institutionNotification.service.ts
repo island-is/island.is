@@ -73,7 +73,7 @@ export class InstitutionNotificationService extends BaseNotificationService {
     }
 
 
-    const subject = this.formatMessage(strings.waitingForConfirmation.subject)
+    const subject = strings.waitingForConfirmation.subject
     const body = formatIcuMessage(strings.waitingForConfirmation.body, {
       count,
     })

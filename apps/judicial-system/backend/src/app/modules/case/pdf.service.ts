@@ -42,7 +42,6 @@ import {
   getRequestPdfAsBuffer,
   getRulingPdfAsBuffer,
 } from '../../formatters'
-import { formatMessage } from '../../messages'
 import { verdictAppellantSide } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import {
@@ -69,8 +68,6 @@ export class PdfService {
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  private readonly formatMessage = formatMessage
 
   private async throttleGetCaseFilesRecordPdf(
     theCase: Case,
@@ -131,7 +128,6 @@ export class PdfService {
       policeCaseNumber,
       caseFiles ?? [],
       policeDigitalCaseFiles,
-      this.formatMessage,
       (file, reason) => {
         // Tolerate failure, but log error
         this.logger.error(
@@ -165,7 +161,7 @@ export class PdfService {
     }
 
 
-    return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
+    return getCourtRecordPdfAsBuffer(theCase, user)
   }
 
   async getCourtRecordPdfForIndictmentCase(
@@ -235,7 +231,7 @@ export class PdfService {
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {
 
-    return getRequestPdfAsBuffer(theCase, this.formatMessage)
+    return getRequestPdfAsBuffer(theCase)
   }
 
   async getRulingPdf(theCase: Case): Promise<Buffer> {
@@ -254,12 +250,12 @@ export class PdfService {
     }
 
 
-    return getRulingPdfAsBuffer(theCase, this.formatMessage)
+    return getRulingPdfAsBuffer(theCase)
   }
 
   async getCustodyNoticePdf(theCase: Case): Promise<Buffer> {
 
-    return getCustodyNoticePdfAsBuffer(theCase, this.formatMessage)
+    return getCustodyNoticePdfAsBuffer(theCase)
   }
 
   private async tryGetPdfFromS3(
@@ -382,7 +378,6 @@ export class PdfService {
     // In case of splits, we use the reconstructed full parent case for generation
     const generatedPdf = await createIndictment(
       fullOriginalCase,
-      this.formatMessage,
       confirmation,
     )
 
@@ -490,7 +485,6 @@ export class PdfService {
     const generatedPdf = await createSubpoena(
       caseForPdf,
       defendant,
-      this.formatMessage,
       subpoena,
       arraignmentDate,
       location,
@@ -535,7 +529,6 @@ export class PdfService {
       caseForPdf,
       defendant,
       subpoena,
-      this.formatMessage,
     )
 
     return generatedPdf
@@ -553,7 +546,6 @@ export class PdfService {
       defendant,
       verdict,
       deliveredToDefenderName,
-      formatMessage: this.formatMessage,
     })
 
     return generatedPdf

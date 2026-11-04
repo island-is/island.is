@@ -12,7 +12,6 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { formatMessage } from '../messages'
 import { DateLog } from '../modules/repository'
 import {
   filterWhitelistEmails,
@@ -184,7 +183,6 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       arrestDate,
@@ -204,7 +202,6 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       undefined,
@@ -221,7 +218,6 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
-      formatMessage,
       type,
       undefined,
       undefined,
@@ -243,7 +239,6 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       arrestDate,
@@ -265,7 +260,6 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       arrestDate,
@@ -287,7 +281,6 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       arrestDate,
@@ -311,7 +304,6 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       prosecutorInstution,
@@ -329,7 +321,6 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
-      formatMessage,
       type,
       undefined,
       undefined,
@@ -349,7 +340,6 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       prosecutorInstution,
@@ -369,7 +359,6 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       prosecutorInstution,
@@ -389,7 +378,6 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       prosecutorInstution,
@@ -408,7 +396,6 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       undefined,
@@ -429,7 +416,6 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Act
     const res = formatCourtResubmittedToCourtSmsNotification(
-      formatMessage,
       courtCaseNumber,
     )
 
@@ -449,7 +435,6 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
     overviewUrl?: string,
   ) =>
     formatProsecutorReadyForCourtEmailNotification(
-      formatMessage,
       policeCaseNumbers,
       caseType,
       courtName,
@@ -520,7 +505,6 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
     // Act
     const res = formatProsecutorReceivedByCourtSmsNotification(
-      formatMessage,
       type,
       court,
       courtCaseNumber,
@@ -540,7 +524,6 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
     // Act
     const res = formatProsecutorReceivedByCourtSmsNotification(
-      formatMessage,
       type,
       court,
       courtCaseNumber,
@@ -560,7 +543,6 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
     // Act
     const res = formatProsecutorReceivedByCourtSmsNotification(
-      formatMessage,
       type,
       court,
       courtCaseNumber,
@@ -580,7 +562,6 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
     // Act
     const res = formatProsecutorReceivedByCourtSmsNotification(
-      formatMessage,
       type,
       court,
       courtCaseNumber,
@@ -600,7 +581,6 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
     // Act
     const res = formatProsecutorReceivedByCourtSmsNotification(
-      formatMessage,
       type,
       court,
       courtCaseNumber,
@@ -620,7 +600,6 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
     // Act
     const res = formatProsecutorReceivedByCourtSmsNotification(
-      formatMessage,
       type,
       court,
       courtCaseNumber,
@@ -647,7 +626,6 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     sessionArrangements?: SessionArrangements,
   ) =>
     formatProsecutorCourtDateEmailNotification(
-      formatMessage,
       type,
       courtCaseNumber,
       court,
@@ -914,7 +892,6 @@ describe('formatArraignmentDateEmailNotification', () => {
     registrarName?: string,
   ) =>
     formatArraignmentDateEmailNotification({
-      formatMessage,
       courtName,
       courtCaseNumber,
       judgeName,
@@ -994,7 +971,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
-      formatMessage,
       caseType,
       prosecutorOffice,
       court,
@@ -1030,7 +1006,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
-      formatMessage,
       caseType,
       prosecutorOffice,
       court,
@@ -1066,7 +1041,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
-      formatMessage,
       caseType,
       prosecutorOffice,
       court,
@@ -1102,7 +1076,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
-      formatMessage,
       caseType,
       prosecutorOffice,
       court,
@@ -1138,7 +1111,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
-      formatMessage,
       caseType,
       prosecutorOffice,
       court,
@@ -1174,7 +1146,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
-      formatMessage,
       caseType,
       prosecutorOffice,
       court,
@@ -1210,7 +1181,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
-      formatMessage,
       caseType,
       prosecutorOffice,
       court,
@@ -1246,7 +1216,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
-      formatMessage,
       court,
       courtCaseNumber,
       courtDate,
@@ -1278,7 +1247,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
-      formatMessage,
       court,
       courtCaseNumber,
       courtDate,
@@ -1310,7 +1278,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
-      formatMessage,
       court,
       courtCaseNumber,
       courtDate,
@@ -1342,7 +1309,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
-      formatMessage,
       court,
       courtCaseNumber,
       courtDate,
@@ -1373,7 +1339,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
-      formatMessage,
       court,
       courtCaseNumber,
       courtDate,
@@ -1404,7 +1369,6 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
 
     // Act
     const res = formatDefenderCourtDateLinkEmailNotification({
-      formatMessage,
       overviewUrl,
       court,
       courtCaseNumber,
@@ -1427,7 +1391,6 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
 
     // Act
     const res = formatDefenderCourtDateLinkEmailNotification({
-      formatMessage,
       overviewUrl,
       court,
       courtCaseNumber,
@@ -1452,7 +1415,6 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Act
     const res = formatCourtRevokedSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       requestedCourtDate,
@@ -1473,7 +1435,6 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Act
     const res = formatCourtRevokedSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       requestedCourtDate,
@@ -1492,7 +1453,6 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Act
     const res = formatCourtRevokedSmsNotification(
-      formatMessage,
       type,
       undefined,
       undefined,
@@ -1512,7 +1472,6 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Act
     const res = formatCourtRevokedSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       requestedCourtDate,
@@ -1534,7 +1493,6 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Act
     const res = formatCourtRevokedSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       requestedCourtDate,
@@ -1556,7 +1514,6 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Act
     const res = formatCourtRevokedSmsNotification(
-      formatMessage,
       type,
       prosecutorName,
       requestedCourtDate,
@@ -1584,7 +1541,6 @@ describe('formatPrisonRevokedEmailNotification', () => {
 
     // Act
     const res = formatPrisonRevokedEmailNotification(
-      formatMessage,
       caseType,
       prosecutorOffice,
       court,
@@ -1612,7 +1568,6 @@ describe('formatPrisonRevokedEmailNotification', () => {
 
     // Act
     const res = formatPrisonRevokedEmailNotification(
-      formatMessage,
       caseType,
       prosecutorOffice,
       court,
@@ -1663,7 +1618,6 @@ describe('formatCustodyRestrictions', () => {
     isCustodyIsolation?: boolean,
   ) =>
     formatCustodyRestrictions(
-      formatMessage,
       caseType,
       requestedRestrictions,
       isCustodyIsolation,
@@ -1773,7 +1727,6 @@ describe('formatPrisonAdministrationRulingNotification', () => {
     courtName?: string,
   ) =>
     formatPrisonAdministrationRulingNotification(
-      formatMessage,
       isModifyingRuling,
       overviewUrl,
       courtCaseNumber,
@@ -1807,7 +1760,6 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
     const courtCaseNumber = 'R-2022/999'
 
     const result = formatDefenderResubmittedToCourtEmailNotification(
-      formatMessage,
       overviewUrl,
       court,
       courtCaseNumber,

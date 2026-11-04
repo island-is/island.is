@@ -15,10 +15,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import {
-  type FormatMessage,
-  serviceCertificate as strings,
-} from '../../messages'
+import { serviceCertificate as strings } from '../../messages'
 import { Case, Defendant, Subpoena } from '../../modules/repository'
 import {
   addEmptyLines,
@@ -69,7 +66,6 @@ export const createSubpoenaServiceCertificate = (
   theCase: Case,
   defendant: Defendant,
   subpoena: Subpoena,
-  formatMessage: FormatMessage,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -86,9 +82,9 @@ export const createSubpoenaServiceCertificate = (
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
-  setTitle(doc, formatMessage(strings.title))
+  setTitle(doc, strings.title)
 
-  addLargeHeading(doc, formatMessage(strings.title).toUpperCase(), 'Times-Bold')
+  addLargeHeading(doc, strings.title.toUpperCase(), 'Times-Bold')
   addMediumCenteredText(
     doc,
     `Mál nr. ${theCase.courtCaseNumber ?? ''}`,

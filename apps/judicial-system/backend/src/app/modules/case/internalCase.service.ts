@@ -55,7 +55,6 @@ import {
 import {
   courtUpload,
   formatIcuMessage,
-  formatMessage,
   notifications,
 } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
@@ -218,8 +217,6 @@ export class InternalCaseService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private readonly formatMessage = formatMessage
-
   private async uploadSignedRulingPdfToCourt(
     theCase: Case,
     buffer: Buffer,
@@ -272,7 +269,7 @@ export class InternalCaseService {
             transaction,
           )
         } else {
-          pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+          pdf = await getCourtRecordPdfAsBuffer(theCase)
         }
       }
 
@@ -309,7 +306,7 @@ export class InternalCaseService {
     theCase: Case,
     user: TUser,
   ): Promise<boolean> {
-    return getRequestPdfAsBuffer(theCase, this.formatMessage)
+    return getRequestPdfAsBuffer(theCase)
       .then((pdf) => {
         const fileName = formatIcuMessage(courtUpload.request, {
           caseType: formatCaseType(theCase.type),
@@ -360,7 +357,7 @@ export class InternalCaseService {
             transaction,
           )
         } else {
-          pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+          pdf = await getCourtRecordPdfAsBuffer(theCase)
         }
       }
 
@@ -1424,7 +1421,7 @@ export class InternalCaseService {
   ): Promise<DeliverResponse> {
     try {
 
-      const request = await getRequestPdfAsString(theCase, this.formatMessage)
+      const request = await getRequestPdfAsString(theCase)
 
       const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
         {
@@ -1465,7 +1462,6 @@ export class InternalCaseService {
 
         courtRecord = await getCourtRecordPdfAsString(
           theCase,
-          this.formatMessage,
         )
       }
 
@@ -1496,7 +1492,6 @@ export class InternalCaseService {
 
       const custodyNotice = await getCustodyNoticePdfAsString(
         theCase,
-        this.formatMessage,
       )
 
       const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [

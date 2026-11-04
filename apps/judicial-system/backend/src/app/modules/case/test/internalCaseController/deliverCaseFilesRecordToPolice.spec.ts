@@ -131,7 +131,6 @@ describe('InternalCaseController - Deliver case files record to police', () => {
         [],
         expect.any(Array),
         expect.any(Function),
-        expect.any(Function),
       )
       expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
         theCase.type,

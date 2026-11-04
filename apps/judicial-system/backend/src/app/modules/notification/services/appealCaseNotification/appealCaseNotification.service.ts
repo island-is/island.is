@@ -284,7 +284,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
 
     smsText = smsText.match(/rettarvorslugatt.island.is/g)
       ? smsText
-      : `${smsText} ${this.formatMessage(notifications.smsTail)}`
+      : `${smsText} ${notifications.smsTail}`
 
     return this.smsService
       .sendSms(mobileNumbers?.split(',') ?? '', smsText)
@@ -321,7 +321,6 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       ) {
         const { subject, body } =
           formatCourtOfAppealJudgeAssignedEmailNotification(
-            this.formatMessage,
             appealCase.appealCaseNumber,
             recipient.id === presidingJudge.id,
             presidingJudge.name,
@@ -1547,7 +1546,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           this.sendEmail({
             subject,
             html,
-            recipientName: this.formatMessage(notifications.emailNames.prison),
+            recipientName: notifications.emailNames.prison,
             recipientEmail: this.config.email.prisonEmail,
           }),
         )
@@ -1969,7 +1968,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
 
     if (appealCase.appealReceivedByCourtDate) {
       recipients.push({
-        name: this.formatMessage(notifications.emailNames.courtOfAppeals),
+        name: notifications.emailNames.courtOfAppeals,
         email: this.getCourtEmail(this.config.courtOfAppealsId),
       })
     }

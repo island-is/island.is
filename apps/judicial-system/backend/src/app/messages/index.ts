@@ -1,6 +1,4 @@
 export { formatIcuMessage } from './icuMessage'
-export { formatMessage } from './formatMessage'
-export type { FormatMessage } from './formatMessage'
 export { core } from './pdfCore'
 export { request } from './pdfRequest'
 export { ruling } from './pdfRuling'

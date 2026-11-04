@@ -5,7 +5,6 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRef } from 'pdf-lib'
 
 import { IndictmentSubtype } from '@island.is/judicial-system/types'
 
-import { formatMessage } from '../../messages'
 import {
   Case,
   Defendant,
@@ -95,7 +94,6 @@ describe('createCaseFilesRecord - table of contents', () => {
       policeCaseNumber,
       caseFiles,
       policeDigitalCaseFiles,
-      formatMessage,
     )
 
     const outPath = path.join(os.tmpdir(), 'caseFilesRecord.pdf')
@@ -136,7 +134,6 @@ describe('createCaseFilesRecord - table of contents', () => {
       policeCaseNumber,
       caseFiles,
       digitalCaseFiles,
-      formatMessage,
     )
 
     const outPath = path.join(os.tmpdir(), 'caseFilesRecord-digital.pdf')
@@ -218,7 +215,6 @@ describe('createCaseFilesRecord - unreadable files', () => {
       policeCaseNumber,
       caseFiles,
       [],
-      formatMessage,
       onUnreadableFile,
     )
 

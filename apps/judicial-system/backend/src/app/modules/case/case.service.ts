@@ -69,7 +69,6 @@ import {
   getCourtRecordPdfAsString,
   getRulingPdfAsString,
 } from '../../formatters'
-import { formatMessage } from '../../messages'
 import { queueMessagesAfterCommit, registerAfterCommit } from '../../middleware'
 import {
   buildInCourtAppealedEvent,
@@ -184,8 +183,6 @@ export class CaseService {
     private readonly caseCloningService: CaseCloningService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  private readonly formatMessage = formatMessage
 
   private async uploadSignedRulingPdfToS3(
     theCase: Case,
@@ -2585,7 +2582,7 @@ export class CaseService {
     method: 'audkenni' | 'mobile',
   ): Promise<SigningServiceResponse> {
 
-    const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
+    const pdf = await getCourtRecordPdfAsString(theCase)
 
     if (method === 'audkenni') {
       return this.signingService
@@ -2714,7 +2711,7 @@ export class CaseService {
       )
     }
 
-    const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
+    const pdf = await getRulingPdfAsString(theCase)
     if (method === 'audkenni') {
       return this.signingService
         .requestSignatureAudkenni(

@@ -19,7 +19,7 @@ import {
   formatPostponedCourtDateEmailNotification,
   stripHtmlTags,
 } from '../../../formatters'
-import { formatIcuMessage, formatMessage, notifications } from '../../../messages'
+import { formatIcuMessage, notifications } from '../../../messages'
 import { CourtService } from '../../court'
 import { EventService } from '../../event'
 import {
@@ -40,7 +40,6 @@ interface Attachment {
 
 @Injectable()
 export abstract class BaseNotificationService {
-  protected readonly formatMessage = formatMessage
 
   constructor(
     private readonly notificationRepositoryService: NotificationRepositoryService,
@@ -52,7 +51,7 @@ export abstract class BaseNotificationService {
   ) {}
 
   private async handleWhitelist(recipients: string[]): Promise<string[]> {
-    const whitelist = this.formatMessage(notifications.emailWhitelist)
+    const whitelist = notifications.emailWhitelist
     const whitelistDomains = formatIcuMessage(
       notifications.emailWhitelistDomains,
     )
@@ -302,7 +301,6 @@ export abstract class BaseNotificationService {
     recipientEmail: string
   }): Promise<Recipient> {
     const { subject, body } = formatArraignmentDateEmailNotification({
-      formatMessage: this.formatMessage,
       courtName: theCase.court?.name,
       courtCaseNumber: theCase.courtCaseNumber,
       judgeName: theCase.judge?.name,
@@ -351,7 +349,6 @@ export abstract class BaseNotificationService {
       : undefined
 
     const { subject, body } = formatPostponedCourtDateEmailNotification(
-      this.formatMessage,
       theCase,
       courtDate,
       overviewUrl,
