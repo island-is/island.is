@@ -36,24 +36,34 @@ export class ProjectPageRepository implements SitemapUrlFetcher {
 
     while (projectPageIds.length > 0) {
       const ids = projectPageIds.splice(0, 15)
-      const projectSubpageResponse = await this.managementClient.getEntries({
-        content_type: 'projectSubpage',
-        select: 'fields.slug,fields.title,fields.projectPage,sys',
-        'fields.projectPage.sys.id[in]': ids.join(','),
-        'sys.publishedAt[exists]': true,
-      })
-      if (!projectSubpageResponse.ok) throw projectSubpageResponse.error
-      for (const projectSubpage of projectSubpageResponse.data.items) {
-        const projectPageId =
-          projectSubpage.fields.projectPage?.[LOCALE]?.sys?.id
-        if (!projectPageId) continue
-        const subpages = projectSubpagesByProjectPageId.get(projectPageId) ?? []
-        subpages.push({
-          slug: projectSubpage.fields.slug,
-          title: projectSubpage.fields.title,
-          publishedAt: projectSubpage.sys.publishedAt,
+      let skip = 0
+      let hasMore = true
+      while (hasMore) {
+        const projectSubpageResponse = await this.managementClient.getEntries({
+          content_type: 'projectSubpage',
+          select: 'fields.slug,fields.title,fields.projectPage,sys',
+          'fields.projectPage.sys.id[in]': ids.join(','),
+          'sys.publishedAt[exists]': true,
+          skip,
         })
-        projectSubpagesByProjectPageId.set(projectPageId, subpages)
+        if (!projectSubpageResponse.ok) throw projectSubpageResponse.error
+        for (const projectSubpage of projectSubpageResponse.data.items) {
+          const projectPageId =
+            projectSubpage.fields.projectPage?.[LOCALE]?.sys?.id
+          if (!projectPageId) continue
+          const subpages =
+            projectSubpagesByProjectPageId.get(projectPageId) ?? []
+          subpages.push({
+            slug: projectSubpage.fields.slug,
+            title: projectSubpage.fields.title,
+            publishedAt: projectSubpage.sys.publishedAt,
+          })
+          projectSubpagesByProjectPageId.set(projectPageId, subpages)
+        }
+        skip += projectSubpageResponse.data.items.length
+        hasMore =
+          projectSubpageResponse.data.items.length > 0 &&
+          projectSubpageResponse.data.total > skip
       }
     }
 
