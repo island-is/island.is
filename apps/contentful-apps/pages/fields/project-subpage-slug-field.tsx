@@ -16,6 +16,8 @@ const ProjectSubpageSlugField = () => {
   const [projectPageId, setProjectPageId] = useState<string | undefined>(
     sdk.entry.fields.projectPage?.getValue()?.sys?.id,
   )
+  const latestFieldValues = useRef({ value, projectPageId })
+  latestFieldValues.current = { value, projectPageId }
   const initialTitleChange = useRef(true)
   const [hasEntryBeenPublished, setHasEntryBeenPublished] = useState(
     Boolean(sdk.entry.getSys()?.firstPublishedAt),
@@ -82,11 +84,15 @@ const ProjectSubpageSlugField = () => {
         },
       })
 
-      if (subpagesWithSameSlug.items.length > 0) {
-        setIsValid(false)
+      // Discard the result if the slug or project page changed during the query
+      if (
+        latestFieldValues.current.value !== value ||
+        latestFieldValues.current.projectPageId !== projectPageId
+      ) {
         return
       }
-      setIsValid(true)
+
+      setIsValid(subpagesWithSameSlug.items.length === 0)
     },
     DEBOUNCE_TIME,
     [value, projectPageId],
