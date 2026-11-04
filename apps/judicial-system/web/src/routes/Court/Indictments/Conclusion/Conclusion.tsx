@@ -578,7 +578,7 @@ const Conclusion: FC = () => {
           {
             text:
               selectedAction === IndictmentDecision.COMPLETING
-                ? formatMessage(core.continue)
+                ? core.continue
                 : strings.nextButtonTextConfirm,
             icon: 'arrowForward',
             onClick: () => {
@@ -617,7 +617,7 @@ const Conclusion: FC = () => {
       isValid={stepIsValid()}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(titles.court.indictments.conclusion)} />
+      <PageHeader title={titles.court.indictments.conclusion} />
       <FormContentContainer>
         <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
@@ -853,9 +853,15 @@ const Conclusion: FC = () => {
                 )}
                 accept="application/pdf"
                 title={strings.inputFieldLabel}
-                description={formatMessage(core.uploadBoxDescription, {
-                  fileEndings: '.pdf',
-                })}
+                description={formatMessage(
+                  {
+                    id: core.uploadBoxDescription,
+                    defaultMessage: core.uploadBoxDescription,
+                  },
+                  {
+                    fileEndings: '.pdf',
+                  },
+                )}
                 buttonLabel={strings.uploadButtonText}
                 onChange={(files) => {
                   handleUpload(
@@ -945,9 +951,15 @@ const Conclusion: FC = () => {
                 )}
                 accept="application/pdf"
                 title={strings.inputFieldLabel}
-                description={formatMessage(core.uploadBoxDescription, {
-                  fileEndings: '.pdf',
-                })}
+                description={formatMessage(
+                  {
+                    id: core.uploadBoxDescription,
+                    defaultMessage: core.uploadBoxDescription,
+                  },
+                  {
+                    fileEndings: '.pdf',
+                  },
+                )}
                 buttonLabel={strings.uploadButtonText}
                 onChange={(files) => {
                   if (

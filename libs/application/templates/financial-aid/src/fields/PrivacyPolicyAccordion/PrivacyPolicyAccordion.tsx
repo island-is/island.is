@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Accordion, AccordionItem, Text } from '@island.is/island-ui/core'
 import { privacyPolicyAccordion } from '../../lib/messages'
-import { DescriptionText } from '..'
+import DescriptionText from '../DescriptionText/DescriptionText'
 
 interface Props {
   municipalityPageUrl?: string
