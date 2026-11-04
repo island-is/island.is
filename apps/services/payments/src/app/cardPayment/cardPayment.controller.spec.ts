@@ -452,6 +452,95 @@ describe('CardPaymentController', () => {
       fetchSpy.mockRestore()
     })
 
+    it('ignores the callback of an earlier attempt once a later attempt has started', async () => {
+      const cardPaymentService = app.get(CardPaymentService)
+      const fetchSpy = jest
+        .spyOn(global, 'fetch')
+        .mockImplementation(async (url) => {
+          if (typeof url === 'string' && url.includes('/CardVerification')) {
+            return {
+              json: async () => mockVerificationSuccessResponse,
+              status: 200,
+              ok: true,
+            } as Response
+          }
+          // Declined, the charge request itself is what the test reads
+          return {
+            json: async () => ({ isSuccess: false, responseCode: '05' }),
+            status: 200,
+            ok: true,
+          } as Response
+        })
+      const verificationMds = () =>
+        fetchSpy.mock.calls
+          .filter(
+            ([url]) =>
+              typeof url === 'string' && url.includes('/CardVerification'),
+          )
+          .map(([, init]) => JSON.parse(init?.body as string).MD as string)
+      const chargeVerificationData = () =>
+        fetchSpy.mock.calls
+          .filter(
+            ([url]) =>
+              typeof url === 'string' && url.includes('/Payment/CardPayment'),
+          )
+          .map(
+            ([, init]) => JSON.parse(init?.body as string).cardVerificationData,
+          )
+      const callback = (md: string, cavv: string) =>
+        server.post('/v1/payments/card/verify-callback').send({
+          md,
+          mdStatus: '1',
+          cavv,
+          xid: 'xid',
+          dsTransId: 'dsTransId',
+        })
+      const charge = () =>
+        cardPaymentService.charge({
+          chargeCardInput: {
+            paymentFlowId,
+            cardNumber: '4242424242424242',
+            expiryMonth: 12,
+            expiryYear: new Date().getFullYear() - 2000,
+            cvc: '123',
+          },
+          paymentTrackingData: {
+            merchantReferenceData: 'merchantReferenceData',
+            correlationId: uuid(),
+            paymentDate: new Date(),
+          },
+          amount: 1000,
+        })
+
+      try {
+        const verifyPayload: VerifyCardInput = {
+          cardNumber: '4242424242424242',
+          expiryMonth: 12,
+          expiryYear: new Date().getFullYear() - 2000,
+          paymentFlowId,
+        }
+        await server.post('/v1/payments/card/verify').send(verifyPayload)
+        await server.post('/v1/payments/card/verify').send(verifyPayload)
+        const [earlierMd, laterMd] = verificationMds()
+
+        // The earlier attempt's 3-D Secure completes after the later one started
+        expect((await callback(earlierMd, 'earlier-cavv')).status).toBe(400)
+        await expect(charge()).rejects.toThrow(
+          PaymentServiceCode.MissingVerification,
+        )
+        expect(chargeVerificationData()).toHaveLength(0)
+
+        expect((await callback(laterMd, 'later-cavv')).status).toBe(201)
+        await expect(charge()).rejects.toThrow()
+        expect(chargeVerificationData()).toEqual([
+          expect.objectContaining({ cavv: 'later-cavv' }),
+        ])
+      } finally {
+        fetchSpy.mockRestore()
+        await cacheManager.del(paymentFlowId)
+      }
+    })
+
     it('should throw an error in verification callback if correlation id is not found in cache', async () => {
       const cacheGetSpy = jest.spyOn(cacheManager, 'get') // not mocking return value ("nothing in cache")
 
