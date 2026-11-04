@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  type ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useDebounce } from 'react-use'
 import flatten from 'lodash/flatten'
 import { useRouter } from 'next/router'
@@ -6,9 +13,14 @@ import { parseAsInteger, parseAsJson, useQueryState } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
 import {
+  Accordion,
+  AccordionCard,
+  AccordionItem,
   AlertMessage,
   Box,
+  Divider,
   Filter,
+  FilterContext,
   FilterInput,
   FilterMultiChoice,
   FocusableBox,
@@ -230,6 +242,61 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
   )
 }
 
+interface FilterMenuSectionProps {
+  id: string
+  label: string
+  active: boolean
+  children: ReactNode
+}
+
+/**
+ * An accordion section that looks the same as the categories rendered by FilterMultiChoice,
+ * used for filters that are not checkbox/radio lists
+ */
+const FilterMenuSection = ({
+  id,
+  label,
+  active,
+  children,
+}: FilterMenuSectionProps) => {
+  const { variant } = useContext(FilterContext)
+
+  if (variant === 'dialog') {
+    return (
+      <AccordionCard id={id} label={label} iconVariant="small">
+        {children}
+      </AccordionCard>
+    )
+  }
+
+  return (
+    <Box
+      paddingX={3}
+      paddingTop={1}
+      borderRadius="large"
+      background="white"
+      className={styles.filterMenuSection}
+    >
+      <Accordion space={3} dividerOnBottom={false} dividerOnTop={false}>
+        <AccordionItem
+          id={id}
+          label={label}
+          labelUse="h5"
+          labelVariant="h5"
+          labelColor={active ? 'blue400' : 'currentColor'}
+          iconVariant="small"
+        >
+          {children}
+        </AccordionItem>
+      </Accordion>
+      {/* Same spacing as the dividers between the filter categories */}
+      <Box paddingTop={1}>
+        <Divider />
+      </Box>
+    </Box>
+  )
+}
+
 interface GenericListProps {
   searchInputPlaceholder?: string | null
   filterTags?: GenericTag[] | null
@@ -250,6 +317,7 @@ interface GenericListProps {
   showSearchInput?: boolean
   showSearchFilters?: boolean
   showYearFilter?: boolean
+  yearFilterLabel?: string | null
   years?: number[] | null
 }
 
@@ -266,9 +334,9 @@ export const GenericList = ({
   children,
   showSearchInput = true,
   showSearchFilters = true,
-  // TODO: Revert default back to false before merging (set to true so the feature deploy shows the year filter)
-  showYearFilter = true,
+  showYearFilter = false,
   yearQueryId,
+  yearFilterLabel,
   years,
 }: React.PropsWithChildren<GenericListProps>) => {
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
@@ -345,6 +413,8 @@ export const GenericList = ({
   )
 
   const allYearsLabel = activeLocale === 'is' ? 'Öll ár' : 'All years'
+  const yearLabel =
+    yearFilterLabel?.trim() || (activeLocale === 'is' ? 'Ár' : 'Year')
 
   const yearOptions = useMemo(() => {
     const availableYears = new Set(years ?? [])
@@ -360,12 +430,13 @@ export const GenericList = ({
     ]
   }, [allYearsLabel, year, years])
 
-  const yearFilterComponent = (
+  const renderYearSelect = (name: string, label?: string) => (
     <Select
-      name="list-year"
+      name={name}
       size="xs"
       isSearchable={false}
-      label={activeLocale === 'is' ? 'Ár' : 'Year'}
+      label={label}
+      aria-label={label ? undefined : yearLabel}
       backgroundColor="white"
       options={yearOptions}
       value={
@@ -381,32 +452,32 @@ export const GenericList = ({
     />
   )
 
-  const filterInputComponent = showYearFilter ? (
-    <GridRow rowGap={2}>
-      {showSearchInput && (
-        <GridColumn span={['1/1', '1/1', '8/12', '9/12']}>
-          {searchInputComponent}
-        </GridColumn>
-      )}
-      <GridColumn span={['1/1', '1/1', '4/12', '3/12']}>
-        {yearFilterComponent}
-      </GridColumn>
-    </GridRow>
-  ) : (
-    searchInputComponent
-  )
-
-  const showFilterInput = showSearchInput || showYearFilter
+  // When there is a filter menu the year is chosen inside it,
+  // otherwise the year select gets its own row above the list
+  const showYearFilterInFilterMenu =
+    showYearFilter && showSearchFilters && filterCategories.length > 1
 
   const selectedFilters = extractFilterTags(filterCategories)
+  const showSelectedYear = showYearFilterInFilterMenu && Boolean(year)
 
   const selectedFiltersComponent = (
     <Box className={styles.filterTagsContainer}>
       <Inline space={1} alignY="top">
-        {selectedFilters.length > 0 && (
+        {(selectedFilters.length > 0 || showSelectedYear) && (
           <Text>{activeLocale === 'is' ? 'Síað eftir:' : 'Filtered by:'}</Text>
         )}
         <Inline space={1}>
+          {showSelectedYear && (
+            <FilterTag
+              active={true}
+              onClick={() => {
+                setYear(null)
+                setPage(null)
+              }}
+            >
+              {year}
+            </FilterTag>
+          )}
           {selectedFilters.map(({ value, label, category }) => (
             <FilterTag
               key={value}
@@ -446,12 +517,12 @@ export const GenericList = ({
     <Box paddingBottom={3}>
       <GridContainer>
         <Stack space={4}>
-          {(showSearchInput || showSearchFilters || showYearFilter) && (
+          {(showSearchInput || showSearchFilters) && (
             <Box ref={ref}>
               {showSearchFilters && filterCategories.length > 1 && (
                 <Stack space={4}>
                   <Stack space={3}>
-                    {isMobile && showFilterInput && filterInputComponent}
+                    {isMobile && showSearchInput && searchInputComponent}
                     <Filter
                       resultCount={totalItems}
                       labelClear={
@@ -486,8 +557,18 @@ export const GenericList = ({
                         setYear(null)
                         setPage(null)
                       }}
-                      filterInput={filterInputComponent}
+                      // The search input is rendered above the filter on mobile
+                      filterInput={isMobile ? undefined : searchInputComponent}
                     >
+                      {showYearFilterInFilterMenu && (
+                        <FilterMenuSection
+                          id="genericListYear"
+                          label={yearLabel}
+                          active={Boolean(year)}
+                        >
+                          {renderYearSelect('list-year-filter-menu')}
+                        </FilterMenuSection>
+                      )}
                       <FilterMultiChoice
                         labelClear={
                           activeLocale === 'is'
@@ -542,11 +623,11 @@ export const GenericList = ({
                 </Stack>
               )}
 
-              {(showSearchFilters || showFilterInput) &&
+              {(showSearchFilters || showSearchInput) &&
                 filterCategories.length <= 1 && (
                   <Stack space={4}>
                     <Stack space={3}>
-                      {showFilterInput && filterInputComponent}
+                      {showSearchInput && searchInputComponent}
                       {showSearchFilters &&
                         selectedFilters.length > 0 &&
                         selectedFiltersComponent}
@@ -593,6 +674,13 @@ export const GenericList = ({
             </Box>
           )}
 
+          {showYearFilter && !showYearFilterInFilterMenu && (
+            <Box display="flex" justifyContent="flexEnd">
+              <Box className={styles.yearFilter}>
+                {renderYearSelect('list-year')}
+              </Box>
+            </Box>
+          )}
           {displayError && (
             <AlertMessage
               type="warning"
@@ -649,6 +737,7 @@ interface GenericListWrapperProps {
   textSearchOrder?: 'Default' | 'Score'
   showSearchInput?: boolean
   showYearFilter?: boolean
+  yearFilterLabel?: string | null
 }
 
 export const GenericListWrapper = ({
@@ -660,6 +749,7 @@ export const GenericListWrapper = ({
   textSearchOrder,
   showSearchInput,
   showYearFilter,
+  yearFilterLabel,
 }: GenericListWrapperProps) => {
   const searchQueryId = `${id}q`
   const pageQueryId = `${id}page`
@@ -745,6 +835,7 @@ export const GenericListWrapper = ({
       showSearchInput={showSearchInput}
       showSearchFilters={showSearchInput}
       showYearFilter={showYearFilter}
+      yearFilterLabel={yearFilterLabel}
       years={itemsResponse?.years}
     >
       <GridContainer>
