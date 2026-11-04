@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ApolloError } from '@apollo/client'
 
 import { PaymentsGooglePayChargeStatus } from '@island.is/api/schema'
@@ -27,22 +27,30 @@ const BASE_REQUEST = {
   apiVersionMinor: 0,
 }
 
-const BASE_CARD_PAYMENT_METHOD: google.payments.api.IsReadyToPayPaymentMethodSpecification =
-  {
-    type: 'CARD',
-    parameters: {
-      // Only a card saved in the Google account, charged after 3-D Secure,
-      // until device tokens (CRYPTOGRAM_3DS) are implemented. Valitor charges
-      // a device token when it decrypts it, so that flow has to treat the
-      // decryption response as the charge, inside the payment saga, and
-      // Valitor has yet to confirm how its web decryption call handles one.
-      allowedAuthMethods: ['PAN_ONLY'],
-      allowedCardNetworks: ['VISA', 'MASTERCARD'],
-      // The name is the cardholder for 3-D Secure of a saved card
-      billingAddressRequired: true,
-      billingAddressParameters: { format: 'MIN' },
-    },
-  }
+/**
+ * The cards the sheet offers. A card saved in the Google account (PAN_ONLY)
+ * passes 3-D Secure and is then charged with the same token. A device token
+ * (CRYPTOGRAM_3DS) is charged by the gateway when it decrypts it, so the
+ * charge answers paid at once; it is offered behind its own flag until the
+ * gateway's handling of it has been seen on production.
+ */
+const googlePayAllowedAuthMethods = (
+  allowDeviceTokens: boolean,
+): google.payments.api.CardAuthMethod[] =>
+  allowDeviceTokens ? ['PAN_ONLY', 'CRYPTOGRAM_3DS'] : ['PAN_ONLY']
+
+const cardPaymentMethod = (
+  allowDeviceTokens: boolean,
+): google.payments.api.IsReadyToPayPaymentMethodSpecification => ({
+  type: 'CARD',
+  parameters: {
+    allowedAuthMethods: googlePayAllowedAuthMethods(allowDeviceTokens),
+    allowedCardNetworks: ['VISA', 'MASTERCARD'],
+    // The name is the cardholder for 3-D Secure of a saved card
+    billingAddressRequired: true,
+    billingAddressParameters: { format: 'MIN' },
+  },
+})
 
 const getErrorCode = (e: unknown): CardErrorCode => {
   const problem = findProblemInApolloError(e as ApolloError)
@@ -64,6 +72,8 @@ const throwOnGraphQLErrors = (errors?: ReadonlyArray<unknown>) => {
 
 interface UseGooglePayProps {
   isEnabled: boolean
+  /** Whether device tokens (CRYPTOGRAM_3DS) are offered besides saved cards */
+  allowDeviceTokens: boolean
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
   productInformation: {
     amount: number
@@ -85,6 +95,7 @@ interface UseGooglePayReturn {
 
 export const useGooglePay = ({
   isEnabled,
+  allowDeviceTokens,
   paymentFlow,
   productInformation,
   onPaymentSuccess,
@@ -94,6 +105,10 @@ export const useGooglePay = ({
 }: UseGooglePayProps): UseGooglePayReturn => {
   const clientRef = useRef<google.payments.api.PaymentsClient | null>(null)
   const isProcessingRef = useRef(false)
+  const baseCardPaymentMethod = useMemo(
+    () => cardPaymentMethod(allowDeviceTokens),
+    [allowDeviceTokens],
+  )
   const [supportsGooglePay, setSupportsGooglePay] = useState(false)
   // The sheet closes as soon as the payer confirms, so the page shows the
   // charge in progress until it succeeds or fails
@@ -128,7 +143,7 @@ export const useGooglePay = ({
     clientRef.current
       .isReadyToPay({
         ...BASE_REQUEST,
-        allowedPaymentMethods: [BASE_CARD_PAYMENT_METHOD],
+        allowedPaymentMethods: [baseCardPaymentMethod],
       })
       .then(({ result }) => {
         if (isCurrent) {
@@ -142,7 +157,7 @@ export const useGooglePay = ({
     return () => {
       isCurrent = false
     }
-  }, [isEnabled, paymentFlow])
+  }, [isEnabled, paymentFlow, baseCardPaymentMethod])
 
   // click handler for google pay button
   const initiateGooglePay = useCallback(async () => {
@@ -164,7 +179,7 @@ export const useGooglePay = ({
         ...BASE_REQUEST,
         allowedPaymentMethods: [
           {
-            ...BASE_CARD_PAYMENT_METHOD,
+            ...baseCardPaymentMethod,
             // Valitor decrypts the token, so we never need a PCI DSS
             // attestation with Google for decrypting it ourselves
             tokenizationSpecification: {
@@ -265,6 +280,7 @@ export const useGooglePay = ({
     setThreeDSecureModalActive,
     chargeGooglePayMutationHook,
     chargeGooglePayVerifiedMutationHook,
+    baseCardPaymentMethod,
   ])
 
   const createGooglePayButton = useCallback(() => {
@@ -280,9 +296,9 @@ export const useGooglePay = ({
       buttonType: 'plain',
       buttonSizeMode: 'fill',
       buttonRadius: 8,
-      allowedPaymentMethods: [BASE_CARD_PAYMENT_METHOD],
+      allowedPaymentMethods: [baseCardPaymentMethod],
     })
-  }, [supportsGooglePay, initiateGooglePay])
+  }, [supportsGooglePay, initiateGooglePay, baseCardPaymentMethod])
 
   return {
     supportsGooglePay,

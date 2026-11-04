@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
@@ -30,59 +29,55 @@ import {
   useAppealCase,
   useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   appendAppealCaseIdQuery,
   applyAppealCaseUpdate,
 } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
+import {
+  type BenchSlot,
+  buildAppealCaseUpdate,
+  getBenchSlots,
+  getNewlyAssignedUserIds,
+  getSelectedJudgeIds,
+  hasUnsavedRoleChanges,
+  isAnyRoleUnfilled,
+  toPreviewAppealCase,
+} from './AppealCase.logic'
 import { useAppealCaseUsersQuery } from './appealCaseUsers.generated'
 import { appealCase as strings } from './AppealCase.strings'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type AssistantSelectOption = ReactSelectOption & { assistant: User }
 
-// The roles a Court of Appeals case can assign, in display order.
-type AssignedUsers = {
-  appealAssistant?: User | null
-  appealJudge1?: User | null
-  appealJudge2?: User | null
-  appealJudge3?: User | null
-}
-
 const AppealCase: FC = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { updateAppealCase, isUpdatingAppealCase } = useAppealCase()
-
-  const { formatMessage } = useIntl()
   const router = useRouter()
 
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   // Role selections are collected locally and only persisted to the server when
-  // the continue button is pressed.
-  const [assignedUsers, setAssignedUsers] = useState<AssignedUsers>(() => ({
-    appealAssistant: targetAppealCase?.appealAssistant,
-    appealJudge1: targetAppealCase?.appealJudge1,
-    appealJudge2: targetAppealCase?.appealJudge2,
-    appealJudge3: targetAppealCase?.appealJudge3,
-  }))
+  // the continue button is pressed. The bench is a list of seats in order; the
+  // first seat is the presiding judge.
+  const [appealAssistant, setAppealAssistant] = useState<
+    User | null | undefined
+  >(() => targetAppealCase?.appealAssistant)
+  const [judges, setJudges] = useState<BenchSlot[]>(() =>
+    getBenchSlots(targetAppealCase),
+  )
+
+  const savedAssistant = targetAppealCase?.appealAssistant
+  const savedJudges = targetAppealCase?.appealJudges
 
   useEffect(() => {
-    setAssignedUsers({
-      appealAssistant: targetAppealCase?.appealAssistant,
-      appealJudge1: targetAppealCase?.appealJudge1,
-      appealJudge2: targetAppealCase?.appealJudge2,
-      appealJudge3: targetAppealCase?.appealJudge3,
-    })
-  }, [
-    targetAppealCase?.appealAssistant,
-    targetAppealCase?.appealJudge1,
-    targetAppealCase?.appealJudge2,
-    targetAppealCase?.appealJudge3,
-  ])
+    setAppealAssistant(savedAssistant)
+    setJudges(getBenchSlots({ appealJudges: savedJudges }))
+  }, [savedAssistant, savedJudges])
 
   const { data: usersData } = useAppealCaseUsersQuery({
     fetchPolicy: 'no-cache',
@@ -95,13 +90,9 @@ const AppealCase: FC = () => {
       return { label: assistant.name ?? '', value: assistant.id, assistant }
     })
 
-  const selectedJudgeIds = [
-    assignedUsers.appealJudge1?.id,
-    assignedUsers.appealJudge2?.id,
-    assignedUsers.appealJudge3?.id,
-  ]
+  const selectedJudgeIds = getSelectedJudgeIds(judges)
 
-  const judges = (usersData?.users ?? [])
+  const judgeOptions = (usersData?.users ?? [])
     .filter(
       (user: User) =>
         user.role === UserRole.COURT_OF_APPEALS_JUDGE &&
@@ -111,45 +102,24 @@ const AppealCase: FC = () => {
       return { label: judge.name ?? '', value: judge.id, judge }
     })
 
-  const judgeSlots: {
-    field: keyof AssignedUsers
-    judge: User | undefined | null
-  }[] = [
-    { field: 'appealJudge1', judge: assignedUsers.appealJudge1 },
-    { field: 'appealJudge2', judge: assignedUsers.appealJudge2 },
-    { field: 'appealJudge3', judge: assignedUsers.appealJudge3 },
-  ]
+  const roles = { appealAssistant, judges }
 
   // Validate against the locally selected users (not yet persisted).
   const previewAppealCase = targetAppealCase
-    ? { ...targetAppealCase, ...assignedUsers }
+    ? toPreviewAppealCase(targetAppealCase, roles)
     : targetAppealCase
-
-  const isAnyRoleUnfilled =
-    !assignedUsers.appealAssistant?.id ||
-    !assignedUsers.appealJudge1?.id ||
-    !assignedUsers.appealJudge2?.id ||
-    !assignedUsers.appealJudge3?.id
-
-  const hasUnsavedRoleChanges =
-    assignedUsers.appealAssistant?.id !==
-      targetAppealCase?.appealAssistant?.id ||
-    assignedUsers.appealJudge1?.id !== targetAppealCase?.appealJudge1?.id ||
-    assignedUsers.appealJudge2?.id !== targetAppealCase?.appealJudge2?.id ||
-    assignedUsers.appealJudge3?.id !== targetAppealCase?.appealJudge3?.id
 
   // Prompt the user to confirm the allocation while a role is still unfilled or
   // an allocation differs from what is saved; otherwise it is already confirmed.
   const nextButtonText =
-    isAnyRoleUnfilled || hasUnsavedRoleChanges
+    isAnyRoleUnfilled(roles) || hasUnsavedRoleChanges(targetAppealCase, roles)
       ? 'Staðfesta úthlutun'
       : 'Halda áfram'
 
-  const handleChangedAssignee = (
-    field: keyof AssignedUsers,
-    assignee: User,
-  ) => {
-    setAssignedUsers((prev) => ({ ...prev, [field]: assignee }))
+  const handleChangedJudge = (seat: number, judge: User) => {
+    setJudges((prev) =>
+      prev.map((slot, index) => (index === seat ? judge : slot)),
+    )
   }
 
   const previousUrl = appendAppealCaseIdQuery(
@@ -165,48 +135,9 @@ const AppealCase: FC = () => {
     }
 
     // Collect any role changes since the last save.
-    const update: {
-      appealAssistantId?: string
-      appealJudge1Id?: string
-      appealJudge2Id?: string
-      appealJudge3Id?: string
-    } = {}
-
-    if (
-      assignedUsers.appealAssistant?.id !== targetAppealCase.appealAssistant?.id
-    ) {
-      update.appealAssistantId = assignedUsers.appealAssistant?.id
-    }
-    if (assignedUsers.appealJudge1?.id !== targetAppealCase.appealJudge1?.id) {
-      update.appealJudge1Id = assignedUsers.appealJudge1?.id
-    }
-    if (assignedUsers.appealJudge2?.id !== targetAppealCase.appealJudge2?.id) {
-      update.appealJudge2Id = assignedUsers.appealJudge2?.id
-    }
-    if (assignedUsers.appealJudge3?.id !== targetAppealCase.appealJudge3?.id) {
-      update.appealJudge3Id = assignedUsers.appealJudge3?.id
-    }
-
-    // A "newly assigned" user is one that was not already assigned to any of
-    // the roles before this change. This mirrors the backend logic that decides
-    // whether to send the APPEAL_JUDGES_ASSIGNED notification.
-    const previouslyAssignedIds = [
-      targetAppealCase.appealAssistant?.id,
-      targetAppealCase.appealJudge1?.id,
-      targetAppealCase.appealJudge2?.id,
-      targetAppealCase.appealJudge3?.id,
-    ].filter((id): id is string => Boolean(id))
-
-    const selectedIds = [
-      assignedUsers.appealAssistant?.id,
-      assignedUsers.appealJudge1?.id,
-      assignedUsers.appealJudge2?.id,
-      assignedUsers.appealJudge3?.id,
-    ].filter((id): id is string => Boolean(id))
-
-    const hasNewlyAssignedUser = selectedIds.some(
-      (id) => !previouslyAssignedIds.includes(id),
-    )
+    const update = buildAppealCaseUpdate(targetAppealCase, roles)
+    const hasNewlyAssignedUser =
+      getNewlyAssignedUserIds(targetAppealCase, roles).length > 0
 
     if (Object.keys(update).length > 0) {
       const updatedAppealCase = await updateAppealCase(
@@ -219,12 +150,15 @@ const AppealCase: FC = () => {
         return
       }
 
+      // The server returns the bench as stored when it changed; otherwise the
+      // local selection already matches it.
+      const savedAppealCase = toPreviewAppealCase(targetAppealCase, roles)
+
       setWorkingCase((prev) =>
         applyAppealCaseUpdate(prev, targetAppealCase.id, {
-          appealAssistant: assignedUsers.appealAssistant,
-          appealJudge1: assignedUsers.appealJudge1,
-          appealJudge2: assignedUsers.appealJudge2,
-          appealJudge3: assignedUsers.appealJudge3,
+          appealAssistant,
+          appealJudges:
+            updatedAppealCase.appealJudges ?? savedAppealCase.appealJudges,
         }),
       )
     }
@@ -252,74 +186,71 @@ const AppealCase: FC = () => {
         <PageHeader title={strings.title} />
         <FormContentContainer>
           <PageTitle>{strings.title}</PageTitle>
-          <Box component="section" marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(core.appealCaseNumberHeading)}
-            />
-            <CaseNumberInput />
-          </Box>
-
-          <Box component="section" marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(core.appealAssistantHeading)}
-            />
-            <Select
-              name="assistant"
-              label={strings.assistantLabel}
-              placeholder={strings.assistantPlaceholder}
-              value={
-                assignedUsers.appealAssistant
-                  ? {
-                      label: assignedUsers.appealAssistant.name ?? '',
-                      value: assignedUsers.appealAssistant.id,
-                    }
-                  : null
-              }
-              options={assistants}
-              onChange={(selectedOption) => {
-                handleChangedAssignee(
-                  'appealAssistant',
-                  (selectedOption as AssistantSelectOption).assistant,
-                )
-              }}
-              required
-            />
-          </Box>
-          <Box component="section" marginBottom={8}>
-            <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
-            <BlueBox>
-              {judgeSlots.map(({ field, judge }, index) => (
-                <Box marginBottom={2} key={`${index}`}>
-                  <Select
-                    name="judge"
-                    label={
-                      index === 0
-                        ? strings.judgeForepersonLabel
-                        : strings.judgeLabel
-                    }
-                    placeholder={
-                      index === 0
-                        ? strings.judgeForepersonPlaceholder
-                        : strings.judgePlaceholder
-                    }
-                    value={
-                      judge
-                        ? { label: judge.name ?? '', value: judge.id }
-                        : undefined
-                    }
-                    options={judges}
-                    onChange={(selectedOption) => {
-                      handleChangedAssignee(
-                        field,
-                        (selectedOption as JudgeSelectOption).judge,
-                      )
-                    }}
-                    required
-                  />
-                </Box>
-              ))}
-            </BlueBox>
-          </Box>
+          <div className={stack({ gap: 5 })}>
+            <Box component="section">
+              <SectionHeading title={core.appealCaseNumberHeading} />
+              <CaseNumberInput />
+            </Box>
+            <Box component="section">
+              <SectionHeading title={core.appealAssistantHeading} />
+              <Select
+                name="assistant"
+                label={strings.assistantLabel}
+                placeholder={strings.assistantPlaceholder}
+                value={
+                  appealAssistant
+                    ? {
+                        label: appealAssistant.name ?? '',
+                        value: appealAssistant.id,
+                      }
+                    : null
+                }
+                options={assistants}
+                onChange={(selectedOption) => {
+                  setAppealAssistant(
+                    (selectedOption as AssistantSelectOption).assistant,
+                  )
+                }}
+                required
+              />
+            </Box>
+            <Box component="section">
+              <SectionHeading title={core.appealJudgesHeading} />
+              <BlueBox>
+                <div className={stack({ gap: 2 })}>
+                  {judges.map((judge, seat) => (
+                    <Select
+                      key={seat}
+                      name="judge"
+                      label={
+                        seat === 0
+                          ? strings.judgeForepersonLabel
+                          : strings.judgeLabel
+                      }
+                      placeholder={
+                        seat === 0
+                          ? strings.judgeForepersonPlaceholder
+                          : strings.judgePlaceholder
+                      }
+                      value={
+                        judge
+                          ? { label: judge.name ?? '', value: judge.id }
+                          : undefined
+                      }
+                      options={judgeOptions}
+                      onChange={(selectedOption) => {
+                        handleChangedJudge(
+                          seat,
+                          (selectedOption as JudgeSelectOption).judge,
+                        )
+                      }}
+                      required
+                    />
+                  ))}
+                </div>
+              </BlueBox>
+            </Box>
+          </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter

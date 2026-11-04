@@ -1,6 +1,5 @@
 import type { ChangeEvent, FC, FocusEvent } from 'react'
 import { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
 import { Input } from '@island.is/island-ui/core'
@@ -43,8 +42,6 @@ const InputNationalId: FC<Props> = (props) => {
     onChange,
     disabled,
   } = props
-
-  const { formatMessage } = useIntl()
 
   const [errorMessage, setErrorMessage] = useState<string>()
   const [inputValue, setInputValue] = useState<string>(value ?? '')
@@ -97,18 +94,13 @@ const InputNationalId: FC<Props> = (props) => {
       hasError={Boolean(errorMessage)}
       placeholder={
         placeholder ??
-        formatMessage(
-          isDateOfBirth ? core.dateOfBirthPlaceholder : core.nationalId,
-        )
+        (isDateOfBirth ? core.dateOfBirthPlaceholder : core.nationalId)
       }
       required={required}
       name="nationalId"
       id="nationalId"
       autoComplete="off"
-      label={
-        label ??
-        formatMessage(isDateOfBirth ? core.dateOfBirth : core.nationalId)
-      }
+      label={label ?? (isDateOfBirth ? core.dateOfBirth : core.nationalId)}
     />
   )
 }

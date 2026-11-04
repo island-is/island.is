@@ -8,6 +8,7 @@ import {
 import { CardPaymentService } from '../cardPayment.service'
 import { RefundService } from '../../refund/refund.service'
 import { PaymentFlowService } from '../../paymentFlow/paymentFlow.service'
+import { GooglePayUnsettledChargeError } from './googlePay.utils'
 import {
   createGooglePayPaymentContext,
   createGooglePayPaymentSaga,
@@ -17,6 +18,7 @@ import {
   createMockCardPaymentService,
   createMockPaymentFlowService,
   getGooglePayChargeInput,
+  mockPaymentResult,
   PAYMENT_FLOW_ID,
 } from '../test/sagaTestUtils'
 
@@ -116,6 +118,80 @@ describe('Google Pay Payment Saga - CHARGE_GOOGLE_PAY step specific', () => {
       )
 
       expect(mockRefundService.refundWithCorrelationId).not.toHaveBeenCalled()
+    })
+
+    it('refunds by the decryption tracking data when the second decryption charged the token', async () => {
+      const input = getGooglePayChargeInput()
+      const context = createGooglePayPaymentContext(PAYMENT_FLOW_ID, input)
+      const decryptionTrackingData = {
+        ...context.trackingData,
+        correlationId: 'decryption-corr',
+      }
+      mockCardPaymentService.chargeGooglePay.mockRejectedValue(
+        new GooglePayUnsettledChargeError(
+          'UnknownCardError',
+          decryptionTrackingData,
+          mockPaymentResult,
+        ),
+      )
+      const saga = createGooglePayPaymentSaga(
+        mockCardPaymentService,
+        mockRefundService,
+        mockPaymentFlowService,
+        mockLogger,
+      )
+      const orchestrator = new PaymentOrchestrator<
+        GooglePayPaymentContext,
+        GooglePayPaymentStepResults
+      >(mockLogger, mockPaymentFlowService)
+
+      await expect(orchestrator.execute(saga, context)).rejects.toThrow(
+        'UnknownCardError',
+      )
+
+      expect(mockRefundService.refundWithCorrelationId).toHaveBeenCalledWith({
+        paymentTrackingData: decryptionTrackingData,
+        paymentFlowId: PAYMENT_FLOW_ID,
+      })
+      expect(context.metadata?.refundSucceeded).toBe(true)
+    })
+
+    it('reports a failed refund of a charge the gateway confirmed', async () => {
+      const input = getGooglePayChargeInput()
+      const context = createGooglePayPaymentContext(PAYMENT_FLOW_ID, input)
+      mockCardPaymentService.chargeGooglePay.mockRejectedValue(
+        new GooglePayUnsettledChargeError(
+          'UnknownCardError',
+          { ...context.trackingData, correlationId: 'decryption-corr' },
+          mockPaymentResult,
+        ),
+      )
+      mockRefundService.refundWithCorrelationId.mockRejectedValue(
+        new Error('Refund gateway error'),
+      )
+      const saga = createGooglePayPaymentSaga(
+        mockCardPaymentService,
+        mockRefundService,
+        mockPaymentFlowService,
+        mockLogger,
+      )
+      const orchestrator = new PaymentOrchestrator<
+        GooglePayPaymentContext,
+        GooglePayPaymentStepResults
+      >(mockLogger, mockPaymentFlowService)
+
+      await expect(orchestrator.execute(saga, context)).rejects.toThrow(
+        'UnknownCardError',
+      )
+
+      expect(context.metadata).toMatchObject({
+        refundSucceeded: false,
+        refundError: 'Refund gateway error',
+      })
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        expect.stringContaining('CRITICAL'),
+        expect.objectContaining({ correlationId: 'decryption-corr' }),
+      )
     })
   })
 

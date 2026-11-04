@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -16,8 +15,6 @@ import { strings } from './CaseFilesOverview.strings'
 const CaseFilesOverview = () => {
   const { workingCase } = useContext(FormContext)
 
-  const { formatMessage } = useIntl()
-
   return (
     <>
       <AppealCaseFilesOverview />
@@ -26,23 +23,23 @@ const CaseFilesOverview = () => {
         <PdfButton
           renderAs="row"
           caseId={workingCase.id}
-          title={formatMessage(core.pdfButtonRequest)}
+          title={core.pdfButtonRequest}
           pdfType="request"
-          elementId={formatMessage(core.pdfButtonRequest)}
+          elementId={core.pdfButtonRequest}
         />
         <PdfButton
           renderAs="row"
           caseId={workingCase.id}
-          title={formatMessage(core.pdfButtonRulingShortVersion)}
+          title={core.pdfButtonRulingShortVersion}
           pdfType="courtRecord"
-          elementId={formatMessage(core.pdfButtonRulingShortVersion)}
+          elementId={core.pdfButtonRulingShortVersion}
         />
         <PdfButton
           renderAs="row"
           caseId={workingCase.id}
-          title={formatMessage(core.pdfButtonRuling)}
+          title={core.pdfButtonRuling}
           pdfType="ruling"
-          elementId={formatMessage(core.pdfButtonRuling)}
+          elementId={core.pdfButtonRuling}
         >
           {workingCase.rulingSignatureDate ? (
             <SignedDocument

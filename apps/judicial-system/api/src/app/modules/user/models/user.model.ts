@@ -52,4 +52,7 @@ export class User {
 
   @Field(() => Boolean, { nullable: true })
   readonly canManageMessageSuspension?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly canManageServiceInterruptionBanner?: boolean
 }
