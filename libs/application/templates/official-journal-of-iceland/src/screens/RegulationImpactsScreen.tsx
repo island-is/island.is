@@ -56,12 +56,16 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
     })
 
   // The effective date is set on a later step. Once it is, impacts take it
-  // by default.
+  // by default, so impacts aren't edited before it has loaded. A failed load
+  // shows an error and falls back to no default; the meta and summary steps
+  // still warn about dates that differ from the effective date.
+  const [draftLoadDone, setDraftLoadDone] = useState(false)
   useEffect(() => {
     if (draftId && !draftLoaded) {
-      loadDraft()
+      loadDraft().finally(() => setDraftLoadDone(true))
     }
   }, [draftId, draftLoaded, loadDraft])
+  const effectiveDateReady = !draftId || draftLoaded || draftLoadDone
 
   // Impacts are loaded from DB (single source of truth)
   const {
@@ -508,6 +512,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
                   variant="ghost"
                   icon="document"
                   iconType="outline"
+                  disabled={!effectiveDateReady}
                   onClick={() => setChooseType('change')}
                 >
                   {f(regulation.impacts.alerts.makeTextChanges)}
@@ -517,6 +522,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
                   variant="ghost"
                   icon="fileTrayFull"
                   iconType="outline"
+                  disabled={!effectiveDateReady}
                   onClick={() => setChooseType('cancel')}
                 >
                   {f(regulation.impacts.alerts.revokeRegulation)}
@@ -567,7 +573,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
         )}
 
         {/* Impact list */}
-        {!impactsLoaded ? (
+        {!impactsLoaded || !effectiveDateReady ? (
           <SkeletonLoader height={80} borderRadius="large" />
         ) : (
           <ImpactList

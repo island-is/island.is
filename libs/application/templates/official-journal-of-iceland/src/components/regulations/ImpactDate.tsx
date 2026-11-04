@@ -14,6 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useEffect, useRef, useState } from 'react'
 import parseISO from 'date-fns/parseISO'
+import { toISODate } from '@island.is/regulations'
 import { formatDate } from '../../utils/formatAmendingUtils'
 
 // ---------------------------------------------------------------------------
@@ -61,6 +62,21 @@ export const ImpactDate = (props: ImpactDateProps) => {
     setHasCustomDate(isCustomDate(date, defaultDate))
     setSelectedDate(date ? new Date(date) : undefined)
   }, [date, defaultDate])
+
+  // Scheduled changes can raise minDate past the picked date while the modal
+  // is open. The modal then saves minDate, so show that instead.
+  useEffect(() => {
+    if (
+      hasCustomDate &&
+      selectedDate &&
+      minDate &&
+      toISODate(selectedDate) < toISODate(minDate)
+    ) {
+      setSelectedDate(minDate)
+      onChange(minDate)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasCustomDate, selectedDate, minDate])
 
   useEffect(() => {
     if (hasCustomDate && !selectedDate) {
