@@ -375,7 +375,8 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
             'incomePlanTable',
             latestIncomePlan.incomeTypeLines.map((income) => ({
               incomeType: income.incomeTypeName,
-              incomePerYear: String(income.totalSum),
+              incomePerYear:
+                income.totalSum != null ? String(income.totalSum) : '',
               currency: income.currency,
               income: RatioType.YEARLY,
               incomeCategory: income.incomeCategoryName,
