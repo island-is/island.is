@@ -251,11 +251,15 @@ export const describeWordChange = (
   }
   // Words removed from the start of a sentence, the next one now
   // capitalised: „Rekstrarleyfishafi eða eftir atvikum“ falla brott.
-  // Mid-sentence, the next word's new case is part of the change.
+  // Mid-sentence, the next word's new case is part of the change, also after
+  // the period of an abbreviation: "skv. Ríkislögreglustjóra".
   const lastOld = oldPart[oldPart.length - 1]
   const lastBefore = before[before.length - 1]
   if (
-    (!lastBefore || (lastBefore.glued && lastBefore.text === '.')) &&
+    (!lastBefore ||
+      (lastBefore.glued &&
+        lastBefore.text === '.' &&
+        !endsWithAbbreviation(detokenize(before.slice(0, -1))))) &&
     newPart.length === 1 &&
     oldPart.length > 1 &&
     lastOld.text.toLowerCase() === newPart[0].text.toLowerCase() &&

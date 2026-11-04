@@ -1669,6 +1669,26 @@ describe('formatAmendingBodyWithArticlePrefix: words and sentences', () => {
     )
   })
 
+  it('replaces words after an abbreviation, the next one now lowercase', () => {
+    expect(
+      change(
+        twoParagraphs(
+          FIRST,
+          'Umsókn skal send skv. ríkislögreglustjóra innan mánaðar.',
+        ),
+        twoParagraphs(
+          FIRST,
+          'Umsókn skal send skv. ákvörðun Ríkislögreglustjóra innan mánaðar.',
+        ),
+      ),
+    ).toBe(
+      article(
+        1,
+        '<p>Í stað orðanna „ákvörðun Ríkislögreglustjóra“ í 2. mgr. 1. gr. reglugerðarinnar kemur: ríkislögreglustjóra.</p>',
+      ),
+    )
+  })
+
   it('adds no period after a question mark', () => {
     expect(
       change(
