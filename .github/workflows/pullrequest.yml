@@ -269,7 +269,7 @@ jobs:
       - prepare
     permissions:
       contents: 'read'
-    runs-on: arc-shared
+    runs-on: arc-iorunner
     timeout-minutes: 35
     env:
       NODE_OPTIONS: --max-old-space-size=4096
