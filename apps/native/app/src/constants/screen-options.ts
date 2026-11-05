@@ -38,9 +38,10 @@ export const tabScreenOptions: StackScreenProps['options'] = {
   }),
 }
 
-// Sheet titles are centered and use the heading5 typography variant.
+// Sheet titles use the heading5 typography variant. iOS always centres them;
+// on Android they stay left-aligned.
 export const sheetHeaderTitleOptions: StackScreenProps['options'] = {
-  headerTitleAlign: 'center',
+  headerTitleAlign: 'left',
   headerTitleStyle: {
     fontFamily: 'IBMPlexSans_600SemiBold',
     fontSize: 16,
