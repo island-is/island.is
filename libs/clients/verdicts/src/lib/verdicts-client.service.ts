@@ -513,8 +513,12 @@ export class VerdictsClientService {
 
     // If a source request failed we can't know which keywords belong to it,
     // so treat membership as unknown (true) rather than hiding keywords
-    const supremeCourtFailed = supremeCourtResponse.status === 'rejected'
-    const otherCourtsFailed = goproResponse.status === 'rejected'
+    const supremeCourtFailed =
+      supremeCourtResponse.status === 'rejected' ||
+      supremeCourtResponse.value.succeeded === false
+    const otherCourtsFailed =
+      goproResponse.status === 'rejected' ||
+      goproResponse.value.succeeded === false
 
     const keywords = Array.from(keywordMap.entries()).map(
       ([label, sources]) => ({
