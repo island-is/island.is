@@ -32,6 +32,58 @@ Imports building data from FSRE, and creates/updates in the CMS a collection of 
 yarn nx run services-cms-importer:fsre-buildings-import
 ```
 
+### Lyfjastofnun Imports
+
+Four jobs importing published material from lyfjastofnun.is into the CMS. The
+guidelines, lists and forms jobs each scrape a static WordPress page and create
+generic list items linked to a single generic list; the news job reads the
+WordPress REST API instead. Where the Icelandic page links a document, the file
+is uploaded as a Contentful asset; where it links elsewhere, a `linkUrl` entry is
+created. English titles come from the corresponding page on ima.is.
+
+All four create entries as drafts — pass `--publish` only when you intend the
+created entries to go live immediately.
+
+```bash
+yarn nx run services-cms-importer:lyfjastofnun-instructions-import
+yarn nx run services-cms-importer:lyfjastofnun-lists-import
+yarn nx run services-cms-importer:lyfjastofnun-forms-import
+yarn nx run services-cms-importer:lyfjastofnun-news-import
+```
+
+#### Flags
+
+The nx targets already pass `--job`, so extra flags are easiest to add by
+running the built entry point directly:
+
+```bash
+yarn nx build services-cms-importer
+node dist/apps/services/cms-importer/main.cjs --job <job> [flags]
+```
+
+| Flag            | Jobs | Meaning                                                                                                       |
+| --------------- | ---- | ------------------------------------------------------------------------------------------------------------- |
+| `--publish`     | all  | publish created entries and assets instead of leaving drafts                                                  |
+| `--limit <n>`   | all  | maximum number of _new_ entries to create (applied after existing ones are filtered out). News defaults to 10 |
+| `--months <n>`  | news | how far back to fetch posts. Defaults to 12                                                                   |
+| `--slug <slug>` | news | import only this post, ignoring `--limit`                                                                     |
+
+`--limit` and `--months` must be positive integers; anything else is warned
+about and the default is used.
+
+A historical news backfill therefore looks like:
+
+```bash
+node dist/apps/services/cms-importer/main.cjs \
+  --job lyfjastofnun-news-import --months 36 --limit 500
+```
+
+Posts with no image of their own are given one from a fixed set of seed images
+(see `SEED_IMAGE_ASSET_IDS`), since the `news` content type requires an image
+and most lyfjastofnun.is posts have none. **Those seed assets must be published
+in Contentful before any article referencing them is published**, otherwise the
+articles render with no image.
+
 ### Web Sitemap
 
 Generates a sitemap.xml file in S3 (that gets forwarded to https://island.is/sitemap.xml) by fetching entries from the CMS
@@ -51,11 +103,12 @@ yarn nx run services-cms-importer:cms-cleanup
 ## Architecture
 
 - **main.ts** - Entry point that handles job routing based on command-line arguments
-- **app/grant-import/** - Grant import module with service and worker logic
-- **app/energy-fund-import/** - Energy fund import module
-- **app/fsre-buildings-import/** - FSRE buildings import module
-- **app/cms-cleanup/** - CMS cleanup module
-- **app/repositories/** - Data access layer for CMS, grants, and energy grants
+- **app/platform/** - Shared data access layer: Contentful management client, CMS repository, sync strategies and content-type mappers
+- **app/grants/jobs/** - Grant import module with service and worker logic
+- **app/organizations/energy-fund/jobs/** - Energy fund import module
+- **app/organizations/fsre-buildings/jobs/** - FSRE buildings import module
+- **app/organizations/lyfjastofnun/** - Shared lyfjastofnun.is scraper/repository, with one module per job under `jobs/`
+- **app/contentful-maintenance/jobs/** - Web sitemap and CMS cleanup modules
 
 ## Building
 
@@ -79,7 +132,7 @@ nx cms-cleanup services-cms-importer
 Or run the built application directly with job arguments:
 
 ```bash
-yarn nx dist/apps/services/cms-importer/main.js --job grant-import
+node dist/apps/services/cms-importer/main.cjs --job grant-import
 ```
 
 ## Testing
