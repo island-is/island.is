@@ -7,6 +7,7 @@ import {
   FileUploadStatus,
   InputFileUpload,
   Text,
+  type UploadFile,
 } from '@island.is/island-ui/core'
 import { COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE } from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -77,7 +78,7 @@ const VerdictAppealStatementUpload = () => {
     removeUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
   const { onOpenFile } = useFileList({ caseId: workingCase.id })
-  const { handleUpload } = useS3Upload(
+  const { handleUpload, handleRemove } = useS3Upload(
     workingCase.id,
     party?.ids.defendantId ?? undefined,
     party?.ids.civilClaimantId ?? undefined,
@@ -114,6 +115,12 @@ const VerdictAppealStatementUpload = () => {
       defendantId: party?.ids.defendantId ?? undefined,
       civilClaimantId: party?.ids.civilClaimantId ?? undefined,
     })
+
+  // A staged file only has a row to lose. One the submit already uploaded,
+  // before the filing failed and left the court here, is on the case and has
+  // to come off it too, or it stays there behind whatever replaces it.
+  const remove = (file: UploadFile) =>
+    file.key ? handleRemove(file, removeUploadFile) : removeUploadFile(file)
 
   const submit = async () => {
     if (!party || !verdictAppealCase || isSubmitting) {
@@ -201,7 +208,7 @@ const VerdictAppealStatementUpload = () => {
                   name="appealStatement"
                   files={statementFiles}
                   onChange={(files) => stage(files, categories.statement)}
-                  onRemove={removeUploadFile}
+                  onRemove={remove}
                   onOpenFile={onOpenFile}
                 />
               </section>
@@ -218,7 +225,7 @@ const VerdictAppealStatementUpload = () => {
                   name="appealCaseFiles"
                   files={caseFiles}
                   onChange={(files) => stage(files, categories.caseFile)}
-                  onRemove={removeUploadFile}
+                  onRemove={remove}
                   onOpenFile={onOpenFile}
                 />
               </section>

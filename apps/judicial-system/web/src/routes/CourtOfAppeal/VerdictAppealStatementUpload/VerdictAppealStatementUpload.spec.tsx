@@ -25,6 +25,7 @@ import VerdictAppealStatementUpload from './VerdictAppealStatementUpload'
 const mockPush = jest.fn()
 const mockFileAppealStatement = jest.fn()
 const mockHandleUpload = jest.fn()
+const mockHandleRemove = jest.fn()
 const mockRefreshCase = jest.fn()
 let mockQuery: Record<string, string> = {}
 
@@ -41,7 +42,10 @@ jest.mock(
 jest.mock('../../../utils/hooks/useS3Upload/useS3Upload', () => ({
   ...jest.requireActual('../../../utils/hooks/useS3Upload/useS3Upload'),
   __esModule: true,
-  default: () => ({ handleUpload: mockHandleUpload, handleRemove: jest.fn() }),
+  default: () => ({
+    handleUpload: mockHandleUpload,
+    handleRemove: mockHandleRemove,
+  }),
 }))
 
 jest.mock('../../../utils/hooks/useFileList', () => ({
@@ -147,6 +151,7 @@ describe('VerdictAppealStatementUpload', () => {
     mockRefreshCase.mockClear()
     mockFileAppealStatement.mockReset()
     mockHandleUpload.mockReset()
+    mockHandleRemove.mockReset()
     mockQuery = { defendantId: 'd1' }
   })
 
@@ -281,6 +286,34 @@ describe('VerdictAppealStatementUpload', () => {
     await waitFor(() => expect(mockFileAppealStatement).toHaveBeenCalled())
     expect(mockPush).not.toHaveBeenCalled()
     expect(mockRefreshCase).not.toHaveBeenCalled()
+  })
+
+  it('takes a file off the case once the submit has put it there', async () => {
+    mockHandleUpload.mockImplementation(async (files, updateFile) => {
+      files.forEach((file: { name: string }) =>
+        updateFile({ ...file, key: `s3/${file.name}`, percent: 100 }, 'f1'),
+      )
+      return 'ALL_SUCCEEDED'
+    })
+    mockFileAppealStatement.mockResolvedValue(undefined)
+    const { container } = renderPage()
+
+    // Staged only: nothing on the case to delete.
+    await chooseStatement(container)
+    await userEvent.click(screen.getByLabelText('Fjarlægja skrá'))
+    expect(mockHandleRemove).not.toHaveBeenCalled()
+    expect(screen.queryByText('greinargerd.pdf')).not.toBeInTheDocument()
+
+    // Uploaded by a submit whose filing then failed: on the case now.
+    await chooseStatement(container)
+    await userEvent.click(screen.getByTestId('continueButton'))
+    await waitFor(() => expect(mockFileAppealStatement).toHaveBeenCalled())
+    await userEvent.click(await screen.findByLabelText('Fjarlægja skrá'))
+
+    expect(mockHandleRemove).toHaveBeenCalledWith(
+      expect.objectContaining({ key: 's3/greinargerd.pdf' }),
+      expect.any(Function),
+    )
   })
 
   it('leads back to the deadlines with the appeal id', async () => {
