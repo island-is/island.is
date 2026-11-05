@@ -316,6 +316,41 @@ describe('VerdictAppealStatementUpload', () => {
     )
   })
 
+  it('holds the submit while a file is coming off the case', async () => {
+    let finishRemoval: () => void = () => undefined
+    mockHandleUpload.mockImplementation(async (files, updateFile) => {
+      files.forEach((file: { name: string }) =>
+        updateFile({ ...file, key: `s3/${file.name}`, percent: 100 }, 'f1'),
+      )
+      return 'ALL_SUCCEEDED'
+    })
+    mockFileAppealStatement.mockResolvedValue(undefined)
+    mockHandleRemove.mockImplementation(
+      () => new Promise<void>((resolve) => (finishRemoval = resolve)),
+    )
+    const { container } = renderPage()
+
+    await chooseStatement(container)
+    await userEvent.click(screen.getByTestId('continueButton'))
+    await waitFor(() =>
+      expect(mockFileAppealStatement).toHaveBeenCalledTimes(1),
+    )
+
+    // The row stays while the case lets go of the file, so the button
+    // cannot read readiness off it.
+    await userEvent.click(await screen.findByLabelText('Fjarlægja skrá'))
+    expect(screen.getByTestId('continueButton')).toBeDisabled()
+    // Past the disabled button, straight at the handler.
+    fireEvent.click(screen.getByTestId('continueButton'))
+    expect(mockFileAppealStatement).toHaveBeenCalledTimes(1)
+
+    finishRemoval()
+
+    await waitFor(() =>
+      expect(screen.getByTestId('continueButton')).toBeEnabled(),
+    )
+  })
+
   it('leads back to the deadlines with the appeal id', async () => {
     renderPage()
 

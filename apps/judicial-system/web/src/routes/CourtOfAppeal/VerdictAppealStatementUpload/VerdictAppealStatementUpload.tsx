@@ -62,6 +62,7 @@ const VerdictAppealStatementUpload = () => {
   // Covers the upload and the filing together: the staged rows read as done
   // throughout, so the box's own state cannot tell the button to wait.
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [pendingRemovals, setPendingRemovals] = useState(0)
 
   // Read directly rather than through the shared resolver, as the deadlines
   // page does: this page is never about the case-level ruling appeal.
@@ -118,12 +119,27 @@ const VerdictAppealStatementUpload = () => {
 
   // A staged file only has a row to lose. One the submit already uploaded,
   // before the filing failed and left the court here, is on the case and has
-  // to come off it too, or it stays there behind whatever replaces it.
-  const remove = (file: UploadFile) =>
-    file.key ? handleRemove(file, removeUploadFile) : removeUploadFile(file)
+  // to come off it too, or it stays there behind whatever replaces it. Its
+  // row stays until the case has let go of it, so the submit is held off
+  // meanwhile: filed on a statement that is halfway out would record a
+  // statement nobody can open.
+  const remove = async (file: UploadFile) => {
+    if (!file.key) {
+      removeUploadFile(file)
+      return
+    }
+
+    setPendingRemovals((count) => count + 1)
+
+    try {
+      await handleRemove(file, removeUploadFile)
+    } finally {
+      setPendingRemovals((count) => count - 1)
+    }
+  }
 
   const submit = async () => {
-    if (!party || !verdictAppealCase || isSubmitting) {
+    if (!party || !verdictAppealCase || isSubmitting || pendingRemovals > 0) {
       return
     }
 
@@ -241,7 +257,10 @@ const VerdictAppealStatementUpload = () => {
                     : 'Hlaða upp greinargerð',
                   colorScheme: someFilesError ? 'destructive' : 'default',
                   onClick: submit,
-                  disabled: statementFiles.length === 0 || isSubmitting,
+                  disabled:
+                    statementFiles.length === 0 ||
+                    isSubmitting ||
+                    pendingRemovals > 0,
                   loading: !allFilesDoneOrError || isSubmitting,
                   testId: 'continueButton',
                 },
