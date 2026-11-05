@@ -414,10 +414,14 @@ export class SdfScreenService {
       return resolvedIndex
     }
 
-    // No saved page: resume at the first page that isn't fully answered, and
-    // save it so later loads stay there.
+    // No saved page: resume at the first shown page that isn't fully
+    // answered, and save it so later loads stay there.
     if (!ephemeral && application.pageIndex == null) {
-      const resolvedIndex = findCurrentScreen(screens, filteredAnswers)
+      const resolvedIndex = moveToScreen(
+        screens,
+        findCurrentScreen(screens, filteredAnswers),
+        true,
+      )
       await this.applicationService.update(applicationId, {
         pageIndex: resolvedIndex,
       })
@@ -1064,8 +1068,9 @@ export class SdfScreenService {
       )
       if (targetIndex >= 0) {
         const newPageIndex = moveToScreen(screens, targetIndex, false)
-        const currentPageIndex: number = (application as any).pageIndex ?? 0
-        if (newPageIndex !== currentPageIndex) {
+        // A missing saved page counts as different from every target, so the
+        // target is always saved then.
+        if (newPageIndex !== application.pageIndex) {
           await this.applicationService.update(applicationId, {
             pageIndex: newPageIndex,
           })

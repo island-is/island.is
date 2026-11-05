@@ -94,6 +94,32 @@ const twoPageForm = () =>
     ],
   })
 
+// Page 0 is never shown; page 1 is the first page the applicant can open.
+const hiddenFirstPageForm = () =>
+  buildForm({
+    id: 'form',
+    title: 'Form',
+    children: [
+      buildSection({
+        id: 'section',
+        title: 'Section',
+        children: [
+          buildMultiField({
+            id: 'page0',
+            title: 'Page 0',
+            condition: () => false,
+            children: [buildTextField({ id: 'field0', title: 'Field 0' })],
+          }),
+          buildMultiField({
+            id: 'page1',
+            title: 'Page 1',
+            children: [buildTextField({ id: 'field1', title: 'Field 1' })],
+          }),
+        ],
+      }),
+    ],
+  })
+
 // Page 0 holds a single text field with a static default.
 const defaultedFieldForm = (fieldId: string, defaultValue: string) => () =>
   buildForm({
@@ -283,7 +309,7 @@ const createTemplate = (
     },
   })
 
-type ApplicationRow = ApplicationWithAttachments & { pageIndex: number }
+type ApplicationRow = ApplicationWithAttachments & { pageIndex: number | null }
 
 const createApplicationRow = (
   overrides: Partial<ApplicationRow>,
@@ -895,6 +921,19 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       label: 'to the first page of an application with answers',
       form: twoPageForm,
       application: { pageIndex: 1, answers: { field0: 'value' } },
+      dto: { actionType: SdfActionType.GO_TO_PAGE, event: 'page0' },
+      saves: [{ pageIndex: 0 }],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+      screenIndex: 0,
+    },
+    {
+      // Going to the first page saves it, so the reload that follows does not
+      // resume at the first unanswered page instead.
+      label: 'to the first page of an application with no saved page',
+      form: twoPageForm,
+      application: { pageIndex: null, answers: { field0: 'value' } },
       dto: { actionType: SdfActionType.GO_TO_PAGE, event: 'page0' },
       saves: [{ pageIndex: 0 }],
       persistingActions: [],
@@ -1650,26 +1689,38 @@ describe('SDF action persistence', () => {
 describe('SDF screen load without a step', () => {
   beforeEach(() => jest.clearAllMocks())
 
-  it.each([
+  it.each<
+    Pick<PersistenceCase, 'label' | 'form' | 'saves'> &
+      Pick<ApplicationRow, 'pageIndex' | 'answers'> & { screenIndex: number }
+  >([
     {
       label: 'stays on the first page when it is the saved one',
+      form: twoPageForm,
       pageIndex: 0,
+      answers: { field0: 'value' },
       saves: [],
       screenIndex: 0,
     },
     {
       label: 'resumes at the first unanswered page when none is saved',
+      form: twoPageForm,
       pageIndex: null,
+      answers: { field0: 'value' },
       saves: [{ pageIndex: 1 }],
       screenIndex: 1,
     },
-  ])('$label', async ({ pageIndex, saves, screenIndex }) => {
-    const row = createApplicationRow({
-      pageIndex: pageIndex as number,
-      answers: { field0: 'value' },
-    })
+    {
+      label: 'skips a hidden first page when none is saved',
+      form: hiddenFirstPageForm,
+      pageIndex: null,
+      answers: {},
+      saves: [{ pageIndex: 1 }],
+      screenIndex: 1,
+    },
+  ])('$label', async ({ form, pageIndex, answers, saves, screenIndex }) => {
+    const row = createApplicationRow({ pageIndex, answers })
     getApplicationTemplateByTypeIdMock.mockResolvedValue(
-      createTemplate(twoPageForm, permissiveSchema, 'all'),
+      createTemplate(form, permissiveSchema, 'all'),
     )
     const { controller, applicationService } = buildController(row, {
       persistingAction: succeeded,
