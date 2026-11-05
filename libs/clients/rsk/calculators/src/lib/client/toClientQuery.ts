@@ -1,7 +1,7 @@
 import type { ZodRawShape } from 'zod'
 
-import { isRskRatio } from './isRskRatio'
-import { percentToRskRatio } from './percentToRskRatio'
+import { isRskRatio } from '../utils/isRskRatio'
+import { percentToRskRatio } from '../utils/percentToRskRatio'
 
 /* Maps client input to the generated client's query. Today that only scales
  * whole percentages (0-100) to the 0-1 ratios RSK expects, detected from the

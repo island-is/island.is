@@ -51,6 +51,26 @@ describe('CalculatorsClientService.getCalculator', () => {
     ])
   })
 
+  it('derives object outputs with sorted itemFields', () => {
+    const fyrraTimabil = service
+      .getCalculator('vehicleTax')
+      .outputFields.find((field) => field.name === 'fyrraTimabil')
+
+    expect(fyrraTimabil?.kind).toBe('object')
+    expect(
+      fyrraTimabil?.kind === 'object'
+        ? fyrraTimabil.itemFields.map((field) => field.name)
+        : [],
+    ).toEqual([
+      'bifreidagjald',
+      'bifreidagjaldAlls',
+      'dagar',
+      'lokTimabils',
+      'upphafTimabils',
+      'urvinnslugjald',
+    ])
+  })
+
   it('does not mutate the authored contract', () => {
     const names = (contract: {
       inputFields: readonly { name: string }[]

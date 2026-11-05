@@ -7,7 +7,9 @@
   "paths": {
     "/api/Barnabaetur": {
       "get": {
-        "tags": ["Barnabaetur"],
+        "tags": [
+          "Barnabaetur"
+        ],
         "summary": "",
         "parameters": [
           {
@@ -116,7 +118,9 @@
     },
     "/api/Bifreidagjold": {
       "get": {
-        "tags": ["Bifreidagjold"],
+        "tags": [
+          "Bifreidagjold"
+        ],
         "summary": "",
         "parameters": [
           {
@@ -186,7 +190,9 @@
     },
     "/api/Bifreidahlunnindi": {
       "get": {
-        "tags": ["Bifreidahlunnindi"],
+        "tags": [
+          "Bifreidahlunnindi"
+        ],
         "summary": "",
         "parameters": [
           {
@@ -268,7 +274,9 @@
     },
     "/api/FyrningOkutaekja": {
       "get": {
-        "tags": ["FyrningOkutaekja"],
+        "tags": [
+          "FyrningOkutaekja"
+        ],
         "summary": "",
         "parameters": [
           {
@@ -289,10 +297,7 @@
             "description": "",
             "required": true,
             "schema": {
-              "maximum": 12,
-              "minimum": 1,
-              "type": "integer",
-              "format": "int32"
+              "$ref": "#/components/schemas/Manudur"
             }
           },
           {
@@ -311,10 +316,7 @@
             "description": "",
             "required": true,
             "schema": {
-              "maximum": 12,
-              "minimum": 1,
-              "type": "integer",
-              "format": "int32"
+              "$ref": "#/components/schemas/Manudur"
             }
           },
           {
@@ -354,7 +356,9 @@
     },
     "/api/Stadgreidsla": {
       "get": {
-        "tags": ["Stadgreidsla"],
+        "tags": [
+          "Stadgreidsla"
+        ],
         "summary": "",
         "parameters": [
           {
@@ -394,10 +398,7 @@
             "description": "",
             "required": true,
             "schema": {
-              "maximum": 12,
-              "minimum": 1,
-              "type": "integer",
-              "format": "int32"
+              "$ref": "#/components/schemas/Manudur"
             }
           },
           {
@@ -428,7 +429,6 @@
             "name": "sereignHlutfall",
             "in": "query",
             "description": "Hlutfall sem er greitt í séreignarsparnað, gefið sem tala milli 0 og 1",
-            "required": true,
             "schema": {
               "maximum": 1,
               "minimum": 0,
@@ -452,7 +452,6 @@
             "name": "nytingSkattkortsMaka",
             "in": "query",
             "description": "Nýting skattkorts maka, gefið sem tala milli 0 og 1",
-            "required": true,
             "schema": {
               "maximum": 1,
               "minimum": 0,
@@ -464,7 +463,6 @@
             "name": "uppsafnadurPersonuafslattur",
             "in": "query",
             "description": "",
-            "required": true,
             "schema": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -476,7 +474,6 @@
             "name": "orlof",
             "in": "query",
             "description": "",
-            "required": true,
             "schema": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -488,7 +485,6 @@
             "name": "stettarfelag",
             "in": "query",
             "description": "",
-            "required": true,
             "schema": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -500,7 +496,6 @@
             "name": "annad",
             "in": "query",
             "description": "Annar frádráttur",
-            "required": true,
             "schema": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -512,7 +507,6 @@
             "name": "motframlagLifeyrissjodur",
             "in": "query",
             "description": "Mótframlag, gefið sem tala milli 0 og 1",
-            "required": true,
             "schema": {
               "maximum": 1,
               "minimum": 0,
@@ -524,7 +518,6 @@
             "name": "okutaekjastyrkurUtan",
             "in": "query",
             "description": "",
-            "required": true,
             "schema": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -536,7 +529,6 @@
             "name": "idgjaldSlysatryggingSjomanna",
             "in": "query",
             "description": "",
-            "required": true,
             "schema": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -571,7 +563,9 @@
     },
     "/api/Vaxtabaetur": {
       "get": {
-        "tags": ["Vaxtabaetur"],
+        "tags": [
+          "Vaxtabaetur"
+        ],
         "summary": "",
         "parameters": [
           {
@@ -693,19 +687,49 @@
         "additionalProperties": false
       },
       "Gjaldtimabil": {
-        "enum": ["1. jan - 30. júlí", "1. júlí - 31. des"],
+        "enum": [
+          "1. jan - 30. júlí",
+          "1. júlí - 31. des"
+        ],
         "type": "string"
       },
       "Hjuskaparstada": {
-        "enum": ["Gift/Í sambúð", "Einstætt foreldri"],
+        "enum": [
+          "Gift/Í sambúð",
+          "Einstætt foreldri"
+        ],
         "type": "string"
       },
       "HjuskaparstadaStadgreidsla": {
-        "enum": ["Einhleypingur", "Einstætt foreldri", "Hjón/sambúð"],
+        "enum": [
+          "Einhleypingur",
+          "Einstætt foreldri",
+          "Hjón/sambúð"
+        ],
         "type": "string"
       },
       "LaunGreidast": {
-        "enum": ["Vikulega", "Mánaðarlega"],
+        "enum": [
+          "Vikulega",
+          "Mánaðarlega"
+        ],
+        "type": "string"
+      },
+      "Manudur": {
+        "enum": [
+          "jan",
+          "feb",
+          "mar",
+          "apr",
+          "maí",
+          "jún",
+          "júl",
+          "ágú",
+          "sep",
+          "okt",
+          "nóv",
+          "des"
+        ],
         "type": "string"
       },
       "NidurstadaBarnabaetur": {
@@ -736,6 +760,8 @@
             "format": "int32"
           },
           "skerdingarhlutfall": {
+            "maximum": 1,
+            "minimum": 0,
             "type": "number",
             "format": "double"
           },
@@ -767,6 +793,8 @@
             "nullable": true
           },
           "umframskerdingarhlutfall": {
+            "maximum": 1,
+            "minimum": 0,
             "type": "number",
             "format": "double",
             "nullable": true
@@ -808,6 +836,8 @@
             "format": "int32"
           },
           "skerdingarhlutfallUndir7ara": {
+            "maximum": 1,
+            "minimum": 0,
             "type": "number",
             "format": "double"
           },
@@ -978,10 +1008,14 @@
             "format": "int32"
           },
           "lifeyrisjodurProsenta": {
+            "maximum": 1,
+            "minimum": 0,
             "type": "number",
             "format": "double"
           },
           "sereignProsenta": {
+            "maximum": 1,
+            "minimum": 0,
             "type": "number",
             "format": "double"
           },

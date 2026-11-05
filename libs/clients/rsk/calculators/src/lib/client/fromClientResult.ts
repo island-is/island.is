@@ -1,8 +1,8 @@
 import type { ZodRawShape, ZodTypeAny } from 'zod'
 import { ZodArray, ZodObject } from 'zod'
 
-import { isRskRatio, unwrap } from './isRskRatio'
-import { rskRatioToPercent } from './rskRatioToPercent'
+import { isRskRatio, unwrap } from '../utils/isRskRatio'
+import { rskRatioToPercent } from '../utils/rskRatioToPercent'
 
 const fromClientValue = (schema: ZodTypeAny, value: unknown): unknown => {
   const inner = unwrap(schema)
