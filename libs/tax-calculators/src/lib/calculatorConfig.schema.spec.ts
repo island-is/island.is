@@ -593,6 +593,53 @@ describe('calculatorConfigSchema', () => {
     })
   })
 
+  describe('numberType', () => {
+    it('keeps a percentage numberType on an input field, output value field, item field and output total', () => {
+      const result = calculatorConfigSchema.safeParse(
+        config({
+          inputSections: [
+            section({ fields: [field({ numberType: 'percentage' })] }),
+          ],
+          outputTotal: outputTotal({ numberType: 'percentage' }),
+          outputSections: [
+            outputSection({
+              fields: [
+                outputField({
+                  numberType: 'percentage',
+                  itemFields: [itemField({ numberType: 'percentage' })],
+                }),
+              ],
+            }),
+          ],
+        }),
+      )
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.inputSections[0].fields[0]).toHaveProperty(
+          'numberType',
+          'percentage',
+        )
+        expect(result.data.outputTotal).toHaveProperty(
+          'numberType',
+          'percentage',
+        )
+        expect(result.data.outputSections[0].fields[0]).toMatchObject({
+          numberType: 'percentage',
+          itemFields: [{ numberType: 'percentage' }],
+        })
+      }
+    })
+
+    it('rejects a numberType outside the declared list on an input field', () => {
+      const result = calculatorConfigSchema.safeParse(
+        config({
+          inputSections: [section({ fields: [field({ numberType: 'month' })] })],
+        }),
+      )
+      expect(result.success).toBe(false)
+    })
+  })
+
   describe('input content rows', () => {
     it('accepts a content row with no key or size', () => {
       const result = calculatorConfigSchema.safeParse(
