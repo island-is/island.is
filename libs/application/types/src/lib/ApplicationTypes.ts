@@ -121,8 +121,9 @@ export interface ApplicationConfiguration {
   useSdf?: boolean
 }
 
+// Keyed by ApplicationTypes so that every application type must have an entry.
 export const ApplicationConfigurations: Record<
-  string,
+  ApplicationTypes,
   ApplicationConfiguration
 > = {
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
