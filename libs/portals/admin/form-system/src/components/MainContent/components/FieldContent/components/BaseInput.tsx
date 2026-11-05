@@ -2,6 +2,8 @@ import { FormSystemField } from '@island.is/api/schema'
 import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
+  Accordion,
+  AccordionItem,
   Bullet,
   BulletList,
   Checkbox,
@@ -325,53 +327,62 @@ export const BaseInput = () => {
         </Row>
       )}
       {currentItem.fieldType === FieldTypesEnum.DATE_PICKER && (
-        <>
-          <Row>
-            <Column span="10/10">
-              <Stack space={2}>
-                <Text>
-                  Eftirfarandi stillingar eru valfrjálsar og hægt er að nota þær
-                  saman eða í sitthvoru lagi.
-                </Text>
-                <BulletList color="dark400" space={0}>
-                  <Bullet>
-                    <strong>Fastar dagsetningar:</strong> Veldu fyrstu og/eða
-                    síðustu leyfilegu dagsetningu.
-                  </Bullet>
-                  <Bullet>
-                    <strong>Fjöldi daga:</strong> Tilgreindu fjölda daga sem
-                    bætist við dagsetninguna þegar umsækjandi fyllir út
-                    umsóknina.
+        <Stack space={2}>
+          <Accordion dividerOnBottom={false}>
+            <AccordionItem
+              key={currentItem.id}
+              id={`date-settings-${currentItem.id}`}
+              label="Ítarlegar stillingar"
+            >
+              <Row>
+                <Column span="10/10">
+                  <Stack space={2}>
+                    <Text>
+                      Eftirfarandi stillingar eru valfrjálsar og hægt er að nota
+                      þær saman eða í sitthvoru lagi.
+                    </Text>
                     <BulletList color="dark400" space={0}>
                       <Bullet>
-                        <code>0</code> merkir daginn í dag.
+                        <strong>Fastar dagsetningar:</strong> Veldu fyrstu
+                        og/eða síðustu leyfilegu dagsetningu.
                       </Bullet>
                       <Bullet>
-                        <code>7</code> merkir eftir sjö daga.
+                        <strong>Fjöldi daga:</strong> Tilgreindu fjölda daga sem
+                        bætist við dagsetninguna þegar umsækjandi fyllir út
+                        umsóknina.
+                        <BulletList color="dark400" space={0}>
+                          <Bullet>
+                            <code>0</code> merkir daginn í dag.
+                          </Bullet>
+                          <Bullet>
+                            <code>7</code> merkir eftir sjö daga.
+                          </Bullet>
+                          <Bullet>
+                            <code>-7</code> merkir fyrir sjö dögum.
+                          </Bullet>
+                        </BulletList>
                       </Bullet>
                       <Bullet>
-                        <code>-7</code> merkir fyrir sjö dögum.
+                        <strong>Samspil stillinga:</strong> Ef bæði föst
+                        dagsetning og dagafjöldi eru tilgreind gilda
+                        eftirfarandi takmarkanir:
+                        <BulletList color="dark400" space={0}>
+                          <Bullet>
+                            Fyrsta leyfilega dagsetning getur aldrei verið fyrr
+                            en föst upphafsdagsetning.
+                          </Bullet>
+                          <Bullet>
+                            Síðasta leyfilega dagsetning getur aldrei verið
+                            síðar en föst lokadagsetning.
+                          </Bullet>
+                        </BulletList>
                       </Bullet>
                     </BulletList>
-                  </Bullet>
-                  <Bullet>
-                    <strong>Samspil stillinga:</strong> Ef bæði föst dagsetning
-                    og dagafjöldi eru tilgreind gilda eftirfarandi takmarkanir:
-                    <BulletList color="dark400" space={0}>
-                      <Bullet>
-                        Fyrsta leyfilega dagsetning getur aldrei verið fyrr en
-                        föst upphafsdagsetning.
-                      </Bullet>
-                      <Bullet>
-                        Síðasta leyfilega dagsetning getur aldrei verið síðar en
-                        föst lokadagsetning.
-                      </Bullet>
-                    </BulletList>
-                  </Bullet>
-                </BulletList>
-              </Stack>
-            </Column>
-          </Row>
+                  </Stack>
+                </Column>
+              </Row>
+            </AccordionItem>
+          </Accordion>
           <Row>
             {(['minDate', 'maxDate'] as const).map((property) => (
               <Column key={property} span={['10/10', '5/10']}>
@@ -453,7 +464,7 @@ export const BaseInput = () => {
               ),
             )}
           </Row>
-        </>
+        </Stack>
       )}
     </Stack>
   )
