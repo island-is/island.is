@@ -114,23 +114,23 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
         })
       : isDigitalDocumentFlow
       ? [
-        ...EmailHeader({ applicationFor, firstName }),
-        ...EmailNextSteps(applicationFor),
-      ]
-    : [
-        ...EmailHeader({ applicationFor, firstName }),
-        ...EmailRequirements(
-          applicationFor,
-          willBringQualityPhoto,
-          willBringHealthCert,
-        ),
-        ...(willBringQualityPhoto || willBringHealthCert
-          ? []
-          : EmailComplete({
-              selectedDistrictCommissioner: jurisdictionInfo?.name,
-              isHomeDelivery,
-            })),
-      ]
+          ...EmailHeader({ applicationFor, firstName }),
+          ...EmailNextSteps(applicationFor),
+        ]
+      : [
+          ...EmailHeader({ applicationFor, firstName }),
+          ...EmailRequirements(
+            applicationFor,
+            willBringQualityPhoto,
+            willBringHealthCert,
+          ),
+          ...(willBringQualityPhoto || willBringHealthCert
+            ? []
+            : EmailComplete({
+                selectedDistrictCommissioner: jurisdictionInfo?.name,
+                isHomeDelivery,
+              })),
+        ]
 
   return {
     from: {

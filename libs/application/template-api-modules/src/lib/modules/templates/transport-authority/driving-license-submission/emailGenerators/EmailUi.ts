@@ -165,9 +165,7 @@ type EmailDigitalFlowOptions = {
 }
 
 const withDeliveryLocation = (str: string, location?: string) =>
-  location
-    ? str.replace('%s', () => location)
-    : str.replace(/\s*\(%s\)/, '')
+  location ? str.replace('%s', () => location) : str.replace(/\s*\(%s\)/, '')
 
 export const EmailDigitalFlow = ({
   applicationFor,

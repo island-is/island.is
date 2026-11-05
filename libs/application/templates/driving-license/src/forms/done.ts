@@ -26,9 +26,7 @@ const getDeliveryLocation = (
   answers: FormValue,
   externalData: ExternalData,
 ): string | undefined => {
-  if (
-    getValueViaPath(answers, 'delivery.deliveryMethod') !== Pickup.DISTRICT
-  ) {
+  if (getValueViaPath(answers, 'delivery.deliveryMethod') !== Pickup.DISTRICT) {
     return undefined
   }
   const jurisdictionId = getValueViaPath<string | number>(
