@@ -24,3 +24,11 @@ export const createCibaGrantType = createGrantType({
   description:
     'OpenID Connect CIBA: a backend asks the identity server to authenticate a person on their own device.',
 })
+
+export const DEVICE_KEY_GRANT_TYPE = 'urn:island.is:params:oauth:grant-type:device-key'
+
+export const createDeviceKeyGrantType = createGrantType({
+  name: DEVICE_KEY_GRANT_TYPE,
+  description:
+    'Biometric unlock of a native app: a challenge signed by a hardware-bound biometric key.',
+})
