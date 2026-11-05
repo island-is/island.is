@@ -254,6 +254,7 @@ export class ApplicationsXRoadService {
     return {
       memberCode,
       canAccess:
+        process.env.name === 'dev' ||
         memberCode === formOwner ||
         (memberCode === '5512201410' && formOwner === '6509142520') || // Special access rule for Sýslumenn
         (memberCode === '5309672079' && formOwner === '5306972079'), // Special access rule for Lögreglan
