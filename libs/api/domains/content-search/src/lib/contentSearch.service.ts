@@ -140,6 +140,10 @@ export class ContentSearchService {
 
     const query = {
       ...restInput,
+      // Searching without types would also return internal documents, like project subpages, that aren't search results
+      types: restInput.types?.length
+        ? restInput.types
+        : Object.values(SearchableContentTypes),
       sort,
       additionalDocumentMatches: projectPageChildMatches.map(
         ({ projectPageId, score }) => ({ id: projectPageId, boost: score }),

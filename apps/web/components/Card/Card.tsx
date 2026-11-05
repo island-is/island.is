@@ -91,12 +91,15 @@ export const Card = ({
 
   const visibleTags = tags.filter((t) => t.title)
 
-  const TitleWrapper =
-    childLinks.length > 0 && !!link?.href
-      ? ({ children }: { children: ReactNode }) => (
-          <LinkV2 href={link?.href}>{children}</LinkV2>
-        )
-      : Box
+  const titleLinkHref = childLinks.length > 0 ? link?.href : undefined
+
+  // A plain function instead of a component so the title isn't remounted on every render
+  const renderTitle = (children: ReactNode) =>
+    titleLinkHref ? (
+      <LinkV2 href={titleLinkHref}>{children}</LinkV2>
+    ) : (
+      <Box>{children}</Box>
+    )
 
   const items = (
     <Box
@@ -125,8 +128,8 @@ export const Card = ({
           )}
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
-              <TitleWrapper>
-                {highlightedResults ? (
+              {renderTitle(
+                highlightedResults ? (
                   <Text
                     as="h3"
                     variant="h3"
@@ -144,8 +147,8 @@ export const Card = ({
                   >
                     <Hyphen>{title}</Hyphen>
                   </Text>
-                )}
-              </TitleWrapper>
+                ),
+              )}
             </Box>
           </Box>
           {description && highlightedResults ? (
@@ -239,6 +242,11 @@ export const Card = ({
       </FocusableBox>
     )
   }
+
+  if (childLinks.length === 0) {
+    return <Frame>{items}</Frame>
+  }
+
   return (
     <Box
       borderRadius="large"
