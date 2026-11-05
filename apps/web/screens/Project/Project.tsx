@@ -210,7 +210,7 @@ const ProjectPage: Screen<PageProps> = ({
                   <Text variant="h5" as="h2">
                     {p(
                       'parentSubpageTableOfContentsTitle',
-                      activeLocale === 'is' ? 'Efnisyfirlit' : 'Contents',
+                      activeLocale === 'is' ? 'Á þessari síðu' : 'On this page',
                     )}
                   </Text>
                   <Stack space={1}>
