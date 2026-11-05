@@ -23,6 +23,7 @@ import {
   SocialInsuranceAdministrationEducationLevelsApi,
   SocialInsuranceAdministrationEmploymentStatusesApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
+  SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationMARPApplicationTypeApi,
   SocialInsuranceAdministrationMARPQuestionnairesApi,
@@ -125,6 +126,9 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCurrenciesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationLatestIncomePlan,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationIncomePlanConditionsApi,

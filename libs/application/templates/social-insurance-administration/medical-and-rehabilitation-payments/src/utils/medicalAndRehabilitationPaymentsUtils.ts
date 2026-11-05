@@ -8,6 +8,7 @@ import {
   Eligible,
   IncomePlanConditions,
   IncomePlanRow,
+  LatestIncomePlan,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application, ExternalData } from '@island.is/application/types'
@@ -369,6 +370,11 @@ export const getApplicationExternalData = (
       'socialInsuranceAdministrationCurrencies.data',
     ) ?? []
 
+  const latestIncomePlan = getValueViaPath<LatestIncomePlan>(
+    externalData,
+    'socialInsuranceAdministrationLatestIncomePlan.data',
+  )
+
   const incomePlanConditions = getValueViaPath<IncomePlanConditions>(
     externalData,
     'socialInsuranceAdministrationIncomePlanConditions.data',
@@ -443,6 +449,7 @@ export const getApplicationExternalData = (
     hasSpouse,
     categorizedIncomeTypes,
     currencies,
+    latestIncomePlan,
     incomePlanConditions,
     selfAssessmentQuestionnaire,
     ectsUnits,
