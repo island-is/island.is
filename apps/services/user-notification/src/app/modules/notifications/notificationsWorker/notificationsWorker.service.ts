@@ -469,13 +469,31 @@ export class NotificationsWorkerService {
           messageId,
         })
 
-      userProfile =
-        await this.userProfileApi.userProfileControllerFindUserProfile({
-          xParamNationalId: nationalId,
-          include: includeBlockedCategories
-            ? [UserProfileInclude.NotificationSettings]
-            : undefined,
-        })
+      if (includeBlockedCategories) {
+        try {
+          userProfile =
+            await this.userProfileApi.userProfileControllerFindUserProfile({
+              xParamNationalId: nationalId,
+              include: [UserProfileInclude.NotificationSettings],
+            })
+        } catch {
+          // Fail open: blocked categories are optional, so retry with the
+          // plain profile rather than dropping the notification.
+          this.logger.warn(
+            'Failed to fetch user profile with notification settings, retrying without',
+            { messageId },
+          )
+          userProfile =
+            await this.userProfileApi.userProfileControllerFindUserProfile({
+              xParamNationalId: nationalId,
+            })
+        }
+      } else {
+        userProfile =
+          await this.userProfileApi.userProfileControllerFindUserProfile({
+            xParamNationalId: nationalId,
+          })
+      }
 
       if (!userProfile) {
         this.logger.info('No user profile found for user', { messageId })
