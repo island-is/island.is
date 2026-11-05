@@ -66,9 +66,10 @@ export const benefitsFromAnotherCountrySubSection = buildSubSection({
                   .selectCountry,
               width: 'half',
               loadingError: coreErrorMessages.failedDataProvider,
-              loadOptions: async ({ apolloClient }) => {
+              loadOptions: async ({ apolloClient, application }) => {
                 const { data } = await apolloClient.query<Query>({
                   query: siaCountriesQuery,
+                  variables: { applicationId: application.id },
                 })
 
                 // Piggyback the name as part of the value

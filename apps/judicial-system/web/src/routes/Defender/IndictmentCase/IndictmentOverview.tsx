@@ -21,6 +21,7 @@ import type { ContextMenuItem } from '@island.is/judicial-system-web/src/compone
 import {
   AllIndictmentCaseFiles,
   AlternativeServiceAnnouncement,
+  AppealCourtSessionScheduledCard,
   AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
@@ -345,6 +346,9 @@ const IndictmentOverview: FC = () => {
                   />
                 </Box>
               )}
+            <AppealCourtSessionScheduledCard
+              verdictAppealCase={workingCase.verdictAppealCase}
+            />
             <Box component="section">
               {caseIsClosed ? (
                 <InfoCardClosedIndictment />

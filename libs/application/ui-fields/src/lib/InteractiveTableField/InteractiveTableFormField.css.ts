@@ -80,7 +80,7 @@ export const line = style({
   height: 'calc(100% + 1px)',
   left: 0,
   top: 0,
-  zIndex: 10,
+  zIndex: theme.zIndex.above,
   position: 'absolute',
 })
 

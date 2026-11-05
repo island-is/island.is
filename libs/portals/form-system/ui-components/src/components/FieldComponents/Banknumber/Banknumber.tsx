@@ -20,7 +20,7 @@ interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
   valueIndex?: number
-  state?: ApplicationState
+  state?: Partial<ApplicationState>
 }
 
 export const Banknumber = ({
@@ -46,7 +46,7 @@ export const Banknumber = ({
   const savedBankAccount = getValue(item, 'bankAccount', valueIndex) ?? ''
   const bankAccountValue = savedBankAccount === '--' ? '' : savedBankAccount
   const hasDelegationApplicant =
-    state?.screens.some((screen) =>
+    state?.screens?.some((screen) =>
       screen.fields?.some((field) =>
         Object.values(ApplicantTypesEnum).some(
           (type) =>

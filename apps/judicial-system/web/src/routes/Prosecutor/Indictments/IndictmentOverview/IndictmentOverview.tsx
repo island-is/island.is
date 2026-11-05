@@ -14,6 +14,7 @@ import {
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealCourtSessionScheduledCard,
   AppealRulingModifiedAlert,
   BlueBox,
   Conclusion,
@@ -227,6 +228,9 @@ const IndictmentOverview: FC = () => {
                   />
                 </Box>
               )}
+            <AppealCourtSessionScheduledCard
+              verdictAppealCase={workingCase.verdictAppealCase}
+            />
             {shouldDisplayReviewDecision &&
               isRuling &&
               defendantsRequiringReview && (
