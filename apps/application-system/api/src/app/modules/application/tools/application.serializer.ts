@@ -156,7 +156,10 @@ export class ApplicationSerializer
             ? intl.formatMessage(actionCardMeta.tag.label)
             : null,
         },
-        deleteButton: roleInState?.delete,
+        deleteButton:
+          typeof roleInState?.delete === 'function'
+            ? roleInState.delete(application)
+            : roleInState?.delete,
         pendingAction,
         history,
         draftFinishedSteps: application.draftFinishedSteps,

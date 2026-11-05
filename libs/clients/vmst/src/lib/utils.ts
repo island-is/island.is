@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch'
 import { logger } from '@island.is/logging'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
-import { ApplicationRights } from '../../gen/fetch'
+import { ApplicationRight } from '../../gen/fetch'
 
 // A parental leave request body:
 type Init = {
@@ -48,7 +48,63 @@ type Init = {
   }[]
   testData: string
   otherParentBlocked: boolean
-  applicationRights: ApplicationRights[]
+  applicationRights: ApplicationRight[]
+}
+
+const MAX_REASON_LENGTH = 300
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
+
+const parseJson = (text: string): unknown => {
+  if (!text) {
+    return undefined
+  }
+  try {
+    return JSON.parse(text)
+  } catch {
+    return undefined
+  }
+}
+
+const collapse = (text: string): string => {
+  const collapsed = text
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+  return collapsed.length > MAX_REASON_LENGTH
+    ? `${collapsed.slice(0, MAX_REASON_LENGTH)}…`
+    : collapsed
+}
+
+/**
+ * Pull a human-readable reason out of a VMST error body: the known fields of a
+ * JSON body (including ASP.NET ProblemDetails field errors), or the raw text
+ * when the body is not JSON (e.g. an HTML 500 from X-Road).
+ */
+const describeErrorBody = (parsed: unknown, rawBody: string): string => {
+  if (isRecord(parsed)) {
+    const parts: string[] = []
+    for (const key of ['errorCode', 'title', 'detail', 'message']) {
+      const value = parsed[key]
+      if (typeof value === 'string' && value) {
+        parts.push(value)
+      }
+    }
+    if (isRecord(parsed.errors)) {
+      for (const [field, messages] of Object.entries(parsed.errors)) {
+        const text = Array.isArray(messages)
+          ? messages.join(', ')
+          : String(messages)
+        parts.push(`${field}: ${text}`)
+      }
+    }
+    if (parts.length > 0) {
+      return collapse(parts.join('; '))
+    }
+  }
+
+  return collapse(rawBody)
 }
 
 export const createWrappedFetchWithLogging = (
@@ -102,7 +158,7 @@ export const createWrappedFetchWithLogging = (
           },
           response: {
             status_text: response.statusText,
-            body: undefined,
+            body: undefined as Record<string, unknown> | undefined,
           },
         }
 
@@ -114,13 +170,16 @@ export const createWrappedFetchWithLogging = (
             },
           })
         } else {
-          let responseBody = await response.json()
-          responseBody = pick(responseBody, [
-            'hasError',
-            'hasActivePregnancy',
-            'errorCode',
-            'status',
-          ])
+          const rawBody = await response.text().catch(() => '')
+          const parsedBody = parseJson(rawBody)
+          const responseBody = isRecord(parsedBody)
+            ? pick(parsedBody, [
+                'hasError',
+                'hasActivePregnancy',
+                'errorCode',
+                'status',
+              ])
+            : undefined
           vmstMetadata.response.body = responseBody
           logger.error(`Failed fetching from VMST`, {
             vmst: {
@@ -128,7 +187,25 @@ export const createWrappedFetchWithLogging = (
               success: false,
             },
           })
-          return reject(requestBody)
+          // Previously rejected with `requestBody`, which handed callers back
+          // their own request as the "error". Reject with a real Error so the
+          // response fields are what surfaces upstream.
+          const reason = describeErrorBody(parsedBody, rawBody)
+          return reject(
+            Object.assign(
+              new Error(
+                reason
+                  ? `${response.status} ${response.statusText}: ${reason}`
+                  : `${response.status} ${response.statusText}`,
+              ),
+              {
+                name: 'VmstError',
+                status: response.status,
+                statusText: response.statusText,
+                body: responseBody,
+              },
+            ),
+          )
         }
 
         return resolve(response)

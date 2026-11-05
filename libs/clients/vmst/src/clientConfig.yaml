@@ -4,13 +4,13 @@ info:
   title: FOS - Parental Leaves API
   version: 1.0.0
 servers:
-  - url: 'https://vmst-paternity-leave.azurewebsites.net'
+  - url: https://vmst-paternity-leave.azurewebsites.net
 paths:
-  '/applications/{applicationId}':
+  /applications/{applicationId}:
     get:
       tags:
-        - ApplicationInformation
-      operationId: Application_GetApplicationInformation
+        - Application
+      operationId: Application_GetApplication
       parameters:
         - name: applicationId
           in: path
@@ -25,20 +25,49 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApplicationInformation'
-  /pension-funds:
+                $ref: '#/components/schemas/ApplicationResponse'
+  /applications/{applicationId}/status:
+    put:
+      tags:
+        - Application
+      operationId: Application_PutApplicationStatus
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 2
+      requestBody:
+        x-name: xmlObject
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationStatus'
+        required: true
+        x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+  /health:
     get:
       tags:
-        - Pension
-      operationId: Pension_GetPensionFunds
+        - Health
+      operationId: Health_GetHealth
       responses:
         '200':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PensionFundsResponse'
-  '/users/{nationalRegistryId}/parental-leaves':
+                $ref: '#/components/schemas/HealthResponse'
+  /users/{nationalRegistryId}/parental-leaves:
     get:
       tags:
         - ParentalLeave
@@ -92,7 +121,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PostParentalLeaveResponse'
-  '/users/{nationalRegistryId}/parental-leaves/{applicationId}/periods':
+  /users/{nationalRegistryId}/parental-leaves/{applicationId}/periods:
     put:
       tags:
         - ParentalLeave
@@ -130,7 +159,7 @@ paths:
               schema:
                 type: string
                 format: binary
-  '/users/{nationalRegistryId}/parental-leaves/rights':
+  /users/{nationalRegistryId}/parental-leaves/rights:
     get:
       tags:
         - ParentalLeave
@@ -157,7 +186,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Right'
-  '/users/{nationalRegistryId}/parental-leaves/estimated-payment-plan':
+  /users/{nationalRegistryId}/parental-leaves/estimated-payment-plan:
     get:
       tags:
         - ParentalLeave
@@ -184,7 +213,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EstimatedPaymentPlan'
-  '/users/{nationalRegistryId}/parental-leaves/{applicationId}/payment-plan':
+  /users/{nationalRegistryId}/parental-leaves/{applicationId}/payment-plan:
     get:
       tags:
         - ParentalLeave
@@ -211,7 +240,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentPlansResponse'
-  '/users/{nationalRegistryId}/parental-leaves/periods/end-date':
+  /users/{nationalRegistryId}/parental-leaves/payment-plan:
+    get:
+      tags:
+        - ParentalLeave
+      operationId: ParentalLeave_GetPaymentPlansByKennitala
+      parameters:
+        - name: nationalRegistryId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentPlansByKennitalaResponse'
+  /users/{nationalRegistryId}/parental-leaves/periods/end-date:
     get:
       tags:
         - ParentalLeave
@@ -249,7 +298,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PeriodEndDateResponse'
-  '/users/{nationalRegistryId}/parental-leaves/periods/length':
+  /users/{nationalRegistryId}/parental-leaves/periods/length:
     get:
       tags:
         - ParentalLeave
@@ -287,7 +336,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PeriodLengthResponse'
-  '/users/{nationalRegistryId}/pregnancy-status':
+  /pension-funds:
+    get:
+      tags:
+        - Pension
+      operationId: Pension_GetPensionFunds
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PensionFundsResponse'
+  /users/{nationalRegistryId}/pregnancy-status:
     get:
       tags:
         - Pregnancy
@@ -321,54 +382,49 @@ paths:
                 $ref: '#/components/schemas/UnionsResponse'
 components:
   schemas:
-    ApplicationInformation:
+    ApplicationResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        application:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/NewApplication'
+    NewApplication:
       type: object
       additionalProperties: false
       required:
-        - result
         - applicationId
         - applicationFundId
-        - nationalRegisteryId
-        - dateOfBirth
-        - expectedDateOfBirth
-        - applicantId
         - email
         - phoneNumber
         - paymentInfo
-        - children
-        - otherParentName
-        - otherParentId
         - status
         - periods
-        - applicationRights
         - employers
-        - testData
-        - type
       properties:
-        adoptionDate:
-          type: string
         result:
           type: string
-          minLength: 1
+          nullable: true
         applicationId:
           type: string
           minLength: 1
         applicationFundId:
           type: string
           minLength: 1
+          pattern: ^\d{10}$
         nationalRegisteryId:
           type: string
-          minLength: 1
-          pattern: '^\d{10}$'
+          nullable: true
         dateOfBirth:
           type: string
+          nullable: true
         expectedDateOfBirth:
           type: string
-          format: date-time
-          minLength: 1
+          nullable: true
         applicantId:
           type: string
-          minLength: 1
+          nullable: true
         email:
           type: string
           minLength: 1
@@ -379,8 +435,9 @@ components:
           $ref: '#/components/schemas/PaymentInfo'
         children:
           type: array
+          nullable: true
           items:
-            $ref: '#/components/schemas/Children'
+            $ref: '#/components/schemas/Child'
         otherParentName:
           type: string
           nullable: true
@@ -389,199 +446,23 @@ components:
           nullable: true
         status:
           type: string
+          minLength: 1
         periods:
           type: array
           items:
-            $ref: '#/components/schemas/ApplicationPeriod'
+            $ref: '#/components/schemas/NewPeriod'
         applicationRights:
           type: array
+          nullable: true
           items:
-            $ref: '#/components/schemas/ApplicationRights'
-        employers:
-          type: array
-          items:
-            $ref: '#/components/schemas/ApplicationEmployer'
-        testData:
-          type: string
-          nullable: true
-    ApplicationPeriod:
-      type: object
-      additionalProperties: false
-      required:
-        - from
-        - to
-        - ratio
-        - approved
-        - paid
-        - rightsCodePeriod
-        - firstPeriodStart
-      properties:
-        from:
-          type: string
-          minLength: 1
-        to:
-          type: string
-          minLength: 1
-        ratio:
-          type: string
-          minLength: 1
-        approved:
-          type: boolean
-        paid:
-          type: boolean
-        rightsCodePeriod:
-          type: string
-        firstPeriodStart:
-          type: string
-        days:
-          type: string
-    ApplicationRights:
-      type: object
-      additionalProperties: false
-      required:
-        - rightsUnit
-        - rightsDescription
-        - months
-        - days
-        - daysLeft
-      properties:
-        rightsUnit:
-          type: string
-          minLength: 1
-        rightsDescription:
-          type: string
-        months:
-          type: string
-          minLength: 1
-        days:
-          type: string
-          minLength: 1
-        daysLeft:
-          type: string
-          minLength: 1
-    ApplicationEmployer:
-      type: object
-      additionalProperties: false
-      required:
-        - employerId
-        - email
-        - nationalRegistryId
-      properties:
-        employerId:
-          type: string
-          nullable: true
-        email:
-          type: string
-          nullable: true
-        nationalRegistryId:
-          type: string
-          nullable: true
-    Children:
-      type: object
-      additionalProperties: false
-      required:
-        - expectedDateOfBirth
-        - dateOfBirth
-        - nationalRegistryId
-        - name
-      properties:
-        expectedDateOfBirth:
-          type: string
-          minLength: 1
-        dateOfBirth:
-          type: string
-        nationalRegistryId:
-          type: string
-        name:
-          type: string
-    ParentalLeavesResponse:
-      type: object
-      additionalProperties: false
-      properties:
-        parentalLeaves:
-          type: array
-          items:
-            $ref: '#/components/schemas/ParentalLeave'
-    ParentalLeave:
-      type: object
-      additionalProperties: false
-      required:
-        - applicationId
-        - applicant
-        - expectedDateOfBirth
-        - dateOfBirth
-        - email
-        - phoneNumber
-        - paymentInfo
-        - status
-        - rightsCode
-      properties:
-        adoptionDate:
-          type: string
-        applicationId:
-          type: string
-          minLength: 1
-        applicationFundId:
-          type: string
-        applicant:
-          type: string
-          minLength: 1
-          pattern: '^\d{10}$'
-        otherParentId:
-          type: string
-          nullable: true
-        expectedDateOfBirth:
-          type: string
-          minLength: 1
-        dateOfBirth:
-          type: string
-          minLength: 1
-        email:
-          type: string
-          minLength: 1
-        phoneNumber:
-          type: string
-          minLength: 1
-        paymentInfo:
-          $ref: '#/components/schemas/PaymentInfo'
-        periods:
-          type: array
-          items:
-            $ref: '#/components/schemas/Period'
-        applicationComment:
-          type: string
-          nullable: true
+            $ref: '#/components/schemas/ApplicationRight'
         employers:
           type: array
           items:
             $ref: '#/components/schemas/Employer'
-        status:
-          type: string
-          minLength: 1
-        rightsCode:
-          type: string
-          minLength: 1
-        attachments:
-          type: array
-          nullable: true
-          items:
-            $ref: '#/components/schemas/Attachment'
         testData:
           type: string
-        noOfChildren:
-          type: string
           nullable: true
-        type:
-          type: string
-          nullable: true
-        language:
-          type: string
-        otherParentBlocked:
-          type: boolean
-        applicationRights:
-          type: array
-          items:
-            $ref: '#/components/schemas/ApplicationRights'
     PaymentInfo:
       type: object
       additionalProperties: false
@@ -636,6 +517,196 @@ components:
           minLength: 1
         name:
           type: string
+    Child:
+      type: object
+      additionalProperties: false
+      properties:
+        expectedDateOfBirth:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          nullable: true
+        nationalRegistryId:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+    NewPeriod:
+      type: object
+      additionalProperties: false
+      required:
+        - from
+        - to
+        - ratio
+        - approved
+        - paid
+      properties:
+        from:
+          type: string
+          minLength: 1
+        to:
+          type: string
+          minLength: 1
+        ratio:
+          type: string
+          minLength: 1
+        approved:
+          type: boolean
+        paid:
+          type: boolean
+        rightsCodePeriod:
+          type: string
+          nullable: true
+        firstPeriodStart:
+          type: string
+          nullable: true
+    ApplicationRight:
+      type: object
+      additionalProperties: false
+      properties:
+        rightsUnit:
+          type: string
+          nullable: true
+        rightsDescription:
+          type: string
+          nullable: true
+        months:
+          type: string
+          nullable: true
+        days:
+          type: string
+          nullable: true
+        daysLeft:
+          type: string
+          nullable: true
+    Employer:
+      type: object
+      additionalProperties: false
+      required:
+        - email
+      properties:
+        employerId:
+          type: string
+          nullable: true
+        email:
+          type: string
+          minLength: 1
+        nationalRegistryId:
+          type: string
+          nullable: true
+        approverNationalRegistryId:
+          type: string
+          nullable: true
+    ApplicationStatus:
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+          nullable: true
+    HealthResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+          nullable: true
+    ParentalLeavesResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        parentalLeaves:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParentalLeave'
+    ParentalLeave:
+      type: object
+      additionalProperties: false
+      required:
+        - applicationId
+        - applicant
+        - email
+        - phoneNumber
+        - paymentInfo
+        - periods
+        - employers
+        - rightsCode
+      properties:
+        applicationId:
+          type: string
+          minLength: 1
+        applicant:
+          type: string
+          minLength: 1
+          pattern: ^\d{10}$
+        otherParentId:
+          type: string
+          nullable: true
+        expectedDateOfBirth:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          nullable: true
+        email:
+          type: string
+          minLength: 1
+        phoneNumber:
+          type: string
+          minLength: 1
+        paymentInfo:
+          $ref: '#/components/schemas/PaymentInfo'
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/Period'
+        employers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Employer'
+        status:
+          type: string
+          nullable: true
+        rightsCode:
+          type: string
+          minLength: 1
+        attachments:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Attachment'
+        testData:
+          type: string
+          nullable: true
+        applicationFundId:
+          type: string
+          nullable: true
+        type:
+          type: string
+          nullable: true
+        noOfChildren:
+          type: string
+          nullable: true
+        adoptionDate:
+          type: string
+          nullable: true
+        language:
+          type: string
+          nullable: true
+        otherParentBlocked:
+          type: boolean
+        applicationComment:
+          type: string
+          maxLength: 1024
+          minLength: 0
+          nullable: true
+        applicationRights:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/ApplicationRight'
     Period:
       type: object
       additionalProperties: false
@@ -662,22 +733,12 @@ components:
         rightsCodePeriod:
           type: string
           nullable: true
-    Employer:
-      type: object
-      additionalProperties: false
-      required:
-        - email
-        - nationalRegistryId
-      properties:
-        email:
+        rightUnt:
           type: string
-          minLength: 1
-        nationalRegistryId:
+          nullable: true
+        rightDescription:
           type: string
-          minLength: 1
-        approverNationalRegistryId:
-          type: string
-          minLength: 1
+          nullable: true
     Attachment:
       type: object
       additionalProperties: false
@@ -708,8 +769,11 @@ components:
           type: integer
           format: int32
         transferableMonths:
-          type: integer
-          format: int32
+          type: number
+          format: float
+        multipleBirthMonths:
+          type: string
+          nullable: true
     EstimatedPaymentPlan:
       type: object
       additionalProperties: false
@@ -768,6 +832,27 @@ components:
           items:
             $ref: '#/components/schemas/PaymentPlan'
     PaymentPlan:
+      allOf:
+        - $ref: '#/components/schemas/PaymentPlanBase'
+        - type: object
+          additionalProperties: false
+          properties:
+            pensionAmount:
+              type: number
+              format: float
+            privatePensionAmount:
+              type: number
+              format: float
+            unionAmount:
+              type: number
+              format: float
+            taxAmount:
+              type: number
+              format: float
+            estimatedPayment:
+              type: number
+              format: float
+    PaymentPlanBase:
       type: object
       additionalProperties: false
       properties:
@@ -776,21 +861,36 @@ components:
         estimatedAmount:
           type: number
           format: float
-        pensionAmount:
-          type: number
-          format: float
-        privatePensionAmount:
-          type: number
-          format: float
-        unionAmount:
-          type: number
-          format: float
-        taxAmount:
-          type: number
-          format: float
-        estimatedPayment:
-          type: number
-          format: float
+    PaymentPlansByKennitalaResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        application:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/ParentalLeavePaymentPlan'
+    ParentalLeavePaymentPlan:
+      type: object
+      additionalProperties: false
+      required:
+        - applicationId
+        - applicant
+      properties:
+        applicationId:
+          type: string
+          minLength: 1
+        applicant:
+          type: string
+          minLength: 1
+          pattern: ^\d{10}$
+        status:
+          type: string
+          nullable: true
+        paymentPlans:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentPlanBase'
     PeriodEndDateResponse:
       type: object
       additionalProperties: false
