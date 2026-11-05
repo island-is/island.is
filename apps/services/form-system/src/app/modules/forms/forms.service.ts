@@ -859,6 +859,7 @@ export class FormsService {
 
         form.status = FormStatus.PUBLISHED
         form.beenPublished = true
+        form.isInaccessible = false
         await form.save({ transaction })
       } catch (error) {
         throw new InternalServerErrorException(
@@ -950,6 +951,7 @@ export class FormsService {
             ? slugToBeArchived
             : formToBePublished.slug
         formToBePublished.status = FormStatus.PUBLISHED
+        formToBePublished.isInaccessible = false
         await formToBePublished.save({ transaction })
       } catch (error) {
         throw new InternalServerErrorException(
