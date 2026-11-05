@@ -160,8 +160,11 @@ const VerdictAppealStatementUpload = () => {
       { fileEndings: '.pdf' },
     ),
     buttonLabel: core.uploadBoxButtonLabel,
-    hideIcons: !allFilesDoneOrError,
-    disabled: !allFilesDoneOrError,
+    // Locked for the whole submit, not just the upload: a file added or taken
+    // out while the filing is still pending would miss the list the submit
+    // captured and be lost on the way to the deadlines page.
+    hideIcons: !allFilesDoneOrError || isSubmitting,
+    disabled: !allFilesDoneOrError || isSubmitting,
   }
 
   return (

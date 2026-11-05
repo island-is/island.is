@@ -231,6 +231,33 @@ describe('VerdictAppealStatementUpload', () => {
     expect(mockFileAppealStatement).not.toHaveBeenCalled()
   })
 
+  it('keeps the boxes locked while the filing is still pending', async () => {
+    let finishFiling: (result: { id: string }) => void = () => undefined
+    mockHandleUpload.mockResolvedValue('ALL_SUCCEEDED')
+    mockFileAppealStatement.mockImplementation(
+      () => new Promise((resolve) => (finishFiling = resolve)),
+    )
+    const { container } = renderPage()
+
+    await chooseStatement(container)
+    expect(screen.getByLabelText('Fjarlægja skrá')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByTestId('continueButton'))
+    await waitFor(() => expect(mockFileAppealStatement).toHaveBeenCalled())
+
+    // The upload is done, so the boxes' own state would open them again.
+    const attachButtons = screen.getAllByRole('button', {
+      name: 'Velja skjöl til að hlaða upp',
+    })
+    expect(attachButtons).toHaveLength(2)
+    attachButtons.forEach((button) => expect(button).toBeDisabled())
+    expect(screen.queryByLabelText('Fjarlægja skrá')).not.toBeInTheDocument()
+
+    finishFiling({ id: 'e2' })
+
+    await waitFor(() => expect(mockPush).toHaveBeenCalledWith(deadlinesUrl))
+  })
+
   it('files nothing when an upload fails', async () => {
     mockHandleUpload.mockResolvedValue('SOME_SUCCEEDED')
     const { container } = renderPage()
