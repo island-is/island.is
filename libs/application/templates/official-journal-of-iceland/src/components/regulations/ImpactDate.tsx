@@ -86,7 +86,7 @@ export const ImpactDate = (props: ImpactDateProps) => {
 
   useEffect(() => {
     if (hasCustomDate && !selectedDate) {
-      const initial = defaultDate ? parseISO(defaultDate) : minDate
+      const initial = defaultDate ? new Date(defaultDate) : minDate
       if (initial) {
         setSelectedDate(initial)
         onChange(initial)

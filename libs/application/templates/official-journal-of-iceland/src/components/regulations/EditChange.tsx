@@ -25,7 +25,6 @@ import {
   LoadingDots,
 } from '@island.is/island-ui/core'
 import { useState, useEffect, useMemo } from 'react'
-import parseISO from 'date-fns/parseISO'
 import {
   HTMLText,
   toISODate,
@@ -228,7 +227,7 @@ export const EditChange = (props: EditChangeProps) => {
       ? activeDate
       : minDate
     : defaultDate
-    ? parseISO(defaultDate)
+    ? new Date(defaultDate)
     : minDate
 
   const changeDate = (newDate: Date | undefined) => {

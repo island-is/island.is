@@ -20,7 +20,6 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 import { useMemo, useState } from 'react'
-import parseISO from 'date-fns/parseISO'
 import { toISODate } from '@island.is/regulations'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
@@ -82,7 +81,7 @@ export const EditCancellation = (props: EditCancellationProps) => {
       ? activeDate
       : minDate
     : defaultDate
-    ? parseISO(defaultDate)
+    ? new Date(defaultDate)
     : minDate
   // A new repeal that can't take the default date gets the earliest one
   // it can, shown as a specific date
