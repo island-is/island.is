@@ -62,7 +62,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
   // loadDraft changes with the answers, so load once per draft: a failed
   // load would otherwise fetch and show its error again on each change.
   const [draftLoadDone, setDraftLoadDone] = useState(false)
-  const loadedDraftIdRef = useRef<string>()
+  const loadedDraftIdRef = useRef<string | undefined>(undefined)
   useEffect(() => {
     if (draftId && !draftLoaded && loadedDraftIdRef.current !== draftId) {
       loadedDraftIdRef.current = draftId
