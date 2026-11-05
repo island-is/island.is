@@ -8,7 +8,10 @@ import {
   IsString,
 } from 'class-validator'
 import { ContentLanguage } from '../enums/contentLanguage.enum'
-import { SearchableContentTypes } from '../enums/searchableContentTypes'
+import {
+  DEFAULT_SEARCHABLE_CONTENT_TYPES,
+  SearchableContentTypes,
+} from '../enums/searchableContentTypes'
 import { SearchableTags } from '../enums/searchableTags'
 
 @InputType()
@@ -29,7 +32,7 @@ export class SearcherInput {
   @Field(() => [SearchableContentTypes], { nullable: true })
   @IsArray()
   @IsOptional()
-  types?: SearchableContentTypes[] = Object.values(SearchableContentTypes)
+  types?: SearchableContentTypes[] = DEFAULT_SEARCHABLE_CONTENT_TYPES
 
   @Field(() => ContentLanguage, { nullable: true })
   @IsEnum(ContentLanguage)

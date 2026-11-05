@@ -7,6 +7,7 @@ import { mapProjectSubpage } from '../../models/projectSubpage.model'
 import type { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import {
   PROJECT_PAGE_SEARCH_TAG_TYPE,
+  PROJECT_SEARCH_TAG_TYPE,
   PROJECT_SUBPAGE_SEARCH_TYPE,
   ProjectPageSearchChild,
 } from '../projectPageSearch'
@@ -87,6 +88,7 @@ export class ProjectSubpageSyncService
           if (!projectPageId) {
             return false
           }
+          const projectSlug = entry.fields.projectPage?.fields?.slug?.trim()
           const content = extractProjectSubpageContent(entry)
 
           const response: ProjectPageSearchChild = {
@@ -95,6 +97,7 @@ export class ProjectSubpageSyncService
             title: entry.fields.title,
             slug: entry.fields.slug.trim(),
             projectPageId,
+            projectSlug,
           }
 
           // Tag the document with the ids of its children so we can later look up what document a child belongs to
@@ -114,6 +117,9 @@ export class ProjectSubpageSyncService
                 key: projectPageId,
                 type: PROJECT_PAGE_SEARCH_TAG_TYPE,
               },
+              ...(projectSlug
+                ? [{ key: projectSlug, type: PROJECT_SEARCH_TAG_TYPE }]
+                : []),
               ...childEntryIds.map((id) => ({
                 key: id,
                 type: 'hasChildEntryWithId',

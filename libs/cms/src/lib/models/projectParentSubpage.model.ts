@@ -37,6 +37,11 @@ export class ProjectParentSubpage {
 
   @Field(() => String, { nullable: true })
   projectPageTitle?: string
+
+  // Only populated on search results, where a parent subpage has to link to itself
+  // without the surrounding project page
+  @Field(() => String, { nullable: true })
+  projectSlug?: string
 }
 
 export const mapProjectParentSubpage = ({

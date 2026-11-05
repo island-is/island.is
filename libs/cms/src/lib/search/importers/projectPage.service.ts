@@ -5,6 +5,7 @@ import { Entry } from 'contentful'
 import { IProjectPage } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapProjectPage } from '../../models/projectPage.model'
+import { PROJECT_SEARCH_TAG_TYPE } from '../projectPageSearch'
 import {
   extractChildEntryIds,
   extractStringsFromObject,
@@ -63,11 +64,16 @@ export class ProjectPageSyncService implements CmsSyncProvider<IProjectPage> {
             .filter(Boolean)
             .join(' ')
 
-          const tags = entry.fields?.slug
+          const slug = entry.fields?.slug?.trim()
+          const tags = slug
             ? [
                 {
-                  key: entry.fields.slug,
+                  key: slug,
                   type: 'slug',
+                },
+                {
+                  key: slug,
+                  type: PROJECT_SEARCH_TAG_TYPE,
                 },
               ]
             : []

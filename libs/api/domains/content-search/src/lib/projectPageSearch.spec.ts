@@ -1,5 +1,6 @@
 import type { GroupedByTagSearchGroup } from '@island.is/content-search-toolkit'
 import {
+  addParentSubpageSlugToChapters,
   getProjectPageSearchChildLinks,
   mapProjectPageChildMatches,
 } from './projectPageSearch'
@@ -146,5 +147,33 @@ describe('getProjectPageSearchChildLinks', () => {
     ])
 
     expect(getProjectPageSearchChildLinks({}, matches, 'is')).toEqual([])
+  })
+})
+
+describe('addParentSubpageSlugToChapters', () => {
+  it('only adds the parent subpage slug to subpages that are its chapters', () => {
+    const items: {
+      typename: string
+      id: string
+      parentSubpageSlug?: string
+    }[] = [
+      subpage('chapter', 'chapter'),
+      subpage('standalone', 'standalone'),
+      parent('guide', 'guide', [{ id: 'chapter', slug: 'chapter' }]),
+    ]
+
+    addParentSubpageSlugToChapters(items, [
+      JSON.stringify(
+        parent('guide', 'guide', [{ id: 'chapter', slug: 'chapter' }]),
+      ),
+      'not json',
+      undefined,
+    ])
+
+    expect(items.map((item) => item.parentSubpageSlug)).toEqual([
+      'guide',
+      undefined,
+      undefined,
+    ])
   })
 })

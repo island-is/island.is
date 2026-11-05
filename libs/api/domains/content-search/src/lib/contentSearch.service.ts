@@ -22,9 +22,16 @@ import {
 import {
   PROJECT_PAGE_CHILD_SEARCH_TYPES,
   PROJECT_PAGE_SEARCH_TAG_TYPE,
+  PROJECT_PARENT_SUBPAGE_SEARCH_TYPE,
 } from '@island.is/cms'
-import { SearchableContentTypes } from './enums/searchableContentTypes'
 import {
+  DEFAULT_SEARCHABLE_CONTENT_TYPES,
+  PROJECT_SCOPED_CONTENT_TYPES,
+  SearchableContentTypes,
+} from './enums/searchableContentTypes'
+import { SearchableTags } from './enums/searchableTags'
+import {
+  addParentSubpageSlugToChapters,
   getProjectPageSearchChildLinks,
   mapProjectPageChildMatches,
   ProjectPageChildMatches,
@@ -81,9 +88,31 @@ export class ContentSearchService {
     }))
   }
 
+  private isScopedToProject(input: SearcherInput) {
+    return Boolean(
+      input.tags?.some((tag) => tag.type === SearchableTags.project && tag.key),
+    )
+  }
+
+  // Project subpages are only search results when the search is scoped to their project
+  private getSearchTypes(input: SearcherInput) {
+    const types = input.types?.length
+      ? input.types
+      : DEFAULT_SEARCHABLE_CONTENT_TYPES
+    if (this.isScopedToProject(input)) {
+      return types
+    }
+    // Types can have a boost appended to them, e.g. 'webArticle^2'
+    return types.filter(
+      (type) => !PROJECT_SCOPED_CONTENT_TYPES.includes(type.split('^')[0]),
+    )
+  }
+
   private shouldFindProjectPagesThroughChildren(input: SearcherInput) {
     const queryString = input.queryString?.trim()
     return (
+      // Within a project its subpages are search results on their own, so they shouldn't also be listed under the project page
+      !this.isScopedToProject(input) &&
       Boolean(queryString) &&
       queryString !== '*' &&
       (input.useQuery ?? 'default') === 'default' &&
@@ -112,6 +141,40 @@ export class ContentSearchService {
     }
   }
 
+  private async addParentSubpagesToChapters(
+    index: string,
+    input: SearcherInput,
+    items: { typename?: string; id?: string; parentSubpageSlug?: string }[],
+  ) {
+    const projectTags =
+      input.tags?.filter((tag) => tag.type === SearchableTags.project) ?? []
+    if (
+      !projectTags.length ||
+      !items.some((item) => item?.typename === 'ProjectSubpage')
+    ) {
+      return
+    }
+    try {
+      const response = await this.elasticService.getDocumentsByMetaData(
+        index,
+        {
+          types: [PROJECT_PARENT_SUBPAGE_SEARCH_TYPE],
+          tags: projectTags,
+          size: 100,
+        },
+      )
+      addParentSubpageSlugToChapters(
+        items,
+        response.hits.hits.map((hit) => hit._source.response),
+      )
+    } catch (error) {
+      // Chapters still link to themselves without their parent subpage
+      logger.warn('Failed to find the parent subpages of project chapters', {
+        message: error?.message,
+      })
+    }
+  }
+
   async find(input: SearcherInput): Promise<SearchResult> {
     const {
       language,
@@ -129,6 +192,13 @@ export class ContentSearchService {
       sort = [{ popularityScore: { order } }]
     }
 
+    const types = this.getSearchTypes(input)
+
+    // Only project subpages were asked for, outside of a project
+    if (!types.length) {
+      return { total: 0, items: [] }
+    }
+
     const index = this.getIndex(language)
 
     const findProjectPagesThroughChildren =
@@ -141,9 +211,7 @@ export class ContentSearchService {
     const query = {
       ...restInput,
       // Searching without types would also return internal documents, like project subpages, that aren't search results
-      types: restInput.types?.length
-        ? restInput.types
-        : Object.values(SearchableContentTypes),
+      types,
       sort,
       additionalDocumentMatches: projectPageChildMatches.map(
         ({ projectPageId, score }) => ({ id: projectPageId, boost: score }),
@@ -171,6 +239,8 @@ export class ContentSearchService {
       }
       return parsedItem
     })
+
+    await this.addParentSubpagesToChapters(index, input, items)
 
     // mix and match highlights
     if (query.highlightResults) {

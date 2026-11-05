@@ -95,10 +95,16 @@ describe('ProjectSubpageSyncService', () => {
       title: 'Subpage valid',
       slug: 'valid',
       projectPageId: 'project',
+      projectSlug: 'project',
     })
     expect(document.tags).toContainEqual({
       key: 'project',
       type: 'projectPage',
+    })
+    // Lets a search be scoped to the project, like an organization search
+    expect(document.tags).toContainEqual({
+      key: 'project',
+      type: 'project',
     })
     // The project page is the parent, not a child
     expect(
@@ -135,6 +141,7 @@ describe('ProjectParentSubpageSyncService', () => {
     ] as never)
 
     expect(document.type).toBe('webProjectParentSubpage')
+    expect(document.tags).toContainEqual({ key: 'project', type: 'project' })
     expect(document.content).toContain('Subpage first')
     expect(document.content).toContain('This is the content of subpage second')
     expect(document.content).not.toContain('foreign')

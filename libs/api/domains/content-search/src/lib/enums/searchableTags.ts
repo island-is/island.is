@@ -5,6 +5,7 @@ export enum SearchableTags {
   processentry = 'processentry',
   organization = 'organization',
   referencedBy = 'referencedBy',
+  project = 'project',
 }
 
 registerEnumType(SearchableTags, { name: 'SearchableTags' })

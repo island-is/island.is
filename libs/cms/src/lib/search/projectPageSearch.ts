@@ -13,6 +13,10 @@ export const PROJECT_PAGE_CHILD_SEARCH_TYPES = [
 // Tag type whose key is the id of the project page a child document belongs to
 export const PROJECT_PAGE_SEARCH_TAG_TYPE = 'projectPage'
 
+// Tag type whose key is the slug of a project, used to scope a search to a single project.
+// The project page and its children are all tagged with it
+export const PROJECT_SEARCH_TAG_TYPE = 'project'
+
 export interface ProjectPageSearchChapter {
   id: string
   title: string
@@ -28,6 +32,8 @@ export type ProjectPageSearchChild =
       title: string
       slug: string
       projectPageId: string
+      // Lets the child link to itself when it's shown as a search result within its project
+      projectSlug?: string
     }
   | {
       typename: 'ProjectParentSubpage'
@@ -35,5 +41,6 @@ export type ProjectPageSearchChild =
       title: string
       slug: string
       projectPageId: string
+      projectSlug?: string
       chapters: ProjectPageSearchChapter[]
     }

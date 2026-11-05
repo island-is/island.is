@@ -8,6 +8,7 @@ import type {
 import type { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import {
   PROJECT_PAGE_SEARCH_TAG_TYPE,
+  PROJECT_SEARCH_TAG_TYPE,
   PROJECT_PARENT_SUBPAGE_SEARCH_TYPE,
   ProjectPageSearchChild,
 } from '../projectPageSearch'
@@ -70,6 +71,7 @@ export class ProjectParentSubpageSyncService
           if (!projectPageId) {
             return false
           }
+          const projectSlug = entry.fields.projectPage?.fields?.slug?.trim()
           const chapters = getChapters(entry)
 
           // The parent subpage is found through the titles and content of its chapters
@@ -87,6 +89,7 @@ export class ProjectParentSubpageSyncService
             title: entry.fields.title,
             slug: entry.fields.slug.trim(),
             projectPageId,
+            projectSlug,
             chapters: chapters.map((chapter) => ({
               id: chapter.sys.id,
               title: chapter.fields.title,
@@ -116,6 +119,9 @@ export class ProjectParentSubpageSyncService
                 key: projectPageId,
                 type: PROJECT_PAGE_SEARCH_TAG_TYPE,
               },
+              ...(projectSlug
+                ? [{ key: projectSlug, type: PROJECT_SEARCH_TAG_TYPE }]
+                : []),
               ...childEntryIds.map((id) => ({
                 key: id,
                 type: 'hasChildEntryWithId',

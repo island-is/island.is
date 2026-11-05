@@ -130,3 +130,39 @@ export const getProjectPageSearchChildLinks = (
 
   return links
 }
+
+interface ProjectSubpageSearchResultItem {
+  typename?: string
+  id?: string
+  parentSubpageSlug?: string
+}
+
+// Chapters are subpages as well. Within a project they are search results on their own,
+// and they should link to their place under the parent subpage they belong to
+export const addParentSubpageSlugToChapters = (
+  items: ProjectSubpageSearchResultItem[],
+  parentSubpageResponses: (string | undefined)[],
+) => {
+  const parentSlugByChapterId = new Map<string, string>()
+  for (const response of parentSubpageResponses) {
+    const parent = parseChild(response)
+    if (parent?.typename !== 'ProjectParentSubpage') {
+      continue
+    }
+    for (const chapter of parent.chapters) {
+      if (!parentSlugByChapterId.has(chapter.id)) {
+        parentSlugByChapterId.set(chapter.id, parent.slug)
+      }
+    }
+  }
+
+  for (const item of items) {
+    const parentSubpageSlug =
+      item?.typename === 'ProjectSubpage' && item.id
+        ? parentSlugByChapterId.get(item.id)
+        : undefined
+    if (parentSubpageSlug) {
+      item.parentSubpageSlug = parentSubpageSlug
+    }
+  }
+}
