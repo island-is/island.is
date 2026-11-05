@@ -341,10 +341,8 @@ export const GenericList = ({
 }: React.PropsWithChildren<GenericListProps>) => {
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
-  const [year, setYear] = useQueryState(
-    yearQueryId ?? `${searchQueryId}year`,
-    parseAsInteger,
-  )
+  const resolvedYearQueryId = yearQueryId ?? `${searchQueryId}year`
+  const [year, setYear] = useQueryState(resolvedYearQueryId, parseAsInteger)
   const [parameters, setParameters] = useQueryState<Record<string, string[]>>(
     tagQueryId,
     parseAsJson(),
@@ -562,11 +560,13 @@ export const GenericList = ({
                     >
                       {showYearFilterInFilterMenu && (
                         <FilterMenuSection
-                          id="genericListYear"
+                          id={`genericListYear-${resolvedYearQueryId}`}
                           label={yearLabel}
                           active={Boolean(year)}
                         >
-                          {renderYearSelect('list-year-filter-menu')}
+                          {renderYearSelect(
+                            `list-year-filter-menu-${resolvedYearQueryId}`,
+                          )}
                         </FilterMenuSection>
                       )}
                       <FilterMultiChoice
@@ -677,7 +677,7 @@ export const GenericList = ({
           {showYearFilter && !showYearFilterInFilterMenu && (
             <Box display="flex" justifyContent="flexEnd">
               <Box className={styles.yearFilter}>
-                {renderYearSelect('list-year')}
+                {renderYearSelect(`list-year-${resolvedYearQueryId}`)}
               </Box>
             </Box>
           )}
