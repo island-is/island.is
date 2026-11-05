@@ -86,11 +86,7 @@ describe('CaseController - Get indictment pdf', () => {
         theCase.type,
         `${caseId}/indictment.pdf`,
       )
-      expect(createIndictment).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-        undefined,
-      )
+      expect(createIndictment).toHaveBeenCalledWith(theCase, undefined)
       expect(res.end).toHaveBeenCalledWith(pdf)
     })
   })

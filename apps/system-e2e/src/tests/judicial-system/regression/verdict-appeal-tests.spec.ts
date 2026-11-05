@@ -67,7 +67,7 @@ test.describe.serial('Verdict appeal tests', () => {
     await page.getByTestId('continueButton').click()
     await Promise.all([
       page.getByTestId('modalPrimaryButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendants'),
     ])
   })
 

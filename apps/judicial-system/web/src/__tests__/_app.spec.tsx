@@ -26,7 +26,6 @@ jest.mock('@island.is/judicial-system-web/src/components', () => {
 
 jest.mock('@island.is/localization', () => ({
   LocaleProvider: ({ children }: PropsWithChildren) => children,
-  GET_TRANSLATIONS: {},
 }))
 
 jest.mock('@island.is/judicial-system-web/graphql/client', () => {
@@ -58,7 +57,6 @@ const renderApp = (
     Component={Component}
     pageProps={{}}
     router={{ asPath } as Router}
-    translations={{}}
   />
 )
 

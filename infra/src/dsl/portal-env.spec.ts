@@ -1,4 +1,4 @@
-import { json, service } from './dsl'
+import { json, service, ref } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
 import { generateOutputOne } from './processing/rendering-pipeline'
 import { EnvironmentConfig } from './types/charts'
@@ -44,7 +44,13 @@ describe('BFF PortalEnv serialization', () => {
     .env({
       BFF_ALLOWED_EXTERNAL_API_URLS: {
         local: json(['http://localhost:3377/download/v1']),
-        dev: json(['https://api.dev01.devland.is']),
+        dev: ref((ctx) =>
+          json([
+            ctx.featureDeploymentName
+              ? `https://${ctx.featureDeploymentName}-api.${ctx.env.domain}`
+              : `https://api.${ctx.env.domain}`,
+          ]),
+        ),
         staging: json(['https://api.staging01.devland.is']),
         prod: json(['https://api.island.is']),
       },

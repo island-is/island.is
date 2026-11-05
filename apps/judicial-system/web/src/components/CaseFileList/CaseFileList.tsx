@@ -1,5 +1,4 @@
 import type { FC } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
 import type { IconMapIcon, StatusColor } from '@island.is/island-ui/core'
@@ -74,10 +73,9 @@ const CaseFileList: FC<Props> = (props) => {
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId,
   })
-  const { formatMessage } = useIntl()
 
   if (files.length === 0) {
-    return <Text>{formatMessage(m.noFilesFound)}</Text>
+    return <Text>{m.noFilesFound}</Text>
   }
 
   return (
@@ -115,12 +113,12 @@ const CaseFileList: FC<Props> = (props) => {
             />
             {file.status === 'unsupported' && (
               <Text color="red600" variant="eyebrow" lineHeight="lg">
-                {formatMessage(m.fileUnsupportedInCourt)}
+                {m.fileUnsupportedInCourt}
               </Text>
             )}
             {file.status === 'case-not-found' && (
               <Text color="red600" variant="eyebrow" lineHeight="lg">
-                {formatMessage(m.caseNotFoundInCourt)}
+                {m.caseNotFoundInCourt}
               </Text>
             )}
           </Box>

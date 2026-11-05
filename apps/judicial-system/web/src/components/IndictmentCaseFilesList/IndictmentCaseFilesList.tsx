@@ -57,10 +57,9 @@ import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
   getIndictmentPdfDisplayName,
   getVisibleSubpoenas,
+  shouldHideCaseFilesRecordFromDefender,
   shouldShowPoliceDigitalCaseFilesSection,
-  shouldShowReplaceIndictmentPdf,
 } from './IndictmentCaseFilesList.logic'
-import ReplaceIndictmentPdf from './ReplaceIndictmentPdf'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -448,6 +447,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+  const hideCaseFilesRecord = shouldHideCaseFilesRecordFromDefender(
+    workingCase.id,
+    user,
+  )
+
   const visiblePoliceCaseNumbers = useMemo(
     () =>
       isDefenceUser(user)
@@ -532,10 +536,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 renderAs="row"
                 elementId="Ákæra"
               />
-              {!connectedCaseParentId &&
-                shouldShowReplaceIndictmentPdf(workingCase, user) && (
-                  <ReplaceIndictmentPdf caseId={workingCase.id} />
-                )}
             </Box>
           </Box>
         )}
@@ -553,7 +553,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
             />
           </>
         )}
-        {displayGeneratedPDFs && (
+        {displayGeneratedPDFs && !hideCaseFilesRecord && (
           <Box>
             <SectionHeading
               title={strings.caseFileTitle}

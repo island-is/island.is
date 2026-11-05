@@ -1232,7 +1232,42 @@ export class ApplicationsService {
       )
       await application.save({ transaction })
 
-      if (currentScreen) {
+      await Promise.all(
+        (sections ?? []).flatMap((section) =>
+          (section.screens ?? []).flatMap((screen) =>
+            (screen.fields ?? [])
+              .filter(
+                (field) =>
+                  (section.isHidden || screen.isHidden || field.isHidden) &&
+                  (field.fieldType === FieldTypesEnum.CHECKBOX ||
+                    field.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+                    field.fieldType === FieldTypesEnum.RADIO_BUTTONS),
+              )
+              .map((field) =>
+                this.valueModel.update(
+                  {
+                    json: this.sequelize.literal(
+                      `COALESCE("json", '{}'::jsonb) || ${this.sequelize.escape(
+                        JSON.stringify(
+                          field.fieldType === FieldTypesEnum.CHECKBOX
+                            ? { checkboxValue: false }
+                            : { label: null, value: null },
+                        ),
+                      )}::jsonb`,
+                    ),
+                  },
+                  { where: { applicationId, fieldId: field.id }, transaction },
+                ),
+              ),
+          ),
+        ),
+      )
+
+      if (
+        currentScreen &&
+        !currentSection.isHidden &&
+        !currentScreen.isHidden
+      ) {
         const filteredFields = currentScreen.fields?.filter(
           (field) => field.isHidden === false,
         )

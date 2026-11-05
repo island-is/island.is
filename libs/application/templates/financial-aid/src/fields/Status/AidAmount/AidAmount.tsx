@@ -10,9 +10,10 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import { aidAmount } from '../../../lib/messages'
-import { Breakdown } from '../../index'
-import { Estimation, VeitaEstimation } from '../index'
-import { ExternalData, FAApplication, waitingForSpouse } from '../../..'
+import Breakdown from '../../Breakdown/Breakdown'
+import { Estimation, VeitaEstimation } from '../Estimation/Estimation'
+import { ExternalData, FAApplication } from '../../../lib/types'
+import { waitingForSpouse } from '../../../lib/utils'
 
 interface Props {
   application: FAApplication

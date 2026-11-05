@@ -1,23 +1,16 @@
-import { createTestIntl } from '@island.is/cms-translations/test'
-
 import { courtRecord } from '../../messages'
 import { formatCourtEndDate } from './courtRecordPdf'
 
 describe('formatCourtEndDate', () => {
-  const formatMessage = createTestIntl({
-    locale: 'is-IS',
-    onError: jest.fn,
-  }).formatMessage
-
   const fn = (startDate?: Date, endDate?: Date) =>
-    formatCourtEndDate(formatMessage, startDate, endDate)
+    formatCourtEndDate(startDate, endDate)
 
   test('should return court still in progress', () => {
     const startDate = undefined
     const endDate = undefined
 
     const result = fn(startDate, endDate)
-    expect(result).toBe(courtRecord.inSession.defaultMessage)
+    expect(result).toBe(courtRecord.inSession)
   })
 
   test('should format court end date when ending on same day as starting', () => {
