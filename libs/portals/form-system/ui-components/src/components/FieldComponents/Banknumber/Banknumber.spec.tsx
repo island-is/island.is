@@ -73,6 +73,7 @@ const renderField = (
   mocks: MockedResponse[],
   bankAccount?: string,
   applicantType?: string,
+  state?: Partial<ApplicationState>,
 ) => {
   const dispatch = jest.fn()
   const profileRequest = jest.fn()
@@ -92,11 +93,12 @@ const renderField = (
           }
           dispatch={dispatch}
           state={
-            applicantType
+            state ??
+            (applicantType
               ? ({
                   screens: [{ fields: [{ fieldSettings: { applicantType } }] }],
                 } as unknown as ApplicationState)
-              : undefined
+              : undefined)
           }
         />
       </FormProvider>
@@ -111,6 +113,16 @@ const renderField = (
   )
   return { dispatch, profileRequest }
 }
+
+it('renders and prefills with preview state that has no screens', async () => {
+  renderField([profileMock('1234-12-123456')], undefined, undefined, {
+    currentScreen: undefined,
+  })
+
+  await screen.findByDisplayValue('123456')
+  expect(screen.getByDisplayValue('1234')).toBeTruthy()
+  expect(screen.getByDisplayValue('12')).toBeTruthy()
+})
 
 it.each(
   Object.values(ApplicantTypesEnum).filter(
