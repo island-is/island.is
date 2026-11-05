@@ -485,22 +485,38 @@ export class VerdictsClientService {
       this.supremeCourtApi.apiV2VerdictGetKeywordsGet(),
     ])
 
-    const keywordSet = new Set<string>()
+    const keywordMap = new Map<
+      string,
+      { belongsToSupremeCourt: boolean; belongsToOtherCourts: boolean }
+    >()
+
+    const addKeyword = (label: string, isSupremeCourt: boolean) => {
+      const entry = keywordMap.get(label) ?? {
+        belongsToSupremeCourt: false,
+        belongsToOtherCourts: false,
+      }
+      if (isSupremeCourt) entry.belongsToSupremeCourt = true
+      else entry.belongsToOtherCourts = true
+      keywordMap.set(label, entry)
+    }
 
     if (goproResponse.status === 'fulfilled') {
       for (const keyword of goproResponse.value.items ?? []) {
-        if (keyword.label) keywordSet.add(keyword.label)
+        if (keyword.label) addKeyword(keyword.label, false)
       }
     }
     if (supremeCourtResponse.status === 'fulfilled') {
       for (const keyword of supremeCourtResponse.value.items ?? []) {
-        if (keyword.label) keywordSet.add(keyword.label)
+        if (keyword.label) addKeyword(keyword.label, true)
       }
     }
 
-    const keywords = Array.from(keywordSet).map((keyword) => ({
-      label: keyword,
-    }))
+    const keywords = Array.from(keywordMap.entries()).map(
+      ([label, sources]) => ({
+        label,
+        ...sources,
+      }),
+    )
     keywords.sort(sortAlpha('label'))
 
     return {
