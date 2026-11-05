@@ -268,10 +268,10 @@ describe('SdfScreenService validation gates', () => {
       ),
     ).rejects.toBeInstanceOf(ConflictException)
 
-    expect(applicationService.update).not.toHaveBeenCalledWith(
-      application.id,
-      expect.objectContaining({ pageIndex: 0 }),
+    const savedPageIndexes = applicationService.update.mock.calls.filter(
+      ([, data]) => 'pageIndex' in data,
     )
+    expect(savedPageIndexes).toEqual([])
   })
 
   it('handleSubmit accepts a matched no-op self-transition', async () => {
