@@ -6,6 +6,7 @@ import {
   EXPORT_FORM,
   GET_APPLICATION_JSON_SAMPLE,
   GET_FORM,
+  GET_FORMS,
   UPDATE_FORM_STATUS,
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
@@ -85,7 +86,7 @@ export const TableRow = ({
   status,
   url,
 }: Props) => {
-  const { forms, isAdmin, organizations, organizationNationalId } =
+  const { isAdmin, organizations, organizationNationalId } =
     useContext(FormsContext)
   const [isOpen, setIsOpen] = useState(false)
   const [
@@ -97,6 +98,7 @@ export const TableRow = ({
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
   const [copyForm] = useMutation(COPY_FORM)
   const [getForm] = useLazyQuery(GET_FORM, { fetchPolicy: 'no-cache' })
+  const [getForms] = useLazyQuery(GET_FORMS, { fetchPolicy: 'no-cache' })
   const [exportForm] = useLazyQuery(EXPORT_FORM, { fetchPolicy: 'no-cache' })
   const [getJsonSample] = useLazyQuery(GET_APPLICATION_JSON_SAMPLE, {
     fetchPolicy: 'no-cache',
@@ -313,24 +315,32 @@ export const TableRow = ({
       icon: 'pencil' as const,
       iconType: 'outline' as const,
       onClick: async () => {
-        if (
-          slug &&
-          forms.some(
-            (form) =>
-              form.slug === `${slug}-i-breytingu` &&
-              form.status === FormStatus.PUBLISHED_BEING_CHANGED,
-          )
-        ) {
-          toast.warning(
-            formatMessage({
-              id: 'publishedFormAlreadyBeingChanged',
-              defaultMessage:
-                'Það er þegar til eyðublað af þessari gerð með stöðuna Útgefið í breytingu.',
-            }),
-          )
-          return
-        }
         try {
+          const { data: formsData } = await getForms({
+            variables: { input: { nationalId: organizationNationalId } },
+          })
+          const refreshedForms: FormSystemForm[] | undefined =
+            formsData?.formSystemForms?.forms
+          if (!refreshedForms) throw new Error('Missing forms list')
+          setFormsState(refreshedForms)
+
+          if (
+            slug &&
+            refreshedForms.some(
+              (form) =>
+                form.slug === `${slug}-i-breytingu` &&
+                form.status === FormStatus.PUBLISHED_BEING_CHANGED,
+            )
+          ) {
+            toast.warning(
+              formatMessage({
+                id: 'publishedFormAlreadyBeingChanged',
+                defaultMessage:
+                  'Það er þegar til eyðublað af þessari gerð með stöðuna Útgefið í breytingu.',
+              }),
+            )
+            return
+          }
           const { data } = await updateFormStatus({
             variables: {
               input: {
@@ -629,13 +639,13 @@ export const TableRow = ({
       del,
     ]
   }, [
-    forms,
     id,
     slug,
     status,
     isAdmin,
     formatMessage,
     exportForm,
+    getForms,
     updateFormStatus,
     copyFormToOrganization,
     organizationNationalId,
@@ -754,7 +764,11 @@ export const TableRow = ({
                 />
               </Box>
 
-              <Box marginRight={2} onClick={(e) => e.stopPropagation()}>
+              <Box
+                className={styles.actionsMenu}
+                marginRight={2}
+                onClick={(e) => e.stopPropagation()}
+              >
                 <DropdownMenu
                   menuLabel={`${formatMessage(m.actions)} ${name}`}
                   disclosure={
