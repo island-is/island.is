@@ -22,7 +22,7 @@ interface Props {
   item: FormSystemField
   hasError?: boolean
   dispatch?: Dispatch<Action>
-  state?: ApplicationState
+  state?: Partial<ApplicationState>
 }
 
 const normalizeS3Keys = (raw: unknown): string[] => {
@@ -61,7 +61,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
   const [uploadFile] = useMutation(STORE_FILE)
   const [deleteFile] = useMutation(DELETE_FILE)
 
-  const applicationId = state?.application.id
+  const applicationId = state?.application?.id
 
   const types =
     item?.fieldSettings?.fileTypes
@@ -77,6 +77,8 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
 
   const handleUpload = useCallback(
     async (file: UploadFile, id: string) => {
+      if (!applicationId) return
+
       try {
         const { data } = await createUploadUrl({
           variables: { filename: file.name },
@@ -105,10 +107,6 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
             },
           },
         })
-
-        if (!applicationId) {
-          throw new Error('Missing applicationId for file key construction')
-        }
 
         const newKey = `${applicationId}/${presigned.fields.key}`
 
@@ -190,15 +188,36 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
 
       setError(undefined)
 
-      const uploadFiles: UploadFile[] = selectedFiles.map((file) => ({
-        id: `${file.name}-${uuid()}`,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        status: FileUploadStatus.uploading,
-        percent: 0,
-        originalFileObj: file,
-      }))
+      const uploadFiles: UploadFile[] = selectedFiles.map((file) => {
+        const id = uuid()
+        return {
+          id: `${file.name}-${id}`,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          status: applicationId
+            ? FileUploadStatus.uploading
+            : FileUploadStatus.done,
+          percent: applicationId ? 0 : 100,
+          originalFileObj: file,
+          key: applicationId ? undefined : `preview/${id}_${file.name}`,
+        }
+      })
+
+      if (!applicationId) {
+        const nextFiles = [...files, ...uploadFiles]
+        const nextKeys = nextFiles
+          .map((file) => file.key)
+          .filter(Boolean) as string[]
+        setFiles(nextFiles)
+        dispatch?.({
+          type: 'SET_FILES',
+          payload: { id: item.id, value: nextKeys },
+        })
+        setValue(item.id, nextKeys, { shouldDirty: true, shouldValidate: true })
+        trigger(item.id)
+        return
+      }
 
       setFiles((prev) => [...prev, ...uploadFiles])
 
@@ -206,11 +225,23 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
         handleUpload(f, f.id as string)
       })
     },
-    [files, item, formatMessage, handleUpload, clearErrors],
+    [
+      applicationId,
+      files,
+      item,
+      formatMessage,
+      handleUpload,
+      clearErrors,
+      dispatch,
+      setValue,
+      trigger,
+    ],
   )
 
   const onRetry = useCallback(
     (file: UploadFile) => {
+      if (!applicationId) return
+
       if (file.originalFileObj && file.id) {
         updateFile(file.id, {
           status: FileUploadStatus.uploading,
@@ -219,21 +250,23 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
         handleUpload(file, file.id)
       }
     },
-    [handleUpload, updateFile],
+    [applicationId, handleUpload, updateFile],
   )
 
   const onRemove = useCallback(
     (file: UploadFile) => {
-      deleteFile({
-        variables: {
-          input: {
-            deleteFileDto: {
-              key: file.key,
-              valueId: item.values?.[0]?.id,
+      if (applicationId) {
+        deleteFile({
+          variables: {
+            input: {
+              deleteFileDto: {
+                key: file.key,
+                valueId: item.values?.[0]?.id,
+              },
             },
           },
-        },
-      })
+        })
+      }
       const newFiles = files.filter(
         (f) => (f.key ?? f.id) !== (file.key ?? file.id),
       )
@@ -248,7 +281,16 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
       setValue(item.id, newKeys, { shouldDirty: true, shouldValidate: true })
       trigger(item.id)
     },
-    [deleteFile, dispatch, files, item.id, item.values, setValue, trigger],
+    [
+      applicationId,
+      deleteFile,
+      dispatch,
+      files,
+      item.id,
+      item.values,
+      setValue,
+      trigger,
+    ],
   )
 
   const title = item.isRequired
