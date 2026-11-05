@@ -4,6 +4,7 @@ export {
 } from './context.middleware'
 export {
   getOrCreateTransaction,
+  getRequestTransaction,
   getTransactionContext,
   registerAfterCommit,
   TransactionContextMiddleware,
