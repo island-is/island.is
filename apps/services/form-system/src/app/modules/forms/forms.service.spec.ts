@@ -13,6 +13,57 @@ import { Form } from './models/form.model'
 import { ApplicationJsonDto } from '../applications/models/dto/application.json.dto'
 import { User } from '@island.is/auth-nest-tools'
 
+describe('FormsService publishing accessibility', () => {
+  it.each([FormStatus.IN_DEVELOPMENT, FormStatus.PUBLISHED_BEING_CHANGED])(
+    'makes an inaccessible %s form accessible when published',
+    async (status) => {
+      const user = { nationalId: 'owner', scope: [] } as unknown as User
+      const transaction = { id: 'transaction' }
+      const form = {
+        id: 'form-id',
+        organizationNationalId: user.nationalId,
+        status,
+        slug: 'form-i-breytingu',
+        derivedFrom: 'published-form-id',
+        isInaccessible: true,
+        save: jest.fn().mockImplementation(async () => {
+          expect(form.status).toBe(FormStatus.PUBLISHED)
+          expect(form.isInaccessible).toBe(false)
+        }),
+      }
+      const publishedForm = {
+        id: 'published-form-id',
+        status: FormStatus.PUBLISHED,
+        slug: 'form',
+        save: jest.fn().mockResolvedValue(undefined),
+      }
+      const service = Object.assign(Object.create(FormsService.prototype), {
+        formModel: {
+          findByPk: jest.fn(async (id) =>
+            id === form.id ? form : publishedForm,
+          ),
+        },
+        applicationModel: { findAll: jest.fn().mockResolvedValue([]) },
+        sequelize: {
+          transaction: jest.fn((callback) => callback(transaction)),
+        },
+        validateZendeskSettingsForPublish: jest
+          .fn()
+          .mockResolvedValue(undefined),
+        buildFormResponse: jest.fn().mockResolvedValue({}),
+      }) as FormsService
+
+      await service.updateStatus(user, form.id, {
+        newStatus: FormStatus.PUBLISHED,
+      })
+
+      expect(form.status).toBe(FormStatus.PUBLISHED)
+      expect(form.isInaccessible).toBe(false)
+      expect(form.save).toHaveBeenCalledWith({ transaction })
+    },
+  )
+})
+
 describe('FormsService update draft steps', () => {
   it.each(
     [0, 1, 3].flatMap((inputSections) =>
