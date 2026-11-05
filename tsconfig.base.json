@@ -1278,6 +1278,9 @@
       "@island.is/portals/my-pages/core/messages": [
         "libs/portals/my-pages/core/src/lib/messages.ts"
       ],
+      "@island.is/portals/my-pages/directorate-of-equality": [
+        "libs/portals/my-pages/directorate-of-equality/src/index.ts"
+      ],
       "@island.is/portals/my-pages/documents": [
         "libs/portals/my-pages/documents/src/index.ts"
       ],

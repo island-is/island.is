@@ -50,5 +50,6 @@ export const servicePortalScopes = [
   ApiScope.healthAppointments,
   ApiScope.healthLists,
   ApiScope.signatureCollection,
-  ApiScope.directorateOfEqualityApiKeys,
+  // TODO: restore once the seeder has registered @island.is/directorate-of-equality/api-keys in IDS — requesting it before then fails login with "invalid scope"
+  // ApiScope.directorateOfEqualityApiKeys,
 ]

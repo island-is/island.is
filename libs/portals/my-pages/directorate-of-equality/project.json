@@ -1,0 +1,27 @@
+{
+  "name": "portals-my-pages-directorate-of-equality",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portals/my-pages/directorate-of-equality/src",
+  "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/portals/my-pages/directorate-of-equality/jest.config.js"
+      },
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/portals/my-pages/directorate-of-equality"
+      ]
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/portals/my-pages/directorate-of-equality/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+      }
+    }
+  }
+}

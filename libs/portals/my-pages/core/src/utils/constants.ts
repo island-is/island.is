@@ -22,6 +22,7 @@ export const LANDSPITALI_SLUG = 'landspitali'
 export const STAFRAEN_HEILSA_SLUG = 'stafraen-heilsa'
 export const LANDSKJORSTJORN_SLUG = 'landskjorstjorn'
 export const ATVINNUVEGARADUNEYTID_SLUG = 'atvinnuvegaraduneytid'
+export const JAFNRETTISSTOFA_SLUG = 'jafnrettisstofa'
 
 export const DOMSMAL_DOC_ID = '12'
 export const MONTHS = [
