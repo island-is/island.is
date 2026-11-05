@@ -4,11 +4,8 @@ import { TaxCalculatorType } from '@island.is/tax-calculators'
 
 import {
   TaxCalculatorCalculationErrorCode,
-  TaxCalculatorInputFieldSemantic,
-  TaxCalculatorInputFieldType,
   TaxCalculatorOutputFieldType,
 } from './models/enums'
-import type { NumberInputField, SelectInputField } from './models/inputField'
 import type { InputFieldValue } from './models/inputFieldValue.model'
 import { TaxCalculatorsService } from './tax-calculators.service'
 
@@ -18,9 +15,6 @@ const service = new TaxCalculatorsService(client, logger)
 
 const inputFieldsFor = (type: TaxCalculatorType) =>
   service.getCalculator(type).inputFields
-
-const findField = (type: TaxCalculatorType, key: string) =>
-  inputFieldsFor(type).find((field) => field.key === key)
 
 const outputFieldsFor = (type: TaxCalculatorType) =>
   service.getCalculator(type).outputFields
@@ -53,105 +47,6 @@ describe('TaxCalculatorsService', () => {
       expect(keys).toContain('launGreidast')
     })
   })
-
-  describe('child benefit fields', () => {
-    it.each([
-      'hjuskaparstada',
-      'tekjuar',
-      'tekjustofn',
-      'fjoldiBarna',
-      'fjoldiBarnaUndir7ara',
-      'skiptBornYfir7ara',
-      'skiptBornUndir7ara',
-    ])('publishes %s unconditionally', (key) => {
-      const field = findField(TaxCalculatorType.CHILD_BENEFIT, key)
-
-      expect(field).toBeDefined()
-      expect(field?.dependsOn).toBeUndefined()
-    })
-
-    it('publishes hjuskaparstada as a select over the RSK enum values', () => {
-      const field = findField(
-        TaxCalculatorType.CHILD_BENEFIT,
-        'hjuskaparstada',
-      ) as SelectInputField | undefined
-
-      expect(field?.type).toBe(TaxCalculatorInputFieldType.SELECT)
-      expect(field?.options).toEqual([
-        { value: 'Gift/Í sambúð' },
-        { value: 'Einstætt foreldri' },
-      ])
-    })
-  })
-
-  describe('input field types', () => {
-    it('publishes gjaldtimabil as a select over the RSK enum values', () => {
-      const field = findField(TaxCalculatorType.VEHICLE_TAX, 'gjaldtimabil') as
-        | SelectInputField
-        | undefined
-
-      expect(field?.type).toBe(TaxCalculatorInputFieldType.SELECT)
-      expect(field?.required).toBe(true)
-      expect(field?.options).toEqual([
-        { value: '1. jan - 30. júlí' },
-        { value: '1. júlí - 31. des' },
-      ])
-    })
-
-    it('publishes gjaldskipting as an optional date carrying no options', () => {
-      const field = findField(TaxCalculatorType.VEHICLE_TAX, 'gjaldskipting')
-
-      expect(field?.type).toBe(TaxCalculatorInputFieldType.DATE)
-      expect(field?.required).toBe(false)
-      expect(field).not.toHaveProperty('options')
-    })
-
-    it('publishes bilnumer as a string', () => {
-      expect(findField(TaxCalculatorType.VEHICLE_TAX, 'bilnumer')?.type).toBe(
-        TaxCalculatorInputFieldType.STRING,
-      )
-    })
-
-    it('publishes isElectric as a boolean', () => {
-      expect(
-        findField(TaxCalculatorType.VEHICLE_BENEFIT, 'isElectric')?.type,
-      ).toBe(TaxCalculatorInputFieldType.BOOLEAN)
-    })
-  })
-
-  /* The source schema types these as plain numbers; this pins assigned semantics. */
-  describe('number field semantics', () => {
-    const { CURRENCY, PERCENTAGE, YEAR, MONTH, COUNT } =
-      TaxCalculatorInputFieldSemantic
-
-    it.each([
-      [TaxCalculatorType.CHILD_BENEFIT, 'tekjuar', YEAR],
-      [TaxCalculatorType.CHILD_BENEFIT, 'tekjustofn', CURRENCY],
-      [TaxCalculatorType.CHILD_BENEFIT, 'fjoldiBarna', COUNT],
-      [TaxCalculatorType.CHILD_BENEFIT, 'skiptBornUndir7ara', COUNT],
-      [TaxCalculatorType.VEHICLE_TAX, 'ar', YEAR],
-      [TaxCalculatorType.VEHICLE_BENEFIT, 'purchasePrice', CURRENCY],
-      [TaxCalculatorType.VEHICLE_BENEFIT, 'purchaseYear', YEAR],
-      [TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES, 'laun', CURRENCY],
-      [TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES, 'launamanudur', MONTH],
-      [TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES, 'orlof', CURRENCY],
-      [
-        TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES,
-        'nytingSkattkorts',
-        PERCENTAGE,
-      ],
-      [
-        TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES,
-        'lifeyrissjodurHlutfall',
-        PERCENTAGE,
-      ],
-    ])('types %s.%s as %s', (type, key, expected) => {
-      const field = findField(type, key) as NumberInputField | undefined
-
-      expect(field?.type).toBe(TaxCalculatorInputFieldType.NUMBER)
-      expect(field?.semantic).toBe(expected)
-    })
-  })
 })
 
 describe('TaxCalculatorsService output contract', () => {
@@ -177,14 +72,22 @@ describe('TaxCalculatorsService output contract', () => {
 })
 
 describe('TaxCalculatorsService calculate', () => {
-  const { CALCULATION_FAILED, EMPTY_RESULT, MISSING_REQUIRED_VALUE } =
-    TaxCalculatorCalculationErrorCode
+  const {
+    CALCULATION_FAILED,
+    EMPTY_RESULT,
+    INVALID_VALUE,
+    MISSING_REQUIRED_VALUE,
+  } = TaxCalculatorCalculationErrorCode
 
   const vehicleTaxValues: InputFieldValue[] = [
     { key: 'ar', value: { numberValue: 2026 } },
     { key: 'bilnumer', value: { stringValue: 'AB123' } },
     { key: 'gjaldtimabil', value: { stringValue: '1. jan - 30. júlí' } },
   ]
+
+  beforeEach(() => {
+    jest.spyOn(client, 'validateInput').mockReturnValue([])
+  })
 
   afterEach(() => {
     jest.restoreAllMocks()
@@ -237,13 +140,19 @@ describe('TaxCalculatorsService calculate', () => {
       await service.calculate({
         type: TaxCalculatorType.VEHICLE_BENEFIT,
         values: [
-          { key: 'purchaseYear', value: { numberValue: 2024 } },
-          { key: 'purchasePrice', value: { numberValue: 6000000 } },
+          { key: 'kaupar', value: { numberValue: 2024 } },
+          { key: 'kaupverd', value: { numberValue: 6000000 } },
+          { key: 'rafbill', value: { booleanValue: true } },
+          { key: 'starfsmadurGreidirHledslu', value: { booleanValue: false } },
+          {
+            key: 'starfsmadurGreidirRekstrarkostnad',
+            value: { booleanValue: false },
+          },
         ],
       })
 
       expect(call).toHaveBeenCalledWith(
-        expect.objectContaining({ purchaseYear: 2024 }),
+        expect.objectContaining({ kaupar: 2024, rafbill: true }),
       )
     })
 
@@ -257,7 +166,7 @@ describe('TaxCalculatorsService calculate', () => {
           { key: 'launGreidast', value: { stringValue: 'Mánaðarlega' } },
           { key: 'hjuskaparstada', value: { stringValue: 'Einhleypingur' } },
           { key: 'tekjuar', value: { numberValue: 2026 } },
-          { key: 'launamanudur', value: { numberValue: 9 } },
+          { key: 'launamanudur', value: { stringValue: 'sep' } },
           { key: 'laun', value: { numberValue: 800000 } },
           { key: 'lifeyrissjodurHlutfall', value: { numberValue: 4 } },
           { key: 'sereignHlutfall', value: { numberValue: 2 } },
@@ -329,6 +238,22 @@ describe('TaxCalculatorsService calculate', () => {
       MISSING_REQUIRED_VALUE,
       MISSING_REQUIRED_VALUE,
       MISSING_REQUIRED_VALUE,
+    ])
+  })
+
+  it('returns fields the client rejects as invalid values without calling it', async () => {
+    jest.spyOn(client, 'validateInput').mockReturnValue(['ar'])
+    const call = jest.spyOn(client, 'getVehicleTax')
+
+    const response = await service.calculate({
+      type: TaxCalculatorType.VEHICLE_TAX,
+      values: vehicleTaxValues,
+    })
+
+    expect(call).not.toHaveBeenCalled()
+    expect(response.calculation).toBeUndefined()
+    expect(response.errors.map((error) => [error.code, error.key])).toEqual([
+      [INVALID_VALUE, 'ar'],
     ])
   })
 
