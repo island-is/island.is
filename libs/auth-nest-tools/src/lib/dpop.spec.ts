@@ -38,7 +38,7 @@ const proof = (
   )
 
 const request = (authorization: string, dpop?: string) =>
-  (({
+  ({
     method: 'POST',
     protocol: 'http',
     originalUrl: '/api/graphql',
@@ -50,7 +50,7 @@ const request = (authorization: string, dpop?: string) =>
       ...(dpop && { dpop }),
     },
     ip: '1.1.1.1',
-  } as unknown) as Request)
+  } as unknown as Request)
 
 describe('JwtStrategy DPoP', () => {
   const key = createKey()
