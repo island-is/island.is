@@ -85,7 +85,7 @@ export const TableRow = ({
   status,
   url,
 }: Props) => {
-  const { isAdmin, organizations, organizationNationalId } =
+  const { forms, isAdmin, organizations, organizationNationalId } =
     useContext(FormsContext)
   const [isOpen, setIsOpen] = useState(false)
   const [
@@ -313,6 +313,23 @@ export const TableRow = ({
       icon: 'pencil' as const,
       iconType: 'outline' as const,
       onClick: async () => {
+        if (
+          slug &&
+          forms.some(
+            (form) =>
+              form.slug === `${slug}-i-breytingu` &&
+              form.status === FormStatus.PUBLISHED_BEING_CHANGED,
+          )
+        ) {
+          toast.warning(
+            formatMessage({
+              id: 'publishedFormAlreadyBeingChanged',
+              defaultMessage:
+                'Það er þegar til eyðublað af þessari gerð með stöðuna Útgefið í breytingu.',
+            }),
+          )
+          return
+        }
         try {
           const { data } = await updateFormStatus({
             variables: {
@@ -329,6 +346,12 @@ export const TableRow = ({
             return [returnedForm, ...prevForms]
           })
         } catch (error) {
+          toast.error(
+            formatMessage({
+              id: 'changePublishedFormError',
+              defaultMessage: 'Ekki tókst að breyta útgefnu eyðublaði.',
+            }),
+          )
           console.error('Error publishing form:', error)
         }
       },
@@ -606,6 +629,7 @@ export const TableRow = ({
       del,
     ]
   }, [
+    forms,
     id,
     slug,
     status,
