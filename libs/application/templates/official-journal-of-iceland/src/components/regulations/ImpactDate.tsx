@@ -104,8 +104,13 @@ export const ImpactDate = (props: ImpactDateProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasCustomDate, selectedDate, minDate, defaultDate])
 
+  // The day the picker shows and toISODate saves, also behind UTC
+  const pickerMinDate = toPickerDate(minDate)
+
   // Without a usable effective date, the earliest allowed date is saved
-  const minDateLabel = minDate ? formatDate(minDate) : 'þegar í stað'
+  const minDateLabel = pickerMinDate
+    ? formatDate(pickerMinDate)
+    : 'þegar í stað'
   const defaultLabel = defaultDate
     ? `Breyting tekur gildi á gildistökudegi reglugerðarinnar (${formatDate(
         parseISO(defaultDate),
@@ -156,7 +161,7 @@ export const ImpactDate = (props: ImpactDateProps) => {
           locale="is"
           label="Gildistaka breytinga"
           placeholderText="Veldu dagsetningu"
-          minDate={toPickerDate(minDate)}
+          minDate={pickerMinDate}
           selected={toPickerDate(selectedDate)}
           handleChange={(pickedDate) => {
             userChoseRef.current = true

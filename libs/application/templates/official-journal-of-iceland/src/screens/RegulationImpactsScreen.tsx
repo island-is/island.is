@@ -59,9 +59,13 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
   // by default, so impacts aren't edited before it has loaded. A failed load
   // shows an error and falls back to no default; the meta and summary steps
   // still warn about dates that differ from the effective date.
+  // loadDraft changes with the answers, so load once per draft: a failed
+  // load would otherwise fetch and show its error again on each change.
   const [draftLoadDone, setDraftLoadDone] = useState(false)
+  const loadedDraftIdRef = useRef<string>()
   useEffect(() => {
-    if (draftId && !draftLoaded) {
+    if (draftId && !draftLoaded && loadedDraftIdRef.current !== draftId) {
+      loadedDraftIdRef.current = draftId
       loadDraft().finally(() => setDraftLoadDone(true))
     }
   }, [draftId, draftLoaded, loadDraft])
