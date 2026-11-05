@@ -113,7 +113,9 @@ export default function MedicineHistoryScreen() {
         closeable
         networkStatus={atcNetworkStatus}
         options={{
-          title: intl.formatMessage({ id: 'health.prescriptions.dispensations' }),
+          title: intl.formatMessage({
+            id: 'health.prescriptions.dispensations',
+          }),
         }}
       />
       {atcError && !atcData ? (
