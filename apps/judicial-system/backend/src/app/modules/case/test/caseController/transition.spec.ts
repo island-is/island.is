@@ -982,6 +982,18 @@ describe('CaseController - Transition', () => {
         expect(then.result).toBe(updatedCase)
       })
 
+      if (transition === CaseTransition.ASK_FOR_REVIEW) {
+        // The guard's transaction holds the case row's lock while the
+        // approver is validated, so the read joins it rather than take a
+        // pool connection of its own.
+        it('should validate the approver in the request transaction', () => {
+          expect(mockUserService.findById).toHaveBeenCalledWith(
+            indictmentApproverId,
+            { transaction },
+          )
+        })
+      }
+
       it(`should queue the ${notificationType} notification and nothing else`, () => {
         expect(mockQueuedMessages).toEqual([
           {
