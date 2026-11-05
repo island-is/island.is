@@ -43,8 +43,8 @@ import {
   ContentLanguage,
   Course,
   GetNamespaceQuery,
-  GetSearchCountTagsQuery,
   GetProjectPageTitleQuery,
+  GetSearchCountTagsQuery,
   GetSearchResultsDetailedQuery,
   GetSearchResultsNewsQuery,
   GetSearchResultsTotalQuery,
@@ -77,6 +77,7 @@ import {
   extractAnchorPageLinkType,
 } from '@island.is/web/utils/anchorPage'
 import { hasProcessEntries } from '@island.is/web/utils/article'
+import { getProjectSearchResultLink } from '@island.is/web/utils/projectSearch'
 
 import { Screen } from '../../types'
 import {
@@ -86,8 +87,6 @@ import {
   GET_SEARCH_RESULTS_TOTAL,
   GET_SINGLE_ENTRY_TITLE_BY_ID_QUERY,
 } from '../queries'
-import { getProjectSearchResultLink } from '@island.is/web/utils/projectSearch'
-
 import { GET_PROJECT_PAGE_TITLE_QUERY } from '../queries/Project'
 import { CategoriesProps, FilterLabels, FilterMenu } from './FilterMenu'
 import { ActionType, initialState, reducer } from './Search.state'
