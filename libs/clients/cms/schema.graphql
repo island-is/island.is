@@ -19748,6 +19748,7 @@ type HnippTemplate implements Entry & _Node {
   clickActionUrl(locale: String, useFallbackLocale: Boolean): String
   clickActionWeb(locale: String, useFallbackLocale: Boolean): String
   contentfulMetadata: ContentfulMetadata!
+  hnippCategory(locale: String, useFallbackLocale: Boolean): String
   linkedFrom(allowedLocales: [String]): HnippTemplateLinkingCollections
   notificationBody(locale: String, useFallbackLocale: Boolean): String
   notificationDataCopy(locale: String, useFallbackLocale: Boolean): String
@@ -19815,6 +19816,13 @@ input HnippTemplateFilter {
   clickAction_not_contains: String
   clickAction_not_in: [String]
   contentfulMetadata: ContentfulMetadataFilter
+  hnippCategory: String
+  hnippCategory_contains: String
+  hnippCategory_exists: Boolean
+  hnippCategory_in: [String]
+  hnippCategory_not: String
+  hnippCategory_not_contains: String
+  hnippCategory_not_in: [String]
   notificationBody: String
   notificationBody_contains: String
   notificationBody_exists: Boolean
@@ -19903,6 +19911,8 @@ enum HnippTemplateOrder {
   clickActionWeb_DESC
   clickAction_ASC
   clickAction_DESC
+  hnippCategory_ASC
+  hnippCategory_DESC
   notificationBody_ASC
   notificationBody_DESC
   notificationDataCopy_ASC
@@ -20703,6 +20713,23 @@ type LatestEventsSliceLinkingCollections {
     preview: Boolean
     useFallbackLocale: Boolean
   ): OrganizationSubpageCursorCollection
+  projectPageCollection(
+    limit: Int = 100
+    locale: String
+    order: [LatestEventsSliceLinkingCollectionsProjectPageCollectionOrder]
+    preview: Boolean
+    skip: Int = 0
+    useFallbackLocale: Boolean
+  ): ProjectPageCollection
+  projectPageCursorCollection(
+    limit: Int = 100
+    locale: String
+    order: [LatestEventsSliceLinkingCollectionsProjectPageCursorCollectionOrder]
+    pageNext: String
+    pagePrev: String
+    preview: Boolean
+    useFallbackLocale: Boolean
+  ): ProjectPageCursorCollection
 }
 
 enum LatestEventsSliceLinkingCollectionsOrganizationPageCollectionOrder {
@@ -20813,6 +20840,64 @@ enum LatestEventsSliceLinkingCollectionsOrganizationSubpageCursorCollectionOrder
   sys_publishedAt_DESC
   sys_publishedVersion_ASC
   sys_publishedVersion_DESC
+  title_ASC
+  title_DESC
+}
+
+enum LatestEventsSliceLinkingCollectionsProjectPageCollectionOrder {
+  contentIsFullWidth_ASC
+  contentIsFullWidth_DESC
+  defaultHeaderBackgroundColor_ASC
+  defaultHeaderBackgroundColor_DESC
+  featuredDescription_ASC
+  featuredDescription_DESC
+  sidebarFrontpageLink_ASC
+  sidebarFrontpageLink_DESC
+  sidebar_ASC
+  sidebar_DESC
+  slug_ASC
+  slug_DESC
+  subtitle_ASC
+  subtitle_DESC
+  sys_firstPublishedAt_ASC
+  sys_firstPublishedAt_DESC
+  sys_id_ASC
+  sys_id_DESC
+  sys_publishedAt_ASC
+  sys_publishedAt_DESC
+  sys_publishedVersion_ASC
+  sys_publishedVersion_DESC
+  theme_ASC
+  theme_DESC
+  title_ASC
+  title_DESC
+}
+
+enum LatestEventsSliceLinkingCollectionsProjectPageCursorCollectionOrder {
+  contentIsFullWidth_ASC
+  contentIsFullWidth_DESC
+  defaultHeaderBackgroundColor_ASC
+  defaultHeaderBackgroundColor_DESC
+  featuredDescription_ASC
+  featuredDescription_DESC
+  sidebarFrontpageLink_ASC
+  sidebarFrontpageLink_DESC
+  sidebar_ASC
+  sidebar_DESC
+  slug_ASC
+  slug_DESC
+  subtitle_ASC
+  subtitle_DESC
+  sys_firstPublishedAt_ASC
+  sys_firstPublishedAt_DESC
+  sys_id_ASC
+  sys_id_DESC
+  sys_publishedAt_ASC
+  sys_publishedAt_DESC
+  sys_publishedVersion_ASC
+  sys_publishedVersion_DESC
+  theme_ASC
+  theme_DESC
   title_ASC
   title_DESC
 }
@@ -30635,6 +30720,8 @@ enum OrganizationLinkingCollectionsHnippTemplateCollectionOrder {
   clickActionWeb_DESC
   clickAction_ASC
   clickAction_DESC
+  hnippCategory_ASC
+  hnippCategory_DESC
   notificationBody_ASC
   notificationBody_DESC
   notificationDataCopy_ASC
@@ -30670,6 +30757,8 @@ enum OrganizationLinkingCollectionsHnippTemplateCursorCollectionOrder {
   clickActionWeb_DESC
   clickAction_ASC
   clickAction_DESC
+  hnippCategory_ASC
+  hnippCategory_DESC
   notificationBody_ASC
   notificationBody_DESC
   notificationDataCopy_ASC
@@ -31273,6 +31362,7 @@ enum OrganizationOrder {
 """
 type OrganizationPage implements Entry & _Node {
   _id: ID!
+  activeTranslations(locale: String, useFallbackLocale: Boolean): JSON
   alertBanner(
     locale: String
     preview: Boolean
@@ -31590,6 +31680,7 @@ enum OrganizationPageExternalLinksCursorCollectionOrder {
 input OrganizationPageFilter {
   AND: [OrganizationPageFilter]
   OR: [OrganizationPageFilter]
+  activeTranslations_exists: Boolean
   alertBanner: cfAlertBannerNestedFilter
   alertBanner_exists: Boolean
   bottomSlices: cfbottomSlicesMultiTypeNestedFilter
@@ -35876,7 +35967,8 @@ input ProjectPageBottomSlicesFilter {
 }
 
 union ProjectPageBottomSlicesItem =
-    LatestNewsSlice
+    LatestEventsSlice
+  | LatestNewsSlice
   | LogoListSlice
   | OneColumnText
   | SliceConnectedComponent
@@ -51073,6 +51165,7 @@ input cfOrganizationNestedFilter {
 input cfOrganizationPageNestedFilter {
   AND: [cfOrganizationPageNestedFilter]
   OR: [cfOrganizationPageNestedFilter]
+  activeTranslations_exists: Boolean
   alertBanner_exists: Boolean
   bottomSlicesCollection_exists: Boolean
   canBeFoundInSearchResults: Boolean

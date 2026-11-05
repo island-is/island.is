@@ -3,8 +3,6 @@ import { Sequelize } from 'sequelize-typescript'
 
 import { Test } from '@nestjs/testing'
 
-import { IntlService } from '@island.is/cms-translations'
-import { createTestIntl } from '@island.is/cms-translations/test'
 import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
@@ -153,17 +151,6 @@ export const createTestingCaseModule = async () => {
       VerdictRepositoryService,
       VictimRepositoryService,
       {
-        provide: IntlService,
-        useValue: {
-          useIntl: async () => ({
-            formatMessage: createTestIntl({
-              onError: jest.fn(),
-              locale: 'is-IS',
-            }).formatMessage,
-          }),
-        },
-      },
-      {
         provide: LOGGER_PROVIDER,
         useValue: {
           debug: jest.fn(),
@@ -201,6 +188,8 @@ export const createTestingCaseModule = async () => {
   const userService = caseModule.get<UserService>(UserService)
 
   const fileService = caseModule.get<FileService>(FileService)
+
+  const pdfService = caseModule.get<PdfService>(PdfService)
 
   const awsS3Service = caseModule.get<AwsS3Service>(AwsS3Service)
 
@@ -360,6 +349,7 @@ export const createTestingCaseModule = async () => {
     policeService,
     userService,
     fileService,
+    pdfService,
     awsS3Service,
     defendantService,
     subpoenaService,

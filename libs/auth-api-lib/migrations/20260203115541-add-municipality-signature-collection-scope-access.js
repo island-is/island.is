@@ -72,9 +72,13 @@ module.exports = {
         ('4301690339', '')
       ON CONFLICT (national_id) DO NOTHING;
 
-      -- Add scope access
+      -- Add scope access. The scope itself is created by the
+      -- scope-signature-collection-municipality seed migration. Locally,
+      -- migrations run before seeds, so skip the grants when it is missing
+      -- rather than failing on the foreign key.
       INSERT INTO api_scope_user_access (national_id, scope)
-      VALUES
+      SELECT v.national_id, v.scope
+      FROM (VALUES
         ('5701696109', '@admin.island.is/signature-collection:municipality'),
         ('5901697579', '@admin.island.is/signature-collection:municipality'),
         ('6901693129', '@admin.island.is/signature-collection:municipality'),
@@ -137,6 +141,8 @@ module.exports = {
         ('4203697009', '@admin.island.is/signature-collection:municipality'),
         ('6902690159', '@admin.island.is/signature-collection:municipality'),
         ('4301690339', '@admin.island.is/signature-collection:municipality')
+      ) AS v(national_id, scope)
+      WHERE EXISTS (SELECT 1 FROM api_scope WHERE name = v.scope)
       ON CONFLICT (national_id, scope) DO NOTHING;
 
       COMMIT;

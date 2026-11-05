@@ -17,10 +17,11 @@
  ***
  *** The state machine is for this template is as follows:
  ***
- ***                           /--> Completed
- *** Prerequisites --> Draft --                                       /--> Approved
- ***                     Λ     \--> Waiting to assign --> In review --
- ***                     |_____________|                              \--> Rejected
+ ***                          /--SUBMIT--> Completed
+ *** Prerequisites --> Draft --                                /--APPROVE--> Approved
+ ***                     Λ    \--ASSIGN--> In review ----------
+ ***                     |                      |              \--REJECT--> Rejected
+ ***                     |_______EDIT___________|
  ***
  */
 
@@ -31,8 +32,6 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
-  DefaultEvents,
-  FormModes,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/types'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -48,8 +47,8 @@ import {
 } from './templateSplit/stateMachineOptions'
 import { approvedState } from './templateSplit/approvedState'
 import { rejectedState } from './templateSplit/rejectedState'
-import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { inReviewState } from './templateSplit/inReviewState'
+import { draftState } from './templateSplit/draftState'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -73,42 +72,7 @@ const template: ApplicationTemplate<
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: prerequisitesState,
-      [States.DRAFT]: {
-        meta: {
-          name: 'Main form',
-          progress: 0.4,
-          status: FormModes.DRAFT,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            // Here we only define one form to display in this state because
-            // the assignee role is set after this state
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/mainForm').then((module) =>
-                  Promise.resolve(module.MainForm),
-                ),
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
-              write: 'all',
-              read: 'all',
-              delete: true,
-            },
-          ],
-        },
-        // Here you can have different events sending the applications into different
-        // states depending on what is triggered
-        on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.COMPLETED,
-          },
-          [DefaultEvents.ASSIGN]: {
-            target: States.IN_REVIEW,
-            actions: 'assignUser',
-          },
-        },
-      },
+      [States.DRAFT]: draftState,
       [States.IN_REVIEW]: inReviewState,
       [States.COMPLETED]: completedState,
       [States.APPROVED]: approvedState,

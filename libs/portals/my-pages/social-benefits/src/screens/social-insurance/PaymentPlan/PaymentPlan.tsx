@@ -1,5 +1,6 @@
 import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { SOCIAL_INSURANCE_NAMESPACE } from '../../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   IntroWrapper,
@@ -14,7 +15,7 @@ import { useGetPreviousPaymentsQuery } from './PaymentPlan.generated'
 
 // Greiðsluáætlun
 const PaymentPlan = () => {
-  useNamespaces('sp.social-insurance-maintenance')
+  useNamespaces(SOCIAL_INSURANCE_NAMESPACE)
   const { formatMessage } = useLocale()
 
   const { data, loading, error } = useGetPreviousPaymentsQuery()

@@ -45,7 +45,11 @@ import { Screen } from '../../types'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { ProjectFooter } from './components/ProjectFooter'
 import { ProjectWrapper } from './components/ProjectWrapper'
-import { getThemeConfig } from './utils'
+import {
+  getProjectEventsOrganizationSlug,
+  getThemeConfig,
+  projectEventLinkParams,
+} from './utils'
 
 export interface PageProps {
   projectPage: Query['getProjectPage']
@@ -92,6 +96,11 @@ const ProjectPage: Screen<PageProps> = ({
     : [projectPage?.id, subpage?.id]
 
   useContentfulId(...contentfulIds)
+
+  // Only link events to the project event routes when they can resolve an organization
+  const eventLinkParams = getProjectEventsOrganizationSlug(projectPage)
+    ? projectEventLinkParams
+    : undefined
 
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
 
@@ -264,6 +273,7 @@ const ProjectPage: Screen<PageProps> = ({
                   namespace={namespace}
                   fullWidth={true}
                   slug={projectPage?.slug}
+                  params={eventLinkParams}
                   marginBottom={
                     typeof sliceCount === 'number' && index === sliceCount - 1
                       ? 8
@@ -312,6 +322,7 @@ const ProjectPage: Screen<PageProps> = ({
         withSidebar={projectPage?.sidebar}
         backLink={backLink}
         isSubpage={(subpage && p('smallerSubpageHeader', false)) ?? false}
+        isFrontpage={!subpage}
       >
         {customContent ? customContent : mainContent}
       </ProjectWrapper>
@@ -351,6 +362,7 @@ const ProjectPage: Screen<PageProps> = ({
               params={{
                 linkType: 'projectnews',
                 overview: 'projectnewsoverview',
+                ...eventLinkParams,
                 containerPaddingBottom: 0,
                 containerPaddingTop: 0,
                 contentPaddingTop: 0,
@@ -391,6 +403,7 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
         input: {
           slug: query.slug as string,
           lang: locale as ContentLanguage,
+          subpageSlug: query.subSlug as string | undefined,
         },
       },
     }),

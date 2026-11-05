@@ -22,10 +22,14 @@ import {
 
 import AppealProcessFileRow from './AppealProcessFileRow'
 import {
+  canConfirmAppealSummonsRow,
   canShowIssueAppealSummons,
+  formatAppealSummonsConfirmedDate,
   formatAppealSummonsFileName,
+  formatAppealSummonsSentToCourtOfAppealsTooltip,
   getAppealAppointmentLetters,
   getAppealSummonsMenuItems,
+  getAppealSummonsRows,
   getVerdictAppealFileGroups,
   showsAppealSummonses,
 } from './VerdictAppealFiles.logic'
@@ -55,11 +59,20 @@ const VerdictAppealFiles: FC = () => {
   const { user } = useContext(UserContext)
   const { features } = useContext(FeatureContext)
   const router = useRouter()
-  const { deleteAppealSummons, isDeletingAppealSummons } = useAppealSummons()
+  const {
+    deleteAppealSummons,
+    isDeletingAppealSummons,
+    confirmAppealSummons,
+    isConfirmingAppealSummons,
+    sendAppealSummonsToCourtOfAppeals,
+    isSendingAppealSummonsToCourtOfAppeals,
+  } = useAppealSummons()
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
   const [summonsIdToDelete, setSummonsIdToDelete] = useState<string>()
+  const [summonsIdToConfirm, setSummonsIdToConfirm] = useState<string>()
+  const [summonsIdToSend, setSummonsIdToSend] = useState<string>()
 
   const groups = getVerdictAppealFileGroups(workingCase, user)
   const isIndictmentAppealEnabled = features.includes(Feature.INDICTMENT_APPEAL)
@@ -67,7 +80,7 @@ const VerdictAppealFiles: FC = () => {
     isIndictmentAppealEnabled && showsAppealSummonses(workingCase, user)
   const showIssueButton =
     isIndictmentAppealEnabled && canShowIssueAppealSummons(workingCase, user)
-  const summonses = workingCase.verdictAppealCase?.appealSummonses ?? []
+  const summonses = getAppealSummonsRows(workingCase, user)
   const appointmentLetters = getAppealAppointmentLetters(workingCase, user)
 
   if (
@@ -110,6 +123,71 @@ const VerdictAppealFiles: FC = () => {
     setSummonsIdToDelete(undefined)
   }
 
+  const handleConfirmAppealSummons = async () => {
+    if (!summonsIdToConfirm) {
+      return
+    }
+
+    const confirmed = await confirmAppealSummons(
+      workingCase.id,
+      summonsIdToConfirm,
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    setWorkingCase((prev) => ({
+      ...prev,
+      verdictAppealCase: prev.verdictAppealCase
+        ? {
+            ...prev.verdictAppealCase,
+            appealSummonses: prev.verdictAppealCase.appealSummonses?.map(
+              (summons) =>
+                summons.id === confirmed.id
+                  ? { ...summons, confirmedDate: confirmed.confirmedDate }
+                  : summons,
+            ),
+          }
+        : prev.verdictAppealCase,
+    }))
+    setSummonsIdToConfirm(undefined)
+  }
+
+  const handleSendAppealSummonsToCourtOfAppeals = async () => {
+    if (!summonsIdToSend) {
+      return
+    }
+
+    const sent = await sendAppealSummonsToCourtOfAppeals(
+      workingCase.id,
+      summonsIdToSend,
+    )
+
+    if (!sent) {
+      return
+    }
+
+    setWorkingCase((prev) => ({
+      ...prev,
+      verdictAppealCase: prev.verdictAppealCase
+        ? {
+            ...prev.verdictAppealCase,
+            appealSummonses: prev.verdictAppealCase.appealSummonses?.map(
+              (summons) =>
+                summons.id === sent.id
+                  ? {
+                      ...summons,
+                      sentToCourtOfAppealsDate: sent.sentToCourtOfAppealsDate,
+                    }
+                  : summons,
+            ),
+          }
+        : prev.verdictAppealCase,
+    }))
+    setSummonsIdToSend(undefined)
+  }
+
   return (
     <Box component="section" dataTestId="verdictAppealFiles">
       <SectionHeading title="Áfrýjunarferli" marginBottom={2} />
@@ -144,13 +222,44 @@ const VerdictAppealFiles: FC = () => {
           </Box>
           {summonses.map((summons) => {
             const fileName = formatAppealSummonsFileName(summons)
+            const confirmedLabel = formatAppealSummonsConfirmedDate(
+              summons.confirmedDate,
+            )
+            const sentTooltip = formatAppealSummonsSentToCourtOfAppealsTooltip(
+              summons.sentToCourtOfAppealsDate,
+            )
+            const showConfirm = canConfirmAppealSummonsRow(summons, user)
 
             return (
               <AppealProcessFileRow
                 key={summons.id}
                 title={fileName}
+                titleIcon={sentTooltip ? 'informationCircle' : undefined}
+                titleIconTooltip={sentTooltip}
                 onOpen={() => openAppealSummonsPdf(summons.id)}
                 menuAriaLabel={`Valmynd fyrir ${fileName}`}
+                meta={
+                  confirmedLabel ? (
+                    <Text whiteSpace="nowrap">{confirmedLabel}</Text>
+                  ) : undefined
+                }
+                action={
+                  showConfirm ? (
+                    <Button
+                      size="small"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        if (summonsIdToConfirm) {
+                          return
+                        }
+
+                        setSummonsIdToConfirm(summons.id)
+                      }}
+                    >
+                      Staðfesta
+                    </Button>
+                  ) : undefined
+                }
                 menuItems={getAppealSummonsMenuItems(
                   summons,
                   user,
@@ -165,6 +274,13 @@ const VerdictAppealFiles: FC = () => {
                     }
 
                     setSummonsIdToDelete(summons.id)
+                  },
+                  () => {
+                    if (summonsIdToSend) {
+                      return
+                    }
+
+                    setSummonsIdToSend(summons.id)
                   },
                 )}
               />
@@ -236,6 +352,7 @@ const VerdictAppealFiles: FC = () => {
           title="Eyða áfrýjunarstefnu"
           text="Ertu viss um að þú viljir eyða þessari áfrýjunarstefnu?"
           onClose={() => setSummonsIdToDelete(undefined)}
+          loading={isDeletingAppealSummons}
           buttons={[
             {
               text: 'Hætta við',
@@ -249,6 +366,51 @@ const VerdictAppealFiles: FC = () => {
               },
               colorScheme: 'destructive',
               isLoading: isDeletingAppealSummons,
+            },
+          ]}
+        />
+      )}
+      {summonsIdToConfirm && (
+        <Modal
+          title="Viltu staðfesta áfrýjunarstefnu?"
+          text="Áfrýjunarstefnan verður staðfest rafrænt í þínu nafni. Ef henni er breytt síðar þarf að staðfesta hana aftur."
+          onClose={() => setSummonsIdToConfirm(undefined)}
+          loading={isConfirmingAppealSummons}
+          buttons={[
+            {
+              text: 'Hætta við',
+              onClick: () => setSummonsIdToConfirm(undefined),
+              variant: 'ghost',
+            },
+            {
+              text: 'Staðfesta',
+              onClick: () => {
+                void handleConfirmAppealSummons()
+              },
+              isLoading: isConfirmingAppealSummons,
+            },
+          ]}
+        />
+      )}
+
+      {summonsIdToSend && (
+        <Modal
+          title="Viltu senda áfrýjunarstefnu til Landsréttar?"
+          text="Áfrýjunarstefnan verður aðgengileg Landsrétti í Réttarvörslugátt. Ekki er hægt að breyta henni eftir að hún hefur verið send."
+          onClose={() => setSummonsIdToSend(undefined)}
+          loading={isSendingAppealSummonsToCourtOfAppeals}
+          buttons={[
+            {
+              text: 'Hætta við',
+              onClick: () => setSummonsIdToSend(undefined),
+              variant: 'ghost',
+            },
+            {
+              text: 'Senda til Landsréttar',
+              onClick: () => {
+                void handleSendAppealSummonsToCourtOfAppeals()
+              },
+              isLoading: isSendingAppealSummonsToCourtOfAppeals,
             },
           ]}
         />

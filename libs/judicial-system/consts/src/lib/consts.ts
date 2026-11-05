@@ -146,6 +146,12 @@ export const COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE =
   '/landsrettur/afryjun/yfirlit'
 export const COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE =
   '/landsrettur/afryjun/verjandi'
+export const COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE =
+  '/landsrettur/afryjun/greinargerdarfrestir'
+export const COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE =
+  '/landsrettur/afryjun/stada-og-lyktir'
+export const COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE =
+  '/landsrettur/afryjun/samantekt'
 //#endregion Court of appeals user routes
 
 //#region District court user routes
@@ -254,6 +260,8 @@ export const ADMIN_CREATE_USER_ROUTE = '/notendur/nyr'
 export const ADMIN_CHANGE_USER_ROUTE = '/notendur/breyta'
 export const ADMIN_STATISTICS_ROUTE = '/notendur/tolfraedi'
 export const ADMIN_MESSAGE_SUSPENSION_ROUTE = '/notendur/bidrod'
+export const ADMIN_SERVICE_INTERRUPTION_BANNER_ROUTE =
+  '/notendur/vidvorunar-bordi'
 
 //#endregion Admin user routes
 

@@ -2,8 +2,12 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Text, UploadFileDeprecated } from '@island.is/island-ui/core'
 import { childrenFilesForm } from '../../lib/messages'
-import { FAFieldBaseProps, OverrideAnswerSchema, UploadFileType } from '../..'
-import { Files } from '..'
+import {
+  FAFieldBaseProps,
+  OverrideAnswerSchema,
+  UploadFileType,
+} from '../../lib/types'
+import Files from '../Files/Files'
 
 const ChildrenFilesForm = ({ field, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()

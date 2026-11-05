@@ -55,7 +55,7 @@ export class FlightLegService {
       // We construct new objects with the expected model properties
       const constructedUser: FlightUser = {
         ...relation,
-        name: `${relation.firstName} ${relation.lastName}`,
+        name: relation.fullName,
       }
       const constructedFlightLegs: FlightLeg[] = []
 

@@ -15,6 +15,7 @@ import {
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
+  getAppealJudges,
   isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
@@ -90,14 +91,23 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
         <Text variant="h4" as={titleAs} marginBottom={2}>
           {capitalize(
             isRequestCase(caseType)
-              ? formatMessage(core.defendant, {
-                  suffix: isMultipleDefendants ? 'ar' : 'i',
-                })
+              ? formatMessage(
+                  { id: core.defendant, defaultMessage: core.defendant },
+                  {
+                    suffix: isMultipleDefendants ? 'ar' : 'i',
+                  },
+                )
               : isMultipleDefendants
-              ? formatMessage(core.indictmentDefendants)
-              : formatMessage(core.indictmentDefendant, {
-                  gender: getDefaultDefendantGender(defendants),
-                }),
+              ? core.indictmentDefendants
+              : formatMessage(
+                  {
+                    id: core.indictmentDefendant,
+                    defaultMessage: core.indictmentDefendant,
+                  },
+                  {
+                    gender: getDefaultDefendantGender(defendants),
+                  },
+                ),
           )}
         </Text>
       ),
@@ -115,9 +125,6 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
                     defendant={defendant}
                     courtId={workingCase.court?.id}
                     defender={{
-                      name: workingCase.defenderName,
-                      email: workingCase.defenderEmail,
-                      phoneNumber: workingCase.defenderPhoneNumber,
                       sessionArrangement: workingCase.sessionArrangements,
                     }}
                     displayAppealExpirationInfo={displayAppealExpirationInfo}
@@ -162,7 +169,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const indictmentCreated: Item = {
     id: 'indictment-created-item',
-    title: formatMessage(strings.indictmentSentToCourt),
+    title: strings.indictmentSentToCourt,
     values: [formatDate(workingCase.caseSentToCourtDate, 'PP')],
   }
 
@@ -171,9 +178,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     onClick?: () => void,
   ): Item => ({
     id: 'prosecutor-item',
-    title: formatMessage(
-      isRequestCase(caseType) ? core.prosecutorPerson : strings.prosecutor,
-    ),
+    title: isRequestCase(caseType) ? core.prosecutorPerson : strings.prosecutor,
     values: [
       RenderPersonalData({
         name: workingCase.prosecutor?.name,
@@ -191,26 +196,26 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const policeCaseNumbers: Item = {
     id: 'police-case-number-item',
-    title: formatMessage(core.policeCaseNumber),
+    title: core.policeCaseNumber,
     values:
       workingCase.policeCaseNumbers?.map((n) => <Text key={n}>{n}</Text>) || [],
   }
 
   const court: Item = {
     id: 'court-item',
-    title: formatMessage(core.court),
+    title: core.court,
     values: [workingCase.court?.name || ''],
   }
 
   const courtCaseNumber: Item = {
     id: 'court-case-number-item',
-    title: formatMessage(core.courtCaseNumber),
+    title: core.courtCaseNumber,
     values: [workingCase.courtCaseNumber],
   }
 
   const offenses: Item = {
     id: 'offenses-item',
-    title: formatMessage(strings.offense),
+    title: strings.offense,
     values: [
       <>
         {readableIndictmentSubtypes(
@@ -225,7 +230,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const judge: Item = {
     id: 'judges-item',
-    title: formatMessage(core.judge),
+    title: core.judge,
     values: [
       RenderPersonalData({
         name: workingCase.judge?.name,
@@ -236,13 +241,13 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const caseType: Item = {
     id: 'case-type-item',
-    title: formatMessage(core.caseType),
+    title: core.caseType,
     values: [capitalize(formatCaseType(workingCase.type))],
   }
 
   const registrar: Item = {
     id: 'registrar-item',
-    title: formatMessage(core.registrar),
+    title: core.registrar,
     values: [
       RenderPersonalData({
         name: workingCase.registrar?.name,
@@ -253,7 +258,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const requestedCourtDate: Item = {
     id: 'requested-court-date-item',
-    title: formatMessage(requestCourtDate.heading),
+    title: requestCourtDate.heading,
     values: [
       `${capitalize(
         formatDate(workingCase.requestedCourtDate, 'PPPP', true) ?? '',
@@ -283,9 +288,15 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
     const externalCourtCaseNumber = workingCase.mergeCaseNumber
     if (externalCourtCaseNumber) {
-      return formatMessage(strings.externalMergeCase, {
-        mergeCaseNumber: externalCourtCaseNumber,
-      })
+      return formatMessage(
+        {
+          id: strings.externalMergeCase,
+          defaultMessage: strings.externalMergeCase,
+        },
+        {
+          mergeCaseNumber: externalCourtCaseNumber,
+        },
+      )
     }
 
     return undefined
@@ -293,20 +304,20 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const mergeCase: Item = {
     id: 'merge-case-item',
-    title: formatMessage(strings.indictmentMergedTitle),
+    title: strings.indictmentMergedTitle,
     values: [getMergeCaseValue()],
   }
 
   const mergedCasePoliceCaseNumbers = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-police-case-number-item',
-    title: formatMessage(core.policeCaseNumber),
+    title: core.policeCaseNumber,
     values:
       mergedCase.policeCaseNumbers?.map((n) => <Text key={n}>{n}</Text>) || [],
   })
 
   const mergedCaseCourtCaseNumber = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-court-case-number-item',
-    title: formatMessage(strings.mergedFromTitle),
+    title: strings.mergedFromTitle,
     values: mergedCase.courtCaseNumber
       ? [
           canDefenceUserOpenLinkedCase(user, mergedCase) ? (
@@ -331,13 +342,13 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const mergedCaseJudge = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-judge-item',
-    title: formatMessage(core.judge),
+    title: core.judge,
     values: [mergedCase.judge?.name],
   })
 
   const mergedCaseCourt = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-court-item',
-    title: formatMessage(core.court),
+    title: core.court,
     values: [mergedCase.court?.name],
   })
 
@@ -396,26 +407,24 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const appealCaseNumber: Item = {
     id: 'appeal-case-number-item',
-    title: formatMessage(core.appealCaseNumberHeading),
+    title: core.appealCaseNumberHeading,
     values: [targetAppealCase?.appealCaseNumber],
   }
 
   const appealAssistant: Item = {
     id: 'appeal-assistant-item',
-    title: formatMessage(core.appealAssistantHeading),
+    title: core.appealAssistantHeading,
     values: [targetAppealCase?.appealAssistant?.name],
   }
 
   const appealJudges: Item = {
     id: 'appeal-judges-item',
-    title: formatMessage(core.appealJudgesHeading),
+    title: core.appealJudgesHeading,
     values: [
       <>
-        {sortByIcelandicAlphabet([
-          targetAppealCase?.appealJudge1?.name || '',
-          targetAppealCase?.appealJudge2?.name || '',
-          targetAppealCase?.appealJudge3?.name || '',
-        ]).map((judge, index) => (
+        {sortByIcelandicAlphabet(
+          getAppealJudges(targetAppealCase).map((judge) => judge.name || ''),
+        ).map((judge, index) => (
           <Text key={`${judge}_${index}`}>{judge}</Text>
         ))}
       </>,
@@ -424,23 +433,31 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const indictmentReviewer: Item = {
     id: 'indictment-reviewer-item',
-    title: formatMessage(strings.indictmentReviewer),
+    title: strings.indictmentReviewer,
     values: [workingCase.indictmentReviewer?.name],
   }
 
   const indictmentReviewDecision: Item = {
     id: 'indictment-review-decision-item',
-    title: formatMessage(strings.indictmentReviewDecision),
+    title: strings.indictmentReviewDecision,
     values: isNonEmptyArray(workingCase.defendants)
       ? workingCase.defendants
           .filter((defendant) => defendant.indictmentReviewDecision)
           .map((defendant) => (
             <Text key={`${defendant.id}-${defendant.indictmentReviewDecision}`}>
               {`${defendant.name} - ${formatMessage(
-                defendant.indictmentReviewDecision ===
-                  IndictmentCaseReviewDecision.ACCEPT
-                  ? strings.reviewTagAccepted
-                  : strings.reviewTagAppealed,
+                {
+                  id:
+                    defendant.indictmentReviewDecision ===
+                    IndictmentCaseReviewDecision.ACCEPT
+                      ? strings.reviewTagAccepted
+                      : strings.reviewTagAppealed,
+                  defaultMessage:
+                    defendant.indictmentReviewDecision ===
+                    IndictmentCaseReviewDecision.ACCEPT
+                      ? strings.reviewTagAccepted
+                      : strings.reviewTagAppealed,
+                },
                 {
                   isFine:
                     workingCase.indictmentRulingDecision ===
@@ -454,17 +471,23 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const indictmentReviewedDate = (date: string): Item => ({
     id: 'indictment-reviewed-date-item',
-    title: formatMessage(strings.indictmentReviewedDateTitle),
+    title: strings.indictmentReviewedDateTitle,
     values: [formatDate(date, 'PP')],
   })
 
   const parentCaseValidToDate: Item = {
     id: 'parent-case-valid-to-date-item',
     title: workingCase.parentCase
-      ? formatMessage(core.pastRestrictionCase, {
-          caseType: workingCase.type,
-        })
-      : formatMessage(core.arrestDate),
+      ? formatMessage(
+          {
+            id: core.pastRestrictionCase,
+            defaultMessage: core.pastRestrictionCase,
+          },
+          {
+            caseType: workingCase.type,
+          },
+        )
+      : core.arrestDate,
     values: [
       workingCase.parentCase
         ? `${capitalize(
@@ -485,8 +508,8 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
         {capitalize(
           isNonEmptyArray(workingCase.civilClaimants) &&
             workingCase.civilClaimants.length > 1
-            ? formatMessage(strings.civilClaimants)
-            : formatMessage(strings.civilClaimant),
+            ? strings.civilClaimants
+            : strings.civilClaimant,
         )}
       </Text>
     ),

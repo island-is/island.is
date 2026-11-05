@@ -25,8 +25,8 @@ export type UpdatedOffenses = {
 }
 
 // Offenses exist only under an indictment count, so every method addresses them
-// through the count. The single-offense endpoints run untransacted today, so
-// only the cascade method - whose callers all hold one - takes a transaction.
+// through the count. Every caller holds the request's transaction, so every
+// method takes one.
 @Injectable()
 export class OffenseRepositoryService {
   constructor(
@@ -37,13 +37,17 @@ export class OffenseRepositoryService {
   async create(
     indictmentCountId: string,
     offense: IndictmentCountOffense,
+    options: { transaction: Transaction },
   ): Promise<Offense> {
     try {
       this.logger.debug(
         `Creating an offense for indictment count ${indictmentCountId}`,
       )
 
-      return await this.offenseModel.create({ indictmentCountId, offense })
+      return await this.offenseModel.create(
+        { indictmentCountId, offense },
+        { transaction: options.transaction },
+      )
     } catch (error) {
       this.logger.error(
         `Error creating an offense for indictment count ${indictmentCountId}:`,
@@ -58,6 +62,7 @@ export class OffenseRepositoryService {
     offenseId: string,
     indictmentCountId: string,
     update: UpdateOffense,
+    options: { transaction: Transaction },
   ): Promise<UpdatedOffenses> {
     try {
       this.logger.debug(
@@ -67,7 +72,11 @@ export class OffenseRepositoryService {
 
       const [numberOfAffectedRows, offenses] = await this.offenseModel.update(
         update,
-        { where: { id: offenseId, indictmentCountId }, returning: true },
+        {
+          where: { id: offenseId, indictmentCountId },
+          returning: true,
+          transaction: options.transaction,
+        },
       )
 
       return { numberOfAffectedRows, offenses }
@@ -84,6 +93,7 @@ export class OffenseRepositoryService {
   async deleteByIdAndIndictmentCount(
     offenseId: string,
     indictmentCountId: string,
+    options: { transaction: Transaction },
   ): Promise<number> {
     try {
       this.logger.debug(
@@ -92,6 +102,7 @@ export class OffenseRepositoryService {
 
       return await this.offenseModel.destroy({
         where: { id: offenseId, indictmentCountId },
+        transaction: options.transaction,
       })
     } catch (error) {
       this.logger.error(

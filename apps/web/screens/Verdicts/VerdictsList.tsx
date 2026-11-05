@@ -30,10 +30,12 @@ import {
   Stack,
   Tag,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import {
   FilterTag,
   HeadWithSocialSharing,
+  MarkdownText,
   Webreader,
 } from '@island.is/web/components'
 import {
@@ -72,6 +74,7 @@ import * as styles from './VerdictsList.css'
 
 const ITEMS_PER_PAGE = 10
 const DEBOUNCE_TIME_IN_MS = 500
+const COURTS_FRONTPAGE_HREF = '/s/domstolar'
 const DATE_FORMAT = 'd. MMMM yyyy'
 
 const ALL_COURTS_TAG = ''
@@ -644,6 +647,11 @@ const Filters = ({
     startExpanded ? FILTER_ACCORDION_ITEM_IDS : [],
   )
   const [openFiltersToggle, setOpenFiltersToggle] = useState(!startExpanded)
+  const supremeCourtCaseTypeTooltip = formatMessage(
+    m.listPage.supremeCourtCaseTypeTooltip,
+  ).trim()
+  const showSupremeCourtCaseTypeTooltip = (courtId: string) =>
+    courtId === 'supremeCourt' && Boolean(supremeCourtCaseTypeTooltip)
 
   const keywordOptions = useMemo(() => {
     return keywords.map((keyword) => ({
@@ -717,9 +725,12 @@ const Filters = ({
     : {}
 
   return (
-    <Stack space={2}>
+    <Stack space={3}>
       {whiteBackground && (
-        <Box display="flex" justifyContent="flexEnd">
+        <Inline justifyContent="spaceBetween" alignY="center" space={2}>
+          <Text variant="h5">
+            {formatMessage(m.listPage.sidebarFilterHeading)}
+          </Text>
           <Button
             variant="text"
             icon={openFiltersToggle ? 'add' : 'remove'}
@@ -737,7 +748,7 @@ const Filters = ({
                 : m.listPage.closeAllFiltersLabel,
             )}
           </Button>
-        </Box>
+        </Inline>
       )}
       <Box {...boxProps}>
         <Accordion
@@ -873,9 +884,22 @@ const Filters = ({
               <Stack space={3} key={renderKey}>
                 {caseFilterOptionsByCourt.map((courtGroup) => (
                   <Stack key={courtGroup.id} space={2}>
-                    {selectedCourtLevel === 'all' && (
+                    <Inline space={1} alignY="center">
                       <Text variant="eyebrow">{courtGroup.label}</Text>
-                    )}
+                      {showSupremeCourtCaseTypeTooltip(courtGroup.id) && (
+                        <Tooltip
+                          text={
+                            <MarkdownText
+                              variant="small"
+                              fontWeight="regular"
+                              replaceNewLinesWithBreaks={false}
+                            >
+                              {supremeCourtCaseTypeTooltip}
+                            </MarkdownText>
+                          }
+                        />
+                      )}
+                    </Inline>
                     <Stack space={2}>
                       {courtGroup.options.map(({ label, typeOfOption }) => {
                         const queryParamKey =
@@ -1337,7 +1361,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
     },
     {
       label: 'Endurupptökudómar',
-      href: '/s/endurupptokudomar',
+      href: '/s/endurupptokudomur',
     },
     {
       label: 'Landsréttur',
@@ -1346,7 +1370,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
 
     {
       label: 'Héraðsdómstólar',
-      href: '/s/haeradsdomstolar',
+      href: '/s/heradsdomstolar',
     },
     {
       label: 'Dómstólasýslan',
@@ -1422,11 +1446,13 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       paddingTop={2}
                       paddingBottom={2}
                     >
-                      <img
-                        src="/assets/skjaldarmerki.svg"
-                        alt=""
-                        className={styles.logo}
-                      />
+                      <LinkV2 href={COURTS_FRONTPAGE_HREF}>
+                        <img
+                          src="/assets/skjaldarmerki.svg"
+                          alt={formatMessage(m.listPage.courtsFrontpageLinkAlt)}
+                          className={styles.logo}
+                        />
+                      </LinkV2>
                     </Box>
                   </Hidden>
                 </GridColumn>
@@ -1954,42 +1980,19 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
             hiddenOnTablet={true}
             isSticky={false}
             sidebarContent={
-              <Stack space={3}>
-                <Text variant="h5">
-                  {formatMessage(m.listPage.sidebarFilterHeading)}
-                </Text>
-                <Filters
-                  selectedCourtLevel={mapCourtsToTopLevelCourt(
-                    selectedCourts,
-                    selectedDistrictCourts,
-                  )}
-                  renderKey={renderKey}
-                  caseFilterOptions={caseFilterOptions}
-                  keywords={keywords}
-                  queryState={queryState}
-                  updateQueryState={updateQueryState}
-                  updateRenderKey={updateRenderKey}
-                  whiteBackground={true}
-                />
-                <Box
-                  background="blue100"
-                  width="full"
-                  display="flex"
-                  flexDirection="row"
-                  alignItems="center"
-                  justifyContent="center"
-                  style={{ height: 72 }}
-                >
-                  <Button
-                    variant="text"
-                    icon="reload"
-                    size="small"
-                    onClick={resetQueryState}
-                  >
-                    {formatMessage(m.listPage.clearAllFiltersLabel)}
-                  </Button>
-                </Box>
-              </Stack>
+              <Filters
+                selectedCourtLevel={mapCourtsToTopLevelCourt(
+                  selectedCourts,
+                  selectedDistrictCourts,
+                )}
+                renderKey={renderKey}
+                caseFilterOptions={caseFilterOptions}
+                keywords={keywords}
+                queryState={queryState}
+                updateQueryState={updateQueryState}
+                updateRenderKey={updateRenderKey}
+                whiteBackground={true}
+              />
             }
           >
             <Stack space={3}>
@@ -2007,16 +2010,33 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                 </Inline>
               )}
               <Inline justifyContent="spaceBetween" alignY="center" space={2}>
-                <Text>
-                  <strong>{data.total}</strong>{' '}
-                  {formatMessage(
-                    m.listPage[
-                      data.total === 1
-                        ? 'verdictsFoundSingular'
-                        : 'verdictsFoundPlural'
-                    ],
+                <Inline alignY="center" space={3}>
+                  <Text>
+                    <strong>{data.total}</strong>{' '}
+                    {formatMessage(
+                      m.listPage[
+                        data.total === 1
+                          ? 'verdictsFoundSingular'
+                          : 'verdictsFoundPlural'
+                      ],
+                    )}
+                  </Text>
+                  {(filterTags.length > 0 ||
+                    selectedCourts.length > 0 ||
+                    selectedDistrictCourts.length > 0 ||
+                    Boolean(queryState[QueryParam.SEARCH_TERM])) && (
+                    <Hidden below="lg">
+                      <Button
+                        variant="text"
+                        icon="reload"
+                        size="small"
+                        onClick={resetQueryState}
+                      >
+                        {formatMessage(m.listPage.clearAllFiltersLabel)}
+                      </Button>
+                    </Hidden>
                   )}
-                </Text>
+                </Inline>
                 <Hidden above="md">
                   <Filter
                     resultCount={data.total}

@@ -8,6 +8,7 @@ import {
 import { getApplicationAnswers as getHSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
   errorMessages as marpErrorMessages,
+  getApplicationAnswers as getMARPApplicationAnswers,
   getApplicationExternalData as getMARPApplicationExternalData,
   getIncompleteAnswerSections,
   MedicalAndRehabilitationPaymentsApplicationType,
@@ -19,7 +20,11 @@ import {
   isEarlyRetirement,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
-import { Application, ApplicationTypes } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationTypes,
+  PerformActionResult,
+} from '@island.is/application/types'
 import {
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
@@ -41,6 +46,7 @@ import { ConfigType } from '@nestjs/config'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationApiAction } from '../../template-api.service'
 import { sharedModuleConfig } from '../../shared'
 import {
   getOAPApplicationType,
@@ -53,7 +59,10 @@ import {
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
-import { ApplicationTypeEnum } from '@island.is/clients/social-insurance-administration'
+import {
+  ApplicationTypeEnum,
+  withApplicationGuidContext,
+} from '@island.is/clients/social-insurance-administration'
 import {
   IndividualDto,
   NationalRegistryV3ApplicationsClientService,
@@ -75,6 +84,32 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     private readonly nationalRegistryV3ApplicationsApi: NationalRegistryV3ApplicationsClientService,
   ) {
     super('SocialInsuranceAdministration')
+  }
+
+  /**
+   * SÍ wants the island.is application id on every request made for the
+   * medical and rehabilitation payments application, so run its actions in a
+   * context that the SÍ client reads the id from.
+   */
+  override async performAction(
+    action: ApplicationApiAction,
+    handleError: (
+      action: ApplicationApiAction,
+      error: Error,
+    ) => TemplateApiError,
+  ): Promise<PerformActionResult> {
+    const { application } = action.props
+
+    if (
+      application?.typeId ===
+      ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS
+    ) {
+      return withApplicationGuidContext(application.id, () =>
+        super.performAction(action, handleError),
+      )
+    }
+
+    return super.performAction(action, handleError)
   }
 
   private async initAttachments(
@@ -542,8 +577,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         )
       }
 
-      const marpDTO =
-        transformApplicationToMedicalAndRehabilitationPaymentsDTO(application)
+      const attachments = await this.getMARPAttachments(application)
+
+      const marpDTO = transformApplicationToMedicalAndRehabilitationPaymentsDTO(
+        application,
+        attachments,
+      )
 
       const response =
         await this.siaMedicalRehabServiceV2.sendMedicalAndRehabilitationPaymentsApplication(
@@ -566,6 +605,30 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
       return response
     }
+  }
+
+  private async getMARPAttachments(
+    application: Application,
+  ): Promise<Attachment[]> {
+    const { isStudying, studyDocuments } = getMARPApplicationAnswers(
+      application.answers,
+    )
+
+    if (isStudying !== YES || studyDocuments.length === 0) {
+      return []
+    }
+
+    const attachments: Attachment[] = []
+
+    for (const document of studyDocuments) {
+      attachments.push({
+        name: document.name,
+        type: DocumentTypeEnum.MARP_SCHOOL_CONFIRMATION,
+        file: await this.getPdf(`${application.id}/${document.key}`),
+      })
+    }
+
+    return attachments
   }
 
   async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {

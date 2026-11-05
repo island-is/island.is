@@ -103,6 +103,13 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_FAKE],
                 })
               },
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.continue,
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
               api: [
@@ -179,6 +186,11 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                   event: DefaultEvents.PAYMENT,
                   name: m.continue,
                   type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: m.continue,
+                  type: 'reject',
                 },
               ],
               write: 'all',

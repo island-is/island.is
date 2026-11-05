@@ -139,11 +139,7 @@ describe('CaseController - Get court record pdf', () => {
         `The court record for case ${caseId} was not found in AWS S3`,
         { error },
       )
-      expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-        user,
-      )
+      expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(theCase, user)
       expect(res.end).toHaveBeenCalledWith(pdf)
     })
   })

@@ -39,6 +39,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 import { AuthDelegationType } from '@island.is/shared/types'
+import cloneDeep from 'lodash/cloneDeep'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
@@ -52,6 +53,7 @@ import {
   SocialInsuranceAdministrationEmploymentStatusesApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationMARPApplicationTypeApi,
   SocialInsuranceAdministrationMARPExemptionApi,
   SocialInsuranceAdministrationMARPQuestionnairesApi,
@@ -61,6 +63,7 @@ import {
 import {
   canStartApplication,
   getApplicationAnswers,
+  getApplicationExternalData,
 } from '../utils/medicalAndRehabilitationPaymentsUtils'
 import { dataSchema } from './dataSchema'
 import {
@@ -133,6 +136,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
                 SocialInsuranceAdministrationCategorizedIncomeTypesApi,
                 SocialInsuranceAdministrationCurrenciesApi,
+                SocialInsuranceAdministrationLatestIncomePlan,
                 SocialInsuranceAdministrationIncomePlanConditionsApi,
                 SocialInsuranceAdministrationMARPQuestionnairesApi,
                 SocialInsuranceAdministrationEctsUnitsApi,
@@ -268,6 +272,23 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Approve',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Reject',
+                  type: 'reject',
+                },
+                {
+                  event: OAPEvents.DISMISS,
+                  name: 'Dismiss',
+                  type: 'reject',
+                },
+              ],
               write: 'all',
             },
           ],
@@ -360,8 +381,29 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
       populateIncomeTable: assign((context) => {
         const { application } = context
         const { answers } = application
+        const { latestIncomePlan } = getApplicationExternalData(
+          application.externalData,
+        )
 
-        set(answers, 'incomePlanTable', defaultIncomeTypes)
+        if (
+          latestIncomePlan?.status === 'Accepted' &&
+          latestIncomePlan.incomeTypeLines?.length
+        ) {
+          set(
+            answers,
+            'incomePlanTable',
+            latestIncomePlan.incomeTypeLines.map((income) => ({
+              incomeType: income.incomeTypeName,
+              incomePerYear:
+                income.totalSum != null ? String(income.totalSum) : '',
+              currency: income.currency,
+              income: RatioType.YEARLY,
+              incomeCategory: income.incomeCategoryName,
+            })),
+          )
+        } else {
+          set(answers, 'incomePlanTable', cloneDeep(defaultIncomeTypes))
+        }
 
         return context
       }),

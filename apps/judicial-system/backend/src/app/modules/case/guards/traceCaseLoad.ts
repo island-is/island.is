@@ -13,33 +13,53 @@ export type CaseLoadInclude =
   | 'defendantIndictment'
   | 'minimal'
 
-export const CASE_LOAD_SPAN = 'judicial-system.case_load'
+// Underscore, not hyphen: the Datadog agent normalises span names and turns a
+// hyphen into an underscore, so this is the name a query has to use.
+export const CASE_LOAD_SPAN = 'judicial_system.case_load'
 export const CASE_LOAD_GUARD_TAG = 'case_load.guard'
 export const CASE_LOAD_INCLUDE_TAG = 'case_load.include'
+export const CASE_LOAD_ROUTE_TAG = 'case_load.route'
+
+/**
+ * The parts of the request the load is tagged with. Under Nest the route
+ * pattern is on the request by the time a guard runs, since guards run inside
+ * the route's handler.
+ */
+export interface CaseLoadRequest {
+  method?: string
+  route?: { path?: string }
+  path?: string
+}
+
+export const caseLoadRoute = (request: CaseLoadRequest): string =>
+  `${request.method ?? ''} ${request.route?.path ?? request.path ?? ''}`.trim()
 
 /**
  * Runs a guard's case load inside a span of its own, named after the guard
- * and tagged with the include profile, and puts the same two tags on the
- * request span.
+ * and tagged with the include profile and the route being served.
  *
  * The span makes every Postgres query the load issues a child of it, so the
- * query volume can be attributed to the guard that caused it. The tags on the
- * request span let request-level metrics (hits, latency, response size) be
- * split by which guard loaded the case and with which profile, route by
- * route. Both are what the guard migrations to narrower profiles are measured
- * against.
+ * query volume and the time spent can be attributed to the guard that caused
+ * them. The route tag is what splits that per route: the span active in a
+ * guard is Nest's router middleware span, not the request entry span, so the
+ * route cannot be read off a parent and has to be carried here. Together they
+ * are what the guard migrations to narrower profiles are measured against.
  */
 export const traceCaseLoad = <T>(
   guard: string,
   include: CaseLoadInclude,
+  request: CaseLoadRequest,
   load: () => Promise<T>,
-): Promise<T> => {
-  const tags = {
-    [CASE_LOAD_GUARD_TAG]: guard,
-    [CASE_LOAD_INCLUDE_TAG]: include,
-  }
-
-  tracer.scope().active()?.addTags(tags)
-
-  return tracer.trace(CASE_LOAD_SPAN, { resource: guard, tags }, load)
-}
+): Promise<T> =>
+  tracer.trace(
+    CASE_LOAD_SPAN,
+    {
+      resource: guard,
+      tags: {
+        [CASE_LOAD_GUARD_TAG]: guard,
+        [CASE_LOAD_INCLUDE_TAG]: include,
+        [CASE_LOAD_ROUTE_TAG]: caseLoadRoute(request),
+      },
+    },
+    load,
+  )

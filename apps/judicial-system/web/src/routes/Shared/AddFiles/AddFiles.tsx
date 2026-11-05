@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useCallback, useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, FileUploadStatus } from '@island.is/island-ui/core'
@@ -100,7 +99,6 @@ const getUserProps = (user: User | undefined, workingCase: WorkingCase) => {
 const AddFiles: FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { formatMessage } = useIntl()
   const [editCount, setEditCount] = useState(0)
   const [visibleModal, setVisibleModal] = useState<'confirmation'>()
   const router = useRouter()
@@ -238,14 +236,12 @@ const AddFiles: FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.overview)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.overview} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <PageTitle>{strings.heading}</PageTitle>
         {CaseInfo}
         <SectionHeading
-          title={formatMessage(strings.uploadFilesHeading)}
+          title={strings.uploadFilesHeading}
           description={`Gögnin verða að hafa lýsandi skráarheiti.${
             isProsecutionUser(user)
               ? ' Athugið að viðbótar rafrænum gögnum er bætt við málið í gegnum Réttarvörslugáttargluggann í LÖKE.'
@@ -276,8 +272,8 @@ const AddFiles: FC = () => {
           actions={[
             {
               text: someFilesError
-                ? formatMessage(strings.tryUploadAgain)
-                : formatMessage(strings.nextButtonText),
+                ? strings.tryUploadAgain
+                : strings.nextButtonText,
               colorScheme: someFilesError ? 'destructive' : 'default',
               onClick: () => setVisibleModal('confirmation'),
               disabled:
@@ -292,16 +288,16 @@ const AddFiles: FC = () => {
       </FormContentContainer>
       {visibleModal === 'confirmation' && (
         <Modal
-          title={formatMessage(strings.filesSentModalTitle)}
-          text={formatMessage(strings.filesSentModalText)}
+          title={strings.filesSentModalTitle}
+          text={strings.filesSentModalText}
           buttons={[
             {
-              text: formatMessage(strings.filesDismissedModalButtonText),
+              text: strings.filesDismissedModalButtonText,
               onClick: () => setVisibleModal(undefined),
               variant: 'ghost',
             },
             {
-              text: formatMessage(strings.filesConfirmedModalButtonText),
+              text: strings.filesConfirmedModalButtonText,
               onClick: async () => {
                 await handleNextButtonClick()
               },

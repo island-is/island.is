@@ -19,7 +19,9 @@ import {
 } from '@island.is/judicial-system/auth'
 import {
   Feature,
+  isCourtOfAppealsUser,
   isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -27,8 +29,10 @@ import { AppealCase } from '../appeal-case'
 import { BackendService } from '../backend'
 import { FeatureService } from '../feature/feature.service'
 import {
+  ConfirmAppealSummonsInput,
   CreateAppealSummonsInput,
   DeleteAppealSummonsInput,
+  SendAppealSummonsToCourtOfAppealsInput,
   UpdateAppealSummonsInput,
 } from './dto/appealSummons.input'
 import { AppealSummons } from './models/appealSummons.model'
@@ -117,6 +121,51 @@ export class AppealSummonsResolver {
       input.appealSummonsId,
     )
   }
+
+  @Mutation(() => AppealSummons)
+  confirmAppealSummons(
+    @Args('caseId', new ParseUUIDPipe()) caseId: string,
+    @Args('input', { type: () => ConfirmAppealSummonsInput })
+    input: ConfirmAppealSummonsInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealSummons> {
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Confirming appeal summons ${input.appealSummonsId} of case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.CONFIRM_APPEAL_SUMMONS,
+      this.backendService.confirmAppealSummons(caseId, input.appealSummonsId),
+      caseId,
+    )
+  }
+
+  @Mutation(() => AppealSummons)
+  sendAppealSummonsToCourtOfAppeals(
+    @Args('caseId', new ParseUUIDPipe()) caseId: string,
+    @Args('input', { type: () => SendAppealSummonsToCourtOfAppealsInput })
+    input: SendAppealSummonsToCourtOfAppealsInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealSummons> {
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Sending appeal summons ${input.appealSummonsId} of case ${caseId} to the court of appeals`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.SEND_APPEAL_SUMMONS_TO_COURT_OF_APPEALS,
+      this.backendService.sendAppealSummonsToCourtOfAppeals(
+        caseId,
+        input.appealSummonsId,
+      ),
+      caseId,
+    )
+  }
 }
 
 @UseGuards(JwtGraphQlAuthUserGuard)
@@ -131,11 +180,28 @@ export class AppealCaseAppealSummonsResolver {
   ): AppealSummons[] {
     if (
       this.featureService.isHidden(Feature.INDICTMENT_APPEAL) ||
-      !isPublicProsecutionOfficeUser(user)
+      !(isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user))
     ) {
       return []
     }
 
     return appealCase.appealSummonses ?? []
+  }
+
+  @ResolveField('sentAppealSummonses', () => [AppealSummons], {
+    nullable: true,
+  })
+  sentAppealSummonses(
+    @Parent() appealCase: AppealCase,
+    @CurrentGraphQlUser() user: User,
+  ): AppealSummons[] {
+    if (
+      this.featureService.isHidden(Feature.INDICTMENT_APPEAL) ||
+      !isCourtOfAppealsUser(user)
+    ) {
+      return []
+    }
+
+    return appealCase.sentAppealSummonses ?? []
   }
 }

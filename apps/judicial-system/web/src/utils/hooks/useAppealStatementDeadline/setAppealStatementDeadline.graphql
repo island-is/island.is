@@ -1,0 +1,10 @@
+mutation SetAppealStatementDeadline($input: SetAppealStatementDeadlineInput!) {
+  setAppealStatementDeadline(input: $input) {
+    id
+    created
+    modified
+    defendantId
+    civilClaimantId
+    deadline
+  }
+}

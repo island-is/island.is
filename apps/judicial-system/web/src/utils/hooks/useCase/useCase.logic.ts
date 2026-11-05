@@ -121,7 +121,10 @@ export const formatDateForServer = (date: Date) => {
 // The fields a prosecutor can enter for a defendant before the case exists.
 // A blank national id is sent as null, since the server validates the length
 // of any string it receives.
-const toCreateCaseDefendantInput = (defendant: Defendant) =>
+const toCreateCaseDefendantInput = (
+  defendant: Defendant,
+  { includeDefender }: { includeDefender: boolean },
+) =>
   normalizeBlankStrings({
     noNationalId: defendant.noNationalId,
     nationalId: defendant.nationalId || null,
@@ -129,13 +132,22 @@ const toCreateCaseDefendantInput = (defendant: Defendant) =>
     gender: defendant.gender,
     address: defendant.address,
     citizenship: defendant.citizenship,
+    ...(includeDefender
+      ? {
+          defenderName: defendant.defenderName,
+          defenderNationalId: defendant.defenderNationalId,
+          defenderEmail: defendant.defenderEmail,
+          defenderPhoneNumber: defendant.defenderPhoneNumber,
+          requestSharedWithDefender: defendant.requestSharedWithDefender,
+        }
+      : {}),
   })
 
 // Indictments collect their defendants before the case exists, so they are
 // sent with the case and created in the same transaction: the case is created
-// whole or not at all. Request cases are created before their defendant is
-// entered, so nothing is sent for them and the server starts them from an
-// empty defendant. Undefined when the case is missing what it takes to be created.
+// whole or not at all. Request cases may send the first defendant's defender
+// details at create time; otherwise the server starts from an empty defendant.
+// Undefined when the case is missing what it takes to be created.
 export const createCaseInput = (
   theCase: WorkingCase,
 ): CreateCaseInput | undefined => {
@@ -143,21 +155,24 @@ export const createCaseInput = (
     return undefined
   }
 
-  const defendants =
-    isIndictmentCase(theCase.type) && theCase.defendants?.length
-      ? theCase.defendants.map(toCreateCaseDefendantInput)
-      : undefined
+  const includeDefender = !isIndictmentCase(theCase.type)
+  const defendants = theCase.defendants?.length
+    ? isIndictmentCase(theCase.type)
+      ? theCase.defendants.map((defendant) =>
+          toCreateCaseDefendantInput(defendant, { includeDefender }),
+        )
+      : [
+          toCreateCaseDefendantInput(theCase.defendants[0], {
+            includeDefender,
+          }),
+        ]
+    : undefined
 
   return {
     type: theCase.type,
     indictmentSubtypes: theCase.indictmentSubtypes,
     description: theCase.description,
     policeCaseNumbers: theCase.policeCaseNumbers,
-    defenderName: theCase.defenderName,
-    defenderNationalId: theCase.defenderNationalId,
-    defenderEmail: theCase.defenderEmail,
-    defenderPhoneNumber: theCase.defenderPhoneNumber,
-    requestSharedWithDefender: theCase.requestSharedWithDefender,
     leadInvestigator: theCase.leadInvestigator,
     crimeScenes: theCase.crimeScenes,
     prosecutorId: theCase.prosecutor?.id,

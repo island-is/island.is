@@ -7,6 +7,7 @@ import {
   getAppealExpirationInfo,
   getDefendantTagConfig,
 } from './DefendantInfo.logic'
+import { strings } from './DefendantInfo.strings'
 
 describe('DefendantInfo', () => {
   describe('getAdditionalDataSections', () => {
@@ -30,9 +31,7 @@ describe('DefendantInfo', () => {
         serviceRequirement,
       })
 
-      expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_date_not_begun_v2',
-      )
+      expect(dataSections.message.id).toStrictEqual(strings.appealDateNotBegun)
     })
 
     test('should return the correct string if serviceRequirement is NOT_APPLICABLE and verdictAppealDeadline is not provided', () => {
@@ -47,9 +46,7 @@ describe('DefendantInfo', () => {
         serviceRequirement,
       })
 
-      expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_date_not_begun_v2',
-      )
+      expect(dataSections.message.id).toStrictEqual(strings.appealDateNotBegun)
     })
 
     test('should return the correct string if serviceRequirement is NOT_REQUIRED', () => {
@@ -63,9 +60,7 @@ describe('DefendantInfo', () => {
         serviceRequirement,
       })
 
-      expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.service_not_required',
-      )
+      expect(dataSections.message.id).toStrictEqual(strings.serviceNotRequired)
     })
 
     test('should return the correct string if serviceRequirement is REQUIRED and appeal expiration date is in the future', () => {
@@ -80,7 +75,7 @@ describe('DefendantInfo', () => {
       })
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_expiration_date_v2',
+        strings.appealExpirationDate,
       )
       expect(dataSections.date).toStrictEqual('05.08.2024')
     })
@@ -97,7 +92,7 @@ describe('DefendantInfo', () => {
       })
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_expiration_date_v2',
+        strings.appealExpirationDate,
       )
       expect(dataSections.date).toStrictEqual('05.08.2024')
     })
@@ -113,9 +108,7 @@ describe('DefendantInfo', () => {
         serviceRequirement,
       })
 
-      expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_date_expired_v2',
-      )
+      expect(dataSections.message.id).toStrictEqual(strings.appealDateExpired)
       expect(dataSections.date).toStrictEqual('07.07.2024')
     })
 
@@ -130,9 +123,7 @@ describe('DefendantInfo', () => {
         serviceRequirement,
       })
 
-      expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_date_expired_v2',
-      )
+      expect(dataSections.message.id).toStrictEqual(strings.appealDateExpired)
       expect(dataSections.date).toStrictEqual('07.07.2024')
     })
   })

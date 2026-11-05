@@ -26,6 +26,27 @@ export const m = defineMessages({
     defaultMessage: 'Nýtt',
     description: 'New',
   },
+  exportForm: {
+    id: 'form.system:export-form',
+    defaultMessage: 'Flytja út',
+    description: 'Export',
+  },
+  importForm: {
+    id: 'form.system:import-form',
+    defaultMessage: 'Flytja inn',
+    description: 'Import',
+  },
+  exportFormError: {
+    id: 'form.system:export-form-error',
+    defaultMessage: 'Ekki tókst að flytja út eyðublað.',
+    description: 'Form export failed',
+  },
+  importFormError: {
+    id: 'form.system:import-form-error',
+    defaultMessage:
+      'Ekki tókst að flytja inn eyðublað. Athugaðu skrána og stillingar stofnunar.',
+    description: 'Form import failed',
+  },
   newApplication: {
     id: 'form.system:new-application',
     defaultMessage: 'Ný umsókn',

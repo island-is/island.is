@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
@@ -38,7 +37,6 @@ export const NewUser = () => {
     loading: institutionsLoading,
     loaded: institutionsLoaded,
   } = useInstitution()
-  const { formatMessage } = useIntl()
 
   const [createUserMutation, { loading: userCreating }] = useCreateUserMutation(
     {
@@ -51,7 +49,7 @@ export const NewUser = () => {
             'Notandi með þessa kennitölu, hlutverk og stofnun er nú þegar til',
           )
         } else {
-          toast.error(formatMessage(strings.createError))
+          toast.error(strings.createError)
         }
       },
     },
@@ -78,6 +76,8 @@ export const NewUser = () => {
             ...(isSuperAdmin
               ? {
                   canManageMessageSuspension: user.canManageMessageSuspension,
+                  canManageServiceInterruptionBanner:
+                    user.canManageServiceInterruptionBanner,
                 }
               : {}),
           } as CreateUserInput,
@@ -91,7 +91,7 @@ export const NewUser = () => {
   ) : institutionsLoaded ? (
     <Box background="purple100">
       <div className={styles.userManagementContainer}>
-        <PageHeader title={formatMessage(titles.admin.newUser)} />
+        <PageHeader title={titles.admin.newUser} />
         <UserForm
           user={user}
           institutions={allInstitutions}

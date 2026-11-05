@@ -34,7 +34,7 @@ describe('ApiDomains: DiscountResolver', () => {
       ...fabTUser(nationalId),
       // The DiscountWithTUser.user takes from both TUser and the User model
       // We fabricate TUser and name is simply the odd one out from between them.
-      name: 'Bergvin',
+      name: 'Bergvin Björn',
     },
     connectionDiscountCodes: [],
     discountCode,
@@ -57,9 +57,8 @@ describe('ApiDomains: DiscountResolver', () => {
   const fabTUser = (nationalId: string): TUser => ({
     address: 'Neinsstaðarból 18',
     city: 'Reykjavík',
-    firstName: 'Bergvin',
-    middleName: 'Björn',
-    lastName: 'Bóason',
+    givenName: 'Bergvin Björn',
+    fullName: 'Bergvin Björn Bóason',
     gender: 'kk',
     nationalId,
     postalcode: 200,

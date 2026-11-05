@@ -31,8 +31,10 @@ const formatAmount = (value?: number | null) =>
   value != null ? amountFormat(value) : DASH
 
 export const ReportedIncome = () => {
-  const { formatMessage, formatDateFns } = useLocale()
-  const { data, loading, error } = useGetVmstApplicantIncomeRowsQuery()
+  const { formatMessage, formatDateFns, locale } = useLocale()
+  const { data, loading, error } = useGetVmstApplicantIncomeRowsQuery({
+    variables: { locale },
+  })
 
   const formatDate = (value?: string | null) => {
     if (!value) return DASH
@@ -53,10 +55,20 @@ export const ReportedIncome = () => {
     return DASH
   }
 
+  const getType = (item: IncomeRow): string => {
+    if (
+      item.__typename === 'VmstApplicantCapitalIncomePayment' &&
+      item.incomeTypeName
+    ) {
+      return item.incomeTypeName
+    }
+    return formatMessage(TYPE_LABELS[item.type])
+  }
+
   const rows: ReportedIncomeRow[] = (data?.vmstApplicantIncomeRows ?? []).map(
     (item, index) => ({
       id: item.id || `${item.type}-${index}`,
-      type: formatMessage(TYPE_LABELS[item.type]),
+      type: getType(item),
       payer: getPayer(item),
       date: formatDate(item.period.from),
       dateTo: formatDate(item.period.to),

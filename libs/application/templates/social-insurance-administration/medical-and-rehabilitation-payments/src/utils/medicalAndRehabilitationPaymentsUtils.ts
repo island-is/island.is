@@ -6,8 +6,10 @@ import {
   BankInfo,
   CategorizedIncomeTypes,
   Eligible,
+  FileType,
   IncomePlanConditions,
   IncomePlanRow,
+  LatestIncomePlan,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application, ExternalData } from '@island.is/application/types'
@@ -81,6 +83,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   )
 
   const ectsUnits = getValueViaPath<string>(answers, 'questions.ectsUnits')
+
+  const studyDocuments =
+    getValueViaPath<FileType[]>(answers, 'questions.studyDocuments') ?? []
 
   const hasUtilizedEmployeeSickPayRights = getValueViaPath<
     YesOrNo | NotApplicable
@@ -261,6 +266,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     isStudying,
     educationalInstitution,
     ectsUnits,
+    studyDocuments,
     hasUtilizedEmployeeSickPayRights,
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
@@ -381,6 +387,11 @@ export const getApplicationExternalData = (
       'socialInsuranceAdministrationCurrencies.data',
     ) ?? []
 
+  const latestIncomePlan = getValueViaPath<LatestIncomePlan>(
+    externalData,
+    'socialInsuranceAdministrationLatestIncomePlan.data',
+  )
+
   const incomePlanConditions = getValueViaPath<IncomePlanConditions>(
     externalData,
     'socialInsuranceAdministrationIncomePlanConditions.data',
@@ -460,6 +471,7 @@ export const getApplicationExternalData = (
     hasSpouse,
     categorizedIncomeTypes,
     currencies,
+    latestIncomePlan,
     incomePlanConditions,
     selfAssessmentQuestionnaire,
     ectsUnits,

@@ -27,6 +27,8 @@ export const JUDICIAL_SYSTEM_PUBLIC_PROSECUTOR_OFFICE_HOME_URL =
   '/api/auth/login?nationalId=0000007777'
 export const JUDICIAL_SYSTEM_PUBLIC_PROSECUTOR_HOME_URL =
   '/api/auth/login?nationalId=0000998888'
+export const JUDICIAL_SYSTEM_PRISON_ADMIN_HOME_URL =
+  '/api/auth/login?nationalId=0000004449'
 
 export const shouldSkipNavigation = (url: string) => {
   return [
@@ -36,6 +38,7 @@ export const shouldSkipNavigation = (url: string) => {
     JUDICIAL_SYSTEM_JUDGE_HOME_URL,
     JUDICIAL_SYSTEM_PUBLIC_PROSECUTOR_OFFICE_HOME_URL,
     JUDICIAL_SYSTEM_PUBLIC_PROSECUTOR_HOME_URL,
+    JUDICIAL_SYSTEM_PRISON_ADMIN_HOME_URL,
   ].includes(url)
 }
 

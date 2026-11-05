@@ -131,7 +131,6 @@ describe('InternalCaseController - Deliver case files record to police', () => {
         [],
         expect.any(Array),
         expect.any(Function),
-        expect.any(Function),
       )
       expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
         theCase.type,
@@ -154,6 +153,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
             courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ],
+        caseId,
       )
       expect(then.result).toEqual({ delivered: true })
     })
@@ -184,6 +184,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
             courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ],
+        caseId,
       )
     })
   })

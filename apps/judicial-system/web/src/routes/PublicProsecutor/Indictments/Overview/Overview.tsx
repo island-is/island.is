@@ -8,6 +8,7 @@ import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts
 import {
   canDefendantAppealVerdict,
   Feature,
+  isPublicProsecutionOfficeUser,
   isRulingOrDismissalCase,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -69,7 +70,9 @@ export const Overview = () => {
     ModalId | undefined
   >()
 
-  const assignMode = getPublicProsecutorOverviewAssignMode(workingCase)
+  const assignMode = isPublicProsecutionOfficeUser(user)
+    ? getPublicProsecutorOverviewAssignMode(workingCase)
+    : 'none'
 
   const assignReviewer = async () => {
     if (!selectedIndictmentReviewer) {
@@ -162,12 +165,18 @@ export const Overview = () => {
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader
-        title={fm(titles.shared.closedCaseOverview, {
-          courtCaseNumber: workingCase.courtCaseNumber,
-        })}
+        title={fm(
+          {
+            id: titles.shared.closedCaseOverview,
+            defaultMessage: titles.shared.closedCaseOverview,
+          },
+          {
+            courtCaseNumber: workingCase.courtCaseNumber,
+          },
+        )}
       />
       <FormContentContainer>
-        <PageTitle>{fm(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={stack({ gap: 5 })}>
           <div className={stack({ gap: 2 })}>{verdictStatusAlerts}</div>
@@ -229,7 +238,10 @@ export const Overview = () => {
               ? []
               : [
                   {
-                    text: fm(core.continue),
+                    text: fm({
+                      id: core.continue,
+                      defaultMessage: core.continue,
+                    }),
                     icon: 'arrowForward',
                     onClick:
                       assignMode === 'appealProsecutor'
@@ -254,14 +266,19 @@ export const Overview = () => {
       </FormContentContainer>
       {isReviewerAssignedModal(confirmationModal) && (
         <Modal
-          title={fm(strings.reviewerAssignedModalTitle)}
-          text={fm(strings.reviewerAssignedModalText, {
-            caseNumber: workingCase.courtCaseNumber,
-            reviewer: selectedIndictmentReviewer?.label,
-          })}
+          title={strings.reviewerAssignedModalTitle}
+          text={fm(
+            {
+              id: strings.reviewerAssignedModalText,
+              defaultMessage: strings.reviewerAssignedModalText,
+            },
+            {
+              caseNumber: workingCase.courtCaseNumber,
+            },
+          )}
           buttons={[
             {
-              text: fm(core.back),
+              text: fm({ id: core.back, defaultMessage: core.back }),
               onClick: () => router.push(getStandardUserDashboardRoute(user)),
               variant: 'ghost',
             },
@@ -274,7 +291,7 @@ export const Overview = () => {
           text="Áfrýjunarmáli hefur verið úthlutað á saksóknara."
           buttons={[
             {
-              text: fm(core.back),
+              text: fm({ id: core.back, defaultMessage: core.back }),
               onClick: () => router.push(getStandardUserDashboardRoute(user)),
               variant: 'ghost',
             },

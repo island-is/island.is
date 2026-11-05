@@ -11,10 +11,9 @@ import { NationalRegistryV3ClientService } from '@island.is/clients/national-reg
 
 const user: NationalRegistryUser = {
   nationalId: '1306886513',
-  firstName: 'Jón',
+  givenName: 'Jón Gunnar',
+  fullName: 'Jón Gunnar Jónsson',
   gender: 'kk',
-  lastName: 'Jónsson',
-  middleName: 'Gunnar',
   address: 'Bessastaðir 1',
   postalcode: 225,
   city: 'Álftanes',
@@ -94,6 +93,12 @@ describe('NationalRegistryService', () => {
     v3Client.getAllDataIndividual.mockResolvedValue({
       kennitala: '1306886513',
       nafn: 'Jón Gunnar Jónsson',
+      fulltNafn: {
+        eiginNafn: 'Jón Gunnar',
+        milliNafn: null,
+        kenniNafn: 'Jónsson',
+        fulltNafn: 'Jón Gunnar Jónsson',
+      },
       kyn: { kynKodi: '1' },
       heimilisfang: {
         husHeiti: 'Bessastaðir 1',
@@ -116,5 +121,53 @@ describe('NationalRegistryService', () => {
       const result = await nationalRegistryService.getUser(user.nationalId)
       expect(result).toEqual(null)
     })
+
+    it.each([
+      [
+        'no millinafn',
+        {
+          eiginNafn: 'Jón Gunnar',
+          milliNafn: null,
+          kenniNafn: 'Jónsson',
+          fulltNafn: 'Jón Gunnar Jónsson',
+        },
+        'Jón Gunnar Jónsson',
+        'Jón Gunnar',
+        'Jón Gunnar Jónsson',
+      ],
+      [
+        'registered millinafn',
+        {
+          eiginNafn: 'Jón Gunnar',
+          milliNafn: 'Hólm',
+          kenniNafn: 'Jónsson',
+          fulltNafn: 'Jón Gunnar Hólm Jónsson',
+        },
+        'Jón Gunnar Hólm Jónsson',
+        'Jón Gunnar',
+        'Jón Gunnar Hólm Jónsson',
+      ],
+      [
+        'no fulltNafn',
+        undefined,
+        'Jón Gunnar Jónsson',
+        '',
+        'Jón Gunnar Jónsson',
+      ],
+    ])(
+      'maps names for %s',
+      async (_case, fulltNafn, nafn, givenName, fullName) => {
+        v3Client.getAllDataIndividual.mockResolvedValue({
+          kennitala: '0000000000',
+          nafn,
+          fulltNafn,
+          kyn: { kynKodi: '1' },
+        })
+
+        const result = await nationalRegistryService.getUser('0000000000')
+        expect(result).toEqual(expect.objectContaining({ givenName, fullName }))
+        expect(result).not.toHaveProperty('middleName')
+      },
+    )
   })
 })

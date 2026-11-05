@@ -918,29 +918,26 @@ export class DrivingLicenseApi {
 
   async getQualityPhotoAndSignature(params: {
     auth: Auth
-  }): Promise<QualityPhotoAndSignature | null> {
-    try {
-      const res = await withAuthContext(params.auth, () =>
-        this.imageApiV6.apiImagecontrollerV6GetqualityphotoandsignatureGet({
-          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
-          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
-        }),
-      )
+  }): Promise<QualityPhotoAndSignature> {
+    // Errors propagate so the caller can tell a failed lookup from "no photo"
+    const res = await withAuthContext(params.auth, () =>
+      this.imageApiV6.apiImagecontrollerV6GetqualityphotoandsignatureGet({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
 
-      return {
-        imageId: res.imageId ?? null,
-        imageTypeId: res.imageTypeId ?? null,
-        imageTypeName: res.imageTypeName ?? null,
-        imageDate: res.imageDate ?? null,
-        pohto: res.photo ?? null,
-        signatureId: res.signatureId ?? null,
-        signatureTypeId: res.signatureTypeId ?? null,
-        signatureTypeName: res.signatureTypeName ?? null,
-        signatureDate: res.signatureDate ?? null,
-        signature: res.signature ?? null,
-      }
-    } catch {
-      return null
+    return {
+      imageId: res.imageId ?? null,
+      imageTypeId: res.imageTypeId ?? null,
+      imageTypeName: res.imageTypeName ?? null,
+      imageDate: res.imageDate ?? null,
+      pohto: res.photo ?? null,
+      signatureId: res.signatureId ?? null,
+      signatureTypeId: res.signatureTypeId ?? null,
+      signatureTypeName: res.signatureTypeName ?? null,
+      signatureDate: res.signatureDate ?? null,
+      signature: res.signature ?? null,
     }
   }
 

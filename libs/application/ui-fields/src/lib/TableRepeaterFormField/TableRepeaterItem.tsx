@@ -318,6 +318,13 @@ export const Item = ({
     labelVal = label
   }
 
+  let placeholderVal: StaticText
+  if (typeof placeholder === 'function') {
+    placeholderVal = placeholder(application, activeValues)
+  } else {
+    placeholderVal = placeholder
+  }
+
   let disableDropdownVal: boolean | undefined
   if (component === 'phone') {
     disableDropdownVal = !(item.enableCountrySelector ?? false)
@@ -348,7 +355,7 @@ export const Item = ({
     selectAsyncProps = {
       id: id,
       title: labelVal,
-      placeholder: placeholder,
+      placeholder: placeholderVal,
       type: FieldTypes.ASYNC_SELECT,
       component: FieldComponents.ASYNC_SELECT,
       children: undefined,
@@ -556,7 +563,7 @@ export const Item = ({
             name={id}
             label={formatText(labelVal, application, formatMessage)}
             options={translatedOptions}
-            placeholder={formatText(placeholder, application, formatMessage)}
+            placeholder={formatText(placeholderVal, application, formatMessage)}
             split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
             error={getFieldError(itemId)}
             control={control}

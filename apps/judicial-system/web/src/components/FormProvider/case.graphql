@@ -53,11 +53,6 @@ query Case($input: CaseQueryInput!) {
         }
       }
     }
-    defenderName
-    defenderNationalId
-    defenderEmail
-    defenderPhoneNumber
-    requestSharedWithDefender
     isHeightenedSecurityLevel
     court {
       ...InstitutionFields
@@ -183,6 +178,7 @@ query Case($input: CaseQueryInput!) {
     defendantWaivesRightToCounsel
     crimeScenes
     indictmentIntroduction
+    indictmentHash
     indictmentReviewedDate
     indictmentCounts {
       id
@@ -259,18 +255,31 @@ query Case($input: CaseQueryInput!) {
       id
       appealState
       appealType
+      appealCaseNumber
       appealConclusion
-      appealJudge1 {
+      courtSessions {
         id
-        name
+        created
+        sessionType
+        sessionDate
+        courtRoom
       }
-      appealJudge2 {
+      statementDeadlines {
         id
-        name
+        created
+        modified
+        defendantId
+        civilClaimantId
+        deadline
       }
-      appealJudge3 {
+      appealJudges {
         id
-        name
+        displayOrder
+        userId
+        user {
+          id
+          name
+        }
       }
       appealEventLogs {
         id
@@ -278,12 +287,25 @@ query Case($input: CaseQueryInput!) {
         eventType
         appealOrigin
         defendantId
+        civilClaimantId
         userRole
         userName
         userTitle
         institutionName
       }
       appealSummonses {
+        id
+        created
+        confirmedDate
+        sentToCourtOfAppealsDate
+        defendants {
+          id
+          defendantId
+          appellantSide
+          claims
+        }
+      }
+      sentAppealSummonses {
         id
         created
         confirmedDate

@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 import {
   AppealCaseRulingDecision,
@@ -10,7 +10,9 @@ import {
 import { AppealSummons } from '../../appeal-summons'
 import { CaseFile } from '../../file'
 import { User } from '../../user'
+import { AppealCourtSession } from './appealCourtSession.response'
 import { AppealEventLog } from './appealEventLog.response'
+import { AppealStatementDeadline } from './appealStatementDeadline.response'
 
 registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
 registerEnumType(AppealCaseType, { name: 'AppealCaseType' })
@@ -32,6 +34,23 @@ export class AppealCivilClaimantStatementDate {
 
   @Field(() => String)
   readonly statementDate!: string
+}
+
+// A judge on the bench of an appeal case. The bench is ordered by display
+// order; the judge at 0 is the presiding judge.
+@ObjectType()
+export class AppealCaseJudge {
+  @Field(() => ID)
+  readonly id!: string
+
+  @Field(() => Int, { nullable: true })
+  readonly displayOrder?: number
+
+  @Field(() => ID, { nullable: true })
+  readonly userId?: string
+
+  @Field(() => User, { nullable: true })
+  readonly user?: User
 }
 
 @ObjectType()
@@ -76,14 +95,9 @@ export class AppealCase {
   @Field(() => User, { nullable: true })
   readonly appealAssistant?: User
 
-  @Field(() => User, { nullable: true })
-  readonly appealJudge1?: User
-
-  @Field(() => User, { nullable: true })
-  readonly appealJudge2?: User
-
-  @Field(() => User, { nullable: true })
-  readonly appealJudge3?: User
+  // The bench in order, presiding judge first.
+  @Field(() => [AppealCaseJudge], { nullable: true })
+  readonly appealJudges?: AppealCaseJudge[]
 
   @Field(() => AppealCaseRulingDecision, { nullable: true })
   readonly appealRulingDecision?: AppealCaseRulingDecision
@@ -147,4 +161,18 @@ export class AppealCase {
   // Only meaningful on a verdict appeal case (áfrýjunarstefna).
   @Field(() => [AppealSummons], { nullable: true })
   readonly appealSummonses?: AppealSummons[]
+
+  // Summonses already sent to Landsréttur. Staff keep appealSummonses; CoA
+  // reads this field only.
+  @Field(() => [AppealSummons], { nullable: true })
+  readonly sentAppealSummonses?: AppealSummons[]
+
+  // Only a verdict appeal carries sessions; a ruling appeal is decided on the papers.
+  @Field(() => [AppealCourtSession], { nullable: true })
+  readonly courtSessions?: AppealCourtSession[]
+
+  // The statement deadlines the court of appeals has given the parties of a
+  // verdict appeal, one per party.
+  @Field(() => [AppealStatementDeadline], { nullable: true })
+  readonly statementDeadlines?: AppealStatementDeadline[]
 }

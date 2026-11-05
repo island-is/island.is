@@ -170,6 +170,7 @@ export class PasskeysCoreService {
     // Generate the authentication options
     const options = await generateAuthenticationOptions({
       rpID: this.config.passkey.rpId,
+      userVerification: 'required',
       allowCredentials: [
         {
           id: passkey.passkey_id,
@@ -239,6 +240,7 @@ export class PasskeysCoreService {
         expectedChallenge: challenge,
         expectedOrigin: this.config.passkey.allowedOrigins,
         expectedRPID: this.config.passkey.rpId,
+        requireUserVerification: true,
         authenticator: {
           credentialID: passkey.passkey_id,
           credentialPublicKey: passkey.public_key,

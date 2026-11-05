@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
@@ -24,7 +25,13 @@ import {
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
 import { nowFactory } from '../../../../factories'
-import { queueMessagesAfterCommit } from '../../../../middleware'
+import {
+  getOrCreateTransaction,
+  getTransactionContext,
+  queueMessagesAfterCommit,
+  TransactionContext,
+} from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import { EventService } from '../../../event'
 import {
   AppealCase,
@@ -67,7 +74,9 @@ describe('AppealCaseController - Transition', () => {
   let mockAppealDecisionRepositoryService: AppealDecisionRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let mockEventService: EventService
+  let mockSequelize: Sequelize
   let transaction: Transaction
+  let transactionContext: TransactionContext | undefined
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -90,11 +99,12 @@ describe('AppealCaseController - Transition', () => {
     const mockNowFactory = nowFactory as jest.Mock
     mockNowFactory.mockReturnValue(now)
 
+    mockSequelize = sequelize
+    transactionContext = undefined
+
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     givenWhenThen = async (
       theCase,
@@ -110,10 +120,29 @@ describe('AppealCaseController - Transition', () => {
       const mockUpdate = mockAppealCaseRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValueOnce(updatedAppealCase)
 
-      await appealCaseController
-        .transition(caseId, appealCaseId, actingUser, theCase, appealCase, dto)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // The route is guarded by CaseExistsForUpdateGuard, so the request
+      // transaction is already open - and holding a lock on this case row -
+      // by the time the handler runs. Guards do not execute in controller
+      // unit tests, so the request context and that transaction are set up
+      // here instead.
+      try {
+        await runInRequestContext(async () => {
+          transactionContext = getTransactionContext()
+
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await appealCaseController.transition(
+            caseId,
+            appealCaseId,
+            actingUser,
+            theCase,
+            appealCase,
+            dto,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -140,6 +169,8 @@ describe('AppealCaseController - Transition', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
       expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(0)
     })
   })
 
@@ -158,7 +189,11 @@ describe('AppealCaseController - Transition', () => {
       )
     })
 
-    it('should move the appeal case to received', () => {
+    it('should move the appeal case to received in the transaction the guard opened, without opening another', () => {
+      // Once, by the stand-in for CaseExistsForUpdateGuard above. A second
+      // call would be the handler opening a transaction of its own, which
+      // would block on the guard's row lock and deadlock the request.
+      expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
       expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
         appealCaseId,
         expect.objectContaining({ appealState: AppealCaseState.RECEIVED }),
@@ -176,7 +211,16 @@ describe('AppealCaseController - Transition', () => {
       )
     })
 
-    it('should post the transition event', () => {
+    it('should register the transition event rather than posting it inline', () => {
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(1)
+    })
+
+    it('should post the transition event once the transaction has committed', async () => {
+      await Promise.all(
+        (transactionContext?.afterCommit ?? []).map((callback) => callback()),
+      )
+
       expect(mockEventService.postEvent).toHaveBeenCalledWith(
         AppealCaseTransition.RECEIVE_APPEAL,
         theCase,

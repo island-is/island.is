@@ -80,9 +80,6 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
             judge: { name: judge.name, email: judge.email },
             registrar: { name: registrar.name, email: registrar.email },
             court: { name: 'Héraðsdómur Reykjavíkur' },
-            defenderNationalId,
-            defenderName: defender.name,
-            defenderEmail: defender.email,
             defendants: [
               {
                 defenderNationalId,

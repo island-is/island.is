@@ -1,8 +1,21 @@
 export { CreateDelegationInput } from './createDelegation.input'
 export { CreateDelegationsInput } from './createDelegations.input'
 export { DelegationInput } from './delegation.input'
+export {
+  DelegationConfirmationInput,
+  DelegationConfirmationStepUpMethod,
+} from './delegationConfirmation.input'
 export { DelegationsInput } from './delegations.input'
 export { UpdateDelegationInput } from './updateDelegation.input'
 export { PatchDelegationInput } from './patchDelegation.input'
 export { DeleteDelegationInput } from './deleteDelegation.input'
 export { DeleteDelegationScopesInput } from './deleteDelegationScopes.input'
+export {
+  CreateDelegationRequestInput,
+  RequestDelegationScopeInput,
+} from './createDelegationRequest.input'
+export {
+  DelegationRequestInput,
+  ApproveDelegationRequestInput,
+  ApproveDelegationRequestScopeInput,
+} from './delegationRequest.input'

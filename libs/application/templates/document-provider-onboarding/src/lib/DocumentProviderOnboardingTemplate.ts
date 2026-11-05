@@ -181,6 +181,13 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
                 import('../forms/TestPhase').then((val) =>
                   Promise.resolve(val.TestPhase),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Ljúka umsókn',
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },

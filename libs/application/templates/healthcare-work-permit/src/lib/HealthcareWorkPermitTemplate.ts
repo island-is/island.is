@@ -127,6 +127,13 @@ const template: ApplicationTemplate<
                 import('../forms/HealthcareWorkPermitForm').then((module) =>
                   Promise.resolve(module.HealthcareWorkPermitForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Áfram',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
             },

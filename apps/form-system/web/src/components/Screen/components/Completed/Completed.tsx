@@ -74,38 +74,39 @@ export const Completed = () => {
     }
   }
 
-  const applicationPdfDownload = enableApplicationPdfDownload ? (
-    <Stack space={3}>
-      <Box
-        display="flex"
-        flexDirection={['column', 'row']}
-        alignItems={['flexStart', 'center']}
-        border="standard"
-        borderColor="blue200"
-        borderRadius="large"
-        padding={3}
-      >
-        <Box marginRight={[0, 3]} marginBottom={[2, 0]} flexShrink={0}>
-          <Button
-            variant="ghost"
-            loading={pdfLoading}
-            onClick={downloadApplicationPdf}
-          >
-            {formatMessage(m.downloadApplicationPdf)}
-          </Button>
+  const applicationPdfDownload =
+    enableApplicationPdfDownload && !state.application.pruned ? (
+      <Stack space={3}>
+        <Box
+          display="flex"
+          flexDirection={['column', 'row']}
+          alignItems={['flexStart', 'center']}
+          border="standard"
+          borderColor="blue200"
+          borderRadius="large"
+          padding={3}
+        >
+          <Box marginRight={[0, 3]} marginBottom={[2, 0]} flexShrink={0}>
+            <Button
+              variant="ghost"
+              loading={pdfLoading}
+              onClick={downloadApplicationPdf}
+            >
+              {formatMessage(m.downloadApplicationPdf)}
+            </Button>
+          </Box>
+          <Box display="flex" alignItems="center">
+            <Text>{formatMessage(m.applicationPdfDownloadDescription)}</Text>
+          </Box>
         </Box>
-        <Box display="flex" alignItems="center">
-          <Text>{formatMessage(m.applicationPdfDownloadDescription)}</Text>
-        </Box>
-      </Box>
-      {pdfDownloadError && (
-        <AlertMessage
-          type="error"
-          title={formatMessage(m.applicationPdfDownloadError)}
-        />
-      )}
-    </Stack>
-  ) : null
+        {pdfDownloadError && (
+          <AlertMessage
+            type="error"
+            title={formatMessage(m.applicationPdfDownloadError)}
+          />
+        )}
+      </Stack>
+    ) : null
 
   const stafraentIslandForm = () => (
     <Box marginTop={5}>

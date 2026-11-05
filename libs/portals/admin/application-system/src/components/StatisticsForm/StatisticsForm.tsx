@@ -1,6 +1,6 @@
 import { Box, DatePicker, Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import type { ApplicationFilters } from '../../types/filters'
+import type { ApplicationFilters, ApplicationOrigin } from '../../types/filters'
 import { m } from '../../lib/messages'
 import { Organization } from '@island.is/shared/types'
 
@@ -10,6 +10,8 @@ type Props = {
   organizations?: Organization[]
   selectedInstitutionNationalId?: string
   onInstitutionChange?: (nationalId: string) => void
+  selectedOrigin?: ApplicationOrigin
+  onOriginChange?: (origin?: ApplicationOrigin) => void
 }
 
 export const StatisticsForm = ({
@@ -18,8 +20,18 @@ export const StatisticsForm = ({
   organizations,
   selectedInstitutionNationalId,
   onInstitutionChange,
+  selectedOrigin,
+  onOriginChange,
 }: Props) => {
   const { formatMessage } = useLocale()
+
+  const originOptions: { value: ApplicationOrigin; label: string }[] = [
+    {
+      value: 'applicationSystem',
+      label: formatMessage(m.originApplicationSystem),
+    },
+    { value: 'formSystem', label: formatMessage(m.originFormSystem) },
+  ]
 
   const sortedOrganizations = organizations
     ? [...organizations].sort((a, b) => a.title.localeCompare(b.title))
@@ -65,6 +77,19 @@ export const StatisticsForm = ({
           />
         </Box>
       )}
+      <Box flexGrow={1}>
+        <Select
+          id="statisticsOrigin"
+          label={formatMessage(m.origin)}
+          backgroundColor="blue"
+          size="sm"
+          placeholder={formatMessage(m.originDropdownPlaceholder)}
+          value={originOptions.find((o) => o.value === selectedOrigin) ?? null}
+          onChange={(v) => onOriginChange?.(v?.value)}
+          options={originOptions}
+          isClearable
+        />
+      </Box>
       <Box
         display="flex"
         flexWrap={['wrap', 'wrap', 'nowrap']}

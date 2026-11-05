@@ -48,6 +48,11 @@ export class VmstApplicationsTRPaymentValidationInput {
   @IsOptional()
   @IsString()
   periodTo?: string | null
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  oneTimePayment?: boolean
 }
 
 @InputType('VmstApplicationsIrregularJobValidationInput')
@@ -158,6 +163,11 @@ export class VmstApplicationsCapitalIncomePaymentValidationInput {
   @IsOptional()
   @IsString()
   periodTo?: string | null
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  oneTimePayment?: boolean
 }
 
 @InputType('VmstApplicationsPensionPaymentValidationInput')
@@ -201,6 +211,11 @@ export class VmstApplicationsPensionPaymentValidationInput {
   @IsOptional()
   @IsString()
   periodTo?: string | null
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  oneTimePayment?: boolean
 }
 
 @InputType('VmstApplicationsPartTimeJobValidationInput')

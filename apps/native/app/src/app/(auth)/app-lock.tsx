@@ -41,6 +41,7 @@ import {
   ensureDeviceUnlockCanary,
   isDeviceUnlocked,
 } from '@/utils/device-unlock-canary'
+import { verifyBiometricIntegrity } from '@/utils/biometric-integrity'
 import { testIDs } from '@/utils/test-ids'
 import { useBrowser } from '@/hooks/use-browser'
 
@@ -137,6 +138,11 @@ export default function AppLockScreen() {
 
   const authenticateWithBiometrics = async () => {
     if (!useBiometrics || isPromptRef.current) {
+      return
+    }
+    // Re-reads the store: biometrics may have been turned off since render
+    // because the enrolled biometrics changed. Falls back to PIN.
+    if (!verifyBiometricIntegrity()) {
       return
     }
 

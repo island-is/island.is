@@ -926,6 +926,7 @@ export const slices = gql`
 
   fragment LatestEventsSliceFields on LatestEventsSlice {
     title
+    organizationSlug
     events {
       title
       slug
@@ -1232,18 +1233,7 @@ export const nestedOneColumnTextFields = gql`
   }
 `
 
-const nestedContainerFields = `
-  ... on AccordionSlice {
-    ...AccordionSliceFields
-    accordionItems {
-      ... on OneColumnText {
-        ...OneColumnTextFields
-        content {
-          ...AllSlices
-        }
-      }
-    }
-  }
+const nestedFaqListFields = `
   ... on FaqList {
     ...FaqListFields
     questions {
@@ -1255,6 +1245,22 @@ const nestedContainerFields = `
       publishDate
     }
   }
+`
+
+const nestedContainerFields = `
+  ... on AccordionSlice {
+    ...AccordionSliceFields
+    accordionItems {
+      ... on OneColumnText {
+        ...OneColumnTextFields
+        content {
+          ...AllSlices
+          ${nestedFaqListFields}
+        }
+      }
+    }
+  }
+  ${nestedFaqListFields}
   ... on TabSection {
     ...TabSectionFields
     tabs {
@@ -1265,6 +1271,7 @@ const nestedContainerFields = `
       }
       body {
         ...AllSlices
+        ${nestedFaqListFields}
       }
     }
   }
@@ -1275,6 +1282,7 @@ const nestedContainerFields = `
         ...OneColumnTextFields
         content {
           ...AllSlices
+          ${nestedFaqListFields}
         }
       }
     }

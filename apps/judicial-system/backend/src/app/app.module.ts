@@ -28,6 +28,8 @@ import {
 import {
   AppealCaseModule,
   appealCaseModuleConfig,
+  AppealCourtSessionModule,
+  AppealStatementDeadlineModule,
   AppealSummonsModule,
   awsS3ModuleConfig,
   CaseModule,
@@ -52,6 +54,7 @@ import {
   PoliceModule,
   policeModuleConfig,
   RepositoryModule,
+  ServiceInterruptionBannerModule,
   StatisticsModule,
   SubpoenaModule,
   UserModule,
@@ -80,6 +83,8 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     PoliceModule,
     EventLogModule,
     SubpoenaModule,
+    AppealCourtSessionModule,
+    AppealStatementDeadlineModule,
     AppealSummonsModule,
     VerdictModule,
     VictimModule,
@@ -88,6 +93,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     StatisticsModule,
     RepositoryModule,
     MessageSuspensionModule,
+    ServiceInterruptionBannerModule,
     MessageModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({

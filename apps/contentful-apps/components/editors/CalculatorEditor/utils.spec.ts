@@ -159,6 +159,50 @@ describe('filterConfigForPersistence', () => {
     })
   })
 
+  it('keeps option labels with Icelandic text and drops the rest', () => {
+    const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
+      inputSections: [
+        inputSection('s1', [
+          inputField('u1', 'status', {
+            optionLabelsEnabled: true,
+            optionLabels: {
+              single: { is: 'Einhleyp(ur)', en: '' },
+              married: { is: '', en: 'Married' },
+              cohabiting: undefined,
+            },
+          }),
+          inputField('u2', 'type', {
+            optionLabelsEnabled: false,
+            optionLabels: { a: { is: '' } },
+          }),
+          inputField('u3', 'other'),
+          inputField('u4', 'kept', {
+            optionLabelsEnabled: false,
+            optionLabels: { a: { is: 'A' } },
+          }),
+        ]),
+      ],
+      outputSections: [],
+    } as never)
+
+    expect(payload.inputSections[0].fields[0]).toMatchObject({
+      optionLabelsEnabled: true,
+      optionLabels: { single: { is: 'Einhleyp(ur)' } },
+    })
+    expect(payload.inputSections[0].fields[1]).toMatchObject({
+      optionLabelsEnabled: undefined,
+      optionLabels: undefined,
+    })
+    expect(payload.inputSections[0].fields[3]).toMatchObject({
+      optionLabelsEnabled: undefined,
+      optionLabels: { a: { is: 'A' } },
+    })
+    expect(payload.inputSections[0].fields[2]).toMatchObject({
+      optionLabels: undefined,
+    })
+  })
+
   it('drops an unlabelled toggle and any gate pointing at it', () => {
     const { payload } = filterConfigForPersistence({
       outputTotal: outputTotal(),

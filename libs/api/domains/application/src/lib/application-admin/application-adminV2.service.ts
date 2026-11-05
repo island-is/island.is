@@ -387,7 +387,10 @@ export class ApplicationAdminV2Service {
     let appSystemStatistics: ApplicationStatistics[] = []
     let formSystemStatistics: ApplicationStatistics[] = []
     if (appSystemSettled.status === 'fulfilled') {
-      appSystemStatistics = appSystemSettled.value
+      appSystemStatistics = appSystemSettled.value.map((statistics) => ({
+        ...statistics,
+        isFormSystem: false,
+      }))
     } else {
       this.logger.error(
         'Error getting application system statistics for super-admin',
@@ -434,7 +437,10 @@ export class ApplicationAdminV2Service {
     let appSystemStatistics: ApplicationStatistics[] = []
     let formSystemStatistics: ApplicationStatistics[] = []
     if (appSystemSettled.status === 'fulfilled') {
-      appSystemStatistics = appSystemSettled.value
+      appSystemStatistics = appSystemSettled.value.map((statistics) => ({
+        ...statistics,
+        isFormSystem: false,
+      }))
     } else {
       this.logger.error(
         'Error getting application system statistics for institution admin',
