@@ -45,7 +45,9 @@ export const ConfirmationOfJobSearch: FC<FieldBaseProps> = ({
     data,
     loading,
     error: confirmationOfJobSearchError,
-  } = useQuery<Query>(siaConfirmationOfJobSearchQuery)
+  } = useQuery<Query>(siaConfirmationOfJobSearchQuery, {
+    variables: { applicationId: application.id },
+  })
 
   setBeforeSubmitCallback?.(async () => {
     const { confirmationOfJobSearchConfirmation } = getApplicationAnswers(

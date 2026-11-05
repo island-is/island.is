@@ -222,8 +222,8 @@ export const siaConfirmationOfIllHealthQuery = gql`
 `
 
 export const siaConfirmationOfJobSearchQuery = gql`
-  query SiaConfirmationOfJobSearch {
-    socialInsuranceConfirmationOfJobSearch {
+  query SiaConfirmationOfJobSearch($applicationId: String) {
+    socialInsuranceConfirmationOfJobSearch(applicationId: $applicationId) {
       referenceId
       created
       serviceProvider {

@@ -114,9 +114,14 @@ export class MedicalDocumentsResolver {
   @Query(() => ConfirmationOfJobSearch, {
     name: 'socialInsuranceConfirmationOfJobSearch',
   })
-  async siaGetConfirmationOfJobSearch(@CurrentUser() user: User) {
-    const confirmation =
-      await this.medicalDocumentsService.getConfirmationOfJobSearch(user)
+  async siaGetConfirmationOfJobSearch(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    const confirmation = await withApplicationGuidContext(applicationId, () =>
+      this.medicalDocumentsService.getConfirmationOfJobSearch(user),
+    )
 
     // The phone number is not shown to the applicant, only that one exists, so
     // the real number never leaves the API.
