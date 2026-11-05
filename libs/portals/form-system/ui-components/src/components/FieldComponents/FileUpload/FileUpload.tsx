@@ -20,6 +20,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 
 interface Props {
   item: FormSystemField
+  valueIndex?: number
   hasError?: boolean
   dispatch?: Dispatch<Action>
   state?: Partial<ApplicationState>
@@ -33,8 +34,11 @@ const normalizeS3Keys = (raw: unknown): string[] => {
   return []
 }
 
-const initializeFiles = (item: FormSystemField): UploadFile[] => {
-  const s3Keys = normalizeS3Keys(getValue(item, 's3Key'))
+const initializeFiles = (
+  item: FormSystemField,
+  valueIndex: number,
+): UploadFile[] => {
+  const s3Keys = normalizeS3Keys(getValue(item, 's3Key', valueIndex))
   if (!s3Keys) {
     return []
   }
@@ -50,10 +54,19 @@ const initializeFiles = (item: FormSystemField): UploadFile[] => {
   })
 }
 
-export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
+export const FileUpload = ({
+  item,
+  valueIndex = 0,
+  hasError,
+  dispatch,
+  state,
+}: Props) => {
   const { formatMessage, lang } = useLocale()
   const { control, setValue, trigger, clearErrors } = useFormContext()
-  const [files, setFiles] = useState<UploadFile[]>(initializeFiles(item))
+  const fieldName = `${item.id}.${valueIndex}`
+  const [files, setFiles] = useState<UploadFile[]>(
+    initializeFiles(item, valueIndex),
+  )
   const [error, setError] = useState<string | undefined>(
     hasError ? 'error' : undefined,
   )
@@ -102,7 +115,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
               storeFileDto: {
                 fieldId: item.id,
                 sourceKey: presigned.fields.key,
-                valueId: item.values?.[0]?.id || '',
+                valueId: item.values?.[valueIndex]?.id || '',
               },
             },
           },
@@ -128,14 +141,14 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
 
           dispatch?.({
             type: 'SET_FILES',
-            payload: { id: item.id, value: nextKeys },
+            payload: { id: item.id, value: nextKeys, valueIndex },
           })
 
-          setValue(item.id, nextKeys, {
+          setValue(fieldName, nextKeys, {
             shouldDirty: true,
             shouldValidate: true,
           })
-          trigger(item.id)
+          trigger(fieldName)
 
           return next
         })
@@ -156,6 +169,8 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
       setValue,
       trigger,
       applicationId,
+      fieldName,
+      valueIndex,
     ],
   )
 
@@ -167,7 +182,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
         files.length + selectedFiles.length >
         (item?.fieldSettings?.maxFiles ?? 1)
       ) {
-        clearErrors(item.id)
+        clearErrors(fieldName)
         setError(
           `${formatMessage(m.maxFileError)} ${
             item.fieldSettings?.maxFiles ?? 1
@@ -179,7 +194,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
       if (typeof maxSize === 'number' && maxSize > 0) {
         const tooLarge = selectedFiles.find((f) => f.size > maxSize)
         if (tooLarge) {
-          clearErrors(item.id)
+          clearErrors(fieldName)
           const maxSizeInMb = Math.round((maxSize / (1024 * 1024)) * 10) / 10
           setError(formatMessage(m.maxSizeInMb, { maxSizeInMb }))
           return
@@ -212,10 +227,13 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
         setFiles(nextFiles)
         dispatch?.({
           type: 'SET_FILES',
-          payload: { id: item.id, value: nextKeys },
+          payload: { id: item.id, value: nextKeys, valueIndex },
         })
-        setValue(item.id, nextKeys, { shouldDirty: true, shouldValidate: true })
-        trigger(item.id)
+        setValue(fieldName, nextKeys, {
+          shouldDirty: true,
+          shouldValidate: true,
+        })
+        trigger(fieldName)
         return
       }
 
@@ -232,6 +250,8 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
       formatMessage,
       handleUpload,
       clearErrors,
+      fieldName,
+      valueIndex,
       dispatch,
       setValue,
       trigger,
@@ -261,7 +281,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
             input: {
               deleteFileDto: {
                 key: file.key,
-                valueId: item.values?.[0]?.id,
+                valueId: item.values?.[valueIndex]?.id,
               },
             },
           },
@@ -276,10 +296,10 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
       const newKeys = newFiles.map((f) => f.key).filter(Boolean) as string[]
       dispatch?.({
         type: 'SET_FILES',
-        payload: { id: item.id, value: newKeys },
+        payload: { id: item.id, value: newKeys, valueIndex },
       })
-      setValue(item.id, newKeys, { shouldDirty: true, shouldValidate: true })
-      trigger(item.id)
+      setValue(fieldName, newKeys, { shouldDirty: true, shouldValidate: true })
+      trigger(fieldName)
     },
     [
       applicationId,
@@ -288,6 +308,8 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
       files,
       item.id,
       item.values,
+      fieldName,
+      valueIndex,
       setValue,
       trigger,
     ],
@@ -299,10 +321,10 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
 
   return (
     <Controller
-      key={item.id}
-      name={item.id}
+      key={`${item.id}-${valueIndex}`}
+      name={fieldName}
       control={control}
-      defaultValue={normalizeS3Keys(getValue(item, 's3Key'))}
+      defaultValue={normalizeS3Keys(getValue(item, 's3Key', valueIndex))}
       rules={{
         validate: (v) =>
           !(item.isRequired ?? false) ||
@@ -311,7 +333,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
       }}
       render={({ fieldState }) => (
         <InputFileUpload
-          name={`fileUpload-${item.id}`}
+          name={`fileUpload-${item.id}-${valueIndex}`}
           files={files}
           accept={types}
           title={title}
