@@ -1,3 +1,6 @@
+/**
+ * @jest-environment ./jest.ahead-of-utc.environment.js
+ */
 import {
   getDefaultDate,
   isWorkday,
@@ -5,8 +8,8 @@ import {
   toLocalISODate,
 } from './utils'
 
-// jest.config.ts runs these ahead of UTC, where a local midnight is the
-// previous day in UTC. Iceland's UTC+0 would hide the shift.
+// The environment above runs these ahead of UTC, where a local midnight is
+// the previous day in UTC. Iceland's UTC+0 would hide the shift.
 describe('dates in a browser ahead of UTC', () => {
   it('runs ahead of UTC', () => {
     expect(new Date(2026, 10, 20).getTimezoneOffset()).toBeLessThan(0)
