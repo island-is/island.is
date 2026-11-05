@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from 'react'
 import parseISO from 'date-fns/parseISO'
 import { toISODate } from '@island.is/regulations'
 import { formatDate } from '../../utils/formatAmendingUtils'
+import { parseLocalISODate, toLocalISODate } from '../../lib/utils'
 
 // ---------------------------------------------------------------------------
 
@@ -36,6 +37,14 @@ export type ImpactDateProps = {
   onChange: (newDate: Date | undefined) => void
   readOnly?: boolean
 }
+
+// The impact dates here are UTC midnight (new Date(isoDate)), which toISODate
+// reads back as the same day. The date picker works in local midnight, so
+// convert on the way in and out, or the day shifts outside UTC+0.
+const toPickerDate = (date?: Date) =>
+  date ? parseLocalISODate(toISODate(date)) : undefined
+
+const fromPickerDate = (date: Date) => new Date(toLocalISODate(date))
 
 /** A saved date is only a specific choice if it isn't the default */
 const isCustomDate = (date?: string, defaultDate?: string) =>
@@ -147,10 +156,11 @@ export const ImpactDate = (props: ImpactDateProps) => {
           locale="is"
           label="Gildistaka breytinga"
           placeholderText="Veldu dagsetningu"
-          minDate={minDate}
-          selected={selectedDate}
-          handleChange={(newDate) => {
+          minDate={toPickerDate(minDate)}
+          selected={toPickerDate(selectedDate)}
+          handleChange={(pickedDate) => {
             userChoseRef.current = true
+            const newDate = fromPickerDate(pickedDate)
             setSelectedDate(newDate)
             onChange(newDate)
           }}

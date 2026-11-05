@@ -3,6 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { FormScreen } from '../components/form/FormScreen'
 import { regulation } from '../lib/messages'
 import { OJOIFieldBaseProps } from '../lib/types'
+import { parseLocalISODate, toLocalISODate } from '../lib/utils'
 import {
   Box,
   DatePicker,
@@ -242,13 +243,13 @@ export const RegulationMetaScreen = (props: OJOIFieldBaseProps) => {
               backgroundColor="blue"
               selected={
                 draftData.effectiveDate
-                  ? new Date(draftData.effectiveDate)
+                  ? parseLocalISODate(draftData.effectiveDate)
                   : undefined
               }
               handleChange={(date) => {
                 updateDraftField(
                   'effectiveDate',
-                  date ? date.toISOString().split('T')[0] : undefined,
+                  date ? toLocalISODate(date) : undefined,
                 )
                 saveDraftNow()
               }}
