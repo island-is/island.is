@@ -20,7 +20,8 @@ interface ComponentProps {
     layoutProps: LayoutProps
     componentProps: PageProps
   }
-  genericListItemProps: GenericListItemPageProps
+  // Not set when the page is a parent subpage chapter
+  genericListItemProps?: GenericListItemPageProps
 }
 
 export const Component: ScreenType<ComponentProps> = ({
@@ -34,6 +35,16 @@ export const Component: ScreenType<ComponentProps> = ({
     const pathname = new URL(router.asPath, 'https://island.is').pathname
     return pathname.slice(0, pathname.lastIndexOf('/'))
   }, [router.asPath])
+
+  if (!genericListItemProps) {
+    // The page is a chapter belonging to a parent subpage
+    return (
+      <SubPageLayout
+        layoutProps={parentProps.layoutProps}
+        componentProps={parentProps.componentProps}
+      />
+    )
+  }
 
   const projectPage = parentProps.componentProps.projectPage as ProjectPage
   const subpage = projectPage.projectSubpages.find(
@@ -93,7 +104,13 @@ export const Component: ScreenType<ComponentProps> = ({
 Component.getProps = async (ctx) => {
   const [parentProps, genericListItemProps] = await Promise.all([
     SubPageLayout.getProps(ctx),
-    GenericListItemPage.getProps(ctx),
+    GenericListItemPage.getProps(ctx).catch((error) => {
+      // Chapters of a parent subpage aren't generic list items
+      if (error instanceof CustomNextError) {
+        return null
+      }
+      throw error
+    }),
   ])
 
   if (!parentProps) {
@@ -102,6 +119,12 @@ Component.getProps = async (ctx) => {
       'Could not fetch subpage layout for generic list item',
     )
   }
+
+  // The last slug is a chapter when the subpage slug belongs to a parent subpage
+  if (parentProps.componentProps.parentSubpage) {
+    return { parentProps }
+  }
+
   if (!genericListItemProps) {
     throw new CustomNextError(404, 'Could not fetch generic list item props')
   }
