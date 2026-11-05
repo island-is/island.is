@@ -1198,7 +1198,9 @@ export const getLimitedAccessCaseInclude = (
           model: AppealCourtSession,
           as: 'courtSessions',
           required: false,
-          order: [['sessionDate', 'ASC']],
+          // Most recently booked first, the order the court's own list shows
+          // them in, so the parties' agenda card reads the same way.
+          order: [['created', 'DESC']],
           separate: true,
         },
       ],

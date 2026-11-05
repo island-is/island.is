@@ -15,27 +15,3 @@ export const appealCourtSessionTypeNames = {
   PREPARATORY_HEARING: 'Undirbúningsþinghald',
   VERDICT: 'Dómsuppkvaðning',
 }
-
-/**
- * Every booked session with a date, newest first, the way a log reads. The
- * parties' card is a log of what the court has called, so nothing is dropped
- * for being over. Sessions without a usable date are left out - the backend
- * requires one, but the web's generated type does not.
- */
-export const sortAppealCourtSessionsByDate = <
-  T extends { sessionDate?: Date | string | null },
->(
-  sessions: T[] | undefined | null,
-): T[] =>
-  (sessions ?? [])
-    .flatMap((session) => {
-      if (!session.sessionDate) {
-        return []
-      }
-
-      const time = new Date(session.sessionDate).getTime()
-
-      return Number.isNaN(time) ? [] : [{ session, time }]
-    })
-    .sort((a, b) => b.time - a.time)
-    .map(({ session }) => session)
