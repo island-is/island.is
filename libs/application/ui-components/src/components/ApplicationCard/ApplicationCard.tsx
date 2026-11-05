@@ -64,7 +64,11 @@ export const ApplicationCard = ({
   const { status, actionCard, modified, pruneAt } = application
   const { lang: locale, formatMessage } = useLocale()
   const { openApplication: defaultOpen, slug } = useOpenApplication(application)
-  const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
+  const dateOnlyFormat = locale === 'is' ? dateFormat.is : dateFormat.en
+  const dateTimeFormat =
+    locale === 'is'
+      ? `${dateFormat.is} 'kl.' HH:mm`
+      : `${dateFormat.en} 'at' hh:mm aaa`
   const defaultData = defaultCardDataByStatus[status]
   const heading = actionCard?.title ?? application.name
   const openApplication = onClick
@@ -73,7 +77,7 @@ export const ApplicationCard = ({
   const historyItems = buildHistoryItems(
     application,
     formatMessage,
-    formattedDate,
+    { dateTimeFormat, dateOnlyFormat },
     shouldShowCardButtons ? openApplication : undefined,
   )
 
@@ -124,7 +128,7 @@ export const ApplicationCard = ({
           </Box>
           <Box display="flex" justifyContent="center">
             <Text variant="small">
-              {format(new Date(modified), formattedDate)}
+              {format(new Date(modified), dateTimeFormat)}
               {daysRemaining !== undefined && daysRemaining > 0 && (
                 <>
                   {' · '}
