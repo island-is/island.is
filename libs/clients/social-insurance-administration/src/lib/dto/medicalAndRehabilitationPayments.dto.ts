@@ -1,3 +1,4 @@
+import { TrWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument } from '../../../gen/fetch/v1'
 import {
   ApplicantInfo,
   DomesticBankInfo,
@@ -30,4 +31,5 @@ export interface MedicalAndRehabilitationPaymentsDTO {
   confirmedTreatmentReference?: string
   confirmationOfPendingResolutionReference?: string
   confirmationOfIllHealthReference?: string
+  uploads?: Array<TrWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument>
 }

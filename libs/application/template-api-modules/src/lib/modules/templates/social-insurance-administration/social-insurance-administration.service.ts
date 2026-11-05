@@ -8,6 +8,7 @@ import {
 import { getApplicationAnswers as getHSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
   errorMessages as marpErrorMessages,
+  getApplicationAnswers as getMARPApplicationAnswers,
   getApplicationExternalData as getMARPApplicationExternalData,
   getIncompleteAnswerSections,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
@@ -541,8 +542,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         )
       }
 
-      const marpDTO =
-        transformApplicationToMedicalAndRehabilitationPaymentsDTO(application)
+      const attachments = await this.getMARPAttachments(application)
+
+      const marpDTO = transformApplicationToMedicalAndRehabilitationPaymentsDTO(
+        application,
+        attachments,
+      )
 
       const response =
         await this.siaMedicalRehabServiceV2.sendMedicalAndRehabilitationPaymentsApplication(
@@ -565,6 +570,30 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
       return response
     }
+  }
+
+  private async getMARPAttachments(
+    application: Application,
+  ): Promise<Attachment[]> {
+    const { isStudying, studyDocuments } = getMARPApplicationAnswers(
+      application.answers,
+    )
+
+    if (isStudying !== YES || studyDocuments.length === 0) {
+      return []
+    }
+
+    const attachments: Attachment[] = []
+
+    for (const document of studyDocuments) {
+      attachments.push({
+        name: document.name,
+        type: DocumentTypeEnum.MARP_SCHOOL_CONFIRMATION,
+        file: await this.getPdf(`${application.id}/${document.key}`),
+      })
+    }
+
+    return attachments
   }
 
   async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {
