@@ -78,9 +78,10 @@ export const Preview = ({
 }: Props) => {
   const methods = useForm()
   const { lang } = useLocale()
-  const [previewFields, previewDispatch] = useReducer(updateSingleFieldPreview, [
-    data,
-  ])
+  const [previewFields, previewDispatch] = useReducer(
+    updateSingleFieldPreview,
+    [data],
+  )
   useEffect(() => {
     if (!dispatch) {
       previewDispatch({
