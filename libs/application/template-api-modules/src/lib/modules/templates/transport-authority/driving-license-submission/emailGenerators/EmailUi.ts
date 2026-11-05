@@ -156,3 +156,67 @@ export const EmailRequirements = (
       : []),
   ]
 }
+
+type EmailDigitalFlowOptions = {
+  applicationFor: 'B-temp' | 'B-full'
+  needsHealthCertificate: boolean
+  firstName?: string
+  selectedDistrictCommissioner?: string
+}
+
+const withDeliveryLocation = (str: string, location?: string) =>
+  location
+    ? str.replace('%s', () => location)
+    : str.replace(/\s*\(%s\)/, '')
+
+export const EmailDigitalFlow = ({
+  applicationFor,
+  needsHealthCertificate,
+  firstName,
+  selectedDistrictCommissioner,
+}: EmailDigitalFlowOptions) => {
+  const texts = m.digitalFlow
+  const greeting = `${texts.greeting} ${firstName ?? ''}`.trim()
+  const image = Img('notification.jpg', 'myndskreyting')
+
+  if (applicationFor === 'B-temp') {
+    return [
+      image,
+      Heading(texts['B-temp'].heading, {
+        align: 'left',
+        small: true,
+        eyebrow: greeting,
+      }),
+      List(texts['B-temp'].list),
+    ]
+  }
+
+  if (!needsHealthCertificate) {
+    return [
+      image,
+      Copy(greeting, { align: 'left', small: true, style: 'bold' }),
+      Copy(
+        withDeliveryLocation(
+          texts['B-full-no-health'].paragraph,
+          selectedDistrictCommissioner,
+        ),
+        { align: 'left', small: true },
+      ),
+    ]
+  }
+
+  return [
+    image,
+    Heading(texts['B-full-health'].heading, {
+      align: 'left',
+      small: true,
+      eyebrow: greeting,
+    }),
+    Copy(texts.nextStepsTitle, { align: 'left', small: true, style: 'bold' }),
+    List(
+      texts['B-full-health'].list.map((str) =>
+        withDeliveryLocation(str, selectedDistrictCommissioner),
+      ),
+    ),
+  ]
+}
