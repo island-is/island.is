@@ -20,6 +20,7 @@ registerEnumType(NotificationChannel, { name: 'NotificationChannel' })
 export enum NotificationPriorityType {
   Informative = 'Informative',
   Actionable = 'Actionable',
+  Important = 'Important',
 }
 
 registerEnumType(NotificationPriorityType, {
