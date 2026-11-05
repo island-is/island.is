@@ -94,7 +94,7 @@ export const CivilClaimantFields = ({
     civilClaimant.nationalId ?? null,
   )
 
-  const { personData, businessData, notFound } =
+  const { personData, businessData, notFound, isLoading } =
     useNationalRegistry(lookupNationalId)
   const {
     updateCivilClaimant,
@@ -194,6 +194,10 @@ export const CivilClaimantFields = ({
       name = business?.full_name
     }
 
+    // Persist the national id even when the registry lookup fails (common on
+    // DEV with fake ids). isLoading is in the dependency list so the effect
+    // also runs when a request settles without person/business data — same
+    // pattern as VictimInfo.
     const update: UpdateCivilClaimant = {
       civilClaimantId: civilClaimantNationalIdUpdate.civilClaimantId || '',
       nationalId: civilClaimantNationalIdUpdate.nationalId,
@@ -201,9 +205,8 @@ export const CivilClaimantFields = ({
     }
 
     handleSetAndSendCivilClaimantToServer(update)
-    // We want this hook to run exclusively when personData or businessData changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personData, businessData])
+  }, [personData, businessData, isLoading])
 
   const legalProtectorCheckboxId = `defender_type_legal_rights_protector-${civilClaimant.id}`
   const lawyerCheckboxId = `defender_type_lawyer-${civilClaimant.id}`
