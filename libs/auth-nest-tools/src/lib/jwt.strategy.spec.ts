@@ -16,7 +16,7 @@ describe('JwtStrategy#validate', () => {
 
     fakeRequest = {
       headers: {
-        authorization: 'authorization',
+        authorization: 'Bearer authorization',
         'user-agent': 'test user agent',
       },
       ip: '1.1.1.1',
@@ -92,14 +92,14 @@ describe('JwtStrategy#validate', () => {
         },
       },
     }
-    const request = {
+    const request = ({
       headers: {
-        authorization: 'authorization',
+        authorization: 'Bearer authorization',
         'user-agent': 'test user agent',
         'x-forwarded-for': '2.2.2.2, 3.3.3.3',
       },
       ip: '1.1.1.1',
-    } as unknown as Request
+    } as unknown) as Request
 
     // Act
     const user = await jwtStrategy.validate(request, payload)
@@ -152,7 +152,7 @@ describe('JwtStrategy#validate', () => {
       scope: ['test-scope-1'],
       client_id: 'test-client',
     }
-    const request = {
+    const request = ({
       headers: {
         'user-agent': 'test user agent',
         'x-forwarded-for': '2.2.2.2, 3.3.3.3',
@@ -160,7 +160,7 @@ describe('JwtStrategy#validate', () => {
       body: {
         __accessToken: 'some-token',
       },
-    } as unknown as Request
+    } as unknown) as Request
 
     // Act
     const user = await jwtStrategy.validate(request, payload)

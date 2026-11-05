@@ -231,4 +231,10 @@ export { isUnderXAge } from './lib/delegations/utils/isUnderXAge'
 export * from './lib/passkeys-core/passkeys-core.module'
 export * from './lib/passkeys-core/passkeys-core.service'
 export * from './lib/passkeys-core/passkeys-core.config'
+
+// Device registrations
+export * from './lib/device-registrations/device-registrations.module'
+export * from './lib/device-registrations/device-registrations.service'
+export * from './lib/device-registrations/device-registration.model'
+export * from './lib/device-registrations/dto/device-registration.dto'
 export * from './lib/resources/dto/scope-delegation-settings.dto'
