@@ -25,7 +25,7 @@ import {
 } from '@island.is/form-system/ui'
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Dispatch, ElementType, useReducer } from 'react'
+import { Dispatch, ElementType, useEffect, useReducer } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { PreviewApplicant } from '../PreviewStepOrGroup/components/PreviewSections'
 import { updatePreviewFields } from '../PreviewStepOrGroup/previewState'
@@ -61,6 +61,14 @@ const fieldComponents = {
   [FieldTypesEnum.FAMILY]: Family,
 }
 
+const updateSingleFieldPreview = (
+  fields: FormSystemField[],
+  action: Action,
+): FormSystemField[] =>
+  action.type === 'SYNC_PREVIEW_CONFIGURATION'
+    ? [{ ...action.payload.data, values: fields[0].values }]
+    : updatePreviewFields(fields, action)
+
 export const Preview = ({
   data,
   screenOrSection,
@@ -70,9 +78,17 @@ export const Preview = ({
 }: Props) => {
   const methods = useForm()
   const { lang } = useLocale()
-  const [previewFields, previewDispatch] = useReducer(updatePreviewFields, [
+  const [previewFields, previewDispatch] = useReducer(updateSingleFieldPreview, [
     data,
   ])
+  useEffect(() => {
+    if (!dispatch) {
+      previewDispatch({
+        type: 'SYNC_PREVIEW_CONFIGURATION',
+        payload: { data },
+      })
+    }
+  }, [data, dispatch])
   const previewItem = dispatch ? data : previewFields[0]
   const FieldComponent = data.fieldType
     ? (fieldComponents[
