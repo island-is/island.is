@@ -74,7 +74,7 @@ export const SocialInsuranceAdministrationEducationLevelsApi =
     action: 'getEducationLevels',
     externalDataId: 'socialInsuranceAdministrationEducationLevels',
     namespace: 'SocialInsuranceAdministration',
-    order: 4,
+    order: 5,
   })
 
 export const SocialInsuranceAdministrationMARPApplicationTypeApi =
@@ -84,6 +84,13 @@ export const SocialInsuranceAdministrationMARPApplicationTypeApi =
     namespace: 'SocialInsuranceAdministration',
     order: 3,
   })
+
+export const SocialInsuranceAdministrationMARPExemptionApi = defineTemplateApi({
+  action: 'getMedicalAndRehabilitationExemption',
+  externalDataId: 'socialInsuranceAdministrationMARPExemption',
+  namespace: 'SocialInsuranceAdministration',
+  order: 4,
+})
 
 export const SocialInsuranceAdministrationEmploymentStatusesApi =
   defineTemplateApi({

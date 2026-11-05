@@ -11,6 +11,7 @@ import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { CertificateForSicknessAndRehabilitation } from '../models/medicalDocuments/certificateForSicknessAndRehabilitation.model'
 import { ConfirmationOfIllHealth } from '../models/medicalDocuments/confirmationOfIllHealth.model'
+import { ConfirmationOfJobSearch } from '../models/medicalDocuments/confirmationOfJobSearch.model'
 import { ConfirmationOfPendingResolution } from '../models/medicalDocuments/confirmationOfPendingResolution.model'
 import { ConfirmedTreatment } from '../models/medicalDocuments/confirmedTreatment.model'
 import { RehabilitationPlan } from '../models/medicalDocuments/rehabilitationPlan.model'
@@ -108,5 +109,31 @@ export class MedicalDocumentsResolver {
     return withApplicationGuidContext(applicationId, () =>
       this.medicalDocumentsService.getConfirmationOfIllHealth(user),
     )
+  }
+
+  @Query(() => ConfirmationOfJobSearch, {
+    name: 'socialInsuranceConfirmationOfJobSearch',
+  })
+  async siaGetConfirmationOfJobSearch(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    const confirmation = await withApplicationGuidContext(applicationId, () =>
+      this.medicalDocumentsService.getConfirmationOfJobSearch(user),
+    )
+
+    // The phone number is not shown to the applicant, only that one exists, so
+    // the real number never leaves the API.
+    return {
+      ...confirmation,
+      serviceProvider: confirmation.serviceProvider && {
+        ...confirmation.serviceProvider,
+        phoneNumber: confirmation.serviceProvider.phoneNumber?.replace(
+          /\d/g,
+          '*',
+        ),
+      },
+    }
   }
 }

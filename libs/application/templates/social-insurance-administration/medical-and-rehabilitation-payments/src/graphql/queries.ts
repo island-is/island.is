@@ -220,3 +220,24 @@ export const siaConfirmationOfIllHealthQuery = gql`
     }
   }
 `
+
+export const siaConfirmationOfJobSearchQuery = gql`
+  query SiaConfirmationOfJobSearch($applicationId: String) {
+    socialInsuranceConfirmationOfJobSearch(applicationId: $applicationId) {
+      referenceId
+      created
+      serviceProvider {
+        serviceProviderName
+        coordinatorTitle
+        workplace
+        phoneNumber
+      }
+      requestedPeriod {
+        startDate
+        endDate
+        totalRequestedMonths
+      }
+      typeAppliedFor
+    }
+  }
+`

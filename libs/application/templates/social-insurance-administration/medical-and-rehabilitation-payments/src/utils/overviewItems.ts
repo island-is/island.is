@@ -452,6 +452,18 @@ export const confirmationOfIllHealthItems = (): Array<KeyValueItem> => [
   },
 ]
 
+export const confirmationOfJobSearchItems = (): Array<KeyValueItem> => [
+  {
+    width: 'full',
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage.confirmationOfJobSearch
+        .sectionTitle,
+    valueText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .confirmationOfJobSearchConfirmed,
+  },
+]
+
 export const selfAssessmentQuestionsOneItems = (
   answers: FormValue,
   externalData: ExternalData,
