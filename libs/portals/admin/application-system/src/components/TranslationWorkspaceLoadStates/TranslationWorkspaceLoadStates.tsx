@@ -1,10 +1,17 @@
 import {
+  AlertMessage,
   Box,
   Text,
   SkeletonLoader,
   GridContainer,
 } from '@island.is/island-ui/core'
 import type { ApolloError } from '@apollo/client'
+import {
+  CONTENTFUL_TOKEN_REJECTED_ERROR,
+  CONTENTFUL_UNAVAILABLE_ERROR,
+} from '@island.is/application/utils'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 import { getTranslationLoadErrorDetail } from '../../utils/translationWorkspaceErrors'
 
 export const TranslationWorkspaceLoading = () => (
@@ -44,6 +51,29 @@ export const TranslationWorkspaceError = ({
         </Text>
       </Box>
     </GridContainer>
+  )
+}
+
+export const TranslationWorkspaceTranslationsWarning = ({
+  error,
+}: {
+  error: ApolloError | Error
+}) => {
+  const { formatMessage } = useLocale()
+  const detail = getTranslationLoadErrorDetail(error)
+
+  const message = detail.includes(CONTENTFUL_TOKEN_REJECTED_ERROR)
+    ? formatMessage(m.translationsContentfulTokenRejected)
+    : detail.includes(CONTENTFUL_UNAVAILABLE_ERROR)
+    ? formatMessage(m.translationsContentfulUnavailable)
+    : detail
+
+  return (
+    <AlertMessage
+      type="warning"
+      title={formatMessage(m.translationsLoadFailedTitle)}
+      message={message}
+    />
   )
 }
 
