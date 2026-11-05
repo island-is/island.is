@@ -46,4 +46,8 @@ describe('formatDateFieldBoundary', () => {
   it('leaves a missing limit missing', () => {
     expect(formatDateFieldBoundary(undefined)).toBeUndefined()
   })
+
+  it('gives no limit for an invalid Date instead of throwing', () => {
+    expect(formatDateFieldBoundary(new Date('11/32/2026x'))).toBeUndefined()
+  })
 })

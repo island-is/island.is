@@ -40,14 +40,16 @@ export const resolveFieldProp = <T>(
   return prop
 }
 
-// A Date limit becomes its local calendar day, 'yyyy-MM-dd'. Strings pass
-// through unchanged.
+// A Date limit becomes its local calendar day, 'yyyy-MM-dd', and an invalid
+// Date becomes no limit instead of throwing. Strings pass through unchanged.
 export const formatDateFieldBoundary = (
   value: Date | string | undefined,
 ): string | undefined => {
   if (value === undefined) return undefined
   if (typeof value === 'string') return value
-  if (value instanceof Date) return format(value, 'yyyy-MM-dd')
+  if (value instanceof Date) {
+    return isNaN(value.getTime()) ? undefined : format(value, 'yyyy-MM-dd')
+  }
   return String(value)
 }
 
