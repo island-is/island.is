@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -24,6 +24,7 @@ export type CreateUser = {
   active: boolean
   canConfirmIndictment: boolean
   canManageMessageSuspension?: boolean
+  canManageServiceInterruptionBanner?: boolean
 }
 
 export type UpdateUser = {
@@ -34,6 +35,7 @@ export type UpdateUser = {
   active?: boolean
   canConfirmIndictment?: boolean
   canManageMessageSuspension?: boolean
+  canManageServiceInterruptionBanner?: boolean
 }
 
 // The institution is always loaded with a user: it is a repository detail, never the
@@ -47,12 +49,18 @@ export class UserRepositoryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async findById(userId: string): Promise<User | null> {
+  // A caller that holds a request transaction reads in it, so the read does
+  // not wait for a second connection while that transaction holds its locks.
+  async findById(
+    userId: string,
+    options?: { transaction?: Transaction },
+  ): Promise<User | null> {
     try {
       this.logger.debug(`Finding user ${userId}`)
 
       return await this.userModel.findByPk(userId, {
         include: includeInstitution,
+        transaction: options?.transaction,
       })
     } catch (error) {
       this.logger.error(`Error finding user ${userId}:`, { error })

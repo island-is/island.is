@@ -105,6 +105,21 @@ describe('CaseRepositoryService - case reads', () => {
       ).toBeDefined()
     })
 
+    // The statement deadline route reads the party's current deadline off the
+    // verdict appeal this load carries. Without the include every call would be
+    // a first deadline, and the second one for a party would die on the
+    // table's unique index.
+    it('should read the statement deadlines of the verdict appeal', () => {
+      const verdictAppealCase = included(
+        findOneOptions().include,
+        'verdictAppealCase',
+      )
+
+      expect(
+        included(verdictAppealCase?.include, 'statementDeadlines'),
+      ).toBeDefined()
+    })
+
     describe('no live case', () => {
       beforeEach(async () => {
         mockCaseModel.findOne.mockReset()
@@ -272,6 +287,50 @@ describe('CaseRepositoryService - case reads', () => {
         result = await caseRepositoryService.findByIdWithJudgeAndRegistrar(
           caseId,
         )
+      })
+
+      it('should resolve nothing', () => {
+        expect(result).toBeNull()
+        expect(mockResolvePoliceCaseNumbersForCases).not.toHaveBeenCalled()
+      })
+    })
+  })
+
+  describe('findByIdWithProsecutor', () => {
+    const transaction = {} as never
+    let result: Case | null
+
+    beforeEach(async () => {
+      result = await caseRepositoryService.findByIdWithProsecutor(caseId, {
+        transaction,
+      })
+    })
+
+    it('should read the case with its prosecutor and nothing else', () => {
+      expect(findByPkArgs()).toEqual([
+        caseId,
+        {
+          include: [{ model: User, as: 'prosecutor' }],
+          transaction,
+        },
+      ])
+      expect(result).toBe(theCase)
+    })
+
+    it('should resolve the police case numbers in the same transaction', () => {
+      expect(mockResolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+        [theCase],
+        { transaction },
+      )
+    })
+
+    describe('no case', () => {
+      beforeEach(async () => {
+        mockCaseModel.findByPk.mockReset()
+        mockResolvePoliceCaseNumbersForCases.mockClear()
+        mockCaseModel.findByPk.mockResolvedValue(null)
+
+        result = await caseRepositoryService.findByIdWithProsecutor(caseId)
       })
 
       it('should resolve nothing', () => {

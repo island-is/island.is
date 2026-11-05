@@ -127,6 +127,13 @@ const template: ApplicationTemplate<
                 import('../forms/EnergyFundsForm').then((module) =>
                   Promise.resolve(module.EnergyFundsForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Senda umsókn',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
             },

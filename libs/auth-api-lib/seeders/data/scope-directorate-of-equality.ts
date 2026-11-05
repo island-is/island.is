@@ -3,7 +3,7 @@ import { createScope } from './helpers'
 export const up = createScope({
   name: '@island.is/applications/directorate-of-equality',
   displayName: 'Jafnréttisstofa',
-  description: 'Umsóknir hjá Jafnréttisstofu',
+  description: 'Skil á jafnréttisáætlun',
 
   delegation: {
     custom: true,

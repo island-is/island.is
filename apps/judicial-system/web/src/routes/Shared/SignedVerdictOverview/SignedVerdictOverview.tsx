@@ -114,9 +114,15 @@ const getNextButtonText = (
   user?: User,
 ) =>
   isProsecutionUser(user)
-    ? formatMessage(m.sections.caseExtension.buttonLabel, {
-        caseType: workingCase.type,
-      })
+    ? formatMessage(
+        {
+          id: m.sections.caseExtension.buttonLabel,
+          defaultMessage: m.sections.caseExtension.buttonLabel,
+        },
+        {
+          caseType: workingCase.type,
+        },
+      )
     : 'Leiðrétta þingbók eða úrskurð'
 
 export const getExtensionInfoText = (
@@ -157,11 +163,17 @@ export const getExtensionInfoText = (
 
   return rejectReason === 'none'
     ? undefined
-    : formatMessage(m.sections.caseExtension.extensionInfo, {
-        hasChildCase: Boolean(workingCase.childCase),
-        caseType: workingCase.type,
-        rejectReason,
-      })
+    : formatMessage(
+        {
+          id: m.sections.caseExtension.extensionInfo,
+          defaultMessage: m.sections.caseExtension.extensionInfo,
+        },
+        {
+          hasChildCase: Boolean(workingCase.childCase),
+          caseType: workingCase.type,
+          rejectReason,
+        },
+      )
 }
 
 type availableModals =
@@ -312,14 +324,27 @@ export const SignedVerdictOverview: FC = () => {
       if (workingCase.sharedWithProsecutorsOffice) {
         setSharedCaseModal({
           open: true,
-          title: formatMessage(m.sections.shareCaseModal.closeTitle, {
-            courtCaseNumber: workingCase.courtCaseNumber,
-          }),
+          title: formatMessage(
+            {
+              id: m.sections.shareCaseModal.closeTitle,
+              defaultMessage: m.sections.shareCaseModal.closeTitle,
+            },
+            {
+              courtCaseNumber: workingCase.courtCaseNumber,
+            },
+          ),
           text: (
             <MarkdownWrapper
-              markdown={formatMessage(m.sections.shareCaseModal.closeText, {
-                prosecutorsOffice: workingCase.sharedWithProsecutorsOffice.name,
-              })}
+              markdown={formatMessage(
+                {
+                  id: m.sections.shareCaseModal.closeText,
+                  defaultMessage: m.sections.shareCaseModal.closeText,
+                },
+                {
+                  prosecutorsOffice:
+                    workingCase.sharedWithProsecutorsOffice.name,
+                },
+              )}
             />
           ),
         })
@@ -336,14 +361,26 @@ export const SignedVerdictOverview: FC = () => {
       } else {
         setSharedCaseModal({
           open: true,
-          title: formatMessage(m.sections.shareCaseModal.openTitle, {
-            courtCaseNumber: workingCase.courtCaseNumber,
-          }),
+          title: formatMessage(
+            {
+              id: m.sections.shareCaseModal.openTitle,
+              defaultMessage: m.sections.shareCaseModal.openTitle,
+            },
+            {
+              courtCaseNumber: workingCase.courtCaseNumber,
+            },
+          ),
           text: (
             <MarkdownWrapper
-              markdown={formatMessage(m.sections.shareCaseModal.openText, {
-                prosecutorsOffice: institution?.name,
-              })}
+              markdown={formatMessage(
+                {
+                  id: m.sections.shareCaseModal.openText,
+                  defaultMessage: m.sections.shareCaseModal.openText,
+                },
+                {
+                  prosecutorsOffice: institution?.name,
+                },
+              )}
             />
           ),
         })
@@ -393,9 +430,15 @@ export const SignedVerdictOverview: FC = () => {
         notFound={caseNotFound}
       >
         <PageHeader
-          title={formatMessage(titles.shared.closedCaseOverview, {
-            courtCaseNumber: workingCase.courtCaseNumber,
-          })}
+          title={formatMessage(
+            {
+              id: titles.shared.closedCaseOverview,
+              defaultMessage: titles.shared.closedCaseOverview,
+            },
+            {
+              courtCaseNumber: workingCase.courtCaseNumber,
+            },
+          )}
         />
         <FormContentContainer>
           <Box component="section" marginBottom={5}>
@@ -409,7 +452,7 @@ export const SignedVerdictOverview: FC = () => {
                   button={
                     canModifyCaseDates()
                       ? {
-                          label: formatMessage(core.update),
+                          label: core.update,
                           onClick: () => setIsModifyingDates((value) => !value),
                           icon: 'pencil',
                         }
@@ -422,9 +465,15 @@ export const SignedVerdictOverview: FC = () => {
             {workingCase.caseModifiedExplanation && (
               <AlertMessage
                 type="info"
-                title={formatMessage(m.sections.modifyDatesInfo.title, {
-                  caseType: workingCase.type,
-                })}
+                title={formatMessage(
+                  {
+                    id: m.sections.modifyDatesInfo.title,
+                    defaultMessage: m.sections.modifyDatesInfo.title,
+                  },
+                  {
+                    caseType: workingCase.type,
+                  },
+                )}
                 message={
                   <MarkdownWrapper
                     markdown={workingCase.caseModifiedExplanation}
@@ -510,7 +559,7 @@ export const SignedVerdictOverview: FC = () => {
               </Accordion>
             )}
             <Conclusion
-              title={formatMessage(conclusion.title)}
+              title={conclusion.title}
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
@@ -518,7 +567,7 @@ export const SignedVerdictOverview: FC = () => {
               AppealCaseState.COMPLETED &&
               workingCase.appealCase?.appealConclusion && (
                 <Conclusion
-                  title={formatMessage(conclusion.appealTitle)}
+                  title={conclusion.appealTitle}
                   conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}
@@ -573,7 +622,7 @@ export const SignedVerdictOverview: FC = () => {
             text={shareCaseModal.text}
             buttons={[
               {
-                text: formatMessage(core.closeModal),
+                text: core.closeModal,
                 onClick: () => setSharedCaseModal(undefined),
               },
             ]}

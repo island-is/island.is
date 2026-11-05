@@ -2,7 +2,7 @@ import React, { FC, createContext, useContext, ReactNode } from 'react'
 import { Colors, theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
 import { Box } from '../Box/Box'
-import { Text } from '../Text/Text'
+import { Text, TextProps } from '../Text/Text'
 import { Stack, StackProps } from '../Stack/Stack'
 
 import * as styles from './BulletList.css'
@@ -17,11 +17,18 @@ const BulletListContext = createContext<BulletListContextValue>({
   color: 'red400',
 })
 
-export const Bullet: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
+interface BulletProps {
+  variant?: TextProps['variant']
+}
+
+export const Bullet: FC<React.PropsWithChildren<BulletProps>> = ({
+  children,
+  variant,
+}) => {
   const { type, color } = useContext(BulletListContext)
 
   return (
-    <Text as="span">
+    <Text as="span" variant={variant}>
       <Box display="flex">
         <Box display="flex">
           <span

@@ -1041,4 +1041,35 @@ describe('HousingBenefitsService', () => {
       email: 'b@test.is',
     })
   })
+
+  it('includes contract tenants (excluding applicant) when householdMembersTableRepeater is empty', () => {
+    const model = mapApplicationToHousingBenefitsModel(
+      createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          householdMembersTableRepeater: [],
+        },
+        externalData: {
+          getRentalAgreements: {
+            data: [
+              {
+                contractId: 123,
+                contractParty: [
+                  { partyTypeUseCode: 'TENANT', kennitala: APPLICANT_ID },
+                  { partyTypeUseCode: 'TENANT', kennitala: ASSIGNEE_A },
+                  { partyTypeUseCode: 'OWNER', kennitala: ASSIGNEE_B },
+                ],
+              },
+            ],
+            status: 'success',
+            date: new Date(),
+          },
+        },
+      }),
+    )
+    expect(model.householdMembers?.map((m) => m.kennitala)).toEqual([
+      APPLICANT_ID,
+      ASSIGNEE_A,
+    ])
+  })
 })

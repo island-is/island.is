@@ -67,24 +67,39 @@ const Ruling = () => {
     setAndSendCaseToServer(
       [
         {
-          introduction: formatMessage(m.sections.introduction.autofill, {
-            date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
-          }),
+          introduction: formatMessage(
+            {
+              id: m.sections.introduction.autofill,
+              defaultMessage: m.sections.introduction.autofill,
+            },
+            {
+              date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
+            },
+          ),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(
-            ruling.sections.courtCaseFacts.prefill,
+            {
+              id: ruling.sections.courtCaseFacts.prefill,
+              defaultMessage: ruling.sections.courtCaseFacts.prefill,
+            },
             {
               caseFacts: workingCase.caseFacts,
             },
           ),
           courtLegalArguments: formatMessage(
-            ruling.sections.courtLegalArguments.prefill,
+            {
+              id: ruling.sections.courtLegalArguments.prefill,
+              defaultMessage: ruling.sections.courtLegalArguments.prefill,
+            },
             { legalArguments: workingCase.legalArguments },
           ),
           ruling: !workingCase.parentCase
-            ? `\n${formatMessage(ruling.autofill, {
-                judgeName: workingCase.judge?.name,
-              })}`
+            ? `\n${formatMessage(
+                { id: ruling.autofill, defaultMessage: ruling.autofill },
+                {
+                  judgeName: workingCase.judge?.name,
+                },
+              )}`
             : isAcceptingCaseDecision(workingCase.decision)
             ? workingCase.parentCase.ruling
             : undefined,
@@ -120,11 +135,9 @@ const Ruling = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.court.investigationCases.ruling)}
-      />
+      <PageHeader title={titles.court.investigationCases.ruling} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.title)}</PageTitle>
+        <PageTitle>{m.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={stack({ gap: 5 })}>
           <Box component="section">
@@ -141,17 +154,15 @@ const Ruling = () => {
           </Box>
           <Box component="section">
             <Checkbox
-              name={formatMessage(m.sections.completedWithoutRuling.label)}
-              label={formatMessage(m.sections.completedWithoutRuling.label)}
+              name={m.sections.completedWithoutRuling.label}
+              label={m.sections.completedWithoutRuling.label}
               checked={!isRulingRequired}
               onChange={({ target }) => {
                 setAndSendCaseToServer(
                   [
                     {
                       isCompletedWithoutRuling: target.checked,
-                      conclusion: formatMessage(
-                        m.sections.completedWithoutRuling.conclusion,
-                      ),
+                      conclusion: m.sections.completedWithoutRuling.conclusion,
                       force: true,
                     },
                   ],
@@ -159,20 +170,18 @@ const Ruling = () => {
                   setWorkingCase,
                 )
               }}
-              tooltip={formatMessage(m.sections.completedWithoutRuling.tooltip)}
+              tooltip={m.sections.completedWithoutRuling.tooltip}
               backgroundColor="blue"
               large
             />
           </Box>
           <Box component="section" marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(m.sections.introduction.title)}
-            />
+            <SectionHeading title={m.sections.introduction.title} />
             <Input
               data-testid="introduction"
               name="introduction"
-              label={formatMessage(m.sections.introduction.label)}
-              placeholder={formatMessage(m.sections.introduction.placeholder)}
+              label={m.sections.introduction.label}
+              placeholder={m.sections.introduction.placeholder}
               value={introductionInput.value || ''}
               onChange={(evt) => introductionInput.onChange(evt.target.value)}
               onBlur={(evt) => introductionInput.onBlur(evt.target.value)}
@@ -185,16 +194,12 @@ const Ruling = () => {
             />
           </Box>
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(m.sections.prosecutorDemands.title)}
-            />
+            <SectionHeading title={m.sections.prosecutorDemands.title} />
             <Input
               data-testid="prosecutorDemands"
               name="prosecutorDemands"
-              label={formatMessage(m.sections.prosecutorDemands.label)}
-              placeholder={formatMessage(
-                m.sections.prosecutorDemands.placeholder,
-              )}
+              label={m.sections.prosecutorDemands.label}
+              placeholder={m.sections.prosecutorDemands.placeholder}
               value={prosecutorDemandsInput.value || ''}
               onChange={(evt) =>
                 prosecutorDemandsInput.onChange(evt.target.value)
@@ -210,15 +215,15 @@ const Ruling = () => {
           </Box>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(m.sections.courtCaseFacts.title)}
-              tooltip={formatMessage(m.sections.courtCaseFacts.tooltip)}
+              title={m.sections.courtCaseFacts.title}
+              tooltip={m.sections.courtCaseFacts.tooltip}
             />
 
             <Input
               data-testid="courtCaseFacts"
               name="courtCaseFacts"
-              label={formatMessage(m.sections.courtCaseFacts.label)}
-              placeholder={formatMessage(m.sections.courtCaseFacts.placeholder)}
+              label={m.sections.courtCaseFacts.label}
+              placeholder={m.sections.courtCaseFacts.placeholder}
               value={courtCaseFactsInput.value || ''}
               onChange={(evt) => courtCaseFactsInput.onChange(evt.target.value)}
               onBlur={(evt) => courtCaseFactsInput.onBlur(evt.target.value)}
@@ -232,17 +237,15 @@ const Ruling = () => {
           </Box>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(m.sections.courtLegalArguments.title)}
-              tooltip={formatMessage(m.sections.courtLegalArguments.tooltip)}
+              title={m.sections.courtLegalArguments.title}
+              tooltip={m.sections.courtLegalArguments.tooltip}
             />
             <Input
               data-testid="courtLegalArguments"
               name="courtLegalArguments"
-              label={formatMessage(m.sections.courtLegalArguments.label)}
+              label={m.sections.courtLegalArguments.label}
               value={courtLegalArgumentsInput.value || ''}
-              placeholder={formatMessage(
-                m.sections.courtLegalArguments.placeholder,
-              )}
+              placeholder={m.sections.courtLegalArguments.placeholder}
               onChange={(evt) =>
                 courtLegalArgumentsInput.onChange(evt.target.value)
               }
@@ -258,26 +261,25 @@ const Ruling = () => {
             />
           </Box>
           <Box component="section">
-            <SectionHeading title={formatMessage(m.sections.ruling.title)} />
+            <SectionHeading title={m.sections.ruling.title} />
             <RulingInput disabled={!isRulingRequired} />
           </Box>
           <Box component="section">
-            <SectionHeading title={formatMessage(m.sections.decision.title)} />
+            <SectionHeading title={m.sections.decision.title} />
             <Decision
               workingCase={workingCase}
-              acceptedLabelText={formatMessage(
-                ruling.investigationCases.sections.decision.acceptLabel,
-              )}
-              rejectedLabelText={formatMessage(
-                ruling.investigationCases.sections.decision.rejectLabel,
-              )}
-              partiallyAcceptedLabelText={formatMessage(
-                ruling.investigationCases.sections.decision
-                  .partiallyAcceptLabel,
-              )}
-              dismissLabelText={formatMessage(
-                ruling.investigationCases.sections.decision.dismissLabel,
-              )}
+              acceptedLabelText={
+                ruling.investigationCases.sections.decision.acceptLabel
+              }
+              rejectedLabelText={
+                ruling.investigationCases.sections.decision.rejectLabel
+              }
+              partiallyAcceptedLabelText={
+                ruling.investigationCases.sections.decision.partiallyAcceptLabel
+              }
+              dismissLabelText={
+                ruling.investigationCases.sections.decision.dismissLabel
+              }
               onChange={(decision) => {
                 let ruling = undefined
 
@@ -308,13 +310,11 @@ const Ruling = () => {
             />
           </Box>
           <Box component="section">
-            <SectionHeading
-              title={formatMessage(m.sections.conclusion.title)}
-            />
+            <SectionHeading title={m.sections.conclusion.title} />
             <Input
               name="conclusion"
-              label={formatMessage(m.sections.conclusion.label)}
-              placeholder={formatMessage(m.sections.conclusion.placeholder)}
+              label={m.sections.conclusion.label}
+              placeholder={m.sections.conclusion.placeholder}
               value={conclusionInput.value || ''}
               onChange={(evt) => conclusionInput.onChange(evt.target.value)}
               rows={7}
@@ -325,9 +325,9 @@ const Ruling = () => {
           <Box>
             <PdfButton
               caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRuling)}
+              title={core.pdfButtonRuling}
               pdfType="ruling"
-              elementId={formatMessage(core.pdfButtonRuling)}
+              elementId={core.pdfButtonRuling}
               disabled={!isRulingRequired}
             />
           </Box>
@@ -338,7 +338,7 @@ const Ruling = () => {
           previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

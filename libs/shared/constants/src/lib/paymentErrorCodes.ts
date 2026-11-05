@@ -62,6 +62,8 @@ export enum CardErrorCode {
   ApplePayNotConfigured = 'ApplePayNotConfigured',
   ApplePayReplayDetected = 'ApplePayReplayDetected',
   ApplePaySignatureVerificationFailed = 'ApplePaySignatureVerificationFailed',
+  GooglePayTokenInvalid = 'GooglePayTokenInvalid',
+  GooglePayReplayDetected = 'GooglePayReplayDetected',
 }
 
 export enum InvoiceErrorCode {
@@ -87,9 +89,21 @@ export enum BankTransferErrorCode {
   BankTransferExpired = 'BankTransferExpired',
 }
 
+export enum DebtPaymentErrorCode {
+  DebtPaymentInvalid = 'DebtPaymentInvalid',
+  DebtPaymentMethodNotAllowed = 'DebtPaymentMethodNotAllowed',
+  DebtPaymentRejected = 'DebtPaymentRejected',
+  DebtPaymentFlowClosed = 'DebtPaymentFlowClosed',
+  /** FJS rejected the payment and the money is on its way back. Pay page only. */
+  DebtPaymentRejectedRefundPending = 'DebtPaymentRejectedRefundPending',
+  DebtPaymentUnavailable = 'DebtPaymentUnavailable',
+  DebtPaymentRegisteredCannotBeRefunded = 'DebtPaymentRegisteredCannotBeRefunded',
+}
+
 export type PaymentErrorCode =
   | FjsErrorCode
   | CardErrorCode
   | InvoiceErrorCode
   | BankTransferErrorCode
+  | DebtPaymentErrorCode
   | PaymentServiceCode

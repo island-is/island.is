@@ -1,11 +1,34 @@
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/feature-flags'
 import { PortalModule, PortalModuleRoutesProps } from '@island.is/portals/core'
 import React, { lazy } from 'react'
 import { m } from './lib/messages'
 import { ApplicationSystemPaths } from './lib/paths'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 
 const Root = lazy(() => import('./screens/Root/Root'))
+const TranslationWorkspace = lazy(() =>
+  import('./screens/TranslationWorkspace/TranslationWorkspace').then((m) => ({
+    default: m.TranslationWorkspace,
+  })),
+)
+const SharedNamespaceTranslationWorkspace = lazy(() =>
+  import(
+    './screens/SharedNamespaceTranslationWorkspace/SharedNamespaceTranslationWorkspace'
+  ).then((m) => ({
+    default: m.SharedNamespaceTranslationWorkspace,
+  })),
+)
+
+const TranslationWorkspaceRoute = () => {
+  const { typeId } = useParams<{ typeId: string }>()
+  return <TranslationWorkspace key={typeId} />
+}
+
+const SharedNamespaceTranslationWorkspaceRoute = () => {
+  const { namespace } = useParams<{ namespace: string }>()
+  return <SharedNamespaceTranslationWorkspace key={namespace} />
+}
 
 const allowedScopes: string[] = [
   AdminPortalScope.applicationSystemAdmin,
@@ -36,6 +59,27 @@ export const applicationSystemAdminModule: PortalModule = {
           element: <Navigate to={ApplicationSystemPaths.Overview} />,
         },
       ],
+    },
+    {
+      name: m.translations,
+      key: Features.isApplicationSystemTranslationsEnabled,
+      path: '/umsoknakerfi/thydingar/shared/:namespace',
+      element: <SharedNamespaceTranslationWorkspaceRoute />,
+      layout: 'default',
+    },
+    {
+      name: m.translations,
+      key: Features.isApplicationSystemTranslationsEnabled,
+      path: ApplicationSystemPaths.SharedNamespaceTranslationWorkspace,
+      element: <SharedNamespaceTranslationWorkspaceRoute />,
+      layout: 'default',
+    },
+    {
+      name: m.translations,
+      key: Features.isApplicationSystemTranslationsEnabled,
+      path: ApplicationSystemPaths.TranslationWorkspace,
+      element: <TranslationWorkspaceRoute />,
+      layout: 'workspace',
     },
   ],
 }

@@ -1100,28 +1100,6 @@ describe('isDefendantStepValidRC', () => {
     expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(true)
   })
 
-  test('is false when the defender email is malformed', () => {
-    const workingCase = {
-      ...validCase,
-      defenderEmail: 'not-an-email',
-    } as WorkingCase
-
-    expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(
-      false,
-    )
-  })
-
-  test('is false when the defender phone number is malformed', () => {
-    const workingCase = {
-      ...validCase,
-      defenderPhoneNumber: '12345',
-    } as WorkingCase
-
-    expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(
-      false,
-    )
-  })
-
   test.each([
     ['defenderEmail', 'not-an-email'],
     ['defenderPhoneNumber', '12345'],
@@ -1340,21 +1318,6 @@ describe('isDefendantStepValidIC', () => {
     } as WorkingCase
 
     expect(isDefendantStepValidIC(workingCase)).toBe(false)
-  })
-
-  test('is false when the defender contact details are malformed', () => {
-    expect(
-      isDefendantStepValidIC({
-        ...validCase,
-        defenderEmail: 'nope',
-      } as WorkingCase),
-    ).toBe(false)
-    expect(
-      isDefendantStepValidIC({
-        ...validCase,
-        defenderPhoneNumber: '1',
-      } as WorkingCase),
-    ).toBe(false)
   })
 })
 
@@ -1943,21 +1906,6 @@ describe('isCourtHearingArrangemenstStepValidRC', () => {
     ).toBe(false)
   })
 
-  test('is false when the defender contact details are malformed', () => {
-    expect(
-      isCourtHearingArrangemenstStepValidRC({
-        arraignmentDate,
-        defenderEmail: 'nope',
-      } as WorkingCase),
-    ).toBe(false)
-    expect(
-      isCourtHearingArrangemenstStepValidRC({
-        arraignmentDate,
-        defenderPhoneNumber: '1',
-      } as WorkingCase),
-    ).toBe(false)
-  })
-
   test.each([
     ['defenderEmail', 'nope'],
     ['defenderPhoneNumber', '1'],
@@ -2027,15 +1975,6 @@ describe('isCourtHearingArrangementsStepValidIC', () => {
       isCourtHearingArrangementsStepValidIC(validCase, {
         date: undefined,
       } as DateLog),
-    ).toBe(false)
-  })
-
-  test('is false when the defender email is malformed', () => {
-    expect(
-      isCourtHearingArrangementsStepValidIC({
-        ...validCase,
-        defenderEmail: 'nope',
-      } as WorkingCase),
     ).toBe(false)
   })
 

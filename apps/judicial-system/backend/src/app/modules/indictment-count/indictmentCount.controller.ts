@@ -27,8 +27,8 @@ import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import { getOrCreateTransaction } from '../../middleware'
 import {
   CaseTypeGuard,
-  MinimalCaseAccessGuard,
   MinimalCaseExistsForUpdateGuard,
+  MinimalCaseWriteGuard,
 } from '../case'
 import { IndictmentCount, Offense } from '../repository'
 import { CreateOffenseDto } from './dto/createOffense.dto'
@@ -54,7 +54,7 @@ import { IndictmentCountService } from './indictmentCount.service'
   RolesGuard,
   MinimalCaseExistsForUpdateGuard,
   new CaseTypeGuard(indictmentCases),
-  MinimalCaseAccessGuard,
+  MinimalCaseWriteGuard,
 )
 export class IndictmentCountController {
   constructor(

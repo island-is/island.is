@@ -3,6 +3,7 @@ export { AppealCaseJudge } from './models/appealCaseJudge.model'
 export { AppealDecision } from './models/appealDecision.model'
 export { AppealEventLog } from './models/appealEventLog.model'
 export { AppealCourtSession } from './models/appealCourtSession.model'
+export { AppealStatementDeadline } from './models/appealStatementDeadline.model'
 export { AppealSummons } from './models/appealSummons.model'
 export { AppealSummonsDefendant } from './models/appealSummonsDefendant.model'
 export { Case } from './models/case.model'
@@ -25,6 +26,7 @@ export { InstitutionContact } from './models/institutionContact.model'
 export { LawyerRegistry } from './models/lawyerRegistry.model'
 export { MessageSuspension } from './models/messageSuspension.model'
 export { Notification, Recipient } from './models/notification.model'
+export { ServiceInterruptionBanner } from './models/serviceInterruptionBanner.model'
 export { Offense } from './models/offense.model'
 export { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 export { RobotLog } from './models/robotLog.model'
@@ -45,6 +47,11 @@ export {
   CreateAppealCourtSession,
   UpdateAppealCourtSession,
 } from './services/appealCourtSessionRepository.service'
+export {
+  AppealStatementDeadlineRepositoryService,
+  CreateAppealStatementDeadline,
+  UpdateAppealStatementDeadline,
+} from './services/appealStatementDeadlineRepository.service'
 export {
   AppealSummonsRepositoryService,
   UpdateAppealSummons,
@@ -109,6 +116,10 @@ export {
   NotificationRepositoryService,
   CreateNotification,
 } from './services/notificationRepository.service'
+export {
+  ServiceInterruptionBannerRepositoryService,
+  SERVICE_INTERRUPTION_BANNER_ID,
+} from './services/serviceInterruptionBannerRepository.service'
 export {
   OffenseRepositoryService,
   UpdateOffense,

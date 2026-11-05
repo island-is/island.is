@@ -1,3 +1,5 @@
+import { Transaction } from 'sequelize'
+
 import {
   Inject,
   Injectable,
@@ -20,8 +22,14 @@ export class VictimService {
     private readonly logger: Logger,
   ) {}
 
-  async findById(victimId: string): Promise<Victim> {
-    const victim = await this.victimRepositoryService.findById(victimId)
+  async findById(
+    victimId: string,
+    options: { transaction: Transaction },
+  ): Promise<Victim> {
+    const victim = await this.victimRepositoryService.findById(
+      victimId,
+      options,
+    )
 
     if (!victim) {
       throw new NotFoundException(`Victim ${victimId} not found`)
@@ -30,20 +38,26 @@ export class VictimService {
     return victim
   }
 
-  async create(caseId: string, dto: CreateVictimDto): Promise<Victim> {
-    return this.victimRepositoryService.create(caseId, dto)
+  async create(
+    caseId: string,
+    dto: CreateVictimDto,
+    options: { transaction: Transaction },
+  ): Promise<Victim> {
+    return this.victimRepositoryService.create(caseId, dto, options)
   }
 
   async update(
     caseId: string,
     victimId: string,
     update: UpdateVictimDto,
+    options: { transaction: Transaction },
   ): Promise<Victim> {
     const { numberOfAffectedRows, victims: updatedVictims } =
       await this.victimRepositoryService.updateByIdAndCase(
         victimId,
         caseId,
         update,
+        options,
       )
 
     if (numberOfAffectedRows > 1) {
@@ -59,9 +73,17 @@ export class VictimService {
     return updatedVictims[0]
   }
 
-  async delete(caseId: string, victimId: string): Promise<boolean> {
+  async delete(
+    caseId: string,
+    victimId: string,
+    options: { transaction: Transaction },
+  ): Promise<boolean> {
     const numberOfAffectedRows =
-      await this.victimRepositoryService.deleteByIdAndCase(victimId, caseId)
+      await this.victimRepositoryService.deleteByIdAndCase(
+        victimId,
+        caseId,
+        options,
+      )
 
     if (numberOfAffectedRows > 1) {
       this.logger.error(

@@ -193,7 +193,10 @@ export class TranslationService {
   }
 
   /** Deletes a translation */
-  async deleteTranslation(translate: TranslationDTO): Promise<number> {
+  async deleteTranslation(
+    translate: TranslationDTO,
+    transaction?: Transaction,
+  ): Promise<number> {
     this.logger.debug(`Deleting translation with key: ${translate.key}`)
 
     if (!translate) {
@@ -207,6 +210,7 @@ export class TranslationService {
         key: translate.key,
         property: translate.property,
       },
+      transaction,
     })
   }
 

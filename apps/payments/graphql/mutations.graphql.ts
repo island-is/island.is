@@ -86,6 +86,7 @@ export const VerifyBankTransferMutation = gql`
       pendingStatus
       scaRedirectUrl
       failureReason
+      isClosed
     }
   }
 `
@@ -94,6 +95,44 @@ export const CancelBankTransferMutation = gql`
   mutation cancelBankTransfer($input: PaymentsCancelBankTransferInput!) {
     paymentsCancelBankTransfer(input: $input) {
       ok
+    }
+  }
+`
+
+export const ChargeGooglePayMutation = gql`
+  mutation chargeGooglePay($input: PaymentsGooglePayChargeInput!) {
+    paymentsChargeGooglePay(input: $input) {
+      status
+      payment {
+        isSuccess
+        responseCode
+      }
+      verification {
+        cardVerificationRawResponse
+        postUrl
+        verificationFields {
+          name
+          value
+        }
+        additionalFields {
+          name
+          value
+        }
+        isSuccess
+        scriptPath
+        responseCode
+      }
+    }
+  }
+`
+
+export const ChargeGooglePayVerifiedMutation = gql`
+  mutation chargeGooglePayVerified(
+    $input: PaymentsGooglePayChargeVerifiedInput!
+  ) {
+    paymentsChargeGooglePayVerified(input: $input) {
+      isSuccess
+      responseCode
     }
   }
 `

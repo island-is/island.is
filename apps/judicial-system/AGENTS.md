@@ -12,11 +12,13 @@ lib instead.
 
 ## Localization strings
 
-We are moving away from Contentful. **Do not add new Contentful-backed
-localization strings** — whether in `.strings.ts` files, `messages/` modules,
-`notifications.ts`, or anywhere else using `defineMessage` / `defineMessages`.
-New user-facing text should be hardcoded directly where it is used (e.g. template
-literals in the calling code). Existing strings may stay as-is until migrated.
+User-facing text should be plain strings in code (string modules or template
+literals at the call site). Do not add `defineMessage` / `defineMessages`.
+
+For ICU / placeholders on the web, format with
+`formatMessage({ id, defaultMessage }, values)` using the same plain string for
+both `id` and `defaultMessage`. On the backend, use `formatIcuMessage` from
+`backend/src/app/messages`. Service-interruption banners are admin-backed.
 
 ## Async style
 
@@ -134,7 +136,10 @@ compiles every route on first visit, which blows the suite's 15s request waits
 and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
 
 - Run it with `yarn playwright test -c apps/system-e2e/src --project judicial-system`,
-  or `/js-e2e` in Claude Code. When nothing listens on port 4200 the Playwright
+  or `/js-e2e` in Claude Code. The skill lives in `apps/judicial-system/.claude/skills`,
+  so from a session started at the repo root it only appears after Claude has
+  touched a file in this app (or after `/add-dir apps/judicial-system`).
+  When nothing listens on port 4200 the Playwright
   config builds the production bundle and serves it itself; a dev server on
   that port is reused as-is (slow, avoid). The port cannot change: the dev S3
   upload bucket only allows the `localhost:4200` origin.

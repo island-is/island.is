@@ -13,6 +13,7 @@ import request from 'supertest'
 
 import {
   Delegation,
+  DelegationConfig,
   DelegationConfirmation,
   DelegationConfirmationService,
   DelegationConfirmationStatus,
@@ -598,6 +599,21 @@ describe('MeDelegationConfirmationsController', () => {
       expect(await scopeNamesInDb()).toEqual([SENSITIVE_SCOPE])
     })
 
+    it('grants for a fake login where fake logins are allowed', async () => {
+      // Arrange
+      app.get<{ confirmationAllowFakeLogin: boolean }>(
+        DelegationConfig.KEY,
+      ).confirmationAllowFakeLogin = true
+      approvedBy(grantorNationalId, { acr: '0' })
+
+      // Act
+      const res = await status(confirmationId)
+
+      // Assert
+      expect(res.body).toEqual({ status: 'confirmed' })
+      expect(await scopeNamesInDb()).toEqual([SENSITIVE_SCOPE])
+    })
+
     it('records the authentication as evidence, and forgets the request handle', async () => {
       // Arrange
       approvedBy(grantorNationalId)
@@ -664,6 +680,7 @@ describe('MeDelegationConfirmationsController', () => {
         'the authentication is weaker than required',
         { acr: 'islandis-passkey' },
       ],
+      ['a fake login approved', { acr: '0' }],
       [
         'the authentication predates the step-up',
         { authTime: subMinutes(new Date(), 5) },

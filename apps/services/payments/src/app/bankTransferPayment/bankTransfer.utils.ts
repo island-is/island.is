@@ -12,11 +12,13 @@ import {
   BankTransferStatus,
   BankTransferPendingStatus,
   BankTransferPayerType,
+  BankTransferDebt,
 } from './bankTransfer.types'
-import { BankTransferPayment } from './models/bankTransferPayment.model'
+import { BankTransferPayment } from './models'
 import { CatalogItemWithQuantity } from '../../types/charges'
-import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import { PaymentFlowAttributes } from '../paymentFlow/models'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
+import type { FjsPayInfo } from '../../utils/fjsDebtPayment'
 
 /** Blikk's payment status lifecycle. */
 export const BLIKK_STATUSES = [
@@ -131,6 +133,14 @@ export const toBlikkItem = (item: CatalogItemWithQuantity): BlikkItem => ({
   sku: item.chargeItemCode,
 })
 
+/** Debts have no catalog item, the `payId` stands in for the sku and the label for the name. */
+export const toBlikkDebtItem = (debt: BankTransferDebt): BlikkItem => ({
+  name: debt.label ?? debt.payId,
+  quantity: 1,
+  unitPrice: String(debt.amount),
+  sku: debt.payId,
+})
+
 /** True when the row's TTL has elapsed. Anchored on `expires_at`, which we sent to Blikk on create. */
 export const isRowExpired = (
   row: Pick<BankTransferPayment, 'expiresAt'>,
@@ -148,7 +158,25 @@ export type BankTransferLogContext = {
   rrn: string
   // Filters the logs by company and person payers (`@payerType:company`).
   payerType?: BankTransferPayerType
+  // The 4-digit bank part of the payer's account, and the bank it names (`@bank:indó`).
+  bankCode?: string
+  bank?: string
 }
+
+// The first two digits of the bank part name the institution, the last two the branch.
+// Source: indó's page on bank numbers, https://indo.is/indo-ordabok/bankanumer
+const BANK_NAMES: Record<string, string> = {
+  '01': 'Landsbankinn',
+  '03': 'Arion banki',
+  '05': 'Íslandsbanki',
+  '07': 'Kvika banki',
+  '11': 'Sparisjóðirnir',
+  '22': 'indó',
+}
+
+/** The bank a 4-digit bank code belongs to; the code itself for a bank not in the map. */
+export const bankName = (bankCode: string): string =>
+  BANK_NAMES[bankCode.slice(0, 2)] ?? bankCode
 
 /** `rrn` is the provider's payment id; `correlationId` our per-attempt key. */
 export const bankTransferLogContext = (
@@ -156,7 +184,16 @@ export const bankTransferLogContext = (
   correlationId: string,
   rrn: string,
   payerType: BankTransferPayerType | undefined,
-): BankTransferLogContext => ({ paymentFlowId, correlationId, rrn, payerType })
+  // Rows created before the column have none.
+  bankCode?: string | null,
+): BankTransferLogContext => ({
+  paymentFlowId,
+  correlationId,
+  rrn,
+  payerType,
+  bankCode: bankCode ?? undefined,
+  bank: bankCode ? bankName(bankCode) : undefined,
+})
 
 /**
  * Correlation id comes from `id`, not `sourceReferenceId` — `create` sets both to the same uuid.
@@ -165,7 +202,11 @@ export const bankTransferLogContext = (
 export const rowLogContext = (
   row: Pick<
     BankTransferPayment,
-    'paymentFlowId' | 'id' | 'providerPaymentId' | 'actorNationalId'
+    | 'paymentFlowId'
+    | 'id'
+    | 'providerPaymentId'
+    | 'actorNationalId'
+    | 'bankCode'
   >,
 ): BankTransferLogContext =>
   bankTransferLogContext(
@@ -175,6 +216,7 @@ export const rowLogContext = (
     row.actorNationalId
       ? BankTransferPayerType.COMPANY
       : BankTransferPayerType.PERSON,
+    row.bankCode,
   )
 
 /** True for any status that won't change again (SUCCESS and the three failure values). */
@@ -215,6 +257,22 @@ export const deriveBankTransferFailureReason = (
     ? BankTransferFailureReason.EXPIRED
     : toBankTransferFailureReason(status)
 
+/** The neutral payInfo of a settled bank transfer; carries the provider id in `RRN`. */
+export const buildBankTransferPayInfo = ({
+  providerPaymentId,
+  totalPrice,
+  correlationId,
+}: {
+  providerPaymentId: string
+  totalPrice: number
+  correlationId: string
+}): FjsPayInfo => ({
+  kind: 'transfer',
+  RRN: providerPaymentId,
+  payableAmount: totalPrice,
+  correlationId,
+})
+
 /** Builds a PAID FJS charge payload for a settled bank transfer; carries the provider id in `RRN`. */
 export const generateBankTransferChargeFJSPayload = ({
   paymentFlow,
@@ -232,16 +290,23 @@ export const generateBankTransferChargeFJSPayload = ({
   providerPaymentId: string
   correlationId: string
   effectiveDate?: Date
-}): Charge =>
-  generateChargeFJSPayload({
+}): Charge => {
+  const {
+    RRN,
+    payableAmount,
+    correlationId: payInfoCorrelationId,
+  } = buildBankTransferPayInfo({ providerPaymentId, totalPrice, correlationId })
+
+  return generateChargeFJSPayload({
     paymentFlow,
     charges,
     systemId,
     effectiveDate,
     payInfo: {
-      RRN: providerPaymentId,
-      payableAmount: totalPrice,
+      RRN,
+      payableAmount,
       paymentMeans: PayInfoPaymentMeansEnum.Milli,
-      correlationId,
+      correlationId: payInfoCorrelationId,
     },
   })
+}

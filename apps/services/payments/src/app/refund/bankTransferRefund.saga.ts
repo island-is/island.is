@@ -9,9 +9,9 @@ import { environment } from '../../environments'
 import { requireStepResult } from '../../utils/orchestrator'
 import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
 import { generateBankTransferChargeFJSPayload } from '../bankTransferPayment/bankTransfer.utils'
-import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
+import { PaymentFulfillment } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { RefundPaymentInput } from './dtos/refundPayment.input'
+import { RefundPaymentInput } from './dtos'
 import {
   BankTransferRefundContext,
   BankTransferRefundSagaDefinition,
@@ -45,6 +45,17 @@ export const createBankTransferRefundSaga = (
     description:
       'Validate the bank transfer payment flow is eligible for refund',
     execute: async (ctx) => {
+      // Debt payments are never refunded through this saga: there is no FJS charge to delete, and
+      // FJS has no reversal for a registered debt payment.
+      const paymentFlow = await paymentFlowService.getPaymentFlowDetails(
+        ctx.paymentFlowId,
+      )
+      if (paymentFlow?.type === 'debt') {
+        throw new BadRequestException(
+          PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded,
+        )
+      }
+
       if (ctx.paymentFulfillment.fjsChargeId) {
         return { needsFjsCreate: false as const }
       }

@@ -1,0 +1,5 @@
+mutation DeleteAppealCourtSession($input: DeleteAppealCourtSessionInput!) {
+  deleteAppealCourtSession(input: $input) {
+    deleted
+  }
+}

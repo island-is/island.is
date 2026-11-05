@@ -3,5 +3,7 @@ import { TrainingLicenseOnAWorkMachineAnswers } from './lib/dataSchema'
 
 export const getFields = () => import('./fields/')
 
+export * from './lib/messages'
+
 export type TrainingLicenseOnAWorkMachine = TrainingLicenseOnAWorkMachineAnswers
 export default template

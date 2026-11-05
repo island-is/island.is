@@ -19,13 +19,22 @@ export const draftState: StateNodeConfig<
     status: FormModes.DRAFT,
     lifecycle: DefaultStateLifeCycle,
     roles: [
+      // Here we only define one form to display in this state because
+      // the assignee role is set after this state
       {
         id: Roles.APPLICANT,
         formLoader: () =>
           import('../../forms/mainForm').then((module) =>
             Promise.resolve(module.MainForm),
           ),
-        actions: [{ event: 'SUBMIT', name: 'Staðfesta', type: 'primary' }],
+        actions: [
+          { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+          {
+            event: 'ASSIGN',
+            name: 'Move to state IN_REVIEW',
+            type: 'subtle',
+          },
+        ],
         write: 'all',
         read: 'all',
         delete: true,
@@ -40,6 +49,7 @@ export const draftState: StateNodeConfig<
     },
     [DefaultEvents.ASSIGN]: {
       target: States.IN_REVIEW,
+      actions: 'assignUser',
     },
   },
 }

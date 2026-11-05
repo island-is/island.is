@@ -22,11 +22,15 @@ import { BackendService } from '../backend'
 import { FeatureService } from '../feature/feature.service'
 import { AppealCase } from './dto/appealCase.response'
 import { AppealCourtSession } from './dto/appealCourtSession.response'
+import { AppealEventLog } from './dto/appealEventLog.response'
+import { AppealStatementDeadline } from './dto/appealStatementDeadline.response'
 import { CreateAppealCaseInput } from './dto/createAppealCase.input'
 import { CreateAppealCourtSessionInput } from './dto/createAppealCourtSession.input'
 import { CreateAppealEventLogInput } from './dto/createAppealEventLog.input'
 import { DeleteAppealCourtSessionInput } from './dto/deleteAppealCourtSession.input'
 import { DeleteAppealCourtSessionResponse } from './dto/deleteAppealCourtSession.response'
+import { FileAppealStatementInput } from './dto/fileAppealStatement.input'
+import { SetAppealStatementDeadlineInput } from './dto/setAppealStatementDeadline.input'
 import { TransitionAppealCaseInput } from './dto/transitionAppealCase.input'
 import { UpdateAppealCaseInput } from './dto/updateAppealCase.input'
 import { UpdateAppealCourtSessionInput } from './dto/updateAppealCourtSession.input'
@@ -166,6 +170,56 @@ export class AppealCaseResolver {
         appealCaseId,
         appealCourtSessionId,
       ),
+      caseId,
+    )
+  }
+
+  @Mutation(() => AppealStatementDeadline, { nullable: true })
+  setAppealStatementDeadline(
+    @Args('input', { type: () => SetAppealStatementDeadlineInput })
+    input: SetAppealStatementDeadlineInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealStatementDeadline> {
+    const { caseId, appealCaseId, ...body } = input
+
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Setting a statement deadline in appeal case ${appealCaseId} of case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.SET_APPEAL_STATEMENT_DEADLINE,
+      this.backendService.setAppealStatementDeadline(
+        caseId,
+        appealCaseId,
+        body,
+      ),
+      caseId,
+    )
+  }
+
+  // The court of appeals records a party's statement as filed, having
+  // uploaded it on the party's behalf.
+  @Mutation(() => AppealEventLog, { nullable: true })
+  fileAppealStatement(
+    @Args('input', { type: () => FileAppealStatementInput })
+    input: FileAppealStatementInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealEventLog> {
+    const { caseId, appealCaseId, ...body } = input
+
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Filing a statement on a party's behalf in appeal case ${appealCaseId} of case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.FILE_APPEAL_STATEMENT,
+      this.backendService.fileAppealStatement(caseId, appealCaseId, body),
       caseId,
     )
   }

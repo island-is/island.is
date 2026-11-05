@@ -18,7 +18,6 @@ import {
   CourtDocument,
   CourtSessionType,
   IndictmentDecision,
-  RequestSharedWithDefender,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
@@ -40,9 +39,6 @@ import { Notification } from './notification.model'
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
 registerEnumType(CaseType, { name: 'CaseType' })
 registerEnumType(CaseState, { name: 'CaseState' })
-registerEnumType(RequestSharedWithDefender, {
-  name: 'RequestSharedWithDefender',
-})
 registerEnumType(CaseLegalProvisions, { name: 'CaseLegalProvisions' })
 registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
 registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
@@ -94,21 +90,6 @@ export class Case {
 
   @Field(() => [Defendant], { nullable: true })
   readonly defendants?: Defendant[]
-
-  @Field(() => String, { nullable: true })
-  readonly defenderName?: string
-
-  @Field(() => String, { nullable: true })
-  readonly defenderNationalId?: string
-
-  @Field(() => String, { nullable: true })
-  readonly defenderEmail?: string
-
-  @Field(() => String, { nullable: true })
-  readonly defenderPhoneNumber?: string
-
-  @Field(() => RequestSharedWithDefender, { nullable: true })
-  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Field(() => Boolean, { nullable: true })
   isHeightenedSecurityLevel?: boolean
@@ -301,6 +282,10 @@ export class Case {
 
   @Field(() => String, { nullable: true })
   readonly indictmentIntroduction?: string
+
+  // Set once the generated Ákæra has been frozen to S3; gates replacing it
+  @Field(() => String, { nullable: true })
+  readonly indictmentHash?: string
 
   @Field(() => [IndictmentCount], { nullable: true })
   readonly indictmentCounts?: IndictmentCount[]

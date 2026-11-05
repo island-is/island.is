@@ -189,9 +189,16 @@ export const createCardRefundSaga = (
       return { action: 'refunded' as const, refundResult }
     },
     compensate: async (ctx) => {
+      const { cardPaymentConfirmation } = requireStepResult(
+        ctx,
+        'VALIDATE_REFUND',
+      )
+
+      // The rollback restores the fulfillment, the id tells the worker the payment is refunded
       ctx.metadata = {
         ...ctx.metadata,
         refundSucceededButRollbackFailed: true,
+        correlationId: cardPaymentConfirmation.id,
       }
     },
     nextStep: 'LOG_REFUND_SUCCESS',
@@ -204,6 +211,9 @@ export const createCardRefundSaga = (
         ? {
             refund: requireStepResult(ctx, 'REFUND_PAYMENT').refundResult,
             reason: ctx.input.reasonForRefund,
+            // Ties the refund to the payment, see PaymentFlowService.isCardPaymentRefunded
+            correlationId: requireStepResult(ctx, 'VALIDATE_REFUND')
+              .cardPaymentConfirmation.id,
           }
         : {
             action: 'deleted_fjs',

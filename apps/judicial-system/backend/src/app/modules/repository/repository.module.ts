@@ -8,6 +8,7 @@ import { AppealCaseRepositoryService } from './services/appealCaseRepository.ser
 import { AppealCourtSessionRepositoryService } from './services/appealCourtSessionRepository.service'
 import { AppealDecisionRepositoryService } from './services/appealDecisionRepository.service'
 import { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
+import { AppealStatementDeadlineRepositoryService } from './services/appealStatementDeadlineRepository.service'
 import { AppealSummonsRepositoryService } from './services/appealSummonsRepository.service'
 import { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
@@ -32,6 +33,7 @@ import { NotificationRepositoryService } from './services/notificationRepository
 import { OffenseRepositoryService } from './services/offenseRepository.service'
 import { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 import { RobotLogRepositoryService } from './services/robotLogRepository.service'
+import { ServiceInterruptionBannerRepositoryService } from './services/serviceInterruptionBannerRepository.service'
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 import { UserRepositoryService } from './services/userRepository.service'
 import { VerdictRepositoryService } from './services/verdictRepository.service'
@@ -50,6 +52,7 @@ import { repositoryModels } from './repositoryModels'
     AppealDecisionRepositoryService,
     AppealEventLogRepositoryService,
     AppealCourtSessionRepositoryService,
+    AppealStatementDeadlineRepositoryService,
     AppealSummonsRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
@@ -74,6 +77,7 @@ import { repositoryModels } from './repositoryModels'
     OffenseRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
     RobotLogRepositoryService,
+    ServiceInterruptionBannerRepositoryService,
     SubpoenaRepositoryService,
     UserRepositoryService,
     VerdictRepositoryService,
@@ -85,6 +89,7 @@ import { repositoryModels } from './repositoryModels'
     AppealDecisionRepositoryService,
     AppealEventLogRepositoryService,
     AppealCourtSessionRepositoryService,
+    AppealStatementDeadlineRepositoryService,
     AppealSummonsRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
@@ -109,6 +114,7 @@ import { repositoryModels } from './repositoryModels'
     OffenseRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
     RobotLogRepositoryService,
+    ServiceInterruptionBannerRepositoryService,
     SubpoenaRepositoryService,
     UserRepositoryService,
     VerdictRepositoryService,

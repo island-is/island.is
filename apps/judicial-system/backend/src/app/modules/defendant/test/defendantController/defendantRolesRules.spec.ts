@@ -1,6 +1,16 @@
 import { RolesRule } from '@island.is/judicial-system/auth'
+import {
+  InstitutionType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { DefendantController } from '../../defendant.controller'
+import { publicProsecutionProsecutorUpdateDefendantsRule } from '../../guards/rolesRules'
+
+const userOnlyRules: RolesRule[] = [
+  publicProsecutionProsecutorUpdateDefendantsRule,
+]
 
 // The controller puts RolesGuard ahead of CaseExistsForUpdateGuard at class
 // level, so a caller in a role no route has a rule for is rejected before a
@@ -18,7 +28,7 @@ import { DefendantController } from '../../defendant.controller'
 // case-reading rule to any route here would silently turn it into a 403 and
 // recreate the lock exposure at the same time. This pins the assumption to
 // each route's own metadata rather than to a list retyped in a spec.
-describe.each(['create', 'update', 'delete'])(
+describe.each(['create', 'update', 'updateMany', 'delete'])(
   'DefendantController - %s rules',
   (methodName) => {
     const rules: RolesRule[] =
@@ -34,11 +44,43 @@ describe.each(['create', 'update', 'delete'])(
     it('should decide every rule on the user alone, without reading the case', () => {
       rules.forEach((rule) => {
         // A bare UserRole is a string and has nowhere to put a canActivate; the
-        // object forms may define one, and this controller's must not.
-        expect(typeof rule === 'string' || rule.canActivate === undefined).toBe(
-          true,
-        )
+        // object forms may define one, and this controller's must not - except
+        // the rules listed here, pinned below to decide with no case loaded.
+        expect(
+          typeof rule === 'string' ||
+            rule.canActivate === undefined ||
+            userOnlyRules.includes(rule),
+        ).toBe(true)
       })
     })
   },
 )
+
+describe('publicProsecutionProsecutorUpdateDefendantsRule', () => {
+  const canActivate = (institutionType: InstitutionType) => {
+    if (
+      typeof publicProsecutionProsecutorUpdateDefendantsRule === 'string' ||
+      !publicProsecutionProsecutorUpdateDefendantsRule.canActivate
+    ) {
+      throw new Error('The rule must decide with a canActivate')
+    }
+
+    // No case on the request: the rule runs before the case is read.
+    return publicProsecutionProsecutorUpdateDefendantsRule.canActivate({
+      user: {
+        currentUser: {
+          role: UserRole.PROSECUTOR,
+          institution: { type: institutionType },
+        } as User,
+      },
+    })
+  }
+
+  it('should allow a prosecutor at the public prosecutors office', () => {
+    expect(canActivate(InstitutionType.PUBLIC_PROSECUTORS_OFFICE)).toBe(true)
+  })
+
+  it('should deny a prosecutor at a police prosecutors office', () => {
+    expect(canActivate(InstitutionType.POLICE_PROSECUTORS_OFFICE)).toBe(false)
+  })
+})

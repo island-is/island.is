@@ -18,6 +18,8 @@ import {
 import {
   AppealCase,
   AppealCourtSession,
+  AppealEventLog,
+  AppealStatementDeadline,
   DeleteAppealCourtSessionResponse,
 } from '../appeal-case'
 import { AppealSummons } from '../appeal-summons'
@@ -65,6 +67,7 @@ import {
   PoliceDefendant,
   UploadPoliceCaseFileResponse,
 } from '../police'
+import { ServiceInterruptionBanner } from '../service-interruption-banner'
 import { CaseDataExportInput, CaseStatistics } from '../statistics'
 import { Subpoena } from '../subpoena'
 import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
@@ -240,6 +243,19 @@ export class BackendService {
     return this.patch(`message-suspension/${category}`, updateMessageSuspension)
   }
 
+  getServiceInterruptionBanner(): Promise<ServiceInterruptionBanner> {
+    return this.get('service-interruption-banner')
+  }
+
+  updateServiceInterruptionBanner(
+    updateServiceInterruptionBanner: unknown,
+  ): Promise<ServiceInterruptionBanner> {
+    return this.patch(
+      'service-interruption-banner',
+      updateServiceInterruptionBanner,
+    )
+  }
+
   getCase(caseId: string): Promise<Case> {
     return this.get<Case>(`case/${caseId}`, caseTransformer)
   }
@@ -349,6 +365,28 @@ export class BackendService {
     return this.patch(
       `case/${caseId}/appealCase/${appealCaseId}`,
       updateAppealCase,
+    )
+  }
+
+  setAppealStatementDeadline(
+    caseId: string,
+    appealCaseId: string,
+    setAppealStatementDeadline: unknown,
+  ): Promise<AppealStatementDeadline> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/statementDeadline`,
+      setAppealStatementDeadline,
+    )
+  }
+
+  fileAppealStatement(
+    caseId: string,
+    appealCaseId: string,
+    fileAppealStatement: unknown,
+  ): Promise<AppealEventLog> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/statement`,
+      fileAppealStatement,
     )
   }
 
@@ -651,6 +689,13 @@ export class BackendService {
     )
   }
 
+  updateDefendants(
+    caseId: string,
+    updateDefendants: unknown,
+  ): Promise<Defendant[]> {
+    return this.patch(`case/${caseId}/defendant`, updateDefendants)
+  }
+
   limitedAccessUpdateDefendant(
     caseId: string,
     defendantId: string,
@@ -721,6 +766,16 @@ export class BackendService {
   ): Promise<AppealSummons> {
     return this.patch(
       `case/${caseId}/appealSummons/${appealSummonsId}/confirm`,
+      {},
+    )
+  }
+
+  sendAppealSummonsToCourtOfAppeals(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}/sendToCourtOfAppeals`,
       {},
     )
   }

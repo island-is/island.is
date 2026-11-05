@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
@@ -59,6 +59,18 @@ describe('UserRepositoryService', () => {
 
       expect(model.findByPk).toHaveBeenCalledWith(userId, { include })
       expect(result).toBe(user)
+    })
+
+    it('reads in the transaction the caller is in', async () => {
+      const transaction = {} as Transaction
+      model.findByPk.mockResolvedValueOnce({ id: userId })
+
+      await service.findById(userId, { transaction })
+
+      expect(model.findByPk).toHaveBeenCalledWith(userId, {
+        include,
+        transaction,
+      })
     })
 
     it('returns null when the user does not exist', async () => {

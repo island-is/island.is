@@ -151,7 +151,7 @@ api:
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.island.is'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/'
     ELFUR_BASE_IDS_URL: 'https://innskra.island.is'
-    ELFUR_BASE_PATH: 'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net'
+    ELFUR_BASE_PATH: 'https://fjs-cdn-endpoint-elfur-prod-azescphpe7b5ecf2.a03.azurefd.net'
     ELFUR_CLIENT_ID: '@fjs.is/stafraent-island-api-elfur'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
     ENVIRONMENT: 'prod'
@@ -308,7 +308,6 @@ api:
     XROAD_VEHICLE_PLATE_ORDERING_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1'
     XROAD_VEHICLE_PLATE_RENEWAL_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOwnership-V1'
     XROAD_VEHICLE_PRINTING_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Printing-V1'
-    XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS/GOV/5402697509/FJS-Public/VehicleServiceFJS_v1'
     XROAD_VERDICTS_GOPRO_PATH: 'IS/GOV/4707171140/Domstolasyslan-Client/Island-is'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
     XROAD_VMST_MEMBER_CODE: '7005942039'
@@ -550,6 +549,7 @@ application-system-api:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'application_system_api'
     DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
+    DOWNLOAD_SERVICE_BASE_PATH: 'https://api.island.is'
     EHIC_XROAD_PROVIDER_ID: 'IS/GOV/4804080550/SJUKRA-Protected/ehic'
     EMAIL_REGION: 'eu-west-1'
     ENDORSEMENTS_API_BASE_PATH: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
@@ -585,6 +585,7 @@ application-system-api:
     NOVA_SENDER_NAME: 'Island.is'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
+    PERSONAL_TAX_RETURN_URL: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc'
     RECYCLING_FUND_GQL_BASE_PATH: 'http://skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
@@ -650,6 +651,7 @@ application-system-api:
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1'
     XROAD_RECYCLING_FUND_PATH: 'IS/GOV/5308033680/Urvinnslusjodur-Protected/skilavottord-api'
     XROAD_RSK_RENTAL_RATE_PATH: 'IS/GOV/5402696029/Skatturinn/rentaldayrate-v1'
+    XROAD_RVK_VEITA_PATH: 'IS/MUN/5302697609/rvik-veita-protected/veita-v1'
     XROAD_SECONDARY_SCHOOL_PATH: 'IS/GOV/6601241280/MMS-Protected/umsoknagatt'
     XROAD_SEMINARS_VER_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/namskeid'
     XROAD_SIGNATURE_COLLECTION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1'
@@ -671,7 +673,6 @@ application-system-api:
     XROAD_VEHICLE_PLATE_ORDERING_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1'
     XROAD_VEHICLE_PLATE_RENEWAL_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOwnership-V1'
     XROAD_VEHICLE_PRINTING_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Printing-V1'
-    XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS/GOV/5402697509/FJS-Public/VehicleServiceFJS_v1'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
     XROAD_VMST_MEMBER_CODE: '7005942039'
     XROAD_WORK_ACCIDENT_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token'
@@ -761,6 +762,7 @@ application-system-api:
     AUTH_JWT_SECRET: '/k8s/application-system/api/AUTH_JWT_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+    CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/application-system/api/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
     DATA_PROTECTION_COMPLAINT_API_PASSWORD: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD'
     DATA_PROTECTION_COMPLAINT_API_USERNAME: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME'
     DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
@@ -784,10 +786,13 @@ application-system-api:
     NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
     NOVA_URL: '/k8s/NOVA_URL_V1'
     NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
+    PERSONAL_TAX_RETURN_AGENT_ID: '/k8s/application-system/api/PERSONAL_TAX_RETURN_AGENT_ID'
+    PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID: '/k8s/application-system/api/PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID'
     REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
     REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
     REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
     REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
+    SI_PUBLIC_FINANCIAL_AID_VEITA_TENANTS: '/k8s/application-system/FINANCIAL_AID_VEITA_TENANTS'
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
@@ -1000,6 +1005,7 @@ application-system-form:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
+    SI_PUBLIC_FINANCIAL_AID_VEITA_TENANTS: '/k8s/application-system/FINANCIAL_AID_VEITA_TENANTS'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -2146,6 +2152,7 @@ payments:
     APP_EXTERNAL_BASEPATH: 'https://island.is'
     BASEPATH: '/greida'
     DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
+    GOOGLE_PAY_ENVIRONMENT: 'PRODUCTION'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -2206,6 +2213,8 @@ payments:
       memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    GOOGLE_PAY_GATEWAY_MERCHANT_ID: '/k8s/payments/GOOGLE_PAY_GATEWAY_MERCHANT_ID'
+    GOOGLE_PAY_MERCHANT_ID: '/k8s/payments/GOOGLE_PAY_MERCHANT_ID'
     PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET: '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET'
     SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
@@ -2750,6 +2759,82 @@ service-portal-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/service-portal-api'
     create: true
     name: 'service-portal-api'
+service-portal-metrics:
+  args:
+    - 'metrics-entrypoint.cjs'
+  command:
+    - 'node'
+  concurrencyPolicy: 'Forbid'
+  enabled: true
+  env:
+    CODE_OWNER: 'aranja'
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'service_portal_api'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'service_portal_api'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
+    - 'islandis'
+    - 'user-notification'
+    - 'identity-server'
+    - 'envoy-gateway-internal'
+    - 'envoy-gateway-external'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
+  namespace: 'service-portal'
+  podDisruptionBudget:
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '100m'
+      memory: '256Mi'
+  schedule: '10 3 * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/service-portal-metrics'
+    create: true
+    name: 'service-portal-metrics'
+  startingDeadlineSeconds: 600
 services-bff-portals-admin:
   enabled: true
   env:
@@ -2769,7 +2854,7 @@ services-bff-portals-admin:
     CODE_OWNER: 'core'
     DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@admin.island.is/bff-stjornbord'
-    IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/document-provider:institution","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/signature-collection:municipality","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin","@admin.island.is/payments"]'
+    IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/document-provider:institution","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/signature-collection:municipality","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin","@admin.island.is/delegation-system:institution","@admin.island.is/payments"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -2858,7 +2943,7 @@ services-bff-portals-my-pages:
     BFF_PROXY_MAX_SOCKETS: '50'
     DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/web'
-    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/ships","@island.is/vehicles","@island.is/work-machines","@island.is/health","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/prescription","@island.is/health/dispensations","@island.is/health/appointments","@island.is/health/lists","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/iceland-health","@island.is/applications/samgongustofa-vehicles","@island.is/applications/social-insurance-administration","@island.is/applications/rsk","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@island.is/applications/dmr:stjornartidindi","@island.is/applications/hms","@island.is/applications/directorate-of-equality","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
+    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/ships","@island.is/vehicles","@island.is/work-machines","@island.is/health","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/prescription","@island.is/health/dispensations","@island.is/health/appointments","@island.is/health/lists","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/iceland-health","@island.is/applications/samgongustofa-vehicles","@island.is/applications/social-insurance-administration","@island.is/applications/rsk","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@island.is/applications/dmr:stjornartidindi","@island.is/applications/hms","@island.is/applications/directorate-of-equality","@island.is/applications/directorate-of-equality-salary","@island.is/applications/fjs:debts","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -3340,6 +3425,7 @@ services-payments:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_FINANCES_V3_PATH: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v3'
     XROAD_FJS_INVOICE_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS/GOV/5501692829/island-is-protected/payments-v1'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
@@ -3492,6 +3578,7 @@ services-payments-worker:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_FINANCES_V3_PATH: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v3'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
@@ -3544,6 +3631,11 @@ services-payments-worker:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-payments/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
+    PAYMENTS_GATEWAY_API_HEADER_KEY: '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_KEY'
+    PAYMENTS_GATEWAY_API_HEADER_VALUE: '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_VALUE'
+    PAYMENTS_GATEWAY_API_SECRET: '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET'
+    PAYMENTS_GATEWAY_API_URL: '/k8s/services-payments/PAYMENTS_GATEWAY_API_URL'
+    PAYMENTS_GATEWAY_SYSTEM_CALLING: '/k8s/services-payments/PAYMENTS_GATEWAY_SYSTEM_CALLING'
     PAYMENTS_JWT_SIGNING_KEY_ID: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_KEY_ID'
     PAYMENTS_JWT_SIGNING_PRIVATE_KEY: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PRIVATE_KEY'
     PAYMENTS_JWT_SIGNING_PUBLIC_KEY: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PUBLIC_KEY'

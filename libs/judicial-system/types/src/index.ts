@@ -107,7 +107,14 @@ export type {
 export {
   AppealCourtSessionType,
   appealCourtSessionTypeNames,
+  sortAppealCourtSessionsByDate,
 } from './lib/appealCourtSession'
+export {
+  findAppealStatementDeadline,
+  hasFiledAppealStatement,
+  isSameAppealStatementParty,
+} from './lib/appealStatementDeadline'
+export type { AppealStatementParty } from './lib/appealStatementDeadline'
 
 export { DateType, dateTypes } from './lib/dateLog'
 
@@ -121,6 +128,8 @@ export {
   HashAlgorithm,
   partyAppealFileCategories,
   verdictAppealDeclarationFileCategories,
+  verdictAppealStatementFileCategories,
+  verdictAppealFileCategories,
   isAppealFileDeletionLocked,
   isRulingOrderWithoutDocument,
   PoliceFileTypeCode,
