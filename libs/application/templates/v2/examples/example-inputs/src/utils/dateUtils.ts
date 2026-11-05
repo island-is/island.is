@@ -9,7 +9,7 @@ export const maxDate = new Date(Date.now() + 3 * oneDayInMs) // Three days from 
 
 export const dateRangeFromMinDate = (application: Application) => {
   const dateFrom = getValueViaPath<string>(application.answers, 'dateRangeFrom')
-  return dateFrom && dateFrom !== '' ? new Date(dateFrom) : new Date()
+  return dateFrom && dateFrom !== '' ? parseISO(dateFrom) : new Date()
 }
 
 export const dateRangeToMaxDate = (application: Application) => {
