@@ -182,6 +182,13 @@ export const CivilClaimantFields = ({
       return
     }
 
+    // Wait for the registry request to settle so we only write once. Still
+    // persists the national id when the lookup fails (common on DEV with
+    // fake ids) because isLoading flipping to false re-runs this effect.
+    if (isLoading) {
+      return
+    }
+
     let name: string | undefined
 
     // Separately handle person and business data in order to populate
@@ -194,10 +201,6 @@ export const CivilClaimantFields = ({
       name = business?.full_name
     }
 
-    // Persist the national id even when the registry lookup fails (common on
-    // DEV with fake ids). isLoading is in the dependency list so the effect
-    // also runs when a request settles without person/business data — same
-    // pattern as VictimInfo.
     const update: UpdateCivilClaimant = {
       civilClaimantId: civilClaimantNationalIdUpdate.civilClaimantId || '',
       nationalId: civilClaimantNationalIdUpdate.nationalId,
