@@ -19,6 +19,16 @@ import {
   ElasticsearchIndexLocale,
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
+import {
+  PROJECT_PAGE_CHILD_SEARCH_TYPES,
+  PROJECT_PAGE_SEARCH_TAG_TYPE,
+} from '@island.is/cms'
+import { SearchableContentTypes } from './enums/searchableContentTypes'
+import {
+  getProjectPageSearchChildLinks,
+  mapProjectPageChildMatches,
+  ProjectPageChildMatches,
+} from './projectPageSearch'
 
 @Injectable()
 export class ContentSearchService {
@@ -71,6 +81,37 @@ export class ContentSearchService {
     }))
   }
 
+  private shouldFindProjectPagesThroughChildren(input: SearcherInput) {
+    const queryString = input.queryString?.trim()
+    return (
+      Boolean(queryString) &&
+      queryString !== '*' &&
+      (input.useQuery ?? 'default') === 'default' &&
+      (!input.types?.length ||
+        input.types.includes(SearchableContentTypes.webProjectPage))
+    )
+  }
+
+  // Project subpages are not search results on their own, instead the project page they belong to is found through them
+  private async findProjectPageChildMatches(
+    index: string,
+    queryString: string,
+  ): Promise<ProjectPageChildMatches[]> {
+    try {
+      const groups = await this.elasticService.searchGroupedByTag(index, {
+        queryString,
+        types: PROJECT_PAGE_CHILD_SEARCH_TYPES,
+        tagType: PROJECT_PAGE_SEARCH_TAG_TYPE,
+      })
+      return mapProjectPageChildMatches(groups)
+    } catch (error) {
+      logger.warn('Failed to search project page children', {
+        message: error?.message,
+      })
+      return []
+    }
+  }
+
   async find(input: SearcherInput): Promise<SearchResult> {
     const {
       language,
@@ -88,20 +129,44 @@ export class ContentSearchService {
       sort = [{ popularityScore: { order } }]
     }
 
+    const index = this.getIndex(language)
+
+    const findProjectPagesThroughChildren =
+      this.shouldFindProjectPagesThroughChildren(input)
+
+    const projectPageChildMatches = findProjectPagesThroughChildren
+      ? await this.findProjectPageChildMatches(index, input.queryString)
+      : []
+
     const query = {
       ...restInput,
       sort,
+      additionalDocumentMatches: projectPageChildMatches.map(
+        ({ projectPageId, score }) => ({ id: projectPageId, boost: score }),
+      ),
     }
 
-    const { body } = await this.elasticService.search(
-      this.getIndex(language),
-      query,
+    const { body } = await this.elasticService.search(index, query)
+
+    const childMatchesByProjectPageId = new Map(
+      projectPageChildMatches.map((match) => [match.projectPageId, match]),
     )
 
     // intercept highlights
-    const items = body.hits.hits.map((item) =>
-      JSON.parse(item._source.response ?? '[]'),
-    )
+    const items = body.hits.hits.map((item) => {
+      const parsedItem = JSON.parse(item._source.response ?? '[]')
+      if (
+        findProjectPagesThroughChildren &&
+        parsedItem?.typename === 'ProjectPage'
+      ) {
+        parsedItem.searchResultChildLinks = getProjectPageSearchChildLinks(
+          parsedItem,
+          childMatchesByProjectPageId.get(parsedItem.id),
+          language ?? 'is',
+        )
+      }
+      return parsedItem
+    })
 
     // mix and match highlights
     if (query.highlightResults) {

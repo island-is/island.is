@@ -418,6 +418,13 @@ const Search: Screen<CategoryProps> = ({
     group: item.group,
     ...getItemImages(item),
     labels: getLabels(item),
+    childLinks:
+      item.__typename === 'ProjectPage'
+        ? (item.searchResultChildLinks ?? []).map(({ label, href }) => ({
+            label,
+            href,
+          }))
+        : [],
   }))
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict

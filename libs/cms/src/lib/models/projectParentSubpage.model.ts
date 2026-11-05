@@ -4,7 +4,7 @@ import { getProjectPageUrlPrefix } from '@island.is/shared/utils'
 import type { IProjectParentSubpage } from '../generated/contentfulTypes'
 
 @ObjectType()
-class ProjectSubpageLink {
+export class ProjectSubpageLink {
   @Field(() => String, { nullable: true })
   id?: string | null
 

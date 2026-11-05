@@ -14,6 +14,8 @@ export default {
     'organizationPage',
     'organizationSubpage',
     'projectPage',
+    'projectSubpage',
+    'projectParentSubpage',
     'supportQNA',
     'link',
     'frontpage',
@@ -108,6 +110,8 @@ export default {
     'numberBullet',
     'genericList',
     'fund',
+    // Chapter changes need to update the project parent subpages they belong to
+    'projectSubpage',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article', 'organizationPage'],

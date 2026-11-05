@@ -287,6 +287,10 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           slug
           subtitle
+          searchResultChildLinks {
+            label
+            href
+          }
         }
 
         ... on Link {
