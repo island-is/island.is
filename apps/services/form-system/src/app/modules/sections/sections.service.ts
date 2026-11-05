@@ -20,6 +20,7 @@ import {
 import { SectionTypes } from '@island.is/form-system/shared'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { ListItem } from '../listItems/models/listItem.model'
 
 @Injectable()
 export class SectionsService {
@@ -175,11 +176,14 @@ export class SectionsService {
     if (Array.isArray(screens) && screens.length) {
       const screenIds = screens.map((screen: { id: string }) => screen.id)
       const fieldsPerScreen = await Promise.all(
-        screens.map((s) => s.$get('fields', { attributes: ['id'] })),
+        screens.map((screen) => screen.$get('fields', { include: [ListItem] })),
       )
       const fieldIds = fieldsPerScreen
         .flat()
-        .map((field: { id: string }) => field.id)
+        .flatMap((field) => [
+          field.id,
+          ...(field.list ?? []).map((item) => item.id),
+        ])
       const newDependencies = filterArrayDependency(dependencies, [
         ...screenIds,
         ...fieldIds,
