@@ -32,11 +32,7 @@ const toNumberField = (
 ): CalculatorField => {
   const isRatio = isRskRatio(inner)
   const scale = (value: number | null) =>
-    value === null
-      ? undefined
-      : isRatio
-      ? rskRatioToPercent(value)
-      : value
+    value === null ? undefined : isRatio ? rskRatioToPercent(value) : value
   const defaultValue = findDefault(schema)
 
   return {

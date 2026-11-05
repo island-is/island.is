@@ -8,10 +8,6 @@ import {
   getVehicleTax,
   getWithholdingTax,
 } from '../../../gen/fetch'
-import type { CalculatorKey } from './calculators.registry'
-import { calculatorRegistry } from './calculators.registry'
-import { fromClientResult } from './fromClientResult'
-import { toClientQuery } from './toClientQuery'
 import { toInputFields } from '../contract/toInputFields'
 import { toOutputFields } from '../contract/toOutputFields'
 import type { CalculatorContract } from '../types/calculator'
@@ -24,9 +20,20 @@ import type {
   WithholdingTaxInput,
 } from '../types/calculators'
 import { byName } from '../utils/byName'
+import type { CalculatorKey } from './calculators.registry'
+import { calculatorRegistry } from './calculators.registry'
+import { fromClientResult } from './fromClientResult'
+import { invalidClientQueryFields } from './invalidClientQueryFields'
+import { toClientQuery } from './toClientQuery'
 
-const { childBenefit, interestBenefit, vehicleBenefit, vehicleDepreciation, vehicleTax, withholdingTax } =
-  calculatorRegistry
+const {
+  childBenefit,
+  interestBenefit,
+  vehicleBenefit,
+  vehicleDepreciation,
+  vehicleTax,
+  withholdingTax,
+} = calculatorRegistry
 
 @Injectable()
 export class CalculatorsClientService {
@@ -48,6 +55,13 @@ export class CalculatorsClientService {
         )
         .sort(byName),
     }
+  }
+
+  validateInput(
+    key: CalculatorKey,
+    input: Readonly<Record<string, unknown>>,
+  ): string[] {
+    return invalidClientQueryFields(calculatorRegistry[key].query, input)
   }
 
   async getChildBenefit(input: ChildBenefitInput) {
