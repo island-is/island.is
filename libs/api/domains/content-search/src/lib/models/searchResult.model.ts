@@ -36,7 +36,7 @@ const Items = createUnionType({
     Link,
     ProjectPage,
     ProjectSubpage,
-  ProjectParentSubpage,
+    ProjectParentSubpage,
     Manual,
     ManualChapterItem,
     OrganizationParentSubpage,

@@ -155,14 +155,11 @@ export class ContentSearchService {
       return
     }
     try {
-      const response = await this.elasticService.getDocumentsByMetaData(
-        index,
-        {
-          types: [PROJECT_PARENT_SUBPAGE_SEARCH_TYPE],
-          tags: projectTags,
-          size: 100,
-        },
-      )
+      const response = await this.elasticService.getDocumentsByMetaData(index, {
+        types: [PROJECT_PARENT_SUBPAGE_SEARCH_TYPE],
+        tags: projectTags,
+        size: 100,
+      })
       addParentSubpageSlugToChapters(
         items,
         response.hits.hits.map((hit) => hit._source.response),
