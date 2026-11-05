@@ -22,6 +22,8 @@ export type ImpactModalTitleProps = {
   date?: string // ISODate string from answers
   /** The regulation's effective date, when the impact can take it */
   defaultDate?: string
+  /** The regulation's effective date, whether or not the impact can take it */
+  regulationEffectiveDate?: string
   minDate?: Date
   readOnly?: boolean
 }
@@ -35,6 +37,7 @@ export const ImpactModalTitle = (props: ImpactModalTitleProps) => {
     onChangeDate,
     date,
     defaultDate,
+    regulationEffectiveDate,
     minDate,
     readOnly,
   } = props
@@ -76,6 +79,7 @@ export const ImpactModalTitle = (props: ImpactModalTitleProps) => {
       <ImpactDate
         date={date}
         defaultDate={defaultDate}
+        regulationEffectiveDate={regulationEffectiveDate}
         size="full"
         minDate={minDate}
         onChange={onChangeDate}

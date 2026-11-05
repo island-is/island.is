@@ -347,6 +347,7 @@ export const EditChange = (props: EditChangeProps) => {
               name={change.name}
               date={shownDate}
               defaultDate={defaultDate}
+              regulationEffectiveDate={regulationEffectiveDate}
               minDate={
                 readOnly
                   ? change.date

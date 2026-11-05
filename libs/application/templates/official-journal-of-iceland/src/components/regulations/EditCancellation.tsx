@@ -136,6 +136,7 @@ export const EditCancellation = (props: EditCancellationProps) => {
               }
               date={shownDate}
               defaultDate={defaultDate}
+              regulationEffectiveDate={regulationEffectiveDate}
               minDate={minDate}
               onChangeDate={changeCancelDate}
               tag={{

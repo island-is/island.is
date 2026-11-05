@@ -26,6 +26,11 @@ export type ImpactDateProps = {
    * no specific date is picked.
    */
   defaultDate?: string // ISODate string
+  /**
+   * The regulation's effective date. Set without a defaultDate when it falls
+   * before minDate, so the impact can't take it.
+   */
+  regulationEffectiveDate?: string // ISODate string
   size?: 'full' | 'half'
   minDate?: Date
   onChange: (newDate: Date | undefined) => void
@@ -40,6 +45,7 @@ export const ImpactDate = (props: ImpactDateProps) => {
   const {
     date,
     defaultDate,
+    regulationEffectiveDate,
     onChange,
     size = 'half',
     minDate,
@@ -89,14 +95,17 @@ export const ImpactDate = (props: ImpactDateProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasCustomDate, selectedDate, minDate, defaultDate])
 
-  // Without an effective date, the earliest allowed date is saved
+  // Without a usable effective date, the earliest allowed date is saved
+  const minDateLabel = minDate ? formatDate(minDate) : 'þegar í stað'
   const defaultLabel = defaultDate
     ? `Breyting tekur gildi á gildistökudegi reglugerðarinnar (${formatDate(
         parseISO(defaultDate),
       )})`
-    : `Breyting tekur gildi ${
-        minDate ? formatDate(minDate) : 'þegar í stað'
-      }. Gildistökudagur reglugerðarinnar hefur ekki verið valinn.`
+    : regulationEffectiveDate
+    ? `Breyting tekur gildi ${minDateLabel}, sem er fyrsti mögulegi dagur. Gildistökudagur reglugerðarinnar (${formatDate(
+        parseISO(regulationEffectiveDate.slice(0, 10)),
+      )}) er of snemma fyrir þessa breytingu.`
+    : `Breyting tekur gildi ${minDateLabel}. Gildistökudagur reglugerðarinnar hefur ekki verið valinn.`
 
   return (
     <Box marginBottom={4} width={size}>
