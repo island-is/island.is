@@ -35,7 +35,15 @@ import {
   useCancelAppointmentMutation,
   useGetAppointmentDetailQuery,
 } from '@/graphql/types/schema'
-import { Alert, Button, Icon, Input, InputRow, Problem, Typography } from '@/ui'
+import {
+  Alert,
+  Button,
+  Icon,
+  InfoLine,
+  InfoLineRow,
+  StatusMessage,
+  Typography,
+} from '@/ui'
 import { formatAppointmentDate } from '../../../../../utils/format-appointment-date'
 
 const Header = styled.View`
@@ -441,7 +449,7 @@ export default function AppointmentDetailScreen() {
       >
         {error && !appointment && (
           <ProblemContainer>
-            <Problem
+            <StatusMessage
               type="error"
               error={error}
               title={intl.formatMessage({ id: 'problem.error.title' })}
@@ -454,7 +462,7 @@ export default function AppointmentDetailScreen() {
 
         {!loading && !error && !appointment && (
           <ProblemContainer>
-            <Problem
+            <StatusMessage
               type="no_data"
               title={intl.formatMessage({ id: 'problem.noData.title' })}
               message={intl.formatMessage({
@@ -666,28 +674,28 @@ export default function AppointmentDetailScreen() {
             )}
 
             {appointment.practitioners && appointment.practitioners.length > 0 && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.appointmentWith',
                   })}
                   value={appointment.practitioners.join(', ')}
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
 
             {detail?.assignees?.map((assignee, index) => (
-              <InputRow key={`assignee-${index}`}>
-                <Input
+              <InfoLineRow key={`assignee-${index}`}>
+                <InfoLine
                   label={assigneeTypeLabel(assignee.type)}
                   value={assignee.name}
                 />
-              </InputRow>
+              </InfoLineRow>
             ))}
 
             {appointment.instruction && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.instructions',
                   })}
@@ -698,7 +706,7 @@ export default function AppointmentDetailScreen() {
                       : undefined
                   }
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
 
             {preparationLink && (
@@ -732,39 +740,39 @@ export default function AppointmentDetailScreen() {
             ]
               .filter((line) => !!line.value)
               .map((line) => (
-                <InputRow key={line.id}>
-                  <Input
+                <InfoLineRow key={line.id}>
+                  <InfoLine
                     label={intl.formatMessage({ id: line.id })}
                     value={line.value}
                   />
-                </InputRow>
+                </InfoLineRow>
               ))}
 
             {appointment.location?.phoneNumber && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.phoneNumber',
                   })}
                   value={appointment.location.phoneNumber}
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
 
             {appointment.location?.openingHoursText && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.openingHours',
                   })}
                   value={appointment.location.openingHoursText}
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
 
             {appointment.location?.organization && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.organization',
                   })}
@@ -775,7 +783,7 @@ export default function AppointmentDetailScreen() {
                       : undefined
                   }
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
           </>
         )}

@@ -19,7 +19,7 @@ export type DetailLink = {
   onPress?: () => void
 }
 
-export type ProblemTemplateBaseProps = {
+export type StatusMessageTemplateBaseProps = {
   variant: Variant
   title: string
   message: string | ReactNode
@@ -31,17 +31,17 @@ export type ProblemTemplateBaseProps = {
   paddingVertical?: number
 }
 
-interface WithIconProps extends ProblemTemplateBaseProps {
+interface WithIconProps extends StatusMessageTemplateBaseProps {
   showIcon?: boolean
   tag?: never
 }
 
-interface WithTagProps extends ProblemTemplateBaseProps {
+interface WithTagProps extends StatusMessageTemplateBaseProps {
   tag?: string
   showIcon?: never
 }
 
-export type ProblemTemplateProps = WithIconProps | WithTagProps
+export type StatusMessageTemplateProps = WithIconProps | WithTagProps
 
 const getIcon = (variant: Variant) => {
   switch (variant) {
@@ -133,7 +133,7 @@ const Content = styled(View)`
   row-gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
-export const ProblemTemplate = ({
+export const StatusMessageTemplate = ({
   variant,
   title,
   message,
@@ -144,7 +144,7 @@ export const ProblemTemplate = ({
   size = 'large',
   paddingHorizontal,
   paddingVertical,
-}: ProblemTemplateProps) => {
+}: StatusMessageTemplateProps) => {
   const theme = useTheme()
   const { openBrowser } = useBrowser()
   const { borderColor, tagColor, tagBackgroundColor } =
@@ -218,3 +218,6 @@ export const ProblemTemplate = ({
     </SafeAreaView>
   )
 }
+
+/** @deprecated Use `StatusMessageTemplate`. */
+export const ProblemTemplate = StatusMessageTemplate

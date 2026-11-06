@@ -10,20 +10,23 @@ const Host = styled.View<{ background: boolean }>`
   border-radius: ${({ theme }) => theme.border.radius.standard};
 `
 
-interface InputRowProps {
+interface InfoLineRowProps {
   background?: boolean
   children: React.ReactNode
   testID?: string | undefined
 }
 
-export function InputRow({
+export function InfoLineRow({
   children,
   testID,
   background = false,
-}: InputRowProps) {
+}: InfoLineRowProps) {
   return (
     <Host background={background} testID={testID}>
       {children}
     </Host>
   )
 }
+
+/** @deprecated Use `InfoLineRow`. */
+export const InputRow = InfoLineRow

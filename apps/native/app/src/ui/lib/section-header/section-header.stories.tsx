@@ -3,7 +3,7 @@ import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
 import { Button } from '../button/button'
-import { Heading } from './heading'
+import { SectionHeader } from './section-header'
 
 const CenterView = ({ children }: any) => (
   <View
@@ -19,22 +19,22 @@ const CenterView = ({ children }: any) => (
   </View>
 )
 
-storiesOf('Heading', module)
+storiesOf('SectionHeader', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
-  .add('Heading', () => {
-    const heading = text('Heading Text', 'Tilkynningar')
-    return <Heading>{heading}</Heading>
+  .add('SectionHeader', () => {
+    const heading = text('SectionHeader Text', 'Tilkynningar')
+    return <SectionHeader>{heading}</SectionHeader>
   })
-  .add('Heading With Button', () => {
-    const heading = text('Heading Text with Button', 'Tilkynningar')
+  .add('SectionHeader With Button', () => {
+    const heading = text('SectionHeader Text with Button', 'Tilkynningar')
     return (
-      <Heading
+      <SectionHeader
         button={
           <Button title="Sjá allt" isTransparent onPress={() => void 0} />
         }
       >
         {heading}
-      </Heading>
+      </SectionHeader>
     )
   })
