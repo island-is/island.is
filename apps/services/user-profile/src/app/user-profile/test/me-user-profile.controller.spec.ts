@@ -2862,6 +2862,7 @@ describe('MeUserProfileController', () => {
 
         expect(res.status).toBe(200)
         expect(res.body).toEqual({
+          nationalId: testUser.nationalId,
           blockedCategories: [
             {
               key: `${otherSenderId}-almennt`,
