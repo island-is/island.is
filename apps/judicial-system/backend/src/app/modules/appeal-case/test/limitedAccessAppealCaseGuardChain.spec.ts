@@ -49,13 +49,14 @@ import { LimitedAccessAppealCaseController } from '../limitedAccessAppealCase.co
 // appeal case and now lock the case row, and the two appointment-letter
 // routes that keep the plain read.
 //
-// transitionRolesRules.spec.ts pins what the defender's transition rule
-// decides from a request the case and appeal case guards have already
-// populated. It never runs a guard, and a wrong order is not visible anywhere
-// else: guards do not execute in controller unit tests, so a chain that locks
-// the case row for every authenticated caller - or one that lets RolesGuard
-// decide before the case it reads is there - passes the whole suite. This
-// table runs them, in Nest's order, for every user role on each route.
+// appealCaseController/transitionRolesRules.spec.ts pins what the defender's
+// transition rule decides from a request the case and appeal case guards have
+// already populated. It never runs a guard, and a wrong order is not visible
+// anywhere else: guards do not execute in controller unit tests, so a chain
+// that locks the case row for every authenticated caller - or one that lets
+// RolesGuard decide before the case it reads is there - passes the whole
+// suite. This table runs them, in Nest's order, for every user role on each
+// route.
 //
 // Authentication is out of the picture: every row supplies a user, and what is
 // tested is what the route's authorization guards do with them. Passport's
@@ -84,20 +85,14 @@ const userAt = (
     institution: { id: uuid(), type: institutionType },
   } as User)
 
-// Both defence users: the one the district court confirmed for the defendant,
-// and the one it confirmed as the civil claimant's spokesperson.
-const defender = () =>
-  userAt(
-    UserRole.DEFENDER,
-    defenderNationalId,
-    InstitutionType.POLICE_PROSECUTORS_OFFICE,
-  )
-const spokesperson = () =>
-  userAt(
-    UserRole.DEFENDER,
-    spokespersonNationalId,
-    InstitutionType.POLICE_PROSECUTORS_OFFICE,
-  )
+// Both defence users, who belong to no institution: the one the district
+// court confirmed for the defendant, and the one it confirmed as the civil
+// claimant's spokesperson.
+const defenceUser = (nationalId: string) =>
+  ({ id: uuid(), role: UserRole.DEFENDER, nationalId } as User)
+
+const defender = () => defenceUser(defenderNationalId)
+const spokesperson = () => defenceUser(spokespersonNationalId)
 
 // A case-level ruling appeal, as the appellant's side made it: the defence
 // may withdraw its own, not the prosecution's.
@@ -238,6 +233,18 @@ const routes: Route[] = [
     deniedCase: receivedIndictmentCase,
   },
 ]
+
+// The chain runs a stand-in for the class-level JwtAuthUserGuard, and the
+// harness only refuses a declared guard with no instance, never an instance
+// that goes unused - so this is what notices the real guard being dropped
+// from the controller.
+describe('LimitedAccessAppealCaseController - class-level guards', () => {
+  it('should require an authenticated user on every route', () => {
+    expect(
+      Reflect.getMetadata('__guards__', LimitedAccessAppealCaseController),
+    ).toContain(JwtAuthUserGuard)
+  })
+})
 
 // Every route admits the defender role and no other.
 const rejectedRoles = Object.values(UserRole).filter(

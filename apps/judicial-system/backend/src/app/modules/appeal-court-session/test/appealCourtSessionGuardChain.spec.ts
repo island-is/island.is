@@ -110,6 +110,18 @@ const verdictAppealedCustodyCase = (caseId: string) =>
     state: CaseState.ACCEPTED,
   } as Case)
 
+// The chain runs a stand-in for the class-level JwtAuthUserGuard, and the
+// harness only refuses a declared guard with no instance, never an instance
+// that goes unused - so this is what notices the real guard being dropped
+// from the controller, as the declaration pin this spec replaced did.
+describe('AppealCourtSessionController - class-level guards', () => {
+  it('should require an authenticated user on every route', () => {
+    expect(
+      Reflect.getMetadata('__guards__', AppealCourtSessionController),
+    ).toContain(JwtAuthUserGuard)
+  })
+})
+
 // Whether the route names a session, and so declares
 // AppealCourtSessionExistsGuard after the appeal case is resolved.
 const routes: [string, boolean][] = [
