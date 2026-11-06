@@ -35,6 +35,12 @@ export default ({ config }) => {
           'group.is.island.app',
           ...(!IS_PROD ? ['group.is.island.app.dev'] : []),
         ],
+        // TestFlight and App Store builds always attest in production and
+        // ignore this, so only locally signed dev builds need it.
+        ...(!IS_PROD && {
+          'com.apple.developer.devicecheck.appattest-environment':
+            'development',
+        }),
       },
       infoPlist: {
         ...config.ios.infoPlist,
